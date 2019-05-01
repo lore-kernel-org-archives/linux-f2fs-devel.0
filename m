@@ -1,8 +1,8 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 08/13] fscrypt: introduce
- fscrypt_decrypt_block_inplace()
-Date: Wed,  1 May 2019 15:45:10 -0700
-Message-ID: <20190501224515.43059-9-ebiggers@kernel.org>
+Subject: [PATCH 06/13] fscrypt: support encrypting multiple
+ filesystem blocks per page
+Date: Wed,  1 May 2019 15:45:08 -0700
+Message-ID: <20190501224515.43059-7-ebiggers@kernel.org>
 References: <20190501224515.43059-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hLxzX-0005Uu-98
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 22:46:19 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hLxzW-0005Ul-Pi
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 22:46:18 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hLxzV-0025G2-W3
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 22:46:19 +0000
+ id 1hLxzV-0025Fz-E1
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 22:46:18 +0000
 In-Reply-To: <20190501224515.43059-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,125 +33,196 @@ Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mtd@lists.i
 
 From: Eric Biggers <ebiggers@google.com>
 
-fscrypt_decrypt_page() behaves very differently depending on whether the
-filesystem set FS_CFLG_OWN_PAGES in its fscrypt_operations.  This makes
-the function difficult to understand and document.  It also makes it so
-that all callers have to provide inode and lblk_num, when fscrypt could
-determine these itself for pagecache pages.
+Rename fscrypt_encrypt_page() to fscrypt_encrypt_pagecache_blocks() and
+redefine its behavior to encrypt all filesystem blocks from the given
+region of the given page, rather than assuming that the region consists
+of just one filesystem block.  Also remove the 'inode' and 'lblk_num'
+parameters, since they can be retrieved from the page as it's already
+assumed to be a pagecache page.
 
-Therefore, move the FS_CFLG_OWN_PAGES behavior into a new function
-fscrypt_decrypt_block_inplace().
+This is in preparation for allowing encryption on ext4 filesystems with
+blocksize != PAGE_SIZE.
+
+This is based on work by Chandan Rajendra.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/crypto.c      | 31 +++++++++++++++++++++++++++----
- fs/ubifs/crypto.c       |  7 ++++---
- include/linux/fscrypt.h | 11 +++++++++++
- 3 files changed, 42 insertions(+), 7 deletions(-)
+ fs/crypto/crypto.c      | 67 ++++++++++++++++++++++++-----------------
+ fs/ext4/page-io.c       |  4 +--
+ fs/f2fs/data.c          |  5 +--
+ include/linux/fscrypt.h | 17 ++++++-----
+ 4 files changed, 53 insertions(+), 40 deletions(-)
 
 diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 7bdb985126d97..2e6fb5e4f7a7f 100644
+index e978541e2ec19..7bdb985126d97 100644
 --- a/fs/crypto/crypto.c
 +++ b/fs/crypto/crypto.c
-@@ -284,8 +284,7 @@ EXPORT_SYMBOL(fscrypt_encrypt_block_inplace);
+@@ -121,8 +121,8 @@ struct page *fscrypt_alloc_bounce_page(gfp_t gfp_flags)
  /**
-  * fscrypt_decrypt_page() - Decrypts a page in-place
-  * @inode:     The corresponding inode for the page to decrypt.
-- * @page:      The page to decrypt. Must be locked in case
-- *             it is a writeback page (FS_CFLG_OWN_PAGES unset).
-+ * @page:      The page to decrypt. Must be locked.
-  * @len:       Number of bytes in @page to be decrypted.
-  * @offs:      Start of data in @page.
-  * @lblk_num:  Logical block number.
-@@ -299,8 +298,7 @@ EXPORT_SYMBOL(fscrypt_encrypt_block_inplace);
- int fscrypt_decrypt_page(const struct inode *inode, struct page *page,
- 			unsigned int len, unsigned int offs, u64 lblk_num)
+  * fscrypt_free_bounce_page() - free a ciphertext bounce page
+  *
+- * Free a bounce page that was allocated by fscrypt_encrypt_page(), or by
+- * fscrypt_alloc_bounce_page() directly.
++ * Free a bounce page that was allocated by fscrypt_encrypt_pagecache_blocks(),
++ * or by fscrypt_alloc_bounce_page() directly.
+  */
+ void fscrypt_free_bounce_page(struct page *bounce_page)
  {
--	if (WARN_ON_ONCE(!PageLocked(page) &&
--			 !(inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES)))
-+	if (WARN_ON_ONCE(!PageLocked(page)))
- 		return -EINVAL;
- 
- 	return fscrypt_crypt_block(inode, FS_DECRYPT, lblk_num, page, page,
-@@ -308,6 +306,31 @@ int fscrypt_decrypt_page(const struct inode *inode, struct page *page,
+@@ -197,52 +197,63 @@ int fscrypt_crypt_block(const struct inode *inode, fscrypt_direction_t rw,
  }
- EXPORT_SYMBOL(fscrypt_decrypt_page);
  
-+/**
-+ * fscrypt_decrypt_block_inplace() - Decrypt a filesystem block in-place
-+ * @inode:     The inode to which this block belongs
-+ * @page:      The page containing the block to decrypt
-+ * @len:       Size of block to decrypt.  Doesn't need to be a multiple of the
-+ *		fs block size, but must be a multiple of FS_CRYPTO_BLOCK_SIZE.
-+ * @offs:      Byte offset within @page at which the block to decrypt begins
-+ * @lblk_num:  Filesystem logical block number of the block, i.e. the 0-based
-+ *		number of the block within the file
+ /**
+- * fscypt_encrypt_page() - Encrypts a page
+- * @inode:     The inode for which the encryption should take place
+- * @page:      The page to encrypt. Must be locked.
+- * @len:       Length of data to encrypt in @page and encrypted
+- *             data in returned page.
+- * @offs:      Offset of data within @page and returned
+- *             page holding encrypted data.
+- * @lblk_num:  Logical block number. This must be unique for multiple
+- *             calls with same inode, except when overwriting
+- *             previously written data.
+- * @gfp_flags: The gfp flag for memory allocation
++ * fscrypt_encrypt_pagecache_blocks() - Encrypt filesystem blocks from a pagecache page
++ * @page:      The locked pagecache page containing the block(s) to encrypt
++ * @len:       Total size of the block(s) to encrypt.  Must be a nonzero
++ *		multiple of the filesystem's block size.
++ * @offs:      Byte offset within @page of the first block to encrypt.  Must be
++ *		a multiple of the filesystem's block size.
++ * @gfp_flags: Memory allocation flags
 + *
-+ * Decrypt a possibly-compressed filesystem block that is located in an
-+ * arbitrary page, not necessarily in the original pagecache page.  The @inode
-+ * and @lblk_num must be specified, as they can't be determined from @page.
-+ *
-+ * Return: 0 on success; -errno on failure
-+ */
-+int fscrypt_decrypt_block_inplace(const struct inode *inode, struct page *page,
-+				  unsigned int len, unsigned int offs,
-+				  u64 lblk_num)
-+{
-+	return fscrypt_crypt_block(inode, FS_DECRYPT, lblk_num, page, page,
-+				   len, offs, GFP_NOFS);
-+}
-+EXPORT_SYMBOL(fscrypt_decrypt_block_inplace);
++ * A new bounce page is allocated, and the specified block(s) are encrypted into
++ * it.  In the bounce page, the ciphertext block(s) will be located at the same
++ * offsets at which the plaintext block(s) were located in the source page; any
++ * other parts of the bounce page will be left uninitialized.  However, normally
++ * blocksize == PAGE_SIZE and the whole page is encrypted at once.
+  *
+- * Encrypts @page.  A bounce page is allocated, the data is encrypted into the
+- * bounce page, and the bounce page is returned.  The caller is responsible for
+- * calling fscrypt_free_bounce_page().
++ * This is for use by the filesystem's ->writepages() method.
+  *
+- * Return: A page containing the encrypted data on success; else an ERR_PTR()
++ * Return: the new encrypted bounce page on success; an ERR_PTR() on failure
+  */
+-struct page *fscrypt_encrypt_page(const struct inode *inode,
+-				struct page *page,
+-				unsigned int len,
+-				unsigned int offs,
+-				u64 lblk_num, gfp_t gfp_flags)
++struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
++					      unsigned int len,
++					      unsigned int offs,
++					      gfp_t gfp_flags)
+ 
+ {
++	const struct inode *inode = page->mapping->host;
++	const unsigned int blockbits = inode->i_blkbits;
++	const unsigned int blocksize = 1 << blockbits;
+ 	struct page *ciphertext_page;
++	u64 lblk_num = ((u64)page->index << (PAGE_SHIFT - blockbits)) +
++		       (offs >> blockbits);
++	unsigned int i;
+ 	int err;
+ 
+ 	if (WARN_ON_ONCE(!PageLocked(page)))
+ 		return ERR_PTR(-EINVAL);
+ 
++	if (WARN_ON_ONCE(len <= 0 || !IS_ALIGNED(len | offs, blocksize)))
++		return ERR_PTR(-EINVAL);
 +
- /*
-  * Validate dentries in encrypted directories to make sure we aren't potentially
-  * caching stale dentries after a key has been added.
-diff --git a/fs/ubifs/crypto.c b/fs/ubifs/crypto.c
-index 032efdad2e668..22be7aeb96c4f 100644
---- a/fs/ubifs/crypto.c
-+++ b/fs/ubifs/crypto.c
-@@ -64,10 +64,11 @@ int ubifs_decrypt(const struct inode *inode, struct ubifs_data_node *dn,
- 	}
+ 	ciphertext_page = fscrypt_alloc_bounce_page(gfp_flags);
+ 	if (!ciphertext_page)
+ 		return ERR_PTR(-ENOMEM);
  
- 	ubifs_assert(c, dlen <= UBIFS_BLOCK_SIZE);
--	err = fscrypt_decrypt_page(inode, virt_to_page(&dn->data), dlen,
--			offset_in_page(&dn->data), block);
-+	err = fscrypt_decrypt_block_inplace(inode, virt_to_page(&dn->data),
-+					    dlen, offset_in_page(&dn->data),
-+					    block);
- 	if (err) {
--		ubifs_err(c, "fscrypt_decrypt_page failed: %i", err);
-+		ubifs_err(c, "fscrypt_decrypt_block_inplace() failed: %d", err);
- 		return err;
+-	err = fscrypt_crypt_block(inode, FS_ENCRYPT, lblk_num, page,
+-				  ciphertext_page, len, offs, gfp_flags);
+-	if (err) {
+-		fscrypt_free_bounce_page(ciphertext_page);
+-		return ERR_PTR(err);
++	for (i = offs; i < offs + len; i += blocksize, lblk_num++) {
++		err = fscrypt_crypt_block(inode, FS_ENCRYPT, lblk_num,
++					  page, ciphertext_page,
++					  blocksize, i, gfp_flags);
++		if (err) {
++			fscrypt_free_bounce_page(ciphertext_page);
++			return ERR_PTR(err);
++		}
  	}
- 	*out_len = clen;
+ 	SetPagePrivate(ciphertext_page);
+ 	set_page_private(ciphertext_page, (unsigned long)page);
+ 	return ciphertext_page;
+ }
+-EXPORT_SYMBOL(fscrypt_encrypt_page);
++EXPORT_SYMBOL(fscrypt_encrypt_pagecache_blocks);
+ 
+ /**
+  * fscrypt_encrypt_block_inplace() - Encrypt a filesystem block in-place
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index b86082d653208..457ddf051608f 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -472,8 +472,8 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 		gfp_t gfp_flags = GFP_NOFS;
+ 
+ 	retry_encrypt:
+-		bounce_page = fscrypt_encrypt_page(inode, page, PAGE_SIZE, 0,
+-						   page->index, gfp_flags);
++		bounce_page = fscrypt_encrypt_pagecache_blocks(page, PAGE_SIZE,
++							       0, gfp_flags);
+ 		if (IS_ERR(bounce_page)) {
+ 			ret = PTR_ERR(bounce_page);
+ 			if (ret == -ENOMEM && wbc->sync_mode == WB_SYNC_ALL) {
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7e2e3f36c7706..757f050c650a4 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1692,8 +1692,9 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
+ 	f2fs_wait_on_block_writeback(inode, fio->old_blkaddr);
+ 
+ retry_encrypt:
+-	fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page,
+-			PAGE_SIZE, 0, fio->page->index, gfp_flags);
++	fio->encrypted_page = fscrypt_encrypt_pagecache_blocks(fio->page,
++							       PAGE_SIZE, 0,
++							       gfp_flags);
+ 	if (IS_ERR(fio->encrypted_page)) {
+ 		/* flush pending IOs and wait for a while in the ENOMEM case */
+ 		if (PTR_ERR(fio->encrypted_page) == -ENOMEM) {
 diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 39229fcdfac5c..f4890870ca984 100644
+index fc5a81c674c20..39229fcdfac5c 100644
 --- a/include/linux/fscrypt.h
 +++ b/include/linux/fscrypt.h
-@@ -114,6 +114,9 @@ extern int fscrypt_encrypt_block_inplace(const struct inode *inode,
- 					 gfp_t gfp_flags);
- extern int fscrypt_decrypt_page(const struct inode *, struct page *, unsigned int,
- 				unsigned int, u64);
-+extern int fscrypt_decrypt_block_inplace(const struct inode *inode,
-+					 struct page *page, unsigned int len,
-+					 unsigned int offs, u64 lblk_num);
- 
- static inline bool fscrypt_is_bounce_page(struct page *page)
- {
-@@ -310,6 +313,14 @@ static inline int fscrypt_decrypt_page(const struct inode *inode,
- 	return -EOPNOTSUPP;
+@@ -103,9 +103,11 @@ static inline void fscrypt_handle_d_move(struct dentry *dentry)
+ extern void fscrypt_enqueue_decrypt_work(struct work_struct *);
+ extern struct fscrypt_ctx *fscrypt_get_ctx(gfp_t);
+ extern void fscrypt_release_ctx(struct fscrypt_ctx *);
+-extern struct page *fscrypt_encrypt_page(const struct inode *, struct page *,
+-						unsigned int, unsigned int,
+-						u64, gfp_t);
++
++extern struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
++						     unsigned int len,
++						     unsigned int offs,
++						     gfp_t gfp_flags);
+ extern int fscrypt_encrypt_block_inplace(const struct inode *inode,
+ 					 struct page *page, unsigned int len,
+ 					 unsigned int offs, u64 lblk_num,
+@@ -283,11 +285,10 @@ static inline void fscrypt_release_ctx(struct fscrypt_ctx *ctx)
+ 	return;
  }
  
-+static inline int fscrypt_decrypt_block_inplace(const struct inode *inode,
-+						struct page *page,
-+						unsigned int len,
-+						unsigned int offs, u64 lblk_num)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static inline bool fscrypt_is_bounce_page(struct page *page)
+-static inline struct page *fscrypt_encrypt_page(const struct inode *inode,
+-						struct page *page,
+-						unsigned int len,
+-						unsigned int offs,
+-						u64 lblk_num, gfp_t gfp_flags)
++static inline struct page *fscrypt_encrypt_pagecache_blocks(struct page *page,
++							    unsigned int len,
++							    unsigned int offs,
++							    gfp_t gfp_flags)
  {
- 	return false;
+ 	return ERR_PTR(-EOPNOTSUPP);
+ }
 -- 
 2.21.0.593.g511ec345e18-goog
