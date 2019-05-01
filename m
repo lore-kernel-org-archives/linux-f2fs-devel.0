@@ -1,8 +1,8 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 12/13] ext4: decrypt only the needed block in
- __ext4_block_zero_page_range()
-Date: Wed,  1 May 2019 15:45:14 -0700
-Message-ID: <20190501224515.43059-13-ebiggers@kernel.org>
+Subject: [PATCH 13/13] ext4: encrypt only up to last block in
+ ext4_bio_write_page()
+Date: Wed,  1 May 2019 15:45:15 -0700
+Message-ID: <20190501224515.43059-14-ebiggers@kernel.org>
 References: <20190501224515.43059-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hLxzX-0008WG-CO
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 22:46:19 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hLxzZ-00004u-Jd
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 22:46:21 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hLxzW-0025G4-8w
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 22:46:19 +0000
+ id 1hLxzY-002Xux-Gk
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 May 2019 22:46:21 +0000
 In-Reply-To: <20190501224515.43059-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,37 +31,45 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-fscrypt@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, Chandan Rajendra <chandan@linux.ibm.com>, linux-f2fs-devel@lists.sourceforge.net
 
-From: Chandan Rajendra <chandan@linux.ibm.com>
+From: Eric Biggers <ebiggers@google.com>
 
-In __ext4_block_zero_page_range(), only decrypt the block that actually
-needs to be decrypted, rather than assuming blocksize == PAGE_SIZE and
-decrypting the whole page.
+As an optimization, don't encrypt blocks fully beyond i_size, since
+those definitely won't need to be written out.  Also add a comment.
 
 This is in preparation for allowing encryption on ext4 filesystems with
 blocksize != PAGE_SIZE.
 
-Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
-(EB: rebase onto previous changes, improve the commit message, and use
- bh_offset())
+This is based on work by Chandan Rajendra.
+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/ext4/page-io.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index d24c50e4598f0..58597db621e1e 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4073,9 +4073,8 @@ static int __ext4_block_zero_page_range(handle_t *handle,
- 		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)) {
- 			/* We expect the key to be set. */
- 			BUG_ON(!fscrypt_has_encryption_key(inode));
--			BUG_ON(blocksize != PAGE_SIZE);
- 			WARN_ON_ONCE(fscrypt_decrypt_pagecache_blocks(
--						page, PAGE_SIZE, 0));
-+					page, blocksize, bh_offset(bh)));
- 		}
- 	}
- 	if (ext4_should_journal_data(inode)) {
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index 457ddf051608f..ab843ad89df2f 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -468,11 +468,19 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 
+ 	bh = head = page_buffers(page);
+ 
++	/*
++	 * If any blocks are being written to an encrypted file, encrypt them
++	 * into a bounce page.  For simplicity, just encrypt until the last
++	 * block which might be needed.  This may cause some unneeded blocks
++	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
++	 * can't happen in the common case of blocksize == PAGE_SIZE.
++	 */
+ 	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
+ 		gfp_t gfp_flags = GFP_NOFS;
++		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
+ 
+ 	retry_encrypt:
+-		bounce_page = fscrypt_encrypt_pagecache_blocks(page, PAGE_SIZE,
++		bounce_page = fscrypt_encrypt_pagecache_blocks(page, enc_bytes,
+ 							       0, gfp_flags);
+ 		if (IS_ERR(bounce_page)) {
+ 			ret = PTR_ERR(bounce_page);
 -- 
 2.21.0.593.g511ec345e18-goog
