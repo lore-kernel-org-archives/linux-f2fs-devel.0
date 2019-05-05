@@ -1,28 +1,22 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix to do sanity with enabled features
- in image
-Date: Sun, 5 May 2019 10:51:35 +0800
-Message-ID: <3f170d86-e556-13ae-ce19-3bba3944f5fa@huawei.com>
-References: <20190424094850.118323-1-yuchao0@huawei.com>
- <20190428133802.GB37346@jaegeuk-macbookpro.roam.corp.google.com>
- <373f4633-d331-5cf3-74b7-e982072bc4b4@kernel.org>
- <20190501032242.GA84420@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: [PATCH] f2fs: fix to avoid potential race on
+ sbi->unusable_block_count access/update
+Date: Sun, 5 May 2019 11:40:46 +0800
+Message-ID: <20190505034046.17905-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hN7G8-0006a1-Vh
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 May 2019 02:52:12 +0000
-Received: from szxga08-in.huawei.com ([45.249.212.255] helo=huawei.com)
+ (envelope-from <yuchao0@huawei.com>) id 1hN81S-0003wn-Lp
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 May 2019 03:41:06 +0000
+Received: from szxga02-in.huawei.com ([45.249.212.188] helo=huawei.com)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hN7G4-0064zM-Rc
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 May 2019 02:52:12 +0000
-In-Reply-To: <20190501032242.GA84420@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+ id 1hN81Q-00677I-9q
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 May 2019 03:41:06 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,101 +26,80 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, drosen@google.com
 
-On 2019/5/1 11:22, Jaegeuk Kim wrote:
-> On 04/29, Chao Yu wrote:
->> On 2019-4-28 21:38, Jaegeuk Kim wrote:
->>> On 04/24, Chao Yu wrote:
->>>> This patch fixes to do sanity with enabled features in image, if
->>>> there are features kernel can not recognize, just fail the mount.
->>>
->>> We need to figure out per-feature-based rejection, since some of them can
->>> be set without layout change.
->>
->> So any suggestion on how to implement this?
-> 
-> Which features do we need to disallow? When we introduce new features, they
+Use sbi.stat_lock to protect sbi->unusable_block_count accesss/udpate, in
+order to avoid potential race on it.
 
-I guess it should be the new features.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 4 ++++
+ fs/f2fs/segment.c    | 5 ++++-
+ fs/f2fs/super.c      | 6 ++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-> didn't hurt the previous flow by checking f2fs_sb_has_###().
-
-Yes, but new features may use new disk layout, if old kernel handled it with old
-disk layout, there must be problematic.
-
-e.g. format image with -O extra_attr, and mount it with kernel who don't
-recognize new inode layout.
-
-Thanks,
-
-> 
->>
->> Maybe:
->>
->> if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
->> 	check 4.14+ features
->> else if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
->> 	check 4.9+ features
->> else if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
->> 	check 4.4+ features
->>
->> Thanks,
->>
->>>
->>>>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>>  fs/f2fs/f2fs.h  | 13 +++++++++++++
->>>>  fs/f2fs/super.c |  9 +++++++++
->>>>  2 files changed, 22 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index f5ffc09705eb..15b640967e12 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -151,6 +151,19 @@ struct f2fs_mount_info {
->>>>  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
->>>>  #define F2FS_FEATURE_SB_CHKSUM		0x0800
->>>>  
->>>> +#define F2FS_ALL_FEATURES	(F2FS_FEATURE_ENCRYPT |			\
->>>> +				F2FS_FEATURE_BLKZONED |			\
->>>> +				F2FS_FEATURE_ATOMIC_WRITE |		\
->>>> +				F2FS_FEATURE_EXTRA_ATTR |		\
->>>> +				F2FS_FEATURE_PRJQUOTA |			\
->>>> +				F2FS_FEATURE_INODE_CHKSUM |		\
->>>> +				F2FS_FEATURE_FLEXIBLE_INLINE_XATTR |	\
->>>> +				F2FS_FEATURE_QUOTA_INO |		\
->>>> +				F2FS_FEATURE_INODE_CRTIME |		\
->>>> +				F2FS_FEATURE_LOST_FOUND |		\
->>>> +				F2FS_FEATURE_VERITY |			\
->>>> +				F2FS_FEATURE_SB_CHKSUM)
->>>> +
->>>>  #define __F2FS_HAS_FEATURE(raw_super, mask)				\
->>>>  	((raw_super->feature & cpu_to_le32(mask)) != 0)
->>>>  #define F2FS_HAS_FEATURE(sbi, mask)	__F2FS_HAS_FEATURE(sbi->raw_super, mask)
->>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>> index 4f8e9ab48b26..57f2fc6d14ba 100644
->>>> --- a/fs/f2fs/super.c
->>>> +++ b/fs/f2fs/super.c
->>>> @@ -2573,6 +2573,15 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->>>>  		return 1;
->>>>  	}
->>>>  
->>>> +	/* check whether kernel supports all features */
->>>> +	if (le32_to_cpu(raw_super->feature) & (~F2FS_ALL_FEATURES)) {
->>>> +		f2fs_msg(sb, KERN_INFO,
->>>> +			"Unsupported feature:%u: supported:%u",
->>>> +			le32_to_cpu(raw_super->feature),
->>>> +			F2FS_ALL_FEATURES);
->>>> +		return 1;
->>>> +	}
->>>> +
->>>>  	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
->>>>  	if (sanity_check_area_boundary(sbi, bh))
->>>>  		return 1;
->>>> -- 
->>>> 2.18.0.rc1
-> .
-> 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 805a33088e82..ed70b68b2b38 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1536,7 +1536,11 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	clear_sbi_flag(sbi, SBI_IS_DIRTY);
+ 	clear_sbi_flag(sbi, SBI_NEED_CP);
+ 	clear_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
++
++	spin_lock(&sbi->stat_lock);
+ 	sbi->unusable_block_count = 0;
++	spin_unlock(&sbi->stat_lock);
++
+ 	__set_cp_next_pack(sbi);
+ 
+ 	/*
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8388d2abacb5..8dee063c833f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2169,8 +2169,11 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 			 * before, we must track that to know how much space we
+ 			 * really have.
+ 			 */
+-			if (f2fs_test_bit(offset, se->ckpt_valid_map))
++			if (f2fs_test_bit(offset, se->ckpt_valid_map)) {
++				spin_lock(&sbi->stat_lock);
+ 				sbi->unusable_block_count++;
++				spin_unlock(&sbi->stat_lock);
++			}
+ 		}
+ 
+ 		if (f2fs_test_and_clear_bit(offset, se->discard_map))
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index dce4416cb1d8..d40cae0cba56 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1226,10 +1226,13 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	buf->f_blocks = total_count - start_count;
+ 	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
+ 						sbi->current_reserved_blocks;
++
++	spin_lock(&sbi->stat_lock);
+ 	if (unlikely(buf->f_bfree <= sbi->unusable_block_count))
+ 		buf->f_bfree = 0;
+ 	else
+ 		buf->f_bfree -= sbi->unusable_block_count;
++	spin_unlock(&sbi->stat_lock);
+ 
+ 	if (buf->f_bfree > F2FS_OPTION(sbi).root_reserved_blocks)
+ 		buf->f_bavail = buf->f_bfree -
+@@ -1508,7 +1511,10 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		goto out_unlock;
+ 
++	spin_lock(&sbi->stat_lock);
+ 	sbi->unusable_block_count = 0;
++	spin_unlock(&sbi->stat_lock);
++
+ out_unlock:
+ 	mutex_unlock(&sbi->gc_mutex);
+ restore_flag:
+-- 
+2.18.0.rc1
