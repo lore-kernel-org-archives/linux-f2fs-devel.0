@@ -1,22 +1,22 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v3 2/2] f2fs-tools: introduce
- f2fs_update_sparse_file()
-Date: Mon, 6 May 2019 16:00:05 +0800
-Message-ID: <20190506080005.58245-1-yuchao0@huawei.com>
+Subject: [PATCH v4 2/2] sload.f2fs: introduce
+ f2fs_sparse_initialize_meta()
+Date: Mon, 6 May 2019 16:58:06 +0800
+Message-ID: <20190506085806.62874-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hNYY6-00072V-9Z
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 08:00:34 +0000
-Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1hNZSJ-0006m2-Pg
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 08:58:39 +0000
+Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hNYY3-007UBv-VK
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 08:00:34 +0000
+ id 1hNZSF-00ALuS-L0
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 08:58:39 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,65 +30,64 @@ To: linux-f2fs-devel@lists.sourceforge.net
 Cc: jaegeuk@kernel.org, zhaowuyun@wingtech.com
 
 This patch fixes to initialize NAT/SIT/CP.payload region in sparse
-file mode for fsck/sload/resize/defrag/dump tools.
+file mode for sload.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v3:
-- print message after variable assignment.
-- use DEFAULT_BLOCKS_PER_SEGMENT instead of get_sb(log_blocks_per_seg).
-
- fsck/fsck.h      |  1 +
- fsck/main.c      |  5 +++
- fsck/mount.c     | 82 ++++++++++++++++++++++++++++++++++++++++++++++++
- lib/libf2fs_io.c |  9 ------
- 4 files changed, 88 insertions(+), 9 deletions(-)
+- move initialize_meta() before do_umount().
+ fsck/fsck.h  |  1 +
+ fsck/main.c  |  4 +++
+ fsck/mount.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 75 insertions(+)
 
 diff --git a/fsck/fsck.h b/fsck/fsck.h
-index dd831de..95bb7d3 100644
+index dd831de..4db14af 100644
 --- a/fsck/fsck.h
 +++ b/fsck/fsck.h
 @@ -181,6 +181,7 @@ extern int fsck_verify(struct f2fs_sb_info *);
  extern void fsck_free(struct f2fs_sb_info *);
  extern int f2fs_do_mount(struct f2fs_sb_info *);
  extern void f2fs_do_umount(struct f2fs_sb_info *);
-+extern int f2fs_update_sparse_file(struct f2fs_sb_info *);
++extern int f2fs_sparse_initialize_meta(struct f2fs_sb_info *);
  
  extern void flush_journal_entries(struct f2fs_sb_info *);
  extern void zero_journal_entries(struct f2fs_sb_info *);
 diff --git a/fsck/main.c b/fsck/main.c
-index afdfec9..0670696 100644
+index afdfec9..d844820 100644
 --- a/fsck/main.c
 +++ b/fsck/main.c
-@@ -845,6 +845,11 @@ retry:
- 				goto fsck_again;
- 		}
- 	}
+@@ -813,6 +813,10 @@ fsck_again:
+ 		if (do_sload(sbi))
+ 			goto out_err;
+ 
++		ret = f2fs_sparse_initialize_meta(sbi);
++		if (ret < 0)
++			goto out_err;
 +
-+	ret = f2fs_update_sparse_file(sbi);
-+	if (ret < 0)
-+		return ret;
-+
- 	ret = f2fs_finalize_device();
- 	if (ret < 0)
- 		return ret;
+ 		f2fs_do_umount(sbi);
+ 
+ 		/* fsck to fix missing quota */
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 843742e..9c73cda 100644
+index 843742e..230f330 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -2721,3 +2721,85 @@ void f2fs_do_umount(struct f2fs_sb_info *sbi)
+@@ -2721,3 +2721,73 @@ void f2fs_do_umount(struct f2fs_sb_info *sbi)
  	free(sbi->ckpt);
  	free(sbi->raw_super);
  }
 +
 +#ifdef WITH_ANDROID
-+static int sparse_initialize_meta(struct f2fs_sb_info *sbi)
++int f2fs_sparse_initialize_meta(struct f2fs_sb_info *sbi)
 +{
++	struct f2fs_super_block *sb = sbi->raw_super; 
 +	u_int32_t sit_seg_count, sit_size;
 +	u_int32_t nat_seg_count, nat_size;
 +	u_int64_t sit_seg_addr, nat_seg_addr, payload_addr;
-+	u_int32_t seg_size = DEFAULT_BLOCKS_PER_SEGMENT;
++	u_int32_t seg_size = 1 << get_sb(log_blocks_per_seg);
 +	int ret;
++
++	if (!c.sparse_mode)
++		return 0;
 +
 +	sit_seg_addr = get_sb(sit_blkaddr);
 +	sit_seg_count = get_sb(segment_count_sit);
@@ -143,44 +142,8 @@ index 843742e..9c73cda 100644
 +	}
 +	return 0;
 +}
-+
-+int f2fs_update_sparse_file(struct f2fs_sb_info *sbi)
-+{
-+	int ret;
-+
-+	if (!c.sparse_mode)
-+		return 0;
-+
-+	sparse_file_destroy(f2fs_sparse_file);
-+	ret = ftruncate(c.devices[0].fd, 0);
-+	ASSERT(!ret);
-+	lseek(c.devices[0].fd, 0, SEEK_SET);
-+	f2fs_sparse_file = sparse_file_new(F2FS_BLKSIZE, c.device_size);
-+
-+	return sparse_initialize_meta(sbi);
-+}
 +#else
-+int f2fs_update_sparse_file(struct f2fs_sb_info *sbi) { return 0; }
++int f2fs_sparse_initialize_meta(struct f2fs_sb_info *sbi) { return 0; }
 +#endif
-diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-index 4d0ea0d..2f2b6bd 100644
---- a/lib/libf2fs_io.c
-+++ b/lib/libf2fs_io.c
-@@ -358,15 +358,6 @@ int f2fs_finalize_device(void)
- 		int64_t chunk_start = (blocks[0] == NULL) ? -1 : 0;
- 		uint64_t j;
- 
--		if (c.func != MKFS) {
--			sparse_file_destroy(f2fs_sparse_file);
--			ret = ftruncate(c.devices[0].fd, 0);
--			ASSERT(!ret);
--			lseek(c.devices[0].fd, 0, SEEK_SET);
--			f2fs_sparse_file = sparse_file_new(F2FS_BLKSIZE,
--							c.device_size);
--		}
--
- 		for (j = 0; j < blocks_count; ++j) {
- 			if (chunk_start != -1) {
- 				if (j - chunk_start >= MAX_CHUNK_COUNT) {
 -- 
 2.18.0.rc1
