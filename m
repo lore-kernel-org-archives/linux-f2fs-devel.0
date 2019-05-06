@@ -1,22 +1,22 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 2/2] f2fs-tools: introduce
+Subject: [PATCH v3 2/2] f2fs-tools: introduce
  f2fs_update_sparse_file()
-Date: Sun, 5 May 2019 17:09:47 +0800
-Message-ID: <20190505090947.110599-1-yuchao0@huawei.com>
+Date: Mon, 6 May 2019 16:00:05 +0800
+Message-ID: <20190506080005.58245-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hNDA1-0006NV-4q
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 May 2019 09:10:17 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1hNYY6-00072V-9Z
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 08:00:34 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hND9y-005wqi-WB
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 May 2019 09:10:17 +0000
+ id 1hNYY3-007UBv-VK
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 08:00:34 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,16 +34,18 @@ file mode for fsck/sload/resize/defrag/dump tools.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v2:
-- add missing log in f2fs_update_sparse_file().
+v3:
+- print message after variable assignment.
+- use DEFAULT_BLOCKS_PER_SEGMENT instead of get_sb(log_blocks_per_seg).
+
  fsck/fsck.h      |  1 +
  fsck/main.c      |  5 +++
- fsck/mount.c     | 84 ++++++++++++++++++++++++++++++++++++++++++++++++
+ fsck/mount.c     | 82 ++++++++++++++++++++++++++++++++++++++++++++++++
  lib/libf2fs_io.c |  9 ------
- 4 files changed, 90 insertions(+), 9 deletions(-)
+ 4 files changed, 88 insertions(+), 9 deletions(-)
 
 diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 60e052a..c21731e 100644
+index dd831de..95bb7d3 100644
 --- a/fsck/fsck.h
 +++ b/fsck/fsck.h
 @@ -181,6 +181,7 @@ extern int fsck_verify(struct f2fs_sb_info *);
@@ -71,10 +73,10 @@ index afdfec9..0670696 100644
  	if (ret < 0)
  		return ret;
 diff --git a/fsck/mount.c b/fsck/mount.c
-index aa2100c..b9e6899 100644
+index 843742e..9c73cda 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -2723,3 +2723,87 @@ void f2fs_do_umount(struct f2fs_sb_info *sbi)
+@@ -2721,3 +2721,85 @@ void f2fs_do_umount(struct f2fs_sb_info *sbi)
  	free(sbi->ckpt);
  	free(sbi->raw_super);
  }
@@ -82,11 +84,10 @@ index aa2100c..b9e6899 100644
 +#ifdef WITH_ANDROID
 +static int sparse_initialize_meta(struct f2fs_sb_info *sbi)
 +{
-+	struct f2fs_super_block *sb = sbi->raw_super;
 +	u_int32_t sit_seg_count, sit_size;
 +	u_int32_t nat_seg_count, nat_size;
 +	u_int64_t sit_seg_addr, nat_seg_addr, payload_addr;
-+	u_int32_t seg_size = 1 << get_sb(log_blocks_per_seg);
++	u_int32_t seg_size = DEFAULT_BLOCKS_PER_SEGMENT;
 +	int ret;
 +
 +	sit_seg_addr = get_sb(sit_blkaddr);
@@ -117,10 +118,10 @@ index aa2100c..b9e6899 100644
 +		return -1;
 +	}
 +
++	payload_addr = get_sb(segment0_blkaddr) + 1;
++
 +	DBG(1, "\tSparse: filling bitmap area at block offset 0x%08"PRIx64" len: %u\n",
 +					payload_addr, get_sb(cp_payload));
-+
-+	payload_addr = get_sb(segment0_blkaddr) + 1;
 +	ret = dev_fill(NULL, payload_addr * F2FS_BLKSIZE,
 +					get_sb(cp_payload) * F2FS_BLKSIZE);
 +	if (ret) {
@@ -133,7 +134,6 @@ index aa2100c..b9e6899 100644
 +
 +	DBG(1, "\tSparse: filling bitmap area at block offset 0x%08"PRIx64" len: %u\n",
 +					payload_addr, get_sb(cp_payload));
-+
 +	ret = dev_fill(NULL, payload_addr * F2FS_BLKSIZE,
 +					get_sb(cp_payload) * F2FS_BLKSIZE);
 +	if (ret) {
