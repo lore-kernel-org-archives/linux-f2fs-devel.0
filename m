@@ -1,62 +1,42 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: Re: [PATCH 13/13] ext4: encrypt only up to last block in
- ext4_bio_write_page()
-Date: Mon, 06 May 2019 14:42:14 +0530
-Message-ID: <5247310.83GBoLVoWW@dhcp-9-109-212-164>
+Subject: Re: [PATCH 06/13] fscrypt: support encrypting multiple filesystem
+ blocks per page
+Date: Mon, 06 May 2019 14:08:21 +0530
+Message-ID: <2173142.gu81EOElhA@dhcp-9-109-212-164>
 References: <20190501224515.43059-1-ebiggers@kernel.org>
- <20190501224515.43059-14-ebiggers@kernel.org>
+ <20190501224515.43059-7-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hNbsh-0003O4-Sg
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 11:34:03 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hNbsf-00ATnp-S2
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 11:34:03 +0000
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x46BXI1U167351
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 6 May 2019 07:33:55 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2sahndnuh2-1
- (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 06 May 2019 07:33:54 -0400
-Received: from localhost
- by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
- Violators will be prosecuted
- for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Mon, 6 May 2019 12:33:53 +0100
-In-Reply-To: <20190501224515.43059-14-ebiggers@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+In-Reply-To: <20190501224515.43059-7-ebiggers@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thursday, May 2, 2019 4:15:15 AM IST Eric Biggers wrote:
+On Thursday, May 2, 2019 4:15:08 AM IST Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> As an optimization, don't encrypt blocks fully beyond i_size, since
-> those definitely won't need to be written out.  Also add a comment.
+> Rename fscrypt_encrypt_page() to fscrypt_encrypt_pagecache_blocks() and
+> redefine its behavior to encrypt all filesystem blocks from the given
+> region of the given page, rather than assuming that the region consists
+> of just one filesystem block.  Also remove the 'inode' and 'lblk_num'
+> parameters, since they can be retrieved from the page as it's already
+> assumed to be a pagecache page.
 > 
 > This is in preparation for allowing encryption on ext4 filesystems with
 > blocksize != PAGE_SIZE.
 > 
 > This is based on work by Chandan Rajendra.
->
 
 Looks good to me,
 
@@ -64,3 +44,10 @@ Reviewed-by: Chandan Rajendra <chandan@linux.ibm.com>
 
 -- 
 chandan
+
+
+
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
