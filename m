@@ -1,8 +1,10 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v4 2/2] sload.f2fs: introduce
- f2fs_sparse_initialize_meta()
-Date: Mon, 6 May 2019 16:58:06 +0800
-Message-ID: <20190506085806.62874-1-yuchao0@huawei.com>
+From: Chandan Rajendra <chandan@linux.ibm.com>
+Subject: Re: [PATCH 04/13] fscrypt: clean up some BUG_ON()s in
+ block encryption/decryption
+Date: Mon, 06 May 2019 13:54:45 +0530
+Message-ID: <4366146.XrkeSAOiMl@dhcp-9-109-212-164>
+References: <20190501224515.43059-1-ebiggers@kernel.org>
+ <20190501224515.43059-5-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,13 +12,27 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hNZSJ-0006m2-Pg
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 08:58:39 +0000
-Received: from szxga01-in.huawei.com ([45.249.212.187] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <chandan@linux.ibm.com>) id 1hNbsQ-00058x-VW
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 11:33:46 +0000
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hNZSF-00ALuS-L0
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 08:58:39 +0000
+ id 1hNbsO-007BJT-FK
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 11:33:46 +0000
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x46BWu0Q036957
+ for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 6 May 2019 07:33:38 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2sajd1caqe-1
+ (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <linux-f2fs-devel@lists.sourceforge.net>; Mon, 06 May 2019 07:33:38 -0400
+Received: from localhost
+ by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ Violators will be prosecuted
+ for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
+ Mon, 6 May 2019 12:33:36 +0100
+In-Reply-To: <20190501224515.43059-5-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,124 +42,20 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org, zhaowuyun@wingtech.com
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch fixes to initialize NAT/SIT/CP.payload region in sparse
-file mode for sload.
+On Thursday, May 2, 2019 4:15:06 AM IST Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Replace some BUG_ON()s with WARN_ON_ONCE() and returning an error code,
+> and move the check for len divisible by FS_CRYPTO_BLOCK_SIZE into
+> fscrypt_crypt_block() so that it's done for both encryption and
+> decryption, not just encryption.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-- move initialize_meta() before do_umount().
- fsck/fsck.h  |  1 +
- fsck/main.c  |  4 +++
- fsck/mount.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 75 insertions(+)
+Looks good to me,
 
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index dd831de..4db14af 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -181,6 +181,7 @@ extern int fsck_verify(struct f2fs_sb_info *);
- extern void fsck_free(struct f2fs_sb_info *);
- extern int f2fs_do_mount(struct f2fs_sb_info *);
- extern void f2fs_do_umount(struct f2fs_sb_info *);
-+extern int f2fs_sparse_initialize_meta(struct f2fs_sb_info *);
- 
- extern void flush_journal_entries(struct f2fs_sb_info *);
- extern void zero_journal_entries(struct f2fs_sb_info *);
-diff --git a/fsck/main.c b/fsck/main.c
-index afdfec9..d844820 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -813,6 +813,10 @@ fsck_again:
- 		if (do_sload(sbi))
- 			goto out_err;
- 
-+		ret = f2fs_sparse_initialize_meta(sbi);
-+		if (ret < 0)
-+			goto out_err;
-+
- 		f2fs_do_umount(sbi);
- 
- 		/* fsck to fix missing quota */
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 843742e..230f330 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -2721,3 +2721,73 @@ void f2fs_do_umount(struct f2fs_sb_info *sbi)
- 	free(sbi->ckpt);
- 	free(sbi->raw_super);
- }
-+
-+#ifdef WITH_ANDROID
-+int f2fs_sparse_initialize_meta(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_super_block *sb = sbi->raw_super; 
-+	u_int32_t sit_seg_count, sit_size;
-+	u_int32_t nat_seg_count, nat_size;
-+	u_int64_t sit_seg_addr, nat_seg_addr, payload_addr;
-+	u_int32_t seg_size = 1 << get_sb(log_blocks_per_seg);
-+	int ret;
-+
-+	if (!c.sparse_mode)
-+		return 0;
-+
-+	sit_seg_addr = get_sb(sit_blkaddr);
-+	sit_seg_count = get_sb(segment_count_sit);
-+	sit_size = sit_seg_count * seg_size;
-+
-+	DBG(1, "\tSparse: filling sit area at block offset: 0x%08"PRIx64" len: %u\n",
-+							sit_seg_addr, sit_size);
-+	ret = dev_fill(NULL, sit_seg_addr * F2FS_BLKSIZE,
-+					sit_size * F2FS_BLKSIZE);
-+	if (ret) {
-+		MSG(1, "\tError: While zeroing out the sit area "
-+				"on disk!!!\n");
-+		return -1;
-+	}
-+
-+	nat_seg_addr = get_sb(nat_blkaddr);
-+	nat_seg_count = get_sb(segment_count_nat);
-+	nat_size = nat_seg_count * seg_size;
-+
-+	DBG(1, "\tSparse: filling nat area at block offset 0x%08"PRIx64" len: %u\n",
-+							nat_seg_addr, nat_size);
-+	ret = dev_fill(NULL, nat_seg_addr * F2FS_BLKSIZE,
-+					nat_size * F2FS_BLKSIZE);
-+	if (ret) {
-+		MSG(1, "\tError: While zeroing out the nat area "
-+				"on disk!!!\n");
-+		return -1;
-+	}
-+
-+	payload_addr = get_sb(segment0_blkaddr) + 1;
-+
-+	DBG(1, "\tSparse: filling bitmap area at block offset 0x%08"PRIx64" len: %u\n",
-+					payload_addr, get_sb(cp_payload));
-+	ret = dev_fill(NULL, payload_addr * F2FS_BLKSIZE,
-+					get_sb(cp_payload) * F2FS_BLKSIZE);
-+	if (ret) {
-+		MSG(1, "\tError: While zeroing out the nat/sit bitmap area "
-+				"on disk!!!\n");
-+		return -1;
-+	}
-+
-+	payload_addr += seg_size;
-+
-+	DBG(1, "\tSparse: filling bitmap area at block offset 0x%08"PRIx64" len: %u\n",
-+					payload_addr, get_sb(cp_payload));
-+	ret = dev_fill(NULL, payload_addr * F2FS_BLKSIZE,
-+					get_sb(cp_payload) * F2FS_BLKSIZE);
-+	if (ret) {
-+		MSG(1, "\tError: While zeroing out the nat/sit bitmap area "
-+				"on disk!!!\n");
-+		return -1;
-+	}
-+	return 0;
-+}
-+#else
-+int f2fs_sparse_initialize_meta(struct f2fs_sb_info *sbi) { return 0; }
-+#endif
+Reviewed-by: Chandan Rajendra <chandan@linux.ibm.com>
+
 -- 
-2.18.0.rc1
+chandan
