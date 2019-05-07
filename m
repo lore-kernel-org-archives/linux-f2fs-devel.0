@@ -1,9 +1,9 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [RFC PATCH 0/7] xfstests: verify fscrypt-encrypted
- contents and filenames
-Date: Mon, 6 May 2019 08:57:22 -0700
-Message-ID: <20190506155721.GB661@sol.localdomain>
-References: <20190426204153.101861-1-ebiggers@kernel.org>
+From: Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 69/81] f2fs: fix to data block
+ override node segment by mistake
+Date: Tue,  7 May 2019 01:35:40 -0400
+Message-ID: <20190507053554.30848-69-sashal@kernel.org>
+References: <20190507053554.30848-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,15 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hNfzk-0002qV-Jh
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 15:57:36 +0000
+ (envelope-from <sashal@kernel.org>) id 1hNsnt-0003vK-O4
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 May 2019 05:38:13 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hNfzf-00AjPh-Po
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 May 2019 15:57:36 +0000
-Content-Disposition: inline
-In-Reply-To: <20190426204153.101861-1-ebiggers@kernel.org>
+ id 1hNsnr-00BSRw-Q1
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 May 2019 05:38:13 +0000
+In-Reply-To: <20190507053554.30848-1-sashal@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,111 +28,69 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: fstests@vger.kernel.org
-Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: Sasha Levin <alexander.levin@microsoft.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Apr 26, 2019 at 01:41:46PM -0700, Eric Biggers wrote:
-> Hello,
-> 
-> This series adds xfstests which verify that encrypted contents and
-> filenames on ext4 and f2fs are actually correct, i.e. that the
-> encryption uses the correct algorithms, keys, IVs, and padding amounts.
-> The new tests work by creating encrypted files, unmounting the
-> filesystem, reading the ciphertext from disk using dd and debugfs or
-> dump.f2fs, and then comparing it against ciphertext computed
-> independently by a new test program that implements the same algorithms.
-> 
-> These tests are important because:
-> 
-> - The whole point of file encryption is that the files are actually
->   encrypted correctly on-disk.  Except for generic/399, current xfstests
->   only tests the filesystem semantics, not the actual encryption.
->   generic/399 only tests for incompressibility of encrypted file
->   contents using one particular encryption setting, which isn't much.
-> 
-> - fscrypt now supports 4 main combinations of encryption settings,
->   rather than 1 as it did originally.  This may be doubled to 8 soon
->   (https://patchwork.kernel.org/patch/10908153/).  We should test all
->   settings.  And without tests, even if the initial implementation is
->   correct, breakage in one specific setting could go undetected.
-> 
-> - Though Linux's crypto API has self-tests, these only test the
->   algorithms themselves, not how they are used, e.g. by fscrypt.
-> 
-> Patch 1 is a cleanup patch.  Patches 2-4 add the common helpers for
-> ciphertext verification tests.  Patches 5-7 add the actual tests.
-> 
-> These tests require e2fsprogs and f2fs-tools patches I recently sent out
-> to fix printing encrypted filenames.  So, this series might not be
-> suitable for merging into mainline xfstests until those patches are
-> applied.  Regardless, comments are appreciated.  The needed patches are:
-> 
-> 	debugfs: avoid ambiguity when printing filenames (https://marc.info/?l=linux-ext4&m=155596495624232&w=2)
-> 	f2fs-tools: improve filename printing (https://sourceforge.net/p/linux-f2fs/mailman/message/36648641/)
-> 
-> This series can also be retrieved from git at
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git
-> branch "ciphertext-verification".
-> 
-> I also have patches on top of this series which verify the ciphertext
-> produced from v2 encryption policies, which are proposed by my kernel
-> patch series "fscrypt: key management improvements"
-> (https://patchwork.kernel.org/cover/10908107/).  v2 encryption policies
-> will use a different key derivation function, and thus their ciphertext
-> will be different.  These additional patches can be found at branch
-> "fscrypt-key-mgmt-improvements" of my git repo above.  But I've arranged
-> things such that this shorter series can potentially be applied earlier,
-> to test what's in the kernel now.
-> 
-> Eric Biggers (7):
->   common/encrypt: introduce helpers for set_encpolicy and get_encpolicy
->   fscrypt-crypt-util: add utility for reproducing fscrypt encrypted data
->   common/encrypt: support requiring other encryption settings
->   common/encrypt: add helper for ciphertext verification tests
->   generic: verify ciphertext of v1 encryption policies with AES-256
->   generic: verify ciphertext of v1 encryption policies with AES-128
->   generic: verify ciphertext of v1 encryption policies with Adiantum
-> 
->  .gitignore               |    1 +
->  common/encrypt           |  482 ++++++++++-
->  src/Makefile             |    3 +-
->  src/fscrypt-crypt-util.c | 1645 ++++++++++++++++++++++++++++++++++++++
->  tests/ext4/024           |    3 +-
->  tests/generic/395        |   28 +-
->  tests/generic/395.out    |    2 +-
->  tests/generic/396        |   15 +-
->  tests/generic/397        |    3 +-
->  tests/generic/398        |    5 +-
->  tests/generic/399        |    3 +-
->  tests/generic/419        |    3 +-
->  tests/generic/421        |    3 +-
->  tests/generic/429        |    3 +-
->  tests/generic/435        |    3 +-
->  tests/generic/440        |    5 +-
->  tests/generic/700        |   41 +
->  tests/generic/700.out    |    5 +
->  tests/generic/701        |   41 +
->  tests/generic/701.out    |    5 +
->  tests/generic/702        |   43 +
->  tests/generic/702.out    |   10 +
->  tests/generic/group      |    3 +
->  23 files changed, 2308 insertions(+), 47 deletions(-)
->  create mode 100644 src/fscrypt-crypt-util.c
->  create mode 100755 tests/generic/700
->  create mode 100644 tests/generic/700.out
->  create mode 100755 tests/generic/701
->  create mode 100644 tests/generic/701.out
->  create mode 100755 tests/generic/702
->  create mode 100644 tests/generic/702.out
-> 
-> -- 
-> 2.21.0.593.g511ec345e18-goog
-> 
+From: zhengliang <zhengliang6@huawei.com>
 
-Any comments on this?
+[ Upstream commit a0770e13c8da83bdb64738c0209ab02dd3cfff8b ]
 
-FYI, the e2fsprogs patch that these tests need was applied.
+v4: Rearrange the previous three versions.
 
-I'm still waiting for the f2fs-tools patch.
+The following scenario could lead to data block override by mistake.
 
-- Eric
+TASK A            |  TASK kworker                                            |     TASK B                                            |       TASK C
+                  |                                                          |                                                       |
+open              |                                                          |                                                       |
+write             |                                                          |                                                       |
+close             |                                                          |                                                       |
+                  |  f2fs_write_data_pages                                   |                                                       |
+                  |    f2fs_write_cache_pages                                |                                                       |
+                  |      f2fs_outplace_write_data                            |                                                       |
+                  |        f2fs_allocate_data_block (get block in seg S,     |                                                       |
+                  |                                  S is full, and only     |                                                       |
+                  |                                  have this valid data    |                                                       |
+                  |                                  block)                  |                                                       |
+                  |          allocate_segment                                |                                                       |
+                  |          locate_dirty_segment (mark S as PRE)            |                                                       |
+                  |        f2fs_submit_page_write (submit but is not         |                                                       |
+                  |                                written on dev)           |                                                       |
+unlink            |                                                          |                                                       |
+ iput_final       |                                                          |                                                       |
+  f2fs_drop_inode |                                                          |                                                       |
+    f2fs_truncate |                                                          |                                                       |
+ (not evict)      |                                                          |                                                       |
+                  |                                                          | write_checkpoint                                      |
+                  |                                                          |  flush merged bio but not wait file data writeback    |
+                  |                                                          |  set_prefree_as_free (mark S as FREE)                 |
+                  |                                                          |                                                       | update NODE/DATA
+                  |                                                          |                                                       | allocate_segment (select S)
+                  |     writeback done                                       |                                                       |
+
+So we need to guarantee io complete before truncate inode in f2fs_drop_inode.
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Zheng Liang <zhengliang6@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ fs/f2fs/super.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 2264f27fd26d..036eb1e0d557 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -890,6 +890,10 @@ static int f2fs_drop_inode(struct inode *inode)
+ 			sb_start_intwrite(inode->i_sb);
+ 			f2fs_i_size_write(inode, 0);
+ 
++			f2fs_submit_merged_write_cond(F2FS_I_SB(inode),
++					inode, NULL, 0, DATA);
++			truncate_inode_pages_final(inode->i_mapping);
++
+ 			if (F2FS_HAS_BLOCKS(inode))
+ 				f2fs_truncate(inode);
+ 
+-- 
+2.20.1
