@@ -1,224 +1,132 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [RFC PATCH 4/4] f2fs: Wire up f2fs to use inline
- encryption via fscrypt
-Date: Wed, 8 May 2019 11:02:20 +0800
-Message-ID: <18ff678e-81eb-c883-eeb0-500c886f3580@huawei.com>
-References: <20190506223544.195371-1-satyat@google.com>
- <20190506223544.195371-5-satyat@google.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity with enabled features
+ in image
+Date: Thu, 9 May 2019 09:15:45 +0800
+Message-ID: <192bae92-2193-570f-7b50-00334271bd2e@huawei.com>
+References: <20190424094850.118323-1-yuchao0@huawei.com>
+ <20190428133802.GB37346@jaegeuk-macbookpro.roam.corp.google.com>
+ <373f4633-d331-5cf3-74b7-e982072bc4b4@kernel.org>
+ <20190501032242.GA84420@jaegeuk-macbookpro.roam.corp.google.com>
+ <3f170d86-e556-13ae-ce19-3bba3944f5fa@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hOCqt-00054C-JB
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 May 2019 03:02:39 +0000
-Received: from szxga08-in.huawei.com ([45.249.212.255] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hOCqr-009PC4-2D
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 May 2019 03:02:39 +0000
-In-Reply-To: <20190506223544.195371-5-satyat@google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3f170d86-e556-13ae-ce19-3bba3944f5fa@huawei.com>
 Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: Kuohong Wang <kuohong.wang@mediatek.com>, Ladvine D Almeida <ladvine.dalmeida@synopsys.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, Barani Muthukumaran <bmuthuku@qti.qualcomm.com>, Parshuram Raju Thombare <pthombar@cadence.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Satya,
-
-+Cc f2fs mailing list.
-
-On 2019/5/7 6:35, Satya Tangirala wrote:
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> ---
->  fs/f2fs/data.c  | 69 ++++++++++++++++++++++++++++++++++++++++++++++---
->  fs/f2fs/super.c |  1 +
->  2 files changed, 67 insertions(+), 3 deletions(-)
+On 2019/5/5 10:51, Chao Yu wrote:
+> On 2019/5/1 11:22, Jaegeuk Kim wrote:
+>> On 04/29, Chao Yu wrote:
+>>> On 2019-4-28 21:38, Jaegeuk Kim wrote:
+>>>> On 04/24, Chao Yu wrote:
+>>>>> This patch fixes to do sanity with enabled features in image, if
+>>>>> there are features kernel can not recognize, just fail the mount.
+>>>>
+>>>> We need to figure out per-feature-based rejection, since some of them can
+>>>> be set without layout change.
+>>>
+>>> So any suggestion on how to implement this?
+>>
+>> Which features do we need to disallow? When we introduce new features, they
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 9727944139f2..7ac6768a52a5 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -279,9 +279,18 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
->  	return bio;
->  }
->  
-> +static inline u64 hw_crypt_dun(struct inode *inode, struct page *page)
-> +{
-> +	return (((u64)inode->i_ino) << 32) | (page->index & 0xFFFFFFFF);
-> +}
-> +
->  static inline void __submit_bio(struct f2fs_sb_info *sbi,
->  				struct bio *bio, enum page_type type)
->  {
-> +	struct page *page;
-> +	struct inode *inode;
-> +	int err = 0;
-> +
->  	if (!is_read_io(bio_op(bio))) {
->  		unsigned int start;
->  
-> @@ -323,7 +332,21 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
->  		trace_f2fs_submit_read_bio(sbi->sb, type, bio);
->  	else
->  		trace_f2fs_submit_write_bio(sbi->sb, type, bio);
-> -	submit_bio(bio);
-> +
-> +	if (bio_has_data(bio)) {
-> +		page = bio_page(bio);
-> +		if (page && page->mapping && page->mapping->host) {
-> +			inode = page->mapping->host;
-> +			err = fscrypt_set_bio_crypt_ctx(inode, bio,
+> I guess it should be the new features.
+> 
+>> didn't hurt the previous flow by checking f2fs_sb_has_###().
+> 
+> Yes, but new features may use new disk layout, if old kernel handled it with old
+> disk layout, there must be problematic.
+> 
+> e.g. format image with -O extra_attr, and mount it with kernel who don't
+> recognize new inode layout.
 
-Should sanity check in fscrypt_set_bio_crypt_ctx() be necessary? as we have
-already did the check in fscrypt_get_encryption_info().
+Jaegeuk,
 
-If it's not necessary, we can relax to not care about the error handling.
-
-> +						hw_crypt_dun(inode, page));
-> +		}
-> +	}
-> +	if (err) {
-> +		bio->bi_status = BLK_STS_IOERR;
-> +		bio_endio(bio);
-> +	} else {
-> +		submit_bio(bio);
-> +	}
->  }
->  
->  static void __submit_merged_bio(struct f2fs_bio_info *io)
-> @@ -484,6 +507,9 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
->  	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
->  	struct page *bio_page;
-> +	struct inode *fio_inode, *bio_inode;
-> +	struct page *first_page;
-> +	u64 next_dun = 0;
->  
->  	f2fs_bug_on(sbi, is_read_io(fio->op));
->  
-> @@ -512,10 +538,29 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  
->  	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
->  
-> +	fio_inode = fio->page->mapping->host;
-> +	bio_inode = NULL;
-> +	first_page = NULL;
-> +	next_dun = 0;
-> +	if (io->bio) {
-> +		first_page = bio_page(io->bio);
-> +		if (first_page->mapping) {
-> +			bio_inode = first_page->mapping->host;
-> +			if (fscrypt_inode_is_hw_encrypted(bio_inode)) {
-> +				next_dun =
-> +					hw_crypt_dun(bio_inode, first_page) +
-> +				    (io->bio->bi_iter.bi_size >> PAGE_SHIFT);
-> +			}
-> +		}
-> +	}
->  	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
->  	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
-> -			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
-> +			!__same_bdev(sbi, fio->new_blkaddr, io->bio) ||
-> +			!fscrypt_inode_crypt_mergeable(bio_inode, fio_inode) ||
-> +			(fscrypt_inode_is_hw_encrypted(bio_inode) &&
-> +			 next_dun != hw_crypt_dun(fio_inode, fio->page))))
-
-The merge condition becomes so complicated and looks not so clean, I just
-suggest we can introduce single static inline function to wrap all inline
-encryption condition, which can help to make codes more clean.
-
->  		__submit_merged_bio(io);
-> +
->  alloc_new:
->  	if (io->bio == NULL) {
->  		if ((fio->type == DATA || fio->type == NODE) &&
-> @@ -570,7 +615,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
->  	bio->bi_end_io = f2fs_read_end_io;
->  	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
->  
-> -	if (f2fs_encrypted_file(inode))
-> +	if (f2fs_encrypted_file(inode) && !fscrypt_inode_is_hw_encrypted(inode))
->  		post_read_steps |= 1 << STEP_DECRYPT;
->  	if (post_read_steps) {
->  		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
-> @@ -1525,6 +1570,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
->  	sector_t last_block_in_file;
->  	sector_t block_nr;
->  	struct f2fs_map_blocks map;
-> +	u64 next_dun = 0;
->  
->  	map.m_pblk = 0;
->  	map.m_lblk = 0;
-> @@ -1606,6 +1652,13 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
->  			__submit_bio(F2FS_I_SB(inode), bio, DATA);
->  			bio = NULL;
->  		}
-> +
-> +		if (bio && fscrypt_inode_is_hw_encrypted(inode) &&
-> +		    next_dun != hw_crypt_dun(inode, page)) {
-> +			__submit_bio(F2FS_I_SB(inode), bio, DATA);
-> +			bio = NULL;
-> +		}
-> +
->  		if (bio == NULL) {
->  			bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
->  					is_readahead ? REQ_RAHEAD : 0);
-> @@ -1624,6 +1677,9 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
->  		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
->  			goto submit_and_realloc;
->  
-> +		if (fscrypt_inode_is_hw_encrypted(inode))
-> +			next_dun = hw_crypt_dun(inode, page) + 1;
-> +
->  		inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
->  		ClearPageError(page);
->  		last_block_in_bio = block_nr;
-> @@ -2591,12 +2647,19 @@ static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
->  {
->  	struct f2fs_private_dio *dio;
->  	bool write = (bio_op(bio) == REQ_OP_WRITE);
-> +	u64 data_unit_num = (((u64)inode->i_ino) << 32) |
-> +			    ((file_offset >> PAGE_SHIFT) & 0xFFFFFFFF);
-
-Can we allow hw_crypt_dun() to accept @offset as parameter instead of @page? so
-we can use hw_crypt_dun() here to replace raw codes.
+Any thoughts?
 
 Thanks,
 
->  
->  	dio = f2fs_kzalloc(F2FS_I_SB(inode),
->  			sizeof(struct f2fs_private_dio), GFP_NOFS);
->  	if (!dio)
->  		goto out;
->  
-> +	if (fscrypt_set_bio_crypt_ctx(inode, bio, data_unit_num) != 0) {
-> +		kvfree(dio);
-> +		goto out;
-> +	}
-> +
->  	dio->inode = inode;
->  	dio->orig_end_io = bio->bi_end_io;
->  	dio->orig_private = bio->bi_private;
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index f2aaa2cc6b3e..e98c85d42e8d 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2225,6 +2225,7 @@ static const struct fscrypt_operations f2fs_cryptops = {
->  	.dummy_context	= f2fs_dummy_context,
->  	.empty_dir	= f2fs_empty_dir,
->  	.max_namelen	= F2FS_NAME_LEN,
-> +	.hw_crypt_supp	= true,
->  };
->  #endif
->  
+> 
+> Thanks,
+> 
+>>
+>>>
+>>> Maybe:
+>>>
+>>> if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0))
+>>> 	check 4.14+ features
+>>> else if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
+>>> 	check 4.9+ features
+>>> else if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 0))
+>>> 	check 4.4+ features
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>>>
+>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>> ---
+>>>>>  fs/f2fs/f2fs.h  | 13 +++++++++++++
+>>>>>  fs/f2fs/super.c |  9 +++++++++
+>>>>>  2 files changed, 22 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>> index f5ffc09705eb..15b640967e12 100644
+>>>>> --- a/fs/f2fs/f2fs.h
+>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>> @@ -151,6 +151,19 @@ struct f2fs_mount_info {
+>>>>>  #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+>>>>>  #define F2FS_FEATURE_SB_CHKSUM		0x0800
+>>>>>  
+>>>>> +#define F2FS_ALL_FEATURES	(F2FS_FEATURE_ENCRYPT |			\
+>>>>> +				F2FS_FEATURE_BLKZONED |			\
+>>>>> +				F2FS_FEATURE_ATOMIC_WRITE |		\
+>>>>> +				F2FS_FEATURE_EXTRA_ATTR |		\
+>>>>> +				F2FS_FEATURE_PRJQUOTA |			\
+>>>>> +				F2FS_FEATURE_INODE_CHKSUM |		\
+>>>>> +				F2FS_FEATURE_FLEXIBLE_INLINE_XATTR |	\
+>>>>> +				F2FS_FEATURE_QUOTA_INO |		\
+>>>>> +				F2FS_FEATURE_INODE_CRTIME |		\
+>>>>> +				F2FS_FEATURE_LOST_FOUND |		\
+>>>>> +				F2FS_FEATURE_VERITY |			\
+>>>>> +				F2FS_FEATURE_SB_CHKSUM)
+>>>>> +
+>>>>>  #define __F2FS_HAS_FEATURE(raw_super, mask)				\
+>>>>>  	((raw_super->feature & cpu_to_le32(mask)) != 0)
+>>>>>  #define F2FS_HAS_FEATURE(sbi, mask)	__F2FS_HAS_FEATURE(sbi->raw_super, mask)
+>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>> index 4f8e9ab48b26..57f2fc6d14ba 100644
+>>>>> --- a/fs/f2fs/super.c
+>>>>> +++ b/fs/f2fs/super.c
+>>>>> @@ -2573,6 +2573,15 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+>>>>>  		return 1;
+>>>>>  	}
+>>>>>  
+>>>>> +	/* check whether kernel supports all features */
+>>>>> +	if (le32_to_cpu(raw_super->feature) & (~F2FS_ALL_FEATURES)) {
+>>>>> +		f2fs_msg(sb, KERN_INFO,
+>>>>> +			"Unsupported feature:%u: supported:%u",
+>>>>> +			le32_to_cpu(raw_super->feature),
+>>>>> +			F2FS_ALL_FEATURES);
+>>>>> +		return 1;
+>>>>> +	}
+>>>>> +
+>>>>>  	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
+>>>>>  	if (sanity_check_area_boundary(sbi, bh))
+>>>>>  		return 1;
+>>>>> -- 
+>>>>> 2.18.0.rc1
+>> .
+>>
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> .
 > 
