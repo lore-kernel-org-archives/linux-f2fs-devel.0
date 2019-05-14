@@ -1,29 +1,25 @@
-From: Ju Hyung Park <qkrwngud825@gmail.com>
-Subject: Re: [PATCH 1/3] f2fs: remove sleep_time under gc_urgent
-Date: Tue, 14 May 2019 20:30:16 +0900
-Message-ID: <CAD14+f2G5M7qqEvztd7nC=MNvSbLtkRKzNA89zGdYSb1FgP6LQ@mail.gmail.com>
-References: <20190514063623.57162-1-qkrwngud825@gmail.com>
- <81acd624-8698-a584-f298-7e64ad77752d@huawei.com>
- <CAD14+f0Zia3oAi+QO+wCBrbV_=csp1SWB4BE7yN0h+=paZpg=w@mail.gmail.com>
- <8cd6214c-d15d-d6c6-224e-69ad7936605d@huawei.com>
+From: zhaowuyun via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Subject: =?utf-8?b?562U5aSNOiBbUEFUQ0ggdjIgMS8yXSBta2ZzLmYyZnM6?=
+	=?utf-8?q?_write_fill_chunk_in_sparse_file_for_zeroed_block?=
+Date: Tue, 14 May 2019 20:16:03 +0800
+Message-ID: <000001d50a4e$cc819970$6584cc50$@wingtech.com>
+References: <20190505074505.103127-1-yuchao0@huawei.com>
+Reply-To: zhaowuyun <zhaowuyun@wingtech.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <qkrwngud825@gmail.com>) id 1hQVdi-00089v-Ty
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 11:30:34 +0000
-Received: from mail-qk1-f194.google.com ([209.85.222.194])
+ (envelope-from <zhaowuyun@wingtech.com>) id 1hQWLz-0008Iu-Ur
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 12:16:19 +0000
+Received: from mail.wingtech.com ([180.166.216.14])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hQVdh-00GV0M-I6
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 11:30:34 +0000
-Received: by mail-qk1-f194.google.com with SMTP id z128so10009072qkb.6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 14 May 2019 04:30:33 -0700 (PDT)
-In-Reply-To: <8cd6214c-d15d-d6c6-224e-69ad7936605d@huawei.com>
+ (TLSv1.2:ECDHE-RSA-AES256-SHA:256) (Exim 4.90_1) id 1hQWLw-00GXJ2-Rp
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 12:16:19 +0000
+In-Reply-To: <20190505074505.103127-1-yuchao0@huawei.com>
+Content-Language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,40 +29,244 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: 'Chao Yu' <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org
 
 Hi Chao,
 
-On Tue, May 14, 2019 at 8:19 PM Chao Yu <yuchao0@huawei.com> wrote:
-> > I've been using this(with a slightly different code) for years and yet to notice
-> > any spikes in lags/slowdowns. Worst scenario, I'd just have to deal with an
-> > added split second(100ms max?) delay in screen wake-up.
->
-> I'm not sure about why this happened... maybe you need to do some test to
-> analyse the root cause of it, filesystem/device fragment? too many undiscard
-> space? or non-storage issue?
+using the same steps, 
+make the userdata partition dirty and fastboot-flash userdata.img to see the mount is successful or not
 
-Um, I'm not sure you understood what I said.
-What I meant is that I haven't found any issues with using an approach
-like this(gc_urgent with 1ms sleep intervals) for years on various
-Android devices.
+to test the patch, confirm that issue is fixed by this patch.
+Hope to see it accepted.
 
-> I agreed that it should done as soon as possible, but it needs to consider IO
-> race in between Apps after screen wake-up and BGGC to avoid potential ANR.
+Best Wishes,
+Zac (zhaowuyun@wingtech.com)
 
-I actually need to check whether vold turns off gc_urgent immediately
-after screen turns itself back on.
-I don't think we need to take potential ANR in to account *if* vold
-stops gc_urgent right after screen-on. What do you think?
-
-> It's userspace strategy, we can change both of them
-> (vold_wait_time/gc_urgent_sleep_time) in userspace if current value doesn't make
-> any sense.
-
-Even the user can set the tunables themselves, the default should be
-sensical imo.
-An "urgent" GC that only GCs up-to 2 segments per second doesn't sound
-that "urgent" :p
-
-Thanks.
+> 
+> As zhaowuyun reported:
+> 
+> we met one problem of f2fs, and found one issue of make_f2fs, so I write
+> this email to search for your help to confirm this issue.
+> 
+> The issue was found on one of Android projects. We use f2fs as the
+> filesystem of userdata, and make sparse userdata.img using following
+> command, which invoked in script mkf2fsuserimg.sh make_f2fs -S $SIZE -f -O
+> encrypt -O quota -O verity $MKFS_OPTS $OUTPUT_FILE
+> 
+> use fastboot to flash this userdata.img to device, and it encountered f2fs
+> problem and leading to the mount fail of data partition.
+> 
+> we can make this issue 100% persent reproduced by making the data
+> partition dirty before flashing userdata.img.
+> 
+> suspect that issue is caused by the dirty data in the data partition.
+> so we checked that source code of make_f2fs in f2fs-tool, found that when
+> making f2fs, it use dev_fill to do some process:
+> 
+> ...
+> 
+> we change code to the following, and the issue is gone.
+> 
+> if (c.sparse_mode)
+>        return dev_write(buf, offset, len);
+> 
+> Chao Yu:
+> >
+> > After checking the codes, IIUC, I guess the problem here is, unlike
+> > img2simg, mkfs.f2fs won't record zeroed block in sparse image, so
+> > during transforming to normal image, some critical region like
+> > NAT/SIT/CP.payload area weren't be zeroed correctly, later kernel may
+> > load obsoleting data from those region.
+> >
+> > Also, The way you provide will obviously increase the size of sparse
+> > file, since with it we need to write all zeroed blocks of
+> > NAT/SIT/CP.payload to sparse file, it's not needed.
+> >
+> > Not sure, maybe we should use sparse_file_add_fill() to record zeroed
+> > blocks, so that this will make formatted image more like img2simged one.
+> 
+> Jaegeuk:
+> > We have to call sparse_file_add_fill() for dev_fill().
+> 
+> This patch fixes to support writing fill chunk sparse file for those zeroed
+> blocks in mkfs.f2fs.
+> 
+> Reported-by: zhaowuyun <zhaowuyun@wingtech.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+> v2:
+> - don't return -EEXIST if block[x] has non-zeroed data.
+>  lib/libf2fs_io.c | 84 +++++++++++++++++++++++++++++++++++++++-------
+> --
+>  1 file changed, 69 insertions(+), 15 deletions(-)
+> 
+> diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c index f848510..4d0ea0d 100644
+> --- a/lib/libf2fs_io.c
+> +++ b/lib/libf2fs_io.c
+> @@ -36,6 +36,7 @@ struct f2fs_configuration c;  struct sparse_file
+> *f2fs_sparse_file;  static char **blocks;  u_int64_t blocks_count;
+> +static char *zeroed_block;
+>  #endif
+> 
+>  static int __get_device_fd(__u64 *offset) @@ -103,6 +104,8 @@ static int
+> sparse_write_blk(__u64 block, int count, const void *buf)
+> 
+>  	for (i = 0; i < count; ++i) {
+>  		cur_block = block + i;
+> +		if (blocks[cur_block] == zeroed_block)
+> +			blocks[cur_block] = NULL;
+>  		if (!blocks[cur_block]) {
+>  			blocks[cur_block] = calloc(1, F2FS_BLKSIZE);
+>  			if (!blocks[cur_block])
+> @@ -114,6 +117,20 @@ static int sparse_write_blk(__u64 block, int count,
+> const void *buf)
+>  	return 0;
+>  }
+> 
+> +static int sparse_write_zeroed_blk(__u64 block, int count) {
+> +	int i;
+> +	__u64 cur_block;
+> +
+> +	for (i = 0; i < count; ++i) {
+> +		cur_block = block + i;
+> +		if (blocks[cur_block])
+> +			continue;
+> +		blocks[cur_block] = zeroed_block;
+> +	}
+> +	return 0;
+> +}
+> +
+>  #ifdef SPARSE_CALLBACK_USES_SIZE_T
+>  static int sparse_import_segment(void *UNUSED(priv), const void *data,
+>  		size_t len, unsigned int block, unsigned int nr_blocks) @@ -
+> 129,11 +146,17 @@ static int sparse_import_segment(void *UNUSED(priv),
+> const void *data, int len,
+>  	return sparse_write_blk(block, nr_blocks, data);  }
+> 
+> -static int sparse_merge_blocks(uint64_t start, uint64_t num)
+> +static int sparse_merge_blocks(uint64_t start, uint64_t num, int zero)
+>  {
+>  	char *buf;
+>  	uint64_t i;
+> 
+> +	if (zero) {
+> +		blocks[start] = NULL;
+> +		return sparse_file_add_fill(f2fs_sparse_file, 0x0,
+> +					F2FS_BLKSIZE * num, start);
+> +	}
+> +
+>  	buf = calloc(num, F2FS_BLKSIZE);
+>  	if (!buf) {
+>  		fprintf(stderr, "failed to alloc %llu\n", @@ -156,6 +179,7 @@
+> static int sparse_merge_blocks(uint64_t start, uint64_t num)  #else  static int
+> sparse_read_blk(__u64 block, int count, void *buf) { return 0; }  static int
+> sparse_write_blk(__u64 block, int count, const void *buf) { return 0; }
+> +static int sparse_write_zeroed_blk(__u64 block, int count) { return 0;
+> +}
+>  #endif
+> 
+>  int dev_read(void *buf, __u64 offset, size_t len) @@ -235,7 +259,8 @@ int
+> dev_fill(void *buf, __u64 offset, size_t len)
+>  	int fd;
+> 
+>  	if (c.sparse_mode)
+> -		return 0;
+> +		return sparse_write_zeroed_blk(offset / F2FS_BLKSIZE,
+> +						len / F2FS_BLKSIZE);
+> 
+>  	fd = __get_device_fd(&offset);
+>  	if (fd < 0)
+> @@ -307,6 +332,12 @@ int f2fs_init_sparse_file(void)
+>  		return -1;
+>  	}
+> 
+> +	zeroed_block = calloc(1, F2FS_BLKSIZE);
+> +	if (!zeroed_block) {
+> +		MSG(0, "\tError: Calloc Failed for zeroed block!!!\n");
+> +		return -1;
+> +	}
+> +
+>  	return sparse_file_foreach_chunk(f2fs_sparse_file, true, false,
+>  				sparse_import_segment, NULL);
+>  #else
+> @@ -315,7 +346,8 @@ int f2fs_init_sparse_file(void)  #endif  }
+> 
+> -#define MAX_CHUNK_SIZE (1 * 1024 * 1024 * 1024ULL)
+> +#define MAX_CHUNK_SIZE		(1 * 1024 * 1024 * 1024ULL)
+> +#define MAX_CHUNK_COUNT		(MAX_CHUNK_SIZE /
+> F2FS_BLKSIZE)
+>  int f2fs_finalize_device(void)
+>  {
+>  	int i;
+> @@ -336,24 +368,44 @@ int f2fs_finalize_device(void)
+>  		}
+> 
+>  		for (j = 0; j < blocks_count; ++j) {
+> -			if (!blocks[j] && chunk_start != -1) {
+> -				ret = sparse_merge_blocks(chunk_start,
+> -							j - chunk_start);
+> -				chunk_start = -1;
+> -			} else if (blocks[j] && chunk_start == -1) {
+> -				chunk_start = j;
+> -			} else if (blocks[j] && (chunk_start != -1) &&
+> -				 (j + 1 - chunk_start >=
+> -					(MAX_CHUNK_SIZE / F2FS_BLKSIZE)))
+> {
+> +			if (chunk_start != -1) {
+> +				if (j - chunk_start >= MAX_CHUNK_COUNT) {
+> +					ret =
+> sparse_merge_blocks(chunk_start,
+> +							j - chunk_start, 0);
+> +					ASSERT(!ret);
+> +					chunk_start = -1;
+> +				}
+> +			}
+> +
+> +			if (chunk_start == -1) {
+> +				if (!blocks[j])
+> +					continue;
+> +
+> +				if (blocks[j] == zeroed_block) {
+> +					ret = sparse_merge_blocks(j, 1, 1);
+> +					ASSERT(!ret);
+> +				} else {
+> +					chunk_start = j;
+> +				}
+> +			} else {
+> +				if (blocks[j] && blocks[j] != zeroed_block)
+> +					continue;
+> +
+>  				ret = sparse_merge_blocks(chunk_start,
+> -							  j + 1 - chunk_start);
+> +						j - chunk_start, 0);
+> +				ASSERT(!ret);
+> +
+> +				if (blocks[j] == zeroed_block) {
+> +					ret = sparse_merge_blocks(j, 1, 1);
+> +					ASSERT(!ret);
+> +				}
+> +
+>  				chunk_start = -1;
+>  			}
+> -			ASSERT(!ret);
+>  		}
+>  		if (chunk_start != -1) {
+>  			ret = sparse_merge_blocks(chunk_start,
+> -						blocks_count - chunk_start);
+> +						blocks_count - chunk_start,
+> 0);
+>  			ASSERT(!ret);
+>  		}
+> 
+> @@ -365,6 +417,8 @@ int f2fs_finalize_device(void)
+>  			free(blocks[j]);
+>  		free(blocks);
+>  		blocks = NULL;
+> +		free(zeroed_block);
+> +		zeroed_block = NULL;
+>  		f2fs_sparse_file = NULL;
+>  	}
+>  #endif
+> --
+> 2.18.0.rc1
