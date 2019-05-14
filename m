@@ -1,59 +1,68 @@
-From: Park Ju Hyung <qkrwngud825@gmail.com>
-Subject: [PATCH 3/3] f2fs: always assume that the device is idle
- under gc_urgent
-Date: Tue, 14 May 2019 15:36:23 +0900
-Message-ID: <20190514063623.57162-3-qkrwngud825@gmail.com>
-References: <20190514063623.57162-1-qkrwngud825@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: issue discard commands proactively in
+ high fs utilization
+Date: Tue, 14 May 2019 16:29:32 +0800
+Message-ID: <73fc6da8-7b89-3b02-8856-bd6876c50259@huawei.com>
+References: <20180529205048.39694-1-jaegeuk@kernel.org>
+ <CAD14+f154_t1-TbbSDb9xV_ikDAWfF+8H7aOSK4VF8UmqWRDAQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <qkrwngud825@gmail.com>) id 1hQR3Q-0006lR-0a
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 06:36:48 +0000
-Received: from mail-pf1-f196.google.com ([209.85.210.196])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hQR3M-0034TW-El
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 06:36:47 +0000
-Received: by mail-pf1-f196.google.com with SMTP id z26so8569943pfg.6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 13 May 2019 23:36:44 -0700 (PDT)
-In-Reply-To: <20190514063623.57162-1-qkrwngud825@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD14+f154_t1-TbbSDb9xV_ikDAWfF+8H7aOSK4VF8UmqWRDAQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ju Hyung Park <qkrwngud825@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This allows more aggressive discards and balancing job to be done
-under gc_urgent.
+On 2019/5/14 13:39, Ju Hyung Park wrote:
+> On Wed, May 30, 2018 at 5:51 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>>
+>> In the high utilization like over 80%, we don't expect huge # of large discard
+>> commands, but do many small pending discards which affects FTL GCs a lot.
+>> Let's issue them in that case.
+>>
+>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>> ---
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 6e40e536dae0..8c1f7a6bf178 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -915,6 +915,38 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
+>> +                       dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> 
+> Isn't this way too aggressive?
+> 
+> Discard thread will wake up on 50ms interval just because the user has
+> used 80% of space.
+> 60,000ms vs 50ms is too much of a stark difference.
+> 
+> I feel something like 10 seconds(10,000ms) could be a much more
+> reasonable choice than this.
 
-Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
----
- fs/f2fs/f2fs.h | 3 +++
- 1 file changed, 3 insertions(+)
+Hmm.. I agree that current hard code method is not flexible enough, and I
+proposed below patch last year to adjust interval according to space usage, it
+looks Jaegeuk partially agreed with that, and pointed out we need to distinguish
+low/high-end storage to decide interval. And also you point out that btrfs
+introduces mount option "ssd" to let user give the device type, and we can
+distinguish with that. :P
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 533fafca68f4..14c95116cd3d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2192,6 +2192,9 @@ static inline struct bio *f2fs_bio_alloc(struct f2fs_sb_info *sbi,
- 
- static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
- {
-+	if (sbi->gc_mode == GC_URGENT)
-+		return true;
-+
- 	if (get_pages(sbi, F2FS_RD_DATA) || get_pages(sbi, F2FS_RD_NODE) ||
- 		get_pages(sbi, F2FS_RD_META) || get_pages(sbi, F2FS_WB_DATA) ||
- 		get_pages(sbi, F2FS_WB_CP_DATA) ||
--- 
-2.21.0
+https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=009f548e37ca5d9b4cad9e3c15c2164c53eff1df
+
+But I pended below patch based on Jaegeuk's and your idea due to other work...
+
+https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=47a992c12398c98e739e3eedc2743824459df943
+
+Thanks,
+
+> 
+> Thanks.
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> .
+> 
