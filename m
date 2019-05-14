@@ -1,133 +1,208 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] f2fs-for-5.2
-Date: Mon, 13 May 2019 16:38:18 -0700
-Message-ID: <20190513233818.GA33287@jaegeuk-macbookpro.roam.corp.google.com>
+From: Eryu Guan <guaneryu@gmail.com>
+Subject: Re: [RFC PATCH 4/7] common/encrypt: add helper for
+ ciphertext verification tests
+Date: Tue, 14 May 2019 10:20:44 +0800
+Message-ID: <20190514022044.GL15846@desktop>
+References: <20190426204153.101861-1-ebiggers@kernel.org>
+ <20190426204153.101861-5-ebiggers@kernel.org>
+ <20190512122703.GJ15846@desktop>
+ <20190513191204.GA142816@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <guaneryu@gmail.com>) id 1hQN3r-0003u2-2Q
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 02:20:59 +0000
+Received: from mail-pl1-f196.google.com ([209.85.214.196])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1hQN3o-002qKG-NX
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 02:20:59 +0000
+Received: by mail-pl1-f196.google.com with SMTP id a5so7400578pls.12
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 13 May 2019 19:20:56 -0700 (PDT)
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20190513191204.GA142816@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Linus,
+On Mon, May 13, 2019 at 12:12:05PM -0700, Eric Biggers wrote:
+> Hi Eryu,
+> 
+> On Sun, May 12, 2019 at 08:27:03PM +0800, Eryu Guan wrote:
+> > > +# Retrieve the filename stored on-disk for the given file.
+> > > +# The name is printed to stdout in binary.
+> > > +_get_on_disk_filename()
+> > > +{
+> > > +	local device=$1
+> > > +	local inode=$2
+> > > +	local dir_inode=$3
+> > > +
+> > > +	case $FSTYP in
+> > > +	ext4)
+> > > +		# Extract the filename from the debugfs output line like:
+> > > +		#
+> > > +		#  131075  100644 (1)      0      0       0 22-Apr-2019 16:54 \xa2\x85\xb0z\x13\xe9\x09\x86R\xed\xdc\xce\xad\x14d\x19
+> > > +		#
+> > > +		$DEBUGFS_PROG $device -R "ls -l -r <$dir_inode>" \
+> > > +					2>>$seqres.full | perl -ne '
+> > > +			next if not /^\s*'$inode'\s+/;
+> > > +			s/.*?\d\d:\d\d //;
+> > > +			chomp;
+> > > +			s/\\x([[:xdigit:]]{2})/chr hex $1/eg;
+> > > +			print;'
+> > > +		;;
+> > > +	f2fs)
+> > > +		# Extract the filename from the dump.f2fs output line like:
+> > > +		#
+> > > +		#  i_name                        		[UpkzIPuts9by1oDmE+Ivfw]
+> > > +		#
+> > > +		# The name is base64-encoded, so we have to decode it here.
+> > > +		#
+> > > +		$DUMP_F2FS_PROG $device -i $inode | perl -ne '
+> > > +			next if not /^i_name\s+\[([A-Za-z0-9+,]+)\]/;
+> > > +			chomp $1;
+> > > +			my @chars = split //, $1;
+> > > +			my $ac = 0;
+> > > +			my $bits = 0;
+> > > +			my $table = join "", (A..Z, a..z, 0..9, "+", ",");
+> > > +			foreach (@chars) {
+> > > +				$ac += index($table, $_) << $bits;
+> > > +				$bits += 6;
+> > > +				if ($bits >= 8) {
+> > > +					print chr($ac & 0xff);
+> > > +					$ac >>= 8;
+> > > +					$bits -= 8;
+> > > +				}
+> > > +			}
+> > > +			if ($ac != 0) {
+> > > +				print STDERR "Invalid base64-encoded string!\n";
+> > > +			}'
+> > > +		;;
+> > > +	*)
+> > > +		_notrun "_get_on_disk_filename() isn't implemented on $FSTYP"
+> > 
+> > And looks like this function has nothing to do with fs encryption, move it to
+> > common/rc?
+> 
+> For ext4 that's true, but for f2fs the name is assumed to be base64-encoded,
+> which f2fs-tools only does for encrypted filenames.  I'll update the comment to
+> clarify that the function assumes the directory is encrypted.
+> 
+> > 
+> > > +		;;
+> > > +	esac
+> > > +}
+> > > +
+> > > +# Require support for _get_on_disk_filename()
+> > > +_require_get_on_disk_filename_support()
+> > > +{
+> > > +	echo "Checking for _get_on_disk_filename() support for $FSTYP" >> $seqres.full
+> > > +	case $FSTYP in
+> > > +	ext4)
+> > > +		# Verify that the "ls -l -r" debugfs command is supported and
+> > > +		# hex-encodes non-ASCII characters, rather than using an
+> > > +		# ambiguous escaping method.  This requires the e2fsprogs patch
+> > > +		# "debugfs: avoid ambiguity when printing filenames"
+> > > +		# (https://marc.info/?l=linux-ext4&m=155596495624232&w=2).
+> > > +		# TODO: once merged, list the minimum e2fsprogs version here.
+> > > +		_require_command "$DEBUGFS_PROG" debugfs
+> > > +		_scratch_mount
+> > > +		touch $SCRATCH_MNT/$'\xc1'
+> > > +		_scratch_unmount
+> > > +		if ! $DEBUGFS_PROG $SCRATCH_DEV -R "ls -l -r /" 2>&1 \
+> > > +			| tee -a $seqres.full | grep -E -q '\s+\\xc1\s*$'; then
+> > > +			_notrun "debugfs (e2fsprogs) is too old; doesn't support showing unambiguous on-disk filenames"
+> > > +		fi
+> > > +		;;
+> > > +	f2fs)
+> > > +		# Verify that dump.f2fs shows encrypted filenames in full.  This
+> > > +		# requires the patch "f2fs-tools: improve filename printing"
+> > > +		# (https://sourceforge.net/p/linux-f2fs/mailman/message/36648641/).
+> > > +		# TODO: once merged, list the minimum f2fs-tools version here.
+> > > +
+> > > +		_require_command "$DUMP_F2FS_PROG" dump.f2fs
+> > > +		_require_command "$KEYCTL_PROG" keyctl
+> > > +		_scratch_mount
+> > > +		_new_session_keyring
+> > > +
+> > > +		local keydesc=$(_generate_encryption_key)
+> > > +		local dir=$SCRATCH_MNT/test.${FUNCNAME[0]}
+> > > +		local file=$dir/$(perl -e 'print "A" x 255')
+> > > +		mkdir $dir
+> > > +		_set_encpolicy $dir $keydesc
+> > > +		touch $file
+> > > +		local inode=$(stat -c %i $file)
+> > > +
+> > > +		_scratch_unmount
+> > > +		$KEYCTL_PROG clear @s
+> > > +
+> > > +		# 255-character filename should result in 340 base64 characters.
+> > > +		if ! $DUMP_F2FS_PROG -i $inode $SCRATCH_DEV \
+> > > +			| grep -E -q '^i_name[[:space:]]+\[[A-Za-z0-9+,]{340}\]'; then
+> > > +			_notrun "dump.f2fs (f2fs-tools) is too old; doesn't support showing unambiguous on-disk filenames"
+> > > +		fi
+> > > +		;;
+> > > +	*)
+> > > +		_notrun "_get_on_disk_filename() isn't implemented on $FSTYP"
+> > > +		;;
+> > > +	esac
+> > > +}
+> > > +
+> > > +# Get the file's list of on-disk blocks as a comma-separated list of block
+> > > +# offsets from the start of the device.  "Blocks" are 512 bytes each here.
+> > > +_get_file_block_list()
+> > > +{
+> > > +	local file=$1
+> > > +
+> > > +	sync
+> > > +	$XFS_IO_PROG -c fiemap $file | perl -ne '
+> > > +		next if not /^\s*\d+: \[\d+\.\.\d+\]: (\d+)\.\.(\d+)/;
+> > > +		print $_ . "," foreach $1..$2;' | sed 's/,$//'
+> > > +}
+> > > +
+> > > +# Dump a block list that was previously saved by _get_file_block_list().
+> > > +_dump_file_blocks()
+> > > +{
+> > > +	local device=$1
+> > > +	local blocklist=$2
+> > > +	local block
+> > > +
+> > > +	for block in $(tr ',' ' ' <<< $blocklist); do
+> > > +		dd if=$device bs=512 count=1 skip=$block status=none
+> > > +	done
+> > > +}
+> > 
+> > Above two functions seem generic enough to be moved to common/rc
+> 
+> I feel that would be premature because common/rc is kind of bloated, and there's
+> a good chance these functions will only ever be used for encryption tests.
+> Normally, xfstests only test for user-visible behavior, so tests just 'cat' the
+> file contents, or 'ls' the filenames.  The encryption tests are somewhat special
+> in that they really care about what's *actually* stored on-disk.
+> 
+> So I think that common/encrypt is the most logical location for now.  But I
 
-Could you please consider this pull request?
+Yeah, that makes sense to me. Perhaps the functions should be renamed to
+reflect that they're encryption-related?
 
-Thanks as lways,
+Thanks,
+Eryu
 
-The following changes since commit 8ed86627f715eacbd6db6862f9499d6d96ea4ad6:
-
-  Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid (2019-04-03 06:11:12 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-v5.2-rc1
-
-for you to fetch changes up to 2777e654371dd4207a3a7f4fb5fa39550053a080:
-
-  f2fs: fix to avoid accessing xattr across the boundary (2019-05-09 09:43:29 -0700)
-
-----------------------------------------------------------------
-f2fs-for-5.2-rc1
-
-Another round of various bug fixes came in. Damien improved SMR drive support a
-bit, and Chao replaced BUG_ON() with reporting errors to user since we've not
-hit from users but did hit from crafted images. We've found a disk layout bug
-in large_nat_bits feature which supports very large NAT entries enabled at mkfs.
-If the feature is enabled, it will give a notice to run fsck to correct the
-on-disk layout.
-
-Enhancement:
- - reduce memory consumption for SMR drive
- - better discard handling for multiple partitions
- - tracepoints for f2fs_file_write_iter/f2fs_filemap_fault
- - allow to change CP_CHKSUM_OFFSET
- - detect wrong layout of large_nat_bitmap feature
- - enhance checking valid data indices
-
-Bug fix:
- - Multiple partition support for SMR drive
- - deadlock problem in f2fs_balance_fs_bg
- - add boundary checks to fix abnormal behaviors on fuzzed images
- - inline_xattr space calculations
- - replace f2fs_bug_on with errors
-
-In addition, this series contains various memory boundary check and sanity check
-of on-disk consistency.
-
-----------------------------------------------------------------
-Chao Yu (31):
-      f2fs: fix potential recursive call when enabling data_flush
-      f2fs: add comment for conditional compilation statement
-      f2fs: add tracepoint for f2fs_file_write_iter()
-      f2fs: fix to avoid deadloop in foreground GC
-      f2fs: fix error path of recovery
-      f2fs: fix to retrieve inline xattr space
-      f2fs: fix to use inline space only if inline_xattr is enable
-      f2fs: fix to avoid panic in dec_valid_block_count()
-      f2fs: fix to avoid panic in dec_valid_node_count()
-      f2fs: fix wrong __is_meta_io() macro
-      f2fs: remove new blank line of f2fs kernel message
-      f2fs: fix to clear dirty inode in error path of f2fs_iget()
-      f2fs: fix to avoid panic in f2fs_remove_inode_page()
-      f2fs: fix to do checksum even if inode page is uptodate
-      f2fs: fix to do sanity check on free nid
-      f2fs: fix to avoid panic in do_recover_data()
-      f2fs: fix to do sanity check on valid node/block count
-      f2fs: fix to do sanity check on valid block count of segment
-      f2fs: fix to avoid panic in f2fs_inplace_write_data()
-      f2fs: fix to set FI_UPDATE_WRITE correctly
-      f2fs: introduce f2fs_read_single_page() for cleanup
-      f2fs: allow address pointer number of dnode aligning to specified size
-      f2fs: allow unfixed f2fs_checkpoint.checksum_offset
-      f2fs: relocate chksum_offset for large_nat_bitmap feature
-      f2fs: fix to consider multiple device for readonly check
-      f2fs: fix to skip recovery on readonly device
-      f2fs: fix to be aware of readonly device in write_checkpoint()
-      f2fs: fix to handle error in f2fs_disable_checkpoint()
-      f2fs: introduce DATA_GENERIC_ENHANCE
-      f2fs: add tracepoint for f2fs_filemap_fault()
-      f2fs: fix to avoid potential race on sbi->unusable_block_count access/update
-
-Chengguang Xu (1):
-      f2fs: remove redundant check in f2fs_file_write_iter()
-
-Damien Le Moal (3):
-      f2fs: Fix use of number of devices
-      f2fs: Reduce zoned block device memory usage
-      f2fs: improve discard handling with multi-device volumes
-
-Hariprasad Kelam (1):
-      f2fs: data: fix warning Using plain integer as NULL pointer
-
-Park Ju Hyung (1):
-      f2fs: mark is_extension_exist() inline
-
-Randall Huang (1):
-      f2fs: fix to avoid accessing xattr across the boundary
-
-Youngjun Yoo (2):
-      f2fs: insert space before the open parenthesis '('
-      f2fs: Replace spaces with tab
-
- fs/f2fs/acl.c               |   4 +-
- fs/f2fs/checkpoint.c        | 108 +++++++++++++----
- fs/f2fs/data.c              | 285 +++++++++++++++++++++++++-------------------
- fs/f2fs/f2fs.h              | 127 +++++++++++++++-----
- fs/f2fs/file.c              |  76 +++++++-----
- fs/f2fs/gc.c                |  16 ++-
- fs/f2fs/inline.c            |  17 +++
- fs/f2fs/inode.c             |  12 +-
- fs/f2fs/namei.c             |   2 +-
- fs/f2fs/node.c              |  43 +++++--
- fs/f2fs/recovery.c          |  37 +++++-
- fs/f2fs/segment.c           |  71 ++++++-----
- fs/f2fs/segment.h           |  16 +--
- fs/f2fs/super.c             |  70 ++++++++---
- fs/f2fs/xattr.c             |  36 ++++--
- fs/f2fs/xattr.h             |   2 +
- include/linux/f2fs_fs.h     |  11 +-
- include/trace/events/f2fs.h |  57 +++++++++
- 18 files changed, 688 insertions(+), 302 deletions(-)
+> don't feel too strongly, and I can move it if you prefer.
+> 
+> Thanks for the review!
+> 
+> - Eric
