@@ -1,68 +1,132 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: issue discard commands proactively in
- high fs utilization
-Date: Tue, 14 May 2019 16:29:32 +0800
-Message-ID: <73fc6da8-7b89-3b02-8856-bd6876c50259@huawei.com>
-References: <20180529205048.39694-1-jaegeuk@kernel.org>
- <CAD14+f154_t1-TbbSDb9xV_ikDAWfF+8H7aOSK4VF8UmqWRDAQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] f2fs: remove sleep_time under gc_urgent
+Date: Tue, 14 May 2019 17:20:14 +0800
+Message-ID: <81acd624-8698-a584-f298-7e64ad77752d@huawei.com>
+References: <20190514063623.57162-1-qkrwngud825@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD14+f154_t1-TbbSDb9xV_ikDAWfF+8H7aOSK4VF8UmqWRDAQ@mail.gmail.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1hQTcC-0007M4-WE
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 09:20:53 +0000
+Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hQTcA-00GOgl-LW
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 09:20:52 +0000
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.53])
+ by Forcepoint Email with ESMTP id EF2A8E2BE5DD9C39D7C7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 14 May 2019 17:20:42 +0800 (CST)
+In-Reply-To: <20190514063623.57162-1-qkrwngud825@gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ju Hyung Park <qkrwngud825@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Park Ju Hyung <qkrwngud825@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 2019/5/14 13:39, Ju Hyung Park wrote:
-> On Wed, May 30, 2018 at 5:51 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->>
->> In the high utilization like over 80%, we don't expect huge # of large discard
->> commands, but do many small pending discards which affects FTL GCs a lot.
->> Let's issue them in that case.
->>
->> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->> ---
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 6e40e536dae0..8c1f7a6bf178 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -915,6 +915,38 @@ static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
->> +                       dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+Hi Ju Hyung,
+
+On 2019/5/14 14:36, Park Ju Hyung wrote:
+> gc_urgent is meant to be a hint from the user to force f2fs to run GC
+> aggressively, which means they are willing to take the hit on increased
+> latency during gc_urgent. It's meaningless to sleep between each GC under
+> gc_urgent, Not to mention that the default value of 500 ms makes gc_urgent
+> super ineffective.
 > 
-> Isn't this way too aggressive?
+> Remove urgent_sleep_time entirely and allow GC to be finished much faster.
 > 
-> Discard thread will wake up on 50ms interval just because the user has
-> used 80% of space.
-> 60,000ms vs 50ms is too much of a stark difference.
-> 
-> I feel something like 10 seconds(10,000ms) could be a much more
-> reasonable choice than this.
+> Use 1 for wait_ms instead of 0 to prevent possible CPU hoggings.
 
-Hmm.. I agree that current hard code method is not flexible enough, and I
-proposed below patch last year to adjust interval according to space usage, it
-looks Jaegeuk partially agreed with that, and pointed out we need to distinguish
-low/high-end storage to decide interval. And also you point out that btrfs
-introduces mount option "ssd" to let user give the device type, and we can
-distinguish with that. :P
+IIRC, related interfaces (gc_urgent/urgent_sleep_time) were introduced for
+Android Go, if some conditions (in userspace) are satisfied, GC/discard threads
+are waked up via sysfs to clean filesystem/device space. Considering the system
+runs in low-performance device, we can't expect that device can handle IOs very
+quickly, so that once one of condition (e.g. screen is lighted up) breaks, apps
+may be stuck due to racing with IO from GC. Anyway I think we need to set proper
+interval for background GC, IMO, 1 ms is too short...
 
-https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=009f548e37ca5d9b4cad9e3c15c2164c53eff1df
-
-But I pended below patch based on Jaegeuk's and your idea due to other work...
-
-https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=f2fs-dev&id=47a992c12398c98e739e3eedc2743824459df943
+And it needs to wait for Jaegeuk's opinion.
 
 Thanks,
 
 > 
-> Thanks.
+> Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
+> ---
+>  fs/f2fs/gc.c    | 3 +--
+>  fs/f2fs/gc.h    | 2 --
+>  fs/f2fs/sysfs.c | 3 ---
+>  3 files changed, 1 insertion(+), 7 deletions(-)
 > 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 963fb4571fd9..9c3ed89c8c5b 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -77,7 +77,7 @@ static int gc_thread_func(void *data)
+>  		 * So, I'd like to wait some time to collect dirty segments.
+>  		 */
+>  		if (sbi->gc_mode == GC_URGENT) {
+> -			wait_ms = gc_th->urgent_sleep_time;
+> +			wait_ms = 1;
+>  			mutex_lock(&sbi->gc_mutex);
+>  			goto do_gc;
+>  		}
+> @@ -129,7 +129,6 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
+>  		goto out;
+>  	}
+>  
+> -	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
+>  	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
+>  	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
+>  	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
+> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+> index bbac9d3787bd..de79a867837e 100644
+> --- a/fs/f2fs/gc.h
+> +++ b/fs/f2fs/gc.h
+> @@ -10,7 +10,6 @@
+>  						 * whether IO subsystem is idle
+>  						 * or not
+>  						 */
+> -#define DEF_GC_THREAD_URGENT_SLEEP_TIME	500	/* 500 ms */
+>  #define DEF_GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
+>  #define DEF_GC_THREAD_MAX_SLEEP_TIME	60000
+>  #define DEF_GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
+> @@ -27,7 +26,6 @@ struct f2fs_gc_kthread {
+>  	wait_queue_head_t gc_wait_queue_head;
+>  
+>  	/* for gc sleep time */
+> -	unsigned int urgent_sleep_time;
+>  	unsigned int min_sleep_time;
+>  	unsigned int max_sleep_time;
+>  	unsigned int no_gc_sleep_time;
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 729f46a3c9ee..0165431e83e5 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -397,8 +397,6 @@ static struct f2fs_attr f2fs_attr_##_name = {			\
+>  	.id	= _id,						\
+>  }
+>  
+> -F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent_sleep_time,
+> -							urgent_sleep_time);
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
+> @@ -459,7 +457,6 @@ F2FS_FEATURE_RO_ATTR(sb_checksum, FEAT_SB_CHECKSUM);
+>  
+>  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+>  static struct attribute *f2fs_attrs[] = {
+> -	ATTR_LIST(gc_urgent_sleep_time),
+>  	ATTR_LIST(gc_min_sleep_time),
+>  	ATTR_LIST(gc_max_sleep_time),
+>  	ATTR_LIST(gc_no_gc_sleep_time),
 > 
