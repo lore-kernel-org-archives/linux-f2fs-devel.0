@@ -1,28 +1,24 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/3] f2fs: remove sleep_time under gc_urgent
-Date: Tue, 14 May 2019 17:20:14 +0800
-Message-ID: <81acd624-8698-a584-f298-7e64ad77752d@huawei.com>
-References: <20190514063623.57162-1-qkrwngud825@gmail.com>
+Subject: [PATCH v3 2/2] f2fs-tools: relocate chksum_offset for
+ large_nat_bitmap feature
+Date: Tue, 14 May 2019 17:33:40 +0800
+Message-ID: <20190514093340.40217-2-yuchao0@huawei.com>
+References: <20190514093340.40217-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hQTcC-0007M4-WE
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 09:20:53 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1hQTpW-0002mM-Ib
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 09:34:38 +0000
 Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hQTcA-00GOgl-LW
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 09:20:52 +0000
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.53])
- by Forcepoint Email with ESMTP id EF2A8E2BE5DD9C39D7C7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 14 May 2019 17:20:42 +0800 (CST)
-In-Reply-To: <20190514063623.57162-1-qkrwngud825@gmail.com>
-Content-Language: en-US
+ id 1hQTpU-003GFQ-5Q
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 May 2019 09:34:38 +0000
+In-Reply-To: <20190514093340.40217-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,101 +28,281 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Park Ju Hyung <qkrwngud825@gmail.com>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org
 
-Hi Ju Hyung,
+For large_nat_bitmap feature, there is a design flaw:
 
-On 2019/5/14 14:36, Park Ju Hyung wrote:
-> gc_urgent is meant to be a hint from the user to force f2fs to run GC
-> aggressively, which means they are willing to take the hit on increased
-> latency during gc_urgent. It's meaningless to sleep between each GC under
-> gc_urgent, Not to mention that the default value of 500 ms makes gc_urgent
-> super ineffective.
-> 
-> Remove urgent_sleep_time entirely and allow GC to be finished much faster.
-> 
-> Use 1 for wait_ms instead of 0 to prevent possible CPU hoggings.
+Previous:
 
-IIRC, related interfaces (gc_urgent/urgent_sleep_time) were introduced for
-Android Go, if some conditions (in userspace) are satisfied, GC/discard threads
-are waked up via sysfs to clean filesystem/device space. Considering the system
-runs in low-performance device, we can't expect that device can handle IOs very
-quickly, so that once one of condition (e.g. screen is lighted up) breaks, apps
-may be stuck due to racing with IO from GC. Anyway I think we need to set proper
-interval for background GC, IMO, 1 ms is too short...
+struct f2fs_checkpoint layout:
++--------------------------+  0x0000
+| checkpoint_ver           |
+| ......                   |
+| checksum_offset          |------+
+| ......                   |      |
+| sit_nat_version_bitmap[] |<-----|-------+
+| ......                   |      |       |
+| checksum_value           |<-----+       |
++--------------------------+  0x1000      |
+|                          |      nat_bitmap + sit_bitmap
+| payload blocks           |              |
+|                          |              |
++--------------------------|<-------------+
 
-And it needs to wait for Jaegeuk's opinion.
+Obviously, if nat_bitmap size + sit_bitmap size is larger than
+MAX_BITMAP_SIZE_IN_CKPT, nat_bitmap or sit_bitmap may overlap
+checkpoint checksum's position, once checkpoint() is triggered
+from kernel, nat or sit bitmap will be damaged by checksum field.
 
-Thanks,
+In order to fix this, let's relocate checksum_value's position
+to the head of sit_nat_version_bitmap as below, then nat/sit
+bitmap and chksum value update will become safe.
 
-> 
-> Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
-> ---
->  fs/f2fs/gc.c    | 3 +--
->  fs/f2fs/gc.h    | 2 --
->  fs/f2fs/sysfs.c | 3 ---
->  3 files changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 963fb4571fd9..9c3ed89c8c5b 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -77,7 +77,7 @@ static int gc_thread_func(void *data)
->  		 * So, I'd like to wait some time to collect dirty segments.
->  		 */
->  		if (sbi->gc_mode == GC_URGENT) {
-> -			wait_ms = gc_th->urgent_sleep_time;
-> +			wait_ms = 1;
->  			mutex_lock(&sbi->gc_mutex);
->  			goto do_gc;
->  		}
-> @@ -129,7 +129,6 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
->  		goto out;
->  	}
->  
-> -	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
->  	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
->  	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
->  	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
-> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> index bbac9d3787bd..de79a867837e 100644
-> --- a/fs/f2fs/gc.h
-> +++ b/fs/f2fs/gc.h
-> @@ -10,7 +10,6 @@
->  						 * whether IO subsystem is idle
->  						 * or not
->  						 */
-> -#define DEF_GC_THREAD_URGENT_SLEEP_TIME	500	/* 500 ms */
->  #define DEF_GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
->  #define DEF_GC_THREAD_MAX_SLEEP_TIME	60000
->  #define DEF_GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
-> @@ -27,7 +26,6 @@ struct f2fs_gc_kthread {
->  	wait_queue_head_t gc_wait_queue_head;
->  
->  	/* for gc sleep time */
-> -	unsigned int urgent_sleep_time;
->  	unsigned int min_sleep_time;
->  	unsigned int max_sleep_time;
->  	unsigned int no_gc_sleep_time;
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 729f46a3c9ee..0165431e83e5 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -397,8 +397,6 @@ static struct f2fs_attr f2fs_attr_##_name = {			\
->  	.id	= _id,						\
->  }
->  
-> -F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent_sleep_time,
-> -							urgent_sleep_time);
->  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
->  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
->  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
-> @@ -459,7 +457,6 @@ F2FS_FEATURE_RO_ATTR(sb_checksum, FEAT_SB_CHECKSUM);
->  
->  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
->  static struct attribute *f2fs_attrs[] = {
-> -	ATTR_LIST(gc_urgent_sleep_time),
->  	ATTR_LIST(gc_min_sleep_time),
->  	ATTR_LIST(gc_max_sleep_time),
->  	ATTR_LIST(gc_no_gc_sleep_time),
-> 
+After:
+
+struct f2fs_checkpoint layout:
++--------------------------+  0x0000
+| checkpoint_ver           |
+| ......                   |
+| checksum_offset          |------+
+| ......                   |      |
+| sit_nat_version_bitmap[] |<-----+
+| ......                   |<-------------+
+|                          |              |
++--------------------------+  0x1000      |
+|                          |      nat_bitmap + sit_bitmap
+| payload blocks           |              |
+|                          |              |
++--------------------------|<-------------+
+
+Related report and discussion:
+
+https://sourceforge.net/p/linux-f2fs/mailman/message/36642346/
+
+In addition, during writing checkpoint, if large_nat_bitmap feature is
+enabled, we need to set CP_LARGE_NAT_BITMAP_FLAG flag in checkpoint.
+
+Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v3:
+- if large_nat_bitmap is off, fix to configure checksum_offset to
+CP_CHKSUM_OFFSET.
+ fsck/f2fs.h        |  9 ++++++++-
+ fsck/fsck.c        | 37 +++++++++++++++++++++++++++++++++++++
+ fsck/fsck.h        |  1 +
+ fsck/main.c        |  2 ++
+ fsck/mount.c       |  9 ++++++++-
+ fsck/resize.c      |  5 +++++
+ include/f2fs_fs.h  | 10 ++++++++--
+ mkfs/f2fs_format.c |  5 ++++-
+ 8 files changed, 73 insertions(+), 5 deletions(-)
+
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index 93f01e5..4dc6698 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -270,9 +270,16 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
+ 	int offset;
+ 
+ 	if (is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
++		unsigned int chksum_size = 0;
++
+ 		offset = (flag == SIT_BITMAP) ?
+ 			le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
+-		return &ckpt->sit_nat_version_bitmap + offset;
++
++		if (le32_to_cpu(ckpt->checksum_offset) ==
++					CP_MIN_CHKSUM_OFFSET)
++			chksum_size = sizeof(__le32);
++
++		return &ckpt->sit_nat_version_bitmap + offset + chksum_size;
+ 	}
+ 
+ 	if (le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload) > 0) {
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index a8c8923..b5daeb4 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1917,6 +1917,19 @@ int fsck_chk_meta(struct f2fs_sb_info *sbi)
+ 	return 0;
+ }
+ 
++void fsck_chk_checkpoint(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
++
++	if (get_cp(ckpt_flags) & CP_LARGE_NAT_BITMAP_FLAG) {
++		if (get_cp(checksum_offset) != CP_MIN_CHKSUM_OFFSET) {
++			ASSERT_MSG("Deprecated layout of large_nat_bitmap, "
++				"chksum_offset:%u", get_cp(checksum_offset));
++			c.fix_chksum = 1;
++		}
++	}
++}
++
+ void fsck_init(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+@@ -2017,6 +2030,23 @@ static void flush_curseg_sit_entries(struct f2fs_sb_info *sbi)
+ 	free(sit_blk);
+ }
+ 
++static void fix_checksum(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
++	struct f2fs_nm_info *nm_i = NM_I(sbi);
++	struct sit_info *sit_i = SIT_I(sbi);
++	void *bitmap_offset;
++
++	if (!c.fix_chksum)
++		return;
++
++	bitmap_offset = cp->sit_nat_version_bitmap + sizeof(__le32);
++
++	memcpy(bitmap_offset, nm_i->nat_bitmap, nm_i->bitmap_size);
++	memcpy(bitmap_offset + nm_i->bitmap_size,
++			sit_i->sit_bitmap, sit_i->bitmap_size);
++}
++
+ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+@@ -2038,6 +2068,12 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 		flags |= CP_TRIMMED_FLAG;
+ 	if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
+ 		flags |= CP_DISABLED_FLAG;
++	if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG)) {
++		flags |= CP_LARGE_NAT_BITMAP_FLAG;
++		set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
++	} else {
++		set_cp(checksum_offset, CP_CHKSUM_OFFSET);
++	}
+ 
+ 	if (flags & CP_UMOUNT_FLAG)
+ 		cp_blocks = 8;
+@@ -2717,6 +2753,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 				write_curseg_info(sbi);
+ 				flush_curseg_sit_entries(sbi);
+ 			}
++			fix_checksum(sbi);
+ 			fix_checkpoint(sbi);
+ 		} else if (is_set_ckpt_flags(cp, CP_FSCK_FLAG) ||
+ 			is_set_ckpt_flags(cp, CP_QUOTA_NEED_FSCK_FLAG)) {
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index cbd6e93..c8802b0 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -154,6 +154,7 @@ extern int fsck_chk_dentry_blk(struct f2fs_sb_info *, u32, struct child_info *,
+ 		int, int);
+ int fsck_chk_inline_dentries(struct f2fs_sb_info *, struct f2fs_node *,
+ 		struct child_info *);
++void fsck_chk_checkpoint(struct f2fs_sb_info *sbi);
+ int fsck_chk_meta(struct f2fs_sb_info *sbi);
+ int fsck_chk_curseg_info(struct f2fs_sb_info *);
+ int convert_encrypted_name(unsigned char *, u32, unsigned char *, int);
+diff --git a/fsck/main.c b/fsck/main.c
+index 03076d9..afdfec9 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -616,6 +616,8 @@ static void do_fsck(struct f2fs_sb_info *sbi)
+ 		c.fix_on = 1;
+ 	}
+ 
++	fsck_chk_checkpoint(sbi);
++
+ 	fsck_chk_quota_node(sbi);
+ 
+ 	/* Traverse all block recursively from root inode */
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 95c5357..5a0955e 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -774,7 +774,8 @@ static int verify_checksum_chksum(struct f2fs_checkpoint *cp)
+ 	unsigned int chksum_offset = get_cp(checksum_offset);
+ 	unsigned int crc, cal_crc;
+ 
+-	if (chksum_offset > CP_CHKSUM_OFFSET) {
++	if (chksum_offset < CP_MIN_CHKSUM_OFFSET ||
++			chksum_offset > CP_CHKSUM_OFFSET) {
+ 		MSG(0, "\tInvalid CP CRC offset: %u\n", chksum_offset);
+ 		return -1;
+ 	}
+@@ -2372,6 +2373,12 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 		flags |= CP_TRIMMED_FLAG;
+ 	if (is_set_ckpt_flags(cp, CP_DISABLED_FLAG))
+ 		flags |= CP_DISABLED_FLAG;
++	if (is_set_ckpt_flags(cp, CP_LARGE_NAT_BITMAP_FLAG)) {
++		flags |= CP_LARGE_NAT_BITMAP_FLAG;
++		set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
++	} else {
++		set_cp(checksum_offset, CP_CHKSUM_OFFSET);
++	}
+ 
+ 	set_cp(free_segment_count, get_free_segments(sbi));
+ 	set_cp(valid_block_count, sbi->total_valid_block_count);
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 5537a73..fc563f2 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -514,6 +514,11 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
+ 	flags = update_nat_bits_flags(new_sb, cp, get_cp(ckpt_flags));
+ 	if (flags & CP_COMPACT_SUM_FLAG)
+ 		flags &= ~CP_COMPACT_SUM_FLAG;
++	if (flags & CP_LARGE_NAT_BITMAP_FLAG)
++		set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
++	else
++		set_cp(checksum_offset, CP_CHKSUM_OFFSET);
++
+ 	set_cp(ckpt_flags, flags);
+ 
+ 	memcpy(new_cp, cp, (unsigned char *)cp->sit_nat_version_bitmap -
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index e0a4cbf..84a4e55 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -382,6 +382,7 @@ struct f2fs_configuration {
+ 	int ro;
+ 	int preserve_limits;		/* preserve quota limits */
+ 	int large_nat_bitmap;
++	int fix_chksum;			/* fix old cp.chksum position */
+ 	__le32 feature;			/* defined features */
+ 
+ 	/* mkfs parameters */
+@@ -692,10 +693,15 @@ struct f2fs_checkpoint {
+ 	unsigned char sit_nat_version_bitmap[1];
+ } __attribute__((packed));
+ 
++#define CP_BITMAP_OFFSET	\
++	(offsetof(struct f2fs_checkpoint, sit_nat_version_bitmap))
++#define CP_MIN_CHKSUM_OFFSET	CP_BITMAP_OFFSET
++
++#define MIN_NAT_BITMAP_SIZE	64
+ #define MAX_SIT_BITMAP_SIZE_IN_CKPT    \
+-	(CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)
++	(CP_CHKSUM_OFFSET - CP_BITMAP_OFFSET - MIN_NAT_BITMAP_SIZE)
+ #define MAX_BITMAP_SIZE_IN_CKPT	\
+-	(CP_CHKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1)
++	(CP_CHKSUM_OFFSET - CP_BITMAP_OFFSET)
+ 
+ /*
+  * For orphan inode management
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index ab8103c..ed27700 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -690,7 +690,10 @@ static int f2fs_write_check_point_pack(void)
+ 	set_cp(nat_ver_bitmap_bytesize, ((get_sb(segment_count_nat) / 2) <<
+ 			 get_sb(log_blocks_per_seg)) / 8);
+ 
+-	set_cp(checksum_offset, CP_CHKSUM_OFFSET);
++	if (c.large_nat_bitmap)
++		set_cp(checksum_offset, CP_MIN_CHKSUM_OFFSET);
++	else
++		set_cp(checksum_offset, CP_CHKSUM_OFFSET);
+ 
+ 	crc = f2fs_checkpoint_chksum(cp);
+ 	*((__le32 *)((unsigned char *)cp + get_cp(checksum_offset))) =
+-- 
+2.18.0.rc1
