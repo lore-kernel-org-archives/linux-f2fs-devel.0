@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to do sanity check on segment bitmap of LFS curseg
-Date: Thu, 16 May 2019 14:36:53 +0800
-Message-ID: <20190516063653.14142-1-yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: fix to do sanity check on segment bitmap of LFS curseg
+Date: Thu, 16 May 2019 17:32:13 +0800
+Message-ID: <20190516093213.72645-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -46,40 +46,48 @@ current in-used segment.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+v2:
+- check .next_blkoff for SSR curseg.
+ fs/f2fs/segment.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8dee063c833f..4a25fb12bdb1 100644
+index 8dee063c833f..b5f21909356f 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -4232,6 +4232,35 @@ static int build_dirty_segmap(struct f2fs_sb_info *sbi)
+@@ -4232,6 +4232,41 @@ static int build_dirty_segmap(struct f2fs_sb_info *sbi)
  	return init_victim_secmap(sbi);
  }
  
 +int sanity_check_curseg(struct f2fs_sb_info *sbi)
 +{
-+	int i, j;
++	int i;
 +
 +	/*
-+	 * In current segment with LFS allocation type, all space after
-+	 * .next_blkoff position should be all valid.
++	 * In LFS/SSR curseg, .next_blkoff should point to an unused blkaddr;
++	 * In LFS curseg, all blkaddr after .next_blkoff should be unused.
 +	 */
 +	for (i = 0; i < NO_CHECK_TYPE; i++) {
 +		struct curseg_info *curseg = CURSEG_I(sbi, i);
 +		struct seg_entry *se = get_seg_entry(sbi, curseg->segno);
++		unsigned int blkofs = curseg->next_blkoff;
++
++		if (f2fs_test_bit(blkofs, se->cur_valid_map))
++			goto out;
 +
 +		if (curseg->alloc_type == SSR)
 +			continue;
 +
-+		for (j = curseg->next_blkoff; j < sbi->blocks_per_seg; j++) {
-+			if (!f2fs_test_bit(j, se->cur_valid_map))
++		for (blkofs += 1; blkofs < sbi->blocks_per_seg; blkofs++) {
++			if (!f2fs_test_bit(blkofs, se->cur_valid_map))
 +				continue;
-+
++out:
 +			f2fs_msg(sbi->sb, KERN_ERR,
-+				"Current segment:%u, segno:%u, "
-+				"next_blkoff:%u, cur:%u",
-+				i, curseg->segno, curseg->next_blkoff, j);
++				"Current segment's next free block offset is "
++				"inconsistent with bitmap, logtype:%u, "
++				"segno:%u, type:%u, next_blkoff:%u, blkofs:%u",
++				i, curseg->segno, curseg->alloc_type,
++				curseg->next_blkoff, blkofs);
 +			return -EINVAL;
 +		}
 +	}
@@ -89,7 +97,7 @@ index 8dee063c833f..4a25fb12bdb1 100644
  /*
   * Update min, max modified time for cost-benefit GC algorithm
   */
-@@ -4327,6 +4356,10 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+@@ -4327,6 +4362,10 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
  	if (err)
  		return err;
  
