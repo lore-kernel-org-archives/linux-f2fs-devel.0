@@ -1,13 +1,17 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] loop: avoid EAGAIN, if offset or block_size are changed
-Date: Fri, 17 May 2019 17:47:51 -0700
-Message-ID: <20190518004751.18962-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] loop: avoid EAGAIN, if offset or block_size are
+ changed
+Date: Fri, 17 May 2019 17:53:04 -0700
+Message-ID: <20190518005304.GA19446@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190518004751.18962-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190518004751.18962-1-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Cc: stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 This patch tries to avoid EAGAIN due to nrpages!=0 that was originally trying
@@ -24,11 +28,14 @@ Reported-by: Gwendal Grignou <gwendal@chromium.org>
 Reported-by: grygorii tertychnyi <gtertych@cisco.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- drivers/block/loop.c | 44 +++++++++++++++++---------------------------
- 1 file changed, 17 insertions(+), 27 deletions(-)
+v2 from v1:
+ - remove obsolete jump
+
+ drivers/block/loop.c | 45 +++++++++++++++++---------------------------
+ 1 file changed, 17 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 102d79575895..7c7d2d9c47d0 100644
+index 102d79575895..42994de2dd12 100644
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
 @@ -1212,6 +1212,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
@@ -88,7 +95,7 @@ index 102d79575895..7c7d2d9c47d0 100644
  	int err = 0;
  
  	if (lo->lo_state != Lo_bound)
-@@ -1506,23 +1504,10 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
+@@ -1506,30 +1504,21 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
  	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
  		return -EINVAL;
  
@@ -114,8 +121,8 @@ index 102d79575895..7c7d2d9c47d0 100644
  	blk_queue_logical_block_size(lo->lo_queue, arg);
  	blk_queue_physical_block_size(lo->lo_queue, arg);
  	blk_queue_io_min(lo->lo_queue, arg);
-@@ -1530,6 +1515,11 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
- out_unfreeze:
+ 	loop_update_dio(lo);
+-out_unfreeze:
  	blk_mq_unfreeze_queue(lo->lo_queue);
  
 +	/* truncate stale pages cached by previous operations */
