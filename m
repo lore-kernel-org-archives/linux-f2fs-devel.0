@@ -1,137 +1,53 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] loop: avoid EAGAIN, if offset or block_size are
- changed
-Date: Fri, 17 May 2019 17:53:04 -0700
-Message-ID: <20190518005304.GA19446@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190518004751.18962-1-jaegeuk@kernel.org>
+From: Ju Hyung Park <qkrwngud825@gmail.com>
+Subject: Re: [PATCH v3 2/2] f2fs-tools: relocate chksum_offset
+ for large_nat_bitmap feature
+Date: Sun, 19 May 2019 05:09:19 +0900
+Message-ID: <CAD14+f1+puy4M6rL_SbGt9vej=7LgK+qEjq71_878=oqSvjJ2Q@mail.gmail.com>
+References: <20190514093340.40217-1-yuchao0@huawei.com>
+ <20190514093340.40217-2-yuchao0@huawei.com>
+ <CAD14+f2ckNUv9n-Zb9UL_ojX8=24tYBhT-SsrcpVNogqee2tkA@mail.gmail.com>
+ <6bcbb5e8-55ad-49c1-bb77-f7f677ceb526@huawei.com>
+ <CAD14+f3NHosrL=5UOBSMbFxQ91x-AuWOj_w=JYkJSnmfDgTkvA@mail.gmail.com>
+ <CAD14+f0ZTmmLBXtmHF_Kz23JLSJy+UzpNxwSMV4rvSCse3y7EA@mail.gmail.com>
+ <7e1bfa07-5ee8-a276-fe6a-6d79bd9270c3@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20190518004751.18962-1-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <qkrwngud825@gmail.com>) id 1hS5eD-0007b9-UM
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 18 May 2019 20:09:37 +0000
+Received: from mail-qt1-f193.google.com ([209.85.160.193])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1hS5eC-006hrU-6p
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 18 May 2019 20:09:37 +0000
+Received: by mail-qt1-f193.google.com with SMTP id t1so11900373qtc.12
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 18 May 2019 13:09:35 -0700 (PDT)
+In-Reply-To: <7e1bfa07-5ee8-a276-fe6a-6d79bd9270c3@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-This patch tries to avoid EAGAIN due to nrpages!=0 that was originally trying
-to drop stale pages resulting in wrong data access.
+Hey Chao,
 
-Report: https://bugs.chromium.org/p/chromium/issues/detail?id=938958#c38
+Sorry for the late reply.
 
-Cc: <stable@vger.kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org
-Cc: Bart Van Assche <bvanassche@acm.org>
-Fixes: 5db470e229e2 ("loop: drop caches if offset or block_size are changed")
-Reported-by: Gwendal Grignou <gwendal@chromium.org>
-Reported-by: grygorii tertychnyi <gtertych@cisco.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
-v2 from v1:
- - remove obsolete jump
+On Wed, May 15, 2019 at 6:23 PM Chao Yu <yuchao0@huawei.com> wrote:
+> So I doubt that sit version bitmap is corrupted, could you add below log and
+> reproduce this issue?
 
- drivers/block/loop.c | 45 +++++++++++++++++---------------------------
- 1 file changed, 17 insertions(+), 28 deletions(-)
+Just done it. The logs are at http://arter97.com/f2fs/v3__/
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 102d79575895..42994de2dd12 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1212,6 +1212,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
- 	kuid_t uid = current_uid();
- 	struct block_device *bdev;
- 	bool partscan = false;
-+	bool drop_caches = false;
- 
- 	err = mutex_lock_killable(&loop_ctl_mutex);
- 	if (err)
-@@ -1232,10 +1233,8 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
- 	}
- 
- 	if (lo->lo_offset != info->lo_offset ||
--	    lo->lo_sizelimit != info->lo_sizelimit) {
--		sync_blockdev(lo->lo_device);
--		kill_bdev(lo->lo_device);
--	}
-+	    lo->lo_sizelimit != info->lo_sizelimit)
-+		drop_caches = true;
- 
- 	/* I/O need to be drained during transfer transition */
- 	blk_mq_freeze_queue(lo->lo_queue);
-@@ -1265,14 +1264,6 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
- 
- 	if (lo->lo_offset != info->lo_offset ||
- 	    lo->lo_sizelimit != info->lo_sizelimit) {
--		/* kill_bdev should have truncated all the pages */
--		if (lo->lo_device->bd_inode->i_mapping->nrpages) {
--			err = -EAGAIN;
--			pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
--				__func__, lo->lo_number, lo->lo_file_name,
--				lo->lo_device->bd_inode->i_mapping->nrpages);
--			goto out_unfreeze;
--		}
- 		if (figure_loop_size(lo, info->lo_offset, info->lo_sizelimit)) {
- 			err = -EFBIG;
- 			goto out_unfreeze;
-@@ -1317,6 +1308,12 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
- 		bdev = lo->lo_device;
- 		partscan = true;
- 	}
-+
-+	/* truncate stale pages cached by previous operations */
-+	if (!err && drop_caches) {
-+		sync_blockdev(lo->lo_device);
-+		kill_bdev(lo->lo_device);
-+	}
- out_unlock:
- 	mutex_unlock(&loop_ctl_mutex);
- 	if (partscan)
-@@ -1498,6 +1495,7 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
- 
- static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
- {
-+	bool drop_caches = false;
- 	int err = 0;
- 
- 	if (lo->lo_state != Lo_bound)
-@@ -1506,30 +1504,21 @@ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
- 	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
- 		return -EINVAL;
- 
--	if (lo->lo_queue->limits.logical_block_size != arg) {
--		sync_blockdev(lo->lo_device);
--		kill_bdev(lo->lo_device);
--	}
-+	if (lo->lo_queue->limits.logical_block_size != arg)
-+		drop_caches = true;
- 
- 	blk_mq_freeze_queue(lo->lo_queue);
--
--	/* kill_bdev should have truncated all the pages */
--	if (lo->lo_queue->limits.logical_block_size != arg &&
--			lo->lo_device->bd_inode->i_mapping->nrpages) {
--		err = -EAGAIN;
--		pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
--			__func__, lo->lo_number, lo->lo_file_name,
--			lo->lo_device->bd_inode->i_mapping->nrpages);
--		goto out_unfreeze;
--	}
--
- 	blk_queue_logical_block_size(lo->lo_queue, arg);
- 	blk_queue_physical_block_size(lo->lo_queue, arg);
- 	blk_queue_io_min(lo->lo_queue, arg);
- 	loop_update_dio(lo);
--out_unfreeze:
- 	blk_mq_unfreeze_queue(lo->lo_queue);
- 
-+	/* truncate stale pages cached by previous operations */
-+	if (drop_caches) {
-+		sync_blockdev(lo->lo_device);
-+		kill_bdev(lo->lo_device);
-+	}
- 	return err;
- }
- 
--- 
-2.19.0.605.g01d371f741-goog
+Thanks :)
