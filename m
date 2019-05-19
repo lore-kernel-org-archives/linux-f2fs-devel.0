@@ -1,74 +1,170 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v3 2/2] f2fs-tools: relocate chksum_offset
- for large_nat_bitmap feature
-Date: Sun, 19 May 2019 23:09:13 +0800
-Message-ID: <e3303318-758e-b263-f6ed-d55e98bdea78@kernel.org>
-References: <20190514093340.40217-1-yuchao0@huawei.com>
- <20190514093340.40217-2-yuchao0@huawei.com>
- <CAD14+f2ckNUv9n-Zb9UL_ojX8=24tYBhT-SsrcpVNogqee2tkA@mail.gmail.com>
- <6bcbb5e8-55ad-49c1-bb77-f7f677ceb526@huawei.com>
- <CAD14+f3NHosrL=5UOBSMbFxQ91x-AuWOj_w=JYkJSnmfDgTkvA@mail.gmail.com>
- <CAD14+f0ZTmmLBXtmHF_Kz23JLSJy+UzpNxwSMV4rvSCse3y7EA@mail.gmail.com>
- <7e1bfa07-5ee8-a276-fe6a-6d79bd9270c3@huawei.com>
- <CAD14+f1+puy4M6rL_SbGt9vej=7LgK+qEjq71_878=oqSvjJ2Q@mail.gmail.com>
- <0f89b0b6-5cc5-6618-72e5-8a2f81947161@kernel.org>
- <CAD14+f1xgYKAnzqLb-ZpzbeskZegGHXbrJ+vEHZe19_Jp3pBTQ@mail.gmail.com>
+From: Ju Hyung Park <qkrwngud825@gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: relocate chksum_offset for
+ large_nat_bitmap feature
+Date: Mon, 20 May 2019 02:31:49 +0900
+Message-ID: <CAD14+f0f9fKMmzNYXzoPD9W5CrECwvmGLi2a8EphfyZhTPjvnA@mail.gmail.com>
+References: <20190426022554.56393-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1hSNRH-0006jY-3V
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 May 2019 15:09:27 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hSNRE-008is6-9v
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 May 2019 15:09:27 +0000
-In-Reply-To: <CAD14+f1xgYKAnzqLb-ZpzbeskZegGHXbrJ+vEHZe19_Jp3pBTQ@mail.gmail.com>
-Content-Language: en-US
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Ju Hyung Park <qkrwngud825@gmail.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190426022554.56393-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Ju Hyung,
+Hi Jaegeuk and Chao,
 
-On 2019-5-19 17:19, Ju Hyung Park wrote:
-> Hi Chao,
-> 
-> On Sun, May 19, 2019 at 2:09 PM Chao Yu <chao@kernel.org> wrote:
->> I've found one bug when repairing cp_payload blocks, could you try it?
->>
->> [PATCH] fsck.f2fs: fix to repair cp_loads blocks at correct position
-> 
-> http://arter97.com/f2fs/v3__cp
-> 
-> After the patch, 2nd, 3rd and the 4th run all returns the same output.
-> I think now fsck only needs to run once :)
+I was semi-forced today to use the new kernel and test f2fs.
 
-Thanks for quick test. :)
+My Ubuntu initramfs got a bit wonky and I had to boot into live CD and
+fix some stuffs. The live CD was using 4.15 kernel, and just mounting
+the f2fs partition there corrupted f2fs and my 4.19(with 5.1-rc1-4.19
+f2fs-stable merged) refused to mount with "SIT is corrupted node"
+message.
 
-> 
-> Final question though, is it expected that the first run to print 62MB
-> worth of logs?
+I used the latest f2fs-tools sent by Chao including "fsck.f2fs: fix to
+repair cp_loads blocks at correct position"
 
-I think last bug which above patch tries to fix really crashes sit version
-bitmap area.. result in wrong sit block use and showing so many error messages
-in fsck, that should only happen when the image is badly corrupted, I think it
-is worth to show enough information which can be used for better troubleshoot later.
+It spit out 140M worth of output, but at least I didn't have to run it
+twice. Everything returned "Ok" in the 2nd run.
+The new log is at
+http://arter97.com/f2fs/final
 
-Thanks,
+After fixing the image, I used my 4.19 kernel with 5.2-rc1-4.19
+f2fs-stable merged and it mounted.
 
-> 
-> Thanks.
-> 
+But, I got this:
+[    1.047791] F2FS-fs (nvme0n1p3): layout of large_nat_bitmap is
+deprecated, run fsck to repair, chksum_offset: 4092
+[    1.081307] F2FS-fs (nvme0n1p3): Found nat_bits in checkpoint
+[    1.161520] F2FS-fs (nvme0n1p3): recover fsync data on readonly fs
+[    1.162418] F2FS-fs (nvme0n1p3): Mounted with checkpoint version = 761c7e00
+
+But after doing a reboot, the message is gone:
+[    1.098423] F2FS-fs (nvme0n1p3): Found nat_bits in checkpoint
+[    1.177771] F2FS-fs (nvme0n1p3): recover fsync data on readonly fs
+[    1.178365] F2FS-fs (nvme0n1p3): Mounted with checkpoint version = 761c7eda
+
+I'm not exactly sure why the kernel detected that I'm still using the
+old layout on the first boot. Maybe fsck didn't fix it properly, or
+the check from the kernel is improper.
+
+I also noticed that Jaegeuk sent v1 of this patch to upstream. (Maybe
+that's why the kernel detected old layout?) Please send v2 to upstream
+soon, as running older fsck will cause much more headaches.
+
+Thanks.
+
+
+On Fri, Apr 26, 2019 at 11:26 AM Chao Yu <yuchao0@huawei.com> wrote:
+>
+> For large_nat_bitmap feature, there is a design flaw:
+>
+> Previous:
+>
+> struct f2fs_checkpoint layout:
+> +--------------------------+  0x0000
+> | checkpoint_ver           |
+> | ......                   |
+> | checksum_offset          |------+
+> | ......                   |      |
+> | sit_nat_version_bitmap[] |<-----|-------+
+> | ......                   |      |       |
+> | checksum_value           |<-----+       |
+> +--------------------------+  0x1000      |
+> |                          |      nat_bitmap + sit_bitmap
+> | payload blocks           |              |
+> |                          |              |
+> +--------------------------|<-------------+
+>
+> Obviously, if nat_bitmap size + sit_bitmap size is larger than
+> MAX_BITMAP_SIZE_IN_CKPT, nat_bitmap or sit_bitmap may overlap
+> checkpoint checksum's position, once checkpoint() is triggered
+> from kernel, nat or sit bitmap will be damaged by checksum field.
+>
+> In order to fix this, let's relocate checksum_value's position
+> to the head of sit_nat_version_bitmap as below, then nat/sit
+> bitmap and chksum value update will become safe.
+>
+> After:
+>
+> struct f2fs_checkpoint layout:
+> +--------------------------+  0x0000
+> | checkpoint_ver           |
+> | ......                   |
+> | checksum_offset          |------+
+> | ......                   |      |
+> | sit_nat_version_bitmap[] |<-----+
+> | ......                   |<-------------+
+> |                          |              |
+> +--------------------------+  0x1000      |
+> |                          |      nat_bitmap + sit_bitmap
+> | payload blocks           |              |
+> |                          |              |
+> +--------------------------|<-------------+
+>
+> Related report and discussion:
+>
+> https://sourceforge.net/p/linux-f2fs/mailman/message/36642346/
+>
+> Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+> v2:
+> - improve hint message suggested by Ju Hyung.
+> - move verification to f2fs_sanity_check_ckpt().
+>  fs/f2fs/f2fs.h  |  4 +++-
+>  fs/f2fs/super.c | 13 +++++++++++++
+>  2 files changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 119bc5a9783e..aa71c1aa9eaa 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1909,9 +1909,11 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
+>         int offset;
+>
+>         if (is_set_ckpt_flags(sbi, CP_LARGE_NAT_BITMAP_FLAG)) {
+> +               unsigned int chksum_size = sizeof(__le32);
+> +
+>                 offset = (flag == SIT_BITMAP) ?
+>                         le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
+> -               return &ckpt->sit_nat_version_bitmap + offset;
+> +               return &ckpt->sit_nat_version_bitmap + offset + chksum_size;
+>         }
+>
+>         if (__cp_payload(sbi) > 0) {
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index fefc8cc6e756..22241bb866df 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -2714,6 +2714,19 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+>                 return 1;
+>         }
+>
+> +       if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
+> +               unsigned int chksum_offset;
+> +
+> +               chksum_offset = le32_to_cpu(ckpt->checksum_offset);
+> +               if (chksum_offset != CP_MIN_CHKSUM_OFFSET) {
+> +                       f2fs_msg(sbi->sb, KERN_WARNING,
+> +                               "using deprecated layout of large_nat_bitmap, "
+> +                               "please run fsck v1.13.0 or higher to repair, "
+> +                               "chksum_offset: %u", chksum_offset);
+> +                       return 1;
+> +               }
+> +       }
+> +
+>         if (unlikely(f2fs_cp_error(sbi))) {
+>                 f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
+>                 return 1;
+> --
+> 2.18.0.rc1
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
