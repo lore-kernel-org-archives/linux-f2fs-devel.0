@@ -1,23 +1,23 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 04/14] fscrypt: clean up some BUG_ON()s in
- block encryption/decryption
-Date: Mon, 20 May 2019 09:29:42 -0700
-Message-ID: <20190520162952.156212-5-ebiggers@kernel.org>
+Subject: [PATCH v2 07/14] fscrypt: handle blocksize < PAGE_SIZE
+ in fscrypt_zeroout_range()
+Date: Mon, 20 May 2019 09:29:45 -0700
+Message-ID: <20190520162952.156212-8-ebiggers@kernel.org>
 References: <20190520162952.156212-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hSlBJ-0006Jy-PW
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:33 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hSlBN-0001Wl-Fg
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:37 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hSlBD-0005I3-UD
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:32 +0000
+ id 1hSlBM-00BNhO-77
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:37 +0000
 In-Reply-To: <20190520162952.156212-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,63 +33,69 @@ Cc: linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, Chandan Rajendra 
 
 From: Eric Biggers <ebiggers@google.com>
 
-Replace some BUG_ON()s with WARN_ON_ONCE() and returning an error code,
-and move the check for len divisible by FS_CRYPTO_BLOCK_SIZE into
-fscrypt_crypt_block() so that it's done for both encryption and
-decryption, not just encryption.
+Adjust fscrypt_zeroout_range() to encrypt a block at a time rather than
+a page at a time, so that it works when blocksize < PAGE_SIZE.
+
+This isn't optimized for performance, but then again this function
+already wasn't optimized for performance.  As a future optimization, we
+could submit much larger bios here.
+
+This is in preparation for allowing encryption on ext4 filesystems with
+blocksize != PAGE_SIZE.
+
+This is based on work by Chandan Rajendra.
 
 Reviewed-by: Chandan Rajendra <chandan@linux.ibm.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/crypto.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ fs/crypto/bio.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index e6802d7aca3c7..9cda0147fca95 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -161,7 +161,10 @@ int fscrypt_crypt_block(const struct inode *inode, fscrypt_direction_t rw,
- 	struct crypto_skcipher *tfm = ci->ci_ctfm;
- 	int res = 0;
- 
--	BUG_ON(len == 0);
-+	if (WARN_ON_ONCE(len <= 0))
-+		return -EINVAL;
-+	if (WARN_ON_ONCE(len % FS_CRYPTO_BLOCK_SIZE != 0))
-+		return -EINVAL;
- 
- 	fscrypt_generate_iv(&iv, lblk_num, ci);
- 
-@@ -224,8 +227,6 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
- 	struct page *ciphertext_page = page;
- 	int err;
- 
--	BUG_ON(len % FS_CRYPTO_BLOCK_SIZE != 0);
--
- 	if (inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES) {
- 		/* with inplace-encryption we just encrypt the page */
- 		err = fscrypt_crypt_block(inode, FS_ENCRYPT, lblk_num, page,
-@@ -237,7 +238,8 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
- 		return ciphertext_page;
- 	}
- 
--	BUG_ON(!PageLocked(page));
-+	if (WARN_ON_ONCE(!PageLocked(page)))
-+		return ERR_PTR(-EINVAL);
- 
- 	/* The encryption operation will require a bounce page. */
- 	ciphertext_page = fscrypt_alloc_bounce_page(gfp_flags);
-@@ -274,8 +276,9 @@ EXPORT_SYMBOL(fscrypt_encrypt_page);
- int fscrypt_decrypt_page(const struct inode *inode, struct page *page,
- 			unsigned int len, unsigned int offs, u64 lblk_num)
+diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+index 92b2d5da5d8e1..f9111ffa12ffd 100644
+--- a/fs/crypto/bio.c
++++ b/fs/crypto/bio.c
+@@ -72,12 +72,12 @@ EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
+ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+ 				sector_t pblk, unsigned int len)
  {
--	if (!(inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES))
--		BUG_ON(!PageLocked(page));
-+	if (WARN_ON_ONCE(!PageLocked(page) &&
-+			 !(inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES)))
-+		return -EINVAL;
++	const unsigned int blockbits = inode->i_blkbits;
++	const unsigned int blocksize = 1 << blockbits;
+ 	struct page *ciphertext_page;
+ 	struct bio *bio;
+ 	int ret, err = 0;
  
- 	return fscrypt_crypt_block(inode, FS_DECRYPT, lblk_num, page, page,
- 				   len, offs, GFP_NOFS);
+-	BUG_ON(inode->i_sb->s_blocksize != PAGE_SIZE);
+-
+ 	ciphertext_page = fscrypt_alloc_bounce_page(GFP_NOWAIT);
+ 	if (!ciphertext_page)
+ 		return -ENOMEM;
+@@ -85,7 +85,7 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+ 	while (len--) {
+ 		err = fscrypt_crypt_block(inode, FS_ENCRYPT, lblk,
+ 					  ZERO_PAGE(0), ciphertext_page,
+-					  PAGE_SIZE, 0, GFP_NOFS);
++					  blocksize, 0, GFP_NOFS);
+ 		if (err)
+ 			goto errout;
+ 
+@@ -95,14 +95,11 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+ 			goto errout;
+ 		}
+ 		bio_set_dev(bio, inode->i_sb->s_bdev);
+-		bio->bi_iter.bi_sector =
+-			pblk << (inode->i_sb->s_blocksize_bits - 9);
++		bio->bi_iter.bi_sector = pblk << (blockbits - 9);
+ 		bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
+-		ret = bio_add_page(bio, ciphertext_page,
+-					inode->i_sb->s_blocksize, 0);
+-		if (ret != inode->i_sb->s_blocksize) {
++		ret = bio_add_page(bio, ciphertext_page, blocksize, 0);
++		if (WARN_ON(ret != blocksize)) {
+ 			/* should never happen! */
+-			WARN_ON(1);
+ 			bio_put(bio);
+ 			err = -EIO;
+ 			goto errout;
 -- 
 2.21.0.1020.gf2820cf01a-goog
