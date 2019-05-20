@@ -1,20 +1,18 @@
-From: Ju Hyung Park <qkrwngud825@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: relocate chksum_offset for
- large_nat_bitmap feature
-Date: Mon, 20 May 2019 02:31:49 +0900
-Message-ID: <CAD14+f0f9fKMmzNYXzoPD9W5CrECwvmGLi2a8EphfyZhTPjvnA@mail.gmail.com>
-References: <20190426022554.56393-1-yuchao0@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to check layout on last valid checkpoint park
+Date: Mon, 20 May 2019 10:09:22 +0800
+Message-ID: <20190520020922.62124-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190426022554.56393-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk and Chao,
+As Ju Hyung reported:
 
+"
 I was semi-forced today to use the new kernel and test f2fs.
 
 My Ubuntu initramfs got a bit wonky and I had to boot into live CD and
@@ -49,122 +47,77 @@ But after doing a reboot, the message is gone:
 I'm not exactly sure why the kernel detected that I'm still using the
 old layout on the first boot. Maybe fsck didn't fix it properly, or
 the check from the kernel is improper.
+"
 
-I also noticed that Jaegeuk sent v1 of this patch to upstream. (Maybe
-that's why the kernel detected old layout?) Please send v2 to upstream
-soon, as running older fsck will cause much more headaches.
+Although we have rebuild the old deprecated checkpoint with new layout
+during repair, we only repair last checkpoint park, the other old one is
+remained.
 
-Thanks.
+Once the image was mounted, we will 1) sanity check layout and 2) decide
+which checkpoint park to use according to cp_ver. So that we will print
+reported message unnecessarily at step 1), to avoid it, we simply move
+layout check into f2fs_sanity_check_ckpt() after step 2).
 
+Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
 
-On Fri, Apr 26, 2019 at 11:26 AM Chao Yu <yuchao0@huawei.com> wrote:
->
-> For large_nat_bitmap feature, there is a design flaw:
->
-> Previous:
->
-> struct f2fs_checkpoint layout:
-> +--------------------------+  0x0000
-> | checkpoint_ver           |
-> | ......                   |
-> | checksum_offset          |------+
-> | ......                   |      |
-> | sit_nat_version_bitmap[] |<-----|-------+
-> | ......                   |      |       |
-> | checksum_value           |<-----+       |
-> +--------------------------+  0x1000      |
-> |                          |      nat_bitmap + sit_bitmap
-> | payload blocks           |              |
-> |                          |              |
-> +--------------------------|<-------------+
->
-> Obviously, if nat_bitmap size + sit_bitmap size is larger than
-> MAX_BITMAP_SIZE_IN_CKPT, nat_bitmap or sit_bitmap may overlap
-> checkpoint checksum's position, once checkpoint() is triggered
-> from kernel, nat or sit bitmap will be damaged by checksum field.
->
-> In order to fix this, let's relocate checksum_value's position
-> to the head of sit_nat_version_bitmap as below, then nat/sit
-> bitmap and chksum value update will become safe.
->
-> After:
->
-> struct f2fs_checkpoint layout:
-> +--------------------------+  0x0000
-> | checkpoint_ver           |
-> | ......                   |
-> | checksum_offset          |------+
-> | ......                   |      |
-> | sit_nat_version_bitmap[] |<-----+
-> | ......                   |<-------------+
-> |                          |              |
-> +--------------------------+  0x1000      |
-> |                          |      nat_bitmap + sit_bitmap
-> | payload blocks           |              |
-> |                          |              |
-> +--------------------------|<-------------+
->
-> Related report and discussion:
->
-> https://sourceforge.net/p/linux-f2fs/mailman/message/36642346/
->
-> Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v2:
-> - improve hint message suggested by Ju Hyung.
-> - move verification to f2fs_sanity_check_ckpt().
->  fs/f2fs/f2fs.h  |  4 +++-
->  fs/f2fs/super.c | 13 +++++++++++++
->  2 files changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 119bc5a9783e..aa71c1aa9eaa 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1909,9 +1909,11 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
->         int offset;
->
->         if (is_set_ckpt_flags(sbi, CP_LARGE_NAT_BITMAP_FLAG)) {
-> +               unsigned int chksum_size = sizeof(__le32);
-> +
->                 offset = (flag == SIT_BITMAP) ?
->                         le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
-> -               return &ckpt->sit_nat_version_bitmap + offset;
-> +               return &ckpt->sit_nat_version_bitmap + offset + chksum_size;
->         }
->
->         if (__cp_payload(sbi) > 0) {
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index fefc8cc6e756..22241bb866df 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -2714,6 +2714,19 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
->                 return 1;
->         }
->
-> +       if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
-> +               unsigned int chksum_offset;
-> +
-> +               chksum_offset = le32_to_cpu(ckpt->checksum_offset);
-> +               if (chksum_offset != CP_MIN_CHKSUM_OFFSET) {
-> +                       f2fs_msg(sbi->sb, KERN_WARNING,
-> +                               "using deprecated layout of large_nat_bitmap, "
-> +                               "please run fsck v1.13.0 or higher to repair, "
-> +                               "chksum_offset: %u", chksum_offset);
-> +                       return 1;
-> +               }
-> +       }
-> +
->         if (unlikely(f2fs_cp_error(sbi))) {
->                 f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
->                 return 1;
-> --
-> 2.18.0.rc1
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Hi Jaegeuk,
+
+Ju Hyung suggested that we can show more detailed info about f2fs-tools
+version to user, I think it's helpful, could you consider to change the
+log as below?
+
+			f2fs_msg(sbi->sb, KERN_WARNING, 
+				"using deprecated layout of large_nat_bitmap, " 
+				"please run fsck v1.13.0 or higher to repair, " 
+				"chksum_offset: %u", chksum_offset); 
+
+ fs/f2fs/checkpoint.c | 11 -----------
+ fs/f2fs/super.c      |  9 +++++++++
+ 2 files changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 22c2cac646f4..739b03c9677b 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -832,17 +832,6 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (__is_set_ckpt_flags(*cp_block, CP_LARGE_NAT_BITMAP_FLAG)) {
+-		if (crc_offset != CP_MIN_CHKSUM_OFFSET) {
+-			f2fs_put_page(*cp_page, 1);
+-			f2fs_msg(sbi->sb, KERN_WARNING,
+-				"layout of large_nat_bitmap is deprecated, "
+-				"run fsck to repair, chksum_offset: %zu",
+-				crc_offset);
+-			return -EINVAL;
+-		}
+-	}
+-
+ 	crc = f2fs_checkpoint_chksum(sbi, *cp_block);
+ 	if (crc != cur_cp_crc(*cp_block)) {
+ 		f2fs_put_page(*cp_page, 1);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f26f0ec78b3d..3c71b9a71932 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2727,6 +2727,15 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 		return 1;
+ 	}
+ 
++	if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG) &&
++		le32_to_cpu(ckpt->checksum_offset) != CP_MIN_CHKSUM_OFFSET) {
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"layout of large_nat_bitmap is deprecated, "
++			"run fsck to repair, chksum_offset: %u",
++			le32_to_cpu(ckpt->checksum_offset));
++		return 1;
++	}
++
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
+ 		return 1;
+-- 
+2.18.0.rc1
