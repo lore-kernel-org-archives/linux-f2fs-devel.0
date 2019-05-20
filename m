@@ -1,22 +1,24 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 00/14] fscrypt,
- ext4: prepare for blocksize != PAGE_SIZE
-Date: Mon, 20 May 2019 09:29:38 -0700
-Message-ID: <20190520162952.156212-1-ebiggers@kernel.org>
+Subject: [PATCH v2 02/14] fscrypt: remove the "write" part of
+ struct fscrypt_ctx
+Date: Mon, 20 May 2019 09:29:40 -0700
+Message-ID: <20190520162952.156212-3-ebiggers@kernel.org>
+References: <20190520162952.156212-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hSlBG-0001VN-Bf
+ (envelope-from <ebiggers@kernel.org>) id 1hSlBG-0004nx-P5
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:30 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hSlBD-00BNft-At
+ id 1hSlBD-00BNg2-At
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:30 +0000
+In-Reply-To: <20190520162952.156212-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,70 +31,105 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-fscrypt@vger.kernel.org
 Cc: linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, Chandan Rajendra <chandan@linux.ibm.com>, linux-f2fs-devel@lists.sourceforge.net
 
-Hello,
+From: Eric Biggers <ebiggers@google.com>
 
-This patchset prepares fs/crypto/, and partially ext4, for the
-'blocksize != PAGE_SIZE' case.
+Now that fscrypt_ctx is not used for writes, remove the 'w' fields.
 
-This basically contains the encryption changes from Chandan Rajendra's
-patchset "[V2,00/13] Consolidate FS read I/O callbacks code"
-(https://patchwork.kernel.org/project/linux-fscrypt/list/?series=111039)
-that don't require introducing the read_callbacks and don't depend on
-fsverity stuff.  But they've been reworked to clean things up a lot.
+Reviewed-by: Chandan Rajendra <chandan@linux.ibm.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/bio.c         | 11 +++++------
+ fs/crypto/crypto.c      | 14 +++++++-------
+ include/linux/fscrypt.h |  7 ++-----
+ 3 files changed, 14 insertions(+), 18 deletions(-)
 
-I'd like to apply this patchset for 5.3 in order to make things forward
-for ext4 encryption with 'blocksize != PAGE_SIZE'.
-
-AFAICT, after this patchset the only thing stopping ext4 encryption from
-working with blocksize != PAGE_SIZE is the lack of encryption support in
-block_read_full_page(), which the read_callbacks will address.
-
-This patchset applies to v5.2-rc1, and it can also be retrieved from git
-at https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
-branch "fscrypt-subpage-blocks-prep".
-
-Changed since v1 (minor cleanups only):
-
-- In "fscrypt: simplify bounce page handling", also remove
-  the definition of FS_CTX_HAS_BOUNCE_BUFFER_FL.
-
-- In "ext4: decrypt only the needed blocks in ext4_block_write_begin()",
-  simplify the code slightly by moving the IS_ENCRYPTED() check.
-
-- Change __fscrypt_decrypt_bio() in a separate patch rather than as part
-  of "fscrypt: support decrypting multiple filesystem blocks per page".
-  The resulting code is the same, so I kept Chandan's Reviewed-by.
-
-- Improve the commit message of
-  "fscrypt: introduce fscrypt_decrypt_block_inplace()".
-
-Chandan Rajendra (3):
-  ext4: clear BH_Uptodate flag on decryption error
-  ext4: decrypt only the needed blocks in ext4_block_write_begin()
-  ext4: decrypt only the needed block in __ext4_block_zero_page_range()
-
-Eric Biggers (11):
-  fscrypt: simplify bounce page handling
-  fscrypt: remove the "write" part of struct fscrypt_ctx
-  fscrypt: rename fscrypt_do_page_crypto() to fscrypt_crypt_block()
-  fscrypt: clean up some BUG_ON()s in block encryption/decryption
-  fscrypt: introduce fscrypt_encrypt_block_inplace()
-  fscrypt: support encrypting multiple filesystem blocks per page
-  fscrypt: handle blocksize < PAGE_SIZE in fscrypt_zeroout_range()
-  fscrypt: introduce fscrypt_decrypt_block_inplace()
-  fscrypt: support decrypting multiple filesystem blocks per page
-  fscrypt: decrypt only the needed blocks in __fscrypt_decrypt_bio()
-  ext4: encrypt only up to last block in ext4_bio_write_page()
-
- fs/crypto/bio.c             |  73 +++------
- fs/crypto/crypto.c          | 299 ++++++++++++++++++++----------------
- fs/crypto/fscrypt_private.h |  15 +-
- fs/ext4/inode.c             |  37 +++--
- fs/ext4/page-io.c           |  44 +++---
- fs/f2fs/data.c              |  17 +-
- fs/ubifs/crypto.c           |  19 +--
- include/linux/fscrypt.h     |  96 ++++++++----
- 8 files changed, 319 insertions(+), 281 deletions(-)
-
+diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+index c857b70b5328c..c534253483874 100644
+--- a/fs/crypto/bio.c
++++ b/fs/crypto/bio.c
+@@ -53,9 +53,8 @@ EXPORT_SYMBOL(fscrypt_decrypt_bio);
+ 
+ static void completion_pages(struct work_struct *work)
+ {
+-	struct fscrypt_ctx *ctx =
+-		container_of(work, struct fscrypt_ctx, r.work);
+-	struct bio *bio = ctx->r.bio;
++	struct fscrypt_ctx *ctx = container_of(work, struct fscrypt_ctx, work);
++	struct bio *bio = ctx->bio;
+ 
+ 	__fscrypt_decrypt_bio(bio, true);
+ 	fscrypt_release_ctx(ctx);
+@@ -64,9 +63,9 @@ static void completion_pages(struct work_struct *work)
+ 
+ void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
+ {
+-	INIT_WORK(&ctx->r.work, completion_pages);
+-	ctx->r.bio = bio;
+-	fscrypt_enqueue_decrypt_work(&ctx->r.work);
++	INIT_WORK(&ctx->work, completion_pages);
++	ctx->bio = bio;
++	fscrypt_enqueue_decrypt_work(&ctx->work);
+ }
+ EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
+ 
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index 4b076f8daab75..ebfa13cfecb7d 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -58,11 +58,11 @@ void fscrypt_enqueue_decrypt_work(struct work_struct *work)
+ EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
+ 
+ /**
+- * fscrypt_release_ctx() - Releases an encryption context
+- * @ctx: The encryption context to release.
++ * fscrypt_release_ctx() - Release a decryption context
++ * @ctx: The decryption context to release.
+  *
+- * If the encryption context was allocated from the pre-allocated pool, returns
+- * it to that pool. Else, frees it.
++ * If the decryption context was allocated from the pre-allocated pool, return
++ * it to that pool.  Else, free it.
+  */
+ void fscrypt_release_ctx(struct fscrypt_ctx *ctx)
+ {
+@@ -79,12 +79,12 @@ void fscrypt_release_ctx(struct fscrypt_ctx *ctx)
+ EXPORT_SYMBOL(fscrypt_release_ctx);
+ 
+ /**
+- * fscrypt_get_ctx() - Gets an encryption context
++ * fscrypt_get_ctx() - Get a decryption context
+  * @gfp_flags:   The gfp flag for memory allocation
+  *
+- * Allocates and initializes an encryption context.
++ * Allocate and initialize a decryption context.
+  *
+- * Return: A new encryption context on success; an ERR_PTR() otherwise.
++ * Return: A new decryption context on success; an ERR_PTR() otherwise.
+  */
+ struct fscrypt_ctx *fscrypt_get_ctx(gfp_t gfp_flags)
+ {
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index d016fa384d607..1c7287f146a98 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -63,16 +63,13 @@ struct fscrypt_operations {
+ 	unsigned int max_namelen;
+ };
+ 
++/* Decryption work */
+ struct fscrypt_ctx {
+ 	union {
+-		struct {
+-			struct page *bounce_page;	/* Ciphertext page */
+-			struct page *control_page;	/* Original page  */
+-		} w;
+ 		struct {
+ 			struct bio *bio;
+ 			struct work_struct work;
+-		} r;
++		};
+ 		struct list_head free_list;	/* Free list */
+ 	};
+ 	u8 flags;				/* Flags */
 -- 
 2.21.0.1020.gf2820cf01a-goog
