@@ -1,190 +1,160 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: relocate chksum_offset for
- large_nat_bitmap feature
-Date: Mon, 20 May 2019 10:18:28 +0800
-Message-ID: <df9a51b0-b634-2b08-d849-e04bc5a44df8@huawei.com>
-References: <20190426022554.56393-1-yuchao0@huawei.com>
- <CAD14+f0f9fKMmzNYXzoPD9W5CrECwvmGLi2a8EphfyZhTPjvnA@mail.gmail.com>
+Subject: [PATCH] f2fs: fix to avoid deadloop if data_flush is on
+Date: Mon, 20 May 2019 17:36:59 +0800
+Message-ID: <20190520093659.50755-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD14+f0f9fKMmzNYXzoPD9W5CrECwvmGLi2a8EphfyZhTPjvnA@mail.gmail.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ju Hyung Park <qkrwngud825@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/5/20 1:31, Ju Hyung Park wrote:
-> Hi Jaegeuk and Chao,
-> 
-> I was semi-forced today to use the new kernel and test f2fs.
-> 
-> My Ubuntu initramfs got a bit wonky and I had to boot into live CD and
-> fix some stuffs. The live CD was using 4.15 kernel, and just mounting
-> the f2fs partition there corrupted f2fs and my 4.19(with 5.1-rc1-4.19
-> f2fs-stable merged) refused to mount with "SIT is corrupted node"
-> message.
-> 
-> I used the latest f2fs-tools sent by Chao including "fsck.f2fs: fix to
-> repair cp_loads blocks at correct position"
-> 
-> It spit out 140M worth of output, but at least I didn't have to run it
-> twice. Everything returned "Ok" in the 2nd run.
-> The new log is at
-> http://arter97.com/f2fs/final
-> 
-> After fixing the image, I used my 4.19 kernel with 5.2-rc1-4.19
-> f2fs-stable merged and it mounted.
-> 
-> But, I got this:
-> [    1.047791] F2FS-fs (nvme0n1p3): layout of large_nat_bitmap is
-> deprecated, run fsck to repair, chksum_offset: 4092
-> [    1.081307] F2FS-fs (nvme0n1p3): Found nat_bits in checkpoint
-> [    1.161520] F2FS-fs (nvme0n1p3): recover fsync data on readonly fs
-> [    1.162418] F2FS-fs (nvme0n1p3): Mounted with checkpoint version = 761c7e00
-> 
-> But after doing a reboot, the message is gone:
-> [    1.098423] F2FS-fs (nvme0n1p3): Found nat_bits in checkpoint
-> [    1.177771] F2FS-fs (nvme0n1p3): recover fsync data on readonly fs
-> [    1.178365] F2FS-fs (nvme0n1p3): Mounted with checkpoint version = 761c7eda
-> 
-> I'm not exactly sure why the kernel detected that I'm still using the
-> old layout on the first boot. Maybe fsck didn't fix it properly, or
-> the check from the kernel is improper.
+As Hagbard Celine reported:
 
-The fsck should have fixed layout problem, that's just unnecessary message, we
-can avoid it by relocating sanity check of layout.
+[  615.697824] INFO: task kworker/u16:5:344 blocked for more than 120 seconds.
+[  615.697825]       Not tainted 5.0.15-gentoo-f2fslog #4
+[  615.697826] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[  615.697827] kworker/u16:5   D    0   344      2 0x80000000
+[  615.697831] Workqueue: writeback wb_workfn (flush-259:0)
+[  615.697832] Call Trace:
+[  615.697836]  ? __schedule+0x2c5/0x8b0
+[  615.697839]  schedule+0x32/0x80
+[  615.697841]  schedule_preempt_disabled+0x14/0x20
+[  615.697842]  __mutex_lock.isra.8+0x2ba/0x4d0
+[  615.697845]  ? log_store+0xf5/0x260
+[  615.697848]  f2fs_write_data_pages+0x133/0x320
+[  615.697851]  ? trace_hardirqs_on+0x2c/0xe0
+[  615.697854]  do_writepages+0x41/0xd0
+[  615.697857]  __filemap_fdatawrite_range+0x81/0xb0
+[  615.697859]  f2fs_sync_dirty_inodes+0x1dd/0x200
+[  615.697861]  f2fs_balance_fs_bg+0x2a7/0x2c0
+[  615.697863]  ? up_read+0x5/0x20
+[  615.697865]  ? f2fs_do_write_data_page+0x2cb/0x940
+[  615.697867]  f2fs_balance_fs+0xe5/0x2c0
+[  615.697869]  __write_data_page+0x1c8/0x6e0
+[  615.697873]  f2fs_write_cache_pages+0x1e0/0x450
+[  615.697878]  f2fs_write_data_pages+0x14b/0x320
+[  615.697880]  ? trace_hardirqs_on+0x2c/0xe0
+[  615.697883]  do_writepages+0x41/0xd0
+[  615.697885]  __filemap_fdatawrite_range+0x81/0xb0
+[  615.697887]  f2fs_sync_dirty_inodes+0x1dd/0x200
+[  615.697889]  f2fs_balance_fs_bg+0x2a7/0x2c0
+[  615.697891]  f2fs_write_node_pages+0x51/0x220
+[  615.697894]  do_writepages+0x41/0xd0
+[  615.697897]  __writeback_single_inode+0x3d/0x3d0
+[  615.697899]  writeback_sb_inodes+0x1e8/0x410
+[  615.697902]  __writeback_inodes_wb+0x5d/0xb0
+[  615.697904]  wb_writeback+0x28f/0x340
+[  615.697906]  ? cpumask_next+0x16/0x20
+[  615.697908]  wb_workfn+0x33e/0x420
+[  615.697911]  process_one_work+0x1a1/0x3d0
+[  615.697913]  worker_thread+0x30/0x380
+[  615.697915]  ? process_one_work+0x3d0/0x3d0
+[  615.697916]  kthread+0x116/0x130
+[  615.697918]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  615.697921]  ret_from_fork+0x3a/0x50
 
-I've sent one patch for that, and tested with it, it acts as expected. :)
+There is still deadloop in below condition:
 
-> 
-> I also noticed that Jaegeuk sent v1 of this patch to upstream. (Maybe
-> that's why the kernel detected old layout?) Please send v2 to upstream
-> soon, as running older fsck will cause much more headaches.
+d A
+- do_writepages
+ - f2fs_write_node_pages
+  - f2fs_balance_fs_bg
+   - f2fs_sync_dirty_inodes
+    - f2fs_write_cache_pages
+     - mutex_lock(&sbi->writepages)	-- lock once
+     - __write_data_page
+      - f2fs_balance_fs_bg
+       - f2fs_sync_dirty_inodes
+        - f2fs_write_data_pages
+         - mutex_lock(&sbi->writepages)	-- lock again
 
-Since v1 was upstreamed in 5.2-rc1, I guess we need another patch for that,
-maybe in below patch?
+Thread A			Thread B
+- do_writepages
+ - f2fs_write_node_pages
+  - f2fs_balance_fs_bg
+   - f2fs_sync_dirty_inodes
+    - .cp_task = current
+				- f2fs_sync_dirty_inodes
+				 - .cp_task = current
+				 - filemap_fdatawrite
+				 - .cp_task = NULL
+    - filemap_fdatawrite
+     - f2fs_write_cache_pages
+      - enter f2fs_balance_fs_bg since .cp_task is NULL
+    - .cp_task = NULL
 
-[PATCH] f2fs: fix to check layout on last valid checkpoint park
+Change as below to avoid this:
+- add condition to avoid holding .writepages mutex lock in path
+of data flush
+- introduce mutex lock sbi.flush_lock to exclude concurrent data
+flush in background.
 
-Thanks,
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c    | 3 +++
+ fs/f2fs/f2fs.h    | 1 +
+ fs/f2fs/segment.c | 4 ++++
+ fs/f2fs/super.c   | 1 +
+ 4 files changed, 9 insertions(+)
 
-> 
-> Thanks.
-> 
-> 
-> On Fri, Apr 26, 2019 at 11:26 AM Chao Yu <yuchao0@huawei.com> wrote:
->>
->> For large_nat_bitmap feature, there is a design flaw:
->>
->> Previous:
->>
->> struct f2fs_checkpoint layout:
->> +--------------------------+  0x0000
->> | checkpoint_ver           |
->> | ......                   |
->> | checksum_offset          |------+
->> | ......                   |      |
->> | sit_nat_version_bitmap[] |<-----|-------+
->> | ......                   |      |       |
->> | checksum_value           |<-----+       |
->> +--------------------------+  0x1000      |
->> |                          |      nat_bitmap + sit_bitmap
->> | payload blocks           |              |
->> |                          |              |
->> +--------------------------|<-------------+
->>
->> Obviously, if nat_bitmap size + sit_bitmap size is larger than
->> MAX_BITMAP_SIZE_IN_CKPT, nat_bitmap or sit_bitmap may overlap
->> checkpoint checksum's position, once checkpoint() is triggered
->> from kernel, nat or sit bitmap will be damaged by checksum field.
->>
->> In order to fix this, let's relocate checksum_value's position
->> to the head of sit_nat_version_bitmap as below, then nat/sit
->> bitmap and chksum value update will become safe.
->>
->> After:
->>
->> struct f2fs_checkpoint layout:
->> +--------------------------+  0x0000
->> | checkpoint_ver           |
->> | ......                   |
->> | checksum_offset          |------+
->> | ......                   |      |
->> | sit_nat_version_bitmap[] |<-----+
->> | ......                   |<-------------+
->> |                          |              |
->> +--------------------------+  0x1000      |
->> |                          |      nat_bitmap + sit_bitmap
->> | payload blocks           |              |
->> |                          |              |
->> +--------------------------|<-------------+
->>
->> Related report and discussion:
->>
->> https://sourceforge.net/p/linux-f2fs/mailman/message/36642346/
->>
->> Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->> v2:
->> - improve hint message suggested by Ju Hyung.
->> - move verification to f2fs_sanity_check_ckpt().
->>  fs/f2fs/f2fs.h  |  4 +++-
->>  fs/f2fs/super.c | 13 +++++++++++++
->>  2 files changed, 16 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 119bc5a9783e..aa71c1aa9eaa 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -1909,9 +1909,11 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
->>         int offset;
->>
->>         if (is_set_ckpt_flags(sbi, CP_LARGE_NAT_BITMAP_FLAG)) {
->> +               unsigned int chksum_size = sizeof(__le32);
->> +
->>                 offset = (flag == SIT_BITMAP) ?
->>                         le32_to_cpu(ckpt->nat_ver_bitmap_bytesize) : 0;
->> -               return &ckpt->sit_nat_version_bitmap + offset;
->> +               return &ckpt->sit_nat_version_bitmap + offset + chksum_size;
->>         }
->>
->>         if (__cp_payload(sbi) > 0) {
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index fefc8cc6e756..22241bb866df 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -2714,6 +2714,19 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
->>                 return 1;
->>         }
->>
->> +       if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG)) {
->> +               unsigned int chksum_offset;
->> +
->> +               chksum_offset = le32_to_cpu(ckpt->checksum_offset);
->> +               if (chksum_offset != CP_MIN_CHKSUM_OFFSET) {
->> +                       f2fs_msg(sbi->sb, KERN_WARNING,
->> +                               "using deprecated layout of large_nat_bitmap, "
->> +                               "please run fsck v1.13.0 or higher to repair, "
->> +                               "chksum_offset: %u", chksum_offset);
->> +                       return 1;
->> +               }
->> +       }
->> +
->>         if (unlikely(f2fs_cp_error(sbi))) {
->>                 f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
->>                 return 1;
->> --
->> 2.18.0.rc1
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index eda4181d2092..923923603a7d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2262,6 +2262,9 @@ static inline bool __should_serialize_io(struct inode *inode,
+ 		return false;
+ 	if (IS_NOQUOTA(inode))
+ 		return false;
++	/* to avoid deadlock in path of data flush */
++	if (F2FS_I(inode)->cp_task)
++		return false;
+ 	if (wbc->sync_mode != WB_SYNC_ALL)
+ 		return true;
+ 	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 71710e8336f4..832ce03768c7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1220,6 +1220,7 @@ struct f2fs_sb_info {
+ 	/* for inode management */
+ 	struct list_head inode_list[NR_INODE_TYPE];	/* dirty inode list */
+ 	spinlock_t inode_lock[NR_INODE_TYPE];	/* for dirty inode list lock */
++	struct mutex flush_lock;		/* for flush exclusion */
+ 
+ 	/* for extent tree cache */
+ 	struct radix_tree_root extent_tree_root;/* cache extent cache entries */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b5f21909356f..23cbca6d6ab6 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -546,9 +546,13 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 		if (test_opt(sbi, DATA_FLUSH)) {
+ 			struct blk_plug plug;
+ 
++			mutex_lock(&sbi->flush_lock);
++
+ 			blk_start_plug(&plug);
+ 			f2fs_sync_dirty_inodes(sbi, FILE_INODE);
+ 			blk_finish_plug(&plug);
++
++			mutex_unlock(&sbi->flush_lock);
+ 		}
+ 		f2fs_sync_fs(sbi->sb, true);
+ 		stat_inc_bg_cp_count(sbi->stat_info);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3c71b9a71932..0d2307809bac 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3305,6 +3305,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		INIT_LIST_HEAD(&sbi->inode_list[i]);
+ 		spin_lock_init(&sbi->inode_lock[i]);
+ 	}
++	mutex_init(&sbi->flush_lock);
+ 
+ 	f2fs_init_extent_cache_info(sbi);
+ 
+-- 
+2.18.0.rc1
