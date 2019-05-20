@@ -1,8 +1,8 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 03/14] fscrypt: rename
- fscrypt_do_page_crypto() to fscrypt_crypt_block()
-Date: Mon, 20 May 2019 09:29:41 -0700
-Message-ID: <20190520162952.156212-4-ebiggers@kernel.org>
+Subject: [PATCH v2 10/14] fscrypt: decrypt only the needed blocks
+ in __fscrypt_decrypt_bio()
+Date: Mon, 20 May 2019 09:29:48 -0700
+Message-ID: <20190520162952.156212-11-ebiggers@kernel.org>
 References: <20190520162952.156212-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hSlBJ-0006Jz-PW
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:33 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hSlBP-0006Ln-3Y
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:39 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hSlBD-0005I2-LJ
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:32 +0000
+ id 1hSlBN-0005JU-Gx
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 May 2019 16:30:39 +0000
 In-Reply-To: <20190520162952.156212-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,113 +33,35 @@ Cc: linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, Chandan Rajendra 
 
 From: Eric Biggers <ebiggers@google.com>
 
-fscrypt_do_page_crypto() only does a single encryption or decryption
-operation, with a single logical block number (single IV).  So it
-actually operates on a filesystem block, not a "page" per se.  To
-reflect this, rename it to fscrypt_crypt_block().
+In __fscrypt_decrypt_bio(), only decrypt the blocks that actually
+comprise the bio, rather than assuming blocksize == PAGE_SIZE and
+decrypting the entirety of every page used in the bio.
+
+This is in preparation for allowing encryption on ext4 filesystems with
+blocksize != PAGE_SIZE.
+
+This is based on work by Chandan Rajendra.
 
 Reviewed-by: Chandan Rajendra <chandan@linux.ibm.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/bio.c             |  6 +++---
- fs/crypto/crypto.c          | 24 ++++++++++++------------
- fs/crypto/fscrypt_private.h | 11 +++++------
- 3 files changed, 20 insertions(+), 21 deletions(-)
+ fs/crypto/bio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index c534253483874..92b2d5da5d8e1 100644
+index 61da06fda45cc..82da2510721f6 100644
 --- a/fs/crypto/bio.c
 +++ b/fs/crypto/bio.c
-@@ -83,9 +83,9 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
- 		return -ENOMEM;
+@@ -33,8 +33,8 @@ static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
  
- 	while (len--) {
--		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk,
--					     ZERO_PAGE(0), ciphertext_page,
--					     PAGE_SIZE, 0, GFP_NOFS);
-+		err = fscrypt_crypt_block(inode, FS_ENCRYPT, lblk,
-+					  ZERO_PAGE(0), ciphertext_page,
-+					  PAGE_SIZE, 0, GFP_NOFS);
- 		if (err)
- 			goto errout;
- 
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index ebfa13cfecb7d..e6802d7aca3c7 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -147,10 +147,11 @@ void fscrypt_generate_iv(union fscrypt_iv *iv, u64 lblk_num,
- 		crypto_cipher_encrypt_one(ci->ci_essiv_tfm, iv->raw, iv->raw);
- }
- 
--int fscrypt_do_page_crypto(const struct inode *inode, fscrypt_direction_t rw,
--			   u64 lblk_num, struct page *src_page,
--			   struct page *dest_page, unsigned int len,
--			   unsigned int offs, gfp_t gfp_flags)
-+/* Encrypt or decrypt a single filesystem block of file contents */
-+int fscrypt_crypt_block(const struct inode *inode, fscrypt_direction_t rw,
-+			u64 lblk_num, struct page *src_page,
-+			struct page *dest_page, unsigned int len,
-+			unsigned int offs, gfp_t gfp_flags)
- {
- 	union fscrypt_iv iv;
- 	struct skcipher_request *req = NULL;
-@@ -227,9 +228,9 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
- 
- 	if (inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES) {
- 		/* with inplace-encryption we just encrypt the page */
--		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num, page,
--					     ciphertext_page, len, offs,
--					     gfp_flags);
-+		err = fscrypt_crypt_block(inode, FS_ENCRYPT, lblk_num, page,
-+					  ciphertext_page, len, offs,
-+					  gfp_flags);
- 		if (err)
- 			return ERR_PTR(err);
- 
-@@ -243,9 +244,8 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
- 	if (!ciphertext_page)
- 		return ERR_PTR(-ENOMEM);
- 
--	err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num,
--				     page, ciphertext_page, len, offs,
--				     gfp_flags);
-+	err = fscrypt_crypt_block(inode, FS_ENCRYPT, lblk_num, page,
-+				  ciphertext_page, len, offs, gfp_flags);
- 	if (err) {
- 		fscrypt_free_bounce_page(ciphertext_page);
- 		return ERR_PTR(err);
-@@ -277,8 +277,8 @@ int fscrypt_decrypt_page(const struct inode *inode, struct page *page,
- 	if (!(inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES))
- 		BUG_ON(!PageLocked(page));
- 
--	return fscrypt_do_page_crypto(inode, FS_DECRYPT, lblk_num, page, page,
--				      len, offs, GFP_NOFS);
-+	return fscrypt_crypt_block(inode, FS_DECRYPT, lblk_num, page, page,
-+				   len, offs, GFP_NOFS);
- }
- EXPORT_SYMBOL(fscrypt_decrypt_page);
- 
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 4122ee1a0b7b1..8978eec9d766d 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -116,12 +116,11 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
- /* crypto.c */
- extern struct kmem_cache *fscrypt_info_cachep;
- extern int fscrypt_initialize(unsigned int cop_flags);
--extern int fscrypt_do_page_crypto(const struct inode *inode,
--				  fscrypt_direction_t rw, u64 lblk_num,
--				  struct page *src_page,
--				  struct page *dest_page,
--				  unsigned int len, unsigned int offs,
--				  gfp_t gfp_flags);
-+extern int fscrypt_crypt_block(const struct inode *inode,
-+			       fscrypt_direction_t rw, u64 lblk_num,
-+			       struct page *src_page, struct page *dest_page,
-+			       unsigned int len, unsigned int offs,
-+			       gfp_t gfp_flags);
- extern struct page *fscrypt_alloc_bounce_page(gfp_t gfp_flags);
- extern const struct dentry_operations fscrypt_d_ops;
- 
+ 	bio_for_each_segment_all(bv, bio, iter_all) {
+ 		struct page *page = bv->bv_page;
+-		int ret = fscrypt_decrypt_pagecache_blocks(page, PAGE_SIZE, 0);
+-
++		int ret = fscrypt_decrypt_pagecache_blocks(page, bv->bv_len,
++							   bv->bv_offset);
+ 		if (ret)
+ 			SetPageError(page);
+ 		else if (done)
 -- 
 2.21.0.1020.gf2820cf01a-goog
