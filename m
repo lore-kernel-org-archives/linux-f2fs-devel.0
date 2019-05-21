@@ -1,48 +1,79 @@
-From: "Theodore Ts'o" <tytso@mit.edu>
+From: Eric Biggers <ebiggers@kernel.org>
 Subject: Re: [PATCH v6 00/16] fscrypt: key management improvements
-Date: Mon, 20 May 2019 20:16:36 -0400
-Message-ID: <20190521001636.GA2369@mit.edu>
+Date: Mon, 20 May 2019 17:41:20 -0700
+Message-ID: <20190521004119.GA647@sol.localdomain>
 References: <20190520172552.217253-1-ebiggers@kernel.org>
+ <20190521001636.GA2369@mit.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1hSsSc-00029p-Fx
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 May 2019 00:16:54 +0000
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hSsSa-00CsJ1-C7
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 May 2019 00:16:54 +0000
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20190520172552.217253-1-ebiggers@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers@kernel.org>
+In-Reply-To: <20190521001636.GA2369@mit.edu>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: Theodore Ts'o <tytso@mit.edu>
 Cc: linux-ext4@vger.kernel.org, linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, keyrings@vger.kernel.org, linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>, Paul Crowley <paulcrowley@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, May 20, 2019 at 10:25:36AM -0700, Eric Biggers wrote:
+On Mon, May 20, 2019 at 08:16:36PM -0400, Theodore Ts'o wrote:
+> On Mon, May 20, 2019 at 10:25:36AM -0700, Eric Biggers wrote:
+> > 
+> > This patchset makes major improvements to how keys are added, removed,
+> > and derived in fscrypt, aka ext4/f2fs/ubifs encryption.  It does this by
+> > adding new ioctls that add and remove encryption keys directly to/from
+> > the filesystem, and by adding a new encryption policy version ("v2")
+> > where the user-provided keys are only used as input to HKDF-SHA512 and
+> > are identified by their cryptographic hash.
 > 
-> This patchset makes major improvements to how keys are added, removed,
-> and derived in fscrypt, aka ext4/f2fs/ubifs encryption.  It does this by
-> adding new ioctls that add and remove encryption keys directly to/from
-> the filesystem, and by adding a new encryption policy version ("v2")
-> where the user-provided keys are only used as input to HKDF-SHA512 and
-> are identified by their cryptographic hash.
+> Do you have userspace programs which use these new ioctl's?  What's
+> are testing strategy for these new ioctls?
+> 
+> Thanks,
+> 
+> 						- Ted
 
-Do you have userspace programs which use these new ioctl's?  What's
-are testing strategy for these new ioctls?
+This was answered in the cover letter, quoted below:
 
-Thanks,
+I've written xfstests for the new APIs.  They test the APIs themselves
+as well as verify the correctness of the ciphertext stored on-disk for
+v2 encryption policies.  The tests can be found at:
 
-						- Ted
+	Repository:   https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git
+	Branch:       fscrypt-key-mgmt-improvements
+
+The xfstests depend on new xfs_io commands which can be found at:
+
+	Repository:   https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfsprogs-dev.git
+	Branch:       fscrypt-key-mgmt-improvements
+
+I've also made proof-of-concept changes to the 'fscrypt' userspace
+program (https://github.com/google/fscrypt) to make it support v2
+encryption policies.  You can find these changes in git at:
+
+	Repository:   https://github.com/ebiggers/fscrypt.git
+	Branch:       fscrypt-key-mgmt-improvements
+
+To make the 'fscrypt' userspace program experimentally use v2 encryption
+policies on new encrypted directories, add the following to
+/etc/fscrypt.conf within the "options" section:
+
+	"policy_version": "2"
+
+Finally, it's also planned for Android and Chromium OS to switch to the
+new ioctls and eventually to v2 encryption policies.  Work-in-progress,
+proof-of-concept changes by Satya Tangirala for AOSP can be found at
+https://android-review.googlesource.com/q/topic:fscrypt-key-mgmt-improvements
+
+- Eric
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
