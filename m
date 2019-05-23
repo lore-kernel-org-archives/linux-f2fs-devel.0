@@ -1,48 +1,94 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add missing sysfs entries in
- documentation
-Date: Thu, 23 May 2019 22:14:53 +0800
-Message-ID: <fc1eda2c-1d31-749f-03ef-eed152fb42c0@kernel.org>
-References: <20190521180606.10461-1-jaegeuk@kernel.org>
- <20190522175035.GB81051@jaegeuk-macbookpro.roam.corp.google.com>
- <14672901-54a2-120f-a2ce-52f7d6fb3008@kernel.org>
- <20190523140649.GA10954@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH] fsck.f2fs: show elapsed time of full scan
+Date: Thu, 23 May 2019 22:16:09 +0800
+Message-ID: <98c0e013-1609-a0f1-03e3-fc7d77863c8e@kernel.org>
+References: <20190522194141.91216-1-jaegeuk@kernel.org>
+ <86b041c4-301b-40b3-d293-ca5365c87600@kernel.org>
+ <20190523140811.GB10954@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190523140649.GA10954@jaegeuk-macbookpro.roam.corp.google.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1hToWB-0004Aa-7G
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 May 2019 14:16:27 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hToW9-002o9u-7k
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 May 2019 14:16:27 +0000
+In-Reply-To: <20190523140811.GB10954@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2019-5-23 22:06, Jaegeuk Kim wrote:
+On 2019-5-23 22:08, Jaegeuk Kim wrote:
 > On 05/23, Chao Yu wrote:
->> On 2019-5-23 1:50, Jaegeuk Kim wrote:
->>> This patch cleans up documentation to cover missing sysfs entries.
+>> On 2019-5-23 3:41, Jaegeuk Kim wrote:
+>>> This patch introduces the elapsed time of fsck.
 >>>
 >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fsck/main.c | 4 +++-
+>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fsck/main.c b/fsck/main.c
+>>> index d844820..9aca024 100644
+>>> --- a/fsck/main.c
+>>> +++ b/fsck/main.c
+>>> @@ -18,6 +18,7 @@
+>>>  #include "fsck.h"
+>>>  #include <libgen.h>
+>>>  #include <ctype.h>
+>>> +#include <time.h>
+>>>  #include <getopt.h>
+>>>  #include "quotaio.h"
+>>>  
+>>> @@ -745,6 +746,7 @@ int main(int argc, char **argv)
+>>>  {
+>>>  	struct f2fs_sb_info *sbi;
+>>>  	int ret = 0;
+>>> +	clock_t start = clock();
+>>>  
+>>>  	f2fs_init_configuration();
+>>>  
+>>> @@ -853,7 +855,7 @@ retry:
+>>>  	if (ret < 0)
+>>>  		return ret;
+>>>  
+>>> -	printf("\nDone.\n");
+>>> +	printf("\nDone: %lf secs\n", (clock() - start) / (double)CLOCKS_PER_SEC);
 >>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->>> + reserved_blocks	      This parameter indicates the number of blocks that
->>> +			      f2fs reserves internally for root.
->>> +
->>
->> I mean we can move below entry here.
+>> Minor, as comment log says it's only for fsck.
 > 
-> Ah, I'd like to keep the order defined in sysfs.c.
+> I think it doesn't matter for other use cases, even though main reason was for
+> fsck.
 
-No problem. :)
+Okay, it's not a big deal. :)
 
 Thanks,
 
 > 
 >>
->> current_reserved_blocks	      This shows # of blocks currently reserved.
+>> if (c.func == FSCK)
+>> 	printf();
 >>
->>> + reserved_blocks	      This shows # of blocks currently reserved.
+>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 >>
 >> Thanks,
+>>
+>>>  	return 0;
+>>>  
+>>>  out_err:
+>>>
