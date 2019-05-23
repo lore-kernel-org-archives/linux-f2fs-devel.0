@@ -1,59 +1,94 @@
 From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH] f2fs: add error prints for debugging mount failure
-Date: Thu, 23 May 2019 09:49:17 +0530
-Message-ID: <1558585157-9349-1-git-send-email-stummala@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH] fsck.f2fs: Fix up nat journal corruption with -a
+ (auto-fix) option
+Date: Thu, 23 May 2019 10:13:47 +0530
+Message-ID: <1558586627-19784-1-git-send-email-stummala@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <stummala@codeaurora.org>) id 1hTfaL-0007Hk-F7
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 May 2019 04:44:09 +0000
+Received: from smtp.codeaurora.org ([198.145.29.96])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hTfaF-0089xM-Kj
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 May 2019 04:44:09 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: Sahitya Tummala <stummala@codeaurora.org>, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Add error prints to get more details on the mount failure.
+Build segment manager and node manager always to catch and auto-fix
+invalid NAT entries found in the NAT journal.
 
 Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 ---
- fs/f2fs/segment.c | 6 +++++-
- fs/f2fs/super.c   | 4 ++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ fsck/mount.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 4896443..bdc6956 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3567,8 +3567,12 @@ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
+diff --git a/fsck/mount.c b/fsck/mount.c
+index ec22783..46d62ee 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -943,6 +943,8 @@ static int f2fs_init_nid_bitmap(struct f2fs_sb_info *sbi)
+ 			"NAT_JOURNAL_ENTRIES(%lu)\n",
+ 			nats_in_cursum(journal), NAT_JOURNAL_ENTRIES);
+ 		journal->n_nats = cpu_to_le16(NAT_JOURNAL_ENTRIES);
++		c.auto_fix = 0;
++		c.fix_on = 1;
+ 	}
  
- 	/* sanity check for summary blocks */
- 	if (nats_in_cursum(nat_j) > NAT_JOURNAL_ENTRIES ||
--			sits_in_cursum(sit_j) > SIT_JOURNAL_ENTRIES)
-+			sits_in_cursum(sit_j) > SIT_JOURNAL_ENTRIES) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"invalid journal entries nats %u sits %u\n",
-+			nats_in_cursum(nat_j), sits_in_cursum(sit_j));
- 		return -EINVAL;
+ 	for (i = 0; i < nats_in_cursum(journal); i++) {
+@@ -2363,19 +2365,6 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+ 
+ 	print_ckpt_info(sbi);
+ 
+-	if (c.auto_fix || c.preen_mode) {
+-		u32 flag = get_cp(ckpt_flags);
+-
+-		if (flag & CP_FSCK_FLAG ||
+-			(exist_qf_ino(sb) && (!(flag & CP_UMOUNT_FLAG) ||
+-						flag & CP_ERROR_FLAG))) {
+-			c.fix_on = 1;
+-		} else if (!c.preen_mode) {
+-			print_cp_state(flag);
+-			return 1;
+-		}
+-	}
+-
+ 	c.bug_on = 0;
+ 	c.feature = sb->feature;
+ 
+@@ -2400,6 +2389,19 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+ 		return -1;
+ 	}
+ 
++	if (c.auto_fix || c.preen_mode) {
++		u32 flag = get_cp(ckpt_flags);
++
++		if (flag & CP_FSCK_FLAG ||
++			(exist_qf_ino(sb) && (!(flag & CP_UMOUNT_FLAG) ||
++						flag & CP_ERROR_FLAG))) {
++			c.fix_on = 1;
++		} else if (!c.preen_mode) {
++			print_cp_state(flag);
++			return 1;
++		}
 +	}
- 
- 	return 0;
- }
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 52f1497..2c9d4f7 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3413,13 +3413,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	err = f2fs_build_segment_manager(sbi);
- 	if (err) {
- 		f2fs_msg(sb, KERN_ERR,
--			"Failed to initialize F2FS segment manager");
-+			"Failed to initialize F2FS segment manager (%d)", err);
- 		goto free_sm;
- 	}
- 	err = f2fs_build_node_manager(sbi);
- 	if (err) {
- 		f2fs_msg(sb, KERN_ERR,
--			"Failed to initialize F2FS node manager");
-+			"Failed to initialize F2FS node manager (%d)", err);
- 		goto free_nm;
- 	}
- 
++
+ 	/* Check nat_bits */
+ 	if (c.func != DUMP && is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
+ 		u_int32_t nat_bits_bytes, nat_bits_blocks;
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
