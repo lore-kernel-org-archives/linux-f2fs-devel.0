@@ -1,25 +1,40 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add error prints for debugging mount
- failure
-Date: Thu, 23 May 2019 21:42:29 +0800
-Message-ID: <079b434f-ee28-2c52-a789-6116e20ccce6@kernel.org>
-References: <1558585157-9349-1-git-send-email-stummala@codeaurora.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add missing sysfs entries in
+ documentation
+Date: Thu, 23 May 2019 07:06:49 -0700
+Message-ID: <20190523140649.GA10954@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190521180606.10461-1-jaegeuk@kernel.org>
+ <20190522175035.GB81051@jaegeuk-macbookpro.roam.corp.google.com>
+ <14672901-54a2-120f-a2ce-52f7d6fb3008@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1558585157-9349-1-git-send-email-stummala@codeaurora.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <14672901-54a2-120f-a2ce-52f7d6fb3008@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019-5-23 12:19, Sahitya Tummala wrote:
-> Add error prints to get more details on the mount failure.
+On 05/23, Chao Yu wrote:
+> On 2019-5-23 1:50, Jaegeuk Kim wrote:
+> > This patch cleans up documentation to cover missing sysfs entries.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
+> > + reserved_blocks	      This parameter indicates the number of blocks that
+> > +			      f2fs reserves internally for root.
+> > +
+> 
+> I mean we can move below entry here.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Ah, I'd like to keep the order defined in sysfs.c.
 
-Thanks,
+> 
+> current_reserved_blocks	      This shows # of blocks currently reserved.
+> 
+> > + reserved_blocks	      This shows # of blocks currently reserved.
+> 
+> Thanks,
