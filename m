@@ -1,10 +1,9 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] fsck.f2fs: show elapsed time of full scan
-Date: Thu, 23 May 2019 22:16:09 +0800
-Message-ID: <98c0e013-1609-a0f1-03e3-fc7d77863c8e@kernel.org>
-References: <20190522194141.91216-1-jaegeuk@kernel.org>
- <86b041c4-301b-40b3-d293-ca5365c87600@kernel.org>
- <20190523140811.GB10954@jaegeuk-macbookpro.roam.corp.google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] fsck.f2fs: Fix up nat journal corruption
+ with -a (auto-fix) option
+Date: Thu, 23 May 2019 07:19:46 -0700
+Message-ID: <20190523141946.GA12317@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1558586627-19784-1-git-send-email-stummala@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -12,15 +11,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1hToWB-0004Aa-7G
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 May 2019 14:16:27 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1hToZW-0004Js-H3
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 May 2019 14:19:54 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hToW9-002o9u-7k
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 May 2019 14:16:27 +0000
-In-Reply-To: <20190523140811.GB10954@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
+ id 1hToZV-002RwI-9d
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 May 2019 14:19:54 +0000
+Content-Disposition: inline
+In-Reply-To: <1558586627-19784-1-git-send-email-stummala@codeaurora.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,65 +29,88 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Sahitya Tummala <stummala@codeaurora.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2019-5-23 22:08, Jaegeuk Kim wrote:
-> On 05/23, Chao Yu wrote:
->> On 2019-5-23 3:41, Jaegeuk Kim wrote:
->>> This patch introduces the elapsed time of fsck.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fsck/main.c | 4 +++-
->>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fsck/main.c b/fsck/main.c
->>> index d844820..9aca024 100644
->>> --- a/fsck/main.c
->>> +++ b/fsck/main.c
->>> @@ -18,6 +18,7 @@
->>>  #include "fsck.h"
->>>  #include <libgen.h>
->>>  #include <ctype.h>
->>> +#include <time.h>
->>>  #include <getopt.h>
->>>  #include "quotaio.h"
->>>  
->>> @@ -745,6 +746,7 @@ int main(int argc, char **argv)
->>>  {
->>>  	struct f2fs_sb_info *sbi;
->>>  	int ret = 0;
->>> +	clock_t start = clock();
->>>  
->>>  	f2fs_init_configuration();
->>>  
->>> @@ -853,7 +855,7 @@ retry:
->>>  	if (ret < 0)
->>>  		return ret;
->>>  
->>> -	printf("\nDone.\n");
->>> +	printf("\nDone: %lf secs\n", (clock() - start) / (double)CLOCKS_PER_SEC);
->>
->> Minor, as comment log says it's only for fsck.
+On 05/23, Sahitya Tummala wrote:
+> Build segment manager and node manager always to catch and auto-fix
+> invalid NAT entries found in the NAT journal.
 > 
-> I think it doesn't matter for other use cases, even though main reason was for
-> fsck.
-
-Okay, it's not a big deal. :)
-
-Thanks,
-
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> ---
+>  fsck/mount.c | 28 +++++++++++++++-------------
+>  1 file changed, 15 insertions(+), 13 deletions(-)
 > 
->>
->> if (c.func == FSCK)
->> 	printf();
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> Thanks,
->>
->>>  	return 0;
->>>  
->>>  out_err:
->>>
+> diff --git a/fsck/mount.c b/fsck/mount.c
+> index ec22783..46d62ee 100644
+> --- a/fsck/mount.c
+> +++ b/fsck/mount.c
+> @@ -943,6 +943,8 @@ static int f2fs_init_nid_bitmap(struct f2fs_sb_info *sbi)
+>  			"NAT_JOURNAL_ENTRIES(%lu)\n",
+>  			nats_in_cursum(journal), NAT_JOURNAL_ENTRIES);
+>  		journal->n_nats = cpu_to_le16(NAT_JOURNAL_ENTRIES);
+> +		c.auto_fix = 0;
+> +		c.fix_on = 1;
+
+BTW, we have some more error cases below. Can we add fix_on for them as well?
+
+1077                 addr = le32_to_cpu(nat_in_journal(journal, i).block_addr);
+1078                 if (!IS_VALID_BLK_ADDR(sbi, addr)) {
+1079                         MSG(0, "\tError: f2fs_init_nid_bitmap: addr(%u) is invalid!!!\n", addr);
+1080                         journal->n_nats = cpu_to_le16(i);
+1081                         continue;
+1082                 }
+1083
+1084                 nid = le32_to_cpu(nid_in_journal(journal, i));
+1085                 if (!IS_VALID_NID(sbi, nid)) {
+1086                         MSG(0, "\tError: f2fs_init_nid_bitmap: nid(%u) is invalid!!!\n", nid);
+1087                         journal->n_nats = cpu_to_le16(i);
+1088                         continue;
+1089                 }
+
+>  	}
+>  
+>  	for (i = 0; i < nats_in_cursum(journal); i++) {
+> @@ -2363,19 +2365,6 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+>  
+>  	print_ckpt_info(sbi);
+>  
+> -	if (c.auto_fix || c.preen_mode) {
+> -		u32 flag = get_cp(ckpt_flags);
+> -
+> -		if (flag & CP_FSCK_FLAG ||
+> -			(exist_qf_ino(sb) && (!(flag & CP_UMOUNT_FLAG) ||
+> -						flag & CP_ERROR_FLAG))) {
+> -			c.fix_on = 1;
+> -		} else if (!c.preen_mode) {
+> -			print_cp_state(flag);
+> -			return 1;
+> -		}
+> -	}
+> -
+>  	c.bug_on = 0;
+>  	c.feature = sb->feature;
+>  
+> @@ -2400,6 +2389,19 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+>  		return -1;
+>  	}
+>  
+> +	if (c.auto_fix || c.preen_mode) {
+> +		u32 flag = get_cp(ckpt_flags);
+> +
+> +		if (flag & CP_FSCK_FLAG ||
+> +			(exist_qf_ino(sb) && (!(flag & CP_UMOUNT_FLAG) ||
+> +						flag & CP_ERROR_FLAG))) {
+> +			c.fix_on = 1;
+> +		} else if (!c.preen_mode) {
+> +			print_cp_state(flag);
+> +			return 1;
+> +		}
+> +	}
+> +
+>  	/* Check nat_bits */
+>  	if (c.func != DUMP && is_set_ckpt_flags(cp, CP_NAT_BITS_FLAG)) {
+>  		u_int32_t nat_bits_bytes, nat_bits_blocks;
+> -- 
+> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
