@@ -1,23 +1,23 @@
 From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 7/7] generic: verify ciphertext of v1
- encryption policies with Adiantum
-Date: Fri, 24 May 2019 15:04:25 -0700
-Message-ID: <20190524220425.201170-8-ebiggers@kernel.org>
+Subject: [PATCH v2 5/7] generic: verify ciphertext of v1
+ encryption policies with AES-256
+Date: Fri, 24 May 2019 15:04:23 -0700
+Message-ID: <20190524220425.201170-6-ebiggers@kernel.org>
 References: <20190524220425.201170-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hUIJH-0002U6-6e
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 May 2019 22:05:07 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hUIJJ-0001cD-Po
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 May 2019 22:05:09 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hUIJ6-0083GJ-0Q
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 May 2019 22:05:07 +0000
+ id 1hUIJ4-00EpFt-Mq
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 May 2019 22:05:09 +0000
 In-Reply-To: <20190524220425.201170-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,32 +33,32 @@ Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@
 
 From: Eric Biggers <ebiggers@google.com>
 
-Verify ciphertext for v1 encryption policies that use Adiantum to
-encrypt file contents and file names.
+Verify ciphertext for v1 encryption policies that use AES-256-XTS to
+encrypt file contents and AES-256-CTS-CBC to encrypt file names.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- tests/generic/702     | 43 +++++++++++++++++++++++++++++++++++++++++++
- tests/generic/702.out | 10 ++++++++++
+ tests/generic/700     | 41 +++++++++++++++++++++++++++++++++++++++++
+ tests/generic/700.out |  5 +++++
  tests/generic/group   |  1 +
- 3 files changed, 54 insertions(+)
- create mode 100755 tests/generic/702
- create mode 100644 tests/generic/702.out
+ 3 files changed, 47 insertions(+)
+ create mode 100755 tests/generic/700
+ create mode 100644 tests/generic/700.out
 
-diff --git a/tests/generic/702 b/tests/generic/702
+diff --git a/tests/generic/700 b/tests/generic/700
 new file mode 100755
-index 00000000..c7ac7be4
+index 00000000..c6dc8b90
 --- /dev/null
-+++ b/tests/generic/702
-@@ -0,0 +1,43 @@
++++ b/tests/generic/700
+@@ -0,0 +1,41 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
 +# Copyright 2019 Google LLC
 +#
-+# FS QA Test generic/702
++# FS QA Test generic/700
 +#
-+# Verify ciphertext for v1 encryption policies that use Adiantum to encrypt file
-+# contents and file names.
++# Verify ciphertext for v1 encryption policies that use AES-256-XTS to encrypt
++# file contents and AES-256-CTS-CBC to encrypt file names.
 +#
 +seq=`basename $0`
 +seqres=$RESULT_DIR/$seq
@@ -87,37 +87,30 @@ index 00000000..c7ac7be4
 +_supported_fs generic
 +_supported_os Linux
 +
-+# Test both with and without the DIRECT_KEY flag.
-+_verify_ciphertext_for_encryption_policy Adiantum Adiantum
-+_verify_ciphertext_for_encryption_policy Adiantum Adiantum direct
++_verify_ciphertext_for_encryption_policy AES-256-XTS AES-256-CTS-CBC
 +
 +# success, all done
 +status=0
 +exit
-diff --git a/tests/generic/702.out b/tests/generic/702.out
+diff --git a/tests/generic/700.out b/tests/generic/700.out
 new file mode 100644
-index 00000000..0dd80dae
+index 00000000..ea2de143
 --- /dev/null
-+++ b/tests/generic/702.out
-@@ -0,0 +1,10 @@
-+QA output created by 702
++++ b/tests/generic/700.out
+@@ -0,0 +1,5 @@
++QA output created by 700
 +
 +Verifying ciphertext with parameters:
-+	contents_encryption_mode: Adiantum
-+	filenames_encryption_mode: Adiantum
-+
-+Verifying ciphertext with parameters:
-+	contents_encryption_mode: Adiantum
-+	filenames_encryption_mode: Adiantum
-+	options: direct
++	contents_encryption_mode: AES-256-XTS
++	filenames_encryption_mode: AES-256-CTS-CBC
 diff --git a/tests/generic/group b/tests/generic/group
-index 85cc2165..2fe51dcc 100644
+index 49639fc9..69ed721a 100644
 --- a/tests/generic/group
 +++ b/tests/generic/group
-@@ -552,3 +552,4 @@
+@@ -550,3 +550,4 @@
+ 545 auto quick cap
+ 546 auto quick clone enospc log
  547 auto quick log
- 700 auto quick encrypt
- 701 auto quick encrypt
-+702 auto quick encrypt
++700 auto quick encrypt
 -- 
 2.22.0.rc1.257.g3120a18244-goog
