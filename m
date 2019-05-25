@@ -1,50 +1,133 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH -next] f2fs: Make sanity_check_curseg static
-Date: Sat, 25 May 2019 21:56:42 +0800
-Message-ID: <33f73a57-285d-e37e-f911-6f3ad5cc6e01@kernel.org>
-References: <20190525124809.17424-1-yuehaibing@huawei.com>
+Subject: [PATCH v3] f2fs: fix to do sanity check on segment
+ bitmap of LFS curseg
+Date: Sat, 25 May 2019 23:07:25 +0800
+Message-ID: <20190525150725.3113-1-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190525124809.17424-1-yuehaibing@huawei.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: YueHaibing <yuehaibing@huawei.com>, jaegeuk@kernel.org, yuchao0@huawei.com
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1hUYHb-0007jU-9w
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 May 2019 15:08:27 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hUYHY-00Gkdt-VQ
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 May 2019 15:08:26 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Haibing,
+From: Chao Yu <yuchao0@huawei.com>
 
-Thanks for the patch, there is a similar report from 0-day project, but I forget
-to fix my v1 patch.
+As Jungyeon Reported in bugzilla:
 
-Anyway, I prefer to merge this into original patch which has not upstreamed yet. :)
+https://bugzilla.kernel.org/show_bug.cgi?id=203233
 
-Thanks,
+- Reproduces
+gcc poc_13.c
+./run.sh f2fs
 
-On 2019-5-25 20:48, YueHaibing wrote:
-> Fix sparse warning:
-> 
-> fs/f2fs/segment.c:4246:5: warning:
->  symbol 'sanity_check_curseg' was not declared. Should it be static?
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  fs/f2fs/segment.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 1a83115284b9..51f57393ad5b 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -4243,7 +4243,7 @@ static int build_dirty_segmap(struct f2fs_sb_info *sbi)
->  	return init_victim_secmap(sbi);
->  }
->  
-> -int sanity_check_curseg(struct f2fs_sb_info *sbi)
-> +static int sanity_check_curseg(struct f2fs_sb_info *sbi)
->  {
->  	int i;
->  
-> 
+- Kernel messages
+ F2FS-fs (sdb): Bitmap was wrongly set, blk:4608
+ kernel BUG at fs/f2fs/segment.c:2133!
+ RIP: 0010:update_sit_entry+0x35d/0x3e0
+ Call Trace:
+  f2fs_allocate_data_block+0x16c/0x5a0
+  do_write_page+0x57/0x100
+  f2fs_do_write_node_page+0x33/0xa0
+  __write_node_page+0x270/0x4e0
+  f2fs_sync_node_pages+0x5df/0x670
+  f2fs_write_checkpoint+0x364/0x13a0
+  f2fs_sync_fs+0xa3/0x130
+  f2fs_do_sync_file+0x1a6/0x810
+  do_fsync+0x33/0x60
+  __x64_sys_fsync+0xb/0x10
+  do_syscall_64+0x43/0x110
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The testcase fails because that, in fuzzed image, current segment was
+allocated with LFS type, its .next_blkoff should point to an unused
+block address, but actually, its bitmap shows it's not. So during
+allocation, f2fs crash when setting bitmap.
+
+Introducing sanity_check_curseg() to check such inconsistence of
+current in-used segment.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v3:
+- make sanity_check_curseg() static.
+ fs/f2fs/segment.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5f6e4cd2eff2..a034e0da004a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4239,6 +4239,41 @@ static int build_dirty_segmap(struct f2fs_sb_info *sbi)
+ 	return init_victim_secmap(sbi);
+ }
+ 
++static int sanity_check_curseg(struct f2fs_sb_info *sbi)
++{
++	int i;
++
++	/*
++	 * In LFS/SSR curseg, .next_blkoff should point to an unused blkaddr;
++	 * In LFS curseg, all blkaddr after .next_blkoff should be unused.
++	 */
++	for (i = 0; i < NO_CHECK_TYPE; i++) {
++		struct curseg_info *curseg = CURSEG_I(sbi, i);
++		struct seg_entry *se = get_seg_entry(sbi, curseg->segno);
++		unsigned int blkofs = curseg->next_blkoff;
++
++		if (f2fs_test_bit(blkofs, se->cur_valid_map))
++			goto out;
++
++		if (curseg->alloc_type == SSR)
++			continue;
++
++		for (blkofs += 1; blkofs < sbi->blocks_per_seg; blkofs++) {
++			if (!f2fs_test_bit(blkofs, se->cur_valid_map))
++				continue;
++out:
++			f2fs_msg(sbi->sb, KERN_ERR,
++				"Current segment's next free block offset is "
++				"inconsistent with bitmap, logtype:%u, "
++				"segno:%u, type:%u, next_blkoff:%u, blkofs:%u",
++				i, curseg->segno, curseg->alloc_type,
++				curseg->next_blkoff, blkofs);
++			return -EINVAL;
++		}
++	}
++	return 0;
++}
++
+ /*
+  * Update min, max modified time for cost-benefit GC algorithm
+  */
+@@ -4334,6 +4369,10 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		return err;
+ 
++	err = sanity_check_curseg(sbi);
++	if (err)
++		return err;
++
+ 	init_min_max_mtime(sbi);
+ 	return 0;
+ }
+-- 
+2.18.0
