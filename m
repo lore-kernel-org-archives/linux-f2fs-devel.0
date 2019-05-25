@@ -1,116 +1,37 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 6/7] generic: verify ciphertext of v1
- encryption policies with AES-128
-Date: Fri, 24 May 2019 15:04:24 -0700
-Message-ID: <20190524220425.201170-7-ebiggers@kernel.org>
-References: <20190524220425.201170-1-ebiggers@kernel.org>
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] f2fs: Make sanity_check_curseg static
+Date: Sat, 25 May 2019 20:48:09 +0800
+Message-ID: <20190525124809.17424-1-yuehaibing@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hUIJQ-0005nz-R1
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 May 2019 22:05:16 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hUIJ4-007hMJ-L9
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 May 2019 22:05:16 +0000
-In-Reply-To: <20190524220425.201170-1-ebiggers@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: fstests@vger.kernel.org
-Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, YueHaibing <yuehaibing@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+Fix sparse warning:
 
-Verify ciphertext for v1 encryption policies that use AES-128-CBC-ESSIV
-to encrypt file contents and AES-128-CTS-CBC to encrypt file names.
+fs/f2fs/segment.c:4246:5: warning:
+ symbol 'sanity_check_curseg' was not declared. Should it be static?
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- tests/generic/701     | 41 +++++++++++++++++++++++++++++++++++++++++
- tests/generic/701.out |  5 +++++
- tests/generic/group   |  1 +
- 3 files changed, 47 insertions(+)
- create mode 100755 tests/generic/701
- create mode 100644 tests/generic/701.out
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tests/generic/701 b/tests/generic/701
-new file mode 100755
-index 00000000..d477f5bd
---- /dev/null
-+++ b/tests/generic/701
-@@ -0,0 +1,41 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright 2019 Google LLC
-+#
-+# FS QA Test generic/701
-+#
-+# Verify ciphertext for v1 encryption policies that use AES-128-CBC-ESSIV to
-+# encrypt file contents and AES-128-CTS-CBC to encrypt file names.
-+#
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1	# failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	cd /
-+	rm -f $tmp.*
-+}
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+. ./common/encrypt
-+
-+# remove previous $seqres.full before test
-+rm -f $seqres.full
-+
-+# real QA test starts here
-+_supported_fs generic
-+_supported_os Linux
-+
-+_verify_ciphertext_for_encryption_policy AES-128-CBC-ESSIV AES-128-CTS-CBC
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/701.out b/tests/generic/701.out
-new file mode 100644
-index 00000000..cfb6c924
---- /dev/null
-+++ b/tests/generic/701.out
-@@ -0,0 +1,5 @@
-+QA output created by 701
-+
-+Verifying ciphertext with parameters:
-+	contents_encryption_mode: AES-128-CBC-ESSIV
-+	filenames_encryption_mode: AES-128-CTS-CBC
-diff --git a/tests/generic/group b/tests/generic/group
-index 69ed721a..85cc2165 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -551,3 +551,4 @@
- 546 auto quick clone enospc log
- 547 auto quick log
- 700 auto quick encrypt
-+701 auto quick encrypt
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1a83115284b9..51f57393ad5b 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4243,7 +4243,7 @@ static int build_dirty_segmap(struct f2fs_sb_info *sbi)
+ 	return init_victim_secmap(sbi);
+ }
+ 
+-int sanity_check_curseg(struct f2fs_sb_info *sbi)
++static int sanity_check_curseg(struct f2fs_sb_info *sbi)
+ {
+ 	int i;
+ 
 -- 
-2.22.0.rc1.257.g3120a18244-goog
+2.17.1
