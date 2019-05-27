@@ -1,59 +1,37 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH] f2fs: ratelimit recovery messages
-Date: Mon, 27 May 2019 16:07:55 +0530
-Message-ID: <1558953475-5258-1-git-send-email-stummala@codeaurora.org>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: [PATCH 2/3] mm: remove cleancache.c
+Date: Mon, 27 May 2019 15:10:41 +0200
+Message-ID: <20190527131041.GH15290@twin.jikos.cz>
+References: <20190527103207.13287-1-jgross@suse.com>
+ <20190527103207.13287-3-jgross@suse.com>
+Reply-To: dsterba@suse.cz
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20190527103207.13287-3-jgross@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: Sahitya Tummala <stummala@codeaurora.org>, linux-kernel@vger.kernel.org
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org, Jonathan Corbet <corbet@lwn.net>, Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, ocfs2-
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Ratelimit the recovery logs, which are expected in case
-of sudden power down and which could result into too
-many prints.
+On Mon, May 27, 2019 at 12:32:06PM +0200, Juergen Gross wrote:
+> With the removal of tmem and xen-selfballoon the only user of
+> cleancache is gone. Remove it, too.
+> 
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
+>  Documentation/vm/cleancache.rst  | 296 ------------------------------------
+>  Documentation/vm/frontswap.rst   |  10 +-
+>  Documentation/vm/index.rst       |   1 -
+>  MAINTAINERS                      |   7 -
+>  drivers/staging/erofs/data.c     |   6 -
+>  drivers/staging/erofs/internal.h |   1 -
+>  fs/block_dev.c                   |   5 -
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
- fs/f2fs/recovery.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+For the btrfs part:
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index e04f82b..38b3b24a 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -188,8 +188,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
- 		name = "<encrypted>";
- 	else
- 		name = raw_inode->i_name;
--	f2fs_msg(inode->i_sb, KERN_NOTICE,
--			"%s: ino = %x, name = %s, dir = %lx, err = %d",
-+	printk_ratelimited(KERN_NOTICE "%s: ino = %x, name = %s, dir = %lx, err = %d",
- 			__func__, ino_of_node(ipage), name,
- 			IS_ERR(dir) ? 0 : dir->i_ino, err);
- 	return err;
-@@ -292,8 +291,7 @@ static int recover_inode(struct inode *inode, struct page *page)
- 	else
- 		name = F2FS_INODE(page)->i_name;
- 
--	f2fs_msg(inode->i_sb, KERN_NOTICE,
--		"recover_inode: ino = %x, name = %s, inline = %x",
-+	printk_ratelimited(KERN_NOTICE "recover_inode: ino = %x, name = %s, inline = %x",
- 			ino_of_node(page), name, raw->i_inline);
- 	return 0;
- }
-@@ -642,10 +640,8 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- err:
- 	f2fs_put_dnode(&dn);
- out:
--	f2fs_msg(sbi->sb, KERN_NOTICE,
--		"recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d",
--		inode->i_ino,
--		file_keep_isize(inode) ? "keep" : "recover",
-+	printk_ratelimited(KERN_NOTICE "recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d",
-+		inode->i_ino, file_keep_isize(inode) ? "keep" : "recover",
- 		recovered, err);
- 	return err;
- }
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+>  fs/btrfs/extent_io.c             |   9 --
+>  fs/btrfs/super.c                 |   2 -
+
+Acked-by: David Sterba <dsterba@suse.com>
