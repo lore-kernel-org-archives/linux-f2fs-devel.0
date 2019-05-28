@@ -1,51 +1,90 @@
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: Re: [PATCH 2/3] mm: remove cleancache.c
-Date: Tue, 28 May 2019 08:50:06 +0800
-Message-ID: <7c75d310-1beb-08f3-d590-b4ff2c42cbcd@linux.alibaba.com>
-References: <20190527103207.13287-1-jgross@suse.com>
- <20190527103207.13287-3-jgross@suse.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: ratelimit recovery messages
+Date: Tue, 28 May 2019 09:23:15 +0800
+Message-ID: <94025a6d-f485-3811-5521-ed5c9b4d1d77@huawei.com>
+References: <1558962655-25994-1-git-send-email-stummala@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190527103207.13287-3-jgross@suse.com>
+In-Reply-To: <1558962655-25994-1-git-send-email-stummala@codeaurora.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org
-Cc: Jonathan Corbet <corbet@lwn.net>, Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
+To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Hi Sahitya,
 
+On 2019/5/27 21:10, Sahitya Tummala wrote:
+> Ratelimit the recovery logs, which are expected in case
+> of sudden power down and which could result into too
+> many prints.
 
-On 19/5/27 18:32, Juergen Gross wrote:
-> With the removal of tmem and xen-selfballoon the only user of
-> cleancache is gone. Remove it, too.
+FYI
+
+https://lore.kernel.org/patchwork/patch/973837/
+
+IMO, we need those logs to provide evidence during trouble-shooting of file data
+corruption or file missing problem...
+
+So I suggest we can keep log as it is in recover_dentry/recover_inode, and for
+the log in do_recover_data, we can record recovery info [isize_kept,
+recovered_count, err ...] into struct fsync_inode_entry, and print them in
+batch, how do you think?
+
+Thanks,
+
 > 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 > ---
->  Documentation/vm/cleancache.rst  | 296 ------------------------------------
->  Documentation/vm/frontswap.rst   |  10 +-
->  Documentation/vm/index.rst       |   1 -
->  MAINTAINERS                      |   7 -
->  drivers/staging/erofs/data.c     |   6 -
->  drivers/staging/erofs/internal.h |   1 -
->  fs/block_dev.c                   |   5 -
->  fs/btrfs/extent_io.c             |   9 --
->  fs/btrfs/super.c                 |   2 -
->  fs/ext4/readpage.c               |   6 -
->  fs/ext4/super.c                  |   2 -
->  fs/f2fs/data.c                   |   3 +-
->  fs/mpage.c                       |   7 -
->  fs/ocfs2/super.c                 |   2 -
-
-For ocfs2 part,
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
->  fs/super.c                       |   3 -
->  include/linux/cleancache.h       | 124 ---------------
->  include/linux/fs.h               |   5 -
->  mm/Kconfig                       |  22 ---
->  mm/Makefile                      |   1 -
->  mm/cleancache.c                  | 317 ---------------------------------------
->  mm/filemap.c                     |  11 --
->  mm/truncate.c                    |  15 +-
+> v2:
+>  - fix minor formatting and add new line for printk
+> 
+>  fs/f2fs/recovery.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index e04f82b..60d7652 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -188,8 +188,8 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
+>  		name = "<encrypted>";
+>  	else
+>  		name = raw_inode->i_name;
+> -	f2fs_msg(inode->i_sb, KERN_NOTICE,
+> -			"%s: ino = %x, name = %s, dir = %lx, err = %d",
+> +	printk_ratelimited(KERN_NOTICE
+> +			"%s: ino = %x, name = %s, dir = %lx, err = %d\n",
+>  			__func__, ino_of_node(ipage), name,
+>  			IS_ERR(dir) ? 0 : dir->i_ino, err);
+>  	return err;
+> @@ -292,8 +292,8 @@ static int recover_inode(struct inode *inode, struct page *page)
+>  	else
+>  		name = F2FS_INODE(page)->i_name;
+>  
+> -	f2fs_msg(inode->i_sb, KERN_NOTICE,
+> -		"recover_inode: ino = %x, name = %s, inline = %x",
+> +	printk_ratelimited(KERN_NOTICE
+> +			"recover_inode: ino = %x, name = %s, inline = %x\n",
+>  			ino_of_node(page), name, raw->i_inline);
+>  	return 0;
+>  }
+> @@ -642,11 +642,11 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+>  err:
+>  	f2fs_put_dnode(&dn);
+>  out:
+> -	f2fs_msg(sbi->sb, KERN_NOTICE,
+> -		"recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d",
+> -		inode->i_ino,
+> -		file_keep_isize(inode) ? "keep" : "recover",
+> -		recovered, err);
+> +	printk_ratelimited(KERN_NOTICE
+> +			"recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d\n",
+> +			inode->i_ino,
+> +			file_keep_isize(inode) ? "keep" : "recover",
+> +			recovered, err);
+>  	return err;
+>  }
+>  
+> 
