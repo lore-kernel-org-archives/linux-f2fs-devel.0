@@ -1,148 +1,55 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: ratelimit recovery messages
-Date: Tue, 28 May 2019 15:37:49 +0800
-Message-ID: <0341eb2c-6788-1c85-2036-ed57b7f99dab@huawei.com>
-References: <1558962655-25994-1-git-send-email-stummala@codeaurora.org>
- <94025a6d-f485-3811-5521-ed5c9b4d1d77@huawei.com>
- <20190528030509.GE10043@codeaurora.org>
- <2575bd54-d67c-6b26-ebf7-d6adb2e193a7@huawei.com>
- <b5665201-d13d-5fcb-100d-21630960e5f1@huawei.com>
+Subject: [PATCH] f2fs: fix sparse warning
+Date: Tue, 28 May 2019 17:23:33 +0800
+Message-ID: <20190528092333.42663-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b5665201-d13d-5fcb-100d-21630960e5f1@huawei.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Gao Xiang <gaoxiang25@huawei.com>, Sahitya Tummala <stummala@codeaurora.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/5/28 11:30, Gao Xiang wrote:
-> Hi Sahitya,
-> 
-> On 2019/5/28 11:17, Chao Yu wrote:
->> Hi Sahitya,
->>
->> On 2019/5/28 11:05, Sahitya Tummala wrote:
->>> Hi Chao,
->>>
->>> On Tue, May 28, 2019 at 09:23:15AM +0800, Chao Yu wrote:
->>>> Hi Sahitya,
->>>>
->>>> On 2019/5/27 21:10, Sahitya Tummala wrote:
->>>>> Ratelimit the recovery logs, which are expected in case
->>>>> of sudden power down and which could result into too
->>>>> many prints.
->>>>
->>>> FYI
->>>>
->>>> https://lore.kernel.org/patchwork/patch/973837/
->>>>
->>>> IMO, we need those logs to provide evidence during trouble-shooting of file data
->>>> corruption or file missing problem...
->>>>
->>> In one of the logs, I have noticed there were ~400 recovery prints in the
->>
->> I think its order of magnitudes is not such bad, if there is redundant logs such
->> as the one in do_recover_data(), we can improve it.
->>
->>> kernel bootup. I noticed your patch above and with that now we can always get
->>> the error returned by f2fs_recover_fsync_data(), which should be good enough
->>> for knowing the status of recovered files I thought. Do you think we need
->>> individually each file status as well?
->>
->> Yes, I think so, we need them for the detailed info. :)
-> 
-> I personally agree with Chao's suggestion as well.
-> 
-> Sometimes huawei got stuck into rare potential f2fs stability issues,
-> which is hard to say whether it is a clearly hardware or software issues.
-> 
-> These messages is used as some evidences for us to guess what happened.
-> it'd better to handle carefully...
+make C=2 CHECKFLAGS="-D__CHECK_ENDIAN__"
 
-Correct, thanks for the detailed explanation. :)
+CHECK   dir.c
+dir.c:842:50: warning: cast from restricted __le32
+CHECK   node.c
+node.c:2759:40: warning: restricted __le32 degrades to integer
 
-Thanks,
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/dir.c  | 4 ++--
+ fs/f2fs/node.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-> 
-> Thanks,
-> Gao Xiang
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>> So I suggest we can keep log as it is in recover_dentry/recover_inode, and for
->>>> the log in do_recover_data, we can record recovery info [isize_kept,
->>>> recovered_count, err ...] into struct fsync_inode_entry, and print them in
->>>> batch, how do you think?
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>>>> ---
->>>>> v2:
->>>>>  - fix minor formatting and add new line for printk
->>>>>
->>>>>  fs/f2fs/recovery.c | 18 +++++++++---------
->>>>>  1 file changed, 9 insertions(+), 9 deletions(-)
->>>>>
->>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>>>> index e04f82b..60d7652 100644
->>>>> --- a/fs/f2fs/recovery.c
->>>>> +++ b/fs/f2fs/recovery.c
->>>>> @@ -188,8 +188,8 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
->>>>>  		name = "<encrypted>";
->>>>>  	else
->>>>>  		name = raw_inode->i_name;
->>>>> -	f2fs_msg(inode->i_sb, KERN_NOTICE,
->>>>> -			"%s: ino = %x, name = %s, dir = %lx, err = %d",
->>>>> +	printk_ratelimited(KERN_NOTICE
->>>>> +			"%s: ino = %x, name = %s, dir = %lx, err = %d\n",
->>>>>  			__func__, ino_of_node(ipage), name,
->>>>>  			IS_ERR(dir) ? 0 : dir->i_ino, err);
->>>>>  	return err;
->>>>> @@ -292,8 +292,8 @@ static int recover_inode(struct inode *inode, struct page *page)
->>>>>  	else
->>>>>  		name = F2FS_INODE(page)->i_name;
->>>>>  
->>>>> -	f2fs_msg(inode->i_sb, KERN_NOTICE,
->>>>> -		"recover_inode: ino = %x, name = %s, inline = %x",
->>>>> +	printk_ratelimited(KERN_NOTICE
->>>>> +			"recover_inode: ino = %x, name = %s, inline = %x\n",
->>>>>  			ino_of_node(page), name, raw->i_inline);
->>>>>  	return 0;
->>>>>  }
->>>>> @@ -642,11 +642,11 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
->>>>>  err:
->>>>>  	f2fs_put_dnode(&dn);
->>>>>  out:
->>>>> -	f2fs_msg(sbi->sb, KERN_NOTICE,
->>>>> -		"recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d",
->>>>> -		inode->i_ino,
->>>>> -		file_keep_isize(inode) ? "keep" : "recover",
->>>>> -		recovered, err);
->>>>> +	printk_ratelimited(KERN_NOTICE
->>>>> +			"recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d\n",
->>>>> +			inode->i_ino,
->>>>> +			file_keep_isize(inode) ? "keep" : "recover",
->>>>> +			recovered, err);
->>>>>  	return err;
->>>>>  }
->>>>>  
->>>>>
->>>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>
-> .
-> 
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 59bc46017855..64cb61c42b95 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -828,8 +828,8 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 			int save_len = fstr->len;
+ 
+ 			err = fscrypt_fname_disk_to_usr(d->inode,
+-						(u32)de->hash_code, 0,
+-						&de_name, fstr);
++						(u32)le32_to_cpu(de->hash_code),
++						0, &de_name, fstr);
+ 			if (err)
+ 				goto out;
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 18a038a2a9fa..865f1525df32 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2725,7 +2725,7 @@ static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+ 		i = 1;
+ 	}
+ 	for (; i < NAT_ENTRY_PER_BLOCK; i++) {
+-		if (nat_blk->entries[i].block_addr != NULL_ADDR)
++		if (le32_to_cpu(nat_blk->entries[i].block_addr) != NULL_ADDR)
+ 			valid++;
+ 	}
+ 	if (valid == 0) {
+-- 
+2.18.0.rc1
