@@ -1,50 +1,78 @@
 From: Daniel Rosenberg <drosen@google.com>
-Subject: [PATCH v3 0/4] F2FS Checkpointing without GC, related fixes
-Date: Wed, 29 May 2019 17:49:02 -0700
-Message-ID: <20190530004906.261170-1-drosen@google.com>
+Subject: [PATCH v3 1/4] f2fs: Lower threshold for disable_cp_again
+Date: Wed, 29 May 2019 17:49:03 -0700
+Message-ID: <20190530004906.261170-2-drosen@google.com>
+References: <20190530004906.261170-1-drosen@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190530004906.261170-1-drosen@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Jonathan Corbet <corbet@lwn.net>, linux-f2fs-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-The first patch adjusts the default allowable holes for checkpointing, and
-the next two patches fix underflow issues related to inc_valid_block_count
-and inc_valid_node_count. The final one adds a new feature for
-checkpointing where the user can specify an acceptable amount of space to
-lose access to up front in checkpointing=disable mode instead of requiring
-garbage collection.
+The existing threshold for allowable holes at checkpoint=disable time is
+too high. The OVP space contains reserved segments, which are always in
+the form of free segments. These must be subtracted from the OVP value.
 
-There is still a question around what to do when the current reserved
-space is less than reserved. As it stands, when a block is deleted, if it
-was an old block, the space is not actually given back, and is marked as
-unusable. But current reserve may still rise towards reserve, which would
-make freeing one block result in a net loss of one block, as opposed to no
-change. Reserved and unusable serve the same function, so it may make
-sense to just handle it as max(current_reserved, unusable), which
-effectively removes the double counting. I'm leaving that until later.
+The current threshold is meant to be the maximum value of holes of a
+single type we can have and still guarantee that we can fill the disk
+without failing to find space for a block of a given type.
 
-Changes from v2:
-Adjust threshold for initial unusable blocks
-Patches to fix underflows
-Added option to set a block limit in addition to a percent for initial
-unusable space
+If the disk is full, ignoring current reserved, which only helps us,
+the amount of unused blocks is equal to the OVP area. Of that, there
+are reserved segments, which must be free segments, and the rest of the
+ovp area, which can come from either free segments or holes. The maximum
+possible amount of holes is OVP-reserved.
 
-Daniel Rosenberg (4):
-  f2fs: Lower threshold for disable_cp_again
-  f2fs: Fix root reserved on remount
-  f2fs: Fix accounting for unusable blocks
-  f2fs: Add option to limit required GC for checkpoint=disable
+Now, consider the disk when mounting with checkpoint=disable.
+We must be able to fill all available free space with either data or
+node blocks. When we start with checkpoint=disable, holes are locked to
+their current type. Say we have H of one type of hole, and H+X of the
+other. We can fill H of that space with arbitrary typed blocks via SSR.
+For the remaining H+X blocks, we may not have any of a given block type
+left at all. For instance, if we were to fill the disk entirely with
+blocks of the type with fewer holes, the H+X blocks of the opposite type
+would not be used. If H+X > OVP-reserved, there would be more holes than
+could possibly exist, and we would have failed to find a suitable block
+earlier on, leading to a crash in update_sit_entry.
 
- Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++
- Documentation/filesystems/f2fs.txt      | 19 +++++++-
- fs/f2fs/f2fs.h                          | 22 ++++++---
- fs/f2fs/segment.c                       | 21 +++++++--
- fs/f2fs/super.c                         | 62 ++++++++++++++++---------
- fs/f2fs/sysfs.c                         | 16 +++++++
- 6 files changed, 115 insertions(+), 33 deletions(-)
+If H+X <= OVP-reserved, then the holes end up effectively masked by the OVP
+region in this case.
 
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fs/f2fs/segment.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1a83115284b93..ec59cbd0e661d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -876,7 +876,9 @@ void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi)
+ int f2fs_disable_cp_again(struct f2fs_sb_info *sbi)
+ {
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+-	block_t ovp = overprovision_segments(sbi) << sbi->log_blocks_per_seg;
++	int ovp_hole_segs =
++		(overprovision_segments(sbi) - reserved_segments(sbi));
++	block_t ovp_holes = ovp_hole_segs << sbi->log_blocks_per_seg;
+ 	block_t holes[2] = {0, 0};	/* DATA and NODE */
+ 	struct seg_entry *se;
+ 	unsigned int segno;
+@@ -891,10 +893,10 @@ int f2fs_disable_cp_again(struct f2fs_sb_info *sbi)
+ 	}
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ 
+-	if (holes[DATA] > ovp || holes[NODE] > ovp)
++	if (holes[DATA] > ovp_holes || holes[NODE] > ovp_holes)
+ 		return -EAGAIN;
+ 	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED_QUICK) &&
+-		dirty_segments(sbi) > overprovision_segments(sbi))
++		dirty_segments(sbi) > ovp_hole_segs)
+ 		return -EAGAIN;
+ 	return 0;
+ }
 -- 
 2.22.0.rc1.257.g3120a18244-goog
