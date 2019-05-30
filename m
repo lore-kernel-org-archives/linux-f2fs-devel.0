@@ -1,319 +1,187 @@
-From: Daniel Rosenberg <drosen@google.com>
-Subject: [PATCH v3 4/4] f2fs: Add option to limit required GC for checkpoint=disable
-Date: Wed, 29 May 2019 17:49:06 -0700
-Message-ID: <20190530004906.261170-5-drosen@google.com>
-References: <20190530004906.261170-1-drosen@google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: add a rw_sem to cover quota flag changes
+Date: Wed, 29 May 2019 20:31:15 -0700
+Message-ID: <20190530033115.16853-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190530004906.261170-1-drosen@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Jonathan Corbet <corbet@lwn.net>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This extends the checkpoint option to allow checkpoint=disable:%u[%]
-This allows you to specify what how much of the disk you are willing
-to lose access to while mounting with checkpoint=disable. If the amount
-lost would be higher, the mount will return -EAGAIN. This can be given
-as a percent of total space, or in blocks.
+thread 1:                        thread 2:
+writeback                        checkpoint
+set QUOTA_NEED_FLUSH
+                                 clear QUOTA_NEED_FLUSH
+f2fs_dquot_commit
+dquot_commit
+clear_dquot_dirty
+                                 f2fs_quota_sync
+                                 dquot_writeback_dquots
+				 nothing to commit
+commit_dqblk
+quota_write
+f2fs_quota_write
+waiting for f2fs_lock_op()
+				 pass __need_flush_quota
+                                 (no F2FS_DIRTY_QDATA)
 
-Currently, we need to run garbage collection until the amount of holes
-is smaller than the OVP space. With the new option, f2fs can mark
-space as unusable up front instead of requiring garbage collection until
-the number of holes is small enough.
+-> up-to-date quota is not written
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++
- Documentation/filesystems/f2fs.txt      | 19 +++++++-
- fs/f2fs/f2fs.h                          |  6 ++-
- fs/f2fs/segment.c                       | 17 +++++--
- fs/f2fs/super.c                         | 59 ++++++++++++++++---------
- fs/f2fs/sysfs.c                         | 16 +++++++
- 6 files changed, 99 insertions(+), 26 deletions(-)
+ fs/f2fs/checkpoint.c | 26 ++++++++++++++++----------
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/super.c      | 27 ++++++++++++++++++++++-----
+ 3 files changed, 39 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 91822ce258317..dca326e0ee3e1 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -243,3 +243,11 @@ Description:
- 		 - Del: echo '[h/c]!extension' > /sys/fs/f2fs/<disk>/extension_list
- 		 - [h] means add/del hot file extension
- 		 - [c] means add/del cold file extension
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 89825261d474..cf3b15c963d2 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1131,17 +1131,23 @@ static void __prepare_cp_block(struct f2fs_sb_info *sbi)
+ 
+ static bool __need_flush_quota(struct f2fs_sb_info *sbi)
+ {
++	bool ret = false;
 +
-+What:		/sys/fs/f2fs/<disk>/unusable
-+Date		April 2019
-+Contact:	"Daniel Rosenberg" <drosen@google.com>
-+Description:
-+		If checkpoint=disable, it displays the number of blocks that are unusable.
-+                If checkpoint=enable it displays the enumber of blocks that would be unusable
-+                if checkpoint=disable were to be set.
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 66aca042988ee..bebd1be3ba495 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -214,11 +214,22 @@ fsync_mode=%s          Control the policy of fsync. Currently supports "posix",
-                        non-atomic files likewise "nobarrier" mount option.
- test_dummy_encryption  Enable dummy encryption, which provides a fake fscrypt
-                        context. The fake fscrypt context is used by xfstests.
--checkpoint=%s          Set to "disable" to turn off checkpointing. Set to "enable"
-+checkpoint=%s[:%u[%]]     Set to "disable" to turn off checkpointing. Set to "enable"
-                        to reenable checkpointing. Is enabled by default. While
-                        disabled, any unmounting or unexpected shutdowns will cause
-                        the filesystem contents to appear as they did when the
-                        filesystem was mounted with that option.
-+                       While mounting with checkpoint=disabled, the filesystem must
-+                       run garbage collection to ensure that all available space can
-+                       be used. If this takes too much time, the mount may return
-+                       EAGAIN. You may optionally add a value to indicate how much
-+                       of the disk you would be willing to temporarily give up to
-+                       avoid additional garbage collection. This can be given as a
-+                       number of blocks, or as a percent. For instance, mounting
-+                       with checkpoint=disable:100% would always succeed, but it may
-+                       hide up to all remaining free space. The actual space that
-+                       would be unusable can be viewed at /sys/fs/f2fs/<disk>/unusable
-+                       This space is reclaimed once checkpoint=enable.
++	down_write(&sbi->quota_sem);
+ 	if (!is_journalled_quota(sbi))
+-		return false;
+-	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+-		return false;
+-	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+-		return false;
+-	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH))
+-		return true;
+-	if (get_pages(sbi, F2FS_DIRTY_QDATA))
+-		return true;
+-	return false;
++		ret = false;
++	else if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
++		ret = false;
++	else if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
++		ret = false;
++	else if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH))
++		ret = true;
++	else if (get_pages(sbi, F2FS_DIRTY_QDATA))
++		ret = true;
++	else
++		ret = false;
++	up_write(&sbi->quota_sem);
++	return ret;
+ }
  
- ================================================================================
- DEBUGFS ENTRIES
-@@ -396,6 +407,12 @@ Files in /sys/fs/f2fs/<devname>
- 
-  current_reserved_blocks      This shows # of blocks currently reserved.
- 
-+ unusable                     If checkpoint=disable, this shows the number of
-+                              blocks that are unusable.
-+                              If checkpoint=enable it shows the number of blocks
-+                              that would be unusable if checkpoint=disable were
-+                              to be set.
-+
- ================================================================================
- USAGE
- ================================================================================
+ /*
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a39cc4ffeb4b1..11ef20fedfe72 100644
+index 9b3d9977cd1e..692c0922f5b2 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -136,6 +136,9 @@ struct f2fs_mount_info {
- 	int alloc_mode;			/* segment allocation policy */
- 	int fsync_mode;			/* fsync policy */
- 	bool test_dummy_encryption;	/* test dummy encryption */
-+	block_t unusable_cap;		/* Amount of space allowed to be
-+					 * unusable when disabling checkpoint
-+					 */
- };
+@@ -1250,6 +1250,7 @@ struct f2fs_sb_info {
+ 	block_t unusable_block_count;		/* # of blocks saved by last cp */
  
- #define F2FS_FEATURE_ENCRYPT		0x0001
-@@ -3085,7 +3088,8 @@ bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi);
- void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 					struct cp_control *cpc);
- void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi);
--int f2fs_disable_cp_again(struct f2fs_sb_info *sbi);
-+block_t f2fs_get_unusable_blocks(struct f2fs_sb_info *sbi);
-+int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable);
- void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
- int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
- void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index ec59cbd0e661d..33bf07222f99f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -873,13 +873,14 @@ void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi)
- 	mutex_unlock(&dirty_i->seglist_lock);
- }
+ 	unsigned int nquota_files;		/* # of quota sysfile */
++	struct rw_semaphore quota_sem;		/* blocking cp for flags */
  
--int f2fs_disable_cp_again(struct f2fs_sb_info *sbi)
-+block_t f2fs_get_unusable_blocks(struct f2fs_sb_info *sbi)
- {
--	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
- 	int ovp_hole_segs =
- 		(overprovision_segments(sbi) - reserved_segments(sbi));
- 	block_t ovp_holes = ovp_hole_segs << sbi->log_blocks_per_seg;
-+	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
- 	block_t holes[2] = {0, 0};	/* DATA and NODE */
-+	block_t unusable;
- 	struct seg_entry *se;
- 	unsigned int segno;
- 
-@@ -893,7 +894,17 @@ int f2fs_disable_cp_again(struct f2fs_sb_info *sbi)
- 	}
- 	mutex_unlock(&dirty_i->seglist_lock);
- 
--	if (holes[DATA] > ovp_holes || holes[NODE] > ovp_holes)
-+	unusable = holes[DATA] > holes[NODE] ? holes[DATA] : holes[NODE];
-+	if (unusable > ovp_holes)
-+		return unusable - ovp_holes;
-+	return 0;
-+}
-+
-+int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable)
-+{
-+	int ovp_hole_segs =
-+		(overprovision_segments(sbi) - reserved_segments(sbi));
-+	if (unusable > F2FS_OPTION(sbi).unusable_cap)
- 		return -EAGAIN;
- 	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED_QUICK) &&
- 		dirty_segments(sbi) > ovp_hole_segs)
+ 	/* # of pages, see count_type */
+ 	atomic_t nr_pages[NR_COUNT_TYPE];
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 359fd68509d16..7d64e97611141 100644
+index 912e2619d581..5ddf5e97ee60 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -136,7 +136,10 @@ enum {
- 	Opt_alloc,
- 	Opt_fsync,
- 	Opt_test_dummy_encryption,
--	Opt_checkpoint,
-+	Opt_checkpoint_disable,
-+	Opt_checkpoint_disable_cap,
-+	Opt_checkpoint_disable_cap_perc,
-+	Opt_checkpoint_enable,
- 	Opt_err,
- };
- 
-@@ -195,7 +198,10 @@ static match_table_t f2fs_tokens = {
- 	{Opt_alloc, "alloc_mode=%s"},
- 	{Opt_fsync, "fsync_mode=%s"},
- 	{Opt_test_dummy_encryption, "test_dummy_encryption"},
--	{Opt_checkpoint, "checkpoint=%s"},
-+	{Opt_checkpoint_disable, "checkpoint=disable"},
-+	{Opt_checkpoint_disable_cap, "checkpoint=disable:%u"},
-+	{Opt_checkpoint_disable_cap_perc, "checkpoint=disable:%u%%"},
-+	{Opt_checkpoint_enable, "checkpoint=enable"},
- 	{Opt_err, NULL},
- };
- 
-@@ -772,22 +778,30 @@ static int parse_options(struct super_block *sb, char *options)
- 					"Test dummy encryption mount option ignored");
- #endif
- 			break;
--		case Opt_checkpoint:
--			name = match_strdup(&args[0]);
--			if (!name)
--				return -ENOMEM;
--
--			if (strlen(name) == 6 &&
--					!strncmp(name, "enable", 6)) {
--				clear_opt(sbi, DISABLE_CHECKPOINT);
--			} else if (strlen(name) == 7 &&
--					!strncmp(name, "disable", 7)) {
--				set_opt(sbi, DISABLE_CHECKPOINT);
--			} else {
--				kvfree(name);
-+		case Opt_checkpoint_disable_cap_perc:
-+			if (args->from && match_int(args, &arg))
- 				return -EINVAL;
--			}
--			kvfree(name);
-+			if (arg < 0 || arg > 100)
-+				return -EINVAL;
-+			if (arg == 100)
-+				F2FS_OPTION(sbi).unusable_cap =
-+					sbi->user_block_count;
-+			else
-+				F2FS_OPTION(sbi).unusable_cap =
-+					(sbi->user_block_count / 100) *	arg;
-+			set_opt(sbi, DISABLE_CHECKPOINT);
-+			break;
-+		case Opt_checkpoint_disable_cap:
-+			if (args->from && match_int(args, &arg))
-+				return -EINVAL;
-+			F2FS_OPTION(sbi).unusable_cap = arg;
-+			set_opt(sbi, DISABLE_CHECKPOINT);
-+			break;
-+		case Opt_checkpoint_disable:
-+			set_opt(sbi, DISABLE_CHECKPOINT);
-+			break;
-+		case Opt_checkpoint_enable:
-+			clear_opt(sbi, DISABLE_CHECKPOINT);
- 			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
-@@ -1410,8 +1424,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_printf(seq, ",alloc_mode=%s", "reuse");
- 
- 	if (test_opt(sbi, DISABLE_CHECKPOINT))
--		seq_puts(seq, ",checkpoint=disable");
--
-+		seq_printf(seq, ",checkpoint=disable:%u",
-+				F2FS_OPTION(sbi).unusable_cap);
- 	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_POSIX)
- 		seq_printf(seq, ",fsync_mode=%s", "posix");
- 	else if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
-@@ -1440,6 +1454,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	set_opt(sbi, EXTENT_CACHE);
- 	set_opt(sbi, NOHEAP);
- 	clear_opt(sbi, DISABLE_CHECKPOINT);
-+	F2FS_OPTION(sbi).unusable_cap = 0;
- 	sbi->sb->s_flags |= SB_LAZYTIME;
- 	set_opt(sbi, FLUSH_MERGE);
- 	set_opt(sbi, DISCARD);
-@@ -1468,6 +1483,7 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 	struct cp_control cpc;
- 	int err = 0;
+@@ -1944,7 +1944,10 @@ int f2fs_quota_sync(struct super_block *sb, int type)
+ 	int cnt;
  	int ret;
-+	block_t unusable;
  
- 	if (s_flags & SB_RDONLY) {
- 		f2fs_msg(sbi->sb, KERN_ERR,
-@@ -1495,7 +1511,8 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 		goto restore_flag;
- 	}
++	down_read(&sbi->quota_sem);
+ 	ret = dquot_writeback_dquots(sb, type);
++	up_read(&sbi->quota_sem);
++
+ 	if (ret)
+ 		goto out;
  
--	if (f2fs_disable_cp_again(sbi)) {
-+	unusable = f2fs_get_unusable_blocks(sbi);
-+	if (f2fs_disable_cp_again(sbi, unusable)) {
- 		err = -EAGAIN;
- 		goto restore_flag;
- 	}
-@@ -1508,7 +1525,7 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 		goto out_unlock;
+@@ -2074,32 +2077,40 @@ static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
  
- 	spin_lock(&sbi->stat_lock);
--	sbi->unusable_block_count = 0;
-+	sbi->unusable_block_count = unusable;
- 	spin_unlock(&sbi->stat_lock);
+ static int f2fs_dquot_commit(struct dquot *dquot)
+ {
++	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+ 	int ret;
  
- out_unlock:
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 729f46a3c9ee0..fa184880cff34 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -68,6 +68,20 @@ static ssize_t dirty_segments_show(struct f2fs_attr *a,
- 		(unsigned long long)(dirty_segments(sbi)));
++	down_read(&sbi->quota_sem);
+ 	ret = dquot_commit(dquot);
+ 	if (ret < 0)
+-		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
++	up_read(&sbi->quota_sem);
+ 	return ret;
  }
  
-+static ssize_t unusable_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
-+{
-+	block_t unusable;
-+
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		unusable = sbi->unusable_block_count;
-+	else
-+		unusable = f2fs_get_unusable_blocks(sbi);
-+	return snprintf(buf, PAGE_SIZE, "%llu\n",
-+		(unsigned long long)unusable);
-+}
-+
-+
- static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
- 		struct f2fs_sb_info *sbi, char *buf)
+ static int f2fs_dquot_acquire(struct dquot *dquot)
  {
-@@ -440,6 +454,7 @@ F2FS_GENERAL_RO_ATTR(dirty_segments);
- F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
- F2FS_GENERAL_RO_ATTR(features);
- F2FS_GENERAL_RO_ATTR(current_reserved_blocks);
-+F2FS_GENERAL_RO_ATTR(unusable);
++	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+ 	int ret;
  
- #ifdef CONFIG_FS_ENCRYPTION
- F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
-@@ -495,6 +510,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(inject_type),
- #endif
- 	ATTR_LIST(dirty_segments),
-+	ATTR_LIST(unusable),
- 	ATTR_LIST(lifetime_write_kbytes),
- 	ATTR_LIST(features),
- 	ATTR_LIST(reserved_blocks),
++	down_read(&sbi->quota_sem);
+ 	ret = dquot_acquire(dquot);
+ 	if (ret < 0)
+-		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
+-
++		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
++	up_read(&sbi->quota_sem);
+ 	return ret;
+ }
+ 
+ static int f2fs_dquot_release(struct dquot *dquot)
+ {
++	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+ 	int ret;
+ 
++	down_read(&sbi->quota_sem);
+ 	ret = dquot_release(dquot);
+ 	if (ret < 0)
+-		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
++		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
++	up_read(&sbi->quota_sem);
+ 	return ret;
+ }
+ 
+@@ -2109,22 +2120,27 @@ static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+ 	int ret;
+ 
++	down_read(&sbi->quota_sem);
+ 	ret = dquot_mark_dquot_dirty(dquot);
+ 
+ 	/* if we are using journalled quota */
+ 	if (is_journalled_quota(sbi))
+ 		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+ 
++	up_read(&sbi->quota_sem);
+ 	return ret;
+ }
+ 
+ static int f2fs_dquot_commit_info(struct super_block *sb, int type)
+ {
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+ 	int ret;
+ 
++	down_read(&sbi->quota_sem);
+ 	ret = dquot_commit_info(sb, type);
+ 	if (ret < 0)
+-		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
++		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
++	up_read(&sbi->quota_sem);
+ 	return ret;
+ }
+ 
+@@ -3233,6 +3249,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	}
+ 
+ 	init_rwsem(&sbi->cp_rwsem);
++	init_rwsem(&sbi->quota_sem);
+ 	init_waitqueue_head(&sbi->cp_wait);
+ 	init_sb_info(sbi);
+ 
 -- 
-2.22.0.rc1.257.g3120a18244-goog
+2.19.0.605.g01d371f741-goog
