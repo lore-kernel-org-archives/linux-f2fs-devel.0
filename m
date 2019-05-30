@@ -1,104 +1,50 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH v2 00/14] fscrypt,
- ext4: prepare for blocksize != PAGE_SIZE
-Date: Wed, 29 May 2019 13:47:54 -0700
-Message-ID: <20190529204753.GB141639@gmail.com>
-References: <20190520162952.156212-1-ebiggers@kernel.org>
+From: Daniel Rosenberg <drosen@google.com>
+Subject: [PATCH v3 0/4] F2FS Checkpointing without GC, related fixes
+Date: Wed, 29 May 2019 17:49:02 -0700
+Message-ID: <20190530004906.261170-1-drosen@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hW5US-00017s-JQ
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 May 2019 20:48:04 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hW5UQ-0042n2-VH
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 May 2019 20:48:04 +0000
-Content-Disposition: inline
-In-Reply-To: <20190520162952.156212-1-ebiggers@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fscrypt@vger.kernel.org
-Cc: linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org, Chandan Rajendra <chandan@linux.ibm.com>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Jonathan Corbet <corbet@lwn.net>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, May 20, 2019 at 09:29:38AM -0700, Eric Biggers wrote:
-> Hello,
-> 
-> This patchset prepares fs/crypto/, and partially ext4, for the
-> 'blocksize != PAGE_SIZE' case.
-> 
-> This basically contains the encryption changes from Chandan Rajendra's
-> patchset "[V2,00/13] Consolidate FS read I/O callbacks code"
-> (https://patchwork.kernel.org/project/linux-fscrypt/list/?series=111039)
-> that don't require introducing the read_callbacks and don't depend on
-> fsverity stuff.  But they've been reworked to clean things up a lot.
-> 
-> I'd like to apply this patchset for 5.3 in order to make things forward
-> for ext4 encryption with 'blocksize != PAGE_SIZE'.
-> 
-> AFAICT, after this patchset the only thing stopping ext4 encryption from
-> working with blocksize != PAGE_SIZE is the lack of encryption support in
-> block_read_full_page(), which the read_callbacks will address.
-> 
-> This patchset applies to v5.2-rc1, and it can also be retrieved from git
-> at https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
-> branch "fscrypt-subpage-blocks-prep".
-> 
-> Changed since v1 (minor cleanups only):
-> 
-> - In "fscrypt: simplify bounce page handling", also remove
->   the definition of FS_CTX_HAS_BOUNCE_BUFFER_FL.
-> 
-> - In "ext4: decrypt only the needed blocks in ext4_block_write_begin()",
->   simplify the code slightly by moving the IS_ENCRYPTED() check.
-> 
-> - Change __fscrypt_decrypt_bio() in a separate patch rather than as part
->   of "fscrypt: support decrypting multiple filesystem blocks per page".
->   The resulting code is the same, so I kept Chandan's Reviewed-by.
-> 
-> - Improve the commit message of
->   "fscrypt: introduce fscrypt_decrypt_block_inplace()".
-> 
-> Chandan Rajendra (3):
->   ext4: clear BH_Uptodate flag on decryption error
->   ext4: decrypt only the needed blocks in ext4_block_write_begin()
->   ext4: decrypt only the needed block in __ext4_block_zero_page_range()
-> 
-> Eric Biggers (11):
->   fscrypt: simplify bounce page handling
->   fscrypt: remove the "write" part of struct fscrypt_ctx
->   fscrypt: rename fscrypt_do_page_crypto() to fscrypt_crypt_block()
->   fscrypt: clean up some BUG_ON()s in block encryption/decryption
->   fscrypt: introduce fscrypt_encrypt_block_inplace()
->   fscrypt: support encrypting multiple filesystem blocks per page
->   fscrypt: handle blocksize < PAGE_SIZE in fscrypt_zeroout_range()
->   fscrypt: introduce fscrypt_decrypt_block_inplace()
->   fscrypt: support decrypting multiple filesystem blocks per page
->   fscrypt: decrypt only the needed blocks in __fscrypt_decrypt_bio()
->   ext4: encrypt only up to last block in ext4_bio_write_page()
-> 
->  fs/crypto/bio.c             |  73 +++------
->  fs/crypto/crypto.c          | 299 ++++++++++++++++++++----------------
->  fs/crypto/fscrypt_private.h |  15 +-
->  fs/ext4/inode.c             |  37 +++--
->  fs/ext4/page-io.c           |  44 +++---
->  fs/f2fs/data.c              |  17 +-
->  fs/ubifs/crypto.c           |  19 +--
->  include/linux/fscrypt.h     |  96 ++++++++----
->  8 files changed, 319 insertions(+), 281 deletions(-)
-> 
+The first patch adjusts the default allowable holes for checkpointing, and
+the next two patches fix underflow issues related to inc_valid_block_count
+and inc_valid_node_count. The final one adds a new feature for
+checkpointing where the user can specify an acceptable amount of space to
+lose access to up front in checkpointing=disable mode instead of requiring
+garbage collection.
 
-I've applied this series to fscrypt.git for 5.3.
+There is still a question around what to do when the current reserved
+space is less than reserved. As it stands, when a block is deleted, if it
+was an old block, the space is not actually given back, and is marked as
+unusable. But current reserve may still rise towards reserve, which would
+make freeing one block result in a net loss of one block, as opposed to no
+change. Reserved and unusable serve the same function, so it may make
+sense to just handle it as max(current_reserved, unusable), which
+effectively removes the double counting. I'm leaving that until later.
 
-- Eric
+Changes from v2:
+Adjust threshold for initial unusable blocks
+Patches to fix underflows
+Added option to set a block limit in addition to a percent for initial
+unusable space
+
+Daniel Rosenberg (4):
+  f2fs: Lower threshold for disable_cp_again
+  f2fs: Fix root reserved on remount
+  f2fs: Fix accounting for unusable blocks
+  f2fs: Add option to limit required GC for checkpoint=disable
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++
+ Documentation/filesystems/f2fs.txt      | 19 +++++++-
+ fs/f2fs/f2fs.h                          | 22 ++++++---
+ fs/f2fs/segment.c                       | 21 +++++++--
+ fs/f2fs/super.c                         | 62 ++++++++++++++++---------
+ fs/f2fs/sysfs.c                         | 16 +++++++
+ 6 files changed, 115 insertions(+), 33 deletions(-)
+
+-- 
+2.22.0.rc1.257.g3120a18244-goog
