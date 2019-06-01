@@ -1,88 +1,104 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 046/186] f2fs: fix to avoid panic in f2fs_remove_inode_page()
-Date: Sat,  1 Jun 2019 09:14:22 -0400
-Message-ID: <20190601131653.24205-46-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 049/186] f2fs: fix to avoid panic in dec_valid_block_count()
+Date: Sat,  1 Jun 2019 09:14:25 -0400
+Message-ID: <20190601131653.24205-49-sashal@kernel.org>
 References: <20190601131653.24205-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
 In-Reply-To: <20190601131653.24205-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 8b6810f8acfe429fde7c7dad4714692cc5f75651 ]
+[ Upstream commit 5e159cd349bf3a31fb7e35c23a93308eb30f4f71 ]
 
 As Jungyeon reported in bugzilla:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203219
+https://bugzilla.kernel.org/show_bug.cgi?id=203209
 
 - Overview
 When mounting the attached crafted image and running program, I got this error.
-Additionally, it hangs on sync after running the program.
+Additionally, it hangs on sync after the this script.
 
 The image is intentionally fuzzed from a normal f2fs image for testing and I enabled option CONFIG_F2FS_CHECK_FS on.
 
 - Reproduces
-cc poc_06.c
-mkdir test
-mount -t f2fs tmp.img test
-cp a.out test
-cd test
-sudo ./a.out
+cc poc_01.c
+./run.sh f2fs
 sync
 
-- Messages
- kernel BUG at fs/f2fs/node.c:1183!
- RIP: 0010:f2fs_remove_inode_page+0x294/0x2d0
+ kernel BUG at fs/f2fs/f2fs.h:1788!
+ RIP: 0010:f2fs_truncate_data_blocks_range+0x342/0x350
  Call Trace:
-  f2fs_evict_inode+0x2a3/0x3a0
-  evict+0xba/0x180
-  __dentry_kill+0xbe/0x160
-  dentry_kill+0x46/0x180
-  dput+0xbb/0x100
-  do_renameat2+0x3c9/0x550
-  __x64_sys_rename+0x17/0x20
+  f2fs_truncate_blocks+0x36d/0x3c0
+  f2fs_truncate+0x88/0x110
+  f2fs_setattr+0x3e1/0x460
+  notify_change+0x2da/0x400
+  do_truncate+0x6d/0xb0
+  do_sys_ftruncate+0xf1/0x160
   do_syscall_64+0x43/0xf0
   entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-The reason is f2fs_remove_inode_page() will trigger kernel panic due to
-inconsistent i_blocks value of inode.
+The reason is dec_valid_block_count() will trigger kernel panic due to
+inconsistent count in between inode.i_blocks and actual block.
 
 To avoid panic, let's just print debug message and set SBI_NEED_FSCK to
-give a hint to fsck for latter repairing of potential image corruption.
+give a hint to fsck for latter repairing.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 [Jaegeuk Kim: fix build warning and add unlikely]
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/node.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 3f99ab2886955..d45ecef751165 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1179,8 +1179,14 @@ int f2fs_remove_inode_page(struct inode *inode)
- 		f2fs_put_dnode(&dn);
- 		return -EIO;
- 	}
--	f2fs_bug_on(F2FS_I_SB(inode),
--			inode->i_blocks != 0 && inode->i_blocks != 8);
-+
-+	if (unlikely(inode->i_blocks != 0 && inode->i_blocks != 8)) {
-+		f2fs_msg(F2FS_I_SB(inode)->sb, KERN_WARNING,
-+			"Inconsistent i_blocks, ino:%lu, iblocks:%llu",
-+			inode->i_ino,
-+			(unsigned long long)inode->i_blocks);
-+		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-+	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7bea1bc6589fd..74f06f12110f1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1789,6 +1789,7 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 	return -ENOSPC;
+ }
  
- 	/* will put inode & node pages */
- 	err = truncate_node(&dn);
++void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
+ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
+ 						struct inode *inode,
+ 						block_t count)
+@@ -1797,13 +1798,21 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
+ 
+ 	spin_lock(&sbi->stat_lock);
+ 	f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
+-	f2fs_bug_on(sbi, inode->i_blocks < sectors);
+ 	sbi->total_valid_block_count -= (block_t)count;
+ 	if (sbi->reserved_blocks &&
+ 		sbi->current_reserved_blocks < sbi->reserved_blocks)
+ 		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
+ 					sbi->current_reserved_blocks + count);
+ 	spin_unlock(&sbi->stat_lock);
++	if (unlikely(inode->i_blocks < sectors)) {
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"Inconsistent i_blocks, ino:%lu, iblocks:%llu, sectors:%llu",
++			inode->i_ino,
++			(unsigned long long)inode->i_blocks,
++			(unsigned long long)sectors);
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		return;
++	}
+ 	f2fs_i_blocks_write(inode, count, false, true);
+ }
+ 
+@@ -2817,7 +2826,6 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
+ 
+ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type);
+-void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
+ static inline void verify_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type)
+ {
 -- 
 2.20.1
