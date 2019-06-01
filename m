@@ -1,23 +1,23 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 28/99] f2fs: fix to clear dirty
- inode in error path of f2fs_iget()
-Date: Sat,  1 Jun 2019 09:22:35 -0400
-Message-ID: <20190601132346.26558-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 30/99] f2fs: fix to do sanity check
+ on valid block count of segment
+Date: Sat,  1 Jun 2019 09:22:37 -0400
+Message-ID: <20190601132346.26558-30-sashal@kernel.org>
 References: <20190601132346.26558-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1hX40A-0002RC-FS
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:24:50 +0000
+ (envelope-from <sashal@kernel.org>) id 1hX40C-0003qB-Ii
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:24:52 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hX409-00ECkg-6k
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:24:50 +0000
+ id 1hX40B-00EcZn-8m
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:24:52 +0000
 In-Reply-To: <20190601132346.26558-1-sashal@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,66 +33,90 @@ Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2f
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 546d22f070d64a7b96f57c93333772085d3a5e6d ]
+[ Upstream commit e95bcdb2fefa129f37bd9035af1d234ca92ee4ef ]
 
 As Jungyeon reported in bugzilla:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203217
+https://bugzilla.kernel.org/show_bug.cgi?id=203233
 
 - Overview
-When mounting the attached crafted image and running program, I got this error.
-Additionally, it hangs on sync after running the program.
+When mounting the attached crafted image and running program, following errors are reported.
+Additionally, it hangs on sync after running program.
 
-The image is intentionally fuzzed from a normal f2fs image for testing and I enabled option CONFIG_F2FS_CHECK_FS on.
+The image is intentionally fuzzed from a normal f2fs image for testing.
+Compile options for F2FS are as follows.
+CONFIG_F2FS_FS=y
+CONFIG_F2FS_STAT_FS=y
+CONFIG_F2FS_FS_XATTR=y
+CONFIG_F2FS_FS_POSIX_ACL=y
+CONFIG_F2FS_CHECK_FS=y
 
 - Reproduces
-cc poc_test_05.c
+cc poc_13.c
 mkdir test
 mount -t f2fs tmp.img test
+cp a.out test
+cd test
 sudo ./a.out
 sync
 
-- Messages
- kernel BUG at fs/f2fs/inode.c:707!
- RIP: 0010:f2fs_evict_inode+0x33f/0x3a0
+- Kernel messages
+ F2FS-fs (sdb): Bitmap was wrongly set, blk:4608
+ kernel BUG at fs/f2fs/segment.c:2102!
+ RIP: 0010:update_sit_entry+0x394/0x410
  Call Trace:
-  evict+0xba/0x180
-  f2fs_iget+0x598/0xdf0
-  f2fs_lookup+0x136/0x320
-  __lookup_slow+0x92/0x140
-  lookup_slow+0x30/0x50
-  walk_component+0x1c1/0x350
-  path_lookupat+0x62/0x200
-  filename_lookup+0xb3/0x1a0
-  do_readlinkat+0x56/0x110
-  __x64_sys_readlink+0x16/0x20
+  f2fs_allocate_data_block+0x16f/0x660
+  do_write_page+0x62/0x170
+  f2fs_do_write_node_page+0x33/0xa0
+  __write_node_page+0x270/0x4e0
+  f2fs_sync_node_pages+0x5df/0x670
+  f2fs_write_checkpoint+0x372/0x1400
+  f2fs_sync_fs+0xa3/0x130
+  f2fs_do_sync_file+0x1a6/0x810
+  do_fsync+0x33/0x60
+  __x64_sys_fsync+0xb/0x10
   do_syscall_64+0x43/0xf0
   entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-During inode loading, __recover_inline_status() can recovery inode status
-and set inode dirty, once we failed in following process, it will fail
-the check in f2fs_evict_inode, result in trigger BUG_ON().
+sit.vblocks and sum valid block count in sit.valid_map may be
+inconsistent, segment w/ zero vblocks will be treated as free
+segment, while allocating in free segment, we may allocate a
+free block, if its bitmap is valid previously, it can cause
+kernel crash due to bitmap verification failure.
 
-Let's clear dirty inode in error path of f2fs_iget() to avoid panic.
+Anyway, to avoid further serious metadata inconsistence and
+corruption, it is necessary and worth to detect SIT
+inconsistence. So let's enable check_block_count() to verify
+vblocks and valid_map all the time rather than do it only
+CONFIG_F2FS_CHECK_FS is enabled.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/segment.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 50818b519df8b..e02ed16bc35cd 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -397,6 +397,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 	return inode;
- 
- bad_inode:
-+	f2fs_inode_synced(inode);
- 	iget_failed(inode);
- 	trace_f2fs_iget_exit(inode, ret);
- 	return ERR_PTR(ret);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 47348d98165b2..e3d8826c5113d 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -641,7 +641,6 @@ static inline void verify_block_addr(struct f2fs_io_info *fio, block_t blk_addr)
+ static inline int check_block_count(struct f2fs_sb_info *sbi,
+ 		int segno, struct f2fs_sit_entry *raw_sit)
+ {
+-#ifdef CONFIG_F2FS_CHECK_FS
+ 	bool is_valid  = test_bit_le(0, raw_sit->valid_map) ? true : false;
+ 	int valid_blocks = 0;
+ 	int cur_pos = 0, next_pos;
+@@ -668,7 +667,7 @@ static inline int check_block_count(struct f2fs_sb_info *sbi,
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 		return -EINVAL;
+ 	}
+-#endif
++
+ 	/* check segment usage, and check boundary of a given segment number */
+ 	if (unlikely(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg
+ 					|| segno > TOTAL_SEGS(sbi) - 1)) {
 -- 
 2.20.1
