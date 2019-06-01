@@ -1,104 +1,113 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 049/186] f2fs: fix to avoid panic in dec_valid_block_count()
-Date: Sat,  1 Jun 2019 09:14:25 -0400
-Message-ID: <20190601131653.24205-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 045/186] f2fs: fix error path of
+ recovery
+Date: Sat,  1 Jun 2019 09:14:21 -0400
+Message-ID: <20190601131653.24205-45-sashal@kernel.org>
 References: <20190601131653.24205-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <sashal@kernel.org>) id 1hX3uM-0003OL-P7
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:18:50 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hX3uK-00EBwt-UP
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:18:50 +0000
 In-Reply-To: <20190601131653.24205-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 5e159cd349bf3a31fb7e35c23a93308eb30f4f71 ]
+[ Upstream commit 988385795c7f46b231982d54750587f204bd558b ]
 
-As Jungyeon reported in bugzilla:
-
-https://bugzilla.kernel.org/show_bug.cgi?id=203209
-
-- Overview
-When mounting the attached crafted image and running program, I got this error.
-Additionally, it hangs on sync after the this script.
-
-The image is intentionally fuzzed from a normal f2fs image for testing and I enabled option CONFIG_F2FS_CHECK_FS on.
-
-- Reproduces
-cc poc_01.c
-./run.sh f2fs
-sync
-
- kernel BUG at fs/f2fs/f2fs.h:1788!
- RIP: 0010:f2fs_truncate_data_blocks_range+0x342/0x350
- Call Trace:
-  f2fs_truncate_blocks+0x36d/0x3c0
-  f2fs_truncate+0x88/0x110
-  f2fs_setattr+0x3e1/0x460
-  notify_change+0x2da/0x400
-  do_truncate+0x6d/0xb0
-  do_sys_ftruncate+0xf1/0x160
-  do_syscall_64+0x43/0xf0
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-The reason is dec_valid_block_count() will trigger kernel panic due to
-inconsistent count in between inode.i_blocks and actual block.
-
-To avoid panic, let's just print debug message and set SBI_NEED_FSCK to
-give a hint to fsck for latter repairing.
+There are some places in where we missed to unlock page or unlock page
+incorrectly, fix them.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
-[Jaegeuk Kim: fix build warning and add unlikely]
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ fs/f2fs/recovery.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7bea1bc6589fd..74f06f12110f1 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1789,6 +1789,7 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 	return -ENOSPC;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 73338c432e7e4..b14c718139a96 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -325,8 +325,10 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 			break;
+ 		}
+ 
+-		if (!is_recoverable_dnode(page))
++		if (!is_recoverable_dnode(page)) {
++			f2fs_put_page(page, 1);
+ 			break;
++		}
+ 
+ 		if (!is_fsync_dnode(page))
+ 			goto next;
+@@ -338,8 +340,10 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 			if (!check_only &&
+ 					IS_INODE(page) && is_dent_dnode(page)) {
+ 				err = f2fs_recover_inode_page(sbi, page);
+-				if (err)
++				if (err) {
++					f2fs_put_page(page, 1);
+ 					break;
++				}
+ 				quota_inode = true;
+ 			}
+ 
+@@ -355,6 +359,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 					err = 0;
+ 					goto next;
+ 				}
++				f2fs_put_page(page, 1);
+ 				break;
+ 			}
+ 		}
+@@ -370,6 +375,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 				"%s: detect looped node chain, "
+ 				"blkaddr:%u, next:%u",
+ 				__func__, blkaddr, next_blkaddr_of_node(page));
++			f2fs_put_page(page, 1);
+ 			err = -EINVAL;
+ 			break;
+ 		}
+@@ -380,7 +386,6 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 
+ 		f2fs_ra_meta_pages_cond(sbi, blkaddr);
+ 	}
+-	f2fs_put_page(page, 1);
+ 	return err;
  }
  
-+void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
- static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
- 						struct inode *inode,
- 						block_t count)
-@@ -1797,13 +1798,21 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
- 
- 	spin_lock(&sbi->stat_lock);
- 	f2fs_bug_on(sbi, sbi->total_valid_block_count < (block_t) count);
--	f2fs_bug_on(sbi, inode->i_blocks < sectors);
- 	sbi->total_valid_block_count -= (block_t)count;
- 	if (sbi->reserved_blocks &&
- 		sbi->current_reserved_blocks < sbi->reserved_blocks)
- 		sbi->current_reserved_blocks = min(sbi->reserved_blocks,
- 					sbi->current_reserved_blocks + count);
- 	spin_unlock(&sbi->stat_lock);
-+	if (unlikely(inode->i_blocks < sectors)) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"Inconsistent i_blocks, ino:%lu, iblocks:%llu, sectors:%llu",
-+			inode->i_ino,
-+			(unsigned long long)inode->i_blocks,
-+			(unsigned long long)sectors);
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		return;
-+	}
- 	f2fs_i_blocks_write(inode, count, false, true);
- }
- 
-@@ -2817,7 +2826,6 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
- 
- bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- 					block_t blkaddr, int type);
--void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...);
- static inline void verify_blkaddr(struct f2fs_sb_info *sbi,
- 					block_t blkaddr, int type)
- {
+@@ -674,8 +679,10 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 		 */
+ 		if (IS_INODE(page)) {
+ 			err = recover_inode(entry->inode, page);
+-			if (err)
++			if (err) {
++				f2fs_put_page(page, 1);
+ 				break;
++			}
+ 		}
+ 		if (entry->last_dentry == blkaddr) {
+ 			err = recover_dentry(entry->inode, page, dir_list);
 -- 
 2.20.1
