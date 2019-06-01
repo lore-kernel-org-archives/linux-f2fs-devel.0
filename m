@@ -1,113 +1,88 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 050/173] f2fs: fix to avoid deadloop
- in foreground GC
-Date: Sat,  1 Jun 2019 09:17:22 -0400
-Message-ID: <20190601131934.25053-50-sashal@kernel.org>
-References: <20190601131934.25053-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 036/141] f2fs: fix to avoid panic in f2fs_remove_inode_page()
+Date: Sat,  1 Jun 2019 09:20:12 -0400
+Message-ID: <20190601132158.25821-36-sashal@kernel.org>
+References: <20190601132158.25821-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1hX3x0-00013S-8H
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:21:34 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hX3wy-00ECLq-Mn
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:21:34 +0000
-In-Reply-To: <20190601131934.25053-1-sashal@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190601132158.25821-1-sashal@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 793ab1c8a792f8bccd7ae4c5be02bd275410b3af ]
+[ Upstream commit 8b6810f8acfe429fde7c7dad4714692cc5f75651 ]
 
 As Jungyeon reported in bugzilla:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203211
+https://bugzilla.kernel.org/show_bug.cgi?id=203219
 
 - Overview
-When mounting the attached crafted image and making a new file, I got this error and the error messages keep repeating.
+When mounting the attached crafted image and running program, I got this error.
+Additionally, it hangs on sync after running the program.
 
-The image is intentionally fuzzed from a normal f2fs image for testing and I run with option CONFIG_F2FS_CHECK_FS on.
+The image is intentionally fuzzed from a normal f2fs image for testing and I enabled option CONFIG_F2FS_CHECK_FS on.
 
 - Reproduces
+cc poc_06.c
 mkdir test
 mount -t f2fs tmp.img test
+cp a.out test
 cd test
-touch t
+sudo ./a.out
+sync
 
 - Messages
-[   58.820451] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.821485] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.822530] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.823571] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.824616] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.825640] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.826663] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.827698] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.828719] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.829759] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.830783] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.831828] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.832869] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.833888] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.834945] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.835996] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.837028] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.838051] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.839072] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.840100] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.841147] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.842186] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.843214] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.844267] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.845282] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.846305] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-[   58.847341] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
-... (repeating)
+ kernel BUG at fs/f2fs/node.c:1183!
+ RIP: 0010:f2fs_remove_inode_page+0x294/0x2d0
+ Call Trace:
+  f2fs_evict_inode+0x2a3/0x3a0
+  evict+0xba/0x180
+  __dentry_kill+0xbe/0x160
+  dentry_kill+0x46/0x180
+  dput+0xbb/0x100
+  do_renameat2+0x3c9/0x550
+  __x64_sys_rename+0x17/0x20
+  do_syscall_64+0x43/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-During GC, if segment type stored in SSA and SIT is inconsistent, we just
-skip migrating current segment directly, since we need to know the exact
-type to decide the migration function we use.
+The reason is f2fs_remove_inode_page() will trigger kernel panic due to
+inconsistent i_blocks value of inode.
 
-So in foreground GC, we will easily run into a infinite loop as we may
-select the same victim segment which has inconsistent type due to greedy
-policy. In order to end up this, we choose to shutdown filesystem. For
-backgrond GC, we need to do that as well, so that we can avoid latter
-potential infinite looped foreground GC.
+To avoid panic, let's just print debug message and set SBI_NEED_FSCK to
+give a hint to fsck for latter repairing of potential image corruption.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
+[Jaegeuk Kim: fix build warning and add unlikely]
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/gc.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/node.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index ab764bd106de1..a66a8752e5f65 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1175,6 +1175,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 				"type [%d, %d] in SSA and SIT",
- 				segno, type, GET_SUM_TYPE((&sum->footer)));
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+			f2fs_stop_checkpoint(sbi, false);
- 			goto skip;
- 		}
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 19a0d83aae653..807a77518a491 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1180,8 +1180,14 @@ int f2fs_remove_inode_page(struct inode *inode)
+ 		f2fs_put_dnode(&dn);
+ 		return -EIO;
+ 	}
+-	f2fs_bug_on(F2FS_I_SB(inode),
+-			inode->i_blocks != 0 && inode->i_blocks != 8);
++
++	if (unlikely(inode->i_blocks != 0 && inode->i_blocks != 8)) {
++		f2fs_msg(F2FS_I_SB(inode)->sb, KERN_WARNING,
++			"Inconsistent i_blocks, ino:%lu, iblocks:%llu",
++			inode->i_ino,
++			(unsigned long long)inode->i_blocks);
++		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
++	}
  
+ 	/* will put inode & node pages */
+ 	err = truncate_node(&dn);
 -- 
 2.20.1
