@@ -1,22 +1,22 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 051/186] f2fs: fix to avoid panic in
- dec_valid_node_count()
-Date: Sat,  1 Jun 2019 09:14:27 -0400
-Message-ID: <20190601131653.24205-51-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 055/186] f2fs: fix to do checksum
+ even if inode page is uptodate
+Date: Sat,  1 Jun 2019 09:14:31 -0400
+Message-ID: <20190601131653.24205-55-sashal@kernel.org>
 References: <20190601131653.24205-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1hX3uY-0000sD-50
+ (envelope-from <sashal@kernel.org>) id 1hX3uY-0000Bh-Hd
  for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:19:02 +0000
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hX3uW-00Ebuo-Pn
+ id 1hX3uW-00Ebuz-Pk
  for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:19:02 +0000
 In-Reply-To: <20190601131653.24205-1-sashal@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -33,88 +33,94 @@ Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2f
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit ea6d7e72fea49402aa445345aade7a26b81732e3 ]
+[ Upstream commit b42b179bda9ff11075a6fc2bac4d9e400513679a ]
 
 As Jungyeon reported in bugzilla:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203213
+https://bugzilla.kernel.org/show_bug.cgi?id=203221
 
 - Overview
-When mounting the attached crafted image and running program, I got this error.
-Additionally, it hangs on sync after running the this script.
+When mounting the attached crafted image and running program, this error is reported.
 
 The image is intentionally fuzzed from a normal f2fs image for testing and I enabled option CONFIG_F2FS_CHECK_FS on.
 
 - Reproduces
+cc poc_07.c
 mkdir test
 mount -t f2fs tmp.img test
 cp a.out test
 cd test
 sudo ./a.out
-sync
 
- kernel BUG at fs/f2fs/f2fs.h:2012!
- RIP: 0010:truncate_node+0x2c9/0x2e0
+- Messages
+ kernel BUG at fs/f2fs/node.c:1279!
+ RIP: 0010:read_node_page+0xcf/0xf0
  Call Trace:
-  f2fs_truncate_xattr_node+0xa1/0x130
-  f2fs_remove_inode_page+0x82/0x2d0
-  f2fs_evict_inode+0x2a3/0x3a0
-  evict+0xba/0x180
-  __dentry_kill+0xbe/0x160
-  dentry_kill+0x46/0x180
-  dput+0xbb/0x100
-  do_renameat2+0x3c9/0x550
-  __x64_sys_rename+0x17/0x20
+  __get_node_page+0x6b/0x2f0
+  f2fs_iget+0x8f/0xdf0
+  f2fs_lookup+0x136/0x320
+  __lookup_slow+0x92/0x140
+  lookup_slow+0x30/0x50
+  walk_component+0x1c1/0x350
+  path_lookupat+0x62/0x200
+  filename_lookup+0xb3/0x1a0
+  do_fchmodat+0x3e/0xa0
+  __x64_sys_chmod+0x12/0x20
   do_syscall_64+0x43/0xf0
   entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-The reason is dec_valid_node_count() will trigger kernel panic due to
-inconsistent count in between inode.i_blocks and actual block.
+On below paths, we can have opportunity to readahead inode page
+- gc_node_segment -> f2fs_ra_node_page
+- gc_data_segment -> f2fs_ra_node_page
+- f2fs_fill_dentries -> f2fs_ra_node_page
 
-To avoid panic, let's just print debug message and set SBI_NEED_FSCK to
-give a hint to fsck for latter repairing.
+Unlike synchronized read, on readahead path, we can set page uptodate
+before verifying page's checksum, then read_node_page() will trigger
+kernel panic once it encounters a uptodated page w/ incorrect checksum.
+
+So considering readahead scenario, we have to do checksum each time
+when loading inode page even if it is uptodated.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
-[Jaegeuk Kim: fix build warning and add unlikely]
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ fs/f2fs/inode.c | 4 ++--
+ fs/f2fs/node.c  | 7 ++++---
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 10240fbdd396d..e2cf567dcbd7c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2029,7 +2029,6 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 4edd6f2bb4910..b53952a15ffae 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -177,8 +177,8 @@ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
  
- 	f2fs_bug_on(sbi, !sbi->total_valid_block_count);
- 	f2fs_bug_on(sbi, !sbi->total_valid_node_count);
--	f2fs_bug_on(sbi, !is_inode && !inode->i_blocks);
+ 	if (provided != calculated)
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+-			"checksum invalid, ino = %x, %x vs. %x",
+-			ino_of_node(page), provided, calculated);
++			"checksum invalid, nid = %lu, ino_of_node = %x, %x vs. %x",
++			page->index, ino_of_node(page), provided, calculated);
  
- 	sbi->total_valid_node_count--;
- 	sbi->total_valid_block_count--;
-@@ -2039,10 +2038,19 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
- 
- 	spin_unlock(&sbi->stat_lock);
- 
--	if (is_inode)
-+	if (is_inode) {
- 		dquot_free_inode(inode);
--	else
-+	} else {
-+		if (unlikely(inode->i_blocks == 0)) {
-+			f2fs_msg(sbi->sb, KERN_WARNING,
-+				"Inconsistent i_blocks, ino:%lu, iblocks:%llu",
-+				inode->i_ino,
-+				(unsigned long long)inode->i_blocks);
-+			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+			return;
-+		}
- 		f2fs_i_blocks_write(inode, 1, false, true);
-+	}
+ 	return provided == calculated;
  }
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 63bb6134d39ae..e29d5f6735ae9 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1281,9 +1281,10 @@ static int read_node_page(struct page *page, int op_flags)
+ 	int err;
  
- static inline unsigned int valid_node_count(struct f2fs_sb_info *sbi)
+ 	if (PageUptodate(page)) {
+-#ifdef CONFIG_F2FS_CHECK_FS
+-		f2fs_bug_on(sbi, !f2fs_inode_chksum_verify(sbi, page));
+-#endif
++		if (!f2fs_inode_chksum_verify(sbi, page)) {
++			ClearPageUptodate(page);
++			return -EBADMSG;
++		}
+ 		return LOCKED_PAGE;
+ 	}
+ 
 -- 
 2.20.1
