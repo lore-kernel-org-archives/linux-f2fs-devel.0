@@ -1,22 +1,22 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.0 051/173] f2fs: fix to retrieve inline
- xattr space
-Date: Sat,  1 Jun 2019 09:17:23 -0400
-Message-ID: <20190601131934.25053-51-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.0 050/173] f2fs: fix to avoid deadloop
+ in foreground GC
+Date: Sat,  1 Jun 2019 09:17:22 -0400
+Message-ID: <20190601131934.25053-50-sashal@kernel.org>
 References: <20190601131934.25053-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1hX3x3-0003c5-Q6
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:21:37 +0000
+ (envelope-from <sashal@kernel.org>) id 1hX3x0-00013S-8H
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:21:34 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hX3wz-0058JH-OU
+ id 1hX3wy-00ECLq-Mn
  for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:21:34 +0000
 In-Reply-To: <20190601131934.25053-1-sashal@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -33,72 +33,81 @@ Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2f
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 45a746881576977f85504c21a75547f10c5c0a8e ]
+[ Upstream commit 793ab1c8a792f8bccd7ae4c5be02bd275410b3af ]
 
-With below mkfs and mount option, generic/339 of fstest will report that
-scratch image becomes corrupted.
+As Jungyeon reported in bugzilla:
 
-MKFS_OPTIONS  -- -O extra_attr -O project_quota -O inode_checksum -O flexible_inline_xattr -O inode_crtime -f /dev/zram1
-MOUNT_OPTIONS -- -o acl,user_xattr -o discard,noinline_xattr /dev/zram1 /mnt/scratch_f2fs
+https://bugzilla.kernel.org/show_bug.cgi?id=203211
 
-[ASSERT] (f2fs_check_dirent_position:1315)  --> Wrong position of dirent pino:1970, name: (...)
-level:8, dir_level:0, pgofs:951, correct range:[900, 901]
+- Overview
+When mounting the attached crafted image and making a new file, I got this error and the error messages keep repeating.
 
-In old kernel, inline data and directory always reserved 200 bytes in
-inode layout, even if inline_xattr is disabled, then new kernel tries
-to retrieve that space for non-inline xattr inode, but for inline dentry,
-its layout size should be fixed, so we just keep that reserved space.
+The image is intentionally fuzzed from a normal f2fs image for testing and I run with option CONFIG_F2FS_CHECK_FS on.
 
-But the problem here is that, after inline dentry conversion, inline
-dentry layout no longer exists, if we still reserve inline xattr space,
-after dents updates, there will be a hole in inline xattr space, which
-can break hierarchy hash directory structure.
+- Reproduces
+mkdir test
+mount -t f2fs tmp.img test
+cd test
+touch t
 
-This patch fixes this issue by retrieving inline xattr space after
-inline dentry conversion.
+- Messages
+[   58.820451] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.821485] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.822530] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.823571] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.824616] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.825640] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.826663] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.827698] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.828719] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.829759] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.830783] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.831828] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.832869] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.833888] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.834945] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.835996] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.837028] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.838051] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.839072] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.840100] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.841147] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.842186] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.843214] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.844267] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.845282] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.846305] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.847341] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+... (repeating)
 
-Fixes: 6afc662e68b5 ("f2fs: support flexible inline xattr size")
+During GC, if segment type stored in SSA and SIT is inconsistent, we just
+skip migrating current segment directly, since we need to know the exact
+type to decide the migration function we use.
+
+So in foreground GC, we will easily run into a infinite loop as we may
+select the same victim segment which has inconsistent type due to greedy
+policy. In order to end up this, we choose to shutdown filesystem. For
+backgrond GC, we need to do that as well, so that we can avoid latter
+potential infinite looped foreground GC.
+
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/inline.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ fs/f2fs/gc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index aacbb864ec1ed..0c2251d595ec8 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -420,6 +420,14 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
- 	stat_dec_inline_dir(dir);
- 	clear_inode_flag(dir, FI_INLINE_DENTRY);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index ab764bd106de1..a66a8752e5f65 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1175,6 +1175,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 				"type [%d, %d] in SSA and SIT",
+ 				segno, type, GET_SUM_TYPE((&sum->footer)));
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
++			f2fs_stop_checkpoint(sbi, false);
+ 			goto skip;
+ 		}
  
-+	/*
-+	 * should retrieve reserved space which was used to keep
-+	 * inline_dentry's structure for backward compatibility.
-+	 */
-+	if (!f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(dir)) &&
-+			!f2fs_has_inline_xattr(dir))
-+		F2FS_I(dir)->i_inline_xattr_size = 0;
-+
- 	f2fs_i_depth_write(dir, 1);
- 	if (i_size_read(dir) < PAGE_SIZE)
- 		f2fs_i_size_write(dir, PAGE_SIZE);
-@@ -501,6 +509,15 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
- 
- 	stat_dec_inline_dir(dir);
- 	clear_inode_flag(dir, FI_INLINE_DENTRY);
-+
-+	/*
-+	 * should retrieve reserved space which was used to keep
-+	 * inline_dentry's structure for backward compatibility.
-+	 */
-+	if (!f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(dir)) &&
-+			!f2fs_has_inline_xattr(dir))
-+		F2FS_I(dir)->i_inline_xattr_size = 0;
-+
- 	kvfree(backup_dentry);
- 	return 0;
- recover:
 -- 
 2.20.1
