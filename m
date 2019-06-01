@@ -1,8 +1,8 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 054/186] f2fs: fix to retrieve inline
- xattr space
-Date: Sat,  1 Jun 2019 09:14:30 -0400
-Message-ID: <20190601131653.24205-54-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 048/186] f2fs: fix to clear dirty
+ inode in error path of f2fs_iget()
+Date: Sat,  1 Jun 2019 09:14:24 -0400
+Message-ID: <20190601131653.24205-48-sashal@kernel.org>
 References: <20190601131653.24205-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1hX3uY-0003Qt-9n
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:19:02 +0000
+ (envelope-from <sashal@kernel.org>) id 1hX3uS-0003PM-Tf
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:18:56 +0000
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hX3uW-00Ebur-Qr
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:19:02 +0000
+ id 1hX3uR-0057m9-Kl
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:18:56 +0000
 In-Reply-To: <20190601131653.24205-1-sashal@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -33,72 +33,66 @@ Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2f
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 45a746881576977f85504c21a75547f10c5c0a8e ]
+[ Upstream commit 546d22f070d64a7b96f57c93333772085d3a5e6d ]
 
-With below mkfs and mount option, generic/339 of fstest will report that
-scratch image becomes corrupted.
+As Jungyeon reported in bugzilla:
 
-MKFS_OPTIONS  -- -O extra_attr -O project_quota -O inode_checksum -O flexible_inline_xattr -O inode_crtime -f /dev/zram1
-MOUNT_OPTIONS -- -o acl,user_xattr -o discard,noinline_xattr /dev/zram1 /mnt/scratch_f2fs
+https://bugzilla.kernel.org/show_bug.cgi?id=203217
 
-[ASSERT] (f2fs_check_dirent_position:1315)  --> Wrong position of dirent pino:1970, name: (...)
-level:8, dir_level:0, pgofs:951, correct range:[900, 901]
+- Overview
+When mounting the attached crafted image and running program, I got this error.
+Additionally, it hangs on sync after running the program.
 
-In old kernel, inline data and directory always reserved 200 bytes in
-inode layout, even if inline_xattr is disabled, then new kernel tries
-to retrieve that space for non-inline xattr inode, but for inline dentry,
-its layout size should be fixed, so we just keep that reserved space.
+The image is intentionally fuzzed from a normal f2fs image for testing and I enabled option CONFIG_F2FS_CHECK_FS on.
 
-But the problem here is that, after inline dentry conversion, inline
-dentry layout no longer exists, if we still reserve inline xattr space,
-after dents updates, there will be a hole in inline xattr space, which
-can break hierarchy hash directory structure.
+- Reproduces
+cc poc_test_05.c
+mkdir test
+mount -t f2fs tmp.img test
+sudo ./a.out
+sync
 
-This patch fixes this issue by retrieving inline xattr space after
-inline dentry conversion.
+- Messages
+ kernel BUG at fs/f2fs/inode.c:707!
+ RIP: 0010:f2fs_evict_inode+0x33f/0x3a0
+ Call Trace:
+  evict+0xba/0x180
+  f2fs_iget+0x598/0xdf0
+  f2fs_lookup+0x136/0x320
+  __lookup_slow+0x92/0x140
+  lookup_slow+0x30/0x50
+  walk_component+0x1c1/0x350
+  path_lookupat+0x62/0x200
+  filename_lookup+0xb3/0x1a0
+  do_readlinkat+0x56/0x110
+  __x64_sys_readlink+0x16/0x20
+  do_syscall_64+0x43/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Fixes: 6afc662e68b5 ("f2fs: support flexible inline xattr size")
+During inode loading, __recover_inline_status() can recovery inode status
+and set inode dirty, once we failed in following process, it will fail
+the check in f2fs_evict_inode, result in trigger BUG_ON().
+
+Let's clear dirty inode in error path of f2fs_iget() to avoid panic.
+
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/inline.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ fs/f2fs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index bb6a152310ef4..404d2462a0fe6 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -420,6 +420,14 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
- 	stat_dec_inline_dir(dir);
- 	clear_inode_flag(dir, FI_INLINE_DENTRY);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index e7f2e87593156..4edd6f2bb4910 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -488,6 +488,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+ 	return inode;
  
-+	/*
-+	 * should retrieve reserved space which was used to keep
-+	 * inline_dentry's structure for backward compatibility.
-+	 */
-+	if (!f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(dir)) &&
-+			!f2fs_has_inline_xattr(dir))
-+		F2FS_I(dir)->i_inline_xattr_size = 0;
-+
- 	f2fs_i_depth_write(dir, 1);
- 	if (i_size_read(dir) < PAGE_SIZE)
- 		f2fs_i_size_write(dir, PAGE_SIZE);
-@@ -501,6 +509,15 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
- 
- 	stat_dec_inline_dir(dir);
- 	clear_inode_flag(dir, FI_INLINE_DENTRY);
-+
-+	/*
-+	 * should retrieve reserved space which was used to keep
-+	 * inline_dentry's structure for backward compatibility.
-+	 */
-+	if (!f2fs_sb_has_flexible_inline_xattr(F2FS_I_SB(dir)) &&
-+			!f2fs_has_inline_xattr(dir))
-+		F2FS_I(dir)->i_inline_xattr_size = 0;
-+
- 	kvfree(backup_dentry);
- 	return 0;
- recover:
+ bad_inode:
++	f2fs_inode_synced(inode);
+ 	iget_failed(inode);
+ 	trace_f2fs_iget_exit(inode, ret);
+ 	return ERR_PTR(ret);
 -- 
 2.20.1
