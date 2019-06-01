@@ -1,7 +1,7 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 050/186] f2fs: fix to use inline space only if inline_xattr is enable
-Date: Sat,  1 Jun 2019 09:14:26 -0400
-Message-ID: <20190601131653.24205-50-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 053/186] f2fs: fix to avoid deadloop in foreground GC
+Date: Sat,  1 Jun 2019 09:14:29 -0400
+Message-ID: <20190601131653.24205-53-sashal@kernel.org>
 References: <20190601131653.24205-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -14,53 +14,81 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 622927f3b8809206f6da54a6a7ed4df1a7770fce ]
+[ Upstream commit 793ab1c8a792f8bccd7ae4c5be02bd275410b3af ]
 
-With below mkfs and mount option:
+As Jungyeon reported in bugzilla:
 
-MKFS_OPTIONS  -- -O extra_attr -O project_quota -O inode_checksum -O flexible_inline_xattr -O inode_crtime -f
-MOUNT_OPTIONS -- -o noinline_xattr
+https://bugzilla.kernel.org/show_bug.cgi?id=203211
 
-We may miss xattr data with below testcase:
-- mkdir dir
-- setfattr -n "user.name" -v 0 dir
-- for ((i = 0; i < 190; i++)) do touch dir/$i; done
-- umount
-- mount
-- getfattr -n "user.name" dir
+- Overview
+When mounting the attached crafted image and making a new file, I got this error and the error messages keep repeating.
 
-user.name: No such attribute
+The image is intentionally fuzzed from a normal f2fs image for testing and I run with option CONFIG_F2FS_CHECK_FS on.
 
-The root cause is that we persist xattr data into reserved inline xattr
-space, even if inline_xattr is not enable in inline directory inode, after
-inline dentry conversion, reserved space no longer exists, so that xattr
-data missed.
+- Reproduces
+mkdir test
+mount -t f2fs tmp.img test
+cd test
+touch t
 
-Let's use inline xattr space only if inline_xattr flag is set on inode
-to fix this iusse.
+- Messages
+[   58.820451] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.821485] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.822530] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.823571] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.824616] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.825640] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.826663] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.827698] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.828719] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.829759] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.830783] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.831828] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.832869] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.833888] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.834945] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.835996] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.837028] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.838051] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.839072] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.840100] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.841147] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.842186] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.843214] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.844267] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.845282] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.846305] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+[   58.847341] F2FS-fs (sdb): Inconsistent segment (1) type [1, 0] in SSA and SIT
+... (repeating)
 
-Fixes: 6afc662e68b5 ("f2fs: support flexible inline xattr size")
+During GC, if segment type stored in SSA and SIT is inconsistent, we just
+skip migrating current segment directly, since we need to know the exact
+type to decide the migration function we use.
+
+So in foreground GC, we will easily run into a infinite loop as we may
+select the same victim segment which has inconsistent type due to greedy
+policy. In order to end up this, we choose to shutdown filesystem. For
+backgrond GC, we need to do that as well, so that we can avoid latter
+potential infinite looped foreground GC.
+
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/f2fs/gc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 74f06f12110f1..10240fbdd396d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2579,7 +2579,9 @@ static inline void *inline_xattr_addr(struct inode *inode, struct page *page)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index ab764bd106de1..a66a8752e5f65 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1175,6 +1175,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 				"type [%d, %d] in SSA and SIT",
+ 				segno, type, GET_SUM_TYPE((&sum->footer)));
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
++			f2fs_stop_checkpoint(sbi, false);
+ 			goto skip;
+ 		}
  
- static inline int inline_xattr_size(struct inode *inode)
- {
--	return get_inline_xattr_addrs(inode) * sizeof(__le32);
-+	if (f2fs_has_inline_xattr(inode))
-+		return get_inline_xattr_addrs(inode) * sizeof(__le32);
-+	return 0;
- }
- 
- static inline int f2fs_has_inline_data(struct inode *inode)
 -- 
 2.20.1
