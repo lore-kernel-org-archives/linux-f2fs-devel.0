@@ -1,66 +1,106 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 040/141] f2fs: fix to use inline space only if inline_xattr is enable
-Date: Sat,  1 Jun 2019 09:20:16 -0400
-Message-ID: <20190601132158.25821-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 037/141] f2fs: fix to do sanity
+ check on free nid
+Date: Sat,  1 Jun 2019 09:20:13 -0400
+Message-ID: <20190601132158.25821-37-sashal@kernel.org>
 References: <20190601132158.25821-1-sashal@kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <sashal@kernel.org>) id 1hX3yl-0001XH-Uu
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:23:23 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hX3yk-00ECYZ-KB
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Jun 2019 13:23:23 +0000
 In-Reply-To: <20190601132158.25821-1-sashal@kernel.org>
-Sender: stable-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 622927f3b8809206f6da54a6a7ed4df1a7770fce ]
+[ Upstream commit 626bcf2b7ce87211dba565f2bfa7842ba5be5c1b ]
 
-With below mkfs and mount option:
+As Jungyeon reported in bugzilla:
 
-MKFS_OPTIONS  -- -O extra_attr -O project_quota -O inode_checksum -O flexible_inline_xattr -O inode_crtime -f
-MOUNT_OPTIONS -- -o noinline_xattr
+https://bugzilla.kernel.org/show_bug.cgi?id=203225
 
-We may miss xattr data with below testcase:
-- mkdir dir
-- setfattr -n "user.name" -v 0 dir
-- for ((i = 0; i < 190; i++)) do touch dir/$i; done
-- umount
-- mount
-- getfattr -n "user.name" dir
+- Overview
+When mounting the attached crafted image and unmounting it, following errors are reported.
+Additionally, it hangs on sync after unmounting.
 
-user.name: No such attribute
+The image is intentionally fuzzed from a normal f2fs image for testing.
+Compile options for F2FS are as follows.
+CONFIG_F2FS_FS=y
+CONFIG_F2FS_STAT_FS=y
+CONFIG_F2FS_FS_XATTR=y
+CONFIG_F2FS_FS_POSIX_ACL=y
+CONFIG_F2FS_CHECK_FS=y
 
-The root cause is that we persist xattr data into reserved inline xattr
-space, even if inline_xattr is not enable in inline directory inode, after
-inline dentry conversion, reserved space no longer exists, so that xattr
-data missed.
+- Reproduces
+mkdir test
+mount -t f2fs tmp.img test
+touch test/t
+umount test
+sync
 
-Let's use inline xattr space only if inline_xattr flag is set on inode
-to fix this iusse.
+- Messages
+ kernel BUG at fs/f2fs/node.c:3073!
+ RIP: 0010:f2fs_destroy_node_manager+0x2f0/0x300
+ Call Trace:
+  f2fs_put_super+0xf4/0x270
+  generic_shutdown_super+0x62/0x110
+  kill_block_super+0x1c/0x50
+  kill_f2fs_super+0xad/0xd0
+  deactivate_locked_super+0x35/0x60
+  cleanup_mnt+0x36/0x70
+  task_work_run+0x75/0x90
+  exit_to_usermode_loop+0x93/0xa0
+  do_syscall_64+0xba/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+ RIP: 0010:f2fs_destroy_node_manager+0x2f0/0x300
 
-Fixes: 6afc662e68b5 ("f2fs: support flexible inline xattr size")
+NAT table is corrupted, so reserved meta/node inode ids were added into
+free list incorrectly, during file creation, since reserved id has cached
+in inode hash, so it fails the creation and preallocated nid can not be
+released later, result in kernel panic.
+
+To fix this issue, let's do nid boundary check during free nid loading.
+
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/f2fs/node.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1f3bf039a90e8..51eea636719a2 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2486,7 +2486,9 @@ static inline void *inline_xattr_addr(struct inode *inode, struct page *page)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 807a77518a491..34c3f732601c3 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2079,6 +2079,9 @@ static bool add_free_nid(struct f2fs_sb_info *sbi,
+ 	if (unlikely(nid == 0))
+ 		return false;
  
- static inline int inline_xattr_size(struct inode *inode)
- {
--	return get_inline_xattr_addrs(inode) * sizeof(__le32);
-+	if (f2fs_has_inline_xattr(inode))
-+		return get_inline_xattr_addrs(inode) * sizeof(__le32);
-+	return 0;
- }
- 
- static inline int f2fs_has_inline_data(struct inode *inode)
++	if (unlikely(f2fs_check_nid_range(sbi, nid)))
++		return false;
++
+ 	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
+ 	i->nid = nid;
+ 	i->state = FREE_NID;
 -- 
 2.20.1
