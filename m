@@ -1,35 +1,54 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v3 4/4] f2fs: Add option to limit required GC
- for checkpoint=disable
-Date: Mon, 3 Jun 2019 23:15:37 +0800
-Message-ID: <cbd6e561-66c3-da63-d5b4-e81da990bd15@kernel.org>
-References: <20190530004906.261170-1-drosen@google.com>
- <20190530004906.261170-5-drosen@google.com>
+From: Ju Hyung Park <qkrwngud825@gmail.com>
+Subject: Re: [PATCH v3 2/2] f2fs-tools: relocate chksum_offset
+ for large_nat_bitmap feature
+Date: Tue, 4 Jun 2019 00:23:48 +0900
+Message-ID: <CAD14+f2XWeWvYXTjKbReJa7uZROvnp_-V419sBkpmWFp5L5BtA@mail.gmail.com>
+References: <20190514093340.40217-1-yuchao0@huawei.com>
+ <20190514093340.40217-2-yuchao0@huawei.com>
+ <CAD14+f2ckNUv9n-Zb9UL_ojX8=24tYBhT-SsrcpVNogqee2tkA@mail.gmail.com>
+ <6bcbb5e8-55ad-49c1-bb77-f7f677ceb526@huawei.com>
+ <CAD14+f3NHosrL=5UOBSMbFxQ91x-AuWOj_w=JYkJSnmfDgTkvA@mail.gmail.com>
+ <CAD14+f0ZTmmLBXtmHF_Kz23JLSJy+UzpNxwSMV4rvSCse3y7EA@mail.gmail.com>
+ <7e1bfa07-5ee8-a276-fe6a-6d79bd9270c3@huawei.com>
+ <CAD14+f1+puy4M6rL_SbGt9vej=7LgK+qEjq71_878=oqSvjJ2Q@mail.gmail.com>
+ <0f89b0b6-5cc5-6618-72e5-8a2f81947161@kernel.org>
+ <CAD14+f1xgYKAnzqLb-ZpzbeskZegGHXbrJ+vEHZe19_Jp3pBTQ@mail.gmail.com>
+ <e3303318-758e-b263-f6ed-d55e98bdea78@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190530004906.261170-5-drosen@google.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Rosenberg <drosen@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, Jonathan Corbet <corbet@lwn.net>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, kernel-team@android.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <qkrwngud825@gmail.com>) id 1hXooi-0007d6-Ox
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 03 Jun 2019 15:24:08 +0000
+Received: from mail-qk1-f195.google.com ([209.85.222.195])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1hXoog-003hp1-Is
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 03 Jun 2019 15:24:08 +0000
+Received: by mail-qk1-f195.google.com with SMTP id c11so647298qkk.8
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 03 Jun 2019 08:24:06 -0700 (PDT)
+In-Reply-To: <e3303318-758e-b263-f6ed-d55e98bdea78@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+ <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On 2019-5-30 8:49, Daniel Rosenberg via Linux-f2fs-devel wrote:
-> This extends the checkpoint option to allow checkpoint=disable:%u[%]
-> This allows you to specify what how much of the disk you are willing
-> to lose access to while mounting with checkpoint=disable. If the amount
-> lost would be higher, the mount will return -EAGAIN. This can be given
-> as a percent of total space, or in blocks.
-> 
-> Currently, we need to run garbage collection until the amount of holes
-> is smaller than the OVP space. With the new option, f2fs can mark
-> space as unusable up front instead of requiring garbage collection until
-> the number of holes is small enough.
-> 
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Hi Jaegeuk and Chao,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+A little update I thought I might share.
 
-Thanks,
+Just went through migrating my laptop to another SSD and I've setup
+f2fs from the beginning with mkfs -i from the master branch.
+No issue as of yet and the kernel is working fine as expected :)
+
+Thanks.
