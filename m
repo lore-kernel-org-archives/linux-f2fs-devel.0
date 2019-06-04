@@ -1,34 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v3 2/2] f2fs-tools: relocate chksum_offset
- for large_nat_bitmap feature
-Date: Tue, 4 Jun 2019 09:48:03 +0800
-Message-ID: <249aff47-cb24-291b-37f7-6ed2d854a207@huawei.com>
-References: <CAD14+f2ckNUv9n-Zb9UL_ojX8=24tYBhT-SsrcpVNogqee2tkA@mail.gmail.com>
- <6bcbb5e8-55ad-49c1-bb77-f7f677ceb526@huawei.com>
- <CAD14+f3NHosrL=5UOBSMbFxQ91x-AuWOj_w=JYkJSnmfDgTkvA@mail.gmail.com>
- <CAD14+f0ZTmmLBXtmHF_Kz23JLSJy+UzpNxwSMV4rvSCse3y7EA@mail.gmail.com>
- <7e1bfa07-5ee8-a276-fe6a-6d79bd9270c3@huawei.com>
- <CAD14+f1+puy4M6rL_SbGt9vej=7LgK+qEjq71_878=oqSvjJ2Q@mail.gmail.com>
- <0f89b0b6-5cc5-6618-72e5-8a2f81947161@kernel.org>
- <CAD14+f1xgYKAnzqLb-ZpzbeskZegGHXbrJ+vEHZe19_Jp3pBTQ@mail.gmail.com>
- <e3303318-758e-b263-f6ed-d55e98bdea78@kernel.org>
- <CAD14+f2XWeWvYXTjKbReJa7uZROvnp_-V419sBkpmWFp5L5BtA@mail.gmail.com>
- <20190603202719.GC34729@jaegeuk-macbookpro.roam.corp.google.com>
+Subject: Re: [PATCH v2] f2fs: add a rw_sem to cover quota flag
+ changes
+Date: Tue, 4 Jun 2019 17:48:52 +0800
+Message-ID: <c4348b1c-02ba-44e7-598c-e2435e53077d@huawei.com>
+References: <20190530033115.16853-1-jaegeuk@kernel.org>
+ <20190530175714.GB28719@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hXyYk-0004CN-NC
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jun 2019 01:48:18 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1hY6BQ-00086h-UW
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jun 2019 09:56:44 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hXyYi-005KOT-T8
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jun 2019 01:48:18 +0000
-In-Reply-To: <20190603202719.GC34729@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1hY6BO-00EvkP-Fz
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jun 2019 09:56:44 +0000
+In-Reply-To: <20190530175714.GB28719@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -39,39 +30,30 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Ju Hyung Park <qkrwngud825@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2019/6/4 4:27, Jaegeuk Kim wrote:
-> On 06/04, Ju Hyung Park wrote:
->> Hi Jaegeuk and Chao,
->>
->> A little update I thought I might share.
->>
->> Just went through migrating my laptop to another SSD and I've setup
->> f2fs from the beginning with mkfs -i from the master branch.
->> No issue as of yet and the kernel is working fine as expected :)
+On 2019/5/31 1:57, Jaegeuk Kim wrote:
+> thread 1:                        thread 2:
+> writeback                        checkpoint
+> set QUOTA_NEED_FLUSH
+>                                  clear QUOTA_NEED_FLUSH
+> f2fs_dquot_commit
+> dquot_commit
+> clear_dquot_dirty
+>                                  f2fs_quota_sync
+>                                  dquot_writeback_dquots
+> 				 nothing to commit
+> commit_dqblk
+> quota_write
+> f2fs_quota_write
+> waiting for f2fs_lock_op()
+> 				 pass __need_flush_quota
+>                                  (no F2FS_DIRTY_QDATA)
 > 
-> Cool, thanks for your test. :)
+> -> up-to-date quota is not written
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Great, thanks for the continuous test and report. :)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> 
->>
->> Thanks.
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
