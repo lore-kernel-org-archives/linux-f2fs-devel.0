@@ -1,34 +1,28 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v3 2/2] f2fs-tools: relocate chksum_offset
- for large_nat_bitmap feature
-Date: Mon, 3 Jun 2019 13:27:19 -0700
-Message-ID: <20190603202719.GC34729@jaegeuk-macbookpro.roam.corp.google.com>
-References: <CAD14+f2ckNUv9n-Zb9UL_ojX8=24tYBhT-SsrcpVNogqee2tkA@mail.gmail.com>
- <6bcbb5e8-55ad-49c1-bb77-f7f677ceb526@huawei.com>
- <CAD14+f3NHosrL=5UOBSMbFxQ91x-AuWOj_w=JYkJSnmfDgTkvA@mail.gmail.com>
- <CAD14+f0ZTmmLBXtmHF_Kz23JLSJy+UzpNxwSMV4rvSCse3y7EA@mail.gmail.com>
- <7e1bfa07-5ee8-a276-fe6a-6d79bd9270c3@huawei.com>
- <CAD14+f1+puy4M6rL_SbGt9vej=7LgK+qEjq71_878=oqSvjJ2Q@mail.gmail.com>
- <0f89b0b6-5cc5-6618-72e5-8a2f81947161@kernel.org>
- <CAD14+f1xgYKAnzqLb-ZpzbeskZegGHXbrJ+vEHZe19_Jp3pBTQ@mail.gmail.com>
- <e3303318-758e-b263-f6ed-d55e98bdea78@kernel.org>
- <CAD14+f2XWeWvYXTjKbReJa7uZROvnp_-V419sBkpmWFp5L5BtA@mail.gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v6 1/1] f2fs: ioctl for removing a range from
+ F2FS
+Date: Tue, 4 Jun 2019 09:43:54 +0800
+Message-ID: <ba9aaee7-6bc4-b8d4-4670-54f11fc0cea0@huawei.com>
+References: <20190524015555.12622-1-sunqiuyang@huawei.com>
+ <20190530160626.GA28719@jaegeuk-macbookpro.roam.corp.google.com>
+ <786721cc-90eb-cf2c-eed8-3be0ef9dff8c@huawei.com>
+ <20190603162319.GA34729@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1hXtYG-0005kq-4A
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 03 Jun 2019 20:27:28 +0000
-Received: from mail.kernel.org ([198.145.29.99])
+ (envelope-from <yuchao0@huawei.com>) id 1hXyUo-00063c-Df
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jun 2019 01:44:14 +0000
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hXtYE-004j3V-1t
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 03 Jun 2019 20:27:28 +0000
-Content-Disposition: inline
-In-Reply-To: <CAD14+f2XWeWvYXTjKbReJa7uZROvnp_-V419sBkpmWFp5L5BtA@mail.gmail.com>
+ id 1hXyUl-005K3L-On
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jun 2019 01:44:14 +0000
+In-Reply-To: <20190603162319.GA34729@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,25 +32,115 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Ju Hyung Park <qkrwngud825@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, sunqiuyang <sunqiuyang@huawei.com>, linux-kernel@vger.kernel.org
 
-On 06/04, Ju Hyung Park wrote:
-> Hi Jaegeuk and Chao,
+On 2019/6/4 0:23, Jaegeuk Kim wrote:
+> On 05/31, Chao Yu wrote:
+>> On 2019/5/31 0:06, Jaegeuk Kim wrote:
+>>> On 05/24, sunqiuyang wrote:
+>>>> From: Qiuyang Sun <sunqiuyang@huawei.com>
+>>>>
+>>>> This ioctl shrinks a given length (aligned to sections) from end of the
+>>>> main area. Any cursegs and valid blocks will be moved out before
+>>>> invalidating the range.
+>>>>
+>>>> This feature can be used for adjusting partition sizes online.
+>>>> --
+>>>> Changlog v1 ==> v2:
+>>>>
+>>>> Sahitya Tummala:
+>>>>  - Add this ioctl for f2fs_compat_ioctl() as well.
+>>>>  - Fix debugfs status to reflect the online resize changes.
+>>>>  - Fix potential race between online resize path and allocate new data
+>>>>    block path or gc path.
+>>>>
+>>>> Others:
+>>>>  - Rename some identifiers.
+>>>>  - Add some error handling branches.
+>>>>  - Clear sbi->next_victim_seg[BG_GC/FG_GC] in shrinking range.
+>>>> --
+>>>> Changelog v2 ==> v3:
+>>>> Implement this interface as ext4's, and change the parameter from shrunk
+>>>> bytes to new block count of F2FS.
+>>>> --
+>>>> Changelog v3 ==> v4:
+>>>>  - During resizing, force to empty sit_journal and forbid adding new
+>>>>    entries to it, in order to avoid invalid segno in journal after resize.
+>>>>  - Reduce sbi->user_block_count before resize starts.
+>>>>  - Commit the updated superblock first, and then update in-memory metadata
+>>>>    only when the former succeeds.
+>>>>  - Target block count must align to sections.
+>>>> --
+>>>> Changelog v4 ==> v5:
+>>>> Write checkpoint before and after committing the new superblock, w/o
+>>>> CP_FSCK_FLAG respectively, so that the FS can be fixed by fsck even if
+>>>> resize fails after the new superblock is committed.
+>>>> --
+>>>> Changelog v5 ==> v6:
+>>>>  - In free_segment_range(), reduce granularity of gc_mutex.
+>>>>  - Add protection on curseg migration.
+>>>>
+>>>> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>>>> ---
+>>>>  fs/f2fs/checkpoint.c |   5 +-
+>>>>  fs/f2fs/debug.c      |   7 +++
+>>>>  fs/f2fs/f2fs.h       |   7 +++
+>>>>  fs/f2fs/file.c       |  28 +++++++++++
+>>>>  fs/f2fs/gc.c         | 134 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+>>>>  fs/f2fs/segment.c    |  54 +++++++++++++++++----
+>>>>  fs/f2fs/segment.h    |   1 +
+>>>>  fs/f2fs/super.c      |   4 ++
+>>>>  8 files changed, 228 insertions(+), 12 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>>> index ed70b68..4706d0a 100644
+>>>> --- a/fs/f2fs/checkpoint.c
+>>>> +++ b/fs/f2fs/checkpoint.c
+>>>> @@ -1313,8 +1313,11 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>>  	else
+>>>>  		__clear_ckpt_flags(ckpt, CP_ORPHAN_PRESENT_FLAG);
+>>>>  
+>>>> -	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+>>>> +	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK) ||
+>>>> +		is_sbi_flag_set(sbi, SBI_IS_RESIZEFS))
+>>>>  		__set_ckpt_flags(ckpt, CP_FSCK_FLAG);
+>>>> +	else
+>>>> +		__clear_ckpt_flags(ckpt, CP_FSCK_FLAG);
+>>>
+>>> We don't need to clear this flag.
+>>
+>> During resizefs, we may face inconsistent status of filesystem's on-disk data,
+>> so I propose to use below flow, so once some thing breaks resizefs, fsck can
+>> detect the corruption by the CP_FSCK_FLAG directly.
+>>
+>> - resizefs()
+>>  - set SBI_IS_RESIZEFS
+>>  - do_checkpoint()
+>>   - if (is_resizing)
+>>    - set CP_FSCK_FLAG
+>>
+>>  - clear SBI_IS_RESIZEFS
+>>  - do_checkpoint()
+>>   - if (!is_resizing && not_need_fsck)
+>>    - clear CP_FSCK_FLAG
+>>
+>> It's safe to clear CP_FSCK_FLAG if there is no resizing and corruption, as once
+>> the inconsistency was detected we will keep SBI_NEED_FSCK in memory anyway, then
+>> checkpoint can set CP_FSCK_FLAG again.
 > 
-> A little update I thought I might share.
-> 
-> Just went through migrating my laptop to another SSD and I've setup
-> f2fs from the beginning with mkfs -i from the master branch.
-> No issue as of yet and the kernel is working fine as expected :)
+> This tries to resize the image and I mostly worried whether fsck is able to fix
 
-Cool, thanks for your test. :)
+So, Qiuyang, could you try break resizefs at some key points with power-cut, to
+check whether fsck can repair all corruption cases? and what is the result
+(resized fs or origianl fs)?
 
-> 
-> Thanks.
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> the corrupted metadata area. Moreover, I'm in doubt we really need to do this in
+> parallel with FS operations.
+
+What do you mean? We have wrapped main resizefs operaion with
+{freeze,thaw}_bdev, so there should be no parallel FS operations.
+
+Thanks,
