@@ -1,13 +1,13 @@
 From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.1 09/60] f2fs: fix to avoid accessing xattr across the boundary
-Date: Tue,  4 Jun 2019 19:21:19 -0400
-Message-ID: <20190604232212.6753-9-sashal@kernel.org>
-References: <20190604232212.6753-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 10/36] f2fs: fix to avoid accessing xattr across the boundary
+Date: Tue,  4 Jun 2019 19:23:05 -0400
+Message-ID: <20190604232333.7185-10-sashal@kernel.org>
+References: <20190604232333.7185-1-sashal@kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190604232212.6753-1-sashal@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20190604232333.7185-1-sashal@kernel.org>
+Sender: stable-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Randall Huang <huangrandall@google.com>, Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
@@ -58,10 +58,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 29 insertions(+), 9 deletions(-)
 
 diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 848a785abe25..e791741d193b 100644
+index 409a637f7a92..88e30f7cf9e1 100644
 --- a/fs/f2fs/xattr.c
 +++ b/fs/f2fs/xattr.c
-@@ -202,12 +202,17 @@ static inline const struct xattr_handler *f2fs_xattr_handler(int index)
+@@ -205,12 +205,17 @@ static inline const struct xattr_handler *f2fs_xattr_handler(int index)
  	return handler;
  }
  
@@ -81,7 +81,7 @@ index 848a785abe25..e791741d193b 100644
  		if (entry->e_name_index != index)
  			continue;
  		if (entry->e_name_len != len)
-@@ -297,20 +302,22 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+@@ -300,20 +305,22 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
  				const char *name, struct f2fs_xattr_entry **xe,
  				void **base_addr, int *base_size)
  {
@@ -108,7 +108,7 @@ index 848a785abe25..e791741d193b 100644
  	/* read from inline xattr */
  	if (inline_size) {
  		err = read_inline_xattr(inode, ipage, txattr_addr);
-@@ -337,7 +344,11 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+@@ -340,7 +347,11 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
  	else
  		cur_addr = txattr_addr;
  
@@ -121,7 +121,7 @@ index 848a785abe25..e791741d193b 100644
  check:
  	if (IS_XATTR_LAST_ENTRY(*xe)) {
  		err = -ENODATA;
-@@ -581,7 +592,8 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+@@ -584,7 +595,8 @@ static int __f2fs_setxattr(struct inode *inode, int index,
  			struct page *ipage, int flags)
  {
  	struct f2fs_xattr_entry *here, *last;
@@ -131,7 +131,7 @@ index 848a785abe25..e791741d193b 100644
  	int found, newsize;
  	size_t len;
  	__u32 new_hsize;
-@@ -605,8 +617,14 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+@@ -608,8 +620,14 @@ static int __f2fs_setxattr(struct inode *inode, int index,
  	if (error)
  		return error;
  
@@ -148,10 +148,10 @@ index 848a785abe25..e791741d193b 100644
  	found = IS_XATTR_LAST_ENTRY(here) ? 0 : 1;
  
 diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
-index 9172ee082ca8..a90920e2f949 100644
+index dbcd1d16e669..2a4ecaf338ea 100644
 --- a/fs/f2fs/xattr.h
 +++ b/fs/f2fs/xattr.h
-@@ -71,6 +71,8 @@ struct f2fs_xattr_entry {
+@@ -74,6 +74,8 @@ struct f2fs_xattr_entry {
  				entry = XATTR_NEXT_ENTRY(entry))
  #define VALID_XATTR_BLOCK_SIZE	(PAGE_SIZE - sizeof(struct node_footer))
  #define XATTR_PADDING_SIZE	(sizeof(__u32))
