@@ -1,22 +1,30 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] f2fs: separate f2fs i_flags from fs_flags and
- ext4 i_flags
-Date: Tue,  4 Jun 2019 22:59:04 -0700
-Message-ID: <20190605055904.4039-1-ebiggers@kernel.org>
+From: Satya Tangirala via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [RFC PATCH v2 7/8] fscrypt: wire up fscrypt to use
+ blk-crypto
+Date: Wed,  5 Jun 2019 16:28:36 -0700
+Message-ID: <20190605232837.31545-8-satyat@google.com>
+References: <20190605232837.31545-1-satyat@google.com>
+Reply-To: Satya Tangirala <satyat@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hYOy6-0005Jk-DD
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Jun 2019 06:00:14 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hYOy4-008jIh-S4
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Jun 2019 06:00:14 +0000
+ (envelope-from <3Q1D4XAYKALIkSlqSlYggYdW.Uge@flex--satyat.bounces.google.com>)
+ id 1hYfhE-0007O9-Kt
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Jun 2019 23:51:56 +0000
+Received: from mail-pg1-f201.google.com ([209.85.215.201])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1hYfh1-002aFM-5J
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Jun 2019 23:51:56 +0000
+Received: by mail-pg1-f201.google.com with SMTP id y187so295332pgd.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 05 Jun 2019 16:51:42 -0700 (PDT)
+In-Reply-To: <20190605232837.31545-1-satyat@google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,445 +34,661 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org
+To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Kuohong Wang <kuohong.wang@mediatek.com>, Ladvine D Almeida <ladvine.dalmeida@synopsys.com>, Satya Tangirala <satyat@google.com>, Barani Muthukumaran <bmuthuku@qti.qualcomm.com>, Parshuram Raju Thombare <pthombar@cadence.com>
 
-From: Eric Biggers <ebiggers@google.com>
+Introduce fscrypt_set_bio_crypt_ctx for filesystems to call to set up
+encryption contexts in bios, and fscrypt_evict_crypt_key to evict
+the encryption context associated with an inode.
 
-f2fs copied all the on-disk i_flags from ext4, and along with it the
-assumption that the on-disk i_flags are the same as the bits used by
-FS_IOC_GETFLAGS and FS_IOC_SETFLAGS.  This is problematic because
-reserving an on-disk inode flag in either filesystem's i_flags or in
-these ioctls effectively reserves it in all the other places too.  In
-fact, most of the "f2fs i_flags" are not used by f2fs at all.
+Inline encryption is controlled by a policy flag in the fscrypt_info
+in the inode, and filesystems may check if an inode should use inline
+encryption by calling fscrypt_inode_is_hw_encrypted. Files can be marked
+as inline encrypted from userspace by appropriately modifying the flags
+(OR-ing FS_POLICY_FLAGS_HW_ENCRYPTION to it) in the fscrypt_policy
+passed to fscrypt_ioctl_set_policy.
 
-Fix this by separating f2fs's i_flags from the ioctl bits and ext4's
-i_flags.
+To test inline encryption with the fscrypt dummy context, add
+ctx.flags |= FS_POLICY_FLAGS_HW_ENCRYPTION
+when setting up the dummy context in fs/crypto/keyinfo.c.
 
-In the process, un-reserve all "f2fs i_flags" that aren't actually
-supported by f2fs.  This included various flags that were not settable
-at all, as well as various flags that were settable by FS_IOC_SETFLAGS
-but didn't actually do anything.
+Note that blk-crypto will fall back to software en/decryption in the
+absence of inline crypto hardware, so setting up the ctx.flags in the
+dummy context without inline crypto hardware serves as a test for
+the software fallback in blk-crypto.
 
-There's a slight chance we'll need to add some flag(s) back to
-FS_IOC_SETFLAGS in order to avoid breaking users who expect f2fs to
-accept some random flag(s).  But hopefully such users don't exist.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
- fs/f2fs/f2fs.h |  42 +--------
- fs/f2fs/file.c | 239 ++++++++++++++++++++++++++++++++-----------------
- 2 files changed, 163 insertions(+), 118 deletions(-)
+ block/blk-crypto.c          |   1 -
+ fs/crypto/Kconfig           |   7 ++
+ fs/crypto/bio.c             | 159 +++++++++++++++++++++++++++++++-----
+ fs/crypto/crypto.c          |   9 ++
+ fs/crypto/fscrypt_private.h |  10 +++
+ fs/crypto/keyinfo.c         |  69 +++++++++++-----
+ fs/crypto/policy.c          |  10 +++
+ include/linux/fscrypt.h     |  64 +++++++++++++++
+ include/uapi/linux/fs.h     |  12 ++-
+ 9 files changed, 296 insertions(+), 45 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9bd2bf0f559b6..4fc297c263adc 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2335,57 +2335,23 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- }
- 
- /*
-- * Inode flags
-+ * On-disk inode flags (f2fs_inode::i_flags)
-  */
--#define F2FS_SECRM_FL			0x00000001 /* Secure deletion */
--#define F2FS_UNRM_FL			0x00000002 /* Undelete */
--#define F2FS_COMPR_FL			0x00000004 /* Compress file */
- #define F2FS_SYNC_FL			0x00000008 /* Synchronous updates */
- #define F2FS_IMMUTABLE_FL		0x00000010 /* Immutable file */
- #define F2FS_APPEND_FL			0x00000020 /* writes to file may only append */
- #define F2FS_NODUMP_FL			0x00000040 /* do not dump file */
- #define F2FS_NOATIME_FL			0x00000080 /* do not update atime */
--/* Reserved for compression usage... */
--#define F2FS_DIRTY_FL			0x00000100
--#define F2FS_COMPRBLK_FL		0x00000200 /* One or more compressed clusters */
--#define F2FS_NOCOMPR_FL			0x00000400 /* Don't compress */
--#define F2FS_ENCRYPT_FL			0x00000800 /* encrypted file */
--/* End compression flags --- maybe not all used */
- #define F2FS_INDEX_FL			0x00001000 /* hash-indexed directory */
--#define F2FS_IMAGIC_FL			0x00002000 /* AFS directory */
--#define F2FS_JOURNAL_DATA_FL		0x00004000 /* file data should be journaled */
--#define F2FS_NOTAIL_FL			0x00008000 /* file tail should not be merged */
- #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
--#define F2FS_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
--#define F2FS_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
--#define F2FS_EXTENTS_FL			0x00080000 /* Inode uses extents */
--#define F2FS_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
--#define F2FS_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
--#define F2FS_NOCOW_FL			0x00800000 /* Do not cow file */
--#define F2FS_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
- #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
--#define F2FS_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
--
--#define F2FS_FL_USER_VISIBLE		0x30CBDFFF /* User visible flags */
--#define F2FS_FL_USER_MODIFIABLE		0x204BC0FF /* User modifiable flags */
--
--/* Flags we can manipulate with through F2FS_IOC_FSSETXATTR */
--#define F2FS_FL_XFLAG_VISIBLE		(F2FS_SYNC_FL | \
--					 F2FS_IMMUTABLE_FL | \
--					 F2FS_APPEND_FL | \
--					 F2FS_NODUMP_FL | \
--					 F2FS_NOATIME_FL | \
--					 F2FS_PROJINHERIT_FL)
- 
- /* Flags that should be inherited by new inodes from their parent. */
--#define F2FS_FL_INHERITED (F2FS_SECRM_FL | F2FS_UNRM_FL | F2FS_COMPR_FL |\
--			   F2FS_SYNC_FL | F2FS_NODUMP_FL | F2FS_NOATIME_FL |\
--			   F2FS_NOCOMPR_FL | F2FS_JOURNAL_DATA_FL |\
--			   F2FS_NOTAIL_FL | F2FS_DIRSYNC_FL |\
--			   F2FS_PROJINHERIT_FL)
-+#define F2FS_FL_INHERITED (F2FS_SYNC_FL | F2FS_NODUMP_FL | F2FS_NOATIME_FL | \
-+			   F2FS_DIRSYNC_FL | F2FS_PROJINHERIT_FL)
- 
- /* Flags that are appropriate for regular files (all but dir-specific ones). */
--#define F2FS_REG_FLMASK		(~(F2FS_DIRSYNC_FL | F2FS_TOPDIR_FL))
-+#define F2FS_REG_FLMASK		(~F2FS_DIRSYNC_FL)
- 
- /* Flags that are appropriate for non-directories/regular files. */
- #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 45b45f37d347e..efdafa8865106 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -707,11 +707,9 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
- 		stat->btime.tv_nsec = fi->i_crtime.tv_nsec;
+diff --git a/block/blk-crypto.c b/block/blk-crypto.c
+index 5adb5251ae7e..7e98acd2b963 100644
+--- a/block/blk-crypto.c
++++ b/block/blk-crypto.c
+@@ -82,7 +82,6 @@ static int blk_crypto_keyslot_program(void *priv, const u8 *key,
+ 		slotp->tfm = tfm;
  	}
  
--	flags = fi->i_flags & F2FS_FL_USER_VISIBLE;
-+	flags = fi->i_flags;
- 	if (flags & F2FS_APPEND_FL)
- 		stat->attributes |= STATX_ATTR_APPEND;
--	if (flags & F2FS_COMPR_FL)
--		stat->attributes |= STATX_ATTR_COMPRESSED;
- 	if (IS_ENCRYPTED(inode))
- 		stat->attributes |= STATX_ATTR_ENCRYPTED;
- 	if (flags & F2FS_IMMUTABLE_FL)
-@@ -720,7 +718,6 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
- 		stat->attributes |= STATX_ATTR_NODUMP;
+-
+ 	err = crypto_skcipher_setkey(tfm, key, keysize);
  
- 	stat->attributes_mask |= (STATX_ATTR_APPEND |
--				  STATX_ATTR_COMPRESSED |
- 				  STATX_ATTR_ENCRYPTED |
- 				  STATX_ATTR_IMMUTABLE |
- 				  STATX_ATTR_NODUMP);
-@@ -1648,44 +1645,22 @@ static int f2fs_file_flush(struct file *file, fl_owner_t id)
- 	return 0;
- }
+ 	if (err) {
+diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+index 24ed99e2eca0..aa5b2bc6c8dd 100644
+--- a/fs/crypto/Kconfig
++++ b/fs/crypto/Kconfig
+@@ -15,3 +15,10 @@ config FS_ENCRYPTION
+ 	  efficient since it avoids caching the encrypted and
+ 	  decrypted pages in the page cache.  Currently Ext4,
+ 	  F2FS and UBIFS make use of this feature.
++
++config FS_ENCRYPTION_HW_CRYPT
++	tristate "Enable fscrypt to use inline crypto"
++	default n
++	depends on FS_ENCRYPTION && BLK_INLINE_ENCRYPTION
++	help
++	  Enables fscrypt to use inline crypto hardware if available.
+diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+index b46021ebde85..b06b1a2be99b 100644
+--- a/fs/crypto/bio.c
++++ b/fs/crypto/bio.c
+@@ -24,17 +24,24 @@
+ #include <linux/module.h>
+ #include <linux/bio.h>
+ #include <linux/namei.h>
++#include <linux/keyslot-manager.h>
++#include <linux/blkdev.h>
++#include <crypto/algapi.h>
+ #include "fscrypt_private.h"
  
--static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
--{
--	struct inode *inode = file_inode(filp);
--	struct f2fs_inode_info *fi = F2FS_I(inode);
--	unsigned int flags = fi->i_flags;
--
--	if (IS_ENCRYPTED(inode))
--		flags |= F2FS_ENCRYPT_FL;
--	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
--		flags |= F2FS_INLINE_DATA_FL;
--	if (is_inode_flag_set(inode, FI_PIN_FILE))
--		flags |= F2FS_NOCOW_FL;
--
--	flags &= F2FS_FL_USER_VISIBLE;
--
--	return put_user(flags, (int __user *)arg);
--}
--
--static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
-+static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+-static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
++static void __fscrypt_decrypt_bio(struct bio *bio, bool done, bool decrypt)
  {
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
--	unsigned int oldflags;
-+	u32 oldflags;
+ 	struct bio_vec *bv;
+ 	struct bvec_iter_all iter_all;
  
- 	/* Is it quota file? Do not allow user to mess with it */
- 	if (IS_NOQUOTA(inode))
- 		return -EPERM;
+ 	bio_for_each_segment_all(bv, bio, iter_all) {
+ 		struct page *page = bv->bv_page;
+-		int ret = fscrypt_decrypt_page(page->mapping->host, page,
+-				PAGE_SIZE, 0, page->index);
++		int ret = 0;
++
++		if (decrypt) {
++			ret = fscrypt_decrypt_page(page->mapping->host, page,
++						   PAGE_SIZE, 0, page->index);
++		}
  
--	flags = f2fs_mask_flags(inode->i_mode, flags);
--
- 	oldflags = fi->i_flags;
+ 		if (ret)
+ 			SetPageError(page);
+@@ -47,7 +54,7 @@ static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
  
--	if ((flags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
-+	if ((iflags ^ oldflags) & (F2FS_APPEND_FL | F2FS_IMMUTABLE_FL))
- 		if (!capable(CAP_LINUX_IMMUTABLE))
- 			return -EPERM;
+ void fscrypt_decrypt_bio(struct bio *bio)
+ {
+-	__fscrypt_decrypt_bio(bio, false);
++	__fscrypt_decrypt_bio(bio, false, true);
+ }
+ EXPORT_SYMBOL(fscrypt_decrypt_bio);
  
--	flags = flags & F2FS_FL_USER_MODIFIABLE;
--	flags |= oldflags & ~F2FS_FL_USER_MODIFIABLE;
--	fi->i_flags = flags;
-+	fi->i_flags = iflags | (oldflags & ~mask);
+@@ -57,16 +64,27 @@ static void completion_pages(struct work_struct *work)
+ 		container_of(work, struct fscrypt_ctx, r.work);
+ 	struct bio *bio = ctx->r.bio;
  
- 	if (fi->i_flags & F2FS_PROJINHERIT_FL)
- 		set_inode_flag(inode, FI_PROJ_INHERIT);
-@@ -1698,26 +1673,124 @@ static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
- 	return 0;
+-	__fscrypt_decrypt_bio(bio, true);
++	__fscrypt_decrypt_bio(bio, true, true);
++	fscrypt_release_ctx(ctx);
++	bio_put(bio);
++}
++
++static void decrypt_bio_hwcrypt(struct fscrypt_ctx *ctx, struct bio *bio)
++{
++	__fscrypt_decrypt_bio(bio, true, false);
+ 	fscrypt_release_ctx(ctx);
+ 	bio_put(bio);
  }
  
-+/* FS_IOC_GETFLAGS and FS_IOC_SETFLAGS support */
+ void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
+ {
+-	INIT_WORK(&ctx->r.work, completion_pages);
+-	ctx->r.bio = bio;
+-	fscrypt_enqueue_decrypt_work(&ctx->r.work);
++	if (bio_is_encrypted(bio)) {
++		decrypt_bio_hwcrypt(ctx, bio);
++	} else {
++		INIT_WORK(&ctx->r.work, completion_pages);
++		ctx->r.bio = bio;
++		fscrypt_enqueue_decrypt_work(&ctx->r.work);
++	}
+ }
+ EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
+ 
+@@ -94,29 +112,33 @@ EXPORT_SYMBOL(fscrypt_pullback_bio_page);
+ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+ 				sector_t pblk, unsigned int len)
+ {
+-	struct fscrypt_ctx *ctx;
++	struct fscrypt_ctx *ctx = NULL;
+ 	struct page *ciphertext_page = NULL;
+ 	struct bio *bio;
+ 	int ret, err = 0;
+ 
+ 	BUG_ON(inode->i_sb->s_blocksize != PAGE_SIZE);
+ 
+-	ctx = fscrypt_get_ctx(GFP_NOFS);
+-	if (IS_ERR(ctx))
+-		return PTR_ERR(ctx);
++	if (!fscrypt_inode_is_hw_encrypted(inode)) {
++		ctx = fscrypt_get_ctx(GFP_NOFS);
++		if (IS_ERR(ctx))
++			return PTR_ERR(ctx);
+ 
+-	ciphertext_page = fscrypt_alloc_bounce_page(ctx, GFP_NOWAIT);
+-	if (IS_ERR(ciphertext_page)) {
+-		err = PTR_ERR(ciphertext_page);
+-		goto errout;
++		ciphertext_page = fscrypt_alloc_bounce_page(ctx, GFP_NOWAIT);
++		if (IS_ERR(ciphertext_page)) {
++			err = PTR_ERR(ciphertext_page);
++			goto errout;
++		}
+ 	}
+ 
+ 	while (len--) {
+-		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk,
++		if (!fscrypt_inode_is_hw_encrypted(inode)) {
++			err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk,
+ 					     ZERO_PAGE(0), ciphertext_page,
+ 					     PAGE_SIZE, 0, GFP_NOFS);
+-		if (err)
+-			goto errout;
++			if (err)
++				goto errout;
++		}
+ 
+ 		bio = bio_alloc(GFP_NOWAIT, 1);
+ 		if (!bio) {
+@@ -127,8 +149,14 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+ 		bio->bi_iter.bi_sector =
+ 			pblk << (inode->i_sb->s_blocksize_bits - 9);
+ 		bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
+-		ret = bio_add_page(bio, ciphertext_page,
+-					inode->i_sb->s_blocksize, 0);
++		if (!fscrypt_inode_is_hw_encrypted(inode)) {
++			ret = bio_add_page(bio, ciphertext_page,
++						inode->i_sb->s_blocksize, 0);
++		} else {
++			ret = bio_add_page(bio, ZERO_PAGE(0),
++						inode->i_sb->s_blocksize, 0);
++		}
 +
-+/*
-+ * To make a new on-disk f2fs i_flag gettable via FS_IOC_GETFLAGS, add an entry
-+ * for it to f2fs_fsflags_map[], and add its FS_*_FL equivalent to
-+ * F2FS_GETTABLE_FS_FL.  To also make it settable via FS_IOC_SETFLAGS, also add
-+ * its FS_*_FL equivalent to F2FS_SETTABLE_FS_FL.
-+ */
+ 		if (ret != inode->i_sb->s_blocksize) {
+ 			/* should never happen! */
+ 			WARN_ON(1);
+@@ -136,6 +164,7 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+ 			err = -EIO;
+ 			goto errout;
+ 		}
++		fscrypt_set_bio_crypt_ctx(inode, bio, pblk);
+ 		err = submit_bio_wait(bio);
+ 		if (err == 0 && bio->bi_status)
+ 			err = -EIO;
+@@ -147,7 +176,93 @@ int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+ 	}
+ 	err = 0;
+ errout:
+-	fscrypt_release_ctx(ctx);
++	if (!fscrypt_inode_is_hw_encrypted(inode))
++		fscrypt_release_ctx(ctx);
+ 	return err;
+ }
+ EXPORT_SYMBOL(fscrypt_zeroout_range);
 +
-+static const struct {
-+	u32 iflag;
-+	u32 fsflag;
-+} f2fs_fsflags_map[] = {
-+	{ F2FS_SYNC_FL,		FS_SYNC_FL },
-+	{ F2FS_IMMUTABLE_FL,	FS_IMMUTABLE_FL },
-+	{ F2FS_APPEND_FL,	FS_APPEND_FL },
-+	{ F2FS_NODUMP_FL,	FS_NODUMP_FL },
-+	{ F2FS_NOATIME_FL,	FS_NOATIME_FL },
-+	{ F2FS_INDEX_FL,	FS_INDEX_FL },
-+	{ F2FS_DIRSYNC_FL,	FS_DIRSYNC_FL },
-+	{ F2FS_PROJINHERIT_FL,	FS_PROJINHERIT_FL },
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION_HW_CRYPT)
++static enum blk_crypt_mode_num
++get_blk_crypto_alg_for_fscryptalg(u8 fscrypt_alg)
++{
++	switch (fscrypt_alg) {
++	case FS_ENCRYPTION_MODE_AES_256_XTS:
++		return BLK_ENCRYPTION_MODE_AES_256_XTS;
++	default: return -EINVAL;
++	}
++}
++
++int fscrypt_set_bio_crypt_ctx(const struct inode *inode,
++				 struct bio *bio, u64 data_unit_num)
++{
++	struct fscrypt_info *ci = inode->i_crypt_info;
++
++	/* If inode is not hw encrypted, nothing to do. */
++	if (!fscrypt_inode_is_hw_encrypted(inode))
++		return 0;
++
++	return bio_crypt_set_ctx(bio, ci->ci_master_key->mk_raw,
++			get_blk_crypto_alg_for_fscryptalg(ci->ci_data_mode),
++			data_unit_num,
++			PAGE_SHIFT);
++}
++EXPORT_SYMBOL(fscrypt_set_bio_crypt_ctx);
++
++void fscrypt_unset_bio_crypt_ctx(struct bio *bio)
++{
++	bio_crypt_free_ctx(bio);
++}
++EXPORT_SYMBOL(fscrypt_unset_bio_crypt_ctx);
++
++int fscrypt_evict_crypt_key(struct inode *inode)
++{
++	struct request_queue *q;
++	struct fscrypt_info *ci;
++
++	if (!inode)
++		return 0;
++
++	q = inode->i_sb->s_bdev->bd_queue;
++	ci = inode->i_crypt_info;
++
++	if (!q || !q->ksm || !ci ||
++	    !fscrypt_inode_is_hw_encrypted(inode)) {
++		return 0;
++	}
++
++	return keyslot_manager_evict_key(q->ksm,
++					 ci->ci_master_key->mk_raw,
++					 get_blk_crypto_alg_for_fscryptalg(
++						ci->ci_data_mode),
++					 PAGE_SIZE);
++}
++EXPORT_SYMBOL(fscrypt_evict_crypt_key);
++
++bool fscrypt_inode_crypt_mergeable(const struct inode *inode_1,
++				   const struct inode *inode_2)
++{
++	struct fscrypt_info *ci_1, *ci_2;
++	bool enc_1 = fscrypt_inode_is_hw_encrypted(inode_1);
++	bool enc_2 = fscrypt_inode_is_hw_encrypted(inode_2);
++
++	if (enc_1 != enc_2)
++		return false;
++
++	if (!enc_1)
++		return true;
++
++	if (inode_1 == inode_2)
++		return true;
++
++	ci_1 = inode_1->i_crypt_info;
++	ci_2 = inode_2->i_crypt_info;
++
++	return ci_1->ci_data_mode == ci_2->ci_data_mode &&
++	       crypto_memneq(ci_1->ci_master_key->mk_raw,
++			     ci_2->ci_master_key->mk_raw,
++			     ci_1->ci_master_key->mk_mode->keysize) == 0;
++}
++EXPORT_SYMBOL(fscrypt_inode_crypt_mergeable);
++
++#endif /* FS_ENCRYPTION_HW_CRYPT */
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index 335a362ee446..1bf195ef82c8 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -240,6 +240,11 @@ struct page *fscrypt_encrypt_page(const struct inode *inode,
+ 
+ 	BUG_ON(len % FS_CRYPTO_BLOCK_SIZE != 0);
+ 
++	/* If HW encryption, then pretend we did in place encryption */
++	if (fscrypt_inode_is_hw_encrypted(inode)) {
++		return ciphertext_page;
++	}
++
+ 	if (inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES) {
+ 		/* with inplace-encryption we just encrypt the page */
+ 		err = fscrypt_do_page_crypto(inode, FS_ENCRYPT, lblk_num, page,
+@@ -302,6 +307,10 @@ int fscrypt_decrypt_page(const struct inode *inode, struct page *page,
+ 	if (!(inode->i_sb->s_cop->flags & FS_CFLG_OWN_PAGES))
+ 		BUG_ON(!PageLocked(page));
+ 
++	/* If we have HW encryption, then this page is already decrypted */
++	if (fscrypt_inode_is_hw_encrypted(inode))
++		return 0;
++
+ 	return fscrypt_do_page_crypto(inode, FS_DECRYPT, lblk_num, page, page,
+ 				      len, offs, GFP_NOFS);
+ }
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 7da276159593..d6d65c88a629 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -49,6 +49,16 @@ struct fscrypt_symlink_data {
+ 	char encrypted_path[1];
+ } __packed;
+ 
++/* Master key referenced by FS_POLICY_FLAG_DIRECT_KEY policy */
++struct fscrypt_master_key {
++	struct hlist_node mk_node;
++	refcount_t mk_refcount;
++	const struct fscrypt_mode *mk_mode;
++	struct crypto_skcipher *mk_ctfm;
++	u8 mk_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++	u8 mk_raw[FS_MAX_KEY_SIZE];
 +};
 +
-+#define F2FS_GETTABLE_FS_FL (		\
-+		FS_SYNC_FL |		\
-+		FS_IMMUTABLE_FL |	\
-+		FS_APPEND_FL |		\
-+		FS_NODUMP_FL |		\
-+		FS_NOATIME_FL |		\
-+		FS_INDEX_FL |		\
-+		FS_DIRSYNC_FL |		\
-+		FS_PROJINHERIT_FL |	\
-+		FS_ENCRYPT_FL |		\
-+		FS_INLINE_DATA_FL |	\
-+		FS_NOCOW_FL)
-+
-+#define F2FS_SETTABLE_FS_FL (		\
-+		FS_SYNC_FL |		\
-+		FS_IMMUTABLE_FL |	\
-+		FS_APPEND_FL |		\
-+		FS_NODUMP_FL |		\
-+		FS_NOATIME_FL |		\
-+		FS_DIRSYNC_FL |		\
-+		FS_PROJINHERIT_FL)
-+
-+/* Convert f2fs on-disk i_flags to FS_IOC_{GET,SET}FLAGS flags */
-+static inline u32 f2fs_iflags_to_fsflags(u32 iflags)
+ /*
+  * fscrypt_info - the "encryption key" for an inode
+  *
+diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+index dcd91a3fbe49..c00d986799d5 100644
+--- a/fs/crypto/keyinfo.c
++++ b/fs/crypto/keyinfo.c
+@@ -25,6 +25,21 @@ static struct crypto_shash *essiv_hash_tfm;
+ static DEFINE_HASHTABLE(fscrypt_master_keys, 6); /* 6 bits = 64 buckets */
+ static DEFINE_SPINLOCK(fscrypt_master_keys_lock);
+ 
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION_HW_CRYPT)
++static inline bool __flags_hw_encrypted(u8 flags,
++					const struct inode *inode)
 +{
-+	u32 fsflags = 0;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(f2fs_fsflags_map); i++)
-+		if (iflags & f2fs_fsflags_map[i].iflag)
-+			fsflags |= f2fs_fsflags_map[i].fsflag;
-+
-+	return fsflags;
++	return inode && (flags & FS_POLICY_FLAGS_HW_ENCRYPTION) &&
++	       S_ISREG(inode->i_mode);
 +}
-+
-+/* Convert FS_IOC_{GET,SET}FLAGS flags to f2fs on-disk i_flags */
-+static inline u32 f2fs_fsflags_to_iflags(u32 fsflags)
++#else
++static inline bool __flags_hw_encrypted(u8 flags,
++					const struct inode *inode)
 +{
-+	u32 iflags = 0;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(f2fs_fsflags_map); i++)
-+		if (fsflags & f2fs_fsflags_map[i].fsflag)
-+			iflags |= f2fs_fsflags_map[i].iflag;
-+
-+	return iflags;
++	return false;
 +}
++#endif /* CONFIG_FS_ENCRYPTION_HW_CRYPT */
 +
-+static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	u32 fsflags = f2fs_iflags_to_fsflags(fi->i_flags);
-+
-+	if (IS_ENCRYPTED(inode))
-+		fsflags |= FS_ENCRYPT_FL;
-+	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
-+		fsflags |= FS_INLINE_DATA_FL;
-+	if (is_inode_flag_set(inode, FI_PIN_FILE))
-+		fsflags |= FS_NOCOW_FL;
-+
-+	fsflags &= F2FS_GETTABLE_FS_FL;
-+
-+	return put_user(fsflags, (int __user *)arg);
-+}
-+
- static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
--	unsigned int flags;
-+	u32 fsflags;
-+	u32 iflags;
- 	int ret;
- 
- 	if (!inode_owner_or_capable(inode))
- 		return -EACCES;
- 
--	if (get_user(flags, (int __user *)arg))
-+	if (get_user(fsflags, (int __user *)arg))
- 		return -EFAULT;
- 
-+	if (fsflags & ~F2FS_GETTABLE_FS_FL)
-+		return -EOPNOTSUPP;
-+	fsflags &= F2FS_SETTABLE_FS_FL;
-+
-+	iflags = f2fs_fsflags_to_iflags(fsflags);
-+	if (f2fs_mask_flags(inode->i_mode, iflags) != iflags)
-+		return -EOPNOTSUPP;
-+
- 	ret = mnt_want_write_file(filp);
- 	if (ret)
- 		return ret;
- 
- 	inode_lock(inode);
- 
--	ret = __f2fs_ioc_setflags(inode, flags);
--
-+	ret = f2fs_setflags_common(inode, iflags,
-+			f2fs_fsflags_to_iflags(F2FS_SETTABLE_FS_FL));
- 	inode_unlock(inode);
- 	mnt_drop_write_file(filp);
- 	return ret;
-@@ -2727,47 +2800,56 @@ static int f2fs_ioc_setproject(struct file *filp, __u32 projid)
- }
- #endif
- 
--/* Transfer internal flags to xflags */
--static inline __u32 f2fs_iflags_to_xflags(unsigned long iflags)
--{
--	__u32 xflags = 0;
--
--	if (iflags & F2FS_SYNC_FL)
--		xflags |= FS_XFLAG_SYNC;
--	if (iflags & F2FS_IMMUTABLE_FL)
--		xflags |= FS_XFLAG_IMMUTABLE;
--	if (iflags & F2FS_APPEND_FL)
--		xflags |= FS_XFLAG_APPEND;
--	if (iflags & F2FS_NODUMP_FL)
--		xflags |= FS_XFLAG_NODUMP;
--	if (iflags & F2FS_NOATIME_FL)
--		xflags |= FS_XFLAG_NOATIME;
--	if (iflags & F2FS_PROJINHERIT_FL)
--		xflags |= FS_XFLAG_PROJINHERIT;
-+/* FS_IOC_FSGETXATTR and FS_IOC_FSSETXATTR support */
-+
-+/*
-+ * To make a new on-disk f2fs i_flag gettable via FS_IOC_FSGETXATTR and settable
-+ * via FS_IOC_FSSETXATTR, add an entry for it to f2fs_xflags_map[], and add its
-+ * FS_XFLAG_* equivalent to F2FS_SUPPORTED_XFLAGS.
-+ */
-+
-+static const struct {
-+	u32 iflag;
-+	u32 xflag;
-+} f2fs_xflags_map[] = {
-+	{ F2FS_SYNC_FL,		FS_XFLAG_SYNC },
-+	{ F2FS_IMMUTABLE_FL,	FS_XFLAG_IMMUTABLE },
-+	{ F2FS_APPEND_FL,	FS_XFLAG_APPEND },
-+	{ F2FS_NODUMP_FL,	FS_XFLAG_NODUMP },
-+	{ F2FS_NOATIME_FL,	FS_XFLAG_NOATIME },
-+	{ F2FS_PROJINHERIT_FL,	FS_XFLAG_PROJINHERIT },
-+};
-+
-+#define F2FS_SUPPORTED_XFLAGS (		\
-+		FS_XFLAG_SYNC |		\
-+		FS_XFLAG_IMMUTABLE |	\
-+		FS_XFLAG_APPEND |	\
-+		FS_XFLAG_NODUMP |	\
-+		FS_XFLAG_NOATIME |	\
-+		FS_XFLAG_PROJINHERIT)
-+
-+/* Convert f2fs on-disk i_flags to FS_IOC_FS{GET,SET}XATTR flags */
-+static inline u32 f2fs_iflags_to_xflags(u32 iflags)
-+{
-+	u32 xflags = 0;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(f2fs_xflags_map); i++)
-+		if (iflags & f2fs_xflags_map[i].iflag)
-+			xflags |= f2fs_xflags_map[i].xflag;
-+
- 	return xflags;
+ /*
+  * Key derivation function.  This generates the derived key by encrypting the
+  * master key with AES-128-ECB using the inode's nonce as the AES key.
+@@ -220,6 +235,9 @@ static int find_and_derive_key(const struct inode *inode,
+ 			memcpy(derived_key, payload->raw, mode->keysize);
+ 			err = 0;
+ 		}
++	} else if (__flags_hw_encrypted(ctx->flags, inode)) {
++		memcpy(derived_key, payload->raw, mode->keysize);
++		err = 0;
+ 	} else {
+ 		err = derive_key_aes(payload->raw, ctx, derived_key,
+ 				     mode->keysize);
+@@ -269,16 +287,6 @@ allocate_skcipher_for_mode(struct fscrypt_mode *mode, const u8 *raw_key,
+ 	return ERR_PTR(err);
  }
  
--#define F2FS_SUPPORTED_FS_XFLAGS (FS_XFLAG_SYNC | FS_XFLAG_IMMUTABLE | \
--				  FS_XFLAG_APPEND | FS_XFLAG_NODUMP | \
--				  FS_XFLAG_NOATIME | FS_XFLAG_PROJINHERIT)
+-/* Master key referenced by FS_POLICY_FLAG_DIRECT_KEY policy */
+-struct fscrypt_master_key {
+-	struct hlist_node mk_node;
+-	refcount_t mk_refcount;
+-	const struct fscrypt_mode *mk_mode;
+-	struct crypto_skcipher *mk_ctfm;
+-	u8 mk_descriptor[FS_KEY_DESCRIPTOR_SIZE];
+-	u8 mk_raw[FS_MAX_KEY_SIZE];
+-};
 -
--/* Transfer xflags flags to internal */
--static inline unsigned long f2fs_xflags_to_iflags(__u32 xflags)
-+/* Convert FS_IOC_FS{GET,SET}XATTR flags to f2fs on-disk i_flags */
-+static inline u32 f2fs_xflags_to_iflags(u32 xflags)
+ static void free_master_key(struct fscrypt_master_key *mk)
  {
--	unsigned long iflags = 0;
-+	u32 iflags = 0;
-+	int i;
- 
--	if (xflags & FS_XFLAG_SYNC)
--		iflags |= F2FS_SYNC_FL;
--	if (xflags & FS_XFLAG_IMMUTABLE)
--		iflags |= F2FS_IMMUTABLE_FL;
--	if (xflags & FS_XFLAG_APPEND)
--		iflags |= F2FS_APPEND_FL;
--	if (xflags & FS_XFLAG_NODUMP)
--		iflags |= F2FS_NODUMP_FL;
--	if (xflags & FS_XFLAG_NOATIME)
--		iflags |= F2FS_NOATIME_FL;
--	if (xflags & FS_XFLAG_PROJINHERIT)
--		iflags |= F2FS_PROJINHERIT_FL;
-+	for (i = 0; i < ARRAY_SIZE(f2fs_xflags_map); i++)
-+		if (xflags & f2fs_xflags_map[i].xflag)
-+			iflags |= f2fs_xflags_map[i].iflag;
- 
- 	return iflags;
+ 	if (mk) {
+@@ -287,13 +295,15 @@ static void free_master_key(struct fscrypt_master_key *mk)
+ 	}
  }
-@@ -2779,8 +2861,7 @@ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
- 	struct fsxattr fa;
  
- 	memset(&fa, 0, sizeof(struct fsxattr));
--	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags &
--				F2FS_FL_USER_VISIBLE);
-+	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags);
- 
- 	if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)))
- 		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
-@@ -2818,9 +2899,8 @@ static int f2fs_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
- static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+-static void put_master_key(struct fscrypt_master_key *mk)
++static void put_master_key(struct fscrypt_master_key *mk,
++			   struct inode *inode)
  {
- 	struct inode *inode = file_inode(filp);
--	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct fsxattr fa;
--	unsigned int flags;
-+	u32 iflags;
+ 	if (!refcount_dec_and_lock(&mk->mk_refcount, &fscrypt_master_keys_lock))
+ 		return;
+ 	hash_del(&mk->mk_node);
+ 	spin_unlock(&fscrypt_master_keys_lock);
+ 
++	fscrypt_evict_crypt_key(inode);
+ 	free_master_key(mk);
+ }
+ 
+@@ -360,11 +370,13 @@ fscrypt_get_master_key(const struct fscrypt_info *ci, struct fscrypt_mode *mode,
+ 		return ERR_PTR(-ENOMEM);
+ 	refcount_set(&mk->mk_refcount, 1);
+ 	mk->mk_mode = mode;
+-	mk->mk_ctfm = allocate_skcipher_for_mode(mode, raw_key, inode);
+-	if (IS_ERR(mk->mk_ctfm)) {
+-		err = PTR_ERR(mk->mk_ctfm);
+-		mk->mk_ctfm = NULL;
+-		goto err_free_mk;
++	if (!__flags_hw_encrypted(ci->ci_flags, inode)) {
++		mk->mk_ctfm = allocate_skcipher_for_mode(mode, raw_key, inode);
++		if (IS_ERR(mk->mk_ctfm)) {
++			err = PTR_ERR(mk->mk_ctfm);
++			mk->mk_ctfm = NULL;
++			goto err_free_mk;
++		}
+ 	}
+ 	memcpy(mk->mk_descriptor, ci->ci_master_key_descriptor,
+ 	       FS_KEY_DESCRIPTOR_SIZE);
+@@ -456,7 +468,8 @@ static int setup_crypto_transform(struct fscrypt_info *ci,
+ 	struct crypto_skcipher *ctfm;
  	int err;
  
- 	if (copy_from_user(&fa, (struct fsxattr __user *)arg, sizeof(fa)))
-@@ -2830,11 +2910,11 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- 	if (!inode_owner_or_capable(inode))
- 		return -EACCES;
+-	if (ci->ci_flags & FS_POLICY_FLAG_DIRECT_KEY) {
++	if ((ci->ci_flags & FS_POLICY_FLAG_DIRECT_KEY) ||
++	    __flags_hw_encrypted(ci->ci_flags, inode)) {
+ 		mk = fscrypt_get_master_key(ci, mode, raw_key, inode);
+ 		if (IS_ERR(mk))
+ 			return PTR_ERR(mk);
+@@ -486,13 +499,13 @@ static int setup_crypto_transform(struct fscrypt_info *ci,
+ 	return 0;
+ }
  
--	if (fa.fsx_xflags & ~F2FS_SUPPORTED_FS_XFLAGS)
-+	if (fa.fsx_xflags & ~F2FS_SUPPORTED_XFLAGS)
- 		return -EOPNOTSUPP;
+-static void put_crypt_info(struct fscrypt_info *ci)
++static void put_crypt_info(struct fscrypt_info *ci, struct inode *inode)
+ {
+ 	if (!ci)
+ 		return;
  
--	flags = f2fs_xflags_to_iflags(fa.fsx_xflags);
--	if (f2fs_mask_flags(inode->i_mode, flags) != flags)
-+	iflags = f2fs_xflags_to_iflags(fa.fsx_xflags);
-+	if (f2fs_mask_flags(inode->i_mode, iflags) != iflags)
- 		return -EOPNOTSUPP;
+ 	if (ci->ci_master_key) {
+-		put_master_key(ci->ci_master_key);
++		put_master_key(ci->ci_master_key, inode);
+ 	} else {
+ 		crypto_free_skcipher(ci->ci_ctfm);
+ 		crypto_free_cipher(ci->ci_essiv_tfm);
+@@ -577,7 +590,7 @@ int fscrypt_get_encryption_info(struct inode *inode)
+ out:
+ 	if (res == -ENOKEY)
+ 		res = 0;
+-	put_crypt_info(crypt_info);
++	put_crypt_info(crypt_info, NULL);
+ 	kzfree(raw_key);
+ 	return res;
+ }
+@@ -591,7 +604,7 @@ EXPORT_SYMBOL(fscrypt_get_encryption_info);
+  */
+ void fscrypt_put_encryption_info(struct inode *inode)
+ {
+-	put_crypt_info(inode->i_crypt_info);
++	put_crypt_info(inode->i_crypt_info, inode);
+ 	inode->i_crypt_info = NULL;
+ }
+ EXPORT_SYMBOL(fscrypt_put_encryption_info);
+@@ -610,3 +623,17 @@ void fscrypt_free_inode(struct inode *inode)
+ 	}
+ }
+ EXPORT_SYMBOL(fscrypt_free_inode);
++
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION_HW_CRYPT)
++bool fscrypt_inode_is_hw_encrypted(const struct inode *inode)
++{
++	struct fscrypt_info *ci;
++
++	if (!inode)
++		return false;
++	ci = inode->i_crypt_info;
++
++	return ci && __flags_hw_encrypted(ci->ci_flags, inode);
++}
++EXPORT_SYMBOL(fscrypt_inode_is_hw_encrypted);
++#endif /* CONFIG_FS_ENCRYPTION_HW_CRYPT */
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index d536889ac31b..556e9da7a427 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -36,6 +36,7 @@ static int create_encryption_context_from_policy(struct inode *inode,
+ 	struct fscrypt_context ctx;
  
- 	err = mnt_want_write_file(filp);
-@@ -2845,9 +2925,8 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- 	err = f2fs_ioctl_check_project(inode, &fa);
- 	if (err)
- 		goto out;
--	flags = (fi->i_flags & ~F2FS_FL_XFLAG_VISIBLE) |
--				(flags & F2FS_FL_XFLAG_VISIBLE);
--	err = __f2fs_ioc_setflags(inode, flags);
-+	err = f2fs_setflags_common(inode, iflags,
-+			f2fs_xflags_to_iflags(F2FS_SUPPORTED_XFLAGS));
- 	if (err)
- 		goto out;
+ 	ctx.format = FS_ENCRYPTION_CONTEXT_FORMAT_V1;
++
+ 	memcpy(ctx.master_key_descriptor, policy->master_key_descriptor,
+ 					FS_KEY_DESCRIPTOR_SIZE);
  
+@@ -46,8 +47,17 @@ static int create_encryption_context_from_policy(struct inode *inode,
+ 	if (policy->flags & ~FS_POLICY_FLAGS_VALID)
+ 		return -EINVAL;
+ 
++	/*
++	 * TODO: expose HW encryption via some toggleable knob
++	 * instead of as a policy?
++	 */
++	if (!inode->i_sb->s_cop->hw_crypt_supp &&
++	    (policy->flags & FS_POLICY_FLAGS_HW_ENCRYPTION))
++		return -EINVAL;
++
+ 	ctx.contents_encryption_mode = policy->contents_encryption_mode;
+ 	ctx.filenames_encryption_mode = policy->filenames_encryption_mode;
++
+ 	ctx.flags = policy->flags;
+ 	BUILD_BUG_ON(sizeof(ctx.nonce) != FS_KEY_DERIVATION_NONCE_SIZE);
+ 	get_random_bytes(ctx.nonce, FS_KEY_DERIVATION_NONCE_SIZE);
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index f7680ef1abd2..f0e1589f32bd 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -61,6 +61,7 @@ struct fscrypt_operations {
+ 	bool (*dummy_context)(struct inode *);
+ 	bool (*empty_dir)(struct inode *);
+ 	unsigned int max_namelen;
++	bool hw_crypt_supp;
+ };
+ 
+ struct fscrypt_ctx {
+@@ -130,6 +131,22 @@ extern int fscrypt_get_encryption_info(struct inode *);
+ extern void fscrypt_put_encryption_info(struct inode *);
+ extern void fscrypt_free_inode(struct inode *);
+ 
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION_HW_CRYPT)
++extern bool fscrypt_inode_is_hw_encrypted(const struct inode *inode);
++extern bool fscrypt_inode_crypt_mergeable(const struct inode *inode_1,
++					  const struct inode *inode_2);
++#else
++static inline bool fscrypt_inode_is_hw_encrypted(const struct inode *inode)
++{
++	return false;
++}
++static inline bool fscrypt_inode_crypt_mergeable(const struct inode *inode_1,
++						 const struct inode *inode_2)
++{
++	return true;
++}
++#endif /* CONFIG_FS_ENCRYPTION_HW_CRYPT */
++
+ /* fname.c */
+ extern int fscrypt_setup_filename(struct inode *, const struct qstr *,
+ 				int lookup, struct fscrypt_name *);
+@@ -226,6 +243,25 @@ extern void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
+ extern void fscrypt_pullback_bio_page(struct page **, bool);
+ extern int fscrypt_zeroout_range(const struct inode *, pgoff_t, sector_t,
+ 				 unsigned int);
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION_HW_CRYPT)
++extern int fscrypt_set_bio_crypt_ctx(const struct inode *inode,
++				     struct bio *bio, u64 data_unit_num);
++extern void fscrypt_unset_bio_crypt_ctx(struct bio *bio);
++extern int fscrypt_evict_crypt_key(struct inode *inode);
++#else
++static inline int fscrypt_set_bio_crypt_ctx(const struct inode *inode,
++					    struct bio *bio, u64 data_unit_num)
++{
++	return 0;
++}
++
++static inline void fscrypt_unset_bio_crypt_ctx(struct bio *bio) { }
++
++static inline int fscrypt_evict_crypt_key(struct inode *inode)
++{
++	return 0;
++}
++#endif
+ 
+ /* hooks.c */
+ extern int fscrypt_file_open(struct inode *inode, struct file *filp);
+@@ -351,6 +387,17 @@ static inline void fscrypt_free_inode(struct inode *inode)
+ {
+ }
+ 
++static inline bool fscrypt_inode_is_hw_encrypted(const struct inode *inode)
++{
++	return false;
++}
++
++static inline bool fscrypt_inode_crypt_mergeable(const struct inode *inode_1,
++						 const struct inode *inode_2)
++{
++	return true;
++}
++
+  /* fname.c */
+ static inline int fscrypt_setup_filename(struct inode *dir,
+ 					 const struct qstr *iname,
+@@ -421,6 +468,23 @@ static inline int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline int fscrypt_set_bio_crypt_ctx(const struct inode *inode,
++					    struct bio *bio,
++					    u64 data_unit_num)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline void fscrypt_unset_bio_crypt_ctx(struct bio *bio)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline int fscrypt_evict_crypt_key(struct inode *inode)
++{
++	return 0;
++}
++
+ /* hooks.c */
+ 
+ static inline int fscrypt_file_open(struct inode *inode, struct file *filp)
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 59c71fa8c553..e8bbdaea4a49 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -224,7 +224,17 @@ struct fsxattr {
+ #define FS_POLICY_FLAGS_PAD_32		0x03
+ #define FS_POLICY_FLAGS_PAD_MASK	0x03
+ #define FS_POLICY_FLAG_DIRECT_KEY	0x04	/* use master key directly */
+-#define FS_POLICY_FLAGS_VALID		0x07
++#define FS_POLICY_FLAGS_VALID_BASE	0x07
++
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION_HW_CRYPT)
++#define FS_POLICY_FLAGS_HW_ENCRYPTION	0x08
++#else
++#define FS_POLICY_FLAGS_HW_ENCRYPTION	0x00
++#endif
++
++
++#define FS_POLICY_FLAGS_VALID (FS_POLICY_FLAGS_VALID_BASE | \
++			       FS_POLICY_FLAGS_HW_ENCRYPTION)
+ 
+ /* Encryption algorithms */
+ #define FS_ENCRYPTION_MODE_INVALID		0
 -- 
-2.21.0
+2.22.0.rc1.311.g5d7573a151-goog
