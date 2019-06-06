@@ -1,8 +1,8 @@
-From: Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v4 11/16] fs-verity: implement
- FS_IOC_MEASURE_VERITY ioctl
-Date: Thu,  6 Jun 2019 08:52:00 -0700
-Message-ID: <20190606155205.2872-12-ebiggers@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v4 00/16] fs-verity: read-only file-based
+ authenticity protection
+Date: Thu, 6 Jun 2019 10:21:12 -0700
+Message-ID: <CAHk-=wgSzRzoro8ATO5xb6OFxN1A0fjUCQSAHfGuEPbEu+zWvA@mail.gmail.com>
 References: <20190606155205.2872-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,25 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hYuic-00085z-Oe
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 15:54:22 +0000
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hYuiZ-00DwWu-B3
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 15:54:23 +0000
+ (envelope-from <torvalds@linuxfoundation.org>) id 1hYwRa-0005F7-Kl
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 17:44:54 +0000
+Received: from mail-lj1-f195.google.com ([209.85.208.195])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1hYwRY-00DpUI-Nc
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 17:44:54 +0000
+Received: by mail-lj1-f195.google.com with SMTP id o13so2867466lji.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 06 Jun 2019 10:44:52 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com.
+ [209.85.208.182])
+ by smtp.gmail.com with ESMTPSA id f4sm454412ljm.13.2019.06.06.10.21.28
+ for <linux-f2fs-devel@lists.sourceforge.net>
+ (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+ Thu, 06 Jun 2019 10:21:28 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id v29so2810453ljv.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 06 Jun 2019 10:21:28 -0700 (PDT)
 In-Reply-To: <20190606155205.2872-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -28,130 +40,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fscrypt@vger.kernel.org
-Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, "Darrick J . Wong" <darrick.wong@oracle.com>, linux-api@vger.kernel.org, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, Victor Hsieh <victorhsieh@google.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, "Darrick J . Wong" <darrick.wong@oracle.com>, Linux API <linux-api@vger.kernel.org>, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Victor Hsieh <victorhsieh@google.com>
 
-From: Eric Biggers <ebiggers@google.com>
+On Thu, Jun 6, 2019 at 8:54 AM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> This is a redesigned version of the fs-verity patchset, implementing
+> Ted's suggestion to build the Merkle tree in the kernel
+> (https://lore.kernel.org/linux-fsdevel/20190207031101.GA7387@mit.edu/).
+> This greatly simplifies the UAPI, since the verity metadata no longer
+> needs to be transferred to the kernel.
 
-Add a function for filesystems to call to implement the
-FS_IOC_MEASURE_VERITY ioctl.  This ioctl retrieves the file measurement
-that fs-verity calculated for the given file and is enforcing for reads;
-i.e., reads that don't match this hash will fail.  This ioctl can be
-used for authentication or logging of file measurements in userspace.
+Interfaces look sane to me. My only real concern is whether it would
+make sense to make the FS_IOC_ENABLE_VERITY ioctl be something that
+could be done incrementally, since the way it is done now it looks
+like any random user could create a big file and then do the
+FS_IOC_ENABLE_VERITY to make the kernel do a _very_ expensive
+operation.
 
-See the "FS_IOC_MEASURE_VERITY" section of
-Documentation/filesystems/fsverity.rst for the documentation.
+Yes, I see the
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/verity/Makefile       |  1 +
- fs/verity/measure.c      | 57 ++++++++++++++++++++++++++++++++++++++++
- include/linux/fsverity.h | 11 ++++++++
- 3 files changed, 69 insertions(+)
- create mode 100644 fs/verity/measure.c
++               if (fatal_signal_pending(current))
++                       return -EINTR;
++               cond_resched();
 
-diff --git a/fs/verity/Makefile b/fs/verity/Makefile
-index 04b37475fd28..6f7675ae0a31 100644
---- a/fs/verity/Makefile
-+++ b/fs/verity/Makefile
-@@ -3,5 +3,6 @@
- obj-$(CONFIG_FS_VERITY) += enable.o \
- 			   hash_algs.o \
- 			   init.o \
-+			   measure.o \
- 			   open.o \
- 			   verify.o
-diff --git a/fs/verity/measure.c b/fs/verity/measure.c
-new file mode 100644
-index 000000000000..05049b68c745
---- /dev/null
-+++ b/fs/verity/measure.c
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * fs/verity/measure.c: ioctl to get a verity file's measurement
-+ *
-+ * Copyright 2019 Google LLC
-+ */
-+
-+#include "fsverity_private.h"
-+
-+#include <linux/uaccess.h>
-+
-+/**
-+ * fsverity_ioctl_measure() - get a verity file's measurement
-+ *
-+ * Retrieve the file measurement that the kernel is enforcing for reads from a
-+ * verity file.  See the "FS_IOC_MEASURE_VERITY" section of
-+ * Documentation/filesystems/fsverity.rst for the documentation.
-+ *
-+ * Return: 0 on success, -errno on failure
-+ */
-+int fsverity_ioctl_measure(struct file *filp, void __user *_uarg)
-+{
-+	const struct inode *inode = file_inode(filp);
-+	struct fsverity_digest __user *uarg = _uarg;
-+	const struct fsverity_info *vi;
-+	const struct fsverity_hash_alg *hash_alg;
-+	struct fsverity_digest arg;
-+
-+	vi = fsverity_get_info(inode);
-+	if (!vi)
-+		return -ENODATA; /* not a verity file */
-+	hash_alg = vi->tree_params.hash_alg;
-+
-+	/*
-+	 * The user specifies the digest_size their buffer has space for; we can
-+	 * return the digest if it fits in the available space.  We write back
-+	 * the actual size, which may be shorter than the user-specified size.
-+	 */
-+
-+	if (get_user(arg.digest_size, &uarg->digest_size))
-+		return -EFAULT;
-+	if (arg.digest_size < hash_alg->digest_size)
-+		return -EOVERFLOW;
-+
-+	memset(&arg, 0, sizeof(arg));
-+	arg.digest_algorithm = hash_alg - fsverity_hash_algs;
-+	arg.digest_size = hash_alg->digest_size;
-+
-+	if (copy_to_user(uarg, &arg, sizeof(arg)))
-+		return -EFAULT;
-+
-+	if (copy_to_user(uarg->digest, vi->measurement, hash_alg->digest_size))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(fsverity_ioctl_measure);
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 7ef2ef826534..247359c86b72 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -116,6 +116,10 @@ static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
- 
- extern int fsverity_ioctl_enable(struct file *filp, const void __user *arg);
- 
-+/* measure.c */
-+
-+extern int fsverity_ioctl_measure(struct file *filp, void __user *arg);
-+
- /* open.c */
- 
- extern int fsverity_file_open(struct inode *inode, struct file *filp);
-@@ -143,6 +147,13 @@ static inline int fsverity_ioctl_enable(struct file *filp,
- 	return -EOPNOTSUPP;
- }
- 
-+/* measure.c */
-+
-+static inline int fsverity_ioctl_measure(struct file *filp, void __user *arg)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- /* open.c */
- 
- static inline int fsverity_file_open(struct inode *inode, struct file *filp)
--- 
-2.21.0
+in there, so it's not like it's some entirely unkillable thing, and
+maybe we don't care as a result. But maybe the ioctl interface could
+be fundamentally restartable?
+
+If that was already considered and people just went "too complex", never mind.
+
+               Linus
