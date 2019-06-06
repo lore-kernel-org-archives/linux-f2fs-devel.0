@@ -1,130 +1,176 @@
-From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: [PATCH V3 0/7] Consolidate FS read I/O callbacks code
-Date: Sun, 16 Jun 2019 21:38:06 +0530
-Message-ID: <20190616160813.24464-1-chandan@linux.ibm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Return-Path: <SRS0=oA2u=UF=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+	aws-us-west-2-korg-lkml-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
+Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F3FC04AB5
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Jun 2019 15:30:43 +0000 (UTC)
+Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPS id C4D432083E;
+	Thu,  6 Jun 2019 15:30:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ds5BcHoz";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KX1tHKQI";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="woOcfrQu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4D432083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
+	id 1hYuLi-0000os-Ca; Thu, 06 Jun 2019 15:30:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hcYht-0004Sq-05
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 17:12:41 +0000
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <darrick.wong@oracle.com>) id 1hYuLh-0000oe-5t
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 15:30:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=F9Pe8iiITRC+INv7Pb3oZ7h6kOB6KWbAP6291TG+Zps=; b=ds5BcHozR8G8lbe6BbbulamZD+
+ Lex2JWAdrqbdE3ayluRUg2x2A5VdZ8V890f7zxD171XNmtKB8BNYwhqMwv3Q1A/YJvL6zOv3vyiCM
+ UUoyVtstXo26h+7HvIP3DSVCj5Zt66B1j2TS2Bqb6i7PiwzM18DjplfqmadDvaz6E6nU=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=F9Pe8iiITRC+INv7Pb3oZ7h6kOB6KWbAP6291TG+Zps=; b=KX1tHKQIwc3GAw372O8zX3JnpV
+ x7HvBLajQTM2poxVyoaxT47Bt3QiGGk0xVcxCaHH2/dF7aRb64oxd85G45ApteZHnyzEQ1Yvfk/ki
+ oHKDkJX04Y4Tqd0cySiPguNp3AYJhSEba7Hy0Ewlffnrld9UIkbNLRnxbD4GgYj0JZcU=;
+Received: from aserp2130.oracle.com ([141.146.126.79])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hcYhq-00Gp1n-HY
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 17:12:40 +0000
+ id 1hYuLe-005MGd-Ag
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 15:30:40 +0000
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+ by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56FSllQ173914;
+ Thu, 6 Jun 2019 15:30:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
+ h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=F9Pe8iiITRC+INv7Pb3oZ7h6kOB6KWbAP6291TG+Zps=;
+ b=woOcfrQufGMFhDFP1y2RTDa8qUN6eNckHuSAFHtdE26srtOt4qwqJPE//u5Pe/aQ7fXU
+ bkobW/2YdeqgCFqkeX2bu74Ebm9h14iWXDCWVA9No3CqnPeaYRHM1RFpdUGfnLBo0Zkk
+ Pnp7OgOVY4gpO9KBEyWkfSlGz7Ym8DNL5+WKIGG1hbVuA9N110w9x8hY8m/KKPM+6MZu
+ QQMR+zsS64u8AQB+Xf6oogPTnDXzIS0p6F3+IBDC0pz47ReV33SX4HW83RiGjrjb9sJm
+ 9oK/sL9/Qj1elqbpYh8a6fzRHeWKph10G7AgtIEgthb7919AMfjJ9gpHOVe2ay9sZ6Wf AQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+ by aserp2130.oracle.com with ESMTP id 2suevdsfxa-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Thu, 06 Jun 2019 15:30:26 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+ by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56FT4ex139851;
+ Thu, 6 Jun 2019 15:30:25 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+ by userp3030.oracle.com with ESMTP id 2swngmjmnn-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Thu, 06 Jun 2019 15:30:25 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+ by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x56FUOAI023747;
+ Thu, 6 Jun 2019 15:30:24 GMT
+Received: from localhost (/67.169.218.210)
+ by default (Oracle Beehive Gateway v4.0)
+ with ESMTP ; Thu, 06 Jun 2019 08:30:24 -0700
+Date: Thu, 6 Jun 2019 08:30:21 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Wang Shilong <wangshilong1991@gmail.com>
+Message-ID: <20190606153021.GA1700170@magnolia>
+References: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280
+ signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906060105
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280
+ signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
+ priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906060106
+X-Headers-End: 1hYuLe-005MGd-Ag
+Subject: Re: [f2fs-dev] [PATCH 1/2] ext4: only set project inherit bit for
+ directory
+X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
+X-Mailman-Version: 2.1.21
+Precedence: list
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
+List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
 List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
 List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Andreas Dilger <adilger@dilger.ca>, linux-ext4@vger.kernel.org,
+ Wang Shilong <wshilong@ddn.com>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
-Cc: hch@infradead.org, tytso@mit.edu, ebiggers@kernel.org, Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca, jaegeuk@kernel.org
+Message-ID: <20190606153021.vVO32y7Fw5DqD_50D-oKuvUC8UXIx_a6VW5CmbT6SnU@z>
 
-This patchset moves the "FS read I/O callbacks" code into a file of its
-own (i.e. fs/read_callbacks.c) and modifies the generic
-do_mpage_readpge() to make use of the functionality provided.
+On Thu, Jun 06, 2019 at 01:32:24PM +0900, Wang Shilong wrote:
+> From: Wang Shilong <wshilong@ddn.com>
+> 
+> It doesn't make any sense to have project inherit bits
+> for regular files, even though this won't cause any
+> problem, but it is better fix this.
+> 
+> Cc: Andreas Dilger <adilger@dilger.ca>
+> Signed-off-by: Wang Shilong <wshilong@ddn.com>
 
-"FS read I/O callbacks" code implements the state machine that needs
-to be executed after reading data from files that are encrypted and/or
-have verity metadata associated with them.
+It's good to be maintaining consistent behavior with XFS.
 
-With these changes in place, the patchset changes Ext4 to use
-mpage_readpage[s] instead of its own custom ext4_readpage[s]()
-functions. This is done to reduce duplication of code across
-filesystems. Also, "FS read I/O callbacks" source files will be built
-only if CONFIG_FS_ENCRYPTION is enabled.
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-The patchset also modifies fs/buffer.c to get file
-encryption/decryption to work with subpage-sized blocks.
+(applies to both ext4 & f2fs patches)
 
-The patches can also be obtained from
-https://github.com/chandanr/linux.git at branch subpage-encryption-v3.
+--D
 
-Changelog:
-V2 -> V3:
-1. Split the V2 patch "Consolidate 'read callbacks' into a new file" into
-   three patches,
-   - Introduce the read_callbacks functionality.
-   - Convert encryption to use read_callbacks.
-   - Remove union from struct fscrypt_context.
-2. fs/Kconfig
-   Do not explicitly set the default value of 'n' for FS_READ_CALLBACKS.
-3. fs/crypto/Kconfig
-   Select CONFIG_FS_READ_CALLBACKS only if CONFIG_BLOCK is selected.
-4. Remove verity associated code in read_callbacks code.
-5. Introduce a callback argument to read_callbacks_setup() function
-   which gets invoked for each page for bio. F2FS uses this to perform
-   custom operations like decrementing the value of f2fs_sb_info->nr_pages[].
-6. Encapsulate the details of "read callbacks" (e.g. Usage of "struct
-   read_callbacks *ctx") within its own functions. When CONFIG_FS_READ_CALLBACKS
-   is set to 'n', the corresponding stub functions return approriate error
-   values.
-7. Split fscrypt_decrypt() function into fscrypt_decrypt_bio() and
-   fscrypt_decrypt_bh().
-8. Split end_read_callbacks() function into end_read_callbacks_bio() and
-   end_read_callbacks_bh().
+> ---
+>  fs/ext4/ext4.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 1cb67859e051..ceb74093e138 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -421,7 +421,8 @@ struct flex_groups {
+>  			   EXT4_PROJINHERIT_FL | EXT4_CASEFOLD_FL)
+>  
+>  /* Flags that are appropriate for regular files (all but dir-specific ones). */
+> -#define EXT4_REG_FLMASK (~(EXT4_DIRSYNC_FL | EXT4_TOPDIR_FL | EXT4_CASEFOLD_FL))
+> +#define EXT4_REG_FLMASK (~(EXT4_DIRSYNC_FL | EXT4_TOPDIR_FL | EXT4_CASEFOLD_FL |\
+> +			   EXT4_PROJINHERIT_FL))
+>  
+>  /* Flags that are appropriate for non-directories/regular files. */
+>  #define EXT4_OTHER_FLMASK (EXT4_NODUMP_FL | EXT4_NOATIME_FL)
+> -- 
+> 2.21.0
+> 
 
-V1 -> V2:
-1. Removed the phrase "post_read_process" from file names and
-   functions. Instead we now use the phrase "read_callbacks" in its
-   place.
-2. When performing changes associated with (1), the changes made by
-   the patch "Remove the term 'bio' from post read processing" are
-   made in the earlier patch "Consolidate 'read callbacks' into a new
-   file". Hence the patch "Remove the term 'bio' from post read
-   processing" is removed from the patchset.
 
-RFC V2 -> V1:
-1. Test and verify FS_CFLG_OWN_PAGES subset of fscrypt_encrypt_page()
-   code by executing fstests on UBIFS.
-2. Implement F2fs function call back to check if the contents of a
-   page holding a verity file's data needs to be verified.
-
-RFC V1 -> RFC V2:
-1. Describe the purpose of "Post processing code" in the cover letter.
-2. Fix build errors when CONFIG_FS_VERITY is enabled.
-
-Chandan Rajendra (7):
-  FS: Introduce read callbacks
-  Integrate read callbacks into Ext4 and F2FS
-  fscrypt: remove struct fscrypt_ctx
-  fs/mpage.c: Integrate read callbacks
-  ext4: Wire up ext4_readpage[s] to use mpage_readpage[s]
-  Add decryption support for sub-pagesized blocks
-  ext4: Enable encryption for subpage-sized blocks
-
- Documentation/filesystems/fscrypt.rst |   4 +-
- fs/Kconfig                            |   3 +
- fs/Makefile                           |   2 +
- fs/buffer.c                           |  55 +++--
- fs/crypto/Kconfig                     |   1 +
- fs/crypto/bio.c                       |  44 ++--
- fs/crypto/crypto.c                    |  90 +-------
- fs/crypto/fscrypt_private.h           |   3 +
- fs/ext4/Makefile                      |   2 +-
- fs/ext4/inode.c                       |   5 +-
- fs/ext4/readpage.c                    | 295 --------------------------
- fs/ext4/super.c                       |   7 -
- fs/f2fs/data.c                        | 124 ++---------
- fs/f2fs/super.c                       |   9 +-
- fs/mpage.c                            |  11 +-
- fs/read_callbacks.c                   | 233 ++++++++++++++++++++
- include/linux/buffer_head.h           |   1 +
- include/linux/fscrypt.h               |  38 ----
- include/linux/read_callbacks.h        |  45 ++++
- 19 files changed, 390 insertions(+), 582 deletions(-)
- delete mode 100644 fs/ext4/readpage.c
- create mode 100644 fs/read_callbacks.c
- create mode 100644 include/linux/read_callbacks.h
-
--- 
-2.19.1
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
