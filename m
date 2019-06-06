@@ -1,25 +1,24 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH 1/2] ext4: only set project inherit bit for
- directory
-Date: Thu, 6 Jun 2019 08:30:21 -0700
-Message-ID: <20190606153021.GA1700170@magnolia>
-References: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v4 04/16] fs: uapi: define verity bit for
+ FS_IOC_GETFLAGS
+Date: Thu,  6 Jun 2019 08:51:53 -0700
+Message-ID: <20190606155205.2872-5-ebiggers@kernel.org>
+References: <20190606155205.2872-1-ebiggers@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <darrick.wong@oracle.com>) id 1hYuLh-0000oe-5t
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 15:30:41 +0000
-Received: from aserp2130.oracle.com ([141.146.126.79])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <ebiggers@kernel.org>) id 1hYuiS-00029q-M9
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 15:54:12 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hYuLe-005MGd-Ag
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 15:30:40 +0000
-Content-Disposition: inline
-In-Reply-To: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>
+ id 1hYuiR-00DwUg-0l
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jun 2019 15:54:12 +0000
+In-Reply-To: <20190606155205.2872-1-ebiggers@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,45 +28,35 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Wang Shilong <wangshilong1991@gmail.com>
-Cc: Andreas Dilger <adilger@dilger.ca>, linux-ext4@vger.kernel.org, Wang Shilong <wshilong@ddn.com>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-fscrypt@vger.kernel.org
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, "Darrick J . Wong" <darrick.wong@oracle.com>, linux-api@vger.kernel.org, Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, Victor Hsieh <victorhsieh@google.com>
 
-On Thu, Jun 06, 2019 at 01:32:24PM +0900, Wang Shilong wrote:
-> From: Wang Shilong <wshilong@ddn.com>
-> 
-> It doesn't make any sense to have project inherit bits
-> for regular files, even though this won't cause any
-> problem, but it is better fix this.
-> 
-> Cc: Andreas Dilger <adilger@dilger.ca>
-> Signed-off-by: Wang Shilong <wshilong@ddn.com>
+From: Eric Biggers <ebiggers@google.com>
 
-It's good to be maintaining consistent behavior with XFS.
+Add FS_VERITY_FL to the flags for FS_IOC_GETFLAGS, so that applications
+can easily determine whether a file is a verity file at the same time as
+they're checking other file flags.  This flag will be gettable only;
+FS_IOC_SETFLAGS won't allow setting it, since an ioctl must be used
+instead to provide more parameters.
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+This flag matches the on-disk bit that was already allocated for ext4.
 
-(applies to both ext4 & f2fs patches)
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ include/uapi/linux/fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
---D
-
-> ---
->  fs/ext4/ext4.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 1cb67859e051..ceb74093e138 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -421,7 +421,8 @@ struct flex_groups {
->  			   EXT4_PROJINHERIT_FL | EXT4_CASEFOLD_FL)
->  
->  /* Flags that are appropriate for regular files (all but dir-specific ones). */
-> -#define EXT4_REG_FLMASK (~(EXT4_DIRSYNC_FL | EXT4_TOPDIR_FL | EXT4_CASEFOLD_FL))
-> +#define EXT4_REG_FLMASK (~(EXT4_DIRSYNC_FL | EXT4_TOPDIR_FL | EXT4_CASEFOLD_FL |\
-> +			   EXT4_PROJINHERIT_FL))
->  
->  /* Flags that are appropriate for non-directories/regular files. */
->  #define EXT4_OTHER_FLMASK (EXT4_NODUMP_FL | EXT4_NOATIME_FL)
-> -- 
-> 2.21.0
-> 
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 59c71fa8c553..df261b7e0587 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -306,6 +306,7 @@ struct fscrypt_key {
+ #define FS_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
+ #define FS_HUGE_FILE_FL			0x00040000 /* Reserved for ext4 */
+ #define FS_EXTENT_FL			0x00080000 /* Extents */
++#define FS_VERITY_FL			0x00100000 /* Verity protected inode */
+ #define FS_EA_INODE_FL			0x00200000 /* Inode used for large EA */
+ #define FS_EOFBLOCKS_FL			0x00400000 /* Reserved for ext4 */
+ #define FS_NOCOW_FL			0x00800000 /* Do not cow file */
+-- 
+2.21.0
