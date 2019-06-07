@@ -1,58 +1,60 @@
-From: Wang Shilong via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Subject: =?utf-8?b?5Zue5aSNOiAgW1BBVENIIDEvMl0gZXh0NDogb25seSBz?=
- =?utf-8?q?et_project_inherit_bit_for_directory?=
-Date: Fri, 7 Jun 2019 07:51:18 +0000
-Message-ID: <MN2PR19MB3167ED3E8C9C85AE510F7BF4D4100@MN2PR19MB3167.namprd19.prod.outlook.com>
-References: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>,
- <20190606224525.GB84833@gmail.com>
-Reply-To: Wang Shilong <wshilong@ddn.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wshilong@ddn.com>) id 1hZC4K-0001iM-CF
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 07 Jun 2019 10:25:56 +0000
-Received: from mail-eopbgr750075.outbound.protection.outlook.com
- ([40.107.75.75] helo=NAM02-BL2-obe.outbound.protection.outlook.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.90_1)
- id 1hZC4D-00Gscx-Lc
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 07 Jun 2019 10:25:56 +0000
-In-Reply-To: <20190606224525.GB84833@gmail.com>
-Content-Language: zh-CN
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers@kernel.org>, Wang Shilong <wangshilong1991@gmail.com>
-Cc: Andreas Dilger <adilger@dilger.ca>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+From: Kimberly Brown <kimbrownkd@gmail.com>
+Subject: [PATCH] f2fs: replace ktype default_attrs with default_groups
+Date: Fri,  7 Jun 2019 13:40:41 -0400
+Message-ID: <20190607174041.11201-1-kimbrownkd@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, yuchao0@huawei.com, gregkh@linuxfoundation.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgo+IC0tCj4gMi4yMS4wCgpXb24ndCB0aGlzIGJyZWFrICdjaGF0dHInIG9uIGZpbGVzIHRo
-YXQgYWxyZWFkeSBoYXZlIHRoaXMgZmxhZyBzZXQ/CkZTX0lPQ19HRVRGTEFHUyB3aWxsIHJldHVy
-biB0aGlzIGZsYWcsIHNvICdjaGF0dHInIHdpbGwgcGFzcyBpdCBiYWNrIHRvCkZTX0lPQ19TRVRG
-TEFHUyB3aGljaCB3aWxsIHJldHVybiBFT1BOT1RTVVBQIGR1ZSB0byB0aGlzOgoKwqAgwqAgwqAg
-wqAgaWYgKGV4dDRfbWFza19mbGFncyhpbm9kZS0+aV9tb2RlLCBmbGFncykgIT0gZmxhZ3MpCsKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIHJldHVybiAtRU9QTk9UU1VQUDsKCj4+Pj4KCllvdSBhcmUg
-cmlnaHQgZm9yIHRoaXMgYW5kIHdlIGFsc28gbmVlZCB0YWtlIGNhcmUgb2YgdGhpcyBpbiBFWFQ0
-X0lPQ19GU1NFVFhBVFRSLwp0aGlzIGlzIGEgYml0IHN0cmFuZ2UgYmVoYXZpb3IgYXMgY2hhdHRy
-IHJlYWQgZXhpc3RlZCBmbGFncwpidXQgY291bGQgbm90IHNldCB0aGVtIGFnYWluLCB0aGVyZSBh
-cmUgc2V2ZXJhbCBwb3NzaWJsZSB3YXlzIHRoYXQgSSBjb3VsZCB0aGluawpvZiB0byBmaXggdGhl
-IGlzc3VlPwoKMSkgY2hhbmdlIGNoYXR0ciB0byBmaWx0ZXIgUHJvamVjdCBpbmhlcml0IGJpdCBi
-ZWZvcmUgY2FsbCBGU19JT0NfU0VURkxBR1MKCjIpIHdlIGF1dG9tYXRpY2FsbHkgZml4ZWQgdGhl
-IGZsYWcgYmVmb3JlIG1hc2sgY2hlY2ssIHNvbWV0aGluZyBsaWtlOgppZiByZWc6CiAgICAgZmxh
-Z3MgJj0gflBST0pFQ1RfSU5IRVJUOwogICAgICBpZiAoZXh0NF9tYXNrX2ZsYWdzKGlub2RlLT5p
-X21vZGUsIGZsYWdzKSAhPSBmbGFncykKwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJuIC1F
-T1BOT1RTVVBQOwpCdXQgdGhpcyBtaWdodCBiZSBub3QgZ29vZC4uCgpJIHdvdWxkIHByZWZlciBz
-b2x1dGlvbiAxKQpXaGF0IGRvIHlvdSB0aGluaz8KCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4
-LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9y
-Z2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+The kobj_type default_attrs field is being replaced by the
+default_groups field. Replace the default_attrs fields in f2fs_sb_ktype
+and f2fs_feat_ktype with default_groups. Use the ATTRIBUTE_GROUPS macro
+to create f2fs_groups and f2fs_feat_groups.
+
+Signed-off-by: Kimberly Brown <kimbrownkd@gmail.com>
+---
+ fs/f2fs/sysfs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 729f46a3c9ee..5c85166677d4 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -501,6 +501,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(current_reserved_blocks),
+ 	NULL,
+ };
++ATTRIBUTE_GROUPS(f2fs);
+ 
+ static struct attribute *f2fs_feat_attrs[] = {
+ #ifdef CONFIG_FS_ENCRYPTION
+@@ -520,6 +521,7 @@ static struct attribute *f2fs_feat_attrs[] = {
+ 	ATTR_LIST(sb_checksum),
+ 	NULL,
+ };
++ATTRIBUTE_GROUPS(f2fs_feat);
+ 
+ static const struct sysfs_ops f2fs_attr_ops = {
+ 	.show	= f2fs_attr_show,
+@@ -527,7 +529,7 @@ static const struct sysfs_ops f2fs_attr_ops = {
+ };
+ 
+ static struct kobj_type f2fs_sb_ktype = {
+-	.default_attrs	= f2fs_attrs,
++	.default_groups = f2fs_groups,
+ 	.sysfs_ops	= &f2fs_attr_ops,
+ 	.release	= f2fs_sb_release,
+ };
+@@ -541,7 +543,7 @@ static struct kset f2fs_kset = {
+ };
+ 
+ static struct kobj_type f2fs_feat_ktype = {
+-	.default_attrs	= f2fs_feat_attrs,
++	.default_groups = f2fs_feat_groups,
+ 	.sysfs_ops	= &f2fs_attr_ops,
+ };
+ 
+-- 
+2.17.1
