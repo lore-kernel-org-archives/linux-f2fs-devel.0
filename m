@@ -1,102 +1,48 @@
-From: bugzilla-daemon@bugzilla.kernel.org
-Subject: [Bug 203861] New: Division by zero error in fsck.f2fs
- when fixing a corrupted image
-Date: Mon, 10 Jun 2019 18:17:12 +0000
-Message-ID: <bug-203861-202145@https.bugzilla.kernel.org/>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH 0/4] vfs: clean up SETFLAGS and FSSETXATTR option processing
+Date: Mon, 10 Jun 2019 21:45:32 -0700
+Message-ID: <156022833285.3227089.11990489625041926920.stgit@magnolia>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1haOrE-0004Dl-8w
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Jun 2019 18:17:24 +0000
-Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1haOrD-006RNF-GA
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 Jun 2019 18:17:24 +0000
-Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 3BA1F28613
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 10 Jun 2019 18:17:14 +0000 (UTC)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
- <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu, darrick.wong@oracle.com, shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk
+Cc: linux-xfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203861
+Hi all,
 
-            Bug ID: 203861
-           Summary: Division by zero error in fsck.f2fs when fixing a
-                    corrupted image
-           Product: File System
-           Version: 2.5
-    Kernel Version: v4.18
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: f2fs
-          Assignee: filesystem_f2fs@kernel-bugs.kernel.org
-          Reporter: seulbae@gatech.edu
-        Regression: No
+The FS_IOC_SETFLAGS and FS_IOC_FSSETXATTR ioctls were promoted from ext4
+and XFS, respectively, into the VFS.  However, we didn't promote any of
+the parameter checking code from those filesystems, which lead to a mess
+where each filesystem open-codes whatever parameter checks they want and
+the behavior across filesystems is no longer consistent.
 
-Created attachment 283179
-  --> https://bugzilla.kernel.org/attachment.cgi?id=283179&action=edit
-Corrupted f2fs image (compressed)
+Therefore, create some generic checking functions in the VFS and remove
+all the open-coded pieces in each filesystem.  This preserves the
+current behavior where a filesystem can choose to ignore fields it
+doesn't understand.
 
-[Overview]
-fsck.f2fs of f2fs-tools (master at commit 54244dcafd) triggers a division by
-zero error while fixing a corrupted image, in which segs->secs_per_zone is set
-to 0.
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
 
-[Reproduction]
-Download and uncompress the attached image.
-Run fsck.f2fs against the downloaded image:
-$ cd path/to/f2fs-tools/
-$ ./fsck/fsck.f2fs -d 0 -f /tmp/f2fs.img
-Info: Force to fix corruption
-Info: Segments per section = 1
-Info: Sections per zone = 1
-Info: sector size = 512
-Info: total sectors = 131072 (64 MB)
-Info: MKFS version
-  "Linux version 4.13.0-45-generic (buildd@lgw01-amd64-011) (gcc version 5.4.0
-20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.9)) #50~16.04.1-Ubuntu SMP Wed May 30
-11:18:27 UTC 2018"
-Info: FSCK version
-  from "Linux version 4.13.0-45-generic (buildd@lgw01-amd64-011) (gcc version
-5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.9)) #50~16.04.1-Ubuntu SMP Wed May
-30 11:18:27 UTC 2018"
-    to "Linux version 4.18.0-21-generic (buildd@lcy01-amd64-006) (gcc version
-7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #22~18.04.1-Ubuntu SMP Thu May 16 15:07:19 UTC
-2019"
-[update_superblock: 503] Info: Done to update superblock
-Info: superblock features = 0 : 
-Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
-Info: total FS sectors = 131072 (64 MB)
-Info: CKPT version = 3
-[1]    13488 floating point exception (core dumped)  ./fsck/fsck.f2fs -f
-/tmp/f2fs.img
+This has been lightly tested with fstests.  Enjoy!
+Comments and questions are, as always, welcome.
 
-[Location]
-- build_curseg at fsck/mount.c:1589
-  1589  array[i].zone = GET_ZONENO_FROM_SEGNO(sbi, segno);
-- GET_ZONENO_FROM_SEGNO(sbi, segno) at fsck/f2fs.h:317
-  318 ((segno / sbi->segs_per_sec) / sbi->secs_per_zone)
-Causes division by zero error when sbi->secs_per_zone is corrupted to be 0.
+--D
 
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=file-ioctl-cleanups
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
