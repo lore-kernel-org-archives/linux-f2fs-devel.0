@@ -1,96 +1,266 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: [PATCH 6/6] xfs: clean up xfs_merge_ioc_xflags
-Date: Mon, 10 Jun 2019 21:47:01 -0700
-Message-ID: <156022842153.3227213.3285668171167534801.stgit@magnolia>
-References: <156022836912.3227213.13598042497272336695.stgit@magnolia>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: add a rw_sem to cover quota flag
+ changes
+Date: Tue, 11 Jun 2019 15:46:04 +0800
+Message-ID: <2afe0416-fe2d-8ba8-7625-0246aca9eba6@huawei.com>
+References: <20190530033115.16853-1-jaegeuk@kernel.org>
+ <20190530175714.GB28719@jaegeuk-macbookpro.roam.corp.google.com>
+ <20190604183619.GA8507@jaegeuk-macbookpro.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <ocfs2-devel-bounces@oss.oracle.com>
-In-Reply-To: <156022836912.3227213.13598042497272336695.stgit@magnolia>
-List-Unsubscribe: <https://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
-	<mailto:ocfs2-devel-request@oss.oracle.com?subject=unsubscribe>
-List-Archive: <http://oss.oracle.com/pipermail/ocfs2-devel>
-List-Post: <mailto:ocfs2-devel@oss.oracle.com>
-List-Help: <mailto:ocfs2-devel-request@oss.oracle.com?subject=help>
-List-Subscribe: <https://oss.oracle.com/mailman/listinfo/ocfs2-devel>,
-	<mailto:ocfs2-devel-request@oss.oracle.com?subject=subscribe>
-Sender: ocfs2-devel-bounces@oss.oracle.com
-Errors-To: ocfs2-devel-bounces@oss.oracle.com
-To: matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu, darrick.wong@oracle.com, ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com, adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org
-Cc: linux-efi@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, linux-mm@kvack.org, linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, devel@lists.orangefs.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20190604183619.GA8507@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+On 2019/6/5 2:36, Jaegeuk Kim wrote:
+> Two paths to update quota and f2fs_lock_op:
+> 
+> 1.
+>  - lock_op
+>  |  - quota_update
+>  `- unlock_op
+> 
+> 2.
+>  - quota_update
+>  - lock_op
+>  `- unlock_op
+> 
+> But, we need to make a transaction on quota_update + lock_op in #2 case.
+> So, this patch introduces:
+> 1. lock_op
+> 2. down_write
+> 3. check __need_flush
+> 4. up_write
+> 5. if there is dirty quota entries, flush them
+> 6. otherwise, good to go
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+> 
+> v3 from v2:
+>  - refactor to fix quota corruption issue
+>   : it seems that the previous scenario is not real and no deadlock case was
+>     encountered.
 
-Clean up the calling convention since we're editing the fsxattr struct
-anyway.
+- f2fs_dquot_commit
+ - down_read(&sbi->quota_sem)
+					- block_operation
+					 - f2fs_lock_all
+					  - need_flush_quota
+					   - down_write(&sbi->quota_sem)
+  - f2fs_quota_write
+   - f2fs_lock_op
 
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/xfs/xfs_ioctl.c |   32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
+Why can't this happen?
 
+Once more question, should we hold quota_sem during checkpoint to avoid further
+quota update? f2fs_lock_op can do this job as well?
 
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 7b19ba2956ad..a67bc9afdd0b 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -829,35 +829,31 @@ xfs_ioc_ag_geometry(
-  * Linux extended inode flags interface.
-  */
- 
--STATIC unsigned int
-+static inline void
- xfs_merge_ioc_xflags(
--	unsigned int	flags,
--	unsigned int	start)
-+	struct fsxattr	*fa,
-+	unsigned int	flags)
- {
--	unsigned int	xflags = start;
--
- 	if (flags & FS_IMMUTABLE_FL)
--		xflags |= FS_XFLAG_IMMUTABLE;
-+		fa->fsx_xflags |= FS_XFLAG_IMMUTABLE;
- 	else
--		xflags &= ~FS_XFLAG_IMMUTABLE;
-+		fa->fsx_xflags &= ~FS_XFLAG_IMMUTABLE;
- 	if (flags & FS_APPEND_FL)
--		xflags |= FS_XFLAG_APPEND;
-+		fa->fsx_xflags |= FS_XFLAG_APPEND;
- 	else
--		xflags &= ~FS_XFLAG_APPEND;
-+		fa->fsx_xflags &= ~FS_XFLAG_APPEND;
- 	if (flags & FS_SYNC_FL)
--		xflags |= FS_XFLAG_SYNC;
-+		fa->fsx_xflags |= FS_XFLAG_SYNC;
- 	else
--		xflags &= ~FS_XFLAG_SYNC;
-+		fa->fsx_xflags &= ~FS_XFLAG_SYNC;
- 	if (flags & FS_NOATIME_FL)
--		xflags |= FS_XFLAG_NOATIME;
-+		fa->fsx_xflags |= FS_XFLAG_NOATIME;
- 	else
--		xflags &= ~FS_XFLAG_NOATIME;
-+		fa->fsx_xflags &= ~FS_XFLAG_NOATIME;
- 	if (flags & FS_NODUMP_FL)
--		xflags |= FS_XFLAG_NODUMP;
-+		fa->fsx_xflags |= FS_XFLAG_NODUMP;
- 	else
--		xflags &= ~FS_XFLAG_NODUMP;
--
--	return xflags;
-+		fa->fsx_xflags &= ~FS_XFLAG_NODUMP;
- }
- 
- STATIC unsigned int
-@@ -1504,7 +1500,7 @@ xfs_ioc_setxflags(
- 		return -EOPNOTSUPP;
- 
- 	__xfs_ioc_fsgetxattr(ip, false, &fa);
--	fa.fsx_xflags = xfs_merge_ioc_xflags(flags, fa.fsx_xflags);
-+	xfs_merge_ioc_xflags(&fa, flags);
- 
- 	error = mnt_want_write_file(filp);
- 	if (error)
+Thanks,
+
+> 
+>  fs/f2fs/checkpoint.c | 41 +++++++++++++++++++----------------------
+>  fs/f2fs/f2fs.h       |  1 +
+>  fs/f2fs/super.c      | 26 +++++++++++++++++++++-----
+>  3 files changed, 41 insertions(+), 27 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 89825261d474..43f65f0962e5 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1131,17 +1131,24 @@ static void __prepare_cp_block(struct f2fs_sb_info *sbi)
+>  
+>  static bool __need_flush_quota(struct f2fs_sb_info *sbi)
+>  {
+> +	bool ret = false;
+> +
+>  	if (!is_journalled_quota(sbi))
+>  		return false;
+> -	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
+> -		return false;
+> -	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
+> -		return false;
+> -	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH))
+> -		return true;
+> -	if (get_pages(sbi, F2FS_DIRTY_QDATA))
+> -		return true;
+> -	return false;
+> +
+> +	down_write(&sbi->quota_sem);
+> +	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH)) {
+> +		ret = false;
+> +	} else if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR)) {
+> +		ret = false;
+> +	} else if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_FLUSH)) {
+> +		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+> +		ret = true;
+> +	} else if (get_pages(sbi, F2FS_DIRTY_QDATA)) {
+> +		ret = true;
+> +	}
+> +	up_write(&sbi->quota_sem);
+> +	return ret;
+>  }
+>  
+>  /*
+> @@ -1160,26 +1167,22 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  	blk_start_plug(&plug);
+>  
+>  retry_flush_quotas:
+> +	f2fs_lock_all(sbi);
+>  	if (__need_flush_quota(sbi)) {
+>  		int locked;
+>  
+>  		if (++cnt > DEFAULT_RETRY_QUOTA_FLUSH_COUNT) {
+>  			set_sbi_flag(sbi, SBI_QUOTA_SKIP_FLUSH);
+> -			f2fs_lock_all(sbi);
+> +			set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+>  			goto retry_flush_dents;
+>  		}
+> -		clear_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+> +		f2fs_unlock_all(sbi);
+>  
+>  		/* only failed during mount/umount/freeze/quotactl */
+>  		locked = down_read_trylock(&sbi->sb->s_umount);
+>  		f2fs_quota_sync(sbi->sb, -1);
+>  		if (locked)
+>  			up_read(&sbi->sb->s_umount);
+> -	}
+> -
+> -	f2fs_lock_all(sbi);
+> -	if (__need_flush_quota(sbi)) {
+> -		f2fs_unlock_all(sbi);
+>  		cond_resched();
+>  		goto retry_flush_quotas;
+>  	}
+> @@ -1201,12 +1204,6 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  	 */
+>  	down_write(&sbi->node_change);
+>  
+> -	if (__need_flush_quota(sbi)) {
+> -		up_write(&sbi->node_change);
+> -		f2fs_unlock_all(sbi);
+> -		goto retry_flush_quotas;
+> -	}
+> -
+>  	if (get_pages(sbi, F2FS_DIRTY_IMETA)) {
+>  		up_write(&sbi->node_change);
+>  		f2fs_unlock_all(sbi);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 9674a85154b2..9bd2bf0f559b 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1253,6 +1253,7 @@ struct f2fs_sb_info {
+>  	block_t unusable_block_count;		/* # of blocks saved by last cp */
+>  
+>  	unsigned int nquota_files;		/* # of quota sysfile */
+> +	struct rw_semaphore quota_sem;		/* blocking cp for flags */
+>  
+>  	/* # of pages, see count_type */
+>  	atomic_t nr_pages[NR_COUNT_TYPE];
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 15d7e30bfc72..5a318399a2fa 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1964,6 +1964,7 @@ int f2fs_quota_sync(struct super_block *sb, int type)
+>  	int cnt;
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_writeback_dquots(sb, type);
+>  	if (ret)
+>  		goto out;
+> @@ -2001,6 +2002,7 @@ int f2fs_quota_sync(struct super_block *sb, int type)
+>  out:
+>  	if (ret)
+>  		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+> @@ -2094,32 +2096,40 @@ static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
+>  
+>  static int f2fs_dquot_commit(struct dquot *dquot)
+>  {
+> +	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_commit(dquot);
+>  	if (ret < 0)
+> -		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
+> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+>  static int f2fs_dquot_acquire(struct dquot *dquot)
+>  {
+> +	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_acquire(dquot);
+>  	if (ret < 0)
+> -		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
+> -
+> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+>  static int f2fs_dquot_release(struct dquot *dquot)
+>  {
+> +	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_release(dquot);
+>  	if (ret < 0)
+> -		set_sbi_flag(F2FS_SB(dquot->dq_sb), SBI_QUOTA_NEED_REPAIR);
+> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+> @@ -2129,22 +2139,27 @@ static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
+>  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_mark_dquot_dirty(dquot);
+>  
+>  	/* if we are using journalled quota */
+>  	if (is_journalled_quota(sbi))
+>  		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
+>  
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+>  static int f2fs_dquot_commit_info(struct super_block *sb, int type)
+>  {
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+>  	int ret;
+>  
+> +	down_read(&sbi->quota_sem);
+>  	ret = dquot_commit_info(sb, type);
+>  	if (ret < 0)
+> -		set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> +	up_read(&sbi->quota_sem);
+>  	return ret;
+>  }
+>  
+> @@ -3253,6 +3268,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	}
+>  
+>  	init_rwsem(&sbi->cp_rwsem);
+> +	init_rwsem(&sbi->quota_sem);
+>  	init_waitqueue_head(&sbi->cp_wait);
+>  	init_sb_info(sbi);
+>  
+> 
