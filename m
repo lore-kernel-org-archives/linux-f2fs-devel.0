@@ -1,86 +1,66 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v8 1/1] f2fs: ioctl for removing a range from F2FS
-Date: Tue, 11 Jun 2019 16:04:49 +0800
-Message-ID: <fff6519a-17c7-35d3-19ff-37163cc0283a@huawei.com>
-References: <20190605033325.47628-1-sunqiuyang@huawei.com>
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+Subject: Re: [Jfs-discussion] [PATCH 1/4] vfs: create a generic checking
+ function for FS_IOC_SETFLAGS
+Date: Tue, 11 Jun 2019 08:41:06 -0500
+Message-ID: <fb974a33-2192-30ab-9f31-885c3796360b@oracle.com>
+References: <156022833285.3227089.11990489625041926920.stgit@magnolia>
+ <156022834076.3227089.14763553158562888103.stgit@magnolia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20190605033325.47628-1-sunqiuyang@huawei.com>
+Return-path: <linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org>
+In-Reply-To: <156022834076.3227089.14763553158562888103.stgit@magnolia>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: sunqiuyang <sunqiuyang@huawei.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mtd/>
+List-Post: <mailto:linux-mtd@lists.infradead.org>
+List-Help: <mailto:linux-mtd-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mtd>,
+ <mailto:linux-mtd-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-mtd" <linux-mtd-bounces@lists.infradead.org>
+Errors-To: linux-mtd-bounces+gldm-linux-mtd-36=gmane.org@lists.infradead.org
+To: "Darrick J. Wong" <darrick.wong@oracle.com>, matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu, shaggy@kernel.org, ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com, adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk
+Cc: cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net, linux-efi@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org, linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2019/6/5 11:33, sunqiuyang wrote:
-> From: Qiuyang Sun <sunqiuyang@huawei.com>
+On 6/10/19 11:45 PM, Darrick J. Wong wrote:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> This ioctl shrinks a given length (aligned to sections) from end of the
-> main area. Any cursegs and valid blocks will be moved out before
-> invalidating the range.
+> Create a generic checking function for the incoming FS_IOC_SETFLAGS flag
+> values so that we can standardize the implementations that follow ext4's
+> flag values.
 > 
-> This feature can be used for adjusting partition sizes online.
-> --
-> Changlog v1 ==> v2:
-> 
-> Sahitya Tummala:
->  - Add this ioctl for f2fs_compat_ioctl() as well.
->  - Fix debugfs status to reflect the online resize changes.
->  - Fix potential race between online resize path and allocate new data
->    block path or gc path.
-> 
-> Others:
->  - Rename some identifiers.
->  - Add some error handling branches.
->  - Clear sbi->next_victim_seg[BG_GC/FG_GC] in shrinking range.
-> --
-> Changelog v2 ==> v3:
-> Implement this interface as ext4's, and change the parameter from shrunk
-> bytes to new block count of F2FS.
-> --
-> Changelog v3 ==> v4:
->  - During resizing, force to empty sit_journal and forbid adding new
->    entries to it, in order to avoid invalid segno in journal after resize.
->  - Reduce sbi->user_block_count before resize starts.
->  - Commit the updated superblock first, and then update in-memory metadata
->    only when the former succeeds.
->  - Target block count must align to sections.
-> --
-> Changelog v4 ==> v5:
-> Write checkpoint before and after committing the new superblock, w/o
-> CP_FSCK_FLAG respectively, so that the FS can be fixed by fsck even if
-> resize fails after the new superblock is committed.
-> --
-> Changelog v5 ==> v6:
->  - In free_segment_range(), reduce granularity of gc_mutex.
->  - Add protection on curseg migration.
-> --
-> Changelog v6 ==> v7:
->  - Add freeze_bdev() and thaw_bdev() for resize fs.
->  - Remove CUR_MAIN_SECS and use MAIN_SECS directly for allocation.
->  - Recover super_block and FS metadata when resize fails.
-> --
-> Changelog v7 ==> v8:
->  - No need to clear CP_FSCK_FLAG in update_ckpt_flags().
->  - Clean up the sb and fs metadata update functions for resize_fs.
-> 
-> Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+ -- clip --
 
-Qiuyang, could you please add one f2fs individual testcase in fstest suit to do
-simple test with this ioctl.
+> diff --git a/fs/jfs/ioctl.c b/fs/jfs/ioctl.c
+> index ba34dae8bd9f..c8446d2cd0c7 100644
+> --- a/fs/jfs/ioctl.c
+> +++ b/fs/jfs/ioctl.c
+> @@ -98,6 +98,12 @@ long jfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  		/* Lock against other parallel changes of flags */
+>  		inode_lock(inode);
+>  
+> +		oldflags = jfs_map_ext2(jfs_inode->mode2 & JFS_FL_USER_VISIBLE,
+> +					0);
+> +		err = vfs_ioc_setflags_check(inode, oldflags, flags);
+> +		if (err)
+> +			goto setflags_out;
 
-e.g.
-- mkfs & mount
-- fragment image
-- resizefs ioctl
-- check fs size via statfs
-- umount & fsck
-- maybe mount & check again
+inode_unlock(inode) is not called on the error path.
+
+> +
+>  		oldflags = jfs_inode->mode2;
+>  
+>  		/*
+
+This patch leaves jfs's open-coded version of the same check.
 
 Thanks,
+Shaggy
+
+______________________________________________________
+Linux MTD discussion mailing list
+http://lists.infradead.org/mailman/listinfo/linux-mtd/
