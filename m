@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10ACC43218
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Jun 2019 04:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A71AC43218
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Jun 2019 04:46:35 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A19E320820;
-	Tue, 11 Jun 2019 04:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id E3D6E20820;
+	Tue, 11 Jun 2019 04:46:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ZH5dudpM";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ZTs72b+E";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="odnbg5TE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A19E320820
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CgbM1E/Z";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="MNc8c/jB";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HeLbbNPv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3D6E20820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1haYfn-0001l5-On; Tue, 11 Jun 2019 04:46:15 +0000
+	id 1haYg7-0001pj-1w; Tue, 11 Jun 2019 04:46:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <darrick.wong@oracle.com>)
- id 1haYfl-0001kN-Io; Tue, 11 Jun 2019 04:46:13 +0000
+ id 1haYg6-0001pM-9A; Tue, 11 Jun 2019 04:46:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BULP8VS3uEUhwz8huJqRMSPsxLDuqcwboMo6O2QxCgM=; b=ZH5dudpMJwj+UHb5zxDRHldg/H
- MJjMW4LR+6wCRQ1Aa/J8ny2jPr9uLaiONJ10GA2idlgtauxNYk9rUmtcc0IdNtDKNCZ1/6TV7/FPN
- 2TftlcS+mi5VbutuijBWYE5YHE8HUvL6PkALr4NkciPdqaAfCT6Bt/GZ1TkjYOIGYFdM=;
+ bh=QRgUEJD9c6Jv8UPms0CPUwYj4YqX2jmXNZDVpcIr6I4=; b=CgbM1E/Ztiv+L1DPuVf1rQrN1P
+ 9LVvmQywEH+saRw3bZq9NQYBkucu1TFJmxAeHX+NYyibujIQmI9vRxqvP+FgHnO+sTDYsJd4zX9KO
+ lcDR8N3Tg4phKZ3b1yuDk3zSr5I8lxEOWlYboHZOIPrTyyq2SdZgMzewFxdMkrOQKQw8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
@@ -46,58 +46,58 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BULP8VS3uEUhwz8huJqRMSPsxLDuqcwboMo6O2QxCgM=; b=ZTs72b+EvMztCeIOeBUUc7qfJS
- ICqMDGM4jUR2dpG6xO2cR5NWSIB4YO/6Y4NHYRkwzbj2pCaz3Wd/ZzZJbvE40lNTkJSafqGvhn0Wr
- beNZE2E/Rq4++uwVlOBKoT0Ym7Guh+HvsH2ZzmtASmh3aQr4frSkCkrD+K3cQFCgOnKo=;
-Received: from userp2130.oracle.com ([156.151.31.86])
+ bh=QRgUEJD9c6Jv8UPms0CPUwYj4YqX2jmXNZDVpcIr6I4=; b=MNc8c/jBISatqfsCIK7h06VdyW
+ g1ISfzgQ4E7DYlieUbhKRqX/Hwg1aDtQEfiCWncxNwK4AMCvMtkJQoGn3qaUBUE8zn80fmBESA9+Q
+ XNqODopW2sNmYdszcQwtYIA4SqU0lJ7BIFGbUMJqWVvZE7xqrql9rHXRY16EcICwt2V0=;
+Received: from aserp2130.oracle.com ([141.146.126.79])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1haYfk-006v7B-Ez; Tue, 11 Jun 2019 04:46:14 +0000
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
- by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5B4i8Te159594;
- Tue, 11 Jun 2019 04:45:53 GMT
+ id 1haYg5-006v8g-5y; Tue, 11 Jun 2019 04:46:34 +0000
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+ by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5B4hiS8179851;
+ Tue, 11 Jun 2019 04:46:11 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
  h=subject : from : to :
  cc : date : message-id : in-reply-to : references : mime-version :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=BULP8VS3uEUhwz8huJqRMSPsxLDuqcwboMo6O2QxCgM=;
- b=odnbg5TEn4ywjV+8VR1L1L9jy0lDX46JtWT1WdOu7ZRG4yXNNnK82qDzpzAZ8Mv+dwub
- xHXaB1QV+uq1SGsQ/0qht9uHm2tukH/CDRAcuW72XWwRUTemfkqMHZhwOnq0F5EKvATv
- hvGkawbnRL8iP0JzPvFxaI5rZZwvMRsOj2jk9vHokbF5uYdVqf+bi+YABxfC/StLxEhm
- Nq2EI2YfxfnBL3X3OVSSYtYUK7HhW/eiL+bjH3Y3jFNfrYeMZMQVtVxq18nPWhq35qlw
- 9IVuESDAV813FGwpwOya1UE5PM8xf7B4utxsSULvzOSPZRczXE4H9bYDbAbscvLZf4e5 BQ== 
+ bh=QRgUEJD9c6Jv8UPms0CPUwYj4YqX2jmXNZDVpcIr6I4=;
+ b=HeLbbNPvYBYlwCzkC7txWNLy9wxSe0dReBH5++FwKmRmVqZHhfD+U4yUg9RVinYoTY8W
+ wTEBmwxUHCcGlSutovddgzzY5hi63/j20PsqKKeZtKxfaNES+d0p0xQl00kSAZVHHVwK
+ 2JwA+5xLNTzpRfnxVOIC7v8rlJ5wrDiBDwhI/vZPol5MWcytQw5vh76BWeIpzV9PY5hG
+ xnd8alCVlDYaE9xg0lLWMMtoR90g+Tkd7EmgxxyGP547AEP3IfFhwGpVvChCNUJ9V64n
+ IxT03BYEC9reGOnVv5D3CNnN9UFhwErgs/Ouxf+kHijhiXDXC4xSnjZZwirN6h+FPXXU ww== 
 Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
- by userp2130.oracle.com with ESMTP id 2t04etjktv-1
+ by aserp2130.oracle.com with ESMTP id 2t02hejrf8-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Tue, 11 Jun 2019 04:45:53 +0000
+ Tue, 11 Jun 2019 04:46:11 +0000
 Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
- by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5B4j7Qe120658;
- Tue, 11 Jun 2019 04:45:52 GMT
+ by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5B4iptW120011;
+ Tue, 11 Jun 2019 04:46:10 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
- by aserp3030.oracle.com with ESMTP id 2t04hy504s-1
+ by aserp3030.oracle.com with ESMTP id 2t04hy507p-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
- Tue, 11 Jun 2019 04:45:52 +0000
+ Tue, 11 Jun 2019 04:46:10 +0000
 Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
- by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5B4jqt1121808;
- Tue, 11 Jun 2019 04:45:52 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
- by aserp3030.oracle.com with ESMTP id 2t04hy504q-1
+ by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5B4kAvW122581;
+ Tue, 11 Jun 2019 04:46:10 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+ by aserp3030.oracle.com with ESMTP id 2t04hy507h-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Tue, 11 Jun 2019 04:45:52 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
- by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5B4jqvS023681;
- Tue, 11 Jun 2019 04:45:52 GMT
+ Tue, 11 Jun 2019 04:46:10 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+ by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5B4k8uK022881;
+ Tue, 11 Jun 2019 04:46:08 GMT
 Received: from localhost (/67.169.218.210)
  by default (Oracle Beehive Gateway v4.0)
- with ESMTP ; Mon, 10 Jun 2019 21:45:51 -0700
+ with ESMTP ; Mon, 10 Jun 2019 21:46:07 -0700
 From: "Darrick J. Wong" <darrick.wong@oracle.com>
 To: matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
  darrick.wong@oracle.com, shaggy@kernel.org, ard.biesheuvel@linaro.org,
  josef@toxicpanda.com, clm@fb.com, adilger.kernel@dilger.ca,
  jk@ozlabs.org, jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org,
  viro@zeniv.linux.org.uk
-Date: Mon, 10 Jun 2019 21:45:49 -0700
-Message-ID: <156022834894.3227089.18246471175409784122.stgit@magnolia>
+Date: Mon, 10 Jun 2019 21:46:05 -0700
+Message-ID: <156022836522.3227089.4353401791178719941.stgit@magnolia>
 In-Reply-To: <156022833285.3227089.11990489625041926920.stgit@magnolia>
 References: <156022833285.3227089.11990489625041926920.stgit@magnolia>
 User-Agent: StGit/0.17.1-dirty
@@ -106,13 +106,13 @@ X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9284
  signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
  priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=975 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1906110033
-X-Headers-End: 1haYfk-006v7B-Ez
-Subject: [f2fs-dev] [PATCH 2/4] vfs: create a generic checking function for
- FS_IOC_FSSETXATTR
+X-Headers-End: 1haYg5-006v8g-5y
+Subject: [f2fs-dev] [PATCH 4/4] vfs: teach vfs_ioc_fssetxattr_check to check
+ extent size hints
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -134,369 +134,154 @@ Cc: linux-xfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Message-ID: <20190611044549.IeAURorWFQ2GlhgQREwO8z8oxqvw5y74mWwPUZ1OkwU@z>
+Message-ID: <20190611044605.7eI1Y2dLRUaRFwQl3SKACS3Y8COnquTtIjEcmaRzeys@z>
 
 From: Darrick J. Wong <darrick.wong@oracle.com>
 
-Create a generic checking function for the incoming FS_IOC_FSSETXATTR
-fsxattr values so that we can standardize some of the implementation
-behaviors.
+Move the extent size hint checks that aren't xfs-specific to the vfs.
 
 Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- fs/btrfs/ioctl.c   |   21 +++++++++-------
- fs/ext4/ioctl.c    |   27 ++++++++++++++------
- fs/f2fs/file.c     |   26 ++++++++++++++-----
- fs/inode.c         |   17 +++++++++++++
- fs/xfs/xfs_ioctl.c |   70 ++++++++++++++++++++++++++++++----------------------
- include/linux/fs.h |    3 ++
- 6 files changed, 111 insertions(+), 53 deletions(-)
+ fs/inode.c         |   18 +++++++++++++
+ fs/xfs/xfs_ioctl.c |   70 ++++++++++++++++++++++------------------------------
+ 2 files changed, 47 insertions(+), 41 deletions(-)
 
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index f408aa93b0cf..7ddda5b4b6a6 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -366,6 +366,13 @@ static int check_xflags(unsigned int flags)
- 	return 0;
- }
- 
-+static void __btrfs_ioctl_fsgetxattr(struct btrfs_inode *binode,
-+				     struct fsxattr *fa)
-+{
-+	memset(fa, 0, sizeof(*fa));
-+	fa->fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
-+}
-+
- /*
-  * Set the xflags from the internal inode flags. The remaining items of fsxattr
-  * are zeroed.
-@@ -375,8 +382,7 @@ static int btrfs_ioctl_fsgetxattr(struct file *file, void __user *arg)
- 	struct btrfs_inode *binode = BTRFS_I(file_inode(file));
- 	struct fsxattr fa;
- 
--	memset(&fa, 0, sizeof(fa));
--	fa.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
-+	__btrfs_ioctl_fsgetxattr(binode, &fa);
- 
- 	if (copy_to_user(arg, &fa, sizeof(fa)))
- 		return -EFAULT;
-@@ -390,7 +396,7 @@ static int btrfs_ioctl_fssetxattr(struct file *file, void __user *arg)
- 	struct btrfs_inode *binode = BTRFS_I(inode);
- 	struct btrfs_root *root = binode->root;
- 	struct btrfs_trans_handle *trans;
--	struct fsxattr fa;
-+	struct fsxattr fa, old_fa;
- 	unsigned old_flags;
- 	unsigned old_i_flags;
- 	int ret = 0;
-@@ -421,13 +427,10 @@ static int btrfs_ioctl_fssetxattr(struct file *file, void __user *arg)
- 	old_flags = binode->flags;
- 	old_i_flags = inode->i_flags;
- 
--	/* We need the capabilities to change append-only or immutable inode */
--	if (((old_flags & (BTRFS_INODE_APPEND | BTRFS_INODE_IMMUTABLE)) ||
--	     (fa.fsx_xflags & (FS_XFLAG_APPEND | FS_XFLAG_IMMUTABLE))) &&
--	    !capable(CAP_LINUX_IMMUTABLE)) {
--		ret = -EPERM;
-+	__btrfs_ioctl_fsgetxattr(binode, &old_fa);
-+	ret = vfs_ioc_fssetxattr_check(inode, &old_fa, &fa);
-+	if (ret)
- 		goto out_unlock;
--	}
- 
- 	if (fa.fsx_xflags & FS_XFLAG_SYNC)
- 		binode->flags |= BTRFS_INODE_SYNC;
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index 5126ee351a84..c2f48c90ca45 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -721,6 +721,19 @@ static int ext4_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
- 	return 0;
- }
- 
-+static void ext4_fsgetxattr(struct inode *inode, struct fsxattr *fa)
-+{
-+	struct ext4_inode_info *ei = EXT4_I(inode);
-+
-+	memset(fa, 0, sizeof(struct fsxattr));
-+	fa->fsx_xflags = ext4_iflags_to_xflags(ei->i_flags & EXT4_FL_USER_VISIBLE);
-+
-+	if (ext4_has_feature_project(inode->i_sb)) {
-+		fa->fsx_projid = (__u32)from_kprojid(&init_user_ns,
-+				ei->i_projid);
-+	}
-+}
-+
- long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -1089,13 +1102,7 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	{
- 		struct fsxattr fa;
- 
--		memset(&fa, 0, sizeof(struct fsxattr));
--		fa.fsx_xflags = ext4_iflags_to_xflags(ei->i_flags & EXT4_FL_USER_VISIBLE);
--
--		if (ext4_has_feature_project(inode->i_sb)) {
--			fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
--				EXT4_I(inode)->i_projid);
--		}
-+		ext4_fsgetxattr(inode, &fa);
- 
- 		if (copy_to_user((struct fsxattr __user *)arg,
- 				 &fa, sizeof(fa)))
-@@ -1104,7 +1111,7 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	}
- 	case EXT4_IOC_FSSETXATTR:
- 	{
--		struct fsxattr fa;
-+		struct fsxattr fa, old_fa;
- 		int err;
- 
- 		if (copy_from_user(&fa, (struct fsxattr __user *)arg,
-@@ -1127,7 +1134,11 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 			return err;
- 
- 		inode_lock(inode);
-+		ext4_fsgetxattr(inode, &old_fa);
- 		err = ext4_ioctl_check_project(inode, &fa);
-+		if (err)
-+			goto out;
-+		err = vfs_ioc_fssetxattr_check(inode, &old_fa, &fa);
- 		if (err)
- 			goto out;
- 		flags = (ei->i_flags & ~EXT4_FL_XFLAG_VISIBLE) |
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a969d5497e03..f707de6bd4a8 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2773,19 +2773,26 @@ static inline unsigned long f2fs_xflags_to_iflags(__u32 xflags)
- 	return iflags;
- }
- 
--static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
-+static void __f2fs_ioc_fsgetxattr(struct inode *inode,
-+				  struct fsxattr *fa)
- {
--	struct inode *inode = file_inode(filp);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
--	struct fsxattr fa;
- 
--	memset(&fa, 0, sizeof(struct fsxattr));
--	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags &
-+	memset(fa, 0, sizeof(struct fsxattr));
-+	fa->fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags &
- 				F2FS_FL_USER_VISIBLE);
- 
- 	if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)))
--		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
-+		fa->fsx_projid = (__u32)from_kprojid(&init_user_ns,
- 							fi->i_projid);
-+}
-+
-+static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct fsxattr fa;
-+
-+	__f2fs_ioc_fsgetxattr(inode, &fa);
- 
- 	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
- 		return -EFAULT;
-@@ -2820,7 +2827,7 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
--	struct fsxattr fa;
-+	struct fsxattr fa, old_fa;
- 	unsigned int flags;
- 	int err;
- 
-@@ -2844,6 +2851,11 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
- 
- 	inode_lock(inode);
- 	err = f2fs_ioctl_check_project(inode, &fa);
-+	if (err)
-+		goto out;
-+
-+	__f2fs_ioc_fsgetxattr(inode, &old_fa);
-+	err = vfs_ioc_fssetxattr_check(inode, &old_fa, &fa);
- 	if (err)
- 		goto out;
- 	flags = (fi->i_flags & ~F2FS_FL_XFLAG_VISIBLE) |
 diff --git a/fs/inode.c b/fs/inode.c
-index 0ce60b720608..026955258a47 100644
+index 40ecd3a6a188..a3757051fd55 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -2187,3 +2187,20 @@ int vfs_ioc_setflags_check(struct inode *inode, int oldflags, int flags)
+@@ -2214,6 +2214,24 @@ int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
+ 			return -EINVAL;
+ 	}
+ 
++	/* Check extent size hints. */
++	if ((fa->fsx_xflags & FS_XFLAG_EXTSIZE) && !S_ISREG(inode->i_mode))
++		return -EINVAL;
++
++	if ((fa->fsx_xflags & FS_XFLAG_EXTSZINHERIT) &&
++			!S_ISDIR(inode->i_mode))
++		return -EINVAL;
++
++	if ((fa->fsx_xflags & FS_XFLAG_COWEXTSIZE) &&
++	    !S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
++		return -EINVAL;
++
++	/* Extent size hints of zero turn off the flags. */
++	if (fa->fsx_extsize == 0)
++		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
++	if (fa->fsx_cowextsize == 0)
++		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
++
  	return 0;
  }
- EXPORT_SYMBOL(vfs_ioc_setflags_check);
-+
-+/* Generic function to check FS_IOC_FSSETXATTR values. */
-+int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
-+			     struct fsxattr *fa)
-+{
-+	/*
-+	 * Can't modify an immutable/append-only file unless we have
-+	 * appropriate permission.
-+	 */
-+	if ((old_fa->fsx_xflags ^ fa->fsx_xflags) &
-+			(FS_XFLAG_IMMUTABLE | FS_XFLAG_APPEND) &&
-+	    !capable(CAP_LINUX_IMMUTABLE))
-+		return -EPERM;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(vfs_ioc_fssetxattr_check);
+ EXPORT_SYMBOL(vfs_ioc_fssetxattr_check);
 diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index d7dfc13f30f5..08c24f2f55c3 100644
+index 82961de98900..b494e7e881e3 100644
 --- a/fs/xfs/xfs_ioctl.c
 +++ b/fs/xfs/xfs_ioctl.c
-@@ -879,37 +879,45 @@ xfs_di2lxflags(
- 	return flags;
- }
- 
--STATIC int
--xfs_ioc_fsgetxattr(
--	xfs_inode_t		*ip,
--	int			attr,
--	void			__user *arg)
-+static void
-+__xfs_ioc_fsgetxattr(
-+	struct xfs_inode	*ip,
-+	bool			attr,
-+	struct fsxattr		*fa)
- {
--	struct fsxattr		fa;
--
--	memset(&fa, 0, sizeof(struct fsxattr));
--
--	xfs_ilock(ip, XFS_ILOCK_SHARED);
--	fa.fsx_xflags = xfs_ip2xflags(ip);
--	fa.fsx_extsize = ip->i_d.di_extsize << ip->i_mount->m_sb.sb_blocklog;
--	fa.fsx_cowextsize = ip->i_d.di_cowextsize <<
-+	memset(fa, 0, sizeof(struct fsxattr));
-+	fa->fsx_xflags = xfs_ip2xflags(ip);
-+	fa->fsx_extsize = ip->i_d.di_extsize << ip->i_mount->m_sb.sb_blocklog;
-+	fa->fsx_cowextsize = ip->i_d.di_cowextsize <<
- 			ip->i_mount->m_sb.sb_blocklog;
--	fa.fsx_projid = xfs_get_projid(ip);
-+	fa->fsx_projid = xfs_get_projid(ip);
- 
- 	if (attr) {
- 		if (ip->i_afp) {
- 			if (ip->i_afp->if_flags & XFS_IFEXTENTS)
--				fa.fsx_nextents = xfs_iext_count(ip->i_afp);
-+				fa->fsx_nextents = xfs_iext_count(ip->i_afp);
- 			else
--				fa.fsx_nextents = ip->i_d.di_anextents;
-+				fa->fsx_nextents = ip->i_d.di_anextents;
- 		} else
--			fa.fsx_nextents = 0;
-+			fa->fsx_nextents = 0;
- 	} else {
- 		if (ip->i_df.if_flags & XFS_IFEXTENTS)
--			fa.fsx_nextents = xfs_iext_count(&ip->i_df);
-+			fa->fsx_nextents = xfs_iext_count(&ip->i_df);
- 		else
--			fa.fsx_nextents = ip->i_d.di_nextents;
-+			fa->fsx_nextents = ip->i_d.di_nextents;
- 	}
-+}
-+
-+STATIC int
-+xfs_ioc_fsgetxattr(
-+	xfs_inode_t		*ip,
-+	int			attr,
-+	void			__user *arg)
-+{
-+	struct fsxattr		fa;
-+
-+	xfs_ilock(ip, XFS_ILOCK_SHARED);
-+	__xfs_ioc_fsgetxattr(ip, attr, &fa);
- 	xfs_iunlock(ip, XFS_ILOCK_SHARED);
- 
- 	if (copy_to_user(arg, &fa, sizeof(fa)))
-@@ -1035,15 +1043,6 @@ xfs_ioctl_setattr_xflags(
- 	if ((fa->fsx_xflags & FS_XFLAG_DAX) && xfs_is_reflink_inode(ip))
- 		return -EINVAL;
- 
--	/*
--	 * Can't modify an immutable/append-only file unless
--	 * we have appropriate permission.
--	 */
--	if (((ip->i_d.di_flags & (XFS_DIFLAG_IMMUTABLE | XFS_DIFLAG_APPEND)) ||
--	     (fa->fsx_xflags & (FS_XFLAG_IMMUTABLE | FS_XFLAG_APPEND))) &&
--	    !capable(CAP_LINUX_IMMUTABLE))
--		return -EPERM;
--
- 	/* diflags2 only valid for v3 inodes. */
- 	di_flags2 = xfs_flags2diflags2(ip, fa->fsx_xflags);
- 	if (di_flags2 && ip->i_d.di_version < 3)
-@@ -1323,6 +1322,7 @@ xfs_ioctl_setattr(
- 	xfs_inode_t		*ip,
+@@ -1201,39 +1201,31 @@ xfs_ioctl_setattr_check_extsize(
  	struct fsxattr		*fa)
  {
-+	struct fsxattr		old_fa;
  	struct xfs_mount	*mp = ip->i_mount;
- 	struct xfs_trans	*tp;
- 	struct xfs_dquot	*udqp = NULL;
-@@ -1370,7 +1370,6 @@ xfs_ioctl_setattr(
- 		goto error_free_dquots;
- 	}
- 
 -
- 	if (XFS_IS_QUOTA_RUNNING(mp) && XFS_IS_PQUOTA_ON(mp) &&
- 	    xfs_get_projid(ip) != fa->fsx_projid) {
- 		code = xfs_qm_vop_chown_reserve(tp, ip, udqp, NULL, pdqp,
-@@ -1379,6 +1378,11 @@ xfs_ioctl_setattr(
- 			goto error_trans_cancel;
- 	}
+-	if ((fa->fsx_xflags & FS_XFLAG_EXTSIZE) && !S_ISREG(VFS_I(ip)->i_mode))
+-		return -EINVAL;
+-
+-	if ((fa->fsx_xflags & FS_XFLAG_EXTSZINHERIT) &&
+-	    !S_ISDIR(VFS_I(ip)->i_mode))
+-		return -EINVAL;
++	xfs_extlen_t		size;
++	xfs_fsblock_t		extsize_fsb;
  
-+	__xfs_ioc_fsgetxattr(ip, false, &old_fa);
-+	code = vfs_ioc_fssetxattr_check(VFS_I(ip), &old_fa, fa);
-+	if (code)
-+		goto error_trans_cancel;
-+
- 	code = xfs_ioctl_setattr_check_extsize(ip, fa);
- 	if (code)
- 		goto error_trans_cancel;
-@@ -1489,6 +1493,7 @@ xfs_ioc_setxflags(
- {
- 	struct xfs_trans	*tp;
- 	struct fsxattr		fa;
-+	struct fsxattr		old_fa;
- 	unsigned int		flags;
- 	int			join_flags = 0;
- 	int			error;
-@@ -1524,6 +1529,13 @@ xfs_ioc_setxflags(
- 		goto out_drop_write;
- 	}
+ 	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_d.di_nextents &&
+ 	    ((ip->i_d.di_extsize << mp->m_sb.sb_blocklog) != fa->fsx_extsize))
+ 		return -EINVAL;
  
-+	__xfs_ioc_fsgetxattr(ip, false, &old_fa);
-+	error = vfs_ioc_fssetxattr_check(VFS_I(ip), &old_fa, &fa);
-+	if (error) {
-+		xfs_trans_cancel(tp);
-+		goto out_drop_write;
+-	if (fa->fsx_extsize != 0) {
+-		xfs_extlen_t    size;
+-		xfs_fsblock_t   extsize_fsb;
+-
+-		extsize_fsb = XFS_B_TO_FSB(mp, fa->fsx_extsize);
+-		if (extsize_fsb > MAXEXTLEN)
+-			return -EINVAL;
++	if (fa->fsx_extsize == 0)
++		return 0;
+ 
+-		if (XFS_IS_REALTIME_INODE(ip) ||
+-		    (fa->fsx_xflags & FS_XFLAG_REALTIME)) {
+-			size = mp->m_sb.sb_rextsize << mp->m_sb.sb_blocklog;
+-		} else {
+-			size = mp->m_sb.sb_blocksize;
+-			if (extsize_fsb > mp->m_sb.sb_agblocks / 2)
+-				return -EINVAL;
+-		}
++	extsize_fsb = XFS_B_TO_FSB(mp, fa->fsx_extsize);
++	if (extsize_fsb > MAXEXTLEN)
++		return -EINVAL;
+ 
+-		if (fa->fsx_extsize % size)
++	if (XFS_IS_REALTIME_INODE(ip) ||
++	    (fa->fsx_xflags & FS_XFLAG_REALTIME)) {
++		size = mp->m_sb.sb_rextsize << mp->m_sb.sb_blocklog;
++	} else {
++		size = mp->m_sb.sb_blocksize;
++		if (extsize_fsb > mp->m_sb.sb_agblocks / 2)
+ 			return -EINVAL;
+-	} else
+-		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
 +	}
 +
- 	error = xfs_ioctl_setattr_xflags(tp, ip, &fa);
- 	if (error) {
- 		xfs_trans_cancel(tp);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 1825d055808c..8dad3c80b611 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3548,4 +3548,7 @@ static inline struct sock *io_uring_get_socket(struct file *file)
++	if (fa->fsx_extsize % size)
++		return -EINVAL;
  
- int vfs_ioc_setflags_check(struct inode *inode, int oldflags, int flags);
+ 	return 0;
+ }
+@@ -1259,6 +1251,8 @@ xfs_ioctl_setattr_check_cowextsize(
+ 	struct fsxattr		*fa)
+ {
+ 	struct xfs_mount	*mp = ip->i_mount;
++	xfs_extlen_t		size;
++	xfs_fsblock_t		cowextsize_fsb;
  
-+int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
-+			     struct fsxattr *fa);
-+
- #endif /* _LINUX_FS_H */
+ 	if (!(fa->fsx_xflags & FS_XFLAG_COWEXTSIZE))
+ 		return 0;
+@@ -1267,25 +1261,19 @@ xfs_ioctl_setattr_check_cowextsize(
+ 	    ip->i_d.di_version != 3)
+ 		return -EINVAL;
+ 
+-	if (!S_ISREG(VFS_I(ip)->i_mode) && !S_ISDIR(VFS_I(ip)->i_mode))
+-		return -EINVAL;
+-
+-	if (fa->fsx_cowextsize != 0) {
+-		xfs_extlen_t    size;
+-		xfs_fsblock_t   cowextsize_fsb;
++	if (fa->fsx_cowextsize == 0)
++		return 0;
+ 
+-		cowextsize_fsb = XFS_B_TO_FSB(mp, fa->fsx_cowextsize);
+-		if (cowextsize_fsb > MAXEXTLEN)
+-			return -EINVAL;
++	cowextsize_fsb = XFS_B_TO_FSB(mp, fa->fsx_cowextsize);
++	if (cowextsize_fsb > MAXEXTLEN)
++		return -EINVAL;
+ 
+-		size = mp->m_sb.sb_blocksize;
+-		if (cowextsize_fsb > mp->m_sb.sb_agblocks / 2)
+-			return -EINVAL;
++	size = mp->m_sb.sb_blocksize;
++	if (cowextsize_fsb > mp->m_sb.sb_agblocks / 2)
++		return -EINVAL;
+ 
+-		if (fa->fsx_cowextsize % size)
+-			return -EINVAL;
+-	} else
+-		fa->fsx_xflags &= ~FS_XFLAG_COWEXTSIZE;
++	if (fa->fsx_cowextsize % size)
++		return -EINVAL;
+ 
+ 	return 0;
+ }
 
 
 
