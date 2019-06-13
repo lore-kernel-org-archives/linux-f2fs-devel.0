@@ -1,25 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/2] f2fs: only set project inherit bit for
- directory
-Date: Thu, 13 Jun 2019 14:36:21 +0800
-Message-ID: <73fb9e88-d3f5-9420-d6d8-82ff4354e4d6@huawei.com>
-References: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>
- <1559795545-17290-2-git-send-email-wshilong1991@gmail.com>
+Subject: Re: [PATCH] f2fs: fix is_idle() check for discard type
+Date: Thu, 13 Jun 2019 14:52:43 +0800
+Message-ID: <d3b4b733-78ab-29bb-9441-c6e4e7efaea9@huawei.com>
+References: <1559813893-23452-1-git-send-email-stummala@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hbJLd-0000vN-Lu
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 06:36:33 +0000
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1hbJbT-0001b0-0o
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 06:52:55 +0000
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hbJLb-00BZpz-52
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 06:36:32 +0000
-In-Reply-To: <1559795545-17290-2-git-send-email-wshilong1991@gmail.com>
+ id 1hbJbR-00BBf7-71
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 06:52:55 +0000
+In-Reply-To: <1559813893-23452-1-git-send-email-stummala@codeaurora.org>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -30,56 +28,46 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Wang Shilong <wangshilong1991@gmail.com>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Andreas Dilger <adilger@dilger.ca>, Wang Shilong <wshilong@ddn.com>
+To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
 
-On 2019/6/6 12:32, Wang Shilong wrote:
-> From: Wang Shilong <wshilong@ddn.com>
+On 2019/6/6 17:38, Sahitya Tummala wrote:
+> The discard thread should issue upto dpolicy->max_requests at once
+> and wait for all those discard requests at once it reaches
+> dpolicy->max_requests. It should then sleep for dpolicy->min_interval
+> timeout before issuing the next batch of discard requests. But in the
+> current code of is_idle(), it checks for dcc_info->queued_discard and
+> aborts issuing the discard batch of max_requests. This
+> dcc_info->queued_discard will be true always once one discard command
+> is issued.
 > 
-> It doesn't make any sense to have project inherit bits
-> for regular files, even though this won't cause any
-> problem, but it is better fix this.
+> It is thus resulting into this type of discard request pattern -
 > 
-> Cc: Andreas Dilger <adilger@dilger.ca>
-> Signed-off-by: Wang Shilong <wshilong@ddn.com>
-> ---
->  fs/f2fs/f2fs.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> - Issue discard request#1
+> - is_idle() returns false, discard thread waits for request#1 and then
+>   sleeps for min_interval 50ms.
+> - Issue discard request#2
+> - is_idle() returns false, discard thread waits for request#2 and then
+>   sleeps for min_interval 50ms.
+> - and so on for all other discard requests, assuming f2fs is idle w.r.t
+>   other conditions.
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 06b89a9862ab..f02ebecb68ea 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2370,7 +2370,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
->  			   F2FS_PROJINHERIT_FL)
->  
->  /* Flags that are appropriate for regular files (all but dir-specific ones). */
-> -#define F2FS_REG_FLMASK		(~(F2FS_DIRSYNC_FL | F2FS_TOPDIR_FL))
-> +#define F2FS_REG_FLMASK 	(~(F2FS_DIRSYNC_FL | F2FS_TOPDIR_FL |\
-> +				   F2FS_PROJINHERIT_FL))
+> With this fix, the pattern will look like this -
+> 
+> - Issue discard request#1
+> - Issue discard request#2
+>   and so on upto max_requests of 8
+> - Issue discard request#8
+> - wait for min_interval 50ms.
+> 
 
-Hi Shilong,
+Fixes: fef4129ec2e6 ("f2fs: fix to be aware discard/preflush/dio command in
+is_idle()")
 
-Could you please add below diff as ext4 did?
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index efdafa886510..295ca5ed42d9 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1759,6 +1759,9 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned
-long arg)
+Ah, thanks for fixing this bug.
 
- 	fsflags &= F2FS_GETTABLE_FS_FL;
-
-+	if (S_ISREG(inode->i_mode))
-+		fsflags &= ~FS_PROJINHERIT_FL;
-+
- 	return put_user(fsflags, (int __user *)arg);
- }
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
->  
->  /* Flags that are appropriate for non-directories/regular files. */
->  #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
-> 
