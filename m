@@ -1,30 +1,25 @@
-From: Wang Shilong via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Subject: =?gb2312?b?u9i4tDogW1BBVENIIDIvMl0gZjJmczogb25seSBz?=
- =?gb2312?b?ZXQgcHJvamVjdCBpbmhlcml0IGJpdCBmb3IgZGlyZWN0b3J5?=
-Date: Thu, 13 Jun 2019 07:34:09 +0000
-Message-ID: <MN2PR19MB3167496236BA4D366EAF5D36D4EF0@MN2PR19MB3167.namprd19.prod.outlook.com>
-References: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>
- <1559795545-17290-2-git-send-email-wshilong1991@gmail.com>,
- <73fb9e88-d3f5-9420-d6d8-82ff4354e4d6@huawei.com>
-Reply-To: Wang Shilong <wshilong@ddn.com>
+From: Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [RFC PATCH v2 5/8] scsi: ufs: UFS crypto API
+Date: Thu, 13 Jun 2019 10:11:13 -0700
+Message-ID: <20190613171113.GB686@sol.localdomain>
+References: <20190605232837.31545-1-satyat@google.com>
+ <20190605232837.31545-6-satyat@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wshilong@ddn.com>) id 1hbOWK-0008Ca-V6
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 12:07:56 +0000
-Received: from mail-eopbgr820048.outbound.protection.outlook.com
- ([40.107.82.48] helo=NAM01-SN1-obe.outbound.protection.outlook.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (envelope-from <ebiggers@kernel.org>) id 1hbTG2-00016S-5G
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 17:11:26 +0000
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hbOWF-0051Sh-4b
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 12:07:55 +0000
-In-Reply-To: <73fb9e88-d3f5-9420-d6d8-82ff4354e4d6@huawei.com>
-Content-Language: zh-CN
+ id 1hbTFy-00CCy4-14
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 17:11:25 +0000
+Content-Disposition: inline
+In-Reply-To: <20190605232837.31545-6-satyat@google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,50 +29,185 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, Wang Shilong <wangshilong1991@gmail.com>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
-Cc: Andreas Dilger <adilger@dilger.ca>
+To: Satya Tangirala <satyat@google.com>
+Cc: Ladvine D Almeida <ladvine.dalmeida@synopsys.com>, linux-scsi@vger.kernel.org, Parshuram Raju Thombare <pthombar@cadence.com>, Kuohong Wang <kuohong.wang@mediatek.com>, Barani Muthukumaran <bmuthuku@qti.qualcomm.com>, linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-SGkgQ2hhbywNCg0KIEkganVzdCBzZW50IGEgVjIsIGJ1dCBJIHRoaW5rIHdlJ2QgYmV0dGVyIGRv
-IHRoYXQgd2hlbiByZWFkaW5nIGlub2RlLCBmb3IgdHdvIHJlYXNvbnM6DQoNCjEpIG5vdCBvbmx5
-IEYyRlNfSU9DX0dFVEZMQUdTIG5lZWQgZmlsdGVyIGZsYWdzIGJ1dCBhbHNvIEYyRlNfSU9DX0ZT
-R0VUWEFUVFIgbmVlZCB0aGF0LCBzbyB0aGUgYW1lbmRlZCBwYXJ0cyBpcyBub3QgZW5vdWdoIElN
-Ty4NCg0KMikgZG9pbmcgdGhhdCBieSByZWFkaW5nIGlub2RlIGdpdmUgYSBiZW5lZml0IHRoYXQg
-d2UgY291bGQgY29ycmVjdCBvbiBkaXNrIGZsYWdzIGZvciByZWd1bGFyIGZpbGUgbmV4dCBkaXJ0
-eWluZyBpbm9kZSBoYXBwZW4uDQoNCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18NCreivP7IyzogQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWkuY29tPg0Kt6LLzcqxvOQ6IDIw
-MTnE6jbUwjEzyNUgMTQ6MzYNCsrVvP7IyzogV2FuZyBTaGlsb25nOyBsaW51eC1leHQ0QHZnZXIu
-a2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCrOty806
-IFdhbmcgU2hpbG9uZzsgQW5kcmVhcyBEaWxnZXINCtb3zOI6IFJlOiBbUEFUQ0ggMi8yXSBmMmZz
-OiBvbmx5IHNldCBwcm9qZWN0IGluaGVyaXQgYml0IGZvciBkaXJlY3RvcnkNCg0KT24gMjAxOS82
-LzYgMTI6MzIsIFdhbmcgU2hpbG9uZyB3cm90ZToNCj4gRnJvbTogV2FuZyBTaGlsb25nIDx3c2hp
-bG9uZ0BkZG4uY29tPg0KPg0KPiBJdCBkb2Vzbid0IG1ha2UgYW55IHNlbnNlIHRvIGhhdmUgcHJv
-amVjdCBpbmhlcml0IGJpdHMNCj4gZm9yIHJlZ3VsYXIgZmlsZXMsIGV2ZW4gdGhvdWdoIHRoaXMg
-d29uJ3QgY2F1c2UgYW55DQo+IHByb2JsZW0sIGJ1dCBpdCBpcyBiZXR0ZXIgZml4IHRoaXMuDQo+
-DQo+IENjOiBBbmRyZWFzIERpbGdlciA8YWRpbGdlckBkaWxnZXIuY2E+DQo+IFNpZ25lZC1vZmYt
-Ynk6IFdhbmcgU2hpbG9uZyA8d3NoaWxvbmdAZGRuLmNvbT4NCj4gLS0tDQo+ICBmcy9mMmZzL2Yy
-ZnMuaCB8IDMgKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0
-aW9uKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMvZjJmcy5o
-DQo+IGluZGV4IDA2Yjg5YTk4NjJhYi4uZjAyZWJlY2I2OGVhIDEwMDY0NA0KPiAtLS0gYS9mcy9m
-MmZzL2YyZnMuaA0KPiArKysgYi9mcy9mMmZzL2YyZnMuaA0KPiBAQCAtMjM3MCw3ICsyMzcwLDgg
-QEAgc3RhdGljIGlubGluZSB2b2lkIGYyZnNfY2hhbmdlX2JpdCh1bnNpZ25lZCBpbnQgbnIsIGNo
-YXIgKmFkZHIpDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICBGMkZTX1BST0pJTkhFUklUX0ZM
-KQ0KPg0KPiAgLyogRmxhZ3MgdGhhdCBhcmUgYXBwcm9wcmlhdGUgZm9yIHJlZ3VsYXIgZmlsZXMg
-KGFsbCBidXQgZGlyLXNwZWNpZmljIG9uZXMpLiAqLw0KPiAtI2RlZmluZSBGMkZTX1JFR19GTE1B
-U0sgICAgICAgICAgICAgICh+KEYyRlNfRElSU1lOQ19GTCB8IEYyRlNfVE9QRElSX0ZMKSkNCj4g
-KyNkZWZpbmUgRjJGU19SRUdfRkxNQVNLICAgICAgKH4oRjJGU19ESVJTWU5DX0ZMIHwgRjJGU19U
-T1BESVJfRkwgfFwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRjJGU19QUk9K
-SU5IRVJJVF9GTCkpDQoNCkhpIFNoaWxvbmcsDQoNCkNvdWxkIHlvdSBwbGVhc2UgYWRkIGJlbG93
-IGRpZmYgYXMgZXh0NCBkaWQ/DQoNCmRpZmYgLS1naXQgYS9mcy9mMmZzL2ZpbGUuYyBiL2ZzL2Yy
-ZnMvZmlsZS5jDQppbmRleCBlZmRhZmE4ODY1MTAuLjI5NWNhNWVkNDJkOSAxMDA2NDQNCi0tLSBh
-L2ZzL2YyZnMvZmlsZS5jDQorKysgYi9mcy9mMmZzL2ZpbGUuYw0KQEAgLTE3NTksNiArMTc1OSw5
-IEBAIHN0YXRpYyBpbnQgZjJmc19pb2NfZ2V0ZmxhZ3Moc3RydWN0IGZpbGUgKmZpbHAsIHVuc2ln
-bmVkDQpsb25nIGFyZykNCg0KICAgICAgICBmc2ZsYWdzICY9IEYyRlNfR0VUVEFCTEVfRlNfRkw7
-DQoNCisgICAgICAgaWYgKFNfSVNSRUcoaW5vZGUtPmlfbW9kZSkpDQorICAgICAgICAgICAgICAg
-ZnNmbGFncyAmPSB+RlNfUFJPSklOSEVSSVRfRkw7DQorDQogICAgICAgIHJldHVybiBwdXRfdXNl
-cihmc2ZsYWdzLCAoaW50IF9fdXNlciAqKWFyZyk7DQogfQ0KDQpUaGFua3MsDQoNCj4NCj4gIC8q
-IEZsYWdzIHRoYXQgYXJlIGFwcHJvcHJpYXRlIGZvciBub24tZGlyZWN0b3JpZXMvcmVndWxhciBm
-aWxlcy4gKi8NCj4gICNkZWZpbmUgRjJGU19PVEhFUl9GTE1BU0sgICAgKEYyRlNfTk9EVU1QX0ZM
-IHwgRjJGU19OT0FUSU1FX0ZMKQ0KPg0KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMt
-ZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0
-L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Hi Satya,
+
+On Wed, Jun 05, 2019 at 04:28:34PM -0700, Satya Tangirala wrote:
+> Introduce functions to manipulate UFS inline encryption hardware
+> in line with the JEDEC UFSHCI v2.1 specification and to work with the
+> block keyslot manager.
+> 
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> ---
+>  drivers/scsi/ufs/Kconfig         |  10 +
+>  drivers/scsi/ufs/Makefile        |   1 +
+>  drivers/scsi/ufs/ufshcd-crypto.c | 438 +++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd-crypto.h |  69 +++++
+>  4 files changed, 518 insertions(+)
+>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
+>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
+> 
+
+There is a build error after this patch because it adds code that uses the
+crypto fields in struct ufs_hba, but those aren't added until the next patch.
+
+It needs to be possible to compile a working kernel after each patch.
+Otherwise it breaks bisection.
+
+So, perhaps add the fields in this patch instead.
+
+> +++ b/drivers/scsi/ufs/ufshcd-crypto.c
+> @@ -0,0 +1,438 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2019 Google LLC
+> + */
+> +
+> +#include <crypto/algapi.h>
+> +
+> +#include "ufshcd.h"
+> +#include "ufshcd-crypto.h"
+> +
+> +bool ufshcd_hba_is_crypto_supported(struct ufs_hba *hba)
+> +{
+> +	return hba->crypto_capabilities.reg_val != 0;
+> +}
+> +
+> +bool ufshcd_is_crypto_enabled(struct ufs_hba *hba)
+> +{
+> +	return hba->caps & UFSHCD_CAP_CRYPTO;
+> +}
+> +
+> +static bool ufshcd_cap_idx_valid(struct ufs_hba *hba, unsigned int cap_idx)
+> +{
+> +	return cap_idx < hba->crypto_capabilities.num_crypto_cap;
+> +}
+> +
+> +#define NUM_KEYSLOTS(hba) (hba->crypto_capabilities.config_count + 1)
+> +
+> +bool ufshcd_keyslot_valid(struct ufs_hba *hba, unsigned int slot)
+> +{
+> +	/*
+> +	 * The actual number of configurations supported is (CFGC+1), so slot
+> +	 * numbers range from 0 to config_count inclusive.
+> +	 */
+> +	return slot < NUM_KEYSLOTS(hba);
+> +}
+
+Since ufshcd_hba_is_crypto_supported(), ufshcd_is_crypto_enabled(), and
+ufshcd_keyslot_valid() are one-liners, don't access any private structures, and
+are used outside this file including on the command submission path, how about
+making them inline functions in ufshcd-crypto.h?
+
+> +
+> +static int ufshcd_crypto_alg_find(void *hba_p,
+> +			   enum blk_crypt_mode_num crypt_mode,
+> +			   unsigned int data_unit_size)
+> +{
+
+Now that the concept of "crypto alg IDs" is gone, rename this to
+ufshcd_crypto_cap_find() and rename the crypto_alg_id variables to cap_idx.
+
+This would make it consistent with using cap_idx elsewhere in the code and avoid
+confusion with ufs_crypto_cap_entry::algorithm_id.
+
+> +
+> +static int ufshcd_crypto_keyslot_program(void *hba_p, const u8 *key,
+> +					 enum blk_crypt_mode_num crypt_mode,
+> +					 unsigned int data_unit_size,
+> +					 unsigned int slot)
+> +{
+> +	struct ufs_hba *hba = hba_p;
+> +	int err = 0;
+> +	u8 data_unit_mask;
+> +	union ufs_crypto_cfg_entry cfg;
+> +	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
+> +	int crypto_alg_id;
+> +
+> +	crypto_alg_id = ufshcd_crypto_alg_find(hba_p, crypt_mode,
+> +					       data_unit_size);
+> +
+> +	if (!ufshcd_is_crypto_enabled(hba) ||
+> +	    !ufshcd_keyslot_valid(hba, slot) ||
+> +	    !ufshcd_cap_idx_valid(hba, crypto_alg_id))
+> +		return -EINVAL;
+> +
+> +	data_unit_mask = get_data_unit_size_mask(data_unit_size);
+> +
+> +	if (!(data_unit_mask &
+> +	      hba->crypto_cap_array[crypto_alg_id].sdus_mask))
+> +		return -EINVAL;
+
+Nit: the 'if' expression with data_unit_mask fits on one line.
+
+> +static int ufshcd_crypto_keyslot_find(void *hba_p,
+> +				      const u8 *key,
+> +				      enum blk_crypt_mode_num crypt_mode,
+> +				      unsigned int data_unit_size)
+> +{
+> +	struct ufs_hba *hba = hba_p;
+> +	int err = 0;
+> +	int slot;
+> +	u8 data_unit_mask;
+> +	union ufs_crypto_cfg_entry cfg;
+> +	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
+> +	int crypto_alg_id;
+> +
+> +	crypto_alg_id = ufshcd_crypto_alg_find(hba_p, crypt_mode,
+> +					       data_unit_size);
+> +
+> +	if (!ufshcd_is_crypto_enabled(hba) ||
+> +	    !ufshcd_cap_idx_valid(hba, crypto_alg_id))
+> +		return -EINVAL;
+> +
+> +	data_unit_mask = get_data_unit_size_mask(data_unit_size);
+> +
+> +	if (!(data_unit_mask &
+> +	      hba->crypto_cap_array[crypto_alg_id].sdus_mask))
+> +		return -EINVAL;
+
+Same here.
+
+> +	for (slot = 0; slot < NUM_KEYSLOTS(hba); slot++) {
+> +		if ((cfg_arr[slot].config_enable &
+> +		     UFS_CRYPTO_CONFIGURATION_ENABLE) &&
+> +		    data_unit_mask == cfg_arr[slot].data_unit_size &&
+> +		    crypto_alg_id == cfg_arr[slot].crypto_cap_idx &&
+> +		    crypto_memneq(&cfg.crypto_key, cfg_arr[slot].crypto_key,
+> +				  UFS_CRYPTO_KEY_MAX_SIZE) == 0) {
+> +			memzero_explicit(&cfg, sizeof(cfg));
+> +			return slot;
+> +		}
+> +	}
+
+Nit: as I've mentioned before, I think !crypto_memneq() is easier to read than
+'crypto_memneq() == 0'.
+
+> +	hba->crypto_cap_array =
+> +		devm_kcalloc(hba->dev,
+> +			     hba->crypto_capabilities.num_crypto_cap,
+> +			     sizeof(hba->crypto_cap_array[0]),
+> +			     GFP_KERNEL);
+> +	if (!hba->crypto_cap_array) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	hba->crypto_cfgs =
+> +		devm_kcalloc(hba->dev,
+> +			     hba->crypto_capabilities.config_count + 1,
+> +			     sizeof(union ufs_crypto_cfg_entry),
+> +			     GFP_KERNEL);
+> +	if (!hba->crypto_cfgs) {
+> +		err = -ENOMEM;
+> +		goto out_cfg_mem;
+> +	}
+
+Nit: use 'sizeof(hba->crypto_cfgs[0])' rather than 'sizeof(union
+ufs_crypto_cfg_entry)', for consistency with the other array allocation.
+
+Thanks,
+
+- Eric
