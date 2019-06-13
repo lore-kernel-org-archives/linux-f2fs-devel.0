@@ -1,24 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: separate f2fs i_flags from fs_flags
- and ext4 i_flags
-Date: Thu, 13 Jun 2019 14:20:41 +0800
-Message-ID: <ac9370d1-82a2-bb8a-4d9d-fe2e763df789@huawei.com>
-References: <20190605055904.4039-1-ebiggers@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: only set project inherit bit for
+ directory
+Date: Thu, 13 Jun 2019 14:36:21 +0800
+Message-ID: <73fb9e88-d3f5-9420-d6d8-82ff4354e4d6@huawei.com>
+References: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>
+ <1559795545-17290-2-git-send-email-wshilong1991@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hbJ6Y-0000FP-1D
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 06:20:58 +0000
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <yuchao0@huawei.com>) id 1hbJLd-0000vN-Lu
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 06:36:33 +0000
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hbJ6U-00B9y1-I0
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 06:20:56 +0000
-In-Reply-To: <20190605055904.4039-1-ebiggers@kernel.org>
+ id 1hbJLb-00BZpz-52
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 06:36:32 +0000
+In-Reply-To: <1559795545-17290-2-git-send-email-wshilong1991@gmail.com>
 Content-Language: en-US
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -29,35 +30,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org
+To: Wang Shilong <wangshilong1991@gmail.com>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Andreas Dilger <adilger@dilger.ca>, Wang Shilong <wshilong@ddn.com>
 
-On 2019/6/5 13:59, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 2019/6/6 12:32, Wang Shilong wrote:
+> From: Wang Shilong <wshilong@ddn.com>
 > 
-> f2fs copied all the on-disk i_flags from ext4, and along with it the
-> assumption that the on-disk i_flags are the same as the bits used by
-> FS_IOC_GETFLAGS and FS_IOC_SETFLAGS.  This is problematic because
-> reserving an on-disk inode flag in either filesystem's i_flags or in
-> these ioctls effectively reserves it in all the other places too.  In
-> fact, most of the "f2fs i_flags" are not used by f2fs at all.
+> It doesn't make any sense to have project inherit bits
+> for regular files, even though this won't cause any
+> problem, but it is better fix this.
 > 
-> Fix this by separating f2fs's i_flags from the ioctl bits and ext4's
-> i_flags.
+> Cc: Andreas Dilger <adilger@dilger.ca>
+> Signed-off-by: Wang Shilong <wshilong@ddn.com>
+> ---
+>  fs/f2fs/f2fs.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> In the process, un-reserve all "f2fs i_flags" that aren't actually
-> supported by f2fs.  This included various flags that were not settable
-> at all, as well as various flags that were settable by FS_IOC_SETFLAGS
-> but didn't actually do anything.
-> 
-> There's a slight chance we'll need to add some flag(s) back to
-> FS_IOC_SETFLAGS in order to avoid breaking users who expect f2fs to
-> accept some random flag(s).  But hopefully such users don't exist.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 06b89a9862ab..f02ebecb68ea 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2370,7 +2370,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+>  			   F2FS_PROJINHERIT_FL)
+>  
+>  /* Flags that are appropriate for regular files (all but dir-specific ones). */
+> -#define F2FS_REG_FLMASK		(~(F2FS_DIRSYNC_FL | F2FS_TOPDIR_FL))
+> +#define F2FS_REG_FLMASK 	(~(F2FS_DIRSYNC_FL | F2FS_TOPDIR_FL |\
+> +				   F2FS_PROJINHERIT_FL))
 
-Looks good to me, thanks for cleaning all mess up. :)
+Hi Shilong,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Could you please add below diff as ext4 did?
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index efdafa886510..295ca5ed42d9 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1759,6 +1759,9 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned
+long arg)
+
+ 	fsflags &= F2FS_GETTABLE_FS_FL;
+
++	if (S_ISREG(inode->i_mode))
++		fsflags &= ~FS_PROJINHERIT_FL;
++
+ 	return put_user(fsflags, (int __user *)arg);
+ }
 
 Thanks,
+
+>  
+>  /* Flags that are appropriate for non-directories/regular files. */
+>  #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
+> 
