@@ -2,133 +2,82 @@ Return-Path: <SRS0=4Diz=UM=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A34C31E45
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Jun 2019 12:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C802C31E45
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Jun 2019 17:11:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8254E208CA;
-	Thu, 13 Jun 2019 12:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2C2572063F;
+	Thu, 13 Jun 2019 17:11:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="h7/rH9L7";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Mf/pdUqd";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ln8FAC7K";
-	dkim=neutral (0-bit key) header.d=ddn.com header.i=@ddn.com header.b="Xz4hcMwq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8254E208CA
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OXZXPnI7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="kuuisjto";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="onyQ0TF6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2572063F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:MIME-Version:In-Reply-To:References:
-	Message-ID:Date:To:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=Xbs/t2slyCVuzU8xOl56YiAaFR8hj0WUt1lDoYW71A8=; b=h7/rH9L7MIEH12YYBQs9G3ixH
-	b6BluQ4mV8yd6uvKJNINtoLmH2I3cfhQPpqip3tf2ecanTMLEVT4FtYi9vpmUua9tvjmqODaI1uoC
-	HKIuEOCK6ur7zHpRKDv87Y+oagqcMhkJDQwgm9QWzzFHfrEC/65I/Abh5foaBDMg9Fc7M=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hbOWM-0008Cp-2T; Thu, 13 Jun 2019 12:07:58 +0000
+	id 1hbTG3-00016g-6O; Thu, 13 Jun 2019 17:11:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wshilong@ddn.com>) id 1hbOWK-0008Ca-V6
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 12:07:56 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hbTG2-00016S-5G
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 17:11:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :In-Reply-To:References:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=61kvRBY7Sb/+631jV1snlv0jDD40Yfex/sO0GjRVvQc=; b=Mf/pdUqd7uVMyFR61ny1zO3AIz
- 9euAlLdMrn/E9MLNuQng3ta4T2jh/975V3nDCc74bk8VWaM+1a0/EX9rRAnKN6Xd+Q7xawocthYf8
- 0dmmEefyOoVxKwWCsQPSgus9e4HgCVcbXxvS5W3oixUuaHNPtI/u5EM1/MppuzXlerV0=;
+ bh=/uCU4boO4FwxZ48pRrg97ehNZuy9nKVxGPu2/PuDTZc=; b=OXZXPnI75PvTAZ+hcKNGwkgbBq
+ w20gycOLVfGfjbWqdDn23LoZDm1PZaA1je9SxZ5FHP6DYu6bP0N0Xhb0QmXtH6IEx4cQZTs3T5yva
+ Qnydf4Ss5RqKuiTzUX8dm6dbiw54DQBtwg70o+p753yANLXPqnWDxdzP1/7We+M9AQHw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:In-Reply-To:
- References:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=61kvRBY7Sb/+631jV1snlv0jDD40Yfex/sO0GjRVvQc=; b=ln8FAC7KztDe+/3T9guKj49hVA
- LqUzHNJk5FcXG5vkI0Oz+INZzlbKtrwHSjGliHUmaoto7Ej4xr3jQckN1wgLNb57RCbuqE+YNn5if
- fXxNSscZoQjQu6+PiydV+QI0WTyz4bhb8u+uhVONZmijOZUCHR3iozCUyUwWHB7d8cyI=;
-Received: from mail-eopbgr820048.outbound.protection.outlook.com
- ([40.107.82.48] helo=NAM01-SN1-obe.outbound.protection.outlook.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=/uCU4boO4FwxZ48pRrg97ehNZuy9nKVxGPu2/PuDTZc=; b=kuuisjtoUx0r5wwYV5zebxhza+
+ QBwbcJtEkrSu1xuWeq8OHJQ9KVF9OF/1y2WGo9QwQC9bY/4UV6QQJcmYy6YCJAsQUo6f9G2k7bXVo
+ sd01UnxyFFNyPzQwfLY59mGfMrK9QT74NtDdaqkowivyqfsG4qXVDBXDkUsTILCp6K6o=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hbOWF-0051Sh-4b
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 12:07:55 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=61kvRBY7Sb/+631jV1snlv0jDD40Yfex/sO0GjRVvQc=;
- b=Xz4hcMwqUT3RdZ78k0vQg/b8Q8WQVQB3P6R/3akrwduWhm8THrzAZqjo2Y0IRioG9nxriQvjJDESN461MXAr6T/S7Gpsx7tFjBkyHN3OgKf4bgNdS2OBNYywqY12KffpVyxx4dOeOYC5QpufozxmXMISyQObT9yA6iiYvILxz50=
-Received: from MN2PR19MB3167.namprd19.prod.outlook.com (10.255.181.16) by
- MN2PR19MB2717.namprd19.prod.outlook.com (20.178.253.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.10; Thu, 13 Jun 2019 07:34:09 +0000
-Received: from MN2PR19MB3167.namprd19.prod.outlook.com
- ([fe80::dc80:b43c:bae8:93ac]) by MN2PR19MB3167.namprd19.prod.outlook.com
- ([fe80::dc80:b43c:bae8:93ac%6]) with mapi id 15.20.1987.010; Thu, 13 Jun 2019
- 07:34:09 +0000
-To: Chao Yu <yuchao0@huawei.com>, Wang Shilong <wangshilong1991@gmail.com>,
- "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>
-Thread-Topic: =?gb2312?B?u9i4tDogW1BBVENIIDIvMl0gZjJmczogb25seSBzZXQgcHJvamVjdCBpbmhl?=
- =?gb2312?Q?rit_bit_for_directory?=
-Thread-Index: AQHVHCDhgH+VuQHB00eQdWW5nGRidqaZLF6AgACVXgI=
-Date: Thu, 13 Jun 2019 07:34:09 +0000
-Message-ID:
- <MN2PR19MB3167496236BA4D366EAF5D36D4EF0@MN2PR19MB3167.namprd19.prod.outlook.com>
-References: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>
- <1559795545-17290-2-git-send-email-wshilong1991@gmail.com>,
- <73fb9e88-d3f5-9420-d6d8-82ff4354e4d6@huawei.com>
-In-Reply-To: <73fb9e88-d3f5-9420-d6d8-82ff4354e4d6@huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=wshilong@ddn.com; 
-x-originating-ip: [36.62.199.127]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 31fd6d66-302b-4882-fb19-08d6efd18621
-x-microsoft-antispam: BCL:0; PCL:0;
- RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);
- SRVR:MN2PR19MB2717; 
-x-ms-traffictypediagnostic: MN2PR19MB2717:
-x-microsoft-antispam-prvs: <MN2PR19MB271724AB294366F66A2208A9D4EF0@MN2PR19MB2717.namprd19.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0067A8BA2A
-x-forefront-antispam-report: SFV:NSPM;
- SFS:(10009020)(39850400004)(396003)(366004)(346002)(376002)(136003)(189003)(199004)(316002)(14444005)(7696005)(305945005)(3846002)(99286004)(256004)(33656002)(6116002)(224303003)(53546011)(6506007)(476003)(76176011)(81156014)(74316002)(9686003)(6436002)(8936002)(110136005)(53936002)(55016002)(11346002)(446003)(486006)(81166006)(71190400001)(71200400001)(26005)(7736002)(66066001)(25786009)(4326008)(5660300002)(186003)(102836004)(64756008)(66556008)(14454004)(86362001)(2501003)(52536014)(2906002)(66446008)(76116006)(66946007)(73956011)(2201001)(68736007)(66476007)(478600001);
- DIR:OUT; SFP:1101; SCL:1; SRVR:MN2PR19MB2717;
- H:MN2PR19MB3167.namprd19.prod.outlook.com; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; MX:1; A:1; 
-received-spf: None (protection.outlook.com: ddn.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GaybPuLU7fxcESrnlUxJPe/UqqFEQ4GicKxdpkttb2ZAHu1Rhx8cQhUx+T6o2DFs3C/H5Mo8T/y1yD7FpVoaTCwCXPY1pxHvtwMgDxnRVVLfQ9Thn9UIkViD4z7FyhKN2iCcchzjguUOh+sJJ1vO4rj+J169AFaiCd80BZEh2TAyveGLU1G8u/XzhQRh261gCGjjOs0yNRay9u/n/I8bsyz3kTIjOwH7Nukw+1bdA9meVBGuC46/61fWxi8YZIIFL0HiOMLcSo1ilzNU2JCP0z97cp6knVTTEiw3aZDVr3/XE5FlQbPDG6yTzFMwjE6Rz2xzxEj+lcjAiIrbQyC++LbfXJo/gzdAuJ1yg904Msg9mm7BurOsJuZnFscGKSxbrWIrPSrGQI6fN191rcVwxjXwMcXbld0cMKduuj2mDdg=
+ id 1hbTFy-00CCy4-14
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 17:11:25 +0000
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
+ [24.5.143.220])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 4CF022063F;
+ Thu, 13 Jun 2019 17:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1560445875;
+ bh=FBWMxYgWxiNu6570dn7YwBKk4jtYzSoOQbyjngxdWio=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=onyQ0TF6UDHFdLqBxVbYoaq8Vmetqt3XjxdkKH0dS0Gl8rOx6CanWFVNqTD5fhlPW
+ CmhHjh0De9XgMRHLmahJfqiLW0NbrhZWZXtRyjPTdqDxYTvTI0JiEhV0DUFGfC4ypv
+ Ebrd89F9zTt1JacElWfJJLosLuVPvJO62FCNDpVc=
+Date: Thu, 13 Jun 2019 10:11:13 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Satya Tangirala <satyat@google.com>
+Message-ID: <20190613171113.GB686@sol.localdomain>
+References: <20190605232837.31545-1-satyat@google.com>
+ <20190605232837.31545-6-satyat@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31fd6d66-302b-4882-fb19-08d6efd18621
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2019 07:34:09.5202 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wshilong@ddn.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR19MB2717
-X-Headers-End: 1hbOWF-0051Sh-4b
-Subject: [f2fs-dev] =?gb2312?b?u9i4tDogW1BBVENIIDIvMl0gZjJmczogb25seSBz?=
- =?gb2312?b?ZXQgcHJvamVjdCBpbmhlcml0IGJpdCBmb3IgZGlyZWN0b3J5?=
+Content-Disposition: inline
+In-Reply-To: <20190605232837.31545-6-satyat@google.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Headers-End: 1hbTFy-00CCy4-14
+Subject: Re: [f2fs-dev] [RFC PATCH v2 5/8] scsi: ufs: UFS crypto API
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -140,56 +89,199 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Wang Shilong via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Wang Shilong <wshilong@ddn.com>
-Cc: Andreas Dilger <adilger@dilger.ca>
+Cc: Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
+ linux-scsi@vger.kernel.org, Parshuram Raju Thombare <pthombar@cadence.com>,
+ Kuohong Wang <kuohong.wang@mediatek.com>,
+ Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Message-ID: <20190613073409.y6M-HhJkb3Rcsh3Bwcgu0cooBV6nqyq8D1rEpozchrI@z>
+Message-ID: <20190613171113.tBNg1Ic-zWPm7AcyYQi2mbecUHHwP_CHQRveIbJpPZg@z>
 
-SGkgQ2hhbywNCg0KIEkganVzdCBzZW50IGEgVjIsIGJ1dCBJIHRoaW5rIHdlJ2QgYmV0dGVyIGRv
-IHRoYXQgd2hlbiByZWFkaW5nIGlub2RlLCBmb3IgdHdvIHJlYXNvbnM6DQoNCjEpIG5vdCBvbmx5
-IEYyRlNfSU9DX0dFVEZMQUdTIG5lZWQgZmlsdGVyIGZsYWdzIGJ1dCBhbHNvIEYyRlNfSU9DX0ZT
-R0VUWEFUVFIgbmVlZCB0aGF0LCBzbyB0aGUgYW1lbmRlZCBwYXJ0cyBpcyBub3QgZW5vdWdoIElN
-Ty4NCg0KMikgZG9pbmcgdGhhdCBieSByZWFkaW5nIGlub2RlIGdpdmUgYSBiZW5lZml0IHRoYXQg
-d2UgY291bGQgY29ycmVjdCBvbiBkaXNrIGZsYWdzIGZvciByZWd1bGFyIGZpbGUgbmV4dCBkaXJ0
-eWluZyBpbm9kZSBoYXBwZW4uDQoNCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18NCreivP7IyzogQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWkuY29tPg0Kt6LLzcqxvOQ6IDIw
-MTnE6jbUwjEzyNUgMTQ6MzYNCsrVvP7IyzogV2FuZyBTaGlsb25nOyBsaW51eC1leHQ0QHZnZXIu
-a2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCrOty806
-IFdhbmcgU2hpbG9uZzsgQW5kcmVhcyBEaWxnZXINCtb3zOI6IFJlOiBbUEFUQ0ggMi8yXSBmMmZz
-OiBvbmx5IHNldCBwcm9qZWN0IGluaGVyaXQgYml0IGZvciBkaXJlY3RvcnkNCg0KT24gMjAxOS82
-LzYgMTI6MzIsIFdhbmcgU2hpbG9uZyB3cm90ZToNCj4gRnJvbTogV2FuZyBTaGlsb25nIDx3c2hp
-bG9uZ0BkZG4uY29tPg0KPg0KPiBJdCBkb2Vzbid0IG1ha2UgYW55IHNlbnNlIHRvIGhhdmUgcHJv
-amVjdCBpbmhlcml0IGJpdHMNCj4gZm9yIHJlZ3VsYXIgZmlsZXMsIGV2ZW4gdGhvdWdoIHRoaXMg
-d29uJ3QgY2F1c2UgYW55DQo+IHByb2JsZW0sIGJ1dCBpdCBpcyBiZXR0ZXIgZml4IHRoaXMuDQo+
-DQo+IENjOiBBbmRyZWFzIERpbGdlciA8YWRpbGdlckBkaWxnZXIuY2E+DQo+IFNpZ25lZC1vZmYt
-Ynk6IFdhbmcgU2hpbG9uZyA8d3NoaWxvbmdAZGRuLmNvbT4NCj4gLS0tDQo+ICBmcy9mMmZzL2Yy
-ZnMuaCB8IDMgKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0
-aW9uKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMvZjJmcy5o
-DQo+IGluZGV4IDA2Yjg5YTk4NjJhYi4uZjAyZWJlY2I2OGVhIDEwMDY0NA0KPiAtLS0gYS9mcy9m
-MmZzL2YyZnMuaA0KPiArKysgYi9mcy9mMmZzL2YyZnMuaA0KPiBAQCAtMjM3MCw3ICsyMzcwLDgg
-QEAgc3RhdGljIGlubGluZSB2b2lkIGYyZnNfY2hhbmdlX2JpdCh1bnNpZ25lZCBpbnQgbnIsIGNo
-YXIgKmFkZHIpDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICBGMkZTX1BST0pJTkhFUklUX0ZM
-KQ0KPg0KPiAgLyogRmxhZ3MgdGhhdCBhcmUgYXBwcm9wcmlhdGUgZm9yIHJlZ3VsYXIgZmlsZXMg
-KGFsbCBidXQgZGlyLXNwZWNpZmljIG9uZXMpLiAqLw0KPiAtI2RlZmluZSBGMkZTX1JFR19GTE1B
-U0sgICAgICAgICAgICAgICh+KEYyRlNfRElSU1lOQ19GTCB8IEYyRlNfVE9QRElSX0ZMKSkNCj4g
-KyNkZWZpbmUgRjJGU19SRUdfRkxNQVNLICAgICAgKH4oRjJGU19ESVJTWU5DX0ZMIHwgRjJGU19U
-T1BESVJfRkwgfFwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRjJGU19QUk9K
-SU5IRVJJVF9GTCkpDQoNCkhpIFNoaWxvbmcsDQoNCkNvdWxkIHlvdSBwbGVhc2UgYWRkIGJlbG93
-IGRpZmYgYXMgZXh0NCBkaWQ/DQoNCmRpZmYgLS1naXQgYS9mcy9mMmZzL2ZpbGUuYyBiL2ZzL2Yy
-ZnMvZmlsZS5jDQppbmRleCBlZmRhZmE4ODY1MTAuLjI5NWNhNWVkNDJkOSAxMDA2NDQNCi0tLSBh
-L2ZzL2YyZnMvZmlsZS5jDQorKysgYi9mcy9mMmZzL2ZpbGUuYw0KQEAgLTE3NTksNiArMTc1OSw5
-IEBAIHN0YXRpYyBpbnQgZjJmc19pb2NfZ2V0ZmxhZ3Moc3RydWN0IGZpbGUgKmZpbHAsIHVuc2ln
-bmVkDQpsb25nIGFyZykNCg0KICAgICAgICBmc2ZsYWdzICY9IEYyRlNfR0VUVEFCTEVfRlNfRkw7
-DQoNCisgICAgICAgaWYgKFNfSVNSRUcoaW5vZGUtPmlfbW9kZSkpDQorICAgICAgICAgICAgICAg
-ZnNmbGFncyAmPSB+RlNfUFJPSklOSEVSSVRfRkw7DQorDQogICAgICAgIHJldHVybiBwdXRfdXNl
-cihmc2ZsYWdzLCAoaW50IF9fdXNlciAqKWFyZyk7DQogfQ0KDQpUaGFua3MsDQoNCj4NCj4gIC8q
-IEZsYWdzIHRoYXQgYXJlIGFwcHJvcHJpYXRlIGZvciBub24tZGlyZWN0b3JpZXMvcmVndWxhciBm
-aWxlcy4gKi8NCj4gICNkZWZpbmUgRjJGU19PVEhFUl9GTE1BU0sgICAgKEYyRlNfTk9EVU1QX0ZM
-IHwgRjJGU19OT0FUSU1FX0ZMKQ0KPg0KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMt
-ZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0
-L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Hi Satya,
+
+On Wed, Jun 05, 2019 at 04:28:34PM -0700, Satya Tangirala wrote:
+> Introduce functions to manipulate UFS inline encryption hardware
+> in line with the JEDEC UFSHCI v2.1 specification and to work with the
+> block keyslot manager.
+> 
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> ---
+>  drivers/scsi/ufs/Kconfig         |  10 +
+>  drivers/scsi/ufs/Makefile        |   1 +
+>  drivers/scsi/ufs/ufshcd-crypto.c | 438 +++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd-crypto.h |  69 +++++
+>  4 files changed, 518 insertions(+)
+>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
+>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
+> 
+
+There is a build error after this patch because it adds code that uses the
+crypto fields in struct ufs_hba, but those aren't added until the next patch.
+
+It needs to be possible to compile a working kernel after each patch.
+Otherwise it breaks bisection.
+
+So, perhaps add the fields in this patch instead.
+
+> +++ b/drivers/scsi/ufs/ufshcd-crypto.c
+> @@ -0,0 +1,438 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2019 Google LLC
+> + */
+> +
+> +#include <crypto/algapi.h>
+> +
+> +#include "ufshcd.h"
+> +#include "ufshcd-crypto.h"
+> +
+> +bool ufshcd_hba_is_crypto_supported(struct ufs_hba *hba)
+> +{
+> +	return hba->crypto_capabilities.reg_val != 0;
+> +}
+> +
+> +bool ufshcd_is_crypto_enabled(struct ufs_hba *hba)
+> +{
+> +	return hba->caps & UFSHCD_CAP_CRYPTO;
+> +}
+> +
+> +static bool ufshcd_cap_idx_valid(struct ufs_hba *hba, unsigned int cap_idx)
+> +{
+> +	return cap_idx < hba->crypto_capabilities.num_crypto_cap;
+> +}
+> +
+> +#define NUM_KEYSLOTS(hba) (hba->crypto_capabilities.config_count + 1)
+> +
+> +bool ufshcd_keyslot_valid(struct ufs_hba *hba, unsigned int slot)
+> +{
+> +	/*
+> +	 * The actual number of configurations supported is (CFGC+1), so slot
+> +	 * numbers range from 0 to config_count inclusive.
+> +	 */
+> +	return slot < NUM_KEYSLOTS(hba);
+> +}
+
+Since ufshcd_hba_is_crypto_supported(), ufshcd_is_crypto_enabled(), and
+ufshcd_keyslot_valid() are one-liners, don't access any private structures, and
+are used outside this file including on the command submission path, how about
+making them inline functions in ufshcd-crypto.h?
+
+> +
+> +static int ufshcd_crypto_alg_find(void *hba_p,
+> +			   enum blk_crypt_mode_num crypt_mode,
+> +			   unsigned int data_unit_size)
+> +{
+
+Now that the concept of "crypto alg IDs" is gone, rename this to
+ufshcd_crypto_cap_find() and rename the crypto_alg_id variables to cap_idx.
+
+This would make it consistent with using cap_idx elsewhere in the code and avoid
+confusion with ufs_crypto_cap_entry::algorithm_id.
+
+> +
+> +static int ufshcd_crypto_keyslot_program(void *hba_p, const u8 *key,
+> +					 enum blk_crypt_mode_num crypt_mode,
+> +					 unsigned int data_unit_size,
+> +					 unsigned int slot)
+> +{
+> +	struct ufs_hba *hba = hba_p;
+> +	int err = 0;
+> +	u8 data_unit_mask;
+> +	union ufs_crypto_cfg_entry cfg;
+> +	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
+> +	int crypto_alg_id;
+> +
+> +	crypto_alg_id = ufshcd_crypto_alg_find(hba_p, crypt_mode,
+> +					       data_unit_size);
+> +
+> +	if (!ufshcd_is_crypto_enabled(hba) ||
+> +	    !ufshcd_keyslot_valid(hba, slot) ||
+> +	    !ufshcd_cap_idx_valid(hba, crypto_alg_id))
+> +		return -EINVAL;
+> +
+> +	data_unit_mask = get_data_unit_size_mask(data_unit_size);
+> +
+> +	if (!(data_unit_mask &
+> +	      hba->crypto_cap_array[crypto_alg_id].sdus_mask))
+> +		return -EINVAL;
+
+Nit: the 'if' expression with data_unit_mask fits on one line.
+
+> +static int ufshcd_crypto_keyslot_find(void *hba_p,
+> +				      const u8 *key,
+> +				      enum blk_crypt_mode_num crypt_mode,
+> +				      unsigned int data_unit_size)
+> +{
+> +	struct ufs_hba *hba = hba_p;
+> +	int err = 0;
+> +	int slot;
+> +	u8 data_unit_mask;
+> +	union ufs_crypto_cfg_entry cfg;
+> +	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
+> +	int crypto_alg_id;
+> +
+> +	crypto_alg_id = ufshcd_crypto_alg_find(hba_p, crypt_mode,
+> +					       data_unit_size);
+> +
+> +	if (!ufshcd_is_crypto_enabled(hba) ||
+> +	    !ufshcd_cap_idx_valid(hba, crypto_alg_id))
+> +		return -EINVAL;
+> +
+> +	data_unit_mask = get_data_unit_size_mask(data_unit_size);
+> +
+> +	if (!(data_unit_mask &
+> +	      hba->crypto_cap_array[crypto_alg_id].sdus_mask))
+> +		return -EINVAL;
+
+Same here.
+
+> +	for (slot = 0; slot < NUM_KEYSLOTS(hba); slot++) {
+> +		if ((cfg_arr[slot].config_enable &
+> +		     UFS_CRYPTO_CONFIGURATION_ENABLE) &&
+> +		    data_unit_mask == cfg_arr[slot].data_unit_size &&
+> +		    crypto_alg_id == cfg_arr[slot].crypto_cap_idx &&
+> +		    crypto_memneq(&cfg.crypto_key, cfg_arr[slot].crypto_key,
+> +				  UFS_CRYPTO_KEY_MAX_SIZE) == 0) {
+> +			memzero_explicit(&cfg, sizeof(cfg));
+> +			return slot;
+> +		}
+> +	}
+
+Nit: as I've mentioned before, I think !crypto_memneq() is easier to read than
+'crypto_memneq() == 0'.
+
+> +	hba->crypto_cap_array =
+> +		devm_kcalloc(hba->dev,
+> +			     hba->crypto_capabilities.num_crypto_cap,
+> +			     sizeof(hba->crypto_cap_array[0]),
+> +			     GFP_KERNEL);
+> +	if (!hba->crypto_cap_array) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	hba->crypto_cfgs =
+> +		devm_kcalloc(hba->dev,
+> +			     hba->crypto_capabilities.config_count + 1,
+> +			     sizeof(union ufs_crypto_cfg_entry),
+> +			     GFP_KERNEL);
+> +	if (!hba->crypto_cfgs) {
+> +		err = -ENOMEM;
+> +		goto out_cfg_mem;
+> +	}
+
+Nit: use 'sizeof(hba->crypto_cfgs[0])' rather than 'sizeof(union
+ufs_crypto_cfg_entry)', for consistency with the other array allocation.
+
+Thanks,
+
+- Eric
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
