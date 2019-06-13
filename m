@@ -1,35 +1,30 @@
-From: missioni@stmarta.org
-Subject: Security Notice. Someone have access to your system.
-Date: Thu, 13 Jun 2019 12:34:31 +0300
-Message-ID: <08EFC2FD-8A6F-3D25-B0BB-E9E674C00394@stmarta.org>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+From: Wang Shilong via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Subject: =?gb2312?b?u9i4tDogW1BBVENIIDIvMl0gZjJmczogb25seSBz?=
+ =?gb2312?b?ZXQgcHJvamVjdCBpbmhlcml0IGJpdCBmb3IgZGlyZWN0b3J5?=
+Date: Thu, 13 Jun 2019 07:34:09 +0000
+Message-ID: <MN2PR19MB3167496236BA4D366EAF5D36D4EF0@MN2PR19MB3167.namprd19.prod.outlook.com>
+References: <1559795545-17290-1-git-send-email-wshilong1991@gmail.com>
+ <1559795545-17290-2-git-send-email-wshilong1991@gmail.com>,
+ <73fb9e88-d3f5-9420-d6d8-82ff4354e4d6@huawei.com>
+Reply-To: Wang Shilong <wshilong@ddn.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <missioni@stmarta.org>) id 1hbMRx-0001vC-LU
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 09:55:17 +0000
-Received: from jolietjake.heavybase.org ([176.9.53.144])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (envelope-from <wshilong@ddn.com>) id 1hbOWK-0008Ca-V6
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 12:07:56 +0000
+Received: from mail-eopbgr820048.outbound.protection.outlook.com
+ ([40.107.82.48] helo=NAM01-SN1-obe.outbound.protection.outlook.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hbMRt-00BMiF-LX
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 09:55:15 +0000
-Received: from localhost (localhost.localdomain [127.0.0.1])
- by jolietjake.heavybase.org (Postfix) with ESMTP id D485026877C3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 13 Jun 2019 11:35:42 +0200 (CEST)
-Received: from jolietjake.heavybase.org ([127.0.0.1])
- by localhost (jolietjake.heavybase.org [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id bnhhZzbaFHjg
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 13 Jun 2019 11:35:42 +0200 (CEST)
-Received: from [127.0.0.1] (unknown [191.53.192.153])
- (Authenticated sender: missioni@stmarta.org)
- by jolietjake.heavybase.org (Postfix) with ESMTPSA id 8EF4526877AD
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 13 Jun 2019 11:35:40 +0200 (CEST)
+ id 1hbOWF-0051Sh-4b
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Jun 2019 12:07:55 +0000
+In-Reply-To: <73fb9e88-d3f5-9420-d6d8-82ff4354e4d6@huawei.com>
+Content-Language: zh-CN
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,41 +34,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>, Wang Shilong <wangshilong1991@gmail.com>, "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: Andreas Dilger <adilger@dilger.ca>
 
-Hello!
-
-I am a hacker who has access to your operating system.
-I also have full access to your account.
-
-I've been watching you for a few months now.
-The fact is that you were infected with malware through an adult site that you visited.
-
-If you are not familiar with this, I will explain.
-Trojan Virus gives me full access and control over a computer or other device.
-This means that I can see everything on your screen, turn on the camera and microphone, but you do not know about it.
-
-I also have access to all your contacts and all your correspondence.
-
-Why your antivirus did not detect malware?
-Answer: My malware uses the driver, I update its signatures every 4 hours so that your antivirus is silent.
-
-I made a video showing how you satisfy yourself in the left half of the screen, and in the right half you see the video that you watched.
-With one click of the mouse, I can send this video to all your emails and contacts on social networks.
-I can also post access to all your e-mail correspondence and messengers that you use.
-
-If you want to prevent this,
-transfer the amount of $500 to my bitcoin address (if you do not know how to do this, write to Google: "Buy Bitcoin").
-
-My bitcoin address (BTC Wallet) is:  3CVy2H3aHGYBsexdGo7DEdLCgu1ZR9VTfM
-
-After receiving the payment, I will delete the video and you will never hear me again.
-I give you 50 hours (more than 2 days) to pay.
-I have a notice reading this letter, and the timer will work when you see this letter.
-
-Filing a complaint somewhere does not make sense because this email cannot be tracked like my bitcoin address.
-I do not make any mistakes.
-
-If I find that you have shared this message with someone else, the video will be immediately distributed.
-
-Best regards!
+SGkgQ2hhbywNCg0KIEkganVzdCBzZW50IGEgVjIsIGJ1dCBJIHRoaW5rIHdlJ2QgYmV0dGVyIGRv
+IHRoYXQgd2hlbiByZWFkaW5nIGlub2RlLCBmb3IgdHdvIHJlYXNvbnM6DQoNCjEpIG5vdCBvbmx5
+IEYyRlNfSU9DX0dFVEZMQUdTIG5lZWQgZmlsdGVyIGZsYWdzIGJ1dCBhbHNvIEYyRlNfSU9DX0ZT
+R0VUWEFUVFIgbmVlZCB0aGF0LCBzbyB0aGUgYW1lbmRlZCBwYXJ0cyBpcyBub3QgZW5vdWdoIElN
+Ty4NCg0KMikgZG9pbmcgdGhhdCBieSByZWFkaW5nIGlub2RlIGdpdmUgYSBiZW5lZml0IHRoYXQg
+d2UgY291bGQgY29ycmVjdCBvbiBkaXNrIGZsYWdzIGZvciByZWd1bGFyIGZpbGUgbmV4dCBkaXJ0
+eWluZyBpbm9kZSBoYXBwZW4uDQoNCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18NCreivP7IyzogQ2hhbyBZdSA8eXVjaGFvMEBodWF3ZWkuY29tPg0Kt6LLzcqxvOQ6IDIw
+MTnE6jbUwjEzyNUgMTQ6MzYNCsrVvP7IyzogV2FuZyBTaGlsb25nOyBsaW51eC1leHQ0QHZnZXIu
+a2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCrOty806
+IFdhbmcgU2hpbG9uZzsgQW5kcmVhcyBEaWxnZXINCtb3zOI6IFJlOiBbUEFUQ0ggMi8yXSBmMmZz
+OiBvbmx5IHNldCBwcm9qZWN0IGluaGVyaXQgYml0IGZvciBkaXJlY3RvcnkNCg0KT24gMjAxOS82
+LzYgMTI6MzIsIFdhbmcgU2hpbG9uZyB3cm90ZToNCj4gRnJvbTogV2FuZyBTaGlsb25nIDx3c2hp
+bG9uZ0BkZG4uY29tPg0KPg0KPiBJdCBkb2Vzbid0IG1ha2UgYW55IHNlbnNlIHRvIGhhdmUgcHJv
+amVjdCBpbmhlcml0IGJpdHMNCj4gZm9yIHJlZ3VsYXIgZmlsZXMsIGV2ZW4gdGhvdWdoIHRoaXMg
+d29uJ3QgY2F1c2UgYW55DQo+IHByb2JsZW0sIGJ1dCBpdCBpcyBiZXR0ZXIgZml4IHRoaXMuDQo+
+DQo+IENjOiBBbmRyZWFzIERpbGdlciA8YWRpbGdlckBkaWxnZXIuY2E+DQo+IFNpZ25lZC1vZmYt
+Ynk6IFdhbmcgU2hpbG9uZyA8d3NoaWxvbmdAZGRuLmNvbT4NCj4gLS0tDQo+ICBmcy9mMmZzL2Yy
+ZnMuaCB8IDMgKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0
+aW9uKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMvZjJmcy5o
+DQo+IGluZGV4IDA2Yjg5YTk4NjJhYi4uZjAyZWJlY2I2OGVhIDEwMDY0NA0KPiAtLS0gYS9mcy9m
+MmZzL2YyZnMuaA0KPiArKysgYi9mcy9mMmZzL2YyZnMuaA0KPiBAQCAtMjM3MCw3ICsyMzcwLDgg
+QEAgc3RhdGljIGlubGluZSB2b2lkIGYyZnNfY2hhbmdlX2JpdCh1bnNpZ25lZCBpbnQgbnIsIGNo
+YXIgKmFkZHIpDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICBGMkZTX1BST0pJTkhFUklUX0ZM
+KQ0KPg0KPiAgLyogRmxhZ3MgdGhhdCBhcmUgYXBwcm9wcmlhdGUgZm9yIHJlZ3VsYXIgZmlsZXMg
+KGFsbCBidXQgZGlyLXNwZWNpZmljIG9uZXMpLiAqLw0KPiAtI2RlZmluZSBGMkZTX1JFR19GTE1B
+U0sgICAgICAgICAgICAgICh+KEYyRlNfRElSU1lOQ19GTCB8IEYyRlNfVE9QRElSX0ZMKSkNCj4g
+KyNkZWZpbmUgRjJGU19SRUdfRkxNQVNLICAgICAgKH4oRjJGU19ESVJTWU5DX0ZMIHwgRjJGU19U
+T1BESVJfRkwgfFwNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgRjJGU19QUk9K
+SU5IRVJJVF9GTCkpDQoNCkhpIFNoaWxvbmcsDQoNCkNvdWxkIHlvdSBwbGVhc2UgYWRkIGJlbG93
+IGRpZmYgYXMgZXh0NCBkaWQ/DQoNCmRpZmYgLS1naXQgYS9mcy9mMmZzL2ZpbGUuYyBiL2ZzL2Yy
+ZnMvZmlsZS5jDQppbmRleCBlZmRhZmE4ODY1MTAuLjI5NWNhNWVkNDJkOSAxMDA2NDQNCi0tLSBh
+L2ZzL2YyZnMvZmlsZS5jDQorKysgYi9mcy9mMmZzL2ZpbGUuYw0KQEAgLTE3NTksNiArMTc1OSw5
+IEBAIHN0YXRpYyBpbnQgZjJmc19pb2NfZ2V0ZmxhZ3Moc3RydWN0IGZpbGUgKmZpbHAsIHVuc2ln
+bmVkDQpsb25nIGFyZykNCg0KICAgICAgICBmc2ZsYWdzICY9IEYyRlNfR0VUVEFCTEVfRlNfRkw7
+DQoNCisgICAgICAgaWYgKFNfSVNSRUcoaW5vZGUtPmlfbW9kZSkpDQorICAgICAgICAgICAgICAg
+ZnNmbGFncyAmPSB+RlNfUFJPSklOSEVSSVRfRkw7DQorDQogICAgICAgIHJldHVybiBwdXRfdXNl
+cihmc2ZsYWdzLCAoaW50IF9fdXNlciAqKWFyZyk7DQogfQ0KDQpUaGFua3MsDQoNCj4NCj4gIC8q
+IEZsYWdzIHRoYXQgYXJlIGFwcHJvcHJpYXRlIGZvciBub24tZGlyZWN0b3JpZXMvcmVndWxhciBm
+aWxlcy4gKi8NCj4gICNkZWZpbmUgRjJGU19PVEhFUl9GTE1BU0sgICAgKEYyRlNfTk9EVU1QX0ZM
+IHwgRjJGU19OT0FUSU1FX0ZMKQ0KPg0KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMt
+ZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0
+L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
