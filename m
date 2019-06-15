@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C55EC31E50
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 15 Jun 2019 15:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E678C31E50
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 15 Jun 2019 15:11:54 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CFC7920866;
-	Sat, 15 Jun 2019 15:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 003E520866;
+	Sat, 15 Jun 2019 15:11:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CXBUPvjR";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="eQhxR83o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC7920866
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DYTze6Sf";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VJJ+ALtG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003E520866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hcAJw-0008F5-62; Sat, 15 Jun 2019 15:10:20 +0000
+	id 1hcALR-0008Ku-Au; Sat, 15 Jun 2019 15:11:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1hcAJu-0008Ey-Ih
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 15 Jun 2019 15:10:18 +0000
+ (envelope-from <tytso@mit.edu>) id 1hcALP-0008Kb-Pc
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 15 Jun 2019 15:11:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=d9pUChXMuKXUNVdBCEquk4tRYR687r22kgyOt6lx+x4=; b=CXBUPvjR4PEjWZ5/Dbzn5F5Ipb
- a1BdVK5vUNzlzkAp94gVhf1WPoE80eSkrKB5BOAL71jRVAsKGl0cfjRkjpA/nGKpjexbzvRguUP0D
- 6/ym0AMdc++TNOyO8PQ1AnD90zgaIlihjAScRKfu7VzTAs1hBRWD1Q601b0r/RElpYRc=;
+ bh=uAzO6KPfAJjObseDieebH2ihK0mkWfkMCAPvt0uuRBM=; b=DYTze6SfyRb6Ob1O8Dh8YE+aTV
+ YU6BF/WvulE5xQkq/SCRc2eE/kS6wMZJfEQ0cofhaICngZIw8mYjiu95L3IqoPTTi/aueCUMnUSpG
+ a1kxSkUq38UqJT7On1nxNybYi4LhBW12iU2cWbnoTztf/vJC88eF73qVCUJLFCDcevsg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,35 +44,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=d9pUChXMuKXUNVdBCEquk4tRYR687r22kgyOt6lx+x4=; b=eQhxR83oZtUVaN8RS/tAGaxXyC
- oUc+fhWieNF4H4/Ku2h3BWaV4TSmjUen764Pj60aSDtJFh19QWUh8Oe4I47MfPLeM4kGU1aODqvAs
- eID2uBTC+tnqQv166xbFWLasHBEA8GFxtITY1dqfA7k6MW/ZaBkxE+gIX7ThjidGM0NI=;
+ bh=uAzO6KPfAJjObseDieebH2ihK0mkWfkMCAPvt0uuRBM=; b=VJJ+ALtGa1xDqt7N4e4q7+QWpb
+ k3SG1m+TvGdNvAC+H8d/qplzNaZdEnK+tKvBVwEl5itlbtjkUb7ISYFdGeakfjWnFr/x42vMHh780
+ O9o0WgnN8WXevrUPE0W3mue+yYhaVhU4i49cUESEmz+9EWBVA0UYE3S3Il4j4IJEhuB8=;
 Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hcAJt-00FWcR-Dm
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 15 Jun 2019 15:10:18 +0000
+ id 1hcALO-009MLY-MH
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 15 Jun 2019 15:11:52 +0000
 Received: from callcc.thunk.org (rrcs-74-87-88-165.west.biz.rr.com
  [74.87.88.165]) (authenticated bits=0)
  (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x5FFA5QC006349
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x5FFBaW6006780
  (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sat, 15 Jun 2019 11:10:06 -0400
+ Sat, 15 Jun 2019 11:11:37 -0400
 Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 919B5420484; Sat, 15 Jun 2019 11:10:05 -0400 (EDT)
-Date: Sat, 15 Jun 2019 11:10:05 -0400
+ id 29140420484; Sat, 15 Jun 2019 11:11:36 -0400 (EDT)
+Date: Sat, 15 Jun 2019 11:11:36 -0400
 From: "Theodore Ts'o" <tytso@mit.edu>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20190615151005.GL6142@mit.edu>
+Message-ID: <20190615151136.GM6142@mit.edu>
 References: <20190606155205.2872-1-ebiggers@kernel.org>
- <20190606155205.2872-12-ebiggers@kernel.org>
+ <20190606155205.2872-13-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20190606155205.2872-12-ebiggers@kernel.org>
+In-Reply-To: <20190606155205.2872-13-ebiggers@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1hcAJt-00FWcR-Dm
-Subject: Re: [f2fs-dev] [PATCH v4 11/16] fs-verity: implement
- FS_IOC_MEASURE_VERITY ioctl
+X-Headers-End: 1hcALO-009MLY-MH
+Subject: Re: [f2fs-dev] [PATCH v4 12/16] fs-verity: add SHA-512 support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,19 +92,15 @@ Cc: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-api@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Message-ID: <20190615151005.RCQj6iGJWOHP5qAgUf7iCroP7AReIeNThVV246kxHa8@z>
+Message-ID: <20190615151136.V_QybolfzNdbS4NM9hlkTN5C4YxXTpMe9Nr6Kj6DNDs@z>
 
-On Thu, Jun 06, 2019 at 08:52:00AM -0700, Eric Biggers wrote:
+On Thu, Jun 06, 2019 at 08:52:01AM -0700, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> Add a function for filesystems to call to implement the
-> FS_IOC_MEASURE_VERITY ioctl.  This ioctl retrieves the file measurement
-> that fs-verity calculated for the given file and is enforcing for reads;
-> i.e., reads that don't match this hash will fail.  This ioctl can be
-> used for authentication or logging of file measurements in userspace.
-> 
-> See the "FS_IOC_MEASURE_VERITY" section of
-> Documentation/filesystems/fsverity.rst for the documentation.
+> Add SHA-512 support to fs-verity.  This is primarily a demonstration of
+> the trivial changes needed to support a new hash algorithm in fs-verity;
+> most users will still use SHA-256, due to the smaller space required to
+> store the hashes.  But some users may prefer SHA-512.
 > 
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 
