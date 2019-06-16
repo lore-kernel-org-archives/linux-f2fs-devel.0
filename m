@@ -1,23 +1,36 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: [PATCH V3 2/7] Integrate read callbacks into Ext4 and
- F2FS
-Date: Sun, 16 Jun 2019 21:38:08 +0530
-Message-ID: <20190616160813.24464-3-chandan@linux.ibm.com>
+Subject: [PATCH V3 5/7] ext4: Wire up ext4_readpage[s] to use
+ mpage_readpage[s]
+Date: Sun, 16 Jun 2019 21:38:11 +0530
+Message-ID: <20190616160813.24464-6-chandan@linux.ibm.com>
 References: <20190616160813.24464-1-chandan@linux.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hcXhk-00046d-Lm
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 16:08:28 +0000
+ (envelope-from <chandan@linux.ibm.com>) id 1hcXhl-00046f-Rf
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 16:08:29 +0000
 Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hcXhg-00GiJK-3e
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 16:08:26 +0000
+ id 1hcXhk-00BBjv-E1
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 16:08:30 +0000
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
+ x5GG6R9j070574
+ for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 16 Jun 2019 12:08:21 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2t5dsqf3rw-1
+ (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 16 Jun 2019 12:08:21 -0400
+Received: from localhost
+ by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ Violators will be prosecuted
+ for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
+ Sun, 16 Jun 2019 17:08:20 +0100
 In-Reply-To: <20190616160813.24464-1-chandan@linux.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -31,422 +44,345 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
 Cc: hch@infradead.org, tytso@mit.edu, ebiggers@kernel.org, Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca, jaegeuk@kernel.org
 
-This commit gets Ext4 and F2FS to make use of read callbacks API to
-perform decryption of file data read from the disk.
----
- fs/crypto/bio.c             |  30 +--------
- fs/crypto/crypto.c          |   1 +
- fs/crypto/fscrypt_private.h |   3 +
- fs/ext4/readpage.c          |  29 +++------
- fs/f2fs/data.c              | 124 +++++++-----------------------------
- fs/f2fs/super.c             |   9 +--
- fs/read_callbacks.c         |   1 -
- include/linux/fscrypt.h     |  18 ------
- 8 files changed, 40 insertions(+), 175 deletions(-)
+Now that do_mpage_readpage() is "post read process" aware, this commit
+gets ext4_readpage[s] to use mpage_readpage[s] and deletes ext4's
+readpage.c since the associated functionality is not required anymore.
 
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index f677ff93d464..4076d704e2e4 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -27,7 +27,7 @@
- #include <linux/read_callbacks.h>
- #include "fscrypt_private.h"
+Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
+---
+ fs/ext4/Makefile   |   2 +-
+ fs/ext4/inode.c    |   5 +-
+ fs/ext4/readpage.c | 286 ---------------------------------------------
+ 3 files changed, 3 insertions(+), 290 deletions(-)
+ delete mode 100644 fs/ext4/readpage.c
+
+diff --git a/fs/ext4/Makefile b/fs/ext4/Makefile
+index 8fdfcd3c3e04..7c38803a808d 100644
+--- a/fs/ext4/Makefile
++++ b/fs/ext4/Makefile
+@@ -8,7 +8,7 @@ obj-$(CONFIG_EXT4_FS) += ext4.o
+ ext4-y	:= balloc.o bitmap.o block_validity.o dir.o ext4_jbd2.o extents.o \
+ 		extents_status.o file.o fsmap.o fsync.o hash.o ialloc.o \
+ 		indirect.o inline.o inode.o ioctl.o mballoc.o migrate.o \
+-		mmp.o move_extent.o namei.o page-io.o readpage.o resize.o \
++		mmp.o move_extent.o namei.o page-io.o resize.o \
+ 		super.o symlink.o sysfs.o xattr.o xattr_trusted.o xattr_user.o
  
--static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
-+static void fscrypt_decrypt_bio(struct bio *bio)
- {
- 	struct bio_vec *bv;
- 	struct bvec_iter_all iter_all;
-@@ -38,37 +38,9 @@ static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
- 							   bv->bv_offset);
- 		if (ret)
- 			SetPageError(page);
--		else if (done)
--			SetPageUptodate(page);
--		if (done)
--			unlock_page(page);
- 	}
+ ext4-$(CONFIG_EXT4_FS_POSIX_ACL)	+= acl.o
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index f65357735a1a..60010b76b566 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3363,8 +3363,7 @@ static int ext4_readpage(struct file *file, struct page *page)
+ 		ret = ext4_readpage_inline(inode, page);
+ 
+ 	if (ret == -EAGAIN)
+-		return ext4_mpage_readpages(page->mapping, NULL, page, 1,
+-						false);
++		return mpage_readpage(page, ext4_get_block);
+ 
+ 	return ret;
+ }
+@@ -3379,7 +3378,7 @@ ext4_readpages(struct file *file, struct address_space *mapping,
+ 	if (ext4_has_inline_data(inode))
+ 		return 0;
+ 
+-	return ext4_mpage_readpages(mapping, pages, NULL, nr_pages, true);
++	return mpage_readpages(mapping, pages, nr_pages, ext4_get_block);
  }
  
--void fscrypt_decrypt_bio(struct bio *bio)
--{
--	__fscrypt_decrypt_bio(bio, false);
--}
--EXPORT_SYMBOL(fscrypt_decrypt_bio);
--
--static void completion_pages(struct work_struct *work)
--{
--	struct fscrypt_ctx *ctx = container_of(work, struct fscrypt_ctx, work);
--	struct bio *bio = ctx->bio;
--
--	__fscrypt_decrypt_bio(bio, true);
--	fscrypt_release_ctx(ctx);
--	bio_put(bio);
--}
--
--void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
--{
--	INIT_WORK(&ctx->work, completion_pages);
--	ctx->bio = bio;
--	fscrypt_enqueue_decrypt_work(&ctx->work);
--}
--EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
--
- void fscrypt_decrypt_work(struct work_struct *work)
- {
- 	struct read_callbacks_ctx *ctx =
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 45c3d0427fb2..e0aa20cfcaa7 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -54,6 +54,7 @@ struct kmem_cache *fscrypt_info_cachep;
- 
- void fscrypt_enqueue_decrypt_work(struct work_struct *work)
- {
-+	INIT_WORK(work, fscrypt_decrypt_work);
- 	queue_work(fscrypt_read_workqueue, work);
- }
- EXPORT_SYMBOL(fscrypt_enqueue_decrypt_work);
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 8978eec9d766..0bd65921efbf 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -113,6 +113,9 @@ static inline bool fscrypt_valid_enc_modes(u32 contents_mode,
- 	return false;
- }
- 
-+/* bio.c */
-+void fscrypt_decrypt_work(struct work_struct *work);
-+
- /* crypto.c */
- extern struct kmem_cache *fscrypt_info_cachep;
- extern int fscrypt_initialize(unsigned int cop_flags);
+ static void ext4_invalidatepage(struct page *page, unsigned int offset,
 diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index c916017db334..652796b95545 100644
+deleted file mode 100644
+index 652796b95545..000000000000
 --- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -44,6 +44,7 @@
- #include <linux/backing-dev.h>
- #include <linux/pagevec.h>
- #include <linux/cleancache.h>
-+#include <linux/read_callbacks.h>
- 
- #include "ext4.h"
- 
-@@ -73,14 +74,9 @@ static void mpage_end_io(struct bio *bio)
- 	struct bio_vec *bv;
- 	struct bvec_iter_all iter_all;
- 
--	if (ext4_bio_encrypted(bio)) {
--		if (bio->bi_status) {
--			fscrypt_release_ctx(bio->bi_private);
++++ /dev/null
+@@ -1,286 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * linux/fs/ext4/readpage.c
+- *
+- * Copyright (C) 2002, Linus Torvalds.
+- * Copyright (C) 2015, Google, Inc.
+- *
+- * This was originally taken from fs/mpage.c
+- *
+- * The intent is the ext4_mpage_readpages() function here is intended
+- * to replace mpage_readpages() in the general case, not just for
+- * encrypted files.  It has some limitations (see below), where it
+- * will fall back to read_block_full_page(), but these limitations
+- * should only be hit when page_size != block_size.
+- *
+- * This will allow us to attach a callback function to support ext4
+- * encryption.
+- *
+- * If anything unusual happens, such as:
+- *
+- * - encountering a page which has buffers
+- * - encountering a page which has a non-hole after a hole
+- * - encountering a page with non-contiguous blocks
+- *
+- * then this code just gives up and calls the buffer_head-based read function.
+- * It does handle a page which has holes at the end - that is a common case:
+- * the end-of-file on blocksize < PAGE_SIZE setups.
+- *
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/export.h>
+-#include <linux/mm.h>
+-#include <linux/kdev_t.h>
+-#include <linux/gfp.h>
+-#include <linux/bio.h>
+-#include <linux/fs.h>
+-#include <linux/buffer_head.h>
+-#include <linux/blkdev.h>
+-#include <linux/highmem.h>
+-#include <linux/prefetch.h>
+-#include <linux/mpage.h>
+-#include <linux/writeback.h>
+-#include <linux/backing-dev.h>
+-#include <linux/pagevec.h>
+-#include <linux/cleancache.h>
+-#include <linux/read_callbacks.h>
+-
+-#include "ext4.h"
+-
+-static inline bool ext4_bio_encrypted(struct bio *bio)
+-{
+-#ifdef CONFIG_FS_ENCRYPTION
+-	return unlikely(bio->bi_private != NULL);
+-#else
+-	return false;
+-#endif
+-}
+-
+-/*
+- * I/O completion handler for multipage BIOs.
+- *
+- * The mpage code never puts partial pages into a BIO (except for end-of-file).
+- * If a page does not map to a contiguous run of blocks then it simply falls
+- * back to block_read_full_page().
+- *
+- * Why is this?  If a page's completion depends on a number of different BIOs
+- * which can complete in any order (or at the same time) then determining the
+- * status of that page is hard.  See end_buffer_async_read() for the details.
+- * There is no point in duplicating all that complexity.
+- */
+-static void mpage_end_io(struct bio *bio)
+-{
+-	struct bio_vec *bv;
+-	struct bvec_iter_all iter_all;
+-
+-	if (read_callbacks_end_bio(bio))
+-		return;
+-
+-	bio_for_each_segment_all(bv, bio, iter_all) {
+-		struct page *page = bv->bv_page;
+-
+-		if (!bio->bi_status) {
+-			SetPageUptodate(page);
 -		} else {
--			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
--			return;
--		}
--	}
-+	if (read_callbacks_end_bio(bio))
-+		return;
-+
- 	bio_for_each_segment_all(bv, bio, iter_all) {
- 		struct page *page = bv->bv_page;
- 
-@@ -241,24 +237,19 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 			bio = NULL;
- 		}
- 		if (bio == NULL) {
--			struct fscrypt_ctx *ctx = NULL;
--
--			if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)) {
--				ctx = fscrypt_get_ctx(GFP_NOFS);
--				if (IS_ERR(ctx))
--					goto set_error_page;
--			}
- 			bio = bio_alloc(GFP_KERNEL,
- 				min_t(int, nr_pages, BIO_MAX_PAGES));
--			if (!bio) {
--				if (ctx)
--					fscrypt_release_ctx(ctx);
-+			if (!bio)
-+				goto set_error_page;
-+
-+			if (read_callbacks_setup(inode, bio, NULL)) {
-+				bio_put(bio);
- 				goto set_error_page;
- 			}
-+
- 			bio_set_dev(bio, bdev);
- 			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
- 			bio->bi_end_io = mpage_end_io;
--			bio->bi_private = ctx;
- 			bio_set_op_attrs(bio, REQ_OP_READ,
- 						is_readahead ? REQ_RAHEAD : 0);
- 		}
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a546ac8685ea..23b34399d809 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -18,6 +18,7 @@
- #include <linux/uio.h>
- #include <linux/cleancache.h>
- #include <linux/sched/signal.h>
-+#include <linux/read_callbacks.h>
- 
- #include "f2fs.h"
- #include "node.h"
-@@ -25,11 +26,6 @@
- #include "trace.h"
- #include <trace/events/f2fs.h>
- 
--#define NUM_PREALLOC_POST_READ_CTXS	128
--
--static struct kmem_cache *bio_post_read_ctx_cache;
--static mempool_t *bio_post_read_ctx_pool;
--
- static bool __is_cp_guaranteed(struct page *page)
- {
- 	struct address_space *mapping = page->mapping;
-@@ -69,18 +65,19 @@ static enum count_type __read_io_type(struct page *page)
- 	return F2FS_RD_DATA;
- }
- 
--/* postprocessing steps for read bios */
--enum bio_post_read_step {
--	STEP_INITIAL = 0,
--	STEP_DECRYPT,
--};
-+static void f2fs_end_page_op(struct bio *bio, struct page *page)
-+{
-+	BUG_ON(!PageLocked(page));
- 
--struct bio_post_read_ctx {
--	struct bio *bio;
--	struct work_struct work;
--	unsigned int cur_step;
--	unsigned int enabled_steps;
--};
-+	/* PG_error was set if any post_read step failed */
-+	if (bio->bi_status || PageError(page)) {
-+		ClearPageUptodate(page);
-+		/* will re-read again later */
-+		ClearPageError(page);
-+	}
-+
-+	dec_page_count(F2FS_P_SB(page), __read_io_type(page));
-+}
- 
- static void __read_end_io(struct bio *bio)
- {
-@@ -91,53 +88,15 @@ static void __read_end_io(struct bio *bio)
- 	bio_for_each_segment_all(bv, bio, iter_all) {
- 		page = bv->bv_page;
- 
--		/* PG_error was set if any post_read step failed */
--		if (bio->bi_status || PageError(page)) {
 -			ClearPageUptodate(page);
--			/* will re-read again later */
--			ClearPageError(page);
--		} else {
-+		if (!bio->bi_status && !PageError(page))
- 			SetPageUptodate(page);
+-			SetPageError(page);
 -		}
--		dec_page_count(F2FS_P_SB(page), __read_io_type(page));
 -		unlock_page(page);
 -	}
--	if (bio->bi_private)
--		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
+-
 -	bio_put(bio);
 -}
- 
--static void bio_post_read_processing(struct bio_post_read_ctx *ctx);
 -
--static void decrypt_work(struct work_struct *work)
+-int ext4_mpage_readpages(struct address_space *mapping,
+-			 struct list_head *pages, struct page *page,
+-			 unsigned nr_pages, bool is_readahead)
 -{
--	struct bio_post_read_ctx *ctx =
--		container_of(work, struct bio_post_read_ctx, work);
+-	struct bio *bio = NULL;
+-	sector_t last_block_in_bio = 0;
 -
--	fscrypt_decrypt_bio(ctx->bio);
+-	struct inode *inode = mapping->host;
+-	const unsigned blkbits = inode->i_blkbits;
+-	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
+-	const unsigned blocksize = 1 << blkbits;
+-	sector_t block_in_file;
+-	sector_t last_block;
+-	sector_t last_block_in_file;
+-	sector_t blocks[MAX_BUF_PER_PAGE];
+-	unsigned page_block;
+-	struct block_device *bdev = inode->i_sb->s_bdev;
+-	int length;
+-	unsigned relative_block = 0;
+-	struct ext4_map_blocks map;
 -
--	bio_post_read_processing(ctx);
--}
-+		f2fs_end_page_op(bio, page);
- 
--static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
--{
--	switch (++ctx->cur_step) {
--	case STEP_DECRYPT:
--		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
--			INIT_WORK(&ctx->work, decrypt_work);
--			fscrypt_enqueue_decrypt_work(&ctx->work);
--			return;
+-	map.m_pblk = 0;
+-	map.m_lblk = 0;
+-	map.m_len = 0;
+-	map.m_flags = 0;
+-
+-	for (; nr_pages; nr_pages--) {
+-		int fully_mapped = 1;
+-		unsigned first_hole = blocks_per_page;
+-
+-		if (pages) {
+-			page = lru_to_page(pages);
+-
+-			prefetchw(&page->flags);
+-			list_del(&page->lru);
+-			if (add_to_page_cache_lru(page, mapping, page->index,
+-				  readahead_gfp_mask(mapping)))
+-				goto next_page;
 -		}
--		ctx->cur_step++;
--		/* fall-through */
--	default:
--		__read_end_io(ctx->bio);
-+		unlock_page(page);
- 	}
--}
- 
--static bool f2fs_bio_post_read_required(struct bio *bio)
--{
--	return bio->bi_private && !bio->bi_status;
-+	bio_put(bio);
- }
- 
- static void f2fs_read_end_io(struct bio *bio)
-@@ -148,13 +107,8 @@ static void f2fs_read_end_io(struct bio *bio)
- 		bio->bi_status = BLK_STS_IOERR;
- 	}
- 
--	if (f2fs_bio_post_read_required(bio)) {
--		struct bio_post_read_ctx *ctx = bio->bi_private;
 -
--		ctx->cur_step = STEP_INITIAL;
--		bio_post_read_processing(ctx);
-+	if (read_callbacks_end_bio(bio))
- 		return;
+-		if (page_has_buffers(page))
+-			goto confused;
+-
+-		block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
+-		last_block = block_in_file + nr_pages * blocks_per_page;
+-		last_block_in_file = (i_size_read(inode) + blocksize - 1) >> blkbits;
+-		if (last_block > last_block_in_file)
+-			last_block = last_block_in_file;
+-		page_block = 0;
+-
+-		/*
+-		 * Map blocks using the previous result first.
+-		 */
+-		if ((map.m_flags & EXT4_MAP_MAPPED) &&
+-		    block_in_file > map.m_lblk &&
+-		    block_in_file < (map.m_lblk + map.m_len)) {
+-			unsigned map_offset = block_in_file - map.m_lblk;
+-			unsigned last = map.m_len - map_offset;
+-
+-			for (relative_block = 0; ; relative_block++) {
+-				if (relative_block == last) {
+-					/* needed? */
+-					map.m_flags &= ~EXT4_MAP_MAPPED;
+-					break;
+-				}
+-				if (page_block == blocks_per_page)
+-					break;
+-				blocks[page_block] = map.m_pblk + map_offset +
+-					relative_block;
+-				page_block++;
+-				block_in_file++;
+-			}
+-		}
+-
+-		/*
+-		 * Then do more ext4_map_blocks() calls until we are
+-		 * done with this page.
+-		 */
+-		while (page_block < blocks_per_page) {
+-			if (block_in_file < last_block) {
+-				map.m_lblk = block_in_file;
+-				map.m_len = last_block - block_in_file;
+-
+-				if (ext4_map_blocks(NULL, inode, &map, 0) < 0) {
+-				set_error_page:
+-					SetPageError(page);
+-					zero_user_segment(page, 0,
+-							  PAGE_SIZE);
+-					unlock_page(page);
+-					goto next_page;
+-				}
+-			}
+-			if ((map.m_flags & EXT4_MAP_MAPPED) == 0) {
+-				fully_mapped = 0;
+-				if (first_hole == blocks_per_page)
+-					first_hole = page_block;
+-				page_block++;
+-				block_in_file++;
+-				continue;
+-			}
+-			if (first_hole != blocks_per_page)
+-				goto confused;		/* hole -> non-hole */
+-
+-			/* Contiguous blocks? */
+-			if (page_block && blocks[page_block-1] != map.m_pblk-1)
+-				goto confused;
+-			for (relative_block = 0; ; relative_block++) {
+-				if (relative_block == map.m_len) {
+-					/* needed? */
+-					map.m_flags &= ~EXT4_MAP_MAPPED;
+-					break;
+-				} else if (page_block == blocks_per_page)
+-					break;
+-				blocks[page_block] = map.m_pblk+relative_block;
+-				page_block++;
+-				block_in_file++;
+-			}
+-		}
+-		if (first_hole != blocks_per_page) {
+-			zero_user_segment(page, first_hole << blkbits,
+-					  PAGE_SIZE);
+-			if (first_hole == 0) {
+-				SetPageUptodate(page);
+-				unlock_page(page);
+-				goto next_page;
+-			}
+-		} else if (fully_mapped) {
+-			SetPageMappedToDisk(page);
+-		}
+-		if (fully_mapped && blocks_per_page == 1 &&
+-		    !PageUptodate(page) && cleancache_get_page(page) == 0) {
+-			SetPageUptodate(page);
+-			goto confused;
+-		}
+-
+-		/*
+-		 * This page will go to BIO.  Do we need to send this
+-		 * BIO off first?
+-		 */
+-		if (bio && (last_block_in_bio != blocks[0] - 1)) {
+-		submit_and_realloc:
+-			submit_bio(bio);
+-			bio = NULL;
+-		}
+-		if (bio == NULL) {
+-			bio = bio_alloc(GFP_KERNEL,
+-				min_t(int, nr_pages, BIO_MAX_PAGES));
+-			if (!bio)
+-				goto set_error_page;
+-
+-			if (read_callbacks_setup(inode, bio, NULL)) {
+-				bio_put(bio);
+-				goto set_error_page;
+-			}
+-
+-			bio_set_dev(bio, bdev);
+-			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
+-			bio->bi_end_io = mpage_end_io;
+-			bio_set_op_attrs(bio, REQ_OP_READ,
+-						is_readahead ? REQ_RAHEAD : 0);
+-		}
+-
+-		length = first_hole << blkbits;
+-		if (bio_add_page(bio, page, length, 0) < length)
+-			goto submit_and_realloc;
+-
+-		if (((map.m_flags & EXT4_MAP_BOUNDARY) &&
+-		     (relative_block == map.m_len)) ||
+-		    (first_hole != blocks_per_page)) {
+-			submit_bio(bio);
+-			bio = NULL;
+-		} else
+-			last_block_in_bio = blocks[blocks_per_page - 1];
+-		goto next_page;
+-	confused:
+-		if (bio) {
+-			submit_bio(bio);
+-			bio = NULL;
+-		}
+-		if (!PageUptodate(page))
+-			block_read_full_page(page, ext4_get_block);
+-		else
+-			unlock_page(page);
+-	next_page:
+-		if (pages)
+-			put_page(page);
 -	}
- 
- 	__read_end_io(bio);
- }
-@@ -557,8 +511,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct bio *bio;
--	struct bio_post_read_ctx *ctx;
--	unsigned int post_read_steps = 0;
-+	int ret;
- 
- 	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
- 	if (!bio)
-@@ -567,17 +520,10 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 	bio->bi_end_io = f2fs_read_end_io;
- 	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
- 
--	if (f2fs_encrypted_file(inode))
--		post_read_steps |= 1 << STEP_DECRYPT;
--	if (post_read_steps) {
--		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
--		if (!ctx) {
--			bio_put(bio);
--			return ERR_PTR(-ENOMEM);
--		}
--		ctx->bio = bio;
--		ctx->enabled_steps = post_read_steps;
--		bio->bi_private = ctx;
-+	ret = read_callbacks_setup(inode, bio, f2fs_end_page_op);
-+	if (ret) {
-+		bio_put(bio);
-+		return ERR_PTR(ret);
- 	}
- 
- 	return bio;
-@@ -2902,27 +2848,3 @@ void f2fs_clear_page_cache_dirty_tag(struct page *page)
- 						PAGECACHE_TAG_DIRTY);
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
- }
--
--int __init f2fs_init_post_read_processing(void)
--{
--	bio_post_read_ctx_cache = KMEM_CACHE(bio_post_read_ctx, 0);
--	if (!bio_post_read_ctx_cache)
--		goto fail;
--	bio_post_read_ctx_pool =
--		mempool_create_slab_pool(NUM_PREALLOC_POST_READ_CTXS,
--					 bio_post_read_ctx_cache);
--	if (!bio_post_read_ctx_pool)
--		goto fail_free_cache;
+-	BUG_ON(pages && !list_empty(pages));
+-	if (bio)
+-		submit_bio(bio);
 -	return 0;
--
--fail_free_cache:
--	kmem_cache_destroy(bio_post_read_ctx_cache);
--fail:
--	return -ENOMEM;
 -}
--
--void __exit f2fs_destroy_post_read_processing(void)
--{
--	mempool_destroy(bio_post_read_ctx_pool);
--	kmem_cache_destroy(bio_post_read_ctx_cache);
--}
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 6b959bbb336a..e2e6a8c7236c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3627,15 +3627,11 @@ static int __init init_f2fs_fs(void)
- 	err = register_filesystem(&f2fs_fs_type);
- 	if (err)
- 		goto free_shrinker;
-+
- 	f2fs_create_root_stats();
--	err = f2fs_init_post_read_processing();
--	if (err)
--		goto free_root_stats;
-+
- 	return 0;
- 
--free_root_stats:
--	f2fs_destroy_root_stats();
--	unregister_filesystem(&f2fs_fs_type);
- free_shrinker:
- 	unregister_shrinker(&f2fs_shrinker_info);
- free_sysfs:
-@@ -3656,7 +3652,6 @@ static int __init init_f2fs_fs(void)
- 
- static void __exit exit_f2fs_fs(void)
- {
--	f2fs_destroy_post_read_processing();
- 	f2fs_destroy_root_stats();
- 	unregister_filesystem(&f2fs_fs_type);
- 	unregister_shrinker(&f2fs_shrinker_info);
-diff --git a/fs/read_callbacks.c b/fs/read_callbacks.c
-index a4196e3de05f..4b7fc2a349cd 100644
---- a/fs/read_callbacks.c
-+++ b/fs/read_callbacks.c
-@@ -76,7 +76,6 @@ void read_callbacks(struct read_callbacks_ctx *ctx)
- 	switch (++ctx->cur_step) {
- 	case STEP_DECRYPT:
- 		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
--			INIT_WORK(&ctx->work, fscrypt_decrypt_work);
- 			fscrypt_enqueue_decrypt_work(&ctx->work);
- 			return;
- 		}
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 159b8ddcd670..4ec0bd7cc0ba 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -232,10 +232,6 @@ static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
- }
- 
- /* bio.c */
--extern void fscrypt_decrypt_bio(struct bio *);
--extern void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
--					struct bio *bio);
--extern void fscrypt_decrypt_work(struct work_struct *work);
- extern int fscrypt_zeroout_range(const struct inode *, pgoff_t, sector_t,
- 				 unsigned int);
- 
-@@ -431,20 +427,6 @@ static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
- 	return !memcmp(de_name, fname->disk_name.name, fname->disk_name.len);
- }
- 
--/* bio.c */
--static inline void fscrypt_decrypt_bio(struct bio *bio)
--{
--}
--
--static inline void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx,
--					       struct bio *bio)
--{
--}
--
--static inline void fscrypt_decrypt_work(struct work_struct *work)
--{
--}
--
- static inline int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
- 					sector_t pblk, unsigned int len)
- {
 -- 
 2.19.1
