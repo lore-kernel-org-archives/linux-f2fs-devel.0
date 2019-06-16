@@ -1,8 +1,8 @@
 From: Chandan Rajendra <chandan@linux.ibm.com>
-Subject: [PATCH V3 6/7] Add decryption support for sub-pagesized
+Subject: [PATCH V3 7/7] ext4: Enable encryption for subpage-sized
  blocks
-Date: Sun, 16 Jun 2019 21:38:12 +0530
-Message-ID: <20190616160813.24464-7-chandan@linux.ibm.com>
+Date: Sun, 16 Jun 2019 21:38:13 +0530
+Message-ID: <20190616160813.24464-8-chandan@linux.ibm.com>
 References: <20190616160813.24464-1-chandan@linux.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,26 +11,26 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hcXhr-0003Mp-Dd
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 16:08:35 +0000
+ (envelope-from <chandan@linux.ibm.com>) id 1hcXhw-0003OG-CC
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 16:08:40 +0000
 Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hcXho-00BBkV-QI
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 16:08:34 +0000
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+ id 1hcXhr-00BBkr-J9
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 16:08:39 +0000
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
  by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x5GG6SQR050457
- for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 16 Jun 2019 12:08:27 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
- by mx0a-001b2d01.pphosted.com with ESMTP id 2t5drty6w6-1
+ x5GG6SVB087470
+ for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 16 Jun 2019 12:08:30 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2t5e12empf-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 16 Jun 2019 12:08:27 -0400
+ for <linux-f2fs-devel@lists.sourceforge.net>; Sun, 16 Jun 2019 12:08:29 -0400
 Received: from localhost
- by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Sun, 16 Jun 2019 17:08:26 +0100
+ Sun, 16 Jun 2019 17:08:29 +0100
 In-Reply-To: <20190616160813.24464-1-chandan@linux.ibm.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/options/linux-f2fs-devel>,
@@ -44,418 +44,52 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
 Cc: hch@infradead.org, tytso@mit.edu, ebiggers@kernel.org, Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca, jaegeuk@kernel.org
 
-To support decryption of sub-pagesized blocks this commit adds code to,
-1. Track buffer head in "struct read_callbacks_ctx".
-2. Pass buffer head argument to all read callbacks.
-3. Add new fscrypt helper to decrypt the file data referred to by a
-   buffer head.
+Now that we have the code to support encryption for subpage-sized
+blocks, this commit removes the conditional check in filesystem mount
+code.
+
+The commit also changes the support statement in
+Documentation/filesystems/fscrypt.rst to reflect the fact that
+encryption of filesystems with blocksize less than page size now works.
 
 Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
 ---
- fs/buffer.c                    |  55 +++++++++------
- fs/crypto/bio.c                |  21 +++++-
- fs/f2fs/data.c                 |   2 +-
- fs/mpage.c                     |   2 +-
- fs/read_callbacks.c            | 118 +++++++++++++++++++++++++--------
- include/linux/buffer_head.h    |   1 +
- include/linux/read_callbacks.h |  13 +++-
- 7 files changed, 158 insertions(+), 54 deletions(-)
+ Documentation/filesystems/fscrypt.rst | 4 ++--
+ fs/ext4/super.c                       | 7 -------
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index e450c55f6434..dcb67525dac9 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -46,6 +46,7 @@
- #include <linux/bit_spinlock.h>
- #include <linux/pagevec.h>
- #include <linux/sched/mm.h>
-+#include <linux/read_callbacks.h>
- #include <trace/events/block.h>
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index 08c23b60e016..c3efe86bf2b2 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -213,8 +213,8 @@ Contents encryption
+ -------------------
  
- static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
-@@ -246,11 +247,7 @@ __find_get_block_slow(struct block_device *bdev, sector_t block)
- 	return ret;
- }
+ For file contents, each filesystem block is encrypted independently.
+-Currently, only the case where the filesystem block size is equal to
+-the system's page size (usually 4096 bytes) is supported.
++Starting from Linux kernel 5.4, encryption of filesystems with block
++size less than system's page size is supported.
  
--/*
-- * I/O completion handler for block_read_full_page() - pages
-- * which come unlocked at the end of I/O.
-- */
--static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
-+void end_buffer_async_read(struct buffer_head *bh)
- {
- 	unsigned long flags;
- 	struct buffer_head *first;
-@@ -258,17 +255,7 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
- 	struct page *page;
- 	int page_uptodate = 1;
+ Each block's IV is set to the logical block number within the file as
+ a little endian number, except that:
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 4079605d437a..63661a86d148 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4412,13 +4412,6 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 		}
+ 	}
  
--	BUG_ON(!buffer_async_read(bh));
--
- 	page = bh->b_page;
--	if (uptodate) {
--		set_buffer_uptodate(bh);
--	} else {
--		clear_buffer_uptodate(bh);
--		buffer_io_error(bh, ", async page read");
--		SetPageError(page);
+-	if ((DUMMY_ENCRYPTION_ENABLED(sbi) || ext4_has_feature_encrypt(sb)) &&
+-	    (blocksize != PAGE_SIZE)) {
+-		ext4_msg(sb, KERN_ERR,
+-			 "Unsupported blocksize for fs encryption");
+-		goto failed_mount_wq;
 -	}
 -
- 	/*
- 	 * Be _very_ careful from here on. Bad things can happen if
- 	 * two buffer heads end IO at almost the same time and both
-@@ -307,6 +294,31 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
- 	return;
- }
- 
-+/*
-+ * I/O completion handler for block_read_full_page().  Pages are unlocked
-+ * after the I/O completes and the read callbacks (if any) have executed.
-+ */
-+static void __end_buffer_async_read(struct buffer_head *bh, int uptodate)
-+{
-+	struct page *page;
-+
-+	BUG_ON(!buffer_async_read(bh));
-+
-+	if (read_callbacks_end_bh(bh, uptodate))
-+		return;
-+
-+	page = bh->b_page;
-+	if (uptodate) {
-+		set_buffer_uptodate(bh);
-+	} else {
-+		clear_buffer_uptodate(bh);
-+		buffer_io_error(bh, ", async page read");
-+		SetPageError(page);
-+	}
-+
-+	end_buffer_async_read(bh);
-+}
-+
- /*
-  * Completion handler for block_write_full_page() - pages which are unlocked
-  * during I/O, and which have PageWriteback cleared upon I/O completion.
-@@ -379,7 +391,7 @@ EXPORT_SYMBOL(end_buffer_async_write);
-  */
- static void mark_buffer_async_read(struct buffer_head *bh)
- {
--	bh->b_end_io = end_buffer_async_read;
-+	bh->b_end_io = __end_buffer_async_read;
- 	set_buffer_async_read(bh);
- }
- 
-@@ -2294,10 +2306,15 @@ int block_read_full_page(struct page *page, get_block_t *get_block)
- 	 */
- 	for (i = 0; i < nr; i++) {
- 		bh = arr[i];
--		if (buffer_uptodate(bh))
--			end_buffer_async_read(bh, 1);
--		else
-+		if (buffer_uptodate(bh)) {
-+			__end_buffer_async_read(bh, 1);
-+		} else {
-+			if (WARN_ON(read_callbacks_setup(inode, NULL, bh, NULL))) {
-+				__end_buffer_async_read(bh, 0);
-+				continue;
-+			}
- 			submit_bh(REQ_OP_READ, 0, bh);
-+		}
- 	}
- 	return 0;
- }
-diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
-index 4076d704e2e4..b836d648fd27 100644
---- a/fs/crypto/bio.c
-+++ b/fs/crypto/bio.c
-@@ -24,6 +24,7 @@
- #include <linux/module.h>
- #include <linux/bio.h>
- #include <linux/namei.h>
-+#include <linux/buffer_head.h>
- #include <linux/read_callbacks.h>
- #include "fscrypt_private.h"
- 
-@@ -41,12 +42,30 @@ static void fscrypt_decrypt_bio(struct bio *bio)
- 	}
- }
- 
-+static void fscrypt_decrypt_bh(struct buffer_head *bh)
-+{
-+	struct page *page;
-+	int ret;
-+
-+	page = bh->b_page;
-+
-+	ret = fscrypt_decrypt_pagecache_blocks(page, bh->b_size,
-+					bh_offset(bh));
-+	if (ret)
-+		SetPageError(page);
-+}
-+
- void fscrypt_decrypt_work(struct work_struct *work)
- {
- 	struct read_callbacks_ctx *ctx =
- 		container_of(work, struct read_callbacks_ctx, work);
- 
--	fscrypt_decrypt_bio(ctx->bio);
-+	WARN_ON(!ctx->bh && !ctx->bio);
-+
-+	if (ctx->bio)
-+		fscrypt_decrypt_bio(ctx->bio);
-+	else
-+		fscrypt_decrypt_bh(ctx->bh);
- 
- 	read_callbacks(ctx);
- }
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 23b34399d809..1e8b1eb68a90 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -520,7 +520,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 	bio->bi_end_io = f2fs_read_end_io;
- 	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
- 
--	ret = read_callbacks_setup(inode, bio, f2fs_end_page_op);
-+	ret = read_callbacks_setup(inode, bio, NULL, f2fs_end_page_op);
- 	if (ret) {
- 		bio_put(bio);
- 		return ERR_PTR(ret);
-diff --git a/fs/mpage.c b/fs/mpage.c
-index 611ad122fc92..387c23b529eb 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -313,7 +313,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
- 		if (args->bio == NULL)
- 			goto confused;
- 
--		if (read_callbacks_setup(inode, args->bio, NULL)) {
-+		if (read_callbacks_setup(inode, args->bio, NULL, NULL)) {
- 			bio_put(args->bio);
- 			args->bio = NULL;
- 			goto confused;
-diff --git a/fs/read_callbacks.c b/fs/read_callbacks.c
-index 4b7fc2a349cd..7b3ab11c1652 100644
---- a/fs/read_callbacks.c
-+++ b/fs/read_callbacks.c
-@@ -8,6 +8,7 @@
- #include <linux/mm.h>
- #include <linux/pagemap.h>
- #include <linux/bio.h>
-+#include <linux/buffer_head.h>
- #include <linux/fscrypt.h>
- #include <linux/read_callbacks.h>
- 
-@@ -57,35 +58,27 @@ static void end_read_callbacks_bio(struct bio *bio)
- 	bio_put(bio);
- }
- 
--/**
-- * read_callbacks() - Execute the read callbacks state machine.
-- * @ctx: The context structure tracking the current state.
-- *
-- * For each state, this function enqueues a work into appropriate subsystem's
-- * work queue. After performing further processing of the data in the bio's
-- * pages, the subsystem should invoke read_calbacks() to continue with the next
-- * state in the state machine.
-- */
--void read_callbacks(struct read_callbacks_ctx *ctx)
-+static void end_read_callbacks_bh(struct buffer_head *bh)
- {
--	/*
--	 * We use different work queues for decryption and for verity because
--	 * verity may require reading metadata pages that need decryption, and
--	 * we shouldn't recurse to the same workqueue.
--	 */
--	switch (++ctx->cur_step) {
--	case STEP_DECRYPT:
--		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
--			fscrypt_enqueue_decrypt_work(&ctx->work);
--			return;
--		}
--		ctx->cur_step++;
--		/* fall-through */
--	default:
--		end_read_callbacks_bio(ctx->bio);
--	}
-+	struct read_callbacks_ctx *ctx;
-+
-+	if (!PageError(bh->b_page))
-+		set_buffer_uptodate(bh);
-+
-+	ctx = bh->b_private;
-+
-+	end_buffer_async_read(bh);
-+
-+	put_read_callbacks_ctx(ctx);
-+}
-+
-+static void end_read_callbacks(struct bio *bio, struct buffer_head *bh)
-+{
-+	if (bio)
-+		end_read_callbacks_bio(bio);
-+	else
-+		end_read_callbacks_bh(bh);
- }
--EXPORT_SYMBOL(read_callbacks);
- 
- /**
-  * read_callbacks_end_bio() - Initiate the read callbacks state machine.
-@@ -113,10 +106,69 @@ int read_callbacks_end_bio(struct bio *bio)
- }
- EXPORT_SYMBOL(read_callbacks_end_bio);
- 
-+/**
-+ * read_callbacks_end_bh() - Initiate the read callbacks state machine.
-+ * @bh: buffer head on which read I/O operation has just been completed.
-+ * @uptodate: Buffer head's I/O status.
-+ *
-+ * Initiates the execution of the read callbacks state machine when the read
-+ * operation has been completed successfully. If there was an error associated
-+ * with the buffer head, this function frees the read callbacks context
-+ * structure stored in bh->b_private (if any).
-+ *
-+ * Return: 1 to indicate that the buffer head has been handled (including
-+ * unlocking the buffer head and the corresponding page if applicable); 0
-+ * otherwise.
-+ */
-+int read_callbacks_end_bh(struct buffer_head *bh, int uptodate)
-+{
-+	if (uptodate && bh->b_private) {
-+		read_callbacks((struct read_callbacks_ctx *)(bh->b_private));
-+		return 1;
-+	}
-+
-+	if (bh->b_private)
-+		put_read_callbacks_ctx((struct read_callbacks_ctx *)(bh->b_private));
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(read_callbacks_end_bh);
-+
-+/**
-+ * read_callbacks() - Execute the read callbacks state machine.
-+ * @ctx: The context structure tracking the current state.
-+ *
-+ * For each state, this function enqueues a work into appropriate subsystem's
-+ * work queue. After performing further processing of the data in the bio's
-+ * pages, the subsystem should invoke read_calbacks() to continue with the next
-+ * state in the state machine.
-+ */
-+void read_callbacks(struct read_callbacks_ctx *ctx)
-+{
-+	/*
-+	 * We use different work queues for decryption and for verity because
-+	 * verity may require reading metadata pages that need decryption, and
-+	 * we shouldn't recurse to the same workqueue.
-+	 */
-+	switch (++ctx->cur_step) {
-+	case STEP_DECRYPT:
-+		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
-+			fscrypt_enqueue_decrypt_work(&ctx->work);
-+			return;
-+		}
-+		ctx->cur_step++;
-+		/* fall-through */
-+	default:
-+		end_read_callbacks(ctx->bio, ctx->bh);
-+	}
-+}
-+EXPORT_SYMBOL(read_callbacks);
-+
- /**
-  * read_callbacks_setup() - Initialize the read callbacks state machine
-  * @inode: The file on which read I/O is performed.
-  * @bio: bio holding page cache pages on which read I/O is performed.
-+ * @bh: Buffer head on which read I/O is performed.
-  * @page_op: Function to perform filesystem specific operations on a page.
-  *
-  * Based on the nature of the file's data (e.g. encrypted), this function
-@@ -128,11 +180,14 @@ EXPORT_SYMBOL(read_callbacks_end_bio);
-  * Return: 0 on success; An error code on failure.
-  */
- int read_callbacks_setup(struct inode *inode, struct bio *bio,
--			end_page_op_t page_op)
-+			struct buffer_head *bh, end_page_op_t page_op)
- {
- 	struct read_callbacks_ctx *ctx = NULL;
- 	unsigned int enabled_steps = 0;
- 
-+	if (!bh && !bio)
-+		return -EINVAL;
-+
- 	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
- 		enabled_steps |= 1 << STEP_DECRYPT;
- 
-@@ -140,12 +195,17 @@ int read_callbacks_setup(struct inode *inode, struct bio *bio,
- 		ctx = mempool_alloc(read_callbacks_ctx_pool, GFP_NOFS);
- 		if (!ctx)
- 			return -ENOMEM;
-+
-+		ctx->bh = bh;
- 		ctx->bio = bio;
- 		ctx->inode = inode;
- 		ctx->enabled_steps = enabled_steps;
- 		ctx->cur_step = STEP_INITIAL;
- 		ctx->page_op = page_op;
--		bio->bi_private = ctx;
-+		if (bio)
-+			bio->bi_private = ctx;
-+		else
-+			bh->b_private = ctx;
- 	}
- 
- 	return 0;
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 7b73ef7f902d..42d0d63c7a3b 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -165,6 +165,7 @@ void create_empty_buffers(struct page *, unsigned long,
- void end_buffer_read_sync(struct buffer_head *bh, int uptodate);
- void end_buffer_write_sync(struct buffer_head *bh, int uptodate);
- void end_buffer_async_write(struct buffer_head *bh, int uptodate);
-+void end_buffer_async_read(struct buffer_head *bh);
- 
- /* Things to do with buffers at mapping->private_list */
- void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode);
-diff --git a/include/linux/read_callbacks.h b/include/linux/read_callbacks.h
-index aa1ec8ed7a6a..0b52d7961fb2 100644
---- a/include/linux/read_callbacks.h
-+++ b/include/linux/read_callbacks.h
-@@ -5,6 +5,7 @@
- typedef void (*end_page_op_t)(struct bio *bio, struct page *page);
- 
- struct read_callbacks_ctx {
-+	struct buffer_head *bh;
- 	struct bio *bio;
- 	struct inode *inode;
- 	struct work_struct work;
-@@ -16,8 +17,9 @@ struct read_callbacks_ctx {
- #ifdef CONFIG_FS_READ_CALLBACKS
- void read_callbacks(struct read_callbacks_ctx *ctx);
- int read_callbacks_end_bio(struct bio *bio);
-+int read_callbacks_end_bh(struct buffer_head *bh, int uptodate);
- int read_callbacks_setup(struct inode *inode, struct bio *bio,
--			end_page_op_t page_op);
-+			struct buffer_head *bh, end_page_op_t page_op);
- #else
- static inline void read_callbacks(struct read_callbacks_ctx *ctx)
- {
-@@ -28,8 +30,13 @@ static inline int read_callbacks_end_bio(struct bio *bio)
- 	return -EOPNOTSUPP;
- }
- 
--static inline int read_callbacks_setup(struct inode *inode,
--				struct bio *bio, end_page_op_t page_op)
-+static inline int read_callbacks_end_bh(struct buffer_head *bh, int uptodate)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline int read_callbacks_setup(struct inode *inode, struct bio *bio,
-+				struct buffer_head *bh, end_page_op_t page_op)
- {
- 	return -EOPNOTSUPP;
- }
+ 	if (DUMMY_ENCRYPTION_ENABLED(sbi) && !sb_rdonly(sb) &&
+ 	    !ext4_has_feature_encrypt(sb)) {
+ 		ext4_set_feature_encrypt(sb);
 -- 
 2.19.1
