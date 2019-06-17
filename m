@@ -1,115 +1,68 @@
-Return-Path: <SRS0=WSfO=UP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=xLI3=UQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BFDC31E50
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 16 Jun 2019 17:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F98C31E57
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Jun 2019 09:03:46 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id ED4E720645;
-	Sun, 16 Jun 2019 17:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 0378120645;
+	Mon, 17 Jun 2019 09:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hROSmT9f";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="gN82auwb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED4E720645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YSrygBjS";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="i6B9/AFB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0378120645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hidrocomta.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hcYhv-0004T8-2D; Sun, 16 Jun 2019 17:12:43 +0000
+	id 1hcnYJ-0005Hh-L6; Mon, 17 Jun 2019 09:03:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hcYht-0004Sq-05
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 17:12:41 +0000
+ (envelope-from <hidrocomta@hidrocomta.com>) id 1hcnYI-0005Hb-Pe
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Jun 2019 09:03:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Message-ID:Date:Subject:To:From:Reply-To:Sender:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Xwg9ngQ1/y4wnhmSNop8+hM7JxrTmbp0U4xaNEFxgJo=; b=hROSmT9fwY0fs4QVXd3OhWbHV5
- ou0c6QngQBsquMYn+nEs2Nb6ZXsPm224lFkXHLUinY0tZ78W3QRqN93NhSwrdY7JQuTNAybEYNVc3
- 90EBh5Pn1oQH4YqiMzxUGEkMExY1QaFM3dMkdVrwlwi7qXJCioDETJP8xYsVZfclWnNU=;
+ bh=u6Ue4nyTlQkUhnhxHYn31O72l+Vaya82LRsDWoJlB6U=; b=YSrygBjSsPhcreUpzrOPaMBN83
+ sWkNvq6hqrRyOhsdaytfMUlysv6cfvb1YDX2+rHUZ3Y/OlqD58YtveatDTiYHKJq/o5wwNWsjLsEV
+ BK5c0qloKN5QUhr6q256Xnfyla50ngDbT3WJGxuYLtutfm3edBFdYD87yErFL2TiVimM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
+ Subject:To:From:Reply-To:Sender:Cc:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Xwg9ngQ1/y4wnhmSNop8+hM7JxrTmbp0U4xaNEFxgJo=; b=g
- N82auwbhjpgZx3PFboQCQaAjAxoi9AdYfwxDUIzUCGz0xzJM4ifyZCezETM/DEtuKi6uz0QVGZafL
- BA5Kd/tmdFvlrLhEBq0Xpd5KcDwV2tFYEQxhnhrXTf+YNZ8RNt4IFyW9EOcEWIfKaoaV9FMaEU7v/
- 3nJTdHa+mS3QJS58=;
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=u6Ue4nyTlQkUhnhxHYn31O72l+Vaya82LRsDWoJlB6U=; b=i
+ 6B9/AFB1m3RRICKFnzUTIjAujX0JLAzO/o0Pmzy8sbsq1p4YdG88nC5KUB0FaeCHfma5HFTeLBf5l
+ NsrAkKhCKcjnMje8km5vnB8bf1JuG3ClR6+FP8pYb3xibB+WGQDn1ERS7XhNdXp7nepxwPpReEuO9
+ 4HWacSxc6/u2mjSo=;
+Received: from [188.209.49.18] (helo=housegq.localdomain)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hcYhq-00Gp1n-HY
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 16 Jun 2019 17:12:40 +0000
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x5GG6Rri063661; Sun, 16 Jun 2019 12:07:56 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2t5e9te9cc-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 16 Jun 2019 12:07:55 -0400
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
- by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5GG6cp5064406;
- Sun, 16 Jun 2019 12:07:55 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com
- [169.53.41.122])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2t5e9te9c3-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 16 Jun 2019 12:07:55 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
- by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5GFxNC8018708;
- Sun, 16 Jun 2019 16:07:54 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com
- (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
- by ppma04dal.us.ibm.com with ESMTP id 2t4ra61bbp-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 16 Jun 2019 16:07:54 +0000
-Received: from b03ledav001.gho.boulder.ibm.com
- (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
- by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
- x5GG7reJ32112910
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Sun, 16 Jun 2019 16:07:53 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
- by IMSVA (Postfix) with ESMTP id 01BE46E04C;
- Sun, 16 Jun 2019 16:07:53 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
- by IMSVA (Postfix) with ESMTP id E88E06E04E;
- Sun, 16 Jun 2019 16:07:48 +0000 (GMT)
-Received: from localhost.localdomain.com (unknown [9.102.1.181])
- by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
- Sun, 16 Jun 2019 16:07:48 +0000 (GMT)
-From: Chandan Rajendra <chandan@linux.ibm.com>
-To: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org
-Date: Sun, 16 Jun 2019 21:38:06 +0530
-Message-Id: <20190616160813.24464-1-chandan@linux.ibm.com>
-X-Mailer: git-send-email 2.19.1
+ id 1hcnYE-00158B-7f
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Jun 2019 09:03:44 +0000
+Received: from hidrocomta.com (unknown [95.174.65.239])
+ by housegq.localdomain (Postfix) with ESMTPA id 163D97925B
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 17 Jun 2019 07:07:53 +0000 (GMT)
+From: Hidroconta Trading Ltd. <hidrocomta@hidrocomta.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: 17 Jun 2019 00:07:52 -0700
+Message-ID: <20190617000752.0AAF75E8510E66F6@hidrocomta.com>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:, ,
- definitions=2019-06-16_07:, , signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906160155
-X-Headers-End: 1hcYhq-00Gp1n-HY
-Subject: [f2fs-dev] [PATCH V3 0/7] Consolidate FS read I/O callbacks code
+X-Headers-End: 1hcnYE-00158B-7f
+Subject: [f2fs-dev] Quotation Inquiry #RFQ170619E - New Supplier
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,114 +74,29 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: hch@infradead.org, tytso@mit.edu, ebiggers@kernel.org,
- Chandan Rajendra <chandan@linux.ibm.com>, adilger.kernel@dilger.ca,
- jaegeuk@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Reply-To: "Hidroconta Trading Ltd." <reply1@galaxyracks.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Message-ID: <20190616160806.PewREQns2BEJBCaCSoRpXc_wQoK36WEDAI0MmGWfFuI@z>
 
-This patchset moves the "FS read I/O callbacks" code into a file of its
-own (i.e. fs/read_callbacks.c) and modifies the generic
-do_mpage_readpge() to make use of the functionality provided.
+Hello,
 
-"FS read I/O callbacks" code implements the state machine that needs
-to be executed after reading data from files that are encrypted and/or
-have verity metadata associated with them.
+Our partners referred your company to us. Regarding your great products.
+Please see required products, quantity and specifications as attached.
 
-With these changes in place, the patchset changes Ext4 to use
-mpage_readpage[s] instead of its own custom ext4_readpage[s]()
-functions. This is done to reduce duplication of code across
-filesystems. Also, "FS read I/O callbacks" source files will be built
-only if CONFIG_FS_ENCRYPTION is enabled.
+Kindly give us your lowest possible prices for FCL shipment.
 
-The patchset also modifies fs/buffer.c to get file
-encryption/decryption to work with subpage-sized blocks.
 
-The patches can also be obtained from
-https://github.com/chandanr/linux.git at branch subpage-encryption-v3.
+Best Regards,
 
-Changelog:
-V2 -> V3:
-1. Split the V2 patch "Consolidate 'read callbacks' into a new file" into
-   three patches,
-   - Introduce the read_callbacks functionality.
-   - Convert encryption to use read_callbacks.
-   - Remove union from struct fscrypt_context.
-2. fs/Kconfig
-   Do not explicitly set the default value of 'n' for FS_READ_CALLBACKS.
-3. fs/crypto/Kconfig
-   Select CONFIG_FS_READ_CALLBACKS only if CONFIG_BLOCK is selected.
-4. Remove verity associated code in read_callbacks code.
-5. Introduce a callback argument to read_callbacks_setup() function
-   which gets invoked for each page for bio. F2FS uses this to perform
-   custom operations like decrementing the value of f2fs_sb_info->nr_pages[].
-6. Encapsulate the details of "read callbacks" (e.g. Usage of "struct
-   read_callbacks *ctx") within its own functions. When CONFIG_FS_READ_CALLBACKS
-   is set to 'n', the corresponding stub functions return approriate error
-   values.
-7. Split fscrypt_decrypt() function into fscrypt_decrypt_bio() and
-   fscrypt_decrypt_bh().
-8. Split end_read_callbacks() function into end_read_callbacks_bio() and
-   end_read_callbacks_bh().
+Wanda Rodriguez
+Purchase Assistant
 
-V1 -> V2:
-1. Removed the phrase "post_read_process" from file names and
-   functions. Instead we now use the phrase "read_callbacks" in its
-   place.
-2. When performing changes associated with (1), the changes made by
-   the patch "Remove the term 'bio' from post read processing" are
-   made in the earlier patch "Consolidate 'read callbacks' into a new
-   file". Hence the patch "Remove the term 'bio' from post read
-   processing" is removed from the patchset.
-
-RFC V2 -> V1:
-1. Test and verify FS_CFLG_OWN_PAGES subset of fscrypt_encrypt_page()
-   code by executing fstests on UBIFS.
-2. Implement F2fs function call back to check if the contents of a
-   page holding a verity file's data needs to be verified.
-
-RFC V1 -> RFC V2:
-1. Describe the purpose of "Post processing code" in the cover letter.
-2. Fix build errors when CONFIG_FS_VERITY is enabled.
-
-Chandan Rajendra (7):
-  FS: Introduce read callbacks
-  Integrate read callbacks into Ext4 and F2FS
-  fscrypt: remove struct fscrypt_ctx
-  fs/mpage.c: Integrate read callbacks
-  ext4: Wire up ext4_readpage[s] to use mpage_readpage[s]
-  Add decryption support for sub-pagesized blocks
-  ext4: Enable encryption for subpage-sized blocks
-
- Documentation/filesystems/fscrypt.rst |   4 +-
- fs/Kconfig                            |   3 +
- fs/Makefile                           |   2 +
- fs/buffer.c                           |  55 +++--
- fs/crypto/Kconfig                     |   1 +
- fs/crypto/bio.c                       |  44 ++--
- fs/crypto/crypto.c                    |  90 +-------
- fs/crypto/fscrypt_private.h           |   3 +
- fs/ext4/Makefile                      |   2 +-
- fs/ext4/inode.c                       |   5 +-
- fs/ext4/readpage.c                    | 295 --------------------------
- fs/ext4/super.c                       |   7 -
- fs/f2fs/data.c                        | 124 ++---------
- fs/f2fs/super.c                       |   9 +-
- fs/mpage.c                            |  11 +-
- fs/read_callbacks.c                   | 233 ++++++++++++++++++++
- include/linux/buffer_head.h           |   1 +
- include/linux/fscrypt.h               |  38 ----
- include/linux/read_callbacks.h        |  45 ++++
- 19 files changed, 390 insertions(+), 582 deletions(-)
- delete mode 100644 fs/ext4/readpage.c
- create mode 100644 fs/read_callbacks.c
- create mode 100644 include/linux/read_callbacks.h
-
--- 
-2.19.1
-
+Hidroconta Trading Ltd.
+Av. de Sta. Catalina,
+60, 30012 Murcia, Spain
+Phone: +34 968 26 77 66
+Fax: +34 968 26 77 06
 
 
 _______________________________________________
