@@ -2,79 +2,76 @@ Return-Path: <SRS0=LeJc=US=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0819FC31E5B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Jun 2019 02:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B84D5C31E5B
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Jun 2019 02:14:50 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C817B20863;
-	Wed, 19 Jun 2019 02:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 89D372147A;
+	Wed, 19 Jun 2019 02:14:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="FKo82ZIa";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TiM2ThZ7";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCa/a5qK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C817B20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Lg+4BC48";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lgn6mYLe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89D372147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hdQ1f-00062e-Cx; Wed, 19 Jun 2019 02:08:39 +0000
+	id 1hdQ7e-0006l2-5G; Wed, 19 Jun 2019 02:14:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1hdQ1d-00062O-RD
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Jun 2019 02:08:37 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1hdQ7b-0006kd-9O
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Jun 2019 02:14:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=H/n5keYtcpezB5ks7Ll0CKFUlXor7AsxFFaJmg9lX/Q=; b=FKo82ZIa7qg0gyDYe6i1bQzJPW
- aVnlYnFodRYiqg9G0p6wizJ+jRjhPWU54BSwNSgZtzavT3SpXzbUahgg4eqz9NQt97mq6tQN48FGd
- ekg/3sq/G51DE3mNt2DRi0C1Fgh1SjreF9vzqseGIj+NwlwWtcHo1/LAOHPWAT5mliSg=;
+ bh=inGqzNUj7z4gnSji1egXPFwfCk3GBY4Zt4rNh7xEl0E=; b=Lg+4BC48kemu1daDLsQroeMy79
+ waCH1/8xlJkxMi99/deMQjlL3BNkouUvpc7Q822loDrcbAMRrgf3Lz7I3Lbj4n9jW0cgUa6NX059Y
+ Gzz0wem0h9lymC5GboQLVNING3JBeRWDVA845hGftQ5lXEB/cqLP22ZqB1rX/OL3fpiw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=H/n5keYtcpezB5ks7Ll0CKFUlXor7AsxFFaJmg9lX/Q=; b=TiM2ThZ7bZeHUToE7TFQEHmLsE
- RypFpeFOhHLX6hGQ+9Ryir7+zVGlZQZZrfG/Natk+R+PCJGftip9TXwF8/19qk80H5f+JlT8lemvs
- 7XZLI6BDcA7f8k4tkaapj7TWFhMJv6QPoAZ6bQMBuLRwjWxSJLjkkwjDnt/PpPPmcpXQ=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=inGqzNUj7z4gnSji1egXPFwfCk3GBY4Zt4rNh7xEl0E=; b=lgn6mYLeiYJLpX8dvGz08w+c4D
+ tmUtUbk7XY6VscXPCMCR/IO8xnbRclCymTTFTh1Y06DHSqgQgysFnXYpfw2EywZ1q9S39rVrOf7S7
+ yE/aDF6aJK1fn03FymAZY/WlD9Go1eN/V5v9ySLBAiP6AAMFE7R/6WIcGAAoEDeHYPSQ=;
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hdQ1b-00GVAW-17
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Jun 2019 02:08:37 +0000
-Received: from localhost (unknown [104.132.1.68])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id EC44520863;
- Wed, 19 Jun 2019 02:08:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1560910107;
- bh=rvhJw8Hyr+ITLOGNar1oGROo4CxqfckrE6ZP4SykFYI=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=MCa/a5qKKYe2B5IEQOdgVbJ63CRfjSlr7gOjlOxA98D/XGOCEzi721fb91CihluSB
- nYZb1G929gToJJLcK3FZgacdeMYcfV1byiFevmKEEX9Zd8x0ICSzWQZPBxH5adjWKT
- m93eCNrlsFew7DJ68dk/EYVsVNyjVahW6bidnT7k=
-Date: Tue, 18 Jun 2019 19:08:25 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Kassey <kassey1216@gmail.com>
-Message-ID: <20190619020825.GA42712@jaegeuk-macbookpro.roam.corp.google.com>
+ id 1hdQ7Y-00GVal-UX
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Jun 2019 02:14:47 +0000
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id 9B227596EAB22FFE6DF2;
+ Wed, 19 Jun 2019 10:14:37 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 19 Jun
+ 2019 10:14:32 +0800
+To: Kassey <kassey1216@gmail.com>, <linux-f2fs-devel@lists.sourceforge.net>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, <kassey@126.com>
 References: <CAKwPUoyvn6mjEw=DfPTpLBZy-NQvtd8fpjfpwRRGMvqshB5gxw@mail.gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <02de6dc0-ca4c-459f-08e4-0e4986bf25ac@huawei.com>
+Date: Wed, 19 Jun 2019 10:14:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
 In-Reply-To: <CAKwPUoyvn6mjEw=DfPTpLBZy-NQvtd8fpjfpwRRGMvqshB5gxw@mail.gmail.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
-X-Headers-End: 1hdQ1b-00GVAW-17
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1hdQ7Y-00GVal-UX
 Subject: Re: [f2fs-dev] f2fs: wait_on_all_pages_writeback 4.4 kernel
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -87,22 +84,19 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kassey@126.com, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hi Kassey,
 
-I remember there was a bug related to this.
+Could below commit fix your problem?
 
-Could you check this out?
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-stable.git/commit/?h=linux-4.4.y&id=45afbd380596bb505970070d9521d607de22bd6b
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=31867b23d7d1ee3535136c6a410a6cf56f666bfc
 
 Thanks,
 
-On 06/19, Kassey wrote:
+On 2019/6/19 9:28, Kassey wrote:
 > hi, Chao and team:
 >    we got dump on arm64 that showing a task is sleep on
 > wait_on_all_pages_writeback
@@ -155,9 +149,6 @@ On 06/19, Kassey wrote:
 > 
 > 
 > 
-> -- 
-> Best regards
-> Kassey
 
 
 _______________________________________________
