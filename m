@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFEBC48BE4
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2019 21:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F386C48BE3
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2019 21:38:55 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6156D20657;
-	Thu, 20 Jun 2019 21:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id E933B20657;
+	Thu, 20 Jun 2019 21:38:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lzRN0we2";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="iP0ioZW3";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHRKAUoz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6156D20657
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Phoh64ip";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="iTgzS9jU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0AW4GOh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E933B20657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1he4lf-0004Pc-9Q; Thu, 20 Jun 2019 21:38:51 +0000
+	id 1he4lg-0007cg-1j; Thu, 20 Jun 2019 21:38:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1he4ld-0004PS-Or
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:38:49 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1he4lc-0007c5-Ne
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:38:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1/7JLbHeSYzPxATJSJmlTlksE7ELoAm3lhN33d85tq0=; b=lzRN0we26zkbYP1vhw5RsWzXxS
- xVl/zym9MQ8YP1Usn8DoQyfmRJdCMLwhRFahzpcXpOyWzyFMCHCLR9IVN7jFE6rVPH0CSFbIZilj/
- H8JHX0gbkmBX0kee2ZLUDcwX+ogIwA6XuCuGQ50xpdhFopFu1mPXpN/1I9aZty0YWr/g=;
+ bh=5tpFNgymtdd0t/szPGsWbXomEaQl2A2vxTP24KawZSA=; b=Phoh64ipuQ1E3R7umUx8gVz6Ra
+ DNC5rzV4Cexnjm/zIMOFqYdCW7i1ntoXYkL/YzlDVvK/Ijv7lE7MjsiB+A0YQr1mqA/SHaI/mkNHk
+ vg8xORv2Z3ETC3MSHpl58ghbW6z+6EHVfZMBYr71Kq79Dr6lFVSTFGYVhuGcV5G8rFs4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=1/7JLbHeSYzPxATJSJmlTlksE7ELoAm3lhN33d85tq0=; b=iP0ioZW3fq4SQo//xi6Z6+BG8P
- 35F98Ouc0VHY1ZUfSrfjLoyRiRcQSLXDn0Q4S88fj/Q66fZ+cBgLlg44/ROSEq4mb7Tlbzlky1CuE
- ZwfFU+K497R4Sdi+1Vt5mUajb+nccg0af5ZR/mJt1AY8/lXMsOZtI4z8YbnEd3i2HSbw=;
+ bh=5tpFNgymtdd0t/szPGsWbXomEaQl2A2vxTP24KawZSA=; b=iTgzS9jULlsL3LEq7evCnNd5xI
+ XacAM3jANZ56H1jqobCOBotZP5f1CzNbSkhrDbtRjWlt6f+QbJlB1maZQ2QDNclOZI+/m3TG/1JZm
+ po+D2bOPZcVUMqqwaQi1Ts+28MpicwZysvnokDGvJXCMkDdjI9OGjJb7BV5AZR0noC3U=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1he4le-006yPo-8t
+ id 1he4le-006aPk-29
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:38:51 +0000
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown
  [104.132.1.77])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id E485521530;
+ by mail.kernel.org (Postfix) with ESMTPSA id 27522215EA;
  Thu, 20 Jun 2019 21:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1561066720;
- bh=tD13SQPiq6U//Di45+l/aLXBU1zkuW4qczDAR3KDkUg=;
+ s=default; t=1561066719;
+ bh=5CM983t566SpUFL1OYw+Q9AJLEmW5fX4XcdwmQ5M32Y=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=OHRKAUozrSLQsYLc+Vn9OWH/pKZWtrUwNpbkGoIc6ngnZUxSmkx0Cv0OzmA4eYuPL
- zc6dpyYI7P1ohPcYsAgLTsfxsQ42hQdtrcuAJbw7txyT+3r4HlfINrFI3CioLYXPtC
- bhnYKW4PJKS/lur1AfMSSKKpCkvvwLtfFcL6u8Fs=
+ b=F0AW4GOhOUWI7+lfy2qlw36rAS9/dND8eokd1WdzuWs5AjH60tQcPWmvp12koGVk8
+ h72mVFhWcqc2BthwBYyKdPcPeD91ECdKmAjcTEfX0Cl5m1fTvx5h+ADyh6dNW9ZBf9
+ NE+mBDSEiRSOkrLu4VL3jgZAYs7lJsHaQA+b4sho=
 From: Eric Biggers <ebiggers@kernel.org>
 To: fstests@vger.kernel.org
-Date: Thu, 20 Jun 2019 14:36:14 -0700
-Message-Id: <20190620213614.113685-9-ebiggers@kernel.org>
+Date: Thu, 20 Jun 2019 14:36:12 -0700
+Message-Id: <20190620213614.113685-7-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 In-Reply-To: <20190620213614.113685-1-ebiggers@kernel.org>
 References: <20190620213614.113685-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1he4le-006yPo-8t
-Subject: [f2fs-dev] [RFC PATCH v2 8/8] generic: test the fs-verity built-in
- signature verification support
+X-Headers-End: 1he4le-006aPk-29
+Subject: [f2fs-dev] [RFC PATCH v2 6/8] generic: test that fs-verity is using
+ the correct measurement values
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,69 +97,33 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add a basic test for the fs-verity built-in signature verification
-support, which is an optional feature where the kernel can be configured
-to enforce that all verity files are accompanied with a valid signature
-by a key that has been loaded into the fs-verity keyring.
+This test verifies that fs-verity is doing its Merkle tree-based hashing
+correctly, i.e. that it hasn't been broken by a change.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- common/config         |   1 +
- common/verity         |  11 ++++
- tests/generic/905     | 141 ++++++++++++++++++++++++++++++++++++++++++
- tests/generic/905.out |  34 ++++++++++
+ tests/generic/903     | 112 ++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/903.out |   5 ++
  tests/generic/group   |   1 +
- 5 files changed, 188 insertions(+)
- create mode 100755 tests/generic/905
- create mode 100644 tests/generic/905.out
+ 3 files changed, 118 insertions(+)
+ create mode 100755 tests/generic/903
+ create mode 100644 tests/generic/903.out
 
-diff --git a/common/config b/common/config
-index 001ddc45..1aaf0a75 100644
---- a/common/config
-+++ b/common/config
-@@ -213,6 +213,7 @@ export XFS_INFO_PROG="$(type -P xfs_info)"
- export DUPEREMOVE_PROG="$(type -P duperemove)"
- export CC_PROG="$(type -P cc)"
- export FSVERITY_PROG="$(type -P fsverity)"
-+export OPENSSL_PROG="$(type -P openssl)"
- 
- # use 'udevadm settle' or 'udevsettle' to wait for lv to be settled.
- # newer systems have udevadm command but older systems like RHEL5 don't.
-diff --git a/common/verity b/common/verity
-index 86fb6585..edd7e523 100644
---- a/common/verity
-+++ b/common/verity
-@@ -35,6 +35,17 @@ _require_scratch_verity()
- 	FSV_BLOCK_SIZE=$(get_page_size)
- }
- 
-+# Check for CONFIG_FS_VERITY_BUILTIN_SIGNATURES=y.
-+_require_fsverity_builtin_signatures()
-+{
-+	if [ ! -e /proc/keys ]; then
-+		_notrun "kernel doesn't support keyrings"
-+	fi
-+	if ! awk '{print $9}' /proc/keys | grep -q '^\.fs-verity:$'; then
-+		_notrun "kernel doesn't support fs-verity builtin signatures"
-+	fi
-+}
-+
- _scratch_mkfs_verity()
- {
- 	case $FSTYP in
-diff --git a/tests/generic/905 b/tests/generic/905
+diff --git a/tests/generic/903 b/tests/generic/903
 new file mode 100755
-index 00000000..db83d221
+index 00000000..55f4a3ba
 --- /dev/null
-+++ b/tests/generic/905
-@@ -0,0 +1,141 @@
++++ b/tests/generic/903
+@@ -0,0 +1,112 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
-+# Copyright 2019 Google LLC
++# Copyright 2018 Google LLC
 +#
-+# FS QA Test generic/905
++# FS QA Test generic/903
 +#
-+# Test the fs-verity built-in signature verification support.
++# Test that fs-verity is using the correct measurement values.  This test
++# verifies that fs-verity is doing its Merkle tree-based hashing correctly,
++# i.e. that it hasn't been broken by a change.
 +#
 +seq=`basename $0`
 +seqres=$RESULT_DIR/$seq
@@ -172,7 +136,6 @@ index 00000000..db83d221
 +
 +_cleanup()
 +{
-+	sysctl -w fs.verity.require_signatures=0 &>/dev/null
 +	cd /
 +	rm -f $tmp.*
 +}
@@ -189,160 +152,101 @@ index 00000000..db83d221
 +_supported_fs generic
 +_supported_os Linux
 +_require_scratch_verity
-+_require_fsverity_builtin_signatures
-+_require_command "$OPENSSL_PROG" openssl
-+_require_command "$KEYCTL_PROG" keyctl
++if [ $FSV_BLOCK_SIZE != 4096 ]; then
++	_notrun "4096-byte verity block size not supported on this platform"
++fi
 +
 +_scratch_mkfs_verity &>> $seqres.full
 +_scratch_mount
-+
-+fsv_file=$SCRATCH_MNT/file.fsv
 +fsv_orig_file=$SCRATCH_MNT/file
-+keyfile=$tmp.key.pem
-+certfile=$tmp.cert.pem
-+certfileder=$tmp.cert.der
-+sigfile=$tmp.sig
-+othersigfile=$tmp.othersig
-+tmpfile=$tmp.tmp
++fsv_file=$SCRATCH_MNT/file.fsv
 +
-+# Setup
++algs=(sha256 sha512)
 +
-+echo -e "\n# Generating certificates and private keys"
-+for suffix in '' '.2'; do
-+	if ! $OPENSSL_PROG req -newkey rsa:4096 -nodes -batch -x509 \
-+			-keyout $keyfile$suffix -out $certfile$suffix \
-+			&>> $seqres.full; then
-+		_fail "Failed to generate certificate and private key (see $seqres.full)"
-+	fi
-+	$OPENSSL_PROG x509 -in $certfile$suffix -out $certfileder$suffix \
-+		-outform der
-+done
++# Try files with 0, 1, and multiple Merkle tree levels.
++file_sizes=(0 4096 65536 65536 100000000)
 +
-+echo -e "\n# Clearing fs-verity keyring"
-+$KEYCTL_PROG clear %keyring:.fs-verity
++# Try both unsalted and salted, and check that empty salt is the same as no salt
++salts=('' '' '' '--salt=' '--salt=f3c93fa6fb828c0e1587e5714ecf6f56')
 +
-+echo -e "\n# Loading first certificate into fs-verity keyring"
-+$KEYCTL_PROG padd asymmetric '' %keyring:.fs-verity \
-+	< $certfileder >> $seqres.full
++# The expected file measurements are here rather than in the expected output
++# file because not all hash algorithms may be available.
++sha256_vals=(
++sha256:3d248ca542a24fc62d1c43b916eae5016878e2533c88238480b26128a1f1af95
++sha256:babc284ee4ffe7f449377fbf6692715b43aec7bc39c094a95878904d34bac97e
++sha256:011e3f2b1dc89b75d78cddcc2a1b85cd8a64b2883e5f20f277ae4c0617e0404f
++sha256:011e3f2b1dc89b75d78cddcc2a1b85cd8a64b2883e5f20f277ae4c0617e0404f
++sha256:9d33cab743468fcbe4edab91a275b30dd543c12dd5e6ce6f2f737f66a1558f06
++)
++sha512_vals=(
++sha512:ccf9e5aea1c2a64efa2f2354a6024b90dffde6bbc017825045dce374474e13d10adb9dadcc6ca8e17a3c075fbd31336e8f266ae6fa93a6c3bed66f9e784e5abf
++sha512:928922686c4caf32175f5236a7f964e9925d10a74dc6d8344a8bd08b23c228ff5792573987d7895f628f39c4f4ebe39a7367d7aeb16aaa0cd324ac1d53664e61
++sha512:eab7224ce374a0a4babcb2db25e24836247f38b87806ad9be9e5ba4daac2f5b814fc0cbdfd9f1f8499b3c9a6c1b38fe08974cce49883ab4ccd04462fd2f9507f
++sha512:eab7224ce374a0a4babcb2db25e24836247f38b87806ad9be9e5ba4daac2f5b814fc0cbdfd9f1f8499b3c9a6c1b38fe08974cce49883ab4ccd04462fd2f9507f
++sha512:f7083a38644880d25539488313e9e5b41a4d431a0e383945129ad2c36e3c1d0f28928a424641bb1363c12b6e770578102566acea73baf1ce8ee15336f5ba2446
++)
 +
-+echo -e "\n# Enabling fs.verity.require_signatures"
-+sysctl -w fs.verity.require_signatures=1
-+
-+echo -e "\n# Generating file and signing it for fs-verity"
-+head -c 100000 /dev/urandom > $fsv_orig_file
-+for suffix in '' '.2'; do
-+	$FSVERITY_PROG sign $fsv_orig_file $sigfile$suffix \
-+		--key=$keyfile$suffix --cert=$certfile$suffix
-+done
-+
-+echo -e "\n# Signing a different file for fs-verity"
-+head -c 100000 /dev/zero > $tmpfile
-+$FSVERITY_PROG sign $tmpfile $othersigfile --key=$keyfile --cert=$certfile
-+
-+# Actual tests
-+
-+reset_fsv_file()
++test_alg()
 +{
-+	rm -f $fsv_file
-+	cp $fsv_orig_file $fsv_file
++	local alg=$1
++	local -n vals=${alg}_vals
++	local i
++	local file_size
++	local expected actual salt_arg
++
++	_fsv_scratch_begin_subtest "Check for expected measurement values ($alg)"
++
++	if ! _fsv_have_hash_algorithm $alg $fsv_file; then
++		if [ "$alg" = sha256 ]; then
++			_fail "Something is wrong - sha256 hash should always be available"
++		fi
++		return 0
++	fi
++
++	for i in ${!file_sizes[@]}; do
++		file_size=${file_sizes[$i]}
++		expected=${vals[$i]}
++		salt_arg=${salts[$i]}
++
++		head -c $file_size /dev/zero > $fsv_orig_file
++		cp $fsv_orig_file $fsv_file
++		_fsv_enable --hash-alg=$alg $salt_arg $fsv_file
++		actual=$(_fsv_measure $fsv_file)
++		if [ "$actual" != "$expected" ]; then
++			echo "Mismatch: expected $expected, kernel calculated $actual (file_size=$file_size)"
++		fi
++		cmp $fsv_orig_file $fsv_file
++		rm -f $fsv_file
++	done
 +}
 +
-+echo -e "\n# Enabling verity with valid signature (should succeed)"
-+reset_fsv_file
-+_fsv_enable $fsv_file --signature=$sigfile
-+cmp $fsv_file $fsv_orig_file
-+
-+echo -e "\n# Enabling verity without signature (should fail)"
-+reset_fsv_file
-+_fsv_enable $fsv_file |& _filter_scratch
-+
-+echo -e "\n# Opening verity file without signature (should fail)"
-+reset_fsv_file
-+sysctl -w fs.verity.require_signatures=0 &>> $seqres.full
-+_fsv_enable $fsv_file
-+sysctl -w fs.verity.require_signatures=1 &>> $seqres.full
-+_scratch_cycle_mount
-+md5sum $fsv_file |& _filter_scratch
-+
-+echo -e "\n# Enabling verity with wrong file's signature (should fail)"
-+reset_fsv_file
-+_fsv_enable $fsv_file --signature=$othersigfile |& _filter_scratch
-+
-+echo -e "\n# Enabling verity with untrusted signature (should fail)"
-+reset_fsv_file
-+_fsv_enable $fsv_file --signature=$sigfile.2 |& _filter_scratch
-+
-+echo -e "\n# Testing salt"
-+reset_fsv_file
-+$FSVERITY_PROG sign $fsv_orig_file $sigfile.salted \
-+	--key=$keyfile --cert=$certfile --salt=abcd
-+_fsv_enable $fsv_file --signature=$sigfile.salted --salt=abcd
-+
-+echo -e "\n# Testing non-default hash algorithm"
-+if _fsv_have_hash_algorithm sha512 $fsv_file; then
-+	reset_fsv_file
-+	$FSVERITY_PROG sign $fsv_orig_file $sigfile.sha512 \
-+		--key=$keyfile --cert=$certfile --hash-alg=sha512
-+	_fsv_enable $fsv_file --signature=$sigfile.sha512 --hash-alg=sha512
-+fi
-+
-+echo -e "\n# Testing empty file"
-+echo -n > $fsv_file
-+$FSVERITY_PROG sign $fsv_file $sigfile.emptyfile --key=$keyfile --cert=$certfile
-+_fsv_enable $fsv_file --signature=$sigfile.emptyfile
++for alg in ${algs[@]}; do
++	test_alg $alg
++done
 +
 +# success, all done
 +status=0
 +exit
-diff --git a/tests/generic/905.out b/tests/generic/905.out
+diff --git a/tests/generic/903.out b/tests/generic/903.out
 new file mode 100644
-index 00000000..76707b5c
+index 00000000..02508828
 --- /dev/null
-+++ b/tests/generic/905.out
-@@ -0,0 +1,34 @@
-+QA output created by 905
++++ b/tests/generic/903.out
+@@ -0,0 +1,5 @@
++QA output created by 903
 +
-+# Generating certificates and private keys
++# Check for expected measurement values (sha256)
 +
-+# Clearing fs-verity keyring
-+
-+# Loading first certificate into fs-verity keyring
-+
-+# Enabling fs.verity.require_signatures
-+fs.verity.require_signatures = 1
-+
-+# Generating file and signing it for fs-verity
-+
-+# Signing a different file for fs-verity
-+
-+# Enabling verity with valid signature (should succeed)
-+
-+# Enabling verity without signature (should fail)
-+ERROR: FS_IOC_ENABLE_VERITY failed on 'SCRATCH_MNT/file.fsv': Bad message
-+
-+# Opening verity file without signature (should fail)
-+md5sum: SCRATCH_MNT/file.fsv: Bad message
-+
-+# Enabling verity with wrong file's signature (should fail)
-+ERROR: FS_IOC_ENABLE_VERITY failed on 'SCRATCH_MNT/file.fsv': Bad message
-+
-+# Enabling verity with untrusted signature (should fail)
-+ERROR: FS_IOC_ENABLE_VERITY failed on 'SCRATCH_MNT/file.fsv': Required key not available
-+
-+# Testing salt
-+
-+# Testing non-default hash algorithm
-+
-+# Testing empty file
++# Check for expected measurement values (sha512)
 diff --git a/tests/generic/group b/tests/generic/group
-index 5b4c32ff..bfbb4957 100644
+index ffdc7640..3927f779 100644
 --- a/tests/generic/group
 +++ b/tests/generic/group
-@@ -564,3 +564,4 @@
+@@ -562,3 +562,4 @@
+ 900 auto quick verity
+ 901 auto quick verity
  902 auto quick verity
- 903 auto quick verity
- 904 auto quick verity encrypt
-+905 auto quick verity
++903 auto quick verity
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
