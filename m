@@ -2,42 +2,42 @@ Return-Path: <SRS0=6WL8=UT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17526C43613
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2019 14:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7650FC43613
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2019 14:03:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DAC2C2085A;
-	Thu, 20 Jun 2019 14:00:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 49AD52075E;
+	Thu, 20 Jun 2019 14:03:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VofgRiFS";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="nGlTpicC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAC2C2085A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="f+GyDzZJ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DRqsOd5p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AD52075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hdxcB-0000if-Ur; Thu, 20 Jun 2019 14:00:35 +0000
+	id 1hdxfO-0000sI-BB; Thu, 20 Jun 2019 14:03:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1hdxcB-0000iZ-IH
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 14:00:35 +0000
+ (envelope-from <jack@suse.cz>) id 1hdxfM-0000s5-JM
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 14:03:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RhPrggSwUXWePd9F4ptGWxocknThYvUSkEbzphlxStU=; b=VofgRiFSzvJYGj6+djaVwzGi7N
- izz039Ufxzg1xlcw1SMjUELMQMkhGXIqhwTKfksU3C/lnqVbjJaThrGJhXiNh6BBgLp+T6qFILsMA
- mwXlDyj0/xDX+IS17+t/HmsJWU4O7Crz56CDyDFSIkcc1+7orzMt6lQP5g/dUJKglQls=;
+ bh=ToNfqA1qtuKBR7PgDNN9N50tBNymGFS9RPUY+mCXJFo=; b=f+GyDzZJcY72Zt8GAuweK/TQnY
+ YuJn0LFjBDpzDvbOwh44tVi3r22MaPknk6nqj/Zva2hZpuoS05QLn8G5rKtwPqm80SsJT8/s8eIEx
+ CqJiNrxhw+DbqDFgRw6iWX1HJ6rlNYFdPuvhV8fL6PGNqlr9f4Q4oizSVJKtVmTSylhc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,33 +45,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RhPrggSwUXWePd9F4ptGWxocknThYvUSkEbzphlxStU=; b=nGlTpicCPquzZbH8h6VVEvJ2CD
- P30QYYg9K2p11ZffbAdmivsqpGg2u7s4kseakmovLvBJOIM0Hu81SmmGZAHkquMrbTf5mPrr9KpYR
- 53O5T4NVau0PNk1Wrr9VQBashCFcbsGpPE/j/tBNtpDolIPVx4wChbst5h9cAVtzNXvA=;
+ bh=ToNfqA1qtuKBR7PgDNN9N50tBNymGFS9RPUY+mCXJFo=; b=DRqsOd5ps6ivrfp4OBMyGDyjsh
+ 0VMEGcWBEcmW4pTQWAwlXtD3TrKCmOKGZ+WG/8DvrO1bPI7LkNx/d1wH5EQ9b+D0jEmyjesOvwxeW
+ gLc+G6aFuyPrazXc4gVkeoaddzrm2qrpMcvE1zhlc1dv663sUKMbmRM7PRaM21mR+o90=;
 Received: from mx2.suse.de ([195.135.220.15] helo=mx1.suse.de)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hdxcB-001TL8-DZ
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 14:00:37 +0000
+ id 1hdxfM-006XNO-Nk
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 14:03:54 +0000
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
- by mx1.suse.de (Postfix) with ESMTP id 8BBB1AEF8;
- Thu, 20 Jun 2019 14:00:28 +0000 (UTC)
+ by mx1.suse.de (Postfix) with ESMTP id 05638AF85;
+ Thu, 20 Jun 2019 14:03:46 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
- id 1187D1E434F; Thu, 20 Jun 2019 16:00:28 +0200 (CEST)
-Date: Thu, 20 Jun 2019 16:00:28 +0200
+ id A12B31E434F; Thu, 20 Jun 2019 16:03:45 +0200 (CEST)
+Date: Thu, 20 Jun 2019 16:03:45 +0200
 From: Jan Kara <jack@suse.cz>
 To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Message-ID: <20190620140028.GH30243@quack2.suse.cz>
+Message-ID: <20190620140345.GI30243@quack2.suse.cz>
 References: <156022836912.3227213.13598042497272336695.stgit@magnolia>
- <156022838496.3227213.3771632042609589318.stgit@magnolia>
+ <156022840560.3227213.4776913678782966728.stgit@magnolia>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <156022838496.3227213.3771632042609589318.stgit@magnolia>
+In-Reply-To: <156022840560.3227213.4776913678782966728.stgit@magnolia>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1hdxcB-001TL8-DZ
-Subject: Re: [f2fs-dev] [PATCH 2/6] vfs: flush and wait for io when setting
- the immutable flag via SETFLAGS
+X-Headers-End: 1hdxfM-006XNO-Nk
+Subject: Re: [f2fs-dev] [PATCH 4/6] vfs: don't allow most setxattr to
+ immutable files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,85 +96,70 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon 10-06-19 21:46:25, Darrick J. Wong wrote:
+On Mon 10-06-19 21:46:45, Darrick J. Wong wrote:
 > From: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> When we're using FS_IOC_SETFLAGS to set the immutable flag on a file, we
-> need to ensure that userspace can't continue to write the file after the
-> file becomes immutable.  To make that happen, we have to flush all the
-> dirty pagecache pages to disk to ensure that we can fail a page fault on
-> a mmap'd region, wait for pending directio to complete, and hope the
-> caller locked out any new writes by holding the inode lock.
+> The chattr manpage has this to say about immutable files:
+> 
+> "A file with the 'i' attribute cannot be modified: it cannot be deleted
+> or renamed, no link can be created to this file, most of the file's
+> metadata can not be modified, and the file can not be opened in write
+> mode."
+> 
+> However, we don't actually check the immutable flag in the setattr code,
+> which means that we can update inode flags and project ids and extent
+> size hints on supposedly immutable files.  Therefore, reject setflags
+> and fssetxattr calls on an immutable file if the file is immutable and
+> will remain that way.
 > 
 > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-
-...
-
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index 6aa1df1918f7..a05341b94d98 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -290,6 +290,9 @@ static int ext4_ioctl_setflags(struct inode *inode,
->  	jflag = flags & EXT4_JOURNAL_DATA_FL;
+> ---
+>  fs/inode.c |   31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index a3757051fd55..adfb458bf533 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2184,6 +2184,17 @@ int vfs_ioc_setflags_check(struct inode *inode, int oldflags, int flags)
+>  	    !capable(CAP_LINUX_IMMUTABLE))
+>  		return -EPERM;
 >  
->  	err = vfs_ioc_setflags_check(inode, oldflags, flags);
-> +	if (err)
-> +		goto flags_out;
-> +	err = vfs_ioc_setflags_flush_data(inode, flags);
->  	if (err)
->  		goto flags_out;
->  
+> +	/*
+> +	 * We aren't allowed to change any other flags if the immutable flag is
+> +	 * already set and is not being unset.
+> +	 */
+> +	if ((oldflags & FS_IMMUTABLE_FL) &&
+> +	    (flags & FS_IMMUTABLE_FL)) {
+> +		if ((oldflags & ~FS_IMMUTABLE_FL) !=
+> +		    (flags & ~FS_IMMUTABLE_FL))
 
-...
+This check looks a bit strange when you've just check FS_IMMUTABLE_FL isn't
+changing... Why not just oldflags != flags?
 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 8dad3c80b611..9c899c63957e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3548,7 +3548,41 @@ static inline struct sock *io_uring_get_socket(struct file *file)
->  
->  int vfs_ioc_setflags_check(struct inode *inode, int oldflags, int flags);
->  
-> +/*
-> + * Do we need to flush the file data before changing attributes?  When we're
-> + * setting the immutable flag we must stop all directio writes and flush the
-> + * dirty pages so that we can fail the page fault on the next write attempt.
-> + */
-> +static inline bool vfs_ioc_setflags_need_flush(struct inode *inode, int flags)
-> +{
-> +	if (S_ISREG(inode->i_mode) && !IS_IMMUTABLE(inode) &&
-> +	    (flags & FS_IMMUTABLE_FL))
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
-> +/*
-> + * Flush file data before changing attributes.  Caller must hold any locks
-> + * required to prevent further writes to this file until we're done setting
-> + * flags.
-> + */
-> +static inline int inode_flush_data(struct inode *inode)
-> +{
-> +	inode_dio_wait(inode);
-> +	return filemap_write_and_wait(inode->i_mapping);
-> +}
-> +
-> +/* Flush file data before changing attributes, if necessary. */
-> +static inline int vfs_ioc_setflags_flush_data(struct inode *inode, int flags)
-> +{
-> +	if (vfs_ioc_setflags_need_flush(inode, flags))
-> +		return inode_flush_data(inode);
-> +	return 0;
-> +}
-> +
+> +	if ((old_fa->fsx_xflags & FS_XFLAG_IMMUTABLE) &&
+> +	    (fa->fsx_xflags & FS_XFLAG_IMMUTABLE)) {
+> +		if ((old_fa->fsx_xflags & ~FS_XFLAG_IMMUTABLE) !=
+> +		    (fa->fsx_xflags & ~FS_XFLAG_IMMUTABLE))
 
-But this is racy at least for page faults, isn't it? What protects you
-against write faults just after filemap_write_and_wait() has finished?
-So either you need to set FS_IMMUTABLE_FL before flushing data or you need
-to get more protection from the fs than just i_rwsem. In the case of ext4
-that would be i_mmap_rwsem but other filesystems don't have equivalent
-protection...
+Ditto here...
+
+> +			return -EPERM;
+> +		if (old_fa->fsx_projid != fa->fsx_projid)
+> +			return -EPERM;
+> +		if ((fa->fsx_xflags & (FS_XFLAG_EXTSIZE |
+> +				       FS_XFLAG_EXTSZINHERIT)) &&
+> +		    old_fa->fsx_extsize != fa->fsx_extsize)
+> +			return -EPERM;
+> +		if ((old_fa->fsx_xflags & FS_XFLAG_COWEXTSIZE) &&
+> +		    old_fa->fsx_cowextsize != fa->fsx_cowextsize)
+> +			return -EPERM;
+> +	}
+> +
+>  	/* Extent size hints of zero turn off the flags. */
+>  	if (fa->fsx_extsize == 0)
+>  		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
 
 								Honza
 -- 
