@@ -2,42 +2,43 @@ Return-Path: <SRS0=6WL8=UT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85288C4646B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82023C43613
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2019 21:38:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 58D232085A;
+	by mail.kernel.org (Postfix) with ESMTPS id 5878820657;
 	Thu, 20 Jun 2019 21:38:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="RB8BGhPp";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="gNNXmZNL";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5uaXOLn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58D232085A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OoL6RbNQ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lQfSGvDJ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfIKpazN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5878820657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1he4ld-0003zy-U4; Thu, 20 Jun 2019 21:38:49 +0000
+	id 1he4ld-0003zm-Q4; Thu, 20 Jun 2019 21:38:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1he4lY-0003zW-KL
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:38:44 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1he4lX-0003zQ-RO
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:38:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=x0b39DIaa3aLzxxNlLFjHfPiDiN9DY4/awpeFillVEM=; b=RB8BGhPp9/hS8B6wi2ffrOqxvk
- zInMTij2d4n3oI/V5RfbkIVktJFQdQZ3HDRzBLAweVlNP9TY5uxdV+RPeZsYEfIYlX2cdvLQgXUto
- a8YmWafHUTGFLwzBjnQxhVG25LlTONUlCC1ddDXFa45Bwa4TjO0yDG1ReyM3W7A4V8FU=;
+ bh=7IQfp55+ErdeaZ9hhZowNIjRqXHcAUbqHL1TqZ9mNr4=; b=OoL6RbNQpXGoggUJPSG62hP6Vp
+ jWjdGKATsa6EkJ7rFkOAECheTFYl8zehYd835Ds0OYnFiBLkLHNROYWGPzUp+zhQcGBaX5qhiP/9A
+ vtvuerONZwhn9EDlS5hLgAs+vzx83O9JTBhTfHwu4g4jTvW7IqpIIiowaDearKSJdKdE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +46,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=x0b39DIaa3aLzxxNlLFjHfPiDiN9DY4/awpeFillVEM=; b=gNNXmZNLd7zQAbyFB0IiUToSpd
- KEcti7l1HRBk2Yos9MVNhCopts30OYY03snSIPTPouqtnLU0RdtX6ZarhE6mBOMoIvCiVw11Ellcm
- HF2oqgp6KHUnA/cx272w/QIWKdEWkcBcGOcAacIezcPVb+ZdIdgemCg5hZl6XX5tb82s=;
+ bh=7IQfp55+ErdeaZ9hhZowNIjRqXHcAUbqHL1TqZ9mNr4=; b=lQfSGvDJlePX1SXrGeDYEepBrx
+ hFgLfLgQkRTVU8eWSlzrj6k8SQ8WhQY8tQH5Uq8hKt1qAowjgWJYecd2qorYvPfCLKHm0Nr9EotYT
+ PSilqF5u4PLthKb136pxhQDRos45nFEKE8uebvCa9qUl7n9Ku+IYXr4tWRxCNZMj/1H8=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1he4lY-001yct-41
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:38:45 +0000
+ id 1he4lX-006aPN-Ap
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:38:44 +0000
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown
  [104.132.1.77])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 5EC62208CA;
- Thu, 20 Jun 2019 21:38:38 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 8F1302085A;
+ Thu, 20 Jun 2019 21:38:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1561066718;
- bh=V+X0j3RoLIP9jo4cD1boHW7vIrMRQP3jzr1LIyfiC1o=;
+ s=default; t=1561066717;
+ bh=HeWLaZx8vNDd7SwrPn4f5AIlPq+mBHnG456nIkYnQjs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=l5uaXOLnXZ7BVz0SR+lMxutRxGT9kQR4NtPCc4ImsyliGwgBguSUrnk0yamwMrvOT
- HAaR/ghHC9Mhl2igYOslTHCoq0GsN/WdIUpdbH1BOXjE9C4uNfT+D2Jn5jDIZtc9XL
- A1d6AiWbIzxxO/s0xhlra+IPhfw9W+SY2/N7wCgY=
+ b=rfIKpazNDw1bB4C0/XZpZm2Dww4Ln3wetmFc7WOjsnOQ1Sq6/yvmvnVxmNPqBtTJD
+ xmP+5sfHRul6vItjTbM4Kl5tXBl997Ahf/M1u//ASjVYxdgU6N7dkNeV5LB2I1Sjhi
+ q31wKs8W1kkDNx3SwhIpdTpis6qnIJqwMrzKKZL8=
 From: Eric Biggers <ebiggers@kernel.org>
 To: fstests@vger.kernel.org
-Date: Thu, 20 Jun 2019 14:36:10 -0700
-Message-Id: <20190620213614.113685-5-ebiggers@kernel.org>
+Date: Thu, 20 Jun 2019 14:36:08 -0700
+Message-Id: <20190620213614.113685-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 In-Reply-To: <20190620213614.113685-1-ebiggers@kernel.org>
 References: <20190620213614.113685-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1he4lY-001yct-41
-Subject: [f2fs-dev] [RFC PATCH v2 4/8] generic: test access controls on the
- fs-verity ioctls
+X-Headers-End: 1he4lX-006aPN-Ap
+Subject: [f2fs-dev] [RFC PATCH v2 2/8] common/verity: add common functions
+ for testing fs-verity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,126 +98,236 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Test access controls on the fs-verity ioctls.  FS_IOC_MEASURE_VERITY is
-allowed on any file, whereas FS_IOC_ENABLE_VERITY requires write access.
+Add common functions for setting up and testing fs-verity, a new feature
+for read-only file-based authenticity protection.  fs-verity will be
+supported by ext4 and f2fs, and perhaps by other filesystems later.
+Running the fs-verity tests requires:
+
+- A kernel with the fs-verity patches from
+  https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+  branch "fsverity" and configured with CONFIG_FS_VERITY.
+- The fsverity utility program from
+  https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/fsverity-utils.git
+- e2fsprogs v1.45.2 or later for ext4 tests, or f2fs-tools v1.11.0 or
+  later for f2fs tests.
+
+See the file Documentation/filesystems/fsverity.rst in the kernel tree
+for more information about fs-verity.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- tests/generic/901     | 73 +++++++++++++++++++++++++++++++++++++++++++
- tests/generic/901.out | 14 +++++++++
- tests/generic/group   |  1 +
- 3 files changed, 88 insertions(+)
- create mode 100755 tests/generic/901
- create mode 100644 tests/generic/901.out
+ common/config |   1 +
+ common/verity | 189 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 190 insertions(+)
+ create mode 100644 common/verity
 
-diff --git a/tests/generic/901 b/tests/generic/901
-new file mode 100755
-index 00000000..56dab587
+diff --git a/common/config b/common/config
+index bd64be62..001ddc45 100644
+--- a/common/config
++++ b/common/config
+@@ -212,6 +212,7 @@ export CHECKBASHISMS_PROG="$(type -P checkbashisms)"
+ export XFS_INFO_PROG="$(type -P xfs_info)"
+ export DUPEREMOVE_PROG="$(type -P duperemove)"
+ export CC_PROG="$(type -P cc)"
++export FSVERITY_PROG="$(type -P fsverity)"
+ 
+ # use 'udevadm settle' or 'udevsettle' to wait for lv to be settled.
+ # newer systems have udevadm command but older systems like RHEL5 don't.
+diff --git a/common/verity b/common/verity
+new file mode 100644
+index 00000000..86fb6585
 --- /dev/null
-+++ b/tests/generic/901
-@@ -0,0 +1,73 @@
-+#! /bin/bash
++++ b/common/verity
+@@ -0,0 +1,189 @@
 +# SPDX-License-Identifier: GPL-2.0
 +# Copyright 2018 Google LLC
 +#
-+# FS QA Test generic/901
-+#
-+# Test access controls on the fs-verity ioctls.  FS_IOC_MEASURE_VERITY is
-+# allowed on any file, whereas FS_IOC_ENABLE_VERITY requires write access.
-+#
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
++# Functions for setting up and testing fs-verity
 +
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1	# failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
++_require_scratch_verity()
 +{
-+	cd /
-+	rm -f $tmp.*
++	_require_scratch
++	_require_command "$FSVERITY_PROG" fsverity
++
++	if ! _scratch_mkfs_verity &>>$seqres.full; then
++		# ext4: need e2fsprogs v1.44.5 or later (but actually v1.45.2+
++		#       is needed for some tests to pass, due to an e2fsck bug)
++		# f2fs: need f2fs-tools v1.11.0 or later
++		_notrun "$FSTYP userspace tools don't support fs-verity"
++	fi
++
++	# Try to mount the filesystem.  If this fails then either the kernel
++	# isn't aware of fs-verity, or the mkfs options were not compatible with
++	# verity (e.g. ext4 with block size != PAGE_SIZE).
++	if ! _try_scratch_mount &>>$seqres.full; then
++		_notrun "kernel is unaware of $FSTYP verity feature," \
++			"or mkfs options are not compatible with verity"
++	fi
++	_scratch_unmount
++
++	# The filesystem may be aware of fs-verity but have it disabled by
++	# CONFIG_FS_VERITY=n.  Detect support via sysfs.
++	if [ ! -e /sys/fs/$FSTYP/features/verity ]; then
++		_notrun "kernel $FSTYP isn't configured with verity support"
++	fi
++
++	# Merkle tree block size.  Currently all filesystems only support
++	# PAGE_SIZE for this.  This is also the default for 'fsverity enable'.
++	FSV_BLOCK_SIZE=$(get_page_size)
 +}
 +
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+. ./common/verity
++_scratch_mkfs_verity()
++{
++	case $FSTYP in
++	ext4|f2fs)
++		_scratch_mkfs -O verity
++		;;
++	*)
++		_notrun "No verity support for $FSTYP"
++		;;
++	esac
++}
 +
-+# remove previous $seqres.full before test
-+rm -f $seqres.full
++_scratch_mkfs_encrypted_verity()
++{
++	case $FSTYP in
++	ext4)
++		_scratch_mkfs -O encrypt,verity
++		;;
++	f2fs)
++		# f2fs-tools as of v1.11.0 doesn't allow comma-separated
++		# features with -O.  Instead -O must be supplied multiple times.
++		_scratch_mkfs -O encrypt -O verity
++		;;
++	*)
++		_notrun "$FSTYP not supported in _scratch_mkfs_encrypted_verity"
++		;;
++	esac
++}
 +
-+# real QA test starts here
-+_supported_fs generic
-+_supported_os Linux
-+_require_scratch_verity
-+_require_user
-+_require_chattr ia
++_fsv_scratch_begin_subtest()
++{
++	local msg=$1
 +
-+_scratch_mkfs_verity &>> $seqres.full
-+_scratch_mount
-+fsv_file=$SCRATCH_MNT/file.fsv
++	rm -rf "${SCRATCH_MNT:?}"/*
++	echo -e "\n# $msg"
++}
 +
-+_fsv_scratch_begin_subtest "FS_IOC_ENABLE_VERITY doesn't require root"
-+echo foo > $fsv_file
-+chmod 666 $fsv_file
-+_user_do "$FSVERITY_PROG enable $fsv_file"
++_fsv_enable()
++{
++	$FSVERITY_PROG enable "$@"
++}
 +
-+_fsv_scratch_begin_subtest "FS_IOC_ENABLE_VERITY requires write access"
-+echo foo > $fsv_file >> $seqres.full
-+chmod 444 $fsv_file
-+_user_do "$FSVERITY_PROG enable $fsv_file" |& _filter_scratch
++_fsv_measure()
++{
++        $FSVERITY_PROG measure "$@" | awk '{print $1}'
++}
 +
-+_fsv_scratch_begin_subtest "FS_IOC_ENABLE_VERITY requires !append-only"
-+echo foo > $fsv_file >> $seqres.full
-+$CHATTR_PROG +a $fsv_file
-+$FSVERITY_PROG enable $fsv_file |& _filter_scratch
-+$CHATTR_PROG -a $fsv_file
++# Generate a file, then enable verity on it.
++_fsv_create_enable_file()
++{
++	local file=$1
++	shift
 +
-+_fsv_scratch_begin_subtest "FS_IOC_ENABLE_VERITY requires !immutable"
-+echo foo > $fsv_file >> $seqres.full
-+$CHATTR_PROG +i $fsv_file
-+$FSVERITY_PROG enable $fsv_file |& _filter_scratch
-+$CHATTR_PROG -i $fsv_file
++	head -c $((FSV_BLOCK_SIZE * 2)) /dev/zero > "$file"
++	_fsv_enable "$file" "$@"
++}
 +
-+_fsv_scratch_begin_subtest "FS_IOC_MEASURE_VERITY doesn't require root"
-+_fsv_create_enable_file $fsv_file >> $seqres.full
-+chmod 444 $fsv_file
-+su $qa_user -c "$FSVERITY_PROG measure $fsv_file" >> $seqres.full
++_fsv_have_hash_algorithm()
++{
++	local hash_alg=$1
++	local test_file=$2
 +
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/901.out b/tests/generic/901.out
-new file mode 100644
-index 00000000..a9e4c364
---- /dev/null
-+++ b/tests/generic/901.out
-@@ -0,0 +1,14 @@
-+QA output created by 901
++	rm -f $test_file
++	head -c 4096 /dev/zero > $test_file
++	if ! _fsv_enable --hash-alg=$hash_alg $test_file &>> $seqres.full; then
++		# no kernel support
++		return 1
++	fi
++	rm -f $test_file
++	return 0
++}
 +
-+# FS_IOC_ENABLE_VERITY doesn't require root
++#
++# _fsv_scratch_corrupt_bytes - Write some bytes to a file, bypassing the filesystem
++#
++# Write the bytes sent on stdin to the given offset in the given file, but do so
++# by writing directly to the extents on the block device, with the filesystem
++# unmounted.  This can be used to corrupt a verity file for testing purposes,
++# bypassing the restrictions imposed by the filesystem.
++#
++# The file is assumed to be located on $SCRATCH_DEV.
++#
++_fsv_scratch_corrupt_bytes()
++{
++	local file=$1
++	local offset=$2
++	local lstart lend pstart pend
++	local dd_cmds=()
++	local cmd
 +
-+# FS_IOC_ENABLE_VERITY requires write access
-+Permission denied
++	sync	# Sync to avoid unwritten extents
 +
-+# FS_IOC_ENABLE_VERITY requires !append-only
-+ERROR: FS_IOC_ENABLE_VERITY failed on 'SCRATCH_MNT/file.fsv': Operation not permitted
++	cat > $tmp.bytes
++	local end=$(( offset + $(stat -c %s $tmp.bytes ) ))
 +
-+# FS_IOC_ENABLE_VERITY requires !immutable
-+ERROR: FS_IOC_ENABLE_VERITY failed on 'SCRATCH_MNT/file.fsv': Operation not permitted
++	# For each extent that intersects the requested range in order, add a
++	# command that writes the next part of the data to that extent.
++	while read -r lstart lend pstart pend; do
++		lstart=$((lstart * 512))
++		lend=$(((lend + 1) * 512))
++		pstart=$((pstart * 512))
++		pend=$(((pend + 1) * 512))
 +
-+# FS_IOC_MEASURE_VERITY doesn't require root
-diff --git a/tests/generic/group b/tests/generic/group
-index ed6839a9..003fbff4 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -560,3 +560,4 @@
- 555 auto quick cap
- 556 auto quick casefold
- 900 auto quick verity
-+901 auto quick verity
++		if (( lend - lstart != pend - pstart )); then
++			_fail "Logical and physical extent lengths differ for file '$file'"
++		elif (( offset < lstart )); then
++			_fail "Hole in file '$file' at byte $offset.  Next extent begins at byte $lstart"
++		elif (( offset < lend )); then
++			local len=$((lend - offset))
++			local seek=$((pstart + (offset - lstart)))
++			dd_cmds+=("head -c $len | dd of=$SCRATCH_DEV oflag=seek_bytes seek=$seek status=none")
++			(( offset += len ))
++		fi
++	done < <($XFS_IO_PROG -r -c "fiemap $offset $((end - offset))" "$file" \
++		 | _filter_xfs_io_fiemap)
++
++	if (( offset < end )); then
++		_fail "Extents of file '$file' ended at byte $offset, but needed until $end"
++	fi
++
++	# Execute the commands to write the data
++	_scratch_unmount
++	for cmd in "${dd_cmds[@]}"; do
++		eval "$cmd"
++	done < $tmp.bytes
++	sync	# Sync to flush the block device's pagecache
++	_scratch_mount
++}
++
++#
++# _fsv_scratch_corrupt_merkle_tree - Corrupt a file's Merkle tree
++#
++# Like _fsv_scratch_corrupt_bytes(), but this corrupts the file's fs-verity
++# Merkle tree.  The offset is given as a byte offset into the Merkle tree.
++#
++_fsv_scratch_corrupt_merkle_tree()
++{
++	local file=$1
++	local offset=$2
++
++	case $FSTYP in
++	ext4|f2fs)
++		# ext4 and f2fs store the Merkle tree after the file contents
++		# itself, starting at the next 65536-byte aligned boundary.
++		(( offset += ($(stat -c %s $file) + 65535) & ~65535 ))
++		_fsv_scratch_corrupt_bytes $file $offset
++		;;
++	*)
++		_fail "_fsv_scratch_corrupt_merkle_tree() unimplemented on $FSTYP"
++		;;
++	esac
++}
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
