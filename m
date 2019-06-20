@@ -2,80 +2,117 @@ Return-Path: <SRS0=6WL8=UT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38546C43613
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2019 21:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D06C43613
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Jun 2019 21:39:50 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 09C3E2084A;
-	Thu, 20 Jun 2019 21:38:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A568420657;
+	Thu, 20 Jun 2019 21:39:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KDMVeJxT";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="UWn5MXAE";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhj3bYfZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09C3E2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="BmqZBHoa";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="I9WtROIR";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HKn791tb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A568420657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1he4lg-0007ct-3z; Thu, 20 Jun 2019 21:38:52 +0000
+	id 1he4mb-000451-5z; Thu, 20 Jun 2019 21:39:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1he4lc-0007cD-Uv
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:38:48 +0000
+ (envelope-from <darrick.wong@oracle.com>) id 1he4ma-00044u-3O
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:39:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KSCqt7+1ZMtXMYGYqaGOnjDESjavvpMtiVaXOo0XVMo=; b=KDMVeJxT/PuhUZq33JPvT+ylEM
- DtxFwpOIFNcwL9cFEddkzvOL7hvG5CpEH8xKigZSdR38lHdJ9nXLi2IXkY5EYgTuMQJQFfpSyBdGj
- hT9Xgh/BSB2u9x0bCYHGHpeBF/MwFYR847oHroEUd4TKB5Q8kMk/GulyAV5coW1YakqI=;
+ bh=D3CnJNHOIgWdUG1TcE81fq/bsWj72ILMBiE1tAPqQwo=; b=BmqZBHoaB6SmOTlgtK3xtH6hPn
+ T1E4nvWzrPgwQOlLVXsuhhbgoxehijS7pbuytQ5ekbDZan+mXZgMa25bWpxhxnw/nXDx3GjhOsa/k
+ kn5ji7M8GYJTUzip+VTtY4MRWcm/r8mXkTejp8L/Qc5F2HEiDUSgTvmFHEPsGJgrNf5k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KSCqt7+1ZMtXMYGYqaGOnjDESjavvpMtiVaXOo0XVMo=; b=UWn5MXAEIVzdXLMh2nqUyxQ0XX
- 89HJuR4BbJW0IMrbzdTCBnNRmp4Fe5S8+QxCunhYqNo+J9F6T1G9oq+dgPcLuDPPKSBFXB+eAcs1d
- PoBBto9N7oG+DRJ0KKLSuJEjQebq3jw0t30Z2GKEM2HVEQTS1oKNWC76SqLwX3aSuvwk=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=D3CnJNHOIgWdUG1TcE81fq/bsWj72ILMBiE1tAPqQwo=; b=I9WtROIRmVhGqKXoC/RihLggK4
+ +sLF/H8u2zIWnH0pqKNjiePDNClq/NwFZ9Hz4t0MLcVm9WHTj7nI/QQbH843yJ/frVAy+0RFkrGGx
+ y1dvXt3TFHYaglcWtOwEHT9EbSCQCCSodkrvBBQfdtN98h+VlYMrXJtO1ECdjg+gY/80=;
+Received: from userp2130.oracle.com ([156.151.31.86])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1he4le-006yPn-3O
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:38:51 +0000
-Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown
- [104.132.1.77])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id BD29820B1F;
- Thu, 20 Jun 2019 21:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1561066719;
- bh=d27p70Gr0QEAejavj4m8KjtHSwoT83LH9uhHi+Iuvmw=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=uhj3bYfZOl448KVcMoiYVX4H+lxzjWdO1NvnxLgW1UhgvdhtKr4YYli2lj0vt7vF+
- vhrGZWOTzYW+H+4O0/2w+J/ftirIAiZzZYsqMDNoZhKQJQmMDdqn97NsnKjkECKh9l
- IFPEwTK+6Iug/tSEFZPNWqMB3lPD5QWoOeZRaXR4=
-From: Eric Biggers <ebiggers@kernel.org>
-To: fstests@vger.kernel.org
-Date: Thu, 20 Jun 2019 14:36:11 -0700
-Message-Id: <20190620213614.113685-6-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190620213614.113685-1-ebiggers@kernel.org>
-References: <20190620213614.113685-1-ebiggers@kernel.org>
+ id 1he4mX-001ygN-Db
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Jun 2019 21:39:49 +0000
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+ by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KLYHVn088700;
+ Thu, 20 Jun 2019 21:38:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
+ h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=D3CnJNHOIgWdUG1TcE81fq/bsWj72ILMBiE1tAPqQwo=;
+ b=HKn791tbDcSyV5tTwA4L7n0iz31Dp5T+PYftD80uW1HfTEOKSjNNo8ILTMjO1/Rv8cOI
+ hpROCjBB23fPljyiuqdvwYxNy/xpAecXOJ97+qJXUbuQysBIXp6+kq1M1NohTdSt2o5m
+ bdEHlQfhcUcK9Q2VlmkUVsRBf7mVWZm2yOm4eXP0y5gikqkZmSL3eKCbJdvsPzjLY50k
+ BfxiWb1VEIm42WU1tUp/bKXk3/F6YlHbkAbzrc8pKPgHNgEvkWIV2bY4z7UBJVZQfH8/
+ ZSoTLiWzgKluhc0l9SvuD6uztH108WS7lGdHTqumoJ0SNSOf6qr9qij979gZkZoaMzEB qg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+ by userp2130.oracle.com with ESMTP id 2t7809kdj1-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Thu, 20 Jun 2019 21:38:38 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+ by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KLacer151050;
+ Thu, 20 Jun 2019 21:36:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+ by aserp3020.oracle.com with ESMTP id 2t77ypkrr0-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+ Thu, 20 Jun 2019 21:36:38 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+ by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5KLabeL151041;
+ Thu, 20 Jun 2019 21:36:37 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+ by aserp3020.oracle.com with ESMTP id 2t77ypkrqs-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Thu, 20 Jun 2019 21:36:37 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+ by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5KLaWqH007037;
+ Thu, 20 Jun 2019 21:36:32 GMT
+Received: from localhost (/10.145.179.81)
+ by default (Oracle Beehive Gateway v4.0)
+ with ESMTP ; Thu, 20 Jun 2019 14:36:31 -0700
+Date: Thu, 20 Jun 2019 14:36:29 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Jan Kara <jack@suse.cz>
+Message-ID: <20190620213629.GB5375@magnolia>
+References: <156022836912.3227213.13598042497272336695.stgit@magnolia>
+ <156022840560.3227213.4776913678782966728.stgit@magnolia>
+ <20190620140345.GI30243@quack2.suse.cz>
 MIME-Version: 1.0
-X-Headers-End: 1he4le-006yPn-3O
-Subject: [f2fs-dev] [RFC PATCH v2 5/8] generic: test corrupting verity files
+Content-Disposition: inline
+In-Reply-To: <20190620140345.GI30243@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294
+ signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
+ priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906200154
+X-Headers-End: 1he4mX-001ygN-Db
+Subject: Re: [f2fs-dev] [PATCH 4/6] vfs: don't allow most setxattr to
+ immutable files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,298 +124,94 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
- linux-fscrypt@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-ext4@vger.kernel.org, Victor Hsieh <victorhsieh@google.com>
+Cc: linux-efi@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+ clm@fb.com, adilger.kernel@dilger.ca, matthew.garrett@nebula.com,
+ linux-nilfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ devel@lists.orangefs.org, josef@toxicpanda.com, reiserfs-devel@vger.kernel.org,
+ viro@zeniv.linux.org.uk, dsterba@suse.com, jaegeuk@kernel.org, tytso@mit.edu,
+ ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ jk@ozlabs.org, jack@suse.com, linux-fsdevel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+On Thu, Jun 20, 2019 at 04:03:45PM +0200, Jan Kara wrote:
+> On Mon 10-06-19 21:46:45, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <darrick.wong@oracle.com>
+> > 
+> > The chattr manpage has this to say about immutable files:
+> > 
+> > "A file with the 'i' attribute cannot be modified: it cannot be deleted
+> > or renamed, no link can be created to this file, most of the file's
+> > metadata can not be modified, and the file can not be opened in write
+> > mode."
+> > 
+> > However, we don't actually check the immutable flag in the setattr code,
+> > which means that we can update inode flags and project ids and extent
+> > size hints on supposedly immutable files.  Therefore, reject setflags
+> > and fssetxattr calls on an immutable file if the file is immutable and
+> > will remain that way.
+> > 
+> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > ---
+> >  fs/inode.c |   31 +++++++++++++++++++++++++++++++
+> >  1 file changed, 31 insertions(+)
+> > 
+> > 
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index a3757051fd55..adfb458bf533 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -2184,6 +2184,17 @@ int vfs_ioc_setflags_check(struct inode *inode, int oldflags, int flags)
+> >  	    !capable(CAP_LINUX_IMMUTABLE))
+> >  		return -EPERM;
+> >  
+> > +	/*
+> > +	 * We aren't allowed to change any other flags if the immutable flag is
+> > +	 * already set and is not being unset.
+> > +	 */
+> > +	if ((oldflags & FS_IMMUTABLE_FL) &&
+> > +	    (flags & FS_IMMUTABLE_FL)) {
+> > +		if ((oldflags & ~FS_IMMUTABLE_FL) !=
+> > +		    (flags & ~FS_IMMUTABLE_FL))
+> 
+> This check looks a bit strange when you've just check FS_IMMUTABLE_FL isn't
+> changing... Why not just oldflags != flags?
+> 
+> > +	if ((old_fa->fsx_xflags & FS_XFLAG_IMMUTABLE) &&
+> > +	    (fa->fsx_xflags & FS_XFLAG_IMMUTABLE)) {
+> > +		if ((old_fa->fsx_xflags & ~FS_XFLAG_IMMUTABLE) !=
+> > +		    (fa->fsx_xflags & ~FS_XFLAG_IMMUTABLE))
+> 
+> Ditto here...
 
-This test corrupts various parts of the contents of a verity file, or
-parts of its Merkle tree, by writing directly to the block device.  It
-verifies that this causes I/O errors when the relevant part of the
-contents is later read by any means.
+Good point!  I'll fix it.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- tests/generic/902     | 154 ++++++++++++++++++++++++++++++++++++++++++
- tests/generic/902.out |  91 +++++++++++++++++++++++++
- tests/generic/group   |   1 +
- 3 files changed, 246 insertions(+)
- create mode 100755 tests/generic/902
- create mode 100644 tests/generic/902.out
+--D
 
-diff --git a/tests/generic/902 b/tests/generic/902
-new file mode 100755
-index 00000000..5ef2cca1
---- /dev/null
-+++ b/tests/generic/902
-@@ -0,0 +1,154 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright 2018 Google LLC
-+#
-+# FS QA Test generic/902
-+#
-+# Test corrupting verity files.  This test corrupts various parts of the
-+# contents of a verity file, or parts of its Merkle tree, by writing directly to
-+# the block device.  It verifies that this causes I/O errors when the relevant
-+# part of the contents is later read by any means.
-+#
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1	# failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	cd /
-+	rm -f $tmp.*
-+}
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+. ./common/verity
-+
-+# remove previous $seqres.full before test
-+rm -f $seqres.full
-+
-+# real QA test starts here
-+_supported_fs generic
-+_supported_os Linux
-+_require_scratch_verity
-+
-+_scratch_mkfs_verity &>> $seqres.full
-+_scratch_mount
-+fsv_orig_file=$SCRATCH_MNT/file
-+fsv_file=$SCRATCH_MNT/file.fsv
-+
-+setup_zeroed_file()
-+{
-+	local len=$1
-+	local sparse=$2
-+
-+	if $sparse; then
-+		dd if=/dev/zero of=$fsv_orig_file bs=1 count=0 seek=$len \
-+			status=none
-+	else
-+		head -c $len /dev/zero > $fsv_orig_file
-+	fi
-+	cp $fsv_orig_file $fsv_file
-+	_fsv_enable $fsv_file
-+	md5sum $fsv_file |& _filter_scratch
-+}
-+
-+filter_sigbus()
-+{
-+	sed -e 's/.*Bus error.*/Bus error/'
-+}
-+
-+round_up_to_page_boundary()
-+{
-+	local n=$1
-+	local page_size=$(get_page_size)
-+
-+	echo $(( (n + page_size - 1) & ~(page_size - 1) ))
-+}
-+
-+corruption_test()
-+{
-+	local file_len=$1
-+	local zap_offset=$2
-+	local zap_len=$3
-+	local is_merkle_tree=${4:-false} # if true, zap tree instead of data
-+	local use_sparse_file=${5:-false}
-+	local page_aligned_eof=$(round_up_to_page_boundary $file_len)
-+	local measurement
-+
-+	if $is_merkle_tree; then
-+		local corrupt_func=_fsv_scratch_corrupt_merkle_tree
-+	else
-+		local corrupt_func=_fsv_scratch_corrupt_bytes
-+	fi
-+
-+	local msg="Corruption test:"
-+	msg+=" file_len=$file_len"
-+	if $use_sparse_file; then
-+		msg+=" (sparse)"
-+	fi
-+	msg+=" zap_offset=$zap_offset"
-+	if $is_merkle_tree; then
-+		msg+=" (in Merkle tree)"
-+	fi
-+	msg+=" zap_len=$zap_len"
-+
-+	_fsv_scratch_begin_subtest "$msg"
-+	setup_zeroed_file $file_len $use_sparse_file
-+	cmp $fsv_file $fsv_orig_file
-+	echo "Corrupting bytes..."
-+	head -c $zap_len /dev/zero | tr '\0' X \
-+		| $corrupt_func $fsv_file $zap_offset
-+
-+	echo "Validating corruption (reading full file)..."
-+	_scratch_cycle_mount
-+	md5sum $fsv_file |& _filter_scratch
-+
-+	echo "Validating corruption (direct I/O)..."
-+	_scratch_cycle_mount
-+	dd if=$fsv_file bs=$FSV_BLOCK_SIZE iflag=direct status=none \
-+		of=/dev/null |& _filter_scratch
-+
-+	if ! $is_merkle_tree; then
-+		echo "Validating corruption (reading just corrupted part)..."
-+		dd if=$fsv_file bs=1 skip=$zap_offset count=$zap_len \
-+			of=/dev/null status=none |& _filter_scratch
-+	fi
-+
-+	echo "Validating corruption (reading full file via mmap)..."
-+	bash -c "trap '' SIGBUS; $XFS_IO_PROG -r $fsv_file \
-+		-c 'mmap -r 0 $page_aligned_eof' \
-+		-c 'mread 0 $file_len'" |& filter_sigbus
-+
-+	if ! $is_merkle_tree; then
-+		echo "Validating corruption (reading just corrupted part via mmap)..."
-+		bash -c "trap '' SIGBUS; $XFS_IO_PROG -r $fsv_file \
-+			-c 'mmap -r 0 $page_aligned_eof' \
-+			-c 'mread $zap_offset $zap_len'" |& filter_sigbus
-+	fi
-+}
-+
-+corruption_test 131072 0 1
-+corruption_test 131072 4095 1
-+corruption_test 131072 65536 65536
-+corruption_test 131072 131071 1
-+
-+# Non-zeroed bytes in the final partial block beyond EOF should cause reads to
-+# fail too.  Such bytes would be visible via mmap().
-+corruption_test 130999 131000 72
-+
-+# Merkle tree corruption.
-+corruption_test 200000 100 10 true
-+
-+# Sparse file.  Corrupting the Merkle tree should still cause reads to fail,
-+# i.e. the filesystem must verify holes.
-+corruption_test 200000 100 10 true true
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/902.out b/tests/generic/902.out
-new file mode 100644
-index 00000000..15fe691e
---- /dev/null
-+++ b/tests/generic/902.out
-@@ -0,0 +1,91 @@
-+QA output created by 902
-+
-+# Corruption test: file_len=131072 zap_offset=0 zap_len=1
-+0dfbe8aa4c20b52e1b8bf3cb6cbdf193  SCRATCH_MNT/file.fsv
-+Corrupting bytes...
-+Validating corruption (reading full file)...
-+md5sum: SCRATCH_MNT/file.fsv: Input/output error
-+Validating corruption (direct I/O)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading just corrupted part)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading full file via mmap)...
-+Bus error
-+Validating corruption (reading just corrupted part via mmap)...
-+Bus error
-+
-+# Corruption test: file_len=131072 zap_offset=4095 zap_len=1
-+0dfbe8aa4c20b52e1b8bf3cb6cbdf193  SCRATCH_MNT/file.fsv
-+Corrupting bytes...
-+Validating corruption (reading full file)...
-+md5sum: SCRATCH_MNT/file.fsv: Input/output error
-+Validating corruption (direct I/O)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading just corrupted part)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading full file via mmap)...
-+Bus error
-+Validating corruption (reading just corrupted part via mmap)...
-+Bus error
-+
-+# Corruption test: file_len=131072 zap_offset=65536 zap_len=65536
-+0dfbe8aa4c20b52e1b8bf3cb6cbdf193  SCRATCH_MNT/file.fsv
-+Corrupting bytes...
-+Validating corruption (reading full file)...
-+md5sum: SCRATCH_MNT/file.fsv: Input/output error
-+Validating corruption (direct I/O)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading just corrupted part)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading full file via mmap)...
-+Bus error
-+Validating corruption (reading just corrupted part via mmap)...
-+Bus error
-+
-+# Corruption test: file_len=131072 zap_offset=131071 zap_len=1
-+0dfbe8aa4c20b52e1b8bf3cb6cbdf193  SCRATCH_MNT/file.fsv
-+Corrupting bytes...
-+Validating corruption (reading full file)...
-+md5sum: SCRATCH_MNT/file.fsv: Input/output error
-+Validating corruption (direct I/O)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading just corrupted part)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading full file via mmap)...
-+Bus error
-+Validating corruption (reading just corrupted part via mmap)...
-+Bus error
-+
-+# Corruption test: file_len=130999 zap_offset=131000 zap_len=72
-+f5cca0d7fbb8b02bc6118a9954d5d306  SCRATCH_MNT/file.fsv
-+Corrupting bytes...
-+Validating corruption (reading full file)...
-+md5sum: SCRATCH_MNT/file.fsv: Input/output error
-+Validating corruption (direct I/O)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading just corrupted part)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading full file via mmap)...
-+Bus error
-+Validating corruption (reading just corrupted part via mmap)...
-+Bus error
-+
-+# Corruption test: file_len=200000 zap_offset=100 (in Merkle tree) zap_len=10
-+4a1e4325031b13f933ac4f1db9ecb63f  SCRATCH_MNT/file.fsv
-+Corrupting bytes...
-+Validating corruption (reading full file)...
-+md5sum: SCRATCH_MNT/file.fsv: Input/output error
-+Validating corruption (direct I/O)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading full file via mmap)...
-+Bus error
-+
-+# Corruption test: file_len=200000 (sparse) zap_offset=100 (in Merkle tree) zap_len=10
-+4a1e4325031b13f933ac4f1db9ecb63f  SCRATCH_MNT/file.fsv
-+Corrupting bytes...
-+Validating corruption (reading full file)...
-+md5sum: SCRATCH_MNT/file.fsv: Input/output error
-+Validating corruption (direct I/O)...
-+dd: error reading 'SCRATCH_MNT/file.fsv': Input/output error
-+Validating corruption (reading full file via mmap)...
-+Bus error
-diff --git a/tests/generic/group b/tests/generic/group
-index 003fbff4..ffdc7640 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -561,3 +561,4 @@
- 556 auto quick casefold
- 900 auto quick verity
- 901 auto quick verity
-+902 auto quick verity
--- 
-2.22.0.410.gd8fdbe21b5-goog
-
+> 
+> > +			return -EPERM;
+> > +		if (old_fa->fsx_projid != fa->fsx_projid)
+> > +			return -EPERM;
+> > +		if ((fa->fsx_xflags & (FS_XFLAG_EXTSIZE |
+> > +				       FS_XFLAG_EXTSZINHERIT)) &&
+> > +		    old_fa->fsx_extsize != fa->fsx_extsize)
+> > +			return -EPERM;
+> > +		if ((old_fa->fsx_xflags & FS_XFLAG_COWEXTSIZE) &&
+> > +		    old_fa->fsx_cowextsize != fa->fsx_cowextsize)
+> > +			return -EPERM;
+> > +	}
+> > +
+> >  	/* Extent size hints of zero turn off the flags. */
+> >  	if (fa->fsx_extsize == 0)
+> >  		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
 
 _______________________________________________
