@@ -2,103 +2,105 @@ Return-Path: <SRS0=Q+BT=UU=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9972BC48BE5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Jun 2019 23:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD751C48BE3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Jun 2019 23:58:19 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 69AB4208CA;
-	Fri, 21 Jun 2019 23:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id ABE0B20881;
+	Fri, 21 Jun 2019 23:58:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lFgSxTBK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Xfb36NML";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VYwNeL6i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69AB4208CA
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HI0Erc6X";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="UxtB5ppu";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wjkT0GQO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE0B20881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1heTPu-0006uG-Ng; Fri, 21 Jun 2019 23:58:02 +0000
+	id 1heTQ6-0007XI-SU; Fri, 21 Jun 2019 23:58:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <darrick.wong@oracle.com>) id 1heTPt-0006u6-Qt
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Jun 2019 23:58:01 +0000
+ (envelope-from <darrick.wong@oracle.com>) id 1heTQ4-0007Wu-7K
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Jun 2019 23:58:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ :References:In-Reply-To:Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fawPQY/UISfSH6DvrztcWabWXm47TtXieQJWSELxOKQ=; b=lFgSxTBKfLWsa1HQ6V9oLiVBbP
- rkfCJrKkmhhWWRPFEdSjD22CozwmJcBKBZ40QNuDeSMhNIUkuMzXyOWj3ZD1xp6P+wU31Eoz2886n
- k6KvyNmFTat1ZlVo70RmPij32pxOANORvOV16xdHMPDYpEtGPlaw8Tn0wyXfJGMM3M9k=;
+ bh=z/qDndmf6A+QcMxspoyUz/S1LymbRSh4kBuy/OOkZMU=; b=HI0Erc6XjQ/bMtDmpVQC9/mFev
+ r+M69EYtyt88Qbf2fG2X+LBAUV70/zgidvFWY5J7zhydCuIQizvDSEYrVFW1H3S9u5q119C7ImwtK
+ 4j3DoX19+xEwb7lTdRDjHFzFlgKXgbVTXSrmwivAYZBwO3STS4GUIt4SdMVpR6F0CZvs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Cc:To
- :From:Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=fawPQY/UISfSH6DvrztcWabWXm47TtXieQJWSELxOKQ=; b=X
- fb36NMLBHrlaQT7VBYViLZQiihIJiyjnNRi0/cY1hxIrtamqpV0rT8wtXNJ7hHSf2aKQbwtpOD0kS
- zm2FYxviuFaoI0ERBmy88iyFcQyHSpwQgbq+QmL+TdogEfPx+/Nmtnm8CeMQtMKAGX4yplfp1uFu6
- dtQ6SfDOCNAXFCAc=;
-Received: from userp2120.oracle.com ([156.151.31.85])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=z/qDndmf6A+QcMxspoyUz/S1LymbRSh4kBuy/OOkZMU=; b=UxtB5ppuuaSQb7nZVNvzyikC8h
+ qxh05EvF8GLsUXyyi00WjYwmPb9D6wk6FAM6fMb4nhjWYfeJ2GjHBgf6SdeS95mBp0UQZdACviPKz
+ AV+2UumrY/aR+tOXl5SEerV5OvNV0e8xAEf4LLwEg47EdCs6MccbgKRteJ0eCaTKfv3M=;
+Received: from userp2130.oracle.com ([156.151.31.86])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1heTPt-003Z8I-HO
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Jun 2019 23:58:04 +0000
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
- by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5LNt5Xd059348;
- Fri, 21 Jun 2019 23:56:58 GMT
+ id 1heTQ7-008LPF-5r
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Jun 2019 23:58:16 +0000
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+ by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5LNtT3C053502;
+ Fri, 21 Jun 2019 23:57:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
  h=subject : from : to :
- cc : date : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=fawPQY/UISfSH6DvrztcWabWXm47TtXieQJWSELxOKQ=;
- b=VYwNeL6ibPXVTEVoRkPUTgHJCT2wzrlt5vhgzdSSWt3OQjBNDlvSlcMAel/+5/qiR1of
- h2fH3k9W374Ek5nhUZh18oW2OLVU8FOtFCEtIVH579hK6M1M54/APh5/t3SUPGKy7t9V
- zr4flVMsY+8M+/9Er2kArmiUZJYRUJeMUa6Z3FeKdWFkw5uKS18otDCNc6AjwWI6ftkm
- Qf7O4LpTTnOL9WPw64vBXu6TFLd4bcXU3WYyHNH2O8UezLzZ+yDrtb1pzL64XMboTNNv
- P0vzfKCxcw4dY1NwEQj5N4JcCQ2pFTiMWGgyRXLO/ijggAoaKJ7wtQ0X968LtP9NJ5HD 2A== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
- by userp2120.oracle.com with ESMTP id 2t7809rqup-1
+ cc : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=z/qDndmf6A+QcMxspoyUz/S1LymbRSh4kBuy/OOkZMU=;
+ b=wjkT0GQOyhGZQVymw3iAWC4tCSljHbMaHfLwOMuDGL8p4btYWyTwsWtBEdQwGGINIwZo
+ h9zBW/cgXXhMZ8oyGZjnW9NYmdB0nA3/EIc95B8S2hEfI7RVCeVpRHHiqV0MZZbBUk4d
+ 2hLxOCGcFbZy1cJCUQcDfBHr4goqckvLXk68LVtc3iN4PAsokI9VnMV1Kduw7ojHGpCO
+ t6oUEvGxTK8pCIDnMurzetCBjzV9DMGl1TyxzjEirA8mwBRdpKK72gDjjK2Oe+hHHOzL
+ Yt0tAmTke1esEGQGWR33J1i4LB8hmomM7Sie9P1P+WLkg7KBJbOIeC+BaS+UWXzgGldC vg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+ by userp2130.oracle.com with ESMTP id 2t7809rsww-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Fri, 21 Jun 2019 23:56:57 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
- by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5LNtKaA167994;
- Fri, 21 Jun 2019 23:56:57 GMT
+ Fri, 21 Jun 2019 23:57:13 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+ by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5LNuZJP036165;
+ Fri, 21 Jun 2019 23:57:12 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
- by aserp3030.oracle.com with ESMTP id 2t7rdy0604-1
+ by aserp3020.oracle.com with ESMTP id 2t77yq6ubx-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
- Fri, 21 Jun 2019 23:56:57 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
- by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5LNuue9170472;
- Fri, 21 Jun 2019 23:56:56 GMT
+ Fri, 21 Jun 2019 23:57:12 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+ by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5LNvCNA037024;
+ Fri, 21 Jun 2019 23:57:12 GMT
 Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
- by aserp3030.oracle.com with ESMTP id 2t7rdy05yy-1
+ by aserp3020.oracle.com with ESMTP id 2t77yq6ubu-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Fri, 21 Jun 2019 23:56:56 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
- by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5LNurk8019074;
- Fri, 21 Jun 2019 23:56:53 GMT
+ Fri, 21 Jun 2019 23:57:12 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+ by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5LNvA1P019154;
+ Fri, 21 Jun 2019 23:57:10 GMT
 Received: from localhost (/10.159.131.214)
  by default (Oracle Beehive Gateway v4.0)
- with ESMTP ; Fri, 21 Jun 2019 16:56:53 -0700
+ with ESMTP ; Fri, 21 Jun 2019 16:57:09 -0700
 From: "Darrick J. Wong" <darrick.wong@oracle.com>
 To: matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
  darrick.wong@oracle.com, ard.biesheuvel@linaro.org,
  josef@toxicpanda.com, clm@fb.com, adilger.kernel@dilger.ca,
  viro@zeniv.linux.org.uk, jack@suse.com, dsterba@suse.com,
  jaegeuk@kernel.org, jk@ozlabs.org
-Date: Fri, 21 Jun 2019 16:56:50 -0700
-Message-ID: <156116141046.1664939.11424021489724835645.stgit@magnolia>
+Date: Fri, 21 Jun 2019 16:57:07 -0700
+Message-ID: <156116142734.1664939.5074567130774423066.stgit@magnolia>
+In-Reply-To: <156116141046.1664939.11424021489724835645.stgit@magnolia>
+References: <156116141046.1664939.11424021489724835645.stgit@magnolia>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9295
@@ -109,9 +111,9 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1906210182
-X-Headers-End: 1heTPt-003Z8I-HO
-Subject: [f2fs-dev] [PATCH v4 0/7] vfs: make immutable files actually
- immutable
+X-Headers-End: 1heTQ7-008LPF-5r
+Subject: [f2fs-dev] [PATCH 2/7] vfs: flush and wait for io when setting the
+ immutable flag via SETFLAGS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -133,55 +135,291 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi all,
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-The chattr(1) manpage has this to say about the immutable bit that
-system administrators can set on files:
+When we're using FS_IOC_SETFLAGS to set the immutable flag on a file, we
+need to ensure that userspace can't continue to write the file after the
+file becomes immutable.  To make that happen, we have to flush all the
+dirty pagecache pages to disk to ensure that we can fail a page fault on
+a mmap'd region, wait for pending directio to complete, and hope the
+caller locked out any new writes by holding the inode lock.
 
-"A file with the 'i' attribute cannot be modified: it cannot be deleted
-or renamed, no link can be created to this file, most of the file's
-metadata can not be modified, and the file can not be opened in write
-mode."
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ fs/btrfs/ioctl.c       |    3 +++
+ fs/efivarfs/file.c     |    5 +++++
+ fs/ext2/ioctl.c        |    5 +++++
+ fs/ext4/ioctl.c        |    3 +++
+ fs/f2fs/file.c         |    3 +++
+ fs/hfsplus/ioctl.c     |    3 +++
+ fs/nilfs2/ioctl.c      |    3 +++
+ fs/ocfs2/ioctl.c       |    3 +++
+ fs/orangefs/file.c     |   11 ++++++++---
+ fs/orangefs/protocol.h |    3 +++
+ fs/reiserfs/ioctl.c    |    3 +++
+ fs/ubifs/ioctl.c       |    3 +++
+ include/linux/fs.h     |   48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 13 files changed, 93 insertions(+), 3 deletions(-)
 
-Given the clause about how the file 'cannot be modified', it is
-surprising that programs holding writable file descriptors can continue
-to write to and truncate files after the immutable flag has been set,
-but they cannot call other things such as utimes, fallocate, unlink,
-link, setxattr, or reflink.
 
-Since the immutable flag is only settable by administrators, resolve
-this inconsistent behavior in favor of the documented behavior -- once
-the flag is set, the file cannot be modified, period.  We presume that
-administrators must be trusted to know what they're doing, and that
-cutting off programs with writable fds will probably break them.
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 7ddda5b4b6a6..f431813b2454 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -214,6 +214,9 @@ static int btrfs_ioctl_setflags(struct file *file, void __user *arg)
+ 	fsflags = btrfs_mask_fsflags_for_type(inode, fsflags);
+ 	old_fsflags = btrfs_inode_flags_to_fsflags(binode->flags);
+ 	ret = vfs_ioc_setflags_check(inode, old_fsflags, fsflags);
++	if (ret)
++		goto out_unlock;
++	ret = vfs_ioc_setflags_flush_data(inode, fsflags);
+ 	if (ret)
+ 		goto out_unlock;
+ 
+diff --git a/fs/efivarfs/file.c b/fs/efivarfs/file.c
+index f4f6c1bec132..845016a67724 100644
+--- a/fs/efivarfs/file.c
++++ b/fs/efivarfs/file.c
+@@ -163,6 +163,11 @@ efivarfs_ioc_setxflags(struct file *file, void __user *arg)
+ 		return error;
+ 
+ 	inode_lock(inode);
++	error = vfs_ioc_setflags_flush_data(inode, flags);
++	if (error) {
++		inode_unlock(inode);
++		return error;
++	}
+ 	inode_set_flags(inode, i_flags, S_IMMUTABLE);
+ 	inode_unlock(inode);
+ 
+diff --git a/fs/ext2/ioctl.c b/fs/ext2/ioctl.c
+index 88b3b9720023..75f75619237c 100644
+--- a/fs/ext2/ioctl.c
++++ b/fs/ext2/ioctl.c
+@@ -65,6 +65,11 @@ long ext2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			inode_unlock(inode);
+ 			goto setflags_out;
+ 		}
++		ret = vfs_ioc_setflags_flush_data(inode, flags);
++		if (ret) {
++			inode_unlock(inode);
++			goto setflags_out;
++		}
+ 
+ 		flags = flags & EXT2_FL_USER_MODIFIABLE;
+ 		flags |= oldflags & ~EXT2_FL_USER_MODIFIABLE;
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index 6aa1df1918f7..a05341b94d98 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -290,6 +290,9 @@ static int ext4_ioctl_setflags(struct inode *inode,
+ 	jflag = flags & EXT4_JOURNAL_DATA_FL;
+ 
+ 	err = vfs_ioc_setflags_check(inode, oldflags, flags);
++	if (err)
++		goto flags_out;
++	err = vfs_ioc_setflags_flush_data(inode, flags);
+ 	if (err)
+ 		goto flags_out;
+ 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 183ed1ac60e1..d3cf4bdb8738 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1681,6 +1681,9 @@ static int __f2fs_ioc_setflags(struct inode *inode, unsigned int flags)
+ 	oldflags = fi->i_flags;
+ 
+ 	err = vfs_ioc_setflags_check(inode, oldflags, flags);
++	if (err)
++		return err;
++	err = vfs_ioc_setflags_flush_data(inode, flags);
+ 	if (err)
+ 		return err;
+ 
+diff --git a/fs/hfsplus/ioctl.c b/fs/hfsplus/ioctl.c
+index 862a3c9481d7..f8295fa35237 100644
+--- a/fs/hfsplus/ioctl.c
++++ b/fs/hfsplus/ioctl.c
+@@ -104,6 +104,9 @@ static int hfsplus_ioctl_setflags(struct file *file, int __user *user_flags)
+ 	inode_lock(inode);
+ 
+ 	err = vfs_ioc_setflags_check(inode, oldflags, flags);
++	if (err)
++		goto out_unlock_inode;
++	err = vfs_ioc_setflags_flush_data(inode, flags);
+ 	if (err)
+ 		goto out_unlock_inode;
+ 
+diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
+index 0632336d2515..a3c200ab9f60 100644
+--- a/fs/nilfs2/ioctl.c
++++ b/fs/nilfs2/ioctl.c
+@@ -149,6 +149,9 @@ static int nilfs_ioctl_setflags(struct inode *inode, struct file *filp,
+ 	oldflags = NILFS_I(inode)->i_flags;
+ 
+ 	ret = vfs_ioc_setflags_check(inode, oldflags, flags);
++	if (ret)
++		goto out;
++	ret = vfs_ioc_setflags_flush_data(inode, flags);
+ 	if (ret)
+ 		goto out;
+ 
+diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
+index 467a2faf0305..e91ca0dad3d7 100644
+--- a/fs/ocfs2/ioctl.c
++++ b/fs/ocfs2/ioctl.c
+@@ -107,6 +107,9 @@ static int ocfs2_set_inode_attr(struct inode *inode, unsigned flags,
+ 	flags |= oldflags & ~mask;
+ 
+ 	status = vfs_ioc_setflags_check(inode, oldflags, flags);
++	if (status)
++		goto bail_unlock;
++	status = vfs_ioc_setflags_flush_data(inode, flags);
+ 	if (status)
+ 		goto bail_unlock;
+ 
+diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+index a35c17017210..fec5dfbc3dac 100644
+--- a/fs/orangefs/file.c
++++ b/fs/orangefs/file.c
+@@ -389,6 +389,8 @@ static long orangefs_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 			     (unsigned long long)uval);
+ 		return put_user(uval, (int __user *)arg);
+ 	} else if (cmd == FS_IOC_SETFLAGS) {
++		struct inode *inode = file_inode(file);
++
+ 		ret = 0;
+ 		if (get_user(uval, (int __user *)arg))
+ 			return -EFAULT;
+@@ -399,11 +401,14 @@ static long orangefs_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 		 * the flags and then updates the flags with some new
+ 		 * settings. So, we ignore it in the following edit. bligon.
+ 		 */
+-		if ((uval & ~ORANGEFS_MIRROR_FL) &
+-		    (~(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_NOATIME_FL))) {
++		if ((uval & ~ORANGEFS_MIRROR_FL) & ~ORANGEFS_VFS_FL) {
+ 			gossip_err("orangefs_ioctl: the FS_IOC_SETFLAGS only supports setting one of FS_IMMUTABLE_FL|FS_APPEND_FL|FS_NOATIME_FL\n");
+ 			return -EINVAL;
+ 		}
++		ret = vfs_ioc_setflags_flush_data(inode,
++						  uval & ORANGEFS_VFS_FL);
++		if (ret)
++			goto out;
+ 		val = uval;
+ 		gossip_debug(GOSSIP_FILE_DEBUG,
+ 			     "orangefs_ioctl: FS_IOC_SETFLAGS: %llu\n",
+@@ -412,7 +417,7 @@ static long orangefs_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 					      "user.pvfs2.meta_hint",
+ 					      &val, sizeof(val), 0);
+ 	}
+-
++out:
+ 	return ret;
+ }
+ 
+diff --git a/fs/orangefs/protocol.h b/fs/orangefs/protocol.h
+index d403cf29a99b..3dbe1c4534ce 100644
+--- a/fs/orangefs/protocol.h
++++ b/fs/orangefs/protocol.h
+@@ -129,6 +129,9 @@ static inline void ORANGEFS_khandle_from(struct orangefs_khandle *kh,
+ #define ORANGEFS_IMMUTABLE_FL FS_IMMUTABLE_FL
+ #define ORANGEFS_APPEND_FL    FS_APPEND_FL
+ #define ORANGEFS_NOATIME_FL   FS_NOATIME_FL
++#define ORANGEFS_VFS_FL				(FS_IMMUTABLE_FL | \
++						 FS_APPEND_FL | \
++						 FS_NOATIME_FL)
+ #define ORANGEFS_MIRROR_FL    0x01000000ULL
+ #define ORANGEFS_FS_ID_NULL       ((__s32)0)
+ #define ORANGEFS_ATTR_SYS_UID                   (1 << 0)
+diff --git a/fs/reiserfs/ioctl.c b/fs/reiserfs/ioctl.c
+index 92bcb1ecd994..50494f54392c 100644
+--- a/fs/reiserfs/ioctl.c
++++ b/fs/reiserfs/ioctl.c
+@@ -77,6 +77,9 @@ long reiserfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			err = vfs_ioc_setflags_check(inode,
+ 						     REISERFS_I(inode)->i_attrs,
+ 						     flags);
++			if (err)
++				goto setflags_out;
++			err = vfs_ioc_setflags_flush_data(inode, flags);
+ 			if (err)
+ 				goto setflags_out;
+ 			if ((flags & REISERFS_NOTAIL_FL) &&
+diff --git a/fs/ubifs/ioctl.c b/fs/ubifs/ioctl.c
+index bdea836fc38b..ff4a43314599 100644
+--- a/fs/ubifs/ioctl.c
++++ b/fs/ubifs/ioctl.c
+@@ -110,6 +110,9 @@ static int setflags(struct inode *inode, int flags)
+ 	mutex_lock(&ui->ui_mutex);
+ 	oldflags = ubifs2ioctl(ui->flags);
+ 	err = vfs_ioc_setflags_check(inode, oldflags, flags);
++	if (err)
++		goto out_unlock;
++	err = vfs_ioc_setflags_flush_data(inode, flags);
+ 	if (err)
+ 		goto out_unlock;
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0c3ef24afe22..ed9a74cf5ef3 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3557,7 +3557,55 @@ static inline struct sock *io_uring_get_socket(struct file *file)
+ 
+ int vfs_ioc_setflags_check(struct inode *inode, int oldflags, int flags);
+ 
++/*
++ * Do we need to flush the file data before changing attributes?  When we're
++ * setting the immutable flag we must stop all directio writes and flush the
++ * dirty pages so that we can fail the page fault on the next write attempt.
++ */
++static inline bool vfs_ioc_setflags_need_flush(struct inode *inode, int flags)
++{
++	if (S_ISREG(inode->i_mode) && !IS_IMMUTABLE(inode) &&
++	    (flags & FS_IMMUTABLE_FL))
++		return true;
++
++	return false;
++}
++
++/*
++ * Flush file data before changing attributes.  Caller must hold any locks
++ * required to prevent further writes to this file until we're done setting
++ * flags.
++ */
++static inline int inode_flush_data(struct inode *inode)
++{
++	inode_dio_wait(inode);
++	return filemap_write_and_wait(inode->i_mapping);
++}
++
++/*
++ * Flush all pending IO and dirty mappings before setting S_IMMUTABLE on an
++ * inode via FS_IOC_SETFLAGS.  If the flush fails we'll clear the flag before
++ * returning error.
++ *
++ * Note: the caller should be holding i_mutex, or else be sure that
++ * they have exclusive access to the inode structure.
++ */
++static inline int vfs_ioc_setflags_flush_data(struct inode *inode, int flags)
++{
++	int ret;
++
++	if (!vfs_ioc_setflags_need_flush(inode, flags))
++		return 0;
++
++	inode_set_flags(inode, S_IMMUTABLE, S_IMMUTABLE);
++	ret = inode_flush_data(inode);
++	if (ret)
++		inode_set_flags(inode, 0, S_IMMUTABLE);
++	return ret;
++}
++
+ int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
+ 			     struct fsxattr *fa);
+ 
++
+ #endif /* _LINUX_FS_H */
 
-Therefore, add immutability checks to the relevant VFS functions, then
-refactor the SETFLAGS and FSSETXATTR implementations to use common
-argument checking functions so that we can then force pagefaults on all
-the file data when setting immutability.
-
-Note that various distro manpages points out the inconsistent behavior
-of the various Linux filesystems w.r.t. immutable.  This fixes all that.
-
-I also discovered that userspace programs can write and create writable
-memory mappings to active swap files.  This is extremely bad because
-this allows anyone with write privileges to corrupt system memory.  The
-final patch in this series closes off that hole, at least for swap
-files.
-
-If you're going to start using this mess, you probably ought to just
-pull from my git trees, which are linked below.
-
-This has been lightly tested with fstests.  Enjoy!
-Comments and questions are, as always, welcome.
-
---D
-
-kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=immutable-files
-
-fstests git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfstests-dev.git/log/?h=immutable-files
 
 
 _______________________________________________
