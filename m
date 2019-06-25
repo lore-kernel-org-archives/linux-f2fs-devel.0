@@ -2,91 +2,82 @@ Return-Path: <SRS0=v3Bs=UY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.9 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC29C48BD5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2019 17:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18696C48BD4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2019 17:52:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9F4F020883;
-	Tue, 25 Jun 2019 17:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id E130720663;
+	Tue, 25 Jun 2019 17:52:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NPdykFFC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="g8sTFsHf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F4F020883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="I1RMYF9P";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="R/Kgch3X";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjAOE5lD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E130720663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hfpJF-0008Rs-M4; Tue, 25 Jun 2019 17:32:45 +0000
+	id 1hfpcK-0006cS-MQ; Tue, 25 Jun 2019 17:52:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <dsterba@suse.cz>)
- id 1hfpJ7-0008RN-2A; Tue, 25 Jun 2019 17:32:37 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hfpcJ-0006cK-NQ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 17:52:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=w2HcbNl+zhL+dwRMUqcT41NLApXI65euOiiPXvQ12TM=; b=NPdykFFCWPa6TDENUwCujAmGlI
- i30A8ogdnSUPoGLeNDPRVCqp4jQNYtZ2xxIAs5HsJY8L5nwH6UIcQZ+VNJfadlAoM9dKEGZgdfF74
- cMCmMYfYQxmRfPbwO1UA4FmBCp1nU7rIvdSTrFpg+vjymwO8TGs36F7JpzDo0CwMm+WI=;
+ bh=EcWPrq2o5lkGnZTGHuqWaNWdoelkSdjwjAmnzxHCn/U=; b=I1RMYF9PAbLb784SWFG/9aQrCC
+ BSpwT+lOHc5QXTw+0dGCt/KY0a8bVBHVMnX4FbZKAHLw/PcxFCch90vcPjKLQrBcZvO3NBU38vso+
+ ywVGndvCgEbE4kbCTauQCo1vDW5FRa1XVF7ur6aOsJ7l/TKTylYLzjWv4rG4sxMCyfpE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Reply-To:Message-ID:
- Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=w2HcbNl+zhL+dwRMUqcT41NLApXI65euOiiPXvQ12TM=; b=g8sTFsHfzCyYtII0gLZ0z4JkPF
- hNRvperJ1UCp49wwE+2asQ4xY+akmicV0bYpwWR7FK7NVALD6Tq/L5YVY1Km/PJtUzFPAy2KN+xwk
- v0fMN7ixZ5O3sX/0CkRpnLGo+jcIeIINurMlu+a7vS/OddbKhTHCl4DTxBfWUr7ufUT0=;
-Received: from mx2.suse.de ([195.135.220.15] helo=mx1.suse.de)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=EcWPrq2o5lkGnZTGHuqWaNWdoelkSdjwjAmnzxHCn/U=; b=R/Kgch3XKlRzcnGEd9Vchsd6IM
+ F+dp0KlISoENJKcDe6dUGbC0P0PTsCxpXsSQdsPctLD93L9HOwW0mHg0mV7GLEZElYPo+2nSUb4ra
+ xh5+zVkaSnL714WI9NtlTNtLsZMaO2I/q+09pFMKAB2bO790UXJpLQfJw7/5VW9hM/lU=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hfpJ9-009mRC-4n; Tue, 25 Jun 2019 17:32:41 +0000
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
- by mx1.suse.de (Postfix) with ESMTP id 0E8FBAD8A;
- Tue, 25 Jun 2019 17:32:32 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
- id 2D2B6DA8F6; Tue, 25 Jun 2019 19:33:16 +0200 (CEST)
-Date: Tue, 25 Jun 2019 19:33:16 +0200
-From: David Sterba <dsterba@suse.cz>
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Message-ID: <20190625173316.GU8917@twin.jikos.cz>
-Mail-Followup-To: dsterba@suse.cz, "Darrick J. Wong" <darrick.wong@oracle.com>,
- Christoph Hellwig <hch@infradead.org>, matthew.garrett@nebula.com,
- yuchao0@huawei.com, tytso@mit.edu, shaggy@kernel.org,
- ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com,
- adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
- dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk,
- cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
- linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
- reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
- ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
-References: <156116136742.1664814.17093419199766834123.stgit@magnolia>
- <156116138952.1664814.16552129914959122837.stgit@magnolia>
- <20190625105725.GB26085@infradead.org>
- <20190625170248.GS8917@twin.jikos.cz>
- <20190625171616.GB2230847@magnolia>
+ id 1hfpcQ-00DQlZ-7b
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 17:52:35 +0000
+Received: from gmail.com (unknown [104.132.1.77])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 2756320663;
+ Tue, 25 Jun 2019 17:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1561485148;
+ bh=wyycSt+pI2DJX5K8aByDIu1qndou0ZcC3vKhYC0f3bM=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=DjAOE5lDyE7nFLOiJ/TjmGzmXakZCqaiO7KZ4EjtP6/qEVCgSX/Fym0WfDE8dHEU7
+ TVqGc4cKyWEW9szMmQezxKmszLdo28xETW3HIk2BO5u49SUH1z9G3kxm/PyvTbUZla
+ rhLWkPZS8pNpuwPX5N2EHJ5EymKNGv0664ZbxDz8=
+Date: Tue, 25 Jun 2019 10:52:26 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <20190625175225.GC81914@gmail.com>
+References: <20190620205043.64350-1-ebiggers@kernel.org>
+ <20190620205043.64350-17-ebiggers@kernel.org>
+ <90495fb1-72eb-ca42-8457-ef8e969eda51@huawei.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20190625171616.GB2230847@magnolia>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
-X-Headers-End: 1hfpJ9-009mRC-4n
-Subject: Re: [f2fs-dev] [PATCH 2/4] vfs: create a generic checking function
- for FS_IOC_FSSETXATTR
+In-Reply-To: <90495fb1-72eb-ca42-8457-ef8e969eda51@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Headers-End: 1hfpcQ-00DQlZ-7b
+Subject: Re: [f2fs-dev] [PATCH v5 16/16] f2fs: add fs-verity support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,77 +89,55 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: dsterba@suse.cz
-Cc: shaggy@kernel.org, jfs-discussion@lists.sourceforge.net,
- linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
- linux-btrfs@vger.kernel.org, dsterba@suse.cz, clm@fb.com,
- adilger.kernel@dilger.ca, matthew.garrett@nebula.com, cluster-devel@redhat.com,
- Christoph Hellwig <hch@infradead.org>, linux-ext4@vger.kernel.org,
- reiserfs-devel@vger.kernel.org, josef@toxicpanda.com,
- linux-nilfs@vger.kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com,
- jaegeuk@kernel.org, tytso@mit.edu, ard.biesheuvel@linaro.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, jk@ozlabs.org, jack@suse.com,
- linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
- ocfs2-devel@oss.oracle.com
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>,
+ "Darrick J . Wong" <darrick.wong@oracle.com>, linux-api@vger.kernel.org,
+ Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-integrity@vger.kernel.org,
+ linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
+ Christoph Hellwig <hch@lst.de>, Victor Hsieh <victorhsieh@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jun 25, 2019 at 10:16:16AM -0700, Darrick J. Wong wrote:
-> On Tue, Jun 25, 2019 at 07:02:48PM +0200, David Sterba wrote:
-> > On Tue, Jun 25, 2019 at 03:57:25AM -0700, Christoph Hellwig wrote:
-> > > On Fri, Jun 21, 2019 at 04:56:29PM -0700, Darrick J. Wong wrote:
-> > > > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > > > 
-> > > > Create a generic checking function for the incoming FS_IOC_FSSETXATTR
-> > > > fsxattr values so that we can standardize some of the implementation
-> > > > behaviors.
-> > > > 
-> > > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > > ---
-> > > >  fs/btrfs/ioctl.c   |   21 +++++++++-------
-> > > >  fs/ext4/ioctl.c    |   27 ++++++++++++++------
-> > > >  fs/f2fs/file.c     |   26 ++++++++++++++-----
-> > > >  fs/inode.c         |   17 +++++++++++++
-> > > >  fs/xfs/xfs_ioctl.c |   70 ++++++++++++++++++++++++++++++----------------------
-> > > >  include/linux/fs.h |    3 ++
-> > > >  6 files changed, 111 insertions(+), 53 deletions(-)
-> > > > 
-> > > > 
-> > > > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > > > index f408aa93b0cf..7ddda5b4b6a6 100644
-> > > > --- a/fs/btrfs/ioctl.c
-> > > > +++ b/fs/btrfs/ioctl.c
-> > > > @@ -366,6 +366,13 @@ static int check_xflags(unsigned int flags)
-> > > >  	return 0;
-> > > >  }
-> > > >  
-> > > > +static void __btrfs_ioctl_fsgetxattr(struct btrfs_inode *binode,
-> > > > +				     struct fsxattr *fa)
-> > > > +{
-> > > > +	memset(fa, 0, sizeof(*fa));
-> > > > +	fa->fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
-> > > 
-> > > Is there really much of a point in this helper? Epeciall as
-> > > the zeroing could easily be done in the variable declaration
-> > > line using
-> > > 
-> > > 	struct fsxattr fa = { };
-> > 
-> > Agreed, not counting the initialization the wrapper is merely another
-> > name for btrfs_inode_flags_to_xflags. I also find it slightly confusing
-> > that __btrfs_ioctl_fsgetxattr name is too close to the ioctl callback
-> > implementation btrfs_ioctl_fsgetxattr but only does some initialization.
-> 
-> Ok; it's easily enough changed to:
-> 
-> 	struct fsxattr old_fa = {
-> 		.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags),
-> 	};
+Hi Chao, thanks for the review.
 
-Works for me, thanks.
+On Tue, Jun 25, 2019 at 03:55:57PM +0800, Chao Yu wrote:
+> Hi Eric,
+> 
+> On 2019/6/21 4:50, Eric Biggers wrote:
+> > +static int f2fs_begin_enable_verity(struct file *filp)
+> > +{
+> > +	struct inode *inode = file_inode(filp);
+> > +	int err;
+> > +
+> 
+> I think we'd better add condition here (under inode lock) to disallow enabling
+> verity on atomic/volatile inode, as we may fail to write merkle tree data due to
+> atomic/volatile inode's special writeback method.
+> 
+
+Yes, I'll add the following:
+
+	if (f2fs_is_atomic_file(inode) || f2fs_is_volatile_file(inode))
+		return -EOPNOTSUPP;
+
+> > +	err = f2fs_convert_inline_inode(inode);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	err = dquot_initialize(inode);
+> > +	if (err)
+> > +		return err;
+> 
+> We can get rid of dquot_initialize() here, since f2fs_file_open() ->
+> dquot_file_open() should has initialized quota entry previously, right?
+
+We still need it because dquot_file_open() only calls dquot_initialize() if the
+file is being opened for writing.  But here the file descriptor is readonly.
+I'll add a comment explaining this here and in the ext4 equivalent.
+
+- Eric
 
 
 _______________________________________________
