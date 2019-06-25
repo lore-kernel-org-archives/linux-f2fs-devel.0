@@ -2,114 +2,79 @@ Return-Path: <SRS0=v3Bs=UY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AF4C48BD5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2019 06:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8940C48BD4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2019 07:08:17 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 95AF520659;
-	Tue, 25 Jun 2019 06:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8A6E320665;
+	Tue, 25 Jun 2019 07:08:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HrTbz06Q";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="E1yUp0rt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95AF520659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="PH2mOQgr";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WlFQcp7y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A6E320665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hferr-0001FG-Vb; Tue, 25 Jun 2019 06:23:47 +0000
+	id 1hffYo-0001oW-0l; Tue, 25 Jun 2019 07:08:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hferq-0001F5-RT
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 06:23:46 +0000
+ (envelope-from <jack@suse.cz>) id 1hffYm-0001nt-3L
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 07:08:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Message-Id:Content-Type:Content-Transfer-Encoding:
- MIME-Version:References:In-Reply-To:Date:Subject:Cc:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/V+ifMcWxEpYSQ0UTgWm8ZC5H0K+rgdh5XDKn7lep5o=; b=HrTbz06QF2B68at7DXA5ip0s+Z
- xRj375MLuwYRdZdaX6/iLZLF6rB0XecvhAo9EOuFQYOFmuaa50IIao/2dLy58BXqUiaHSrHFi+3/J
- V+WQS8ySJqIAeMBVSXh9Qp6jg24fgUcZl7uh+bMB1EsgN2+CIi5Cy42JaVYyTrckruEY=;
+ bh=ywoJoB1QtyyrG5KEQvKI03l1UYF9axIDMCYfP3oZi1M=; b=PH2mOQgrMcWKXwin3mg0Gh7X0W
+ gInd+DIwiMucDa+ru2Vt0rsxJEyqZAbHU6RewXVGy3WWaSSJE4upnPf65jWQNcc3/MhDRLiA+ncsW
+ MJL7/t6L/jwRh+rPqxdEmjfty4F2v5sgIPUShzJdqDEmq9MQ06kEthY/ZJg8TP0+rV/o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Message-Id:Content-Type:Content-Transfer-Encoding:MIME-Version:References
- :In-Reply-To:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/V+ifMcWxEpYSQ0UTgWm8ZC5H0K+rgdh5XDKn7lep5o=; b=E1yUp0rt42bqj8IIdysxLeoniz
- lOttkJYYvQtkgcCFLJd+R38ncpYUDqteImgR5N1QFjSfyUs8bYFjebX6ucjZNk5kHZfTObmZBMcgj
- W7knDS55/CrXcXPtF4sqMj6OZEeIACwQPkVjx/fz2h4N8XzLAZHwdRPt1IADhf38Ibls=;
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]
- helo=mx0a-001b2d01.pphosted.com)
+ bh=ywoJoB1QtyyrG5KEQvKI03l1UYF9axIDMCYfP3oZi1M=; b=WlFQcp7yIxPXLieKBNdSTkCrxg
+ FU2M9ZV47TtN4rt3vEA5yrpnZyHYTB0f2ri2xWDR6tiY0YwPaLgAMaAQFZMjPLE4mc97I6D8gUmNx
+ PcJITSN9GhC/0b5zQHgDM60+4tS5WYhK77r3knkVlfoGrx1nmetyR4ofilL7ab6Xn9bg=;
+Received: from mx2.suse.de ([195.135.220.15] helo=mx1.suse.de)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hferq-00D5t4-WF
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 06:23:50 +0000
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
- by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x5P6HZfR056053
- for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 25 Jun 2019 02:23:39 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
- by mx0b-001b2d01.pphosted.com with ESMTP id 2tbdd59txn-1
- (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 25 Jun 2019 02:23:39 -0400
-Received: from localhost
- by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
- Violators will be prosecuted
- for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Tue, 25 Jun 2019 07:23:37 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
- by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway:
- Authorized Use Only! Violators will be prosecuted; 
- (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
- Tue, 25 Jun 2019 07:23:34 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com
- [9.149.105.62])
- by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP
- id x5P6NNGB39322076
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Tue, 25 Jun 2019 06:23:23 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
- by IMSVA (Postfix) with ESMTP id 330E1AE045;
- Tue, 25 Jun 2019 06:23:33 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
- by IMSVA (Postfix) with ESMTP id 8EC1FAE055;
- Tue, 25 Jun 2019 06:23:31 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.35.58])
- by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
- Tue, 25 Jun 2019 06:23:31 +0000 (GMT)
-From: Chandan Rajendra <chandan@linux.ibm.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Date: Tue, 25 Jun 2019 11:51:14 +0530
-Organization: IBM
-In-Reply-To: <20190621211454.GC167064@gmail.com>
-References: <20190616160813.24464-1-chandan@linux.ibm.com>
- <20190616160813.24464-5-chandan@linux.ibm.com>
- <20190621211454.GC167064@gmail.com>
+ id 1hffYr-00D7xk-4O
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 07:08:15 +0000
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+ by mx1.suse.de (Postfix) with ESMTP id 05584ADF2;
+ Tue, 25 Jun 2019 07:08:05 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+ id E62D81E2F23; Tue, 25 Jun 2019 09:08:04 +0200 (CEST)
+Date: Tue, 25 Jun 2019 09:08:04 +0200
+From: Jan Kara <jack@suse.cz>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Message-ID: <20190625070804.GA31527@quack2.suse.cz>
+References: <156116141046.1664939.11424021489724835645.stgit@magnolia>
+ <156116142734.1664939.5074567130774423066.stgit@magnolia>
+ <20190624113737.GG32376@quack2.suse.cz>
+ <20190624215817.GE1611011@magnolia>
+ <20190625030439.GA5379@magnolia>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 19062506-0016-0000-0000-0000028C17A4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062506-0017-0000-0000-000032E987C1
-Message-Id: <1847149.B8S3WBCFIi@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:, ,
- definitions=2019-06-25_05:, , signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=924 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906250050
-X-Headers-End: 1hferq-00D5t4-WF
-Subject: Re: [f2fs-dev] [PATCH V3 4/7] fs/mpage.c: Integrate read callbacks
+Content-Disposition: inline
+In-Reply-To: <20190625030439.GA5379@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Headers-End: 1hffYr-00D7xk-4O
+Subject: Re: [f2fs-dev] [Ocfs2-devel] [PATCH 2/7] vfs: flush and wait for io
+ when setting the immutable flag via SETFLAGS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,81 +86,110 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net, hch@infradead.org,
- linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca,
- linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Cc: linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+ clm@fb.com, adilger.kernel@dilger.ca, ocfs2-devel@oss.oracle.com,
+ matthew.garrett@nebula.com, linux-nilfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, devel@lists.orangefs.org, josef@toxicpanda.com,
+ reiserfs-devel@vger.kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com,
+ jaegeuk@kernel.org, tytso@mit.edu, ard.biesheuvel@linaro.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, jk@ozlabs.org, jack@suse.com,
+ linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Saturday, June 22, 2019 2:44:55 AM IST Eric Biggers wrote:
-> On Sun, Jun 16, 2019 at 09:38:10PM +0530, Chandan Rajendra wrote:
-> > This commit adds code to make do_mpage_readpage() to be "read callbacks"
-> > aware i.e. for files requiring decryption, do_mpage_readpage() now
-> > sets up the read callbacks state machine when allocating a bio and later
-> > starts execution of the state machine after file data is read from the
-> > underlying disk.
+On Mon 24-06-19 20:04:39, Darrick J. Wong wrote:
+> On Mon, Jun 24, 2019 at 02:58:17PM -0700, Darrick J. Wong wrote:
+> > On Mon, Jun 24, 2019 at 01:37:37PM +0200, Jan Kara wrote:
+> > > On Fri 21-06-19 16:57:07, Darrick J. Wong wrote:
+> > > > From: Darrick J. Wong <darrick.wong@oracle.com>
+> > > > 
+> > > > When we're using FS_IOC_SETFLAGS to set the immutable flag on a file, we
+> > > > need to ensure that userspace can't continue to write the file after the
+> > > > file becomes immutable.  To make that happen, we have to flush all the
+> > > > dirty pagecache pages to disk to ensure that we can fail a page fault on
+> > > > a mmap'd region, wait for pending directio to complete, and hope the
+> > > > caller locked out any new writes by holding the inode lock.
+> > > > 
+> > > > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > > 
+> > > Seeing the way this worked out, is there a reason to have separate
+> > > vfs_ioc_setflags_flush_data() instead of folding the functionality in
+> > > vfs_ioc_setflags_check() (possibly renaming it to
+> > > vfs_ioc_setflags_prepare() to indicate it does already some changes)? I
+> > > don't see any place that would need these two separated...
 > > 
-> > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
-> > ---
-> >  fs/mpage.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > XFS needs them to be separated.
 > > 
-> > diff --git a/fs/mpage.c b/fs/mpage.c
-> > index 436a85260394..611ad122fc92 100644
-> > --- a/fs/mpage.c
-> > +++ b/fs/mpage.c
-> > @@ -30,6 +30,7 @@
-> >  #include <linux/backing-dev.h>
-> >  #include <linux/pagevec.h>
-> >  #include <linux/cleancache.h>
-> > +#include <linux/read_callbacks.h>
-> >  #include "internal.h"
-> >  
-> >  /*
-> > @@ -49,6 +50,8 @@ static void mpage_end_io(struct bio *bio)
-> >  	struct bio_vec *bv;
-> >  	struct bvec_iter_all iter_all;
-> >  
-> > +	if (read_callbacks_end_bio(bio))
-> > +		return;
-> >  	bio_for_each_segment_all(bv, bio, iter_all) {
-> >  		struct page *page = bv->bv_page;
-> >  		page_endio(page, bio_op(bio),
-> > @@ -309,6 +312,12 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
-> >  					gfp);
-> >  		if (args->bio == NULL)
-> >  			goto confused;
-> > +
-> > +		if (read_callbacks_setup(inode, args->bio, NULL)) {
-> > +			bio_put(args->bio);
-> > +			args->bio = NULL;
-> > +			goto confused;
-> > +		}
-> >  	}
-> >  
-> >  	length = first_hole << blkbits;
-> > @@ -330,7 +339,7 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
-> >  confused:
-> >  	if (args->bio)
-> >  		args->bio = mpage_bio_submit(REQ_OP_READ, op_flags, args->bio);
-> > -	if (!PageUptodate(page))
-> > +	if (!PageUptodate(page) && !PageError(page))
-> >  		block_read_full_page(page, args->get_block);
-> >  	else
-> >  		unlock_page(page);
+> > If we even /think/ that we're going to be setting the immutable flag
+> > then we need to grab the IOLOCK and the MMAPLOCK to prevent further
+> > writes while we drain all the directio writes and dirty data.  IO
+> > completions for the write draining can take the ILOCK, which means that
+> > we can't have grabbed it yet.
+> > 
+> > Next, we grab the ILOCK so we can check the new flags against the inode
+> > and then update the inode core.
+> > 
+> > For most filesystems I think it suffices to inode_lock and then do both,
+> > though.
 > 
-> Why is the !PageError() check needed here?
-> 
+> Heh, lol, that applies to fssetxattr, not to setflags, because xfs
+> setflags implementation open-codes the relevant fssetxattr pieces.
+> So for setflags we can combine both parts into a single _prepare
+> function.
 
-Sorry, Its a remnant from when I was debugging the patchset. I will remove
-this.
+Yeah. Also for fssetxattr we could use the prepare helper at least for
+ext4, f2fs, and btrfs where the situation isn't so complex as for xfs to
+save some boilerplate code.
 
+								Honza
+
+> > > > +/*
+> > > > + * Flush all pending IO and dirty mappings before setting S_IMMUTABLE on an
+> > > > + * inode via FS_IOC_SETFLAGS.  If the flush fails we'll clear the flag before
+> > > > + * returning error.
+> > > > + *
+> > > > + * Note: the caller should be holding i_mutex, or else be sure that
+> > > > + * they have exclusive access to the inode structure.
+> > > > + */
+> > > > +static inline int vfs_ioc_setflags_flush_data(struct inode *inode, int flags)
+> > > > +{
+> > > > +	int ret;
+> > > > +
+> > > > +	if (!vfs_ioc_setflags_need_flush(inode, flags))
+> > > > +		return 0;
+> > > > +
+> > > > +	inode_set_flags(inode, S_IMMUTABLE, S_IMMUTABLE);
+> > > > +	ret = inode_flush_data(inode);
+> > > > +	if (ret)
+> > > > +		inode_set_flags(inode, 0, S_IMMUTABLE);
+> > > > +	return ret;
+> > > > +}
+> > > 
+> > > Also this sets S_IMMUTABLE whenever vfs_ioc_setflags_need_flush() returns
+> > > true. That is currently the right thing but seems like a landmine waiting
+> > > to trip? So I'd just drop the vfs_ioc_setflags_need_flush() abstraction to
+> > > make it clear what's going on.
+> > 
+> > Ok.
+> > 
+> > --D
+> > 
+> > > 
+> > > 								Honza
+> > > -- 
+> > > Jan Kara <jack@suse.com>
+> > > SUSE Labs, CR
+> > 
+> > _______________________________________________
+> > Ocfs2-devel mailing list
+> > Ocfs2-devel@oss.oracle.com
+> > https://oss.oracle.com/mailman/listinfo/ocfs2-devel
 -- 
-chandan
-
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 
 _______________________________________________
