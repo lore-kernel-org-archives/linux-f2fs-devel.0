@@ -2,41 +2,41 @@ Return-Path: <SRS0=v3Bs=UY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E000CC48BD5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2019 06:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF55C48BD7
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2019 06:23:42 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B898120659;
-	Tue, 25 Jun 2019 06:23:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A04CE20659;
+	Tue, 25 Jun 2019 06:23:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="BmUZGArI";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="AVqwYC6T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B898120659
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HcWTUYZi";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="L6aeDi8U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A04CE20659
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hfere-0008Qj-74; Tue, 25 Jun 2019 06:23:34 +0000
+	id 1hferh-0001Dw-OK; Tue, 25 Jun 2019 06:23:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chandan@linux.ibm.com>) id 1hferQ-0008QA-Nd
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 06:23:20 +0000
+ (envelope-from <chandan@linux.ibm.com>) id 1hferg-0001Dn-8O
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 06:23:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Message-Id:Content-Type:Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QcxVoFkGMAwLTFdxgj5z/CExq0NE6OPHxUy8bUSVLTM=; b=BmUZGArIR5TaPy6HjxgECZsjkH
- gheQMyJTFNQOAynzishhApTxZR8IBTur4FQBk3mgLxFpXFBYtqXjW05DbCLOTi5Iadf+SZe0kvxN7
- n+jBFABXxM2I8U6A3TCW7dF0aLiUtRINkh7l1WmnFTkWYIj/a33sE0fa4e8iC+77TJ3g=;
+ bh=maQ9nYdDGp2xzvtJRkbKbVVsPfRrNpRJMiqNr5uXZFM=; b=HcWTUYZil9tb8dXAgfoexgOZxD
+ adhFfrkM6GecmW0LnAftdr9aYzg4vWr2WSwv29JhG55Ea5ei9Y3MD+rGn52QGLXxt9nTqO8UBFRaG
+ CCrIbWdAZ5r7Y+/sGfedV9YWoLy8iCewBfp5QS+DYjLKJDvWF58woj8sDxfQ1PYTUFlk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Message-Id:Content-Type:Content-Transfer-Encoding:MIME-Version:References
@@ -44,72 +44,71 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=QcxVoFkGMAwLTFdxgj5z/CExq0NE6OPHxUy8bUSVLTM=; b=AVqwYC6Twt+mFGY0dIj2NjiZ61
- esYf7Qlift1L+d5TsQo+HuK8O+lonLL5DZo5BvQOhGfDk8bYQgwb1PTv0E/6kASG0rdMOyryvORk3
- vOPTu+1VtDYPw7EpI1SAfBP9Zdb3O47/etl9z2sMHUyw0+iL5BsBW0+TDGH5+cOVGpso=;
+ bh=maQ9nYdDGp2xzvtJRkbKbVVsPfRrNpRJMiqNr5uXZFM=; b=L6aeDi8UsSOlSAhwDPL92p3sBp
+ 51esNgn4VzLy0OgzP8dBpHASA0Oi6dCLVkDgksdg/j12waMhesj7Vzgp1Xy+ETPFTkoipBNuyY0Mj
+ Wupn3X1OOlgHL35MUbpUPKWjo139QMYKLWCimj8pHmirp1KKO03iN2zmjUoi+LQcY1kE=;
 Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hferV-00CiMb-TR
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 06:23:27 +0000
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+ id 1hferh-008za7-4W
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 06:23:38 +0000
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
  by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id
- x5P6I39E040675
- for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 25 Jun 2019 02:23:20 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
- by mx0a-001b2d01.pphosted.com with ESMTP id 2tbagtqj76-1
+ x5P6HBIf105095
+ for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 25 Jun 2019 02:23:31 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+ by mx0a-001b2d01.pphosted.com with ESMTP id 2tbe290enn-1
  (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
- for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 25 Jun 2019 02:23:20 -0400
+ for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 25 Jun 2019 02:23:31 -0400
 Received: from localhost
- by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
+ by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only!
  Violators will be prosecuted
  for <linux-f2fs-devel@lists.sourceforge.net> from <chandan@linux.ibm.com>;
- Tue, 25 Jun 2019 07:23:17 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
- by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway:
+ Tue, 25 Jun 2019 07:23:28 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+ by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway:
  Authorized Use Only! Violators will be prosecuted; 
  (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
- Tue, 25 Jun 2019 07:23:14 +0100
+ Tue, 25 Jun 2019 07:23:25 +0100
 Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com
  [9.149.105.62])
- by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
- x5P6NDtI51708146
+ by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
+ x5P6NOUO52756548
  (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Tue, 25 Jun 2019 06:23:13 GMT
+ Tue, 25 Jun 2019 06:23:24 GMT
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
- by IMSVA (Postfix) with ESMTP id 2AAD5AE045;
- Tue, 25 Jun 2019 06:23:13 +0000 (GMT)
+ by IMSVA (Postfix) with ESMTP id 5A966AE04D;
+ Tue, 25 Jun 2019 06:23:24 +0000 (GMT)
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
- by IMSVA (Postfix) with ESMTP id 83F5CAE057;
- Tue, 25 Jun 2019 06:23:11 +0000 (GMT)
+ by IMSVA (Postfix) with ESMTP id 848A9AE056;
+ Tue, 25 Jun 2019 06:23:22 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.124.35.58])
  by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
- Tue, 25 Jun 2019 06:23:11 +0000 (GMT)
+ Tue, 25 Jun 2019 06:23:22 +0000 (GMT)
 From: Chandan Rajendra <chandan@linux.ibm.com>
 To: Eric Biggers <ebiggers@kernel.org>
-Date: Tue, 25 Jun 2019 11:52:43 +0530
+Date: Tue, 25 Jun 2019 10:29:42 +0530
 Organization: IBM
-In-Reply-To: <20190621212916.GD167064@gmail.com>
+In-Reply-To: <20190621200355.GA167064@gmail.com>
 References: <20190616160813.24464-1-chandan@linux.ibm.com>
- <20190616160813.24464-7-chandan@linux.ibm.com>
- <20190621212916.GD167064@gmail.com>
+ <20190616160813.24464-2-chandan@linux.ibm.com>
+ <20190621200355.GA167064@gmail.com>
 MIME-Version: 1.0
 X-TM-AS-GCONF: 00
-x-cbid: 19062506-0008-0000-0000-000002F6BFB8
+x-cbid: 19062506-4275-0000-0000-0000034559C0
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062506-0009-0000-0000-00002263EE89
-Message-Id: <3201150.UV5xBNPoiD@localhost.localdomain>
+x-cbparentid: 19062506-4276-0000-0000-00003855947F
+Message-Id: <3763974.FiHZtjIrND@localhost.localdomain>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:, ,
  definitions=2019-06-25_05:, , signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1906250050
-X-Headers-End: 1hferV-00CiMb-TR
-Subject: Re: [f2fs-dev] [PATCH V3 6/7] Add decryption support for
- sub-pagesized blocks
+X-Headers-End: 1hferh-008za7-4W
+Subject: Re: [f2fs-dev] [PATCH V3 1/7] FS: Introduce read callbacks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,47 +127,464 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Saturday, June 22, 2019 2:59:17 AM IST Eric Biggers wrote:
-> On Sun, Jun 16, 2019 at 09:38:12PM +0530, Chandan Rajendra wrote:
-> > To support decryption of sub-pagesized blocks this commit adds code to,
-> > 1. Track buffer head in "struct read_callbacks_ctx".
-> > 2. Pass buffer head argument to all read callbacks.
-> > 3. Add new fscrypt helper to decrypt the file data referred to by a
-> >    buffer head.
+On Saturday, June 22, 2019 1:33:57 AM IST Eric Biggers wrote:
+> Hi Chandan,
+> 
+> On Sun, Jun 16, 2019 at 09:38:07PM +0530, Chandan Rajendra wrote:
+> > Read callbacks implements a state machine to be executed after a
+> > buffered read I/O is completed. They help in further processing the file
+> > data read from the backing store. Currently, decryption is the only post
+> > processing step to be supported.
+> > 
+> > The execution of the state machine is to be initiated by the endio
+> > function associated with the read operation.
 > > 
 > > Signed-off-by: Chandan Rajendra <chandan@linux.ibm.com>
 > > ---
-> >  fs/buffer.c                    |  55 +++++++++------
-> >  fs/crypto/bio.c                |  21 +++++-
-> >  fs/f2fs/data.c                 |   2 +-
-> >  fs/mpage.c                     |   2 +-
-> >  fs/read_callbacks.c            | 118 +++++++++++++++++++++++++--------
-> >  include/linux/buffer_head.h    |   1 +
-> >  include/linux/read_callbacks.h |  13 +++-
-> >  7 files changed, 158 insertions(+), 54 deletions(-)
+> >  fs/Kconfig                     |   3 +
+> >  fs/Makefile                    |   2 +
+> >  fs/crypto/Kconfig              |   1 +
+> >  fs/crypto/bio.c                |  11 +++
+> >  fs/read_callbacks.c            | 174 +++++++++++++++++++++++++++++++++
+> >  include/linux/fscrypt.h        |   5 +
+> >  include/linux/read_callbacks.h |  38 +++++++
+> >  7 files changed, 234 insertions(+)
+> >  create mode 100644 fs/read_callbacks.c
+> >  create mode 100644 include/linux/read_callbacks.h
 > > 
+> > diff --git a/fs/Kconfig b/fs/Kconfig
+> > index f1046cf6ad85..d869859c88da 100644
+> > --- a/fs/Kconfig
+> > +++ b/fs/Kconfig
+> > @@ -21,6 +21,9 @@ if BLOCK
+> >  config FS_IOMAP
+> >  	bool
+> >  
+> > +config FS_READ_CALLBACKS
+> > +       bool
 > 
-> This is another patch that unnecessarily changes way too many components at
-> once.  My suggestions elsewhere would resolve this, though:
+> This should be intended with a tab, not spaces.
 > 
-> - This patch changes fs/f2fs/data.c and fs/mpage.c only to pass a NULL
->   buffer_head to read_callbacks_setup().  But as per my comments on patch 1,
->   read_callbacks_setup() should be split into read_callbacks_setup_bio() and
->   read_callbacks_end_bh().
+> > +
+> >  source "fs/ext2/Kconfig"
+> >  source "fs/ext4/Kconfig"
+> >  source "fs/jbd2/Kconfig"
+> > diff --git a/fs/Makefile b/fs/Makefile
+> > index c9aea23aba56..a1a06f0db5c1 100644
+> > --- a/fs/Makefile
+> > +++ b/fs/Makefile
+> > @@ -21,6 +21,8 @@ else
+> >  obj-y +=	no-block.o
+> >  endif
+> >  
+> > +obj-$(CONFIG_FS_READ_CALLBACKS) += read_callbacks.o
+> > +
+> >  obj-$(CONFIG_PROC_FS) += proc_namespace.o
 > 
-> - This patch changes fs/crypto/ only to add support for the buffer_head
->   decryption work.  But as per my comments on patch 1, that should be in
->   read_callbacks.c instead.
+> Nit: maybe move this to just below the line for iomap.o, to be consistent with
+> where FS_READ_CALLBACKS is in the Kconfig file.
 > 
-> And adding buffer_head support to fs/read_callbacks.c should be its own patch,
-> *or* should simply be folded into the patch that adds fs/read_callbacks.c.
+> >  
+> >  obj-y				+= notify/
+> > diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+> > index 24ed99e2eca0..7752f9964280 100644
+> > --- a/fs/crypto/Kconfig
+> > +++ b/fs/crypto/Kconfig
+> > @@ -9,6 +9,7 @@ config FS_ENCRYPTION
+> >  	select CRYPTO_CTS
+> >  	select CRYPTO_SHA256
+> >  	select KEYS
+> > +	select FS_READ_CALLBACKS if BLOCK
+> >  	help
+> >  	  Enable encryption of files and directories.  This
+> >  	  feature is similar to ecryptfs, but it is more memory
+> > diff --git a/fs/crypto/bio.c b/fs/crypto/bio.c
+> > index 82da2510721f..f677ff93d464 100644
+> > --- a/fs/crypto/bio.c
+> > +++ b/fs/crypto/bio.c
+> > @@ -24,6 +24,7 @@
+> >  #include <linux/module.h>
+> >  #include <linux/bio.h>
+> >  #include <linux/namei.h>
+> > +#include <linux/read_callbacks.h>
+> >  #include "fscrypt_private.h"
+> >  
+> >  static void __fscrypt_decrypt_bio(struct bio *bio, bool done)
+> > @@ -68,6 +69,16 @@ void fscrypt_enqueue_decrypt_bio(struct fscrypt_ctx *ctx, struct bio *bio)
+> >  }
+> >  EXPORT_SYMBOL(fscrypt_enqueue_decrypt_bio);
+> >  
+> > +void fscrypt_decrypt_work(struct work_struct *work)
+> > +{
+> > +	struct read_callbacks_ctx *ctx =
+> > +		container_of(work, struct read_callbacks_ctx, work);
+> > +
+> > +	fscrypt_decrypt_bio(ctx->bio);
+> > +
+> > +	read_callbacks(ctx);
+> > +}
+> > +
 > 
-> Then the only thing remaining in this patch would be updating fs/buffer.c to
-> make it use the read_callbacks, which should be retitled to something like
-> "fs/buffer.c: add decryption support via read_callbacks".
+> This seems like a layering violation, since it means that read_callbacks.c calls
+> fs/crypto/ *and* fs/crypto/ calls read_callbacks.c.  I don't think fs/crypto/
+> should be aware of read_callbacks at all.  Instead we should have a clear
+> ordering between the components: the filesystem uses read_callbacks.c and
+> fs/crypto/, and read_callbacks.c uses fs/crypto/.  So how about:
+> 
+> - Move fscrypt_decrypt_work(), fscrypt_decrypt_bh(), and fscrypt_decrypt_bio()
+>   into fs/read_callbacks.c and remove the "fscrypt_" prefix from them.
+> 
+> - Instead of selecting FS_READ_CALLBACKS from FS_ENCRYPTION, select it from
+>   EXT4_FS and F2FS_FS (if FS_ENCRYPTION).  I.e., it's really the *filesystems*
+>   themselves that use read_callbacks, not fs/crypto/.
+> 
+> - Move the definition of read_callbacks_ctx into fs/read_callbacks.c, and make
+>   read_callbacks() static, so these are private to the read_callbacks component.
+> 
+> >  int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
+> >  				sector_t pblk, unsigned int len)
+> >  {
+> > diff --git a/fs/read_callbacks.c b/fs/read_callbacks.c
+> > new file mode 100644
+> > index 000000000000..a4196e3de05f
+> > --- /dev/null
+> > +++ b/fs/read_callbacks.c
+> > @@ -0,0 +1,174 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * This file tracks the state machine that needs to be executed after reading
+> > + * data from files that are encrypted and/or have verity metadata associated
+> > + * with them.
+> > + */
+> > +#include <linux/module.h>
+> > +#include <linux/mm.h>
+> > +#include <linux/pagemap.h>
+> > +#include <linux/bio.h>
+> > +#include <linux/fscrypt.h>
+> > +#include <linux/read_callbacks.h>
+> > +
+> > +#define NUM_PREALLOC_READ_CALLBACK_CTXS	128
+> > +
+> > +static struct kmem_cache *read_callbacks_ctx_cache;
+> > +static mempool_t *read_callbacks_ctx_pool;
+> > +
+> > +/* Read callback state machine steps */
+> > +enum read_callbacks_step {
+> > +	STEP_INITIAL = 0,
+> > +	STEP_DECRYPT,
+> > +};
+> > +
+> > +static void put_read_callbacks_ctx(struct read_callbacks_ctx *ctx)
+> > +{
+> > +	mempool_free(ctx, read_callbacks_ctx_pool);
+> > +}
+> 
+> Maybe call this free_read_callbacks_ctx(), so that it doesn't sound like it's
+> doing reference counting.
+> 
+> > +
+> > +static void end_read_callbacks_bio(struct bio *bio)
+> > +{
+> > +	struct read_callbacks_ctx *ctx;
+> > +	struct page *page;
+> > +	struct bio_vec *bv;
+> > +	struct bvec_iter_all iter_all;
+> > +
+> > +	ctx = bio->bi_private;
+> > +
+> > +	bio_for_each_segment_all(bv, bio, iter_all) {
+> > +		page = bv->bv_page;
+> > +
+> > +		if (bio->bi_status || PageError(page)) {
+> > +			ClearPageUptodate(page);
+> > +			SetPageError(page);
+> > +		} else {
+> > +			SetPageUptodate(page);
+> > +		}
+> > +
+> > +		if (ctx->page_op)
+> > +			ctx->page_op(bio, page);
+> > +
+> > +		unlock_page(page);
+> > +	}
+> > +
+> > +	put_read_callbacks_ctx(ctx);
+> > +
+> > +	bio_put(bio);
+> > +}
+> 
+> The filesystem itself (or fs/mpage.c) actually has to implement almost all this
+> logic as well anyway, because CONFIG_FS_READ_CALLBACKS may be unset.  And the
+> ->page_op() callback, which exists only because f2fs needs to update some
+> counter, is very ugly.
+> 
+> IMO, it would be simpler to just make this whole function filesystem-specific,
+> as a 'typedef void (*end_bio_func_t)(struct bio *bio);' which gets passed to the
+> read_callbacks endio hook.
+> 
+> Of course, each end_bio_func_t would have to check PageError() to check whether
+> any read_callbacks step failed.  But to make that a bit easier and to make it
+> get compiled out when CONFIG_FS_READ_CALLBACKS is unset, there could be a helper
+> function in read_callbacks.h:
+> 
+> 	#ifdef CONFIG_FS_READ_CALLBACKS
+> 	static inline bool read_callbacks_failed(struct page *page)
+> 	{
+> 		return PageError(page);
+> 	}
+> 	#else
+> 	static inline bool read_callbacks_failed(struct page *page)
+> 	{
+> 		return false;
+> 	}
+> 	#endif
+> 
+> > +
+> > +/**
+> > + * read_callbacks() - Execute the read callbacks state machine.
+> > + * @ctx: The context structure tracking the current state.
+> > + *
+> > + * For each state, this function enqueues a work into appropriate subsystem's
+> > + * work queue. After performing further processing of the data in the bio's
+> > + * pages, the subsystem should invoke read_calbacks() to continue with the next
+> > + * state in the state machine.
+> > + */
+> > +void read_callbacks(struct read_callbacks_ctx *ctx)
+> > +{
+> > +	/*
+> > +	 * We use different work queues for decryption and for verity because
+> > +	 * verity may require reading metadata pages that need decryption, and
+> > +	 * we shouldn't recurse to the same workqueue.
+> > +	 */
+> > +	switch (++ctx->cur_step) {
+> > +	case STEP_DECRYPT:
+> > +		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
+> > +			INIT_WORK(&ctx->work, fscrypt_decrypt_work);
+> > +			fscrypt_enqueue_decrypt_work(&ctx->work);
+> > +			return;
+> > +		}
+> > +		ctx->cur_step++;
+> > +		/* fall-through */
+> > +	default:
+> > +		end_read_callbacks_bio(ctx->bio);
+> > +	}
+> > +}
+> > +EXPORT_SYMBOL(read_callbacks);
+> 
+> As I mentioned, I think the work functions should be defined in this file rather
+> than in fs/crypto/ or fs/verity/, since they're specific to the read_callbacks.
+> fs/crypto/ and fs/verity/ should not be aware of read_callbacks at all.
+> Moreover, the 'read_callbacks()' function should be static.
+> 
+> > +
+> > +/**
+> > + * read_callbacks_end_bio() - Initiate the read callbacks state machine.
+> > + * @bio: bio on which read I/O operation has just been completed.
+> > + *
+> > + * Initiates the execution of the read callbacks state machine when the read
+> > + * operation has been completed successfully. If there was an error associated
+> > + * with the bio, this function frees the read callbacks context structure stored
+> > + * in bio->bi_private (if any).
+> > + *
+> > + * Return: 1 to indicate that the bio has been handled (including unlocking the
+> > + * pages); 0 otherwise.
+> > + */
+> > +int read_callbacks_end_bio(struct bio *bio)
+> > +{
+> > +	if (!bio->bi_status && bio->bi_private) {
+> > +		read_callbacks((struct read_callbacks_ctx *)(bio->bi_private));
+> > +		return 1;
+> > +	}
+> > +
+> > +	if (bio->bi_private)
+> > +		put_read_callbacks_ctx((struct read_callbacks_ctx *)(bio->bi_private));
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL(read_callbacks_end_bio);
+> 
+> Okay, several issues here...
+> 
+> First, the naming of this is really confusing, since it's actually *beginning*
+> the read callbacks, not ending them; and it's basically the same name as
+> end_read_callbacks_bio(), which actually *is* for ending the read callbacks.
+> Since this is the endio hook, how about calling it read_callbacks_endio_bio(),
+> and likewise read_callbacks_endio_bh()?
+> 
+> But more importantly, this doesn't need to have a return value, since the
+> read_callbacks layer has to know how to end the bio (meaning unlock the pages
+> and mark them uptodate or not) *anyway*, or at least know how to ask the
+> filesystem to do it.  So it should just do it if needed, rather than returning 0
+> and making the caller do it.
+> 
+> Also just assign 'ctx = bio->bi_private' at the start of the function; no need
+> to access the field 4 times and have unnecessary casts.
+> 
+> So IMO, the below would be much better:
+> 
+> void read_callbacks_endio_bio(struct bio *bio, end_bio_func_t end_bio)
+> {
+> 	struct read_callbacks_ctx *ctx = bio->bi_private;
+> 
+> 	if (ctx) {
+> 		if (!bio->bi_status) {
+> 			ctx->end_bio = end_bio;
+> 			read_callbacks(ctx);
+> 			return;
+> 		}
+> 		free_read_callbacks_ctx(ctx);
+> 	}
+> 	end_bio(bio);
+> }
+> EXPORT_SYMBOL(read_callbacks_endio_bio);
+> 
+> And then the !CONFIG_FS_READ_CALLBACKS stub:
+> 
+> static inline void read_callbacks_endio_bio(struct bio *bio,
+> 					    end_bio_func_t end_bio)
+> {
+> 	end_bio(bio);
+> }
+> 
+> Similarly for the buffer_head versions.
+> 
+> > +
+> > +/**
+> > + * read_callbacks_setup() - Initialize the read callbacks state machine
+> > + * @inode: The file on which read I/O is performed.
+> > + * @bio: bio holding page cache pages on which read I/O is performed.
+> > + * @page_op: Function to perform filesystem specific operations on a page.
+> > + *
+> > + * Based on the nature of the file's data (e.g. encrypted), this function
+> > + * computes the steps that need to be performed after data is read of the
+> > + * backing disk. This information is saved in a context structure. A pointer
+> > + * to the context structure is then stored in bio->bi_private for later
+> > + * usage.
+> > + *
+> > + * Return: 0 on success; An error code on failure.
+> > + */
+> > +int read_callbacks_setup(struct inode *inode, struct bio *bio,
+> > +			end_page_op_t page_op)
+> > +{
+> > +	struct read_callbacks_ctx *ctx = NULL;
+> > +	unsigned int enabled_steps = 0;
+> > +
+> > +	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
+> > +		enabled_steps |= 1 << STEP_DECRYPT;
+> > +
+> > +	if (enabled_steps) {
+> > +		ctx = mempool_alloc(read_callbacks_ctx_pool, GFP_NOFS);
+> > +		if (!ctx)
+> > +			return -ENOMEM;
+> > +		ctx->bio = bio;
+> > +		ctx->inode = inode;
+> > +		ctx->enabled_steps = enabled_steps;
+> > +		ctx->cur_step = STEP_INITIAL;
+> > +		ctx->page_op = page_op;
+> > +		bio->bi_private = ctx;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL(read_callbacks_setup);
+> 
+> Please call it:
+> 
+> 	read_callbacks_setup_bio()
+> 
+> Then when you add buffer_head support later in the patchset, rather than adding
+> a buffer_head argument to this function, add a new function:
+> 
+> 	read_callbacks_setup_bh()
+> 
+> So that all the users don't have to pass both the buffer_head and bio arguments.
+> 
+> These can use a common function get_read_callbacks_ctx() that creates a
+> read_callbacks_ctx for the inode.  E.g., the bio version could look like:
+> 
+> int read_callbacks_setup_bio(struct inode *inode, struct bio *bio)
+> {
+> 	struct read_callbacks_ctx *ctx = get_read_callbacks_ctx(inode);
+> 
+> 	if (ctx) {
+> 		if (IS_ERR(ctx))
+> 			return PTR_ERR(ctx);
+> 		ctx->bio = bio;
+> 		ctx->bh = NULL;
+> 		bio->bi_private = ctx;
+> 	}
+> 	return 0;
+> }
+> EXPORT_SYMBOL(read_callbacks_setup_bio);
+> 
+> 
+> Also, a nit: can you move the read_callbacks_setup_*() functions to near the top
+> of the file, since they're called first (before the endio functions)?  Likewise
+> in read_callbacks.h.  It would nice to keep the functions in a logical order.
+> 
+> > diff --git a/include/linux/read_callbacks.h b/include/linux/read_callbacks.h
+> > new file mode 100644
+> > index 000000000000..aa1ec8ed7a6a
+> > --- /dev/null
+> > +++ b/include/linux/read_callbacks.h
+> > @@ -0,0 +1,38 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef _READ_CALLBACKS_H
+> > +#define _READ_CALLBACKS_H
+> 
+> Headers should be self-contained, but this is missing some prerequisite headers
+> and forward declarations.  Try compiling a .c file with this header included
+> first.
+> 
+> > +
+> > +typedef void (*end_page_op_t)(struct bio *bio, struct page *page);
+> > +
+> > +struct read_callbacks_ctx {
+> > +	struct bio *bio;
+> > +	struct inode *inode;
+> > +	struct work_struct work;
+> > +	unsigned int cur_step;
+> > +	unsigned int enabled_steps;
+> > +	end_page_op_t page_op;
+> > +};
+> 
+> As I mentioned, I don't think read_callbacks_ctx should be exposed to
+> filesystems like this.  Instead just forward declare it here, and put the actual
+> definition in fs/read_callbacks.c.
+> 
+> > +
+> > +#ifdef CONFIG_FS_READ_CALLBACKS
+> > +void read_callbacks(struct read_callbacks_ctx *ctx);
+> > +int read_callbacks_end_bio(struct bio *bio);
+> > +int read_callbacks_setup(struct inode *inode, struct bio *bio,
+> > +			end_page_op_t page_op);
+> > +#else
+> > +static inline void read_callbacks(struct read_callbacks_ctx *ctx)
+> > +{
+> > +}
+> > +
+> > +static inline int read_callbacks_end_bio(struct bio *bio)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> 
+> This stub needs to return 0, otherwise it breaks fs/mpage.c and f2fs for
+> everyone when CONFIG_FS_READ_CALLBACKS is unset.
+> 
+> But as I mentioned elsewhere, I think this should actually call an end_bio()
+> callback itself and return void, which would also avoid this issue.
+> 
+> > +
+> > +static inline int read_callbacks_setup(struct inode *inode,
+> > +				struct bio *bio, end_page_op_t page_op)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> 
+> Similarly here, this stub needs to return 0.
 > 
 
-I agree.
+I agree with all your comments. I will fix them up and post the next version.
 
 -- 
 chandan
