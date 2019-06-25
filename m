@@ -2,44 +2,44 @@ Return-Path: <SRS0=v3Bs=UY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CBAC48BD5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2019 10:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9CBC48BD6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jun 2019 10:54:39 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DCE1820663;
-	Tue, 25 Jun 2019 10:37:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4F3B6204EC;
+	Tue, 25 Jun 2019 10:54:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="EtmgylMp";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="EzQ0DbMs";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZpriNPni"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE1820663
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Jc4ZMw8U";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="hnZqYimy";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nBAVGkdg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3B6204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hfipb-00050y-JD; Tue, 25 Jun 2019 10:37:43 +0000
+	id 1hfj5r-0003uV-Er; Tue, 25 Jun 2019 10:54:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from
  <BATV+c5155a46dc30cc8634d8+5784+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1hfipZ-00050p-DC
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 10:37:41 +0000
+ id 1hfj5q-0003uL-9A; Tue, 25 Jun 2019 10:54:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1VNqATdiMZjRjBl/SX9aDfK/cY5ROrczskzh7bEhyqQ=; b=EtmgylMpgkRloittS2tBhz45yl
- kCpQxz4/MKGXzSL5NxgVXR+ufF2+t/uwqbLEujAaNPdS3KaiyglVXc2TC0efbiM6Kk7x/NTLJpluL
- Zko2Q0qF2ooV1vxWXgVEhwyEBwKxBL5f3gvaIFVm2aF6l+3kHLP03Ii/4EGUHZ/Rbiig=;
+ bh=Vz9EsU+BMp1qYPkPo0lwQQ2lWPTJmqiFxShSC5HxZL8=; b=Jc4ZMw8UiBVQBx5m/tjv2fuaX1
+ XDqzshyArw3Y98pMiXNp1Ta2wabSCmtCZdl7fJHEHPRUuswbopuAlqZ5pcJCj5bzWvcfaNCdaZbc1
+ PIlazzTDuHXV5I3JlFeKh97MHRbYfa//xhwQbX55R+ngqV2Jtm0wVJ5ua0zF4NbDVZ7U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -47,42 +47,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=1VNqATdiMZjRjBl/SX9aDfK/cY5ROrczskzh7bEhyqQ=; b=EzQ0DbMsYAUYaHpzIuStEs0iyt
- ajmPxdxe2DBlOpP0lcgxEmdiUuIcO5QDQgOGL60555EVup3eRgZ6FODHW7g1xV3nMMnSLH6eEDH0i
- mQv2M6ofiIfUeHrzchWuwFwlF7UqREHXYU9mIrF+RdAoLiCxFPcGhvTqxdhgWUqmus80=;
+ bh=Vz9EsU+BMp1qYPkPo0lwQQ2lWPTJmqiFxShSC5HxZL8=; b=hnZqYimy6SPQPu8Tvv9XJqM6ZX
+ sg6ckK/gTWdHADODjbXv75oNt0HTGthpce69jTvGPm9aySD126cosc2PUFfmY80NUzhRlXhkGGbvy
+ zckZQlWPR5yGo+5XIBp7xuigoenqnjPwUlyrqSE1mndTQbitCv954/Oc5sbS38B3u+EE=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hfipb-009Ib3-U7
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jun 2019 10:37:45 +0000
+ id 1hfj5w-00DNI2-66; Tue, 25 Jun 2019 10:54:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
  :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1VNqATdiMZjRjBl/SX9aDfK/cY5ROrczskzh7bEhyqQ=; b=ZpriNPniMtQfF3PzrXrZFLu9+
- swp27pwzGA3dKtOql8ByZMlmC5XAUIK6Dd+GMHjf0qKANtiVkMY+kP24emwMCRR8Bd7PMgTyLe9QA
- 5OqMw/nvM9U3sRjirT+3roDKm/2t058rf3DiyN7fkLSlwMZ0SYle68bvh+fdV+mCDEdE0F8PxUYpO
- 6uADPC1wdetL3m6crno/ECGMbIBw4GF5RRX2ugGr6ltI3bjWVADicfMYipFtp/ocudq1CWBwDRZB8
- y8f1S9n0qHQVZzv6yurSepPmJiIiCIwpzAKGBbc00350emRHfZhiQtGnClIv9oYZsJs4CbEdnWkcx
- MCg3FRwHw==;
+ bh=Vz9EsU+BMp1qYPkPo0lwQQ2lWPTJmqiFxShSC5HxZL8=; b=nBAVGkdglPHpmuYQqFSATJHvp
+ qEilF7DPQiyEZIpSQIzZMPcCB19ggY2hEx92EbZD+IfkhXJZyak79h1VGJHrDEiGWkV7vWdHEwcvG
+ Uia30K8CsEe4KciVwAx9Ueh3ZNWdw+WX0rQuV/+mv6RSULDepJH0TpBhp34CvQXHIF+E3SqeKl+h1
+ M4x4LTLyO9xuSOKuIZjfQoumHfSjD2nHSXzSH8N5h1GHiAmRxpvVGMpCPUokV0wdUvCNSLjPRhyX1
+ eWkvzLLvA59dhTbrV/Jxp6kiY1qeMWIK1b2QPellvvFdOmIPR/rA0YufkoNWt9HeRFDAWMeB3mZv2
+ /tv3kTYFQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat
- Linux)) id 1hfioR-0001Ln-BN; Tue, 25 Jun 2019 10:36:31 +0000
-Date: Tue, 25 Jun 2019 03:36:31 -0700
+ Linux)) id 1hfj5c-00078N-JV; Tue, 25 Jun 2019 10:54:16 +0000
+Date: Tue, 25 Jun 2019 03:54:16 -0700
 From: Christoph Hellwig <hch@infradead.org>
 To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Message-ID: <20190625103631.GB30156@infradead.org>
-References: <156116141046.1664939.11424021489724835645.stgit@magnolia>
+Message-ID: <20190625105416.GA26085@infradead.org>
+References: <156116136742.1664814.17093419199766834123.stgit@magnolia>
+ <156116138140.1664814.9610454726122206157.stgit@magnolia>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <156116141046.1664939.11424021489724835645.stgit@magnolia>
+In-Reply-To: <156116138140.1664814.9610454726122206157.stgit@magnolia>
 User-Agent: Mutt/1.11.4 (2019-03-13)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1hfipb-009Ib3-U7
-Subject: Re: [f2fs-dev] [PATCH v4 0/7] vfs: make immutable files actually
- immutable
+X-Headers-End: 1hfj5w-00DNI2-66
+Subject: Re: [f2fs-dev] [PATCH 1/4] vfs: create a generic checking function
+ for FS_IOC_SETFLAGS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,43 +94,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-efi@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
- clm@fb.com, adilger.kernel@dilger.ca, matthew.garrett@nebula.com,
- linux-nilfs@vger.kernel.org, linux-ext4@vger.kernel.org,
- devel@lists.orangefs.org, josef@toxicpanda.com, reiserfs-devel@vger.kernel.org,
- viro@zeniv.linux.org.uk, dsterba@suse.com, jaegeuk@kernel.org, tytso@mit.edu,
- ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- jk@ozlabs.org, jack@suse.com, linux-fsdevel@vger.kernel.org,
- linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com
+Cc: shaggy@kernel.org, jfs-discussion@lists.sourceforge.net,
+ linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ linux-btrfs@vger.kernel.org, clm@fb.com, adilger.kernel@dilger.ca,
+ matthew.garrett@nebula.com, linux-nilfs@vger.kernel.org,
+ cluster-devel@redhat.com, linux-ext4@vger.kernel.org, josef@toxicpanda.com,
+ reiserfs-devel@vger.kernel.org, viro@zeniv.linux.org.uk, dsterba@suse.com,
+ jaegeuk@kernel.org, tytso@mit.edu, ard.biesheuvel@linaro.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, jk@ozlabs.org, jack@suse.com,
+ linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ ocfs2-devel@oss.oracle.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jun 21, 2019 at 04:56:50PM -0700, Darrick J. Wong wrote:
-> Hi all,
+On Fri, Jun 21, 2019 at 04:56:21PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> The chattr(1) manpage has this to say about the immutable bit that
-> system administrators can set on files:
+> Create a generic checking function for the incoming FS_IOC_SETFLAGS flag
+> values so that we can standardize the implementations that follow ext4's
+> flag values.
 > 
-> "A file with the 'i' attribute cannot be modified: it cannot be deleted
-> or renamed, no link can be created to this file, most of the file's
-> metadata can not be modified, and the file can not be opened in write
-> mode."
-> 
-> Given the clause about how the file 'cannot be modified', it is
-> surprising that programs holding writable file descriptors can continue
-> to write to and truncate files after the immutable flag has been set,
-> but they cannot call other things such as utimes, fallocate, unlink,
-> link, setxattr, or reflink.
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-I still think living code beats documentation.  And as far as I can
-tell the immutable bit never behaved as documented or implemented
-in this series on Linux, and it originated on Linux.
+Looks fine:
 
-If you want  hard cut off style immutable flag it should really be a
-new API, but I don't really see the point.  It isn't like the usual
-workload is to set the flag on a file actively in use.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
 _______________________________________________
