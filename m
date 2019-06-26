@@ -2,117 +2,70 @@ Return-Path: <SRS0=M3qu=UZ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F14CC48BD6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Jun 2019 02:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B393C4646B
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Jun 2019 04:12:24 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 469A221726;
-	Wed, 26 Jun 2019 02:36:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EE67F20645;
+	Wed, 26 Jun 2019 04:12:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fBchn2SK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fsF098to";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Qi2NwHnV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 469A221726
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Ak2tnFKQ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ATLP4+Hu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE67F20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hfxng-0007jp-0Z; Wed, 26 Jun 2019 02:36:44 +0000
+	id 1hfzI3-0006di-Py; Wed, 26 Jun 2019 04:12:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <darrick.wong@oracle.com>) id 1hfxnU-0007j7-0y
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Jun 2019 02:36:32 +0000
+ (envelope-from <viro@ftp.linux.org.uk>)
+ id 1hfzI2-0006dK-JU; Wed, 26 Jun 2019 04:12:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RDkQFwhFFQ2vI5qz0xIqaf4zf8uM8p//mWlaoaNYF+I=; b=fBchn2SKqUwweVAPdzKFFGAw2b
- ffqakb5vzjqUiZS3tGsAtB6+DvhsTArNoX85q6vio797UGBWV8hdxL+QoHGGVHBMRye8bBlnhF/Qj
- 9kuH2zrxRuHnRPbkjYiQSELwZoo65ciUi3S/qRK3k4D4UzM3LQi5cRW/dsKTTrnnGCKw=;
+ d=sourceforge.net; s=x; h=Sender:In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=rH4OF0GHPClOZ4K9k6rCWew4+MWIr6v83apdz0y+Mu4=; b=Ak2tnFKQVG4SP3Qp/bHhalEFc
+ 059qSb2TZBycHGyWpbPPR+uvra8QGSwsHLQSnAOHGK5QTTeF3B7za34nIMuaPnp6YyIWuSDZ5g/eG
+ 18xBDkDC96PN6Hnuy0Pu0+buTH1L1Ha9HZoL+3VaQuSi+cQS+Ytwd2cD6DiIC7egh2xVo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:Content-ID:
+ h=Sender:In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+ Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RDkQFwhFFQ2vI5qz0xIqaf4zf8uM8p//mWlaoaNYF+I=; b=fsF098to7xASrC8fOQEwvPvNYu
- rTbYStPVm2PuBxjVtCnnK4nC8fFcoMjXjA7qd6OuHCjTToJtQXUsSjVplIUNRxAyy8Tia1mvHO559
- /CcJgv/PQ4vgqRqgBQ4VKd9E70P/NEyDZ5aoHORfueDq+LTrWB46kmxrj72LCTVxypRw=;
-Received: from userp2130.oracle.com ([156.151.31.86])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=rH4OF0GHPClOZ4K9k6rCWew4+MWIr6v83apdz0y+Mu4=; b=ATLP4+HuRwmNLtUvFNJRV+wdHP
+ N8J71OgmsL4aaFnsk71skhCpxCABLHydFuFEdw2c420H/JZqJt6ekwsd9qy4+gteoTthda47RXLlN
+ zK59WQoNq+fLuyWCZS8RmBbDdK4ChAxq7UjMvZYRHskOfRcUgHC020YY+tjdW+oWCEms=;
+Received: from zeniv.linux.org.uk ([195.92.253.2])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hfxnX-00EEKm-FI
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Jun 2019 02:36:36 +0000
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
- by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q2Z0Zp120740;
- Wed, 26 Jun 2019 02:35:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
- h=subject : from : to :
- cc : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=RDkQFwhFFQ2vI5qz0xIqaf4zf8uM8p//mWlaoaNYF+I=;
- b=Qi2NwHnVvWi7uetKAFrtDLbEc7vBEztBO544xnn041sSZ7Fd3ocayxJrgUVLY5aWK0nf
- Ite4JKYpy0UTn6/XETb7boW3RhaAdXiKa1fL2V5TysE/aV9BaTPrGmv7gGnaw4E3aPVd
- h1eAr0iXSQgZ8bt1cz+Y/aA8/0mIndivv/2HisCjrSY7yBaaGjEge4/5om9TBbv2jvW3
- eOfa1J2vXFZDfhPdb+EttM0EV/jAq/YuGxJoz8dMa6tkFMJao88u3rFVpg9bj4ZNDBKS
- k6bGwT+rfiYQyJ1DPmadzn9S646qAfU1gSQw1fIjxewe/fI4Upnp6HJpT25nXB2TRGu8 EA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
- by userp2130.oracle.com with ESMTP id 2t9brt7mt2-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Wed, 26 Jun 2019 02:35:36 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
- by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q2XQY8081296;
- Wed, 26 Jun 2019 02:33:36 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
- by userp3020.oracle.com with ESMTP id 2tat7cjp2n-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
- Wed, 26 Jun 2019 02:33:36 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
- by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5Q2XZtv081761;
- Wed, 26 Jun 2019 02:33:35 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
- by userp3020.oracle.com with ESMTP id 2tat7cjp28-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Wed, 26 Jun 2019 02:33:35 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
- by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5Q2XY3k021348;
- Wed, 26 Jun 2019 02:33:34 GMT
-Received: from localhost (/10.159.230.235)
- by default (Oracle Beehive Gateway v4.0)
- with ESMTP ; Tue, 25 Jun 2019 19:33:34 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
- darrick.wong@oracle.com, ard.biesheuvel@linaro.org,
- josef@toxicpanda.com, hch@infradead.org, clm@fb.com,
- adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com,
- dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org
-Date: Tue, 25 Jun 2019 19:33:31 -0700
-Message-ID: <156151641177.2283603.7806026378321236401.stgit@magnolia>
-In-Reply-To: <156151637248.2283603.8458727861336380714.stgit@magnolia>
-References: <156151637248.2283603.8458727861336380714.stgit@magnolia>
-User-Agent: StGit/0.17.1-dirty
+ id 1hfzI9-00AMpy-6y; Wed, 26 Jun 2019 04:12:21 +0000
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat
+ Linux)) id 1hfzHR-0000Pn-Ag; Wed, 26 Jun 2019 04:11:33 +0000
+Date: Wed, 26 Jun 2019 05:11:33 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Message-ID: <20190626041133.GB32272@ZenIV.linux.org.uk>
+References: <156151632209.2283456.3592379873620132456.stgit@magnolia>
+ <156151633829.2283456.834142172527987802.stgit@magnolia>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299
- signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
- priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906260028
-X-Headers-End: 1hfxnX-00EEKm-FI
-Subject: [f2fs-dev] [PATCH 5/5] vfs: don't allow writes to swap files
+Content-Disposition: inline
+In-Reply-To: <156151633829.2283456.834142172527987802.stgit@magnolia>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Headers-End: 1hfzI9-00AMpy-6y
+Subject: Re: [f2fs-dev] [PATCH 2/5] vfs: create a generic checking function
+ for FS_IOC_FSSETXATTR
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,122 +77,45 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-efi@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org,
+Cc: shaggy@kernel.org, jfs-discussion@lists.sourceforge.net,
+ linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>, hch@infradead.org,
+ linux-btrfs@vger.kernel.org, clm@fb.com, adilger.kernel@dilger.ca,
+ matthew.garrett@nebula.com, linux-nilfs@vger.kernel.org,
+ cluster-devel@redhat.com, linux-ext4@vger.kernel.org, josef@toxicpanda.com,
+ reiserfs-devel@vger.kernel.org, dsterba@suse.com, jaegeuk@kernel.org,
+ tytso@mit.edu, ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-mm@kvack.org, linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
- ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, devel@lists.orangefs.org
+ jk@ozlabs.org, jack@suse.com, linux-fsdevel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+On Tue, Jun 25, 2019 at 07:32:18PM -0700, Darrick J. Wong wrote:
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -373,10 +373,9 @@ static int check_xflags(unsigned int flags)
+>  static int btrfs_ioctl_fsgetxattr(struct file *file, void __user *arg)
+>  {
+>  	struct btrfs_inode *binode = BTRFS_I(file_inode(file));
+> -	struct fsxattr fa;
+> -
+> -	memset(&fa, 0, sizeof(fa));
+> -	fa.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags);
+> +	struct fsxattr fa = {
+> +		.fsx_xflags = btrfs_inode_flags_to_xflags(binode->flags),
+> +	};
 
-Don't let userspace write to an active swap file because the kernel
-effectively has a long term lease on the storage and things could get
-seriously corrupted if we let this happen.
+Umm...  Sure, there's no padding, but still - you are going to copy that thing
+to userland...  How about
 
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/attr.c     |    3 +++
- mm/filemap.c  |    3 +++
- mm/memory.c   |    4 +++-
- mm/mmap.c     |    2 ++
- mm/swapfile.c |   15 +++++++++++++--
- 5 files changed, 24 insertions(+), 3 deletions(-)
+static inline void simple_fill_fsxattr(struct fsxattr *fa, unsigned xflags)
+{
+	memset(fa, 0, sizeof(*fa));
+	fa->fsx_xflags = xflags;
+}
 
-
-diff --git a/fs/attr.c b/fs/attr.c
-index 1fcfdcc5b367..42f4d4fb0631 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -236,6 +236,9 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
- 	if (IS_IMMUTABLE(inode))
- 		return -EPERM;
- 
-+	if (IS_SWAPFILE(inode))
-+		return -ETXTBSY;
-+
- 	if ((ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID | ATTR_TIMES_SET)) &&
- 	    IS_APPEND(inode))
- 		return -EPERM;
-diff --git a/mm/filemap.c b/mm/filemap.c
-index dad85e10f5f8..fd80bc20e30a 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2938,6 +2938,9 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
- 	if (IS_IMMUTABLE(inode))
- 		return -EPERM;
- 
-+	if (IS_SWAPFILE(inode))
-+		return -ETXTBSY;
-+
- 	if (!iov_iter_count(from))
- 		return 0;
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 4311cfdade90..c04c6a689995 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2235,7 +2235,9 @@ static vm_fault_t do_page_mkwrite(struct vm_fault *vmf)
- 
- 	vmf->flags = FAULT_FLAG_WRITE|FAULT_FLAG_MKWRITE;
- 
--	if (vmf->vma->vm_file && IS_IMMUTABLE(file_inode(vmf->vma->vm_file)))
-+	if (vmf->vma->vm_file &&
-+	    (IS_IMMUTABLE(file_inode(vmf->vma->vm_file)) ||
-+	     IS_SWAPFILE(file_inode(vmf->vma->vm_file))))
- 		return VM_FAULT_SIGBUS;
- 
- 	ret = vmf->vma->vm_ops->page_mkwrite(vmf);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index ac1e32205237..031807339869 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1488,6 +1488,8 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 					return -EACCES;
- 				if (IS_IMMUTABLE(file_inode(file)))
- 					return -EPERM;
-+				if (IS_SWAPFILE(file_inode(file)))
-+					return -ETXTBSY;
- 			}
- 
- 			/*
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 596ac98051c5..1ca4ee8c2d60 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -3165,6 +3165,19 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 	if (error)
- 		goto bad_swap;
- 
-+	/*
-+	 * Flush any pending IO and dirty mappings before we start using this
-+	 * swap file.
-+	 */
-+	if (S_ISREG(inode->i_mode)) {
-+		inode->i_flags |= S_SWAPFILE;
-+		error = inode_drain_writes(inode);
-+		if (error) {
-+			inode->i_flags &= ~S_SWAPFILE;
-+			goto bad_swap;
-+		}
-+	}
-+
- 	mutex_lock(&swapon_mutex);
- 	prio = -1;
- 	if (swap_flags & SWAP_FLAG_PREFER)
-@@ -3185,8 +3198,6 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 	atomic_inc(&proc_poll_event);
- 	wake_up_interruptible(&proc_poll_wait);
- 
--	if (S_ISREG(inode->i_mode))
--		inode->i_flags |= S_SWAPFILE;
- 	error = 0;
- 	goto out;
- bad_swap:
-
+and let the compiler optimize the crap out?
 
 
 _______________________________________________
