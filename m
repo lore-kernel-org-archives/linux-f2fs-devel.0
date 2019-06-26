@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36883C48BD7
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Jun 2019 02:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EED0C48BD6
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Jun 2019 02:34:14 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0AD1120645;
-	Wed, 26 Jun 2019 02:33:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 61CBC2085A;
+	Wed, 26 Jun 2019 02:34:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XNpSKzQI";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="OQ11JNOM";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WVzGJQhS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD1120645
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="f1cPEg+D";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="UwMBWNnC";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OwYWG9CO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61CBC2085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hfxkE-0007Vz-Uk; Wed, 26 Jun 2019 02:33:10 +0000
+	id 1hfxl7-0004gl-SH; Wed, 26 Jun 2019 02:34:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <darrick.wong@oracle.com>)
- id 1hfxkD-0007Va-86; Wed, 26 Jun 2019 02:33:09 +0000
+ (envelope-from <darrick.wong@oracle.com>) id 1hfxl4-0004gb-DV
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Jun 2019 02:34:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=h0lWCLVuyu0P/36h1LaiA53s/qIbwAY/ZQm2+JFVybY=; b=XNpSKzQIUw+kWGOIjZsFsVDtsu
- sra9HsCIc0R1x7S+gMvbWf+Dsi9/mQ4VC2AbHFER7jZem08KbFSBRtneH0FPTLtm7xvFYqNECiKMG
- TSN9PWfzXG+U/YfsMkjLn40I+406gU/lY2EFid886UtdRs6s/E4Uvh7j03RKitNYEn5I=;
+ bh=GZ5Da9i8UXdicVq5/ebI4XscP19RKvf9/ymCHA5iuvw=; b=f1cPEg+DdX7VQfjk9/AOVyDUMI
+ hvyygGB8kNcphB5Mn4c2RKA0Vg2ARQRLfIm82V7Uh8JhsIvklG+qQ8zTPzLyVNexJdz4qck72UgJF
+ CFdEt6BFAUQkizB2IOaWDF1wIO4ppNOSBtrHJQdJi7RJiKNhs2ojLqy68UT+rIIbb+Ok=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
@@ -46,60 +46,61 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=h0lWCLVuyu0P/36h1LaiA53s/qIbwAY/ZQm2+JFVybY=; b=OQ11JNOMQjR7sqRlzJEPNBhth9
- DBjKmmF9wgeWDXsZQg6w+EjXE0GWbq45TbXCTYZ5PXEi2+DIinIEhS2IQMbf3WO/vv4pUvTi8KPSz
- wqVTPB1xOhuuxHochRbit9ghvbW7DUUK5H68X8jgnBTweH2isZOgE0/OneCJ1oSosGgU=;
-Received: from userp2120.oracle.com ([156.151.31.85])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=GZ5Da9i8UXdicVq5/ebI4XscP19RKvf9/ymCHA5iuvw=; b=UwMBWNnCnjzQEMPMeqElxsQuiA
+ rckF7fbQrphSRGU6/4VLxpMyw1eeh1sYzgPfxv+hJ73MxilUAdRAWmuA1RuZyzbTH99CRHK0sRun3
+ 4yGxtN8mjkHYf0XfU2+PMwocFEWMhB10JMN27hVfYJw4TP9vwhp521r7ownKMPa3aK+Y=;
+Received: from userp2130.oracle.com ([156.151.31.86])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hfxkE-00DrCa-L5; Wed, 26 Jun 2019 02:33:13 +0000
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
- by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q2SxLv123573;
- Wed, 26 Jun 2019 02:32:53 GMT
+ id 1hfxlB-00EEF5-BA
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Jun 2019 02:34:10 +0000
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+ by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q2St3m116601;
+ Wed, 26 Jun 2019 02:33:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
  h=subject : from : to :
  cc : date : message-id : in-reply-to : references : mime-version :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=h0lWCLVuyu0P/36h1LaiA53s/qIbwAY/ZQm2+JFVybY=;
- b=WVzGJQhS0xFxS9ZetgIjbt11O8dEzX+ntxaHJA/Dp/fXfdPu7h/tulaSw1kwfk0cARJ2
- 6P7+LaBlGhrlBlTBixL7H1joLQrl5v0O8Wq+iChywtxq2zREmo1SZZsiPwhchYHf5vcY
- R0rhHWm3t8w9kIzGZYGPtpv/6JW+V9DMY/ig7caUEniKBDHwAAFFsm07Eaqv5HMAGarc
- SKeFMzwagbIiY2I+pTgKcZn6a1g5ugBqrBvCiKUeVmttxdxpA1/1SINzfxzwgoTvWkZP
- UjKlu1lIQbbY9YDXdOtJshWXzjUfBugIbz/OPW6NC+6WJf+WV9PZRfD4hUj2cSIcQL/8 JQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
- by userp2120.oracle.com with ESMTP id 2t9cyqfh8k-1
+ bh=GZ5Da9i8UXdicVq5/ebI4XscP19RKvf9/ymCHA5iuvw=;
+ b=OwYWG9COa/utVeg+XFueBCQNbNHCKEORscmBRW6CX5wX1eaV2FXBC7NljSPy3RS4qDUE
+ b9M9KeySwRTS+CsKX1Xla151y395HzGSXJJfbVfWx4faXRcg07z0e6bgKSj3w9DHkvII
+ gHuoqvYt3YoddlkFH+TkNlF+72zdoGX3Sep9OlkXKvgZw+mtCU/rS3hW1v8feUw3Jiv+
+ swWRG78ZiDDHbKViaLEwV+Y4c0KtsiRV7RBTt83NxTKbz7E7deMXzIVYS9lFPFateZVC
+ +waBXMHaI1HYAQqb+CTireZ6bU/vo07hOOzWEEuIfzyuXzso74QcEtkOyaT392xtlJLV lg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+ by userp2130.oracle.com with ESMTP id 2t9brt7mm4-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Wed, 26 Jun 2019 02:32:53 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
- by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q2WaOO021358;
- Wed, 26 Jun 2019 02:32:52 GMT
+ Wed, 26 Jun 2019 02:33:06 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+ by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5Q2WkGE080003;
+ Wed, 26 Jun 2019 02:33:05 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
- by userp3030.oracle.com with ESMTP id 2t99f47112-1
+ by userp3020.oracle.com with ESMTP id 2tat7cjnv7-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
- Wed, 26 Jun 2019 02:32:52 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
- by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5Q2WqQI021725;
- Wed, 26 Jun 2019 02:32:52 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
- by userp3030.oracle.com with ESMTP id 2t99f4710w-1
+ Wed, 26 Jun 2019 02:33:05 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+ by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5Q2X5bt080432;
+ Wed, 26 Jun 2019 02:33:05 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+ by userp3020.oracle.com with ESMTP id 2tat7cjnv1-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Wed, 26 Jun 2019 02:32:52 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
- by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5Q2Wovl012016;
- Wed, 26 Jun 2019 02:32:50 GMT
+ Wed, 26 Jun 2019 02:33:05 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+ by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5Q2X32M024230;
+ Wed, 26 Jun 2019 02:33:03 GMT
 Received: from localhost (/10.159.230.235)
  by default (Oracle Beehive Gateway v4.0)
- with ESMTP ; Tue, 25 Jun 2019 19:32:50 -0700
+ with ESMTP ; Tue, 25 Jun 2019 19:33:03 -0700
 From: "Darrick J. Wong" <darrick.wong@oracle.com>
 To: matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
- darrick.wong@oracle.com, shaggy@kernel.org, ard.biesheuvel@linaro.org,
+ darrick.wong@oracle.com, ard.biesheuvel@linaro.org,
  josef@toxicpanda.com, hch@infradead.org, clm@fb.com,
- adilger.kernel@dilger.ca, jk@ozlabs.org, jack@suse.com,
- dsterba@suse.com, jaegeuk@kernel.org, viro@zeniv.linux.org.uk
-Date: Tue, 25 Jun 2019 19:32:47 -0700
-Message-ID: <156151636789.2283456.3835262849301472968.stgit@magnolia>
-In-Reply-To: <156151632209.2283456.3592379873620132456.stgit@magnolia>
-References: <156151632209.2283456.3592379873620132456.stgit@magnolia>
+ adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com,
+ dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org
+Date: Tue, 25 Jun 2019 19:33:00 -0700
+Message-ID: <156151638036.2283603.8347635093125152699.stgit@magnolia>
+In-Reply-To: <156151637248.2283603.8458727861336380714.stgit@magnolia>
+References: <156151637248.2283603.8458727861336380714.stgit@magnolia>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299
@@ -107,12 +108,11 @@ X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9299
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
  priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=961 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=324 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1906260027
-X-Headers-End: 1hfxkE-00DrCa-L5
-Subject: [f2fs-dev] [PATCH 5/5] vfs: only allow FSSETXATTR to set DAX flag
- on files and dirs
+X-Headers-End: 1hfxlB-00EEF5-BA
+Subject: [f2fs-dev] [PATCH 1/5] mm/fs: don't allow writes to immutable files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,47 +124,131 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc: linux-efi@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
  reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+ linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
  linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- ocfs2-devel@oss.oracle.com
+ devel@lists.orangefs.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Darrick J. Wong <darrick.wong@oracle.com>
 
-The DAX flag only applies to files and directories, so don't let it get
-set for other types of files.
+The chattr manpage has this to say about immutable files:
+
+"A file with the 'i' attribute cannot be modified: it cannot be deleted
+or renamed, no link can be created to this file, most of the file's
+metadata can not be modified, and the file can not be opened in write
+mode."
+
+Once the flag is set, it is enforced for quite a few file operations,
+such as fallocate, fpunch, fzero, rm, touch, open, etc.  However, we
+don't check for immutability when doing a write(), a PROT_WRITE mmap(),
+a truncate(), or a write to a previously established mmap.
+
+If a program has an open write fd to a file that the administrator
+subsequently marks immutable, the program still can change the file
+contents.  Weird!
+
+The ability to write to an immutable file does not follow the manpage
+promise that immutable files cannot be modified.  Worse yet it's
+inconsistent with the behavior of other syscalls which don't allow
+modifications of immutable files.
+
+Therefore, add the necessary checks to make the write, mmap, and
+truncate behavior consistent with what the manpage says and consistent
+with other syscalls on filesystems which support IMMUTABLE.
 
 Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/inode.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/attr.c    |   13 ++++++-------
+ mm/filemap.c |    3 +++
+ mm/memory.c  |    3 +++
+ mm/mmap.c    |    8 ++++++--
+ 4 files changed, 18 insertions(+), 9 deletions(-)
 
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 670d5408d022..f08711b34341 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2259,6 +2259,14 @@ int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
- 	    !S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
- 		return -EINVAL;
+diff --git a/fs/attr.c b/fs/attr.c
+index d22e8187477f..1fcfdcc5b367 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -233,19 +233,18 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
  
-+	/*
-+	 * It is only valid to set the DAX flag on regular files and
-+	 * directories on filesystems.
-+	 */
-+	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
-+	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
-+		return -EINVAL;
+ 	WARN_ON_ONCE(!inode_is_locked(inode));
+ 
+-	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID | ATTR_TIMES_SET)) {
+-		if (IS_IMMUTABLE(inode) || IS_APPEND(inode))
+-			return -EPERM;
+-	}
++	if (IS_IMMUTABLE(inode))
++		return -EPERM;
 +
- 	/* Extent size hints of zero turn off the flags. */
- 	if (fa->fsx_extsize == 0)
- 		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
++	if ((ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID | ATTR_TIMES_SET)) &&
++	    IS_APPEND(inode))
++		return -EPERM;
+ 
+ 	/*
+ 	 * If utimes(2) and friends are called with times == NULL (or both
+ 	 * times are UTIME_NOW), then we need to check for write permission
+ 	 */
+ 	if (ia_valid & ATTR_TOUCH) {
+-		if (IS_IMMUTABLE(inode))
+-			return -EPERM;
+-
+ 		if (!inode_owner_or_capable(inode)) {
+ 			error = inode_permission(inode, MAY_WRITE);
+ 			if (error)
+diff --git a/mm/filemap.c b/mm/filemap.c
+index aac71aef4c61..dad85e10f5f8 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2935,6 +2935,9 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 	loff_t count;
+ 	int ret;
+ 
++	if (IS_IMMUTABLE(inode))
++		return -EPERM;
++
+ 	if (!iov_iter_count(from))
+ 		return 0;
+ 
+diff --git a/mm/memory.c b/mm/memory.c
+index ddf20bd0c317..4311cfdade90 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2235,6 +2235,9 @@ static vm_fault_t do_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	vmf->flags = FAULT_FLAG_WRITE|FAULT_FLAG_MKWRITE;
+ 
++	if (vmf->vma->vm_file && IS_IMMUTABLE(file_inode(vmf->vma->vm_file)))
++		return VM_FAULT_SIGBUS;
++
+ 	ret = vmf->vma->vm_ops->page_mkwrite(vmf);
+ 	/* Restore original flags so that caller is not surprised */
+ 	vmf->flags = old_flags;
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 7e8c3e8ae75f..ac1e32205237 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1483,8 +1483,12 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 		case MAP_SHARED_VALIDATE:
+ 			if (flags & ~flags_mask)
+ 				return -EOPNOTSUPP;
+-			if ((prot&PROT_WRITE) && !(file->f_mode&FMODE_WRITE))
+-				return -EACCES;
++			if (prot & PROT_WRITE) {
++				if (!(file->f_mode & FMODE_WRITE))
++					return -EACCES;
++				if (IS_IMMUTABLE(file_inode(file)))
++					return -EPERM;
++			}
+ 
+ 			/*
+ 			 * Make sure we don't allow writing to an append-only
 
 
 
