@@ -2,89 +2,78 @@ Return-Path: <SRS0=+JY/=U2=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C65C48BD6
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Jun 2019 10:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07729C48BD9
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Jun 2019 17:05:18 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E401F2085A;
-	Thu, 27 Jun 2019 10:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CD3BC20659;
+	Thu, 27 Jun 2019 17:05:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Q/Ovv9uY";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="j2LXhzy6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E401F2085A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HglcAIwC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="j38xq10U";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zC1Ze2Dp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD3BC20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hgRVP-00012s-RU; Thu, 27 Jun 2019 10:19:51 +0000
+	id 1hgXpf-0002q0-0Q; Thu, 27 Jun 2019 17:05:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hgRVN-00012g-PN
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jun 2019 10:19:49 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1hgXpd-0002pa-32
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jun 2019 17:05:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=t+Gkml9Tw/7+HbEl3vGG926lw5n0CdI4Yh5JcDl9zTo=; b=Q/Ovv9uY/x5qSQu997724hbbDh
- D9PpB/J/wlMlu0iaNX4Ew/X+tiIUAVNY3mniQLjf8JfHXm1MDRVaLsxXB/Hj5DrdgSVWt/BoCmlHM
- txSFCxGvcFfTrMcExFS7tHI4GzHFo2iSTB4zZs0SepIxsGIO2jkr054EPm0XypXWr0aw=;
+ bh=6EYRpwIh3zFUAGBoGM/TbzUOLE3KJ6lFOkFt1xq7hho=; b=HglcAIwCqvoUJWcieJftmoah5z
+ iiodVATRVO3hM0nl+Gn/UlBiyi041zex2jfCPidqcptOU9C/T9a7TBqpKcEpuT8TR/Zr5nxrTYJoc
+ C1lPKxSEEHG/HbchIHMQFGNU8hffCwVO/NH1XNF+/N5OvhmtLs746CD4p/TTtK8HcHIA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=t+Gkml9Tw/7+HbEl3vGG926lw5n0CdI4Yh5JcDl9zTo=; b=j2LXhzy6iSQtOtCXppPXtwm02/
- Shk7habQs1upJYI2kftTI2udTBPIW7eWerPYXicKmjvqDvn3ujJ2e0xS4vMw0a0tRcO4DbY9EaEJe
- p/DmzS1VX7WCGNFWCIj0jYZPd5Th9lJLKSFkVEkRywhR7AEJHc3x/IOiPhVa6wyRQvDc=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=6EYRpwIh3zFUAGBoGM/TbzUOLE3KJ6lFOkFt1xq7hho=; b=j
+ 38xq10UmX2VfEL+OOwUJ9QbVpvCg24afyMBZrLQHOiGX1bjQeGAJzpTIYuArRopzRXsCXnaNMO/zi
+ vEj1A0ANAifWrEs34IJQN+RKwZHepR8NEkaomLklo30nP/GaS75nd/5S1EPhHCr9WzEtqGafHpm+4
+ x5G0silfp68a80us=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hgRVR-00GXp5-Ax
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jun 2019 10:19:55 +0000
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id CC9CACF30C0E86F4E8AE;
- Thu, 27 Jun 2019 18:19:45 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 27 Jun
- 2019 18:19:41 +0800
-To: Ju Hyung Park <qkrwngud825@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <CAD14+f2ckNUv9n-Zb9UL_ojX8=24tYBhT-SsrcpVNogqee2tkA@mail.gmail.com>
- <6bcbb5e8-55ad-49c1-bb77-f7f677ceb526@huawei.com>
- <CAD14+f3NHosrL=5UOBSMbFxQ91x-AuWOj_w=JYkJSnmfDgTkvA@mail.gmail.com>
- <CAD14+f0ZTmmLBXtmHF_Kz23JLSJy+UzpNxwSMV4rvSCse3y7EA@mail.gmail.com>
- <7e1bfa07-5ee8-a276-fe6a-6d79bd9270c3@huawei.com>
- <CAD14+f1+puy4M6rL_SbGt9vej=7LgK+qEjq71_878=oqSvjJ2Q@mail.gmail.com>
- <0f89b0b6-5cc5-6618-72e5-8a2f81947161@kernel.org>
- <CAD14+f1xgYKAnzqLb-ZpzbeskZegGHXbrJ+vEHZe19_Jp3pBTQ@mail.gmail.com>
- <e3303318-758e-b263-f6ed-d55e98bdea78@kernel.org>
- <CAD14+f2XWeWvYXTjKbReJa7uZROvnp_-V419sBkpmWFp5L5BtA@mail.gmail.com>
- <20190603202719.GC34729@jaegeuk-macbookpro.roam.corp.google.com>
- <249aff47-cb24-291b-37f7-6ed2d854a207@huawei.com>
- <CAD14+f13+fKvo+-vOwu79O-mSwKS7r0g=gbVL65qv+MXPc+gZg@mail.gmail.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <5c36de6c-fe75-e131-9f18-03e83fb5f439@huawei.com>
-Date: Thu, 27 Jun 2019 18:20:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1hgXph-00Gv1M-Rx
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jun 2019 17:05:14 +0000
+Received: from localhost (unknown [104.132.1.68])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id C257F20659;
+ Thu, 27 Jun 2019 17:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1561655105;
+ bh=VtbDzrEliM8ZNaN7HaceyqdJC4IAY9HnrzQS56Uhm2A=;
+ h=From:To:Cc:Subject:Date:From;
+ b=zC1Ze2DpXm5s0+vhbpsM3KmvnE494N6tYjhLyy/LLyEY5Ssc3jod5fPxmSZKRGHSW
+ 63FMhpChlaD9x2wXpVODyZtPmbl8W+zmJfCT1+syTJ97E1LcNgiu4olbdPv/zfpsPi
+ cSSyiXQkFSU14EbrEYw/WzxyZHHR4OeEYtlpVNkU=
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Thu, 27 Jun 2019 10:05:04 -0700
+Message-Id: <20190627170504.71700-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-In-Reply-To: <CAD14+f13+fKvo+-vOwu79O-mSwKS7r0g=gbVL65qv+MXPc+gZg@mail.gmail.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1hgRVR-00GXp5-Ax
-Subject: Re: [f2fs-dev] [PATCH v3 2/2] f2fs-tools: relocate chksum_offset
- for large_nat_bitmap feature
+X-Headers-End: 1hgXph-00Gv1M-Rx
+Subject: [f2fs-dev] [PATCH] f2fs: allocate blocks for pinned file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,67 +85,39 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Ju Hyung,
+This patch allows fallocate to allocate physical blocks for pinned file.
 
-Thanks for the reminding.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/file.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Jaegeuk, I can send the kernel patch after you tag a new version on fsck.
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index e7c368db8185..cdfd4338682d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1528,7 +1528,12 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
+ 	if (off_end)
+ 		map.m_len++;
+ 
+-	err = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_AIO);
++	if (f2fs_is_pinned_file(inode))
++		map.m_seg_type = CURSEG_COLD_DATA;
++
++	err = f2fs_map_blocks(inode, &map, 1, (f2fs_is_pinned_file(inode) ?
++						F2FS_GET_BLOCK_PRE_DIO :
++						F2FS_GET_BLOCK_PRE_AIO));
+ 	if (err) {
+ 		pgoff_t last_off;
+ 
+-- 
+2.19.0.605.g01d371f741-goog
 
-Thanks,
-
-On 2019/6/27 17:12, Ju Hyung Park wrote:
-> Hi Jaegeuk and Chao.
-> 
-> A little bump here.
-> 
-> We still need to tag a new version of fsck and update f2fs kernel code
-> to tell which version users should use as we discussed earlier.
-> -rc is closing soon, so I felt I needed to remind you.
-> 
-> Thanks.
-> 
-> On Tue, Jun 4, 2019 at 10:48 AM Chao Yu <yuchao0@huawei.com> wrote:
->>
->> On 2019/6/4 4:27, Jaegeuk Kim wrote:
->>> On 06/04, Ju Hyung Park wrote:
->>>> Hi Jaegeuk and Chao,
->>>>
->>>> A little update I thought I might share.
->>>>
->>>> Just went through migrating my laptop to another SSD and I've setup
->>>> f2fs from the beginning with mkfs -i from the master branch.
->>>> No issue as of yet and the kernel is working fine as expected :)
->>>
->>> Cool, thanks for your test. :)
->>
->> Great, thanks for the continuous test and report. :)
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks.
->>>>
->>>>
->>>> _______________________________________________
->>>> Linux-f2fs-devel mailing list
->>>> Linux-f2fs-devel@lists.sourceforge.net
->>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>
->>>
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>> .
->>>
-> .
-> 
 
 
 _______________________________________________
