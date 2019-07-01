@@ -2,43 +2,42 @@ Return-Path: <SRS0=+7CQ=U6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4CDC06513
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 15:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E2AEC0650E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 15:34:20 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D146821873;
-	Mon,  1 Jul 2019 15:34:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 06D9121473;
+	Mon,  1 Jul 2019 15:34:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="SFn6LOAb";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VzFVVRAk";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAS5AIiz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D146821873
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cqFvY+Me";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YPCEOOWL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMGQtvzu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06D9121473
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hhyJi-0008GI-Sq; Mon, 01 Jul 2019 15:34:06 +0000
+	id 1hhyJq-0005qI-Lt; Mon, 01 Jul 2019 15:34:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hhyJf-0008G8-Kp
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:03 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hhyJp-0005pg-AO
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AzVw6WPp5n1vKxeG8LMc3fwqD+oYSUnH13CMqDvOjwQ=; b=SFn6LOAb8TAaQonkrnkBaa+rCy
- a50myHFsqy9m1KilSuemm/HNyJMmUEoVsUxbtM5Yku3rrLPYuS2N2ZxDB7P1XuKpGc5DVBjVN1oTD
- A8Ftk6V0vxUwNRsM8lfkN+rluVONA7fQNQfa6hHR8dkfX5ak62jbpf/jm2YBv6zCuu7I=;
+ bh=Lrbdvr2I56W+B/fFbwrjDiibmYCup0u2/x2nkMlUF3M=; b=cqFvY+MeNWqCDgvc/TGnZzR8jU
+ 7NwQxYK46a+HOTuZaBVQ/ezrM08etTdONKLhXAuU+0CIGGn1dVKJ12/brfmHGahsvKn7yJ/vXxqRr
+ FUZWatT81s3iF6aM6jTzh8k6Ve0UkvRbAnnYN/DMFss5s0FwowMMCPwO9HJZrP4JWgGU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,37 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AzVw6WPp5n1vKxeG8LMc3fwqD+oYSUnH13CMqDvOjwQ=; b=VzFVVRAkHRA7cIx8XXXFtECEkv
- DJLjZShBXx0cOPDqp8Tt+QBx4UYTjJ6yjMy6upOFSs5ASkEmFdxjjWwU8AVZAqjLuQiFKUIg79YwU
- B28LeZU+BikxYD63IKd+DPPvGlxfueqFLt6qeNPeINyFylpliQ9ZsXQ/3nRFB8LPjOa8=;
+ bh=Lrbdvr2I56W+B/fFbwrjDiibmYCup0u2/x2nkMlUF3M=; b=YPCEOOWLwvGS4lmjLNd/z6f0qw
+ 1WTEgjD6+te0MdtfXYbMchU3r+1RA5VGhhHZwy6ofISfLZePbsZ9OycoHkqs0qV/9lQSxWrMpTjZc
+ 5Jq5p27eE0a2bAz3674AKg0+AHqn5NrTJEDdcZz8ABGK2o9NyIU0gaLxgxuRJLILer3k=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hhyJm-003bNs-BD
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:12 +0000
+ id 1hhyJt-003bP9-6U
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:18 +0000
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
  [24.5.143.220])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 3996921473;
- Mon,  1 Jul 2019 15:34:03 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 028242184B;
+ Mon,  1 Jul 2019 15:34:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1561995243;
- bh=vJ+HK3s70OEbOQ2uJD7JHNPCiFhnqc3YbvGsiLj+zwQ=;
+ s=default; t=1561995246;
+ bh=K+NemXguOV0dTgX86NywEULK+bYljcPqx+IErwSAPPw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=NAS5AIizzeGuRP4pmNigAzT5ZEhNgAR5oUiL6CYNf3szYF+53ki78+wMd5cY8oTe6
- efkP/+/0me0lFDagmkhvgfgIdKsxGKku+nRpdcFgASMk5F0wGrwaCV+jo/tpv/QqxM
- BR+H+q6GLFTlywBq3d3cwPtadoxW6FDaPuHgiFm0=
+ b=IMGQtvzuI50Dsn8CxBQL7EJkWsCPSlPlnr3uT3sckNaS+M+7jQiOu/+P2UKYLTGUX
+ HGNxdlYnCQTatrtZzftTHzKbyQi8HpFUD8TlWn0+Tse56dyxuAILRgwoWXIa/9yk3R
+ YFU1SzBnE2QvN+fsGDbpt04NVgwmnZ4B3a0mzVrs=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Mon,  1 Jul 2019 08:32:23 -0700
-Message-Id: <20190701153237.1777-4-ebiggers@kernel.org>
+Date: Mon,  1 Jul 2019 08:32:28 -0700
+Message-Id: <20190701153237.1777-9-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190701153237.1777-1-ebiggers@kernel.org>
 References: <20190701153237.1777-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1hhyJm-003bNs-BD
-Subject: [f2fs-dev] [PATCH v6 03/17] fs-verity: add UAPI header
+X-Headers-End: 1hhyJt-003bP9-6U
+Subject: [f2fs-dev] [PATCH v6 08/17] fs-verity: add the hook for file
+ ->setattr()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,86 +101,74 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add the UAPI header for fs-verity, including two ioctls:
-
-- FS_IOC_ENABLE_VERITY
-- FS_IOC_MEASURE_VERITY
-
-These ioctls are documented in the "User API" section of
-Documentation/filesystems/fsverity.rst.
-
-Examples of using these ioctls can be found in fsverity-utils
-(https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/fsverity-utils.git).
-
-I've also written xfstests that test these ioctls
-(https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git/log/?h=fsverity).
+Add a function fsverity_prepare_setattr() which filesystems that support
+fs-verity must call to deny truncates of verity files.
 
 Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- Documentation/ioctl/ioctl-number.txt |  1 +
- include/uapi/linux/fsverity.h        | 39 ++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
- create mode 100644 include/uapi/linux/fsverity.h
+ fs/verity/open.c         | 21 +++++++++++++++++++++
+ include/linux/fsverity.h |  7 +++++++
+ 2 files changed, 28 insertions(+)
 
-diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-index c9558146ac58..21767c81e86d 100644
---- a/Documentation/ioctl/ioctl-number.txt
-+++ b/Documentation/ioctl/ioctl-number.txt
-@@ -225,6 +225,7 @@ Code  Seq#(hex)	Include File		Comments
- 'f'	00-0F	fs/ext4/ext4.h		conflict!
- 'f'	00-0F	linux/fs.h		conflict!
- 'f'	00-0F	fs/ocfs2/ocfs2_fs.h	conflict!
-+'f'	81-8F	linux/fsverity.h
- 'g'	00-0F	linux/usb/gadgetfs.h
- 'g'	20-2F	linux/usb/g_printer.h
- 'h'	00-7F				conflict! Charon filesystem
-diff --git a/include/uapi/linux/fsverity.h b/include/uapi/linux/fsverity.h
-new file mode 100644
-index 000000000000..57d1d7fc0c34
---- /dev/null
-+++ b/include/uapi/linux/fsverity.h
-@@ -0,0 +1,39 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/*
-+ * fs-verity user API
+diff --git a/fs/verity/open.c b/fs/verity/open.c
+index 8013f77f907e..2cb2fe8082bf 100644
+--- a/fs/verity/open.c
++++ b/fs/verity/open.c
+@@ -295,6 +295,27 @@ int fsverity_file_open(struct inode *inode, struct file *filp)
+ }
+ EXPORT_SYMBOL_GPL(fsverity_file_open);
+ 
++/**
++ * fsverity_prepare_setattr() - prepare to change a verity inode's attributes
++ * @dentry: dentry through which the inode is being changed
++ * @attr: attributes to change
 + *
-+ * These ioctls can be used on filesystems that support fs-verity.  See the
-+ * "User API" section of Documentation/filesystems/fsverity.rst.
++ * Verity files are immutable, so deny truncates.  This isn't covered by the
++ * open-time check because sys_truncate() takes a path, not a file descriptor.
 + *
-+ * Copyright 2019 Google LLC
++ * Return: 0 on success, -errno on failure
 + */
-+#ifndef _UAPI_LINUX_FSVERITY_H
-+#define _UAPI_LINUX_FSVERITY_H
++int fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr)
++{
++	if (IS_VERITY(d_inode(dentry)) && (attr->ia_valid & ATTR_SIZE)) {
++		pr_debug("Denying truncate of verity file (ino %lu)\n",
++			 d_inode(dentry)->i_ino);
++		return -EPERM;
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(fsverity_prepare_setattr);
 +
-+#include <linux/ioctl.h>
-+#include <linux/types.h>
+ /**
+  * fsverity_cleanup_inode() - free the inode's verity info, if present
+  *
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index 09b04dab6452..cbd0f84e1620 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -46,6 +46,7 @@ static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
+ /* open.c */
+ 
+ extern int fsverity_file_open(struct inode *inode, struct file *filp);
++extern int fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr);
+ extern void fsverity_cleanup_inode(struct inode *inode);
+ 
+ #else /* !CONFIG_FS_VERITY */
+@@ -62,6 +63,12 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+ 	return IS_VERITY(inode) ? -EOPNOTSUPP : 0;
+ }
+ 
++static inline int fsverity_prepare_setattr(struct dentry *dentry,
++					   struct iattr *attr)
++{
++	return IS_VERITY(d_inode(dentry)) ? -EOPNOTSUPP : 0;
++}
 +
-+#define FS_VERITY_HASH_ALG_SHA256	1
-+
-+struct fsverity_enable_arg {
-+	__u32 version;
-+	__u32 hash_algorithm;
-+	__u32 block_size;
-+	__u32 salt_size;
-+	__u64 salt_ptr;
-+	__u32 sig_size;
-+	__u32 __reserved1;
-+	__u64 sig_ptr;
-+	__u64 __reserved2[11];
-+};
-+
-+struct fsverity_digest {
-+	__u16 digest_algorithm;
-+	__u16 digest_size; /* input/output */
-+	__u8 digest[];
-+};
-+
-+#define FS_IOC_ENABLE_VERITY	_IOW('f', 133, struct fsverity_enable_arg)
-+#define FS_IOC_MEASURE_VERITY	_IOWR('f', 134, struct fsverity_digest)
-+
-+#endif /* _UAPI_LINUX_FSVERITY_H */
+ static inline void fsverity_cleanup_inode(struct inode *inode)
+ {
+ }
 -- 
 2.22.0
 
