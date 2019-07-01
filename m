@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D271C06519
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 15:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE94C06511
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 15:34:23 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 604CE2184E;
-	Mon,  1 Jul 2019 15:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1EB41208E4;
+	Mon,  1 Jul 2019 15:34:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Co9jDxSA";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="BdFV1Bl6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJ00FLZE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 604CE2184E
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="PiiABqJ/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ZRAiazPZ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2naWryMM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB41208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hhyJp-0008IJ-EQ; Mon, 01 Jul 2019 15:34:13 +0000
+	id 1hhyJk-0002MH-2s; Mon, 01 Jul 2019 15:34:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hhyJn-0008H2-Ey
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:11 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hhyJg-0002Li-C0
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RjbPLfJDIjV3tosRf5oGVSlHrEhysys8w8VGZGycJoU=; b=Co9jDxSAaehSozCtp12c9xnWLw
- 6Y4J4zlvbjWLjGo/IOb3xKGjLYbMP4ike7tPq8dOyqUY5AoMUzif36lj7gmgScdJI5U7FDrjTeeIi
- dxSwYFiU9PxrEwpJUHStr4CfpBYFADqMTU6So3aEGCV+L6UOU9oHJSC279utZ0YyCHTQ=;
+ bh=/yccgRRByOGzDF3PrOx5biw6khYB4iQ3aKIQf9p5ii0=; b=PiiABqJ/+9XgbBtK542sGm+e99
+ NfH+ORQGaDWicI0dz/wJs2iMeqNbpRty774P0sxtISSfWwJh3YOtRaboE3uCAo3f1YBrq4dvv06it
+ cNeZcqTNBjR4fnrIqPid5r0LplaYcJYoKaI6z55Z69K/lywzjD1YL7Vv7uMbyWjES3q8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,37 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RjbPLfJDIjV3tosRf5oGVSlHrEhysys8w8VGZGycJoU=; b=BdFV1Bl6+JnDET9p93z+RCqusH
- WqymaiO7mcxqbZkY06otHMiqJGr9HT91OkdUfh5Gee55svgfqoSpUqCqIMqqPgPNK+XRvL79IxBQ+
- vrG83vEK465X/M+YsDdKhybqz9GhFz02Bt9/7oRuspMQMZ924FAfbf/aDQUpejZldY+c=;
+ bh=/yccgRRByOGzDF3PrOx5biw6khYB4iQ3aKIQf9p5ii0=; b=ZRAiazPZX/5lYq+BoqBEt1X2QL
+ JklngvvcPYfa8RBdzWXcPBtdPvfxBwvkO7JUPje9hGm1LAV0eIapCr6TGTm2epM+Er0gPQQAXwkIW
+ Mtkp/FVENQKXa0U/OZ2WBQcdxsInwURE3hTnVfDWxRM5Hwv5tEuaeqxPZGJR0LoxbpI4=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hhyJt-000lNo-QP
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:19 +0000
+ id 1hhyJt-000lNZ-3F
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:18 +0000
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
  [24.5.143.220])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 52C4821852;
- Mon,  1 Jul 2019 15:34:09 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 54475214AE;
+ Mon,  1 Jul 2019 15:34:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1561995249;
- bh=msfO2MccBF0HKheMEUuSiODBJLMnE6p8KQnOuBOfWsQ=;
+ s=default; t=1561995244;
+ bh=+2AtK+m1zS4U5ujdwP+YvogNtuzOymz2bglsCjDqhkU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=PJ00FLZEv8pmaHuMNATBFy6ZeLVzl3CZ/BLK13I6IatzicpjkZmcDklJ9+LPgy1P1
- HkYjjLIEf77b17t2aAnf2Lsm5DpEsNaVluhM2m3+WSXyBGUeTg1x7xZKxIpIlEqBYf
- MoAJQaTSnPlu1FaNgZXbFcl3uNOquyY2SuOcSfxs=
+ b=2naWryMMeRQ4JmcPCZY4NVUpj4J/w5XmkVuTR2m2s4WydiHeSV6cJe6fKF8+42HZ7
+ kL2TZ8YJ7sDgFR6CeJYkbdABRqdWzOfeNmx13lt1pw7GKvvVtx2dbLnyVili1aJJVA
+ m2cviEWtExgAz3PEXuqBgRB0vhlyhU9EasWEqrgE=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Mon,  1 Jul 2019 08:32:34 -0700
-Message-Id: <20190701153237.1777-15-ebiggers@kernel.org>
+Date: Mon,  1 Jul 2019 08:32:25 -0700
+Message-Id: <20190701153237.1777-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190701153237.1777-1-ebiggers@kernel.org>
 References: <20190701153237.1777-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1hhyJt-000lNo-QP
-Subject: [f2fs-dev] [PATCH v6 14/17] ext4: add basic fs-verity support
+X-Headers-End: 1hhyJt-000lNZ-3F
+Subject: [f2fs-dev] [PATCH v6 05/17] fs-verity: add Kconfig and the helper
+ functions for hashing
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,803 +101,528 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add most of fs-verity support to ext4.  fs-verity is a filesystem
-feature that enables transparent integrity protection and authentication
-of read-only files.  It uses a dm-verity like mechanism at the file
-level: a Merkle tree is used to verify any block in the file in
-log(filesize) time.  It is implemented mainly by helper functions in
-fs/verity/.  See Documentation/filesystems/fsverity.rst for the full
-documentation.
+Add the beginnings of the fs/verity/ support layer, including the
+Kconfig option and various helper functions for hashing.  To start, only
+SHA-256 is supported, but other hash algorithms can easily be added.
 
-This commit adds all of ext4 fs-verity support except for the actual
-data verification, including:
-
-- Adding a filesystem feature flag and an inode flag for fs-verity.
-
-- Implementing the fsverity_operations to support enabling verity on an
-  inode and reading/writing the verity metadata.
-
-- Updating ->write_begin(), ->write_end(), and ->writepages() to support
-  writing verity metadata pages.
-
-- Calling the fs-verity hooks for ->open(), ->setattr(), and ->ioctl().
-
-ext4 stores the verity metadata (Merkle tree and fsverity_descriptor)
-past the end of the file, starting at the first 64K boundary beyond
-i_size.  This approach works because (a) verity files are readonly, and
-(b) pages fully beyond i_size aren't visible to userspace but can be
-read/written internally by ext4 with only some relatively small changes
-to ext4.  This approach avoids having to depend on the EA_INODE feature
-and on rearchitecturing ext4's xattr support to support paging
-multi-gigabyte xattrs into memory, and to support encrypting xattrs.
-Note that the verity metadata *must* be encrypted when the file is,
-since it contains hashes of the plaintext data.
-
-This patch incorporates work by Theodore Ts'o and Chandan Rajendra.
-
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/Makefile |   1 +
- fs/ext4/ext4.h   |  21 ++-
- fs/ext4/file.c   |   4 +
- fs/ext4/inode.c  |  46 ++++--
- fs/ext4/ioctl.c  |  12 ++
- fs/ext4/super.c  |   9 ++
- fs/ext4/sysfs.c  |   6 +
- fs/ext4/verity.c | 364 +++++++++++++++++++++++++++++++++++++++++++++++
- 8 files changed, 448 insertions(+), 15 deletions(-)
- create mode 100644 fs/ext4/verity.c
+ fs/Kconfig                   |   2 +
+ fs/Makefile                  |   1 +
+ fs/verity/Kconfig            |  38 +++++
+ fs/verity/Makefile           |   4 +
+ fs/verity/fsverity_private.h |  88 +++++++++++
+ fs/verity/hash_algs.c        | 274 +++++++++++++++++++++++++++++++++++
+ fs/verity/init.c             |  41 ++++++
+ 7 files changed, 448 insertions(+)
+ create mode 100644 fs/verity/Kconfig
+ create mode 100644 fs/verity/Makefile
+ create mode 100644 fs/verity/fsverity_private.h
+ create mode 100644 fs/verity/hash_algs.c
+ create mode 100644 fs/verity/init.c
 
-diff --git a/fs/ext4/Makefile b/fs/ext4/Makefile
-index 8fdfcd3c3e04..b17ddc229ac5 100644
---- a/fs/ext4/Makefile
-+++ b/fs/ext4/Makefile
-@@ -13,3 +13,4 @@ ext4-y	:= balloc.o bitmap.o block_validity.o dir.o ext4_jbd2.o extents.o \
+diff --git a/fs/Kconfig b/fs/Kconfig
+index f1046cf6ad85..4b66dafbdc7b 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -113,6 +113,8 @@ config MANDATORY_FILE_LOCKING
  
- ext4-$(CONFIG_EXT4_FS_POSIX_ACL)	+= acl.o
- ext4-$(CONFIG_EXT4_FS_SECURITY)		+= xattr_security.o
-+ext4-$(CONFIG_FS_VERITY)		+= verity.o
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 1cb67859e051..5a1deea3fb3e 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -41,6 +41,7 @@
- #endif
+ source "fs/crypto/Kconfig"
  
- #include <linux/fscrypt.h>
-+#include <linux/fsverity.h>
- 
- #include <linux/compiler.h>
- 
-@@ -395,6 +396,7 @@ struct flex_groups {
- #define EXT4_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
- #define EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
- #define EXT4_EXTENTS_FL			0x00080000 /* Inode uses extents */
-+#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
- #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
- #define EXT4_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
- #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
-@@ -402,7 +404,7 @@ struct flex_groups {
- #define EXT4_CASEFOLD_FL		0x40000000 /* Casefolded file */
- #define EXT4_RESERVED_FL		0x80000000 /* reserved for ext4 lib */
- 
--#define EXT4_FL_USER_VISIBLE		0x704BDFFF /* User visible flags */
-+#define EXT4_FL_USER_VISIBLE		0x705BDFFF /* User visible flags */
- #define EXT4_FL_USER_MODIFIABLE		0x604BC0FF /* User modifiable flags */
- 
- /* Flags we can manipulate with through EXT4_IOC_FSSETXATTR */
-@@ -466,6 +468,7 @@ enum {
- 	EXT4_INODE_TOPDIR	= 17,	/* Top of directory hierarchies*/
- 	EXT4_INODE_HUGE_FILE	= 18,	/* Set to each huge file */
- 	EXT4_INODE_EXTENTS	= 19,	/* Inode uses extents */
-+	EXT4_INODE_VERITY	= 20,	/* Verity protected inode */
- 	EXT4_INODE_EA_INODE	= 21,	/* Inode used for large EA */
- 	EXT4_INODE_EOFBLOCKS	= 22,	/* Blocks allocated beyond EOF */
- 	EXT4_INODE_INLINE_DATA	= 28,	/* Data in inode. */
-@@ -511,6 +514,7 @@ static inline void ext4_check_flag_values(void)
- 	CHECK_FLAG_VALUE(TOPDIR);
- 	CHECK_FLAG_VALUE(HUGE_FILE);
- 	CHECK_FLAG_VALUE(EXTENTS);
-+	CHECK_FLAG_VALUE(VERITY);
- 	CHECK_FLAG_VALUE(EA_INODE);
- 	CHECK_FLAG_VALUE(EOFBLOCKS);
- 	CHECK_FLAG_VALUE(INLINE_DATA);
-@@ -1559,6 +1563,7 @@ enum {
- 	EXT4_STATE_MAY_INLINE_DATA,	/* may have in-inode data */
- 	EXT4_STATE_EXT_PRECACHED,	/* extents have been precached */
- 	EXT4_STATE_LUSTRE_EA_INODE,	/* Lustre-style ea_inode */
-+	EXT4_STATE_VERITY_IN_PROGRESS,	/* building fs-verity Merkle tree */
- };
- 
- #define EXT4_INODE_BIT_FNS(name, field, offset)				\
-@@ -1609,6 +1614,12 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
- #define EXT4_SB(sb)	(sb)
- #endif
- 
-+static inline bool ext4_verity_in_progress(struct inode *inode)
-+{
-+	return IS_ENABLED(CONFIG_FS_VERITY) &&
-+	       ext4_test_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
-+}
++source "fs/verity/Kconfig"
 +
- #define NEXT_ORPHAN(inode) EXT4_I(inode)->i_dtime
+ source "fs/notify/Kconfig"
  
- /*
-@@ -1661,6 +1672,7 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
- #define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
- #define EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
- #define EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000
-+#define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
- 
- #define EXT4_FEATURE_INCOMPAT_COMPRESSION	0x0001
- #define EXT4_FEATURE_INCOMPAT_FILETYPE		0x0002
-@@ -1755,6 +1767,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(bigalloc,		BIGALLOC)
- EXT4_FEATURE_RO_COMPAT_FUNCS(metadata_csum,	METADATA_CSUM)
- EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		READONLY)
- EXT4_FEATURE_RO_COMPAT_FUNCS(project,		PROJECT)
-+EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		VERITY)
- 
- EXT4_FEATURE_INCOMPAT_FUNCS(compression,	COMPRESSION)
- EXT4_FEATURE_INCOMPAT_FUNCS(filetype,		FILETYPE)
-@@ -1812,7 +1825,8 @@ EXT4_FEATURE_INCOMPAT_FUNCS(casefold,		CASEFOLD)
- 					 EXT4_FEATURE_RO_COMPAT_BIGALLOC |\
- 					 EXT4_FEATURE_RO_COMPAT_METADATA_CSUM|\
- 					 EXT4_FEATURE_RO_COMPAT_QUOTA |\
--					 EXT4_FEATURE_RO_COMPAT_PROJECT)
-+					 EXT4_FEATURE_RO_COMPAT_PROJECT |\
-+					 EXT4_FEATURE_RO_COMPAT_VERITY)
- 
- #define EXTN_FEATURE_FUNCS(ver) \
- static inline bool ext4_has_unknown_ext##ver##_compat_features(struct super_block *sb) \
-@@ -3250,6 +3264,9 @@ extern int ext4_bio_write_page(struct ext4_io_submit *io,
- /* mmp.c */
- extern int ext4_multi_mount_protect(struct super_block *, ext4_fsblk_t);
- 
-+/* verity.c */
-+extern const struct fsverity_operations ext4_verityops;
-+
- /*
-  * Add new method to test whether block and inode bitmaps are properly
-  * initialized. With uninit_bg reading the block from disk is not enough
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 2c5baa5e8291..ed59fb8f268e 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -451,6 +451,10 @@ static int ext4_file_open(struct inode * inode, struct file * filp)
- 	if (ret)
- 		return ret;
- 
-+	ret = fsverity_file_open(inode, filp);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * Set up the jbd2_inode if we are opening the inode for
- 	 * writing and the journal is present
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index c7f77c643008..514e24f88f90 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1390,6 +1390,7 @@ static int ext4_write_end(struct file *file,
- 	int ret = 0, ret2;
- 	int i_size_changed = 0;
- 	int inline_data = ext4_has_inline_data(inode);
-+	bool verity = ext4_verity_in_progress(inode);
- 
- 	trace_ext4_write_end(inode, pos, len, copied);
- 	if (inline_data) {
-@@ -1407,12 +1408,16 @@ static int ext4_write_end(struct file *file,
- 	/*
- 	 * it's important to update i_size while still holding page lock:
- 	 * page writeout could otherwise come in and zero beyond i_size.
-+	 *
-+	 * If FS_IOC_ENABLE_VERITY is running on this inode, then Merkle tree
-+	 * blocks are being written past EOF, so skip the i_size update.
- 	 */
--	i_size_changed = ext4_update_inode_size(inode, pos + copied);
-+	if (!verity)
-+		i_size_changed = ext4_update_inode_size(inode, pos + copied);
- 	unlock_page(page);
- 	put_page(page);
- 
--	if (old_size < pos)
-+	if (old_size < pos && !verity)
- 		pagecache_isize_extended(inode, old_size, pos);
- 	/*
- 	 * Don't mark the inode dirty under page lock. First, it unnecessarily
-@@ -1423,7 +1428,7 @@ static int ext4_write_end(struct file *file,
- 	if (i_size_changed || inline_data)
- 		ext4_mark_inode_dirty(handle, inode);
- 
--	if (pos + len > inode->i_size && ext4_can_truncate(inode))
-+	if (pos + len > inode->i_size && !verity && ext4_can_truncate(inode))
- 		/* if we have allocated more blocks and copied
- 		 * less. We will have blocks allocated outside
- 		 * inode->i_size. So truncate them
-@@ -1434,7 +1439,7 @@ static int ext4_write_end(struct file *file,
- 	if (!ret)
- 		ret = ret2;
- 
--	if (pos + len > inode->i_size) {
-+	if (pos + len > inode->i_size && !verity) {
- 		ext4_truncate_failed_write(inode);
- 		/*
- 		 * If truncate failed early the inode might still be
-@@ -1495,6 +1500,7 @@ static int ext4_journalled_write_end(struct file *file,
- 	unsigned from, to;
- 	int size_changed = 0;
- 	int inline_data = ext4_has_inline_data(inode);
-+	bool verity = ext4_verity_in_progress(inode);
- 
- 	trace_ext4_journalled_write_end(inode, pos, len, copied);
- 	from = pos & (PAGE_SIZE - 1);
-@@ -1524,13 +1530,14 @@ static int ext4_journalled_write_end(struct file *file,
- 		if (!partial)
- 			SetPageUptodate(page);
- 	}
--	size_changed = ext4_update_inode_size(inode, pos + copied);
-+	if (!verity)
-+		size_changed = ext4_update_inode_size(inode, pos + copied);
- 	ext4_set_inode_state(inode, EXT4_STATE_JDATA);
- 	EXT4_I(inode)->i_datasync_tid = handle->h_transaction->t_tid;
- 	unlock_page(page);
- 	put_page(page);
- 
--	if (old_size < pos)
-+	if (old_size < pos && !verity)
- 		pagecache_isize_extended(inode, old_size, pos);
- 
- 	if (size_changed || inline_data) {
-@@ -1539,7 +1546,7 @@ static int ext4_journalled_write_end(struct file *file,
- 			ret = ret2;
- 	}
- 
--	if (pos + len > inode->i_size && ext4_can_truncate(inode))
-+	if (pos + len > inode->i_size && !verity && ext4_can_truncate(inode))
- 		/* if we have allocated more blocks and copied
- 		 * less. We will have blocks allocated outside
- 		 * inode->i_size. So truncate them
-@@ -1550,7 +1557,7 @@ static int ext4_journalled_write_end(struct file *file,
- 	ret2 = ext4_journal_stop(handle);
- 	if (!ret)
- 		ret = ret2;
--	if (pos + len > inode->i_size) {
-+	if (pos + len > inode->i_size && !verity) {
- 		ext4_truncate_failed_write(inode);
- 		/*
- 		 * If truncate failed early the inode might still be
-@@ -2146,7 +2153,8 @@ static int ext4_writepage(struct page *page,
- 
- 	trace_ext4_writepage(page);
- 	size = i_size_read(inode);
--	if (page->index == size >> PAGE_SHIFT)
-+	if (page->index == size >> PAGE_SHIFT &&
-+	    !ext4_verity_in_progress(inode))
- 		len = size & ~PAGE_MASK;
- 	else
- 		len = PAGE_SIZE;
-@@ -2230,7 +2238,8 @@ static int mpage_submit_page(struct mpage_da_data *mpd, struct page *page)
- 	 * after page tables are updated.
- 	 */
- 	size = i_size_read(mpd->inode);
--	if (page->index == size >> PAGE_SHIFT)
-+	if (page->index == size >> PAGE_SHIFT &&
-+	    !ext4_verity_in_progress(mpd->inode))
- 		len = size & ~PAGE_MASK;
- 	else
- 		len = PAGE_SIZE;
-@@ -2329,6 +2338,9 @@ static int mpage_process_page_bufs(struct mpage_da_data *mpd,
- 	ext4_lblk_t blocks = (i_size_read(inode) + i_blocksize(inode) - 1)
- 							>> inode->i_blkbits;
- 
-+	if (ext4_verity_in_progress(inode))
-+		blocks = EXT_MAX_BLOCKS;
-+
- 	do {
- 		BUG_ON(buffer_locked(bh));
- 
-@@ -3045,8 +3057,8 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
- 
- 	index = pos >> PAGE_SHIFT;
- 
--	if (ext4_nonda_switch(inode->i_sb) ||
--	    S_ISLNK(inode->i_mode)) {
-+	if (ext4_nonda_switch(inode->i_sb) || S_ISLNK(inode->i_mode) ||
-+	    ext4_verity_in_progress(inode)) {
- 		*fsdata = (void *)FALL_BACK_TO_NONDELALLOC;
- 		return ext4_write_begin(file, mapping, pos,
- 					len, flags, pagep, fsdata);
-@@ -4720,6 +4732,8 @@ static bool ext4_should_use_dax(struct inode *inode)
- 		return false;
- 	if (ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT))
- 		return false;
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_VERITY))
-+		return false;
- 	return true;
- }
- 
-@@ -4744,9 +4758,11 @@ void ext4_set_inode_flags(struct inode *inode)
- 		new_fl |= S_ENCRYPTED;
- 	if (flags & EXT4_CASEFOLD_FL)
- 		new_fl |= S_CASEFOLD;
-+	if (flags & EXT4_VERITY_FL)
-+		new_fl |= S_VERITY;
- 	inode_set_flags(inode, new_fl,
- 			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|S_DAX|
--			S_ENCRYPTED|S_CASEFOLD);
-+			S_ENCRYPTED|S_CASEFOLD|S_VERITY);
- }
- 
- static blkcnt_t ext4_inode_blocks(struct ext4_inode *raw_inode,
-@@ -5528,6 +5544,10 @@ int ext4_setattr(struct dentry *dentry, struct iattr *attr)
- 	if (error)
- 		return error;
- 
-+	error = fsverity_prepare_setattr(dentry, attr);
-+	if (error)
-+		return error;
-+
- 	if (is_quota_modification(inode, attr)) {
- 		error = dquot_initialize(inode);
- 		if (error)
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index e486e49b31ed..93b63697f5dc 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -1092,6 +1092,16 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	case EXT4_IOC_GET_ENCRYPTION_POLICY:
- 		return fscrypt_ioctl_get_policy(filp, (void __user *)arg);
- 
-+	case FS_IOC_ENABLE_VERITY:
-+		if (!ext4_has_feature_verity(sb))
-+			return -EOPNOTSUPP;
-+		return fsverity_ioctl_enable(filp, (const void __user *)arg);
-+
-+	case FS_IOC_MEASURE_VERITY:
-+		if (!ext4_has_feature_verity(sb))
-+			return -EOPNOTSUPP;
-+		return fsverity_ioctl_measure(filp, (void __user *)arg);
-+
- 	case EXT4_IOC_FSGETXATTR:
- 	{
- 		struct fsxattr fa;
-@@ -1210,6 +1220,8 @@ long ext4_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case EXT4_IOC_SET_ENCRYPTION_POLICY:
- 	case EXT4_IOC_GET_ENCRYPTION_PWSALT:
- 	case EXT4_IOC_GET_ENCRYPTION_POLICY:
-+	case FS_IOC_ENABLE_VERITY:
-+	case FS_IOC_MEASURE_VERITY:
- 	case EXT4_IOC_SHUTDOWN:
- 	case FS_IOC_GETFSMAP:
- 		break;
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 4079605d437a..05a9874687c3 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1179,6 +1179,7 @@ void ext4_clear_inode(struct inode *inode)
- 		EXT4_I(inode)->jinode = NULL;
- 	}
- 	fscrypt_put_encryption_info(inode);
-+	fsverity_cleanup_inode(inode);
- }
- 
- static struct inode *ext4_nfs_get_inode(struct super_block *sb,
-@@ -4272,6 +4273,9 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- #ifdef CONFIG_FS_ENCRYPTION
- 	sb->s_cop = &ext4_cryptops;
- #endif
-+#ifdef CONFIG_FS_VERITY
-+	sb->s_vop = &ext4_verityops;
-+#endif
- #ifdef CONFIG_QUOTA
- 	sb->dq_op = &ext4_quota_operations;
- 	if (ext4_has_feature_quota(sb))
-@@ -4419,6 +4423,11 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 		goto failed_mount_wq;
- 	}
- 
-+	if (ext4_has_feature_verity(sb) && blocksize != PAGE_SIZE) {
-+		ext4_msg(sb, KERN_ERR, "Unsupported blocksize for fs-verity");
-+		goto failed_mount_wq;
-+	}
-+
- 	if (DUMMY_ENCRYPTION_ENABLED(sbi) && !sb_rdonly(sb) &&
- 	    !ext4_has_feature_encrypt(sb)) {
- 		ext4_set_feature_encrypt(sb);
-diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
-index 04b4f53f0659..534531747bf1 100644
---- a/fs/ext4/sysfs.c
-+++ b/fs/ext4/sysfs.c
-@@ -241,6 +241,9 @@ EXT4_ATTR_FEATURE(encryption);
- #ifdef CONFIG_UNICODE
- EXT4_ATTR_FEATURE(casefold);
- #endif
-+#ifdef CONFIG_FS_VERITY
-+EXT4_ATTR_FEATURE(verity);
-+#endif
- EXT4_ATTR_FEATURE(metadata_csum_seed);
- 
- static struct attribute *ext4_feat_attrs[] = {
-@@ -252,6 +255,9 @@ static struct attribute *ext4_feat_attrs[] = {
- #endif
- #ifdef CONFIG_UNICODE
- 	ATTR_LIST(casefold),
-+#endif
-+#ifdef CONFIG_FS_VERITY
-+	ATTR_LIST(verity),
- #endif
- 	ATTR_LIST(metadata_csum_seed),
- 	NULL,
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+ source "fs/quota/Kconfig"
+diff --git a/fs/Makefile b/fs/Makefile
+index c9aea23aba56..fe7f2c07f482 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -34,6 +34,7 @@ obj-$(CONFIG_AIO)               += aio.o
+ obj-$(CONFIG_IO_URING)		+= io_uring.o
+ obj-$(CONFIG_FS_DAX)		+= dax.o
+ obj-$(CONFIG_FS_ENCRYPTION)	+= crypto/
++obj-$(CONFIG_FS_VERITY)		+= verity/
+ obj-$(CONFIG_FILE_LOCKING)      += locks.o
+ obj-$(CONFIG_COMPAT)		+= compat.o compat_ioctl.o
+ obj-$(CONFIG_BINFMT_AOUT)	+= binfmt_aout.o
+diff --git a/fs/verity/Kconfig b/fs/verity/Kconfig
 new file mode 100644
-index 000000000000..dd0d1093e362
+index 000000000000..c2bca0b01ecf
 --- /dev/null
-+++ b/fs/ext4/verity.c
-@@ -0,0 +1,364 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/fs/verity/Kconfig
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: GPL-2.0
++
++config FS_VERITY
++	bool "FS Verity (read-only file-based authenticity protection)"
++	select CRYPTO
++	# SHA-256 is selected as it's intended to be the default hash algorithm.
++	# To avoid bloat, other wanted algorithms must be selected explicitly.
++	select CRYPTO_SHA256
++	help
++	  This option enables fs-verity.  fs-verity is the dm-verity
++	  mechanism implemented at the file level.  On supported
++	  filesystems (currently EXT4 and F2FS), userspace can use an
++	  ioctl to enable verity for a file, which causes the filesystem
++	  to build a Merkle tree for the file.  The filesystem will then
++	  transparently verify any data read from the file against the
++	  Merkle tree.  The file is also made read-only.
++
++	  This serves as an integrity check, but the availability of the
++	  Merkle tree root hash also allows efficiently supporting
++	  various use cases where normally the whole file would need to
++	  be hashed at once, such as: (a) auditing (logging the file's
++	  hash), or (b) authenticity verification (comparing the hash
++	  against a known good value, e.g. from a digital signature).
++
++	  fs-verity is especially useful on large files where not all
++	  the contents may actually be needed.  Also, fs-verity verifies
++	  data each time it is paged back in, which provides better
++	  protection against malicious disks vs. an ahead-of-time hash.
++
++	  If unsure, say N.
++
++config FS_VERITY_DEBUG
++	bool "FS Verity debugging"
++	depends on FS_VERITY
++	help
++	  Enable debugging messages related to fs-verity by default.
++
++	  Say N unless you are an fs-verity developer.
+diff --git a/fs/verity/Makefile b/fs/verity/Makefile
+new file mode 100644
+index 000000000000..398f3f85fa18
+--- /dev/null
++++ b/fs/verity/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_FS_VERITY) += hash_algs.o \
++			   init.o
+diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+new file mode 100644
+index 000000000000..9697aaebb5dc
+--- /dev/null
++++ b/fs/verity/fsverity_private.h
+@@ -0,0 +1,88 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * fs/ext4/verity.c: fs-verity support for ext4
++ * fs-verity: read-only file-based authenticity protection
 + *
 + * Copyright 2019 Google LLC
 + */
 +
++#ifndef _FSVERITY_PRIVATE_H
++#define _FSVERITY_PRIVATE_H
++
++#ifdef CONFIG_FS_VERITY_DEBUG
++#define DEBUG
++#endif
++
++#define pr_fmt(fmt) "fs-verity: " fmt
++
++#include <crypto/sha.h>
++#include <linux/fs.h>
++#include <uapi/linux/fsverity.h>
++
++struct ahash_request;
++
 +/*
-+ * Implementation of fsverity_operations for ext4.
++ * Implementation limit: maximum depth of the Merkle tree.  For now 8 is plenty;
++ * it's enough for over U64_MAX bytes of data using SHA-256 and 4K blocks.
++ */
++#define FS_VERITY_MAX_LEVELS		8
++
++/*
++ * Largest digest size among all hash algorithms supported by fs-verity.
++ * Currently assumed to be <= size of fsverity_descriptor::root_hash.
++ */
++#define FS_VERITY_MAX_DIGEST_SIZE	SHA256_DIGEST_SIZE
++
++/* A hash algorithm supported by fs-verity */
++struct fsverity_hash_alg {
++	struct crypto_ahash *tfm; /* hash tfm, allocated on demand */
++	const char *name;	  /* crypto API name, e.g. sha256 */
++	unsigned int digest_size; /* digest size in bytes, e.g. 32 for SHA-256 */
++	unsigned int block_size;  /* block size in bytes, e.g. 64 for SHA-256 */
++};
++
++/* Merkle tree parameters: hash algorithm, initial hash state, and topology */
++struct merkle_tree_params {
++	const struct fsverity_hash_alg *hash_alg; /* the hash algorithm */
++	const u8 *hashstate;		/* initial hash state or NULL */
++	unsigned int digest_size;	/* same as hash_alg->digest_size */
++	unsigned int block_size;	/* size of data and tree blocks */
++	unsigned int hashes_per_block;	/* number of hashes per tree block */
++	unsigned int log_blocksize;	/* log2(block_size) */
++	unsigned int log_arity;		/* log2(hashes_per_block) */
++	unsigned int num_levels;	/* number of levels in Merkle tree */
++	u64 tree_size;			/* Merkle tree size in bytes */
++
++	/*
++	 * Starting block index for each tree level, ordered from leaf level (0)
++	 * to root level ('num_levels - 1')
++	 */
++	u64 level_start[FS_VERITY_MAX_LEVELS];
++};
++
++/* hash_algs.c */
++
++extern struct fsverity_hash_alg fsverity_hash_algs[];
++
++const struct fsverity_hash_alg *fsverity_get_hash_alg(const struct inode *inode,
++						      unsigned int num);
++const u8 *fsverity_prepare_hash_state(const struct fsverity_hash_alg *alg,
++				      const u8 *salt, size_t salt_size);
++int fsverity_hash_page(const struct merkle_tree_params *params,
++		       const struct inode *inode,
++		       struct ahash_request *req, struct page *page, u8 *out);
++int fsverity_hash_buffer(const struct fsverity_hash_alg *alg,
++			 const void *data, size_t size, u8 *out);
++void __init fsverity_check_hash_algs(void);
++
++/* init.c */
++
++extern void __printf(3, 4) __cold
++fsverity_msg(const struct inode *inode, const char *level,
++	     const char *fmt, ...);
++
++#define fsverity_warn(inode, fmt, ...)		\
++	fsverity_msg((inode), KERN_WARNING, fmt, ##__VA_ARGS__)
++#define fsverity_err(inode, fmt, ...)		\
++	fsverity_msg((inode), KERN_ERR, fmt, ##__VA_ARGS__)
++
++#endif /* _FSVERITY_PRIVATE_H */
+diff --git a/fs/verity/hash_algs.c b/fs/verity/hash_algs.c
+new file mode 100644
+index 000000000000..c0457915ca10
+--- /dev/null
++++ b/fs/verity/hash_algs.c
+@@ -0,0 +1,274 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * fs/verity/hash_algs.c: fs-verity hash algorithms
 + *
-+ * ext4 stores the verity metadata (Merkle tree and fsverity_descriptor) past
-+ * the end of the file, starting at the first 64K boundary beyond i_size.  This
-+ * approach works because (a) verity files are readonly, and (b) pages fully
-+ * beyond i_size aren't visible to userspace but can be read/written internally
-+ * by ext4 with only some relatively small changes to ext4.  This approach
-+ * avoids having to depend on the EA_INODE feature and on rearchitecturing
-+ * ext4's xattr support to support paging multi-gigabyte xattrs into memory, and
-+ * to support encrypting xattrs.  Note that the verity metadata *must* be
-+ * encrypted when the file is, since it contains hashes of the plaintext data.
++ * Copyright 2019 Google LLC
++ */
++
++#include "fsverity_private.h"
++
++#include <crypto/hash.h>
++#include <linux/scatterlist.h>
++
++/* The hash algorithms supported by fs-verity */
++struct fsverity_hash_alg fsverity_hash_algs[] = {
++	[FS_VERITY_HASH_ALG_SHA256] = {
++		.name = "sha256",
++		.digest_size = SHA256_DIGEST_SIZE,
++		.block_size = SHA256_BLOCK_SIZE,
++	},
++};
++
++/**
++ * fsverity_get_hash_alg() - validate and prepare a hash algorithm
++ * @inode: optional inode for logging purposes
++ * @num: the hash algorithm number
 + *
-+ * Using a 64K boundary rather than a 4K one keeps things ready for
-+ * architectures with 64K pages, and it doesn't necessarily waste space on-disk
-+ * since there can be a hole between i_size and the start of the Merkle tree.
++ * Get the struct fsverity_hash_alg for the given hash algorithm number, and
++ * ensure it has a hash transform ready to go.  The hash transforms are
++ * allocated on-demand so that we don't waste resources unnecessarily, and
++ * because the crypto modules may be initialized later than fs/verity/.
++ *
++ * Return: pointer to the hash alg on success, else an ERR_PTR()
 + */
-+
-+#include <linux/quotaops.h>
-+
-+#include "ext4.h"
-+#include "ext4_extents.h"
-+#include "ext4_jbd2.h"
-+
-+static inline loff_t ext4_verity_metadata_pos(const struct inode *inode)
++const struct fsverity_hash_alg *fsverity_get_hash_alg(const struct inode *inode,
++						      unsigned int num)
 +{
-+	return round_up(inode->i_size, 65536);
-+}
-+
-+/*
-+ * Read some verity metadata from the inode.  __vfs_read() can't be used because
-+ * we need to read beyond i_size.
-+ */
-+static int pagecache_read(struct inode *inode, void *buf, size_t count,
-+			  loff_t pos)
-+{
-+	while (count) {
-+		size_t n = min_t(size_t, count,
-+				 PAGE_SIZE - offset_in_page(pos));
-+		struct page *page;
-+		void *addr;
-+
-+		page = read_mapping_page(inode->i_mapping, pos >> PAGE_SHIFT,
-+					 NULL);
-+		if (IS_ERR(page))
-+			return PTR_ERR(page);
-+
-+		addr = kmap_atomic(page);
-+		memcpy(buf, addr + offset_in_page(pos), n);
-+		kunmap_atomic(addr);
-+
-+		put_page(page);
-+
-+		buf += n;
-+		pos += n;
-+		count -= n;
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * Write some verity metadata to the inode for FS_IOC_ENABLE_VERITY.
-+ * kernel_write() can't be used because the file descriptor is readonly.
-+ */
-+static int pagecache_write(struct inode *inode, const void *buf, size_t count,
-+			   loff_t pos)
-+{
-+	if (pos + count > inode->i_sb->s_maxbytes)
-+		return -EFBIG;
-+
-+	while (count) {
-+		size_t n = min_t(size_t, count,
-+				 PAGE_SIZE - offset_in_page(pos));
-+		struct page *page;
-+		void *fsdata;
-+		void *addr;
-+		int res;
-+
-+		res = pagecache_write_begin(NULL, inode->i_mapping, pos, n, 0,
-+					    &page, &fsdata);
-+		if (res)
-+			return res;
-+
-+		addr = kmap_atomic(page);
-+		memcpy(addr + offset_in_page(pos), buf, n);
-+		kunmap_atomic(addr);
-+
-+		res = pagecache_write_end(NULL, inode->i_mapping, pos, n, n,
-+					  page, fsdata);
-+		if (res < 0)
-+			return res;
-+		if (res != n)
-+			return -EIO;
-+
-+		buf += n;
-+		pos += n;
-+		count -= n;
-+	}
-+	return 0;
-+}
-+
-+static int ext4_begin_enable_verity(struct file *filp)
-+{
-+	struct inode *inode = file_inode(filp);
-+	const int credits = 2; /* superblock and inode for ext4_orphan_add() */
-+	handle_t *handle;
++	struct fsverity_hash_alg *alg;
++	struct crypto_ahash *tfm;
 +	int err;
 +
++	if (num >= ARRAY_SIZE(fsverity_hash_algs) ||
++	    !fsverity_hash_algs[num].name) {
++		fsverity_warn(inode, "Unknown hash algorithm number: %u", num);
++		return ERR_PTR(-EINVAL);
++	}
++	alg = &fsverity_hash_algs[num];
++
++	/* pairs with cmpxchg() below */
++	tfm = READ_ONCE(alg->tfm);
++	if (likely(tfm != NULL))
++		return alg;
 +	/*
-+	 * Since the file was opened readonly, we have to initialize the jbd
-+	 * inode and quotas here and not rely on ->open() doing it.  This must
-+	 * be done before evicting the inline data.
++	 * Using the shash API would make things a bit simpler, but the ahash
++	 * API is preferable as it allows the use of crypto accelerators.
 +	 */
++	tfm = crypto_alloc_ahash(alg->name, 0, 0);
++	if (IS_ERR(tfm)) {
++		if (PTR_ERR(tfm) == -ENOENT)
++			fsverity_warn(inode,
++				      "Missing crypto API support for hash algorithm \"%s\"",
++				      alg->name);
++		else
++			fsverity_err(inode,
++				     "Error allocating hash algorithm \"%s\": %ld",
++				     alg->name, PTR_ERR(tfm));
++		return ERR_CAST(tfm);
++	}
 +
-+	err = ext4_inode_attach_jinode(inode);
-+	if (err)
-+		return err;
++	err = -EINVAL;
++	if (WARN_ON(alg->digest_size != crypto_ahash_digestsize(tfm)))
++		goto err_free_tfm;
++	if (WARN_ON(alg->block_size != crypto_ahash_blocksize(tfm)))
++		goto err_free_tfm;
 +
-+	err = dquot_initialize(inode);
-+	if (err)
-+		return err;
++	pr_info("%s using implementation \"%s\"\n",
++		alg->name, crypto_ahash_driver_name(tfm));
 +
-+	err = ext4_convert_inline_data(inode);
-+	if (err)
-+		return err;
++	/* pairs with READ_ONCE() above */
++	if (cmpxchg(&alg->tfm, NULL, tfm) != NULL)
++		crypto_free_ahash(tfm);
 +
-+	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-+		ext4_warning_inode(inode,
-+				   "verity is only allowed on extent-based files");
-+		return -EOPNOTSUPP;
++	return alg;
++
++err_free_tfm:
++	crypto_free_ahash(tfm);
++	return ERR_PTR(err);
++}
++
++/**
++ * fsverity_prepare_hash_state() - precompute the initial hash state
++ * @alg: hash algorithm
++ * @salt: a salt which is to be prepended to all data to be hashed
++ * @salt_size: salt size in bytes, possibly 0
++ *
++ * Return: NULL if the salt is empty, otherwise the kmalloc()'ed precomputed
++ *	   initial hash state on success or an ERR_PTR() on failure.
++ */
++const u8 *fsverity_prepare_hash_state(const struct fsverity_hash_alg *alg,
++				      const u8 *salt, size_t salt_size)
++{
++	u8 *hashstate = NULL;
++	struct ahash_request *req = NULL;
++	u8 *padded_salt = NULL;
++	size_t padded_salt_size;
++	struct scatterlist sg;
++	DECLARE_CRYPTO_WAIT(wait);
++	int err;
++
++	if (salt_size == 0)
++		return NULL;
++
++	hashstate = kmalloc(crypto_ahash_statesize(alg->tfm), GFP_KERNEL);
++	if (!hashstate)
++		return ERR_PTR(-ENOMEM);
++
++	req = ahash_request_alloc(alg->tfm, GFP_KERNEL);
++	if (!req) {
++		err = -ENOMEM;
++		goto err_free;
 +	}
 +
 +	/*
-+	 * ext4 uses the last allocated block to find the verity descriptor, so
-+	 * we must remove any other blocks past EOF which might confuse things.
++	 * Zero-pad the salt to the next multiple of the input size of the hash
++	 * algorithm's compression function, e.g. 64 bytes for SHA-256 or 128
++	 * bytes for SHA-512.  This ensures that the hash algorithm won't have
++	 * any bytes buffered internally after processing the salt, thus making
++	 * salted hashing just as fast as unsalted hashing.
 +	 */
-+	err = ext4_truncate(inode);
++	padded_salt_size = round_up(salt_size, alg->block_size);
++	padded_salt = kzalloc(padded_salt_size, GFP_KERNEL);
++	if (!padded_salt) {
++		err = -ENOMEM;
++		goto err_free;
++	}
++	memcpy(padded_salt, salt, salt_size);
++
++	sg_init_one(&sg, padded_salt, padded_salt_size);
++	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
++					CRYPTO_TFM_REQ_MAY_BACKLOG,
++				   crypto_req_done, &wait);
++	ahash_request_set_crypt(req, &sg, NULL, padded_salt_size);
++
++	err = crypto_wait_req(crypto_ahash_init(req), &wait);
 +	if (err)
-+		return err;
++		goto err_free;
 +
-+	handle = ext4_journal_start(inode, EXT4_HT_INODE, credits);
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
++	err = crypto_wait_req(crypto_ahash_update(req), &wait);
++	if (err)
++		goto err_free;
 +
-+	err = ext4_orphan_add(handle, inode);
-+	if (err == 0)
-+		ext4_set_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
++	err = crypto_ahash_export(req, hashstate);
++	if (err)
++		goto err_free;
++out:
++	ahash_request_free(req);
++	kfree(padded_salt);
++	return hashstate;
 +
-+	ext4_journal_stop(handle);
++err_free:
++	kfree(hashstate);
++	hashstate = ERR_PTR(err);
++	goto out;
++}
++
++/**
++ * fsverity_hash_page() - hash a single data or hash page
++ * @params: the Merkle tree's parameters
++ * @inode: inode for which the hashing is being done
++ * @req: preallocated hash request
++ * @page: the page to hash
++ * @out: output digest, size 'params->digest_size' bytes
++ *
++ * Hash a single data or hash block, assuming block_size == PAGE_SIZE.
++ * The hash is salted if a salt is specified in the Merkle tree parameters.
++ *
++ * Return: 0 on success, -errno on failure
++ */
++int fsverity_hash_page(const struct merkle_tree_params *params,
++		       const struct inode *inode,
++		       struct ahash_request *req, struct page *page, u8 *out)
++{
++	struct scatterlist sg;
++	DECLARE_CRYPTO_WAIT(wait);
++	int err;
++
++	if (WARN_ON(params->block_size != PAGE_SIZE))
++		return -EINVAL;
++
++	sg_init_table(&sg, 1);
++	sg_set_page(&sg, page, PAGE_SIZE, 0);
++	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
++					CRYPTO_TFM_REQ_MAY_BACKLOG,
++				   crypto_req_done, &wait);
++	ahash_request_set_crypt(req, &sg, out, PAGE_SIZE);
++
++	if (params->hashstate) {
++		err = crypto_ahash_import(req, params->hashstate);
++		if (err) {
++			fsverity_err(inode,
++				     "Error %d importing hash state", err);
++			return err;
++		}
++		err = crypto_ahash_finup(req);
++	} else {
++		err = crypto_ahash_digest(req);
++	}
++
++	err = crypto_wait_req(err, &wait);
++	if (err)
++		fsverity_err(inode, "Error %d computing page hash", err);
 +	return err;
 +}
 +
-+/*
-+ * ext4 stores the verity descriptor beginning on the next filesystem block
-+ * boundary after the Merkle tree.  Then, the descriptor size is stored in the
-+ * last 4 bytes of the last allocated filesystem block --- which is either the
-+ * block in which the descriptor ends, or the next block after that if there
-+ * weren't at least 4 bytes remaining.
++/**
++ * fsverity_hash_buffer() - hash some data
++ * @alg: the hash algorithm to use
++ * @data: the data to hash
++ * @size: size of data to hash, in bytes
++ * @out: output digest, size 'alg->digest_size' bytes
 + *
-+ * We can't simply store the descriptor in an xattr because it *must* be
-+ * encrypted when ext4 encryption is used, but ext4 encryption doesn't encrypt
-+ * xattrs.  Also, if the descriptor includes a large signature blob it may be
-+ * too large to store in an xattr without the EA_INODE feature.
++ * Hash some data which is located in physically contiguous memory (i.e. memory
++ * allocated by kmalloc(), not by vmalloc()).  No salt is used.
++ *
++ * Return: 0 on success, -errno on failure
 + */
-+static int ext4_write_verity_descriptor(struct inode *inode, const void *desc,
-+					size_t desc_size, u64 merkle_tree_size)
++int fsverity_hash_buffer(const struct fsverity_hash_alg *alg,
++			 const void *data, size_t size, u8 *out)
 +{
-+	const u64 desc_pos = round_up(ext4_verity_metadata_pos(inode) +
-+				      merkle_tree_size, i_blocksize(inode));
-+	const u64 desc_end = desc_pos + desc_size;
-+	const __le32 desc_size_disk = cpu_to_le32(desc_size);
-+	const u64 desc_size_pos = round_up(desc_end + sizeof(desc_size_disk),
-+					   i_blocksize(inode)) -
-+				  sizeof(desc_size_disk);
++	struct ahash_request *req;
++	struct scatterlist sg;
++	DECLARE_CRYPTO_WAIT(wait);
 +	int err;
 +
-+	err = pagecache_write(inode, desc, desc_size, desc_pos);
-+	if (err)
-+		return err;
++	req = ahash_request_alloc(alg->tfm, GFP_KERNEL);
++	if (!req)
++		return -ENOMEM;
 +
-+	return pagecache_write(inode, &desc_size_disk, sizeof(desc_size_disk),
-+			       desc_size_pos);
++	sg_init_one(&sg, data, size);
++	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
++					CRYPTO_TFM_REQ_MAY_BACKLOG,
++				   crypto_req_done, &wait);
++	ahash_request_set_crypt(req, &sg, out, size);
++
++	err = crypto_wait_req(crypto_ahash_digest(req), &wait);
++
++	ahash_request_free(req);
++	return err;
 +}
 +
-+static int ext4_end_enable_verity(struct file *filp, const void *desc,
-+				  size_t desc_size, u64 merkle_tree_size)
++void __init fsverity_check_hash_algs(void)
 +{
-+	struct inode *inode = file_inode(filp);
-+	const int credits = 2; /* superblock and inode for ext4_orphan_add() */
-+	handle_t *handle;
-+	int err = 0;
-+	int err2;
-+
-+	if (desc != NULL) {
-+		/* Succeeded; write the verity descriptor. */
-+		err = ext4_write_verity_descriptor(inode, desc, desc_size,
-+						   merkle_tree_size);
-+
-+		/* Write all pages before clearing VERITY_IN_PROGRESS. */
-+		if (!err)
-+			err = filemap_write_and_wait(inode->i_mapping);
-+	}
-+
-+	/* If we failed, truncate anything we wrote past i_size. */
-+	if (desc == NULL || err)
-+		ext4_truncate(inode);
++	size_t i;
 +
 +	/*
-+	 * We must always clean up by clearing EXT4_STATE_VERITY_IN_PROGRESS and
-+	 * deleting the inode from the orphan list, even if something failed.
-+	 * If everything succeeded, we'll also set the verity bit in the same
-+	 * transaction.
++	 * Sanity check the hash algorithms (could be a build-time check, but
++	 * they're in an array)
 +	 */
++	for (i = 0; i < ARRAY_SIZE(fsverity_hash_algs); i++) {
++		const struct fsverity_hash_alg *alg = &fsverity_hash_algs[i];
 +
-+	ext4_clear_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
++		if (!alg->name)
++			continue;
 +
-+	handle = ext4_journal_start(inode, EXT4_HT_INODE, credits);
-+	if (IS_ERR(handle)) {
-+		ext4_orphan_del(NULL, inode);
-+		return PTR_ERR(handle);
++		BUG_ON(alg->digest_size > FS_VERITY_MAX_DIGEST_SIZE);
++
++		/*
++		 * For efficiency, the implementation currently assumes the
++		 * digest and block sizes are powers of 2.  This limitation can
++		 * be lifted if the code is updated to handle other values.
++		 */
++		BUG_ON(!is_power_of_2(alg->digest_size));
++		BUG_ON(!is_power_of_2(alg->block_size));
 +	}
++}
+diff --git a/fs/verity/init.c b/fs/verity/init.c
+new file mode 100644
+index 000000000000..40076bbe452a
+--- /dev/null
++++ b/fs/verity/init.c
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * fs/verity/init.c: fs-verity module initialization and logging
++ *
++ * Copyright 2019 Google LLC
++ */
 +
-+	err2 = ext4_orphan_del(handle, inode);
-+	if (err2)
-+		goto out_stop;
++#include "fsverity_private.h"
 +
-+	if (desc != NULL && !err) {
-+		struct ext4_iloc iloc;
++#include <linux/ratelimit.h>
 +
-+		err = ext4_reserve_inode_write(handle, inode, &iloc);
-+		if (err)
-+			goto out_stop;
-+		ext4_set_inode_flag(inode, EXT4_INODE_VERITY);
-+		ext4_set_inode_flags(inode);
-+		err = ext4_mark_iloc_dirty(handle, inode, &iloc);
-+	}
-+out_stop:
-+	ext4_journal_stop(handle);
-+	return err ?: err2;
++void fsverity_msg(const struct inode *inode, const char *level,
++		  const char *fmt, ...)
++{
++	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
++				      DEFAULT_RATELIMIT_BURST);
++	struct va_format vaf;
++	va_list args;
++
++	if (!__ratelimit(&rs))
++		return;
++
++	va_start(args, fmt);
++	vaf.fmt = fmt;
++	vaf.va = &args;
++	if (inode)
++		printk("%sfs-verity (%s, inode %lu): %pV\n",
++		       level, inode->i_sb->s_id, inode->i_ino, &vaf);
++	else
++		printk("%sfs-verity: %pV\n", level, &vaf);
++	va_end(args);
 +}
 +
-+static int ext4_get_verity_descriptor_location(struct inode *inode,
-+					       size_t *desc_size_ret,
-+					       u64 *desc_pos_ret)
++static int __init fsverity_init(void)
 +{
-+	struct ext4_ext_path *path;
-+	struct ext4_extent *last_extent;
-+	u32 end_lblk;
-+	u64 desc_size_pos;
-+	__le32 desc_size_disk;
-+	u32 desc_size;
-+	u64 desc_pos;
-+	int err;
++	fsverity_check_hash_algs();
 +
-+	/*
-+	 * Descriptor size is in last 4 bytes of last allocated block.
-+	 * See ext4_write_verity_descriptor().
-+	 */
-+
-+	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-+		EXT4_ERROR_INODE(inode, "verity file doesn't use extents");
-+		return -EFSCORRUPTED;
-+	}
-+
-+	path = ext4_find_extent(inode, EXT_MAX_BLOCKS - 1, NULL, 0);
-+	if (IS_ERR(path))
-+		return PTR_ERR(path);
-+
-+	last_extent = path[path->p_depth].p_ext;
-+	if (!last_extent) {
-+		EXT4_ERROR_INODE(inode, "verity file has no extents");
-+		ext4_ext_drop_refs(path);
-+		kfree(path);
-+		return -EFSCORRUPTED;
-+	}
-+
-+	end_lblk = le32_to_cpu(last_extent->ee_block) +
-+		   ext4_ext_get_actual_len(last_extent);
-+	desc_size_pos = (u64)end_lblk << inode->i_blkbits;
-+	ext4_ext_drop_refs(path);
-+	kfree(path);
-+
-+	if (desc_size_pos < sizeof(desc_size_disk))
-+		goto bad;
-+	desc_size_pos -= sizeof(desc_size_disk);
-+
-+	err = pagecache_read(inode, &desc_size_disk, sizeof(desc_size_disk),
-+			     desc_size_pos);
-+	if (err)
-+		return err;
-+	desc_size = le32_to_cpu(desc_size_disk);
-+
-+	/*
-+	 * The descriptor is stored just before the desc_size_disk, but starting
-+	 * on a filesystem block boundary.
-+	 */
-+
-+	if (desc_size > INT_MAX || desc_size > desc_size_pos)
-+		goto bad;
-+
-+	desc_pos = round_down(desc_size_pos - desc_size, i_blocksize(inode));
-+	if (desc_pos < ext4_verity_metadata_pos(inode))
-+		goto bad;
-+
-+	*desc_size_ret = desc_size;
-+	*desc_pos_ret = desc_pos;
++	pr_debug("Initialized fs-verity\n");
 +	return 0;
-+
-+bad:
-+	EXT4_ERROR_INODE(inode, "verity file corrupted; can't find descriptor");
-+	return -EFSCORRUPTED;
 +}
-+
-+static int ext4_get_verity_descriptor(struct inode *inode, void *buf,
-+				      size_t buf_size)
-+{
-+	size_t desc_size = 0;
-+	u64 desc_pos = 0;
-+	int err;
-+
-+	err = ext4_get_verity_descriptor_location(inode, &desc_size, &desc_pos);
-+	if (err)
-+		return err;
-+
-+	if (buf_size) {
-+		if (desc_size > buf_size)
-+			return -ERANGE;
-+		err = pagecache_read(inode, buf, desc_size, desc_pos);
-+		if (err)
-+			return err;
-+	}
-+	return desc_size;
-+}
-+
-+static struct page *ext4_read_merkle_tree_page(struct inode *inode,
-+					       pgoff_t index)
-+{
-+	index += ext4_verity_metadata_pos(inode) >> PAGE_SHIFT;
-+
-+	return read_mapping_page(inode->i_mapping, index, NULL);
-+}
-+
-+static int ext4_write_merkle_tree_block(struct inode *inode, const void *buf,
-+					u64 index, int log_blocksize)
-+{
-+	loff_t pos = ext4_verity_metadata_pos(inode) + (index << log_blocksize);
-+
-+	return pagecache_write(inode, buf, 1 << log_blocksize, pos);
-+}
-+
-+const struct fsverity_operations ext4_verityops = {
-+	.begin_enable_verity	= ext4_begin_enable_verity,
-+	.end_enable_verity	= ext4_end_enable_verity,
-+	.get_verity_descriptor	= ext4_get_verity_descriptor,
-+	.read_merkle_tree_page	= ext4_read_merkle_tree_page,
-+	.write_merkle_tree_block = ext4_write_merkle_tree_block,
-+};
++late_initcall(fsverity_init)
 -- 
 2.22.0
 
