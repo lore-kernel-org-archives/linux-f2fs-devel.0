@@ -2,103 +2,109 @@ Return-Path: <SRS0=+7CQ=U6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD24C0650E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 05:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F371C5B578
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 06:24:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B103C208C4;
-	Mon,  1 Jul 2019 05:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1C52A208E4;
+	Mon,  1 Jul 2019 06:24:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="LtZTBKFg";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Vczm3Y/N";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Z+JBArhn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B103C208C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lz39kSH3";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="akIkMnNt";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoyjPOQi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C52A208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hhooA-0006hO-UU; Mon, 01 Jul 2019 05:24:54 +0000
+	id 1hhpjc-0003s1-7o; Mon, 01 Jul 2019 06:24:16 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <prvs=078492c59=damien.lemoal@wdc.com>)
- id 1hhooA-0006hB-Jb
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 05:24:54 +0000
+ (envelope-from <qkrwngud825@gmail.com>) id 1hhpjb-0003rf-3G
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 06:24:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RYx4d5QhMaI4olPaxF+tbeMqZ8vcu19IfOWyrDQWNHg=; b=LtZTBKFgyXpOK/0TP98CHiNTX3
- TJVK4cUxqMKlR22hc4mghlo5Z2qWLjO52U8WFhw0GpURjC+Zl0lribHErKC+ZSL2vEJDgLV4ShSgA
- MYtIRmvR7jSTCxpPxi9APresCST3JH8+qS/4nbLflVxMUs4ZRrzzWfy3c3qP9CgKloPk=;
+ bh=MvTw3mN2DWRcY1t/B2mIOScNso0p3r34rhUisOGDeUU=; b=lz39kSH39aIoKG+CjKLzJzEAce
+ EnohOMNbshwNRFqXZyMv+IGscFaFtV0Md4mz6BZMHnx7uTfetdn3aoOuU4wr4r4jf0SbNl3WSS9pc
+ tPrcxio0EmH3Zh+iHIeLqKTMB+267i2hp680qFj8q9lI/Bma7s+TnOwPrfB/wmAASqnM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RYx4d5QhMaI4olPaxF+tbeMqZ8vcu19IfOWyrDQWNHg=; b=Vczm3Y/NWbgSsGa9Saah4e5Hze
- IUSXt//jguXmRl07GTk3WYH2i4uGYrwNkNRPOUNDFd6DxmCU10JNZ5T3FE5lPlbnmyMlpEOHj1T+O
- BuuBNtZa6VQxaZwICBv54i6++Hy4IrUxyITRGPQo6SPwNkntZAvxRmXVpKgasUQ8cTqM=;
-Received: from esa4.hgst.iphmx.com ([216.71.154.42])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hhooG-0037dv-UL
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 05:25:02 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
- d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1561958701; x=1593494701;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=fiT0Q2RZAIaTc+o8PPq09fvwdcfYZE72CFvMQOosU9c=;
- b=Z+JBArhnZzXV7x8me4Se/0PkrdezRgNZrboXASUdLfUSI6VCjXYS7LxB
- 91rArekV93CJcSL82ogjHJPdNIipE8QXjE0jIfqHSf1SIBCofcm6tvQ6y
- Gw+dti5SlsERlo24DK2aZzwiKEcJ1YoJk0ENNtg536jtFb+bR6YOQ1PZL
- 9H9S32Ehd1yOvGvOGr9sU+TQdrpVttoBexrr9VfWvenHgzbFrYD4nFAMN
- s+TSJ7nq2RIdnbXbIFVi2185Kr2XNSSIee28tQR0KLWnVeTsDJYZhaDPf
- QlHBPmRCvF+pDqvrPzrl5IVZF5N+bJ6A2Wch3dWCHJPS7jVuyT8xvKcut A==;
-X-IronPort-AV: E=Sophos;i="5.63,437,1557158400"; d="scan'208";a="111921731"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com)
- ([199.255.45.14])
- by ob1.hgst.iphmx.com with ESMTP; 01 Jul 2019 13:09:28 +0800
-IronPort-SDR: L266yQ/tnlGaVN4ZP58dyr5P2RULAXmGGJPHFQrreJ2OibpcP/6T/6LhLIGGUO6FbO8igFYkCA
- H2FcG90ma4IfJgNfYqHFiXHqBOfMlpy0v0IBj3S2X0gArWXW7ToNOtLE6/SAQmN+mmkxEYy+6K
- ERp+rvjboPTHpEpI8vcehvIsVtSxD3sSuHPkAFKKJ/wPl8o2jK5XbeTefCjhqrg5yYdBDyYuL7
- ODzbBT1jlzfJ59uekE2GKxQdvRVf4Mjvd2anR+irKk8hYe8rPCYd2rO1c/v1wEOjHQ72wUhsLi
- F/pNuNFVU/lF4RN7+r3xgdAZ
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
- by uls-op-cesaep01.wdc.com with ESMTP; 30 Jun 2019 22:08:28 -0700
-IronPort-SDR: nW2I57e363zZy8ypwNj+v+eT0Z8Wy9I3uEUEDqVyL2t8v0jXQ7XAx1XyWcfk1eFd9+9RFQB592
- QiA4zT7SbZeEzOcFj0coze4NDQZYsLK8U0dcJw/arh2P8QvIV05+/CsXSgN5psbs8ptf6Hom4w
- gHpgdM3tby0LsTxJqHtCvVG29jknMcWCH2j6Li8+n7TlrHApYGDYrbSG9WzBR4OqWV3AQRHUYq
- LoKfVoevMDObQmmSzKKWOeAgSb/r69E0xBFJjQdSIWlshpY0ySpNrz7BT7Vr35a4TskJUcsc0Z
- 1Ww=
-Received: from washi.fujisawa.hgst.com ([10.149.53.254])
- by uls-op-cesaip02.wdc.com with ESMTP; 30 Jun 2019 22:09:26 -0700
-From: Damien Le Moal <damien.lemoal@wdc.com>
-To: linux-scsi@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- dm-devel@redhat.com, Mike Snitzer <snitzer@redhat.com>,
- linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Mon,  1 Jul 2019 14:09:18 +0900
-Message-Id: <20190701050918.27511-5-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190701050918.27511-1-damien.lemoal@wdc.com>
-References: <20190701050918.27511-1-damien.lemoal@wdc.com>
+ bh=MvTw3mN2DWRcY1t/B2mIOScNso0p3r34rhUisOGDeUU=; b=akIkMnNtWS0Yr3AvGzH9FnUYJw
+ 9DFC9WAv++G+/VXVAKStNSeJPJKmmY4VfBFI0FnZH6kW04us600MKNWNi0iuu+LLnhxxw1EFUqZzV
+ wi+P1pkKwTkd1/4r3UkJTPIut3qBXagt599jEX81+qhLP8IrD0nQi5o+Ys8bS/nYy/g0=;
+Received: from mail-ua1-f67.google.com ([209.85.222.67])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1hhpjd-000HUo-AH
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 06:24:19 +0000
+Received: by mail-ua1-f67.google.com with SMTP id f20so4611702ual.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 30 Jun 2019 23:24:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :cc; bh=MvTw3mN2DWRcY1t/B2mIOScNso0p3r34rhUisOGDeUU=;
+ b=WoyjPOQiMZ8AspkVPwKTW0LKxBdluHaHoZhSns/9K0TH4URQ2gg8SfHWfSUhpk+z+H
+ ZkR7zXJgVlM5LsCqfTdvnIhdhKwZ+qNjF36t4Qgzgpp9Uy0sKMJucUiRpHe9hYcyRx68
+ WK4kP6VvYGj9BRVKPB5LhllMWUHIe213aU6+8f767RPF6mSSPh406hiJH4OY/tj7xlZB
+ mMQoWAw1Y1+Heo1OJpSHr3DkiuZ6f1whzd/Vmt8kO9IV9ghfan1GyPyLFkIFnMuE709Q
+ x/72PtzNJ/pWjFRkaElOTQaxyAdn3XEKEA2NJnvDeRetI96e6v3IHLl9ONioQIAa/uf/
+ BRvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc;
+ bh=MvTw3mN2DWRcY1t/B2mIOScNso0p3r34rhUisOGDeUU=;
+ b=qD8TSZoG+FH4GG0lmREtEbHcu+bdGEpcuiRp2f437RNEXy/1dyp2MMjUTchM4//IPq
+ KlavfnEYRviqgdUq2gDPIc9W974vjSPH5WxBss8vWqxnId87J27GohZHFnQ/mtmH3240
+ PGh/yaUTjV+eyba6ko2awVJMNZ5uZDGfJOa106VZm6OQqkhGafxp9UC23B+iEcInImEf
+ 6GMTI+jg8Ob4uNRR1SeZ1+KpsEvY8pLHNJcGRVLM3JCeMwaPT/+NRDssx2LwuPZLnhfp
+ fTM6Zf7GkuuiwGpNOluCLUbpdYA22vBtbEUyPf2xaqvnuCWO1dx5u+tyMIhOigQNLhMq
+ HRDA==
+X-Gm-Message-State: APjAAAUzuFdF4bvFDAs7dmMWIRTcRynjx+u0Z5Etv9FARppTdvGYA2SK
+ KqcH+F2EqoD2g/0U3NdU7ccCr3ZiX9jyfRMo1pk=
+X-Google-Smtp-Source: APXvYqy+/AlLcZAySMipEKYiQT1kMkJhxqkNKDpTd8l2p1Pc1G5sogoYkSxo2Qv1aq7LuF4beR8KQOTvuZE8GrPjzWU=
+X-Received: by 2002:ab0:64c4:: with SMTP id j4mr12848861uaq.97.1561962251030; 
+ Sun, 30 Jun 2019 23:24:11 -0700 (PDT)
 MIME-Version: 1.0
-X-Headers-End: 1hhooG-0037dv-UL
-Subject: [f2fs-dev] [PATCH V6 4/4] block: Limit zone array allocation size
+References: <CAD14+f2ckNUv9n-Zb9UL_ojX8=24tYBhT-SsrcpVNogqee2tkA@mail.gmail.com>
+ <6bcbb5e8-55ad-49c1-bb77-f7f677ceb526@huawei.com>
+ <CAD14+f3NHosrL=5UOBSMbFxQ91x-AuWOj_w=JYkJSnmfDgTkvA@mail.gmail.com>
+ <CAD14+f0ZTmmLBXtmHF_Kz23JLSJy+UzpNxwSMV4rvSCse3y7EA@mail.gmail.com>
+ <7e1bfa07-5ee8-a276-fe6a-6d79bd9270c3@huawei.com>
+ <CAD14+f1+puy4M6rL_SbGt9vej=7LgK+qEjq71_878=oqSvjJ2Q@mail.gmail.com>
+ <0f89b0b6-5cc5-6618-72e5-8a2f81947161@kernel.org>
+ <CAD14+f1xgYKAnzqLb-ZpzbeskZegGHXbrJ+vEHZe19_Jp3pBTQ@mail.gmail.com>
+ <e3303318-758e-b263-f6ed-d55e98bdea78@kernel.org>
+ <CAD14+f2XWeWvYXTjKbReJa7uZROvnp_-V419sBkpmWFp5L5BtA@mail.gmail.com>
+ <20190603202719.GC34729@jaegeuk-macbookpro.roam.corp.google.com>
+ <249aff47-cb24-291b-37f7-6ed2d854a207@huawei.com>
+ <CAD14+f13+fKvo+-vOwu79O-mSwKS7r0g=gbVL65qv+MXPc+gZg@mail.gmail.com>
+ <5c36de6c-fe75-e131-9f18-03e83fb5f439@huawei.com>
+In-Reply-To: <5c36de6c-fe75-e131-9f18-03e83fb5f439@huawei.com>
+From: Ju Hyung Park <qkrwngud825@gmail.com>
+Date: Mon, 1 Jul 2019 15:23:58 +0900
+Message-ID: <CAD14+f3Qen80fQJp2fbQW6eG7sEkBeUChYqFQmZ0gGguKW8E2w@mail.gmail.com>
+To: Chao Yu <yuchao0@huawei.com>
+X-Headers-End: 1hhpjd-000HUo-AH
+Subject: Re: [f2fs-dev] [PATCH v3 2/2] f2fs-tools: relocate chksum_offset
+ for large_nat_bitmap feature
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,116 +116,75 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Christoph Hellwig <hch@lst.de>, Bart Van Assche <bvanassche@acm.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Limit the size of the struct blk_zone array used in
-blk_revalidate_disk_zones() to avoid memory allocation failures leading
-to disk revalidation failure. Also further reduce the likelyhood of
-such failures by using kvcalloc() (that is vmalloc()) instead of
-allocating contiguous pages with alloc_pages().
+One more bump.
 
-Fixes: 515ce6061312 ("scsi: sd_zbc: Fix sd_zbc_report_zones() buffer allocation")
-Fixes: e76239a3748c ("block: add a report_zones method")
-Cc: stable@vger.kernel.org
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- block/blk-zoned.c      | 36 ++++++++++++++++++++----------------
- include/linux/blkdev.h |  5 +++++
- 2 files changed, 25 insertions(+), 16 deletions(-)
+afaik, there's only about a week left.
 
-diff --git a/block/blk-zoned.c b/block/blk-zoned.c
-index 60dfc3f22350..79ad269b545d 100644
---- a/block/blk-zoned.c
-+++ b/block/blk-zoned.c
-@@ -14,6 +14,8 @@
- #include <linux/rbtree.h>
- #include <linux/blkdev.h>
- #include <linux/blk-mq.h>
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
- #include <linux/sched/mm.h>
- 
- #include "blk.h"
-@@ -371,22 +373,25 @@ static inline unsigned long *blk_alloc_zone_bitmap(int node,
-  * Allocate an array of struct blk_zone to get nr_zones zone information.
-  * The allocated array may be smaller than nr_zones.
-  */
--static struct blk_zone *blk_alloc_zones(int node, unsigned int *nr_zones)
-+static struct blk_zone *blk_alloc_zones(unsigned int *nr_zones)
- {
--	size_t size = *nr_zones * sizeof(struct blk_zone);
--	struct page *page;
--	int order;
--
--	for (order = get_order(size); order >= 0; order--) {
--		page = alloc_pages_node(node, GFP_NOIO | __GFP_ZERO, order);
--		if (page) {
--			*nr_zones = min_t(unsigned int, *nr_zones,
--				(PAGE_SIZE << order) / sizeof(struct blk_zone));
--			return page_address(page);
--		}
-+	struct blk_zone *zones;
-+	size_t nrz = min(*nr_zones, BLK_ZONED_REPORT_MAX_ZONES);
-+
-+	/*
-+	 * GFP_KERNEL here is meaningless as the caller task context has
-+	 * the PF_MEMALLOC_NOIO flag set in blk_revalidate_disk_zones()
-+	 * with memalloc_noio_save().
-+	 */
-+	zones = kvcalloc(nrz, sizeof(struct blk_zone), GFP_KERNEL);
-+	if (!zones) {
-+		*nr_zones = 0;
-+		return NULL;
- 	}
- 
--	return NULL;
-+	*nr_zones = nrz;
-+
-+	return zones;
- }
- 
- void blk_queue_free_zone_bitmaps(struct request_queue *q)
-@@ -448,7 +453,7 @@ int blk_revalidate_disk_zones(struct gendisk *disk)
- 
- 	/* Get zone information and initialize seq_zones_bitmap */
- 	rep_nr_zones = nr_zones;
--	zones = blk_alloc_zones(q->node, &rep_nr_zones);
-+	zones = blk_alloc_zones(&rep_nr_zones);
- 	if (!zones)
- 		goto out;
- 
-@@ -487,8 +492,7 @@ int blk_revalidate_disk_zones(struct gendisk *disk)
- out:
- 	memalloc_noio_restore(noio_flag);
- 
--	free_pages((unsigned long)zones,
--		   get_order(rep_nr_zones * sizeof(struct blk_zone)));
-+	kvfree(zones);
- 	kfree(seq_zones_wlock);
- 	kfree(seq_zones_bitmap);
- 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 472ba74ca968..5ace0bb77213 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -344,6 +344,11 @@ struct queue_limits {
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- 
-+/*
-+ * Maximum number of zones to report with a single report zones command.
-+ */
-+#define BLK_ZONED_REPORT_MAX_ZONES	8192U
-+
- extern unsigned int blkdev_nr_zones(struct block_device *bdev);
- extern int blkdev_report_zones(struct block_device *bdev,
- 			       sector_t sector, struct blk_zone *zones,
--- 
-2.21.0
+Thanks.
 
+On Thu, Jun 27, 2019 at 7:20 PM Chao Yu <yuchao0@huawei.com> wrote:
+>
+> Hi Ju Hyung,
+>
+> Thanks for the reminding.
+>
+> Jaegeuk, I can send the kernel patch after you tag a new version on fsck.
+>
+> Thanks,
+>
+> On 2019/6/27 17:12, Ju Hyung Park wrote:
+> > Hi Jaegeuk and Chao.
+> >
+> > A little bump here.
+> >
+> > We still need to tag a new version of fsck and update f2fs kernel code
+> > to tell which version users should use as we discussed earlier.
+> > -rc is closing soon, so I felt I needed to remind you.
+> >
+> > Thanks.
+> >
+> > On Tue, Jun 4, 2019 at 10:48 AM Chao Yu <yuchao0@huawei.com> wrote:
+> >>
+> >> On 2019/6/4 4:27, Jaegeuk Kim wrote:
+> >>> On 06/04, Ju Hyung Park wrote:
+> >>>> Hi Jaegeuk and Chao,
+> >>>>
+> >>>> A little update I thought I might share.
+> >>>>
+> >>>> Just went through migrating my laptop to another SSD and I've setup
+> >>>> f2fs from the beginning with mkfs -i from the master branch.
+> >>>> No issue as of yet and the kernel is working fine as expected :)
+> >>>
+> >>> Cool, thanks for your test. :)
+> >>
+> >> Great, thanks for the continuous test and report. :)
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>>
+> >>>> Thanks.
+> >>>>
+> >>>>
+> >>>> _______________________________________________
+> >>>> Linux-f2fs-devel mailing list
+> >>>> Linux-f2fs-devel@lists.sourceforge.net
+> >>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>>
+> >>>
+> >>> _______________________________________________
+> >>> Linux-f2fs-devel mailing list
+> >>> Linux-f2fs-devel@lists.sourceforge.net
+> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>> .
+> >>>
+> > .
+> >
 
 
 _______________________________________________
