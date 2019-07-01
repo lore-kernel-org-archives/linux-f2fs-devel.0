@@ -2,109 +2,81 @@ Return-Path: <SRS0=+7CQ=U6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C72EC0650E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 17:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C06FC0650E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 18:27:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DA729206A3;
-	Mon,  1 Jul 2019 17:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 656B621721;
+	Mon,  1 Jul 2019 18:27:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GkWPmo/V";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="d5KA5j9w";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plexistor-com.20150623.gappssmtp.com header.i=@plexistor-com.20150623.gappssmtp.com header.b="1wUdmopY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA729206A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plexistor.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="gGe2m6Uc";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ecxZDarc";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQxxnHv3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 656B621721
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hi0Oe-00088q-8O; Mon, 01 Jul 2019 17:47:20 +0000
+	id 1hi11X-0006DD-NC; Mon, 01 Jul 2019 18:27:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <boaz@plexistor.com>) id 1hi0Ob-00088h-U6
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 17:47:18 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hi11W-0006Cx-7p
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 18:27:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RMtO9zTMwULPwpFiTkeooNGzR9zKo/UB7YgL+t4fgzA=; b=GkWPmo/ViJ1h7xhms9zc2CCtC1
- Ee+T/mGzFi6C4DXS/rQhY9phwvIiTN6AMxCzgtROlE15U1a/3I9wpu7f7EdtojC2ftLsz4iJynhFR
- FIPsexHx6ZOGQOnz1cgFmj7OalzdvEr8Ig7o0QRSONznAkmIpLTBL82KprZZPQFuEMfE=;
+ bh=3jVv8TsQ7LrqjiSsUpcZQRg98IvUIFfstxp03Q7SwnU=; b=gGe2m6UcCz1fqGQqqlDfvADFee
+ cJG2FNqlb1KZuqNMtnVt2/1vd9KQw0N32a7pcsP8qZHLI17QCG8DWXlhqxQ5CdOEJ6mQ4TFahRMSj
+ fIWottIPYIF0bgpqs1bwiAgGdGWNqSGROmyihY8wKV71uPFTYZZylzDY3Jsn0za41QkI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RMtO9zTMwULPwpFiTkeooNGzR9zKo/UB7YgL+t4fgzA=; b=d5KA5j9w6iWtMmqm6R0oH0x0ts
- bFFL5YC+IxIlyVxJnL4NL2A+QoKJaSdv7fPYNU2x1ml8xVmj3L1jcTluSgAO3faSmUrV+JxIY/LfL
- dWk8gaX9Qf4djj0lY+3w8PvNP/eeZPn0/g3QJTpzQ0TLG5SK4Oq6pn14NWYevL+UVOog=;
-Received: from mail-wm1-f66.google.com ([209.85.128.66])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hi0Op-003gLA-5r
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 17:47:32 +0000
-Received: by mail-wm1-f66.google.com with SMTP id f17so421500wme.2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 01 Jul 2019 10:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=plexistor-com.20150623.gappssmtp.com; s=20150623;
- h=subject:to:cc:references:from:message-id:date:user-agent
- :mime-version:in-reply-to:content-language:content-transfer-encoding;
- bh=RMtO9zTMwULPwpFiTkeooNGzR9zKo/UB7YgL+t4fgzA=;
- b=1wUdmopYsOTGEBPctCCQBJNp/Weny3U0OdMAgIX7XMpDLNjX7yi2BQKVOeIOZfgf1b
- I2dQPvs1YcMd4MKfGasxoR1vUF57n1uWvGfOwCBn+dFFXqdtzk7+nDTMfgxaIC1cMqAd
- CyXSD5wWJrsSE7f66iNNQpS8suPAgj9SNlBFoRgvaYPLl2O9hulyvjxbO8s6Guhj4y1S
- Nf6nnLqhsslQUJQ8lQjHCR002MedRLPvKNFje/NywIlwBVxr1dbYLS/Ag6d45MoLEFLA
- TB43Jl9ECXn6C3ClznsgSlBckfDR8AQM1se/327D0FreZlmY9S9DkHpcHai8gVFUiAbk
- jAnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:subject:to:cc:references:from:message-id:date
- :user-agent:mime-version:in-reply-to:content-language
- :content-transfer-encoding;
- bh=RMtO9zTMwULPwpFiTkeooNGzR9zKo/UB7YgL+t4fgzA=;
- b=GXmdjWyZY8D9MUxknLp7PZjLjfVg+p8mBw1YA68SPn8hfAXDvdQJPaZu79ZHG2kI+Q
- cYB33V4Ve4+aowXcbMyBiUEN1jC+CykcyG4KXHU2In5PviO+57pCHw6DqFYtY3CjwiEM
- 2JDR7lZSN8VtCMJ/HKk7ymGlPWSPHwUTjScjDfu8LvDb4pEqg/mKO6MEflfKYIaO19FU
- 0KsssuB1A734n3nLmfzrTsVrlywDDmq32uD5YFqYqZU8g0MS7KKEZBwQXZ0v+LqDQ1eN
- hiKAlt+acsZOY6KNbKg7S/BIrFLE7aDzWbJIPQksoKD0G99zF7CC3sD+y5Iu9rqJhAPU
- e10g==
-X-Gm-Message-State: APjAAAUHhuuW8QK2hIkf+D7vrgw+i88ZR+IuvxBYdToQU8QfOSOZKARc
- s6g6LfO1HyBemH0cU4iGBrVYmw0Aqt4=
-X-Google-Smtp-Source: APXvYqyJIZEjZ99B+K6R50DPm7lq0IHr/E/1lfJMHdrHDPCDWuYMn1JV6lQAB5xdWdZjMaq23hnwbA==
-X-Received: by 2002:a1c:f009:: with SMTP id a9mr234245wmb.32.1562001657000;
- Mon, 01 Jul 2019 10:20:57 -0700 (PDT)
-Received: from [10.68.217.182] ([217.70.211.18])
- by smtp.googlemail.com with ESMTPSA id q193sm269299wme.8.2019.07.01.10.20.53
- (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
- Mon, 01 Jul 2019 10:20:56 -0700 (PDT)
-To: "Darrick J. Wong" <darrick.wong@oracle.com>, matthew.garrett@nebula.com,
- yuchao0@huawei.com, tytso@mit.edu, ard.biesheuvel@linaro.org,
- josef@toxicpanda.com, hch@infradead.org, clm@fb.com,
- adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com,
- dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org
-References: <156174687561.1557469.7505651950825460767.stgit@magnolia>
-From: Boaz Harrosh <boaz@plexistor.com>
-Message-ID: <72f01c73-a1eb-efde-58fa-7667221255c7@plexistor.com>
-Date: Mon, 1 Jul 2019 20:20:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ bh=3jVv8TsQ7LrqjiSsUpcZQRg98IvUIFfstxp03Q7SwnU=; b=ecxZDarcv4W78lNJNvWyn7rxIu
+ +g9uO0DZiih46gAOnTekwsOfgOFov9eSpznJghbqc3MS5ud+wMvZ0Z1YRqQ+w/NaJq2pJyCR/+Nys
+ wG27+qh/uMdAjGgbzQDRAiyYPj4dMf89QQPKceilOfX5mnUSVS0fqmUktbORrxT+gTWk=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hi11a-003KzU-Db
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 18:27:35 +0000
+Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown
+ [104.132.1.77])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id D2A0A2173E;
+ Mon,  1 Jul 2019 18:27:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1562005648;
+ bh=/TqjxXaacZLBl0M7a8866fUvjTCYt+qsAku09GMwzaU=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=dQxxnHv37PKpFTpe8HW/se53kzv2A74FRRJO7BSy/a5dyvDMNuJrBMDsVO8W0NWUB
+ JHKyMofa2PmzzQfBIwHsfTqtGv2KnbDstYHG4UTyPTAha3d9pfK6WCvzhZnqKNFUXP
+ EZA20sZJxUFH5y3OMwpTwzqY7+Y+7H4LjaHU0mmc=
+From: Eric Biggers <ebiggers@kernel.org>
+To: fstests@vger.kernel.org
+Date: Mon,  1 Jul 2019 11:25:40 -0700
+Message-Id: <20190701182547.165856-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+In-Reply-To: <20190701182547.165856-1-ebiggers@kernel.org>
+References: <20190701182547.165856-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <156174687561.1557469.7505651950825460767.stgit@magnolia>
-Content-Language: en-MW
-X-Headers-End: 1hi0Op-003gLA-5r
-Subject: Re: [f2fs-dev] [PATCH v6 0/4] vfs: make immutable files actually
- immutable
+X-Headers-End: 1hi11a-003KzU-Db
+Subject: [f2fs-dev] [RFC PATCH v3 1/8] common/filter: add
+ _filter_xfs_io_fiemap()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,62 +88,61 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-efi@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-mm@kvack.org, linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
- ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, devel@lists.orangefs.org
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fscrypt@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org, Victor Hsieh <victorhsieh@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 28/06/2019 21:34, Darrick J. Wong wrote:
-> Hi all,
-> 
-> The chattr(1) manpage has this to say about the immutable bit that
-> system administrators can set on files:
-> 
-> "A file with the 'i' attribute cannot be modified: it cannot be deleted
-> or renamed, no link can be created to this file, most of the file's
-> metadata can not be modified, and the file can not be opened in write
-> mode."
-> 
-> Given the clause about how the file 'cannot be modified', it is
-> surprising that programs holding writable file descriptors can continue
-> to write to and truncate files after the immutable flag has been set,
-> but they cannot call other things such as utimes, fallocate, unlink,
-> link, setxattr, or reflink.
-> 
-> Since the immutable flag is only settable by administrators, resolve
-> this inconsistent behavior in favor of the documented behavior -- once
-> the flag is set, the file cannot be modified, period.  We presume that
-> administrators must be trusted to know what they're doing, and that
-> cutting off programs with writable fds will probably break them.
-> 
+From: Eric Biggers <ebiggers@google.com>
 
-This effort sounds very logical to me and sound. But are we allowed to
-do it? IE: Is it not breaking ABI. I do agree previous ABI was evil but
-are we allowed to break it?
+Add _filter_xfs_io_fiemap() to clean up the output of
+'xfs_io -c fiemap'.  This will be used by a function in common/verity.
 
-I would not mind breaking it if %99.99 of the time the immutable bit
-was actually set manually by a human administrator. But what if there
-are automated systems that set it relying on the current behaviour?
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ common/filter | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-For example I have a very distant and vague recollection of a massive
-camera capture system, that was DMAing directly to file (splice). And setting
-the immutable bit right away on start. Then once the capture is done
-(capture file recycled) the file becomes immutable. Such program is now
-broken. Who's fault is it?
+diff --git a/common/filter b/common/filter
+index ed082d24..9ad43ff4 100644
+--- a/common/filter
++++ b/common/filter
+@@ -541,6 +541,30 @@ _filter_filefrag()
+ 	      $flags, "\n"'
+ }
+ 
++# Clean up the extents list output of 'xfs_io -c fiemap', e.g.
++#
++#	file:
++#		0: [0..79]: 628365312..628365391
++#		1: [80..159]: hole
++#		2: [160..319]: 628365472..628365631
++# =>
++#	0  79   628365312  628365391
++#	160  319   628365472  628365631
++#
++# The fields are:
++#
++#	first_logical_block last_logical_block first_physical_block last_physical_block
++#
++# Blocks are 512 bytes, and holes are omitted.
++#
++_filter_xfs_io_fiemap()
++{
++	 grep -E '^[[:space:]]+[0-9]+:' \
++		 | grep -v '\<hole\>' \
++		 | sed -E 's/^[[:space:]]+[0-9]+://' \
++		 | tr '][.:' ' '
++}
++
+ # We generate WARNINGs on purpose when applications mix buffered/mmap IO with
+ # direct IO on the same file. This is a helper for _check_dmesg() to filter out
+ # such warnings.
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
-I'm totally not sure and maybe you are right. But have you made a
-survey of the majority of immutable uses, and are positive that
-the guys are not broken after this change?
-
-For me this is kind of scary. Yes I am known to be a SW coward ;-)
-
-Thanks
-Boaz
 
 
 _______________________________________________
