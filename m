@@ -2,90 +2,81 @@ Return-Path: <SRS0=+7CQ=U6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2E0C0650E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 14:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC34C06514
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 15:34:13 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1BC9C2064B;
-	Mon,  1 Jul 2019 14:58:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4EA4321473;
+	Mon,  1 Jul 2019 15:34:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="dUsyrqTW";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KoMRt3q2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC9C2064B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ajhYrSMn";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TDUf3HJx";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U583/iix"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA4321473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hhxlU-0007WA-NA; Mon, 01 Jul 2019 14:58:44 +0000
+	id 1hhyJa-0002Kd-8D; Mon, 01 Jul 2019 15:33:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <arndbergmann@gmail.com>) id 1hhxlS-0007Vd-Q9
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 14:58:42 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hhyJZ-0002KQ-2u
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:33:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wYPUdrH4rwqGcTGw5ZdGUH3QSotQNpnBmXpSrhpI2OY=; b=dUsyrqTWfku5N0qJjZqicO4ccp
- Y01dP3QaUyTtZJCZW4SzZGqLUMbII76yl/py8s80GqzgOMmEET/ELfxaaTlg19/vaOQj3isO/Ttz+
- 6mG7H3OoU6xvTZopB/ZSs6D/H1IEqrFqf0/VjxdvXMlnIgtST5KceP6/9lUGVidXU0fM=;
+ bh=qd316xXRN/K7+nOcA5+esnpkglVNHHZkIGSNr4d+fZk=; b=ajhYrSMnOXXe68f+uGrGmDUH+a
+ NBxC32N6QRinX03XCTwtgMDId+J3ahYmVkgszZq8xLjNjSgUNYe0qqF02trH6xq7jKOMRjWD7pf4o
+ G/FiBvN38dT9TvNMMMWrkByaxRjqM8dhDY0ZzcLub+e+1HkkzIKdI8SS/kFRbH1P16xY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=wYPUdrH4rwqGcTGw5ZdGUH3QSotQNpnBmXpSrhpI2OY=; b=KoMRt3q2ZCG2UAlKDBaKWRTjbP
- LjyJ4+Aj58e5zDhf1NNQsPQqZSxFy1F1ZbQj3qqIUEm2esfbhEpLwZe0uWLA6NdEoJSOfnU4BgVF2
- v3BAAwxFzBzowcU9HCljczga1DMwojqRqpc4Cu9y5Z8X2zl8HElSLhI0k4PufMZH+kug=;
-Received: from mail-qk1-f194.google.com ([209.85.222.194])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hhxlV-003D9D-Gj
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 14:58:47 +0000
-Received: by mail-qk1-f194.google.com with SMTP id m14so11199946qka.10
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 01 Jul 2019 07:58:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc;
- bh=wYPUdrH4rwqGcTGw5ZdGUH3QSotQNpnBmXpSrhpI2OY=;
- b=W6Qc2+J9fhtAJyoON1030lZmF6RmtI9wBNFk+NF+wsD1UaKshulXhzsSNhc31KAby6
- n+ySU17l8Iftsy5udEPKHJ//shs3dFFa9n5d751BRZQ0MZ7Vm3jD/hFGl+Tl0Uhvk965
- MWE1ggE0TtHaCgYfDpIZALL8YTc8zPUofjKog8Q8FC22kz78cQQ9bXU6L+ui45iOIXBU
- eYhLdYlC8sK07Y5IFmyAMhgBZo2YfSr4LR76hS9bedYxY0m5yDgn10IvQNdb/fDuyE5V
- GCKAgYuU47m+rzZAQnfB4Tb5G2y3xMCTAbB+CphDVC2WamGvFghtOy1ogl9/ZvE4qeXd
- +ZyA==
-X-Gm-Message-State: APjAAAWZMC8HRV9AWMrJkuX1DkLJNSBWjCoFOzPapsK1sblcIsDVeyoo
- d2M5gkmxvwcQHrpROkdi8Xsu2f/4p0BJByJNf0c=
-X-Google-Smtp-Source: APXvYqzW0scNhmgaP30TW42l5BV3v+F8ylQUDtigpiOBj0tUz731pKZzDIRDVYOsVfehdePPdz5cnTvDfz2jjGCBE0I=
-X-Received: by 2002:a37:76c5:: with SMTP id
- r188mr20631949qkc.394.1561993119317; 
- Mon, 01 Jul 2019 07:58:39 -0700 (PDT)
+ bh=qd316xXRN/K7+nOcA5+esnpkglVNHHZkIGSNr4d+fZk=; b=TDUf3HJxKNm6AJktRvEqzqxPjU
+ mBANSx9epr7nVAigvpNQqetCZ+cR6mm3RrSZIqBciekNWxRGMRJ2c4Bp12qioWTMIfmkUMu49xibe
+ coXlyHzU90DTLf18VMyBtds5cIvXE2LooAX3phMmC8fuhGKmQdkBhy448L/uBjIGNnRE=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hhyJl-000lNC-N8
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:11 +0000
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
+ [24.5.143.220])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id C128A21479;
+ Mon,  1 Jul 2019 15:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1561995244;
+ bh=UHMEZquVp+ldesIUu/G2OCD2a4fRDxKXlFi53PXUgIE=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=U583/iix48mhcuoEjdbkZi/fRIUSj74S3yobiEgV43qWjThvUiJp8GkRqSP/tHUJ5
+ zHipaLq+ZfKH7xAvgNDGQ25AKG9+wdwwqqABprncWxy/2/n7PcP4rsFfysjrBhQ0xR
+ 2Lv+K0k8CacGLQzDTGXwiE5XBqHo+tMubkrx9fOE=
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Mon,  1 Jul 2019 08:32:24 -0700
+Message-Id: <20190701153237.1777-5-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190701153237.1777-1-ebiggers@kernel.org>
+References: <20190701153237.1777-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <20190628104007.2721479-1-arnd@arndb.de>
- <20190628124422.GA9888@infradead.org>
- <CAK8P3a1jwPQvX6f+eMZLdnF2ZawDB9obF3hjk2P9RJxDr6HUQA@mail.gmail.com>
- <20190628131738.GA994@infradead.org>
- <CAK8P3a0t+vGge8uDOuwex6j+ddaUqovxCXoJOO8Ec3z6_brvsg@mail.gmail.com>
- <20190628175835.hwzfrgrtwphi6kka@shell.armlinux.org.uk>
-In-Reply-To: <20190628175835.hwzfrgrtwphi6kka@shell.armlinux.org.uk>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 1 Jul 2019 16:58:23 +0200
-Message-ID: <CAK8P3a1AdseCGhg2aNkvtfCd-Wn2-rG9Z_LbvkkheGnbpT8EWA@mail.gmail.com>
-To: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-X-Headers-End: 1hhxlV-003D9D-Gj
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix 32-bit linking
+X-Headers-End: 1hhyJl-000lNC-N8
+Subject: [f2fs-dev] [PATCH v6 04/17] fs: uapi: define verity bit for
+ FS_IOC_GETFLAGS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,55 +88,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Eric Biggers <ebiggers@google.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Wang Shilong <wangshilong1991@gmail.com>, "Linux F2FS DEV,
- Mailing List" <linux-f2fs-devel@lists.sourceforge.net>,
- Christoph Hellwig <hch@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Qiuyang Sun <sunqiuyang@huawei.com>
+Cc: "Theodore Y . Ts'o" <tytso@mit.edu>,
+ "Darrick J . Wong" <darrick.wong@oracle.com>, linux-api@vger.kernel.org,
+ Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
+ Victor Hsieh <victorhsieh@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jun 28, 2019 at 7:58 PM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
->
-> On Fri, Jun 28, 2019 at 04:46:14PM +0200, Arnd Bergmann wrote:
-> > On Fri, Jun 28, 2019 at 3:17 PM Christoph Hellwig <hch@infradead.org> wrote:
-> > >
-> > > On Fri, Jun 28, 2019 at 03:09:47PM +0200, Arnd Bergmann wrote:
-> > > > I came across this on arm-nommu (which disables
-> > > > CONFIG_CPU_SPECTRE) during randconfig testing.
-> > > >
-> > > > I don't see an easy way to add this in there, short of rewriting the
-> > > > whole __get_user_err() function. Any suggestions?
-> > >
-> > > Can't we just fall back to using copy_from_user with a little wrapper
-> > > that switches based on sizeof()?
-> >
-> > I came up with something now. It's not pretty, but seems to satisfy the
-> > compiler. Not a proper patch yet, but let me know if you find a bug.
->
-> Have you checked what the behaviour is when "ptr" is a pointer to a
-> pointer?  I think you'll end up with a compiler warning for every
-> case, complaining about casting an unsigned long long to a pointer.
+From: Eric Biggers <ebiggers@google.com>
 
-I have built lots of kernels using this patch as a test, though my autobuilder
-is currently configured to use clang-8, and other compilers or versions
-might show more warnings.
+Add FS_VERITY_FL to the flags for FS_IOC_GETFLAGS, so that applications
+can easily determine whether a file is a verity file at the same time as
+they're checking other file flags.  This flag will be gettable only;
+FS_IOC_SETFLAGS won't allow setting it, since an ioctl must be used
+instead to provide more parameters.
 
-> >         uaccess_restore(__ua_flags);                                    \
-> > -       (x) = (__typeof__(*(ptr)))__gu_val;                             \
-> > +       (x) = __builtin_choose_expr(sizeof(*(ptr)) == 8,                \
-> > +               (__typeof__(*(ptr)))__gu_val8,                          \
-> > +               (__typeof__(*(ptr)))__gu_val);                          \
-> >  } while (0)
+This flag matches the on-disk bit that was already allocated for ext4.
 
-The __builtin_choose_expr() here is supposed to take care of the case
-of a pointer type, gcc and clang should both ignore the non-taken
-branch and only produce warnings for the case they actually use.
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ include/uapi/linux/fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-       Arnd
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 59c71fa8c553..df261b7e0587 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -306,6 +306,7 @@ struct fscrypt_key {
+ #define FS_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
+ #define FS_HUGE_FILE_FL			0x00040000 /* Reserved for ext4 */
+ #define FS_EXTENT_FL			0x00080000 /* Extents */
++#define FS_VERITY_FL			0x00100000 /* Verity protected inode */
+ #define FS_EA_INODE_FL			0x00200000 /* Inode used for large EA */
+ #define FS_EOFBLOCKS_FL			0x00400000 /* Reserved for ext4 */
+ #define FS_NOCOW_FL			0x00800000 /* Do not cow file */
+-- 
+2.22.0
+
 
 
 _______________________________________________
