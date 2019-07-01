@@ -2,81 +2,119 @@ Return-Path: <SRS0=+7CQ=U6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D34C0650E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 15:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28183C0650E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 15:45:45 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8D18020881;
-	Mon,  1 Jul 2019 15:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EFEB520B7C;
+	Mon,  1 Jul 2019 15:45:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="E91HI/rC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PfUaRumH";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD3SKZ4N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D18020881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AEk2Iop+";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YmP29cko";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="x/SdHBcY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFEB520B7C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hhyK5-0008LO-Ja; Mon, 01 Jul 2019 15:34:29 +0000
+	id 1hhyUj-0002rV-SK; Mon, 01 Jul 2019 15:45:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hhyJs-0008JJ-L3
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:16 +0000
+ (envelope-from <darrick.wong@oracle.com>) id 1hhyUj-0002rP-AV
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:45:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=u61H/gwgjyULQ1rm03+rt15Bdb16dsB5g68vkpZtJ1o=; b=E91HI/rCf+RFZpGLq0OUocTqqV
- JfWMh+HB7Yq2I6SpA0gvshd9zPcmV+swadMAxjEvM9K5/8ajpC5CnxToPQS/gmjRiDL/guMM85iKG
- SpdbvwgUnK/wbwpanbhyqp9CdyzXobGKvcz3kkvxzBJJ/1LZ5uxiShhVsz01f2JagJBk=;
+ bh=pYgOiYG9niz5w5j2Xs2uAj2RGhsP9dEqiFiqy+v2SHk=; b=AEk2Iop+jGncnzpPeQUXUxypuS
+ XipkV6LHZuxdoicJkCyUekg3porywtDNP/+FFYLXKhvC3kFbOnQG3S8q6kKK0ZCmqeuAIGOdoa30x
+ CHZMIC3vl+pLWraURUR3NnfE8fOmjVMJBRiaoYglIRWH01wSEbAATfe8ifzE60b2WsoU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=u61H/gwgjyULQ1rm03+rt15Bdb16dsB5g68vkpZtJ1o=; b=PfUaRumHasvvF5PkAqF2aslMNh
- fH/8a1cbw32DUDqUIIEMNDWBlIkyF29Db/lNTbWCIh6p5tnp+g50gP1YmdcgN16byS2j6II2OJR0u
- KGhMOxiabuG8Sx3Fu2sRB2hkwGXa0I722cwK1wNR+4ZXeB69cP284ebN4fX93a1smRs8=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=pYgOiYG9niz5w5j2Xs2uAj2RGhsP9dEqiFiqy+v2SHk=; b=YmP29ckoyqodfJLsHz3SCg/Dmf
+ ocZ4x/YpLl5Vyf3zryPA7bR77h0/RSRtjFJLKrXkQ09Kwb6FVB6r/5j1TVyBT9++L5f4LyN2puMqX
+ 2FnpGmcLFhx3gCt7lkTxfsBZRNVJtDDh3qe5u7WtuhYH6U5ohN05HpScCzCY6FqDAfSA=;
+Received: from userp2120.oracle.com ([156.151.31.85])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hhyJz-000lNx-QD
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:25 +0000
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
- [24.5.143.220])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 6CBEF21851;
- Mon,  1 Jul 2019 15:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1561995250;
- bh=A41vt4jGxIjxms6taEMGdqC+r7hlRcG0OlJSTNYg6+U=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=iD3SKZ4NuFdVsvtTwHp67q1eLCgKv2yQih/QpjUim8OmpZnbzQ7oZYjMXY6u0gEAF
- k4Z4Btr2h50/1QSnvfvHDqxAUosnpP3S4X9u6kVl1RL7GZnMGJX6lq/nnHFBQ2r4Rl
- TN6KX7sDkc7P2+SgJ6zcV67wWlDIRxUtX3jf9tyo=
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Date: Mon,  1 Jul 2019 08:32:36 -0700
-Message-Id: <20190701153237.1777-17-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190701153237.1777-1-ebiggers@kernel.org>
-References: <20190701153237.1777-1-ebiggers@kernel.org>
+ id 1hhyUv-003bqg-JT
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:45:43 +0000
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+ by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61Fd1eX135390;
+ Mon, 1 Jul 2019 15:44:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
+ h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=pYgOiYG9niz5w5j2Xs2uAj2RGhsP9dEqiFiqy+v2SHk=;
+ b=x/SdHBcYO8s8zWcphUBtW0vaxMhmfi55Tc3O1uqVw5wFQoSV0TdcaQrd5DCa4/j3leVl
+ afbReE/QG5U9d5RMDtBeMdXqUXH0ZjmvMBZR4Bqmxg/kAljEVFLfyeY/NtPkYHmHYr9X
+ LYGxft84ZgeBGOpFpDLQVRFORBGkrIKz998fNMkSDSFhU9OkEimNW4ZMMNbmgLHWe6Wa
+ H32awHJIcTvxMIApJV/pr3XFucA4iWiPO5eUtLjVkO8Vi1P6W9rEo/9vB6C/HmqfVy1z
+ wSoSDGjT9hh0PbsVNlgPWgfY33Zl0N02nGKztDfgCPOv1W9YyXHHcQeRRazJE5zmpoPz vg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+ by userp2120.oracle.com with ESMTP id 2te61ppf40-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Mon, 01 Jul 2019 15:44:09 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+ by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x61FcFES032310;
+ Mon, 1 Jul 2019 15:42:09 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+ by userp3020.oracle.com with ESMTP id 2tebbj8db7-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+ Mon, 01 Jul 2019 15:42:09 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+ by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x61Fg9hp040678;
+ Mon, 1 Jul 2019 15:42:09 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+ by userp3020.oracle.com with ESMTP id 2tebbj8dap-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Mon, 01 Jul 2019 15:42:09 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+ by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x61Fg3SU026276;
+ Mon, 1 Jul 2019 15:42:04 GMT
+Received: from localhost (/67.169.218.210)
+ by default (Oracle Beehive Gateway v4.0)
+ with ESMTP ; Mon, 01 Jul 2019 08:42:02 -0700
+Date: Mon, 1 Jul 2019 08:42:00 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
+ ard.biesheuvel@linaro.org, josef@toxicpanda.com, hch@infradead.org,
+ clm@fb.com, adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk,
+ jack@suse.com, dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org
+Message-ID: <20190701154200.GK1404256@magnolia>
+References: <156174687561.1557469.7505651950825460767.stgit@magnolia>
+ <156174690758.1557469.9258105121276292687.stgit@magnolia>
 MIME-Version: 1.0
-X-Headers-End: 1hhyJz-000lNx-QD
-Subject: [f2fs-dev] [PATCH v6 16/17] ext4: update on-disk format
- documentation for fs-verity
+Content-Disposition: inline
+In-Reply-To: <156174690758.1557469.9258105121276292687.stgit@magnolia>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9305
+ signatures=668688
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
+ priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=991 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1907010188
+X-Headers-End: 1hhyUv-003bqg-JT
+Subject: [f2fs-dev] [PATCH v2 4/4] vfs: don't allow most setxattr to
+ immutable files
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,128 +126,73 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "Theodore Y . Ts'o" <tytso@mit.edu>,
- "Darrick J . Wong" <darrick.wong@oracle.com>, linux-api@vger.kernel.org,
- Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
- Victor Hsieh <victorhsieh@google.com>
+Cc: linux-efi@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-mm@kvack.org, linux-nilfs@vger.kernel.org, linux-mtd@lists.infradead.org,
+ ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, devel@lists.orangefs.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-Document the format of verity files on ext4, and the corresponding inode
-and superblock flags.
+The chattr manpage has this to say about immutable files:
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+"A file with the 'i' attribute cannot be modified: it cannot be deleted
+or renamed, no link can be created to this file, most of the file's
+metadata can not be modified, and the file can not be opened in write
+mode."
+
+However, we don't actually check the immutable flag in the setattr code,
+which means that we can update inode flags and project ids and extent
+size hints on supposedly immutable files.  Therefore, reject setflags
+and fssetxattr calls on an immutable file if the file is immutable and
+will remain that way.
+
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- Documentation/filesystems/ext4/inodes.rst   |  6 ++-
- Documentation/filesystems/ext4/overview.rst |  1 +
- Documentation/filesystems/ext4/super.rst    |  2 +
- Documentation/filesystems/ext4/verity.rst   | 41 +++++++++++++++++++++
- 4 files changed, 48 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/filesystems/ext4/verity.rst
+v2: use memcmp instead of open coding a bunch of checks
+---
+ fs/inode.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/Documentation/filesystems/ext4/inodes.rst b/Documentation/filesystems/ext4/inodes.rst
-index 6bd35e506b6f..e851e6ca31fa 100644
---- a/Documentation/filesystems/ext4/inodes.rst
-+++ b/Documentation/filesystems/ext4/inodes.rst
-@@ -277,6 +277,8 @@ The ``i_flags`` field is a combination of these values:
-      - This is a huge file (EXT4\_HUGE\_FILE\_FL).
-    * - 0x80000
-      - Inode uses extents (EXT4\_EXTENTS\_FL).
-+   * - 0x100000
-+     - Verity protected file (EXT4\_VERITY\_FL).
-    * - 0x200000
-      - Inode stores a large extended attribute value in its data blocks
-        (EXT4\_EA\_INODE\_FL).
-@@ -299,9 +301,9 @@ The ``i_flags`` field is a combination of these values:
-      - Reserved for ext4 library (EXT4\_RESERVED\_FL).
-    * -
-      - Aggregate flags:
--   * - 0x4BDFFF
-+   * - 0x705BDFFF
-      - User-visible flags.
--   * - 0x4B80FF
-+   * - 0x604BC0FF
-      - User-modifiable flags. Note that while EXT4\_JOURNAL\_DATA\_FL and
-        EXT4\_EXTENTS\_FL can be set with setattr, they are not in the kernel's
-        EXT4\_FL\_USER\_MODIFIABLE mask, since it needs to handle the setting of
-diff --git a/Documentation/filesystems/ext4/overview.rst b/Documentation/filesystems/ext4/overview.rst
-index cbab18baba12..123ebfde47ee 100644
---- a/Documentation/filesystems/ext4/overview.rst
-+++ b/Documentation/filesystems/ext4/overview.rst
-@@ -24,3 +24,4 @@ order.
- .. include:: bigalloc.rst
- .. include:: inlinedata.rst
- .. include:: eainode.rst
-+.. include:: verity.rst
-diff --git a/Documentation/filesystems/ext4/super.rst b/Documentation/filesystems/ext4/super.rst
-index 04ff079a2acf..6eae92054827 100644
---- a/Documentation/filesystems/ext4/super.rst
-+++ b/Documentation/filesystems/ext4/super.rst
-@@ -696,6 +696,8 @@ the following:
-        (RO\_COMPAT\_READONLY)
-    * - 0x2000
-      - Filesystem tracks project quotas. (RO\_COMPAT\_PROJECT)
-+   * - 0x8000
-+     - Verity inodes may be present on the filesystem. (RO\_COMPAT\_VERITY)
+diff --git a/fs/inode.c b/fs/inode.c
+index cf07378e5731..31f694e405fe 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2214,6 +2214,14 @@ int vfs_ioc_setflags_prepare(struct inode *inode, unsigned int oldflags,
+ 	    !capable(CAP_LINUX_IMMUTABLE))
+ 		return -EPERM;
  
- .. _super_def_hash:
++	/*
++	 * We aren't allowed to change any other flags if the immutable flag is
++	 * already set and is not being unset.
++	 */
++	if ((oldflags & FS_IMMUTABLE_FL) && (flags & FS_IMMUTABLE_FL) &&
++	    oldflags != flags)
++		return -EPERM;
++
+ 	/*
+ 	 * Now that we're done checking the new flags, flush all pending IO and
+ 	 * dirty mappings before setting S_IMMUTABLE on an inode via
+@@ -2284,6 +2292,15 @@ int vfs_ioc_fssetxattr_check(struct inode *inode, const struct fsxattr *old_fa,
+ 	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+ 		return -EINVAL;
  
-diff --git a/Documentation/filesystems/ext4/verity.rst b/Documentation/filesystems/ext4/verity.rst
-new file mode 100644
-index 000000000000..3e4c0ee0e068
---- /dev/null
-+++ b/Documentation/filesystems/ext4/verity.rst
-@@ -0,0 +1,41 @@
-+.. SPDX-License-Identifier: GPL-2.0
++	/*
++	 * We aren't allowed to change any fields if the immutable flag is
++	 * already set and is not being unset.
++	 */
++	if ((old_fa->fsx_xflags & FS_XFLAG_IMMUTABLE) &&
++	    (fa->fsx_xflags & FS_XFLAG_IMMUTABLE) &&
++	    memcmp(fa, old_fa, offsetof(struct fsxattr, fsx_pad)))
++		return -EPERM;
 +
-+Verity files
-+------------
-+
-+ext4 supports fs-verity, which is a filesystem feature that provides
-+Merkle tree based hashing for individual readonly files.  Most of
-+fs-verity is common to all filesystems that support it; see
-+:ref:`Documentation/filesystems/fsverity.rst <fsverity>` for the
-+fs-verity documentation.  However, the on-disk layout of the verity
-+metadata is filesystem-specific.  On ext4, the verity metadata is
-+stored after the end of the file data itself, in the following format:
-+
-+- Zero-padding to the next 65536-byte boundary.  This padding need not
-+  actually be allocated on-disk, i.e. it may be a hole.
-+
-+- The Merkle tree, as documented in
-+  :ref:`Documentation/filesystems/fsverity.rst
-+  <fsverity_merkle_tree>`, with the tree levels stored in order from
-+  root to leaf, and the tree blocks within each level stored in their
-+  natural order.
-+
-+- Zero-padding to the next filesystem block boundary.
-+
-+- The verity descriptor, as documented in
-+  :ref:`Documentation/filesystems/fsverity.rst <fsverity_descriptor>`,
-+  with optionally appended signature blob.
-+
-+- Zero-padding to the next offset that is 4 bytes before a filesystem
-+  block boundary.
-+
-+- The size of the verity descriptor in bytes, as a 4-byte little
-+  endian integer.
-+
-+Verity inodes have EXT4_VERITY_FL set, and they must use extents, i.e.
-+EXT4_EXTENTS_FL must be set and EXT4_INLINE_DATA_FL must be clear.
-+They can have EXT4_ENCRYPT_FL set, in which case the verity metadata
-+is encrypted as well as the data itself.
-+
-+Verity files cannot have blocks allocated past the end of the verity
-+metadata.
--- 
-2.22.0
-
+ 	/* Extent size hints of zero turn off the flags. */
+ 	if (fa->fsx_extsize == 0)
+ 		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
 
 
 _______________________________________________
