@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D7CC5B578
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90EFC46478
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 06:34:33 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 64CAD21479;
+	by mail.kernel.org (Postfix) with ESMTPS id 64EA1214AF;
 	Mon,  1 Jul 2019 06:34:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="M5/LSm91";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TdtlGc2H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64CAD21479
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="E6D+a4oB";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="g931/fXK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64EA1214AF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hhptK-0003dA-Ov; Mon, 01 Jul 2019 06:34:18 +0000
+	id 1hhptK-0003dJ-Rd; Mon, 01 Jul 2019 06:34:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hch@lst.de>) id 1hhptI-0003cv-94
+ (envelope-from <hch@lst.de>) id 1hhptI-0003d1-Fr
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 06:34:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
@@ -34,9 +34,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=M5/LSm91xK1trI1EtNHO/NmKgc
- sYJD+Ndggr847LPXKOfkJF7ww9h8nMEhAbmD9cikhYQAEhi2qgMNWxacW76dhpWuOCdy42USuUPE6
- h1SxwC+3VpgwfmdTbgvOvrk1WKAanUAsws7ybfYv816ozCh1QazKhyoYud/tEr5lrfNg=;
+ bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=E6D+a4oBjzQYgTpcZjrX45trXw
+ 63kMwrBS+VO91BO8gE70yX3Ijy9vIQdekqDJZZpMVLjWxpiBCnJMSeCqVb3HH8KMkW54h/mTIHUPw
+ rCqrGcCB0aBhbVFKY/haXxmFlcARldCwG9LVJv4fJX65OT04FxIDmu7bdRVSV02+IZeY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,29 +44,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=TdtlGc2HsYcTSjnG4/OamOf6ir
- qDggLMWG9nUkOY5LrWH/kE5VTEMPTCTQcj05V0M+L9BZzCq1lQ6c5B0bevLSMMzn5loYCIwmSe2ZS
- WiMNsWj+4u6D86HJWr1NoXRCboyJDWYL7L9sXTc3IHDgXb04faGBVCHkE3fRUUgxsq3A=;
+ bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=g931/fXKgm6nLjsfliTDjQYheS
+ FyJnpJfbuK5oqZa7X5GMvxNjP2vuqHq7dSfQauWMVxKNA/ErcbgKjMBJTan/RdGXRgdcDtMzm2KMN
+ Wh0v8taFcpTj1DDj7NxtSkuC5VuA3LorG7AEn5OBb7/+OjfGM2YCKRrvpyKFSu5DCg/g=;
 Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hhptU-002q1z-Pm
+ id 1hhptU-002q1y-Or
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 06:34:30 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id CDDDF68CEC; Mon,  1 Jul 2019 08:17:56 +0200 (CEST)
-Date: Mon, 1 Jul 2019 08:17:56 +0200
+ id 45C3568C4E; Mon,  1 Jul 2019 08:17:20 +0200 (CEST)
+Date: Mon, 1 Jul 2019 08:17:20 +0200
 From: Christoph Hellwig <hch@lst.de>
 To: Damien Le Moal <damien.lemoal@wdc.com>
-Message-ID: <20190701061756.GD20073@lst.de>
+Message-ID: <20190701061720.GB20073@lst.de>
 References: <20190701050918.27511-1-damien.lemoal@wdc.com>
- <20190701050918.27511-5-damien.lemoal@wdc.com>
+ <20190701050918.27511-3-damien.lemoal@wdc.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20190701050918.27511-5-damien.lemoal@wdc.com>
+In-Reply-To: <20190701050918.27511-3-damien.lemoal@wdc.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1hhptU-002q1z-Pm
-Subject: Re: [f2fs-dev] [PATCH V6 4/4] block: Limit zone array allocation
- size
+X-Headers-End: 1hhptU-002q1y-Or
+Subject: Re: [f2fs-dev] [PATCH V6 2/4] block: Kill gfp_t argument of
+ blkdev_report_zones()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
