@@ -2,79 +2,81 @@ Return-Path: <SRS0=+7CQ=U6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14877C5B578
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40470C06510
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 20:26:57 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DA81220B7C;
-	Mon,  1 Jul 2019 20:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1B0E82183F;
+	Mon,  1 Jul 2019 20:26:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GM8Z9hC3";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="erPRg4er";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSpbrUwW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA81220B7C
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="JEuLsigr";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="D7daMtgd";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VE207eP4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B0E82183F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hi2sr-0006dQ-DV; Mon, 01 Jul 2019 20:26:41 +0000
+	id 1hi2t1-0006VB-Ad; Mon, 01 Jul 2019 20:26:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hi2sq-0006dJ-7u
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 20:26:40 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hi2t0-0006Ux-2v
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 20:26:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=314NgkE3luLEE9CBIb+pShDmju7u+6t4OmzRIumPZxo=; b=GM8Z9hC3Xhh26R6xIKHGnYfqok
- /B08iMQCsE6E0ZRcN2XK9u6/y3ru8neB2SCIth2EWgVWF7t9hleyCAEYdsy6N9bZcnk0tGVtIN+q+
- HOt+WydwiHlm8qmYBg5G+uZPybNJTNtqFjAJ1MQ8l59EuYJDWnI6rvVLLrid/ORaCRNE=;
+ bh=k124AyjwPr9iccZ8VDoQ891IoYsYSSxlTymA1RW9zJc=; b=JEuLsigr3jZwva8yAbhm9JFrsD
+ 49dMNB91MGRUQ9t4bWTWSDaKBQARAYk1F1LHksg7FMHogAJvI3QoorL5Z/GdbO36W5Bo8yfaEpZiy
+ XrnRvw7IvMHrrN9Unj+EiMCzgMP9IJXiOu+VsuYus/yl7MtOcnPqYY85SnMpDSWfZHU4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=314NgkE3luLEE9CBIb+pShDmju7u+6t4OmzRIumPZxo=; b=e
- rPRg4er4zYssMnKEDnbcOyjbn3aH7IRtMnMQi+WUsJOaevVmOb+I/7XcROmaiOI2rf9YfOoFRFvLy
- +1Scc3jKCCdc1fA+ZuD2iVmWuCMy110694mYbGqbzK6oklnpryaAIshof49qcLMLYEwjoK2A3mLEe
- 6Uu+rwMcKS8ioDb8=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=k124AyjwPr9iccZ8VDoQ891IoYsYSSxlTymA1RW9zJc=; b=D7daMtgdC6xaiPKUQfD+0byWYi
+ 4bnjO7mqaU/f7T9pWUTKf0NFyuIwL5JxMzWXCPNR4RkMVFoLPChvX9MKkAaOe8EKLkHZG7XLF19T2
+ Nv48j1o4ucWgPOwXoxrSdqVA0phWCjIGw5EkBMEwT/b8LQ2GT+RpcsZUEa8WKTCQuMBc=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hi2t3-000yxK-Og
+ id 1hi2t4-000yxL-9a
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 20:26:55 +0000
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown
  [104.132.1.77])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id E65EA20B7C;
- Mon,  1 Jul 2019 20:26:47 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 8C3E22183F;
+ Mon,  1 Jul 2019 20:26:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=default; t=1562012808;
- bh=bHXVVLIgc6WfqlmFZzYaV90ylrhq4JfZ8EnmuXsM1vM=;
- h=From:To:Cc:Subject:Date:From;
- b=OSpbrUwWPr0XVE/7R0/wA16gYkmjSek15Tqav6ajumHVktyFYoEoorUuZQF+gflA4
- 84F055Vx3NQftnhPrev4FSE19+whHobVMOFxeN4CJyKBcQqhWVncSNbipYtNqAprpc
- VnbcSOFO5cSX4XOoH65e53wf4vd8lDttaWBoyZXQ=
+ bh=0cbNlz5thpQTzDjL2iC3/D1sFOhgoRjTU/G57B/uHos=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=VE207eP4YrlwzadxlffCTs4jWNIAksZmTAt45yaOZAlvxnO/hBxjkES5ybiT+MO/R
+ ETlW6hOZiBGcJ5lGy1mBBTJPQ9y/Vo7hjvC/Rb/XqWHL94eoxc7Yz2tLcUhBJUqDoV
+ niPetrQc6a+dYK36yVKUoA5bMlvk1ASuWiyurKh4=
 From: Eric Biggers <ebiggers@kernel.org>
 To: "Darrick J . Wong" <darrick.wong@oracle.com>
-Date: Mon,  1 Jul 2019 13:26:27 -0700
-Message-Id: <20190701202630.43776-1-ebiggers@kernel.org>
+Date: Mon,  1 Jul 2019 13:26:29 -0700
+Message-Id: <20190701202630.43776-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+In-Reply-To: <20190701202630.43776-1-ebiggers@kernel.org>
+References: <20190701202630.43776-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1hi2t3-000yxK-Og
-Subject: [f2fs-dev] [PATCH 0/3] f2fs: use generic helpers for
- FS_IOC_{SETFLAGS, FSSETXATTR}
+X-Headers-End: 1hi2t4-000yxL-9a
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: use generic checking function for
+ FS_IOC_FSSETXATTR
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,27 +94,103 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This series converts f2fs to use the new VFS helper functions that check
-the parameters of the FS_IOC_SETFLAGS and FS_IOC_FSSETXATTR ioctls.
+From: Eric Biggers <ebiggers@google.com>
 
-This applies to the merge of the f2fs/dev and xfs/vfs-for-next branches:
+Make the f2fs implementation of FS_IOC_FSSETXATTR use the new VFS helper
+function vfs_ioc_fssetxattr_check(), and remove the project quota check
+since it's now done by the helper function.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev
-	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git/log/?h=vfs-for-next
+This is based on a patch from Darrick Wong, but reworked to apply after
+commit 360985573b55 ("f2fs: separate f2fs i_flags from fs_flags and ext4
+i_flags").
 
-i.e., this series will apply to mainline after these two branches get
-merged into it for 5.3.  Don't apply it to the f2fs tree by itself yet.
+Originally-from: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/f2fs/file.c | 45 ++++++++++++++-------------------------------
+ 1 file changed, 14 insertions(+), 31 deletions(-)
 
-See: https://lore.kernel.org/lkml/20190701110603.5abcbb2c@canb.auug.org.au/T/#u
-
-Eric Biggers (3):
-  f2fs: use generic checking and prep function for FS_IOC_SETFLAGS
-  f2fs: use generic checking function for FS_IOC_FSSETXATTR
-  f2fs: remove redundant check from f2fs_setflags_common()
-
- fs/f2fs/file.c | 63 ++++++++++++++++++--------------------------------
- 1 file changed, 23 insertions(+), 40 deletions(-)
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index b5b941e6448657..ae1a54ecc9fccc 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2857,52 +2857,32 @@ static inline u32 f2fs_xflags_to_iflags(u32 xflags)
+ 	return iflags;
+ }
+ 
+-static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
++static void f2fs_fill_fsxattr(struct inode *inode, struct fsxattr *fa)
+ {
+-	struct inode *inode = file_inode(filp);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+-	struct fsxattr fa;
+ 
+-	memset(&fa, 0, sizeof(struct fsxattr));
+-	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags);
++	simple_fill_fsxattr(fa, f2fs_iflags_to_xflags(fi->i_flags));
+ 
+ 	if (f2fs_sb_has_project_quota(F2FS_I_SB(inode)))
+-		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
+-							fi->i_projid);
+-
+-	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
+-		return -EFAULT;
+-	return 0;
++		fa->fsx_projid = from_kprojid(&init_user_ns, fi->i_projid);
+ }
+ 
+-static int f2fs_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
++static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
+ {
+-	/*
+-	 * Project Quota ID state is only allowed to change from within the init
+-	 * namespace. Enforce that restriction only if we are trying to change
+-	 * the quota ID state. Everything else is allowed in user namespaces.
+-	 */
+-	if (current_user_ns() == &init_user_ns)
+-		return 0;
+-
+-	if (__kprojid_val(F2FS_I(inode)->i_projid) != fa->fsx_projid)
+-		return -EINVAL;
++	struct inode *inode = file_inode(filp);
++	struct fsxattr fa;
+ 
+-	if (F2FS_I(inode)->i_flags & F2FS_PROJINHERIT_FL) {
+-		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
+-			return -EINVAL;
+-	} else {
+-		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
+-			return -EINVAL;
+-	}
++	f2fs_fill_fsxattr(inode, &fa);
+ 
++	if (copy_to_user((struct fsxattr __user *)arg, &fa, sizeof(fa)))
++		return -EFAULT;
+ 	return 0;
+ }
+ 
+ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(filp);
+-	struct fsxattr fa;
++	struct fsxattr fa, old_fa;
+ 	u32 iflags;
+ 	int err;
+ 
+@@ -2925,9 +2905,12 @@ static int f2fs_ioc_fssetxattr(struct file *filp, unsigned long arg)
+ 		return err;
+ 
+ 	inode_lock(inode);
+-	err = f2fs_ioctl_check_project(inode, &fa);
++
++	f2fs_fill_fsxattr(inode, &old_fa);
++	err = vfs_ioc_fssetxattr_check(inode, &old_fa, &fa);
+ 	if (err)
+ 		goto out;
++
+ 	err = f2fs_setflags_common(inode, iflags,
+ 			f2fs_xflags_to_iflags(F2FS_SUPPORTED_XFLAGS));
+ 	if (err)
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
