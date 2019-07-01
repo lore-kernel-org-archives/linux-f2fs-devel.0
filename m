@@ -2,42 +2,43 @@ Return-Path: <SRS0=+7CQ=U6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC34C06514
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53C4C06515
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jul 2019 15:34:13 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4EA4321473;
+	by mail.kernel.org (Postfix) with ESMTPS id BD10C208E4;
 	Mon,  1 Jul 2019 15:34:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ajhYrSMn";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TDUf3HJx";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U583/iix"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA4321473
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mADtuYym";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="NMlTDCB2";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtp2Pxjp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD10C208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hhyJa-0002Kd-8D; Mon, 01 Jul 2019 15:33:58 +0000
+	id 1hhyJk-0005oT-DQ; Mon, 01 Jul 2019 15:34:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hhyJZ-0002KQ-2u
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:33:57 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hhyJi-0005o5-NC
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qd316xXRN/K7+nOcA5+esnpkglVNHHZkIGSNr4d+fZk=; b=ajhYrSMnOXXe68f+uGrGmDUH+a
- NBxC32N6QRinX03XCTwtgMDId+J3ahYmVkgszZq8xLjNjSgUNYe0qqF02trH6xq7jKOMRjWD7pf4o
- G/FiBvN38dT9TvNMMMWrkByaxRjqM8dhDY0ZzcLub+e+1HkkzIKdI8SS/kFRbH1P16xY=;
+ bh=hLnXoqMPq3IrV4Kvrr1kQoQteHFv9ydYLIvhwoCtliI=; b=mADtuYym+Kr+ykQM2mbzAQ2RgM
+ klDtCjl/r98dMj6Byq3u165kFkybdWnJ6o+erJGwI2w2lw1DWSceCu1X62OSBaJB+5rfO4/aBqqRP
+ Y+xXLP5yQEhOJiPiHjO07bcIE16dIoFHJKXI0dOwPXsRXHSQ3Pf6N1sn3T1iVciPhiQk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +46,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qd316xXRN/K7+nOcA5+esnpkglVNHHZkIGSNr4d+fZk=; b=TDUf3HJxKNm6AJktRvEqzqxPjU
- mBANSx9epr7nVAigvpNQqetCZ+cR6mm3RrSZIqBciekNWxRGMRJ2c4Bp12qioWTMIfmkUMu49xibe
- coXlyHzU90DTLf18VMyBtds5cIvXE2LooAX3phMmC8fuhGKmQdkBhy448L/uBjIGNnRE=;
+ bh=hLnXoqMPq3IrV4Kvrr1kQoQteHFv9ydYLIvhwoCtliI=; b=NMlTDCB228JnV1JWWhBH3QFkgj
+ D9875bcukmgH7yqZWI1UJnK0qm7xU2hyIQHB1AZuzLYlyei9LVVpXbQekFOu8l8o4E1j8iOgifURd
+ sExAIkpzbOsHRVbrRYSzfthxXq56aMeiY++xqcl5v+2MYLCtO/4neBT+bA6t709gCNi8=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hhyJl-000lNC-N8
+ id 1hhyJm-003bNH-9m
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jul 2019 15:34:11 +0000
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
  [24.5.143.220])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id C128A21479;
- Mon,  1 Jul 2019 15:34:03 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id A5D5E2146F;
+ Mon,  1 Jul 2019 15:34:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1561995244;
- bh=UHMEZquVp+ldesIUu/G2OCD2a4fRDxKXlFi53PXUgIE=;
+ s=default; t=1561995243;
+ bh=ffYV/l6ccu4lXg/FKpsd2YnmOvw809vDuYKn+yvO5GQ=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=U583/iix48mhcuoEjdbkZi/fRIUSj74S3yobiEgV43qWjThvUiJp8GkRqSP/tHUJ5
- zHipaLq+ZfKH7xAvgNDGQ25AKG9+wdwwqqABprncWxy/2/n7PcP4rsFfysjrBhQ0xR
- 2Lv+K0k8CacGLQzDTGXwiE5XBqHo+tMubkrx9fOE=
+ b=gtp2PxjpSVA8IQlhUWw9Ep55B2LPFOrylyfNrc/ruiF8N9mx3ILr62VlaLkj1r6uw
+ v2epniiugEqNEn49O56OEPhEUkdI1RZbNuJlnEfH8zRlvH2GXS1FO0erymVMfiKcEA
+ gvZDNTfQOxwM79RwWRc2XErAmMUSY1Qkc1JvloRQ=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Mon,  1 Jul 2019 08:32:24 -0700
-Message-Id: <20190701153237.1777-5-ebiggers@kernel.org>
+Date: Mon,  1 Jul 2019 08:32:22 -0700
+Message-Id: <20190701153237.1777-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190701153237.1777-1-ebiggers@kernel.org>
 References: <20190701153237.1777-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1hhyJl-000lNC-N8
-Subject: [f2fs-dev] [PATCH v6 04/17] fs: uapi: define verity bit for
- FS_IOC_GETFLAGS
+X-Headers-End: 1hhyJm-003bNH-9m
+Subject: [f2fs-dev] [PATCH v6 02/17] fs-verity: add MAINTAINERS file entry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,33 +101,38 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add FS_VERITY_FL to the flags for FS_IOC_GETFLAGS, so that applications
-can easily determine whether a file is a verity file at the same time as
-they're checking other file flags.  This flag will be gettable only;
-FS_IOC_SETFLAGS won't allow setting it, since an ioctl must be used
-instead to provide more parameters.
-
-This flag matches the on-disk bit that was already allocated for ext4.
+fs-verity will be jointly maintained by Eric Biggers and Theodore Ts'o.
 
 Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- include/uapi/linux/fs.h | 1 +
- 1 file changed, 1 insertion(+)
+ MAINTAINERS | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 59c71fa8c553..df261b7e0587 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -306,6 +306,7 @@ struct fscrypt_key {
- #define FS_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
- #define FS_HUGE_FILE_FL			0x00040000 /* Reserved for ext4 */
- #define FS_EXTENT_FL			0x00080000 /* Extents */
-+#define FS_VERITY_FL			0x00100000 /* Verity protected inode */
- #define FS_EA_INODE_FL			0x00200000 /* Inode used for large EA */
- #define FS_EOFBLOCKS_FL			0x00400000 /* Reserved for ext4 */
- #define FS_NOCOW_FL			0x00800000 /* Do not cow file */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a6954776a37e..655065116f92 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6505,6 +6505,18 @@ S:	Maintained
+ F:	fs/notify/
+ F:	include/linux/fsnotify*.h
+ 
++FSVERITY: READ-ONLY FILE-BASED AUTHENTICITY PROTECTION
++M:	Eric Biggers <ebiggers@kernel.org>
++M:	Theodore Y. Ts'o <tytso@mit.edu>
++L:	linux-fscrypt@vger.kernel.org
++Q:	https://patchwork.kernel.org/project/linux-fscrypt/list/
++T:	git git://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git fsverity
++S:	Supported
++F:	fs/verity/
++F:	include/linux/fsverity.h
++F:	include/uapi/linux/fsverity.h
++F:	Documentation/filesystems/fsverity.rst
++
+ FUJITSU LAPTOP EXTRAS
+ M:	Jonathan Woithe <jwoithe@just42.net>
+ L:	platform-driver-x86@vger.kernel.org
 -- 
 2.22.0
 
