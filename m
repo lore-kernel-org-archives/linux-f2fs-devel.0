@@ -7,19 +7,19 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D8FC5B57D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Jul 2019 07:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1094DC06511
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Jul 2019 08:11:59 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C91452146F;
-	Tue,  2 Jul 2019 07:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D8E0D20659;
+	Tue,  2 Jul 2019 08:11:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="hyHE/wQj";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="QEkoVaHV";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Rctr8X8N";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="I8u313E8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C91452146F
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="RyMsSP+z";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="nO0VsFNo";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ZXg0hrR9";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="SUuiCpEy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8E0D20659
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,79 +28,79 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=SkOBizpS0RI8Ora4fbHMoTODRk4gz89hNp2h49DaAf0=; b=hyHE/wQjc0JmYe/YnR7EiLX1tJ
-	S05KOX3ekA7jneKCdPrKJn9V0XxL9/xH6a4ZMzpXTAoWj8JfgOsJz/pl8hwvJcQzO0ZhYvWYxFcPt
-	7krEAJCwd3wUKyCLgHDZ3BKboLhCpmR1iHmUV/rleEPb5Bd59Bu+I17RSRYfJk+95E2Q=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	bh=v2evgfUoUWIavlxD38m5tcnNvDJCIlJnFEgY+M1TGSM=; b=RyMsSP+zeZGaye3nNASish7m6g
+	0XQe8jkW1uWv/1qXtysmoVZF14IIorIyzaEKCmblP/J5Hff/LAUdda5lYzz217F74OSbOaCigtFcv
+	S7DVJ6TuxvrWR4qHKjlKLRDPyTN7bO0SY51Ud2pdXiKnfsPacfKmYS2bBe4M9oNYG2R8=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hiDNb-0000qb-VY; Tue, 02 Jul 2019 07:39:07 +0000
+	id 1hiDtI-0007XT-8e; Tue, 02 Jul 2019 08:11:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from
- <3hgQbXQkKAOkZNPLYNSPYRZZRWP.NZX@flex--oceanchen.bounces.google.com>)
- id 1hiDNa-0000qU-6V
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Jul 2019 07:39:06 +0000
+ <3NhAbXQkKALEfTVReTYVeXffXcV.Tfd@flex--oceanchen.bounces.google.com>)
+ id 1hiDtH-0007XH-Rk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Jul 2019 08:11:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
  Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=K8Aexb7ljwnjo43LTD84KFxt2yaGUlciYewUGizxqp8=; b=QEkoVaHV2Yd0ID4xzQ1oSXXd1l
- j5a0YpD/2Tp40PX84hE31o1Rf92BKdXw99LDVJsJJ2ihw/PrJirySKkmevnqZ05iO55sUDAfKaOmT
- ghDQIUnd3gFeCO8Xoy38wDrYggYT8EneX1F9s+EAXANEARuvlwwbfatMEaUctjRHr73A=;
+ bh=NEsgFhBOsHO1SUu/GnNK2DPDOJTChWsbzIPYkeXfosU=; b=nO0VsFNoMxFmR7LrfiPSpTxtgu
+ AjFHZV6D/8KwdxbPuVkamuvKVugnXh9D08dPcp9MW2Zd8bELkQ7oHsFqWV/dffLnma/H6CsqYsdfY
+ KL+nZrM2QtBIpmg0GCvBuLW4LlSUWZ4On6bobED3AiGqM4tU/40HO/c7GUWBGxskR0aE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
  Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=K8Aexb7ljwnjo43LTD84KFxt2yaGUlciYewUGizxqp8=; b=R
- ctr8X8NqA8JoIfwqDxO7N8kPWwbnzekYeIvgiVEo5KbeYNa+QId3xNw1RwsivSFeTfj2cTnRJLpnE
- pxlro77Vicwjk7ieUKYBNs2MvV0npTApsxaAO0LcOfaSAIudplCky4bBEWaxxJQudC3jZ1eMsVJjD
- xLnTfndHnJ2L5FYA=;
-Received: from mail-ua1-f73.google.com ([209.85.222.73])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=NEsgFhBOsHO1SUu/GnNK2DPDOJTChWsbzIPYkeXfosU=; b=Z
+ Xg0hrR9J33BNeouYqeUoQf8tmS2LMezDTZWvW08xC2Tye50hyXFxzzwMyAGNdflHW6JfQ9Sh/ZzBr
+ Rtp9lhtu95JinWDGOUa7kwytnX+FWPezoNOVJhkxs45HrkfovTDNpL6xJbmHEHvKcDxdiz2YsI4rH
+ 4NtwJUo9eRyN5V10=;
+Received: from mail-qk1-f202.google.com ([209.85.222.202])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hiDNm-001ahM-Pz
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Jul 2019 07:39:21 +0000
-Received: by mail-ua1-f73.google.com with SMTP id q23so2921147uam.9
+ id 1hiDtM-00409j-Qc
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Jul 2019 08:11:58 +0000
+Received: by mail-qk1-f202.google.com with SMTP id n77so15927860qke.17
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 02 Jul 2019 00:39:18 -0700 (PDT)
+ Tue, 02 Jul 2019 01:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=date:message-id:mime-version:subject:from:to:cc;
- bh=K8Aexb7ljwnjo43LTD84KFxt2yaGUlciYewUGizxqp8=;
- b=I8u313E8FBDrYJbHjZTqlq9VFU2xsZDW/+q0ovmtc6t5f9akeBUHu4ahrsM5qqlBxU
- +wqic6S14w0ZfSbKtCZYxIRdeM3SNZscRHz6YumpcCn+qA7gKfM6ZLvRQTljOuNl/7dY
- 0vogG0ZPjZvUecplrxHpwaDiB4qufA2wonaIZUY1hq7CrZc1BsWNwOsvN0XgOEPInKA/
- a3sAOB5ExVdMRqQJZ9PMTxtKQavFNSontACIoGATuBaO4n3/BAN4e7YwXZHaz/bCnoWW
- Bdb0IPtLchhv0XEsSS70YRGodKiO+AwwnwC1HYxrKSw4nco/9zIkbV7n5viarectEKop
- 6b/w==
+ bh=NEsgFhBOsHO1SUu/GnNK2DPDOJTChWsbzIPYkeXfosU=;
+ b=SUuiCpEyaak5XfddxqDhgd8CZLbHmyS+aWA9tOcpJKwvJ+lmczEa4pAv2doIL/MNAx
+ oxbvwgOT7JP95TVpHvEKVEhqSCkHTaAIJ2qYLYjYX/sM5EVQ/ehuStA1RZaAx9WKHIu2
+ HOMEvp+RFG18HWtxgTcDEihisRNtMoN4fr51BGqd0Y1aNZ9EUIBxSnArjNTNPZj0qKeC
+ 7lDfBfPvpuhQ5dGD+qwIbY14OOVkD/4L9H5Ax829EjB1ByMvbQVVg8/LyR1nThS/JZpC
+ sGyguTYXTlq79AT/k0ECihTxoUZa47U8PBCFXFAtW0FYIKiTXq8syA+AF8rl0mZfO7q0
+ 9njw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
- bh=K8Aexb7ljwnjo43LTD84KFxt2yaGUlciYewUGizxqp8=;
- b=dPS3rRlSgn3fUd4VEHFRTGIYtx/i8X5BxcjYorGP1H7+ZzcP1ILnNvnGOW+BZ+WEec
- j4aQXK14oDAiH207QH171GdtTEdp1NZ0LnafHCJ+k030bAAD7auaa6XfGgJTjjDrq1D1
- gdPyIp0B9Mfivr4iCZt/vSzZxuJmUzTsotymbso0XB7zPeN/hgqVt0GAp+gMjCJkpY1k
- H2UyvVe0/n1T9WsxhOtHjJ774u0e8WUa8Xq0IS/VIlK+CmMolb6plV78wQyg3AFiKHtr
- MKsG3NMDrcejzkLV7rF3P3CUSxgYvPW+U1mmV/sW4DQvQy3tHDkeQwAW3NKchnCP3s5e
- eKLw==
-X-Gm-Message-State: APjAAAX/XqDBbmupqxGtFN69PA0UZCbMkwdVdLBoL1iQI0TiY51b/3hB
- 0ZCnQQ8Aa2B+u/7IG7t8OjDWSHBuW5lWakE=
-X-Google-Smtp-Source: APXvYqyNbkUWK4ZjMisvx3QNm+os2jiG+ShivAJCx8Dft26tvmFVMGPVIfe17cJhkyVPwEZgQqTehJX9HdetKU0=
-X-Received: by 2002:a63:60cc:: with SMTP id u195mr28865210pgb.13.1562051718453; 
- Tue, 02 Jul 2019 00:15:18 -0700 (PDT)
-Date: Tue,  2 Jul 2019 15:15:10 +0800
-Message-Id: <20190702071510.158351-1-oceanchen@google.com>
+ bh=NEsgFhBOsHO1SUu/GnNK2DPDOJTChWsbzIPYkeXfosU=;
+ b=Mfl+3sEqKSZkkCmOtUAv904lvzp7spMPlYAEcRC8ins3F0+GdmbnIdb6FZVVE+JzE+
+ rCvpxtndcMMQP0XcikA/Tv0q0D1LiunCb5SQl7O3p32hURIkpd2aB9Qi5ycuGak+Y9Qk
+ 3oB5rR4o+9KrJLmpRNYuj4486dv5/Yta2dmd04qrpZUAUD23F0i3ellGt0UTB79YIzxO
+ d0nphbRUQaGHOoS4at8nW5R+JB8PlvxwnWDJ08BXnnXZvk07REjF6ZWR30t5Yf5ZL94K
+ sYMT9T8CFGEmVrZz/DiT5TDkqLpJaMFD6QpsGXPhnKou7BEKflVK0ztqN2YK04RWeO5F
+ BzHw==
+X-Gm-Message-State: APjAAAUeCbixDap+Q0lb88+/W6OUj3pFvVCTiSR5n0H7vG/c3uB8J4Iq
+ faidylgjCTbrjgst0eKG393uF5yny5kVO8w=
+X-Google-Smtp-Source: APXvYqwrXvbk11TVxxDHQCIkdbAtLKP9A2wasQz4c5X/idjoID/jWMQN/mQNqcB/Hw6wGFCTefiRv8WenyeupcE=
+X-Received: by 2002:a37:ac0a:: with SMTP id e10mr24972711qkm.168.1562054710600; 
+ Tue, 02 Jul 2019 01:05:10 -0700 (PDT)
+Date: Tue,  2 Jul 2019 16:05:03 +0800
+Message-Id: <20190702080503.175149-1-oceanchen@google.com>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 To: jaegeuk@kernel.org, yuchao0@huawei.com, 
  linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-X-Headers-End: 1hiDNm-001ahM-Pz
-Subject: [f2fs-dev] [PATCH] f2fs: avoid out-of-range memory access
+X-Headers-End: 1hiDtM-00409j-Qc
+Subject: [f2fs-dev] [PATCH v2] f2fs: avoid out-of-range memory access
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,20 +122,22 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 blk_off might over 512 due to fs corrupt.
 Use ENTRIES_IN_SUM to protect invalid memory access.
 
+v2:
+- fix typo
 Signed-off-by: Ocean Chen <oceanchen@google.com>
 ---
  fs/f2fs/segment.c | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8dee063c833f..b83c23ebae1f 100644
+index 8dee063c833f..a5e8af0bd62e 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
 @@ -3403,6 +3403,8 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
  
  		for (j = 0; j < blk_off; j++) {
  			struct f2fs_summary *s;
-+			if (blk_off >= ENTRIES_IN_SUM)
++			if (j >= ENTRIES_IN_SUM)
 +				return -EFAULT;
  			s = (struct f2fs_summary *)(kaddr + offset);
  			seg_i->sum_blk->entries[j] = *s;
