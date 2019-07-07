@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3CBC48BDB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Jul 2019 18:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 026B2C48BDB
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Jul 2019 18:54:43 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5FEB020828;
-	Sun,  7 Jul 2019 18:51:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id BF8D420684;
+	Sun,  7 Jul 2019 18:54:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="g7l4Yd50";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Apcz29jD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FEB020828
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="jy3gFG+E";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fF3qVLhM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF8D420684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hkCG2-0006xU-Lk; Sun, 07 Jul 2019 18:51:30 +0000
+	id 1hkCIn-0003lS-ER; Sun, 07 Jul 2019 18:54:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1hkCG1-0006xH-HP
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Jul 2019 18:51:29 +0000
+ (envelope-from <tytso@mit.edu>) id 1hkCIl-0003lK-Nm
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Jul 2019 18:54:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pOZUnXzQy8pM4hC1E9Q3b5x4/DgBQWX+zV03BRpyKSM=; b=g7l4Yd50TKMgbE7PW5/O4/08XB
- 6OLuB8zKsP3gulSKrukzmMTLChWYZdxzBIvgW4bLWs9XMcIvKyOTTUfIUj23VGSq1g58XThx+ocFl
- nWWNPEfJKfK7jQK2cdHydWzTPdvDw4aaLRnYNs2pekUcY5KuB1xUCNGX2yED685ZTFPo=;
+ bh=uEOVYhonbLU86WIV8IuYG31sgO3qVnrdBrMU8JfIK+c=; b=jy3gFG+E9OaBjO8dTmdp4OuMy0
+ Itzo/UYQOIXvROL+VK6U2BcEeud36ShfLUacoljjYWw0ztuiCiwIt/acpmaMhDyoUQpnhNj6vKegj
+ 1G+jleffGaNpmSNSJLE01dscMMrU1xyUjwOTDo+hpPtyGALVnmKcE2zwaiIQHE0BEZDw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,34 +44,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=pOZUnXzQy8pM4hC1E9Q3b5x4/DgBQWX+zV03BRpyKSM=; b=Apcz29jD33/xIjrTJYDQEXp+82
- nKPXiVXyoylssPGph+2Gzp9YH+DZwvB8wMI2FVENtZEMqBs/cbjP1Kb1lwYGOsvIElUQz3UE02hnZ
- 3btYZ+Py2wDGDquIDC0/exvxtzlITzhbBJH4by66lqnqJhno77ok6WURgknSv1XRPzF8=;
+ bh=uEOVYhonbLU86WIV8IuYG31sgO3qVnrdBrMU8JfIK+c=; b=fF3qVLhMDSwEQB3DJewEVDjS+g
+ zatuZeQtB62Kb2kCMXC5vQYrd4l92I3VdRNUdrQ7zQuFRl66DOe/CYDy1GI3EWdILDQ1vkKvaJw0o
+ m3Sch9cN0XVXECTBZFGHy70ffZpe+GRW7cFveOI4Q6neh5gO4/blNX+42FGklc91lveU=;
 Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hkCGC-009Jxf-UH
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Jul 2019 18:51:44 +0000
+ id 1hkCJ6-009K6P-28
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Jul 2019 18:54:41 +0000
 Received: from callcc.thunk.org (75-104-86-74.mobility.exede.net
  [75.104.86.74] (may be forged)) (authenticated bits=0)
  (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x67IpJhW015414
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x67IsJgr016282
  (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 7 Jul 2019 14:51:25 -0400
+ Sun, 7 Jul 2019 14:54:26 -0400
 Received: by callcc.thunk.org (Postfix, from userid 15806)
- id CD13542002E; Sun,  7 Jul 2019 14:51:17 -0400 (EDT)
-Date: Sun, 7 Jul 2019 14:51:17 -0400
+ id 7EC8C42002E; Sun,  7 Jul 2019 14:54:18 -0400 (EDT)
+Date: Sun, 7 Jul 2019 14:54:18 -0400
 From: "Theodore Ts'o" <tytso@mit.edu>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20190707185117.GC19775@mit.edu>
+Message-ID: <20190707185418.GD19775@mit.edu>
 References: <20190701153237.1777-1-ebiggers@kernel.org>
- <20190701153237.1777-15-ebiggers@kernel.org>
+ <20190701153237.1777-16-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20190701153237.1777-15-ebiggers@kernel.org>
+In-Reply-To: <20190701153237.1777-16-ebiggers@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1hkCGC-009Jxf-UH
-Subject: Re: [f2fs-dev] [PATCH v6 14/17] ext4: add basic fs-verity support
+X-Headers-End: 1hkCJ6-009K6P-28
+Subject: Re: [f2fs-dev] [PATCH v6 15/17] ext4: add fs-verity read support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,52 +93,31 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jul 01, 2019 at 08:32:34AM -0700, Eric Biggers wrote:
+On Mon, Jul 01, 2019 at 08:32:35AM -0700, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> Add most of fs-verity support to ext4.  fs-verity is a filesystem
-> feature that enables transparent integrity protection and authentication
-> of read-only files.  It uses a dm-verity like mechanism at the file
-> level: a Merkle tree is used to verify any block in the file in
-> log(filesize) time.  It is implemented mainly by helper functions in
-> fs/verity/.  See Documentation/filesystems/fsverity.rst for the full
-> documentation.
+> Make ext4_mpage_readpages() verify data as it is read from fs-verity
+> files, using the helper functions from fs/verity/.
 > 
-> This commit adds all of ext4 fs-verity support except for the actual
-> data verification, including:
+> To support both encryption and verity simultaneously, this required
+> refactoring the decryption workflow into a generic "post-read
+> processing" workflow which can do decryption, verification, or both.
 > 
-> - Adding a filesystem feature flag and an inode flag for fs-verity.
+> The case where the ext4 block size is not equal to the PAGE_SIZE is not
+> supported yet, since in that case ext4_mpage_readpages() sometimes falls
+> back to block_read_full_page(), which does not support fs-verity yet.
 > 
-> - Implementing the fsverity_operations to support enabling verity on an
->   inode and reading/writing the verity metadata.
-> 
-> - Updating ->write_begin(), ->write_end(), and ->writepages() to support
->   writing verity metadata pages.
-> 
-> - Calling the fs-verity hooks for ->open(), ->setattr(), and ->ioctl().
-> 
-> ext4 stores the verity metadata (Merkle tree and fsverity_descriptor)
-> past the end of the file, starting at the first 64K boundary beyond
-> i_size.  This approach works because (a) verity files are readonly, and
-> (b) pages fully beyond i_size aren't visible to userspace but can be
-> read/written internally by ext4 with only some relatively small changes
-> to ext4.  This approach avoids having to depend on the EA_INODE feature
-> and on rearchitecturing ext4's xattr support to support paging
-> multi-gigabyte xattrs into memory, and to support encrypting xattrs.
-> Note that the verity metadata *must* be encrypted when the file is,
-> since it contains hashes of the plaintext data.
-> 
-> This patch incorporates work by Theodore Ts'o and Chandan Rajendra.
-> 
+> Co-developed-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Looks good.  You can add:
+Looks good.  Since there's a S-o-B, some might claim that a
+Reviewed-by: is not necessary, but to the extent that you modified
+this code as well:
 
 Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
-Thanks,
-
-					- Ted
+							- Ted
 
 
 _______________________________________________
