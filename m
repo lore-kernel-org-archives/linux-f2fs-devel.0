@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7631EC606C7
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  8 Jul 2019 18:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1001EC606BD
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  8 Jul 2019 18:39:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 47389217F4;
-	Mon,  8 Jul 2019 18:39:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D6C93217F4;
+	Mon,  8 Jul 2019 18:39:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KtDkcboc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Rsi8ej9E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47389217F4
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lo3GTf2S";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TLVf9mEj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C93217F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hkYXi-0007Vi-1k; Mon, 08 Jul 2019 18:39:14 +0000
+	id 1hkYYA-0007XX-4b; Mon, 08 Jul 2019 18:39:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1hkYXh-0007VW-17
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 08 Jul 2019 18:39:13 +0000
+ id 1hkYY9-0007XR-OV
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 08 Jul 2019 18:39:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
  :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=16ohAQrawj0uRgshlV1K6AIp/GiF03uCfYgoC8/mcX4=; b=KtDkcbocV6qDzJ35acVvVBpVJh
- 72pHl8L80tyT14Xj4Z5kLgIdN4Ek5QJvYxrjxuU09BU6vH0eRijcaBB+PEBctzJIbddbpH3NmVhfk
- 8qYVxSSzoVnPIlPllQ+coxQ3JGhv+ptxCYseyO7/afc7xOY3eFTcq56SGU6Cwba9Q2i0=;
+ bh=eTEutr/1grTW0LlZ7T3pPqVEKRRAZjfsbgy3q0UnJws=; b=lo3GTf2SzojpPC/dFr9Ypyga0K
+ Ienng4u0cP50HLf8nweF0DWLKhAzAPHSJrSuvg2w0ggu7smkVKgQQvYbyIVjSkXvbyO7/EGEDaQN+
+ 9KqOros3Fq0nRu5yLA4CAiQ+yksf4gGjRFSYIlrM8a8eFo+7rclol7Q28cEQpyqf0WsA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
@@ -45,23 +45,23 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=16ohAQrawj0uRgshlV1K6AIp/GiF03uCfYgoC8/mcX4=; b=Rsi8ej9EkS93QEqzNvuInvj1Am
- FQZr+GXRoPqB0Na+LirB0dduxewNEc+G9QWd3UPrAF4W6RcJZcxDrxXqHPLo6S3iVVOb1D6IBTZBP
- aUiAdiTv6Y+dQLrdQf0l21WyFqtL3faRo4LQe2EGHW4yZjBbgpJydmjYBAmbBQlG4nTQ=;
+ bh=eTEutr/1grTW0LlZ7T3pPqVEKRRAZjfsbgy3q0UnJws=; b=TLVf9mEjx+wAgAZBlb8NhUu6LK
+ e2LtO8AsyCnonvWEY9pTNp7ey9w5eOZNXC9j614Kzc2sukq0mohE8uy/Kzeq4Om4TGZ6LZgw4Va60
+ EeayOMW7Zi8DsYHZBKEIGpHR5IkzGu6PWULl9SKKXHXepbMb2q9C5OeoV6A7rtflWSVM=;
 Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hkYXt-00Af6V-88
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 08 Jul 2019 18:39:26 +0000
+ id 1hkYYL-00Af86-TQ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 08 Jul 2019 18:39:55 +0000
 Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
- by mail.wl.linuxfoundation.org (Postfix) with ESMTP id A1A28262F2
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 7D019262F2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  8 Jul 2019 18:39:19 +0000 (UTC)
+ Mon,  8 Jul 2019 18:39:47 +0000 (UTC)
 Received: by mail.wl.linuxfoundation.org (Postfix, from userid 486)
- id 95A40285F2; Mon,  8 Jul 2019 18:39:19 +0000 (UTC)
+ id 709CB285F2; Mon,  8 Jul 2019 18:39:47 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon, 08 Jul 2019 18:39:19 +0000
+Date: Mon, 08 Jul 2019 18:39:47 +0000
 X-Bugzilla-Reason: None
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
@@ -77,16 +77,16 @@ X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_status resolution
-Message-ID: <bug-203171-202145-F0vF1x3peS@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-203171-202145@https.bugzilla.kernel.org/>
-References: <bug-203171-202145@https.bugzilla.kernel.org/>
+Message-ID: <bug-203341-202145-1x9DHjMCAW@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-203341-202145@https.bugzilla.kernel.org/>
+References: <bug-203341-202145@https.bugzilla.kernel.org/>
 X-Bugzilla-URL: https://bugzilla.kernel.org/
 Auto-Submitted: auto-generated
 MIME-Version: 1.0
 X-Virus-Scanned: ClamAV using ClamSMTP
-X-Headers-End: 1hkYXt-00Af6V-88
-Subject: [f2fs-dev] [Bug 203171] PF error: at
- __remove_dirty_segment+0x61/0xd0
+X-Headers-End: 1hkYYL-00Af86-TQ
+Subject: [f2fs-dev] [Bug 203341] Kernel read fault when mounting a crafted
+ image and running program
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,7 +102,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=203171
+https://bugzilla.kernel.org/show_bug.cgi?id=203341
 
 Jungyeon (jungyeon@gatech.edu) changed:
 
