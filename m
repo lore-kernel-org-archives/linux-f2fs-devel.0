@@ -1,111 +1,79 @@
-Return-Path: <SRS0=j7y+=VH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=63a8=VI=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A695BC74A36
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 10 Jul 2019 23:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C24FC74A36
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jul 2019 01:01:57 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 751E320665;
-	Wed, 10 Jul 2019 23:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 185BC21019;
+	Thu, 11 Jul 2019 01:01:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="aXBzeBaP";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="A/U5WAz0";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="F7tfibXP";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="aXowkVMI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751E320665
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VF8Hbze0";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="hM6QXkVh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185BC21019
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
-	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=jxfrER6J0jhxicqc2Irf7Ox31iGTW997UOjw9u7u81w=; b=aXBzeBaPnMoWq7NZzSRHOOByP
-	ZYStDh/HFOMXlogoadQxISpvJUpHRujjuS1CvYQFruLY+hj2L5zlcvWNGlHUxVYmDd5hkwoTfUCn4
-	GMdRcLPICa43avBZ++wj/0PKmoS7ivpcQ1nQtHNSj3soRfjPsCcjYYjkt091HhCuftvYw=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hlLwg-0005oL-4T; Wed, 10 Jul 2019 23:24:18 +0000
+	id 1hlNTA-00054K-Lu; Thu, 11 Jul 2019 01:01:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3Hm0mXQYKAIExfy3fylttlqj.htr@flex--satyat.bounces.google.com>)
- id 1hlLwe-0005o7-RF
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Jul 2019 23:24:16 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1hlNT9-00054C-5S
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jul 2019 01:01:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
- Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4/QTYY2AlGrGFK44WSp0Jd8POW7A5Vb4AZQh/O/gS78=; b=A/U5WAz0cTk0zTMVoMAfEuj2y
- RXzdFlHe7UuzucVCrQ++3S8Ylv9SglidyTBXE76i9I6HtUORf3NAVyt4VyZyLqFcZ7DVsrOVCoDZI
- jA6QPEJUj/JQ3p2objLJB/cA04NAaf72l0yIoYbU9rBoWAxB5/agKPC43p1Kk76N03C0k=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=kMa+Lz+l7/Zmmy6BUvPbGUsA2OLMq1L69KfOKeMbI6s=; b=VF8Hbze03wa8C2P0Ept2fo1jm5
+ H4wwiAW7zP4e3QQwhcNtkHKnKo5EAILQDksLRlg71JoZcS4elkDTBaAJW/V5Wt4A5qm1Qin4z7Ood
+ FDmvCFHVdKIddOejGl5zMoNHZwIBXOUojI48nVJI0pLeTLKuX4DWe+RQ8BSVQ5m44Mu0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=4/QTYY2AlGrGFK44WSp0Jd8POW7A5Vb4AZQh/O/gS78=; b=F7tfibXPlAWajEfZrmS51ySfWH
- hLmn3oBfM3b9eQMVA4USdeqN4tjc2M3i49GXNJZ5jaFfd1zDcj0KQH3i5GUK0kiua3zrz6onJW1OL
- RXIeOIdXGq9bSPMYF6q05Wt7Eo77J2YK7mdINegjNh/G7uSANz3d6a10+TOOqABbMSxE=;
-Received: from mail-qt1-f201.google.com ([209.85.160.201])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1hlLwd-00F45q-GA
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 10 Jul 2019 23:24:16 +0000
-Received: by mail-qt1-f201.google.com with SMTP id r58so3859006qtb.5
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 10 Jul 2019 16:24:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=4/QTYY2AlGrGFK44WSp0Jd8POW7A5Vb4AZQh/O/gS78=;
- b=aXowkVMI94/7JLmk41Qo1UxhN8v6st8xbXGSMPE3U6Eds/64QzO+KcB3gIf3sqxl4e
- twxxi2CN0MOH+fXUVZLrPcRvb/uEj7UvYANSi5QFUXOCfNLSz3SfLBMXUKYkKcsOMQT6
- 0p04ifOd9ksIMt0EdEm5Lib6ExUTlBTyMl56R7u8HXyWwmgs20MD8p7w3CIb93crPPRW
- kUU8tdkkf0BkVr2Zop+DNUVyn7AKgaa/i1chZXqspHI1G0N0WKX224J/bpF7JGAZx/Yu
- rODbft1B8eDM1kUBFSRkXWujlFmXPxPsYZCKF1ZL6b4mVZoAhRPuOjPQj2xFFlteRUKO
- wr7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:date:in-reply-to:message-id:mime-version
- :references:subject:from:to:cc;
- bh=4/QTYY2AlGrGFK44WSp0Jd8POW7A5Vb4AZQh/O/gS78=;
- b=a6JwHwAI4AxaWT/cQ1dv0gGfOwGhXwPtKXtmzASlz6Xj9VsQqewZojIb3DRdpTGXh4
- S01z2V8YZyldeLuWSuKl6uyOgIVpe66fep122hL5We+SDVaioYcGet87pW+nmcn2nf8X
- p2FH4iY5+3lwono7/ZQLWy0/4YWU2wEUHbGw+xfQEOmF5Xkkc2SudTlOGMQoIJEcYZFF
- yW4dPoT3jSuI7pWge8d5tuoINTwhSRMfqbw4PvZpTl6uV1T54kMmgp6qFeoRQbA7wwOl
- d2RfvXjaEndBUTSE0umE4k3h9gsU62gqzRHNjKMp8iF/u/gJydb1PYbvAVFx+0Bsa1Vp
- n2og==
-X-Gm-Message-State: APjAAAWlGP5XhE6MTg1Rx1m0z71zlGSA+lt75nMfTasK9/xaVxv5ix6h
- bbq1/O/FFp8qHcKD7F08UDf6s/tuQnQ=
-X-Google-Smtp-Source: APXvYqznz5aKxFDmxJVIXALkeXeWkpTA/DKOsnNz9XgpUJafD2fHXkHEitHcmq/qQy5SQBDPtZ0vFryg76U=
-X-Received: by 2002:ae9:ea09:: with SMTP id f9mr532639qkg.379.1562799390249;
- Wed, 10 Jul 2019 15:56:30 -0700 (PDT)
-Date: Wed, 10 Jul 2019 15:56:05 -0700
-In-Reply-To: <20190710225609.192252-1-satyat@google.com>
-Message-Id: <20190710225609.192252-5-satyat@google.com>
-Mime-Version: 1.0
-References: <20190710225609.192252-1-satyat@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1hlLwd-00F45q-GA
-Subject: [f2fs-dev] [PATCH 4/8] scsi: ufs: UFS driver v2.1 spec crypto
- additions
+ bh=kMa+Lz+l7/Zmmy6BUvPbGUsA2OLMq1L69KfOKeMbI6s=; b=hM6QXkVhFpaEzX1vs7G/Pbn2Q1
+ Ijo+fOigNlyCLtfI23Br/EiB77fF44OcqWvUMknh2WHOxV4f2zdGzRQGG5soH+/deLCG5PVJKv3s4
+ RudJYxufi2aOtW1hK8tszCqV+CJszhf2XcATnib7BQ1k74Nmq0Vkdfl8LSwdwhwzcJcE=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ id 1hlNT6-00FVdx-Sp
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jul 2019 01:01:55 +0000
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id 367194338F8E0D5DD9CB;
+ Thu, 11 Jul 2019 09:01:45 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 11 Jul
+ 2019 09:01:39 +0800
+To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-f2fs-devel@lists.sourceforge.net>
+References: <20190705062910.39163-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <767973da-a4c8-74e6-cffa-55ab656de7a0@huawei.com>
+Date: Thu, 11 Jul 2019 09:01:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190705062910.39163-1-jaegeuk@kernel.org>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1hlNT6-00FVdx-Sp
+Subject: Re: [f2fs-dev] [PATCH] f2fs: allow all the users to pin a file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,177 +85,16 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Satya Tangirala via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Satya Tangirala <satyat@google.com>
-Cc: Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
- Parshuram Raju Thombare <pthombar@cadence.com>,
- Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
- Kuohong Wang <kuohong.wang@mediatek.com>, Satya Tangirala <satyat@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add the crypto registers and structs defined in v2.1 of the JEDEC UFSHCI
-specification in preparation to add support for inline encryption to
-UFS.
+On 2019/7/5 14:29, Jaegeuk Kim wrote:
+> This patch allows users to pin files.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Signed-off-by: Satya Tangirala <satyat@google.com>
----
- drivers/scsi/ufs/ufshcd.c |  2 ++
- drivers/scsi/ufs/ufshcd.h |  5 +++
- drivers/scsi/ufs/ufshci.h | 67 +++++++++++++++++++++++++++++++++++++--
- 3 files changed, 72 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 3fe3029617a8..36413f97074d 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -4724,6 +4724,8 @@ ufshcd_transfer_rsp_status(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
- 	case OCS_MISMATCH_RESP_UPIU_SIZE:
- 	case OCS_PEER_COMM_FAILURE:
- 	case OCS_FATAL_ERROR:
-+	case OCS_INVALID_CRYPTO_CONFIG:
-+	case OCS_GENERAL_CRYPTO_ERROR:
- 	default:
- 		result |= DID_ERROR << 16;
- 		dev_err(hba->dev,
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index ecfa898b9ccc..d3b6a6b57a37 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -692,6 +692,11 @@ struct ufs_hba {
- 	 * the performance of ongoing read/write operations.
- 	 */
- #define UFSHCD_CAP_KEEP_AUTO_BKOPS_ENABLED_EXCEPT_SUSPEND (1 << 5)
-+	/*
-+	 * This capability allows the host controller driver to use the
-+	 * inline crypto engine, if it is present
-+	 */
-+#define UFSHCD_CAP_CRYPTO (1 << 6)
- 
- 	struct devfreq *devfreq;
- 	struct ufs_clk_scaling clk_scaling;
-diff --git a/drivers/scsi/ufs/ufshci.h b/drivers/scsi/ufs/ufshci.h
-index 6fa889de5ee5..a757eaf99a19 100644
---- a/drivers/scsi/ufs/ufshci.h
-+++ b/drivers/scsi/ufs/ufshci.h
-@@ -90,6 +90,7 @@ enum {
- 	MASK_64_ADDRESSING_SUPPORT		= 0x01000000,
- 	MASK_OUT_OF_ORDER_DATA_DELIVERY_SUPPORT	= 0x02000000,
- 	MASK_UIC_DME_TEST_MODE_SUPPORT		= 0x04000000,
-+	MASK_CRYPTO_SUPPORT			= 0x10000000,
- };
- 
- #define UFS_MASK(mask, offset)		((mask) << (offset))
-@@ -143,6 +144,7 @@ enum {
- #define DEVICE_FATAL_ERROR			0x800
- #define CONTROLLER_FATAL_ERROR			0x10000
- #define SYSTEM_BUS_FATAL_ERROR			0x20000
-+#define CRYPTO_ENGINE_FATAL_ERROR		0x40000
- 
- #define UFSHCD_UIC_PWR_MASK	(UIC_HIBERNATE_ENTER |\
- 				UIC_HIBERNATE_EXIT |\
-@@ -153,11 +155,13 @@ enum {
- #define UFSHCD_ERROR_MASK	(UIC_ERROR |\
- 				DEVICE_FATAL_ERROR |\
- 				CONTROLLER_FATAL_ERROR |\
--				SYSTEM_BUS_FATAL_ERROR)
-+				SYSTEM_BUS_FATAL_ERROR |\
-+				CRYPTO_ENGINE_FATAL_ERROR)
- 
- #define INT_FATAL_ERRORS	(DEVICE_FATAL_ERROR |\
- 				CONTROLLER_FATAL_ERROR |\
--				SYSTEM_BUS_FATAL_ERROR)
-+				SYSTEM_BUS_FATAL_ERROR |\
-+				CRYPTO_ENGINE_FATAL_ERROR)
- 
- /* HCS - Host Controller Status 30h */
- #define DEVICE_PRESENT				0x1
-@@ -316,6 +320,61 @@ enum {
- 	INTERRUPT_MASK_ALL_VER_21	= 0x71FFF,
- };
- 
-+/* CCAP - Crypto Capability 100h */
-+union ufs_crypto_capabilities {
-+	__le32 reg_val;
-+	struct {
-+		u8 num_crypto_cap;
-+		u8 config_count;
-+		u8 reserved;
-+		u8 config_array_ptr;
-+	};
-+};
-+
-+enum ufs_crypto_key_size {
-+	UFS_CRYPTO_KEY_SIZE_INVALID	= 0x0,
-+	UFS_CRYPTO_KEY_SIZE_128		= 0x1,
-+	UFS_CRYPTO_KEY_SIZE_192		= 0x2,
-+	UFS_CRYPTO_KEY_SIZE_256		= 0x3,
-+	UFS_CRYPTO_KEY_SIZE_512		= 0x4,
-+};
-+
-+enum ufs_crypto_alg {
-+	UFS_CRYPTO_ALG_AES_XTS			= 0x0,
-+	UFS_CRYPTO_ALG_BITLOCKER_AES_CBC	= 0x1,
-+	UFS_CRYPTO_ALG_AES_ECB			= 0x2,
-+	UFS_CRYPTO_ALG_ESSIV_AES_CBC		= 0x3,
-+};
-+
-+/* x-CRYPTOCAP - Crypto Capability X */
-+union ufs_crypto_cap_entry {
-+	__le32 reg_val;
-+	struct {
-+		u8 algorithm_id;
-+		u8 sdus_mask; /* Supported data unit size mask */
-+		u8 key_size;
-+		u8 reserved;
-+	};
-+};
-+
-+#define UFS_CRYPTO_CONFIGURATION_ENABLE (1 << 7)
-+#define UFS_CRYPTO_KEY_MAX_SIZE 64
-+/* x-CRYPTOCFG - Crypto Configuration X */
-+union ufs_crypto_cfg_entry {
-+	__le32 reg_val[32];
-+	struct {
-+		u8 crypto_key[UFS_CRYPTO_KEY_MAX_SIZE];
-+		u8 data_unit_size;
-+		u8 crypto_cap_idx;
-+		u8 reserved_1;
-+		u8 config_enable;
-+		u8 reserved_multi_host;
-+		u8 reserved_2;
-+		u8 vsb[2];
-+		u8 reserved_3[56];
-+	};
-+};
-+
- /*
-  * Request Descriptor Definitions
-  */
-@@ -337,6 +396,7 @@ enum {
- 	UTP_NATIVE_UFS_COMMAND		= 0x10000000,
- 	UTP_DEVICE_MANAGEMENT_FUNCTION	= 0x20000000,
- 	UTP_REQ_DESC_INT_CMD		= 0x01000000,
-+	UTP_REQ_DESC_CRYPTO_ENABLE_CMD	= 0x00800000,
- };
- 
- /* UTP Transfer Request Data Direction (DD) */
-@@ -356,6 +416,9 @@ enum {
- 	OCS_PEER_COMM_FAILURE		= 0x5,
- 	OCS_ABORTED			= 0x6,
- 	OCS_FATAL_ERROR			= 0x7,
-+	OCS_DEVICE_FATAL_ERROR		= 0x8,
-+	OCS_INVALID_CRYPTO_CONFIG	= 0x9,
-+	OCS_GENERAL_CRYPTO_ERROR	= 0xA,
- 	OCS_INVALID_COMMAND_STATUS	= 0x0F,
- 	MASK_OCS			= 0x0F,
- };
--- 
-2.22.0.410.gd8fdbe21b5-goog
-
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 
 _______________________________________________
