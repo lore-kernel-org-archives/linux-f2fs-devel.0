@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC3CC742A2
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 12 Jul 2019 00:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 948AAC742A2
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 12 Jul 2019 00:28:45 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 328A6208E4;
-	Fri, 12 Jul 2019 00:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 6433E208E4;
+	Fri, 12 Jul 2019 00:28:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NZAgGBzq";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="CX8YC4vf";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3NRufK/f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328A6208E4
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="BI3icEzO";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="dR2c1EBN";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Gc15rENB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6433E208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hljPq-0002cX-LS; Fri, 12 Jul 2019 00:27:58 +0000
+	id 1hljQa-0002fC-JF; Fri, 12 Jul 2019 00:28:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <martin.petersen@oracle.com>) id 1hljPp-0002cQ-Pc
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jul 2019 00:27:57 +0000
+ (envelope-from <martin.petersen@oracle.com>) id 1hljQZ-0002f5-5J
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jul 2019 00:28:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:In-Reply-To:
  Date:References:From:Subject:Cc:To:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MhocDkjZbIggx8U9U8vvBLlYm4zvgD6O5M+9P0cqzBs=; b=NZAgGBzq33HBneVsObqNfdtdeS
- lW9YS2U6Kb9Cse9wribI6OiQ9BE9xufcYTq0FHeevQgn40HePmwBFw8+S4yhUAoVIaKTEXYMIqNWi
- Xwsr1WRLQ9eqaUxO39cY4qeFHfA0C9aeutBEKJJgcZ6MFg18SgUZF2EnH6d7rO81HBWU=;
+ bh=mc43yGKFxRqtyzPAZBNO6WQoV7g2BNz8w4rDliUfdGA=; b=BI3icEzO4osl6TWpVFZgw6sso8
+ qb9SCxSyc1DKgCQlMXTRH1yx7qOiESmTQ9CGGPb/0gCQEzs2lxJPyljUAEuBd8UGGmmgeus4zrQgQ
+ cjovM4CB4/IVqNhSvosPdSGt3/3KrNWnryBoER6TaeuuFVsD6r5KCOeI1HFybhrkCvX4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:Message-ID:In-Reply-To:Date:References:From:
@@ -45,60 +45,60 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=MhocDkjZbIggx8U9U8vvBLlYm4zvgD6O5M+9P0cqzBs=; b=CX8YC4vfh8sZBSSNFPmEfilFxG
- 5W3tc5JqzvnpKBubsGIIA3zfVp6EAc72OqHqiWt07rKk27N3Uk5hU1oll1V1wjtLoY5DoVNY482XU
- ZgJ3zI7TDCZ+aUqz0RHKp7xqAK2+kVUZNiNtAreq9OfiyoBEtrh54BhYNjIRhfF3YEck=;
-Received: from userp2130.oracle.com ([156.151.31.86])
+ bh=mc43yGKFxRqtyzPAZBNO6WQoV7g2BNz8w4rDliUfdGA=; b=dR2c1EBN0BSMDmZhDzLD1XemFh
+ mbW+zS5Fv5pqcA4HtT0SQR+r64FA2XXwqN7NCyvh6PDUbxhmZBVKP4hMSE/N4aR/sEDiWZ1R89m4s
+ 6dckw0/ym4L9YleMtE8UuBiKFtMEN3xLs3QKvtfG5FkEjvETlZoOt5uSCUZP6IwXD99o=;
+Received: from aserp2120.oracle.com ([141.146.126.78])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hljPk-00G8BN-Pr
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jul 2019 00:27:57 +0000
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
- by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C0PpU8076404;
- Fri, 12 Jul 2019 00:27:42 GMT
+ id 1hljQX-00G8D8-7B
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 12 Jul 2019 00:28:43 +0000
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+ by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C0O4Js173471;
+ Fri, 12 Jul 2019 00:28:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
  h=to : cc : subject :
  from : references : date : in-reply-to : message-id : mime-version :
  content-type; s=corp-2018-07-02;
- bh=MhocDkjZbIggx8U9U8vvBLlYm4zvgD6O5M+9P0cqzBs=;
- b=3NRufK/fF1sOhF7KPVo2t6eOdyLDVH+lIqaC+YhvSqAJfR2hFDctFRalwh0Bm1frkusW
- NrnIPp0q6gKPYATEzzJNPZPuuHIpHYnfnRBLxJCRmNxx8AGGwvipoZUnyKzlDsnlg2PE
- 8aw4+rTeY5EdDqGoBGnMC2H8rHklUy9xvQfULZzKAxlu/qsMoC04o1blg0MWh0FJ9xhl
- PIdvLul9JlLLT1sk8NVAYM1CfugxZS/KO7/lYS4R3upy0PNC2dWFXO80JK93jhi9EGep
- SYPuI/px/eG97NoH1D872b8sbnhkN9zeDmGbRkhWlALvJU1iGMQRpfOHqBdZik9G+E60 Fg== 
+ bh=mc43yGKFxRqtyzPAZBNO6WQoV7g2BNz8w4rDliUfdGA=;
+ b=Gc15rENBlhC094M20gYN8JKsS2irlStcWSbUykf7Olk/J4xpKWtKqmI2ded0D1hAWCq7
+ RHUpJ+TaZCCw+VRmwbM6ymCC9DAr05OeL+xNzBq6tRHUD0+a54jmb+45e7FnKn3OlLZB
+ O3K1E0BZlW5TRk3ibDj6M4g6DCCUHj2pfD8zxggsTJb+vyZiymS5146hNoOB7ITR7Xlw
+ 9O+PI9/SR13t2dn8Bx8AUd3Jz6sOkjDQzF3KBzfAt0tCMr0EKLMwv732n4VD2dbxlmAi
+ mIr4zTSpfxANvFV3m4aU/34ORMOw4SyXbVMkzG8/WPoIg8oeXHcb0QB/5N3sVxV/tZxn +Q== 
 Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
- by userp2130.oracle.com with ESMTP id 2tjk2u2wgh-1
+ by aserp2120.oracle.com with ESMTP id 2tjkkq2u76-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Fri, 12 Jul 2019 00:27:42 +0000
+ Fri, 12 Jul 2019 00:28:32 +0000
 Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
- by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C0RWMH057569;
- Fri, 12 Jul 2019 00:27:42 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
- by userp3020.oracle.com with ESMTP id 2tnc8tu5x3-1
+ by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6C0RVG0057454;
+ Fri, 12 Jul 2019 00:28:31 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+ by userp3020.oracle.com with ESMTP id 2tnc8tu6cq-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Fri, 12 Jul 2019 00:27:42 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
- by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6C0Re3P001187;
- Fri, 12 Jul 2019 00:27:41 GMT
+ Fri, 12 Jul 2019 00:28:31 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+ by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6C0SUnB014951;
+ Fri, 12 Jul 2019 00:28:30 GMT
 Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
  by default (Oracle Beehive Gateway v4.0)
- with ESMTP ; Thu, 11 Jul 2019 17:27:40 -0700
+ with ESMTP ; Thu, 11 Jul 2019 17:28:30 -0700
 To: Damien Le Moal <damien.lemoal@wdc.com>
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
 References: <20190701050918.27511-1-damien.lemoal@wdc.com>
- <20190701050918.27511-4-damien.lemoal@wdc.com>
-Date: Thu, 11 Jul 2019 20:27:37 -0400
-In-Reply-To: <20190701050918.27511-4-damien.lemoal@wdc.com> (Damien Le Moal's
- message of "Mon, 1 Jul 2019 14:09:17 +0900")
-Message-ID: <yq1wogo85c6.fsf@oracle.com>
+ <20190701050918.27511-5-damien.lemoal@wdc.com>
+Date: Thu, 11 Jul 2019 20:28:27 -0400
+In-Reply-To: <20190701050918.27511-5-damien.lemoal@wdc.com> (Damien Le Moal's
+ message of "Mon, 1 Jul 2019 14:09:18 +0900")
+Message-ID: <yq1sgrc85as.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315
  signatures=668688
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
  malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=793
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=642
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1907120004
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315
@@ -106,12 +106,12 @@ X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9315
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
  priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=843 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=689 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1907120003
-X-Headers-End: 1hljPk-00G8BN-Pr
-Subject: Re: [f2fs-dev] [PATCH V6 3/4] sd_zbc: Fix report zones buffer
- allocation
+X-Headers-End: 1hljQX-00G8D8-7B
+Subject: Re: [f2fs-dev] [PATCH V6 4/4] block: Limit zone array allocation
+ size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -136,23 +136,13 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Damien,
 
-> During disk scan and revalidation done with sd_revalidate(), the zones
-> of a zoned disk are checked using the helper function
-> blk_revalidate_disk_zones() if a configuration change is detected
-> (change in the number of zones or zone size). The function
-> blk_revalidate_disk_zones() issues report_zones calls that are very
-> large, that is, to obtain zone information for all zones of the disk
-> with a single command. The size of the report zones command buffer
-> necessary for such large request generally is lower than the disk
-> max_hw_sectors and KMALLOC_MAX_SIZE (4MB) and succeeds on boot (no
-> memory fragmentation), but often fail at run time (e.g. hot-plug
-> event). This causes the disk revalidation to fail and the disk
-> capacity to be changed to 0.
+> Limit the size of the struct blk_zone array used in
+> blk_revalidate_disk_zones() to avoid memory allocation failures
+> leading to disk revalidation failure. Also further reduce the
+> likelyhood of such failures by using kvcalloc() (that is vmalloc())
+> instead of allocating contiguous pages with alloc_pages().
 
-Probably easiest to funnel this through block with the rest of the
-series.
-
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
