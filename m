@@ -2,76 +2,91 @@ Return-Path: <SRS0=th+A=VO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F73C76186
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jul 2019 10:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77CCAC7618F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jul 2019 20:56:55 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DC72A21743;
-	Wed, 17 Jul 2019 10:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3812F21019;
+	Wed, 17 Jul 2019 20:56:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AOt524YC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Xd629tUP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC72A21743
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Jvb+jfQ9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="l8icISC4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3812F21019
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hngv5-0007bj-BI; Wed, 17 Jul 2019 10:12:19 +0000
+	id 1hnqys-0002Im-ED; Wed, 17 Jul 2019 20:56:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hngv1-0007bV-SE
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jul 2019 10:12:15 +0000
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1hnqyr-0002Ig-HI
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jul 2019 20:56:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LPjj64hsoyj0mcyEa0KhWIezye+Br/ysIV9gnPJ6gZg=; b=AOt524YC7gaxW2bcYIjyzRwcIC
- 3mKqQWvyXG0f40ZH6IgqF0LilDnX5xkjoN9sUpy9nOYh1iZTu6KEaNBAsQO8pgFJhLD7huPxSzhLQ
- lmMVqjP7/z4axac9VSeI0BRf+5pgWMXs+SwNWABVIsGXyFN0Jbl/czWliO1g6lCOThmQ=;
+ bh=KHjiQ5aEuXx9kIoItk0YbSjcnWeGLosbEjDtWIh4LK8=; b=Jvb+jfQ97hOX4e/aDfBeuwDqAN
+ DQRhvJn/CfY6PcrDvJ3lo6dD3OuYncNTIUw6ZxolAiqwZJSQ0T7nx2GdJJ0kGokObkkOeMuBcpLcX
+ ilZXbKtDhcPpC14vkx2cS8ymBFgwQZzcfXGm0cH9GG1tkH2Aoof76b1741l18KY0Uj/o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=LPjj64hsoyj0mcyEa0KhWIezye+Br/ysIV9gnPJ6gZg=; b=Xd629tUPJvYeUNNdceZvH+3eo7
- yBwF/vupV4R6xQaCK5Kml+iKmrqiVd75fD8eUttfTTSR9olAtd/JTlGagY1SZjStm9O29dLQVSrux
- 1Jip4KilS5NmI0Yx3mLz0oCqVWk/BRA+FcAUrFN64819KSPwtNQRnLceB91VLCvMM9vM=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ bh=KHjiQ5aEuXx9kIoItk0YbSjcnWeGLosbEjDtWIh4LK8=; b=l8icISC4srQEGSNRVOs6S8DfcG
+ iLVnicfZa14Ndv30hulVA789aJGKZ24DuhgHQoF86hCAemHgwhk3bTKHVurkZgD0LCynX5Ap5aoFT
+ Zj9s3R+gjN2HNNZ8B6J25Yp3b0AWvAX9zKuQ/la5RC80nX0hUxLqPy0bLTfOwPoj//+g=;
+Received: from mail.wl.linuxfoundation.org ([198.145.29.98])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hnguz-004bS0-9K
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jul 2019 10:12:15 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id B805537BA33C0C7E0EFA;
- Wed, 17 Jul 2019 18:12:06 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 17 Jul
- 2019 18:12:03 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190712212037.41820-1-jaegeuk@kernel.org>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <413dd16e-6b26-ba85-b676-9edba70988e9@huawei.com>
-Date: Wed, 17 Jul 2019 18:12:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1hnqyq-0055Z3-7e
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jul 2019 20:56:53 +0000
+Received: from mail.wl.linuxfoundation.org (localhost [127.0.0.1])
+ by mail.wl.linuxfoundation.org (Postfix) with ESMTP id 8EC662877F
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 17 Jul 2019 20:56:46 +0000 (UTC)
+Received: by mail.wl.linuxfoundation.org (Postfix, from userid 486)
+ id 82D4728785; Wed, 17 Jul 2019 20:56:46 +0000 (UTC)
+From: bugzilla-daemon@bugzilla.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Wed, 17 Jul 2019 20:56:45 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: phiber2000@gmx.de
+X-Bugzilla-Status: RESOLVED
+X-Bugzilla-Resolution: PATCH_ALREADY_AVAILABLE
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: 
+Message-ID: <bug-202495-202145-jCuRiJQCe1@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-202495-202145@https.bugzilla.kernel.org/>
+References: <bug-202495-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-In-Reply-To: <20190712212037.41820-1-jaegeuk@kernel.org>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1hnguz-004bS0-9K
-Subject: Re: [f2fs-dev] [PATCH] f2fs_io: fix wrong buffered/dio option
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Headers-End: 1hnqyq-0055Z3-7e
+Subject: [f2fs-dev] [Bug 202495] oops in fs/f2fs/checkpoint.c:150
+ f2fs_is_valid_blkaddr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,13 +102,21 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2019/7/13 5:20, Jaegeuk Kim wrote:
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+https://bugzilla.kernel.org/show_bug.cgi?id=202495
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+--- Comment #7 from phiber2000@gmx.de ---
+(In reply to Chao Yu from comment #6)
+> Was fixed with a backported patch ("f2fs: fix to skip verifying block
+> address for non-regular inode")
 
-Thanks,
+Maybe my mistake, but I can't find the backported patch in the v4.14.y branch.
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/?h=linux-4.14.y&qt=grep&q=f2fs
 
+Could you just check that?
+
+-- 
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
