@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EDBC76199
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jul 2019 16:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29B3C76190
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Jul 2019 16:54:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5166A22387;
-	Mon, 22 Jul 2019 16:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8AA20219BE;
+	Mon, 22 Jul 2019 16:54:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Bd0i3KYt";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="QJYafvxd";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSSPFdYx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5166A22387
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bo8JBC3u";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IcXk+SmU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dl+X0Jhd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA20219BE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hpbZc-00007Z-1P; Mon, 22 Jul 2019 16:54:04 +0000
+	id 1hpbZe-00008K-98; Mon, 22 Jul 2019 16:54:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hpbZa-00007R-Sa
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Jul 2019 16:54:02 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hpbZc-00007o-6l
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Jul 2019 16:54:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FkNvOr5lS/yKRK8t5v5smOBhn2NKdWYyQ9fkrijjy0s=; b=Bd0i3KYttKI3MY3FwCEROHvHKc
- 9E9NFrVpbhKmoDL0rquKEyp3wxCfG6SE9gP8KfHQA7iNjh2zB5+SyfhOZTJFd2L8ZkWkH5JSQPO6s
- ZmTLnsUtR/LhKaP5xDgolzBElS/6Fy/nbspsJsKVPtamiwkgYVhsNtv6v3QqBE6c7ncg=;
+ bh=t3Cy9bJJAPBVTjn/HZPxZ4rMRtczwHLgdRFZnO1FYzI=; b=bo8JBC3uT6JdYCuoOvnJDAVibz
+ Sx4K6Eb9PkJAgWLiCEN0j2XDsoZuMyiws/B4yiXGy6FapU2Pn8w6+o7lOfy2kXSJTpbPR7kMoPzrz
+ 0nhdZ3iDjNn9sbw8chlQieUotmVX2yadv4S6DLwzV1C40+JNPITCizyX1SNyHmFn3kOE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FkNvOr5lS/yKRK8t5v5smOBhn2NKdWYyQ9fkrijjy0s=; b=QJYafvxdWygrMkD0H/FSEUqOEA
- Yqk2gdJno3Vae6I0TRJTJqWCl5dYA/0x5eR5fCel6yr9+Fkgc9lKZgDU82fiQ90ZIBShi5VVegOde
- ijSbH3/vPUrEp/qB5xEFPLe8h68KxCipSsU8XXgpIp6ecn7i/4jvP4i3aXUnPP/XgylM=;
+ bh=t3Cy9bJJAPBVTjn/HZPxZ4rMRtczwHLgdRFZnO1FYzI=; b=IcXk+SmUc7l3lGEiYdSjoLHrDG
+ nKm69PeMcvgAdQ53eRu7h/+tl4YPLee7jW/Ack33/N//HI7DHLa+l4RY80ohk/2kI1k7yXa+KZZWm
+ B38Kw6wMs79AKA6ZdjsC1m5f2sSZmJbHZGWfuQOg6BtRCP4zEZcJPdwOM7hiJ0TL+XwM=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hpbZZ-00AyRT-Ic
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Jul 2019 16:54:02 +0000
+ id 1hpbZa-00AyRf-D6
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Jul 2019 16:54:04 +0000
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
  [24.5.143.220])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 1E0B92199C;
- Mon, 22 Jul 2019 16:53:51 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 97DA62238B;
+ Mon, 22 Jul 2019 16:53:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1563814431;
- bh=VGrXcuq2JJds5s8/6aDAR92CvWXdrLRgJCIHirZzjWU=;
+ s=default; t=1563814435;
+ bh=MtgVL37HoieBzfwCF9QKMfV3RzqX01u5pulUzyh1zjs=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=hSSPFdYxo7NKJJfa6Yg/l3vEFvo4wI2jrxVl6IwvIZxHtlicp0FALyeL5MqfV2JDn
- V9IRDTsww5mYsu0KGn0ME5kjJo7bIVOmoC/PS9/9Rq7phWz4bXIzmHyx/Dqo/4mQx+
- joJUBQ1LU7SFzAKqPjJs6IMayCCv34UpCPRh84iA=
+ b=dl+X0Jhd8vUnGd4wD7CdFlZ3y+5VijX1Ud7MZcREThYG+qqhAUDdMp9gty2ulXMPM
+ ZWfzynUL/ZHFFDCQD/gUZx8SMioc8FTYbZlhAacfHqaolrdhdBQf7HgFqDBA3dWCXw
+ 94bUdq2dtmr57kFq3N2hm6X8yErmXKLTNvfxLmWo=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Mon, 22 Jul 2019 09:50:50 -0700
-Message-Id: <20190722165101.12840-7-ebiggers@kernel.org>
+Date: Mon, 22 Jul 2019 09:50:56 -0700
+Message-Id: <20190722165101.12840-13-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190722165101.12840-1-ebiggers@kernel.org>
 References: <20190722165101.12840-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1hpbZZ-00AyRT-Ic
-Subject: [f2fs-dev] [PATCH v7 06/17] fs-verity: add inode and superblock
- fields
+X-Headers-End: 1hpbZa-00AyRf-D6
+Subject: [f2fs-dev] [PATCH v7 12/17] fs-verity: add SHA-512 support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,75 +100,61 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Analogous to fs/crypto/, add fields to the VFS inode and superblock for
-use by the fs/verity/ support layer:
-
-- ->s_vop: points to the fsverity_operations if the filesystem supports
-  fs-verity, otherwise is NULL.
-
-- ->i_verity_info: points to cached fs-verity information for the inode
-  after someone opens it, otherwise is NULL.
-
-- S_VERITY: bit in ->i_flags that identifies verity inodes, even when
-  they haven't been opened yet and thus still have NULL ->i_verity_info.
+Add SHA-512 support to fs-verity.  This is primarily a demonstration of
+the trivial changes needed to support a new hash algorithm in fs-verity;
+most users will still use SHA-256, due to the smaller space required to
+store the hashes.  But some users may prefer SHA-512.
 
 Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- include/linux/fs.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/verity/fsverity_private.h  | 2 +-
+ fs/verity/hash_algs.c         | 5 +++++
+ include/uapi/linux/fsverity.h | 1 +
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 56b8e358af5c1..b3a0f5bfb06d7 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -64,6 +64,8 @@ struct workqueue_struct;
- struct iov_iter;
- struct fscrypt_info;
- struct fscrypt_operations;
-+struct fsverity_info;
-+struct fsverity_operations;
- struct fs_context;
- struct fs_parameter_description;
+diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+index eaa2b3b93bbf6..02a547f0667c1 100644
+--- a/fs/verity/fsverity_private.h
++++ b/fs/verity/fsverity_private.h
+@@ -29,7 +29,7 @@ struct ahash_request;
+  * Largest digest size among all hash algorithms supported by fs-verity.
+  * Currently assumed to be <= size of fsverity_descriptor::root_hash.
+  */
+-#define FS_VERITY_MAX_DIGEST_SIZE	SHA256_DIGEST_SIZE
++#define FS_VERITY_MAX_DIGEST_SIZE	SHA512_DIGEST_SIZE
  
-@@ -723,6 +725,10 @@ struct inode {
- 	struct fscrypt_info	*i_crypt_info;
- #endif
+ /* A hash algorithm supported by fs-verity */
+ struct fsverity_hash_alg {
+diff --git a/fs/verity/hash_algs.c b/fs/verity/hash_algs.c
+index 7df1d67742b84..31e6d7d2389ab 100644
+--- a/fs/verity/hash_algs.c
++++ b/fs/verity/hash_algs.c
+@@ -17,6 +17,11 @@ struct fsverity_hash_alg fsverity_hash_algs[] = {
+ 		.digest_size = SHA256_DIGEST_SIZE,
+ 		.block_size = SHA256_BLOCK_SIZE,
+ 	},
++	[FS_VERITY_HASH_ALG_SHA512] = {
++		.name = "sha512",
++		.digest_size = SHA512_DIGEST_SIZE,
++		.block_size = SHA512_BLOCK_SIZE,
++	},
+ };
  
-+#ifdef CONFIG_FS_VERITY
-+	struct fsverity_info	*i_verity_info;
-+#endif
-+
- 	void			*i_private; /* fs or device private pointer */
- } __randomize_layout;
+ /**
+diff --git a/include/uapi/linux/fsverity.h b/include/uapi/linux/fsverity.h
+index 57d1d7fc0c345..da0daf6c193b4 100644
+--- a/include/uapi/linux/fsverity.h
++++ b/include/uapi/linux/fsverity.h
+@@ -14,6 +14,7 @@
+ #include <linux/types.h>
  
-@@ -1427,6 +1433,9 @@ struct super_block {
- 	const struct xattr_handler **s_xattr;
- #ifdef CONFIG_FS_ENCRYPTION
- 	const struct fscrypt_operations	*s_cop;
-+#endif
-+#ifdef CONFIG_FS_VERITY
-+	const struct fsverity_operations *s_vop;
- #endif
- 	struct hlist_bl_head	s_roots;	/* alternate root dentries for NFS */
- 	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
-@@ -1965,6 +1974,7 @@ struct super_operations {
- #endif
- #define S_ENCRYPTED	16384	/* Encrypted file (using fs/crypto/) */
- #define S_CASEFOLD	32768	/* Casefolded file */
-+#define S_VERITY	65536	/* Verity file (using fs/verity/) */
+ #define FS_VERITY_HASH_ALG_SHA256	1
++#define FS_VERITY_HASH_ALG_SHA512	2
  
- /*
-  * Note that nosuid etc flags are inode-specific: setting some file-system
-@@ -2006,6 +2016,7 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
- #define IS_DAX(inode)		((inode)->i_flags & S_DAX)
- #define IS_ENCRYPTED(inode)	((inode)->i_flags & S_ENCRYPTED)
- #define IS_CASEFOLDED(inode)	((inode)->i_flags & S_CASEFOLD)
-+#define IS_VERITY(inode)	((inode)->i_flags & S_VERITY)
- 
- #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
- 				 (inode)->i_rdev == WHITEOUT_DEV)
+ struct fsverity_enable_arg {
+ 	__u32 version;
 -- 
 2.22.0
 
