@@ -2,76 +2,104 @@ Return-Path: <SRS0=Ac/y=VU=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA5FC7618B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Jul 2019 09:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59025C76186
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Jul 2019 23:13:23 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3381E223BA;
-	Tue, 23 Jul 2019 09:26:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 246AE2253D;
+	Tue, 23 Jul 2019 23:13:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NOXmefv5";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XcfSI6nQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3381E223BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="NlFpMiYL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CNo2oyPU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="D8dtB81v";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="WQ3iNnYo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 246AE2253D
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=TDn4u878PNiTzrq0GaV5k1qJiqnwjIaz3ugU6ew+g3Y=; b=NlFpMiYLIOAGLCClVz5Wa65eHW
+	2lwjAesIY3QzG9E4ajSlSvlJbWF1ZD+3kSweyktEQu9mK2jJsqh7s0pyt+lYi9XehOPPCfI2nScva
+	icM6xcoYdu2B+7aO90XcJN4cmI6USJtygoWDrh+ZMv1TOuGilzYDhOHh2ZEYOULWxuJw=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hpr3k-0005cI-Q7; Tue, 23 Jul 2019 09:26:12 +0000
+	id 1hq3yE-0005Va-Be; Tue, 23 Jul 2019 23:13:22 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hpr3k-0005c8-2e
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Jul 2019 09:26:12 +0000
+ (envelope-from <3DJM3XQYKAAEesptfohpphmf.dpn@flex--drosen.bounces.google.com>)
+ id 1hq3yC-0005VJ-RI
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Jul 2019 23:13:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
- Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
+ Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AkiElZs+5LD/wuVb2BEYB3yryrN2Oi0E37Bb+FYDwnI=; b=NOXmefv5HhdP8qvNtgZ7ZTD6lO
- yOwvcz6RUEnDOGAFRii3R5dR+eZVAfTEcl2PKmY+Tm1vT15OsMwM2el+XAJL/aRYK0HbZKmynS0j2
- 975eg1QaHa5t2QzpO79pJX3gzH7DNGvHiX4KZwzm3CF1yO3AN9HjxSOnlbDnp/cEcEzA=;
+ bh=ypAciFLqcuJHhZlJfd3b9E/UNSP51lkN8ppY3+9yiV0=; b=CNo2oyPUKHDNqZGFi8AzF2ouV7
+ d5o+yjE8hsFG6i2wsMue5iXVWFPSL15vO4XP/hWki8fsS7z1nM3BqPEb844bpqxXCLFkIdilJs9BU
+ 7ZesxXo7RhXG8KdoB3OSdVzHAAZQ2BksFABOSdPOIWpdpWJJPD1va/uFwO/8Wb6TRG6w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=AkiElZs+5LD/wuVb2BEYB3yryrN2Oi0E37Bb+FYDwnI=; b=XcfSI6nQN1vGC8magEMLGF4LlI
- g4ikRUqPBzZFd63sBYDReJLeux4MFIlgDTbtB7IOyKpQCRzaxfpvu9hOwN/W203uHj12nfxSPQV7s
- 3MiQ3Fp/oK08zInafOGEzlGU7wID1RJD7w/xo1K+gkuHsxeB8UEUnBddU5o902m0cr7g=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hpr3g-00E3RU-16
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Jul 2019 09:26:12 +0000
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 6D662C290FC82737B9F7;
- Tue, 23 Jul 2019 17:25:51 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 23 Jul 2019 17:25:40 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <guaneryu@gmail.com>
-Date: Tue, 23 Jul 2019 17:25:28 +0800
-Message-ID: <20190723092529.112426-2-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20190723092529.112426-1-yuchao0@huawei.com>
-References: <20190723092529.112426-1-yuchao0@huawei.com>
-MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1hpr3g-00E3RU-16
-Subject: [f2fs-dev] [PATCH 2/3] common/quota: support f2fs in
- _require_quota() and _check_quota_usage()
+ h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=ypAciFLqcuJHhZlJfd3b9E/UNSP51lkN8ppY3+9yiV0=; b=D
+ 8dtB81vF+MbT0sJpRB1wDr1Qwc4WATZLXusC+Mjs2K0Lh9cUnnY/ZlI0UUNXDeCzfRNTVRpdKOYQO
+ KZoc2EsQKPcc6TMSaCWWI+V+TjIH5ctxlIakWQIvxzk/XSsJv3OueBjaUGeYo5YPgwt6pvaTjsPtg
+ QmYCroJvdbNSUV/w=;
+Received: from mail-oi1-f202.google.com ([209.85.167.202])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1hq3yB-00Cxv4-Fw
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Jul 2019 23:13:20 +0000
+Received: by mail-oi1-f202.google.com with SMTP id i16so17295708oie.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 23 Jul 2019 16:13:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
+ h=date:message-id:mime-version:subject:from:to:cc;
+ bh=ypAciFLqcuJHhZlJfd3b9E/UNSP51lkN8ppY3+9yiV0=;
+ b=WQ3iNnYoSyu7xtrItLgp020OuxDdO2/iRV2uuk27rT/z0T/Ivgp2t0qpnjUQnutvGO
+ Kht4XkxfyI82pAf7iBAmzpAh3bma+GsOP/lWEILbL8XGZCUWOfR+zOJEZO+LCwqW1+0J
+ re12tXsPG1ZGIxtefWTTHZ0rmoSeptTv50oNwbBi/yxdBR8eGzy6vE71M02BrWaMSa2m
+ Wz74TCUFRRT36yUx5zDCm4LFO0AviBkQ0V64+68mNDKlBkz8NiEXI6tSXKyDDGRXxRym
+ +gBXn/6aa1ixajprqf1Gcl0vH57WykEURFDVSYksJJH5tW7lbed6XcGlVblOav8mCxix
+ p45A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+ bh=ypAciFLqcuJHhZlJfd3b9E/UNSP51lkN8ppY3+9yiV0=;
+ b=IrPZXKWfpDsPpQ92rZchY+xJScKasIrhUsT8UlB4LTi5BTWY7O7T6XT0ClZ7g6hz8X
+ sG8jabiJBqqbsGEMobhNjSalMX1lG7xSFKVOPQSvEeyQf4bSKRqHPYvlk/L0YDhNatgu
+ +V0PX1BWI4FiXDjAa9JEUFlogYsH8my0qZVm7DWswQ7+LBL1yjx1YbQzs3NZPmQluKMt
+ kEmotAafUtanoUbCdZEJfWBDQoXjLoC7HSrSnB1QjBdvsCDGnQgeIpLMwVeTxYe+PEf1
+ zKlhfZs8XV09yvpyv7TWBcJAOorjwSKKMJ5y68hpbJQAPSbhSlxRaF+Fstd+Fjp8c5fq
+ sxAw==
+X-Gm-Message-State: APjAAAWHup9L8/RNkjDPYKmf2nRpFPagixczrXWV/qXBlBMgNa7Zy3e4
+ gbjHCE63sXQnk2tGD540fnHlmeL+EIc=
+X-Google-Smtp-Source: APXvYqwz+0x7RONeJbKjUnRXjeymxUnQSwmgLwpHeeoqm1M6i5wivZrMYqkPk7JDlsvHSKoQHeWXu8isL0I=
+X-Received: by 2002:a63:1c22:: with SMTP id c34mr78125523pgc.56.1563923212254; 
+ Tue, 23 Jul 2019 16:06:52 -0700 (PDT)
+Date: Tue, 23 Jul 2019 16:05:26 -0700
+Message-Id: <20190723230529.251659-1-drosen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.657.g960e92d24f-goog
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, 
+ Jonathan Corbet <corbet@lwn.net>, linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1hq3yB-00Cxv4-Fw
+Subject: [f2fs-dev] [PATCH v4 0/3] Casefolding in F2FS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,43 +111,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, chao@kernel.orga, fstests@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Daniel Rosenberg via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Daniel Rosenberg <drosen@google.com>
+Cc: Daniel Rosenberg <drosen@google.com>, linux-doc@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This can let f2fs pass the check of quota testcases.
+These patches are largely based on the casefolding patches for ext4
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- common/quota | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v4: Added FS_CASEFOLD_FL flag, added documentation that escaped the last
+    format-patch, moved setting dentry ops to f2fs_setup_casefold
+v3: Addressed feedback, apart from F2FS_CASEFOLD_FL/FS_CASEFOLD_FL
+    Added sysfs file "encoding" to see the encoding set on a filesystem
+v2: Rebased patches again master, changed f2fs_msg to f2fs_info/f2fs_err
 
-diff --git a/common/quota b/common/quota
-index f19f81a1..9af280a2 100644
---- a/common/quota
-+++ b/common/quota
-@@ -12,7 +12,7 @@ _require_quota()
-     [ -n "$QUOTA_PROG" ] || _notrun "Quota user tools not installed"
- 
-     case $FSTYP in
--    ext2|ext3|ext4|ext4dev|reiserfs)
-+    ext2|ext3|ext4|ext4dev|f2fs|reiserfs)
- 	if [ ! -d /proc/sys/fs/quota ]; then
- 	    _notrun "Installed kernel does not support quotas"
- 	fi
-@@ -257,7 +257,7 @@ _check_quota_usage()
- 
- 	VFS_QUOTA=0
- 	case $FSTYP in
--	ext2|ext3|ext4|ext4dev|reiserfs|gfs2)
-+	ext2|ext3|ext4|ext4dev|f2fs|reiserfs|gfs2)
- 		VFS_QUOTA=1
- 		quotaon -f -u -g $SCRATCH_MNT 2>/dev/null
- 		;;
+Daniel Rosenberg (3):
+  fs: Reserve flag for casefolding
+  f2fs: include charset encoding information in the superblock
+  f2fs: Support case-insensitive file name lookups
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |   7 ++
+ Documentation/filesystems/f2fs.txt      |   3 +
+ fs/f2fs/dir.c                           | 126 ++++++++++++++++++++++--
+ fs/f2fs/f2fs.h                          |  21 +++-
+ fs/f2fs/file.c                          |  16 ++-
+ fs/f2fs/hash.c                          |  35 ++++++-
+ fs/f2fs/inline.c                        |   4 +-
+ fs/f2fs/inode.c                         |   4 +-
+ fs/f2fs/namei.c                         |  21 ++++
+ fs/f2fs/super.c                         |  96 ++++++++++++++++++
+ fs/f2fs/sysfs.c                         |  23 +++++
+ include/linux/f2fs_fs.h                 |   9 +-
+ include/uapi/linux/fs.h                 |   1 +
+ tools/include/uapi/linux/fs.h           |   1 +
+ 14 files changed, 347 insertions(+), 20 deletions(-)
+
 -- 
-2.18.0.rc1
+2.22.0.657.g960e92d24f-goog
 
 
 
