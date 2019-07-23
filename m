@@ -4,72 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70ACCC7618E
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Jul 2019 09:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991ABC76190
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Jul 2019 09:26:05 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4155E223BA;
-	Tue, 23 Jul 2019 09:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 712C2227BF;
+	Tue, 23 Jul 2019 09:26:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AwffbBqk";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Z8t0/sGT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4155E223BA
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ALVjOB4y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="m63OT+yh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 712C2227BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hpr3X-000070-Iy; Tue, 23 Jul 2019 09:25:59 +0000
+	id 1hpr3d-0002LV-1s; Tue, 23 Jul 2019 09:26:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hpr3V-00006s-Oc
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Jul 2019 09:25:57 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1hpr3b-0002LM-49
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Jul 2019 09:26:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KEI98Ub49rHsOY78C+nCtti6P/qLVHcMJOnFcDWvX6U=; b=AwffbBqkQMnrec+usjZ7ix/Mrz
- DjHPt8jPcKRYRi/bE1fMLsVM+xSw7Tx37+u59U6wXqZWBPjCF6tqRyYCTJzqZ8Sx3oOdFCCDIRDMg
- TkijbtgkHmMv6Bcq7DMDRnPslZaf/csJrStO7mqWu4J1LCKqOm22p2S0qJXCrAsePi/8=;
+ bh=y73H7i8iU+TT75W9wCi8dvEYKm28igLhVLPTFE8bA4E=; b=ALVjOB4yKeRpy8+hINoMmk1SN0
+ 7QaReBfA8wxCQPSkticIwKLKsWjc/hfhqQuvWNTuody3LTi/+TLuTuPL+ZRCcCA27LioO9VlQ3Xrx
+ oqZrtItEBy0NqFEFMAAdgTpnf8bUAUEYGVpGChEbzwUpGlulMkSJePwoaSBURjhcZwJs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=KEI98Ub49rHsOY78C+nCtti6P/qLVHcMJOnFcDWvX6U=; b=Z
- 8t0/sGTqfekHOVOu6SfNgOqcVvbxh4dwZhpb8AxX2ZGk0cQ5r0x2kZ4/guBjW23X8Bqu7prJRnrv2
- o3iuO+LffPmLUedCaHdxVkrnh29gCa1tvF4tr5xi6I1eWQjt9JXSs1NtEB8GiaGc/6pSMVZYTVAwj
- o4jGLvId8fBy5vro=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=y73H7i8iU+TT75W9wCi8dvEYKm28igLhVLPTFE8bA4E=; b=m63OT+yhRsa5IwXmpxTuDk5Ug/
+ jpfHNVPNlmhqggRVHkfeuVheCaOYFZIEeryw79U3lNIH31ZnQcV0epPk86taHQ+QzsA2f+d7ZSski
+ I9+VFSbuz5If0aKOgKFr32/GZRpLE6ss217D0zpb6FB33zEA0dOo8lvs8CI4/yaHYzpo=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hpr3S-00E3Ql-6j
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Jul 2019 09:25:57 +0000
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 56DCFE290D39BCEC26F5;
- Tue, 23 Jul 2019 17:25:46 +0800 (CST)
+ id 1hpr3Z-00E3RL-Od
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Jul 2019 09:26:02 +0000
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+ by Forcepoint Email with ESMTP id 68C621A8ECFF5BE390B8;
+ Tue, 23 Jul 2019 17:25:51 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 23 Jul 2019 17:25:40 +0800
+ 14.3.439.0; Tue, 23 Jul 2019 17:25:41 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <guaneryu@gmail.com>
-Date: Tue, 23 Jul 2019 17:25:27 +0800
-Message-ID: <20190723092529.112426-1-yuchao0@huawei.com>
+Date: Tue, 23 Jul 2019 17:25:29 +0800
+Message-ID: <20190723092529.112426-3-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20190723092529.112426-1-yuchao0@huawei.com>
+References: <20190723092529.112426-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1hpr3S-00E3Ql-6j
-Subject: [f2fs-dev] [PATCH 1/3] generic/38[3456]: adjust to check prjquota
- before mount
+X-Headers-End: 1hpr3Z-00E3RL-Od
+Subject: [f2fs-dev] [PATCH 3/3] common/rc: check quota sysfile feature for
+ f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,86 +89,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Move _require_prjquota() to front of _qmount() since we do the
-check on device directly instead of mountpoint, it can avoid
-potential failure if filesystem utils needs exclusive open on
-device.
+In _require_prjquota(), f2fs missed to check whether we have enabled
+quota sysfile feature in the image, add it.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- tests/generic/383 | 2 +-
- tests/generic/384 | 2 +-
- tests/generic/385 | 2 +-
- tests/generic/386 | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ common/quota | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tests/generic/383 b/tests/generic/383
-index 2c8c5923..cf5ac255 100755
---- a/tests/generic/383
-+++ b/tests/generic/383
-@@ -39,6 +39,7 @@ _require_xfs_quota_foreign
- 
- _scratch_mkfs >/dev/null 2>&1
- _scratch_enable_pquota
-+_require_prjquota $SCRATCH_DEV
- 
- do_project_test()
- {
-@@ -76,7 +77,6 @@ EOF
- # Test project
- _qmount_option "usrquota,prjquota"
- _qmount
--_require_prjquota $SCRATCH_DEV
- do_project_test
- 
- # success, all done
-diff --git a/tests/generic/384 b/tests/generic/384
-index b7c940d7..2c0cd00b 100755
---- a/tests/generic/384
-+++ b/tests/generic/384
-@@ -57,10 +57,10 @@ chmod a+rwx $seqres.full	# arbitrary users will write here
- _require_scratch
- _scratch_mkfs >/dev/null 2>&1
- _scratch_enable_pquota
-+_require_prjquota $SCRATCH_DEV
- 
- _qmount_option "prjquota"
- _qmount
--_require_prjquota $SCRATCH_DEV
- 
- report_quota()
- {
-diff --git a/tests/generic/385 b/tests/generic/385
-index 937131a9..56ce6eb0 100755
---- a/tests/generic/385
-+++ b/tests/generic/385
-@@ -56,9 +56,9 @@ quota_cmd="$XFS_QUOTA_PROG -D $tmp.projects -P $tmp.projid"
- 
- _scratch_mkfs >/dev/null 2>&1
- _scratch_enable_pquota
-+_require_prjquota $SCRATCH_DEV
- _qmount_option "prjquota"
- _qmount
--_require_prjquota $SCRATCH_DEV
- 
- #
- # Create the project root
-diff --git a/tests/generic/386 b/tests/generic/386
-index 462c5869..e4f7d23b 100755
---- a/tests/generic/386
-+++ b/tests/generic/386
-@@ -112,10 +112,10 @@ echo $proj_num:$proj_dir > "$my_projects"
- 
- _scratch_mkfs					>> "$seqres.full" 2>&1
- _scratch_enable_pquota
-+_require_prjquota $SCRATCH_DEV
- 
- _qmount_option "prjquota"
- _qmount
--_require_prjquota $SCRATCH_DEV
- 
- mkdir -p "${proj_dir}"
- 
+diff --git a/common/quota b/common/quota
+index 9af280a2..3f46eb19 100644
+--- a/common/quota
++++ b/common/quota
+@@ -80,6 +80,8 @@ _require_prjquota()
+     if [ "$FSTYP" == "f2fs" ]; then
+ 	dump.f2fs $_dev 2>&1 | grep -qw project_quota
+ 	[ $? -ne 0 ] && _notrun "Project quota not enabled in this device $_dev"
++	dump.f2fs $_dev 2>&1 | grep -qw quota_ino
++	[ $? -ne 0 ] && _notrun "quota sysfile not enabled in this device $_dev"
+ 	cat /sys/fs/f2fs/features/project_quota | grep -qw supported
+ 	[ $? -ne 0 ] && _notrun "Installed kernel does not support project quotas"
+ 	return
 -- 
 2.18.0.rc1
 
