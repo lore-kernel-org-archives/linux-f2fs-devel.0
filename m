@@ -2,73 +2,82 @@ Return-Path: <SRS0=8jIo=VX=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-14.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B90A4C7618B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jul 2019 07:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E25CC41514
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jul 2019 22:46:07 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 91674217D4
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jul 2019 07:43:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4943722CB9;
+	Fri, 26 Jul 2019 22:46:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="IjnAM9Na";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="H1NZU4kc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91674217D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Q8yRJAEF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="nRc0jLPc";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hh5g3og9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4943722CB9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hqutD-0006Ar-68; Fri, 26 Jul 2019 07:43:43 +0000
+	id 1hr8yU-0002qL-JJ; Fri, 26 Jul 2019 22:46:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hqutC-0006Al-Kl
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Jul 2019 07:43:42 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hr8yS-0002q3-Vz
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Jul 2019 22:46:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=olsqJs+2cUiMs7y9c6ISTcueQJVp76Q5V5pe6xoamDI=; b=IjnAM9NargIcMPBfarM1ApP5NZ
- JPJJuUVeuA0HwE6VUoDC0aOpC4yzil6BrKSBQWpPsMHKs0ei//vflGuCWZEqcM9HFkgAkw8yC8OIH
- nJlUqs6PsVivI1e4c8pL3fI6THOV91Wyn5ZzyJUeF/L1dHX8NG2g4Q5YgxqbTiZmRlbE=;
+ bh=MGGaqTf7gmaVT/uDrZ7CY+p6zzxKOB6VsFn7RQFfM40=; b=Q8yRJAEFFUW8deBuyhcsbbCJ1l
+ jKOcWvaluhmTm+iyQkDvkZNPexfLAvuRgMJBM67er6WMu5CUHTFva3fMCRa6uGHMfXhwqmizd2JyN
+ px6b2/xKWx448ECkmoAO+Evg+nsUmysAgzpJhu4sYg8f+lJIrP2S4Q4NPBtISWMpp53Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=olsqJs+2cUiMs7y9c6ISTcueQJVp76Q5V5pe6xoamDI=; b=H
- 1NZU4kcTNiblRYmWZd52CAOK5MaAo3yJKtz4QDF7NyYD5WweN46yEPiKXZeEWSZreF2+fnVOPiahN
- Y0VP1z34U/YYt0Zx6/t4Tml4Fp5CnGXKIHgqpg+3A0vmVdb5GpwjvP2aV6dIZ+GPnsDoUlN7LZtsh
- SnkgA6a/iHX/3k6M=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=MGGaqTf7gmaVT/uDrZ7CY+p6zzxKOB6VsFn7RQFfM40=; b=nRc0jLPcd4hz2a8/kFYJ/bHt3U
+ YZqrpdCbQwMw0PCv3nO0KenfIOhZ0ctoB0Zxn76g2TaGSsuylYg1ZQ80gFZw+gAv0b1X79Tg3e0f4
+ Iq409xYDc//6NGc0xxFnPabDuPSY9tlKKhWmWJ/6uTssq13kXQIprRrjGw1EdxVRkyig=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hqutA-0031Gj-1k
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Jul 2019 07:43:42 +0000
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 5AE36A10F49F44F065CE;
- Fri, 26 Jul 2019 15:43:29 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 26 Jul 2019 15:43:19 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Fri, 26 Jul 2019 15:43:17 +0800
-Message-ID: <20190726074317.4416-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+ id 1hr8yR-000WrL-6d
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Jul 2019 22:46:04 +0000
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
+ [24.5.143.220])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 2E9E922C7E;
+ Fri, 26 Jul 2019 22:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1564181156;
+ bh=GzelVGHPqkbkaf9RW/Q47B0yPhCAPUbNJ2m3SxNTfR8=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=Hh5g3og90qEqztUsE2t9s4ZaGbo4PHm8PgOIZ7Cn88aQmQ9I09rlPTTjq97xIXllH
+ AUGhcFEEwjX9yMubzc1MeH5jr9nKF7Yx1d3Bhyqy6AmzHwgH/My3CQdZT1V63fWgl1
+ 8KH/yL2CJ6SuUTYu8mmJNGSxxSXoc65+TBganzjA=
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Fri, 26 Jul 2019 15:41:26 -0700
+Message-Id: <20190726224141.14044-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190726224141.14044-1-ebiggers@kernel.org>
+References: <20190726224141.14044-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1hqutA-0031Gj-1k
-Subject: [f2fs-dev] [PATCH] f2fs: fix to avoid call kvfree under spinlock
+X-Headers-End: 1hr8yR-000WrL-6d
+Subject: [f2fs-dev] [PATCH v7 01/16] fs,
+ fscrypt: move uapi definitions to new header <linux/fscrypt.h>
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,47 +89,198 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Satya Tangirala <satyat@google.com>, linux-api@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, keyrings@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Paul Crowley <paulcrowley@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-vfree() don't wish to be called from interrupt context, move it
-out of spin_lock_irqsave() coverage.
+From: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+More fscrypt definitions are being added, and we shouldn't use a
+disproportionate amount of space in <linux/fs.h> for fscrypt stuff.
+So move the fscrypt definitions to a new header <linux/fscrypt.h>.
+
+For source compatibility with existing userspace programs, <linux/fs.h>
+still includes the new header.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/f2fs.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ MAINTAINERS                  |  1 +
+ include/linux/fscrypt.h      |  1 +
+ include/uapi/linux/fs.h      | 54 ++-----------------------------
+ include/uapi/linux/fscrypt.h | 61 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 66 insertions(+), 51 deletions(-)
+ create mode 100644 include/uapi/linux/fscrypt.h
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 29da1ea3e160..529b32f81c6b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1643,6 +1643,7 @@ static inline void clear_ckpt_flags(struct f2fs_sb_info *sbi, unsigned int f)
- static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
- {
- 	unsigned long flags;
-+	unsigned char *nat_bits;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 783569e3c4b48..e7c473fb08163 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6598,6 +6598,7 @@ T:	git git://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
+ S:	Supported
+ F:	fs/crypto/
+ F:	include/linux/fscrypt*.h
++F:	include/uapi/linux/fscrypt.h
+ F:	Documentation/filesystems/fscrypt.rst
  
- 	/*
- 	 * In order to re-enable nat_bits we need to call fsck.f2fs by
-@@ -1653,10 +1654,12 @@ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
- 	if (lock)
- 		spin_lock_irqsave(&sbi->cp_lock, flags);
- 	__clear_ckpt_flags(F2FS_CKPT(sbi), CP_NAT_BITS_FLAG);
--	kvfree(NM_I(sbi)->nat_bits);
-+	nat_bits = NM_I(sbi)->nat_bits;
- 	NM_I(sbi)->nat_bits = NULL;
- 	if (lock)
- 		spin_unlock_irqrestore(&sbi->cp_lock, flags);
+ FSI SUBSYSTEM
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index bd8f207a2fb68..81c0c754f8b21 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -16,6 +16,7 @@
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
++#include <uapi/linux/fscrypt.h>
+ 
+ #define FS_CRYPTO_BLOCK_SIZE		16
+ 
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 59c71fa8c553a..41bd84d25a980 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -13,6 +13,9 @@
+ #include <linux/limits.h>
+ #include <linux/ioctl.h>
+ #include <linux/types.h>
++#ifndef __KERNEL__
++#include <linux/fscrypt.h>
++#endif
+ 
+ /* Use of MS_* flags within the kernel is restricted to core mount(2) code. */
+ #if !defined(__KERNEL__)
+@@ -212,57 +215,6 @@ struct fsxattr {
+ #define FS_IOC_GETFSLABEL		_IOR(0x94, 49, char[FSLABEL_MAX])
+ #define FS_IOC_SETFSLABEL		_IOW(0x94, 50, char[FSLABEL_MAX])
+ 
+-/*
+- * File system encryption support
+- */
+-/* Policy provided via an ioctl on the topmost directory */
+-#define FS_KEY_DESCRIPTOR_SIZE	8
+-
+-#define FS_POLICY_FLAGS_PAD_4		0x00
+-#define FS_POLICY_FLAGS_PAD_8		0x01
+-#define FS_POLICY_FLAGS_PAD_16		0x02
+-#define FS_POLICY_FLAGS_PAD_32		0x03
+-#define FS_POLICY_FLAGS_PAD_MASK	0x03
+-#define FS_POLICY_FLAG_DIRECT_KEY	0x04	/* use master key directly */
+-#define FS_POLICY_FLAGS_VALID		0x07
+-
+-/* Encryption algorithms */
+-#define FS_ENCRYPTION_MODE_INVALID		0
+-#define FS_ENCRYPTION_MODE_AES_256_XTS		1
+-#define FS_ENCRYPTION_MODE_AES_256_GCM		2
+-#define FS_ENCRYPTION_MODE_AES_256_CBC		3
+-#define FS_ENCRYPTION_MODE_AES_256_CTS		4
+-#define FS_ENCRYPTION_MODE_AES_128_CBC		5
+-#define FS_ENCRYPTION_MODE_AES_128_CTS		6
+-#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7 /* Removed, do not use. */
+-#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8 /* Removed, do not use. */
+-#define FS_ENCRYPTION_MODE_ADIANTUM		9
+-
+-struct fscrypt_policy {
+-	__u8 version;
+-	__u8 contents_encryption_mode;
+-	__u8 filenames_encryption_mode;
+-	__u8 flags;
+-	__u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
+-};
+-
+-#define FS_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct fscrypt_policy)
+-#define FS_IOC_GET_ENCRYPTION_PWSALT	_IOW('f', 20, __u8[16])
+-#define FS_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct fscrypt_policy)
+-
+-/* Parameters for passing an encryption key into the kernel keyring */
+-#define FS_KEY_DESC_PREFIX		"fscrypt:"
+-#define FS_KEY_DESC_PREFIX_SIZE		8
+-
+-/* Structure that userspace passes to the kernel keyring */
+-#define FS_MAX_KEY_SIZE			64
+-
+-struct fscrypt_key {
+-	__u32 mode;
+-	__u8 raw[FS_MAX_KEY_SIZE];
+-	__u32 size;
+-};
+-
+ /*
+  * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
+  *
+diff --git a/include/uapi/linux/fscrypt.h b/include/uapi/linux/fscrypt.h
+new file mode 100644
+index 0000000000000..26f6d2c19afd3
+--- /dev/null
++++ b/include/uapi/linux/fscrypt.h
+@@ -0,0 +1,61 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * fscrypt user API
++ *
++ * These ioctls can be used on filesystems that support fscrypt.  See the
++ * "User API" section of Documentation/filesystems/fscrypt.rst.
++ */
++#ifndef _UAPI_LINUX_FSCRYPT_H
++#define _UAPI_LINUX_FSCRYPT_H
 +
-+	kvfree(nat_bits);
- }
- 
- static inline bool enabled_nat_bits(struct f2fs_sb_info *sbi,
++#include <linux/types.h>
++
++#define FS_KEY_DESCRIPTOR_SIZE	8
++
++/* Encryption policy flags */
++#define FS_POLICY_FLAGS_PAD_4		0x00
++#define FS_POLICY_FLAGS_PAD_8		0x01
++#define FS_POLICY_FLAGS_PAD_16		0x02
++#define FS_POLICY_FLAGS_PAD_32		0x03
++#define FS_POLICY_FLAGS_PAD_MASK	0x03
++#define FS_POLICY_FLAG_DIRECT_KEY	0x04	/* use master key directly */
++#define FS_POLICY_FLAGS_VALID		0x07
++
++/* Encryption algorithms */
++#define FS_ENCRYPTION_MODE_INVALID		0
++#define FS_ENCRYPTION_MODE_AES_256_XTS		1
++#define FS_ENCRYPTION_MODE_AES_256_GCM		2
++#define FS_ENCRYPTION_MODE_AES_256_CBC		3
++#define FS_ENCRYPTION_MODE_AES_256_CTS		4
++#define FS_ENCRYPTION_MODE_AES_128_CBC		5
++#define FS_ENCRYPTION_MODE_AES_128_CTS		6
++#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7 /* Removed, do not use. */
++#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8 /* Removed, do not use. */
++#define FS_ENCRYPTION_MODE_ADIANTUM		9
++
++struct fscrypt_policy {
++	__u8 version;
++	__u8 contents_encryption_mode;
++	__u8 filenames_encryption_mode;
++	__u8 flags;
++	__u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++};
++
++#define FS_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct fscrypt_policy)
++#define FS_IOC_GET_ENCRYPTION_PWSALT	_IOW('f', 20, __u8[16])
++#define FS_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct fscrypt_policy)
++
++/* Parameters for passing an encryption key into the kernel keyring */
++#define FS_KEY_DESC_PREFIX		"fscrypt:"
++#define FS_KEY_DESC_PREFIX_SIZE		8
++
++/* Structure that userspace passes to the kernel keyring */
++#define FS_MAX_KEY_SIZE			64
++
++struct fscrypt_key {
++	__u32 mode;
++	__u8 raw[FS_MAX_KEY_SIZE];
++	__u32 size;
++};
++
++#endif /* _UAPI_LINUX_FSCRYPT_H */
 -- 
-2.18.0.rc1
+2.22.0
 
 
 
