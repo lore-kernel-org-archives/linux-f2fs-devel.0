@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4ACC761AB
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jul 2019 22:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3955EC761A9
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Jul 2019 22:46:17 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BD11822CC2;
-	Fri, 26 Jul 2019 22:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 0B64B22CC3;
+	Fri, 26 Jul 2019 22:46:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ji+ee6YX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="BPFzOkPS";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aP8xwJng"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD11822CC2
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="c8ryG5VV";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bnlusHyp";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/+SS+iU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B64B22CC3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hr8ye-0002sO-Cd; Fri, 26 Jul 2019 22:46:16 +0000
+	id 1hr8ye-0002su-Nd; Fri, 26 Jul 2019 22:46:16 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hr8ya-0002rI-K2
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Jul 2019 22:46:12 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hr8yb-0002rm-P4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Jul 2019 22:46:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AAcGh82MGdZVdW+esdHCGy0r1g76RX8mbr2ojgDkrw0=; b=ji+ee6YXFIhuNOnWoMR5uP6YFw
- zJg01j4+djGALK/OOueKPlK3osU9FR2WUd1GgsIVSl0mSFrWINKvVRJFgalyrkek2CQFLDvgrMxv6
- HGo/W+FQ11TNCXyXZe58ZtT305/gZxtilKA+eG++GvjWEEGYY9mGZtr+ItoaZZlUVR+E=;
+ bh=5wKAIVLG4XRlUWsgpBLRNZ6hD9p3TnfhBrqxaVhkNF8=; b=c8ryG5VVHsS57UgiidYlGnTYWl
+ C8WLeVL1uBxab1OZ8+AHMpyQ1Xzm9mfZ4PsC0oqQdm/JqSHRhohSnmCSHh3idShOH2M81dF4rPqkL
+ SfQLZuEBiqZIXCS1rkb6wsNcEY3VDX93AXU2PvEjSIV4xEHOmwsA4S905siChY3z1J+Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AAcGh82MGdZVdW+esdHCGy0r1g76RX8mbr2ojgDkrw0=; b=BPFzOkPSrmAdU1UEePLB1GWqgV
- Pkga2bPSDQPJ/UxRMiftebVOCezDLkXgcVBXskuPonFu8RgrkpsYUx1GFtMdFNWFRnFdNSy7LJZ08
- IfxPQToCZ28ofsFtopopVqh5kuaozEcfxxH+PMYOiR3uG8y3tQE1TWwWiE1lFWJsYf64=;
+ bh=5wKAIVLG4XRlUWsgpBLRNZ6hD9p3TnfhBrqxaVhkNF8=; b=bnlusHypbBXFG+XyjR9lrsMYmU
+ gNzP7RVdWjtKCMZJ0K3Uv5ATTM/+mTWGidgA3OVcxbdyrOOwERNeBAy2Ycg96p0hTxLtW/kPfhPW8
+ +FMX8idL+NqrToDC/N2uXV72KJS9UI+h9WmjlDLlebJ4FuTa8Hdu37AxLk+BZwCsIW2A=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hr8yY-0008fa-Li
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Jul 2019 22:46:12 +0000
+ id 1hr8ya-004zB2-FC
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Jul 2019 22:46:13 +0000
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
  [24.5.143.220])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id D805722CD1;
- Fri, 26 Jul 2019 22:45:59 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 27CCB22CD4;
+ Fri, 26 Jul 2019 22:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1564181160;
- bh=mErALqCTk6E120NHiNPGCl67c6DS3WtUjVeqDW8HkQQ=;
+ s=default; t=1564181162;
+ bh=IKiEQFIiMfCYan5GuYDaxi56R4bXsWKFB7+JD7gdczw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=aP8xwJngaLfWwxnNi43kE2r6HE30luj1Xir4YUV41o2RfNBHukBMA3lBA42ErawIX
- Bb4VzINmo5VgMgyKm34WCQ/h4y73MFTO94loqsDjz+XHzJkfaJv734Db3L9bXUq8rh
- 8hSJk/rJPMqXtr0XbHGyP3aNSH1sFQtsPg2LasWg=
+ b=u/+SS+iUPkWR2k6QxlCH0itC8t6u6DSzS58eGmA0BgHaoWSLNg19ZJzBz5VL+w9aL
+ vsLWa0EiXbUI5Jk+WvV75k2milvrUZyGHTWIB4jlasqhMJ/VJuMlfjdK5ZxdExiwsK
+ 0ILAcpIb2RSTErjkae7sj2OOZKrBiNk0jKX2V79U=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Fri, 26 Jul 2019 15:41:34 -0700
-Message-Id: <20190726224141.14044-10-ebiggers@kernel.org>
+Date: Fri, 26 Jul 2019 15:41:39 -0700
+Message-Id: <20190726224141.14044-15-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190726224141.14044-1-ebiggers@kernel.org>
 References: <20190726224141.14044-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1hr8yY-0008fa-Li
-Subject: [f2fs-dev] [PATCH v7 09/16] fscrypt: add an HKDF-SHA512
- implementation
+X-Headers-End: 1hr8ya-004zB2-FC
+Subject: [f2fs-dev] [PATCH v7 14/16] f2fs: wire up new fscrypt ioctls
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,283 +98,105 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add an implementation of HKDF (RFC 5869) to fscrypt, for the purpose of
-deriving additional key material from the fscrypt master keys for v2
-encryption policies.  HKDF is a key derivation function built on top of
-HMAC.  We choose SHA-512 for the underlying unkeyed hash, and use an
-"hmac(sha512)" transform allocated from the crypto API.
+Wire up the new ioctls for adding and removing fscrypt keys to/from the
+filesystem, and the new ioctl for retrieving v2 encryption policies.
 
-We'll be using this to replace the AES-ECB based KDF currently used to
-derive the per-file encryption keys.  While the AES-ECB based KDF is
-believed to meet the original security requirements, it is nonstandard
-and has problems that don't exist in modern KDFs such as HKDF:
+FS_IOC_REMOVE_ENCRYPTION_KEY also required making f2fs_drop_inode() call
+fscrypt_drop_inode().
 
-1. It's reversible.  Given a derived key and nonce, an attacker can
-   easily compute the master key.  This is okay if the master key and
-   derived keys are equally hard to compromise, but now we'd like to be
-   more robust against threats such as a derived key being compromised
-   through a timing attack, or a derived key for an in-use file being
-   compromised after the master key has already been removed.
-
-2. It doesn't evenly distribute the entropy from the master key; each 16
-   input bytes only affects the corresponding 16 output bytes.
-
-3. It isn't easily extensible to deriving other values or keys, such as
-   a public hash for securely identifying the key, or per-mode keys.
-   Per-mode keys will be immediately useful for Adiantum encryption, for
-   which fscrypt currently uses the master key directly, introducing
-   unnecessary usage constraints.  Per-mode keys will also be useful for
-   hardware inline encryption, which is currently being worked on.
-
-HKDF solves all the above problems.
+For more details see Documentation/filesystems/fscrypt.rst and the
+fscrypt patches that added the implementation of these ioctls.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/Kconfig           |   2 +
- fs/crypto/Makefile          |   1 +
- fs/crypto/fscrypt_private.h |  15 +++
- fs/crypto/hkdf.c            | 181 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 199 insertions(+)
- create mode 100644 fs/crypto/hkdf.c
+ fs/f2fs/file.c  | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/super.c |  2 ++
+ 2 files changed, 48 insertions(+)
 
-diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
-index 5fdf24877c178..ff5a1746cbae4 100644
---- a/fs/crypto/Kconfig
-+++ b/fs/crypto/Kconfig
-@@ -7,6 +7,8 @@ config FS_ENCRYPTION
- 	select CRYPTO_ECB
- 	select CRYPTO_XTS
- 	select CRYPTO_CTS
-+	select CRYPTO_SHA512
-+	select CRYPTO_HMAC
- 	select KEYS
- 	help
- 	  Enable encryption of files and directories.  This
-diff --git a/fs/crypto/Makefile b/fs/crypto/Makefile
-index a640d486800da..3333e2ac859fa 100644
---- a/fs/crypto/Makefile
-+++ b/fs/crypto/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_FS_ENCRYPTION)	+= fscrypto.o
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f8d46df8fa9ee..d81dda290b829 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2184,6 +2184,40 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
+ 	return err;
+ }
  
- fscrypto-y := crypto.o \
- 	      fname.o \
-+	      hkdf.o \
- 	      hooks.o \
- 	      keyring.o \
- 	      keysetup.o \
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 3616232b4798e..92567efec2cd5 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -172,6 +172,21 @@ extern bool fscrypt_fname_encrypted_size(const struct inode *inode,
- 					 u32 orig_len, u32 max_len,
- 					 u32 *encrypted_len_ret);
- 
-+/* hkdf.c */
-+
-+struct fscrypt_hkdf {
-+	struct crypto_shash *hmac_tfm;
-+};
-+
-+extern int fscrypt_init_hkdf(struct fscrypt_hkdf *hkdf, const u8 *master_key,
-+			     unsigned int master_key_size);
-+
-+extern int fscrypt_hkdf_expand(struct fscrypt_hkdf *hkdf, u8 context,
-+			       const u8 *info, unsigned int infolen,
-+			       u8 *okm, unsigned int okmlen);
-+
-+extern void fscrypt_destroy_hkdf(struct fscrypt_hkdf *hkdf);
-+
- /* keyring.c */
- 
- /*
-diff --git a/fs/crypto/hkdf.c b/fs/crypto/hkdf.c
-new file mode 100644
-index 0000000000000..f21873e1b4674
---- /dev/null
-+++ b/fs/crypto/hkdf.c
-@@ -0,0 +1,181 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Implementation of HKDF ("HMAC-based Extract-and-Expand Key Derivation
-+ * Function"), aka RFC 5869.  See also the original paper (Krawczyk 2010):
-+ * "Cryptographic Extraction and Key Derivation: The HKDF Scheme".
-+ *
-+ * This is used to derive keys from the fscrypt master keys.
-+ *
-+ * Copyright 2019 Google LLC
-+ */
-+
-+#include <crypto/hash.h>
-+#include <crypto/sha.h>
-+
-+#include "fscrypt_private.h"
-+
-+/*
-+ * HKDF supports any unkeyed cryptographic hash algorithm, but fscrypt uses
-+ * SHA-512 because it is reasonably secure and efficient; and since it produces
-+ * a 64-byte digest, deriving an AES-256-XTS key preserves all 64 bytes of
-+ * entropy from the master key and requires only one iteration of HKDF-Expand.
-+ */
-+#define HKDF_HMAC_ALG		"hmac(sha512)"
-+#define HKDF_HASHLEN		SHA512_DIGEST_SIZE
-+
-+/*
-+ * HKDF consists of two steps:
-+ *
-+ * 1. HKDF-Extract: extract a pseudorandom key of length HKDF_HASHLEN bytes from
-+ *    the input keying material and optional salt.
-+ * 2. HKDF-Expand: expand the pseudorandom key into output keying material of
-+ *    any length, parameterized by an application-specific info string.
-+ *
-+ * HKDF-Extract can be skipped if the input is already a pseudorandom key of
-+ * length HKDF_HASHLEN bytes.  However, cipher modes other than AES-256-XTS take
-+ * shorter keys, and we don't want to force users of those modes to provide
-+ * unnecessarily long master keys.  Thus fscrypt still does HKDF-Extract.  No
-+ * salt is used, since fscrypt master keys should already be pseudorandom and
-+ * there's no way to persist a random salt per master key from kernel mode.
-+ */
-+
-+/* HKDF-Extract (RFC 5869 section 2.2), unsalted */
-+static int hkdf_extract(struct crypto_shash *hmac_tfm, const u8 *ikm,
-+			unsigned int ikmlen, u8 prk[HKDF_HASHLEN])
++static int f2fs_ioc_get_encryption_policy_ex(struct file *filp,
++					     unsigned long arg)
 +{
-+	static const u8 default_salt[HKDF_HASHLEN];
-+	SHASH_DESC_ON_STACK(desc, hmac_tfm);
-+	int err;
++	if (!f2fs_sb_has_encrypt(F2FS_I_SB(file_inode(filp))))
++		return -EOPNOTSUPP;
 +
-+	err = crypto_shash_setkey(hmac_tfm, default_salt, HKDF_HASHLEN);
-+	if (err)
-+		return err;
-+
-+	desc->tfm = hmac_tfm;
-+	err = crypto_shash_digest(desc, ikm, ikmlen, prk);
-+	shash_desc_zero(desc);
-+	return err;
++	return fscrypt_ioctl_get_policy_ex(filp, (void __user *)arg);
 +}
 +
-+/*
-+ * Compute HKDF-Extract using the given master key as the input keying material,
-+ * and prepare an HMAC transform object keyed by the resulting pseudorandom key.
-+ *
-+ * Afterwards, the keyed HMAC transform object can be used for HKDF-Expand many
-+ * times without having to recompute HKDF-Extract each time.
-+ */
-+int fscrypt_init_hkdf(struct fscrypt_hkdf *hkdf, const u8 *master_key,
-+		      unsigned int master_key_size)
++static int f2fs_ioc_add_encryption_key(struct file *filp, unsigned long arg)
 +{
-+	struct crypto_shash *hmac_tfm;
-+	u8 prk[HKDF_HASHLEN];
-+	int err;
++	if (!f2fs_sb_has_encrypt(F2FS_I_SB(file_inode(filp))))
++		return -EOPNOTSUPP;
 +
-+	hmac_tfm = crypto_alloc_shash(HKDF_HMAC_ALG, 0, 0);
-+	if (IS_ERR(hmac_tfm)) {
-+		fscrypt_err(NULL, "Error allocating " HKDF_HMAC_ALG ": %ld",
-+			    PTR_ERR(hmac_tfm));
-+		return PTR_ERR(hmac_tfm);
-+	}
-+
-+	if (WARN_ON(crypto_shash_digestsize(hmac_tfm) != sizeof(prk))) {
-+		err = -EINVAL;
-+		goto err_free_tfm;
-+	}
-+
-+	err = hkdf_extract(hmac_tfm, master_key, master_key_size, prk);
-+	if (err)
-+		goto err_free_tfm;
-+
-+	err = crypto_shash_setkey(hmac_tfm, prk, sizeof(prk));
-+	if (err)
-+		goto err_free_tfm;
-+
-+	hkdf->hmac_tfm = hmac_tfm;
-+	goto out;
-+
-+err_free_tfm:
-+	crypto_free_shash(hmac_tfm);
-+out:
-+	memzero_explicit(prk, sizeof(prk));
-+	return err;
++	return fscrypt_ioctl_add_key(filp, (void __user *)arg);
 +}
 +
-+/*
-+ * HKDF-Expand (RFC 5869 section 2.3).  This expands the pseudorandom key, which
-+ * was already keyed into 'hkdf->hmac_tfm' by fscrypt_init_hkdf(), into 'okmlen'
-+ * bytes of output keying material parameterized by the application-specific
-+ * 'info' of length 'infolen' bytes, prefixed by "fscrypt\0" and the 'context'
-+ * byte.  This is thread-safe and may be called by multiple threads in parallel.
-+ *
-+ * ('context' isn't part of the HKDF specification; it's just a prefix fscrypt
-+ * adds to its application-specific info strings to guarantee that it doesn't
-+ * accidentally repeat an info string when using HKDF for different purposes.)
-+ */
-+int fscrypt_hkdf_expand(struct fscrypt_hkdf *hkdf, u8 context,
-+			const u8 *info, unsigned int infolen,
-+			u8 *okm, unsigned int okmlen)
++static int f2fs_ioc_remove_encryption_key(struct file *filp, unsigned long arg)
 +{
-+	SHASH_DESC_ON_STACK(desc, hkdf->hmac_tfm);
-+	u8 prefix[9];
-+	unsigned int i;
-+	int err;
-+	const u8 *prev = NULL;
-+	u8 counter = 1;
-+	u8 tmp[HKDF_HASHLEN];
++	if (!f2fs_sb_has_encrypt(F2FS_I_SB(file_inode(filp))))
++		return -EOPNOTSUPP;
 +
-+	if (WARN_ON(okmlen > 255 * HKDF_HASHLEN))
-+		return -EINVAL;
-+
-+	desc->tfm = hkdf->hmac_tfm;
-+
-+	memcpy(prefix, "fscrypt\0", 8);
-+	prefix[8] = context;
-+
-+	for (i = 0; i < okmlen; i += HKDF_HASHLEN) {
-+
-+		err = crypto_shash_init(desc);
-+		if (err)
-+			goto out;
-+
-+		if (prev) {
-+			err = crypto_shash_update(desc, prev, HKDF_HASHLEN);
-+			if (err)
-+				goto out;
-+		}
-+
-+		err = crypto_shash_update(desc, prefix, sizeof(prefix));
-+		if (err)
-+			goto out;
-+
-+		err = crypto_shash_update(desc, info, infolen);
-+		if (err)
-+			goto out;
-+
-+		BUILD_BUG_ON(sizeof(counter) != 1);
-+		if (okmlen - i < HKDF_HASHLEN) {
-+			err = crypto_shash_finup(desc, &counter, 1, tmp);
-+			if (err)
-+				goto out;
-+			memcpy(&okm[i], tmp, okmlen - i);
-+			memzero_explicit(tmp, sizeof(tmp));
-+		} else {
-+			err = crypto_shash_finup(desc, &counter, 1, &okm[i]);
-+			if (err)
-+				goto out;
-+		}
-+		counter++;
-+		prev = &okm[i];
-+	}
-+	err = 0;
-+out:
-+	if (unlikely(err))
-+		memzero_explicit(okm, okmlen); /* so caller doesn't need to */
-+	shash_desc_zero(desc);
-+	return err;
++	return fscrypt_ioctl_remove_key(filp, (const void __user *)arg);
 +}
 +
-+void fscrypt_destroy_hkdf(struct fscrypt_hkdf *hkdf)
++static int f2fs_ioc_get_encryption_key_status(struct file *filp,
++					      unsigned long arg)
 +{
-+	crypto_free_shash(hkdf->hmac_tfm);
++	if (!f2fs_sb_has_encrypt(F2FS_I_SB(file_inode(filp))))
++		return -EOPNOTSUPP;
++
++	return fscrypt_ioctl_get_key_status(filp, (void __user *)arg);
 +}
++
+ static int f2fs_ioc_gc(struct file *filp, unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(filp);
+@@ -3109,6 +3143,14 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_ioc_get_encryption_policy(filp, arg);
+ 	case F2FS_IOC_GET_ENCRYPTION_PWSALT:
+ 		return f2fs_ioc_get_encryption_pwsalt(filp, arg);
++	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
++		return f2fs_ioc_get_encryption_policy_ex(filp, arg);
++	case FS_IOC_ADD_ENCRYPTION_KEY:
++		return f2fs_ioc_add_encryption_key(filp, arg);
++	case FS_IOC_REMOVE_ENCRYPTION_KEY:
++		return f2fs_ioc_remove_encryption_key(filp, arg);
++	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
++		return f2fs_ioc_get_encryption_key_status(filp, arg);
+ 	case F2FS_IOC_GARBAGE_COLLECT:
+ 		return f2fs_ioc_gc(filp, arg);
+ 	case F2FS_IOC_GARBAGE_COLLECT_RANGE:
+@@ -3236,6 +3278,10 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_SET_ENCRYPTION_POLICY:
+ 	case F2FS_IOC_GET_ENCRYPTION_PWSALT:
+ 	case F2FS_IOC_GET_ENCRYPTION_POLICY:
++	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
++	case FS_IOC_ADD_ENCRYPTION_KEY:
++	case FS_IOC_REMOVE_ENCRYPTION_KEY:
++	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
+ 	case F2FS_IOC_GARBAGE_COLLECT:
+ 	case F2FS_IOC_GARBAGE_COLLECT_RANGE:
+ 	case F2FS_IOC_WRITE_CHECKPOINT:
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 6de6cda440315..f5fae8d511a20 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -913,6 +913,8 @@ static int f2fs_drop_inode(struct inode *inode)
+ 		return 0;
+ 	}
+ 	ret = generic_drop_inode(inode);
++	if (!ret)
++		ret = fscrypt_drop_inode(inode);
+ 	trace_f2fs_drop_inode(inode, ret);
+ 	return ret;
+ }
 -- 
 2.22.0
 
