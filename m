@@ -1,78 +1,85 @@
-Return-Path: <SRS0=cCeN=VY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=Lb5W=VZ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB8FC76186
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 27 Jul 2019 20:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22E8C76186
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 28 Jul 2019 00:36:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5A865208C0;
-	Sat, 27 Jul 2019 20:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A2F392086D;
+	Sun, 28 Jul 2019 00:36:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="FTa0BmC6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="dzHZb2E0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A865208C0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YD1963W4";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="MxhMczsk";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGgP1an4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F392086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hrTUE-0006OX-VW; Sat, 27 Jul 2019 20:40:14 +0000
+	id 1hrXAy-0007XG-S3; Sun, 28 Jul 2019 00:36:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1hrTUD-0006OP-Ov
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 27 Jul 2019 20:40:13 +0000
+ (envelope-from <chao@kernel.org>) id 1hrXAw-0007X7-PJ
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Jul 2019 00:36:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/xtoc1jnPAKGNSxnXW4grFtnuFoHWwVxKvZMMzm/K9A=; b=FTa0BmC6j2ntOvQUJ/R3P684nW
- XgtL15p9V2jGAmrMXzafflQKi1mpRGG4tFXizhU+s/+NkV79K3BJNQVv4Lqob9SZu3r+ZdZ/0hcGL
- HRgBXbGs3ZRDlMlQ6KhY25u5kUN3xp+sltWVnhfKfoHtHjFs74nG6B+56JfMcS+WsxV4=;
+ bh=8H9supk5RMG+QuzerAxIrHVfV6N4IH3Lxwte8kAc3Vw=; b=YD1963W4pvB43x0qCNZ2LwROe+
+ 3HM/n9w15Xg9gtpw98Of3YN51xj254ZM1NoB9eW2mFQ1tZdC0L8dj96/nSkz4zukMaLSZ+Xg8tTD4
+ y5Kjhmxp+xWxBRMwOa2F8xVVyKUsicumZ0l8Q77wcv2emaI5cme6NXqLMj0NcCfvxYyg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/xtoc1jnPAKGNSxnXW4grFtnuFoHWwVxKvZMMzm/K9A=; b=dzHZb2E0kxuzTcgjI0kMwGwSky
- 8ZsR/2W5WsqJEfiYzCpkaIuwMiE3V/fM+EP5wK8ZFUqIreQJPmBoc0DAW1yCke9FjRiJ3fyaLqlFG
- boLxD9ek3XZXoJgNCMl7pJJL29mZsUbMVu2wynzGOoviieqIM5G7Pxuz18eYcwQOEzoY=;
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=8H9supk5RMG+QuzerAxIrHVfV6N4IH3Lxwte8kAc3Vw=; b=MxhMczskiYRB4Uy20KFWn/tnHI
+ N3JegrRBHO7x8yjFjSSc7NvkFG31kwSzF8Dfx3/ttu+oKtDefNlFQWjlsP/lU1mSFnfeMCz6+893+
+ u2puaYjkj+r85yxIPww4iKWI+swJKqTvOLLhA6iFPszfhcmihdXB3avttg9ovXJy08CM=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hrTUC-0085wD-6v
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 27 Jul 2019 20:40:13 +0000
-Received: from callcc.thunk.org (96-72-84-49-static.hfc.comcastbusiness.net
- [96.72.84.49] (may be forged)) (authenticated bits=0)
- (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x6RKdtcc013261
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sat, 27 Jul 2019 16:39:57 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
- id B45954202F5; Sat, 27 Jul 2019 16:39:54 -0400 (EDT)
-Date: Sat, 27 Jul 2019 16:39:54 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20190727203954.GB1499@mit.edu>
-References: <20190722165101.12840-1-ebiggers@kernel.org>
- <20190722165101.12840-11-ebiggers@kernel.org>
+ id 1hrXAt-001QDL-3Y
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 28 Jul 2019 00:36:34 +0000
+Received: from [192.168.0.101] (unknown [180.111.32.87])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 32516205C9;
+ Sun, 28 Jul 2019 00:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1564274185;
+ bh=3QcKMWyvud9E/WuCoeT08n9lTblApc1uZ21h4kx9PhU=;
+ h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+ b=rGgP1an4Xkc81fP263JRufM8BgqKjlDC3mlNL3lmt272CzPVdK4B9dyJWB3gSxqBq
+ TPkB8mhv9GqJLzn4sNEveW25kMW4/kt2NSjMLJ2CYmkWgYjnvwdRLMLcs29BKyzIXT
+ 085dg8hYsKwLZUBAzE/J6C1Xc1SmUEMJVJUGd+64=
+To: Daniel Rosenberg <drosen@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <yuchao0@huawei.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20190723230529.251659-1-drosen@google.com>
+ <20190723230529.251659-2-drosen@google.com>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <056a12d4-d787-9a3d-9ad4-4d1136b2a197@kernel.org>
+Date: Sun, 28 Jul 2019 08:36:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20190722165101.12840-11-ebiggers@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1hrTUC-0085wD-6v
-Subject: Re: [f2fs-dev] [PATCH v7 10/17] fs-verity: implement
- FS_IOC_ENABLE_VERITY ioctl
+In-Reply-To: <20190723230529.251659-2-drosen@google.com>
+Content-Language: en-US
+X-Headers-End: 1hrXAt-001QDL-3Y
+Subject: Re: [f2fs-dev] [PATCH v4 1/3] fs: Reserve flag for casefolding
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,33 +91,22 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "Darrick J . Wong" <darrick.wong@oracle.com>, linux-api@vger.kernel.org,
- Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-integrity@vger.kernel.org,
- linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
- Christoph Hellwig <hch@lst.de>, Victor Hsieh <victorhsieh@google.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jul 22, 2019 at 09:50:54AM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 2019-7-24 7:05, Daniel Rosenberg via Linux-f2fs-devel wrote:
+> In preparation for including the casefold feature within f2fs, elevate
+> the EXT4_CASEFOLD_FL flag to FS_CASEFOLD_FL.
 > 
-> Add a function for filesystems to call to implement the
-> FS_IOC_ENABLE_VERITY ioctl.  This ioctl enables fs-verity on a file.
-> 
-> See the "FS_IOC_ENABLE_VERITY" section of
-> Documentation/filesystems/fsverity.rst for the documentation.
-> 
-> Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
 
-Looks good.  You can add:
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-
-						- Ted
+Thanks,
 
 
 _______________________________________________
