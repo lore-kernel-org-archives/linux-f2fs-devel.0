@@ -2,79 +2,86 @@ Return-Path: <SRS0=MGGM=V2=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_PAST_12_24,
-	DKIM_INVALID,DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B74C433FF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jul 2019 14:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0952EC7618B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jul 2019 14:57:36 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B1CA0216C8;
-	Mon, 29 Jul 2019 14:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CE7F1216C8;
+	Mon, 29 Jul 2019 14:57:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Qw2WnCgg";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="hnfzcki5";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmvZSnG9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1CA0216C8
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KrZqW55p";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PFYQYNQE";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmIYCh1t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7F1216C8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hs6ti-00013N-SW; Mon, 29 Jul 2019 14:45:10 +0000
+	id 1hs75j-0006mL-5f; Mon, 29 Jul 2019 14:57:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1hs6th-00012v-Fw
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jul 2019 14:45:09 +0000
+ (envelope-from <chao@kernel.org>) id 1hs75h-0006mE-Fw
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jul 2019 14:57:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UAZx6nftTql1aqEdgqnyC1ff8Z/VwXfneWHWV9A/U2o=; b=Qw2WnCggXuJSMQVibupSlH8oEV
- T4vBJjAeR7G1gK0dMte39x+1e+HV/iKcodAeZ3BM2m8FdwMSbTNDJmWaqZBFybuNfFFmT+byCenwZ
- W1eu3rMFpsZbRTqslq58qdXkrAnAAHdcuQPWHUSTZ7y+YE8uw3LYaKj+z2yMHlYfjCxQ=;
+ bh=yEZE8bEaPiB9Jqx3KQV2KZ/CF5CgxFEkgK0zd1/C8ac=; b=KrZqW55p1MT0bH9oii4tIIfVZS
+ q5DZIpqb82qmvUdTOmug2ZSU9oSxBxKn2TEkQHKHwm7azz/RejjwuisWlnJGK/Vd2sVdQjiRXrCWc
+ Fn7mtY2Q7iw2FZ/oxaXuTd/hSwUPEQyZjIBIHxh8zsp6KHf5nfbEvd39uEse1HwIlyU0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=UAZx6nftTql1aqEdgqnyC1ff8Z/VwXfneWHWV9A/U2o=; b=h
- nfzcki5VTR/9HUxJkHJpdgP2W3bZJXujHuIl/ishfqXxOJygkFROBjREnwBKUx9d00C3a6IqDMsUS
- tSJTKhyxT26TE2bXK6tbNLhjuJffQAMhPV6CWEA5lQMzgQNzZ8+gK8qVMLbmJ81NWtLxigFya3oJf
- bmaNbf0q0+pImheI=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=yEZE8bEaPiB9Jqx3KQV2KZ/CF5CgxFEkgK0zd1/C8ac=; b=PFYQYNQEKApH7a4sXdeQBibgyC
+ lxAosCg1i/82Yb7xj+RRP1Av4KRgOGgauFcmOdm7v3NJKtKVLeDsslbCxEPJ8wCqAJFAvExx4LJh3
+ DoN+22vrD2c37rdqrj5JSe/e0FU7+AobYbZY3mYahlLk4HtYtS5ftnuYZCL7qmVp3iCU=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hs6te-00Ednl-Iu
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jul 2019 14:45:09 +0000
-Received: from localhost.localdomain (unknown [180.111.32.87])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+ id 1hs75g-00EfRG-Ai
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jul 2019 14:57:33 +0000
+Received: from [192.168.0.101] (unknown [180.111.32.87])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 5CA22206BA;
- Mon, 29 Jul 2019 14:44:49 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id D7F582067D;
+ Mon, 29 Jul 2019 14:57:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1564411500;
- bh=ZJaCH6/EG+GnwaN6bqP7F/RqkgpTASOAGcigZFAnIpA=;
- h=From:To:Cc:Subject:Date:From;
- b=TmvZSnG9lh5mWO+cGUplu/CmjSJvwa2qTah96YjGVYfbj9ierPPBmN9AieTmH7SRJ
- AYCDXgiyWmdeT3MzmJ2zd5kkoAg5OHeQXQBCE5L28CUqt+mLFfjiTSsAhpkPWZF3Y7
- f97y+zozRZJ/mGj4OJcR/r2n/uRUKi0xGdpYwuLc=
+ s=default; t=1564412246;
+ bh=hMANmngripBsLJYd0Y/7x4OoPirri23tE2oLpVKpNB4=;
+ h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+ b=fmIYCh1tQ7HGhaBzdlRtL2bHHiOLDhp8u5eyZg8qMCO41oty4t2dCIDuN3sxkRk7e
+ C/M4SoQ+feASKNhouXi6y5RnqTyepKX4N1mk3kln5zowMv36DnEMloxEU4IpopLkGr
+ BVSnI82o391mNn0iFzF+OuKAodyIiVWC47INjDH8=
+To: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20190723230529.251659-1-drosen@google.com>
+ <20190723230529.251659-4-drosen@google.com>
+ <9362e4ed-2be8-39f5-b4d9-9c86e37ab993@kernel.org>
+ <20190729062735.GA98839@jaegeuk-macbookpro.roam.corp.google.com>
+ <fa07a09d-92c9-4e0b-7c2b-e87771273dce@huawei.com>
 From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Sun, 28 Jul 2019 23:15:26 +0800
-Message-Id: <20190728151526.11845-1-chao@kernel.org>
-X-Mailer: git-send-email 2.22.0
+Message-ID: <fe7066e9-f299-c675-cec3-919cdabe18ce@kernel.org>
+Date: Mon, 29 Jul 2019 22:57:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Headers-End: 1hs6te-00Ednl-Iu
-Subject: [f2fs-dev] [PATCH v3] f2fs: introduce sb.required_features to store
- incompatible features
+In-Reply-To: <fa07a09d-92c9-4e0b-7c2b-e87771273dce@huawei.com>
+Content-Language: en-US
+X-Headers-End: 1hs75g-00EfRG-Ai
+Subject: Re: [f2fs-dev] [PATCH v4 3/3] f2fs: Support case-insensitive file
+ name lookups
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,102 +93,82 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Daniel Rosenberg <drosen@google.com>, linux-doc@vger.kernel.org,
+ linux-api@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On 2019-7-29 15:22, Chao Yu wrote:
+> On 2019/7/29 14:27, Jaegeuk Kim wrote:
+>> On 07/28, Chao Yu wrote:
+>>> On 2019-7-24 7:05, Daniel Rosenberg via Linux-f2fs-devel wrote:
+>>>>  /* Flags that are appropriate for regular files (all but dir-specific ones). */
+>>>>  #define F2FS_REG_FLMASK		(~(F2FS_DIRSYNC_FL | F2FS_PROJINHERIT_FL))
+>>>
+>>> We missed to add F2FS_CASEFOLD_FL here to exclude it in F2FS_REG_FLMASK.
+>>
+>> Applied.
+>>
+>>>
+>>>> @@ -1660,7 +1660,16 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+>>>>  		return -EPERM;
+>>>>  
+>>>>  	oldflags = fi->i_flags;
+>>>> +	if ((iflags ^ oldflags) & F2FS_CASEFOLD_FL) {
+>>>> +		if (!f2fs_sb_has_casefold(F2FS_I_SB(inode)))
+>>>> +			return -EOPNOTSUPP;
+>>>> +
+>>>> +		if (!S_ISDIR(inode->i_mode))
+>>>> +			return -ENOTDIR;
+>>>>  
+>>>> +		if (!f2fs_empty_dir(inode))
+>>>> +			return -ENOTEMPTY;
+>>>> +	}
+>>
+>> Modified like this:
+>> @@ -1665,6 +1665,13 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+>>         if (IS_NOQUOTA(inode))
+>>                 return -EPERM;
+>>
+>> +       if ((iflags ^ fi->i_flags) & F2FS_CASEFOLD_FL) {
+>> +               if (!f2fs_sb_has_casefold(F2FS_I_SB(inode)))
+>> +                       return -EOPNOTSUPP;
+>> +               if (!f2fs_empty_dir(inode))
+>> +                       return -ENOTEMPTY;
+>> +       }
+>> +
+>>
+>> Note that, directory is checked by above change.
+>>
+>> I've uploaded in f2fs.git, so could you check it out and test a bit?
+> 
+> I've checked it out, it looks good to me now, and later I will test this new
+> version.
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Later after this patch was merged, all new incompatible feature's
-bit should be added into sb.required_features field, and define new
-feature function with F2FS_INCOMPAT_FEATURE_FUNCS() macro.
+It can pass generic/556 as well.
 
-Then during mount, we will do sanity check with enabled features in
-image, if there are features in sb.required_features that kernel can
-not recognize, just fail the mount.
+Thanks,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v3:
-- change commit title.
-- fix wrong macro name.
- fs/f2fs/f2fs.h          | 15 +++++++++++++++
- fs/f2fs/super.c         | 10 ++++++++++
- include/linux/f2fs_fs.h |  3 ++-
- 3 files changed, 27 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a6eb828af57f..b8e17d4ddb8d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -163,6 +163,15 @@ struct f2fs_mount_info {
- #define F2FS_CLEAR_FEATURE(sbi, mask)					\
- 	(sbi->raw_super->feature &= ~cpu_to_le32(mask))
- 
-+#define F2FS_INCOMPAT_FEATURES		0
-+
-+#define F2FS_HAS_INCOMPAT_FEATURE(sbi, mask)				\
-+	((sbi->raw_super->required_features & cpu_to_le32(mask)) != 0)
-+#define F2FS_SET_INCOMPAT_FEATURE(sbi, mask)				\
-+	(sbi->raw_super->required_features |= cpu_to_le32(mask))
-+#define F2FS_CLEAR_INCOMPAT_FEATURE(sbi, mask)				\
-+	(sbi->raw_super->required_features &= ~cpu_to_le32(mask))
-+
- /*
-  * Default values for user and/or group using reserved blocks
-  */
-@@ -3585,6 +3594,12 @@ F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
- F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
- F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
- 
-+#define F2FS_INCOMPAT_FEATURE_FUNCS(name, flagname) \
-+static inline int f2fs_sb_has_##name(struct f2fs_sb_info *sbi) \
-+{ \
-+	return F2FS_HAS_INCOMPAT_FEATURE(sbi, F2FS_FEATURE_##flagname); \
-+}
-+
- #ifdef CONFIG_BLK_DEV_ZONED
- static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
- 				    block_t blkaddr)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5540fee0fe3f..3701dcce90e6 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2513,6 +2513,16 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		return -EINVAL;
- 	}
- 
-+	/* check whether current kernel supports all features on image */
-+	if (le32_to_cpu(raw_super->required_features) &
-+			~F2FS_INCOMPAT_FEATURES) {
-+		f2fs_info(sbi, "Unsupported feature: %x: supported: %x",
-+			  le32_to_cpu(raw_super->required_features) ^
-+			  F2FS_INCOMPAT_FEATURES,
-+			  F2FS_INCOMPAT_FEATURES);
-+		return -EINVAL;
-+	}
-+
- 	/* Check checksum_offset and crc in superblock */
- 	if (__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_SB_CHKSUM)) {
- 		crc_offset = le32_to_cpu(raw_super->checksum_offset);
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index a2b36b2e286f..4141be3f219c 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -117,7 +117,8 @@ struct f2fs_super_block {
- 	__u8 hot_ext_count;		/* # of hot file extension */
- 	__le16	s_encoding;		/* Filename charset encoding */
- 	__le16	s_encoding_flags;	/* Filename charset encoding flags */
--	__u8 reserved[306];		/* valid reserved region */
-+	__le32 required_features;       /* incompatible features to old kernel */
-+	__u8 reserved[302];		/* valid reserved region */
- 	__le32 crc;			/* checksum of superblock */
- } __packed;
- 
--- 
-2.22.0
-
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> I applied the patches based on last Jaegeuk's dev branch, it seems we needs to
+>>> adjust above code a bit. Otherwise it looks good to me.
+>>>
+>>> BTW, it looks the patchset works fine with generic/556 testcase.
+>>>
+>>> Thanks,
+>> .
+>>
 
 
 _______________________________________________
