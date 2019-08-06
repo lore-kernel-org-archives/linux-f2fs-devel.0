@@ -1,83 +1,89 @@
-Return-Path: <SRS0=Urpw=WB=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=Uf9r=WC=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8D3C32751
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Aug 2019 16:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E2AC41514
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Aug 2019 00:35:32 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5EDC42173B;
-	Mon,  5 Aug 2019 16:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id ECCC5214C6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Aug 2019 00:35:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ZwTOOgvQ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lqT/R1Sg";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/Z2qERE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EDC42173B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="JmnojQo4";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="NrmlmD0d";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKlYQx2i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCC5214C6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hufr2-0004ik-3N; Mon, 05 Aug 2019 16:29:00 +0000
+	id 1hunRr-0006BZ-5R; Tue, 06 Aug 2019 00:35:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hufqv-0004ga-Im
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Aug 2019 16:28:53 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1hunRq-0006BT-HN
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Aug 2019 00:35:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=C7aA00JtGnttKKrxNjSl1CRvQB6AK7OCIyIlVC7CI38=; b=ZwTOOgvQAMOM6Llg8XYBauv8wn
- KRQJ1sBeNgUjUIJ3TTZ7THXpPgoHHv8w0PweV6/J49HCWO0Kp0BeB8x4s4dXVszVTRJtQlR5orDBI
- 6mwWE7RqIEv97PgYch6DyvgMN9zICwYpojOtdvsElS58WR9+o27Zmj8qCRDj1ch7ehGg=;
+ bh=gOMqG9H50zry7v01lCuXtx66gK8cFFqUFhlHiMb2Ml0=; b=JmnojQo4B9AghlMlbxTi/lJPO/
+ UmFFrr2n3ILDt0Q0bQkPvZaACdN/nStgHYHgOv/srgFwUwXZc9jONwhi4P0V3Zongf3FyP34KBa3G
+ e6TuvzHVe+3ren5Ux4ZRpW0N65vHg8t5j4cnAKpGWRET3+oSKEbzrJH9fLTLp2EZD9eM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=C7aA00JtGnttKKrxNjSl1CRvQB6AK7OCIyIlVC7CI38=; b=lqT/R1SgneAp4xB3b9HakZNa0c
- HrF1DaJ973uXaebgWHqy4uQzkhMPpP/lUL7SUOqPFt6YVxUTFv8WMuoAuvkkkmG54+aLEXGajEOHo
- U0kiaGmYldFIRC6KXtk1kgD05K+2IW1wCJgbQtnzlOsC/RntYnsGINC+O9EtvwF7whl4=;
+ bh=gOMqG9H50zry7v01lCuXtx66gK8cFFqUFhlHiMb2Ml0=; b=NrmlmD0d++yz0vDrUHQXOPmtYg
+ sUdtTbohyox/j5o+9JRv5WyCslF43hvEPZBwVWO1Db14phVP94o9KtA4SVQHC/VXbC0x0QsmtBtU2
+ mPMPODz1nkB/n7UNMHGb7tAg2H8tCkYlHD0pLHX74Nlh9W2/fNWrNS2O75mI8fKOYPPo=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hufqs-00BnL4-Vd
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Aug 2019 16:28:52 +0000
-Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown
- [104.132.1.77])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ id 1hunRo-00CIiA-TX
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Aug 2019 00:35:30 +0000
+Received: from localhost (unknown [104.132.0.81])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 8ABEF21882;
- Mon,  5 Aug 2019 16:28:37 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 2AA68208C3;
+ Tue,  6 Aug 2019 00:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1565022517;
- bh=VjAaNT/bB/mmrNPRrRj2ZZRW/GYtz3hszPigcawoqzI=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Z/Z2qEREoFm/mmXKw0i8w5vAqkR/mAb7ptX3C3G4hUGzHmRT1I+2nh4hBecUKx7qP
- qBhsWoKbVZ1N1GU379pIrI8rEbMfoI9deXoMQu2LigEP21H3iI02xzcwQUzPrjanzh
- kdeLKNiBRCc55d1D1wuKOC8WZUtDl/AbFtSL7UFA=
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Date: Mon,  5 Aug 2019 09:25:16 -0700
-Message-Id: <20190805162521.90882-16-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-In-Reply-To: <20190805162521.90882-1-ebiggers@kernel.org>
-References: <20190805162521.90882-1-ebiggers@kernel.org>
+ s=default; t=1565051723;
+ bh=lBgCz4t4Y49z22ltJYFFWgPICIaXUC5VKxDbL+3wXhM=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=OKlYQx2iGvu9urbTbje0N7FvExAlXtKpHsxY5dAYymPlN2va9dUIOkzZIsZy+j8yp
+ EXN363I9jXg9+bcURWVQLyaZOwzFR9u+ZL1jhsN2lBYH/nJ7rOcBSqFV6W2b5KynRu
+ b6RUKiZ9ex46DLkC01mE22EbUuxRXfrb0iV4NMrs=
+Date: Mon, 5 Aug 2019 17:35:22 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <20190806003522.GA98101@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190729150351.12223-1-chao@kernel.org>
+ <20190730231850.GA7097@jaegeuk-macbookpro.roam.corp.google.com>
+ <c7232d80-a4d8-88ae-2eca-01290dd0e56a@huawei.com>
+ <20190801042215.GC84433@jaegeuk-macbookpro.roam.corp.google.com>
+ <345c55ea-01c2-a9d1-4367-716dbd08ae9d@huawei.com>
+ <20190801223509.GB27597@jaegeuk-macbookpro.roam.corp.google.com>
+ <8e906ddb-81d8-b63e-0c19-1ee9fc7f5cbf@huawei.com>
 MIME-Version: 1.0
-X-Headers-End: 1hufqs-00BnL4-Vd
-Subject: [f2fs-dev] [PATCH v8 15/20] fscrypt: add
- FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS ioctl
+Content-Disposition: inline
+In-Reply-To: <8e906ddb-81d8-b63e-0c19-1ee9fc7f5cbf@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
+X-Headers-End: 1hunRo-00CIiA-TX
+Subject: Re: [f2fs-dev] [PATCH v3 RESEND] f2fs: introduce
+ sb.required_features to store incompatible features
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,147 +95,235 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Satya Tangirala <satyat@google.com>, Theodore Ts'o <tytso@mit.edu>,
- linux-api@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- keyrings@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
- Paul Crowley <paulcrowley@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+On 08/02, Chao Yu wrote:
+> On 2019/8/2 6:35, Jaegeuk Kim wrote:
+> > On 08/01, Chao Yu wrote:
+> >> On 2019/8/1 12:22, Jaegeuk Kim wrote:
+> >>> On 07/31, Chao Yu wrote:
+> >>>> On 2019/7/31 7:18, Jaegeuk Kim wrote:
+> >>>>> On 07/29, Chao Yu wrote:
+> >>>>>> From: Chao Yu <yuchao0@huawei.com>
+> >>>>>>
+> >>>>>> Later after this patch was merged, all new incompatible feature's
+> >>>>>> bit should be added into sb.required_features field, and define new
+> >>>>>> feature function with F2FS_INCOMPAT_FEATURE_FUNCS() macro.
+> >>>>>>
+> >>>>>> Then during mount, we will do sanity check with enabled features in
+> >>>>>> image, if there are features in sb.required_features that kernel can
+> >>>>>> not recognize, just fail the mount.
+> >>>>>>
+> >>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>>>> ---
+> >>>>>> v3:
+> >>>>>> - change commit title.
+> >>>>>> - fix wrong macro name.
+> >>>>>>  fs/f2fs/f2fs.h          | 15 +++++++++++++++
+> >>>>>>  fs/f2fs/super.c         | 10 ++++++++++
+> >>>>>>  include/linux/f2fs_fs.h |  3 ++-
+> >>>>>>  3 files changed, 27 insertions(+), 1 deletion(-)
+> >>>>>>
+> >>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>>>>> index a6eb828af57f..b8e17d4ddb8d 100644
+> >>>>>> --- a/fs/f2fs/f2fs.h
+> >>>>>> +++ b/fs/f2fs/f2fs.h
+> >>>>>> @@ -163,6 +163,15 @@ struct f2fs_mount_info {
+> >>>>>>  #define F2FS_CLEAR_FEATURE(sbi, mask)					\
+> >>>>>>  	(sbi->raw_super->feature &= ~cpu_to_le32(mask))
+> >>>>>>  
+> >>>>>> +#define F2FS_INCOMPAT_FEATURES		0
+> >>>>>> +
+> >>>>>> +#define F2FS_HAS_INCOMPAT_FEATURE(sbi, mask)				\
+> >>>>>> +	((sbi->raw_super->required_features & cpu_to_le32(mask)) != 0)
+> >>>>>> +#define F2FS_SET_INCOMPAT_FEATURE(sbi, mask)				\
+> >>>>>> +	(sbi->raw_super->required_features |= cpu_to_le32(mask))
+> >>>>>> +#define F2FS_CLEAR_INCOMPAT_FEATURE(sbi, mask)				\
+> >>>>>> +	(sbi->raw_super->required_features &= ~cpu_to_le32(mask))
+> >>>>>> +
+> >>>>>>  /*
+> >>>>>>   * Default values for user and/or group using reserved blocks
+> >>>>>>   */
+> >>>>>> @@ -3585,6 +3594,12 @@ F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
+> >>>>>>  F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
+> >>>>>>  F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
+> >>>>>>  
+> >>>>>> +#define F2FS_INCOMPAT_FEATURE_FUNCS(name, flagname) \
+> >>>>>> +static inline int f2fs_sb_has_##name(struct f2fs_sb_info *sbi) \
+> >>>>>> +{ \
+> >>>>>> +	return F2FS_HAS_INCOMPAT_FEATURE(sbi, F2FS_FEATURE_##flagname); \
+> >>>>>> +}
+> >>>>>> +
+> >>>>>>  #ifdef CONFIG_BLK_DEV_ZONED
+> >>>>>>  static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+> >>>>>>  				    block_t blkaddr)
+> >>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >>>>>> index 5540fee0fe3f..3701dcce90e6 100644
+> >>>>>> --- a/fs/f2fs/super.c
+> >>>>>> +++ b/fs/f2fs/super.c
+> >>>>>> @@ -2513,6 +2513,16 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+> >>>>>>  		return -EINVAL;
+> >>>>>>  	}
+> >>>>>>  
+> >>>>>> +	/* check whether current kernel supports all features on image */
+> >>>>>> +	if (le32_to_cpu(raw_super->required_features) &
+> >>>>>
+> >>>>> ...
+> >>>>> #define F2FS_FEATURE_VERITY	0x0400	/* reserved */
+> >>>>> ...
+> >>>>> #define F2FS_FEATURE_CASEFOLD	0x1000
+> >>>>> #define F2FS_FEATURE_SUPPORT	0x1BFF
+> >>>>>
+> >>>>> 	if (le32_to_cpu(raw_super->required_features) & ~F2FS_FEATURE_SUPPORT) {
+> >>>>> 		...
+> >>>>> 		return -EINVAL;
+> >>>>> 	}
+> >>>>
+> >>>> Um, I thought .required_features are used to store new feature flags from 0x0.
+> >>>>
+> >>>> All 'F2FS_FEATURE_SUPPORT' bits should be stored in sb.feature instead of
+> >>>> sb.required_features, I'm confused...
+> >>>
+> >>> I'm thinking,
+> >>>
+> >>> f2fs-tools     sb->required_features     f2fs    F2FS_FEATURE_SUPPORT
+> >>> v0             0                         v0      no_check -> ok
+> >>> v1             0x1BFF                    v0      no_check -> ok
+> >>> v0             0                         v1      0x1BFF -> ok
+> >>> v1             0x1BFF                    v1      0x1BFF -> ok
+> >>> v2             0x3BFF                    v1      0x1BFF -> fail
+> >>> v1             0x1BFF                    v2      0x3BFF -> ok
+> >>> v2             0x3BFF                    v2      0x3BFF -> ok
+> >>
+> >> I see, it's a bit waste for 0x1FFF low bits in sb->required_features. Why not
+> >> leaving 0x0FFF in sb->feature w/o sanity check. And make all new incompatible
+> >> features (including casefold) adding into sb->required_features.
+> > 
+> > I don't think we can define like this, and we still have 32bits feature filed.
+> > This would give another confusion to understand. VERITY is reserved only now.
+> > 
+> > #define F2FS_FEATURE_CASEFOLD		0x0001
+> 
+> Oops, so you want to make .required_features being almost a mirror of .feature,
+> and do sanity check on it... I can see now. :P
+> 
+> If so, why not just use .feature:
 
-Add a root-only variant of the FS_IOC_REMOVE_ENCRYPTION_KEY ioctl which
-removes all users' claims of the key, not just the current user's claim.
-I.e., it always removes the key itself, no matter how many users have
-added it.
+Sometimes, we don't need to set the flag, but not required at some point.
+(e.g., verify)
 
-This is useful for forcing a directory to be locked, without having to
-figure out which user ID(s) the key was added under.  This is planned to
-be used by a command like 'sudo fscrypt lock DIR --all-users' in the
-fscrypt userspace tool (http://github.com/google/fscrypt).
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/crypto/keyring.c          | 29 ++++++++++++++++++++++++-----
- include/linux/fscrypt.h      |  8 ++++++++
- include/uapi/linux/fscrypt.h |  1 +
- 3 files changed, 33 insertions(+), 5 deletions(-)
-
-diff --git a/fs/crypto/keyring.c b/fs/crypto/keyring.c
-index 2f47464f8cf603..86bfcc02b31fcf 100644
---- a/fs/crypto/keyring.c
-+++ b/fs/crypto/keyring.c
-@@ -11,6 +11,7 @@
-  *
-  * - FS_IOC_ADD_ENCRYPTION_KEY
-  * - FS_IOC_REMOVE_ENCRYPTION_KEY
-+ * - FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS
-  * - FS_IOC_GET_ENCRYPTION_KEY_STATUS
-  *
-  * See the "User API" section of Documentation/filesystems/fscrypt.rst for more
-@@ -699,8 +700,10 @@ static int try_to_lock_encrypted_files(struct super_block *sb,
- /*
-  * Try to remove an fscrypt master encryption key.
-  *
-- * This removes the current user's claim to the key, then removes the key itself
-- * if no other users have claims.
-+ * FS_IOC_REMOVE_ENCRYPTION_KEY (all_users=false) removes the current user's
-+ * claim to the key, then removes the key itself if no other users have claims.
-+ * FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS (all_users=true) always removes the
-+ * key itself.
-  *
-  * To "remove the key itself", first we wipe the actual master key secret, so
-  * that no more inodes can be unlocked with it.  Then we try to evict all cached
-@@ -715,7 +718,7 @@ static int try_to_lock_encrypted_files(struct super_block *sb,
-  * For more details, see the "Removing keys" section of
-  * Documentation/filesystems/fscrypt.rst.
-  */
--int fscrypt_ioctl_remove_key(struct file *filp, void __user *_uarg)
-+static int do_remove_key(struct file *filp, void __user *_uarg, bool all_users)
- {
- 	struct super_block *sb = file_inode(filp)->i_sb;
- 	struct fscrypt_remove_key_arg __user *uarg = _uarg;
-@@ -751,9 +754,12 @@ int fscrypt_ioctl_remove_key(struct file *filp, void __user *_uarg)
- 
- 	down_write(&key->sem);
- 
--	/* If relevant, remove current user's claim to the key */
-+	/* If relevant, remove current user's (or all users) claim to the key */
- 	if (mk->mk_users && mk->mk_users->keys.nr_leaves_on_tree != 0) {
--		err = remove_master_key_user(mk);
-+		if (all_users)
-+			err = keyring_clear(mk->mk_users);
-+		else
-+			err = remove_master_key_user(mk);
- 		if (err) {
- 			up_write(&key->sem);
- 			goto out_put_key;
-@@ -806,8 +812,21 @@ int fscrypt_ioctl_remove_key(struct file *filp, void __user *_uarg)
- 		err = put_user(status_flags, &uarg->removal_status_flags);
- 	return err;
- }
-+
-+int fscrypt_ioctl_remove_key(struct file *filp, void __user *uarg)
-+{
-+	return do_remove_key(filp, uarg, false);
-+}
- EXPORT_SYMBOL_GPL(fscrypt_ioctl_remove_key);
- 
-+int fscrypt_ioctl_remove_key_all_users(struct file *filp, void __user *uarg)
-+{
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EACCES;
-+	return do_remove_key(filp, uarg, true);
-+}
-+EXPORT_SYMBOL_GPL(fscrypt_ioctl_remove_key_all_users);
-+
- /*
-  * Retrieve the status of an fscrypt master encryption key.
-  *
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 8b8ff048404297..f622f7460ed8c6 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -143,6 +143,8 @@ extern int fscrypt_inherit_context(struct inode *, struct inode *,
- extern void fscrypt_sb_free(struct super_block *sb);
- extern int fscrypt_ioctl_add_key(struct file *filp, void __user *arg);
- extern int fscrypt_ioctl_remove_key(struct file *filp, void __user *arg);
-+extern int fscrypt_ioctl_remove_key_all_users(struct file *filp,
-+					      void __user *arg);
- extern int fscrypt_ioctl_get_key_status(struct file *filp, void __user *arg);
- 
- /* keysetup.c */
-@@ -396,6 +398,12 @@ static inline int fscrypt_ioctl_remove_key(struct file *filp, void __user *arg)
- 	return -EOPNOTSUPP;
- }
- 
-+static inline int fscrypt_ioctl_remove_key_all_users(struct file *filp,
-+						     void __user *arg)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static inline int fscrypt_ioctl_get_key_status(struct file *filp,
- 					       void __user *arg)
- {
-diff --git a/include/uapi/linux/fscrypt.h b/include/uapi/linux/fscrypt.h
-index b9fb775e3db8e4..39ccfe9311c387 100644
---- a/include/uapi/linux/fscrypt.h
-+++ b/include/uapi/linux/fscrypt.h
-@@ -148,6 +148,7 @@ struct fscrypt_get_key_status_arg {
- #define FS_IOC_GET_ENCRYPTION_POLICY_EX		_IOWR('f', 22, __u8[9]) /* size + version */
- #define FS_IOC_ADD_ENCRYPTION_KEY		_IOWR('f', 23, struct fscrypt_add_key_arg)
- #define FS_IOC_REMOVE_ENCRYPTION_KEY		_IOWR('f', 24, struct fscrypt_remove_key_arg)
-+#define FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS	_IOWR('f', 25, struct fscrypt_remove_key_arg)
- #define FS_IOC_GET_ENCRYPTION_KEY_STATUS	_IOWR('f', 26, struct fscrypt_get_key_status_arg)
- 
- /**********************************************************************/
--- 
-2.22.0.770.g0f2c4a37fd-goog
-
+> 
+> kernel	tool
+> v5.2 .. 1.12
+> #define	F2FS_FEATURE_SUPPORT		0x0BFF
+> 
+> v5.3 .. 1.13
+> #define F2FS_FEATURE_CASEFOLD		0x1000
+> #define	F2FS_FEATURE_SUPPORT		0x1BFF
+> 
+> v5.4 .. 1.14
+> #define F2FS_FEATURE_CASEFOLD		0x1000
+> #define F2FS_FEATURE_COMPRESS		0x2000
+> #define	F2FS_FEATURE_SUPPORT		0x3BFF
+> 
+> f2fs-tools	sb->feature		f2fs	F2FS_FEATURE_SUPPORT
+> 
+> [enable all features in tools]
+> v1.12		0x0BFF			v5.2	no_check -> ok
+> v1.12		0x0BFF			v5.3	0x1BFF -> ok
+> v1.12		0x0BFF			v5.4	0x3BFF -> ok
+> 
+> v1.13		0x1BFF			v5.2	that's issue we need to fix
+> v1.13		0x1BFF			v5.3	0x1BFF -> ok
+> v1.13		0x1BFF			v5.4	0x3BFF -> ok
+> 
+> v1.14		0x3BFF			v5.2	that's issue we need to fix
+> v1.14		0x3BFF			v5.3	0x1BFF -> fail
+> v1.14		0x3BFF			v5.4	0x3BFF -> ok
+> 
+> Or am I missing something?
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Then that would be:
+> >>
+> >> kernel	tool
+> >> v5.2 .. 1.12
+> >> #define	F2FS_FEATURE_SUPPORT		0x0000
+> >>
+> >> v5.3 .. 1.13
+> >> #define F2FS_FEATURE_CASEFOLD		0x0001
+> >> #define	F2FS_FEATURE_SUPPORT		0x0001
+> >>
+> >> v5.4 .. 1.14
+> >> #define F2FS_FEATURE_CASEFOLD		0x0001
+> >> #define F2FS_FEATURE_COMPRESS		0x0002
+> >> #define	F2FS_FEATURE_SUPPORT		0x0003
+> >>
+> >> f2fs-tools	sb->required_features	f2fs	F2FS_FEATURE_SUPPORT
+> >>
+> >> v1.12		0x0000			v5.2	no_check -> ok
+> >> v1.12		0x0000			v5.3	0x0001 -> ok
+> >> v1.12		0x0000			v5.4	0x0003 -> ok
+> >>
+> >> v1.13		0x0001			v5.2	that's issue we need to fix
+> >> v1.13		0x0001			v5.3	0x0001 -> ok
+> >> v1.13		0x0001			v5.4	0x0003 -> ok
+> >>
+> >> v1.14		0x0003			v5.2	that's issue we need to fix
+> >> v1.14		0x0003			v5.3	0x0001 -> fail
+> >> v1.14		0x0003			v5.4	0x0003 -> ok
+> >>
+> >> And all compatible features can be added into sb->feature[_VERITY, ....].
+> >>
+> >> Would that okay to you?
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>>>
+> >>>>>
+> >>>>>> +			~F2FS_INCOMPAT_FEATURES) {
+> >>>>>> +		f2fs_info(sbi, "Unsupported feature: %x: supported: %x",
+> >>>>>> +			  le32_to_cpu(raw_super->required_features) ^
+> >>>>>> +			  F2FS_INCOMPAT_FEATURES,
+> >>>>>> +			  F2FS_INCOMPAT_FEATURES);
+> >>>>>> +		return -EINVAL;
+> >>>>>> +	}
+> >>>>>> +
+> >>>>>>  	/* Check checksum_offset and crc in superblock */
+> >>>>>>  	if (__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_SB_CHKSUM)) {
+> >>>>>>  		crc_offset = le32_to_cpu(raw_super->checksum_offset);
+> >>>>>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> >>>>>> index a2b36b2e286f..4141be3f219c 100644
+> >>>>>> --- a/include/linux/f2fs_fs.h
+> >>>>>> +++ b/include/linux/f2fs_fs.h
+> >>>>>> @@ -117,7 +117,8 @@ struct f2fs_super_block {
+> >>>>>>  	__u8 hot_ext_count;		/* # of hot file extension */
+> >>>>>>  	__le16	s_encoding;		/* Filename charset encoding */
+> >>>>>>  	__le16	s_encoding_flags;	/* Filename charset encoding flags */
+> >>>>>> -	__u8 reserved[306];		/* valid reserved region */
+> >>>>>> +	__le32 required_features;       /* incompatible features to old kernel */
+> >>>>>> +	__u8 reserved[302];		/* valid reserved region */
+> >>>>>>  	__le32 crc;			/* checksum of superblock */
+> >>>>>>  } __packed;
+> >>>>>>  
+> >>>>>> -- 
+> >>>>>> 2.22.0
+> >>>>> .
+> >>>>>
+> >>> .
+> >>>
+> > .
+> > 
 
 
 _______________________________________________
