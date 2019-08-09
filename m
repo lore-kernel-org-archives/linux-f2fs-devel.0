@@ -2,76 +2,82 @@ Return-Path: <SRS0=3/yP=WF=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23772C31E40
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Aug 2019 10:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8E5C32756
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Aug 2019 15:13:05 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E1A6C2086D
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Aug 2019 10:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CE8DE2171F;
+	Fri,  9 Aug 2019 15:13:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Amqtiq8q";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="OdwRJYJR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A6C2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="T2jsjJt7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="gFN5PQdn";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvnXWqCA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE8DE2171F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hw2Wn-0004QR-FC; Fri, 09 Aug 2019 10:53:45 +0000
+	id 1hw6Zj-0007s8-UO; Fri, 09 Aug 2019 15:13:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hw2Wk-0004Pv-EX
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 10:53:42 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1hw6Zi-0007s1-AC
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 15:13:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
- Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fE3BQHzomD+7K9lK8U+vCwfz++JFgUowgZ3va75I2Lc=; b=Amqtiq8qDrBySAufHV9fDp/Wkx
- cVwfkhsYEmmfdZL+9EDG3KFMPxskySahvu4EtT+CLBg3TjfV2F1NY4xvtscLlJXV/rDHbld8X5INB
- d5D9ywW/oChK6yFdXhIVmszbYQmwAA9YvKVacyrYf3EADK7HLyAel5RT9TGCYTwHIAAg=;
+ bh=9DbzHs9Ny/T7IUjrl96SfxT3Tu0GX6ZdeFE3KJ90gn8=; b=T2jsjJt7fB+YUZ/DeI83jWQOlI
+ 9pFqX7TzM34ButQqT+4Za3cIhH8mTaVEprfZYQYld52uF8mZzljtJdFVIGB6ekKeS+l/ZEHd5QB/t
+ UB+3iwabK3V6wB/TH94GrrW4u+sIxqS424kda9kqN27Ub3nw6lqeXAwFPFWxJ3dRltCY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
+ From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=fE3BQHzomD+7K9lK8U+vCwfz++JFgUowgZ3va75I2Lc=; b=OdwRJYJRcVigudKq63S8rEXCvv
- vsFA8WwZJtcgzwe7wiwPPkVI5evjYL1tKe0g/IkehIoUj0ifs/yja3mMgN75oU+2fMGGhnvBBivpt
- AenlWCqu3Zi0TQMlgydLbTVyujpH9hJjXORzR5pxhEdPU6+b34u6AFrBgNa2b05+CCSw=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ bh=9DbzHs9Ny/T7IUjrl96SfxT3Tu0GX6ZdeFE3KJ90gn8=; b=gFN5PQdn3DEg7P/RgNkWx8lB/N
+ tc3uxLVvQYDYru42jhbNSdbsIcTmVjIOwgnTMLUb/4w5F7jPp2WWDIZ9gTP6NXWdzOlqDNlxgL0iA
+ Ocaz13tm0H7SVepJ+azNgaQb9HiZjPJ6LBIPjCPCitgJ28GfCu6uVS6CyXkP53Kp83Zg=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hw2Wi-00HEfp-4E
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 10:53:41 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id DC5E7EBDF53620CF9515;
- Fri,  9 Aug 2019 18:53:23 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 9 Aug 2019 18:53:14 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Fri, 9 Aug 2019 18:52:59 +0800
-Message-ID: <20190809105302.79876-7-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20190809105302.79876-1-yuchao0@huawei.com>
-References: <20190809105302.79876-1-yuchao0@huawei.com>
+ id 1hw6Zf-00HSzj-GA
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 15:13:02 +0000
+Received: from localhost (unknown [104.132.0.81])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id D1AA52171F
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri,  9 Aug 2019 15:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1565363573;
+ bh=E/hs3Xh8pCfN74N8ZrCl1G/4ANk//iUiaqFOIoSLOog=;
+ h=Date:From:To:Subject:References:In-Reply-To:From;
+ b=BvnXWqCAVmZlon/yBS6BNpXOf7mzJKD/x/yN2V1+9/DRmeUbSSehXc9DKjoRGU8J9
+ YGhNc9ijjtsHTWjxGR28zui5jlOl/z1tmZC2FEWVeIdKHNThzVDcTHG5R62mlhXY7P
+ KpDsJ+jDShA47QOrHIPDVKkpbYXRywvF2+kR2p3U=
+Date: Fri, 9 Aug 2019 08:12:53 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <20190809151253.GA93481@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190808231108.75599-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1hw2Wi-00HEfp-4E
-Subject: [f2fs-dev] [PATCH 07/10] fsck.f2fs: fix to set large section type
- during allocation
+Content-Disposition: inline
+In-Reply-To: <20190808231108.75599-1-jaegeuk@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
+X-Headers-End: 1hw6Zf-00HSzj-GA
+Subject: Re: [f2fs-dev] [PATCH v2] mkfs.f2fs: check zeros in first 16MB for
+ Android
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,60 +89,99 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-During block allocation in large free section, we need to change
-all sub segments' type in it, otherwise, we will fail to allocate
-block in non-first segment due to mismatch seg-type.
+We actually don't need to issue trim on entire disk by checking first
+blocks having zeros.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/mount.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+v2 from v1:
+ - clean up
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 46fe1be..ad20d19 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -2393,6 +2393,20 @@ int relocate_curseg_offset(struct f2fs_sb_info *sbi, int type)
+ mkfs/f2fs_format_utils.c | 53 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 51 insertions(+), 2 deletions(-)
+
+diff --git a/mkfs/f2fs_format_utils.c b/mkfs/f2fs_format_utils.c
+index 8bf128c..f2d55ad 100644
+--- a/mkfs/f2fs_format_utils.c
++++ b/mkfs/f2fs_format_utils.c
+@@ -25,6 +25,7 @@
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <stdlib.h>
++#include <stdbool.h>
+ #ifndef ANDROID_WINDOWS_HOST
+ #include <sys/ioctl.h>
+ #endif
+@@ -110,13 +111,61 @@ static int trim_device(int i)
  	return 0;
  }
  
-+void set_section_type(struct f2fs_sb_info *sbi, unsigned int segno, int type)
++static bool is_wiped_device(int i)
 +{
-+	struct seg_entry *se;
-+	unsigned int i;
++#ifdef WITH_ANDROID
++	struct device_info *dev = c.devices + i;
++	int fd = dev->fd;
++	char *buf, *zero_buf;
++	bool wiped = true;
++	int nblocks = 4096;	/* 16MB size */
++	int j;
 +
-+	if (sbi->segs_per_sec == 1)
-+		return;
-+
-+	for (i = 0; i < sbi->segs_per_sec; i++) {
-+		se = get_seg_entry(sbi, segno + i);
-+		se->type = type;
++	buf = malloc(F2FS_BLKSIZE);
++	if (buf == NULL) {
++		MSG(1, "\tError: Malloc Failed for buf!!!\n");
++		return false;
 +	}
++	zero_buf = calloc(1, F2FS_BLKSIZE);
++	if (zero_buf == NULL) {
++		MSG(1, "\tError: Calloc Failed for zero buf!!!\n");
++		free(buf);
++		return false;
++	}
++
++	if (lseek(fd, 0, SEEK_SET) < 0) {
++		free(zero_buf);
++		free(buf);
++		return false;
++	}
++
++	/* check first n blocks */
++	for (j = 0; j < nblocks; j++) {
++		if (read(fd, buf, F2FS_BLKSIZE) != F2FS_BLKSIZE ||
++				memcmp(buf, zero_buf, F2FS_BLKSIZE)) {
++			wiped = false;
++			break;
++		}
++	}
++	free(zero_buf);
++	free(buf);
++
++	if (wiped)
++		MSG(0, "Info: Found all zeros in first %d blocks\n", nblocks);
++	return wiped;
++#else
++	return false;
++#endif
 +}
 +
- int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
+ int f2fs_trim_devices(void)
  {
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-@@ -2436,8 +2450,11 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
- 				if (se2->valid_blocks)
- 					break;
- 			}
--			if (i == sbi->segs_per_sec)
-+
-+			if (i == sbi->segs_per_sec) {
-+				set_section_type(sbi, segno, type);
- 				return 0;
-+			}
- 		}
+ 	int i;
  
- 		if (se->type == type &&
+-	for (i = 0; i < c.ndevs; i++)
+-		if (trim_device(i))
++	for (i = 0; i < c.ndevs; i++) {
++		if (!is_wiped_device(i) && trim_device(i))
+ 			return -1;
++	}
+ 	c.trimmed = 1;
+ 	return 0;
+ }
 -- 
-2.18.0.rc1
+2.19.0.605.g01d371f741-goog
 
 
 
