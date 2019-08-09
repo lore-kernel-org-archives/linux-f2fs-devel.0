@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0450C32756
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Aug 2019 10:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1ECC31E40
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Aug 2019 10:53:33 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 822B72086D
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Aug 2019 10:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5FFD72086D
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Aug 2019 10:53:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bee7qFDY";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="H9o+SvMO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 822B72086D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cn4u5AFo";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="H0FrvbqD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FFD72086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hw2WY-0007Oq-6x; Fri, 09 Aug 2019 10:53:30 +0000
+	id 1hw2Wb-0004On-1u; Fri, 09 Aug 2019 10:53:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hw2WV-0007O9-Ma
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 10:53:27 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1hw2Wa-0004Of-B4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 10:53:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
  Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=w7H6Tmq3lOw8ksg9YOlwmwETE3jGtOtQv7H+RxZB5xo=; b=bee7qFDYt8u/1oTq0zQxrGj7lO
- omB8Rx+Id8N6NjQl0VpSwyct7wm3MTjqETdxBiuRpx+ODya7LcYdIib3O9jo/8byP3vdOr5SjNfmN
- J/+4/TM9lT9MGf1PmtMBHTnZXiYvEr67A+spjrEbMWCaNYwRMrArenLQdy+DG9zLI5fU=;
+ bh=B+K2UpdrtZmLfkd8pWf6GiI+fH3aP5ufo6kbHP5JC3w=; b=cn4u5AFoKckIG8eyDFyQZb8zqb
+ ZSGdSSSrv89jvOdWnC5QQBhvhQZFL0L/M1TrtojuMevS6ABYaMDdDOX6spcQ5q1DW2oP+Li4ndApC
+ goy82zZvhcEJdS1wandMWT5KCPBKb/KuHi0ebOwSVrI+DuvSsIjm9J+1GxzAZNpb4XJU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
@@ -45,33 +45,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=w7H6Tmq3lOw8ksg9YOlwmwETE3jGtOtQv7H+RxZB5xo=; b=H9o+SvMOAxG6WSGfPmi9HaV4oi
- LZwbq7aEJnJ/QUFPy9iEQK/KHY1XAbfgVLVz6XtKDsA4oihn86SlcGkxwUzIQQvWeLqkOu/W3VBkb
- AXwWJ9jA7j9bxLonb7HUz61WjzvbF0tSTq1eN2n5vWSA7G0HL+0Sz6YbJZWGnAarfMNo=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ bh=B+K2UpdrtZmLfkd8pWf6GiI+fH3aP5ufo6kbHP5JC3w=; b=H0FrvbqDZtV2aJ3glc2s2aArG4
+ j9xu0TSz+2ubSM/hIOoXx5CxoRFP72jzZH6GTCdUf7Uj6ZbobKnkqgcEh7ouReBU15Ku4RMC71DjC
+ CHFQ7BzwLxGcHXs33EL64choYKec3jiOoAAqbh7WoHJqh8nH2+adOUCTOjypbwugMm84=;
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hw2WT-00HEew-Mz
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 10:53:27 +0000
+ id 1hw2WZ-00HEfC-2T
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 10:53:32 +0000
 Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id BB29DC058791E39F234A;
- Fri,  9 Aug 2019 18:53:18 +0800 (CST)
+ by Forcepoint Email with ESMTP id D823B7356C5E59AAF52C;
+ Fri,  9 Aug 2019 18:53:23 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 9 Aug 2019 18:53:11 +0800
+ 14.3.439.0; Fri, 9 Aug 2019 18:53:15 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Fri, 9 Aug 2019 18:52:54 +0800
-Message-ID: <20190809105302.79876-2-yuchao0@huawei.com>
+Date: Fri, 9 Aug 2019 18:53:01 +0800
+Message-ID: <20190809105302.79876-9-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
 In-Reply-To: <20190809105302.79876-1-yuchao0@huawei.com>
 References: <20190809105302.79876-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1hw2WT-00HEew-Mz
-Subject: [f2fs-dev] [PATCH 02/10] f2fs-tools: fix to avoid memory leak of
- sit_i->sentries
+X-Headers-End: 1hw2WZ-00HEfC-2T
+Subject: [f2fs-dev] [PATCH 09/10] fsck.f2fs: fix to propagate error of
+ write_dquots()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,25 +88,55 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-We missed to free sit_i->sentries in f2fs_do_umount(), fix it.
+Propagate correct error number from write_dquots() to
+quota_write_inode().
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/mount.c | 1 +
- 1 file changed, 1 insertion(+)
+ fsck/mkquota.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index f97c4ea..af7149e 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -2917,6 +2917,7 @@ void f2fs_do_umount(struct f2fs_sb_info *sbi)
- 		free(sit_i->sentries[i].cur_valid_map);
+diff --git a/fsck/mkquota.c b/fsck/mkquota.c
+index c1abbc4..84f9d3d 100644
+--- a/fsck/mkquota.c
++++ b/fsck/mkquota.c
+@@ -42,10 +42,11 @@ static void print_dquot(const char *desc, struct dquot *dq)
+ #define print_dquot(...)
+ #endif
  
- 	free(sit_i->sit_bitmap);
-+	free(sit_i->sentries);
- 	free(sm_i->sit_info);
+-static void write_dquots(dict_t *dict, struct quota_handle *qh)
++static int write_dquots(dict_t *dict, struct quota_handle *qh)
+ {
+ 	dnode_t		*n;
+ 	struct dquot	*dq;
++	int retval = 0;
  
- 	/* free sm_info */
+ 	for (n = dict_first(dict); n; n = dict_next(dict, n)) {
+ 		dq = dnode_get(n);
+@@ -53,10 +54,13 @@ static void write_dquots(dict_t *dict, struct quota_handle *qh)
+ 			print_dquot("write", dq);
+ 			dq->dq_h = qh;
+ 			update_grace_times(dq);
+-			if (qh->qh_ops->commit_dquot(dq))
++			if (qh->qh_ops->commit_dquot(dq)) {
++				retval = -1;
+ 				break;
++			}
+ 		}
+ 	}
++	return retval;
+ }
+ 
+ errcode_t quota_write_inode(struct f2fs_sb_info *sbi, enum quota_type qtype)
+@@ -83,7 +87,7 @@ errcode_t quota_write_inode(struct f2fs_sb_info *sbi, enum quota_type qtype)
+ 		if (retval) {
+ 			log_debug("Cannot initialize io on quotafile");
+ 		} else {
+-			write_dquots(dict, h);
++			retval = write_dquots(dict, h);
+ 			quota_file_close(sbi, h, 1);
+ 		}
+ 	}
 -- 
 2.18.0.rc1
 
