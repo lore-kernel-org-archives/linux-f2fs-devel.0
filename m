@@ -7,68 +7,71 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAFBC433FF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA07C31E40
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Aug 2019 10:53:29 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8B9FC21773
+	by mail.kernel.org (Postfix) with ESMTPS id 8B0502171F
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Aug 2019 10:53:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mEL5HUzK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="hOwI/RMe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B9FC21773
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="PVU2dOZc";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Dz1mw+5O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0502171F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hw2WW-0004OJ-U6; Fri, 09 Aug 2019 10:53:28 +0000
+	id 1hw2WW-0003rq-IP; Fri, 09 Aug 2019 10:53:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hw2WV-0004OD-OX
+ (envelope-from <yuchao0@huawei.com>) id 1hw2WV-0003rd-QN
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 10:53:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CTIPIeup5Ed36K5X2rhXpYTlx2lTbWyCnEDDhMsb3cQ=; b=mEL5HUzKjAIZaZWqdIbHg2mKFq
- oqVx4tqGL4V/QHRMLaEM4YniQP6bNgccACIM4crW+aXjvox74othiARQjyh4/8LRi0ZCj/GVoFhAa
- nU5o9KYlb7yfmGm8eVnDoJ5VR63JbLMHswmxzYdGnmv002yN5yJ/XCPdJIkt4jyFx0eE=;
+ bh=XS+Y7DTVWikZWe0+AZi1VgaQS08HNEQ8dfFbPtF6bhM=; b=PVU2dOZcA8GQRLFG0YI+hrkyiE
+ 7DjjoznW3rIbAWq8AthQcRrqWEGoPxk9bEOVp8UwAae0syUVOI8FaJvWQVCuXgbaA1DO4V4MiNftV
+ oKLRoKPNBgLdLSym9OvvQbxALhXc+fiXezfl0C6QEazHFTLo/5qJA8ADekVqZ158HAQA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=CTIPIeup5Ed36K5X2rhXpYTlx2lTbWyCnEDDhMsb3cQ=; b=h
- OwI/RMe+1YgfJpPUX9mlDbZ8of74Wemvay81ywkRjVRJd9+98ylBm/0OOFOATNUi/IU2+mSDQotg0
- llWuwJ/SJyLeeTO19LonInIPGhaAE9zrMtUdj6pxs6Sf2wpQcoVSpkcFzKpUSlRCThP0iDrWeC4oy
- lSl3BdMFMBGCGb7o=;
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=XS+Y7DTVWikZWe0+AZi1VgaQS08HNEQ8dfFbPtF6bhM=; b=Dz1mw+5O2rxbwb1AsLZbLJQ7Og
+ 4aq6oPdPFQd7vSOAHMxuPl3OUiUmyB//OGqrw+L/44L/1NllV48Kt5oTQHBbc5biNnx3FkYnxb3Z6
+ WOjdIS1DjSBGjcE5HOFOberBsG01S2+ZnRbOAhXa7uWEbNqWL7bgLVzmYvEkNayQ0eLs=;
 Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hw2WT-00GHCp-NN
+ id 1hw2WT-00HEey-MY
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Aug 2019 10:53:27 +0000
 Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id C40C0F8C62AAF6F52EDD;
- Fri,  9 Aug 2019 18:53:18 +0800 (CST)
+ by Forcepoint Email with ESMTP id 032981E164D2ACB37670;
+ Fri,  9 Aug 2019 18:53:19 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 9 Aug 2019 18:53:11 +0800
+ 14.3.439.0; Fri, 9 Aug 2019 18:53:12 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Fri, 9 Aug 2019 18:52:53 +0800
-Message-ID: <20190809105302.79876-1-yuchao0@huawei.com>
+Date: Fri, 9 Aug 2019 18:52:55 +0800
+Message-ID: <20190809105302.79876-3-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20190809105302.79876-1-yuchao0@huawei.com>
+References: <20190809105302.79876-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1hw2WT-00GHCp-NN
-Subject: [f2fs-dev] [PATCH 01/10] f2fs-tools: fix potential deadloop
+X-Headers-End: 1hw2WT-00HEey-MY
+Subject: [f2fs-dev] [PATCH 03/10] f2fs-tools: allocate memory in batch in
+ build_sit_info()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,39 +88,89 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In error path of build_sit_info(), start variable is unsigned int type,
-it should never be less than zero, fix it.
-
-build_sit_info()
-{
-...
-	unsigned int start;
-...
-free_validity_maps:
-	for (--start ; start >= 0; --start)
-		free(sit_i->sentries[start].cur_valid_map);
-...
-}
+Like we did in kernel, allocating memory in batch will be more
+efficient.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/mount.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fsck/f2fs.h  |  1 +
+ fsck/mount.c | 28 ++++++++++++++++------------
+ 2 files changed, 17 insertions(+), 12 deletions(-)
 
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index a52b5d4..6fc0bf3 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -82,6 +82,7 @@ struct sit_info {
+ 	block_t sit_base_addr;          /* start block address of SIT area */
+ 	block_t sit_blocks;             /* # of blocks used by SIT area */
+ 	block_t written_valid_blocks;   /* # of valid blocks in main area */
++	unsigned char *bitmap;		/* all bitmaps pointer */
+ 	char *sit_bitmap;               /* SIT bitmap pointer */
+ 	unsigned int bitmap_size;       /* SIT bitmap size */
+ 
 diff --git a/fsck/mount.c b/fsck/mount.c
-index fd89b8e..f97c4ea 100644
+index af7149e..bed22d5 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -1401,7 +1401,8 @@ int build_sit_info(struct f2fs_sb_info *sbi)
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
- 	struct sit_info *sit_i;
--	unsigned int sit_segs, start;
-+	unsigned int sit_segs;
-+	int start;
+@@ -1404,6 +1404,7 @@ int build_sit_info(struct f2fs_sb_info *sbi)
+ 	unsigned int sit_segs;
+ 	int start;
  	char *src_bitmap, *dst_bitmap;
++	unsigned char *bitmap;
  	unsigned int bitmap_size;
  
+ 	sit_i = malloc(sizeof(struct sit_info));
+@@ -1420,13 +1421,19 @@ int build_sit_info(struct f2fs_sb_info *sbi)
+ 		goto free_sit_info;
+ 	}
+ 
++	bitmap_size = TOTAL_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE;
++
++	sit_i->bitmap = calloc(bitmap_size, 1);
++	if (!sit_i->bitmap) {
++		MSG(1, "\tError: Calloc failed for build_sit_info!!\n");
++		goto free_sentries;
++	}
++
++	bitmap = sit_i->bitmap;
++
+ 	for (start = 0; start < TOTAL_SEGS(sbi); start++) {
+-		sit_i->sentries[start].cur_valid_map
+-			= calloc(SIT_VBLOCK_MAP_SIZE, 1);
+-		if (!sit_i->sentries[start].cur_valid_map) {
+-			MSG(1, "\tError: Calloc failed for build_sit_info!!\n");
+-			goto free_validity_maps;
+-		}
++		sit_i->sentries[start].cur_valid_map = bitmap;
++		bitmap += SIT_VBLOCK_MAP_SIZE;
+ 	}
+ 
+ 	sit_segs = get_sb(segment_count_sit) >> 1;
+@@ -1452,10 +1459,9 @@ int build_sit_info(struct f2fs_sb_info *sbi)
+ 	return 0;
+ 
+ free_validity_maps:
+-	for (--start ; start >= 0; --start)
+-		free(sit_i->sentries[start].cur_valid_map);
++	free(sit_i->bitmap);
++free_sentries:
+ 	free(sit_i->sentries);
+-
+ free_sit_info:
+ 	free(sit_i);
+ 
+@@ -2913,9 +2919,7 @@ void f2fs_do_umount(struct f2fs_sb_info *sbi)
+ 	free(sbi->nm_info);
+ 
+ 	/* free sit_info */
+-	for (i = 0; i < TOTAL_SEGS(sbi); i++)
+-		free(sit_i->sentries[i].cur_valid_map);
+-
++	free(sit_i->bitmap);
+ 	free(sit_i->sit_bitmap);
+ 	free(sit_i->sentries);
+ 	free(sm_i->sit_info);
 -- 
 2.18.0.rc1
 
