@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF7EC41514
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196BEC0650F
 	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Aug 2019 21:37:22 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D822E2085A;
+	by mail.kernel.org (Postfix) with ESMTPS id D7EB920818;
 	Sun, 11 Aug 2019 21:37:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XuO6jYFK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="QBW5z/jV";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjl93+Ad"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D822E2085A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cyXwM7IU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="gENA9sPB";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjKGV8U4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7EB920818
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hwvWj-0003B8-3w; Sun, 11 Aug 2019 21:37:21 +0000
+	id 1hwvWj-0003BX-6E; Sun, 11 Aug 2019 21:37:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1hwvWi-0003At-2o
+ (envelope-from <ebiggers@kernel.org>) id 1hwvWi-0003Az-Kv
  for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Aug 2019 21:37:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -35,9 +35,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Zn+1QKRYPENvLMZj8xiUykCOVKOOEUeCz0J64rPkYaM=; b=XuO6jYFKc7D9YoWCNXLCBHVpPU
- v8z/nr62X4SXcnEJZQh/bP7Hlaz0+WDj/uPM/WwUg+41wOS6wuv1HXISZ9Jkldj31yALWpBkuv8Y3
- Pir8eVUpjf/cGk4by45lmHxa4Mc5CQZ//wekTcisZSSEW6Wp7Mw1MgyxTiUdntjLDJLo=;
+ bh=z13UzqbwtJ2vVFOjFzYgV70348yUQTF8/VvsoIjIq8Q=; b=cyXwM7IU1L0CKNUOPIN1beoflv
+ X9G8H2TWVJYapVmpxwhmSeOgsrqqQXqHYRHYwBG6fP8rJm0qOqWVWDJ6EDnCiZEXjRvds3iGWojcg
+ L4XKFjOpuZUAnZVMygh0SHmcxMc4yQfDvrMTOnMtaXuMArKEH/frls52mj4jNTdP1kIM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Zn+1QKRYPENvLMZj8xiUykCOVKOOEUeCz0J64rPkYaM=; b=QBW5z/jV4aUHIfoCIk4e8Xxt9C
- hWEUeHiWla3SZDoyFOI1jIiya1kX4DPeOb/6ShRSC3q2xVZir2Yjyqmyozfi9v51o2VAFPvjrZ/ta
- GRS+l4IqAwBbypp/+z8TwxG7TOwL5k59kefDNhn7dvYiXy+q3m8xFsYq4e6fDiUkUnc4=;
+ bh=z13UzqbwtJ2vVFOjFzYgV70348yUQTF8/VvsoIjIq8Q=; b=gENA9sPBae/D3/mwLK0iXb0b8D
+ 8H5RRKC1Yj9u1mdHK7hbzMW9J72dEYCdqZA+74rQNzQL2J7idZkXt58G/wBphh4FrOVWVk8cS4+C3
+ xneqCVRHOEzH7tASI7yui/9rklLE7cAPfhn7cE3XPHeLVeL3e/Bpgp9kgBAPaSR9Shu8=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hwvWg-000YlC-5Z
+ id 1hwvWg-000YlE-Qz
  for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Aug 2019 21:37:20 +0000
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
  [24.5.143.220])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 6B08F2085A;
- Sun, 11 Aug 2019 21:37:12 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 310002147A;
+ Sun, 11 Aug 2019 21:37:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1565559432;
- bh=swoMgo/n2caW8yJE4pfd10ANnvVz7VhP4yS8JJAp8jA=;
+ s=default; t=1565559433;
+ bh=ogxEiq2FStmpdB1nMQQucSgGithBLja/oR9v2LpPzGc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=jjl93+AdEy/Khgm0sMNr6vNO8vy8+xtaJ1FK03uu8Hf21CqlupuirV1lgPjpC3eNP
- j+mTgk8XFhCfbLOy7kGcp4S1eFQLrYp4GRpbcPes0lSBHhMTW696YwxCNtGfdaz31s
- NC8T+kUaShHNtQ9bCRN/9r60OPepWkiFcKwiowmo=
+ b=JjKGV8U4TfrNl4xq3zOAIX0wqsItLHGRMeqlb7G26JeK1ekkCb5ZB/ha1mvjDNMcH
+ XGaJvYtNHn86tLponsPBakMNcE54w4kLU0WParAktwp5L6K7uRVuj1lmDmqq9kD2Q3
+ 08W5HT7MXYRs0lrzhllxVQFpqPLuJnTkXGB8OKyI=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Sun, 11 Aug 2019 14:35:52 -0700
-Message-Id: <20190811213557.1970-2-ebiggers@kernel.org>
+Date: Sun, 11 Aug 2019 14:35:55 -0700
+Message-Id: <20190811213557.1970-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190811213557.1970-1-ebiggers@kernel.org>
 References: <20190811213557.1970-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1hwvWg-000YlC-5Z
-Subject: [f2fs-dev] [PATCH 1/6] fs-verity: fix crash on read error in
- build_merkle_tree_level()
+X-Headers-End: 1hwvWg-000YlE-Qz
+Subject: [f2fs-dev] [PATCH 4/6] ext4: remove ext4_bio_encrypted()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,57 +94,34 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-In build_merkle_tree_level(), use a separate fsverity_err() statement
-when failing to read a data page, rather than incorrectly reusing the
-one for failure to read a Merkle tree page and accessing level_start[]
-out of bounds due to 'params->level_start[level - 1]' when level == 0.
+ext4_bio_encrypted() is unused following commit 4e47a0d40dac
+("ext4: add fs-verity read support"), so remove it.
 
-Fixes: 248676649d53 ("fs-verity: implement FS_IOC_ENABLE_VERITY ioctl")
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/verity/enable.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ fs/ext4/readpage.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index 3371d51563962..eabc6ac199064 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -43,19 +43,27 @@ static int build_merkle_tree_level(struct inode *inode, unsigned int level,
- 			pr_debug("Hashing block %llu of %llu for level %u\n",
- 				 i + 1, num_blocks_to_hash, level);
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index ec8aeab3af65a..a30b203fa461c 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -52,15 +52,6 @@
+ static struct kmem_cache *bio_post_read_ctx_cache;
+ static mempool_t *bio_post_read_ctx_pool;
  
--		if (level == 0)
-+		if (level == 0) {
- 			/* Leaf: hashing a data block */
- 			src_page = read_mapping_page(inode->i_mapping, i, NULL);
--		else
-+			if (IS_ERR(src_page)) {
-+				err = PTR_ERR(src_page);
-+				fsverity_err(inode,
-+					     "Error %d reading data page %llu",
-+					     err, i);
-+				return err;
-+			}
-+		} else {
- 			/* Non-leaf: hashing hash block from level below */
- 			src_page = vops->read_merkle_tree_page(inode,
- 					params->level_start[level - 1] + i);
--		if (IS_ERR(src_page)) {
--			err = PTR_ERR(src_page);
--			fsverity_err(inode,
--				     "Error %d reading Merkle tree page %llu",
--				     err, params->level_start[level - 1] + i);
--			return err;
-+			if (IS_ERR(src_page)) {
-+				err = PTR_ERR(src_page);
-+				fsverity_err(inode,
-+					     "Error %d reading Merkle tree page %llu",
-+					     err, params->level_start[level - 1] + i);
-+				return err;
-+			}
- 		}
- 
- 		err = fsverity_hash_page(params, inode, req, src_page,
+-static inline bool ext4_bio_encrypted(struct bio *bio)
+-{
+-#ifdef CONFIG_FS_ENCRYPTION
+-	return unlikely(bio->bi_private != NULL);
+-#else
+-	return false;
+-#endif
+-}
+-
+ /* postprocessing steps for read bios */
+ enum bio_post_read_step {
+ 	STEP_INITIAL = 0,
 -- 
 2.22.0
 
