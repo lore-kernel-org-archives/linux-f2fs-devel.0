@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7AAC31E40
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Aug 2019 11:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D97DC32750
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Aug 2019 11:46:01 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 95AA820684
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Aug 2019 11:45:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id F0A3A20684
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Aug 2019 11:46:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Y77+V4Ef";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="hBDYvNZZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95AA820684
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AmExHvWB";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Ju84dL8l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0A3A20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hx8lz-0000gr-7d; Mon, 12 Aug 2019 11:45:59 +0000
+	id 1hx8m0-0005OR-Mq; Mon, 12 Aug 2019 11:46:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hx8ly-0000gf-U2
+ (envelope-from <yuchao0@huawei.com>) id 1hx8ly-0005OA-Uz
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Aug 2019 11:45:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
@@ -35,9 +35,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1QTs0wdP73Cth85cmv9rlKpGT1YVyMBhWB7RskdrbNM=; b=Y77+V4Ef7Tjx8J5lPJCnZaXQB4
- q8Ya8RLxX3hyTXLLamKGoBS2uQMIzk/LVkqtSeU/MafWJibxvZrFxyhgmds5T1+hieFT2yGzCeyYt
- +cF95W/VLILOZUi3DhVwTAaQ78SG7pEUFvl1rdo8b4bmt0Jvgz1zIuIHYWdH0CGoqPOM=;
+ bh=i9HclnUglyl5syXAEuUZGSzY2nbotp8tQWBNb3vlcTg=; b=AmExHvWBB58YG5FmTLInP3H4BS
+ g9MqVzVMs1B1MoPRPbgBEr4QEx3IKXvgYH+c/iO2zy7jWPpN4hfb8j913Ww2ohOgGPY/hzVniVS18
+ AFRaMhi2EIyWde2sM5c6envrIMaPkNXwstXorny4/soJlOeI/Se5qiMIayZGGe3GbViQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
@@ -45,33 +45,32 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=1QTs0wdP73Cth85cmv9rlKpGT1YVyMBhWB7RskdrbNM=; b=hBDYvNZZ/Jiz/1c0fEc090VYpW
- Nk4Ivk4qAEQ5Do/LjFfyCIwZVImqSLXUbeKYyrRnrYsIzxPqce1spfupYFtAJ9T0zjswhJ5SPFbOe
- uZvJtO7qDyHntz/9MuYXvMhCOcRBzP4goisqpaTd9clG3130xtIL7mXgcmd1uCVR4jgo=;
+ bh=i9HclnUglyl5syXAEuUZGSzY2nbotp8tQWBNb3vlcTg=; b=Ju84dL8l+amoUgp6/P0WvqOFwE
+ s3LJfE870yiE9DzZcMDnZYUovoe7c0YHMcEWG1pjAG9Q6Ce7FQnPLCTmrVht+Ujq2B+/FM/pB3loV
+ mGkgnA/na/JxNtgSthtyZpHjkXWjLbcURET5vQE7zvuDzuT0WzO/6keNgFiOUNyQ1wgE=;
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hx8lx-0011sn-9l
+ id 1hx8lw-000csp-Ph
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Aug 2019 11:45:58 +0000
 Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 850A1739E7DA0DA1D32E;
+ by Forcepoint Email with ESMTP id 8A283C03BB7B99A065B0;
  Mon, 12 Aug 2019 19:45:49 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 12 Aug 2019 19:45:39 +0800
+ 14.3.439.0; Mon, 12 Aug 2019 19:45:40 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Mon, 12 Aug 2019 19:45:25 +0800
-Message-ID: <20190812114527.34613-2-yuchao0@huawei.com>
+Date: Mon, 12 Aug 2019 19:45:27 +0800
+Message-ID: <20190812114527.34613-4-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
 In-Reply-To: <20190812114527.34613-1-yuchao0@huawei.com>
 References: <20190812114527.34613-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1hx8lx-0011sn-9l
-Subject: [f2fs-dev] [PATCH 2/4] fsck.f2fs: fix to check c.fix_on before
- repair
+X-Headers-End: 1hx8lw-000csp-Ph
+Subject: [f2fs-dev] [PATCH 4/4] fsck.f2fs: fix symlink correctly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,222 +87,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-We should always set c.bug_on whenever found a bug, then fix them
-if c.fix_on is on, otherwise, some bugs won't be shown unless we
-enable debug log.
+inode.i_blocks includes inode, xnode and data block count, so, only
+fix in below condition:
+- i_blocks := 3 (inode + xnode + data_block)
+- i_blocks := 2 (inode + data_block)
+
+In addition, it recovers symlink's i_size to 4k rather than i_blocks *
+4k.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/fsck.c | 137 +++++++++++++++++++++++++++++++---------------------
- 1 file changed, 83 insertions(+), 54 deletions(-)
+ fsck/fsck.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 7eb599d..91ddd49 100644
+index 1ea8590..61d1a8d 100644
 --- a/fsck/fsck.c
 +++ b/fsck/fsck.c
-@@ -712,12 +712,13 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	fsck_reada_node_block(sbi, le32_to_cpu(node_blk->i.i_xattr_nid));
+@@ -1027,16 +1027,15 @@ skip_blkcnt_fix:
  
- 	if (fsck_chk_xattr_blk(sbi, nid,
--			le32_to_cpu(node_blk->i.i_xattr_nid), blk_cnt) &&
--			c.fix_on) {
--		node_blk->i.i_xattr_nid = 0;
--		need_fix = 1;
--		FIX_MSG("Remove xattr block: 0x%x, x_nid = 0x%x",
--				nid, le32_to_cpu(node_blk->i.i_xattr_nid));
-+			le32_to_cpu(node_blk->i.i_xattr_nid), blk_cnt)) {
-+		if (c.fix_on) {
-+			node_blk->i.i_xattr_nid = 0;
-+			need_fix = 1;
-+			FIX_MSG("Remove xattr block: 0x%x, x_nid = 0x%x",
-+					nid, le32_to_cpu(node_blk->i.i_xattr_nid));
-+		}
- 	}
- 
- 	if (ftype == F2FS_FT_CHRDEV || ftype == F2FS_FT_BLKDEV ||
-@@ -730,24 +731,32 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 
- 	if (f2fs_has_extra_isize(&node_blk->i)) {
- 		if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
--			if (node_blk->i.i_extra_isize >
--				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE)) {
--				FIX_MSG("ino[0x%x] recover i_extra_isize "
--					"from %u to %u",
--					nid,
--					le16_to_cpu(node_blk->i.i_extra_isize),
--					calc_extra_isize());
--				node_blk->i.i_extra_isize =
--					cpu_to_le16(calc_extra_isize());
--				need_fix = 1;
-+			unsigned int isize =
-+				le16_to_cpu(node_blk->i.i_extra_isize);
-+
-+			if (isize > F2FS_TOTAL_EXTRA_ATTR_SIZE) {
-+				ASSERT_MSG("[0x%x] wrong i_extra_isize=0x%x",
-+						nid, isize);
-+				if (c.fix_on) {
-+					FIX_MSG("ino[0x%x] recover i_extra_isize "
-+						"from %u to %u",
-+						nid, isize,
-+						calc_extra_isize());
-+					node_blk->i.i_extra_isize =
-+						cpu_to_le16(calc_extra_isize());
-+					need_fix = 1;
-+				}
- 			}
- 		} else {
--			FIX_MSG("ino[0x%x] remove F2FS_EXTRA_ATTR "
--				"flag in i_inline:%u",
--				nid, node_blk->i.i_inline);
--			/* we don't support tuning F2FS_FEATURE_EXTRA_ATTR now */
--			node_blk->i.i_inline &= ~F2FS_EXTRA_ATTR;
--			need_fix = 1;
-+			ASSERT_MSG("[0x%x] wrong extra_attr flag", nid);
-+			if (c.fix_on) {
-+				FIX_MSG("ino[0x%x] remove F2FS_EXTRA_ATTR "
-+					"flag in i_inline:%u",
-+					nid, node_blk->i.i_inline);
-+				/* we don't support tuning F2FS_FEATURE_EXTRA_ATTR now */
-+				node_blk->i.i_inline &= ~F2FS_EXTRA_ATTR;
-+				need_fix = 1;
-+			}
- 		}
- 
- 		if ((c.feature &
-@@ -758,13 +767,17 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 
- 			if (!inline_size ||
- 					inline_size > MAX_INLINE_XATTR_SIZE) {
--				FIX_MSG("ino[0x%x] recover inline xattr size "
--					"from %u to %u",
--					nid, inline_size,
--					DEFAULT_INLINE_XATTR_ADDRS);
--				node_blk->i.i_inline_xattr_size =
--					cpu_to_le16(DEFAULT_INLINE_XATTR_ADDRS);
--				need_fix = 1;
-+				ASSERT_MSG("[0x%x] wrong inline_xattr_size:%u",
-+						nid, inline_size);
-+				if (c.fix_on) {
-+					FIX_MSG("ino[0x%x] recover inline xattr size "
-+						"from %u to %u",
-+						nid, inline_size,
-+						DEFAULT_INLINE_XATTR_ADDRS);
-+					node_blk->i.i_inline_xattr_size =
-+						cpu_to_le16(DEFAULT_INLINE_XATTR_ADDRS);
-+					need_fix = 1;
-+				}
- 			}
- 		}
- 	}
-@@ -772,20 +785,28 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 
- 	if ((node_blk->i.i_inline & F2FS_INLINE_DATA)) {
- 		unsigned int inline_size = MAX_INLINE_DATA(node_blk);
-+		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[ofs]);
- 
--		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
--			/* should fix this bug all the time */
--			FIX_MSG("inline_data has wrong 0'th block = %x",
--					le32_to_cpu(node_blk->i.i_addr[ofs]));
--			node_blk->i.i_addr[ofs] = 0;
--			node_blk->i.i_blocks = cpu_to_le64(*blk_cnt);
--			need_fix = 1;
-+		if (blkaddr != 0) {
-+			ASSERT_MSG("[0x%x] wrong inline reserve blkaddr:%u",
-+					nid, blkaddr);
-+			if (c.fix_on) {
-+				FIX_MSG("inline_data has wrong 0'th block = %x",
-+								blkaddr);
-+				node_blk->i.i_addr[ofs] = 0;
-+				node_blk->i.i_blocks = cpu_to_le64(*blk_cnt);
-+				need_fix = 1;
-+			}
- 		}
- 		if (!i_size || i_size > inline_size) {
--			node_blk->i.i_size = cpu_to_le64(inline_size);
--			FIX_MSG("inline_data has wrong i_size %lu",
--						(unsigned long)i_size);
--			need_fix = 1;
-+			ASSERT_MSG("[0x%x] wrong inline size:%lu",
-+					nid, (unsigned long)i_size);
-+			if (c.fix_on) {
-+				node_blk->i.i_size = cpu_to_le64(inline_size);
-+				FIX_MSG("inline_data has wrong i_size %lu",
-+							(unsigned long)i_size);
-+				need_fix = 1;
-+			}
- 		}
- 		if (!(node_blk->i.i_inline & F2FS_DATA_EXIST)) {
- 			char buf[MAX_INLINE_DATA(node_blk)];
-@@ -793,9 +814,12 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 
- 			if (memcmp(buf, inline_data_addr(node_blk),
- 						MAX_INLINE_DATA(node_blk))) {
--				FIX_MSG("inline_data has DATA_EXIST");
--				node_blk->i.i_inline |= F2FS_DATA_EXIST;
--				need_fix = 1;
-+				ASSERT_MSG("[0x%x] junk inline data", nid);
-+				if (c.fix_on) {
-+					FIX_MSG("inline_data has DATA_EXIST");
-+					node_blk->i.i_inline |= F2FS_DATA_EXIST;
-+					need_fix = 1;
-+				}
- 			}
- 		}
- 		DBG(3, "ino[0x%x] has inline data!\n", nid);
-@@ -804,20 +828,25 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	}
- 
- 	if ((node_blk->i.i_inline & F2FS_INLINE_DENTRY)) {
-+		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[ofs]);
-+
- 		DBG(3, "ino[0x%x] has inline dentry!\n", nid);
--		if (le32_to_cpu(node_blk->i.i_addr[ofs]) != 0) {
--			/* should fix this bug all the time */
--			FIX_MSG("inline_dentry has wrong 0'th block = %x",
--					le32_to_cpu(node_blk->i.i_addr[ofs]));
--			node_blk->i.i_addr[ofs] = 0;
--			node_blk->i.i_blocks = cpu_to_le64(*blk_cnt);
--			need_fix = 1;
-+		if (blkaddr != 0) {
-+			ASSERT_MSG("[0x%x] wrong inline reserve blkaddr:%u",
-+								nid, blkaddr);
-+			if (c.fix_on) {
-+				FIX_MSG("inline_dentry has wrong 0'th block = %x",
-+								blkaddr);
-+				node_blk->i.i_addr[ofs] = 0;
-+				node_blk->i.i_blocks = cpu_to_le64(*blk_cnt);
-+				need_fix = 1;
-+			}
- 		}
- 
- 		ret = fsck_chk_inline_dentries(sbi, node_blk, &child);
- 		if (ret < 0) {
--			/* should fix this bug all the time */
--			need_fix = 1;
-+			if (c.fix_on)
-+				need_fix = 1;
- 		}
- 		child.state |= FSCK_INLINE_INODE;
- 		goto check;
-@@ -999,7 +1028,7 @@ skip_blkcnt_fix:
  	free(en);
  
- 	if (ftype == F2FS_FT_SYMLINK && i_blocks && i_size == 0) {
--		DBG(1, "ino: 0x%x i_blocks: %lu with zero i_size",
-+		ASSERT_MSG("ino: 0x%x i_blocks: %lu with zero i_size\n",
+-	if (ftype == F2FS_FT_SYMLINK && i_blocks && i_size == 0) {
++	if (ftype == F2FS_FT_SYMLINK && i_size == 0 &&
++			i_blocks == (i_xattr_nid ? 3 : 2)) {
+ 		ASSERT_MSG("ino: 0x%x i_blocks: %lu with zero i_size\n",
  						nid, (unsigned long)i_blocks);
  		if (c.fix_on) {
- 			u64 i_size = i_blocks * F2FS_BLKSIZE;
-@@ -1012,7 +1041,7 @@ skip_blkcnt_fix:
+-			u64 i_size = i_blocks * F2FS_BLKSIZE;
+-
+-			node_blk->i.i_size = cpu_to_le64(i_size);
++			node_blk->i.i_size = cpu_to_le64(F2FS_BLKSIZE);
+ 			need_fix = 1;
+ 			FIX_MSG("Symlink: recover 0x%x with i_size=%lu",
+-						nid, (unsigned long)i_size);
++					nid, (unsigned long)F2FS_BLKSIZE);
+ 		}
  	}
  
- 	if (ftype == F2FS_FT_ORPHAN && i_links) {
--		MSG(0, "ino: 0x%x is orphan inode, but has i_links: %u",
-+		ASSERT_MSG("ino: 0x%x is orphan inode, but has i_links: %u",
- 				nid, i_links);
- 		if (c.fix_on) {
- 			node_blk->i.i_links = 0;
 -- 
 2.18.0.rc1
 
