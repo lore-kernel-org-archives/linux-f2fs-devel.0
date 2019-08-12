@@ -2,76 +2,74 @@ Return-Path: <SRS0=qvT3=WI=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA26C31E40
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Aug 2019 11:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9B2C433FF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Aug 2019 12:01:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E475720684
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Aug 2019 11:46:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 0913D206DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Aug 2019 12:01:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="iaTaKCDU";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="CadFJZFY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E475720684
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Fcc90R5s";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="UtcgWkb0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0913D206DF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hx8m3-0004HF-IA; Mon, 12 Aug 2019 11:46:03 +0000
+	id 1hx90q-0004rC-Ga; Mon, 12 Aug 2019 12:01:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hx8m2-0004H5-6s
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Aug 2019 11:46:02 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1hx90p-0004r5-5w
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Aug 2019 12:01:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
- Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Date:Message-ID:CC:Subject:From:To:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gW73TgrCLKebMXKCtjGPGz6dIQjfcSvCF6sFWIuywRk=; b=iaTaKCDUldyva9u212YavEYa9M
- 46D/11/ioq6NlUBLKtgr05UGwDLoUBNYaZG9LgYCcTUJR7cP2DxpBqfMXYVbdzi7gxaoee7njt2r/
- AuI9OY7LWKgpOXmGwKA+QsQ3DyGL+h+vW8VLtWI4EibPBRMeSyF064MNYx1dCQ73GtFM=;
+ bh=FGQXMbxiqUI1xZ3Nq4AUE8u/GaLNExJNLsuQ3ajptCE=; b=Fcc90R5s+QL/f6dP0fnWzzYPr+
+ xEa+cAbWe6BJegKgw5y2vQ7S2uNvRX5nXztjt0WMwzZXMV8Ir06SnHo8Ggm7o77P862PrpyTLKnKq
+ LtWs8E3JI3nSiMtCbh+geS7U3VtTemGO+SiAGTd/fI/Ih/qj5Ovtw2EXWKXLnTt6orog=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=gW73TgrCLKebMXKCtjGPGz6dIQjfcSvCF6sFWIuywRk=; b=CadFJZFYSif5AjChD7YwntjpNf
- VegyNXl4nNCFJo7TJkpv7FLjRxMVw4BZ5qzcqbIuFl4FyaK9jf5hzyjzKgm8deKiNrX6TSc3SeNQ6
- lRfPHrxX5VJ0SwUT8MD7p1WcVyK5sZ1pVSG0GcUyq+AsT5+o+jxFLk06J3JeAuiBn9Yk=;
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Message-ID:CC:
+ Subject:From:To:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=FGQXMbxiqUI1xZ3Nq4AUE8u/GaLNExJNLsuQ3ajptCE=; b=U
+ tcgWkb0ZHTm5SY6gUBV0kRrRdJ5uj6ug4oNazJjXtFFMnHAWw/3vgHOYV/DbjIkWOGIZlkmFurF4F
+ gf/A+HfOIPVzeEfa0GuhDMYMTl44U06yf/zFpZ8dsN4mfemBz1WevAay+lNjD48gIqyn+iVGAQ93J
+ pqNUpsjPR5Sr3xVg=;
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hx8m0-002dSe-TN
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Aug 2019 11:46:02 +0000
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 9132EBC782C4752FEDDA;
- Mon, 12 Aug 2019 19:45:49 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 12 Aug 2019 19:45:39 +0800
+ id 1hx90m-000dK3-Vn
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Aug 2019 12:01:19 +0000
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 46AEF25BA7D14820FE4B;
+ Mon, 12 Aug 2019 20:01:10 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 12 Aug
+ 2019 20:01:07 +0800
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Mon, 12 Aug 2019 19:45:26 +0800
-Message-ID: <20190812114527.34613-3-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20190812114527.34613-1-yuchao0@huawei.com>
-References: <20190812114527.34613-1-yuchao0@huawei.com>
+Message-ID: <3bc8584e-651c-9578-c25a-40c60b5cfbdb@huawei.com>
+Date: Mon, 12 Aug 2019 20:01:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1hx8m0-002dSe-TN
-Subject: [f2fs-dev] [PATCH 3/4] fsck.f2fs: fix to show removed x_nid
- correctly
+X-Headers-End: 1hx90m-000dK3-Vn
+Subject: [f2fs-dev] f2fs_symlink bug
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,52 +81,30 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Otherwise, we just show fixed zero x_nid value.
+Hi Jaegeuk,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fsck/fsck.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+In por_fsstress testcase, fsck reports below inconsistent status, I found one
+path can cause this case.
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 91ddd49..1ea8590 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -659,6 +659,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	u32 i_links = le32_to_cpu(node_blk->i.i_links);
- 	u64 i_size = le64_to_cpu(node_blk->i.i_size);
- 	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
-+	nid_t i_xattr_nid = le32_to_cpu(node_blk->i.i_xattr_nid);
- 	int ofs;
- 	char *en;
- 	u32 namelen;
-@@ -709,15 +710,14 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	}
- 
- 	/* readahead xattr node block */
--	fsck_reada_node_block(sbi, le32_to_cpu(node_blk->i.i_xattr_nid));
-+	fsck_reada_node_block(sbi, i_xattr_nid);
- 
--	if (fsck_chk_xattr_blk(sbi, nid,
--			le32_to_cpu(node_blk->i.i_xattr_nid), blk_cnt)) {
-+	if (fsck_chk_xattr_blk(sbi, nid, i_xattr_nid, blk_cnt)) {
- 		if (c.fix_on) {
- 			node_blk->i.i_xattr_nid = 0;
- 			need_fix = 1;
- 			FIX_MSG("Remove xattr block: 0x%x, x_nid = 0x%x",
--					nid, le32_to_cpu(node_blk->i.i_xattr_nid));
-+							nid, i_xattr_nid);
- 		}
- 	}
- 
--- 
-2.18.0.rc1
+[FIX] (fsck_chk_inode_blk:1002)  --> Symlink: recover 0x1425 with i_size=4096
+[ASSERT] (fsck_chk_inode_blk:1030)  --> ino: 0x1425 chksum:0x6983d47, but
+calculated one is: 0xdb284b35
+[FIX] (fsck_chk_inode_blk:1036)  --> ino: 0x1425 recover, i_inode_checksum=
+0x6983d47 -> 0xdb284b35
 
+- f2fs_symlink
+ - page_symlink failed -> f2fs_write_failed() will truncate size to zero
+  - f2fs_unlink failed -> symlink inode w/o data will remain in fs
+
+Not sure, but one choice of fix is to treat symlink as fs meta like we did for
+directory, so that checkpoint can take care of all data/node of symlink, any
+thoughts?
 
 
 _______________________________________________
