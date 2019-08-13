@@ -2,41 +2,42 @@ Return-Path: <SRS0=UTfh=WJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE311C31E40
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2019 00:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAEEC433FF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Aug 2019 00:16:13 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6D3A420665;
-	Tue, 13 Aug 2019 00:14:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D946720665;
+	Tue, 13 Aug 2019 00:16:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="iCSLLBSv";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="SKlPcOXf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D3A420665
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VTdGgD47";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XF3TMTfc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D946720665
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hxKSF-00014t-W5; Tue, 13 Aug 2019 00:14:23 +0000
+	id 1hxKU0-0002lM-Eu; Tue, 13 Aug 2019 00:16:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1hxKSE-00014L-FM
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Aug 2019 00:14:22 +0000
+ (envelope-from <tytso@mit.edu>) id 1hxKTz-0002lE-7N
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Aug 2019 00:16:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tJyjCSiivrYyvvAXMNCAGVNk/gtIhAZv6lckGq379x4=; b=iCSLLBSvPB0QPKf2lGQUQm5c+O
- i94m4YF8E7nMMdXbCEK2XO4B8j26i6c3kqjF08s0E76YpOL8iUUlFXwGGgRfU+zXM8FMXHy7N+IZe
- OImOEDPui9T4QzPeaiv6+aQmu8alKiXYO3IPuRaz/0HB1fpj4Ug8NdwInpc3k643+lpw=;
+ bh=Rx2yfZ31VYZZLw5g2VKuIHTfReK415heQDkgEnx5Zu4=; b=VTdGgD47C2cwjleUA7p4/oY88j
+ WZCezh+unSzXzo85IMw/8vR34LaJubmw9C1yew8uHG60ZRFgXgKGSAfO35DkWx0QCPrSKa6lAmd9Z
+ Gigcl7MR366blhSQ3yXlOvWkQ5CJLexDT8i4tWWTGL4oeEfQA80k5OYZyhT2CMyorqCM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,35 +45,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tJyjCSiivrYyvvAXMNCAGVNk/gtIhAZv6lckGq379x4=; b=SKlPcOXfql8iJGYAOgSoPYxITZ
- 4oqofQn0fyl40YVSNvoLmE8bBdyty1Z8pExaY5TcBfS4m54a57GG/+gKF+NuEDTLqRHvVy+YPv03M
- icHxs3Bm3Rs59MR1X7ajStGsLNwttJh+kde+dQn7h7RlbRR6+77qXB+N9xHkGmxDDl9s=;
+ bh=Rx2yfZ31VYZZLw5g2VKuIHTfReK415heQDkgEnx5Zu4=; b=XF3TMTfcWXMkbR0P2DTn85LJYQ
+ YvpQK6OW+OnzSUZtXE38CUiBNXRwQwljHVKCHZqyOf8ilPAb69JWhPLhPh9+6kCVCLDgrA1VbnCho
+ fGKFxcZzAGDww6iJncyrfmLALj+QH66DrFajLfP9ME/WuaKJWU8yNlE3qwbzSUCzIkk4=;
 Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hxKSC-001lCg-V3
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Aug 2019 00:14:22 +0000
+ id 1hxKTx-001lSz-Ik
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Aug 2019 00:16:11 +0000
 Received: from callcc.thunk.org (guestnat-104-133-9-109.corp.google.com
  [104.133.9.109] (may be forged)) (authenticated bits=0)
  (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7D0E7I4017125
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7D0FuIa017672
  (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 12 Aug 2019 20:14:08 -0400
+ Mon, 12 Aug 2019 20:15:57 -0400
 Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 1BBDD4218EF; Mon, 12 Aug 2019 20:14:07 -0400 (EDT)
-Date: Mon, 12 Aug 2019 20:14:07 -0400
+ id BDC084218EF; Mon, 12 Aug 2019 20:15:55 -0400 (EDT)
+Date: Mon, 12 Aug 2019 20:15:55 -0400
 From: "Theodore Y. Ts'o" <tytso@mit.edu>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20190813001406.GI28705@mit.edu>
+Message-ID: <20190813001555.GJ28705@mit.edu>
 References: <20190805162521.90882-1-ebiggers@kernel.org>
- <20190805162521.90882-15-ebiggers@kernel.org>
+ <20190805162521.90882-16-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20190805162521.90882-15-ebiggers@kernel.org>
+In-Reply-To: <20190805162521.90882-16-ebiggers@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1hxKSC-001lCg-V3
-Subject: Re: [f2fs-dev] [PATCH v8 14/20] fscrypt: allow unprivileged users
- to add/remove keys for v2 policies
+X-Headers-End: 1hxKTx-001lSz-Ik
+Subject: Re: [f2fs-dev] [PATCH v8 15/20] fscrypt: add
+ FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS ioctl
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,63 +95,24 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Aug 05, 2019 at 09:25:15AM -0700, Eric Biggers wrote:
+On Mon, Aug 05, 2019 at 09:25:16AM -0700, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> Allow the FS_IOC_ADD_ENCRYPTION_KEY and FS_IOC_REMOVE_ENCRYPTION_KEY
-> ioctls to be used by non-root users to add and remove encryption keys
-> from the filesystem-level crypto keyrings, subject to limitations.
+> Add a root-only variant of the FS_IOC_REMOVE_ENCRYPTION_KEY ioctl which
+> removes all users' claims of the key, not just the current user's claim.
+> I.e., it always removes the key itself, no matter how many users have
+> added it.
 > 
-> Motivation: while privileged fscrypt key management is sufficient for
-> some users (e.g. Android and Chromium OS, where a privileged process
-> manages all keys), the old API by design also allows non-root users to
-> set up and use encrypted directories, and we don't want to regress on
-> that.  Especially, we don't want to force users to continue using the
-> old API, running into the visibility mismatch between files and keyrings
-> and being unable to "lock" encrypted directories.
-> 
-> Intuitively, the ioctls have to be privileged since they manipulate
-> filesystem-level state.  However, it's actually safe to make them
-> unprivileged if we very carefully enforce some specific limitations.
-> 
-> First, each key must be identified by a cryptographic hash so that a
-> user can't add the wrong key for another user's files.  For v2
-> encryption policies, we use the key_identifier for this.  v1 policies
-> don't have this, so managing keys for them remains privileged.
-> 
-> Second, each key a user adds is charged to their quota for the keyrings
-> service.  Thus, a user can't exhaust memory by adding a huge number of
-> keys.  By default each non-root user is allowed up to 200 keys; this can
-> be changed using the existing sysctl 'kernel.keys.maxkeys'.
-> 
-> Third, if multiple users add the same key, we keep track of those users
-> of the key (of which there remains a single copy), and won't really
-> remove the key, i.e. "lock" the encrypted files, until all those users
-> have removed it.  This prevents denial of service attacks that would be
-> possible under simpler schemes, such allowing the first user who added a
-> key to remove it -- since that could be a malicious user who has
-> compromised the key.  Of course, encryption keys should be kept secret,
-> but the idea is that using encryption should never be *less* secure than
-> not using encryption, even if your key was compromised.
-> 
-> We tolerate that a user will be unable to really remove a key, i.e.
-> unable to "lock" their encrypted files, if another user has added the
-> same key.  But in a sense, this is actually a good thing because it will
-> avoid providing a false notion of security where a key appears to have
-> been removed when actually it's still in memory, available to any
-> attacker who compromises the operating system kernel.
+> This is useful for forcing a directory to be locked, without having to
+> figure out which user ID(s) the key was added under.  This is planned to
+> be used by a command like 'sudo fscrypt lock DIR --all-users' in the
+> fscrypt userspace tool (http://github.com/google/fscrypt).
 > 
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Looks good.  I'd probably would have used either "mk_secret_sem" or
-"mk->mk_secret_sem" in the comments, instead of "->mk_securet_sem",
-but that's just a personal style preference.  Since you consistently
-used the latter, I assume that's a deliberate choice, which is fine.
-
-Feel free to add:
+Looks good, thanks.   Feel free to add:
 
 Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-
 
 
 _______________________________________________
