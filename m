@@ -7,70 +7,68 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E43CC32757
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Aug 2019 11:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A4AC31E40
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Aug 2019 11:46:09 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 453322083B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Aug 2019 11:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 408D42083B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Aug 2019 11:46:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HSwPlVjf";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="JzXfhuJn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453322083B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="JvE5yslQ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VELdhyxd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408D42083B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hyECl-0004kG-TW; Thu, 15 Aug 2019 11:46:07 +0000
+	id 1hyECm-0006Ga-S9; Thu, 15 Aug 2019 11:46:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hyECj-0004jz-SB
+ (envelope-from <yuchao0@huawei.com>) id 1hyECj-0006GI-Q6
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Aug 2019 11:46:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
- Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UiAkqWydsyGL+fAu2iFmZnR6IkJ+5MBCFUuQpoWDo08=; b=HSwPlVjfTqE+UuvQGzOD+xKDjT
- z/WJPG4EaWu+68r1neyn5yb4hDVMl7ZvMw7xMk9i0a+tWW2eGjzaB9s/OgL+KEC7ee5w99w3Yl/zm
- NzOlPec/YkB136TtcYPTPHOGZ6HvtWtN9aGZoUUcVZFa2nyKtcNwm0NIZu2Qc8NU4e8M=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
  CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=UiAkqWydsyGL+fAu2iFmZnR6IkJ+5MBCFUuQpoWDo08=; b=JzXfhuJnCuKMpZxJ9hj4c3c9+C
- EuwAQLxz/cl7l+UT1kQO4DPr0e3nxIGhMviuf183u69eivArVdC7A/JrKzGnfjGNPF/tFB90gwm0U
- bszN+5ElMbzMEbrsZaLmhxTFbn/hjFEwOasQA4VSmsG8lp5+ZK9q4FhUy7uSPKAuqgkI=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=UB0K2R8O2y8rqnkRCjJmED0kHvfyyb64UniNTUhc5eY=; b=JvE5yslQ0rZXqLtEHywJVbKEIL
+ w3LW7UHRtbEqGi3O2Fm22hX1F7chkxqdkgEn5J/j+NmsDmyNAuHKwcw7WfhDwvpROzo6iBd4KB0Z3
+ 1HcGVbq3/D57ylio4GUkNzV43LMiszhptQ02QZJ3/Q/DYy6KRChy2WL2MG+nSbGMbIX4=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=UB0K2R8O2y8rqnkRCjJmED0kHvfyyb64UniNTUhc5eY=; b=V
+ ELdhyxdyPYoYNvEHNPOyEmMPbf4znRpiCMEKdEfK3tG/EARqvechLj3+BaGvWpZBZMw+7tiC/iXXN
+ t2lj7Fv418OQE9rnTlKZ+7kvZ2sOMbKgHZDLa90hJeJbaUBfVieif5XUaMY2WPU1Qbn4NMz+puIqc
+ 39RIxEOVpwYzcJe4=;
 Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hyECh-004sLE-Ng
+ id 1hyECi-0078Lq-IT
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Aug 2019 11:46:05 +0000
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id C8CAACD2281A1538240B;
+ by Forcepoint Email with ESMTP id C4184EF3A2264704D489;
  Thu, 15 Aug 2019 19:45:56 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 15 Aug 2019 19:45:49 +0800
+ 14.3.439.0; Thu, 15 Aug 2019 19:45:48 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Thu, 15 Aug 2019 19:45:35 +0800
-Message-ID: <20190815114536.114255-2-yuchao0@huawei.com>
+Date: Thu, 15 Aug 2019 19:45:34 +0800
+Message-ID: <20190815114536.114255-1-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20190815114536.114255-1-yuchao0@huawei.com>
-References: <20190815114536.114255-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1hyECh-004sLE-Ng
-Subject: [f2fs-dev] [PATCH 2/3] f2fs: use wrapped f2fs_cp_error()
+X-Headers-End: 1hyECi-0078Lq-IT
+Subject: [f2fs-dev] [PATCH 1/3] f2fs: use wrapped IS_SWAPFILE()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,22 +89,22 @@ Just cleanup, no logic change.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/inode.c | 2 +-
+ fs/f2fs/f2fs.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 5d78f2db7a67..88af85e0db62 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -706,7 +706,7 @@ void f2fs_evict_inode(struct inode *inode)
- 	stat_dec_inline_dir(inode);
- 	stat_dec_inline_inode(inode);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 73e007dca3bb..d2b718e33f88 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3706,7 +3706,7 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 				block_unaligned_IO(inode, iocb, iter))
+ 		return true;
+ 	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_CP_DISABLED) &&
+-					!(inode->i_flags & S_SWAPFILE))
++					!IS_SWAPFILE(inode))
+ 		return true;
  
--	if (likely(!is_set_ckpt_flags(sbi, CP_ERROR_FLAG) &&
-+	if (likely(!f2fs_cp_error(sbi) &&
- 				!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
- 		f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
- 	else
+ 	return false;
 -- 
 2.18.0.rc1
 
