@@ -2,41 +2,41 @@ Return-Path: <SRS0=leBL=WM=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B06DC3A59C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Aug 2019 06:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD7DC3A59C
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Aug 2019 06:50:53 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4893320644;
-	Fri, 16 Aug 2019 06:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 609C620644;
+	Fri, 16 Aug 2019 06:50:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CCuHFib4";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YtrutQ7U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4893320644
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hvEYrbxA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PsXtyFkn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 609C620644
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hyW4H-0007Aq-UA; Fri, 16 Aug 2019 06:50:33 +0000
+	id 1hyW4b-0004VG-3E; Fri, 16 Aug 2019 06:50:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hyW4G-0007AY-Gg
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Aug 2019 06:50:32 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1hyW4Z-0004V9-Aa
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Aug 2019 06:50:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+5yEDftGYr2jWWbGHOPw5LQTnQc2dYQMCZDnV+4JBvM=; b=CCuHFib4FPUVqLc+HGFH2ePbk2
- qZHi4lVGNFyNrrHl1jNqq//TS8CaMf3cHNywUZbOtcJ8wR1T8gOXi8ugQKlfL5cp+bk2Msge6q+aA
- WliuV4tLo70wko9qz2lOmbjf30Hct7eROrDQ4+4v/35CGc1M9X9/XR7ARgV6/H6k5Vac=;
+ bh=Gd/9QbfGoGIbV2arDj2XoW9VKjtUQW9lLyc2LBaZpeI=; b=hvEYrbxA7KeFBEP7mmfwSwoiGq
+ Bf9nmhgHQok7xtc2sDunvgXjBQ+aJr9kma8zyKFMAUAe04+0qA5mtWmzcOG8lI/ZeeqyoZo8vaK3F
+ 1BFFeLjIA2Y+QESh6Ty3agNKwPEefC1vxC8YXTR8Owii4Ggl/uJwCWqegLjtTUfRuGwU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -44,35 +44,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+5yEDftGYr2jWWbGHOPw5LQTnQc2dYQMCZDnV+4JBvM=; b=YtrutQ7U8MFEVmdK+aQ5JfjMMI
- eX6kC6RfY4dkgp1DOohYnBgA5rJYKPUHiBMjQFaYsp7mSp4vDtXzFgSGyXNBwfULPVrADfFHYUGl9
- 1uAxafMMI9KfuUqb1Zh2ZJaMTxayNR0nY/KqH4FTjJ2/FJnlEAPr5cBlB7kF3OVbzVkI=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=Gd/9QbfGoGIbV2arDj2XoW9VKjtUQW9lLyc2LBaZpeI=; b=PsXtyFknqa47p1oJ3KzW5xw6OX
+ teTvxZyZmJqbNMepeY/+iJDtZjRmePdwB6ss3ChDDw9a0TrM/vE6c9kG5N1h6dcVqSbwep39l4wZ2
+ duHBUm/XqHU0LYs5akpwx2Rg/K5IRXXdNMIwW6tiNIwPUtrsHD/dqmI18EkykVbwMkdo=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hyW40-00803C-QZ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Aug 2019 06:50:32 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id E8FE46B83525FEA5EA62;
- Fri, 16 Aug 2019 14:50:02 +0800 (CST)
+ id 1hyW4M-005AUQ-IT
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Aug 2019 06:50:50 +0000
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id D043636065D0A6BAE017;
+ Fri, 16 Aug 2019 14:50:30 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 16 Aug
- 2019 14:49:59 +0800
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 16 Aug
+ 2019 14:50:28 +0800
 To: Eric Biggers <ebiggers@kernel.org>,
  <linux-f2fs-devel@lists.sourceforge.net>
 References: <20190816055539.30420-1-ebiggers@kernel.org>
+ <20190816055539.30420-2-ebiggers@kernel.org>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <faefae52-3c06-46b1-8be9-3774a98a212b@huawei.com>
-Date: Fri, 16 Aug 2019 14:49:58 +0800
+Message-ID: <c3d4c7ee-9c08-b4d2-f48a-ac98fbe8fbc1@huawei.com>
+Date: Fri, 16 Aug 2019 14:50:26 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190816055539.30420-1-ebiggers@kernel.org>
+In-Reply-To: <20190816055539.30420-2-ebiggers@kernel.org>
 Content-Language: en-US
 X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1hyW40-00803C-QZ
-Subject: Re: [f2fs-dev] [PATCH 0/3] f2fs: fixes for FS_IOC_{GET,SET}FSLABEL
+X-Headers-End: 1hyW4M-005AUQ-IT
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: fix buffer overruns in FS_IOC_{GET,
+ SET}FSLABEL
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,22 +90,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Eric, thanks for all the fixes.
+On 2019/8/16 13:55, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> utf16s_to_utf8s() and utf8s_to_utf16s() take the number of characters,
+> not the number of bytes.
+> 
+> Fixes: 61a3da4d5ef8 ("f2fs: support FS_IOC_{GET,SET}FSLABEL")
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-On 2019/8/16 13:55, Eric Biggers wrote:
-> Fix some bugs in the f2fs implementation of the FS_IOC_GETFSLABEL and
-> FS_IOC_SETFSLABEL ioctls.
-> 
-> Eric Biggers (3):
->   f2fs: fix buffer overruns in FS_IOC_{GET,SET}FSLABEL
->   f2fs: fix copying too many bytes in FS_IOC_SETFSLABEL
->   f2fs: add missing authorization check in FS_IOC_SETFSLABEL
-> 
->  fs/f2fs/file.c | 27 +++++++++------------------
->  1 file changed, 9 insertions(+), 18 deletions(-)
-> 
 
 
 _______________________________________________
