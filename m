@@ -2,74 +2,82 @@ Return-Path: <SRS0=leBL=WM=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96422C3A59B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Aug 2019 03:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E59CC3A59E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Aug 2019 05:56:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 643C52086C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Aug 2019 03:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CD4232064A;
+	Fri, 16 Aug 2019 05:56:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Ku4VU15j";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DD5OTqFx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643C52086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lYb8uLdF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="GPHznl6+";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="biE0xC2D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4232064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hySXL-0007vq-RS; Fri, 16 Aug 2019 03:04:19 +0000
+	id 1hyVEJ-0002GW-48; Fri, 16 Aug 2019 05:56:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hySXK-0007vT-6P
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Aug 2019 03:04:18 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1hyVEI-0002GP-AC
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Aug 2019 05:56:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lBaRpNg3I4FFT/oJc2BBHj+ZoDhPks0+8rMA3I520E0=; b=Ku4VU15j8HwQcFmUuKZLUEMZD5
- 1EnhppOymjni9P9B0SGR+D56GwgVZrD1Nb1xpisTTzulquA1i4jhS93OXRB+rCIlhqOoUPqcyuNrb
- rsg3DLvwt7UrDgvyJ3xr0SjKrhBigjg+8uHMXWLWzgcLT0NUYVeaNKfmhiQq+Tv8BFfY=;
+ bh=JjuURzPCN38irn/PVSTdROCE+Fuyt8hvQwWUhSnEHo0=; b=lYb8uLdFxqvrRkPmGFeJK97w87
+ lW9/4Si/dlkFcGf+Bt8Kpv47sboL+kxW/wUJax0y6etlEMBoCNIuJP7DLQlowNud+oHd7kIi7yrPG
+ SeWHlq1otcwdcSUHiqMdek7nz3eZw3+pk6z+Gz/TGGlgoISC2mgBCslIPLz+krqRjR5Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=lBaRpNg3I4FFT/oJc2BBHj+ZoDhPks0+8rMA3I520E0=; b=D
- D5OTqFxLwg43/U01PIVNMAAHo1v6H2mnhTzJQJ4Ft4QMF6el+0ygn79TlPiD3qaszHSX9/q5zXcXJ
- LYW6FZN8ay4D6Io1S9cm5uAMEDIOfGjAgTE6z26DFfeZt88xgGVkMtjHSbxn2EUkj42mfoGmNEOkq
- fAQyBS1kylWJ+luE=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=JjuURzPCN38irn/PVSTdROCE+Fuyt8hvQwWUhSnEHo0=; b=GPHznl6+RJUw54YsuKuOIfqVf5
+ IHJrgD3SjDKFDBvUnlwoaz/To8LWAsss4CDrgy8n+f681N05sGJ/wtfjrHQumX806YR7/Ij0ZUExO
+ OaxXdi9ckmS9OKGnMQ4UqFxV26H1FYmYSp661G2ppvG+NwLefA+p+rbDVXy4Gw4JVWW0=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hySX6-005QZj-86
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Aug 2019 03:04:17 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 22A01A017554AFE3FD6A;
- Fri, 16 Aug 2019 11:03:57 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 16 Aug 2019 11:03:50 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Fri, 16 Aug 2019 11:03:34 +0800
-Message-ID: <20190816030334.81035-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+ id 1hyVEG-007xJe-BO
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Aug 2019 05:56:50 +0000
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
+ [24.5.143.220])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id B5C312064A
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 16 Aug 2019 05:56:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1565935002;
+ bh=l/GbltjBRn9pVcB/bU3jK0Y2TdVWlgpp24wjDO2j0OI=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=biE0xC2DufQvp3+NAwIO5w4jW0akOURNoBybKUbt8akk9FDoEeIVz+QsBpcLYGo/k
+ aav1Wb0WuMVLtXB0jYq5ojYh9akc47wQNZp5rfEYcJ+aWWGLKDvxERanrdeTmMfBa4
+ PZo8krkNdmROGXURgAqFFauI+kUd//d1oQXx4puc=
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Thu, 15 Aug 2019 22:55:37 -0700
+Message-Id: <20190816055539.30420-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190816055539.30420-1-ebiggers@kernel.org>
+References: <20190816055539.30420-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1hySX6-005QZj-86
-Subject: [f2fs-dev] [PATCH] f2fs: fix to avoid data corruption by forbidding
- SSR overwrite
+X-Headers-End: 1hyVEG-007xJe-BO
+Subject: [f2fs-dev] [PATCH 1/3] f2fs: fix buffer overruns in FS_IOC_{GET,
+ SET}FSLABEL
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,57 +89,45 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-There is one case can cause data corruption.
+From: Eric Biggers <ebiggers@google.com>
 
-- write 4k to fileA
-- fsync fileA, 4k data is writebacked to lbaA
-- write 4k to fileA
-- kworker flushs 4k to lbaB; dnode contain lbaB didn't be persisted yet
-- write 4k to fileB
-- kworker flush 4k to lbaA due to SSR
-- SPOR -> dnode with lbaA will be recovered, however lbaA contains fileB's
-data
+utf16s_to_utf8s() and utf8s_to_utf16s() take the number of characters,
+not the number of bytes.
 
-One solution is tracking all fsynced file's block history, and disallow
-SSR overwrite on newly invalidated block on that file.
-
-However, during recovery, no matter the dnode is flushed or fsynced, all
-previous dnodes until last fsynced one in node chain can be recovered,
-that means we need to record all block change in flushed dnode, which
-will cause heavy cost, so let's just use simple fix by forbidding SSR
-overwrite directly.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Fixes: 61a3da4d5ef8 ("f2fs: support FS_IOC_{GET,SET}FSLABEL")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/segment.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/f2fs/file.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9d9d9a050d59..69b3b553ee6b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2205,9 +2205,11 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 		if (!f2fs_test_and_set_bit(offset, se->discard_map))
- 			sbi->discard_blks--;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index eb1aa9b75eda..d521a582d94d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3094,7 +3094,7 @@ static int f2fs_get_volume_name(struct file *filp, unsigned long arg)
  
--		/* don't overwrite by SSR to keep node chain */
--		if (IS_NODESEG(se->type) &&
--				!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
-+		/*
-+		 * SSR should never reuse block which is checkpointed
-+		 * or newly invalidated.
-+		 */
-+		if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
- 			if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
- 				se->ckpt_valid_blocks++;
- 		}
+ 	down_read(&sbi->sb_lock);
+ 	count = utf16s_to_utf8s(sbi->raw_super->volume_name,
+-			sizeof(sbi->raw_super->volume_name),
++			ARRAY_SIZE(sbi->raw_super->volume_name),
+ 			UTF16_LITTLE_ENDIAN, vbuf, MAX_VOLUME_NAME);
+ 	up_read(&sbi->sb_lock);
+ 
+@@ -3139,7 +3139,7 @@ static int f2fs_set_volume_name(struct file *filp, unsigned long arg)
+ 			sizeof(sbi->raw_super->volume_name));
+ 	utf8s_to_utf16s(vbuf, MAX_VOLUME_NAME, UTF16_LITTLE_ENDIAN,
+ 			sbi->raw_super->volume_name,
+-			sizeof(sbi->raw_super->volume_name));
++			ARRAY_SIZE(sbi->raw_super->volume_name));
+ 
+ 	err = f2fs_commit_super(sbi, false);
+ 
 -- 
-2.18.0.rc1
+2.22.0
 
 
 
