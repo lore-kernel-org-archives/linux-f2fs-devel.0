@@ -1,78 +1,83 @@
-Return-Path: <SRS0=riAn=WN=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=2ghP=WO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35014C3A59D
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 17 Aug 2019 01:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 077F2C3A589
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 18 Aug 2019 12:35:05 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EDF392077C;
-	Sat, 17 Aug 2019 01:03:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id BEC2D20673;
+	Sun, 18 Aug 2019 12:35:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hjtOAegp";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IWH1U3iE";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbB69qDs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDF392077C
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="nC0dstKK";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="QPcRWEBx";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwslRGiy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC2D20673
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hyn8B-0002ln-8d; Sat, 17 Aug 2019 01:03:43 +0000
+	id 1hzKOl-00055t-KC; Sun, 18 Aug 2019 12:35:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1hyn8A-0002le-Vu
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 17 Aug 2019 01:03:42 +0000
+ (envelope-from <chao@kernel.org>) id 1hzKOj-00055b-Vv
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 18 Aug 2019 12:35:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yztsGLqxehLgnkdVZ8BCW+33XSukbLZRiFEk4Nd9kxs=; b=hjtOAegpc9Ejfh3yRBuT0Tv2z+
- sUHOKtppWd5bOJDxYOj2Sg/Komb+rFW66cSa+laqzlkEjHxAuioTy5WbFU8ESZoqgjeYzC717rpiM
- 1z3VboVyyOgkzIES/F8sO0dlbKHILpAn/ceCFylQoCXg1dVG7GDf8KTxJmzlwxTwOc0U=;
+ bh=Dg38Gd+zjQeBEd9vOShhZRScw+u70EqPGNKrTN7DoG0=; b=nC0dstKKprVWQ4G8S7hlGF9LXO
+ 8ncBXBKIkGNaOHVM3hdE7yGBAT6hogc2XN5ceYxtviZbiIYPDkLRvO2CU8Nq0F7QaJ11N04yOfIrh
+ WYLmTUxrR+JMhPSUeVaqXQJAP+yFmLNJbGwaSYl6Z5jbqVkVNnN6PNgliI934Rje8mps=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=yztsGLqxehLgnkdVZ8BCW+33XSukbLZRiFEk4Nd9kxs=; b=I
- WH1U3iERsBClkuX6IJ+6dkOlpsiSg5A9ZqERodjOpNlO3Su6rOhY1P0sTnDSaXpj8iCnm9Af0bA8y
- f1aDjrVJY62nCf7e9jIinY2ryIPs/LIryOd98cF5RmHZuzSMbLZ2Y5REGM29FUZYoEiXFYofGwuF0
- jMvpdYWI1YrvPrNk=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Dg38Gd+zjQeBEd9vOShhZRScw+u70EqPGNKrTN7DoG0=; b=QPcRWEBxGNSvJ2a2u2SLtHgU2b
+ KEBuZQwoGjJfqaAbgbWCork3Z1ZJpgdKwyJO6vQvwpeoXevL5Biq5ek21cL4smnsTTJDPwUUjDDUf
+ OSiIZ14kXrUt7SmCrU4f8WGCJVweOWY+K/Sig84vplo8GmHGeJzRzSaxZK1jslFtb/k0=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hyn80-008xxT-KI
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 17 Aug 2019 01:03:42 +0000
-Received: from localhost (unknown [104.132.0.81])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ id 1hzKOi-007It8-37
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 18 Aug 2019 12:35:01 +0000
+Received: from [192.168.0.101] (unknown [180.111.132.43])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id E9B5E2077C;
- Sat, 17 Aug 2019 01:03:26 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id EAA0020673;
+ Sun, 18 Aug 2019 12:34:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1566003807;
- bh=QBFFL/SHbo+UhA75igny1+g1F36ODanpVH8hj8R9+XU=;
- h=From:To:Cc:Subject:Date:From;
- b=bbB69qDsxY7qlqdxYbIDBFyF/GrTti8KwKJtCUizP2gnd+iE5jWs3mqgtzTXkskFU
- +N9D0Wfms52I3/pAYf1swLe76aX5Mn4pevnwgcGxl5kAkOtIyi0jAsrmXF1LSq8axy
- guQESlusXpspDZF4cdMFoG6T0+fc/Ox8M3TQ5VvE=
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 16 Aug 2019 18:03:25 -0700
-Message-Id: <20190817010325.36501-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+ s=default; t=1566131694;
+ bh=En13LL9EuLMF0mgoTgG9ewLwXdJ9VtIvWizl8rd0KwU=;
+ h=Subject:To:References:From:Date:In-Reply-To:From;
+ b=AwslRGiytdssN7ncsgc0VCf6k5iMIpc+aGIGw0zR9PUOu/zFA93FfjNTZJ9q/cy25
+ LhsYM2NqMy3mpx1sIXQn2KEHevHpFqKjh5Y42kPa2mg3A+DLozagL8f/eYD2CNwGpd
+ YXErwmTWb88SP0BD1C13YJ66OLwD+CVyeJTW7TiM=
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+References: <20190817010325.36501-1-jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <723dac7b-2223-cf03-78ac-c417af5a404d@kernel.org>
+Date: Sun, 18 Aug 2019 20:34:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Headers-End: 1hyn80-008xxT-KI
-Subject: [f2fs-dev] [PATCH] fsck.f2fs: check only max extra_isize
+In-Reply-To: <20190817010325.36501-1-jaegeuk@kernel.org>
+Content-Language: en-US
+X-Headers-End: 1hzKOi-007It8-37
+Subject: Re: [f2fs-dev] [PATCH] fsck.f2fs: check only max extra_isize
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,35 +89,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If we use later kernel having larger extra_isize, old fsck will delete
-entire old files.
+On 2019-8-17 9:03, Jaegeuk Kim wrote:
+> If we use later kernel having larger extra_isize, old fsck will delete
+> entire old files.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/fsck.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Would it be better to construct the length based on existed features?
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 1708abe..b4e53db 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -731,7 +731,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	if (f2fs_has_extra_isize(&node_blk->i)) {
- 		if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
- 			if (node_blk->i.i_extra_isize >
--				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE)) {
-+						4 * DEF_ADDRS_PER_INODE) {
- 				FIX_MSG("ino[0x%x] recover i_extra_isize "
- 					"from %u to %u",
- 					nid,
--- 
-2.19.0.605.g01d371f741-goog
+Thanks,
 
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fsck/fsck.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index 1708abe..b4e53db 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -731,7 +731,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+>  	if (f2fs_has_extra_isize(&node_blk->i)) {
+>  		if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
+>  			if (node_blk->i.i_extra_isize >
+> -				cpu_to_le16(F2FS_TOTAL_EXTRA_ATTR_SIZE)) {
+> +						4 * DEF_ADDRS_PER_INODE) {
+>  				FIX_MSG("ino[0x%x] recover i_extra_isize "
+>  					"from %u to %u",
+>  					nid,
+> 
 
 
 _______________________________________________
