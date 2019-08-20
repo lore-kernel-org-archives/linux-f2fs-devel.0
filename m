@@ -2,42 +2,42 @@ Return-Path: <SRS0=r/0U=WQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4368AC3A589
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Aug 2019 07:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC780C3A589
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Aug 2019 09:12:39 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 111F922DCB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Aug 2019 07:43:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id BC477214DA
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Aug 2019 09:12:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fQpEMT3Y";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="K0u+ytHp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111F922DCB
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Xp5B7UGt";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="l7WMYEfw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC477214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1hzyni-00042g-HR; Tue, 20 Aug 2019 07:43:30 +0000
+	id 1i00Bz-00030Y-14; Tue, 20 Aug 2019 09:12:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1hzynh-00042S-AE
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Aug 2019 07:43:29 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1i00Bx-00030H-SB
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Aug 2019 09:12:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hlfovMA+sUd+aPFvI+Boqp/bGg5Cvp68FicDWvfzKlI=; b=fQpEMT3YVmgFihVsySHUpCT8TB
- kVVofllv+9gH8B9RKxq7cIC4TBM89nBNkPfCZRMbfAdBq0K+WZVFRWpq2GNzUVoni5LnNvpFOP8qu
- thsBstuGVL45XTHKjWv1J6G2+tT31uShBFxk6hLQkWjzCNVb5y71lJJzUG6NcmcJKslE=;
+ bh=yr4DWOS0wZ9pQnLznA6p79dP+OgDCCcVoOSKs0QoAnE=; b=Xp5B7UGtOEpVV0HW6Wy/PnZDYz
+ 2o7qHlxQUHNEIDJe8x7VTUiACek2MJj2d7bf7Zcx+spw8P6mNmjXT/vfYoEOetlylRmchtTK0yvJd
+ EnLHy3Y77HaPkndJmr4HHxZXGA0aOuZFHPF0VG7axPprGo4Tr8slZUvA0axS9sAdqeMk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -45,38 +45,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hlfovMA+sUd+aPFvI+Boqp/bGg5Cvp68FicDWvfzKlI=; b=K0u+ytHpdKu9DTlTqK1WT7KBkJ
- XiRoaCxiI/txRK+dkx+VbmMfBqkhKeHG/kadBi5cq6VEVpjMYwYzq59HFeBhneeyqoB/pBNNqOnP2
- W7ATUD6Pz5ptFk2vIfvcTpoyF9FRh3kdQb0ZpEVEzE4GecxWq8guxbIf4/ZjuSgPVjTg=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=yr4DWOS0wZ9pQnLznA6p79dP+OgDCCcVoOSKs0QoAnE=; b=l7WMYEfwkWeF5uTKqxNdjqh3Kd
+ B8R8pyvL3FWbhl543LFuKh6Lc7QjtHHaKj7zuWu9786awojrqpo6Ap9MU+0METRn/x5lBv8AVMuMC
+ uxw+KW5vgWUhpscWDglRtdA0kvEOzzjvRsZFWQL9SeagUkTL0/e8zoOJC5QK5VkqUUvc=;
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1hzynf-00Crpd-46
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Aug 2019 07:43:29 +0000
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id B4DADC8A5D2DB9292ABB;
- Tue, 20 Aug 2019 15:43:19 +0800 (CST)
+ id 1i00Bu-009h5l-5R
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Aug 2019 09:12:37 +0000
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+ by Forcepoint Email with ESMTP id D3DE6B93F5B37132134D;
+ Tue, 20 Aug 2019 17:12:25 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 20 Aug
- 2019 15:43:15 +0800
-To: Chandan Rajendra <chandan@linux.ibm.com>, Chao Yu <chao@kernel.org>
-References: <20190816061804.14840-1-chandan@linux.ibm.com>
- <20190816061804.14840-6-chandan@linux.ibm.com>
- <bb3dc624-1249-2418-f9da-93da8c11e7f5@kernel.org>
- <20104514.oSSJcvNEEM@localhost.localdomain>
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 20 Aug
+ 2019 17:12:17 +0800
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20190726074120.3278-1-yuchao0@huawei.com>
+ <20190819202007.GA23891@jaegeuk-macbookpro.roam.corp.google.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <c4a16ead-bb85-b7db-948e-5ebe7bc4431d@huawei.com>
-Date: Tue, 20 Aug 2019 15:43:14 +0800
+Message-ID: <99a2713a-50d2-8a77-87d9-661ab7ed3a0c@huawei.com>
+Date: Tue, 20 Aug 2019 17:12:16 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20104514.oSSJcvNEEM@localhost.localdomain>
+In-Reply-To: <20190819202007.GA23891@jaegeuk-macbookpro.roam.corp.google.com>
 Content-Language: en-US
 X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1hzynf-00Crpd-46
-Subject: Re: [f2fs-dev] [PATCH V4 5/8] f2fs: Use read_callbacks for
- decrypting file data
+X-Headers-End: 1i00Bu-009h5l-5R
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: allocate memory in batch in
+ build_sit_info()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,92 +86,152 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: ebiggers@kernel.org, tytso@mit.edu, linux-f2fs-devel@lists.sourceforge.net,
- hch@infradead.org, linux-fscrypt@vger.kernel.org, adilger.kernel@dilger.ca,
- chandanrmail@gmail.com, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
- linux-ext4@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2019/8/19 21:33, Chandan Rajendra wrote:
-> On Sunday, August 18, 2019 7:15:42 PM IST Chao Yu wrote:
->> Hi Chandan,
->>
->> On 2019-8-16 14:18, Chandan Rajendra wrote:
->>> F2FS has a copy of "post read processing" code using which encrypted
->>> file data is decrypted. This commit replaces it to make use of the
->>> generic read_callbacks facility.
->>
->> I remember that previously Jaegeuk had mentioned f2fs will support compression
->> later, and it needs to reuse 'post read processing' fwk.
->>
->> There is very initial version of compression feature in below link:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=compression
->>
->> So my concern is how can we uplift the most common parts of this fwk into vfs,
->> and meanwhile keeping the ability and flexibility when introducing private
->> feature/step in specified filesytem(now f2fs)?
->>
->> According to current f2fs compression's requirement, maybe we can expand to
->>
->> - support callback to let filesystem set the function for the flow in
->> decompression/verity/decryption step.
->> - support to use individual/common workqueue according the parameter.
->>
->> Any thoughts?
->>
+On 2019/8/20 4:20, Jaegeuk Kim wrote:
+> On 07/26, Chao Yu wrote:
+>> build_sit_info() allocate all bitmaps for each segment one by one,
+>> it's quite low efficiency, this pach changes to allocate large
+>> continuous memory at a time, and divide it and assign for each bitmaps
+>> of segment. For large size image, it can expect improving its mount
+>> speed.
 > 
-> Hi,
+> Hmm, I hit a kernel panic when mounting a partition during fault injection test:
 > 
-> F2FS can be made to use fscrypt's queue for decryption and hence can reuse
-> "read callbacks" code for decrypting data.
+> 726 #ifdef CONFIG_F2FS_CHECK_FS
+> 727         if (f2fs_test_bit(offset, sit_i->sit_bitmap) !=
+> 728                         f2fs_test_bit(offset, sit_i->sit_bitmap_mir))
+> 729                 f2fs_bug_on(sbi, 1);
+> 730 #endif
+
+We didn't change anything about sit_i->sit_bitmap{_mir,}, it's so wired we panic
+here... :(
+
+I double check the change, but find nothing suspicious, btw, my fault injection
+testcase shows normal.
+
+Jaegeuk, do you have any idea about this issue?
+
+Thanks,
+
 > 
-> For decompression, we could have a STEP_MISC where we invoke a FS provided
-> callback function for FS specific post read processing? 
+> For your information, I'm testing without this patch.
 > 
-> Something like the following can be implemented in read_callbacks(),
-> 	  case STEP_MISC:
-> 		  if (ctx->enabled_steps & (1 << STEP_MISC)) {
-> 			  /*
-> 			    ctx->fs_misc() must process bio in a workqueue
-> 			    and later invoke read_callbacks() with
-> 			    bio->bi_private's value as an argument.
-> 			  */
-> 			  ctx->fs_misc(ctx->bio);
-> 			  return;
-> 		  }
-> 		  ctx->cur_step++;
+> Thanks,
 > 
-> The fs_misc() callback can be passed in by the filesystem when invoking
-> read_callbacks_setup_bio().
-
-Hi,
-
-Yes, something like this, can we just use STEP_DECOMPRESS and fs_decompress(),
-not sure, I doubt this interface may has potential user which has compression
-feature.
-
-One more concern is that to avoid more context switch, maybe we can merge all
-background works into one workqueue if there is no conflict when call wants to.
-
-static void bio_post_read_processing(struct bio_post_read_ctx *ctx)
- {
-	switch (++ctx->cur_step) {
-	case STEP_DECRYPT:
-		if (ctx->enabled_steps & (1 << STEP_DECRYPT)) {
-...
-			if (ctx->separated_wq)
-				return;
-		}
-		ctx->cur_step++;
-		/* fall-through */
-	case STEP_DECOMPRESS:
-...
-	default:
-		__read_end_io(ctx->bio);
-
+>>
+>> Signed-off-by: Chen Gong <gongchen4@huawei.com>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> v2:
+>> - fix warning triggered in kmalloc() if requested memory size exceeds 4MB.
+>>  fs/f2fs/segment.c | 51 +++++++++++++++++++++--------------------------
+>>  fs/f2fs/segment.h |  1 +
+>>  2 files changed, 24 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index a661ac32e829..d720eacd9c57 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -3941,7 +3941,7 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+>>  	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
+>>  	struct sit_info *sit_i;
+>>  	unsigned int sit_segs, start;
+>> -	char *src_bitmap;
+>> +	char *src_bitmap, *bitmap;
+>>  	unsigned int bitmap_size;
+>>  
+>>  	/* allocate memory for SIT information */
+>> @@ -3964,27 +3964,31 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+>>  	if (!sit_i->dirty_sentries_bitmap)
+>>  		return -ENOMEM;
+>>  
+>> +#ifdef CONFIG_F2FS_CHECK_FS
+>> +	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * 4;
+>> +#else
+>> +	bitmap_size = MAIN_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE * 3;
+>> +#endif
+>> +	sit_i->bitmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
+>> +	if (!sit_i->bitmap)
+>> +		return -ENOMEM;
+>> +
+>> +	bitmap = sit_i->bitmap;
+>> +
+>>  	for (start = 0; start < MAIN_SEGS(sbi); start++) {
+>> -		sit_i->sentries[start].cur_valid_map
+>> -			= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
+>> -		sit_i->sentries[start].ckpt_valid_map
+>> -			= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
+>> -		if (!sit_i->sentries[start].cur_valid_map ||
+>> -				!sit_i->sentries[start].ckpt_valid_map)
+>> -			return -ENOMEM;
+>> +		sit_i->sentries[start].cur_valid_map = bitmap;
+>> +		bitmap += SIT_VBLOCK_MAP_SIZE;
+>> +
+>> +		sit_i->sentries[start].ckpt_valid_map = bitmap;
+>> +		bitmap += SIT_VBLOCK_MAP_SIZE;
+>>  
+>>  #ifdef CONFIG_F2FS_CHECK_FS
+>> -		sit_i->sentries[start].cur_valid_map_mir
+>> -			= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
+>> -		if (!sit_i->sentries[start].cur_valid_map_mir)
+>> -			return -ENOMEM;
+>> +		sit_i->sentries[start].cur_valid_map_mir = bitmap;
+>> +		bitmap += SIT_VBLOCK_MAP_SIZE;
+>>  #endif
+>>  
+>> -		sit_i->sentries[start].discard_map
+>> -			= f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE,
+>> -							GFP_KERNEL);
+>> -		if (!sit_i->sentries[start].discard_map)
+>> -			return -ENOMEM;
+>> +		sit_i->sentries[start].discard_map = bitmap;
+>> +		bitmap += SIT_VBLOCK_MAP_SIZE;
+>>  	}
+>>  
+>>  	sit_i->tmp_map = f2fs_kzalloc(sbi, SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
+>> @@ -4492,21 +4496,12 @@ static void destroy_free_segmap(struct f2fs_sb_info *sbi)
+>>  static void destroy_sit_info(struct f2fs_sb_info *sbi)
+>>  {
+>>  	struct sit_info *sit_i = SIT_I(sbi);
+>> -	unsigned int start;
+>>  
+>>  	if (!sit_i)
+>>  		return;
+>>  
+>> -	if (sit_i->sentries) {
+>> -		for (start = 0; start < MAIN_SEGS(sbi); start++) {
+>> -			kvfree(sit_i->sentries[start].cur_valid_map);
+>> -#ifdef CONFIG_F2FS_CHECK_FS
+>> -			kvfree(sit_i->sentries[start].cur_valid_map_mir);
+>> -#endif
+>> -			kvfree(sit_i->sentries[start].ckpt_valid_map);
+>> -			kvfree(sit_i->sentries[start].discard_map);
+>> -		}
+>> -	}
+>> +	if (sit_i->sentries)
+>> +		kvfree(sit_i->bitmap);
+>>  	kvfree(sit_i->tmp_map);
+>>  
+>>  	kvfree(sit_i->sentries);
+>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>> index b74602813a05..ec4d568fd58c 100644
+>> --- a/fs/f2fs/segment.h
+>> +++ b/fs/f2fs/segment.h
+>> @@ -226,6 +226,7 @@ struct sit_info {
+>>  	block_t sit_base_addr;		/* start block address of SIT area */
+>>  	block_t sit_blocks;		/* # of blocks used by SIT area */
+>>  	block_t written_valid_blocks;	/* # of valid blocks in main area */
+>> +	char *bitmap;			/* all bitmaps pointer */
+>>  	char *sit_bitmap;		/* SIT bitmap pointer */
+>>  #ifdef CONFIG_F2FS_CHECK_FS
+>>  	char *sit_bitmap_mir;		/* SIT bitmap mirror */
+>> -- 
+>> 2.18.0.rc1
+> .
 > 
 
 
