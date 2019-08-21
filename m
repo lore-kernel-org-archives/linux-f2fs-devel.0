@@ -2,85 +2,80 @@ Return-Path: <SRS0=qRZ7=WR=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69170C3A59E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 13:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABFFEC3A59E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 15:20:34 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3441F214DA;
-	Wed, 21 Aug 2019 13:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 75C4722CF7;
+	Wed, 21 Aug 2019 15:20:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="G22sEsMb";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="UHILctCK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3segr/6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3441F214DA
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ZCGFjhGJ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DRgYWPm9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bycgHQ+Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75C4722CF7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1i0QST-0006Bj-Ii; Wed, 21 Aug 2019 13:15:25 +0000
+	id 1i0SPY-0006AR-TP; Wed, 21 Aug 2019 15:20:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1i0QSR-0006BW-Bx
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 13:15:23 +0000
+ (envelope-from <chao@kernel.org>) id 1i0SPY-0006AG-08
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 15:20:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nKBgpZcmqM2KWTjk4grQiWnYqdvVACHVN2Y2Q+X891A=; b=G22sEsMbAQUWnaFbuKEBY8nZ0e
- K77BiFNijKJStGVV4bXSbZCOcW14zeSRBcOh5CYkmfyU4UmxVSI0BbHauxqXvBaXz8zRyf3w+eiJ3
- 5wTI8xHZP2DS9TEpv9Lyg5fJ9321d3oT7ou/0jx2b4nn+WZOJlSfyXY0IzgToIkopQYU=;
+ bh=AWEZm+GDarC95G+UtZScXrUBr2YcGvj6LjJgSLHxJ+8=; b=ZCGFjhGJb/fsd7SMo77eHVkjRK
+ 0KX8sXyAP8x8iGJt47RW+PUHCoB6mJtrQQhn622r0OtPUN2hai7N+hbrLmaWKcI933JbjXIQiaDjy
+ VhDUg/plEywPozvvOmZT3JOHCmQH1EK74mpKwu94b8p/KeT8T/iB7AWZ+p9G7i9oTV+Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=nKBgpZcmqM2KWTjk4grQiWnYqdvVACHVN2Y2Q+X891A=; b=UHILctCKmmOZbjIJFTssKrJAPE
- vTPCwDuSFMocplJAq/fAiVDA1YcYrNMacUnamRr8UVHe7HfAvrEqhDm75O+46FygT0f30K47zWTWj
- zee8b2QHJmhjkz5fX5KRAS0St/BGev/GGvW/U14S8g+fagdukG9i3+eztGVAV3mjFZQU=;
+ bh=AWEZm+GDarC95G+UtZScXrUBr2YcGvj6LjJgSLHxJ+8=; b=DRgYWPm9sm+56rq/F10zL9iD1z
+ 6Gd86GxePEIAdhkjWSAa9x2KwxAkqrGnN75DTishNDWsqMiKcAC91uJ8yuSRRv9/+/9ET6iNCmStt
+ e7qrx9RbJg8l0ST7WqQ+xuOQdCxdVgHmPaZK4KyobNFxwKP2Os2+rYQSe5snbTVy808s=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1i0QSQ-00B2jB-9D
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 13:15:23 +0000
-Received: from [192.168.0.101] (unknown [180.111.132.43])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ id 1i0SPW-00AeEw-2y
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 15:20:31 +0000
+Received: from localhost.localdomain (unknown [180.111.132.43])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 9CC2B214DA;
- Wed, 21 Aug 2019 13:15:14 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 511DF22DD3;
+ Wed, 21 Aug 2019 15:20:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1566393316;
- bh=EO9Bip6DSF9x/AWrsU50iQqY5CV6rf7s8XCVw7bhH/k=;
- h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
- b=C3segr/6YdtzYrAkfoIuaHjBH3hsXn3HQvP3H7GYJ/LLFZRYBIIIVVUZtmNmVhUes
- SQL67+adFwRxD/HgPcOsaqyJ0V1E7R04rt0k0RuHtHUbHfGfjeaOLhvl9EEyLTddQa
- PwteJ65+4VijcgcfVc0cubkDO43wTJ1A/F01XGUU=
-To: Daniel Rosenberg <drosen@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <yuchao0@huawei.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20190723230529.251659-1-drosen@google.com>
- <20190723230529.251659-4-drosen@google.com>
+ s=default; t=1566400824;
+ bh=9/75u3Tvm7n34viu09eAdOl3V9lhc9uG6Rxa1n05bT0=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=bycgHQ+ZC/zGBc1mzQ6vqFT1gg42d40dW6R5OO/PHwzq1wPRurESaiqjSLy1zvAFB
+ 5LZQhnI0dhW0/jdEEGrAC8DO+1STTTsfnpiiS7s23Iq8R6AAhWfohFbkBihJ0F52IR
+ XBrNLazBumveD69/bckbYeX6DDwFqL40+rzhonM0=
 From: Chao Yu <chao@kernel.org>
-Message-ID: <354102fb-e076-78d4-174d-5a193cae70f0@kernel.org>
-Date: Wed, 21 Aug 2019 21:15:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+To: jaegeuk@kernel.org
+Date: Wed, 21 Aug 2019 23:13:35 +0800
+Message-Id: <20190821151335.21312-2-chao@kernel.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190821151335.21312-1-chao@kernel.org>
+References: <20190821151335.21312-1-chao@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190723230529.251659-4-drosen@google.com>
-Content-Language: en-US
-X-Headers-End: 1i0QSQ-00B2jB-9D
-Subject: Re: [f2fs-dev] [PATCH v4 3/3] f2fs: Support case-insensitive file
- name lookups
+X-Headers-End: 1i0SPW-00AeEw-2y
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: optimize case-insensitive lookups
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,27 +87,163 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2019-7-24 7:05, Daniel Rosenberg via Linux-f2fs-devel wrote:
-> +static int f2fs_d_compare(const struct dentry *dentry, unsigned int len,
-> + const char *str, const struct qstr *name)
-> +{
-> +	struct qstr qstr = {.name = str, .len = len };
-> +
-> +	if (!IS_CASEFOLDED(dentry->d_parent->d_inode)) {
-> +		if (len != name->len)
-> +			return -1;
-> +		return memcmp(str, name, len);
+From: Chao Yu <yuchao0@huawei.com>
 
-66883da1eee8 ("ext4: fix dcache lookup of !casefolded directories")
+This patch ports below casefold enhancement patch from ext4 to f2fs
 
-memcmp(str, name->name, len);
+commit 3ae72562ad91 ("ext4: optimize case-insensitive lookups")
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/dir.c  | 57 ++++++++++++++++++++++++++++++++++++++++++++------
+ fs/f2fs/f2fs.h |  3 ++-
+ 2 files changed, 53 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index e34c17106084..7498b789518a 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -112,13 +112,17 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
+  * doesn't match or less than zero on error.
+  */
+ int f2fs_ci_compare(const struct inode *parent, const struct qstr *name,
+-		    const struct qstr *entry)
++				const struct qstr *entry, bool quick)
+ {
+ 	const struct f2fs_sb_info *sbi = F2FS_SB(parent->i_sb);
+ 	const struct unicode_map *um = sbi->s_encoding;
+ 	int ret;
+ 
+-	ret = utf8_strncasecmp(um, name, entry);
++	if (quick)
++		ret = utf8_strncasecmp_folded(um, name, entry);
++	else
++		ret = utf8_strncasecmp(um, name, entry);
++
+ 	if (ret < 0) {
+ 		/* Handle invalid character sequence as either an error
+ 		 * or as an opaque byte sequence.
+@@ -134,11 +138,36 @@ int f2fs_ci_compare(const struct inode *parent, const struct qstr *name,
+ 
+ 	return ret;
+ }
++
++void f2fs_fname_setup_ci_filename(struct inode *dir,
++					const struct qstr *iname,
++					struct fscrypt_str *cf_name)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
++
++	if (!IS_CASEFOLDED(dir)) {
++		cf_name->name = NULL;
++		return;
++	}
++
++	cf_name->name = f2fs_kmalloc(sbi, F2FS_NAME_LEN, GFP_NOFS);
++	if (!cf_name->name)
++		return;
++
++	cf_name->len = utf8_casefold(sbi->s_encoding,
++					iname, cf_name->name,
++					F2FS_NAME_LEN);
++	if (cf_name->len <= 0) {
++		kvfree(cf_name->name);
++		cf_name->name = NULL;
++	}
++}
+ #endif
+ 
+ static inline bool f2fs_match_name(struct f2fs_dentry_ptr *d,
+ 					struct f2fs_dir_entry *de,
+ 					struct fscrypt_name *fname,
++					struct fscrypt_str *cf_str,
+ 					unsigned long bit_pos,
+ 					f2fs_hash_t namehash)
+ {
+@@ -155,8 +184,15 @@ static inline bool f2fs_match_name(struct f2fs_dentry_ptr *d,
+ 	entry.name = d->filename[bit_pos];
+ 	entry.len = de->name_len;
+ 
+-	if (sbi->s_encoding && IS_CASEFOLDED(parent))
+-		return !f2fs_ci_compare(parent, fname->usr_fname, &entry);
++	if (sbi->s_encoding && IS_CASEFOLDED(parent)) {
++		if (cf_str->name) {
++			struct qstr cf = {.name = cf_str->name,
++					  .len = cf_str->len};
++			return !f2fs_ci_compare(parent, &cf, &entry, true);
++		}
++		return !f2fs_ci_compare(parent, fname->usr_fname, &entry,
++					false);
++	}
+ #endif
+ 	if (fscrypt_match_name(fname, d->filename[bit_pos],
+ 				le16_to_cpu(de->name_len)))
+@@ -169,9 +205,14 @@ struct f2fs_dir_entry *f2fs_find_target_dentry(struct fscrypt_name *fname,
+ 			struct f2fs_dentry_ptr *d)
+ {
+ 	struct f2fs_dir_entry *de;
++	struct fscrypt_str cf_str = { .name = NULL, .len = 0 };
+ 	unsigned long bit_pos = 0;
+ 	int max_len = 0;
+ 
++#ifdef CONFIG_UNICODE
++	f2fs_fname_setup_ci_filename(d->inode, fname->usr_fname, &cf_str);
++#endif
++
+ 	if (max_slots)
+ 		*max_slots = 0;
+ 	while (bit_pos < d->max) {
+@@ -188,7 +229,7 @@ struct f2fs_dir_entry *f2fs_find_target_dentry(struct fscrypt_name *fname,
+ 			continue;
+ 		}
+ 
+-		if (f2fs_match_name(d, de, fname, bit_pos, namehash))
++		if (f2fs_match_name(d, de, fname, &cf_str, bit_pos, namehash))
+ 			goto found;
+ 
+ 		if (max_slots && max_len > *max_slots)
+@@ -202,6 +243,10 @@ struct f2fs_dir_entry *f2fs_find_target_dentry(struct fscrypt_name *fname,
+ found:
+ 	if (max_slots && max_len > *max_slots)
+ 		*max_slots = max_len;
++
++#ifdef CONFIG_UNICODE
++	kvfree(cf_str.name);
++#endif
+ 	return de;
+ }
+ 
+@@ -1025,7 +1070,7 @@ static int f2fs_d_compare(const struct dentry *dentry, unsigned int len,
+ 		return memcmp(str, name, len);
+ 	}
+ 
+-	return f2fs_ci_compare(dentry->d_parent->d_inode, name, &qstr);
++	return f2fs_ci_compare(dentry->d_parent->d_inode, name, &qstr, false);
+ }
+ 
+ static int f2fs_d_hash(const struct dentry *dentry, struct qstr *str)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 2d0cab0cd620..52174aae3299 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2951,7 +2951,8 @@ struct dentry *f2fs_get_parent(struct dentry *child);
+ 
+ extern int f2fs_ci_compare(const struct inode *parent,
+ 			   const struct qstr *name,
+-			   const struct qstr *entry);
++			   const struct qstr *entry,
++			   bool quick);
+ 
+ /*
+  * dir.c
+-- 
+2.22.0
+
 
 
 _______________________________________________
