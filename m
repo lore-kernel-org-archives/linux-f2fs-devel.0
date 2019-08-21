@@ -2,75 +2,107 @@ Return-Path: <SRS0=qRZ7=WR=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F87C3A59E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 08:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CBDC3A59E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 12:10:04 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8410822D6D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 08:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 135222339F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 12:10:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DZI9DCOj";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PAPnZgYi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8410822D6D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="b/7XYRPh";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="anakEj7U";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="1mTbly5h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 135222339F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1i0M7c-0002Ok-65; Wed, 21 Aug 2019 08:37:36 +0000
+	id 1i0PRD-0003Ea-7p; Wed, 21 Aug 2019 12:10:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <herbert@gondor.apana.org.au>) id 1i0M7a-0002OY-BL
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:37:34 +0000
+ (envelope-from <axboe@kernel.dk>) id 1i0PRB-0003EK-Qc
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 12:10:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EvNOROSwxndi26Wu5kOx9aFkEOIIS4ZMKJ9RpqtJs14=; b=DZI9DCOjKRLQVOu3ba99HovA2D
- 9b6rsq7M85xe6vu2+EbD93LRJf47WEreEOM+HECyqEF2QKSA/wPSlaQNFCpQg609clfLu0PZLSPTc
- LuYkEXFBNRwrt3tZQY0SEx3PMH6hwVTBxV/SGsTx+bY8OCSDnxawlAArfjtxQgdOPTMI=;
+ bh=UT6yE/roxwyyBSRfLOwrFlilraLjBXjoNWJQAsldDVo=; b=b/7XYRPhY1N30x9Z4mQSMRQHuV
+ 6qZVSdtBRWxU5py07TAPIn/GW+r3ccP71aepus8Mk8lMEGX1igH/Q7F6WkJzBOpkI8neVQP1hODtY
+ 2JW1JJmXpRRUfto2OAYGQMDnm+11bdN8nCVQHJfj0/CrRpZSbPPdRJ/yTft6GfNHIFSA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=EvNOROSwxndi26Wu5kOx9aFkEOIIS4ZMKJ9RpqtJs14=; b=PAPnZgYivXdVfKI8+oQM4QVfEu
- 1zn6AIJMB0rN6RdT3Wy/PA+G//dWNCKMpjQq/xGLmpX25vm8uda7cUQrBXR1e+zPSuZcsaFoBXPW6
- CDdP3tyMMmzML+SAEz73+c3s9FUD4oLkOhZAMcXrYPkNIqo8R8ygL395SsMJlEiXd/dY=;
-Received: from helcar.hmeau.com ([216.24.177.18] helo=fornost.hmeau.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1i0M7X-00AMDZ-OX
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:37:33 +0000
-Received: from gondolin.me.apana.org.au ([192.168.0.6]
- helo=gondolin.hengli.com.au)
- by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
- id 1i0Lnm-0003cr-QG; Wed, 21 Aug 2019 18:17:07 +1000
-Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
- (envelope-from <herbert@gondor.apana.org.au>)
- id 1i0Lng-00061p-Pw; Wed, 21 Aug 2019 18:17:00 +1000
-Date: Wed, 21 Aug 2019 18:17:00 +1000
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "boojin.kim" <boojin.kim@samsung.com>
-Message-ID: <20190821081700.GA23138@gondor.apana.org.au>
-References: <CGME20190821075742epcas2p4b9104e8249067c048d4050f2888da0a9@epcas2p4.samsung.com>
- <001b01d557f6$1c49fd40$54ddf7c0$@samsung.com>
+ bh=UT6yE/roxwyyBSRfLOwrFlilraLjBXjoNWJQAsldDVo=; b=anakEj7U6U6faAKwOqYl/tHtj7
+ uA2Q3oNyEujaWTNy+m8aIivoQCwvawkMoOF7m5LdC9wRWgXIxEcBvm2/eXV2bIkzgvlSyFFjYGgwd
+ J30FF94rW81sd+yGCDHAJtXPZp+94FBBS8qOKTiyQUY67zagrowZwinM0t0Pd2YMYEdo=;
+Received: from mail-pl1-f194.google.com ([209.85.214.194])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1i0PRA-00Azpx-0H
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 12:10:01 +0000
+Received: by mail-pl1-f194.google.com with SMTP id f19so1242051plr.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 21 Aug 2019 05:09:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+ h=subject:to:cc:references:from:message-id:date:user-agent
+ :mime-version:in-reply-to:content-language:content-transfer-encoding;
+ bh=UT6yE/roxwyyBSRfLOwrFlilraLjBXjoNWJQAsldDVo=;
+ b=1mTbly5hNN6suDS+BwBXn5tZNQRoJv3U+6eGIZWkxOpX8gp4MfK0srbyshCamPl8cE
+ oynbwAZaUVd3iYuDw/fFqllqnUyyMdhGmWDFTWD0+uRBHO1RABomqwNTPTloesNaBCP/
+ OF0wNlT1X2HUApuEYt9hqsB3ukfCOmKOxQ9VlFGyTVla9DArrhzV46cf0e1hqSL0Em1S
+ kMKT+OUOB39Lc9u+MllIcA6W2VixaWAmIOOCqIPym//+KF+bJLzrXd5uXWfD6RF+tn8O
+ fEItbmLNgpz+3xyfCw5xuoCb8BCqv/jPsevOVEPakCBbt5mOdjvlnK19JQHJXISJTFII
+ +AuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+ :user-agent:mime-version:in-reply-to:content-language
+ :content-transfer-encoding;
+ bh=UT6yE/roxwyyBSRfLOwrFlilraLjBXjoNWJQAsldDVo=;
+ b=JCMnnZM2xmxRVZ67aduFxLT4UcfnCGKeAOjm4atiP/EkF98mBJjzqlmz8vJ6Hr51sp
+ z/nir+unN4c9KBKWpSX8N/m+9feEmccMRK1zJ+lQVldJDUC1EtNu2gluJ0evWlGAdfSJ
+ N1aIjATzQ7brTRmf0CCLZfjS0EhcDXsUmDZavpPt9XpekFO4gMAxR5SHmfbBaGYn5JPk
+ 0ezN6BdExenGBzrSzO0H1XRZn7qgjI3CrV0fDe5BALMPjQPhgWSpuMdGxaF2PvDJVed4
+ N7bd8s8zfnvlQ28ctuvq62sJOzzOQX73Ac3rrlsJ0st7gk2vrGtTQHoOLgskYkyDvDOZ
+ AEfA==
+X-Gm-Message-State: APjAAAVlg0/TpChUuxk2ZvrTdt0bkkjo2vEJG3Moa8j8TWEEuOidpIWW
+ EAsCPiVhxxTE/6c4RFhHBsn48w==
+X-Google-Smtp-Source: APXvYqxsoe31YiWALXWqRLHXasZTZR3nM8GXNUHwTUUu4EkoxYDPJeCxhjU4HkYSZ/HpLNbIJ9AOOg==
+X-Received: by 2002:a17:902:a410:: with SMTP id
+ p16mr17723995plq.150.1566389394293; 
+ Wed, 21 Aug 2019 05:09:54 -0700 (PDT)
+Received: from [192.168.1.188] (66.29.164.166.static.utbb.net. [66.29.164.166])
+ by smtp.gmail.com with ESMTPSA id z4sm22521476pfg.166.2019.08.21.05.09.51
+ (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+ Wed, 21 Aug 2019 05:09:53 -0700 (PDT)
+To: "boojin.kim" <boojin.kim@samsung.com>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CGME20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab@epcas2p2.samsung.com>
+ <004101d557eb$98b00060$ca100120$@samsung.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <6ea5e5db-4dd4-719f-3b3e-b89099636ea6@kernel.dk>
+Date: Wed, 21 Aug 2019 06:09:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <001b01d557f6$1c49fd40$54ddf7c0$@samsung.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Headers-End: 1i0M7X-00AMDZ-OX
-Subject: Re: [f2fs-dev] [PATCH 6/9] dm crypt: support diskcipher
+In-Reply-To: <004101d557eb$98b00060$ca100120$@samsung.com>
+Content-Language: en-US
+X-Headers-End: 1i0PRA-00Azpx-0H
+Subject: Re: [f2fs-dev] [PATCH 5/9] block: support diskcipher
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,31 +117,46 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Cc: 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Mike Snitzer' <snitzer@redhat.com>,
  dm-devel@redhat.com, 'Andreas Dilger' <adilger.kernel@dilger.ca>,
  'Alasdair Kergon' <agk@redhat.com>, 'Eric Biggers' <ebiggers@kernel.org>,
- linux-samsung-soc@vger.kernel.org, 'Krzysztof Kozlowski' <krzk@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, 'Herbert Xu' <herbert@gondor.apana.org.au>,
+ 'Krzysztof Kozlowski' <krzk@kernel.org>,
  'Jaehoon Chung' <jh80.chung@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>,
- linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, 'Jaegeuk Kim' <jaegeuk@kernel.org>,
- linux-arm-kernel@lists.infradead.org, 'Jens Axboe' <axboe@kernel.dk>,
+ linux-ext4@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-arm-kernel@lists.infradead.org,
  "'Theodore Y. Ts'o'" <tytso@mit.edu>, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "'David S. Miller'" <davem@davemloft.net>
+ linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, "'David S. Miller'" <davem@davemloft.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Aug 21, 2019 at 04:57:41PM +0900, boojin.kim wrote:
->
-> Can you tell me which patch you mentioned? Is this?
-> https://patches.linaro.org/project/linux-crypto/list/?series=22762
+On 8/21/19 12:42 AM, boojin.kim wrote:
+> This patch supports crypto information to be maintained via BIO
+> and passed to the storage driver.
+> 
+> To do this, 'bi_aux_private', 'REQ_CYPTE' and 'bi_dun' are added
+> to the block layer.
+> 
+> 'bi_aux_private' is added for loading additional private information into
+> BIO.
+> 'REQ_CRYPT' is added to distinguish that bi_aux_private is being used
+> for diskcipher.
+> F2FS among encryption users uses DUN(device unit number) as
+> the IV(initial vector) for cryptographic operations.
+> DUN is stored in 'bi_dun' of bi_iter as a specific value for each BIO.
+> 
+> Before attempting to merge the two BIOs, the operation is also added to
+> verify that the crypto information contained in two BIOs is consistent.
 
-Yes this is the one.
+This isn't going to happen. With this, and the inline encryption
+proposed by Google, we'll bloat the bio even more. At least the Google
+approach didn't include bio iter changes as well.
 
-Cheers,
+Please work it out between yourselves so we can have a single, clean
+abstraction that works for both.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Jens Axboe
+
 
 
 _______________________________________________
