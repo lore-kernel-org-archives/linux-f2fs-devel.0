@@ -7,19 +7,19 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1145FC3A59E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 08:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA0FC3A59E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 08:23:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CCC6F22DA7;
-	Wed, 21 Aug 2019 08:22:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 6CFAD22DA7;
+	Wed, 21 Aug 2019 08:23:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="Z8V4bTWG";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mv2lCgS6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="RnrYtR/A";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="IKW0aN+y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC6F22DA7
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="WVGbd1QC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YgK0ELo9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="d9y4rkDj";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="DkO7Nn7D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFAD22DA7
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,28 +28,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=MJd7KPVlNVUx+Ckjh0UDhgJ34F4dCxKtfoV1UhW/Eo4=; b=Z8V4bTWGqCWl6Tb94bJTQvO9f
-	v71TJY9LWcLjk6mvszoMLn67cKcDHHuTUClcgjT5/eTtYMieK62fYmPbd+kisWwbYJKnF9lnRz92Y
-	Ol3iEn5U7n8WekJz7T4yPRYMyA1RwVnbiV9Qx04DG25hvfjLr5K7vh296BuX8eB2z34ao=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	 bh=mjqHdMP6BjtMy8fUjJ+4jem2r9zRPtKc+6+4vzyZHMs=; b=WVGbd1QCXnIg+AJG5x53Zy71B
+	d5Oub7XahwcFEyaERe61R4sD+dG3vrzKKi+4ncAor/7P3+3cDgjlLhUwPke0qxEZGPD+mkjk/3A19
+	Fa+miEliGjHvK0wNO6hw0n+IG82YJSp/+5wIDwtC/Jld/PCkJl2rSAz8mEvDlSvC7lyd4=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1i0Lsa-0001CH-EJ; Wed, 21 Aug 2019 08:22:04 +0000
+	id 1i0Lty-0007Pk-0W; Wed, 21 Aug 2019 08:23:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3YPlcXQYKALcpXqvXqdlldib.Zlj@flex--satyat.bounces.google.com>)
- id 1i0LsY-0001C7-Sb
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:22:02 +0000
+ (envelope-from <3cvlcXQYKAMk7p8Dp8v33v0t.r31@flex--satyat.bounces.google.com>)
+ id 1i0Ltw-0007OS-UU
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:23:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GYHwPi7d8kDthlxRC2QtqYXeGrYkCO6cHAiAxIeKl2w=; b=mv2lCgS6241vTib1vIVpbAZaV
- 7mw28mkJ9PMnRR5ENMH+kU4XFBdFj5Ztc3JO9QhP9tvxkdsP0i1OWEGEDz/eOTBKun7iL0BLbNWip
- ObmzepnB9q3Y2HcXz6ytcBvyVZ72S365ZPl6XBRdxPdVgOwQYcFpPOxiWqXA8oBx/EYPk=;
+ bh=Za7w9RhqOvx+rbdwwS8b0CPcodToPB6Hjzwh7+A6Syg=; b=YgK0ELo9r6gyzmryUgiAKeuhA
+ Akp3gFvrKjAU4jPR1QTRMI+Ro44+BXctP05oHP9F2QmutOd219ttigGtq42Xe/2S8Ty3RkdMbcbyk
+ /w6dWdVFiV0dub8Cq9E9u+SLb/CtJTuSf5JVdpIRFo6jvJgTA8vViu7BXd5u6tgvR0pD0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -57,54 +57,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GYHwPi7d8kDthlxRC2QtqYXeGrYkCO6cHAiAxIeKl2w=; b=RnrYtR/AAo8z4VKvOBTBBMIISg
- bqUbHQY8V2UqNYa+TWQShMvE7uFzmQp5mYm9hAI7sKXMkhys3k31cyYCqGwZ9OtExdGcg8rx4nRyC
- 8pJ119mWWsyCOeC+n4OyQJ0hq1+dgvuw416bXNS91kQIsfWOxVvYCGtMPbe3Ws0WsruA=;
-Received: from mail-vk1-f201.google.com ([209.85.221.201])
+ bh=Za7w9RhqOvx+rbdwwS8b0CPcodToPB6Hjzwh7+A6Syg=; b=d9y4rkDjx7Zg+lcVdRbIDLVk2Z
+ H28rb9eVmhwAVnbz9IrdgbUq2nrSdSVWMC3v9c0P4QhFWhuLLEPQS90BE+vMJw0SinGGp5AM9c/Gm
+ WKl5b5DYkiRx5bcdI1zK8P5gLv+mPB7685hiNutv3FOqSLXOOq8LNTn+NeQgA1fSKilw=;
+Received: from mail-qk1-f201.google.com ([209.85.222.201])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1i0LsR-00AKgW-L3
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:22:02 +0000
-Received: by mail-vk1-f201.google.com with SMTP id l3so613063vkb.15
+ id 1i0Ltp-00AKpV-Pr
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:23:28 +0000
+Received: by mail-qk1-f201.google.com with SMTP id x1so1369914qkn.6
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 21 Aug 2019 01:21:55 -0700 (PDT)
+ Wed, 21 Aug 2019 01:23:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=GYHwPi7d8kDthlxRC2QtqYXeGrYkCO6cHAiAxIeKl2w=;
- b=IKW0aN+yLv7Ic3R8BjawRQWYh+JA/tjHRPyOkAe4uCVOZhHSNH7f3EdxqcueZzS0TV
- hvvFNZXC78bRng8tEVNrfSLhwlyfjIqcYkT/gTQkxFUK7has5vjW1KdEp2BzDKmWOBzt
- 86rwshilNU306hzb3YkdkCnAPv0GnqtgLpw0EZUVqzMAnsym0XAnHvWPgY0GqZz5v0U7
- y7ahDdgTOzxCIsuRgq0EkYO6VBI6OMOZ//Dt3703izWC4wuW3pxJ8EfQPxIO38BkNjTi
- XMkY2XadI+ddT+C2PjCfmsigOMZBPiHpXSOJCMGiZsU1C33mCBkXAJ+uzyf5MwcUvn9r
- ZNmg==
+ :cc; bh=Za7w9RhqOvx+rbdwwS8b0CPcodToPB6Hjzwh7+A6Syg=;
+ b=DkO7Nn7D2Xk3T8cG9p5c6N+nZxrZ4col+9+vVnpt+G8JRphS7kgWTTlgn5Bd5a7AEr
+ 2+F74HCdI8eYIHLUkOCPVnjF6FETFobs//509xgwEM6D2QXn5fWkqtj1OYtyNK9jLmcb
+ nUKfbKW2EpHKT2STSUPVMDF1nO/bLvyj7TNB7z7JrveFvkG+H83icRhL4TabD7m81QWd
+ rLvILk0GUc37LAVeI9NTyikh6FTn203V3g/QNWZMD7plUmU3b9axvSOM/g4hUsLM+MdH
+ qocPUAm3Qz2URW8cy40aN8EXQVmgiiGAjvgjxDT2Zlcia441Z0Tq6MJ7LfZvRRBZ/kxa
+ m3aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=GYHwPi7d8kDthlxRC2QtqYXeGrYkCO6cHAiAxIeKl2w=;
- b=bP24w+Yd1cZYoWuvw3dEmxheuJDniV/mM9GwL58JCHWRpN7u+q3IkXqadLarUVQFvk
- ATx/cC9ev43fSopgtT0ysvb6/dQJIXQaegYhXchCWCIMILbbMuiIuIggYmlP1H6TmEYu
- OC9V/5c8jzjOiRSt3NXQaFr+l3Bbker+wlXnP8adkUWk3lbiyeI+U9hwP0zIha5MB7ts
- 3NtvL/ROzSsozvnfv9RzK4Gz0PMf+GeVUsqJovT2YwbdIzzvpVB5jK9tY6+wSjrHJlsO
- uRpve3yV99m7hh4RssoEMWNK2JROLJ1pME+FuLan5PWvdmMj27hdAbHipYdxrFu2svFA
- j/Ig==
-X-Gm-Message-State: APjAAAUvrFEsj8uP6qeBbQxzHmMXPhcrubKCTOYofmChDZbfLYtfjIRw
- jZgeLld5/OtvoSN4LW2TebtB3rtq+94=
-X-Google-Smtp-Source: APXvYqyV+P2tAM3aKCN6LYEg9vDK991bwuZUHQOqXrruD+VPP7UHRwbR1hbfob9NKwvxEUEZ7imMKQsdBc4=
-X-Received: by 2002:a63:6d6:: with SMTP id 205mr28824838pgg.262.1566374240737; 
- Wed, 21 Aug 2019 00:57:20 -0700 (PDT)
-Date: Wed, 21 Aug 2019 00:57:07 -0700
+ bh=Za7w9RhqOvx+rbdwwS8b0CPcodToPB6Hjzwh7+A6Syg=;
+ b=LB0q0p0t7G/V+7VU+V6zwHRHygh1gc0ECc0MLm6CZ/FNZjJ2mNiXYumrHszflAJ9+b
+ RdgIM32BE81+zH2WbFmxAtCFpK/2rx2WQmKYf1D+1AlRPxMTzPjbEHPXpZNczT9vyI+9
+ H+8EdOvdJRkN61RNOUHSksEBuHx808cNXebYKjsjV3boq42PzPcQ9Dhpau9QFfcRfKpP
+ lLWbBJh3m7/da1zUDiIJOzqNB6nsBmPtJZGJEpcJ8Til7Y3OfV+urH6jEBz+tq3rscEL
+ v/NKV9qcNCCh3VJD0Gt4zWV8qGjterWGeUY3yTKt4eXx/U0HrqYuYpaidUrTJNRiki/l
+ A45g==
+X-Gm-Message-State: APjAAAUGCDyUbngDa8J5gsyL4k50AYHNjJQp4XjWElCMaoJ08G0gcavi
+ ke8yV/IlcF88QDufX2Uyfc0tTyMkbNU=
+X-Google-Smtp-Source: APXvYqxT3jAgizDP+6vcOIt7t24Pqk/vf2IKzBLMg5jcFQikXJNxIrCVsY+Yz+Wd8/Yvw1kXif/HLfUjnzU=
+X-Received: by 2002:a63:ab08:: with SMTP id p8mr29238085pgf.340.1566374258557; 
+ Wed, 21 Aug 2019 00:57:38 -0700 (PDT)
+Date: Wed, 21 Aug 2019 00:57:14 -0700
 In-Reply-To: <20190821075714.65140-1-satyat@google.com>
-Message-Id: <20190821075714.65140-2-satyat@google.com>
+Message-Id: <20190821075714.65140-9-satyat@google.com>
 Mime-Version: 1.0
 References: <20190821075714.65140-1-satyat@google.com>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, 
  linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1i0LsR-00AKgW-L3
-Subject: [f2fs-dev] [PATCH v4 1/8] block: Keyslot Manager for Inline
- Encryption
+X-Headers-End: 1i0Ltp-00AKpV-Pr
+Subject: [f2fs-dev] [PATCH v4 8/8] f2fs: Wire up f2fs to use inline
+ encryption via fscrypt
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,573 +127,336 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Inline Encryption hardware allows software to specify an encryption context
-(an encryption key, crypto algorithm, data unit num, data unit size, etc.)
-along with a data transfer request to a storage device, and the inline
-encryption hardware will use that context to en/decrypt the data. The
-inline encryption hardware is part of the storage device, and it
-conceptually sits on the data path between system memory and the storage
-device.
-
-Inline Encryption hardware implementations often function around the
-concept of "keyslots". These implementations often have a limited number
-of "keyslots", each of which can hold an encryption context (we say that
-an encryption context can be "programmed" into a keyslot). Requests made
-to the storage device may have a keyslot associated with them, and the
-inline encryption hardware will en/decrypt the data in the requests using
-the encryption context programmed into that associated keyslot. As
-keyslots are limited, and programming keys may be expensive in many
-implementations, and multiple requests may use exactly the same encryption
-contexts, we introduce a Keyslot Manager to efficiently manage keyslots.
-The keyslot manager also functions as the interface that upper layers will
-use to program keys into inline encryption hardware. For more information
-on the Keyslot Manager, refer to documentation found in
-block/keyslot-manager.c and linux/keyslot-manager.h.
-
 Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
- block/Kconfig                   |   8 +
- block/Makefile                  |   1 +
- block/keyslot-manager.c         | 351 ++++++++++++++++++++++++++++++++
- include/linux/bio.h             |  12 ++
- include/linux/blkdev.h          |   6 +
- include/linux/keyslot-manager.h |  94 +++++++++
- 6 files changed, 472 insertions(+)
- create mode 100644 block/keyslot-manager.c
- create mode 100644 include/linux/keyslot-manager.h
+ fs/f2fs/data.c  | 127 ++++++++++++++++++++++++++++++++++++++++++++----
+ fs/f2fs/super.c |  15 +++---
+ 2 files changed, 126 insertions(+), 16 deletions(-)
 
-diff --git a/block/Kconfig b/block/Kconfig
-index 8b5f8e560eb4..1469efdd385b 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -164,6 +164,14 @@ config BLK_SED_OPAL
- 	Enabling this option enables users to setup/unlock/lock
- 	Locking ranges for SED devices using the Opal protocol.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index abbf14e9bd72..a7294edce173 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -143,6 +143,8 @@ static bool f2fs_bio_post_read_required(struct bio *bio)
  
-+config BLK_INLINE_ENCRYPTION
-+	bool "Enable inline encryption support in block layer"
-+	help
-+	  Build the blk-crypto subsystem.
-+	  Enabling this lets the block layer handle encryption,
-+	  so users can take advantage of inline encryption
-+	  hardware if present.
+ static void f2fs_read_end_io(struct bio *bio)
+ {
++	fscrypt_unset_bio_crypt_ctx(bio);
 +
- menu "Partition Types"
+ 	if (time_to_inject(F2FS_P_SB(bio_first_page_all(bio)),
+ 						FAULT_READ_IO)) {
+ 		f2fs_show_injection_info(FAULT_READ_IO);
+@@ -166,6 +168,8 @@ static void f2fs_write_end_io(struct bio *bio)
+ 	struct bio_vec *bvec;
+ 	struct bvec_iter_all iter_all;
  
- source "block/partitions/Kconfig"
-diff --git a/block/Makefile b/block/Makefile
-index eee1b4ceecf9..a72abd61b220 100644
---- a/block/Makefile
-+++ b/block/Makefile
-@@ -35,3 +35,4 @@ obj-$(CONFIG_BLK_DEBUG_FS)	+= blk-mq-debugfs.o
- obj-$(CONFIG_BLK_DEBUG_FS_ZONED)+= blk-mq-debugfs-zoned.o
- obj-$(CONFIG_BLK_SED_OPAL)	+= sed-opal.o
- obj-$(CONFIG_BLK_PM)		+= blk-pm.o
-+obj-$(CONFIG_BLK_INLINE_ENCRYPTION)	+= keyslot-manager.o
-diff --git a/block/keyslot-manager.c b/block/keyslot-manager.c
-new file mode 100644
-index 000000000000..2f8582eb4e65
---- /dev/null
-+++ b/block/keyslot-manager.c
-@@ -0,0 +1,351 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * keyslot-manager.c
-+ *
-+ * Copyright 2019 Google LLC
-+ */
++	fscrypt_unset_bio_crypt_ctx(bio);
 +
-+/**
-+ * DOC: The Keyslot Manager
-+ *
-+ * Many devices with inline encryption support have a limited number of "slots"
-+ * into which encryption contexts may be programmed, and requests can be tagged
-+ * with a slot number to specify the key to use for en/decryption.
-+ *
-+ * As the number of slots are limited, and programming keys is expensive on
-+ * many inline encryption hardware, we don't want to program the same key into
-+ * multiple slots - if multiple requests are using the same key, we want to
-+ * program just one slot with that key and use that slot for all requests.
-+ *
-+ * The keyslot manager manages these keyslots appropriately, and also acts as
-+ * an abstraction between the inline encryption hardware and the upper layers.
-+ *
-+ * Lower layer devices will set up a keyslot manager in their request queue
-+ * and tell it how to perform device specific operations like programming/
-+ * evicting keys from keyslots.
-+ *
-+ * Upper layers will call keyslot_manager_get_slot_for_key() to program a
-+ * key into some slot in the inline encryption hardware.
-+ */
-+#include <linux/keyslot-manager.h>
-+#include <linux/atomic.h>
-+#include <linux/mutex.h>
-+#include <linux/wait.h>
-+#include <linux/blkdev.h>
-+
-+struct keyslot {
-+	atomic_t slot_refs;
-+	struct list_head idle_slot_node;
-+};
-+
-+struct keyslot_manager {
-+	unsigned int num_slots;
-+	atomic_t num_idle_slots;
-+	struct keyslot_mgmt_ll_ops ksm_ll_ops;
-+	void *ll_priv_data;
-+
-+	/* Protects programming and evicting keys from the device */
-+	struct rw_semaphore lock;
-+
-+	/* List of idle slots, with least recently used slot at front */
-+	wait_queue_head_t idle_slots_wait_queue;
-+	struct list_head idle_slots;
-+	spinlock_t idle_slots_lock;
-+
-+	/* Per-keyslot data */
-+	struct keyslot slots[];
-+};
-+
-+/**
-+ * keyslot_manager_create() - Create a keyslot manager
-+ * @num_slots: The number of key slots to manage.
-+ * @ksm_ll_ops: The struct keyslot_mgmt_ll_ops for the device that this keyslot
-+ *		manager will use to perform operations like programming and
-+ *		evicting keys.
-+ * @ll_priv_data: Private data passed as is to the functions in ksm_ll_ops.
-+ *
-+ * Allocate memory for and initialize a keyslot manager. Called by for e.g.
-+ * storage drivers to set up a keyslot manager in their request_queue.
-+ *
-+ * Context: May sleep
-+ * Return: Pointer to constructed keyslot manager or NULL on error.
-+ */
-+struct keyslot_manager *keyslot_manager_create(unsigned int num_slots,
-+				const struct keyslot_mgmt_ll_ops *ksm_ll_ops,
-+				void *ll_priv_data)
+ 	if (time_to_inject(sbi, FAULT_WRITE_IO)) {
+ 		f2fs_show_injection_info(FAULT_WRITE_IO);
+ 		bio->bi_status = BLK_STS_IOERR;
+@@ -283,6 +287,53 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
+ 	return bio;
+ }
+ 
++static int f2fs_init_bio_crypt_ctx(struct bio *bio, struct inode *inode,
++				   struct f2fs_io_info *fio, bool no_fail)
 +{
-+	struct keyslot_manager *ksm;
-+	int slot;
++	gfp_t gfp_mask = GFP_NOIO;
++	/*
++	 * This function should be called with NULL inode iff the pages
++	 * being added to the bio are to be handled without inline
++	 * en/decryption.
++	 */
++	if (!inode)
++		return 0;
 +
-+	if (num_slots == 0)
-+		return NULL;
++	/*
++	 * If the fio has an encrypted page, that means we want to read/write
++	 * it without inline encryption (for e.g. when moving blocks)
++	 */
++	if (fio && fio->encrypted_page)
++		return 0;
 +
-+	/* Check that all ops are specified */
-+	if (ksm_ll_ops->keyslot_program == NULL ||
-+	    ksm_ll_ops->keyslot_evict == NULL ||
-+	    ksm_ll_ops->crypto_mode_supported == NULL ||
-+	    ksm_ll_ops->keyslot_find == NULL)
-+		return NULL;
++	if (no_fail)
++		gfp_mask |= __GFP_NOFAIL;
 +
-+	ksm = kvzalloc(struct_size(ksm, slots, num_slots), GFP_KERNEL);
-+	if (!ksm)
-+		return NULL;
-+
-+	ksm->num_slots = num_slots;
-+	atomic_set(&ksm->num_idle_slots, num_slots);
-+	ksm->ksm_ll_ops = *ksm_ll_ops;
-+	ksm->ll_priv_data = ll_priv_data;
-+
-+	init_rwsem(&ksm->lock);
-+
-+	init_waitqueue_head(&ksm->idle_slots_wait_queue);
-+	INIT_LIST_HEAD(&ksm->idle_slots);
-+
-+	for (slot = 0; slot < num_slots; slot++)
-+		list_add(&ksm->slots[slot].idle_slot_node, &ksm->idle_slots);
-+
-+	spin_lock_init(&ksm->idle_slots_lock);
-+
-+	return ksm;
++	return fscrypt_set_bio_crypt_ctx(bio, inode, 0, gfp_mask);
 +}
-+EXPORT_SYMBOL(keyslot_manager_create);
 +
-+static int find_and_grab_keyslot(struct keyslot_manager *ksm, const u8 *key,
-+				 enum blk_crypto_mode_num crypto_mode,
-+				 unsigned int data_unit_size)
++static inline u64 inline_crypt_dun(struct inode *inode, pgoff_t offset)
 +{
-+	int slot;
-+	unsigned long flags;
++	return (((u64)inode->i_ino) << 32) | lower_32_bits(offset);
++}
 +
-+	slot = ksm->ksm_ll_ops.keyslot_find(ksm->ll_priv_data, key,
-+					    crypto_mode, data_unit_size);
-+	if (slot < 0)
-+		return slot;
-+	if (WARN_ON(slot >= ksm->num_slots))
-+		return -EINVAL;
-+	if (atomic_inc_return(&ksm->slots[slot].slot_refs) == 1) {
-+		/* Took first reference to this slot; remove it from LRU list */
-+		spin_lock_irqsave(&ksm->idle_slots_lock, flags);
-+		list_del(&ksm->slots[slot].idle_slot_node);
-+		spin_unlock_irqrestore(&ksm->idle_slots_lock, flags);
-+		atomic_dec(&ksm->num_idle_slots);
++bool f2fs_page_crypt_back_mergeable(const struct bio *bio,
++				    const struct page *page)
++{
++	struct inode *bio_inode = bio && bio_page(bio)->mapping ?
++				    bio_page(bio)->mapping->host : NULL;
++	struct inode *page_inode = page && page->mapping ? page->mapping->host
++							 : NULL;
++
++	if (!fscrypt_inode_crypt_mergeable(page_inode, bio_inode))
++		return false;
++	if (!bio_inode || !fscrypt_inode_is_inline_crypted(bio_inode))
++		return true;
++	return inline_crypt_dun(bio_inode, bio_page(bio)->index) +
++	       (bio->bi_iter.bi_size >> PAGE_SHIFT) ==
++	       inline_crypt_dun(page_inode, page->index);
++}
++
+ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+ 				struct bio *bio, enum page_type type)
+ {
+@@ -327,6 +378,14 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+ 		trace_f2fs_submit_read_bio(sbi->sb, type, bio);
+ 	else
+ 		trace_f2fs_submit_write_bio(sbi->sb, type, bio);
++
++	if (bio_has_data(bio) && bio_has_crypt_ctx(bio)) {
++		struct page *page = bio_page(bio);
++
++		bio_set_data_unit_num(bio, inline_crypt_dun(page->mapping->host,
++							    page->index));
 +	}
-+	return slot;
-+}
 +
-+/**
-+ * keyslot_manager_get_slot_for_key() - Program a key into a keyslot.
-+ * @ksm: The keyslot manager to program the key into.
-+ * @key: Pointer to the bytes of the key to program. Must be the correct length
-+ *      for the chosen @crypto_mode; see blk_crypto_modes in blk-crypto.c.
-+ * @crypto_mode: Identifier for the encryption algorithm to use.
-+ * @data_unit_size: The data unit size to use for en/decryption.
-+ *
-+ * Get a keyslot that's been programmed with the specified key, crypto_mode, and
-+ * data_unit_size.  If one already exists, return it with incremented refcount.
-+ * Otherwise, wait for a keyslot to become idle and program it.
-+ *
-+ * Context: Process context. Takes and releases ksm->lock.
-+ * Return: The keyslot on success, else a -errno value.
-+ */
-+int keyslot_manager_get_slot_for_key(struct keyslot_manager *ksm,
-+				     const u8 *key,
-+				     enum blk_crypto_mode_num crypto_mode,
-+				     unsigned int data_unit_size)
-+{
-+	int slot;
+ 	submit_bio(bio);
+ }
+ 
+@@ -451,6 +510,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	struct bio *bio;
+ 	struct page *page = fio->encrypted_page ?
+ 			fio->encrypted_page : fio->page;
 +	int err;
-+	struct keyslot *idle_slot;
-+	unsigned long flags;
+ 
+ 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
+ 			fio->is_por ? META_POR : (__is_meta_io(fio) ?
+@@ -464,9 +524,15 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
+ 				1, is_read_io(fio->op), fio->type, fio->temp);
+ 
+-	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
++	err = f2fs_init_bio_crypt_ctx(bio, fio->page->mapping->host, fio,
++				      false);
 +
-+	down_read(&ksm->lock);
-+	slot = find_and_grab_keyslot(ksm, key, crypto_mode, data_unit_size);
-+	up_read(&ksm->lock);
-+	if (slot != -ENOKEY)
-+		return slot;
-+
-+	while (true) {
-+		down_write(&ksm->lock);
-+		slot = find_and_grab_keyslot(ksm, key, crypto_mode,
-+					     data_unit_size);
-+		if (slot != -ENOKEY) {
-+			up_write(&ksm->lock);
-+			return slot;
-+		}
-+
-+		/*
-+		 * If we're here, that means there wasn't a slot that was
-+		 * already programmed with the key. So try to program it.
-+		 */
-+		if (atomic_read(&ksm->num_idle_slots) > 0)
-+			break;
-+
-+		up_write(&ksm->lock);
-+		wait_event(ksm->idle_slots_wait_queue,
-+			(atomic_read(&ksm->num_idle_slots) > 0));
-+	}
-+
-+	idle_slot = list_first_entry(&ksm->idle_slots, struct keyslot,
-+					     idle_slot_node);
-+	slot = idle_slot - ksm->slots;
-+
-+	err = ksm->ksm_ll_ops.keyslot_program(ksm->ll_priv_data, key,
-+					      crypto_mode,
-+					      data_unit_size,
-+					      slot);
++	if (!err && bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE)
++		err = -EFAULT;
 +
 +	if (err) {
-+		wake_up(&ksm->idle_slots_wait_queue);
-+		up_write(&ksm->lock);
+ 		bio_put(bio);
+-		return -EFAULT;
 +		return err;
+ 	}
+ 
+ 	if (fio->io_wbc && !is_read_io(fio->op))
+@@ -486,6 +552,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ 	struct bio *bio = *fio->bio;
+ 	struct page *page = fio->encrypted_page ?
+ 			fio->encrypted_page : fio->page;
++	int err;
+ 
+ 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
+ 			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
+@@ -495,7 +562,8 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ 	f2fs_trace_ios(fio, 0);
+ 
+ 	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
+-			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
++			!__same_bdev(fio->sbi, fio->new_blkaddr, bio) ||
++			!f2fs_page_crypt_back_mergeable(bio, page))) {
+ 		__submit_bio(fio->sbi, bio, fio->type);
+ 		bio = NULL;
+ 	}
+@@ -503,6 +571,12 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ 	if (!bio) {
+ 		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
+ 				BIO_MAX_PAGES, false, fio->type, fio->temp);
++		err = f2fs_init_bio_crypt_ctx(bio, fio->page->mapping->host,
++					      fio, false);
++		if (err) {
++			bio_put(bio);
++			return err;
++		}
+ 		bio_set_op_attrs(bio, fio->op, fio->op_flags);
+ 	}
+ 
+@@ -570,8 +644,10 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 
+ 	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+ 	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
+-			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
++			!__same_bdev(sbi, fio->new_blkaddr, io->bio) ||
++			!f2fs_page_crypt_back_mergeable(io->bio, bio_page)))
+ 		__submit_merged_bio(io);
++
+ alloc_new:
+ 	if (io->bio == NULL) {
+ 		if ((fio->type == DATA || fio->type == NODE) &&
+@@ -583,6 +659,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 		io->bio = __bio_alloc(sbi, fio->new_blkaddr, fio->io_wbc,
+ 						BIO_MAX_PAGES, false,
+ 						fio->type, fio->temp);
++		f2fs_init_bio_crypt_ctx(io->bio, fio->page->mapping->host,
++					fio, true);
+ 		io->fio = *fio;
+ 	}
+ 
+@@ -615,16 +693,24 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+ 	struct bio *bio;
+ 	struct bio_post_read_ctx *ctx;
+ 	unsigned int post_read_steps = 0;
++	int err;
+ 
+ 	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
+ 	if (!bio)
+ 		return ERR_PTR(-ENOMEM);
++	err = f2fs_init_bio_crypt_ctx(bio, inode, NULL, false);
++	if (err) {
++		bio_put(bio);
++		return ERR_PTR(err);
 +	}
 +
-+	atomic_inc(&ksm->slots[slot].slot_refs);
-+	spin_lock_irqsave(&ksm->idle_slots_lock, flags);
-+	list_del(&idle_slot->idle_slot_node);
-+	spin_unlock_irqrestore(&ksm->idle_slots_lock, flags);
-+	atomic_dec(&ksm->num_idle_slots);
+ 	f2fs_target_device(sbi, blkaddr, bio);
+ 	bio->bi_end_io = f2fs_read_end_io;
+ 	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
+ 
+-	if (f2fs_encrypted_file(inode))
++	if (fscrypt_needs_fs_layer_crypto(inode))
+ 		post_read_steps |= 1 << STEP_DECRYPT;
 +
-+	up_write(&ksm->lock);
-+	return slot;
+ 	if (post_read_steps) {
+ 		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
+ 		if (!ctx) {
+@@ -1574,6 +1660,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+ 					struct f2fs_map_blocks *map,
+ 					struct bio **bio_ret,
+ 					sector_t *last_block_in_bio,
++					u64 *next_dun,
+ 					bool is_readahead)
+ {
+ 	struct bio *bio = *bio_ret;
+@@ -1648,6 +1735,13 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+ 		__submit_bio(F2FS_I_SB(inode), bio, DATA);
+ 		bio = NULL;
+ 	}
 +
-+}
-+EXPORT_SYMBOL(keyslot_manager_get_slot_for_key);
-+
-+/**
-+ * keyslot_manager_get_slot() - Increment the refcount on the specified slot.
-+ * @ksm - The keyslot manager that we want to modify.
-+ * @slot - The slot to increment the refcount of.
-+ *
-+ * This function assumes that there is already an active reference to that slot
-+ * and simply increments the refcount. This is useful when cloning a bio that
-+ * already has a reference to a keyslot, and we want the cloned bio to also have
-+ * its own reference.
-+ *
-+ * Context: Any context.
-+ */
-+void keyslot_manager_get_slot(struct keyslot_manager *ksm, unsigned int slot)
-+{
-+	if (WARN_ON(slot >= ksm->num_slots))
-+		return;
-+
-+	WARN_ON(atomic_inc_return(&ksm->slots[slot].slot_refs) < 2);
-+}
-+EXPORT_SYMBOL(keyslot_manager_get_slot);
-+
-+/**
-+ * keyslot_manager_put_slot() - Release a reference to a slot
-+ * @ksm: The keyslot manager to release the reference from.
-+ * @slot: The slot to release the reference from.
-+ *
-+ * Context: Any context.
-+ */
-+void keyslot_manager_put_slot(struct keyslot_manager *ksm, unsigned int slot)
-+{
-+	unsigned long flags;
-+
-+	if (WARN_ON(slot >= ksm->num_slots))
-+		return;
-+
-+	spin_lock_irqsave(&ksm->idle_slots_lock, flags);
-+	if (atomic_dec_and_test(&ksm->slots[slot].slot_refs)) {
-+		list_add_tail(&ksm->slots[slot].idle_slot_node,
-+			      &ksm->idle_slots);
-+		spin_unlock_irqrestore(&ksm->idle_slots_lock, flags);
-+		atomic_inc(&ksm->num_idle_slots);
-+		wake_up(&ksm->idle_slots_wait_queue);
-+	} else {
-+		spin_unlock_irqrestore(&ksm->idle_slots_lock, flags);
-+	}
-+}
-+EXPORT_SYMBOL(keyslot_manager_put_slot);
-+
-+/**
-+ * keyslot_manager_crypto_mode_supported() - Find out if a crypto_mode/data
-+ *					     unit size combination is supported
-+ *					     by a ksm.
-+ * @ksm - The keyslot manager to check
-+ * @crypto_mode - The crypto mode to check for.
-+ * @data_unit_size - The data_unit_size for the mode.
-+ *
-+ * Calls and returns the result of the crypto_mode_supported function specified
-+ * by the ksm.
-+ *
-+ * Context: Process context.
-+ * Return: Whether or not this ksm supports the specified crypto_mode/
-+ *	   data_unit_size combo.
-+ */
-+bool keyslot_manager_crypto_mode_supported(struct keyslot_manager *ksm,
-+					   enum blk_crypto_mode_num crypto_mode,
-+					   unsigned int data_unit_size)
-+{
-+	if (!ksm)
-+		return false;
-+	return ksm->ksm_ll_ops.crypto_mode_supported(ksm->ll_priv_data,
-+						     crypto_mode,
-+						     data_unit_size);
-+}
-+EXPORT_SYMBOL(keyslot_manager_crypto_mode_supported);
-+
-+bool keyslot_manager_rq_crypto_mode_supported(struct request_queue *q,
-+					enum blk_crypto_mode_num crypto_mode,
-+					unsigned int data_unit_size)
-+{
-+	return keyslot_manager_crypto_mode_supported(q->ksm, crypto_mode,
-+						     data_unit_size);
-+}
-+EXPORT_SYMBOL(keyslot_manager_rq_crypto_mode_supported);
-+
-+/**
-+ * keyslot_manager_evict_key() - Evict a key from the lower layer device.
-+ * @ksm - The keyslot manager to evict from
-+ * @key - The key to evict
-+ * @crypto_mode - The crypto algorithm the key was programmed with.
-+ * @data_unit_size - The data_unit_size the key was programmed with.
-+ *
-+ * Finds the slot that the specified key, crypto_mode, data_unit_size combo
-+ * was programmed into, and evicts that slot from the lower layer device if
-+ * the refcount on the slot is 0. Returns -EBUSY if the refcount is not 0, and
-+ * -errno on error.
-+ *
-+ * Context: Process context. Takes and releases ksm->lock.
-+ */
-+int keyslot_manager_evict_key(struct keyslot_manager *ksm,
-+			      const u8 *key,
-+			      enum blk_crypto_mode_num crypto_mode,
-+			      unsigned int data_unit_size)
-+{
-+	int slot;
-+	int err = 0;
-+
-+	down_write(&ksm->lock);
-+	slot = ksm->ksm_ll_ops.keyslot_find(ksm->ll_priv_data, key,
-+					    crypto_mode,
-+					    data_unit_size);
-+
-+	if (slot < 0) {
-+		up_write(&ksm->lock);
-+		return slot;
++	if (bio && fscrypt_inode_is_inline_crypted(inode) &&
++	    *next_dun != inline_crypt_dun(inode, page->index)) {
++		__submit_bio(F2FS_I_SB(inode), bio, DATA);
++		bio = NULL;
 +	}
 +
-+	if (atomic_read(&ksm->slots[slot].slot_refs) == 0) {
-+		err = ksm->ksm_ll_ops.keyslot_evict(ksm->ll_priv_data, key,
-+						    crypto_mode,
-+						    data_unit_size,
-+						    slot);
-+	} else {
-+		err = -EBUSY;
+ 	if (bio == NULL) {
+ 		bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
+ 				is_readahead ? REQ_RAHEAD : 0);
+@@ -1667,6 +1761,9 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+ 	if (bio_add_page(bio, page, blocksize, 0) < blocksize)
+ 		goto submit_and_realloc;
+ 
++	if (fscrypt_inode_is_inline_crypted(inode))
++		*next_dun = inline_crypt_dun(inode, page->index) + 1;
++
+ 	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
+ 	ClearPageError(page);
+ 	*last_block_in_bio = block_nr;
+@@ -1700,6 +1797,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+ 	struct inode *inode = mapping->host;
+ 	struct f2fs_map_blocks map;
+ 	int ret = 0;
++	u64 next_dun = 0;
+ 
+ 	map.m_pblk = 0;
+ 	map.m_lblk = 0;
+@@ -1723,7 +1821,8 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+ 		}
+ 
+ 		ret = f2fs_read_single_page(inode, page, nr_pages, &map, &bio,
+-					&last_block_in_bio, is_readahead);
++					&last_block_in_bio, &next_dun,
++					is_readahead);
+ 		if (ret) {
+ 			SetPageError(page);
+ 			zero_user_segment(page, 0, PAGE_SIZE);
+@@ -1777,12 +1876,12 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
+ 	struct page *mpage;
+ 	gfp_t gfp_flags = GFP_NOFS;
+ 
+-	if (!f2fs_encrypted_file(inode))
+-		return 0;
+-
+ 	/* wait for GCed page writeback via META_MAPPING */
+ 	f2fs_wait_on_block_writeback(inode, fio->old_blkaddr);
+ 
++	if (!fscrypt_needs_fs_layer_crypto(inode))
++		return 0;
++
+ retry_encrypt:
+ 	fio->encrypted_page = fscrypt_encrypt_pagecache_blocks(fio->page,
+ 							       PAGE_SIZE, 0,
+@@ -1957,7 +2056,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 			f2fs_unlock_op(fio->sbi);
+ 		err = f2fs_inplace_write_data(fio);
+ 		if (err) {
+-			if (f2fs_encrypted_file(inode))
++			if (fscrypt_needs_fs_layer_crypto(inode))
+ 				fscrypt_finalize_bounce_page(&fio->encrypted_page);
+ 			if (PageWriteback(page))
+ 				end_page_writeback(page);
+@@ -2692,6 +2791,8 @@ static void f2fs_dio_end_io(struct bio *bio)
+ {
+ 	struct f2fs_private_dio *dio = bio->bi_private;
+ 
++	fscrypt_unset_bio_crypt_ctx(bio);
++
+ 	dec_page_count(F2FS_I_SB(dio->inode),
+ 			dio->write ? F2FS_DIO_WRITE : F2FS_DIO_READ);
+ 
+@@ -2708,12 +2809,18 @@ static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
+ {
+ 	struct f2fs_private_dio *dio;
+ 	bool write = (bio_op(bio) == REQ_OP_WRITE);
++	u64 data_unit_num = inline_crypt_dun(inode, file_offset >> PAGE_SHIFT);
+ 
+ 	dio = f2fs_kzalloc(F2FS_I_SB(inode),
+ 			sizeof(struct f2fs_private_dio), GFP_NOFS);
+ 	if (!dio)
+ 		goto out;
+ 
++	if (fscrypt_set_bio_crypt_ctx(bio, inode, data_unit_num, GFP_NOIO)) {
++		kvfree(dio);
++		goto out;
 +	}
 +
-+	up_write(&ksm->lock);
-+	return err;
-+}
-+EXPORT_SYMBOL(keyslot_manager_evict_key);
-+
-+void keyslot_manager_destroy(struct keyslot_manager *ksm)
-+{
-+	if (!ksm)
-+		return;
-+	kvfree(ksm);
-+}
-+EXPORT_SYMBOL(keyslot_manager_destroy);
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 3cdb84cdc488..6c9228dd3156 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -564,6 +564,18 @@ static inline void bvec_kunmap_irq(char *buffer, unsigned long *flags)
+ 	dio->inode = inode;
+ 	dio->orig_end_io = bio->bi_end_io;
+ 	dio->orig_private = bio->bi_private;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 78a1b873e48a..196145cb42f9 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2223,12 +2223,15 @@ static bool f2fs_dummy_context(struct inode *inode)
  }
+ 
+ static const struct fscrypt_operations f2fs_cryptops = {
+-	.key_prefix	= "f2fs:",
+-	.get_context	= f2fs_get_context,
+-	.set_context	= f2fs_set_context,
+-	.dummy_context	= f2fs_dummy_context,
+-	.empty_dir	= f2fs_empty_dir,
+-	.max_namelen	= F2FS_NAME_LEN,
++	.key_prefix		= "f2fs:",
++	.get_context		= f2fs_get_context,
++	.set_context		= f2fs_set_context,
++	.dummy_context		= f2fs_dummy_context,
++	.empty_dir		= f2fs_empty_dir,
++	.max_namelen		= F2FS_NAME_LEN,
++#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
++	.inline_crypt_supp	= true,
++#endif
+ };
  #endif
  
-+enum blk_crypto_mode_num {
-+	BLK_ENCRYPTION_MODE_INVALID	= -1,
-+	BLK_ENCRYPTION_MODE_AES_256_XTS	= 0,
-+	/*
-+	 * TODO: Support these too
-+	 * BLK_ENCRYPTION_MODE_AES_256_CTS	= 1,
-+	 * BLK_ENCRYPTION_MODE_AES_128_CBC	= 2,
-+	 * BLK_ENCRYPTION_MODE_AES_128_CTS	= 3,
-+	 * BLK_ENCRYPTION_MODE_ADIANTUM		= 4,
-+	 */
-+};
-+
- /*
-  * BIO list management for use by remapping drivers (e.g. DM or MD) and loop.
-  *
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 1ef375dafb1c..afcca4c1ff64 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -43,6 +43,7 @@ struct pr_ops;
- struct rq_qos;
- struct blk_queue_stats;
- struct blk_stat_callback;
-+struct keyslot_manager;
- 
- #define BLKDEV_MIN_RQ	4
- #define BLKDEV_MAX_RQ	128	/* Default maximum */
-@@ -478,6 +479,11 @@ struct request_queue {
- 	unsigned int		dma_pad_mask;
- 	unsigned int		dma_alignment;
- 
-+#ifdef CONFIG_BLK_INLINE_ENCRYPTION
-+	/* Inline crypto capabilities */
-+	struct keyslot_manager *ksm;
-+#endif
-+
- 	unsigned int		rq_timeout;
- 	int			poll_nsec;
- 
-diff --git a/include/linux/keyslot-manager.h b/include/linux/keyslot-manager.h
-new file mode 100644
-index 000000000000..284f53973271
---- /dev/null
-+++ b/include/linux/keyslot-manager.h
-@@ -0,0 +1,94 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2019 Google LLC
-+ */
-+
-+#include <linux/bio.h>
-+
-+#ifndef __LINUX_KEYSLOT_MANAGER_H
-+#define __LINUX_KEYSLOT_MANAGER_H
-+
-+/**
-+ * struct keyslot_mgmt_ll_ops - functions to manage keyslots in hardware
-+ * @keyslot_program:	Program the specified key and algorithm into the
-+ *			specified slot in the inline encryption hardware.
-+ * @keyslot_evict:	Evict key from the specified keyslot in the hardware.
-+ *			The key, crypto_mode and data_unit_size are also passed
-+ *			down so that for e.g. dm layers can evict keys from
-+ *			the devices that they map over.
-+ *			Returns 0 on success, -errno otherwise.
-+ * @crypto_mode_supported:	Check whether a crypto_mode and data_unit_size
-+ *				combo is supported.
-+ * @keyslot_find:	Returns the slot number that matches the key,
-+ *			or -ENOKEY if no match found, or -errno on
-+ *			error.
-+ *
-+ * This structure should be provided by storage device drivers when they set up
-+ * a keyslot manager - this structure holds the function ptrs that the keyslot
-+ * manager will use to manipulate keyslots in the hardware.
-+ */
-+struct keyslot_mgmt_ll_ops {
-+	int (*keyslot_program)(void *ll_priv_data, const u8 *key,
-+			       enum blk_crypto_mode_num crypto_mode,
-+			       unsigned int data_unit_size,
-+			       unsigned int slot);
-+	int (*keyslot_evict)(void *ll_priv_data, const u8 *key,
-+			     enum blk_crypto_mode_num crypto_mode,
-+			     unsigned int data_unit_size,
-+			     unsigned int slot);
-+	bool (*crypto_mode_supported)(void *ll_priv_data,
-+				      enum blk_crypto_mode_num crypto_mode,
-+				      unsigned int data_unit_size);
-+	int (*keyslot_find)(void *ll_priv_data, const u8 *key,
-+			    enum blk_crypto_mode_num crypto_mode,
-+			    unsigned int data_unit_size);
-+};
-+
-+#ifdef CONFIG_BLK_INLINE_ENCRYPTION
-+struct keyslot_manager;
-+
-+extern struct keyslot_manager *keyslot_manager_create(unsigned int num_slots,
-+				const struct keyslot_mgmt_ll_ops *ksm_ops,
-+				void *ll_priv_data);
-+
-+extern int
-+keyslot_manager_get_slot_for_key(struct keyslot_manager *ksm,
-+				 const u8 *key,
-+				 enum blk_crypto_mode_num crypto_mode,
-+				 unsigned int data_unit_size);
-+
-+extern void keyslot_manager_get_slot(struct keyslot_manager *ksm,
-+				     unsigned int slot);
-+
-+extern void keyslot_manager_put_slot(struct keyslot_manager *ksm,
-+				     unsigned int slot);
-+
-+extern bool
-+keyslot_manager_crypto_mode_supported(struct keyslot_manager *ksm,
-+				      enum blk_crypto_mode_num crypto_mode,
-+				      unsigned int data_unit_size);
-+
-+extern bool
-+keyslot_manager_rq_crypto_mode_supported(struct request_queue *q,
-+					 enum blk_crypto_mode_num crypto_mode,
-+					 unsigned int data_unit_size);
-+
-+extern int keyslot_manager_evict_key(struct keyslot_manager *ksm,
-+				     const u8 *key,
-+				     enum blk_crypto_mode_num crypto_mode,
-+				     unsigned int data_unit_size);
-+
-+extern void keyslot_manager_destroy(struct keyslot_manager *ksm);
-+
-+#else /* CONFIG_BLK_INLINE_ENCRYPTION */
-+
-+static inline bool
-+keyslot_manager_rq_crypto_mode_supported(struct request_queue *q,
-+					 enum blk_crypto_mode_num crypto_mode,
-+					 unsigned int data_unit_size)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_BLK_INLINE_ENCRYPTION */
-+
-+#endif /* __LINUX_KEYSLOT_MANAGER_H */
 -- 
 2.23.0.rc1.153.gdeed80330f-goog
 
