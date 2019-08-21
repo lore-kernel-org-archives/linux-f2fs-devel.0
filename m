@@ -7,19 +7,19 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA0FC3A59E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 08:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A3FC3A59E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 08:25:39 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6CFAD22DA7;
-	Wed, 21 Aug 2019 08:23:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3B32122DA7;
+	Wed, 21 Aug 2019 08:25:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="WVGbd1QC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YgK0ELo9";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="d9y4rkDj";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="DkO7Nn7D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFAD22DA7
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="YsXgH4LU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mXTBOpRA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="GSY1OF69";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="FVyr06XB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B32122DA7
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,28 +28,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=mjqHdMP6BjtMy8fUjJ+4jem2r9zRPtKc+6+4vzyZHMs=; b=WVGbd1QCXnIg+AJG5x53Zy71B
-	d5Oub7XahwcFEyaERe61R4sD+dG3vrzKKi+4ncAor/7P3+3cDgjlLhUwPke0qxEZGPD+mkjk/3A19
-	Fa+miEliGjHvK0wNO6hw0n+IG82YJSp/+5wIDwtC/Jld/PCkJl2rSAz8mEvDlSvC7lyd4=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	 bh=Cd+N/hbqqKK7Hk5ygoyUOukHSFy+WBlGcmFAZEZCnnA=; b=YsXgH4LUxihM0y2xgC4Hy1k6w
+	Jpni/95LfQpz+PpJhepmn34EPt2022jQPz3FMO9FbRfHmOi/EBKx3CGLCWD8CVqM/8afR7zJaIJu1
+	4b8vblkvQkJyDM+qNnYWNDJo0Hdj4r49MzzrV5klHAw8khUG4EF+sOT35SdxusQyGuM1Q=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1i0Lty-0007Pk-0W; Wed, 21 Aug 2019 08:23:30 +0000
+	id 1i0Lw2-0001et-U2; Wed, 21 Aug 2019 08:25:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3cvlcXQYKAMk7p8Dp8v33v0t.r31@flex--satyat.bounces.google.com>)
- id 1i0Ltw-0007OS-UU
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:23:28 +0000
+ (envelope-from <3Y_lcXQYKALoxfy3fylttlqj.htr@flex--satyat.bounces.google.com>)
+ id 1i0Lw0-0001el-UE
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:25:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Za7w9RhqOvx+rbdwwS8b0CPcodToPB6Hjzwh7+A6Syg=; b=YgK0ELo9r6gyzmryUgiAKeuhA
- Akp3gFvrKjAU4jPR1QTRMI+Ro44+BXctP05oHP9F2QmutOd219ttigGtq42Xe/2S8Ty3RkdMbcbyk
- /w6dWdVFiV0dub8Cq9E9u+SLb/CtJTuSf5JVdpIRFo6jvJgTA8vViu7BXd5u6tgvR0pD0=;
+ bh=IJJtlknwtk9R5EKrLGyaqkcJMNagGiZqElpki0nh3vk=; b=mXTBOpRAwBIMKQYdvAxfIMLvp
+ mp88oqvbMnJZsSc1f1Ykq8pMYHeZ8U/GyPLTNRaIXJV4sEWgJE1pGGSklvH+1DVp2dDrsHJIv2FUj
+ 9omzCapohUmWZ44igFpTjL4FnyQKvJmEs/Dujkz+Y+V1XhO1ed/CI5C3RQAc0SHxloLOo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -57,54 +57,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Za7w9RhqOvx+rbdwwS8b0CPcodToPB6Hjzwh7+A6Syg=; b=d9y4rkDjx7Zg+lcVdRbIDLVk2Z
- H28rb9eVmhwAVnbz9IrdgbUq2nrSdSVWMC3v9c0P4QhFWhuLLEPQS90BE+vMJw0SinGGp5AM9c/Gm
- WKl5b5DYkiRx5bcdI1zK8P5gLv+mPB7685hiNutv3FOqSLXOOq8LNTn+NeQgA1fSKilw=;
+ bh=IJJtlknwtk9R5EKrLGyaqkcJMNagGiZqElpki0nh3vk=; b=GSY1OF69KZlIx3D9SmzSzuBQ9B
+ KbYFt03za7YZXSybHg4PP7KcIaeEmGNGnGseu9bejph9bHKV1ZRHj2RFY1NW64+YkVmBZts7sQb68
+ ALpQWj2TV6wK9gvCt8kjJyful+U8e1tXcT3melYoGcK0wlW7lji9BcVV+ec1nY9sSws8=;
 Received: from mail-qk1-f201.google.com ([209.85.222.201])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1i0Ltp-00AKpV-Pr
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:23:28 +0000
-Received: by mail-qk1-f201.google.com with SMTP id x1so1369914qkn.6
+ id 1i0Lvs-00AL5x-Jf
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:25:35 +0000
+Received: by mail-qk1-f201.google.com with SMTP id p18so1372785qke.9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 21 Aug 2019 01:23:21 -0700 (PDT)
+ Wed, 21 Aug 2019 01:25:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=Za7w9RhqOvx+rbdwwS8b0CPcodToPB6Hjzwh7+A6Syg=;
- b=DkO7Nn7D2Xk3T8cG9p5c6N+nZxrZ4col+9+vVnpt+G8JRphS7kgWTTlgn5Bd5a7AEr
- 2+F74HCdI8eYIHLUkOCPVnjF6FETFobs//509xgwEM6D2QXn5fWkqtj1OYtyNK9jLmcb
- nUKfbKW2EpHKT2STSUPVMDF1nO/bLvyj7TNB7z7JrveFvkG+H83icRhL4TabD7m81QWd
- rLvILk0GUc37LAVeI9NTyikh6FTn203V3g/QNWZMD7plUmU3b9axvSOM/g4hUsLM+MdH
- qocPUAm3Qz2URW8cy40aN8EXQVmgiiGAjvgjxDT2Zlcia441Z0Tq6MJ7LfZvRRBZ/kxa
- m3aA==
+ :cc; bh=IJJtlknwtk9R5EKrLGyaqkcJMNagGiZqElpki0nh3vk=;
+ b=FVyr06XBTw70NrHexmEQX4TMcwGRPmNimrVnPiKP1u/Shbgouh1GRyIxEBBS9U6wt9
+ qtpFYxNJTNUOZgf0fqvCjItYxjqaIipimmCvwP34uH9AK/KxNyocg16/J3phZptzYthi
+ pXZnxi26FLtahOdEV46RhVk2ZU6mht4xEI7SFXmwXHGptsOap6dUKFFC6c38n0DcU34y
+ 9udABHLgSHs7d8+5PztESdtY03K3RrxraV+EwWnxRTne+hY8HqU47GZCiCeF3+8nKyjQ
+ wKo8zm2gZs0mqcKRs++6rxBEDQb9GA9pOy/ORskno7le0ArabmIltSzfbGjJaJI/lnMS
+ TgOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=Za7w9RhqOvx+rbdwwS8b0CPcodToPB6Hjzwh7+A6Syg=;
- b=LB0q0p0t7G/V+7VU+V6zwHRHygh1gc0ECc0MLm6CZ/FNZjJ2mNiXYumrHszflAJ9+b
- RdgIM32BE81+zH2WbFmxAtCFpK/2rx2WQmKYf1D+1AlRPxMTzPjbEHPXpZNczT9vyI+9
- H+8EdOvdJRkN61RNOUHSksEBuHx808cNXebYKjsjV3boq42PzPcQ9Dhpau9QFfcRfKpP
- lLWbBJh3m7/da1zUDiIJOzqNB6nsBmPtJZGJEpcJ8Til7Y3OfV+urH6jEBz+tq3rscEL
- v/NKV9qcNCCh3VJD0Gt4zWV8qGjterWGeUY3yTKt4eXx/U0HrqYuYpaidUrTJNRiki/l
- A45g==
-X-Gm-Message-State: APjAAAUGCDyUbngDa8J5gsyL4k50AYHNjJQp4XjWElCMaoJ08G0gcavi
- ke8yV/IlcF88QDufX2Uyfc0tTyMkbNU=
-X-Google-Smtp-Source: APXvYqxT3jAgizDP+6vcOIt7t24Pqk/vf2IKzBLMg5jcFQikXJNxIrCVsY+Yz+Wd8/Yvw1kXif/HLfUjnzU=
-X-Received: by 2002:a63:ab08:: with SMTP id p8mr29238085pgf.340.1566374258557; 
- Wed, 21 Aug 2019 00:57:38 -0700 (PDT)
-Date: Wed, 21 Aug 2019 00:57:14 -0700
+ bh=IJJtlknwtk9R5EKrLGyaqkcJMNagGiZqElpki0nh3vk=;
+ b=lh2zhTC19D2UgRzBVXBHRbxswRNzyB2WPRTRxMV89AlwB1cYiCjCwZI45CzAu2o+EM
+ i/BQLk7wEV0e3Uhmwu0P+jons2KsJhuNMyPa2yMiMmhGQjgrrwn+M3ajUZBVDuvnqZOI
+ PZUvwDwLu4midJVrTkHxjzbyP54RuLKmrBaZg2j/f1+9WJaQa+HNR79Oxp0x3FdBCO9S
+ sC5XTN1gox+LSLrSWsslDB2c2rYbSFyaDIhZxGKNhX5zEloWA+88qA1y7g5vfk/d4Fm4
+ EzU242Y/ayTxhsrzHWXDbXx+Dox9qx9AwUgkJMB1jL+wYOvgPu4F/ufKEp6Vid14YSWp
+ t16g==
+X-Gm-Message-State: APjAAAUpJDUFmPIadaJ+pb2WsdNeI2dmuPF88kUZTjOJXq8twAHCP+bS
+ NrW58tLi2x/HCxSFOxSGC3OM8NbyXDs=
+X-Google-Smtp-Source: APXvYqyF4CEq7FNstHV9Yw7XcPzl84Mu1qdahWk99gbLSRGvHimfT0i+qmMXAUPrIxmIzuOwCb4rM/7BcE4=
+X-Received: by 2002:a37:99c2:: with SMTP id
+ b185mr14536177qke.475.1566374243624; 
+ Wed, 21 Aug 2019 00:57:23 -0700 (PDT)
+Date: Wed, 21 Aug 2019 00:57:08 -0700
 In-Reply-To: <20190821075714.65140-1-satyat@google.com>
-Message-Id: <20190821075714.65140-9-satyat@google.com>
+Message-Id: <20190821075714.65140-3-satyat@google.com>
 Mime-Version: 1.0
 References: <20190821075714.65140-1-satyat@google.com>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, 
  linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1i0Ltp-00AKpV-Pr
-Subject: [f2fs-dev] [PATCH v4 8/8] f2fs: Wire up f2fs to use inline
- encryption via fscrypt
+X-Headers-End: 1i0Lvs-00AL5x-Jf
+Subject: [f2fs-dev] [PATCH v4 2/8] block: Add encryption context to struct
+ bio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,336 +128,675 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+We must have some way of letting a storage device driver know what
+encryption context it should use for en/decrypting a request. However,
+it's the filesystem/fscrypt that knows about and manages encryption
+contexts. As such, when the filesystem layer submits a bio to the block
+layer, and this bio eventually reaches a device driver with support for
+inline encryption, the device driver will need to have been told the
+encryption context for that bio.
+
+We want to communicate the encryption context from the filesystem layer
+to the storage device along with the bio, when the bio is submitted to the
+block layer. To do this, we add a struct bio_crypt_ctx to struct bio, which
+can represent an encryption context (note that we can't use the bi_private
+field in struct bio to do this because that field does not function to pass
+information across layers in the storage stack). We also introduce various
+functions to manipulate the bio_crypt_ctx and make the bio/request merging
+logic aware of the bio_crypt_ctx.
+
 Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
- fs/f2fs/data.c  | 127 ++++++++++++++++++++++++++++++++++++++++++++----
- fs/f2fs/super.c |  15 +++---
- 2 files changed, 126 insertions(+), 16 deletions(-)
+ block/Makefile                |   2 +-
+ block/bio-crypt-ctx.c         | 137 +++++++++++++++++++++
+ block/bio.c                   |  18 +--
+ block/blk-core.c              |   3 +
+ block/blk-merge.c             |  35 +++++-
+ block/bounce.c                |  15 +--
+ drivers/md/dm.c               |  15 ++-
+ include/linux/bio-crypt-ctx.h | 226 ++++++++++++++++++++++++++++++++++
+ include/linux/bio.h           |  13 +-
+ include/linux/blk_types.h     |   6 +
+ 10 files changed, 433 insertions(+), 37 deletions(-)
+ create mode 100644 block/bio-crypt-ctx.c
+ create mode 100644 include/linux/bio-crypt-ctx.h
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index abbf14e9bd72..a7294edce173 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -143,6 +143,8 @@ static bool f2fs_bio_post_read_required(struct bio *bio)
- 
- static void f2fs_read_end_io(struct bio *bio)
- {
-+	fscrypt_unset_bio_crypt_ctx(bio);
+diff --git a/block/Makefile b/block/Makefile
+index a72abd61b220..4147ffa63631 100644
+--- a/block/Makefile
++++ b/block/Makefile
+@@ -35,4 +35,4 @@ obj-$(CONFIG_BLK_DEBUG_FS)	+= blk-mq-debugfs.o
+ obj-$(CONFIG_BLK_DEBUG_FS_ZONED)+= blk-mq-debugfs-zoned.o
+ obj-$(CONFIG_BLK_SED_OPAL)	+= sed-opal.o
+ obj-$(CONFIG_BLK_PM)		+= blk-pm.o
+-obj-$(CONFIG_BLK_INLINE_ENCRYPTION)	+= keyslot-manager.o
++obj-$(CONFIG_BLK_INLINE_ENCRYPTION)	+= keyslot-manager.o bio-crypt-ctx.o
+diff --git a/block/bio-crypt-ctx.c b/block/bio-crypt-ctx.c
+new file mode 100644
+index 000000000000..aa3571f72ee7
+--- /dev/null
++++ b/block/bio-crypt-ctx.c
+@@ -0,0 +1,137 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2019 Google LLC
++ */
 +
- 	if (time_to_inject(F2FS_P_SB(bio_first_page_all(bio)),
- 						FAULT_READ_IO)) {
- 		f2fs_show_injection_info(FAULT_READ_IO);
-@@ -166,6 +168,8 @@ static void f2fs_write_end_io(struct bio *bio)
- 	struct bio_vec *bvec;
- 	struct bvec_iter_all iter_all;
- 
-+	fscrypt_unset_bio_crypt_ctx(bio);
++#include <linux/bio.h>
++#include <linux/blkdev.h>
++#include <linux/slab.h>
++#include <linux/keyslot-manager.h>
 +
- 	if (time_to_inject(sbi, FAULT_WRITE_IO)) {
- 		f2fs_show_injection_info(FAULT_WRITE_IO);
- 		bio->bi_status = BLK_STS_IOERR;
-@@ -283,6 +287,53 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
- 	return bio;
- }
- 
-+static int f2fs_init_bio_crypt_ctx(struct bio *bio, struct inode *inode,
-+				   struct f2fs_io_info *fio, bool no_fail)
++static int num_prealloc_crypt_ctxs = 128;
++static struct kmem_cache *bio_crypt_ctx_cache;
++static mempool_t *bio_crypt_ctx_pool;
++
++int bio_crypt_ctx_init(void)
 +{
-+	gfp_t gfp_mask = GFP_NOIO;
-+	/*
-+	 * This function should be called with NULL inode iff the pages
-+	 * being added to the bio are to be handled without inline
-+	 * en/decryption.
-+	 */
-+	if (!inode)
-+		return 0;
++	bio_crypt_ctx_cache = KMEM_CACHE(bio_crypt_ctx, 0);
++	if (!bio_crypt_ctx_cache)
++		return -ENOMEM;
 +
-+	/*
-+	 * If the fio has an encrypted page, that means we want to read/write
-+	 * it without inline encryption (for e.g. when moving blocks)
-+	 */
-+	if (fio && fio->encrypted_page)
-+		return 0;
++	bio_crypt_ctx_pool = mempool_create_slab_pool(
++					num_prealloc_crypt_ctxs,
++					bio_crypt_ctx_cache);
 +
-+	if (no_fail)
-+		gfp_mask |= __GFP_NOFAIL;
++	if (!bio_crypt_ctx_pool)
++		return -ENOMEM;
 +
-+	return fscrypt_set_bio_crypt_ctx(bio, inode, 0, gfp_mask);
++	return 0;
 +}
 +
-+static inline u64 inline_crypt_dun(struct inode *inode, pgoff_t offset)
++struct bio_crypt_ctx *bio_crypt_alloc_ctx(gfp_t gfp_mask)
 +{
-+	return (((u64)inode->i_ino) << 32) | lower_32_bits(offset);
++	return mempool_alloc(bio_crypt_ctx_pool, gfp_mask);
 +}
++EXPORT_SYMBOL(bio_crypt_alloc_ctx);
 +
-+bool f2fs_page_crypt_back_mergeable(const struct bio *bio,
-+				    const struct page *page)
++void bio_crypt_free_ctx(struct bio *bio)
 +{
-+	struct inode *bio_inode = bio && bio_page(bio)->mapping ?
-+				    bio_page(bio)->mapping->host : NULL;
-+	struct inode *page_inode = page && page->mapping ? page->mapping->host
-+							 : NULL;
++	mempool_free(bio->bi_crypt_context, bio_crypt_ctx_pool);
++	bio->bi_crypt_context = NULL;
++}
++EXPORT_SYMBOL(bio_crypt_free_ctx);
 +
-+	if (!fscrypt_inode_crypt_mergeable(page_inode, bio_inode))
++int bio_crypt_clone(struct bio *dst, struct bio *src, gfp_t gfp_mask)
++{
++	if (!bio_has_crypt_ctx(src))
++		return 0;
++
++	dst->bi_crypt_context = bio_crypt_alloc_ctx(gfp_mask);
++	if (!dst->bi_crypt_context)
++		return -ENOMEM;
++
++	*dst->bi_crypt_context = *src->bi_crypt_context;
++
++	if (bio_crypt_has_keyslot(src))
++		keyslot_manager_get_slot(src->bi_crypt_context->processing_ksm,
++					 src->bi_crypt_context->keyslot);
++
++	return 0;
++}
++EXPORT_SYMBOL(bio_crypt_clone);
++
++bool bio_crypt_should_process(struct bio *bio, struct request_queue *q)
++{
++	if (!bio_has_crypt_ctx(bio))
 +		return false;
-+	if (!bio_inode || !fscrypt_inode_is_inline_crypted(bio_inode))
++
++	WARN_ON(!bio_crypt_has_keyslot(bio));
++	return q->ksm == bio->bi_crypt_context->processing_ksm;
++}
++EXPORT_SYMBOL(bio_crypt_should_process);
++
++/*
++ * Checks that two bio crypt contexts are compatible - i.e. that
++ * they are mergeable except for data_unit_num continuity.
++ */
++bool bio_crypt_ctx_compatible(struct bio *b_1, struct bio *b_2)
++{
++	struct bio_crypt_ctx *bc1 = b_1->bi_crypt_context;
++	struct bio_crypt_ctx *bc2 = b_2->bi_crypt_context;
++
++	if (bio_has_crypt_ctx(b_1) != bio_has_crypt_ctx(b_2))
++		return false;
++
++	if (!bio_has_crypt_ctx(b_1))
 +		return true;
-+	return inline_crypt_dun(bio_inode, bio_page(bio)->index) +
-+	       (bio->bi_iter.bi_size >> PAGE_SHIFT) ==
-+	       inline_crypt_dun(page_inode, page->index);
++
++	return bc1->keyslot == bc2->keyslot &&
++	       bc1->data_unit_size_bits == bc2->data_unit_size_bits;
 +}
 +
- static inline void __submit_bio(struct f2fs_sb_info *sbi,
- 				struct bio *bio, enum page_type type)
- {
-@@ -327,6 +378,14 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
- 		trace_f2fs_submit_read_bio(sbi->sb, type, bio);
- 	else
- 		trace_f2fs_submit_write_bio(sbi->sb, type, bio);
++/*
++ * Checks that two bio crypt contexts are compatible, and also
++ * that their data_unit_nums are continuous (and can hence be merged)
++ */
++bool bio_crypt_ctx_back_mergeable(struct bio *b_1,
++				  unsigned int b1_sectors,
++				  struct bio *b_2)
++{
++	struct bio_crypt_ctx *bc1 = b_1->bi_crypt_context;
++	struct bio_crypt_ctx *bc2 = b_2->bi_crypt_context;
 +
-+	if (bio_has_data(bio) && bio_has_crypt_ctx(bio)) {
-+		struct page *page = bio_page(bio);
++	if (!bio_crypt_ctx_compatible(b_1, b_2))
++		return false;
 +
-+		bio_set_data_unit_num(bio, inline_crypt_dun(page->mapping->host,
-+							    page->index));
-+	}
++	return !bio_has_crypt_ctx(b_1) ||
++		(bc1->data_unit_num +
++		(b1_sectors >> (bc1->data_unit_size_bits - 9)) ==
++		bc2->data_unit_num);
++}
 +
- 	submit_bio(bio);
- }
- 
-@@ -451,6 +510,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	struct bio *bio;
- 	struct page *page = fio->encrypted_page ?
- 			fio->encrypted_page : fio->page;
-+	int err;
- 
- 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
- 			fio->is_por ? META_POR : (__is_meta_io(fio) ?
-@@ -464,9 +524,15 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
- 				1, is_read_io(fio->op), fio->type, fio->temp);
- 
--	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
-+	err = f2fs_init_bio_crypt_ctx(bio, fio->page->mapping->host, fio,
-+				      false);
++void bio_crypt_ctx_release_keyslot(struct bio *bio)
++{
++	struct bio_crypt_ctx *crypt_ctx = bio->bi_crypt_context;
 +
-+	if (!err && bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE)
-+		err = -EFAULT;
++	keyslot_manager_put_slot(crypt_ctx->processing_ksm, crypt_ctx->keyslot);
++	bio->bi_crypt_context->processing_ksm = NULL;
++	bio->bi_crypt_context->keyslot = -1;
++}
 +
-+	if (err) {
- 		bio_put(bio);
--		return -EFAULT;
-+		return err;
- 	}
- 
- 	if (fio->io_wbc && !is_read_io(fio->op))
-@@ -486,6 +552,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	struct bio *bio = *fio->bio;
- 	struct page *page = fio->encrypted_page ?
- 			fio->encrypted_page : fio->page;
-+	int err;
- 
- 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
- 			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
-@@ -495,7 +562,8 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	f2fs_trace_ios(fio, 0);
- 
- 	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
--			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
-+			!__same_bdev(fio->sbi, fio->new_blkaddr, bio) ||
-+			!f2fs_page_crypt_back_mergeable(bio, page))) {
- 		__submit_bio(fio->sbi, bio, fio->type);
- 		bio = NULL;
- 	}
-@@ -503,6 +571,12 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	if (!bio) {
- 		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
- 				BIO_MAX_PAGES, false, fio->type, fio->temp);
-+		err = f2fs_init_bio_crypt_ctx(bio, fio->page->mapping->host,
-+					      fio, false);
-+		if (err) {
-+			bio_put(bio);
-+			return err;
-+		}
- 		bio_set_op_attrs(bio, fio->op, fio->op_flags);
- 	}
- 
-@@ -570,8 +644,10 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 
- 	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
- 	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
--			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
-+			!__same_bdev(sbi, fio->new_blkaddr, io->bio) ||
-+			!f2fs_page_crypt_back_mergeable(io->bio, bio_page)))
- 		__submit_merged_bio(io);
++int bio_crypt_ctx_acquire_keyslot(struct bio *bio, struct keyslot_manager *ksm)
++{
++	int slot;
++	enum blk_crypto_mode_num crypto_mode = bio_crypto_mode(bio);
 +
- alloc_new:
- 	if (io->bio == NULL) {
- 		if ((fio->type == DATA || fio->type == NODE) &&
-@@ -583,6 +659,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 		io->bio = __bio_alloc(sbi, fio->new_blkaddr, fio->io_wbc,
- 						BIO_MAX_PAGES, false,
- 						fio->type, fio->temp);
-+		f2fs_init_bio_crypt_ctx(io->bio, fio->page->mapping->host,
-+					fio, true);
- 		io->fio = *fio;
- 	}
- 
-@@ -615,16 +693,24 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 	struct bio *bio;
- 	struct bio_post_read_ctx *ctx;
- 	unsigned int post_read_steps = 0;
-+	int err;
- 
- 	bio = f2fs_bio_alloc(sbi, min_t(int, nr_pages, BIO_MAX_PAGES), false);
- 	if (!bio)
- 		return ERR_PTR(-ENOMEM);
-+	err = f2fs_init_bio_crypt_ctx(bio, inode, NULL, false);
-+	if (err) {
-+		bio_put(bio);
-+		return ERR_PTR(err);
-+	}
++	if (!ksm)
++		return -ENOMEM;
 +
- 	f2fs_target_device(sbi, blkaddr, bio);
- 	bio->bi_end_io = f2fs_read_end_io;
- 	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
- 
--	if (f2fs_encrypted_file(inode))
-+	if (fscrypt_needs_fs_layer_crypto(inode))
- 		post_read_steps |= 1 << STEP_DECRYPT;
++	slot = keyslot_manager_get_slot_for_key(ksm,
++			bio_crypt_raw_key(bio), crypto_mode,
++			1 << bio->bi_crypt_context->data_unit_size_bits);
++	if (slot < 0)
++		return slot;
 +
- 	if (post_read_steps) {
- 		ctx = mempool_alloc(bio_post_read_ctx_pool, GFP_NOFS);
- 		if (!ctx) {
-@@ -1574,6 +1660,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 					struct f2fs_map_blocks *map,
- 					struct bio **bio_ret,
- 					sector_t *last_block_in_bio,
-+					u64 *next_dun,
- 					bool is_readahead)
- {
- 	struct bio *bio = *bio_ret;
-@@ -1648,6 +1735,13 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 		__submit_bio(F2FS_I_SB(inode), bio, DATA);
- 		bio = NULL;
- 	}
-+
-+	if (bio && fscrypt_inode_is_inline_crypted(inode) &&
-+	    *next_dun != inline_crypt_dun(inode, page->index)) {
-+		__submit_bio(F2FS_I_SB(inode), bio, DATA);
-+		bio = NULL;
-+	}
-+
- 	if (bio == NULL) {
- 		bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
- 				is_readahead ? REQ_RAHEAD : 0);
-@@ -1667,6 +1761,9 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 	if (bio_add_page(bio, page, blocksize, 0) < blocksize)
- 		goto submit_and_realloc;
++	bio_crypt_set_keyslot(bio, slot, ksm);
++	return 0;
++}
+diff --git a/block/bio.c b/block/bio.c
+index 299a0e7651ec..ada9850c90dc 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -241,6 +241,7 @@ static void bio_free(struct bio *bio)
+ 	struct bio_set *bs = bio->bi_pool;
+ 	void *p;
  
-+	if (fscrypt_inode_is_inline_crypted(inode))
-+		*next_dun = inline_crypt_dun(inode, page->index) + 1;
-+
- 	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
- 	ClearPageError(page);
- 	*last_block_in_bio = block_nr;
-@@ -1700,6 +1797,7 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 	struct inode *inode = mapping->host;
- 	struct f2fs_map_blocks map;
- 	int ret = 0;
-+	u64 next_dun = 0;
++	bio_crypt_free_ctx(bio);
+ 	bio_uninit(bio);
  
- 	map.m_pblk = 0;
- 	map.m_lblk = 0;
-@@ -1723,7 +1821,8 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
- 		}
+ 	if (bs) {
+@@ -612,15 +613,15 @@ struct bio *bio_clone_fast(struct bio *bio, gfp_t gfp_mask, struct bio_set *bs)
  
- 		ret = f2fs_read_single_page(inode, page, nr_pages, &map, &bio,
--					&last_block_in_bio, is_readahead);
-+					&last_block_in_bio, &next_dun,
-+					is_readahead);
- 		if (ret) {
- 			SetPageError(page);
- 			zero_user_segment(page, 0, PAGE_SIZE);
-@@ -1777,12 +1876,12 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
- 	struct page *mpage;
- 	gfp_t gfp_flags = GFP_NOFS;
+ 	__bio_clone_fast(b, bio);
  
--	if (!f2fs_encrypted_file(inode))
--		return 0;
+-	if (bio_integrity(bio)) {
+-		int ret;
 -
- 	/* wait for GCed page writeback via META_MAPPING */
- 	f2fs_wait_on_block_writeback(inode, fio->old_blkaddr);
- 
-+	if (!fscrypt_needs_fs_layer_crypto(inode))
-+		return 0;
-+
- retry_encrypt:
- 	fio->encrypted_page = fscrypt_encrypt_pagecache_blocks(fio->page,
- 							       PAGE_SIZE, 0,
-@@ -1957,7 +2056,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 			f2fs_unlock_op(fio->sbi);
- 		err = f2fs_inplace_write_data(fio);
- 		if (err) {
--			if (f2fs_encrypted_file(inode))
-+			if (fscrypt_needs_fs_layer_crypto(inode))
- 				fscrypt_finalize_bounce_page(&fio->encrypted_page);
- 			if (PageWriteback(page))
- 				end_page_writeback(page);
-@@ -2692,6 +2791,8 @@ static void f2fs_dio_end_io(struct bio *bio)
- {
- 	struct f2fs_private_dio *dio = bio->bi_private;
- 
-+	fscrypt_unset_bio_crypt_ctx(bio);
-+
- 	dec_page_count(F2FS_I_SB(dio->inode),
- 			dio->write ? F2FS_DIO_WRITE : F2FS_DIO_READ);
- 
-@@ -2708,12 +2809,18 @@ static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
- {
- 	struct f2fs_private_dio *dio;
- 	bool write = (bio_op(bio) == REQ_OP_WRITE);
-+	u64 data_unit_num = inline_crypt_dun(inode, file_offset >> PAGE_SHIFT);
- 
- 	dio = f2fs_kzalloc(F2FS_I_SB(inode),
- 			sizeof(struct f2fs_private_dio), GFP_NOFS);
- 	if (!dio)
- 		goto out;
- 
-+	if (fscrypt_set_bio_crypt_ctx(bio, inode, data_unit_num, GFP_NOIO)) {
-+		kvfree(dio);
-+		goto out;
+-		ret = bio_integrity_clone(b, bio, gfp_mask);
++	if (bio_crypt_clone(b, bio, gfp_mask) < 0) {
++		bio_put(b);
++		return NULL;
 +	}
-+
- 	dio->inode = inode;
- 	dio->orig_end_io = bio->bi_end_io;
- 	dio->orig_private = bio->bi_private;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 78a1b873e48a..196145cb42f9 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2223,12 +2223,15 @@ static bool f2fs_dummy_context(struct inode *inode)
- }
  
- static const struct fscrypt_operations f2fs_cryptops = {
--	.key_prefix	= "f2fs:",
--	.get_context	= f2fs_get_context,
--	.set_context	= f2fs_set_context,
--	.dummy_context	= f2fs_dummy_context,
--	.empty_dir	= f2fs_empty_dir,
--	.max_namelen	= F2FS_NAME_LEN,
-+	.key_prefix		= "f2fs:",
-+	.get_context		= f2fs_get_context,
-+	.set_context		= f2fs_set_context,
-+	.dummy_context		= f2fs_dummy_context,
-+	.empty_dir		= f2fs_empty_dir,
-+	.max_namelen		= F2FS_NAME_LEN,
-+#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
-+	.inline_crypt_supp	= true,
-+#endif
- };
+-		if (ret < 0) {
+-			bio_put(b);
+-			return NULL;
+-		}
++	if (bio_integrity(bio) &&
++	    bio_integrity_clone(b, bio, gfp_mask) < 0) {
++		bio_put(b);
++		return NULL;
+ 	}
+ 
+ 	return b;
+@@ -1007,6 +1008,7 @@ void bio_advance(struct bio *bio, unsigned bytes)
+ 	if (bio_integrity(bio))
+ 		bio_integrity_advance(bio, bytes);
+ 
++	bio_crypt_advance(bio, bytes);
+ 	bio_advance_iter(bio, &bio->bi_iter, bytes);
+ }
+ EXPORT_SYMBOL(bio_advance);
+diff --git a/block/blk-core.c b/block/blk-core.c
+index d0cc6e14d2f0..35027e80e27d 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -1769,5 +1769,8 @@ int __init blk_dev_init(void)
+ 	blk_debugfs_root = debugfs_create_dir("block", NULL);
  #endif
  
++	if (bio_crypt_ctx_init() < 0)
++		panic("Failed to allocate mem for bio crypt ctxs\n");
++
+ 	return 0;
+ }
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 57f7990b342d..ebfb26b536d2 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -504,6 +504,9 @@ static inline int ll_new_hw_segment(struct request *req, struct bio *bio,
+ 	if (blk_integrity_merge_bio(req->q, req, bio) == false)
+ 		goto no_merge;
+ 
++	if (WARN_ON_ONCE(!bio_crypt_ctx_compatible(bio, req->bio)))
++		goto no_merge;
++
+ 	/*
+ 	 * This will form the start of a new hw segment.  Bump both
+ 	 * counters.
+@@ -658,8 +661,14 @@ static enum elv_merge blk_try_req_merge(struct request *req,
+ {
+ 	if (blk_discard_mergable(req))
+ 		return ELEVATOR_DISCARD_MERGE;
+-	else if (blk_rq_pos(req) + blk_rq_sectors(req) == blk_rq_pos(next))
++	else if (blk_rq_pos(req) + blk_rq_sectors(req) == blk_rq_pos(next)) {
++		if (!bio_crypt_ctx_back_mergeable(req->bio,
++						  blk_rq_sectors(req),
++						  next->bio)) {
++			return ELEVATOR_NO_MERGE;
++		}
+ 		return ELEVATOR_BACK_MERGE;
++	}
+ 
+ 	return ELEVATOR_NO_MERGE;
+ }
+@@ -695,6 +704,9 @@ static struct request *attempt_merge(struct request_queue *q,
+ 	if (req->ioprio != next->ioprio)
+ 		return NULL;
+ 
++	if (!bio_crypt_ctx_compatible(req->bio, next->bio))
++		return NULL;
++
+ 	/*
+ 	 * If we are allowed to merge, then append bio list
+ 	 * from next to rq and release next. merge_requests_fn
+@@ -827,16 +839,31 @@ bool blk_rq_merge_ok(struct request *rq, struct bio *bio)
+ 	if (rq->ioprio != bio_prio(bio))
+ 		return false;
+ 
++	/* Only merge if the crypt contexts are compatible */
++	if (!bio_crypt_ctx_compatible(bio, rq->bio))
++		return false;
++
+ 	return true;
+ }
+ 
+ enum elv_merge blk_try_merge(struct request *rq, struct bio *bio)
+ {
+-	if (blk_discard_mergable(rq))
++	if (blk_discard_mergable(rq)) {
+ 		return ELEVATOR_DISCARD_MERGE;
+-	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) == bio->bi_iter.bi_sector)
++	} else if (blk_rq_pos(rq) + blk_rq_sectors(rq) ==
++		   bio->bi_iter.bi_sector) {
++		if (!bio_crypt_ctx_back_mergeable(rq->bio,
++						  blk_rq_sectors(rq), bio)) {
++			return ELEVATOR_NO_MERGE;
++		}
+ 		return ELEVATOR_BACK_MERGE;
+-	else if (blk_rq_pos(rq) - bio_sectors(bio) == bio->bi_iter.bi_sector)
++	} else if (blk_rq_pos(rq) - bio_sectors(bio) ==
++		   bio->bi_iter.bi_sector) {
++		if (!bio_crypt_ctx_back_mergeable(bio,
++						  bio_sectors(bio), rq->bio)) {
++			return ELEVATOR_NO_MERGE;
++		}
+ 		return ELEVATOR_FRONT_MERGE;
++	}
+ 	return ELEVATOR_NO_MERGE;
+ }
+diff --git a/block/bounce.c b/block/bounce.c
+index f8ed677a1bf7..6f9a2359b22a 100644
+--- a/block/bounce.c
++++ b/block/bounce.c
+@@ -267,14 +267,15 @@ static struct bio *bounce_clone_bio(struct bio *bio_src, gfp_t gfp_mask,
+ 		break;
+ 	}
+ 
+-	if (bio_integrity(bio_src)) {
+-		int ret;
++	if (bio_crypt_clone(bio, bio_src, gfp_mask) < 0) {
++		bio_put(bio);
++		return NULL;
++	}
+ 
+-		ret = bio_integrity_clone(bio, bio_src, gfp_mask);
+-		if (ret < 0) {
+-			bio_put(bio);
+-			return NULL;
+-		}
++	if (bio_integrity(bio_src) &&
++	    bio_integrity_clone(bio, bio_src, gfp_mask) < 0) {
++		bio_put(bio);
++		return NULL;
+ 	}
+ 
+ 	bio_clone_blkg_association(bio, bio_src);
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index d0beef033e2f..ce378c0b9ebd 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1322,12 +1322,15 @@ static int clone_bio(struct dm_target_io *tio, struct bio *bio,
+ 		     sector_t sector, unsigned len)
+ {
+ 	struct bio *clone = &tio->clone;
++	int ret;
+ 
+ 	__bio_clone_fast(clone, bio);
+ 
+-	if (bio_integrity(bio)) {
+-		int r;
++	ret = bio_crypt_clone(clone, bio, GFP_NOIO);
++	if (ret < 0)
++		return ret;
+ 
++	if (bio_integrity(bio)) {
+ 		if (unlikely(!dm_target_has_integrity(tio->ti->type) &&
+ 			     !dm_target_passes_integrity(tio->ti->type))) {
+ 			DMWARN("%s: the target %s doesn't support integrity data.",
+@@ -1336,9 +1339,11 @@ static int clone_bio(struct dm_target_io *tio, struct bio *bio,
+ 			return -EIO;
+ 		}
+ 
+-		r = bio_integrity_clone(clone, bio, GFP_NOIO);
+-		if (r < 0)
+-			return r;
++		ret = bio_integrity_clone(clone, bio, GFP_NOIO);
++		if (ret < 0) {
++			bio_crypt_free_ctx(clone);
++			return ret;
++		}
+ 	}
+ 
+ 	bio_advance(clone, to_bytes(sector - clone->bi_iter.bi_sector));
+diff --git a/include/linux/bio-crypt-ctx.h b/include/linux/bio-crypt-ctx.h
+new file mode 100644
+index 000000000000..ebe456289338
+--- /dev/null
++++ b/include/linux/bio-crypt-ctx.h
+@@ -0,0 +1,226 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright 2019 Google LLC
++ */
++#ifndef __LINUX_BIO_CRYPT_CTX_H
++#define __LINUX_BIO_CRYPT_CTX_H
++
++#ifdef CONFIG_BLOCK
++#include <linux/blk_types.h>
++
++enum blk_crypto_mode_num {
++	BLK_ENCRYPTION_MODE_INVALID	= -1,
++	BLK_ENCRYPTION_MODE_AES_256_XTS	= 0,
++	/*
++	 * TODO: Support these too
++	 * BLK_ENCRYPTION_MODE_AES_256_CTS	= 1,
++	 * BLK_ENCRYPTION_MODE_AES_128_CBC	= 2,
++	 * BLK_ENCRYPTION_MODE_AES_128_CTS	= 3,
++	 * BLK_ENCRYPTION_MODE_ADIANTUM		= 4,
++	 */
++};
++
++#ifdef CONFIG_BLK_INLINE_ENCRYPTION
++struct bio_crypt_ctx {
++	int keyslot;
++	u8 *raw_key;
++	enum blk_crypto_mode_num crypto_mode;
++	u64 data_unit_num;
++	unsigned int data_unit_size_bits;
++
++	/*
++	 * The keyslot manager where the key has been programmed
++	 * with keyslot.
++	 */
++	struct keyslot_manager *processing_ksm;
++
++	/*
++	 * Copy of the bvec_iter when this bio was submitted.
++	 * We only want to en/decrypt the part of the bio
++	 * as described by the bvec_iter upon submission because
++	 * bio might be split before being resubmitted
++	 */
++	struct bvec_iter crypt_iter;
++	u64 sw_data_unit_num;
++};
++
++extern int bio_crypt_clone(struct bio *dst, struct bio *src,
++			   gfp_t gfp_mask);
++
++static inline bool bio_has_crypt_ctx(struct bio *bio)
++{
++	return bio->bi_crypt_context;
++}
++
++static inline void bio_crypt_advance(struct bio *bio, unsigned int bytes)
++{
++	if (bio_has_crypt_ctx(bio)) {
++		bio->bi_crypt_context->data_unit_num +=
++			bytes >> bio->bi_crypt_context->data_unit_size_bits;
++	}
++}
++
++static inline bool bio_crypt_has_keyslot(struct bio *bio)
++{
++	return bio->bi_crypt_context->keyslot >= 0;
++}
++
++extern int bio_crypt_ctx_init(void);
++
++extern struct bio_crypt_ctx *bio_crypt_alloc_ctx(gfp_t gfp_mask);
++
++extern void bio_crypt_free_ctx(struct bio *bio);
++
++static inline int bio_crypt_set_ctx(struct bio *bio,
++				    u8 *raw_key,
++				    enum blk_crypto_mode_num crypto_mode,
++				    u64 dun,
++				    unsigned int dun_bits,
++				    gfp_t gfp_mask)
++{
++	struct bio_crypt_ctx *crypt_ctx;
++
++	crypt_ctx = bio_crypt_alloc_ctx(gfp_mask);
++	if (!crypt_ctx)
++		return -ENOMEM;
++
++	crypt_ctx->raw_key = raw_key;
++	crypt_ctx->data_unit_num = dun;
++	crypt_ctx->data_unit_size_bits = dun_bits;
++	crypt_ctx->crypto_mode = crypto_mode;
++	crypt_ctx->processing_ksm = NULL;
++	crypt_ctx->keyslot = -1;
++	bio->bi_crypt_context = crypt_ctx;
++
++	return 0;
++}
++
++static inline void bio_set_data_unit_num(struct bio *bio, u64 dun)
++{
++	bio->bi_crypt_context->data_unit_num = dun;
++}
++
++static inline int bio_crypt_get_keyslot(struct bio *bio)
++{
++	return bio->bi_crypt_context->keyslot;
++}
++
++static inline void bio_crypt_set_keyslot(struct bio *bio,
++					 unsigned int keyslot,
++					 struct keyslot_manager *ksm)
++{
++	bio->bi_crypt_context->keyslot = keyslot;
++	bio->bi_crypt_context->processing_ksm = ksm;
++}
++
++extern void bio_crypt_ctx_release_keyslot(struct bio *bio);
++
++extern int bio_crypt_ctx_acquire_keyslot(struct bio *bio,
++					 struct keyslot_manager *ksm);
++
++static inline u8 *bio_crypt_raw_key(struct bio *bio)
++{
++	return bio->bi_crypt_context->raw_key;
++}
++
++static inline enum blk_crypto_mode_num bio_crypto_mode(struct bio *bio)
++{
++	return bio->bi_crypt_context->crypto_mode;
++}
++
++static inline u64 bio_crypt_data_unit_num(struct bio *bio)
++{
++	return bio->bi_crypt_context->data_unit_num;
++}
++
++static inline u64 bio_crypt_sw_data_unit_num(struct bio *bio)
++{
++	return bio->bi_crypt_context->sw_data_unit_num;
++}
++
++extern bool bio_crypt_should_process(struct bio *bio, struct request_queue *q);
++
++extern bool bio_crypt_ctx_compatible(struct bio *b_1, struct bio *b_2);
++
++extern bool bio_crypt_ctx_back_mergeable(struct bio *b_1,
++					 unsigned int b1_sectors,
++					 struct bio *b_2);
++
++#else /* CONFIG_BLK_INLINE_ENCRYPTION */
++struct keyslot_manager;
++
++static inline int bio_crypt_ctx_init(void)
++{
++	return 0;
++}
++
++static inline int bio_crypt_clone(struct bio *dst, struct bio *src,
++				  gfp_t gfp_mask)
++{
++	return 0;
++}
++
++static inline void bio_crypt_advance(struct bio *bio,
++				     unsigned int bytes) { }
++
++static inline bool bio_has_crypt_ctx(struct bio *bio)
++{
++	return false;
++}
++
++static inline void bio_crypt_free_ctx(struct bio *bio) { }
++
++static inline void bio_crypt_set_ctx(struct bio *bio,
++				     u8 *raw_key,
++				     enum blk_crypto_mode_num crypto_mode,
++				     u64 dun,
++				     unsigned int dun_bits,
++				     gfp_t gfp_mask) { }
++
++static inline void bio_set_data_unit_num(struct bio *bio, u64 dun) { }
++
++static inline bool bio_crypt_has_keyslot(struct bio *bio)
++{
++	return false;
++}
++
++static inline void bio_crypt_set_keyslot(struct bio *bio,
++					 unsigned int keyslot,
++					 struct keyslot_manager *ksm) { }
++
++static inline int bio_crypt_get_keyslot(struct bio *bio)
++{
++	return -1;
++}
++
++static inline u8 *bio_crypt_raw_key(struct bio *bio)
++{
++	return NULL;
++}
++
++static inline u64 bio_crypt_data_unit_num(struct bio *bio)
++{
++	return 0;
++}
++
++static inline bool bio_crypt_should_process(struct bio *bio,
++					    struct request_queue *q)
++{
++	return false;
++}
++
++static inline bool bio_crypt_ctx_compatible(struct bio *b_1, struct bio *b_2)
++{
++	return true;
++}
++
++static inline bool bio_crypt_ctx_back_mergeable(struct bio *b_1,
++						unsigned int b1_sectors,
++						struct bio *b_2)
++{
++	return true;
++}
++
++#endif /* CONFIG_BLK_INLINE_ENCRYPTION */
++#endif /* CONFIG_BLOCK */
++#endif /* __LINUX_BIO_CRYPT_CTX_H */
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 6c9228dd3156..9dddcd2af3e9 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -12,6 +12,7 @@
+ #ifdef CONFIG_BLOCK
+ /* struct bio, bio_vec and BIO_* flags are defined in blk_types.h */
+ #include <linux/blk_types.h>
++#include <linux/bio-crypt-ctx.h>
+ 
+ #define BIO_DEBUG
+ 
+@@ -564,18 +565,6 @@ static inline void bvec_kunmap_irq(char *buffer, unsigned long *flags)
+ }
+ #endif
+ 
+-enum blk_crypto_mode_num {
+-	BLK_ENCRYPTION_MODE_INVALID	= -1,
+-	BLK_ENCRYPTION_MODE_AES_256_XTS	= 0,
+-	/*
+-	 * TODO: Support these too
+-	 * BLK_ENCRYPTION_MODE_AES_256_CTS	= 1,
+-	 * BLK_ENCRYPTION_MODE_AES_128_CBC	= 2,
+-	 * BLK_ENCRYPTION_MODE_AES_128_CTS	= 3,
+-	 * BLK_ENCRYPTION_MODE_ADIANTUM		= 4,
+-	 */
+-};
+-
+ /*
+  * BIO list management for use by remapping drivers (e.g. DM or MD) and loop.
+  *
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index feff3fe4467e..e59ab0186441 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -18,6 +18,7 @@ struct block_device;
+ struct io_context;
+ struct cgroup_subsys_state;
+ typedef void (bio_end_io_t) (struct bio *);
++struct bio_crypt_ctx;
+ 
+ /*
+  * Block error status values.  See block/blk-core:blk_errors for the details.
+@@ -170,6 +171,11 @@ struct bio {
+ 	struct blkcg_gq		*bi_blkg;
+ 	struct bio_issue	bi_issue;
+ #endif
++
++#ifdef CONFIG_BLK_INLINE_ENCRYPTION
++	struct bio_crypt_ctx	*bi_crypt_context;
++#endif
++
+ 	union {
+ #if defined(CONFIG_BLK_DEV_INTEGRITY)
+ 		struct bio_integrity_payload *bi_integrity; /* data integrity */
 -- 
 2.23.0.rc1.153.gdeed80330f-goog
 
