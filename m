@@ -2,105 +2,109 @@ Return-Path: <SRS0=qRZ7=WR=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6436C3A59E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 08:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD76C3A59E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Aug 2019 08:27:59 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9E1D922DA7;
-	Wed, 21 Aug 2019 08:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id AFD9322DA7;
+	Wed, 21 Aug 2019 08:27:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="dE0kxZqK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HW1+KF1u";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="R6I8hS64";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="m1Xurgto"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E1D922DA7
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="R/q3Xc6f";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AwgvQblb";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IOywAx9G";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="fWI4uwOO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD9322DA7
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=SvfanO3+HtvwAqloFumtM9PbsY2/vIkO958Crl1hqKI=; b=dE0kxZqKFWSpsFvS8LN8dntEIW
-	fpJUaCoQO03SaD1cZbgRp0BCI6ypc6na2w0lwrEXaMM/VW3UeseBYNJC+0mF4QCxe8LKMnfoPlhul
-	PmazcbSz+Ur0C6G5sup0HmCUHatRXPLCebsq0EyQaDeNoGg/metNvq5X09Wm3I1fHr+I=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=rC4n9s4Q1eYJRlrkjOA3XjXSLuwgxOzU+jugPgtFZ4s=; b=R/q3Xc6fJCerYjyqoKSc+ah7b
+	yYgXrYoG4oh4/o8Z9nBNxpWptXqyVG/epD1VoMKV4/B80GjT1BvJ9qvSXUZm5/C1nwWHwonkeR7Vg
+	PBXgzxeotWdaBcgRhby4E0lYOs4gxjzhrnaqZYu4tu2ORWu1rRpeJ+GR/CIUWOO3kKR7w=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1i0LwU-0001h4-73; Wed, 21 Aug 2019 08:26:06 +0000
+	id 1i0LyJ-0001VH-BC; Wed, 21 Aug 2019 08:27:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3XvlcXQYKALUnVotVobjjbgZ.Xjh@flex--satyat.bounces.google.com>)
- id 1i0LwS-0001gl-5y
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:26:04 +0000
+ (envelope-from <3bflcXQYKAMQ2k38k3qyyqvo.myw@flex--satyat.bounces.google.com>)
+ id 1i0LyI-0001U7-8F
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:27:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
- Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qBYw6rmUbKKC3VdJzzhZFbO54DY8EqjVVgF8hqQ2BVM=; b=HW1+KF1ub/uLYn3IQRS8QHOhUh
- PLMEb+w+Ou/jUWlpAX6tXt9sYd4Ux8VKki62xYS1xXUQkdFM8Okh4HYhVwc8RW+Zz7h4bVXfqPUMP
- q2jibBNpTAyvVPis0yQXqkGf1uaocpxzRjuiXsJ3BbAWKLhZVlxHiWvQ2suZhdyq02e0=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
+ Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=SfY5XRW311zdC5RUZv3f1YyeJJxz4XjcRlTY+ZjAHvc=; b=AwgvQblbJW7wpw9wlrBZ8BrlG
+ teR030CJsV8EQrQTeHOZuT6koJywoWfHLP9KmxbYU7gdMJpY+X/dChPk7fNmEzl/gfoMmDVjXQxTs
+ AMv0BCfmWbwOG/8rRRjYzJuU2YcyhQqq1TAVams31yleyRUVJOVKKQbESHjOrCmFpm+uA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=qBYw6rmUbKKC3VdJzzhZFbO54DY8EqjVVgF8hqQ2BVM=; b=R
- 6I8hS64VfpVmdEsWPFGZD0KKCSg+8in9J2LacI/oG38i5lbOAVXSC62JXRVfWqgi7BhWratCvclj8
- qBOpKRf47bE68/ucGsrWvYGV8XtmUcHqsGXqkshd5wFtuNRFFoBQQZJES8RoMOCarROY7IT4+KoyO
- 8+KNlonG7UZyHbTs=;
-Received: from mail-qt1-f202.google.com ([209.85.160.202])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=SfY5XRW311zdC5RUZv3f1YyeJJxz4XjcRlTY+ZjAHvc=; b=IOywAx9GuIgwM81avNdEuITDrI
+ zAH7PRnf1Nb5f6TlmE3H814bNhUHL2d8v79M4+NTlT01QuURtpRGEhvDAyhb99eAcOAW5B93JHeM2
+ ogMiEghVDWkDWYMx4xS+uc34bXPhh3ezlGwrySgW4C4zl4juqNc1TLcpCkKhdcSfcSus=;
+Received: from mail-yw1-f74.google.com ([209.85.161.74])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
- id 1i0LwI-00AL7n-Cg
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:26:04 +0000
-Received: by mail-qt1-f202.google.com with SMTP id z15so1827328qts.0
+ id 1i0Lwo-00EINl-UE
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Aug 2019 08:26:41 +0000
+Received: by mail-yw1-f74.google.com with SMTP id j132so953263ywa.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 21 Aug 2019 01:25:54 -0700 (PDT)
+ Wed, 21 Aug 2019 01:26:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:message-id:mime-version:subject:from:to:cc;
- bh=qBYw6rmUbKKC3VdJzzhZFbO54DY8EqjVVgF8hqQ2BVM=;
- b=m1XurgtoPK+fka2z8sNyW0/MqfW9/U9hjy3nSxr5IPDOY+nWylWHuogp9jrVH5zFCF
- GRsgogC4tQFk3Yzt2zQT9kLISOv5wsMBdy297GHb/QuCYDrRmyg2JdtW+8NtfbPKafxi
- MoLg4eK/kitx8SnWOv3uhXpr8bDQGHHsBReb86MT16AaTYiI4ybrwjzBQhOsUVclUYKi
- h2r8/Dd7NUpMxrwKnp57d20sNxfcj6ISWEOSO/xFG1m1dMw4JodcZVcOlV72zDWzTlT4
- 5wuG+eNl+GhXM1Qy3JjnLN/UwBFCyLiLUmtCEd4Xvs+uLqtP4gboeKPIJ038cFUHYTcZ
- v+NQ==
+ h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+ :cc; bh=SfY5XRW311zdC5RUZv3f1YyeJJxz4XjcRlTY+ZjAHvc=;
+ b=fWI4uwOOZULs38dJ/e4/Rov0rnXIpdgH46de98nsV/ACBXN1r1TbY8E4Nd7KuoWjBH
+ g6wf7ZEj1i06r6eNeZEXyNidpiodgNdKwMma2Iiu4iwalBguttIU91udt3U+LY/0vK5L
+ dN4xXQSkXRPxlGv8vodUe3SK3sWdv5m/q15C/L/5mient8PcVeiKuJJ8qXFDITGBo1Gq
+ R4sBj7cqy9OvvTUGuvriaDdR5KlQKPWtTGVGv2Bxq41P48wo5toxF2doQ2uIMfkfe5Vg
+ MB6ZUENCkq11qGTZvWQAIrwQi7QdqCSPirn78ushHpBMIYlxbXL7mZ3P3P9VEgIICuSC
+ zhaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
- bh=qBYw6rmUbKKC3VdJzzhZFbO54DY8EqjVVgF8hqQ2BVM=;
- b=QYp5xbeznwvNGHWW+UcdIwyvSdM6uX2P1WxNt9SO6VPU5J91odBadQHuq++0KxvYbq
- OrgEjVI4r6XJQ//aw1oz/KmZ8Oyl1vNVxTC12wRGbNdUsuPqEbsBQNh8mRcRKscnkxg3
- bZKhyO6IdO1/PDHkoy6VtEM94FOEVpIcBjFJiH6fCLK3y3M1+bhkuBScZ/R9KI7JJDYr
- 3XgMOY2LIbhGWhnHUWipbLLHy+Mh6+1HqOWD+f9SYRZRlfSDWzhKvfFl4kqshJumMshR
- LPK6sGqG0V8WHfE5KIgxZsKT+q15D5V+cvDlpD1K7Jt/MNGbax/bDZKNPKgX2wkJ0XoE
- +z9Q==
-X-Gm-Message-State: APjAAAVTX8bcg64SqZfn92DsLfttYg1zHbFrI/426WLVgaJTocCe4RxM
- smzvTOubFPDq//qPXkrhm5YUqI71dig=
-X-Google-Smtp-Source: APXvYqyYG592CW3rXQWgTZpbKT/mH3YUzFok7GJ5iJ9kysnTWjWo+ii3lu2lURgc1SAlWfNK2GglwL02dCI=
-X-Received: by 2002:a65:4507:: with SMTP id n7mr27027863pgq.86.1566374238228; 
- Wed, 21 Aug 2019 00:57:18 -0700 (PDT)
-Date: Wed, 21 Aug 2019 00:57:06 -0700
-Message-Id: <20190821075714.65140-1-satyat@google.com>
+ h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+ :references:subject:from:to:cc;
+ bh=SfY5XRW311zdC5RUZv3f1YyeJJxz4XjcRlTY+ZjAHvc=;
+ b=U64GeVH6dlpgjZFTbGbn8M1yWZCFP+FE5Tixs2ouQjHb/16dIAX5toWRaXOcr3fna/
+ 97bvXuyUmRT2uXYmJ+QxzU20B2opgSu/ZTMX82mY1ANDBESHtwSNNLBTJwLP2oumMeUb
+ aEZS6enM5r+9D1YY3BQ7+09V8FUlfuZRG3iinHtdT5zxQ5NChq8/mAaO2upzH8c330KV
+ P7lndds503JSxy+5pvNKrczfxUu/nfkAeaqYN4VqjuyBZyWYXASeQwCtHfp/IQ2IZ2TE
+ tATdkJYP7VQDVWmmAd1A2Y9xBKg6qXxng05sC7qFGvwJm9CpxDt7zTC5AeGQwlH81AF8
+ F+hQ==
+X-Gm-Message-State: APjAAAXH1LivYafEr2rHrfqy3slU/9r3Rmi6isUHJyNldWQH4QXBF78A
+ UtboWlsSVjk+FCTtZTIa6Rh2qVA1sJk=
+X-Google-Smtp-Source: APXvYqxis6xCLsHhX8VMjHW7pKCBcr3N5pGkoeuirvOMEpcmqSmucQXX36A/XD2uzZlmNEeh88CJW3Uksa0=
+X-Received: by 2002:a81:7850:: with SMTP id t77mr170499ywc.129.1566374253554; 
+ Wed, 21 Aug 2019 00:57:33 -0700 (PDT)
+Date: Wed, 21 Aug 2019 00:57:12 -0700
+In-Reply-To: <20190821075714.65140-1-satyat@google.com>
+Message-Id: <20190821075714.65140-7-satyat@google.com>
 Mime-Version: 1.0
+References: <20190821075714.65140-1-satyat@google.com>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, 
  linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1i0LwI-00AL7n-Cg
-Subject: [f2fs-dev] [PATCH v4 0/8] Inline Encryption Support
+X-Headers-End: 1i0Lwo-00EINl-UE
+Subject: [f2fs-dev] [PATCH v4 6/8] scsi: ufs: Add inline encryption support
+ to UFS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -123,154 +127,213 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch series adds support for Inline Encryption to the block layer,
-UFS, fscrypt and f2fs.
+Wire up ufshcd.c with the UFS Crypto API, the block layer inline
+encryption additions and the keyslot manager.
 
-Inline Encryption hardware allows software to specify an encryption context
-(an encryption key, crypto algorithm, data unit num, data unit size, etc.)
-along with a data transfer request to a storage device, and the inline
-encryption hardware will use that context to en/decrypt the data. The
-inline encryption hardware is part of the storage device, and it
-conceptually sits on the data path between system memory and the storage
-device. Inline Encryption hardware has become increasingly common, and we
-want to support it in the kernel.
+Signed-off-by: Satya Tangirala <satyat@google.com>
+---
+ drivers/scsi/ufs/ufshcd.c | 83 ++++++++++++++++++++++++++++++++++++---
+ drivers/scsi/ufs/ufshcd.h |  6 +++
+ 2 files changed, 84 insertions(+), 5 deletions(-)
 
-Inline Encryption hardware implementations often function around the
-concept of a limited number of "keyslots", which can hold an encryption
-context each. The storage device can be directed to en/decrypt any
-particular request with the encryption context stored in any particular
-keyslot.
-
-Patch 1 introduces a Keyslot Manager to efficiently manage keyslots.
-The keyslot manager also functions as the interface that blk-crypto
-(introduced in Path 3), will use to program keys into inline encryption
-hardware. For more information on the Keyslot Manager, refer to
-documentation found in block/keyslot-manager.c and linux/keyslot-manager.h.
-
-Patch 2 introduces struct bio_crypt_ctx, and a ptr to one in struct bio,
-which allows struct bio to represent an encryption context that can be
-passed down the storage stack from the filesystem layer to the storage
-driver.
-
-Patch 3 introduces blk-crypto. Blk-crypto delegates crypto operations to
-inline encryption hardware when available, and also contains a software
-fallback to the kernel crypto API. Blk-crypto also makes it possible for
-layered devices like device mapper to make use of inline encryption
-hardware. Given that blk-crypto works as a software fallback, we are
-considering removing file content en/decryption from fscrypt and simply
-using blk-crypto in a future patch. For more details on blk-crypto, refer
-to Documentation/block/blk-crypto.txt.
-
-Patches 4-6 add support for inline encryption into the UFS driver according
-to the JEDEC UFS HCI v2.1 specification. Inline encryption support for
-other drivers (like eMMC) may be added in the same way - the device driver
-should set up a Keyslot Manager in the device's request_queue (refer to
-the UFS crypto additions in ufshcd-crypto.c and ufshcd.c for an example).
-
-Patches 7 and 8 add support to fscrypt and f2fs, so that we have
-a complete stack that can make use of inline encryption.
-
-There have been a few patch sets addressing Inline Encryption Support in
-the past. Briefly, this patch set differs from those as follows:
-
-1) "crypto: qce: ice: Add support for Inline Crypto Engine"
-is specific to certain hardware, while our patch set's Inline
-Encryption support for UFS is implemented according to the JEDEC UFS
-specification.
-
-2) "scsi: ufs: UFS Host Controller crypto changes" registers inline
-encryption support as a kernel crypto algorithm. Our patch views inline
-encryption as being fundamentally different from a generic crypto
-provider (in that inline encryption is tied to a device), and so does
-not use the kernel crypto API to represent inline encryption hardware.
-
-3) "scsi: ufs: add real time/inline crypto support to UFS HCD" requires
-the device mapper to work - our patch does not.
-
-Changes v3 => v4:
- - Fixed the issue with allocating crypto_skcipher in
-   blk_crypto_keyslot_program.
- - bio_crypto_alloc_ctx is now mempool backed.
- - In f2fs, a bio's bi_crypt_context is now set up when the
-   bio is allocated, rather than just before the bio is
-   submitted - this fixes bugs in certain cases, like when an
-   encrypted block is being moved without decryption.
- - Lots of refactoring and cleanup of blk-crypto - thanks Eric!
-
-Changes v2 => v3:
- - Overhauled keyslot manager's get keyslot logic and optimized LRU.
- - Block crypto en/decryption fallback now supports data unit sizes
-   that divide the bvec length (instead of requiring each bvec's length
-   to be the same as the data unit size).
- - fscrypt master key is now keyed additionally by super_block and
-   ci_ctfm != NULL.
- - all references of "hw encryption" are replaced by inline encryption.
- - address various other review comments from Eric.
-
-Changes v1 => v2:
- - Block layer and UFS changes are split into 3 patches each.
- - We now only have a ptr to a struct bio_crypt_ctx in struct bio, instead
-   of the struct itself.
- - struct bio_crypt_ctx no longer has flags.
- - blk-crypto now correctly handles the case when it fails to init
-   (because of insufficient memory), but kernel continues to boot.
- - ufshcd-crypto now works on big endian cpus.
- - Many cleanups.
-
-Satya Tangirala (8):
-  block: Keyslot Manager for Inline Encryption
-  block: Add encryption context to struct bio
-  block: blk-crypto for Inline Encryption
-  scsi: ufs: UFS driver v2.1 spec crypto additions
-  scsi: ufs: UFS crypto API
-  scsi: ufs: Add inline encryption support to UFS
-  fscrypt: wire up fscrypt to use blk-crypto
-  f2fs: Wire up f2fs to use inline encryption via fscrypt
-
- Documentation/block/inline-encryption.txt | 186 ++++++
- block/Kconfig                             |  10 +
- block/Makefile                            |   2 +
- block/bio-crypt-ctx.c                     | 142 +++++
- block/bio.c                               |  23 +-
- block/blk-core.c                          |  14 +-
- block/blk-crypto.c                        | 737 ++++++++++++++++++++++
- block/blk-merge.c                         |  35 +-
- block/bounce.c                            |  15 +-
- block/keyslot-manager.c                   | 351 +++++++++++
- drivers/md/dm.c                           |  15 +-
- drivers/scsi/ufs/Kconfig                  |  10 +
- drivers/scsi/ufs/Makefile                 |   1 +
- drivers/scsi/ufs/ufshcd-crypto.c          | 429 +++++++++++++
- drivers/scsi/ufs/ufshcd-crypto.h          |  86 +++
- drivers/scsi/ufs/ufshcd.c                 |  85 ++-
- drivers/scsi/ufs/ufshcd.h                 |  29 +
- drivers/scsi/ufs/ufshci.h                 |  67 +-
- fs/crypto/Kconfig                         |   6 +
- fs/crypto/bio.c                           | 137 +++-
- fs/crypto/fscrypt_private.h               |  23 +
- fs/crypto/keyinfo.c                       | 107 +++-
- fs/crypto/policy.c                        |   6 +
- fs/f2fs/data.c                            | 127 +++-
- fs/f2fs/super.c                           |  15 +-
- include/linux/bio-crypt-ctx.h             | 233 +++++++
- include/linux/bio.h                       |   1 +
- include/linux/blk-crypto.h                |  47 ++
- include/linux/blk_types.h                 |   6 +
- include/linux/blkdev.h                    |   6 +
- include/linux/fscrypt.h                   |  72 +++
- include/linux/keyslot-manager.h           |  94 +++
- include/uapi/linux/fs.h                   |   3 +-
- 33 files changed, 3034 insertions(+), 86 deletions(-)
- create mode 100644 Documentation/block/inline-encryption.txt
- create mode 100644 block/bio-crypt-ctx.c
- create mode 100644 block/blk-crypto.c
- create mode 100644 block/keyslot-manager.c
- create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
- create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
- create mode 100644 include/linux/bio-crypt-ctx.h
- create mode 100644 include/linux/blk-crypto.h
- create mode 100644 include/linux/keyslot-manager.h
-
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 212f7653c4c5..dcb841c6be7e 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -47,6 +47,7 @@
+ #include "unipro.h"
+ #include "ufs-sysfs.h"
+ #include "ufs_bsg.h"
++#include "ufshcd-crypto.h"
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/ufs.h>
+@@ -855,7 +856,14 @@ static void ufshcd_enable_run_stop_reg(struct ufs_hba *hba)
+  */
+ static inline void ufshcd_hba_start(struct ufs_hba *hba)
+ {
+-	ufshcd_writel(hba, CONTROLLER_ENABLE, REG_CONTROLLER_ENABLE);
++	u32 val = CONTROLLER_ENABLE;
++
++	if (ufshcd_hba_is_crypto_supported(hba)) {
++		ufshcd_crypto_enable(hba);
++		val |= CRYPTO_GENERAL_ENABLE;
++	}
++
++	ufshcd_writel(hba, val, REG_CONTROLLER_ENABLE);
+ }
+ 
+ /**
+@@ -2209,9 +2217,21 @@ static void ufshcd_prepare_req_desc_hdr(struct ufshcd_lrb *lrbp,
+ 		dword_0 |= UTP_REQ_DESC_INT_CMD;
+ 
+ 	/* Transfer request descriptor header fields */
++	if (lrbp->crypto_enable) {
++		dword_0 |= UTP_REQ_DESC_CRYPTO_ENABLE_CMD;
++		dword_0 |= lrbp->crypto_key_slot;
++		req_desc->header.dword_1 =
++			cpu_to_le32((u32)lrbp->data_unit_num);
++		req_desc->header.dword_3 =
++			cpu_to_le32((u32)(lrbp->data_unit_num >> 32));
++	} else {
++		/* dword_1 and dword_3 are reserved, hence they are set to 0 */
++		req_desc->header.dword_1 = 0;
++		req_desc->header.dword_3 = 0;
++	}
++
+ 	req_desc->header.dword_0 = cpu_to_le32(dword_0);
+-	/* dword_1 is reserved, hence it is set to 0 */
+-	req_desc->header.dword_1 = 0;
++
+ 	/*
+ 	 * assigning invalid value for command status. Controller
+ 	 * updates OCS on command completion, with the command
+@@ -2219,8 +2239,6 @@ static void ufshcd_prepare_req_desc_hdr(struct ufshcd_lrb *lrbp,
+ 	 */
+ 	req_desc->header.dword_2 =
+ 		cpu_to_le32(OCS_INVALID_COMMAND_STATUS);
+-	/* dword_3 is reserved, hence it is set to 0 */
+-	req_desc->header.dword_3 = 0;
+ 
+ 	req_desc->prd_table_length = 0;
+ }
+@@ -2380,6 +2398,37 @@ static inline u16 ufshcd_upiu_wlun_to_scsi_wlun(u8 upiu_wlun_id)
+ 	return (upiu_wlun_id & ~UFS_UPIU_WLUN_ID) | SCSI_W_LUN_BASE;
+ }
+ 
++static inline int ufshcd_prepare_lrbp_crypto(struct ufs_hba *hba,
++					     struct scsi_cmnd *cmd,
++					     struct ufshcd_lrb *lrbp)
++{
++	int key_slot;
++
++	if (!cmd->request->bio ||
++	    !bio_crypt_should_process(cmd->request->bio, cmd->request->q)) {
++		lrbp->crypto_enable = false;
++		return 0;
++	}
++
++	if (WARN_ON(!ufshcd_is_crypto_enabled(hba))) {
++		/*
++		 * Upper layer asked us to do inline encryption
++		 * but that isn't enabled, so we fail this request.
++		 */
++		return -EINVAL;
++	}
++	key_slot = bio_crypt_get_keyslot(cmd->request->bio);
++	if (!ufshcd_keyslot_valid(hba, key_slot))
++		return -EINVAL;
++
++	lrbp->crypto_enable = true;
++	lrbp->crypto_key_slot = key_slot;
++	lrbp->data_unit_num = bio_crypt_data_unit_num(cmd->request->bio);
++
++	return 0;
++}
++
++
+ /**
+  * ufshcd_queuecommand - main entry point for SCSI requests
+  * @host: SCSI host pointer
+@@ -2467,6 +2516,13 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 	lrbp->task_tag = tag;
+ 	lrbp->lun = ufshcd_scsi_to_upiu_lun(cmd->device->lun);
+ 	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba) ? true : false;
++
++	err = ufshcd_prepare_lrbp_crypto(hba, cmd, lrbp);
++	if (err) {
++		lrbp->cmd = NULL;
++		clear_bit_unlock(tag, &hba->lrb_in_use);
++		goto out;
++	}
+ 	lrbp->req_abort_skip = false;
+ 
+ 	ufshcd_comp_scsi_upiu(hba, lrbp);
+@@ -2500,6 +2556,7 @@ static int ufshcd_compose_dev_cmd(struct ufs_hba *hba,
+ 	lrbp->task_tag = tag;
+ 	lrbp->lun = 0; /* device management cmd is not specific to any LUN */
+ 	lrbp->intr_cmd = true; /* No interrupt aggregation */
++	lrbp->crypto_enable = false; /* No crypto operations */
+ 	hba->dev_cmd.type = cmd_type;
+ 
+ 	return ufshcd_comp_devman_upiu(hba, lrbp);
+@@ -4192,6 +4249,8 @@ static inline void ufshcd_hba_stop(struct ufs_hba *hba, bool can_sleep)
+ {
+ 	int err;
+ 
++	ufshcd_crypto_disable(hba);
++
+ 	ufshcd_writel(hba, CONTROLLER_DISABLE,  REG_CONTROLLER_ENABLE);
+ 	err = ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE,
+ 					CONTROLLER_ENABLE, CONTROLLER_DISABLE,
+@@ -4585,8 +4644,12 @@ static int ufshcd_change_queue_depth(struct scsi_device *sdev, int depth)
+ static int ufshcd_slave_configure(struct scsi_device *sdev)
+ {
+ 	struct request_queue *q = sdev->request_queue;
++	struct ufs_hba *hba = shost_priv(sdev->host);
+ 
+ 	blk_queue_update_dma_pad(q, PRDT_DATA_BYTE_COUNT_PAD - 1);
++
++	ufshcd_crypto_setup_rq_keyslot_manager(hba, q);
++
+ 	return 0;
+ }
+ 
+@@ -4597,6 +4660,7 @@ static int ufshcd_slave_configure(struct scsi_device *sdev)
+ static void ufshcd_slave_destroy(struct scsi_device *sdev)
+ {
+ 	struct ufs_hba *hba;
++	struct request_queue *q = sdev->request_queue;
+ 
+ 	hba = shost_priv(sdev->host);
+ 	/* Drop the reference as it won't be needed anymore */
+@@ -4607,6 +4671,8 @@ static void ufshcd_slave_destroy(struct scsi_device *sdev)
+ 		hba->sdev_ufs_device = NULL;
+ 		spin_unlock_irqrestore(hba->host->host_lock, flags);
+ 	}
++
++	ufshcd_crypto_destroy_rq_keyslot_manager(hba, q);
+ }
+ 
+ /**
+@@ -8323,6 +8389,13 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 		goto exit_gating;
+ 	}
+ 
++	/* Init crypto */
++	err = ufshcd_hba_init_crypto(hba);
++	if (err) {
++		dev_err(hba->dev, "crypto setup failed\n");
++		goto out_remove_scsi_host;
++	}
++
+ 	/* Host controller enable */
+ 	err = ufshcd_hba_enable(hba);
+ 	if (err) {
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 34e9849f00f0..c3e1f409e63d 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -167,6 +167,9 @@ struct ufs_pm_lvl_states {
+  * @intr_cmd: Interrupt command (doesn't participate in interrupt aggregation)
+  * @issue_time_stamp: time stamp for debug purposes
+  * @compl_time_stamp: time stamp for statistics
++ * @crypto_enable: whether or not the request needs inline crypto operations
++ * @crypto_key_slot: the key slot to use for inline crypto
++ * @data_unit_num: the data unit number for the first block for inline crypto
+  * @req_abort_skip: skip request abort task flag
+  */
+ struct ufshcd_lrb {
+@@ -191,6 +194,9 @@ struct ufshcd_lrb {
+ 	bool intr_cmd;
+ 	ktime_t issue_time_stamp;
+ 	ktime_t compl_time_stamp;
++	bool crypto_enable;
++	u8 crypto_key_slot;
++	u64 data_unit_num;
+ 
+ 	bool req_abort_skip;
+ };
 -- 
 2.23.0.rc1.153.gdeed80330f-goog
 
