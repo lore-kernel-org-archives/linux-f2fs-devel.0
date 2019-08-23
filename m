@@ -2,78 +2,106 @@ Return-Path: <SRS0=HDuJ=WT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFECC3A5A1
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Aug 2019 01:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC1EC3A5A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Aug 2019 02:35:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 36E4E233FD;
-	Fri, 23 Aug 2019 01:45:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id AEA752341B
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Aug 2019 02:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Dl5UNg9J";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IFReIws3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E4E233FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="RNXJ61sd";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mp4keepf";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="B+7/L6Um";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="flcLM5FZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEA752341B
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:Message-ID:Date:In-Reply-To:References:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=NBXj+4v1p3bfuqyzsiz9w6h/LAPNePRgB27C1FjXLB4=; b=RNXJ61sdfwfmyrgzTc51o/NpzX
+	DsC+dewTIZlxIXDEb42o6LmGNlDYAX6HxDuMTTO6iNUlN7I6rKrpY3eGj2jLM9n9JU7Btufqeo4Av
+	AIAXE8JJDwLMqzZo354mAk3UK1fG8fiIvE4JWfXlmBRD85bD52Zqg3NmnLwT3ajr+Zr8=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1i0yeH-0001Xj-RD; Fri, 23 Aug 2019 01:45:53 +0000
+	id 1i0zQO-0003e9-Uy; Fri, 23 Aug 2019 02:35:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1i0yeF-0001Xb-SF
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Aug 2019 01:45:51 +0000
+ (envelope-from <satyat@google.com>) id 1i0zQN-0003e2-BP
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Aug 2019 02:35:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:To:CC:References:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5arQsYGcx0qX1PNPRBqrYaODYTeEgjL2WdUkO5ccbXQ=; b=Dl5UNg9J2wTED6WWFlZ5IpaFKA
- ExrR70nvCE6asOVSZIfF9kFu0vATMLAS8FXMVYLooItbqq5SLAef8RMgSalMpKCAp9GfpZFpiZ+ER
- 9hpszADEM6iu8ZdfpTvLeNicgB7pPnKM+rtzmh0O+kuQzytcjnw/qcA+sECQgVU5rxd4=;
+ bh=2Ob+A4xxX2bRSxLGz92/UzTEvC1yWM8JcjhiXKDPfB8=; b=mp4keepfoumFN4K6idh9hwrozh
+ wTnYrehJwS7HifNCm4apjlcU0mkapy/NPxw0dGgRdKObfbPC1T0OzqdfVllQ/Hu/XyQWhDXCj/dQ9
+ +YCvkl1A7danMmFKQ7GhoO+KwFc9K37dFTBEfUs+AKSFX7dBi14JXydUs1sdTXkkCyTg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:To:CC:References:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=5arQsYGcx0qX1PNPRBqrYaODYTeEgjL2WdUkO5ccbXQ=; b=IFReIws3Jy+yuJxzHIf4vOKQf7
- CE8CCVlmKlq8rzFkV2/U9ey2i8AJq0PuGB+6qbTvlgb0LoA0rCDGKmRh/NwvORNKNr5KMqaNha134
- 6TpOA5sRxK+G/nJPsmTGO2QM6YqXR3fDggtvwX5zdpKXGTjTd6nivdWyS8vQH7Wf49UM=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ bh=2Ob+A4xxX2bRSxLGz92/UzTEvC1yWM8JcjhiXKDPfB8=; b=B+7/L6UmxOwswuVRLIZJWD2JRw
+ H/jLtclDDy0eaE1izp/t4x2LvZC/oXj20OUI1pUFoRkSi7h/f6bNr6SOZIL1PtUWXlWenM6eV3bfy
+ aDiGrCw5mR+/wJ6zmJr0LzNww8EbSvnCCfsvMHgoAF/uJBj4/oMcbSfSWao8TMdzKyhE=;
+Received: from mail-io1-f65.google.com ([209.85.166.65])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1i0yeD-00GjBa-MF
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Aug 2019 01:45:51 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 0225F98E76DC5A62B45A;
- Fri, 23 Aug 2019 09:45:42 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 23 Aug
- 2019 09:45:37 +0800
-References: <20190822121756.107187-1-yuchao0@huawei.com>
- <20190822214955.GA1349@sol.localdomain>
-To: Eric Biggers <ebiggers@kernel.org>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <735bd992-a668-f3f2-0ff2-8071e235f4e8@huawei.com>
-Date: Fri, 23 Aug 2019 09:45:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.90_1)
+ id 1i0zQL-00Glxn-Nr
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Aug 2019 02:35:35 +0000
+Received: by mail-io1-f65.google.com with SMTP id o9so16625295iom.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 22 Aug 2019 19:35:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :cc; bh=2Ob+A4xxX2bRSxLGz92/UzTEvC1yWM8JcjhiXKDPfB8=;
+ b=flcLM5FZxA1UdTl+5MfostzBYwQfyv1yb87DaSzrnDrUwd/ZNj4K4T/rHszC/sFQMH
+ ADUFV/N/N6vulg+PsFB9LiJOba7WYzMsXqe7TkwmxiwQw++HUI5Q9lwxgsadqj5kp36o
+ 7ir9Ftxz3Frpzbh7dbD9IWl/fAPy+uyEwFD9Qu0xwImVT/66UuNo3m+3vDu9rqcZdHGP
+ dJuOAFAhp3e0iD0AWnqz3VAQtqcjnUDCLFkZZiPVDrJq83kU9d3bg+KlteAnZK+XFKE6
+ M2BK3WAwQy2tydaBr0xJ2dcLV8QJVxM3CxkgnlBsNXoibdFYaWIIutqUzeXdd2gExoTy
+ FEcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc;
+ bh=2Ob+A4xxX2bRSxLGz92/UzTEvC1yWM8JcjhiXKDPfB8=;
+ b=DoIE3x2yawfOaRskRzhLP12bcbZSSA0P6CdJ+kPTrppdVo2K7KGEF+P3hTUwJHeMJ8
+ l18bMY66QPFWuq19/q1fsk+k9UdspWXXT70rHCJ9R82Aj7/tU81TgN0OG6sIj/7yRRnO
+ uvOw6tG7NhAYvke9PppKQ8T7jhjJsGHMJM+4eu5rpgtseJKaH7ToxYMdnwx7zEZNinno
+ o+ueW94hXdvatpCkMOAQ4TCBtTU6z/4zZD9riKKzHZ/Da9keUpXZNLc0Gj1Ag96Svgwi
+ U8qMryXn7CCbTiepidfim8Y3C0KH7zOyzG7dtwGJXDAAFq4O8ZkJA8dxyzsfRNprx91K
+ cCIQ==
+X-Gm-Message-State: APjAAAXy5NOdSiP9ya8cBpNA3lMNrp+abQWFh4TAgUzhWiPBPE19V1Nm
+ lGFVAJM0T8OXApAsjXRmY6v8pztXBEo55YBQBcxxBA==
+X-Google-Smtp-Source: APXvYqxk0KBtXTDXCH7sq1BDWGn2tzcj3BOrK9VJXXJYjin28Niwi8IhH6bIWJT+jY7Hn20R6XsnRrLk/vFE/AUzyqo=
+X-Received: by 2002:a6b:c581:: with SMTP id v123mr3719443iof.158.1566527727590; 
+ Thu, 22 Aug 2019 19:35:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190822214955.GA1349@sol.localdomain>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1i0yeD-00GjBa-MF
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to writeout dirty inode during
- node flush
+References: <CGME20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab@epcas2p2.samsung.com>
+ <004101d557eb$98b00060$ca100120$@samsung.com>
+ <6ea5e5db-4dd4-719f-3b3e-b89099636ea6@kernel.dk>
+In-Reply-To: <6ea5e5db-4dd4-719f-3b3e-b89099636ea6@kernel.dk>
+Date: Thu, 22 Aug 2019 19:35:16 -0700
+Message-ID: <CAA+FYZc6G0xk7Dhx0b9xNRoK+b+DpfuS+OK4wn4bpKpFPiiGUQ@mail.gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, boojin.kim@samsung.com
+X-Headers-End: 1i0zQL-00Glxn-Nr
+Subject: Re: [f2fs-dev] [PATCH 5/9] block: support diskcipher
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,21 +113,83 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Satya Tangirala via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Satya Tangirala <satyat@google.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Mike Snitzer <snitzer@redhat.com>,
+ dm-devel@redhat.com, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Alasdair Kergon <agk@redhat.com>, Jaehoon Chung <jh80.chung@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+ Kukjin Kim <kgene@kernel.org>, linux-ext4@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ "Theodore Y. Ts'o" <tytso@mit.edu>, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2019/8/23 5:49, Eric Biggers wrote:
-> Thanks, the test passes for me with this patch applied.
-> 
-> Tested-by: Eric Biggers <ebiggers@kernel.org>
-> .
+On Wed, Aug 21, 2019 at 5:10 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 8/21/19 12:42 AM, boojin.kim wrote:
+> > This patch supports crypto information to be maintained via BIO
+> > and passed to the storage driver.
+> >
+> > To do this, 'bi_aux_private', 'REQ_CYPTE' and 'bi_dun' are added
+> > to the block layer.
+> >
+> > 'bi_aux_private' is added for loading additional private information into
+> > BIO.
+> > 'REQ_CRYPT' is added to distinguish that bi_aux_private is being used
+> > for diskcipher.
+> > F2FS among encryption users uses DUN(device unit number) as
+> > the IV(initial vector) for cryptographic operations.
+> > DUN is stored in 'bi_dun' of bi_iter as a specific value for each BIO.
+> >
+> > Before attempting to merge the two BIOs, the operation is also added to
+> > verify that the crypto information contained in two BIOs is consistent.
+>
+> This isn't going to happen. With this, and the inline encryption
+> proposed by Google, we'll bloat the bio even more. At least the Google
+> approach didn't include bio iter changes as well.
+>
+> Please work it out between yourselves so we can have a single, clean
+> abstraction that works for both.
+>
+> --
+> Jens Axboe
+>
 
-Thanks for the test.
+Hi Boojin,
 
-Thanks,
+We're very keen to make sure that our approach to inline encryption can
+work with diverse hardware, including Samsung's FMP hardware; if you
+can see any issues with using our approach with your hardware please
+let us know.
+
+We understand that a possible concern for getting FMP working with our
+patch series for Inline Encryption Support at
+
+https://lore.kernel.org/linux-block/20190821075714.65140-1-satyat@google.com/
+
+is that unlike some inline encryption hardware (and also unlike the JEDEC
+UFS v2.1 spec), FMP doesn't have the concept of a limited number of
+keyslots - to address that difference we have a "passthrough keyslot
+manager", which we put up on top of our patch series for inline encryption
+support at
+
+https://android-review.googlesource.com/c/kernel/common/+/980137/2
+
+Setting up a passthrough keyslot manager in the request queue of a
+device allows the device to receive a bio's encryption context as-is with
+the bio, which is what FMP would prefer. Are there any issues with
+using the passthrough keyslot manager for FMP?
+
+Thanks!
+Satya
 
 
 _______________________________________________
