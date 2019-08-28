@@ -7,69 +7,71 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A62FC3A5A4
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Aug 2019 09:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB35C3A5A1
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Aug 2019 09:34:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0B41C217F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Aug 2019 09:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 418BD208CB
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 28 Aug 2019 09:34:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="UtAfKgRI";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Fd0MFZZl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B41C217F5
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="FEFysFa7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="eKSvMQow"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418BD208CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1i2uKz-0000bI-Bq; Wed, 28 Aug 2019 09:33:57 +0000
+	id 1i2uL7-0005bS-P6; Wed, 28 Aug 2019 09:34:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1i2uKy-0000b2-84
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Aug 2019 09:33:56 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1i2uL3-0005ap-Rn
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Aug 2019 09:34:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=a32tDUiwvAliWHYONgZxHdSVHgxBtA4CMgrmB1H+ZG4=; b=UtAfKgRIBGoqITbLd7vubHeeol
- 893ivCXe0g+gzZPLt09Gskyl4QqtqsXC049tkW8+V4ER27oYdU2dh09FCMy92DWHLiD064ust780b
- UUj/+EMDJOOpPLHCF6GS5mV6V6TSaos1h7baW29HRCcrVmBf+/eteRPwMKnRMsXxipgY=;
+ bh=pO2NdOJleo5HHTdvI+hNtllRX5uyQGGEbjeSpI8wq+U=; b=FEFysFa7CPMZ2Wgmc8PB/EESvh
+ PiCA1oPQEcWQrH4qNVI4Y0OKh3kvjFhVu5hebjE4zRa0Mx1NLY8aAPIhiz7NxfNfsLyMiSjuKUlND
+ XE1RzKybYOOHZm/Q2LfU8kD3IUhjY2JpilZRonlqIa5Y09GBznoURyCdzgOBEIBpl/00=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=a32tDUiwvAliWHYONgZxHdSVHgxBtA4CMgrmB1H+ZG4=; b=F
- d0MFZZl82Ax8m6qJchVRy96S2+/13SZjqGfRk78iWzCDIEyHhoy5aj8IIUQ/bgQ46FpWYIf+ozbxi
- qYvl/cVkrPVGXsRe6U9XHdVtgGHt0k5HqzsQa2zfN3t6uZJAQCS9al6+SLJjrPea8VhvzTybXZ3AL
- EW4lEv6tAmLLwQNU=;
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=pO2NdOJleo5HHTdvI+hNtllRX5uyQGGEbjeSpI8wq+U=; b=eKSvMQowJfZvsluBXR0+II9Esz
+ 0NxWVPnQ/AF7wqT5xj/STo8QAOtM5V9nzmkx7FoSTLiQrFHFB755H0rUX/ANnASH619YMla8zKXZR
+ amnjMP37/FjjJjFXy0jSjKN7ceQBhockR5dlVk5NQBU9FEOSbmn4OjBav537Z7o1uub0=;
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- id 1i2uKw-000imQ-Dr
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Aug 2019 09:33:56 +0000
+ id 1i2uL1-000in7-EK
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 28 Aug 2019 09:34:01 +0000
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 9D1DA661CCA65AFB3D68;
- Wed, 28 Aug 2019 17:33:46 +0800 (CST)
+ by Forcepoint Email with ESMTP id B51C7E97F49E86C47173;
+ Wed, 28 Aug 2019 17:33:51 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 28 Aug 2019 17:33:40 +0800
+ 14.3.439.0; Wed, 28 Aug 2019 17:33:41 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Wed, 28 Aug 2019 17:33:35 +0800
-Message-ID: <20190828093338.29446-1-yuchao0@huawei.com>
+Date: Wed, 28 Aug 2019 17:33:36 +0800
+Message-ID: <20190828093338.29446-2-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20190828093338.29446-1-yuchao0@huawei.com>
+References: <20190828093338.29446-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1i2uKw-000imQ-Dr
-Subject: [f2fs-dev] [PATCH 1/4] f2fs: fix extent corrupotion during directIO
- in LFS mode
+X-Headers-End: 1i2uL1-000in7-EK
+Subject: [f2fs-dev] [PATCH 2/4] f2fs: fix to handle error path correctly in
+ f2fs_map_blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,35 +88,34 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In LFS mode, por_fsstress testcase reports a bug as below:
-
-[ASSERT] (fsck_chk_inode_blk: 931)  --> ino: 0x12fe has wrong ext: [pgofs:142, blk:215424, len:16]
-
-Since commit f847c699cff3 ("f2fs: allow out-place-update for direct
-IO in LFS mode"), we start to allow OPU mode for direct IO, however,
-we missed to update extent cache in __allocate_data_block(), finally,
-it cause extent field being inconsistent with physical block address,
-fix it.
+In f2fs_map_blocks(), we should bail out once __allocate_data_block()
+failed.
 
 Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/data.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index bf648c8c50ad..727df32382c6 100644
+index 727df32382c6..777888ba171a 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1018,7 +1018,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
- 		invalidate_mapping_pages(META_MAPPING(sbi),
- 					old_blkaddr, old_blkaddr);
--	f2fs_set_data_blkaddr(dn);
-+	f2fs_update_data_blkaddr(dn, dn->data_blkaddr);
- 
- 	/*
- 	 * i_size will be updated by direct_IO. Otherwise, we'll get stale
+@@ -1195,10 +1195,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 		if (test_opt(sbi, LFS) && flag == F2FS_GET_BLOCK_DIO &&
+ 							map->m_may_create) {
+ 			err = __allocate_data_block(&dn, map->m_seg_type);
+-			if (!err) {
+-				blkaddr = dn.data_blkaddr;
+-				set_inode_flag(inode, FI_APPEND_WRITE);
+-			}
++			if (err)
++				goto sync_out;
++			blkaddr = dn.data_blkaddr;
++			set_inode_flag(inode, FI_APPEND_WRITE);
+ 		}
+ 	} else {
+ 		if (create) {
 -- 
 2.18.0.rc1
 
