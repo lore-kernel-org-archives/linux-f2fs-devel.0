@@ -1,80 +1,82 @@
-Return-Path: <SRS0=K3S8=XS=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=fUww=XT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3558C04EBF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Sep 2019 13:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF7DC432C1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Sep 2019 11:13:29 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 98EB9205F4;
-	Mon, 23 Sep 2019 13:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EADAF2146E;
+	Tue, 24 Sep 2019 11:13:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="e5ZDpsdd";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IGImr0E4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98EB9205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Hd4anmou";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="QSA828QL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADAF2146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iCOEy-0001Db-61; Mon, 23 Sep 2019 13:18:56 +0000
+	id 1iCil6-0002w6-7s; Tue, 24 Sep 2019 11:13:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1iCOEx-0001DV-Nb
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Sep 2019 13:18:55 +0000
+ (envelope-from <stanley.chu@mediatek.com>) id 1iCil5-0002vz-2a
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Sep 2019 11:13:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NkEOoYFdo9d/uoxWYvOIZ9BDP4nFyFqOUCtve3sJ6J8=; b=e5ZDpsdd6mUCjJRIOTKCzrbIRu
- Z+tK7bSn+YtEZspocFPOcTZig5hHxyD62jbhdn79ohsdpBGnhdUZm5Fj0hFgYb6SHUQhqBUgbcrY5
- gDbWloOlIbllewgvIts6Difebcpi/hySBFzHev84wfC1n7Fe8VCPTBkcU4PNxe3/K+x8=;
+ bh=YRiypp73jpCmvvDdzm0LBpX6sT22rFZNPZV3RnyetwY=; b=Hd4anmouvVeNn00lfXr0eak+uV
+ EBO64StbJiVMLihOCueAodtHz2XU0Txr3amPhj0aDFTlC6C3Zw3B1LT+lzLjRKwNgYOrATG/jSsx6
+ 9LX1r/ovwqXfVOiIDMh+vtWkSXTZX6JdqOJnxgV9gIGfIC7A917CBshS/esVVRxrUwZA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NkEOoYFdo9d/uoxWYvOIZ9BDP4nFyFqOUCtve3sJ6J8=; b=IGImr0E4z8JWraAznNgnLCYyTq
- Wb8CNXSYAlx3SvcOkcvHYtSPnEt41aoqF51RMiGvmYE+Ju+1MFTynkukENXpUlUWh9mZXsGqYTxXZ
- PyQijyB8/lp5vhXzbLJQei6TLNA8ahh/6YaXFd3C9XDrlJKcoUI3GX9pOB3yYbTwd/zo=;
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iCOEv-005O02-Ub
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Sep 2019 13:18:55 +0000
-Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com
- [104.133.0.98] (may be forged)) (authenticated bits=0)
- (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x8NDIEHw002725
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 23 Sep 2019 09:18:15 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 7F45B420811; Mon, 23 Sep 2019 09:18:14 -0400 (EDT)
-Date: Mon, 23 Sep 2019 09:18:14 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Jan Kara <jack@suse.cz>
-Message-ID: <20190923131814.GB6005@mit.edu>
-References: <20190911093926.pfkkx25mffzeuo32@alap3.anarazel.de>
- <20190911164517.16130-1-rgoldwyn@suse.de>
- <20190911164517.16130-3-rgoldwyn@suse.de>
- <20190923101042.GA25332@quack2.suse.cz>
+ bh=YRiypp73jpCmvvDdzm0LBpX6sT22rFZNPZV3RnyetwY=; b=QSA828QL5ds+8Eyz+S678Ejcm5
+ NlyQGXeHa5bJZ7Tvvs0pQ3B8tqwIPUxhZZOEXvgJ3/OTJujOFZWV/lxvkAojvXEzfuWIhfp6SfxRJ
+ z6JLeFSzHqxCWqa93dNUx7c5AAkk68X2pvE64D8id0UDP+S6H4kwD4ARNtyLi0IYwcRQ=;
+Received: from [210.61.82.183] (helo=mailgw01.mediatek.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.92.2)
+ id 1iCil1-006tEp-GC
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Sep 2019 11:13:27 +0000
+X-UUID: 6b4dcb537e034f2fac2ed0db970a76ec-20190924
+X-UUID: 6b4dcb537e034f2fac2ed0db970a76ec-20190924
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by
+ mailgw01.mediatek.com (envelope-from <stanley.chu@mediatek.com>)
+ (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+ with ESMTP id 1038858326; Tue, 24 Sep 2019 18:57:51 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 24 Sep 2019 18:57:49 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 24 Sep 2019 18:57:49 +0800
+Message-ID: <1569322670.16730.28.camel@mtkswgap22>
+From: Stanley Chu <stanley.chu@mediatek.com>
+To: Satya Tangirala <satyat@google.com>
+Date: Tue, 24 Sep 2019 18:57:50 +0800
+In-Reply-To: <20190821075714.65140-3-satyat@google.com>
+References: <20190821075714.65140-1-satyat@google.com>
+ <20190821075714.65140-3-satyat@google.com>
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20190923101042.GA25332@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1iCOEv-005O02-Ub
-Subject: Re: [f2fs-dev] [PATCH 2/3] ext4: fix inode rwsem regression
+X-MTK: N
+X-Headers-End: 1iCil1-006tEp-GC
+Subject: Re: [f2fs-dev] [PATCH v4 2/8] block: Add encryption context to
+ struct bio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,38 +88,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>, david@fromorbit.com,
- linux-f2fs-devel@lists.sourceforge.net, hch@infradead.org,
- Goldwyn Rodrigues <rgoldwyn@suse.com>, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, andres@anarazel.de, linux-btrfs@vger.kernel.org
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ Kim Boojin <boojin.kim@samsung.com>, Kuohong Wang
+ =?UTF-8?Q?=28=E7=8E=8B=E5=9C=8B=E9=B4=BB=29?= <kuohong.wang@mediatek.com>,
+ Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Sep 23, 2019 at 12:10:42PM +0200, Jan Kara wrote:
-> On Wed 11-09-19 11:45:16, Goldwyn Rodrigues wrote:
-> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > 
-> > This is similar to 942491c9e6d6 ("xfs: fix AIM7 regression")
-> > Apparently our current rwsem code doesn't like doing the trylock, then
-> > lock for real scheme.  So change our read/write methods to just do the
-> > trylock for the RWF_NOWAIT case.
-> > 
-> > Fixes: 728fbc0e10b7 ("ext4: nowait aio support")
-> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> Thanks for fixing this! The patch looks good to me. You can add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> BTW, I've also added Ted as ext4 maintainer to CC.
+Hi Satya,
 
-Thanks, I've been following along, and once the merge window is over
-I'll start going through the patch backlog.
+On Wed, 2019-08-21 at 15:57 +0800, Satya Tangirala wrote:
+> @@ -827,16 +839,31 @@ bool blk_rq_merge_ok(struct request *rq, struct bio *bio)
+>  	if (rq->ioprio != bio_prio(bio))
+>  		return false;
+>  
+> +	/* Only merge if the crypt contexts are compatible */
+> +	if (!bio_crypt_ctx_compatible(bio, rq->bio))
+> +		return false;
+> +
 
-Cheers,
+Since bio_crypt_ctx_compatible() lacks of consideration of inode, I am
+not sure if here may lead to incorrect merge decision, especially for
+f2fs which does not allow merging different files.
 
-						- Ted
+Thanks,
+Stanley
+
 
 
 _______________________________________________
