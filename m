@@ -2,87 +2,84 @@ Return-Path: <SRS0=nlUV=XY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5C2C4360C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 29 Sep 2019 02:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4229C4360C
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 29 Sep 2019 02:22:36 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7C1DF2146E;
-	Sun, 29 Sep 2019 02:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 90D262082F;
+	Sun, 29 Sep 2019 02:22:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OFUsEEzS";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="h05vM6VF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C1DF2146E
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AHrZYDMA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KBuxPjQ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90D262082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iEOeQ-000510-Ul; Sun, 29 Sep 2019 02:09:30 +0000
+	id 1iEOr6-0006hM-53; Sun, 29 Sep 2019 02:22:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1iEOeO-00050g-Nr
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Sep 2019 02:09:28 +0000
+ (envelope-from <gaoxiang25@huawei.com>) id 1iEOr2-0006gl-L1
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Sep 2019 02:22:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:CC:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=C5hWFWT14QGRDLOuefMyIKuzkGHZ5SuBtYA+lJq3pfk=; b=OFUsEEzSK5dWwQ4KYaNUimkmMJ
- DB3vLaM2ZxOlfHxjagBFdM3KXrw9OM4p+v/R7ZwiB7tjqXs5kv3AU6TQPmBV7tYmLvDCuO8sCnf8A
- 49h0yE8opewA7CMMjrlieaqBLmg3OyuQJre8y4M8m69982KVoyreBuwBIZON4HEcyqys=;
+ bh=mU1lxLL38bTOMszBa+m3xb9Cd6uAP41dilWEjB0MRVc=; b=AHrZYDMADMhZvQOoYCwpdh08Y4
+ voFmxsayDJgz4npXT+tP/i3LIAT7Ur3CgbYCP5/U5+U/gbswnNUx3B7F02H85G+6eIekEopyHoKyy
+ i81kInWowo8VfV/jmj/XjyFEMrUrj16e4/DSy+8Rky15hcRNI5Km40rIG5btXPSesrxA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=C5hWFWT14QGRDLOuefMyIKuzkGHZ5SuBtYA+lJq3pfk=; b=h05vM6VFzwApwewqduVYvVUYPS
- D5bJo/28giGKjz76zdDaSxI1qwAkvsR4APM8XeFBBbISxakSSPxejFO7aPnL0HeI7Tz4VOa58nom2
- bs1Qj+ODbl0qnfFEFfoiJ+pn2mtv3odOQnfX9+wVX9QTvVQZ1Oj4HGpaRHSp8KonOqZk=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=mU1lxLL38bTOMszBa+m3xb9Cd6uAP41dilWEjB0MRVc=; b=KBuxPjQ5XYKOFRboY2U/zxgCIy
+ 2TSkFhfSwXoxpjNTZOGvwFbVFyMW5/c1T4sYPeU0yA3THHEdm80KEAd4aTqlqHcXiv2OO4P2B4ZXq
+ ftYeYIVdXTurd6WZgunuW/lTFY2gjqaL35dQUhjq/eLo0LBd2Ho57a5RJqqt8/frH+gM=;
+Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iEOeK-00Dbtd-7V
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Sep 2019 02:09:28 +0000
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id B4ECAB56D56D4EFEF14B;
- Sun, 29 Sep 2019 10:09:16 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sun, 29 Sep
- 2019 10:09:12 +0800
-To: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-References: <20190903083704.kmc5bwfdpeinzfle@shindev>
- <7e13140d-f031-9eda-3544-747f80880df9@huawei.com>
- <20190906083114.jmjzczqzp4m3kxex@shindev>
- <e209cee9-2d91-e15a-0d30-4b388d463f08@huawei.com>
- <20190910081010.uwubhhwenuex7vhx@shindev.dhcp.fujisawa.hgst.com>
- <45f1d3e8-ae50-879f-3cfc-2e6786afb28f@huawei.com>
- <20190912081648.wq2wi447hpold4t6@shindev.dhcp.fujisawa.hgst.com>
- <dd935f8f-276e-fa7b-e202-2a8722be60e0@huawei.com>
- <20190918030712.hko3pjm65glncqap@shindev.dhcp.fujisawa.hgst.com>
- <6b6552a0-333b-872b-37b8-67e6bf0c1311@huawei.com>
- <20190925080544.ldxsmx7zf4dtbqmz@shindev.dhcp.fujisawa.hgst.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <d0bb79bd-54bd-a7b6-68e7-28de364f2162@huawei.com>
-Date: Sun, 29 Sep 2019 10:09:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1iEOqy-00ADVC-Mq
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 Sep 2019 02:22:31 +0000
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.53])
+ by Forcepoint Email with ESMTP id 81C8489247855DFBD3EF;
+ Sun, 29 Sep 2019 10:22:21 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sun, 29 Sep 2019 10:22:21 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Sun, 29 Sep 2019 10:22:11 +0800
+Date: Sun, 29 Sep 2019 10:20:52 +0800
+From: Gao Xiang <gaoxiang25@huawei.com>
+To: <linux-f2fs-devel@lists.sourceforge.net>
+Message-ID: <20190929021939.GA136917@architecture4>
+References: <20190925093050.118921-1-yuchao0@huawei.com>
+ <20190927183150.GA54001@jaegeuk-macbookpro.roam.corp.google.com>
+ <8c54adaf-163f-fcbe-7731-0c18b12410e0@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190925080544.ldxsmx7zf4dtbqmz@shindev.dhcp.fujisawa.hgst.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
+Content-Disposition: inline
+In-Reply-To: <8c54adaf-163f-fcbe-7731-0c18b12410e0@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme701-chm.china.huawei.com (10.1.199.97) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1iEOeK-00Dbtd-7V
-Subject: Re: [f2fs-dev] [PATCH v4 2/2] fsck.f2fs: Check write pointer
- consistency with current segments
+X-Headers-End: 1iEOqy-00ADVC-Mq
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix comment of f2fs_evict_inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,87 +91,137 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Damien Le Moal <Damien.LeMoal@wdc.com>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2019/9/25 16:05, Shinichiro Kawasaki wrote:
-> On Sep 21, 2019 / 17:42, Chao Yu wrote:
->> On 2019/9/18 11:07, Shinichiro Kawasaki wrote:
->>> Thanks for the comments. I read f2fs code further, and think still the
->>> SIT vs write pointer check can be implemented and meaningful.
->>>
->>> F2fs ensures consistency of SIT using two CP areas, two SIT areas and
->>> sit_bitmap in CP. These metadata are in the conventional zone that not
->>> affected by write pointer control logic. My current scope is to ensure
->>> write pointer control logic correctness for zoned block device. From this
->>> scope and the f2fs SIT consistency feature, I would like to assume that
->>> SIT entries built in kernel after f2fs mount is correct for the write
->>> pointer position check.
->>
->> SIT may be broken due to software bug or hardware flaw, we'd better not consider
->> it as a consistent metadata.
+On Sun, Sep 29, 2019 at 08:53:05AM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> I see. I found that kernel checks SIT valid blocks with check_block_count()
-> function, and if mismatch happens it requests fsck. I guess SIT consistency is
-> not ensured during kernel run, but after fsck run. Is this correct? If so, I
-> think the write pointer consistency check with SIT valid block bitmaps should
-> not be done by kernel, but by fsck after SIT rewrite.
-
-IMO, consistency check can be done in both kernel and fsck.
-
-If SIT is corrupted, but kernel doesn't aware of it (check_block_count() doesn't
-report any inconsistency), write_pointer consistency check may give some clues
-for filesystem corruption.
-
+> On 2019/9/28 2:31, Jaegeuk Kim wrote:
+> > Hi Chao,
+> > 
+> > On 09/25, Chao Yu wrote:
+> >> evict() should be called once i_count is zero, rather than i_nlinke
+> >> is zero.
+> >>
+> >> Reported-by: Gao Xiang <gaoxiang25@huawei.com>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/inode.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> >> index db4fec30c30d..8262f4a483d3 100644
+> >> --- a/fs/f2fs/inode.c
+> >> +++ b/fs/f2fs/inode.c
+> >> @@ -632,7 +632,7 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
+> >>  }
+> >>  
+> >>  /*
+> >> - * Called at the last iput() if i_nlink is zero
+> > 
+> > I don't think this comment is wrong. You may be able to add on top of this.
 > 
-> As for non-open zones (curseg do not point to), the other check is needed: if
-> the zone does not have valid blocks and fsync data, need to reset its write
-> pointer. My understanding is that the valid blocks count comes from SIT. Then
-> this fix also should be done not by kernel but by fsck after SIT rewrite. I
-> think kernel just should do this check at mount time to avoid unaligned write
-> error, and if inconsistency found it should request fsck to recheck and fix.
-
-Yeah, I agree with this.
-
+> It actually misleads the developer or user.
 > 
-> I assume kernel can check and fix write pointer inconsistency with cursegs in
-> CP. CP (and SB) have checksum guard and their consistency looks ensured during
-> kernel run.
+> How do you think of:
 > 
->>
->>>
->>> Fsck does additional SIT consistency check in fsck_chk_meta(). It would be
->>> good to do the write pointer position check at the end of fsck_chk_meta().
->>
->> SIT can be changed later? e.g. SIT bitmap says one block address is valid,
->> however fsck found there is no entry can link to it, then it needs to be
->> deleted? it may affect write_pointer repair, right?
->>
->> So we'd better look into all SIT update cases in fsck.
-> 
-> Ah, yes, when fsck updates SIT, write pointer consistency check should be done
-> after that. I found SIT is rewritten at the end of fsck_verify() by
-> rewrite_sit_area_bitmap() and fix_curseg_info() calls. I guess write pointer
-> consistency check with SIT (and write pointer reset if required) should be
-> done after those function calls to reflect all SIT changes by fsck. I'll try
-> to create a patch with this approach.
+> "Called at the last iput() if i_count is zero, and will release all meta/data
+> blocks allocated in the inode if i_nlink is zero"
 
-Quota file repair may grab and write the block which can change SIT status,
-please notice that case as well.
+(sigh... side note: I just took some time to check the original meaning
+ out of curiosity. AFAIK, the above word was added in Linux-2.1.45 [1]
+ due to ext2_delete_inode behavior, which is called when i_nlink == 0,
+ and .delete_inode was gone in 2010 (commit 72edc4d0873b merge ext2
+ delete_inode and clear_inode, switch to ->evict_inode()), it may be
+ helpful to understand the story so I write here for later folks reference.
+ And it's also good to just kill it. )
+
++
++/*
++ * Called at the last iput() if i_nlink is zero.
++ */
++void ext2_delete_inode (struct inode * inode)
++{
++	if (inode->i_ino == EXT2_ACL_IDX_INO ||
+ 	    inode->i_ino == EXT2_ACL_DATA_INO)
+ 		return;
+ 	inode->u.ext2_i.i_dtime	= CURRENT_TIME;
+-	inode->i_dirt = 1;
++	mark_inode_dirty(inode);
+ 	ext2_update_inode(inode, IS_SYNC(inode));
+ 	inode->i_size = 0;
+ 	if (inode->i_blocks)
+@@ -248,7 +258,7 @@
+ 	if (IS_SYNC(inode) || inode->u.ext2_i.i_osync)
+ 		ext2_sync_inode (inode);
+ 	else
+-		inode->i_dirt = 1;
++		mark_inode_dirty(inode);
+ 	return result;
+ }
+
++void iput(struct inode *inode)
+ {
+-	struct inode * inode = get_empty_inode();
++	if (inode) {
++		struct super_operations *op = NULL;
+ 
+-	PIPE_BASE(*inode) = (char*)__get_free_page(GFP_USER);
+-	if (!(PIPE_BASE(*inode))) {
+-		iput(inode);
+-		return NULL;
++		if (inode->i_sb && inode->i_sb->s_op)
++			op = inode->i_sb->s_op;
++		if (op && op->put_inode)
++			op->put_inode(inode);
++
++		spin_lock(&inode_lock);
++		if (!--inode->i_count) {
++			if (!inode->i_nlink) {
++				list_del(&inode->i_hash);
++				INIT_LIST_HEAD(&inode->i_hash);
++				if (op && op->delete_inode) {
++					void (*delete)(struct inode *) = op->delete_inode;
++					spin_unlock(&inode_lock);
++					delete(inode);
++					spin_lock(&inode_lock);
++				}
++			}
++			if (list_empty(&inode->i_hash)) {
++				list_del(&inode->i_list);
++				list_add(&inode->i_list, &inode_unused);
++			}
++		}
++		spin_unlock(&inode_lock);
+ 	}
+
+[1] https://www.kernel.org/pub/linux/kernel/v2.1/patch-2.1.45.xz
 
 Thanks,
+Gao Xiang
 
 > 
-> Thanks again for your comments!
+> Thanks,
 > 
-> --
-> Best Regards,
-> Shin'ichiro Kawasaki.
+> > 
+> >> + * Called at the last iput() if i_count is zero
+> >>   */
+> >>  void f2fs_evict_inode(struct inode *inode)
+> >>  {
+> >> -- 
+> >> 2.18.0.rc1
+> > .
+> > 
 > 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 _______________________________________________
