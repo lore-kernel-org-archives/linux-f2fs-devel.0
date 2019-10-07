@@ -1,84 +1,78 @@
-Return-Path: <SRS0=HQ7y=X5=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=EZAZ=YA=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB38C4CED1
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Oct 2019 22:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC96C47404
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Oct 2019 16:33:32 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0CE7E20873;
-	Fri,  4 Oct 2019 22:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id DC7242067B;
+	Mon,  7 Oct 2019 16:33:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NDmiXujv";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DP98K4LX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bfgu20r2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE7E20873
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Oq6f/uVM";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="jdX0Wxrw";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvAWm+cl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC7242067B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iGWJn-0001pO-1i; Fri, 04 Oct 2019 22:44:59 +0000
+	id 1iHVwx-0004ux-1J; Mon, 07 Oct 2019 16:33:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1iGWJj-0001oo-OA
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 Oct 2019 22:44:55 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1iHVww-0004uh-5O
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Oct 2019 16:33:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1B7jXbF0HqUv4cv/ufx0Jjlo73IR7+GJvkDqMs8APnU=; b=NDmiXujvLJ7ZIUFNbxM+UpPQOv
- M8ChqH/hi4112qeaL1LR6bvmAKABHHHD1lnEHwY7wz/F/L3KY92BoDn5O1YkZPeGfap3aKvZPDjBX
- GDDh+9Tsb0Kcnm4sP3EIdK+flk5NgzOmrM2vZlXrNLaH1B0BLu4jy2MabrXMm05PaPUA=;
+ bh=pidOQNmt/SzMDJY2Qis9cUXqNZjdwqsP5Bmdic+sAE4=; b=Oq6f/uVMel4fu88TWHA16b2pGh
+ gtvtlp5IxBBb3gABPmi6WhePs5rMIN9jW44unhUdIwRy/CN+vpgXnT8SA3hNn9XjskPkpsPy2/15L
+ qL6lip5ALw0/XqkYa+pFkZzq7IFFcp7VyYbtw5Lx+NfqiMfNPASwjjDpfr/f5GR+Joso=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=1B7jXbF0HqUv4cv/ufx0Jjlo73IR7+GJvkDqMs8APnU=; b=DP98K4LXb6KUq/8dM6/SYePJMg
- Eqkfim2pMSRPSm9Np5tf1C3hrxvzStkhUssJ1jQ7KjrUVn2muAMwKGXxXKdS/PWP00IaJJw2vz6R3
- i704qb1pDuPmI18oUgVR7ThVuNTjPX2RFo/u/wU0m+C/XGtYcRFFlcONkuqgbTvUrTPw=;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=pidOQNmt/SzMDJY2Qis9cUXqNZjdwqsP5Bmdic+sAE4=; b=j
+ dX0Wxrw3QX2/DCTMUQ+Z+JxkveDCTq/kcnWaH/GI17CUgCArl9j2aL5RQuWX5AFckEF7ZieHUZ82B
+ avNSTWGFlqCz/EQZH65r/EWY6AZmOqd4VS/VQV0iejRuq0tbzp6+H7IBXqigXvGnLr2oYRu4LVBAm
+ PnemtWDpA9VQQJII=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iGWJg-00HCJD-Nu
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 Oct 2019 22:44:55 +0000
-Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown
- [104.132.1.77])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ id 1iHVwu-002FX2-VB
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Oct 2019 16:33:29 +0000
+Received: from localhost (unknown [104.132.0.81])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 45398222C0;
- Fri,  4 Oct 2019 22:44:42 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 6DE2D2067B;
+ Mon,  7 Oct 2019 16:33:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1570229082;
- bh=D2mnsOYHreOo+oAA4W0SxGKc6RTKa3k0jHcfqzEJ/NI=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=bfgu20r2kp9EaHQoGi065c4K1hCzlNTtO/y4NPZmvPNoWvje9TMoIkC3+zgnhu4ou
- xsdXsxpMgU6xVbivI0lzxCICD4opAaWNtjhOPGvqxB5a2QcBR9btmipbC6nBas80Vy
- 81g9G8dG0uTOQrWV0qxMwhC7kmSSQ4JY63HTP5aQ=
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-f2fs-devel@lists.sourceforge.net,
-	Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri,  4 Oct 2019 15:43:16 -0700
-Message-Id: <20191004224317.153566-2-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.23.0.581.g78d2f28ef7-goog
-In-Reply-To: <20191004224317.153566-1-ebiggers@kernel.org>
-References: <20191004224317.153566-1-ebiggers@kernel.org>
+ s=default; t=1570465997;
+ bh=QZTjHM3K+gFPiNS7TLf/Phu30rxxJCGIp05Ir+bSqQU=;
+ h=From:To:Cc:Subject:Date:From;
+ b=XvAWm+clEN0XsMXPbimXYiZFcySsGwgxiW4KBa7N9Pa9V2tD1EhP6G47lLhACE2Wh
+ 3bFBj4sH79fOWF9dNfPZ13sedzEXq64A3c/HZZZEicdBifhtHKmTPUjk8ik8uWAlWJ
+ /JnmAHZ3DoaWayNNgv6J2rP26vFInGfxQP+EHH0k=
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Mon,  7 Oct 2019 09:33:15 -0700
+Message-Id: <20191007163315.84634-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
-X-Headers-End: 1iGWJg-00HCJD-Nu
-Subject: [f2fs-dev] [PATCH 1/2] f2fs_io: add helper functions for handling
- errors
+X-Headers-End: 1iHVwu-002FX2-VB
+Subject: [f2fs-dev] [PATCH] tools/fibmap: fix build error
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,410 +84,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+fibmap.c:28:10: fatal error: 'sys/sysmacros.h' file not found
+         ^~~~~~~~~~~~~~~~~
+1 error generated.
+make[3]: *** [fibmap.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
 
-Add and use helper functions for:
-
-- Printing an error message (optionally with errno) and exiting.
-- Allocating memory, exiting on error.
-- Opening a file, exiting on error.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Fixes: ce64ea0815bf ("f2fs-tools: Add support for Casefolding")
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- tools/f2fs_io/f2fs_io.c | 255 +++++++++++++++++++---------------------
- 1 file changed, 121 insertions(+), 134 deletions(-)
+ tools/fibmap.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index add40c4..f5493ff 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -19,18 +19,21 @@
- #define O_LARGEFILE 0
- #endif
- 
--#include <stdio.h>
-+#include <errno.h>
- #include <fcntl.h>
-+#include <inttypes.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdbool.h>
-+#include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
--#include <unistd.h>
--#include <time.h>
--#include <inttypes.h>
- #include <string.h>
--#include <signal.h>
--#include <termios.h>
--#include <sys/types.h>
+diff --git a/tools/fibmap.c b/tools/fibmap.c
+index 2b3c40f..9e96cb6 100644
+--- a/tools/fibmap.c
++++ b/tools/fibmap.c
+@@ -25,7 +25,6 @@
+ #include <sys/types.h>
+ #include <sys/ioctl.h>
  #include <sys/stat.h>
-+#include <sys/types.h>
-+#include <termios.h>
-+#include <time.h>
-+#include <unistd.h>
- 
- #ifdef HAVE_CONFIG_H
- #include "config.h"
-@@ -45,6 +48,63 @@ struct cmd_desc {
- 	int cmd_flags;
- };
- 
-+static void __attribute__((noreturn))
-+do_die(const char *format, va_list va, int err)
-+{
-+	vfprintf(stderr, format, va);
-+	if (err)
-+		fprintf(stderr, ": %s", strerror(err));
-+	putc('\n', stderr);
-+	exit(1);
-+}
-+
-+static void __attribute__((noreturn, format(printf, 1, 2)))
-+die_errno(const char *format, ...)
-+{
-+	va_list va;
-+
-+	va_start(va, format);
-+	do_die(format, va, errno);
-+	va_end(va);
-+}
-+
-+static void __attribute__((noreturn, format(printf, 1, 2)))
-+die(const char *format, ...)
-+{
-+	va_list va;
-+
-+	va_start(va, format);
-+	do_die(format, va, 0);
-+	va_end(va);
-+}
-+
-+static void *xmalloc(size_t size)
-+{
-+	void *p = malloc(size);
-+
-+	if (!p)
-+		die("Memory alloc failed (requested %zu bytes)", size);
-+	return p;
-+}
-+
-+static void *aligned_xalloc(size_t alignment, size_t size)
-+{
-+	void *p = aligned_alloc(alignment, size);
-+
-+	if (!p)
-+		die("Memory alloc failed (requested %zu bytes)", size);
-+	return p;
-+}
-+
-+static int xopen(const char *pathname, int flags, mode_t mode)
-+{
-+	int fd = open(pathname, flags, mode);
-+
-+	if (fd < 0)
-+		die_errno("Failed to open %s", pathname);
-+	return fd;
-+}
-+
- #define getflags_desc "getflags ioctl"
- #define getflags_help						\
- "f2fs_io getflags [file]\n\n"					\
-@@ -66,12 +126,7 @@ static void do_getflags(int argc, char **argv, const struct cmd_desc *cmd)
- 		exit(1);
- 	}
- 
--	fd = open(argv[1], O_RDONLY);
--	if (fd == -1) {
--		fputs("Open failed\n\n", stderr);
--		fputs(cmd->cmd_help, stderr);
--		exit(1);
--	}
-+	fd = xopen(argv[1], O_RDONLY, 0);
- 
- 	ret = ioctl(fd, F2FS_IOC_GETFLAGS, &flag);
- 	printf("get a flag on %s ret=%d, flags=", argv[1], ret);
-@@ -117,17 +172,12 @@ static void do_setflags(int argc, char **argv, const struct cmd_desc *cmd)
- 		exit(1);
- 	}
- 
--	fd = open(argv[2], O_RDONLY);
--	if (fd == -1) {
--		fputs("Open failed\n\n", stderr);
--		fputs(cmd->cmd_help, stderr);
--		exit(1);
--	}
-+	fd = xopen(argv[2], O_RDONLY, 0);
- 
- 	ret = ioctl(fd, F2FS_IOC_GETFLAGS, &flag);
- 	printf("get a flag on %s ret=%d, flags=%lx\n", argv[1], ret, flag);
- 	if (ret)
--		exit(1);
-+		die_errno("F2FS_IOC_GETFLAGS failed");
- 
- 	if (!strcmp(argv[1], "casefold"))
- 		flag |= FS_CASEFOLD_FL;
-@@ -169,18 +219,12 @@ static void do_shutdown(int argc, char **argv, const struct cmd_desc *cmd)
- 		fputs(cmd->cmd_help, stderr);
- 		exit(1);
- 	}
--	fd = open(argv[2], O_RDONLY);
--	if (fd == -1) {
--		fputs("Open failed\n\n", stderr);
--		fputs(cmd->cmd_help, stderr);
--		exit(1);
--	}
-+	fd = xopen(argv[2], O_RDONLY, 0);
- 
- 	ret = ioctl(fd, F2FS_IOC_SHUTDOWN, &flag);
--	if (ret < 0) {
--		perror("F2FS_IOC_SHUTDOWN");
--		exit(1);
--	}
-+	if (ret < 0)
-+		die_errno("F2FS_IOC_SHUTDOWN failed");
-+
- 	printf("Shutdown %s with level=%d\n", argv[2], flag);
- 	exit(0);
- }
-@@ -201,35 +245,26 @@ static void do_pinfile(int argc, char **argv, const struct cmd_desc *cmd)
- 		exit(1);
- 	}
- 
--	fd = open(argv[2], O_RDWR);
--	if (fd == -1) {
--		fputs("Open failed\n\n", stderr);
--		fputs(cmd->cmd_help, stderr);
--		exit(1);
--	}
-+	fd = xopen(argv[2], O_RDWR, 0);
- 
- 	ret = -1;
- 	if (!strcmp(argv[1], "set")) {
- 		pin = 1;
- 		ret = ioctl(fd, F2FS_IOC_SET_PIN_FILE, &pin);
--		if (ret != 0) {
--			perror("set_pin_file failed");
--			exit(1);
--		}
-+		if (ret != 0)
-+			die_errno("F2FS_IOC_SET_PIN_FILE failed");
- 		printf("set_pin_file: %u blocks moved in %s\n", ret, argv[2]);
- 	} else if (!strcmp(argv[1], "get")) {
- 		unsigned int flags;
- 
- 		ret = ioctl(fd, F2FS_IOC_GET_PIN_FILE, &pin);
--		if (ret < 0) {
--			perror("pin_file failed");
--			exit(1);
--		}
-+		if (ret < 0)
-+			die_errno("F2FS_IOC_GET_PIN_FILE failed");
-+
- 		ret = ioctl(fd, F2FS_IOC_GETFLAGS, &flags);
--		if (ret < 0) {
--			perror("get flags failed");
--			exit(1);
--		}
-+		if (ret < 0)
-+			die_errno("F2FS_IOC_GETFLAGS failed");
-+
- 		printf("get_pin_file: %s with %u blocks moved in %s\n",
- 				(flags & F2FS_NOCOW_FL) ? "pinned" : "un-pinned",
- 				pin, argv[2]);
-@@ -262,21 +297,14 @@ static void do_fallocate(int argc, char **argv, const struct cmd_desc *cmd)
- 	offset = atoi(argv[2]);
- 	length = atoi(argv[3]);
- 
--	fd = open(argv[4], O_RDWR);
--	if (fd == -1) {
--		fputs("Open failed\n\n", stderr);
--		fputs(cmd->cmd_help, stderr);
--		exit(1);
--	}
-+	fd = xopen(argv[4], O_RDWR, 0);
-+
-+	if (fallocate(fd, mode, offset, length) != 0)
-+		die_errno("fallocate failed");
-+
-+	if (fstat(fd, &sb) != 0)
-+		die_errno("fstat failed");
- 
--	if (fallocate(fd, mode, offset, length)) {
--		fputs("fallocate failed\n\n", stderr);
--		exit(1);
--	}
--	if (fstat(fd, &sb) == -1) {
--		fputs("Stat failed\n\n", stderr);
--		exit(1);
--	}
- 	printf("fallocated a file: i_size=%"PRIu64", i_blocks=%"PRIu64"\n", sb.st_size, sb.st_blocks);
- 	exit(0);
- }
-@@ -311,41 +339,27 @@ static void do_write(int argc, char **argv, const struct cmd_desc *cmd)
- 	}
- 
- 	bs = atoi(argv[1]);
--	if (bs > 1024) {
--		fputs("Too big chunk size - limit: 4MB\n\n", stderr);
--		exit(1);
--	}
-+	if (bs > 1024)
-+		die("Too big chunk size - limit: 4MB");
-+
- 	buf_size = bs * 4096;
- 
- 	offset = atoi(argv[2]) * buf_size;
- 
--	buf = aligned_alloc(4096, buf_size);
--	if (!buf) {
--		fputs("Memory alloc failed\n\n", stderr);
--		exit(1);
--	}
-+	buf = aligned_xalloc(4096, buf_size);
- 	count = atoi(argv[3]);
- 
--	if (!strcmp(argv[4], "zero")) {
-+	if (!strcmp(argv[4], "zero"))
- 		memset(buf, 0, buf_size);
--	} else if (strcmp(argv[4], "inc_num") &&
--			strcmp(argv[4], "rand")) {
--		fputs("Wrong pattern type\n\n", stderr);
--		exit(1);
--	}
-+	else if (strcmp(argv[4], "inc_num") && strcmp(argv[4], "rand"))
-+		die("Wrong pattern type");
- 
--	if (!strcmp(argv[5], "dio")) {
-+	if (!strcmp(argv[5], "dio"))
- 		flags |= O_DIRECT;
--	} else if (strcmp(argv[5], "buffered")) {
--		fputs("Wrong IO type\n\n", stderr);
--		exit(1);
--	}
-+	else if (strcmp(argv[5], "buffered"))
-+		die("Wrong IO type");
- 
--	fd = open(argv[6], O_CREAT | O_WRONLY | flags, 0755);
--	if (fd == -1) {
--		fputs("Open failed\n\n", stderr);
--		exit(1);
--	}
-+	fd = xopen(argv[6], O_CREAT | O_WRONLY | flags, 0755);
- 
- 	for (i = 0; i < count; i++) {
- 		if (!strcmp(argv[4], "inc_num"))
-@@ -389,43 +403,27 @@ static void do_read(int argc, char **argv, const struct cmd_desc *cmd)
- 	}
- 
- 	bs = atoi(argv[1]);
--	if (bs > 1024) {
--		fputs("Too big chunk size - limit: 4MB\n\n", stderr);
--		exit(1);
--	}
-+	if (bs > 1024)
-+		die("Too big chunk size - limit: 4MB");
- 	buf_size = bs * 4096;
- 
- 	offset = atoi(argv[2]) * buf_size;
- 
--	buf = aligned_alloc(4096, buf_size);
--	if (!buf) {
--		fputs("Memory alloc failed\n\n", stderr);
--		exit(1);
--	}
-+	buf = aligned_xalloc(4096, buf_size);
-+
- 	count = atoi(argv[3]);
--	if (!strcmp(argv[4], "dio")) {
-+	if (!strcmp(argv[4], "dio"))
- 		flags |= O_DIRECT;
--	} else if (strcmp(argv[4], "buffered")) {
--		fputs("Wrong IO type\n\n", stderr);
--		exit(1);
--	}
-+	else if (strcmp(argv[4], "buffered"))
-+		die("Wrong IO type");
- 
- 	print_bytes = atoi(argv[5]);
--	if (print_bytes > buf_size) {
--		fputs("Print_nbytes should be less then chunk_size in kb\n\n", stderr);
--		exit(1);
--	}
--	print_buf = malloc(print_bytes);
--	if (!print_buf) {
--		fputs("Memory alloc failed\n\n", stderr);
--		exit(1);
--	}
-+	if (print_bytes > buf_size)
-+		die("Print_nbytes should be less then chunk_size in kb");
- 
--	fd = open(argv[6], O_RDONLY | flags);
--	if (fd == -1) {
--		fputs("Open failed\n\n", stderr);
--		exit(1);
--	}
-+	print_buf = xmalloc(print_bytes);
-+
-+	fd = xopen(argv[6], O_RDONLY | flags, 0);
- 
- 	for (i = 0; i < count; i++) {
- 		ret = pread(fd, buf, buf_size, offset + buf_size * i);
-@@ -480,20 +478,15 @@ static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
- 	offset = atoi(argv[1]);
- 	count = atoi(argv[2]);
- 
--	fd = open(argv[3], O_RDONLY | O_LARGEFILE);
--	if (fd == -1) {
--		fputs("Open failed\n\n", stderr);
--		exit(1);
--	}
-+	fd = xopen(argv[3], O_RDONLY | O_LARGEFILE, 0);
- 
- 	printf("Fiemap: offset = %08"PRIx64" len = %d\n", offset, count);
- 	for (i = 0; i < count; i++) {
- 		blknum = offset + i;
- 
--		if (ioctl(fd, FIBMAP, &blknum) < 0) {
--			fputs("FIBMAP failed\n\n", stderr);
--			exit(1);
--		}
-+		if (ioctl(fd, FIBMAP, &blknum) < 0)
-+			die_errno("FIBMAP failed");
-+
- 		printf("%u ", blknum);
- 	}
- 	printf("\n");
-@@ -559,18 +552,12 @@ static void do_defrag_file(int argc, char **argv, const struct cmd_desc *cmd)
- 	df.start = atoll(argv[1]);
- 	df.len = len = atoll(argv[2]);
- 
--	fd = open(argv[3], O_RDWR);
--	if (fd == -1) {
--		fputs("Open failed\n\n", stderr);
--		fputs(cmd->cmd_help, stderr);
--		exit(1);
--	}
-+	fd = xopen(argv[3], O_RDWR, 0);
- 
- 	ret = ioctl(fd, F2FS_IOC_DEFRAGMENT, &df);
--	if (ret < 0) {
--		perror("F2FS_IOC_DEFRAGMENT");
--		exit(1);
--	}
-+	if (ret < 0)
-+		die_errno("F2FS_IOC_DEFRAGMENT failed");
-+
- 	printf("defrag %s in region[%"PRIu64", %"PRIu64"]\n",
- 			argv[3], df.start, df.start + len);
- 	exit(0);
+-#include <sys/sysmacros.h>
+ #ifdef HAVE_SYS_SYSMACROS_H
+ #include <sys/sysmacros.h>
+ #endif
 -- 
-2.23.0.581.g78d2f28ef7-goog
+2.19.0.605.g01d371f741-goog
 
 
 
