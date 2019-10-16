@@ -6,67 +6,67 @@ X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC806ECE588
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Oct 2019 09:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4665ECE59D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Oct 2019 09:15:08 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BED552168B;
-	Wed, 16 Oct 2019 09:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8784221835;
+	Wed, 16 Oct 2019 09:15:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="UOXsqLzB";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="H1ckH0sw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BED552168B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Zdw1t711";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DEDKZmRS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8784221835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iKfIA-0005B2-FY; Wed, 16 Oct 2019 09:08:26 +0000
+	id 1iKfOe-0005W7-7l; Wed, 16 Oct 2019 09:15:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <koulihong@huawei.com>) id 1iKfI3-0005Al-6k
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Oct 2019 09:08:19 +0000
+ (envelope-from <koulihong@huawei.com>) id 1iKfOd-0005Vz-Dr
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Oct 2019 09:15:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
  CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/6JxGDGw+D0Q6Mveb97ahCfxTsGbmTyWy0g90X2qlxg=; b=UOXsqLzBIU0I80v589ujhhkM1h
- mLgOCpGCnxE31mFv65u9GZeHcjTW9hYrA6rEbXRqxcQrkqSr2EHcsopbJKE8PE31+SGxEGecgkgyo
- 8gRQLuVPjn5raXB1gArvVw/b5XepTxwur4ncsUhMYd1thAfdITkGrHPHc0GJ4HN/6VOQ=;
+ bh=/6JxGDGw+D0Q6Mveb97ahCfxTsGbmTyWy0g90X2qlxg=; b=Zdw1t711oS40mmfdevAFW25aPJ
+ Wllo0NpFc6hUn9vmLxo8QUe4KSiQ7qHLDwv31+b3IQHWhSexTpPqdiEuf5D1+SKvyOjzHWOEP9WNg
+ J1atjTeFPGKOOcgSRqwyUY9G7LByJVvfbydSMDVUeLPBX0C85KmUZsYeHPP98y8XGWRQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
  Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=/6JxGDGw+D0Q6Mveb97ahCfxTsGbmTyWy0g90X2qlxg=; b=H
- 1ckH0swjOwuVKi6J5njtZ8iiuFoCVhnHIX4Qyz3x+68lRnj5F8AJ6gqKTHaLz5chezk5Js3ShzHF/
- R3ekG8hlqrqRT6ul29e5C/TMD2x/GquBLOMfyCxML7T67MS3B+O0ZD0oeaHUf5WUCVTqnc8uoNtD8
- Kr0e9ukaZur34UMI=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=/6JxGDGw+D0Q6Mveb97ahCfxTsGbmTyWy0g90X2qlxg=; b=D
+ EDKZmRSwWZvlXCmYpIrZrze86wvBBpb6NPVwZfQTQumlzvIW7+XrnweK2aebnaBAX5rVjDZH4vj++
+ 0h0kkfx/ZxEAlhA9sYkS97Pi7msxwMyogBZcVAb9rIZV5AX+TuOVYOmaF9N7UN3QM2iIlT93Yp6pq
+ blVmADLeLgMCBpwE=;
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iKfHy-00BEDX-7f
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Oct 2019 09:08:19 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 75B03FD1271A2D5931E3;
- Wed, 16 Oct 2019 17:08:06 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
- 17:07:58 +0800
+ id 1iKfOb-003dDf-E8
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Oct 2019 09:15:07 +0000
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 60C051C46FA7E1FB048F;
+ Wed, 16 Oct 2019 17:14:58 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 16 Oct 2019
+ 17:14:51 +0800
 From: Lihong Kou <koulihong@huawei.com>
 To: <yuchao0@huawei.com>, <jaegeuk@kernel.org>
-Date: Wed, 16 Oct 2019 17:15:07 +0800
-Message-ID: <1571217309-63636-1-git-send-email-koulihong@huawei.com>
+Date: Wed, 16 Oct 2019 17:22:00 +0800
+Message-ID: <1571217722-88090-1-git-send-email-koulihong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 X-Originating-IP: [10.90.53.225]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1iKfHy-00BEDX-7f
+X-Headers-End: 1iKfOb-003dDf-E8
 Subject: [f2fs-dev] [PATCH 0/2] add a new fio cache for IPU.
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
