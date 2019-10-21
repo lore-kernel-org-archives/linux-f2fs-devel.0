@@ -1,85 +1,86 @@
-Return-Path: <SRS0=J485=YM=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=OISs=YO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312EFCA9EAC
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 19 Oct 2019 17:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEFECA9EAF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Oct 2019 20:28:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E478821925;
-	Sat, 19 Oct 2019 17:29:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A41882067B;
+	Mon, 21 Oct 2019 20:28:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cUWUFMD8";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fsvdra8A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E478821925
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="dkyI7LAz";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="mox/4fPY";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="an64t09X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A41882067B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iLsXh-0002QQ-9h; Sat, 19 Oct 2019 17:29:29 +0000
+	id 1iMeI2-0003V3-03; Mon, 21 Oct 2019 20:28:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <SRS0=44Pv=YM=bugzilla.kernel.org=bugzilla-daemon@kernel.org>)
- id 1iLsXg-0002QJ-PS
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 19 Oct 2019 17:29:28 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1iMeHz-0003Uu-7l
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Oct 2019 20:28:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3KCTk2oULbDJErHSjYJOiFGtR1vU+sJOc6/NNhetg7Q=; b=cUWUFMD8Tzh17ePgN0saPTepup
- SYR9vJu8lsoPahGsBicgI+zDDhFV65vh1spVLTB2Gy2jydifqAz2MItEjG7s4BVq0ov5DvtU8z/vR
- iIdqzaLgDqhbJ5STsbMh8TsrxHYMQpGnpooU4cUF/yh39fFwZloEbtXxZz3+wSrJQD5U=;
+ bh=w9mTEpUU8HqDNecb5o48iWRPNUYJj0A0dWSnU2dZhWc=; b=dkyI7LAzG/QYQ9E41XeSfUPbfr
+ n+9QC9iRfrNgRE57rwLo2fRcu4V6q5T/Bm7W0DDL8l0y9cXSuH6OGvPsQEodKLwSkNdwqWVX2iw0S
+ FKqYx3CfiVjs2xN8JAaBrzW82zAye54QQDw1MsIivkCy3fupVOjanMhe62zdSRdHsOPI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3KCTk2oULbDJErHSjYJOiFGtR1vU+sJOc6/NNhetg7Q=; b=fsvdra8AN+d38nhleHMuq+oUnV
- zLYsvouViceepz9/9eYeGNY3DfjDXIpH7XFLEtkCG09VO+dvemWA4LnN2lRHSAKAzLWvZgBxuICjJ
- 470/fBJEvDp0YtH7YYBY36darzrdvN3pIJf3VADln7P7s3mEanPHWlFPZognmXJe081I=;
+ bh=w9mTEpUU8HqDNecb5o48iWRPNUYJj0A0dWSnU2dZhWc=; b=mox/4fPYix/sdEOybuw6g8Syd0
+ rSTgLvXcIZdB8ItftF0ir5g0nifdE4Hb6Ffzoh6d9V/woOUhrd0bJUxnB0HwUkajBz0DMuWJU8hWL
+ vkpb1dKrgdM8xEV/Wu55NqUHNHZiqZuQdKnu85FCoKam0soOKeXF4D0KIEidCb2JyxfY=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iLsXf-00EWTA-Kd
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 19 Oct 2019 17:29:28 +0000
-From: bugzilla-daemon@bugzilla.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Sat, 19 Oct 2019 17:29:21 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: blocking
-X-Bugzilla-Who: rogan6710@gmail.com
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-205181-202145-SPBaCnXuGt@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-205181-202145@https.bugzilla.kernel.org/>
-References: <bug-205181-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ id 1iMeHw-00AeMw-5m
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Oct 2019 20:28:26 +0000
+Received: from gmail.com (unknown [104.132.1.77])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 95FF12067B;
+ Mon, 21 Oct 2019 20:28:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1571689693;
+ bh=yuyYH5txUJFQLMmsUgKioVsaetUA4KvG58kwl612GrY=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=an64t09Xy6VRXqPUL3GAIscODkfzQVFm3dpCFD2yIaAOE6cETIfhBMD87q+snEVE5
+ Rom5MN9qzxQyKuQxxFpZ/OaBDo1FMMMEv9GyNL58gw4pnsTnZfAmj0n8bJyss80aop
+ /MWy7freDt/FEOXG2dZ+xcYBu84nosqqtIrbVFc0=
+Date: Mon, 21 Oct 2019 13:28:12 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Message-ID: <20191021202811.GB122863@gmail.com>
+Mail-Followup-To: linux-fscrypt@vger.kernel.org,
+ "Theodore Y . Ts'o" <tytso@mit.edu>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net,
+ Chandan Rajendra <chandan@linux.ibm.com>
+References: <20191009234038.224587-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1iLsXf-00EWTA-Kd
-Subject: [f2fs-dev] [Bug 205181] kernel panic when accessing btrfs root
- device with f2fs in kernel
+Content-Disposition: inline
+In-Reply-To: <20191009234038.224587-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Headers-End: 1iMeHw-00AeMw-5m
+Subject: Re: [f2fs-dev] [PATCH] fscrypt: remove struct fscrypt_ctx
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,19 +92,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+ "Theodore Y . Ts'o" <tytso@mit.edu>, Chandan Rajendra <chandan@linux.ibm.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=205181
+On Wed, Oct 09, 2019 at 04:40:38PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Now that ext4 and f2fs implement their own post-read workflow that
+> supports both fscrypt and fsverity, the fscrypt-only workflow based
+> around struct fscrypt_ctx is no longer used.  So remove the unused code.
+> 
+> This is based on a patch from Chandan Rajendra's "Consolidate FS read
+> I/O callbacks code" patchset, but rebased onto the latest kernel, folded
+> __fscrypt_decrypt_bio() into fscrypt_decrypt_bio(), cleaned up
+> fscrypt_initialize(), and updated the commit message.
+> 
+> Originally-from: Chandan Rajendra <chandan@linux.ibm.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
---- Comment #4 from Roger (rogan6710@gmail.com) ---
-Thanks for the quick response
-4.19.80 works just fine here :)
+Applied to fscrypt.git for 5.5.
 
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+- Eric
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
