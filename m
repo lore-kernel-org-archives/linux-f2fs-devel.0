@@ -2,81 +2,79 @@ Return-Path: <SRS0=OISs=YO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B38CA9EAF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Oct 2019 23:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FA4CA9EAF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Oct 2019 23:07:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BC3DD2086D;
-	Mon, 21 Oct 2019 23:07:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B9BFA2086D;
+	Mon, 21 Oct 2019 23:07:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="j0XA07r0";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="R6RUFQzA";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugZlVU71"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC3DD2086D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="SK80TvLW";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Ua/W2MgV";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFqCooku"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9BFA2086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iMgly-0001Wg-AN; Mon, 21 Oct 2019 23:07:34 +0000
+	id 1iMgm1-0001XA-C4; Mon, 21 Oct 2019 23:07:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1iMglv-0001WV-KK
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Oct 2019 23:07:31 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1iMgly-0001Wd-9H
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Oct 2019 23:07:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Q3+/omaHofztb4vpeFhTw9BhsA0D0qudt+LOtoFjhvI=; b=j0XA07r00cdFft/U5tJ0Xh6ncx
- QDXh2Cgq6PxZMZfSuN+Tw/pm+Fzt8EDmSI4mtVw19v6E5VFH/25VmnJKaUfE4PRIYM6ZFMzhtYuZf
- ieKfiF6ZTV0hieXeZqVxPSxaizhBj9o35td41eOvI4t2dTLddkntAJTxwgm2p/hWz+4Y=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Q3+/omaHofztb4vpeFhTw9BhsA0D0qudt+LOtoFjhvI=; b=R6RUFQzAfAm7kCY2ykVgTVRUNP
- zraZvdEqGty1znNKQk8WVtvh6NNotoSD9gnDcuybQi1R84YNZwXWhMQGQhCmpaeMSisZWE5p8Rb/X
- 4yZ2K5qAMPmTcKwY6Wf5qiv6bb/6wIW6WU1VUbJhv4P4ShjoKXTP/iGHM+5UESKc2/vA=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=etEiCtfrTlCjrPUc0CX+ZxcbeglYBiC+EqMURFd7jpo=; b=SK80TvLWdOkE6JHDyUe706zaeG
+ k0dAmrnrnzMybuQiykMv+yIoAB7w/gSBFgQlBmfFDYqux5AYlPGHkdyar04H7fNKVfhfB85JETIUV
+ 7HJ+3UYqBUTzI3Tt6qz2U2RB1Xfu+zSlaa+P+qEn344A67EBM8rOKXz1miGfNKF1CL10=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=etEiCtfrTlCjrPUc0CX+ZxcbeglYBiC+EqMURFd7jpo=; b=U
+ a/W2MgVJILhe5q2CTimVln+BVU4Yq6YuUraydOPbXOavCQViqarcEujw75xNpFIca5r4zV1UfSELV
+ DX9kfM5tV6VTI6BLjHVsSzACmctTXGn4sN85CNq/OnBDsM18g3fZME6usGlQAP8UzQ2abfaycdm/+
+ Fm+Yvx7hkzV3VlK4=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iMglt-00Alou-Nw
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Oct 2019 23:07:31 +0000
+ id 1iMglw-00GIlh-VZ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Oct 2019 23:07:34 +0000
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown
  [104.132.1.77])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 1FDC1214B2;
- Mon, 21 Oct 2019 23:07:23 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id C812F2086D;
+ Mon, 21 Oct 2019 23:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1571699243;
- bh=FOZqGhYE8h24wrGESr8UoajZvJ4ZhQMu8xtIorR38Mk=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=ugZlVU71CDPVEBBv+7mmMCXCOR/73fpd09Y3fz2dQKbpafoZNlX3Z/3sBct//NlFo
- d3wuK8xF+3fONl/cS+b6joBgZinmWacixf7sN2KKwKUFXJfHvc6Si8+Uo/RdmC6QX7
- bBScYAjOsBmiql1BpxMRy85tJPZtJxdr/65dcmxo=
+ s=default; t=1571699242;
+ bh=Pe7Lis/ulx8/IwkmeLuv53LKYhthEU3xhU7qcvrWXZ8=;
+ h=From:To:Cc:Subject:Date:From;
+ b=KFqCookuLvhUWmmwBtVb2etKPO0Oto0GcX9cwodQRQNs2/xlaPbje2qinGny1YdhG
+ 34Z6+AuL/AuHZ/lDvAKibQh0ft7asFQOQiIoMfRwwMVndg90X1oJg9z7TTsgGx/cQ9
+ 3FPe8cmn2ZRnZyEzQrXJ9OGqx45lrhuB5zRNyYLI=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Mon, 21 Oct 2019 16:03:55 -0700
-Message-Id: <20191021230355.23136-4-ebiggers@kernel.org>
+Date: Mon, 21 Oct 2019 16:03:52 -0700
+Message-Id: <20191021230355.23136-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.23.0.866.gb869b98d4c-goog
-In-Reply-To: <20191021230355.23136-1-ebiggers@kernel.org>
-References: <20191021230355.23136-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1iMglt-00Alou-Nw
-Subject: [f2fs-dev] [PATCH 3/3] f2fs: add support for INLINE_CRYPT_OPTIMIZED
- encryption policies
+X-Headers-End: 1iMglw-00GIlh-VZ
+Subject: [f2fs-dev] [PATCH 0/3] fscrypt: support for
+ inline-encryption-optimized policies
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,56 +94,55 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+Hello,
 
-f2fs inode numbers are stable across filesystem resizing, and f2fs inode
-and file logical block numbers are always 32-bit.  So f2fs can always
-support INLINE_CRYPT_OPTIMIZED encryption policies.  Wire up the needed
-fscrypt_operations to declare support.
+In preparation for adding inline encryption support to fscrypt, this
+patchset adds a new fscrypt policy flag which modifies the encryption to
+be optimized for inline encryption hardware compliant with the UFS
+standard --- specifically, to use a smaller number of keys while still
+using at most 64 IV bits.  This required adding the inode number to the
+IVs.  For ext4, this precludes filesystem shrinking, so I've also added
+a compat feature which will prevent the filesystem from being shrunk.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/super.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+I've separated this from the full "Inline Encryption Support" patchset
+(https://lkml.kernel.org/linux-fsdevel/20190821075714.65140-1-satyat@google.com/)
+to avoid conflating an implementation (inline encryption) with a new
+on-disk format (INLINE_CRYPT_OPTIMIZED).  This patchset purely adds
+support for INLINE_CRYPT_OPTIMIZED policies to fscrypt, but implements
+them using the existing filesystem layer crypto.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1443cee158633..851ac95229263 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2308,13 +2308,27 @@ static bool f2fs_dummy_context(struct inode *inode)
- 	return DUMMY_ENCRYPTION_ENABLED(F2FS_I_SB(inode));
- }
- 
-+static bool f2fs_has_stable_inodes(struct super_block *sb)
-+{
-+	return true;
-+}
-+
-+static void f2fs_get_ino_and_lblk_bits(struct super_block *sb,
-+				       int *ino_bits_ret, int *lblk_bits_ret)
-+{
-+	*ino_bits_ret = 8 * sizeof(nid_t);
-+	*lblk_bits_ret = 8 * sizeof(block_t);
-+}
-+
- static const struct fscrypt_operations f2fs_cryptops = {
--	.key_prefix	= "f2fs:",
--	.get_context	= f2fs_get_context,
--	.set_context	= f2fs_set_context,
--	.dummy_context	= f2fs_dummy_context,
--	.empty_dir	= f2fs_empty_dir,
--	.max_namelen	= F2FS_NAME_LEN,
-+	.key_prefix		= "f2fs:",
-+	.get_context		= f2fs_get_context,
-+	.set_context		= f2fs_set_context,
-+	.dummy_context		= f2fs_dummy_context,
-+	.empty_dir		= f2fs_empty_dir,
-+	.max_namelen		= F2FS_NAME_LEN,
-+	.has_stable_inodes	= f2fs_has_stable_inodes,
-+	.get_ino_and_lblk_bits	= f2fs_get_ino_and_lblk_bits,
- };
- #endif
- 
+We're planning to make the *implementation* (filesystem layer or inline
+crypto) be controlled by a mount option '-o inlinecrypt'.
+
+This patchset applies to fscrypt.git#master and can also be retrieved from
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-crypt-optimized-v1
+
+A ciphertext verification test for INLINE_CRYPT_OPTIMIZED policies can
+be found at
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git/log/?h=inline-encryption
+
+Work-in-progress patches for the inline encryption implementation of
+both INLINE_CRYPT_OPTIMIZED and regular policies can be found at
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=inline-encryption-wip
+
+Eric Biggers (3):
+  fscrypt: add support for inline-encryption-optimized policies
+  ext4: add support for INLINE_CRYPT_OPTIMIZED encryption policies
+  f2fs: add support for INLINE_CRYPT_OPTIMIZED encryption policies
+
+ Documentation/filesystems/fscrypt.rst | 53 +++++++++++++++++++--------
+ fs/crypto/crypto.c                    | 11 +++++-
+ fs/crypto/fscrypt_private.h           | 20 +++++++---
+ fs/crypto/keyring.c                   |  6 ++-
+ fs/crypto/keysetup.c                  | 47 +++++++++++++++++++-----
+ fs/crypto/policy.c                    | 42 ++++++++++++++++++++-
+ fs/ext4/ext4.h                        |  2 +
+ fs/ext4/super.c                       | 14 +++++++
+ fs/f2fs/super.c                       | 26 ++++++++++---
+ include/linux/fscrypt.h               |  3 ++
+ include/uapi/linux/fscrypt.h          | 15 ++++----
+ 11 files changed, 191 insertions(+), 48 deletions(-)
+
 -- 
 2.23.0.866.gb869b98d4c-goog
 
