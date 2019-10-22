@@ -2,41 +2,42 @@ Return-Path: <SRS0=7Gzg=YP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D04A7CA9EA0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Oct 2019 13:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4B5CA9EA0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Oct 2019 16:15:24 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9A44D2064B;
-	Tue, 22 Oct 2019 13:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9ACE320B7C;
+	Tue, 22 Oct 2019 16:15:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="MucT/mo8";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cMniiBli"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A44D2064B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="gLzdMfGN";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IC92ZTZL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tw1A3NnY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ACE320B7C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iMuLr-0004np-21; Tue, 22 Oct 2019 13:37:31 +0000
+	id 1iMwod-0007HN-UR; Tue, 22 Oct 2019 16:15:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1iMuLq-0004ni-Ew
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Oct 2019 13:37:30 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1iMwod-0007HG-4H
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Oct 2019 16:15:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GsBYi5v9BsB5DsrG/6gHghdK7YwKX1r2G/hPXjE3+jE=; b=MucT/mo8nuaiuuYZCddfkIxo2b
- qpFk88HgT6brzxr5Um5aAL6yBhdKp2MInH+6DlfNAMVwEDUxP2nHmI/KdaG2dCyDJkHAXuEj591Xc
- RtetoptVspcnK9ybsIVSubwdWSh7QYimWRM0FMuJlir+M9FzBpbqKUwWEY5dypf9bLHM=;
+ bh=Fkcn/+FPnDLmW3xRlllpDFLClvQht+GCWPUdS3itGIU=; b=gLzdMfGNeghXCzk7WFh6cpIEDN
+ Vkyo5S21zGSaUbahQmu4KlnrQRZXpeMC3anVDOfmwddOhdy0QFaT796wFpYs18DER7Fb8LMO6X1ZE
+ v2CPkT9wcf0Q8o6Swr2+g42h4BLpdhMGDkDLlTH2B/dzg9jZAiY5WjNELtS+87m1RxLQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,35 +45,49 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GsBYi5v9BsB5DsrG/6gHghdK7YwKX1r2G/hPXjE3+jE=; b=cMniiBliiIBSwI1Nkr4iDYDePC
- P7d6J0zGyMxFlvFrH/B+MHpAKc30FUSzv9T+rV6n2Evf5vb9IzT9w/vtqV9SV53kphCaLwcmqGuET
- wNTdos3uAyvbBljNP+qjnHcbacHrqJLtxrUuD7qrKjTzi6tUQyUqYdVTDaVzoQRtsdVU=;
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=Fkcn/+FPnDLmW3xRlllpDFLClvQht+GCWPUdS3itGIU=; b=IC92ZTZLsJbAjqSVAxvfFUFvVM
+ hYbpgNrwMtFzHsHruzUPgU5r8QDW3KNsE4zXAaD2yInvvKY9KLv4VYCisV5MZGrZVn9p3O0RxdOKD
+ 2BLpxNtqphVtSFHCy9TcfWFjCGlf87YwH+33SdR6EBZGpXG5s4t03M+opZpoYYZ7BOMk=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iMuLo-00BV2m-5L
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Oct 2019 13:37:30 +0000
-Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com
- [104.133.0.98] (may be forged)) (authenticated bits=0)
- (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9MDbIXp024473
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 22 Oct 2019 09:37:19 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 52E2C420456; Tue, 22 Oct 2019 09:37:16 -0400 (EDT)
-Date: Tue, 22 Oct 2019 09:37:16 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20191022133716.GB23268@mit.edu>
+ id 1iMwoY-00GvI4-9z
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Oct 2019 16:15:22 +0000
+Received: from gmail.com (unknown [104.132.1.77])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 8FF7820B7C;
+ Tue, 22 Oct 2019 16:15:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1571760907;
+ bh=jm5gtMdP07KkfSKxsAaLk29QiN6xgSCjIxXzWNwp05Q=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=Tw1A3NnYtI/hR1ki4FEWB3YJEGkTwWqRbzz5wAUUuaaqe5I2DkOH6rOIRlPiV6mBp
+ 8hg+XebiRYNX6glDUPm6qws0Blwt6JXLIz3oSFDdtyOpuwQKfmhQR2xaabA+/vIXu4
+ kqEc9MyvQw505uyQ1NTTQjFrmJWMR83hZMwcQRlY=
+Date: Tue, 22 Oct 2019 09:15:06 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>
+Message-ID: <20191022161504.GA229362@gmail.com>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+ Dave Chinner <david@fromorbit.com>, linux-fscrypt@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+ Paul Crowley <paulcrowley@google.com>,
+ Paul Lawrence <paullawrence@google.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>
 References: <20191021230355.23136-1-ebiggers@kernel.org>
- <20191021230355.23136-3-ebiggers@kernel.org>
+ <20191021230355.23136-2-ebiggers@kernel.org>
+ <20191022052712.GA2083@dread.disaster.area>
+ <20191022060004.GA333751@sol.localdomain>
+ <20191022133001.GA23268@mit.edu>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20191021230355.23136-3-ebiggers@kernel.org>
+In-Reply-To: <20191022133001.GA23268@mit.edu>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1iMuLo-00BV2m-5L
-Subject: Re: [f2fs-dev] [PATCH 2/3] ext4: add support for
- INLINE_CRYPT_OPTIMIZED encryption policies
+X-Headers-End: 1iMwoY-00GvI4-9z
+Subject: Re: [f2fs-dev] [PATCH 1/3] fscrypt: add support for
+ inline-encryption-optimized policies
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,37 +99,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net, Satya Tangirala <satyat@google.com>,
- Paul Lawrence <paullawrence@google.com>, linux-fscrypt@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, Dave Chinner <david@fromorbit.com>,
+ Satya Tangirala <satyat@google.com>, Paul Lawrence <paullawrence@google.com>,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+ Paul Crowley <paulcrowley@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Oct 21, 2019 at 04:03:54PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Tue, Oct 22, 2019 at 09:30:01AM -0400, Theodore Y. Ts'o wrote:
+> > An alternative which would work nicely on ext4 and xfs (if xfs supported
+> > fscrypt) would be to pass the physical block number as the DUN.  However, that
+> > wouldn't work at all on f2fs because f2fs moves data blocks around.  And since
+> > most people who want to use this are using f2fs, f2fs support is essential.
 > 
-> INLINE_CRYPT_OPTIMIZED encryption policies have special requirements
-> from the filesystem:
-> 
-> - Inode numbers must never change, even if the filesystem is resized
-> - Inode numbers must be <= 32 bits
-> - File logical block numbers must be <= 32 bits
+> And that is something fscrypt supports already, so if people really
+> did want to use 64-bit logical block numbers, they could do that, at
+> the cost of giving up the ability to shrink the file system (which XFS
+> doesn't support anyway....)
 
-You need to guarantee more than this; you also need to guarantee that
-the logical block number may not change.  Fortunately, because the
-original per-file key scheme used a logical block tweak, we've
-prohibited this already, and we didn't relax this restriction for
-files encrpyted using DIRECT_KEY.  So it's a requirement which we
-already meet, but we should document this requirement explicitly ---
-both here and also in Documentations/filesystems/fscrypt.rst.
+I was talking about the physical block number (offset from the start of the
+filesystem -- ext4_fsblk_t on ext4), not the file logical block number (offset
+in the file data -- ext4_lblk_t on ext4).  fscrypt doesn't currently support
+using the physical block number.
 
-Otherwise, looks good.  Feel free to add:
-
-Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-
-						- Ted
+- Eric
 
 
 _______________________________________________
