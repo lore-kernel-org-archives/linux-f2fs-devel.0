@@ -6,40 +6,37 @@ X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1061CA9EB6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Oct 2019 09:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDD3CA9EB6
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Oct 2019 12:57:33 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BF9032064A;
-	Wed, 23 Oct 2019 09:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id AF58520640;
+	Wed, 23 Oct 2019 12:57:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="UcWIMil1";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="SckFuRTr";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BLqXj+n0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9032064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Riy4e/zn";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="B3KS/hs0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF58520640
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iNDMw-0000KV-Et; Wed, 23 Oct 2019 09:55:54 +0000
+	id 1iNGCi-00054J-Oc; Wed, 23 Oct 2019 12:57:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <BATV+9c86d9a8f0f754250c00+5904+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1iNDMv-0000KE-Lu
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Oct 2019 09:55:53 +0000
+ (envelope-from <tytso@mit.edu>) id 1iNGCh-00054C-G4
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Oct 2019 12:57:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CS6l8CT81d+rQTdwvtyepLT7A36udW9pzFL6uXC4imE=; b=UcWIMil1NfeJpvQmoytK6Y9Pf5
- Q7eEa/2ncrlNa7dK7nawNkhNR8HuLIUZkI4K76PHzxc4hStZu5igZJelSy+6Smlz+MWMl21IB3vfs
- YR5q901JSguGcHylmFnSgqkegh3GRIClOyp4RdlNxemNA8BiCI8WtfszvoX5I3+KLskg=;
+ bh=l2cQJDoUTRUcJk4WJHtfIvuEu/pcOoRpz7qkEPnP9rM=; b=Riy4e/znNSsuZXISHM0cb7qF2C
+ gzJYnFpd4RumH7VOHI5BiDQRqwSbVCJ3huLV1dLtpQ28gFe1x3pa9oJ44WdQyLkUPU18ds9rKX6z0
+ vSlh6Cw0pw0pIWHWu28K8k6RTcHS58MOYK8hiLyrB/hiT4du30N2iOCtHO7viPam1PIk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -47,44 +44,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=CS6l8CT81d+rQTdwvtyepLT7A36udW9pzFL6uXC4imE=; b=SckFuRTrP93TCH7LDdBszzfhiK
- TvV9oh2HbH0ujhoG77SH9MWod2hbpq/FYFe0NmzW43qN8xwdAnr8U1tGMp/kjy6aEENU+Hs324MRz
- Eb0FAB2Zafa4fPQGm9uvGDyYMlQ8tWf+QZ/qdlVPOjIauyOYG3E/b9+aP14ocKuXbjkc=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=l2cQJDoUTRUcJk4WJHtfIvuEu/pcOoRpz7qkEPnP9rM=; b=B3KS/hs0BPDVVoifLtbZ3GbS0q
+ pMaC4897oJv1XqVCPHuzJkjCYsvIa0YooYiJGXJrHO4PLXY7KL9TGT19fgpkjtWB/p83pxELGL8eX
+ L9Evp7qhRfZIeBlwsM5YxdZ8AkPWlbJZoNFiZYa6q2d7kZGwD8qbXyM7ScCHfvbP/qvo=;
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iNDMu-000CRr-Hb
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Oct 2019 09:55:53 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CS6l8CT81d+rQTdwvtyepLT7A36udW9pzFL6uXC4imE=; b=BLqXj+n0cwZj+xiVhD0XhdVei
- navF1Vt+rLXP1v7NYN0DwsLlyVpVgZh+yFR10a5/X2B7j/Lh0O6eW4BPu/ng3uRA/b7oM5S6SGWai
- T2du0PWd3hVEF1n4vFNAZCk3h1rFrgbgjnuIjEdY5nDO90O6MwpyCPhVjiKmUkObL0obrudYfo6hI
- jPO7TRXi/sVj1GzA5tyQ2h0gKfgewSqnR2TfQH03LAru5wMdXnjuKtCQGvIjvyNYy35Lg+/WawQvz
- wsunSBUm4u2U9h5hHI+mT+7qLtlQ2j5WzJcHjJlfMHS6gFPZmOTeVzZtqnTJLBm73f4ilwewrH/Oc
- l+a00VBKw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1iNCvH-0006p0-0m; Wed, 23 Oct 2019 09:27:19 +0000
-Date: Wed, 23 Oct 2019 02:27:18 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Message-ID: <20191023092718.GA23274@infradead.org>
+ id 1iNGCf-000JHl-Hs
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Oct 2019 12:57:31 +0000
+Received: from callcc.thunk.org (guestnat-104-133-0-98.corp.google.com
+ [104.133.0.98] (may be forged)) (authenticated bits=0)
+ (User authenticated as tytso@ATHENA.MIT.EDU)
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x9NCv1VA016128
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 23 Oct 2019 08:57:02 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+ id 3FF4B420456; Wed, 23 Oct 2019 08:57:01 -0400 (EDT)
+Date: Wed, 23 Oct 2019 08:57:01 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Christoph Hellwig <hch@infradead.org>
+Message-ID: <20191023125701.GA2460@mit.edu>
 References: <20191021230355.23136-1-ebiggers@kernel.org>
  <20191021230355.23136-2-ebiggers@kernel.org>
  <20191022052712.GA2083@dread.disaster.area>
  <20191022060004.GA333751@sol.localdomain>
  <20191022133001.GA23268@mit.edu>
+ <20191023092718.GA23274@infradead.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20191022133001.GA23268@mit.edu>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1iNDMu-000CRr-Hb
+In-Reply-To: <20191023092718.GA23274@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Headers-End: 1iNGCf-000JHl-Hs
 Subject: Re: [f2fs-dev] [PATCH 1/3] fscrypt: add support for
  inline-encryption-optimized policies
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -107,14 +97,42 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Oct 22, 2019 at 09:30:01AM -0400, Theodore Y. Ts'o wrote:
-> If and when we actually get inline crypto support for server-class
-> systems, hopefully they will support 128-bit DUN's, and/or they will
-> have sufficiently fast key load times such that we can use per-file
-> keying.
+On Wed, Oct 23, 2019 at 02:27:18AM -0700, Christoph Hellwig wrote:
+> On Tue, Oct 22, 2019 at 09:30:01AM -0400, Theodore Y. Ts'o wrote:
+> > If and when we actually get inline crypto support for server-class
+> > systems, hopefully they will support 128-bit DUN's, and/or they will
+> > have sufficiently fast key load times such that we can use per-file
+> > keying.
+> 
+> NVMe is working on a key per I/O feature.  So at very least the naming
+> of this option should be "crappy_underwhelming_embedded_inline_crypto"
 
-NVMe is working on a key per I/O feature.  So at very least the naming
-of this option should be "crappy_underwhelming_embedded_inline_crypto"
+If and when the vaporware shows up in real hardware, and assuming that
+fscrypt is useful for this hardware, we can name it
+"super_duper_fancy_inline_crypto".  :-)
+
+Remember that fscrypt only encrypts the data and the file name.  It
+doesn't encrypt the metadata.  It has very specific use cases for
+Android and ChromeOS where you have multiple users that need to use
+different keys, and in the case of ChromeOS, we want to be able to
+efficiently use the space so that while user A is logged in, we can
+delete files in user B's cache directory without user B's keys being
+present.  (This is why we can't use fixed per-user partitions with
+dm-crypt; that solution was considered and rejected before we started
+work on fscrypt.)
+
+If you aren't working under tight space and cost constraints, it's
+actually better to encrypt the whole partition, so that all of the
+metadata can be protected.  fscrypt is deployed in millions and
+millions of devices, and is solving real world problems.  However, it
+never claimed to be the only way to address encryption in the storage
+stack --- and it's not at all clear fscrypt is the way that makes the
+most amount of sense for NVMe devices.  So let's cross that bridge
+when we get to it.
+
+Cheers,
+
+	       	   	      	       	      - Ted
 
 
 _______________________________________________
