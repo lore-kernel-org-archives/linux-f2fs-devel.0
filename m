@@ -4,77 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2174CA9EAF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Oct 2019 20:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E411ACA9EAF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Oct 2019 21:57:18 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 99BF520578;
-	Thu, 24 Oct 2019 20:47:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A7F5A222CD;
+	Thu, 24 Oct 2019 21:57:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="LzqOl7Y3";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="AtU4VHEf";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFsIDGH6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99BF520578
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="II+B+l34";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="NDd3bbzU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WeOTzezS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F5A222CD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iNk0l-0000VA-Pd; Thu, 24 Oct 2019 20:47:11 +0000
+	id 1iNl6c-00064C-4a; Thu, 24 Oct 2019 21:57:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1iNk0k-0000V1-7W
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Oct 2019 20:47:10 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1iNl6b-000645-1f
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Oct 2019 21:57:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NFeOE+rLFk+Yp5PiLBN3oJPpICjLHV6n++qqL8qcqyc=; b=LzqOl7Y3mMMo+71AUyMjLz0OIK
- zrj8JsXr7c0/bA0y/xUzt9+jHxL3eGIhfgKzDCjch9xaa6mxIxwg3Vd+3XT4gPeEcck3+Vglyt2X6
- ia3uqieON6LVoW7pLCrmDyzJeZMdWT7fIyjg7wzwsKN+lPZQZ9kADIbW9zbt5Fm3VrnM=;
+ bh=Qu9hStTOx3q0SHZZWl0owzLLeI9jLUcX/G95iJY5xa0=; b=II+B+l342u/bjiBT5ZkkGZQ6Le
+ NTRm8jteGNRdPdsVAmVhqcTnQdwAIPDmE10NkqFORr/uG0idofCouo+dt1Wg1V9h3nO5Wz5pmhYb4
+ W0CO4Fzva+KWv9+a+mpfqWS8WOPF5LfVrirAjw5fqzOiIXD6MyLORZOgwDM2CkWRyxtg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=NFeOE+rLFk+Yp5PiLBN3oJPpICjLHV6n++qqL8qcqyc=; b=A
- tU4VHEfUQ8d4yI+d1xMeQ/Qppg8qkrKExcCdpGZn8efa/Vm86IcFf98/EHqs7seKcJ+fNocth6TI3
- uhYEu3sQjkPnf5DEkVkjYbVeG+vKs4eBARL7cKx7l9Pz4wPgf9ZOhlG7sKzr35LEhJU6ILEawG8Eg
- Roaj62y7YWB4N008=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Qu9hStTOx3q0SHZZWl0owzLLeI9jLUcX/G95iJY5xa0=; b=NDd3bbzUTS2XiWdMB5pTvh3ZWY
+ mtVQd2n7q6+SPhAdg5dmvqyxdJ5uu4z7BgZCutx0uOBsvZQ1RtqpsC2NsOUor2YncJmKtr/5MdjRK
+ cs2n6EC/x+zy09N+4jfPIeRhg/OpNE6SybjvfpdFTje/NltLBOX8dtnDbOYB5YeqLXro=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iNk0i-002MHv-T5
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Oct 2019 20:47:10 +0000
+ id 1iNl6Z-00FjuV-MJ
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Oct 2019 21:57:16 +0000
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown
  [104.132.1.77])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 5B5CC20578;
- Thu, 24 Oct 2019 20:46:58 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 2D22E21BE5;
+ Thu, 24 Oct 2019 21:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1571950018;
- bh=qG//jemOf0oV7yOFCo4p6dDb+1bp2vMf1ErKHQyQct0=;
- h=From:To:Cc:Subject:Date:From;
- b=BFsIDGH6/024dJ2xIIQ7ihyt6NIegUJ5bXhyScRWsj0UNXJZKfMNrB7tsv8pnQTWu
- uDl89+oVJLG33wo3AbKwcDK2LuGFuZb2LEPjjEQSQXPyhiEgJmKvedkODYJIsKglqx
- UiViBdydGTvrFYA50tJkpzYjndSIbYEOFwU98lzA=
+ s=default; t=1571954228;
+ bh=+8luL/bZbW80xKvD+Y5+ihdXdtrAmLOtrJQG9TlkZRw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=WeOTzezSHVhFDUS3z1MVMNpVpZbieE7y3cb8AVhIwjOipEey9gdJHO8RTPjScbkIN
+ jlnEOEd1d386nG02+5FZio0Jh/ncn3P50e86w9T4B29QcJIRQo0pJOzxuDTtOVwFQB
+ h0EBva4YYLMQzuwTPA/bB9fWPVxQklx00kF/mkmg=
 From: Eric Biggers <ebiggers@kernel.org>
-To: fstests@vger.kernel.org
-Date: Thu, 24 Oct 2019 13:45:29 -0700
-Message-Id: <20191024204529.90714-1-ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Thu, 24 Oct 2019 14:54:37 -0700
+Message-Id: <20191024215438.138489-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
+In-Reply-To: <20191024215438.138489-1-ebiggers@kernel.org>
+References: <20191024215438.138489-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1iNk0i-002MHv-T5
-Subject: [f2fs-dev] [PATCH] common/rc: skip encrypted direct I/O tests on
- f2fs
+X-Headers-End: 1iNl6Z-00FjuV-MJ
+Subject: [f2fs-dev] [PATCH v2 2/3] ext4: add support for IV_INO_LBLK_64
+ encryption policies
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,44 +88,93 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, "Theodore Y . Ts'o" <tytso@mit.edu>,
+ Satya Tangirala <satyat@google.com>, Paul Lawrence <paullawrence@google.com>,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org, Paul Crowley <paulcrowley@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Skip the O_DIRECT tests on f2fs when the test_dummy_encryption mount
-option is given, for the same reason as given for ext4 in
-commit 9b154b26e4a1 ("common/rc: ext4 doesn't support O_DIRECT with
-encryption").
+IV_INO_LBLK_64 encryption policies have special requirements from the
+filesystem beyond those of the existing encryption policies:
+
+- Inode numbers must never change, even if the filesystem is resized.
+- Inode numbers must be <= 32 bits.
+- File logical block numbers must be <= 32 bits.
+
+ext4 has 32-bit inode and file logical block numbers.  However,
+resize2fs can re-number inodes when shrinking an ext4 filesystem.
+
+However, typically the people who would want to use this format don't
+care about filesystem shrinking.  They'd be fine with a solution that
+just prevents the filesystem from being shrunk.
+
+Therefore, add a new feature flag EXT4_FEATURE_COMPAT_STABLE_INODES that
+will do exactly that.  Then wire up the fscrypt_operations to expose
+this flag to fs/crypto/, so that it allows IV_INO_LBLK_64 policies when
+this flag is set.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- common/rc | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/ext4/ext4.h  |  2 ++
+ fs/ext4/super.c | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/common/rc b/common/rc
-index cfaabf10..7c94307a 100644
---- a/common/rc
-+++ b/common/rc
-@@ -2216,10 +2216,13 @@ _require_xfs_io_command()
- # check that kernel and filesystem support direct I/O
- _require_odirect()
- {
--	if [ $FSTYP = "ext4" ] ; then
-+	if [ $FSTYP = "ext4" ] || [ $FSTYP = "f2fs" ] ; then
- 		if echo "$MOUNT_OPTIONS" | grep -q "test_dummy_encryption"; then
--			_notrun "ext4 encryption doesn't support O_DIRECT"
--		elif echo "$MOUNT_OPTIONS" | grep -q "data=journal"; then
-+			_notrun "$FSTYP encryption doesn't support O_DIRECT"
-+		fi
-+	fi
-+	if [ $FSTYP = "ext4" ] ; then
-+		if echo "$MOUNT_OPTIONS" | grep -q "data=journal"; then
- 			_notrun "ext4 data journaling doesn't support O_DIRECT"
- 		fi
- 	fi
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 03db3e71676ce..b3a2cc7c0252f 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1678,6 +1678,7 @@ static inline bool ext4_verity_in_progress(struct inode *inode)
+ #define EXT4_FEATURE_COMPAT_RESIZE_INODE	0x0010
+ #define EXT4_FEATURE_COMPAT_DIR_INDEX		0x0020
+ #define EXT4_FEATURE_COMPAT_SPARSE_SUPER2	0x0200
++#define EXT4_FEATURE_COMPAT_STABLE_INODES	0x0800
+ 
+ #define EXT4_FEATURE_RO_COMPAT_SPARSE_SUPER	0x0001
+ #define EXT4_FEATURE_RO_COMPAT_LARGE_FILE	0x0002
+@@ -1779,6 +1780,7 @@ EXT4_FEATURE_COMPAT_FUNCS(xattr,		EXT_ATTR)
+ EXT4_FEATURE_COMPAT_FUNCS(resize_inode,		RESIZE_INODE)
+ EXT4_FEATURE_COMPAT_FUNCS(dir_index,		DIR_INDEX)
+ EXT4_FEATURE_COMPAT_FUNCS(sparse_super2,	SPARSE_SUPER2)
++EXT4_FEATURE_COMPAT_FUNCS(stable_inodes,	STABLE_INODES)
+ 
+ EXT4_FEATURE_RO_COMPAT_FUNCS(sparse_super,	SPARSE_SUPER)
+ EXT4_FEATURE_RO_COMPAT_FUNCS(large_file,	LARGE_FILE)
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index dd654e53ba3d9..b3cbf8622eab6 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1345,6 +1345,18 @@ static bool ext4_dummy_context(struct inode *inode)
+ 	return DUMMY_ENCRYPTION_ENABLED(EXT4_SB(inode->i_sb));
+ }
+ 
++static bool ext4_has_stable_inodes(struct super_block *sb)
++{
++	return ext4_has_feature_stable_inodes(sb);
++}
++
++static void ext4_get_ino_and_lblk_bits(struct super_block *sb,
++				       int *ino_bits_ret, int *lblk_bits_ret)
++{
++	*ino_bits_ret = 8 * sizeof(EXT4_SB(sb)->s_es->s_inodes_count);
++	*lblk_bits_ret = 8 * sizeof(ext4_lblk_t);
++}
++
+ static const struct fscrypt_operations ext4_cryptops = {
+ 	.key_prefix		= "ext4:",
+ 	.get_context		= ext4_get_context,
+@@ -1352,6 +1364,8 @@ static const struct fscrypt_operations ext4_cryptops = {
+ 	.dummy_context		= ext4_dummy_context,
+ 	.empty_dir		= ext4_empty_dir,
+ 	.max_namelen		= EXT4_NAME_LEN,
++	.has_stable_inodes	= ext4_has_stable_inodes,
++	.get_ino_and_lblk_bits	= ext4_get_ino_and_lblk_bits,
+ };
+ #endif
+ 
 -- 
 2.24.0.rc0.303.g954a862665-goog
 
