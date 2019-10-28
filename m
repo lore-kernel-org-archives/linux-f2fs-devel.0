@@ -7,19 +7,19 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB04CA9EA0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Oct 2019 07:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94C6CA9EA0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Oct 2019 07:49:40 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DD4EC20650;
-	Mon, 28 Oct 2019 07:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 6F98320650;
+	Mon, 28 Oct 2019 07:49:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="HMQAYWVy";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="aLvHkP9o";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="BPZsfrJx";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="bUb2NMWD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4EC20650
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="j2tZ41ky";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="R57akb9W";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PJm3x8u7";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="GKZGgMi/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F98320650
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,28 +28,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=onOm3crCIt3A+wM/4DGmRUeaDNaLqxkq4UFhO96BccU=; b=HMQAYWVyrOKpmyvX+wbyWk+K5
-	0huVUiO3zA/Jvu3CvzVpQ7vgOJlzjzefPQLtfAULvmxDn/4B0r/L8sV163GHGcaxf5wyyu92uuQ1a
-	egBigpnk094+7iJpVpVHp5e2Q4M3gsP/tdh0u7miOxwAtCKRZoJ8btF+J1pJsEnIYfyis=;
+	 bh=WX71JZgloGI8LofZuzaQ92jGyr5BJDDT1PDAn97HKO0=; b=j2tZ41kyNbEkH+6g+x6kfx+hk
+	3y89fH6mrZc4/VpPehNaoKxVJ+m8mgY+1wUU91kYoRPoBwbS4Uwh5h8VnpvdveB1cPTzOzFzq+fO9
+	A1aaGaIkcipvY4ntpCUxwz/GYI9qL4wrPU4Ib/jiCkHpWyJsMHs38pW/z8Nmubpirr04I=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iOzkR-0005AB-OE; Mon, 28 Oct 2019 07:47:31 +0000
+	id 1iOzmW-0005Ps-37; Mon, 28 Oct 2019 07:49:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3ypa2XQYKAMU3l49l4rzzrwp.nzx@flex--satyat.bounces.google.com>)
- id 1iOzkQ-00059z-Pn
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Oct 2019 07:47:30 +0000
+ (envelope-from <30pa2XQYKAM0BtCHtCz77z4x.v75@flex--satyat.bounces.google.com>)
+ id 1iOzmU-0005Pe-Sk
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Oct 2019 07:49:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WzbsbFz4o8H8SJZeCqtGo6txi0Bzn3b43TKqwjKX5n4=; b=aLvHkP9oUi9AvleAXWnStgZcM
- h8OaEf4OT4vLM3KJ8BdzcMtPN9Rg11TIp8IHgK3if0NihIDMcmq+eGmw+HUtXSJjearzkuPFE95JG
- FLmFKoLUHjNjA41bLGwtCD8EdEtS4grNYaYiFVvMDUa6g3G5mTm4JagB+cbof3dHMm8ow=;
+ bh=YuLRBT8VeKFjeFAxW/RFbwDFQDt87L5ymIHlQ4T2tKE=; b=R57akb9WPtNxG4hgf+c/yU/4M
+ b95YRVevpomwEslCrcwmpPpJwA6ehO4vIHVTGbqEwNU5sDfeAbxoNxW81XfhuGuWheQhtkli8BTzU
+ U9ueE9+avuKu8abza48MRgFHt3MFILcIdKd5f4QadVzv6Vix5iEebmzzgK6wD490W2X0U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -57,54 +57,53 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WzbsbFz4o8H8SJZeCqtGo6txi0Bzn3b43TKqwjKX5n4=; b=BPZsfrJxDl+MvC9cvzSa6LjO7M
- 7y6DHb7FB40aw8g6LoaZr6ApD5SsRrH7Ox6XKeeAontIbYrfUWhkNgoZzgTpK4hEHex4ZohmNY4i2
- c8/rQ/sgotEcbv+FUmZT2dM8IAu2no69UaiCHNqn/b/PcDTKG1mgBuuHS6F9bzTXS/fc=;
-Received: from mail-pg1-f202.google.com ([209.85.215.202])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=YuLRBT8VeKFjeFAxW/RFbwDFQDt87L5ymIHlQ4T2tKE=; b=PJm3x8u7DgWMpGLvO1ENfZvRxK
+ ie4jBWfluEHVzQknVRNAX7UxZ3Gj0TVS4oiq6ryPXY0lCpgeOxxrODCnpl/1wyjqxXISvhVl0KxJL
+ C5FoEWS03yNeCCwDCIsqH3DZ+tgWEmRJG10Asim86HLy7ZwBxMV+VQF+o0Z18ep5z7Ek=;
+Received: from mail-pg1-f201.google.com ([209.85.215.201])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1iOzkO-006B6u-GD
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Oct 2019 07:47:30 +0000
-Received: by mail-pg1-f202.google.com with SMTP id e15so7675677pgh.19
+ id 1iOzmQ-0067aZ-Bl
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Oct 2019 07:49:38 +0000
+Received: by mail-pg1-f201.google.com with SMTP id b24so7708389pgi.5
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 28 Oct 2019 00:47:28 -0700 (PDT)
+ Mon, 28 Oct 2019 00:49:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=WzbsbFz4o8H8SJZeCqtGo6txi0Bzn3b43TKqwjKX5n4=;
- b=bUb2NMWDO+aVOB94qsGaE64AsV4ygRC4sgW32zy6qGeDAA2U+p/koZ8w2pc/HE6FrP
- v72wYbH57p/iSQVrWVLzaRKLlm8537Hp3TR01PPkw9kG9AsxxauKK1BUpV6S3rRG9JO5
- 3pmdA7UwYXqJyMqiDJqGKH6/hh0BQcS3Ct0Y7bGA2wuHhF8ad9y/jlNA5BS4Wzxz7TGY
- X9akU9rQVWfKIDwYLSE1goDdInj6SYZpYTUIoO2CMazWlGkNsGL7pqL+A/poc7DQmkDR
- 6EDb6rp0odYTNQKND/l+ltMCASAJtbRe2KLhWKDR5bcWV6w9UlhzzyMZK9bim/OJOfpS
- /P2g==
+ :cc; bh=YuLRBT8VeKFjeFAxW/RFbwDFQDt87L5ymIHlQ4T2tKE=;
+ b=GKZGgMi/B6ycgEcPXCNsdNf93Eck666Y5VeC5+v8EzPCvEBsbJztoAv5JnltzkNazX
+ 5atVX3AUEQVUdaDz2uncJeVahLolQ7TfOgdHnbnBiL2vc/UWEdp2JTnu07kXYsBJji/Q
+ Zqk9FtVOR/LLqsEcFxarl6fyZpWocebg40i8cWWDap4nd+287AALYb07uOnC7YEYNooj
+ 2xzOttjR/b8n4HGVT2voMOb7nF5ejTFw2D9eUkDjHq4Yu7KzERECuI3aflhauYzgTXbF
+ VxLXTO3pQCRB89qNktQpwP0M41RRJ5v9QM66CZtT9aKvxjx/lTHsQCF1c0IFEuYZa9/W
+ ZUlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=WzbsbFz4o8H8SJZeCqtGo6txi0Bzn3b43TKqwjKX5n4=;
- b=G0dbOtQ8lBkSOCEEE4Xaf/v67lHv5oOrbU/NIDJqeJgbTBxJmYGHhH7bIhZ+w5I/Uv
- sxc6QcFW4HvsUO5smsYRgvxs3w1y3ZIeyocVV7gPHo+ugbn4Z7PCGNOUua7vbvVwWQGG
- ZrjL/O0pxg0EmeJdSXlEQygsF7VTXFEv8xoW339hIHS5SORMKRxzHUelvjBWE8I0WDHE
- vBRlA15spyFEXx68CGsIELvgCI+GZyDx8rIala51y0+0/YnozYA9Q2ieF3dPO5LynpHp
- MYU/tLUJBiFZL2tPRVEVX9IS6X0s0qzaH0nc9VnhaDPd0lUhf3rbC02MNzZqqhCg1E17
- tc1Q==
-X-Gm-Message-State: APjAAAXNhTx8BSfvltsoIUQhkSXjPk+7Nljr4y6X+46l6lX8H3GTyVJt
- OuTIVoIfOm4hw3efQoHzjYIs1cIo3gc=
-X-Google-Smtp-Source: APXvYqwFWXhDGmTzN1CzplsG0yv8tZy8yJA11DEE9f5LVjzOlT/VMK72QlpuHZYWdmiS6fTmCwTGSpXQIuY=
-X-Received: by 2002:a63:5605:: with SMTP id k5mr19434999pgb.14.1572247242788; 
- Mon, 28 Oct 2019 00:20:42 -0700 (PDT)
-Date: Mon, 28 Oct 2019 00:20:25 -0700
+ bh=YuLRBT8VeKFjeFAxW/RFbwDFQDt87L5ymIHlQ4T2tKE=;
+ b=GWfnNNrMW0hzfVDfjjeZaT3KddfXIjzOsu9ldcW1UQLtzt/ajI2OK7d66Ngq8Eemc+
+ 0zNVQoWb8lT3zOeiK0XMZMY+M9pWTbWp46OZoH5lhODxcKB8R7G2JGv4b3Bcy6gO8g3A
+ lLNXqU7ZRQZ8fMCLVX+y9PtASQq6SRo1VJlX9MOOS1KQjrr7rzTxDe9htFbcfgdK/W3X
+ 9/YgWUGyE62TX34rGJxZLStbOBwIkdv9yItvD6daGEVxH11SmDFBqMiCvjwuIIqVw25S
+ hY4k07aKWssrqA5cuszSqZrXhF8UjktgR55Nhi+lzTvqTzK20VFjIV9idIz86gfqo5Qq
+ dLeg==
+X-Gm-Message-State: APjAAAXcEXvQaG7/BDy/+1olZHHjQHoawBKtRd8VY3wlNpxriDdFbSvt
+ dfRebA4wnoV7Ayl3XP/TQO6w+sIDl2o=
+X-Google-Smtp-Source: APXvYqwlVuJpn+Z1ioz3x/N3OYX0dwcv7dyCP7U4ND/nJgH4yaOVqF/AQ0+ZA9A5Z6rprH0WX9QpmN/gtBc=
+X-Received: by 2002:a63:bc11:: with SMTP id q17mr10427556pge.223.1572247250972; 
+ Mon, 28 Oct 2019 00:20:50 -0700 (PDT)
+Date: Mon, 28 Oct 2019 00:20:28 -0700
 In-Reply-To: <20191028072032.6911-1-satyat@google.com>
-Message-Id: <20191028072032.6911-3-satyat@google.com>
+Message-Id: <20191028072032.6911-6-satyat@google.com>
 Mime-Version: 1.0
 References: <20191028072032.6911-1-satyat@google.com>
 X-Mailer: git-send-email 2.24.0.rc0.303.g954a862665-goog
 To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, 
  linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1iOzkO-006B6u-GD
-Subject: [f2fs-dev] [PATCH v5 2/9] block: Add encryption context to struct
- bio
+X-Headers-End: 1iOzmQ-0067aZ-Bl
+Subject: [f2fs-dev] [PATCH v5 5/9] scsi: ufs: UFS crypto API
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,661 +126,568 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-We must have some way of letting a storage device driver know what
-encryption context it should use for en/decrypting a request. However,
-it's the filesystem/fscrypt that knows about and manages encryption
-contexts. As such, when the filesystem layer submits a bio to the block
-layer, and this bio eventually reaches a device driver with support for
-inline encryption, the device driver will need to have been told the
-encryption context for that bio.
-
-We want to communicate the encryption context from the filesystem layer
-to the storage device along with the bio, when the bio is submitted to the
-block layer. To do this, we add a struct bio_crypt_ctx to struct bio, which
-can represent an encryption context (note that we can't use the bi_private
-field in struct bio to do this because that field does not function to pass
-information across layers in the storage stack). We also introduce various
-functions to manipulate the bio_crypt_ctx and make the bio/request merging
-logic aware of the bio_crypt_ctx.
+Introduce functions to manipulate UFS inline encryption hardware
+in line with the JEDEC UFSHCI v2.1 specification and to work with the
+block keyslot manager.
 
 Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
- block/Makefile                |   2 +-
- block/bio-crypt-ctx.c         | 137 +++++++++++++++++++++
- block/bio.c                   |  18 +--
- block/blk-core.c              |   3 +
- block/blk-merge.c             |  35 +++++-
- block/bounce.c                |  15 +--
- drivers/md/dm.c               |  15 ++-
- include/linux/bio-crypt-ctx.h | 219 ++++++++++++++++++++++++++++++++++
- include/linux/bio.h           |   6 +-
- include/linux/blk_types.h     |   6 +
- 10 files changed, 426 insertions(+), 30 deletions(-)
- create mode 100644 block/bio-crypt-ctx.c
- create mode 100644 include/linux/bio-crypt-ctx.h
+ drivers/scsi/ufs/Kconfig         |   9 +
+ drivers/scsi/ufs/Makefile        |   1 +
+ drivers/scsi/ufs/ufshcd-crypto.c | 391 +++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd-crypto.h |  86 +++++++
+ drivers/scsi/ufs/ufshcd.h        |  14 ++
+ 5 files changed, 501 insertions(+)
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
 
-diff --git a/block/Makefile b/block/Makefile
-index e922844219c2..f39611ed151f 100644
---- a/block/Makefile
-+++ b/block/Makefile
-@@ -36,4 +36,4 @@ obj-$(CONFIG_BLK_DEBUG_FS)	+= blk-mq-debugfs.o
- obj-$(CONFIG_BLK_DEBUG_FS_ZONED)+= blk-mq-debugfs-zoned.o
- obj-$(CONFIG_BLK_SED_OPAL)	+= sed-opal.o
- obj-$(CONFIG_BLK_PM)		+= blk-pm.o
--obj-$(CONFIG_BLK_INLINE_ENCRYPTION)	+= keyslot-manager.o
-+obj-$(CONFIG_BLK_INLINE_ENCRYPTION)	+= keyslot-manager.o bio-crypt-ctx.o
-diff --git a/block/bio-crypt-ctx.c b/block/bio-crypt-ctx.c
+diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+index 0b845ab7c3bf..3ee5cede823e 100644
+--- a/drivers/scsi/ufs/Kconfig
++++ b/drivers/scsi/ufs/Kconfig
+@@ -150,3 +150,12 @@ config SCSI_UFS_BSG
+ 
+ 	  Select this if you need a bsg device node for your UFS controller.
+ 	  If unsure, say N.
++
++config SCSI_UFS_CRYPTO
++	bool "UFS Crypto Engine Support"
++	depends on SCSI_UFSHCD && BLK_INLINE_ENCRYPTION
++	help
++	  Enable Crypto Engine Support in UFS.
++	  Enabling this makes it possible for the kernel to use the crypto
++	  capabilities of the UFS device (if present) to perform crypto
++	  operations on data being transferred to/from the device.
+diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+index 2a9097939bcb..094c39989a37 100644
+--- a/drivers/scsi/ufs/Makefile
++++ b/drivers/scsi/ufs/Makefile
+@@ -11,3 +11,4 @@ obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+ obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+ obj-$(CONFIG_SCSI_UFS_HISI) += ufs-hisi.o
+ obj-$(CONFIG_SCSI_UFS_MEDIATEK) += ufs-mediatek.o
++ufshcd-core-$(CONFIG_SCSI_UFS_CRYPTO) += ufshcd-crypto.o
+diff --git a/drivers/scsi/ufs/ufshcd-crypto.c b/drivers/scsi/ufs/ufshcd-crypto.c
 new file mode 100644
-index 000000000000..aa3571f72ee7
+index 000000000000..3900a07a7e9b
 --- /dev/null
-+++ b/block/bio-crypt-ctx.c
-@@ -0,0 +1,137 @@
++++ b/drivers/scsi/ufs/ufshcd-crypto.c
+@@ -0,0 +1,391 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright 2019 Google LLC
 + */
 +
-+#include <linux/bio.h>
-+#include <linux/blkdev.h>
-+#include <linux/slab.h>
-+#include <linux/keyslot-manager.h>
++#include <crypto/algapi.h>
 +
-+static int num_prealloc_crypt_ctxs = 128;
-+static struct kmem_cache *bio_crypt_ctx_cache;
-+static mempool_t *bio_crypt_ctx_pool;
++#include "ufshcd.h"
++#include "ufshcd-crypto.h"
 +
-+int bio_crypt_ctx_init(void)
++static bool ufshcd_cap_idx_valid(struct ufs_hba *hba, unsigned int cap_idx)
 +{
-+	bio_crypt_ctx_cache = KMEM_CACHE(bio_crypt_ctx, 0);
-+	if (!bio_crypt_ctx_cache)
-+		return -ENOMEM;
-+
-+	bio_crypt_ctx_pool = mempool_create_slab_pool(
-+					num_prealloc_crypt_ctxs,
-+					bio_crypt_ctx_cache);
-+
-+	if (!bio_crypt_ctx_pool)
-+		return -ENOMEM;
-+
-+	return 0;
++	return cap_idx < hba->crypto_capabilities.num_crypto_cap;
 +}
 +
-+struct bio_crypt_ctx *bio_crypt_alloc_ctx(gfp_t gfp_mask)
++static u8 get_data_unit_size_mask(unsigned int data_unit_size)
 +{
-+	return mempool_alloc(bio_crypt_ctx_pool, gfp_mask);
-+}
-+EXPORT_SYMBOL(bio_crypt_alloc_ctx);
-+
-+void bio_crypt_free_ctx(struct bio *bio)
-+{
-+	mempool_free(bio->bi_crypt_context, bio_crypt_ctx_pool);
-+	bio->bi_crypt_context = NULL;
-+}
-+EXPORT_SYMBOL(bio_crypt_free_ctx);
-+
-+int bio_crypt_clone(struct bio *dst, struct bio *src, gfp_t gfp_mask)
-+{
-+	if (!bio_has_crypt_ctx(src))
++	if (data_unit_size < 512 || data_unit_size > 65536 ||
++	    !is_power_of_2(data_unit_size))
 +		return 0;
 +
-+	dst->bi_crypt_context = bio_crypt_alloc_ctx(gfp_mask);
-+	if (!dst->bi_crypt_context)
-+		return -ENOMEM;
++	return data_unit_size / 512;
++}
 +
-+	*dst->bi_crypt_context = *src->bi_crypt_context;
++static size_t get_keysize_bytes(enum ufs_crypto_key_size size)
++{
++	switch (size) {
++	case UFS_CRYPTO_KEY_SIZE_128: return 16;
++	case UFS_CRYPTO_KEY_SIZE_192: return 24;
++	case UFS_CRYPTO_KEY_SIZE_256: return 32;
++	case UFS_CRYPTO_KEY_SIZE_512: return 64;
++	default: return 0;
++	}
++}
 +
-+	if (bio_crypt_has_keyslot(src))
-+		keyslot_manager_get_slot(src->bi_crypt_context->processing_ksm,
-+					 src->bi_crypt_context->keyslot);
++static int ufshcd_crypto_cap_find(void *hba_p,
++			   enum blk_crypto_mode_num crypto_mode,
++			   unsigned int data_unit_size)
++{
++	struct ufs_hba *hba = hba_p;
++	enum ufs_crypto_alg ufs_alg;
++	u8 data_unit_mask;
++	int cap_idx;
++	enum ufs_crypto_key_size ufs_key_size;
++	union ufs_crypto_cap_entry *ccap_array = hba->crypto_cap_array;
++
++	if (!ufshcd_hba_is_crypto_supported(hba))
++		return -EINVAL;
++
++	switch (crypto_mode) {
++	case BLK_ENCRYPTION_MODE_AES_256_XTS:
++		ufs_alg = UFS_CRYPTO_ALG_AES_XTS;
++		ufs_key_size = UFS_CRYPTO_KEY_SIZE_256;
++		break;
++	default: return -EINVAL;
++	}
++
++	data_unit_mask = get_data_unit_size_mask(data_unit_size);
++
++	for (cap_idx = 0; cap_idx < hba->crypto_capabilities.num_crypto_cap;
++	     cap_idx++) {
++		if (ccap_array[cap_idx].algorithm_id == ufs_alg &&
++		    (ccap_array[cap_idx].sdus_mask & data_unit_mask) &&
++		    ccap_array[cap_idx].key_size == ufs_key_size)
++			return cap_idx;
++	}
++
++	return -EINVAL;
++}
++
++/**
++ * ufshcd_crypto_cfg_entry_write_key - Write a key into a crypto_cfg_entry
++ *
++ *	Writes the key with the appropriate format - for AES_XTS,
++ *	the first half of the key is copied as is, the second half is
++ *	copied with an offset halfway into the cfg->crypto_key array.
++ *	For the other supported crypto algs, the key is just copied.
++ *
++ * @cfg: The crypto config to write to
++ * @key: The key to write
++ * @cap: The crypto capability (which specifies the crypto alg and key size)
++ *
++ * Returns 0 on success, or -EINVAL
++ */
++static int ufshcd_crypto_cfg_entry_write_key(union ufs_crypto_cfg_entry *cfg,
++					     const u8 *key,
++					     union ufs_crypto_cap_entry cap)
++{
++	size_t key_size_bytes = get_keysize_bytes(cap.key_size);
++
++	if (key_size_bytes == 0)
++		return -EINVAL;
++
++	switch (cap.algorithm_id) {
++	case UFS_CRYPTO_ALG_AES_XTS:
++		key_size_bytes *= 2;
++		if (key_size_bytes > UFS_CRYPTO_KEY_MAX_SIZE)
++			return -EINVAL;
++
++		memcpy(cfg->crypto_key, key, key_size_bytes/2);
++		memcpy(cfg->crypto_key + UFS_CRYPTO_KEY_MAX_SIZE/2,
++		       key + key_size_bytes/2, key_size_bytes/2);
++		return 0;
++	case UFS_CRYPTO_ALG_BITLOCKER_AES_CBC: // fallthrough
++	case UFS_CRYPTO_ALG_AES_ECB: // fallthrough
++	case UFS_CRYPTO_ALG_ESSIV_AES_CBC:
++		memcpy(cfg->crypto_key, key, key_size_bytes);
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++static void program_key(struct ufs_hba *hba,
++			const union ufs_crypto_cfg_entry *cfg,
++			int slot)
++{
++	int i;
++	u32 slot_offset = hba->crypto_cfg_register + slot * sizeof(*cfg);
++
++	/* Clear the dword 16 */
++	ufshcd_writel(hba, 0, slot_offset + 16 * sizeof(cfg->reg_val[0]));
++	/* Ensure that CFGE is cleared before programming the key */
++	wmb();
++	for (i = 0; i < 16; i++) {
++		ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[i]),
++			      slot_offset + i * sizeof(cfg->reg_val[0]));
++		/* Spec says each dword in key must be written sequentially */
++		wmb();
++	}
++	/* Write dword 17 */
++	ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[17]),
++		      slot_offset + 17 * sizeof(cfg->reg_val[0]));
++	/* Dword 16 must be written last */
++	wmb();
++	/* Write dword 16 */
++	ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[16]),
++		      slot_offset + 16 * sizeof(cfg->reg_val[0]));
++	wmb();
++}
++
++static int ufshcd_crypto_keyslot_program(void *hba_p, const u8 *key,
++					 enum blk_crypto_mode_num crypto_mode,
++					 unsigned int data_unit_size,
++					 unsigned int slot)
++{
++	struct ufs_hba *hba = hba_p;
++	int err = 0;
++	u8 data_unit_mask;
++	union ufs_crypto_cfg_entry cfg;
++	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
++	int cap_idx;
++
++	cap_idx = ufshcd_crypto_cap_find(hba_p, crypto_mode,
++					       data_unit_size);
++
++	if (!ufshcd_is_crypto_enabled(hba) ||
++	    !ufshcd_keyslot_valid(hba, slot) ||
++	    !ufshcd_cap_idx_valid(hba, cap_idx))
++		return -EINVAL;
++
++	data_unit_mask = get_data_unit_size_mask(data_unit_size);
++
++	if (!(data_unit_mask & hba->crypto_cap_array[cap_idx].sdus_mask))
++		return -EINVAL;
++
++	memset(&cfg, 0, sizeof(cfg));
++	cfg.data_unit_size = data_unit_mask;
++	cfg.crypto_cap_idx = cap_idx;
++	cfg.config_enable |= UFS_CRYPTO_CONFIGURATION_ENABLE;
++
++	err = ufshcd_crypto_cfg_entry_write_key(&cfg, key,
++				hba->crypto_cap_array[cap_idx]);
++	if (err)
++		return err;
++
++	program_key(hba, &cfg, slot);
++
++	memcpy(&cfg_arr[slot], &cfg, sizeof(cfg));
++	memzero_explicit(&cfg, sizeof(cfg));
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL(bio_crypt_clone);
 +
-+bool bio_crypt_should_process(struct bio *bio, struct request_queue *q)
++static int ufshcd_crypto_keyslot_find(void *hba_p,
++				      const u8 *key,
++				      enum blk_crypto_mode_num crypto_mode,
++				      unsigned int data_unit_size)
 +{
-+	if (!bio_has_crypt_ctx(bio))
-+		return false;
-+
-+	WARN_ON(!bio_crypt_has_keyslot(bio));
-+	return q->ksm == bio->bi_crypt_context->processing_ksm;
-+}
-+EXPORT_SYMBOL(bio_crypt_should_process);
-+
-+/*
-+ * Checks that two bio crypt contexts are compatible - i.e. that
-+ * they are mergeable except for data_unit_num continuity.
-+ */
-+bool bio_crypt_ctx_compatible(struct bio *b_1, struct bio *b_2)
-+{
-+	struct bio_crypt_ctx *bc1 = b_1->bi_crypt_context;
-+	struct bio_crypt_ctx *bc2 = b_2->bi_crypt_context;
-+
-+	if (bio_has_crypt_ctx(b_1) != bio_has_crypt_ctx(b_2))
-+		return false;
-+
-+	if (!bio_has_crypt_ctx(b_1))
-+		return true;
-+
-+	return bc1->keyslot == bc2->keyslot &&
-+	       bc1->data_unit_size_bits == bc2->data_unit_size_bits;
-+}
-+
-+/*
-+ * Checks that two bio crypt contexts are compatible, and also
-+ * that their data_unit_nums are continuous (and can hence be merged)
-+ */
-+bool bio_crypt_ctx_back_mergeable(struct bio *b_1,
-+				  unsigned int b1_sectors,
-+				  struct bio *b_2)
-+{
-+	struct bio_crypt_ctx *bc1 = b_1->bi_crypt_context;
-+	struct bio_crypt_ctx *bc2 = b_2->bi_crypt_context;
-+
-+	if (!bio_crypt_ctx_compatible(b_1, b_2))
-+		return false;
-+
-+	return !bio_has_crypt_ctx(b_1) ||
-+		(bc1->data_unit_num +
-+		(b1_sectors >> (bc1->data_unit_size_bits - 9)) ==
-+		bc2->data_unit_num);
-+}
-+
-+void bio_crypt_ctx_release_keyslot(struct bio *bio)
-+{
-+	struct bio_crypt_ctx *crypt_ctx = bio->bi_crypt_context;
-+
-+	keyslot_manager_put_slot(crypt_ctx->processing_ksm, crypt_ctx->keyslot);
-+	bio->bi_crypt_context->processing_ksm = NULL;
-+	bio->bi_crypt_context->keyslot = -1;
-+}
-+
-+int bio_crypt_ctx_acquire_keyslot(struct bio *bio, struct keyslot_manager *ksm)
-+{
++	struct ufs_hba *hba = hba_p;
++	int err = 0;
 +	int slot;
-+	enum blk_crypto_mode_num crypto_mode = bio_crypto_mode(bio);
++	u8 data_unit_mask;
++	union ufs_crypto_cfg_entry cfg;
++	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
++	int cap_idx;
 +
-+	if (!ksm)
-+		return -ENOMEM;
++	cap_idx = ufshcd_crypto_cap_find(hba_p, crypto_mode,
++					       data_unit_size);
 +
-+	slot = keyslot_manager_get_slot_for_key(ksm,
-+			bio_crypt_raw_key(bio), crypto_mode,
-+			1 << bio->bi_crypt_context->data_unit_size_bits);
-+	if (slot < 0)
-+		return slot;
++	if (!ufshcd_is_crypto_enabled(hba) ||
++	    !ufshcd_cap_idx_valid(hba, cap_idx))
++		return -EINVAL;
 +
-+	bio_crypt_set_keyslot(bio, slot, ksm);
++	data_unit_mask = get_data_unit_size_mask(data_unit_size);
++
++	if (!(data_unit_mask & hba->crypto_cap_array[cap_idx].sdus_mask))
++		return -EINVAL;
++
++	memset(&cfg, 0, sizeof(cfg));
++	err = ufshcd_crypto_cfg_entry_write_key(&cfg, key,
++					hba->crypto_cap_array[cap_idx]);
++
++	if (err)
++		return -EINVAL;
++
++	for (slot = 0; slot < NUM_KEYSLOTS(hba); slot++) {
++		if ((cfg_arr[slot].config_enable &
++		     UFS_CRYPTO_CONFIGURATION_ENABLE) &&
++		    data_unit_mask == cfg_arr[slot].data_unit_size &&
++		    cap_idx == cfg_arr[slot].crypto_cap_idx &&
++		    !crypto_memneq(&cfg.crypto_key, cfg_arr[slot].crypto_key,
++				  UFS_CRYPTO_KEY_MAX_SIZE)) {
++			memzero_explicit(&cfg, sizeof(cfg));
++			return slot;
++		}
++	}
++
++	memzero_explicit(&cfg, sizeof(cfg));
++	return -ENOKEY;
++}
++
++static int ufshcd_crypto_keyslot_evict(void *hba_p, const u8 *key,
++				       enum blk_crypto_mode_num crypto_mode,
++				       unsigned int data_unit_size,
++				       unsigned int slot)
++{
++	struct ufs_hba *hba = hba_p;
++	int i = 0;
++	u32 reg_base;
++	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
++
++	if (!ufshcd_is_crypto_enabled(hba) ||
++	    !ufshcd_keyslot_valid(hba, slot))
++		return -EINVAL;
++
++	memset(&cfg_arr[slot], 0, sizeof(cfg_arr[slot]));
++	reg_base = hba->crypto_cfg_register + slot * sizeof(cfg_arr[0]);
++
++	/*
++	 * Clear the crypto cfg on the device. Clearing CFGE
++	 * might not be sufficient, so just clear the entire cfg.
++	 */
++	for (i = 0; i < sizeof(cfg_arr[0]); i += sizeof(__le32))
++		ufshcd_writel(hba, 0, reg_base + i);
++	wmb();
++
 +	return 0;
 +}
-diff --git a/block/bio.c b/block/bio.c
-index 8f0ed6228fc5..ce8003aadf07 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -241,6 +241,7 @@ static void bio_free(struct bio *bio)
- 	struct bio_set *bs = bio->bi_pool;
- 	void *p;
- 
-+	bio_crypt_free_ctx(bio);
- 	bio_uninit(bio);
- 
- 	if (bs) {
-@@ -612,15 +613,15 @@ struct bio *bio_clone_fast(struct bio *bio, gfp_t gfp_mask, struct bio_set *bs)
- 
- 	__bio_clone_fast(b, bio);
- 
--	if (bio_integrity(bio)) {
--		int ret;
--
--		ret = bio_integrity_clone(b, bio, gfp_mask);
-+	if (bio_crypt_clone(b, bio, gfp_mask) < 0) {
-+		bio_put(b);
-+		return NULL;
-+	}
- 
--		if (ret < 0) {
--			bio_put(b);
--			return NULL;
--		}
-+	if (bio_integrity(bio) &&
-+	    bio_integrity_clone(b, bio, gfp_mask) < 0) {
-+		bio_put(b);
-+		return NULL;
- 	}
- 
- 	return b;
-@@ -992,6 +993,7 @@ void bio_advance(struct bio *bio, unsigned bytes)
- 	if (bio_integrity(bio))
- 		bio_integrity_advance(bio, bytes);
- 
-+	bio_crypt_advance(bio, bytes);
- 	bio_advance_iter(bio, &bio->bi_iter, bytes);
- }
- EXPORT_SYMBOL(bio_advance);
-diff --git a/block/blk-core.c b/block/blk-core.c
-index d5e668ec751b..3b5959d386fb 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1807,5 +1807,8 @@ int __init blk_dev_init(void)
- 	blk_debugfs_root = debugfs_create_dir("block", NULL);
- #endif
- 
-+	if (bio_crypt_ctx_init() < 0)
-+		panic("Failed to allocate mem for bio crypt ctxs\n");
 +
- 	return 0;
- }
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 48e6725b32ee..c97c02a20c6a 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -557,6 +557,9 @@ static inline int ll_new_hw_segment(struct request *req, struct bio *bio,
- 	if (blk_integrity_merge_bio(req->q, req, bio) == false)
- 		goto no_merge;
- 
-+	if (WARN_ON_ONCE(!bio_crypt_ctx_compatible(bio, req->bio)))
-+		goto no_merge;
++static bool ufshcd_crypto_mode_supported(void *hba_p,
++					 enum blk_crypto_mode_num crypto_mode,
++					 unsigned int data_unit_size)
++{
++	return ufshcd_crypto_cap_find(hba_p, crypto_mode, data_unit_size) >= 0;
++}
 +
- 	/*
- 	 * This will form the start of a new hw segment.  Bump both
- 	 * counters.
-@@ -711,8 +714,14 @@ static enum elv_merge blk_try_req_merge(struct request *req,
- {
- 	if (blk_discard_mergable(req))
- 		return ELEVATOR_DISCARD_MERGE;
--	else if (blk_rq_pos(req) + blk_rq_sectors(req) == blk_rq_pos(next))
-+	else if (blk_rq_pos(req) + blk_rq_sectors(req) == blk_rq_pos(next)) {
-+		if (!bio_crypt_ctx_back_mergeable(req->bio,
-+						  blk_rq_sectors(req),
-+						  next->bio)) {
-+			return ELEVATOR_NO_MERGE;
-+		}
- 		return ELEVATOR_BACK_MERGE;
-+	}
- 
- 	return ELEVATOR_NO_MERGE;
- }
-@@ -748,6 +757,9 @@ static struct request *attempt_merge(struct request_queue *q,
- 	if (req->ioprio != next->ioprio)
- 		return NULL;
- 
-+	if (!bio_crypt_ctx_compatible(req->bio, next->bio))
-+		return NULL;
++void ufshcd_crypto_enable(struct ufs_hba *hba)
++{
++	union ufs_crypto_cfg_entry *cfg_arr = hba->crypto_cfgs;
++	int slot;
 +
- 	/*
- 	 * If we are allowed to merge, then append bio list
- 	 * from next to rq and release next. merge_requests_fn
-@@ -880,16 +892,31 @@ bool blk_rq_merge_ok(struct request *rq, struct bio *bio)
- 	if (rq->ioprio != bio_prio(bio))
- 		return false;
- 
-+	/* Only merge if the crypt contexts are compatible */
-+	if (!bio_crypt_ctx_compatible(bio, rq->bio))
-+		return false;
++	if (!ufshcd_hba_is_crypto_supported(hba))
++		return;
 +
- 	return true;
- }
- 
- enum elv_merge blk_try_merge(struct request *rq, struct bio *bio)
- {
--	if (blk_discard_mergable(rq))
-+	if (blk_discard_mergable(rq)) {
- 		return ELEVATOR_DISCARD_MERGE;
--	else if (blk_rq_pos(rq) + blk_rq_sectors(rq) == bio->bi_iter.bi_sector)
-+	} else if (blk_rq_pos(rq) + blk_rq_sectors(rq) ==
-+		   bio->bi_iter.bi_sector) {
-+		if (!bio_crypt_ctx_back_mergeable(rq->bio,
-+						  blk_rq_sectors(rq), bio)) {
-+			return ELEVATOR_NO_MERGE;
-+		}
- 		return ELEVATOR_BACK_MERGE;
--	else if (blk_rq_pos(rq) - bio_sectors(bio) == bio->bi_iter.bi_sector)
-+	} else if (blk_rq_pos(rq) - bio_sectors(bio) ==
-+		   bio->bi_iter.bi_sector) {
-+		if (!bio_crypt_ctx_back_mergeable(bio,
-+						  bio_sectors(bio), rq->bio)) {
-+			return ELEVATOR_NO_MERGE;
-+		}
- 		return ELEVATOR_FRONT_MERGE;
++	hba->caps |= UFSHCD_CAP_CRYPTO;
++	/*
++	 * Reset might clear all keys, so reprogram all the keys.
++	 * Also serves to clear keys on driver init.
++	 */
++	for (slot = 0; slot < NUM_KEYSLOTS(hba); slot++)
++		program_key(hba, &cfg_arr[slot], slot);
++}
++
++void ufshcd_crypto_disable(struct ufs_hba *hba)
++{
++	hba->caps &= ~UFSHCD_CAP_CRYPTO;
++}
++
++static const struct keyslot_mgmt_ll_ops ufshcd_ksm_ops = {
++	.keyslot_program	= ufshcd_crypto_keyslot_program,
++	.keyslot_evict		= ufshcd_crypto_keyslot_evict,
++	.keyslot_find		= ufshcd_crypto_keyslot_find,
++	.crypto_mode_supported	= ufshcd_crypto_mode_supported,
++};
++
++/**
++ * ufshcd_hba_init_crypto - Read crypto capabilities, init crypto fields in hba
++ * @hba: Per adapter instance
++ *
++ * Returns 0 on success. Returns -ENODEV if such capabilities don't exist, and
++ * -ENOMEM upon OOM.
++ */
++int ufshcd_hba_init_crypto(struct ufs_hba *hba)
++{
++	int cap_idx = 0;
++	int err = 0;
++
++	/* Default to disabling crypto */
++	hba->caps &= ~UFSHCD_CAP_CRYPTO;
++
++	if (!(hba->capabilities & MASK_CRYPTO_SUPPORT)) {
++		err = -ENODEV;
++		goto out;
 +	}
- 	return ELEVATOR_NO_MERGE;
- }
-diff --git a/block/bounce.c b/block/bounce.c
-index f8ed677a1bf7..6f9a2359b22a 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -267,14 +267,15 @@ static struct bio *bounce_clone_bio(struct bio *bio_src, gfp_t gfp_mask,
- 		break;
- 	}
- 
--	if (bio_integrity(bio_src)) {
--		int ret;
-+	if (bio_crypt_clone(bio, bio_src, gfp_mask) < 0) {
-+		bio_put(bio);
-+		return NULL;
++
++	/*
++	 * Crypto Capabilities should never be 0, because the
++	 * config_array_ptr > 04h. So we use a 0 value to indicate that
++	 * crypto init failed, and can't be enabled.
++	 */
++	hba->crypto_capabilities.reg_val =
++			cpu_to_le32(ufshcd_readl(hba, REG_UFS_CCAP));
++	hba->crypto_cfg_register =
++		(u32)hba->crypto_capabilities.config_array_ptr * 0x100;
++	hba->crypto_cap_array =
++		devm_kcalloc(hba->dev,
++			     hba->crypto_capabilities.num_crypto_cap,
++			     sizeof(hba->crypto_cap_array[0]),
++			     GFP_KERNEL);
++	if (!hba->crypto_cap_array) {
++		err = -ENOMEM;
++		goto out;
 +	}
- 
--		ret = bio_integrity_clone(bio, bio_src, gfp_mask);
--		if (ret < 0) {
--			bio_put(bio);
--			return NULL;
--		}
-+	if (bio_integrity(bio_src) &&
-+	    bio_integrity_clone(bio, bio_src, gfp_mask) < 0) {
-+		bio_put(bio);
-+		return NULL;
- 	}
- 
- 	bio_clone_blkg_association(bio, bio_src);
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 1a5e328c443a..67c24294d7c8 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1322,12 +1322,15 @@ static int clone_bio(struct dm_target_io *tio, struct bio *bio,
- 		     sector_t sector, unsigned len)
- {
- 	struct bio *clone = &tio->clone;
-+	int ret;
- 
- 	__bio_clone_fast(clone, bio);
- 
--	if (bio_integrity(bio)) {
--		int r;
-+	ret = bio_crypt_clone(clone, bio, GFP_NOIO);
-+	if (ret < 0)
-+		return ret;
- 
-+	if (bio_integrity(bio)) {
- 		if (unlikely(!dm_target_has_integrity(tio->ti->type) &&
- 			     !dm_target_passes_integrity(tio->ti->type))) {
- 			DMWARN("%s: the target %s doesn't support integrity data.",
-@@ -1336,9 +1339,11 @@ static int clone_bio(struct dm_target_io *tio, struct bio *bio,
- 			return -EIO;
- 		}
- 
--		r = bio_integrity_clone(clone, bio, GFP_NOIO);
--		if (r < 0)
--			return r;
-+		ret = bio_integrity_clone(clone, bio, GFP_NOIO);
-+		if (ret < 0) {
-+			bio_crypt_free_ctx(clone);
-+			return ret;
-+		}
- 	}
- 
- 	bio_advance(clone, to_bytes(sector - clone->bi_iter.bi_sector));
-diff --git a/include/linux/bio-crypt-ctx.h b/include/linux/bio-crypt-ctx.h
++
++	hba->crypto_cfgs =
++		devm_kcalloc(hba->dev,
++			     NUM_KEYSLOTS(hba),
++			     sizeof(hba->crypto_cfgs[0]),
++			     GFP_KERNEL);
++	if (!hba->crypto_cfgs) {
++		err = -ENOMEM;
++		goto out_free_cfg_mem;
++	}
++
++	/*
++	 * Store all the capabilities now so that we don't need to repeatedly
++	 * access the device each time we want to know its capabilities
++	 */
++	for (cap_idx = 0; cap_idx < hba->crypto_capabilities.num_crypto_cap;
++	     cap_idx++) {
++		hba->crypto_cap_array[cap_idx].reg_val =
++			cpu_to_le32(ufshcd_readl(hba,
++						 REG_UFS_CRYPTOCAP +
++						 cap_idx * sizeof(__le32)));
++	}
++
++	hba->ksm = keyslot_manager_create(NUM_KEYSLOTS(hba), &ufshcd_ksm_ops,
++					  hba);
++
++	if (!hba->ksm) {
++		err = -ENOMEM;
++		goto out_free_crypto_cfgs;
++	}
++
++	return 0;
++out_free_crypto_cfgs:
++	devm_kfree(hba->dev, hba->crypto_cfgs);
++out_free_cfg_mem:
++	devm_kfree(hba->dev, hba->crypto_cap_array);
++out:
++	// TODO: print error?
++	/* Indicate that init failed by setting crypto_capabilities to 0 */
++	hba->crypto_capabilities.reg_val = 0;
++	return err;
++}
++
++void ufshcd_crypto_setup_rq_keyslot_manager(struct ufs_hba *hba,
++					    struct request_queue *q)
++{
++	if (!ufshcd_hba_is_crypto_supported(hba) || !q)
++		return;
++
++	q->ksm = hba->ksm;
++}
++
++void ufshcd_crypto_destroy_rq_keyslot_manager(struct ufs_hba *hba,
++					      struct request_queue *q)
++{
++	keyslot_manager_destroy(hba->ksm);
++}
+diff --git a/drivers/scsi/ufs/ufshcd-crypto.h b/drivers/scsi/ufs/ufshcd-crypto.h
 new file mode 100644
-index 000000000000..5cd569f77c31
+index 000000000000..73ddc8e493fb
 --- /dev/null
-+++ b/include/linux/bio-crypt-ctx.h
-@@ -0,0 +1,219 @@
++++ b/drivers/scsi/ufs/ufshcd-crypto.h
+@@ -0,0 +1,86 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
 + * Copyright 2019 Google LLC
 + */
-+#ifndef __LINUX_BIO_CRYPT_CTX_H
-+#define __LINUX_BIO_CRYPT_CTX_H
 +
-+enum blk_crypto_mode_num {
-+	BLK_ENCRYPTION_MODE_INVALID	= 0,
-+	BLK_ENCRYPTION_MODE_AES_256_XTS	= 1,
-+};
++#ifndef _UFSHCD_CRYPTO_H
++#define _UFSHCD_CRYPTO_H
 +
-+#ifdef CONFIG_BLOCK
-+#include <linux/blk_types.h>
++struct ufs_hba;
 +
-+#ifdef CONFIG_BLK_INLINE_ENCRYPTION
-+struct bio_crypt_ctx {
-+	int keyslot;
-+	const u8 *raw_key;
-+	enum blk_crypto_mode_num crypto_mode;
-+	u64 data_unit_num;
-+	unsigned int data_unit_size_bits;
++#ifdef CONFIG_SCSI_UFS_CRYPTO
++#include <linux/keyslot-manager.h>
 +
++#include "ufshci.h"
++
++#define NUM_KEYSLOTS(hba) (hba->crypto_capabilities.config_count + 1)
++
++static inline bool ufshcd_keyslot_valid(struct ufs_hba *hba, unsigned int slot)
++{
 +	/*
-+	 * The keyslot manager where the key has been programmed
-+	 * with keyslot.
++	 * The actual number of configurations supported is (CFGC+1), so slot
++	 * numbers range from 0 to config_count inclusive.
 +	 */
-+	struct keyslot_manager *processing_ksm;
-+
-+	/*
-+	 * Copy of the bvec_iter when this bio was submitted.
-+	 * We only want to en/decrypt the part of the bio
-+	 * as described by the bvec_iter upon submission because
-+	 * bio might be split before being resubmitted
-+	 */
-+	struct bvec_iter crypt_iter;
-+	u64 sw_data_unit_num;
-+};
-+
-+extern int bio_crypt_clone(struct bio *dst, struct bio *src,
-+			   gfp_t gfp_mask);
-+
-+static inline bool bio_has_crypt_ctx(struct bio *bio)
-+{
-+	return bio->bi_crypt_context;
++	return slot < NUM_KEYSLOTS(hba);
 +}
 +
-+static inline void bio_crypt_advance(struct bio *bio, unsigned int bytes)
++static inline bool ufshcd_hba_is_crypto_supported(struct ufs_hba *hba)
 +{
-+	if (bio_has_crypt_ctx(bio)) {
-+		bio->bi_crypt_context->data_unit_num +=
-+			bytes >> bio->bi_crypt_context->data_unit_size_bits;
-+	}
++	return hba->crypto_capabilities.reg_val != 0;
 +}
 +
-+static inline bool bio_crypt_has_keyslot(struct bio *bio)
++static inline bool ufshcd_is_crypto_enabled(struct ufs_hba *hba)
 +{
-+	return bio->bi_crypt_context->keyslot >= 0;
++	return hba->caps & UFSHCD_CAP_CRYPTO;
 +}
 +
-+extern int bio_crypt_ctx_init(void);
++void ufshcd_crypto_enable(struct ufs_hba *hba);
 +
-+extern struct bio_crypt_ctx *bio_crypt_alloc_ctx(gfp_t gfp_mask);
++void ufshcd_crypto_disable(struct ufs_hba *hba);
 +
-+extern void bio_crypt_free_ctx(struct bio *bio);
++int ufshcd_hba_init_crypto(struct ufs_hba *hba);
 +
-+static inline int bio_crypt_set_ctx(struct bio *bio,
-+				    const u8 *raw_key,
-+				    enum blk_crypto_mode_num crypto_mode,
-+				    u64 dun,
-+				    unsigned int dun_bits,
-+				    gfp_t gfp_mask)
-+{
-+	struct bio_crypt_ctx *crypt_ctx;
++void ufshcd_crypto_setup_rq_keyslot_manager(struct ufs_hba *hba,
++					    struct request_queue *q);
 +
-+	crypt_ctx = bio_crypt_alloc_ctx(gfp_mask);
-+	if (!crypt_ctx)
-+		return -ENOMEM;
++void ufshcd_crypto_destroy_rq_keyslot_manager(struct ufs_hba *hba,
++					      struct request_queue *q);
 +
-+	crypt_ctx->raw_key = raw_key;
-+	crypt_ctx->data_unit_num = dun;
-+	crypt_ctx->data_unit_size_bits = dun_bits;
-+	crypt_ctx->crypto_mode = crypto_mode;
-+	crypt_ctx->processing_ksm = NULL;
-+	crypt_ctx->keyslot = -1;
-+	bio->bi_crypt_context = crypt_ctx;
++#else /* CONFIG_SCSI_UFS_CRYPTO */
 +
-+	return 0;
-+}
-+
-+static inline void bio_set_data_unit_num(struct bio *bio, u64 dun)
-+{
-+	bio->bi_crypt_context->data_unit_num = dun;
-+}
-+
-+static inline int bio_crypt_get_keyslot(struct bio *bio)
-+{
-+	return bio->bi_crypt_context->keyslot;
-+}
-+
-+static inline void bio_crypt_set_keyslot(struct bio *bio,
-+					 unsigned int keyslot,
-+					 struct keyslot_manager *ksm)
-+{
-+	bio->bi_crypt_context->keyslot = keyslot;
-+	bio->bi_crypt_context->processing_ksm = ksm;
-+}
-+
-+extern void bio_crypt_ctx_release_keyslot(struct bio *bio);
-+
-+extern int bio_crypt_ctx_acquire_keyslot(struct bio *bio,
-+					 struct keyslot_manager *ksm);
-+
-+static inline const u8 *bio_crypt_raw_key(struct bio *bio)
-+{
-+	return bio->bi_crypt_context->raw_key;
-+}
-+
-+static inline enum blk_crypto_mode_num bio_crypto_mode(struct bio *bio)
-+{
-+	return bio->bi_crypt_context->crypto_mode;
-+}
-+
-+static inline u64 bio_crypt_data_unit_num(struct bio *bio)
-+{
-+	return bio->bi_crypt_context->data_unit_num;
-+}
-+
-+static inline u64 bio_crypt_sw_data_unit_num(struct bio *bio)
-+{
-+	return bio->bi_crypt_context->sw_data_unit_num;
-+}
-+
-+extern bool bio_crypt_should_process(struct bio *bio, struct request_queue *q);
-+
-+extern bool bio_crypt_ctx_compatible(struct bio *b_1, struct bio *b_2);
-+
-+extern bool bio_crypt_ctx_back_mergeable(struct bio *b_1,
-+					 unsigned int b1_sectors,
-+					 struct bio *b_2);
-+
-+#else /* CONFIG_BLK_INLINE_ENCRYPTION */
-+struct keyslot_manager;
-+
-+static inline int bio_crypt_ctx_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline int bio_crypt_clone(struct bio *dst, struct bio *src,
-+				  gfp_t gfp_mask)
-+{
-+	return 0;
-+}
-+
-+static inline void bio_crypt_advance(struct bio *bio,
-+				     unsigned int bytes) { }
-+
-+static inline bool bio_has_crypt_ctx(struct bio *bio)
++static inline bool ufshcd_keyslot_valid(struct ufs_hba *hba,
++					unsigned int slot)
 +{
 +	return false;
 +}
 +
-+static inline void bio_crypt_free_ctx(struct bio *bio) { }
-+
-+static inline void bio_crypt_set_ctx(struct bio *bio,
-+				     u8 *raw_key,
-+				     enum blk_crypto_mode_num crypto_mode,
-+				     u64 dun,
-+				     unsigned int dun_bits,
-+				     gfp_t gfp_mask) { }
-+
-+static inline void bio_set_data_unit_num(struct bio *bio, u64 dun) { }
-+
-+static inline bool bio_crypt_has_keyslot(struct bio *bio)
++static inline bool ufshcd_hba_is_crypto_supported(struct ufs_hba *hba)
 +{
 +	return false;
 +}
 +
-+static inline void bio_crypt_set_keyslot(struct bio *bio,
-+					 unsigned int keyslot,
-+					 struct keyslot_manager *ksm) { }
-+
-+static inline int bio_crypt_get_keyslot(struct bio *bio)
++static inline bool ufshcd_is_crypto_enabled(struct ufs_hba *hba)
 +{
-+	return -1;
++	return false;
 +}
 +
-+static inline u8 *bio_crypt_raw_key(struct bio *bio)
-+{
-+	return NULL;
-+}
++static inline void ufshcd_crypto_enable(struct ufs_hba *hba) { }
 +
-+static inline u64 bio_crypt_data_unit_num(struct bio *bio)
++static inline void ufshcd_crypto_disable(struct ufs_hba *hba) { }
++
++static inline int ufshcd_hba_init_crypto(struct ufs_hba *hba)
 +{
 +	return 0;
 +}
 +
-+static inline bool bio_crypt_should_process(struct bio *bio,
-+					    struct request_queue *q)
-+{
-+	return false;
-+}
++static inline void ufshcd_crypto_setup_rq_keyslot_manager(
++					struct ufs_hba *hba,
++					struct request_queue *q) { }
 +
-+static inline bool bio_crypt_ctx_compatible(struct bio *b_1, struct bio *b_2)
-+{
-+	return true;
-+}
++static inline void ufshcd_crypto_destroy_rq_keyslot_manager(
++				struct ufs_hba *hba,
++				struct request_queue *q) { }
 +
-+static inline bool bio_crypt_ctx_back_mergeable(struct bio *b_1,
-+						unsigned int b1_sectors,
-+						struct bio *b_2)
-+{
-+	return true;
-+}
++#endif /* CONFIG_SCSI_UFS_CRYPTO */
 +
-+#endif /* CONFIG_BLK_INLINE_ENCRYPTION */
-+#endif /* CONFIG_BLOCK */
-+#endif /* __LINUX_BIO_CRYPT_CTX_H */
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index d0cb7c350cdc..63d0fee423fa 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -8,6 +8,7 @@
- #include <linux/highmem.h>
- #include <linux/mempool.h>
- #include <linux/ioprio.h>
-+#include <linux/bio-crypt-ctx.h>
++#endif /* _UFSHCD_CRYPTO_H */
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 8f2329b4fe79..31e64f4267dd 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -525,6 +525,11 @@ struct ufs_stats {
+  * @is_urgent_bkops_lvl_checked: keeps track if the urgent bkops level for
+  *  device is known or not.
+  * @scsi_block_reqs_cnt: reference counting for scsi block requests
++ * @crypto_capabilities: Content of crypto capabilities register (0x100)
++ * @crypto_cap_array: Array of crypto capabilities
++ * @crypto_cfg_register: Start of the crypto cfg array
++ * @crypto_cfgs: Array of crypto configurations (i.e. config for each slot)
++ * @ksm: the keyslot manager tied to this hba
+  */
+ struct ufs_hba {
+ 	void __iomem *mmio_base;
+@@ -735,6 +740,15 @@ struct ufs_hba {
  
- #ifdef CONFIG_BLOCK
- /* struct bio, bio_vec and BIO_* flags are defined in blk_types.h */
-@@ -564,11 +565,6 @@ static inline void bvec_kunmap_irq(char *buffer, unsigned long *flags)
- }
- #endif
- 
--enum blk_crypto_mode_num {
--	BLK_ENCRYPTION_MODE_INVALID	= 0,
--	BLK_ENCRYPTION_MODE_AES_256_XTS	= 1,
--};
--
- /*
-  * BIO list management for use by remapping drivers (e.g. DM or MD) and loop.
-  *
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index d688b96d1d63..d3ee2dcb634d 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -18,6 +18,7 @@ struct block_device;
- struct io_context;
- struct cgroup_subsys_state;
- typedef void (bio_end_io_t) (struct bio *);
-+struct bio_crypt_ctx;
- 
- /*
-  * Block error status values.  See block/blk-core:blk_errors for the details.
-@@ -173,6 +174,11 @@ struct bio {
- 	u64			bi_iocost_cost;
- #endif
- #endif
+ 	struct device		bsg_dev;
+ 	struct request_queue	*bsg_queue;
 +
-+#ifdef CONFIG_BLK_INLINE_ENCRYPTION
-+	struct bio_crypt_ctx	*bi_crypt_context;
-+#endif
-+
- 	union {
- #if defined(CONFIG_BLK_DEV_INTEGRITY)
- 		struct bio_integrity_payload *bi_integrity; /* data integrity */
++#ifdef CONFIG_SCSI_UFS_CRYPTO
++	/* crypto */
++	union ufs_crypto_capabilities crypto_capabilities;
++	union ufs_crypto_cap_entry *crypto_cap_array;
++	u32 crypto_cfg_register;
++	union ufs_crypto_cfg_entry *crypto_cfgs;
++	struct keyslot_manager *ksm;
++#endif /* CONFIG_SCSI_UFS_CRYPTO */
+ };
+ 
+ /* Returns true if clocks can be gated. Otherwise false */
 -- 
 2.24.0.rc0.303.g954a862665-goog
 
