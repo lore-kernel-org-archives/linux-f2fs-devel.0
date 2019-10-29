@@ -2,79 +2,106 @@ Return-Path: <SRS0=onZI=YW=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20D9CA9EAE
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 29 Oct 2019 09:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3886CA9EAE
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 29 Oct 2019 17:54:29 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A34CF20659;
-	Tue, 29 Oct 2019 09:33:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7DC272086A;
+	Tue, 29 Oct 2019 17:54:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="FqU9npcQ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="LPCxGXav"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A34CF20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="j04lSVv1";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ciNJ1YaT";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="FgzPmRcT";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="cIKrfG2B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DC272086A
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
-	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iPNsU-0002cx-9i; Tue, 29 Oct 2019 09:33:26 +0000
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1iPNsT-0002ck-8s
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 Oct 2019 09:33:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:Message-ID:Date:In-Reply-To:References:
+	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=biZ6RDb8tRZ5K2viZxh1/IaOe6PAx55tiIgG5S/sDjM=; b=j04lSVv1ObSSuKD2PoA5RD0uxN
+	gkmCwjHM0lWry9x4Q1+FOzEfIBdvMoSQE36Vns113wRPJsA1+MCe6G83hoR0n5iFhnEMYGgJ8boyr
+	vRF5cO/E14WhuEd/Ek+zqIFWYU79bB10v3sQkbWIcYTsybj3vmCURyiTejcqXVRdMy9Y=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
+	id 1iPVhM-0007XW-UA; Tue, 29 Oct 2019 17:54:28 +0000
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <paulcrowley@google.com>) id 1iPVhM-0007XP-CL
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 Oct 2019 17:54:28 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rnZ19+M7+M0FozXbUTAkvwpyYwhlVZ7m3BXlGTIyhdk=; b=FqU9npcQqZ6D6OtZxoCMqLGs4a
- U0FV1CCDvCPyphTiqF8izkaq1nZasCcjeEKDTYgL+G6PO3W0VSPTSajhDNLPMya6E1pFAOZIexVgU
- w5q03kC05tvs7bm5BmKI938/tgAlZ8bXB48mAzFFet5w78aaCEA1MwIbEVL2EfM047oc=;
+ bh=R35NzCe37FoRr+JmWaRxXNrs+ANr5l1yDPp+eQUm8vU=; b=ciNJ1YaTtUeGGZ7Ut2vCUZL6Qc
+ L0G5C4Y3MhFfGwz6CFY9ccd6dd/gWY7ujikWOr7urjYPFy6oNj+cEzaxQsUzVZ0TomoDgwI7cCYXC
+ wiB95HJ+lydYvFixxJwXQdBr5lbPsJvrW8YVE/xzj+1pxHxbGVnlIc1tGtV1apOmpmzs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=rnZ19+M7+M0FozXbUTAkvwpyYwhlVZ7m3BXlGTIyhdk=; b=LPCxGXav0Bq9G7BNj4mbtYAXPc
- 80PeQ/e+7DaBXmAXVChNDxTE3oYDscisKmfM64tI2WYWbcE5P/+MaKmR+NmJnFEVaMEx/F9jM1cZR
- OXmh1Uqk24rU3Hw4qlNFj4RcMwvVRFZmx12fQ3ps/j2irEt7gFcm20D/3u/eVSiNJR/A=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iPNsR-008JRq-J8
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 Oct 2019 09:33:25 +0000
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 5DD4795D8C9B028EF9D9;
- Tue, 29 Oct 2019 17:33:16 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 29 Oct
- 2019 17:33:12 +0800
-To: =?UTF-8?B?546L55+b?= <spearmao@126.com>
-References: <51b426e.685b.16df7c1dfeb.Coremail.spearmao@126.com>
- <41ebc7c0-d302-af52-f201-825220ed70f0@huawei.com>
- <6a90286.7f06.16dfde844d3.Coremail.spearmao@126.com>
- <14c6b12e.4b95.16e111552ce.Coremail.spearmao@126.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <8e7b930d-3c93-4edf-ad2c-cdff3e71ec49@huawei.com>
-Date: Tue, 29 Oct 2019 17:33:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ bh=R35NzCe37FoRr+JmWaRxXNrs+ANr5l1yDPp+eQUm8vU=; b=FgzPmRcTPD0WcnG3hjQKw7EWbd
+ 5mCsfwu7J5LX5r8NLC+4y/i4kJK8LgenyT9cmiLVZypw2Csv3ZwYy+70Im1CJTxQitjy/8q2qwHlS
+ Nwwgmix1DNvH2dJdIGWIcNAvSqFEQkoqH3ctSH/gSk45KUnRNEkyohED8sHbAn0TxYTQ=;
+Received: from mail-lj1-f196.google.com ([209.85.208.196])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1iPVhL-008w3p-2C
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 Oct 2019 17:54:28 +0000
+Received: by mail-lj1-f196.google.com with SMTP id s4so15374136ljj.10
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 29 Oct 2019 10:54:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :cc; bh=R35NzCe37FoRr+JmWaRxXNrs+ANr5l1yDPp+eQUm8vU=;
+ b=cIKrfG2BcBsU9hYXIpQdSwopgElTE4RautsHm9ZOuGHXTi69dKNkh17wSQH/L4zosA
+ DI1JpADSu0a3R25/VXr5Iz0OjSuf3z6tAsWgiVO+H5ZF/9VP2xOxAKxjdhdoLpjleNL1
+ GGQBMKSg8yP8LIjunquGxXVF8tAxYNJNCdEfsXnbnr55B8bLQDyruSeqzDYclYPGSbAm
+ HJjhrG4J94CdXOlytO9LgDMPwdYA+nprQ2rf2m4rCZfPfrNaJYmSZ90g3N59yzI3oBGl
+ vPR4bxKynazkligieSoyOTOws2e6shukr1fmmOZGMEygc+XcvpYmK61rppkwFwgRbTjB
+ zPIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc;
+ bh=R35NzCe37FoRr+JmWaRxXNrs+ANr5l1yDPp+eQUm8vU=;
+ b=UNp2iW75snZurZ5p61RbISLq5lTzvMwtte3YTE0RNo2eKdm3IDDZ93McbvIVy6UoXv
+ HkqL38rYXfNFP9ljyfz5D9EXTVjFXOMOeBi46/PwXhd9WUIU/K1N8kGp6gEhrkGPVmbF
+ sc8lan+18np6sUfomEjzPoXZcqaECp0DBURHBG430OM1huRf2LKBIJMVopmKYRbQs6wC
+ mxieREgsT8PyqsoYVxYDx2NpecPo4UsjB16tGJCau55hd+Ovx2KQDFbuHhqdbNmuYaxq
+ R+tfFph8O8RdyWJF60r3RaUBXBc7sFLrdZLHgt02Y06nEXwOY4uxTLMtArlNH4YwcmNf
+ L/cg==
+X-Gm-Message-State: APjAAAVOM0VdeX48tpMUL3YV3UgDDYAreHD8hvYQaN1hNgiyADSM2fnv
+ CX90ruIaA0Sep4r+zNu7QclbWIG99FpZh8IH1Z/BxA==
+X-Google-Smtp-Source: APXvYqwNTLBO6ek7haLq57qS7qFh4V78zjcOU4/j+rzIkHP000hEzkPtfT9hnV441B6ZiktsLU57y15HuzMTPyrd4yw=
+X-Received: by 2002:a2e:96c9:: with SMTP id d9mr3387439ljj.247.1572371282017; 
+ Tue, 29 Oct 2019 10:48:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <14c6b12e.4b95.16e111552ce.Coremail.spearmao@126.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1iPNsR-008JRq-J8
-Subject: Re: [f2fs-dev] Question about f2fs UDC(userdata checkpointing)
+References: <20191024215438.138489-1-ebiggers@kernel.org>
+ <20191024215438.138489-2-ebiggers@kernel.org>
+In-Reply-To: <20191024215438.138489-2-ebiggers@kernel.org>
+Date: Tue, 29 Oct 2019 10:47:50 -0700
+Message-ID: <CA+_SqcCefZRWL2xHRwFABupXyBdq9=jgBK_9gy-_4o-yFXG+Tg@mail.gmail.com>
+To: Eric Biggers <ebiggers@kernel.org>
+X-Headers-End: 1iPVhL-008w3p-2C
+Subject: Re: [f2fs-dev] [PATCH v2 1/3] fscrypt: add support for
+ IV_INO_LBLK_64 policies
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,70 +113,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Paul Crowley via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Paul Crowley <paulcrowley@google.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, "Theodore Y . Ts'o" <tytso@mit.edu>,
+ Satya Tangirala <satyat@google.com>, Paul Lawrence <paullawrence@google.com>,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SGVsbG8sCgpPbiAyMDE5LzEwLzI4IDE0OjM3LCDnjovnn5sgd3JvdGU6Cj4gSGkgQ2hhbywKPiAK
-PiBTb3JyeSB0byBib3RoZXIgeW91IGFnYWluIHdpdGggbGFzdCBxdWVzdGlvbiBhYm91dCB0aGlz
-IHRvcGljLiA6KQo+IAo+ICJBY3R1YWxseSwgQVBQIGNhbiB1cGRhdGUgZGF0YSBkdXJpbmcgQ1Ag
-ZGlzYWJsaW5nLCB1bmxlc3MgdGhlcmUgaXMgbm8gZW5vdWdoCj4gZnJlZSBzcGFjZSIKPiBTbyB3
-ZSBkb24ndCBwcmV2ZW50IGFwcCB1cGRhdGUgZGF0YSBkdXJpbmcgQ1AgZGlzYWJsaW5nLCBidXQg
-d2UgcHJldmVudCB0aGUKPiBkaXJ0eSBub2RlL2RhdGEgaW5mb3JtYXRpb24gdG8gYmUgc3luY2Vk
-IGludG8gc3RvcmFnZSwgcmlnaHQ/Cj4gCj4gRnJvbSBjb2RlIGkgY2FuIHNlZSBiZWxvdyBzeW5j
-IG9wZXJhdGlvbiB3aWxsIHJldHVybiBkaXJlY3RseSBpZiBmaW5kIENQIGlzCj4gZGlzYWJsZWQ6
-Cj4gwqDCoMKgIMKgwqDCoCBmMmZzX3N5bmNfZnMoKQo+IMKgwqDCoCDCoMKgwqAgZjJmc19kb19z
-eW5jX2ZpbGUoKQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKHVubGlrZWx5KGlzX3NiaV9m
-bGFnX3NldChzYmksIFNCSV9DUF9ESVNBQkxFRCkpKQo+IMKgwqDCoCDCoMKgIMKgIMKgIMKgIMKg
-IMKgwqAgcmV0dXJuIDA7Cj4gCj4gTXkgcXVlc3Rpb24gaXMsIGkgZGlkbid0IGZpbmQgYW55IGNv
-ZGUgdG8gY2hlY2sgQ1AgaXMgZGlzYWJsZWQgaW4gdGhlIFdyaWJlLUJhY2sKPiBwcm9jZWR1cmUu
-Cj4gQXMgeW91IGtub3csIFdCIHByb2NlZHVyZSB3b3VsZCBiZSBleGVjdXRlZCBwZXJpb2RpY2Fs
-bHkgYW5kIGZsdXNoIGRpcnR5IGRhdGEKPiBpbnRvIHN0b3JhZ2UuCj4gVGh1cyBpZiBXQiBpcyBu
-b3QgcHJldmVudGVkIGR1cmluZyBDUCBkaXNhYmxlZCwgZGF0YSBzdGlsbCBiZSB1cGRhdGVkIG9u
-dG8KPiBmbGFzaCzCoCB0aGlzIGlzIG91dCBvZiBleHBlY3RhdGlvbiBvZiBVREMsIGlzIHRoaXMg
-cmlnaHQ/CgpXZSBkb24ndCBuZWVkIHRvIHRha2UgY2FyZSBvZiBXQiwgaWYgQ1AgYW5kIGZzeW5j
-IGlzIGRpc2FibGVkLCBhZnRlciBzdWRkZW4KcG93ZXItY3V0LCB3ZSB3aWxsIHJvbGxiYWNrIHRv
-IHByZXZpb3VzIENQLCB3aGljaCB3aWxsIG5vdCBjb250YWluIHdyaXRlYmFja2VkCmRhdGEvbm9k
-ZS4KClRoYW5rcywKCj4gCj4gVGhhbmtzLAo+IE1hbwo+IAo+IAo+IEF0IDIwMTktMTAtMjQgMjE6
-MTU6MjAsICLnjovnn5siIDxzcGVhcm1hb0AxMjYuY29tPiB3cm90ZToKPiAKPiAgICAgQ2hhbywK
-PiAKPiAgICAgVmVyeSBhcHByZWNpYXRlZCBmb3IgeW91ciBraW5kIGFuZCBwcm9tcHQgcmVwbHku
-IDopCj4gCj4gICAgIExldCBtZSB0cnkgdG8gc3BlbmQgbW9yZSB0aW1lIG9uIHRoZSBmMmZzIFVE
-QyByZWxhdGVkIGNvZGUgYW5kIGdldCBiYWNrCj4gICAgIGxhdGVyIGlmIEkgaGF2ZSBmdXJ0aGVy
-IHF1ZXN0aW9ucy4KPiAKPiAgICAgVGhhbmtzIQo+ICAgICBNYW8KPiAKPiAgICAgQXQgMjAxOS0x
-MC0yMyAxNzo0MjowMywgIkNoYW8gWXUiIDx5dWNoYW8wQGh1YXdlaS5jb20+IHdyb3RlOgo+ICAg
-ICA+SGVsbG8sCj4gICAgID4KPiAgICAgPk9uIDIwMTkvMTAvMjMgMTY6MzUsIOeOi+efmyB3cm90
-ZToKPiAgICAgPgo+ICAgICA+W3NuaXBdCj4gICAgID4KPiAgICAgPj4gV2hlbiBDUCBpcyBkaXNh
-YmxlZCwgSSBzYXcgbWFueSBmMmZzIG9wZXJhdGlvbnMgYXJlIHByZXZlbnRlZChsaXN0ZWQgYWJv
-dmUpLgo+ICAgICA+PiAKPiAgICAgPj4gSWYgc28sIGR1cmluZyB0aGUgcGVyaW9kIENQIGRpc2Fi
-bGVkLCBhcHAgY2Fu4oCZdCBkbyBhbnkgY2hhbmdlIHRvIGYyZnM/IAo+ICAgICA+Cj4gICAgID5Q
-bGVhc2UgQ2MgZjJmcyBtYWlsaW5nIGxpc3QgZm9yIGFueSBmMmZzIHF1ZXN0aW9uLgo+ICAgICA+
-Cj4gICAgID5BY3R1YWxseSwgQVBQIGNhbiB1cGRhdGUgZGF0YSBkdXJpbmcgQ1AgZGlzYWJsaW5n
-LCB1bmxlc3MgdGhlcmUgaXMgbm8gZW5vdWdoCj4gICAgID5mcmVlIHNwYWNlLCB0aGUgbG9naWMg
-d2FzIGluZGljYXRlZCBieSBiZWxvdyBjb2RlczoKPiAgICAgPgo+ICAgICA+c3RhdGljIGlubGlu
-ZSBib29sIGYyZnNfaXNfY2hlY2twb2ludF9yZWFkeShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkp
-Cj4gICAgID57Cj4gICAgID4JaWYgKGxpa2VseSghaXNfc2JpX2ZsYWdfc2V0KHNiaSwgU0JJX0NQ
-X0RJU0FCTEVEKSkpCj4gICAgID4JCXJldHVybiB0cnVlOwo+ICAgICA+CWlmIChsaWtlbHkoIWhh
-c19ub3RfZW5vdWdoX2ZyZWVfc2VjcyhzYmksIDAsIDApKSkKPiAgICAgPgkJcmV0dXJuIHRydWU7
-Cj4gICAgID4JcmV0dXJuIGZhbHNlOwo+ICAgICA+fQo+ICAgICA+Cj4gICAgID5zdGF0aWMgaW50
-IGYyZnNfbWtub2Qoc3RydWN0IGlub2RlICpkaXIsIHN0cnVjdCBkZW50cnkgKmRlbnRyeSwKPiAg
-ICAgPgkJCQl1bW9kZV90IG1vZGUsIGRldl90IHJkZXYpCj4gICAgID57Cj4gICAgID4Jc3RydWN0
-IGYyZnNfc2JfaW5mbyAqc2JpID0gRjJGU19JX1NCKGRpcik7Cj4gICAgID4Jc3RydWN0IGlub2Rl
-ICppbm9kZTsKPiAgICAgPglpbnQgZXJyID0gMDsKPiAgICAgPgo+ICAgICA+CWlmICh1bmxpa2Vs
-eShmMmZzX2NwX2Vycm9yKHNiaSkpKQo+ICAgICA+CQlyZXR1cm4gLUVJTzsKPiAgICAgPglpZiAo
-IWYyZnNfaXNfY2hlY2twb2ludF9yZWFkeShzYmkpKQo+ICAgICA+CQlyZXR1cm4gLUVOT1NQQzsK
-PiAgICAgPi4uLgo+ICAgICA+fQo+ICAgICA+Cj4gICAgID5PbmNlIGFsbCBkYXRhIHdhcyB1cGRh
-dGVkIGJ5IEFuZHJvaWQsIHdlIGNhbiB0ZXJtaW5hdGUgQ1AgZGlzYWJsaW5nIHN0YXR1cywgYW5k
-Cj4gICAgID50cmlnZ2VyIGEgY2hlY2twb2ludCB0byBwZXJzaXN0IGFsbCBwcmV2aW91cyB1cGRh
-dGVzLgo+ICAgICA+Cj4gICAgID5UaGFua3MsCj4gICAgID4KPiAgICAgPj4gCj4gICAgID4+IElm
-IHllcywgaG93IGl0IGltcGxlbWVudGVkIHRoZSBjaGVja3BvaW50IGZ1bmN0aW9uPwo+ICAgICA+
-PiAKPiAgICAgPj4gTWF5YmUgdGhlIHBhdGNoIEkKPiAgICAgPj4gZm91bmQoaHR0cHM6Ly9zb3Vy
-Y2Vmb3JnZS5uZXQvcC9saW51eC1mMmZzL21haWxtYW4vbWVzc2FnZS8zNjQyNTUxMS8pIGlzIG5v
-dCB0aGUKPiAgICAgPj4gd2hvbGUgaW1wbGVtZW50YXRpb24gb2YgdGhpcyBmZWF1dGXigKYuCj4g
-ICAgID4+IAo+ICAgICA+PiDCoAo+ICAgICA+PiAKPiAgICAgPj4gCj4gICAgID4+IFRoYW5rcywK
-PiAgICAgPj4gCj4gICAgID4+IE1hbwo+ICAgICA+PiAKPiAgICAgPj4gCj4gICAgID4+IAo+ICAg
-ICA+PiDCoAo+ICAgICA+PiAKPiAKPiAKPiAKPiAgICAgwqAKPiAKPiAKPiAKPiDCoAo+IAoKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
-ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
-Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
-ZGV2ZWwK
+On Thu, 24 Oct 2019 at 14:57, Eric Biggers <ebiggers@kernel.org> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Co-developed-by: Satya Tangirala <satyat@google.com>
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  Documentation/filesystems/fscrypt.rst | 63 +++++++++++++++++----------
+>  fs/crypto/crypto.c                    | 10 ++++-
+>  fs/crypto/fscrypt_private.h           | 16 +++++--
+>  fs/crypto/keyring.c                   |  6 ++-
+>  fs/crypto/keysetup.c                  | 45 ++++++++++++++-----
+>  fs/crypto/policy.c                    | 41 ++++++++++++++++-
+>  include/linux/fscrypt.h               |  3 ++
+>  include/uapi/linux/fscrypt.h          |  3 +-
+>  8 files changed, 146 insertions(+), 41 deletions(-)
+
+I don't understand all of this, but the crypto-relevant part looks good to me.
+
+Reviewed-By: Paul Crowley <paulcrowley@google.com>
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
