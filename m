@@ -4,115 +4,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BE8CA9EC5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Oct 2019 17:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A58DCA9EC5
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Oct 2019 17:23:04 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5E15720679;
-	Wed, 30 Oct 2019 17:03:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 137682173E;
+	Wed, 30 Oct 2019 17:23:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="L68i9y80";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lNSz2/79";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="c/DcdHg1";
-	dkim=neutral (0-bit key) header.d=aol.com header.i=@aol.com header.b="QaTibODe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E15720679
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="cr0WMpOM";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Mxxs+nKe";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PqX2nX4k";
+	dkim=neutral (0-bit key) header.d=aol.com header.i=@aol.com header.b="Un1nk9Ek"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137682173E
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
 	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Message-ID:To:Date:Sender:Cc:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=tarwXS0zmNv8pze02F/FPIhlZWqm3er8yGZ9N4x3VRE=; b=L68i9y80J4EqUt+kfkER0Yazw
-	bH1nbJpWFhfaBQq1e6Nqjic9j8ohGK364Q76y62ruxGgcM+oZvXHNn/UQQDGbfhAsi5pPa9aGE2mE
-	zDB3n1Oz0pcFw+iX1Xd5chc6142S42qzyzAj58omMYFvFvJ9oxUyk6oVR9YbNV3sGZNrQ=;
+	 bh=3m6zlidMi/kQVHRy5rk7iegM8aWnyocqGtbxVTYi00c=; b=cr0WMpOMDe9VQCOcYJEpb/Rla
+	bWzMbSFpesAEGashxDwEuxlvJDx14v8AxbdMHkpwjHh5FcrTXsx4/J3KTM5tQs+wffXmp3RnRYZS3
+	YQH+g9NYTUI4NmzKtu4nF7/CD8q46nMnkM1Dl9TEwIlIQ1/XmlhmSOVFCJ0eCKZRjBtTQ=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iPrND-0007bA-1z; Wed, 30 Oct 2019 17:03:07 +0000
+	id 1iPrgU-0008Qp-SN; Wed, 30 Oct 2019 17:23:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hsiangkao@aol.com>) id 1iPrNB-0007b3-NA
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Oct 2019 17:03:05 +0000
+ (envelope-from <hsiangkao@aol.com>) id 1iPrgU-0008Qh-14
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Oct 2019 17:23:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=a1fHgbV2gsxc/qTJLuC1KwVssDo9JDASf8CqQzhRyLw=; b=lNSz2/792LLImaB9C7eZELsToK
- vATXWa10itbhxqi2Z2wsDpU2c85us+/POdLssm040QzyfZ0rawsUsuWXspecFBybt+5PJYDImYsCT
- YB7hK3qbQR4qO03ygcSuEa92vVx9SiWTcRpjc96Ujg1VVKROHMIZ5/5GIt0BI4zjuAks=;
+ bh=Kb4n1V0seA/ZgYHtBmZ8iV+zYnoNVd+L2wWX8RTfW1M=; b=Mxxs+nKe/18xmEytZ6WUXgi/XO
+ BtfFlOLG5GVofZ8a9WFERGFabzlsYMKOurR+jk167JEwTDscDbeRKH5qKb+lAA7/71OgVLH53MxZf
+ 4nqd3tAZ0LUd5fMStfBSBAtuYdo+X1JwBoCr2gPBRfjYDg2G8r6RTFFQPIQgP4taaMI4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
+ From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=a1fHgbV2gsxc/qTJLuC1KwVssDo9JDASf8CqQzhRyLw=; b=c/DcdHg13qp1OlW98Dp2UezNoA
- rsxpG/BsHrfelPnm+sEg3G6TbJiG5gxuTlRNBn5HHusKfI+wBwZTMRktyshkFE4H9nZqRY2EeKzvu
- kw366yf4qS6DPg6gN1D4nEcZOKandSonE592oCMUtiqfjrj/O+Iu+YoBngCcdhQPQlBs=;
-Received: from sonic312-24.consmr.mail.gq1.yahoo.com ([98.137.69.205])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=Kb4n1V0seA/ZgYHtBmZ8iV+zYnoNVd+L2wWX8RTfW1M=; b=PqX2nX4kEkPZXoB3i0K60ALL3t
+ 71uFY+HkpyDJoIfBTB7ThTFYvsrB8480KpG7vBRFRYrhd56UFTnMTfEAklyKP1BnFI4fk4nePAzFy
+ zZq4OxlLu3AlamZb+brM1TeqjeGjBo5OZIt5OddUu1n+R6Q7qKJUPpi7i5G93SRTPVcY=;
+Received: from sonic304-24.consmr.mail.gq1.yahoo.com ([98.137.68.205])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1iPrN8-00BABf-Qv
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Oct 2019 17:03:05 +0000
+ id 1iPrgQ-00B8XO-6j
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Oct 2019 17:23:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048;
- t=1572454977; bh=a1fHgbV2gsxc/qTJLuC1KwVssDo9JDASf8CqQzhRyLw=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject;
- b=QaTibODeT0QYR4zIRHr/bGvFMurkXoD1uzsTpwSNMTV4FeTgvrpvqNPvgDKpV93VtMcKZs7jeh10DI1MHvs0NErQevBKov+G9fIw+hmA4+VfgXqYo73o712APtFLKA+dcBp85wdLJKJcKeI+38HJjs0tZoNX0S5Hv9+hODDwdSLKNLbe/ysYEin9Ns4POZfMzMM7TDj7lPMOr5fQwLufZNFhjVl3qj2WbwgYJijVzbGFGIChiTDityLzzZkWAdrM93b1qnm+cCOpra57pr8eEwGo0GApiiWoTwW8B1ZfK4aG6LjKDbXCNbORJ/m79YlQtTzAyspgKmEM1lCbn2CfzQ==
-X-YMail-OSG: xAMhXSYVM1mVFgtK0BldmKPUfzfYfyQA7hXB0tqZ1buoDcpRFjK1KOkXE2vDdku
- mS0_DTHl7uNhwfTABLCGEqL0IzWLVKrf4CUovUZqk_NWxgKv_DlmP1XifeCvCZF2LpzqOhcTJGLG
- Dm0nzWMyRflAODUEl3e1bTwZYU0gufWn0iiy6Mtgdbpk0qdOPePbPvw5N3tN7DdpZWo07zh6BO1y
- TjwZehv6xDg0ar1LvNVUVE5Vibo0FLKAkatJ3mudnOArjxx9NmenrkXhs0OgrW06HjLVB1cA4YcS
- dB3oZTncNajnuHRwgAtKhqUa7K9Dx2ccbwRZExzSkpx105I8Tp2CVVSxKoKt2MBUJj82GCpdkjcn
- DIye3PaZol8nQqKL7Du8XlYaxAcvsFT3SQaqoLsskRtHgspkORXw1V3_lRGMcac0_Rekl7Erv1J9
- 3CMm8Q3WuUb7iR7j6nyUNIABWH1yGQpCl.jQPLqq6f6qV0DYOxE6My06TxLwFRtYYtfDe7JhrM9j
- 25FLduRwdsIrD4KgiYcPWYYJoNFQf.BeFOgwv3o2cifm.cfBTc79EF.3oTdqIoe1JWVYYO0IH0A1
- qCSKEjKY0JucuM587EMpbHcqy8JNQO5QmN.T1QVJMkwizewftDr7gUb_PjbRDNSf0WzV3M69WlW1
- _CWKDPVagVJoKK6s2XF53muDbOUBeUgHtQzqAb3pXh5g3QqrLDLMrQ0fBjAoXknjMOICQsd9M2dB
- pLc.N8I8_AWdHq8cSRkD2CeG4EnCn8LcVg3WWCgu8XAVk14.y2OxNAv2lLJfEgD3nrS26a.jPx7n
- nwfm_9QWYpFLaa8TscbhLuaE4i5sizemvJdP01KTo8pTOr7z4CfEyuOgBdd50xVXe1ITLt_EnlnC
- PMZ6IcUhcsrnhWafvutq7ok7dm53F2W.OijwDHLFVLLoAXUbogEjmQo0NbP2GM4e__KItwdj70Xl
- YmioWc0K_w5kfxl7gc8BwHi.srO_qIWrt.jx7aXZlIQot0JHYGoydcghy15YQSOQPABZUG9FU5vk
- CMpwhvECKPzeXTMEWiWfg7c.isOMiHeo9Ut7tfP.45DFVu1X8EER3C.OSa9PjucAfi_x_9wLKFms
- khTO7eFSl1b5AeD.N.c9WXtTT5K2Xxlua04EWhh0jE5LFtPvBW9Heq7BaXqculhHYF.6GeTC0UrF
- rWR.0_ZRCe.EoZWHFtbzMMLRQW2.jbk4lB.3vf8BawbgJLTKbVf1Gy8EOTzL.ESFrVqX8RyHZX_s
- uKB.XmOE0VuIVL_7FOO8LgMjaWoRqUvoK0sPvriMxHLt3fORBmxUscWrrcsIhNbjOiZVLB84aX88
- jkCrYESXAJHZgynhHlaZ2sgKfG11MaPuSP8aTkufW7h8zg3aX4.wBJNRH7nAvgtiQa3Fzpg5bw2t
- e2a49yjXnEg--
+ t=1572456172; bh=Kb4n1V0seA/ZgYHtBmZ8iV+zYnoNVd+L2wWX8RTfW1M=;
+ h=Date:From:To:Subject:References:In-Reply-To:From:Subject;
+ b=Un1nk9EkHYaK0BMxOM2tsndHhH/1x7yC0PS/+NhGQ3LFO5nZPw5xTtjOruCj2M/rZTMW18a7omSDc3toddZXTQN8RLsp5aGtea9mAuYHsLVmlJh7YPVzO5HaFe7jzGc3q62eTbmCl/Agy8RToWDrzP0pJdFWWjm+RrVnyDpie88KuNvUISYkAxt9hMqBHOaJuHun2Jvko4G/FpJINmsvRIQxF6mi1vWYDIT4iwRM7GEQGmx1Q8/ioFomSEwdh0MRenk/YDpNEkRGuwp+o83xMD88bBZ/ybqSEF9qX7Ik3p2Jr4Y24F/VGHrH0aI/BRzE0le28sLe0OWz440AiTQgqg==
+X-YMail-OSG: 9NV7YMwVM1li.vt0Wt_kGHuCLM6N2Rp7_uQIRZFfJ7mGGG.1e68Rtg8Ra6trvAd
+ 0T9LvpWHgRtlywhsGdG4YIBh2LXsRpT3CHlyuELKnHvI18e_Rw94OnJH9WtEl2xZ6_xBS6SYGZ2C
+ BsreKwFbODvzvDarCJn3XSiXj8ne8RN2vxQ24ogdT5KoaM.ufezIc5d1X9dW7cyN35n16zJp9cSz
+ dxXdCDKpK5ST3MKZIuwtOUFoTt.mPr22B2HdfLB2CaE.RCr5SjmNSoJsnC8oAe0wXP5A5DppDWio
+ E886lfvRy3wBanP.UQWZBtHM50M6SnWKIr6HLEPn7.r4hZUI_eNRV6kF6fAzbXpSXnUiOxtCnVzF
+ hHErg6VLrx286dzhFkHaBpEEDpXF8EZUyo.kX3gqxxOD4RkcmzocfHVCeik.ukZOmvEzVPYG0z2j
+ Znlk3noB3pXf2nyw5JFcte8cSn.HQ0r0BtFGfRIh0mdLoLMDTyDJZZmUl1arQc_Czi5AxqPcxzHJ
+ KXwl_7V_lmyPjbVP0anKSX4AkJddT455bEEjdlfKGQ8lcKmDEGCyjENOCLc0MIzx6kenTbeGJpyX
+ o3ofVD9mPGAPGY6kFoE.WlHEeXXqyv_nJ_s7UaDzPLri0ddtt.5gKHpH4Q_5Clx65SWFrLWyh7ho
+ 3cm5guUNcFaddNsbqmSjvXHeAjIO4zsJGkrbUjVJKQdSCv3fEPcNvHUkNQlUI6LrEiyZxiaBylUK
+ 9d8mpYHtW0NXsg83D3EJrZ3M19q.eq8BkSmGcRtku8h2r7GcBcmeWX85HSlJ0w_HcpmIDz0g1S5S
+ 9XsWQovO7r5EhpY67TBnbbmoYCVk36asjR_gDyogp.06Y63jhD_UHnNWSbN3Larh_CUXMz7TPpTs
+ GrNJiTCrRDPxiNUq9ia6FsWNZ4Eo6hD90fiSr00uB9fTky5RPGXJ4ilnRcSdhiX6j6BmfoT_Tvfv
+ VsnpNrWA95JmH4ktnyE46.jJWl28x46suX2eW8JJOrsyZgt5vPN6Cq6gCXnPLkBUTOtAQISOTfGJ
+ y__BWhFArZgROHVUwyAJjmZFBigK0GInRhtSmqz8w66rYwZzOaeGUOTe13S4GSdpxMhwiH2SvsCi
+ PKFwpYaxGbehsb9AbS_ccC3QVhiZyNgjeqONh5t1SMncpNhck0JSjkyJ0pc7J1pMKvmSZ5U.QkKz
+ 0zyJ3pqnKCi62C2J0q6jFKjzC.FYsO5mZDDqcU2axUh8GhsVSu.zBW1NB3SUz8j5_JjqsftSewFS
+ V5rwJnDq7JAvY6.35Br0J8USDelvfFLxVxTuIfC.KtdTx_DqBSoPnqvPNTjCwZxxOJx2HipgGEVA
+ vqKtD36H20RIuHquq6D_5FKxsfd07ESIuINmMsMGVPQc45BAgeIhYVMq4E72.vbcHEW8ra5PpVOA
+ fKEmF7TLQVw--
 Received: from sonic.gate.mail.ne1.yahoo.com by
- sonic312.consmr.mail.gq1.yahoo.com with HTTP; Wed, 30 Oct 2019 17:02:57 +0000
-Received: by smtp408.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA
- ID 39a6ce8385eb3b927ad40666caf4f5e7; 
- Wed, 30 Oct 2019 16:52:46 +0000 (UTC)
-Date: Thu, 31 Oct 2019 00:52:39 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Message-ID: <20191030165226.GC3953@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20191030035518.65477-1-gaoxiang25@huawei.com>
- <20aa40bd-280d-d223-9f73-d9ed7dbe4f29@huawei.com>
- <20191030091542.GA24976@architecture4>
- <19a417e6-8f0e-564e-bc36-59bfc883ec16@huawei.com>
- <20191030104345.GB170703@architecture4>
- <20191030151444.GC16197@mit.edu>
- <20191030155020.GA3953@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20191030162243.GA18729@mit.edu>
- <20191030163313.GB34056@jaegeuk-macbookpro.roam.corp.google.com>
+ sonic304.consmr.mail.gq1.yahoo.com with HTTP; Wed, 30 Oct 2019 17:22:52 +0000
+Received: by smtp415.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA
+ ID c6b74f9a96653bcbb72edbf42affa5a8; 
+ Wed, 30 Oct 2019 17:22:50 +0000 (UTC)
+Date: Thu, 31 Oct 2019 01:22:44 +0800
+To: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Fengguang Wu <fengguang.wu@intel.com>
+Message-ID: <20191030172234.GA7018@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20191022171602.93637-1-jaegeuk@kernel.org>
+ <20191022171602.93637-2-jaegeuk@kernel.org>
+ <20191027225006.GA321938@sol.localdomain>
+ <da214cdc-0074-b7bf-7761-d4c4ad3d4f6a@huawei.com>
+ <20191030025512.GA4791@sol.localdomain>
+ <97c33fa1-15af-b319-29a1-22f254a26c0a@huawei.com>
+ <20191030165056.GA693@sol.localdomain>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20191030163313.GB34056@jaegeuk-macbookpro.roam.corp.google.com>
+In-Reply-To: <20191030165056.GA693@sol.localdomain>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Mailer: WebService/1.1.14593 hermes Apache-HttpAsyncClient/4.1.4
  (Java/1.8.0_181)
-X-Headers-End: 1iPrN8-00BABf-Qv
-Subject: Re: [f2fs-dev] [PATCH] f2fs: bio_alloc should never fail
+X-Headers-End: 1iPrgQ-00B8XO-6j
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: support data compression
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -126,59 +127,55 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 From: Gao Xiang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Gao Xiang <hsiangkao@aol.com>
-Cc: linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- "Theodore Y. Ts'o" <tytso@mit.edu>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Oct 30, 2019 at 09:33:13AM -0700, Jaegeuk Kim wrote:
-> On 10/30, Theodore Y. Ts'o wrote:
-> > On Wed, Oct 30, 2019 at 11:50:37PM +0800, Gao Xiang wrote:
+Hi Eric,
+
+(add some mm folks...)
+
+On Wed, Oct 30, 2019 at 09:50:56AM -0700, Eric Biggers wrote:
+
+<snip>
+
+> > >>>
+> > >>> It isn't really appropriate to create fake pagecache pages like this.  Did you
+> > >>> consider changing f2fs to use fscrypt_decrypt_block_inplace() instead?
+> > >>
+> > >> We need to store i_crypto_info and iv index somewhere, in order to pass them to
+> > >> fscrypt_decrypt_block_inplace(), where did you suggest to store them?
+> > >>
 > > > 
-> > > So I'm curious about the original issue in commit 740432f83560
-> > > ("f2fs: handle failed bio allocation"). Since f2fs manages multiple write
-> > > bios with its internal fio but it seems the commit is not helpful to
-> > > resolve potential mempool deadlock (I'm confused since no calltrace,
-> > > maybe I'm wrong)...
+> > > The same place where the pages are stored.
 > > 
-> > Two possibilities come to mind.  (a) It may be that on older kernels
-> > (when f2fs is backported to older Board Support Package kernels from
-> > the SOC vendors) didn't have the bio_alloc() guarantee, so it was
-> > necessary on older kernels, but not on upstream, or (b) it wasn't
-> > *actually* possible for bio_alloc() to fail and someone added the
-> > error handling in 740432f83560 out of paranoia.
+> > Still we need allocate space for those fields, any strong reason to do so?
+> > 
 > 
-> Yup, I was checking old device kernels but just stopped digging it out.
-> Instead, I hesitate to apply this patch since I can't get why we need to
-> get rid of this code for clean-up purpose. This may be able to bring
-> some hassles when backporting to android/device kernels.
+> page->mapping set implies that the page is a pagecache page.  Faking it could
+> cause problems with code elsewhere.
 
-Yes, got you concern. As I said in other patches for many times, since
-you're the maintainer of f2fs, it's all up to you (I'm not paranoia).
-However, I think there are 2 valid reasons:
+Not very related with this patch. Faking page->mapping was used in zsmalloc before
+nonLRU migration (see material [1]) and use in erofs now (page->mapping to indicate
+nonLRU short lifetime temporary page type, page->private is used for per-page information),
+as far as I know, NonLRU page without PAGE_MAPPING_MOVABLE set is safe for most mm code.
 
- 1) As a newbie of Linux filesystem. When I study or work on f2fs,
-    and I saw these misleading code, I think I will produce similar
-    code in the future (not everyone refers comments above bio_alloc),
-    so such usage will spread (since one could refer some sample code
-    from exist code);
+On the other hands, I think NULL page->mapping will waste such field in precious
+page structure... And we can not get such page type directly only by a NULL --
+a truncated file page or just allocated page or some type internal temporary pages...
 
- 2) Since it's upstream, I personally think appropriate cleanup is ok (anyway
-    it kills net 20+ line dead code), and this patch I think isn't so harmful
-    for backporting.
+So I have some proposal is to use page->mapping to indicate specific page type for
+such nonLRU pages (by some common convention, e.g. some real structure, rather than
+just zero out to waste 8 bytes, it's also natural to indicate some page type by
+its `mapping' naming )... Since my English is not very well, I delay it util now...
+
+[1] https://elixir.bootlin.com/linux/v3.18.140/source/mm/zsmalloc.c#L379
+    https://lore.kernel.org/linux-mm/1459321935-3655-7-git-send-email-minchan@kernel.org
+    and some not very related topic: https://lwn.net/Articles/752564/
 
 Thanks,
 Gao Xiang
 
-> 
-> > 
-> > (Hence my suggestion that in the ext4 version of the patch, we add a
-> > code comment justifying why there was no error checking, to make it
-> > clear that this was a deliberate choice.  :-)
-> > 
-> > 						- Ted
 
 
 _______________________________________________
