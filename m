@@ -2,41 +2,41 @@ Return-Path: <SRS0=IVPH=Y6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D00C5DF63
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Nov 2019 03:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D20EC5DF62
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Nov 2019 03:36:00 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5A705205C9;
-	Wed,  6 Nov 2019 03:26:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5741A2077B;
+	Wed,  6 Nov 2019 03:36:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NpqFoU35";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="C39KwedC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A705205C9
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ZR8Dptx7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="B4Wafk90"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5741A2077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iSBxw-0001w5-9W; Wed, 06 Nov 2019 03:26:40 +0000
+	id 1iSC6x-0002ar-Bq; Wed, 06 Nov 2019 03:35:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1iSBxu-0001vx-CH
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Nov 2019 03:26:38 +0000
+ (envelope-from <tytso@mit.edu>) id 1iSC6w-0002a3-DL
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Nov 2019 03:35:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=eXbTkeLLTPq/is4OmaGJiGnD1qywzbvGYR1C77mghk8=; b=NpqFoU35eXEonOzqPA3btRrsfM
- KUqYszDvBG1NaCmRHQF6eZvQgyc+LP0A2/VJgCZwsdiwjz0h955g6KeFiA629KsUy5lTAl2wNaehq
- 8EP5LJyzK+JlPg0xeNYVVv3NxCelMEjxB2gKwHjQa9RGtoWTW8FRbElTUTZH8g4LhEgs=;
+ bh=LbWGdNBAeDe9NI4vUkld1Bfqo0sjzcyiRxPvuPkAGiI=; b=ZR8Dptx7prIEUWS5hNozaLdg26
+ yJbrbBdbt3J723bpu8ao5ixBgRhrC7J1l5zuxnarjd5bJ3NWUffxkI308qk+/labrXr4ifSiTn0c3
+ rC0ffhlyY1Qf+ipidoYWJ3Ig9Yz+A1o2kdcIdYFVCdnasfXWWwLajXf2mM83QXGMt8FQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,35 +44,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=eXbTkeLLTPq/is4OmaGJiGnD1qywzbvGYR1C77mghk8=; b=C39KwedCcxvBSBshWX5zCOZQ1B
- /3nN6wzzp71xkjChLsjDcCW6bQGoSyziAHNqTA15OfgDvonSSt+NQcy2hajVk7n/XRFdmfV5F9XX+
- RDAydiK9AtMVpQ2y9/0RF1YKFfZvQVdgOBFl+bfeAB7YQ/f3Y8j3Q033/Y0CRgBLWbCc=;
+ bh=LbWGdNBAeDe9NI4vUkld1Bfqo0sjzcyiRxPvuPkAGiI=; b=B4Wafk90Uvq4Ck7kQg9wdNEo5U
+ GAW99/lmuPvI6PI5v/rNxJZdm4vI+rj16QrSDX+DcgJZ2LlwMTLyftrsxJ9aqdcCTiH3bOfrF4jMb
+ LShkqqXgsBwch8KHUwM1rTHhu413N2FtHoa1815WaJTF7vOFWN9ezl6+5M/TSVD7v07Q=;
 Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iSBxq-002GyT-DX
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Nov 2019 03:26:38 +0000
+ id 1iSC6u-002HSA-Oz
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Nov 2019 03:35:58 +0000
 Received: from callcc.thunk.org (ip-12-2-52-196.nyc.us.northamericancoax.com
  [196.52.2.12]) (authenticated bits=0)
  (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xA63QMGp027897
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xA63Zk2N030405
  (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 5 Nov 2019 22:26:23 -0500
+ Tue, 5 Nov 2019 22:35:47 -0500
 Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 4AC21420311; Tue,  5 Nov 2019 22:26:20 -0500 (EST)
-Date: Tue, 5 Nov 2019 22:26:20 -0500
+ id 615B9420311; Tue,  5 Nov 2019 22:35:44 -0500 (EST)
+Date: Tue, 5 Nov 2019 22:35:44 -0500
 From: "Theodore Y. Ts'o" <tytso@mit.edu>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20191106032620.GF26959@mit.edu>
+Message-ID: <20191106033544.GG26959@mit.edu>
 References: <20191024215438.138489-1-ebiggers@kernel.org>
- <20191024215438.138489-3-ebiggers@kernel.org>
+ <20191024215438.138489-2-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20191024215438.138489-3-ebiggers@kernel.org>
+In-Reply-To: <20191024215438.138489-2-ebiggers@kernel.org>
 User-Agent: Mutt/1.12.2 (2019-09-21)
-X-Headers-End: 1iSBxq-002GyT-DX
-Subject: Re: [f2fs-dev] [PATCH v2 2/3] ext4: add support for IV_INO_LBLK_64
- encryption policies
+X-Headers-End: 1iSC6u-002HSA-Oz
+Subject: Re: [f2fs-dev] [PATCH v2 1/3] fscrypt: add support for
+ IV_INO_LBLK_64 policies
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,33 +92,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Oct 24, 2019 at 02:54:37PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> IV_INO_LBLK_64 encryption policies have special requirements from the
-> filesystem beyond those of the existing encryption policies:
-> 
-> - Inode numbers must never change, even if the filesystem is resized.
-> - Inode numbers must be <= 32 bits.
-> - File logical block numbers must be <= 32 bits.
-> 
-> ext4 has 32-bit inode and file logical block numbers.  However,
-> resize2fs can re-number inodes when shrinking an ext4 filesystem.
-> 
-> However, typically the people who would want to use this format don't
-> care about filesystem shrinking.  They'd be fine with a solution that
-> just prevents the filesystem from being shrunk.
-> 
-> Therefore, add a new feature flag EXT4_FEATURE_COMPAT_STABLE_INODES that
-> will do exactly that.  Then wire up the fscrypt_operations to expose
-> this flag to fs/crypto/, so that it allows IV_INO_LBLK_64 policies when
-> this flag is set.
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Thu, Oct 24, 2019 at 02:54:36PM -0700, Eric Biggers wrote:
+> @@ -83,6 +118,10 @@ bool fscrypt_supported_policy(const union fscrypt_policy *policy_u,
+>  			return false;
+>  		}
+>  
+> +		if ((policy->flags & FSCRYPT_POLICY_FLAG_IV_INO_LBLK_64) &&
+> +		    !supported_iv_ino_lblk_64_policy(policy, inode))
+> +			return false;
+> +
+>  		if (memchr_inv(policy->__reserved, 0,
+>  			       sizeof(policy->__reserved))) {
+>  			fscrypt_warn(inode,
 
-LGTM
-
-Acked-by: Theodore Ts'o <tytso@mit.edu>
+fscrypt_supported_policy is getting more and more complicated, and
+supported_iv_ino_lblk_64_policy calls a fs-supplied callback function,
+etc.  And we need to use this every single time we need to set up an
+inode.  Granted that compared to the crypto, even if it is ICE, it's
+probably small beer --- but perhaps we should think about caching some
+of what fscrypt_supported_policy does on a per-file system basis at
+some point?
 
 						- Ted
 
