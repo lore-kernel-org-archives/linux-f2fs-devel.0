@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 845A0FC6194
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Nov 2019 11:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2671FC6197
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Nov 2019 11:44:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 517DE22459;
-	Fri,  8 Nov 2019 11:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 78373222CE;
+	Fri,  8 Nov 2019 11:44:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="RAOKS5ME";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="eTidvug1";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uzg5/5Ge"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 517DE22459
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="E3H7t98c";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IfP4K6DE";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNCc8AA+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78373222CE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iT2dn-0006oS-HM; Fri, 08 Nov 2019 11:41:23 +0000
+	id 1iT2hE-0006Be-3K; Fri, 08 Nov 2019 11:44:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1iT2dl-0006oK-Sd
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Nov 2019 11:41:21 +0000
+ (envelope-from <sashal@kernel.org>) id 1iT2hC-0006BS-6i
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Nov 2019 11:44:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZpfyrADcx8J8z+R7YxvnzzZAAHXu5Bp2xnfWgTZB/O0=; b=RAOKS5ME2N0lBBYeNYI22U1n8y
- qO0pJU/6EG9q6QpX5NfljIDcwU1TueY44RhB3yMLQEyb00SNHcGJBo0YQvoKA1cjk3/qTi480O+jQ
- K3WsbRvxF7vFNjuYuuwr26F5NnTeYNpXA618PjCIxkGR7ivZfjnR0/tExCrLLFDUvh9s=;
+ bh=//WAEz/vXsyM6pXfDJabrXRlsX7oHz2jrLSjDzhrYsI=; b=E3H7t98cZOQQ6sG9QIEAmmspiJ
+ XXX1sLJiKc6yThpgPDlNLFZSGtFabvKImsxtgAhLAYXcXYKxRrVA08b8Oyr3iW2n2DdN8xqqhep+n
+ agOjjIyt4TyyFsdP8T7FkobQUWEH6qZQHcSWwPoETECwUfnus2abh1Kg70V5Dnxo5nQo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,40 +45,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZpfyrADcx8J8z+R7YxvnzzZAAHXu5Bp2xnfWgTZB/O0=; b=eTidvug14kJp06mk52fLR6pwIb
- 0AZmuhDmLcHVYvkUeOyt09diuH+9E8B8FzUxI2jOBHbYcQp27UlAeSc2cf/JOfa00q17KuUfK9EhB
- hoR+GICNge+ODazHCFQc2Cm1HQ133KeAMCrFC9QGcRyU1Lib0LtavsulvUhYgf4aKi8k=;
+ bh=//WAEz/vXsyM6pXfDJabrXRlsX7oHz2jrLSjDzhrYsI=; b=IfP4K6DE0dPuyfn9sf43pozGQG
+ zAM/DG0GwAYU9bykDdup7D+zPzWtxfsv490G1nMZ6wmsj2P50EIgad6CrkOM9gDl+d0JmPHfiTxyi
+ 3YLeSVVKSe7Lk1Ik0Wc+NsiA40vtdec/1zSneNiWmguMR06x/fMheTSoTih0pz2gqgyQ=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iT2dk-004ygq-Ps
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Nov 2019 11:41:21 +0000
+ id 1iT2hB-004yvF-4g
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Nov 2019 11:44:54 +0000
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net
  [73.47.72.35])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id D8CC3222D4;
- Fri,  8 Nov 2019 11:41:12 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id DB6FE2245C;
+ Fri,  8 Nov 2019 11:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1573213273;
- bh=QIt9cB9KftKcL9TswJa78nCGJhZ52XYOCwqoXAAJRJ4=;
+ s=default; t=1573213487;
+ bh=rEIAm3V1qILwCRot6idR0i5DGBcrYmtiS7UblRxpyFI=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Uzg5/5Ge6mn6O+/kEm6UI+7/CjWoST2pqsWG5PO9p3f9pIFsU4Fk4g7ptfuJ+15oB
- J3kPJUwh/96l+69OqpPcJbFJpCh6OOe6Dmafhl8dw591qE8fNkdXBSO2n1ebhyBce0
- CHvz2Yjfth7J95KSRzkeoQXDCnMmHoCkB5aWnk5U=
+ b=GNCc8AA+cQ4Qf8YzydxiYEkuLkTy0DrSTnQzl/YeYf4+S2rEcxxh6wRdyYSfhgyhQ
+ xzuYoBUFSX4NuqFNckckTlDTFWOgAo251NIFSvwVJblTZ2TU0hpm3YdfQlL+fGZzHx
+ XQ6I7l7AIVVztfOWXbF5Ro738JB9IAqbmdgLWRbs=
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Fri,  8 Nov 2019 06:36:42 -0500
-Message-Id: <20191108113752.12502-135-sashal@kernel.org>
+Date: Fri,  8 Nov 2019 06:42:32 -0500
+Message-Id: <20191108114310.14363-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
-References: <20191108113752.12502-1-sashal@kernel.org>
+In-Reply-To: <20191108114310.14363-1-sashal@kernel.org>
+References: <20191108114310.14363-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1iT2dk-004ygq-Ps
-Subject: [f2fs-dev] [PATCH AUTOSEL 4.19 135/205] f2fs: fix memory leak of
+X-Headers-End: 1iT2hB-004yvF-4g
+Subject: [f2fs-dev] [PATCH AUTOSEL 4.14 067/103] f2fs: fix memory leak of
  percpu counter in fill_super()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -113,10 +113,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 588c575bd72b0..18534d03d112b 100644
+index e70975ca723b7..62a7821806593 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -2510,8 +2510,12 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+@@ -2117,8 +2117,12 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
  	if (err)
  		return err;
  
