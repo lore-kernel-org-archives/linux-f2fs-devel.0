@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3864CC17442
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 303CEC43331
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Nov 2019 02:39:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C34282067B;
+	by mail.kernel.org (Postfix) with ESMTPS id F1F11206C3;
 	Mon, 11 Nov 2019 02:39:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="a0TadkEm";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fQg5tbAm";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="WhZe5Ofo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C34282067B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VY8pxq0t";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="QXPmvIot";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Ba79SW26"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F11206C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iTzcQ-0006xw-09; Mon, 11 Nov 2019 02:39:54 +0000
+	id 1iTzcR-0006yO-2a; Mon, 11 Nov 2019 02:39:55 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=2117e6735=damien.lemoal@wdc.com>)
- id 1iTzcO-0006xh-CC
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Nov 2019 02:39:52 +0000
+ id 1iTzcP-0006xp-K7
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Nov 2019 02:39:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+RXz5Qq4ebwXpNNHfmbIeV4K5ZxRTqWSDaY/7EN9tj0=; b=a0TadkEmJhz07geZG7FLscQ5Fw
- iBgfD37Xc3DZmBj6suxyzK0PC8jfqyiBL37g2042BqMyXO1U1khUTmhJEA9bh1dkCLwhyRTS6MITT
- WScFkmxGudZmf/ox+q+UtXx2tPvbS4/HaCPeNRnYX7/g8HS3IYyx5oqay0hxSYjPmZt4=;
+ bh=FrkehnrfYHhE8jYuRR7S/GmUSrPV+VhpPYfLdPPp1Yo=; b=VY8pxq0tNGKRYYLQTO3j3rMvWI
+ DlatZlzYs9ByRxMAuYJiY38VRloCSaWcMD+UZOn3vFE6GWZTpRzMyubcCsj4MR7jveTvbTb9S5/Bo
+ rD/rebYRirZXTO3pElNfu8Fw+OtlxZUj4sqR6OTdmmIW/7kT8HJ9asNHZYU2ztnmfJSU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -47,66 +47,66 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+RXz5Qq4ebwXpNNHfmbIeV4K5ZxRTqWSDaY/7EN9tj0=; b=fQg5tbAm/3JKW5r0Qk2Kkh28Re
- eIf3Yjyy9wgQSLjxhKV6N6LjXFaXmRln52zYcaqxqyk4g9qVCtkRSMrtMntk58f2vWrh+2wdSuV3h
- AxXN7CT/wKKdIPtgM8BUG2vfuwR4GEMgEfanOIWAdIlWjHaEabrIpXrhmTQ1o+0SQlgE=;
+ bh=FrkehnrfYHhE8jYuRR7S/GmUSrPV+VhpPYfLdPPp1Yo=; b=QXPmvIotmUL1Wh3gY99WAohyRP
+ /bcWWrEpP8NyXj3BC29D5z9Afg5MS2pcdk0ZY+rT3y1Ovr7dAGFcfwKBnfNEQ5MpkHP0WnJOumtSk
+ 8EBDjgmJuo0fSh5tOhlUxYG9RuHKqsj6WDhm7J+XdXYU4QlmTLwlGtPSkF5Or+Bmjlf8=;
 Received: from esa2.hgst.iphmx.com ([68.232.143.124])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iTzcM-00BS4R-BL
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Nov 2019 02:39:52 +0000
+ id 1iTzcO-00BS4R-Bw
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Nov 2019 02:39:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1573440032; x=1604976032;
+ t=1573440035; x=1604976035;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=pRKa9RYPbmYIjqNqnNPy9xId0wvUi5EB+wPZWDfjvWA=;
- b=WhZe5Ofoi1wYcntBzuBMGLu4UuchU/Rs8zE35sILWlICG5AOmvWl150R
- njbaL6vhV8/OivIw/Q0iIoJiRokRh8DU5m239djQ1dzq1crPDd+VJakuV
- S3F75kNpUtbFLRS08pHeSV7CjmopJNTc7ZjVuGCu5L/zJZ6Fts0lT3+56
- 2qp9TDI8nHWkJjMyMxMbcFN43C1Unohe+Oe2m2XF9c7NWU99sOMhSLS+A
- D6neV4kGrj0KnuTB82D3tvUfBQlahbVBtny0vul/TdmQv2jCERiUxeKOH
- EyIVegoh5yTjb5dJJPZoOLq7aytRPi5Ainy6SnStQ6tJKcommMaVD4REc A==;
-IronPort-SDR: rym70zfFJVT3jMWVCtGVLHisB9FL7f582xrz/MU4a7TevIm6CsU85HTqeJNAQre3dtO/c/oeEu
- NVwdhqu3+Or0aqcOIdRqqYgdjEERSr5n9WsRaCu6CKNsfSbSeMQQPWX/FFCAVtTnpkzXV+isJH
- aJ1F+fv+1jPlhmGI8jIuS53HSUofBVEBTyTSI0tc/EBG3pvRz4wuKKXD2I1xsxBAA/D6jmLRRl
- feq75EG6F8OARKOXlJwMy+d3QnEc/HeKJTcJkE1h+Ny49MtOqupGHYui0qX4G0rD5dT5g8RDTk
- Oqc=
-X-IronPort-AV: E=Sophos;i="5.68,291,1569254400"; d="scan'208";a="223870997"
+ bh=Mhdy8g97yrlGhg/4RxtKDJYb9b3tPtuYVaQdVOv/e+c=;
+ b=Ba79SW26r1tMkGkc692zZ6LQneuwCAgBQ32a7eUmXtOgLxNoLiWuKbym
+ vmW6bxqHnRSb0v2c+emiqohpGz4KUxfyMJcmsodINEBxauzmC/m+iZ7kk
+ Fu4ME8hoVx3peiO+e3G+Io65N4tkkobba+HfXnC1nCQd3+pmKbUeyWO4X
+ W8TSl9VKqfCiHoPj3Cii5b3RwKb0+x5tQpoAHXk34Ag1cS1FaJA1sDj6i
+ QfChkwpYfd3pGxID/XjSmCHpBtZLJDB8k5badc0LE2wofNj4bYkATyywm
+ zhYRP4Mz8kNf/zM3Qlh90TMQOWbOpGKgnhSH8mcG3QM5MULRQWVr+KDqg Q==;
+IronPort-SDR: tqG+53HrSJ6ioXEqXsl875gcJx6r/kKx1VvxUF/gpWTJXn8s6fQABSf8BUIX8YkDKoWWVIPSE4
+ ex0TxMX5g7X0bjZEtyFxLUIZtpjW9JRVwRE3Ff4LHzXmhA5kIy/Ii3SJHiiuwUDAYOnQ0Xnyfi
+ cDNICGZmt+i/E+ZT0LGirtR5Nqnr3IroF5ptRLNOyaEKp/MlrrFqYUrcK5DPm2qmY3Oi0deUGH
+ FpCMKRooDtS4zL+Nqec70cTFrR7kMVfIcUaADV6j81JpaCRx6OevmECvnn1yIiQJvgjSmQSRad
+ oBA=
+X-IronPort-AV: E=Sophos;i="5.68,291,1569254400"; d="scan'208";a="223871008"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com)
  ([199.255.45.15])
- by ob1.hgst.iphmx.com with ESMTP; 11 Nov 2019 10:40:10 +0800
-IronPort-SDR: w/49AzRqsC3BHrImP9I9WI8MqRJw1hRhJxcatwF4cfbGDBBZQffVSFFhBJvb+5z+unFUYScq77
- cWhpxQ0df5l3xy6RkzGzTxVDDGZ8sy5jHHQEYxNLWVuXdyI5llA8ShsBX5I+m3b/YXuO/wRn+T
- R47387j/LkAmoTKcDq4+yyTA3p5cxYZsHmlge+qewUIgPah482c8o4Tx9McjIZbeDDvdjXnHwY
- iIOHmlUuPI2Co4wcnWkwgWC1W2iekLpP3BqK4+XXFukQPrJvpBn5UQYpbuN0IOudtheMFLYPj3
- 8R0UbjFxO5BJv99L9FPXlEEE
+ by ob1.hgst.iphmx.com with ESMTP; 11 Nov 2019 10:40:18 +0800
+IronPort-SDR: sKIDr/YddCgms+xqf2Ms6uCmZ4lJkEpQ3e/Czzjp17keVGfeWFzLsCFhwVr3cIbwp+Q1XRf6XM
+ 0rvbQpbQcba7J6eP/zyQHgVI3OK/xK7CFI6nBen7pYXs0VaoOPeS8IryHqCm0Qq7V8QQVEX3yw
+ xB17SaRsqCWPaXLtSyGrP14G2OdXT9U61czWU8x9rw6/JxcV0QVW/NEeIYiRAb6mU7Yn588bTt
+ 0lolgCeMDxRZ80i+VHkWqA2acaFtms3kwHu57i8p0wcPXmVj9SiTaRoxx6FpGEOSnkNQZ2i7t2
+ INNvybRTrFVaMDN1gzhzZaMr
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Nov 2019 18:34:40 -0800
-IronPort-SDR: 7KNGaRYyEF8x+/ZjhGLu+4u7TY3OdEre8o8K8/TSWKs251Hma92sBpZPSA97z7BpbhbhrdKCih
- 20juh7bT6ZoQyJrVgJHjWUPUUiQtcwoWZTZ5S4umULlxJ66POPAasvaVIFu28RLa8V7fo4US+n
- i3LfYjAeNMB3hSVfcBGoSOkKyvNlOCxOBxEBguMsrNWpPHVw8tD6fqnn5xtN11LUgxpGeSHVoc
- H70zVCimk3duIOd4rIT2UQ3ODoLxwdogWfGpLa3Y4iWYeM+bD4sfoVMS+mr5D5N4UCAcDW9sOF
- VNQ=
+ 10 Nov 2019 18:34:45 -0800
+IronPort-SDR: NyyzMjuId9K/cwPW4JejXGl9FOwY6f4zFA0r2xaWlqpgAWgx+kRjiP8OqVZDjDYVpGEZpwSIMZ
+ hPo4W3ycGN7s6Py3xxyG2l2wTUQ/d4aQg2jSYGFmjC19ej2PEMO11ERUdlhul1ZcvGNJ3lyNXt
+ TwsZraiGWIr9JWb9WdpAaWwQmF+iIsp8W4sgEKr9m/r1q5emigRYnXyY5HU9WxK5wLBB9UifKr
+ lZg8Zm0UZPNOJcTwRXXQwzESDgKQlU0hTaJsdD9YS951Nzj26s42T6SjnXuO1JrvfTrj2PhTSR
+ Nlk=
 WDCIronportException: Internal
 Received: from washi.fujisawa.hgst.com ([10.149.53.254])
- by uls-op-cesaip01.wdc.com with ESMTP; 10 Nov 2019 18:39:35 -0800
+ by uls-op-cesaip01.wdc.com with ESMTP; 10 Nov 2019 18:39:40 -0800
 From: Damien Le Moal <damien.lemoal@wdc.com>
 To: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
  linux-scsi@vger.kernel.org,
  "Martin K . Petersen" <martin.petersen@oracle.com>, dm-devel@redhat.com,
  Mike Snitzer <snitzer@redhat.com>, linux-f2fs-devel@lists.sourceforge.net,
  Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Date: Mon, 11 Nov 2019 11:39:23 +0900
-Message-Id: <20191111023930.638129-3-damien.lemoal@wdc.com>
+Date: Mon, 11 Nov 2019 11:39:26 +0900
+Message-Id: <20191111023930.638129-6-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191111023930.638129-1-damien.lemoal@wdc.com>
 References: <20191111023930.638129-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-X-Headers-End: 1iTzcM-00BS4R-BL
-Subject: [f2fs-dev] [PATCH v2 2/9] block: cleanup the !zoned case in
- blk_revalidate_disk_zones
+X-Headers-End: 1iTzcO-00BS4R-Bw
+Subject: [f2fs-dev] [PATCH v2 5/9] null_blk: clean up the block device
+ operations
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,43 +124,55 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Christoph Hellwig <hch@lst.de>
 
-blk_revalidate_disk_zones is never called for non-zoned devices.  Just
-return early and warn instead of trying to handle this case.
+Remove the pointless stub open and release methods, give the operations
+vector a slightly less confusing name, and use normal alignment for the
+assignment operators.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- block/blk-zoned.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/block/null_blk_main.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/block/blk-zoned.c b/block/blk-zoned.c
-index dae787f67019..523a28d7a15c 100644
---- a/block/blk-zoned.c
-+++ b/block/blk-zoned.c
-@@ -520,6 +520,9 @@ int blk_revalidate_disk_zones(struct gendisk *disk)
- 	sector_t sector = 0;
- 	int ret = 0;
+diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.c
+index 40a64bdd8ea7..89d385bab45b 100644
+--- a/drivers/block/null_blk_main.c
++++ b/drivers/block/null_blk_main.c
+@@ -1442,20 +1442,9 @@ static void null_config_discard(struct nullb *nullb)
+ 	blk_queue_flag_set(QUEUE_FLAG_DISCARD, nullb->q);
+ }
  
-+	if (WARN_ON_ONCE(!blk_queue_is_zoned(q)))
-+		return -EIO;
-+
- 	/*
- 	 * BIO based queues do not use a scheduler so only q->nr_zones
- 	 * needs to be updated so that the sysfs exposed value is correct.
-@@ -535,10 +538,8 @@ int blk_revalidate_disk_zones(struct gendisk *disk)
- 	 */
- 	noio_flag = memalloc_noio_save();
+-static int null_open(struct block_device *bdev, fmode_t mode)
+-{
+-	return 0;
+-}
+-
+-static void null_release(struct gendisk *disk, fmode_t mode)
+-{
+-}
+-
+-static const struct block_device_operations null_fops = {
+-	.owner =	THIS_MODULE,
+-	.open =		null_open,
+-	.release =	null_release,
+-	.report_zones =	null_zone_report,
++static const struct block_device_operations null_ops = {
++	.owner		= THIS_MODULE,
++	.report_zones	= null_zone_report,
+ };
  
--	if (!blk_queue_is_zoned(q) || !nr_zones) {
--		nr_zones = 0;
-+	if (!nr_zones)
- 		goto update;
--	}
- 
- 	/* Allocate bitmaps */
- 	ret = -ENOMEM;
+ static void null_init_queue(struct nullb *nullb, struct nullb_queue *nq)
+@@ -1556,7 +1545,7 @@ static int null_gendisk_register(struct nullb *nullb)
+ 	disk->flags |= GENHD_FL_EXT_DEVT | GENHD_FL_SUPPRESS_PARTITION_INFO;
+ 	disk->major		= null_major;
+ 	disk->first_minor	= nullb->index;
+-	disk->fops		= &null_fops;
++	disk->fops		= &null_ops;
+ 	disk->private_data	= nullb;
+ 	disk->queue		= nullb->q;
+ 	strncpy(disk->disk_name, nullb->disk_name, DISK_NAME_LEN);
 -- 
 2.23.0
 
