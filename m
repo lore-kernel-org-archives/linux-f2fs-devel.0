@@ -2,66 +2,81 @@ Return-Path: <SRS0=9BzI=ZE=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0947C43331
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Nov 2019 17:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 665C8C17441
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Nov 2019 23:52:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 92E78214E0;
-	Tue, 12 Nov 2019 17:57:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 393B120578
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Nov 2019 23:52:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="jhCSlpVV";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="aEVAJ3B9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92E78214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=isd.co.kr
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OFTuetNG";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cek7xlge"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 393B120578
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iUaQ1-0008GM-1t; Tue, 12 Nov 2019 17:57:33 +0000
+	id 1iUfxr-0000ls-Hj; Tue, 12 Nov 2019 23:52:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <choimj@isd.co.kr>) id 1iUaPz-0008GE-07
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Nov 2019 17:57:31 +0000
+ (envelope-from <ira.weiny@intel.com>) id 1iUfxq-0000ld-B2
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Nov 2019 23:52:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Subject:Message-ID:To:Reply-To:From:Date:Sender:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CjFBLg4feocA67R7Snn9hTAVTjuyOGDS6JZdh5yPjk4=; b=jhCSlpVVQaJ49fOMIQR5GaSd/l
- mvstuLZ9+p653qbkN5bdQgY6ggSZ3p5IxbkEJbIoS+EjQofigBTuHJXv3S/LfmEw+Y6IBHdy1qrFa
- 65n+NrLq5r2Rpshm5OtbqU/HRImwEI22FhYc7FJ18heuXjq6wiXPnF/L1UJc5oquvA0A=;
+ bh=F1gpK46hU6YW3vD1XAu4kcFqrHgwDLQgihoXmvtSY3c=; b=OFTuetNGipmRWsmyS0k3XEgCsB
+ hIeFijNL/rl+q9XZkPOSIpVQypIyenZpjscmtAnHbgD7EUTNevnLg/4gmLsMdi4Q9h+Mq2NfOMB08
+ yJSy39ho/MWbMrZ1Z2ijQc/JKlJwXmHSqIy3wQQCXZpiLJgWxWf6qwKLmtzHyvnu14V8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Message-ID:To
- :Reply-To:From:Date:Sender:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=CjFBLg4feocA67R7Snn9hTAVTjuyOGDS6JZdh5yPjk4=; b=a
- EVAJ3B94AA0cfQ6hUNq1Gumml9LQdtmlY2+D5uCuEhadL1zsOvmowj1UUw7ChomUTIw0psHna5RcH
- c+cAwKwWxR3TcW6XBzVzrKJUiFR9Bw2ElYyft9At9V3XIoU89tHjI5yPVHNZOBT83P0hyZ8cqSgHp
- l6Wi5gvBcC4Ceuro=;
-Received: from [211.53.128.215] (helo=MAIL.isd.co.kr)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1:ECDHE-RSA-AES256-SHA:256) (Exim 4.92.2) id 1iUaPx-00Dc6Z-Hm
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Nov 2019 17:57:30 +0000
-Received: from 192.168.1.163 (217.217.179.17) by MAIL.isd.co.kr (10.10.10.22)
- with Microsoft SMTP Server id 14.3.123.3;
- Wed, 13 Nov 2019 02:57:04 +0900
-Date: Tue, 12 Nov 2019 18:57:03 +0100
-From: Peter Wong <choimj@isd.co.kr>
-To: <linux-f2fs-devel@lists.sourceforge.net>
-Message-ID: <20675348.155089.1573581428205.JavaMail.cash@webmail.isd.co.kr>
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=F1gpK46hU6YW3vD1XAu4kcFqrHgwDLQgihoXmvtSY3c=; b=cek7xlgeuMaTbS1T+O/o4R3DWp
+ hC+/IyxrESkve5dF/4X5vNSi/ryruKhH8xSN0DKg3FWl0cAKYe685z2xnRkx5sIScczetqIYq8skn
+ RDelxt4+wLaq3LkSmb6HiD/j1Pa8RtNhUMmJzIv0AmBe5RkDLrphBge/RsL74Dwf6mX4=;
+Received: from mga12.intel.com ([192.55.52.136])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1iUfxo-00EBBT-0b
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Nov 2019 23:52:50 +0000
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+ by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384;
+ 12 Nov 2019 15:52:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,298,1569308400"; d="scan'208";a="235064254"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+ by fmsmga002.fm.intel.com with ESMTP; 12 Nov 2019 15:52:41 -0800
+Date: Tue, 12 Nov 2019 15:52:41 -0800
+From: Ira Weiny <ira.weiny@intel.com>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Message-ID: <20191112235240.GB5792@iweiny-DESK2.sc.intel.com>
+References: <20191112003452.4756-1-ira.weiny@intel.com>
+ <20191112003452.4756-3-ira.weiny@intel.com>
+ <20191112012017.GT6219@magnolia>
 MIME-Version: 1.0
-X-Originating-IP: [217.217.179.17]
-X-Headers-End: 1iUaPx-00Dc6Z-Hm
-Subject: [f2fs-dev] Investment opportunity
+Content-Disposition: inline
+In-Reply-To: <20191112012017.GT6219@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
+X-Headers-End: 1iUfxo-00EBBT-0b
+Subject: Re: [f2fs-dev] [PATCH 2/2] fs: Move swap_[de]activate to
+ file_operations
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -73,23 +88,42 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: Peter Wong <pw178484@gmail.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+ Dave Chinner <david@fromorbit.com>, Josef Bacik <josef@toxicpanda.com>,
+ Anna Schumaker <anna.schumaker@netapp.com>, linux-xfs@vger.kernel.org,
+ Chris Mason <clm@fb.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-f2fs-devel@lists.sourceforge.net,
+ Trond Myklebust <trond.myklebust@hammerspace.com>, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Greetings,
+On Mon, Nov 11, 2019 at 05:20:17PM -0800, Darrick J. Wong wrote:
+> On Mon, Nov 11, 2019 at 04:34:52PM -0800, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> >  };
+> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > index 865543e41fb4..3d2e89ac72ed 100644
+> > --- a/fs/xfs/xfs_file.c
+> > +++ b/fs/xfs/xfs_file.c
+> > @@ -1294,6 +1294,17 @@ xfs_file_mmap(
+> >  	return 0;
+> >  }
+> >  
+> > +static int
+> > +xfs_iomap_swapfile_activate(
+> 
+> Might as well rename this xfs_file_swap_activate().
 
-Find attached email very confidential. reply for more details
+Done.
 
-Thanks.
-Peter Wong
+V1 with fixed btrfs, to be out shortly.
 
-
-
-
-----------------------------------------------------
-This email was sent by the shareware version of Postman Professional.
+Ira
 
 
 
