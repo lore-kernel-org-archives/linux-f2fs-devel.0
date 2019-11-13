@@ -2,110 +2,92 @@ Return-Path: <SRS0=zCfE=ZF=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 398EFC43331
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Nov 2019 02:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC8AC43331
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Nov 2019 03:23:36 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 08F6E20818;
-	Wed, 13 Nov 2019 02:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 47EA6222BD
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 13 Nov 2019 03:23:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="j3UG03NF";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="AdZ8kNXb";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="J1GKzxf5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08F6E20818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="egnL8UmG";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="M9Ay1zmC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mykernel.net header.i=cgxu519@mykernel.net header.b="eI/SySjn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47EA6222BD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mykernel.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iUibb-0004e7-KD; Wed, 13 Nov 2019 02:42:03 +0000
+	id 1iUjFn-0001Zo-JT; Wed, 13 Nov 2019 03:23:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <axboe@kernel.dk>) id 1iUibZ-0004dD-Bg
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Nov 2019 02:42:01 +0000
+ (envelope-from <cgxu519@mykernel.net>) id 1iUjFl-0001ZV-QO
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Nov 2019 03:23:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Date:Subject:Message-ID:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=c7pgGUOErKCone57ckbGDS/eeyPemc6EIW0Fbaye1l4=; b=j3UG03NF4QhedVF3sMb1IFtNQC
- gg/U+OST/3OWr9bbP00qui88OtirCSdevHzFU8/NSTaA1yMzJ0R37dqURqH0isLJTi0m+7joRfR1N
- DEuER08vvBkB1KiI+/bQq2e77mQfBwrjs58y3cS5AkeqB5jaL4dBv+UYLrZQ697hkImA=;
+ bh=oNA6b51YSLYTxOaQeYCw8BYJ7WLM52eOEE5HyCsYtdE=; b=egnL8UmGwnrMnTSdGPgsts/AdC
+ 1aetsPlbibt5SLsg3yPzjcqX5IR8SNIY5kQkdIiyWu992kn01NBM+Yj51pbqAhYPfV6xS6WwuTURc
+ rzlJUrHzHyRr42lA/BHD3isPbNja6sSBrIyO8pSsHxLHFUFAUEkfvhdGpSh2s5QG7YrA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Date:Subject:
+ Message-ID:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=c7pgGUOErKCone57ckbGDS/eeyPemc6EIW0Fbaye1l4=; b=AdZ8kNXbbJFw/fMqjqPF0QfZch
- DEL1+RrUcF1NoIcVCciCEFoqk2I1ohp4kFvOPBdD10pryyooeaJGh9cGHHt9s5nfAp6ueJLayUpu8
- Q0+EPBdwOBJ4F3rLjeKPCPXJEYF9zYJa4Ibo86W8wZOoWyqf+DVuHKm8UZds8G5Uds/Q=;
-Received: from mail-pf1-f195.google.com ([209.85.210.195])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1iUibX-000OcQ-F2
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Nov 2019 02:42:01 +0000
-Received: by mail-pf1-f195.google.com with SMTP id 3so537257pfb.10
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 12 Nov 2019 18:41:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=kernel-dk.20150623.gappssmtp.com; s=20150623;
- h=subject:to:references:from:message-id:date:user-agent:mime-version
- :in-reply-to:content-language:content-transfer-encoding;
- bh=c7pgGUOErKCone57ckbGDS/eeyPemc6EIW0Fbaye1l4=;
- b=J1GKzxf5D4PNxbYKxDELs3k7YlYHe/IgHvU8Etzan0v3SuwtZ62rEm1vWFQAXFTWqg
- q5GbIvG6C/Bi2hnba2PXWn2pywiaPhAqj19zLVeHVpUB/w+bJn62gzb9mmaePzydVmxv
- XAYZZFMdQ6jMS+xxsqXiz430ptjXzzatWh97FtCiIUx8TWg2NGykQo3WcHtCfcJrMFcr
- eqAqztK9aojc6IvhkKDL8UM7ckfiwhqjgW7yUs9sNKNCQts2WY/qf/Y56U6wCuW8N3t0
- HTWIy5X+Nktu52sYBB0Vz/LfvTjVsXzxChLk+jf8NXDEItN26y685XWjFOthOBTTeLzq
- 6W0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:subject:to:references:from:message-id:date
- :user-agent:mime-version:in-reply-to:content-language
- :content-transfer-encoding;
- bh=c7pgGUOErKCone57ckbGDS/eeyPemc6EIW0Fbaye1l4=;
- b=AwYAy6aQVQwZx/KMsuNk4vNPmACES+GkkXqcpUs7Jzu99PibA0Jz0Q9o77G2LrCijl
- O1jq/hIbd+6eU//O/UAJp5+Yk39RyrvT8ikR7aaZhdI8zSjydwx5ECciyHeFsdy36Cf1
- BlAsbie3MDxgqJvNbVQDgYh0O6JHrUub0OaKAsSn064q4DuDAr8S0YZ6Ex8eAtyDnzfJ
- dY5HRtvvAPHIsVc/Y2bLDml07juMeK2CtmlMi1gEapbFGJUPPbbkNAVnuGlMErbOXMz+
- 5AojZcd6U4/84y98ehe1FK21W5aOInyKOBfNWH3ZxldHM1XGpmxLekI6vOBp+uC1zfk8
- wTkA==
-X-Gm-Message-State: APjAAAWCHd8yyTFInnMpD6ahi1uZeAqpoxDsVc2Mj61U4392PygOnbJo
- b2aVr48OrBbfmHkh3GMXLHehUmMfiI0=
-X-Google-Smtp-Source: APXvYqycpY+BSOLB53HT4o8SEWzgzYFea+fu4bX8JbhALJ60LxNdAWEQSjGNGVeVl5dehnnO9BWleQ==
-X-Received: by 2002:a17:90a:a114:: with SMTP id
- s20mr1410230pjp.44.1573611402828; 
- Tue, 12 Nov 2019 18:16:42 -0800 (PST)
-Received: from [192.168.1.182] ([66.219.217.79])
- by smtp.gmail.com with ESMTPSA id e17sm303534pfh.121.2019.11.12.18.16.40
- (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 12 Nov 2019 18:16:41 -0800 (PST)
-To: Damien Le Moal <damien.lemoal@wdc.com>, linux-block@vger.kernel.org,
- linux-scsi@vger.kernel.org, "Martin K . Petersen"
- <martin.petersen@oracle.com>, dm-devel@redhat.com,
- Mike Snitzer <snitzer@redhat.com>, linux-f2fs-devel@lists.sourceforge.net,
- Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-References: <20191111023930.638129-1-damien.lemoal@wdc.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <a0c1c1bf-d6e5-8be1-ed99-6bfed3483d1d@kernel.dk>
-Date: Tue, 12 Nov 2019 19:16:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+ bh=oNA6b51YSLYTxOaQeYCw8BYJ7WLM52eOEE5HyCsYtdE=; b=M9Ay1zmC+ImQ69blFHtuNLW5fJ
+ UUBWku91vsQUKOgoKQEK9xmjW0YRz2wSgMbanV2Y13FPexZiGUGXxu2cgXZ0plUV0XjCtcy5JkmrO
+ qHRphqUEbcrA/3mwhfq/pZwNIuoOuEwErDJCJUqNCU2fv9IUZU8mQp4H/Gsj7bfrS2fE=;
+Received: from sender3-of-o52.zoho.com.cn ([124.251.121.247]
+ helo=sender2.zoho.com.cn)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.92.2)
+ id 1iUjFi-00EQzQ-Vx
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 13 Nov 2019 03:23:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; t=1573614463; cv=none; d=zoho.com.cn; s=zohoarc; 
+ b=dx+WMnmOtCUK97UqLQA6p8VpN7yL9cGOsQSdN3rnBqRclgQaMSPf87thlo5OwrlaMq4Y/zBmBw+q434gFaFpxf2TfrbYTRWVI7yx0gLe30B04bk8b1x780ah2CgB6fOi0mzBF9yUj6fB8f4f9ZfZzNDABcwhL6Z7fu/wmmS2Ies=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn;
+ s=zohoarc; t=1573614463;
+ h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To;
+ bh=oNA6b51YSLYTxOaQeYCw8BYJ7WLM52eOEE5HyCsYtdE=; 
+ b=LFNes/BqeuzeGn3Ok+HZl4jKv5ZBBKF7Stkxlh+0/PCImOSosqQLV7xyDRqzWmhnKZplha415/S6l03Zx37yoq+nEyNl9Zp5+fPqI7OhxIAE1GTkNuUJQn5YvPrvc2k5FkXME+BWWHkBH3CpZiuQ+3YjH9pciLJrVRD70pd2mW8=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+ dkim=pass  header.i=mykernel.net;
+ spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+ dmarc=pass header.from=<cgxu519@mykernel.net>
+ header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1573614463; 
+ s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+ h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+ l=2997; bh=oNA6b51YSLYTxOaQeYCw8BYJ7WLM52eOEE5HyCsYtdE=;
+ b=eI/SySjnZ3gB+e8BLe7VGUR/ldQVmLO7uGQFoo7B7au+x2j97mVHRWh2Cz6mYKck
+ saP+7+2lWoh3MUx/l/ihgRZs55CDtakwyNXP8ODv3hHbQqD2QRG7H4nGLO2FN/LAV9u
+ Z3/ClBiQrK24Ck4k+3ypawlF3dy7FYG1ohVsIhI8=
+Received: from localhost.localdomain (218.18.229.179 [218.18.229.179]) by
+ mx.zoho.com.cn with SMTPS id 1573614460358623.6100546947341;
+ Wed, 13 Nov 2019 11:07:40 +0800 (CST)
+From: Chengguang Xu <cgxu519@mykernel.net>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Message-ID: <20191113030731.3488-1-cgxu519@mykernel.net>
+Date: Wed, 13 Nov 2019 11:07:31 +0800
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191111023930.638129-1-damien.lemoal@wdc.com>
-Content-Language: en-US
-X-Headers-End: 1iUibX-000OcQ-F2
-Subject: Re: [f2fs-dev] [PATCH v2 0/9] Zoned block device enhancements and
- zone report rework
+X-ZohoCNMailClient: External
+X-Headers-End: 1iUjFi-00EQzQ-Vx
+Subject: [f2fs-dev] [PATCH] f2fs: choose hardlimit when softlimit is larger
+ than hardlimit in f2fs_statfs_project()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,54 +99,95 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Chengguang Xu <cgxu519@mykernel.net>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 11/10/19 6:39 PM, Damien Le Moal wrote:
-> This series of patches introduces changes to zoned block device handling
-> code with the intent to simplify the code while optimizing run-time
-> operation, particularly in the area of zone reporting.
-> 
-> The first patch lifts the device zone check code out of the sd driver
-> and reimplements these zone checks generically as part of
-> blk_revalidate_disk_zones(). This avoids zoned block device drivers to
-> have to implement these checks. The second patch simplifies this
-> function code for the !zoned case.
-> 
-> The third patch is a small cleanup of zone report processing in
-> preparation for the fourth patch which removes support for partitions
-> on zoned block devices. As mentioned in that patch commit message, none
-> of the known partitioning tools support zoned devices and there are no
-> known use case in the field of SMR disks being used with partitions.
-> Dropping partition supports allows to significantly simplify the code
-> for zone report as zone sector values remapping becomes unnecessary.
-> 
-> Patch 5 to 6 are small cleanups and fixes of the null_blk driver zoned
-> mode.
-> 
-> The prep patch 7 optimizes zone report buffer allocation for the SCSI
-> sd driver. Finally, patch 8 introduces a new interface for report zones
-> handling using a callback function executed per zone reported by the
-> device. This allows avoiding the need to allocate large arrays of
-> blk_zone structures for the execution of zone reports. This can
-> significantly reduce memory usage and pressure on the memory management
-> system while significantly simplify the code all over.
-> 
-> Overall, this series not only reduces significantly the code size, it
-> also improves run-time memory usage for zone report execution.
-> 
-> This series applies cleanly on the for-next block tree on top of the
-> zone management operation series. It may however create a conflict with
-> Christoph's reqork of disk size revalidation. Please consider this
-> series for inclusion in the 5.5 kernel.
+Setting softlimit larger than hardlimit seems meaningless
+for disk quota but currently it is allowed. In this case,
+there may be a bit of comfusion for users when they run
+df comamnd to directory which has project quota.
 
-We're taking branching to new levels... I created for-5.5/zoned for this,
-which is for-5.5/block + for-5.5/drivers + for-5.5/drivers-post combined.
-The latter is a branch with the SCSI dependencies from Martin pulled in.
+For example, we set 20M softlimit and 10M hardlimit of
+block usage limit for project quota of test_dir(project id 123).
 
+[root@hades f2fs]# repquota -P -a
+*** Report for project quotas on device /dev/nvme0n1p8
+Block grace time: 7days; Inode grace time: 7days
+                        Block limits                File limits
+Project         used    soft    hard  grace    used  soft  hard  grace
+----------------------------------------------------------------------
+0        --       4       0       0              1     0     0
+123      +-   10248   20480   10240              2     0     0
+
+The result of df command as below:
+
+[root@hades f2fs]# df -h /mnt/f2fs/test
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p8   20M   11M   10M  51% /mnt/f2fs
+
+Even though it looks like there is another 10M free space to use,
+if we write new data to diretory test(inherit project id),
+the write will fail with errno(-EDQUOT).
+
+After this patch, the df result looks like below.
+
+[root@hades f2fs]# df -h /mnt/f2fs/test
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p8   10M   10M     0 100% /mnt/f2fs
+
+Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+---
+ fs/f2fs/super.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1443cee15863..5bf6e619a8e2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1213,9 +1213,15 @@ static int f2fs_statfs_project(struct super_block *sb,
+ 		return PTR_ERR(dquot);
+ 	spin_lock(&dquot->dq_dqb_lock);
+ 
+-	limit = (dquot->dq_dqb.dqb_bsoftlimit ?
+-		 dquot->dq_dqb.dqb_bsoftlimit :
+-		 dquot->dq_dqb.dqb_bhardlimit) >> sb->s_blocksize_bits;
++	limit = 0;
++	if (dquot->dq_dqb.dqb_bsoftlimit &&
++	   (!limit || dquot->dq_dqb.dqb_bsoftlimit < limit))
++		limit = dquot->dq_dqb.dqb_bsoftlimit;
++	if (dquot->dq_dqb.dqb_bhardlimit &&
++	   (!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
++		limit = dquot->dq_dqb.dqb_bhardlimit;
++	limit >>= sb->s_blocksize_bits;
++
+ 	if (limit && buf->f_blocks > limit) {
+ 		curblock = dquot->dq_dqb.dqb_curspace >> sb->s_blocksize_bits;
+ 		buf->f_blocks = limit;
+@@ -1224,9 +1230,14 @@ static int f2fs_statfs_project(struct super_block *sb,
+ 			 (buf->f_blocks - curblock) : 0;
+ 	}
+ 
+-	limit = dquot->dq_dqb.dqb_isoftlimit ?
+-		dquot->dq_dqb.dqb_isoftlimit :
+-		dquot->dq_dqb.dqb_ihardlimit;
++	limit = 0;
++	if (dquot->dq_dqb.dqb_isoftlimit &&
++	   (!limit || dquot->dq_dqb.dqb_isoftlimit < limit))
++		limit = dquot->dq_dqb.dqb_isoftlimit;
++	if (dquot->dq_dqb.dqb_ihardlimit &&
++	   (!limit || dquot->dq_dqb.dqb_ihardlimit < limit))
++		limit = dquot->dq_dqb.dqb_ihardlimit;
++
+ 	if (limit && buf->f_files > limit) {
+ 		buf->f_files = limit;
+ 		buf->f_ffree =
 -- 
-Jens Axboe
+2.20.1
+
+
 
 
 
