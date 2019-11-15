@@ -1,76 +1,116 @@
-Return-Path: <SRS0=gIUY=ZG=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=nGR+=ZH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C038BC432C3
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 Nov 2019 23:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7027C432C3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Nov 2019 00:29:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8F4E0206F0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 Nov 2019 23:20:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8336620727
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Nov 2019 00:29:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="TBbBKabi";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cK9J2rIe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F4E0206F0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YkR2Gsaz";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="beEQWZmn";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FAkJB/fk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8336620727
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iVOPA-0006qo-79; Thu, 14 Nov 2019 23:20:00 +0000
+	id 1iVPUh-0005o0-Qh; Fri, 15 Nov 2019 00:29:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ira.weiny@intel.com>) id 1iVOP8-0006qh-Gm
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Nov 2019 23:19:58 +0000
+ (envelope-from <darrick.wong@oracle.com>) id 1iVPUg-0005nm-Ex
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Nov 2019 00:29:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M9BV5AOahRsBpG/lR5WR7uD4sSJaB2/5KhmrzcgOZDM=; b=TBbBKabi7dGPKKEaOTA7ZoxTxO
- X1r/yKT/BbKLkK0fCZn7ydy9MOd4zkVtyJi3Dwt2FcP2aVtPDjhevpD9WNUmtkZ2Yi4mt+ItuF+t5
- WKzjdC339Hj6hg76RkkOfmnm5Ez0dJ8hCmjQSiZgOOjmMBnpSmgAftbXwgAUqsWJ7dP8=;
+ bh=9jrL+BhqTPJfGslBLcrIu2gfpEanXTGlkl6dwq3AI5s=; b=YkR2GsazcMnHhBWafXHD6wuFSF
+ hTschuXB0moB3IOKtSsCJzMNIfQmVtL+NwKrBKhVIjVuMiyOpA1Al1HkF3m3Cv7kyE3lMqMtfTxg9
+ NVLNuGJfVuMkgah9YC1q5wglMDAnwL43SKS4bM2QkWM1OXUXrs7nUgsygiPgH50CV5D8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=M9BV5AOahRsBpG/lR5WR7uD4sSJaB2/5KhmrzcgOZDM=; b=c
- K9J2rIegbCS2LHzJlcd1xr8PDI0r2+9otwinqkvCVaaahoVgC2pXcl0EZ9u0rRjVidH5dcwipl33M
- SbVe7AAXET9Jw8sDqeISoBOukaao7zEA3eaK9twvePQ4lnqT1Bx2eX5Zc94tfI/2ofYmQn/dyQSZq
- SEUbhiurByYHigR0=;
-Received: from mga14.intel.com ([192.55.52.115])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=9jrL+BhqTPJfGslBLcrIu2gfpEanXTGlkl6dwq3AI5s=; b=beEQWZmnWxlWY1rzgarVoE0DI1
+ Ia6AU+fuhHYYtUvIcQg1nVPNc+pW20f97jwIJKzhGdUvjjKxdjPCkyZAJ1axbF7n4712juKV+A89G
+ hU0/67M4fPeXxAlO4Xfw7HWS13VFx/KiULp8OcaUgZy7oJEDOJmwkG49MTSt1atbWPSQ=;
+Received: from userp2120.oracle.com ([156.151.31.85])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iVOP3-003vju-KS
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 Nov 2019 23:19:58 +0000
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
- by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384;
- 14 Nov 2019 15:19:47 -0800
-X-IronPort-AV: E=Sophos;i="5.68,306,1569308400"; d="scan'208";a="199003287"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
- by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384;
- 14 Nov 2019 15:19:46 -0800
-From: ira.weiny@intel.com
-To: Andrew Morton <akpm@linux-foundation.org>
-Date: Thu, 14 Nov 2019 15:19:43 -0800
-Message-Id: <20191114231943.11220-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.21.0
+ id 1iVPUe-00H5Bz-Hn
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Nov 2019 00:29:46 +0000
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+ by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAF0NwPc162409;
+ Fri, 15 Nov 2019 00:29:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
+ h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=9jrL+BhqTPJfGslBLcrIu2gfpEanXTGlkl6dwq3AI5s=;
+ b=FAkJB/fkPdwLwF8fI+cc3AEY0b6WrXBX6fm3i4eCPJjFDKMhs8jADyZLQO/WOqP9MRAM
+ 1U9JW9DSlV6YDhTbTuLGaSSqZfA0y+bkPqmC7PFfqYbGJ9OSGQVczF6uEc9jtvMrwUck
+ J5sDuHbVx/0tesYGT2ZE+DknD4PAHILfdfr0r3mM08kBc6ryg36z79AaBdI/TrScBb0i
+ YqP7Ye82SYVq1wYoDRg67HMMdxEb67tK0P6s56mCx5+bozBshVbAFe5u3vCT0RLvA0Rp
+ R7hVjTVl3KwgOtZ6JLV5xS7gaT2JxKY1RW/xCypn/ocC+NETtGud7EMNQ7rUHbmjDp7m mA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+ by userp2120.oracle.com with ESMTP id 2w9gxpg3ha-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Fri, 15 Nov 2019 00:29:27 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+ by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAF0TBTh006674;
+ Fri, 15 Nov 2019 00:29:27 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+ by userp3020.oracle.com with ESMTP id 2w9h171780-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Fri, 15 Nov 2019 00:29:26 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+ by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xAF0SAK0027264;
+ Fri, 15 Nov 2019 00:28:10 GMT
+Received: from localhost (/10.145.178.64)
+ by default (Oracle Beehive Gateway v4.0)
+ with ESMTP ; Thu, 14 Nov 2019 16:28:09 -0800
+Date: Thu, 14 Nov 2019 16:28:07 -0800
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: ira.weiny@intel.com
+Message-ID: <20191115002807.GN6219@magnolia>
+References: <20191114231943.11220-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-X-Headers-End: 1iVOP3-003vju-KS
-Subject: [f2fs-dev] [PATCH] Documentation/fs: Move swap_[de]activate() to
- file_operations
+Content-Disposition: inline
+In-Reply-To: <20191114231943.11220-1-ira.weiny@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441
+ signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1
+ malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911150001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9441
+ signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
+ priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911150001
+X-Headers-End: 1iVPUe-00H5Bz-Hn
+Subject: Re: [f2fs-dev] [PATCH] Documentation/fs: Move swap_[de]activate()
+ to file_operations
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,84 +127,92 @@ Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
  Anna Schumaker <anna.schumaker@netapp.com>, linux-xfs@vger.kernel.org,
  Chris Mason <clm@fb.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
  David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, Ira Weiny <ira.weiny@intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-f2fs-devel@lists.sourceforge.net,
  Trond Myklebust <trond.myklebust@hammerspace.com>, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Thu, Nov 14, 2019 at 03:19:43PM -0800, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> Update the documentation for the move of the swap_* functions out of
+> address_space_operations and into file_operations.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-Update the documentation for the move of the swap_* functions out of
-address_space_operations and into file_operations.
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
----
-Follow on to the V2 series sent earlier.  If I need to spin a V3 I will squash
-this into patch 2/2 "fs: Move swap_[de]activate to file_operations"
+--D
 
- Documentation/filesystems/vfs.rst | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 7d4d09dd5e6d..03a740d7faa4 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -731,8 +731,6 @@ cache in your filesystem.  The following members are defined:
- 					      unsigned long);
- 		void (*is_dirty_writeback) (struct page *, bool *, bool *);
- 		int (*error_remove_page) (struct mapping *mapping, struct page *page);
--		int (*swap_activate)(struct file *);
--		int (*swap_deactivate)(struct file *);
- 	};
- 
- ``writepage``
-@@ -924,16 +922,6 @@ cache in your filesystem.  The following members are defined:
- 	Setting this implies you deal with pages going away under you,
- 	unless you have them locked or reference counts increased.
- 
--``swap_activate``
--	Called when swapon is used on a file to allocate space if
--	necessary and pin the block lookup information in memory.  A
--	return value of zero indicates success, in which case this file
--	can be used to back swapspace.
--
--``swap_deactivate``
--	Called during swapoff on files where swap_activate was
--	successful.
--
- 
- The File Object
- ===============
-@@ -988,6 +976,8 @@ This describes how the VFS can manipulate an open file.  As of kernel
- 					   struct file *file_out, loff_t pos_out,
- 					   loff_t len, unsigned int remap_flags);
- 		int (*fadvise)(struct file *, loff_t, loff_t, int);
-+		int (*swap_activate)(struct file *);
-+		int (*swap_deactivate)(struct file *);
- 	};
- 
- Again, all methods are called without any locks being held, unless
-@@ -1108,6 +1098,16 @@ otherwise noted.
- ``fadvise``
- 	possibly called by the fadvise64() system call.
- 
-+``swap_activate``
-+	Called when swapon is used on a file to allocate space if
-+	necessary and pin the block lookup information in memory.  A
-+	return value of zero indicates success, in which case this file
-+	can be used to back swapspace.
-+
-+``swap_deactivate``
-+	Called during swapoff on files where swap_activate was
-+	successful.
-+
- Note that the file operations are implemented by the specific
- filesystem in which the inode resides.  When opening a device node
- (character or block special) most filesystems will call special
--- 
-2.21.0
-
+> ---
+> Follow on to the V2 series sent earlier.  If I need to spin a V3 I will squash
+> this into patch 2/2 "fs: Move swap_[de]activate to file_operations"
+> 
+>  Documentation/filesystems/vfs.rst | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> index 7d4d09dd5e6d..03a740d7faa4 100644
+> --- a/Documentation/filesystems/vfs.rst
+> +++ b/Documentation/filesystems/vfs.rst
+> @@ -731,8 +731,6 @@ cache in your filesystem.  The following members are defined:
+>  					      unsigned long);
+>  		void (*is_dirty_writeback) (struct page *, bool *, bool *);
+>  		int (*error_remove_page) (struct mapping *mapping, struct page *page);
+> -		int (*swap_activate)(struct file *);
+> -		int (*swap_deactivate)(struct file *);
+>  	};
+>  
+>  ``writepage``
+> @@ -924,16 +922,6 @@ cache in your filesystem.  The following members are defined:
+>  	Setting this implies you deal with pages going away under you,
+>  	unless you have them locked or reference counts increased.
+>  
+> -``swap_activate``
+> -	Called when swapon is used on a file to allocate space if
+> -	necessary and pin the block lookup information in memory.  A
+> -	return value of zero indicates success, in which case this file
+> -	can be used to back swapspace.
+> -
+> -``swap_deactivate``
+> -	Called during swapoff on files where swap_activate was
+> -	successful.
+> -
+>  
+>  The File Object
+>  ===============
+> @@ -988,6 +976,8 @@ This describes how the VFS can manipulate an open file.  As of kernel
+>  					   struct file *file_out, loff_t pos_out,
+>  					   loff_t len, unsigned int remap_flags);
+>  		int (*fadvise)(struct file *, loff_t, loff_t, int);
+> +		int (*swap_activate)(struct file *);
+> +		int (*swap_deactivate)(struct file *);
+>  	};
+>  
+>  Again, all methods are called without any locks being held, unless
+> @@ -1108,6 +1098,16 @@ otherwise noted.
+>  ``fadvise``
+>  	possibly called by the fadvise64() system call.
+>  
+> +``swap_activate``
+> +	Called when swapon is used on a file to allocate space if
+> +	necessary and pin the block lookup information in memory.  A
+> +	return value of zero indicates success, in which case this file
+> +	can be used to back swapspace.
+> +
+> +``swap_deactivate``
+> +	Called during swapoff on files where swap_activate was
+> +	successful.
+> +
+>  Note that the file operations are implemented by the specific
+>  filesystem in which the inode resides.  When opening a device node
+>  (character or block special) most filesystems will call special
+> -- 
+> 2.21.0
+> 
 
 
 _______________________________________________
