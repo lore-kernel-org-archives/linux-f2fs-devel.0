@@ -7,88 +7,86 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB38EC43215
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2019 05:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C9FC432C3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2019 05:10:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C04BD20726
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2019 05:10:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 6B48120726
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2019 05:10:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="M+M2+PoI";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VjueZgJm";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mykernel.net header.i=cgxu519@mykernel.net header.b="SvQFCdzi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C04BD20726
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="SOdwt2eE";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="K8p1evRg";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mykernel.net header.i=cgxu519@mykernel.net header.b="Hd4TEPjE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B48120726
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mykernel.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iWZJP-0004Xm-ER; Mon, 18 Nov 2019 05:10:55 +0000
+	id 1iWZJQ-0007Hb-1j; Mon, 18 Nov 2019 05:10:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <cgxu519@mykernel.net>) id 1iWZJO-0004XQ-4P
+ (envelope-from <cgxu519@mykernel.net>) id 1iWZJO-0007HU-NH
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Nov 2019 05:10:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :References:In-Reply-To:Date:Subject:Message-ID:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ :Date:Subject:Message-ID:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GDu82HfY7CnDAb1EdcuqFswUt9CFFN7VyyP2enB6TlQ=; b=M+M2+PoIDoIcAFGGHPNJ4ZnloB
- KkAlzuf+VL5r9qmKDpAbnMlgqseJheleq5x4XGuY5EkHtgjySHImWsVv/gFU+fB0zE92cqgJXDT8x
- gdTb5ZkTDS5Bmv8CqItnQTKR2YlZ3g20rwFCinDYDB8w6U53y2b0IKAANfTYvHztCwVI=;
+ bh=BsgB+uLSbI/A7RpGrDvhjCegyC49pCxyhfWI2lOuUfk=; b=SOdwt2eEBowLoVGlZk7be4gVrE
+ s3mkIEkJhpcY+gcSC3SMTitwIu9kb7BwXEBEoSpDil/qmyWEx2ggqNv6XWOXEC2Yo09jzK538kjMN
+ 8UJPm0d7CEsWLnec41sQcE/DG13Vd+dwLDCojVoDyWGu02ko/I2XJc78bF2osryypE8Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Date:Subject:Message-ID:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Subject:
+ Message-ID:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GDu82HfY7CnDAb1EdcuqFswUt9CFFN7VyyP2enB6TlQ=; b=VjueZgJmGe4kzd1LkuqHQLU8A7
- vG4iGlB+7lA4COnGFmhMsWT5plkjUSLOISHbg9b1JOJLa6B09wfbZRt5YcxRoaQHea8dVB1HJlsG8
- 4Jbztrl1i+rZYmm+GneqONkh0oj2cDGE69LxHjGV2PYuywpMBmW7Kq/z6g37iYaq+mtU=;
+ bh=BsgB+uLSbI/A7RpGrDvhjCegyC49pCxyhfWI2lOuUfk=; b=K8p1evRgzZ2y8QR9TOV/8T3yef
+ ac8Q4jJ6/5kOvsJJIQJqUqhovIu8teDir0gpm63I4QBw1/jQIDxhOrA3Hg10W1O/9Z9GZAaEzNoCF
+ nonWoBEL3ofveygfdOBRm9XvpCxKng3UuxfqGNUigFodpMji5tFpgwZeoZEzmlNM9CEM=;
 Received: from sender3-of-o52.zoho.com.cn ([124.251.121.247]
  helo=sender2.zoho.com.cn)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.92.2)
- id 1iWZJJ-004M0S-Us
+ id 1iWZJL-004M0J-Rb
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Nov 2019 05:10:54 +0000
-ARC-Seal: i=1; a=rsa-sha256; t=1574053820; cv=none; d=zoho.com.cn; s=zohoarc; 
- b=O70woNDRmcMXazDUfoFGwElRurDEqQkMMtwkKp5K6lJNE3JlmbUwmddwyfDJ7Kkk5NEvifaMbe3QSg6S5Iv6S1jQYwHVE6d1/0UQ7O/xMDxDChXuolGDg50qnLURp0ieO5L6an++ZJmdOKHov5kAWqEcrQy87VGwPGrP2RT4zGY=
+ARC-Seal: i=1; a=rsa-sha256; t=1574053816; cv=none; d=zoho.com.cn; s=zohoarc; 
+ b=nOqkrGkbDhtS3JDMvQRPuCCRI17CD3aKZSTRZtWSBRtIjONCrKc6v+eLP7IuCi+Tkb0VZoRzf+u9HRwRyoZxjpE3o/LBCY/xtjVY9lmLKSyHDBAtPBSmHY/MkEagt4xEyqco26PSMXg93wv5ol1WfKIHQt+zoEOWThlUcRAGN+8=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn;
- s=zohoarc; t=1574053820;
- h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To;
- bh=GDu82HfY7CnDAb1EdcuqFswUt9CFFN7VyyP2enB6TlQ=; 
- b=NDFYFZseRQVlvn4/MTP/3tm5xReBr2b8K0fkVe9XORh9WOWXlGgKFK4Poqc0odvNBXvnoxWJupOFspTrPLGsgl5L8vMj4wc2cPV2Dhk2Iwd7ERh1HPNWQtIZLW9WzYmgnq0cqPFlHanvOHDqjAiQQWS1CunrfKkT8g2lzoj2Y0o=
+ s=zohoarc; t=1574053816;
+ h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To;
+ bh=BsgB+uLSbI/A7RpGrDvhjCegyC49pCxyhfWI2lOuUfk=; 
+ b=PTPwfFgv2WlRWueS8Em/r/X8tv6FghRBaJJqvDQHrdYADltuXdTTk+PPpD9x7DXGGxiajBFuHx+ywgo4prEMy5XC3vRT4LdJwBbfwIffx2ETasq8EpSMJaSyDqKAEK4aliVEMaWCccd8f334fuTtopvX2yodxA6oYCsKxH3LQIs=
 ARC-Authentication-Results: i=1; mx.zoho.com.cn;
  dkim=pass  header.i=mykernel.net;
  spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
  dmarc=pass header.from=<cgxu519@mykernel.net>
  header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574053820; 
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574053816; 
  s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
- h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding;
- l=1682; bh=GDu82HfY7CnDAb1EdcuqFswUt9CFFN7VyyP2enB6TlQ=;
- b=SvQFCdziN57bDfl1glECMMWGyxlsxq9Aynk00GSL3RpiZdBV94P6CXT5PQ7cPCMs
- wN/J3OMCE6VSFOTFYPs2cvzwGGBK6Mzzx1e2xeeEmYZ7+14+K4gzJ04m7HZQNDFmtlr
- V4RcyxibAcDC8EEC3xIl29I12Q7l48+i8mv7Tutg=
+ h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ l=1765; bh=BsgB+uLSbI/A7RpGrDvhjCegyC49pCxyhfWI2lOuUfk=;
+ b=Hd4TEPjE8y+eT9uAecADUdrpdpM8idvHMa1WowClTYYDjvX+VFqMB/ZTpEKHKjQi
+ efzGVbutkWe2JrkyEhT91eL6JxU5nE58/YJUeOzq8cRZoz3qf/lUNAW3IQPj19sZVxj
+ 2ViUFwDHjLT3p5JQPt2yg7VxII6IbzbJfqaDVpmA=
 Received: from localhost.localdomain (218.18.229.179 [218.18.229.179]) by
- mx.zoho.com.cn with SMTPS id 1574053818929531.7015154867489;
- Mon, 18 Nov 2019 13:10:18 +0800 (CST)
+ mx.zoho.com.cn with SMTPS id 1574053813058511.6204774440098;
+ Mon, 18 Nov 2019 13:10:13 +0800 (CST)
 From: Chengguang Xu <cgxu519@mykernel.net>
 To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
-Message-ID: <20191118050949.15629-3-cgxu519@mykernel.net>
-Date: Mon, 18 Nov 2019 13:09:49 +0800
+Message-ID: <20191118050949.15629-1-cgxu519@mykernel.net>
+Date: Mon, 18 Nov 2019 13:09:47 +0800
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191118050949.15629-1-cgxu519@mykernel.net>
-References: <20191118050949.15629-1-cgxu519@mykernel.net>
 MIME-Version: 1.0
 X-ZohoCNMailClient: External
-X-Headers-End: 1iWZJJ-004M0S-Us
-Subject: [f2fs-dev] [RFC PATCH 3/3] xfs: show prjquota info on statfs for a
+X-Headers-End: 1iWZJL-004M0J-Rb
+Subject: [f2fs-dev] [RFC PATCH 1/3] ext4: show prjquota info on statfs for a
  file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -123,18 +121,19 @@ cmVkwqDCoMKgwqDCoCAxLjBHwqDCoCAxM00gMTAxMk3CoMKgIDIlIC8KClJ1biBkZiBvbiBhIGZp
 bGU6Cgpbcm9vdCAvXSMgZGYgLWggL2V0Yy9leHBvcnRzCkZpbGVzeXN0ZW3CoMKgwqDCoMKgIFNp
 emXCoCBVc2VkIEF2YWlsIFVzZSUgTW91bnRlZCBvbgprYXRhU2hhcmVkwqDCoMKgwqDCoCAxLjVU
 wqAgNzc4TcKgIDEuNVTCoMKgIDElIC8KClNpZ25lZC1vZmYtYnk6IENoZW5nZ3VhbmcgWHUgPGNn
-eHU1MTlAbXlrZXJuZWwubmV0PgotLS0KIGZzL3hmcy94ZnNfc3VwZXIuYyB8IDMgKystCiAxIGZp
-bGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEv
-ZnMveGZzL3hmc19zdXBlci5jIGIvZnMveGZzL3hmc19zdXBlci5jCmluZGV4IDhkMWRmOWY4YmUw
-Ny4uOWY0ZDllODY1NzJhIDEwMDY0NAotLS0gYS9mcy94ZnMveGZzX3N1cGVyLmMKKysrIGIvZnMv
-eGZzL3hmc19zdXBlci5jCkBAIC0xMTI1LDcgKzExMjUsOCBAQCB4ZnNfZnNfc3RhdGZzKAogCXN0
-YXRwLT5mX2ZmcmVlID0gbWF4X3QoaW50NjRfdCwgZmZyZWUsIDApOwogCiAKLQlpZiAoKGlwLT5p
-X2QuZGlfZmxhZ3MgJiBYRlNfRElGTEFHX1BST0pJTkhFUklUKSAmJgorCWlmICgoKGlwLT5pX2Qu
-ZGlfZmxhZ3MgJiBYRlNfRElGTEFHX1BST0pJTkhFUklUKSB8fAorCSAgICAgIVNfSVNESVIoZGVu
-dHJ5LT5kX2lub2RlLT5pX21vZGUpKSAmJgogCSAgICAoKG1wLT5tX3FmbGFncyAmIChYRlNfUFFV
-T1RBX0FDQ1R8WEZTX1BRVU9UQV9FTkZEKSkpID09CiAJCQkgICAgICAoWEZTX1BRVU9UQV9BQ0NU
-fFhGU19QUVVPVEFfRU5GRCkpCiAJCXhmc19xbV9zdGF0dmZzKGlwLCBzdGF0cCk7Ci0tIAoyLjIw
-LjEKCgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpM
-aW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJj
-ZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9s
-aW51eC1mMmZzLWRldmVsCg==
+eHU1MTlAbXlrZXJuZWwubmV0PgotLS0KIGZzL2V4dDQvc3VwZXIuYyB8IDMgKystCiAxIGZpbGUg
+Y2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZnMv
+ZXh0NC9zdXBlci5jIGIvZnMvZXh0NC9zdXBlci5jCmluZGV4IGRkNjU0ZTUzYmEzZC4uM2ZiYTIy
+YjU0ZjVjIDEwMDY0NAotLS0gYS9mcy9leHQ0L3N1cGVyLmMKKysrIGIvZnMvZXh0NC9zdXBlci5j
+CkBAIC01NjA3LDcgKzU2MDcsOCBAQCBzdGF0aWMgaW50IGV4dDRfc3RhdGZzKHN0cnVjdCBkZW50
+cnkgKmRlbnRyeSwgc3RydWN0IGtzdGF0ZnMgKmJ1ZikKIAlidWYtPmZfZnNpZC52YWxbMV0gPSAo
+ZnNpZCA+PiAzMikgJiAweEZGRkZGRkZGVUw7CiAKICNpZmRlZiBDT05GSUdfUVVPVEEKLQlpZiAo
+ZXh0NF90ZXN0X2lub2RlX2ZsYWcoZGVudHJ5LT5kX2lub2RlLCBFWFQ0X0lOT0RFX1BST0pJTkhF
+UklUKSAmJgorCWlmICgoZXh0NF90ZXN0X2lub2RlX2ZsYWcoZGVudHJ5LT5kX2lub2RlLCBFWFQ0
+X0lOT0RFX1BST0pJTkhFUklUKSB8fAorCSAgICAgIVNfSVNESVIoZGVudHJ5LT5kX2lub2RlLT5p
+X21vZGUpKSAmJgogCSAgICBzYl9oYXNfcXVvdGFfbGltaXRzX2VuYWJsZWQoc2IsIFBSSlFVT1RB
+KSkKIAkJZXh0NF9zdGF0ZnNfcHJvamVjdChzYiwgRVhUNF9JKGRlbnRyeS0+ZF9pbm9kZSktPmlf
+cHJvamlkLCBidWYpOwogI2VuZGlmCi0tIAoyLjIwLjEKCgoKCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
+dApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNv
+dXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
