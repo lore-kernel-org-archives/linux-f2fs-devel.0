@@ -1,120 +1,95 @@
-Return-Path: <SRS0=3oDy=ZJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=q29q=ZK=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37C3C432C0
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 17 Nov 2019 21:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACE6C432C0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2019 05:10:55 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 77DBF206E6;
-	Sun, 17 Nov 2019 21:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 0F2E920726
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 18 Nov 2019 05:10:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="M5mvhZfF";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="kS6lVKG4";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eK956UQq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DBF206E6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cvfboqRv";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="X+Rs6hs+";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mykernel.net header.i=cgxu519@mykernel.net header.b="Jz7cAV9v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F2E920726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mykernel.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iWSN2-0003aR-Hm; Sun, 17 Nov 2019 21:46:12 +0000
+	id 1iWZJO-0004XX-BF; Mon, 18 Nov 2019 05:10:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <darrick.wong@oracle.com>) id 1iWSN1-0003aF-Gs
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Nov 2019 21:46:11 +0000
+ (envelope-from <cgxu519@mykernel.net>) id 1iWZJM-0004XJ-SL
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Nov 2019 05:10:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :References:In-Reply-To:Date:Subject:Message-ID:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lQsxtj1zILTPO3ytzDWL4aqcpWPnGFH9Mz/GY19HCxE=; b=M5mvhZfFAKplqFHxQIRl6Jq/nH
- SE6Yv1Nd18W6hCDsI275nWLlsDOkRT0Kpx+b3+OFx8g6PskZzy/AzFc7yrVqBBses44sjEbKvzEBQ
- xjkZO7OWJrMSOrmVU+iHPNrRPowFW2bENgaz613S/ulnT3ozoGe7gAis1/InuKYuDla0=;
+ bh=W+4d37NiUZrTVp/T//URhJAtULIpMWsOCTG3JUgcQbA=; b=cvfboqRv1WHgAhApWEarpBrYhX
+ 5Y36PgbWcmSrCgDj0t1+rhW+pR39kaQmo5l8vAlZIR5SQYT0gs1rEZWbNu/hXqg8ekO//bp4EaBYM
+ 7Tdm8/kgS8B3PFjXUo+vELp62sacFtzV1/VKVCJdcyFD3fM8OU35rAcu32RTq/49lId8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+ In-Reply-To:Date:Subject:Message-ID:Cc:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=lQsxtj1zILTPO3ytzDWL4aqcpWPnGFH9Mz/GY19HCxE=; b=kS6lVKG4zYNTgS61DcLmzLWl4X
- 504wEPppmAUCDd8XAPUFk6SQy12OkKKyYnflKrnOWUInXY0xgCAn0GKfIRISVbASNw+UeiiRqAze5
- 62HwHo/X6+5gK4hIFJSOFY+gGXZ2tKdfP/k0dh4uPTD1nBvZeDr7luu87dTQeR3EHFIM=;
-Received: from userp2120.oracle.com ([156.151.31.85])
+ bh=W+4d37NiUZrTVp/T//URhJAtULIpMWsOCTG3JUgcQbA=; b=X+Rs6hs+MrTNBc0mgGDGwfIp+U
+ iKNoy3S5J9gcicRwmOFPlSh7YzKm1J8iw8z9Syv2npvKtRrZvNjgyGpHZvzRXkrtcPj+X/E5csMaB
+ WhsQrXaR8xdhTOjwWI+a5vh6cflUDEvGTOcWoj02Knn/6dpY3tj29M+pDur6gDrsRkcE=;
+Received: from sender3-of-o52.zoho.com.cn ([124.251.121.247]
+ helo=sender2.zoho.com.cn)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iWSMy-003qut-2K
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 Nov 2019 21:46:11 +0000
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
- by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAHLdfpI003596;
- Sun, 17 Nov 2019 21:44:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com;
- h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=lQsxtj1zILTPO3ytzDWL4aqcpWPnGFH9Mz/GY19HCxE=;
- b=eK956UQqKjf2dIYueXIg/Y2Cb6FPuQxk7c8vJxotCUH+PzNTDZUhNEtS1V7JWWmgbA4t
- W18LnfXuwkt5hePJwfM3grayAZTN6Kqt1gHu+NKAzvAOcURxDZJfixp5louJ5iNUKaur
- Y1BJCNCoAnOozJmSk3c0M/pcgPM6/Hp6oRKrMsqjcG7S8SVk7YFsSU/hf9K93XG357qW
- MBKfY3DWnVFh57J9gZF844R+AaqLkt9kT3GugzcFFhy6H6+VH3WpJ10oPM5iCiPQYHRU
- NJpCAK9h4FWcW4k8zPiyYN0cgPd0ewFhOlrmLL9gJeLXFKup9o5JG65MxsyNfoDF2/eq /Q== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
- by userp2120.oracle.com with ESMTP id 2wa9rq4cqx-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Sun, 17 Nov 2019 21:44:48 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
- by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xAHLiif8155274;
- Sun, 17 Nov 2019 21:44:47 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
- by userp3020.oracle.com with ESMTP id 2wau8m1qv8-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Sun, 17 Nov 2019 21:44:47 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
- by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xAHLi9F6010176;
- Sun, 17 Nov 2019 21:44:09 GMT
-Received: from localhost (/67.169.218.210)
- by default (Oracle Beehive Gateway v4.0)
- with ESMTP ; Sun, 17 Nov 2019 13:44:08 -0800
-Date: Sun, 17 Nov 2019 13:44:07 -0800
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Message-ID: <20191117214407.GD6213@magnolia>
-References: <20191107001259.115018-1-ebiggers@kernel.org>
- <20191115172832.GA21300@linux.intel.com>
- <20191115192227.GA150987@sol.localdomain>
- <20191115225319.GB29389@linux.intel.com>
- <20191116000139.GB18146@mit.edu>
+ (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.92.2)
+ id 1iWZJI-004CUu-7b
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 18 Nov 2019 05:10:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; t=1574053818; cv=none; d=zoho.com.cn; s=zohoarc; 
+ b=CFiTydxXmqD9bMG7v780o3N8ddqWN6K3FCgyTdlTsez+ICLl9SEtemLlO1rFmwdlnFVn0KaMzc1ve2S2pA//ZQDSMywCMchSASZ55qhlGgITwNozY47/lo2c/INkLP4RSjDGEAEdUnzyuSWpR2MhhKkB3r8PeWHkAF6uLKrdeQw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn;
+ s=zohoarc; t=1574053818;
+ h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To;
+ bh=W+4d37NiUZrTVp/T//URhJAtULIpMWsOCTG3JUgcQbA=; 
+ b=SfZrHruFtbvLbpQPjNc72IC+JSlnZfJ+XGA4IFDCxatxJXqhBCbg8JNLUagIec/KDcUIuQTVBtngdQoSW3hkUMbcgLGEpH8Fm+eXwz7ARt58nKunz86ZgaxuRX//6Mv41ix92didw44LkKsvKlQgBBZdKpmg9s6dWyjCHjCQdl8=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+ dkim=pass  header.i=mykernel.net;
+ spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+ dmarc=pass header.from=<cgxu519@mykernel.net>
+ header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1574053818; 
+ s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+ h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ l=1801; bh=W+4d37NiUZrTVp/T//URhJAtULIpMWsOCTG3JUgcQbA=;
+ b=Jz7cAV9vUe3W4KyujDLRcYQXLcQV6tl7gVqHx1v+Ljon9oHqojtRod0Rc50n5YC5
+ ZkEOZtA8Vu7ezLL5/F5sGKbob4KLpIxLDCTIwMJBQFp3pj5hakvhUeJmc/iSvEmO7Gl
+ mbdedSI3usWavsqw8+/jaZGYDbtDrn2dLYPcKTdA=
+Received: from localhost.localdomain (218.18.229.179 [218.18.229.179]) by
+ mx.zoho.com.cn with SMTPS id 157405381681740.021350625482796;
+ Mon, 18 Nov 2019 13:10:16 +0800 (CST)
+From: Chengguang Xu <cgxu519@mykernel.net>
+To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
+Message-ID: <20191118050949.15629-2-cgxu519@mykernel.net>
+Date: Mon, 18 Nov 2019 13:09:48 +0800
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191118050949.15629-1-cgxu519@mykernel.net>
+References: <20191118050949.15629-1-cgxu519@mykernel.net>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20191116000139.GB18146@mit.edu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9444
- signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911170206
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9444
- signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
- priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911170206
-X-Headers-End: 1iWSMy-003qut-2K
-Subject: Re: [f2fs-dev] [PATCH] fscrypt: support passing a keyring key to
- FS_IOC_ADD_ENCRYPTION_KEY
+X-ZohoCNMailClient: External
+X-Headers-End: 1iWZJI-004CUu-7b
+Subject: [f2fs-dev] [RFC PATCH 2/3] f2fs: show prjquota info on statfs for a
+ file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -126,46 +101,42 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Paul Lawrence <paullawrence@google.com>,
- David Howells <dhowells@redhat.com>, Ondrej Mosnacek <omosnace@redhat.com>,
- Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- linux-fscrypt@vger.kernel.org, keyrings@vger.kernel.org,
- linux-mtd@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
- Paul Crowley <paulcrowley@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: tytso@mit.edu, darrick.wong@oracle.com,
+ Chengguang Xu <cgxu519@mykernel.net>, adilger.kernel@dilger.ca,
+ jaegeuk@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Nov 15, 2019 at 07:01:39PM -0500, Theodore Y. Ts'o wrote:
-> On Sat, Nov 16, 2019 at 12:53:19AM +0200, Jarkko Sakkinen wrote:
-> > > I'm working on an xfstest for this:
-> > > 
-> > > 	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git/commit/?h=fscrypt-provisioning&id=24ab6abb7cf6a80be44b7c72b73f0519ccaa5a97
-> > > 
-> > > It's not quite ready, though.  I'll post it for review when it is.
-> > > 
-> > > Someone is also planning to update Android userspace to use this.  So if there
-> > > are any issues from that, I'll hear about it.
-> > 
-> > Cool. Can you combine this patch and matching test (once it is done) to
-> > a patch set?
-> 
-> That's generally not done since the test goes to a different repo
-> (xfstests.git) which has a different review process from the kernel
-> change.
-
-FWIW I generally send one series per git tree (kernel, *progs, fstests)
-one right after another so that they'll all land more or less together
-in everybody's inboxes.
-
---D
-
-> 					- Ted
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Q3VycmVudGx5IHdlIHJlcGxhY2UgZmlsZXN5c3RlbSBzdGF0aXN0aWNzIHVzaW5nIHByanF1b3Rh
+IGluZm8Kb24gc3RhdGZzIHdoZW4gc3BlY2lmaWVkIGRpcmVjdG9yeSBoYXMgcHJvamVjdCBpZCBp
+bmhlcml0IGZsYWcuCkhvd2V2ZXIsIHN0YXRmcyBvbiBhIGZpbGUoYWNjdXJhdGVseSBub24tZGly
+KSB3aGljaCBpcyB1bmRlciB0aGUKcHJvamVjdCBxdW90YSBkaXIod2l0aCBpbmhlcml0IGZsYWcp
+IHN0aWxsIHNob3dzIHdob2xlIGZpbGVzeXN0ZW0Kc3RhdGlzdGljcy4gSW4gY29udGFpbmVyIHVz
+ZSBjYXNlLCBpdCB3aWxsIGdpdmUgY29udGFpbmVyIHVzZXIKaW5jb25zaXN0ZW50IGV4cGVyaWVu
+Y2UgYW5kIGNhdXNlIGNvbmZ1c2lvbiBhYm91dCBhdmFpbGFibGUgZnJlZQpzcGFjZS4KCkRldGFp
+bCBpbmZvIGxpa2UgYmVsb3c6CldlIHVzZSBwcm9qZWN0IHF1b3RhIHRvIGxpbWl0IGRpc2sgc3Bh
+Y2UgdXNhZ2UgZm9yIGEgY29udGFpbmVyCmFuZCBydW4gZGYgY29tbWFuZCBpbnNpZGUgY29udGFp
+bmVyLgoKUnVuIGRmIG9uIGEgZGlyZWN0b3J5OgoKW3Jvb3QgL10jIGRmIC1oIC9ldGMvCkZpbGVz
+eXN0ZW3CoMKgwqDCoMKgIFNpemXCoCBVc2VkIEF2YWlsIFVzZSUgTW91bnRlZCBvbgprYXRhU2hh
+cmVkwqDCoMKgwqDCoCAxLjBHwqDCoCAxM00gMTAxMk3CoMKgIDIlIC8KClJ1biBkZiBvbiBhIGZp
+bGU6Cgpbcm9vdCAvXSMgZGYgLWggL2V0Yy9leHBvcnRzCkZpbGVzeXN0ZW3CoMKgwqDCoMKgIFNp
+emXCoCBVc2VkIEF2YWlsIFVzZSUgTW91bnRlZCBvbgprYXRhU2hhcmVkwqDCoMKgwqDCoCAxLjVU
+wqAgNzc4TcKgIDEuNVTCoMKgIDElIC8KClNpZ25lZC1vZmYtYnk6IENoZW5nZ3VhbmcgWHUgPGNn
+eHU1MTlAbXlrZXJuZWwubmV0PgotLS0KIGZzL2YyZnMvc3VwZXIuYyB8IDUgKysrLS0KIDEgZmls
+ZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+ZnMvZjJmcy9zdXBlci5jIGIvZnMvZjJmcy9zdXBlci5jCmluZGV4IDE0NDNjZWUxNTg2My4uYzVi
+OWE5MmQ2MDZiIDEwMDY0NAotLS0gYS9mcy9mMmZzL3N1cGVyLmMKKysrIGIvZnMvZjJmcy9zdXBl
+ci5jCkBAIC0xMjg3LDggKzEyODcsOSBAQCBzdGF0aWMgaW50IGYyZnNfc3RhdGZzKHN0cnVjdCBk
+ZW50cnkgKmRlbnRyeSwgc3RydWN0IGtzdGF0ZnMgKmJ1ZikKIAlidWYtPmZfZnNpZC52YWxbMV0g
+PSAodTMyKShpZCA+PiAzMik7CiAKICNpZmRlZiBDT05GSUdfUVVPVEEKLQlpZiAoaXNfaW5vZGVf
+ZmxhZ19zZXQoZGVudHJ5LT5kX2lub2RlLCBGSV9QUk9KX0lOSEVSSVQpICYmCi0JCQlzYl9oYXNf
+cXVvdGFfbGltaXRzX2VuYWJsZWQoc2IsIFBSSlFVT1RBKSkgeworCWlmICgoaXNfaW5vZGVfZmxh
+Z19zZXQoZGVudHJ5LT5kX2lub2RlLCBGSV9QUk9KX0lOSEVSSVQpIHx8CisJICAgICAhU19JU0RJ
+UihkZW50cnktPmRfaW5vZGUtPmlfbW9kZSkpICYmCisJICAgIHNiX2hhc19xdW90YV9saW1pdHNf
+ZW5hYmxlZChzYiwgUFJKUVVPVEEpKSB7CiAJCWYyZnNfc3RhdGZzX3Byb2plY3Qoc2IsIEYyRlNf
+SShkZW50cnktPmRfaW5vZGUpLT5pX3Byb2ppZCwgYnVmKTsKIAl9CiAjZW5kaWYKLS0gCjIuMjAu
+MQoKCgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxp
+bnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNl
+Zm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xp
+bnV4LWYyZnMtZGV2ZWwK
