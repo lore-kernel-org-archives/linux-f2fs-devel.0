@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92681C432C3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Nov 2019 05:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B8BC432C3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Nov 2019 05:53:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6250620721;
-	Fri, 22 Nov 2019 05:52:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1B28B2071B;
+	Fri, 22 Nov 2019 05:53:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Y9W8sC6j";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="de0Vvpo0";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rVpGJBIF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6250620721
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="kxMcRKH1";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HDmUqs2Q";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0q4jZF9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B28B2071B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iY1rW-0004gM-De; Fri, 22 Nov 2019 05:52:10 +0000
+	id 1iY1sl-00056o-Hb; Fri, 22 Nov 2019 05:53:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1iY1rV-0004gF-82
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 05:52:09 +0000
+ (envelope-from <sashal@kernel.org>) id 1iY1sj-00056Z-GG
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 05:53:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dOlEEsN1sM/ZeY3wtKXF1hCnfWPtlHPpkHhsec7O77Y=; b=Y9W8sC6jgIEeS2oYj6GeJRPVkD
- 4fduRFo66uX1tpjk54mns+nHWktx2BnmCkvdsQnL7Bvlp/2ZzeraSWGtfDB7X9d3/DQK8kwdB611w
- zO5FP6Zj/7drexa9VvGKd57qRJDfIVxgf20PM8l0eRl9vBMsTAQQWpcY+cMAZvr/NeIc=;
+ bh=1zU7YNZaHaRsTUOGxgWtDa5KrjCni4s8YzAFaFNUdV4=; b=kxMcRKH15yHvdZDC4AvuqxNdtB
+ 2mh054jlHyJgPPdkN0ACrwsjfB5xrM8nGww/NfrQCPJXlphX1C8Q0FxBhh0AHqT1Dlyy5/CwYqj8Z
+ 3L8E9EN5P0QYfpoiRjU8MMJww3kN2ynRATjqpeOSQ8UpWodxMRJ3MG+ebSVfVwBUQvCM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,41 +45,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dOlEEsN1sM/ZeY3wtKXF1hCnfWPtlHPpkHhsec7O77Y=; b=de0Vvpo0rAhYOOyMBfOJOx/NG4
- wnjaP1hIjG1IHRYZEsLzk1Jv5j7CEcxuJy5lj+yv5sM6DxT8s1Mla/Ibg3h+Javfv/9Vtydsw0aY7
- YA3tpJS9Lb7dsjAnzlnlN8rez8oA7ryXywzCo8UivwJsP18cBGaqvKysYwzO3qP9GnoU=;
+ bh=1zU7YNZaHaRsTUOGxgWtDa5KrjCni4s8YzAFaFNUdV4=; b=HDmUqs2QfuFYauOsNZ89TCVRs/
+ Wfp3Us9umhe0Fv8igH0DTFGNglJ02r2c+vl3yEPKxUunRS3onaGvSX6qDToiO0qex5QAJuKsJHlc4
+ +s4ljAbbXuzySSqbnqrqifCYT4+KaZE2FNMLxkIFpaxR3+WxXDE+EqBXEMFWG6KzTPV8=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iY1rS-0000cu-6l
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 05:52:08 +0000
+ id 1iY1si-009xpH-Ct
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 05:53:25 +0000
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net
  [73.47.72.35])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 0916520717;
- Fri, 22 Nov 2019 05:51:49 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 155102085B;
+ Fri, 22 Nov 2019 05:53:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1574401910;
- bh=pnHoMJ/VIf/bpAE19w6W//LfMUwzElYtDIiJ9wLpwgo=;
+ s=default; t=1574401998;
+ bh=ppy15U+nQ8RPSyPX+4WknncCJKj6FCQWxkBQTbeujCU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=rVpGJBIFVn9ld64xGBlidcb1MVObsr3xoN5VZeHEw3BojbKasOoWgHvZzvT8HspwT
- SxNFD44RR/9DN4U6ZaidiTDa+ysR7PIycotTimvc05BqzBn8GRexr5J7G0MyCf7qhG
- auL0SqARIlpdOlIeg1irbs6IBU/WN59fBpFLR1to=
+ b=J0q4jZF9aBQc9E4Sfd1aePg5e2IxFWLMvLgBf1pv6zO/RUS0fyIeaiSmpHQk1wYlu
+ JhB9qq4FXWplDGJUl9lwh1PpKoy/RKuEY7nd/dPL9573xMIUWmZ2mp+931IVBl6a7i
+ lhYStzzWZTv16kk0INtHZRk/7SMbajcRP6ovH8w8=
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Fri, 22 Nov 2019 00:47:53 -0500
-Message-Id: <20191122054911.1750-134-sashal@kernel.org>
+Date: Fri, 22 Nov 2019 00:49:07 -0500
+Message-Id: <20191122054911.1750-208-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1iY1rS-0000cu-6l
-Subject: [f2fs-dev] [PATCH AUTOSEL 4.19 141/219] f2fs: fix block address for
- __check_sit_bitmap
+X-Headers-End: 1iY1si-009xpH-Ct
+Subject: [f2fs-dev] [PATCH AUTOSEL 4.19 216/219] f2fs: fix to data block
+ override node segment by mistake
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,39 +92,72 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Qiuyang Sun <sunqiuyang@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Qiuyang Sun <sunqiuyang@huawei.com>
+From: zhengliang <zhengliang6@huawei.com>
 
-[ Upstream commit 9249dded7b5cb539a8c8698b25d08a3c15261470 ]
+[ Upstream commit a0770e13c8da83bdb64738c0209ab02dd3cfff8b ]
 
-Should use lstart (logical start address) instead of start (in dev) here.
-This fixes a bug in multi-device scenarios.
+v4: Rearrange the previous three versions.
 
-Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+The following scenario could lead to data block override by mistake.
+
+TASK A            |  TASK kworker                                            |     TASK B                                            |       TASK C
+                  |                                                          |                                                       |
+open              |                                                          |                                                       |
+write             |                                                          |                                                       |
+close             |                                                          |                                                       |
+                  |  f2fs_write_data_pages                                   |                                                       |
+                  |    f2fs_write_cache_pages                                |                                                       |
+                  |      f2fs_outplace_write_data                            |                                                       |
+                  |        f2fs_allocate_data_block (get block in seg S,     |                                                       |
+                  |                                  S is full, and only     |                                                       |
+                  |                                  have this valid data    |                                                       |
+                  |                                  block)                  |                                                       |
+                  |          allocate_segment                                |                                                       |
+                  |          locate_dirty_segment (mark S as PRE)            |                                                       |
+                  |        f2fs_submit_page_write (submit but is not         |                                                       |
+                  |                                written on dev)           |                                                       |
+unlink            |                                                          |                                                       |
+ iput_final       |                                                          |                                                       |
+  f2fs_drop_inode |                                                          |                                                       |
+    f2fs_truncate |                                                          |                                                       |
+ (not evict)      |                                                          |                                                       |
+                  |                                                          | write_checkpoint                                      |
+                  |                                                          |  flush merged bio but not wait file data writeback    |
+                  |                                                          |  set_prefree_as_free (mark S as FREE)                 |
+                  |                                                          |                                                       | update NODE/DATA
+                  |                                                          |                                                       | allocate_segment (select S)
+                  |     writeback done                                       |                                                       |
+
+So we need to guarantee io complete before truncate inode in f2fs_drop_inode.
+
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Zheng Liang <zhengliang6@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/super.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 10d5dcdb34be6..01cb87b12d40b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1101,7 +1101,7 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
- 		list_move_tail(&dc->list, wait_list);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index d9106bbe7df63..d01998ed32343 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -890,6 +890,10 @@ static int f2fs_drop_inode(struct inode *inode)
+ 			sb_start_intwrite(inode->i_sb);
+ 			f2fs_i_size_write(inode, 0);
  
- 		/* sanity check on discard range */
--		__check_sit_bitmap(sbi, start, start + len);
-+		__check_sit_bitmap(sbi, lstart, lstart + len);
++			f2fs_submit_merged_write_cond(F2FS_I_SB(inode),
++					inode, NULL, 0, DATA);
++			truncate_inode_pages_final(inode->i_mapping);
++
+ 			if (F2FS_HAS_BLOCKS(inode))
+ 				f2fs_truncate(inode);
  
- 		bio->bi_private = dc;
- 		bio->bi_end_io = f2fs_submit_discard_endio;
 -- 
 2.20.1
 
