@@ -2,82 +2,81 @@ Return-Path: <SRS0=LI+B=ZO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AFAC432C0
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Nov 2019 16:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D93C432C0
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Nov 2019 20:09:35 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4A66B20672;
-	Fri, 22 Nov 2019 16:53:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 327212068F;
+	Fri, 22 Nov 2019 20:09:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OKXILgwe";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="jzeeXb3m";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxYNl3gO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A66B20672
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GX+GTXg/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="jf3eKo9G";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mG6KoUt4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 327212068F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iYCBp-0006Mu-3R; Fri, 22 Nov 2019 16:53:49 +0000
+	id 1iYFFG-00018j-86; Fri, 22 Nov 2019 20:09:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1iYCBn-0006Mn-Qs
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 16:53:47 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1iYFFF-00018Y-3z
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 20:09:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GVyP3qohTM4ZcHOJFrXk4YIsWCiqJCVX3D6C+EpUpJ0=; b=OKXILgweArHQiHCMcxANxbimLk
- o8z1RLV67RU4/4uMQg+SgYZ6KadnHSsZ158ahiH2LMEbo2zbS7Yi6rgFKctj74sKCDzvbyN3dPjvD
- Mv5BGH7Fs/+dVxZ3ko4RrNo163Fk7pNzFzda0JQtPj+c7GjGyiJnVymtu/mtWpUXt7CA=;
+ bh=2dEkgfgtGXUDaHISHm8TQguIQkMXpmekUBtrf/y81oE=; b=GX+GTXg/CPXcLIe5JPeluiaySh
+ alAfgJcY1tyG52xlu3TnJwU2QXhUOi1/ixpzSGpyiDrwOxJ+a4cZvMEbUPbZU/8ggxiRT0nBsLm/j
+ BN+dCqdjsBWKz04xVAG0uHFencntD1jAUW9ZZJvuarvccXKg606h76y1aCXKqZPwNtVI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GVyP3qohTM4ZcHOJFrXk4YIsWCiqJCVX3D6C+EpUpJ0=; b=jzeeXb3m5MVVEQbn0fC+b13WX4
- XafgbWGmWi1ZDKz8dfNDjvMcoI/I3S1Uz8pPbfHnkLkKp+0T+/xsBYZ9DPAzGH5M6cyEBNJWLFr73
- 2DVTny6Z6EjT3TS9aEPPEYRynbmMfBSt6YBogEQTNJvEVgMAMVDBnJOCjN+zyTORS6+k=;
+ bh=2dEkgfgtGXUDaHISHm8TQguIQkMXpmekUBtrf/y81oE=; b=jf3eKo9GaNnPWPJaQweWFdBVui
+ rtxtWzZGWtDlkWB2Gq4+7TUBeBRalR6+ByRWaLuZdAcxrjkUuZHlWocBErX0wlDkPj3/UCUFNYYWP
+ QSkSKkLWvoAiCCJU98IqpkSyazpIE62oCStkbIh2bs2ujfRBY3kGPU6K0BnU9pGh9kQU=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iYCBl-000gyn-Fx
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 16:53:47 +0000
+ id 1iYFFC-00AjGu-QW
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 20:09:33 +0000
 Received: from localhost (unknown [104.132.0.81])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 3102320672;
- Fri, 22 Nov 2019 16:53:30 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 438402070E;
+ Fri, 22 Nov 2019 20:09:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1574441610;
- bh=JQc+KsF5lzYeruxmK9jO7TjWnowAWT5i/fC5nqNh9ss=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=BxYNl3gOYcqHLHgxDw4SbW5djxQLCNTFdwfPdsxPK6/g+yjSx35G1d/ade4NlhvJO
- 3cx1Ze3kd0wePIUlDcplMgcxiE73WnQG82V0APZ+6a9njWyp6h34pdJ1cJf66T/vV9
- uo3T2Le8MANxKTaxOC2SP8iFvn9+Jc6Gu0YIy9NM=
-Date: Fri, 22 Nov 2019 08:53:28 -0800
+ s=default; t=1574453363;
+ bh=Dvd17sN9aKtG3WDYVBtYh+HeEMUwJ3hipC55jNi6qBc=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=mG6KoUt4L/RNymmjDaeJHrvG8+kzFySvErqhsboZFRI3tUMmhSD0969niKGARYKa2
+ c0jeZ29pWiSrR50IQ2hrTfzU2oECLvzkBfF1n26yZ+WVCUoMWSVnU0eXPYVEkdawpE
+ waNaodEt78IsNaJZuJ1i07dwHJLurkcdninAbWds=
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Sahitya Tummala <stummala@codeaurora.org>
-Message-ID: <20191122165328.GA74621@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1573641063-21232-1-git-send-email-stummala@codeaurora.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 22 Nov 2019 12:09:20 -0800
+Message-Id: <20191122200920.83941-2-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+In-Reply-To: <20191122200920.83941-1-jaegeuk@kernel.org>
+References: <20191122200920.83941-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <1573641063-21232-1-git-send-email-stummala@codeaurora.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
-X-Headers-End: 1iYCBl-000gyn-Fx
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix deadlock in f2fs_gc() context
- during atomic files handling
+X-Headers-End: 1iYFFC-00AjGu-QW
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: stop GC when the victim becomes fully
+ valid
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,141 +88,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Ramon Pantin <pantin@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 11/13, Sahitya Tummala wrote:
-> The FS got stuck in the below stack when the storage is almost
-> full/dirty condition (when FG_GC is being done).
-> 
-> schedule_timeout
-> io_schedule_timeout
-> congestion_wait
-> f2fs_drop_inmem_pages_all
-> f2fs_gc
-> f2fs_balance_fs
-> __write_node_page
-> f2fs_fsync_node_pages
-> f2fs_do_sync_file
-> f2fs_ioctl
-> 
-> The root cause for this issue is there is a potential infinite loop
-> in f2fs_drop_inmem_pages_all() for the case where gc_failure is true
-> and when there an inode whose i_gc_failures[GC_FAILURE_ATOMIC] is
-> not set. Fix this by keeping track of the total atomic files
-> currently opened and using that to exit from this condition.
-> 
-> Fix-suggested-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> ---
-> v2:
-> - change fix as per Chao's suggestion
-> - decrement sbi->atomic_files protected under sbi->inode_lock[ATOMIC_FILE] and
->   only when atomic flag is cleared for the first time, otherwise, the count
->   goes to an invalid/high value as f2fs_drop_inmem_pages() can be called from
->   two contexts at the same time.
-> 
->  fs/f2fs/f2fs.h    |  1 +
->  fs/f2fs/file.c    |  1 +
->  fs/f2fs/segment.c | 21 +++++++++++++++------
->  3 files changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index c681f51..e04a665 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1297,6 +1297,7 @@ struct f2fs_sb_info {
->  	unsigned int gc_mode;			/* current GC state */
->  	unsigned int next_victim_seg[2];	/* next segment in victim section */
->  	/* for skip statistic */
-> +	unsigned int atomic_files;              /* # of opened atomic file */
->  	unsigned long long skipped_atomic_files[2];	/* FG_GC and BG_GC */
->  	unsigned long long skipped_gc_rwsem;		/* FG_GC only */
->  
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index f6c038e..22c4949 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1919,6 +1919,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->  	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
->  	if (list_empty(&fi->inmem_ilist))
->  		list_add_tail(&fi->inmem_ilist, &sbi->inode_list[ATOMIC_FILE]);
-> +	sbi->atomic_files++;
->  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->  
->  	/* add inode in inmem_list first and set atomic_file */
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index da830fc..0b7a33b 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -288,6 +288,8 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
->  	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
->  	struct inode *inode;
->  	struct f2fs_inode_info *fi;
-> +	unsigned int count = sbi->atomic_files;
-> +	unsigned int looped = 0;
->  next:
->  	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
->  	if (list_empty(head)) {
-> @@ -296,22 +298,26 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
->  	}
->  	fi = list_first_entry(head, struct f2fs_inode_info, inmem_ilist);
->  	inode = igrab(&fi->vfs_inode);
-> +	if (inode)
-> +		list_move_tail(&fi->inmem_ilist, head);
->  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->  
->  	if (inode) {
->  		if (gc_failure) {
-> -			if (fi->i_gc_failures[GC_FAILURE_ATOMIC])
-> -				goto drop;
-> -			goto skip;
-> +			if (!fi->i_gc_failures[GC_FAILURE_ATOMIC])
-> +				goto skip;
->  		}
-> -drop:
->  		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
->  		f2fs_drop_inmem_pages(inode);
-> +skip:
->  		iput(inode);
->  	}
-> -skip:
->  	congestion_wait(BLK_RW_ASYNC, HZ/50);
->  	cond_resched();
-> +	if (gc_failure) {
-> +		if (++looped >= count)
+We must stop GC, once the segment becomes fully valid. Otherwise, it can
+produce another dirty segments by moving valid blocks in the segment partially.
 
-There is a race condition when handling sbi->atomic_files?
+Ramon hit no free segment panic sometimes and saw this case happens when
+validating reliable file pinning feature.
 
-> +			return;
-> +	}
->  	goto next;
->  }
->  
-> @@ -327,13 +333,16 @@ void f2fs_drop_inmem_pages(struct inode *inode)
->  		mutex_unlock(&fi->inmem_lock);
->  	}
->  
-> -	clear_inode_flag(inode, FI_ATOMIC_FILE);
->  	fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
->  	stat_dec_atomic_write(inode);
->  
->  	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
->  	if (!list_empty(&fi->inmem_ilist))
->  		list_del_init(&fi->inmem_ilist);
-> +	if (f2fs_is_atomic_file(inode)) {
-> +		clear_inode_flag(inode, FI_ATOMIC_FILE);
-> +		sbi->atomic_files--;
-> +	}
->  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->  }
->  
-> -- 
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Signed-off-by: Ramon Pantin <pantin@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/gc.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 24a3b6b52210..b3d399623290 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1012,8 +1012,14 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 		block_t start_bidx;
+ 		nid_t nid = le32_to_cpu(entry->nid);
+ 
+-		/* stop BG_GC if there is not enough free sections. */
+-		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0))
++		/*
++		 * stop BG_GC if there is not enough free sections.
++		 * Or, stop GC if the segment becomes fully valid caused by
++		 * race condition along with SSR block allocation.
++		 */
++		if ((gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0)) ||
++				get_valid_blocks(sbi, segno, false) ==
++							sbi->blocks_per_seg)
+ 			return submitted;
+ 
+ 		if (check_valid_map(sbi, segno, off) == 0)
+-- 
+2.19.0.605.g01d371f741-goog
+
 
 
 _______________________________________________
