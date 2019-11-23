@@ -1,80 +1,80 @@
-Return-Path: <SRS0=LI+B=ZO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=+uxz=ZP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 921AFC432C3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Nov 2019 20:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8139DC43215
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 23 Nov 2019 00:44:57 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5F8272068F;
-	Fri, 22 Nov 2019 20:09:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 44CFB2071C;
+	Sat, 23 Nov 2019 00:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="MDTfu01h";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="j7qLQj45";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3AersLt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8272068F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NaCa25vS";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XCfRK8Nw";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahob4dfS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44CFB2071C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iYFFR-0006oO-0p; Fri, 22 Nov 2019 20:09:45 +0000
+	id 1iYJXk-000512-OQ; Sat, 23 Nov 2019 00:44:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1iYFFG-0006nm-FJ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 20:09:34 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1iYJXj-00050u-AF
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Nov 2019 00:44:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=A9Dtm7PIfXw0OTDWhLZrVgrukGKnYgFBLqGdjwfqcqI=; b=MDTfu01hS6d5LgUvLa05/ny1lp
- GY0z9I4QiH69XVzDl+dxVFAUm9phbJUMFA4QJ83S5vvLgn2SdZtLOWzLSfEOjwBEYhbr8pUb/UHeE
- D5E3TyedWWuwgvvYdbGKS56XjQJJVXchtQmARFs0LKU8heELRWJdxkhs3RL1JSivS96Q=;
+ bh=5eaZ8M6ljIq5oIEHzX/fnBs5dQuOMUEMspVVAjymyd8=; b=NaCa25vSojL7RHlJ6cvcPudW0z
+ U1bQSfxvQUJUM3QA6f3VtetjsmFKeLQGmc0nfX50pYb9KnumZF10I69MAFYrPijucG/4OI4kDVCjG
+ BhZ7Qe1KreuHOJ9RkxpD44wgEBTxBoRY6mOQo/mfMOgco5gq6VFYd2ohTWIR5hXDBgjA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=A9Dtm7PIfXw0OTDWhLZrVgrukGKnYgFBLqGdjwfqcqI=; b=j
- 7qLQj45/b6jBToFoglyrN/EjW+bMzadekzehDMRxLm/pbzdKGM5NjwhhWpCJZHpA7Ca7BNVFw1BGV
- 7TS39KqGMC/kTcXXtSzvnx/g+IHwR7bD0+SsItWZxjMKc8pnCSBNivWlZTPcFWKYI6KtfGYL84dOc
- mPHgLVx0QeEhbDFk=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=5eaZ8M6ljIq5oIEHzX/fnBs5dQuOMUEMspVVAjymyd8=; b=XCfRK8NwJUNExmIpcDtqtxX9DJ
+ 4pDezW4tLh0gs+i12ngNwVxy5iafufo3bhh1SOTiwzynkaB4QW+ENuhy0Rk/jUeUPeTngGGTpQWD/
+ ITE//+zPEafvktz7uU3FINuHC/ZXWTWrENk5+7pcVUnBLc7OeCp7/YrB+r6FE8JbCAsM=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iYFFF-00AZkq-3H
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Nov 2019 20:09:34 +0000
+ id 1iYJXh-00B39N-EU
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Nov 2019 00:44:55 +0000
 Received: from localhost (unknown [104.132.0.81])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 9B9AF2068F;
- Fri, 22 Nov 2019 20:09:22 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id BDF6E2071C;
+ Sat, 23 Nov 2019 00:44:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1574453362;
- bh=sUU5ZHY5o7dMVF1G7nOuopKx1TMsfFOufwaWDvxep14=;
- h=From:To:Cc:Subject:Date:From;
- b=p3AersLtERcCiWgiHG0s79dPmiHB2nPQF2Ibr+jLXXalGxmxpLAOkIqWFUzaMh813
- HI7a/gu38NO7AIXzEzt0eQETT1sfw7VdV6Mix+D1IQLAbfE2ZruFEtUKCk5PIgqQYD
- AZ9VfK5k9//yIe3EcYAI2HUXUC0IBnTKvYAVPgp0=
+ s=default; t=1574469887;
+ bh=8GDWRYa40KJwgt0zJB9ze+0Ie0DnQLC/TcBFXY8zj6I=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=ahob4dfSzommGd8Tm50XwooH8wCHXjFFODtp8cAoRlvHQmpiK4eShQ8GU34qTBd4E
+ fFgCVl8crCWVywOLv4haDdgStjmrwR5HMco5b76GyiBE9x5pgiW/3Ln6df64Ct1a3U
+ gqJFYKp/hKxMTgdpahXV78QAWqcLVkZ3wb5alHpw=
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 22 Nov 2019 12:09:19 -0800
-Message-Id: <20191122200920.83941-1-jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 22 Nov 2019 16:44:44 -0800
+Message-Id: <20191123004444.99166-2-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+In-Reply-To: <20191123004444.99166-1-jaegeuk@kernel.org>
+References: <20191123004444.99166-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1iYFFF-00AZkq-3H
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: expose main_blkaddr in sysfs
+X-Headers-End: 1iYJXh-00B39N-EU
+Subject: [f2fs-dev] [PATCH 2/2] fsck.f2fs: Enable user-space cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,86 +86,107 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Ramon Pantin <pantin@google.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Expose in /sys/fs/f2fs/<blockdev>/main_blkaddr the block address where the
-main area starts. This allows user mode programs to determine:
+From: Robin Hsu <robinhsu@google.com>
 
-- That pinned files that are made exclusively of fully allocated 2MB
-  segments will never be unpinned by the file system.
+Added command line options -c <num_cache_entry> and -m <max_hash_collision>
+to activate cache for fsck.  It may significantly speed up fsck.
 
-- Where the main area starts. This is required by programs that want to
-  verify if a file is made exclusively of 2MB f2fs segments, the alignment
-  boundary for segments starts at this address. Testing for 2MB alignment
-  relative to the start of the device is incorrect, because for some
-  filesystems main_blkaddr is not at a 2MB boundary relative to the start
-  of the device.
-
-The entry will be used when validating reliable pinning file feature proposed
-by "f2fs: support aligned pinned file".
-
-Signed-off-by: Ramon Pantin <pantin@google.com>
+Signed-off-by: Robin Hsu <robinhsu@google.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-fs-f2fs | 6 ++++++
- Documentation/filesystems/f2fs.txt      | 3 +++
- fs/f2fs/sysfs.c                         | 2 ++
- 3 files changed, 11 insertions(+)
+ fsck/main.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 7ab2b1b5e255..aedeae1e8ec1 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -31,6 +31,12 @@ Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
- Description:
- 		 Controls the issue rate of segment discard commands.
+diff --git a/fsck/main.c b/fsck/main.c
+index 8c62a14..8edb177 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -10,6 +10,9 @@
+  *   Liu Shuoran <liushuoran@huawei.com>
+  *   Jaegeuk Kim <jaegeuk@kernel.org>
+  *  : add sload.f2fs
++ * Copyright (c) 2019 Google Inc.
++ *   Robin Hsu <robinhsu@google.com>
++ *  : add cache layer
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -20,6 +23,7 @@
+ #include <ctype.h>
+ #include <time.h>
+ #include <getopt.h>
++#include <stdbool.h>
+ #include "quotaio.h"
  
-+What:		/sys/fs/f2fs/<disk>/max_blkaddr
-+Date:		November 2019
-+Contact:	"Ramon Pantin" <pantin@google.com>
-+Description:
-+		 Shows first block address of MAIN area.
-+
- What:		/sys/fs/f2fs/<disk>/ipu_policy
- Date:		November 2013
- Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 29020af0cff9..3135b80df6da 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -297,6 +297,9 @@ Files in /sys/fs/f2fs/<devname>
- 			      reclaim the prefree segments to free segments.
- 			      By default, 5% over total # of segments.
+ struct f2fs_fsck gfsck;
+@@ -54,7 +58,12 @@ void fsck_usage()
+ 	MSG(0, "\nUsage: fsck.f2fs [options] device\n");
+ 	MSG(0, "[options]:\n");
+ 	MSG(0, "  -a check/fix potential corruption, reported by f2fs\n");
+-	MSG(0, "  -C encoding[:flag1,flag2] Set options for enabling casefolding\n");
++	MSG(0, "  -c <num-cache-entry>  set number of cache entries"
++			" (default 0)\n");
++	MSG(0, "  -m <max-hash-collision>  set max cache hash collision"
++			" (default 16)\n");
++	MSG(0, "  -C encoding[:flag1,flag2] Set options for enabling"
++			" casefolding\n");
+ 	MSG(0, "  -d debug level [default:0]\n");
+ 	MSG(0, "  -f check/fix entire partition\n");
+ 	MSG(0, "  -g add default options\n");
+@@ -66,6 +75,7 @@ void fsck_usage()
+ 	MSG(0, "  -y fix all the time\n");
+ 	MSG(0, "  -V print the version number and exit\n");
+ 	MSG(0, "  --dry-run do not really fix corruptions\n");
++	MSG(0, "  --debug-cache to debug cache when -c is used\n");
+ 	exit(1);
+ }
  
-+ main_blkaddr                 This value gives the first block address of
-+			      MAIN area in the partition.
-+
-  max_small_discards	      This parameter controls the number of discard
- 			      commands that consist small blocks less than 2MB.
- 			      The candidates to be discarded are cached until
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index f164959e4224..70945ceb9c0c 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -445,6 +445,7 @@ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle, gc_mode);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_urgent, gc_mode);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
-+F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, main_blkaddr, main_blkaddr);
- F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, max_small_discards, max_discards);
- F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, discard_granularity, discard_granularity);
- F2FS_RW_ATTR(RESERVED_BLOCKS, f2fs_sb_info, reserved_blocks, reserved_blocks);
-@@ -512,6 +513,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(gc_idle),
- 	ATTR_LIST(gc_urgent),
- 	ATTR_LIST(reclaim_segments),
-+	ATTR_LIST(main_blkaddr),
- 	ATTR_LIST(max_small_discards),
- 	ATTR_LIST(discard_granularity),
- 	ATTR_LIST(batched_trim_sections),
+@@ -187,15 +197,18 @@ void f2fs_parse_options(int argc, char *argv[])
+ 	}
+ 
+ 	if (!strcmp("fsck.f2fs", prog)) {
+-		const char *option_string = ":aC:d:fg:O:p:q:StyV";
++		const char *option_string = ":aC:c:m:d:fg:O:p:q:StyV";
+ 		int opt = 0, val;
+ 		char *token;
+ 		struct option long_opt[] = {
+ 			{"dry-run", no_argument, 0, 1},
++			{"debug-cache", no_argument, 0, 2},
+ 			{0, 0, 0, 0}
+ 		};
+ 
+ 		c.func = FSCK;
++		c.cache_config.max_hash_collision = 16;
++		c.cache_config.dbg_en = false;
+ 		while ((option = getopt_long(argc, argv, option_string,
+ 						long_opt, &opt)) != EOF) {
+ 			switch (option) {
+@@ -203,10 +216,20 @@ void f2fs_parse_options(int argc, char *argv[])
+ 				c.dry_run = 1;
+ 				MSG(0, "Info: Dry run\n");
+ 				break;
++			case 2:
++				c.cache_config.dbg_en = true;
++				break;
+ 			case 'a':
+ 				c.auto_fix = 1;
+ 				MSG(0, "Info: Fix the reported corruption.\n");
+ 				break;
++			case 'c':
++				c.cache_config.num_cache_entry = atoi(optarg);
++				break;
++			case 'm':
++				c.cache_config.max_hash_collision =
++						atoi(optarg);
++				break;
+ 			case 'g':
+ 				if (!strcmp(optarg, "android"))
+ 					c.defset = CONF_ANDROID;
 -- 
 2.19.0.605.g01d371f741-goog
 
