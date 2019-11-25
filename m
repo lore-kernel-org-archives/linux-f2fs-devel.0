@@ -1,78 +1,149 @@
-Return-Path: <SRS0=+uxz=ZP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=iO/g=ZR=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C72FC432C0
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 23 Nov 2019 00:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 591D2C432C0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 25 Nov 2019 01:04:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4427C2070E;
-	Sat, 23 Nov 2019 00:44:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 101CB2073F;
+	Mon, 25 Nov 2019 01:04:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="QlNFMh+f";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ZG1udOsQ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w+THamV0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4427C2070E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="MW461HiA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="B78VLmTG";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="dyOk4xKa";
+	dkim=neutral (0-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="XhknSrih"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101CB2073F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iYJXk-00076C-Fr; Sat, 23 Nov 2019 00:44:56 +0000
+	id 1iZ2nk-000862-T6; Mon, 25 Nov 2019 01:04:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1iYJXi-00075v-RG
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Nov 2019 00:44:54 +0000
+ (envelope-from <prvs=22502ed00=Damien.LeMoal@wdc.com>)
+ id 1iZ2ni-00085l-Vy
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Nov 2019 01:04:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=C0J01NUuekYpoSExCex+S/f5e9tpLt5IY7E2BmdjpEo=; b=QlNFMh+fNnMDHrARhPpBYAjFHJ
- yQaCxgGTMAhtV67lhaIWaCaoH1dyHI7rO1hbGybl8ZonvSZ/QAXsfH/aLthPXqa/fcfDpTrsxL0RT
- W0oeEe93C+kPMGlHHsP5wUor6jtr67Nox4ZauFBlNO4ZrGSYrCdMksvlAENeEq5o+s/w=;
+ bh=x3FZfYypXdNKHBsGAoqlm4dpGBrbuEm4Od2guUDX4JE=; b=MW461HiAJMVxZubuTDiM811tEI
+ EQ3dX1VA7bKk7hmq1tr+OLFSEJGZ3OOmQTWka8u0pThrPnENs+Qz/9dTuXPQPCAl5RYq2s6rT6oXE
+ 9EUxr7fJgqVxchWN1wt+Cb9cyBWfKz/iGjnvTXVBscgn+o4+braVI3sd9iycq8hcJI0I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=C0J01NUuekYpoSExCex+S/f5e9tpLt5IY7E2BmdjpEo=; b=Z
- G1udOsQWpHBQUu/8BWEvXJsWa5xGUlxdJIPEWGD4W1kLuYIyOdUjL6QDDG0+weNmhSLgaOjZG5Pqd
- 7NaBRiw3mhplaGWmg5yxODewut0obNSl8GGo3I6PM2THhqDNZsNwGUphCXDBuhH5O5/uNfgZvnjDl
- Tks1UaCLVCuNfjwo=;
-Received: from mail.kernel.org ([198.145.29.99])
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:Message-ID
+ :Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=x3FZfYypXdNKHBsGAoqlm4dpGBrbuEm4Od2guUDX4JE=; b=B
+ 78VLmTGuuBT3CeSYe2L7zxnhDn7wR0tKrnMYFzK24g7lh7eTV0TQstOPT8JJELOVJtc/R735peoI2
+ UiERm8ytoFlbwdKjjqzJD6O4KxK3GyU+SP6KWRFSJq7uU2F8oNTPTkVXipNTSvJ2c6ZO7Vz20FLKV
+ Jb7DyW99oXJmaMUY=;
+Received: from esa1.hgst.iphmx.com ([68.232.141.245])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iYJXg-00Atk6-O7
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 23 Nov 2019 00:44:54 +0000
-Received: from localhost (unknown [104.132.0.81])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 17A7C2070E;
- Sat, 23 Nov 2019 00:44:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1574469887;
- bh=Y9ylcDbKwaPPgKZe8xrbHxMAqtXA3C5keHTmyJojoS4=;
- h=From:To:Cc:Subject:Date:From;
- b=w+THamV01whKIHO9KsmybR7RwTGP2+6dlntDVRpH7F6gIzLVm6x6VyeAg3sVS2B8j
- X5WDaRNlgA77qgusVY81rKp26E/h1UR3vthYFCO4vkHJ0bmtI4CH832HTFjbde5tWZ
- VRxqMt837J6w9IcPBYC3+ijdBZoxVTw3O07o4qB8=
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 22 Nov 2019 16:44:43 -0800
-Message-Id: <20191123004444.99166-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+ id 1iZ2ne-00Cjfw-EY
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 25 Nov 2019 01:04:26 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+ d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+ t=1574643862; x=1606179862;
+ h=from:to:cc:subject:date:message-id:references:
+ content-transfer-encoding:mime-version;
+ bh=dvrZhUIjNa95JQO78KyHXMK/k5LaZqzx9O1FuOeNXk4=;
+ b=dyOk4xKa8g+veolnfMZlATz8B/5HDW7a4j+o8pLKahrgGccAGnp0wijh
+ aqbdbQ3IV6i60BP0u/sfK1dCCWwBW/Me0rhcezAcWJ19igxasXUEouQGt
+ hXqNvy9gik4w1aIPRODm18os12yh7CtSgI18YO2+RWqeS3cD7bYngiQsy
+ fu5xlZDei1LH3lRxWkHzQXTR0NQOQa6PYMOY6F/e2dXqFm0BLNKbAiQ/e
+ nfvydVy6YXSWuA85fyWtn8U7PTOro/pmPhWeZ+XFTsZYHIhe8sZWbsPOT
+ veJqaZYcEZhgYLhxypS2uC9RZi6Cwn8lrPDJ7cjuIRcTMFTNSj1szKlwR Q==;
+IronPort-SDR: Rg4ifiyeJd9+f7d6hx8/aP6CSUlQWArKV0QD3UtCF5TZWBjVFVx8B1q41bhNCDBFs2LnIQ6wPg
+ sxOqIt5xswkGs3D3+TsAjvKcjotFseQQR+nqSKXrsuZBM2/5bhrNAlMEGT1KKbLPdP9g4Fz8oU
+ LRtB8rq80sH+RNPEZ5RA42D7qqlcGJWKj8a9zk7mnRiDn9NQX2Os1sJ5/CJLxcFwSoo75LUCup
+ LNBLZtCxIGQzsR4+AzCdcJ1/ozRNvvToJAedrIx86/UyvAu7K6XPvcITepScYLLNP7gJfEHyuI
+ swg=
+X-IronPort-AV: E=Sophos;i="5.69,239,1571673600"; d="scan'208";a="231320232"
+Received: from mail-sn1nam01lp2053.outbound.protection.outlook.com (HELO
+ NAM01-SN1-obe.outbound.protection.outlook.com) ([104.47.32.53])
+ by ob1.hgst.iphmx.com with ESMTP; 25 Nov 2019 08:48:39 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=liQnAhMHtdFdbjtC8cK7QcDxoS7OMrcjMrjnyd1h5Jd+WX4FKL7oDZXlRKZhktmPb55nhMg/HZmTBUzxwtha6tDmdDz48mvPZF7GacEk5yzbhLBKnBv27pp+gnPmVMl3p5ROsYwfSN9KHz8yeeVMAjJBqi+wLL3TUHjRy0tXM5Yo0/swdVMMLYGsKYpecETkbf94/ALF7f3rR0I21C4S1FrCCVg1odfkB++fDEJHdjYURZdgJyvALr9a/Tm/V7lsRZ201g7sOK8WY7hXI8yrodXZ9qFdVfmaPNgzV76P0JXMQsZedIpz9Pro4EciH79s+XtDSOU9Nsf8uA1WjrXI4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x3FZfYypXdNKHBsGAoqlm4dpGBrbuEm4Od2guUDX4JE=;
+ b=SYX8w+U6VRi3CICpfk+5p3pcmr4ebtk4Ut7oA9W58X7qnu2IBhGCHaA6RzpaZuPn2VFXhm2WtY5hoFLZOWPh1SzTvnbyL96vpvZgPWzWdTI5EHznQt8txXtWdSfYAG0IAjPFGTeYeY1P+6H1YNeKHez3bLRk0lmS/0s+wGrMoV1iY2kXqoThydGAY85wbHNN+tB0opzOpcXpUUYaKBuA7nNz41fZKwnjNskx7PlRhmJSd1I18LLzB6VyHPCJSBqw0AEbBKm03q/nl0cYMYV6d5zVd7NqpVZPD/WmLy+qaSzk8qNlFiCCPmldytzbfzh+xv/DLtzILeyJTzjcm1b98Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x3FZfYypXdNKHBsGAoqlm4dpGBrbuEm4Od2guUDX4JE=;
+ b=XhknSrihA95xR8RK7tvKQ5/tqebRS1E9M6HafrjF4aaKVjqPW+E4/I/Q+q+acRqev6EkOR9eoQIkLTsm3040wSJ7uxFX5UCgwAbDoAOAHEr6G4ZXSnLKJ8EvD6nh2QlJlfIsqNP7dtPBtVYW/9EeTHaqzcPYTxT28UbRigc7zXc=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.59.16) by
+ BYAPR04MB4182.namprd04.prod.outlook.com (20.176.250.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2474.17; Mon, 25 Nov 2019 00:48:38 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::4176:5eda:76a2:3c40]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::4176:5eda:76a2:3c40%7]) with mapi id 15.20.2474.023; Mon, 25 Nov 2019
+ 00:48:38 +0000
+From: Damien Le Moal <Damien.LeMoal@wdc.com>
+To: =?iso-8859-1?Q?Javier_Gonz=E1lez?= <javier@javigon.com>,
+ "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "yuchao0@huawei.com"
+ <yuchao0@huawei.com>
+Thread-Topic: [PATCH] f2fs: disble physical prealloc in LSF mount
+Thread-Index: AQHVoRNC1jbxwLDWckincxKmSLcqwA==
+Date: Mon, 25 Nov 2019 00:48:37 +0000
+Message-ID: <BYAPR04MB58166AE029D919C6610D8404E74A0@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <20191122085952.12754-1-javier@javigon.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [199.255.47.8]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 44aa8961-3a55-4780-b902-08d771413592
+x-ms-traffictypediagnostic: BYAPR04MB4182:
+x-microsoft-antispam-prvs: <BYAPR04MB418232309E8AF7A30ED2BA3BE74A0@BYAPR04MB4182.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0232B30BBC
+x-forefront-antispam-report: SFV:NSPM;
+ SFS:(10019020)(4636009)(136003)(396003)(376002)(366004)(346002)(39860400002)(199004)(189003)(51444003)(8936002)(81166006)(81156014)(8676002)(52536014)(5660300002)(66574012)(66446008)(64756008)(66556008)(66476007)(66946007)(76116006)(91956017)(305945005)(74316002)(7736002)(99286004)(2906002)(110136005)(316002)(66066001)(6116002)(3846002)(25786009)(446003)(102836004)(76176011)(7696005)(6246003)(71190400001)(71200400001)(9686003)(54906003)(55016002)(6436002)(229853002)(2201001)(86362001)(2501003)(14454004)(186003)(26005)(6506007)(53546011)(33656002)(4326008)(478600001)(256004)(14444005);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:BYAPR04MB4182;
+ H:BYAPR04MB5816.namprd04.prod.outlook.com; FPR:; SPF:None; LANG:en;
+ PTR:InfoNoRecords; A:1; MX:1; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: dfHbA8sdLSYDiKQsKZYWXQMh0cSe9V8aSVXcfQDfIUk3VBIcgQ6P9Y9x8Zyi76E7CsTIdk9OgewlmPiKK+EUE5ETY3Xrj06v/PObHuaI5JBlnf4K13KKqSJcB2XzQ7WZXHUWbQQSvg8ZOoRUuI6IGqb3Zc8VA7XRP3aKqCDiFdGg/kmDPqECTbg1HC0QnUiTLAY3Is3ms1R4NidjBcO+baqaXHEB9nq19NpQizqnEMgwY0SDqzbO7wESGYNg4jpF4NQetO4DKWbOhJ8wAbJNaDrwZEs26/vSVpItz15Nam64E/HRpTPdm+1eyAk42QC0hYFCPATiDe/9mJDhMjAotmwmkAYFwOXGRtcXKHx4wdW+PhFV7zxSR42X6vb22vLHgLV5ZXQaaz3qO9xecEn1Q8+2pHe6jUTHJMzm1m2/G42W67dnyXV7rKgnsHl7M+qv
+x-ms-exchange-transport-forked: True
 MIME-Version: 1.0
-X-Headers-End: 1iYJXg-00Atk6-O7
-Subject: [f2fs-dev] [PATCH 1/2] libf2fs_io: Add user-space cache
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44aa8961-3a55-4780-b902-08d771413592
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2019 00:48:37.7897 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Do9BI5q2xGmaeTapLAo0uw2X8QJSJ+q1r9zLCUzK2GrFKgL++n524A8gZsY0dT5dHu8quGCotl2LsJoLEmCNBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4182
+X-Headers-End: 1iZ2ne-00Cjfw-EY
+Subject: Re: [f2fs-dev] [PATCH] f2fs: disble physical prealloc in LSF mount
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,480 +155,111 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: =?iso-8859-1?Q?Javier_Gonz=E1lez?= <javier.gonz@samsung.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Robin Hsu <robinhsu@google.com>
+On 2019/11/22 18:00, Javier Gonz=E1lez wrote:
+> From: Javier Gonz=E1lez <javier.gonz@samsung.com>
+> =
 
-Implemented cache options in F2FS configuration 'c' (i.e. user
-options):
-    * use c.cache_config.num_cache_entry to set the number of
-      cache entries (in block), minimum 1024, or 0 to disable cache.
-    * use c.cache_config.max_hash_collision to set maximum hash
-      collision (max 16).
-    * use c.cavhe_config.dbg_en to enable printing of debug messages.
+> Fix file system corruption when using LFS mount (e.g., in zoned
+> devices). Seems like the fallback into buffered I/O creates an
+> inconsistency if the application is assuming both read and write DIO. I
+> can easily reproduce a corruption with a simple RocksDB test.
+> =
 
-Cache properties:
-    * Per block save based (block size = f2fs block size = 4K Bytes)
-    * Device block indices are used to hash (simple modular hash
-      function) to cache indices.
-    * A hash collision (when a block is hashed to an already occupied
-      cache block) will trigger offset-based relocation to max 16
-      other places, at first empty slot found policy.
-    * A hash collision with all 17 possible relocating places occupied
-      will evict the oldest used one (replaced by the new read block).
-      A global 'use' tick is kept ticking-up per block read for this
-      purpose.
-    * On write cache hit, it will update the corresponding cached
-      block.
-    * On write cache miss, the data won't be cached.
-    * Write-through policy only: never delayed write.
-    * On read cache hit, it returns the cached block.
-    * On read cache miss, it issues an I/O read to the kernel, and
-      then caches and returns the block.
-    * Currently read ahead is not implemented.  Yet, the read ahead
-      logic is kept as before, i.e. using kernel's read ahead
-      mechanism.
+> Might be that the f2fs_forced_buffered_io path brings some problems too,
+> but I have not seen other failures besides this one.
+> =
 
-Signed-off-by: Robin Hsu <robinhsu@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- include/f2fs_fs.h |  18 +++
- lib/libf2fs_io.c  | 331 +++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 348 insertions(+), 1 deletion(-)
+> Problem reproducible without a zoned block device, simply by forcing
+> LFS mount:
+> =
 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 84f3f3e..cb67c7e 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -3,6 +3,8 @@
-  *
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-+ * Copyright (c) 2019 Google Inc.
-+ *             http://www.google.com/
-  *
-  * Dual licensed under the GPL or LGPL version 2 licenses.
-  *
-@@ -329,6 +331,16 @@ struct device_info {
- 	size_t zone_blocks;
- };
- 
-+typedef struct {
-+	/* Value 0 means no cache, minimum 1024 */
-+	long num_cache_entry;
-+
-+	/* Value 0 means always overwrite (no collision allowed). maximum 16 */
-+	unsigned max_hash_collision;
-+
-+	bool dbg_en;
-+} dev_cache_config_t;
-+
- struct f2fs_configuration {
- 	u_int32_t reserved_segments;
- 	u_int32_t new_reserved_segments;
-@@ -419,6 +431,9 @@ struct f2fs_configuration {
- 
- 	/* precomputed fs UUID checksum for seeding other checksums */
- 	u_int32_t chksum_seed;
-+
-+	/* cache parameters */
-+	dev_cache_config_t cache_config;
- };
- 
- #ifdef CONFIG_64BIT
-@@ -1185,6 +1200,9 @@ extern int f2fs_init_sparse_file(void);
- extern int f2fs_finalize_device(void);
- extern int f2fs_fsync_device(void);
- 
-+extern void dcache_init(void);
-+extern void dcache_release(void);
-+
- extern int dev_read(void *, __u64, size_t);
- #ifdef POSIX_FADV_WILLNEED
- extern int dev_readahead(__u64, size_t);
-diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-index 4d0ea0d..971ae37 100644
---- a/lib/libf2fs_io.c
-+++ b/lib/libf2fs_io.c
-@@ -3,6 +3,8 @@
-  *
-  * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-+ * Copyright (c) 2019 Google Inc.
-+ *             http://www.google.com/
-  *
-  * Dual licensed under the GPL or LGPL version 2 licenses.
-  */
-@@ -27,7 +29,10 @@
- #include <linux/hdreg.h>
- #endif
- 
--#include <f2fs_fs.h>
-+#include <stdbool.h>
-+#include <assert.h>
-+#include <inttypes.h>
-+#include "f2fs_fs.h"
- 
- struct f2fs_configuration c;
- 
-@@ -64,6 +69,318 @@ static inline off64_t lseek64(int fd, __u64 offset, int set)
- }
- #endif
- 
-+/* ---------- dev_cache, Least Used First (LUF) policy  ------------------- */
-+/*
-+ * Least used block will be the first victim to be replaced when max hash
-+ * collision exceeds
-+ */
-+static bool *dcache_valid; /* is the cached block valid? */
-+static off64_t  *dcache_blk; /* which block it cached */
-+static uint64_t *dcache_lastused; /* last used ticks for cache entries */
-+static char *dcache_buf; /* cached block data */
-+static uint64_t dcache_usetick; /* current use tick */
-+
-+static uint64_t dcache_raccess;
-+static uint64_t dcache_rhit;
-+static uint64_t dcache_rmiss;
-+static uint64_t dcache_rreplace;
-+
-+static bool dcache_exit_registered = false;
-+
-+/*
-+ *  Shadow config:
-+ *
-+ *  Active set of the configurations.
-+ *  Global configuration 'dcache_config' will be transferred here when
-+ *  when dcache_init() is called
-+ */
-+static dev_cache_config_t dcache_config = {0, 16, 1};
-+static bool dcache_initialized = false;
-+
-+#define MIN_NUM_CACHE_ENTRY  1024L
-+#define MAX_MAX_HASH_COLLISION  16
-+
-+static long dcache_relocate_offset0[] = {
-+	20, -20, 40, -40, 80, -80, 160, -160,
-+	320, -320, 640, -640, 1280, -1280, 2560, -2560,
-+};
-+static int dcache_relocate_offset[16];
-+
-+static void dcache_print_statistics(void)
-+{
-+	long i;
-+	long useCnt;
-+
-+	/* Number of used cache entries */
-+	useCnt = 0;
-+	for (i = 0; i < dcache_config.num_cache_entry; i++)
-+		if (dcache_valid[i])
-+			++useCnt;
-+
-+	/*
-+	 *  c: number of cache entries
-+	 *  u: used entries
-+	 *  RA: number of read access blocks
-+	 *  CH: cache hit
-+	 *  CM: cache miss
-+	 *  Repl: read cache replaced
-+	 */
-+	printf ("\nc, u, RA, CH, CM, Repl=\n");
-+	printf ("%ld %ld %" PRIu64 " %" PRIu64 " %" PRIu64 " %" PRIu64 "\n",
-+			dcache_config.num_cache_entry,
-+			useCnt,
-+			dcache_raccess,
-+			dcache_rhit,
-+			dcache_rmiss,
-+			dcache_rreplace);
-+}
-+
-+void dcache_release(void)
-+{
-+	if (!dcache_initialized)
-+		return;
-+
-+	dcache_initialized = false;
-+
-+	if (c.cache_config.dbg_en)
-+		dcache_print_statistics();
-+
-+	if (dcache_blk != NULL)
-+		free(dcache_blk);
-+	if (dcache_lastused != NULL)
-+		free(dcache_lastused);
-+	if (dcache_buf != NULL)
-+		free(dcache_buf);
-+	if (dcache_valid != NULL)
-+		free(dcache_valid);
-+	dcache_config.num_cache_entry = 0;
-+	dcache_blk = NULL;
-+	dcache_lastused = NULL;
-+	dcache_buf = NULL;
-+	dcache_valid = NULL;
-+}
-+
-+// return 0 for success, error code for failure.
-+static int dcache_alloc_all(long n)
-+{
-+	if (n <= 0)
-+		return -1;
-+	if ((dcache_blk = (off64_t *) malloc(sizeof(off64_t) * n)) == NULL
-+		|| (dcache_lastused = (uint64_t *)
-+				malloc(sizeof(uint64_t) * n)) == NULL
-+		|| (dcache_buf = (char *) malloc (F2FS_BLKSIZE * n)) == NULL
-+		|| (dcache_valid = (bool *) malloc(sizeof(bool) * n)) == NULL)
-+	{
-+		dcache_release();
-+		return -1;
-+	}
-+	dcache_config.num_cache_entry = n;
-+	return 0;
-+}
-+
-+static void dcache_relocate_init(void)
-+{
-+	int i;
-+	int n0 = (sizeof(dcache_relocate_offset0)
-+			/ sizeof(dcache_relocate_offset0[0]));
-+	int n = (sizeof(dcache_relocate_offset)
-+			/ sizeof(dcache_relocate_offset[0]));
-+
-+	ASSERT(n == n0);
-+	for (i = 0; i < n && i < dcache_config.max_hash_collision; i++) {
-+		if (labs(dcache_relocate_offset0[i])
-+				> dcache_config.num_cache_entry / 2) {
-+			dcache_config.max_hash_collision = i;
-+			break;
-+		}
-+		dcache_relocate_offset[i] =
-+				dcache_config.num_cache_entry
-+				+ dcache_relocate_offset0[i];
-+	}
-+}
-+
-+void dcache_init(void)
-+{
-+	long n;
-+
-+	if (c.cache_config.num_cache_entry <= 0)
-+		return;
-+
-+	/* release previous cache init, if any */
-+	dcache_release();
-+
-+	dcache_blk = NULL;
-+	dcache_lastused = NULL;
-+	dcache_buf = NULL;
-+	dcache_valid = NULL;
-+
-+	dcache_config = c.cache_config;
-+
-+	n = max(MIN_NUM_CACHE_ENTRY, dcache_config.num_cache_entry);
-+
-+	/* halve alloc size until alloc succeed, or min cache reached */
-+	while (dcache_alloc_all(n) != 0 && n !=  MIN_NUM_CACHE_ENTRY)
-+		n = max(MIN_NUM_CACHE_ENTRY, n/2);
-+
-+	/* must be the last: data dependent on num_cache_entry */
-+	dcache_relocate_init();
-+	dcache_initialized = true;
-+
-+	if (!dcache_exit_registered) {
-+		dcache_exit_registered = true;
-+		atexit(dcache_release); /* auto release */
-+	}
-+
-+	dcache_raccess = 0;
-+	dcache_rhit = 0;
-+	dcache_rmiss = 0;
-+	dcache_rreplace = 0;
-+}
-+
-+static inline char *dcache_addr(long entry)
-+{
-+	return dcache_buf + F2FS_BLKSIZE * entry;
-+}
-+
-+/* relocate on (n+1)-th collision */
-+static inline long dcache_relocate(long entry, int n)
-+{
-+	assert(dcache_config.num_cache_entry != 0);
-+	return (entry + dcache_relocate_offset[n]) %
-+			dcache_config.num_cache_entry;
-+}
-+
-+static long dcache_find(off64_t blk)
-+{
-+	register long n = dcache_config.num_cache_entry;
-+	register unsigned m = dcache_config.max_hash_collision;
-+	long entry, least_used, target;
-+	unsigned try;
-+
-+	assert(n > 0);
-+	target = least_used = entry = blk % n; /* simple modulo hash */
-+
-+	for (try = 0; try < m; try++) {
-+		if (!dcache_valid[target] || dcache_blk[target] == blk)
-+			return target;  /* found target or empty cache slot */
-+		if (dcache_lastused[target] < dcache_lastused[least_used])
-+			least_used = target;
-+		target = dcache_relocate(entry, try); /* next target */
-+	}
-+	return least_used;  /* max search reached, return least used slot */
-+}
-+
-+/* Physical read into cache */
-+static int dcache_io_read(int fd, long entry, off64_t offset, off64_t blk)
-+{
-+	if (lseek64(fd, offset, SEEK_SET) < 0) {
-+		MSG(0, "\n lseek64 fail.\n");
-+		return -1;
-+	}
-+	if (read(fd, dcache_buf + entry * F2FS_BLKSIZE, F2FS_BLKSIZE) < 0) {
-+		MSG(0, "\n read() fail.\n");
-+		return -1;
-+	}
-+	dcache_lastused[entry] = ++dcache_usetick;
-+	dcache_valid[entry] = true;
-+	dcache_blk[entry] = blk;
-+	return 0;
-+}
-+
-+/*
-+ *  - Note: Read/Write are not symmetric:
-+ *       For read, we need to do it block by block, due to the cache nature:
-+ *           some blocks may be cached, and others don't.
-+ *       For write, since we always do a write-thru, we can join all writes into one,
-+ *       and write it once at the caller.  This function updates the cache for write, but
-+ *       not the do a physical write.  The caller is responsible for the physical write.
-+ *  - Note: We concentrate read/write together, due to the fact of similar structure to find
-+ *          the relavant cache entries
-+ *  - Return values:
-+ *       0: success
-+ *       1: cache not available (uninitialized)
-+ *      -1: error
-+ */
-+static int dcache_update_rw(int fd, void *buf, off64_t offset,
-+		size_t byte_count, bool is_write)
-+{
-+	off64_t blk;
-+	int addr_in_blk;
-+	off64_t start;
-+
-+	if (!dcache_initialized)
-+		dcache_init(); /* auto initialize */
-+
-+	if (!dcache_initialized)
-+		return 1; /* not available */
-+
-+	blk = offset / F2FS_BLKSIZE;
-+	addr_in_blk = offset % F2FS_BLKSIZE;
-+	start = blk * F2FS_BLKSIZE;
-+
-+	while (byte_count != 0) {
-+		size_t cur_size = min(byte_count,
-+				(size_t)(F2FS_BLKSIZE - addr_in_blk));
-+		long entry = dcache_find(blk);
-+
-+		if (!is_write)
-+			++dcache_raccess;
-+
-+		if (dcache_valid[entry] && dcache_blk[entry] == blk) {
-+			/* cache hit */
-+			if (is_write)  /* write: update cache */
-+				memcpy(dcache_addr(entry) + addr_in_blk,
-+					buf, cur_size);
-+			else
-+				++dcache_rhit;
-+		} else {
-+			/* cache miss */
-+			if (!is_write) {
-+				int err;
-+				++dcache_rmiss;
-+				if (dcache_valid[entry])
-+					++dcache_rreplace;
-+				/* read: physical I/O read into cache */
-+				err = dcache_io_read(fd, entry, start, blk);
-+				if (err)
-+					return err;
-+			}
-+		}
-+
-+		/* read: copy data from cache */
-+		/* write: nothing to do, since we don't do physical write. */
-+		if (!is_write)
-+			memcpy(buf, dcache_addr(entry) + addr_in_blk,
-+				cur_size);
-+
-+		/* next block */
-+		++blk;
-+		buf += cur_size;
-+		offset += F2FS_BLKSIZE;
-+		byte_count -= cur_size;
-+		addr_in_blk = 0;
-+	}
-+	return 0;
-+}
-+
-+/*
-+ * dcache_update_cache() just update cache, won't do physical I/O.
-+ * Thus even no error, we need normal non-cache I/O for actual write
-+ *
-+ * return value: 1: cache not available
-+ *               0: success, -1: I/O error
-+ */
-+inline int dcache_update_cache(int fd, void *buf, off64_t offset, size_t count)
-+{
-+	return dcache_update_rw(fd, buf, offset, count, true);
-+}
-+
-+/* handles read into cache + read into buffer  */
-+inline int dcache_read(int fd, void *buf, off64_t offset, size_t count)
-+{
-+	return dcache_update_rw(fd, buf, offset, count, false);
-+}
-+
- /*
-  * IO interfaces
-  */
-@@ -185,6 +502,7 @@ static int sparse_write_zeroed_blk(__u64 block, int count) { return 0; }
- int dev_read(void *buf, __u64 offset, size_t len)
- {
- 	int fd;
-+	int err;
- 
- 	if (c.sparse_mode)
- 		return sparse_read_blk(offset / F2FS_BLKSIZE,
-@@ -194,6 +512,11 @@ int dev_read(void *buf, __u64 offset, size_t len)
- 	if (fd < 0)
- 		return fd;
- 
-+	/* err = 1: cache not available, fall back to non-cache R/W */
-+	/* err = 0: success, err=-1: I/O error */
-+	err = dcache_read(fd, buf, (off64_t)offset, len);
-+	if (err <= 0)
-+		return err;
- 	if (lseek64(fd, (off64_t)offset, SEEK_SET) < 0)
- 		return -1;
- 	if (read(fd, buf, len) < 0)
-@@ -233,6 +556,12 @@ int dev_write(void *buf, __u64 offset, size_t len)
- 	if (fd < 0)
- 		return fd;
- 
-+	/*
-+	 * dcache_update_cache() just update cache, won't do I/O.
-+	 * Thus even no error, we need normal non-cache I/O for actual write
-+	 */
-+	if (dcache_update_cache(fd, buf, (off64_t)offset, len) < 0)
-+		return -1;
- 	if (lseek64(fd, (off64_t)offset, SEEK_SET) < 0)
- 		return -1;
- 	if (write(fd, buf, len) < 0)
--- 
-2.19.0.605.g01d371f741-goog
+>   $ sudo mkfs.f2fs -f -m /dev/nvme0n1
+>   $ sudo mount /dev/nvme0n1 /mnt/f2fs
+>   $ sudo  /opt/rocksdb/db_bench  --benchmarks=3Dfillseq --use_existing_db=
+=3D0
+>   --use_direct_reads=3Dtrue --use_direct_io_for_flush_and_compaction=3Dtr=
+ue
+>   --db=3D/mnt/f2fs --num=3D5000 --value_size=3D1048576 --verify_checksum=
+=3D1
+>   --block_size=3D65536
+> =
 
+> Note that the options that cause the problem are:
+>   --use_direct_reads=3Dtrue --use_direct_io_for_flush_and_compaction=3Dtr=
+ue
+> =
+
+> Fixes: f9d6d0597698 ("f2fs: fix out-place-update DIO write")
+> =
+
+> Signed-off-by: Javier Gonz=E1lez <javier.gonz@samsung.com>
+> ---
+>  fs/f2fs/data.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> =
+
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 5755e897a5f0..b045dd6ab632 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1081,9 +1081,6 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, str=
+uct iov_iter *from)
+>  			return err;
+>  	}
+>  =
+
+> -	if (direct_io && allow_outplace_dio(inode, iocb, from))
+> -		return 0;
+
+Since for LFS mode, all DIOs can end up out of place, I think that it
+may be better to change allow_outplace_dio() to always return true in
+the case of LFS mode. So may be something like:
+
+static inline int allow_outplace_dio(struct inode *inode,
+			struct kiocb *iocb, struct iov_iter *iter)
+{
+	struct f2fs_sb_info *sbi =3D F2FS_I_SB(inode);
+	int rw =3D iov_iter_rw(iter);
+
+	return test_opt(sbi, LFS) ||
+	 	(rw =3D=3D WRITE && !block_unaligned_IO(inode, iocb, iter));
+}
+
+instead of the original:
+
+static inline int allow_outplace_dio(struct inode *inode,
+			struct kiocb *iocb, struct iov_iter *iter)
+{
+	struct f2fs_sb_info *sbi =3D F2FS_I_SB(inode);
+	int rw =3D iov_iter_rw(iter);
+
+	return (test_opt(sbi, LFS) && (rw =3D=3D WRITE) &&
+				!block_unaligned_IO(inode, iocb, iter));
+}
+
+Thoughts ?
+
+> -
+>  	if (is_inode_flag_set(inode, FI_NO_PREALLOC))
+>  		return 0;
+>  =
+
+> =
+
+
+
+-- =
+
+Damien Le Moal
+Western Digital Research
 
 
 _______________________________________________
