@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0ECC432C0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2019 08:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 434D7C432C3
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2019 08:00:22 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3A0AD21770;
-	Thu, 28 Nov 2019 08:00:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1261821770;
+	Thu, 28 Nov 2019 08:00:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="StjO4o5q";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="CZEsv62r";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="PDEIl9hi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A0AD21770
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VuliK5Dr";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Z4jlwvGR";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="DvfcSASK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1261821770
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iaEil-0003Mt-DS; Thu, 28 Nov 2019 08:00:15 +0000
+	id 1iaEir-0003Nn-MN; Thu, 28 Nov 2019 08:00:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=2285f8a38=shinichiro.kawasaki@wdc.com>)
- id 1iaEid-0003MO-1L
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Nov 2019 08:00:07 +0000
+ id 1iaEil-0003MX-1Y
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Nov 2019 08:00:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NutTyn7b9kMJh0FH8zEcciebAZ009zXXA7DDoN3p5kY=; b=StjO4o5qnb6crZG6+RhJ4/mGpZ
- 7noQWp4+27iqIh7GAqo1wgyR3cHuWIqaD4og+85JqTST/jAJuEps9b6foKMdilDalhin35vQnLM1f
- BWNbuMrz/Wn0HT4IbS1e9/xEgIoQ553Y6Geh1Zz41BDMaxADwa8lzT3jSa3gylUhFBBs=;
+ bh=ujB46cskWhCl2T/HMSkG+1UsHh4mv17gs7jjaGkE04c=; b=VuliK5Dro+fNHleIsxCzfhaLVi
+ 0ktkkj9LasrwX0uao6oPTZ0EtXBa0nlpiw/Zzwy6B4DVFUKqOvbe+Edk0JDygsIsqazewbtf8EXAz
+ o6ovSQq7IvxChx31180RlSAMPnuA2k+3g4Xl6A0ciF3sDlHXriu2zLadJln+A381XMok=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -47,64 +47,64 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NutTyn7b9kMJh0FH8zEcciebAZ009zXXA7DDoN3p5kY=; b=CZEsv62rZBSwhIdjYJwWmgtOxo
- 5tfczbDTToP7ToVXypigsFZeMyUKs1hjU7UMkEl3UZM9gZS4CbuNYmzMfsdb+q8AUk5jYZPVhC0yr
- GiD29jzsl5GBUTmrH5QvlAmElzXIVPyYk+uH2irsycPGP1KIfpM9Hv8Er54EIFZOXX2o=;
+ bh=ujB46cskWhCl2T/HMSkG+1UsHh4mv17gs7jjaGkE04c=; b=Z4jlwvGRpJLIrMZsL0lSnu5Wb/
+ L6iVKQhLYKUGVu4J9clH9J2hMaTkp3UrOzBAc1Y5NpGe1Ju0wilpPMeFzPNn3JKk5WzgXUET9sG/E
+ EeXOR2ekg9zJvYx9zePElLN+kEMhMC5UBozltHsl3SL9iudHzwhqp/f7WuxhVo76uxxo=;
 Received: from esa2.hgst.iphmx.com ([68.232.143.124])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iaEib-00Fq7V-L8
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Nov 2019 08:00:06 +0000
+ id 1iaEie-00Fq7V-FJ
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Nov 2019 08:00:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1574928061; x=1606464061;
+ t=1574928065; x=1606464065;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=HcsZLM1/1NzZknimi453AZzGrTearLQC2PjKExuj228=;
- b=PDEIl9hiL2NAjVanvjr6qTjUIecbyxAeyGH3F4jzLeE8GqtMFYT1rfaE
- lP8J5sRAbka36PSeb+cs9iPkfvwknPjoi945dMiAv9fWECgx8XN+hguuQ
- 8kio/v+tH+mm15SzUNI+CZ5R0pb6miQFcmZwwf3uqCWeSdFLmF4lFf45m
- jM06MyCtu7IIJkX+Ycoo7rcvosXA1mqSrklo4zTmcBZjuUGuG5VopxbQ/
- VIPipPHxO032+UJnOrQBaEV60olqz79gM5qkoFV4m6Gm2jnEMrZzCh0xl
- OZFowJ1/hYDCQGVoTHCRhIWycOimSd8ZSdEY8RT5OUBIQgs6C6VgKmYde A==;
-IronPort-SDR: NIXplKDgTsiNtpM8k4h4VpSHGysLTQu7sPlLmqGXuYL+RlSSYDU6HkI6h8Rbmo017PUDlbxyrD
- UePNkDtpj+jcw8Cqmx82IcyKzUezat9/I6ql0rKiUXh4unwczcEGdKpnSTOX+hotai2YpXi3me
- fHfDP9GN8qE1JI2dwkHemI9naRenAWc9hRRTrioYJ8Acg1qnKr91i9JnculqoeMTYmJP8SNqY+
- WNcROzrF6m7L4SoX0ixlnbFOJJ50eoUA9CA7vFiL54VOGVNx1mGomqJ+7DRVMr2hYm0dRIQDo+
- xt4=
-X-IronPort-AV: E=Sophos;i="5.69,252,1571673600"; d="scan'208";a="225597351"
+ bh=GFDk8qg5ZvVcrqS3dbu4XLLbXid2AikV1IrRv2cpbcc=;
+ b=DvfcSASKgEoqLc2v1OsVTBOm0FSMNHP816Vta8K+QRnseDTDNeDrtg6E
+ v9/X2B4AZYlJzElhf+js+rwt1HHPMh23xhicMtvenW5T4BSB6cejdrGGc
+ LYAPowXIuluabZdYI0pGlaWiY+TmL0gXZ4Wjxp73IC29qoXO/VTrsL2kH
+ twVkCkqScKyAWq/QdzWTajfi7IFovjQQpWrjSuGggUCZcllTk/yTkWx/5
+ B69j59guz35Y5HrAszBozHcvnupqe0lX51yTE6IIjMhD6uNsZYtEZqL7D
+ qUkDwihtY1buQX3U2Y23zo2Gv6ciVBMdAfqPRIyIk95Fi9qkKUKVQJbKJ g==;
+IronPort-SDR: K9BPszumjPO9eQgn4tcRgaVVgZ81c0wVMJSwzlwo+GTYM8cdfFiLM4tejqhTWQYCGI4fLD2iQ/
+ Hwb10CaQJUFuljHIf9ZPyqnmewuctL6k4O6/8M/o4JpMJ6uhlmhvxSHkxTsu3YdoheiQ1lp5V8
+ tIn7pXc6TF39EbG93UAl1+KVpA7LhJ+j21RtCS2VoZM1Zs/OX2aQ3S0HqcjGZzUmPdWyOXf2mV
+ sWw0dieJeSHIx4uO2MVWGbkAGirXuLuueM1JpKIFzw0FC4VcuMlXlC8BEsn2sicsvxoQGGWSqy
+ txo=
+X-IronPort-AV: E=Sophos;i="5.69,252,1571673600"; d="scan'208";a="225597357"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com)
  ([199.255.45.15])
- by ob1.hgst.iphmx.com with ESMTP; 28 Nov 2019 16:00:40 +0800
-IronPort-SDR: 3lk9t9nhuYIs+PSNt6M9rgepktVwyJKfd2nHy3v6RdA34DMaF/aGwA9aYOYJinpgEXSPpkAcP5
- INB9duVoY9+e3HGPiWx9KzmnL+VLWUvsnloQ2baNIP6L84e3KfUkb7ZJV3OvGjBde9QCHl7uFl
- 6Vnfzwp5bpmTU/dY+d3HG7pS20P2G5HbVNi2T+psK5/GMkPuKi8h5mWkE6aVKbQ/yFRTnyIpAk
- d5D3UkYMpmpzQ+sXJzCG18hnxLW01EdzgoZduchPP970LlODD4E4jANiwWeOPPTAZ3dmfNKr5a
- HBON34VauzvbdYgJtPqKTVn+
+ by ob1.hgst.iphmx.com with ESMTP; 28 Nov 2019 16:00:43 +0800
+IronPort-SDR: /YvV40l00WCyuwQFoATcDGaIAGD1uab5cV6MMluLRL3NahW2EjPQeFoHnZhsy+5Oa0VzngYEft
+ tIFUbMXeX7D+TkhorLiTgQ6wrH1L4c7SO18djujcMf4zu+9IvWXLkuCuSiTUwbOlB2y/cvUDym
+ WscPGdNC7bJbPyn+aiWX4gwd8bm2cnNdFwzmWGWFE2mOlmdfzXPQqrmoYitHJDe9HyyX23NYdq
+ Lta7sIrzL1sujtwN7SqJzZazKn5NA2Ilckt5Yb4uV3R8qKWq73uP9Hf2z8edtVG8DC02t/albi
+ EnkakXUDkSIkdeX7fkUsahU8
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Nov 2019 23:54:27 -0800
-IronPort-SDR: 1rpeEWof5cu6SiyvgzhT6lsOTw/MTBuAjvS9N0S9S5SeQ4aY/LMoaO6g4NdifWf3VW2FkzmHDw
- DiMKIiYfuafbmaVaQKLZhpbN7sxvZwZ3F2+xYQ6WVz0/JJbRWv7w+IJ46GgqX4auKhuPq5nR6W
- 2+82KZ4Eo3MjHoY30mTvEUtwOsraVlXNd62rvb2/XCrwA6x+JjuXwEmXdN+lTcKH5OFQhcTq4T
- 73iPEzBrJw6alOzqZO3Eu8Kc5Cq5vZ0lWKsJb4lbSNZ4c+k6aOIvTLhpF66oD/15yWGnAvxkVp
- lIs=
+ 27 Nov 2019 23:54:29 -0800
+IronPort-SDR: PWjsUQ3A2cqgGm+L/exkc9zNh6jwWxaLaNwJycza+hHRvBuvFZYkrcf3kjQr5J7w3OHIbsZlp3
+ q9mnwWkc135KbzUjwlq6qDq3DlkpLCUDzBQc/O57kM7iEJsS8/xhOf3yhL1w2URcSAigTq3hnp
+ E1hFn9Y3MQLItPkbhwD8NQKz8R9aXdA3zD0af/UTm8IuQNtov0VOT73v48/wi0+A92nAKbCmPM
+ YELOVvkytE9PDIlqyz4vJPVM9tIXlA3KZCNJVsXoIf9N+tQmKsSx/VoelT//AgZXTCOzDR24kh
+ OQI=
 WDCIronportException: Internal
 Received: from shindev.dhcp.fujisawa.hgst.com (HELO shindev.fujisawa.hgst.com)
  ([10.149.53.87])
- by uls-op-cesaip02.wdc.com with ESMTP; 27 Nov 2019 23:59:51 -0800
+ by uls-op-cesaip02.wdc.com with ESMTP; 27 Nov 2019 23:59:54 -0800
 From: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
  linux-f2fs-devel@lists.sourceforge.net
-Date: Thu, 28 Nov 2019 16:59:23 +0900
-Message-Id: <20191128075930.467833-2-shinichiro.kawasaki@wdc.com>
+Date: Thu, 28 Nov 2019 16:59:25 +0900
+Message-Id: <20191128075930.467833-4-shinichiro.kawasaki@wdc.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191128075930.467833-1-shinichiro.kawasaki@wdc.com>
 References: <20191128075930.467833-1-shinichiro.kawasaki@wdc.com>
 MIME-Version: 1.0
-X-Headers-End: 1iaEib-00Fq7V-L8
-Subject: [f2fs-dev] [PATCH v8 1/8] libf2fs_zoned: Introduce
- f2fs_report_zones() helper function
+X-Headers-End: 1iaEie-00Fq7V-FJ
+Subject: [f2fs-dev] [PATCH v8 3/8] libf2fs_zoned: Introduce
+ f2fs_reset_zone() helper function
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,128 +121,92 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-To prepare for write pointer consistency check by fsck, add
-f2fs_report_zones() helper function which calls REPORT ZONE command to
-get write pointer status. The function is added to lib/libf2fs_zoned
-which gathers zoned block device related functions.
+To prepare for write pointer consistency fix by fsck, add
+f2fs_reset_zone() helper function which calls RESET ZONE command. The
+function is added to lib/libf2fs_zoned which gathers zoned block device
+related functions.
 
-To check write pointer consistency with f2fs meta data, fsck needs to
-refer both of reported zone information and f2fs super block structure
-"f2fs_sb_info". However, libf2fs_zoned does not import f2fs_sb_info. To
-keep f2fs_sb_info structure out of libf2fs_zoned, provide a callback
-function in fsck to f2fs_report_zones() and call it for each zone.
-
-Add SECTOR_SHIFT definition in include/f2fs_fs.h to avoid a magic number
-to convert bytes into 512B sectors.
+When f2fs-tools are built without blkzoned.h kernel header, the helper
+function f2fs_reset_zone() prints an error message as other helper
+functions in lib/libf2fs_zoned print. To make the message consistent
+through the all helper functions, modify message strings in
+f2fs_check_zones() and f2fs_reset_zones().
 
 Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- include/f2fs_fs.h   |  5 ++++
- lib/libf2fs_zoned.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 64 insertions(+)
+ include/f2fs_fs.h   |  1 +
+ lib/libf2fs_zoned.c | 32 ++++++++++++++++++++++++++++++--
+ 2 files changed, 31 insertions(+), 2 deletions(-)
 
 diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index a386e61..fe18dff 100644
+index d6ea688..9c26314 100644
 --- a/include/f2fs_fs.h
 +++ b/include/f2fs_fs.h
-@@ -281,6 +281,9 @@ static inline uint64_t bswap_64(uint64_t val)
- #endif
- #define PAGE_CACHE_SIZE		4096
- #define BITS_PER_BYTE		8
-+#ifndef SECTOR_SHIFT
-+#define SECTOR_SHIFT		9
-+#endif
- #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
- #define CP_CHKSUM_OFFSET	4092
- #define SB_CHKSUM_OFFSET	3068
-@@ -1316,6 +1319,8 @@ blk_zone_cond_str(struct blk_zone *blkz)
- 
- extern int f2fs_get_zoned_model(int);
- extern int f2fs_get_zone_blocks(int);
-+typedef int (report_zones_cb_t)(int i, void *, void *);
-+extern int f2fs_report_zones(int, report_zones_cb_t *, void *);
+@@ -1323,6 +1323,7 @@ extern int f2fs_report_zone(int, u_int64_t, void *);
+ typedef int (report_zones_cb_t)(int i, void *, void *);
+ extern int f2fs_report_zones(int, report_zones_cb_t *, void *);
  extern int f2fs_check_zones(int);
++int f2fs_reset_zone(int, void *);
  extern int f2fs_reset_zones(int);
  
+ #define SIZE_ALIGN(val, size)	((val) + (size) - 1) / (size)
 diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-index af00b44..8ad4171 100644
+index 5328c56..8b88fe9 100644
 --- a/lib/libf2fs_zoned.c
 +++ b/lib/libf2fs_zoned.c
-@@ -193,6 +193,59 @@ int f2fs_get_zone_blocks(int i)
+@@ -388,6 +388,28 @@ out:
+ 	return ret;
+ }
  
- #define F2FS_REPORT_ZONES_BUFSZ	524288
- 
-+int f2fs_report_zones(int j, report_zones_cb_t *report_zones_cb, void *opaque)
++int f2fs_reset_zone(int i, void *blkzone)
 +{
-+	struct device_info *dev = c.devices + j;
-+	struct blk_zone_report *rep;
-+	struct blk_zone *blkz;
-+	unsigned int i, n = 0;
-+	u_int64_t total_sectors = (dev->total_sectors * c.sector_size)
-+		>> SECTOR_SHIFT;
-+	u_int64_t sector = 0;
-+	int ret = -1;
++	struct blk_zone *blkz = (struct blk_zone *)blkzone;
++	struct device_info *dev = c.devices + i;
++	struct blk_zone_range range;
++	int ret;
 +
-+	rep = malloc(F2FS_REPORT_ZONES_BUFSZ);
-+	if (!rep) {
-+		ERR_MSG("No memory for report zones\n");
-+		return -ENOMEM;
++	if (!blk_zone_seq(blkz) || blk_zone_empty(blkz))
++		return 0;
++
++	/* Non empty sequential zone: reset */
++	range.sector = blk_zone_sector(blkz);
++	range.nr_sectors = blk_zone_length(blkz);
++	ret = ioctl(dev->fd, BLKRESETZONE, &range);
++	if (ret != 0) {
++		ret = -errno;
++		ERR_MSG("ioctl BLKRESETZONE failed: errno=%d\n", errno);
 +	}
 +
-+	while (sector < total_sectors) {
-+
-+		/* Get zone info */
-+		rep->sector = sector;
-+		rep->nr_zones = (F2FS_REPORT_ZONES_BUFSZ - sizeof(struct blk_zone_report))
-+			/ sizeof(struct blk_zone);
-+
-+		ret = ioctl(dev->fd, BLKREPORTZONE, rep);
-+		if (ret != 0) {
-+			ret = -errno;
-+			ERR_MSG("ioctl BLKREPORTZONE failed: errno=%d\n",
-+				errno);
-+			goto out;
-+		}
-+
-+		if (!rep->nr_zones) {
-+			ret = -EIO;
-+			ERR_MSG("Unexpected ioctl BLKREPORTZONE result\n");
-+			goto out;
-+		}
-+
-+		blkz = (struct blk_zone *)(rep + 1);
-+		for (i = 0; i < rep->nr_zones; i++) {
-+			ret = report_zones_cb(n, blkz, opaque);
-+			if (ret)
-+				goto out;
-+			sector = blk_zone_sector(blkz) + blk_zone_length(blkz);
-+			n++;
-+			blkz++;
-+		}
-+	}
-+out:
-+	free(rep);
 +	return ret;
 +}
 +
- int f2fs_check_zones(int j)
+ int f2fs_reset_zones(int j)
  {
  	struct device_info *dev = c.devices + j;
-@@ -372,6 +425,12 @@ out:
+@@ -487,13 +509,19 @@ int f2fs_get_zone_blocks(int i)
  
- #else
- 
-+int f2fs_report_zones(int i, report_zones_cb_t *report_zones_cb, void *opaque)
-+{
+ int f2fs_check_zones(int i)
+ {
+-	ERR_MSG("%d: Zoned block devices are not supported\n", i);
 +	ERR_MSG("%d: Unsupported zoned block device\n", i);
 +	return -1;
 +}
 +
- int f2fs_get_zoned_model(int i)
++int f2fs_reset_zone(int i, void *blkzone)
++{
++	ERR_MSG("%d: Unsupported zoned block device\n", i);
+ 	return -1;
+ }
+ 
+ int f2fs_reset_zones(int i)
  {
- 	struct device_info *dev = c.devices + i;
+-	ERR_MSG("%d: Zoned block devices are not supported\n", i);
++	ERR_MSG("%d: Unsupported zoned block device\n", i);
+ 	return -1;
+ }
+ 
 -- 
 2.23.0
 
