@@ -2,44 +2,44 @@ Return-Path: <SRS0=DU7W=ZU=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F97C43215
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2019 08:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 756DDC432C3
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Nov 2019 08:00:24 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7058D21775;
-	Thu, 28 Nov 2019 08:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 490FC21771;
+	Thu, 28 Nov 2019 08:00:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HAsKimkM";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="kTAWMT9E";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ES8ryDqJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7058D21775
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="RNwMlW8f";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="esEgzWul";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ZA8b/VFe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 490FC21771
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iaEis-0005T4-2z; Thu, 28 Nov 2019 08:00:22 +0000
+	id 1iaEiu-0003Oa-0c; Thu, 28 Nov 2019 08:00:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=2285f8a38=shinichiro.kawasaki@wdc.com>)
- id 1iaEim-0005SY-E3
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Nov 2019 08:00:16 +0000
+ id 1iaEiq-0003N9-UO
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Nov 2019 08:00:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2fb00h4B+DnYaEF/Odq6Jv4p4uWTenx0b+j/p6/6VsU=; b=HAsKimkMUoxtfZ3RWZrmJGQX4p
- IPHmfasZtpEMgx9GKoYUwtHzUHCh4c1DqIn8xzfvXcNNWDubNmKN8UQv7eDwAMCvXc2MAYjXoBoCI
- fRmC+fLB3An6m2poL/BN+jPzLS/GNwyKuX6i57QQCX44MmR/l6zmprBCrpDPxi8IWZh0=;
+ bh=x4PH0Oqb39Ry0rT+IQomP/wdNXm27ZR035NMHrYLn8g=; b=RNwMlW8fwih7Gqw6SWC43bt0ZF
+ hu8SuObukZInow27T8fl3wCOTgwmTvURYGCe5DQpY8FpGUL77Bb0htzvhUBHCzNjDbfsMK5wtEeGk
+ UxwRqmRPLZHOVKqiL5kEjByDNSmodlMMtNf9Y6DtifW4DzD9w8ik/ng2Es0cCb1jUr6k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -47,64 +47,64 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2fb00h4B+DnYaEF/Odq6Jv4p4uWTenx0b+j/p6/6VsU=; b=kTAWMT9EMHNjzGjtzvq/L910IQ
- ITnCKSE3wmbRADlPb4hkRHkR/FGcDfozu2mEURh2uOBHpfG9a8Zbhg0epdghoe3MCxL56H3Ne6VCR
- 9ybbSF7phejM+DR8Y89eQ8l8ZFw485c1qqE6fyDfyt/bxbdaDZHnJSFQKB7hMQhyB5SQ=;
+ bh=x4PH0Oqb39Ry0rT+IQomP/wdNXm27ZR035NMHrYLn8g=; b=esEgzWulE9XbPxHhF/tXZpr9cL
+ Wfr+YmUFlMUWeDRpkbS+OE86+DcmOxkmwxWQ33PqeVZcXjg81MZjZjtZ/6J5aOyHpkRAKnkYbU7fJ
+ aabTAdSHcA1BNZIrchmhg9Jp5gUh0Vs19/fMvBlx3Fqg2U2Y1vz6cZAlQPCZfjcB01DA=;
 Received: from esa2.hgst.iphmx.com ([68.232.143.124])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iaEig-00Fq7V-OB
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Nov 2019 08:00:14 +0000
+ id 1iaEij-00Fq8f-LL
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Nov 2019 08:00:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1574928068; x=1606464068;
+ t=1574928073; x=1606464073;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=eFSPQB5CGW6gzgtCWBs8hNdY06lSauRcAysdw7G2x2s=;
- b=ES8ryDqJWfrCqoaG/iWD2PnEdI/lxawO6VWWZ8giBFVFxUd8fsrEdS0k
- XhOWcpxUv2elUsnZeeP00QBar0pyLOOiJwi45PoWZ7w/AkmMT516BjrPJ
- VEwXmGyk2k7V9qNyXsPcrM5SN7glcWfp5JVcTc8h1XY06uJp2XBvkbGMI
- GW1r+CHrATp1JWbtyy0XdUv4gZfGZ6rBlNZH9N3CxrDWua58mXWZ+J/aT
- HqT5JmbTeRVVnxXvL+rvKkntvNyBB2E0ZCAN1sEvWOUwFVxm4yKCus1wT
- rsmYxXtqSdPEA+rs3jaX45k7DqGy+NuCnm/t4lRjLj7yQgQcuhQonMMpx A==;
-IronPort-SDR: FzS+gZHIeicXXdvYs+Iorbn3xoWJxc+PGj1VrNVubSHlJGPMOEEn4fiQu3IQO2U0BXGyG17b/x
- 8CerHONdAnJPfYDTvcf0VLw1lMSu6Omhx8ibR/Xq2TRImOA6UjHg/Fkb2CFsiO558obXuCUO6f
- XTpwAqsQHoTXGP/2ATc9EUxEnyjGBrswfx6idmQ4NSng63NQxEK878M1UG8CSm4wkj6FE1ba/v
- lW3wG0wlCOO7JwrVsjWsCp3nWO6wxwpaL0S9v9Au7w7qPHeDKMJfIvKbz5lhsaBrpBxSK22J9r
- MKo=
-X-IronPort-AV: E=Sophos;i="5.69,252,1571673600"; d="scan'208";a="225597359"
+ bh=XmnG2wLjtKJlQue7aagts5j3/txvG9pd8UrIUaBXBzw=;
+ b=ZA8b/VFefx+Hdf9dtD5VWX15M7SDFNykSDbKx6YfvO8SIcP4efKEBKOq
+ QeX/TAgllFmKsNJ968IDeYFbxbtdF+5Q/0fFAYLBV3mxS6yzxFoa3ilrv
+ N7fBXKP2UNbl7l2ZOvkiMaoV3i+NEwSal24YeqeCKLej3xS1hoxblbOAv
+ tM5UgckFSe22OviGQ/JiP/A7jTe3wILsCP11Xr2nt7lx8QiTn0ZgnKp92
+ AMY5o8Q+NKV7f+kY03e3cClyt9DiypTLJmmsTnP/N2NeUcY+ZR0t/Q7UM
+ BR1uGcdvZlHYT4rf2y2W/giYRKQIXVoWKDzM4fm3TSnk7chrCmoFQjbnx g==;
+IronPort-SDR: J7/ELZPhm0FLgzK6pmRZcVgNaYiTG3u83iWmEX7KW46g82zBjlbUfByHq9b+yz8B1s+IisZ5aH
+ uvSdatP8Oe6emtdnBkkxviCpiEhxHtvTSduFUCzIFSU1Hzn2tC8xrkhYHFodVSForJtOD1YimY
+ StIyxeHOEfl+u/prANH/+JFHGrPF+i3Fr104DHlJZsYxjlU+dqlgi9DDDdoK5Byj5gFM+iGXl/
+ RyOSOz/YrjDyhBUf0U6TEoEpVSAVaMchSFnOJtSpmBYu0WSHmucMx58YnGVXfZiXg0ii8h9L2J
+ CkU=
+X-IronPort-AV: E=Sophos;i="5.69,252,1571673600"; d="scan'208";a="225597362"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com)
  ([199.255.45.15])
- by ob1.hgst.iphmx.com with ESMTP; 28 Nov 2019 16:00:45 +0800
-IronPort-SDR: 6Bfn3i4r7gm9QloabB6To21W00pawvZguupRjivNG+wqUZrJvy1Q2FqZTNrNpX2T73I/x3Nnwx
- rWNbjYfGibUhc08iZyOvPqz2PMUmrt1eV6n7HttRjUd17IPwGwfQLXLrqLkn4jbW8lSd6Nvn/6
- AmmA49Pv9g+3QLErTrmQ9gak64UkQoJbEDJD8C2n3JJHSB2NkF6BeTSWTXJo+ndF5x+oXZn+FD
- YNcd4Cu4X8rRy5wDEr03lBBxKabccSJvhiRP0oxSGRVtmGp2kn5d+70F/sCUd1IWeGVgnC/lDj
- 7Pr1mcDnH/B0lC6rjYbl5/qM
+ by ob1.hgst.iphmx.com with ESMTP; 28 Nov 2019 16:00:49 +0800
+IronPort-SDR: uft37UHGPGo30FNfH6ReEeRaYZj1g/YUbF6R84oG61xysoNZouBkJevN9eSKAtQdBsYUo9D+FU
+ Hqs75JZvsB9y/9HqMc2QYKCUwA8fap4RUAh+FqfaTDHSdlhUE5XCDRbL8AO2ETaDWnTW7PZT4w
+ ceE7W+Vf2cPMQS7odnzK9rInU5SHaT7bpnzaYJYywKXHOaEWU5BiRiVj//ACw+dj4cBjAnL8Hj
+ xlJX+KdlMht6V1R38/am6OiV3coZMzfZMU7BEm8q+EbNUzZbwL8+agjPyHlUBl3vJS5DTqmRUN
+ UsmWgm94DolzON9YfOxu4oeq
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Nov 2019 23:54:30 -0800
-IronPort-SDR: CX084X3NwKzwyiV8AIZ7xZteWTrzJ/jq+Cy98HItf7th/ULGYB9oB7dBhj2Xmn4Jut4c5zPWEc
- J3cdONM5GQSj+VFkXR7cETRtvb88UrZHvKrnwCsiDB+8eyzoHElBsE58CxbHh7TzofNZNQWi5b
- KS0BhgtnKevm4igcJogBla3KdawCr/TkPy6FD7VGYA7O4rcLnmv4qm3pkO999jw3KsPX4L/jVp
- PNgcHgoH7voEe+47x9wv4PZTbcIs/AdL90Apx0f3E1Zo8pDAR7iwcroItPlc0t8XVGQtgSdk3G
- 57U=
+ 27 Nov 2019 23:54:33 -0800
+IronPort-SDR: YBcnasEz/UPVCNO9sLWGWDo+4c14cvPJE+TZtfTDAUzDDW0LShLliRLxd1SbcbKgyM2zjX60dk
+ vwqW2C47L1/8hhtFFJCUrpO+n+UszGpU5PJL7jcOOgX/gkPVnKg3v1lIbz7T1SV6PLTg6n9w8K
+ lN9wc7nbXnGiKiwgjGKE2duhUeImAKVdex0ofoz5EhjZs0urMCidtIdijiijqixHbjbDVqAIeh
+ rGljExIvmyac/RjK/JEMFWSCZJCUrKY1YB7LeSuL41BBwDbRgV9vIwSDLW6gOEY5xWUp+d5c2K
+ GOA=
 WDCIronportException: Internal
 Received: from shindev.dhcp.fujisawa.hgst.com (HELO shindev.fujisawa.hgst.com)
  ([10.149.53.87])
- by uls-op-cesaip02.wdc.com with ESMTP; 27 Nov 2019 23:59:55 -0800
+ by uls-op-cesaip02.wdc.com with ESMTP; 27 Nov 2019 23:59:57 -0800
 From: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
  linux-f2fs-devel@lists.sourceforge.net
-Date: Thu, 28 Nov 2019 16:59:26 +0900
-Message-Id: <20191128075930.467833-5-shinichiro.kawasaki@wdc.com>
+Date: Thu, 28 Nov 2019 16:59:28 +0900
+Message-Id: <20191128075930.467833-7-shinichiro.kawasaki@wdc.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191128075930.467833-1-shinichiro.kawasaki@wdc.com>
 References: <20191128075930.467833-1-shinichiro.kawasaki@wdc.com>
 MIME-Version: 1.0
-X-Headers-End: 1iaEig-00Fq7V-OB
-Subject: [f2fs-dev] [PATCH v8 4/8] fsck: Find free zones instead of blocks
- to assign to current segments
+X-Headers-End: 1iaEij-00Fq8f-LL
+Subject: [f2fs-dev] [PATCH v8 6/8] fsck: Check fsync data always for zoned
+ block devices
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,141 +121,131 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-When fsck needs to assign a new area to a curreng segment, it calls
-find_next_free_block() function to find a new block to assign. For zoned
-block devices, fsck checks write pointer consistency with current
-segments' positions. In case a curseg is inconsistent with the
-write pointer of the zone it points to, fsck should assign not a new free
-block but a new free zone/section with write pointer at the zone start,
-so that next write to the current segment succeeds without error.
+Fsck checks fsync data when UMOUNT flag is not set. When the f2fs was not
+cleanly unmouted, UMOUNT flag is not recorded in meta data and fsync data
+can be left in the f2fs. The first fsck run checks fsync data to reflect
+it on quota status recovery. After that, fsck writes UMOUNT flag in the
+f2fs meta data so that second fsck run can skip fsync data check.
 
-To extend find_next_free_block() function's capability to find not only
-a block but also a zone/section, add new_sec flag to
-find_next_free_block() function. When new_sec flag is true, skip check
-for each block's availability so that the check is done with unit of
-section. Note that it is ensured that one zone has one section for f2fs
-on zoned block devices. Then the logic to find a new free section is good
-to find a new free zone.
+However, fsck for zoned block devices need to care fsync data for all
+fsck runs. The first fsck run checks fsync data, then fsck can check
+write pointer consistency with fsync data. However, since second fsck run
+does not check fsync data, fsck detects write pointer at fsync data end
+is not consistent with f2fs meta data. This results in meta data update
+by fsck and fsync data gets lost.
 
-When fsck target devices have ZONED_HM model, set new_sec flag true to
-call find_next_free_block() from move_curseg_info(). Set curseg's
-alloc_type not SSR but LFS for the devices with ZONED_HM model, because
-SSR block allocation is not allowed for zoned block devices. Also skip
-relocate_curseg_offset() for the devices with ZONED_HM model for the
-same reason.
+To have fsck check fsync data always for zoned block devices, introduce
+need_fsync_data_record() helper function which returns boolean to tell
+if fsck needs fsync data check or not. For zoned block devices, always
+return true. Otherwise, return true if UMOUNT flag is not set in CP.
+Replace UMOUNT flag check codes for fsync data with the function call.
 
 Signed-off-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/defrag.c  |  2 +-
- fsck/f2fs.h    |  1 +
- fsck/fsck.h    |  2 +-
- fsck/mount.c   | 13 +++++++++----
+ fsck/fsck.h    |  6 ++++++
+ fsck/mount.c   | 14 +++++++-------
  fsck/segment.c |  2 +-
- 5 files changed, 13 insertions(+), 7 deletions(-)
+ 3 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/fsck/defrag.c b/fsck/defrag.c
-index fc6b7cf..3473637 100644
---- a/fsck/defrag.c
-+++ b/fsck/defrag.c
-@@ -77,7 +77,7 @@ int f2fs_defragment(struct f2fs_sb_info *sbi, u64 from, u64 len, u64 to, int lef
- 		if (!f2fs_test_bit(offset, (const char *)se->cur_valid_map))
- 			continue;
- 
--		if (find_next_free_block(sbi, &target, left, se->type)) {
-+		if (find_next_free_block(sbi, &target, left, se->type, false)) {
- 			MSG(0, "Not enough space to migrate blocks");
- 			return -1;
- 		}
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 399c74d..59d2cc8 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -14,6 +14,7 @@
- #include <stdlib.h>
- #include <unistd.h>
- #include <stdio.h>
-+#include <stdbool.h>
- #include <errno.h>
- #include <fcntl.h>
- #include <string.h>
 diff --git a/fsck/fsck.h b/fsck/fsck.h
-index ccf4a39..8da0ebb 100644
+index 8da0ebb..75052d8 100644
 --- a/fsck/fsck.h
 +++ b/fsck/fsck.h
-@@ -191,7 +191,7 @@ extern void zero_journal_entries(struct f2fs_sb_info *);
- extern void flush_sit_entries(struct f2fs_sb_info *);
- extern void move_curseg_info(struct f2fs_sb_info *, u64, int);
- extern void write_curseg_info(struct f2fs_sb_info *);
--extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int);
-+extern int find_next_free_block(struct f2fs_sb_info *, u64 *, int, int, bool);
- extern void duplicate_checkpoint(struct f2fs_sb_info *);
- extern void write_checkpoint(struct f2fs_sb_info *);
- extern void write_checkpoints(struct f2fs_sb_info *);
+@@ -133,6 +133,12 @@ enum seg_type {
+ 
+ struct selabel_handle;
+ 
++static inline bool need_fsync_data_record(struct f2fs_sb_info *sbi)
++{
++	return !is_set_ckpt_flags(F2FS_CKPT(sbi), CP_UMOUNT_FLAG) ||
++		c.zoned_model == F2FS_ZONED_HM;
++}
++
+ extern int fsck_chk_orphan_node(struct f2fs_sb_info *);
+ extern int fsck_chk_quota_node(struct f2fs_sb_info *);
+ extern int fsck_chk_quota_files(struct f2fs_sb_info *);
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 7d268e3..7ce885c 100644
+index cd6b51b..fdf1dd7 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -2445,6 +2445,9 @@ int relocate_curseg_offset(struct f2fs_sb_info *sbi, int type)
- 	struct seg_entry *se = get_seg_entry(sbi, curseg->segno);
- 	unsigned int i;
+@@ -1540,7 +1540,7 @@ int build_sit_info(struct f2fs_sb_info *sbi)
  
-+	if (c.zoned_model == F2FS_ZONED_HM)
-+		return -EINVAL;
-+
- 	for (i = 0; i < sbi->blocks_per_seg; i++) {
- 		if (!f2fs_test_bit(i, (const char *)se->cur_valid_map))
- 			break;
-@@ -2477,7 +2480,8 @@ void set_section_type(struct f2fs_sb_info *sbi, unsigned int segno, int type)
- 	}
- }
+ 	bitmap_size = TOTAL_SEGS(sbi) * SIT_VBLOCK_MAP_SIZE;
  
--int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int want_type)
-+int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left,
-+						int want_type, bool new_sec)
- {
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	struct seg_entry *se;
-@@ -2535,7 +2539,7 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int want_t
- 			}
+-	if (!is_set_ckpt_flags(cp, CP_UMOUNT_FLAG))
++	if (need_fsync_data_record(sbi))
+ 		bitmap_size += bitmap_size;
+ 
+ 	sit_i->bitmap = calloc(bitmap_size, 1);
+@@ -1555,7 +1555,7 @@ int build_sit_info(struct f2fs_sb_info *sbi)
+ 		sit_i->sentries[start].cur_valid_map = bitmap;
+ 		bitmap += SIT_VBLOCK_MAP_SIZE;
+ 
+-		if (!is_set_ckpt_flags(cp, CP_UMOUNT_FLAG)) {
++		if (need_fsync_data_record(sbi)) {
+ 			sit_i->sentries[start].ckpt_valid_map = bitmap;
+ 			bitmap += SIT_VBLOCK_MAP_SIZE;
  		}
+@@ -1902,7 +1902,7 @@ void seg_info_from_raw_sit(struct f2fs_sb_info *sbi, struct seg_entry *se,
+ {
+ 	__seg_info_from_raw_sit(se, raw_sit);
  
--		if (type == want_type &&
-+		if (type == want_type && !new_sec &&
- 			!f2fs_test_bit(offset, (const char *)bitmap))
- 			return 0;
+-	if (is_set_ckpt_flags(F2FS_CKPT(sbi), CP_UMOUNT_FLAG))
++	if (!need_fsync_data_record(sbi))
+ 		return;
+ 	se->ckpt_valid_blocks = se->valid_blocks;
+ 	memcpy(se->ckpt_valid_map, se->cur_valid_map, SIT_VBLOCK_MAP_SIZE);
+@@ -1918,7 +1918,7 @@ struct seg_entry *get_seg_entry(struct f2fs_sb_info *sbi,
  
-@@ -2561,13 +2565,14 @@ void move_curseg_info(struct f2fs_sb_info *sbi, u64 from, int left)
- 		ASSERT(ret >= 0);
+ unsigned short get_seg_vblocks(struct f2fs_sb_info *sbi, struct seg_entry *se)
+ {
+-	if (is_set_ckpt_flags(F2FS_CKPT(sbi), CP_UMOUNT_FLAG))
++	if (!need_fsync_data_record(sbi))
+ 		return se->valid_blocks;
+ 	else
+ 		return se->ckpt_valid_blocks;
+@@ -1926,7 +1926,7 @@ unsigned short get_seg_vblocks(struct f2fs_sb_info *sbi, struct seg_entry *se)
  
- 		to = from;
--		ret = find_next_free_block(sbi, &to, left, i);
-+		ret = find_next_free_block(sbi, &to, left, i,
-+					   c.zoned_model == F2FS_ZONED_HM);
- 		ASSERT(ret == 0);
+ unsigned char *get_seg_bitmap(struct f2fs_sb_info *sbi, struct seg_entry *se)
+ {
+-	if (is_set_ckpt_flags(F2FS_CKPT(sbi), CP_UMOUNT_FLAG))
++	if (!need_fsync_data_record(sbi))
+ 		return se->cur_valid_map;
+ 	else
+ 		return se->ckpt_valid_map;
+@@ -1934,7 +1934,7 @@ unsigned char *get_seg_bitmap(struct f2fs_sb_info *sbi, struct seg_entry *se)
  
- 		old_segno = curseg->segno;
- 		curseg->segno = GET_SEGNO(sbi, to);
- 		curseg->next_blkoff = OFFSET_IN_SEG(sbi, to);
--		curseg->alloc_type = SSR;
-+		curseg->alloc_type = c.zoned_model == F2FS_ZONED_HM ? LFS : SSR;
+ unsigned char get_seg_type(struct f2fs_sb_info *sbi, struct seg_entry *se)
+ {
+-	if (is_set_ckpt_flags(F2FS_CKPT(sbi), CP_UMOUNT_FLAG))
++	if (!need_fsync_data_record(sbi))
+ 		return se->type;
+ 	else
+ 		return se->ckpt_type;
+@@ -3258,7 +3258,7 @@ static int record_fsync_data(struct f2fs_sb_info *sbi)
+ 	struct list_head inode_list = LIST_HEAD_INIT(inode_list);
+ 	int ret;
  
- 		/* update new segno */
- 		ssa_blk = GET_SUM_BLKADDR(sbi, curseg->segno);
+-	if (is_set_ckpt_flags(F2FS_CKPT(sbi), CP_UMOUNT_FLAG))
++	if (!need_fsync_data_record(sbi))
+ 		return 0;
+ 
+ 	ret = find_fsync_inode(sbi, &inode_list);
 diff --git a/fsck/segment.c b/fsck/segment.c
-index e3a90da..ccde05f 100644
+index ccde05f..17c42b7 100644
 --- a/fsck/segment.c
 +++ b/fsck/segment.c
-@@ -52,7 +52,7 @@ int reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
- 
- 	blkaddr = SM_I(sbi)->main_blkaddr;
- 
--	if (find_next_free_block(sbi, &blkaddr, 0, type)) {
-+	if (find_next_free_block(sbi, &blkaddr, 0, type, false)) {
- 		ERR_MSG("Can't find free block");
- 		ASSERT(0);
- 	}
+@@ -62,7 +62,7 @@ int reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
+ 	se->type = type;
+ 	se->valid_blocks++;
+ 	f2fs_set_bit(offset, (char *)se->cur_valid_map);
+-	if (!is_set_ckpt_flags(F2FS_CKPT(sbi), CP_UMOUNT_FLAG)) {
++	if (need_fsync_data_record(sbi)) {
+ 		se->ckpt_type = type;
+ 		se->ckpt_valid_blocks++;
+ 		f2fs_set_bit(offset, (char *)se->ckpt_valid_map);
 -- 
 2.23.0
 
