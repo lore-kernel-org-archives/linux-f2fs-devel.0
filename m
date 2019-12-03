@@ -2,79 +2,75 @@ Return-Path: <SRS0=t7e3=ZZ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FB2C432C0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Dec 2019 19:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5969FC432C0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Dec 2019 19:45:09 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E273820640;
-	Tue,  3 Dec 2019 19:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 24CB2206EC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Dec 2019 19:45:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ZTX08Jli";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="iKZ0eg5N";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgKYpKIk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E273820640
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="PaXUSFmo";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cCvzCPze"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24CB2206EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1icDsj-0001kG-Og; Tue, 03 Dec 2019 19:30:45 +0000
+	id 1icE6e-0003uk-7t; Tue, 03 Dec 2019 19:45:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1icDsi-0001k4-KQ
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Dec 2019 19:30:44 +0000
+ (envelope-from <krisman@collabora.com>) id 1icE6d-0003uY-Jn
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Dec 2019 19:45:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:In-Reply-To:
+ Date:References:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+SuOHAjl0U3ry7vU56uapxRrO++QVTUC2Fq9+17gPQM=; b=ZTX08Jlis+V+WjtBClLDN3gB24
- HSU3NBjw9CU5BRypPcEnJoWb/eog2XNs5sGbbrky2+BQpwpzHBGzw40+JMGF9EByx7EiVPJI/81yJ
- Ph355++qvSdsxtOBG2VZh9NxL82X0HOql776cyO7lhD5BO86tyLGKJ27d3pHwJmmd5V8=;
+ bh=0D2Cgd22q0eT9L/9wQGR5LqDrBU2mh0lG3oZSuni5Y8=; b=PaXUSFmoidaSvP7OlAsMXtU+OM
+ UuqsZwmHPF+0tpnfM2EdQFtNpMRt28liIau5jPX/3TDAgdPksgBUQHjeCRS8681hKrQ5CTAzBHSew
+ 3nFPbtz9uyY5jdT4l7SMYhazHdtYK6alOj/1PCv0hLri7zz/g5tp7WHMnJlgicN3UBwM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=+SuOHAjl0U3ry7vU56uapxRrO++QVTUC2Fq9+17gPQM=; b=i
- KZ0eg5Nm9qkdMm/iSYyh1iTd2vQRCTThJ90xzX53cgMvVvRDjUU/HLS4CyreqCkgCqGKPy5zZ++DV
- FckUT16nRBb3Rnurbk5YQ4tWINHZD6O4hcOwmfqz1pR7+ISKz30HJgmPa1cdfnIp8+SXEfbQcxq/h
- 2vukjZqiQ0RD6l6M=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:MIME-Version:Message-ID:In-Reply-To:Date:References:Subject:
+ Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=0D2Cgd22q0eT9L/9wQGR5LqDrBU2mh0lG3oZSuni5Y8=; b=cCvzCPze9QE17TOyOnGgMUDyW8
+ /jbFpTcf+rHfc3l5jqIh/wIr/fFtIonmyPpsDfEFPFeKwrkYXOacwU74k/8yywagHuPzc6npzU7+Q
+ MK8VUDCfLYo+0vhQKnFTG/x8czIDJDHl/awKNhHf0pC2zj1ze0CbK75SEJrSyFYoJLnA=;
+Received: from bhuna.collabora.co.uk ([46.235.227.227])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1icDse-006ICr-WA
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Dec 2019 19:30:44 +0000
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
- [24.5.143.220])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 5BB2020640;
- Tue,  3 Dec 2019 19:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1575401430;
- bh=3gyEXfaqpedy6uRB/8VMCVxDlcKhW09vYVAVCCnolyc=;
- h=From:To:Cc:Subject:Date:From;
- b=FgKYpKIkk9MEV83ohzNgDB9G/T4o/iQ9m7o1UFMrbwOfpVwLcE5dD9OHGkoTo2LwO
- PnmEWqfvlFJ7EEGzDeoEmMV/1up/GnGaLng94nHb2TTD2h7CF+SsoBT/rBFnFdPT08
- Bdspll56L0sEIIuHxA4aDIZrtITbN6Fv1Bv4tK0E=
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Date: Tue,  3 Dec 2019 11:30:01 -0800
-Message-Id: <20191203193001.66906-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.24.0
+ id 1icE6b-0067lI-PX
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Dec 2019 19:45:07 +0000
+Received: from localhost (unknown [IPv6:2610:98:8005::647])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested) (Authenticated sender: krisman)
+ by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 28F2D28D559;
+ Tue,  3 Dec 2019 19:44:59 +0000 (GMT)
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
+To: Daniel Rosenberg <drosen@google.com>
+Organization: Collabora
+References: <20191203051049.44573-1-drosen@google.com>
+ <20191203051049.44573-7-drosen@google.com>
+Date: Tue, 03 Dec 2019 14:44:56 -0500
+In-Reply-To: <20191203051049.44573-7-drosen@google.com> (Daniel Rosenberg's
+ message of "Mon, 2 Dec 2019 21:10:47 -0800")
+Message-ID: <85sgm1b3d3.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-Headers-End: 1icDse-006ICr-WA
-Subject: [f2fs-dev] [PATCH] fs-verity: implement readahead for
- FS_IOC_ENABLE_VERITY
+X-Headers-End: 1icE6b-0067lI-PX
+Subject: Re: [f2fs-dev] [PATCH 6/8] ext4: Use struct super_block's casefold
+ data
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,158 +82,29 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- Victor Hsieh <victorhsieh@google.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Theodore Ts'o <tytso@mit.edu>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
+ linux-fscrypt@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+ kernel-team@android.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+Daniel Rosenberg <drosen@google.com> writes:
 
-When it builds the first level of the Merkle tree, FS_IOC_ENABLE_VERITY
-sequentially reads each page of the file using read_mapping_page().
-This works fine if the file's data is already in pagecache, which should
-normally be the case, since this ioctl is normally used immediately
-after writing out the file.
+> Switch over to using the struct entries added to the VFS, and
+> remove the redundant dentry operations.
 
-But in any other case this implementation performs very poorly, since
-only one page is read at a time.
+getting this in VFS instead of per filesystem is gonna allow us to mix
+not only fscrypt with case-insensitive but also overlayfs.
 
-Fix this by implementing readahead using the functions from
-mm/readahead.c.
+Need to do a closer review, but thanks for doing this!!
 
-This improves performance in the uncached case by about 20x, as seen in
-the following benchmarks done on a 250MB file (on x86_64 with SHA-NI):
-
-    FS_IOC_ENABLE_VERITY uncached (before) 3.299s
-    FS_IOC_ENABLE_VERITY uncached (after)  0.160s
-    FS_IOC_ENABLE_VERITY cached            0.147s
-    sha256sum uncached                     0.191s
-    sha256sum cached                       0.145s
-
-Note: we could instead switch to kernel_read().  But that would mean
-we'd no longer be hashing the data directly from the pagecache, which is
-a nice optimization of its own.  And using kernel_read() would require
-allocating another temporary buffer, hashing the data and tree pages
-separately, and explicitly zero-padding the last page -- so it wouldn't
-really be any simpler than direct pagecache access, at least for now.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/verity/enable.c | 46 ++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 40 insertions(+), 6 deletions(-)
-
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index eabc6ac19906..f7eaffa60196 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -13,14 +13,44 @@
- #include <linux/sched/signal.h>
- #include <linux/uaccess.h>
- 
--static int build_merkle_tree_level(struct inode *inode, unsigned int level,
-+/*
-+ * Read a file data page for Merkle tree construction.  Do aggressive readahead,
-+ * since we're sequentially reading the entire file.
-+ */
-+static struct page *read_file_data_page(struct inode *inode,
-+					struct file_ra_state *ra,
-+					struct file *filp,
-+					pgoff_t index,
-+					pgoff_t num_pages_in_file)
-+{
-+	struct page *page;
-+
-+	page = find_get_page(inode->i_mapping, index);
-+	if (!page || !PageUptodate(page)) {
-+		if (page)
-+			put_page(page);
-+		page_cache_sync_readahead(inode->i_mapping, ra, filp,
-+					  index, num_pages_in_file - index);
-+		page = read_mapping_page(inode->i_mapping, index, NULL);
-+		if (IS_ERR(page))
-+			return page;
-+	}
-+	if (PageReadahead(page))
-+		page_cache_async_readahead(inode->i_mapping, ra, filp, page,
-+					   index, num_pages_in_file - index);
-+	return page;
-+}
-+
-+static int build_merkle_tree_level(struct file *filp, unsigned int level,
- 				   u64 num_blocks_to_hash,
- 				   const struct merkle_tree_params *params,
- 				   u8 *pending_hashes,
- 				   struct ahash_request *req)
- {
-+	struct inode *inode = file_inode(filp);
- 	const struct fsverity_operations *vops = inode->i_sb->s_vop;
- 	unsigned int pending_size = 0;
-+	struct file_ra_state ra = { 0 };
- 	u64 dst_block_num;
- 	u64 i;
- 	int err;
-@@ -36,6 +66,8 @@ static int build_merkle_tree_level(struct inode *inode, unsigned int level,
- 		dst_block_num = 0; /* unused */
- 	}
- 
-+	file_ra_state_init(&ra, inode->i_mapping);
-+
- 	for (i = 0; i < num_blocks_to_hash; i++) {
- 		struct page *src_page;
- 
-@@ -45,7 +77,8 @@ static int build_merkle_tree_level(struct inode *inode, unsigned int level,
- 
- 		if (level == 0) {
- 			/* Leaf: hashing a data block */
--			src_page = read_mapping_page(inode->i_mapping, i, NULL);
-+			src_page = read_file_data_page(inode, &ra, filp, i,
-+						       num_blocks_to_hash);
- 			if (IS_ERR(src_page)) {
- 				err = PTR_ERR(src_page);
- 				fsverity_err(inode,
-@@ -103,17 +136,18 @@ static int build_merkle_tree_level(struct inode *inode, unsigned int level,
- }
- 
- /*
-- * Build the Merkle tree for the given inode using the given parameters, and
-+ * Build the Merkle tree for the given file using the given parameters, and
-  * return the root hash in @root_hash.
-  *
-  * The tree is written to a filesystem-specific location as determined by the
-  * ->write_merkle_tree_block() method.  However, the blocks that comprise the
-  * tree are the same for all filesystems.
-  */
--static int build_merkle_tree(struct inode *inode,
-+static int build_merkle_tree(struct file *filp,
- 			     const struct merkle_tree_params *params,
- 			     u8 *root_hash)
- {
-+	struct inode *inode = file_inode(filp);
- 	u8 *pending_hashes;
- 	struct ahash_request *req;
- 	u64 blocks;
-@@ -139,7 +173,7 @@ static int build_merkle_tree(struct inode *inode,
- 	blocks = (inode->i_size + params->block_size - 1) >>
- 		 params->log_blocksize;
- 	for (level = 0; level <= params->num_levels; level++) {
--		err = build_merkle_tree_level(inode, level, blocks, params,
-+		err = build_merkle_tree_level(filp, level, blocks, params,
- 					      pending_hashes, req);
- 		if (err)
- 			goto out;
-@@ -227,7 +261,7 @@ static int enable_verity(struct file *filp,
- 	 */
- 	pr_debug("Building Merkle tree...\n");
- 	BUILD_BUG_ON(sizeof(desc->root_hash) < FS_VERITY_MAX_DIGEST_SIZE);
--	err = build_merkle_tree(inode, &params, desc->root_hash);
-+	err = build_merkle_tree(filp, &params, desc->root_hash);
- 	if (err) {
- 		fsverity_err(inode, "Error %d building Merkle tree", err);
- 		goto rollback;
 -- 
-2.24.0
-
+Gabriel Krisman Bertazi
 
 
 _______________________________________________
