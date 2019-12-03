@@ -7,19 +7,19 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95944C432C0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Dec 2019 05:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7242C432C0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Dec 2019 05:38:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5EBB8206DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Dec 2019 05:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A10EA206DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Dec 2019 05:38:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="ZDbwlb3u";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="SE4YzjAh";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VTJ+CLeC";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="fI7GXMVD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EBB8206DF
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="A0vtZ0Ze";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cmLbgtcv";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HEIDGGgj";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="hbPWGUEt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A10EA206DF
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,28 +28,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=A+5Boi9r/ScB6+BPykEnSro25IH5iG0E9g7kjc5c3m8=; b=ZDbwlb3uu3s8tDTjbfFl2gEzW
-	bxE4fHeVFgxie+XtZg71+UxEImGECr//bgx3cTTvMYtMp1dZdts7r3jvJv+rOZFUGpEd6tIsQpZif
-	ZYdHSLjSx+X9ocwsNAsBz2TMwdNuqWn9vemRYH2FOvh6dzMEE9EtjGVKN4aiAuDeWQKtg=;
+	 bh=eIXGisp27utoccHpcOW7WgWRJ4wMiu41rdMLZPigyb8=; b=A0vtZ0ZeJlOzx4WtElr8so9H6
+	lq7D09k835atK5XA0yd0vIMk9WdwqzqfcDK9Sco+sgjvhqy2Ht/cHL8ZCcN47kfPTEcym5+sGRu9z
+	SUt6uBVMLBuarChDQc46nw03G0JvNWEdGKBIHQDr/YQo5U6lPhbpOWCWh/LQP60H2pCis=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ic0rz-00012Z-2J; Tue, 03 Dec 2019 05:37:07 +0000
+	id 1ic0tB-0001Av-8L; Tue, 03 Dec 2019 05:38:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3gu7lXQYKAOsQebfRaTbbTYR.PbZ@flex--drosen.bounces.google.com>)
- id 1ic0ry-00012O-AU
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Dec 2019 05:37:06 +0000
+ (envelope-from <3fe7lXQYKAOYLZWaMVOWWOTM.KWU@flex--drosen.bounces.google.com>)
+ id 1ic0tA-0001An-TU
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Dec 2019 05:38:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=X8XWw+Y8uchsia3FAe+I/uTU/LaChMWb6jtx0p+dIuo=; b=SE4YzjAhaYQEJWFpQ2x4F8jpw
- c6faRokQbWFGcQ2B5w+KJ+N0OBRuuIHDGJ1ir94XX9BNh1tyTaJnfTB9oO/WIQ83hVicZ0VKw7jnt
- 3b1B6dTmnxNR92FEunLNQN+r1SommF/EGDylS/0JjxTgYfUDzz72+GIvi64qFLwIfc6ao=;
+ bh=fjDzYP4akxITglcH3eYkmUeETy7YJmWTmEYTLRKX/0M=; b=cmLbgtcvgKw6N/t7T9zwha09j
+ 7/YHM03E/ViBDwvsNFD8npt06dOo5kUUq4rWh512qPK/UIa11c2dvrBYYYPy9I7eWtS5xQTvEGdiv
+ R0SyZumaJbZH9EnQ8C5WY31ubROJmb9CGEOBkT0ePla0rx5nd7GBHWsHPKRDCC5Wd99CY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -57,45 +57,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=X8XWw+Y8uchsia3FAe+I/uTU/LaChMWb6jtx0p+dIuo=; b=VTJ+CLeCQa4K7Xa4J2nKyO7mwr
- nDIrtY/5GwAVe26ZDRMvalIpYg/9VoEqZvjmu6azHq04GJndgwuHtHtU/YvbtaRhZNBuzCk+6adt8
- Jzvs4VuW4xojxaEYaUwMHL2+nKd3ilIbUIBVGQhcVMdramM7o4xw/5W2EJ+XUhnQnQ4Y=;
-Received: from mail-io1-f73.google.com ([209.85.166.73])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=fjDzYP4akxITglcH3eYkmUeETy7YJmWTmEYTLRKX/0M=; b=HEIDGGgj/RvJGesThLI9qfVwOr
+ HwqJVjbwe7hrOH+wY4J/9aXjC8z4lnbXZwaFnLBCblKVD3yP5BTGherjz+bLeviHx4WYgEyzLy9Lc
+ vvUYWbQrZ6YGPMT30ycLJ/HaD/eXAJOml/DJ0ULWTadhXUDrNarZ6bS0y5tookylLH4o=;
+Received: from mail-qt1-f201.google.com ([209.85.160.201])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1ic0ru-005VCb-LV
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Dec 2019 05:37:06 +0000
-Received: by mail-io1-f73.google.com with SMTP id a13so1657034iol.1
+ id 1ic0t8-001gUW-JO
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Dec 2019 05:38:20 +0000
+Received: by mail-qt1-f201.google.com with SMTP id z7so1624500qto.23
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 02 Dec 2019 21:37:02 -0800 (PST)
+ Mon, 02 Dec 2019 21:38:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=X8XWw+Y8uchsia3FAe+I/uTU/LaChMWb6jtx0p+dIuo=;
- b=fI7GXMVDEMsaYoQnHbY1FDEdanHfg6yxmvIajzQqfkmELIeeTDU24cUNKIgu7ixk1B
- W1cMbVVzHeNvdM4xipShTAhXiPW35UbQKmnIWmjIkNnic1tcxMDZPBj1h0nxkinOfhP6
- tNaNzXB2WXYBCyJHQGXXfdEJJbjX+s4BPR3jIVVyxvG3IOc9Kkf/X2nMRoaxx86xjQTF
- Vkx0hbbwVgdUqrCM7HkUDWh9UYikaRSMngR98kyIj3stE6Nd6/wvvh1fs0MQ5nlKeYJ8
- bWLH0vQATgCpv9wObuSbWBRBr4ByiZ0iq4r5mVcFRxLnGvj0QPnT8aJ+NDY1M4ynYa6q
- fMuw==
+ :cc; bh=fjDzYP4akxITglcH3eYkmUeETy7YJmWTmEYTLRKX/0M=;
+ b=hbPWGUEtK2jN8yaTm9Zv+Q/61kQAWMlhNlq+s6pZOiY+aFGPsX1qPRakzazbIbIsvF
+ N/P7H7X7ZllbDi/doW4qa/0i6iICr7x8vzkZgvbJ8vMGfLDGek2/+uxlmyNrsQwDqZAA
+ igtYjR2XLx0uk3QUms4Fpzr9e4mz5AA9LDbpMETCTg1g9eY0MqIUWO2Bqh9HUXM4fnqz
+ hj+Cdj5X+Y25MqFEqWP8FaX9TmhL5DiUTp77pcLil21Fumc8/X4otJkPZ241kPtzxUad
+ LXEkMTZ+oMtXBpp1lOVs3P4tkvgn/UuW0lFyAsk6aIVqdYPFnO9eLBPjc7OzeJmfNH7z
+ yFYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=X8XWw+Y8uchsia3FAe+I/uTU/LaChMWb6jtx0p+dIuo=;
- b=B++KRTPqPDq3rILZp4PugkDdukZtTNsyH1UnW/QBvOI0r9hGOdqLgIVRojuMnjIFfY
- dcvlDewcng9PNFUTyBfRcCryj5c0H0fN3O0LTOPk4+JxNRpmELulrg1LMbIntiJzeWRf
- Ibsoyo/3xpjg5tVHCPpjQYzTpCOuVYT7Ut/GgUZ6Jh2o7Xn2L/Z7kj3Ew1SCEtPgDEpl
- x1NNdEE+tfcrFERysL49snippKLV4TUbF+XxFnzt9PhiPCRKaSkhZ1lDXZxqA9YUK6nr
- 2u9Cj5GKAyQS4kD637kNyZQ722DquTTWFouHlb6DsqC79GQFayXtc2Qn7p1fofoVaDVk
- 9+RQ==
-X-Gm-Message-State: APjAAAWedBilql678SrQkAG90nB+QKBv9k/Ax24B0pnmt8GuHKlDXK+w
- V4mvRPJeMfyeMvQ8jsL2jJ+/b187tbc=
-X-Google-Smtp-Source: APXvYqz9zhR2TN2hqnywLAJcvdaujxv2NBjvcQ3xFrMjaX2DWsWnJb7rF+xpTP913IfCGgciFOBrtYR2Lq4=
-X-Received: by 2002:a63:fd48:: with SMTP id m8mr3498900pgj.76.1575349890731;
- Mon, 02 Dec 2019 21:11:30 -0800 (PST)
-Date: Mon,  2 Dec 2019 21:10:46 -0800
+ bh=fjDzYP4akxITglcH3eYkmUeETy7YJmWTmEYTLRKX/0M=;
+ b=Oz7bvANSTqdfKN8eKrHVgLbAas55WETjClV+b3gElk8mrI5vI0j+ah7PW5Aa6r0lYy
+ AnAxMSqJesTHGgtzwAsRXMaBq9uQnV8qIgUfVChS59Hu1sudIPJ7roeyoOl2oWqpWjVe
+ Ckk3g2dHtrlocZl4+QuRQ2IbGaxubDLzUUHqpx9z1yUPVdcQnG/MLhQ3VZtPbjNTa+tq
+ JlUcF3J+mfeQtKy4+Jl+LYGM1LFq/Xyh7YjqY6KCPR4YyAAsuWiWFCSA22RYLjDLSyJV
+ jlK8vLzWW8w30v+HO4OI6KMpK5Z+VoRms4O8gbAjhoE/hY7FwF3lr49tP4VzFqHc7uqz
+ oexA==
+X-Gm-Message-State: APjAAAVK3ZbdBAw9k5WdNsIgRlBFYzn53D1d77EbWoy1zDQJR9TwGImQ
+ BAFQMwGSeReAz3Een2aijHHf0ALWDCY=
+X-Google-Smtp-Source: APXvYqwN6Ss7aRyiPUKI0kGpB0NmUeDfnOPXypeRPMIQb/7yTu5lxeNLysIa1CsoGdNc1/LgcJZ1XDTsCiA=
+X-Received: by 2002:a65:5281:: with SMTP id y1mr1916819pgp.327.1575349885592; 
+ Mon, 02 Dec 2019 21:11:25 -0800 (PST)
+Date: Mon,  2 Dec 2019 21:10:44 -0800
 In-Reply-To: <20191203051049.44573-1-drosen@google.com>
-Message-Id: <20191203051049.44573-6-drosen@google.com>
+Message-Id: <20191203051049.44573-4-drosen@google.com>
 Mime-Version: 1.0
 References: <20191203051049.44573-1-drosen@google.com>
 X-Mailer: git-send-email 2.24.0.393.g34dc348eaf-goog
@@ -103,8 +103,8 @@ To: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
  Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
  linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>, 
  linux-fscrypt@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-X-Headers-End: 1ic0ru-005VCb-LV
-Subject: [f2fs-dev] [PATCH 5/8] f2fs: Handle casefolding with Encryption
+X-Headers-End: 1ic0t8-001gUW-JO
+Subject: [f2fs-dev] [PATCH 3/8] fscrypt: Change format of no-key token
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -127,478 +127,419 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This expands f2fs's casefolding support to include encrypted
-directories. For encrypted directories, we use the siphash of the
-casefolded name. This ensures there is no direct way to go from an
-unencrypted name to the stored hash on disk without knowledge of the
-encryption policy keys.
+Encrypted and casefolded names always require a dirtree hash, since
+their hash values cannot be generated without the key.
 
-Additionally, we switch to using the vfs layer's casefolding support
-instead of storing this information inside of f2fs's private data.
+In the new format, we always base64 encode the same structure. For names
+that are less than 149 characters, we concatenate the provided hash and
+ciphertext. If the name is longer than 149 characters, we also include
+the sha256 of the remaining parts of the name. We then base64 encode the
+resulting data to get a representation of the name that is at most 252
+characters long, with a very low collision rate. We avoid needing to
+compute the sha256 apart from in the case of a very long filename, and
+then only need to compute the sha256 of possible matches if their
+ciphertext is also longer than 149.
 
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 ---
- fs/f2fs/dir.c    | 115 +++++++++++++++++++----------------------------
- fs/f2fs/f2fs.h   |  14 +++---
- fs/f2fs/hash.c   |  25 +++++++----
- fs/f2fs/inline.c |   9 ++--
- fs/f2fs/super.c  |  17 +++----
- fs/f2fs/sysfs.c  |   8 ++--
- 6 files changed, 81 insertions(+), 107 deletions(-)
+ fs/crypto/Kconfig       |   1 +
+ fs/crypto/fname.c       | 182 +++++++++++++++++++++++++++++-----------
+ include/linux/fscrypt.h |  92 ++++++--------------
+ 3 files changed, 160 insertions(+), 115 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index c967cacf979e..1cc2995fee84 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -111,31 +111,50 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
-  * Returns: 0 if the directory entry matches, more than 0 if it
-  * doesn't match or less than zero on error.
-  */
--int f2fs_ci_compare(const struct inode *parent, const struct qstr *name,
--				const struct qstr *entry, bool quick)
-+int f2fs_ci_compare(struct inode *parent, const struct qstr *name,
-+		    unsigned char *name2, size_t len, bool quick)
- {
- 	const struct f2fs_sb_info *sbi = F2FS_SB(parent->i_sb);
--	const struct unicode_map *um = sbi->s_encoding;
-+	const struct unicode_map *um = sbi->sb->s_encoding;
-+	const struct fscrypt_str crypt_entry = FSTR_INIT(name2, len);
-+	struct fscrypt_str decrypted_entry;
-+	struct qstr decrypted;
-+	struct qstr entry = QSTR_INIT(name2, len);
- 	int ret;
+diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+index ff5a1746cbae..6e0d56f0b993 100644
+--- a/fs/crypto/Kconfig
++++ b/fs/crypto/Kconfig
+@@ -9,6 +9,7 @@ config FS_ENCRYPTION
+ 	select CRYPTO_CTS
+ 	select CRYPTO_SHA512
+ 	select CRYPTO_HMAC
++	select CRYPTO_SHA256
+ 	select KEYS
+ 	help
+ 	  Enable encryption of files and directories.  This
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index b33f03b9f892..03c837c461f2 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -14,8 +14,46 @@
+ #include <linux/scatterlist.h>
+ #include <linux/siphash.h>
+ #include <crypto/skcipher.h>
++#include <crypto/hash.h>
+ #include "fscrypt_private.h"
  
-+	decrypted_entry.name = NULL;
++static struct crypto_shash *sha256_hash_tfm;
 +
-+	if (IS_ENCRYPTED(parent) && fscrypt_has_encryption_key(parent)) {
-+		decrypted_entry.name = kmalloc(len, GFP_ATOMIC);
-+		decrypted.name = decrypted_entry.name;
-+		decrypted_entry.len = len;
-+		decrypted.len = len;
-+		if (!decrypted.name)
-+			return -ENOMEM;
-+		fscrypt_fname_disk_to_usr(parent, 0, 0, &crypt_entry,
-+							&decrypted_entry);
++static int fscrypt_do_sha256(unsigned char *result,
++	     const u8 *data, unsigned int data_len)
++{
++	struct crypto_shash *tfm = READ_ONCE(sha256_hash_tfm);
++
++	if (unlikely(!tfm)) {
++		struct crypto_shash *prev_tfm;
++
++		tfm = crypto_alloc_shash("sha256", 0, 0);
++		if (IS_ERR(tfm)) {
++			if (PTR_ERR(tfm) == -ENOENT) {
++				fscrypt_warn(NULL,
++					     "Missing crypto API support for SHA-256");
++				return -ENOPKG;
++			}
++			fscrypt_err(NULL,
++				    "Error allocating SHA-256 transform: %ld",
++				    PTR_ERR(tfm));
++			return PTR_ERR(tfm);
++		}
++		prev_tfm = cmpxchg(&sha256_hash_tfm, NULL, tfm);
++		if (prev_tfm) {
++			crypto_free_shash(tfm);
++			tfm = prev_tfm;
++		}
 +	}
++	{
++		SHASH_DESC_ON_STACK(desc, tfm);
 +
- 	if (quick)
--		ret = utf8_strncasecmp_folded(um, name, entry);
-+		ret = utf8_strncasecmp_folded(um, name, decrypted_entry.name ?
-+							&decrypted : &entry);
- 	else
--		ret = utf8_strncasecmp(um, name, entry);
--
-+		ret = utf8_strncasecmp(um, name, decrypted_entry.name ?
-+							&decrypted : &entry);
- 	if (ret < 0) {
- 		/* Handle invalid character sequence as either an error
- 		 * or as an opaque byte sequence.
- 		 */
--		if (f2fs_has_strict_mode(sbi))
-+		if (sb_has_enc_strict_mode(sbi->sb))
- 			return -EINVAL;
- 
--		if (name->len != entry->len)
-+		if (name->len != len)
- 			return 1;
- 
--		return !!memcmp(name->name, entry->name, name->len);
-+		ret = !!memcmp(name->name,
-+				decrypted_entry.name ?: name2, name->len);
- 	}
--
-+	kfree(decrypted_entry.name);
- 	return ret;
- }
- 
-@@ -154,7 +173,7 @@ static void f2fs_fname_setup_ci_filename(struct inode *dir,
- 	if (!cf_name->name)
- 		return;
- 
--	cf_name->len = utf8_casefold(sbi->s_encoding,
-+	cf_name->len = utf8_casefold(dir->i_sb->s_encoding,
- 					iname, cf_name->name,
- 					F2FS_NAME_LEN);
- 	if ((int)cf_name->len <= 0) {
-@@ -173,24 +192,25 @@ static inline bool f2fs_match_name(struct f2fs_dentry_ptr *d,
++		desc->tfm = tfm;
++
++		return crypto_shash_digest(desc, data, data_len, result);
++	}
++}
++
+ static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
  {
- #ifdef CONFIG_UNICODE
- 	struct inode *parent = d->inode;
--	struct f2fs_sb_info *sbi = F2FS_I_SB(parent);
--	struct qstr entry;
-+	struct super_block *sb = parent->i_sb;
-+	unsigned char *name;
-+	int len;
- #endif
- 
- 	if (de->hash_code != namehash)
- 		return false;
- 
- #ifdef CONFIG_UNICODE
--	entry.name = d->filename[bit_pos];
--	entry.len = de->name_len;
-+	name = d->filename[bit_pos];
-+	len = de->name_len;
- 
--	if (sbi->s_encoding && IS_CASEFOLDED(parent)) {
-+	if (sb->s_encoding && needs_casefold(parent)) {
- 		if (cf_str->name) {
- 			struct qstr cf = {.name = cf_str->name,
- 					  .len = cf_str->len};
--			return !f2fs_ci_compare(parent, &cf, &entry, true);
-+			return !f2fs_ci_compare(parent, &cf, name, len, true);
- 		}
--		return !f2fs_ci_compare(parent, fname->usr_fname, &entry,
-+		return !f2fs_ci_compare(parent, fname->usr_fname, name, len,
- 					false);
- 	}
- #endif
-@@ -357,8 +377,8 @@ struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
- 	int err;
- 
- #ifdef CONFIG_UNICODE
--	if (f2fs_has_strict_mode(F2FS_I_SB(dir)) && IS_CASEFOLDED(dir) &&
--			utf8_validate(F2FS_I_SB(dir)->s_encoding, child)) {
-+	if (sb_has_enc_strict_mode(dir->i_sb) && IS_CASEFOLDED(dir) &&
-+			utf8_validate(dir->i_sb->s_encoding, child)) {
- 		*res_page = ERR_PTR(-EINVAL);
- 		return NULL;
- 	}
-@@ -602,13 +622,13 @@ void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
- 
- int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 				const struct qstr *orig_name,
-+				f2fs_hash_t dentry_hash,
- 				struct inode *inode, nid_t ino, umode_t mode)
+ 	if (str->len == 1 && str->name[0] == '.')
+@@ -208,8 +246,7 @@ int fscrypt_fname_alloc_buffer(const struct inode *inode,
+ 			       struct fscrypt_str *crypto_str)
  {
- 	unsigned int bit_pos;
- 	unsigned int level;
- 	unsigned int current_depth;
- 	unsigned long bidx, block;
--	f2fs_hash_t dentry_hash;
- 	unsigned int nbucket, nblock;
- 	struct page *dentry_page = NULL;
- 	struct f2fs_dentry_block *dentry_blk = NULL;
-@@ -618,7 +638,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+ 	const u32 max_encoded_len =
+-		max_t(u32, BASE64_CHARS(FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE),
+-		      1 + BASE64_CHARS(sizeof(struct fscrypt_digested_name)));
++		      BASE64_CHARS(sizeof(struct fscrypt_nokey_name));
+ 	u32 max_presented_len;
  
- 	level = 0;
- 	slots = GET_DENTRY_SLOTS(new_name->len);
--	dentry_hash = f2fs_dentry_hash(dir, new_name, NULL);
- 
- 	current_depth = F2FS_I(dir)->i_current_depth;
- 	if (F2FS_I(dir)->chash == dentry_hash) {
-@@ -704,17 +723,19 @@ int f2fs_add_dentry(struct inode *dir, struct fscrypt_name *fname,
- 				struct inode *inode, nid_t ino, umode_t mode)
+ 	max_presented_len = max(max_encoded_len, max_encrypted_len);
+@@ -243,8 +280,9 @@ EXPORT_SYMBOL(fscrypt_fname_free_buffer);
+  * The caller must have allocated sufficient memory for the @oname string.
+  *
+  * If the key is available, we'll decrypt the disk name; otherwise, we'll encode
+- * it for presentation.  Short names are directly base64-encoded, while long
+- * names are encoded in fscrypt_digested_name format.
++ * it for presentation.  The usr name is the base64 encoding of the dirtree hash
++ * value, the first 149 characters of the name, and the sha256 of the rest of
++ * the name, if longer than 149 characters.
+  *
+  * Return: 0 on success, -errno on failure
+  */
+@@ -254,7 +292,9 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
+ 			struct fscrypt_str *oname)
  {
- 	struct qstr new_name;
-+	f2fs_hash_t dentry_hash;
- 	int err = -EAGAIN;
+ 	const struct qstr qname = FSTR_TO_QSTR(iname);
+-	struct fscrypt_digested_name digested_name;
++	struct fscrypt_nokey_name nokey_name;
++	u32 size;
++	int err = 0;
  
- 	new_name.name = fname_name(fname);
- 	new_name.len = fname_len(fname);
+ 	if (fscrypt_is_dot_dotdot(&qname)) {
+ 		oname->name[0] = '.';
+@@ -269,25 +309,29 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
+ 	if (fscrypt_has_encryption_key(inode))
+ 		return fname_decrypt(inode, iname, oname);
  
- 	if (f2fs_has_inline_dentry(dir))
--		err = f2fs_add_inline_entry(dir, &new_name, fname->usr_fname,
-+		err = f2fs_add_inline_entry(dir, &new_name, fname,
- 							inode, ino, mode);
-+	dentry_hash = f2fs_dentry_hash(dir, &new_name, fname);
- 	if (err == -EAGAIN)
- 		err = f2fs_add_regular_entry(dir, &new_name, fname->usr_fname,
--							inode, ino, mode);
-+						dentry_hash, inode, ino, mode);
- 
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
- 	return err;
-@@ -1064,49 +1085,3 @@ const struct file_operations f2fs_dir_operations = {
- #endif
- };
- 
--#ifdef CONFIG_UNICODE
--static int f2fs_d_compare(const struct dentry *dentry, unsigned int len,
--			  const char *str, const struct qstr *name)
--{
--	struct qstr qstr = {.name = str, .len = len };
--
--	if (!IS_CASEFOLDED(dentry->d_parent->d_inode)) {
--		if (len != name->len)
--			return -1;
--		return memcmp(str, name, len);
--	}
--
--	return f2fs_ci_compare(dentry->d_parent->d_inode, name, &qstr, false);
--}
--
--static int f2fs_d_hash(const struct dentry *dentry, struct qstr *str)
--{
--	struct f2fs_sb_info *sbi = F2FS_SB(dentry->d_sb);
--	const struct unicode_map *um = sbi->s_encoding;
--	unsigned char *norm;
--	int len, ret = 0;
--
--	if (!IS_CASEFOLDED(dentry->d_inode))
+-	if (iname->len <= FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE) {
+-		oname->len = base64_encode(iname->name, iname->len,
+-					   oname->name);
 -		return 0;
--
--	norm = f2fs_kmalloc(sbi, PATH_MAX, GFP_ATOMIC);
--	if (!norm)
--		return -ENOMEM;
--
--	len = utf8_casefold(um, str, norm, PATH_MAX);
--	if (len < 0) {
--		if (f2fs_has_strict_mode(sbi))
--			ret = -EINVAL;
--		goto out;
 -	}
--	str->hash = full_name_hash(dentry, norm, len);
--out:
--	kvfree(norm);
--	return ret;
--}
--
--const struct dentry_operations f2fs_dentry_ops = {
--	.d_hash = f2fs_d_hash,
--	.d_compare = f2fs_d_compare,
--};
--#endif
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5a888a063c7f..a4864ed76dd8 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1184,10 +1184,6 @@ struct f2fs_sb_info {
- 	int valid_super_block;			/* valid super block no */
- 	unsigned long s_flag;				/* flags for sbi */
- 	struct mutex writepages;		/* mutex for writepages() */
--#ifdef CONFIG_UNICODE
--	struct unicode_map *s_encoding;
--	__u16 s_encoding_flags;
--#endif
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
-@@ -2969,9 +2965,9 @@ int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
- 							bool hot, bool set);
- struct dentry *f2fs_get_parent(struct dentry *child);
- 
--extern int f2fs_ci_compare(const struct inode *parent,
-+extern int f2fs_ci_compare(struct inode *parent,
- 			   const struct qstr *name,
--			   const struct qstr *entry,
-+			   unsigned char *name2, size_t len,
- 			   bool quick);
- 
- /*
-@@ -3005,7 +3001,7 @@ void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
- 			const struct qstr *name, f2fs_hash_t name_hash,
- 			unsigned int bit_pos);
- int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
--			const struct qstr *orig_name,
-+			const struct qstr *orig_name, f2fs_hash_t dentry_hash,
- 			struct inode *inode, nid_t ino, umode_t mode);
- int f2fs_add_dentry(struct inode *dir, struct fscrypt_name *fname,
- 			struct inode *inode, nid_t ino, umode_t mode);
-@@ -3038,7 +3034,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi);
-  * hash.c
-  */
- f2fs_hash_t f2fs_dentry_hash(const struct inode *dir,
--		const struct qstr *name_info, struct fscrypt_name *fname);
-+		const struct qstr *name_info, const struct fscrypt_name *fname);
- 
- /*
-  * node.c
-@@ -3517,7 +3513,7 @@ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
- int f2fs_make_empty_inline_dir(struct inode *inode, struct inode *parent,
- 			struct page *ipage);
- int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
--			const struct qstr *orig_name,
-+			const struct fscrypt_name *fname,
- 			struct inode *inode, nid_t ino, umode_t mode);
- void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry,
- 				struct page *page, struct inode *dir,
-diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
-index 5bc4dcd8fc03..954d03dee450 100644
---- a/fs/f2fs/hash.c
-+++ b/fs/f2fs/hash.c
-@@ -68,8 +68,9 @@ static void str2hashbuf(const unsigned char *msg, size_t len,
- 		*buf++ = pad;
++	size = min_t(u32, iname->len, FSCRYPT_FNAME_UNDIGESTED_SIZE);
++		memcpy(nokey_name.bytes, iname->name, size);
++
+ 	if (hash) {
+-		digested_name.hash = hash;
+-		digested_name.minor_hash = minor_hash;
++		nokey_name.dirtree_hash[0] = hash;
++		nokey_name.dirtree_hash[1] = minor_hash;
+ 	} else {
+-		digested_name.hash = 0;
+-		digested_name.minor_hash = 0;
++		nokey_name.dirtree_hash[0] = 0;
++		nokey_name.dirtree_hash[1] = 0;
+ 	}
+-	memcpy(digested_name.digest,
+-	       FSCRYPT_FNAME_DIGEST(iname->name, iname->len),
+-	       FSCRYPT_FNAME_DIGEST_SIZE);
+-	oname->name[0] = '_';
+-	oname->len = 1 + base64_encode((const u8 *)&digested_name,
+-				       sizeof(digested_name), oname->name + 1);
+-	return 0;
++	size += sizeof(nokey_name.dirtree_hash);
++
++	if (iname->len > FSCRYPT_FNAME_UNDIGESTED_SIZE) {
++		/* compute sha256 of remaining name */
++		err = fscrypt_do_sha256(nokey_name.sha256,
++				&iname->name[FSCRYPT_FNAME_UNDIGESTED_SIZE],
++				iname->len - FSCRYPT_FNAME_UNDIGESTED_SIZE);
++		if (err)
++			return err;
++		size += sizeof(nokey_name.sha256);
++	}
++	oname->len = base64_encode((const u8 *)&nokey_name, size, oname->name);
++	return err;
  }
+ EXPORT_SYMBOL(fscrypt_fname_disk_to_usr);
  
--static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
--				struct fscrypt_name *fname)
-+static f2fs_hash_t __f2fs_dentry_hash(const struct inode *dir,
-+				const struct qstr *name_info,
-+				const struct fscrypt_name *fname)
+@@ -319,7 +363,6 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ 			      int lookup, struct fscrypt_name *fname)
  {
- 	__u32 hash;
- 	f2fs_hash_t f2fs_hash;
-@@ -85,6 +86,11 @@ static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
- 	if (is_dot_dotdot(name_info))
- 		return 0;
+ 	int ret;
+-	int digested;
  
-+	if (IS_CASEFOLDED(dir) && IS_ENCRYPTED(dir)) {
-+		f2fs_hash = fscrypt_fname_siphash(dir, name_info);
-+		return f2fs_hash;
+ 	memset(fname, 0, sizeof(struct fscrypt_name));
+ 	fname->usr_fname = iname;
+@@ -359,42 +402,32 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ 	 * We don't have the key and we are doing a lookup; decode the
+ 	 * user-supplied name
+ 	 */
+-	if (iname->name[0] == '_') {
+-		if (iname->len !=
+-		    1 + BASE64_CHARS(sizeof(struct fscrypt_digested_name)))
+-			return -ENOENT;
+-		digested = 1;
+-	} else {
+-		if (iname->len >
+-		    BASE64_CHARS(FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE))
+-			return -ENOENT;
+-		digested = 0;
+-	}
+ 
+ 	fname->crypto_buf.name =
+-		kmalloc(max_t(size_t, FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE,
+-			      sizeof(struct fscrypt_digested_name)),
+-			GFP_KERNEL);
++			kmalloc(sizeof(struct fscrypt_nokey_name), GFP_KERNEL);
+ 	if (fname->crypto_buf.name == NULL)
+ 		return -ENOMEM;
+ 
+-	ret = base64_decode(iname->name + digested, iname->len - digested,
++	ret = base64_decode(iname->name, iname->len,
+ 			    fname->crypto_buf.name);
+ 	if (ret < 0) {
+ 		ret = -ENOENT;
+ 		goto errout;
+ 	}
+-	fname->crypto_buf.len = ret;
+-	if (digested) {
+-		const struct fscrypt_digested_name *n =
+-			(const void *)fname->crypto_buf.name;
+-		fname->hash = n->hash;
+-		fname->minor_hash = n->minor_hash;
+-	} else {
+-		fname->disk_name.name = fname->crypto_buf.name;
+-		fname->disk_name.len = fname->crypto_buf.len;
++	if (ret > (int)offsetofend(struct fscrypt_nokey_name, sha256)) {
++		ret = -EINVAL;
++		goto errout;
 +	}
 +
- 	/* Initialize the default seed for the hash checksum functions */
- 	buf[0] = 0x67452301;
- 	buf[1] = 0xefcdab89;
-@@ -106,35 +112,38 @@ static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
- }
- 
- f2fs_hash_t f2fs_dentry_hash(const struct inode *dir,
--		const struct qstr *name_info, struct fscrypt_name *fname)
-+		const struct qstr *name_info, const struct fscrypt_name *fname)
- {
- #ifdef CONFIG_UNICODE
- 	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
--	const struct unicode_map *um = sbi->s_encoding;
-+	const struct unicode_map *um = sbi->sb->s_encoding;
- 	int r, dlen;
- 	unsigned char *buff;
- 	struct qstr folded;
-+	const struct qstr *name = fname ? fname->usr_fname : name_info;
- 
- 	if (!name_info->len || !IS_CASEFOLDED(dir))
- 		goto opaque_seq;
- 
-+	if (IS_ENCRYPTED(dir) && !fscrypt_has_encryption_key(dir))
-+		goto opaque_seq;
++	{
++		struct fscrypt_nokey_name *n =
++				(void *)fname->crypto_buf.name;
++		fname->crypto_buf.len = ret;
 +
- 	buff = f2fs_kzalloc(sbi, sizeof(char) * PATH_MAX, GFP_KERNEL);
- 	if (!buff)
- 		return -ENOMEM;
--
--	dlen = utf8_casefold(um, name_info, buff, PATH_MAX);
-+	dlen = utf8_casefold(um, name, buff, PATH_MAX);
- 	if (dlen < 0) {
- 		kvfree(buff);
- 		goto opaque_seq;
++		fname->hash = n->dirtree_hash[0];
++		fname->minor_hash = n->dirtree_hash[1];
++		return 0;
  	}
- 	folded.name = buff;
- 	folded.len = dlen;
--	r = __f2fs_dentry_hash(&folded, fname);
-+	r = __f2fs_dentry_hash(dir, &folded, fname);
+-	return 0;
  
- 	kvfree(buff);
- 	return r;
- 
- opaque_seq:
- #endif
--	return __f2fs_dentry_hash(name_info, fname);
-+	return __f2fs_dentry_hash(dir, name_info, fname);
+ errout:
+ 	kfree(fname->crypto_buf.name);
+@@ -402,6 +435,61 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
  }
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 896db0416f0e..3c3772094153 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -465,8 +465,8 @@ static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
- 		ino = le32_to_cpu(de->ino);
- 		fake_mode = f2fs_get_de_type(de) << S_SHIFT;
+ EXPORT_SYMBOL(fscrypt_setup_filename);
  
--		err = f2fs_add_regular_entry(dir, &new_name, NULL, NULL,
--							ino, fake_mode);
-+		err = f2fs_add_regular_entry(dir, &new_name, NULL,
-+					de->hash_code, NULL, ino, fake_mode);
- 		if (err)
- 			goto punch_dentry_pages;
++/**
++ * fscrypt_match_name() - test whether the given name matches a directory entry
++ * @fname: the name being searched for
++ * @de_name: the name from the directory entry
++ * @de_name_len: the length of @de_name in bytes
++ *
++ * Normally @fname->disk_name will be set, and in that case we simply compare
++ * that to the name stored in the directory entry.  The only exception is that
++ * if we don't have the key for an encrypted directory and a filename in it is
++ * very long, then we won't have the full disk_name and we'll instead need to
++ * match against the fscrypt_digested_name.
++ *
++ * Return: %true if the name matches, otherwise %false.
++ */
++bool fscrypt_match_name(const struct fscrypt_name *fname,
++				      const u8 *de_name, u32 de_name_len)
++{
++	if (unlikely(!fname->disk_name.name)) {
++		const struct fscrypt_nokey_name *n =
++			(const void *)fname->crypto_buf.name;
++		u32 len;
++		bool check_sha256 = false;
++		u8 sha256[SHA256_DIGEST_SIZE];
++
++		if (fname->crypto_buf.len ==
++			    offsetofend(struct fscrypt_nokey_name, sha256)) {
++			len = FSCRYPT_FNAME_UNDIGESTED_SIZE;
++			check_sha256 = true;
++		} else {
++			len = fname->crypto_buf.len -
++				offsetof(struct fscrypt_nokey_name, bytes);
++		}
++		if (!check_sha256 && de_name_len != len)
++			return false;
++		if (check_sha256 && de_name_len <= len)
++			return false;
++		if (memcmp(de_name, n->bytes, len) != 0)
++			return false;
++		if (check_sha256) {
++			fscrypt_do_sha256(sha256,
++				&de_name[FSCRYPT_FNAME_UNDIGESTED_SIZE],
++				de_name_len - FSCRYPT_FNAME_UNDIGESTED_SIZE);
++			if (memcmp(sha256, n->sha256, sizeof(sha256)) != 0)
++				return false;
++		}
++
++		return true;
++	}
++
++	if (de_name_len != fname->disk_name.len)
++		return false;
++	return !memcmp(de_name, fname->disk_name.name, fname->disk_name.len);
++}
++EXPORT_SYMBOL(fscrypt_match_name);
++
+ /**
+  * fscrypt_fname_siphash() - Calculate the siphash for a file name
+  * @dir: the parent directory
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 028aed925e51..ddb7245ba92b 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -16,6 +16,7 @@
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
++#include <crypto/sha.h>
+ #include <uapi/linux/fscrypt.h>
  
-@@ -540,7 +540,7 @@ static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
- }
+ #define FS_CRYPTO_BLOCK_SIZE		16
+@@ -160,79 +161,34 @@ extern int fscrypt_fname_disk_to_usr(struct inode *, u32, u32,
+ extern u64 fscrypt_fname_siphash(const struct inode *dir,
+ 					const struct qstr *name);
  
- int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
--				const struct qstr *orig_name,
-+				const struct fscrypt_name *fname,
- 				struct inode *inode, nid_t ino, umode_t mode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-@@ -551,6 +551,7 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
- 	struct f2fs_dentry_ptr d;
- 	int slots = GET_DENTRY_SLOTS(new_name->len);
- 	struct page *page = NULL;
-+	const struct qstr *orig_name = fname->usr_fname;
- 	int err = 0;
- 
- 	ipage = f2fs_get_node_page(sbi, dir->i_ino);
-@@ -581,7 +582,7 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
- 
- 	f2fs_wait_on_page_writeback(ipage, NODE, true, true);
- 
--	name_hash = f2fs_dentry_hash(dir, new_name, NULL);
-+	name_hash = f2fs_dentry_hash(dir, new_name, fname);
- 	f2fs_update_dentry(ino, mode, &d, new_name, name_hash, bit_pos);
- 
- 	set_page_dirty(ipage);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5111e1ffe58a..5e4e76332c4c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1144,7 +1144,7 @@ static void f2fs_put_super(struct super_block *sb)
- 	for (i = 0; i < NR_PAGE_TYPE; i++)
- 		kvfree(sbi->write_io[i]);
- #ifdef CONFIG_UNICODE
--	utf8_unload(sbi->s_encoding);
-+	utf8_unload(sbi->sb->s_encoding);
- #endif
- 	kvfree(sbi);
- }
-@@ -3136,17 +3136,11 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- static int f2fs_setup_casefold(struct f2fs_sb_info *sbi)
- {
- #ifdef CONFIG_UNICODE
--	if (f2fs_sb_has_casefold(sbi) && !sbi->s_encoding) {
-+	if (f2fs_sb_has_casefold(sbi) && !sbi->sb->s_encoding) {
- 		const struct f2fs_sb_encodings *encoding_info;
- 		struct unicode_map *encoding;
- 		__u16 encoding_flags;
- 
--		if (f2fs_sb_has_encrypt(sbi)) {
--			f2fs_err(sbi,
--				"Can't mount with encoding and encryption");
--			return -EINVAL;
--		}
+-#define FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE	32
 -
- 		if (f2fs_sb_read_encoding(sbi->raw_super, &encoding_info,
- 					  &encoding_flags)) {
- 			f2fs_err(sbi,
-@@ -3167,9 +3161,8 @@ static int f2fs_setup_casefold(struct f2fs_sb_info *sbi)
- 			 "%s-%s with flags 0x%hx", encoding_info->name,
- 			 encoding_info->version?:"\b", encoding_flags);
+-/* Extracts the second-to-last ciphertext block; see explanation below */
+-#define FSCRYPT_FNAME_DIGEST(name, len)	\
+-	((name) + round_down((len) - FS_CRYPTO_BLOCK_SIZE - 1, \
+-			     FS_CRYPTO_BLOCK_SIZE))
+-
+-#define FSCRYPT_FNAME_DIGEST_SIZE	FS_CRYPTO_BLOCK_SIZE
+-
+ /**
+- * fscrypt_digested_name - alternate identifier for an on-disk filename
++ * fscrypt_nokey_name - identifier for on-disk filenames when key is not present
+  *
+- * When userspace lists an encrypted directory without access to the key,
+- * filenames whose ciphertext is longer than FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE
+- * bytes are shown in this abbreviated form (base64-encoded) rather than as the
+- * full ciphertext (base64-encoded).  This is necessary to allow supporting
+- * filenames up to NAME_MAX bytes, since base64 encoding expands the length.
++ * When userspace lists an encrypted directory without access to the key, we
++ * must present them with a unique identifier for the file. base64 encoding will
++ * expand the space, so we use this format to avoid most collisions.
+  *
+- * To make it possible for filesystems to still find the correct directory entry
+- * despite not knowing the full on-disk name, we encode any filesystem-specific
+- * 'hash' and/or 'minor_hash' which the filesystem may need for its lookups,
+- * followed by the second-to-last ciphertext block of the filename.  Due to the
+- * use of the CBC-CTS encryption mode, the second-to-last ciphertext block
+- * depends on the full plaintext.  (Note that ciphertext stealing causes the
+- * last two blocks to appear "flipped".)  This makes accidental collisions very
+- * unlikely: just a 1 in 2^128 chance for two filenames to collide even if they
+- * share the same filesystem-specific hashes.
+- *
+- * However, this scheme isn't immune to intentional collisions, which can be
+- * created by anyone able to create arbitrary plaintext filenames and view them
+- * without the key.  Making the "digest" be a real cryptographic hash like
+- * SHA-256 over the full ciphertext would prevent this, although it would be
+- * less efficient and harder to implement, especially since the filesystem would
+- * need to calculate it for each directory entry examined during a search.
++ * Filesystems may rely on the hash being present to look up a file on disk.
++ * For filenames that are both casefolded and encrypted, it is not possible to
++ * calculate the hash without the key. Additionally, if the ciphertext is longer
++ * than what we can base64 encode, we cannot generate the hash from the partial
++ * name. For simplicity, we always store the hash at the front of the name,
++ * followed by the first 149 bytes of the ciphertext, and then the sha256 of the
++ * remainder of the name if the ciphertext was longer than 149 bytes. For the
++ * usual case of relatively short filenames, this allows us to avoid needing to
++ * compute the sha256. This results in an encoded name that is at most 252 bytes
++ * long.
+  */
+-struct fscrypt_digested_name {
+-	u32 hash;
+-	u32 minor_hash;
+-	u8 digest[FSCRYPT_FNAME_DIGEST_SIZE];
+-};
  
--		sbi->s_encoding = encoding;
--		sbi->s_encoding_flags = encoding_flags;
--		sbi->sb->s_d_op = &f2fs_dentry_ops;
-+		sbi->sb->s_encoding = encoding;
-+		sbi->sb->s_encoding_flags = encoding_flags;
- 	}
- #else
- 	if (f2fs_sb_has_casefold(sbi)) {
-@@ -3637,7 +3630,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		kvfree(sbi->write_io[i]);
+-/**
+- * fscrypt_match_name() - test whether the given name matches a directory entry
+- * @fname: the name being searched for
+- * @de_name: the name from the directory entry
+- * @de_name_len: the length of @de_name in bytes
+- *
+- * Normally @fname->disk_name will be set, and in that case we simply compare
+- * that to the name stored in the directory entry.  The only exception is that
+- * if we don't have the key for an encrypted directory and a filename in it is
+- * very long, then we won't have the full disk_name and we'll instead need to
+- * match against the fscrypt_digested_name.
+- *
+- * Return: %true if the name matches, otherwise %false.
+- */
+-static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
+-				      const u8 *de_name, u32 de_name_len)
+-{
+-	if (unlikely(!fname->disk_name.name)) {
+-		const struct fscrypt_digested_name *n =
+-			(const void *)fname->crypto_buf.name;
+-		if (WARN_ON_ONCE(fname->usr_fname->name[0] != '_'))
+-			return false;
+-		if (de_name_len <= FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE)
+-			return false;
+-		return !memcmp(FSCRYPT_FNAME_DIGEST(de_name, de_name_len),
+-			       n->digest, FSCRYPT_FNAME_DIGEST_SIZE);
+-	}
++#define FSCRYPT_FNAME_UNDIGESTED_SIZE 149
++struct fscrypt_nokey_name {
++	u32 dirtree_hash[2];
++	u8 bytes[FSCRYPT_FNAME_UNDIGESTED_SIZE];
++	u8 sha256[SHA256_DIGEST_SIZE];
++};
  
- #ifdef CONFIG_UNICODE
--	utf8_unload(sbi->s_encoding);
-+	utf8_unload(sbi->sb->s_encoding);
- #endif
- free_options:
- #ifdef CONFIG_QUOTA
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 70945ceb9c0c..7fd37c8c9733 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -88,10 +88,10 @@ static ssize_t encoding_show(struct f2fs_attr *a,
- #ifdef CONFIG_UNICODE
- 	if (f2fs_sb_has_casefold(sbi))
- 		return snprintf(buf, PAGE_SIZE, "%s (%d.%d.%d)\n",
--			sbi->s_encoding->charset,
--			(sbi->s_encoding->version >> 16) & 0xff,
--			(sbi->s_encoding->version >> 8) & 0xff,
--			sbi->s_encoding->version & 0xff);
-+			sbi->sb->s_encoding->charset,
-+			(sbi->sb->s_encoding->version >> 16) & 0xff,
-+			(sbi->sb->s_encoding->version >> 8) & 0xff,
-+			sbi->sb->s_encoding->version & 0xff);
- #endif
- 	return snprintf(buf, PAGE_SIZE, "(none)");
+-	if (de_name_len != fname->disk_name.len)
+-		return false;
+-	return !memcmp(de_name, fname->disk_name.name, fname->disk_name.len);
+-}
++extern bool fscrypt_match_name(const struct fscrypt_name *fname,
++				      const u8 *de_name, u32 de_name_len);
+ 
+ /* bio.c */
+ extern void fscrypt_decrypt_bio(struct bio *);
+@@ -448,7 +404,7 @@ static inline void fscrypt_fname_free_buffer(struct fscrypt_str *crypto_str)
  }
+ 
+ static inline int fscrypt_fname_disk_to_usr(struct inode *inode,
+-					    u32 hash, u32 minor_hash,
++					    u32 dirtree_hash, u32 minor_hash,
+ 					    const struct fscrypt_str *iname,
+ 					    struct fscrypt_str *oname)
+ {
 -- 
 2.24.0.393.g34dc348eaf-goog
 
