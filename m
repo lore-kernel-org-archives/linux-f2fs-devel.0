@@ -2,103 +2,137 @@ Return-Path: <SRS0=YA7B=Z2=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 633CBC43603
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Dec 2019 08:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A46C43603
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Dec 2019 13:06:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2A38620637;
-	Wed,  4 Dec 2019 08:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 059D02073B;
+	Wed,  4 Dec 2019 13:06:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GNfCdrpO";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DmKHsnfF";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dubeyko-com.20150623.gappssmtp.com header.i=@dubeyko-com.20150623.gappssmtp.com header.b="R15GZEj9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A38620637
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="jb/OjxEb";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="J3twyoha";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="SwLO48aP";
+	dkim=neutral (0-bit key) header.d=laposte.net header.i=@laposte.net header.b="IVjMPm63"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 059D02073B
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
-	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1icPyj-0008Gb-OH; Wed, 04 Dec 2019 08:25:45 +0000
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <slava@dubeyko.com>) id 1icPyi-0008GQ-H1
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Dec 2019 08:25:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Mime-Version:Content-Type
- :References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:Date:Message-ID:
+	References:To:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	bh=e/733sNQx9E0wXjsaTETaYJVLrG5CD6d+Bno/VR6kZw=; b=jb/OjxEb3IWKAzttNHEZ15Bnc8
+	8skhFxNHvh6GNAmJ608BSlavlvhykULscZf2vc99iWNVs20zFdYgPo9nXrI4Jzg0NnmQpMlzaBqVS
+	vvy2/OCPh5hVyQM8MdQ8ZnXJAQiu+q24FwM55sHD5Zjdfk2MFzrvHaTkVBo5bsmmMQNQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
+	id 1icUMd-0004bO-D0; Wed, 04 Dec 2019 13:06:43 +0000
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jl.biasini@laposte.net>) id 1icUMc-0004bH-8u
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Dec 2019 13:06:42 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=o7BdwW/nndIBcsxZWW8vbo3uXBPbU7tTjh33V04X4ek=; b=GNfCdrpOz3o1kBz/pX4A+730aj
- MPKfLPFaJm/ewuaA7FcpICe18mPRqXlwfcmZKSoM4fm6KpHccaqfyd3DMTsBCqnFwOgVDXZhhZ195
- ZlvuEVp4LhNuoChRIKhdLi6L/mqFfJYpB1+Io7u2+SUgPbVW7dsCuUJ56atqqh/rNB8Q=;
+ bh=QoIoJNvQPoGhf1mEusSBQCFVb/hmuGDTkK983LBNhUA=; b=J3twyohaM2P2i+zE2bSgZwy4pF
+ 30xQwneTd/HtJ/GSz4T04Z7f3sx+xPTyTf+7Uh5QO0QWL9gRhh98d72Rn8B287ZMJ3bYg4cxn0r46
+ CMJIyrojPCjpdcTWAgj7VqzkYYxtTI+5pML3ZpIYSs91dTI3fm+7N6+WvlrpR+73bya0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Mime-Version:Content-Type:References:
- In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=o7BdwW/nndIBcsxZWW8vbo3uXBPbU7tTjh33V04X4ek=; b=DmKHsnfFJhDtDXsKYwaqAsmWIJ
- DsvI3RGAb19XpDadPfnBMTAk577onylmik6qtGEI6R4BDlu718wlREgqAtYMnwEiBHJEEpsCbFDE+
- ZzOebTzs8UOsxijUawooxgbSeEiMxjCIXkb9wJiBiERRtnS+94g9ZAxAV+OH5RLITpN4=;
-Received: from mail-lj1-f194.google.com ([209.85.208.194])
+ bh=QoIoJNvQPoGhf1mEusSBQCFVb/hmuGDTkK983LBNhUA=; b=SwLO48aP+zJykiYAPOfINySLTD
+ +BKcg0Ku9zkP/G6R0TkRz/q/nhCJuYxPtFFAACcEVZ8DESEF/qcKk1RJ6O1wdXEs9LrnzPKzpnzhF
+ F+lCWjZxaKxlBGauUDEhecuLM3X85DHAyQRn4AotgzyND4HK6ZU6+5eqiHoUdydpzHwA=;
+Received: from smtpoutz23.laposte.net ([194.117.213.98] helo=smtp.laposte.net)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1icPyh-007LFo-1v
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Dec 2019 08:25:44 +0000
-Received: by mail-lj1-f194.google.com with SMTP id m6so7053518ljc.1
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1icUMZ-008FPQ-1G
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Dec 2019 13:06:42 +0000
+Received: from smtp.laposte.net (localhost [127.0.0.1])
+ by lpn-prd-vrout011 (Postfix) with ESMTP id D2E1E5309C8
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 04 Dec 2019 00:25:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
- h=message-id:subject:from:to:cc:date:in-reply-to:references
- :mime-version:content-transfer-encoding;
- bh=o7BdwW/nndIBcsxZWW8vbo3uXBPbU7tTjh33V04X4ek=;
- b=R15GZEj9KTLTNO0VqqzBo4GIYJtcpTb2kJpdaZtblji+D+RrmcI9rTjDxe+QmhairT
- Dbdver0Sq7o39O5yoG4UDoGmJmo9vH5HMuLXGO7h9I6dmFkSgcGzoSd18zm/LtsqK2mF
- lUVjO8y7iCVF2gvIFJREkER6zjHAaENjaCcLtLpziuR4Pq2w3Z8Wlhe3XDpq/lUxhE9O
- T4/3msAlwIt0YUvQb44lViYxzbj8rFEkqw+r1HWH3ILYKZPpWy2mnzcedUuXScZGEePd
- QqT5lFUQEHQIvzSg5F3M5PVgRTSf84jSg366orX8ATHSyfkMZ7VBL4bHLLLgCBkyqZGQ
- zDxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
- :references:mime-version:content-transfer-encoding;
- bh=o7BdwW/nndIBcsxZWW8vbo3uXBPbU7tTjh33V04X4ek=;
- b=SI6/KL9fz4ypb5AjPmtsZLzrDhlizZV+GYl2FhJsOiQTN0gpS7wITP2wMchkcJQR3P
- F8XA7oVJsEyYrrmX9iRYrQCLQGzNKTbOprx/z5iUgiBNu2dt9da/fQIMOQaw8IMZz1hf
- ENy1t+j6kkW3v9PTInVcwYIrHryzKVz6k6aLIBYuC/nszBYRvmTOlDHBrBMWLbOzk8jH
- CRfgvhYv/XwIGK34DXqT1ZYmG86+J3qhcETVKR2/2gDpn6Xg5c5M8S8tayb6z8HzfaUb
- eVmAddvQ28kthWLn5DsnjiTcsXfyyMRh7cVlBia/svBGJS60e/6aiAUq15EzDPQIjDZ5
- LWkA==
-X-Gm-Message-State: APjAAAWYbyBWrDr26HT3x+YImqC6rOP2CkgKBURjyOvzBHZHrwt7mqYG
- iwM4uui1OGmSgeb3OaVQjLu0i0tMjLNU7g==
-X-Google-Smtp-Source: APXvYqw9cr0AJeOMuYf9c3iwqsmg8RWLKAie3QTXWVS6sDwM7krFflTW5KVptECDL2Qepv39q9RcUg==
-X-Received: by 2002:a2e:9e97:: with SMTP id f23mr1068434ljk.89.1575446031396; 
- Tue, 03 Dec 2019 23:53:51 -0800 (PST)
-Received: from msk1wst115n.omp.ru (mail.omprussia.ru. [5.134.221.218])
- by smtp.gmail.com with ESMTPSA id x23sm2807809lff.24.2019.12.03.23.53.50
- (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
- Tue, 03 Dec 2019 23:53:50 -0800 (PST)
-Message-ID: <96a288281d9d84f11dcc06e62a1ff20e2bb2f776.camel@dubeyko.com>
-From: Vyacheslav Dubeyko <slava@dubeyko.com>
-To: Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org
-Date: Wed, 04 Dec 2019 10:53:50 +0300
-In-Reply-To: <20191203193001.66906-1-ebiggers@kernel.org>
-References: <20191203193001.66906-1-ebiggers@kernel.org>
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-X-Headers-End: 1icPyh-007LFo-1v
-Subject: Re: [f2fs-dev] [PATCH] fs-verity: implement readahead for
- FS_IOC_ENABLE_VERITY
+ Wed,  4 Dec 2019 14:06:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=laposte.net; s=mail0;
+ t=1575464790; bh=QoIoJNvQPoGhf1mEusSBQCFVb/hmuGDTkK983LBNhUA=;
+ h=Subject:To:Cc:References:From:Date:In-Reply-To;
+ b=IVjMPm635PtB2Yl7mYU30crQdS480bPi7jOE3zVI1J9Xa55WFhJQYQ87r5VIZ2qny
+ QYI8Fwe5PpySZWTBSyzmtuS4BYB2cGQCQaUGt9zABQuvyEM5d4CLHDoZ+PiI3cXFV1
+ fEbSqLB8Y1fGWVe6DonfAoI8eJ0laFwDU2H2sflNp405NQyyZ2Cy1UKXdi4e1vEJaW
+ n4m3bcglSXgT74zsTVnI6l3IYI7li5HROizHwu9s9iNjQG75TbZwD7qAyxPJyMOP8Q
+ UvlYgKDRtmZPguV2rA8+fYRbKXqawoyAgqTsISfYiYTdmYMQ2SreNRPiDShLS3xKXG
+ +JYSYp4V+F35Q==
+Received: from smtp.laposte.net (localhost [127.0.0.1])
+ by lpn-prd-vrout011 (Postfix) with ESMTP id C4056530C59
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed,  4 Dec 2019 14:06:30 +0100 (CET)
+Received: from lpn-prd-vrin003 (lpn-prd-vrin003.prosodie [10.128.63.4])
+ by lpn-prd-vrout011 (Postfix) with ESMTP id BE9F25309C8
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed,  4 Dec 2019 14:06:30 +0100 (CET)
+Received: from lpn-prd-vrin003 (localhost [127.0.0.1])
+ by lpn-prd-vrin003 (Postfix) with ESMTP id B089D4A7260
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed,  4 Dec 2019 14:06:30 +0100 (CET)
+Received: from [192.168.1.18] (lfbn-mar-1-801-152.w92-150.abo.wanadoo.fr
+ [92.150.127.152])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by lpn-prd-vrin003 (Postfix) with ESMTPSA id 4C5A04A7228;
+ Wed,  4 Dec 2019 14:06:29 +0100 (CET)
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Matthew Wilcox <willy@infradead.org>
+References: <1575281413-6753-1-git-send-email-yangtiezhu@loongson.cn>
+ <20191202200302.GN20752@bombadil.infradead.org>
+ <357ad021-a58c-ad46-42bd-d5012126276f@loongson.cn>
+X-Pep-Version: 2.0
+Message-ID: <12554a8e-2899-f03f-ec3d-d4cf35c4dd71@laposte.net>
+Date: Wed, 4 Dec 2019 14:06:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <357ad021-a58c-ad46-42bd-d5012126276f@loongson.cn>
+Content-Language: en-US
+X-VR-FullState: 0
+X-VR-Score: -100
+X-VR-Cause-1: gggruggvucftvghtrhhoucdtuddrgedufedrudejledggeejucetufdoteggodetrfdotffvucfrrhho
+X-VR-Cause-2: fhhilhgvmecunfetrffquffvgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhht
+X-VR-Cause-3: shculddquddttddmnecujfgurhepuffvfhfhkffffgggjggtgfesthhqredttdefjeenucfhrhhomhep
+X-VR-Cause-4: lfgvrghnqdfnohhuihhsuceuihgrshhinhhiuceojhhlrdgsihgrshhinhhisehlrghpohhsthgvrdhn
+X-VR-Cause-5: vghtqeenucfkphepledvrdduhedtrdduvdejrdduhedvnecurfgrrhgrmhepmhhouggvpehsmhhtphho
+X-VR-Cause-6: uhhtpdhinhgvthepledvrdduhedtrdduvdejrdduhedvpdhhvghloheplgduledvrdduieekrddurddu
+X-VR-Cause-7: kegnpdhmrghilhhfrhhomhepjhhlrdgsihgrshhinhhisehlrghpohhsthgvrdhnvghtpdhrtghpthht
+X-VR-Cause-8: oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+X-VR-Cause-9: nhhugidqfhdvfhhsqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghp
+X-VR-Cause-10: thhtoheplhhinhhugidqfhhstghrhihpthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+X-VR-Cause-11: pegvtghrhihpthhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhf
+X-VR-Cause-12: shguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthihhhhitghkshestggr
+X-VR-Cause-13: nhhonhhitggrlhdrtghomhdprhgtphhtthhopegvsghighhgvghrsheskhgvrhhnvghlrdhorhhgpdhr
+X-VR-Cause-14: tghpthhtohephihutghhrghotdeshhhurgifvghirdgtohhmpdhrtghpthhtohepjhgrvghgvghukhes
+X-VR-Cause-15: khgvrhhnvghlrdhorhhgpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehv
+X-VR-Cause-16: ihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepfihilhhlhiesihhnfhhr
+X-VR-Cause-17: rgguvggrugdrohhrghdprhgtphhtthhopeihrghnghhtihgviihhuheslhhoohhnghhsohhnrdgtnhen
+X-VR-Cause-18: ucevlhhushhtvghrufhiiigvpedt
+X-VR-AvState: No
+X-VR-State: 0
+X-VR-State: 0
+X-Headers-End: 1icUMZ-008FPQ-1G
+Subject: Re: [f2fs-dev] [PATCH] fs: introduce is_dot_dotdot helper for
+ cleanup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,107 +144,75 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- Victor Hsieh <victorhsieh@google.com>, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+From: Jean-Louis Biasini via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jean-Louis Biasini <jl.biasini@laposte.net>
+Cc: ecryptfs@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ linux-kernel@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>,
+ Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, 2019-12-03 at 11:30 -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> When it builds the first level of the Merkle tree,
-> FS_IOC_ENABLE_VERITY
-> sequentially reads each page of the file using read_mapping_page().
-> This works fine if the file's data is already in pagecache, which
-> should
-> normally be the case, since this ioctl is normally used immediately
-> after writing out the file.
-> 
-> But in any other case this implementation performs very poorly, since
-> only one page is read at a time.
-> 
-> Fix this by implementing readahead using the functions from
-> mm/readahead.c.
-> 
-> This improves performance in the uncached case by about 20x, as seen
-> in
-> the following benchmarks done on a 250MB file (on x86_64 with SHA-
-> NI):
-> 
->     FS_IOC_ENABLE_VERITY uncached (before) 3.299s
->     FS_IOC_ENABLE_VERITY uncached (after)  0.160s
->     FS_IOC_ENABLE_VERITY cached            0.147s
->     sha256sum uncached                     0.191s
->     sha256sum cached                       0.145s
-> 
-> Note: we could instead switch to kernel_read().  But that would mean
-> we'd no longer be hashing the data directly from the pagecache, which
-> is
-> a nice optimization of its own.  And using kernel_read() would
-> require
-> allocating another temporary buffer, hashing the data and tree pages
-> separately, and explicitly zero-padding the last page -- so it
-> wouldn't
-> really be any simpler than direct pagecache access, at least for now.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/verity/enable.c | 46 ++++++++++++++++++++++++++++++++++++++++--
-> ----
->  1 file changed, 40 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-> index eabc6ac19906..f7eaffa60196 100644
-> --- a/fs/verity/enable.c
-> +++ b/fs/verity/enable.c
-> @@ -13,14 +13,44 @@
->  #include <linux/sched/signal.h>
->  #include <linux/uaccess.h>
->  
-> -static int build_merkle_tree_level(struct inode *inode, unsigned int
-> level,
-> +/*
-> + * Read a file data page for Merkle tree construction.  Do
-> aggressive readahead,
-> + * since we're sequentially reading the entire file.
-> + */
-> +static struct page *read_file_data_page(struct inode *inode,
-> +					struct file_ra_state *ra,
-> +					struct file *filp,
-> +					pgoff_t index,
-> +					pgoff_t num_pages_in_file)
-> +{
-> +	struct page *page;
-> +
-> +	page = find_get_page(inode->i_mapping, index);
-> +	if (!page || !PageUptodate(page)) {
-> +		if (page)
-> +			put_page(page);
-
-
-It looks like that there is not necessary check here. If we have NULL
-pointer on page then we will not enter inside. But if we have valid
-pointer on page then we have double check inside. Am I correct? 
-
-
-> +		page_cache_sync_readahead(inode->i_mapping, ra, filp,
-> +					  index, num_pages_in_file -
-> index);
-> +		page = read_mapping_page(inode->i_mapping, index,
-> NULL);
-> +		if (IS_ERR(page))
-> +			return page;
-
-Could we recieve the NULL pointer here? Is callee ready to process theNULL return value? 
-
-Thanks,
-Viacheslav Dubeyko.
-
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+UGxlYXNlIFVOU1VCU0NSSUJFIE1FIGZyb20gdGhpcyBsaXN0IG9mIHRlbGwgaG93IHRvISEhCgpM
+ZSAwMy8xMi8yMDE5IMOgIDAzOjA3LCBUaWV6aHUgWWFuZyBhIMOpY3JpdMKgOgo+IE9uIDEyLzAz
+LzIwMTkgMDQ6MDMgQU0sIE1hdHRoZXcgV2lsY294IHdyb3RlOgo+PiBPbiBNb24sIERlYyAwMiwg
+MjAxOSBhdCAwNjoxMDoxM1BNICswODAwLCBUaWV6aHUgWWFuZyB3cm90ZToKPj4+IFRoZXJlIGV4
+aXN0cyBtYW55IHNpbWlsYXIgYW5kIGR1cGxpY2F0ZSBjb2RlcyB0byBjaGVjayAiLiIgYW5kICIu
+LiIsCj4+PiBzbyBpbnRyb2R1Y2UgaXNfZG90X2RvdGRvdCBoZWxwZXIgdG8gbWFrZSB0aGUgY29k
+ZSBtb3JlIGNsZWFuLgo+PiBUaGUgaWRlYSBpcyBnb29kLsKgIFRoZSBpbXBsZW1lbnRhdGlvbiBp
+cywgSSdtIGFmcmFpZCwgYmFkbHkgY2hvc2VuLgo+PiBEaWQgeW91IGJlbmNobWFyayB0aGlzIGNo
+YW5nZSBhdCBhbGw/wqAgSW4gZ2VuZXJhbCwgeW91IHNob3VsZCBwcmVmZXIgdGhlCj4+IGNvcmUg
+a2VybmVsIGltcGxlbWVudGF0aW9uIHRvIHRoYXQgb2Ygc29tZSBsZXNzLWludGVyZXN0aW5nIGZp
+bGVzeXN0ZW1zLgo+PiBJIG1lYXN1cmVkIHRoZSBwZXJmb3JtYW5jZSB3aXRoIHRoZSBhdHRhY2hl
+ZCB0ZXN0IHByb2dyYW0gb24gbXkgbGFwdG9wCj4+IChDb3JlLWk3IEthYnkgTGFrZSk6Cj4+Cj4+
+IHFzdHIgLiB0aW1lXzEgMC4wMjA1MzEgdGltZV8yIDAuMDA1Nzg2Cj4+IHFzdHIgLi4gdGltZV8x
+IDAuMDE3ODkyIHRpbWVfMiAwLjAwODc5OAo+PiBxc3RyIGEgdGltZV8xIDAuMDE3NjMzIHRpbWVf
+MiAwLjAwMzYzNAo+PiBxc3RyIG1hdHRoZXcgdGltZV8xIDAuMDExODIwIHRpbWVfMiAwLjAwMzYw
+NQo+PiBxc3RyIC5hIHRpbWVfMSAwLjAxNzkwOSB0aW1lXzIgMC4wMDg3MTAKPj4gcXN0ciAsIHRp
+bWVfMSAwLjAxNzYzMSB0aW1lXzIgMC4wMDM2MTkKPj4KPj4gVGhlIHJlc3VsdHMgYXJlIHF1aXRl
+IHN0YWJsZToKPj4KPj4gcXN0ciAuIHRpbWVfMSAwLjAyMTEzNyB0aW1lXzIgMC4wMDU3ODAKPj4g
+cXN0ciAuLiB0aW1lXzEgMC4wMTc5NjQgdGltZV8yIDAuMDA4Njc1Cj4+IHFzdHIgYSB0aW1lXzEg
+MC4wMTc4OTkgdGltZV8yIDAuMDAzNjU0Cj4+IHFzdHIgbWF0dGhldyB0aW1lXzEgMC4wMTE4MjEg
+dGltZV8yIDAuMDAzNjIwCj4+IHFzdHIgLmEgdGltZV8xIDAuMDE3ODg5IHRpbWVfMiAwLjAwODY2
+Mgo+PiBxc3RyICwgdGltZV8xIDAuMDE3NzY0IHRpbWVfMiAwLjAwMzYxMwo+Pgo+PiBGZWVsIGZy
+ZWUgdG8gc3VnZ2VzdCBzb21lIGRpZmZlcmVudCBzdHJpbmdzIHdlIGNvdWxkIHVzZSBmb3IgdGVz
+dGluZy4KPj4gVGhlc2Ugc2VlbWVkIGxpa2UgaW50ZXJlc3Rpbmcgc3RyaW5ncyB0byB0ZXN0IHdp
+dGguwqAgSXQncyBhbHdheXMKPj4gcG9zc2libGUKPj4gSSd2ZSBtZXNzZWQgdXAgc29tZXRoaW5n
+IHdpdGggdGhpcyBiZW5jaG1hcmsgdGhhdCBjYXVzZXMgaXQgdG8gbm90Cj4+IGFjY3VyYXRlbHkg
+cmVwcmVzZW50IHRoZSBwZXJmb3JtYW5jZSBvZiBlYWNoIGFsZ29yaXRobSwgc28gcGxlYXNlIGNo
+ZWNrCj4+IHRoYXQgdG9vLgo+Cj4gW1NvcnJ5IHRvIHJlc2VuZCB0aGlzIGVtYWlsIGJlY2F1c2Ug
+dGhlIG1haWwgbGlzdCBzZXJ2ZXIKPiB3YXMgZGVuaWVkIGR1ZSB0byBpdCBpcyBub3QgcGxhaW4g
+dGV4dC5dCj4KPiBIaSBNYXR0aGV3LAo+Cj4gVGhhbmtzIGZvciB5b3VyIHJlcGx5IGFuZCBzdWdn
+ZXN0aW9uLiBJIG1lYXN1cmVkIHRoZQo+IHBlcmZvcm1hbmNlIHdpdGggdGhlIHRlc3QgcHJvZ3Jh
+bSwgdGhlIGZvbGxvd2luZwo+IGltcGxlbWVudGF0aW9uIGlzIGJldHRlciBmb3IgdmFyaW91cyBv
+ZiB0ZXN0IGNhc2VzOgo+Cj4gYm9vbCBpc19kb3RfZG90ZG90KGNvbnN0IHN0cnVjdCBxc3RyICpz
+dHIpCj4gewo+IMKgwqDCoMKgwqDCoMKgIGlmICh1bmxpa2VseShzdHItPm5hbWVbMF0gPT0gJy4n
+KSkgewo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoc3RyLT5sZW4gPCAyIHx8
+IChzdHItPmxlbiA9PSAyICYmIHN0ci0+bmFtZVsxXSA9PQo+ICcuJykpCj4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gdHJ1ZTsKPiDCoMKgwqDC
+oMKgwqDCoCB9Cj4KPiDCoMKgwqDCoMKgwqDCoCByZXR1cm4gZmFsc2U7Cj4gfQo+Cj4gSSB3aWxs
+IHNlbmQgYSB2MiBwYXRjaCB1c2VkIHdpdGggdGhpcyBpbXBsZW1lbnRhdGlvbi4KPgo+IFRoYW5r
+cywKPgo+IFRpZXpodSBZYW5nCj4KPj4KPj4+ICtib29sIGlzX2RvdF9kb3Rkb3QoY29uc3Qgc3Ry
+dWN0IHFzdHIgKnN0cikKPj4+ICt7Cj4+PiArwqDCoMKgIGlmIChzdHItPmxlbiA9PSAxICYmIHN0
+ci0+bmFtZVswXSA9PSAnLicpCj4+PiArwqDCoMKgwqDCoMKgwqAgcmV0dXJuIHRydWU7Cj4+PiAr
+Cj4+PiArwqDCoMKgIGlmIChzdHItPmxlbiA9PSAyICYmIHN0ci0+bmFtZVswXSA9PSAnLicgJiYg
+c3RyLT5uYW1lWzFdID09ICcuJykKPj4+ICvCoMKgwqDCoMKgwqDCoCByZXR1cm4gdHJ1ZTsKPj4+
+ICsKPj4+ICvCoMKgwqAgcmV0dXJuIGZhbHNlOwo+Pj4gK30KPj4+ICtFWFBPUlRfU1lNQk9MKGlz
+X2RvdF9kb3Rkb3QpOwo+Pj4gZGlmZiAtLWdpdCBhL2ZzL25hbWVpLmMgYi9mcy9uYW1laS5jCj4+
+PiBpbmRleCAyZGRhNTUyLi43NzMwYTNiIDEwMDY0NAo+Pj4gLS0tIGEvZnMvbmFtZWkuYwo+Pj4g
+KysrIGIvZnMvbmFtZWkuYwo+Pj4gQEAgLTI0NTgsMTAgKzI0NTgsOCBAQCBzdGF0aWMgaW50IGxv
+b2t1cF9vbmVfbGVuX2NvbW1vbihjb25zdCBjaGFyCj4+PiAqbmFtZSwgc3RydWN0IGRlbnRyeSAq
+YmFzZSwKPj4+IMKgwqDCoMKgwqAgaWYgKCFsZW4pCj4+PiDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0
+dXJuIC1FQUNDRVM7Cj4+PiDCoCAtwqDCoMKgIGlmICh1bmxpa2VseShuYW1lWzBdID09ICcuJykp
+IHsKPj4+IC3CoMKgwqDCoMKgwqDCoCBpZiAobGVuIDwgMiB8fCAobGVuID09IDIgJiYgbmFtZVsx
+XSA9PSAnLicpKQo+Pj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FQUNDRVM7Cj4+
+PiAtwqDCoMKgIH0KPj4+ICvCoMKgwqAgaWYgKHVubGlrZWx5KGlzX2RvdF9kb3Rkb3QodGhpcykp
+KQo+Pj4gK8KgwqDCoMKgwqDCoMKgIHJldHVybiAtRUFDQ0VTOwo+Pj4gwqAgwqDCoMKgwqDCoCB3
+aGlsZSAobGVuLS0pIHsKPj4+IMKgwqDCoMKgwqDCoMKgwqDCoCB1bnNpZ25lZCBpbnQgYyA9ICoo
+Y29uc3QgdW5zaWduZWQgY2hhciAqKW5hbWUrKzsKPgoKCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApM
+aW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJj
+ZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
