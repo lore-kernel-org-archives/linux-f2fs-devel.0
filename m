@@ -1,80 +1,93 @@
-Return-Path: <SRS0=Hc1M=Z4=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=uNrF=Z5=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.9 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C54E6C43603
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 Dec 2019 04:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BB8C43603
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  7 Dec 2019 10:11:07 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8F64C21823
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 Dec 2019 04:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9A66A217BA;
+	Sat,  7 Dec 2019 10:11:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="IB5q9vTJ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YF0bjhNo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F64C21823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="MunqFWhd";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Ux9C1KlP";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=qq.com header.i=@qq.com header.b="eeZ9d/dK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A66A217BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=qq.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1id5Hw-0006nD-Pv; Fri, 06 Dec 2019 04:32:20 +0000
+	id 1idX3J-0000Ri-P2; Sat, 07 Dec 2019 10:11:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1id5Hu-0006n1-Jo
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Dec 2019 04:32:18 +0000
+ (envelope-from <glqhw@qq.com>) id 1idX3F-0000PQ-HM
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Dec 2019 10:11:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Message-ID:Date:Content-Transfer-Encoding:
+ Content-Type:Mime-Version:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bU1QMwTZg/xe8tNuljQONTxx1OviPd0HKgXxq7u1qAA=; b=IB5q9vTJ6GHnsQVsigqJlrf7Cq
- 5aJTvkKfggj0tGjbyrQH7PUOQYB0pyH1gzzXOGyPayEbsy6AS7NpYdue8s4BHdUGFthXudjb9vI65
- vWqt7r09q4TLG3U2NreFRoOQjpSnHJGEmhZ9vnfvSHcAzH/cGPp7DjYBJpfEA+pwS6a0=;
+ bh=sNeVoIvhIh3os80f6nmYqsFqGSqj0Bc0AMIDaUei+wg=; b=MunqFWhd3KAkCCz0uxUMx51FgH
+ FjvRCm4hTqZXYMyobX6CwBfWa8xbPeklQbiZX3wvrvAzwqgKR3hAxYW6ntnoybm6sArnLEHpPA1n7
+ z0YIA9miOW69uiYa4uaHA4j0p8hTrR6bqGD4zhJ0/k/esvXoccLaPMCAHAO4Rw8g0Xmc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=bU1QMwTZg/xe8tNuljQONTxx1OviPd0HKgXxq7u1qAA=; b=YF0bjhNoRptLuOmePBBP0x8kyP
- LWjjKZRXtIDFhTur5FWpb0trfb2qrsONp+5agMXhwvqxUcyGieuVNtkxglOtmHwG3vJtc9LbtqEZ2
- n+WYjeS81OO9Dzm+9xS3usD7ZEplqGa7hYAtarxlzxJ+LLAK5hKeApawtbVof/H1KjYA=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ h=Message-ID:Date:Content-Transfer-Encoding:Content-Type:Mime-Version:
+ Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=sNeVoIvhIh3os80f6nmYqsFqGSqj0Bc0AMIDaUei+wg=; b=U
+ x9C1KlPqOetgjpd2Goe5mdce7KFzgXYGDPU7ubflD+tvLzHWYkq7LnJZjwY7ovLuv3TJBjD7xpvRA
+ OX51Ub/l3Q6uGAdrUKc6EILB/aNgGQg90n5N4b+vLORFWI+WDyHgjLHRBh/8LEbQ9UR35otrO2BmW
+ WrPqQV/kRNARHUow=;
+Received: from smtpbguseast2.qq.com ([54.204.34.130])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1id5Hs-00BVHT-KG
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Dec 2019 04:32:18 +0000
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id F0B0344229A131A50F8E;
- Fri,  6 Dec 2019 12:32:08 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 6 Dec 2019
- 12:32:05 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20191206033100.36345-1-yuchao0@huawei.com>
- <20191206040823.GA33758@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <21133017-e538-83b4-b295-abecbcb329df@huawei.com>
-Date: Fri, 6 Dec 2019 12:32:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20191206040823.GA33758@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1id5Hs-00BVHT-KG
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to relocate f2fs_balance_fs() in
- mkwrite()
+ id 1idX3A-00CTBZ-Qx
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Dec 2019 10:11:01 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+ t=1575713448; bh=sNeVoIvhIh3os80f6nmYqsFqGSqj0Bc0AMIDaUei+wg=;
+ h=From:To:Subject:Mime-Version:Date:Message-ID;
+ b=eeZ9d/dK/SieIewK1yT9bwHPiNmMDjJzgmjrbKle/n5cti941Xy/brtqmtNEYISIu
+ WLTMC7F2btZaVcho1aD9ui3qDnFKN87Mwkv/QyVIgi0XLCr+GtoXj9k8YcL58nT1Eq
+ c0z8g7Y9fiQf/gfCmCEPOq16kqANGVOx+ZQAXWRs=
+X-QQ-FEAT: EUGmOqWjSYJ09B2JmuhBNWD0e+2jXfs/yvSZAAsWOfFaB0I1HTAh7OvOYl8Wx
+ WSY5O2oiZdvz8whp2CyMI+gvV33WurqfbkfCngiw8YpRjdakIllFKSOLCAAwOQHRpYqT2Do
+ rQ9clurJdji3/ITXWBX7FTC1lWetCLxY2b7l10LUQXnpdrM5c9TDzh8AaUp4HwRWg6GZtgL
+ aYXMj2zJpS/EQigCnfX35But0nZCixor8Ua5HOSZacw3ColB3jGE7X4mhxvb4hSNTW6bWhw
+ lxg4EwZS5uHoCkNT5+fgnR+T8JfjMjNN9mRA==
+X-QQ-SSF: 00000000000000F000000000000000Z
+X-HAS-ATTACH: no
+X-QQ-BUSINESS-ORIGIN: 2
+X-Originating-IP: 115.156.164.146
+X-QQ-STYLE: 
+X-QQ-mid: webmail804t1575713447t2801590
+From: "=?gb18030?B?uuzJ1bXEzf67r7H9?=" <glqhw@qq.com>
+To: "=?gb18030?B?bGludXgtZjJmcy1kZXZlbA==?="
+ <linux-f2fs-devel@lists.sourceforge.net>
+Mime-Version: 1.0
+Date: Sat, 7 Dec 2019 18:10:47 +0800
+X-Priority: 3
+Message-ID: <tencent_0B38BD6C2739091DE8A052D6D772D1DEAA06@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1]) by smtp.qq.com (ESMTP) with SMTP
+ id ; Sat, 07 Dec 2019 18:10:48 +0800 (CST)
+Feedback-ID: webmail:qq.com:bgforeign:bgforeign11
+X-QQ-Bgrelay: 1
+X-Headers-End: 1idX3A-00CTBZ-Qx
+Subject: [f2fs-dev]  Potential data corruption?
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,82 +99,30 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jaeguek,
+Hi F2FS experts,
+The following confuses me:
 
-On 2019/12/6 12:08, Jaegeuk Kim wrote:
-> Hi Chao,
-> 
-> I was testing this.
-> 
-> https://github.com/jaegeuk/f2fs/commit/76be33b9f1fce70dd2d3f04f66d0f78b418fe3f5
+A typical fsync() goes like this:
+1) Issue data block IOs
+2) Wait for completion
+3) Issue chained node block IOs
+4) Wait for completion
+5) Issue flush command
 
-The patch looks good.
+In order to preserve data consistency under sudden power failure, it requires that the storage device persists data blocks prior to node blocks.
+Otherwise, under sudden power failure, it's possible that the persisted node block points to NULL data blocks.
 
-BTW, do you mind adding below call stack into your patch? I guess it
-describes this ABBA deadlock with more details. :)
+However, according to this study (https://www.usenix.org/conference/fast18/presentation/won), the persistent order of requests doesn't necessarily equals to the request finish order (due to device volatile caches). This means that its possible that the node blocks get persisted prior to data blocks.
 
-Thanks,
+Does F2FS have other mechanisms to prevent such inconsistency? Or does it require the device to persist data without reordering?
 
-> 
-> On 12/06, Chao Yu wrote:
->> As Dinosaur Huang reported, there is a potential deadlock in between
->> GC and mkwrite():
->>
->> Thread A			Thread B
->> - do_page_mkwrite
->>  - f2fs_vm_page_mkwrite
->>   - lock_page
->> 				- f2fs_balance_fs
->>                                  - mutex_lock(gc_mutex)
->> 				 - f2fs_gc
->> 				  - do_garbage_collect
->> 				   - ra_data_block
->> 				    - grab_cache_page
->>   - f2fs_balance_fs
->>    - mutex_lock(gc_mutex)
->>
->> In order to fix this, we just move f2fs_balance_fs() out of page lock's
->> coverage in f2fs_vm_page_mkwrite().
->>
->> Reported-by: Dinosaur Huang <dinosaur.huang@unisoc.com>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/file.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index c0560d62dbee..ed3290225506 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -67,6 +67,8 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
->>  
->>  	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
->>  
->> +	f2fs_balance_fs(sbi, true);
->> +
->>  	file_update_time(vmf->vma->vm_file);
->>  	down_read(&F2FS_I(inode)->i_mmap_sem);
->>  	lock_page(page);
->> @@ -120,8 +122,6 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
->>  out_sem:
->>  	up_read(&F2FS_I(inode)->i_mmap_sem);
->>  
->> -	f2fs_balance_fs(sbi, dn.node_changed);
->> -
->>  	sb_end_pagefault(inode->i_sb);
->>  err:
->>  	return block_page_mkwrite_return(err);
->> -- 
->> 2.18.0.rc1
-> .
-> 
+Thanks!
 
-
+Hongwei
 _______________________________________________
 Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
