@@ -6,64 +6,78 @@ X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82316C43603
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  8 Dec 2019 04:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B30C1C43603
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  8 Dec 2019 12:38:42 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 43C82206D6;
-	Sun,  8 Dec 2019 04:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7F3A720706;
+	Sun,  8 Dec 2019 12:38:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="WwvCon0l";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Odqd2Qxd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C82206D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lcj3+g7/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VtC11GjE";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U1XvJNbZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3A720706
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1idnmf-00009T-QM; Sun, 08 Dec 2019 04:03:01 +0000
+	id 1idvph-0000Xn-Jh; Sun, 08 Dec 2019 12:38:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <viro@ftp.linux.org.uk>) id 1idnmc-00009A-Vj
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Dec 2019 04:02:58 +0000
+ (envelope-from <willy@infradead.org>) id 1idvpg-0000Xb-KJ
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Dec 2019 12:38:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Sender:In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lSP8/e8OjiSNZZDmK6SxArGfSuSlNA5shfAilc1iQA0=; b=WwvCon0lfSQ+LtFM1vJLLC91X
- S3y+f4hpHc21qvHf1YP2q/Btsa6KKPBgutAJFui4akhVfB5Gl2I45IH0LP7SK4fM9zu9QLGHSwEM2
- J9f0zl/1XO+pqDzEMuHMdwrdr6yO7KrfgPF53EHvji/4f0Gxw3RK2IiQBRWfXV4gucYRk=;
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=2ELcNaQndnrwr3FiX1NwpMEheNcsO2lBa0QVqsnMeCA=; b=lcj3+g7/vLr9oTRe1Z/lOfDor3
+ l1aGNDhfcIiTQTkbtucleNvUiA4iTvX0duGr6DvBT7fpiLeBVVNwcknrInMTJEGr51EFKFPjh5HT1
+ bF21/4PCC3M2x48oh9poLjj2iK+SvznMD+0fmOIiG39nF/VcH5slbTHjQ90hRDvdsr7E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Sender:In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
- Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=lSP8/e8OjiSNZZDmK6SxArGfSuSlNA5shfAilc1iQA0=; b=Odqd2Qxdb8p/1AVvWMXXQGh9jr
- G33jBw9eh/uzT0XqnMOqTBrswnPFShSc/EpaG2bk07sGRIOoUVElkVg3+Cr4lgYRyWly6DmFCJQ8P
- B5Cvb0HTcjTClg5U2rBzWLJiTbqdRzAyYDWzKDrrRws1ZK3IwGVnbsTJbRfDDFwWfmko=;
-Received: from zeniv.linux.org.uk ([195.92.253.2])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=2ELcNaQndnrwr3FiX1NwpMEheNcsO2lBa0QVqsnMeCA=; b=VtC11GjEaAMkyQht647TgnGyE0
+ adzDlTusRnFO1+4ISbo64ansY17d4KgROmIzcakHv48juami8p9RbfULxRSj6US+X+atTVNN11We1
+ eDWYcbdSYqEsPJwr63PisuvR2nCDlpi/Z3jYE7b0exmQrNuL55VKLpDMiEQY6fDkCGL8=;
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1idnmb-00Dg7k-9W
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Dec 2019 04:02:58 +0000
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat
- Linux)) id 1idnS4-00084W-CV; Sun, 08 Dec 2019 03:41:47 +0000
-Date: Sun, 8 Dec 2019 03:41:44 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <20191208034144.GP4203@ZenIV.linux.org.uk>
+ id 1idvpe-00EEHx-Lu
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 08 Dec 2019 12:38:40 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=2ELcNaQndnrwr3FiX1NwpMEheNcsO2lBa0QVqsnMeCA=; b=U1XvJNbZbJPCjOt3AAVxDS0oF
+ Mh4MI6C2RCv9V/mL1VeDkpDKRcIa5JCrtsA48oc1ZWffNGpUIw9aDPdgh/eY/Z/Q4WtyE7XL7R13H
+ aNZLECIv8MGDhMqhxhCqK1oiWpsqzhojIEowfJv2H/LvRalBHVMMUfsS4I77I7ns/h7iIXi4HWqwb
+ GyxnngdRgaYtkRI5xGHMfFDIC8rl7qT9qa1tjyHUshnhjuP/W8K7z2hDCCVU0qUcb7uczdDPfpylS
+ gPg1CQlcwkjyKfXr2gYv2md+i1a3Ba+MfYDEpJDNCATOzq/5SM/3hvEgbW0A9/aYLu+vajeb1GHPp
+ ylpQUn9Uw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
+ Hat Linux)) id 1idvp6-00061v-LN; Sun, 08 Dec 2019 12:38:04 +0000
+Date: Sun, 8 Dec 2019 04:38:04 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Message-ID: <20191208123804.GB32169@bombadil.infradead.org>
 References: <1575718548-19017-1-git-send-email-yangtiezhu@loongson.cn>
+ <20191208034144.GP4203@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <1575718548-19017-1-git-send-email-yangtiezhu@loongson.cn>
+In-Reply-To: <20191208034144.GP4203@ZenIV.linux.org.uk>
 User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Headers-End: 1idnmb-00Dg7k-9W
+X-Headers-End: 1idvpe-00EEHx-Lu
 Subject: Re: [f2fs-dev] [PATCH v3] fs: introduce is_dot_dotdot helper for
  cleanup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -81,19 +95,22 @@ Cc: ecryptfs@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
  linux-kernel@vger.kernel.org, Tyler Hicks <tyhicks@canonical.com>,
  Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
+ Tiezhu Yang <yangtiezhu@loongson.cn>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sat, Dec 07, 2019 at 07:35:48PM +0800, Tiezhu Yang wrote:
-> There exists many similar and duplicate codes to check "." and "..",
-> so introduce is_dot_dotdot helper to make the code more clean.
+On Sun, Dec 08, 2019 at 03:41:44AM +0000, Al Viro wrote:
+> On Sat, Dec 07, 2019 at 07:35:48PM +0800, Tiezhu Yang wrote:
+> > There exists many similar and duplicate codes to check "." and "..",
+> > so introduce is_dot_dotdot helper to make the code more clean.
+> 
+> Umm...  No objections, in principle, but... you try to say that name
+> (e.g. in a phone conversation) without stuttering ;-/
+> 
+> Any suggestions from native speakers?
 
-Umm...  No objections, in principle, but... you try to say that name
-(e.g. in a phone conversation) without stuttering ;-/
-
-Any suggestions from native speakers?
+I used "is_dot_or_dotdot" when discussing this patch with my wife verbally.
 
 
 _______________________________________________
