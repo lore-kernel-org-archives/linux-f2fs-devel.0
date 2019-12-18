@@ -2,79 +2,82 @@ Return-Path: <SRS0=NKbs=2I=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D931DC43603
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 Dec 2019 20:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA46C43603
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 Dec 2019 20:13:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A626D2176D;
-	Wed, 18 Dec 2019 20:10:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 69A922176D;
+	Wed, 18 Dec 2019 20:13:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="LGN8vIjm";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WYLBLEE7";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2csad9ty"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A626D2176D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="d1uGYQpi";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="RMnoMp4w";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HbjIZjZi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A922176D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ihfe2-0007BD-CD; Wed, 18 Dec 2019 20:10:06 +0000
+	id 1ihfhY-0001Av-0y; Wed, 18 Dec 2019 20:13:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1ihfdy-0007AC-6o
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Dec 2019 20:10:02 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1ihfhW-0001Ae-9z
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Dec 2019 20:13:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9wlYAg8NHN5uZ3ydGRdYz8rlf6RYtg1kQkxacdV9d84=; b=LGN8vIjm1Ze+NFAuS28mHQVr5y
- HIh5OREEId6lkjANRQm8ujmaBu019GgYB3u9KaJKKUDyRAb5Jlf9BvSnwfW4CUeVSWpqvy/HW3CAW
- lMMCnNZSAyVCZAxbO7WOvbJRrFCtATH0+E0Q94bCiN714wLtsxBq/qiEMXHgW1IFOl1s=;
+ bh=9yHrAeFidQzVcFRB6rO4eMQs7bBw034Oo1hsXUQ32Qc=; b=d1uGYQpi3uYeONo1AnIRAeIBN9
+ ySUd3bLGHZv2AlKXeHkQDyo/tsH6mv9q3uB0ETYAqjgD79Dy9NO1hOG/RmIZ2NPxMGr6j0YWh8/2M
+ K7JfWsYMMJkfmwO90Jr0Sk7o+LSbIIhDWzqN9qui1rc+s+tE+d5cn4oO7dBr99XB5gZM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=9wlYAg8NHN5uZ3ydGRdYz8rlf6RYtg1kQkxacdV9d84=; b=W
- YLBLEE7Kz7wmISlgcYvF3mp5Hj30kGwGARi988RUh/+Q41WzHn57dz48632COIXTncifFfkBiYdKG
- POXJ1TjRXavgkTOBplyWPWfLAfWyJh7fhi49jd5ac9sBtczTYxq224C0JGvZ+TiplwnCsmn2lDzpE
- xMuNkBQ+l/5z7W9M=;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=9yHrAeFidQzVcFRB6rO4eMQs7bBw034Oo1hsXUQ32Qc=; b=RMnoMp4whAw7994Y/7YjorI+Ju
+ ZswHxP0vj0cZXgLVx+UeYUD5h9zyOsCFIDYxLZhrKw2XDOmd3gX7P2TAQfRtbnWzDS5eCym5AsHJ1
+ MI3cRdm0JnJgbXndARTgOx078ToWsMZwnM+XZLezsbRgz2fl9M9RN3iuyRGOgBh0Q134=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ihfdu-0091lE-Sy
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Dec 2019 20:10:02 +0000
-Received: from localhost (unknown [104.132.0.81])
+ id 1ihfhU-0091yN-V4
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Dec 2019 20:13:42 +0000
+Received: from gmail.com (unknown [104.132.1.77])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 5DFEA2176D;
- Wed, 18 Dec 2019 20:09:48 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 190D72176D;
+ Wed, 18 Dec 2019 20:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1576699788;
- bh=/KD7EM6C7AOfwLcr9C9xpVsfMo+pOZkTit5WAuTRmPU=;
- h=From:To:Cc:Subject:Date:From;
- b=2csad9tys+XBfYmT6nRuod03RfXeQE02r+DxP54UNLUBf7n32ThbskR3t6v5WcKzO
- 27xZeBLu3zNBIqVL45BPIS0vj2dZL3cD9/lcpIDGnjyiAQgCwceFGBBukcV2rZn8kX
- zLBO6TgZHPvKEAoWLzsCi04ew4/2uu5aW1opLFTI=
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 18 Dec 2019 12:09:44 -0800
-Message-Id: <20191218200947.20445-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
+ s=default; t=1576700015;
+ bh=UMmD5Z5ygH9aVGZDCv0TmAgy4F+Uw50SpSAzO3KWdWA=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=HbjIZjZiaO/pegR8UQwIlCL+CIc0+MOpHINMa6Wa4XC7CpM10gILJCfLd78ffIIU/
+ 4MDsuaJ1sOmbJou6wzefCczQtvBOCDftxK3nH5Qq+4/htt5t0TPTY2emEjareiijLb
+ KPiqBjfQ10vuK0cXSKCh74afokCgwFJp3dhC23cc=
+Date: Wed, 18 Dec 2019 12:13:33 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Satya Tangirala <satyat@google.com>
+Message-ID: <20191218201333.GA47399@gmail.com>
+References: <20191218145136.172774-1-satyat@google.com>
+ <20191218145136.172774-2-satyat@google.com>
 MIME-Version: 1.0
-X-Headers-End: 1ihfdu-0091lE-Sy
-Subject: [f2fs-dev] [PATCH 1/4] f2fs: convert inline_dir early before
- starting rename
+Content-Disposition: inline
+In-Reply-To: <20191218145136.172774-2-satyat@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Headers-End: 1ihfhU-0091yN-V4
+Subject: Re: [f2fs-dev] [PATCH v6 1/9] block: Keyslot Manager for Inline
+ Encryption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,152 +89,117 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
+ Kuohong Wang <kuohong.wang@mediatek.com>,
+ Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If we hit an error during rename, we'll get two dentries in different
-directories.
+On Wed, Dec 18, 2019 at 06:51:28AM -0800, Satya Tangirala wrote:
+> Inline Encryption hardware allows software to specify an encryption context
+> (an encryption key, crypto algorithm, data unit num, data unit size, etc.)
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h   |  1 +
- fs/f2fs/inline.c | 30 ++++++++++++++++++++++++++++--
- fs/f2fs/namei.c  | 36 +++++++++++++-----------------------
- 3 files changed, 42 insertions(+), 25 deletions(-)
+These four things (key, algorithm, DUN, and data unit size) fully specify the
+crypto that is done.  So the use of "etc." is a bit misleading.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index dbc20d33d0e1..8d64525743cb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3490,6 +3490,7 @@ void f2fs_truncate_inline_inode(struct inode *inode,
- int f2fs_read_inline_data(struct inode *inode, struct page *page);
- int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page);
- int f2fs_convert_inline_inode(struct inode *inode);
-+int f2fs_convert_inline_dir(struct inode *dir);
- int f2fs_write_inline_data(struct inode *inode, struct page *page);
- bool f2fs_recover_inline_data(struct inode *inode, struct page *npage);
- struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 52f85ed07a15..f82c3d9cf333 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -530,7 +530,7 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
- 	return err;
- }
- 
--static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
-+static int do_convert_inline_dir(struct inode *dir, struct page *ipage,
- 							void *inline_dentry)
- {
- 	if (!F2FS_I(dir)->i_dir_level)
-@@ -539,6 +539,32 @@ static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
- 		return f2fs_move_rehashed_dirents(dir, ipage, inline_dentry);
- }
- 
-+int f2fs_convert_inline_dir(struct inode *dir)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-+	struct page *ipage;
-+	void *inline_dentry = NULL;
-+	int err;
-+
-+	if (!f2fs_has_inline_dentry(dir))
-+		return 0;
-+
-+	f2fs_lock_op(sbi);
-+
-+	ipage = f2fs_get_node_page(sbi, dir->i_ino);
-+	if (IS_ERR(ipage))
-+		return PTR_ERR(ipage);
-+
-+	inline_dentry = inline_data_addr(dir, ipage);
-+
-+	err = do_convert_inline_dir(dir, ipage, inline_dentry);
-+	if (!err)
-+		f2fs_put_page(ipage, 1);
-+
-+	f2fs_unlock_op(sbi);
-+	return err;
-+}
-+
- int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
- 				const struct qstr *orig_name,
- 				struct inode *inode, nid_t ino, umode_t mode)
-@@ -562,7 +588,7 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
- 
- 	bit_pos = f2fs_room_for_filename(d.bitmap, slots, d.max);
- 	if (bit_pos >= d.max) {
--		err = f2fs_convert_inline_dir(dir, ipage, inline_dentry);
-+		err = do_convert_inline_dir(dir, ipage, inline_dentry);
- 		if (err)
- 			return err;
- 		err = -EAGAIN;
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 5d9584281935..61615ab466c2 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -855,7 +855,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	struct f2fs_dir_entry *old_dir_entry = NULL;
- 	struct f2fs_dir_entry *old_entry;
- 	struct f2fs_dir_entry *new_entry;
--	bool is_old_inline = f2fs_has_inline_dentry(old_dir);
- 	int err;
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
-@@ -868,6 +867,19 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			F2FS_I(old_dentry->d_inode)->i_projid)))
- 		return -EXDEV;
- 
-+	/*
-+	 * old entry and new entry can locate in the same inline
-+	 * dentry in inode, when attaching new entry in inline dentry,
-+	 * it could force inline dentry conversion, after that,
-+	 * old_entry and old_page will point to wrong address, in
-+	 * order to avoid this, let's do the check and update here.
-+	 */
-+	if (old_dir == new_dir && !new_inode) {
-+		err = f2fs_convert_inline_dir(old_dir);
-+		if (err)
-+			return err;
-+	}
-+
- 	if (flags & RENAME_WHITEOUT) {
- 		err = f2fs_create_whiteout(old_dir, &whiteout);
- 		if (err)
-@@ -954,28 +966,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 		if (old_dir_entry)
- 			f2fs_i_links_write(new_dir, true);
--
--		/*
--		 * old entry and new entry can locate in the same inline
--		 * dentry in inode, when attaching new entry in inline dentry,
--		 * it could force inline dentry conversion, after that,
--		 * old_entry and old_page will point to wrong address, in
--		 * order to avoid this, let's do the check and update here.
--		 */
--		if (is_old_inline && !f2fs_has_inline_dentry(old_dir)) {
--			f2fs_put_page(old_page, 0);
--			old_page = NULL;
--
--			old_entry = f2fs_find_entry(old_dir,
--						&old_dentry->d_name, &old_page);
--			if (!old_entry) {
--				err = -ENOENT;
--				if (IS_ERR(old_page))
--					err = PTR_ERR(old_page);
--				f2fs_unlock_op(sbi);
--				goto out_dir;
--			}
--		}
- 	}
- 
- 	down_write(&F2FS_I(old_inode)->i_sem);
--- 
-2.24.0.525.g8f36a354ae-goog
+> along with a data transfer request to a storage device, and the inline
+> encryption hardware will use that context to en/decrypt the data. The
+> inline encryption hardware is part of the storage device, and it
+> conceptually sits on the data path between system memory and the storage
+> device.
+> 
+> Inline Encryption hardware implementations often function around the
+> concept of "keyslots". These implementations often have a limited number
+> of "keyslots", each of which can hold an encryption context (we say that
+> an encryption context can be "programmed" into a keyslot). Requests made
+> to the storage device may have a keyslot associated with them, and the
+> inline encryption hardware will en/decrypt the data in the requests using
+> the encryption context programmed into that associated keyslot. As
+> keyslots are limited, and programming keys may be expensive in many
+> implementations, and multiple requests may use exactly the same encryption
+> contexts, we introduce a Keyslot Manager to efficiently manage keyslots.
+> We also introduce a blk_crypto_key, which will represent the key that's
+> programmed into keyslots managed by keyslot managers. The keyslot manager
+> also functions as the interface that upper layers will use to program keys
+> into inline encryption hardware. For more information on the Keyslot
+> Manager, refer to documentation found in block/keyslot-manager.c and
+> linux/keyslot-manager.h.
 
+Long paragraphs are hard to read.  Maybe split this into multiple paragraphs.
+
+> +/**
+> + * keyslot_manager_crypto_mode_supported() - Find out if a crypto_mode/data
+> + *					     unit size combination is supported
+> + *					     by a ksm.
+> + * @ksm: The keyslot manager to check
+> + * @crypto_mode: The crypto mode to check for.
+> + * @data_unit_size: The data_unit_size for the mode.
+> + *
+> + * Calls and returns the result of the crypto_mode_supported function specified
+> + * by the ksm.
+> + *
+> + * Context: Process context.
+> + * Return: Whether or not this ksm supports the specified crypto_mode/
+> + *	   data_unit_size combo.
+> + */
+> +bool keyslot_manager_crypto_mode_supported(struct keyslot_manager *ksm,
+> +					   enum blk_crypto_mode_num crypto_mode,
+> +					   unsigned int data_unit_size)
+> +{
+> +	if (!ksm)
+> +		return false;
+> +	if (WARN_ON(crypto_mode >= BLK_ENCRYPTION_MODE_MAX))
+> +		return false;
+> +	if (WARN_ON(!is_power_of_2(data_unit_size)))
+> +		return false;
+> +	return ksm->crypto_mode_supported[crypto_mode] & data_unit_size;
+> +}
+
+There's no crypto_mode_supported() function anymore, so the comment above this
+function is outdated, including both the part that mentions
+crypto_mode_supported() and the part that says "Process context".
+
+Also, since C enums are signed, and there's already a check for invalid
+crypto_mode, it might be a good idea to catch crypto_mode < 0 too:
+
+	if (WARN_ON((unsigned int)crypto_mode >= BLK_ENCRYPTION_MODE_MAX))
+
+> +/**
+> + * keyslot_manager_evict_key() - Evict a key from the lower layer device.
+> + * @ksm: The keyslot manager to evict from
+> + * @key: The key to evict
+> + *
+> + * Find the keyslot that the specified key was programmed into, and evict that
+> + * slot from the lower layer device if that slot is not currently in use.
+> + *
+> + * Context: Process context. Takes and releases ksm->lock.
+> + * Return: 0 on success, -EBUSY if the key is still in use, or another
+> + *	   -errno value on other error.
+> + */
+> +int keyslot_manager_evict_key(struct keyslot_manager *ksm,
+> +			      const struct blk_crypto_key *key)
+> +{
+> +	int slot;
+> +	int err;
+> +	struct keyslot *slotp;
+> +
+> +	down_write(&ksm->lock);
+> +	slot = find_keyslot(ksm, key);
+> +	if (slot < 0) {
+> +		err = slot;
+> +		goto out_unlock;
+> +	}
+
+I think this function should return 0 (rather than fail with -ENOKEY) if the key
+is not currently programmed into a keyslot.  Otherwise anyone who wants to print
+a warning if key eviction failed will have to ignore the -ENOKEY error.
+
+(Note that this change would require an small update to the function comment.)
+
+- Eric
 
 
 _______________________________________________
