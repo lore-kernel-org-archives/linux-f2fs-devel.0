@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A621C43603
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Dec 2019 09:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF335C43603
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Dec 2019 10:18:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 57BE1206D8
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Dec 2019 09:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9D61520716
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Dec 2019 10:18:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="e4coFBXx";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="mbc2o4yu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57BE1206D8
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ju0EQN+N";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="agNmHwng"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D61520716
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ihsVc-000559-AN; Thu, 19 Dec 2019 09:54:16 +0000
+	id 1ihst3-00063U-S3; Thu, 19 Dec 2019 10:18:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <geert.uytterhoeven@gmail.com>) id 1ihsVZ-00054y-MO
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Dec 2019 09:54:13 +0000
+ (envelope-from <geert.uytterhoeven@gmail.com>) id 1ihst2-00063N-Lf
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Dec 2019 10:18:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
  In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
  :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZUKPu+3lzNZNRX0GPct7+0OF4dHxMBRWmyHMUXjgvFU=; b=e4coFBXxQyeGjFjs+h41q8bUO3
- dg01iyZNvI0nlsAmBbUvk9pQpcedu089IgkQgFzsglyAuc95F07WP5eqC4tbuoDy4rpUF3G6k/mHq
- T3QVuIxl0Wl0iFZKkzjppdGzdHA1L4djf/sLnfgZMfTAbV4qI1hdbOKZfkjQXTaE5aM4=;
+ bh=gBfpTXVpKERfPCUf14OHD25gfpTFwcw7s5JiNlGDUoM=; b=ju0EQN+NQsY24e30L1k4a42sSN
+ RnD3NmKEmsM0OGsRfLzV6eGvqhnAenO9fnsQjGC7VqrsYpMyPEe0oP+rNP8lMEEcc+YnpWgEcMtWf
+ 1Nht87vYC0taufyLSio/NzghccdajebhnWctyA7fVuZCB4KmyLm2ae5TBSl8soRVsDJc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
@@ -44,42 +44,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZUKPu+3lzNZNRX0GPct7+0OF4dHxMBRWmyHMUXjgvFU=; b=mbc2o4yuUILBcxuONS9zNTjnNa
- XgNE6ww9MHIBiIOImdLZOzOPpurQTXpmrczBbE5C02acu3A3Dm1KTv+rL+UxbKAagoP7A5aL+++EH
- +nHP48+B/AYggxcAhy1dTmn+5RArloz2P/QrKJo75jhhA8iyunpXJiD86JEdZ0B6F3mA=;
+ bh=gBfpTXVpKERfPCUf14OHD25gfpTFwcw7s5JiNlGDUoM=; b=agNmHwngPnmnRh1WP8nZnu+cNG
+ 1nr8CRApKww/J0FRhCJW3B7fBuYDcBGG6D2mjiS4c7ALe/BV/tRj9Q+VHlG5PcDyPhSEXogNJBsGL
+ ETVvPpxlpm8xdF2olijlniCzIhPpfKsj7CB6k6tdGw59z5B+ihEgIaHTuEAaqZ8p6Svo=;
 Received: from mail-oi1-f194.google.com ([209.85.167.194])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1ihsVW-006vtw-0D
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Dec 2019 09:54:13 +0000
-Received: by mail-oi1-f194.google.com with SMTP id 18so1685534oin.9
+ id 1ihst1-006xh1-2X
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Dec 2019 10:18:28 +0000
+Received: by mail-oi1-f194.google.com with SMTP id c77so1990986oib.7
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 19 Dec 2019 01:54:09 -0800 (PST)
+ Thu, 19 Dec 2019 02:18:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:mime-version:references:in-reply-to:from:date
  :message-id:subject:to:cc;
- bh=ZUKPu+3lzNZNRX0GPct7+0OF4dHxMBRWmyHMUXjgvFU=;
- b=cEUYZoUYsaP3hlUTJLLoqJvw1mUAUGzOiqJUJuMkdy41QMw0XfEigHJHqnIY7Ny+Ty
- L1d1VI2LuLDN6qKfcsaGEXv8iSPKd7F621LHnBL437xs3arAM40fYCpGQWIfnPCl4Abd
- Kn8+TopV4HeLZtv95OwMCICOj3wjZVWCoZR47X5KEOF1hVBzqj5n/M0OBBB9PMlxXSp+
- WQq5/1PT4Ib8muwYvKg7YYVfoSI5RJXyMLVgs77KtRG+gdOrWdv7+eF/k9X/ce/1yn73
- Mxd5tQ1RrLqTlxaOxeKssqG54UmuyjSU37KVj+gi9QWuMuJejC4o1AtE9TUnMBK+Qf7r
- WbZw==
-X-Gm-Message-State: APjAAAVk4e3crNQmxXk/mHCcgSJ+9xqfo39nr+SayAMTizfoiEh2twUT
- thiH1fC3qsj+5pEO+SXh5hGZ2cxLHwXPzRgQn+g=
-X-Google-Smtp-Source: APXvYqxGRCQ+HGG1eHMEhsUuHEO4jMulwydAvw7vvY4zmIqXYi1z525a9XEwSsmQKa80af+gnHaisBN2rlN7G8IGYk0=
+ bh=gBfpTXVpKERfPCUf14OHD25gfpTFwcw7s5JiNlGDUoM=;
+ b=mFHOhrEa2eI/owK+f8cKdJtDXW/d/g7mFKTOAqs5zQcdESx4pu8wUrLCBHGyx1jzcr
+ AOw8vSZwR3eU15WE2e9ZZbJY44xyv+XkLhDotJ4XI3+c1NuXSdkfnfwZYPRKTA92CJjR
+ F2nX0M0ZmKdpQooP5hLzoi7MAx/xmJXoMdPHAIEKmAUca8bT5/ETe50oHP3PzN0dTnc4
+ Y4DYuRLUQ7glULKUuK3xfSutrXWDyD9TLtdOhNP9CJV8877VGXyOuctsCcejNpvwbrMl
+ QfxCJ9t04M+AtXhyudTzQo9YEYiZwn/zMyAVGEWlsKFW4VsT38nTl1s+wgvtVkdFvfBn
+ 2hew==
+X-Gm-Message-State: APjAAAXtzfL8h+Lva6wBoXnEsw2flsE6fr6Wwg/3G+lsv9FtHjuc00hA
+ ezHRive+Tq+lOzE5yZu+kgorbqZHdlKORzz566g=
+X-Google-Smtp-Source: APXvYqxKyRNwS6QLwpbYAjN8wwj1dZAiLECzHCQK8knRk73UYUPRCuTuK604XVYYJwKviWnSLi3BYVdg9nHjYIsqjaM=
 X-Received: by 2002:a05:6808:8ec:: with SMTP id
- d12mr1679787oic.131.1576749244150; 
- Thu, 19 Dec 2019 01:54:04 -0800 (PST)
+ d12mr1714729oic.131.1576750701225; 
+ Thu, 19 Dec 2019 02:18:21 -0800 (PST)
 MIME-Version: 1.0
 References: <20191216062806.112361-1-yuchao0@huawei.com>
 In-Reply-To: <20191216062806.112361-1-yuchao0@huawei.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 19 Dec 2019 10:53:52 +0100
-Message-ID: <CAMuHMdVvqccd_iwdz8khxYKUjrD-pnBYggagVCYZyNmbZxB9Tw@mail.gmail.com>
+Date: Thu, 19 Dec 2019 11:18:09 +0100
+Message-ID: <CAMuHMdWnOCOqNCNnrsdNw4q3vG-Htm3bPBngqFJ8Frk8m13ytQ@mail.gmail.com>
 To: Chao Yu <yuchao0@huawei.com>
-X-Headers-End: 1ihsVW-006vtw-0D
+X-Headers-End: 1ihst1-006xh1-2X
 Subject: Re: [f2fs-dev] [RFC PATCH v5] f2fs: support data compression
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -99,62 +99,51 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+Hi,
+
 On Mon, Dec 16, 2019 at 7:29 AM Chao Yu <yuchao0@huawei.com> wrote:
 > This patch tries to support compression in f2fs.
 
-> +static int f2fs_write_raw_pages(struct compress_ctx *cc,
-> +                                       int *submitted,
-> +                                       struct writeback_control *wbc,
-> +                                       enum iostat_type io_type,
-> +                                       bool compressed)
-> +{
-> +       int i, _submitted;
-> +       int ret, err = 0;
+> --- a/fs/f2fs/Kconfig
+> +++ b/fs/f2fs/Kconfig
+> @@ -92,3 +92,26 @@ config F2FS_FAULT_INJECTION
+>           Test F2FS to inject faults such as ENOMEM, ENOSPC, and so on.
+>
+>           If unsure, say N.
 > +
-> +       for (i = 0; i < cc->cluster_size; i++) {
-> +               if (!cc->rpages[i])
-> +                       continue;
-> +retry_write:
-> +               BUG_ON(!PageLocked(cc->rpages[i]));
+> +config F2FS_FS_COMPRESSION
+> +       bool "F2FS compression feature"
+> +       depends on F2FS_FS
+> +       help
+> +         Enable filesystem-level compression on f2fs regular files,
+> +         multiple back-end compression algorithms are supported.
 > +
-> +               ret = f2fs_write_single_data_page(cc->rpages[i], &_submitted,
-> +                                               NULL, NULL, wbc, io_type);
-> +               if (ret) {
-> +                       if (ret == AOP_WRITEPAGE_ACTIVATE) {
-> +                               unlock_page(cc->rpages[i]);
-> +                               ret = 0;
-> +                       } else if (ret == -EAGAIN) {
-> +                               ret = 0;
-> +                               cond_resched();
-> +                               congestion_wait(BLK_RW_ASYNC, HZ/50);
+> +config F2FS_FS_LZO
+> +       bool "LZO compression support" if F2FS_FS_COMPRESSION
 
-On some platforms, HZ can be less than 50.
-What happens if congestion_wait() is called with a zero timeout?
+This should depend on F2FS_FS_COMPRESSION, instead of just hiding
+the question, to avoid the option always being enabled when
+F2FS_FS_COMPRESSION is not set:
 
-> +                               lock_page(cc->rpages[i]);
-> +                               clear_page_dirty_for_io(cc->rpages[i]);
-> +                               goto retry_write;
-> +                       }
-> +                       err = ret;
-> +                       goto out_fail;
-> +               }
+        bool "LZO compression support"
+        depends on F2FS_FS_COMPRESSION
+
+> +       select LZO_COMPRESS
+> +       select LZO_DECOMPRESS
+> +       default y
+> +       help
+> +         Support LZO compress algorithm, if unsure, say Y.
 > +
-> +               *submitted += _submitted;
-> +       }
-> +       return 0;
-> +
-> +out_fail:
-> +       /* TODO: revoke partially updated block addresses */
-> +       BUG_ON(compressed);
-> +
-> +       for (++i; i < cc->cluster_size; i++) {
-> +               if (!cc->rpages[i])
-> +                       continue;
-> +               redirty_page_for_writepage(wbc, cc->rpages[i]);
-> +               unlock_page(cc->rpages[i]);
-> +       }
-> +       return err;
-> +}
+> +config F2FS_FS_LZ4
+> +       bool "LZ4 compression support" if F2FS_FS_COMPRESSION
+
+Likewise.
+
+> +       select LZ4_COMPRESS
+> +       select LZ4_DECOMPRESS
+> +       default y
+> +       help
+> +         Support LZ4 compress algorithm, if unsure, say Y.
 
 Gr{oetje,eeting}s,
 
