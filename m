@@ -2,114 +2,85 @@ Return-Path: <SRS0=zJyc=2J=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF335C43603
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Dec 2019 00:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A621C43603
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Dec 2019 09:54:17 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 76E6C218AC;
-	Thu, 19 Dec 2019 00:56:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 57BE1206D8
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Dec 2019 09:54:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="cVlCFVyb";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="I85EjdEV";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="BRXli2cW";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="KAQu8lWE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E6C218AC
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="e4coFBXx";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="mbc2o4yu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57BE1206D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=IguPUTMpQdf0TOr9z/9bPIWYjtoI1vFzqW8R6MgQRSM=; b=cVlCFVybv8C9Tp5PDaKg1Rq3K
-	QaEIHMlTsO8tZwHBkOIRjWry75oBqVfcmzcr0nbHoVoPabgtOUxne3/uM7s2B7r3d3upJU5EhUomu
-	2/0qtvYTbkqr8SjzWWauMPnwWH6CdKAZw3KRMzWfZCTCTU/Q4cwR8ufamsIOhAIO39vnw=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ihk7N-0002dU-2t; Thu, 19 Dec 2019 00:56:41 +0000
+	id 1ihsVc-000559-AN; Thu, 19 Dec 2019 09:54:16 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <satyat@google.com>) id 1ihk7L-0002dK-9C
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Dec 2019 00:56:39 +0000
+ (envelope-from <geert.uytterhoeven@gmail.com>) id 1ihsVZ-00054y-MO
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Dec 2019 09:54:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xyBVEYkzY9GbJqdrcpd7/z5zSijkLJgqnvmaBURJfhE=; b=I85EjdEVjvfvNKyCKjJGuKEP88
- h9sUiweHmaE4kYnoml65mlc3YjoyhzSqCI3OXh2MYjdWVlyJu1tmN7/NeecJMFtALxajHSR55R4kW
- i0nDmC4x2v+YnNDyEZnlGZPB36B1fDe+BqIBPki7u4/Y7OqIR3onWoDpJq7M+dJ9swLs=;
+ bh=ZUKPu+3lzNZNRX0GPct7+0OF4dHxMBRWmyHMUXjgvFU=; b=e4coFBXxQyeGjFjs+h41q8bUO3
+ dg01iyZNvI0nlsAmBbUvk9pQpcedu089IgkQgFzsglyAuc95F07WP5eqC4tbuoDy4rpUF3G6k/mHq
+ T3QVuIxl0Wl0iFZKkzjppdGzdHA1L4djf/sLnfgZMfTAbV4qI1hdbOKZfkjQXTaE5aM4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xyBVEYkzY9GbJqdrcpd7/z5zSijkLJgqnvmaBURJfhE=; b=BRXli2cW2saYAQkxLrb14lZbzO
- zDqLJK+TsLkgCFq/LI46fwWHmZZZsDZqbc4kCOCwxTZrow+0lMiNdKdXr8sLNRJpceQt7kLWH99cy
- 8JycpsK5/aewmnxeh1joQgWYs5ubP+qL8kJeBUjNFOkO2jgQTNgroOCzvf7h+fN8JYxA=;
-Received: from mail-pj1-f65.google.com ([209.85.216.65])
+ bh=ZUKPu+3lzNZNRX0GPct7+0OF4dHxMBRWmyHMUXjgvFU=; b=mbc2o4yuUILBcxuONS9zNTjnNa
+ XgNE6ww9MHIBiIOImdLZOzOPpurQTXpmrczBbE5C02acu3A3Dm1KTv+rL+UxbKAagoP7A5aL+++EH
+ +nHP48+B/AYggxcAhy1dTmn+5RArloz2P/QrKJo75jhhA8iyunpXJiD86JEdZ0B6F3mA=;
+Received: from mail-oi1-f194.google.com ([209.85.167.194])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1ihk7J-006NFo-6C
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Dec 2019 00:56:39 +0000
-Received: by mail-pj1-f65.google.com with SMTP id t101so1675212pjb.4
+ id 1ihsVW-006vtw-0D
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Dec 2019 09:54:13 +0000
+Received: by mail-oi1-f194.google.com with SMTP id 18so1685534oin.9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 18 Dec 2019 16:56:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:from:to:cc:subject:message-id:references:mime-version
- :content-disposition:in-reply-to:user-agent;
- bh=xyBVEYkzY9GbJqdrcpd7/z5zSijkLJgqnvmaBURJfhE=;
- b=KAQu8lWERy1KOc9Ud0UlTkJ2GAPgGMLJmfGGUv4bnrOUk4vJxXAC0AY1xNcvkISpeI
- uIsQDjPd3msGpm/7zUGCPL0YtOjZavh2xy3umNez3OlvRajMUOAwhQh0B3yFgftoucAg
- IyWelZPCQjQuZfk526krewBwae4ivldt7xFNjJx2T/ifoiJO0h/uglfGxHzSxWttw1nI
- RfZ0qM9HF0NZAde13/wA1BG3bxkdzGfP7d/tzTl5WxNvhtuILSnJ8ZGQWRnapp6id0a9
- wTouE5yi3zHXY4U97cSq9LaO0oO5YghMW9q9w+uC2nyjTwMS0vglF966saeN1kTeT5Fs
- fyuw==
+ Thu, 19 Dec 2019 01:54:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:date:from:to:cc:subject:message-id:references
- :mime-version:content-disposition:in-reply-to:user-agent;
- bh=xyBVEYkzY9GbJqdrcpd7/z5zSijkLJgqnvmaBURJfhE=;
- b=oXzAkTuJdzX12HuqpFboeCXATttFDeYxbul/c8/HCveSkMA/vTrpkQfFsqgO7VpTFP
- ph1yt/hatR53yDDYqnkEVjj0HcJplT8vGMtn1w0WZyNMpHPvv3+8/IoDib1j5suKEhxt
- /qOJ645Xv4eLwtdqF3GISr5AdddCDIW9tAPT9HKx3HsDB4qMEOd8wFitYQrcbe1kHgsB
- S9Y3K8VFnDUK9x6JzcyDu7PE6aUzbnUrXAek9R+/fMr+3pYpmK06jag34XTMn7rO9wR8
- gUo/T2ap4r1amkKUswFaRibem3CqTaR+fS9vmEX/shKiMTJIuRz+PxjJy6pLNnlFQpIB
- AhAA==
-X-Gm-Message-State: APjAAAVa8M0FQRfdRI1j6QmsQEicRizhiFx+I3ZMemN3/q/74Ed1rq4N
- vcTokyuUYkFIBTfOtOWfSvb2ZNUB240=
-X-Google-Smtp-Source: APXvYqzizqlaykbVmos6h8bpIEJ1Pw90IdGHpoC0aid9Ibyt71vL3V4ttZZfSQYuPn6uyDDX+71A4Q==
-X-Received: by 2002:a17:90a:8043:: with SMTP id
- e3mr6037146pjw.24.1576715522475; 
- Wed, 18 Dec 2019 16:32:02 -0800 (PST)
-Received: from google.com ([2620:15c:201:0:7f8c:9d6e:20b8:e324])
- by smtp.gmail.com with ESMTPSA id z130sm4664074pgz.6.2019.12.18.16.32.01
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 18 Dec 2019 16:32:02 -0800 (PST)
-Date: Wed, 18 Dec 2019 16:31:57 -0800
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20191219003157.GA178424@google.com>
-References: <20191218145136.172774-1-satyat@google.com>
- <20191218145136.172774-10-satyat@google.com>
- <20191219001240.GD47399@gmail.com>
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc;
+ bh=ZUKPu+3lzNZNRX0GPct7+0OF4dHxMBRWmyHMUXjgvFU=;
+ b=cEUYZoUYsaP3hlUTJLLoqJvw1mUAUGzOiqJUJuMkdy41QMw0XfEigHJHqnIY7Ny+Ty
+ L1d1VI2LuLDN6qKfcsaGEXv8iSPKd7F621LHnBL437xs3arAM40fYCpGQWIfnPCl4Abd
+ Kn8+TopV4HeLZtv95OwMCICOj3wjZVWCoZR47X5KEOF1hVBzqj5n/M0OBBB9PMlxXSp+
+ WQq5/1PT4Ib8muwYvKg7YYVfoSI5RJXyMLVgs77KtRG+gdOrWdv7+eF/k9X/ce/1yn73
+ Mxd5tQ1RrLqTlxaOxeKssqG54UmuyjSU37KVj+gi9QWuMuJejC4o1AtE9TUnMBK+Qf7r
+ WbZw==
+X-Gm-Message-State: APjAAAVk4e3crNQmxXk/mHCcgSJ+9xqfo39nr+SayAMTizfoiEh2twUT
+ thiH1fC3qsj+5pEO+SXh5hGZ2cxLHwXPzRgQn+g=
+X-Google-Smtp-Source: APXvYqxGRCQ+HGG1eHMEhsUuHEO4jMulwydAvw7vvY4zmIqXYi1z525a9XEwSsmQKa80af+gnHaisBN2rlN7G8IGYk0=
+X-Received: by 2002:a05:6808:8ec:: with SMTP id
+ d12mr1679787oic.131.1576749244150; 
+ Thu, 19 Dec 2019 01:54:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20191219001240.GD47399@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1ihk7J-006NFo-6C
-Subject: Re: [f2fs-dev] [PATCH v6 9/9] ext4: add inline encryption support
+References: <20191216062806.112361-1-yuchao0@huawei.com>
+In-Reply-To: <20191216062806.112361-1-yuchao0@huawei.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 19 Dec 2019 10:53:52 +0100
+Message-ID: <CAMuHMdVvqccd_iwdz8khxYKUjrD-pnBYggagVCYZyNmbZxB9Tw@mail.gmail.com>
+To: Chao Yu <yuchao0@huawei.com>
+X-Headers-End: 1ihsVW-006vtw-0D
+Subject: Re: [f2fs-dev] [RFC PATCH v5] f2fs: support data compression
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,264 +92,80 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Satya Tangirala via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Satya Tangirala <satyat@google.com>
-Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
- Kuohong Wang <kuohong.wang@mediatek.com>,
- Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-I messed up while using git and managed to overwrite the author field in
-the patch - it should read "Eric Biggers <ebiggers@google.com>" instead.
-I'll fix that in the next patch version, sorry.
+On Mon, Dec 16, 2019 at 7:29 AM Chao Yu <yuchao0@huawei.com> wrote:
+> This patch tries to support compression in f2fs.
 
-On Wed, Dec 18, 2019 at 04:12:41PM -0800, Eric Biggers wrote:
+> +static int f2fs_write_raw_pages(struct compress_ctx *cc,
+> +                                       int *submitted,
+> +                                       struct writeback_control *wbc,
+> +                                       enum iostat_type io_type,
+> +                                       bool compressed)
+> +{
+> +       int i, _submitted;
+> +       int ret, err = 0;
+> +
+> +       for (i = 0; i < cc->cluster_size; i++) {
+> +               if (!cc->rpages[i])
+> +                       continue;
+> +retry_write:
+> +               BUG_ON(!PageLocked(cc->rpages[i]));
+> +
+> +               ret = f2fs_write_single_data_page(cc->rpages[i], &_submitted,
+> +                                               NULL, NULL, wbc, io_type);
+> +               if (ret) {
+> +                       if (ret == AOP_WRITEPAGE_ACTIVATE) {
+> +                               unlock_page(cc->rpages[i]);
+> +                               ret = 0;
+> +                       } else if (ret == -EAGAIN) {
+> +                               ret = 0;
+> +                               cond_resched();
+> +                               congestion_wait(BLK_RW_ASYNC, HZ/50);
 
-> [+Cc linux-ext4]
-> 
-> On Wed, Dec 18, 2019 at 06:51:36AM -0800, Satya Tangirala wrote:
-> > Wire up ext4 to support inline encryption via the helper functions which
-> > fs/crypto/ now provides.  This includes:
-> > 
-> > - Adding a mount option 'inlinecrypt' which enables inline encryption
-> >   on encrypted files where it can be used.
-> > 
-> > - Setting the bio_crypt_ctx on bios that will be submitted to an
-> >   inline-encrypted file.
-> > 
-> >   Note: submit_bh_wbc() in fs/buffer.c also needed to be patched for
-> >   this part, since ext4 sometimes uses ll_rw_block() on file data.
-> > 
-> > - Not adding logically discontiguous data to bios that will be submitted
-> >   to an inline-encrypted file.
-> > 
-> > - Not doing filesystem-layer crypto on inline-encrypted files.
-> > 
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > Signed-off-by: Satya Tangirala <satyat@google.com>
-> 
-> In the next version can you please add linux-ext4 to Cc for the series?
-> 
-Ok, I will.
-> > ---
-> >  fs/buffer.c        |  2 ++
-> >  fs/ext4/ext4.h     |  1 +
-> >  fs/ext4/inode.c    |  4 ++--
-> >  fs/ext4/page-io.c  |  6 ++++--
-> >  fs/ext4/readpage.c | 11 ++++++++---
-> >  fs/ext4/super.c    | 13 +++++++++++++
-> >  6 files changed, 30 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/buffer.c b/fs/buffer.c
-> > index d8c7242426bb..3ad000db4a19 100644
-> > --- a/fs/buffer.c
-> > +++ b/fs/buffer.c
-> > @@ -3108,6 +3108,8 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
-> >  	 */
-> >  	bio = bio_alloc(GFP_NOIO, 1);
-> >  
-> > +	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
-> > +
-> >  	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
-> >  	bio_set_dev(bio, bh->b_bdev);
-> >  	bio->bi_write_hint = write_hint;
-> 
-> In 5.5, there was some decryption code added to fs/buffer.c in order to support
-> ext4 encryption with blocksize < PAGE_SIZE:
-> 
-> static void end_buffer_async_read_io(struct buffer_head *bh, int uptodate)
-> {
->         /* Decrypt if needed */
->         if (uptodate && IS_ENABLED(CONFIG_FS_ENCRYPTION) &&
->             IS_ENCRYPTED(bh->b_page->mapping->host) &&
->             S_ISREG(bh->b_page->mapping->host->i_mode)) {
-> 	...
-> 
-> 
-> This needs to be updated to use fscrypt_inode_uses_fs_layer_crypto() instead, so
-> that the filesystem-layer decryption is not done when the file is already using
-> inline decryption.
-> 
-Will fix in the next version.
-> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> > index f8578caba40d..aeaa01724d7c 100644
-> > --- a/fs/ext4/ext4.h
-> > +++ b/fs/ext4/ext4.h
-> > @@ -1153,6 +1153,7 @@ struct ext4_inode_info {
-> >  #define EXT4_MOUNT_JOURNAL_CHECKSUM	0x800000 /* Journal checksums */
-> >  #define EXT4_MOUNT_JOURNAL_ASYNC_COMMIT	0x1000000 /* Journal Async Commit */
-> >  #define EXT4_MOUNT_WARN_ON_ERROR	0x2000000 /* Trigger WARN_ON on error */
-> > +#define EXT4_MOUNT_INLINECRYPT		0x4000000 /* Inline encryption support */
-> >  #define EXT4_MOUNT_DELALLOC		0x8000000 /* Delalloc support */
-> >  #define EXT4_MOUNT_DATA_ERR_ABORT	0x10000000 /* Abort on file data write */
-> >  #define EXT4_MOUNT_BLOCK_VALIDITY	0x20000000 /* Block validity checking */
-> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> > index 28f28de0c1b6..44d9651b8638 100644
-> > --- a/fs/ext4/inode.c
-> > +++ b/fs/ext4/inode.c
-> > @@ -1090,7 +1090,7 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
-> >  	}
-> >  	if (unlikely(err)) {
-> >  		page_zero_new_buffers(page, from, to);
-> > -	} else if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)) {
-> > +	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
-> >  		for (i = 0; i < nr_wait; i++) {
-> >  			int err2;
-> >  
-> > @@ -3698,7 +3698,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
-> >  		/* Uhhuh. Read error. Complain and punt. */
-> >  		if (!buffer_uptodate(bh))
-> >  			goto unlock;
-> > -		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)) {
-> > +		if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
-> >  			/* We expect the key to be set. */
-> >  			BUG_ON(!fscrypt_has_encryption_key(inode));
-> >  			WARN_ON_ONCE(fscrypt_decrypt_pagecache_blocks(
-> > diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
-> > index 24aeedb8fc75..acde754cc5ca 100644
-> > --- a/fs/ext4/page-io.c
-> > +++ b/fs/ext4/page-io.c
-> > @@ -404,6 +404,7 @@ static void io_submit_init_bio(struct ext4_io_submit *io,
-> >  	 * __GFP_DIRECT_RECLAIM is set, see comments for bio_alloc_bioset().
-> >  	 */
-> >  	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
-> > +	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
-> >  	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
-> >  	bio_set_dev(bio, bh->b_bdev);
-> >  	bio->bi_end_io = ext4_end_bio;
-> > @@ -420,7 +421,8 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
-> >  {
-> >  	int ret;
-> >  
-> > -	if (io->io_bio && bh->b_blocknr != io->io_next_block) {
-> > +	if (io->io_bio && (bh->b_blocknr != io->io_next_block ||
-> > +			   !fscrypt_mergeable_bio_bh(io->io_bio, bh))) {
-> >  submit_and_retry:
-> >  		ext4_io_submit(io);
-> >  	}
-> > @@ -508,7 +510,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
-> >  	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
-> >  	 * can't happen in the common case of blocksize == PAGE_SIZE.
-> >  	 */
-> > -	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
-> > +	if (fscrypt_inode_uses_fs_layer_crypto(inode) && nr_to_submit) {
-> >  		gfp_t gfp_flags = GFP_NOFS;
-> >  		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
-> >  
-> > diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-> > index fef7755300c3..7844e27518b4 100644
-> > --- a/fs/ext4/readpage.c
-> > +++ b/fs/ext4/readpage.c
-> > @@ -183,7 +183,7 @@ static struct bio_post_read_ctx *get_bio_post_read_ctx(struct inode *inode,
-> >  	unsigned int post_read_steps = 0;
-> >  	struct bio_post_read_ctx *ctx = NULL;
-> >  
-> > -	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
-> > +	if (fscrypt_inode_uses_fs_layer_crypto(inode))
-> >  		post_read_steps |= 1 << STEP_DECRYPT;
-> >  
-> >  	if (ext4_need_verity(inode, first_idx))
-> > @@ -220,6 +220,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
-> >  	const unsigned blkbits = inode->i_blkbits;
-> >  	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
-> >  	const unsigned blocksize = 1 << blkbits;
-> > +	sector_t next_block;
-> >  	sector_t block_in_file;
-> >  	sector_t last_block;
-> >  	sector_t last_block_in_file;
-> > @@ -252,7 +253,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
-> >  		if (page_has_buffers(page))
-> >  			goto confused;
-> >  
-> > -		block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
-> > +		block_in_file = next_block =
-> > +			(sector_t)page->index << (PAGE_SHIFT - blkbits);
-> >  		last_block = block_in_file + nr_pages * blocks_per_page;
-> >  		last_block_in_file = (ext4_readpage_limit(inode) +
-> >  				      blocksize - 1) >> blkbits;
-> > @@ -352,7 +354,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
-> >  		 * This page will go to BIO.  Do we need to send this
-> >  		 * BIO off first?
-> >  		 */
-> > -		if (bio && (last_block_in_bio != blocks[0] - 1)) {
-> > +		if (bio && (last_block_in_bio != blocks[0] - 1 ||
-> > +			    !fscrypt_mergeable_bio(bio, inode, next_block))) {
-> >  		submit_and_realloc:
-> >  			submit_bio(bio);
-> >  			bio = NULL;
-> > @@ -366,6 +369,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
-> >  			 */
-> >  			bio = bio_alloc(GFP_KERNEL,
-> >  				min_t(int, nr_pages, BIO_MAX_PAGES));
-> > +			fscrypt_set_bio_crypt_ctx(bio, inode, next_block,
-> > +						  GFP_KERNEL);
-> >  			ctx = get_bio_post_read_ctx(inode, bio, page->index);
-> >  			if (IS_ERR(ctx)) {
-> >  				bio_put(bio);
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index 1d82b56d9b11..0a6b60620942 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -1357,6 +1357,11 @@ static void ext4_get_ino_and_lblk_bits(struct super_block *sb,
-> >  	*lblk_bits_ret = 8 * sizeof(ext4_lblk_t);
-> >  }
-> >  
-> > +static bool ext4_inline_crypt_enabled(struct super_block *sb)
-> > +{
-> > +	return test_opt(sb, INLINECRYPT);
-> > +}
-> > +
-> >  static const struct fscrypt_operations ext4_cryptops = {
-> >  	.key_prefix		= "ext4:",
-> >  	.get_context		= ext4_get_context,
-> > @@ -1366,6 +1371,7 @@ static const struct fscrypt_operations ext4_cryptops = {
-> >  	.max_namelen		= EXT4_NAME_LEN,
-> >  	.has_stable_inodes	= ext4_has_stable_inodes,
-> >  	.get_ino_and_lblk_bits	= ext4_get_ino_and_lblk_bits,
-> > +	.inline_crypt_enabled	= ext4_inline_crypt_enabled,
-> >  };
-> >  #endif
-> >  
-> > @@ -1460,6 +1466,7 @@ enum {
-> >  	Opt_journal_path, Opt_journal_checksum, Opt_journal_async_commit,
-> >  	Opt_abort, Opt_data_journal, Opt_data_ordered, Opt_data_writeback,
-> >  	Opt_data_err_abort, Opt_data_err_ignore, Opt_test_dummy_encryption,
-> > +	Opt_inlinecrypt,
-> >  	Opt_usrjquota, Opt_grpjquota, Opt_offusrjquota, Opt_offgrpjquota,
-> >  	Opt_jqfmt_vfsold, Opt_jqfmt_vfsv0, Opt_jqfmt_vfsv1, Opt_quota,
-> >  	Opt_noquota, Opt_barrier, Opt_nobarrier, Opt_err,
-> > @@ -1556,6 +1563,7 @@ static const match_table_t tokens = {
-> >  	{Opt_noinit_itable, "noinit_itable"},
-> >  	{Opt_max_dir_size_kb, "max_dir_size_kb=%u"},
-> >  	{Opt_test_dummy_encryption, "test_dummy_encryption"},
-> > +	{Opt_inlinecrypt, "inlinecrypt"},
-> >  	{Opt_nombcache, "nombcache"},
-> >  	{Opt_nombcache, "no_mbcache"},	/* for backward compatibility */
-> >  	{Opt_removed, "check=none"},	/* mount option from ext2/3 */
-> > @@ -1767,6 +1775,11 @@ static const struct mount_opts {
-> >  	{Opt_jqfmt_vfsv1, QFMT_VFS_V1, MOPT_QFMT},
-> >  	{Opt_max_dir_size_kb, 0, MOPT_GTE0},
-> >  	{Opt_test_dummy_encryption, 0, MOPT_GTE0},
-> > +#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
-> > +	{Opt_inlinecrypt, EXT4_MOUNT_INLINECRYPT, MOPT_SET},
-> > +#else
-> > +	{Opt_inlinecrypt, EXT4_MOUNT_INLINECRYPT, MOPT_NOSUPPORT},
-> > +#endif
-> >  	{Opt_nombcache, EXT4_MOUNT_NO_MBCACHE, MOPT_SET},
-> >  	{Opt_err, 0, 0}
-> >  };
-> 
-> On v5 there was a discussion about using a flag like SB_INLINECRYPT to replace
-> the ->inline_crypt_enabled() function.  Was this considered?
-> 
-Right, I'll add this change to the next version too.
-> - Eric
+On some platforms, HZ can be less than 50.
+What happens if congestion_wait() is called with a zero timeout?
+
+> +                               lock_page(cc->rpages[i]);
+> +                               clear_page_dirty_for_io(cc->rpages[i]);
+> +                               goto retry_write;
+> +                       }
+> +                       err = ret;
+> +                       goto out_fail;
+> +               }
+> +
+> +               *submitted += _submitted;
+> +       }
+> +       return 0;
+> +
+> +out_fail:
+> +       /* TODO: revoke partially updated block addresses */
+> +       BUG_ON(compressed);
+> +
+> +       for (++i; i < cc->cluster_size; i++) {
+> +               if (!cc->rpages[i])
+> +                       continue;
+> +               redirty_page_for_writepage(wbc, cc->rpages[i]);
+> +               unlock_page(cc->rpages[i]);
+> +       }
+> +       return err;
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
 
 _______________________________________________
