@@ -2,42 +2,42 @@ Return-Path: <SRS0=niwW=2K=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA13C43603
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Dec 2019 05:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C354EC43603
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Dec 2019 21:27:02 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1E6FE21D7D;
-	Fri, 20 Dec 2019 05:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8E832206DA
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Dec 2019 21:27:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fx0wOMFP";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WICE81wd";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6bqa5Ki"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E6FE21D7D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="SSW8PwMm";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="B664uM8y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnD/cqIs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E832206DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iiB5v-0004Qw-Lf; Fri, 20 Dec 2019 05:44:59 +0000
+	id 1iiPnZ-0007nx-Ft; Fri, 20 Dec 2019 21:27:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1iiB5u-0004Qp-OU
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Dec 2019 05:44:58 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1iiPnY-0007nh-KK
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Dec 2019 21:27:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UA53Cp5EdNLiXb948QYY1O+KqvjlcN/zogEkq7rmYyk=; b=fx0wOMFPFhXxBoyp0aiUsVmVAE
- SD9hjvyfrRtJ1FFH7Pm0OPaXl7jvttYoJG9hYLK0DhDuZRqupfGomyGG2RwU/22LSJaDWB2KFH2PS
- 9xfS1BNRuvI2u0kLzs09Z6FrUyfglIBqQJyiuSgxGoe3himqODatW4WXnC8qG+QQVU44=;
+ bh=mSlQpjOpp1k0pL8XUloQQ9l41kEOOcPuuaJ6qBTNo7A=; b=SSW8PwMmM0RFq+qODeddMyvTVH
+ a0oZ2VmgBWQbARpd9GVhPFmiixioNOjoYjqddaXstaYNUuKM0mLHIq/stwRDenefU/1Mrq3kg+NS6
+ 6jmWi5ttkWIIOvLFpcBF8vnrKBNW6MOIYbIURRLFFM51W4RMBEXiPqGGdTja6gJUoD0w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,39 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UA53Cp5EdNLiXb948QYY1O+KqvjlcN/zogEkq7rmYyk=; b=WICE81wdzsLEs15d8wgnIVR/9u
- 7xud3SEiXiyCWybe7kUFYrKI9cZgmXasrIICNPmN3V3frecgvFMpmEq+DUpYXneqbir/NVLz0WCor
- QJ1U8+eP2wxChcYj6prIUMsQ9fG1sW0DzJ1KmkDaDlBiPZcnytOxs/EMvpnBfBr0mUXs=;
+ bh=mSlQpjOpp1k0pL8XUloQQ9l41kEOOcPuuaJ6qBTNo7A=; b=B664uM8yBANu/E5UIERnv3ETLg
+ /6gv8Ri39ghlApsnEYVE/LiLVCII+85i4bIVh8rD4tHTGxGu9+03CeL26XYY1Wsmcj+JwaXdAc3iK
+ yKCc81ii7Wc3WV8CvSktTvS3cZM8MAoPiWT0vj7EbbYCd6qHXL+plyugKo6p+19B9pOQ=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1iiB5r-00AktL-Ab
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Dec 2019 05:44:58 +0000
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net
- [24.5.143.220])
+ id 1iiPnU-009Bb1-Uo
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Dec 2019 21:27:00 +0000
+Received: from localhost (unknown [104.132.0.81])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 9B84421D7D;
- Fri, 20 Dec 2019 05:44:44 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 82FDE206DA;
+ Fri, 20 Dec 2019 21:26:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1576820684;
- bh=crWqBTWcrWs9Yhos0lMvcsdeK71eAsUMhrzRN5VLDls=;
+ s=default; t=1576877206;
+ bh=GB0uH5v3CIKNR642grWZ0+CyMiDRyZ1gPbwQP4C+Aw0=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=u6bqa5Kiip/6ahbVT5hOuKU19IdN56g9JWtYUfZRTIdrzvnzQyWxjrEXkPz44EwhT
- Jw/r2SBBnmrvnIDAHniEUcNRDJ69m9srW0I5RVFhFCeFWhf/ohypkp+qEGNA49Irq+
- AyDqbRmxX3j6GLIi/aUxl3jSe7NM5UP1WNAfMIjM=
-Date: Thu, 19 Dec 2019 21:44:43 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Satya Tangirala <satyat@google.com>
-Message-ID: <20191220054443.GF718@sol.localdomain>
-References: <20191218145136.172774-1-satyat@google.com>
- <20191218145136.172774-7-satyat@google.com>
+ b=mnD/cqIsY2DEGGEQjd5GSK4d6ltKJg8qF/7HVUf0RdCncfWQz6dCALsQSlUt4WWO5
+ GQjczmmQeTpmisqGhWEcfBC3ePvP11TPVHCEOxmgXyYC8Kd+cni1wpwfewiyQapBan
+ bbci6tmLpqU1uq5xNWdo1u7EofBgHvoVgC/xCiTQ=
+Date: Fri, 20 Dec 2019 13:26:45 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Message-ID: <20191220212645.GA14042@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20191216062806.112361-1-yuchao0@huawei.com>
+ <CAMuHMdUDURUQJjJU+2QQgY1hXN8ndJ6dwc-PF1CWc-HAio0sKA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20191218145136.172774-7-satyat@google.com>
-X-Headers-End: 1iiB5r-00AktL-Ab
-Subject: Re: [f2fs-dev] [PATCH v6 6/9] scsi: ufs: Add inline encryption
- support to UFS
+In-Reply-To: <CAMuHMdUDURUQJjJU+2QQgY1hXN8ndJ6dwc-PF1CWc-HAio0sKA@mail.gmail.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
+X-Headers-End: 1iiPnU-009Bb1-Uo
+Subject: Re: [f2fs-dev] [RFC PATCH v5] f2fs: support data compression
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,77 +88,73 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
- Kuohong Wang <kuohong.wang@mediatek.com>,
- Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: Linux-Next <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Dec 18, 2019 at 06:51:33AM -0800, Satya Tangirala wrote:
-> Wire up ufshcd.c with the UFS Crypto API, the block layer inline
-> encryption additions and the keyslot manager.
+On 12/19, Geert Uytterhoeven wrote:
+> Hi,
 > 
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> ---
->  drivers/scsi/ufs/ufshcd-crypto.c | 30 ++++++++++++++++++
->  drivers/scsi/ufs/ufshcd-crypto.h | 21 +++++++++++++
->  drivers/scsi/ufs/ufshcd.c        | 54 +++++++++++++++++++++++++++++---
->  drivers/scsi/ufs/ufshcd.h        |  8 +++++
->  4 files changed, 108 insertions(+), 5 deletions(-)
+> On Mon, Dec 16, 2019 at 7:29 AM Chao Yu <yuchao0@huawei.com> wrote:
+> >
+> > This patch tries to support compression in f2fs.
 > 
-> diff --git a/drivers/scsi/ufs/ufshcd-crypto.c b/drivers/scsi/ufs/ufshcd-crypto.c
-> index b0aa072d9009..749c325686a7 100644
-> --- a/drivers/scsi/ufs/ufshcd-crypto.c
-> +++ b/drivers/scsi/ufs/ufshcd-crypto.c
-> @@ -352,6 +352,36 @@ void ufshcd_crypto_setup_rq_keyslot_manager(struct ufs_hba *hba,
->  }
->  EXPORT_SYMBOL_GPL(ufshcd_crypto_setup_rq_keyslot_manager);
->  
-> +int ufshcd_prepare_lrbp_crypto(struct ufs_hba *hba,
-> +			       struct scsi_cmnd *cmd,
-> +			       struct ufshcd_lrb *lrbp)
-> +{
-> +	struct bio_crypt_ctx *bc;
-> +
-> +	if (!bio_crypt_should_process(cmd->request)) {
-> +		lrbp->crypto_enable = false;
-> +		return 0;
-> +	}
-> +	bc = cmd->request->bio->bi_crypt_context;
-> +
-> +	if (WARN_ON(!ufshcd_is_crypto_enabled(hba))) {
-> +		/*
-> +		 * Upper layer asked us to do inline encryption
-> +		 * but that isn't enabled, so we fail this request.
-> +		 */
-> +		return -EINVAL;
-> +	}
-> +	if (!ufshcd_keyslot_valid(hba, bc->bc_keyslot))
-> +		return -EINVAL;
-> +
-> +	lrbp->crypto_enable = true;
-> +	lrbp->crypto_key_slot = bc->bc_keyslot;
-> +	lrbp->data_unit_num = bc->bc_dun[0];
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(ufshcd_prepare_lrbp_crypto);
+> 
+> 
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> 
+> > @@ -667,6 +719,24 @@ int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock)
+> >         return err;
+> >  }
+> >
+> > +int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock)
+> > +{
+> > +       u64 free_from = from;
+> > +
+> > +       /*
+> > +        * for compressed file, only support cluster size
+> > +        * aligned truncation.
+> > +        */
+> > +       if (f2fs_compressed_file(inode)) {
+> > +               size_t cluster_size = PAGE_SIZE <<
+> > +                                       F2FS_I(inode)->i_log_cluster_size;
+> > +
+> > +               free_from = roundup(from, cluster_size);
+> 
+> This is a 64-by-32 or 64-by-64 division, causing a link failure on
+> 32-bit platforms:
+> 
+>     fs/f2fs/file.o: In function `f2fs_truncate_blocks':
+>     file.c:(.text+0x1db4): undefined reference to `__udivdi3'
+> 
+> Please use DIV_ROUND_UP_ULL() instead.
 
-The UFS driver only uses the first 64 bits of the DUN, but in this version of
-the patchset the DUN in the bio_crypt_ctx can be up to the real length of the
-algorithm's IV -- which for AES-256-XTS is 128 bits.  So if the user were to
-specify anything nonzero in bits 64-127, the crypto would be done incorrectly.
+Thanks, I applied it in:
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev
 
-(This case isn't encountered with fscrypt.  But it's still an issue with the
-overall approach.)
-
-So there needs to be a way for drivers to declare the max_dun_size they support,
-and prevent them from being used with longer DUNs.
-
-- Eric
+> 
+> Reported-by: <noreply@ellerman.id.au>
+> 
+> > +       }
+> > +
+> > +       return do_truncate_blocks(inode, free_from, lock);
+> > +}
+> 
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
 
 _______________________________________________
