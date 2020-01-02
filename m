@@ -2,84 +2,78 @@ Return-Path: <SRS0=T0Dp=2X=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A28C2D0DE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Jan 2020 02:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02C2C2D0DD
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Jan 2020 08:13:19 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 17BBF24653;
-	Thu,  2 Jan 2020 02:02:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8BD5F215A4;
+	Thu,  2 Jan 2020 08:13:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mFb18UlF";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bgpPWQCU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17BBF24653
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DHg6yMnc";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="M1AVKABp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BD5F215A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1impoL-00083O-B5; Thu, 02 Jan 2020 02:02:05 +0000
+	id 1imvba-00089p-Ej; Thu, 02 Jan 2020 08:13:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <SRS0=UYFn=2X=bugzilla.kernel.org=bugzilla-daemon@kernel.org>)
- id 1impoJ-00083D-HD
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jan 2020 02:02:03 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1imvbZ-00089V-5B
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jan 2020 08:13:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=buoUmJJGDma+tOZWQ72X01eMRlDDc6TRkh+3KAU7cAk=; b=mFb18UlFXEqibUjGbmGAuBli8U
- vkLKh8nPUG7gyjWGOeu04GTczWSBEgbCHYSexKGdIQs/YRiN2y2m/dGRXo0lvaai5EZ55aRkqKqNH
- 4R2t8xYKAb9gcud1Zl+06XybYUlYxbvYEPbgS9MOacjq4LbjrXQF3qgcgv/08ogpzlLg=;
+ bh=yJ5ORB01kFnbVYSe896SDNzGA8X5EQlZDUOWo1jkN34=; b=DHg6yMncY7nGoJGxnN/3qSkyg+
+ o3Fy9p8wOcg1WJiaQIVhQ+LOWuK9/ItSIZrogczAW/nsKoSN99z1+bBOztANCFOngOK6/akQhvIKd
+ hvTJturqLJCbzZOH6Hzjkwh/7XHGpStPfEw5Xh7eCQGdxs/zZae1KE8gUkgy4rChL5DQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=buoUmJJGDma+tOZWQ72X01eMRlDDc6TRkh+3KAU7cAk=; b=bgpPWQCUTD9SZHA50zAmRaf7Dy
- EeVHWPxQ8JniKl6btL7jj1FFKdvgWTZBV6ROnzf3ScdlgHvRst3o3IPbDmOOGRoOnS/4T/qqjUBUS
- Ah+k4gTOW/Ts8B7I+Ftzuy6IVHa3F2sBbcWtbxtNARTRSS3mHMOhAnH4mtGfU1sRKjYo=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=yJ5ORB01kFnbVYSe896SDNzGA8X5EQlZDUOWo1jkN34=; b=M1AVKABpDlK9qs+9WlXFLnseL0
+ jO4Ug38Eyh/NGqxHMxAfsOrhogNsMTU2E1Ih5QByM/gszjcCcB0B+oimSCzVtSnNJsydXfqbuJqk0
+ hWMdIOSu4A54FuIM5mSmwEQKp/uIkEb9WB2WXnpHn9ZKQaZvPgt0iFkBStvGBCx7qFBM=;
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1impoD-006XQm-Ab
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jan 2020 02:02:03 +0000
-From: bugzilla-daemon@bugzilla.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu, 02 Jan 2020 02:01:51 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: chao@kernel.org
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: cc
-Message-ID: <bug-206057-202145-HtOca7M9WH@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-206057-202145@https.bugzilla.kernel.org/>
-References: <bug-206057-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ id 1imvbX-006nZ0-0N
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jan 2020 08:13:17 +0000
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id 902062E29299B644E8A3;
+ Thu,  2 Jan 2020 16:13:04 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 2 Jan 2020
+ 16:13:02 +0800
+To: Eric Biggers <ebiggers@kernel.org>,
+ <linux-f2fs-devel@lists.sourceforge.net>
+References: <20191231181416.47875-1-ebiggers@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <883839de-94e7-9c93-388b-9787e3fa76ba@huawei.com>
+Date: Thu, 2 Jan 2020 16:13:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Headers-End: 1impoD-006XQm-Ab
-Subject: [f2fs-dev] [Bug 206057] 5.5.0-rc2-next: f2fs is extremely slow,
- with ext4 system works well
+In-Reply-To: <20191231181416.47875-1-ebiggers@kernel.org>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1imvbX-006nZ0-0N
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix deadlock allocating
+ bio_post_read_ctx from mempool
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,36 +85,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-fscrypt@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206057
+On 2020/1/1 2:14, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Without any form of coordination, any case where multiple allocations
+> from the same mempool are needed at a time to make forward progress can
+> deadlock under memory pressure.
+> 
+> This is the case for struct bio_post_read_ctx, as one can be allocated
+> to decrypt a Merkle tree page during fsverity_verify_bio(), which itself
+> is running from a post-read callback for a data bio which has its own
+> struct bio_post_read_ctx.
+> 
+> Fix this by freeing first bio_post_read_ctx before calling
+> fsverity_verify_bio().  This works because verity (if enabled) is always
+> the last post-read step.
+> 
+> This deadlock can be reproduced by trying to read from an encrypted
+> verity file after reducing NUM_PREALLOC_POST_READ_CTXS to 1 and patching
+> mempool_alloc() to pretend that pool->alloc() always fails.
+> 
+> Note that since NUM_PREALLOC_POST_READ_CTXS is actually 128, to actually
+> hit this bug in practice would require reading from lots of encrypted
+> verity files at the same time.  But it's theoretically possible, as N
+> available objects doesn't guarantee forward progress when > N/2 threads
+> each need 2 objects at a time.
+> 
+> Fixes: 95ae251fe828 ("f2fs: add fs-verity support")
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Chao Yu (chao@kernel.org) changed:
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |chao@kernel.org
+Thanks,
 
---- Comment #1 from Chao Yu (chao@kernel.org) ---
-I doubt this issue was caused by below case:
-
-- f2fs_convert_inline_dir()
- - f2fs_lock_op()
- - f2fs_get_node_page() failed
- - return w/o call f2fs_unlock_op()
-
-Could you try below fix?
-
-https://lore.kernel.org/linux-f2fs-devel/d4ea0c19-61da-8181-8fd9-62c3dfd42493@huawei.com/T/#mda4115e74bf06dbadc45d82018e4f1a51b7c36c6
-
-If this doesn't work, could you please help to bisect the commit after 5.5-rc1
-which caused this issue?
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
