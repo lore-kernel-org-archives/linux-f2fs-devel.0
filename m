@@ -2,92 +2,91 @@ Return-Path: <SRS0=iHq8=2Z=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 501DDC2D0C2
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  4 Jan 2020 14:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104AEC2D0C2
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  4 Jan 2020 16:48:41 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 275B220656
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  4 Jan 2020 14:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CA4332464E
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  4 Jan 2020 16:48:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bJJo9jyd";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="EqovaYbJ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mykernel.net header.i=cgxu519@mykernel.net header.b="e8i109+Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 275B220656
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mykernel.net
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="RXsz9Ygd";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DATSnwZQ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="EUzP21Z5";
+	dkim=neutral (0-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="DkHWDLoc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4332464E
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
-	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1inkY0-0002Dy-OH; Sat, 04 Jan 2020 14:37:00 +0000
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <cgxu519@mykernel.net>) id 1inkXs-0002Dc-Lq
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 04 Jan 2020 14:36:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Date:Subject:Message-ID:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6RgICWXwhvwNHztqQtPT2dhQ/f21R4V1Nli9Z29zuMM=; b=bJJo9jydRJH8anxsYn+QPtCR/w
- y8wAcADmTfjMYavc4DQ6A3U/0VuwqmzxI/JIHzn0pVijZSTJLWP+CecTNu0E8E3Q8IaudXNMQmbv3
- kSGLkNjy5TNHuRrVrcQvJ0TpjxbzvzuCOL34VsOPbwuIrgmi/V+Xh1f1yAQbddzr7QL0=;
+	d=lists.sourceforge.net; s=beta; h=Content-Type:Content-Transfer-Encoding:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:Message-ID:To:Date:MIME-Version:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=YKMGpWIil/fOQRrsHWL/vU6L32I6GLUbFI4fqnIknFc=; b=RXsz9YgdNsE0e2DKRmlwbPX6Le
+	DKPupc/l0w0yhgJIFvsuP6Hox/IsT6is0lruSfaA18IJXt0UuuC5BGXCmk4IWS64mORGHOx60Neoe
+	c42FoxtXd8Qb6RuUcV+j2R4dym+RXnOQRTLuhZ80m6ComBRjRBBQRxxFu2W+om7Db+3s=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
+	id 1inmbP-0000Lb-Ss; Sat, 04 Jan 2020 16:48:39 +0000
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <oleksandr@natalenko.name>) id 1inmbO-0000LJ-BZ
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 04 Jan 2020 16:48:38 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=sourceforge.net; s=x; h=Message-ID:Subject:Cc:To:From:Date:
+ Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=RboBw79xQDQsEmbNfetBmtEfWpp5jtrjn3jvMeyFDd8=; b=DATSnwZQzxB+FRNH4EDyDyEqL
+ N+3n1qCQkIz2hqDdDkczrhxt33QB2zw7/ZOoB8Qz7dhHz3Gx7WImzzN/R3jw6SIS7+lorkFqBQvRl
+ NrGO+7HwDl56VKxruh6eXte2+ROD5NbO04AXHe3Zgy5Dq7seZ4MrcC5piZB5EeXXEQNfU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Date:Subject:
- Message-ID:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=6RgICWXwhvwNHztqQtPT2dhQ/f21R4V1Nli9Z29zuMM=; b=EqovaYbJkOuzVnFEehFva4/cgk
- c1ioA+KFfKAdCuOBNQhp3jUjtREy1Y+i4twrzdD6+52mRb86+G/jOk+BKWdzL5atIk0Y87doPQ2NB
- MPX+ZXR2vZWZWOV4ppX/ZjibXLklMPQNxMmY0pYbSX4YoTWePMI5fteJZF0RpHhR2ZB8=;
-Received: from sender2-of-o52.zoho.com.cn ([163.53.93.247])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.92.2)
- id 1inkXm-009ZAC-8u
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 04 Jan 2020 14:36:51 +0000
-ARC-Seal: i=1; a=rsa-sha256; t=1578147625; cv=none; d=zoho.com.cn; s=zohoarc; 
- b=bgbpHZyY+MRw8YTJOM1WEOc7yXFt1MCmQ61SZGH2rCLHeEBVB4FX376zfIqrFHr+4TW1CmxdlgFkm71q6+heq6ihQRzsneaLjpR1TqfbZI4hxtQgahVRkRpZ/HgFO844kR/9YK4Nl6kpPECRmtWRxr345LyPkP7idrq2qrvV+eE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn;
- s=zohoarc; t=1578147625;
- h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To;
- bh=6RgICWXwhvwNHztqQtPT2dhQ/f21R4V1Nli9Z29zuMM=; 
- b=B8LMXxqN+WYi2cB+C1WgsNs4MSabWqQN3AnbeGsdg0da3fF8Z2qJkwLk51zoErV3I1R5+bIPR69V7eR1j1vrvhNabBeQobn5ljVEYWfjYM/ETcU7veEbtogT8JhGfCoEU0lCOArv8hKlSxFb8Gx0UDz3PmSWL2H8DlLMob3UJm8=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
- dkim=pass  header.i=mykernel.net;
- spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
- dmarc=pass header.from=<cgxu519@mykernel.net>
- header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1578147625; 
- s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
- h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
- bh=6RgICWXwhvwNHztqQtPT2dhQ/f21R4V1Nli9Z29zuMM=;
- b=e8i109+QZvsd4wrqLK+Ybcy0JonbcvaCzWUFIG4Iwxz4G4U8UYlj1I/qUOqH64cF
- qGOUrEQYCiykqYIU6t+eIUqA/roamSoT7ILbISdwEw6MSZvg6qeMelcXj5bANQIc7Oo
- zJUYuSqTJ4leSILovkpfDaLNU+0aPpMCV9KLhQSk=
-Received: from localhost.localdomain.localdomain (113.116.49.111
- [113.116.49.111]) by mx.zoho.com.cn
- with SMTPS id 15781476236011.4213776319637645;
- Sat, 4 Jan 2020 22:20:23 +0800 (CST)
-From: Chengguang Xu <cgxu519@mykernel.net>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Message-ID: <20200104142004.12883-1-cgxu519@mykernel.net>
-Date: Sat,  4 Jan 2020 22:20:03 +0800
-X-Mailer: git-send-email 2.21.1
+ h=Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:Content-Type
+ :MIME-Version:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=RboBw79xQDQsEmbNfetBmtEfWpp5jtrjn3jvMeyFDd8=; b=E
+ UzP21Z50o1kSCO2FAfxdhlH2iMQNuW6J/Dc5y2dvHd94EofeyKPF6O4D+lyQ6KmV5sMNn0HNGltbw
+ U/WS+UNkm6lbLEP0sttoBU+b5t7y/c5FwKgBV7VGiT81reUUl4leMHfiVdUThxlxH1lFa2Z2Zxir6
+ VJ2OkjfvB4OuBIcw=;
+Received: from vulcan.natalenko.name ([104.207.131.136])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1inmbA-0098L7-RE
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 04 Jan 2020 16:48:38 +0000
+Received: from mail.natalenko.name (vulcan.natalenko.name
+ [IPv6:fe80::5400:ff:fe0c:dfa0])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by vulcan.natalenko.name (Postfix) with ESMTPSA id 7677F67E7DA;
+ Sat,  4 Jan 2020 17:29:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+ s=dkim-20170712; t=1578155371;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=RboBw79xQDQsEmbNfetBmtEfWpp5jtrjn3jvMeyFDd8=;
+ b=DkHWDLocTyngL9E+vupQYYBTyODXr2TXjDvI/3TsSqhEPaM3q+P51wizrwMU4TIGePHz5j
+ unvCnt0pxUY7PaVkSI92RlWHybv7hfOpvkJUVW1EgXM0BTj/q645jA/tGSIQdPh1F8cI/+
+ 5sx+fsMDnp+sAIRnwmzxnUQGkrT3Y5E=
 MIME-Version: 1.0
-X-ZohoCNMailClient: External
-X-Headers-End: 1inkXm-009ZAC-8u
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: fix miscounted block limit in
- f2fs_statfs_project()
+Date: Sat, 04 Jan 2020 17:29:31 +0100
+To: linux-f2fs-devel@lists.sourceforge.net
+User-Agent: Roundcube Webmail/1.4.1
+Message-ID: <4c6cf8418236145f7124ac61eb2908ad@natalenko.name>
+X-Sender: oleksandr@natalenko.name
+X-Headers-End: 1inmbA-0098L7-RE
+Subject: [f2fs-dev] Multidevice f2fs mount after disk rearrangement
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,80 +98,53 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Chengguang Xu <cgxu519@mykernel.net>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+From: Oleksandr Natalenko via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-statfs calculates Total/Used/Avail disk space in block unit,
-so we should translate soft/hard prjquota limit to block unit
-as well.
+Hello.
 
-Below testing result shows the block/inode numbers of
-Total/Used/Avail from df command are all correct afer
-applying this patch.
+I was brave enough to create f2fs filesystem spanning through 2 physical 
+device using this command:
 
-[root@localhost quota-tools]\# ./repquota -P /dev/sdb1
-*** Report for project quotas on device /dev/sdb1
-Block grace time: 7days; Inode grace time: 7days
-              Block limits                File limits
-Project   used soft    hard  grace  used  soft  hard  grace
------------------------------------------------------------
-\#0   --   4       0       0         1     0     0
-\#101 --   0       0       0         2     0     0
-\#102 --   0   10240       0         2    10     0
-\#103 --   0       0   20480         2     0    20
-\#104 --   0   10240   20480         2    10    20
-\#105 --   0   20480   10240         2    20    10
+# mkfs.f2fs -t 0 /dev/sdc -c /dev/sdd
 
-[root@localhost sdb1]\# lsattr -p t{1,2,3,4,5}
-  101 ----------------N-- t1/a1
-  102 ----------------N-- t2/a2
-  103 ----------------N-- t3/a3
-  104 ----------------N-- t4/a4
-  105 ----------------N-- t5/a5
+It worked fine until I removed /dev/sdb from my system, so f2fs devices 
+became:
 
-[root@localhost sdb1]\# df -hi t{1,2,3,4,5}
-Filesystem     Inodes IUsed IFree IUse% Mounted on
-/dev/sdb1        2.4M    21  2.4M    1% /mnt/sdb1
-/dev/sdb1          10     2     8   20% /mnt/sdb1
-/dev/sdb1          20     2    18   10% /mnt/sdb1
-/dev/sdb1          10     2     8   20% /mnt/sdb1
-/dev/sdb1          10     2     8   20% /mnt/sdb1
+/dev/sdc -> /dev/sdb
+/dev/sdd -> /dev/sdc
 
-[root@localhost sdb1]\# df -h t{1,2,3,4,5}
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/sdb1        10G  489M  9.6G   5% /mnt/sdb1
-/dev/sdb1        10M     0   10M   0% /mnt/sdb1
-/dev/sdb1        20M     0   20M   0% /mnt/sdb1
-/dev/sdb1        10M     0   10M   0% /mnt/sdb1
-/dev/sdb1        10M     0   10M   0% /mnt/sdb1
+Now, when I try to mount it, I get the following:
 
-Fixes: 909110c060f2 ("f2fs: choose hardlimit when softlimit is larger than hardlimit in f2fs_statfs_project()")
-Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
----
- fs/f2fs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
+# mount -t f2fs /dev/sdb /mnt/fs
+mount: /mnt/fs: mount(2) system call failed: No such file or directory.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5111e1ffe58a..78efd0e76174 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1219,6 +1219,8 @@ static int f2fs_statfs_project(struct super_block *sb,
- 	if (dquot->dq_dqb.dqb_bhardlimit &&
- 			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
- 		limit = dquot->dq_dqb.dqb_bhardlimit;
-+	if (limit)
-+		limit >>= sb->s_blocksize_bits;
- 
- 	if (limit && buf->f_blocks > limit) {
- 		curblock = dquot->dq_dqb.dqb_curspace >> sb->s_blocksize_bits;
+In dmesg:
+
+[Jan 4 17:25] F2FS-fs (sdb): Mount Device [ 0]:             /dev/sdc,    
+59063,        0 -  1cd6fff
+[  +0,000024] F2FS-fs (sdb): Failed to find devices
+
+fsck also fails with the following assertion:
+
+[ASSERT] (init_sb_info: 908) !strcmp((char *)sb->devs[i].path, (char 
+*)c.devices[i].path)
+
+Am I doing something obviously stupid, and the device path can be 
+(somehow) changed so that the mount succeeds, or this is unfixable, and 
+f2fs relies on persistent device naming?
+
+Please suggest.
+
+Thank you.
+
 -- 
-2.21.1
-
-
-
+   Oleksandr Natalenko (post-factum)
 
 
 _______________________________________________
