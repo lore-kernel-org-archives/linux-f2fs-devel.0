@@ -1,76 +1,94 @@
-Return-Path: <SRS0=ZZcx=2Y=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=iHq8=2Z=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C57C2D0C2
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Jan 2020 20:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D22C2D0C2
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  4 Jan 2020 14:36:58 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2E5BE222C3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Jan 2020 20:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B00AA20656
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  4 Jan 2020 14:36:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HbL9BsPy";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="L4cUOVO8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E5BE222C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="QJYwK5Ab";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="RdZFvzSj";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mykernel.net header.i=cgxu519@mykernel.net header.b="cng1tKuB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00AA20656
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mykernel.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1inTWs-00089L-Em; Fri, 03 Jan 2020 20:26:42 +0000
+	id 1inkXx-0007zU-OS; Sat, 04 Jan 2020 14:36:57 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1inTWr-00089D-3X
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Jan 2020 20:26:41 +0000
+ (envelope-from <cgxu519@mykernel.net>) id 1inkXr-0007yP-KV
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 04 Jan 2020 14:36:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Date:Subject:Message-ID:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=j9HvB9oGjIjK8nwMPkEfnnIOl4ZQOletwuHIBp7Ag3I=; b=HbL9BsPyLQo6n8ZUE9ZD1yJ3Nv
- oIhx8LBkrY0BjZoPTpRGzglbR3gRo0QTE1GIPMffZZKFj27w5u4btHlmjVTUm5SG2xfQxpW0g7dks
- ksgSTQCliNoeF+ESUM6BLwpM+OW8am+D9+Hv1uO6ob6wr9PAt+sTIzCU/Bf+YQHF4vss=;
+ bh=7k8gaLXukPzjJGyY+xIC8DOJaUh+oLrwvPFiks3Knak=; b=QJYwK5Ab8wxfJNP3eCeBYgMUeH
+ Ze02yjhKRaP3dNWyH8bLW3eqrIwXGfYwXCa+vSbqZ+yrAO+PoKiuWQGoR7kjvyMki2dswBqD8q6HY
+ fh4Alj8c1leWqKmyNuNSBPFm7c6DaobgXAnARNnyTAcLCwvxU0jnKKCjHBBy2vb7jmNQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Date:Subject:Message-ID:Cc:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=j9HvB9oGjIjK8nwMPkEfnnIOl4ZQOletwuHIBp7Ag3I=; b=L4cUOVO8TUFCB1YhsZYgRgeiV/
- EHSjnfEusaFl7UOGXRoHg6iqSpaXSuFLqg2tmSml3HgSw+HIFsSGzjHaB+ikyw0hIZuuxrHcT4b8z
- vBReWr4Qe+txcmkQnm8cFrladCz3GT4EiDPx5K5Pgy7JdAUxlBH/5m5A+vwbJGM/yj34=;
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1inTWf-008tX6-Hq
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Jan 2020 20:26:40 +0000
-Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com
- [104.133.0.111] (may be forged)) (authenticated bits=0)
- (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 003KQ8JY013722
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 3 Jan 2020 15:26:09 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 522F24200AF; Fri,  3 Jan 2020 15:26:08 -0500 (EST)
-Date: Fri, 3 Jan 2020 15:26:08 -0500
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Daniel Rosenberg <drosen@google.com>
-Message-ID: <20200103202608.GB4253@mit.edu>
-References: <20191203051049.44573-1-drosen@google.com>
- <20191203051049.44573-5-drosen@google.com>
+ bh=7k8gaLXukPzjJGyY+xIC8DOJaUh+oLrwvPFiks3Knak=; b=RdZFvzSjrS5cCa9eFiutt6Q7oy
+ XWaY+fHuv6qB/pYGUl7WtjADpgCH/c8g44Qjt5clZHOpwiAdBUVb3ak4//WV4nXa5wT83+gMtM1iu
+ UIvg9Kf5zJj4cv5o0aGHJjeUKIbdk1YN4pbKSemopYR6Nuh+ukbOdccMemHJbihKf3N8=;
+Received: from sender2-of-o52.zoho.com.cn ([163.53.93.247])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.92.2)
+ id 1inkXc-0094CR-IZ
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 04 Jan 2020 14:36:51 +0000
+ARC-Seal: i=1; a=rsa-sha256; t=1578147631; cv=none; d=zoho.com.cn; s=zohoarc; 
+ b=Wm1LmxEiRdnPxgUwAF6QFOvou39oZfviXf6u9vBIe+s4Wp24uY8rW49btrDPv9isBkv4WKchZ9HgTPykYIZYlv383SWfGnsJuhY7fQAhR2Fyp9kER6BjGvkqh8S9kXxOTn03xPJABz/DQKZNNUnobxZE0uPuw6GceLkABB4hoiw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn;
+ s=zohoarc; t=1578147631;
+ h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To;
+ bh=7k8gaLXukPzjJGyY+xIC8DOJaUh+oLrwvPFiks3Knak=; 
+ b=fZJBaexuGyqp/gqCJVR0N/D7EWMuF9C8MMisxzgrbDxZ8XIW+hjdXF+uBCK/GoiQTc8zGXJlV8Yr4I/RlulMlp+OGQVzVQPBWIxcLi9Y8IjzvQ5IDA+CSaWlEwQ1JlO2DYxgxqC4rRXlIDdiUa3z2Z3AtGKuk9Ezlc5gkOU/45Y=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+ dkim=pass  header.i=mykernel.net;
+ spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+ dmarc=pass header.from=<cgxu519@mykernel.net>
+ header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1578147631; 
+ s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+ h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type;
+ bh=7k8gaLXukPzjJGyY+xIC8DOJaUh+oLrwvPFiks3Knak=;
+ b=cng1tKuBAc7ah7mdBkmJMkb1ivGDCz7jaUqTUyBO/pfGl6X47GgFlfPQzTB0R8dF
+ mpQSMQnATVk2uNkaUraso0szktsumaHmGPg5zINaL4UFB9+wZguvZtGIiYZiG/jyoCZ
+ nE/r+3MgyPNA1dCdAgiFTowqWQKHmYrcPzLzBeXI=
+Received: from localhost.localdomain.localdomain (113.116.49.111
+ [113.116.49.111]) by mx.zoho.com.cn
+ with SMTPS id 1578147629444192.7016564807659;
+ Sat, 4 Jan 2020 22:20:29 +0800 (CST)
+From: Chengguang Xu <cgxu519@mykernel.net>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Message-ID: <20200104142004.12883-2-cgxu519@mykernel.net>
+Date: Sat,  4 Jan 2020 22:20:04 +0800
+X-Mailer: git-send-email 2.21.1
+In-Reply-To: <20200104142004.12883-1-cgxu519@mykernel.net>
+References: <20200104142004.12883-1-cgxu519@mykernel.net>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20191203051049.44573-5-drosen@google.com>
-X-Headers-End: 1inTWf-008tX6-Hq
-Subject: Re: [f2fs-dev] [PATCH 4/8] vfs: Fold casefolding into vfs
+X-ZohoCNMailClient: External
+X-Headers-End: 1inkXc-0094CR-IZ
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: code cleanup for f2fs_statfs_project()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,89 +100,59 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jonathan Corbet <corbet@lwn.net>, kernel-team@android.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- linux-fscrypt@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
- Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
- Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc: Chengguang Xu <cgxu519@mykernel.net>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Dec 02, 2019 at 09:10:45PM -0800, Daniel Rosenberg wrote:
-> @@ -228,6 +229,13 @@ static inline int dentry_string_cmp(const unsigned char *cs, const unsigned char
->  
->  #endif
->  
-> +bool needs_casefold(const struct inode *dir)
-> +{
-> +	return IS_CASEFOLDED(dir) &&
-> +			(!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir));
-> +}
-> +EXPORT_SYMBOL(needs_casefold);
-> +
+Calling min_not_zero() to simplify complicated prjquota
+limit comparison in f2fs_statfs_project().
 
-I'd suggest adding a check to make sure that dir->i_sb->s_encoding is
-non-NULL before needs_casefold() returns non-NULL.  Otherwise a bug
-(or a fuzzed file system) which manages to set the S_CASEFOLD flag without having s_encoding be initialized might cause a NULL dereference.
+Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+---
+ fs/f2fs/super.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-Also, maybe make needs_casefold() an inline function which returns 0
-if CONFIG_UNICODE is not defined?  That way the need for #ifdef
-CONFIG_UNICODE could be reduced.
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 78efd0e76174..ac01c3f8863d 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1213,12 +1213,8 @@ static int f2fs_statfs_project(struct super_block *sb,
+ 		return PTR_ERR(dquot);
+ 	spin_lock(&dquot->dq_dqb_lock);
+ 
+-	limit = 0;
+-	if (dquot->dq_dqb.dqb_bsoftlimit)
+-		limit = dquot->dq_dqb.dqb_bsoftlimit;
+-	if (dquot->dq_dqb.dqb_bhardlimit &&
+-			(!limit || dquot->dq_dqb.dqb_bhardlimit < limit))
+-		limit = dquot->dq_dqb.dqb_bhardlimit;
++	limit = min_not_zero(dquot->dq_dqb.dqb_bsoftlimit,
++					dquot->dq_dqb.dqb_bhardlimit);
+ 	if (limit)
+ 		limit >>= sb->s_blocksize_bits;
+ 
+@@ -1230,12 +1226,8 @@ static int f2fs_statfs_project(struct super_block *sb,
+ 			 (buf->f_blocks - curblock) : 0;
+ 	}
+ 
+-	limit = 0;
+-	if (dquot->dq_dqb.dqb_isoftlimit)
+-		limit = dquot->dq_dqb.dqb_isoftlimit;
+-	if (dquot->dq_dqb.dqb_ihardlimit &&
+-			(!limit || dquot->dq_dqb.dqb_ihardlimit < limit))
+-		limit = dquot->dq_dqb.dqb_ihardlimit;
++	limit = min_not_zero(dquot->dq_dqb.dqb_isoftlimit,
++					dquot->dq_dqb.dqb_ihardlimit);
+ 
+ 	if (limit && buf->f_files > limit) {
+ 		buf->f_files = limit;
+-- 
+2.21.1
 
-> @@ -247,7 +255,19 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
->  	 * be no NUL in the ct/tcount data)
->  	 */
->  	const unsigned char *cs = READ_ONCE(dentry->d_name.name);
-> +#ifdef CONFIG_UNICODE
-> +	struct inode *parent = dentry->d_parent->d_inode;
->  
-> +	if (unlikely(needs_casefold(parent))) {
-> +		const struct qstr n1 = QSTR_INIT(cs, tcount);
-> +		const struct qstr n2 = QSTR_INIT(ct, tcount);
-> +		int result = utf8_strncasecmp(dentry->d_sb->s_encoding,
-> +						&n1, &n2);
-> +
-> +		if (result >= 0 || sb_has_enc_strict_mode(dentry->d_sb))
-> +			return result;
-> +	}
-> +#endif
 
-This is an example of how we could drop the #ifdef CONFIG_UNICODE
-(moving the declaration of 'parent' into the #if statement) if
-needs_casefold() always returns 0 if !defined(CONFIG_UNICODE).
 
-> @@ -2404,7 +2424,22 @@ struct dentry *d_hash_and_lookup(struct dentry *dir, struct qstr *name)
->  	 * calculate the standard hash first, as the d_op->d_hash()
->  	 * routine may choose to leave the hash value unchanged.
->  	 */
-> +#ifdef CONFIG_UNICODE
-> +	unsigned char *hname = NULL;
-> +	int hlen = name->len;
-> +
-> +	if (IS_CASEFOLDED(dir->d_inode)) {
-> +		hname = kmalloc(PATH_MAX, GFP_ATOMIC);
-> +		if (!hname)
-> +			return ERR_PTR(-ENOMEM);
-> +		hlen = utf8_casefold(dir->d_sb->s_encoding,
-> +					name, hname, PATH_MAX);
-> +	}
-> +	name->hash = full_name_hash(dir, hname ?: name->name, hlen);
-> +	kfree(hname);
-> +#else
->  	name->hash = full_name_hash(dir, name->name, name->len);
-> +#endif
-
-Perhaps this could be refactored out?  It's also used in
-link_path_walk() and lookup_one_len_common().
-
-(Note, there was some strageness in lookup_one_len_common(), where
-hname is freed twice, the first time using kvfree() which I don't
-believe is needed.  But this can be fixed as part of the refactoring.)
-
-	   	    	     	    	  - Ted
 
 
 _______________________________________________
