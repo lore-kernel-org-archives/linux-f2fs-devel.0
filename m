@@ -4,74 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB723C33C9A
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jan 2020 08:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF1DC32771
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jan 2020 08:02:11 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BD04D21734
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jan 2020 08:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 6033F21734
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jan 2020 08:02:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="O1Yd8hSz";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="d+e+tpIs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD04D21734
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="N6CqY0ei";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="f/91xhre"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6033F21734
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ioNKx-0004Hu-Lw; Mon, 06 Jan 2020 08:02:07 +0000
+	id 1ioNL1-0004DW-0o; Mon, 06 Jan 2020 08:02:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1ioNKv-0004Hl-96
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 Jan 2020 08:02:05 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1ioNKz-0004DO-N2
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 Jan 2020 08:02:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
- Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZbvnHTdwDOK6akBKgU+lhA9WinAqvdxPVWGgPwBnftg=; b=O1Yd8hSz1QHUBna+Dgn8fA++6i
- TREPLMxIsjW9KiUQMaaP+VEQuhjeqKM7rIO+GK6MOXQ734YRsS+eGaTIn5u0Qwt8Jm506oguBq3Xr
- mkSVZzxrEDj7rHoKo7oBWsYzxEm2RhZphEHMtPCbMc0XlJMcCKHFye1N7fDwa5alewo8=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
  CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ZbvnHTdwDOK6akBKgU+lhA9WinAqvdxPVWGgPwBnftg=; b=d+e+tpIsENyW+qNKUqCTUY1cRZ
- 5n/V8gt5p9pfP9wE3NZpZqot2onZfj5YgJ2k9zgSfcoTfD+JnkvQ6wsko2OUosmhDQHWb6flWwp2j
- cWih5ApP+IVFuvIv/pDgh7ok+V0toZ2YqWTLbUSlDN0gY4w4iQVo58zfqDKQFTBmfgVY=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=z24SyhueFvCeacIA5kVChaWXmwLpqrKPVQAHlSINtlE=; b=N6CqY0ei5yfO21Pn6eJk2X3T1G
+ phL2usSZ6O8+31azsFAXhwYERjGjDhFLvrJ/D92iiP4anUm0xxUiu1MRR1rJen17Imzk32xJ1dtG6
+ tq7c71DdhICSt5gwCA9V3nENZ2ORdgMEJV/Mqq/PQS+J4bHIvdFTlIZMHU0b1R3xFT0E=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=z24SyhueFvCeacIA5kVChaWXmwLpqrKPVQAHlSINtlE=; b=f
+ /91xhrex4o7f/rAe5eD8Az/588SrbEmxrxmTNzGqprGnIQdSCpBy14vHb+U3NZBJSVaqNVjP6chlV
+ CB23wFpuJHNwJ7Ff8zJwUYLe4F4kFYqYmH9MVvHl9jP7yAUwQj2bRpxbleVHBcf/SunlHXemJJGfp
+ 4vVaUoemiBIU5DBY=;
 Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ioNKs-00AvrS-Se
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 Jan 2020 08:02:05 +0000
+ id 1ioNKx-00BaJV-Ve
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 Jan 2020 08:02:09 +0000
 Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id D99BBB0FD549768C145A;
+ by Forcepoint Email with ESMTP id E51A1A58AD1726910730;
  Mon,  6 Jan 2020 16:01:55 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 6 Jan 2020 16:01:49 +0800
+ 14.3.439.0; Mon, 6 Jan 2020 16:01:47 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Mon, 6 Jan 2020 16:01:44 +0800
-Message-ID: <20200106080144.52363-4-yuchao0@huawei.com>
+Date: Mon, 6 Jan 2020 16:01:41 +0800
+Message-ID: <20200106080144.52363-1-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20200106080144.52363-1-yuchao0@huawei.com>
-References: <20200106080144.52363-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1ioNKs-00AvrS-Se
-Subject: [f2fs-dev] [PATCH 4/4] f2fs: compress: release compress context in
- caller of f2fs_read_multi_pages()
+X-Headers-End: 1ioNKx-00BaJV-Ve
+Subject: [f2fs-dev] [PATCH 1/4] f2fs: compress: fix panic in mkwrite
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,70 +85,50 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Execute initialize/destroy flow of compress context outside of
-f2fs_read_multi_pages()
+[ 1237.458208] invalid opcode: 0000 [#1] SMP PTI
+[ 1237.458228] CPU: 9 PID: 6291 Comm: fsstress Tainted: G           OE     5.5.0-rc1 #36
+[ 1237.458255] Hardware name: Xen HVM domU, BIOS 4.1.2_115-908.790. 06/05/2017
+[ 1237.458299] RIP: 0010:f2fs_vm_page_mkwrite+0x1c6/0x630 [f2fs]
+[ 1237.458321] Code: d6 fe ff ff 49 8b 75 20 48 89 df e8 24 0a 05 00 85 c0 41 89 c7 78 8e 0f 84 bd fe ff ff 45 31 f6 41 83 ff 02 0f 85 c3 fe ff ff <0f> 0b 45 84 f6 0f 84 e4 00 00 00 ba 01 00 00 00 be 05 00 00 00 48
+[ 1237.458374] RSP: 0000:ffffaecdc0c1bd38 EFLAGS: 00010246
+[ 1237.458395] RAX: 0000000000000002 RBX: ffff9241c5b5d8c0 RCX: 0000000000000000
+[ 1237.458418] RDX: ffffeeb715d42407 RSI: ffff9242d8085168 RDI: 0000000000000000
+[ 1237.458441] RBP: ffff9243f1c67000 R08: 0000000000017677 R09: 0000000000000004
+[ 1237.458463] R10: 0000000000000000 R11: ffff9242d8085000 R12: ffffaecdc0c1bdf8
+[ 1237.458488] R13: ffffeeb715d037c0 R14: 0000000000000000 R15: 0000000000000002
+[ 1237.458512] FS:  00007f71f28ce700(0000) GS:ffff92443d840000(0000) knlGS:0000000000000000
+[ 1237.458540] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1237.458561] CR2: 00007f71f28c9000 CR3: 00000007e0ba2003 CR4: 00000000001606e0
+[ 1237.458586] Call Trace:
+[ 1237.458611]  do_page_mkwrite+0x5a/0xc0
+[ 1237.458630]  __handle_mm_fault+0xb81/0x12a0
+[ 1237.458648]  ? do_mmap+0x4bd/0x640
+[ 1237.458665]  handle_mm_fault+0xe3/0x1d0
+[ 1237.458686]  __do_page_fault+0x288/0x500
+[ 1237.458704]  do_page_fault+0x30/0x120
+[ 1237.458725]  page_fault+0x3e/0x50
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/compress.c |  1 +
- fs/f2fs/data.c     | 10 +++-------
- 2 files changed, 4 insertions(+), 7 deletions(-)
+ fs/f2fs/file.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 3390351d2e39..7727b6553a14 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -615,6 +615,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
- 
- 		ret = f2fs_read_multi_pages(cc, &bio, cc->cluster_size,
- 						&last_block_in_bio, false);
-+		f2fs_destroy_compress_ctx(cc);
- 		if (ret)
- 			goto release_pages;
- 		if (bio)
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 5476d33f2d76..e68b9f4b7913 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2121,7 +2121,6 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 							false);
- 				f2fs_free_dic(dic);
- 				f2fs_put_dnode(&dn);
--				f2fs_destroy_compress_ctx(cc);
- 				*bio_ret = bio;
- 				return ret;
- 			}
-@@ -2139,7 +2138,6 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 
- 	f2fs_put_dnode(&dn);
- 
--	f2fs_destroy_compress_ctx(cc);
- 	*bio_ret = bio;
- 	return 0;
- 
-@@ -2213,10 +2211,9 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 							max_nr_pages,
- 							&last_block_in_bio,
- 							is_readahead);
--				if (ret) {
--					f2fs_destroy_compress_ctx(&cc);
-+				f2fs_destroy_compress_ctx(&cc);
-+				if (ret)
- 					goto set_error_page;
--				}
- 			}
- 			ret = f2fs_is_compressed_cluster(inode, page->index);
- 			if (ret < 0)
-@@ -2257,8 +2254,7 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 							max_nr_pages,
- 							&last_block_in_bio,
- 							is_readahead);
--				if (ret)
--					f2fs_destroy_compress_ctx(&cc);
-+				f2fs_destroy_compress_ctx(&cc);
- 			}
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9aeadf14413c..f18d1262b274 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -72,7 +72,10 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 			err = ret;
+ 			goto err;
+ 		} else if (ret) {
+-			f2fs_bug_on(sbi, ret == CLUSTER_HAS_SPACE);
++			if (ret == CLUSTER_HAS_SPACE) {
++				err = -EAGAIN;
++				goto err;
++			}
+ 			need_alloc = false;
  		}
- #endif
+ 	}
 -- 
 2.18.0.rc1
 
