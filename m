@@ -2,53 +2,43 @@ Return-Path: <SRS0=jKbZ=25=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0929C282DD
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jan 2020 18:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B424BC282DD
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jan 2020 20:50:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A2B692067D;
-	Wed,  8 Jan 2020 18:50:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7E57E206DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jan 2020 20:50:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="IMUcSKhs";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="jTZHXNAc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lJlR18bv";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="U3nfmbMH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B692067D
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="IawjOscy";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="mmAAofne";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEP25404"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E57E206DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=oT8/Lv/txkaewwtN/xtClYllbRYv+fAmuDvyyAtQ/i0=; b=IMUcSKhsMkqB7XbW7qB5zKzby
-	Lsul6efwv+OD1Suf0feHKeoMFYf7mjQT/lMbB6E7vHtksuZZ7bQ32S+XWUBg/cccDgQX0aipBNtBX
-	sszUDCFJw/QsqZ+YBaOQlxqn+p5vkf91EbE9jST5M2vTsLtTBarjzRLwzcV97Apat8f8o=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ipGPr-00039o-9q; Wed, 08 Jan 2020 18:50:51 +0000
+	id 1ipIHF-0008Ip-Qx; Wed, 08 Jan 2020 20:50:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <satyat@google.com>) id 1ipGPp-00039M-Rg
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jan 2020 18:50:49 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1ipIHE-0008Ii-My
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jan 2020 20:50:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GqM7/Gox89N6RYmX8N+C+JYNDY9Y92t5hXeig9A+0NE=; b=jTZHXNAcd+SZ3gyBpPG8WB1GOh
- SKhaqFGkFaXhbIMfO7ohPdKfrZBneabntu0G1O3nnTE3EnDO6dcLL8deHN6829hr8wC1VRH+pT1zG
- CII6YxA9l850FmSBTCIhY14pB8Fz2yCLfvyHazoFaKh4m/cGJBvY14zuew1iLG9lqPyI=;
+ bh=kHRK09mJ8rTjIWo1X6T606nnci3H2fbueQWF/G6s9Ng=; b=IawjOscyUbFief1LPYT+OxNecY
+ D+fDdWPpdoTn0NejCcgp4ARe+emvjSvp90qdUm503aI5yPdOdbEpVa6rV9cwdd7lVOxS4pOf4v4T7
+ 49aly7c1yrUp04AwlnE+gRlq1hPbvY+39ULQpOORMppiUe1692cRVgSyVovgj7AQ+At8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -56,58 +46,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GqM7/Gox89N6RYmX8N+C+JYNDY9Y92t5hXeig9A+0NE=; b=lJlR18bvnJH78pUNBu0aDgjiLd
- k088FduCX8PMKc2oaJoyO2tHHXHNFNW0A7K5ZQ+x/EP3BVGPnkZvxg04zW7XaK8aZ0njHpVTGx6cj
- 3L5zoDbjXMNl2+R9Mum4RLSsagi58SaMMFRpuRnNf8FyYntapoyjJ/At1ch9KlepJfzo=;
-Received: from mail-pj1-f65.google.com ([209.85.216.65])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1ipGPj-00DhYD-2v
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jan 2020 18:50:44 +0000
-Received: by mail-pj1-f65.google.com with SMTP id s94so95872pjc.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 08 Jan 2020 10:50:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:from:to:cc:subject:message-id:references:mime-version
- :content-disposition:in-reply-to:user-agent;
- bh=GqM7/Gox89N6RYmX8N+C+JYNDY9Y92t5hXeig9A+0NE=;
- b=U3nfmbMHq/W60Cggp7RJIO+vjwZF+eOByq0zw2NdD3Ar4SSHaOIVputw0PVblX2/o4
- rGuycl8hULEeLa76n6VKtiejtrAZxV2ip7LKG2pkIUppk7kP+nYsoJH8PIA2ERd6eHZF
- 7kg8c8oxe1HfsuNiPK04ZvCZVI7p4MrF4wrplzGBHJ7+0t7oRiI5MUorB0njq6uxH/p4
- g3w3/0xI8Flgn5SK4qw2rmZOVRk4uCUJbVGYc+4YUDe02CHqfod56+BNdpYqpkr4u4Ju
- QWRtvYtE+1qc0bdsIr5YDGmM3klH/1hIseMl+g3jErzlysuBDR4N36fNB1+B3orn9fso
- nn7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:date:from:to:cc:subject:message-id:references
- :mime-version:content-disposition:in-reply-to:user-agent;
- bh=GqM7/Gox89N6RYmX8N+C+JYNDY9Y92t5hXeig9A+0NE=;
- b=F+4P835OXRFOLqA+I4EF5ar/hdGDC/tNb8NaQPMkwmemsLta2HMCocR7KUE706PpLs
- xdCFxzBD++hfA7A8HNU1xzO3RxiBE4D8byu/41jsXh+HQlBt+iGvpUk+nV7YuYxKfk6y
- kjSNRv+298WQt2mrChLvva7P6vmZ3n9HqkAWNGMw2tAKBG/qRrk6IL0ZSRc8NiIYXqUd
- qph3S2MHHfiiTN+3YXXBxV6vBl7uA3BfUR4EP7RPzQTaWfL2skPw66e/9m/uWZM2W2PW
- MJvNSNvTPeJYlqOgZAbXqbpEmH9Rv1KwmunSyWYsud0Lsq5BEFqDguFbfNYmpfj2haTC
- lQGA==
-X-Gm-Message-State: APjAAAWuSheNNCXF0OnfWyaU7TDjU6b+nG0w8HF9iyXLJZOYVCtwVM5f
- SLcxNdgYmuDc2r7fZJ4ZlM3FSA==
-X-Google-Smtp-Source: APXvYqwLsrqAQku6UEZ+m75sX13ln6fLUNoETR2ZmPckprU0bqTzke9nFnndvHW2jpMVg425OyWE3w==
-X-Received: by 2002:a17:90a:480a:: with SMTP id a10mr14637pjh.88.1578508990909; 
- Wed, 08 Jan 2020 10:43:10 -0800 (PST)
-Received: from google.com ([2620:15c:201:0:7f8c:9d6e:20b8:e324])
- by smtp.gmail.com with ESMTPSA id y7sm4734645pfb.139.2020.01.08.10.43.09
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 08 Jan 2020 10:43:10 -0800 (PST)
-Date: Wed, 8 Jan 2020 10:43:05 -0800
-To: Christoph Hellwig <hch@infradead.org>
-Message-ID: <20200108184305.GA173657@google.com>
-References: <20191218145136.172774-1-satyat@google.com>
- <20200108140556.GB2896@infradead.org>
+ bh=kHRK09mJ8rTjIWo1X6T606nnci3H2fbueQWF/G6s9Ng=; b=mmAAofneF5u93w35wwCB1adSDI
+ q9tubqF+Kqr1H3t95MRRY2eMGOzsvu7zwqX0/cciAfaUJPoRsi70pLmK0RzhQHk9xPKZ1UhAMNjxR
+ vqT51KSrzs1PYwNNK4bXMOT635V0c8QyKMi7Dnxjw4l9rLwyS0ggubfQdjbf6cyuSAnE=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1ipIHC-00EuMt-4q
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jan 2020 20:50:04 +0000
+Received: from localhost (unknown [104.132.0.81])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id B1B3F206DB;
+ Wed,  8 Jan 2020 20:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1578516591;
+ bh=RoGyoxDjbmh57ZZyR6e3bepLtqCh5hqe8I/Oj1/AnkE=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=nEP25404Vj17mJBZ/HZTJvolNiedCiANYMD0o9tuLERpiN96XVn4eMyDNideENRJ1
+ KlIfDTSu08HhqtmDiArry0dKlMZRLrj/se9q0JVg0brPkFb9u7OrkNWKH8j1Ij9lci
+ GfN2cRGOCqgB5mX7h7iRl7rs6tRdnXwLuEcmd+ew=
+Date: Wed, 8 Jan 2020 12:49:50 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <20200108204950.GD28331@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20200106080144.52363-1-yuchao0@huawei.com>
+ <20200106080144.52363-3-yuchao0@huawei.com>
+ <20200106190809.GE50058@jaegeuk-macbookpro.roam.corp.google.com>
+ <e5c45ba2-6437-c84a-11b3-abe8c16a5c6c@huawei.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200108140556.GB2896@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1ipGPj-00DhYD-2v
-Subject: Re: [f2fs-dev] [PATCH v6 0/9] Inline Encryption Support
+In-Reply-To: <e5c45ba2-6437-c84a-11b3-abe8c16a5c6c@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
+X-Headers-End: 1ipIHC-00EuMt-4q
+Subject: Re: [f2fs-dev] [PATCH 3/4] f2fs: compress: fix error path in
+ prepare_compress_overwrite()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,46 +92,113 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Satya Tangirala via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Satya Tangirala <satyat@google.com>
-Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
- Kuohong Wang <kuohong.wang@mediatek.com>,
- Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Jan 08, 2020 at 06:05:56AM -0800, Christoph Hellwig wrote:
-> I haven't been able to deep dive into the details, but the structure
-> of this still makes me very unhappy.
+On 01/07, Chao Yu wrote:
+> On 2020/1/7 3:08, Jaegeuk Kim wrote:
+> > On 01/06, Chao Yu wrote:
+> >> - fix to release cluster pages in retry flow
+> >> - fix to call f2fs_put_dnode() & __do_map_lock() in error path
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/compress.c | 22 ++++++++++++++++------
+> >>  1 file changed, 16 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> >> index fc4510729654..3390351d2e39 100644
+> >> --- a/fs/f2fs/compress.c
+> >> +++ b/fs/f2fs/compress.c
+> >> @@ -626,20 +626,26 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+> >>  	}
+> >>  
+> >>  	for (i = 0; i < cc->cluster_size; i++) {
+> >> +		f2fs_bug_on(sbi, cc->rpages[i]);
+> >> +
+> >>  		page = find_lock_page(mapping, start_idx + i);
+> >>  		f2fs_bug_on(sbi, !page);
+> >>  
+> >>  		f2fs_wait_on_page_writeback(page, DATA, true, true);
+> >>  
+> >> -		cc->rpages[i] = page;
+> >> +		f2fs_compress_ctx_add_page(cc, page);
+> >>  		f2fs_put_page(page, 0);
+> >>  
+> >>  		if (!PageUptodate(page)) {
+> >> -			for (idx = 0; idx < cc->cluster_size; idx++) {
+> >> -				f2fs_put_page(cc->rpages[idx],
+> >> -						(idx <= i) ? 1 : 0);
+> >> +			for (idx = 0; idx <= i; idx++) {
+> >> +				unlock_page(cc->rpages[idx]);
+> >>  				cc->rpages[idx] = NULL;
+> >>  			}
+> >> +			for (idx = 0; idx < cc->cluster_size; idx++) {
+> >> +				page = find_lock_page(mapping, start_idx + idx);
+> > 
+> > Why do we need to lock the pages again?
 > 
-> Most of it is related to the software fallback again.  Please split the
-> fallback into a separate file, and also into a separate data structure.
-> There is abslutely no need to have the overhead of the software only
-> fields for the hardware case.
+> Here, all pages in cluster has one extra reference count, we need to find all
+> pages, and release those references on them.
 > 
-The fallback actually is in a separate file, and the software only fields
-are not allocated in the hardware case anymore, either - I should have
-made that clear(er) in the coverletter.
-> On the counter side I think all the core block layer code added should
-> go into a single file instead of split into three with some odd
-> layering.
+> cc->rpages may not record all pages' pointers, so we can not use
 > 
-Alright, I'll look into this. I still think that the keyslot manager
-should maybe go in a separate file because it does a specific, fairly
-self contained task and isn't just block layer code - it's the interface
-between the device drivers and any upper layer.
-> Also what I don't understand is why this managed key-slots on a per-bio
-> basis.  Wou;dn't it make a whole lot more sense to manage them on a
-> struct request basis once most of the merging has been performed?
-I don't immediately see an issue with making it work on a struct request
-basis. I'll look into this more carefully.
+> f2fs_put_page(cc->rpages[idx], (idx <= i) ? 1 : 0); to release all pages' references.
+> 
+> BTW, find_get_page() should be fine to instead find_lock_page().
 
-Thanks!
-Satya
+Could you take a look at this?
+
+https://github.com/jaegeuk/f2fs/commit/2e4ea726633dd2666f57ae88dfec5d97694d6495
+
+
+Thanks,
+
+> 
+> > 
+> >> +				f2fs_put_page(page, 1);
+> >> +				f2fs_put_page(page, 0);
+> >> +			}
+> >>  			kvfree(cc->rpages);
+> >>  			cc->nr_rpages = 0;
+> >>  			goto retry;
+> >> @@ -654,16 +660,20 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+> >>  		for (i = cc->cluster_size - 1; i > 0; i--) {
+> >>  			ret = f2fs_get_block(&dn, start_idx + i);
+> >>  			if (ret) {
+> >> -				/* TODO: release preallocate blocks */
+> >>  				i = cc->cluster_size;
+> >> -				goto unlock_pages;
+> >> +				break;
+> >>  			}
+> >>  
+> >>  			if (dn.data_blkaddr != NEW_ADDR)
+> >>  				break;
+> >>  		}
+> >>  
+> >> +		f2fs_put_dnode(&dn);
+> > 
+> > We don't neeed this, since f2fs_reserve_block() put the dnode.
+> 
+> Correct.
+> 
+> Thanks,
+> 
+> > 
+> >> +
+> >>  		__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
+> >> +
+> >> +		if (ret)
+> >> +			goto unlock_pages;
+> >>  	}
+> >>  
+> >>  	*fsdata = cc->rpages;
+> >> -- 
+> >> 2.18.0.rc1
+> > .
+> > 
 
 
 _______________________________________________
