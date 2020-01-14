@@ -2,42 +2,42 @@ Return-Path: <SRS0=YoBC=3D=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32124C33C9E
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Jan 2020 21:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAC4C33C9E
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Jan 2020 21:31:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 009E924656;
-	Tue, 14 Jan 2020 21:24:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id E4C3C24656;
+	Tue, 14 Jan 2020 21:31:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fkmwnFe+";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cKo92U6D";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BddM2F3H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 009E924656
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ARUKWb0t";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="gFhJZ4YC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gy5kqOEx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C3C24656
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1irTfd-0005Ia-HO; Tue, 14 Jan 2020 21:24:17 +0000
+	id 1irTmt-0005d8-GF; Tue, 14 Jan 2020 21:31:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1irTfc-0005IS-4r
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Jan 2020 21:24:16 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1irTml-0005cg-LW
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Jan 2020 21:31:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HuuIXbOJ388ULq86cf/i4f6wAE3MmNF2plKIyFh59fU=; b=fkmwnFe+fY5amQPpJdZ5KuDZGz
- ajnDK4KztuZz+RlAzScvE1NIs6kXccfxvgsGPpb2Tbg76UT6W35xT/eGRDRn6wso6opwmCpXRvqv3
- ihYo1GoAmpYAe7rSdqR2QNrXdUPZOoNfOE8k+dCyBUYpdkJkhKKeTMS0cZXmDrZGAt3o=;
+ bh=RabqbOe7oTTLAHrHrAVz19mTBktBicXEaWn3LU5uRJc=; b=ARUKWb0t/cnMnfEzi59eevlPRI
+ QYqPjVK6un1SjMKWo7bKs7qsKmIKYUuDxLYh8iHLhZThTqze9CSrhwtZU2h6/53s8l4r8hwDGA/Jt
+ uZWeqCQG+MX3AJJ2qld+ZUwBQgDpFI9nQ7Bb0ILbxohVOtG4f3skdcRF27rbk3/fKpD4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,39 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=HuuIXbOJ388ULq86cf/i4f6wAE3MmNF2plKIyFh59fU=; b=cKo92U6Df0PM5krKi1L2YefYE7
- orCfcAAxISXwLktuCup5hB0TORS9hBbBni4tU0QD8ybNHJz8fyVFvLBEKUNjQyF+Jrua6lLDH2Fia
- XHhb9dhAhBcwCxRS1h3+pOsvCSpOzuZJqgRSzKfMRSQNyzW3w4FK8DxwdA9oM8q01bg4=;
+ bh=RabqbOe7oTTLAHrHrAVz19mTBktBicXEaWn3LU5uRJc=; b=gFhJZ4YCmSYCyGCDmcB/BIHnUw
+ eVdsthK1SbiQGQio8eR3wmYf0fw5XhM0VlyXM0Nq2ZnNuQo/ofNehVIfSKdOUs4/JskTH5lbsrDf5
+ dvIPrj4bQhNs2DKLuPIYsAvq3XOsK/H9m6t6K/3hF+jv9raFU8ySwURlUxRwTl8yb/0U=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1irTfb-003SYZ-4h
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Jan 2020 21:24:16 +0000
+ id 1irTmk-005xnX-Bk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Jan 2020 21:31:39 +0000
 Received: from gmail.com (unknown [104.132.1.77])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 4F26E24656;
- Tue, 14 Jan 2020 21:24:09 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 9B3EB24656;
+ Tue, 14 Jan 2020 21:31:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1579037049;
- bh=aGWleahYjUMp+oq+LHbLyk7aqRexeZp1Q7zVEa2V+PU=;
+ s=default; t=1579037492;
+ bh=GYh5yHnh97crjUGcpNk4U6wgwEXtefUmh/sSj0nDhcw=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=BddM2F3HQyL+zyp/NCjh1ksC6Ks5xnobKc3HJiLEelHGXS6fRmiu4+TrQ9D+KxPuF
- ZxeMIbNC3YS5xU6MMKLUcIphzYNSt4c/BtgZcpe7ofl5xTZo2G2aQ73b2M3jzYsOUm
- lIACnPmJWBtg1/i5ywycEKS6N0GXbFf6eFtXjDJM=
-Date: Tue, 14 Jan 2020 13:24:07 -0800
+ b=Gy5kqOExzRwji185eoB98JBO7eFuWv/RF0w4IPYwJHE7O3C14sKdF4CTZuMLYUhli
+ nOzatFMeiKnnTyXd2psPtdj1xFMw8jRowwvjxH7l2SzLsCQN+R6GzFAWgSgVV7EUx3
+ kNcZ7+QZ+D77atEjVGVwo+B2/3TMSDF/JmZEfgCg=
+Date: Tue, 14 Jan 2020 13:31:31 -0800
 From: Eric Biggers <ebiggers@kernel.org>
-To: Satya Tangirala <satyat@google.com>
-Message-ID: <20200114212407.GF41220@gmail.com>
-References: <20191218145136.172774-1-satyat@google.com>
- <20191218145136.172774-3-satyat@google.com>
+To: linux-fscrypt@vger.kernel.org
+Message-ID: <20200114213130.GG41220@gmail.com>
+References: <20200106205533.137005-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20191218145136.172774-3-satyat@google.com>
+In-Reply-To: <20200106205533.137005-1-ebiggers@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1irTfb-003SYZ-4h
-Subject: Re: [f2fs-dev] [PATCH v6 2/9] block: Add encryption context to
- struct bio
+X-Headers-End: 1irTmk-005xnX-Bk
+Subject: Re: [f2fs-dev] [PATCH v2] fs-verity: implement readahead of Merkle
+ tree pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,32 +88,83 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
- Kuohong Wang <kuohong.wang@mediatek.com>,
- Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Victor Hsieh <victorhsieh@google.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Dec 18, 2019 at 06:51:29AM -0800, Satya Tangirala wrote:
-> +static inline void bio_crypt_set_ctx(struct bio *bio,
-> +				     const struct blk_crypto_key *key,
-> +				     u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE],
-> +				     gfp_t gfp_mask)
-> +{
-> +	struct bio_crypt_ctx *bc = bio_crypt_alloc_ctx(gfp_mask);
-> +
-> +	bc->bc_key = key;
-> +	memcpy(bc->bc_dun, dun, sizeof(bc->bc_dun));
-> +	bc->bc_ksm = NULL;
-> +	bc->bc_keyslot = -1;
-> +
-> +	bio->bi_crypt_context = bc;
-> +}
+On Mon, Jan 06, 2020 at 12:55:33PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> When fs-verity verifies data pages, currently it reads each Merkle tree
+> page synchronously using read_mapping_page().
+> 
+> Therefore, when the Merkle tree pages aren't already cached, fs-verity
+> causes an extra 4 KiB I/O request for every 512 KiB of data (assuming
+> that the Merkle tree uses SHA-256 and 4 KiB blocks).  This results in
+> more I/O requests and performance loss than is strictly necessary.
+> 
+> Therefore, implement readahead of the Merkle tree pages.
+> 
+> For simplicity, we take advantage of the fact that the kernel already
+> does readahead of the file's *data*, just like it does for any other
+> file.  Due to this, we don't really need a separate readahead state
+> (struct file_ra_state) just for the Merkle tree, but rather we just need
+> to piggy-back on the existing data readahead requests.
+> 
+> We also only really need to bother with the first level of the Merkle
+> tree, since the usual fan-out factor is 128, so normally over 99% of
+> Merkle tree I/O requests are for the first level.
+> 
+> Therefore, make fsverity_verify_bio() enable readahead of the first
+> Merkle tree level, for up to 1/4 the number of pages in the bio, when it
+> sees that the REQ_RAHEAD flag is set on the bio.  The readahead size is
+> then passed down to ->read_merkle_tree_page() for the filesystem to
+> (optionally) implement if it sees that the requested page is uncached.
+> 
+> While we're at it, also make build_merkle_tree_level() set the Merkle
+> tree readahead size, since it's easy to do there.
+> 
+> However, for now don't set the readahead size in fsverity_verify_page(),
+> since currently it's only used to verify holes on ext4 and f2fs, and it
+> would need parameters added to know how much to read ahead.
+> 
+> This patch significantly improves fs-verity sequential read performance.
+> Some quick benchmarks with 'cat'-ing a 250MB file after dropping caches:
+> 
+>     On an ARM64 phone (using sha256-ce):
+>         Before: 217 MB/s
+>         After: 263 MB/s
+>         (compare to sha256sum of non-verity file: 357 MB/s)
+> 
+>     In an x86_64 VM (using sha256-avx2):
+>         Before: 173 MB/s
+>         After: 215 MB/s
+>         (compare to sha256sum of non-verity file: 223 MB/s)
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> Changed v1 => v2:
+>   - Ensure that the pages continue being marked accessed when they're
+>     already cached and Uptodate.
+>   - Removed unnecessary IS_ERR(page) checks.
+>   - Adjusted formatting of the prototype of f2fs_mpage_readpages() to
+>     avoid a merge conflict with the f2fs tree.
+> 
+>  fs/ext4/verity.c             | 47 ++++++++++++++++++++++++++++++++++--
+>  fs/f2fs/data.c               |  2 +-
+>  fs/f2fs/f2fs.h               |  3 +++
+>  fs/f2fs/verity.c             | 47 ++++++++++++++++++++++++++++++++++--
+>  fs/verity/enable.c           |  8 +++++-
+>  fs/verity/fsverity_private.h |  1 +
+>  fs/verity/open.c             |  1 +
+>  fs/verity/verify.c           | 34 +++++++++++++++++++++-----
+>  include/linux/fsverity.h     |  7 +++++-
+>  9 files changed, 137 insertions(+), 13 deletions(-)
 
-The 'dun' argument should be const.
+Applied to fscrypt.git#fsverity for 5.6.
 
 - Eric
 
