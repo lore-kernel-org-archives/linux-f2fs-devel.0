@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0825FC33C9E
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Jan 2020 21:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C2AC33C9E
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Jan 2020 21:32:50 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C9CCD24656;
-	Tue, 14 Jan 2020 21:32:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id E7E8E24656;
+	Tue, 14 Jan 2020 21:32:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="MSm98KRR";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="kz23fWO6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFAbY7Rh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9CCD24656
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="JIJdVojk";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IUYqOdD5";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgTXs4Z4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E8E24656
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1irTnW-0005ff-DS; Tue, 14 Jan 2020 21:32:26 +0000
+	id 1irTnt-00028b-Jn; Tue, 14 Jan 2020 21:32:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1irTnN-0005fE-9F
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Jan 2020 21:32:17 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1irTnr-00028K-EX
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Jan 2020 21:32:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZZd7WF+QzAlg+j1cDCZOmZwyR7MO2sG59WK7olIJpVU=; b=MSm98KRRdAdAL2DFnz5+dnZaBJ
- Ch6wYZuI6coeWstGPpaL/m4mgNxr1UZosOIRw5kkBoEGtax9waCugeRn5b4NJscolcBDfGTe/fx34
- Dc2+GCHf8M3NucgI9hlEX8y7NBIw+PSgDOXWL/NB0MC80xawAuRia3OyYS8/TcVnoXEk=;
+ bh=61GVDQ3XxFLelk8BddLFfb8qKhQzL3u3wnnLZ2ljuhQ=; b=JIJdVojkg5kVz84dl/qaqDaZZM
+ Ick7kaeraKoBHqNh+lTfqyM8zNujgFeWdo6Rt8a+ZO2hN1MHBFAzGDaNpVVbU0LNCBj655dFx8u0I
+ X7oh1hF/zQSCILQFDgUT0CIbkkwatDvljcESiooUvcD6VB/wT/Juqvsi1yRe7V36K4oo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,38 +45,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZZd7WF+QzAlg+j1cDCZOmZwyR7MO2sG59WK7olIJpVU=; b=kz23fWO6kU/CN6VekW1mmWHq/U
- ow96IT3jPwv+4y/VWhUOc67hI2P4CPI9rzkXFAz3sCZTNLHhMROW7vuiI7QNPtSkKm5zj4HdG4ed+
- 5jacs8CiWxnhG/pCbBYQoF/XgeftQpqCe6a6SOBcf9CUk6ltGB1AnlSQlL8hPs0q63Ts=;
+ bh=61GVDQ3XxFLelk8BddLFfb8qKhQzL3u3wnnLZ2ljuhQ=; b=IUYqOdD57cpLLBIC7iXat6TYLt
+ 6faFy6NGyz7ZCPBTyntIYOT9Ci3c++lZjNrk3HTeccVrfFOeBQQ5fA0D49+m32ObQKo8WyGCm8ruS
+ fXBA/bp5joNvGf4Cb9ImR1wIOcHkcov+HWg1iRAfHSLsVH2HF/y7qDIrw3IFNtRvfC4o=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1irTnJ-003Wet-T2
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Jan 2020 21:32:17 +0000
+ id 1irTnq-003T0G-CS
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Jan 2020 21:32:47 +0000
 Received: from gmail.com (unknown [104.132.1.77])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 1F10824656;
- Tue, 14 Jan 2020 21:32:08 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id B43F324656;
+ Tue, 14 Jan 2020 21:32:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1579037528;
- bh=1BLiOHY3+U5mgGQo0sq5tDdGfHavHOxZk/eO8aynUDY=;
+ s=default; t=1579037560;
+ bh=dozMZNZbwXQXYTYPrlUelgfZm/+WwDTPJ1CePGDuCLQ=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=pFAbY7RhdWOk14PGf8+P83JLb5NFJ0dIyAnlJOVYqj+j9q4AXhxPdWEQ5YxFbPRux
- 3jJ4P2cwG2NOCfpyDCukOWJQ+2fbb0qD5N1hWCW+nD6sv8nKPhcdGIHj1Aq4Eidi00
- k14FYq1As+ta64nKhGMRtDCzi9Ke8z9/5k4Ckrtk=
-Date: Tue, 14 Jan 2020 13:32:06 -0800
+ b=tgTXs4Z4uC5Ug2qyrWa7r3M9ydC41IjJUg9yRfyWTP/ou74LzDuWMdSplppsecIW/
+ Hw1b0cCk+aM8F/+EMk182zPEoSlJ5ZTI4BVX+6MCrJl1m0XX7m0hlibGuBUr/ki7fx
+ bTZkvkfKhcpchpyHoBwPtUcVtKtY7JDfT0KJzTjU=
+Date: Tue, 14 Jan 2020 13:32:39 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Message-ID: <20200114213206.GH41220@gmail.com>
-References: <20200106205410.136707-1-ebiggers@kernel.org>
+Message-ID: <20200114213239.GI41220@gmail.com>
+References: <20191231175545.20709-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200106205410.136707-1-ebiggers@kernel.org>
+In-Reply-To: <20191231175545.20709-1-ebiggers@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1irTnJ-003Wet-T2
-Subject: Re: [f2fs-dev] [PATCH v3] fs-verity: implement readahead for
- FS_IOC_ENABLE_VERITY
+X-Headers-End: 1irTnq-003T0G-CS
+Subject: Re: [f2fs-dev] [PATCH] fs-verity: use mempool for hash requests
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,57 +87,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- Victor Hsieh <victorhsieh@google.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jan 06, 2020 at 12:54:10PM -0800, Eric Biggers wrote:
+On Tue, Dec 31, 2019 at 11:55:45AM -0600, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> When it builds the first level of the Merkle tree, FS_IOC_ENABLE_VERITY
-> sequentially reads each page of the file using read_mapping_page().
-> This works fine if the file's data is already in pagecache, which should
-> normally be the case, since this ioctl is normally used immediately
-> after writing out the file.
+> When initializing an fs-verity hash algorithm, also initialize a mempool
+> that contains a single preallocated hash request object.  Then replace
+> the direct calls to ahash_request_alloc() and ahash_request_free() with
+> allocating and freeing from this mempool.
 > 
-> But in any other case this implementation performs very poorly, since
-> only one page is read at a time.
+> This eliminates the possibility of the allocation failing, which is
+> desirable for the I/O path.
 > 
-> Fix this by implementing readahead using the functions from
-> mm/readahead.c.
-> 
-> This improves performance in the uncached case by about 20x, as seen in
-> the following benchmarks done on a 250MB file (on x86_64 with SHA-NI):
-> 
->     FS_IOC_ENABLE_VERITY uncached (before) 3.299s
->     FS_IOC_ENABLE_VERITY uncached (after)  0.160s
->     FS_IOC_ENABLE_VERITY cached            0.147s
->     sha256sum uncached                     0.191s
->     sha256sum cached                       0.145s
-> 
-> Note: we could instead switch to kernel_read().  But that would mean
-> we'd no longer be hashing the data directly from the pagecache, which is
-> a nice optimization of its own.  And using kernel_read() would require
-> allocating another temporary buffer, hashing the data and tree pages
-> separately, and explicitly zero-padding the last page -- so it wouldn't
-> really be any simpler than direct pagecache access, at least for now.
+> This doesn't cause deadlocks because there's no case where multiple hash
+> requests are needed at a time to make forward progress.
 > 
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
+>  fs/verity/enable.c           |  8 +--
+>  fs/verity/fsverity_private.h | 16 ++++--
+>  fs/verity/hash_algs.c        | 98 +++++++++++++++++++++++++++---------
+>  fs/verity/open.c             |  4 +-
+>  fs/verity/verify.c           | 17 +++----
+>  5 files changed, 97 insertions(+), 46 deletions(-)
 > 
-> Changed v2 => v3:
->   - Ensure that the pages continue being marked accessed when they're
->     already cached and Uptodate.
-> 
-> Changed v1 => v2:
->   - Only do sync readahead when the page wasn't found in the pagecache
->     at all.
->   - Use ->f_mapping so that the inode doesn't have to be passed.
-> 
->  fs/verity/enable.c | 45 +++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 39 insertions(+), 6 deletions(-)
 
 Applied to fscrypt.git#fsverity for 5.6.
 
