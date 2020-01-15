@@ -2,41 +2,42 @@ Return-Path: <SRS0=YOv7=3E=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2EEC33CB1
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Jan 2020 09:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09FACC33CB1
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Jan 2020 10:00:10 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4C04D24679
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Jan 2020 09:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CDF52207FF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Jan 2020 10:00:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="A5OhOIpK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lTtR0JsS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C04D24679
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="D3xZTTq/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="j4UwgTD0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDF52207FF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1irfNv-0000v5-Ls; Wed, 15 Jan 2020 09:54:47 +0000
+	id 1irfT7-0002GZ-BK; Wed, 15 Jan 2020 10:00:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1irfNs-0000uM-OC
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Jan 2020 09:54:44 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1irfSu-0002De-Ag
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Jan 2020 09:59:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iUFNXolgudU1gu/h+pwY0lt0MT1f5oHmI644MRTPzpc=; b=A5OhOIpKedIZb2oLD2qa2iaoN+
- BxQvZonXUYPbu8ESyxOh88ANSzUv52swJDYJh76hnIf0MNIuGmXIfmqy1k/gIimSuXwNQnmLmwPMd
- zr/PdaKqvtHkW4+E69jFqo8NXlw+3gQ8FMEqW71If5PJRChlGcT3Bw/QmHa05Lply6k4=;
+ bh=9YteP5GzoEgeCiv/2SwlJCeygTqboUjvturZJ3ErSkc=; b=D3xZTTq/HbkQuN6ZaY6O/Nn5OB
+ +vg4IJfyudSsAfkxIe1OsoQ4aqcAOYlaCPn8/J7TM7jS1ZjYrJcJE2txzDFmABuBncQwcp8ZclxPz
+ oxWycTskAM0wGO/3Bz5t3h5q7Y2bLz6vGVY9ixrtQMksk9RR0f+75vxB7epgQG752bis=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -44,40 +45,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=iUFNXolgudU1gu/h+pwY0lt0MT1f5oHmI644MRTPzpc=; b=lTtR0JsSOXiYg/dJM8mnFCdW5g
- V4fbcE/sfbER/8Iu/HOcig2LsdsRHA1Ye4rkiW+jusyJ/ZTGlah2FIhkIvHNXXHEi2cILE4cQrZMU
- rHHG9zkHIA4mBeS2rdfr1oc0ec4dJAKPpkDckmaCv4rVQozkji3cGwlQcU6tMiqsMHj0=;
+ bh=9YteP5GzoEgeCiv/2SwlJCeygTqboUjvturZJ3ErSkc=; b=j4UwgTD02C22oAnUW6kc+0492t
+ YpBIVeGAaRLOFf7O2fHQ/4Ls9HpeoQBn0w/JY8uLLKJ3keaflkVgp3DzNcdzZ2tBwlR/YumccRxZQ
+ BSrhK+pQ4F5EcpaeV5TL64DdG0nn7zcmg/7TaagIYPMy+6rNUHvn0A4bKesY5nzB/GWU=;
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1irfNp-006yQz-4U
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Jan 2020 09:54:44 +0000
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 79DE1587D749E023B9B4;
- Wed, 15 Jan 2020 17:54:29 +0800 (CST)
+ id 1irfSp-006z0k-V5
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Jan 2020 09:59:56 +0000
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id B6D1B12F2BA9F911C53F;
+ Wed, 15 Jan 2020 17:59:44 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 15 Jan
- 2020 17:54:23 +0800
-To: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>, Yuehaibing
- <yuehaibing@huawei.com>
-References: <20191224124359.15040-1-yuehaibing@huawei.com>
- <673efe18-d528-2e9b-6d44-a6a7a22086f3@huawei.com>
- <62ce1981-9061-f798-a65d-9599ceceb4b8@huawei.com>
- <20191226082419.ljbhystwkhp2d4gh@shindev.dhcp.fujisawa.hgst.com>
- <20200115023328.bummaaa7pdnao5qk@shindev.dhcp.fujisawa.hgst.com>
+ (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 15 Jan
+ 2020 17:59:38 +0800
+To: Zhang Xiaoxu <zhangxiaoxu5@huawei.com>, <jaegeuk@kernel.org>,
+ <chao@kernel.org>
+References: <20200115015424.41496-1-zhangxiaoxu5@huawei.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <0aea7754-2114-cc78-3453-bc608bacd45a@huawei.com>
-Date: Wed, 15 Jan 2020 17:54:23 +0800
+Message-ID: <dcdba6c2-7ad1-86ae-c5d8-7ad0ee8ea3b2@huawei.com>
+Date: Wed, 15 Jan 2020 17:59:38 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20200115023328.bummaaa7pdnao5qk@shindev.dhcp.fujisawa.hgst.com>
+In-Reply-To: <20200115015424.41496-1-zhangxiaoxu5@huawei.com>
 Content-Language: en-US
 X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1irfNp-006yQz-4U
-Subject: Re: [f2fs-dev] [PATCH -next] f2fs: remove set but not used variable
- 'cs_block'
+X-Headers-End: 1irfSp-006z0k-V5
+Subject: Re: [f2fs-dev] [PATCH] f2fs: Make f2fs_verify_pages static
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,53 +85,46 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/1/15 10:33, Shinichiro Kawasaki wrote:
-> On Dec 26, 2019 / 17:24, Shin'ichiro Kawasaki wrote:
->> On Dec 26, 2019 / 14:05, Yuehaibing wrote:
->>> On 2019/12/26 11:44, Chao Yu wrote:
->>>> On 2019/12/24 20:43, YueHaibing wrote:
->>>>> fs/f2fs/segment.c: In function fix_curseg_write_pointer:
->>>>> fs/f2fs/segment.c:4485:35: warning: variable cs_block set but not used [-Wunused-but-set-variable]
->>>>>
->>>>> It is never used since commit 362d8a920384 ("f2fs: Check
->>>>> write pointer consistency of open zones") , so remove it.
->>>>
->>>> Thanks for the fix!
->>>>
->>>> Do you mind merging this patch to original patch? as it's still
->>>> pending in dev branch.
->>>
->>> It's ok for me.
->>>
->>
->> Thank you for this catch and the fix. Appreciated.
-> 
-> I have merged YueHaibing's change to the write pointer consistency fix patch
-> and sent out as the v6 series. Thanks again for finding out the unused variable.
-> 
-> I was not sure if I should add Chao Yu's reviewed by tag to the patch from which
-> the unused variable was removed. To be strict, I didn't add the tag. Just
-> another quick review by Chao will be appreciated.
+Hi Xiaoxu,
 
-Thanks for the revision. :)
+On 2020/1/15 9:54, Zhang Xiaoxu wrote:
+> Fix sparse warning:
+> 
+> fs/f2fs/data.c:187:6: warning:
+>   symbol 'f2fs_verify_pages' was not declared. Should it be static?
 
-I guess Jaegeuk can merge that kind of fix into original patch, and
-meanwhile keeping old Reviewed-by tag in that patch.
+Thanks for your patch.
+
+It will be better to merge this patch into original patch which is
+still on dev status, let us know if you have any other concern. :)
 
 Thanks,
 
 > 
-> --
-> Best Regards,
-> Shin'ichiro Kawasaki.
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Zhang Xiaoxu <zhangxiaoxu5@huawei.com>
+> ---
+>  fs/f2fs/data.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 2576d7dd047d..b27b72107911 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -184,7 +184,7 @@ static void f2fs_decompress_work(struct bio_post_read_ctx *ctx)
+>  }
+>  
+>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+> -void f2fs_verify_pages(struct page **rpages, unsigned int cluster_size)
+> +static void f2fs_verify_pages(struct page **rpages, unsigned int cluster_size)
+>  {
+>  	f2fs_decompress_end_io(rpages, cluster_size, false, true);
+>  }
 > 
 
 
