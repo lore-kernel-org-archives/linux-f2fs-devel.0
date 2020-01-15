@@ -2,73 +2,106 @@ Return-Path: <SRS0=YOv7=3E=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB0BC33C9E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Jan 2020 01:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3FDC33C9E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Jan 2020 02:41:02 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 37E35214AF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Jan 2020 01:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7C678222C3;
+	Wed, 15 Jan 2020 02:41:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Z6NEtVn/";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="S9niiuAn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E35214AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="jRok2Byv";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="EKOSYVhZ";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="FjjAD8di"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C678222C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1irXuB-0004kx-BN; Wed, 15 Jan 2020 01:55:35 +0000
+	id 1irYc9-0002hV-M0; Wed, 15 Jan 2020 02:41:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <zhangxiaoxu5@huawei.com>) id 1irXu9-0004kZ-M8
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Jan 2020 01:55:33 +0000
+ (envelope-from <prvs=276f86f0a=shinichiro.kawasaki@wdc.com>)
+ id 1irYc8-0002h8-WD
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Jan 2020 02:41:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pINNsJLgeANaTDYfI9ocWwH/UPhecvpG3ynSd4b74ug=; b=Z6NEtVn/VAo6mHVK9k21tGnx/w
- l1Gx8Z27M8iZwh9wKZMj6xycsTSGgwuDziZFWuxQnXU6z+Z2dNzT3rHwqVfSg9vkRX0TqRpqTmgCe
- Yo0ADfk6OZZr0pXUp7e70VgJ6ek8u1EI/MfGqNytqRBMxauAG7E7W+4bQcFnkVsbRQb4=;
+ bh=kBqqq7Qux37Tb03Hi/jnQHrfnz+/J0dqWUL5xCiyb+I=; b=jRok2ByvdUwPoetIWU3cvOGzLw
+ qqRt0SXXfoC3ZlVbvinCVH4z5YQkE+U6KGcrZe90ht05D23hGOD8eKOy0J2DK5hX1Mb+rb1JWKDMP
+ uszPH74exR/46oxjF1bxSlM8jLXcLWA97eFLf9FWFO1YwRPC7BCBRaFtihwuzzvlCHfk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=pINNsJLgeANaTDYfI9ocWwH/UPhecvpG3ynSd4b74ug=; b=S
- 9niiuAnBqxIGhYasjr60grMaClYRx3UZFkjdRq4SQHVm5j+qVQ6E0yuPFksTxya9kspnB6OcjPLgi
- 54j1dhyQs4usEHlPPl5WaRCGgDUYCrA2MpysWEP+SzVwB34YlTwEVo5bqSZwDJNqzA+u1kn4UzWi0
- JfOV7f1XcE3Vyh18=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ List-Owner:List-Archive; bh=kBqqq7Qux37Tb03Hi/jnQHrfnz+/J0dqWUL5xCiyb+I=; b=E
+ KOSYVhZLRl4IKROvaLSTMvAzarmadeUI450pmLJ8lBZBvED91ZdwUtabLKRYb2Mnlwo7cIIbsTVEj
+ UE93cDMam2GwbPbWbhbdygRageDXmelPu7FbDX+GTJDjSoDaidsdsdoSCbdBzwNu6SAvNxsg2xylI
+ Ej52SLlcEG3bfZR8=;
+Received: from esa5.hgst.iphmx.com ([216.71.153.144])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1irXu7-003mtc-MW
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Jan 2020 01:55:33 +0000
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id B17A099DC1C796F2F1AC;
- Wed, 15 Jan 2020 09:55:22 +0800 (CST)
-Received: from localhost.localdomain (10.175.124.28) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 15 Jan 2020 09:55:13 +0800
-From: Zhang Xiaoxu <zhangxiaoxu5@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <zhangxiaoxu5@huawei.com>
-Date: Wed, 15 Jan 2020 09:54:24 +0800
-Message-ID: <20200115015424.41496-1-zhangxiaoxu5@huawei.com>
-X-Mailer: git-send-email 2.17.2
+ id 1irYc4-003pRg-HL
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Jan 2020 02:41:00 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+ d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+ t=1579056057; x=1610592057;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=dlyrtumlplpns302Ct72feVekF1V0rrMEnsLuZRyhuk=;
+ b=FjjAD8diaiihLTJoM71s9+LoOe+/xU7tjZv/Qy2Ej02iMD+uYQpZgRNA
+ VDeQLb0+R3k9xrmnM8wxKOIXBUXRfniyOsn8JtHQ8+oJuYMUQQaDdK6oL
+ H66irxsKvXcEtFf2/5zvAskP1jUms/U12XaPQCivjcC8dlZBSFEdmRppT
+ /ezH9uKapKugoOqPcSLo1lfZmAD2MdEgptZ/Vy2eIWH6WHUdSdYK3j9Sr
+ yQiyFO0ul5evegyzGTtO0S6LXPNGY+ndA1tKOy5L/4sxFIAKttCXAyjFk
+ 0LDhPT3NWcESDPqqdTtjBEqsmopWS7rwKlgRIY1DrSGmCARJ9xEWChxND Q==;
+IronPort-SDR: hEQgncxvuB5MHQMtFMg1dXzX4tBPDvjVXeNnnr8j7ZHVd42M4BQnLZ7I2p6e0d9XP3FlNeuqi9
+ jN5P29z+aISewTd3uHYCxcjh30z2yogw2p0Kj50lG6N3zdPerNV3N/0fqSPHwwxjA5hD7lZFoR
+ BalvLvCd6Q+xororqjlTCuhOZY22TjTEtSTFeFsdwrr+xAItKaZ7n9sq2B4wY5RMPgfmADCqju
+ hhLE0gY56hJjeBhc83CTkN7iYa8auOFfq29g86MCzmtvS4SLlzc7WM1g8JpeuibWPvyy2POOZE
+ 32I=
+X-IronPort-AV: E=Sophos;i="5.70,320,1574092800"; d="scan'208";a="128158035"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com)
+ ([199.255.45.14])
+ by ob1.hgst.iphmx.com with ESMTP; 15 Jan 2020 10:25:11 +0800
+IronPort-SDR: a2xvRweEWZyPimO6xwW98iND9rCkKBHQNLda0UbRpOxSMqYV4j2JR04GMuaDnko8fNIjixaf9/
+ 96lV/+n93Tg/XII48KlOiIPqUQ9e5SoTmLpaDgunq6MmfbQqshWF07kBKp/nvBR1V/HDe9M4n4
+ 7PR+79SiW+7/JgjYqPDSJtCI55eC/LEFKRXtYc1rPt2wHPBMoAj5H/ygrd6qdPdsysMpFNZBJ7
+ rwwKsbF52t+2YBAFIQdz+KYzegi3Cu6aS0ABkNi9ItjWIZ9XB7rHFvvonuRa/srJf+fbxrAvlt
+ 7AIGpoNjr/lDRz6x8A1+3Xbo
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+ by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Jan 2020 18:18:48 -0800
+IronPort-SDR: X+DdRcSOnIi1EAR/hm9mc6qyeegodvjrjFyLsC5iPXrjrYSC5Zm/ch7MReOZEehlIT/N34mCw9
+ PdJYkwlmeYo5YzcCWAwTBmKx5xkItMb7B/+EZ4i6Z3M+bCP3sbCJRlqC57nLFWV+g0uMT+xe56
+ s+KTd6SmcpuqKfdpiT+MXTPbdRRNaiD+Z5xTYJAw8jEZPuVW+ZbwUvXWThJ8waS0dfV1C4FtmG
+ UvMODiTUka+ZqVLCoHTnPeK4Pj9HU6tEh+A4QTkEsRuG+hIcZMjl3Gt0c5zxcYq1Cuv/m+5k3f
+ a10=
+WDCIronportException: Internal
+Received: from shindev.dhcp.fujisawa.hgst.com (HELO shindev.fujisawa.hgst.com)
+ ([10.149.53.87])
+ by uls-op-cesaip01.wdc.com with ESMTP; 14 Jan 2020 18:25:11 -0800
+From: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+ linux-f2fs-devel@lists.sourceforge.net
+Date: Wed, 15 Jan 2020 11:25:07 +0900
+Message-Id: <20200115022509.199291-1-shinichiro.kawasaki@wdc.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1irXu7-003mtc-MW
-Subject: [f2fs-dev] [PATCH] f2fs: Make f2fs_verify_pages static
+X-Headers-End: 1irYc4-003pRg-HL
+Subject: [f2fs-dev] [PATCH v6 0/2] f2fs: Check write pointers of zoned block
+ devices
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,37 +113,67 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Damien Le Moal <Damien.LeMoal@wdc.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Fix sparse warning:
+On sudden f2fs shutdown, zoned block device status and f2fs meta data can be
+inconsistent. When f2fs shutdown happens during write operations, write pointers
+on the device go forward but the f2fs meta data does not reflect the write
+pointer progress. This inconsistency will eventually cause "Unaligned write
+command" error when restarting write operation after the next mount.
 
-fs/f2fs/data.c:187:6: warning:
-  symbol 'f2fs_verify_pages' was not declared. Should it be static?
+This error is observed with xfstests test case generic/388, which enforces
+sudden shutdown during write operation and checks the file system recovery.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Zhang Xiaoxu <zhangxiaoxu5@huawei.com>
----
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch series adds a feature to f2fs to check and fix the write pointer
+consistency when zoned block devices get mounted. Per discussion on the list,
+implement two checks: a check for open zones and a check for non-open zones.
+The first patch add the check for open zones that current segments point to.
+Check write pointer consistency with current segment positions recorded in CP,
+and if they are inconsistent, assign a new zone to the current segment. When
+fsync data exists, check and fix the consistency after fsync data recovery.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2576d7dd047d..b27b72107911 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -184,7 +184,7 @@ static void f2fs_decompress_work(struct bio_post_read_ctx *ctx)
- }
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
--void f2fs_verify_pages(struct page **rpages, unsigned int cluster_size)
-+static void f2fs_verify_pages(struct page **rpages, unsigned int cluster_size)
- {
- 	f2fs_decompress_end_io(rpages, cluster_size, false, true);
- }
+The second patch adds the check for non-open zones that current segments do not
+point to. Compare write pointers with valid block maps in SIT, and if they are
+inconsistent, report the failure or fix by resetting the write pointer.
+
+Thank goes to Chao Yu for the detailed discussion on the list.
+
+Changes from v5:
+* Removed unused variable cs_block that YueHaibing pointed out
+
+Changes from v4:
+* Replaced blkdev_zone_mgmt() function calls with __f2fs_issue_discard_zone()
+
+Changes from v3:
+* Rebased to linux master tip and fixed conflicts for blkdev_report_zones()
+* Discard zones with write pointers not at zone start but without valid blocks,
+  resetting the write pointers instead of fsck run by users
+* Improved readability of open-zone's check condition and indent with tab
+
+Changes from v2:
+* 1st patch: Fix write pointer in SBI_POR_DOING guard
+             Removed __set_inuse() and f2fs_stop_checkpoint()
+* 2nd patch: Reversed bitmap search and removed __set_inuse()
+             Changed condition for disable_roll_forward/norecovery mount options
+
+Changes from v1:
+* 2nd patch: Added check to ensure zones are in main segments
+
+Shin'ichiro Kawasaki (2):
+  f2fs: Check write pointer consistency of open zones
+  f2fs: Check write pointer consistency of non-open zones
+
+ fs/f2fs/f2fs.h     |   2 +
+ fs/f2fs/recovery.c |  20 +++-
+ fs/f2fs/segment.c  | 257 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/super.c    |  11 ++
+ 4 files changed, 288 insertions(+), 2 deletions(-)
+
 -- 
-2.17.2
+2.24.1
 
 
 
