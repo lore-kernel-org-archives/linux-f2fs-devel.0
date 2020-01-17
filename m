@@ -2,83 +2,106 @@ Return-Path: <SRS0=qGLh=3G=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E12C33CB1
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 17 Jan 2020 16:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5011FC33CB6
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 17 Jan 2020 21:43:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 91BCC2072E;
-	Fri, 17 Jan 2020 16:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1CD292083E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 17 Jan 2020 21:43:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="eULWsGyS";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="GqfmdFSh";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eH5zxBHy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91BCC2072E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="G+c54o3q";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KDxbfkpA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="jtTaK2QX";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="hrp+gp+g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CD292083E
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=LdLNxt9nX9bO/Bfq9gth63S7jWqwStn9Qd8L3GtaoxA=; b=G+c54o3qMjkof8Vr2Tbf5HaypI
+	QH0X6gfrUK2rtQUsDoZHJMAhc6vHXfnLkHupznoF8Aq9NF1+MetkWxBt3ZqhYEvm6quxEGBUUjMdv
+	N0p2c2l0SpC0v/ol6Hs1a/Xw4ZZgt2jmPlbMLAv+BuO7ff9v3eGv8whUHsD7M5SleEA4=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1isUvH-0005oy-QW; Fri, 17 Jan 2020 16:56:39 +0000
+	id 1isZOT-0001xp-9K; Fri, 17 Jan 2020 21:43:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <gregkh@linuxfoundation.org>) id 1isUvF-0005oq-WD
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 17 Jan 2020 16:56:38 +0000
+ (envelope-from <3XioiXgYKADMSgdhTcVddVaT.Rdb@flex--drosen.bounces.google.com>)
+ id 1isZOQ-0001xc-QW
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 17 Jan 2020 21:43:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
+ Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mWU9I+Zj58pCSXDnBPZbfOCMGnL/j9t7N2Dm6idJyO0=; b=eULWsGySx/B/AiSdx8O1A7EUPN
- E1eDmtfMk2vriQ0Ug9+fUZi21yAceFm6jVXrZl9fpgcFSVzk64pOd/t8mkkT3NeEFvqnH8lhO/ZA3
- 3Pxmra273kdob+uHb08ZNp8vWEUeF1Q/tc5xZKDlK+38UtcChxGL9KmlfING2Nnksl5o=;
+ bh=yBEf4c2Y/V+ZNwnYQzLFCcZKpZySQQ5dJ9X0QGzY9eo=; b=KDxbfkpARPjKZBlrOvASKCeOgU
+ YyDFDFZpqI+DL4Ra9kqT/BUURidpDXDAyYkzJ6RxKyJTwwgdHw34uiEmjdIaW8z/ei5lk3Oziholp
+ UmLqx/pbwME24KPUGTqiJYs2RmU0wrSsyLuipsgk2DHO9chm+rM6LU9BublfVjz4fdAo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=mWU9I+Zj58pCSXDnBPZbfOCMGnL/j9t7N2Dm6idJyO0=; b=GqfmdFShga6TN8D/sq394lwYl3
- CV+9vmdC6fkXQ68RAg8TH2yte+oQ1ksDPoe5sXJmfi1194rT+21lYMW4APo8sMS24pjSnqrRivfsp
- 7tEVodWPPdOelpNwyIbmeWoYnFl6eOgKQIWiBwy92Z+Ko5vSoMpu5gdo4hHybf3VZx4I=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1isUvB-008OJS-II
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 17 Jan 2020 16:56:37 +0000
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl
- [83.86.89.107])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id EE81C2072B;
- Fri, 17 Jan 2020 16:56:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1579280186;
- bh=itV4GZdAwjB8Lf2mvaZRf7Z5T2MikjbR+tHNgH8x7Ho=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=eH5zxBHyWnHhM0fzuTtFItQX3h3ARLC8wvey/8gEsSn1hob0N06+kjPORG7OY14De
- QrJjZUhJyLqvlTzk7np+QfUA6dQP7Pgw5pF504M0eQqDOensC73sgpHjdgT0iomyQb
- Ympq5BXzPJhTWLd5/oAA3cB4qYuWz4YWHFNxeD3Q=
-Date: Fri, 17 Jan 2020 17:56:24 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Message-ID: <20200117165624.GC1937954@kroah.com>
-References: <20200116192008.35766-1-ebiggers@kernel.org>
- <20200117081246.GA16846@infradead.org>
- <20200117164054.GD448999@mit.edu>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200117164054.GD448999@mit.edu>
-X-Headers-End: 1isUvB-008OJS-II
-Subject: Re: [f2fs-dev] [PATCH] fscrypt: reserve flags for hardware-wrapped
- keys feature
+ h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=yBEf4c2Y/V+ZNwnYQzLFCcZKpZySQQ5dJ9X0QGzY9eo=; b=j
+ tTaK2QXToIqZp8+zMrjdvlVmuc5BZPNixhFha6pNF6NNz309RYNz8AyI+Uz/UgU4HwQcKzFB2bb6K
+ hGHffLEI9z93PdBbgWBC0aeG9u6mz4PkCMwPU7V0iFuUOw4RJPNEuX9GnSZEiyF6uVIz40RjUBntE
+ 5OcsUdyLH74+Op2Y=;
+Received: from mail-pl1-f202.google.com ([209.85.214.202])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1isZOO-008f6s-Gb
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 17 Jan 2020 21:43:02 +0000
+Received: by mail-pl1-f202.google.com with SMTP id t17so11397389ply.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 17 Jan 2020 13:43:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
+ h=date:message-id:mime-version:subject:from:to:cc;
+ bh=yBEf4c2Y/V+ZNwnYQzLFCcZKpZySQQ5dJ9X0QGzY9eo=;
+ b=hrp+gp+g8aB/jpumGkpuc5F5wkzC/eegSUgKsuaP5vuBUKLF33qoqqM2MafIuVh9s1
+ jI2A1GYFMvU+zXn/tCLnmGXTqm3p0Gd4ZJGvWkGqgwBJx9K3w5rosKRTKFkLyeVpf7r7
+ WFGq/cvvGa0UIt89Z8qEnh4tUigSQ7k5T7oowlnUjWNYSj1q2cLitkSLMyMd0jkKCkAD
+ anxNB8ZROhRvpyrX/Yj82zl81n9GScBR9YTXGVMqHu3OoPibEEExYkK8+hQXWp7bAWgy
+ 5hmPB7B0i/vXCHN1gPjV6lJhuK5oImOVpW8qPq4w+BW8SnU9RkZI5NRwJt35MaEoucrI
+ kOSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+ bh=yBEf4c2Y/V+ZNwnYQzLFCcZKpZySQQ5dJ9X0QGzY9eo=;
+ b=AAmyZJCEik5D3u2KmPqm9ZQQmsP5iTj7JCyTXMUJ7LRi1pFp0KxMSjNMcrYBCPr8lx
+ HqSzjOCyr5rsx+/ug/539WdAJHwl6ReEvxSM8PHx4br2RiFpEpHkcAmjxz6cTy972V07
+ tOt6ll4YyK6vRxpJBgFq8/ErkQU/hhuDtDMnnCimfYtD8S3tudLsWnoo3BbZ+e2WI+Yp
+ y4aly4ALSAjDL7TW1kSDszKIbepv9JdxHbXl6buRg1uDyAxrFuKF64p4qe76l2OTsJmt
+ X6wvLESC8bCDuAUYrKsv9KmdJYFSdb4DZCUUBkgY7xFlotPRSKdunXUzSXQ2hap0D+7H
+ q8Wg==
+X-Gm-Message-State: APjAAAVENVCkH+de8cSN3o3M5w6K8WSQgOoUh0iqg8vH+oL8ZmqA/mgg
+ TERe05R+Vrt3dr9jkiPeVhFyQIv/jPw=
+X-Google-Smtp-Source: APXvYqx/thRfotMiEcNYQU3muvCEizuxjwfQx4bfJuDJBpTmZngE9VJym447R2DaU34FJTWJBfRydBLRlJY=
+X-Received: by 2002:a63:ff20:: with SMTP id k32mr45963088pgi.448.1579297374588; 
+ Fri, 17 Jan 2020 13:42:54 -0800 (PST)
+Date: Fri, 17 Jan 2020 13:42:37 -0800
+Message-Id: <20200117214246.235591-1-drosen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+To: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org, 
+ Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+ linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>, 
+ linux-fscrypt@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+X-Headers-End: 1isZOO-008f6s-Gb
+Subject: [f2fs-dev] [PATCH v3 0/9] Support for Casefolding and Encryption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,45 +113,96 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Eric Biggers <ebiggers@kernel.org>,
- Barani Muthukumaran <bmuthuku@codeaurora.org>,
- Gaurav Kashyap <gaurkash@codeaurora.org>, linux-api@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>,
- linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
+From: Daniel Rosenberg via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Daniel Rosenberg <drosen@google.com>
+Cc: Daniel Rosenberg <drosen@google.com>, linux-doc@vger.kernel.org,
+ kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>,
+ linux-kernel@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+ linux-fsdevel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jan 17, 2020 at 11:40:54AM -0500, Theodore Y. Ts'o wrote:
-> On Fri, Jan 17, 2020 at 12:12:46AM -0800, Christoph Hellwig wrote:
-> > On Thu, Jan 16, 2020 at 11:20:08AM -0800, Eric Biggers wrote:
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > Reserve flags for the hardware-wrapped keys feature which is being
-> > > worked on [1].  FSCRYPT_POLICY_FLAG_HW_WRAPPED_KEY will denote that the
-> > > encryption policy needs a hardware-wrapped key to be unlocked.
-> > > FSCRYPT_ADD_KEY_FLAG_HW_WRAPPED will denote that the key being added is
-> > > a hardware-wrapped key.
-> > > 
-> > > This reservation is tentative, and these codepoints may be reused if the
-> > > feature is not upstreamed.
-> > 
-> > NAK.  While the feature itself sounds really useful we don't just
-> > reserve format bits for code not upstream.
-> 
-> I disagree; saving a codepoint to avoid accidental collision of a
-> feature bit is a good and proper thing to do.
-> 
-> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+These patches are all on top of fscrypt's developement branch
 
-What kind of "deadline" do you have for that feature to then be merged?
-I'm with Christoph here, we shouldn't be reserving bits for stuff not
-in mergable state, what's the rush?
+Ext4 and F2FS currently both support casefolding and encryption, but not at
+the same time. These patches aim to rectify that.
 
-thansk,
+Since directory names are stored case preserved, we cannot just take the hash
+of the ciphertext. Instead we use the siphash of the casefolded name. With this
+we no longer have a direct path from an encrypted name to the hash without the
+key. To deal with this, fscrypt now always includes the hash in the name it
+presents when the key is not present. There is a pre-existing bug where you can
+change parts of the hash and still match the name so long as the disruption to
+the hash does not happen to affect lookup on that filesystem. I'm not sure how
+to fix that without making ext4 lookups slower in the more common case.
 
-greg k-h
+I moved the identical dcache operations for ext4 and f2fs into the VFS, as any
+filesystem that uses casefolding will need the same code. This will also allow
+further optimizations to that path, although my current changes don't take
+advantage of that yet.
+
+For Ext4, this also means that we need to store the hash on disk. We only do so
+for encrypted and casefolded directories to avoid on disk format changes.
+Previously encryption and casefolding could not live on the same filesystem,
+and we're relaxing that requirement. F2fs is a bit more straightforward since
+it already stores hashes on disk.
+
+I've updated the related tools with just enough to enable the feature. I still
+need to adjust ext4's fsck's, although without access to the keys,
+neither fsck will be able to verify the hashes of casefolded and encrypted names.
+
+v3 changes:
+fscrypt patch only creates hash key if it will be needed.
+Rebased on top of fscrypt branch, reconstified match functions in ext4/f2fs
+
+v2 changes:
+fscrypt moved to separate thread to rebase on fscrypt dev branch
+addressed feedback, plus some minor fixes
+
+
+Daniel Rosenberg (9):
+  fscrypt: Add siphash and hash key for policy v2
+  fscrypt: Don't allow v1 policies with casefolding
+  fscrypt: Change format of no-key token
+  fscrypt: Only create hash key when needed
+  vfs: Fold casefolding into vfs
+  f2fs: Handle casefolding with Encryption
+  ext4: Use struct super_blocks' casefold data
+  ext4: Hande casefolding with encryption
+  ext4: Optimize match for casefolded encrypted dirs
+
+ Documentation/filesystems/ext4/directory.rst |  27 ++
+ fs/crypto/Kconfig                            |   1 +
+ fs/crypto/fname.c                            | 232 ++++++++++---
+ fs/crypto/fscrypt_private.h                  |   9 +
+ fs/crypto/keysetup.c                         |  35 +-
+ fs/crypto/policy.c                           |  53 +++
+ fs/dcache.c                                  |  28 ++
+ fs/ext4/dir.c                                |  75 +----
+ fs/ext4/ext4.h                               |  85 +++--
+ fs/ext4/hash.c                               |  26 +-
+ fs/ext4/ialloc.c                             |   5 +-
+ fs/ext4/inline.c                             |  41 +--
+ fs/ext4/namei.c                              | 324 ++++++++++++-------
+ fs/ext4/super.c                              |  21 +-
+ fs/f2fs/dir.c                                | 112 +++----
+ fs/f2fs/f2fs.h                               |  12 +-
+ fs/f2fs/hash.c                               |  25 +-
+ fs/f2fs/inline.c                             |   9 +-
+ fs/f2fs/super.c                              |  17 +-
+ fs/f2fs/sysfs.c                              |   8 +-
+ fs/inode.c                                   |   3 +-
+ fs/namei.c                                   |  41 ++-
+ include/linux/fs.h                           |  10 +
+ include/linux/fscrypt.h                      |  95 ++----
+ include/linux/unicode.h                      |  14 +
+ 25 files changed, 835 insertions(+), 473 deletions(-)
+
+-- 
+2.25.0.341.g760bfbb309-goog
+
 
 
 _______________________________________________
