@@ -2,79 +2,80 @@ Return-Path: <SRS0=H63v=3J=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051DAC35245
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jan 2020 04:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F579C32771
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jan 2020 04:52:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CA45220684;
-	Mon, 20 Jan 2020 04:49:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 609E02073D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jan 2020 04:52:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="E/fiLnu4";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="MeZSNqHo";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWfWDdlT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA45220684
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lelaveGU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Z9YHbACm";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0tf43nq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 609E02073D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1itOzz-0003cQ-Eo; Mon, 20 Jan 2020 04:49:15 +0000
+	id 1itP35-0003Lk-B0; Mon, 20 Jan 2020 04:52:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1itOzv-0003bO-OP
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 04:49:11 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1itP33-0003LM-IE
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 04:52:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NcO65FZU7SLMz2DY7E8ZGHbJW5NThWb+Pg1HgZaDymg=; b=E/fiLnu4p0r53aXv7YoUZfdEMO
- QUbTSlTcrbboVcQLtqxRQkjuwSYbBnnAVfIYLmNhwDerDvLktMCCtEO2Pw1y1PTORrDSLqvJUau/s
- rojxMG3YvfGhdrWAcfHNk25/JASrB3PI71BXrLqz3pqo/8P7rjh2eHtE8QLj8e4cTC00=;
+ bh=aOK2Wv34Jv2uKr8eXhPqjKsozzUn53pkOKxNgF8Ad7g=; b=lelaveGUtVTl+Oe2J8XB+qWGQV
+ PjP3PxXAbuTfleLApDx0JNQTWf/NnhvWd0d1WfUWiw1vTBCI8crRk6jLqviSGPSyeEFyX8uN0C4bH
+ TlwvjIIa0K4FbyR8gWKe9N9oPmFPje84x6GHwN0JmBu/BerShmj57PZITVt6CtC80FcU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=NcO65FZU7SLMz2DY7E8ZGHbJW5NThWb+Pg1HgZaDymg=; b=M
- eZSNqHoN5USc8rvzI0jLR0WBBktmszPtbtignmeEursie3NW/Dr31hFt0otuoxVqENJkDka3iJ6LL
- mcKKjKgVTKj3JOzU9oW3BZ6TVthjsm5DL8sqIawF4vSjBKJv1cOClZ0V9QzAw47Eehv5KtnVlJaIY
- ewyefaf3q9Fi2sp8=;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=aOK2Wv34Jv2uKr8eXhPqjKsozzUn53pkOKxNgF8Ad7g=; b=Z9YHbACmUNnEN9MJZ5NX1eV3fG
+ /rR0lwLR5wCp/K1PjkxT0XAqsUnK5or2gGVfxr+HrAhSkJID7+pPhTcYDwAv8xRwBWmCVaFwBWRTk
+ a5QO0Sm3FvalvNSQf/cfqU8O50jV+7z9X40opXSasCGx/Aan3JJ6vCln1plS+83mYRJI=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1itOzm-00EZzo-G4
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 04:49:11 +0000
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
+ id 1itP32-00B5n6-5y
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 04:52:25 +0000
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net
  [107.3.166.239])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id ABBFE20684;
- Mon, 20 Jan 2020 04:48:56 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id EE82A2073A;
+ Mon, 20 Jan 2020 04:52:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1579495736;
- bh=Q7wJnp7QsNYnS0LU3C/JSOl8FKpk9+5t4Fs/69qFKaU=;
- h=From:To:Cc:Subject:Date:From;
- b=WWfWDdlTcogjcjQNU7ROuxO9HC011fHFtUPXK4hPXps9XoUf8wkg5rPYzIs0S+7R9
- Bm7MzTfJ66XlmhgQPPYFgppZoeT45/WoRsEp/8WF3PJpLBnRpY9f0bUJZpaV9aYp0P
- rPkd74JC+efpVynWmII+acK6DerXye6tMRIUVY6g=
+ s=default; t=1579495938;
+ bh=DAtdwoWn08bxGri1PxDJ/LULe8Ktr8pcYIS21k28EN4=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=j0tf43nqBaHRTk8KvCSppcB0LKW557pYqYNlt49K3zTMGOJWI1C55cXqV6Sa+upBN
+ fe1G0uKWFmL5LwUIKfbU9zbeAHfL4x+4mO/ID01faHvm3joFX5AL1Kn8Zsh+bQ3+NM
+ w1eqcV5s+H8nFfeVbQ2zUJHWkDdHVGMQVksgVduE=
+Date: Sun, 19 Jan 2020 20:52:16 -0800
 From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Date: Sun, 19 Jan 2020 20:43:57 -0800
-Message-Id: <20200120044401.325453-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.25.0
+To: Daniel Rosenberg <drosen@google.com>
+Message-ID: <20200120045216.GB913@sol.localdomain>
+References: <20200117214246.235591-1-drosen@google.com>
 MIME-Version: 1.0
-X-Headers-End: 1itOzm-00EZzo-G4
-Subject: [f2fs-dev] [PATCH v4 0/4] fscrypt preparations for
- encryption+casefolding
+Content-Disposition: inline
+In-Reply-To: <20200117214246.235591-1-drosen@google.com>
+X-Headers-End: 1itP32-00B5n6-5y
+Subject: Re: [f2fs-dev] [PATCH v3 0/9] Support for Casefolding and Encryption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,58 +87,98 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daniel Rosenberg <drosen@google.com>, kernel-team@android.com,
+Cc: Theodore Ts'o <tytso@mit.edu>, Jonathan Corbet <corbet@lwn.net>,
+ kernel-team@android.com, linux-doc@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
  Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This is a cleaned up version of the fscrypt patches to prepare for
-directories that are both encrypted and casefolded.
+On Fri, Jan 17, 2020 at 01:42:37PM -0800, Daniel Rosenberg wrote:
+> These patches are all on top of fscrypt's developement branch
+> 
+> Ext4 and F2FS currently both support casefolding and encryption, but not at
+> the same time. These patches aim to rectify that.
+> 
+> Since directory names are stored case preserved, we cannot just take the hash
+> of the ciphertext. Instead we use the siphash of the casefolded name. With this
+> we no longer have a direct path from an encrypted name to the hash without the
+> key. To deal with this, fscrypt now always includes the hash in the name it
+> presents when the key is not present. There is a pre-existing bug where you can
+> change parts of the hash and still match the name so long as the disruption to
+> the hash does not happen to affect lookup on that filesystem. I'm not sure how
+> to fix that without making ext4 lookups slower in the more common case.
+> 
+> I moved the identical dcache operations for ext4 and f2fs into the VFS, as any
+> filesystem that uses casefolding will need the same code. This will also allow
+> further optimizations to that path, although my current changes don't take
+> advantage of that yet.
+> 
+> For Ext4, this also means that we need to store the hash on disk. We only do so
+> for encrypted and casefolded directories to avoid on disk format changes.
+> Previously encryption and casefolding could not live on the same filesystem,
+> and we're relaxing that requirement. F2fs is a bit more straightforward since
+> it already stores hashes on disk.
+> 
+> I've updated the related tools with just enough to enable the feature. I still
+> need to adjust ext4's fsck's, although without access to the keys,
+> neither fsck will be able to verify the hashes of casefolded and encrypted names.
+> 
+> v3 changes:
+> fscrypt patch only creates hash key if it will be needed.
+> Rebased on top of fscrypt branch, reconstified match functions in ext4/f2fs
+> 
+> v2 changes:
+> fscrypt moved to separate thread to rebase on fscrypt dev branch
+> addressed feedback, plus some minor fixes
+> 
+> 
+> Daniel Rosenberg (9):
+>   fscrypt: Add siphash and hash key for policy v2
+>   fscrypt: Don't allow v1 policies with casefolding
+>   fscrypt: Change format of no-key token
+>   fscrypt: Only create hash key when needed
+>   vfs: Fold casefolding into vfs
+>   f2fs: Handle casefolding with Encryption
+>   ext4: Use struct super_blocks' casefold data
+>   ext4: Hande casefolding with encryption
+>   ext4: Optimize match for casefolded encrypted dirs
 
-Patches 1-3 start deriving a SipHash key for the new dirhash method that
-will be used by encrypted+casefolded directories.  To avoid unnecessary
-overhead, we only do this if the directory is actually casefolded.
+Thanks for the new version of this patchset, Daniel!
 
-Patch 4 modifies the fscrypt no-key names to always include the dirhash,
-since with the new dirhash method the dirhash will no longer be
-computable from the ciphertext filename without the key.  It also fixes
-a longstanding issue where there could be collisions in the no-key
-names, due to not using a proper cryptographic hash to abbreviate names.
+I'd like to apply the first four patches (the fs/crypto/ part, to prepare for
+the new dirhash method) for 5.6, to get ready for the actual
+encrypted+casefolded support in filesystems later.
 
-For more information see the main patch series, which includes the
-filesystem-specific changes:
-https://lkml.kernel.org/linux-fscrypt/20200117214246.235591-1-drosen@google.com/T/#u
+But we don't have much time left before the merge window, the more I look at the
+patches I'm still not very happy with them.  E.g., some comments I made haven't
+been addressed, it's missing updates to the documentation, and some of the code
+comments and commit messages are still confusing.  For one, there's still some
+ambiguity between the dirhash and the SHA-256 hash, and it's not really
+explained why the patch introduces the SHA-256 stuff, which actually has nothing
+to do with encrypted+casefold (other than it was a good opportunity to do it as
+the nokey name format had to be changed for encrypted+casefold anyway).
 
-This applies to fscrypt.git#master.
+I also found a bug where the return value of base64_decode() isn't being checked
+properly.  We should also keep fscrypt_match_name() simpler by setting disk_name
+for short names, like we were before.  There are also some places that count the
+padding in struct fscrypt_nokey_name and some that don't, which is confusing.
+We also no longer need to call fscrypt_get_policy() during setflags, as we call
+fscrypt_require_key() now anyway.  And there's now some ambiguity about what's
+meant by a "per-file key", since now there will be 2 types of per-file keys.
 
-Daniel Rosenberg (3):
-  fscrypt: don't allow v1 policies with casefolding
-  fscrypt: derive dirhash key for casefolded directories
-  fscrypt: improve format of no-key names
+So I hope you don't mind, but to move things along I've had a go at cleaning up
+the fscrypt patches, and I've sent out an updated version of them.  Can you
+please take a look when you have a chance?:
+https://lkml.kernel.org/linux-fscrypt/20200120044401.325453-1-ebiggers@kernel.org/T/#u
 
-Eric Biggers (1):
-  fscrypt: clarify what is meant by a per-file key
+Thanks!
 
- Documentation/filesystems/fscrypt.rst |  40 +++--
- fs/crypto/Kconfig                     |   1 +
- fs/crypto/fname.c                     | 239 ++++++++++++++++++++------
- fs/crypto/fscrypt_private.h           |  19 +-
- fs/crypto/hooks.c                     |  44 +++++
- fs/crypto/keysetup.c                  |  81 ++++++---
- fs/crypto/keysetup_v1.c               |   4 +-
- fs/crypto/policy.c                    |   7 +
- fs/inode.c                            |   3 +-
- include/linux/fscrypt.h               |  94 +++-------
- 10 files changed, 360 insertions(+), 172 deletions(-)
-
-
-base-commit: 2d8f7f119b0b2ce5e7ff0e8024b0763bf42b99c9
--- 
-2.25.0
-
+- Eric
 
 
 _______________________________________________
