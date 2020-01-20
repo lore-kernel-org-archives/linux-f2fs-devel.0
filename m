@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9832C4741C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jan 2020 22:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FBD8C35242
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jan 2020 22:34:34 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B56B62253D;
-	Mon, 20 Jan 2020 22:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 63C272253D;
+	Mon, 20 Jan 2020 22:34:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mDLJu1+5";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Y3HwACkz";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qrVjUaSH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56B62253D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cGTPxc8D";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="T6P0kszb";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZB3SVJ8m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C272253D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1itfcu-0002gx-BU; Mon, 20 Jan 2020 22:34:32 +0000
+	id 1itfcw-0001Zs-43; Mon, 20 Jan 2020 22:34:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1itfcs-0002gZ-KR
+ (envelope-from <ebiggers@kernel.org>) id 1itfcs-0001Zd-PB
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 22:34:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -35,9 +35,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CqV5d1M3KYI5pYUXEkJdddpFVYg3EjdHYwZ9cEbDF/A=; b=mDLJu1+54aEiS73hHWu1uPFEcg
- IZG3mU6k28XbqDWQG+dy9oryPsTVsnC81AZebzqiC2aQAfiTig14Z6i5/kfF8VJyf5IncI7fzCioQ
- n2flWzjb92IuMpCsLIx++zp1G0fPWdv8j0391BAGcVGEiPsvqmUqMf+neKLzO+6OCmfk=;
+ bh=27/66Nvm9lO3OX3J5wgRh3K2tHq3u3Wqi2t78kCSOWQ=; b=cGTPxc8DIKKboEaCrriLEf7PUU
+ 3ASTtY0Rd5Yx4CRCqbsXRwLpySxfLdlf2tne/aXht7OT2dm/s8pqYSu09hRuCTyDM4Q4wfEzmIy7H
+ YumP/qDporXPGTT2rVJY2mpbmC2uVYWiNPcNpiPRD0hO4HZHWc19tkI3d1tv9Ax9iP5U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=CqV5d1M3KYI5pYUXEkJdddpFVYg3EjdHYwZ9cEbDF/A=; b=Y3HwACkz1vxmNt652hzqVQ8dmu
- 5j2r2jOzwsP3OKvYWGR52hgv784Yen1gn6vqCce0bHCdiIeazJr0qBNr3kd49i6ei50WRqrLnAUo3
- yLuNHV22XK0sYVulcCs42bQivBP43GRiDcJCDiKJlvqbXnrKi6DKG2E3L9ZpbPiB+kpQ=;
+ bh=27/66Nvm9lO3OX3J5wgRh3K2tHq3u3Wqi2t78kCSOWQ=; b=T6P0kszb8hPRQGD+GOnFhSpDTx
+ OKT8fCfSnNLk8iVu59AMUoIvo7O488AUTVdT1sMSXdzGQLozwjnjOdNDmZAg9hX6fBlcAYnKQZJ6s
+ bsREgBS6a/UeIHalvsnxvg5BBX6zZhh4HMi64pEl4bk/wCWgWB1HJ8cfhEQ7/W36aUmY=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1itfcp-00BrPF-R9
+ id 1itfcp-00BrPI-Up
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 22:34:30 +0000
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
  [107.3.166.239])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 1FAAE22522;
- Mon, 20 Jan 2020 22:34:17 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 8125524125;
+ Mon, 20 Jan 2020 22:34:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1579559657;
- bh=tpX3Z5aTfQYbdolCOLoHxFujgPfupohBTNGUTgTN6rY=;
+ s=default; t=1579559658;
+ bh=z2Y0IHglkKCvSNW3HrTdG8/6BD+OKkO7hiP7aqvSJao=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=qrVjUaSHOVqRokRfV2YwiPbgKmKm7JGX3kotJjBEwQd/vIvpskRgf7I/gVifaFEoB
- UVrcRwntKuUnqMvv4V0WOegwQodT38tGXS3JBuZ5Zj/T4VclxoiMemD5IXroUP2gGb
- AsP39GViKWmYbxmtHnd8+jmldMlGpu1xv6dnvD9M=
+ b=ZB3SVJ8mSzoYzK9TQg1dPhopO5UVnGDpovyzD09WXgRSNwFHyvEGuEnJuXKB8QU0M
+ PwAjhqcs/SkmEahZUDCqWX/w8vAfdZ7DzKFpXQHyzzwViiMZ8WwPjBUBOy2vdNNi/P
+ /gzyfLaRHRr2ZdmVU0xfBIzVXnFBcyFDVqXiNG6M=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Mon, 20 Jan 2020 14:31:56 -0800
-Message-Id: <20200120223201.241390-2-ebiggers@kernel.org>
+Date: Mon, 20 Jan 2020 14:31:59 -0800
+Message-Id: <20200120223201.241390-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200120223201.241390-1-ebiggers@kernel.org>
 References: <20200120223201.241390-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1itfcp-00BrPF-R9
-Subject: [f2fs-dev] [PATCH v5 1/6] fscrypt: don't allow v1 policies with
- casefolding
+X-Headers-End: 1itfcp-00BrPI-Up
+Subject: [f2fs-dev] [PATCH v5 4/6] ubifs: don't trigger assertion on invalid
+ no-key filename
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,152 +97,47 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daniel Rosenberg <drosen@google.com>
+From: Eric Biggers <ebiggers@google.com>
 
-Casefolded encrypted directories will use a new dirhash method that
-requires a secret key.  If the directory uses a v2 encryption policy,
-it's easy to derive this key from the master key using HKDF.  However,
-v1 encryption policies don't provide a way to derive additional keys.
+If userspace provides an invalid fscrypt no-key filename which encodes a
+hash value with any of the UBIFS node type bits set (i.e. the high 3
+bits), gracefully report ENOENT rather than triggering ubifs_assert().
 
-Therefore, don't allow casefolding on directories that use a v1 policy.
-Specifically, make it so that trying to enable casefolding on a
-directory that has a v1 policy fails, trying to set a v1 policy on a
-casefolded directory fails, and trying to open a casefolded directory
-that has a v1 policy (if one somehow exists on-disk) fails.
+Test case with kvm-xfstests shell:
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
-[EB: improved commit message, updated fscrypt.rst, and other cleanups]
+    . fs/ubifs/config
+    . ~/xfstests/common/encrypt
+    dev=$(__blkdev_to_ubi_volume /dev/vdc)
+    ubiupdatevol $dev -t
+    mount $dev /mnt -t ubifs
+    mkdir /mnt/edir
+    xfs_io -c set_encpolicy /mnt/edir
+    rm /mnt/edir/_,,,,,DAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+With the bug, the following assertion fails on the 'rm' command:
+
+    [   19.066048] UBIFS error (ubi0:0 pid 379): ubifs_assert_failed: UBIFS assert failed: !(hash & ~UBIFS_S_KEY_HASH_MASK), in fs/ubifs/key.h:170
+
+Fixes: f4f61d2cc6d8 ("ubifs: Implement encrypted filenames")
+Cc: <stable@vger.kernel.org> # v4.10+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- Documentation/filesystems/fscrypt.rst |  4 +++-
- fs/crypto/hooks.c                     | 28 +++++++++++++++++++++++++++
- fs/crypto/policy.c                    |  7 +++++++
- fs/inode.c                            |  3 ++-
- include/linux/fscrypt.h               |  9 +++++++++
- 5 files changed, 49 insertions(+), 2 deletions(-)
+ fs/ubifs/dir.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-index 9c53336d06a43..380a1be9550e1 100644
---- a/Documentation/filesystems/fscrypt.rst
-+++ b/Documentation/filesystems/fscrypt.rst
-@@ -513,7 +513,9 @@ FS_IOC_SET_ENCRYPTION_POLICY can fail with the following errors:
- - ``EEXIST``: the file is already encrypted with an encryption policy
-   different from the one specified
- - ``EINVAL``: an invalid encryption policy was specified (invalid
--  version, mode(s), or flags; or reserved bits were set)
-+  version, mode(s), or flags; or reserved bits were set); or a v1
-+  encryption policy was specified but the directory has the casefold
-+  flag enabled (casefolding is incompatible with v1 policies).
- - ``ENOKEY``: a v2 encryption policy was specified, but the key with
-   the specified ``master_key_identifier`` has not been added, nor does
-   the process have the CAP_FOWNER capability in the initial user
-diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-index bb3b7fcfdd48a..d96a58f11d2b0 100644
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -122,6 +122,34 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
- }
- EXPORT_SYMBOL_GPL(__fscrypt_prepare_lookup);
- 
-+/**
-+ * fscrypt_prepare_setflags() - prepare to change flags with FS_IOC_SETFLAGS
-+ * @inode: the inode on which flags are being changed
-+ * @oldflags: the old flags
-+ * @flags: the new flags
-+ *
-+ * The caller should be holding i_rwsem for write.
-+ *
-+ * Return: 0 on success; -errno if the flags change isn't allowed or if
-+ *	   another error occurs.
-+ */
-+int fscrypt_prepare_setflags(struct inode *inode,
-+			     unsigned int oldflags, unsigned int flags)
-+{
-+	struct fscrypt_info *ci;
-+	int err;
-+
-+	if (IS_ENCRYPTED(inode) && (flags & ~oldflags & FS_CASEFOLD_FL)) {
-+		err = fscrypt_require_key(inode);
-+		if (err)
-+			return err;
-+		ci = inode->i_crypt_info;
-+		if (ci->ci_policy.version != FSCRYPT_POLICY_V2)
-+			return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- int __fscrypt_prepare_symlink(struct inode *dir, unsigned int len,
- 			      unsigned int max_len,
- 			      struct fscrypt_str *disk_link)
-diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
-index f1cff83c151ac..cf2a9d26ef7da 100644
---- a/fs/crypto/policy.c
-+++ b/fs/crypto/policy.c
-@@ -124,6 +124,13 @@ static bool fscrypt_supported_v1_policy(const struct fscrypt_policy_v1 *policy,
- 					policy->filenames_encryption_mode))
- 		return false;
- 
-+	if (IS_CASEFOLDED(inode)) {
-+		/* With v1, there's no way to derive dirhash keys. */
-+		fscrypt_warn(inode,
-+			     "v1 policies can't be used on casefolded directories");
-+		return false;
-+	}
-+
- 	return true;
- }
- 
-diff --git a/fs/inode.c b/fs/inode.c
-index 96d62d97694ef..ea15c6d9f2742 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -12,6 +12,7 @@
- #include <linux/security.h>
- #include <linux/cdev.h>
- #include <linux/memblock.h>
-+#include <linux/fscrypt.h>
- #include <linux/fsnotify.h>
- #include <linux/mount.h>
- #include <linux/posix_acl.h>
-@@ -2252,7 +2253,7 @@ int vfs_ioc_setflags_prepare(struct inode *inode, unsigned int oldflags,
- 	    !capable(CAP_LINUX_IMMUTABLE))
- 		return -EPERM;
- 
--	return 0;
-+	return fscrypt_prepare_setflags(inode, oldflags, flags);
- }
- EXPORT_SYMBOL(vfs_ioc_setflags_prepare);
- 
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 6fe8d0f96a4ac..3984eadd7023f 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -263,6 +263,8 @@ extern int __fscrypt_prepare_rename(struct inode *old_dir,
- 				    unsigned int flags);
- extern int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
- 				    struct fscrypt_name *fname);
-+extern int fscrypt_prepare_setflags(struct inode *inode,
-+				    unsigned int oldflags, unsigned int flags);
- extern int __fscrypt_prepare_symlink(struct inode *dir, unsigned int len,
- 				     unsigned int max_len,
- 				     struct fscrypt_str *disk_link);
-@@ -519,6 +521,13 @@ static inline int __fscrypt_prepare_lookup(struct inode *dir,
- 	return -EOPNOTSUPP;
- }
- 
-+static inline int fscrypt_prepare_setflags(struct inode *inode,
-+					   unsigned int oldflags,
-+					   unsigned int flags)
-+{
-+	return 0;
-+}
-+
- static inline int __fscrypt_prepare_symlink(struct inode *dir,
- 					    unsigned int len,
- 					    unsigned int max_len,
-
-base-commit: 50d9fad73a45a78f8b974b46307712556c9a42d3
+diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+index 636c3222c2308..5f937226976a6 100644
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -228,6 +228,8 @@ static struct dentry *ubifs_lookup(struct inode *dir, struct dentry *dentry,
+ 	if (nm.hash) {
+ 		ubifs_assert(c, fname_len(&nm) == 0);
+ 		ubifs_assert(c, fname_name(&nm) == NULL);
++		if (nm.hash & ~UBIFS_S_KEY_HASH_MASK)
++			goto done; /* ENOENT */
+ 		dent_key_init_hash(c, &key, dir->i_ino, nm.hash);
+ 		err = ubifs_tnc_lookup_dh(c, &key, dent, nm.minor_hash);
+ 	} else {
 -- 
 2.25.0
 
