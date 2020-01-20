@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E360DC32771
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9832C4741C
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jan 2020 22:34:32 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B2B6B22522;
+	by mail.kernel.org (Postfix) with ESMTPS id B56B62253D;
 	Mon, 20 Jan 2020 22:34:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OAoZkTsZ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bdJUcME9";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiQV6zQS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B6B22522
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mDLJu1+5";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Y3HwACkz";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qrVjUaSH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56B62253D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1itfcu-0002hA-Ei; Mon, 20 Jan 2020 22:34:32 +0000
+	id 1itfcu-0002gx-BU; Mon, 20 Jan 2020 22:34:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1itfcs-0002gg-VV
+ (envelope-from <ebiggers@kernel.org>) id 1itfcs-0002gZ-KR
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 22:34:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -35,9 +35,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iU3Y3viLYACKUUoV9/SXTV/n2s12bpkxERDqgwkyZ3g=; b=OAoZkTsZkzB3iWI2Z1Qk0CFjgD
- WiTTvNV099zQrakjyfSLOSBhMgRaRLb7hQi6GkCATSQss9gGr0ulcPbRD+yRVBk8+uimwDLcV/ych
- MDYH1sFbr801vkZMBZM6GCAGtZ3UskM9QdpUvRBNvbkCL+c/ayQFOLXLjo0oo7PsgJHU=;
+ bh=CqV5d1M3KYI5pYUXEkJdddpFVYg3EjdHYwZ9cEbDF/A=; b=mDLJu1+54aEiS73hHWu1uPFEcg
+ IZG3mU6k28XbqDWQG+dy9oryPsTVsnC81AZebzqiC2aQAfiTig14Z6i5/kfF8VJyf5IncI7fzCioQ
+ n2flWzjb92IuMpCsLIx++zp1G0fPWdv8j0391BAGcVGEiPsvqmUqMf+neKLzO+6OCmfk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=iU3Y3viLYACKUUoV9/SXTV/n2s12bpkxERDqgwkyZ3g=; b=bdJUcME9eZpR9MytKdC/4vPLqp
- 8cyoVeXvGYmFwICV/KCIHDFv6XshUoIEwpPJ9keH1PpLKzHiU99rQjncow4UVoUfUYZAsrIQEUxKN
- R4Z6etSL2hKPgsS/caT7HA27boOIVeZwzm0WFW1lXOEsb/Aq8h5XpZep7L8lJ3f7NWZ4=;
+ bh=CqV5d1M3KYI5pYUXEkJdddpFVYg3EjdHYwZ9cEbDF/A=; b=Y3HwACkz1vxmNt652hzqVQ8dmu
+ 5j2r2jOzwsP3OKvYWGR52hgv784Yen1gn6vqCce0bHCdiIeazJr0qBNr3kd49i6ei50WRqrLnAUo3
+ yLuNHV22XK0sYVulcCs42bQivBP43GRiDcJCDiKJlvqbXnrKi6DKG2E3L9ZpbPiB+kpQ=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1itfcp-00BrPH-R0
+ id 1itfcp-00BrPF-R9
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 22:34:30 +0000
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
  [107.3.166.239])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 0F28224653;
- Mon, 20 Jan 2020 22:34:18 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 1FAAE22522;
+ Mon, 20 Jan 2020 22:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1579559658;
- bh=3GsTwrhKWubkVOsog2c7B6F+lDuYVeeynMA/s90tqzI=;
+ s=default; t=1579559657;
+ bh=tpX3Z5aTfQYbdolCOLoHxFujgPfupohBTNGUTgTN6rY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=iiQV6zQShw6vXY9eYKMzoDDlLg4Z5+7Zz+Apw4p8beyOOIuzj7ENWAsm3911e3aFm
- nLH6VTCqKwvLstz0uoPDZQKkLZu/gBGLR/QPxlsboE9RSnzrizXJR86xeiLNJeiTQn
- Hv72riL4fjRKz3rvJ6LX3kN7Onb0WHw/Uo7YG/98=
+ b=qrVjUaSHOVqRokRfV2YwiPbgKmKm7JGX3kotJjBEwQd/vIvpskRgf7I/gVifaFEoB
+ UVrcRwntKuUnqMvv4V0WOegwQodT38tGXS3JBuZ5Zj/T4VclxoiMemD5IXroUP2gGb
+ AsP39GViKWmYbxmtHnd8+jmldMlGpu1xv6dnvD9M=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Mon, 20 Jan 2020 14:31:58 -0800
-Message-Id: <20200120223201.241390-4-ebiggers@kernel.org>
+Date: Mon, 20 Jan 2020 14:31:56 -0800
+Message-Id: <20200120223201.241390-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200120223201.241390-1-ebiggers@kernel.org>
 References: <20200120223201.241390-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1itfcp-00BrPH-R0
-Subject: [f2fs-dev] [PATCH v5 3/6] fscrypt: clarify what is meant by a
- per-file key
+X-Headers-End: 1itfcp-00BrPF-R9
+Subject: [f2fs-dev] [PATCH v5 1/6] fscrypt: don't allow v1 policies with
+ casefolding
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,207 +97,152 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+From: Daniel Rosenberg <drosen@google.com>
 
-Now that there's sometimes a second type of per-file key (the dirhash
-key), clarify some function names, macros, and documentation that
-specifically deal with per-file *encryption* keys.
+Casefolded encrypted directories will use a new dirhash method that
+requires a secret key.  If the directory uses a v2 encryption policy,
+it's easy to derive this key from the master key using HKDF.  However,
+v1 encryption policies don't provide a way to derive additional keys.
 
+Therefore, don't allow casefolding on directories that use a v1 policy.
+Specifically, make it so that trying to enable casefolding on a
+directory that has a v1 policy fails, trying to set a v1 policy on a
+casefolded directory fails, and trying to open a casefolded directory
+that has a v1 policy (if one somehow exists on-disk) fails.
+
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+[EB: improved commit message, updated fscrypt.rst, and other cleanups]
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- Documentation/filesystems/fscrypt.rst | 24 ++++++++---------
- fs/crypto/fscrypt_private.h           |  6 ++---
- fs/crypto/keysetup.c                  | 39 ++++++++++++++-------------
- fs/crypto/keysetup_v1.c               |  4 +--
- 4 files changed, 37 insertions(+), 36 deletions(-)
+ Documentation/filesystems/fscrypt.rst |  4 +++-
+ fs/crypto/hooks.c                     | 28 +++++++++++++++++++++++++++
+ fs/crypto/policy.c                    |  7 +++++++
+ fs/inode.c                            |  3 ++-
+ include/linux/fscrypt.h               |  9 +++++++++
+ 5 files changed, 49 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-index c45f5bcc13e17..d5b1b49c3d002 100644
+index 9c53336d06a43..380a1be9550e1 100644
 --- a/Documentation/filesystems/fscrypt.rst
 +++ b/Documentation/filesystems/fscrypt.rst
-@@ -234,8 +234,8 @@ HKDF is more flexible, is nonreversible, and evenly distributes
- entropy from the master key.  HKDF is also standardized and widely
- used by other software, whereas the AES-128-ECB based KDF is ad-hoc.
+@@ -513,7 +513,9 @@ FS_IOC_SET_ENCRYPTION_POLICY can fail with the following errors:
+ - ``EEXIST``: the file is already encrypted with an encryption policy
+   different from the one specified
+ - ``EINVAL``: an invalid encryption policy was specified (invalid
+-  version, mode(s), or flags; or reserved bits were set)
++  version, mode(s), or flags; or reserved bits were set); or a v1
++  encryption policy was specified but the directory has the casefold
++  flag enabled (casefolding is incompatible with v1 policies).
+ - ``ENOKEY``: a v2 encryption policy was specified, but the key with
+   the specified ``master_key_identifier`` has not been added, nor does
+   the process have the CAP_FOWNER capability in the initial user
+diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
+index bb3b7fcfdd48a..d96a58f11d2b0 100644
+--- a/fs/crypto/hooks.c
++++ b/fs/crypto/hooks.c
+@@ -122,6 +122,34 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
+ }
+ EXPORT_SYMBOL_GPL(__fscrypt_prepare_lookup);
  
--Per-file keys
---------------
-+Per-file encryption keys
-+------------------------
++/**
++ * fscrypt_prepare_setflags() - prepare to change flags with FS_IOC_SETFLAGS
++ * @inode: the inode on which flags are being changed
++ * @oldflags: the old flags
++ * @flags: the new flags
++ *
++ * The caller should be holding i_rwsem for write.
++ *
++ * Return: 0 on success; -errno if the flags change isn't allowed or if
++ *	   another error occurs.
++ */
++int fscrypt_prepare_setflags(struct inode *inode,
++			     unsigned int oldflags, unsigned int flags)
++{
++	struct fscrypt_info *ci;
++	int err;
++
++	if (IS_ENCRYPTED(inode) && (flags & ~oldflags & FS_CASEFOLD_FL)) {
++		err = fscrypt_require_key(inode);
++		if (err)
++			return err;
++		ci = inode->i_crypt_info;
++		if (ci->ci_policy.version != FSCRYPT_POLICY_V2)
++			return -EINVAL;
++	}
++	return 0;
++}
++
+ int __fscrypt_prepare_symlink(struct inode *dir, unsigned int len,
+ 			      unsigned int max_len,
+ 			      struct fscrypt_str *disk_link)
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index f1cff83c151ac..cf2a9d26ef7da 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -124,6 +124,13 @@ static bool fscrypt_supported_v1_policy(const struct fscrypt_policy_v1 *policy,
+ 					policy->filenames_encryption_mode))
+ 		return false;
  
- Since each master key can protect many files, it is necessary to
- "tweak" the encryption of each file so that the same plaintext in two
-@@ -268,9 +268,9 @@ is greater than that of an AES-256-XTS key.
- Therefore, to improve performance and save memory, for Adiantum a
- "direct key" configuration is supported.  When the user has enabled
- this by setting FSCRYPT_POLICY_FLAG_DIRECT_KEY in the fscrypt policy,
--per-file keys are not used.  Instead, whenever any data (contents or
--filenames) is encrypted, the file's 16-byte nonce is included in the
--IV.  Moreover:
-+per-file encryption keys are not used.  Instead, whenever any data
-+(contents or filenames) is encrypted, the file's 16-byte nonce is
-+included in the IV.  Moreover:
- 
- - For v1 encryption policies, the encryption is done directly with the
-   master key.  Because of this, users **must not** use the same master
-@@ -335,11 +335,11 @@ used.
- Adiantum is a (primarily) stream cipher-based mode that is fast even
- on CPUs without dedicated crypto instructions.  It's also a true
- wide-block mode, unlike XTS.  It can also eliminate the need to derive
--per-file keys.  However, it depends on the security of two primitives,
--XChaCha12 and AES-256, rather than just one.  See the paper
--"Adiantum: length-preserving encryption for entry-level processors"
--(https://eprint.iacr.org/2018/720.pdf) for more details.  To use
--Adiantum, CONFIG_CRYPTO_ADIANTUM must be enabled.  Also, fast
-+per-file encryption keys.  However, it depends on the security of two
-+primitives, XChaCha12 and AES-256, rather than just one.  See the
-+paper "Adiantum: length-preserving encryption for entry-level
-+processors" (https://eprint.iacr.org/2018/720.pdf) for more details.
-+To use Adiantum, CONFIG_CRYPTO_ADIANTUM must be enabled.  Also, fast
- implementations of ChaCha and NHPoly1305 should be enabled, e.g.
- CONFIG_CRYPTO_CHACHA20_NEON and CONFIG_CRYPTO_NHPOLY1305_NEON for ARM.
- 
-@@ -1149,8 +1149,8 @@ The context structs contain the same information as the corresponding
- policy structs (see `Setting an encryption policy`_), except that the
- context structs also contain a nonce.  The nonce is randomly generated
- by the kernel and is used as KDF input or as a tweak to cause
--different files to be encrypted differently; see `Per-file keys`_ and
--`DIRECT_KEY policies`_.
-+different files to be encrypted differently; see `Per-file encryption
-+keys`_ and `DIRECT_KEY policies`_.
- 
- Data path changes
- -----------------
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index e79d5fd6236a8..f0b0bfae5fa2d 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -268,7 +268,7 @@ extern int fscrypt_init_hkdf(struct fscrypt_hkdf *hkdf, const u8 *master_key,
-  * output doesn't reveal another.
-  */
- #define HKDF_CONTEXT_KEY_IDENTIFIER	1
--#define HKDF_CONTEXT_PER_FILE_KEY	2
-+#define HKDF_CONTEXT_PER_FILE_ENC_KEY	2
- #define HKDF_CONTEXT_DIRECT_KEY		3
- #define HKDF_CONTEXT_IV_INO_LBLK_64_KEY	4
- #define HKDF_CONTEXT_DIRHASH_KEY	5
-@@ -440,8 +440,8 @@ extern struct crypto_skcipher *
- fscrypt_allocate_skcipher(struct fscrypt_mode *mode, const u8 *raw_key,
- 			  const struct inode *inode);
- 
--extern int fscrypt_set_derived_key(struct fscrypt_info *ci,
--				   const u8 *derived_key);
-+extern int fscrypt_set_per_file_enc_key(struct fscrypt_info *ci,
-+					const u8 *raw_key);
- 
- extern int fscrypt_derive_dirhash_key(struct fscrypt_info *ci,
- 				      const struct fscrypt_master_key *mk);
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index 74d61d827d913..65cb09fa6ead9 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -107,12 +107,12 @@ struct crypto_skcipher *fscrypt_allocate_skcipher(struct fscrypt_mode *mode,
- 	return ERR_PTR(err);
++	if (IS_CASEFOLDED(inode)) {
++		/* With v1, there's no way to derive dirhash keys. */
++		fscrypt_warn(inode,
++			     "v1 policies can't be used on casefolded directories");
++		return false;
++	}
++
+ 	return true;
  }
  
--/* Given the per-file key, set up the file's crypto transform object */
--int fscrypt_set_derived_key(struct fscrypt_info *ci, const u8 *derived_key)
-+/* Given a per-file encryption key, set up the file's crypto transform object */
-+int fscrypt_set_per_file_enc_key(struct fscrypt_info *ci, const u8 *raw_key)
- {
- 	struct crypto_skcipher *tfm;
+diff --git a/fs/inode.c b/fs/inode.c
+index 96d62d97694ef..ea15c6d9f2742 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -12,6 +12,7 @@
+ #include <linux/security.h>
+ #include <linux/cdev.h>
+ #include <linux/memblock.h>
++#include <linux/fscrypt.h>
+ #include <linux/fsnotify.h>
+ #include <linux/mount.h>
+ #include <linux/posix_acl.h>
+@@ -2252,7 +2253,7 @@ int vfs_ioc_setflags_prepare(struct inode *inode, unsigned int oldflags,
+ 	    !capable(CAP_LINUX_IMMUTABLE))
+ 		return -EPERM;
  
--	tfm = fscrypt_allocate_skcipher(ci->ci_mode, derived_key, ci->ci_inode);
-+	tfm = fscrypt_allocate_skcipher(ci->ci_mode, raw_key, ci->ci_inode);
- 	if (IS_ERR(tfm))
- 		return PTR_ERR(tfm);
+-	return 0;
++	return fscrypt_prepare_setflags(inode, oldflags, flags);
+ }
+ EXPORT_SYMBOL(vfs_ioc_setflags_prepare);
  
-@@ -121,10 +121,10 @@ int fscrypt_set_derived_key(struct fscrypt_info *ci, const u8 *derived_key)
- 	return 0;
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 6fe8d0f96a4ac..3984eadd7023f 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -263,6 +263,8 @@ extern int __fscrypt_prepare_rename(struct inode *old_dir,
+ 				    unsigned int flags);
+ extern int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
+ 				    struct fscrypt_name *fname);
++extern int fscrypt_prepare_setflags(struct inode *inode,
++				    unsigned int oldflags, unsigned int flags);
+ extern int __fscrypt_prepare_symlink(struct inode *dir, unsigned int len,
+ 				     unsigned int max_len,
+ 				     struct fscrypt_str *disk_link);
+@@ -519,6 +521,13 @@ static inline int __fscrypt_prepare_lookup(struct inode *dir,
+ 	return -EOPNOTSUPP;
  }
  
--static int setup_per_mode_key(struct fscrypt_info *ci,
--			      struct fscrypt_master_key *mk,
--			      struct crypto_skcipher **tfms,
--			      u8 hkdf_context, bool include_fs_uuid)
-+static int setup_per_mode_enc_key(struct fscrypt_info *ci,
-+				  struct fscrypt_master_key *mk,
-+				  struct crypto_skcipher **tfms,
-+				  u8 hkdf_context, bool include_fs_uuid)
- {
- 	const struct inode *inode = ci->ci_inode;
- 	const struct super_block *sb = inode->i_sb;
-@@ -196,15 +196,15 @@ static int fscrypt_setup_v2_file_key(struct fscrypt_info *ci,
- 
- 	if (ci->ci_policy.v2.flags & FSCRYPT_POLICY_FLAG_DIRECT_KEY) {
- 		/*
--		 * DIRECT_KEY: instead of deriving per-file keys, the per-file
--		 * nonce will be included in all the IVs.  But unlike v1
--		 * policies, for v2 policies in this case we don't encrypt with
--		 * the master key directly but rather derive a per-mode key.
--		 * This ensures that the master key is consistently used only
--		 * for HKDF, avoiding key reuse issues.
-+		 * DIRECT_KEY: instead of deriving per-file encryption keys, the
-+		 * per-file nonce will be included in all the IVs.  But unlike
-+		 * v1 policies, for v2 policies in this case we don't encrypt
-+		 * with the master key directly but rather derive a per-mode
-+		 * encryption key.  This ensures that the master key is
-+		 * consistently used only for HKDF, avoiding key reuse issues.
- 		 */
--		err = setup_per_mode_key(ci, mk, mk->mk_direct_tfms,
--					 HKDF_CONTEXT_DIRECT_KEY, false);
-+		err = setup_per_mode_enc_key(ci, mk, mk->mk_direct_tfms,
-+					     HKDF_CONTEXT_DIRECT_KEY, false);
- 	} else if (ci->ci_policy.v2.flags &
- 		   FSCRYPT_POLICY_FLAG_IV_INO_LBLK_64) {
- 		/*
-@@ -213,20 +213,21 @@ static int fscrypt_setup_v2_file_key(struct fscrypt_info *ci,
- 		 * the IVs.  This format is optimized for use with inline
- 		 * encryption hardware compliant with the UFS or eMMC standards.
- 		 */
--		err = setup_per_mode_key(ci, mk, mk->mk_iv_ino_lblk_64_tfms,
--					 HKDF_CONTEXT_IV_INO_LBLK_64_KEY, true);
-+		err = setup_per_mode_enc_key(ci, mk, mk->mk_iv_ino_lblk_64_tfms,
-+					     HKDF_CONTEXT_IV_INO_LBLK_64_KEY,
-+					     true);
- 	} else {
- 		u8 derived_key[FSCRYPT_MAX_KEY_SIZE];
- 
- 		err = fscrypt_hkdf_expand(&mk->mk_secret.hkdf,
--					  HKDF_CONTEXT_PER_FILE_KEY,
-+					  HKDF_CONTEXT_PER_FILE_ENC_KEY,
- 					  ci->ci_nonce,
- 					  FS_KEY_DERIVATION_NONCE_SIZE,
- 					  derived_key, ci->ci_mode->keysize);
- 		if (err)
- 			return err;
- 
--		err = fscrypt_set_derived_key(ci, derived_key);
-+		err = fscrypt_set_per_file_enc_key(ci, derived_key);
- 		memzero_explicit(derived_key, ci->ci_mode->keysize);
- 	}
- 	if (err)
-diff --git a/fs/crypto/keysetup_v1.c b/fs/crypto/keysetup_v1.c
-index 3578c1c607c51..801b48c0cd7f3 100644
---- a/fs/crypto/keysetup_v1.c
-+++ b/fs/crypto/keysetup_v1.c
-@@ -9,7 +9,7 @@
-  * This file implements compatibility functions for the original encryption
-  * policy version ("v1"), including:
-  *
-- * - Deriving per-file keys using the AES-128-ECB based KDF
-+ * - Deriving per-file encryption keys using the AES-128-ECB based KDF
-  *   (rather than the new method of using HKDF-SHA512)
-  *
-  * - Retrieving fscrypt master keys from process-subscribed keyrings
-@@ -283,7 +283,7 @@ static int setup_v1_file_key_derived(struct fscrypt_info *ci,
- 	if (err)
- 		goto out;
- 
--	err = fscrypt_set_derived_key(ci, derived_key);
-+	err = fscrypt_set_per_file_enc_key(ci, derived_key);
- out:
- 	kzfree(derived_key);
- 	return err;
++static inline int fscrypt_prepare_setflags(struct inode *inode,
++					   unsigned int oldflags,
++					   unsigned int flags)
++{
++	return 0;
++}
++
+ static inline int __fscrypt_prepare_symlink(struct inode *dir,
+ 					    unsigned int len,
+ 					    unsigned int max_len,
+
+base-commit: 50d9fad73a45a78f8b974b46307712556c9a42d3
 -- 
 2.25.0
 
