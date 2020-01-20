@@ -2,69 +2,80 @@ Return-Path: <SRS0=H63v=3J=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3237CC33CAF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jan 2020 01:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A48C33CB7
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jan 2020 04:49:10 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F08D6206D7
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jan 2020 01:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8001F2077C;
+	Mon, 20 Jan 2020 04:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Ef8fmM7D";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="CmgGFK6l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08D6206D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="dqVGThap";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="LEncCoy8";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uP4y8S6S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8001F2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1itMGe-0006Bw-Um; Mon, 20 Jan 2020 01:54:16 +0000
+	id 1itOzt-0001l7-JJ; Mon, 20 Jan 2020 04:49:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <viro@ftp.linux.org.uk>) id 1itMGc-0006BD-OP
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 01:54:14 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1itOzs-0001kq-E1
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 04:49:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Sender:In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=07Wbq55Cyqr3zBVt4NiTlh8b3QNGDdOmjHef7vcL2vY=; b=Ef8fmM7D5r2bcFJS8yAo+Y8LR
- SFxU+KpBCLm+ihiPljgmVTWBaoGQHixD0M6WraQFM70LH7azpSRvCSKKcn4x3eZp8NllucnBJaRNQ
- mkbLbWk8cmZM3FplneJc31FM5zmtjHnqDv7bH8ozgmXFzWshDbDmDN/UmkGln73KWBWw8=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=lbn0gVuz96JjAAWyjWAOrvMXV06j6A/ABotqDVRIEjM=; b=dqVGThaptwCGoRwXp11FgI+65p
+ XEwAOPKQZaCyzpg3/KKuWCEOSLoMFFGErOxzhJ7K+VaQCRy5R/4ec7YdvbDD8NkK4m0cseKs73yAp
+ p2nWJSDTuZjdYAYqNk27WDjmhsw0u5vtfURO4IK7FcRRuRJ3u2bUrM5lUulnSp65xbFQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Sender:In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
- Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=07Wbq55Cyqr3zBVt4NiTlh8b3QNGDdOmjHef7vcL2vY=; b=CmgGFK6lDb2L3qQ9vtrOEcjKV8
- 1J/QBiW/5mgp4rzswFxe+REul6F+w2fY3e2cMzP8IHBgzkgyH1dOHDFTB5tyRNl5cdy/NgpsI/hEr
- Vp1TgzE5rEqMBV8qCXnoHJnwtBq1ofYvqFIAk73phWLOV3PtuhwGg5Q+OiGYb4S0WOvA=;
-Received: from zeniv.linux.org.uk ([195.92.253.2])
+ bh=lbn0gVuz96JjAAWyjWAOrvMXV06j6A/ABotqDVRIEjM=; b=LEncCoy8HxTtQ5vEdkCLIXaJfq
+ ydinduJFzc281vMMR2IzVJhFqIiSzbuw/465xqS2JiweIk9YtWUICXcAjiHdvJkV/HP9ETbteq9Ia
+ zDdB1KSmuZ5PSqC4DGh65STAY5V8TEjotFrNDk56OVgLtsXqBF5MO6mpSTs2UMJiIe1g=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1itMGa-00AyZ5-RX
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 01:54:14 +0000
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat
- Linux)) id 1itLyS-00Bl2j-If; Mon, 20 Jan 2020 01:35:28 +0000
-Date: Mon, 20 Jan 2020 01:35:28 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Daniel Rosenberg <drosen@google.com>
-Message-ID: <20200120013528.GY8904@ZenIV.linux.org.uk>
-References: <20200117214246.235591-1-drosen@google.com>
- <20200117214246.235591-6-drosen@google.com>
+ id 1itOzo-00B698-Eq
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jan 2020 04:49:08 +0000
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
+ [107.3.166.239])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 4E0B4207FD;
+ Mon, 20 Jan 2020 04:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1579495738;
+ bh=IGMkQrNx58sdKreblrpAmaCSG7NKWX7RBzLDowk/gQI=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=uP4y8S6Sbevk8dvMhLVIb831GY794EJX9PsZGN7nVCy1vVSY4KaeCte0xIUAZ607Q
+ C49r4+tv6DTUXTsr4vr4eLhrwn9AH4XmW3nDT6uKyaoxGtG3WekOdjdGMH+YyaDYsl
+ iXLdqxuIjeCy7nqYpEv4tcmelA00QaSCvzQKApTY=
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Sun, 19 Jan 2020 20:44:01 -0800
+Message-Id: <20200120044401.325453-5-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200120044401.325453-1-ebiggers@kernel.org>
+References: <20200120044401.325453-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200117214246.235591-6-drosen@google.com>
-X-Headers-End: 1itMGa-00AyZ5-RX
-Subject: Re: [f2fs-dev] [PATCH v3 5/9] vfs: Fold casefolding into vfs
+X-Headers-End: 1itOzo-00B698-Eq
+Subject: [f2fs-dev] [PATCH v4 4/4] fscrypt: improve format of no-key names
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,86 +87,479 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Theodore Ts'o <tytso@mit.edu>, Jonathan Corbet <corbet@lwn.net>,
- kernel-team@android.com, linux-doc@vger.kernel.org,
+Cc: Daniel Rosenberg <drosen@google.com>, kernel-team@android.com,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
- Andreas Dilger <adilger.kernel@dilger.ca>, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
  Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jan 17, 2020 at 01:42:42PM -0800, Daniel Rosenberg wrote:
-> Ext4 and F2fs are both using casefolding, and they, along with any other
-> filesystem that adds the feature, will be using identical dentry_ops.
-> Additionally, those dentry ops interfere with the dentry_ops required
-> for fscrypt once we add support for casefolding and encryption.
-> Moving this into the vfs removes code duplication as well as the
-> complication with encryption.
-> 
-> Currently this is pretty close to just moving the existing f2fs/ext4
-> code up a level into the vfs,
+From: Daniel Rosenberg <drosen@google.com>
 
-... buggering the filesystems (and boxen) that never planned to use
-that garbage.
+When an encrypted directory is listed without the key, the filesystem
+must show "no-key names" that uniquely identify directory entries, are
+at most 255 (NAME_MAX) bytes long, and don't contain '/' or '\0'.
+Currently, for short names the no-key name is the base64 encoding of the
+ciphertext filename, while for long names it's the base64 encoding of
+the ciphertext filename's dirhash and second-to-last 16-byte block.
 
-> @@ -247,7 +248,19 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
->  	 * be no NUL in the ct/tcount data)
->  	 */
->  	const unsigned char *cs = READ_ONCE(dentry->d_name.name);
-> +#ifdef CONFIG_UNICODE
-> +	struct inode *parent = dentry->d_parent->d_inode;
+This format has the following problems:
 
-What happens if dentry gets moved under you?  And that's not mentioning the joy
-of extra cachelines to shit the cache with.  For every sodding dentry in the
-hashchain you are walking.
+- Since it doesn't always include the dirhash, it's incompatible with
+  directories that will use a secret-keyed dirhash over the plaintext
+  filenames.  In this case, the dirhash won't be computable from the
+  ciphertext name without the key, so it instead must be retrieved from
+  the directory entry and always included in the no-key name.
+  Casefolded encrypted directories will use this type of dirhash.
 
-> +	if (unlikely(needs_casefold(parent))) {
-> +		const struct qstr n1 = QSTR_INIT(cs, tcount);
-> +		const struct qstr n2 = QSTR_INIT(ct, tcount);
-> +		int result = utf8_strncasecmp(dentry->d_sb->s_encoding,
-> +						&n1, &n2);
+- It's ambiguous: it's possible to craft two filenames that map to the
+  same no-key name, since the method used to abbreviate long filenames
+  doesn't use a proper cryptographic hash function.
 
-Is that safe in face of renames?  We are *NOT* guaranteed ->d_lock here;
-->d_name can change under you just fine.  False negatives are OK, but
-there's a lot more ways for the things to go wrong.
+Solve both these problems by switching to a new no-key name format that
+is the base64-encoding of a variable-length structure that contains the
+dirhash, up to 149 bytes of the ciphertext filename, and (if any bytes
+remain) the SHA-256 of the remaining bytes of the ciphertext filename.
 
->  static int link_path_walk(const char *name, struct nameidata *nd)
->  {
+This ensures that each no-key name contains everything needed to find
+the directory entry again, contains only legal characters, doesn't
+exceed NAME_MAX, is unambiguous unless there's a SHA-256 collision, and
+that we only take the performance hit of SHA-256 on very long filenames.
 
-> +#ifdef CONFIG_UNICODE
-> +		if (needs_casefold(nd->path.dentry->d_inode)) {
-> +			struct qstr str = QSTR_INIT(name, PATH_MAX);
-> +
-> +			hname = kmalloc(PATH_MAX, GFP_ATOMIC);
-> +			if (!hname)
-> +				return -ENOMEM;
-> +			hlen = utf8_casefold(nd->path.dentry->d_sb->s_encoding,
-> +						&str, hname, PATH_MAX);
-> +		}
-> +		hash_len = hash_name(nd->path.dentry, hname ?: name);
-> +		kfree(hname);
-> +		hname = NULL;
-> +#else
->  		hash_len = hash_name(nd->path.dentry, name);
-> -
-> +#endif
+Note: this change does *not* address the existing issue where users can
+modify the 'dirhash' part of a no-key name and the filesystem may still
+accept the name.
 
-Are you serious?
-	1) who said that ->d_inode is stable here?  If we are in RCU mode,
-it won't be.
-	2) page-sized kmalloc/kfree *ON* *COMPONENT* *AFTER* *COMPONENT*?
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+[EB: improved comments and commit message, fixed checking return value
+ of base64_decode(), check for SHA-256 error, continue to set disk_name
+ for short names to keep matching simpler, and many other cleanups]
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ Documentation/filesystems/fscrypt.rst |   2 +-
+ fs/crypto/Kconfig                     |   1 +
+ fs/crypto/fname.c                     | 218 ++++++++++++++++++++------
+ include/linux/fscrypt.h               |  76 +--------
+ 4 files changed, 171 insertions(+), 126 deletions(-)
 
-> +static inline bool needs_casefold(const struct inode *dir)
-> +{
-> +	return IS_CASEFOLDED(dir) && dir->i_sb->s_encoding &&
-> +			(!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir));
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index d5b1b49c3d002..01e909245fcde 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -1202,7 +1202,7 @@ filesystem-specific hash(es) needed for directory lookups.  This
+ allows the filesystem to still, with a high degree of confidence, map
+ the filename given in ->lookup() back to a particular directory entry
+ that was previously listed by readdir().  See :c:type:`struct
+-fscrypt_digested_name` in the source for more details.
++fscrypt_nokey_name` in the source for more details.
+ 
+ Note that the precise way that filenames are presented to userspace
+ without the key is subject to change in the future.  It is only meant
+diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+index 02df95b44331d..8046d7c7a3e9c 100644
+--- a/fs/crypto/Kconfig
++++ b/fs/crypto/Kconfig
+@@ -21,5 +21,6 @@ config FS_ENCRYPTION_ALGS
+ 	select CRYPTO_CTS
+ 	select CRYPTO_ECB
+ 	select CRYPTO_HMAC
++	select CRYPTO_SHA256
+ 	select CRYPTO_SHA512
+ 	select CRYPTO_XTS
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index 2d0d5a934e170..938220292e8de 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -13,9 +13,85 @@
+ 
+ #include <linux/namei.h>
+ #include <linux/scatterlist.h>
++#include <crypto/hash.h>
++#include <crypto/sha.h>
+ #include <crypto/skcipher.h>
+ #include "fscrypt_private.h"
+ 
++/**
++ * struct fscrypt_nokey_name - identifier for directory entry when key is absent
++ *
++ * When userspace lists an encrypted directory without access to the key, the
++ * filesystem must present a unique "no-key name" for each filename that allows
++ * it to find the directory entry again if requested.  Naively, that would just
++ * mean using the ciphertext filenames.  However, since the ciphertext filenames
++ * can contain illegal characters ('\0' and '/'), they must be encoded in some
++ * way.  We use base64.  But that can cause names to exceed NAME_MAX (255
++ * bytes), so we also need to use a strong hash to abbreviate long names.
++ *
++ * The filesystem may also need another kind of hash, the "dirhash", to quickly
++ * find the directory entry.  Since filesystems normally compute the dirhash
++ * over the on-disk filename (i.e. the ciphertext), it's not computable from
++ * no-key names that abbreviate the ciphertext using the strong hash to fit in
++ * NAME_MAX.  It's also not computable if it's a keyed hash taken over the
++ * plaintext (but it may still be available in the on-disk directory entry);
++ * casefolded directories use this type of dirhash.  At least in these cases,
++ * each no-key name must include the name's dirhash too.
++ *
++ * To meet all these requirements, we base64-encode the following
++ * variable-length structure.  It contains the dirhash, or 0's if the filesystem
++ * didn't provide one; up to 149 bytes of the ciphertext name; and for
++ * ciphertexts longer than 149 bytes, also the SHA-256 of the remaining bytes.
++ *
++ * This ensures that each no-key name contains everything needed to find the
++ * directory entry again, contains only legal characters, doesn't exceed
++ * NAME_MAX, is unambiguous unless there's a SHA-256 collision, and that we only
++ * take the performance hit of SHA-256 on very long filenames (which are rare).
++ */
++struct fscrypt_nokey_name {
++	u32 dirhash[2];
++	u8 bytes[149];
++	u8 sha256[SHA256_DIGEST_SIZE];
++}; /* 189 bytes => 252 bytes base64-encoded, which is <= NAME_MAX (255) */
++
++/*
++ * Decoded size of max-size nokey name, i.e. a name that was abbreviated using
++ * the strong hash and thus includes the 'sha256' field.  This isn't simply
++ * sizeof(struct fscrypt_nokey_name), as the padding at the end isn't included.
++ */
++#define FSCRYPT_NOKEY_NAME_MAX	offsetofend(struct fscrypt_nokey_name, sha256)
++
++static struct crypto_shash *sha256_hash_tfm;
++
++static int fscrypt_do_sha256(const u8 *data, unsigned int data_len, u8 *result)
++{
++	struct crypto_shash *tfm = READ_ONCE(sha256_hash_tfm);
++
++	if (unlikely(!tfm)) {
++		struct crypto_shash *prev_tfm;
++
++		tfm = crypto_alloc_shash("sha256", 0, 0);
++		if (IS_ERR(tfm)) {
++			fscrypt_err(NULL,
++				    "Error allocating SHA-256 transform: %ld",
++				    PTR_ERR(tfm));
++			return PTR_ERR(tfm);
++		}
++		prev_tfm = cmpxchg(&sha256_hash_tfm, NULL, tfm);
++		if (prev_tfm) {
++			crypto_free_shash(tfm);
++			tfm = prev_tfm;
++		}
++	}
++	{
++		SHASH_DESC_ON_STACK(desc, tfm);
++
++		desc->tfm = tfm;
++
++		return crypto_shash_digest(desc, data, data_len, result);
++	}
++}
++
+ static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+ {
+ 	if (str->len == 1 && str->name[0] == '.')
+@@ -207,9 +283,7 @@ int fscrypt_fname_alloc_buffer(const struct inode *inode,
+ 			       u32 max_encrypted_len,
+ 			       struct fscrypt_str *crypto_str)
+ {
+-	const u32 max_encoded_len =
+-		max_t(u32, BASE64_CHARS(FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE),
+-		      1 + BASE64_CHARS(sizeof(struct fscrypt_digested_name)));
++	const u32 max_encoded_len = BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX);
+ 	u32 max_presented_len;
+ 
+ 	max_presented_len = max(max_encoded_len, max_encrypted_len);
+@@ -242,9 +316,9 @@ EXPORT_SYMBOL(fscrypt_fname_free_buffer);
+  *
+  * The caller must have allocated sufficient memory for the @oname string.
+  *
+- * If the key is available, we'll decrypt the disk name; otherwise, we'll encode
+- * it for presentation.  Short names are directly base64-encoded, while long
+- * names are encoded in fscrypt_digested_name format.
++ * If the key is available, we'll decrypt the disk name.  Otherwise, we'll
++ * encode it for presentation in fscrypt_nokey_name format.
++ * See struct fscrypt_nokey_name for details.
+  *
+  * Return: 0 on success, -errno on failure
+  */
+@@ -254,7 +328,9 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 			      struct fscrypt_str *oname)
+ {
+ 	const struct qstr qname = FSTR_TO_QSTR(iname);
+-	struct fscrypt_digested_name digested_name;
++	struct fscrypt_nokey_name nokey_name;
++	u32 size; /* size of the unencoded no-key name */
++	int err;
+ 
+ 	if (fscrypt_is_dot_dotdot(&qname)) {
+ 		oname->name[0] = '.';
+@@ -269,24 +345,37 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 	if (fscrypt_has_encryption_key(inode))
+ 		return fname_decrypt(inode, iname, oname);
+ 
+-	if (iname->len <= FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE) {
+-		oname->len = base64_encode(iname->name, iname->len,
+-					   oname->name);
+-		return 0;
+-	}
++	/*
++	 * Sanity check that struct fscrypt_nokey_name doesn't have padding
++	 * between fields and that its encoded size never exceeds NAME_MAX.
++	 */
++	BUILD_BUG_ON(offsetofend(struct fscrypt_nokey_name, dirhash) !=
++		     offsetof(struct fscrypt_nokey_name, bytes));
++	BUILD_BUG_ON(offsetofend(struct fscrypt_nokey_name, bytes) !=
++		     offsetof(struct fscrypt_nokey_name, sha256));
++	BUILD_BUG_ON(BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX) > NAME_MAX);
++
+ 	if (hash) {
+-		digested_name.hash = hash;
+-		digested_name.minor_hash = minor_hash;
++		nokey_name.dirhash[0] = hash;
++		nokey_name.dirhash[1] = minor_hash;
++	} else {
++		nokey_name.dirhash[0] = 0;
++		nokey_name.dirhash[1] = 0;
++	}
++	if (iname->len <= sizeof(nokey_name.bytes)) {
++		memcpy(nokey_name.bytes, iname->name, iname->len);
++		size = offsetof(struct fscrypt_nokey_name, bytes[iname->len]);
+ 	} else {
+-		digested_name.hash = 0;
+-		digested_name.minor_hash = 0;
++		memcpy(nokey_name.bytes, iname->name, sizeof(nokey_name.bytes));
++		/* Compute strong hash of remaining part of name. */
++		err = fscrypt_do_sha256(&iname->name[sizeof(nokey_name.bytes)],
++					iname->len - sizeof(nokey_name.bytes),
++					nokey_name.sha256);
++		if (err)
++			return err;
++		size = FSCRYPT_NOKEY_NAME_MAX;
+ 	}
+-	memcpy(digested_name.digest,
+-	       FSCRYPT_FNAME_DIGEST(iname->name, iname->len),
+-	       FSCRYPT_FNAME_DIGEST_SIZE);
+-	oname->name[0] = '_';
+-	oname->len = 1 + base64_encode((const u8 *)&digested_name,
+-				       sizeof(digested_name), oname->name + 1);
++	oname->len = base64_encode((const u8 *)&nokey_name, size, oname->name);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(fscrypt_fname_disk_to_usr);
+@@ -307,8 +396,7 @@ EXPORT_SYMBOL(fscrypt_fname_disk_to_usr);
+  * get the disk_name.
+  *
+  * Else, for keyless @lookup operations, @iname is the presented ciphertext, so
+- * we decode it to get either the ciphertext disk_name (for short names) or the
+- * fscrypt_digested_name (for long names).  Non-@lookup operations will be
++ * we decode it to get the fscrypt_nokey_name.  Non-@lookup operations will be
+  * impossible in this case, so we fail them with ENOKEY.
+  *
+  * If successful, fscrypt_free_filename() must be called later to clean up.
+@@ -318,8 +406,8 @@ EXPORT_SYMBOL(fscrypt_fname_disk_to_usr);
+ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ 			      int lookup, struct fscrypt_name *fname)
+ {
++	struct fscrypt_nokey_name *nokey_name;
+ 	int ret;
+-	int digested;
+ 
+ 	memset(fname, 0, sizeof(struct fscrypt_name));
+ 	fname->usr_fname = iname;
+@@ -359,40 +447,31 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ 	 * We don't have the key and we are doing a lookup; decode the
+ 	 * user-supplied name
+ 	 */
+-	if (iname->name[0] == '_') {
+-		if (iname->len !=
+-		    1 + BASE64_CHARS(sizeof(struct fscrypt_digested_name)))
+-			return -ENOENT;
+-		digested = 1;
+-	} else {
+-		if (iname->len >
+-		    BASE64_CHARS(FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE))
+-			return -ENOENT;
+-		digested = 0;
+-	}
+ 
+-	fname->crypto_buf.name =
+-		kmalloc(max_t(size_t, FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE,
+-			      sizeof(struct fscrypt_digested_name)),
+-			GFP_KERNEL);
++	if (iname->len > BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX))
++		return -ENOENT;
++
++	fname->crypto_buf.name = kmalloc(FSCRYPT_NOKEY_NAME_MAX, GFP_KERNEL);
+ 	if (fname->crypto_buf.name == NULL)
+ 		return -ENOMEM;
+ 
+-	ret = base64_decode(iname->name + digested, iname->len - digested,
+-			    fname->crypto_buf.name);
+-	if (ret < 0) {
++	ret = base64_decode(iname->name, iname->len, fname->crypto_buf.name);
++	if (ret < (int)offsetof(struct fscrypt_nokey_name, bytes[1]) ||
++	    (ret > offsetof(struct fscrypt_nokey_name, sha256) &&
++	     ret != FSCRYPT_NOKEY_NAME_MAX)) {
+ 		ret = -ENOENT;
+ 		goto errout;
+ 	}
+ 	fname->crypto_buf.len = ret;
+-	if (digested) {
+-		const struct fscrypt_digested_name *n =
+-			(const void *)fname->crypto_buf.name;
+-		fname->hash = n->hash;
+-		fname->minor_hash = n->minor_hash;
+-	} else {
+-		fname->disk_name.name = fname->crypto_buf.name;
+-		fname->disk_name.len = fname->crypto_buf.len;
++
++	nokey_name = (void *)fname->crypto_buf.name;
++	fname->hash = nokey_name->dirhash[0];
++	fname->minor_hash = nokey_name->dirhash[1];
++	if (ret != FSCRYPT_NOKEY_NAME_MAX) {
++		/* The full ciphertext filename is available. */
++		fname->disk_name.name = nokey_name->bytes;
++		fname->disk_name.len =
++			ret - offsetof(struct fscrypt_nokey_name, bytes);
+ 	}
+ 	return 0;
+ 
+@@ -402,6 +481,43 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ }
+ EXPORT_SYMBOL(fscrypt_setup_filename);
+ 
++/**
++ * fscrypt_match_name() - test whether the given name matches a directory entry
++ * @fname: the name being searched for
++ * @de_name: the name from the directory entry
++ * @de_name_len: the length of @de_name in bytes
++ *
++ * Normally @fname->disk_name will be set, and in that case we simply compare
++ * that to the name stored in the directory entry.  The only exception is that
++ * if we don't have the key for an encrypted directory and the name we're
++ * looking for is very long, then we won't have the full disk_name and instead
++ * we'll need to match against a fscrypt_nokey_name that includes a strong hash.
++ *
++ * Return: %true if the name matches, otherwise %false.
++ */
++bool fscrypt_match_name(const struct fscrypt_name *fname,
++			const u8 *de_name, u32 de_name_len)
++{
++	const struct fscrypt_nokey_name *nokey_name =
++		(const void *)fname->crypto_buf.name;
++	u8 sha256[SHA256_DIGEST_SIZE];
++
++	if (likely(fname->disk_name.name)) {
++		if (de_name_len != fname->disk_name.len)
++			return false;
++		return !memcmp(de_name, fname->disk_name.name, de_name_len);
++	}
++	if (de_name_len <= sizeof(nokey_name->bytes))
++		return false;
++	if (memcmp(de_name, nokey_name->bytes, sizeof(nokey_name->bytes)))
++		return false;
++	if (fscrypt_do_sha256(&de_name[sizeof(nokey_name->bytes)],
++			      de_name_len - sizeof(nokey_name->bytes), sha256))
++		return false;
++	return !memcmp(sha256, nokey_name->sha256, sizeof(sha256));
++}
++EXPORT_SYMBOL_GPL(fscrypt_match_name);
++
+ /**
+  * fscrypt_fname_siphash() - calculate the SipHash of a filename
+  * @dir: the parent directory
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 2bb43a772f361..556f4adf5dc58 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -172,83 +172,11 @@ extern int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 				     u32 hash, u32 minor_hash,
+ 				     const struct fscrypt_str *iname,
+ 				     struct fscrypt_str *oname);
++extern bool fscrypt_match_name(const struct fscrypt_name *fname,
++			       const u8 *de_name, u32 de_name_len);
+ extern u64 fscrypt_fname_siphash(const struct inode *dir,
+ 				 const struct qstr *name);
+ 
+-#define FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE	32
+-
+-/* Extracts the second-to-last ciphertext block; see explanation below */
+-#define FSCRYPT_FNAME_DIGEST(name, len)	\
+-	((name) + round_down((len) - FS_CRYPTO_BLOCK_SIZE - 1, \
+-			     FS_CRYPTO_BLOCK_SIZE))
+-
+-#define FSCRYPT_FNAME_DIGEST_SIZE	FS_CRYPTO_BLOCK_SIZE
+-
+-/**
+- * fscrypt_digested_name - alternate identifier for an on-disk filename
+- *
+- * When userspace lists an encrypted directory without access to the key,
+- * filenames whose ciphertext is longer than FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE
+- * bytes are shown in this abbreviated form (base64-encoded) rather than as the
+- * full ciphertext (base64-encoded).  This is necessary to allow supporting
+- * filenames up to NAME_MAX bytes, since base64 encoding expands the length.
+- *
+- * To make it possible for filesystems to still find the correct directory entry
+- * despite not knowing the full on-disk name, we encode any filesystem-specific
+- * 'hash' and/or 'minor_hash' which the filesystem may need for its lookups,
+- * followed by the second-to-last ciphertext block of the filename.  Due to the
+- * use of the CBC-CTS encryption mode, the second-to-last ciphertext block
+- * depends on the full plaintext.  (Note that ciphertext stealing causes the
+- * last two blocks to appear "flipped".)  This makes accidental collisions very
+- * unlikely: just a 1 in 2^128 chance for two filenames to collide even if they
+- * share the same filesystem-specific hashes.
+- *
+- * However, this scheme isn't immune to intentional collisions, which can be
+- * created by anyone able to create arbitrary plaintext filenames and view them
+- * without the key.  Making the "digest" be a real cryptographic hash like
+- * SHA-256 over the full ciphertext would prevent this, although it would be
+- * less efficient and harder to implement, especially since the filesystem would
+- * need to calculate it for each directory entry examined during a search.
+- */
+-struct fscrypt_digested_name {
+-	u32 hash;
+-	u32 minor_hash;
+-	u8 digest[FSCRYPT_FNAME_DIGEST_SIZE];
+-};
+-
+-/**
+- * fscrypt_match_name() - test whether the given name matches a directory entry
+- * @fname: the name being searched for
+- * @de_name: the name from the directory entry
+- * @de_name_len: the length of @de_name in bytes
+- *
+- * Normally @fname->disk_name will be set, and in that case we simply compare
+- * that to the name stored in the directory entry.  The only exception is that
+- * if we don't have the key for an encrypted directory and a filename in it is
+- * very long, then we won't have the full disk_name and we'll instead need to
+- * match against the fscrypt_digested_name.
+- *
+- * Return: %true if the name matches, otherwise %false.
+- */
+-static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
+-				      const u8 *de_name, u32 de_name_len)
+-{
+-	if (unlikely(!fname->disk_name.name)) {
+-		const struct fscrypt_digested_name *n =
+-			(const void *)fname->crypto_buf.name;
+-		if (WARN_ON_ONCE(fname->usr_fname->name[0] != '_'))
+-			return false;
+-		if (de_name_len <= FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE)
+-			return false;
+-		return !memcmp(FSCRYPT_FNAME_DIGEST(de_name, de_name_len),
+-			       n->digest, FSCRYPT_FNAME_DIGEST_SIZE);
+-	}
+-
+-	if (de_name_len != fname->disk_name.len)
+-		return false;
+-	return !memcmp(de_name, fname->disk_name.name, fname->disk_name.len);
+-}
+-
+ /* bio.c */
+ extern void fscrypt_decrypt_bio(struct bio *);
+ extern int fscrypt_zeroout_range(const struct inode *, pgoff_t, sector_t,
+-- 
+2.25.0
 
-... and again, you are pulling in a lot of cachelines.
-
-<understatement> IMO the whole thing is not a good idea. </understatement>
 
 
 _______________________________________________
