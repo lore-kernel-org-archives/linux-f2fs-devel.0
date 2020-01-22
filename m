@@ -2,106 +2,81 @@ Return-Path: <SRS0=ZV1O=3L=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC2AC2D0CE
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Jan 2020 01:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794ADC32771
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Jan 2020 22:59:38 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 88FC224656;
-	Wed, 22 Jan 2020 01:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 39A9121835;
+	Wed, 22 Jan 2020 22:59:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="deNtBJM7";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KwwGUKpQ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="G9K/qW1c";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="sbjgI932"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88FC224656
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ZxA2NRL9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="MV8ujOPG";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1/1qVGJ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A9121835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Message-ID:Date:In-Reply-To:References:
-	MIME-Version:Sender:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	bh=lDgqvs8k4xRlcM12RAK0XnUjVINBOShi3TxzT09Jq80=; b=deNtBJM72r0ht1bKC8DQ8FlB8j
-	0zUDKWgWAnSkB7+lsF/+sgjDSxbN8HUrbP0wi5a5uSzB4ngbrq4/wo8nCrBnVlLKcOINBghHosejK
-	7PvXFKqWEHU4Y+8EpgjXY6FBBp0xeJnQEaK2tM+tEr1cNRkF+eYjoSltSJqVzbKRqPbg=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1iu4de-0005Ty-6A; Wed, 22 Jan 2020 01:16:58 +0000
+	id 1iuOyH-0007Fo-7o; Wed, 22 Jan 2020 22:59:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <drosen@google.com>) id 1iu4dc-0005Tr-Hw
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jan 2020 01:16:56 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1iuOyF-0007FX-F3
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jan 2020 22:59:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=aTrmpDPbM7QagWgFbn/XvaDbssQKCtZ+aK7kQ78b1YQ=; b=KwwGUKpQ3zomLHW4PQa3lBbENz
- qH6CT9zY7mfjU6Zw4Vm0K8jydXxdIutHdMY20dc9kMnFnRFmx+UTL/jOt0WSyC5zCMABfB6GYs/Cu
- h3wQmL2RnpM7esiNHGsPk8RvIZix+qR8SiN/WbXt1dZpnGmk1QyQwe5Qe3/uDchvibUA=;
+ bh=fH+E9Tj2h25yLjy+ynpgTyVLEpP3RchZJmc3FAnh1kc=; b=ZxA2NRL9t/orT94VzyLPgrwjLZ
+ rYlI1jO+5efwBS8Iws4/A6ui6+nXieOL2ppRUXnv/o+O0Sh30Yp08EtjKK0pjlr5PS5sMCG/5aN0l
+ 1U6s7e1RBDfloMu6i6dJ9xpYCHpmj71G5dlnYC3EHxKjBS51jGNrzAWWWm5d9xBTul5w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=aTrmpDPbM7QagWgFbn/XvaDbssQKCtZ+aK7kQ78b1YQ=; b=G9K/qW1cdaSVC6JEHdDarxTpQY
- AcGEbKN1ahwBLbiklfswjh46QbQbjpkipOHfr+XKrGr9ItGmLxKlQ/Y+w9aZrJ+UAabC/rAJIXzyn
- Vewj0WzSVHwNqk0kH0gXGlOR4MJCB3RtuCc8upGOOY0/+BZ0xzf2VszMr/uTpQOTh8c4=;
-Received: from mail-lj1-f196.google.com ([209.85.208.196])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1iu4da-00H5L5-Am
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jan 2020 01:16:56 +0000
-Received: by mail-lj1-f196.google.com with SMTP id y6so4927759lji.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 21 Jan 2020 17:16:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc; bh=aTrmpDPbM7QagWgFbn/XvaDbssQKCtZ+aK7kQ78b1YQ=;
- b=sbjgI932IVsBnwvZcFBnekfHjH6LPvKho84iI0IqHn/lre/vnHDKZVHxM1chNODhEO
- oeBlWCXMu1xE41wCdmoAkJJWr3Xo/D+ju9vZ24VZpOnhSgfRdcQ5am2PHHrxTnbqi0XX
- b6eAwer8WCvSMIGV6+9Wm90f1KZ3856dgqPB2hB+SbeEq0VAirrYLusuJK6x9OvIXK1e
- QDAc9rab8nWgGfMDGKUKmikIqpQ1Tb6qVVp8u1rUGV3i6DXFmO0XieZmSerhbsGxj1Kd
- Nom76vDbxrBnAL633zaFY9rrVrFB9Ton5m1jJHrUpOo8xzUYC7WMuWNZ+fTJ5iMxzctH
- wfaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc;
- bh=aTrmpDPbM7QagWgFbn/XvaDbssQKCtZ+aK7kQ78b1YQ=;
- b=AkJelnDicGjJK23r2upVDPTHKYs1lU2X02g4/MBbk6FacdCothVaB18z0bp0EGJcUH
- ZE5pZ2XUP0HpKAkEYJr55TBBNzNlqeQdCV+CbR/krkLc/gtlGcZy1y9cvFliKol8a00h
- J2KIMCZ2dJK7S8atQRzKuYbyxY8b42+rqGviiTkc7PKuXUbq4sBY2PJEv16rv2J3YQET
- unWPuMBh8iRxt5Zgn5tAjis1Prt+r+xyV8XJpr6C9F39uOLP2vdraMSifOoQodbPyB8g
- L+t+HNR2Jb9TI90aS/XOAR6P78yfb/zidgdBq1G1lZKWsDnhJERjf8GA2B1UCORdVwsK
- KGNw==
-X-Gm-Message-State: APjAAAVcMrVFBIv9mZv07zXIg86DYznQv5XZ50SR7zWL046OTcA8X156
- NQOqEZubt6EZGWI4VhmwkVwYJtqIHaJ2s2zTM1wXCQ==
-X-Google-Smtp-Source: APXvYqx9Wcig2VJsMhSPvoP5661qvRVt8CMWdEp0WvbCQ34genipkG1eA/ei4esFDAtnsgj2YEIbFdJHl+MGczi/Wzs=
-X-Received: by 2002:a2e:b52b:: with SMTP id z11mr18133901ljm.155.1579655807322; 
- Tue, 21 Jan 2020 17:16:47 -0800 (PST)
+ bh=fH+E9Tj2h25yLjy+ynpgTyVLEpP3RchZJmc3FAnh1kc=; b=MV8ujOPGjAOjAf4La6wpHTM6Nt
+ ApnqMWPVnrW076WqaOrRYtbP5WJgzVAdxAo74iI3aJC6fPz/HupM7h8OLHgL85Luvk117La6VzEyy
+ xaZs4JYmF5gc0qDDbg7CJoYnJA5Ci9n1JsXAXemw5AHVsMX7j9aF42d/mRv5D1HoANvw=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1iuOyA-00F8mg-0K
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jan 2020 22:59:35 +0000
+Received: from gmail.com (unknown [104.132.1.77])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 6D5E221835;
+ Wed, 22 Jan 2020 22:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1579733959;
+ bh=PEgc7glKU+eTUcoJvJSY2cFK4bxB8lTHfVQY/rxd9nQ=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=1/1qVGJ7dgvX7BRXVza1/cj12O3YybXAukgv+DgcaApLwrlHilg0Po8C+0NaZuKjh
+ R1bg0kmBt9xA2/0vvYiPXtzqPC8DeYarFzR6h5qgSEH9/4aWbqvufBlWv9/+ty1LwW
+ 7pz4DFyw1ZzxD4MZh5XqQMX62UN3Nhccj2yWOsuE=
+Date: Wed, 22 Jan 2020 14:59:18 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Message-ID: <20200122225917.GA182745@gmail.com>
+References: <20200120060732.390362-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <20200120223201.241390-1-ebiggers@kernel.org>
- <20200120223201.241390-4-ebiggers@kernel.org>
-In-Reply-To: <20200120223201.241390-4-ebiggers@kernel.org>
-Date: Tue, 21 Jan 2020 17:16:36 -0800
-Message-ID: <CA+PiJmT1GPgLBYak51V04jtyDjOFPzSeaTxKryCqy3Ak6yAo6A@mail.gmail.com>
-To: Eric Biggers <ebiggers@kernel.org>
-X-Headers-End: 1iu4da-00H5L5-Am
-Subject: Re: [f2fs-dev] [PATCH v5 3/6] fscrypt: clarify what is meant by a
- per-file key
+Content-Disposition: inline
+In-Reply-To: <20200120060732.390362-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Headers-End: 1iuOyA-00F8mg-0K
+Subject: Re: [f2fs-dev] [PATCH] fscrypt: don't print name of busy file when
+ removing key
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -113,30 +88,42 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Rosenberg via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Rosenberg <drosen@google.com>
-Cc: Gabriel Krisman Bertazi <krisman@collabora.com>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org,
- Richard Weinberger <richard@nod.at>, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, kernel-team@android.com
+Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jan 20, 2020 at 2:34 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
+On Sun, Jan 19, 2020 at 10:07:32PM -0800, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
->
-> Now that there's sometimes a second type of per-file key (the dirhash
-> key), clarify some function names, macros, and documentation that
-> specifically deal with per-file *encryption* keys.
->
+> 
+> When an encryption key can't be fully removed due to file(s) protected
+> by it still being in-use, we shouldn't really print the path to one of
+> these files to the kernel log, since parts of this path are likely to be
+> encrypted on-disk, and (depending on how the system is set up) the
+> confidentiality of this path might be lost by printing it to the log.
+> 
+> This is a trade-off: a single file path often doesn't matter at all,
+> especially if it's a directory; the kernel log might still be protected
+> in some way; and I had originally hoped that any "inode(s) still busy"
+> bugs (which are security weaknesses in their own right) would be quickly
+> fixed and that to do so it would be super helpful to always know the
+> file path and not have to run 'find dir -inum $inum' after the fact.
+> 
+> But in practice, these bugs can be hard to fix (e.g. due to asynchronous
+> process killing that is difficult to eliminate, for performance
+> reasons), and also not tied to specific files, so knowing a file path
+> doesn't necessarily help.
+> 
+> So to be safe, for now let's just show the inode number, not the path.
+> If someone really wants to know a path they can use 'find -inum'.
+> 
+> Fixes: b1c0ec3599f4 ("fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl")
+> Cc: <stable@vger.kernel.org> # v5.4+
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Looks good to me. Feel free to add
-Reviewed-by: Daniel Rosenberg <drosen@google>
+Applied to fscrypt.git#master for 5.6.
+
+- Eric
 
 
 _______________________________________________
