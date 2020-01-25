@@ -3,78 +3,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3294EC32771
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jan 2020 01:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8B8C32771
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jan 2020 03:35:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 026662075E;
-	Sat, 25 Jan 2020 01:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 418392072C;
+	Sat, 25 Jan 2020 03:35:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="W6hI9/e8";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="B/9CnIaa";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u/qkoarH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 026662075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CsQrq1MM";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="E88Fd2LU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418392072C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ivAN0-0001yk-N1; Sat, 25 Jan 2020 01:36:18 +0000
+	id 1ivCEh-0004Yr-2m; Sat, 25 Jan 2020 03:35:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1ivAMz-0001yc-0X
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Jan 2020 01:36:17 +0000
+ (envelope-from <tytso@mit.edu>) id 1ivCEe-0004YY-VO
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Jan 2020 03:35:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=r6GOkDmHzXzhSVqOAD8xlLIM6J6vOicE1/PE/yHNhJg=; b=W6hI9/e8ZJ2rEh5GxJQa0FtFgs
- H5Ft07SPe0Lv8SmwuDBqtDtS18zz/fFryqIh3ifvXOjFWqX6spGjkvXZx6lt9nFmDyBX+eVEGgGNj
- +uMxnBhDFAevm7BCT/SqcUMwZJ3mUz9Ch+j1TNfvYCCxcANmAPvwqpYV2GlnPUHENvd8=;
+ bh=N8zMhI150you8/NvC9e+c/YVi+8vyTTCgq1MjPie2uU=; b=CsQrq1MMa6jsH/Jdr0BUi5t/AQ
+ htyB5XfwaB9ECQEH5QqkCBaGePzYQeyo2LeUct+DxAdTrIE+rs7PQiJk2nnXhUuWpUEjSG7WupIRD
+ a3hJG3y96j+9w7m4gkL+Xh5OpCev+o9EyflNv8i693rgrlg5cKjc7TMJ2MbqwuJDEy2E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=r6GOkDmHzXzhSVqOAD8xlLIM6J6vOicE1/PE/yHNhJg=; b=B
- /9CnIaa/Hqf8XyF5b3PN/ZSvP4XfW4NxpVvMXOPVnwPusTdkItQyMvH9Dgyc518PY56ktf/USbNiU
- 4FTOoA771s6t5zBbEAvYv93rgTb7dXtTSz8BznVbkDpHIc1rasLW0qjhdEnGcMMswN2En54Z4r7Ox
- O6QkPbSdYe+hHzBA=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=N8zMhI150you8/NvC9e+c/YVi+8vyTTCgq1MjPie2uU=; b=E88Fd2LU1grR6OGWWTE36FdQ8K
+ 7AT3ImXyRVoWphD9mEDUmAnwHwhFd7MxYb9rDl+K0OiCRBtFWKpbrJ5UKP6nzw5sQMn2/r5P/Y9U9
+ IBs3Jd7l+8Aivo/tOadZoSfGgS+LaYmxIqrd10XjtLNxCclQX2l1dYr90f2mArMgGaE0=;
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ivAMu-0001R2-Kl
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Jan 2020 01:36:16 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
- MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=r6GOkDmHzXzhSVqOAD8xlLIM6J6vOicE1/PE/yHNhJg=; b=u/qkoarH8z0iijq33ZVQ9301v
- 9Rwk5QUWYJuir0JRz2g3gAvmwfEk2dveuO6cp6kOah1H+gU5RcgFpZyz8DOTwcq4u41wsYNesptA0
- DXWwxdfd621h81YVmJJ6QyYt9XLzBwRj4Jjxdi+im2s9zwR/Mdkn5Xy9ag9DkFKXzAcHngeQJznAY
- IH/oeFxaS/lqVzfpSuTithOrftDc8EsfLSUsRuMvpblcWkatJapDh1LX+b0NnrjN3vpcLlh3vxdyB
- 4FxYQxNjeDWA6ghvaA058mgMgNJpasVgaPd45I3lX1j0F1vfqg5aArs0bf9j0xFTI4zgAeO6rnM94
- yjHIU1COw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1ivAMd-0006VA-6E; Sat, 25 Jan 2020 01:35:55 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org
-Date: Fri, 24 Jan 2020 17:35:41 -0800
-Message-Id: <20200125013553.24899-1-willy@infradead.org>
-X-Mailer: git-send-email 2.21.1
+ id 1ivCEZ-0001kG-SJ
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Jan 2020 03:35:48 +0000
+Received: from callcc.thunk.org (rrcs-67-53-201-206.west.biz.rr.com
+ [67.53.201.206]) (authenticated bits=0)
+ (User authenticated as tytso@ATHENA.MIT.EDU)
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 00P3ZNia013355
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 24 Jan 2020 22:35:26 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+ id DA14842014A; Fri, 24 Jan 2020 22:35:22 -0500 (EST)
+Date: Fri, 24 Jan 2020 22:35:22 -0500
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Eric Biggers <ebiggers@kernel.org>
+Message-ID: <20200125033522.GM147870@mit.edu>
+References: <20200124041234.159740-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ivAMu-0001R2-Kl
-Subject: [f2fs-dev] [PATCH 00/12] Change readahead API
+Content-Disposition: inline
+In-Reply-To: <20200124041234.159740-1-ebiggers@kernel.org>
+X-Headers-End: 1ivCEZ-0001kG-SJ
+Subject: Re: [f2fs-dev] [PATCH] ext4: fix race conditions in ->d_compare()
+ and ->d_hash()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,85 +82,54 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
- "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-ext4@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Cc: Daniel Rosenberg <drosen@google.com>,
+ linux-f2fs-devel@lists.sourceforge.net,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Thu, Jan 23, 2020 at 08:12:34PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Since ->d_compare() and ->d_hash() can be called in RCU-walk mode,
+> ->d_parent and ->d_inode can be concurrently modified, and in
+> particular, ->d_inode may be changed to NULL.  For ext4_d_hash() this
+> resulted in a reproducible NULL dereference if a lookup is done in a
+> directory being deleted, e.g. with:
+> 
+> 	int main()
+> 	{
+> 		if (fork()) {
+> 			for (;;) {
+> 				mkdir("subdir", 0700);
+> 				rmdir("subdir");
+> 			}
+> 		} else {
+> 			for (;;)
+> 				access("subdir/file", 0);
+> 		}
+> 	}
+> 
+> ... or by running the 't_encrypted_d_revalidate' program from xfstests.
+> Both repros work in any directory on a filesystem with the encoding
+> feature, even if the directory doesn't actually have the casefold flag.
+> 
+> I couldn't reproduce a crash in ext4_d_compare(), but it appears that a
+> similar crash is possible there.
+> 
+> Fix these bugs by reading ->d_parent and ->d_inode using READ_ONCE() and
+> falling back to the case sensitive behavior if the inode is NULL.
+> 
+> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> Fixes: b886ee3e778e ("ext4: Support case-insensitive file name lookups")
+> Cc: <stable@vger.kernel.org> # v5.2+
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-This series adds a readahead address_space operation to eventually
-replace the readpages operation.  The key difference is that
-pages are added to the page cache as they are allocated (and
-then looked up by the filesystem) instead of passing them on a
-list to the readpages operation and having the filesystem add
-them to the page cache.  It's a net reduction in code for each
-implementation, more efficient than walking a list, and solves
-the direct-write vs buffered-read problem reported by yu kuai at
-https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
+Thanks, applied.
 
-Matthew Wilcox (Oracle) (12):
-  mm: Fix the return type of __do_page_cache_readahead
-  readahead: Ignore return value of ->readpages
-  readahead: Put pages in cache earlier
-  mm: Add readahead address space operation
-  fs: Convert mpage_readpages to mpage_readahead
-  btrfs: Convert from readpages to readahead
-  erofs: Convert uncompressed files from readpages to readahead
-  erofs: Convert compressed files from readpages to readahead
-  ext4: Convert from readpages to readahead
-  f2fs: Convert from readpages to readahead
-  fuse: Convert from readpages to readahead
-  iomap: Convert from readpages to readahead
-
- Documentation/filesystems/locking.rst |  7 ++-
- Documentation/filesystems/vfs.rst     | 11 ++++
- drivers/staging/exfat/exfat_super.c   |  9 ++--
- fs/block_dev.c                        |  9 ++--
- fs/btrfs/extent_io.c                  | 15 ++----
- fs/btrfs/extent_io.h                  |  2 +-
- fs/btrfs/inode.c                      | 18 +++----
- fs/erofs/data.c                       | 34 +++++-------
- fs/erofs/zdata.c                      | 21 +++-----
- fs/ext2/inode.c                       | 12 ++---
- fs/ext4/ext4.h                        |  2 +-
- fs/ext4/inode.c                       | 24 ++++-----
- fs/ext4/readpage.c                    | 20 +++----
- fs/f2fs/data.c                        | 33 +++++-------
- fs/fat/inode.c                        |  8 +--
- fs/fuse/file.c                        | 35 ++++++------
- fs/gfs2/aops.c                        | 20 ++++---
- fs/hpfs/file.c                        |  8 +--
- fs/iomap/buffered-io.c                | 74 ++++++--------------------
- fs/iomap/trace.h                      |  2 +-
- fs/isofs/inode.c                      |  9 ++--
- fs/jfs/inode.c                        |  8 +--
- fs/mpage.c                            | 38 +++++---------
- fs/nilfs2/inode.c                     | 13 ++---
- fs/ocfs2/aops.c                       | 32 +++++------
- fs/omfs/file.c                        |  8 +--
- fs/qnx6/inode.c                       |  8 +--
- fs/reiserfs/inode.c                   | 10 ++--
- fs/udf/inode.c                        |  8 +--
- fs/xfs/xfs_aops.c                     | 10 ++--
- include/linux/fs.h                    |  2 +
- include/linux/iomap.h                 |  2 +-
- include/linux/mpage.h                 |  2 +-
- include/linux/pagemap.h               | 12 +++++
- include/trace/events/erofs.h          |  6 +--
- include/trace/events/f2fs.h           |  6 +--
- mm/internal.h                         |  2 +-
- mm/migrate.c                          |  2 +-
- mm/readahead.c                        | 76 +++++++++++++++++----------
- 39 files changed, 289 insertions(+), 329 deletions(-)
-
--- 
-2.24.1
-
+						- Ted
 
 
 _______________________________________________
