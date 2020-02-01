@@ -7,76 +7,77 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E3EC33CB3
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  1 Feb 2020 15:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D73C33CB7
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  1 Feb 2020 15:12:55 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D357B20661
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  1 Feb 2020 15:09:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 73A5F2073B;
+	Sat,  1 Feb 2020 15:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fF2t/DVR";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ThEZ97cS";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PpI0y0aB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D357B20661
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Es2DW8yv";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KFmHltPS";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sg8vRCPj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73A5F2073B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ixuOP-0001S3-Rf; Sat, 01 Feb 2020 15:09:05 +0000
+	id 1ixuS7-0002Cv-2t; Sat, 01 Feb 2020 15:12:55 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1ixuOM-0001RI-9F
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Feb 2020 15:09:02 +0000
+ (envelope-from <willy@infradead.org>) id 1ixuS6-0002Co-Eg
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Feb 2020 15:12:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Oin9omXum+K1vH3lIpfU4JhSOHeXHB2IvOy+kBmeirY=; b=fF2t/DVR3SYnNAgT5UqXLSHmx/
- hthVAHkCzeZ6tCPSSy9/jCKM+GbX/8br1vDVImR5LUDnrt1eF/6ueXT8MqxKwrd53346tucoldiRy
- yOQrUGmcqYKjdfzSOApIlZrGN9thdiabC22HsDD1JXzTd2Omb4kTYH9te8enWJ0gTid0=;
+ bh=6RY0UUjdaQhDdTRUN9wz8mjIn266EGtHTTMcbVMwTms=; b=Es2DW8yvzJVm6P4bo7qeBk2Kgt
+ gZGRoY23fJtAj4b3xwzPyZ5d9YJatyPv+nZgKQhJVwSIePxB8CyFtPL2ngvoM09h5NJl9XRZSEHv0
+ +QCLE1SKvpPZ9IewkepCCBHhCu0lCtYhP4q0QkQIsmvk6DGc4VBI853bPob1SUTDXrUc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Oin9omXum+K1vH3lIpfU4JhSOHeXHB2IvOy+kBmeirY=; b=T
- hEZ97cSVCtUZRMgOxN+fx3zbYi5bwjLxYVdouRqljl/BGN02vknQ8P4OfDNxsITWPuXYs6IOCzq2J
- W0+JJAlbGofkB7xYRuyWAJfDS+b9+c8bQdM/A6lK1jEjfDPHwBZo3pB3MEnYR11+WbVnXeP8zdL/H
- wfWzgMQDBkHuJNQ8=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=6RY0UUjdaQhDdTRUN9wz8mjIn266EGtHTTMcbVMwTms=; b=KFmHltPSf7nPKV63DZR83UJaZH
+ +DP5vWRrne2iqpXVuqLTnxioJyUV6SieqRHYvhwzxNG+BQulQlpRObuB2l8urUwfxAECN2Fwy2lal
+ hgS2u34SK1kzCtJAdoOqMZ2HCIk+P5diM4M6ZVCV8V2zBAGgh1BdTGzmI7AzmA0heJuE=;
+Received: from [198.137.202.133] (helo=bombadil.infradead.org)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ixuOI-007HiS-Ao
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Feb 2020 15:09:02 +0000
+ id 1ixuS4-00DHg4-Qh
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Feb 2020 15:12:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
- MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Oin9omXum+K1vH3lIpfU4JhSOHeXHB2IvOy+kBmeirY=; b=PpI0y0aBsE6Y602fQ4rH5EZff
- iaqvLOaNDrb0ZLJFmk6+Hr0Qn04JlYzFLXKwGa2kuizi92mOUR/DmJ1+ss0rC2nu9OcHz0GseFKve
- EuvAeX418NwSs4ncInCjGkocnIZQsjHPInqkRdDCIq6Fe1mZ4THnf+YfJ36RIxT/JGMC2driUPaF2
- coau+YuI1FCzeCCyWk3pj/d+pZrx8llnXof2UfSYyyJNwSgrxYWWEK6BFCDhDHDLvZ2cifPT77FX/
- VeuIo8B7GLPFha2ji58aWIwAMzbBUwzeWKjcKWtNqq7HMqQEHw7apEmLHpHv7f4dI6xTOdiMZD/DS
- TS9Jn8spw==;
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+ :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+ List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=6RY0UUjdaQhDdTRUN9wz8mjIn266EGtHTTMcbVMwTms=; b=sg8vRCPjK4w0XFjy7NZSoRgAsd
+ sBqqUd+isaXbSIeuUVYJtJcfV1jXRDPy/1U16VGmZmw7bTQ2rLIGBTuQKAD/evbIN/2CGbqf86yup
+ XZ76ZxqM71IlldJbmwKxuiwssBnvs5ewBtmJYaNdUdUO6dOPG3sciLrooImEXaiNT1xW8H07J2elq
+ MLCqW63FKLppkTHRkeZA8wHWWlexMlCPdis108H2QqcdbP7xU7qfs0u4ZevSD35ABj+qvZpfKPRbf
+ WCKm37R+Iue4NcPjCNjV5Q89mRHaRwM5fowkUIPipwzn+iV7HDCMv8T9DB6eFWwAwMXNJ5OgUQWmH
+ 9h9aE2Jw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1ixuNa-0004fn-Ja; Sat, 01 Feb 2020 15:08:14 +0000
+ Hat Linux)) id 1ixuRu-0006HP-4H; Sat, 01 Feb 2020 15:12:42 +0000
 From: Matthew Wilcox <willy@infradead.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Date: Sat,  1 Feb 2020 07:08:07 -0800
-Message-Id: <20200201150807.17820-1-willy@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Date: Sat,  1 Feb 2020 07:12:31 -0800
+Message-Id: <20200201151240.24082-4-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
+In-Reply-To: <20200201151240.24082-1-willy@infradead.org>
+References: <20200201151240.24082-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1ixuOI-007HiS-Ao
-Subject: [f2fs-dev] [PATCH] f2fs: Make f2fs_readpages readable again
+X-Headers-End: 1ixuS4-00DHg4-Qh
+Subject: [f2fs-dev] [PATCH v4 03/12] readahead: Put pages in cache earlier
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,79 +89,163 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "Matthew Wilcox \(Oracle\)" <willy@infradead.org>
+Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-ext4@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Remove the horrendous ifdeffery by slipping an IS_ENABLED into
-f2fs_compressed_file().
+At allocation time, put the pages in the cache unless we're using
+->readpages.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: linux-btrfs@vger.kernel.org
+Cc: linux-erofs@lists.ozlabs.org
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-xfs@vger.kernel.org
+Cc: cluster-devel@redhat.com
+Cc: ocfs2-devel@oss.oracle.com
 ---
- fs/f2fs/data.c | 6 ------
- fs/f2fs/f2fs.h | 3 ++-
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ mm/readahead.c | 64 ++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 44 insertions(+), 20 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8bd9afa81c54..41156a8f60a7 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2203,7 +2203,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 				goto next_page;
- 		}
+diff --git a/mm/readahead.c b/mm/readahead.c
+index fc77d13af556..7daef0038b14 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -114,10 +114,10 @@ int read_cache_pages(struct address_space *mapping, struct list_head *pages,
+ EXPORT_SYMBOL(read_cache_pages);
  
--#ifdef CONFIG_F2FS_FS_COMPRESSION
- 		if (f2fs_compressed_file(inode)) {
- 			/* there are remained comressed pages, submit them */
- 			if (!f2fs_cluster_can_merge_page(&cc, page->index)) {
-@@ -2230,14 +2229,11 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 			goto next_page;
- 		}
- read_single_page:
--#endif
- 
- 		ret = f2fs_read_single_page(inode, page, max_nr_pages, &map,
- 					&bio, &last_block_in_bio, is_readahead);
- 		if (ret) {
--#ifdef CONFIG_F2FS_FS_COMPRESSION
- set_error_page:
--#endif
- 			SetPageError(page);
- 			zero_user_segment(page, 0, PAGE_SIZE);
- 			unlock_page(page);
-@@ -2246,7 +2242,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 		if (pages)
- 			put_page(page);
- 
--#ifdef CONFIG_F2FS_FS_COMPRESSION
- 		if (f2fs_compressed_file(inode)) {
- 			/* last page */
- 			if (nr_pages == 1 && !f2fs_cluster_is_empty(&cc)) {
-@@ -2257,7 +2252,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 				f2fs_destroy_compress_ctx(&cc);
- 			}
- 		}
--#endif
- 	}
- 	BUG_ON(pages && !list_empty(pages));
- 	if (bio)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5355be6b6755..398d5a1f2867 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2706,7 +2706,8 @@ static inline int f2fs_has_inline_xattr(struct inode *inode)
- 
- static inline int f2fs_compressed_file(struct inode *inode)
+ static void read_pages(struct address_space *mapping, struct file *filp,
+-		struct list_head *pages, unsigned int nr_pages, gfp_t gfp)
++		struct list_head *pages, pgoff_t start,
++		unsigned int nr_pages)
  {
--	return S_ISREG(inode->i_mode) &&
-+	return IS_ENABLED(CONFIG_F2FS_FS_COMPRESSION) &&
-+		S_ISREG(inode->i_mode) &&
- 		is_inode_flag_set(inode, FI_COMPRESSED_FILE);
+ 	struct blk_plug plug;
+-	unsigned page_idx;
+ 
+ 	blk_start_plug(&plug);
+ 
+@@ -125,18 +125,17 @@ static void read_pages(struct address_space *mapping, struct file *filp,
+ 		mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
+ 		/* Clean up the remaining pages */
+ 		put_pages_list(pages);
+-		goto out;
+-	}
++	} else {
++		struct page *page;
++		unsigned long index;
+ 
+-	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
+-		struct page *page = lru_to_page(pages);
+-		list_del(&page->lru);
+-		if (!add_to_page_cache_lru(page, mapping, page->index, gfp))
++		xa_for_each_range(&mapping->i_pages, index, page, start,
++				start + nr_pages - 1) {
+ 			mapping->a_ops->readpage(filp, page);
+-		put_page(page);
++			put_page(page);
++		}
+ 	}
+ 
+-out:
+ 	blk_finish_plug(&plug);
  }
  
+@@ -153,13 +152,14 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
+ 		unsigned long lookahead_size)
+ {
+ 	struct inode *inode = mapping->host;
+-	struct page *page;
+ 	unsigned long end_index;	/* The last page we want to read */
+ 	LIST_HEAD(page_pool);
+ 	int page_idx;
++	pgoff_t page_offset;
+ 	unsigned long nr_pages = 0;
+ 	loff_t isize = i_size_read(inode);
+ 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
++	bool use_list = mapping->a_ops->readpages;
+ 
+ 	if (isize == 0)
+ 		goto out;
+@@ -170,21 +170,32 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
+ 	 * Preallocate as many pages as we will need.
+ 	 */
+ 	for (page_idx = 0; page_idx < nr_to_read; page_idx++) {
+-		pgoff_t page_offset = offset + page_idx;
++		struct page *page;
+ 
++		page_offset = offset + page_idx;
+ 		if (page_offset > end_index)
+ 			break;
+ 
+ 		page = xa_load(&mapping->i_pages, page_offset);
+ 		if (page && !xa_is_value(page)) {
+ 			/*
+-			 * Page already present?  Kick off the current batch of
+-			 * contiguous pages before continuing with the next
+-			 * batch.
++			 * Page already present?  Kick off the current batch
++			 * of contiguous pages before continuing with the
++			 * next batch.
+ 			 */
+ 			if (nr_pages)
+-				read_pages(mapping, filp, &page_pool, nr_pages,
+-						gfp_mask);
++				read_pages(mapping, filp, &page_pool,
++						page_offset - nr_pages,
++						nr_pages);
++			/*
++			 * It's possible this page is the page we should
++			 * be marking with PageReadahead.  However, we
++			 * don't have a stable ref to this page so it might
++			 * be reallocated to another user before we can set
++			 * the bit.  There's probably another page in the
++			 * cache marked with PageReadahead from the other
++			 * process which accessed this file.
++			 */
+ 			nr_pages = 0;
+ 			continue;
+ 		}
+@@ -192,8 +203,20 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
+ 		page = __page_cache_alloc(gfp_mask);
+ 		if (!page)
+ 			break;
+-		page->index = page_offset;
+-		list_add(&page->lru, &page_pool);
++		if (use_list) {
++			page->index = page_offset;
++			list_add(&page->lru, &page_pool);
++		} else if (add_to_page_cache_lru(page, mapping, page_offset,
++					gfp_mask) < 0) {
++			if (nr_pages)
++				read_pages(mapping, filp, &page_pool,
++						page_offset - nr_pages,
++						nr_pages);
++			put_page(page);
++			nr_pages = 0;
++			continue;
++		}
++
+ 		if (page_idx == nr_to_read - lookahead_size)
+ 			SetPageReadahead(page);
+ 		nr_pages++;
+@@ -205,7 +228,8 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
+ 	 * will then handle the error.
+ 	 */
+ 	if (nr_pages)
+-		read_pages(mapping, filp, &page_pool, nr_pages, gfp_mask);
++		read_pages(mapping, filp, &page_pool, page_offset - nr_pages,
++				nr_pages);
+ 	BUG_ON(!list_empty(&page_pool));
+ out:
+ 	return nr_pages;
 -- 
 2.24.1
 
