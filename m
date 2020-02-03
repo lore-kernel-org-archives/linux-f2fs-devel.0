@@ -1,84 +1,72 @@
-Return-Path: <SRS0=Xl6b=3V=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=Z6GX=3X=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1163C33CB7
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  1 Feb 2020 15:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0337BC35249
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Feb 2020 02:03:03 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A6EFE20728;
-	Sat,  1 Feb 2020 15:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B66BB20679
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Feb 2020 02:03:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CnO9Wleu";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="aeF1PWxg";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bY3NBrXn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6EFE20728
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Uo2fUt8y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="i5Uveyo+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B66BB20679
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ixuSB-00028p-CO; Sat, 01 Feb 2020 15:12:59 +0000
+	id 1iyR4n-0000sb-Cw; Mon, 03 Feb 2020 02:03:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1ixuS9-00028G-Bo
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Feb 2020 15:12:57 +0000
+ (envelope-from <krisman@collabora.com>) id 1iyR4m-0000sJ-P7
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 03 Feb 2020 02:03:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:In-Reply-To:
+ Date:References:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ml5Puu4JmLRdzMhiiCOiBo4ACbPsQdjTb+QSPxS+DKY=; b=CnO9WleuCjBBTwcYPNAWbbtOcL
- pEfAjFz7LTHDQn2JHgdl7pWk5iaw0FYV5aKXA01p/LRdMSV/3IL4lapt9nfgVx8RPC7ZGtDAJcsnp
- XvsFE6S5Xa8Bj51P+M3LoTzU49G+1UrbzeyPyVbKj2pWNOvLz9MO/K5tYymYlUYZzjKU=;
+ bh=nUYYIl4IRRlyjjI0vHcmCONz8SS2vgF0ouje8+gD7Tw=; b=Uo2fUt8yfSWbmbev46s764rArA
+ QaAmIKxH2sE2nWcUGOIJqKjQ37u6y0MACFi9LWH/r59pN567/l8R1fWcW4KEJY8r8lWcqX0Ie6oXN
+ K33ZpK8ExbAkaM1+S3/9pR+h1CZgJUD9dWtiNrmR9ZChMj6p0VRQ7u7U1HJCtTA/eH7M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Type:MIME-Version:Message-ID:In-Reply-To:Date:References:Subject:
+ Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Ml5Puu4JmLRdzMhiiCOiBo4ACbPsQdjTb+QSPxS+DKY=; b=aeF1PWxgGNOdGzrX+cO0AaF6IL
- ep02PnCo5CL+6AZAP7IUOeG9jR7SdLH1X5gG2AlNdNTRYuxRlDt2gFMi0ueQTovJqXIfMeWC79GcV
- 4lcwBTrCyExYCkoh5IYDQSAwNrNv7BGmePzuM9OafTu6D9AeqjTMjjEtXbWuL7zJ7OZU=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=nUYYIl4IRRlyjjI0vHcmCONz8SS2vgF0ouje8+gD7Tw=; b=i5Uveyo+IkZNn66RMO5RLEm/my
+ ysy7sJY4WH+JTa+Sy+Lu/C9XhVSzH2Rs5uQVQK7NlrKigRayBL+WRsHKZ9csBsKgavyDQpfXSL+rI
+ OqFj1xDtE0yUkupR/bvpGmyXqGo8xipp9KRfPTU8SPpAWlvTzBg1UWrThDFyyxEYderA=;
+Received: from bhuna.collabora.co.uk ([46.235.227.227])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ixuS7-007EgC-5v
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 01 Feb 2020 15:12:57 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
- MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
- :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
- :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
- List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ml5Puu4JmLRdzMhiiCOiBo4ACbPsQdjTb+QSPxS+DKY=; b=bY3NBrXng43eEHaP4qFkNBHkjA
- /0ai0QxQPvj+vzTnehD7kfdwvHZ8vzjptHG3nMCtmSDzhJPLlrrRvHwMG04vHV9fd/CCJRTd7hZ9S
- kCY6iKxXzzldIpqfDcbhn1eEv9lpm3OwGdFjku0KJeD/QhITkP89Q8r/3MLB+25BxQPdL5yjJPCI/
- zaoC9Cl+tOymw4aTP+dhrGrhEN9KAUrBXzsBIHlqEM/UfvzLlZxLPkERj8Ov2t+ljIWtVaj85jqMP
- h352PTKYgXTRiVZYfWwYCWlL9sM65Px7gR4w2uvH7jwuclAa5kmfsGcMYSDK+NcJWFvdA8OCVg7ot
- FV+G0YLQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1ixuRu-0006HT-5R; Sat, 01 Feb 2020 15:12:42 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org
-Date: Sat,  1 Feb 2020 07:12:32 -0800
-Message-Id: <20200201151240.24082-5-willy@infradead.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200201151240.24082-1-willy@infradead.org>
-References: <20200201151240.24082-1-willy@infradead.org>
+ id 1iyR4i-008gWo-KP
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 03 Feb 2020 02:03:00 +0000
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+ (Authenticated sender: krisman) with ESMTPSA id 085A328BEFA
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
+To: Daniel Rosenberg <drosen@google.com>
+Organization: Collabora
+References: <20200128230328.183524-1-drosen@google.com>
+ <20200128230328.183524-2-drosen@google.com>
+Date: Sun, 02 Feb 2020 20:45:59 -0500
+In-Reply-To: <20200128230328.183524-2-drosen@google.com> (Daniel Rosenberg's
+ message of "Tue, 28 Jan 2020 15:03:24 -0800")
+Message-ID: <85sgjsxx2g.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-Headers-End: 1ixuS7-007EgC-5v
-Subject: [f2fs-dev] [PATCH v4 04/12] mm: Add readahead address space
- operation
+X-Headers-End: 1iyR4i-008gWo-KP
+Subject: Re: [f2fs-dev] [PATCH v6 1/5] unicode: Add standard casefolded d_ops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,166 +78,55 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
- "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-ext4@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>, Jonathan Corbet <corbet@lwn.net>,
+ Richard Weinberger <richard@nod.at>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
+ linux-fscrypt@vger.kernel.org, linux-mtd@lists.infradead.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+ kernel-team@android.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Daniel Rosenberg <drosen@google.com> writes:
 
-This replaces ->readpages with a saner interface:
- - Return the number of pages not read instead of an ignored error code.
- - Pages are already in the page cache when ->readahead is called.
- - Implementation looks up the pages in the page cache instead of
-   having them passed in a linked list.
+> diff --git a/include/linux/unicode.h b/include/linux/unicode.h
+> index 990aa97d80496..5de313abeaf98 100644
+> --- a/include/linux/unicode.h
+> +++ b/include/linux/unicode.h
+> @@ -4,6 +4,8 @@
+>  
+>  #include <linux/init.h>
+>  #include <linux/dcache.h>
+> +#include <linux/fscrypt.h>
+> +#include <linux/fs.h>
+>  
+>  struct unicode_map {
+>  	const char *charset;
+> @@ -30,4 +32,19 @@ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
+>  struct unicode_map *utf8_load(const char *version);
+>  void utf8_unload(struct unicode_map *um);
+>  
+> +int utf8_ci_d_hash(const struct dentry *dentry, struct qstr *str);
+> +int utf8_ci_d_compare(const struct dentry *dentry, unsigned int len,
+> +			  const char *str, const struct qstr *name);
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Cc: linux-btrfs@vger.kernel.org
-Cc: linux-erofs@lists.ozlabs.org
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-xfs@vger.kernel.org
-Cc: cluster-devel@redhat.com
-Cc: ocfs2-devel@oss.oracle.com
----
- Documentation/filesystems/locking.rst |  7 ++++++-
- Documentation/filesystems/vfs.rst     | 14 ++++++++++++++
- include/linux/fs.h                    |  2 ++
- include/linux/pagemap.h               | 12 ++++++++++++
- mm/readahead.c                        | 13 ++++++++++++-
- 5 files changed, 46 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index 5057e4d9dcd1..3d10729caf44 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -239,6 +239,8 @@ prototypes::
- 	int (*readpage)(struct file *, struct page *);
- 	int (*writepages)(struct address_space *, struct writeback_control *);
- 	int (*set_page_dirty)(struct page *page);
-+	unsigned (*readahead)(struct file *, struct address_space *,
-+				 pgoff_t start, unsigned nr_pages);
- 	int (*readpages)(struct file *filp, struct address_space *mapping,
- 			struct list_head *pages, unsigned nr_pages);
- 	int (*write_begin)(struct file *, struct address_space *mapping,
-@@ -271,7 +273,8 @@ writepage:		yes, unlocks (see below)
- readpage:		yes, unlocks
- writepages:
- set_page_dirty		no
--readpages:
-+readahead:		yes, unlocks
-+readpages:		no
- write_begin:		locks the page		 exclusive
- write_end:		yes, unlocks		 exclusive
- bmap:
-@@ -295,6 +298,8 @@ the request handler (/dev/loop).
- ->readpage() unlocks the page, either synchronously or via I/O
- completion.
- 
-+->readahead() unlocks the pages like ->readpage().
-+
- ->readpages() populates the pagecache with the passed pages and starts
- I/O against them.  They come unlocked upon I/O completion.
- 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 7d4d09dd5e6d..c2bc345f2169 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -706,6 +706,8 @@ cache in your filesystem.  The following members are defined:
- 		int (*readpage)(struct file *, struct page *);
- 		int (*writepages)(struct address_space *, struct writeback_control *);
- 		int (*set_page_dirty)(struct page *page);
-+		unsigned (*readahead)(struct file *filp, struct address_space *mapping,
-+				 pgoff_t start, unsigned nr_pages);
- 		int (*readpages)(struct file *filp, struct address_space *mapping,
- 				 struct list_head *pages, unsigned nr_pages);
- 		int (*write_begin)(struct file *, struct address_space *mapping,
-@@ -781,6 +783,18 @@ cache in your filesystem.  The following members are defined:
- 	If defined, it should set the PageDirty flag, and the
- 	PAGECACHE_TAG_DIRTY tag in the radix tree.
- 
-+``readahead``
-+	Called by the VM to read pages associated with the address_space
-+	object.  The pages are consecutive in the page cache and
-+	are locked.  The implementation should decrement the page
-+	refcount after attempting I/O on each page.  Usually the
-+	page will be unlocked by the I/O completion handler.  If the
-+	function does not attempt I/O on some pages, return the number
-+	of pages which were not read so the caller can unlock the pages
-+	for you.  Set PageUptodate if the I/O completes successfully.
-+	Setting PageError on any page will be ignored; simply unlock
-+	the page if an I/O error occurs.
-+
- ``readpages``
- 	called by the VM to read pages associated with the address_space
- 	object.  This is essentially just a vector version of readpage.
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 41584f50af0d..3bfc142e7d10 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -375,6 +375,8 @@ struct address_space_operations {
- 	 */
- 	int (*readpages)(struct file *filp, struct address_space *mapping,
- 			struct list_head *pages, unsigned nr_pages);
-+	unsigned (*readahead)(struct file *, struct address_space *,
-+			pgoff_t start, unsigned nr_pages);
- 
- 	int (*write_begin)(struct file *, struct address_space *mapping,
- 				loff_t pos, unsigned len, unsigned flags,
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index ccb14b6a16b5..a2cf007826f2 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -630,6 +630,18 @@ static inline int add_to_page_cache(struct page *page,
- 	return error;
- }
- 
-+/*
-+ * Only call this from a ->readahead implementation.
-+ */
-+static inline
-+struct page *readahead_page(struct address_space *mapping, pgoff_t index)
-+{
-+	struct page *page = xa_load(&mapping->i_pages, index);
-+	VM_BUG_ON_PAGE(!PageLocked(page), page);
-+
-+	return page;
-+}
-+
- static inline unsigned long dir_pages(struct inode *inode)
- {
- 	return (unsigned long)(inode->i_size + PAGE_SIZE - 1) >>
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 7daef0038b14..b2ed0baf3a5d 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -121,7 +121,18 @@ static void read_pages(struct address_space *mapping, struct file *filp,
- 
- 	blk_start_plug(&plug);
- 
--	if (mapping->a_ops->readpages) {
-+	if (mapping->a_ops->readahead) {
-+		unsigned left = mapping->a_ops->readahead(filp, mapping,
-+				start, nr_pages);
-+
-+		while (left) {
-+			struct page *page = readahead_page(mapping,
-+					start + nr_pages - left);
-+			unlock_page(page);
-+			put_page(page);
-+			left--;
-+		}
-+	} else if (mapping->a_ops->readpages) {
- 		mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
- 		/* Clean up the remaining pages */
- 		put_pages_list(pages);
+I don't think fs/unicode is the right place for these very specific
+filesystem functions, just because they happen to use unicode.  It is an
+encoding library, it doesn't care about dentries, nor should know how to
+handle them.  It exposes a simple api to manipulate and convert utf8 strings.
+
+I saw change was after the desire to not have these functions polluting
+the VFS hot path, but that has nothing to do with placing them here.
+
+Would libfs be better?  or a casefolding library in fs/casefold.c?
+
+
 -- 
-2.24.1
-
+Gabriel Krisman Bertazi
 
 
 _______________________________________________
