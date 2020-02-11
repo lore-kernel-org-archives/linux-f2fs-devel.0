@@ -2,33 +2,33 @@ Return-Path: <SRS0=0CYP=37=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C03C4741C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC646C3B187
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Feb 2020 01:04:10 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 94ABD2082F;
+	by mail.kernel.org (Postfix) with ESMTPS id 98B2924650;
 	Tue, 11 Feb 2020 01:04:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YzNryr2A";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Knz8yrN6";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o9szV0YQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94ABD2082F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AgBrCoF2";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="aQ+Mdnc7";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C/fwHRK5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B2924650
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j1JyD-0006xY-W2; Tue, 11 Feb 2020 01:04:10 +0000
+	id 1j1JyE-0006xz-9K; Tue, 11 Feb 2020 01:04:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1j1Jy9-0006x5-1W
+ (envelope-from <willy@infradead.org>) id 1j1Jy9-0006xH-Pm
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Feb 2020 01:04:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -36,9 +36,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TLN+MN9liFnLDsYo+PJ3gSWsvtLSIjBwcyOIhgoJ5VY=; b=YzNryr2AeDIKOv2qjR8DCH3Ppq
- XS4NEfAYcPc0ElkkJ4kyVy621qKBj/l+UXJIA9Yu3iyoAtg2Bb4Ct4JuWUfQIM0GAQkYeRoDUg4+b
- KV2RuQrgxJHLJgFB2ah06OkdkdRiwG9Pj5vR4+U3LRQ3sLVm1g8JJbGFfy/w/G4UBtwI=;
+ bh=c1RHQNQxAXbf5ukt2BNF7izx4iTSuNQC5EsGyGLZYjM=; b=AgBrCoF2f1ehm8x6TjL1nlI8ql
+ xcdY2rtDkAgl4UKm2dhurCk9Pq/ZKW03G/bZckFM3vwRUgMus3n+532cyhj+DAbp3+FHUE1DaZiTv
+ jsHeSvQJ/ivD71NDQRUtm8PBI19aydNFAZ6S5yrP0JWz+PAIziK3va2+q5pbbkuPR+i8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,37 +46,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TLN+MN9liFnLDsYo+PJ3gSWsvtLSIjBwcyOIhgoJ5VY=; b=Knz8yrN61maUyLcJSy6Qp78KID
- kXMxcvk3HdghdsPJj4VvMkQxNm1AlLyf1DNhIAzdU3OsIgxlS4NRPufBb+908Ib3f2cNATSLWMJFN
- dbe8AgARjAqAjto1NCgDmQsy4+qNiHnLmYjJnEBE7agT/QLZzagAcyI7tPpQAMAvZePA=;
+ bh=c1RHQNQxAXbf5ukt2BNF7izx4iTSuNQC5EsGyGLZYjM=; b=aQ+Mdnc73tlcqMauuj3qZtPqZb
+ Fe4bcFblD5LzfBM8y8XSvt1le1+vo6DRbz4MbM0n/jyQ9QdSDIzLcTsdT6lLGiLD686ysRzdM/nYP
+ ZiHEBQsoiI0HcZPjv3swOoroCnDwRvVKJQZFyo5hSU65W6wTtx0vno98R+auJDuaS5D0=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j1Jy7-0006sb-VM
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Feb 2020 01:04:04 +0000
+ id 1j1Jy7-00090C-Nk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 Feb 2020 01:04:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=TLN+MN9liFnLDsYo+PJ3gSWsvtLSIjBwcyOIhgoJ5VY=; b=o9szV0YQJs5JsVpkyikXPRSMd+
- 1jZ7sRD03ENp4dDcNoI3jz5ORJwG3IQpgiGY2IfzEeaijLLLxU2BkrG2wPKm5p/Zj6g/6ooFO75YU
- oLrsXoKwnzlC39aQMX600Ax4bNpRy5+DaRGs2hHjAi4Ttnvm4tYyzKC+s37Knhq7HMIgR/jkPPVaI
- msh06TdwLnj4VOhsGtgsHqDu0Q8EAf0u8paq12u8vjS3ktdlzJIzWO3LqFLoeSx3eHN+Wa7dkq7F6
- lT4dqgjfz7VZbZdK4VBqVrQdG5eigmLc/9fE0dRx6/VdCcI22AhXxW8obYy5jYTWh4CPoF2MDiP15
- vMCfkPRA==;
+ bh=c1RHQNQxAXbf5ukt2BNF7izx4iTSuNQC5EsGyGLZYjM=; b=C/fwHRK5Sb7vY2Zn6N9kUIBxq9
+ YEUiTBTGOnBZgO1uQqDx2jbxkfMo7lhVHZegQobppDR50QGwQLOY+mwgd9gh1ypv2QB6ENw/WMmJ4
+ 7yRtuWgE63BqAMFE6BDbS8Il2ztsZ3pVUHwvzK3XkhOJPwY3n024b8cow11wq1NNN7jxXdkNEOqHU
+ SIEgqtaYep6RiV+ArBnmTaOaeRz9xskDqCn5ELaKZd4giumH/soIAeEAUn9Jm5/8VLgP24QZegQNl
+ ZOoEgg0HRxfOrqpAtqWdeEm8WurD8sktooq5s9czUTYuq+IjNsCydKm6Z6g6FWwrsP4R1Aa1al71V
+ cnRSBUNw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1j1Jxu-0001oP-Mi; Tue, 11 Feb 2020 01:03:50 +0000
+ Hat Linux)) id 1j1Jxu-0001o9-IA; Tue, 11 Feb 2020 01:03:50 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Mon, 10 Feb 2020 17:03:47 -0800
-Message-Id: <20200211010348.6872-13-willy@infradead.org>
+Date: Mon, 10 Feb 2020 17:03:43 -0800
+Message-Id: <20200211010348.6872-9-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200211010348.6872-1-willy@infradead.org>
 References: <20200211010348.6872-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1j1Jy7-0006sb-VM
-Subject: [f2fs-dev] [PATCH v5 12/13] fuse: Convert from readpages to
- readahead
+X-Headers-End: 1j1Jy7-00090C-Nk
+Subject: [f2fs-dev] [PATCH v5 08/13] erofs: Convert uncompressed files from
+ readpages to readahead
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,116 +99,128 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Use the new readahead operation in fuse.  Switching away from the
-read_cache_pages() helper gets rid of an implicit call to put_page(),
-so we can get rid of the get_page() call in fuse_readpages_fill().
+Use the new readahead operation in erofs
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/fuse/file.c | 46 +++++++++++++++++++---------------------------
- 1 file changed, 19 insertions(+), 27 deletions(-)
+ fs/erofs/data.c              | 39 +++++++++++++-----------------------
+ fs/erofs/zdata.c             |  2 +-
+ include/trace/events/erofs.h |  6 +++---
+ 3 files changed, 18 insertions(+), 29 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 9d67b830fb7a..f64f98708b5e 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -923,9 +923,8 @@ struct fuse_fill_data {
- 	unsigned int max_pages;
- };
- 
--static int fuse_readpages_fill(void *_data, struct page *page)
-+static int fuse_readpages_fill(struct fuse_fill_data *data, struct page *page)
- {
--	struct fuse_fill_data *data = _data;
- 	struct fuse_io_args *ia = data->ia;
- 	struct fuse_args_pages *ap = &ia->ap;
- 	struct inode *inode = data->inode;
-@@ -941,10 +940,8 @@ static int fuse_readpages_fill(void *_data, struct page *page)
- 					fc->max_pages);
- 		fuse_send_readpages(ia, data->file);
- 		data->ia = ia = fuse_io_alloc(NULL, data->max_pages);
--		if (!ia) {
--			unlock_page(page);
-+		if (!ia)
- 			return -ENOMEM;
--		}
- 		ap = &ia->ap;
- 	}
- 
-@@ -954,7 +951,6 @@ static int fuse_readpages_fill(void *_data, struct page *page)
- 		return -EIO;
- 	}
- 
--	get_page(page);
- 	ap->pages[ap->num_pages] = page;
- 	ap->descs[ap->num_pages].length = PAGE_SIZE;
- 	ap->num_pages++;
-@@ -962,37 +958,33 @@ static int fuse_readpages_fill(void *_data, struct page *page)
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index fc3a8d8064f8..82ebcee9d178 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -280,47 +280,36 @@ static int erofs_raw_access_readpage(struct file *file, struct page *page)
  	return 0;
  }
  
--static int fuse_readpages(struct file *file, struct address_space *mapping,
--			  struct list_head *pages, unsigned nr_pages)
-+static void fuse_readahead(struct readahead_control *rac)
+-static int erofs_raw_access_readpages(struct file *filp,
+-				      struct address_space *mapping,
+-				      struct list_head *pages,
+-				      unsigned int nr_pages)
++static void erofs_raw_access_readahead(struct readahead_control *rac)
  {
--	struct inode *inode = mapping->host;
-+	struct inode *inode = rac->mapping->host;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	struct fuse_fill_data data;
--	int err;
+ 	erofs_off_t last_block;
+ 	struct bio *bio = NULL;
+-	gfp_t gfp = readahead_gfp_mask(mapping);
+-	struct page *page = list_last_entry(pages, struct page, lru);
+-
+-	trace_erofs_readpages(mapping->host, page, nr_pages, true);
 +	struct page *page;
  
--	err = -EIO;
- 	if (is_bad_inode(inode))
--		goto out;
-+		return;
+-	for (; nr_pages; --nr_pages) {
+-		page = list_entry(pages->prev, struct page, lru);
++	trace_erofs_readpages(rac->mapping->host, readahead_index(rac),
++			readahead_count(rac), true);
  
--	data.file = file;
-+	data.file = rac->file;
- 	data.inode = inode;
--	data.nr_pages = nr_pages;
--	data.max_pages = min_t(unsigned int, nr_pages, fc->max_pages);
--;
-+	data.nr_pages = readahead_count(rac);
-+	data.max_pages = min_t(unsigned int, data.nr_pages, fc->max_pages);
- 	data.ia = fuse_io_alloc(NULL, data.max_pages);
--	err = -ENOMEM;
- 	if (!data.ia)
--		goto out;
-+		return;
- 
--	err = read_cache_pages(mapping, pages, fuse_readpages_fill, &data);
--	if (!err) {
--		if (data.ia->ap.num_pages)
--			fuse_send_readpages(data.ia, file);
--		else
--			fuse_io_free(data.ia);
 +	readahead_for_each(rac, page) {
-+		if (fuse_readpages_fill(&data, page) != 0)
-+			return;
+ 		prefetchw(&page->flags);
+-		list_del(&page->lru);
+ 
+-		if (!add_to_page_cache_lru(page, mapping, page->index, gfp)) {
+-			bio = erofs_read_raw_page(bio, mapping, page,
+-						  &last_block, nr_pages, true);
++		bio = erofs_read_raw_page(bio, rac->mapping, page, &last_block,
++				readahead_count(rac), true);
+ 
+-			/* all the page errors are ignored when readahead */
+-			if (IS_ERR(bio)) {
+-				pr_err("%s, readahead error at page %lu of nid %llu\n",
+-				       __func__, page->index,
+-				       EROFS_I(mapping->host)->nid);
++		/* all the page errors are ignored when readahead */
++		if (IS_ERR(bio)) {
++			pr_err("%s, readahead error at page %lu of nid %llu\n",
++			       __func__, page->index,
++			       EROFS_I(rac->mapping->host)->nid);
+ 
+-				bio = NULL;
+-			}
++			bio = NULL;
+ 		}
+ 
+-		/* pages could still be locked */
+ 		put_page(page);
  	}
--out:
--	return err;
-+
-+	if (data.ia->ap.num_pages)
-+		fuse_send_readpages(data.ia, rac->file);
-+	else
-+		fuse_io_free(data.ia);
+-	DBG_BUGON(!list_empty(pages));
+ 
+ 	/* the rare case (end in gaps) */
+ 	if (bio)
+ 		submit_bio(bio);
+-	return 0;
  }
  
- static ssize_t fuse_cache_read_iter(struct kiocb *iocb, struct iov_iter *to)
-@@ -3373,10 +3365,10 @@ static const struct file_operations fuse_file_operations = {
+ static int erofs_get_block(struct inode *inode, sector_t iblock,
+@@ -358,7 +347,7 @@ static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
+ /* for uncompressed (aligned) files and raw access for other files */
+ const struct address_space_operations erofs_raw_access_aops = {
+ 	.readpage = erofs_raw_access_readpage,
+-	.readpages = erofs_raw_access_readpages,
++	.readahead = erofs_raw_access_readahead,
+ 	.bmap = erofs_bmap,
+ };
  
- static const struct address_space_operations fuse_file_aops  = {
- 	.readpage	= fuse_readpage,
-+	.readahead	= fuse_readahead,
- 	.writepage	= fuse_writepage,
- 	.writepages	= fuse_writepages,
- 	.launder_page	= fuse_launder_page,
--	.readpages	= fuse_readpages,
- 	.set_page_dirty	= __set_page_dirty_nobuffers,
- 	.bmap		= fuse_bmap,
- 	.direct_IO	= fuse_direct_IO,
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 80e47f07d946..17f45fcb8c5c 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -1315,7 +1315,7 @@ static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
+ 	struct page *head = NULL;
+ 	LIST_HEAD(pagepool);
+ 
+-	trace_erofs_readpages(mapping->host, lru_to_page(pages),
++	trace_erofs_readpages(mapping->host, lru_to_page(pages)->index,
+ 			      nr_pages, false);
+ 
+ 	f.headoffset = (erofs_off_t)lru_to_page(pages)->index << PAGE_SHIFT;
+diff --git a/include/trace/events/erofs.h b/include/trace/events/erofs.h
+index 27f5caa6299a..bf9806fd1306 100644
+--- a/include/trace/events/erofs.h
++++ b/include/trace/events/erofs.h
+@@ -113,10 +113,10 @@ TRACE_EVENT(erofs_readpage,
+ 
+ TRACE_EVENT(erofs_readpages,
+ 
+-	TP_PROTO(struct inode *inode, struct page *page, unsigned int nrpage,
++	TP_PROTO(struct inode *inode, pgoff_t start, unsigned int nrpage,
+ 		bool raw),
+ 
+-	TP_ARGS(inode, page, nrpage, raw),
++	TP_ARGS(inode, start, nrpage, raw),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,		dev	)
+@@ -129,7 +129,7 @@ TRACE_EVENT(erofs_readpages,
+ 	TP_fast_assign(
+ 		__entry->dev	= inode->i_sb->s_dev;
+ 		__entry->nid	= EROFS_I(inode)->nid;
+-		__entry->start	= page->index;
++		__entry->start	= start;
+ 		__entry->nrpage	= nrpage;
+ 		__entry->raw	= raw;
+ 	),
 -- 
 2.25.0
 
