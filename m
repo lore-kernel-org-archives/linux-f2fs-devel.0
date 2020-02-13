@@ -2,79 +2,79 @@ Return-Path: <SRS0=jEq4=4B=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 696C2C352A3
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Feb 2020 04:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 504DDC2BA83
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Feb 2020 13:43:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 36027206D7;
-	Thu, 13 Feb 2020 04:39:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1DE23218AC;
+	Thu, 13 Feb 2020 13:43:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XK4pIJJn";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VXZRG2pO";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbYlCnFj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36027206D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HyziW3sN";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Ca3j9zRg";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rSzaYz7/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE23218AC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j26HM-00041O-7n; Thu, 13 Feb 2020 04:39:08 +0000
+	id 1j2EmN-0001NG-7z; Thu, 13 Feb 2020 13:43:43 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <akpm@linux-foundation.org>) id 1j26HK-000419-N9
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Feb 2020 04:39:06 +0000
+ (envelope-from <willy@infradead.org>) id 1j2EmL-0001N8-JN
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Feb 2020 13:43:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Mime-Version
- :References:In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Iyo9Dk0mJYM2A+6IJL4/OVB0v3ghHa04hjU4w070rCg=; b=XK4pIJJnfmB0+8HR+002RcfHEJ
- 4XU6HIEdJX+ogdoqex3icBpIBJWO5pDEa1ACqYwJR6MYZC6kDTYt7s8hLZgIpdqIBsXxMWvyRazzm
- f174SqG5vzC2t6rOil4x4YnSze9ngrEcQPecTMU4aX+t5oryAAbhrcv90sr6Pt7bTK0Q=;
+ bh=57P4Q/GU2ra8qTXmZpI2Z/3+4gqtkjqSHRcsBClNQtg=; b=HyziW3sNcpT1sqeB7Liv1/yjw0
+ IQARdf/IqNhZ1zY8Eeux2Orw6Zg74PlgxcP/c5Bl/X7ATM07mWcXGyadPiiQeu3uR/tGuzsUWQRvr
+ VBROVAjkjQmg4LowIgDWb5S+pgQXX0GGp4UM2hggKy8SFfRcp90afrpd9l3ahHr7nbH8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Mime-Version:References:
- In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Iyo9Dk0mJYM2A+6IJL4/OVB0v3ghHa04hjU4w070rCg=; b=VXZRG2pOV/LCKxtdwEoOJWQwOU
- 182nVwNc8fsMtgIQuOylysLvBGDzayAZ0ZgPiDK+lPD0X4jWzLsht0iOfeHCdxUuuDidCJ7xxp31e
- 0dHir0Ngsd5hD1Gm4nPQbZr4IJWKuyIf0dMrsGXjtms7SnyMvbgxrM5fpExG8QNV31VY=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=57P4Q/GU2ra8qTXmZpI2Z/3+4gqtkjqSHRcsBClNQtg=; b=Ca3j9zRgalf5lc2PwGghIyJrvU
+ 7ajVkI5yZ5gopR5bE1it/RabK5GmsoX7k6jyNJa40QSLOi80Ro9bWvhBkEtWkHZ29lIisgzvadHkq
+ bk7/a8YJ/lCOjv2aVwf+aB2pv2gh0D0D+lI6Zt9PxiFAMbf6r2Sho1yxamyfLz49R7F0=;
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j26HD-002cqn-4Z
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Feb 2020 04:39:06 +0000
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net
- [73.231.172.41])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 18ED8206D7;
- Thu, 13 Feb 2020 04:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1581568733;
- bh=bv+0VtaMuMuDtzLYPkieCdmd5QR4JDDM6y220mrx378=;
- h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
- b=tbYlCnFj7ggSwK4cyg70rWxQrzUahCW2yOeoE3sZ/LlJjzcrzNUchpk3R5qfHHiaz
- SHB7larZ7765fztRfvP4xU4fKtp8W2fvEWd3ELQPm1bzbJvc27CPLFeH48zYRK25QU
- yPUch6WEdYHhO2730Z2ntH6BUkthDgGeRFY+B2E4=
-Date: Wed, 12 Feb 2020 20:38:52 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Matthew Wilcox <willy@infradead.org>
-Message-Id: <20200212203852.8b7e0b28974e41227bd97329@linux-foundation.org>
-In-Reply-To: <20200125013553.24899-1-willy@infradead.org>
+ id 1j2EmJ-00BTaU-Tt
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 13 Feb 2020 13:43:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=57P4Q/GU2ra8qTXmZpI2Z/3+4gqtkjqSHRcsBClNQtg=; b=rSzaYz7/rumIfdFG+MdlTwtWLq
+ KJDbhGYitV4p48O5SGrNFqm7b6XrkzPNvpJkvwLsbmPzqOjljvrrI/kGme5i39kPjSCbZwMVJj/gp
+ /vZh8pgUFXWHWX8sVicFVEOt39rpppNWYqPj6hi4J8dYGEOsWyymiKiHcRkxOz883kzq6ZSKHqjk3
+ fsehuyu0gDewtgLxKPXDc7teJpZ6SJQvrPw6Tb1R8zCLV/rYe5SP5WtC5ElJI7KBaqIo6dB7dEuoo
+ fa9oGjFgIiPAK7v7SmERxvNZ+0wRUV+dCDxCmPFGbyPDr/p1ZkogJK5cSzTw9SfomXbDVvK3/M17m
+ Yx42/x7g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
+ Hat Linux)) id 1j2Elw-0008Pa-QR; Thu, 13 Feb 2020 13:43:16 +0000
+Date: Thu, 13 Feb 2020 05:43:16 -0800
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Message-ID: <20200213134316.GK7778@bombadil.infradead.org>
 References: <20200125013553.24899-1-willy@infradead.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-X-Headers-End: 1j26HD-002cqn-4Z
+ <20200212203852.8b7e0b28974e41227bd97329@linux-foundation.org>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20200212203852.8b7e0b28974e41227bd97329@linux-foundation.org>
+X-Headers-End: 1j2EmJ-00BTaU-Tt
 Subject: Re: [f2fs-dev] [PATCH 00/12] Change readahead API
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -87,30 +87,86 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+Cc: cluster-devel@redhat.com, Andreas Gruenbacher <agruenba@redhat.com>,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, Mark Fasheh <mark@fasheh.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
+ linux-fsdevel@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
  linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, 24 Jan 2020 17:35:41 -0800 Matthew Wilcox <willy@infradead.org> wrote:
-
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Wed, Feb 12, 2020 at 08:38:52PM -0800, Andrew Morton wrote:
+> On Fri, 24 Jan 2020 17:35:41 -0800 Matthew Wilcox <willy@infradead.org> wrote:
 > 
-> This series adds a readahead address_space operation to eventually
-> replace the readpages operation.  The key difference is that
-> pages are added to the page cache as they are allocated (and
-> then looked up by the filesystem) instead of passing them on a
-> list to the readpages operation and having the filesystem add
-> them to the page cache.  It's a net reduction in code for each
-> implementation, more efficient than walking a list, and solves
-> the direct-write vs buffered-read problem reported by yu kuai at
-> https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > This series adds a readahead address_space operation to eventually
+> > replace the readpages operation.  The key difference is that
+> > pages are added to the page cache as they are allocated (and
+> > then looked up by the filesystem) instead of passing them on a
+> > list to the readpages operation and having the filesystem add
+> > them to the page cache.  It's a net reduction in code for each
+> > implementation, more efficient than walking a list, and solves
+> > the direct-write vs buffered-read problem reported by yu kuai at
+> > https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
+> 
+> Unclear which patch fixes this and how it did it?
 
-Unclear which patch fixes this and how it did it?
+I suppose the problem isn't fixed until patch 13/13 is applied.
+What yu kuai is seeing is a race where readahead allocates a page,
+then passes it to iomap_readpages, which calls xfs_read_iomap_begin()
+which looks up the extent.  Then thread 2 does DIO which modifies the
+extent, because there's nothing to say that thread 1 is still using it.
+With this patch series, the readpages code puts the locked pages in the
+cache before calling iomap_readpages, so any racing write will block on
+the locked page until readahead is completed.
+
+If you're tempted to put this into -mm, I have a couple of new changes;
+one to fix a kernel-doc warning for mpage_readahead() and one to add
+kernel-doc for iomap_readahead():
+
++++ b/fs/mpage.c
+@@ -339,9 +339,7 @@
+ 
+ /**
+  * mpage_readahead - start reads against pages
+- * @mapping: the address_space
+- * @start: The number of the first page to read.
+- * @nr_pages: The number of consecutive pages to read.
++ * @rac: Describes which pages to read.
+  * @get_block: The filesystem's block mapper function.
+  *
+  * This function walks the pages and the blocks within each page, building and
+
++++ b/fs/iomap/buffered-io.c
+@@ -395,6 +395,21 @@
+ 	return done;
+ }
+ 
++/**
++ * iomap_readahead - Attempt to read pages from a file.
++ * @rac: Describes the pages to be read.
++ * @ops: The operations vector for the filesystem.
++ *
++ * This function is for filesystems to call to implement their readahead
++ * address_space operation.
++ *
++ * Context: The file is pinned by the caller, and the pages to be read are
++ * all locked and have an elevated refcount.  This function will unlock
++ * the pages (once I/O has completed on them, or I/O has been determined to
++ * not be necessary).  It will also decrease the refcount once the pages
++ * have been submitted for I/O.  After this point, the page may be removed
++ * from the page cache, and should not be referenced.
++ */
+ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
+ {
+ 	struct inode *inode = rac->mapping->host;
+
+I'll do a v6 with those changes soon, but I would really like a bit more
+review from filesystem people, particularly ocfs2 and gfs2.
 
 
 _______________________________________________
