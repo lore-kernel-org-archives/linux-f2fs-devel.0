@@ -7,37 +7,38 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3149CC352A3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Feb 2020 02:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC1AC35242
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Feb 2020 03:36:49 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EAEA820848
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Feb 2020 02:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 58B0D206ED;
+	Fri, 14 Feb 2020 03:36:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HxQ+2Lnm";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ioSop/Kk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAEA820848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="MfD/LjU8";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="hAm3l3Yg";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="TZf2FK1b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58B0D206ED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j2QwX-0000Da-Fd; Fri, 14 Feb 2020 02:43:01 +0000
+	id 1j2Rma-000739-Hj; Fri, 14 Feb 2020 03:36:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1j2QwV-0000DL-Ur
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 14 Feb 2020 02:42:59 +0000
+ (envelope-from <jhubbard@nvidia.com>) id 1j2RmY-00072s-BP
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 14 Feb 2020 03:36:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1pbdFYtYD2Et2jYCTnnFcs+QJJdWijgMG9h8qQP8hCc=; b=HxQ+2Lnm2vgJQK0mwVLQ+ONFxo
- V4xiB3bf5v/g9t+1ODvp2+VCWZCtgwiNkCWChKurdPI68B6wJ9EfRfJEPbuECxjMtlzUQ1J3uYatx
- sUQ7MmIGltAZoah5jVaiz67aWzx39cIOzql24+Cj/glme9oVNrsyyZJRIaqQuP1Hv6p8=;
+ bh=jodX0tIvBxH/fc59T73o9SPk6S3e+yDpKWnaNwpeJKk=; b=MfD/LjU8iPB3A0pFMUldaUoxcw
+ AiKoyDF20B7ANjAzY3tBFxNRE0umXx4CajIIQLMjZpJ8yzQ+CD2WT+QR7KDysHCpVogV42kcbgNJK
+ axkZmibWNNjZk9JDUbF0B42pQT+ou4sS6dHxTnfvUu5XTa9HrMLAaE3yMepTNt3YGrcg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -45,35 +46,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=1pbdFYtYD2Et2jYCTnnFcs+QJJdWijgMG9h8qQP8hCc=; b=ioSop/Kknc8zIgxVR2WImXjuht
- Vwpl9U6y7hwCl5cFFXfzyiTdg6vjE4ft73z3ktsQYJQWKGHlmiOUkQpQUJ5ih+iGeqzCIyiOxMo7L
- /uay0pWQyTYTl4POHZgmvVjtooZ6xh/YnY16i+vcoVBknYk6Y3foiI9GXUbIODCKQEZM=;
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=jodX0tIvBxH/fc59T73o9SPk6S3e+yDpKWnaNwpeJKk=; b=hAm3l3YgkqdNUbLITVGSFdJ/I4
+ cbUBa2CaVGrNjV2O36AORWrTUByJ/ZQ2F55HC2qgh6VzvwbF/12hc7eanY0tC3IOZDR+FSD5dfYiR
+ DcyFtawDxPpW1FktXJnWb19Rqj1dvxok13wbGTrmhHOeNjh7l3paYb/VAIakh/pmBr4c=;
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j2QwT-003Sk9-5o
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 14 Feb 2020 02:42:59 +0000
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 84623F842BC3B938455B;
- Fri, 14 Feb 2020 10:32:09 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 14 Feb
- 2020 10:32:08 +0800
-To: <jaegeuk@kernel.org>
-References: <20180127094301.29154-1-yuchao0@huawei.com>
- <20180127094301.29154-2-yuchao0@huawei.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <2826070a-82f6-2911-4c77-2b895182c964@huawei.com>
-Date: Fri, 14 Feb 2020 10:32:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1j2RmW-003duO-Sg
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 14 Feb 2020 03:36:46 +0000
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by
+ hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+ id <B5e4615b90000>; Thu, 13 Feb 2020 19:36:25 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+ by hqpgpgate101.nvidia.com (PGP Universal service);
+ Thu, 13 Feb 2020 19:36:39 -0800
+X-PGP-Universal: processed;
+ by hqpgpgate101.nvidia.com on Thu, 13 Feb 2020 19:36:39 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Feb
+ 2020 03:36:39 +0000
+To: Matthew Wilcox <willy@infradead.org>, <linux-fsdevel@vger.kernel.org>
+References: <20200211010348.6872-1-willy@infradead.org>
+ <20200211010348.6872-4-willy@infradead.org>
+X-Nvconfidentiality: public
+From: John Hubbard <jhubbard@nvidia.com>
+Message-ID: <b0cdd7b4-e103-a884-d8f7-2378905f7b3b@nvidia.com>
+Date: Thu, 13 Feb 2020 19:36:38 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180127094301.29154-2-yuchao0@huawei.com>
+In-Reply-To: <20200211010348.6872-4-willy@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
 Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1j2QwT-003Sk9-5o
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+ t=1581651385; bh=jodX0tIvBxH/fc59T73o9SPk6S3e+yDpKWnaNwpeJKk=;
+ h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+ Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+ X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+ Content-Transfer-Encoding;
+ b=TZf2FK1bESe06GQrr3QWPstwI5CI6ADgd3ekfkEEBCxsznAzp/43OrXvLIdUwk6v9
+ 4PvhXV9KA2GzBIO5FVXywx6Yx4JZowfMDze3Z/5j54bStQRS61QiScPwZCgRgQ9xzt
+ 7ai4uLewCJr+qbdYGw8j6AC1KIuz1sHeXguO+TyPFfs/5Cwmjn/6ETP0ytHeXfze8x
+ aZXVC6Py5XJwaXp8pJ7Om4/J3JPHPE/2VYV1PRSOmD236D2IEEGhBl9TBFg0OLQxCY
+ GWBBoVBH3FzkluFiC7gp+exF/Tlgdi2RCth1YbNLQQ91aeVldSsZAblIBpXwiH2ihX
+ ePKdIST/oKi4w==
+X-Headers-End: 1j2RmW-003duO-Sg
+Subject: Re: [f2fs-dev] [PATCH v5 03/13] mm: Put readahead pages in cache
+ earlier
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,313 +106,178 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+ linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-ext4@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jaegeuk,
-
-Is it time to consider this metadata chksum feature? Maybe for 5.7 version.
-
-Thanks,
-
-On 2018/1/27 17:43, Chao Yu wrote:
-> This patch adds to support {d,id,did,x}node checksum in kernel side.
+On 2/10/20 5:03 PM, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> At allocation time, put the pages in the cache unless we're using
+> ->readpages.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->  fs/f2fs/f2fs.h          | 15 +++++++-
->  fs/f2fs/inode.c         | 98 +++++++++++++++++++++++++++++++------------------
->  fs/f2fs/node.c          |  2 +-
->  fs/f2fs/segment.c       |  2 +-
->  fs/f2fs/sysfs.c         |  7 ++++
->  include/linux/f2fs_fs.h | 10 ++++-
->  6 files changed, 93 insertions(+), 41 deletions(-)
+>  mm/readahead.c | 66 ++++++++++++++++++++++++++++++++------------------
+>  1 file changed, 42 insertions(+), 24 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 6f5e41657c62..ad48d389fea4 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -128,6 +128,7 @@ struct f2fs_mount_info {
->  #define F2FS_FEATURE_QUOTA_INO		0x0080
->  #define F2FS_FEATURE_INODE_CRTIME	0x0100
->  #define F2FS_FEATURE_EXTENDED_NODE	0x0200
-> +#define F2FS_FEATURE_NODE_CHECKSUM	0x0400
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index fc77d13af556..96c6ca68a174 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -114,10 +114,10 @@ int read_cache_pages(struct address_space *mapping, struct list_head *pages,
+>  EXPORT_SYMBOL(read_cache_pages);
 >  
->  #define F2FS_HAS_FEATURE(sb, mask)					\
->  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-> @@ -2570,6 +2571,11 @@ static inline int get_inline_xattr_addrs(struct inode *inode)
->  		sizeof((f2fs_inode)->field))			\
->  		<= (F2FS_OLD_ATTRIBUTE_SIZE + extra_isize))	\
->  
-> +#define F2FS_FITS_IN_NODE(extra_nsize, field)		\
-> +		((offsetof(struct f2fs_node, footer) -	\
-> +		offsetof(struct f2fs_node, field))	\
-> +		<= (extra_nsize))			\
-> +
->  static inline void f2fs_reset_iostat(struct f2fs_sb_info *sbi)
+>  static void read_pages(struct address_space *mapping, struct file *filp,
+> -		struct list_head *pages, unsigned int nr_pages, gfp_t gfp)
+> +		struct list_head *pages, pgoff_t start,
+> +		unsigned int nr_pages)
 >  {
->  	int i;
-> @@ -2616,8 +2622,8 @@ int f2fs_pin_file_control(struct inode *inode, bool inc);
->   * inode.c
+>  	struct blk_plug plug;
+> -	unsigned page_idx;
+>  
+>  	blk_start_plug(&plug);
+>  
+> @@ -125,18 +125,17 @@ static void read_pages(struct address_space *mapping, struct file *filp,
+>  		mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
+>  		/* Clean up the remaining pages */
+>  		put_pages_list(pages);
+> -		goto out;
+> -	}
+> +	} else {
+> +		struct page *page;
+> +		unsigned long index;
+>  
+> -	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
+> -		struct page *page = lru_to_page(pages);
+> -		list_del(&page->lru);
+> -		if (!add_to_page_cache_lru(page, mapping, page->index, gfp))
+> +		xa_for_each_range(&mapping->i_pages, index, page, start,
+> +				start + nr_pages - 1) {
+>  			mapping->a_ops->readpage(filp, page);
+> -		put_page(page);
+> +			put_page(page);
+> +		}
+>  	}
+>  
+> -out:
+>  	blk_finish_plug(&plug);
+>  }
+>  
+> @@ -149,17 +148,18 @@ static void read_pages(struct address_space *mapping, struct file *filp,
+>   * Returns the number of pages requested, or the maximum amount of I/O allowed.
 >   */
->  void f2fs_set_inode_flags(struct inode *inode);
-> -bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page);
-> -void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct page *page);
-> +bool f2fs_node_chksum_verify(struct f2fs_sb_info *sbi, struct page *page);
-> +void f2fs_node_chksum_set(struct f2fs_sb_info *sbi, struct page *page);
->  struct inode *f2fs_iget(struct super_block *sb, unsigned long ino);
->  struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino);
->  int try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink);
-> @@ -3252,6 +3258,11 @@ static inline int f2fs_sb_has_extended_node(struct super_block *sb)
->  	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_EXTENDED_NODE);
->  }
->  
-> +static inline int f2fs_sb_has_node_checksum(struct super_block *sb)
-> +{
-> +	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_NODE_CHECKSUM);
-> +}
-> +
->  #ifdef CONFIG_BLK_DEV_ZONED
->  static inline int get_blkz_type(struct f2fs_sb_info *sbi,
->  			struct block_device *bdev, block_t blkaddr)
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index f5b5606ca273..f879f0a65986 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -111,75 +111,103 @@ static void __recover_inline_status(struct inode *inode, struct page *ipage)
->  	return;
->  }
->  
-> -static bool f2fs_enable_inode_chksum(struct f2fs_sb_info *sbi, struct page *page)
-> +static bool f2fs_enable_node_chksum(struct f2fs_sb_info *sbi, struct page *page)
+>  unsigned long __do_page_cache_readahead(struct address_space *mapping,
+> -		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
+> +		struct file *filp, pgoff_t start, unsigned long nr_to_read,
+>  		unsigned long lookahead_size)
 >  {
-> -	struct f2fs_inode *ri = &F2FS_NODE(page)->i;
-> -	int extra_isize = le32_to_cpu(ri->i_extra_isize);
-> -
-> -	if (!f2fs_sb_has_inode_chksum(sbi->sb))
-> -		return false;
-> -
-> -	if (!RAW_IS_INODE(F2FS_NODE(page)) || !(ri->i_inline & F2FS_EXTRA_ATTR))
-> -		return false;
-> -
-> -	if (!F2FS_FITS_IN_INODE(ri, extra_isize, i_inode_checksum))
-> -		return false;
-> +	if (IS_INODE(page)) {
-> +		struct f2fs_inode *ri = &F2FS_NODE(page)->i;
-> +		int extra_isize = le32_to_cpu(ri->i_extra_isize);
+>  	struct inode *inode = mapping->host;
+> -	struct page *page;
+>  	unsigned long end_index;	/* The last page we want to read */
+>  	LIST_HEAD(page_pool);
+>  	int page_idx;
+> +	pgoff_t page_offset = start;
+>  	unsigned long nr_pages = 0;
+>  	loff_t isize = i_size_read(inode);
+>  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
+> +	bool use_list = mapping->a_ops->readpages;
+>  
+>  	if (isize == 0)
+>  		goto out;
+> @@ -170,7 +170,7 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
+>  	 * Preallocate as many pages as we will need.
+>  	 */
+>  	for (page_idx = 0; page_idx < nr_to_read; page_idx++) {
+> -		pgoff_t page_offset = offset + page_idx;
+> +		struct page *page;
+
+I see two distinct things happening in this patch, and I think they want to each be
+in their own patch:
+
+1) A significant refactoring of the page loop, and
+
+2) Changing the place where the page is added to the page cache. (Only this one is 
+   mentioned in the commit description.)
+
+We'll be more likely to spot any errors if these are teased apart.
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+>  
+>  		if (page_offset > end_index)
+>  			break;
+> @@ -178,25 +178,43 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
+>  		page = xa_load(&mapping->i_pages, page_offset);
+>  		if (page && !xa_is_value(page)) {
+>  			/*
+> -			 * Page already present?  Kick off the current batch of
+> -			 * contiguous pages before continuing with the next
+> -			 * batch.
+> +			 * Page already present?  Kick off the current batch
+> +			 * of contiguous pages before continuing with the
+> +			 * next batch.
+> +			 * It's possible this page is the page we should
+> +			 * be marking with PageReadahead.  However, we
+> +			 * don't have a stable ref to this page so it might
+> +			 * be reallocated to another user before we can set
+> +			 * the bit.  There's probably another page in the
+> +			 * cache marked with PageReadahead from the other
+> +			 * process which accessed this file.
+>  			 */
+> -			if (nr_pages)
+> -				read_pages(mapping, filp, &page_pool, nr_pages,
+> -						gfp_mask);
+> -			nr_pages = 0;
+> -			continue;
+> +			goto skip;
+>  		}
+>  
+>  		page = __page_cache_alloc(gfp_mask);
+>  		if (!page)
+>  			break;
+> -		page->index = page_offset;
+> -		list_add(&page->lru, &page_pool);
+> +		if (use_list) {
+> +			page->index = page_offset;
+> +			list_add(&page->lru, &page_pool);
+> +		} else if (add_to_page_cache_lru(page, mapping, page_offset,
+> +					gfp_mask) < 0) {
+> +			put_page(page);
+> +			goto skip;
+> +		}
 > +
-> +		if (!(ri->i_inline & F2FS_EXTRA_ATTR))
-> +			return false;
-> +		if (!f2fs_sb_has_inode_chksum(sbi->sb))
-> +			return false;
-> +		if (!F2FS_FITS_IN_INODE(ri, extra_isize, i_inode_checksum))
-> +			return false;
-> +	} else {
-> +		if (!f2fs_sb_has_extended_node(sbi->sb))
-> +			return false;
-> +		if (!f2fs_sb_has_node_checksum(sbi->sb))
-> +			return false;
-> +		if (!F2FS_FITS_IN_NODE(sbi->extra_nsize, node_checksum))
-> +			return false;
-> +	}
->  
->  	return true;
->  }
->  
-> -static __u32 f2fs_inode_chksum(struct f2fs_sb_info *sbi, struct page *page)
-> +static __u32 f2fs_node_chksum(struct f2fs_sb_info *sbi, struct page *page)
->  {
->  	struct f2fs_node *node = F2FS_NODE(page);
-> -	struct f2fs_inode *ri = &node->i;
-> -	__le32 ino = node->footer.ino;
-> -	__le32 gen = ri->i_generation;
-> -	__u32 chksum, chksum_seed;
-> -	__u32 dummy_cs = 0;
-> -	unsigned int offset = offsetof(struct f2fs_inode, i_inode_checksum);
-> -	unsigned int cs_size = sizeof(dummy_cs);
-> +	__le32 append, ino = node->footer.ino;
-> +	__u32 chksum, chksum_seed, dummy_cs = 0;
-> +	unsigned int offset, cs_size = sizeof(dummy_cs);
-> +	bool is_inode = RAW_IS_INODE(node);
-> +
-> +	if (is_inode) {
-> +		append = node->i.i_generation;
-> +		offset = offsetof(struct f2fs_inode, i_inode_checksum);
-> +	} else {
-> +		append = node->footer.nid;
-> +		offset = offsetof(struct f2fs_node, node_checksum);
-> +	}
->  
->  	chksum = f2fs_chksum(sbi, sbi->s_chksum_seed, (__u8 *)&ino,
->  							sizeof(ino));
-> -	chksum_seed = f2fs_chksum(sbi, chksum, (__u8 *)&gen, sizeof(gen));
-> +	chksum_seed = f2fs_chksum(sbi, chksum, (__u8 *)&append, sizeof(append));
->  
-> -	chksum = f2fs_chksum(sbi, chksum_seed, (__u8 *)ri, offset);
-> +	chksum = f2fs_chksum(sbi, chksum_seed, (__u8 *)node, offset);
->  	chksum = f2fs_chksum(sbi, chksum, (__u8 *)&dummy_cs, cs_size);
->  	offset += cs_size;
-> -	chksum = f2fs_chksum(sbi, chksum, (__u8 *)ri + offset,
-> +	chksum = f2fs_chksum(sbi, chksum, (__u8 *)node + offset,
->  						F2FS_BLKSIZE - offset);
->  	return chksum;
->  }
->  
-> -bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
-> +bool f2fs_node_chksum_verify(struct f2fs_sb_info *sbi, struct page *page)
->  {
-> -	struct f2fs_inode *ri;
-> +	struct f2fs_node *rn;
->  	__u32 provided, calculated;
->  
-> -	if (!f2fs_enable_inode_chksum(sbi, page) ||
-> +	if (!f2fs_enable_node_chksum(sbi, page) ||
->  			PageDirty(page) || PageWriteback(page))
->  		return true;
->  
-> -	ri = &F2FS_NODE(page)->i;
-> -	provided = le32_to_cpu(ri->i_inode_checksum);
-> -	calculated = f2fs_inode_chksum(sbi, page);
-> +	rn = F2FS_NODE(page);
-> +	if (RAW_IS_INODE(rn))
-> +		provided = le32_to_cpu(rn->i.i_inode_checksum);
-> +	else
-> +		provided = le32_to_cpu(rn->node_checksum);
-> +	calculated = f2fs_node_chksum(sbi, page);
->  
->  	if (provided != calculated)
->  		f2fs_msg(sbi->sb, KERN_WARNING,
-> -			"checksum invalid, ino = %x, %x vs. %x",
-> -			ino_of_node(page), provided, calculated);
-> +			"checksum invalid, ino = %u, nid = %u, %x vs. %x",
-> +			ino_of_node(page), nid_of_node(page),
-> +			provided, calculated);
-> +
-> +	else
-> +		f2fs_msg(sbi->sb, KERN_WARNING,
-> +			"checksum is valid, ino = %u, nid = %u, %x vs. %x",
-> +			ino_of_node(page), nid_of_node(page),
-> +			provided, calculated);
->  
->  	return provided == calculated;
->  }
->  
-> -void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct page *page)
-> +void f2fs_node_chksum_set(struct f2fs_sb_info *sbi, struct page *page)
->  {
-> -	struct f2fs_inode *ri = &F2FS_NODE(page)->i;
-> +	struct f2fs_node *rn = F2FS_NODE(page);
-> +	__le32 chksum;
->  
-> -	if (!f2fs_enable_inode_chksum(sbi, page))
-> +	if (!f2fs_enable_node_chksum(sbi, page))
->  		return;
->  
-> -	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, page));
-> +	chksum = cpu_to_le32(f2fs_node_chksum(sbi, page));
-> +
-> +	if (RAW_IS_INODE(rn))
-> +		rn->i.i_inode_checksum = chksum;
-> +	else
-> +		rn->node_checksum = chksum;
->  }
->  
->  static int do_read_inode(struct inode *inode)
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index bc8424babf36..613e6bc65f9c 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1194,7 +1194,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
->  		goto out_err;
+>  		if (page_idx == nr_to_read - lookahead_size)
+>  			SetPageReadahead(page);
+>  		nr_pages++;
+> +		page_offset++;
+> +		continue;
+> +skip:
+> +		if (nr_pages)
+> +			read_pages(mapping, filp, &page_pool, start, nr_pages);
+> +		nr_pages = 0;
+> +		page_offset++;
+> +		start = page_offset;
 >  	}
 >  
-> -	if (!f2fs_inode_chksum_verify(sbi, page)) {
-> +	if (!f2fs_node_chksum_verify(sbi, page)) {
->  		err = -EBADMSG;
->  		goto out_err;
->  	}
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index ba8cd4e5ad75..5aa2c24cdcd8 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -2678,7 +2678,7 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
->  	if (page && IS_NODESEG(type)) {
->  		fill_node_footer_blkaddr(page, NEXT_FREE_BLKADDR(sbi, curseg));
->  
-> -		f2fs_inode_chksum_set(sbi, page);
-> +		f2fs_node_chksum_set(sbi, page);
->  	}
->  
->  	if (add_list) {
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index f25a6fc0a17e..24d3b82c7bf0 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -119,6 +119,9 @@ static ssize_t features_show(struct f2fs_attr *a,
->  	if (f2fs_sb_has_extended_node(sb))
->  		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
->  				len ? ", " : "", "extended_node");
-> +	if (f2fs_sb_has_node_checksum(sb))
-> +		len += snprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> +				len ? ", " : "", "node_checksum");
->  	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
->  	return len;
->  }
-> @@ -240,6 +243,7 @@ enum feat_id {
->  	FEAT_QUOTA_INO,
->  	FEAT_INODE_CRTIME,
->  	FEAT_EXTENDED_NODE,
-> +	FEAT_NODE_CHECKSUM,
->  };
->  
->  static ssize_t f2fs_feature_show(struct f2fs_attr *a,
-> @@ -256,6 +260,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
->  	case FEAT_QUOTA_INO:
->  	case FEAT_INODE_CRTIME:
->  	case FEAT_EXTENDED_NODE:
-> +	case FEAT_NODE_CHECKSUM:
->  		return snprintf(buf, PAGE_SIZE, "supported\n");
->  	}
->  	return 0;
-> @@ -335,6 +340,7 @@ F2FS_FEATURE_RO_ATTR(flexible_inline_xattr, FEAT_FLEXIBLE_INLINE_XATTR);
->  F2FS_FEATURE_RO_ATTR(quota_ino, FEAT_QUOTA_INO);
->  F2FS_FEATURE_RO_ATTR(inode_crtime, FEAT_INODE_CRTIME);
->  F2FS_FEATURE_RO_ATTR(extended_node, FEAT_EXTENDED_NODE);
-> +F2FS_FEATURE_RO_ATTR(node_checksum, FEAT_NODE_CHECKSUM);
->  
->  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
->  static struct attribute *f2fs_attrs[] = {
-> @@ -390,6 +396,7 @@ static struct attribute *f2fs_feat_attrs[] = {
->  	ATTR_LIST(quota_ino),
->  	ATTR_LIST(inode_crtime),
->  	ATTR_LIST(extended_node),
-> +	ATTR_LIST(node_checksum),
->  	NULL,
->  };
->  
-> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> index a6bacfdd378d..941b5330c504 100644
-> --- a/include/linux/f2fs_fs.h
-> +++ b/include/linux/f2fs_fs.h
-> @@ -295,8 +295,14 @@ struct f2fs_node {
->  	/* can be one of three types: inode, direct, and indirect types */
->  	union {
->  		struct f2fs_inode i;
-> -		struct direct_node dn;
-> -		struct indirect_node in;
-> +		union {
-> +			struct {
-> +				__le32 data[1017];
-> +				__le32 node_checksum;
-> +			};
-> +			struct direct_node dn;
-> +			struct indirect_node in;
-> +		};
->  	};
->  	struct node_footer footer;
->  } __packed;
+>  	/*
+> @@ -205,7 +223,7 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
+>  	 * will then handle the error.
+>  	 */
+>  	if (nr_pages)
+> -		read_pages(mapping, filp, &page_pool, nr_pages, gfp_mask);
+> +		read_pages(mapping, filp, &page_pool, start, nr_pages);
+>  	BUG_ON(!list_empty(&page_pool));
+>  out:
+>  	return nr_pages;
 > 
 
 
