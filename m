@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6148EC3402A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EBCC3402C
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Feb 2020 18:46:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3B86420836;
+	by mail.kernel.org (Postfix) with ESMTPS id A2C5C208C4;
 	Mon, 17 Feb 2020 18:46:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="b8VY5Oe3";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="euZSFQLe";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OMvAvn22"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B86420836
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="jYQ2oE/P";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KTwZayq3";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="snPthlEa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C5C208C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j3lPZ-0008KD-Tn; Mon, 17 Feb 2020 18:46:29 +0000
+	id 1j3lPa-0000Eo-Az; Mon, 17 Feb 2020 18:46:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1j3lPY-0008JS-F0
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Feb 2020 18:46:28 +0000
+ (envelope-from <willy@infradead.org>) id 1j3lPX-0000E7-Ol
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Feb 2020 18:46:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SByyiFZxo6mKeGfmmPSPoRTX+MwXpUXrSbQ1yx7hUZg=; b=b8VY5Oe3QYdss8GJWkLVlmaEIr
- TgznNSVtRKMMnxF84lzJNvAzu8K6vN33yssWnM7mK6WDjN+7PpZzUpBccUv53P7MM/dFFNSxcciah
- ChBLEayP9lunEBrUUW4F/RH8ReS0sEaaeEA8v65x6D0O3hL9Heu2j4DpLSo9YqWtG6kA=;
+ bh=1vCvBaqxbguzzL0oqL4ThK9G1MHEV4QPzlA3342SkQo=; b=jYQ2oE/PwFXE17GcePJF1l/ZJm
+ +y6I7Aq4bAH4v9y1Ktu2LOR6MBhvm7++GZoHeQwXGJspW9BDS5Ix+jv9CxgdzOcullclDKd1cgjm6
+ SH00CMx6/FGeiEuW56i8zQj/h/T8dd6Lyxrus6FqjKJJzTzZl6HL5217aPUHeRdd1axQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,36 +46,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=SByyiFZxo6mKeGfmmPSPoRTX+MwXpUXrSbQ1yx7hUZg=; b=euZSFQLeLJnQ+r5tHGXdoFFFo/
- kSFkUDcE0L19N17/fcCTaCBsfs/Z7NbCV0LBxaylIQqpXn+C1RVi8HKyf3FOJsuvFG9UHifU4v+dq
- dQbZgCIEWJd7cwU+9bd7n1kBsZN378zOYbU89hOTLmMUcAud1xuvVnyzOyUeDJy8Y6iA=;
+ bh=1vCvBaqxbguzzL0oqL4ThK9G1MHEV4QPzlA3342SkQo=; b=KTwZayq3KDjiP6J/wX8Mo9DX4j
+ zx9FDy1EkH+AjUimCTuMjdY230M+MnI4MzEhFGJJ46vG6hLUIqQl5EsztcaEDUhwO0I5WZBhdNf9l
+ MZxP6xYKogTTcbMSRQ7i+a0ZRwH1y+94wf6RX8zxRF7p5sPUqZOqGoKNZeHWRasEbp9k=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j3lPX-006iXf-7b
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Feb 2020 18:46:28 +0000
+ id 1j3lPW-006iXb-3J
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 17 Feb 2020 18:46:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=SByyiFZxo6mKeGfmmPSPoRTX+MwXpUXrSbQ1yx7hUZg=; b=OMvAvn22Mp1T9c9Y5Yp+PUl3ZQ
- 5EU8aXEaJPdrfwLqmmxku3auxQmO5ZgHofDPmcLQACF3x/rwgZhuhtgV0hkBrCwZOeFiRseyv0k+4
- YMQpE4ACpmPAOCEcwah0fo+TKg6A5yP98qtQdsxU8rnLiMbcx6g1incwzk94lWHK3RUiW9jjSlG9Z
- W7/BTyFVuElbyQIbdCfuMEXGI4NquDy7djRt3+axU4bi1dHWHGTuBnoc0MxLZHirFbXLJq7hTn1wE
- 1pG8j4AG3sA9Lcmk4xyBIuoHBYwc/E7VQzijTfSDZSch+RMRmcCrxcKmI3cp+eAspwqiuOgLhRdPK
- M4+xPdNg==;
+ bh=1vCvBaqxbguzzL0oqL4ThK9G1MHEV4QPzlA3342SkQo=; b=snPthlEa1laZVQGXgsuWsnm1i/
+ S9nYhTXEc17hrnBUmC8pxzHsx9KDM8jn96kPDRAjQBIJKTWAYboduinpQZrbzO5s/gj8K3XXhC5eI
+ BSgBq67IKoQitJdFgAfF2FtG6pmxHSKd04UZuzZgguQQJeHmmk30CntJRnWcQYERfOjnuKnaiQjSH
+ 3d9tZnZetBNaFWLpXu93MjZuKbajeWtSRHTmESry9VHjIVXTaJUafTUeMBcCIULTngwlv4eIUALsg
+ 1OJE78jG3Z1BPaaWXBRfn/ZMTWPrw3j9Kc2IBjI0hwD6kIwoJ1s/2sQ/UtOsFUi9TbUR02/VaqWp2
+ H6Ugi6WQ==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1j3lPM-0005BU-33; Mon, 17 Feb 2020 18:46:16 +0000
+ Hat Linux)) id 1j3lPM-0005D4-Bq; Mon, 17 Feb 2020 18:46:16 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Mon, 17 Feb 2020 10:46:02 -0800
-Message-Id: <20200217184613.19668-22-willy@infradead.org>
+Date: Mon, 17 Feb 2020 10:46:08 -0800
+Message-Id: <20200217184613.19668-28-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200217184613.19668-1-willy@infradead.org>
 References: <20200217184613.19668-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1j3lPX-006iXf-7b
-Subject: [f2fs-dev] [PATCH v6 12/16] ext4: Convert from readpages to
+X-Headers-End: 1j3lPW-006iXb-3J
+Subject: [f2fs-dev] [PATCH v6 15/16] iomap: Convert from readpages to
  readahead
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -99,170 +99,278 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Use the new readahead operation in ext4
+Use the new readahead operation in iomap.  Convert XFS and ZoneFS to
+use it.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ext4/ext4.h     |  3 +--
- fs/ext4/inode.c    | 23 ++++++++++-------------
- fs/ext4/readpage.c | 22 ++++++++--------------
- 3 files changed, 19 insertions(+), 29 deletions(-)
+ fs/iomap/buffered-io.c | 116 ++++++++++++++++-------------------------
+ fs/iomap/trace.h       |   2 +-
+ fs/xfs/xfs_aops.c      |  13 ++---
+ fs/zonefs/super.c      |   7 ++-
+ include/linux/iomap.h  |   3 +-
+ 5 files changed, 54 insertions(+), 87 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 9a2ee2428ecc..3af755da101d 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3276,8 +3276,7 @@ static inline void ext4_set_de_type(struct super_block *sb,
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index cb3511eb152a..2bfcd5242264 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -214,9 +214,8 @@ iomap_read_end_io(struct bio *bio)
+ struct iomap_readpage_ctx {
+ 	struct page		*cur_page;
+ 	bool			cur_page_in_bio;
+-	bool			is_readahead;
+ 	struct bio		*bio;
+-	struct list_head	*pages;
++	struct readahead_control *rac;
+ };
  
- /* readpages.c */
- extern int ext4_mpage_readpages(struct address_space *mapping,
--				struct list_head *pages, struct page *page,
--				unsigned nr_pages, bool is_readahead);
-+		struct readahead_control *rac, struct page *page);
- extern int __init ext4_init_post_read_processing(void);
- extern void ext4_exit_post_read_processing(void);
+ static void
+@@ -307,11 +306,11 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 		if (ctx->bio)
+ 			submit_bio(ctx->bio);
  
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 1305b810c44a..7770e38e17e7 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3218,7 +3218,7 @@ static sector_t ext4_bmap(struct address_space *mapping, sector_t block)
- static int ext4_readpage(struct file *file, struct page *page)
- {
- 	int ret = -EAGAIN;
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = file_inode(file);
- 
- 	trace_ext4_readpage(page);
- 
-@@ -3226,23 +3226,20 @@ static int ext4_readpage(struct file *file, struct page *page)
- 		ret = ext4_readpage_inline(inode, page);
- 
- 	if (ret == -EAGAIN)
--		return ext4_mpage_readpages(page->mapping, NULL, page, 1,
--						false);
-+		return ext4_mpage_readpages(page->mapping, NULL, page);
- 
- 	return ret;
+-		if (ctx->is_readahead) /* same as readahead_gfp_mask */
++		if (ctx->rac) /* same as readahead_gfp_mask */
+ 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
+ 		ctx->bio = bio_alloc(gfp, min(BIO_MAX_PAGES, nr_vecs));
+ 		ctx->bio->bi_opf = REQ_OP_READ;
+-		if (ctx->is_readahead)
++		if (ctx->rac)
+ 			ctx->bio->bi_opf |= REQ_RAHEAD;
+ 		ctx->bio->bi_iter.bi_sector = sector;
+ 		bio_set_dev(ctx->bio, iomap->bdev);
+@@ -367,104 +366,77 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
  }
+ EXPORT_SYMBOL_GPL(iomap_readpage);
  
--static int
--ext4_readpages(struct file *file, struct address_space *mapping,
--		struct list_head *pages, unsigned nr_pages)
-+static void ext4_readahead(struct readahead_control *rac)
- {
--	struct inode *inode = mapping->host;
-+	struct inode *inode = rac->mapping->host;
- 
--	/* If the file has inline data, no need to do readpages. */
-+	/* If the file has inline data, no need to do readahead. */
- 	if (ext4_has_inline_data(inode))
--		return 0;
-+		return;
- 
--	return ext4_mpage_readpages(mapping, pages, NULL, nr_pages, true);
-+	ext4_mpage_readpages(rac->mapping, rac, NULL);
- }
- 
- static void ext4_invalidatepage(struct page *page, unsigned int offset,
-@@ -3587,7 +3584,7 @@ static int ext4_set_page_dirty(struct page *page)
- 
- static const struct address_space_operations ext4_aops = {
- 	.readpage		= ext4_readpage,
--	.readpages		= ext4_readpages,
-+	.readahead		= ext4_readahead,
- 	.writepage		= ext4_writepage,
- 	.writepages		= ext4_writepages,
- 	.write_begin		= ext4_write_begin,
-@@ -3604,7 +3601,7 @@ static const struct address_space_operations ext4_aops = {
- 
- static const struct address_space_operations ext4_journalled_aops = {
- 	.readpage		= ext4_readpage,
--	.readpages		= ext4_readpages,
-+	.readahead		= ext4_readahead,
- 	.writepage		= ext4_writepage,
- 	.writepages		= ext4_writepages,
- 	.write_begin		= ext4_write_begin,
-@@ -3620,7 +3617,7 @@ static const struct address_space_operations ext4_journalled_aops = {
- 
- static const struct address_space_operations ext4_da_aops = {
- 	.readpage		= ext4_readpage,
--	.readpages		= ext4_readpages,
-+	.readahead		= ext4_readahead,
- 	.writepage		= ext4_writepage,
- 	.writepages		= ext4_writepages,
- 	.write_begin		= ext4_da_write_begin,
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index c1769afbf799..e14841ade612 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -7,8 +7,8 @@
-  *
-  * This was originally taken from fs/mpage.c
-  *
-- * The intent is the ext4_mpage_readpages() function here is intended
-- * to replace mpage_readpages() in the general case, not just for
-+ * The ext4_mpage_readahead() function here is intended to
-+ * replace mpage_readahead() in the general case, not just for
-  * encrypted files.  It has some limitations (see below), where it
-  * will fall back to read_block_full_page(), but these limitations
-  * should only be hit when page_size != block_size.
-@@ -222,8 +222,7 @@ static inline loff_t ext4_readpage_limit(struct inode *inode)
- }
- 
- int ext4_mpage_readpages(struct address_space *mapping,
--			 struct list_head *pages, struct page *page,
--			 unsigned nr_pages, bool is_readahead)
-+		struct readahead_control *rac, struct page *page)
- {
- 	struct bio *bio = NULL;
- 	sector_t last_block_in_bio = 0;
-@@ -241,6 +240,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 	int length;
- 	unsigned relative_block = 0;
- 	struct ext4_map_blocks map;
-+	unsigned int nr_pages = rac ? readahead_count(rac) : 1;
- 
- 	map.m_pblk = 0;
- 	map.m_lblk = 0;
-@@ -251,14 +251,9 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 		int fully_mapped = 1;
- 		unsigned first_hole = blocks_per_page;
- 
--		if (pages) {
--			page = lru_to_page(pages);
+-static struct page *
+-iomap_next_page(struct inode *inode, struct list_head *pages, loff_t pos,
+-		loff_t length, loff_t *done)
+-{
+-	while (!list_empty(pages)) {
+-		struct page *page = lru_to_page(pages);
 -
-+		if (rac) {
-+			page = readahead_page(rac);
- 			prefetchw(&page->flags);
--			list_del(&page->lru);
--			if (add_to_page_cache_lru(page, mapping, page->index,
--				  readahead_gfp_mask(mapping)))
--				goto next_page;
- 		}
+-		if (page_offset(page) >= (u64)pos + length)
+-			break;
+-
+-		list_del(&page->lru);
+-		if (!add_to_page_cache_lru(page, inode->i_mapping, page->index,
+-				GFP_NOFS))
+-			return page;
+-
+-		/*
+-		 * If we already have a page in the page cache at index we are
+-		 * done.  Upper layers don't care if it is uptodate after the
+-		 * readpages call itself as every page gets checked again once
+-		 * actually needed.
+-		 */
+-		*done += PAGE_SIZE;
+-		put_page(page);
+-	}
+-
+-	return NULL;
+-}
+-
+ static loff_t
+-iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
++iomap_readahead_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		void *data, struct iomap *iomap, struct iomap *srcmap)
+ {
+ 	struct iomap_readpage_ctx *ctx = data;
+-	loff_t done, ret;
++	loff_t ret, done = 0;
  
- 		if (page_has_buffers(page))
-@@ -381,7 +376,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
- 			bio->bi_end_io = mpage_end_io;
- 			bio_set_op_attrs(bio, REQ_OP_READ,
--						is_readahead ? REQ_RAHEAD : 0);
-+						rac ? REQ_RAHEAD : 0);
+-	for (done = 0; done < length; done += ret) {
+-		if (ctx->cur_page && offset_in_page(pos + done) == 0) {
+-			if (!ctx->cur_page_in_bio)
+-				unlock_page(ctx->cur_page);
+-			put_page(ctx->cur_page);
+-			ctx->cur_page = NULL;
+-		}
++	while (done < length) {
+ 		if (!ctx->cur_page) {
+-			ctx->cur_page = iomap_next_page(inode, ctx->pages,
+-					pos, length, &done);
+-			if (!ctx->cur_page)
+-				break;
++			ctx->cur_page = readahead_page(ctx->rac);
+ 			ctx->cur_page_in_bio = false;
  		}
- 
- 		length = first_hole << blkbits;
-@@ -406,10 +401,9 @@ int ext4_mpage_readpages(struct address_space *mapping,
- 		else
- 			unlock_page(page);
- 	next_page:
--		if (pages)
-+		if (rac)
- 			put_page(page);
+ 		ret = iomap_readpage_actor(inode, pos + done, length - done,
+ 				ctx, iomap, srcmap);
++		if (WARN_ON(ret == 0))
++			break;
++		done += ret;
++		if (offset_in_page(pos + done) == 0) {
++			readahead_next(ctx->rac);
++			if (!ctx->cur_page_in_bio)
++				unlock_page(ctx->cur_page);
++			put_page(ctx->cur_page);
++			ctx->cur_page = NULL;
++		}
  	}
--	BUG_ON(pages && !list_empty(pages));
- 	if (bio)
- 		submit_bio(bio);
- 	return 0;
+ 
+ 	return done;
+ }
+ 
+-int
+-iomap_readpages(struct address_space *mapping, struct list_head *pages,
+-		unsigned nr_pages, const struct iomap_ops *ops)
++/**
++ * iomap_readahead - Attempt to read pages from a file.
++ * @rac: Describes the pages to be read.
++ * @ops: The operations vector for the filesystem.
++ *
++ * This function is for filesystems to call to implement their readahead
++ * address_space operation.
++ *
++ * Context: The file is pinned by the caller, and the pages to be read are
++ * all locked and have an elevated refcount.  This function will unlock
++ * the pages (once I/O has completed on them, or I/O has been determined to
++ * not be necessary).  It will also decrease the refcount once the pages
++ * have been submitted for I/O.  After this point, the page may be removed
++ * from the page cache, and should not be referenced.
++ */
++void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
+ {
++	struct inode *inode = rac->mapping->host;
+ 	struct iomap_readpage_ctx ctx = {
+-		.pages		= pages,
+-		.is_readahead	= true,
++		.rac	= rac,
+ 	};
+-	loff_t pos = page_offset(list_entry(pages->prev, struct page, lru));
+-	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
+-	loff_t length = last - pos + PAGE_SIZE, ret = 0;
++	loff_t pos = readahead_offset(rac);
++	loff_t length = readahead_length(rac);
+ 
+-	trace_iomap_readpages(mapping->host, nr_pages);
++	trace_iomap_readahead(inode, readahead_count(rac));
+ 
+ 	while (length > 0) {
+-		ret = iomap_apply(mapping->host, pos, length, 0, ops,
+-				&ctx, iomap_readpages_actor);
++		loff_t ret = iomap_apply(inode, pos, length, 0, ops,
++				&ctx, iomap_readahead_actor);
+ 		if (ret <= 0) {
+ 			WARN_ON_ONCE(ret == 0);
+-			goto done;
++			break;
+ 		}
+ 		pos += ret;
+ 		length -= ret;
+ 	}
+-	ret = 0;
+-done:
++
+ 	if (ctx.bio)
+ 		submit_bio(ctx.bio);
+-	if (ctx.cur_page) {
+-		if (!ctx.cur_page_in_bio)
+-			unlock_page(ctx.cur_page);
+-		put_page(ctx.cur_page);
+-	}
+-
+-	/*
+-	 * Check that we didn't lose a page due to the arcance calling
+-	 * conventions..
+-	 */
+-	WARN_ON_ONCE(!ret && !list_empty(ctx.pages));
+-	return ret;
++	BUG_ON(ctx.cur_page);
+ }
+-EXPORT_SYMBOL_GPL(iomap_readpages);
++EXPORT_SYMBOL_GPL(iomap_readahead);
+ 
+ /*
+  * iomap_is_partially_uptodate checks whether blocks within a page are
+diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+index 6dc227b8c47e..d6ba705f938a 100644
+--- a/fs/iomap/trace.h
++++ b/fs/iomap/trace.h
+@@ -39,7 +39,7 @@ DEFINE_EVENT(iomap_readpage_class, name,	\
+ 	TP_PROTO(struct inode *inode, int nr_pages), \
+ 	TP_ARGS(inode, nr_pages))
+ DEFINE_READPAGE_EVENT(iomap_readpage);
+-DEFINE_READPAGE_EVENT(iomap_readpages);
++DEFINE_READPAGE_EVENT(iomap_readahead);
+ 
+ DECLARE_EVENT_CLASS(iomap_page_class,
+ 	TP_PROTO(struct inode *inode, struct page *page, unsigned long off,
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 58e937be24ce..6e68eeb50b07 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -621,14 +621,11 @@ xfs_vm_readpage(
+ 	return iomap_readpage(page, &xfs_read_iomap_ops);
+ }
+ 
+-STATIC int
+-xfs_vm_readpages(
+-	struct file		*unused,
+-	struct address_space	*mapping,
+-	struct list_head	*pages,
+-	unsigned		nr_pages)
++STATIC void
++xfs_vm_readahead(
++	struct readahead_control	*rac)
+ {
+-	return iomap_readpages(mapping, pages, nr_pages, &xfs_read_iomap_ops);
++	iomap_readahead(rac, &xfs_read_iomap_ops);
+ }
+ 
+ static int
+@@ -644,7 +641,7 @@ xfs_iomap_swapfile_activate(
+ 
+ const struct address_space_operations xfs_address_space_operations = {
+ 	.readpage		= xfs_vm_readpage,
+-	.readpages		= xfs_vm_readpages,
++	.readahead		= xfs_vm_readahead,
+ 	.writepage		= xfs_vm_writepage,
+ 	.writepages		= xfs_vm_writepages,
+ 	.set_page_dirty		= iomap_set_page_dirty,
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index 8bc6ef82d693..8327a01d3bac 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -78,10 +78,9 @@ static int zonefs_readpage(struct file *unused, struct page *page)
+ 	return iomap_readpage(page, &zonefs_iomap_ops);
+ }
+ 
+-static int zonefs_readpages(struct file *unused, struct address_space *mapping,
+-			    struct list_head *pages, unsigned int nr_pages)
++static void zonefs_readahead(struct readahead_control *rac)
+ {
+-	return iomap_readpages(mapping, pages, nr_pages, &zonefs_iomap_ops);
++	iomap_readahead(rac, &zonefs_iomap_ops);
+ }
+ 
+ /*
+@@ -128,7 +127,7 @@ static int zonefs_writepages(struct address_space *mapping,
+ 
+ static const struct address_space_operations zonefs_file_aops = {
+ 	.readpage		= zonefs_readpage,
+-	.readpages		= zonefs_readpages,
++	.readahead		= zonefs_readahead,
+ 	.writepage		= zonefs_writepage,
+ 	.writepages		= zonefs_writepages,
+ 	.set_page_dirty		= iomap_set_page_dirty,
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 8b09463dae0d..bc20bd04c2a2 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -155,8 +155,7 @@ loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
+ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+ 		const struct iomap_ops *ops);
+ int iomap_readpage(struct page *page, const struct iomap_ops *ops);
+-int iomap_readpages(struct address_space *mapping, struct list_head *pages,
+-		unsigned nr_pages, const struct iomap_ops *ops);
++void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+ int iomap_set_page_dirty(struct page *page);
+ int iomap_is_partially_uptodate(struct page *page, unsigned long from,
+ 		unsigned long count);
 -- 
 2.25.0
 
