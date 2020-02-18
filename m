@@ -2,84 +2,76 @@ Return-Path: <SRS0=tJjq=4G=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3D1C34031
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Feb 2020 07:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D08C34026
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Feb 2020 10:22:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2577C207FD;
-	Tue, 18 Feb 2020 07:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B8C1121D7D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Feb 2020 10:22:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DmUqBAhy";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="dwZh6sHo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2577C207FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="IBAClAAs";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Rl0gLiZ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C1121D7D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j3xAG-0008Sx-EL; Tue, 18 Feb 2020 07:19:28 +0000
+	id 1j401g-0002A2-3H; Tue, 18 Feb 2020 10:22:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <SRS0=z2qo=4G=bugzilla.kernel.org=bugzilla-daemon@kernel.org>)
- id 1j3xAE-0008So-Vo
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Feb 2020 07:19:26 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1j401f-00029w-4j
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Feb 2020 10:22:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cDaavKLafchoKGGlPD9YY8j/Eko5IuVzuyjWrJVPPhM=; b=DmUqBAhySHuavrKLOLukF3NdUF
- dNkOuedg31G5aBiACezUPH/QAmBMEy0rcFer7ITyD3WV7fF3qPQFiN3vtHBQEsJomUkX+clBJjE7s
- 8vlx1HC9ri0RbwAejG5E7GtlwwEEaRo8lvcEBfyWcqyIiu9uzxLI9XYFVy/s7ETwxz50=;
+ bh=w59j3vIX7OT2UFGUjYmhKaCJw84nfm1DE+MxYDDZ3vQ=; b=IBAClAAsjFNgDUSXqxCCo0NjtO
+ V6CLMF8HbbXhvYNg0d13a9etL5OwjHpV6GSOT0lWbubtJHvFMF3b4pFI4T2TP2JHuLJ7XNc1PoqsT
+ SMSUSufHFRzF2/8uj9tNDy3/s6Q5lmZO/5iObJf8h7RyDMfhWe37MP52ZsPGkMrf4TqQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=cDaavKLafchoKGGlPD9YY8j/Eko5IuVzuyjWrJVPPhM=; b=dwZh6sHoTEtBry0sjtxu4TTNuE
- 7ACUXp/dvwtkLm1AS3Ovg1zj5crpDyQgmxfkDJqxMXK9gmGCPHr4lFsu6g0tz4kiDpMF58MgHhz2o
- G9A31g7/JOy16HRPOP4lun2lBP7E1NWyJ4ElkZlNwjFQ1+OMVRrlnvHO7PZphJc8YNQI=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=w59j3vIX7OT2UFGUjYmhKaCJw84nfm1DE+MxYDDZ3vQ=; b=Rl0gLiZ1v/w3kVWWQIiR1y/HoN
+ ZLZDPADt+SnCamuJL6+J1zbjI7DrudxPAILbTE2jcoCxkHBCseAtJigzJORrq/bDCCebsRIsYA86J
+ C1Cgx4Hb3Jf//26uirlZX4FKd77FTHCYyeqV26M0Lnmt1Ivhu0HE1wEo6yXG6BhHAtsc=;
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j3xAD-0076VW-Ij
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Feb 2020 07:19:26 +0000
-From: bugzilla-daemon@bugzilla.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Tue, 18 Feb 2020 07:19:19 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: stefan@konink.de
-X-Bugzilla-Status: ASSIGNED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-206551-202145-dPXTK2Cskb@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-206551-202145@https.bugzilla.kernel.org/>
-References: <bug-206551-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ id 1j401c-007EoM-OT
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Feb 2020 10:22:47 +0000
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 84050E62389C5A75AAAA;
+ Tue, 18 Feb 2020 18:22:35 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 18 Feb 2020 18:22:29 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Tue, 18 Feb 2020 18:21:36 +0800
+Message-ID: <20200218102136.32150-3-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20200218102136.32150-1-yuchao0@huawei.com>
+References: <20200218102136.32150-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-X-Headers-End: 1j3xAD-0076VW-Ij
-Subject: [f2fs-dev] [Bug 206551] Failed to initialize F2FS segment manager
- (-117)
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1j401c-007EoM-OT
+Subject: [f2fs-dev] [PATCH 3/3] f2fs: avoid unneeded barrier in
+ do_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,24 +83,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206551
+We don't need to wait all dirty page submitting IO twice,
+remove unneeded wait step.
 
---- Comment #5 from Stefan de Konink (stefan@konink.de) ---
-[    1.404552] F2FS-fs (sda4): Found nat_bits in checkpoint
-[    1.638356] F2FS-fs (sda4): Mounted with checkpoint version = 68992090
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-I don't have the dmesg of the 'recovery' attempts.
-
-/dev/sda4 on / type f2fs
-(rw,noatime,lazytime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,fsync_mode=posix)
-
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 751815cb4c2b..9c88fb3d255a 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1384,8 +1384,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* Flush all the NAT/SIT pages */
+ 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+-	/* Wait for all dirty meta pages to be submitted for IO */
+-	f2fs_wait_on_all_pages(sbi, F2FS_DIRTY_META);
+ 
+ 	/*
+ 	 * modify checkpoint
 -- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+2.18.0.rc1
+
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
