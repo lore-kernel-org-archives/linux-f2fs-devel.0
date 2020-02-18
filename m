@@ -2,82 +2,77 @@ Return-Path: <SRS0=tJjq=4G=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78213C34036
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Feb 2020 05:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348DDC34031
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Feb 2020 06:10:03 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 46FFC207FD;
-	Tue, 18 Feb 2020 05:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id F1B4E207FD;
+	Tue, 18 Feb 2020 06:10:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="E3fVqNOX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="S02tzo62"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46FFC207FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="eGhnWD2Y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="CHgjiwOJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1B4E207FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j3vVg-00040V-Pf; Tue, 18 Feb 2020 05:33:28 +0000
+	id 1j3w53-0005e2-Ii; Tue, 18 Feb 2020 06:10:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <david@fromorbit.com>) id 1j3vVg-00040O-H8
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Feb 2020 05:33:28 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1j3w51-0005dX-K3
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Feb 2020 06:09:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NLn8bIjnCWtMjk44t9lPr4/h5djhvdWEJPqp8Qg00ZI=; b=E3fVqNOX9+Au4cA0XflB666CL0
- MA1I1XcBlLNsuVq3iorENzyvZm1SFb2OOHl7St+oSZiG6KIfYpTnwrGyRAMFfVtwCJM8cXrv1iib3
- Ss2+Seu9llcwjts0BJBxClr4xI/W3IDAhGQyK1iTp+FiAGEbxjzq/z6go2u9gvlShQa8=;
+ bh=orFU9yHcjJQutr8H/yohGhy9fV24WiYBdQlp7zq91I8=; b=eGhnWD2YQKxra62yy92t+aDy1M
+ Tp5UH2kQKiy6DCS+envwLLymAigtc7Y3o7pcyrBp49rnUNX818h6S8UnI60ChOVpc2xp1ZYeyUHjB
+ ZiRiLVA81aidjOEMrHEVbBlXbZjUkY7NAxCT++hSTddJDIU6d80YZmmCvrEFPjqVo+tE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NLn8bIjnCWtMjk44t9lPr4/h5djhvdWEJPqp8Qg00ZI=; b=S02tzo62IwX7gw4LJ9k9qMzqRn
- 1KMcti5PwtBl9q3e0eYMA58GyzORpxDxc5lxd02R8v4w/+0fAQW5NRCA2JMU92WkAMu01EHY2vzKn
- ezCLCrqFRJ2mwUatrtp6KWTMuIsJD59kWn33cv/mGUSR2kl42rnEgweYGlCk57CcY6UU=;
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtp (Exim 4.92.2)
- id 1j3vVf-0073DD-As
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Feb 2020 05:33:28 +0000
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au
- [49.179.138.28])
- by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 8B4E77EA1B5;
- Tue, 18 Feb 2020 16:33:20 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
- (envelope-from <david@fromorbit.com>)
- id 1j3vVX-00063Y-Ld; Tue, 18 Feb 2020 16:33:19 +1100
-Date: Tue, 18 Feb 2020 16:33:19 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <20200218053319.GL10776@dread.disaster.area>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-10-willy@infradead.org>
+ bh=orFU9yHcjJQutr8H/yohGhy9fV24WiYBdQlp7zq91I8=; b=CHgjiwOJ292R5ggSLuL/76NWxT
+ 09Mlfrx1UTI35Ld6iLmuo7XUFy+eovzitGByPLs1oiymg1XBbWGifV1D5MQi3kneUoXbDA3cUCHMI
+ STlMw1H/e+S0Oqh7zpNCu4pfp+KThs2qrLgojbaXBD7ShrhuSclkGuNVp6rqdNd89vCo=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1j3w4x-006k7N-VU
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 18 Feb 2020 06:09:59 +0000
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id C8727B81DB7338D6EC55;
+ Tue, 18 Feb 2020 14:09:48 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 18 Feb
+ 2020 14:09:43 +0800
+To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim
+ <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>
+References: <1581997747-31044-1-git-send-email-stummala@codeaurora.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <53aacd2c-8e6b-91f8-b105-270502d6d6d1@huawei.com>
+Date: Tue, 18 Feb 2020 14:09:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200217184613.19668-10-willy@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
- a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
- a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
- a=JfrnYn6hAAAA:8 a=Ikd4Dj_1AAAA:8 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
- a=hst_v9hiAf68Pp7nMRMA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
- a=biEYGPWJfzWAr4FL6Ov7:22
-X-Headers-End: 1j3vVf-0073DD-As
-Subject: Re: [f2fs-dev] [PATCH v6 06/19] mm: rename readahead loop variable
- to 'i'
+In-Reply-To: <1581997747-31044-1-git-send-email-stummala@codeaurora.org>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1j3w4x-006k7N-VU
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix the panic in do_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,34 +84,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- cluster-devel@redhat.com, linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 17, 2020 at 10:45:50AM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On 2020/2/18 11:49, Sahitya Tummala wrote:
+> There could be a scenario where f2fs_sync_meta_pages() will not
+> ensure that all F2FS_DIRTY_META pages are submitted for IO. Thus,
+> resulting in the below panic in do_checkpoint() -
 > 
-> Change the type of page_idx to unsigned long, and rename it -- it's
-> just a loop counter, not a page index.
+> f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+> 				!f2fs_cp_error(sbi));
 > 
-> Suggested-by: John Hubbard <jhubbard@nvidia.com>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  mm/readahead.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> This can happen in a low-memory condition, where shrinker could
+> also be doing the writepage operation (stack shown below)
+> at the same time when checkpoint is running on another core.
+> 
+> schedule
+> down_write
+> f2fs_submit_page_write -> by this time, this page in page cache is tagged
+> 			as PAGECACHE_TAG_WRITEBACK and PAGECACHE_TAG_DIRTY
+> 			is cleared, due to which f2fs_sync_meta_pages()
+> 			cannot sync this page in do_checkpoint() path.
+> f2fs_do_write_meta_page
+> __f2fs_write_meta_page
+> f2fs_write_meta_page
+> shrink_page_list
+> shrink_inactive_list
+> shrink_node_memcg
+> shrink_node
+> kswapd
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 
-Looks fine.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
 
 
 _______________________________________________
