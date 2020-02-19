@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561F1C11D00
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72519C11D0E
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Feb 2020 21:01:31 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1D9632467C;
+	by mail.kernel.org (Postfix) with ESMTPS id 46B4B24685;
 	Wed, 19 Feb 2020 21:01:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="WbNFiZLr";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="K97IKenp";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gz+VLPn6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9632467C
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Y39T9+cX";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Wr06DMAd";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uH+Yj68Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B4B24685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j4WTK-0002QL-Ga; Wed, 19 Feb 2020 21:01:30 +0000
+	id 1j4WTK-0002Qk-UZ; Wed, 19 Feb 2020 21:01:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1j4WTA-0002P0-Ax
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:20 +0000
+ (envelope-from <willy@infradead.org>) id 1j4WTB-0002P6-5t
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Vi9zRPzZG0WAGJnjLPY0Z7JD7evHL99FPGROsolVlqA=; b=WbNFiZLr5KT1N2Y9hAAqRK6X1D
- enYdnJdnetHE/h5wIqF0rkTNhBwVXlRBid2F53yc3Dz3wVdtJ6qafpTWE1JMOsRGk5vTNB/YJdQJY
- 45xFWYUNXuePKM4kET23qEdC2i28bsyTzXG0uLjhN1HZSzwVMqskAPrTuj7Kcv7XV5Ew=;
+ bh=ti/VQbcGx7iB5ZkDtMNebTtjtNZ81oeKJGpMdUNZLV0=; b=Y39T9+cXnekOz1bB8eldY4fmRu
+ iTgoUtKa644I5CevXqSAuTSWmzUPQejUafTdpH1I2D3+QQcXVtKIW+jdHoHaoClC8wKDdswBhnNYJ
+ CBx+4iwxm0cQIhqIpH+oEo2V+KDViQg+ASImfsL33l0MuPB0sumCwI8AdZCpOlAzOkOw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,37 +46,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Vi9zRPzZG0WAGJnjLPY0Z7JD7evHL99FPGROsolVlqA=; b=K97IKenp5XJcDUuAecUZ0knMiD
- 7jK15L6uhYlOC15scUJo0DHL7DYsjVbYDHOdlooirUlYELiy1UsfBQ+LQ+BzPwv2kA2/HNMFU7UmD
- z24PHldA0Z1W5+no4zrfBJrcVHfN5czizAt9tqeXFUPJDkZ4nxz5YvnRVx0PEZPQMwiI=;
+ bh=ti/VQbcGx7iB5ZkDtMNebTtjtNZ81oeKJGpMdUNZLV0=; b=Wr06DMAdI+GDQsUcTh3euwZlvk
+ SuJaXGjINJod6Wtpw0rBxDgh3KQqxqVS25EfjCxqGZmpcs5LxcFocxWAHGjr997xCm5rtxBS6dnHA
+ mh/bKI4ZEVJO/uDev4bEskkgX1t9J/C76SRnevz8/kPJXf5NI7mxLs05XuWBVGfjDwp8=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j4WT9-008SV2-4e
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:20 +0000
+ id 1j4WT9-008SV8-5f
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=Vi9zRPzZG0WAGJnjLPY0Z7JD7evHL99FPGROsolVlqA=; b=gz+VLPn63u9exWSVjS/Fwdfh6a
- 3VyIkB3ZEkV24M8qzt6ByllMr0D7lrA3dZggQF5d8QQkcY7ipnDSzTAckLI7esmSEWY+IrBmYC2A/
- bf6MiIqzGO6lEnt3toY4r0HQsfpkMAwh6QXflhaktbNiKPFQ8X7LGSwnxZHJ6rFIPCdIj1tzWXlhG
- T+Zmkx1DnCzIK/1+nKXM/6CeiFY7xrD7bvELS/z+pv3v1S48Ad68oLEm+0f95v9pyIAEIW3hK2UQV
- 8IiHRoThuvpc2qbUqjYYPAo359pmAloQGOvkCnd8icesJ5/Wp01JXz0hQ0AUrnK/uMBfUB5sOh8Ex
- KW5ZmNcA==;
+ bh=ti/VQbcGx7iB5ZkDtMNebTtjtNZ81oeKJGpMdUNZLV0=; b=uH+Yj68Zq00b1el9IhXvtJg/ER
+ JKcDD2sr89kzrbW/CetZp6Fyud1tXA80CjzlzuHIreMpTZdCzt66YpvfxzztwR+HxT6XAzvXxI/iu
+ b4YFRc6hamcIFMjpT0TuqEPN+qLrwntKHxJK8PDELA+OzYON8fSCz/Y20rnFMWe49OrohOnwn9yHz
+ CGOoG1Lq3O5ypaCkNP2WJtcS91SQhIpHvbhIWNgGw2uR8VbM/wEI+AO28/uJA3ZoEJKzV7jnvLSkG
+ 3NbrGg91hnS2b8QyqPxskApWNYq11NuSW2lm22pIud33IrSYx0BQAbPqykBUdwrgp/K0HLfPETgOS
+ ORq69oYQ==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1j4WSv-0008Tq-2n; Wed, 19 Feb 2020 21:01:05 +0000
+ Hat Linux)) id 1j4WSu-0008TS-SZ; Wed, 19 Feb 2020 21:01:04 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Wed, 19 Feb 2020 13:00:49 -0800
-Message-Id: <20200219210103.32400-11-willy@infradead.org>
+Date: Wed, 19 Feb 2020 13:00:43 -0800
+Message-Id: <20200219210103.32400-5-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200219210103.32400-1-willy@infradead.org>
 References: <20200219210103.32400-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1j4WT9-008SV2-4e
-Subject: [f2fs-dev] [PATCH v7 10/24] mm: Add readahead address space
- operation
+X-Headers-End: 1j4WT9-008SV8-5f
+Subject: [f2fs-dev] [PATCH v7 04/24] mm: Move readahead nr_pages check into
+ read_pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,172 +99,58 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-This replaces ->readpages with a saner interface:
- - Return void instead of an ignored error code.
- - Page cache is already populated with locked pages when ->readahead
-   is called.
- - New arguments can be passed to the implementation without changing
-   all the filesystems that use a common helper function like
-   mpage_readahead().
+Simplify the callers by moving the check for nr_pages and the BUG_ON
+into read_pages().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- Documentation/filesystems/locking.rst |  6 +++++-
- Documentation/filesystems/vfs.rst     | 15 +++++++++++++++
- include/linux/fs.h                    |  2 ++
- include/linux/pagemap.h               | 18 ++++++++++++++++++
- mm/readahead.c                        | 12 ++++++++++--
- 5 files changed, 50 insertions(+), 3 deletions(-)
+ mm/readahead.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index 5057e4d9dcd1..0af2e0e11461 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -239,6 +239,7 @@ prototypes::
- 	int (*readpage)(struct file *, struct page *);
- 	int (*writepages)(struct address_space *, struct writeback_control *);
- 	int (*set_page_dirty)(struct page *page);
-+	void (*readahead)(struct readahead_control *);
- 	int (*readpages)(struct file *filp, struct address_space *mapping,
- 			struct list_head *pages, unsigned nr_pages);
- 	int (*write_begin)(struct file *, struct address_space *mapping,
-@@ -271,7 +272,8 @@ writepage:		yes, unlocks (see below)
- readpage:		yes, unlocks
- writepages:
- set_page_dirty		no
--readpages:
-+readahead:		yes, unlocks
-+readpages:		no
- write_begin:		locks the page		 exclusive
- write_end:		yes, unlocks		 exclusive
- bmap:
-@@ -295,6 +297,8 @@ the request handler (/dev/loop).
- ->readpage() unlocks the page, either synchronously or via I/O
- completion.
- 
-+->readahead() unlocks the pages that I/O is attempted on like ->readpage().
-+
- ->readpages() populates the pagecache with the passed pages and starts
- I/O against them.  They come unlocked upon I/O completion.
- 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 7d4d09dd5e6d..ed17771c212b 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -706,6 +706,7 @@ cache in your filesystem.  The following members are defined:
- 		int (*readpage)(struct file *, struct page *);
- 		int (*writepages)(struct address_space *, struct writeback_control *);
- 		int (*set_page_dirty)(struct page *page);
-+		void (*readahead)(struct readahead_control *);
- 		int (*readpages)(struct file *filp, struct address_space *mapping,
- 				 struct list_head *pages, unsigned nr_pages);
- 		int (*write_begin)(struct file *, struct address_space *mapping,
-@@ -781,12 +782,26 @@ cache in your filesystem.  The following members are defined:
- 	If defined, it should set the PageDirty flag, and the
- 	PAGECACHE_TAG_DIRTY tag in the radix tree.
- 
-+``readahead``
-+	Called by the VM to read pages associated with the address_space
-+	object.  The pages are consecutive in the page cache and are
-+	locked.  The implementation should decrement the page refcount
-+	after starting I/O on each page.  Usually the page will be
-+	unlocked by the I/O completion handler.  If the filesystem decides
-+	to stop attempting I/O before reaching the end of the readahead
-+	window, it can simply return.  The caller will decrement the page
-+	refcount and unlock the remaining pages for you.  Set PageUptodate
-+	if the I/O completes successfully.  Setting PageError on any page
-+	will be ignored; simply unlock the page if an I/O error occurs.
-+
- ``readpages``
- 	called by the VM to read pages associated with the address_space
- 	object.  This is essentially just a vector version of readpage.
- 	Instead of just one page, several pages are requested.
- 	readpages is only used for read-ahead, so read errors are
- 	ignored.  If anything goes wrong, feel free to give up.
-+	This interface is deprecated and will be removed by the end of
-+	2020; implement readahead instead.
- 
- ``write_begin``
- 	Called by the generic buffered write code to ask the filesystem
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3cd4fe6b845e..d4e2d2964346 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -292,6 +292,7 @@ enum positive_aop_returns {
- struct page;
- struct address_space;
- struct writeback_control;
-+struct readahead_control;
- 
- /*
-  * Write life time hint values.
-@@ -375,6 +376,7 @@ struct address_space_operations {
- 	 */
- 	int (*readpages)(struct file *filp, struct address_space *mapping,
- 			struct list_head *pages, unsigned nr_pages);
-+	void (*readahead)(struct readahead_control *);
- 
- 	int (*write_begin)(struct file *, struct address_space *mapping,
- 				loff_t pos, unsigned len, unsigned flags,
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 4989d330fada..b3008605fd1b 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -669,6 +669,24 @@ static inline struct page *readahead_page(struct readahead_control *rac)
- 	return page;
- }
- 
-+/* The byte offset into the file of this readahead block */
-+static inline loff_t readahead_pos(struct readahead_control *rac)
-+{
-+	return (loff_t)rac->_index * PAGE_SIZE;
-+}
-+
-+/* The number of bytes in this readahead block */
-+static inline loff_t readahead_length(struct readahead_control *rac)
-+{
-+	return (loff_t)rac->_nr_pages * PAGE_SIZE;
-+}
-+
-+/* The index of the first page in this readahead block */
-+static inline unsigned int readahead_index(struct readahead_control *rac)
-+{
-+	return rac->_index;
-+}
-+
- /* The number of pages in this readahead block */
- static inline unsigned int readahead_count(struct readahead_control *rac)
- {
 diff --git a/mm/readahead.c b/mm/readahead.c
-index aaa209559ba2..07cdfbf00f4b 100644
+index 61b15b6b9e72..9fcd4e32b62d 100644
 --- a/mm/readahead.c
 +++ b/mm/readahead.c
-@@ -124,7 +124,14 @@ static void read_pages(struct readahead_control *rac, struct list_head *pages)
+@@ -119,6 +119,9 @@ static void read_pages(struct address_space *mapping, struct file *filp,
+ 	struct blk_plug plug;
+ 	unsigned page_idx;
  
++	if (!nr_pages)
++		return;
++
  	blk_start_plug(&plug);
  
--	if (aops->readpages) {
-+	if (aops->readahead) {
-+		aops->readahead(rac);
-+		/* Clean up the remaining pages */
-+		while ((page = readahead_page(rac))) {
-+			unlock_page(page);
-+			put_page(page);
-+		}
-+	} else if (aops->readpages) {
- 		aops->readpages(rac->file, rac->mapping, pages,
- 				readahead_count(rac));
- 		/* Clean up the remaining pages */
-@@ -234,7 +241,8 @@ void force_page_cache_readahead(struct address_space *mapping,
- 	struct file_ra_state *ra = &filp->f_ra;
- 	unsigned long max_pages;
+ 	if (mapping->a_ops->readpages) {
+@@ -138,6 +141,8 @@ static void read_pages(struct address_space *mapping, struct file *filp,
  
--	if (unlikely(!mapping->a_ops->readpage && !mapping->a_ops->readpages))
-+	if (unlikely(!mapping->a_ops->readpage && !mapping->a_ops->readpages &&
-+			!mapping->a_ops->readahead))
- 		return;
+ out:
+ 	blk_finish_plug(&plug);
++
++	BUG_ON(!list_empty(pages));
+ }
  
- 	/*
+ /*
+@@ -180,8 +185,7 @@ void __do_page_cache_readahead(struct address_space *mapping,
+ 			 * contiguous pages before continuing with the next
+ 			 * batch.
+ 			 */
+-			if (nr_pages)
+-				read_pages(mapping, filp, &page_pool, nr_pages,
++			read_pages(mapping, filp, &page_pool, nr_pages,
+ 						gfp_mask);
+ 			nr_pages = 0;
+ 			continue;
+@@ -202,9 +206,7 @@ void __do_page_cache_readahead(struct address_space *mapping,
+ 	 * uptodate then the caller will launch readpage again, and
+ 	 * will then handle the error.
+ 	 */
+-	if (nr_pages)
+-		read_pages(mapping, filp, &page_pool, nr_pages, gfp_mask);
+-	BUG_ON(!list_empty(&page_pool));
++	read_pages(mapping, filp, &page_pool, nr_pages, gfp_mask);
+ }
+ 
+ /*
 -- 
 2.25.0
 
