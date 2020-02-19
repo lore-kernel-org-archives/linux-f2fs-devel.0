@@ -2,42 +2,42 @@ Return-Path: <SRS0=CXlU=4H=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C28C3402F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Feb 2020 03:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8FCC34022
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Feb 2020 03:29:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 38D7A24658;
-	Wed, 19 Feb 2020 03:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 61A2F24658;
+	Wed, 19 Feb 2020 03:29:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="i41+dGd8";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="McFMJxTA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38D7A24658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lKCAP8FN";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Pz+180vt";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="plo0B7tN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61A2F24658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j4G2y-0007Xl-SG; Wed, 19 Feb 2020 03:29:12 +0000
+	id 1j4G3U-00060Z-2m; Wed, 19 Feb 2020 03:29:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <david@fromorbit.com>) id 1j4G2w-0007XS-R9
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 03:29:10 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1j4G3S-00060O-Sm
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 03:29:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=y/TNK02YCbH4w2ikRjLbrWECEmvRJnSic67MOYht+jI=; b=i41+dGd8HKzLCT8FPUY7EHHaxQ
- q7l1pQP2ARlxJXDE0Xr2oj27/eYQcdOdVHUCb/CB0www7pCXwHE6aUyDtqy+jYKde+7gs3/r2ZVNJ
- 9VN96/AL71Pa4lCH/zDoQOGAynZp2tETWMmq1pjOUI1NNwgJtKhKmITdOJxWo8wtTgVw=;
+ bh=BxHqMJnK5CxjkwkJhCkFLWCzA6lKsqohMftNfU7zRy0=; b=lKCAP8FNh5679VOGujKHmRC/G8
+ SZpmhSOZ8bCMXP8saHz0xSfb8NgJ8vLt6fv/EoIK+owkOnKJYVBBdqoPLD1sXzosbWoP4oQwWBeKY
+ E5X0gYQadDeK4Refec/3k4wWLujp4o9NtyK8D+UEDDdj2FxREUG6iSRbdEhCDk53CInk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,40 +45,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=y/TNK02YCbH4w2ikRjLbrWECEmvRJnSic67MOYht+jI=; b=McFMJxTAX8ucNTc8XuhR2JfWQY
- UiPlvyItrJjwq5ygUYjfCL2qdDXJDEKSJs9v1WL1mH/GzLNd4mngkEjORLxePJAMUrULNhVLokyMY
- NzA+zXJX56DLUedTgnip4RgPA3y7Z7U8Y5oDgtxmby4XzyfBEEOMnw1aTK6mR7E95Sik=;
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.92.2)
- id 1j4G2v-00HAK7-92
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 03:29:10 +0000
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au
- [49.179.138.28])
- by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C4ADA7EB4FD;
- Wed, 19 Feb 2020 14:29:02 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
- (envelope-from <david@fromorbit.com>)
- id 1j4G2m-0005Wz-JP; Wed, 19 Feb 2020 14:29:00 +1100
-Date: Wed, 19 Feb 2020 14:29:00 +1100
-From: Dave Chinner <david@fromorbit.com>
+ bh=BxHqMJnK5CxjkwkJhCkFLWCzA6lKsqohMftNfU7zRy0=; b=Pz+180vtEeLQ88zCNATuQjGNVG
+ ot8V6agdT3ItxK7uxuZ9IiVz1H/5dosTzVAaTu9SHJGkZ5aoT+Z3Gpn2bmV8aDBeFXm3TmA4mgyNy
+ 458EZ/vVf3jzGMoya35zXrCHv6veRgtuVd6v4IwuS5Tk3s/G1cZ+dE1A+NpHeLIVMgcs=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1j4G3R-007WkI-Jj
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 03:29:42 +0000
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net
+ [107.3.166.239])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id AB6A824658;
+ Wed, 19 Feb 2020 03:29:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1582082976;
+ bh=Be/ShAdVvoVw7PIhz4RQ5k4za6c4aizt0SASf/qexgY=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=plo0B7tNDe57VbC/yC0rOzcAei0YUXdc1f4dr2CWVcw7e0qg9AgP+rj6qu8UrLaSF
+ gewq1595Ti6GJCQLWG0bqUD0ydY7Gq+C+nxwRKtF05o+5dxf/CzPCrGZ495V+t6U4e
+ Fy0nGJuZP4V+WRQbsVvNFY4o4dZo13ulK1XTogiE=
+Date: Tue, 18 Feb 2020 19:29:34 -0800
+From: Eric Biggers <ebiggers@kernel.org>
 To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <20200219032900.GE10776@dread.disaster.area>
+Message-ID: <20200219032934.GC1075@sol.localdomain>
 References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-31-willy@infradead.org>
+ <20200217184613.19668-25-willy@infradead.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200217184613.19668-31-willy@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
- a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
- a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
- a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=D_ITGRzz0ucxF3CW0B0A:9
- a=m4Eakf-3O-CBJR1D:21 a=uIsSIQHDIO17Gszz:21 a=CjuIK1q_8ugA:10
- a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Headers-End: 1j4G2v-00HAK7-92
-Subject: Re: [f2fs-dev] [PATCH v6 17/19] iomap: Restructure
- iomap_readpages_actor
+In-Reply-To: <20200217184613.19668-25-willy@infradead.org>
+X-Headers-End: 1j4G3R-007WkI-Jj
+Subject: Re: [f2fs-dev] [PATCH v6 14/19] ext4: Convert from readpages to
+ readahead
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,88 +89,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+Cc: cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-mm@kvack.org, linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ ocfs2-devel@oss.oracle.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 17, 2020 at 10:46:11AM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> By putting the 'have we reached the end of the page' condition at the end
-> of the loop instead of the beginning, we can remove the 'submit the last
-> page' code from iomap_readpages().  Also check that iomap_readpage_actor()
-> didn't return 0, which would lead to an endless loop.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/iomap/buffered-io.c | 25 ++++++++++++-------------
->  1 file changed, 12 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index cb3511eb152a..44303f370b2d 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -400,15 +400,9 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
->  		void *data, struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct iomap_readpage_ctx *ctx = data;
-> -	loff_t done, ret;
-> +	loff_t ret, done = 0;
->  
-> -	for (done = 0; done < length; done += ret) {
-> -		if (ctx->cur_page && offset_in_page(pos + done) == 0) {
-> -			if (!ctx->cur_page_in_bio)
-> -				unlock_page(ctx->cur_page);
-> -			put_page(ctx->cur_page);
-> -			ctx->cur_page = NULL;
-> -		}
-> +	while (done < length) {
->  		if (!ctx->cur_page) {
->  			ctx->cur_page = iomap_next_page(inode, ctx->pages,
->  					pos, length, &done);
-> @@ -418,6 +412,15 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
->  		}
->  		ret = iomap_readpage_actor(inode, pos + done, length - done,
->  				ctx, iomap, srcmap);
-> +		if (WARN_ON(ret == 0))
-> +			break;
+On Mon, Feb 17, 2020 at 10:46:05AM -0800, Matthew Wilcox wrote:
+> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> index c1769afbf799..e14841ade612 100644
+> --- a/fs/ext4/readpage.c
+> +++ b/fs/ext4/readpage.c
+> @@ -7,8 +7,8 @@
+>   *
+>   * This was originally taken from fs/mpage.c
+>   *
+> - * The intent is the ext4_mpage_readpages() function here is intended
+> - * to replace mpage_readpages() in the general case, not just for
+> + * The ext4_mpage_readahead() function here is intended to
+> + * replace mpage_readahead() in the general case, not just for
+>   * encrypted files.  It has some limitations (see below), where it
+>   * will fall back to read_block_full_page(), but these limitations
+>   * should only be hit when page_size != block_size.
+> @@ -222,8 +222,7 @@ static inline loff_t ext4_readpage_limit(struct inode *inode)
+>  }
 
-This error case now leaks ctx->cur_page....
+This says ext4_mpage_readahead(), but it's actually still called
+ext4_mpage_readpages().
 
-> +		done += ret;
-> +		if (offset_in_page(pos + done) == 0) {
-> +			if (!ctx->cur_page_in_bio)
-> +				unlock_page(ctx->cur_page);
-> +			put_page(ctx->cur_page);
-> +			ctx->cur_page = NULL;
-> +		}
->  	}
->  
->  	return done;
-> @@ -451,11 +454,7 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
->  done:
->  	if (ctx.bio)
->  		submit_bio(ctx.bio);
-> -	if (ctx.cur_page) {
-> -		if (!ctx.cur_page_in_bio)
-> -			unlock_page(ctx.cur_page);
-> -		put_page(ctx.cur_page);
-> -	}
-> +	BUG_ON(ctx.cur_page);
-
-And so will now trigger both a warn and a bug....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+- Eric
 
 
 _______________________________________________
