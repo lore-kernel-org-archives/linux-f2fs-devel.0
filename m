@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBE4C5ACC4
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Feb 2020 21:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E54C11D00
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Feb 2020 21:01:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EF17624654;
-	Wed, 19 Feb 2020 21:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id E56D524670;
+	Wed, 19 Feb 2020 21:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="TYSrJl9u";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="FSFUET9x";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="biXztY+3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF17624654
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="I1nTks2n";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="nA76556J";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QAyJRxkc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E56D524670
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j4WTE-0001oQ-Ku; Wed, 19 Feb 2020 21:01:24 +0000
+	id 1j4WTG-0002WO-Jm; Wed, 19 Feb 2020 21:01:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1j4WT6-0001m5-UN
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:16 +0000
+ (envelope-from <willy@infradead.org>) id 1j4WTB-0002UX-VA
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vmBYSWiADbzhrnAmLI0opbogq5zBVEJUJhOq4kDcPa8=; b=TYSrJl9ui8NjQQQq9Hb0XwnlIb
- H+Pz0AWGmZ20X7ImzAlqDXpyTXGTV6RZ102E1cNSTdyiv/16GiAgJaJbMzfL6c2t6nEWhK8w7yj3f
- t4yFpj43Jfa8objVNRw1bDm2zA8Eo1VzfPToqmapt/rR/sPYwYpuMzm8m9y8gxU9G/B4=;
+ bh=AKQIAD+CV6bMD4ebVqb2Pl7Yi9X7OosUM4taS8DkqDU=; b=I1nTks2noTvBl7gqMVhAFq3Ufw
+ Ai1LoyZX28JzO5Agzto7YL3aPIIzJzBvThCPY0QpQGfvjFjCqYQ3bfNzpIb5sgfLG9gN0kk2aIR6h
+ 7BemhzKIx2hO3mwXX4je8cpZKOudVk1P3yIkjFLhKWwsjgqc6SD0bnzWSWPgVCZe9s0w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,37 +46,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=vmBYSWiADbzhrnAmLI0opbogq5zBVEJUJhOq4kDcPa8=; b=FSFUET9xkWjXlRLZPFo7ZfutPe
- LjcyVzKAeCYx829YQOGHQHNVcsr3qeJUIDYAsPXbPKIe/smIMByi7J3k5tqw83NTHFhueCdDDedzP
- xt8qQLM4JruY4tmG49TBl6NoI7OFxppP8raAFPKj6QYWeoloV69GYHdliOdhp94wE7C8=;
+ bh=AKQIAD+CV6bMD4ebVqb2Pl7Yi9X7OosUM4taS8DkqDU=; b=nA76556JVmGMDSuYb5caNLK9WN
+ cPIl8NnPDfuzhZYgenm6EIrnw2IRyHdHF/W7l0oWADKblxwTG3WqyLT+Kbny3KfoYCDeG6ZXBrbtH
+ KSjW21wIAxkHw5wutZ7msQ0UEFRP6ptBOYUcECZDuu7F9MKp6I2y+xcwx/Y8Me61IzcI=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j4WT4-000Gix-RD
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:16 +0000
+ id 1j4WTA-008SVU-Sh
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=vmBYSWiADbzhrnAmLI0opbogq5zBVEJUJhOq4kDcPa8=; b=biXztY+3Z9WN5sTV1wTWo+FYtC
- fyTLTZ2+VVA1QPrvOIzyXZq3siFLwW97EtZ5Hdy/Um6FDkRN/R0v8XLsBlBrMyXp/DHLPmZQf9uBd
- oWgoSp52Sqhh72al/g5OWZ86Y4OZYKezFsUCtP7/Y6JjTk1KkthUkLhOAHgO+axb4+ZTXyi2MVMdC
- 1w+jqtDWZsAkWFckpZiNhzBHA1V60OjeOaHUSSltkFLEzv/HuZZ7ynXRe2J9/mNLqA9kETj5kHu2f
- lfRgSf/ZiGlLtwaAhVPKoSDqInGyKtmCBHAZWydrKjH/INNkasmnjZAiK6s7wD5sniPUvzo3nkaRq
- 7C1aTKPQ==;
+ bh=AKQIAD+CV6bMD4ebVqb2Pl7Yi9X7OosUM4taS8DkqDU=; b=QAyJRxkcJ0qFYdUlhIXy4+mSpF
+ e5+qCIpSX5HiXDgrOQIQbQe1HOPpz2Eq8QNCgwjOEGmadMDjaO++xMzzSVceRCPuQAoc6Tl+d6V5e
+ dmSrBTXyTNtKzG7+xtUdvS32EjUMteiGXgHVxylIBaDB9dhPAFdc2zEC22rL1/pS4OsWinJLNyOX/
+ +njQ996NBx79dZL9hdWy9fCBPiaPlolOxfWoGCLPwZF7HU8EBfeNvMA+5LcUUK8VK3DSgdmhdAw0X
+ oVN1tqUr/j6OUd1gHaHjhmNYvEfeKetTcxFduGgXVHo/yRIwZCqGYkYB99En66BZXa3brMBQVoGLJ
+ KgnVVXsw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1j4WSv-0008UE-9y; Wed, 19 Feb 2020 21:01:05 +0000
+ Hat Linux)) id 1j4WSv-0008Tu-3k; Wed, 19 Feb 2020 21:01:05 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Wed, 19 Feb 2020 13:00:55 -0800
-Message-Id: <20200219210103.32400-17-willy@infradead.org>
+Date: Wed, 19 Feb 2020 13:00:50 -0800
+Message-Id: <20200219210103.32400-12-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200219210103.32400-1-willy@infradead.org>
 References: <20200219210103.32400-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1j4WT4-000Gix-RD
-Subject: [f2fs-dev] [PATCH v7 16/24] erofs: Convert compressed files from
- readpages to readahead
+X-Headers-End: 1j4WTA-008SVU-Sh
+Subject: [f2fs-dev] [PATCH v7 11/24] mm: Move end_index check out of
+ readahead loop
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,8 +91,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
  "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
  linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
- Dave Chinner <dchinner@redhat.com>, linux-ext4@vger.kernel.org,
+ linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-ext4@vger.kernel.org,
  linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -100,81 +99,58 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Use the new readahead operation in erofs.
+By reducing nr_to_read, we can eliminate this check from inside the loop.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Acked-by: Gao Xiang <gaoxiang25@huawei.com>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
 ---
- fs/erofs/zdata.c | 29 +++++++++--------------------
- 1 file changed, 9 insertions(+), 20 deletions(-)
+ mm/readahead.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 17f45fcb8c5c..e64d8ab0900d 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -1303,28 +1303,23 @@ static bool should_decompress_synchronously(struct erofs_sb_info *sbi,
- 	return nr <= sbi->max_sync_decompress_pages;
- }
- 
--static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
--			     struct list_head *pages, unsigned int nr_pages)
-+static void z_erofs_readahead(struct readahead_control *rac)
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 07cdfbf00f4b..ace611f4bf05 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -166,8 +166,6 @@ void __do_page_cache_readahead(struct address_space *mapping,
+ 		unsigned long lookahead_size)
  {
--	struct inode *const inode = mapping->host;
-+	struct inode *const inode = rac->mapping->host;
- 	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
+ 	struct inode *inode = mapping->host;
+-	struct page *page;
+-	unsigned long end_index;	/* The last page we want to read */
+ 	LIST_HEAD(page_pool);
+ 	loff_t isize = i_size_read(inode);
+ 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
+@@ -179,22 +177,27 @@ void __do_page_cache_readahead(struct address_space *mapping,
+ 		._nr_pages = 0,
+ 	};
+ 	unsigned long i;
++	pgoff_t end_index;	/* The last page we want to read */
  
--	bool sync = should_decompress_synchronously(sbi, nr_pages);
-+	bool sync = should_decompress_synchronously(sbi, readahead_count(rac));
- 	struct z_erofs_decompress_frontend f = DECOMPRESS_FRONTEND_INIT(inode);
--	gfp_t gfp = mapping_gfp_constraint(mapping, GFP_KERNEL);
--	struct page *head = NULL;
-+	struct page *page, *head = NULL;
- 	LIST_HEAD(pagepool);
+ 	if (isize == 0)
+ 		return;
  
--	trace_erofs_readpages(mapping->host, lru_to_page(pages)->index,
--			      nr_pages, false);
-+	trace_erofs_readpages(inode, readahead_index(rac),
-+			readahead_count(rac), false);
+-	end_index = ((isize - 1) >> PAGE_SHIFT);
++	end_index = (isize - 1) >> PAGE_SHIFT;
++	if (index > end_index)
++		return;
++	if (index + nr_to_read < index)
++		nr_to_read = ULONG_MAX - index + 1;
++	if (index + nr_to_read >= end_index)
++		nr_to_read = end_index - index + 1;
  
--	f.headoffset = (erofs_off_t)lru_to_page(pages)->index << PAGE_SHIFT;
--
--	for (; nr_pages; --nr_pages) {
--		struct page *page = lru_to_page(pages);
-+	f.headoffset = readahead_pos(rac);
+ 	/*
+ 	 * Preallocate as many pages as we will need.
+ 	 */
+ 	for (i = 0; i < nr_to_read; i++) {
+-		if (index + i > end_index)
+-			break;
++		struct page *page = xa_load(&mapping->i_pages, index + i);
  
-+	while ((page = readahead_page(rac))) {
- 		prefetchw(&page->flags);
--		list_del(&page->lru);
+ 		BUG_ON(index + i != rac._index + rac._nr_pages);
  
- 		/*
- 		 * A pure asynchronous readahead is indicated if
-@@ -1333,11 +1328,6 @@ static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
- 		 */
- 		sync &= !(PageReadahead(page) && !head);
- 
--		if (add_to_page_cache_lru(page, mapping, page->index, gfp)) {
--			list_add(&page->lru, &pagepool);
--			continue;
--		}
--
- 		set_page_private(page, (unsigned long)head);
- 		head = page;
- 	}
-@@ -1366,11 +1356,10 @@ static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
- 
- 	/* clean up the remaining free pages */
- 	put_pages_list(&pagepool);
--	return 0;
- }
- 
- const struct address_space_operations z_erofs_aops = {
- 	.readpage = z_erofs_readpage,
--	.readpages = z_erofs_readpages,
-+	.readahead = z_erofs_readahead,
- };
- 
+-		page = xa_load(&mapping->i_pages, index + i);
+ 		if (page && !xa_is_value(page)) {
+ 			/*
+ 			 * Page already present?  Kick off the current batch of
 -- 
 2.25.0
 
