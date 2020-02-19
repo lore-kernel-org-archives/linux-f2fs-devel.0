@@ -2,82 +2,99 @@ Return-Path: <SRS0=CXlU=4H=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D286C3404E
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Feb 2020 03:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED35C34022
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Feb 2020 03:17:29 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E538A2176D;
-	Wed, 19 Feb 2020 03:16:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2023E20578;
+	Wed, 19 Feb 2020 03:17:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="nItiQrA/";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VTr9wHl6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E538A2176D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XrwaMOYC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="h7BJ/VKQ";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YslRlare"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2023E20578
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j4Fqm-0003zh-Gl; Wed, 19 Feb 2020 03:16:36 +0000
+	id 1j4Frc-00042Q-LB; Wed, 19 Feb 2020 03:17:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <david@fromorbit.com>) id 1j4Fql-0003zR-Eg
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 03:16:35 +0000
+ (envelope-from <jhubbard@nvidia.com>) id 1j4Frb-00042J-Vt
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 03:17:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cxCL5RFtdFVZG5tLAKuwHzVvmL/cA4qX/tYfbljcq+s=; b=nItiQrA/M78hGU+jJTswqBglaL
- foTQP2cIuHNNKd8lQF71jqUvQZQdOCeHeyrUedKD8OjXW7EfiQZsR4qZBwMJGlu0MalMteTDdHdAV
- nOwJXygkZ+QG2Ql5Ml7SsoU14SQz1e0VFFV8w+SAMDKDDEKpRYMmhQmpat1vpIdbPDcQ=;
+ bh=qudh4G4mbAakXyxDC+CEEfYfnwTeUkkYc+c7DnUQ5iw=; b=XrwaMOYCyJImnmCDxu86TI2pC6
+ KkdaXlx/l0X/ZlgbIGlBdxCZ9qTQGc2F9KuueEvJlIouMT/ix2gmciMJFCHGtTVhfDG2mRViFLrWu
+ J5bAwO8BXFiFDd96qPolNQ6+cPKbw23UyIsSGkwDy5GfqKSHEjkXdxPpOLAT5FK9I8c8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=cxCL5RFtdFVZG5tLAKuwHzVvmL/cA4qX/tYfbljcq+s=; b=VTr9wHl6/YHGyT0Mfu8dy6rcKf
- qTlXpn77doOwqoKta9+QYVx6wRZB+aeMslWaNtAC7iraS8pegothlu2zUey+93mH4VbE0//SZwB0W
- 2qkI/LG2isJ3ZKUtsOrCdoN08zMi0nBMlm/bshrx5SqJQjinMkOKm2+VYno4anjAw+ek=;
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.92.2)
- id 1j4Fqk-00HA0o-BC
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 03:16:35 +0000
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au
- [49.179.138.28])
- by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0C8703A2239;
- Wed, 19 Feb 2020 14:16:28 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
- (envelope-from <david@fromorbit.com>)
- id 1j4Fqc-0005MI-Kp; Wed, 19 Feb 2020 14:16:26 +1100
-Date: Wed, 19 Feb 2020 14:16:26 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <20200219031626.GC10776@dread.disaster.area>
+ bh=qudh4G4mbAakXyxDC+CEEfYfnwTeUkkYc+c7DnUQ5iw=; b=h7BJ/VKQ0sVItw2/2aTNfDPtZA
+ PGv6jELxFbcPzo58H7K1l5I/rSpdIrV6fwldEs5Px8lLLiNcf+UrVxXsAOSDaN9+m7nB1h5RSA+n+
+ VYW/xsEBOhy4UGVqSrtQMs9vB4sTf0HMtle4n0ZL6Iglcqyk3sOqHX96w7NDNdTCYvx8=;
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1j4Fra-007WXK-94
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 03:17:27 +0000
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by
+ hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+ id <B5e4ca89f0000>; Tue, 18 Feb 2020 19:16:47 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+ by hqpgpgate101.nvidia.com (PGP Universal service);
+ Tue, 18 Feb 2020 19:17:19 -0800
+X-PGP-Universal: processed;
+ by hqpgpgate101.nvidia.com on Tue, 18 Feb 2020 19:17:19 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 19 Feb
+ 2020 03:17:19 +0000
+To: Matthew Wilcox <willy@infradead.org>, <linux-fsdevel@vger.kernel.org>
 References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-25-willy@infradead.org>
+ <20200217184613.19668-31-willy@infradead.org>
+X-Nvconfidentiality: public
+From: John Hubbard <jhubbard@nvidia.com>
+Message-ID: <d4803ef9-7a2f-965f-8f0f-c5e15396d892@nvidia.com>
+Date: Tue, 18 Feb 2020 19:17:18 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200217184613.19668-25-willy@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
- a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
- a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
- a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=gdF_tSV0u4M_20XL-lkA:9
- a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Headers-End: 1j4Fqk-00HA0o-BC
-Subject: Re: [f2fs-dev] [PATCH v6 14/19] ext4: Convert from readpages to
- readahead
+In-Reply-To: <20200217184613.19668-31-willy@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+ t=1582082207; bh=qudh4G4mbAakXyxDC+CEEfYfnwTeUkkYc+c7DnUQ5iw=;
+ h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+ Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+ X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+ Content-Transfer-Encoding;
+ b=YslRlare92/3kKy2ALdiRw0V4leVlhB+OQ2oTCia+X/cOeEhILWlZgjniE6GIN3l+
+ GrCYIb7qY2r0mt7gmyLFsOrUF1a+I4fEnIhLtzNfT8q1GKHB5igJo/82WfvUBj7rDW
+ UFJv/dlLBUbcosBLSj9TopeTp6oClzjJ1Kpb+8b1fSY0G1eCISE4bKDBcJJtMMI1CT
+ 4iBbTKL2IhwyI9qcJsmvCTSjJGJxxS/r9E9pcv0+56/p+lZW3IkcA9kTY2BrcqBJ0d
+ NZhpcuPzYZ+mrkj414zWNzMsUZRQBdbFd4hBeNlv1s5LJX19bnMStWaOU3ItxgSXyZ
+ 89tOyTLlKSRuQ==
+X-Headers-End: 1j4Fra-007WXK-94
+Subject: Re: [f2fs-dev] [PATCH v6 17/19] iomap: Restructure
+ iomap_readpages_actor
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,31 +108,107 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-ext4@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 17, 2020 at 10:46:05AM -0800, Matthew Wilcox wrote:
+On 2/17/20 10:46 AM, Matthew Wilcox wrote:
 > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Use the new readahead operation in ext4
+> By putting the 'have we reached the end of the page' condition at the end
+> of the loop instead of the beginning, we can remove the 'submit the last
+> page' code from iomap_readpages().  Also check that iomap_readpage_actor()
+> didn't return 0, which would lead to an endless loop.
+
+
+Also added a new WARN_ON() and BUG(), although I'm wondering about the BUG
+below...
+
+
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/iomap/buffered-io.c | 25 ++++++++++++-------------
+>  1 file changed, 12 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index cb3511eb152a..44303f370b2d 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -400,15 +400,9 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		void *data, struct iomap *iomap, struct iomap *srcmap)
+>  {
+>  	struct iomap_readpage_ctx *ctx = data;
+> -	loff_t done, ret;
+> +	loff_t ret, done = 0;
+>  
+> -	for (done = 0; done < length; done += ret) {
 
-There's nothing I can see in this that would cause that list
-corruption I saw with ext4.
 
-I'll re-introduce the patch and see if it falls over again.
+nit: this "for" loop was perfect just the way it was. :) I'd vote here for reverting
+the change to a "while" loop. Because with this change, now the code has to 
+separately initialize "done", separately increment "done", and the beauty of a
+for loop is that the loop init and control is all clearly in one place. For things
+that follow that model (as in this case!), that's a Good Thing.
 
-Cheers,
+And I don't see any technical reason (even in the following patch) that requires 
+this change.
 
-Dave.
+
+> -		if (ctx->cur_page && offset_in_page(pos + done) == 0) {
+> -			if (!ctx->cur_page_in_bio)
+> -				unlock_page(ctx->cur_page);
+> -			put_page(ctx->cur_page);
+> -			ctx->cur_page = NULL;
+> -		}
+> +	while (done < length) {
+>  		if (!ctx->cur_page) {
+>  			ctx->cur_page = iomap_next_page(inode, ctx->pages,
+>  					pos, length, &done);
+> @@ -418,6 +412,15 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		}
+>  		ret = iomap_readpage_actor(inode, pos + done, length - done,
+>  				ctx, iomap, srcmap);
+> +		if (WARN_ON(ret == 0))
+> +			break;
+> +		done += ret;
+> +		if (offset_in_page(pos + done) == 0) {
+> +			if (!ctx->cur_page_in_bio)
+> +				unlock_page(ctx->cur_page);
+> +			put_page(ctx->cur_page);
+> +			ctx->cur_page = NULL;
+> +		}
+>  	}
+>  
+>  	return done;
+> @@ -451,11 +454,7 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+>  done:
+>  	if (ctx.bio)
+>  		submit_bio(ctx.bio);
+> -	if (ctx.cur_page) {
+> -		if (!ctx.cur_page_in_bio)
+> -			unlock_page(ctx.cur_page);
+> -		put_page(ctx.cur_page);
+> -	}
+> +	BUG_ON(ctx.cur_page);
+
+
+Is a full BUG_ON() definitely called for here? Seems like a WARN might suffice...
+
+
+>  
+>  	/*
+>  	 * Check that we didn't lose a page due to the arcance calling
+> 
+
+
+
+thanks,
 -- 
-Dave Chinner
-david@fromorbit.com
+John Hubbard
+NVIDIA
 
 
 _______________________________________________
