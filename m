@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3FDC11D03
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7ECC11D06
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 19 Feb 2020 21:01:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A572824670;
-	Wed, 19 Feb 2020 21:01:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A57972467E;
+	Wed, 19 Feb 2020 21:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bXtHxVF9";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="azWs/KnR";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ez8O6Ork"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A572824670
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="V1UrpUe/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="NDqq4BXa";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rr0Isn6K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57972467E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j4WTG-0002Wv-RL; Wed, 19 Feb 2020 21:01:26 +0000
+	id 1j4WTG-0002W9-Ho; Wed, 19 Feb 2020 21:01:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1j4WTD-0002V3-DA
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:23 +0000
+ (envelope-from <willy@infradead.org>) id 1j4WT7-0002TZ-RV
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=erFAlFt7URKao+s7h4ENpLN+DsCi0u0lEGbwZPr/bFo=; b=bXtHxVF9c/SlotdUtQvlZEjh6Y
- i9+tRm3YJRhTtHoIeeIFijBV/HjfaADaoDvEoNMtqrcY+bdLp90qlPYiDBvIjRuRcMO0IelQTlStG
- iNBuktQZM6PhK5jj5Xt098CkTIPw7jBd7giBpYNerzofscST6m9v9NqfIY7QchPnP4XU=;
+ bh=8zYEi4IG7gzAvMHdDHY3fStOc4dh5wVqKWm99G/lD2Q=; b=V1UrpUe/qpAgLXbMzc2FGvyedt
+ Jot4/ezqS2muNdguuHuFE6B2EYK2cMa1NWi6E3NrCkrEq1WwxM9ih0d+xE0uoN7may3OtIMtaFeGo
+ kvzTENMM21Uv1YnMjhejBw3a7jg9IE9/qdktxI+dntsk+dlYp3nLmfQwvfQyglK6qFYs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,36 +46,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=erFAlFt7URKao+s7h4ENpLN+DsCi0u0lEGbwZPr/bFo=; b=azWs/KnRbTQUnl6IgsDi74RVJh
- iHJmgE/KCpw8OZ29S8xox7JiCP4VAWMDfxAhbYNIWiyqRgE6uFKZRGnfy8fiNNWA8M1+JQEgRJba6
- H8E2qj5S0lLd3U9itDzmb+Le8UU26gOPLWXgRfIbtA5rw4Xizw/kwEf3wllnOqa2fygE=;
+ bh=8zYEi4IG7gzAvMHdDHY3fStOc4dh5wVqKWm99G/lD2Q=; b=NDqq4BXaNZ2edLdFHqjTdwRYu8
+ RSYH6JKkex3t18TEt2FaHgAPyyPv0cPQ2LISrVF0oKYMjeg7R6ntKSK3a2VEFZ5o5K2TPVIgIcZS/
+ z5lk1xNI1UYbdEjE0qp2wn7Q6u2S7LPKc4VqsrObJLp2WcxkMh0cwAvgpE+212LxArrI=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j4WT8-0084md-AF
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:23 +0000
+ id 1j4WT4-000Gis-UN
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 19 Feb 2020 21:01:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=erFAlFt7URKao+s7h4ENpLN+DsCi0u0lEGbwZPr/bFo=; b=Ez8O6Ork4eM5HUZAaYjx52rH2y
- 4lieoM83EpQuWgejFeMJRSD3vAz098TXGV3I4kOGIMPFYhkczKgk6r9ev9aYcBhMFWPV6Su87WcUF
- WzSqnxWhPQiSIvNFy5wvbWQhLCuGo9rdjXrglVVZc7aTNjzUc/1VxOBxvY8ksQWBNs/tDWxUValZ1
- zNq6IQcJoXKrO93oWsp6x6tqa7v5Isrcub5czeYkk+HLGrOV9JhvQ0pR1hBiIFm6SO1MVW4+xqzj5
- +lcM2cyaeBfGc9H2MieqJ+y/i/uohPEyQx9bwMAqtRJz0AdumNavA7uQpYKgL2AAcn9oHSYzFN/fi
- bCsNsoYg==;
+ bh=8zYEi4IG7gzAvMHdDHY3fStOc4dh5wVqKWm99G/lD2Q=; b=Rr0Isn6KV0yiQsuTepKXa8KVhx
+ +JyO+IlvzFzA0z8sV2iMvtsm9Pv6cgJBZMIpSg1cP4Tx/ZMk08ueKIw29L1ptgphnFq+2Q+86II+5
+ PJNKMmaiCDdBTTJcDI/iXmLXg84N2WswF5/urdiVm5BTv6ykoK2n3od2eyCx5s1P6nY1KF4YFoSKI
+ volIkWq8cBw6eiWFrgoZdNhCO9tAL9ZiLKXZMPI9znsj3s/nMwWW9pTQdBxelt0H9avPXVOec5UVz
+ t7L9I6CkSyQomfI4fzLa6hPYbkKOJATGVMcI+Zu0LuHW7aFhXW23e3VE3cpt3VyFwn6ldkAqvOfZV
+ bM3ipe0w==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1j4WSv-0008VK-Gt; Wed, 19 Feb 2020 21:01:05 +0000
+ Hat Linux)) id 1j4WSv-0008VZ-JM; Wed, 19 Feb 2020 21:01:05 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Wed, 19 Feb 2020 13:01:00 -0800
-Message-Id: <20200219210103.32400-22-willy@infradead.org>
+Date: Wed, 19 Feb 2020 13:01:02 -0800
+Message-Id: <20200219210103.32400-24-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200219210103.32400-1-willy@infradead.org>
 References: <20200219210103.32400-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1j4WT8-0084md-AF
-Subject: [f2fs-dev] [PATCH v7 21/24] iomap: Restructure iomap_readpages_actor
+X-Headers-End: 1j4WT4-000Gis-UN
+Subject: [f2fs-dev] [PATCH v7 23/24] mm: Document why we don't set
+ PageReadahead
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,73 +99,33 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-By putting the 'have we reached the end of the page' condition at the end
-of the loop instead of the beginning, we can remove the 'submit the last
-page' code from iomap_readpages().  Also check that iomap_readpage_actor()
-didn't return 0, which would lead to an endless loop.
+If the page is already in cache, we don't set PageReadahead on it.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ mm/readahead.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index cb3511eb152a..31899e6cb0f8 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -400,15 +400,9 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
- 		void *data, struct iomap *iomap, struct iomap *srcmap)
- {
- 	struct iomap_readpage_ctx *ctx = data;
--	loff_t done, ret;
--
--	for (done = 0; done < length; done += ret) {
--		if (ctx->cur_page && offset_in_page(pos + done) == 0) {
--			if (!ctx->cur_page_in_bio)
--				unlock_page(ctx->cur_page);
--			put_page(ctx->cur_page);
--			ctx->cur_page = NULL;
--		}
-+	loff_t ret, done = 0;
-+
-+	while (done < length) {
- 		if (!ctx->cur_page) {
- 			ctx->cur_page = iomap_next_page(inode, ctx->pages,
- 					pos, length, &done);
-@@ -418,6 +412,20 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
- 		}
- 		ret = iomap_readpage_actor(inode, pos + done, length - done,
- 				ctx, iomap, srcmap);
-+		done += ret;
-+
-+		/* Keep working on a partial page */
-+		if (ret && offset_in_page(pos + done))
-+			continue;
-+
-+		if (!ctx->cur_page_in_bio)
-+			unlock_page(ctx->cur_page);
-+		put_page(ctx->cur_page);
-+		ctx->cur_page = NULL;
-+
-+		/* Don't loop forever if we made no progress */
-+		if (WARN_ON(!ret))
-+			break;
- 	}
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 453ef146de83..bbe7208fcc2d 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -196,9 +196,12 @@ void page_cache_readahead_unbounded(struct address_space *mapping,
  
- 	return done;
-@@ -451,11 +459,7 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
- done:
- 	if (ctx.bio)
- 		submit_bio(ctx.bio);
--	if (ctx.cur_page) {
--		if (!ctx.cur_page_in_bio)
--			unlock_page(ctx.cur_page);
--		put_page(ctx.cur_page);
--	}
-+	BUG_ON(ctx.cur_page);
- 
- 	/*
- 	 * Check that we didn't lose a page due to the arcance calling
+ 		if (page && !xa_is_value(page)) {
+ 			/*
+-			 * Page already present?  Kick off the current batch of
+-			 * contiguous pages before continuing with the next
+-			 * batch.
++			 * Page already present?  Kick off the current batch
++			 * of contiguous pages before continuing with the
++			 * next batch.  This page may be the one we would
++			 * have intended to mark as Readahead, but we don't
++			 * have a stable reference to this page, and it's
++			 * not worth getting one just for that.
+ 			 */
+ 			read_pages(&rac, &page_pool);
+ 			continue;
 -- 
 2.25.0
 
