@@ -2,74 +2,81 @@ Return-Path: <SRS0=zARH=4J=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B11C35640
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Feb 2020 10:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8854C35646
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Feb 2020 12:00:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4AAC320722
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Feb 2020 10:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 740DA222C4;
+	Fri, 21 Feb 2020 12:00:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fxUShAyf";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Xc4tWQDk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AAC320722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="it9bmh64";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DZXahgA9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 740DA222C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j55Fp-0000w4-E4; Fri, 21 Feb 2020 10:09:53 +0000
+	id 1j56yo-0006VN-4m; Fri, 21 Feb 2020 12:00:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1j55Fl-0000vd-SA
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Feb 2020 10:09:49 +0000
+ (envelope-from <dsterba@suse.cz>) id 1j56yn-0006V7-1d
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Feb 2020 12:00:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EcZdJ2x8ZpWsrCVUtgqhgCZXPPaTxsMx3HqrzXsSh9k=; b=fxUShAyfG0lZtCLwEpigx+qR97
- 7IfphgNG+SiyyUgHALWcVS7ogU9DnPbNObF72TjV/AThGO28dPTGGfpPcYsGa24/EnNQXgcB8/Qqf
- 744UIULm6RTT+ro3y8JgSbX/iYWbZX2mkJEL38hsR0zMCVeYC2pHvgFqP4thgUoVk47w=;
+ bh=fqnvcmg7I8fi0RmeFxwBC2P5aoh+9brAjYCJV7Sk1LM=; b=it9bmh645K6c28Fv7gzWJMVAAi
+ BpmdeXRZY1yexVwUZz/aQUKY3V4CAgKkHSAE61SjpLRcyfXqtuvoeSS7m4Vk2/i32vigSxl9e+4Aw
+ ED7PVocsYe44nzRzIH9AubSRt6l9TlOnWNvwiuZcEmHQL/nZHxLcB8twIx4v96KEKLM4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=EcZdJ2x8ZpWsrCVUtgqhgCZXPPaTxsMx3HqrzXsSh9k=; b=X
- c4tWQDkkA+O6dF92VDJflLuwo5lumkWJjrPwz5LjoEpgW3jVSAXHNE2dHN1cCbgD4AUKuAB4GyPcC
- yqHEcMLVaQjs1hGEmr/ol+Q0OPCeNRq0CAfnAeDnYZ0+lduSAgw+sAa7IGcpHrABksyXURljSmM6R
- PXs1UgdrKzyG1g5Y=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ h=In-Reply-To:Content-Type:MIME-Version:References:Reply-To:Message-ID:
+ Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=fqnvcmg7I8fi0RmeFxwBC2P5aoh+9brAjYCJV7Sk1LM=; b=DZXahgA9xYHjp8q1XbMm8slNo3
+ Km0LL5Knh4PCCbEtRZ5Iayw9/t4Zlh7E6wHDdX2/2aw3kjzgrp87Cg5b9L/48Gc3YoarRYfyziqiP
+ 8C4iZgBsASJAMVxr6c9C3hUwqU7tqwLwtkYw2jlF0sPAId2oU2E0nLEs3B2NqN0MyBbM=;
+Received: from mx2.suse.de ([195.135.220.15])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j55Fh-000YRB-LD
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Feb 2020 10:09:49 +0000
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 85D1C5816F81FCDBA610;
- Fri, 21 Feb 2020 18:09:34 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 21 Feb 2020 18:09:25 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Fri, 21 Feb 2020 18:09:21 +0800
-Message-ID: <20200221100922.16781-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+ id 1j56yl-002hfx-2w
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Feb 2020 12:00:24 +0000
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+ by mx2.suse.de (Postfix) with ESMTP id 9004EAF2B;
+ Fri, 21 Feb 2020 12:00:16 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+ id B113FDA70E; Fri, 21 Feb 2020 12:59:58 +0100 (CET)
+Date: Fri, 21 Feb 2020 12:59:58 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Message-ID: <20200221115957.GE2902@twin.jikos.cz>
+Mail-Followup-To: dsterba@suse.cz, Matthew Wilcox <willy@infradead.org>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+ ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
+References: <20200219210103.32400-1-willy@infradead.org>
+ <20200220175400.GB2902@twin.jikos.cz>
+ <20200220223909.GB24185@bombadil.infradead.org>
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1j55Fh-000YRB-LD
-Subject: [f2fs-dev] [RFC PATCH 1/2] f2fs: introduce
- F2FS_IOC_GET_COMPRESS_BLOCKS
+Content-Disposition: inline
+In-Reply-To: <20200220223909.GB24185@bombadil.infradead.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Headers-End: 1j56yl-002hfx-2w
+Subject: Re: [f2fs-dev] [PATCH v7 00/23] Change readahead API
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,78 +88,28 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Reply-To: dsterba@suse.cz
+Cc: linux-xfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ dsterba@suse.cz, linux-kernel@vger.kernel.org, cluster-devel@redhat.com,
+ linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-With this newly introduced interface, user can get block
-number compression saved in target inode.
+On Thu, Feb 20, 2020 at 02:39:09PM -0800, Matthew Wilcox wrote:
+> > >  - Now passes an xfstests run on ext4!
+> > 
+> > On btrfs it still chokes on the first test btrfs/001, with the following
+> > warning, the test is stuck there.
+> 
+> Thanks.  The warning actually wasn't the problem, but it did need to
+> be addressed.  I got a test system up & running with btrfs, and it's
+> currently on generic/027 with the following patch:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/file.c | 18 ++++++++++++++++++
- 2 files changed, 19 insertions(+)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5d047c0bbbbb..15199df5d40a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -426,6 +426,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
- #define F2FS_IOC_GET_PIN_FILE		_IOR(F2FS_IOCTL_MAGIC, 14, __u32)
- #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
- #define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
-+#define F2FS_IOC_GET_COMPRESS_BLOCKS	_IOR(F2FS_IOCTL_MAGIC, 17, __u64)
- 
- #define F2FS_IOC_GET_VOLUME_NAME	FS_IOC_GETFSLABEL
- #define F2FS_IOC_SET_VOLUME_NAME	FS_IOC_SETFSLABEL
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index efca4ed17b7d..235708c892af 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3401,6 +3401,21 @@ static int f2fs_set_volume_name(struct file *filp, unsigned long arg)
- 	return err;
- }
- 
-+static int f2fs_get_compress_blocks(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	__u64 blocks;
-+
-+	if (!f2fs_sb_has_compression(F2FS_I_SB(inode)))
-+		return -EOPNOTSUPP;
-+
-+	if (!f2fs_compressed_file(inode))
-+		return -EINVAL;
-+
-+	blocks = F2FS_I(inode)->i_compr_blocks;
-+	return put_user(blocks, (u64 __user *)arg);
-+}
-+
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
-@@ -3479,6 +3494,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_get_volume_name(filp, arg);
- 	case F2FS_IOC_SET_VOLUME_NAME:
- 		return f2fs_set_volume_name(filp, arg);
-+	case F2FS_IOC_GET_COMPRESS_BLOCKS:
-+		return f2fs_get_compress_blocks(filp, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -3636,6 +3653,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case FS_IOC_MEASURE_VERITY:
- 	case F2FS_IOC_GET_VOLUME_NAME:
- 	case F2FS_IOC_SET_VOLUME_NAME:
-+	case F2FS_IOC_GET_COMPRESS_BLOCKS:
- 		break;
- 	default:
- 		return -ENOIOCTLCMD;
--- 
-2.18.0.rc1
-
+Thanks, with the fix applied the first 10 tests passed, I'll let the
+testsuite finish and let you know if ther are more warnings and such.
 
 
 _______________________________________________
