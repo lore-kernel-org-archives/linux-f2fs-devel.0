@@ -7,68 +7,71 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA86C35671
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Feb 2020 11:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 793F3C11D30
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Feb 2020 11:20:55 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8684720675
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Feb 2020 11:20:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4F1A520675
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Feb 2020 11:20:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="LQgamrvt";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fmrGtcDq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8684720675
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="MGnPEiFU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="mHddp8A/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1A520675
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j6BnC-00022D-4X; Mon, 24 Feb 2020 11:20:54 +0000
+	id 1j6BnC-0005Q4-VV; Mon, 24 Feb 2020 11:20:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1j6BnA-00021n-FG
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 11:20:52 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1j6BnB-0005Pr-8S
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 11:20:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tNfxbC0cN2BN2cWK25KouJ1GpTTu7TTopIkcEEAJrso=; b=LQgamrvt7lW+oB8akqzyYoSxP+
- I2E9rpt+wPEVh+EK/U1Fbi2dXQLH1k5WO7GrX9JkSpToyYe/I5vyGuFhWxJWE4eSrXpajUSBY3wMA
- WKwmv8hwBUBrwIPHPu70Esi9XocXpQjcVbdwyzgSR7dOk8BVt1qZxJvo9KDmN59L1jec=;
+ bh=RwaFgbX+pbOI9qFi+MUvItEY234CheDsnBkoN1N1uHM=; b=MGnPEiFUWJOl8s4z0bd1q8xWfm
+ hsse8t2LiHkrczmNvcSfy10VeRKLigDKwPCALXSLlclXod49mhEVFWkhUSqa4KoSaV59vtBq3cmLc
+ HpgcntjzKhE45rohQWWgHRd/ZRieSpaxX0LHun+CTqgp+1bW9INoxsBwWJsVvPoMyPmE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=tNfxbC0cN2BN2cWK25KouJ1GpTTu7TTopIkcEEAJrso=; b=f
- mrGtcDq6PUocJQ2m8GDVldN0Aw6DXdsuNfcDDpipqoK23hvQkl3WMF14nUcuwBJylxg5nA+YHKzl7
- a5TP56xBdu0VQfBhfcrrc7OL/RD+b0dvrKofDGD9wSPPlHJJhH9YOIrkZAshM6pAWNOOmVSeSKC1F
- q15q5n2FRdw5+kTw=;
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=RwaFgbX+pbOI9qFi+MUvItEY234CheDsnBkoN1N1uHM=; b=mHddp8A/4NTRH94wW7WRPCU44o
+ JoASmdbOr2UiJBbyc5R9rABpZdPqvu1KXxVPINSYapWn1HeedwVmtZFikmOsqJfRt+azxAAynkBY0
+ c31/Tr+RflRS91cn9N61SPUFD1Xu59+oK83bqXoGCR7g3dSpwoKB4IsgAZR4W0L2zTso=;
 Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j6Bn6-008cMc-Gl
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 11:20:52 +0000
+ id 1j6Bn8-00F19A-Mc
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 11:20:53 +0000
 Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 7DC028715A779C90D204;
+ by Forcepoint Email with ESMTP id 7472383E962AEED00A5C;
  Mon, 24 Feb 2020 19:20:36 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 24 Feb 2020 19:20:26 +0800
+ 14.3.439.0; Mon, 24 Feb 2020 19:20:28 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Mon, 24 Feb 2020 19:20:15 +0800
-Message-ID: <20200224112019.93829-1-yuchao0@huawei.com>
+Date: Mon, 24 Feb 2020 19:20:18 +0800
+Message-ID: <20200224112019.93829-4-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20200224112019.93829-1-yuchao0@huawei.com>
+References: <20200224112019.93829-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1j6Bn6-008cMc-Gl
-Subject: [f2fs-dev] [PATCH 1/5] f2fs: fix to show tracepoint correctly
+X-Headers-End: 1j6Bn8-00F19A-Mc
+Subject: [f2fs-dev] [PATCH 4/5] f2fs: recycle unused compress_data.chksum
+ feild
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,28 +88,42 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+In Struct compress_data, chksum field was never used, remove it.
+
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/file.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/f2fs/compress.c | 1 -
+ fs/f2fs/f2fs.h     | 3 +--
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 613f87151d90..13f3454ceb92 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3649,8 +3649,10 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		goto out;
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 864035549329..e8b88f7bb7a5 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -380,7 +380,6 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
  	}
  
--	if (!f2fs_is_compress_backend_ready(inode))
--		return -EOPNOTSUPP;
-+	if (!f2fs_is_compress_backend_ready(inode)) {
-+		ret = -EOPNOTSUPP;
-+		goto out;
-+	}
+ 	cc->cbuf->clen = cpu_to_le32(cc->clen);
+-	cc->cbuf->chksum = cpu_to_le32(0);
  
- 	if (iocb->ki_flags & IOCB_NOWAIT) {
- 		if (!inode_trylock(inode)) {
+ 	for (i = 0; i < COMPRESS_DATA_RESERVED_SIZE; i++)
+ 		cc->cbuf->reserved[i] = cpu_to_le32(0);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 468f807fd917..bd264d8cddaf 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1233,10 +1233,9 @@ enum compress_algorithm_type {
+ 	COMPRESS_MAX,
+ };
+ 
+-#define COMPRESS_DATA_RESERVED_SIZE		4
++#define COMPRESS_DATA_RESERVED_SIZE		5
+ struct compress_data {
+ 	__le32 clen;			/* compressed data size */
+-	__le32 chksum;			/* checksum of compressed data */
+ 	__le32 reserved[COMPRESS_DATA_RESERVED_SIZE];	/* reserved */
+ 	u8 cdata[];			/* compressed data */
+ };
 -- 
 2.18.0.rc1
 
