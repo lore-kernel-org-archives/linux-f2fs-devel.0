@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A636C11D2F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63605C11D31
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Feb 2020 11:20:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1811A2082F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Feb 2020 11:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 36B2C218AC
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Feb 2020 11:20:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="FNvYGnvQ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="j9jrG/5F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1811A2082F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="biS+jOUC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="J23k58g1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B2C218AC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j6Bn8-0005Up-JA; Mon, 24 Feb 2020 11:20:50 +0000
+	id 1j6Bn8-0005PX-Tv; Mon, 24 Feb 2020 11:20:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1j6Bn7-0005Ui-0k
+ (envelope-from <yuchao0@huawei.com>) id 1j6Bn7-0005PQ-OP
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 11:20:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
@@ -35,9 +35,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kSW3sNtayiKJHKvzLlHlaBKPW54fXoSDJsJRFMoYDtc=; b=FNvYGnvQD3DjUgARPApOWHhd8z
- n9jgJ16z/LwfIKOCBUYI63xfV1DEB8n1diZdMo0l0Z3nGyOHDJedKgBojKj9iih2cseRbcLT9JDFn
- h8efM2EHRdsMpnEx9LqcjNDkjAWqrTOYmyCUSlq5kyEjjpLvdYEKuxxpbNY2y0/efjA4=;
+ bh=3K/mnuTVphHkYIw2zgmQzN6swivge/2fFW/TDMC2xA4=; b=biS+jOUCb5eO79iKkC4Q5L8pfr
+ /+JzHO3MuvL1OL7KOxLsQBg0FEhkOtFJ+ONuj8QMXyBF3sz/Urh5nThPauGr22z/8KRzvNThV/zXL
+ kOJdg3RFlBNm/mG1DGxxWyn8o8OEfI875QRacFVpPL2AeJHrwIloRd2LESPpWOlQmau8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
@@ -45,32 +45,32 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=kSW3sNtayiKJHKvzLlHlaBKPW54fXoSDJsJRFMoYDtc=; b=j9jrG/5F0gU/Wkv2OsL1C8ZD9K
- aqAP0Q3M0MFf1FihXL5VDgkckZFkCCoHGvUU+mIVdg2CkXDzDJ8MxBqw186ddVsjXVYSl9sClJ9ZT
- /P6nIWtq6kzT/SRACQc4fVe4nGreP5+kzAeBUwu6awlAYG7aqxpWYykOvw0nEDN5pBZc=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=3K/mnuTVphHkYIw2zgmQzN6swivge/2fFW/TDMC2xA4=; b=J23k58g1FOwUsYrVkkHT1fmi98
+ TOO+N5ggFRb0C2jBsxi6B+lpI4Zv3f8wyH7cL2D+qkhiGhOcprSFYRLbyyO25mY/gee1mYbU+ANxD
+ 184lWvShN/rlddqecONYN2rhm1FgmcnSIgBL3ANwdoF9qxlw5AqHchfv66PN7tINPqpc=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j6Bn3-0056fP-EG
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 11:20:48 +0000
+ id 1j6Bn4-008cMb-3S
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 11:20:49 +0000
 Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 792044D98C522702459D;
+ by Forcepoint Email with ESMTP id A75C4EE6E982B2D97FEB;
  Mon, 24 Feb 2020 19:20:36 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 24 Feb 2020 19:20:26 +0800
+ 14.3.439.0; Mon, 24 Feb 2020 19:20:27 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Mon, 24 Feb 2020 19:20:16 +0800
-Message-ID: <20200224112019.93829-2-yuchao0@huawei.com>
+Date: Mon, 24 Feb 2020 19:20:17 +0800
+Message-ID: <20200224112019.93829-3-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
 In-Reply-To: <20200224112019.93829-1-yuchao0@huawei.com>
 References: <20200224112019.93829-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1j6Bn3-0056fP-EG
-Subject: [f2fs-dev] [PATCH 2/5] f2fs: fix to avoid potential deadlock
+X-Headers-End: 1j6Bn4-008cMb-3S
+Subject: [f2fs-dev] [PATCH 3/5] f2fs: fix to avoid NULL pointer dereference
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,39 +87,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Using f2fs_trylock_op() in f2fs_write_compressed_pages() to avoid potential
-deadlock like we did in f2fs_write_single_data_page().
+Unable to handle kernel NULL pointer dereference at virtual address 00000000
+PC is at f2fs_free_dic+0x60/0x2c8
+LR is at f2fs_decompress_pages+0x3c4/0x3e8
+f2fs_free_dic+0x60/0x2c8
+f2fs_decompress_pages+0x3c4/0x3e8
+__read_end_io+0x78/0x19c
+f2fs_post_read_work+0x6c/0x94
+process_one_work+0x210/0x48c
+worker_thread+0x2e8/0x44c
+kthread+0x110/0x120
+ret_from_fork+0x10/0x18
+
+In f2fs_free_dic(), we can not use f2fs_put_page(,1) to release dic->tpages[i],
+as the page's mapping is NULL.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/compress.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/f2fs/compress.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index b1bc057ee266..4ba65a3b0456 100644
+index 4ba65a3b0456..864035549329 100644
 --- a/fs/f2fs/compress.c
 +++ b/fs/f2fs/compress.c
-@@ -772,7 +772,6 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 		.encrypted_page = NULL,
- 		.compressed_page = NULL,
- 		.submitted = false,
--		.need_lock = LOCK_RETRY,
- 		.io_type = io_type,
- 		.io_wbc = wbc,
- 		.encrypted = f2fs_encrypted_file(cc->inode),
-@@ -785,9 +784,10 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 	loff_t psize;
- 	int i, err;
- 
--	set_new_dnode(&dn, cc->inode, NULL, NULL, 0);
-+	if (!f2fs_trylock_op(sbi))
-+		return -EAGAIN;
- 
--	f2fs_lock_op(sbi);
-+	set_new_dnode(&dn, cc->inode, NULL, NULL, 0);
- 
- 	err = f2fs_get_dnode_of_data(&dn, start_idx, LOOKUP_NODE);
- 	if (err)
+@@ -1133,7 +1133,8 @@ void f2fs_free_dic(struct decompress_io_ctx *dic)
+ 		for (i = 0; i < dic->cluster_size; i++) {
+ 			if (dic->rpages[i])
+ 				continue;
+-			f2fs_put_page(dic->tpages[i], 1);
++			unlock_page(dic->tpages[i]);
++			put_page(dic->tpages[i]);
+ 		}
+ 		kfree(dic->tpages);
+ 	}
 -- 
 2.18.0.rc1
 
