@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2307C38BFF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Feb 2020 21:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE340C38BFF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Feb 2020 21:57:53 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7525020CC7;
-	Mon, 24 Feb 2020 21:54:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A07D620CC7;
+	Mon, 24 Feb 2020 21:57:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DvhYOLbS";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KgDCoPaa";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UH81cZnw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7525020CC7
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="WGTIfjW+";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="aqDe1j3v";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xsl1VicG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A07D620CC7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j6Lgi-0001O4-3w; Mon, 24 Feb 2020 21:54:52 +0000
+	id 1j6Ljd-0000fu-8A; Mon, 24 Feb 2020 21:57:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from
  <BATV+fd4c774fa746ae91f5d1+6028+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1j6Lgg-0001Nw-HQ
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 21:54:50 +0000
+ id 1j6Ljb-0000fh-V9
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 21:57:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5MRTbwLPWhsz+OCfhc7KfndlpxpBjNwdciDoRgQ9Kiw=; b=DvhYOLbSWdTeU4xJrT2K0R+l/l
- PboOE8ZqM5l9Rz9/AGlkWDKAC7CzwdTfNqRfmn6FiUMb3xLvsGY913oFv3Xg7KswnUG3T6zSnWs/W
- 6nbT8vLvRg7r375H4sQO549GXruyaF0nKlfjXdq86etqL9YAtjd78iJBp6iKvr9ijg60=;
+ bh=IhFcixf6xB7flTgkTYeOnbWlEpWZuV6CKSy7ZQez0WI=; b=WGTIfjW+xHbdWCJDsrpLn5jFTG
+ +9vo1OMqOjKDI1yZuvEZ1e2OkWjJuwZN9UQKW0pcAtZ5tws7zniyfhY52PoBBnFdLuipaXdgF+5HI
+ +Ns4pbM/zcO+Hg32+zUBCH6mTzlbPJcL9JtuG6WvAbmaN3IanEFEQUKnZSfL1q+N5YAE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -47,40 +47,47 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=5MRTbwLPWhsz+OCfhc7KfndlpxpBjNwdciDoRgQ9Kiw=; b=KgDCoPaadTu8G3uS5TI1enp2Vw
- +wC1Gmv1D3vUR/V/AY5rn1m3bccAn0ViZuiwQokKBupXPAwSCmVn/tsu0OsQz2g21LzPebViRfSft
- IrgVpU5+XLNNsjV4yAWmSr/bJxnlR1/7dFueksZ3tCKM1d8Ihe/peHYwqUp3Uv3ILSyg=;
+ bh=IhFcixf6xB7flTgkTYeOnbWlEpWZuV6CKSy7ZQez0WI=; b=aqDe1j3vJwn1QGjqPKhYo9xpmv
+ lcM/ggKwixPO4kR95qVobo0yobBeyK1cVSEJ2M7pRQ9pU3U2bQsMmGSacONqylgMJlEbL9seycAuI
+ 6nSMPaDSuXrlUxYanc0QWYVgLGEQCzQSPA8iNiMcStdenfXHAoLproknQo5mscvhh9xk=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j6Lgf-008z2D-Fa
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 21:54:50 +0000
+ id 1j6Lja-005TOs-Uu
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Feb 2020 21:57:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
  :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=5MRTbwLPWhsz+OCfhc7KfndlpxpBjNwdciDoRgQ9Kiw=; b=UH81cZnwNAU0qj0U69UGyTcrTv
- s3U/2WEoUZteazt25hpIrP9mx2czSA73w1KKBo7jGQ2t7egu9fl8mN83EDjcSVbHFMPIlC0nz0jrE
- /sHO9tWieo1tWKMbYptvT/SEf3+uUhXvREH+sjpmBlq0Ix+GchDHn+n+UAer2XM6ls7irhVTLYsw4
- dfhQXNPHta9xRzxr9BLoaH+QyGz14ciyXbQ/Bf67V8Mwsvu0zvUzAj17rcatmJ0byo4OM++Tk9PJC
- fnSZ2gijdW6WE7VdnNAWYFBO6aYhYQh8JMyM4jVzhoj3AKirlrfCJSKYf4NtObVE2kjUhSCTXIPzv
- kIxJP4xQ==;
+ bh=IhFcixf6xB7flTgkTYeOnbWlEpWZuV6CKSy7ZQez0WI=; b=Xsl1VicGy/cUMy3nKSfLYsp4JQ
+ XuauTs+SlYeSgQlRLvumnWjOr2cplAYv962X+iwgIS1cxx+dgzmOltxe84qM829HlpGa7tIVs0rCR
+ UHY9vePWsKoMCOJwVPvOJVEDVFCToUF9yNOI+tB8g0de/RYeV2SMFMNQdVuKQtuM7NwbEbskf1eLg
+ dUXO0x+mn96sZpwZlnDzQxbegLQ/KMtN7w/7oKgd1oDm9ELzK0l9J7YruyW3Oz774Ix0HS0VLNMdY
+ vEye7QuENdlHLI1W4ae0sgNhwCA9TIm6YccKAq+w4+qAYpIVZfjL3mSg7AgI6bRAZf2eZBA7qbemA
+ dCabWfIw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1j6LgY-0004om-8r; Mon, 24 Feb 2020 21:54:42 +0000
-Date: Mon, 24 Feb 2020 13:54:42 -0800
+ Hat Linux)) id 1j6LjT-0006S8-Ch; Mon, 24 Feb 2020 21:57:43 +0000
+Date: Mon, 24 Feb 2020 13:57:43 -0800
 From: Christoph Hellwig <hch@infradead.org>
 To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <20200224215442.GB16051@infradead.org>
+Message-ID: <20200224215743.GA24044@infradead.org>
 References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-14-willy@infradead.org>
+ <20200219210103.32400-15-willy@infradead.org>
+ <SN4PR0401MB35987D7B76007B93B1C5CE5E9B130@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <20200220134849.GV24185@bombadil.infradead.org>
+ <20200220154658.GA19577@infradead.org>
+ <20200220155452.GX24185@bombadil.infradead.org>
+ <20200220155727.GA32232@infradead.org>
+ <20200224214347.GH13895@infradead.org>
+ <20200224215414.GR24185@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200219210103.32400-14-willy@infradead.org>
+In-Reply-To: <20200224215414.GR24185@bombadil.infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1j6Lgf-008z2D-Fa
-Subject: Re: [f2fs-dev] [Cluster-devel] [PATCH v7 13/24] fs: Convert
- mpage_readpages to mpage_readahead
+X-Headers-End: 1j6Lja-005TOs-Uu
+Subject: Re: [f2fs-dev] [PATCH v7 14/24] btrfs: Convert from readpages to
+ readahead
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,26 +99,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: cluster-devel@redhat.com, linux-ext4@vger.kernel.org, linux-mm@kvack.org,
- John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org,
- Junxiao Bi <junxiao.bi@oracle.com>, linux-xfs@vger.kernel.org,
- Joseph Qi <joseph.qi@linux.alibaba.com>, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-erofs@lists.ozlabs.org, ocfs2-devel@oss.oracle.com
+Cc: "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
+ Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>,
+ Christoph Hellwig <hch@infradead.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+ "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Feb 19, 2020 at 01:00:52PM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Mon, Feb 24, 2020 at 01:54:14PM -0800, Matthew Wilcox wrote:
+> > First I think the implicit ARRAY_SIZE in readahead_page_batch is highly
+> > dangerous, as it will do the wrong thing when passing a pointer or
+> > function argument.
 > 
-> Implement the new readahead aop and convert all callers (block_dev,
-> exfat, ext2, fat, gfs2, hpfs, isofs, jfs, nilfs2, ocfs2, omfs, qnx6,
-> reiserfs & udf).  The callers are all trivial except for GFS2 & OCFS2.
+> somebody already thought of that ;-)
+> 
+> #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
 
-Looks sensible:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Ok.  Still find it pretty weird to design a primary interface that
+just works with an array type.
 
 
 _______________________________________________
