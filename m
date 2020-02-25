@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D824C4BA18
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Feb 2020 21:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C50C4BA0D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Feb 2020 21:49:02 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5CD7A2467C;
-	Tue, 25 Feb 2020 21:49:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4EC3121927;
+	Tue, 25 Feb 2020 21:49:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="guiTe4nc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bebzFrEL";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A+ugosl7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CD7A2467C
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lAdKYaVx";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="X0a/zBE4";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H2P25tKR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC3121927
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j6i4e-0007my-1g; Tue, 25 Feb 2020 21:49:04 +0000
+	id 1j6i4b-0005rv-Uv; Tue, 25 Feb 2020 21:49:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1j6i4V-0007ji-5h
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 21:48:55 +0000
+ (envelope-from <willy@infradead.org>) id 1j6i4U-0005q6-Pv
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 21:48:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0gMh1yamRVaNETPSTUEglHum9p/xixoA+LVU7RwCI34=; b=guiTe4nc+rCwNQU0RKDptxIT+1
- aF+mojEB9N2CCSk39ykb0JoRoKbe6QDqRpUUmk6vevE8P0oRFIlABsFqtTLNlHtTnkWLuoENx2j1E
- MMN1FFtkRlvBrPxcIavvFHT8aFpcyH25tpqxHUs57DveOTB1XuzbZdpU6JrsebV4IMpM=;
+ bh=PUKrIRd3Ve0Id+Di+t5ZQHR+Lkt5XgaaLxXGGrJVDyM=; b=lAdKYaVxiSHLHH0pdcdL8BlS/U
+ 1lSiVzfpkwc60RmHD2B7HbSov4EBO+ESpw5y3aCSxf5vgGM1ZR5PP7MezfGTeLySTm13aJVICYdoF
+ J0JN0Pejm5CZBJw1hmhkiI0hYmacQYroAMoMhxHpTXiXLSYgV+XdDPlIWwfBtd52kqdQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,37 +46,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0gMh1yamRVaNETPSTUEglHum9p/xixoA+LVU7RwCI34=; b=bebzFrELr0f9E3bcEYVOlDRqkJ
- JwV9gn9cxSonYEoFZHp0ltzSB8YHkqF23yRSOlHeXEqrigrki7hXwRbwUPVLriuYC4a9wH3Hk+Lim
- iEGRwcGgFRp2a975pxVafnKdWCzqeJpJpx1sPLCXTVd6UFP17CaFVmu9GI8aDd+lpFfw=;
+ bh=PUKrIRd3Ve0Id+Di+t5ZQHR+Lkt5XgaaLxXGGrJVDyM=; b=X0a/zBE4LQszaoPOAOJBTLLqjH
+ vFpUVTssUHbl6Yml//ckblqAzrA2heGDIehhkqBA/Xh4WMqf2SXaUHk9Gb2gzctJ8JfqCOfW8n0pf
+ bpaNszC56LztcL0bX7DFPBc3RMWYIF1M8BaajwhNGQ78FqowPpZes1X2oLLM+xxtlwmE=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j6i4U-009nX7-2t
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 21:48:55 +0000
+ id 1j6i4R-006Hzz-G6
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 21:48:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=0gMh1yamRVaNETPSTUEglHum9p/xixoA+LVU7RwCI34=; b=A+ugosl7XCuWZ0DZM060VhasbF
- LlgbO5ELIQJ449viGm0I1EI7L0UglVYvyBriRpH8pBN+Rmj714EtqvFrMaosZr24PrysRfLaHRbus
- QPSl3wzAaCuxS8hDzpCGhTD8X6bOOyCQ1vFuSYSN48wlEYAR2dKQnRt3n1ww8iX1t3NhnDsNxW/D+
- 8NQfScKs2JhrTJV3TmYoXBX9y+9NBU0TzMuU3vu3FcLiH3QoiWjmtt4tk2jxf2c4WgVjtlmOna6E+
- uGFSvdXtlaqgrmld7J0hqWFeqCKw0sMvK4sLrLFjwM5dcgtCPADXi0SCBPNZo+JeJ6/L85qK3eqe+
- YVIWitkw==;
+ bh=PUKrIRd3Ve0Id+Di+t5ZQHR+Lkt5XgaaLxXGGrJVDyM=; b=H2P25tKRd6DOh+v9jBKxvQraZA
+ Z45sTSCSVYGiH/sXqv7Rei8a1qD26fep5gG02v/sU0YI66JAXsRFAgvH7KDq3AppZuWIGDwadiNNh
+ NF9+m1W21fjPH00gVIaHQJV6iQvYyRdGJs8SHeHSJkCyxL9s000WXuTy3nrvrtcZRyq9Lr4rBlC2r
+ ukS8kkblNjNhc5+dlP7yhzwP04xd6vf//CYeYWSzTDE04xpgA7rMo/n0zifPqncStzIuBrN8hdJSd
+ SKiVrnyfP0gZUFc5QEjNAU1lrQZ/AH89c80EuB/Jttzzo+Cz9TCaD8KrSHY3HZ3YBhcyhRajZM0Tj
+ WK7IOFag==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1j6i4H-0007rL-OM; Tue, 25 Feb 2020 21:48:41 +0000
+ Hat Linux)) id 1j6i4H-0007qN-Gf; Tue, 25 Feb 2020 21:48:41 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Tue, 25 Feb 2020 13:48:36 -0800
-Message-Id: <20200225214838.30017-24-willy@infradead.org>
+Date: Tue, 25 Feb 2020 13:48:30 -0800
+Message-Id: <20200225214838.30017-18-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200225214838.30017-1-willy@infradead.org>
 References: <20200225214838.30017-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1j6i4U-009nX7-2t
-Subject: [f2fs-dev] [PATCH v8 23/25] f2fs: Pass the inode to
- f2fs_mpage_readpages
+X-Headers-End: 1j6i4R-006Hzz-G6
+Subject: [f2fs-dev] [PATCH v8 17/25] btrfs: Convert from readpages to
+ readahead
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,51 +99,153 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-This function now only uses the mapping argument to look up the inode,
-and both callers already have the inode, so just pass the inode instead
-of the mapping.
+Implement the new readahead method in btrfs.  Add a readahead_page_batch()
+to optimise fetching a batch of pages at once.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/data.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/btrfs/extent_io.c | 46 ++++++++++++++------------------------------
+ fs/btrfs/extent_io.h |  3 +--
+ fs/btrfs/inode.c     | 16 +++++++--------
+ 3 files changed, 22 insertions(+), 43 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 237dff36fe73..c8b042979fc4 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2159,12 +2159,11 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
-  * use ->readpage() or do the necessary surgery to decouple ->readpages()
-  * from read-ahead.
-  */
--static int f2fs_mpage_readpages(struct address_space *mapping,
-+static int f2fs_mpage_readpages(struct inode *inode,
- 		struct readahead_control *rac, struct page *page)
- {
- 	struct bio *bio = NULL;
- 	sector_t last_block_in_bio = 0;
--	struct inode *inode = mapping->host;
- 	struct f2fs_map_blocks map;
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	struct compress_ctx cc = {
-@@ -2276,7 +2275,7 @@ static int f2fs_read_data_page(struct file *file, struct page *page)
- 	if (f2fs_has_inline_data(inode))
- 		ret = f2fs_read_inline_data(inode, page);
- 	if (ret == -EAGAIN)
--		ret = f2fs_mpage_readpages(page_file_mapping(page), NULL, page);
-+		ret = f2fs_mpage_readpages(inode, NULL, page);
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index c0f202741e09..e70f14c1de60 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4278,52 +4278,34 @@ int extent_writepages(struct address_space *mapping,
  	return ret;
  }
  
-@@ -2293,7 +2292,7 @@ static void f2fs_readahead(struct readahead_control *rac)
- 	if (f2fs_has_inline_data(inode))
- 		return;
+-int extent_readpages(struct address_space *mapping, struct list_head *pages,
+-		     unsigned nr_pages)
++void extent_readahead(struct readahead_control *rac)
+ {
+ 	struct bio *bio = NULL;
+ 	unsigned long bio_flags = 0;
+ 	struct page *pagepool[16];
+ 	struct extent_map *em_cached = NULL;
+-	struct extent_io_tree *tree = &BTRFS_I(mapping->host)->io_tree;
+-	int nr = 0;
++	struct extent_io_tree *tree = &BTRFS_I(rac->mapping->host)->io_tree;
+ 	u64 prev_em_start = (u64)-1;
++	int nr;
  
--	f2fs_mpage_readpages(rac->mapping, rac, NULL);
-+	f2fs_mpage_readpages(inode, rac, NULL);
+-	while (!list_empty(pages)) {
+-		u64 contig_end = 0;
+-
+-		for (nr = 0; nr < ARRAY_SIZE(pagepool) && !list_empty(pages);) {
+-			struct page *page = lru_to_page(pages);
+-
+-			prefetchw(&page->flags);
+-			list_del(&page->lru);
+-			if (add_to_page_cache_lru(page, mapping, page->index,
+-						readahead_gfp_mask(mapping))) {
+-				put_page(page);
+-				break;
+-			}
+-
+-			pagepool[nr++] = page;
+-			contig_end = page_offset(page) + PAGE_SIZE - 1;
+-		}
++	while ((nr = readahead_page_batch(rac, pagepool))) {
++		u64 contig_start = page_offset(pagepool[0]);
++		u64 contig_end = page_offset(pagepool[nr - 1]) + PAGE_SIZE - 1;
+ 
+-		if (nr) {
+-			u64 contig_start = page_offset(pagepool[0]);
++		ASSERT(contig_start + nr * PAGE_SIZE - 1 == contig_end);
+ 
+-			ASSERT(contig_start + nr * PAGE_SIZE - 1 == contig_end);
+-
+-			contiguous_readpages(tree, pagepool, nr, contig_start,
+-				     contig_end, &em_cached, &bio, &bio_flags,
+-				     &prev_em_start);
+-		}
++		contiguous_readpages(tree, pagepool, nr, contig_start,
++				contig_end, &em_cached, &bio, &bio_flags,
++				&prev_em_start);
+ 	}
+ 
+ 	if (em_cached)
+ 		free_extent_map(em_cached);
+ 
+-	if (bio)
+-		return submit_one_bio(bio, 0, bio_flags);
+-	return 0;
++	if (bio) {
++		if (submit_one_bio(bio, 0, bio_flags))
++			return;
++	}
  }
  
- int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
+ /*
+diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
+index 5d205bbaafdc..bddac32948c7 100644
+--- a/fs/btrfs/extent_io.h
++++ b/fs/btrfs/extent_io.h
+@@ -198,8 +198,7 @@ int extent_writepages(struct address_space *mapping,
+ 		      struct writeback_control *wbc);
+ int btree_write_cache_pages(struct address_space *mapping,
+ 			    struct writeback_control *wbc);
+-int extent_readpages(struct address_space *mapping, struct list_head *pages,
+-		     unsigned nr_pages);
++void extent_readahead(struct readahead_control *rac);
+ int extent_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		__u64 start, __u64 len);
+ void set_page_extent_mapped(struct page *page);
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 7d26b4bfb2c6..61d5137ce4e9 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -4802,8 +4802,8 @@ static void evict_inode_truncate_pages(struct inode *inode)
+ 
+ 	/*
+ 	 * Keep looping until we have no more ranges in the io tree.
+-	 * We can have ongoing bios started by readpages (called from readahead)
+-	 * that have their endio callback (extent_io.c:end_bio_extent_readpage)
++	 * We can have ongoing bios started by readahead that have
++	 * their endio callback (extent_io.c:end_bio_extent_readpage)
+ 	 * still in progress (unlocked the pages in the bio but did not yet
+ 	 * unlocked the ranges in the io tree). Therefore this means some
+ 	 * ranges can still be locked and eviction started because before
+@@ -7004,11 +7004,11 @@ static int lock_extent_direct(struct inode *inode, u64 lockstart, u64 lockend,
+ 			 * for it to complete) and then invalidate the pages for
+ 			 * this range (through invalidate_inode_pages2_range()),
+ 			 * but that can lead us to a deadlock with a concurrent
+-			 * call to readpages() (a buffered read or a defrag call
++			 * call to readahead (a buffered read or a defrag call
+ 			 * triggered a readahead) on a page lock due to an
+ 			 * ordered dio extent we created before but did not have
+ 			 * yet a corresponding bio submitted (whence it can not
+-			 * complete), which makes readpages() wait for that
++			 * complete), which makes readahead wait for that
+ 			 * ordered extent to complete while holding a lock on
+ 			 * that page.
+ 			 */
+@@ -8247,11 +8247,9 @@ static int btrfs_writepages(struct address_space *mapping,
+ 	return extent_writepages(mapping, wbc);
+ }
+ 
+-static int
+-btrfs_readpages(struct file *file, struct address_space *mapping,
+-		struct list_head *pages, unsigned nr_pages)
++static void btrfs_readahead(struct readahead_control *rac)
+ {
+-	return extent_readpages(mapping, pages, nr_pages);
++	extent_readahead(rac);
+ }
+ 
+ static int __btrfs_releasepage(struct page *page, gfp_t gfp_flags)
+@@ -10456,7 +10454,7 @@ static const struct address_space_operations btrfs_aops = {
+ 	.readpage	= btrfs_readpage,
+ 	.writepage	= btrfs_writepage,
+ 	.writepages	= btrfs_writepages,
+-	.readpages	= btrfs_readpages,
++	.readahead	= btrfs_readahead,
+ 	.direct_IO	= btrfs_direct_IO,
+ 	.invalidatepage = btrfs_invalidatepage,
+ 	.releasepage	= btrfs_releasepage,
 -- 
 2.25.0
 
