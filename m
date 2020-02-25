@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE99C35DEE
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Feb 2020 01:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDE2C35DEA
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Feb 2020 02:24:33 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 60A50218AC
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Feb 2020 01:51:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 962242176D;
+	Tue, 25 Feb 2020 02:24:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Y8GgVemA";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="a7P18QYZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A50218AC
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="L9FPv2au";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="C1TV2uou"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 962242176D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j6PO9-0008VK-4l; Tue, 25 Feb 2020 01:51:57 +0000
+	id 1j6Pth-0004SU-6r; Tue, 25 Feb 2020 02:24:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1j6PO8-0008V7-B3
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 01:51:56 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1j6Ptg-0004SI-83
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 02:24:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yeaI+n+nk2ZsNVdodi0oId9ksuvSC7mOnzDmOvmY28k=; b=Y8GgVemAweObKHy8Retv7SCDZ6
- gE4bjdf+qFh4OEumzEy30mO7D6tQ7OF4/uqzL1sLBc0D6jn1yoUWkeaI4fV7jFcBwDnR40PjJvlKv
- 2mV+9CPQFoi7pVo/zazLjFsv844XMGIORI4zolixAynm97A+gcpftcl4twyaKGsXzzyQ=;
+ bh=ie0rcHKBUPKzmY7gNw3Dru1ib6rsWNijTWDguKZGKqs=; b=L9FPv2au5BvBPsx4+KxPbfKx2x
+ 0/pdsSSJrvooUM1vv5fYiy+WnOblEKEhyFmL5N3pLqaukjfg19PeKdKHy3ciCacXUld2pRVw8hDTV
+ nrXIfJ5JhJw4z38HHgff5fps97kXYyFrXvGB1DoyGsvg5x9uPMVY+uNq5yBBpxwx8TfA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -45,37 +45,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=yeaI+n+nk2ZsNVdodi0oId9ksuvSC7mOnzDmOvmY28k=; b=a7P18QYZWpxJ49un/5NErPAGLN
- xRju7zZYBaILbgaTq6O96vJSRHW3qt1XQyV9pLJQPA3SBqFHqHbEI99aNCs5vzN/n7AFe1sVHaiZo
- h34e1WEgTLwYgxRin/YkaVWn1LJtSfqBX1LG/P5Xn7afqq56AVmF7R7aHyt4EdjRIEWI=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ bh=ie0rcHKBUPKzmY7gNw3Dru1ib6rsWNijTWDguKZGKqs=; b=C1TV2uouWhKTmo5ZT9XGgFXWCe
+ 8VSRn3tWb++swB559atRriBjPSQ20xClKTcA/E3F36mHhz8glKUX0K2S3pPOD1SuzTZ5fHgNcBx3c
+ +nallC8u3uuYhzEYFN6EkNUfG4AQmKqm0SgetHrWVNJly3jQafzYkHvVG8PtMJuOfeDU=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j6PO2-0096kq-Ba
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 01:51:56 +0000
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id CE461DE503E800B389C1;
- Tue, 25 Feb 2020 09:46:32 +0800 (CST)
+ id 1j6Pte-0097ew-5i
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 02:24:32 +0000
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id C865638C72DDFA78731F;
+ Tue, 25 Feb 2020 10:24:20 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 25 Feb
- 2020 09:46:30 +0800
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 25 Feb
+ 2020 10:24:17 +0800
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20200221100922.16781-1-yuchao0@huawei.com>
- <20200221100922.16781-2-yuchao0@huawei.com>
- <20200224214605.GA77839@google.com>
+References: <20200214185855.217360-1-jaegeuk@kernel.org>
+ <20200214185855.217360-3-jaegeuk@kernel.org>
+ <9c497f3e-3399-e4a6-f81c-6c4a1f35e5bb@huawei.com>
+ <20200218232714.GB10213@google.com>
+ <117a927f-7128-b5a1-a961-22934bb62ec5@huawei.com>
+ <20200219030425.GA102063@google.com>
+ <266f233b-e084-cccd-d07e-96d8438d5b74@huawei.com>
+ <20200224215341.GB77839@google.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <db505852-345d-05d0-4555-437093d2af14@huawei.com>
-Date: Tue, 25 Feb 2020 09:46:29 +0800
+Message-ID: <141fb1b0-b527-1ef8-0fce-dcdf0170a987@huawei.com>
+Date: Tue, 25 Feb 2020 10:24:17 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20200224214605.GA77839@google.com>
+In-Reply-To: <20200224215341.GB77839@google.com>
 Content-Language: en-US
 X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1j6PO2-0096kq-Ba
-Subject: Re: [f2fs-dev] [RFC PATCH 2/2] f2fs: introduce
- F2FS_IOC_RELEASE_COMPRESS_BLOCKS
+X-Headers-End: 1j6Pte-0097ew-5i
+Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: skip migration only when BG_GC is
+ called
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,226 +97,87 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/2/25 5:46, Jaegeuk Kim wrote:
-> On 02/21, Chao Yu wrote:
->> There are still reserved blocks on compressed inode, this patch
->> introduce a new ioctl to help release reserved blocks back to
->> filesystem, so that userspace can reuse those freed space.
+On 2020/2/25 5:53, Jaegeuk Kim wrote:
+> On 02/19, Chao Yu wrote:
+>> On 2020/2/19 11:04, Jaegeuk Kim wrote:
+>>> On 02/19, Chao Yu wrote:
+>>>> On 2020/2/19 7:27, Jaegeuk Kim wrote:
+>>>>> On 02/17, Chao Yu wrote:
+>>>>>> On 2020/2/15 2:58, Jaegeuk Kim wrote:
+>>>>>>> FG_GC needs to move entire section more quickly.
+>>>>>>>
+>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>>>> ---
+>>>>>>>  fs/f2fs/gc.c | 2 +-
+>>>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>>>> index bbf4db3f6bb4..1676eebc8c8b 100644
+>>>>>>> --- a/fs/f2fs/gc.c
+>>>>>>> +++ b/fs/f2fs/gc.c
+>>>>>>> @@ -1203,7 +1203,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>>>>>>  
+>>>>>>>  		if (get_valid_blocks(sbi, segno, false) == 0)
+>>>>>>>  			goto freed;
+>>>>>>> -		if (__is_large_section(sbi) &&
+>>>>>>> +		if (gc_type == BG_GC && __is_large_section(sbi) &&
+>>>>>>>  				migrated >= sbi->migration_granularity)
+>>>>>>
+>>>>>> I knew migrating one large section is a more efficient way, but this can
+>>>>>> increase long-tail latency of f2fs_balance_fs() occasionally, especially in
+>>>>>> extreme fragmented space.
+>>>>>
+>>>>> FG_GC requires to wait for whole section migration which shows the entire
+>>>>> latency.
+>>>>
+>>>> That will cause long-tail latency for single f2fs_balance_fs() procedure,
+>>>> which it looks a very long hang when userspace call f2fs syscall, so why
+>>>> not splitting total elapsed time into several f2fs_balance_fs() to avoid that.
+>>>
+>>> Then, other ops can easily make more dirty segments. The intention of FG_GC is
+>>
+>> Yup, that's a problem, if there are more dirty datas being made, reserved segments
+>> may be ran out during FG_GC.
+>>
+>>> to block everything and make min. free segments as a best shot.
+>>
+>> I just try to simulate write GC's logic in FTL to mitigate single op's max latency,
+>> otherwise benchmark looks hang during FG_GC (in a 500mb+ section).
+
+Oh, if we want to FG_GC only migrate on segment on time, it needs to change
+has_not_enough_free_secs() condition as well, so previous logic is broken.
+
+Nvm, please add:
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
 > 
-> I thought we can add compressed_blocks into free space, after converting
-> the file to immutable one. Otherwise, this patch is able to corrupt the
+> Hmm, I think we may need to think another way like doing BG_GC more aggressively.
 
-Yes, I remember that.
-
-So any suggestion on this patch? we can:
-- check immutable flag before releasing space, or
-- we can add immutable flag on compressed inode in this ioctl interface?
+Agreed, I guess SMR scenario may need such policy: higher trigger frequency on bggc
+when free space decreases, but less block migration for each bggc cycle.
 
 Thanks,
 
-> filesystem very easily.
 > 
 >>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/f2fs.h |   6 +++
->>  fs/f2fs/file.c | 129 ++++++++++++++++++++++++++++++++++++++++++++++++-
->>  2 files changed, 134 insertions(+), 1 deletion(-)
+>> Thanks,
 >>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 15199df5d40a..468f807fd917 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -427,6 +427,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
->>  #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
->>  #define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
->>  #define F2FS_IOC_GET_COMPRESS_BLOCKS	_IOR(F2FS_IOCTL_MAGIC, 17, __u64)
->> +#define F2FS_IOC_RELEASE_COMPRESS_BLOCKS				\
->> +					_IOR(F2FS_IOCTL_MAGIC, 18, __u64)
->>  
->>  #define F2FS_IOC_GET_VOLUME_NAME	FS_IOC_GETFSLABEL
->>  #define F2FS_IOC_SET_VOLUME_NAME	FS_IOC_SETFSLABEL
->> @@ -3957,6 +3959,10 @@ static inline void f2fs_i_compr_blocks_update(struct inode *inode,
->>  {
->>  	int diff = F2FS_I(inode)->i_cluster_size - blocks;
->>  
->> +	/* don't update i_compr_blocks if saved blocks were released */
->> +	if (!add && !F2FS_I(inode)->i_compr_blocks)
->> +		return;
->> +
->>  	if (add) {
->>  		F2FS_I(inode)->i_compr_blocks += diff;
->>  		stat_add_compr_blocks(inode, diff);
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index 235708c892af..613f87151d90 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -557,6 +557,7 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->>  	bool compressed_cluster = false;
->>  	int cluster_index = 0, valid_blocks = 0;
->>  	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
->> +	bool released = !F2FS_I(dn->inode)->i_compr_blocks;
->>  
->>  	if (IS_INODE(dn->node_page) && f2fs_has_extra_attr(dn->inode))
->>  		base = get_extra_isize(dn->inode);
->> @@ -595,7 +596,9 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
->>  			clear_inode_flag(dn->inode, FI_FIRST_BLOCK_WRITTEN);
->>  
->>  		f2fs_invalidate_blocks(sbi, blkaddr);
->> -		nr_free++;
->> +
->> +		if (released && blkaddr != COMPRESS_ADDR)
->> +			nr_free++;
->>  	}
->>  
->>  	if (compressed_cluster)
->> @@ -3416,6 +3419,127 @@ static int f2fs_get_compress_blocks(struct file *filp, unsigned long arg)
->>  	return put_user(blocks, (u64 __user *)arg);
->>  }
->>  
->> +static int release_compress_blocks(struct dnode_of_data *dn, pgoff_t count)
->> +{
->> +	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
->> +	unsigned int released_blocks = 0;
->> +	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
->> +
->> +	while (count) {
->> +		int compr_blocks = 0;
->> +		block_t blkaddr = f2fs_data_blkaddr(dn);
->> +		int i;
->> +
->> +		if (blkaddr != COMPRESS_ADDR) {
->> +			dn->ofs_in_node += cluster_size;
->> +			goto next;
->> +		}
->> +
->> +		for (i = 0; i < cluster_size; i++, dn->ofs_in_node++) {
->> +			blkaddr = f2fs_data_blkaddr(dn);
->> +
->> +			if (__is_valid_data_blkaddr(blkaddr)) {
->> +				compr_blocks++;
->> +				if (unlikely(!f2fs_is_valid_blkaddr(sbi, blkaddr,
->> +							DATA_GENERIC_ENHANCE)))
->> +					return -EFSCORRUPTED;
->> +			}
->> +
->> +			if (blkaddr != NEW_ADDR)
->> +				continue;
->> +
->> +			dn->data_blkaddr = NULL_ADDR;
->> +			f2fs_set_data_blkaddr(dn);
->> +		}
->> +
->> +		f2fs_i_compr_blocks_update(dn->inode, compr_blocks, false);
->> +		dec_valid_block_count(sbi, dn->inode,
->> +					cluster_size - compr_blocks);
->> +
->> +		released_blocks += cluster_size - compr_blocks;
->> +next:
->> +		count -= cluster_size;
->> +	}
->> +
->> +	return released_blocks;
->> +}
->> +
->> +static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
->> +{
->> +	struct inode *inode = file_inode(filp);
->> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> +	pgoff_t page_idx = 0, last_idx;
->> +	unsigned int released_blocks = 0;
->> +	int ret;
->> +
->> +	if (!f2fs_sb_has_compression(F2FS_I_SB(inode)))
->> +		return -EOPNOTSUPP;
->> +
->> +	if (!f2fs_compressed_file(inode))
->> +		return -EINVAL;
->> +
->> +	if (f2fs_readonly(sbi->sb))
->> +		return -EROFS;
->> +
->> +	ret = mnt_want_write_file(filp);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (!F2FS_I(inode)->i_compr_blocks)
->> +		goto out;
->> +
->> +	f2fs_balance_fs(F2FS_I_SB(inode), true);
->> +
->> +	inode_lock(inode);
->> +
->> +	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->> +	down_write(&F2FS_I(inode)->i_mmap_sem);
->> +
->> +	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
->> +
->> +	while (page_idx < last_idx) {
->> +		struct dnode_of_data dn;
->> +		pgoff_t end_offset, count;
->> +
->> +		set_new_dnode(&dn, inode, NULL, NULL, 0);
->> +		ret = f2fs_get_dnode_of_data(&dn, page_idx, LOOKUP_NODE);
->> +		if (ret) {
->> +			if (ret == -ENOENT) {
->> +				page_idx = f2fs_get_next_page_offset(&dn,
->> +								page_idx);
->> +				ret = 0;
->> +				continue;
->> +			}
->> +			break;
->> +		}
->> +
->> +		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
->> +		count = min(end_offset - dn.ofs_in_node, last_idx - page_idx);
->> +
->> +		ret = release_compress_blocks(&dn, count);
->> +
->> +		f2fs_put_dnode(&dn);
->> +
->> +		if (ret < 0)
->> +			break;
->> +
->> +		page_idx += count;
->> +		released_blocks += ret;
->> +	}
->> +
->> +	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->> +	up_write(&F2FS_I(inode)->i_mmap_sem);
->> +
->> +	inode_unlock(inode);
->> +out:
->> +	mnt_drop_write_file(filp);
->> +
->> +	if (!ret)
->> +		ret = put_user(released_blocks, (u64 __user *)arg);
->> +
->> +	return ret;
->> +}
->> +
->>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->>  {
->>  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
->> @@ -3496,6 +3620,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->>  		return f2fs_set_volume_name(filp, arg);
->>  	case F2FS_IOC_GET_COMPRESS_BLOCKS:
->>  		return f2fs_get_compress_blocks(filp, arg);
->> +	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
->> +		return f2fs_release_compress_blocks(filp, arg);
->>  	default:
->>  		return -ENOTTY;
->>  	}
->> @@ -3654,6 +3780,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->>  	case F2FS_IOC_GET_VOLUME_NAME:
->>  	case F2FS_IOC_SET_VOLUME_NAME:
->>  	case F2FS_IOC_GET_COMPRESS_BLOCKS:
->> +	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
->>  		break;
->>  	default:
->>  		return -ENOIOCTLCMD;
->> -- 
->> 2.18.0.rc1
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>>>  			goto skip;
+>>>>>>>  		if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
+>>>>>>>
+>>>>> .
+>>>>>
+>>> .
+>>>
 > .
 > 
 
