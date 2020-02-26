@@ -2,84 +2,87 @@ Return-Path: <SRS0=pqVX=4O=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5512C4BA06
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Feb 2020 00:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66189C4BA06
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Feb 2020 01:12:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5380720732;
-	Wed, 26 Feb 2020 00:33:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2730322464;
+	Wed, 26 Feb 2020 01:12:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XPZJSmSM";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="jiJ2Skrk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5380720732
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gtsys.com.hk
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KNDsGQkk";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WvcV4+eI";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4o0t5Q2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2730322464
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j6kdN-0006MX-Ta; Wed, 26 Feb 2020 00:33:05 +0000
+	id 1j6lFS-0005b4-KX; Wed, 26 Feb 2020 01:12:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chris.ruehl@gtsys.com.hk>) id 1j6kdM-0006MI-Li
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Feb 2020 00:33:04 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1j6lFR-0005av-Ir
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Feb 2020 01:12:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2EmxknqdJzqtESA6ZSYyMIxOGBcbfdlhtXtOfBl4V/Y=; b=XPZJSmSM4pb5YCA0AR34+hCbyf
- HfGsY7uGrfxK/KLj437venMKFAWQCC5te4UUzzYOScgg+KHL0nPDFk/kIDcOrb3Y5JEM2vpe9TrIH
- NIGlVRXUdKodcP+wt/UAlEuwxu5UT3rTacf5B+NdHpnpPtAuS+xesFxYV2lkirY4MeAA=;
+ bh=XrvzVlKEA2gNxgUdISfz2GWdsTaodYDrBAmAr0RulmE=; b=KNDsGQkkWUczZi/A1WDr4PzJ30
+ 3b/rjcglje2TSL7RLIuIjsq3f3zWL1nA/1R3kJntOdPaF4SeNEVEDPCGnzTBrDTBhKKUGIDq7szud
+ tSrORwyflRhIWS4Ao9ANpPCI2QT6FxLeOlMtSM6Je/MHAcKt2U+jaWmFnqIwNPZ7jFtE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Message-ID:
- Subject:From:To:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=2EmxknqdJzqtESA6ZSYyMIxOGBcbfdlhtXtOfBl4V/Y=; b=j
- iJ2SkrkUdV99aNA/n+KdLrOFkQcSNMYnKi1tcpX8oNXn/EGQq8ZB5DEwI09DyUWH4s9bQWmRH9b3a
- a2xLBQQBT0fFwJC5FTBULMHYR7HR4Vs5AQRrvzhyFZjrdTY34U3xqEat9cs7i/V6y9HMgaXnPqTam
- L7kMtfF3rSp0UyFo=;
-Received: from [27.111.83.178] (helo=mail.gtsys.com.hk)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=XrvzVlKEA2gNxgUdISfz2GWdsTaodYDrBAmAr0RulmE=; b=WvcV4+eInRJ5ZYY3379OiA/OkP
+ kLcLQgmOpYh58jyisGcevAUzwk4szBeJFFWAjbdaCsbqBxQAQJ+1gFNuPESVfdsbfrhyg06Fv5NDM
+ sZMNR0N1fXub43Fah3yWYoJrb3YN5AuT/G4n+2n5+80Uh4r6G1GeWj2xzepaN0HwxUSM=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j6kdH-006NTU-Pn
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Feb 2020 00:33:04 +0000
-Received: from localhost (localhost [127.0.0.1])
- by mail.gtsys.com.hk (Postfix) with ESMTP id 8F3BC20161AF
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 26 Feb 2020 08:13:40 +0800 (HKT)
-X-Virus-Scanned: Debian amavisd-new at gtsys.com.hk
-Received: from mail.gtsys.com.hk ([127.0.0.1])
- by localhost (mail.gtsys.com.hk [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id v0m7xfw8uRZr
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 26 Feb 2020 08:13:40 +0800 (HKT)
-Received: from s01.gtsys.com.hk (unknown [10.128.4.2])
- by mail.gtsys.com.hk (Postfix) with ESMTP id 6BF8F20160C7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 26 Feb 2020 08:13:40 +0800 (HKT)
-Received: from [10.128.2.32] (n058152218242.netvigator.com [58.152.218.242])
- by s01.gtsys.com.hk (Postfix) with ESMTPSA id 41DF5C01A0C
- for <linux-f2fs-devel@lists.sourceforge.net.>;
- Wed, 26 Feb 2020 08:13:40 +0800 (HKT)
-To: linux-f2fs-devel@lists.sourceforge.net
-From: Chris Ruehl <chris.ruehl@gtsys.com.hk>
-Message-ID: <d1f8b052-afaf-1473-0fa6-7b18bd6f6c69@gtsys.com.hk>
-Date: Wed, 26 Feb 2020 08:13:39 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ id 1j6lFF-009u05-Id
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Feb 2020 01:12:25 +0000
+Received: from gmail.com (unknown [104.132.1.77])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 877AA20732;
+ Wed, 26 Feb 2020 01:12:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1582679528;
+ bh=0pd2L0V39Irh1qfpzk47vY1wiZKCu530Z4tcoP6sR2E=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=P4o0t5Q2Gvf1XVm3IJMpJ1c3Ex2gM86Q5S6WwXI30ghOQkr8vYWiOSgdos5lz3xCC
+ C21NH2ik1z+wUtTahz4GwWJZGKKqJi0BDgszJz+gl26eL5OfQCP8N/vPJyxpOnTLAr
+ GyErSh1DcqsYjcY6A7tig9yx1gAG2DSyidmA9z7I=
+Date: Tue, 25 Feb 2020 17:12:06 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Stanley Chu <stanley.chu@mediatek.com>
+Message-ID: <20200226011206.GD114977@gmail.com>
+References: <20200221115050.238976-1-satyat@google.com>
+ <20200221115050.238976-7-satyat@google.com>
+ <20200221172244.GC438@infradead.org>
+ <20200221181109.GB925@sol.localdomain>
+ <1582465656.26304.69.camel@mtksdccf07>
+ <20200224233759.GC30288@infradead.org>
+ <1582615285.26304.93.camel@mtksdccf07>
 MIME-Version: 1.0
-Content-Language: en-US
-X-Headers-End: 1j6kdH-006NTU-Pn
-Subject: [f2fs-dev] AArch64 static build link order fix
+Content-Disposition: inline
+In-Reply-To: <1582615285.26304.93.camel@mtksdccf07>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Headers-End: 1j6lFF-009u05-Id
+Subject: Re: [f2fs-dev] [PATCH v7 6/9] scsi: ufs: Add inline encryption
+ support to UFS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,71 +94,89 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-block@vger.kernel.org,
+ Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>, linux-ext4@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
+ Kuohong Wang <kuohong.wang@mediatek.com>,
+ Parshuram Raju Thombare <pthombar@cadence.com>,
+ Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+ Satya Tangirala <satyat@google.com>, Christoph Hellwig <hch@infradead.org>,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi,
+On Tue, Feb 25, 2020 at 03:21:25PM +0800, Stanley Chu wrote:
+> Hi Christoph,
+> 
+> On Mon, 2020-02-24 at 15:37 -0800, Christoph Hellwig wrote:
+> > On Sun, Feb 23, 2020 at 09:47:36PM +0800, Stanley Chu wrote:
+> > > Yes, MediaTek is keeping work closely with inline encryption patch sets.
+> > > Currently the v6 version can work well (without
+> > > UFSHCD_QUIRK_BROKEN_CRYPTO quirk) at least in our MT6779 SoC platform
+> > > which basic SoC support and some other peripheral drivers are under
+> > > upstreaming as below link,
+> > > 
+> > > https://patchwork.kernel.org/project/linux-mediatek/list/?state=%
+> > > 2A&q=6779&series=&submitter=&delegate=&archive=both
+> > > 
+> > > The integration with inline encryption patch set needs to patch
+> > > ufs-mediatek and patches are ready in downstream. We plan to upstream
+> > > them soon after inline encryption patch sets get merged.
+> > 
+> > What amount of support do you need in ufs-mediatek?  It seems like
+> > pretty much every ufs low-level driver needs some kind of specific
+> > support now, right?  I wonder if we should instead opt into the support
+> > instead of all the quirking here.
+> 
+> The patch in ufs-mediatek is aimed to issue vendor-specific SMC calls
+> for host initialization and configuration. This is because MediaTek UFS
+> host has some "secure-protected" registers/features which need to be
+> accessed/switched in secure world. 
+> 
+> Such protection is not mentioned by UFSHCI specifications thus inline
+> encryption patch set assumes that every registers in UFSHCI can be
+> accessed normally in kernel. This makes sense and surely the patchset
+> can work fine in any "standard" UFS host. However if host has special
+> design then it can work normally only if some vendor-specific treatment
+> is applied.
+> 
+> I think one of the reason to apply UFSHCD_QUIRK_BROKEN_CRYPTO quirk in
+> ufs-qcom host is similar to above case.
 
-Had a recently a cross compile to arm64 for f2fs-tools and run into
-a couple of issues and want to share the resolving.
+So, I had originally assumed that most kernel developers would prefer to make
+the UFS crypto support opt-out rather than opt-in, since that matches the normal
+Linux way of doing things.  I.e. normally the kernel's default assumption is
+that devices implement the relevant standard, and only when a device is known to
+deviate from the standard does the driver apply quirks.
 
-I running on Debian buster, and using the tool-chain from them
-COLLECT_GCC=/usr/bin/aarch64-linux-gnu-gcc
-gcc version 8.3.0 (Debian 8.3.0-2)
+But indeed, as we've investigated more vendors' UFS hardware, it seems that
+everyone has some quirk that needs to be handled in the platform driver:
 
-1) if HAVE_LIBSELINUX is enabled in the config.h
-fsck will fail to build missing the libraries
-* libsepol
-* libpcre
-* libpthread
-I add this temporally in the Makefile, it must be a fix done in the configure 
-process
-** add the link path which is missing for cross compilation too.
-orig:
-libselinux_LIBS = -lselinux
-fix:
-libselinux_LIBS = -L/usr/lib/aarch64-linux-gnu -lselinux -lsepol -lprce -lpthread
+  - ufs-qcom (tested on DragonBoard 845c with upstream kernel) needs
+    vendor-specific crypto initialization logic and SMC calls to set keys
 
-Sadly the selinux static library us dynamic function from the glibc throw a 
-warning that the glibc shared library version is needed on runtime! So I removed
-the SELINUX support in my static build comment out HAVE_LIBSELINUX.
+  - ufs-mediatek needs the quirks that Stanley mentioned above
 
+  - ufs-hisi (tested on Hikey960 with upstream kernel) needs to write a
+    vendor-specific register to use high keyslots, but even then I still
+    couldn't get the crypto support working correctly.
 
-2) mkfs the link order for blkid & uuid is wrong, leads to unresolved objects
-below change fix it.
+I'm not sure about the UFS controllers from Synopsys, Cadence, or Samsung, all
+of which apparently have implemented some form of the crypto support too.  But I
+wouldn't get my hopes up that everyone followed the UFS standard precisely.
 
-diff --git a/mkfs/Makefile.am b/mkfs/Makefile.am
-index 83e2389..d3206e8 100644
---- a/mkfs/Makefile.am
-+++ b/mkfs/Makefile.am
-@@ -6,7 +6,8 @@ sbin_PROGRAMS = mkfs.f2fs
-  noinst_HEADERS = f2fs_format_utils.h
-  include_HEADERS = $(top_srcdir)/include/f2fs_fs.h
-  mkfs_f2fs_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c
--mkfs_f2fs_LDADD = ${libuuid_LIBS} ${libblkid_LIBS} $(top_builddir)/lib/libf2fs.la
-+mkfs_f2fs_LDADD = ${libblkid_LIBS} ${libuuid_LIBS} $(top_builddir)/lib/libf2fs.la
-+mkfs_f2fs_LDFLAGS = -all-static
+So if there are no objections, IMO we should make the crypto support opt-in.
 
-  lib_LTLIBRARIES = libf2fs_format.la
-  libf2fs_format_la_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c
+That makes it even more important to upstream the crypto support for specific
+hardware like ufs-qcom and ufs-mediatek, since otherwise the ufshcd-crypto code
+would be unusable even theoretically.  I'm volunteering to handle ufs-qcom with
+https://lkml.kernel.org/linux-block/20200110061634.46742-1-ebiggers@kernel.org/.
+Stanley, could you send out ufs-mediatek support as an RFC so people can see
+better what it involves?
 
-
-The outcome of my cross compilation works fine.
-
-May someone run in the same problem, and benefit from my fix.
-
-Have a nice one!
-
-Chris
-
--- 
-GTSYS Limited RFID Technology
-9/F, Unit E, R07, Kwai Shing Industrial Building Phase 2,
-42-46 Tai Lin Pai Road, Kwai Chung, N.T., Hong Kong
-Tel (852) 9079 9521
-
-Disclaimer: https://www.gtsys.com.hk/email/classified.html
+- Eric
 
 
 _______________________________________________
