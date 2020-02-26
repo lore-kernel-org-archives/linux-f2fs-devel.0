@@ -1,82 +1,82 @@
-Return-Path: <SRS0=Co/T=4N=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=pqVX=4O=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADB5C4BA01
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Feb 2020 21:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BC1C4BA06
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Feb 2020 00:31:13 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9351B24676;
-	Tue, 25 Feb 2020 21:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9CFA020732;
+	Wed, 26 Feb 2020 00:31:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="JbhBe6pM";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="D56iPxg5";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qMrXyYQ+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9351B24676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="gNvUBr6Z";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lEBUKJef";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPlCxoAB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFA020732
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j6i4d-0007lw-9y; Tue, 25 Feb 2020 21:49:03 +0000
+	id 1j6kbX-0004Ov-BB; Wed, 26 Feb 2020 00:31:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1j6i4T-0007io-HD
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 21:48:53 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1j6kbV-0004Om-3f
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Feb 2020 00:31:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NGfKFierKYU9LL2xCrMmTaPMG/VnrPXKtd68xopasHE=; b=JbhBe6pM+S4JLSVwEXyVxkdWhi
- 7gMNMUNrtwxxCbB34Yx9kvuZU0ur+fdLlSeTysFTkB7IMNEzGeqHi3/Bo1iroMaYjxabRdg+dyV65
- OnQO+MpNWh01j5li4f1vhSwAR4Samo6YK9rZTtKElN/G4pW0ib+1cIipiNGe79CXR9QI=;
+ bh=RQ3Lrs5pD2I4D7BEXBfjzOqK/JSDXcJXX+5WTam+Ch4=; b=gNvUBr6Zr8gm5WWucKPxDSEmFg
+ YRDyZdqxqauyS0yNb+agiRmiWjlC40Cha/FbiX7QmeEXF7YyerojqoZcC0/A5fNN2lcub05Nm4pMb
+ XSlZFFAwbxro1dCeEkp6Z87PY4aLSDWh/SGIKjiGndt1Sk8umMMQ1apwktyMyJ7UeO+w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NGfKFierKYU9LL2xCrMmTaPMG/VnrPXKtd68xopasHE=; b=D56iPxg5j3PTMa1rokeLF0CiDy
- y6shMj8iYJKaU3GDqw4kO1YLUJZrtxX5SrHrTUR64ri5KIEskmUjZd8vkv7WIq0l915Fr0dMLcfIJ
- PiAy+xx7OC0Bpnv5qLNTirWNQO3gEAD0r/2QyOGiDYaJG2D8gkRhUIxkWb8lwf4N/7O4=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=RQ3Lrs5pD2I4D7BEXBfjzOqK/JSDXcJXX+5WTam+Ch4=; b=lEBUKJefXo8OQZ3302Ak4klCoP
+ 5kBk0/l7hpbauK7GmqY/NmTsg1hV1SUE7rBGBVEGoQTTAFVSm0TbW/KHqsSpo4V9vL7a2zfnpQ5Rp
+ CwYv+kls8WbOjxeh3eRjD8OmCR3THCnoKd6TutQeeeTgxIpqdWVmb9bXEyKPtdaB/IbE=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j6i4R-00GS0g-Lg
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Feb 2020 21:48:53 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
- MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
- :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=NGfKFierKYU9LL2xCrMmTaPMG/VnrPXKtd68xopasHE=; b=qMrXyYQ+czSCqYSO5KlWYsk4p1
- phLMAkx5EXVLudJJ4W8l6trwcmJym3lDRmuL6uQinSF03W8tl5gvl0KHFUvfMPumKrJKx7SkW+qGV
- epPBtBp2nOZwy3It1Wv8mrq5D0Hq5cJAQMx4W4Ifn70KnAo5wsqiIy65HlwgQubVzFFIjjNwmf0bB
- 6CaeV/OdvjsGyjVTsCYRYjWXtVvSVmp+I5qb5EFwkebiUPYadmTOQK5e4Hb4o3/MZrYC4RnY2QOJs
- R2hQzGUGnuF6+/t02R2mt+d/eG2kq82oEcclEA1/7yPmKLsiuRvSRJiyh+4HAuYdQNYW0iMdcZ4HI
- t1ZCjacA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1j6i4H-0007pj-6E; Tue, 25 Feb 2020 21:48:41 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org
-Date: Tue, 25 Feb 2020 13:48:21 -0800
-Message-Id: <20200225214838.30017-9-willy@infradead.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200225214838.30017-1-willy@infradead.org>
-References: <20200225214838.30017-1-willy@infradead.org>
+ id 1j6kbS-009sw2-TD
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Feb 2020 00:31:09 +0000
+Received: from gmail.com (unknown [104.132.1.77])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 2220721D7E;
+ Wed, 26 Feb 2020 00:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1582677056;
+ bh=bSWh+q++sx8C8D9lAd6ZLiMK7C4FjpFs2du6fFMigso=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=iPlCxoABGs8vm/dCfwQe7NAQXpNxvKvL/hghlJBEeMiaWyVPkj76Y8RftvlocF5QQ
+ O38Q2Y7BPU3Fom0eR+SD1OFL79U9zFr79KbcFx2n0xjjE/J2+AeXoHaA3bS1cQW3Xe
+ RjZqqiITwX9rWuGTXEyKS+hv4IXCbJJVbxX/ZjSs=
+Date: Tue, 25 Feb 2020 16:30:54 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Satya Tangirala <satyat@google.com>
+Message-ID: <20200226003054.GC114977@gmail.com>
+References: <20200221115050.238976-1-satyat@google.com>
+ <20200221115050.238976-8-satyat@google.com>
 MIME-Version: 1.0
-X-Headers-End: 1j6i4R-00GS0g-Lg
-Subject: [f2fs-dev] [PATCH v8 08/25] mm: rename readahead loop variable to
- 'i'
+Content-Disposition: inline
+In-Reply-To: <20200221115050.238976-8-satyat@google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Headers-End: 1j6kbS-009sw2-TD
+Subject: Re: [f2fs-dev] [PATCH v7 7/9] fscrypt: add inline encryption support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,71 +88,96 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
- linux-kernel@vger.kernel.org,
- "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
- Dave Chinner <dchinner@redhat.com>, linux-ext4@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
+ Kuohong Wang <kuohong.wang@mediatek.com>,
+ Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Fri, Feb 21, 2020 at 03:50:48AM -0800, Satya Tangirala wrote:
+> +/**
+> + * fscrypt_inode_uses_inline_crypto - test whether an inode uses inline
+> + *				      encryption
+> + * @inode: an inode
+> + *
+> + * Return: true if the inode requires file contents encryption and if the
+> + *	   encryption should be done in the block layer via blk-crypto rather
+> + *	   than in the filesystem layer.
+> + */
+> +bool fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+> +{
+> +	return IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) &&
+> +		inode->i_crypt_info->ci_inlinecrypt;
+> +}
+> +EXPORT_SYMBOL_GPL(fscrypt_inode_uses_inline_crypto);
+> +
+> +/**
+> + * fscrypt_inode_uses_fs_layer_crypto - test whether an inode uses fs-layer
+> + *					encryption
+> + * @inode: an inode
+> + *
+> + * Return: true if the inode requires file contents encryption and if the
+> + *	   encryption should be done in the filesystem layer rather than in the
+> + *	   block layer via blk-crypto.
+> + */
+> +bool fscrypt_inode_uses_fs_layer_crypto(const struct inode *inode)
+> +{
+> +	return IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) &&
+> +		!inode->i_crypt_info->ci_inlinecrypt;
+> +}
+> +EXPORT_SYMBOL_GPL(fscrypt_inode_uses_fs_layer_crypto);
 
-Change the type of page_idx to unsigned long, and rename it -- it's
-just a loop counter, not a page index.
+We should use the fscrypt_needs_contents_encryption() helper function which I
+added in v5.6.  I.e.:
 
-Suggested-by: John Hubbard <jhubbard@nvidia.com>
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
----
- mm/readahead.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 8a65d6bd97e0..7ce320854bad 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -163,13 +163,13 @@ void __do_page_cache_readahead(struct address_space *mapping,
- 	struct page *page;
- 	unsigned long end_index;	/* The last page we want to read */
- 	LIST_HEAD(page_pool);
--	int page_idx;
- 	loff_t isize = i_size_read(inode);
- 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
- 	struct readahead_control rac = {
- 		.mapping = mapping,
- 		.file = filp,
- 	};
-+	unsigned long i;
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index 72692366795aa9..36510802a3665a 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -32,7 +32,7 @@ void fscrypt_select_encryption_impl(struct fscrypt_info *ci)
+ 	struct super_block *sb = inode->i_sb;
  
- 	if (isize == 0)
+ 	/* The file must need contents encryption, not filenames encryption */
+-	if (!S_ISREG(inode->i_mode))
++	if (!fscrypt_needs_contents_encryption(inode))
  		return;
-@@ -179,8 +179,8 @@ void __do_page_cache_readahead(struct address_space *mapping,
- 	/*
- 	 * Preallocate as many pages as we will need.
- 	 */
--	for (page_idx = 0; page_idx < nr_to_read; page_idx++) {
--		pgoff_t page_offset = index + page_idx;
-+	for (i = 0; i < nr_to_read; i++) {
-+		pgoff_t page_offset = index + i;
  
- 		if (page_offset > end_index)
- 			break;
-@@ -201,7 +201,7 @@ void __do_page_cache_readahead(struct address_space *mapping,
- 			break;
- 		page->index = page_offset;
- 		list_add(&page->lru, &page_pool);
--		if (page_idx == nr_to_read - lookahead_size)
-+		if (i == nr_to_read - lookahead_size)
- 			SetPageReadahead(page);
- 		rac._nr_pages++;
- 	}
--- 
-2.25.0
-
+ 	/* blk-crypto must implement the needed encryption algorithm */
+@@ -148,7 +148,7 @@ void fscrypt_destroy_inline_crypt_key(struct fscrypt_prepared_key *prep_key)
+  */
+ bool fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+ {
+-	return IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) &&
++	return fscrypt_needs_contents_encryption(inode) &&
+ 		inode->i_crypt_info->ci_inlinecrypt;
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_inode_uses_inline_crypto);
+@@ -164,7 +164,7 @@ EXPORT_SYMBOL_GPL(fscrypt_inode_uses_inline_crypto);
+  */
+ bool fscrypt_inode_uses_fs_layer_crypto(const struct inode *inode)
+ {
+-	return IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) &&
++	return fscrypt_needs_contents_encryption(inode) &&
+ 		!inode->i_crypt_info->ci_inlinecrypt;
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_inode_uses_fs_layer_crypto);
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 2a84131ab270fd..1d9810eb88b113 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -528,7 +528,7 @@ static inline bool fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+ 
+ static inline bool fscrypt_inode_uses_fs_layer_crypto(const struct inode *inode)
+ {
+-	return IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode);
++	return fscrypt_needs_contents_encryption(inode);
+ }
+ 
+ static inline void fscrypt_set_bio_crypt_ctx(struct bio *bio,
 
 
 _______________________________________________
