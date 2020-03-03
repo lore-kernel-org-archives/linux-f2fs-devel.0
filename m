@@ -2,79 +2,76 @@ Return-Path: <SRS0=2eK0=4U=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F420C3F2D1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2020 01:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1336EC3F2CD
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2020 08:57:33 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1C5D6217F4;
-	Tue,  3 Mar 2020 01:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id DD2DB20842
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Mar 2020 08:57:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hYSiSy2s";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Q6U6Ucfo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C5D6217F4
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="f9UvQnIW";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="N7RD6/IT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2DB20842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1j8wiG-0007xR-61; Tue, 03 Mar 2020 01:51:12 +0000
+	id 1j93Mq-0001Qh-3J; Tue, 03 Mar 2020 08:57:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1j8wiE-0007xK-CV
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Mar 2020 01:51:10 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1j93Mo-0001QV-9E
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Mar 2020 08:57:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iVgrgvdk/sIAluO6LAkr4M4izIPRt6xK2gxhb3EuUmI=; b=hYSiSy2sAnQbHMndfYv4SKzlAO
- 77yUOtwKSFjUkw/7HHvHC53lJbQwMODg6veyStoAYoc/05LiI45+oMWY6LRbhWtWiGtC/S6pzTWxq
- dQGCjgAG+oJJuIvy5zQAbYl+AO48JywN+nVFFLRl2iPOoz83ZeCf3+BzFCXwoFa7XNY0=;
+ bh=QLaGdsS+TbfKUifCXg77+ckABdHrJDsQU7RuFZf71AY=; b=f9UvQnIWL4q7o/4DB5FaLUHq9Q
+ zz2JF4mQ+TKy/F/AAQxOOaGczjEeB8tpyLEmBM/DV4tLN1/Tk+bN1IO417zizKtSQiVgHJ2ZpkqRN
+ SX7uBS+XrwE7jE7xrgMQ5Pug7v+6EmR3OutFJQiS2ChP/qU0D0473Ueosx/aOaZBQIsE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=iVgrgvdk/sIAluO6LAkr4M4izIPRt6xK2gxhb3EuUmI=; b=Q6U6UcfoXYXV6ieQYvTN37Dxkd
- gQUxU4BBkAr7Reyf2dYjQfTjJiJq/HSrTFw9OtbQaGKDVrKmOyNje5cO+uGumLXQZH7ZU068osUsf
- 0Ktt9MLcvhL50DWTLoZwIP7z0EQMONelPifPVsvV9781ApOA3XPNDXeuOyhIzCeaFVDQ=;
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=QLaGdsS+TbfKUifCXg77+ckABdHrJDsQU7RuFZf71AY=; b=N7RD6/IT77m//JurqtSWzqIis7
+ okFMSiIOdv7dWnzubJmHTunlmAUgYSCr/BN46y9Rfwg3a7cjkXbKkfKgTWUFRP7NoSGxyWiX4LvoV
+ uO1NQWw09g6ADbg87OyL1zNvgJSJH/M3Dk65SOIS/fy1bf9Hpvf+NFD8B8F/bGp39Q4Q=;
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1j8wiA-00F7Mt-Km
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Mar 2020 01:51:10 +0000
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id D4F04A19C6B7C1797461;
- Tue,  3 Mar 2020 09:50:57 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 3 Mar 2020
- 09:50:53 +0800
-To: Eric Biggers <ebiggers@kernel.org>
-References: <20200228111456.11311-1-yuchao0@huawei.com>
- <20200302175014.GA98133@gmail.com>
+ id 1j93Mm-00BmlU-Np
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Mar 2020 08:57:30 +0000
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id C58212A6F2CE941394F8;
+ Tue,  3 Mar 2020 16:57:20 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 3 Mar 2020 16:57:10 +0800
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <efce624c-1247-4519-576b-fd60c0a03cb0@huawei.com>
-Date: Tue, 3 Mar 2020 09:50:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+To: <jaegeuk@kernel.org>
+Date: Tue, 3 Mar 2020 16:57:07 +0800
+Message-ID: <20200303085707.45104-2-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20200303085707.45104-1-yuchao0@huawei.com>
+References: <20200303085707.45104-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20200302175014.GA98133@gmail.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
+X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1j8wiA-00F7Mt-Km
-Subject: Re: [f2fs-dev] [PATCH] f2fs: compress: support zstd compress
- algorithm
+X-Headers-End: 1j93Mm-00BmlU-Np
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: compress: add .{init,
+ destroy}_decompress_ctx callback
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,128 +83,105 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/3/3 1:50, Eric Biggers wrote:
-> On Fri, Feb 28, 2020 at 07:14:56PM +0800, Chao Yu wrote:
->> Add zstd compress algorithm support, use "compress_algorithm=zstd"
->> mountoption to enable it.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  Documentation/filesystems/f2fs.txt |   4 +-
->>  fs/f2fs/Kconfig                    |   9 ++
->>  fs/f2fs/compress.c                 | 151 +++++++++++++++++++++++++++++
->>  fs/f2fs/f2fs.h                     |   2 +
->>  fs/f2fs/super.c                    |   7 ++
->>  include/trace/events/f2fs.h        |   3 +-
->>  6 files changed, 173 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
->> index 4eb3e2ddd00e..b1a66cf0e967 100644
->> --- a/Documentation/filesystems/f2fs.txt
->> +++ b/Documentation/filesystems/f2fs.txt
->> @@ -235,8 +235,8 @@ checkpoint=%s[:%u[%]]     Set to "disable" to turn off checkpointing. Set to "en
->>                         hide up to all remaining free space. The actual space that
->>                         would be unusable can be viewed at /sys/fs/f2fs/<disk>/unusable
->>                         This space is reclaimed once checkpoint=enable.
->> -compress_algorithm=%s  Control compress algorithm, currently f2fs supports "lzo"
->> -                       and "lz4" algorithm.
->> +compress_algorithm=%s  Control compress algorithm, currently f2fs supports "lzo",
->> +                       "lz4" and "zstd" algorithm.
->>  compress_log_size=%u   Support configuring compress cluster size, the size will
->>                         be 4KB * (1 << %u), 16KB is minimum size, also it's
->>                         default size.
->> diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
->> index f0faada30f30..bb68d21e1f8c 100644
->> --- a/fs/f2fs/Kconfig
->> +++ b/fs/f2fs/Kconfig
->> @@ -118,3 +118,12 @@ config F2FS_FS_LZ4
->>  	default y
->>  	help
->>  	  Support LZ4 compress algorithm, if unsure, say Y.
->> +
->> +config F2FS_FS_ZSTD
->> +	bool "ZSTD compression support"
->> +	depends on F2FS_FS_COMPRESSION
->> +	select ZSTD_COMPRESS
->> +	select ZSTD_DECOMPRESS
->> +	default y
->> +	help
->> +	  Support ZSTD compress algorithm, if unsure, say Y.
->> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
->> index bd3ea01db448..c8e1175eaf4e 100644
->> --- a/fs/f2fs/compress.c
->> +++ b/fs/f2fs/compress.c
->> @@ -11,6 +11,7 @@
->>  #include <linux/backing-dev.h>
->>  #include <linux/lzo.h>
->>  #include <linux/lz4.h>
->> +#include <linux/zstd.h>
->>  
->>  #include "f2fs.h"
->>  #include "node.h"
->> @@ -291,6 +292,151 @@ static const struct f2fs_compress_ops f2fs_lz4_ops = {
->>  };
->>  #endif
->>  
->> +#ifdef CONFIG_F2FS_FS_ZSTD
->> +#define F2FS_ZSTD_DEFAULT_CLEVEL	1
->> +
->> +static int zstd_init_compress_ctx(struct compress_ctx *cc)
->> +{
->> +	return 0;
->> +}
->> +
->> +static void zstd_destroy_compress_ctx(struct compress_ctx *cc)
->> +{
->> +}
->> +
->> +static int zstd_compress_pages(struct compress_ctx *cc)
->> +{
->> +	ZSTD_parameters params;
->> +	ZSTD_CStream *stream;
->> +	ZSTD_inBuffer inbuf;
->> +	ZSTD_outBuffer outbuf;
->> +	void *workspace;
->> +	unsigned int workspace_size;
->> +	int src_size = cc->rlen;
->> +	int dst_size = src_size - PAGE_SIZE - COMPRESS_HEADER_SIZE;
->> +	int ret;
->> +
->> +	params = ZSTD_getParams(F2FS_ZSTD_DEFAULT_CLEVEL, src_size, 0);
->> +	workspace_size = ZSTD_CStreamWorkspaceBound(params.cParams);
->> +
->> +	workspace = f2fs_kvmalloc(F2FS_I_SB(cc->inode),
->> +					workspace_size, GFP_NOFS);
->> +	if (!workspace)
->> +		return -ENOMEM;
->> +
->> +	stream = ZSTD_initCStream(params, 0,
->> +					workspace, workspace_size);
-> 
-> Why is this allocating the memory for every compression operation, instead of
-> ahead of time in ->init_compress_ctx()?
+Add below two callback interfaces in struct f2fs_compress_ops:
 
-Actually, zstd decompression flow needs workspace like its compression flow,
-however I realized that we don't have related callback interfaces in decompress
-path, so I just add all steps of {,de}compression into .{,de}compress_pages()
-functions.
+	int (*init_decompress_ctx)(struct decompress_io_ctx *dic);
+	void (*destroy_decompress_ctx)(struct decompress_io_ctx *dic);
 
-In order to not break callback function fwk of compression, how about adding
-{init,destroy}_decompress_ctx() callback interfaces, and relocating
-initialization and destroy step into correct callback functions?
+Which will be used by zstd compress algorithm later.
 
-Thanks,
+In addition, this patch adds callback function pointer check, so that
+specified algorithm can avoid defining unneeded functions.
 
-> 
-> - Eric
-> .
-> 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/compress.c | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index b373102ed4af..6688fe091281 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -20,6 +20,8 @@ struct f2fs_compress_ops {
+ 	int (*init_compress_ctx)(struct compress_ctx *cc);
+ 	void (*destroy_compress_ctx)(struct compress_ctx *cc);
+ 	int (*compress_pages)(struct compress_ctx *cc);
++	int (*init_decompress_ctx)(struct decompress_io_ctx *dic);
++	void (*destroy_decompress_ctx)(struct decompress_io_ctx *dic);
+ 	int (*decompress_pages)(struct decompress_io_ctx *dic);
+ };
+ 
+@@ -334,9 +336,11 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
+ 	trace_f2fs_compress_pages_start(cc->inode, cc->cluster_idx,
+ 				cc->cluster_size, fi->i_compress_algorithm);
+ 
+-	ret = cops->init_compress_ctx(cc);
+-	if (ret)
+-		goto out;
++	if (cops->init_compress_ctx) {
++		ret = cops->init_compress_ctx(cc);
++		if (ret)
++			goto out;
++	}
+ 
+ 	max_len = COMPRESS_HEADER_SIZE + cc->clen;
+ 	cc->nr_cpages = DIV_ROUND_UP(max_len, PAGE_SIZE);
+@@ -398,7 +402,8 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
+ 		cc->cpages[i] = NULL;
+ 	}
+ 
+-	cops->destroy_compress_ctx(cc);
++	if (cops->destroy_compress_ctx)
++		cops->destroy_compress_ctx(cc);
+ 
+ 	cc->nr_cpages = nr_cpages;
+ 
+@@ -418,7 +423,8 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
+ 	kfree(cc->cpages);
+ 	cc->cpages = NULL;
+ destroy_compress_ctx:
+-	cops->destroy_compress_ctx(cc);
++	if (cops->destroy_compress_ctx)
++		cops->destroy_compress_ctx(cc);
+ out:
+ 	trace_f2fs_compress_pages_end(cc->inode, cc->cluster_idx,
+ 							cc->clen, ret);
+@@ -452,10 +458,16 @@ void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity)
+ 		goto out_free_dic;
+ 	}
+ 
++	if (cops->init_decompress_ctx) {
++		ret = cops->init_decompress_ctx(dic);
++		if (ret)
++			goto out_free_dic;
++	}
++
+ 	dic->rbuf = vmap(dic->tpages, dic->cluster_size, VM_MAP, PAGE_KERNEL);
+ 	if (!dic->rbuf) {
+ 		ret = -ENOMEM;
+-		goto out_free_dic;
++		goto destroy_decompress_ctx;
+ 	}
+ 
+ 	dic->cbuf = vmap(dic->cpages, dic->nr_cpages, VM_MAP, PAGE_KERNEL_RO);
+@@ -478,6 +490,9 @@ void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity)
+ 	vunmap(dic->cbuf);
+ out_vunmap_rbuf:
+ 	vunmap(dic->rbuf);
++destroy_decompress_ctx:
++	if (cops->destroy_decompress_ctx)
++		cops->destroy_decompress_ctx(dic);
+ out_free_dic:
+ 	if (!verity)
+ 		f2fs_decompress_end_io(dic->rpages, dic->cluster_size,
+-- 
+2.18.0.rc1
+
 
 
 _______________________________________________
