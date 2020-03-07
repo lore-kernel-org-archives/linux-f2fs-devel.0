@@ -2,76 +2,110 @@ Return-Path: <SRS0=k77w=4Y=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D106DC10DCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  7 Mar 2020 02:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A32C10F25
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  7 Mar 2020 02:36:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9EDFE206CC;
-	Sat,  7 Mar 2020 02:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 45D34206CC
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  7 Mar 2020 02:36:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fEzQXwhL";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Myq/Ub13"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EDFE206CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="cklOnTx1";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="UjfaNg40";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KP2aAdg5";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="fyzf/Jub"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D34206CC
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
-	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jAOm7-0003EC-S6; Sat, 07 Mar 2020 02:01:11 +0000
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1jAOm6-0003Dz-CZ
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Mar 2020 02:01:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=H/NDT5ty+VhGKKSqgCdILAzSSI1bGo3X7VZZq00+MIw=; b=fEzQXwhLCfNY77gG+KlDfudsDY
- plmU73bHd06gZQHVCPVNM/DWdJT7LTxgYrBTfSENpgHta9WJPREgyBBYbOL6EqTOx5g847smdSG3W
- 2V61puMVJQmydotASNx3tGhu1rBrZA28yUbcE7dlmrRhbwiGpSQ/Jc/FJF5wjwqa7PsE=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=eiUdyiweMQER/m8EeBo2uMwfpgzcXkYXV0AskqUZBrY=; b=cklOnTx1oX8/oj9Um/YMG381t
+	SegclJ8vtqUZSO8Dpg01qyxMdio1VomS1nZql8D48p3QaOawoOlntUvGpk3wvnvbNh/bbuzoRcIY7
+	b8T7lRrXxRt2SmMzTtiHXJTmwZ889aTMnewPlCxDn6DuVPgkSHzSSJsQIteE3TXgJxw4Q=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
+	id 1jAPKV-0005X6-Rl; Sat, 07 Mar 2020 02:36:43 +0000
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <3swhjXgYKAEop304qzs00sxq.o0y@flex--drosen.bounces.google.com>)
+ id 1jAPKU-0005Wu-TX
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Mar 2020 02:36:42 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
+ Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=upHdbTD180chm+zVZgEnvZGj206fX6ERxiKApi6jZ8Y=; b=UjfaNg40LSOOj9qdrAKBPym7N
+ 1A9auyeAeBqoIxyzNxQfvZkhDO/vaW7ezEY4mer+zURnGe8NoaspzKFo+wwjqIQmvdNsQcmzdkyYA
+ +dmjCvwL3qT2gKLM9oWjxOhwqAfmR1dqtKjIdAw+tefgLrP4kBKNDnW0QlMEiDTU5ej7o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=H/NDT5ty+VhGKKSqgCdILAzSSI1bGo3X7VZZq00+MIw=; b=Myq/Ub13Jisbj6zpw7deG4/c8A
- sOhLg36I1OlvpCnHn7emBQmbFGqNow72yqhl60e81nPNFfa/kbmRNcA6Om7Cj5gj9bpTSZG1z82aP
- pCLbS7a4kIYzI3Fjeyezn1iB4OoxZwUlkeKALQ5w4CwEdP+BSv/ydTiQeMy7+VnyN4F4=;
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
+ bh=upHdbTD180chm+zVZgEnvZGj206fX6ERxiKApi6jZ8Y=; b=KP2aAdg5xuIc9xAI7y/1VIxNEh
+ coeh9d9ua7zdIY7nBdd0WBquyr6pmVQetaCTh4N0e31cOLrPEF9D5sPjf+bcO7kBBdyvLBWvsfsNr
+ 23x2SzadRcIs7m3onPW8pe44Tkjx+TaJHEHXnNVdl7phkfwMmUUbpNlQNWvspwg5wfBw=;
+Received: from mail-pg1-f202.google.com ([209.85.215.202])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jAOm1-000tZV-FV
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Mar 2020 02:01:10 +0000
-Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net
- [72.93.95.157]) (authenticated bits=0)
- (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 02720trO015135
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 6 Mar 2020 21:00:55 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 4FE0242045B; Fri,  6 Mar 2020 21:00:54 -0500 (EST)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>
-Date: Fri,  6 Mar 2020 21:00:43 -0500
-Message-Id: <20200307020043.60118-1-tytso@mit.edu>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200306004555.GB225345@gmail.com>
-References: <20200306004555.GB225345@gmail.com>
-MIME-Version: 1.0
-X-Headers-End: 1jAOm1-000tZV-FV
-Subject: [f2fs-dev] [PATCH] writeback: avoid double-writing the inode on a
- lazytime expiration
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1jAPKT-000uCR-O6
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Mar 2020 02:36:42 +0000
+Received: by mail-pg1-f202.google.com with SMTP id b130so2525161pga.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 06 Mar 2020 18:36:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
+ h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+ :cc; bh=upHdbTD180chm+zVZgEnvZGj206fX6ERxiKApi6jZ8Y=;
+ b=fyzf/Jubz9HkaxalGwR7GV/FnVvkkR3z+BL3xHAPV78dlk0xTqKWjGufJKSNBjySMS
+ lJ6l9J8ZWaIMU4nYnJuLS0JP2KVJdtg58knvL2LZxAJig1d4nz0Pc8hN4CdjtrkPUh/L
+ yGigvrVnnRAK1tYt/TyWTJZE14KygnZc+/ePsCWL7e5XM7ELayZaGTwE/bQ7cBu7vtFD
+ 6vSaxno8O+IO2yfKMw1SR77PmzhVPfUzkkgLsP7YIsL4mg+FKh+FCg7gM4axMP3W3rB0
+ QJnTC98cimALDDZc7nEEDInaKRP29kqGalZn+2xetw6c5m0DBWt7tUDiZlaNbgCzCprP
+ TPUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+ :references:subject:from:to:cc;
+ bh=upHdbTD180chm+zVZgEnvZGj206fX6ERxiKApi6jZ8Y=;
+ b=EThHppqQIWi9P2pXXVstqwmmnIQYXWTkG01ZuLq12xmUOw2sDmmeDWVoNj30/1e9le
+ JoUnsNREZL7T7kCl1C2uJMJo9sa2d6jezgmNR6FNTVPlYsj/poE7AD8e8TCO5giRqb08
+ SkgqULeWwn/POfBmy7WwevTdAf/ppA5UXGmsrRfLgZxj1FlzOWHdSP5qm1S6aSkzf2AE
+ w1SkjInjoZwjZRrX7ro/i+Zqlqw7POJAfHEG7I6U3Sqw8SXUWADnE5NJcpTZcytV+NeE
+ cv8p/KBkB8Eaa76kyfQ1aije662VS3S0RSe1jY9fHiMagOpjxGENHWWMftHQJRJa+yLH
+ HNQw==
+X-Gm-Message-State: ANhLgQ2x70Hqx8/sw6Xm4bN2rseWVLdPHaENv7n9unEIgR66GHwkr03Z
+ tyEQ9gzPuRO5Q4ln3BbW2kqbLpayCOw=
+X-Google-Smtp-Source: ADFU+vuXQ5IvQYoUUL0swPdg+x5Y+MMF/JrTRrg98tDU5t1A35z2Nv6UucYAIwBa/D0lgjJ2OblQhk4x968=
+X-Received: by 2002:a63:f447:: with SMTP id p7mr6066483pgk.326.1583548595595; 
+ Fri, 06 Mar 2020 18:36:35 -0800 (PST)
+Date: Fri,  6 Mar 2020 18:36:04 -0800
+In-Reply-To: <20200307023611.204708-1-drosen@google.com>
+Message-Id: <20200307023611.204708-2-drosen@google.com>
+Mime-Version: 1.0
+References: <20200307023611.204708-1-drosen@google.com>
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+To: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org, 
+ Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+ linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>, 
+ linux-fscrypt@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Richard Weinberger <richard@nod.at>
+X-Headers-End: 1jAPKT-000uCR-O6
+Subject: [f2fs-dev] [PATCH v8 1/8] unicode: Add utf8_casefold_hash
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,55 +117,86 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Eric Biggers <ebiggers@kernel.org>,
- Ext4 Developers List <linux-ext4@vger.kernel.org>,
- Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net
+From: Daniel Rosenberg via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Daniel Rosenberg <drosen@google.com>
+Cc: Daniel Rosenberg <drosen@google.com>, linux-doc@vger.kernel.org,
+ kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>,
+ linux-kernel@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+ linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In the case that an inode has dirty timestamp for longer than the
-lazytime expiration timeout (or if all such inodes are being flushed
-out due to a sync or syncfs system call), we need to inform the file
-system that the inode is dirty so that the inode's timestamps can be
-copied out to the on-disk data structures.  That's because if the file
-system supports lazytime, it will have ignored the dirty_inode(inode,
-I_DIRTY_TIME) notification when the timestamp was modified in memory.q
+This adds a case insensitive hash function to allow taking the hash
+without needing to allocate a casefolded copy of the string.
 
-Previously, this was accomplished by calling mark_inode_dirty_sync(),
-but that has the unfortunate side effect of also putting the inode the
-writeback list, and that's not necessary in this case, since we will
-immediately call write_inode() afterwards.
-
-Eric Biggers noticed that this was causing problems for fscrypt after
-the key was removed[1].
-
-[1] https://lore.kernel.org/r/20200306004555.GB225345@gmail.com
-
-Reported-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
 ---
- fs/fs-writeback.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/unicode/utf8-core.c  | 23 ++++++++++++++++++++++-
+ include/linux/unicode.h |  3 +++
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 76ac9c7d32ec..32101349ba97 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1504,8 +1504,9 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index 2a878b739115d..90656b9980720 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -6,6 +6,7 @@
+ #include <linux/parser.h>
+ #include <linux/errno.h>
+ #include <linux/unicode.h>
++#include <linux/stringhash.h>
  
- 	spin_unlock(&inode->i_lock);
+ #include "utf8n.h"
  
--	if (dirty & I_DIRTY_TIME)
--		mark_inode_dirty_sync(inode);
-+	/* This was a lazytime expiration; we need to tell the file system */
-+	if (dirty & I_DIRTY_TIME_EXPIRED && inode->i_sb->s_op->dirty_inode)
-+		inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_TIME_EXPIRED);
- 	/* Don't write the inode if only I_DIRTY_PAGES was set */
- 	if (dirty & ~I_DIRTY_PAGES) {
- 		int err = write_inode(inode, wbc);
+@@ -122,9 +123,29 @@ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
+ 	}
+ 	return -EINVAL;
+ }
+-
+ EXPORT_SYMBOL(utf8_casefold);
+ 
++int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
++		       struct qstr *str)
++{
++	const struct utf8data *data = utf8nfdicf(um->version);
++	struct utf8cursor cur;
++	int c;
++	unsigned long hash = init_name_hash(salt);
++
++	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
++		return -EINVAL;
++
++	while ((c = utf8byte(&cur))) {
++		if (c < 0)
++			return c;
++		hash = partial_name_hash((unsigned char)c, hash);
++	}
++	str->hash = end_name_hash(hash);
++	return 0;
++}
++EXPORT_SYMBOL(utf8_casefold_hash);
++
+ int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
+ 		   unsigned char *dest, size_t dlen)
+ {
+diff --git a/include/linux/unicode.h b/include/linux/unicode.h
+index 990aa97d80496..74484d44c7554 100644
+--- a/include/linux/unicode.h
++++ b/include/linux/unicode.h
+@@ -27,6 +27,9 @@ int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
+ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
+ 		  unsigned char *dest, size_t dlen);
+ 
++int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
++		       struct qstr *str);
++
+ struct unicode_map *utf8_load(const char *version);
+ void utf8_unload(struct unicode_map *um);
+ 
 -- 
-2.24.1
+2.25.1.481.gfbce0eb801-goog
 
 
 
