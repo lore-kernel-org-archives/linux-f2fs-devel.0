@@ -7,68 +7,71 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7822C3F2C6
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2020 12:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FCDC18E5A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2020 12:50:40 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A4DAE2468E
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2020 12:50:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 673C72468F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2020 12:50:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="LsitxhCB";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TfJjZEDR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4DAE2468E
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DlDb9q1M";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ZDHbmmZ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 673C72468F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jBeLG-0005Wn-Ep; Tue, 10 Mar 2020 12:50:38 +0000
+	id 1jBeLI-00043l-3D; Tue, 10 Mar 2020 12:50:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jBeLD-0005WZ-QM
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Mar 2020 12:50:35 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jBeLE-00043N-Bc
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Mar 2020 12:50:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oUDYH9xcBaWZEPkaBWGOKb5RKGBnMoe1ub4/FfRspLU=; b=LsitxhCBLChYoCVNP+y9aCSRhO
- kiFz8zp4a9RVpsS3oRXyuR5B3a2YsAS2V//PNCFuNPiTfePZVtGGU5Oabfkk0hjzC1HcVOTOi0lO+
- AmaSiT2BaiRKN/ueoiuoZXU9yku5oP28lrmRqEpcOWaCIrg11EWOmahkHtNeEAikSOL8=;
+ bh=fFbzXCLn5Uy+cHigUHuh5OOsIc8H4BasSOGV9QxitcE=; b=DlDb9q1M6jDzP0JIhbC30Iz5X2
+ c6PclrOukS3hYbBBUMQelStZGY9cihOhitiLjyR8OwAZF3AZrYmKLSq2LAua9MHQC0rqjFCAqSMIe
+ SKr8NDq8zlyaCnbvoKbpw8GbP/cEc9GT0rF47mgQaG22ZmuepUpA+lsopQtDUHkg+DwU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=oUDYH9xcBaWZEPkaBWGOKb5RKGBnMoe1ub4/FfRspLU=; b=T
- fJjZEDRBxZ8ZlKl68Ih0/xaGY008Y5QMsCOieSV6CKMvfkCA493yV0yFYIttOJJG/cL+bgIJVB/NI
- SBW5yF/poVnzqeWMKnLux0EcagT9vKOup1JTVOLMY8zTirXTpEJFiS6gG71oDdpaLTOPoFjWgTmnR
- bFFJkPiDUfzG9vmQ=;
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=fFbzXCLn5Uy+cHigUHuh5OOsIc8H4BasSOGV9QxitcE=; b=ZDHbmmZ7v79Bs/SalJk+AG9HxF
+ 9VS134YBY+gnFsEISYoseJFN2NdP1wKsIguXkGy9bLx52PLuS1upyYLufbhh8GjfnOmVgaXLKHZc/
+ 6wJcBlarIc7zGOMZb/hNUrXhgm/MnR8NlT64mI7tfzX3QFAp/ldlduw25T6DAoGY8t8o=;
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jBeLB-007dBT-Fm
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Mar 2020 12:50:35 +0000
+ id 1jBeLA-00Ec2H-BU
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Mar 2020 12:50:36 +0000
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 81232A850F29D316DF7A;
+ by Forcepoint Email with ESMTP id 85E9838387BF27579734;
  Tue, 10 Mar 2020 20:50:21 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.487.0; Tue, 10 Mar 2020 20:50:11 +0800
+ 14.3.487.0; Tue, 10 Mar 2020 20:50:13 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Tue, 10 Mar 2020 20:50:05 +0800
-Message-ID: <20200310125009.12966-1-yuchao0@huawei.com>
+Date: Tue, 10 Mar 2020 20:50:08 +0800
+Message-ID: <20200310125009.12966-4-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20200310125009.12966-1-yuchao0@huawei.com>
+References: <20200310125009.12966-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jBeLB-007dBT-Fm
-Subject: [f2fs-dev] [PATCH 1/5] f2fs: change default compression algorithm
+X-Headers-End: 1jBeLA-00Ec2H-BU
+Subject: [f2fs-dev] [PATCH 4/5] f2fs: fix to check dirty pages during
+ compressed inode conversion
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,27 +88,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use LZ4 as default compression algorithm, as compared to LZO, it shows
-almost the same compression ratio and much better decompression speed.
+Compressed cluster can be generated during dirty data writeback,
+if there is dirty pages on compressed inode, it needs to disable
+converting compressed inode to non-compressed one.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/f2fs.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index db3a63f7c769..ebffe7aa08ee 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1577,7 +1577,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	F2FS_OPTION(sbi).test_dummy_encryption = false;
- 	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
- 	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
--	F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZO;
-+	F2FS_OPTION(sbi).compress_algorithm = COMPRESS_LZ4;
- 	F2FS_OPTION(sbi).compress_log_size = MIN_COMPRESS_LOG_SIZE;
- 	F2FS_OPTION(sbi).compress_ext_cnt = 0;
- 	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5ba6c2382c32..76d2a99520bf 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3854,6 +3854,8 @@ static inline u64 f2fs_disable_compressed_file(struct inode *inode)
+ 
+ 	if (!f2fs_compressed_file(inode))
+ 		return 0;
++	if (get_dirty_pages(inode))
++		return 1;
+ 	if (fi->i_compr_blocks)
+ 		return fi->i_compr_blocks;
+ 
 -- 
 2.18.0.rc1
 
