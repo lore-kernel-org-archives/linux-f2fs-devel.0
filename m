@@ -1,78 +1,77 @@
-Return-Path: <SRS0=2a+f=42=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=yDIE=43=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2003CC10F25
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Mar 2020 21:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D96EC18E5A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2020 12:50:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E69E82146E;
-	Mon,  9 Mar 2020 21:19:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3AF632468F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Mar 2020 12:50:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GO8hDC0N";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lbF2IUXf";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2hf7h+w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69E82146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="TECEm8us";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="I5MPMqhQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AF632468F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jBPoB-0005Jw-6k; Mon, 09 Mar 2020 21:19:31 +0000
+	id 1jBeLE-00043E-1Z; Tue, 10 Mar 2020 12:50:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1jBPo9-0005Jo-BE
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Mar 2020 21:19:29 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jBeLB-000436-FZ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Mar 2020 12:50:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=f8bJMYyi08bN48rTof4l30gDgzsPXe6U71jm+MXJ+bQ=; b=GO8hDC0NAEYV0Re5OhfhdW2nfo
- bswIJrMtvRAgE7Ho8eTzUxErZPJuQN6do56vMaxPCbh9vrFKAGHoFenrqgPqyH+p5JSTjuAiinlEj
- D39pIbhpUzqsItFHgUi3uhbAktbqQ/YCQNTYXRfM3GxQcZJDp601RYEQ5wzszQiSdRhI=;
+ bh=2dBPV9JGIHwg7gnltBTQwFNk6MLEdcz2GRE6JjSG7Ys=; b=TECEm8usmqycmOxhhNFoDEnONQ
+ F1vj2uTa/7mdeKrSt40LhUNFs/uZHc4ixUP9BEn6FQvtW8+9eHYIMs50wPskNtJyv9uB+FhAqTmRB
+ 1sarm9E9oxfNgZsBkPg0lNTFn5kvfgXj3Y2tFFAHZaHokDym9LdkuJ38YTWngRkQntsU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=f8bJMYyi08bN48rTof4l30gDgzsPXe6U71jm+MXJ+bQ=; b=l
- bF2IUXfja1soUJpLYBJ21swfa0VRFzdBTmGIE89hXYieHq9Dg+uxk+j0B5L/eHy7zb0DEBeW0i5s5
- uS7yYDVgFFTaRWrp0KaGE1ZpdGpBFi9WehR2VHnwKcDVSAuuZnSrchJQPt3v7UVFkmpIHiWi8/ieC
- djUd7K1oQrr3lp6k=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=2dBPV9JGIHwg7gnltBTQwFNk6MLEdcz2GRE6JjSG7Ys=; b=I5MPMqhQjAePPnZkgbt2aXt2kU
+ qYPbtybYBgS5lGjtEJnp6L9xrpNEb0c5NeKBxHWR7i8SUwmfL/YU19vLmaDBciF3ZeimLQ/EHk9Ao
+ 1tsBYe8vC3TLgdr5vbCSDiqwM/enqFryIXpS73bijprejtW0HblmaGr7vdoNTmaMWN5c=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jBPo8-00DxGO-Aa
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Mar 2020 21:19:29 +0000
-Received: from localhost (unknown [104.132.1.66])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 785E32146E;
- Mon,  9 Mar 2020 21:19:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1583788759;
- bh=r/0ddh1RpQ0Kb/e2Qr7Lpst8p3Ed85ZZkGCtZ+74m28=;
- h=From:To:Cc:Subject:Date:From;
- b=D2hf7h+wGgtGEZX5B95XlfwL3//1UoqILs+62AOX4Id5STA3IUQOpmCyeDdtOqk1q
- I7Crl0/dViJwvjn41e8I65Pxvns2eR66aG3LoKCWssrtTM4z69+gHZTgfIV9aaJpN/
- tUyJgsR/CQ6mkSCzR8bJh2A95QxDZq2RLPgrKo1U=
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon,  9 Mar 2020 14:19:18 -0700
-Message-Id: <20200309211918.159991-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+ id 1jBeL9-007dBU-9M
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Mar 2020 12:50:33 +0000
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id AC8165B52D5AA9F7CE93;
+ Tue, 10 Mar 2020 20:50:21 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.487.0; Tue, 10 Mar 2020 20:50:13 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Tue, 10 Mar 2020 20:50:07 +0800
+Message-ID: <20200310125009.12966-3-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20200310125009.12966-1-yuchao0@huawei.com>
+References: <20200310125009.12966-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-X-Headers-End: 1jBPo8-00DxGO-Aa
-Subject: [f2fs-dev] [PATCH] fsck.f2fs: report real wall time
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jBeL9-007dBU-9M
+Subject: [f2fs-dev] [PATCH 3/5] f2fs: fix to account compressed inode
+ correctly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,62 +83,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Wei Wang <wvw@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Wei Wang <wvw@google.com>
+stat_inc_compr_inode() needs to check FI_COMPRESSED_FILE flag, so
+in f2fs_disable_compressed_file(), we should call stat_dec_compr_inode()
+before clearing FI_COMPRESSED_FILE flag.
 
-clock_t time is per-process time, which is not wall time. For example,
-if the CPU is shared by other processes, clock_t time may advance slower
-than wall clock. On the other hand, if the current process is
-multithreaded and more than one execution core is available, clock_t
-time may advance faster than wall clock.
-
-this CL changes it to use CLOCK_BOOTTIME (Linux-specific)
-
-Signed-off-by: Wei Wang <wvw@google.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fsck/main.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fsck/main.c b/fsck/main.c
-index a6fd970..c481ce4 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -801,11 +801,18 @@ static int do_sload(struct f2fs_sb_info *sbi)
- 	return f2fs_sload(sbi);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index bc45f738e3e0..5ba6c2382c32 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3858,8 +3858,8 @@ static inline u64 f2fs_disable_compressed_file(struct inode *inode)
+ 		return fi->i_compr_blocks;
+ 
+ 	fi->i_flags &= ~F2FS_COMPR_FL;
+-	clear_inode_flag(inode, FI_COMPRESSED_FILE);
+ 	stat_dec_compr_inode(inode);
++	clear_inode_flag(inode, FI_COMPRESSED_FILE);
+ 	return 0;
  }
  
-+static u64 get_boottime_ns() {
-+	struct timespec t;
-+	t.tv_sec = t.tv_nsec = 0;
-+	clock_gettime(CLOCK_BOOTTIME, &t);
-+	return (u64)t.tv_sec * 1000000000LL + t.tv_nsec;
-+}
-+
- int main(int argc, char **argv)
- {
- 	struct f2fs_sb_info *sbi;
- 	int ret = 0;
--	clock_t start = clock();
-+	u64 start = get_boottime_ns();
- 
- 	f2fs_init_configuration();
- 
-@@ -919,7 +926,7 @@ retry:
- 	if (ret < 0)
- 		return ret;
- 
--	printf("\nDone: %lf secs\n", (clock() - start) / (double)CLOCKS_PER_SEC);
-+	printf("\nDone: %lf secs\n", (get_boottime_ns() - start) / 1000000000.0);
- 	return 0;
- 
- out_err:
 -- 
-2.25.1.481.gfbce0eb801-goog
+2.18.0.rc1
 
 
 
