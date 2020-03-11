@@ -2,104 +2,82 @@ Return-Path: <SRS0=DrP0=44=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5417C0044D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Mar 2020 17:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DEFC0044D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Mar 2020 17:48:49 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8C01B20734;
-	Wed, 11 Mar 2020 17:46:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id DD31520734;
+	Wed, 11 Mar 2020 17:48:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="WBSlOH3i";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="dOqO9UT6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SniYRJq8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C01B20734
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="dhakg/jX";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WMBhEvhD";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNcHirCX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD31520734
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jC5RL-0007ir-7p; Wed, 11 Mar 2020 17:46:43 +0000
+	id 1jC5TM-0005aU-PJ; Wed, 11 Mar 2020 17:48:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <torvalds@linuxfoundation.org>) id 1jC5RJ-0007id-Ak
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Mar 2020 17:46:41 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1jC5TL-0005aM-8G
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Mar 2020 17:48:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=aJxZbwEp+wlKlGV90QlJ+a4eQ5p+pI1IhjdIHz5JZ4s=; b=WBSlOH3ieeMLNiNkLzdHHHnzaF
- EOfJsL5X3aQwDWEreTywliWQSan/vXujrlEEt0jrs+g7sOV9gE7t6/jYy0oShmdtgh8ppZKi+wcq+
- M3lmS31u4fndTY1EO6wW1qvqjaeXti7QWawWrCkA7b3femmg8nCZhlO9Oq4s6q0GH2P8=;
+ bh=Unly3C3+gr7731ExqEwNqQqD050BoBWzFjgavDaXPrY=; b=dhakg/jX264gXQSLVWRVy0BQb2
+ s1/+my8+F2PXh5aBqG227PiSUMSMlmYSHCkBDMdLRRBm6AmaxFclkVHL71M4kj4lHvfXhjiGNuMy/
+ 49mOVdRS2ydp+6g6rmFoRgGt/aovV6ITDe84fYV5ZN6SMdPScrdVaLbDS24t5jt88uLU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=aJxZbwEp+wlKlGV90QlJ+a4eQ5p+pI1IhjdIHz5JZ4s=; b=dOqO9UT6KxQ2ykltKvB2V/FZA1
- n2Q4AYPKCeSyELTLyA3xL9WSa8B5q4CRV9+nRvnz5DHm2qQ7ouNZt9uolU50sNWirpzY5/fvTV81U
- dYwKkq8jBlzp0rcdCKzHli55oVZibQkGqGsyLXTA/ghUosKMJb3rT1kj6iPmrhuXdR5Q=;
-Received: from mail-ed1-f66.google.com ([209.85.208.66])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jC5RD-008cV9-Fb
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Mar 2020 17:46:41 +0000
-Received: by mail-ed1-f66.google.com with SMTP id ca19so3881544edb.13
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 11 Mar 2020 10:46:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=linux-foundation.org; s=google;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc; bh=aJxZbwEp+wlKlGV90QlJ+a4eQ5p+pI1IhjdIHz5JZ4s=;
- b=SniYRJq8qrMWk118P05M9PetiYL7ODjNp75BvsOcDJIlqRkPD3Jb97yILnYQFVOz3/
- kiJlYw0cMZBed9vrOZnFV+UZBXXysRi52+PxPI+rg/qM/xWIbOjLpjK7O1VzB68ts7iY
- 82PbMl8MtY1FZuEId9Eyj3WPq1fryqn0sIQrc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc;
- bh=aJxZbwEp+wlKlGV90QlJ+a4eQ5p+pI1IhjdIHz5JZ4s=;
- b=tsUDBTeIUzhuoxPcp0fuQL9sZ9QzSmAQtKWUUKpBj9hKyiq3hgBN8UJ6hzri6RerNQ
- 22AYQi/ralrUfHyZqG43PAS0qbDx6RzvafxUpslIJygGPWhFu/Q7WIC6TA5T92OIurwv
- pHBUTjDdL39hOb7XtAeFaRkLNjmvd5pgaVGz9QqJmfeQDLRy+zVbSwJzFI/El+c8vS5/
- TVhX3YwPHa7f4WUyS4fGaNDHIO6IkLteR9ulnkpVGq7/3Be5LLhSbgkVaGAj2cy/p9mz
- 5kwLW1yibBkrSxstDsyrkWH+JPjMxDwDvow3kAhN/nNzOAdqbxx1TEiuytZ40DBhx5Mw
- 6T8Q==
-X-Gm-Message-State: ANhLgQ0mhzsoMsvh8uWVXTMd2NbuJCCXK1v/QCHzRt0G4WMD/Y4aZuq/
- RpOzvRlnkGHydiea6CmXQqVu5tsg2Ew=
-X-Google-Smtp-Source: ADFU+vv3MdzqkgGsPq95XI8vyBSx93spCkr7jFNqYPR22PbwcvZFfPRvPVCN3CDZCp94oeLTFlDQIA==
-X-Received: by 2002:a19:6513:: with SMTP id z19mr2781307lfb.207.1583947257724; 
- Wed, 11 Mar 2020 10:20:57 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com.
- [209.85.167.46])
- by smtp.gmail.com with ESMTPSA id u21sm6722207ljo.4.2020.03.11.10.20.56
- for <linux-f2fs-devel@lists.sourceforge.net>
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 11 Mar 2020 10:20:57 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id b186so2312059lfg.11
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 11 Mar 2020 10:20:56 -0700 (PDT)
-X-Received: by 2002:a05:6512:10cf:: with SMTP id
- k15mr2864358lfg.142.1583947256468; 
- Wed, 11 Mar 2020 10:20:56 -0700 (PDT)
-MIME-Version: 1.0
+ bh=Unly3C3+gr7731ExqEwNqQqD050BoBWzFjgavDaXPrY=; b=WMBhEvhDs8XuFvvjqUaubk0BOH
+ B6lA1jtHSExB1XUF9W/PYf4dj5dZcXs8agP8dvV3u2ZEfRaSPYJiLLqsPgnAY18HKK0wy28R5gfi/
+ zWEWgjPql8MHQvcZGNiPVv5Q+054bhaC5JuS+kxJlRVDPqtzTSCzOGcj8BmPBB3KauIc=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jC5TI-00ForW-4l
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Mar 2020 17:48:47 +0000
+Received: from localhost (unknown [104.132.1.66])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id F1C5B20734;
+ Wed, 11 Mar 2020 17:48:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1583948919;
+ bh=o6cfFMd76vbeZd9f32n4LmEvpTaX32KdbDibeKUu9jU=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=lNcHirCXMuXTRjxAhcBTXM+uJDRIFTyQ7xcnNZSGcV3HXtYu50FYhlFQKyeqt5Qi+
+ ybY2UKmTNNL9si7JuFc72Uusfw+T/EyxehtOUL6ajiw4gusPq9ta9DeeW7dm3u+qzM
+ /B07T/grBRqlow0OJHle22MB4VhyWV3rB0tgMFRw=
+Date: Wed, 11 Mar 2020 10:48:37 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <20200311174837.GA82207@google.com>
 References: <20200311162735.GA152176@google.com>
-In-Reply-To: <20200311162735.GA152176@google.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 11 Mar 2020 10:20:40 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjES_Si7rUtu_EuYu4PDz4OGdA4BWhYGJ=zOoJiELiykw@mail.gmail.com>
-Message-ID: <CAHk-=wjES_Si7rUtu_EuYu4PDz4OGdA4BWhYGJ=zOoJiELiykw@mail.gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1jC5RD-008cV9-Fb
+ <CAHk-=wjES_Si7rUtu_EuYu4PDz4OGdA4BWhYGJ=zOoJiELiykw@mail.gmail.com>
+ <20200311173513.GA261045@google.com>
+ <CAHk-=wiVpnOo9MyOpHxAyuv0ZBGCsW2tMmOtwb+6CX-taKRtKQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiVpnOo9MyOpHxAyuv0ZBGCsW2tMmOtwb+6CX-taKRtKQ@mail.gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Headers-End: 1jC5TI-00ForW-4l
 Subject: Re: [f2fs-dev] [GIT PULL] f2fs for 5.6-rc6
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -118,20 +96,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Mar 11, 2020 at 9:27 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->
-> Sorry for late pull request. Could you please consider this?
+On 03/11, Linus Torvalds wrote:
+> On Wed, Mar 11, 2020 at 10:35 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> >
+> > I actually merged the last three patches which were introduced yesterday.
+> >
+> > Others were merged over a week ago.
+> 
+> No, three were done just before you sent the pull request, and then
+> seven others were done yesterday.
 
-I pulled this, and then immediately unpulled.
+Due to my rebase work. :(
 
-Most (all?) of the commits have been committed basically minutes
-before you sent the pull request.
+> 
+> Yes, the rest were a week ago.
+> 
+> But basically, by rc6, I want to get the warm and fuzzies that the
+> code has been tested, seen review, and isn't some last-minute
+> addition.
 
-That's simply not acceptable. Not when we're in late rc, and with
-hundreds of lines of changes, and when there is no explanation for a
-late pull request that was very very recently generated.
+Ok, I see. Let me prepare them for next merge window.
 
-                Linus
+Thanks,
 
 
 _______________________________________________
