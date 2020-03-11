@@ -2,68 +2,72 @@ Return-Path: <SRS0=DrP0=44=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65084C10F27
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Mar 2020 10:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB00C10F27
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Mar 2020 11:02:05 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 32CDD2146E;
-	Wed, 11 Mar 2020 10:51:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9C3A32146E;
+	Wed, 11 Mar 2020 11:02:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="f38zQ2FR";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HDp88h8k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CDD2146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="b2E/0fO/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fbSZCIzP";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="q1gWRADY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3A32146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xff.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jByxg-0002K1-Oq; Wed, 11 Mar 2020 10:51:40 +0000
+	id 1jBz7l-0003fa-8C; Wed, 11 Mar 2020 11:02:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jByxf-0002Jk-S2
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Mar 2020 10:51:39 +0000
+ (envelope-from <megi@xff.cz>) id 1jBz7i-0003fQ-5H
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Mar 2020 11:02:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/oFEUK5DLxs371jsoy47fxRqEl6LKhcDP6hk+xJsc18=; b=f38zQ2FRs2qvzCbqZDic08TrAG
- XMj+4/xEcd/8QQOQ5IP8CT2LbCFGlCi4KPHhPCC2U8k+lKvMxs47vPw5FB2DO8MD/jE0EoYyFe4Fn
- 809go8pAPSEKZDZegvRaz03JfIWMSVSW4S7dQ+w/lnl7Go29tgxsh30QPCcvoD7hLucQ=;
+ bh=kjmfxj7Tv15/nFpfaXnaGf8uAzheW1BwYzvh2yNtPHw=; b=b2E/0fO/iOTmmqZRqIZWMSeld+
+ gdy0K/j+LNyP68iXTT3e3+ym1vRiDAODCNT0VyjTo1kqlCKQpf4I1B5zr9Ajrc7yY7fURDv03DZCb
+ x9yToObJDMwiwzsRVg4PSFJGnCxuDmJSZUTr6fioS2YWpRrIbmvBVxx0ZjuO8JobOnzc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/oFEUK5DLxs371jsoy47fxRqEl6LKhcDP6hk+xJsc18=; b=HDp88h8kz8f1WljmJDvZT5g55T
- VW82Nt5GiI6+Kf6Tz376UrmxlmTzbDDj9L8+sB89T2jFhOhsoLI9KaN00QGTEwQVtcEjRPp/IMiQJ
- fPz4OmOQ3aIn1hPSn76Kw6qTXcg7UjBKRsDisECPfFp0VS2OFSvqsIj4cEkdhXXdpDTc=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ bh=kjmfxj7Tv15/nFpfaXnaGf8uAzheW1BwYzvh2yNtPHw=; b=fbSZCIzP3F+pAZ7PvFGOqh4O35
+ LdhStNm1VEKFhOvxkbLYcULifEyrdAfmcwH3dAW9ACCpAdfVPE+KtavGEqDBUj/v7T2xvHlHziCqo
+ HqBGxRo4hwGeSc4/bFg5E6Uz68GZL312rKH9YU5IXrV0rqNdl4Zl0u5a3KWZGRmZuqck=;
+Received: from vps.xff.cz ([195.181.215.36])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jByxc-00FUxp-F4
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Mar 2020 10:51:39 +0000
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id B3A2A3473D4233BDE244;
- Wed, 11 Mar 2020 18:51:24 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 11 Mar
- 2020 18:51:24 +0800
-To: =?UTF-8?Q?Ond=c5=99ej_Jirman?= <megi@xff.cz>, Jaegeuk Kim
- <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-f2fs-devel@lists.sourceforge.net>
-References: <20200224143149.au6hvmmfw4ajsq2g@core.my.home>
- <39712bf4-210b-d7b6-cbb1-eb57585d991a@huawei.com>
- <20200225120814.gjm4dby24cs22lux@core.my.home>
+ id 1jBz7g-00FVQ6-DR
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Mar 2020 11:02:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+ t=1583924511; bh=P6XGe2Y/JfrAmfvHCCn6nLtRPNSYzKFV+VBM9UgB3m0=;
+ h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
+ b=q1gWRADYxD/Lk+gYf4sKqAypi6n1psX3dYNFQY3jPlM1bX1aGg2FX2aR8js7PijZg
+ vyfv2Qd3hOrxpv/6cp3zTHZLE+lSj1rHGQMKVQe7jgBg72Dh/JrbsEbQrn/qrA6Kmx
+ r4G7Y0H4P2aIo8QDBjUgBBIxsHLRPconvVLPQTqE=
+Date: Wed, 11 Mar 2020 12:01:50 +0100
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <20200311110150.ajywqttf7pyrpnau@core.my.home>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>,
+ Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20200225120814.gjm4dby24cs22lux@core.my.home>
  <20200225122706.d6pngz62iwyowhym@core.my.home>
  <72d28eba-53b9-b6f4-01a5-45b2352f4285@huawei.com>
  <20200226121143.uag224cqzqossvlv@core.my.home>
@@ -72,17 +76,13 @@ References: <20200224143149.au6hvmmfw4ajsq2g@core.my.home>
  <20200306120203.2p34ezryzxb2jeuk@core.my.home>
  <0ce08d13-ca00-2823-94eb-8274c332a8ef@huawei.com>
  <20200311103309.m52hdut7mt7crt7g@core.my.home>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <c3d53657-7c2a-9d2f-9111-048db6e30a7e@huawei.com>
-Date: Wed, 11 Mar 2020 18:51:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ <c3d53657-7c2a-9d2f-9111-048db6e30a7e@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20200311103309.m52hdut7mt7crt7g@core.my.home>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jByxc-00FUxp-F4
+Content-Disposition: inline
+In-Reply-To: <c3d53657-7c2a-9d2f-9111-048db6e30a7e@huawei.com>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+X-Headers-End: 1jBz7g-00FVQ6-DR
 Subject: Re: [f2fs-dev] Writes stoped working on f2fs after the compression
  support was added
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -96,46 +96,48 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SGksCgpPbiAyMDIwLzMvMTEgMTg6MzMsIE9uZMWZZWogSmlybWFuIHdyb3RlOgo+IEhlbGxvLAo+
-IAo+IE9uIFdlZCwgTWFyIDExLCAyMDIwIGF0IDA1OjAyOjEwUE0gKzA4MDAsIENoYW8gWXUgd3Jv
-dGU6Cj4+IEhpLAo+Pgo+PiBTb3JyeSBmb3IgdGhlIGRlbGF5Lgo+Pgo+PiBPbiAyMDIwLzMvNiAy
-MDowMiwgT25kxZllaiBKaXJtYW4gd3JvdGU6Cj4+PiBIZWxsbywKPj4+Cj4+PiBPbiBUaHUsIEZl
-YiAyNywgMjAyMCBhdCAxMDowMTo1MEFNICswODAwLCBDaGFvIFl1IHdyb3RlOgo+Pj4+IE9uIDIw
-MjAvMi8yNyAyOjA1LCBPbmTFmWVqIEppcm1hbiB3cm90ZToKPj4+Pj4KPj4+Pj4gTm8gaXNzdWUg
-YWZ0ZXIgN2ggdXB0aW1lIGVpdGhlci4gU28gSSBndWVzcyB0aGlzIHBhdGNoIHNvbHZlZCBpdCBm
-b3Igc29tZQo+Pj4+PiByZWFzb24uCj4+Pj4KPj4+PiBJIGhvcGUgc28gYXMgd2VsbCwgSSB3aWxs
-IHNlbmQgYSBmb3JtYWwgcGF0Y2ggZm9yIHRoaXMuCj4+Pgo+Pj4gU28gSSBoYWQgaXQgaGFwcGVu
-IGFnYWluLCBldmVuIHdpdGggdGhlIHBhdGNoZXMuIFRoaXMgdGltZSBpbiBmMmZzX3JlbmFtZTI6
-Cj4+Cj4+IE9vcHMsIGl0IGxvb2tzIHByZXZpb3VzIGZpeCBwYXRjaCBqdXN0IGNvdmVyIHRoZSBy
-b290IGNhdXNlLi4uIDooCj4+Cj4+IERpZCB0aGlzIGlzc3VlIHN0aWxsIGhhcHBlbiBmcmVxdWVu
-dGx5PyBJZiBpdCBpcywgd291bGQgeW91IHBsZWFzZSBhcHBseSBwYXRjaAo+PiB0aGF0IHByaW50
-cyBsb2cgZHVyaW5nIGRvd24vdXAgc2VtYXBob3JlLgo+IAo+IE5vdCBmcmVxdWVudGx5LiBKdXN0
-IG9uY2UuIEkgY291bGRuJ3QgYWZmb3JkIEZTIGNvcnJ1cHRpb24gZHVyaW5nIHVwZGF0ZSwKCkFs
-cmlnaHQuCgo+IHNvIEkgcmV2ZXJ0ZWQgdGhlIGNvbXByZXNzaW9uIHN1cHBvcnQgc2hvcnRseSBh
-ZnRlci4KCldoYXQgSSBjYW4gc2VlIGlzIHRoYXQgZmlsZXN5c3RlbSB3YXMganVzdCBzdHVjaywg
-cmF0aGVyIHRoYW4gaW1hZ2UgYmVjYW1lCmNvcnJ1cHRlZCwgSSBndWVzcyB0aGUgY29uZGl0aW9u
-IGlzIG5vdCBzdWNoIGJhZCwgYW55d2F5LCBpdCdzIG9rYXkgdG8ganVzdApyZXZlcnQgY29tcHJl
-c3Npb24gc3VwcG9ydCBmb3Igbm93IHRvIGtlZXAgZnMgc3RhYmxlLgoKPiAKPiBCdXQgSSB3YXNu
-J3Qgc3RyZXNzaW5nIHRoZSBzeXN0ZW0gbXVjaCB3aXRoIEZTIGFjdGl2aXR5IGFmdGVyIGFwcGx5
-aW5nIHRoZQo+IGluaXRpYWwgZml4Lgo+IAo+PiBBbmQgb25jZSB3ZSByZXZlcnQgY29tcHJlc3Np
-b24gc3VwcG9ydCBwYXRjaCwgdGhpcyBpc3N1ZSB3aWxsIGRpc2FwcGVhciwgcmlnaHQ/Cj4gCj4g
-WWVzLCBBRkFJSy4gSSByZXZlcnRlZCBpdCBhbmQgcnVuIGEgZmV3IGN5Y2xlcyBvZiBpbnN0YWxs
-IDUwME1pQiB3b3J0aCBvZgo+IHBhY2thZ2VzLCB1bmluc3RhbGwgdGhlIHBhY2thZ2VzIHdpdGgg
-cGFjbWFuLiBBbmQgaXQgZGlkbid0IHJlLW9jY3VyLiBJIG5ldmVyCj4gc2F3IGFueSBpc3N1ZXMg
-d2l0aCBjb21wcmVzc2lvbiBzdXBwb3J0IHBhdGNoIHJldmVydGVkLgoKT2theSwgY29tcHJlc3Np
-b24gc3VwcG9ydCBtYXkgaW5jcmVhc2Ugc3RhY2sgdXNhZ2UgZHVyaW5nIHBhZ2Ugd3JpdGViYWNr
-LCBpdApzaG91bGRuJ3Qgb3ZlcmZsb3cgdGhlIHN0YWNrLCBvdGhlcndpc2UgaXQgY291bGQgY2F1
-c2UgcGFuaWMgaW4gc29tZXdoZXJlIGVsc2UsCmJ1dCBzdGlsbCBjYW4gZmluZCBhbnkgY2x1ZSB3
-aHkgdGhpcyBpcyByZWxhdGVkIHRvIGNvbXByZXNzaW9uIHN1cHBvcnQgcGF0Y2guLi4KCj4gCj4+
-IEJ0dywgZGlkIHlvdSB0cnkgb3RoZXIgaGFyZHdhcmUgd2hpY2ggaXMgbm90IEFybSB2Nz8KPiAK
-PiBZZXMsIGJ1dCBJIGRpZG4ndCBldmVyIHNlZSBpdCBvbiBhbnl0aGluZyBlbHNlLiBKdXN0IG9u
-IHR3byA4IGNvcmUgY29ydGV4ZXMgQTcuCj4gKDIgY2x1c3RlcnMpCgpOb3Qgc3VyZSwgbWF5YmUg
-dGhpcyBpc3N1ZSBpcyByZWxhdGVkIHRvIGFybSB2NyBhcmNoaXRlY3R1cmUuCgpUaGFua3MsCgo+
-IAo+IHJlZ2FyZHMsCj4gCW8uCj4gLgo+IAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYy
-ZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On Wed, Mar 11, 2020 at 06:51:23PM +0800, Chao Yu wrote:
+> Hi,
+> 
+> >> Oops, it looks previous fix patch just cover the root cause... :(
+> >>
+> >> Did this issue still happen frequently? If it is, would you please apply patch
+> >> that prints log during down/up semaphore.
+> > 
+> > Not frequently. Just once. I couldn't afford FS corruption during update,
+> 
+> Alright.
+> 
+> > so I reverted the compression support shortly after.
+> 
+> What I can see is that filesystem was just stuck, rather than image became
+> corrupted, I guess the condition is not such bad, anyway, it's okay to just
+> revert compression support for now to keep fs stable.
+
+Yes, to be precise, file writes were not completed and fs was stuck.
+The system as a whole would probably become unbootable if this would
+happen to core libraries necessary for systemd, or something like that,
+but filesystem itself was not corrupted.
+
+Re-writing the files was enough to recover the system.
+
+I guess we'll see if there will be more reports after 5.6 is released,
+or if it's just some quirk in my system.
+
+I'll try to collect more information, once I'll have some time, to
+get to the bottom of this.
+
+thank you and regards,
+	o.
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
