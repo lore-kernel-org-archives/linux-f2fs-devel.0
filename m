@@ -2,110 +2,106 @@ Return-Path: <SRS0=Hk9E=45=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FAC2C10DCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Mar 2020 08:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCD6C10DCE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Mar 2020 08:26:43 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 052D6206EB;
-	Thu, 12 Mar 2020 08:26:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id C0FF7206EB;
+	Thu, 12 Mar 2020 08:26:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="BGVkldnj";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="j2PwBtLl";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HEo0J89c";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="kZidW+4u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 052D6206EB
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Y2bxzDgX";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="SbZ7yOJ3";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhVHewWm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0FF7206EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
-	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=34m1NVN80RVHYX59ZIjJvhIv67Y1CCuof4zyAvrOMiY=; b=BGVkldnjCkcclBz4kwbHVYjNq
-	D2RrY/pIGT2nkB1jX13+J3oeYBFbccywzWlf7cO/Ov4b1tEO600S7wVsZKOPfl6YXVLXWPtsKXy2q
-	B2XYiJpg9geVX4SXVwLwfT7+egGvmvspn+WdG4S/rlOVjvBc80uw/Cj+yeSXqGnnpXsrk=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jCJAc-0003PE-HQ; Thu, 12 Mar 2020 08:26:22 +0000
+	id 1jCJAx-0001uD-BA; Thu, 12 Mar 2020 08:26:43 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3uuxpXgYKADUjRkpRkXffXcV.Tfd@flex--satyat.bounces.google.com>)
- id 1jCJAb-0003Op-AT
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 12 Mar 2020 08:26:21 +0000
+ (envelope-from <mtk.manpages@gmail.com>) id 1jCJAx-0001u7-0a
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 12 Mar 2020 08:26:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
- Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=b9K5ZF1QsnMyis2Iwao7Kx/jSimzBrtZiFuBRS+8W2Q=; b=j2PwBtLlXcz5BBa81JT6nario
- eqANsJHGimTjrdqjmVwXjH+wvYAH59rpAAQVF2Z2O+kpZbO1oGnqcAmw5qSnX3FPB1kFTF583Gupv
- 9VYwzUh+4TFpxcVRRaI8ZgiGm3Q935gIbA+PO6EYdGpEj+i3tqooe7UzTvdK9IFZypMtQ=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Cc:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=VOXwvXmhViXjWlgJNON6/RWwRCogM7s+tZi57Naxvsg=; b=Y2bxzDgXl8duDvqY1Zy1Mc0UTt
+ 2XP3pHqrhVXAYfqpLjoYTsx48YSj5PZvQUn/Pth4VAX9H/fpM7ftMSnYOQonYBdcPIvoSG9onPktT
+ 6tfP8hh/Y56hUaEM3z7TDp0wuerzKv2GCDnCWw5ygBgoI0urmK0RBM85BUfrEEcEx8i0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:To:Subject:Cc:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=b9K5ZF1QsnMyis2Iwao7Kx/jSimzBrtZiFuBRS+8W2Q=; b=HEo0J89cKjQ5wyGw778UFE1WZ/
- aKd3FYCv7SlS/k4y1GXeCRpe725gR0ijVRhQ/FC7NNrI8Tu1EZnz8llOFU/Py1Oqsr9nw7OTnzXr6
- g0yJEcneBjUNSq55Hd53n1d5O8wU1mDrs4Tk6GxcXoNvXkgvu9+aVvsUAJqfWI5k4seo=;
-Received: from mail-oi1-f201.google.com ([209.85.167.201])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=VOXwvXmhViXjWlgJNON6/RWwRCogM7s+tZi57Naxvsg=; b=SbZ7yOJ3s0nw9eQiBcBY+jCEwD
+ QbVJTyKb7tKLO1wXmcYyjVTgicDnI8ekbPkhhEOe6WT0h1LohOmFOM/7K2DE6+W6LIuc67t49ELhU
+ L89AAes8vPNT+w/YgbJQjO3qxY4vXdTxBcz5HIPagpCRfYTulZ1LeudOPX9BFGmaK0YI=;
+Received: from mail-wr1-f65.google.com ([209.85.221.65])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jCJAZ-0099UP-32
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 12 Mar 2020 08:26:21 +0000
-Received: by mail-oi1-f201.google.com with SMTP id s10so2617083oie.22
+ id 1jCJAv-00GUAi-0m
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 12 Mar 2020 08:26:42 +0000
+Received: by mail-wr1-f65.google.com with SMTP id v11so6209143wrm.9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 12 Mar 2020 01:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=b9K5ZF1QsnMyis2Iwao7Kx/jSimzBrtZiFuBRS+8W2Q=;
- b=kZidW+4uWj572uSVMaga3/kGllNvwppjeLnRckxNsn5ZtGRgpnGQcc6m+YfG02XymY
- 7tPFhcGqWEa67J+CmGysa8gt+VL2iS3Dk1nu4qmKVGDtEuGKRdk9OTprEm7Sq7wNTUQb
- jm4UKSAttJSRDGZIUOMetDNaBKuN/8i11J9iBmRO7yzZeRSH+kVX796hnd4X6iRm9js3
- HvIoMDpjRbNuLUCqTwU8dmF6IrTB0Ng1lTyKWjJU9IhHK481X8Sg6flTQ60sYOC/JB9O
- BxfWCBsbLHPhcjl5wrHg34DADUUc+phrttzuJ3JEpwy9v/IFlJAzdCo89bwQ8EnS+BUy
- T/Iw==
+ Thu, 12 Mar 2020 01:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=cc:subject:to:references:from:message-id:date:user-agent
+ :mime-version:in-reply-to:content-language:content-transfer-encoding;
+ bh=VOXwvXmhViXjWlgJNON6/RWwRCogM7s+tZi57Naxvsg=;
+ b=mhVHewWmUn9cWoWob2kV9/oNAU+knm6pV/tEl5GH+wuUorgZf1lRoH9Y/KvDbdViVr
+ +ENcNj2WPCz6KYNCfuWcVXHebOBdQBZHRj3gmvwpIr8LOqlAmo+TDDET0jGelOdAYlfD
+ 9aoqakgG+beS11JnyZnpnwEJLnAF+opgngnnov6QiKgiR+ZvawDV97f6S1H3UE0kgTx2
+ iadbe6mRyYqUnadO6XgrWIsfmd8CBhFLh16oc1yLMdebAfvv+yDSGeSiqfqwlBer7cVM
+ D92qxmrk56JOJwuV8yUQcxNuW6PDmtkresyqqlRZCSKBbGFZTEZhiWu6Dvi3vFO8OXQM
+ 5w2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:date:in-reply-to:message-id:mime-version
- :references:subject:from:to:cc;
- bh=b9K5ZF1QsnMyis2Iwao7Kx/jSimzBrtZiFuBRS+8W2Q=;
- b=O5zf9Fz7w3FJMv+yIUAaDxDOTqpbZLWwSNQqN7vysJ1f+QFMTjPxDxFgEtUhgjlc7c
- HV4fyr0yco1Ykjs767I+jOcyAd1hh4OahUcIzxGL756xBVn0JGUmxuvv4aO3OlGCazeq
- 3bJ7XzkQn2eXpepQ4seHPNAQzyN25fDpqQejtITCJrYqrLTHMCJHuwy9xIA4XH9tg6nl
- 9yhYUgcsymGFHqMZePQ9GwQR0qLz06hgl0IKkHvpV+JkC4hNPm9Pcvq6OnPy+dy8z3lj
- rVU0Qh86jLEG5TC9Mkn5zeECBz1/3vlnLb459ONjGWoiKPLxkjTl+U5KIzPgiPl1KO4/
- 14vg==
-X-Gm-Message-State: ANhLgQ131ZsJ8EfD/+LbgraInTcRNvA2GuzCqR/2P8rWxGISNB/pgN5V
- boH3k2uZ6gHqTQ1YJQb0aZorQXZ9tOc=
-X-Google-Smtp-Source: ADFU+vtoROhgaUUciKRMglgoersUjDrTpk4PeN3QMGxv3qFhvT5zpCtRD+M2MWAfK7e+3A+TCNAAjfUqW68=
-X-Received: by 2002:a17:90a:f311:: with SMTP id
- ca17mr2920448pjb.6.1584000186546; 
- Thu, 12 Mar 2020 01:03:06 -0700 (PDT)
-Date: Thu, 12 Mar 2020 01:02:45 -0700
-In-Reply-To: <20200312080253.3667-1-satyat@google.com>
-Message-Id: <20200312080253.3667-4-satyat@google.com>
-Mime-Version: 1.0
-References: <20200312080253.3667-1-satyat@google.com>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, 
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-X-Headers-End: 1jCJAZ-0099UP-32
-Subject: [f2fs-dev] [PATCH v8 03/11] block: Make blk-integrity preclude
- hardware inline encryption
+ h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+ :user-agent:mime-version:in-reply-to:content-language
+ :content-transfer-encoding;
+ bh=VOXwvXmhViXjWlgJNON6/RWwRCogM7s+tZi57Naxvsg=;
+ b=CmxRtC4dRqpE2P5TewWYpdGwNfspVUxR3aCUevNMAhQrszC/yvzbXTceXnhA79atXG
+ x8msdHdpnjNioeUeKH40uqvYzbBWDYixsBW+uKkaxLEJvVHus7AnK59LlEKkMM/tKx63
+ GzO1spU4+Xqb6ndDZ6mf7IfDvSocjYC3B1GTHIfAJnt0cdZuYma3SRhMbT0r2nZUzfQB
+ RDEt9BoJ1rLCe6Li+N/F4Feczj9+UHEDr+sPRCnS/6wZGocXfvz5sjVZYRRGmrXNRIUy
+ xGXPLGAafh2ko0M4n73r4orHr3bUpRnE+z38Wx5OOcVGsRtNfIWljPGgzjvcyKgBWaz1
+ tfKA==
+X-Gm-Message-State: ANhLgQ24IxJTNvTv6AJfHFG3bSI1VLU6ZNsXyKkxFYq7lCaDDx4uN3Nl
+ jCWKqrkfd+iZjvWhzOhAAuk=
+X-Google-Smtp-Source: ADFU+vvaWP4xGGNO/Jiptk/ZTdyzvml108TVAMDjhO6ya8t9Wsf3jbbjroPrwuYCL6+p5Y9jk1R+GQ==
+X-Received: by 2002:a5d:6782:: with SMTP id v2mr9485138wru.218.1584001594497; 
+ Thu, 12 Mar 2020 01:26:34 -0700 (PDT)
+Received: from [10.5.49.236] ([195.171.175.163])
+ by smtp.gmail.com with ESMTPSA id b16sm71865540wrq.14.2020.03.12.01.26.33
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Thu, 12 Mar 2020 01:26:33 -0700 (PDT)
+To: Eric Biggers <ebiggers@kernel.org>
+References: <20200128192449.260550-1-ebiggers@kernel.org>
+From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <451297df-2371-336e-d058-4cd6b4ed9754@gmail.com>
+Date: Thu, 12 Mar 2020 09:26:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20200128192449.260550-1-ebiggers@kernel.org>
+Content-Language: en-US
+X-Headers-End: 1jCJAv-00GUAi-0m
+Subject: Re: [f2fs-dev] [man-pages PATCH v2] statx.2: document
+ STATX_ATTR_VERITY
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,168 +113,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Satya Tangirala via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Satya Tangirala <satyat@google.com>
-Cc: Kuohong Wang <kuohong.wang@mediatek.com>,
- Satya Tangirala <satyat@google.com>,
- Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
- Kim Boojin <boojin.kim@samsung.com>
+Cc: linux-man@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fscrypt@vger.kernel.org, mtk.manpages@gmail.com,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Whenever a device supports blk-integrity, the kernel will now always
-pretend that the device doesn't support inline encryption (essentially
-by setting the keyslot manager in the request queue to NULL).
+Hello Eric,
 
-There's no hardware currently that supports both integrity and inline
-encryption. However, it seems possible that there will be in the near
-future, based on discussion at
-https://lore.kernel.org/r/20200108140730.GC2896@infradead.org/
-But properly integrating both features is not trivial, and without
-real hardware that implements both, it is difficult to tell if it will
-be done correctly by the majority of hardware that support both, and
-through discussions at
-https://lore.kernel.org/r/20200224233459.GA30288@infradead.org/
-it seems best not to support both features together right now, and
-to decide what to do at probe time.
+On 1/28/20 8:24 PM, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Document the verity attribute for statx(), which was added in
+> Linux 5.5.
+> 
+> For more context, see the fs-verity documentation:
+> https://www.kernel.org/doc/html/latest/filesystems/fsverity.html
 
-Signed-off-by: Satya Tangirala <satyat@google.com>
----
- block/bio-integrity.c   |  5 +++++
- block/blk-integrity.c   |  7 +++++++
- block/keyslot-manager.c | 20 ++++++++++++++++++++
- include/linux/blkdev.h  | 30 ++++++++++++++++++++++++++++++
- 4 files changed, 62 insertions(+)
+Thanks for the patch! Applied.
 
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index bf62c25cde8f..a5c57991c6fa 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -42,6 +42,11 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
- 	struct bio_set *bs = bio->bi_pool;
- 	unsigned inline_vecs;
- 
-+	if (bio_has_crypt_ctx(bio)) {
-+		pr_warn("blk-integrity can't be used together with inline en/decryption.");
-+		return ERR_PTR(-EOPNOTSUPP);
-+	}
-+
- 	if (!bs || !mempool_initialized(&bs->bio_integrity_pool)) {
- 		bip = kmalloc(struct_size(bip, bip_inline_vecs, nr_vecs), gfp_mask);
- 		inline_vecs = nr_vecs;
-diff --git a/block/blk-integrity.c b/block/blk-integrity.c
-index ff1070edbb40..793ba23e8688 100644
---- a/block/blk-integrity.c
-+++ b/block/blk-integrity.c
-@@ -409,6 +409,13 @@ void blk_integrity_register(struct gendisk *disk, struct blk_integrity *template
- 	bi->tag_size = template->tag_size;
- 
- 	disk->queue->backing_dev_info->capabilities |= BDI_CAP_STABLE_WRITES;
-+
-+#ifdef BLK_INLINE_ENCRYPTION
-+	if (disk->queue->ksm) {
-+		pr_warn("blk-integrity: Integrity and hardware inline encryption are not supported together. Unregistering keyslot manager from request queue, to disable hardware inline encryption.");
-+		blk_ksm_unregister(disk->queue);
-+	}
-+#endif
- }
- EXPORT_SYMBOL(blk_integrity_register);
- 
-diff --git a/block/keyslot-manager.c b/block/keyslot-manager.c
-index 38df0652df80..a7970e18a122 100644
---- a/block/keyslot-manager.c
-+++ b/block/keyslot-manager.c
-@@ -25,6 +25,9 @@
-  * Upper layers will call blk_ksm_get_slot_for_key() to program a
-  * key into some slot in the inline encryption hardware.
-  */
-+
-+#define pr_fmt(fmt) "blk_ksm: " fmt
-+
- #include <crypto/algapi.h>
- #include <linux/keyslot-manager.h>
- #include <linux/atomic.h>
-@@ -375,3 +378,20 @@ void blk_ksm_destroy(struct keyslot_manager *ksm)
- 	memzero_explicit(ksm, sizeof(*ksm));
- }
- EXPORT_SYMBOL_GPL(blk_ksm_destroy);
-+
-+bool blk_ksm_register(struct keyslot_manager *ksm, struct request_queue *q)
-+{
-+	if (blk_integrity_queue_supports_integrity(q)) {
-+		pr_warn("Integrity and hardware inline encryption are not supported together. Won't register keyslot manager with request queue.");
-+		return false;
-+	}
-+	q->ksm = ksm;
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(blk_ksm_register);
-+
-+void blk_ksm_unregister(struct request_queue *q)
-+{
-+	q->ksm = NULL;
-+}
-+EXPORT_SYMBOL_GPL(blk_ksm_unregister);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index c6ea578c1f79..abe886d48cc4 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1570,6 +1570,12 @@ struct blk_integrity *bdev_get_integrity(struct block_device *bdev)
- 	return blk_get_integrity(bdev->bd_disk);
- }
- 
-+static inline bool
-+blk_integrity_queue_supports_integrity(struct request_queue *q)
-+{
-+	return q->integrity.profile;
-+}
-+
- static inline bool blk_integrity_rq(struct request *rq)
- {
- 	return rq->cmd_flags & REQ_INTEGRITY;
-@@ -1650,6 +1656,11 @@ static inline struct blk_integrity *blk_get_integrity(struct gendisk *disk)
- {
- 	return NULL;
- }
-+static inline bool
-+blk_integrity_queue_supports_integrity(struct request_queue *q)
-+{
-+	return false;
-+}
- static inline int blk_integrity_compare(struct gendisk *a, struct gendisk *b)
- {
- 	return 0;
-@@ -1701,6 +1712,25 @@ static inline struct bio_vec *rq_integrity_vec(struct request *rq)
- 
- #endif /* CONFIG_BLK_DEV_INTEGRITY */
- 
-+#ifdef CONFIG_BLK_INLINE_ENCRYPTION
-+
-+bool blk_ksm_register(struct keyslot_manager *ksm, struct request_queue *q);
-+
-+void blk_ksm_unregister(struct request_queue *q);
-+
-+#else /* CONFIG_BLK_INLINE_ENCRYPTION */
-+
-+static inline bool blk_ksm_register(struct keyslot_manager *ksm,
-+				    struct request_queue *q)
-+{
-+	return true;
-+}
-+
-+static inline void blk_ksm_unregister(struct request_queue *q) { }
-+
-+#endif /* CONFIG_BLK_INLINE_ENCRYPTION */
-+
-+
- struct block_device_operations {
- 	int (*open) (struct block_device *, fmode_t);
- 	void (*release) (struct gendisk *, fmode_t);
+Cheers,
+
+Michael
+
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  man2/statx.2 | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/man2/statx.2 b/man2/statx.2
+> index d2f1b07b8..d015ee73d 100644
+> --- a/man2/statx.2
+> +++ b/man2/statx.2
+> @@ -461,6 +461,11 @@ See
+>  .TP
+>  .B STATX_ATTR_ENCRYPTED
+>  A key is required for the file to be encrypted by the filesystem.
+> +.TP
+> +.B STATX_ATTR_VERITY
+> +Since Linux 5.5: the file has fs-verity enabled.  It cannot be written to, and
+> +all reads from it will be verified against a cryptographic hash that covers the
+> +entire file, e.g. via a Merkle tree.
+>  .SH RETURN VALUE
+>  On success, zero is returned.
+>  On error, \-1 is returned, and
+> 
+
+
 -- 
-2.25.1.481.gfbce0eb801-goog
-
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
 
 
 _______________________________________________
