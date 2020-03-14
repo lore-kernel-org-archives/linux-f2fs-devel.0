@@ -2,92 +2,80 @@ Return-Path: <SRS0=FtoV=47=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2489C0044D
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Mar 2020 18:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 922A1C0044D
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Mar 2020 20:53:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9888E2076E;
-	Sat, 14 Mar 2020 18:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 519AF20828;
+	Sat, 14 Mar 2020 20:53:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hKuglozo";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="AvO7Gvk2";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=archlinux-us.20150623.gappssmtp.com header.i=@archlinux-us.20150623.gappssmtp.com header.b="tXcEmUXb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9888E2076E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=archlinux.us
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mAe7WE/O";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cx1LGBmS";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxtA5Fnd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519AF20828
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jDBbX-00048b-6L; Sat, 14 Mar 2020 18:33:47 +0000
+	id 1jDDmj-0002dv-AU; Sat, 14 Mar 2020 20:53:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <graysky@archlinux.us>) id 1jDBbU-00048S-T1
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Mar 2020 18:33:45 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1jDDmg-0002dm-J4
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Mar 2020 20:53:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:Subject:Message-ID:Date:From:
- MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=N5bjVfru7PjYxeTK7mVAtuo91ekoPBY+CLgnOz+hK58=; b=hKuglozotMFTxmYs5tpmCnPwpb
- 2zZ1uNDPtKbeoJGFyQqEAmFfwvzRhKlbNJ2q78SdSQLryHJmb+9x/Grnhr/OzgV1qG85CSTwIjt1B
- 5WvCoDDG9BYRKzaYWcTL0YUO5M6SB69mOQ+gLdiHPn7juVdO/8klDhGTChnzjZ3ncrHA=;
+ bh=CFqDkCPnjOfvQPkkCG9GnjiyYIxcYe3v7qvvBrMQnWA=; b=mAe7WE/On8xbqj4auBSQduQURe
+ QFplpQGlLHAh6k9yJ0cklbLY9dKceqrOHvl35ZRrJHDZZIg3RgGK4bSStvUyojqInPQnbffjQnyEe
+ sjYOE68KhOKGa9cDU2aU6BRGxGkhHgZ66bOqfxziJirE/eTtzd5mR6Ch3REMrxUMEdnk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:To:Subject:Message-ID:Date:From:MIME-Version:Sender:Reply-To
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=N5bjVfru7PjYxeTK7mVAtuo91ekoPBY+CLgnOz+hK58=; b=A
- vO7Gvk2OEAHbVOoGQVIigHbgn1MH4qBmxSfFJKe0v4ZmxDGIND8kyvBY9V6XYr8jh+E5cEcT7hITj
- eFibu1dNg8h2CZ95zfZsGa7RWIldxd+UYXE0w/wBmMyDsjDdKCrXVe0LQYP47Yyuw3r3WN4e5SbBI
- GvoA79KH2DhAr1lo=;
-Received: from mail-wr1-f68.google.com ([209.85.221.68])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jDBbS-007RSr-0J
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Mar 2020 18:33:44 +0000
-Received: by mail-wr1-f68.google.com with SMTP id b2so9986017wrj.10
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 14 Mar 2020 11:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=archlinux-us.20150623.gappssmtp.com; s=20150623;
- h=mime-version:from:date:message-id:subject:to;
- bh=N5bjVfru7PjYxeTK7mVAtuo91ekoPBY+CLgnOz+hK58=;
- b=tXcEmUXbEsvCmex87s12vVJngcFBQqgdbdMBhFRF3hOBo/2jvlCSO9PSViamy4e5O/
- IN1elt6/yW775vEbYCMiJxcpSVjJ6BTYHTiSAjEb9DTjwIj0umCFNpnvBPibOKqq/zrc
- OX84Q8G07oaS0MdBGsLhd7yYksy71bItOUXqw0jvUM7gDAS0pmzNx+hZ+XRbRVzXAojq
- E9F+v5kJFMkHhIN3yxo6zx/aWUMFUaD0F4Zpmdb8/bF4Y08ez2KfZTmfsQJTr3+/rm1W
- INCg7qGitvJL2WgnyIBOuuC86zbRLcVO+D/Z/Ji0NUGEm6i8YFX86oM3LkCeMaWMYWXV
- v14w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
- bh=N5bjVfru7PjYxeTK7mVAtuo91ekoPBY+CLgnOz+hK58=;
- b=oTK7ZFLoXvTp3PGyPmctE5hzCuXljFtzvUJxyDEgn/0+81Ws89rAwaLfD2AUTYN5Kk
- Cn7IA4Av3wsQ+I5EE9w+Dd/YMH6VheGv8clDV83GAtd5afaQYsVwRUkkBCt1o74ojUMT
- hH5gC+a4J1mQ/szt0gE4s2EmAOwVF0dT1YqnrQbqbaHrRGKoix+K4RmXGNUUtWLf/Zs0
- +380Jf0taJibNyf/1ihhGpe1Z8YTD74qnh1YqCONtT3E9mGU8L9KdmFvvTSq8vAd/GBR
- Wgz/Mni1doui0IdYltdGTnaFcCWZIfbAguhTbA0fvir9OD+k18KR5/JjsyhkPYgtuI3v
- 3v/A==
-X-Gm-Message-State: ANhLgQ10lncYvaSBztEeStb33prPj/345ORFpeUnOvlli231SxKUVQpi
- jccklFLvkSEBSckEUyH4GmEsOgiWK+g7YrQ+JJ6o7SqPDsA=
-X-Google-Smtp-Source: ADFU+vtbLqQN7QbCGrteo1CA1S7D73QFAH7wB2c4sTTwC5LVxgxbD44py2HXCTQHAtVEP8SoPjC0UWqHBr3qjX0+3oU=
-X-Received: by 2002:adf:a419:: with SMTP id d25mr26351573wra.210.1584209384665; 
- Sat, 14 Mar 2020 11:09:44 -0700 (PDT)
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=CFqDkCPnjOfvQPkkCG9GnjiyYIxcYe3v7qvvBrMQnWA=; b=cx1LGBmS7iUCsdP8yIWDu6uG4h
+ Rs0LGCCxj1+kVofiUwhymCJssVRza7zXCnyFqWXnwKnBk0e6lbXeRrfLvFsF2zL/bxT5VkH/XZ13+
+ Jcd4RbTMEA671CUOPK9xAr5jHWc0eRXJoS3sPPyIFbkSn3iF8B1cYauwBeSGf/NhsroI=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jDDmd-00BCJH-Im
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Mar 2020 20:53:26 +0000
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
+ [107.3.166.239])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 4A39620792;
+ Sat, 14 Mar 2020 20:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1584219194;
+ bh=BekzoYGRaAG7hdnMIHYnXydLgmN0afGG/lRCyAbxsow=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=DxtA5FndvEQrWYJ1lLT38U6RoCkJTTKARYiBRkYMxyhpzJqs9rlw1ebJKhqeONoVc
+ PrGI+9cNJaMxe/l32l3G3sElzfnTGKgS9d3i70orWJl/g5fzCmYnfWgQhCRW8GsDd3
+ AUxOd5Pk7uahYWHoTpKyZYZRStA9y4nu6SuMdczo=
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Sat, 14 Mar 2020 13:50:52 -0700
+Message-Id: <20200314205052.93294-5-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200314205052.93294-1-ebiggers@kernel.org>
+References: <20200314205052.93294-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-From: John <graysky@archlinux.us>
-Date: Sat, 14 Mar 2020 14:09:33 -0400
-Message-ID: <CAO_nJAYw+-+n584gg2-rRp3KoAsPT5mpD5yRCrwM7hiDMD=PJg@mail.gmail.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1jDBbS-007RSr-0J
-Subject: [f2fs-dev] fstrim does not recognize FSVER=1.13 of F2FS partitions
+X-Headers-End: 1jDDmd-00BCJH-Im
+Subject: [f2fs-dev] [PATCH 4/4] ubifs: wire up FS_IOC_GET_ENCRYPTION_NONCE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,25 +87,48 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Running `fstrim -a -v` is not detecting my f2fs partition that I
-created just a few days ago but it does detect an older f2fs partition
-and trims it as expected.  Both partitions are on the same SSD.  The
-older partition is FSVER=1.12 whereas the newer one is FSVER=1.13
-(reported by `lsblk -f`).
+From: Eric Biggers <ebiggers@google.com>
 
-Invoking it manually on the newer one gives this:
-# fstrim -v /mnt/media
-fstrim: /mnt/media: the discard operation is not supported
+This new ioctl retrieves a file's encryption nonce, which is useful for
+testing.  See the corresponding fs/crypto/ patch for more details.
 
-And invoking it manually on the older one gives this:
-# fstrim -v /incoming
-/mnt/incoming:  1.7 GiB (1762152448 bytes) trimmed on /dev/sda2
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/ubifs/ioctl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks.
+diff --git a/fs/ubifs/ioctl.c b/fs/ubifs/ioctl.c
+index d49fc04f2d7d4..3df9be2c684c3 100644
+--- a/fs/ubifs/ioctl.c
++++ b/fs/ubifs/ioctl.c
+@@ -208,6 +208,9 @@ long ubifs_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
+ 		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
+ 
++	case FS_IOC_GET_ENCRYPTION_NONCE:
++		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
++
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -230,6 +233,7 @@ long ubifs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case FS_IOC_REMOVE_ENCRYPTION_KEY:
+ 	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
+ 	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
++	case FS_IOC_GET_ENCRYPTION_NONCE:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+-- 
+2.25.1
+
 
 
 _______________________________________________
