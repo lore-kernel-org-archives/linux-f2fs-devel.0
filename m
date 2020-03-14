@@ -2,80 +2,79 @@ Return-Path: <SRS0=FtoV=47=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922A1C0044D
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Mar 2020 20:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23492C0044D
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Mar 2020 20:53:33 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 519AF20828;
-	Sat, 14 Mar 2020 20:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EC09020838;
+	Sat, 14 Mar 2020 20:53:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mAe7WE/O";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cx1LGBmS";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxtA5Fnd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519AF20828
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Jk15a4vy";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lPV+cgNl";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0iSH8Q5D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC09020838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jDDmj-0002dv-AU; Sat, 14 Mar 2020 20:53:29 +0000
+	id 1jDDmm-0001mu-M0; Sat, 14 Mar 2020 20:53:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1jDDmg-0002dm-J4
+ (envelope-from <ebiggers@kernel.org>) id 1jDDmg-0001mZ-Fw
  for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Mar 2020 20:53:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CFqDkCPnjOfvQPkkCG9GnjiyYIxcYe3v7qvvBrMQnWA=; b=mAe7WE/On8xbqj4auBSQduQURe
- QFplpQGlLHAh6k9yJ0cklbLY9dKceqrOHvl35ZRrJHDZZIg3RgGK4bSStvUyojqInPQnbffjQnyEe
- sjYOE68KhOKGa9cDU2aU6BRGxGkhHgZ66bOqfxziJirE/eTtzd5mR6Ch3REMrxUMEdnk=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=CFqDkCPnjOfvQPkkCG9GnjiyYIxcYe3v7qvvBrMQnWA=; b=cx1LGBmS7iUCsdP8yIWDu6uG4h
- Rs0LGCCxj1+kVofiUwhymCJssVRza7zXCnyFqWXnwKnBk0e6lbXeRrfLvFsF2zL/bxT5VkH/XZ13+
- Jcd4RbTMEA671CUOPK9xAr5jHWc0eRXJoS3sPPyIFbkSn3iF8B1cYauwBeSGf/NhsroI=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=0SEq7JVkgwqcEQgxVqhopF4IEZFuq9UyJX3hwnwBa0I=; b=Jk15a4vyoWTfRz20Avlm+AkLGC
+ X658+/IYkJyXlXJ2aEqHP7Ngn/18zc99Yu0T4tccTy5rG2SSeko3pCOKDBY4tdWD+3eoB0lnqlOj8
+ clccIommxZ9Tujoa2jwLFz5lvB/SaGXJm2sooJPWlMnM97dSGjLSTEsiQCDLQ6HV/JG8=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=0SEq7JVkgwqcEQgxVqhopF4IEZFuq9UyJX3hwnwBa0I=; b=l
+ PV+cgNl5SqMJtHpqqfCzJshaibs6TO88r9CZUIR2CPl6T/Hs+6GZhOVP7F9Bk3C9ekzgqdTSgv9hR
+ 7f5PVuc8sbDuJslmKyMQoblyJxJQWcAUeE3B7lAqZPcAfSaPiRbu2bXfV7RqX2p3ZNPAZOjBxe7i/
+ uhDMg8uEtgdJmViE=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jDDmd-00BCJH-Im
+ id 1jDDmd-00BCJF-Im
  for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Mar 2020 20:53:26 +0000
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
  [107.3.166.239])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 4A39620792;
- Sat, 14 Mar 2020 20:53:14 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id E76F22071B;
+ Sat, 14 Mar 2020 20:53:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1584219194;
- bh=BekzoYGRaAG7hdnMIHYnXydLgmN0afGG/lRCyAbxsow=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=DxtA5FndvEQrWYJ1lLT38U6RoCkJTTKARYiBRkYMxyhpzJqs9rlw1ebJKhqeONoVc
- PrGI+9cNJaMxe/l32l3G3sElzfnTGKgS9d3i70orWJl/g5fzCmYnfWgQhCRW8GsDd3
- AUxOd5Pk7uahYWHoTpKyZYZRStA9y4nu6SuMdczo=
+ s=default; t=1584219193;
+ bh=nlaaveyfQbhFKfwiAaphWpQDQEdEAujbuJUQUWFnHF0=;
+ h=From:To:Cc:Subject:Date:From;
+ b=0iSH8Q5D+Ml4kWit103vNhqqB1ao1wz8fX85tuNaSR98NmuiY+2hC1jyJD/ruJ/V1
+ 199VRhsa+r9bu1MzO7xz9Tr7s0TnpAj5smS4RburSHj7ylnB0x9tbam9/SzEee07yX
+ pQtOWhG8kxmo09f3EZX3BsptKW71I9wsopcIgkek=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Sat, 14 Mar 2020 13:50:52 -0700
-Message-Id: <20200314205052.93294-5-ebiggers@kernel.org>
+Date: Sat, 14 Mar 2020 13:50:48 -0700
+Message-Id: <20200314205052.93294-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200314205052.93294-1-ebiggers@kernel.org>
-References: <20200314205052.93294-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1jDDmd-00BCJH-Im
-Subject: [f2fs-dev] [PATCH 4/4] ubifs: wire up FS_IOC_GET_ENCRYPTION_NONCE
+X-Headers-End: 1jDDmd-00BCJF-Im
+Subject: [f2fs-dev] [PATCH 0/4] fscrypt: add ioctl to get file's encryption
+ nonce
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,38 +93,32 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+This patchset adds an ioctl FS_IOC_GET_ENCRYPTION_NONCE which retrieves
+the nonce from an encrypted file or directory.
 
-This new ioctl retrieves a file's encryption nonce, which is useful for
-testing.  See the corresponding fs/crypto/ patch for more details.
+This is useful for automated ciphertext verification testing.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/ubifs/ioctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
+See patch #1 for more details.
 
-diff --git a/fs/ubifs/ioctl.c b/fs/ubifs/ioctl.c
-index d49fc04f2d7d4..3df9be2c684c3 100644
---- a/fs/ubifs/ioctl.c
-+++ b/fs/ubifs/ioctl.c
-@@ -208,6 +208,9 @@ long ubifs_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
- 		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
- 
-+	case FS_IOC_GET_ENCRYPTION_NONCE:
-+		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
-+
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -230,6 +233,7 @@ long ubifs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case FS_IOC_REMOVE_ENCRYPTION_KEY:
- 	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
- 	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
-+	case FS_IOC_GET_ENCRYPTION_NONCE:
- 		break;
- 	default:
- 		return -ENOIOCTLCMD;
+Eric Biggers (4):
+  fscrypt: add FS_IOC_GET_ENCRYPTION_NONCE ioctl
+  ext4: wire up FS_IOC_GET_ENCRYPTION_NONCE
+  f2fs: wire up FS_IOC_GET_ENCRYPTION_NONCE
+  ubifs: wire up FS_IOC_GET_ENCRYPTION_NONCE
+
+ Documentation/filesystems/fscrypt.rst | 11 +++++++++++
+ fs/crypto/fscrypt_private.h           | 20 ++++++++++++++++++++
+ fs/crypto/keysetup.c                  | 16 ++--------------
+ fs/crypto/policy.c                    | 21 ++++++++++++++++++++-
+ fs/ext4/ioctl.c                       |  6 ++++++
+ fs/f2fs/file.c                        | 11 +++++++++++
+ fs/ubifs/ioctl.c                      |  4 ++++
+ include/linux/fscrypt.h               |  6 ++++++
+ include/uapi/linux/fscrypt.h          |  1 +
+ 9 files changed, 81 insertions(+), 15 deletions(-)
+
+
+base-commit: 98d54f81e36ba3bf92172791eba5ca5bd813989b
 -- 
 2.25.1
 
