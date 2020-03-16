@@ -2,78 +2,77 @@ Return-Path: <SRS0=lILY=5B=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7A7C10DCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Mar 2020 01:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE63C10DCE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Mar 2020 02:59:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 63EC020663;
-	Mon, 16 Mar 2020 01:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2239320409;
+	Mon, 16 Mar 2020 02:59:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bZJ/wi23";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PxtASnQG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63EC020663
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="JNZAxFKq";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DYzAaxEb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2239320409
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jDeUX-0007qY-KF; Mon, 16 Mar 2020 01:24:29 +0000
+	id 1jDfyK-0003Ih-DM; Mon, 16 Mar 2020 02:59:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jDeUV-0007qP-DO
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 01:24:27 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jDfyI-0003IY-UY
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 02:59:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MDqTB/ER9T/hpCG+dW2ixR6IAzAwFKdTIedTa+YtzwY=; b=bZJ/wi23nIzA9DPTo8rSjJh7+p
- +SdKAhOA98sZpKwrRzQzwwsbq34Lvr73yUWp2vx5fBvqps1C8h0lQI1TP4a2kP61DUTAQbszliOA5
- LeMj5wtdbUHUVrvxpItbEnpH9ClsVLLTrKUOtr5vleKDW+3xyES2xg9GTOZLSOeMnHGQ=;
+ bh=hlDewNOTqQI1xGQFRtpMq/uo2OCj6ofLLCEIwz6s9vk=; b=JNZAxFKquXYo8f2y3MsOoHMwRA
+ E0hK0sEFqRqGtmWu5pa0qhZyBs/uo2ZBEg+TCNxgBacAMeexkykekbhDfjr9i1ERWm6OR37wI1KEH
+ fWryoFOgtJXOVQqK5YQbavncWzx5gwDhg7lyqm3wDYB9+cm08H/9EwAe/Wo0fkAKgPqg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=MDqTB/ER9T/hpCG+dW2ixR6IAzAwFKdTIedTa+YtzwY=; b=PxtASnQGirnhhJWYdLZtfrM359
- 7P+0Ml445d2UkhGCY7E8IlW3SiTBJVeZldxqXvM030DbSSa4hNfOzbm9hiEwohQ8i3dJFXlMlW7QD
- 9M+zximp/wJIAQUy7t59+5hM8pkdh1k9rWFT3moNUqIbikf15pmL0NRzQ79WApeFq6D8=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ bh=hlDewNOTqQI1xGQFRtpMq/uo2OCj6ofLLCEIwz6s9vk=; b=DYzAaxEbW67UsssPDw2sIsU1lF
+ bTLTaebZAKmwjY1drwHFBYaTjSJ2SL1NYn9L4NHGlI5PO6KNioVeZX89ErRdV8FqZSI7L7rtxNEmh
+ WAAdelHs9yiEPJ0hAseJs6KMRV2UXWnh4oaBkeXYVCms3/tyjp71TDVq4dUH6UV3AiOI=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jDeUT-002WpJ-8E
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 01:24:27 +0000
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id A64A05C78EABCF5520F1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 16 Mar 2020 09:24:16 +0800 (CST)
+ id 1jDfyD-002Zv7-Pi
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 02:59:18 +0000
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 5189489D738A14A00A8C;
+ Mon, 16 Mar 2020 10:59:06 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 16 Mar
- 2020 09:24:12 +0800
-To: John <graysky@archlinux.us>, <linux-f2fs-devel@lists.sourceforge.net>
-References: <CAO_nJAYw+-+n584gg2-rRp3KoAsPT5mpD5yRCrwM7hiDMD=PJg@mail.gmail.com>
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 16 Mar
+ 2020 10:59:02 +0800
+To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>
+References: <20200306033741.113980-1-jaegeuk@kernel.org>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <78bdaf48-9699-3a04-efec-95e1a670bfe4@huawei.com>
-Date: Mon, 16 Mar 2020 09:24:11 +0800
+Message-ID: <0d325a9a-1dec-ab25-4a38-f3d274ebb905@huawei.com>
+Date: Mon, 16 Mar 2020 10:59:02 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAO_nJAYw+-+n584gg2-rRp3KoAsPT5mpD5yRCrwM7hiDMD=PJg@mail.gmail.com>
+In-Reply-To: <20200306033741.113980-1-jaegeuk@kernel.org>
 Content-Language: en-US
 X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jDeUT-002WpJ-8E
-Subject: Re: [f2fs-dev] fstrim does not recognize FSVER=1.13 of F2FS
- partitions
+X-Headers-End: 1jDfyD-002Zv7-Pi
+Subject: Re: [f2fs-dev] [PATCH] Include private/fs_config.h directly when
+ needed
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,53 +84,22 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Tom Cherry <tomcherry@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+On 2020/3/6 11:37, Jaegeuk Kim wrote:
+> From: Tom Cherry <tomcherry@google.com>
+> 
+> This is no longer a transitive include of android_filesystem_config.h
+> 
+> Signed-off-by: Tom Cherry <tomcherry@google.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On 2020/3/15 2:09, John wrote:
-> Running `fstrim -a -v` is not detecting my f2fs partition that I
-> created just a few days ago but it does detect an older f2fs partition
-> and trims it as expected.  Both partitions are on the same SSD.  The
-> older partition is FSVER=1.12 whereas the newer one is FSVER=1.13
-> (reported by `lsblk -f`).
-
-What's your mount option and mkfs option on those two partitions, and what's
-your kernel version?
-
-I checked the code, only place where we give 'not supported' is as below
-by checking whether underlying device supports discard.
-
-f2fs_ioc_fitrim()
-
-	if (!f2fs_hw_support_discard(F2FS_SB(sb)))
-		return -EOPNOTSUPP;
-
-So this should not happen that two partitions locates in one device have
-inconsistent discard support status.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> 
-> Invoking it manually on the newer one gives this:
-> # fstrim -v /mnt/media
-> fstrim: /mnt/media: the discard operation is not supported
-> 
-> And invoking it manually on the older one gives this:
-> # fstrim -v /incoming
-> /mnt/incoming:  1.7 GiB (1762152448 bytes) trimmed on /dev/sda2
-> 
-> Thanks.
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
 
 
 _______________________________________________
