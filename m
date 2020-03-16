@@ -2,104 +2,76 @@ Return-Path: <SRS0=lILY=5B=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F9AC0044D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Mar 2020 03:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FD4C0044D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Mar 2020 06:18:20 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B8E7320658;
-	Mon, 16 Mar 2020 03:53:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 32B2A20575;
+	Mon, 16 Mar 2020 06:18:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="RoSE/hKP";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Zd/t1ZZ4";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="maVSUvag"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E7320658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="eabxpIVs";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="R/xHUBNw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B2A20575
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jDgoR-0005m1-7R; Mon, 16 Mar 2020 03:53:11 +0000
+	id 1jDj4t-0003Ft-DN; Mon, 16 Mar 2020 06:18:19 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <bounce+103f7e.be9e4a-linux-f2fs-devel=lists.sourceforge.net@mg.codeaurora.org>)
- id 1jDgoP-0005lu-DU
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 03:53:09 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jDj4r-0003Fi-9e
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 06:18:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dX/HmR6sozhxPO42JTLUS5ksGpbvHKOZ+PUUche2qGQ=; b=RoSE/hKP226lE2UaT7SxVkjATg
- B6p2QXScZb3nYWTgWs0FF7HPrlkq9vb9hezz+varBJWeTyjvZKgcOyOQHJu6Qb5yaQjBurO0UN6pr
- YYhVLvuDlxufr5HElBzfDXqaFGdwtBJ1FXodFicKzCtAVSEjlfz78O8rlY+ZwUO7dXfQ=;
+ bh=JcLHsE2ADLGJXmP7FIl781RAhEnSyTlNv9zgu3os5oc=; b=eabxpIVslaRl+HeLocVV8fitgW
+ YrFIutiCZ49DKj6rJLDSMqy+qkqb1utbuoVITq+fuS2EVUc/tRd6rezyuo2ST5amBcQPzxNmnlQAD
+ CnYT0pVuMnjXU6hHaAQeRs1z19D02XyFGDUZVeGquv4iiEkdAw1nsJH9y9V59gxE/ta0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dX/HmR6sozhxPO42JTLUS5ksGpbvHKOZ+PUUche2qGQ=; b=Zd/t1ZZ4QBybINoxYwQ/mcfq0t
- wwSrSP/AZERg39wTC6p8RToMs1QDKgahnMJ1FOifCRyyEI08lzjQbTmPkq7Vy6dKGHfV2PQLc4q99
- 6IroiP1N58cxS176iRBT64Ibsu5LqtFzQ8yiJbwMsJsFjquCxATAMbn5eLiDFSgc1Vg0=;
-Received: from mail26.static.mailgun.info ([104.130.122.26])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jDgoF-008UB9-Il
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 03:53:09 +0000
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
- q=dns/txt; 
- s=smtp; t=1584330781; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=dX/HmR6sozhxPO42JTLUS5ksGpbvHKOZ+PUUche2qGQ=;
- b=maVSUvagCe4DVQ8rYzL9QomjVJyV7ZVt05PBuJpsl214IdLBxLwY//hnwNbRuO77bRckiTep
- 2Wgo2urj/ZbflAeIQTCeAylnpFcKn68L/prc742prFCtF9+Q7C/izI31sFDvhiSX92uCgoXB
- y3xlayIKNCJXSff8e10vXP7tJMg=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI2M2Y4ZiIsICJsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6ef809.7fea4562bf10-smtp-out-n05;
- Mon, 16 Mar 2020 03:52:41 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
- id 6B720C4478F; Mon, 16 Mar 2020 03:52:40 +0000 (UTC)
-Received: from codeaurora.org
- (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
- (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
- (No client certificate requested) (Authenticated sender: stummala)
- by smtp.codeaurora.org (Postfix) with ESMTPSA id AD61DC4478C;
- Mon, 16 Mar 2020 03:52:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD61DC4478C
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- spf=none smtp.mailfrom=stummala@codeaurora.org
-Date: Mon, 16 Mar 2020 09:22:33 +0530
-From: Sahitya Tummala <stummala@codeaurora.org>
-To: Chao Yu <yuchao0@huawei.com>
-Message-ID: <20200316035233.GM20234@codeaurora.org>
-References: <1584011671-20939-1-git-send-email-stummala@codeaurora.org>
- <fa7d88ee-01e2-e82c-6c79-f24b90fbd472@huawei.com>
- <20200313033912.GJ20234@codeaurora.org>
- <a8f01157-0b1b-d83a-488d-bb48cf8954ab@huawei.com>
- <20200313110846.GL20234@codeaurora.org>
- <20d3b7ef-b216-6e46-58fd-7f1c96d4a8d3@huawei.com>
+ bh=JcLHsE2ADLGJXmP7FIl781RAhEnSyTlNv9zgu3os5oc=; b=R/xHUBNwSAilJu7aBcFfuWycT/
+ pezOP6R8vZVJXpaYMRfSVHZOsA+vSpbpO95r2/GxCM1LTV8zTk0y3CeeF8KmicQg1fdFSDVgrzFkh
+ sNrjo8wqOn9IH5O1ET6I5EjkY4ABkx6hurftKp72sUg7DUbJGaELJyljn5BY1qgl7a1I=;
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jDj4l-00CDoC-Pf
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 06:18:17 +0000
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 30783CA8BF98CE6132D3;
+ Mon, 16 Mar 2020 14:18:01 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 16 Mar
+ 2020 14:17:55 +0800
+To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>
+References: <20200309211918.159991-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <a6295921-15a5-5c5c-93cd-67db81d037f6@huawei.com>
+Date: Mon, 16 Mar 2020 14:17:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20d3b7ef-b216-6e46-58fd-7f1c96d4a8d3@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Headers-End: 1jDgoF-008UB9-Il
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix long latency due to discard during
- umount
+In-Reply-To: <20200309211918.159991-1-jaegeuk@kernel.org>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jDj4l-00CDoC-Pf
+Subject: Re: [f2fs-dev] [PATCH] fsck.f2fs: report real wall time
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -111,153 +83,28 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Wei Wang <wvw@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Chao,
-
-On Mon, Mar 16, 2020 at 08:52:25AM +0800, Chao Yu wrote:
-> On 2020/3/13 19:08, Sahitya Tummala wrote:
-> > On Fri, Mar 13, 2020 at 02:30:55PM +0800, Chao Yu wrote:
-> >> On 2020/3/13 11:39, Sahitya Tummala wrote:
-> >>> On Fri, Mar 13, 2020 at 10:20:04AM +0800, Chao Yu wrote:
-> >>>> On 2020/3/12 19:14, Sahitya Tummala wrote:
-> >>>>> F2FS already has a default timeout of 5 secs for discards that
-> >>>>> can be issued during umount, but it can take more than the 5 sec
-> >>>>> timeout if the underlying UFS device queue is already full and there
-> >>>>> are no more available free tags to be used. In that case, submit_bio()
-> >>>>> will wait for the already queued discard requests to complete to get
-> >>>>> a free tag, which can potentially take way more than 5 sec.
-> >>>>>
-> >>>>> Fix this by submitting the discard requests with REQ_NOWAIT
-> >>>>> flags during umount. This will return -EAGAIN for UFS queue/tag full
-> >>>>> scenario without waiting in the context of submit_bio(). The FS can
-> >>>>> then handle these requests by retrying again within the stipulated
-> >>>>> discard timeout period to avoid long latencies.
-> >>>>>
-> >>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> >>>>> ---
-> >>>>>  fs/f2fs/segment.c | 14 +++++++++++++-
-> >>>>>  1 file changed, 13 insertions(+), 1 deletion(-)
-> >>>>>
-> >>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>>> index fb3e531..a06bbac 100644
-> >>>>> --- a/fs/f2fs/segment.c
-> >>>>> +++ b/fs/f2fs/segment.c
-> >>>>> @@ -1124,10 +1124,13 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> >>>>>  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
-> >>>>>  					&(dcc->fstrim_list) : &(dcc->wait_list);
-> >>>>> -	int flag = dpolicy->sync ? REQ_SYNC : 0;
-> >>>>> +	int flag;
-> >>>>>  	block_t lstart, start, len, total_len;
-> >>>>>  	int err = 0;
-> >>>>>  
-> >>>>> +	flag = dpolicy->sync ? REQ_SYNC : 0;
-> >>>>> +	flag |= dpolicy->type == DPOLICY_UMOUNT ? REQ_NOWAIT : 0;
-> >>>>> +
-> >>>>>  	if (dc->state != D_PREP)
-> >>>>>  		return 0;
-> >>>>>  
-> >>>>> @@ -1203,6 +1206,11 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>>  		bio->bi_end_io = f2fs_submit_discard_endio;
-> >>>>>  		bio->bi_opf |= flag;
-> >>>>>  		submit_bio(bio);
-> >>>>> +		if ((flag & REQ_NOWAIT) && (dc->error == -EAGAIN)) {
-> >>>>
-> >>>> If we want to update dc->state, we need to cover it with dc->lock.
-> >>>
-> >>> Sure, will update it.
-> >>>
-> >>>>
-> >>>>> +			dc->state = D_PREP;
-> >>>>
-> >>>> BTW, one dc can be referenced by multiple bios, so dc->state could be updated to
-> >>>> D_DONE later by f2fs_submit_discard_endio(), however we just relocate it to
-> >>>> pending list... which is inconsistent status.
-> >>>
-> >>> In that case dc->bio_ref will reflect it and until it becomes 0, the dc->state
-> >>> will not be updated to D_DONE in f2fs_submit_discard_endio()?
-> >>
-> >> __submit_discard_cmd()
-> >>  lock()
-> >>  dc->state = D_SUBMIT;
-> >>  dc->bio_ref++;
-> >>  unlock()
-> >> ...
-> >>  submit_bio()
-> >> 				f2fs_submit_discard_endio()
-> >> 				 dc->error = -EAGAIN;
-> >> 				 lock()
-> >> 				 dc->bio_ref--;
-> >>
-> >>  dc->state = D_PREP;
-> >>
-> >> 				 dc->state = D_DONE;
-> >> 				 unlock()
-> >>
-> >> So finally, dc's state is D_DONE, and it's in wait list, then will be relocated
-> >> to pending list.
-> > 
-> > In case of queue full, f2fs_submit_discard_endio() will not be called
+On 2020/3/10 5:19, Jaegeuk Kim wrote:
+> From: Wei Wang <wvw@google.com>
 > 
-> I guess the case is there are multiple bios related to one dc and partially callback
-> of bio is called asynchronously and the other is called synchronously, so the race
-> condition could happen.
+> clock_t time is per-process time, which is not wall time. For example,
+> if the CPU is shared by other processes, clock_t time may advance slower
+> than wall clock. On the other hand, if the current process is
+> multithreaded and more than one execution core is available, clock_t
+> time may advance faster than wall clock.
+> 
+> this CL changes it to use CLOCK_BOOTTIME (Linux-specific)
+> 
+> Signed-off-by: Wei Wang <wvw@google.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-You are right. Let me review that case and try to fix it.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> 
-> Thanks,
-> 
-> > asynchronously. It will be called in the context of submit_bio() itself.
-> > So by the time, submit_bio returns dc->error will be -EAGAIN and dc->state
-> > will be D_DONE. 
-> > 
-> > submit_bio()
-> > ->blk_mq_make_request
-> > ->blk_mq_get_request()
-> >   ->bio_wouldblock_error() (called due to queue full)
-> >     ->bio_endio()
-> >     
-> > Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>> +			err = dc->error;
-> >>>>> +			break;
-> >>>>> +		}
-> >>>>>  
-> >>>>>  		atomic_inc(&dcc->issued_discard);
-> >>>>>  
-> >>>>> @@ -1510,6 +1518,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>>  			}
-> >>>>>  
-> >>>>>  			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> >>>>> +			if (dc->error == -EAGAIN) {
-> >>>>> +				congestion_wait(BLK_RW_ASYNC, HZ/50);
-> >>>>> +				__relocate_discard_cmd(dcc, dc);
-> >>>>> +			}
-> >>>>>  
-> >>>>>  			if (issued >= dpolicy->max_requests)
-> >>>>>  				break;
-> >>>>>
-> >>>
-> > 
-
--- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
 
 
 _______________________________________________
