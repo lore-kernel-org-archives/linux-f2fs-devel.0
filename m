@@ -1,96 +1,79 @@
-Return-Path: <SRS0=lILY=5B=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=gybR=5C=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1186EC0044D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Mar 2020 09:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9325AC0044D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Mar 2020 02:05:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CCA6320658;
-	Mon, 16 Mar 2020 09:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5F34D206C0;
+	Tue, 17 Mar 2020 02:05:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Wb6LMF/c";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="aChrTL9b";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=archlinux-us.20150623.gappssmtp.com header.i=@archlinux-us.20150623.gappssmtp.com header.b="LWZ9jx91"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCA6320658
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=archlinux.us
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DNTWI3Ne";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lp9VyXd5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F34D206C0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jDmR0-00063u-W7; Mon, 16 Mar 2020 09:53:22 +0000
+	id 1jE1bN-0000Od-4c; Tue, 17 Mar 2020 02:05:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <graysky@archlinux.us>) id 1jDmR0-00063f-9q
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 09:53:22 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jE1bL-0000OM-OD
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Mar 2020 02:05:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=twSEtXbUemdMzWY6Y7Kk95s0Z4mOKO25AFjditd+24U=; b=Wb6LMF/cJtnl21ZOKaLgy/gbir
- Gshf3UIvMifqupCmxuRxMLtG+j9YudIiUWtZWTQbUL9ccz037g/vxCZNhLWXsKjfpwE/BddxsiOv9
- GCnW6V3j6hA6Dzs8izvcGo4YX2mKRgjYI/cU90PYwUzZkBMuZCTQINaEANVVLLzpog0E=;
+ bh=m4B+CNn4qnASwuej0+aOauVTedImwltWOkDBhkWiPQY=; b=DNTWI3NexCyYtmGFrY56Lv7AB7
+ sL/y27Ewg2b93p6qJgVoFFJXPxeyDwkxXkeKWD74GdSnXo6k7CdgUCFAG2qLrWq9q/Y1ibAB1tQmF
+ CkCDX0+25yy33txJQ7EG4BEGGipFOMmb9P5L3A1Eiju9C4+eTSsf+GjEVE4E9Djk6y+8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=twSEtXbUemdMzWY6Y7Kk95s0Z4mOKO25AFjditd+24U=; b=aChrTL9bhsMf/7qjvvXvpUMfkf
- cLesmIZ+sZuBAaGifp4uylQMp7+we6kR8Z5NT1VEdqqks9vQy69UqcvTf85qA6RdZHaSTZ/1RiDy9
- uZTYqdaCrtIB4kv/nPO02Jd6Mkmup1DuadVjIat8pGo7La4wffF1EVws3p3MTPXFs2q8=;
-Received: from mail-wr1-f67.google.com ([209.85.221.67])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jDmQu-002ogv-25
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Mar 2020 09:53:22 +0000
-Received: by mail-wr1-f67.google.com with SMTP id r15so20334713wrx.6
+ bh=m4B+CNn4qnASwuej0+aOauVTedImwltWOkDBhkWiPQY=; b=lp9VyXd5NLtsgtToE9GlvVnTSU
+ A/RYBPbihYVP2xZgGjPBYJ+gD/IWngzsdNok0WdZr4pViDvsH9PJ+d3vTUynt3P6wmSqhTWAORmhK
+ xcRlU1kkV0d0yWqvl2YuIM4s14sf75knKQtz2SWyOL7EuWKMhUalyBJZRvSEEFapv8Ug=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jE1bH-009DqM-JW
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Mar 2020 02:05:03 +0000
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id 9FC262CDC09407622853
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 16 Mar 2020 02:53:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=archlinux-us.20150623.gappssmtp.com; s=20150623;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc; bh=twSEtXbUemdMzWY6Y7Kk95s0Z4mOKO25AFjditd+24U=;
- b=LWZ9jx91NQ50Cl9UJsNpzvnLzmBoJ2OUwkmplEZXZPja0LhDVOKrMSaR3k8GmOGEeT
- 3z6+g4ipiKWRPeRp+z/MMFYcC6MZEoiiT72D9Rl79tptAE3cThoPPNLhYKIlUfiqobb2
- mO15luplaaCfp1nlVAbpUT1mnuNVZoRQFb4V2J5WZiX9kk3dzp1idifkhShIGstnZv8y
- G7WaUud2LLWlTsHHF9McxuwUHUC22rVa6GUAYL9kdlUTmotXlgz9d7U+XgGxDWmny1T5
- Pue0HlXWOGgEOKPThI92dTvZc1tqGzBj9isEZCXzpSeEgSZkvTD7Fs98PxM0+SAAxhT0
- UBww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc;
- bh=twSEtXbUemdMzWY6Y7Kk95s0Z4mOKO25AFjditd+24U=;
- b=hhuTfad/soig3YfUqRbcCrWz2YtdifhEQbDrgs7FZ7zyT3929AXZT0CAAWf+eYgbhu
- SZ0Hv3k1aKdxSDptRH4+yXc27+fxXAGhg2VuHlcNS2bZ94BGsXZr1z3H17iHB7JcIJuW
- N2vhZfCGBcvJ5qrs1eWyOLjYTpgA0m5DYx+iZLTbRTJXhrA/lzzrit7Zh36/bI9IFmLq
- 2DOD04A5ZPHM2ehfzK8pFAqy8G84K7BM5dsephEp3bbLuoG1ErZ9eSqvZ3ilwaQ/AdbU
- O+s9V5KMWv6xRxvwMf51pvKN61v4EEO4f81V0a/Je7uktBuzcBQsi36/PHZ/MM7riMjs
- redg==
-X-Gm-Message-State: ANhLgQ1RChhC+2WPcVyXmgCJfgtB+h6fPY82fpKL2BaesTdt9UV0ylw8
- 6aCC5/FtBF/SyPMMpdqmmb48IRHPQ/oQRimkWBQy6j3BJqE=
-X-Google-Smtp-Source: ADFU+vt6murA7L85KGhzXZmhqfegrQT64cx86nXeWj3MeUkcauoMooK3kqtuNl/DLlhE4EbK0x6q6zaqHH48FPcseaM=
-X-Received: by 2002:adf:e94a:: with SMTP id m10mr4107654wrn.218.1584352389089; 
- Mon, 16 Mar 2020 02:53:09 -0700 (PDT)
-MIME-Version: 1.0
+ Tue, 17 Mar 2020 09:44:10 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 17 Mar
+ 2020 09:44:06 +0800
+To: John <graysky@archlinux.us>, <linux-f2fs-devel@lists.sourceforge.net>
 References: <CAO_nJAYw+-+n584gg2-rRp3KoAsPT5mpD5yRCrwM7hiDMD=PJg@mail.gmail.com>
  <78bdaf48-9699-3a04-efec-95e1a670bfe4@huawei.com>
-In-Reply-To: <78bdaf48-9699-3a04-efec-95e1a670bfe4@huawei.com>
-From: John <graysky@archlinux.us>
-Date: Mon, 16 Mar 2020 05:52:58 -0400
-Message-ID: <CAO_nJAZ_bW1Bor-sUb8Ouz4VQV28KPZR23njH4VV+eH=BgwR=Q@mail.gmail.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1jDmQu-002ogv-25
+ <CAO_nJAZ_bW1Bor-sUb8Ouz4VQV28KPZR23njH4VV+eH=BgwR=Q@mail.gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <418f4ee8-14ed-bdfa-d16c-f68c2992f234@huawei.com>
+Date: Tue, 17 Mar 2020 09:44:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAO_nJAZ_bW1Bor-sUb8Ouz4VQV28KPZR23njH4VV+eH=BgwR=Q@mail.gmail.com>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jE1bH-009DqM-JW
 Subject: Re: [f2fs-dev] fstrim does not recognize FSVER=1.13 of F2FS
  partitions
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -108,39 +91,58 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sun, Mar 15, 2020 at 9:24 PM Chao Yu <yuchao0@huawei.com> wrote:
->
-> What's your mount option and mkfs option on those two partitions, and what's
-> your kernel version?
+On 2020/3/16 17:52, John wrote:
+> On Sun, Mar 15, 2020 at 9:24 PM Chao Yu <yuchao0@huawei.com> wrote:
+>>
+>> What's your mount option and mkfs option on those two partitions, and what's
+>> your kernel version?
+> 
+> I am mounting the partitions with systemd like so (/etc/fstab entry):
+>   LABEL=incoming         /incoming     f2fs  noauto,x-systemd.automount  0 0
+> 
+> But I can reproduce this if I totally remove the entries within
+> /etc/fstab, reboot, and mount manually like this:
+>   mount LABEL=incoming /incoming
 
-I am mounting the partitions with systemd like so (/etc/fstab entry):
-  LABEL=incoming         /incoming     f2fs  noauto,x-systemd.automount  0 0
+However, the directory where you trigger trim is "/mnt/media"?
 
-But I can reproduce this if I totally remove the entries within
-/etc/fstab, reboot, and mount manually like this:
-  mount LABEL=incoming /incoming
+Quoted:
+"Invoking it manually on the newer one gives this:
+# fstrim -v /mnt/media
+fstrim: /mnt/media: the discard operation is not supported"
 
-Inspecting my shell history, I created them both with this command:
-  mkfs.f2fs -l incoming /dev/sdb2
+Could you give more details about that? What device is behind /mnt/media?
 
-I am running 5.5.9 on Arch Linux, but I believe I experienced this
-under previous 5.5.x series as well.
+> 
+> Inspecting my shell history, I created them both with this command:
+>   mkfs.f2fs -l incoming /dev/sdb2
+> 
+> I am running 5.5.9 on Arch Linux, but I believe I experienced this
+> under previous 5.5.x series as well.
+> 
+> If you create a F2FS partition using the latest stable release of
+> f2fs-tools (1.13.0) are you able to reproduce the inability to trim?
 
-If you create a F2FS partition using the latest stable release of
-f2fs-tools (1.13.0) are you able to reproduce the inability to trim?
+I can't, and also there is such option in mkfs to disable trim functionality
+during format.
 
-Thank you for the consideration!
+Thanks,
 
-> I checked the code, only place where we give 'not supported' is as below
-> by checking whether underlying device supports discard.
->
-> f2fs_ioc_fitrim()
->
->         if (!f2fs_hw_support_discard(F2FS_SB(sb)))
->                 return -EOPNOTSUPP;
->
-> So this should not happen that two partitions locates in one device have
-> inconsistent discard support status.
+> 
+> Thank you for the consideration!
+> 
+>> I checked the code, only place where we give 'not supported' is as below
+>> by checking whether underlying device supports discard.
+>>
+>> f2fs_ioc_fitrim()
+>>
+>>         if (!f2fs_hw_support_discard(F2FS_SB(sb)))
+>>                 return -EOPNOTSUPP;
+>>
+>> So this should not happen that two partitions locates in one device have
+>> inconsistent discard support status.
+> .
+> 
 
 
 _______________________________________________
