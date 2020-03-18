@@ -2,44 +2,42 @@ Return-Path: <SRS0=+Ju8=5D=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54568C10DCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 Mar 2020 12:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39202C43332
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 Mar 2020 20:47:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2392D20724
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 Mar 2020 12:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id F1BE02071C;
+	Wed, 18 Mar 2020 20:47:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="dXIgd8zh";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KukNoaSe";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAeIBdla"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2392D20724
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HIQJBLWj";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lsnVhG02";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=archlinux-us.20150623.gappssmtp.com header.i=@archlinux-us.20150623.gappssmtp.com header.b="FtD7qwuo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BE02071C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=archlinux.us
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jEXac-0002gT-Hq; Wed, 18 Mar 2020 12:14:26 +0000
+	id 1jEfb5-0002Qe-6Y; Wed, 18 Mar 2020 20:47:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <qkrwngud825@gmail.com>) id 1jEXab-0002gA-D6
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Mar 2020 12:14:25 +0000
+ (envelope-from <graysky@archlinux.us>) id 1jEfb4-0002QV-1j
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Mar 2020 20:47:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
  In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
  :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=og0LDHDGJi+jmOmmQp4Rk2H6PUrLgVc6fcIsRCRNLD0=; b=dXIgd8zhvyfBVXhk7pfXq5oScB
- E59ybec6SrQTRWQJ3ntevIzPv0LQA6afAJWS/ufkFZbIwqGtrhB7zv5tqfwkQJlxDIO1DhHKN7TPw
- xi0S1J5HU8HHACjCQnZO35s/WHCQ6x+ck7dArEmZpbDfIaY5l9zkPFBNtGR0Q2Db9ASM=;
+ bh=/gYyt3hRcetYExPMhNahsVTUi6lo6bX65s1UZ7Pn1fU=; b=HIQJBLWjxiSPjYJYdRmWZGT2fY
+ fjENSHgxbBT8KJ38o927VHL5fQ5BdPZzjY9VaafoDTH9B/BOP0DrkdRJUqxLP8qbcYHkvwLX4fWTR
+ B1HGv5+DtC9BC59GnCXVeVoFWvF2YkcBpqji4U3wezoK1oufb2+PqV4THCTWi/1dGsEM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
@@ -47,52 +45,56 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=og0LDHDGJi+jmOmmQp4Rk2H6PUrLgVc6fcIsRCRNLD0=; b=KukNoaSenIFcfhaGLtDtbctudy
- vy8v6Q36Wsjqj5plzr8SBDCgKgUFEYWbCPf19tpNtGfnwTuHmVK0PuWRVXcZLPs6Xgq0u2WxKz3jo
- LkEUOL0f1qfHsTIDvV6UxK6RAfmTVVEZstk24wPP732orMR/nJhPTuQ84kxlMx+LbWLU=;
-Received: from mail-vk1-f195.google.com ([209.85.221.195])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=/gYyt3hRcetYExPMhNahsVTUi6lo6bX65s1UZ7Pn1fU=; b=lsnVhG02ommymgZNY1s9SfsLdC
+ kd32ZEkFmzfxYv0R7oNiUGggZGZpreAgpCAUAIs9Tv5ajYxudcTiRbyDVqohxSdrbkNbiwCUJxUoA
+ So3c/AMlOBM+2lWJgz49G2ihG3fi1aEqDryk1/ZZMymIuy5Dlb9SWicLS9KzwWs5+WnY=;
+Received: from mail-wm1-f51.google.com ([209.85.128.51])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jEXaY-00DBOd-ET
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Mar 2020 12:14:25 +0000
-Received: by mail-vk1-f195.google.com with SMTP id e20so6988299vke.9
+ id 1jEfb2-00HEMh-L6
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 Mar 2020 20:47:26 +0000
+Received: by mail-wm1-f51.google.com with SMTP id d1so3420730wmb.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 18 Mar 2020 05:14:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ Wed, 18 Mar 2020 13:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=archlinux-us.20150623.gappssmtp.com; s=20150623;
  h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc; bh=og0LDHDGJi+jmOmmQp4Rk2H6PUrLgVc6fcIsRCRNLD0=;
- b=iAeIBdlaaFvGcjmOV9nnbG4Q+ZKQ58q6k1c/nmRUOMcJSdQdGoeupdtrE0kMoc4lpt
- tEZueJQn3kCsdxcxN9odshFTtplAHptMXbyeDvQnnTC6abmb/DbaTG/Gjk/rjKhu34XH
- F2ITAgNyF83lzIz/61qEASXmvPCKRW+M9iJ+PbaFQzhZAIZB3yw8fhmgkCI09aEuas4p
- npdO3N3Ju7my6YLRjznwctZm7KlW4PbyQN6a5kYxyGYntxrnLPxGzzpswV6X9ffChNMZ
- S4QnHDcw9NCHeG0/8rpOn7HeDWK04qk/2DZsOqiKAaNE6IF1N8/U/0XYPUt7g3do7k6m
- eh5Q==
+ :cc; bh=/gYyt3hRcetYExPMhNahsVTUi6lo6bX65s1UZ7Pn1fU=;
+ b=FtD7qwuoYfn2zHhqePESsyP3JJngQtuGLdvf7GtXsCQNgCH4WRKKPq2xAewgOtSv2G
+ Jqb6XW/KOBRVdjUGecnEpa0GrrQeYrHIGxBuxO1cvwRJ5zbX5W1x3HjAInpd5YB/Cy/8
+ 6T80wXqMpqpEUeJsJ6RRX8e+JHi4h70AK5oAAf8Qh9nSblb8AtAqUwQhIz5kTewhOQKM
+ OL2KvEH9ahr4zORTJOuteUroDVs+Kf9zr+wv5I7DLnwLr8e0iERdi1VH8DKK/DdF6L1E
+ rghaeuL70OLpX+hjSq0wU+Y90Coko/8cYQt5zTL9Qlf+YYzs4jfqtPm2A9ZyCTqACk9T
+ c4Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:mime-version:references:in-reply-to:from:date
  :message-id:subject:to:cc;
- bh=og0LDHDGJi+jmOmmQp4Rk2H6PUrLgVc6fcIsRCRNLD0=;
- b=Wl2NKMbba6VNya5470Ii7omzPsPW3e3GblrjIp0VMZSaG4YXGCR5/DFRMbFSKJpuED
- Lb7d7EP5PvRxRaMK2l5yn4EnjSGWDexkFbYtL8neqiRc3rwErHPejeTBv3hoQ6HVqcGo
- c0MlF0o8NrL9wb7xvFZKlBksqD5I4xPzigendGG1lA+SdwWnNEer4eY3yTy3fLMHV8YT
- /bSbdUNY4ZmIeLW2OylpsLFS8uuHmRF1kL6hDIpwG9Ge4j+tsv75kxmeIHNXz0LwBT56
- yMDE2XsU/SMDGuF6QPt7oQGe4kn6buDIF1JvgB4jCFOP0EZBTZtbXERZ8+gDWJKG0bO5
- yksg==
-X-Gm-Message-State: ANhLgQ0oYowJz63jkgIC7JG3Bpd5R9UVQNPZocCmz/U+jC6pdnogKHFB
- o6V2Ir4liSL07Fp5VhIPRjcPUCpuwFMkDgdcIOk=
-X-Google-Smtp-Source: ADFU+vtuxafvF6plHBJVfKJ7U23/fBbB1V91FZHEJpgZp+l9v0FqrX8HUV0TNGlgraDKAKeMO6f2LK/g141VKeZjYYs=
-X-Received: by 2002:a1f:ee05:: with SMTP id m5mr3020614vkh.9.1584533656113;
- Wed, 18 Mar 2020 05:14:16 -0700 (PDT)
+ bh=/gYyt3hRcetYExPMhNahsVTUi6lo6bX65s1UZ7Pn1fU=;
+ b=hgOUur1uHkegnOewFpMVMQsKYMHtAU8v0UMcPopo7LhCd3+mHMhCNuSXIVf+e0VAEU
+ qdfsAwORa3CBeR1oNvT16Awiniddf4u90FgItfaiFh+LBDywQe0YF1476C0Cjbr9YbgJ
+ uNIh5Xr+BE+N5QBlNe+Jo5ikEXK6XommZB84Zd9tOUuxO/laSSQM4EGQHUaiR/ht11fc
+ Cx0EY2rB+dN9cB5GAJEjguRYNOjHtUt5MikWJ01g2O4S5/bFDxPZx9WnRUIx9VrlVNFI
+ ItsbjWTM67d7LXCMXXdD1NC5rh/n75dASfMVczlzMuzKbHAsJla8de4xCb+Hj4Mpa9n2
+ W3hA==
+X-Gm-Message-State: ANhLgQ2CeIpFS/f92twAEu9JUkqVkC+1XAQWERL+7NCp8wD/kEW7G98s
+ 5wrgPDbQozmZpWvvL0S2QVim/S3LVvkDgEVxbI6HoT+k
+X-Google-Smtp-Source: ADFU+vsPPtGSPiLGby2fS3myrgCP+xbx2wFp0BnZyVFpYaHfCl2uzo4Ix2fzYZBekHchyTCieChRGAN00/PHxh0werE=
+X-Received: by 2002:a1c:c3c3:: with SMTP id t186mr7304568wmf.118.1584563135334; 
+ Wed, 18 Mar 2020 13:25:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200225101710.40123-1-yuchao0@huawei.com>
-In-Reply-To: <20200225101710.40123-1-yuchao0@huawei.com>
-From: Ju Hyung Park <qkrwngud825@gmail.com>
-Date: Wed, 18 Mar 2020 21:14:04 +0900
-Message-ID: <CAD14+f3pi331-V0gzjtxcMRVaEn3tPacrC20wtRq9+6JY9_HVA@mail.gmail.com>
+References: <CAO_nJAYw+-+n584gg2-rRp3KoAsPT5mpD5yRCrwM7hiDMD=PJg@mail.gmail.com>
+ <78bdaf48-9699-3a04-efec-95e1a670bfe4@huawei.com>
+ <CAO_nJAZ_bW1Bor-sUb8Ouz4VQV28KPZR23njH4VV+eH=BgwR=Q@mail.gmail.com>
+ <418f4ee8-14ed-bdfa-d16c-f68c2992f234@huawei.com>
+In-Reply-To: <418f4ee8-14ed-bdfa-d16c-f68c2992f234@huawei.com>
+From: John <graysky@archlinux.us>
+Date: Wed, 18 Mar 2020 16:25:24 -0400
+Message-ID: <CAO_nJAYTbPqWKAnG1+i2J1jnEKN6QtiMV_CxVyranZ-AWK9Agg@mail.gmail.com>
 To: Chao Yu <yuchao0@huawei.com>
-X-Headers-End: 1jEXaY-00DBOd-ET
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: use kmem_cache pool during inline
- xattr lookups
+X-Headers-End: 1jEfb2-00HEMh-L6
+Subject: Re: [f2fs-dev] fstrim does not recognize FSVER=1.13 of F2FS
+ partitions
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,40 +106,59 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Chao.
-
-I got the time around to test this patch.
-The v2 patch seems to work just fine, and the code looks good.
-
-On Tue, Feb 25, 2020 at 7:17 PM Chao Yu <yuchao0@huawei.com> wrote:
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index a3360a97e624..e46a10eb0e42 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -23,6 +23,25 @@
->  #include "xattr.h"
->  #include "segment.h"
+On Mon, Mar 16, 2020 at 9:44 PM Chao Yu <yuchao0@huawei.com> wrote:
 >
-> +static void *xattr_alloc(struct f2fs_sb_info *sbi, int size, bool *is_inline)
-> +{
-> +       *is_inline = (size == sbi->inline_xattr_slab_size);
+> On 2020/3/16 17:52, John wrote:
+> > On Sun, Mar 15, 2020 at 9:24 PM Chao Yu <yuchao0@huawei.com> wrote:
+> >>
+> >> What's your mount option and mkfs option on those two partitions, and what's
+> >> your kernel version?
+> >
+> > I am mounting the partitions with systemd like so (/etc/fstab entry):
+> >   LABEL=incoming         /incoming     f2fs  noauto,x-systemd.automount  0 0
+> >
+> > But I can reproduce this if I totally remove the entries within
+> > /etc/fstab, reboot, and mount manually like this:
+> >   mount LABEL=incoming /incoming
+>
+> However, the directory where you trigger trim is "/mnt/media"?
+>
+> Quoted:
+> "Invoking it manually on the newer one gives this:
+> # fstrim -v /mnt/media
+> fstrim: /mnt/media: the discard operation is not supported"
+>
+> Could you give more details about that? What device is behind /mnt/media?
 
-Would it be meaningless to change this to the following code?
-if (likely(size == sbi->inline_xattr_slab_size))
-    *is_inline = true;
-else
-    *is_inline = false;
+The SSD has two partitions on it formatted to F2FS.
+LABEL=incoming was created with f2fs-tools v1.12.0
+LABEL=media was created with f2fs-tools v1.13.0
 
-The above statement seems to be only false during the initial mount
-and the rest(millions) seems to be always true.
+The physical device is a Samsung 860 EVO 2TB SSD.
 
-Thanks.
+> > Inspecting my shell history, I created them both with this command:
+> >   mkfs.f2fs -l incoming /dev/sdb2
+> >
+> > I am running 5.5.9 on Arch Linux, but I believe I experienced this
+> > under previous 5.5.x series as well.
+> >
+> > If you create a F2FS partition using the latest stable release of
+> > f2fs-tools (1.13.0) are you able to reproduce the inability to trim?
+>
+> I can't, and also there is such option in mkfs to disable trim functionality
+> during format.
+>
+
+I might be misunderstanding.  When you said "I can't" does that mean
+when you created a partition with f2fstools v1.13.0, mounted it, and
+then ran the fstrim on it, fstrim completed successfully?  Which
+version of fstrim do you have installed?  I am using util-linux
+2.35.1.
 
 
 _______________________________________________
