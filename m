@@ -2,85 +2,80 @@ Return-Path: <SRS0=57LO=5E=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C90AC4332B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2020 11:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C7DC43332
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Mar 2020 11:08:12 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CE6EF206D7;
-	Thu, 19 Mar 2020 11:05:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id C459B206D7;
+	Thu, 19 Mar 2020 11:08:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="TqRe6r6x";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="CPrMJuda";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h22azbs6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6EF206D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="iBzWe3c0";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KNQzyEtt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C459B206D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jEsz5-0003hO-TB; Thu, 19 Mar 2020 11:05:07 +0000
+	id 1jEt23-0003r3-G4; Thu, 19 Mar 2020 11:08:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <BATV+061b0704d8249feb4593+6052+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1jEsz3-0003hA-Q1
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Mar 2020 11:05:05 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jEt20-0003ql-ES
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Mar 2020 11:08:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Z8k5rxxuWJeifREgQU7npm0AxV0O+HvW6zpGtvds6oI=; b=TqRe6r6x5wLD26HhgYfHBg1lUP
- Mv/5mx/O2VdFafWLwVkGZQwFwYY+nDbc9/GYtqYxhRCmTq6TfFdu5VxtohtduU5ZigLVaYpm5pA7K
- 1n5ix3DAOmuCqmzz5FYXh0WOuzYrsqXPXR84H6/qW8KgC8QX+qi2jjFkUgAEHcwbktNg=;
+ bh=1b4usBJ4por/WI51h4wE/fsccx2AyJdxwRUm9qToDAk=; b=iBzWe3c0lQd9CBAEDgOZYDO2BH
+ iEprYFB38LTDG+erh0M3LsQ8NCf5nH1Lebud59F52RG2Rz3jjN6zzFnI8Qx6J1K4R0AKvULjAa6xQ
+ mRVL5Do9eZwPwFfqMb06+trk2As1MKdVxnT3aKog3e9pk9h0Hyz75h4ML/HDK2nQiNrM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Z8k5rxxuWJeifREgQU7npm0AxV0O+HvW6zpGtvds6oI=; b=CPrMJudatLbSvYdRyRPpbzg3cj
- YGGSh3d8ecslk5n+CQzhmGtON/WV8ZHUedzThYxWyO+ARj8h406L9UHpnVtmSV0SOIVv9KaOs9Ifb
- xy7RqiqMOobeyEt5NtVqoXHLGfsBf3+YErPwbpC5pSs/SEfHLoOd2sPCD4v65PDO/3c4=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=1b4usBJ4por/WI51h4wE/fsccx2AyJdxwRUm9qToDAk=; b=KNQzyEtt+aWPEYDIn4GKZgBAhc
+ 9A0Z/ju5/HiHO5xvrI2vmX8SNX+yExUi/hXvOUylR/jswjU0OEPBy6c58zkNkmMIt2rBzmzKuFaYJ
+ yETJCZMEoMKIALLZB3kOCFQxnfno0ay8SmXPUqwywt+ocsK4bGtDal1ZMMhyqlQse+90=;
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jEsz0-00E4j5-6H
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Mar 2020 11:05:05 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=Z8k5rxxuWJeifREgQU7npm0AxV0O+HvW6zpGtvds6oI=; b=h22azbs6kOrxgCeM2CER1MvB/F
- nzVY1oKsfJNndoqnTYxXjLohFNHtF/549gKeKID2vhuuA8lSt2dcyRkbX5EBjajghlihjYaP5n6fK
- 5IkOMlFMNHaEnLF95CW0+s81grvKSTu/KGoPLajsfB6zB0IbgLAd+wFYUq+/fT+R4GD4GOyROFBxS
- zOPEXB4pMkv4HDMRRfapcGp9lQmencPDW2201XRwlxAK0V2l+CJe3cnriFSBHoidGjPcls3090U7R
- GJyP2/+y4iy1LuvGqWTpiMrAm/CtyYE3dqT+yLXX5o2858rAVGYP3DDDV3QwJ39c+SfchouVOj3Aj
- OvOuBEFQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1jEsyu-0004gA-Es; Thu, 19 Mar 2020 11:04:56 +0000
-Date: Thu, 19 Mar 2020 04:04:56 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Satya Tangirala <satyat@google.com>
-Message-ID: <20200319110456.GB20097@infradead.org>
-References: <20200312080253.3667-1-satyat@google.com>
- <20200312080253.3667-4-satyat@google.com>
+ id 1jEt1x-000ANC-GS
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 Mar 2020 11:08:08 +0000
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id 22C75D69615A3D173C0A;
+ Thu, 19 Mar 2020 18:47:10 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 19 Mar
+ 2020 18:47:08 +0800
+To: Sahitya Tummala <stummala@codeaurora.org>
+References: <1583466746-17445-1-git-send-email-stummala@codeaurora.org>
+ <3c88ab1f-d6f0-56da-e845-1d064b0e24fe@huawei.com>
+ <20200319091518.GN20234@codeaurora.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <12c0ac9f-54ab-d012-0796-24b6e08d31c7@huawei.com>
+Date: Thu, 19 Mar 2020 18:47:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200312080253.3667-4-satyat@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1jEsz0-00E4j5-6H
-Subject: Re: [f2fs-dev] [PATCH v8 03/11] block: Make blk-integrity preclude
- hardware inline encryption
+In-Reply-To: <20200319091518.GN20234@codeaurora.org>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jEt1x-000ANC-GS
+Subject: Re: [f2fs-dev] [PATCH V2] fsck.f2fs: allow fsck to fix issues with
+ online resize due to SPO
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,47 +87,164 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
- Kuohong Wang <kuohong.wang@mediatek.com>,
- Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Mar 12, 2020 at 01:02:45AM -0700, Satya Tangirala wrote:
-> There's no hardware currently that supports both integrity and inline
-> encryption. However, it seems possible that there will be in the near
-> future, based on discussion at
-> https://lore.kernel.org/r/20200108140730.GC2896@infradead.org/
-> But properly integrating both features is not trivial, and without
-> real hardware that implements both, it is difficult to tell if it will
-> be done correctly by the majority of hardware that support both, and
-> through discussions at
-> https://lore.kernel.org/r/20200224233459.GA30288@infradead.org/
-> it seems best not to support both features together right now, and
-> to decide what to do at probe time.
+Hi Sahitya,
 
-Please don't reference web links, just inline the important information.
+On 2020/3/19 17:15, Sahitya Tummala wrote:
+> Hi Chao,
+> 
+> On Mon, Mar 16, 2020 at 11:19:11AM +0800, Chao Yu wrote:
+>> On 2020/3/6 11:52, Sahitya Tummala wrote:
+>>> Add support for new CP flag CP_RESIZEFS_FLAG set during online
+>>> resize FS. If SPO happens after SB is updated but CP isn't, then
+>>> allow fsck to fix it.
+>>>
+>>> fsck errors without this fix -
+>>>     Info: CKPT version = 6ed7bccb
+>>>             Wrong user_block_count(2233856)
+>>>     [f2fs_do_mount:3365] Checkpoint is polluted
+>>>
+>>> the subsequent mount failure without this fix -
+>>> [   11.294650] F2FS-fs (sda8): Wrong user_block_count: 2233856
+>>> [   11.300272] F2FS-fs (sda8): Failed to get valid F2FS checkpoint
+>>>
+>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>>> ---
+>>> v2:
+>>> - fix even if CP_FSCK_FLAG is set for backward compatibility
+>>> - update print_cp_state()
+>>>
+>>>  fsck/mount.c      | 34 +++++++++++++++++++++++++++++++---
+>>>  include/f2fs_fs.h |  1 +
+>>>  2 files changed, 32 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fsck/mount.c b/fsck/mount.c
+>>> index e4ba048..8d32e41 100644
+>>> --- a/fsck/mount.c
+>>> +++ b/fsck/mount.c
+>>> @@ -429,6 +429,8 @@ void print_cp_state(u32 flag)
+>>>  		MSG(0, "%s", " orphan_inodes");
+>>>  	if (flag & CP_DISABLED_FLAG)
+>>>  		MSG(0, "%s", " disabled");
+>>> +	if (flag & CP_RESIZEFS_FLAG)
+>>> +		MSG(0, "%s", " resizefs");
+>>>  	if (flag & CP_UMOUNT_FLAG)
+>>>  		MSG(0, "%s", " unmount");
+>>>  	else
+>>> @@ -1128,6 +1130,7 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+>>>  	unsigned int total, fsmeta;
+>>>  	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+>>>  	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
+>>> +	unsigned int flag = get_cp(ckpt_flags);
+>>>  	unsigned int ovp_segments, reserved_segments;
+>>>  	unsigned int main_segs, blocks_per_seg;
+>>>  	unsigned int sit_segs, nat_segs;
+>>> @@ -1164,7 +1167,32 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+>>>  	log_blocks_per_seg = get_sb(log_blocks_per_seg);
+>>>  	if (!user_block_count || user_block_count >=
+>>>  			segment_count_main << log_blocks_per_seg) {
+>>> -		MSG(0, "\tWrong user_block_count(%u)\n", user_block_count);
+>>> +		if (flag & (CP_FSCK_FLAG | CP_RESIZEFS_FLAG)) {
+>>> +			u32 valid_user_block_cnt;
+>>> +			u32 seg_cnt_main = get_sb(segment_count) -
+>>> +					(get_sb(segment_count_ckpt) +
+>>> +					 get_sb(segment_count_sit) +
+>>> +					 get_sb(segment_count_nat) +
+>>> +					 get_sb(segment_count_ssa));
+>>> +
+>>> +			/* validate segment_count_main in sb first */
+>>> +			if (seg_cnt_main != get_sb(segment_count_main)) {
+>>> +				MSG(0, "\tWrong user_block_count(%u) and inconsistent segment_cnt_main %u\n",
+>>> +						user_block_count,
+>>> +						segment_count_main << log_blocks_per_seg);
+>>> +				return 1;
+>>> +			}
+>>> +			valid_user_block_cnt = ((get_sb(segment_count_main) -
+>>> +						get_cp(overprov_segment_count)) * c.blks_per_seg);
+>>> +			MSG(0, "\tInfo: Fix wrong user_block_count in CP: (%u) -> (%u)\n",
+>>> +					user_block_count, valid_user_block_cnt);
+>>
+>> By default, we should only fix such bug if c.fix_on is true, something
+>> like this:
+>>
+>> ASSERT_MSG("\tWrong user_block_count(%u)\n", user_block_count);
+>>
+>> if (!c.fix_on)
+>> 	return 1;
+>>
+>> valid_user_block_cnt = ((get_sb(segment_count_main) -
+>> 	get_cp(overprov_segment_count)) * c.blks_per_seg);
+>>
+>> MSG(0, "\tInfo: Fix wrong user_block_count in CP: (%u) -> (%u)\n",
+>> 	user_block_count, valid_user_block_cnt);
+>>
+> Since this is a fatal error which fails the basic mount itself, I thought it
+> must be fixed by default with fsck independent of -f option. Can we do so for
+> such critical bugs?
 
-> diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-> index bf62c25cde8f..a5c57991c6fa 100644
-> --- a/block/bio-integrity.c
-> +++ b/block/bio-integrity.c
-> @@ -42,6 +42,11 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
->  	struct bio_set *bs = bio->bi_pool;
->  	unsigned inline_vecs;
->  
-> +	if (bio_has_crypt_ctx(bio)) {
-> +		pr_warn("blk-integrity can't be used together with inline en/decryption.");
-> +		return ERR_PTR(-EOPNOTSUPP);
-> +	}
+I suggest to follow the options' meaning, e.g. if user specified --dry-run,
+however we change any bits on that image, it looks that break that option's
+semantics, and it may violate user's will.... so IMO, if user don't want to
+repair the image, it will be better to keep the image as it is.
 
-This is a hard error and should just be a WARN_ON_ONCE.
+Thoughts?
 
-I'm also not sure we need the register time warnings at all.
+To Jaegeuk, thoughts?
+
+Thanks,
+
+> 
+> Thanks,
+> 
+>> Thanks,
+>>
+>>
+>>> +			set_cp(user_block_count, valid_user_block_cnt);
+>>> +			c.fix_on = 1;
+>>> +			c.bug_on = 1;
+>>> +		} else {
+>>> +			MSG(0, "\tWrong user_block_count(%u)\n", user_block_count);
+>>> +			return 1;
+>>> +		}
+>>>  		return 1;
+>>>  	}
+>>>  
+>>> @@ -3361,6 +3389,8 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+>>>  		return -1;
+>>>  	}
+>>>  
+>>> +	c.bug_on = 0;
+>>> +
+>>>  	if (sanity_check_ckpt(sbi)) {
+>>>  		ERR_MSG("Checkpoint is polluted\n");
+>>>  		return -1;
+>>> @@ -3380,8 +3410,6 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
+>>>  			c.fix_on = 1;
+>>>  	}
+>>>  
+>>> -	c.bug_on = 0;
+>>> -
+>>>  	if (tune_sb_features(sbi))
+>>>  		return -1;
+>>>  
+>>> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+>>> index af31bc5..265f50c 100644
+>>> --- a/include/f2fs_fs.h
+>>> +++ b/include/f2fs_fs.h
+>>> @@ -678,6 +678,7 @@ struct f2fs_super_block {
+>>>  /*
+>>>   * For checkpoint
+>>>   */
+>>> +#define CP_RESIZEFS_FLAG                0x00004000
+>>>  #define CP_DISABLED_FLAG		0x00001000
+>>>  #define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+>>>  #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
+>>>
+> 
 
 
 _______________________________________________
