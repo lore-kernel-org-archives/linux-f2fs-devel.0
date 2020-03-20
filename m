@@ -4,75 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9005DC4332E
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Mar 2020 02:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65AB6C4332D
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Mar 2020 10:15:02 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 601442075E;
-	Fri, 20 Mar 2020 02:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2D1B720722
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Mar 2020 10:15:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="BH+SZ4iQ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PTo6nR4A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 601442075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cwOb2aVY";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="H3mHD5sj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D1B720722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jF7me-00049Y-0a; Fri, 20 Mar 2020 02:53:16 +0000
+	id 1jFEg6-0007px-2D; Fri, 20 Mar 2020 10:14:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1jF7mc-00049Q-C5
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 02:53:14 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jFEg4-0007pL-IN
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 10:14:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tEKb3gANdxCQsV+Tg8mI9a1m86j2S28OWCB5kPQz+Rs=; b=BH+SZ4iQjRU8tsHRihY/EMzMXC
- 3nauLgzQd4uwOXfZvEm+f0daJaEq96F9uuzNu/04H4Bk2ZiGl5+qgs3FIiFBjaIm5cDOWfeRtATNS
- zUffkTqnopA6TpDSnioMYAP0cJsaVSuIwM2efW56ISof/Nj6YBDw7k8gzc23rYnzAp08=;
+ bh=rCV8csAYwN0U0scJPLI8jCDkHjqQGwdLNX3Vga49m9M=; b=cwOb2aVYnoAeur26zVRRMhoheO
+ +QoYRxjcSiWBkDIY4RcTPPlkgoPXuGFCCfHPVrjud9DfIMqwwKYlZlD0IWIu7TAi/OPFOdL4wxajx
+ 53Tb+YoXtkYPyzh+GlJaH0Cnhu73SaQwp7KQxu/Gr1oLQtumHn2wHThS/qmkdc6ZB3WQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=tEKb3gANdxCQsV+Tg8mI9a1m86j2S28OWCB5kPQz+Rs=; b=PTo6nR4AqIzoabwEy0WKZjLWis
- SXDYR/KilBUHH2/GRjBsLwd5wYfWlLN9FCA+T3FxdR0hRy3MSrb+mxcKTvl+eBDCMYJ1+s67vjUZq
- twXpV13KP1rTDN8Mq/jzVMxgazwrVvOYNFjO1HQqrdPj+bKG+BXu8g78t4H4QO37ifsg=;
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
+ h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=rCV8csAYwN0U0scJPLI8jCDkHjqQGwdLNX3Vga49m9M=; b=H
+ 3mHD5sj7vxcFc1sA0lLdGUmYZVi80CWe+XM9eWA361lTn6Fp209zeBGDiROn4uGtyg3BddOdjbDVq
+ o6HfegrHHwL2VQQtBezYe4feTUxF2askiD9QsvBGlYBpq6KmBtCKkDHDtRjUziYdpU/NkOtr1hFB9
+ nS70Hmkhc+vntuvg=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jF7mZ-000qlN-BR
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 02:53:14 +0000
-Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net
- [72.93.95.157]) (authenticated bits=0)
- (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 02K2r1pT016072
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 19 Mar 2020 22:53:01 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 068E4420EBA; Thu, 19 Mar 2020 22:53:00 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Ext4 Developers List <linux-ext4@vger.kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
-Date: Thu, 19 Mar 2020 22:52:54 -0400
-Message-Id: <20200320025255.1705972-1-tytso@mit.edu>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200320024639.GH1067245@mit.edu>
-References: <20200320024639.GH1067245@mit.edu>
+ id 1jFEfz-00188Q-1r
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 10:14:56 +0000
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+ by Forcepoint Email with ESMTP id 86A4C4F888A47972BEF3;
+ Fri, 20 Mar 2020 18:14:41 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.487.0; Fri, 20 Mar 2020 18:14:34 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Fri, 20 Mar 2020 18:14:31 +0800
+Message-ID: <20200320101431.26718-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-X-Headers-End: 1jF7mZ-000qlN-BR
-Subject: [f2fs-dev] [PATCH 1/2] writeback: avoid double-writing the inode on
- a lazytime expiration
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jFEfz-00188Q-1r
+Subject: [f2fs-dev] [PATCH] f2fs: fix potential deadlock on compressed quota
+ file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,53 +81,146 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Eric Biggers <ebiggers@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In the case that an inode has dirty timestamp for longer than the
-lazytime expiration timeout (or if all such inodes are being flushed
-out due to a sync or syncfs system call), we need to inform the file
-system that the inode is dirty so that the inode's timestamps can be
-copied out to the on-disk data structures.  That's because if the file
-system supports lazytime, it will have ignored the dirty_inode(inode,
-I_DIRTY_TIME) notification when the timestamp was modified in memory.q
+generic/232 reports below deadlock:
 
-Previously, this was accomplished by calling mark_inode_dirty_sync(),
-but that has the unfortunate side effect of also putting the inode the
-writeback list, and that's not necessary in this case, since we will
-immediately call write_inode() afterwards.
+fsstress        D    0 96980  96969 0x00084000
+Call Trace:
+ schedule+0x4a/0xb0
+ io_schedule+0x12/0x40
+ __lock_page+0x127/0x1d0
+ pagecache_get_page+0x1d8/0x250
+ prepare_compress_overwrite+0xe0/0x490 [f2fs]
+ f2fs_prepare_compress_overwrite+0x5d/0x80 [f2fs]
+ f2fs_write_begin+0x833/0xb90 [f2fs]
+ f2fs_quota_write+0x145/0x1e0 [f2fs]
+ write_blk+0x36/0x80 [quota_tree]
+ do_insert_tree+0x2ac/0x4a0 [quota_tree]
+ do_insert_tree+0x26e/0x4a0 [quota_tree]
+ qtree_write_dquot+0x70/0x190 [quota_tree]
+ v2_write_dquot+0x43/0x90 [quota_v2]
+ dquot_acquire+0x77/0x100
+ f2fs_dquot_acquire+0x2f/0x60 [f2fs]
+ dqget+0x310/0x450
+ dquot_transfer+0xb2/0x120
+ f2fs_setattr+0x11a/0x4a0 [f2fs]
+ notify_change+0x349/0x480
+ chown_common+0x168/0x1c0
+ do_fchownat+0xbc/0xf0
+ __x64_sys_lchown+0x21/0x30
+ do_syscall_64+0x5f/0x220
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Eric Biggers noticed that this was causing problems for fscrypt after
-the key was removed[1].
+  task                        PC stack   pid father
+kworker/u256:0  D    0 103444      2 0x80084000
+Workqueue: writeback wb_workfn (flush-251:1)
+Call Trace:
+ schedule+0x4a/0xb0
+ schedule_timeout+0x15e/0x2f0
+ io_schedule_timeout+0x19/0x40
+ congestion_wait+0x7e/0x120
+ f2fs_write_multi_pages+0x12a/0x840 [f2fs]
+ f2fs_write_cache_pages+0x48f/0x790 [f2fs]
+ f2fs_write_data_pages+0x2db/0x330 [f2fs]
+ do_writepages+0x1a/0x60
+ __writeback_single_inode+0x3d/0x340
+ writeback_sb_inodes+0x225/0x4a0
+ wb_writeback+0xf7/0x320
+ wb_workfn+0xba/0x470
+ process_one_work+0x16c/0x3f0
+ worker_thread+0x4c/0x440
+ kthread+0xf8/0x130
+ ret_from_fork+0x35/0x40
 
-[1] https://lore.kernel.org/r/20200306004555.GB225345@gmail.com
+fsstress        D    0  5277   5266 0x00084000
+Call Trace:
+ schedule+0x4a/0xb0
+ rwsem_down_write_slowpath+0x29d/0x540
+ block_operations+0x105/0x360 [f2fs]
+ f2fs_write_checkpoint+0x101/0x1010 [f2fs]
+ f2fs_sync_fs+0xa8/0x130 [f2fs]
+ f2fs_do_sync_file+0x1ad/0x890 [f2fs]
+ do_fsync+0x38/0x60
+ __x64_sys_fdatasync+0x13/0x20
+ do_syscall_64+0x5f/0x220
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Reported-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+The root cause is there is potential deadlock between quota data
+update and writeback.
+
+Kworker					Thread B			Thread C
+- f2fs_write_cache_pages
+ - lock whole cluster	--- A
+ - f2fs_write_multi_pages
+  - f2fs_write_raw_pages
+   - f2fs_write_single_data_page
+    - f2fs_do_write_data_page
+					- f2fs_setattr
+					 - f2fs_lock_op	--- B
+									- f2fs_write_checkpoint
+									 - block_operations
+									  - f2fs_lock_all --- B
+					 - dquot_transfer
+					  - f2fs_quota_write
+					   - f2fs_prepare_compress_overwrite
+					    - pagecache_get_page --- A
+     - f2fs_trylock_op failed	--- B
+  - congestion_wait
+  - goto rewrite
+
+To fix this issue, during quota file writeback, just redirty all pages
+left in cluster rather holding pages' lock in cluster and looping retrying
+lock cp_rwsem.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/fs-writeback.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/compress.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 76ac9c7d32ec..867454997c9d 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1504,8 +1504,9 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 758ef8183e59..df3e6ad5b6d7 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1235,6 +1235,15 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 				unlock_page(cc->rpages[i]);
+ 				ret = 0;
+ 			} else if (ret == -EAGAIN) {
++				/*
++				 * for quota file, just redirty left pages to
++				 * avoid deadlock caused by cluster update race
++				 * from foreground operation.
++				 */
++				if (IS_NOQUOTA(cc->inode)) {
++					err = 0;
++					goto out_err;
++				}
+ 				ret = 0;
+ 				cond_resched();
+ 				congestion_wait(BLK_RW_ASYNC,
+@@ -1244,16 +1253,12 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 				goto retry_write;
+ 			}
+ 			err = ret;
+-			goto out_fail;
++			goto out_err;
+ 		}
  
- 	spin_unlock(&inode->i_lock);
- 
--	if (dirty & I_DIRTY_TIME)
--		mark_inode_dirty_sync(inode);
-+	/* This was a lazytime expiration; we need to tell the file system */
-+	if (dirty & I_DIRTY_TIME_EXPIRED && inode->i_sb->s_op->dirty_inode)
-+		inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_SYNC);
- 	/* Don't write the inode if only I_DIRTY_PAGES was set */
- 	if (dirty & ~I_DIRTY_PAGES) {
- 		int err = write_inode(inode, wbc);
+ 		*submitted += _submitted;
+ 	}
+ 	return 0;
+-
+-out_fail:
+-	/* TODO: revoke partially updated block addresses */
+-	BUG_ON(compr_blocks);
+ out_err:
+ 	for (++i; i < cc->cluster_size; i++) {
+ 		if (!cc->rpages[i])
 -- 
-2.24.1
+2.18.0.rc1
 
 
 
