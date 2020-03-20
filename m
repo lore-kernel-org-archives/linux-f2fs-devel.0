@@ -2,79 +2,78 @@ Return-Path: <SRS0=ZXqV=5F=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA9FC4332D
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Mar 2020 02:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8139C4332B
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Mar 2020 02:53:15 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8015D2071C;
-	Fri, 20 Mar 2020 02:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B41092075E;
+	Fri, 20 Mar 2020 02:53:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="m1JvpXwT";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bgk8io0Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8015D2071C
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Xt1Hjx7L";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YHCw/ZQf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41092075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jF7gd-0003ug-DW; Fri, 20 Mar 2020 02:47:03 +0000
+	id 1jF7mc-00062i-KC; Fri, 20 Mar 2020 02:53:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1jF7gb-0003uO-5u
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 02:47:01 +0000
+ (envelope-from <tytso@mit.edu>) id 1jF7mb-00062Z-1J
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 02:53:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UkAcQB5U9VHFgkPL2ucHINC2tRFVs+Clqkm0Dk0Z5DE=; b=m1JvpXwTJ2bP2AInBKE4yoaX2b
- XYipwDXFJCPQMQRjokKspha7l8rLqXbng9YckIKs+E16W61GhrRtlKu8thdADXMa56/PsjLRBbNzy
- OV0iEsoeqH6rXD/fGzTGzKTgLHGYv+vzjuecAc+QehzH4qVZAc9KpLrwoIeQLB4nxeRc=;
+ bh=Q8R+dzNsnhirYMxddQKlhhy11jhpOZOH03FScemmPBQ=; b=Xt1Hjx7LV9Co/4E+JiMrjcdMqX
+ evmv6zLc1IQztSFMJOsAclAKKN39IWJ8NY13HgQN4op4hNGX38612bMrfHP2yihjTad3WC9B5uI1z
+ cCoHRZ/EoNZa0cDK0dAf2HnDOlrONw5Aa1vxZGwMxrprvA77LQs1IGQYgEtNgAfj5VaM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UkAcQB5U9VHFgkPL2ucHINC2tRFVs+Clqkm0Dk0Z5DE=; b=bgk8io0Z6k0REXo93GuRRVa8Co
- oCsu++oR2Buk7DAkT9VNoy9fh4BVQjCZVJz6JwabQz2qvagJBtLBSjbRVn4CJAbBgOzeMW3iSzVpv
- EIOhgQ/oetzpaThjpP0DhmIvtLuUgaoVwxI9L810FIfgOAykOyEbmosAmpE3j3vvXLFY=;
+ bh=Q8R+dzNsnhirYMxddQKlhhy11jhpOZOH03FScemmPBQ=; b=YHCw/ZQfmp+1yodTR8JIyKKOon
+ DuuosfXT7MkDfb0h+gZXZgl++xYANoX2SKR20+MVd2DLBGHgG0T5W3U4GP19e+h/Afc/nHYCPGMq7
+ OibBjfdq3P7E+Afib3L5ZnQr/pJz+Ioo1RE9Myu+K8E/tylJ3XdCbPuo0tTn7N9FadFg=;
 Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jF7gZ-009ZRl-6x
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 02:47:01 +0000
+ id 1jF7mZ-000qlM-CA
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 02:53:12 +0000
 Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net
  [72.93.95.157]) (authenticated bits=0)
  (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 02K2kepw014400
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 02K2r1gl016094
  (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 19 Mar 2020 22:46:40 -0400
+ Thu, 19 Mar 2020 22:53:02 -0400
 Received: by callcc.thunk.org (Postfix, from userid 15806)
- id CDE30420EBA; Thu, 19 Mar 2020 22:46:39 -0400 (EDT)
-Date: Thu, 19 Mar 2020 22:46:39 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Christoph Hellwig <hch@infradead.org>
-Message-ID: <20200320024639.GH1067245@mit.edu>
-References: <20200306004555.GB225345@gmail.com>
- <20200307020043.60118-1-tytso@mit.edu>
- <20200311032009.GC46757@gmail.com> <20200311125749.GA7159@mit.edu>
- <20200312000716.GY10737@dread.disaster.area>
- <20200312143445.GA19160@infradead.org>
+ id C18CD420EBB; Thu, 19 Mar 2020 22:53:01 -0400 (EDT)
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Ext4 Developers List <linux-ext4@vger.kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
+Date: Thu, 19 Mar 2020 22:52:55 -0400
+Message-Id: <20200320025255.1705972-2-tytso@mit.edu>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200320025255.1705972-1-tytso@mit.edu>
+References: <20200320024639.GH1067245@mit.edu>
+ <20200320025255.1705972-1-tytso@mit.edu>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200312143445.GA19160@infradead.org>
-X-Headers-End: 1jF7gZ-009ZRl-6x
-Subject: Re: [f2fs-dev] [PATCH] writeback: avoid double-writing the inode on
- a lazytime expiration
+X-Headers-End: 1jF7mZ-000qlM-CA
+Subject: [f2fs-dev] [PATCH 2/2] writeback,
+ xfs: call dirty_inode() with I_DIRTY_TIME_EXPIRED when appropriate
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,36 +85,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
- Ext4 Developers List <linux-ext4@vger.kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Mar 12, 2020 at 07:34:45AM -0700, Christoph Hellwig wrote:
-> I haven't seen the original mail this replies to, but if we could
-> get the lazytime expirty by some other means (e.g. an explicit
-> callback), XFS could opt out of all the VFS inode tracking again,
-> which would simplify a few things.
+Use the flag I_DIRTY_TIME_EXPIRED passed to dirty_inode() to signal to
+the file system that it is time to flush the inode's timestamps to
+stable storage.
 
-Part of my thinking of calling 
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+---
+ fs/fs-writeback.c  | 2 +-
+ fs/xfs/xfs_super.c | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-       inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_TIME_EXPIRED);
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 867454997c9d..32101349ba97 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1506,7 +1506,7 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+ 
+ 	/* This was a lazytime expiration; we need to tell the file system */
+ 	if (dirty & I_DIRTY_TIME_EXPIRED && inode->i_sb->s_op->dirty_inode)
+-		inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_SYNC);
++		inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_TIME_EXPIRED);
+ 	/* Don't write the inode if only I_DIRTY_PAGES was set */
+ 	if (dirty & ~I_DIRTY_PAGES) {
+ 		int err = write_inode(inode, wbc);
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 2094386af8ac..f27b9b205f81 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -622,7 +622,8 @@ xfs_fs_dirty_inode(
+ 
+ 	if (!(inode->i_sb->s_flags & SB_LAZYTIME))
+ 		return;
+-	if (flag != I_DIRTY_SYNC || !(inode->i_state & I_DIRTY_TIME))
++	if ((flag != I_DIRTY_SYNC && flag != I_DIRTY_TIME_EXPIRED) ||
++	    !(inode->i_state & I_DIRTY_TIME))
+ 		return;
+ 
+ 	if (xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp))
+-- 
+2.24.1
 
-So that it would be an explicit callback to XFS.  So why don't I break
-this as two patches --- one which uses I_DIRTY_SYNC, as before, and a
-second one which changes calls dirty_inode() with
-I_DIRTY_TIME_EXPIRED, and with a change to XFS so that it recognizes
-I_DIRTY_TIME_EXPIRED as if it were I_DIRTY_SYNC.  If this would then
-allow XFS to simplify how it handles VFS tracking, you could do that
-in a separate patch.
-
-Does that work?  I'll send out the two patches, and if you can
-review/ack the second patch, that would be great.
-
-	       	      	     	  	- Ted
 
 
 _______________________________________________
