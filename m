@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D89F7C43332
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF656C54FD2
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 Mar 2020 14:22:49 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A63C320776;
+	by mail.kernel.org (Postfix) with ESMTPS id AF7822078C;
 	Fri, 20 Mar 2020 14:22:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Bw9+RlHJ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YLBnxSia";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jKW9GBYs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A63C320776
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DxOzCqcG";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="GkSozxFI";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RYj6PXO2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF7822078C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jFIXx-0003Yj-CY; Fri, 20 Mar 2020 14:22:49 +0000
+	id 1jFIXx-0001LC-BW; Fri, 20 Mar 2020 14:22:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1jFIXt-0003Xv-OL
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 14:22:45 +0000
+ (envelope-from <willy@infradead.org>) id 1jFIXu-0001JL-6R
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 14:22:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uJQyNXPRyr3MEmX31UTxivj138HeoXLkpB9icmxKmck=; b=Bw9+RlHJCzDalnBjpFFg07VAyH
- 7tvFNFL/DO1/Mgo0kcilSpyEuUcUKOw3U2gjovRKe607Al5aj37W+f8oDdUEykpeuXR6a49SmpltW
- Owac0zfsc+mGyHqpujmpuuyA3rVS3lK2q7NSzKCt/xja2nTnEmG89gAx2QwOrZFPWjbw=;
+ bh=tVTCrH8cQ/F5ivWRNhrAQ0ihqzkrHbjiqbn9CKzaols=; b=DxOzCqcGovt7X7M8BM2U6a3oGj
+ mPwgLUMZJJwHvpaV+jjXWeV7zAuFS5jWErAIVqxfXMcOXJtWGhm+Sp22YifEHr2yXXM7J9rbHpCGC
+ VIQzw5SVlbx73CCds6uDQ1YHnrNvRMQh6fpOc3G8E8geuDbYRY97I1mLG/GhgU3VRKmc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,37 +46,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=uJQyNXPRyr3MEmX31UTxivj138HeoXLkpB9icmxKmck=; b=YLBnxSiawBb+PbKVyV6GrPCkvq
- UbWq6GD4A6c25Xn4YrgVO5K9fCaNfOL++dnsqDWhADJfQXzCkrJWwzH7iYfJPnN9nn1PAu4wY/nr/
- +Jcnw/NQhsjbG53F3mbq82p1NXPsEyy6qz9DhHis+EYIwZbaNrEDbtm+HDi0wfXD53ic=;
+ bh=tVTCrH8cQ/F5ivWRNhrAQ0ihqzkrHbjiqbn9CKzaols=; b=GkSozxFI+BJwkDE0WGykO7zoWU
+ DcH7z1XICM/jF45/rdoPAbOoCQD2pSDevUZ8oYMNkY9gekGfV+0IZ0HDAUcOqy272mBvB6iCxRyH6
+ qn4oP+bw4piHookQ7MAi5sYS/K5QlMmg+kq97Q7GgJsYXfKaHJuU9qsY019Jlx2iXgNA=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jFIXp-001KEK-QM
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 14:22:45 +0000
+ id 1jFIXq-001KEL-9n
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 Mar 2020 14:22:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=uJQyNXPRyr3MEmX31UTxivj138HeoXLkpB9icmxKmck=; b=jKW9GBYsiK2hYV/J1HH/iXaFkr
- SK+ZswpZxVS5btEbTMuI/fyBjdqUZdfW7cqNmskOOVmbKHkDzCOs1Gd0LuCHC3VyCUvgLFV0CJcri
- 9zEJxlh6wKrxh8W682yRGhKDla3j3oO/x6Tsx4sLcsz88hxbEonVteSiTykIURj4IoBAyHI2dUa+b
- TItLnfJRrUJIuciMf2M0XULSJINan0s1HA3/k2MgFOmHvQqvwUraQxA8L9Aql/6bt441I3jnPOKBE
- Txl7tquXQvU+Ly22dkBWDzCfn0QH/a4VRImFqk8WVxHL8PQ74cPT6SVqcVbuu1f51a+Zm0Coa1k6s
- SJmAut2w==;
+ bh=tVTCrH8cQ/F5ivWRNhrAQ0ihqzkrHbjiqbn9CKzaols=; b=RYj6PXO2BZTwiSzF5OeImHzi0P
+ FKGoEwoOR7sd2OkCM3CXykRhQBiq0aqcIDrzKMCzuPlM1iIZsi1JHHn87NzCl8EHZOrSPQmEI0LyF
+ rDGDIeESYXWUJsVbPEg5pvYBBrJqIhRCy7CZ8UeFHMUOO3TK7CJnuFwRKVqdJiyFMKz4zYa6mZWcc
+ B7YkRT5xVvJVOPXGsxdC9vBiFuC34KyYxGJpgkCMy7iFpgmLu7sbuFrYw5bWV2fwIDk8txqO5loO0
+ wErfy8M7X95bMgt3O/4krh/1kpDL6E7HQtEKqtbGb778h8icljrzleKwES+qIyqWTNDjB38mTjSP4
+ Bzc9dSlA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1jFIXi-0000je-61; Fri, 20 Mar 2020 14:22:34 +0000
+ Hat Linux)) id 1jFIXh-0000hE-51; Fri, 20 Mar 2020 14:22:33 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Date: Fri, 20 Mar 2020 07:22:27 -0700
-Message-Id: <20200320142231.2402-22-willy@infradead.org>
+Date: Fri, 20 Mar 2020 07:22:10 -0700
+Message-Id: <20200320142231.2402-5-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200320142231.2402-1-willy@infradead.org>
 References: <20200320142231.2402-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1jFIXp-001KEK-QM
-Subject: [f2fs-dev] [PATCH v9 21/25] ext4: Pass the inode to
- ext4_mpage_readpages
+X-Headers-End: 1jFIXq-001KEL-9n
+Subject: [f2fs-dev] [PATCH v9 04/25] mm: Move readahead nr_pages check into
+ read_pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,11 +89,12 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-xfs@vger.kernel.org, William Kucharski <william.kucharski@oracle.com>,
- linux-kernel@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org,
  "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
  linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, Zi Yan <ziy@nvidia.com>,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, Christoph Hellwig <hch@lst.de>,
  linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -101,72 +102,62 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-This function now only uses the mapping argument to look up the inode,
-and both callers already have the inode, so just pass the inode instead
-of the mapping.
+Simplify the callers by moving the check for nr_pages and the BUG_ON
+into read_pages().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 ---
- fs/ext4/ext4.h     | 2 +-
- fs/ext4/inode.c    | 4 ++--
- fs/ext4/readpage.c | 3 +--
- 3 files changed, 4 insertions(+), 5 deletions(-)
+ mm/readahead.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 1570a0b51b73..bc1b34ba6eab 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3278,7 +3278,7 @@ static inline void ext4_set_de_type(struct super_block *sb,
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 61b15b6b9e72..9fcd4e32b62d 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -119,6 +119,9 @@ static void read_pages(struct address_space *mapping, struct file *filp,
+ 	struct blk_plug plug;
+ 	unsigned page_idx;
+ 
++	if (!nr_pages)
++		return;
++
+ 	blk_start_plug(&plug);
+ 
+ 	if (mapping->a_ops->readpages) {
+@@ -138,6 +141,8 @@ static void read_pages(struct address_space *mapping, struct file *filp,
+ 
+ out:
+ 	blk_finish_plug(&plug);
++
++	BUG_ON(!list_empty(pages));
  }
  
- /* readpages.c */
--extern int ext4_mpage_readpages(struct address_space *mapping,
-+extern int ext4_mpage_readpages(struct inode *inode,
- 		struct readahead_control *rac, struct page *page);
- extern int __init ext4_init_post_read_processing(void);
- extern void ext4_exit_post_read_processing(void);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index d674c5f9066c..4f3703c1408d 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3226,7 +3226,7 @@ static int ext4_readpage(struct file *file, struct page *page)
- 		ret = ext4_readpage_inline(inode, page);
- 
- 	if (ret == -EAGAIN)
--		return ext4_mpage_readpages(page->mapping, NULL, page);
-+		return ext4_mpage_readpages(inode, NULL, page);
- 
- 	return ret;
- }
-@@ -3239,7 +3239,7 @@ static void ext4_readahead(struct readahead_control *rac)
- 	if (ext4_has_inline_data(inode))
- 		return;
- 
--	ext4_mpage_readpages(rac->mapping, rac, NULL);
-+	ext4_mpage_readpages(inode, rac, NULL);
+ /*
+@@ -180,8 +185,7 @@ void __do_page_cache_readahead(struct address_space *mapping,
+ 			 * contiguous pages before continuing with the next
+ 			 * batch.
+ 			 */
+-			if (nr_pages)
+-				read_pages(mapping, filp, &page_pool, nr_pages,
++			read_pages(mapping, filp, &page_pool, nr_pages,
+ 						gfp_mask);
+ 			nr_pages = 0;
+ 			continue;
+@@ -202,9 +206,7 @@ void __do_page_cache_readahead(struct address_space *mapping,
+ 	 * uptodate then the caller will launch readpage again, and
+ 	 * will then handle the error.
+ 	 */
+-	if (nr_pages)
+-		read_pages(mapping, filp, &page_pool, nr_pages, gfp_mask);
+-	BUG_ON(!list_empty(&page_pool));
++	read_pages(mapping, filp, &page_pool, nr_pages, gfp_mask);
  }
  
- static void ext4_invalidatepage(struct page *page, unsigned int offset,
-diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
-index 66275f25235d..5761e9961682 100644
---- a/fs/ext4/readpage.c
-+++ b/fs/ext4/readpage.c
-@@ -221,13 +221,12 @@ static inline loff_t ext4_readpage_limit(struct inode *inode)
- 	return i_size_read(inode);
- }
- 
--int ext4_mpage_readpages(struct address_space *mapping,
-+int ext4_mpage_readpages(struct inode *inode,
- 		struct readahead_control *rac, struct page *page)
- {
- 	struct bio *bio = NULL;
- 	sector_t last_block_in_bio = 0;
- 
--	struct inode *inode = mapping->host;
- 	const unsigned blkbits = inode->i_blkbits;
- 	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
- 	const unsigned blocksize = 1 << blkbits;
+ /*
 -- 
 2.25.1
 
