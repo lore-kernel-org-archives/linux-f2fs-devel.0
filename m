@@ -2,103 +2,81 @@ Return-Path: <SRS0=IH0A=5I=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE28FC10DCE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Mar 2020 20:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2692C54FD6
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Mar 2020 20:23:18 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 98A7D20637;
-	Mon, 23 Mar 2020 20:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8B446208D5;
+	Mon, 23 Mar 2020 20:23:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="II/vfMcZ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bJBL4oCn";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=archlinux-us.20150623.gappssmtp.com header.i=@archlinux-us.20150623.gappssmtp.com header.b="qtn5om1o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98A7D20637
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=archlinux.us
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Wd+bAkv9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="K+KRn++Q";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rcSBAvrn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B446208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jGTRL-00065e-KZ; Mon, 23 Mar 2020 20:12:51 +0000
+	id 1jGTbS-0006bf-8s; Mon, 23 Mar 2020 20:23:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <graysky@archlinux.us>) id 1jGTR7-00064r-Qw
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Mar 2020 20:12:37 +0000
+ (envelope-from <willy@infradead.org>) id 1jGTbO-0006ag-BW
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Mar 2020 20:23:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zTpPCp7Nhx1fPfC7diG6rpJ08dQiP3WnHwoiWd+KCqo=; b=II/vfMcZDDHr/t/lmHMPUR35fA
- 7hdDdR84y+tPp0zl16Anb1w7uidnBPP+LxgpT8RdRhHTPINCiT6/1LJlx37/4dOPO9QVj1Os5rcsW
- 06cunP2uYxCKiX4QPb87y0QBRGpP9WAzTSLwF2r/eQWreV2cVJ5vaiwbAeOyVPo2leCk=;
+ bh=6e6MkFHkgZxTPkf/pf8wKlFOrhk7tOynNqE4aNKoitw=; b=Wd+bAkv9jgAKqOj2OLCI0zOjpW
+ zUit9LrE00wHVfCHNl2VCW581Jv4tAnYH4IxP+q0/c/NiLkI5qQSAvED06C/pGLnoP4EoCV1suSlF
+ PI9SCtngViA4ltiUdxGt9a+0SUG4emnphAdtJDa4lbp1s90ixb1vPhkRPGFiY7e7Zklg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=zTpPCp7Nhx1fPfC7diG6rpJ08dQiP3WnHwoiWd+KCqo=; b=bJBL4oCnovne9IhDnTCLasbYjv
- NZAjYiV01rV9n0m1/VXDWc7oUv1iK2unqEHAuaHJXKVlbIuEt3DEKLW/De6ewwN074eB+122u9Ou7
- UOEBhO6Bht9k3co5f1mQWi/F1BvE5mpmIeXjPouKvlruRl/FSiIMT4GkmTAY/WkAJN7Q=;
-Received: from mail-wm1-f50.google.com ([209.85.128.50])
+ bh=6e6MkFHkgZxTPkf/pf8wKlFOrhk7tOynNqE4aNKoitw=; b=K+KRn++QqcaCSyeQ+ljXkFfasr
+ l3Dxhetekcp91HNGRqDlKdCK0YrPIXOZI7/QBIL2QVww9nsuyJkhX5VyEIMALB8xItejCVy1UpsXJ
+ trFqmmnn4kr0HsVM/YTqgJToORq5HDO0y34GOlfsJosiOrRmTPb7Skrp8CIoDtsdkmBU=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jGTR3-001Gzr-DE
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Mar 2020 20:12:37 +0000
-Received: by mail-wm1-f50.google.com with SMTP id c81so829867wmd.4
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 23 Mar 2020 13:12:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=archlinux-us.20150623.gappssmtp.com; s=20150623;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc; bh=zTpPCp7Nhx1fPfC7diG6rpJ08dQiP3WnHwoiWd+KCqo=;
- b=qtn5om1oUNLne4J8WrmsUXkVjfp+uGNS+g59UNXn+TWI0qmcGxJadVt6a2TmjlzVmo
- NqbWqQ2cqR0qs9mGiaKL5ZD3ynrEXPTMPAagRwZS2zxLJGnOqfUtkkpj1KdxUZWCTM+C
- nZYxakRM4L6xj2fXBZbzOBcPpZOaoxCdksNoEuQIrDn1lfUGXCVgEiYn1d2SuO4xdHkp
- 9Bh2zdn0M5fJbpqaP6Te3CvVKvhnkza22xC6lYXOnzyjQZ+ERdQIiRHj5MgRrG90ZrSU
- EsW+Pw3BtkiEn3RVI6ZchZhlKM03q58VuASMGpAbKEX7YeFjxf/m0q7SugV/67OqAKh/
- PjiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc;
- bh=zTpPCp7Nhx1fPfC7diG6rpJ08dQiP3WnHwoiWd+KCqo=;
- b=bvbbkAXo24iUOPVXjFX0ndq7WAe2qJnIolAbr02rs5cFE8gMzJLen3ge0W7TdI22ak
- wpA25kgz+bER7T+oabk4mPZEFyZJj0Dk8KQ24IsJNUN++ZO+w7kB7BgHieUFCiy+ZOcj
- Ya1NqFIipmV3lPQIIStTMNY2x0nSY1WgJPfqPHB1RsU0wVNGd63FIkTkaihh/an5Lx3t
- MUcT5RIkdN3I9l9Hq8lIWu52v9XSHYt/R/HiGq9+9YkkeUmn5jEZ7VlahamlARHT9ELn
- ELeStreSV8knruNKOQ4+lupvfEdpOKX12mfks24kNIVOtQnbDoU1Avb+DtSr3mP6bg1K
- 70Pg==
-X-Gm-Message-State: ANhLgQ3ilTnAoXminV4Q2VMhJjjM4NX52yBLyMtqrBm9+al0WNKILXGH
- JzUyc65Hc5X7LrkHallYU9xq6keUxNblukC/AvcLtg==
-X-Google-Smtp-Source: ADFU+vtNx+ZOQNXaQpgp3IyYdmqBI/tm2W9VlY1nmUUYxGdgLE95DtnkmL3kZXx4ohLwlCaGAoqf6tthW2ixJSu5ZnQ=
-X-Received: by 2002:a1c:c3c3:: with SMTP id t186mr1240250wmf.118.1584994342744; 
- Mon, 23 Mar 2020 13:12:22 -0700 (PDT)
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jGTbN-001Hco-2I
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Mar 2020 20:23:14 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=6e6MkFHkgZxTPkf/pf8wKlFOrhk7tOynNqE4aNKoitw=; b=rcSBAvrn+IQEdt2TIjNzgqG46I
+ vpBA821shzmSctCZYniOrQCdmph/GZCq6mBn/OrMg4vwRF+Bm3gFFeXIt0etZYy0OqU9AV3APEv5q
+ 6xvEcemss1ASH+03Ew96++jew5Tid6lfGOuudalZVt+MJIsdMwj+TojI9EQtKyp5Xu4+MvImBrW2Z
+ s7+2YqoFIhtV3aMK95ToZ4poTP6vfdVMYXpClITPf+nXsOCYaqvHCyAsG0cnJgsCgsNtnZVIH6iTM
+ GU1ejLuCTLRe/JDKD0NhHPqIc2Hh6IJDaTddI9/bVBV4lI1UloKjSAowwG7lTxVtRR/ubkZxbddHf
+ GtyhF3wQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
+ Hat Linux)) id 1jGTbB-0003V9-NX; Mon, 23 Mar 2020 20:23:01 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Date: Mon, 23 Mar 2020 13:22:45 -0700
+Message-Id: <20200323202259.13363-12-willy@infradead.org>
+X-Mailer: git-send-email 2.21.1
+In-Reply-To: <20200323202259.13363-1-willy@infradead.org>
+References: <20200323202259.13363-1-willy@infradead.org>
 MIME-Version: 1.0
-References: <CAO_nJAYw+-+n584gg2-rRp3KoAsPT5mpD5yRCrwM7hiDMD=PJg@mail.gmail.com>
- <78bdaf48-9699-3a04-efec-95e1a670bfe4@huawei.com>
- <CAO_nJAZ_bW1Bor-sUb8Ouz4VQV28KPZR23njH4VV+eH=BgwR=Q@mail.gmail.com>
- <418f4ee8-14ed-bdfa-d16c-f68c2992f234@huawei.com>
- <CAO_nJAYTbPqWKAnG1+i2J1jnEKN6QtiMV_CxVyranZ-AWK9Agg@mail.gmail.com>
- <20200323041143.GC147648@google.com>
- <CAO_nJAYEGp1129PsFwMdU0ZdjC75DoL60nXhY7KaATgSPz-2DA@mail.gmail.com>
- <20200323150205.GA119787@google.com>
-In-Reply-To: <20200323150205.GA119787@google.com>
-From: John <graysky@archlinux.us>
-Date: Mon, 23 Mar 2020 16:12:11 -0400
-Message-ID: <CAO_nJAbyEcTR4wFytJp1HQmQBDzpwycKhA_-FUwo39WVMceuZw@mail.gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1jGTR3-001Gzr-DE
-Subject: Re: [f2fs-dev] fstrim does not recognize FSVER=1.13 of F2FS
- partitions
+X-Headers-End: 1jGTbN-001Hco-2I
+Subject: [f2fs-dev] [PATCH v10 11/25] mm: Add readahead address space
+ operation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,33 +88,161 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-xfs@vger.kernel.org, William Kucharski <william.kucharski@oracle.com>,
+ John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+ linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Mar 23, 2020 at 11:02 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> > /dev/mapper/media-crypt /mnt/media f2fs
-> > rw,lazytime,relatime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,fsync_mode=posix
->
-> - media-crypt means dm-crypt? Any chance to try raw sda?
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Yes, it is dm-crypt.
+This replaces ->readpages with a saner interface:
+ - Return void instead of an ignored error code.
+ - Page cache is already populated with locked pages when ->readahead
+   is called.
+ - New arguments can be passed to the implementation without changing
+   all the filesystems that use a common helper function like
+   mpage_readahead().
 
-> Could you try this?
-> - mount -o remount,nodiscard
->  : The reason is, as f2fs uses async discard feature with -o discard, it doesn't
->    give 0 bytes on fstrim sometimes.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+---
+ Documentation/filesystems/locking.rst |  6 +++++-
+ Documentation/filesystems/vfs.rst     | 15 +++++++++++++++
+ include/linux/fs.h                    |  2 ++
+ mm/readahead.c                        | 12 ++++++++++--
+ 4 files changed, 32 insertions(+), 3 deletions(-)
 
-I can confirm it is mounted now with the nodiscard option, but fstrim
-still claims discard is not supported.
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index 5057e4d9dcd1..0af2e0e11461 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -239,6 +239,7 @@ prototypes::
+ 	int (*readpage)(struct file *, struct page *);
+ 	int (*writepages)(struct address_space *, struct writeback_control *);
+ 	int (*set_page_dirty)(struct page *page);
++	void (*readahead)(struct readahead_control *);
+ 	int (*readpages)(struct file *filp, struct address_space *mapping,
+ 			struct list_head *pages, unsigned nr_pages);
+ 	int (*write_begin)(struct file *, struct address_space *mapping,
+@@ -271,7 +272,8 @@ writepage:		yes, unlocks (see below)
+ readpage:		yes, unlocks
+ writepages:
+ set_page_dirty		no
+-readpages:
++readahead:		yes, unlocks
++readpages:		no
+ write_begin:		locks the page		 exclusive
+ write_end:		yes, unlocks		 exclusive
+ bmap:
+@@ -295,6 +297,8 @@ the request handler (/dev/loop).
+ ->readpage() unlocks the page, either synchronously or via I/O
+ completion.
+ 
++->readahead() unlocks the pages that I/O is attempted on like ->readpage().
++
+ ->readpages() populates the pagecache with the passed pages and starts
+ I/O against them.  They come unlocked upon I/O completion.
+ 
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 7d4d09dd5e6d..ed17771c212b 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -706,6 +706,7 @@ cache in your filesystem.  The following members are defined:
+ 		int (*readpage)(struct file *, struct page *);
+ 		int (*writepages)(struct address_space *, struct writeback_control *);
+ 		int (*set_page_dirty)(struct page *page);
++		void (*readahead)(struct readahead_control *);
+ 		int (*readpages)(struct file *filp, struct address_space *mapping,
+ 				 struct list_head *pages, unsigned nr_pages);
+ 		int (*write_begin)(struct file *, struct address_space *mapping,
+@@ -781,12 +782,26 @@ cache in your filesystem.  The following members are defined:
+ 	If defined, it should set the PageDirty flag, and the
+ 	PAGECACHE_TAG_DIRTY tag in the radix tree.
+ 
++``readahead``
++	Called by the VM to read pages associated with the address_space
++	object.  The pages are consecutive in the page cache and are
++	locked.  The implementation should decrement the page refcount
++	after starting I/O on each page.  Usually the page will be
++	unlocked by the I/O completion handler.  If the filesystem decides
++	to stop attempting I/O before reaching the end of the readahead
++	window, it can simply return.  The caller will decrement the page
++	refcount and unlock the remaining pages for you.  Set PageUptodate
++	if the I/O completes successfully.  Setting PageError on any page
++	will be ignored; simply unlock the page if an I/O error occurs.
++
+ ``readpages``
+ 	called by the VM to read pages associated with the address_space
+ 	object.  This is essentially just a vector version of readpage.
+ 	Instead of just one page, several pages are requested.
+ 	readpages is only used for read-ahead, so read errors are
+ 	ignored.  If anything goes wrong, feel free to give up.
++	This interface is deprecated and will be removed by the end of
++	2020; implement readahead instead.
+ 
+ ``write_begin``
+ 	Called by the generic buffered write code to ask the filesystem
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2c097c0793f3..3b505aabebde 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -292,6 +292,7 @@ enum positive_aop_returns {
+ struct page;
+ struct address_space;
+ struct writeback_control;
++struct readahead_control;
+ 
+ /*
+  * Write life time hint values.
+@@ -375,6 +376,7 @@ struct address_space_operations {
+ 	 */
+ 	int (*readpages)(struct file *filp, struct address_space *mapping,
+ 			struct list_head *pages, unsigned nr_pages);
++	void (*readahead)(struct readahead_control *);
+ 
+ 	int (*write_begin)(struct file *, struct address_space *mapping,
+ 				loff_t pos, unsigned len, unsigned flags,
+diff --git a/mm/readahead.c b/mm/readahead.c
+index e52b3a7b9da5..d01531ef9f3c 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -125,7 +125,14 @@ static void read_pages(struct readahead_control *rac, struct list_head *pages,
+ 
+ 	blk_start_plug(&plug);
+ 
+-	if (aops->readpages) {
++	if (aops->readahead) {
++		aops->readahead(rac);
++		/* Clean up the remaining pages */
++		while ((page = readahead_page(rac))) {
++			unlock_page(page);
++			put_page(page);
++		}
++	} else if (aops->readpages) {
+ 		aops->readpages(rac->file, rac->mapping, pages,
+ 				readahead_count(rac));
+ 		/* Clean up the remaining pages */
+@@ -233,7 +240,8 @@ void force_page_cache_readahead(struct address_space *mapping,
+ 	struct file_ra_state *ra = &filp->f_ra;
+ 	unsigned long max_pages;
+ 
+-	if (unlikely(!mapping->a_ops->readpage && !mapping->a_ops->readpages))
++	if (unlikely(!mapping->a_ops->readpage && !mapping->a_ops->readpages &&
++			!mapping->a_ops->readahead))
+ 		return;
+ 
+ 	/*
+-- 
+2.25.1
 
-% mount | grep crypt
-/dev/mapper/media-crypt on /mnt/media type f2fs
-(rw,relatime,lazytime,background_gc=on,nodiscard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,fsync_mode=posix,x-systemd.automount)
-
-# fstrim -v /mnt/media
-fstrim: /mnt/media: the discard operation is not supported
 
 
 _______________________________________________
