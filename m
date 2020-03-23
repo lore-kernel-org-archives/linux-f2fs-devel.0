@@ -1,87 +1,80 @@
-Return-Path: <SRS0=uuFX=5H=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=IH0A=5I=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A66C54FD0
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 22 Mar 2020 16:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EC9C4332E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Mar 2020 01:07:25 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 147B420732;
-	Sun, 22 Mar 2020 16:28:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id BF5DE206C3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 23 Mar 2020 01:07:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NHFppTSj";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TZFAA++v";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DMIkZSYb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147B420732
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Ivb+vv99";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="RH9qLpv5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF5DE206C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jG3Sl-0004kl-EU; Sun, 22 Mar 2020 16:28:35 +0000
+	id 1jGBYp-0006HA-2L; Mon, 23 Mar 2020 01:07:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1jG3Sk-0004ke-5j
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 22 Mar 2020 16:28:34 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jGBYm-0006Gs-U4
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Mar 2020 01:07:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+q5SE8PabkJ4E2ARJpyvT2voAuJ2mKWWauYSLk4KvP8=; b=NHFppTSje9bh+r4Isf+ymV5owd
- 0uTJeSDF36Db5lFLNhxfwPJ7De58ChurMpwtLc/a+n374MIpidi4U00bALaL+MsPqc+xCBNQL9zm6
- 1mXNMwxB1CxrZncAgGlnn0QolJsArhwtr6V+NMZhSQ7mmOWBG2Oq8htZDoh2qyTKWmFQ=;
+ bh=pkB3IIb5hlNjfeHDNs4NbsCYK4HjJcAyVYthqBbspvo=; b=Ivb+vv99pNCoakGGQ2bZCLcd7z
+ ZJA6fQ5pUy3uXlI9GOYz6dVc73W4r08iHoXs9YWLFUKZa3t2vMz4xNNHTppYm9VqmW60HLlUXm84F
+ JcCBBuDZ9C7zN6Ndx1VnsjK2bKiwSsOBuN8PLeVAJfonl5IVtBo8Ef6p8rTwuTEthdPE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+q5SE8PabkJ4E2ARJpyvT2voAuJ2mKWWauYSLk4KvP8=; b=TZFAA++vZahVnU0YP4IFa6WWXm
- w9KjhcPQjRNyUZ5GgZZS//k4RegukTolbgQvYlYrG4YaL6YOLe3tuPtd5ceXWNOqLJaqz5VerEP6X
- 8VD1/lsrIqZUHQ2Vii85FfTU9iqiVTiMAX8lo8vufSDIhKsWAReZd3dmGTqK0CDHdVzk=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=pkB3IIb5hlNjfeHDNs4NbsCYK4HjJcAyVYthqBbspvo=; b=RH9qLpv5QbrCOl2zRVIt/5eUBd
+ vVdYlRAxrufoJDS0RDcuXwsZbh3sUOCMKCS1GOcU1iVPKslhxNv0UhgoJnK8xME2QTKzvaMeHvCsf
+ Vh3GILI8NKx6ILEOrWsvz2fyoeVDh7qf0v2LEraIZbWYYP4K09kC9UqOE/RTLdEnOrN0=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jG3Sg-00CpWF-Tk
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 22 Mar 2020 16:28:34 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=+q5SE8PabkJ4E2ARJpyvT2voAuJ2mKWWauYSLk4KvP8=; b=DMIkZSYbAXVYZnU8ct+6eTALIM
- IIwMq32XvglVnA0tcHkjB7yxlMiata26hBz45kwB5a05tIb02c9RE5ySYhs3Ho1G+lFVSgzlzVVDc
- DUMiK8p2sT6gtwlUuoh5Nc7LPQ6R2kVmwSly/JqhfRE2B1JKygrsPQSdgxP2bs4+VdMciVAE86kHt
- faPtljJno8DX46yFjGcZZwU56Jt23D6buy8qiu9daFTCr8dE5hV5cU6dlBPdz0Fx7mooeF/M7/3E9
- cV1R/zopL7FbuerKPz2Tn81i5E79BF6SUI1praSaJFyVmD8DjvZ9DxsxJvgden2Wq6jHCv3KoNE8F
- cMFMFWAw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1jG3SU-0000CF-PX; Sun, 22 Mar 2020 16:28:18 +0000
-Date: Sun, 22 Mar 2020 09:28:18 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20200322162818.GG4971@bombadil.infradead.org>
-References: <20200320142231.2402-1-willy@infradead.org>
- <20200320142231.2402-13-willy@infradead.org>
- <20200320165828.GB851@sol.localdomain>
- <20200320173040.GB4971@bombadil.infradead.org>
- <20200320180017.GE851@sol.localdomain>
- <20200320181132.GD4971@bombadil.infradead.org>
- <20200320182452.GF851@sol.localdomain>
+ id 1jGBYi-000MLv-HE
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 23 Mar 2020 01:07:20 +0000
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+ by Forcepoint Email with ESMTP id 1F765C28ED1691C6004D;
+ Mon, 23 Mar 2020 09:07:07 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 23 Mar
+ 2020 09:07:04 +0800
+To: Joe Perches <joe@perches.com>, Chao Yu <chao@kernel.org>,
+ <jaegeuk@kernel.org>
+References: <20200322135614.10413-1-chao@kernel.org>
+ <d88cce8ff37f336087899226668abcbcacd96baa.camel@perches.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <c5b8115e-509d-9ace-ed4d-87bc2484d834@huawei.com>
+Date: Mon, 23 Mar 2020 09:07:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200320182452.GF851@sol.localdomain>
-X-Headers-End: 1jG3Sg-00CpWF-Tk
-Subject: Re: [f2fs-dev] [PATCH v9 12/25] mm: Move end_index check out of
- readahead loop
+In-Reply-To: <d88cce8ff37f336087899226668abcbcacd96baa.camel@perches.com>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jGBYi-000MLv-HE
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix potential .flags overflow on
+ 32bit architecture
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,81 +86,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: cluster-devel@redhat.com, linux-mm@kvack.org,
- John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- William Kucharski <william.kucharski@oracle.com>, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- ocfs2-devel@oss.oracle.com
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Mar 20, 2020 at 11:24:52AM -0700, Eric Biggers wrote:
-> On Fri, Mar 20, 2020 at 11:11:32AM -0700, Matthew Wilcox wrote:
-> > On Fri, Mar 20, 2020 at 11:00:17AM -0700, Eric Biggers wrote:
-> > > But then if someone passes index=0 and nr_to_read=0, this underflows and the
-> > > entire file gets read.
-> > 
-> > nr_to_read == 0 doesn't make sense ... I thought we filtered that out
-> > earlier, but I can't find anywhere that does that right now.  I'd
-> > rather return early from __do_page_cache_readahead() to fix that.
-> > 
-> > > The page cache isn't actually supposed to contain a page at index ULONG_MAX,
-> > > since MAX_LFS_FILESIZE is at most ((loff_t)ULONG_MAX << PAGE_SHIFT), right?  So
-> > > I don't think we need to worry about reading the page with index ULONG_MAX.
-> > > I.e. I think it's fine to limit nr_to_read to 'ULONG_MAX - index', if that makes
-> > > it easier to avoid an overflow or underflow in the next check.
-> > 
-> > I think we can get a page at ULONG_MAX on 32-bit systems?  I mean, we can buy
-> > hard drives which are larger than 16TiB these days:
-> > https://www.pcmag.com/news/seagate-will-ship-18tb-and-20tb-hard-drives-in-2020
-> > (even ignoring RAID devices)
+On 2020/3/22 22:56, Joe Perches wrote:
+> On Sun, 2020-03-22 at 21:56 +0800, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> f2fs_inode_info.flags is unsigned long variable, it has 32 bits
+>> in 32bit architecture, since we introduced FI_MMAP_FILE flag
+>> when we support data compression, we may access memory cross
+>> the border of .flags field, corrupting .i_sem field, result in
+>> below deadlock.
+>>
+>> To fix this issue, let's expand .flags as an array to grab enough
+>> space to store new flags.
+> []
+>> +static inline void __set_inode_flag(struct inode *inode, int flag)
+>> +{
+>> +	if (!test_bit(flag % BITS_PER_LONG,
+>> +			&F2FS_I(inode)->flags[BIT_WORD(flag)]))
+>> +		set_bit(flag % BITS_PER_LONG,
+>> +			&F2FS_I(inode)->flags[BIT_WORD(flag)]);
+>> +}
 > 
-> The max file size is ((loff_t)ULONG_MAX << PAGE_SHIFT) which means the maximum
-> page *index* is ULONG_MAX - 1, not ULONG_MAX.
-
-I see where we set that for _files_ ... I can't find anywhere that we prevent
-i_size getting that big for block devices.  Maybe I'm missing something.
-
-> Anyway, I think we may be making this much too complicated.  How about just:
+> I believe you don't need to do anything like this
+> but just let test_bit and set_bit do the indexing.
 > 
-> 	pgoff_t i_nrpages = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> 	if (!test_bit(flg, F2FS_I(inode->flags)))
+> 		set_bit(flag, F2FS_I(inode->flags));
 > 
-> 	if (index >= i_nrpages)
-> 		return;
-> 	/* Don't read past the end of the file */
-> 	nr_to_read = min(nr_to_read, i_nrpages - index);
+> And there already is a function called test_and_set_bit()
+
+Yup, I've cleaned up with test_and_{set,clear}_bit(), thanks for your
+reminder.
+
+Thanks,
+
 > 
-> That's 2 branches instead of 4.  (Note that assigning to i_nrpages can't
-> overflow, since the max number of pages is ULONG_MAX not ULONG_MAX + 1.)
-
-I like where you're going with this.  Just to be on the safe side, I'd
-prefer to do this:
-
-@@ -266,11 +266,8 @@ void __do_page_cache_readahead(struct address_space *mapping,
-        end_index = (isize - 1) >> PAGE_SHIFT;
-        if (index > end_index)
-                return;
--       /* Avoid wrapping to the beginning of the file */
--       if (index + nr_to_read < index)
--               nr_to_read = ULONG_MAX - index + 1;
-        /* Don't read past the page containing the last byte of the file */
--       if (index + nr_to_read >= end_index)
-+       if (nr_to_read > end_index - index)
-                nr_to_read = end_index - index + 1;
- 
-        page_cache_readahead_unbounded(mapping, file, index, nr_to_read,
-
-end_index - index + 1 could only overflow if end_index is ULONG_MAX
-and index is 0.  But if end_index is ULONG_MAX and index is 0, then
-nr_to_read is necessarily <= ULONG_MAX, so the condition is false.
-And if nr_to_read is 0, then the condition is also false, so it won't
-increase nr_to_read from 0 to 1.  It might assign x to nr_to_read when
-nr_to_read is already x, but that's harmless.
-
-Thanks!
+> 
+> .
+> 
 
 
 _______________________________________________
