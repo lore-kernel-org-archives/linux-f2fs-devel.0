@@ -2,42 +2,42 @@ Return-Path: <SRS0=yNny=5L=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37516C43331
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Mar 2020 03:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 257F5C43331
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Mar 2020 03:32:32 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0667320746
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 Mar 2020 03:22:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id E63F520714;
+	Thu, 26 Mar 2020 03:32:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NhSHLmnC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IXN8Rze0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0667320746
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="T04/FwQm";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lMkVKmii";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdxCTCnY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E63F520714
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jHJ6D-0006Ek-Jf; Thu, 26 Mar 2020 03:22:29 +0000
+	id 1jHJFt-0001AM-Tx; Thu, 26 Mar 2020 03:32:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <david@fromorbit.com>) id 1jHJ6C-0006EW-C3
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Mar 2020 03:22:28 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1jHJFr-0001AD-EI
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Mar 2020 03:32:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/fdWTTIBbJzahUwVNnKZnwR8SxFb7t+mhG75VYtj894=; b=NhSHLmnCZV3NIg+W0r0NWNmgOE
- YZ4n7u48Qgtqx/Og4YCkyMoK1dKfkYhpBTuKZTx7Ti//QFNVD2N7WRD+eHof4OyxjWzvmnOMzsoFr
- OGjRDsLQUjtcnWmHClpAhAyyQFuy849nhLDuwruEOFlHVspX+7xBVO9IMy4a2cyqm748=;
+ bh=hUI1PCTRGSZZRj13nFvuvdcsKuKC6Lxu52tmpUuu5fU=; b=T04/FwQmfNKWKphoZVoLS+0TcN
+ o33+CYVCCScAkbpiu4XzXgP2HSI3GnoOZ0NdPj9/5VRXkK5Tg67mwN3boOODD7bhbk+7EabvymiFh
+ dbT238pWdtx0PHMtsQYIoYrxdarMCwpi5epjUAqh8PoeSUgRbMHRUfbPvcwsPI2b/kjA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,39 +45,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/fdWTTIBbJzahUwVNnKZnwR8SxFb7t+mhG75VYtj894=; b=IXN8Rze07eDTOXzffXnltFYuwD
- ELWCA8M3tTmLiZRzq9o3PofBsQ+ys4rK7zP8X4pOW3bsnFIb8x4Nr1dqCJNxzItjgUbgbEXyPb01f
- Xfm4ZOpksEG6HtozE72p7AzykU3U2/8dUsx7+/Qry9lT8j5gKO8zia3gnxnCgrVkdI/g=;
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtp (Exim 4.92.2)
- id 1jHJ69-007mOh-7s
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Mar 2020 03:22:28 +0000
-Received: from dread.disaster.area (pa49-179-23-206.pa.nsw.optusnet.com.au
- [49.179.23.206])
- by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id D3C267EB4DD;
- Thu, 26 Mar 2020 14:22:13 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
- (envelope-from <david@fromorbit.com>)
- id 1jHJ5w-0006v8-Du; Thu, 26 Mar 2020 14:22:12 +1100
-Date: Thu, 26 Mar 2020 14:22:12 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20200326032212.GN10776@dread.disaster.area>
-References: <20200325122825.1086872-1-hch@lst.de>
- <20200325122825.1086872-3-hch@lst.de>
+ bh=hUI1PCTRGSZZRj13nFvuvdcsKuKC6Lxu52tmpUuu5fU=; b=lMkVKmiiFRfIx81a8CTxvqyY/z
+ YrSg0NiGxaCS+uV9rdmEIS6fD4dp0a/nnzWVMadTdlLEBgE94rAerxBM7E6GsPHHTOqrrWAq2TiYw
+ d0V7vH2LB7HWFwHkBlogySfX044+sth+Zf7PgOigs4/CyVnUwU0fFWE3bM5YOYU29UM4=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jHJFn-0044q8-4t
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 Mar 2020 03:32:27 +0000
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net
+ [107.3.166.239])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 9A16420714;
+ Thu, 26 Mar 2020 03:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1585193535;
+ bh=H8MDjdXMw4UeC+MDo5AJWCDIbLhr8JiIlIAwI10Z+3g=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=qdxCTCnYYLrmrKMHD7/C7aC7RtVoeokIKBRmSJcTFqfSg9L9He24K/ah36MPQA3J8
+ hNdqhPOPnhM8LjHvJeo+1gCJB8VLyKZxaHrhIfFzALZHKEGtdbRmyD29DexWUDhKHI
+ 7oPVsvCKfts7FBULpKTEy/kFk+tw/RlESgcqi/y0=
+Date: Wed, 25 Mar 2020 20:32:14 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Satya Tangirala <satyat@google.com>
+Message-ID: <20200326033214.GA858@sol.localdomain>
+References: <20200326030702.223233-1-satyat@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200325122825.1086872-3-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
- a=n/Z79dAqQwRlp4tcgfhWYA==:117 a=n/Z79dAqQwRlp4tcgfhWYA==:17
- a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=SS2py6AdgQ4A:10
- a=7-415B0cAAAA:8 a=TQi0xSRmeD81B83iwF8A:9 a=CjuIK1q_8ugA:10
- a=biEYGPWJfzWAr4FL6Ov7:22
-X-Headers-End: 1jHJ69-007mOh-7s
-Subject: Re: [f2fs-dev] [PATCH 2/4] fs: avoid double-writing the inode on a
- lazytime expiration
+In-Reply-To: <20200326030702.223233-1-satyat@google.com>
+X-Headers-End: 1jHJFn-0044q8-4t
+Subject: Re: [f2fs-dev] [PATCH v9 00/11] Inline Encryption Support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,92 +87,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Eric Biggers <ebiggers@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-mtd@lists.infradead.org, Al Viro <viro@zeniv.linux.org.uk>,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
+ Kuohong Wang <kuohong.wang@mediatek.com>,
+ Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Mar 25, 2020 at 01:28:23PM +0100, Christoph Hellwig wrote:
-> In the case that an inode has dirty timestamp for longer than the
-> lazytime expiration timeout (or if all such inodes are being flushed
-> out due to a sync or syncfs system call), we need to inform the file
-> system that the inode is dirty so that the inode's timestamps can be
-> copied out to the on-disk data structures.  That's because if the file
-> system supports lazytime, it will have ignored the dirty_inode(inode,
-> I_DIRTY_TIME) notification when the timestamp was modified in memory.q
-> Previously, this was accomplished by calling mark_inode_dirty_sync(),
-> but that has the unfortunate side effect of also putting the inode the
-> writeback list, and that's not necessary in this case, since we will
-> immediately call write_inode() afterwards.  Replace the call to
-> mark_inode_dirty_sync() with a new lazytime_expired method to clearly
-> separate out this case.
+On Wed, Mar 25, 2020 at 08:06:51PM -0700, Satya Tangirala wrote:
+> This patch series adds support for Inline Encryption to the block layer,
+> UFS, fscrypt, f2fs and ext4.
+> 
 
+This patch series can also be retrieved from
 
-hmmm. Doesn't this cause issues with both iput() and
-vfs_fsync_range() because they call mark_inode_dirty_sync() on
-I_DIRTY_TIME inodes to move them onto the writeback list so they are
-appropriately expired when the inode is written back.
+        Repo: https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
+        Tag: inline-encryption-v9
 
-i.e.:
+I based it on v5.6-rc2 (same base commit as v7 and v8) since it still applies
+cleanly to it.  You can see what changed from v8 by:
 
+        git diff inline-encryption-v8..inline-encryption-v9
 
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 2094386af8ac..e5aafd40dd0f 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -612,19 +612,13 @@ xfs_fs_destroy_inode(
->  }
->  
->  static void
-> -xfs_fs_dirty_inode(
-> -	struct inode			*inode,
-> -	int				flag)
-> +xfs_fs_lazytime_expired(
-> +	struct inode			*inode)
->  {
->  	struct xfs_inode		*ip = XFS_I(inode);
->  	struct xfs_mount		*mp = ip->i_mount;
->  	struct xfs_trans		*tp;
->  
-> -	if (!(inode->i_sb->s_flags & SB_LAZYTIME))
-> -		return;
-> -	if (flag != I_DIRTY_SYNC || !(inode->i_state & I_DIRTY_TIME))
-> -		return;
-> -
->  	if (xfs_trans_alloc(mp, &M_RES(mp)->tr_fsyncts, 0, 0, 0, &tp))
->  		return;
->  	xfs_ilock(ip, XFS_ILOCK_EXCL);
-> @@ -1053,7 +1047,7 @@ xfs_fs_free_cached_objects(
->  static const struct super_operations xfs_super_operations = {
->  	.alloc_inode		= xfs_fs_alloc_inode,
->  	.destroy_inode		= xfs_fs_destroy_inode,
-> -	.dirty_inode		= xfs_fs_dirty_inode,
-> +	.lazytime_expired	= xfs_fs_lazytime_expired,
->  	.drop_inode		= xfs_fs_drop_inode,
->  	.put_super		= xfs_fs_put_super,
->  	.sync_fs		= xfs_fs_sync_fs,
+or from v7 by:
 
-This means XFS no longer updates/logs the current timestamp because
-->dirty_inode(I_DIRTY_SYNC) is no longer called for XFS) before
-->fsync flushes the inode data and metadata changes to the journal.
-Hence the current in-memory timestamps are not present in the log
-before the fsync is run as so we violate the fsync guarantees
-lazytime gives for timestamp updates....
+        git diff inline-encryption-v7..inline-encryption-v9
 
-I haven't quite got it straight in my head if the iput() case has
-similar problems, but the fsync case definitely looks broken.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+- Eric
 
 
 _______________________________________________
