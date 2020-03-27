@@ -2,73 +2,76 @@ Return-Path: <SRS0=MQND=5M=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 332B6C2D0EC
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 Mar 2020 10:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A770EC43331
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 Mar 2020 10:50:25 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 092D420578
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 Mar 2020 10:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5A76F20578
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 Mar 2020 10:50:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Zr8173XF";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="P9FQkJek"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092D420578
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GDnUJpEL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="EiAWc6RK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A76F20578
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jHmFp-0005cn-Hs; Fri, 27 Mar 2020 10:30:21 +0000
+	id 1jHmZE-0006hi-Vw; Fri, 27 Mar 2020 10:50:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jHmFm-0005cd-9o
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Mar 2020 10:30:18 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jHmZC-0006hR-6h
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Mar 2020 10:50:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cXw0TzVkGU+TRU5tU8jXfjzXbYfnro8ehgTAM3jhVsE=; b=Zr8173XFY/Lp04m/YVT7fyGPyl
- pTA+bV9utDYY7iOJzpXR3z7jqNvGXFfC6BI3AAvqiyDRrWFYPQtt+rLECknD2H8wkR8+AKjPFJIDC
- 0wosNUlQljcfCdIyHIqzo/hic9VD3CPNXcVdSmpxdTluovNEItUmzGQ5oDJwaSptp9qA=;
+ bh=Thapt64gBibUNUikcGgyvDjacVqXIEjZzOM0AvjyjbE=; b=GDnUJpELKGxh43DwGm7jxCzf5J
+ 1pzYNFvCpj+SXN4Ga6XVFlFSY5Hc3DAqG81B+lw5yvt9eh+siD1vpUGaq2Nx48wbXLRP7114CgOvn
+ tLuWdR6zWCUmSQJOLkwn5DIrrDnaJdZlXXRz9Cri5JuBEXGMDxQOPkzGj2d2P1pHAaoU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=cXw0TzVkGU+TRU5tU8jXfjzXbYfnro8ehgTAM3jhVsE=; b=P
- 9FQkJekd++Tg1Lbe63PnNHm3eBNZ7C4X95GwTqWqkKSwhWhncnRED+kNr5kQAFSOmBOUoCpSJ4b/V
- /Pi6wmC7mcQmsFcLVC5Z5XlETL3BEYs7KmPPkKiNmDIZtqet7dy+V0+3UVNg6ET5XYMyCj/RkPIxO
- c+XSe1xX4voRKNJM=;
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Thapt64gBibUNUikcGgyvDjacVqXIEjZzOM0AvjyjbE=; b=EiAWc6RK5PvcQVCAIZ70Rj1oj5
+ H6ooGElZn73lHVNgN5yjg752QUnuHke+uaxGxoL6gtKL3SdzB7iKIHNg/zko/Jpqv/ATdD2Ha25xG
+ fnX/2S2/lQ+8fsxMDGxBT8Z5abwgpLoKNg2bHRPqkXK/DOMRahy3YZ8eFRCgS2ZQjQsQ=;
 Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jHmFi-002U9D-M2
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Mar 2020 10:30:18 +0000
+ id 1jHmZ7-006CEy-3a
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 Mar 2020 10:50:22 +0000
 Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 7F898749A64AA55676B8;
+ by Forcepoint Email with ESMTP id 7AE4EB349D00C049249D;
  Fri, 27 Mar 2020 18:30:03 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
  14.3.487.0; Fri, 27 Mar 2020 18:29:57 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Fri, 27 Mar 2020 18:29:51 +0800
-Message-ID: <20200327102953.104035-1-yuchao0@huawei.com>
+Date: Fri, 27 Mar 2020 18:29:52 +0800
+Message-ID: <20200327102953.104035-2-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20200327102953.104035-1-yuchao0@huawei.com>
+References: <20200327102953.104035-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jHmFi-002U9D-M2
-Subject: [f2fs-dev] [PATCH 1/3] f2fs: fix to disable compression on directory
+X-Headers-End: 1jHmZ7-006CEy-3a
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: keep inline_data when compression
+ conversion
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,49 +88,29 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-It needs to call f2fs_disable_compressed_file() to disable
-compression on directory.
+We can keep compressed inode's data inline before inline conversion.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h | 10 ++++++----
- fs/f2fs/file.c |  2 +-
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ fs/f2fs/file.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9274399d9505..4e80cbe130d9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3850,10 +3850,12 @@ static inline u64 f2fs_disable_compressed_file(struct inode *inode)
- 
- 	if (!f2fs_compressed_file(inode))
- 		return 0;
--	if (get_dirty_pages(inode))
--		return 1;
--	if (fi->i_compr_blocks)
--		return fi->i_compr_blocks;
-+	if (S_ISREG(inode->i_mode)) {
-+		if (get_dirty_pages(inode))
-+			return 1;
-+		if (fi->i_compr_blocks)
-+			return fi->i_compr_blocks;
-+	}
- 
- 	fi->i_flags &= ~F2FS_COMPR_FL;
- 	stat_dec_compr_inode(inode);
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 1476a3bc6317..6cb3c6cae7cd 100644
+index 6cb3c6cae7cd..21f7108ca2ba 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -1815,7 +1815,7 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
- 	}
- 
- 	if ((iflags ^ masked_flags) & F2FS_COMPR_FL) {
--		if (S_ISREG(inode->i_mode) && (masked_flags & F2FS_COMPR_FL)) {
-+		if (masked_flags & F2FS_COMPR_FL) {
- 			if (f2fs_disable_compressed_file(inode))
+@@ -1822,11 +1822,6 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+ 		if (iflags & F2FS_NOCOMP_FL)
+ 			return -EINVAL;
+ 		if (iflags & F2FS_COMPR_FL) {
+-			int err = f2fs_convert_inline_inode(inode);
+-
+-			if (err)
+-				return err;
+-
+ 			if (!f2fs_may_compress(inode))
  				return -EINVAL;
- 		}
+ 
 -- 
 2.18.0.rc1
 
