@@ -2,42 +2,43 @@ Return-Path: <SRS0=OWUn=5P=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 992EFC43331
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Mar 2020 20:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFB2C2D0F1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Mar 2020 20:38:00 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 64D332072E;
-	Mon, 30 Mar 2020 20:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 86CBB20784;
+	Mon, 30 Mar 2020 20:38:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="jiH+FFi5";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="P6ZMgaBK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yUD50oAb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D332072E
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Z558td8C";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KBA4tP8r";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYB4THHR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86CBB20784
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jJ0sI-00031f-GB; Mon, 30 Mar 2020 20:19:10 +0000
+	id 1jJ1AW-0006JF-0M; Mon, 30 Mar 2020 20:38:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1jJ0s9-00031B-HJ
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Mar 2020 20:19:01 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1jJ1AV-0006J5-2Y
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Mar 2020 20:37:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iRAicgI46RA6kyXGGOf6oYCgrFaHzK5vWfWqau28X+o=; b=jiH+FFi5Y/xpzR5AHG7svB5Cff
- 9T9xKrvU84ufKWVXllgHsiQZoYMNX/ZqWJ3eqAM/kiQoMKHSqOqbFNbRs1QLoUt48bT2x2rGCdwC3
- XndvhdTtyR5HxX4WsjdybCmzK1jVg7XyAp8xKgFx7FfM95UEHMm4PcokwdN8Kzut0EiU=;
+ bh=yYC1Bf2Xmdry4FyupwGMIj4NtOJcHCa10lLYanykPSA=; b=Z558td8CzCtmrLavvTMgl1uxR6
+ BnYoCN8emcGUiDBUIyIfTWGLrhaO0KDT3r8VC7SrOCZ6MazFrwYj4ZtLDD84N5LBFSsSj3d7Nm0vl
+ h0v85wXz/DPX3ye46ZmpGfhRAAvE/6pn5BOVJVeGudo/Q7KH56KAfEq9oDiwDOUZJkdw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,36 +46,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=iRAicgI46RA6kyXGGOf6oYCgrFaHzK5vWfWqau28X+o=; b=P6ZMgaBKXnDmF2A3KvpKgyiELk
- mnBK+lz0e8DqNsHliGX6c3GJ9QKl/h7cRZvaIxGQbMLg53uEM+8vs6M0ODv2iKACMcJ93pSCE39BH
- npUuYi9z/Sn99vLg9im6vYWsgUqYJIGWyEyLbuzFmPrmDkU4HlfsS5g2HEvMiTejtycc=;
+ bh=yYC1Bf2Xmdry4FyupwGMIj4NtOJcHCa10lLYanykPSA=; b=KBA4tP8rCJk9ljLCR2u6N1GkT8
+ TF6BLH5eyst/m4rnCiZt3YEu9gyPo1bzYIS778Oeogsi6bZ4udbJ9B+DpXsdsuQfc3kKOahpYiYuN
+ kGyLtsJOelB6EP5oi992dotTdh8sernQumToPNHmbs49bR5GeGX7VYPAOtvSVI1piWO4=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jJ0s5-001pln-T6
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Mar 2020 20:19:01 +0000
-Received: from localhost (unknown [104.132.1.66])
+ id 1jJ1AS-001rmA-P7
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Mar 2020 20:37:59 +0000
+Received: from gmail.com (unknown [104.132.1.76])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 5EE932072E;
- Mon, 30 Mar 2020 20:18:47 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 2704720757;
+ Mon, 30 Mar 2020 20:37:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1585599527;
- bh=jUroWGhyAm60DiHiarqP0y2ZdSu/cOYZJxJ1uUhL3/w=;
+ s=default; t=1585600671;
+ bh=+mbjkt2M3Cet+7VuNGQYRyAAZeqN0FtaQWEfj5HYfPQ=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=yUD50oAb84AfPygKHS7AhcNzx6DF+KYI3GWdD73sVGwEMzB24wJabVxP1Pwah8Izc
- pcUL1xy942GxFHfEypIHC3eRgL6y37svhjU4Zi50kBX37m+qi18GSH4DpwFDK+uQ0g
- qTVmHPIV3IDQuceWrTzaUxEzZdosza9zwUFoOXGE=
-Date: Mon, 30 Mar 2020 13:18:46 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20200330201846.GA212732@google.com>
+ b=jYB4THHRXmw7XF2gcB3t+hMeDJw48gTiEOvPjtNic8yRpGxQ3LxuF0YZGbpBW+01b
+ li0opREoaGyTbJ9BNZ1ZhIVGKzYCWr4MJ1V98BVLf5h5ApoXMIej1Cbs5S0589VeJy
+ k4NRUY9xbWbPpYPdLOWCKPUbIv6UnU4DxxUUCIDs=
+Date: Mon, 30 Mar 2020 13:37:49 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Message-ID: <20200330203749.GC108564@gmail.com>
 References: <20200330192524.8931-1-jaegeuk@kernel.org>
  <20200330195143.GB108564@gmail.com>
+ <20200330201846.GA212732@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200330195143.GB108564@gmail.com>
-X-Headers-End: 1jJ0s5-001pln-T6
+In-Reply-To: <20200330201846.GA212732@google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Headers-End: 1jJ1AS-001rmA-P7
 Subject: Re: [f2fs-dev] [PATCH] f2fscrypt: show more information of policy
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -92,68 +95,51 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 03/30, Eric Biggers wrote:
-> On Mon, Mar 30, 2020 at 12:25:24PM -0700, Jaegeuk Kim wrote:
-> > From: Jaegeuk Kim <jaegeuk@google.com>
+On Mon, Mar 30, 2020 at 01:18:46PM -0700, Jaegeuk Kim wrote:
+> On 03/30, Eric Biggers wrote:
+> > On Mon, Mar 30, 2020 at 12:25:24PM -0700, Jaegeuk Kim wrote:
+> > > From: Jaegeuk Kim <jaegeuk@google.com>
+> > > 
+> > > This patch gives more information of encryption policy.
+> > > 
+> > > Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
+> > > Change-Id: I04a6826aa4497554ce79d884d495b3dda1b64fac
+> > > ---
+> > >  tools/f2fscrypt.c | 34 ++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 34 insertions(+)
+> > > 
+> > > diff --git a/tools/f2fscrypt.c b/tools/f2fscrypt.c
+> > > index fe3e0ff..bb3e70f 100644
+> > > --- a/tools/f2fscrypt.c
+> > > +++ b/tools/f2fscrypt.c
 > > 
-> > This patch gives more information of encryption policy.
+> > I'm a little confused why the f2fscrypt tool even exists?  Who is using it?  It
+> > looks like this code was all copied from e4crypt, which is no longer being
+> > maintained either as there are now better filesystem-independent tools:
 > > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
-> > Change-Id: I04a6826aa4497554ce79d884d495b3dda1b64fac
-> > ---
-> >  tools/f2fscrypt.c | 34 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
+> > - https://github.com/google/fscrypt
+> > - https://github.com/google/fscryptctl
+> > - https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/tree/io/encrypt.c
 > > 
-> > diff --git a/tools/f2fscrypt.c b/tools/f2fscrypt.c
-> > index fe3e0ff..bb3e70f 100644
-> > --- a/tools/f2fscrypt.c
-> > +++ b/tools/f2fscrypt.c
+> > Would one of those work for you instead?
 > 
-> I'm a little confused why the f2fscrypt tool even exists?  Who is using it?  It
-> looks like this code was all copied from e4crypt, which is no longer being
-> maintained either as there are now better filesystem-independent tools:
+> I'm using it occasionally in Android. I think it'd be great to add it in f2fs_io
+> likewise xfs_io tho, it'd be also okay to add one of projects in AOSP, if you
+> have some bandwidth. If you have any plan, I'd okay to remove f2fscrypt in
+> f2fs-tools.
 > 
-> - https://github.com/google/fscrypt
-> - https://github.com/google/fscryptctl
-> - https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/tree/io/encrypt.c
-> 
-> Would one of those work for you instead?
 
-I'm using it occasionally in Android. I think it'd be great to add it in f2fs_io
-likewise xfs_io tho, it'd be also okay to add one of projects in AOSP, if you
-have some bandwidth. If you have any plan, I'd okay to remove f2fscrypt in
-f2fs-tools.
+Does it actually need to be part of the Android source tree, or would it suffice
+to build it locally?
 
-> 
-> > @@ -63,6 +63,8 @@
-> >  #define F2FS_ENCRYPTION_MODE_AES_256_GCM	2
-> >  #define F2FS_ENCRYPTION_MODE_AES_256_CBC	3
-> >  #define F2FS_ENCRYPTION_MODE_AES_256_CTS	4
-> > +#define F2FS_ENCRYPTION_MODE_ADIANTUM		9
-> > +#define F2FS_ENCRYPTION_MODE_PRIVATE		127
-> 
-> This doesn't match the list of encryption modes from the UAPI header.
+Either way, building xfs_io for Android might be difficult, so fscryptctl might
+be the best option.
 
-Will fix.
+Note that fscryptctl doesn't yet support v2 encryption policies, but I'll
+probably add it eventually.  I don't have any plans to update e4crypt and
+f2fscrypt too.
 
-> 
-> > +static const char *get_crypt_mode(int mode)
-> > +{
-> > +	int i;
-> > +
-> > +	for (i = 0; i < (sizeof(enc_mode_str) / sizeof(enc_mode_str[0])); ++i) {
-> > +		if (mode == enc_mode_str[i].mode) {
-> > +			return enc_mode_str[i].name;
-> > +		}
-> > +	}
-> > +	return "N/A";
-> > +}
-> 
-> If the mode number is unrecognized, it should show the number.
-
-Will fix.
-
-Thanks,
+- Eric
 
 
 _______________________________________________
