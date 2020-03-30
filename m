@@ -1,74 +1,103 @@
-Return-Path: <SRS0=JMaF=5N=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=OWUn=5P=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF64C43331
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 28 Mar 2020 11:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01963C43331
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Mar 2020 06:54:17 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 47B9E206E6
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 28 Mar 2020 11:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B6DE92073B;
+	Mon, 30 Mar 2020 06:54:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XcSW7AEB";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bHdaToKx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47B9E206E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VDZoJ5Rp";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="iHZfQ7hP";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="gsNI3Mzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6DE92073B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jI9dD-0006zx-KN; Sat, 28 Mar 2020 11:28:03 +0000
+	id 1jIoJI-0000n3-L0; Mon, 30 Mar 2020 06:54:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuehaibing@huawei.com>) id 1jI9dA-0006zg-Ha
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Mar 2020 11:28:00 +0000
+ (envelope-from
+ <bounce+103f7e.be9e4a-linux-f2fs-devel=lists.sourceforge.net@mg.codeaurora.org>)
+ id 1jIoJH-0000mi-79
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Mar 2020 06:54:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jJuSabGjXu4FniZlp3Tt8xur7pLAtDVyX0acYTjB4vQ=; b=XcSW7AEB4xNyjdxeh9HBhNEOJB
- DFNXsgdnsovi/Z54Zg6wr9/ceveGpMReUei9o8W3RSJ3HmQjnZqb+0TcCJVWGLNrtomL5u2ZaG9O6
- JSiz9sm0WSeerKBxKLCjqch/HYuyvXmGuGPBe/bUZHRXY27MZYC+XlPe6eCJxMhk5NuA=;
+ bh=NxnZdIQiHu9SdYni9w/ASzbt88VeS0n25G+4IoCyDSY=; b=VDZoJ5RpiHQtK9ZqdZpfl8ruVp
+ A5HBb6d7Bba4j64gCcS1RQUoklzscKr+1RJrNe/iOIfVTiXeDQk/pp22OXL6TPybSu+FRxs5t6h1U
+ Sa+/ZnxBXXrFe+2GF/sqrcjSx334q3mzwADGP1Wb0NhI7FQmZ6uqA4qqTVp3D3tG/LjM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=jJuSabGjXu4FniZlp3Tt8xur7pLAtDVyX0acYTjB4vQ=; b=b
- HdaToKx8o+4ktc4pcGkTRWfJ6F5M0czDmQWCCIBIxH+isYhq0a3KOzC9NCDRdSOCUMH9rBOpFQ9LG
- p22FoUpytFirS9GyNkqCMDhraFpKdG1buXmOfkzyM/9+dA/pnFbjRn28wYlwPD3IKDcYGuyTO2xxQ
- 1/VFf5naHSGeyBtY=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jI9d5-0052dW-BC
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 28 Mar 2020 11:28:00 +0000
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 82E2438E4A91D745D7AF;
- Sat, 28 Mar 2020 19:27:46 +0800 (CST)
-Received: from localhost (10.173.223.234) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.487.0; Sat, 28 Mar 2020
- 19:27:39 +0800
-From: YueHaibing <yuehaibing@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <qkrwngud825@gmail.com>
-Date: Sat, 28 Mar 2020 19:27:36 +0800
-Message-ID: <20200328112736.28852-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=NxnZdIQiHu9SdYni9w/ASzbt88VeS0n25G+4IoCyDSY=; b=iHZfQ7hPp9AODIMKPqjOAOxrDp
+ 2z/Rvcnz3lS6a/nLsvUsm9QIWbZp/Vwgtcp9zxjFt6jP/AHUu//0IDIsa2NTOx5N4NI9nFs/i9iX4
+ QfYuYD0+VaTK2WHeEkL3txutXsg0K/8dhSHu490/scSbzd1kLoLVKEOJE9NIF9w4q9wY=;
+Received: from mail26.static.mailgun.info ([104.130.122.26])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1jIoJ7-00F1hv-E1
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 Mar 2020 06:54:11 +0000
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
+ q=dns/txt; 
+ s=smtp; t=1585551244; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=NxnZdIQiHu9SdYni9w/ASzbt88VeS0n25G+4IoCyDSY=;
+ b=gsNI3MzdivdpcXvHbJVLTPVlj9ExO+acJE5Qn2nqHrZmztFwStUMVRLfhFZ0yAX2yemEowQK
+ YTBwL/yhmCbbRTurhEf3rm7FbRifUssSPPKn3A0MX5ouHpmv3i9hkBEddABjTHnMew0ttWNd
+ KcxLBJh4dWhItxWqdqHytgH+gj4=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI2M2Y4ZiIsICJsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e819776.7ff25bf2fc70-smtp-out-n01;
+ Mon, 30 Mar 2020 06:53:42 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+ id E3A33C43637; Mon, 30 Mar 2020 06:53:41 +0000 (UTC)
+Received: from codeaurora.org
+ (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+ (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+ (No client certificate requested) (Authenticated sender: stummala)
+ by smtp.codeaurora.org (Postfix) with ESMTPSA id 4F10BC433F2;
+ Mon, 30 Mar 2020 06:53:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F10BC433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
+ dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
+ spf=none smtp.mailfrom=stummala@codeaurora.org
+Date: Mon, 30 Mar 2020 12:23:35 +0530
+From: Sahitya Tummala <stummala@codeaurora.org>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <20200330065335.GT20234@codeaurora.org>
+References: <1584506689-5041-1-git-send-email-stummala@codeaurora.org>
+ <29d4adc4-482d-3d92-1470-3405989ea231@huawei.com>
+ <20200326133700.GR20234@codeaurora.org>
+ <2b0d8d4c-a981-4edc-d8ca-fe199a63ea79@huawei.com>
+ <20200327030542.GS20234@codeaurora.org>
 MIME-Version: 1.0
-X-Originating-IP: [10.173.223.234]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jI9d5-0052dW-BC
-Subject: [f2fs-dev] [PATCH -next] f2fs: xattr.h: Make stub helpers inline
+Content-Disposition: inline
+In-Reply-To: <20200327030542.GS20234@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Headers-End: 1jIoJ7-00F1hv-E1
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix long latency due to discard during
+ umount
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,47 +109,185 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org,
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Fix gcc warnings:
+Hi Chao,
 
-In file included from fs/f2fs/dir.c:15:0:
-fs/f2fs/xattr.h:157:13: warning: 'f2fs_destroy_xattr_caches' defined but not used [-Wunused-function]
- static void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi) { }
-             ^~~~~~~~~~~~~~~~~~~~~~~~~
-fs/f2fs/xattr.h:156:12: warning: 'f2fs_init_xattr_caches' defined but not used [-Wunused-function]
- static int f2fs_init_xattr_caches(struct f2fs_sb_info *sbi) { return 0; }
+On Fri, Mar 27, 2020 at 08:35:42AM +0530, Sahitya Tummala wrote:
+> On Fri, Mar 27, 2020 at 09:51:43AM +0800, Chao Yu wrote:
+> > 
+> > With this patch, most of xfstest cases cost 5 * n second longer than before.
+> > 
+> > E.g. generic/003, during umount(), we looped into retrying one bio
+> > submission.
+> > 
+> > [61279.829724] F2FS-fs (zram1): Found nat_bits in checkpoint
+> > [61279.885337] F2FS-fs (zram1): Mounted with checkpoint version = 5cf3cb8e
+> > [61281.912832] submit discard bio start [23555,1]
+> > [61281.912835] f2fs_submit_discard_endio [23555,1] err:-11
+> > [61281.912836] submit discard bio end [23555,1]
+> > [61281.912836] move dc to retry list [23555,1]
+> > 
+> > ...
+> > 
+> > [61286.881212] submit discard bio start [23555,1]
+> > [61286.881217] f2fs_submit_discard_endio [23555,1] err:-11
+> > [61286.881223] submit discard bio end [23555,1]
+> > [61286.881224] move dc to retry list [23555,1]
+> > [61286.905198] submit discard bio start [23555,1]
+> > [61286.905203] f2fs_submit_discard_endio [23555,1] err:-11
+> > [61286.905205] submit discard bio end [23555,1]
+> > [61286.905206] move dc to retry list [23555,1]
+> > [61286.929157] F2FS-fs (zram1): Issue discard(23555, 23555, 1) failed, ret: -11
+> > 
+> > Could you take a look at this issue?
+> 
+> Let me check and get back on this.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: a999150f4fe3 ("f2fs: use kmem_cache pool during inline xattr lookups")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/f2fs/xattr.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I found the issue. The dc with multiple bios is getting requeued again and
+again in case if one of its bio gets -EAGAIN error. Even the successfully
+completed bios are getting requeued again resulting into long latency.
+I have fixed it by splitting the dc in such case so that we can requeue only
+the leftover bios into a new dc and retry that later within the 5 sec timeout.
 
-diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
-index e471be77f8f0..938fcd20565d 100644
---- a/fs/f2fs/xattr.h
-+++ b/fs/f2fs/xattr.h
-@@ -153,8 +153,8 @@ static inline ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer,
- {
- 	return -EOPNOTSUPP;
- }
--static int f2fs_init_xattr_caches(struct f2fs_sb_info *sbi) { return 0; }
--static void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi) { }
-+static inline int f2fs_init_xattr_caches(struct f2fs_sb_info *sbi) { return 0; }
-+static inline void f2fs_destroy_xattr_caches(struct f2fs_sb_info *sbi) { }
- #endif
- 
- #ifdef CONFIG_F2FS_FS_SECURITY
+Please help to review v3 posted and if it looks good, I would like to request
+you to test the earlier regression scenario with it to check the result again?
+
+thanks,
+
+> 
+> Thanks,
+> 
+> > 
+> > Thanks,
+> > 
+> > > 
+> > > Thanks,
+> > > 
+> > >> Thanks,
+> > >>
+> > >>> +				break;
+> > >>> +			}
+> > >>> +		}
+> > >>>  
+> > >>>  		atomic_inc(&dcc->issued_discard);
+> > >>>  
+> > >>> @@ -1463,6 +1477,40 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+> > >>>  	return issued;
+> > >>>  }
+> > >>>  
+> > >>> +static bool __should_discard_retry(struct f2fs_sb_info *sbi,
+> > > s> > +		struct discard_policy *dpolicy)
+> > >>> +{
+> > >>> +	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> > >>> +	struct discard_cmd *dc, *tmp;
+> > >>> +	bool retry = false;
+> > >>> +	unsigned long flags;
+> > >>> +
+> > >>> +	if (dpolicy->type != DPOLICY_UMOUNT)
+> > >>> +		f2fs_bug_on(sbi, 1);
+> > >>> +
+> > >>> +	mutex_lock(&dcc->cmd_lock);
+> > >>> +	list_for_each_entry_safe(dc, tmp, &(dcc->retry_list), list) {
+> > >>> +		if (dpolicy->timeout != 0 &&
+> > >>> +			f2fs_time_over(sbi, dpolicy->timeout)) {
+> > >>> +			retry = false;
+> > >>> +			break;
+> > >>> +		}
+> > >>> +
+> > >>> +		spin_lock_irqsave(&dc->lock, flags);
+> > >>> +		if (!dc->bio_ref) {
+> > >>> +			dc->state = D_PREP;
+> > >>> +			dc->error = 0;
+> > >>> +			reinit_completion(&dc->wait);
+> > >>> +			__relocate_discard_cmd(dcc, dc);
+> > >>> +			retry = true;
+> > >>> +		}
+> > >>> +		spin_unlock_irqrestore(&dc->lock, flags);
+> > >>> +	}
+> > >>> +	mutex_unlock(&dcc->cmd_lock);
+> > >>> +
+> > >>> +	return retry;
+> > >>> +}
+> > >>> +
+> > >>>  static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> > >>>  					struct discard_policy *dpolicy)
+> > >>>  {
+> > >>> @@ -1470,12 +1518,13 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> > >>>  	struct list_head *pend_list;
+> > >>>  	struct discard_cmd *dc, *tmp;
+> > >>>  	struct blk_plug plug;
+> > >>> -	int i, issued = 0;
+> > >>> +	int i, err, issued = 0;
+> > >>>  	bool io_interrupted = false;
+> > >>>  
+> > >>>  	if (dpolicy->timeout != 0)
+> > >>>  		f2fs_update_time(sbi, dpolicy->timeout);
+> > >>>  
+> > >>> +retry:
+> > >>>  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+> > >>>  		if (dpolicy->timeout != 0 &&
+> > >>>  				f2fs_time_over(sbi, dpolicy->timeout))
+> > >>> @@ -1509,7 +1558,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> > >>>  				break;
+> > >>>  			}
+> > >>>  
+> > >>> -			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> > >>> +			err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> > >>> +			if (err == -EAGAIN)
+> > >>> +				congestion_wait(BLK_RW_ASYNC,
+> > >>> +						DEFAULT_IO_TIMEOUT);
+> > >>>  
+> > >>>  			if (issued >= dpolicy->max_requests)
+> > >>>  				break;
+> > >>> @@ -1522,6 +1574,10 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> > >>>  			break;
+> > >>>  	}
+> > >>>  
+> > >>> +	if (!list_empty(&dcc->retry_list) &&
+> > >>> +		__should_discard_retry(sbi, dpolicy))
+> > >>> +		goto retry;
+> > >>> +
+> > >>>  	if (!issued && io_interrupted)
+> > >>>  		issued = -1;
+> > >>>  
+> > >>> @@ -1613,6 +1669,12 @@ static unsigned int __wait_discard_cmd_range(struct f2fs_sb_info *sbi,
+> > >>>  		goto next;
+> > >>>  	}
+> > >>>  
+> > >>> +	if (dpolicy->type == DPOLICY_UMOUNT &&
+> > >>> +		!list_empty(&dcc->retry_list)) {
+> > >>> +		wait_list = &dcc->retry_list;
+> > >>> +		goto next;
+> > >>> +	}
+> > >>> +
+> > >>>  	return trimmed;
+> > >>>  }
+> > >>>  
+> > >>> @@ -2051,6 +2113,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+> > >>>  	for (i = 0; i < MAX_PLIST_NUM; i++)
+> > >>>  		INIT_LIST_HEAD(&dcc->pend_list[i]);
+> > >>>  	INIT_LIST_HEAD(&dcc->wait_list);
+> > >>> +	INIT_LIST_HEAD(&dcc->retry_list);
+> > >>>  	INIT_LIST_HEAD(&dcc->fstrim_list);
+> > >>>  	mutex_init(&dcc->cmd_lock);
+> > >>>  	atomic_set(&dcc->issued_discard, 0);
+> > >>>
+> > > 
+> 
+> -- 
+> --
+> Sent by a consultant of the Qualcomm Innovation Center, Inc.
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+
 -- 
-2.17.1
-
-
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
 
 
 _______________________________________________
