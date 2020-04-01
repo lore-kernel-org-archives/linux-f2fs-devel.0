@@ -7,73 +7,95 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1A8C2D0F1
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  1 Apr 2020 02:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E94C43331
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  1 Apr 2020 05:08:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E2FD22072E;
-	Wed,  1 Apr 2020 02:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 597292074D;
+	Wed,  1 Apr 2020 05:08:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="L8h4+OS5";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="BNWkZCmS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FD22072E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Tf89k+lT";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ICN9M0yT";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="SdWxAHYx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597292074D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jJTWF-000285-6n; Wed, 01 Apr 2020 02:54:19 +0000
+	id 1jJVcO-00058e-Us; Wed, 01 Apr 2020 05:08:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jJTWE-00027s-1N
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 Apr 2020 02:54:18 +0000
+ (envelope-from
+ <bounce+103f7e.be9e4a-linux-f2fs-devel=lists.sourceforge.net@mg.codeaurora.org>)
+ id 1jJVcN-00058X-UX
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 Apr 2020 05:08:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OdxNV+VKdWxPFVjaBZlvGJRLTPNVS6x9O3kcwvtrbPw=; b=L8h4+OS5JZg5WmlDAC7m4t1Cu7
- 3q9Rx3Tl7Ksx3qq1DMY20qUYsohHiSgjiqj8aSqA3Ui9PWzo6DgAOuchv6eNz2m2MPHirsKjXo/ku
- d6HQkH8TUhDyy2C7gsuXmzvx8Bco2U9GE+sgjsgbrdRhW5hdNK1UTh/myg4uyC5crndU=;
+ bh=IwfMIS6wvEWOjLAjcB816TqdPl4Q5b3pSRnkd6mSmTI=; b=Tf89k+lTyP1H0a3blkd5keuo1Y
+ W86KLbqTjIg/gymCvL2b8vliXn1t4Kha5WxhF2LXIHM8HacrmX3IRlhXuPHpDv0L1/JKsG9KLJG1k
+ ZMy4KmhXMhUlvEy4wX1tvmHBnXYhsYI0TAb5qzwf62Kl+dy7TTyCJwi9R1ILHZYxDMJc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=OdxNV+VKdWxPFVjaBZlvGJRLTPNVS6x9O3kcwvtrbPw=; b=BNWkZCmSmt72Wc6Hn7pXxe3xgZ
- DgplskXMnQacG5UbJZ0K2T7ilLXlKcKN8ox7TzAc2NVL4XMwQKO9OU29MRNaQlJYH3MxJQUB0G6Wm
- zIirkCPtd3zjoG/gfpMckpK+PTS2p7i62B3Kwn46N/iNzYtySNWJFhzd6lARalbqYGUA=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jJTWB-003YTl-Hz
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 Apr 2020 02:54:17 +0000
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id B3D37C7476AA77FA5ADD;
- Wed,  1 Apr 2020 10:54:06 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 1 Apr 2020
- 10:54:01 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Sahitya Tummala <stummala@codeaurora.org>
+ bh=IwfMIS6wvEWOjLAjcB816TqdPl4Q5b3pSRnkd6mSmTI=; b=ICN9M0yTausgRi/pvvuJHFu4g4
+ xhpKuYMWm89shInUsdbL7G5st4hYJILtKJdo3M+pFD8gXVJJSupy9YlgQpNLVYrchxxnajLCV43Am
+ YuzS1DTN58CWkJR8umKqk3GkbSe/HzSImHQwOgGrugwoWSLBqmX39aM2OInkrHWCG+fg=;
+Received: from mail26.static.mailgun.info ([104.130.122.26])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1jJVcK-00F1Hp-36
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 Apr 2020 05:08:47 +0000
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
+ q=dns/txt; 
+ s=smtp; t=1585717725; h=In-Reply-To: Content-Type: MIME-Version:
+ References: Message-ID: Subject: Cc: To: From: Date: Sender;
+ bh=IwfMIS6wvEWOjLAjcB816TqdPl4Q5b3pSRnkd6mSmTI=;
+ b=SdWxAHYxrrWhOSbTzxuhgndE9ndd9u6wVp/nOdZzcgv87VpPvOPt66Qi7KL3U8iP0XnQidJ3
+ SeidjxZM1oFmA65GkRVmnL4gv1jLSCYEzogcH/wYUKq/9lZyHTW1CzONyUN/SBAs7uI6J4fS
+ p0r88aIKOB99/l8qNcWk7PB5Fb8=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI2M2Y4ZiIsICJsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e8421cf.7f3399c51b90-smtp-out-n01;
+ Wed, 01 Apr 2020 05:08:31 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+ id 8F1E9C433BA; Wed,  1 Apr 2020 05:08:30 +0000 (UTC)
+Received: from codeaurora.org
+ (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+ (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+ (No client certificate requested) (Authenticated sender: stummala)
+ by smtp.codeaurora.org (Postfix) with ESMTPSA id D0356C433F2;
+ Wed,  1 Apr 2020 05:08:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0356C433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
+ dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
+ spf=none smtp.mailfrom=stummala@codeaurora.org
+Date: Wed, 1 Apr 2020 10:38:01 +0530
+From: Sahitya Tummala <stummala@codeaurora.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Message-ID: <20200401050801.GA20234@codeaurora.org>
 References: <1585219019-24831-1-git-send-email-stummala@codeaurora.org>
- <20200331035419.GB79749@google.com> <20200331090608.GZ20234@codeaurora.org>
+ <20200331035419.GB79749@google.com>
+ <20200331090608.GZ20234@codeaurora.org>
  <20200331184307.GA198665@google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <a56deb76-bf7f-dd86-301f-fbe56413ab9b@huawei.com>
-Date: Wed, 1 Apr 2020 10:54:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
 MIME-Version: 1.0
+Content-Disposition: inline
 In-Reply-To: <20200331184307.GA198665@google.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jJTWB-003YTl-Hz
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Headers-End: 1jJVcK-00F1Hp-36
 Subject: Re: [f2fs-dev] [PATCH] f2fs: prevent meta updates while checkpoint
  is in progress
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -92,19 +114,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/4/1 2:43, Jaegeuk Kim wrote:
+Hi Jaegeuk,
+
+Got it.
+The diff below looks good to me.
+Would you like me to test it and put a patch for this?
+
+Thanks,
+
+On Tue, Mar 31, 2020 at 11:43:07AM -0700, Jaegeuk Kim wrote:
 > On 03/31, Sahitya Tummala wrote:
->> On Mon, Mar 30, 2020 at 08:54:19PM -0700, Jaegeuk Kim wrote:
->>> On 03/26, Sahitya Tummala wrote:
->>>> allocate_segment_for_resize() can cause metapage updates if
->>>> it requires to change the current node/data segments for resizing.
->>>> Stop these meta updates when there is a checkpoint already
->>>> in progress to prevent inconsistent CP data.
->>>
->>> I'd prefer to use f2fs_lock_op() in bigger coverage.
->>
->> Do you mean to cover the entire free_segment_range() function within
->> f2fs_lock_op()? Please clarify.
+> > On Mon, Mar 30, 2020 at 08:54:19PM -0700, Jaegeuk Kim wrote:
+> > > On 03/26, Sahitya Tummala wrote:
+> > > > allocate_segment_for_resize() can cause metapage updates if
+> > > > it requires to change the current node/data segments for resizing.
+> > > > Stop these meta updates when there is a checkpoint already
+> > > > in progress to prevent inconsistent CP data.
+> > > 
+> > > I'd prefer to use f2fs_lock_op() in bigger coverage.
+> > 
+> > Do you mean to cover the entire free_segment_range() function within
+> > f2fs_lock_op()? Please clarify.
 > 
 > I didn't test tho, something like this?
 > 
@@ -207,20 +237,6 @@ On 2020/4/1 2:43, Jaegeuk Kim wrote:
 >  
 > -	freeze_bdev(sbi->sb->s_bdev);
 > +	freeze_super(sbi->sb);
-
-Look at this again, I guess holding freeze lock here may cause potential
-hang task issue, imaging that in a low-end storage, shrinking large size
-address space, free_segment_range() needs very long time to migrate all
-valid blocks in the tail of device, that's why previously we do block
-migration with small gc_lock coverage.
-
-Quoted:
-
-Changelog v5 ==> v6:
- - In free_segment_range(), reduce granularity of gc_mutex.
-
-Thanks,
-
 > +	down_write(&sbi->gc_lock);
 > +	mutex_lock(&sbi->cp_mutex);
 >  
@@ -305,7 +321,14 @@ Thanks,
 >  
 >  #define show_fsync_cpreason(type)					\
 >  	__print_symbolic(type,						\
+> -- 
+> 2.26.0.rc2.310.g2932bb562d-goog
 > 
+
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
 
 
 _______________________________________________
