@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1260C55183
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Apr 2020 15:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E06BC54FD0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 14 Apr 2020 15:02:59 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C100C2084D;
-	Tue, 14 Apr 2020 15:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 501B2214AF;
+	Tue, 14 Apr 2020 15:02:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="nKwn75vC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="GZ/KAlSU";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LzhSacnH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C100C2084D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Et4rYuol";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="exGYpkfa";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eKicQk6/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 501B2214AF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jON5a-0001ZI-G8; Tue, 14 Apr 2020 15:03:02 +0000
+	id 1jON5W-0003hL-W1; Tue, 14 Apr 2020 15:02:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1jON5T-0001WA-Oz
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Apr 2020 15:02:55 +0000
+ (envelope-from <willy@infradead.org>) id 1jON5S-0003fV-Qt
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Apr 2020 15:02:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JIWYplRscu505eUf6DjdTxinCKmvVQR8lfp+2Y6n8B0=; b=nKwn75vCmDJUThKE3pjOgE90Kw
- FJ4GrB/1R4NwkpAHoZNa5Q5iteGXFZg12zFluS9tN6ty1OYs3felx5RAOJXfWb9oI4DXCvM9NEacM
- tL5dP37mYpe5/7e3adO3iFb1Nbj5OxgIqea/kv8lu5WqkPCw402TjqZK6qwjWnzA6oXI=;
+ bh=dnVcRUhp6I8Fi+gnKN7PeXxunGICLabZNDbma7rvUfA=; b=Et4rYuolP9nQIURZZrsjrj373Z
+ qJX5D687EcGG1qkoJabaSLcjy5m3mE6+N6Di6pA32XG2EUa6jXZ/QqPB2p0xILSLMX3BfqXxBBW6J
+ qSaUuO5wp745R7syaIHM0EJsfjLZWyQc53LUjdb/g+86RKDU9EX7NdDEhzqChUwbvMbo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,37 +46,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=JIWYplRscu505eUf6DjdTxinCKmvVQR8lfp+2Y6n8B0=; b=GZ/KAlSUdU7Nfrdu+j6GSJTR2Q
- S0dd9RQn/C+b9HhA+DwdKiDsq2sjtdlcT0Iicd1AMRB8405vWozafkyuDjVgKRnHBylLFY96HJcYj
- FcQc+KfCMC3tQG2kjC0OoR3CA1Vtz+g1H/SzDBdKh+dLRydDg3ox5UDkLOHbzlh/eNsI=;
+ bh=dnVcRUhp6I8Fi+gnKN7PeXxunGICLabZNDbma7rvUfA=; b=exGYpkfaoDh3lUkdVqk4SnC8ts
+ 5azsN9GXTNmJIX4gaRwS55heIv9su1+rEIOPJ6Fn3kur6poeg3Lytabz7f79QQUoglf0CGJSOPrcT
+ mc5F2eAfxsy4qOSXwL+gb76DR4WLMKL71y8gGoL3nimw7ueflkXzgA5/XDEIkqru1Gng=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jON5Q-00EmGe-5b
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Apr 2020 15:02:55 +0000
+ id 1jON5Q-00EmGV-60
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 14 Apr 2020 15:02:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=JIWYplRscu505eUf6DjdTxinCKmvVQR8lfp+2Y6n8B0=; b=LzhSacnHbc6KghuGVfNkcOCJHp
- 5ZLNZLDSftcTn0v83NLZLVmZhen2i84VqUWP9JZ/3yOibp4JO2uYfDYUYIZU6BV1WBKmfpEqoLAs2
- HAhqmnVqrI41UPqUhKCVWPlx+iWH9Szo+AqXBvOqff7IscKM86SP+AymrzN+6zrt9b9hcVQX7TvUy
- 49PgOLLfxNvIRheNkB/LcZtWVqO9VEzT6GBzHOL0Oai+jR1TJAUg0ay7huj5on5nt26FsCNWgKdGn
- XWTpBarRpq2zzZjMWm3mCd1788gic8f7z9e7Q3pjE5upMv4vhJ9PGwLWx0/mvzq5/u5yOAOP8+sao
- 3RQpH5LA==;
+ bh=dnVcRUhp6I8Fi+gnKN7PeXxunGICLabZNDbma7rvUfA=; b=eKicQk6/N/qhm5ukpvL2quJ1kW
+ DThpXoVleuAK3Mor0LuN1OZ94FRCUT6ua7lH0Om5eK1Mb2qi6ebAYHd2nE6AEk6sAqOa7lEtYgU4e
+ o33uYsR6eg+d5Y6seoRjMUW82tBsoef8wG8rNx46ZZouvaRd353Jn4jXL5alqFhL8OxDFphIf6H2X
+ o7PwvGYa6Y8leC3WI+gd2xpgcsyngNSgy6h7udZIgkEsDTBQN/wJfaP8ApB2i7kaafitCBy0bllNL
+ Qrs6Lcqs6qd6BabzSEVs/9BubjFjdEuYSm4hJkOFxeM5+4XJ2WKpitkjyjDafNlV5sDN7fWj2xFFw
+ +7Ll1QFw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1jON5A-0006Pf-JL; Tue, 14 Apr 2020 15:02:36 +0000
+ Hat Linux)) id 1jON59-0006Nv-Nk; Tue, 14 Apr 2020 15:02:35 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
-Date: Tue, 14 Apr 2020 08:02:32 -0700
-Message-Id: <20200414150233.24495-25-willy@infradead.org>
+Date: Tue, 14 Apr 2020 08:02:09 -0700
+Message-Id: <20200414150233.24495-2-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200414150233.24495-1-willy@infradead.org>
 References: <20200414150233.24495-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1jON5Q-00EmGe-5b
-Subject: [f2fs-dev] [PATCH v11 24/25] fuse: Convert from readpages to
- readahead
+X-Headers-End: 1jON5Q-00EmGV-60
+Subject: [f2fs-dev] [PATCH v11 01/25] mm: Move readahead prototypes from mm.h
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,157 +88,122 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-xfs@vger.kernel.org, William Kucharski <william.kucharski@oracle.com>,
- linux-kernel@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, linux-kernel@vger.kernel.org,
  "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
  linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
- Dave Chinner <dchinner@redhat.com>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Implement the new readahead operation in fuse by using __readahead_batch()
-to fill the array of pages in fuse_args_pages directly.  This lets us
-inline fuse_readpages_fill() into fuse_readahead().
+The readahead code is part of the page cache so should be found in the
+pagemap.h file.  force_page_cache_readahead is only used within mm,
+so move it to mm/internal.h instead.  Remove the parameter names where
+they add no value, and rename the ones which were actively misleading.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 ---
- fs/fuse/file.c | 99 ++++++++++++++------------------------------------
- 1 file changed, 27 insertions(+), 72 deletions(-)
+ block/blk-core.c        |  1 +
+ include/linux/mm.h      | 19 -------------------
+ include/linux/pagemap.h |  8 ++++++++
+ mm/fadvise.c            |  2 ++
+ mm/internal.h           |  2 ++
+ 5 files changed, 13 insertions(+), 19 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 9d67b830fb7a..db82fb29dd39 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -915,84 +915,39 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
- 	fuse_readpages_end(fc, &ap->args, err);
- }
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 7e4a1da0715e..f9b4457fd78d 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -20,6 +20,7 @@
+ #include <linux/blk-mq.h>
+ #include <linux/highmem.h>
+ #include <linux/mm.h>
++#include <linux/pagemap.h>
+ #include <linux/kernel_stat.h>
+ #include <linux/string.h>
+ #include <linux/init.h>
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 5a323422d783..581e56275bc4 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2601,25 +2601,6 @@ extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
+ int __must_check write_one_page(struct page *page);
+ void task_dirty_inc(struct task_struct *tsk);
  
--struct fuse_fill_data {
--	struct fuse_io_args *ia;
--	struct file *file;
--	struct inode *inode;
--	unsigned int nr_pages;
--	unsigned int max_pages;
--};
+-/* readahead.c */
+-#define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
 -
--static int fuse_readpages_fill(void *_data, struct page *page)
-+static void fuse_readahead(struct readahead_control *rac)
- {
--	struct fuse_fill_data *data = _data;
--	struct fuse_io_args *ia = data->ia;
--	struct fuse_args_pages *ap = &ia->ap;
--	struct inode *inode = data->inode;
-+	struct inode *inode = rac->mapping->host;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-+	unsigned int i, max_pages, nr_pages = 0;
+-int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
+-			pgoff_t offset, unsigned long nr_to_read);
+-
+-void page_cache_sync_readahead(struct address_space *mapping,
+-			       struct file_ra_state *ra,
+-			       struct file *filp,
+-			       pgoff_t offset,
+-			       unsigned long size);
+-
+-void page_cache_async_readahead(struct address_space *mapping,
+-				struct file_ra_state *ra,
+-				struct file *filp,
+-				struct page *pg,
+-				pgoff_t offset,
+-				unsigned long size);
+-
+ extern unsigned long stack_guard_gap;
+ /* Generic expand stack which grows the stack according to GROWS{UP,DOWN} */
+ extern int expand_stack(struct vm_area_struct *vma, unsigned long address);
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index a8f7bd8ea1c6..6c61535aa7ff 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -615,6 +615,14 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask);
+ void delete_from_page_cache_batch(struct address_space *mapping,
+ 				  struct pagevec *pvec);
  
--	fuse_wait_on_page_writeback(inode, page->index);
--
--	if (ap->num_pages &&
--	    (ap->num_pages == fc->max_pages ||
--	     (ap->num_pages + 1) * PAGE_SIZE > fc->max_read ||
--	     ap->pages[ap->num_pages - 1]->index + 1 != page->index)) {
--		data->max_pages = min_t(unsigned int, data->nr_pages,
--					fc->max_pages);
--		fuse_send_readpages(ia, data->file);
--		data->ia = ia = fuse_io_alloc(NULL, data->max_pages);
--		if (!ia) {
--			unlock_page(page);
--			return -ENOMEM;
--		}
--		ap = &ia->ap;
--	}
--
--	if (WARN_ON(ap->num_pages >= data->max_pages)) {
--		unlock_page(page);
--		fuse_io_free(ia);
--		return -EIO;
--	}
--
--	get_page(page);
--	ap->pages[ap->num_pages] = page;
--	ap->descs[ap->num_pages].length = PAGE_SIZE;
--	ap->num_pages++;
--	data->nr_pages--;
--	return 0;
--}
--
--static int fuse_readpages(struct file *file, struct address_space *mapping,
--			  struct list_head *pages, unsigned nr_pages)
--{
--	struct inode *inode = mapping->host;
--	struct fuse_conn *fc = get_fuse_conn(inode);
--	struct fuse_fill_data data;
--	int err;
--
--	err = -EIO;
- 	if (is_bad_inode(inode))
--		goto out;
-+		return;
- 
--	data.file = file;
--	data.inode = inode;
--	data.nr_pages = nr_pages;
--	data.max_pages = min_t(unsigned int, nr_pages, fc->max_pages);
--;
--	data.ia = fuse_io_alloc(NULL, data.max_pages);
--	err = -ENOMEM;
--	if (!data.ia)
--		goto out;
-+	max_pages = min(fc->max_pages, fc->max_read / PAGE_SIZE);
- 
--	err = read_cache_pages(mapping, pages, fuse_readpages_fill, &data);
--	if (!err) {
--		if (data.ia->ap.num_pages)
--			fuse_send_readpages(data.ia, file);
--		else
--			fuse_io_free(data.ia);
-+	for (;;) {
-+		struct fuse_io_args *ia;
-+		struct fuse_args_pages *ap;
++#define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
 +
-+		nr_pages = readahead_count(rac) - nr_pages;
-+		if (nr_pages > max_pages)
-+			nr_pages = max_pages;
-+		if (nr_pages == 0)
-+			break;
-+		ia = fuse_io_alloc(NULL, nr_pages);
-+		if (!ia)
-+			return;
-+		ap = &ia->ap;
-+		nr_pages = __readahead_batch(rac, ap->pages, nr_pages);
-+		for (i = 0; i < nr_pages; i++) {
-+			fuse_wait_on_page_writeback(inode,
-+						    readahead_index(rac) + i);
-+			ap->descs[i].length = PAGE_SIZE;
-+		}
-+		ap->num_pages = nr_pages;
-+		fuse_send_readpages(ia, rac->file);
- 	}
--out:
--	return err;
- }
++void page_cache_sync_readahead(struct address_space *, struct file_ra_state *,
++		struct file *, pgoff_t index, unsigned long req_count);
++void page_cache_async_readahead(struct address_space *, struct file_ra_state *,
++		struct file *, struct page *, pgoff_t index,
++		unsigned long req_count);
++
+ /*
+  * Like add_to_page_cache_locked, but used to add newly allocated pages:
+  * the page is new, so we can just run __SetPageLocked() against it.
+diff --git a/mm/fadvise.c b/mm/fadvise.c
+index 4f17c83db575..3efebfb9952c 100644
+--- a/mm/fadvise.c
++++ b/mm/fadvise.c
+@@ -22,6 +22,8 @@
  
- static ssize_t fuse_cache_read_iter(struct kiocb *iocb, struct iov_iter *to)
-@@ -3373,10 +3328,10 @@ static const struct file_operations fuse_file_operations = {
+ #include <asm/unistd.h>
  
- static const struct address_space_operations fuse_file_aops  = {
- 	.readpage	= fuse_readpage,
-+	.readahead	= fuse_readahead,
- 	.writepage	= fuse_writepage,
- 	.writepages	= fuse_writepages,
- 	.launder_page	= fuse_launder_page,
--	.readpages	= fuse_readpages,
- 	.set_page_dirty	= __set_page_dirty_nobuffers,
- 	.bmap		= fuse_bmap,
- 	.direct_IO	= fuse_direct_IO,
++#include "internal.h"
++
+ /*
+  * POSIX_FADV_WILLNEED could set PG_Referenced, and POSIX_FADV_NOREUSE could
+  * deactivate the pages and clear PG_Referenced.
+diff --git a/mm/internal.h b/mm/internal.h
+index b5634e78f01d..25fee17c7334 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -49,6 +49,8 @@ void unmap_page_range(struct mmu_gather *tlb,
+ 			     unsigned long addr, unsigned long end,
+ 			     struct zap_details *details);
+ 
++int force_page_cache_readahead(struct address_space *, struct file *,
++		pgoff_t index, unsigned long nr_to_read);
+ extern unsigned int __do_page_cache_readahead(struct address_space *mapping,
+ 		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
+ 		unsigned long lookahead_size);
 -- 
 2.25.1
 
