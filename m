@@ -2,83 +2,84 @@ Return-Path: <SRS0=cknU=57=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA14C3815B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Apr 2020 11:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9E9C2BB55
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:19 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B93D920575;
-	Wed, 15 Apr 2020 11:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2D60C20936;
+	Wed, 15 Apr 2020 11:35:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GHICeHF8";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Y3u9mdLU";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ClQLKHw9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93D920575
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="alRtLpDY";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="I513sugE";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4b0fYM7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D60C20936
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jOg7o-0000hY-T4; Wed, 15 Apr 2020 11:22:36 +0000
+	id 1jOgK4-000074-VD; Wed, 15 Apr 2020 11:35:16 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1jOg7n-0000hI-T4
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Apr 2020 11:22:35 +0000
+ (envelope-from <sashal@kernel.org>) id 1jOgJz-00006m-VP
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Apr 2020 11:35:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=p5k96MLyrJ0Kc/9UM6Xw8FfLDEnTX/dVH39aK5qAXAA=; b=GHICeHF8a6vCDoIuAK+LK9wyjH
- OJZo7t5tNWJh7hCTdB0ii9skpofvrz9p4WWe74Jyxt2mAPzUhlVtMkdaULUmfSVdUCJlhP6Z4eBRL
- PtsDNFL5FLBRUXrR6m4oC9RXSw+uVlp9Vm+x5xi4flVMfT2Op0V2tMu91tiTEhprSF+w=;
+ bh=5sXDMRTJG11H1fSY0M+kZp69zdwDieMgsH2jzYAnaHw=; b=alRtLpDYYSCw/vX/EQDvTU95/R
+ 74pNUvlQ9MlvntdqGmliCsUkXLWkTN39EQKNFbArjF/LD2wvvdjGORzhIs39kZ6H3u8R/TyPbBi6U
+ 7seDH9BiTteFNjlsQUWMjeIJ/SpVZ4OekAiiOv9Er4g/AQOzi0vFJKMo5jzIln4cj7nA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=p5k96MLyrJ0Kc/9UM6Xw8FfLDEnTX/dVH39aK5qAXAA=; b=Y3u9mdLU/sc+Hp+eSX2pKsQDuV
- QT3ZPfIATsbw840M1lCKW+Ubtv6F7o/ixBTeIyxxGk8oamBd2G0vFkjTGuEeCXdu69hkK4rrjAaHi
- CMRgc0VPQNrxPRNCOEbs9aGyuMlExrNo4B3avgkYLcNcHQxC9ZzfwcfXxpeifqooE3v0=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=5sXDMRTJG11H1fSY0M+kZp69zdwDieMgsH2jzYAnaHw=; b=I513sugE4Al2IEvZM4w3XLH8O0
+ sSZY5+06gTvIWZ4D7RlajAZRX4ifyjBK2Ka85vV53BYMb/7sqJ4bYYP95bMU3ANLluWoD7I+288zO
+ a+wz8tvOnEq7zAwfdlbB9DBmxDlQ0j9Mi2xbkJVN1xzvqyqIC7vDnB8/kzghbic35puw=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jOg7j-000CkL-Dr
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Apr 2020 11:22:35 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=p5k96MLyrJ0Kc/9UM6Xw8FfLDEnTX/dVH39aK5qAXAA=; b=ClQLKHw92puBJhU2nimC3BH8wA
- 355osRMfVxhDQVssm7Zm9jE6v3E3dRGs+Oc5jFRy3/jQbyNAsfVORzBRmGEfW7/HIf4gbDH2d4DT2
- gL3rNu+X2XBNBJ3NpW/Bx0FlYJMdgdadGJM/y2cHwCtDUUl9b+KcgcTHyz2DkqV52KYqOQaeHmfVH
- s2D+J2WiHScmuPaZ+HVg8gSTWAFyV0P0cKjdmyQFi/TapX8CRjBU8aFB/npLmiZAvjPQMvj6Rpgij
- Vy0bfVHN0vosqBiQDXjyzG7mDrHdrpJGmw7wYW8mNvb2TBTAiSuOkc9Tu/G2eouAmkldMad/NLN38
- jgC7ixKA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1jOg7U-0004jU-L2; Wed, 15 Apr 2020 11:22:16 +0000
-Date: Wed, 15 Apr 2020 04:22:16 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Message-ID: <20200415112216.GC5820@bombadil.infradead.org>
-References: <20200414150233.24495-1-willy@infradead.org>
- <20200414150233.24495-6-willy@infradead.org>
- <20200414181705.bfc4c0087092051a9475141e@linux-foundation.org>
- <20200415021808.GA5820@bombadil.infradead.org>
- <20200414215616.f665d12f8549f52606784d1e@linux-foundation.org>
+ id 1jOgJw-00GSSd-6O
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Apr 2020 11:35:11 +0000
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net
+ [73.47.72.35])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 0183E20768;
+ Wed, 15 Apr 2020 11:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1586950497;
+ bh=9le1PvFkKlbTxjWl55RK+nnvYIn4LST6W/S4enHx7iU=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=E4b0fYM77fcLEXlvuQmcLzBoEQi/r0073qy2eJvkbX42Y8wousSgXtRCsxKiDu9HF
+ So4SVcdbTPCuAuIo2AE3cYD5Es4sEM3UyIU78/mnLvZ4zCvp/OoJSj3x/EksuiIzme
+ 2QzKoGPzY/w1kleL/izHAt1mdII5xI4FtQ/XdLUw=
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Date: Wed, 15 Apr 2020 07:32:45 -0400
+Message-Id: <20200415113445.11881-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200415113445.11881-1-sashal@kernel.org>
+References: <20200415113445.11881-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200414215616.f665d12f8549f52606784d1e@linux-foundation.org>
-X-Headers-End: 1jOg7j-000CkL-Dr
-Subject: Re: [f2fs-dev] [PATCH v11 05/25] mm: Add new readahead_control API
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-Headers-End: 1jOgJw-00GSSd-6O
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.6 010/129] f2fs: fix the panic in
+ do_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,47 +91,142 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, William Kucharski <william.kucharski@oracle.com>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- cluster-devel@redhat.com, linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, Christoph Hellwig <hch@lst.de>,
- linux-btrfs@vger.kernel.org
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Apr 14, 2020 at 09:56:16PM -0700, Andrew Morton wrote:
-> On Tue, 14 Apr 2020 19:18:08 -0700 Matthew Wilcox <willy@infradead.org> wrote:
-> > Hmm.  They don't seem that big to me.
-> 
-> They're really big!
+From: Sahitya Tummala <stummala@codeaurora.org>
 
-v5.7-rc1:	11636	    636	    224	  12496	   30d0	fs/iomap/buffered-io.o
-readahead_v11:	11528	    636	    224	  12388	   3064	fs/iomap/buffered-io.o
+[ Upstream commit bf22c3cc8ce71454dddd772284773306a68031d8 ]
 
-> > __readahead_batch is much bigger, but it's only used by btrfs and fuse,
-> > and it seemed unfair to make everybody pay the cost for a function only
-> > used by two filesystems.
-> 
-> Do we expect more filesystems to use these in the future?
+There could be a scenario where f2fs_sync_meta_pages() will not
+ensure that all F2FS_DIRTY_META pages are submitted for IO. Thus,
+resulting in the below panic in do_checkpoint() -
 
-I'm honestly not sure.  I think it'd be nice to be able to fill a bvec
-from the page cache directly, but I haven't tried to write that function
-yet.  If so, then it'd be appropriate to move that functionality into
-the core.
+f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+				!f2fs_cp_error(sbi));
 
-> > > The code adds quite a few (inlined!) VM_BUG_ONs.  Can we plan to remove
-> > > them at some stage?  Such as, before Linus shouts at us :)
-> > 
-> > I'd be happy to remove them.  Various reviewers said things like "are you
-> > sure this can't happen?"
-> 
-> Yeah, these things tend to live for ever.  Please add a todo to remove
-> them after the code has matured?
+This can happen in a low-memory condition, where shrinker could
+also be doing the writepage operation (stack shown below)
+at the same time when checkpoint is running on another core.
 
-Sure!  I'm touching this code some more in the large pages patch set, so
-I can get rid of it there.
+schedule
+down_write
+f2fs_submit_page_write -> by this time, this page in page cache is tagged
+			as PAGECACHE_TAG_WRITEBACK and PAGECACHE_TAG_DIRTY
+			is cleared, due to which f2fs_sync_meta_pages()
+			cannot sync this page in do_checkpoint() path.
+f2fs_do_write_meta_page
+__f2fs_write_meta_page
+f2fs_write_meta_page
+shrink_page_list
+shrink_inactive_list
+shrink_node_memcg
+shrink_node
+kswapd
+
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/f2fs/checkpoint.c | 16 +++++++---------
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/super.c      |  2 +-
+ 3 files changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 44e84ac5c9411..9c88fb3d255a2 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1250,20 +1250,20 @@ static void unblock_operations(struct f2fs_sb_info *sbi)
+ 	f2fs_unlock_all(sbi);
+ }
+ 
+-void f2fs_wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
++void f2fs_wait_on_all_pages(struct f2fs_sb_info *sbi, int type)
+ {
+ 	DEFINE_WAIT(wait);
+ 
+ 	for (;;) {
+ 		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
+ 
+-		if (!get_pages(sbi, F2FS_WB_CP_DATA))
++		if (!get_pages(sbi, type))
+ 			break;
+ 
+ 		if (unlikely(f2fs_cp_error(sbi)))
+ 			break;
+ 
+-		io_schedule_timeout(5*HZ);
++		io_schedule_timeout(HZ/50);
+ 	}
+ 	finish_wait(&sbi->cp_wait, &wait);
+ }
+@@ -1384,8 +1384,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* Flush all the NAT/SIT pages */
+ 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+-	f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+-					!f2fs_cp_error(sbi));
+ 
+ 	/*
+ 	 * modify checkpoint
+@@ -1493,11 +1491,11 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* Here, we have one bio having CP pack except cp pack 2 page */
+ 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+-	f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
+-					!f2fs_cp_error(sbi));
++	/* Wait for all dirty meta pages to be submitted for IO */
++	f2fs_wait_on_all_pages(sbi, F2FS_DIRTY_META);
+ 
+ 	/* wait for previous submitted meta pages writeback */
+-	f2fs_wait_on_all_pages_writeback(sbi);
++	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+ 
+ 	/* flush all device cache */
+ 	err = f2fs_flush_device_cache(sbi);
+@@ -1506,7 +1504,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* barrier and flush checkpoint cp pack 2 page if it can */
+ 	commit_checkpoint(sbi, ckpt, start_blk);
+-	f2fs_wait_on_all_pages_writeback(sbi);
++	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+ 
+ 	/*
+ 	 * invalidate intermediate page cache borrowed from meta inode which are
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5355be6b6755c..d39f5de114208 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3308,7 +3308,7 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi);
+ void f2fs_update_dirty_page(struct inode *inode, struct page *page);
+ void f2fs_remove_dirty_inode(struct inode *inode);
+ int f2fs_sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type);
+-void f2fs_wait_on_all_pages_writeback(struct f2fs_sb_info *sbi);
++void f2fs_wait_on_all_pages(struct f2fs_sb_info *sbi, int type);
+ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+ void f2fs_init_ino_entry_info(struct f2fs_sb_info *sbi);
+ int __init f2fs_create_checkpoint_caches(void);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 65a7a432dfee2..686f5402660ed 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1172,7 +1172,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	/* our cp_error case, we can wait for any writeback page */
+ 	f2fs_flush_merged_writes(sbi);
+ 
+-	f2fs_wait_on_all_pages_writeback(sbi);
++	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+ 
+ 	f2fs_bug_on(sbi, sbi->fsync_node_num);
+ 
+-- 
+2.20.1
+
 
 
 _______________________________________________
