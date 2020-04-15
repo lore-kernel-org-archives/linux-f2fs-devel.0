@@ -4,40 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 249F6C2BA2B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Apr 2020 06:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5ECC2BB85
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Apr 2020 06:26:17 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E5089206D9;
-	Wed, 15 Apr 2020 06:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8CD6E206D9;
+	Wed, 15 Apr 2020 06:26:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KJY1SMhj";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Qw+0hqWV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5089206D9
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="eU6N79+g";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DCgEjzRA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CD6E206D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jObUA-0003Dz-H9; Wed, 15 Apr 2020 06:25:22 +0000
+	id 1jObUx-0002rn-PM; Wed, 15 Apr 2020 06:26:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jObUA-0003Dq-0n
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Apr 2020 06:25:22 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jObUv-0002re-51
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Apr 2020 06:26:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dinks9R8MyBxR966n82W22dyi/FIBe9gNP8FkwJWYEQ=; b=KJY1SMhjvmZbiNPcww0VjsEPzY
- mJA5pgZtcE5aX8eSiWQ/xq+MjqfCgV4ArPu5xUIxpgr2zqEQawBETqTW0mWVbYN8u+Q3fhCHyOZPl
- lTpdS2p0UHDc9xiGUVrJw5azYXcMII1blj39pAl4EAwPuGwuEZz3a8ovzg2l2+XpgTT8=;
+ bh=nw6hujR3MdnKl3uIqx+HUzxonsmT/n8kcsBPE/R1pes=; b=eU6N79+gQXkIUENivqXazt65MK
+ +SBgGC1nrXv0IV6DV4LKZg6G9EyOruQ4Q7r7lAPBUqKtHzVMuBujvUba7G85EEQUic4I7hfN8/sPq
+ +F7/139t0GieXPvSxVDuo3BfQwyNYTOxS9+yPT5FzK98ke17YTrV5lAZ0rY6tyqrlYwc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -45,36 +44,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dinks9R8MyBxR966n82W22dyi/FIBe9gNP8FkwJWYEQ=; b=Qw+0hqWVSjPmOM3pcorbC+LNm8
- 4RwkWO3sFHXHpuPv/UUe/3RD2drUoU0cXtz0CD5vFu/QHl6njnOYlyPx5+CJGPU8cn2B1DllzqebI
- SkCfWWGhIzh05diTLmKNBuy57URoUnySSqIcKFIMlrAoqdwxvouVcgxA+JuUXnoS8/wU=;
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=nw6hujR3MdnKl3uIqx+HUzxonsmT/n8kcsBPE/R1pes=; b=DCgEjzRAwUS88DjKNkY1cFFjlK
+ LAyDP279hMoxsUb+L7i/XHR6V0O82gMzXkCIcDHQkjH0yu/P6hP6cNNZ+z+Gx9GMNvgaJSRkC59Em
+ 3sPDlTFdtN0C1N8RBHNrhae0P/bCXlbyDo9LR3ORt9hOoEdKq5fwM4PkU9lJ9VPlzV+E=;
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jObU8-001ltJ-Gh
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Apr 2020 06:25:21 +0000
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id A7419E15ED6B69521AE7;
- Wed, 15 Apr 2020 14:25:13 +0800 (CST)
+ id 1jObUs-00H0vA-5G
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Apr 2020 06:26:09 +0000
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 80110417E13B5D4CF896;
+ Wed, 15 Apr 2020 14:25:56 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 15 Apr
- 2020 14:25:09 +0800
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 15 Apr
+ 2020 14:25:53 +0800
 To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim
  <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>
-References: <1586921462-12972-1-git-send-email-stummala@codeaurora.org>
+References: <1586923554-30257-1-git-send-email-stummala@codeaurora.org>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <156892a9-1d19-81b9-e8a2-bc8483385a8b@huawei.com>
-Date: Wed, 15 Apr 2020 14:25:09 +0800
+Message-ID: <fde3d252-674d-f2e8-6f26-5e70bab748b3@huawei.com>
+Date: Wed, 15 Apr 2020 14:25:53 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1586921462-12972-1-git-send-email-stummala@codeaurora.org>
+In-Reply-To: <1586923554-30257-1-git-send-email-stummala@codeaurora.org>
 Content-Language: en-US
 X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jObU8-001ltJ-Gh
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs: fix long latency due to discard
- during umount
+X-Headers-End: 1jObUs-00H0vA-5G
+Subject: Re: [f2fs-dev] [PATCH] f2fs: report the discard cmd errors properly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,14 +89,10 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/4/15 11:31, Sahitya Tummala wrote:
-> F2FS already has a default timeout of 5 secs for discards that
-> can be issued during umount, but it can take more than the 5 sec
-> timeout if the underlying UFS device queue is already full and there
-> are no more available free tags to be used. Fix this by submitting a
-> small batch of discard requests so that it won't cause the device
-> queue to be full at any time and thus doesn't incur its wait time
-> in the umount context.
+On 2020/4/15 12:05, Sahitya Tummala wrote:
+> In case a discard_cmd is split into several bios, the dc->error
+> must not be overwritten once an error is reported by a bio. Also,
+> move it under dc->lock.
 > 
 > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 
