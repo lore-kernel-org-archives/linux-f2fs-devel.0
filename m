@@ -2,42 +2,42 @@ Return-Path: <SRS0=lWv/=6A=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F78C2BA2B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Apr 2020 07:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3C6C2D0EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Apr 2020 07:19:08 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 44732206D5;
-	Thu, 16 Apr 2020 07:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id ADA71206D5;
+	Thu, 16 Apr 2020 07:19:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="l0EXrHhE";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="A7PlBR5J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44732206D5
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="IMlS7ygb";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bmTi/yEC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA71206D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jOykt-00061a-RC; Thu, 16 Apr 2020 07:16:11 +0000
+	id 1jOyni-0006AL-3h; Thu, 16 Apr 2020 07:19:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jOyks-00061S-92
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Apr 2020 07:16:10 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jOyng-0006AC-EW
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Apr 2020 07:19:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kTOF4O3uYXuhQ83/pzYZ92k2B39RA7mcH8xinhRdR/A=; b=l0EXrHhEs7okAWmKNunqkPcB7+
- KMt3KOlOg1F0B427almsU5Ey40qH4svtYklEkNkqBfaeY0skXgSaLfD9yvaftLXdQveP9cqhOJ4Dl
- riARkIhbR3P6fWeKZM5VQyP3udDkouTfvw+polzmbyDBTTwFu2jOW/u0bcNRbu0bUUPk=;
+ bh=QwoCEbVn0yTBkno9HBt8YxawETP2KgD9911y0H1QGwo=; b=IMlS7ygb7lk1rtJQoFzGb3KwSg
+ rpR+iedMzxGcxUibfAO28xzBi96swE4Htb2GJEioICxGoIRq1eEiCnBnVBBe70Bz0Iou51nXU06jM
+ ZPlsrhUc4ROmBVr61jIBOmnYO+ncGgOQqmFBa05TyccCtbnqcEgF3sjbx7XwAPT0R8Po=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -45,36 +45,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=kTOF4O3uYXuhQ83/pzYZ92k2B39RA7mcH8xinhRdR/A=; b=A7PlBR5J2WvDCC289pJrKxgGHs
- oB1y7ER6WTDcrQP4Wef0QzZRMySUi01Li8tyEfVOjTucWD5wZGTYXwpKCX6IvakoFYwskpnGs04Pw
- JZd8ur634wWSIBxA2Umrzpwml1k1uiirLhylenUMkJXTtraKQB/PqR/BcrlFOKvO5sJM=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=QwoCEbVn0yTBkno9HBt8YxawETP2KgD9911y0H1QGwo=; b=bmTi/yECKBrhYPL29a8/N/+io+
+ N8q03l2G5wzVR+QBoAfiuqS3U3QV6H4j+lY+e7x59mjw9OBL0oPkiT6s2oDX3IGnrxf4YHsE3MViI
+ rtiyJtFObhD5mqzz9FJS17RNjdHTRiH+dTdW1r+TnoUbv+UosOEG4Yr5yzpNltlRqTGk=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jOyko-00HWVT-2l
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Apr 2020 07:16:10 +0000
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 9916B9C4B29A166B4B0F;
- Thu, 16 Apr 2020 15:15:57 +0800 (CST)
+ id 1jOyne-003b98-1m
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Apr 2020 07:19:04 +0000
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+ by Forcepoint Email with ESMTP id A6DA45EE4167EB0AB608;
+ Thu, 16 Apr 2020 15:18:53 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 16 Apr
- 2020 15:15:52 +0800
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 16 Apr
+ 2020 15:18:49 +0800
 To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
  <linux-f2fs-devel@lists.sourceforge.net>, <kernel-team@android.com>
-References: <20200409173056.229855-1-jaegeuk@kernel.org>
+References: <20200403161249.68385-1-jaegeuk@kernel.org>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <77e9f2e6-f3f3-8ca9-e6b5-3d57c4d2acc5@huawei.com>
-Date: Thu, 16 Apr 2020 15:15:51 +0800
+Message-ID: <ded76be6-236e-4367-9cde-7b46dbd96087@huawei.com>
+Date: Thu, 16 Apr 2020 15:18:48 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20200409173056.229855-1-jaegeuk@kernel.org>
+In-Reply-To: <20200403161249.68385-1-jaegeuk@kernel.org>
 Content-Language: en-US
 X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jOyko-00HWVT-2l
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota_sync failure due to
- f2fs_lock_op
+X-Headers-End: 1jOyne-003b98-1m
+Subject: Re: [f2fs-dev] [PATCH] f2fs: introduce sysfs/data_io_flag to attach
+ REQ_META/FUA
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,39 +90,25 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/4/10 1:30, Jaegeuk Kim wrote:
-> f2fs_quota_sync() uses f2fs_lock_op() before flushing dirty pages, but
-> f2fs_write_data_page() returns EAGAIN.
-> Likewise dentry blocks, we can just bypass getting the lock, since quota
-> blocks are also maintained by checkpoint.
+On 2020/4/4 0:12, Jaegeuk Kim wrote:
+> This patch introduces a way to attach REQ_META/FUA explicitly
+> to all the data writes given temperature.
+> 
+> -> attach REQ_FUA to Hot Data writes
+> 
+> -> attach REQ_FUA to Hot|Warm Data writes
+> 
+> -> attach REQ_FUA to Hot|Warm|Cold Data writes
+> 
+> -> attach REQ_FUA to Hot|Warm|Cold Data writes as well as
+>           REQ_META to Hot Data writes
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/data.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 358c5f0bd6346..1139d8cf4b8d1 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2707,8 +2707,8 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
->  			f2fs_available_free_memory(sbi, BASE_CHECK))))
->  		goto redirty_out;
->  
-> -	/* Dentry blocks are controlled by checkpoint */
-> -	if (S_ISDIR(inode->i_mode)) {
-> +	/* Dentry/quota blocks are controlled by checkpoint */
-> +	if (S_ISDIR(inode->i_mode) || IS_NOQUOTA(inode)) {
 
-Should cover multipage write path, in the case of normal quota file
-(such as /quota.user or /quota.group) is set as compressed.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
->  		fio.need_lock = LOCK_DONE;
->  		err = f2fs_do_write_data_page(&fio);
->  		goto done;
-> 
 
 
 _______________________________________________
