@@ -1,75 +1,86 @@
-Return-Path: <SRS0=/3/5=6F=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=6JJe=6G=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622E4C54FC9
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Apr 2020 11:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CA0C55186
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Apr 2020 09:23:17 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 356EA2064C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Apr 2020 11:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 26CE120735;
+	Wed, 22 Apr 2020 09:23:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YXZ4OGaL";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="EIcOYJNZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 356EA2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hJvCkw5e";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="f2Pp6BLS";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FSRMb7oj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26CE120735
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jQrCp-0004G0-U1; Tue, 21 Apr 2020 11:36:47 +0000
+	id 1jRBb8-0004i1-AO; Wed, 22 Apr 2020 09:23:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jQrCo-0004Fn-E0
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Apr 2020 11:36:46 +0000
+ (envelope-from
+ <BATV+f4d323def9086acb1ddf+6086+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1jRBb7-0004hu-Dp
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Apr 2020 09:23:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7TMxef6zEik+d4Ux6oqwG12xknyOfWnFq2Uvx22LroE=; b=YXZ4OGaLUziQuwX0JG5AiJMM1v
- epuYmUgTDHOpLKy7uAyl68/24qyyVgpPrHz4zZAHFFemAd2/2JVRCbjZ8xe8e0eyRqc2UBoyrJuVJ
- dONk+8lCAtpQhSb/m6YEl91stqa6+YRgY8nYDEcVWWpTPO80CIu4JCQzTOD3PYjLIYfw=;
+ bh=LJwNwAXsE+S8zNNlabn/hmZ+oktxf4w2TKCPbz3Xd7Y=; b=hJvCkw5eVx3nwIoHK+xn44n9oY
+ dIocUwME0cG8hm5K6+fNvcIhwvGhUrP66FkFhU3ldwW/tR2evuCBpgNyjyw2X6MuVGDzh/YDKLgM9
+ 7P7WKxYkms5XmOq4/Rxr+gpHSVcNTK1LkJ3jVTG+qKy64cIz2sHGXeocg8UOUzFiHgwU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=7TMxef6zEik+d4Ux6oqwG12xknyOfWnFq2Uvx22LroE=; b=E
- IcOYJNZLzgSMKkxzuKYYlpDmAI6vGOUhbea/UvhIQe2lTySkqtJHeL0GNBE184GVawHdWs9JDHN29
- lCul7lX9bZmX+cmExU123oy22dMqlHXYPEuTQTF3MxuCnxwq2S59tAyi0Le3xqnwipSk/FfMvnCyy
- MtCzK59lRwjrLc+8=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=LJwNwAXsE+S8zNNlabn/hmZ+oktxf4w2TKCPbz3Xd7Y=; b=f2Pp6BLSHWSCuRFgGtt47pFk04
+ eREtjQ7FQEYyDPTSV7VR3C9jmFHDNUqLAFEHnbGAhMvu7hDLJIDNTykRMX7Tze7O4nNXjs6jjw4eE
+ XhVhKJRfZCq30VjbC+vXljNWDBs990nSgm2ef3HU0JW5sev0aN/9m5Zb0yalNt0fhBCo=;
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jQrCk-005JWX-Gv
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Apr 2020 11:36:46 +0000
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id E3F3D244BF4870A871B2;
- Tue, 21 Apr 2020 19:36:33 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.487.0; Tue, 21 Apr 2020 19:36:24 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Tue, 21 Apr 2020 19:36:21 +0800
-Message-ID: <20200421113621.60996-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+ id 1jRBaz-009SxC-KX
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Apr 2020 09:23:13 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=LJwNwAXsE+S8zNNlabn/hmZ+oktxf4w2TKCPbz3Xd7Y=; b=FSRMb7ojsDy+kjVHZOZLeU26Hf
+ 9MCf1WYrctgxy1tuPfJMalhsl6zhO/V1ks4bbCVNwwHNLlr2jh6msWOiiWacT1kQsPEYAu/6kGWMb
+ mMxQ8Zu4i1PrJBW9vFNyMWTpN5Lre4ufCpTj3uRHqN0wC2JGN3FonwPzsLmpEd9Tor932GVd0f33N
+ rktqnNf+kW3RdvUgMu8GryUSirp+X5+Kwz3b2uQLGpT8DPabJ2LUrNxxSYFLzws1vD5KwGPX6T2RG
+ VZJzk7YamFtFdSj9Y/sWS0kGIoyQLjwpuZmX+BuTl3PCVg67Sxts9J/5yjryJJPwe2kEvUDKf+T0o
+ PdTaVhrQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
+ Hat Linux)) id 1jRBak-0006ab-6i; Wed, 22 Apr 2020 09:22:50 +0000
+Date: Wed, 22 Apr 2020 02:22:50 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Satya Tangirala <satyat@google.com>
+Message-ID: <20200422092250.GA12290@infradead.org>
+References: <20200408035654.247908-1-satyat@google.com>
+ <20200408035654.247908-3-satyat@google.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jQrCk-005JWX-Gv
-Subject: [f2fs-dev] [PATCH] f2fs: compress: don't handle non-compressed data
- in workqueue
+Content-Disposition: inline
+In-Reply-To: <20200408035654.247908-3-satyat@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1jRBaz-009SxC-KX
+Subject: Re: [f2fs-dev] [PATCH v10 02/12] block: Keyslot Manager for Inline
+ Encryption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,66 +92,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
+ Kuohong Wang <kuohong.wang@mediatek.com>, Eric Biggers <ebiggers@google.com>,
+ Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If bio has no compressed data, we don't need to handle end_io work in
-workqueue, instead, it should just let interrupter handle it directly
-to speed up IO response.
+> +bool blk_ksm_crypto_cfg_supported(struct blk_keyslot_manager *ksm,
+> +				  const struct blk_crypto_config *cfg)
+> +{
+> +	if (!ksm)
+> +		return false;
+> +	return (ksm->crypto_modes_supported[cfg->crypto_mode] &
+> +		cfg->data_unit_size) &&
+> +	       (ksm->max_dun_bytes_supported >= cfg->dun_bytes);
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Nit: why not expand this a bit to be more readable:
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ff8a92df8d99..8607c02e8f96 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -114,7 +114,8 @@ static enum count_type __read_io_type(struct page *page)
- /* postprocessing steps for read bios */
- enum bio_post_read_step {
- 	STEP_DECRYPT,
--	STEP_DECOMPRESS,
-+	STEP_DECOMPRESS_NOWQ,		/* handle normal cluster data inplace */
-+	STEP_DECOMPRESS,		/* handle compressed cluster data in workqueue */
- 	STEP_VERITY,
- };
- 
-@@ -990,7 +991,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 	if (f2fs_encrypted_file(inode))
- 		post_read_steps |= 1 << STEP_DECRYPT;
- 	if (f2fs_compressed_file(inode))
--		post_read_steps |= 1 << STEP_DECOMPRESS;
-+		post_read_steps |= 1 << STEP_DECOMPRESS_NOWQ;
- 	if (f2fs_need_verity(inode, first_idx))
- 		post_read_steps |= 1 << STEP_VERITY;
- 
-@@ -2189,6 +2190,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 	for (i = 0; i < dic->nr_cpages; i++) {
- 		struct page *page = dic->cpages[i];
- 		block_t blkaddr;
-+		struct bio_post_read_ctx *ctx;
- 
- 		blkaddr = data_blkaddr(dn.inode, dn.node_page,
- 						dn.ofs_in_node + i + 1);
-@@ -2225,6 +2227,11 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
- 			goto submit_and_realloc;
- 
-+		/* tag STEP_DECOMPRESS to handle IO in wq */
-+		ctx = bio->bi_private;
-+		if (!(ctx->enabled_steps & (1 << STEP_DECOMPRESS)))
-+			ctx->enabled_steps |= 1 << STEP_DECOMPRESS;
-+
- 		inc_page_count(sbi, F2FS_RD_DATA);
- 		f2fs_update_iostat(sbi, FS_DATA_READ_IO, F2FS_BLKSIZE);
- 		ClearPageError(page);
--- 
-2.18.0.rc1
+	if (!(ksm->crypto_modes_supported[cfg->crypto_mode] &
+			cfg->data_unit_size))
+		return false;
+	if (ksm->max_dun_bytes_supported < cfg->dun_bytes)
+		return false;
+	return true;
 
+> +int blk_ksm_evict_key(struct blk_keyslot_manager *ksm,
+> +		      const struct blk_crypto_key *key)
+> +{
+> +	struct blk_ksm_keyslot *slot;
+> +	int err = 0;
+> +
+> +	blk_ksm_hw_enter(ksm);
+> +	slot = blk_ksm_find_keyslot(ksm, key);
+> +	if (!slot)
+> +		goto out_unlock;
+> +
+> +	if (atomic_read(&slot->slot_refs) != 0) {
+> +		err = -EBUSY;
+> +		goto out_unlock;
+> +	}
+
+This check looks racy.
 
 
 _______________________________________________
