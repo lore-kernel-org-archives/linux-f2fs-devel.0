@@ -1,85 +1,81 @@
-Return-Path: <SRS0=6JJe=6G=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=NCuU=6H=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4786C54FCB
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Apr 2020 16:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66A3C55186
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Apr 2020 09:48:08 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AFCF321473;
-	Wed, 22 Apr 2020 16:38:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8FF7D20776;
+	Thu, 23 Apr 2020 09:48:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KtnIdgW6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="MgLgtSU/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFCF321473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="FHHZLuFG";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="QVOJrynB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF7D20776
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jRIO2-0000yj-1j; Wed, 22 Apr 2020 16:38:10 +0000
+	id 1jRYSj-0005O0-Js; Thu, 23 Apr 2020 09:48:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <SRS0=4Hi+=6G=bugzilla.kernel.org=bugzilla-daemon@kernel.org>)
- id 1jRIO0-0000yc-QC
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Apr 2020 16:38:08 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jRYSi-0005Nt-Hv
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Apr 2020 09:48:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4aujlV4+EqYcVQGFwud7faLiF4q95Lq3ntfX0sFNoaA=; b=KtnIdgW6kQrWqGH2cDmNerZTeC
- 75YOCiSk4Z6QWmYC6s9aZLRuw9blyRwNE6GY6MqjH3kPpN3CCigZrxaGBs4gr2bJ8safRYM9+qGlD
- 4+jkXAE4AktLpGvUIBWY/nIRxzLEuK8mlyF/Fy4irXOsTXBwkby+qvOyqBpvhpMPqN50=;
+ bh=Yap6f0pCXnWzwsagWuxgmrAfC/n6tbj/kH1oNYHtvwk=; b=FHHZLuFGy+Cz3/48MCZgf5xHFZ
+ A3xKT7oe/8A7KjW4DH8zYGrJUpqCHliXKi0vJCSIQbOxPwpBwzvP9q8scL5B913xBz8j9tGZcqCrZ
+ Ak6PeE95RFg7ZVoIhQzcTsQZWbe6SBkN4UGHJS9WLHU8rR/Nt4YhVsoCGe/hXclsC3L0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=4aujlV4+EqYcVQGFwud7faLiF4q95Lq3ntfX0sFNoaA=; b=MgLgtSU/ErKbFtY+Yj4DeXb06r
- juYdJl3oCagKD3yzfkwKVyJzn5iYQuHImDyOn4Pw4ol7cZ7qmRrahVAGoDQsry4cCrEdsyL4AG6U2
- 9GhTk9uf2PM23L569OulVPZHICHMUNgHZjWllRX3X+dARqTVq4OPIEbGCMdvdBY4MKB4=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=Yap6f0pCXnWzwsagWuxgmrAfC/n6tbj/kH1oNYHtvwk=; b=QVOJrynB2vZBRrC6dL9jLEYcIM
+ 93MvhmMgnR/Vnp1gBuECs6MZXpWu6En7WRW/mse+yxzSB9t39m3kNBOMTYDOsrpyhy8j0CZ5o/tTC
+ rj9cBMxOunjmTVcIrCYjQYAaHftKyiiMbCQ0CpxNXgoDAwik5k2A7DFlKkYdpiyIjK84=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jRINz-006XdC-MI
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Apr 2020 16:38:08 +0000
-From: bugzilla-daemon@bugzilla.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 22 Apr 2020 16:38:01 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: jaegeuk@kernel.org
-X-Bugzilla-Status: ASSIGNED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-206057-202145-P85iPulP1t@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-206057-202145@https.bugzilla.kernel.org/>
-References: <bug-206057-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ id 1jRYSf-007Sqg-Lr
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Apr 2020 09:48:04 +0000
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id F194E7FF708048E37DEF;
+ Thu, 23 Apr 2020 17:47:52 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 23 Apr
+ 2020 17:47:47 +0800
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20200409173056.229855-1-jaegeuk@kernel.org>
+ <77e9f2e6-f3f3-8ca9-e6b5-3d57c4d2acc5@huawei.com>
+ <20200416213946.GA196168@google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <fd8b116a-7830-809c-70a4-a3a12da1eb14@huawei.com>
+Date: Thu, 23 Apr 2020 17:47:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Headers-End: 1jRINz-006XdC-MI
-Subject: [f2fs-dev] [Bug 206057] 5.5.0-rc2-next: f2fs is extremely slow,
- with ext4 system works well
+In-Reply-To: <20200416213946.GA196168@google.com>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jRYSf-007Sqg-Lr
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix quota_sync failure due to
+ f2fs_lock_op
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,26 +87,64 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206057
-
---- Comment #9 from Jaegeuk Kim (jaegeuk@kernel.org) ---
-(In reply to Balazs Vinarz from comment #8)
-> Hello there,
+On 2020/4/17 5:39, Jaegeuk Kim wrote:
+> f2fs_quota_sync() uses f2fs_lock_op() before flushing dirty pages, but
+> f2fs_write_data_page() returns EAGAIN.
+> Likewise dentry blocks, we can just bypass getting the lock, since quota
+> blocks are also maintained by checkpoint.
 > 
-> as a 32bit ARM user, I'm also affected.
-> Will this fix be in 5.7?
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+> v2:
+>  - fix multipage write case
 > 
-> Regards
+>  fs/f2fs/compress.c | 2 +-
+>  fs/f2fs/data.c     | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index df7b2d15eacde..faaa358289010 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -985,7 +985,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+>  	loff_t psize;
+>  	int i, err;
+>  
+> -	if (!f2fs_trylock_op(sbi))
+> +	if (!IS_NOQUOTA(inode) && !f2fs_trylock_op(sbi))
+>  		return -EAGAIN;
 
-Yes, it was merged in 5.7-rc1.
+I encounter deadlock..
 
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+Should call f2fs_unlock_op() for non-quota compressed inode later.
+
+Thanks,
+
+>  
+>  	set_new_dnode(&dn, cc->inode, NULL, NULL, 0);
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index accd28728642a..5c8d3823d7593 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2656,8 +2656,8 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+>  			f2fs_available_free_memory(sbi, BASE_CHECK))))
+>  		goto redirty_out;
+>  
+> -	/* Dentry blocks are controlled by checkpoint */
+> -	if (S_ISDIR(inode->i_mode)) {
+> +	/* Dentry/quota blocks are controlled by checkpoint */
+> +	if (S_ISDIR(inode->i_mode) || IS_NOQUOTA(inode)) {
+>  		fio.need_lock = LOCK_DONE;
+>  		err = f2fs_do_write_data_page(&fio);
+>  		goto done;
+> 
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
