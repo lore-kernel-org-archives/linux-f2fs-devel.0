@@ -2,148 +2,66 @@ Return-Path: <SRS0=mM0/=6L=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_NAME_MR_MRS,LOTS_OF_MONEY,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A6BC54FD0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 27 Apr 2020 10:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2955C54FD0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 27 Apr 2020 11:04:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3EA522051A;
-	Mon, 27 Apr 2020 10:38:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8D2222063A;
+	Mon, 27 Apr 2020 11:04:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="FmI+zd9z";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="R6Fozm/f";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=web.de header.i=@web.de header.b="JCHUpYFd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EA522051A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=web.de
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="J8jajm9e";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Q3rAWnr8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2222063A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iasl.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jT19z-0003TT-FF; Mon, 27 Apr 2020 10:38:47 +0000
+	id 1jT1ZD-0004Zb-6C; Mon, 27 Apr 2020 11:04:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <Markus.Elfring@web.de>) id 1jT19y-0003TL-2n
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Apr 2020 10:38:46 +0000
+ (envelope-from <spo@iasl.com>) id 1jT1ZB-0004ZU-S6
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Apr 2020 11:04:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Date:Message-ID:From:Subject:Cc:To:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Subject:Reply-To:Date:From:To:Content-Description:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Message-ID:Cc:
+ Content-ID:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:
+ Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=woZ/2CyQJdO+sZ77S3XgZwoofyUa1t3wQRHp1c/DWEg=; b=FmI+zd9zcx5UgIISGWxylhKX+F
- Zo9rRp7486D+2AcEY/SizZCp904gqKp1+VGtmATLNpNnmL3htTzUKVKGYDl/mIhYPXaGWTRUrOIY3
- ShlnwhLrpqG/J79GPcSdx1AI42wLhRhDSmJotNhmjq+owqAhJqgZuWIiwCoPr/4JFZ20=;
+ bh=W18FlU6dYZ9T8PxQAN5cwXV5ZyTJnoaW0bRwpDF0mXY=; b=J8jajm9erLpvqvfu6z8yg5Tj0c
+ mPVYL1mjy5q+rBIGCFPRO3IJy0GoKLslvujkhjmqsvC3qxkvuXh1Yo5fJ0iHbymCfrVt3thOuUYwQ
+ +JgBNbKj6ERpV4DZ4QYimEjrZMnKtctLcZyYrlQ9vA7QjfsQqJvuOE0tfQXJ1PCWj3cI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Message-ID:From:
- Subject:Cc:To:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=woZ/2CyQJdO+sZ77S3XgZwoofyUa1t3wQRHp1c/DWEg=; b=R
- 6Fozm/ftBtkujkC6eLN2b40UQV88kdN8D81eRoTm61tC2+Kn+RcBcTBFSF5bVkupsvaEpFgo8KrlL
- amGHYMslEBNlFXGQkficTNauPSiNLg97a9lxPswYyh3vXtIY+yEGeFnVVvTY0RW1M+OYpcCmpzZhh
- adFlBjWo9j7BpztM=;
-Received: from mout.web.de ([212.227.17.11])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jT19u-00HOHs-4u
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Apr 2020 10:38:45 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
- s=dbaedf251592; t=1587983904;
- bh=woZ/2CyQJdO+sZ77S3XgZwoofyUa1t3wQRHp1c/DWEg=;
- h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
- b=JCHUpYFd+nAVdchgNmdwp8lVIT5WXOFwl17pTEAoPlFSjrV9swBjpWOF3m04GPE5E
- LnEKxIDq89gqy3Eg9WC17KWO6bL/BQf9Le3ROw0nS+sM0fZSnyUUM2X/STaUaRwvA6
- 4AbcHNHyzDVhxs6UKXZNx+YH185k++jWwb9Cih3A=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.190.48]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0Le4Lg-1iqKsu2aoW-00puSo; Mon, 27
- Apr 2020 12:38:24 +0200
-To: Sayali Lokhande <sayalil@codeaurora.org>,
- linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <yuchao0@huawei.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <07a820a2-b3b3-32ca-75ce-ceaca106d2c6@web.de>
-Date: Mon, 27 Apr 2020 12:38:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ ; h=Subject:Reply-To:Date:From:To:Content-Description:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Message-ID:Cc:
+ Content-ID:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:
+ Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=W18FlU6dYZ9T8PxQAN5cwXV5ZyTJnoaW0bRwpDF0mXY=; b=Q3rAWnr89t3XD56fqlT7Hn8MK/
+ zMQ34kML3Ztng/jAHNBmnnYRGnMGtinEnyx+34ie47JSKZv5PfPShwFvfqEl0t7ZhMimgPHaAgIK3
+ vUdgb3Ax8bmp4PGCWl1hx8RPBJbsjIyKWa5ikPIsGxczlMbQ1xuDLIZqPnX0xFUZYGpM=;
+Received: from wajo-holdings.jp ([153.120.11.189] helo=www.wajo-holdings.jp)
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtp (Exim 4.92.2)
+ id 1jT1Z7-00GM6x-8m
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 27 Apr 2020 11:04:49 +0000
+Received: from [167.114.42.90] (unknown [167.114.42.90])
+ by www.wajo-holdings.jp (Postfix) with ESMTPA id 45177224116E
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 27 Apr 2020 20:00:51 +0900 (JST)
 MIME-Version: 1.0
-Content-Language: en-GB
-X-Provags-ID: V03:K1:++/Oc5KfkHwauMmC/4Wo1AxKxEs6Q9CoodqX2ixa/jol188TefC
- a2CZdNSc7sKz4v38wKY+WextH9VZpFAAY378DQeaI/gHEJGrTnZ5OG1rHLLXxsREAl0nRsF
- iTg7lfily2eryNJZ97qqMmRu29ri1oRZZaGtIXnrMZr+wHPKrgwqR8nKgnJyf5uWC/KKKfg
- x5/TgR02PQaG+DuRYHa8Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Cxhf14tGBdE=:JfaUdP9YQJOeuT6d+qHLHu
- ikGONHg/ZjR90X4HWPHvVLTuNrJoXjtEfsDnFTldOwuxqrmruX94F7vr7F+sJI4qHjIortKcQ
- KD5oRTV+fn/MQDtSFX/EiAdbfKzAss7f7vCvS+9IQDUn8RMMy3aDrMYOjGRfGAZilSwLQkRar
- 2lzwqgNgELZDXleA/sKq76EynInym9nM56GCsWfaE3Viv0hISj/f6rn9VvXJiC6sH0YEY3E0H
- Hr79qECXrRhmcNBInmN85ockdTuPix18Kn2cpuZHJ4A/sGyz1YxabAPP3rnB1ZZ2FJc1AC6KE
- BZDTjm0LT8bjMOoAtrf5/OxA2U+kIfz9OaP8OaUl+eQsYQjMTGu1bJmbt9gVDdhoSKAYvJVme
- IjYzPajVXWRIi5uHf5sOFXkM1pinhCDhyzl+npQL1h+qVhXCqiok7c2uc4O9N99Ug0TiuyTxg
- itI8BEgRRjVtedZRY9HfkRozaNuvPB1JXm9DTvL/Bm1VO8nR1mtr2yjpESbW/KPbY+y7MnyBV
- 3lBJ74O6UOTz/eyDI85bBPyw45sMTZ7dELozm8t7mf6iJnTq5L4ocnuoiU1mKsXgWEDaqWDLJ
- KmFFHxuf3uVrfEsbTwGlxVh+sMX/jBmPG2ZqsMfUQM5iPW31lrFHcUxBGWTIpjvbDPlOTTw++
- GJF5J+c5YP4zyck2qioaSL5x00ckHsqqcxE6UqGgs1fE4heImCrIA5GzZXyyzlZU7LwiWXrhH
- 6zGBgFikNd9MYPLr26URsMhCoFXxSfVrkXy6mIgEA+b+kXO0rnnD9qd4GeICuPDFlldahPnR2
- i76QZQfWu9m5j+lsPS5cbdQFdVPwAXCP5ElEndghTBN64PUsNp5PXD/iHnCP+VKvdmJ2XYZZH
- JTAahS3CsKVqeJ3kwJc06i3hVd9oaOqa4WtE3z4QE+tjdCP6VuStdocnpinHCcQ0gzZFpx7yA
- dRjbIs0mpx0CF0AGcHBCnVD81TnqMDvW2p76JTw6gd3qnxFf8vBYp3012Paz6I9M3NXX6oqUv
- kO7is79PRs0bevWVu7UKkkCpWl3t6A8CuNKcLqw12CW07MEL3AsytVUCluAiNobPw4ykL3g3N
- CwAXSmzKMTsDocDi3l8JUOrxZlGj7sDJrIW0kfGNzG9P/HjT6WYouKVuxr6GdLH/2YhMc4h37
- M3H91Xb3+O/PhyPRK7hKBGAn7l8aV/qZ6lLQA6TVDK7OqbEa1qs63d/Jeaj50pQPBZWayksP+
- uC4GsorXEuE9jLEhl
-X-Headers-End: 1jT19u-00HOHs-4u
-Subject: Re: [f2fs-dev] [PATCH V2] f2fs: Avoid double lock for cp_rwsem
- during checkpoint
+Content-Description: Mail message body
+To: linux-f2fs-devel@lists.sourceforge.net
+From: "Mr. Ali Ahmed Mohammed" <spo@iasl.com>
+Date: Mon, 27 Apr 2020 04:01:05 -0700
+X-VA-Spam-Flag: YES
+X-Headers-End: 1jT1Z7-00GM6x-8m
+Subject: [f2fs-dev] [SPAM] Good Day,
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -155,21 +73,33 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Reply-To: mohammedhadinbd@gmail.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Message-Id: <E1jT1ZD-0004Zb-6C@sfs-ml-4.v29.lw.sourceforge.com>
 
-PiDigKYgVGhpcyByZXN1bHRzIGluIGRlYWRsb2NrIGFzCj4gaXB1dCgpIHRyaWVzIHRvIGhvbGQg
-Y3BfcndzZW0sIHdoaWNoIGlzIGFscmVhZHkgaGVsZCBhdCB0aGUKPiBiZWdpbm5pbmcgYnkgY2hl
-Y2twb2ludC0+YmxvY2tfb3BlcmF0aW9ucygpLgoKV2lsbCBhbm90aGVyIGltcGVyYXRpdmUgd29y
-ZGluZyBiZWNvbWUgaGVscGZ1bCBiZXNpZGVzIHRoZSBwcm92aWRlZCBpbmZvcm1hdGlvbgpmb3Ig
-dGhpcyBjaGFuZ2UgZGVzY3JpcHRpb24/Cmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9s
-aW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL0RvY3VtZW50YXRpb24vcHJv
-Y2Vzcy9zdWJtaXR0aW5nLXBhdGNoZXMucnN0P2lkPTZhOGI1NWVkNDA1NmVhNTU1OWViZTRmNmE0
-YjI0N2Y2Mjc4NzBkNGMjbjE1MQoKV291bGQgeW91IGxpa2UgdG8gYWRkIHRoZSB0YWcg4oCcRml4
-ZXPigJ0gYmVjYXVzZSBvZiBhZGp1c3RtZW50cwpmb3IgdGhlIGRhdGEgc3luY2hyb25pc2F0aW9u
-PwoKUmVnYXJkcywKTWFya3VzCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
-bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
-dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Hello,
+
+
+
+Contacting you officially is my pleasure for a great unique business investment in your region.
+However, I need your official consent and co-operation that will be of best interest and great
+achievement in our favor, over the investment sum of ($12.6Millions US Dollars or more).
+
+I'll appreciate your response for more business details to proceed officially.
+Thanks in anticipation.
+
+
+
+Yours Sincerely
+.
+Ali Ahmed Mohammed Hamad.
+Tel:+61488874006
+whatsapp:+61488874006
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
