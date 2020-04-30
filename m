@@ -2,82 +2,102 @@ Return-Path: <SRS0=phsH=6O=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFCCC4724C
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Apr 2020 17:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22422C47247
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Apr 2020 21:52:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 818AE206C0;
-	Thu, 30 Apr 2020 17:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id E31CC20731;
+	Thu, 30 Apr 2020 21:52:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="H/dye7Om";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Ekn0Rjp1";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ofvd7GuJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 818AE206C0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="UGYUQG3V";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="U7Sm9Gzb";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cloud.ionos.com header.i=@cloud.ionos.com header.b="AUo5ie4M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E31CC20731
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cloud.ionos.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jUCbj-0005rR-5J; Thu, 30 Apr 2020 17:04:19 +0000
+	id 1jUH70-0003mr-FP; Thu, 30 Apr 2020 21:52:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1jUCbi-0005rI-Bv
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Apr 2020 17:04:18 +0000
+ (envelope-from <guoqing.jiang@cloud.ionos.com>) id 1jUH6y-0003mV-Sw
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Apr 2020 21:52:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:
+ To:From:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8jT+oAhzMuJqAne7dFVfnXp+ioB7bZEr1dniZjoj8qs=; b=H/dye7OmgE2WbTxdy/pMHmM5sx
- rUsOCDlWtQJthhjKytKReb9+24AG8zAILEe+gj3sK6T8r6MyiaQH9tM4bCgDQupV/ZAZ/lBTC+gun
- 4SXMih+MuvDoUVryE3UXz8FHHQ8zj7GAPoQ9/1bu/c9El2AnmAbo1zpWrIeP6XxhIhqc=;
+ bh=VQtiN0YF68ouYEl0FBCwGef51NS629CikCik/xuB3mA=; b=UGYUQG3VGNy4jmM6bAcQtlhxdr
+ DLoQj6vGw2Vt+YYqiaX4khYyZVoidgdlEfbkmu2+/S1H1gcMvr+L5Mt49ViHZUoQup+UuHPGrGkga
+ E+SnQnqBRabxosZvDxKd0ZluG+juZb0IzMk7ukCFafetzl9HH1/wHnpYJM5FC5NfKraE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To
+ :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8jT+oAhzMuJqAne7dFVfnXp+ioB7bZEr1dniZjoj8qs=; b=Ekn0Rjp1b3tyVeoh2twBshDWd+
- GXpnCUHNPXjzTpAEH6szVTyJDUVWk+VTlXgQTUmmijQDuEWkx+vhZVxV6m3oX2oggdLXI06hP2nLz
- FKj7NQ5kBbj7cZ6jXqXCoXP5qziGq++3Bh9KG+MlGOCd+7ZYPuAdnOwkhVgdxVS0zKoA=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jUCbh-00HUnR-Cr
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Apr 2020 17:04:18 +0000
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net
- [107.3.166.239])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 76FDC20787;
- Thu, 30 Apr 2020 17:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1588266251;
- bh=p3PY8v4K9MXDL2QVIbKch9hnHXPDV5bO+Bl4Z5ompNM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=ofvd7GuJV37V4vJOvUKnWq4C/v1xbd3mvDBxUw04u6XfgRrJHLihJ0khXJpzsYWJi
- 42MtVUtsO8njIXQJ+P2HBeIv9z+8wKQu4dFy5SmhhU7L7TKGpapze5VAxJq/l2mj2u
- wzpYGjYJmtlYiphZ0ZzWlzBBFWVL9FLJT4lb9OkY=
-Date: Thu, 30 Apr 2020 10:04:08 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Satya Tangirala <satyat@google.com>
-Message-ID: <20200430170408.GB1003@sol.localdomain>
-References: <20200430115959.238073-1-satyat@google.com>
- <20200430115959.238073-11-satyat@google.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200430115959.238073-11-satyat@google.com>
-X-Headers-End: 1jUCbh-00HUnR-Cr
-Subject: Re: [f2fs-dev] [PATCH v12 10/12] fscrypt: add inline encryption
- support
+ bh=VQtiN0YF68ouYEl0FBCwGef51NS629CikCik/xuB3mA=; b=U7Sm9GzbfAKS442zOGH0AyQ6Ht
+ d8xQRLnxbvXyc6C85tfIM6KYyfeHuDAe0xwVQKAWb240YJYmZhAvUpxzRNRFI3Vaprw5q5FkLkyqn
+ FOZE+n8pvMUtymg3xtgiYrWkcrpbADQv+lcg/JyxxHDegdlTJvD8xcZq1SG/atOxS2Bc=;
+Received: from mail-ed1-f66.google.com ([209.85.208.66])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1jUH6u-005ng4-Az
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Apr 2020 21:52:52 +0000
+Received: by mail-ed1-f66.google.com with SMTP id d16so5814921edv.8
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 30 Apr 2020 14:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cloud.ionos.com; s=google;
+ h=from:to:cc:subject:date:message-id:in-reply-to:references;
+ bh=VQtiN0YF68ouYEl0FBCwGef51NS629CikCik/xuB3mA=;
+ b=AUo5ie4M5LC6EyVTONtWCWaK6x9Glpt0fKqCXZVKpIls4fS+TQMg9AZVj57+ZKp657
+ KxpTHzcmRADvXQhinXFVjaJFVsM9IuKylOT606jy/n3S8NWY7zE2X3rHDq7FW+dv5OL5
+ 1HMaxuBEfufCr2WCuB4rDNQOV8qEERy8iOyCbgO42UphAQhYWWLT2Kl7Ouklm/t3uF1a
+ fBBUzA+7kF8C+npPOk3+v2AgOy9vTvhHtGfHdvNk/1rBbn6A5aQS1qjv/ZBpzIHD8l/5
+ RK7vYHRT3JNA6f1tCk3T27BEPLr6hIdu7kSYpHu2/hF36qamf3WGbDphvY/vVIgJThmr
+ 9n9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+ :references;
+ bh=VQtiN0YF68ouYEl0FBCwGef51NS629CikCik/xuB3mA=;
+ b=VI44BLj5fOvnfrApqujZLp8dRpo1woF0pONuqXV3QtCdUCMJ44k4SIBjLzTXIuchTw
+ QK76y4IZaS1VLWTitb5SEvFwpcOkHv4yTrjyOSd+6sNq/J+ac5CCitbsBhfRhUOn69sR
+ pmZra/bYXRoj1IFxoMEPMtTeJLWh4gMxkJvvtJp0SQVtC3pYTLOfqFyK5dL/SUO5log5
+ Q5dYRYgVVkXkSWLGe8tDJA1W0s62teDHxMyhKLk+xpXpWpMOm2N3OHCA/8O62pqDZ0EW
+ dZPxijTDwIxyQY7iXM2gMnn2AYzpcXhV+f9XEvV0Q7kvha1QyIEJDuHPEa4KN9JOb3y6
+ RtZw==
+X-Gm-Message-State: AGi0Pua43G/Z29aE2vZZuidI7VNMS0N6R0BBDR3IuFp93SkFJZo6DJVn
+ pBBtG88NvFhgBz0mjMQEEKDF9Q==
+X-Google-Smtp-Source: APiQypL49Bp/BPGNJL3rW/dArQDsk2UFazjTXaUNS6oloFuEsd404kXblrgA4wta20gl8BWTl2ZM7w==
+X-Received: by 2002:a05:6402:286:: with SMTP id
+ l6mr1062803edv.134.1588283561709; 
+ Thu, 30 Apr 2020 14:52:41 -0700 (PDT)
+Received: from ls00508.pb.local ([2001:1438:4010:2540:b82f:dfc:5e2a:e7cc])
+ by smtp.gmail.com with ESMTPSA id f13sm92022ejd.2.2020.04.30.14.52.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 30 Apr 2020 14:52:40 -0700 (PDT)
+From: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Date: Thu, 30 Apr 2020 23:44:46 +0200
+Message-Id: <20200430214450.10662-6-guoqing.jiang@cloud.ionos.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200430214450.10662-1-guoqing.jiang@cloud.ionos.com>
+References: <20200430214450.10662-1-guoqing.jiang@cloud.ionos.com>
+X-Headers-End: 1jUH6u-005ng4-Az
+Subject: [f2fs-dev] [RFC PATCH V2 5/9] f2fs: use attach/clear_page_private
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,27 +109,57 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-scsi@vger.kernel.org, Kim Boojin <boojin.kim@samsung.com>,
- Kuohong Wang <kuohong.wang@mediatek.com>,
- Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org
+Cc: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>, david@fromorbit.com,
+ willy@infradead.org, linux-f2fs-devel@lists.sourceforge.net, hch@infradead.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Apr 30, 2020 at 11:59:57AM +0000, Satya Tangirala wrote:
-> +bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
-> +{
-> +	return inode->i_crypt_info->ci_inlinecrypt;
-> +}
-> +EXPORT_SYMBOL_GPL(fscrypt_inode_uses_inline_crypto);
+Since the new pair function is introduced, we can call them to clean the
+code in f2fs.h.
 
-Right, this still needs to be exported (I missed that in the diff I suggested).
-But the export needs to be fixed to use the double-underscore name.
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Acked-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+---
+RFC -> RFC V2
+1. change the name of new functions to attach/clear_page_private.
 
-- Eric
+ fs/f2fs/f2fs.h | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ba470d5687fe..24d22bd7352d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3051,19 +3051,12 @@ static inline void f2fs_set_page_private(struct page *page,
+ 	if (PagePrivate(page))
+ 		return;
+ 
+-	get_page(page);
+-	SetPagePrivate(page);
+-	set_page_private(page, data);
++	attach_page_private(page, (void *)data);
+ }
+ 
+ static inline void f2fs_clear_page_private(struct page *page)
+ {
+-	if (!PagePrivate(page))
+-		return;
+-
+-	set_page_private(page, 0);
+-	ClearPagePrivate(page);
+-	f2fs_put_page(page, 0);
++	clear_page_private(page);
+ }
+ 
+ /*
+-- 
+2.17.1
+
 
 
 _______________________________________________
