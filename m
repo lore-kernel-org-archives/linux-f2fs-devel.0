@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C41AC47247
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  1 May 2020 02:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E912FC4724C
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  1 May 2020 02:12:14 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5E5C82073E
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  1 May 2020 02:09:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B9DEC2073E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  1 May 2020 02:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Iif58kZo";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="EovpkKnf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5C82073E
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YhYjNv2S";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="OPBXcf7Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9DEC2073E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jUL7k-0002Jw-Tx; Fri, 01 May 2020 02:09:56 +0000
+	id 1jUL9y-0006N1-Ev; Fri, 01 May 2020 02:12:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <viro@ftp.linux.org.uk>)
- id 1jUL7j-0002JZ-DP; Fri, 01 May 2020 02:09:55 +0000
+ id 1jUL9x-0006Mj-7V; Fri, 01 May 2020 02:12:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Sender:In-Reply-To:Content-Type:MIME-Version:
  References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OnTBD6DqpX+uKaRY/s2WtwBpe2LYhu3rtR56UsL7WPo=; b=Iif58kZorAlkjZJ2TQ+W4+wF9
- 2yos9mPuT2sMrBCYPwYZoCxt9pu7vbcRR/yu4of4ttf9qv0CbvBcENZjAra9RKUSqe8N9U3QD3U2N
- 41qSOLMx6J1ZokmlP5XkTohj8riDh3hM1Pk84j53Te4k3ZnJ54XhrsNsaiEXxFVo0P6VE=;
+ bh=trbOd/sxn9XGUMmyAPbB0ZJZPfTeuKcn+Urwjio32oY=; b=YhYjNv2SCPHYIapcYZsp1MG0s
+ JBnWYVhXIaYyhWhBj5TQvtEPkLwsp7cJKcSWvx9/zD30InCw3npBx11v8wFKupIdseOdSaK0Be6sk
+ rbRp0Zjl0XUWtaPx9H4kcTYjvjlnsH0Zye9WTaKWm/wvVULeIccyYnAKSeTRmuE2Fk+gk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Sender:In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
@@ -44,27 +44,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=OnTBD6DqpX+uKaRY/s2WtwBpe2LYhu3rtR56UsL7WPo=; b=EovpkKnfQK3IVHAFiSvus86oNk
- 3bsE4GWyF2061ITURINf18XF12B+vEXlpbaJ7rRgXxIUyCgFn/fqK78kfcGO5mrjH+AOYmQENuF1Z
- QE6ccUCAGlOOstgwN9hqoQwKQlE4DcTSu8Otnr/m2Zr/9aW7bC3CLI5WpxHPiR3a1Fhg=;
+ bh=trbOd/sxn9XGUMmyAPbB0ZJZPfTeuKcn+Urwjio32oY=; b=OPBXcf7ZapfFsEytvB8zKXbemb
+ NUMC0AsyGmcmVER4kUUsGjnhPe2xWdAmmuJmZh07eiXbHY+F6CdCfMHomIgWMFmAhR2cC/hoBx02A
+ KsbZm+yhJXwiwoZHY48fPUk1Xh0CqGdM01jnGF77FGqssZJV1qmtLTW2q8QYGxqO2Rmk=;
 Received: from zeniv.linux.org.uk ([195.92.253.2])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jUL7h-0040F2-TC; Fri, 01 May 2020 02:09:55 +0000
+ id 1jUL9v-000MyB-U9; Fri, 01 May 2020 02:12:13 +0000
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat
- Linux)) id 1jUKoM-00FVfr-JJ; Fri, 01 May 2020 01:49:54 +0000
-Date: Fri, 1 May 2020 02:49:54 +0100
+ Linux)) id 1jUKhB-00FVTz-IU; Fri, 01 May 2020 01:42:29 +0000
+Date: Fri, 1 May 2020 02:42:29 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <20200501014954.GC23230@ZenIV.linux.org.uk>
+Message-ID: <20200501014229.GB23230@ZenIV.linux.org.uk>
 References: <20200430214450.10662-1-guoqing.jiang@cloud.ionos.com>
  <20200430214450.10662-2-guoqing.jiang@cloud.ionos.com>
  <20200430221338.GY29705@bombadil.infradead.org>
- <20200501014229.GB23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200501014229.GB23230@ZenIV.linux.org.uk>
-X-Headers-End: 1jUL7h-0040F2-TC
+In-Reply-To: <20200430221338.GY29705@bombadil.infradead.org>
+X-Headers-End: 1jUL9v-000MyB-U9
 Subject: Re: [f2fs-dev] [RFC PATCH V2 1/9] include/linux/pagemap.h:
  introduce attach/clear_page_private
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -100,23 +99,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, May 01, 2020 at 02:42:29AM +0100, Al Viro wrote:
-> On Thu, Apr 30, 2020 at 03:13:38PM -0700, Matthew Wilcox wrote:
-> 
-> > > +/**
-> > > + * clear_page_private - clear page's private field and PG_private.
-> > > + * @page: page to be cleared.
-> > > + *
-> > > + * The counterpart function of attach_page_private.
-> > > + * Return: private data of page or NULL if page doesn't have private data.
-> > > + */
-> > 
-> > Seems to me that the opposite of "attach" is "detach", not "clear".
-> 
-> Or "remove", perhaps...
+On Thu, Apr 30, 2020 at 03:13:38PM -0700, Matthew Wilcox wrote:
 
-Actually, "detach" is better - neither "clear" nor "remove" imply "... and give
-me what used to be attached there", as this thing is doing.
+> > +/**
+> > + * clear_page_private - clear page's private field and PG_private.
+> > + * @page: page to be cleared.
+> > + *
+> > + * The counterpart function of attach_page_private.
+> > + * Return: private data of page or NULL if page doesn't have private data.
+> > + */
+> 
+> Seems to me that the opposite of "attach" is "detach", not "clear".
+
+Or "remove", perhaps...
 
 
 _______________________________________________
