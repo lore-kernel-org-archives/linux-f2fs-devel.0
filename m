@@ -1,4 +1,4 @@
-Return-Path: <SRS0=phsH=6O=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=u70t=6P=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,74 +6,65 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C283C4724C
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Apr 2020 22:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C41AC47247
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  1 May 2020 02:09:58 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4335820870
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Apr 2020 22:14:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5E5C82073E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  1 May 2020 02:09:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XkO+Kfmg";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="G0OB0cI2";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xh5T5/zf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4335820870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Iif58kZo";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="EovpkKnf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5C82073E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jUHRd-0003ry-OC; Thu, 30 Apr 2020 22:14:13 +0000
+	id 1jUL7k-0002Jw-Tx; Fri, 01 May 2020 02:09:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>)
- id 1jUHRb-0003rc-Ms; Thu, 30 Apr 2020 22:14:11 +0000
+ (envelope-from <viro@ftp.linux.org.uk>)
+ id 1jUL7j-0002JZ-DP; Fri, 01 May 2020 02:09:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bd0ZsvJx0qN41jGJdx6Q3uDOBTPr2hBuuON/tmj1OPE=; b=XkO+KfmgWhS43hjIylO9KapXmo
- UbktEFIpG7c2lJBIYPNrskcD6GFcD73ioZhg6GHgg4MeN2l3ei9B18bcHI+JXkSBMf8Jbeaa1lnNV
- s8lcMnzE/oMQ2C5A4+wGSrSTdqRT3dw4Dw2HB9NpEE5Z7IwkEeIOfKD8L343u8wZ0AvU=;
+ d=sourceforge.net; s=x; h=Sender:In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=OnTBD6DqpX+uKaRY/s2WtwBpe2LYhu3rtR56UsL7WPo=; b=Iif58kZorAlkjZJ2TQ+W4+wF9
+ 2yos9mPuT2sMrBCYPwYZoCxt9pu7vbcRR/yu4of4ttf9qv0CbvBcENZjAra9RKUSqe8N9U3QD3U2N
+ 41qSOLMx6J1ZokmlP5XkTohj8riDh3hM1Pk84j53Te4k3ZnJ54XhrsNsaiEXxFVo0P6VE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Sender:In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+ Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=bd0ZsvJx0qN41jGJdx6Q3uDOBTPr2hBuuON/tmj1OPE=; b=G0OB0cI2KfPJ6ezMCBUjva6a9X
- PFqv77HlBO+uTPH2KHWTjnm0vLGfvbdCaUjVmsY/1pV5hsyOPQhvHO4n0khiEkzpKRtzu2SP+2g1a
- 7YT7IwopL3BY2vtJ0kfxhfr2cYiJ1e4MQTk0pspoMfcDhQHewREH+25OqvmsTng0aTqo=;
-Received: from bombadil.infradead.org ([198.137.202.133])
+ bh=OnTBD6DqpX+uKaRY/s2WtwBpe2LYhu3rtR56UsL7WPo=; b=EovpkKnfQK3IVHAFiSvus86oNk
+ 3bsE4GWyF2061ITURINf18XF12B+vEXlpbaJ7rRgXxIUyCgFn/fqK78kfcGO5mrjH+AOYmQENuF1Z
+ QE6ccUCAGlOOstgwN9hqoQwKQlE4DcTSu8Otnr/m2Zr/9aW7bC3CLI5WpxHPiR3a1Fhg=;
+Received: from zeniv.linux.org.uk ([195.92.253.2])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jUHRa-003ngT-G8; Thu, 30 Apr 2020 22:14:11 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=bd0ZsvJx0qN41jGJdx6Q3uDOBTPr2hBuuON/tmj1OPE=; b=Xh5T5/zf36Iun9lfkNlEeXo/27
- qpj6KB4345/Cc/m+7HWNU07yHSitTsHNxf43w29pLdFOLHOfVTYjI9tDCKGec6cEk83PJ5GqWyrFw
- xCVrZDz49/b0wB7Yapm/GbhfIo0w0D60cKkNHaoxbLCv70va07R3hB3AxdrLrli8dB87fDS0Ndm9j
- m+USiBB+G6dkvHAgLi3/Sy2qxmHFNVeKf9RAg+FPui7Hgtq0Ig17TaGN1/AGUg4WEKCDRMHpCrK7u
- 9rIqjC7QpANlp3+ie8aKQDzn2D4NAtlZhS85GUMY3G9CNKyyxd/3mIlLD0DRHnazAYqhFC6STfv7G
- vA7SVRlQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
- Hat Linux)) id 1jUHR4-0007zt-IY; Thu, 30 Apr 2020 22:13:38 +0000
-Date: Thu, 30 Apr 2020 15:13:38 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Message-ID: <20200430221338.GY29705@bombadil.infradead.org>
+ id 1jUL7h-0040F2-TC; Fri, 01 May 2020 02:09:55 +0000
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat
+ Linux)) id 1jUKoM-00FVfr-JJ; Fri, 01 May 2020 01:49:54 +0000
+Date: Fri, 1 May 2020 02:49:54 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Matthew Wilcox <willy@infradead.org>
+Message-ID: <20200501014954.GC23230@ZenIV.linux.org.uk>
 References: <20200430214450.10662-1-guoqing.jiang@cloud.ionos.com>
  <20200430214450.10662-2-guoqing.jiang@cloud.ionos.com>
+ <20200430221338.GY29705@bombadil.infradead.org>
+ <20200501014229.GB23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200430214450.10662-2-guoqing.jiang@cloud.ionos.com>
-X-Headers-End: 1jUHRa-003ngT-G8
+In-Reply-To: <20200501014229.GB23230@ZenIV.linux.org.uk>
+X-Headers-End: 1jUL7h-0040F2-TC
 Subject: Re: [f2fs-dev] [RFC PATCH V2 1/9] include/linux/pagemap.h:
  introduce attach/clear_page_private
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -94,9 +85,10 @@ Cc: Martin Brandenburg <martin@omnibond.com>,
  "Darrick J. Wong" <darrick.wong@oracle.com>, Chris Mason <clm@fb.com>,
  hch@infradead.org, devel@lists.orangefs.org,
  Josef Bacik <josef@toxicpanda.com>, linux-raid@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Anton Altaparmakov <anton@tuxera.com>, Andreas Dilger <adilger@dilger.ca>,
+ David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Anton Altaparmakov <anton@tuxera.com>,
+ Andreas Dilger <adilger@dilger.ca>,
+ Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
  Yang Shi <yang.shi@linux.alibaba.com>,
  William Kucharski <william.kucharski@oracle.com>,
  linux-ntfs-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org,
@@ -108,47 +100,23 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Apr 30, 2020 at 11:44:42PM +0200, Guoqing Jiang wrote:
-> +/**
-> + * attach_page_private - attach data to page's private field and set PG_private.
-> + * @page: page to be attached and set flag.
-> + * @data: data to attach to page's private field.
-> + *
-> + * Need to take reference as mm.h said "Setting PG_private should also increment
-> + * the refcount".
-> + */
+On Fri, May 01, 2020 at 02:42:29AM +0100, Al Viro wrote:
+> On Thu, Apr 30, 2020 at 03:13:38PM -0700, Matthew Wilcox wrote:
+> 
+> > > +/**
+> > > + * clear_page_private - clear page's private field and PG_private.
+> > > + * @page: page to be cleared.
+> > > + *
+> > > + * The counterpart function of attach_page_private.
+> > > + * Return: private data of page or NULL if page doesn't have private data.
+> > > + */
+> > 
+> > Seems to me that the opposite of "attach" is "detach", not "clear".
+> 
+> Or "remove", perhaps...
 
-I don't think this will read well when added to the API documentation.
-Try this:
-
-/**
- * attach_page_private - Attach private data to a page.
- * @page: Page to attach data to.
- * @data: Data to attach to page.
- *
- * Attaching private data to a page increments the page's reference count.
- * The data must be detached before the page will be freed.
- */
-
-> +/**
-> + * clear_page_private - clear page's private field and PG_private.
-> + * @page: page to be cleared.
-> + *
-> + * The counterpart function of attach_page_private.
-> + * Return: private data of page or NULL if page doesn't have private data.
-> + */
-
-Seems to me that the opposite of "attach" is "detach", not "clear".
-
-/**
- * detach_page_private - Detach private data from a page.
- * @page: Page to detach data from.
- *
- * Removes the data that was previously attached to the page and decrements
- * the refcount on the page.
- *
- * Return: Data that was attached to the page.
- */
+Actually, "detach" is better - neither "clear" nor "remove" imply "... and give
+me what used to be attached there", as this thing is doing.
 
 
 _______________________________________________
