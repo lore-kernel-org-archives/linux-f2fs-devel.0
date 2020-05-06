@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 606A9C28CBC
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 May 2020 10:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E9AC28CBC
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 May 2020 10:46:24 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2979520663
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 May 2020 10:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 751FF206B8
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 May 2020 10:46:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="BbuVdPBx";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Pcg8R90W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2979520663
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="iFRFqLFk";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WxDaTHJa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751FF206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jWHVu-0000SC-1G; Wed, 06 May 2020 10:42:54 +0000
+	id 1jWHZI-0002nl-1x; Wed, 06 May 2020 10:46:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jWHVs-0000Rn-GU
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 May 2020 10:42:52 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jWHZG-0002nZ-8V
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 May 2020 10:46:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
  CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vkrR+MLK3DyXamUyxnI7uExoUaza6dDRH5cPTUxIDjc=; b=BbuVdPBxV+rzRxc+f8il8oXUpI
- vlctGR2yG5SVNDSqRL2v20MFPlgXMuUlhutgsiuM7FiNY0ZmeX2Q3t4Ni6PjMrH3GOvzAiiiFLTwP
- 8KjFOy3X/lmlyh/c30Smo0j9qO8TM5BDkD4XVi87hdRIgPESBm+JopRpqCrwIIF4/y/o=;
+ bh=0FFDsM5W9DnQM0SQZ7/kIO10fvdu/gXICi6d2RcOrm8=; b=iFRFqLFko8yssTPHhKRWjJwYpn
+ WAXTpBvsPdw8skRyef8tUHbv3U0btjJ7Em1h8rPihkJO4QKxwv3ArnulykkftS1pLswipcLt7mv78
+ ok98xb+fRKNArWeAVqIw80mchj++Wk7Yuc19ToFM3pQ5ataZw0QgHji9ekLpc0hiL3h8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
  Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=vkrR+MLK3DyXamUyxnI7uExoUaza6dDRH5cPTUxIDjc=; b=P
- cg8R90WHbVtM41Aasj4vopgcH8v27DTLlTmJ+OfCeGPQl8ocYKVNXxdb8079VwCAV997PIGljluqH
- pxyOttu7iH8dh85aJO8lj21YAiQVcwwkEUheIIc7ZyN5ydmSPC4xdgKjVj9Dgz3mfy59udMqPH3FN
- poKQqYsKeSGHeOd0=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=0FFDsM5W9DnQM0SQZ7/kIO10fvdu/gXICi6d2RcOrm8=; b=W
+ xDaTHJaCWxPbbX+l7G55CN0Cn4uo0CdPBTiYQIjb6Lw6b4hg/ncLirsNW5b+FWyEmEgWCrP8PTnUG
+ OP/nOZ1MpBMft/SZDbVjht7j9ZWWgWUO7cam//nsVerZddPpBSQm9LLje7+GhTDLpHPab1XAnojfu
+ QHSxr9bxiDLY5ank=;
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jWHVq-00Cgvt-Mg
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 May 2020 10:42:52 +0000
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id A981B7F4B966CBE7C6E2;
- Wed,  6 May 2020 18:42:43 +0800 (CST)
+ id 1jWHZE-00Fxhi-Jn
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 May 2020 10:46:22 +0000
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id BC9F388DE92295BC2E09;
+ Wed,  6 May 2020 18:46:08 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 6 May 2020 18:42:33 +0800
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 6 May 2020 18:45:58 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Wed, 6 May 2020 18:42:18 +0800
-Message-ID: <20200506104218.121804-1-yuchao0@huawei.com>
+Date: Wed, 6 May 2020 18:45:42 +0800
+Message-ID: <20200506104542.123575-1-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jWHVq-00Cgvt-Mg
-Subject: [f2fs-dev] [PATCH] f2fs: shrink spinlock coverage
+X-Headers-End: 1jWHZE-00Fxhi-Jn
+Subject: [f2fs-dev] [PATCH v2] f2fs: shrink spinlock coverage
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,11 +92,13 @@ shrinker.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
+v2:
+- fix unlock wrong spinlock.
  fs/f2fs/node.c | 15 +++++++++++----
  1 file changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 4da0d8713df5..a0cf66ace41e 100644
+index 4da0d8713df5..ad0b14f4dab8 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
 @@ -2488,7 +2488,6 @@ void f2fs_alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
@@ -123,7 +125,7 @@ index 4da0d8713df5..a0cf66ace41e 100644
 +		i = list_first_entry(&nm_i->free_nid_list,
 +					struct free_nid, list);
 +		list_del(&i->list);
-+		spin_unlock(&nm_i->nat_list_lock);
++		spin_unlock(&nm_i->nid_list_lock);
 +
  		__remove_free_nid(sbi, i, FREE_NID);
  		kmem_cache_free(free_nid_slab, i);
