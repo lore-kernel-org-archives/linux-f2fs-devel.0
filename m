@@ -4,77 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24729C4724C
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 May 2020 06:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B927EC28CBC
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 May 2020 06:27:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E4D8720753;
-	Wed,  6 May 2020 06:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 81820206E6;
+	Wed,  6 May 2020 06:27:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hG9OVqvz";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cBrSxR62"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D8720753
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="WcNzcTi4";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="QOvX9pm1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81820206E6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jWDRL-00065H-Ac; Wed, 06 May 2020 06:21:55 +0000
+	id 1jWDWj-0006kV-AI; Wed, 06 May 2020 06:27:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jWDRJ-00064y-8A
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 May 2020 06:21:53 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jWDWi-0006kG-2S
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 May 2020 06:27:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vkbZv3Oyy0uATuHRPMqT3qKR+d4IM9hjVB0ieK3AgkY=; b=hG9OVqvz/vaNJ6XeEniz8V0n4c
- Hx0pnz4E1GcrgOFRsiO5M4+isCwkrF1UdL1rcNoMkz1G8YE/Ox+4dmUNy9v9ZEmohwe0slJVN2s99
- Tz9abW/PCJ1Y9lEVyVhdimvyrO6xB66cAMRIbzP8kFFUVH9Nj3sBxbnxiJi1VcBXkNQw=;
+ bh=CEsK6kO50CJI9g0hLEUOyQYIRCmCaCnrVmzI+a1vPrs=; b=WcNzcTi4HODk+JtIMmiMxB5ME0
+ TefNG1n0QaRs7n1Yks7mJ/nx47DYN6D6NJa6zVQ7CJLZPV3zRRNCVeLoD8RFOOB4p+elxlERZuz66
+ zkkhLOy6TRrRjxCRKp9gdteUhxKWB6GRSBuil2FGjFCXQZcQJV99QAxRJc+0UF9hPftA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=vkbZv3Oyy0uATuHRPMqT3qKR+d4IM9hjVB0ieK3AgkY=; b=cBrSxR62qUcP6aZjadbPObJSqB
- RgiF60feeuEvXayikTlY2k6p2vk6an+OXyWHJQRx4lh+suLB+RbabvvhrJ4LobPD0UdpcZTKKCPWa
- d1lvid0eICohk5ri6KvaqBn9Q4ak4Od0Sz8R9M7p9+/97ZsGKRtV7h2/P7sgKiMne880=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=CEsK6kO50CJI9g0hLEUOyQYIRCmCaCnrVmzI+a1vPrs=; b=QOvX9pm1FPbqZV6/dUH0jE/UbW
+ mcaL4/5+ypLkU4E6RG4YmnRN/mjEHlLxPIyZ1X7pY1fHKxJrdhGNYSHQWdvdQ2j9A+0fxGybg5omY
+ LAzS+dctg335RQM7T2Jv8I+5jkTaSUjM3vKaiPiMTJhC1u+hvQ2zxwnblrgbQlJ+92PY=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jWDRH-00CMt9-1t
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 May 2020 06:21:53 +0000
+ id 1jWDWg-009JNX-LP
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 May 2020 06:27:28 +0000
 Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id CB25E46A86DC60311C1D;
- Wed,  6 May 2020 14:21:41 +0800 (CST)
+ by Forcepoint Email with ESMTP id 7BAC469DF63D38E928D2;
+ Wed,  6 May 2020 14:27:11 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
  (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 6 May 2020
- 14:21:39 +0800
-To: Sayali Lokhande <sayalil@codeaurora.org>, <jaegeuk@kernel.org>,
+ 14:27:08 +0800
+To: Eric Biggers <ebiggers@kernel.org>,
  <linux-f2fs-devel@lists.sourceforge.net>
-References: <1588244309-1468-1-git-send-email-sayalil@codeaurora.org>
+References: <20200501233523.50037-1-ebiggers@kernel.org>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <02e5d9ab-4ff9-4c8e-8a67-0fae6b3da372@huawei.com>
-Date: Wed, 6 May 2020 14:21:38 +0800
+Message-ID: <d44cb4c9-ad2b-2f21-06eb-ad386ebf2c18@huawei.com>
+Date: Wed, 6 May 2020 14:27:05 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1588244309-1468-1-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <20200501233523.50037-1-ebiggers@kernel.org>
 Content-Language: en-US
 X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jWDRH-00CMt9-1t
-Subject: Re: [f2fs-dev] [PATCH V4] f2fs: Avoid double lock for cp_rwsem
- during checkpoint
+X-Headers-End: 1jWDWg-009JNX-LP
+Subject: Re: [f2fs-dev] [PATCH] f2fs: use strcmp() in parse_options()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,52 +84,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/4/30 18:58, Sayali Lokhande wrote:
-> There could be a scenario where f2fs_sync_node_pages gets
-> called during checkpoint, which in turn tries to flush
-> inline data and calls iput(). This results in deadlock as
-> iput() tries to hold cp_rwsem, which is already held at the
-> beginning by checkpoint->block_operations().
+On 2020/5/2 7:35, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Call stack :
+> Remove the pointless string length checks.  Just use strcmp().
 > 
-> Thread A		Thread B
-> f2fs_write_checkpoint()
-> - block_operations(sbi)
->  - f2fs_lock_all(sbi);
->   - down_write(&sbi->cp_rwsem);
-> 
->                         - open()
->                          - igrab()
->                         - write() write inline data
->                         - unlink()
-> - f2fs_sync_node_pages()
->  - if (is_inline_node(page))
->   - flush_inline_data()
->    - ilookup()
->      page = f2fs_pagecache_get_page()
->      if (!page)
->       goto iput_out;
->      iput_out:
-> 			-close()
-> 			-iput()
->        iput(inode);
->        - f2fs_evict_inode()
->         - f2fs_truncate_blocks()
->          - f2fs_lock_op()
->            - down_read(&sbi->cp_rwsem);
-> 
-> Fixes: 2049d4fcb057 ("f2fs: avoid multiple node page writes due to inline_data")
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
+[...]
+
+> -			} else if (strlen(name) == 4 &&
+> -					!strcmp(name, "zstd")) {
+> +			} else if (!strcmp(name, "zstd")) {
+>  				F2FS_OPTION(sbi).compress_algorithm =
+>  								COMPRESS_ZSTD;
+
+lzo-rle will be added, Jaegeuk, please notice that the late applied patch
+should adjust a bit here.
+
 Thanks,
+
+>  			} else {
+> 
 
 
 _______________________________________________
