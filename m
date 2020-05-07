@@ -2,81 +2,82 @@ Return-Path: <SRS0=Htwq=6V=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53921C47247
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  7 May 2020 08:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4806C38A2A
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  7 May 2020 09:16:54 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 25B8F20753;
-	Thu,  7 May 2020 08:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9FB3A2078C
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  7 May 2020 09:16:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lm88ZAEe";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Poc1iZT4";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVN/U1fK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25B8F20753
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="k1R3gbga";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Qzz53ljj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB3A2078C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jWbUC-0004FL-Mc; Thu, 07 May 2020 08:02:28 +0000
+	id 1jWceD-0001ZB-ED; Thu, 07 May 2020 09:16:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1jWbTz-0004Ei-Ug
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 07 May 2020 08:02:15 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jWceB-0001YI-I7
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 07 May 2020 09:16:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qxhsQODHUbrnycVRAVdts1Nxkk6JIbmSkvyrt0TYJuc=; b=lm88ZAEePdR7xdN5h1M0LGIz6a
- ERM0jp/VzCocYuGTiBPQD3iuQnGC4TQKshzKL5HTSl72g8qhmP4aoCC6cG8W9UHFYquAsjUDf26y/
- tQgM+MT/kmWkcY4XXk5jUXe21W0980arGWysJjVx67Jo+iGY48Sn2TuKNAZ1TnjnW2zk=;
+ bh=Gqn4Nt1775FJeFyZB84NoRj3maesSKyLaBb0Fz7dhdk=; b=k1R3gbga+lpqXYPwOS+xse+cFq
+ 9ZahGJPbaOC0u+XYyOkMCe/3/fcRLz0T9294lSsfdM2YxYK4S5zWtsbVDDe81D4jFVWNatdn147zA
+ cSbLdExqPEeP+OFTM0aYTP7saGcimVh+e/M7kDKbJzA7im/cm/hnm4J4ew9pPLsjv8qY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qxhsQODHUbrnycVRAVdts1Nxkk6JIbmSkvyrt0TYJuc=; b=Poc1iZT4CL0QyijU/cf8bqhreE
- lguWrpJNSAHlRtQcEmwIBprYbr6IThuh6L0u2GBYPiWYKV2BkIdU5s+QM1wUAAeNzg5Xo/tzcvn8V
- unhtXxB3/z9gsmN3XfwZpIgf234VVcCehLW0V8ftwzX4yKI6SEa1gqtHAo3vIhlzED7w=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=Gqn4Nt1775FJeFyZB84NoRj3maesSKyLaBb0Fz7dhdk=; b=Qzz53ljjAhdmAywiM1j04lpF11
+ vrxrG4gdVCzb8leffnvVzUOS+3Khk1C19xUE0izg3EH2ycVMpCRjjM2hGAArPHrHPhC19JRfABjIn
+ TvCGRYshiaboZ9ESlsfaWW9oGacxO5IToFBfwApAqr4TWyVF1ctboXTMIPKPxzSMtkX8=;
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jWbTv-00Duvf-GV
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 07 May 2020 08:02:15 +0000
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
- [107.3.166.239])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id C73F820870;
- Thu,  7 May 2020 08:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1588838525;
- bh=ztW4C2b6T2EFInxjRwHnDi0WLo+7XrsN3yd2t+lAdAY=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=QVN/U1fKwqbnkjNigCQV+W1CpB/UN45jcHJkfWHEjDvBsAMKDRgAYPL+kKki1MCTm
- CP3/KRZaA7FxagZAlIwjyTVrhskgP5W6quvOKrfxTqzRdhansIl6ZVxF25uqfqQuQD
- g07K453HTrcl/Kk+PydPJoz75sqsDjPo52vhmPWc=
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu,  7 May 2020 00:59:03 -0700
-Message-Id: <20200507075905.953777-3-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200507075905.953777-1-ebiggers@kernel.org>
-References: <20200507075905.953777-1-ebiggers@kernel.org>
+ id 1jWce7-00E094-Dz
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 07 May 2020 09:16:51 +0000
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+ by Forcepoint Email with ESMTP id 3ABD85AD673B3CE51DB3;
+ Thu,  7 May 2020 17:16:40 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 7 May 2020
+ 17:16:38 +0800
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20200504143039.155644-1-jaegeuk@kernel.org>
+ <7177aab9-630e-e077-7005-0023c93134b3@kernel.org>
+ <20200505230559.GA203407@google.com>
+ <9aaeac5e-4511-5c81-653c-23a85b3c335a@huawei.com>
+ <20200506145608.GD107238@google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <357d5a28-5163-c52d-2a7d-c6162b56e1cb@huawei.com>
+Date: Thu, 7 May 2020 17:16:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Headers-End: 1jWbTv-00Duvf-GV
-Subject: [f2fs-dev] [PATCH 2/4] f2fs: split f2fs_d_compare() from
- f2fs_match_name()
+In-Reply-To: <20200506145608.GD107238@google.com>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jWce7-00E094-Dz
+Subject: Re: [f2fs-dev] [PATCH] f2fs: change maximum zstd compression buffer
+ size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,155 +89,97 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fscrypt@vger.kernel.org,
- Gabriel Krisman Bertazi <krisman@collabora.com>,
- Daniel Rosenberg <drosen@google.com>
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+On 2020/5/6 22:56, Jaegeuk Kim wrote:
+> On 05/06, Chao Yu wrote:
+>> On 2020/5/6 7:05, Jaegeuk Kim wrote:
+>>> On 05/05, Chao Yu wrote:
+>>>> On 2020-5-4 22:30, Jaegeuk Kim wrote:
+>>>>> From: Daeho Jeong <daehojeong@google.com>
+>>>>>
+>>>>> Current zstd compression buffer size is one page and header size less
+>>>>> than cluster size. By this, zstd compression always succeeds even if
+>>>>> the real compression data is failed to fit into the buffer size, and
+>>>>> eventually reading the cluster returns I/O error with the corrupted
+>>>>> compression data.
+>>>>
+>>>> What's the root cause of this issue? I didn't get it.
+>>>>
+>>>>>
+>>>>> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+>>>>> ---
+>>>>>  fs/f2fs/compress.c | 4 ++--
+>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+>>>>> index 4c7eaeee52336..a9fa8049b295f 100644
+>>>>> --- a/fs/f2fs/compress.c
+>>>>> +++ b/fs/f2fs/compress.c
+>>>>> @@ -313,7 +313,7 @@ static int zstd_init_compress_ctx(struct compress_ctx *cc)
+>>>>>  	cc->private = workspace;
+>>>>>  	cc->private2 = stream;
+>>>>>
+>>>>> -	cc->clen = cc->rlen - PAGE_SIZE - COMPRESS_HEADER_SIZE;
+>>>>> +	cc->clen = ZSTD_compressBound(PAGE_SIZE << cc->log_cluster_size);
+>>>>
+>>>> In my machine, the value is 66572 which is much larger than size of dst
+>>>> buffer, so, in where we can tell the real size of dst buffer to zstd
+>>>> compressor? Otherwise, if compressed data size is larger than dst buffer
+>>>> size, when we flush compressed data into dst buffer, we may suffer overflow.
+>>>
+>>> Could you give it a try compress_log_size=2 and check decompression works?
+>>
+>> I tried some samples before submitting the patch, did you encounter app's data
+>> corruption when using zstd algorithm? If so, let me check this issue.
+> 
+> Daeho reported:
+> 1. cp -a src_file comp_dir/dst_file (comp_dir is a directory for compression)
+> 2. sync comp_dir/dst_file
+> 3. echo 3 > /proc/sys/vm/drop_caches
+> 4. cat comp_dir/dst_file > dump (it returns I/O error depending on the file).
 
-Sharing f2fs_ci_compare() between comparing cached dentries
-(f2fs_d_compare()) and comparing on-disk dentries (f2fs_match_name())
-doesn't work as well as intended, as these actions fundamentally differ
-in several ways (e.g. whether the task may sleep, whether the directory
-is stable, whether the casefolded name was precomputed, whether the
-dentry will need to be decrypted once we allow casefold+encrypt, etc.)
+ * ZSTD_endStream() to complete the flush. It returns the number of bytes left
+ * in the internal buffer and must be called until it returns 0.
 
-Just make f2fs_d_compare() implement what it needs directly, and rework
-f2fs_ci_compare() to be specialized for f2fs_match_name().
+It looks we need to check return value of ZSTD_endStream() to see whether
+dst buffer has enough space to store all compressed data.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/dir.c  | 70 +++++++++++++++++++++++++-------------------------
- fs/f2fs/f2fs.h |  5 ----
- 2 files changed, 35 insertions(+), 40 deletions(-)
+Thanks,
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 44bfc464df7872..44eb12a00cd0ed 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -107,36 +107,28 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
- /*
-  * Test whether a case-insensitive directory entry matches the filename
-  * being searched for.
-- *
-- * Returns: 0 if the directory entry matches, more than 0 if it
-- * doesn't match or less than zero on error.
-  */
--int f2fs_ci_compare(const struct inode *parent, const struct qstr *name,
--				const struct qstr *entry, bool quick)
-+static bool f2fs_match_ci_name(const struct inode *dir, const struct qstr *name,
-+			       const struct qstr *entry, bool quick)
- {
--	const struct f2fs_sb_info *sbi = F2FS_SB(parent->i_sb);
-+	const struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
- 	const struct unicode_map *um = sbi->s_encoding;
--	int ret;
-+	int res;
- 
- 	if (quick)
--		ret = utf8_strncasecmp_folded(um, name, entry);
-+		res = utf8_strncasecmp_folded(um, name, entry);
- 	else
--		ret = utf8_strncasecmp(um, name, entry);
--
--	if (ret < 0) {
--		/* Handle invalid character sequence as either an error
--		 * or as an opaque byte sequence.
-+		res = utf8_strncasecmp(um, name, entry);
-+	if (res < 0) {
-+		/*
-+		 * In strict mode, ignore invalid names.  In non-strict mode,
-+		 * fall back to treating them as opaque byte sequences.
- 		 */
--		if (f2fs_has_strict_mode(sbi))
--			return -EINVAL;
--
--		if (name->len != entry->len)
--			return 1;
--
--		return !!memcmp(name->name, entry->name, name->len);
-+		if (f2fs_has_strict_mode(sbi) || name->len != entry->len)
-+			return false;
-+		return !memcmp(name->name, entry->name, name->len);
- 	}
--
--	return ret;
-+	return res == 0;
- }
- 
- static void f2fs_fname_setup_ci_filename(struct inode *dir,
-@@ -188,10 +180,10 @@ static inline bool f2fs_match_name(struct f2fs_dentry_ptr *d,
- 		if (cf_str->name) {
- 			struct qstr cf = {.name = cf_str->name,
- 					  .len = cf_str->len};
--			return !f2fs_ci_compare(parent, &cf, &entry, true);
-+			return f2fs_match_ci_name(parent, &cf, &entry, true);
- 		}
--		return !f2fs_ci_compare(parent, fname->usr_fname, &entry,
--					false);
-+		return f2fs_match_ci_name(parent, fname->usr_fname, &entry,
-+					  false);
- 	}
- #endif
- 	if (fscrypt_match_name(fname, d->filename[bit_pos],
-@@ -1080,17 +1072,25 @@ const struct file_operations f2fs_dir_operations = {
- static int f2fs_d_compare(const struct dentry *dentry, unsigned int len,
- 			  const char *str, const struct qstr *name)
- {
--	struct qstr qstr = {.name = str, .len = len };
- 	const struct dentry *parent = READ_ONCE(dentry->d_parent);
--	const struct inode *inode = READ_ONCE(parent->d_inode);
--
--	if (!inode || !IS_CASEFOLDED(inode)) {
--		if (len != name->len)
--			return -1;
--		return memcmp(str, name->name, len);
--	}
--
--	return f2fs_ci_compare(inode, name, &qstr, false);
-+	const struct inode *dir = READ_ONCE(parent->d_inode);
-+	const struct f2fs_sb_info *sbi = F2FS_SB(dentry->d_sb);
-+	struct qstr entry = QSTR_INIT(str, len);
-+	int res;
-+
-+	if (!dir || !IS_CASEFOLDED(dir))
-+		goto fallback;
-+
-+	res = utf8_strncasecmp(sbi->s_encoding, name, &entry);
-+	if (res >= 0)
-+		return res;
-+
-+	if (f2fs_has_strict_mode(sbi))
-+		return -EINVAL;
-+fallback:
-+	if (len != name->len)
-+		return 1;
-+	return !!memcmp(str, name->name, len);
- }
- 
- static int f2fs_d_hash(const struct dentry *dentry, struct qstr *str)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5ef9711ccb4967..a953a622f260e3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3134,11 +3134,6 @@ int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
- 							bool hot, bool set);
- struct dentry *f2fs_get_parent(struct dentry *child);
- 
--extern int f2fs_ci_compare(const struct inode *parent,
--			   const struct qstr *name,
--			   const struct qstr *entry,
--			   bool quick);
--
- /*
-  * dir.c
-  */
--- 
-2.26.2
-
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>>>  	return 0;
+>>>>>  }
+>>>>>
+>>>>> @@ -330,7 +330,7 @@ static int zstd_compress_pages(struct compress_ctx *cc)
+>>>>>  	ZSTD_inBuffer inbuf;
+>>>>>  	ZSTD_outBuffer outbuf;
+>>>>>  	int src_size = cc->rlen;
+>>>>> -	int dst_size = src_size - PAGE_SIZE - COMPRESS_HEADER_SIZE;
+>>>>> +	int dst_size = cc->clen;
+>>>>>  	int ret;
+>>>>>
+>>>>>  	inbuf.pos = 0;
+>>>>>
+>>>
+>>>
+>>> _______________________________________________
+>>> Linux-f2fs-devel mailing list
+>>> Linux-f2fs-devel@lists.sourceforge.net
+>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>> .
+>>>
+> .
+> 
 
 
 _______________________________________________
