@@ -2,74 +2,80 @@ Return-Path: <SRS0=QJsr=6Z=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F5FC47255
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2020 11:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 458EAC47255
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2020 19:16:47 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BFBF020735
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 May 2020 11:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 0A44320736;
+	Mon, 11 May 2020 19:16:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="PDx06MTH";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ORT2xOoO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFBF020735
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="lSNWcAVF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="RHxpLF/A";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGot39VZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A44320736
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jY6sZ-0002g1-DG; Mon, 11 May 2020 11:45:51 +0000
+	id 1jYDuv-0005HX-Kw; Mon, 11 May 2020 19:16:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <mafeng.ma@huawei.com>) id 1jY6sX-0002fQ-5U
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 May 2020 11:45:49 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1jYDuu-0005HK-HZ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 May 2020 19:16:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dWXdFoPIwGEfoIHOKgRP1Wxq1allHRFib2yqN4PrTpU=; b=PDx06MTHL5bvr1EuNDezHajaEB
- mWevilk57WQEHyVrTfKWgFpAt+RMk0dZnvPWELnOE1fxJHFpZ1x9/PgtWBu+OaY8XiBr9rdoTX872
- FFjJcuRim8PbNUGFW/iJ2ieJYirYP5+zm65ISK/p+CkgzW1zxspf8yteD92/RMU6wUG8=;
+ bh=8wifyF+e/aszpa+m180KTkAHv+ccEaRdUDAZLvKOKNU=; b=lSNWcAVFSwx/NOApVnniW2ZzPY
+ cT+RohbjW43BLMxpz5fesYxgFuVJFE4av4RQrJ2xX5ODNag2jdcMCGs09c0AY/z+J2y6dDIv0SyHj
+ rB+qVqg+kxHXF6icNUVNgZdu0kH3E91laFwaUiiFxXYECfMtcg/hqH/sOAD7CiHSp8+o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=dWXdFoPIwGEfoIHOKgRP1Wxq1allHRFib2yqN4PrTpU=; b=O
- RT2xOoOIuFVNyCIKFXqMtbSQ4UBW5WredMgL4C0j/3TffIYw1X21PMZCcOXOC/316fXG0EMDroUiO
- srrGq0ql3S3KrXMs5c3629FwgysYBYm6XE29rwLLRjr7ziH92kAuuTG1DzilK2UAYeZZSEwpjw7fl
- gasUGn2Z4gR/CPzM=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=8wifyF+e/aszpa+m180KTkAHv+ccEaRdUDAZLvKOKNU=; b=RHxpLF/Aos+0hVWtpdJRhv3sLk
+ H6NbUxkI2VxoRrn7XyJfe68pJHdZVsq/D5QKO7GKZIfMSD2Nm4JSlelS5WrUW3yktyvDGSuchBWoe
+ g1W2jzadFiZR2p11mY2BvczpOSgRoeUfOMzpj3g6FauLu8gfjgVZ5iuFu/27EXVzd0/Q=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jY6sU-008iQq-Si
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 May 2020 11:45:49 +0000
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 09B785329E7C40BEAB3A;
- Mon, 11 May 2020 19:45:29 +0800 (CST)
-Received: from linux-lmwb.huawei.com (10.175.103.112) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.487.0; Mon, 11 May 2020 19:45:21 +0800
-From: Ma Feng <mafeng.ma@huawei.com>
-To: <chao@kernel.org>, <jaegeuk@kernel.org>
-Date: Mon, 11 May 2020 19:51:26 +0800
-Message-ID: <1589197886-10580-1-git-send-email-mafeng.ma@huawei.com>
-X-Mailer: git-send-email 2.6.2
+ id 1jYDus-001mcX-Mu
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 May 2020 19:16:44 +0000
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
+ [107.3.166.239])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id E57F720736;
+ Mon, 11 May 2020 19:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1589224597;
+ bh=2izxiaGUPO1H4O0NjBC09EHeAyN3lBintH1KSBHdM7I=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=IGot39VZ4JxU3bOq3SYiM+yhf0lCV0+Bj+ZcrTnwEAran6zZKi8fSNOwAfUiNgzpD
+ 4m5aUV/F2Y8CA2vHCzezmFNd6qy8RvOJsMzyq2lxrfo7xH60QSycSYKYdTsgRcnylR
+ 7Oh6MBOJr5GV79WfzTLrM8N3EoS7N8qr9dkbdL50=
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Mon, 11 May 2020 12:13:57 -0700
+Message-Id: <20200511191358.53096-3-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200511191358.53096-1-ebiggers@kernel.org>
+References: <20200511191358.53096-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.103.112]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jY6sU-008iQq-Si
-Subject: [f2fs-dev] [PATCH] f2fs: compress: make num_compress_pages and
- f2fs_compress_free_page static
+X-Headers-End: 1jYDus-001mcX-Mu
+Subject: [f2fs-dev] [PATCH 2/3] fscrypt: name all function parameters
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,48 +87,112 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Ma Feng <mafeng.ma@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Fix the following sparse warning:
+From: Eric Biggers <ebiggers@google.com>
 
-fs/f2fs/compress.c:501:5: warning: symbol 'num_compress_pages' was not declared.
- Should it be static?
-fs/f2fs/compress.c:530:6: warning: symbol 'f2fs_compress_free_page' was not
-declared. Should it be static?
+Name all the function parameters.  This makes it so that we don't have a
+mix of both styles, so it won't be ambiguous what to use in new fscrypt
+patches.  This also matches the checkpatch expectation.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Ma Feng <mafeng.ma@huawei.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/compress.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/fscrypt.h | 46 ++++++++++++++++++++++-------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 4c7eaee..c7c5a8f 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -498,7 +498,7 @@ bool f2fs_is_compress_backend_ready(struct inode *inode)
- }
-
- static mempool_t *compress_page_pool = NULL;
--int num_compress_pages = 512;
-+static int num_compress_pages = 512;
- module_param(num_compress_pages, uint, 0444);
- MODULE_PARM_DESC(num_compress_pages,
- 		"Number of intermediate compress pages to preallocate");
-@@ -527,7 +527,7 @@ static struct page *f2fs_compress_alloc_page(void)
- 	return page;
- }
-
--void f2fs_compress_free_page(struct page *page)
-+static void f2fs_compress_free_page(struct page *page)
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index cb2c41f8dfdee7..210a05dd9ecd4a 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -56,10 +56,11 @@ struct fscrypt_name {
+ struct fscrypt_operations {
+ 	unsigned int flags;
+ 	const char *key_prefix;
+-	int (*get_context)(struct inode *, void *, size_t);
+-	int (*set_context)(struct inode *, const void *, size_t, void *);
+-	bool (*dummy_context)(struct inode *);
+-	bool (*empty_dir)(struct inode *);
++	int (*get_context)(struct inode *inode, void *ctx, size_t len);
++	int (*set_context)(struct inode *inode, const void *ctx, size_t len,
++			   void *fs_data);
++	bool (*dummy_context)(struct inode *inode);
++	bool (*empty_dir)(struct inode *inode);
+ 	unsigned int max_namelen;
+ 	bool (*has_stable_inodes)(struct super_block *sb);
+ 	void (*get_ino_and_lblk_bits)(struct super_block *sb,
+@@ -137,13 +138,15 @@ static inline struct page *fscrypt_pagecache_page(struct page *bounce_page)
+ extern void fscrypt_free_bounce_page(struct page *bounce_page);
+ 
+ /* policy.c */
+-extern int fscrypt_ioctl_set_policy(struct file *, const void __user *);
+-extern int fscrypt_ioctl_get_policy(struct file *, void __user *);
+-extern int fscrypt_ioctl_get_policy_ex(struct file *, void __user *);
++extern int fscrypt_ioctl_set_policy(struct file *filp, const void __user *arg);
++extern int fscrypt_ioctl_get_policy(struct file *filp, void __user *arg);
++extern int fscrypt_ioctl_get_policy_ex(struct file *filp, void __user *arg);
+ extern int fscrypt_ioctl_get_nonce(struct file *filp, void __user *arg);
+-extern int fscrypt_has_permitted_context(struct inode *, struct inode *);
+-extern int fscrypt_inherit_context(struct inode *, struct inode *,
+-					void *, bool);
++extern int fscrypt_has_permitted_context(struct inode *parent,
++					 struct inode *child);
++extern int fscrypt_inherit_context(struct inode *parent, struct inode *child,
++				   void *fs_data, bool preload);
++
+ /* keyring.c */
+ extern void fscrypt_sb_free(struct super_block *sb);
+ extern int fscrypt_ioctl_add_key(struct file *filp, void __user *arg);
+@@ -153,23 +156,24 @@ extern int fscrypt_ioctl_remove_key_all_users(struct file *filp,
+ extern int fscrypt_ioctl_get_key_status(struct file *filp, void __user *arg);
+ 
+ /* keysetup.c */
+-extern int fscrypt_get_encryption_info(struct inode *);
+-extern void fscrypt_put_encryption_info(struct inode *);
+-extern void fscrypt_free_inode(struct inode *);
++extern int fscrypt_get_encryption_info(struct inode *inode);
++extern void fscrypt_put_encryption_info(struct inode *inode);
++extern void fscrypt_free_inode(struct inode *inode);
+ extern int fscrypt_drop_inode(struct inode *inode);
+ 
+ /* fname.c */
+-extern int fscrypt_setup_filename(struct inode *, const struct qstr *,
+-				int lookup, struct fscrypt_name *);
++extern int fscrypt_setup_filename(struct inode *inode, const struct qstr *iname,
++				  int lookup, struct fscrypt_name *fname);
+ 
+ static inline void fscrypt_free_filename(struct fscrypt_name *fname)
  {
- 	if (!page)
- 		return;
---
-2.6.2
+ 	kfree(fname->crypto_buf.name);
+ }
+ 
+-extern int fscrypt_fname_alloc_buffer(const struct inode *, u32,
+-				struct fscrypt_str *);
+-extern void fscrypt_fname_free_buffer(struct fscrypt_str *);
++extern int fscrypt_fname_alloc_buffer(const struct inode *inode,
++				      u32 max_encrypted_len,
++				      struct fscrypt_str *crypto_str);
++extern void fscrypt_fname_free_buffer(struct fscrypt_str *crypto_str);
+ extern int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 				     u32 hash, u32 minor_hash,
+ 				     const struct fscrypt_str *iname,
+@@ -180,9 +184,9 @@ extern u64 fscrypt_fname_siphash(const struct inode *dir,
+ 				 const struct qstr *name);
+ 
+ /* bio.c */
+-extern void fscrypt_decrypt_bio(struct bio *);
+-extern int fscrypt_zeroout_range(const struct inode *, pgoff_t, sector_t,
+-				 unsigned int);
++extern void fscrypt_decrypt_bio(struct bio *bio);
++extern int fscrypt_zeroout_range(const struct inode *inode, pgoff_t lblk,
++				 sector_t pblk, unsigned int len);
+ 
+ /* hooks.c */
+ extern int fscrypt_file_open(struct inode *inode, struct file *filp);
+-- 
+2.26.2
 
 
 
