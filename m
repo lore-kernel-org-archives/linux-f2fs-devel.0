@@ -2,79 +2,80 @@ Return-Path: <SRS0=rqbO=62=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41755C2D0FB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D352C2D0F8
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 May 2020 23:36:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 10F2420753;
-	Tue, 12 May 2020 23:36:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EE2D1206F5;
+	Tue, 12 May 2020 23:36:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HdQjHB0n";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="aL1cZBGp";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="afRq1cf5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10F2420753
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OwaoaJbe";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="hMYL6IPB";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVaPAYOd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE2D1206F5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jYeRf-0006mD-R0; Tue, 12 May 2020 23:36:19 +0000
+	id 1jYeRf-0006mM-Vf; Tue, 12 May 2020 23:36:19 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1jYeRe-0006ly-F0
+ (envelope-from <ebiggers@kernel.org>) id 1jYeRe-0006m0-Fr
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 May 2020 23:36:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CtunamWNpifi9QtBcgSnG6mzwregi6ruKz6ib5uJh8Y=; b=HdQjHB0nGT0aacHM6AMvd0xYBi
- igV7MWPn8T4d7xk6J6ePHiSjpLEgNnI5mEKpDwaFh9BUBhIz7C5F11T86sksk15TGFi3r1b+FlXHg
- M/KmkgSPfigr/2grWPdHEw4PiKoaQ9D30FOP7EX9JAUu/V+hGQokJkK+1ajUSAlg0+XI=;
+ bh=MbS6ZXa9der9q2xYgI4U8QAROqoF7IBeem+bkeDFsac=; b=OwaoaJbevD6fLjwEWMGABGchxj
+ GtQtDavBat2a9QyZ4q/N9EesJW1WqxHhwkBhpuxiV7j/sq0JREeNm5m/Omraj01pYY+Qn8qi0rHQ/
+ KOXKi5ZnjYI7RWbZUZSuxylvXhiN2ytNj1JmROCQqOnRHF3yo9Uq5rQM1Lje/luypp5M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=CtunamWNpifi9QtBcgSnG6mzwregi6ruKz6ib5uJh8Y=; b=a
- L1cZBGp5wWi6Pm+am04/V8ECHhw9MnwHvhHJuqCDnlrhWTNxUaw9DdGr2tYbyaGJ/sA8xfWW52WxB
- l4kfhE+R6GpOdAqHvrLTNtYW4/R7dKbH4LgBNzSUltok2htodABHT43sj5MRMjkXG7UAtohOtNv1K
- ne/YllmZlHMlpDd4=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=MbS6ZXa9der9q2xYgI4U8QAROqoF7IBeem+bkeDFsac=; b=hMYL6IPB9YGmgRXcxsnqeYiDzJ
+ lAKvt2GzFNMFWFP0XvSmVy7S7YYif8nOmM1R5UCeMbmw23RULWZCTKYleMCF390HJjDqz9sUF81RF
+ GdFo5+qd3VV9YHhKXfL9CnCBUMdR4ZIkPWgsC628WvuFEfnXcX7MdYwvTsg06d9ALjXg=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jYeRa-003ujL-WF
+ id 1jYeRa-003ujT-WF
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 May 2020 23:36:18 +0000
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
  [107.3.166.239])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 81FBD206F5;
- Tue, 12 May 2020 23:36:06 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id B066C20753;
+ Tue, 12 May 2020 23:36:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1589326567;
- bh=dUF4crkDJeVEpBzU47y9vojUlDTZiw0M+TOOvUz27To=;
- h=From:To:Cc:Subject:Date:From;
- b=afRq1cf5WfvzrPj28yGvgevWspYFNzgMZQgKcHyFYPR8VWWT/lmrfs0Qp0W4OBWac
- VPkSZMBGDAbKBltNqjKetKmJv4TN8MLM5nhsjla7Jv8NNrCEVVt7hnOExK3PBlq32H
- 17Vq4/E4jU5X1pEAbWPA2sr/YRHRMuavi6kFLBuE=
+ s=default; t=1589326568;
+ bh=EEakLHov+/y1Y/0O8Mqo/Itjd8dO5abxKpeHqQD/g6g=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=nVaPAYOdAT7VQ6IeMYWKeDPJih9Y81YQfL3bwHVeYmSiAAXwqn6aOm4FYDbqISAdQ
+ U4XKzf1y8c6HI7uPFKgdiQUsONFGxqB1cFBtTWCkYN+QNaVsihpMqeulbTpO5/vxwo
+ gINS5mhH3s4YN2cZJG5h4zZFlrY9NkAAIVdgfM7E=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Tue, 12 May 2020 16:32:47 -0700
-Message-Id: <20200512233251.118314-1-ebiggers@kernel.org>
+Date: Tue, 12 May 2020 16:32:49 -0700
+Message-Id: <20200512233251.118314-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200512233251.118314-1-ebiggers@kernel.org>
+References: <20200512233251.118314-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1jYeRa-003ujL-WF
-Subject: [f2fs-dev] [PATCH 0/4] fscrypt: make '-o test_dummy_encryption'
- support v2 policies
+X-Headers-End: 1jYeRa-003ujT-WF
+Subject: [f2fs-dev] [PATCH 2/4] fscrypt: add fscrypt_add_test_dummy_key()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,41 +94,215 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-v1 encryption policies are deprecated in favor of v2, and some new
-features (e.g. encryption+casefolding) are only being added for v2.
+From: Eric Biggers <ebiggers@google.com>
 
-As a result, the "test_dummy_encryption" mount option (which is used for
-encryption I/O testing with xfstests) needs to support v2 policies.
+Currently, the test_dummy_encryption mount option (which is used for
+encryption I/O testing with xfstests) uses v1 encryption policies, and
+it relies on userspace inserting a test key into the session keyring.
 
-Therefore, this patchset adds support for specifying
-"test_dummy_encryption=v2" (or "test_dummy_encryption=v1").
-To make this possible, it reworks the way the test_dummy_encryption
-mount option is handled to make it more flexible than a flag, and to
-automatically add the test dummy key to the filesystem's keyring.
+We need test_dummy_encryption to support v2 encryption policies too.
+Requiring userspace to add the test key doesn't work well with v2
+policies, since v2 policies only support the filesystem keyring (not the
+session keyring), and keys in the filesystem keyring are lost when the
+filesystem is unmounted.  Hooking all test code that unmounts and
+re-mounts the filesystem would be difficult.
 
-Patch 4 additionally changes the default to "v2".
+Instead, let's make the filesystem automatically add the test key to its
+keyring when test_dummy_encryption is enabled.
 
-This patchset applies to v5.7-rc4.
+That puts the responsibility for choosing the test key on the kernel.
+We could just hard-code a key.  But out of paranoia, let's first try
+using a per-boot random key, to prevent this code from being misused.
+A per-boot key will work as long as no one expects dummy-encrypted files
+to remain accessible after a reboot.  (gce-xfstests doesn't.)
 
-Eric Biggers (4):
-  linux/parser.h: add include guards
-  fscrypt: add fscrypt_add_test_dummy_key()
-  fscrypt: support test_dummy_encryption=v2
-  fscrypt: make test_dummy_encryption use v2 by default
+Therefore, this patch adds a function fscrypt_add_test_dummy_key() which
+implements the above.  The next patch will use it.
 
- Documentation/filesystems/f2fs.rst |   6 +-
- fs/crypto/fscrypt_private.h        |   3 +
- fs/crypto/keyring.c                | 117 +++++++++++++++++----------
- fs/crypto/keysetup.c               |  15 ++--
- fs/crypto/policy.c                 | 125 +++++++++++++++++++++++++++++
- fs/ext4/ext4.h                     |   7 +-
- fs/ext4/super.c                    |  68 ++++++++++++----
- fs/f2fs/f2fs.h                     |   4 +-
- fs/f2fs/super.c                    |  85 ++++++++++++++------
- include/linux/fscrypt.h            |  52 ++++++++++--
- include/linux/parser.h             |   5 +-
- 11 files changed, 383 insertions(+), 104 deletions(-)
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/fscrypt_private.h |   3 +
+ fs/crypto/keyring.c         | 117 +++++++++++++++++++++++-------------
+ 2 files changed, 77 insertions(+), 43 deletions(-)
 
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index dbced2937ec895..1bdb4a3a9b9fd6 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -440,6 +440,9 @@ extern struct key *
+ fscrypt_find_master_key(struct super_block *sb,
+ 			const struct fscrypt_key_specifier *mk_spec);
+ 
++int fscrypt_add_test_dummy_key(struct super_block *sb,
++			       struct fscrypt_key_specifier *key_spec);
++
+ extern int fscrypt_verify_key_added(struct super_block *sb,
+ 				    const u8 identifier[FSCRYPT_KEY_IDENTIFIER_SIZE]);
+ 
+diff --git a/fs/crypto/keyring.c b/fs/crypto/keyring.c
+index ab41b25d4fa1ba..c983ddfde8ad8d 100644
+--- a/fs/crypto/keyring.c
++++ b/fs/crypto/keyring.c
+@@ -20,6 +20,7 @@
+ 
+ #include <crypto/skcipher.h>
+ #include <linux/key-type.h>
++#include <linux/random.h>
+ #include <linux/seq_file.h>
+ 
+ #include "fscrypt_private.h"
+@@ -424,9 +425,9 @@ static int add_existing_master_key(struct fscrypt_master_key *mk,
+ 	return 0;
+ }
+ 
+-static int add_master_key(struct super_block *sb,
+-			  struct fscrypt_master_key_secret *secret,
+-			  const struct fscrypt_key_specifier *mk_spec)
++static int do_add_master_key(struct super_block *sb,
++			     struct fscrypt_master_key_secret *secret,
++			     const struct fscrypt_key_specifier *mk_spec)
+ {
+ 	static DEFINE_MUTEX(fscrypt_add_key_mutex);
+ 	struct key *key;
+@@ -465,6 +466,35 @@ static int add_master_key(struct super_block *sb,
+ 	return err;
+ }
+ 
++static int add_master_key(struct super_block *sb,
++			  struct fscrypt_master_key_secret *secret,
++			  struct fscrypt_key_specifier *key_spec)
++{
++	int err;
++
++	if (key_spec->type == FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER) {
++		err = fscrypt_init_hkdf(&secret->hkdf, secret->raw,
++					secret->size);
++		if (err)
++			return err;
++
++		/*
++		 * Now that the HKDF context is initialized, the raw key is no
++		 * longer needed.
++		 */
++		memzero_explicit(secret->raw, secret->size);
++
++		/* Calculate the key identifier */
++		err = fscrypt_hkdf_expand(&secret->hkdf,
++					  HKDF_CONTEXT_KEY_IDENTIFIER, NULL, 0,
++					  key_spec->u.identifier,
++					  FSCRYPT_KEY_IDENTIFIER_SIZE);
++		if (err)
++			return err;
++	}
++	return do_add_master_key(sb, secret, key_spec);
++}
++
+ static int fscrypt_provisioning_key_preparse(struct key_preparsed_payload *prep)
+ {
+ 	const struct fscrypt_provisioning_key_payload *payload = prep->data;
+@@ -609,6 +639,15 @@ int fscrypt_ioctl_add_key(struct file *filp, void __user *_uarg)
+ 	if (memchr_inv(arg.__reserved, 0, sizeof(arg.__reserved)))
+ 		return -EINVAL;
+ 
++	/*
++	 * Only root can add keys that are identified by an arbitrary descriptor
++	 * rather than by a cryptographic hash --- since otherwise a malicious
++	 * user could add the wrong key.
++	 */
++	if (arg.key_spec.type == FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR &&
++	    !capable(CAP_SYS_ADMIN))
++		return -EACCES;
++
+ 	memset(&secret, 0, sizeof(secret));
+ 	if (arg.key_id) {
+ 		if (arg.raw_size != 0)
+@@ -626,54 +665,46 @@ int fscrypt_ioctl_add_key(struct file *filp, void __user *_uarg)
+ 			goto out_wipe_secret;
+ 	}
+ 
+-	switch (arg.key_spec.type) {
+-	case FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR:
+-		/*
+-		 * Only root can add keys that are identified by an arbitrary
+-		 * descriptor rather than by a cryptographic hash --- since
+-		 * otherwise a malicious user could add the wrong key.
+-		 */
+-		err = -EACCES;
+-		if (!capable(CAP_SYS_ADMIN))
+-			goto out_wipe_secret;
+-		break;
+-	case FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER:
+-		err = fscrypt_init_hkdf(&secret.hkdf, secret.raw, secret.size);
+-		if (err)
+-			goto out_wipe_secret;
+-
+-		/*
+-		 * Now that the HKDF context is initialized, the raw key is no
+-		 * longer needed.
+-		 */
+-		memzero_explicit(secret.raw, secret.size);
+-
+-		/* Calculate the key identifier and return it to userspace. */
+-		err = fscrypt_hkdf_expand(&secret.hkdf,
+-					  HKDF_CONTEXT_KEY_IDENTIFIER,
+-					  NULL, 0, arg.key_spec.u.identifier,
+-					  FSCRYPT_KEY_IDENTIFIER_SIZE);
+-		if (err)
+-			goto out_wipe_secret;
+-		err = -EFAULT;
+-		if (copy_to_user(uarg->key_spec.u.identifier,
+-				 arg.key_spec.u.identifier,
+-				 FSCRYPT_KEY_IDENTIFIER_SIZE))
+-			goto out_wipe_secret;
+-		break;
+-	default:
+-		WARN_ON(1);
+-		err = -EINVAL;
++	err = add_master_key(sb, &secret, &arg.key_spec);
++	if (err)
+ 		goto out_wipe_secret;
+-	}
+ 
+-	err = add_master_key(sb, &secret, &arg.key_spec);
++	/* Return the key identifier to userspace, if applicable */
++	err = -EFAULT;
++	if (arg.key_spec.type == FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER &&
++	    copy_to_user(uarg->key_spec.u.identifier, arg.key_spec.u.identifier,
++			 FSCRYPT_KEY_IDENTIFIER_SIZE))
++		goto out_wipe_secret;
++	err = 0;
+ out_wipe_secret:
+ 	wipe_master_key_secret(&secret);
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_ioctl_add_key);
+ 
++/*
++ * Add the key for '-o test_dummy_encryption' to the filesystem keyring.
++ *
++ * Use a per-boot random key to prevent people from misusing this option.
++ */
++int fscrypt_add_test_dummy_key(struct super_block *sb,
++			       struct fscrypt_key_specifier *key_spec)
++{
++	static u8 test_key[FSCRYPT_MAX_KEY_SIZE];
++	struct fscrypt_master_key_secret secret;
++	int err;
++
++	get_random_once(test_key, FSCRYPT_MAX_KEY_SIZE);
++
++	memset(&secret, 0, sizeof(secret));
++	secret.size = FSCRYPT_MAX_KEY_SIZE;
++	memcpy(secret.raw, test_key, FSCRYPT_MAX_KEY_SIZE);
++
++	err = add_master_key(sb, &secret, key_spec);
++	wipe_master_key_secret(&secret);
++	return err;
++}
++
+ /*
+  * Verify that the current user has added a master key with the given identifier
+  * (returns -ENOKEY if not).  This is needed to prevent a user from encrypting
 -- 
 2.26.2
 
