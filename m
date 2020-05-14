@@ -2,106 +2,108 @@ Return-Path: <SRS0=IvxL=64=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2B1C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 May 2020 00:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8B7C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 May 2020 00:45:39 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2297520659;
-	Thu, 14 May 2020 00:45:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D4FE420659;
+	Thu, 14 May 2020 00:45:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="Xg2yhMA4";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="LYgBWu31";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="eJtLvFAr";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="ZAIRPf+o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2297520659
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="VR41KSxX";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CRNqNaiv";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="kC9L9civ";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="CorCHbEF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4FE420659
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=TpOWPe3Z7eKI53P3vCVVWAVihjnQHYfX3dFxVOxnkS8=; b=Xg2yhMA4FbNaGx2nGZYQDZ0ynh
-	ijEyQMWc0nCter9GcIbOvWsCLvgCVYD2yFWXhOyQpqHDVh0AQhhbJht7w0UlxOtkmT3zxEVDuaQsd
-	I2a0YPJa32eKEe3EXQiUURT3k+pyx19eRHA+vdod/prIpsmggPbu6BmWGngR0b0H8p6U=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=he3VDdYb/T1YlksBmAxG6dqxyDZmyYrZhUDtBm4vqxo=; b=VR41KSxXJhmRmy2BxjXQtgRCr
+	z/qkjSaY4uS9CZqMrlvOhU4cRrsEPwh+H5gpPH5z2q97dAaCSMYx9N0Ll4c2qs/ITtsG6nbNI8+t2
+	rCCkY3LpFEHFXM+0cCyhOnVytgQv/zO90XnbnyYckEdduNEjDsCwJeeURBwm26wnb2lzc=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jZ1zk-0000IE-CO; Thu, 14 May 2020 00:45:04 +0000
+	id 1jZ20J-0000pN-5c; Thu, 14 May 2020 00:45:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3zpK8XgYKAOEVDWbDWJRRJOH.FRP@flex--satyat.bounces.google.com>)
- id 1jZ1zj-0000I5-C2
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 May 2020 00:45:03 +0000
+ (envelope-from <34ZK8XgYKAPQoWpuWpckkcha.Yki@flex--satyat.bounces.google.com>)
+ id 1jZ20H-0000p9-Q6
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 May 2020 00:45:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
- Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Y1TvKp65tsQMJNgm9HMaRO/OTRlalkrsXwsa1JM97tc=; b=LYgBWu31B3w4shBgJBBKvsWlQS
- p1JX5MxxGNGlTvBTkmkol7wnOWBaRRO5VhqTCmC6dHz+L3zC1xfyocv0P5ZI9gDg0o1pYzVesr/IT
- Pt+0TLbV9k4QEn8sDXf4kIIqP/fW88ssGbRJUkAp8flp2iqFac41W5S4oA5Lq81/Zt9U=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
+ Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=jSH7/AmnzXrjgmk8lWSfcMe95UKbUVGwx5FdmlnTcp0=; b=CRNqNaivGdNRMuHtLxYifFcWn
+ 04Gbs5oDfNaI/TPg1NUHXdqPswMo32QZ2R10XoUMYO1xNIv2c02VWerJypFDVIAy0eU1wzHZm0hk5
+ zh7NhYtYpMY9r8+77bUOWBeQf8ZZVibY8ho1ShN8Q0sfUPWOioXAxawPEMRE/EFbsXTPY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Y1TvKp65tsQMJNgm9HMaRO/OTRlalkrsXwsa1JM97tc=; b=e
- JtLvFArHD+QleJBLJJlIh1X3/G7jpmrP2RgTnfb60oMMJsHrpCnspfo19aZMirOzOREe9f8izYMjx
- dCOIAeAroTPWNHFavkWazoxcy+wrl+0Pksyoc1B8sD3jioeUX1egrn0AglXM3hI8djot7SOX7/NXM
- eGoApJOVQlStEjaI=;
-Received: from mail-pj1-f74.google.com ([209.85.216.74])
+ h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=jSH7/AmnzXrjgmk8lWSfcMe95UKbUVGwx5FdmlnTcp0=; b=kC9L9civo+zfzDFj8D4LEh0U++
+ 2POAP6tDRFJ3nv8sE8lAnaB1heawAx/l0RsfcTM0OedZBdP769cSUL1iD8gPAzOKcNaWrWry2Gyak
+ XpFPfb9Afnas6L4YwfCdGyYCFFMmBolYsUZ82/blHC9i8dKU+AM/dXzuYsGyl+gtMzEg=;
+Received: from mail-pg1-f202.google.com ([209.85.215.202])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jZ1zh-00EdZ8-KJ
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 May 2020 00:45:03 +0000
-Received: by mail-pj1-f74.google.com with SMTP id o6so25284639pjl.1
+ id 1jZ20E-00EdbL-Jg
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 May 2020 00:45:37 +0000
+Received: by mail-pg1-f202.google.com with SMTP id j21so1055017pgh.12
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 13 May 2020 17:45:01 -0700 (PDT)
+ Wed, 13 May 2020 17:45:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:message-id:mime-version:subject:from:to:cc;
- bh=Y1TvKp65tsQMJNgm9HMaRO/OTRlalkrsXwsa1JM97tc=;
- b=ZAIRPf+oXWmjCxrysa3jnmus5IGwb5XwIiHrVByRxAvpfIiYD0ItqjkDiHZYWDO672
- N6ekiRkc2g/Uwy6OxSuTPl/jJsC3yfHMTGqr+kXgxIM1GV4xoOast3Baq4FyVQY8wkck
- XuUHl2oyXL+nBJJo71j5Aw3SQgmWnew7yHCKmU3YiBWlXl00JzZ7JHNUGPeMEmpLh2hL
- k5HCo+shfd2274Q38Cxm9cTV2VSSR22B+2IDwM8W2ULznysB/DsfvvHt30N6+uqW/5Kq
- DHJuckiUowmfqdW0OuXvIhO0M/9ZkJlk4A3Z2NAoQ6ct8QBRjvaWH5N735j7QujKWzkR
- 7gaQ==
+ h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+ :cc; bh=jSH7/AmnzXrjgmk8lWSfcMe95UKbUVGwx5FdmlnTcp0=;
+ b=CorCHbEFaLqJG2qA/D/PokRtWRhWo+coWB8NaWQJ1bAWjoLm06zA7m0y8Cp1XLhRc0
+ NVeVqomTQam+/sFarFFPZPG+qA16/UD2UGQKxxEQEdEOp0ErWKBYBVHIwZNDIwfwuqyG
+ HCEcc82IWPZbfHFjRPiknYcPI3MYB8q7DmdmFRwtjZHS/yI7WZ2z5lH0lvGLqHuqnWmN
+ PYTQXyDIlNRLyHQylhNGvgbUwfJ/MamBjWALFb16uCgHjaHcs/GFWnN3PHHhkSinzjfy
+ fPqqnrCrpG3t612wNzZQCRasSBR79DD1Chv/QGZLXTfs8NjGl4rbcyNj1qJyQv6t/BJD
+ Gm9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
- bh=Y1TvKp65tsQMJNgm9HMaRO/OTRlalkrsXwsa1JM97tc=;
- b=DqzQmyG5Xamtkh5o7++jzbD+5HLf3QWE+iMqXn8C/ZKLGO8aYiOe1f/YYKMk2zd6jT
- /laK6rpI5JhfJVlCKWvv1BD5se7ZrpQKSVKr3OJscgPuH8zywsya/iujNoOKiO11Ut5e
- OZ6O5ZAbcEg/9mVDIAH8aIqkSOeLI3esnEEar2FkAxSHpxT3sdoZA9gxscbL4TQBPIKd
- TmCEmMrrfS63I4KGPUbPz3Hdq80PTSStqhkGfogwOPLoIjXF2thGQ2m5FgsqCYqaRtFZ
- WW/zJb8HBBtLiSInYietwAqt7/uLmT0fpozgPe0CaOOF8ygQQVELZYdDO0E02wv6H5uA
- /Enw==
-X-Gm-Message-State: AOAM530cFAXeQ5zQTceBZbRYRLLDBLnLvEatn2VQ39GxfF6zDGnZOYv5
- zvUD9rYahFkNBHJFtTYBFdHUlgjxTiQ=
-X-Google-Smtp-Source: ABdhPJzXq3gY922W8GvJYKDCvdvkhTLMen1AnugqOEU+vcfl/4sIauHvla7GSVA5QizCia3rzhtcSzDwKjE=
-X-Received: by 2002:a05:6214:1262:: with SMTP id
- r2mr2374687qvv.126.1589416654581; 
- Wed, 13 May 2020 17:37:34 -0700 (PDT)
-Date: Thu, 14 May 2020 00:37:15 +0000
-Message-Id: <20200514003727.69001-1-satyat@google.com>
+ h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+ :references:subject:from:to:cc;
+ bh=jSH7/AmnzXrjgmk8lWSfcMe95UKbUVGwx5FdmlnTcp0=;
+ b=gPYVze+WecSrZ6QFUcmHwXOrpJm1W/nsLolUsO9E2pDTLIMAdwcoQcIIYFUfAq2Fom
+ 8BXhRzb/iIxdNJr/m6Z123XYqeMX2a1Mp3CeVwdUpDbX2Sc/X0dM5L2a4v7so7JOA+fE
+ esPtHsOHiZkliudm8TJ8px4dBkZa45N0Yi0Y0UUqe/onr9GtrG/Vg0SjHXCY7JTev24D
+ Dqnok1LIztdL9QRkLCzE3l4tVHxH4emmhvAn5n8NfiwVuUjNgRwhrgJ57k1MbYrsD00Z
+ A5a6VykxZqoazGx4ml7RZgO1jdkfLsxUTMAaBTOHez3bB1C+XqftXUA+NuABR3oi0OBq
+ jEvQ==
+X-Gm-Message-State: AOAM531hQMuf/w0oujhln5W1F5rNJvdza11Pxb5tmLMsCUPSqWXax9t0
+ 2zW0CHoZt2LfiHHvoZEj/l25GjKiKas=
+X-Google-Smtp-Source: ABdhPJwBh/wsrSWYEhc6NNS3EHG+XSrYPjs2uFKQe/vehOe++1uwzxxsIf9e+FGuRNVP5YpF4CANHGHKo0g=
+X-Received: by 2002:ad4:4b6b:: with SMTP id m11mr2296448qvx.130.1589416673786; 
+ Wed, 13 May 2020 17:37:53 -0700 (PDT)
+Date: Thu, 14 May 2020 00:37:27 +0000
+In-Reply-To: <20200514003727.69001-1-satyat@google.com>
+Message-Id: <20200514003727.69001-13-satyat@google.com>
 Mime-Version: 1.0
+References: <20200514003727.69001-1-satyat@google.com>
 X-Mailer: git-send-email 2.26.2.645.ge9eca65c58-goog
 To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, 
  linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-X-Headers-End: 1jZ1zh-00EdZ8-KJ
-Subject: [f2fs-dev] [PATCH v13 00/12] Inline Encryption Support
+X-Headers-End: 1jZ20E-00EdbL-Jg
+Subject: [f2fs-dev] [PATCH v13 12/12] ext4: add inline encryption support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,308 +119,223 @@ From: Satya Tangirala via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Satya Tangirala <satyat@google.com>
 Cc: Kuohong Wang <kuohong.wang@mediatek.com>,
- Satya Tangirala <satyat@google.com>,
+ Satya Tangirala <satyat@google.com>, Eric Biggers <ebiggers@google.com>,
  Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
  Kim Boojin <boojin.kim@samsung.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch series adds support for Inline Encryption to the block layer,
-UFS, fscrypt, f2fs and ext4. It has been rebased onto linux-block/for-next.
+From: Eric Biggers <ebiggers@google.com>
 
-Note that the patches in this series for the block layer (i.e. patches 1,
-2, 3, 4 and 5) can be applied independently of the subsequent patches in
-this series.
+Wire up ext4 to support inline encryption via the helper functions which
+fs/crypto/ now provides.  This includes:
 
-Inline Encryption hardware allows software to specify an encryption context
-(an encryption key, crypto algorithm, data unit num, data unit size, etc.)
-along with a data transfer request to a storage device, and the inline
-encryption hardware will use that context to en/decrypt the data. The
-inline encryption hardware is part of the storage device, and it
-conceptually sits on the data path between system memory and the storage
-device. Inline Encryption hardware has become increasingly common, and we
-want to support it in the kernel.
+- Adding a mount option 'inlinecrypt' which enables inline encryption
+  on encrypted files where it can be used.
 
-Inline Encryption hardware implementations often function around the
-concept of a limited number of "keyslots", which can hold an encryption
-context each. The storage device can be directed to en/decrypt any
-particular request with the encryption context stored in any particular
-keyslot.
+- Setting the bio_crypt_ctx on bios that will be submitted to an
+  inline-encrypted file.
 
-Patch 1 documents the whole series.
+  Note: submit_bh_wbc() in fs/buffer.c also needed to be patched for
+  this part, since ext4 sometimes uses ll_rw_block() on file data.
 
-Patch 2 introduces a Keyslot Manager to efficiently manage keyslots.
-The keyslot manager also functions as the interface that blk-crypto
-(introduced in Patch 3), will use to program keys into inline encryption
-hardware. For more information on the Keyslot Manager, refer to
-documentation found in block/keyslot-manager.c and linux/keyslot-manager.h.
+- Not adding logically discontiguous data to bios that will be submitted
+  to an inline-encrypted file.
 
-Patch 3 adds the block layer changes for inline encryption support. It
-introduces struct bio_crypt_ctx, and a ptr to one in struct bio, which
-allows struct bio to represent an encryption context that can be passed
-down the storage stack from the filesystem layer to the storage driver.
+- Not doing filesystem-layer crypto on inline-encrypted files.
 
-Patch 4 precludes inline encryption support in a device whenever it
-supports blk-integrity, because there is currently no known hardware that
-supports both features, and it is not completely straightfoward to support
-both of them properly, and doing it improperly might result in leaks of
-information about the plaintext.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Co-developed-by: Satya Tangirala <satyat@google.com>
+Signed-off-by: Satya Tangirala <satyat@google.com>
+---
+ Documentation/admin-guide/ext4.rst |  6 ++++++
+ fs/buffer.c                        |  7 ++++---
+ fs/ext4/inode.c                    |  4 ++--
+ fs/ext4/page-io.c                  |  6 ++++--
+ fs/ext4/readpage.c                 | 11 ++++++++---
+ fs/ext4/super.c                    |  9 +++++++++
+ 6 files changed, 33 insertions(+), 10 deletions(-)
 
-Patch 5 introduces blk-crypto-fallback - a kernel crypto API fallback for
-blk-crypto to use when inline encryption hardware isn't present. This
-allows filesystems to specify encryption contexts for bios without
-having to worry about whether the underlying hardware has inline
-encryption support, and allows for testing without real hardware inline
-encryption support. This fallback is separately configurable from
-blk-crypto, and can be disabled if desired while keeping inline
-encryption support. It may also be possible to remove file content
-en/decryption from fscrypt and simply use blk-crypto-fallback in a future
-patch. For more details on blk-crypto and the fallback, refer to
-Documentation/block/inline-encryption.rst.
-
-Patches 6-8 add support for inline encryption into the UFS driver according
-to the JEDEC UFS HCI v2.1 specification. Inline encryption support for
-other drivers (like eMMC) may be added in the same way - the device driver
-should set up a Keyslot Manager in the device's request_queue (refer to
-the UFS crypto additions in ufshcd-crypto.c and ufshcd.c for an example).
-
-Patch 9 adds the SB_INLINECRYPT mount flag to the fs layer, which
-filesystems must set to indicate that they want to use blk-crypto for
-en/decryption of file contents.
-
-Patch 10 adds support to fscrypt - to use inline encryption with fscrypt,
-the filesystem must be mounted with '-o inlinecrypt' - when this option is
-specified, the contents of any AES-256-XTS encrypted file will be
-encrypted using blk-crypto.
-
-Patches 11 and 12 add support to f2fs and ext4 respectively, so that we
-have a complete stack that can make use of inline encryption.
-
-The patches were tested running kvm-xfstests, by specifying the introduced
-"inlinecrypt" mount option, so that en/decryption happens with the
-blk-crypto fallback. The patches were also tested on a Pixel 4 with UFS
-hardware that has support for inline encryption.
-
-There have been a few patch sets addressing Inline Encryption Support in
-the past. Briefly, this patch set differs from those as follows:
-
-1) "crypto: qce: ice: Add support for Inline Crypto Engine"
-is specific to certain hardware, while our patch set's Inline
-Encryption support for UFS is implemented according to the JEDEC UFS
-specification.
-
-2) "scsi: ufs: UFS Host Controller crypto changes" registers inline
-encryption support as a kernel crypto algorithm. Our patch views inline
-encryption as being fundamentally different from a generic crypto
-provider (in that inline encryption is tied to a device), and so does
-not use the kernel crypto API to represent inline encryption hardware.
-
-3) "scsi: ufs: add real time/inline crypto support to UFS HCD" requires
-the device mapper to work - our patch does not.
-
-Changes v12 => v13:
- - Updated docs
- - Minor cleanups
- - rebased onto linux-block/for-next
-
-Changes v11 => v12:
- - Inlined some fscrypt functions
- - Minor cleanups and improved comments
-
-Changes v10 => v11:
- - We now allocate a new bio_crypt_ctx for each request instead of
-   pulling and reusing the one in the bio inserted into the request. The
-   bio_crypt_ctx of a bio is freed after the bio is ended.
- - Make each blk_ksm_keyslot store a pointer to the blk_crypto_key
-   instead of a copy of the blk_crypto_key, so that each blk_crypto_key
-   will have its own keyslot. We also won't need to compute the siphash
-   for a blk_crypto_key anymore.
- - Minor cleanups
-
-Changes v9 => v10:
- - Incorporate Eric's fix for allowing en/decryption to happen as usual via
-   fscrypt in the case that hardware doesn't support the desired crypto
-   configuration, but blk-crypto-fallback is disabled. (Introduce
-   struct blk_crypto_config and blk_crypto_config_supported for fscrypt
-   to call, to check that either blk-crypto-fallback is enabled or the
-   device supports the crypto configuration).
- - Update docs
- - Lots of cleanups
-
-Changes v8 => v9:
- - Don't open code bio_has_crypt_ctx into callers of blk-crypto functions.
- - Lots of cleanups
-
-Changes v7 => v8:
- - Pass a struct blk_ksm_keyslot * around instead of slot numbers which
-   simplifies some functions and passes around arguments with better types
- - Make bios with no encryption context avoid making calls into blk-crypto
-   by checking for the presence of bi_crypt_context before making the call
- - Make blk-integrity preclude inline encryption support at probe time
- - Many many cleanups
-
-Changes v6 => v7:
- - Keyslot management is now done on a per-request basis rather than a
-   per-bio basis.
- - Storage drivers can now specify the maximum number of bytes they
-   can accept for the data unit number (DUN) for each crypto algorithm,
-   and upper layers can specify the minimum number of bytes of DUN they
-   want with the blk_crypto_key they send with the bio - a driver is
-   only considered to support a blk_crypto_key if the driver supports at
-   least as many DUN bytes as the upper layer wants. This is necessary
-   because storage drivers may not support as many bytes as the
-   algorithm specification dictates (for e.g. UFS only supports 8 byte
-   DUNs for AES-256-XTS, even though the algorithm specification
-   says DUNs are 16 bytes long).
- - Introduce SB_INLINECRYPT to keep track of whether inline encryption
-   is enabled for a filesystem (instead of using an fscrypt_operation).
- - Expose keyslot manager declaration and embed it within ufs_hba to
-   clean up code.
- - Make blk-crypto preclude blk-integrity.
- - Some bug fixes
- - Introduce UFSHCD_QUIRK_BROKEN_CRYPTO for UFS drivers that don't
-   support inline encryption (yet)
-
-Changes v5 => v6:
- - Blk-crypto's kernel crypto API fallback is no longer restricted to
-   8-byte DUNs. It's also now separately configurable from blk-crypto, and
-   can be disabled entirely, while still allowing the kernel to use inline
-   encryption hardware. Further, struct bio_crypt_ctx takes up less space,
-   and no longer contains the information needed by the crypto API
-   fallback - the fallback allocates the required memory when necessary.
- - Blk-crypto now supports all file content encryption modes supported by
-   fscrypt.
- - Fixed bio merging logic in blk-merge.c
- - Fscrypt now supports inline encryption with the direct key policy, since
-   blk-crypto now has support for larger DUNs.
- - Keyslot manager now uses a hashtable to lookup which keyslot contains
-   any particular key (thanks Eric!)
- - Fscrypt support for inline encryption now handles filesystems with
-   multiple underlying block devices (thanks Eric!)
- - Numerous cleanups
-
-Changes v4 => v5:
- - The fscrypt patch has been separated into 2. The first adds support
-   for the IV_INO_LBLK_64 policy (which was called INLINE_CRYPT_OPTIMIZED
-   in past versions of this series). This policy is now purely an on disk
-   format, and doesn't dictate whether blk-crypto is used for file content
-   encryption or not. Instead, this is now decided based on the
-   "inlinecrypt" mount option.
- - Inline crypto key eviction is now handled by blk-crypto instead of
-   fscrypt.
- - More refactoring.
-
-Changes v3 => v4:
- - Fixed the issue with allocating crypto_skcipher in
-   blk_crypto_keyslot_program.
- - bio_crypto_alloc_ctx is now mempool backed.
- - In f2fs, a bio's bi_crypt_context is now set up when the
-   bio is allocated, rather than just before the bio is
-   submitted - this fixes bugs in certain cases, like when an
-   encrypted block is being moved without decryption.
- - Lots of refactoring and cleanup of blk-crypto - thanks Eric!
-
-Changes v2 => v3:
- - Overhauled keyslot manager's get keyslot logic and optimized LRU.
- - Block crypto en/decryption fallback now supports data unit sizes
-   that divide the bvec length (instead of requiring each bvec's length
-   to be the same as the data unit size).
- - fscrypt master key is now keyed additionally by super_block and
-   ci_ctfm != NULL.
- - all references of "hw encryption" are replaced by inline encryption.
- - address various other review comments from Eric.
-
-Changes v1 => v2:
- - Block layer and UFS changes are split into 3 patches each.
- - We now only have a ptr to a struct bio_crypt_ctx in struct bio, instead
-   of the struct itself.
- - struct bio_crypt_ctx no longer has flags.
- - blk-crypto now correctly handles the case when it fails to init
-   (because of insufficient memory), but kernel continues to boot.
- - ufshcd-crypto now works on big endian cpus.
- - Many cleanups.
-
-Eric Biggers (1):
-  ext4: add inline encryption support
-
-Satya Tangirala (11):
-  Documentation: Document the blk-crypto framework
-  block: Keyslot Manager for Inline Encryption
-  block: Inline encryption support for blk-mq
-  block: Make blk-integrity preclude hardware inline encryption
-  block: blk-crypto-fallback for Inline Encryption
-  scsi: ufs: UFS driver v2.1 spec crypto additions
-  scsi: ufs: UFS crypto API
-  scsi: ufs: Add inline encryption support to UFS
-  fs: introduce SB_INLINECRYPT
-  fscrypt: add inline encryption support
-  f2fs: add inline encryption support
-
- Documentation/admin-guide/ext4.rst        |   6 +
- Documentation/block/index.rst             |   1 +
- Documentation/block/inline-encryption.rst | 263 +++++++++
- Documentation/filesystems/f2fs.rst        |   7 +-
- block/Kconfig                             |  17 +
- block/Makefile                            |   2 +
- block/bio-integrity.c                     |   3 +
- block/bio.c                               |   6 +
- block/blk-core.c                          |  27 +-
- block/blk-crypto-fallback.c               | 657 ++++++++++++++++++++++
- block/blk-crypto-internal.h               | 201 +++++++
- block/blk-crypto.c                        | 404 +++++++++++++
- block/blk-integrity.c                     |   7 +
- block/blk-map.c                           |   1 +
- block/blk-merge.c                         |  11 +
- block/blk-mq.c                            |  13 +
- block/blk.h                               |   2 +
- block/bounce.c                            |   2 +
- block/keyslot-manager.c                   | 397 +++++++++++++
- drivers/md/dm.c                           |   3 +
- drivers/scsi/ufs/Kconfig                  |   9 +
- drivers/scsi/ufs/Makefile                 |   1 +
- drivers/scsi/ufs/ufshcd-crypto.c          | 226 ++++++++
- drivers/scsi/ufs/ufshcd-crypto.h          |  60 ++
- drivers/scsi/ufs/ufshcd.c                 |  46 +-
- drivers/scsi/ufs/ufshcd.h                 |  24 +
- drivers/scsi/ufs/ufshci.h                 |  67 ++-
- fs/buffer.c                               |   7 +-
- fs/crypto/Kconfig                         |   6 +
- fs/crypto/Makefile                        |   1 +
- fs/crypto/bio.c                           |  50 ++
- fs/crypto/crypto.c                        |   2 +-
- fs/crypto/fname.c                         |   4 +-
- fs/crypto/fscrypt_private.h               | 120 +++-
- fs/crypto/inline_crypt.c                  | 339 +++++++++++
- fs/crypto/keyring.c                       |   4 +-
- fs/crypto/keysetup.c                      |  92 ++-
- fs/crypto/keysetup_v1.c                   |  16 +-
- fs/ext4/inode.c                           |   4 +-
- fs/ext4/page-io.c                         |   6 +-
- fs/ext4/readpage.c                        |  11 +-
- fs/ext4/super.c                           |   9 +
- fs/f2fs/compress.c                        |   2 +-
- fs/f2fs/data.c                            |  68 ++-
- fs/f2fs/super.c                           |  32 ++
- fs/proc_namespace.c                       |   1 +
- include/linux/blk-crypto.h                | 123 ++++
- include/linux/blk_types.h                 |   6 +
- include/linux/blkdev.h                    |  41 ++
- include/linux/fs.h                        |   1 +
- include/linux/fscrypt.h                   |  82 +++
- include/linux/keyslot-manager.h           | 106 ++++
- 52 files changed, 3504 insertions(+), 92 deletions(-)
- create mode 100644 Documentation/block/inline-encryption.rst
- create mode 100644 block/blk-crypto-fallback.c
- create mode 100644 block/blk-crypto-internal.h
- create mode 100644 block/blk-crypto.c
- create mode 100644 block/keyslot-manager.c
- create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
- create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
- create mode 100644 fs/crypto/inline_crypt.c
- create mode 100644 include/linux/blk-crypto.h
- create mode 100644 include/linux/keyslot-manager.h
-
+diff --git a/Documentation/admin-guide/ext4.rst b/Documentation/admin-guide/ext4.rst
+index 9443fcef18760..ed997e3766781 100644
+--- a/Documentation/admin-guide/ext4.rst
++++ b/Documentation/admin-guide/ext4.rst
+@@ -395,6 +395,12 @@ When mounting an ext4 filesystem, the following option are accepted:
+         Documentation/filesystems/dax.txt.  Note that this option is
+         incompatible with data=journal.
+ 
++  inlinecrypt
++        Encrypt/decrypt the contents of encrypted files using the blk-crypto
++        framework rather than filesystem-layer encryption. This allows the use
++        of inline encryption hardware. The on-disk format is unaffected. For
++        more details, see Documentation/block/inline-encryption.rst.
++
+ Data Mode
+ =========
+ There are 3 different data modes:
+diff --git a/fs/buffer.c b/fs/buffer.c
+index a60f60396cfa0..33827a55b5952 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -328,9 +328,8 @@ static void decrypt_bh(struct work_struct *work)
+ static void end_buffer_async_read_io(struct buffer_head *bh, int uptodate)
+ {
+ 	/* Decrypt if needed */
+-	if (uptodate && IS_ENABLED(CONFIG_FS_ENCRYPTION) &&
+-	    IS_ENCRYPTED(bh->b_page->mapping->host) &&
+-	    S_ISREG(bh->b_page->mapping->host->i_mode)) {
++	if (uptodate &&
++	    fscrypt_inode_uses_fs_layer_crypto(bh->b_page->mapping->host)) {
+ 		struct decrypt_bh_ctx *ctx = kmalloc(sizeof(*ctx), GFP_ATOMIC);
+ 
+ 		if (ctx) {
+@@ -3047,6 +3046,8 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
+ 	 */
+ 	bio = bio_alloc(GFP_NOIO, 1);
+ 
++	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
++
+ 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+ 	bio_set_dev(bio, bh->b_bdev);
+ 	bio->bi_write_hint = write_hint;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 2a4aae6acdcb9..ac20b65766ece 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1088,7 +1088,7 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
+ 	}
+ 	if (unlikely(err)) {
+ 		page_zero_new_buffers(page, from, to);
+-	} else if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)) {
++	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+ 		for (i = 0; i < nr_wait; i++) {
+ 			int err2;
+ 
+@@ -3738,7 +3738,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+ 		/* Uhhuh. Read error. Complain and punt. */
+ 		if (!buffer_uptodate(bh))
+ 			goto unlock;
+-		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)) {
++		if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+ 			/* We expect the key to be set. */
+ 			BUG_ON(!fscrypt_has_encryption_key(inode));
+ 			err = fscrypt_decrypt_pagecache_blocks(page, blocksize,
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index de6fe969f7737..defd2e10dfd10 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -402,6 +402,7 @@ static void io_submit_init_bio(struct ext4_io_submit *io,
+ 	 * __GFP_DIRECT_RECLAIM is set, see comments for bio_alloc_bioset().
+ 	 */
+ 	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
++	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+ 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+ 	bio_set_dev(bio, bh->b_bdev);
+ 	bio->bi_end_io = ext4_end_bio;
+@@ -418,7 +419,8 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
+ {
+ 	int ret;
+ 
+-	if (io->io_bio && bh->b_blocknr != io->io_next_block) {
++	if (io->io_bio && (bh->b_blocknr != io->io_next_block ||
++			   !fscrypt_mergeable_bio_bh(io->io_bio, bh))) {
+ submit_and_retry:
+ 		ext4_io_submit(io);
+ 	}
+@@ -506,7 +508,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
+ 	 * can't happen in the common case of blocksize == PAGE_SIZE.
+ 	 */
+-	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
++	if (fscrypt_inode_uses_fs_layer_crypto(inode) && nr_to_submit) {
+ 		gfp_t gfp_flags = GFP_NOFS;
+ 		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
+ 
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index c1769afbf7995..68eac0aeffad3 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -195,7 +195,7 @@ static void ext4_set_bio_post_read_ctx(struct bio *bio,
+ {
+ 	unsigned int post_read_steps = 0;
+ 
+-	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
++	if (fscrypt_inode_uses_fs_layer_crypto(inode))
+ 		post_read_steps |= 1 << STEP_DECRYPT;
+ 
+ 	if (ext4_need_verity(inode, first_idx))
+@@ -232,6 +232,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 	const unsigned blkbits = inode->i_blkbits;
+ 	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
+ 	const unsigned blocksize = 1 << blkbits;
++	sector_t next_block;
+ 	sector_t block_in_file;
+ 	sector_t last_block;
+ 	sector_t last_block_in_file;
+@@ -264,7 +265,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 		if (page_has_buffers(page))
+ 			goto confused;
+ 
+-		block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
++		block_in_file = next_block =
++			(sector_t)page->index << (PAGE_SHIFT - blkbits);
+ 		last_block = block_in_file + nr_pages * blocks_per_page;
+ 		last_block_in_file = (ext4_readpage_limit(inode) +
+ 				      blocksize - 1) >> blkbits;
+@@ -364,7 +366,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 		 * This page will go to BIO.  Do we need to send this
+ 		 * BIO off first?
+ 		 */
+-		if (bio && (last_block_in_bio != blocks[0] - 1)) {
++		if (bio && (last_block_in_bio != blocks[0] - 1 ||
++			    !fscrypt_mergeable_bio(bio, inode, next_block))) {
+ 		submit_and_realloc:
+ 			submit_bio(bio);
+ 			bio = NULL;
+@@ -376,6 +379,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 			 */
+ 			bio = bio_alloc(GFP_KERNEL,
+ 				min_t(int, nr_pages, BIO_MAX_PAGES));
++			fscrypt_set_bio_crypt_ctx(bio, inode, next_block,
++						  GFP_KERNEL);
+ 			ext4_set_bio_post_read_ctx(bio, inode, page->index);
+ 			bio_set_dev(bio, bdev);
+ 			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index bf5fcb477f667..fb4a293cac0c3 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1509,6 +1509,7 @@ enum {
+ 	Opt_journal_path, Opt_journal_checksum, Opt_journal_async_commit,
+ 	Opt_abort, Opt_data_journal, Opt_data_ordered, Opt_data_writeback,
+ 	Opt_data_err_abort, Opt_data_err_ignore, Opt_test_dummy_encryption,
++	Opt_inlinecrypt,
+ 	Opt_usrjquota, Opt_grpjquota, Opt_offusrjquota, Opt_offgrpjquota,
+ 	Opt_jqfmt_vfsold, Opt_jqfmt_vfsv0, Opt_jqfmt_vfsv1, Opt_quota,
+ 	Opt_noquota, Opt_barrier, Opt_nobarrier, Opt_err,
+@@ -1606,6 +1607,7 @@ static const match_table_t tokens = {
+ 	{Opt_noinit_itable, "noinit_itable"},
+ 	{Opt_max_dir_size_kb, "max_dir_size_kb=%u"},
+ 	{Opt_test_dummy_encryption, "test_dummy_encryption"},
++	{Opt_inlinecrypt, "inlinecrypt"},
+ 	{Opt_nombcache, "nombcache"},
+ 	{Opt_nombcache, "no_mbcache"},	/* for backward compatibility */
+ 	{Opt_removed, "check=none"},	/* mount option from ext2/3 */
+@@ -1893,6 +1895,13 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
+ 	case Opt_nolazytime:
+ 		sb->s_flags &= ~SB_LAZYTIME;
+ 		return 1;
++	case Opt_inlinecrypt:
++#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
++		sb->s_flags |= SB_INLINECRYPT;
++#else
++		ext4_msg(sb, KERN_ERR, "inline encryption not supported");
++#endif
++		return 1;
+ 	}
+ 
+ 	for (m = ext4_mount_opts; m->token != Opt_err; m++)
 -- 
 2.26.2.645.ge9eca65c58-goog
 
