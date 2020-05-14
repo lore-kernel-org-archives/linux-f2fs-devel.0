@@ -5,21 +5,21 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A7BC433EC
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 May 2020 00:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 161BDC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 14 May 2020 00:38:04 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2372A20727;
-	Thu, 14 May 2020 00:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1620E20659;
+	Thu, 14 May 2020 00:38:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="FJp5dhgU";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Oiktifu/";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="AxAH/kxT";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="FSAR9aVs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2372A20727
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="InnkzKsr";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ggoGhyV7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VmYBTlOx";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="ZNOl0E65"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1620E20659
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,28 +28,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=unO1e2qy3kE1vJjNd7tr+hPN7VEFc+uOSeT8LnhmSW8=; b=FJp5dhgUXmj85E7LvBU396K6a
-	FrhEOsRn4dVy/S4hvVzi64CM/av+kunmJuV7mCHw5cd0nwOkfY9HZLhv5yad6REiyxULx3R1d+H0R
-	KKq4eVnzvl6KycKvwhKFaILK2x+JzTCN/Y3tRv4WmaiQDvt8MWWX258pxMt4l8fDarQCM=;
+	 bh=6QqKsRMUf3n1rSzvqAMcdBO7b9CGlfmc8OfocGGgFPM=; b=InnkzKsr0Nbv5JL0IgkldZN8c
+	ISvzkAFOhYIF8iVKi/oP4sGzXdklShPZG4dRHne/MbC42yiQHkvvfSn9K62xI3Gd9k7L6fjGFiLy4
+	8+TM90bpD9S2RGsz9ZyFJobVJoefrUg686gRpoOagwslkZkKo/f3/AX3DO15dvM9bhuQo=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jZ1sy-0008Ob-Jk; Thu, 14 May 2020 00:38:04 +0000
+	id 1jZ1sx-0008OA-H2; Thu, 14 May 2020 00:38:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <33ZK8XgYKAPAkSlqSlYggYdW.Uge@flex--satyat.bounces.google.com>)
- id 1jZ1sx-0008O2-F4
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 May 2020 00:38:03 +0000
+ (envelope-from <32JK8XgYKAOsfNglNgTbbTYR.PbZ@flex--satyat.bounces.google.com>)
+ id 1jZ1ss-0008MQ-BQ
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 May 2020 00:37:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=55QkT4XKq8mxRSoFTXYC1SQTqi8PeYRTuEggeVVcKMg=; b=Oiktifu/vOGoUjkxJI1cWCDqO
- /8Yaqgy+1EKU2IKEGM7ztBbKF9bwC/L3dtAR5pE0Ukgm2rSvIdfMWtyH7UT1YhrLcVot6F5R/TEKJ
- GK0KU90oSPvtSCEGyfcL7/y7zwGw79DZ23yNFj7tIkKDkDKxAO+5vDgEQk37jVjEgAlaY=;
+ bh=tP7X2K+VyDAYfBXa3yweYdeAYjBY67BV86eB2S2fDwg=; b=ggoGhyV7JNtu1K4m9dDhi75aK
+ xhrGDs+2FsqKunPr31CxQT3O2WRH0GTPSmWY9i4N9aZ/mF9oZgUINhSUO8Iud6PXtf+hyN6cNgPo/
+ JmS9PB6d9F480IZyWDUMl2Ct/SSwz4WyVJ5+yMfKn81EsVvtk4akazFVigw6QzJlqnr8M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -57,53 +57,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=55QkT4XKq8mxRSoFTXYC1SQTqi8PeYRTuEggeVVcKMg=; b=AxAH/kxTk3vW33doXBEFvNF+O1
- +3D5BFdpIuDN/2TsrTYphZUI8IPV+K2PAerEFijod3oy0LQx39QEd4MDL8l5gvXsYZmFeXN0W84nx
- 039OwKdRbs5azI7rcsXHTeQfqOjFj9aTGK6lLpSMuIJ/88Dk+XpQsAlKd2CLD0K/15ak=;
+ bh=tP7X2K+VyDAYfBXa3yweYdeAYjBY67BV86eB2S2fDwg=; b=VmYBTlOxHUMHnFLcXUGwOG7Ihp
+ ItFBsXsPOzRq9SOwbOF2EkvGPYMIS8UQS0MQ+IOmc9EgYbW7mblus0pWWNCe9854Y97GBXNMuZJn0
+ 9SZBGnD+L9hxZstqrQiHrv/L0e0LRJsLFZ7/G61A7mMbDaKVVWxW2yCEaxvcgo9xMlOQ=;
 Received: from mail-yb1-f201.google.com ([209.85.219.201])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jZ1sv-006BiL-Uv
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 May 2020 00:38:03 +0000
-Received: by mail-yb1-f201.google.com with SMTP id k15so1775862ybt.4
+ id 1jZ1sr-006Bhs-2p
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 14 May 2020 00:37:58 +0000
+Received: by mail-yb1-f201.google.com with SMTP id h129so1737454ybc.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 13 May 2020 17:38:01 -0700 (PDT)
+ Wed, 13 May 2020 17:37:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=55QkT4XKq8mxRSoFTXYC1SQTqi8PeYRTuEggeVVcKMg=;
- b=FSAR9aVsI4Fqie7/PXkkDI8Y5GUjTkPwa4yPhNhy081BetakXjp2/T+HFhP7i1+jje
- E+77VaVI8DExiI50gAzT+1sVBifCQAsD4Iuj7Vx4k3eLChOi3L0EEOkG/ctWNZDFmosz
- dincGlPfrOyQ2hvnuusxDe81Gvr09ObdELXbyZRT59AQP1askJ5J0y93drtA7pgYfPqK
- 58BqOlAMvpPVvsB380SSrFExwEf+FXA0+3cxjhFZkS/tyewv7/tymBXeCjcfXEdWaawb
- MXslNYJD3F0lPpZKrL4FBdhG80RKUgs4aLPHmixHtsc75/nDy6pOADX/NqjUV9XdyGN3
- BtOw==
+ :cc; bh=tP7X2K+VyDAYfBXa3yweYdeAYjBY67BV86eB2S2fDwg=;
+ b=ZNOl0E65xehUzjcF8BuVGJxaPwvFFbLCph7a2DNmRNA7rcoxjbrSdPbS9qhG4GvaqL
+ dyWg3HpUmaFrzpk0houD3D9yslgSC8V0kN+HO0TRvf0MJeqCOkff0MEhzjrvebRM70VW
+ EBT+NUSN90cbk5rNT/13OndGXvuwthTEfrh7Ee7vRbpKQCUiIw/2RKudkqHlNlCjJoDY
+ ZCq7lbqCUYeIfX3PEUJhfLHk0eUBHZrwpJNYHX3p/292L2W5/P8vyOP4POhcpwmDJy7B
+ EhPEQ77+ILIn50vdYJQUFTc6+haxETplUizGy9mF/9rN0HBpPrZvLk6fug6nnUCdfHq/
+ RVvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=55QkT4XKq8mxRSoFTXYC1SQTqi8PeYRTuEggeVVcKMg=;
- b=lveVydywbZWmUdTQleQyncw4LjtHsxMq811HP+0LzQlxU3M2CBhlpJnab8g8csxbXc
- XoXHG+Ml/Noovf1dyAak4lED+CgVqn6LV5zi7xOZI7qfTNqnKUKwDfAZxnkIzcw09xFr
- RKjBlu3gyTFvbmwR2TRz1mLwIbjCMB4XqM0J2uaS4K0XwnEX8tcPBdEpHWYyohSUgzfP
- hAiCa9wspgMAiKBSLS6ATSz0xCG4JDecGYZs854FChzee+NdPzetdGugml28wc7UKr0q
- UIFj87M18LU+pA2gSCX2/+bQLXuDHTaw9up5N9dpUXeH5ecvcCE+Ndd1jyRQUKBVAtrJ
- hZaQ==
-X-Gm-Message-State: AOAM5328Qd9YGhyc1KR347InE4dMBijNJaV+4Mm2K/XwveIjJa5IYdCL
- aOWhiv8TzMMtzO4qIs6YZUt3MWgDH40=
-X-Google-Smtp-Source: ABdhPJzYcXxCqDOzC/K2ZR7nIKEHI38RLh83qXdlxtWE7t4EU9eemainBQhkiuOi2LGdK5129XlL1c7RPiI=
-X-Received: by 2002:a25:3044:: with SMTP id w65mr2908668ybw.207.1589416669011; 
- Wed, 13 May 2020 17:37:49 -0700 (PDT)
-Date: Thu, 14 May 2020 00:37:24 +0000
+ bh=tP7X2K+VyDAYfBXa3yweYdeAYjBY67BV86eB2S2fDwg=;
+ b=gd7yWw4URZOWW2E8C9hoRYlFaCauoWFN1F42pfB9FUACIZa58WN8eOG4UUEfrJi3GW
+ ls1Wedb/ONJSvWME4ZMfdPnmGGWdw+nzDZvgaQEUp4dfnTMSo6GVpfE6h9h37dvNsPym
+ lZyJ/6X79OGNUqYWMTFj5PulYgyyK0dIoBzQrMz+vR+aiOkKJjeVG3nGnkMEILPF30bI
+ AwmU/lVGPOymkHKC4OMA/XfmQXsP5tPJ2JMUEt8wP0+uhEeAUCjzdU0kF7aiLEZhLoQ9
+ wMmP2snqsnA/R6kNGU/94/2iE9nALq7qlWvo8rt1l8KU53kPBI1m+EjavxxW5goRrEtO
+ BTjA==
+X-Gm-Message-State: AOAM5315NgAqFw4MjU24DCDNpUOb7y8Mx8smXL93bxIJtyCnBrxa1DOX
+ kFy643AlwBP7P2hccfYkZklaiT2C4Pg=
+X-Google-Smtp-Source: ABdhPJxlbN9uREv2GVKQNqifFP3MUgVOlk1GXMOjiZmKrlFiVGpcUOMKLVR8tqV+dVMbOWNUlrldQlIdXLM=
+X-Received: by 2002:a05:6902:703:: with SMTP id
+ k3mr3211783ybt.61.1589416664181; 
+ Wed, 13 May 2020 17:37:44 -0700 (PDT)
+Date: Thu, 14 May 2020 00:37:21 +0000
 In-Reply-To: <20200514003727.69001-1-satyat@google.com>
-Message-Id: <20200514003727.69001-10-satyat@google.com>
+Message-Id: <20200514003727.69001-7-satyat@google.com>
 Mime-Version: 1.0
 References: <20200514003727.69001-1-satyat@google.com>
 X-Mailer: git-send-email 2.26.2.645.ge9eca65c58-goog
 To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, 
  linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-X-Headers-End: 1jZ1sv-006BiL-Uv
-Subject: [f2fs-dev] [PATCH v13 09/12] fs: introduce SB_INLINECRYPT
+X-Headers-End: 1jZ1sr-006Bhs-2p
+Subject: [f2fs-dev] [PATCH v13 06/12] scsi: ufs: UFS driver v2.1 spec crypto
+ additions
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,47 +123,169 @@ Reply-To: Satya Tangirala <satyat@google.com>
 Cc: Kuohong Wang <kuohong.wang@mediatek.com>,
  Satya Tangirala <satyat@google.com>,
  Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
- Kim Boojin <boojin.kim@samsung.com>
+ Eric Biggers <ebiggers@google.com>, Kim Boojin <boojin.kim@samsung.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Introduce SB_INLINECRYPT, which is set by filesystems that wish to use
-blk-crypto for file content en/decryption. This flag maps to the
-'-o inlinecrypt' mount option which multiple filesystems will implement,
-and code in fs/crypto/ needs to be able to check for this mount option
-in a filesystem-independent way.
+Add the crypto registers and structs defined in v2.1 of the JEDEC UFSHCI
+specification in preparation to add support for inline encryption to
+UFS.
 
 Signed-off-by: Satya Tangirala <satyat@google.com>
+Reviewed-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/proc_namespace.c | 1 +
- include/linux/fs.h  | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/scsi/ufs/ufshcd.c |  2 ++
+ drivers/scsi/ufs/ufshcd.h |  6 ++++
+ drivers/scsi/ufs/ufshci.h | 67 +++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 73 insertions(+), 2 deletions(-)
 
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index 273ee82d8aa97..8bf195d3bda69 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -49,6 +49,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
- 		{ SB_DIRSYNC, ",dirsync" },
- 		{ SB_MANDLOCK, ",mand" },
- 		{ SB_LAZYTIME, ",lazytime" },
-+		{ SB_INLINECRYPT, ",inlinecrypt" },
- 		{ 0, NULL }
- 	};
- 	const struct proc_fs_info *fs_infop;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d3ebb49189df2..da6551c8d96fb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1376,6 +1376,7 @@ extern int send_sigurg(struct fown_struct *fown);
- #define SB_NODIRATIME	2048	/* Do not update directory access times */
- #define SB_SILENT	32768
- #define SB_POSIXACL	(1<<16)	/* VFS does not apply the umask */
-+#define SB_INLINECRYPT	(1<<17)	/* Use blk-crypto for encrypted files */
- #define SB_KERNMOUNT	(1<<22) /* this is a kern_mount call */
- #define SB_I_VERSION	(1<<23) /* Update inode I_version field */
- #define SB_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 698e8d20b4bac..2435c600cb2d9 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -4767,6 +4767,8 @@ ufshcd_transfer_rsp_status(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
+ 	case OCS_MISMATCH_RESP_UPIU_SIZE:
+ 	case OCS_PEER_COMM_FAILURE:
+ 	case OCS_FATAL_ERROR:
++	case OCS_INVALID_CRYPTO_CONFIG:
++	case OCS_GENERAL_CRYPTO_ERROR:
+ 	default:
+ 		result |= DID_ERROR << 16;
+ 		dev_err(hba->dev,
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 6ffc08ad85f63..835b9a844aa21 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -555,6 +555,12 @@ enum ufshcd_caps {
+ 	 * for userspace to control the power management.
+ 	 */
+ 	UFSHCD_CAP_RPM_AUTOSUSPEND			= 1 << 6,
++
++	/*
++	 * This capability allows the host controller driver to use the
++	 * inline crypto engine, if it is present
++	 */
++	UFSHCD_CAP_CRYPTO				= 1 << 7,
+ };
+ 
+ /**
+diff --git a/drivers/scsi/ufs/ufshci.h b/drivers/scsi/ufs/ufshci.h
+index c2961d37cc1cf..c0651fe6dbbc6 100644
+--- a/drivers/scsi/ufs/ufshci.h
++++ b/drivers/scsi/ufs/ufshci.h
+@@ -90,6 +90,7 @@ enum {
+ 	MASK_64_ADDRESSING_SUPPORT		= 0x01000000,
+ 	MASK_OUT_OF_ORDER_DATA_DELIVERY_SUPPORT	= 0x02000000,
+ 	MASK_UIC_DME_TEST_MODE_SUPPORT		= 0x04000000,
++	MASK_CRYPTO_SUPPORT			= 0x10000000,
+ };
+ 
+ #define UFS_MASK(mask, offset)		((mask) << (offset))
+@@ -143,6 +144,7 @@ enum {
+ #define DEVICE_FATAL_ERROR			0x800
+ #define CONTROLLER_FATAL_ERROR			0x10000
+ #define SYSTEM_BUS_FATAL_ERROR			0x20000
++#define CRYPTO_ENGINE_FATAL_ERROR		0x40000
+ 
+ #define UFSHCD_UIC_HIBERN8_MASK	(UIC_HIBERNATE_ENTER |\
+ 				UIC_HIBERNATE_EXIT)
+@@ -155,11 +157,13 @@ enum {
+ #define UFSHCD_ERROR_MASK	(UIC_ERROR |\
+ 				DEVICE_FATAL_ERROR |\
+ 				CONTROLLER_FATAL_ERROR |\
+-				SYSTEM_BUS_FATAL_ERROR)
++				SYSTEM_BUS_FATAL_ERROR |\
++				CRYPTO_ENGINE_FATAL_ERROR)
+ 
+ #define INT_FATAL_ERRORS	(DEVICE_FATAL_ERROR |\
+ 				CONTROLLER_FATAL_ERROR |\
+-				SYSTEM_BUS_FATAL_ERROR)
++				SYSTEM_BUS_FATAL_ERROR |\
++				CRYPTO_ENGINE_FATAL_ERROR)
+ 
+ /* HCS - Host Controller Status 30h */
+ #define DEVICE_PRESENT				0x1
+@@ -318,6 +322,61 @@ enum {
+ 	INTERRUPT_MASK_ALL_VER_21	= 0x71FFF,
+ };
+ 
++/* CCAP - Crypto Capability 100h */
++union ufs_crypto_capabilities {
++	__le32 reg_val;
++	struct {
++		u8 num_crypto_cap;
++		u8 config_count;
++		u8 reserved;
++		u8 config_array_ptr;
++	};
++};
++
++enum ufs_crypto_key_size {
++	UFS_CRYPTO_KEY_SIZE_INVALID	= 0x0,
++	UFS_CRYPTO_KEY_SIZE_128		= 0x1,
++	UFS_CRYPTO_KEY_SIZE_192		= 0x2,
++	UFS_CRYPTO_KEY_SIZE_256		= 0x3,
++	UFS_CRYPTO_KEY_SIZE_512		= 0x4,
++};
++
++enum ufs_crypto_alg {
++	UFS_CRYPTO_ALG_AES_XTS			= 0x0,
++	UFS_CRYPTO_ALG_BITLOCKER_AES_CBC	= 0x1,
++	UFS_CRYPTO_ALG_AES_ECB			= 0x2,
++	UFS_CRYPTO_ALG_ESSIV_AES_CBC		= 0x3,
++};
++
++/* x-CRYPTOCAP - Crypto Capability X */
++union ufs_crypto_cap_entry {
++	__le32 reg_val;
++	struct {
++		u8 algorithm_id;
++		u8 sdus_mask; /* Supported data unit size mask */
++		u8 key_size;
++		u8 reserved;
++	};
++};
++
++#define UFS_CRYPTO_CONFIGURATION_ENABLE (1 << 7)
++#define UFS_CRYPTO_KEY_MAX_SIZE 64
++/* x-CRYPTOCFG - Crypto Configuration X */
++union ufs_crypto_cfg_entry {
++	__le32 reg_val[32];
++	struct {
++		u8 crypto_key[UFS_CRYPTO_KEY_MAX_SIZE];
++		u8 data_unit_size;
++		u8 crypto_cap_idx;
++		u8 reserved_1;
++		u8 config_enable;
++		u8 reserved_multi_host;
++		u8 reserved_2;
++		u8 vsb[2];
++		u8 reserved_3[56];
++	};
++};
++
+ /*
+  * Request Descriptor Definitions
+  */
+@@ -339,6 +398,7 @@ enum {
+ 	UTP_NATIVE_UFS_COMMAND		= 0x10000000,
+ 	UTP_DEVICE_MANAGEMENT_FUNCTION	= 0x20000000,
+ 	UTP_REQ_DESC_INT_CMD		= 0x01000000,
++	UTP_REQ_DESC_CRYPTO_ENABLE_CMD	= 0x00800000,
+ };
+ 
+ /* UTP Transfer Request Data Direction (DD) */
+@@ -358,6 +418,9 @@ enum {
+ 	OCS_PEER_COMM_FAILURE		= 0x5,
+ 	OCS_ABORTED			= 0x6,
+ 	OCS_FATAL_ERROR			= 0x7,
++	OCS_DEVICE_FATAL_ERROR		= 0x8,
++	OCS_INVALID_CRYPTO_CONFIG	= 0x9,
++	OCS_GENERAL_CRYPTO_ERROR	= 0xA,
+ 	OCS_INVALID_COMMAND_STATUS	= 0x0F,
+ 	MASK_OCS			= 0x0F,
+ };
 -- 
 2.26.2.645.ge9eca65c58-goog
 
