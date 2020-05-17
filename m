@@ -1,79 +1,102 @@
-Return-Path: <SRS0=Ub2H=66=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=i8F+=67=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091DCC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 16 May 2020 01:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF05C433E1
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 17 May 2020 21:47:43 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CAD9620671;
-	Sat, 16 May 2020 01:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 73838207F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 17 May 2020 21:47:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bQPg+EGJ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cEdU8lU5";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zzTXUDS0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAD9620671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bQsaGEIN";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="So7C6aNV";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cloud.ionos.com header.i=@cloud.ionos.com header.b="b2OunlJb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73838207F5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cloud.ionos.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jZlFf-0006aV-Ks; Sat, 16 May 2020 01:04:31 +0000
+	id 1jaR8H-0000yD-TP; Sun, 17 May 2020 21:47:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1jZlFe-0006aI-1g
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 16 May 2020 01:04:30 +0000
+ (envelope-from <guoqing.jiang@cloud.ionos.com>) id 1jaR8C-0000xX-IJ
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 May 2020 21:47:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:
+ To:From:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CpOoxys/ZN+Cpt1dwiPQ375eB2mOVKnFdQkSJKM/VYU=; b=bQPg+EGJuu/ASNRKobERQ93nsg
- 9tw0DkAQIKvgEE5Kyhq95xJZnXlL8l3RwfNYW3cNQ7SKUW5ND7+i2C8PVLac/ECap4OljhQL+nZL2
- 53vpZrqIIJvJbyk/yrJRm+uEnRg5WHCfUKWXQI1fztkfTe17M7oCY/fcFI6qgZxE6HR8=;
+ bh=OFT0iCFHjK0nh8uePEVriaTeaCB6BcpTAMIRJKLJOK8=; b=bQsaGEINX29nSH23ZrNdXshbU+
+ f1gJZa9zxxKQGxUaw/GkL1LqM1FcdSE4MZvlx4mfInDR7uVIepcQsGlXug6/b/WsN05axdg7Vgl/b
+ DjzlWDAxxMW04Y+e6HagP+dZRH7w28GnqDbypO4NJPk5FftkdtnC392vHtt9z++sYquo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=CpOoxys/ZN+Cpt1dwiPQ375eB2mOVKnFdQkSJKM/VYU=; b=c
- EdU8lU5YSMugQOyNzpVvsq+wlnhXgfUD+6K5+t/IPboHx5zH21VxNN9tF7i62VrVn3Msf4dSKZ0ib
- TvUGB01dVSUllFmPH0ChVQuGgHtu1tPsrU6VP004qbouxRMqEAxKUM2QFzZvNQ0xxrF8giCUvuMR2
- WWGoJDTMhEqPHH3Q=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jZlFY-00CUHq-W7
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 16 May 2020 01:04:30 +0000
-Received: from localhost (unknown [104.132.1.66])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 810FA20671;
- Sat, 16 May 2020 01:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1589591059;
- bh=YxpuI17mMTnCsgPgr4+idWQJpE0CThxM8O7KvpRZj9o=;
- h=From:To:Cc:Subject:Date:From;
- b=zzTXUDS0VoiW9kPvGtDXz+emZ5aDm3SUE+Jo9Q9VFtrWok1oDDY6ZtOsTliuYBKcG
- +FiZZYoV/lqQiq3c+M/Q/PjLiHTxmMtfSEP9q/eQxFdgtoP5X98fxQorwIFn1b6UAx
- OsMpjAcVdB8qovjQHw8TYuJZoWYm8G2SydZIYRS8=
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Fri, 15 May 2020 18:04:16 -0700
-Message-Id: <20200516010416.116281-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.26.2.761.g0e0b3e54be-goog
-MIME-Version: 1.0
-X-Headers-End: 1jZlFY-00CUHq-W7
-Subject: [f2fs-dev] [PATCH] f2fs: fix checkpoint=disable:%u%%
+ h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To
+ :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=OFT0iCFHjK0nh8uePEVriaTeaCB6BcpTAMIRJKLJOK8=; b=So7C6aNVyV/UdKGci/fF0Yxnv2
+ 6ErwE/P81t5ifoElWQ98AUj94W2O5J2a8t+rKVYfnIP1u1n9nHGyS7yjWLB7X8i1BTA2UY049Upcj
+ tE6c1n5mT9NU21PaByMVHNyZ20hb6q0Vo+UaBFpUslnBL2WYHbYCtPsDc31ms+8gO2A0=;
+Received: from mail-wr1-f67.google.com ([209.85.221.67])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1jaR8A-00ClRi-Jj
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 17 May 2020 21:47:36 +0000
+Received: by mail-wr1-f67.google.com with SMTP id l11so9646719wru.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 17 May 2020 14:47:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cloud.ionos.com; s=google;
+ h=from:to:cc:subject:date:message-id:in-reply-to:references;
+ bh=OFT0iCFHjK0nh8uePEVriaTeaCB6BcpTAMIRJKLJOK8=;
+ b=b2OunlJb1CqG4qMvf91CNV+d8tunFadtVS8JCoT8WqCC9BY9AeF54XVDVBqhqjfXF/
+ 8OPXXY8BQ3dm7EE/i+F4/9JmQtxgkNDL5deNYT17giGKWgdRYlaG3i6daLy5HIsw/PfM
+ 20vdfTALNGIdNIiamhNH0OdiJmHmrzuDPCcl2Q1mjWwTDMJktm4aF7kdIxdy0DI3mayq
+ 0K35ZpmTBYtxEJOs63UQgGJfbmZNvtcvtVvm076xjtcI2succM5Q8iou6S3qSQ3C5Vl0
+ FjJL13aUg0ZvNStsIAe4mAz1kVDyZ14fOCMqUqqszcwIVyNJAwF8wSko6zY+IN9q/m4/
+ GWhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+ :references;
+ bh=OFT0iCFHjK0nh8uePEVriaTeaCB6BcpTAMIRJKLJOK8=;
+ b=M8xtYZG5nVp9ez2MEFXCt64GZ3mA6RC3PU3LjRIEIJRe2/g9gGIOwi4hDls8dpYT37
+ WQLi63iUhzLycsgQSAhgXrOeaC1b0ijfM+hAmqsvBPJOXDYQS0N/AYVTuaUgE6VBApDo
+ mqnyAtJbUNh7gj6bS69Fn8JDr/twSB3v62+OF60uU0TzvUMRNgkxMtAtWarJWb1HH6pm
+ sbDhqEwhiPSv0tvfw6VYDJbJcT5hzu0ChqdnOT9x8xLCqi+7FVJ6mXXbSe1bBbfFqdXP
+ BtX6vzXidykJ+iiXtzWffhQAXyXwTjalqXE7E/uYsjPduWS6NztPPSUJ1J+PaY40IqO+
+ etUg==
+X-Gm-Message-State: AOAM532fIKS7If3Hv/+fb3MMek4bcg81p7Qf2qS/3w+iWVcqUGk2NfEK
+ E1zXPgtFPpnLNoDsEsYkA3U3eQ==
+X-Google-Smtp-Source: ABdhPJzk2oag1WV/Akj3+q9BtXJaV2V1BQcaFlIJ4suSs38gE/ChmFbqJosJ60jwzmp0vo3buD/jog==
+X-Received: by 2002:adf:ea90:: with SMTP id s16mr16142123wrm.19.1589752048332; 
+ Sun, 17 May 2020 14:47:28 -0700 (PDT)
+Received: from ls00508.pb.local ([2001:1438:4010:2540:bc3e:92a1:7010:2763])
+ by smtp.gmail.com with ESMTPSA id v126sm14441244wmb.4.2020.05.17.14.47.27
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 17 May 2020 14:47:27 -0700 (PDT)
+From: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+To: akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk
+Date: Sun, 17 May 2020 23:47:13 +0200
+Message-Id: <20200517214718.468-6-guoqing.jiang@cloud.ionos.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200517214718.468-1-guoqing.jiang@cloud.ionos.com>
+References: <20200517214718.468-1-guoqing.jiang@cloud.ionos.com>
+X-Headers-End: 1jaR8A-00ClRi-Jj
+Subject: [f2fs-dev] [PATCH 05/10] f2fs: use attach/detach_page_private
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,91 +108,63 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>, david@fromorbit.com,
+ linux-kernel@vger.kernel.org, willy@infradead.org,
+ linux-f2fs-devel@lists.sourceforge.net, hch@infradead.org,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-When parsing the mount option, we don't have sbi->user_block_count.
-Should do it after getting it.
+Since the new pair function is introduced, we can call them to clean the
+code in f2fs.h.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Acked-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
 ---
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/super.c | 25 +++++++++++++++++++------
- 2 files changed, 20 insertions(+), 6 deletions(-)
+No change since RFC V3.
+
+RFC V2 -> RFC V3
+1. rename clear_page_private to detach_page_private.
+
+RFC -> RFC V2
+1. change the name of new functions to attach/clear_page_private.
+
+ fs/f2fs/f2fs.h | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 51863e4f5d4e0..fb180020e175c 100644
+index 3574629b75ba..a4d4a947f603 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -139,6 +139,7 @@ struct f2fs_mount_info {
- 	int fs_mode;			/* fs mode: LFS or ADAPTIVE */
- 	int bggc_mode;			/* bggc mode: off, on or sync */
- 	bool test_dummy_encryption;	/* test dummy encryption */
-+	block_t unusable_cap_perc;	/* percentage for cap */
- 	block_t unusable_cap;		/* Amount of space allowed to be
- 					 * unusable when disabling checkpoint
- 					 */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 441eaaf9739c4..a71da699cb2d5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -284,6 +284,22 @@ static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
- 					   F2FS_OPTION(sbi).s_resgid));
+@@ -3128,19 +3128,12 @@ static inline void f2fs_set_page_private(struct page *page,
+ 	if (PagePrivate(page))
+ 		return;
+ 
+-	get_page(page);
+-	SetPagePrivate(page);
+-	set_page_private(page, data);
++	attach_page_private(page, (void *)data);
  }
  
-+static inline void adjust_unusable_cap_perc(struct f2fs_sb_info *sbi)
-+{
-+	if (!F2FS_OPTION(sbi).unusable_cap_perc)
-+		return;
-+
-+	if (F2FS_OPTION(sbi).unusable_cap_perc == 100)
-+		F2FS_OPTION(sbi).unusable_cap = sbi->user_block_count;
-+	else
-+		F2FS_OPTION(sbi).unusable_cap = (sbi->user_block_count / 100) *
-+					F2FS_OPTION(sbi).unusable_cap_perc;
-+
-+	f2fs_info(sbi, "Adjust unusable cap for checkpoint=disable = %u / %u%%",
-+			F2FS_OPTION(sbi).unusable_cap,
-+			F2FS_OPTION(sbi).unusable_cap_perc);
-+}
-+
- static void init_once(void *foo)
+ static inline void f2fs_clear_page_private(struct page *page)
  {
- 	struct f2fs_inode_info *fi = (struct f2fs_inode_info *) foo;
-@@ -785,12 +801,7 @@ static int parse_options(struct super_block *sb, char *options)
- 				return -EINVAL;
- 			if (arg < 0 || arg > 100)
- 				return -EINVAL;
--			if (arg == 100)
--				F2FS_OPTION(sbi).unusable_cap =
--					sbi->user_block_count;
--			else
--				F2FS_OPTION(sbi).unusable_cap =
--					(sbi->user_block_count / 100) *	arg;
-+			F2FS_OPTION(sbi).unusable_cap_perc = arg;
- 			set_opt(sbi, DISABLE_CHECKPOINT);
- 			break;
- 		case Opt_checkpoint_disable_cap:
-@@ -1840,6 +1851,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+-	if (!PagePrivate(page))
+-		return;
+-
+-	set_page_private(page, 0);
+-	ClearPagePrivate(page);
+-	f2fs_put_page(page, 0);
++	detach_page_private(page);
+ }
  
- 	limit_reserve_root(sbi);
-+	adjust_unusable_cap_perc(sbi);
- 	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
- 	return 0;
- restore_gc:
-@@ -3516,6 +3528,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	sbi->reserved_blocks = 0;
- 	sbi->current_reserved_blocks = 0;
- 	limit_reserve_root(sbi);
-+	adjust_unusable_cap_perc(sbi);
- 
- 	for (i = 0; i < NR_INODE_TYPE; i++) {
- 		INIT_LIST_HEAD(&sbi->inode_list[i]);
+ /*
 -- 
-2.26.2.761.g0e0b3e54be-goog
+2.17.1
 
 
 
