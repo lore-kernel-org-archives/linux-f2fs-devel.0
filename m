@@ -2,83 +2,108 @@ Return-Path: <SRS0=qDwu=7D=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A065C433E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 May 2020 10:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6781C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 May 2020 12:25:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D1DB7206F6
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 May 2020 10:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 83E3B2070A
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 May 2020 12:25:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GwYnvX+J";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="iS3WdsQF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1DB7206F6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="GxnxMGbS";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="EOKM4MhW";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="IJVs79Qh";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="GAwoCLbW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E3B2070A
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:References:Message-ID:
+	In-Reply-To:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=Pct0Nl7v5XZav+hPf/PdPJvwMXO4YQziVjUwh7E443w=; b=GxnxMGbSSaOhf8AjqydiZGrrT
+	Nb92ryQstT/bWU2qzOJFXU+zmy68GyxLvanBU5u/qFSBvfg+/HUARC420NAMuifR/9DuU4ov+iVN0
+	ANI4OHA88Mh2h1iskwQJnZE07svoLmiz6lvoVhGAyngFVPWKLXNZwjWWnV3QiCeqo6eoo=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jbity-00009i-Dm; Thu, 21 May 2020 10:58:14 +0000
+	id 1jbkGM-0003pF-Se; Thu, 21 May 2020 12:25:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <mstsxfx@gmail.com>) id 1jbitx-00009M-4K
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 May 2020 10:58:13 +0000
+ (envelope-from <hughd@google.com>) id 1jbkGE-0003ow-FL
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 May 2020 12:25:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:Message-ID:
+ In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XNawhknjOIKR4nsDknlNKTgt07zaj8UbYNFvZIbzSoA=; b=GwYnvX+JUnM75K0WKVkf9jhLhF
- JaKHWgi5uZNFgx5HwbXMR6hH73B0iH5fYfDB+qtvj8DuxVehjwyGHzDBK61JYs1Zi36iGDxtMk8jj
- Y+L/g6VAIUk+nWYuoQ0oJAEGEf0HsoW63pAAtisi4t+8zYa3D3/efkMNxgKXe9QcYkv8=;
+ bh=PhDrJCxRBSBAodlC1XBnNa5He6+juNPIjvBJ9yPZkZU=; b=EOKM4MhWlQ4nAUhg86WC3L2yKy
+ 9av7XMXeBQgWuL4AqgYRfOp0ZCSyRGl1PIve4T5a49zWogG/ayjiNcX0kni2NZNHNhLKMy0qsZavA
+ gezhuIW44C7NFhUsIidhyc8fPeyod+uFcXxzBENxqzBZmQwTfkaCQqjL4Ojh4aSirAYY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ h=Content-Type:MIME-Version:References:Message-ID:In-Reply-To:Subject:cc:To
  :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XNawhknjOIKR4nsDknlNKTgt07zaj8UbYNFvZIbzSoA=; b=iS3WdsQFZjt5TQ57zef7TlWerJ
- FeFMXBPdJbbv3JB18CHnQhT+YrMyVAFmlohrqeA3oG13mOhdX/b52tfsGuxKSWHBsv5eadG4oOAXD
- W1SRDivEu9jE5nGZ31JBLHJsImhY1bi8Wn14UqyBQl6W94FXGNj8bSg3jvDN7J4ek8HQ=;
-Received: from mail-ed1-f67.google.com ([209.85.208.67])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=PhDrJCxRBSBAodlC1XBnNa5He6+juNPIjvBJ9yPZkZU=; b=IJVs79QhD8Df+CJPXzylo3Dvf9
+ vTIWkWqrdeaj2LPvPmRJLS6mYC1fQTPtSUw1/mmAZPz9ky3MOWtixqIMVlSSMtLnAa32SfvIvtcKJ
+ pAad/KUQunyn7MGkNRvu1YW94M4o84i/sq2gbwd1w4Lmyez5GG62kg8Q31WYlB804yTQ=;
+Received: from mail-ot1-f66.google.com ([209.85.210.66])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jbitv-000jp4-Tn
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 May 2020 10:58:13 +0000
-Received: by mail-ed1-f67.google.com with SMTP id k19so6368410edv.9
+ id 1jbkGD-003qw0-3n
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 May 2020 12:25:18 +0000
+Received: by mail-ot1-f66.google.com with SMTP id z3so5321325otp.9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 21 May 2020 03:58:11 -0700 (PDT)
+ Thu, 21 May 2020 05:25:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references
+ :user-agent:mime-version;
+ bh=PhDrJCxRBSBAodlC1XBnNa5He6+juNPIjvBJ9yPZkZU=;
+ b=GAwoCLbWD9HuyBSQd0wB8YF9zAyMXx8NbeSM7sRIrSyCwgXCk1LyqZeRL1KKYDxGpO
+ SfcyL7WWrKzTySa7jQ2M5Ts1LnWUm3g/Qx1L8g5kC2IoeCBruc4gzU1F4CJxlTlthFwn
+ 8cQLzuQJ8GunRzg6SAVUB5eWIOoS/I4/3TvmOl6Os6sL6dq8+TYnF4G2BikWZZdixt6Z
+ 8YGeoGhg3eET12atEyxNGeStgzAZYgEGop4eXnXIT8ch1u4jTGjXtDWtipmKoMC+brMH
+ 7uiUWwSCg6szqJOXce1pc6s7/tvySaQmynhC56Uz1zN68+slGilfarrZouXqBlszBgta
+ PC+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:date:from:to:cc:subject:message-id:references
- :mime-version:content-disposition:in-reply-to;
- bh=XNawhknjOIKR4nsDknlNKTgt07zaj8UbYNFvZIbzSoA=;
- b=Se8lj6x631bhf+oJfW6+ndE1WveSJA8Gkthnce8YMlTAABlsM5QC+dM/s3/1PGzlWA
- qj+cPrtL3EtxerD7Nz14NrhEfQ9BWnq8HL1PM/IQcCHv6gY5t3pjy/fdKi16KbnEOzuR
- /qQ3GmJrVQSjNWkB9hLxoTaPSwfvej+W4Jzh+/bzwKqAFlqSuFm3IisEreOnFOKSku7S
- +agNwhEfRWUWn65jMGuBFPr4TddZhwDTldwXk+orkUskAdfBBiPSR1vDuOQY16e0x2og
- d7MJaIC29LGceutStyBNkVAgsspukQx9SUJPBReQqs3rkPluUaeRtNkVj+666bfAnvJ+
- MX3g==
-X-Gm-Message-State: AOAM532anhqnWd5C+DUlhVDz+r+bv+wrUUYbJA+UcTAaSNfe7vWizAUl
- YD0+R0otxSKQZ+9/BD1Ag1E=
-X-Google-Smtp-Source: ABdhPJz5cmzkqGt/VjxJ/B57BbRDLsfEshniDGeSG3hqEi0TKwBN20Zmnf3zg4J2qyGDodX/TUsadw==
-X-Received: by 2002:a50:ee15:: with SMTP id g21mr7048744eds.170.1590058685348; 
- Thu, 21 May 2020 03:58:05 -0700 (PDT)
-Received: from localhost (ip-37-188-180-112.eurotel.cz. [37.188.180.112])
- by smtp.gmail.com with ESMTPSA id dc13sm4285623edb.97.2020.05.21.03.58.03
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 21 May 2020 03:58:04 -0700 (PDT)
-Date: Thu, 21 May 2020 12:58:01 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Message-ID: <20200521105801.GL6462@dhcp22.suse.cz>
+ h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+ :references:user-agent:mime-version;
+ bh=PhDrJCxRBSBAodlC1XBnNa5He6+juNPIjvBJ9yPZkZU=;
+ b=JykdnGMf7S5BRT7PCkcTTh7dt3Plxns4ot11ThNhlxIB0c6cX2xCCaX+zuJYKeFTom
+ Bu4Eya8KJEq5dt15AFNlSbCbsOK3OGgNDX0Q7b/RxpWKk2vPBW6ezWPjrbpRx65DkyAI
+ 6LhWFvDLKjhFzlJdRRb5poXsXl7gjxOHK1FD3NmeK5Z76U5KIVxqO21tp9fylpSlJHWz
+ a9s/Yvd/pQl6mXttNkfM60Hnp5hxLJKzrv4o36sUBPEZTKfcwTbk5A4nBrz4dkPB3p/S
+ 2ljGeUrwebfo19/ki/jWHlejrkyrG3EtRGXH7vmGBswYUtI/fN6sSibTqM6r7+aoKkj5
+ koYA==
+X-Gm-Message-State: AOAM533sdmjLGSVs986ktv/cA6E0rhe101uWku5N8Y8D4sJifp3O6KU6
+ 05jhYrUuSDXR/sHHfTQ8Cm8E0Q==
+X-Google-Smtp-Source: ABdhPJz8i6R3+Gpl88cFFCjChR4peNI0ajEE177NOVIpwi4jQ1mVyOkilLJaymEulOMfcKdQ7NDNgg==
+X-Received: by 2002:a05:6830:1de3:: with SMTP id
+ b3mr6316659otj.71.1590063911088; 
+ Thu, 21 May 2020 05:25:11 -0700 (PDT)
+Received: from eggly.attlocal.net
+ (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+ by smtp.gmail.com with ESMTPSA id t2sm1553308otq.54.2020.05.21.05.25.07
+ (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+ Thu, 21 May 2020 05:25:09 -0700 (PDT)
+Date: Thu, 21 May 2020 05:24:27 -0700 (PDT)
+X-X-Sender: hugh@eggly.anvils
+To: Michal Hocko <mhocko@kernel.org>
+In-Reply-To: <20200521105801.GL6462@dhcp22.suse.cz>
+Message-ID: <alpine.LSU.2.11.2005210504110.1185@eggly.anvils>
 References: <20200501135806.4eebf0b92f84ab60bba3e1e7@linux-foundation.org>
  <CA+G9fYsiZ81pmawUY62K30B6ue+RXYod854RS91R2+F8ZO7Xvw@mail.gmail.com>
  <20200519075213.GF32497@dhcp22.suse.cz>
@@ -89,10 +114,10 @@ References: <20200501135806.4eebf0b92f84ab60bba3e1e7@linux-foundation.org>
  <20200520190906.GA558281@chrisdown.name>
  <20200521095515.GK6462@dhcp22.suse.cz>
  <CA+G9fYvAB9F+Xo0vUsSveKnExkv3cV9-oOG9gBqGEcXsO95m0w@mail.gmail.com>
+ <20200521105801.GL6462@dhcp22.suse.cz>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYvAB9F+Xo0vUsSveKnExkv3cV9-oOG9gBqGEcXsO95m0w@mail.gmail.com>
-X-Headers-End: 1jbitv-000jp4-Tn
+X-Headers-End: 1jbkGD-003qw0-3n
 Subject: Re: [f2fs-dev] mm: mkfs.ext4 invoked oom-killer on i386 -
  pagecache_get_page
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -106,10 +131,14 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+From: Hugh Dickins via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Hugh Dickins <hughd@google.com>
 Cc: lkft-triage@lists.linaro.org, linux-mm <linux-mm@kvack.org>,
  Yafang Shao <laoar.shao@gmail.com>, Andreas Dilger <adilger.kernel@dilger.ca>,
  Cgroups <cgroups@vger.kernel.org>, Andrea Arcangeli <aarcange@redhat.com>,
- Anders Roxell <anders.roxell@linaro.org>, Hugh Dickins <hughd@google.com>,
+ Anders Roxell <anders.roxell@linaro.org>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>, Hugh Dickins <hughd@google.com>,
  Matthew Wilcox <willy@infradead.org>,
  Linux-Next Mailing List <linux-next@vger.kernel.org>,
  linux-ext4 <linux-ext4@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
@@ -123,68 +152,91 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu 21-05-20 16:11:11, Naresh Kamboju wrote:
-> On Thu, 21 May 2020 at 15:25, Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Wed 20-05-20 20:09:06, Chris Down wrote:
-> > > Hi Naresh,
+On Thu, 21 May 2020, Michal Hocko wrote:
+> On Thu 21-05-20 16:11:11, Naresh Kamboju wrote:
+> > On Thu, 21 May 2020 at 15:25, Michal Hocko <mhocko@kernel.org> wrote:
 > > >
-> > > Naresh Kamboju writes:
-> > > > As a part of investigation on this issue LKFT teammate Anders Roxell
-> > > > git bisected the problem and found bad commit(s) which caused this problem.
+> > > On Wed 20-05-20 20:09:06, Chris Down wrote:
+> > > > Hi Naresh,
 > > > >
-> > > > The following two patches have been reverted on next-20200519 and retested the
-> > > > reproducible steps and confirmed the test case mkfs -t ext4 got PASS.
-> > > > ( invoked oom-killer is gone now)
+> > > > Naresh Kamboju writes:
+> > > > > As a part of investigation on this issue LKFT teammate Anders Roxell
+> > > > > git bisected the problem and found bad commit(s) which caused this problem.
+> > > > >
+> > > > > The following two patches have been reverted on next-20200519 and retested the
+> > > > > reproducible steps and confirmed the test case mkfs -t ext4 got PASS.
+> > > > > ( invoked oom-killer is gone now)
+> > > > >
+> > > > > Revert "mm, memcg: avoid stale protection values when cgroup is above
+> > > > > protection"
+> > > > >    This reverts commit 23a53e1c02006120f89383270d46cbd040a70bc6.
+> > > > >
+> > > > > Revert "mm, memcg: decouple e{low,min} state mutations from protection
+> > > > > checks"
+> > > > >    This reverts commit 7b88906ab7399b58bb088c28befe50bcce076d82.
 > > > >
-> > > > Revert "mm, memcg: avoid stale protection values when cgroup is above
-> > > > protection"
-> > > >    This reverts commit 23a53e1c02006120f89383270d46cbd040a70bc6.
+> > > > Thanks Anders and Naresh for tracking this down and reverting.
 > > > >
-> > > > Revert "mm, memcg: decouple e{low,min} state mutations from protection
-> > > > checks"
-> > > >    This reverts commit 7b88906ab7399b58bb088c28befe50bcce076d82.
+> > > > I'll take a look tomorrow. I don't see anything immediately obviously wrong
+> > > > in either of those commits from a (very) cursory glance, but they should
+> > > > only be taking effect if protections are set.
 > > >
-> > > Thanks Anders and Naresh for tracking this down and reverting.
-> > >
-> > > I'll take a look tomorrow. I don't see anything immediately obviously wrong
-> > > in either of those commits from a (very) cursory glance, but they should
-> > > only be taking effect if protections are set.
-> >
-> > Agreed. If memory.{low,min} is not used then the patch should be
-> > effectively a nop. Btw. do you see the problem when booting with
-> > cgroup_disable=memory kernel command line parameter?
+> > > Agreed. If memory.{low,min} is not used then the patch should be
+> > > effectively a nop. Btw. do you see the problem when booting with
+> > > cgroup_disable=memory kernel command line parameter?
+> > 
+> > With extra kernel command line parameters, cgroup_disable=memory
+> > I have noticed a differ problem now.
+> > 
+> > + mkfs -t ext4 /dev/disk/by-id/ata-TOSHIBA_MG04ACA100N_Y8NRK0BPF6XF
+> > mke2fs 1.43.8 (1-Jan-2018)
+> > Creating filesystem with 244190646 4k blocks and 61054976 inodes
+> > Filesystem UUID: 3bb1a285-2cb4-44b4-b6e8-62548f3ac620
+> > Superblock backups stored on blocks:
+> > 32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+> > 4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,
+> > 102400000, 214990848
+> > Allocating group tables:    0/7453                           done
+> > Writing inode tables:    0/7453                           done
+> > Creating journal (262144 blocks): [   35.502102] BUG: kernel NULL
+> > pointer dereference, address: 000000c8
+> > [   35.508372] #PF: supervisor read access in kernel mode
+> > [   35.513506] #PF: error_code(0x0000) - not-present page
+> > [   35.518638] *pde = 00000000
+> > [   35.521514] Oops: 0000 [#1] SMP
+> > [   35.524652] CPU: 0 PID: 145 Comm: kswapd0 Not tainted
+> > 5.7.0-rc6-next-20200519+ #1
+> > [   35.532121] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> > 2.2 05/23/2018
+> > [   35.539507] EIP: mem_cgroup_get_nr_swap_pages+0x28/0x60
 > 
-> With extra kernel command line parameters, cgroup_disable=memory
-> I have noticed a differ problem now.
-> 
-> + mkfs -t ext4 /dev/disk/by-id/ata-TOSHIBA_MG04ACA100N_Y8NRK0BPF6XF
-> mke2fs 1.43.8 (1-Jan-2018)
-> Creating filesystem with 244190646 4k blocks and 61054976 inodes
-> Filesystem UUID: 3bb1a285-2cb4-44b4-b6e8-62548f3ac620
-> Superblock backups stored on blocks:
-> 32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
-> 4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,
-> 102400000, 214990848
-> Allocating group tables:    0/7453                           done
-> Writing inode tables:    0/7453                           done
-> Creating journal (262144 blocks): [   35.502102] BUG: kernel NULL
-> pointer dereference, address: 000000c8
-> [   35.508372] #PF: supervisor read access in kernel mode
-> [   35.513506] #PF: error_code(0x0000) - not-present page
-> [   35.518638] *pde = 00000000
-> [   35.521514] Oops: 0000 [#1] SMP
-> [   35.524652] CPU: 0 PID: 145 Comm: kswapd0 Not tainted
-> 5.7.0-rc6-next-20200519+ #1
-> [   35.532121] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-> 2.2 05/23/2018
-> [   35.539507] EIP: mem_cgroup_get_nr_swap_pages+0x28/0x60
+> Could you get faddr2line for this offset?
 
-Could you get faddr2line for this offset?
+No need for that, I can help with the "cgroup_disabled=memory" crash:
+I've been happily running with the fixup below, but haven't got to
+send it in yet (and wouldn't normally be reading mail at this time!)
+because of busy chasing a couple of other bugs (not necessarily mm);
+and maybe the fix would be better with explicit mem_cgroup_disabled()
+test, or maybe that should be where cgroup_memory_noswap is decided -
+up to Johannes.
 
--- 
-Michal Hocko
-SUSE Labs
+---
+
+ mm/memcontrol.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- 5.7-rc6-mm1/mm/memcontrol.c	2020-05-20 12:21:56.109693740 -0700
++++ linux/mm/memcontrol.c	2020-05-20 12:26:15.500478753 -0700
+@@ -6954,7 +6954,8 @@ long mem_cgroup_get_nr_swap_pages(struct
+ {
+ 	long nr_swap_pages = get_nr_swap_pages();
+ 
+-	if (cgroup_memory_noswap || !cgroup_subsys_on_dfl(memory_cgrp_subsys))
++	if (!memcg || cgroup_memory_noswap ||
++            !cgroup_subsys_on_dfl(memory_cgrp_subsys))
+ 		return nr_swap_pages;
+ 	for (; memcg != root_mem_cgroup; memcg = parent_mem_cgroup(memcg))
+ 		nr_swap_pages = min_t(long, nr_swap_pages,
 
 
 _______________________________________________
