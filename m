@@ -2,73 +2,75 @@ Return-Path: <SRS0=Qzrr=7J=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FD9C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 May 2020 10:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D79BC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 May 2020 10:28:19 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 415CB207CB
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 May 2020 10:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D3E1F208B8
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 May 2020 10:28:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="h2W9NJpn";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ggxIxkbp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 415CB207CB
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hGiNaY39";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Jght30aR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3E1F208B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jdtIC-0002w3-90; Wed, 27 May 2020 10:28:12 +0000
+	id 1jdtII-0002xs-BN; Wed, 27 May 2020 10:28:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jdtI9-0002vE-JX
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 May 2020 10:28:09 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jdtIH-0002xa-I1
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 May 2020 10:28:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
- CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
+ Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xxItM5n1YpYqe1YTpzVVI3EwCdZvTXQrNPLW+3FYcas=; b=h2W9NJpnztWeL+5NMLiisqPvkq
- UGLLZ8aDWLDDcZk88mZj0Z6cv6P7UFy5XUFM/5fsoRPWvCW/MCETJstwvGRf7vIHYMcaOrUF0F2MQ
- BC9oNTP5jnqTSEF+2XcSKLlMNQqhL1ovTwF+fkaeAsPI8mgoSqVsfDm90p+uilClNV40=;
+ bh=tBk34DCN1U9WdM2fgpDI20DBxSc9iUpO/gZuXrGQx70=; b=hGiNaY393bz8hIKWZTwZD1j465
+ J6Zy7nY2GvafYQ7igE6dbjUa93SSY3YIr2uPryB/x6Kfxj6TfzsQG2i6Q6wFuRSumk7KQQEeAvawU
+ 34RLqr8wx7DUWMw8o65ejzjN5mjKEC6+broRzso1T50B7x7X0a57sUECzrkNi+qTlRXA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=xxItM5n1YpYqe1YTpzVVI3EwCdZvTXQrNPLW+3FYcas=; b=g
- gxIxkbp5YwE28cRNNmbsPgLV9w4mBkglgRsLB/AjFkeuw0ZpfYtjzN2RrzGF03i1Tyc3QerPRgzNt
- m8+7mf2TYoN2yVqw9xjBzs6EULHzhFbRDK9SLPPycOelfTxwg6nRAQJ0ca9WKtbeyVsMxJqRq66PZ
- oBWNAOvqixKnXnmI=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=tBk34DCN1U9WdM2fgpDI20DBxSc9iUpO/gZuXrGQx70=; b=Jght30aReROnoXo9tardFQTeE7
+ 0oR3FFqOua4p6dIy4XTu/nEs68EhsGaA44cNT8jYACFLHkyKNeR3oc6tpwUXEXPM5VtsIQgm8fu/n
+ x06y4t6/qL9/xeyYyssAvSYD92/sOQDMOdntDpIKjM7K5Z6z/5YJiYJMUHkz8nDIMvdM=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jdtI7-0094Xl-Mu
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 May 2020 10:28:09 +0000
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 0A807683E807A536D497;
- Wed, 27 May 2020 18:28:01 +0800 (CST)
+ id 1jdtID-00Eg5m-C6
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 May 2020 10:28:17 +0000
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 26207C1D2B936DEEF8CB;
+ Wed, 27 May 2020 18:28:06 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 27 May 2020 18:27:54 +0800
+ 14.3.487.0; Wed, 27 May 2020 18:27:55 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Wed, 27 May 2020 18:27:51 +0800
-Message-ID: <20200527102753.15743-1-yuchao0@huawei.com>
+Date: Wed, 27 May 2020 18:27:53 +0800
+Message-ID: <20200527102753.15743-3-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20200527102753.15743-1-yuchao0@huawei.com>
+References: <20200527102753.15743-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jdtI7-0094Xl-Mu
-Subject: [f2fs-dev] [PATCH 1/3] f2fs: fix wrong value of tracepoint parameter
+X-Headers-End: 1jdtID-00Eg5m-C6
+Subject: [f2fs-dev] [PATCH 3/3] f2fs: fix to cover meta flush with cp_lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,35 +87,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In f2fs_lookup(), we should set @err correctly before printing it
-in tracepoint.
+meta inode page should be flushed under cp_lock, fix it.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/namei.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 63b34a161cf4..2c2f8c36c828 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -504,6 +504,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 			err = PTR_ERR(page);
- 			goto out;
- 		}
-+		err = -ENOENT;
- 		goto out_splice;
- 	}
- 
-@@ -549,7 +550,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- #endif
- 	new = d_splice_alias(inode, dentry);
- 	err = PTR_ERR_OR_ZERO(new);
--	trace_f2fs_lookup_end(dir, dentry, ino, err);
-+	trace_f2fs_lookup_end(dir, dentry, ino, !new ? -ENOENT : err);
- 	return new;
- out_iput:
- 	iput(inode);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f7de2a1da528..0fcae4d90074 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2260,7 +2260,9 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+ 		set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
+ 		break;
+ 	case F2FS_GOING_DOWN_METAFLUSH:
++		mutex_lock(&sbi->cp_mutex);
+ 		f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_META_IO);
++		mutex_unlock(&sbi->cp_mutex);
+ 		f2fs_stop_checkpoint(sbi, false);
+ 		set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
+ 		break;
 -- 
 2.18.0.rc1
 
