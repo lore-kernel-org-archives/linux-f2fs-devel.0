@@ -2,82 +2,96 @@ Return-Path: <SRS0=Qzrr=7J=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CBCC433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 May 2020 02:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1067C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 May 2020 02:21:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 483BC2075F;
-	Wed, 27 May 2020 02:10:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A41FF207CB;
+	Wed, 27 May 2020 02:21:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="i+4/f97M";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KLzrLj/l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483BC2075F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="UldBn/P0";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Ub2Kma1Y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="lifywIpl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A41FF207CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jdlW6-0006lC-RK; Wed, 27 May 2020 02:10:02 +0000
+	id 1jdlhB-0007IC-PA; Wed, 27 May 2020 02:21:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jdlW5-0006ki-H7
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 May 2020 02:10:01 +0000
+ (envelope-from
+ <bounce+103f7e.be9e4a-linux-f2fs-devel=lists.sourceforge.net@mg.codeaurora.org>)
+ id 1jdlh9-0007I4-Lc
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 May 2020 02:21:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LoskZRIkiiBP/QgxskN1ICLm3GhLAUKNPQvKJXOs0pU=; b=i+4/f97M7E96Bua19pYJl+D6Ms
- DM2afWFDaE9wdwOp3z9gcZa6fJAGMMBNitTYGKsTSKFA8GU066MYcd/cRo292E6+xCFAenghsu9cl
- 3lKUofpCHqSH4RzX6+ku6vuQS6BwfnmnxSVxQyy14jKK5HT+RQe0nzF0gRLC6qg+hZ7U=;
+ bh=hiWqnMh4e/b60m6l+Rli4gyEkCZHAr24/SZOnCCR4Z4=; b=UldBn/P0lZ+2OhVWbCCWm/FcjB
+ NcJgw05kvCXm5qoNOrFHe4B96mrq/Xyic8SXG2mBqbJdunFCK/qX+87YJk71ZGj1hu47PgGX7irdy
+ +NdjBfQ2d/8M1zZ2T4y7Apx4GQbr0EQ7R+2rN8CcbDgPKAFXqaoSnr7RxyKVz8u36LAM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:
+ Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=LoskZRIkiiBP/QgxskN1ICLm3GhLAUKNPQvKJXOs0pU=; b=KLzrLj/lnwP2IVpbjbv+jrfDA5
- 32UFnZxP2hFvP8eLTQfgUp3wfe2QLe6sFpQpyXBH/T0dtvna87b/5WOnXesWrAekryQqgxPhIq9/H
- GFkYCpL4FOPR4/0PSa/OH33Dh8M7w2FtP+mndD8u2mtIoXlGulP163aiJIg8YrWEWZgM=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ bh=hiWqnMh4e/b60m6l+Rli4gyEkCZHAr24/SZOnCCR4Z4=; b=Ub2Kma1YpIBZmIiSQnxQgt3+A+
+ FxZ/Ts4SBMagpsRUI4DgYiu7GrC+JjHVnXCgluWmmYkhA7DCXc0NCg/phiN20cz/0F/QMHBWm6mTY
+ Z59CR24ML1o5PoNXaIMbZxxjqvpOZFM2qLTx/lWhoFxi8Go87KaMqSvi8sPihNl/aIEY=;
+Received: from mail27.static.mailgun.info ([104.130.122.27])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jdlW3-00EHU2-HA
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 May 2020 02:10:01 +0000
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 2DA312A1BCCB80143DDD;
- Wed, 27 May 2020 10:06:57 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 27 May
- 2020 10:06:54 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20200526015917.GB207949@google.com>
- <9a09da49-9b3d-68c3-f47f-40bb7e4309b8@huawei.com>
- <20200526022646.GA226136@google.com>
- <36fc95db-96e1-a93b-737a-c8bf34ca00f3@huawei.com>
- <d305ce79-79b5-8bf4-5229-68085d96afac@huawei.com>
- <20200527015817.GA153429@google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <96e1d7c8-d8ca-2b8b-22c7-ec88a8c6b357@huawei.com>
-Date: Wed, 27 May 2020 10:06:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20200527015817.GA153429@google.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jdlW3-00EHU2-HA
-Subject: Re: [f2fs-dev] Discard issue
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1jdlh6-00EI1k-8t
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 May 2020 02:21:27 +0000
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
+ q=dns/txt; 
+ s=smtp; t=1590546084; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=hiWqnMh4e/b60m6l+Rli4gyEkCZHAr24/SZOnCCR4Z4=;
+ b=lifywIpl0g+8Kx0+qXew2g52QfoSTl5hrFLsErzjN6BCRoWrPS1TAv8V5YZsk1qvnfhRr65C
+ dMNAQAq420exs4EFddqdY1Rt1xpxTuHiemec2SMT/S3VDxx6b5A8DzA6Ld6F5L5c5N8/dGvZ
+ 08f3Ru96yK2Irqe8r/ZdJL0jOY0=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI2M2Y4ZiIsICJsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 5ecdce9927386861263bd832 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 27 May 2020 02:21:13
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+ id 8D749C43387; Wed, 27 May 2020 02:21:12 +0000 (UTC)
+Received: from codeaurora.org
+ (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+ (No client certificate requested) (Authenticated sender: stummala)
+ by smtp.codeaurora.org (Postfix) with ESMTPSA id 36215C433C9;
+ Wed, 27 May 2020 02:21:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36215C433C9
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
+ dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
+ spf=none smtp.mailfrom=stummala@codeaurora.org
+From: Sahitya Tummala <stummala@codeaurora.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+ linux-f2fs-devel@lists.sourceforge.net
+Date: Wed, 27 May 2020 07:50:56 +0530
+Message-Id: <1590546056-17871-1-git-send-email-stummala@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+X-Headers-End: 1jdlh6-00EI1k-8t
+Subject: [f2fs-dev] [PATCH] f2fs: fix retry logic in f2fs_write_cache_pages()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,129 +103,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+Cc: linux-kernel@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/5/27 9:58, Jaegeuk Kim wrote:
-> On 05/27, Chao Yu wrote:
->> On 2020/5/26 15:44, Chao Yu wrote:
->>> On 2020/5/26 10:26, Jaegeuk Kim wrote:
->>>> On 05/26, Chao Yu wrote:
->>>>> Hi Jaegeuk,
->>>>>
->>>>> On 2020/5/26 9:59, Jaegeuk Kim wrote:
->>>>>> Hi Chao,
->>>>>>
->>>>>> I'm hitting segment.c:1065 when running longer fsstress (1000s) with error
->>>>>
->>>>> (1000s) do you mean time in single round or total time of multi rounds?
->>>>>
->>>>>> injection. Do you have any issue from your side?
->>>>>
->>>>> I haven't hit that before, in my test, in single round, fsstress won't last long
->>>>> time (normally about 10s+ for each round).
->>>>>
->>>>> Below is por_fsstress() implementation in my code base:
->>>>>
->>>>> por_fsstress()
->>>>> {
->>>>>         _fs_opts
->>>>>
->>>>>         while true; do
->>>>>                 ltp/fsstress -x "echo 3 > /proc/sys/vm/drop_caches" -X 10 -r -f fsync=8 -f sync=0 -f write=4 -f dwrite=2 -f truncate=6 -f allocsp=0 -f bulkstat=0 -f bulkstat1=0 -f freesp=0 -f zero=1 -f collapse=1 -f insert=1 -f resvsp=0 -f unresvsp=0 -S t -p 20 -n 200000 -d $TESTDIR/test &
->>>>>                 sleep 10
->>>>>                 src/godown $TESTDIR
->>>>>                 killall fsstress
->>>>>                 sleep 5
->>>>>                 umount $TESTDIR
->>>>>                 if [ $? -ne 0 ]; then
->>>>>                         for i in `seq 1 50`
->>>>>                         do
->>>>>                                 umount $TESTDIR
->>>>>                                 if [ $? -eq 0]; then
->>>>>                                         break
->>>>>                                 fi
->>>>>                                 sleep 5
->>>>>                         done
->>>>>                 fi
->>>>>                 echo 3 > /proc/sys/vm/drop_caches
->>>>>                 _fsck
->>>>>                 _mount f2fs
->>>>>                 rm $TESTDIR/testfile
->>>>>                 touch $TESTDIR/testfile
->>>>>                 umount $TESTDIR
->>>>>                 _fsck
->>>>>                 _mount f2fs
->>>>>                 _rm_50
->>>>>         done
->>>>> }
->>>>>
->>>>> Did you update this code?
->>>>>
->>>>> Could you share more test configuration, like mkfs option, device size, mount option,
->>>>> new por_fsstress() implementation if it exists? I can try to reproduce this issue
->>>>> in my env.
->>>>
->>>> I just changed, in __run_godown_fsstress(), sleep 1000 instead of 10.
->>>>
->>>> https://github.com/jaegeuk/xfstests-f2fs/blob/f2fs/run.sh#L249
->>>>
->>>> ./run.sh por_fsstress
->>>
->>> Reproducing...
->>
->> After one night reproducing, the issue still not occur..
->>
->> BTW, I enabled below features in image:
->>
->> extra_attr project_quota inode_checksum flexible_inline_xattr inode_crtime compression
->>
->> and tagged compression flag on root inode.
-> 
-> Could you check disk supports discard? I didn't set compression to the root
-> inode.
+In case a compressed file is getting overwritten, the current retry
+logic doesn't include the current page to be retried now as it sets
+the new start index as 0 and new end index as writeback_index - 1.
+This causes the corresponding cluster to be uncompressed and written
+as normal pages without compression. Fix this by allowing writeback to
+be retried for the current page as well (in case of compressed page
+getting retried due to index mismatch with cluster index). So that
+this cluster can be written compressed in case of overwrite.
 
-I start to review discard support codes from yesterday, however I have not found
-anything suspectable yet.
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+---
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> I set _mkfs with "f2fs":
-> mkfs.f2fs -f -O encrypt -O extra_attr -O quota -O inode_checksum /dev/$DEV;;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 4af5fcd..bfd1df4 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3024,7 +3024,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	if ((!cycled && !done) || retry) {
+ 		cycled = 1;
+ 		index = 0;
+-		end = writeback_index - 1;
++		end = retry ? -1 : writeback_index - 1;
+ 		goto retry;
+ 	}
+ 	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-Let me update test configs.
-
-Thanks,
-
-> 
-> # run.sh reload
-> # run.sh por_fsstress
-> 
->>
->>>
->>> Thanks,
->>>
->>>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>> .
->>>>>>
->>>> .
->>>>
->>>
->>>
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>> .
->>>
-> .
-> 
 
 
 _______________________________________________
