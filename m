@@ -2,69 +2,106 @@ Return-Path: <SRS0=Qhk5=7L=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E99C433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 29 May 2020 14:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56408C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 29 May 2020 14:40:11 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DE3EA2073B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 29 May 2020 14:33:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2421B2072D
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 29 May 2020 14:40:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fb+IRRu/";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XhI88ZEh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3EA2073B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ekL5Lv36";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KGhS/EQ9";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="eE5upXYz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2421B2072D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jeg4l-00005I-GR; Fri, 29 May 2020 14:33:35 +0000
+	id 1jegB8-0002QK-OJ; Fri, 29 May 2020 14:40:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hch@lst.de>) id 1jeg4j-0008WO-Lz
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 May 2020 14:33:33 +0000
+ (envelope-from <axboe@kernel.dk>) id 1jegB6-0002QC-Gy
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 May 2020 14:40:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pAFqDBl/8ke8NBa7VjWOkBDyD8eEitkoCLex2aL190E=; b=fb+IRRu/TufCY6mT1Hf54Gr0Ex
- PcXcMAua2wS1Zq2xWlpBEIz/n4b8hdCNAG6DvW/hsZJihK9X20oxOdSLcILFHVg0EgMHYHq4dqk1t
- tYyGLk9jXHA5H/S+mCVIQ87DsG15qqF4YyoQuHZgv9K0nPTQC/FCB3iHaUVDVal/JA+8=;
+ bh=sstDEw2eR7/x5s00uzGBoVK1nqE9b65b7cAMAqhOjao=; b=ekL5Lv36nNSdU1QZs0QtoV3pui
+ MagsXMd5unwZAo6UzNRZkxREhC9C0by8Yrq2BvwSt9ndFYVLU+wTSX+wlg60ZRvT4+sPfmvPovVCQ
+ am6v8uP8//Dep8a9v/IKnf19ZeGSeg50e/8RidyKKIH2Es64dP8xxC1AUE78s+54cXwM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=pAFqDBl/8ke8NBa7VjWOkBDyD8eEitkoCLex2aL190E=; b=XhI88ZEhxKMfgWthoJ7shjJqUU
- geToSQRR6qcwFjcAENotFg/4Ld8wPLIoQE0p1yq09EOIIH1Vy24+AHIX2mhIp7jk+tPmxllpLP6ye
- NWT/Sj8Uil2Nj7zBEFbBTom9paOkb3bnp5eU/gEzDPsAdwUO7iMce88OmC2vH0gWzLbk=;
-Received: from verein.lst.de ([213.95.11.211])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jeg4h-002n5R-GM
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 May 2020 14:33:33 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 0963868B02; Fri, 29 May 2020 16:15:56 +0200 (CEST)
-Date: Fri, 29 May 2020 16:15:55 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Kaitao Cheng <pilgrimtao@gmail.com>
-Message-ID: <20200529141555.GA3249@lst.de>
+ bh=sstDEw2eR7/x5s00uzGBoVK1nqE9b65b7cAMAqhOjao=; b=KGhS/EQ9+lfuHZffcCYbcOAvnf
+ 5CLCsL5ne2wzmUwbyWBz91HssEnnxVoQQ6JK+IeJNo67Z5LQKib/kK5GwxAAwHWSi2q4SbkkRYYHn
+ jAUWWIOjuKHzz1cTGuj7dJbV1vCMDTNnwxXTjiThx3C3QYMFmNCX7Kj30XddUB9qs/nM=;
+Received: from mail-oi1-f196.google.com ([209.85.167.196])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1jegB4-00HN2N-Jx
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 May 2020 14:40:08 +0000
+Received: by mail-oi1-f196.google.com with SMTP id j145so2745857oib.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 29 May 2020 07:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+ h=subject:to:cc:references:from:message-id:date:user-agent
+ :mime-version:in-reply-to:content-language:content-transfer-encoding;
+ bh=sstDEw2eR7/x5s00uzGBoVK1nqE9b65b7cAMAqhOjao=;
+ b=eE5upXYzk0pow1GTjkztlADM6NfVbrh/uHt+G1jl9EulITHptpOGivfgZ9UM2DZPeT
+ QzDSBImSr62zvHA4fpZjPKoOgIad9kZyPX2Pg/8nuAQTJ3/2yu1dOc5WcOu99Kko/uk+
+ JHHjcQeYVXofPi/9w67mwpp7taL/v8rnEtFjiUQt2+5HJT1HNIqLVfzk8C15zK0dRQDM
+ HprQkgIl0QIfcdgkulZv6c2+BpjhhJc39zy3lRejrUhTw58N+xFCRBzYs65EUgEZZaQb
+ C23jReqIIypb479CHVfyFfIhwVVplo1+96n+FWZRlsJS/ZWLbHO247w+VeMKyAtOGXp+
+ Nwmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+ :user-agent:mime-version:in-reply-to:content-language
+ :content-transfer-encoding;
+ bh=sstDEw2eR7/x5s00uzGBoVK1nqE9b65b7cAMAqhOjao=;
+ b=dqNyJAow3L9AwOynIDk1+OW3+BDKoirfWo+a9NbgWo8GFLswxFsacEQdojuL14wemb
+ tIrFhb1s43sMGBLH5F+gJnzZi+hWdhNzRkICypzFyXbOC/iTVgLW8+dc2IVJiLwaWkdn
+ HSMfAYWm8AOmc8NVGYZiZLOOJBFEhMYFbx/jcj5mopU655JTCPCEuquJ0mYaxfu6KwJK
+ JPSeO76sOylOqNJRYkH9fmuuQri+3igAZ5CPy/YV6Y0+sOxJl4ZZhwvYccQNZ/GAQEY6
+ 5XbQuxWYLC4FsouBsY58fHX6eINdrTc2cJcL+6Qhc0Qbebp2UFHhi4uPaK9njnH6llj0
+ 3wnQ==
+X-Gm-Message-State: AOAM531YQVcYsP+d9Am8g2aaE5kEk6EHpIoLucBlqGgXNf9y4ou1wDbi
+ oZ+suUCOUFcjZudx0aId1mbr5wA1Ebu0DNae
+X-Google-Smtp-Source: ABdhPJx/vZKTQwjkEYDfjCmjXR8SsS9x7O54I1G0OhUxjA27obWAm6HjQIWQQc+C6Ua+WQEtGiJQ1Q==
+X-Received: by 2002:a17:90a:bf18:: with SMTP id
+ c24mr9827989pjs.171.1590761617982; 
+ Fri, 29 May 2020 07:13:37 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+ by smtp.gmail.com with ESMTPSA id d2sm6688603pgp.56.2020.05.29.07.13.34
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Fri, 29 May 2020 07:13:37 -0700 (PDT)
+To: Kaitao Cheng <pilgrimtao@gmail.com>, hch@lst.de, sth@linux.ibm.com,
+ viro@zeniv.linux.org.uk, clm@fb.com, jaegeuk@kernel.org, hch@infradead.org,
+ mark@fasheh.com, dhowells@redhat.com, balbi@kernel.org
 References: <20200529141100.37519-1-pilgrimtao@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <c8412d98-0328-0976-e5f9-5beddc148a35@kernel.dk>
+Date: Fri, 29 May 2020 08:13:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Disposition: inline
 In-Reply-To: <20200529141100.37519-1-pilgrimtao@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1jeg4h-002n5R-GM
+Content-Language: en-US
+X-Headers-End: 1jegB4-00HN2N-Jx
 Subject: Re: [f2fs-dev] [PATCH v2] blkdev: Replace blksize_bits() with
  ilog2()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -79,109 +116,39 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: hoeppner@linux.ibm.com, heiko.carstens@de.ibm.com,
- linux-nvme@lists.infradead.org, dhowells@redhat.com, clm@fb.com,
- deepa.kernel@gmail.com, houtao1@huawei.com, hch@lst.de,
- linux-s390@vger.kernel.org, bvanassche@acm.org, darrick.wong@oracle.com,
- mark@fasheh.com, satyat@google.com, hch@infradead.org, borntraeger@de.ibm.com,
- gor@linux.ibm.com, chaitanya.kulkarni@wdc.com, josef@toxicpanda.com,
- ming.lei@redhat.com, viro@zeniv.linux.org.uk, songmuchun@bytedance.com,
- dsterba@suse.com, jaegeuk@kernel.org, jlbec@evilplan.org, sagi@grimberg.me,
- axboe@kernel.dk, balbi@kernel.org, damien.lemoal@wdc.com,
- martin.petersen@oracle.com, joseph.qi@linux.alibaba.com,
- gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
- linux-fsdevel@vger.kernel.org, asml.silence@gmail.com,
- linux-btrfs@vger.kernel.org, sth@linux.ibm.com
+ linux-nvme@lists.infradead.org, joseph.qi@linux.alibaba.com,
+ deepa.kernel@gmail.com, houtao1@huawei.com, linux-s390@vger.kernel.org,
+ bvanassche@acm.org, darrick.wong@oracle.com, chaitanya.kulkarni@wdc.com,
+ satyat@google.com, borntraeger@de.ibm.com, gor@linux.ibm.com,
+ josef@toxicpanda.com, ming.lei@redhat.com, jlbec@evilplan.org,
+ songmuchun@bytedance.com, dsterba@suse.com, sagi@grimberg.me,
+ damien.lemoal@wdc.com, martin.petersen@oracle.com, gregkh@linuxfoundation.org,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+ asml.silence@gmail.com, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
->  	ns->size = i_size_read(ns->bdev->bd_inode);
-> -	ns->blksize_shift = blksize_bits(bdev_logical_block_size(ns->bdev));
-> +	ns->blksize_shift = ilog2(bdev_logical_block_size(ns->bdev));
+On 5/29/20 8:11 AM, Kaitao Cheng wrote:
+> There is a function named ilog2() exist which can replace blksize.
+> The generated code will be shorter and more efficient on some
+> architecture, such as arm64. And ilog2() can be optimized according
+> to different architecture.
 
-This should just be:
+When you posted this last time, I said:
 
-	ns->blksize_shift = ns->bdev->bd_inode->i_blkbits;
+"I like the simplification, but do you have any results to back up
+ that claim? Is the generated code shorter? Runs faster?"
 
-> diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
-> index 777734d1b4e5..55adb134451b 100644
-> --- a/drivers/s390/block/dasd_ioctl.c
-> +++ b/drivers/s390/block/dasd_ioctl.c
-> @@ -228,7 +228,7 @@ dasd_format(struct dasd_block *block, struct format_data_t *fdata)
->  	 */
->  	if (fdata->start_unit == 0) {
->  		struct block_device *bdev = bdget_disk(block->gdp, 0);
-> -		bdev->bd_inode->i_blkbits = blksize_bits(fdata->blksize);
-> +		bdev->bd_inode->i_blkbits = ilog2(fdata->blksize);
+which you handily ignored, yet sending out a new version. I'm not
+going to apply this without justification, your commit message is
+handwavy at best.
 
-This also needs to set bdev->bd_block_size, so this probably warrants
-a separate fix that be backported.  It might be nice to split out
-a helper that sets bd_block_size and bd_inode->i_blkbits together
-so that such a use is more obvious.
+-- 
+Jens Axboe
 
->  	} else if (inode->i_bdev) {
->  		blksize = bdev_logical_block_size(inode->i_bdev);
-> -		blkbits = blksize_bits(blksize);
-> +		blkbits = ilog2(blksize);
-
-This can just use inode->i_bdev->bd_inode->i_blkbits.
-
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index fc8831c392d7..fa92e0afe349 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -907,7 +907,7 @@ static sector_t blkdev_max_block(struct block_device *bdev, unsigned int size)
->  	loff_t sz = i_size_read(bdev->bd_inode);
->  
->  	if (sz) {
-> -		unsigned int sizebits = blksize_bits(size);
-> +		unsigned int sizebits = ilog2(size);
-
-bdev->bd_inode->i_blkbits.
-
-> diff --git a/fs/direct-io.c b/fs/direct-io.c
-> index 1543b5af400e..7ea2cd3effcc 100644
-> --- a/fs/direct-io.c
-> +++ b/fs/direct-io.c
-> @@ -1148,7 +1148,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
->  
->  	if (align & blocksize_mask) {
->  		if (bdev)
-> -			blkbits = blksize_bits(bdev_logical_block_size(bdev));
-> +			blkbits = ilog2(bdev_logical_block_size(bdev));
-
-bdev->bd_inode->i_blkbits.
-
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index cb05f71cf850..b896da27942a 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3458,7 +3458,7 @@ static int check_direct_IO(struct inode *inode, struct iov_iter *iter,
->  
->  	if (align & blocksize_mask) {
->  		if (bdev)
-> -			blkbits = blksize_bits(bdev_logical_block_size(bdev));
-> +			blkbits = ilog2(bdev_logical_block_size(bdev));
-
-bdev->bd_inode->i_blkbits.
-
->  		blocksize_mask = (1 << blkbits) - 1;
->  		if (align & blocksize_mask)
->  			return -EINVAL;
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index ec7b78e6feca..2a807657d544 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -203,7 +203,7 @@ static loff_t
->  iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		struct iomap_dio *dio, struct iomap *iomap)
->  {
-> -	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
-> +	unsigned int blkbits = ilog2(bdev_logical_block_size(iomap->bdev));
-
-iomap->bdev->bd_inode->i_blkbits.
 
 
 _______________________________________________
