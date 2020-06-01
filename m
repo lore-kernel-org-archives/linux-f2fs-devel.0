@@ -2,81 +2,80 @@ Return-Path: <SRS0=qeLJ=7O=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF2EC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jun 2020 11:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC20C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Jun 2020 19:35:16 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B67242074B;
-	Mon,  1 Jun 2020 11:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 591EC2065C;
+	Mon,  1 Jun 2020 19:35:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ODHS3yzm";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="InXH7wBv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B67242074B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CSUhjYOR";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DFuzikl9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KeExiaz9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 591EC2065C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jfirQ-0006Pc-I2; Mon, 01 Jun 2020 11:44:08 +0000
+	id 1jfqDL-0002YI-5p; Mon, 01 Jun 2020 19:35:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jfirP-0006PU-Dc
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jun 2020 11:44:07 +0000
+ (envelope-from <pr-tracker-bot@kernel.org>) id 1jfqDJ-0002Y2-PP
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jun 2020 19:35:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Cc:To:Date:Message-Id:References:In-Reply-To:From:
+ Subject:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pFY4mRr7mmUOg+bGWfGTTQq51AVauaIFqxlm+7EVQ4c=; b=ODHS3yzmNG3Lu5eUSFkI2vvddY
- 50RlhoYr5RUdKyv3YIgdsHZSuc7KUSj78/qPIeAktDOZQt2Ce3VsXxA7o7aUKWDMLCNNmqh6fi2M/
- Ap2DQvoTMHYVnbSILIATLmwrutakNKSVKrFTxBlZCjFUZ7KsL5SvkHtyK7qCx0KHVHOk=;
+ bh=yd8dynrFpf/G1mm4omkjOEOxOrwVlPbrkdvAkY5+iJE=; b=CSUhjYORAWrPVdSfvT8YpWLuzm
+ BdlHFixTGTfumAGeLucfNEFpSf46tY5r/aM7R5S3WL2a/6t4JantenDQgIWg8kRkA7HA6fZ/cjyCU
+ 4imheEa6UCtU72FFNP+U61ef4gpeh0J3iPdRTKJiNanvm/NXqxRTqevnMDmOSeqjW+K8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=Cc:To:Date:Message-Id:References:In-Reply-To:From:Subject:Sender:Reply-To
+ :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=pFY4mRr7mmUOg+bGWfGTTQq51AVauaIFqxlm+7EVQ4c=; b=InXH7wBvaQRSIcZvswqQHawKZf
- 6nt5T76pN3Qzu8Qb9I6AGKZu9M/Z396YMqf4k2ygduzgQvFAxqt3CROmwkuEVp1L+knt2R7GAr3PZ
- gaD9RnAgXnCYdvcMWxhwOFIN7/PfQBRQtZWGsBECxS0PS47XZqt/eg18fBHN/EfpCbQg=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ bh=yd8dynrFpf/G1mm4omkjOEOxOrwVlPbrkdvAkY5+iJE=; b=DFuzikl9xcKla/A82ZNi0f5tTQ
+ ARXT/9C98SEwv0Sj7V4GcEUHJEmYlN1eJ3CQRuMExgjJZKDeB0LgIKog61MDGoLyN/8Zdj2JSrKRy
+ B/5UwufigeY7Ccree2yaixaxaFobNTYa1esYsYyPW9zNSLrGQAfCN5taw6MqMR4//qVY=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jfirN-003bF1-AR
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jun 2020 11:44:07 +0000
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 6FD09ECC3EF7D00DC03F;
- Mon,  1 Jun 2020 19:43:54 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 1 Jun 2020
- 19:43:53 +0800
-To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <1590546056-17871-1-git-send-email-stummala@codeaurora.org>
- <1d54379e-35c7-76e0-0c8a-d89bfcecb935@huawei.com>
- <78d2f29b-3ec0-39bc-46cf-88e82f1970c9@huawei.com>
- <20200528191839.GA180586@google.com> <20200601092035.GA19831@codeaurora.org>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <8e938d5c-251c-9922-34a0-5e606cdb4afb@huawei.com>
-Date: Mon, 1 Jun 2020 19:43:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20200601092035.GA19831@codeaurora.org>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jfirN-003bF1-AR
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix retry logic in
- f2fs_write_cache_pages()
+ id 1jfqDE-004f0m-G5
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Jun 2020 19:35:13 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1591040103;
+ bh=FG5YZrumuxu+SUe9tE67sVQlsmLyNC7e800RwFody5U=;
+ h=From:In-Reply-To:References:Date:To:Cc:From;
+ b=KeExiaz9m5h879IZ1BEQl3nEkk8hevGPTuX/HTBMuE2abZI2ifbmaB5R/CNVUeKdW
+ Zy0uNXJWso9ocrLXtq6DWF3YggXoBfGdMb0/UA5DY/dnhFAeX+EgV/wRrplS8o/GUO
+ WFI1fbrkwDNfuAwAhSlYazDURGbqszfUUDgf6SE0=
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20200601063150.GB11054@sol.localdomain>
+References: <20200601063150.GB11054@sol.localdomain>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200601063150.GB11054@sol.localdomain>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
+ tags/fsverity-for-linus
+X-PR-Tracked-Commit-Id: 9cd6b593cfc9eaa476c9a3fa768b08bca73213d0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4d67829e11863072aec7cd1dd2939b1fd3eda17b
+Message-Id: <159104010315.18844.6258170183596402649.pr-tracker-bot@kernel.org>
+Date: Mon, 01 Jun 2020 19:35:03 +0000
+To: Eric Biggers <ebiggers@kernel.org>
+X-Headers-End: 1jfqDE-004f0m-G5
+Subject: Re: [f2fs-dev] [GIT PULL] fsverity updates for 5.8
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,126 +87,27 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/6/1 17:20, Sahitya Tummala wrote:
-> Hi Chao,
-> 
-> Can you please help review the diff given by Jaegeuk below?
-> If it looks good, I can post a v2.
+The pull request you sent on Sun, 31 May 2020 23:31:50 -0700:
 
-Oops, I missed to review that patch...
+> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fsverity-for-linus
 
-> 
-> Thanks,
-> 
-> On Thu, May 28, 2020 at 12:18:39PM -0700, Jaegeuk Kim wrote:
->> On 05/28, Chao Yu wrote:
->>> On 2020/5/28 10:45, Chao Yu wrote:
->>>> On 2020/5/27 10:20, Sahitya Tummala wrote:
->>>>> In case a compressed file is getting overwritten, the current retry
->>>>> logic doesn't include the current page to be retried now as it sets
->>>>> the new start index as 0 and new end index as writeback_index - 1.
->>>>> This causes the corresponding cluster to be uncompressed and written
->>>>> as normal pages without compression. Fix this by allowing writeback to
->>>>> be retried for the current page as well (in case of compressed page
->>>>> getting retried due to index mismatch with cluster index). So that
->>>>> this cluster can be written compressed in case of overwrite.
->>>>>
->>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>>>> ---
->>>>>  fs/f2fs/data.c | 2 +-
->>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>> index 4af5fcd..bfd1df4 100644
->>>>> --- a/fs/f2fs/data.c
->>>>> +++ b/fs/f2fs/data.c
->>>>> @@ -3024,7 +3024,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>>>>  	if ((!cycled && !done) || retry) {
->>>>
->>>> IMO, we add retry logic in wrong place, you can see that cycled value is
->>>> zero only if wbc->range_cyclic is true, in that case writeback_index is valid.
->>>>
->>>> However if retry is true and wbc->range_cyclic is false, then writeback_index
->>>> would be uninitialized variable.
->>>>
->>>> Thoughts?
->>>>
->>>> Thanks,
->>>>
->>>>>  		cycled = 1;
->>>>>  		index = 0;
->>>>> -		end = writeback_index - 1;
->>>
->>> BTW, I notice that range_cyclic writeback flow was refactored in below commit,
->>> and skeleton of f2fs.writepages was copied from mm/page-writeback.c::write_cache_pages(),
->>> I guess we need follow that change.
->>>
->>> 64081362e8ff ("mm/page-writeback.c: fix range_cyclic writeback vs writepages deadlock")
->>
->> Is that something like this?
->>
->> ---
->>  fs/f2fs/data.c | 11 ++---------
->>  1 file changed, 2 insertions(+), 9 deletions(-)
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index 48a622b95b76e..28fcdf0d4dcb9 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -2861,7 +2861,6 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>  	pgoff_t index;
->>  	pgoff_t end;		/* Inclusive */
->>  	pgoff_t done_index;
->> -	int cycled;
->>  	int range_whole = 0;
->>  	xa_mark_t tag;
->>  	int nwritten = 0;
->> @@ -2879,17 +2878,12 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>  	if (wbc->range_cyclic) {
->>  		writeback_index = mapping->writeback_index; /* prev offset */
->>  		index = writeback_index;
->> -		if (index == 0)
->> -			cycled = 1;
->> -		else
->> -			cycled = 0;
->>  		end = -1;
->>  	} else {
->>  		index = wbc->range_start >> PAGE_SHIFT;
->>  		end = wbc->range_end >> PAGE_SHIFT;
->>  		if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
->>  			range_whole = 1;
->> -		cycled = 1; /* ignore range_cyclic tests */
->>  	}
->>  	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
->>  		tag = PAGECACHE_TAG_TOWRITE;
->> @@ -3054,10 +3048,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>  		}
->>  	}
->>  #endif
->> -	if ((!cycled && !done) || retry) {
->> -		cycled = 1;
->> +	if (retry) {
->>  		index = 0;
->> -		end = writeback_index - 1;
->> +		end = -1;
->>  		goto retry;
->>  	}
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4d67829e11863072aec7cd1dd2939b1fd3eda17b
 
-+	if (wbc->range_cyclic && !done)
-+		done_index = 0;
+Thank you!
 
-Thanks,
-
->>  	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
->> -- 
->> 2.27.0.rc0.183.gde8f92d652-goog
->>
-> 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
 
 
 _______________________________________________
