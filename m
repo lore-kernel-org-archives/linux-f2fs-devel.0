@@ -2,84 +2,80 @@ Return-Path: <SRS0=E8q1=7R=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A218C433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  4 Jun 2020 21:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B065EC433E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  4 Jun 2020 23:50:53 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 513AC2067B;
-	Thu,  4 Jun 2020 21:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7CE6C20872;
+	Thu,  4 Jun 2020 23:50:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="L59xuAdc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ihW0xSxe";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tw1VGIo2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 513AC2067B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NU0oJpE9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="CQhe7lem";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="12DhJ4j7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE6C20872
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jgx4j-0002oY-5u; Thu, 04 Jun 2020 21:06:57 +0000
+	id 1jgzdM-0000Az-1V; Thu, 04 Jun 2020 23:50:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1jgx4i-0002oS-MG
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jun 2020 21:06:56 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1jgzdC-00008l-Ub
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jun 2020 23:50:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xgWYnP0wIAvtZ3thPLVdLkBQNwxihvirLTJpvp94MLI=; b=L59xuAdcqSX7bj8ERNmp2IJbE+
- Rhv6hXVp9JGMVwxCnEpsuRk8zVxOpId1AR+5vlize/H+7lc0pGJiJfHvm+93yiZbMF4PNVk7jbFjf
- 3alNvyEilVtncbQhCuJ0qFkhbXKO+Db/DXmu0uRpFNqFi+Oo9tH3m8PhrGkwTc9CiiYc=;
+ bh=gGiC0x+XOELAYzDMdHSU1D+PBWmFnPVamSFrmgYg4yI=; b=NU0oJpE9zeygbpxnzEVD1ZhqVo
+ MIjCN1V8by4EJhMQBqY1oOT+H5YSQqkDSMd8DfMyLUO7qR1/W/RkF8EWhu2mk6fv80k3yXKBE2uuT
+ uUbjgW8qJoUQjrWnrXHtmKs+xvGZUJ7P71uDmE1zrIZ8JaekdrAEkTquxZ2bOSGyeY7A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xgWYnP0wIAvtZ3thPLVdLkBQNwxihvirLTJpvp94MLI=; b=ihW0xSxeeglxXVXQXsdTuLj6w4
- 0a0DYdAjF31P8qcAeZeVKRKgoLXTf+gT6fTIuUxsAh4PdEFMXmp/ICn0yhxQpYClGnR0x9AaJxvcq
- 6d1PGJ9ka5XGe5Hf5RHC1e29AcVUVagoONH7emnghKCLIftGdywm2z5Rtyf9isX0yPKI=;
+ bh=gGiC0x+XOELAYzDMdHSU1D+PBWmFnPVamSFrmgYg4yI=; b=CQhe7lemrMfSiU61jq2LbxAb1d
+ DS+Ea0Y2PlRgb8w+jkLPlGQbTyPjL52tlDHk5bHnIXTI6CSVeeOv5xh9nyyhmqljvcuJIvWIwZ8L7
+ /4AB4p1W3DxIYQ8uLweqUcEqt9Sobxy5xCK2gilJxeXYsp3PfuKKEncxSK42E0ik6FZE=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jgx4f-00C7FM-0s
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jun 2020 21:06:56 +0000
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net
- [107.3.166.239])
+ id 1jgzdB-0068Ii-Un
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 04 Jun 2020 23:50:42 +0000
+Received: from localhost (unknown [104.132.1.66])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 8C5DC2067B;
- Thu,  4 Jun 2020 21:06:47 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 5E69E20872;
+ Thu,  4 Jun 2020 23:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1591304807;
- bh=g/gdyeFpBHokLKrQe6xCW/yCnhqXNIihjrHwcCcMn3s=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Tw1VGIo2Hu5KJlkvMxls7SKhk++Yml4QtUfWxudQ6SxE+xOokTNjw4YDhZSlrNEDU
- 8Qp0rN8tf3RwpsitWIwnHLSnvlXMyx73SPCQqq4JzhfPZQGRQQ7gcIjvlmqW4UPmbC
- WNfaFT63HnoKtnNSv35MCJdmQW5wAKWMX5CQKpx4=
-Date: Thu, 4 Jun 2020 14:06:46 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Message-ID: <20200604210646.GA855@sol.localdomain>
-References: <20200505204823.211214-1-ebiggers@kernel.org>
- <20200518180648.GB218254@google.com>
- <20200518183542.GA121709@gmail.com>
- <20200518191016.GA182581@google.com>
+ s=default; t=1591314625;
+ bh=u+5YnwWFFK5nlG26TpFp3tw/TxQAXscErfxMw11kdHY=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=12DhJ4j7SA82q006esRWoPp6vOrOhNNpd5/SGsziuuG2nsrgWgRBs8X1fCOmSkiu/
+ 7hDhu5CTTZDufKWiPU3Qabbm39ZYXLl43tsAqzpsKzd7LoHvD7VRvPzHMjJ8ocV2nC
+ N6ttocMm+STaxGGsMhocOjVAwE7tSwTk9UiCCVxE=
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Thu,  4 Jun 2020 16:50:23 -0700
+Message-Id: <20200604235023.1954-2-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.27.0.278.ge193c7cf3a9-goog
+In-Reply-To: <20200604235023.1954-1-jaegeuk@kernel.org>
+References: <20200604235023.1954-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200518191016.GA182581@google.com>
-X-Headers-End: 1jgx4f-00C7FM-0s
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't return vmalloc() memory from
- f2fs_kmalloc()
+X-Headers-End: 1jgzdB-0068Ii-Un
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: attach IO flags to the missing cases
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,99 +87,42 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, May 18, 2020 at 12:10:16PM -0700, Jaegeuk Kim wrote:
-> On 05/18, Eric Biggers wrote:
-> > On Mon, May 18, 2020 at 11:06:48AM -0700, Jaegeuk Kim wrote:
-> > > On 05/05, Eric Biggers wrote:
-> > > > From: Eric Biggers <ebiggers@google.com>
-> > > > 
-> > > > kmalloc() returns kmalloc'ed memory, and kvmalloc() returns either
-> > > > kmalloc'ed or vmalloc'ed memory.  But the f2fs wrappers, f2fs_kmalloc()
-> > > > and f2fs_kvmalloc(), both return both kinds of memory.
-> > > > 
-> > > > It's redundant to have two functions that do the same thing, and also
-> > > > breaking the standard naming convention is causing bugs since people
-> > > > assume it's safe to kfree() memory allocated by f2fs_kmalloc().  See
-> > > > e.g. the various allocations in fs/f2fs/compress.c.
-> > > > 
-> > > > Fix this by making f2fs_kmalloc() just use kmalloc().  And to avoid
-> > > > re-introducing the allocation failures that the vmalloc fallback was
-> > > > intended to fix, convert the largest allocations to use f2fs_kvmalloc().
-> > > > 
-> > > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > > ---
-> > > >  fs/f2fs/checkpoint.c | 4 ++--
-> > > >  fs/f2fs/f2fs.h       | 8 +-------
-> > > >  fs/f2fs/node.c       | 8 ++++----
-> > > >  3 files changed, 7 insertions(+), 13 deletions(-)
-> > > > 
-> > > > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > > > index 97b6378554b406..ac5b47f15f5e77 100644
-> > > > --- a/fs/f2fs/checkpoint.c
-> > > > +++ b/fs/f2fs/checkpoint.c
-> > > > @@ -895,8 +895,8 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
-> > > >  	int i;
-> > > >  	int err;
-> > > >  
-> > > > -	sbi->ckpt = f2fs_kzalloc(sbi, array_size(blk_size, cp_blks),
-> > > > -				 GFP_KERNEL);
-> > > > +	sbi->ckpt = f2fs_kvzalloc(sbi, array_size(blk_size, cp_blks),
-> > > > +				  GFP_KERNEL);
-> > > >  	if (!sbi->ckpt)
-> > > >  		return -ENOMEM;
-> > > >  	/*
-> > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > > > index d036a31a97e84e..bc4c5b9b1bf14c 100644
-> > > > --- a/fs/f2fs/f2fs.h
-> > > > +++ b/fs/f2fs/f2fs.h
-> > > > @@ -2953,18 +2953,12 @@ static inline bool f2fs_may_extent_tree(struct inode *inode)
-> > > >  static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
-> > > >  					size_t size, gfp_t flags)
-> > > >  {
-> > > > -	void *ret;
-> > > > -
-> > > >  	if (time_to_inject(sbi, FAULT_KMALLOC)) {
-> > > >  		f2fs_show_injection_info(sbi, FAULT_KMALLOC);
-> > > >  		return NULL;
-> > > >  	}
-> > > >  
-> > > > -	ret = kmalloc(size, flags);
-> > > > -	if (ret)
-> > > > -		return ret;
-> > > > -
-> > > > -	return kvmalloc(size, flags);
-> > > > +	return kmalloc(size, flags);
-> > > 
-> > > IIRC, sometimes, we suffered from ENOMEM from kmalloc, as some structures
-> > > depended on the disk capacity. I can't remember exactly which structure tho.
-> > > 
-> > 
-> > I think this patch already addresses that, by changing the large allocations to
-> > use f2fs_kvmalloc().
-> 
-> Hmm, I worried a bit whether it covers every cases.
-> 
+This adds more IOs to attach flags.
 
-I went through every remaining caller of f2fs_kmalloc() and f2fs_kzalloc().  I
-think we're fine, except for possibly the allocation of blkz_seq in
-init_blkz_info().  How many zones can we expect on a zoned block device?
+Fixes: d58f2f658159 ("f2fs: add node_io_flag for bio flags likewise data_io_flag")
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Other than that, the largest fixed-size allocation is 8536 bytes
-(struct discard_cmd_control).  And the variable-size allocations are all a page
-or less, except for xattr buffers which maybe can be larger, but the VFS uses
-kmalloc() for those too.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 2f5293eb5e52a..9d40db50cd65a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -702,6 +702,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	if (fio->io_wbc && !is_read_io(fio->op))
+ 		wbc_account_cgroup_owner(fio->io_wbc, page, PAGE_SIZE);
+ 
++	__attach_io_flag(fio);
+ 	bio_set_op_attrs(bio, fio->op, fio->op_flags);
+ 
+ 	inc_page_count(fio->sbi, is_read_io(fio->op) ?
+@@ -888,6 +889,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ alloc_new:
+ 	if (!bio) {
+ 		bio = __bio_alloc(fio, BIO_MAX_PAGES);
++		__attach_io_flag(fio);
+ 		bio_set_op_attrs(bio, fio->op, fio->op_flags);
+ 
+ 		add_bio_entry(fio->sbi, bio, page, fio->temp);
+-- 
+2.27.0.278.ge193c7cf3a9-goog
 
-Anyway, f2fs used to allocate megabytes with kmalloc(), so I'm not surprised you
-had issues before.  But that's not a good reason to make *every* caller
-potentially get vmalloc()'ed memory, in the process introducing bugs where
-vmalloc() memory isn't handled correctly.
-
-- Eric
 
 
 _______________________________________________
