@@ -2,41 +2,42 @@ Return-Path: <SRS0=hpJI=7Y=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C4FC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jun 2020 15:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4958DC433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 11 Jun 2020 16:19:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 27D5D20792;
-	Thu, 11 Jun 2020 15:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 146CC206DC;
+	Thu, 11 Jun 2020 16:19:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="aTUOm3OE";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Hz3R+ToI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D5D20792
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="RsycJ7TW";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="SwAoT5Ni";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQsgT8Ch"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 146CC206DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jjOiY-0001L1-3o; Thu, 11 Jun 2020 15:02:10 +0000
+	id 1jjPvJ-00041n-H7; Thu, 11 Jun 2020 16:19:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1jjOiW-0001Ks-71
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jun 2020 15:02:08 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1jjPvH-00041c-LT
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jun 2020 16:19:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Atbx5KRkV9iAZ2YZme7cGFVu4Hgia5eKp3Ejnouy10s=; b=aTUOm3OEjMauSR87zXNGw0cNsT
- BNehggblBrfwblBdWkLCFAQdyGvp+1ZysrrDx2a5LS8JeMAmxn/2zuTIAZjRPnwUAn+7g5uam2RW9
- GEvRfXESDUxQvHRUkrekT4eJg64dJZn3i+8FlEp/4R+hwPVLi39ffAiIXlSEv8Oh3Itc=;
+ bh=hQ6/oH6BXdgxeNManMv2lSDXH4b/FyRvt9rTjSZcj7Q=; b=RsycJ7TWfoqmOVf35VKs+aq2ew
+ nFHzQYWeRChVpKfj/6Be8/1wSoBbADu9iWiMxBJtPHmD+xCGrN5Lb/widHpPBQcZ5TSjJ1eQZ3Hjc
+ Od7mn0iWu1coA+yrH117bZ6FZql0cnKYDfUDjTUGGQGUjmID88fAQc26L/IBhtSBxozw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,34 +45,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Atbx5KRkV9iAZ2YZme7cGFVu4Hgia5eKp3Ejnouy10s=; b=Hz3R+ToItzBUfQSdkXNyUqqs1O
- qPzKnAz46w5tC7tVVvjKPezKHhZeKzEqL704L6uD0z4erOc/mejnoI3PMZZNWwo1EJ/eaF/wwBg8w
- XutkpzIe5q6dEymsAGScJQ1+m5g0e9qtPfZhsMf7TUpdiUac2RZrHj9mT45EM6b62bUo=;
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
+ bh=hQ6/oH6BXdgxeNManMv2lSDXH4b/FyRvt9rTjSZcj7Q=; b=SwAoT5NiSF5jI2eIWDLsQdqrux
+ KpZ1rd8FMj4/qfD9ooQgh/Ssw9+yfDc/88sWXdDTZYxtZbDV7IWTHM/C0NzQesoZJ9wVsiIszhafD
+ SWaUaIYCr0XSKsY0zE+lXHLoZyAym99lrVtHsMIOrKJznjtL8xoy3UxlfYgXE275RdKE=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jjOiU-00Gkca-58
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jun 2020 15:02:08 +0000
-Received: from callcc.thunk.org (pool-100-0-195-244.bstnma.fios.verizon.net
- [100.0.195.244]) (authenticated bits=0)
- (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 05BF1oeZ025687
- (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 11 Jun 2020 11:01:51 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 8C5C84200DD; Thu, 11 Jun 2020 11:01:50 -0400 (EDT)
-Date: Thu, 11 Jun 2020 11:01:50 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Andreas Dilger <adilger@dilger.ca>
-Message-ID: <20200611150150.GO1347934@mit.edu>
-References: <20200601200543.59417-1-ebiggers@kernel.org>
- <E876FECB-300E-471B-A790-D44F2F1A3F9A@dilger.ca>
+ id 1jjPvE-00Gnz4-MV
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 11 Jun 2020 16:19:23 +0000
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net
+ [107.3.166.239])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 21955206DC;
+ Thu, 11 Jun 2020 16:19:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1591892355;
+ bh=wsH+kYUlpHN3cnHucYD34glIdihIFPxxoNjrZUi41cM=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=FQsgT8ChS41POrJ2L2DcuW4Puplj8vZ0UDnA2JkwL48aZ46XTeEZm5fx2Q9o2I4/d
+ xunID26zloLK1DunIahtFYmMDEJkP4ED/cD3pme+/Bf+P6AoT8fwhmiMRLTA642EAg
+ LaoSe/Lf6G4s31j9bhkbo7ypNF39wEVTN9WkHGVE=
+Date: Thu, 11 Jun 2020 09:19:13 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Daeho Jeong <daeho43@gmail.com>
+Message-ID: <20200611161913.GA1152@sol.localdomain>
+References: <20200611031652.200401-1-daeho43@gmail.com>
+ <2eeaf889-da2c-0dac-c60b-fc5e68f2d402@huawei.com>
+ <CACOAw_zyNFMYC3pTK3dT4yRgqp+-6yy3m2E64dkDkpNFKZicfQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <E876FECB-300E-471B-A790-D44F2F1A3F9A@dilger.ca>
-X-Headers-End: 1jjOiU-00Gkca-58
-Subject: Re: [f2fs-dev] [PATCH v2] ext4: avoid utf8_strncasecmp() with
- unstable name
+In-Reply-To: <CACOAw_zyNFMYC3pTK3dT4yRgqp+-6yy3m2E64dkDkpNFKZicfQ@mail.gmail.com>
+X-Headers-End: 1jjPvE-00Gnz4-MV
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add F2FS_IOC_SEC_TRIM_FILE ioctl
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,42 +89,76 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daniel Rosenberg <drosen@google.com>, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.co.uk>
+Cc: kernel-team@android.com, Daeho Jeong <daehojeong@google.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jun 01, 2020 at 02:49:51PM -0600, Andreas Dilger wrote:
-> On Jun 1, 2020, at 2:05 PM, Eric Biggers <ebiggers@kernel.org> wrote:
-> > 
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > If the dentry name passed to ->d_compare() fits in dentry::d_iname, then
-> > it may be concurrently modified by a rename.  This can cause undefined
-> > behavior (possibly out-of-bounds memory accesses or crashes) in
-> > utf8_strncasecmp(), since fs/unicode/ isn't written to handle strings
-> > that may be concurrently modified.
-> > 
-> > Fix this by first copying the filename to a stack buffer if needed.
-> > This way we get a stable snapshot of the filename.
-> > 
-> > Fixes: b886ee3e778e ("ext4: Support case-insensitive file name lookups")
-> > Cc: <stable@vger.kernel.org> # v5.2+
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: Daniel Rosenberg <drosen@google.com>
-> > Cc: Gabriel Krisman Bertazi <krisman@collabora.co.uk>
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Thu, Jun 11, 2020 at 08:04:06PM +0900, Daeho Jeong wrote:
+> > > +static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
+> > > +{
+> > > +     struct inode *inode = file_inode(filp);
+> > > +     struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> > > +     struct address_space *mapping = inode->i_mapping;
+> > > +     struct block_device *prev_bdev = NULL;
+> > > +     pgoff_t index, pg_start = 0, pg_end;
+> > > +     block_t prev_block = 0, len = 0;
+> > > +     u32 flags;
+> > > +     int ret = 0;
+> > > +
+> > > +     if (!(filp->f_mode & FMODE_WRITE))
+> > > +             return -EBADF;
+> > > +
+> > > +     if (get_user(flags, (u32 __user *)arg))
+> > > +             return -EFAULT;
+> > > +     if (flags == 0 || (flags & ~F2FS_TRIM_FILE_MASK))
+> > > +             return -EINVAL;
+> > > +
+> > > +     if ((flags & F2FS_TRIM_FILE_DISCARD) && !f2fs_hw_support_discard(sbi))
+> > > +             return -EOPNOTSUPP;
+> > > +
+> > > +     file_start_write(filp);
+> >
+> > Now, I'm a little confused about when we need to call __mnt_want_write_file(),
+> > you know, vfs_write() still will call this function when updating time.
+> > - __generic_file_write_iter
+> >  - file_update_time
+> >   - __mnt_want_write_file
+> >
+> > And previously, f2fs ioctl uses mnt_{want,drop}_write_file() whenever there is
+> > any updates on fs/file, if Eric is correct, we need to clean up most of ioctl
+> > interface as well.
 > 
-> LGTM.
-> 
-> Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+> I also saw most filesytem codes use just mnt_{want,drop}_write_file()
+> and actually it doesn't affect code working. It's a matter of doing a
+> redundant job or not.
+> AFAIUI, if the file is not open for writing (FMODE_WRITE), we have to
+> call mnt_want_write_file() to increase mnt_writers.
+> In this case, we already checked it has FMODE_WRITE flag.
 
-Thanks, applied.
+If the fd isn't writable (or may not be writable), mnt_want_write_file() is
+needed.  That includes all ioctls that operate (or may operate) on directories,
+since directories can't be opened for writing.
 
-					- Ted
+But when the fd is guaranteed to be writable, incrementing mnt_writers is
+pointless.  I'm trying to clean this up in the VFS:
+https://lkml.kernel.org/r/20200611160534.55042-1-ebiggers@kernel.org.
+
+mnt_want_write_file() still does the freeze protection, which file_start_write()
+achieves more directly.
+
+The only other thing that mnt_want_write_file() does is the check for emergency
+remount r/o, which I doubt is very important.  It's racy, so the filesystem
+needs to detect it in other places too.
+
+I'm not sure why file_update_time() uses __mnt_want_write_file().  Either it
+assumes the fd might not be writable, or it just wants the check for emergency
+remount r/o, or it's just a mistake.  Note also that mtime isn't always updated,
+so just because file_update_time() calls __mnt_want_write_file() doesn't mean
+that write() always calls __mnt_want_write_file().
+
+- Eric
 
 
 _______________________________________________
