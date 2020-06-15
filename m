@@ -2,78 +2,79 @@ Return-Path: <SRS0=/SzK=74=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F77BC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 15 Jun 2020 08:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 358C0C433E1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 15 Jun 2020 08:26:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2BEB92053B;
-	Mon, 15 Jun 2020 08:18:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 08AC02068E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 15 Jun 2020 08:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YFqpMeaC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fF32Xy1c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BEB92053B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YcjyoVOV";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="a9ZO0qr4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08AC02068E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jkkKG-0006x0-Pl; Mon, 15 Jun 2020 08:18:40 +0000
+	id 1jkkSF-0007N8-G2; Mon, 15 Jun 2020 08:26:55 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jkkK7-0006wT-LM
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Jun 2020 08:18:31 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jkkSD-0007Mq-Sb
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Jun 2020 08:26:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FYA93KDKLdM83bWPuaAEirwNoGKO2yJv1z6v/q5kKaw=; b=YFqpMeaCXeT5WKZ+UygT7Ec3p0
- iVy8Znmcg5oyTinC9h0rcmBTcRL2lD0qRwoAXqyCKGiCB3I8v6qMBV6+8JMu8BTNqQ4YeIkLXQ8uj
- gPD+bwv+/SthwbDBK/RKl+fUrrClriBcHXSLqsTRrdnE0sILIRlxs1lT83uDX2LcwV/Y=;
+ bh=vP8lUT7/McE4dWEjD5ezeH2WM0MEmUAsdx28X4tQHpQ=; b=YcjyoVOVUYLmzMT1Mc81l6YACm
+ 4nglP/HbPqgZwPzgJKrwWTvHx4VuGYdL5f411nOkFjFhxX6Pw3ipMBPSPzALrGpUHPY4VWCGe+NWl
+ n3w2fKtnS3n0S+vfhOca+6/YpdSXuqdg9XbnERZ/L/bebWFVP7JuCdsqjsiKaV7A8mvQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FYA93KDKLdM83bWPuaAEirwNoGKO2yJv1z6v/q5kKaw=; b=fF32Xy1cBION7PdlZNTsqSzpwK
- 2IMwIGEnOJVc9eF6AvVhZy1i2xBvmekD9UeNOa+pSUpFH9CXE5nhbBToZpnZenPVqseLXS/XSI3vg
- dEGGE9NH3fjxNSDeWVIw/jQtzlxma3i3qTf00RmD9N4Ob3ZXXpIn3Uf5EL9SmiWjp638=;
+ bh=vP8lUT7/McE4dWEjD5ezeH2WM0MEmUAsdx28X4tQHpQ=; b=a9ZO0qr4zb+k6c7iXCyourXqWW
+ /DqgWDQ7v/j3s7hkRVR7lTr8d/dCT2EPW3nBF94Mzta1fgyDli5T/EWTjJXx5ZygtYnUaQzOmDIpA
+ uQ2ucEkFvw5fibMS6zB3wyMqnHyuiOs1fLP3gGool61H21TrFqZMLiNHXnGo08CQXybs=;
 Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jkkK4-003HKQ-A4
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Jun 2020 08:18:31 +0000
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 78C85222F3D9AFF0ACD9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 15 Jun 2020 16:18:12 +0800 (CST)
+ id 1jkkS7-0038HR-7q
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 15 Jun 2020 08:26:49 +0000
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id EF3B0151BA05F3817A22;
+ Mon, 15 Jun 2020 16:26:35 +0800 (CST)
 Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 15 Jun
- 2020 16:18:06 +0800
-To: Wei Fang <fangwei1@huawei.com>, <linux-f2fs-devel@lists.sourceforge.net>
-References: <20200615081138.11685-1-fangwei1@huawei.com>
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 15 Jun
+ 2020 16:26:25 +0800
+To: Jason Yan <yanaijie@huawei.com>, <jaegeuk@kernel.org>, <chao@kernel.org>, 
+ <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>
+References: <20200615040212.3681503-1-yanaijie@huawei.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <14d8aa52-0975-8371-c49f-86278649c3ec@huawei.com>
-Date: Mon, 15 Jun 2020 16:18:06 +0800
+Message-ID: <d1562b04-125f-c112-7272-d99ed1e38549@huawei.com>
+Date: Mon, 15 Jun 2020 16:26:25 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20200615081138.11685-1-fangwei1@huawei.com>
+In-Reply-To: <20200615040212.3681503-1-yanaijie@huawei.com>
 Content-Language: en-US
 X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jkkK4-003HKQ-A4
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: remove useless truncate in
- f2fs_collapse_range()
+X-Headers-End: 1jkkS7-0038HR-7q
+Subject: Re: [f2fs-dev] [PATCH] f2fs: Eliminate usage of uninitialized_var()
+ macro
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,19 +86,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Kees Cook <keescook@chromium.org>, kernel-hardening@lists.openwall.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/6/15 16:11, Wei Fang wrote:
-> Since offset < new_size, no need to do truncate_pagecache() again
-> with new_size.
+On 2020/6/15 12:02, Jason Yan wrote:
+> This is an effort to eliminate the uninitialized_var() macro[1].
 > 
-> Signed-off-by: Wei Fang <fangwei1@huawei.com>
+> The use of this macro is the wrong solution because it forces off ANY
+> analysis by the compiler for a given variable. It even masks "unused
+> variable" warnings.
+> 
+> Quoted from Linus[2]:
+> 
+> "It's a horrible thing to use, in that it adds extra cruft to the
+> source code, and then shuts up a compiler warning (even the _reliable_
+> warnings from gcc)."
+> 
+> The gcc option "-Wmaybe-uninitialized" has been disabled and this change
+> will not produce any warnnings even with "make W=1".
+> 
+> [1] https://github.com/KSPP/linux/issues/81
+> [2] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/
+> 
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> ---
+>  fs/f2fs/data.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 326c63879ddc..e6ec61274d76 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2856,7 +2856,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>  	};
+>  #endif
+>  	int nr_pages;
+> -	pgoff_t uninitialized_var(writeback_index);
+> +	pgoff_t writeback_index;
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+I suggest to delete this variable directly, as we did for mm in
+commit 28659cc8cc87 (mm/page-writeback.c: remove unused variable).
 
 Thanks,
+
+>  	pgoff_t index;
+>  	pgoff_t end;		/* Inclusive */
+>  	pgoff_t done_index;
+> 
 
 
 _______________________________________________
