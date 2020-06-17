@@ -2,78 +2,106 @@ Return-Path: <SRS0=Iz0M=76=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCB6C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jun 2020 12:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AC0C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jun 2020 13:37:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8D2AC20DD4;
-	Wed, 17 Jun 2020 12:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id C025521556
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jun 2020 13:37:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="WJSlTx53";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XDP8PIDA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2AC20DD4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Hf5EmjoH";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fR2Ls47q";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AQDHF9j1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C025521556
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jlXBM-0003yI-7p; Wed, 17 Jun 2020 12:28:44 +0000
+	id 1jlYGA-00064u-Dm; Wed, 17 Jun 2020 13:37:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jlXBJ-0003y9-VV
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jun 2020 12:28:41 +0000
+ (envelope-from <naresh.kamboju@linaro.org>) id 1jlYG9-00064j-7P
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jun 2020 13:37:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nFsdFWcbLYBUlCYK3kE4wKXFEiCnwdJ9C5Nc4wdtPBk=; b=WJSlTx5372uzoRdm3/qdECWLKD
- nkX/XXNdUv+37l0+Qx5HLMwGXusof6BpcsI7c4gHbv/d83xL0cEoYG0NAti5hCkrQirx4bFDSSZOr
- vx9jemh8v+dg9liMbud9jMztP1uIuvusKjsVY2sCETJbeDFzSnvkcI+YwNx89TV349/c=;
+ bh=fqR44w8izx/KE5EkQ1Ws5ETNchnRTHELluIzCKgLjZQ=; b=Hf5EmjoHaQ3FywO1su0nhQ6fci
+ IX647RQMuI08zPefYQnoKjFS+1/Vq3pjyLCUDH2+ZsYuBI1/T9KLxWvEtF5tptby10JBEhlw5IvPm
+ /E2zU1zl0Hupt0nzyZMQ+WEqAtORbcse8HY+4tk8qzZuW3NMl09TobpkVfu2QdfDZb+A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=nFsdFWcbLYBUlCYK3kE4wKXFEiCnwdJ9C5Nc4wdtPBk=; b=XDP8PIDA4SK2EYhcVuA1qMzD/Q
- dH8GDsRJpxeyCAdZTbW+0gYhHHKwZQZnd2FwrG23rlxJFPGy56DxBQwmnZ1jFz1ZquqgWv9BXtHWs
- J7Nic/+dIvg7skdLAc3wEC9VvWZ+dMLc+J69nU07eeAgsV+fGkwB/3jfXVQUyBZlA2ys=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ bh=fqR44w8izx/KE5EkQ1Ws5ETNchnRTHELluIzCKgLjZQ=; b=fR2Ls47qJ9N2q769z721EbKzxD
+ CXjT8J1wX+XQS/SPnR3MHVJoFlGY3J0n8a8gBmOg60mkocQ0Mbwi2bZGWGjo5Xi8D+pi0OEnUp9rC
+ 9zsMzAq2LfhoO2A2Sq+1Yk/dxfKeoBLuYIlSfrkoSp/uOGpGJgeiSfXDmQ7jrF6IyIBI=;
+Received: from mail-lj1-f193.google.com ([209.85.208.193])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jlXBH-006qRa-Pu
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jun 2020 12:28:41 +0000
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 7EC3826641B5BDBD1DA9;
- Wed, 17 Jun 2020 20:28:21 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 17 Jun
- 2020 20:28:16 +0800
-To: <zhaowuyun@wingtech.com>, <jaegeuk@kernel.org>
-References: <1592384659-20203-1-git-send-email-zhaowuyun@wingtech.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <86069ba3-cba3-7bc9-c90b-e931abd0dde5@huawei.com>
-Date: Wed, 17 Jun 2020 20:28:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1jlYG3-006vCc-II
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jun 2020 13:37:45 +0000
+Received: by mail-lj1-f193.google.com with SMTP id x18so2921853lji.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 17 Jun 2020 06:37:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linaro.org; s=google;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :cc; bh=fqR44w8izx/KE5EkQ1Ws5ETNchnRTHELluIzCKgLjZQ=;
+ b=AQDHF9j1wumEdOF8jW/1ZD+wMd/8SpKXUSrLOHAhi0A44X1JaVVNvxPIvK23AWFQl1
+ lcfd2qLeHyI1mOR56hQwvpPqFkxdvrqlLEDd85my4N1iUDfAlgcF8AzsgKWBK3zrgNCe
+ FfcZd/NGkaf2Mw5/0Wi7/NN8GlYj/dE1H3Y2K/UdByyIhfAVRQSJIdp1UXJN3EirQcCx
+ gGhwwgc+eOdRDRZohnKU4obNcVnQwSt7TB0Y31V6blCHXIgexA++Mbo6gO8D5gHDGqpn
+ e08UA7hYCS3YGjFr+hICEEExE+bXh2EV+2ZuVFnYmW334FTROJKMWUws6mNfrG1VlVfC
+ NXPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc;
+ bh=fqR44w8izx/KE5EkQ1Ws5ETNchnRTHELluIzCKgLjZQ=;
+ b=mzp4Ns9ZiXBNw2ghMgRGVom2Hj9w9xWvXM43AhVuRmOkUQlE0gkehpIVHjc2Bp/xr/
+ a+BEkeH1DDA+mOUBR9DL4lJvKV4cKMFUQjfuU/fMYdUWCQzptmLMFv9kDe0ZVgV8ZHNB
+ vUAG8aoawqhdznJtL8R1ZOguL56WHD2gW12k/X+u8u8OPYShFQlOwV/UoO0zzZLdlgn9
+ LDAElRzws0MYnS5yNxE1xPRoggB8+tN3Eelzx64yFEJOn7AJ+rOtGPdFHOKPi3rtdAQG
+ 0g26TzEMgeGjWtibLmdW+fVa8bMOgVNGXJJaAJx/pbpYHYnIIGVPiQlv2PZ7GB+XmnCH
+ yQcA==
+X-Gm-Message-State: AOAM532QBi0Q6H5Az0hRm/ZXMeFzkYRA3tRf/BaQFL9YWMIcl14BDYxM
+ Xjd0w+GWwTNbGXbofuWQoPS6bm4ZEb0CGfL1Ev+jlw==
+X-Google-Smtp-Source: ABdhPJwA6fF2gcH8wQw09CP/KfWtNPcawF+FUlNNP2wgH6FMgwt35Wa0rYTio1e8v/dCRtNDcHsmii7KXDmm4uILcaA=
+X-Received: by 2002:a2e:911:: with SMTP id 17mr4347007ljj.411.1592401052747;
+ Wed, 17 Jun 2020 06:37:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1592384659-20203-1-git-send-email-zhaowuyun@wingtech.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jlXBH-006qRa-Pu
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix a race condition between
- f2fs_write_end_io and f2fs_del_fsync_node_entry
+References: <CA+G9fYu2ruH-8uxBHE0pdE6RgRTSx4QuQPAN=Nv3BCdRd2ouYA@mail.gmail.com>
+ <20200501135806.4eebf0b92f84ab60bba3e1e7@linux-foundation.org>
+ <CA+G9fYsiZ81pmawUY62K30B6ue+RXYod854RS91R2+F8ZO7Xvw@mail.gmail.com>
+ <20200519075213.GF32497@dhcp22.suse.cz>
+ <CAK8P3a2T_j-Ynvhsqe_FCqS2-ZdLbo0oMbHhHChzMbryE0izAQ@mail.gmail.com>
+ <20200519084535.GG32497@dhcp22.suse.cz>
+ <CA+G9fYvzLm7n1BE7AJXd8_49fOgPgWWTiQ7sXkVre_zoERjQKg@mail.gmail.com>
+ <CA+G9fYsXnwyGetj-vztAKPt8=jXrkY8QWe74u5EEA3XPW7aikQ@mail.gmail.com>
+ <20200520190906.GA558281@chrisdown.name>
+ <20200521095515.GK6462@dhcp22.suse.cz>
+ <20200521163450.GV6462@dhcp22.suse.cz>
+In-Reply-To: <20200521163450.GV6462@dhcp22.suse.cz>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 17 Jun 2020 19:07:20 +0530
+Message-ID: <CA+G9fYsdsgRmwLtSKJSzB1eWcUQ1z-_aaU+BNcQpker34XT6_w@mail.gmail.com>
+To: Michal Hocko <mhocko@kernel.org>, Chris Down <chris@chrisdown.name>, 
+ Yafang Shao <laoar.shao@gmail.com>
+X-Headers-End: 1jlYG3-006vCc-II
+Subject: Re: [f2fs-dev] mm: mkfs.ext4 invoked oom-killer on i386 -
+ pagecache_get_page
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,92 +113,112 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Andrea Arcangeli <aarcange@redhat.com>,
+ Anders Roxell <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ Cgroups <cgroups@vger.kernel.org>, Hugh Dickins <hughd@google.com>,
+ open list <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>,
+ linux-block <linux-block@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+ Linux-Next Mailing List <linux-next@vger.kernel.org>,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>,
+ lkft-triage@lists.linaro.org, Johannes Weiner <hannes@cmpxchg.org>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-ext4 <linux-ext4@vger.kernel.org>, Roman Gushchin <guro@fb.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/6/17 17:04, zhaowuyun@wingtech.com wrote:
-> From: Wuyun Zhao <zhaowuyun@wingtech.com>
-> 
-> Under some condition, the __write_node_page will submit a page which is not
-> f2fs_in_warm_node_list and will not call f2fs_add_fsync_node_entry.
-> f2fs_gc continue to run to invoke f2fs_iget -> do_read_inode to read the same node page
-> and set code node, which make f2fs_in_warm_node_list become true,
-> that will cause f2fs_bug_on in f2fs_del_fsync_node_entry when f2fs_write_end_io called.
-Could you please add below race condition description into commit message?
+On Thu, 21 May 2020 at 22:04, Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Thu 21-05-20 11:55:16, Michal Hocko wrote:
+> > On Wed 20-05-20 20:09:06, Chris Down wrote:
+> > > Hi Naresh,
+> > >
+> > > Naresh Kamboju writes:
+> > > > As a part of investigation on this issue LKFT teammate Anders Roxell
+> > > > git bisected the problem and found bad commit(s) which caused this problem.
+> > > >
+> > > > The following two patches have been reverted on next-20200519 and retested the
+> > > > reproducible steps and confirmed the test case mkfs -t ext4 got PASS.
+> > > > ( invoked oom-killer is gone now)
+> > > >
+> > > > Revert "mm, memcg: avoid stale protection values when cgroup is above
+> > > > protection"
+> > > >    This reverts commit 23a53e1c02006120f89383270d46cbd040a70bc6.
+> > > >
+> > > > Revert "mm, memcg: decouple e{low,min} state mutations from protection
+> > > > checks"
+> > > >    This reverts commit 7b88906ab7399b58bb088c28befe50bcce076d82.
+> > >
+> > > Thanks Anders and Naresh for tracking this down and reverting.
+> > >
+> > > I'll take a look tomorrow. I don't see anything immediately obviously wrong
+> > > in either of those commits from a (very) cursory glance, but they should
+> > > only be taking effect if protections are set.
+> >
+> > Agreed. If memory.{low,min} is not used then the patch should be
+> > effectively a nop.
+>
+> I was staring into the code and do not see anything.  Could you give the
+> following debugging patch a try and see whether it triggers?
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index cc555903a332..df2e8df0eb71 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -2404,6 +2404,8 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
+>                          * sc->priority further than desirable.
+>                          */
+>                         scan = max(scan, SWAP_CLUSTER_MAX);
+> +
+> +                       trace_printk("scan:%lu protection:%lu\n", scan, protection);
+>                 } else {
+>                         scan = lruvec_size;
+>                 }
+> @@ -2648,6 +2650,7 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
+>                 mem_cgroup_calculate_protection(target_memcg, memcg);
+>
+>                 if (mem_cgroup_below_min(memcg)) {
+> +                       trace_printk("under min:%lu emin:%lu\n", memcg->memory.min, memcg->memory.emin);
+>                         /*
+>                          * Hard protection.
+>                          * If there is no reclaimable memory, OOM.
+> @@ -2660,6 +2663,7 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
+>                          * there is an unprotected supply
+>                          * of reclaimable memory from other cgroups.
+>                          */
+> +                       trace_printk("under low:%lu elow:%lu\n", memcg->memory.low, memcg->memory.elow);
+>                         if (!sc->memcg_low_reclaim) {
+>                                 sc->memcg_low_skipped = 1;
+>                                 continue;
 
-- f2fs_write_end_io
-					- f2fs_iget
-					 - do_read_inode
-					  - set_cold_node
-					  recover cold node flag
- - f2fs_in_warm_node_list
-  - is_cold_node
-  if node is cold, assume we have added
-  node to fsync_node_list during writepages()
- - f2fs_del_fsync_node_entry
-  - f2fs_bug_on() due to node page
-  is not in fsync_node_list
+As per your suggestions on debugging this problem,
+trace_printk is replaced with printk and applied to your patch on top of the
+problematic kernel and here is the test output and link.
 
-BTW, I'm curious about why we can lose cold flag for non-dir inode?
-any clue to reproduce this bug (I mean losing cold flag)?
+mkfs -t ext4 /dev/disk/by-id/ata-TOSHIBA_MG04ACA100N_Y8RQK14KF6XF
+mke2fs 1.43.8 (1-Jan-2018)
+Creating filesystem with 244190646 4k blocks and 61054976 inodes
+Filesystem UUID: 7c380766-0ed8-41ba-a0de-3c08e78f1891
+Superblock backups stored on blocks:
+32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,
+102400000, 214990848
+Allocating group tables:    0/7453 done
+Writing inode tables:    0/7453 done
+Creating journal (262144 blocks): [   51.544525] under min:0 emin:0
+[   51.845304] under min:0 emin:0
+[   51.848738] under min:0 emin:0
+[   51.858147] under min:0 emin:0
+[   51.861333] under min:0 emin:0
+[   51.862034] under min:0 emin:0
+[   51.862442] under min:0 emin:0
+[   51.862763] under min:0 emin:0
 
-> 
-> [   34.966133] Call trace:
-> [   34.969902]  f2fs_del_fsync_node_entry+0x100/0x108
-> [   34.976071]  f2fs_write_end_io+0x1e0/0x288
-> [   34.981539]  bio_endio+0x248/0x270
-> [   34.986289]  blk_update_request+0x2b0/0x4d8
-> [   34.991841]  scsi_end_request+0x40/0x440
-> [   34.997126]  scsi_io_completion+0xa4/0x748
-> [   35.002593]  scsi_finish_command+0xdc/0x110
-> [   35.008143]  scsi_softirq_done+0x118/0x150
-> [   35.013610]  blk_done_softirq+0x8c/0xe8
-> [   35.018811]  __do_softirq+0x2e8/0x578
-> [   35.023828]  irq_exit+0xfc/0x120
-> [   35.028398]  handle_IPI+0x1d8/0x330
-> [   35.033233]  gic_handle_irq+0x110/0x1d4
-> [   35.038433]  el1_irq+0xb4/0x130
-> [   35.042917]  kmem_cache_alloc+0x3f0/0x418
-> [   35.048288]  radix_tree_node_alloc+0x50/0xf8
-> [   35.053933]  __radix_tree_create+0xf8/0x188
-> [   35.059484]  __radix_tree_insert+0x3c/0x128
-> [   35.065035]  add_gc_inode+0x90/0x118
-> [   35.069967]  f2fs_gc+0x1b80/0x2d70
-> [   35.074718]  f2fs_disable_checkpoint+0x94/0x1d0
-> [   35.080621]  f2fs_fill_super+0x10c4/0x1b88
-> [   35.086088]  mount_bdev+0x194/0x1e0
-> [   35.090923]  f2fs_mount+0x40/0x50
-> [   35.095589]  mount_fs+0xb4/0x190
-> [   35.100159]  vfs_kern_mount+0x80/0x1d8
-> [   35.105260]  do_mount+0x478/0xf18
-> [   35.109926]  ksys_mount+0x90/0xd0
-> [   35.114592]  __arm64_sys_mount+0x24/0x38
-> 
-> Signed-off-by: Wuyun Zhao <zhaowuyun@wingtech.com>
+Full test log link,
+https://lkft.validation.linaro.org/scheduler/job/1497412#L1451
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
-> ---
->  fs/f2fs/inode.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index be6ac33..0df5c8c 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -402,6 +402,7 @@ static int do_read_inode(struct inode *inode)
->  
->  	/* try to recover cold bit for non-dir inode */
->  	if (!S_ISDIR(inode->i_mode) && !is_cold_node(node_page)) {
-> +		f2fs_wait_on_page_writeback(node_page, NODE, true, true);
->  		set_cold_node(node_page, false);
->  		set_page_dirty(node_page);
->  	}
-> 
+- Naresh
 
 
 _______________________________________________
