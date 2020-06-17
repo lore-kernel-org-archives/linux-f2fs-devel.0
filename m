@@ -2,75 +2,78 @@ Return-Path: <SRS0=Iz0M=76=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51945C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jun 2020 12:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCB6C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Jun 2020 12:28:45 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CC33A2098B;
-	Wed, 17 Jun 2020 12:23:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8D2AC20DD4;
+	Wed, 17 Jun 2020 12:28:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="d6FgrZuK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="K00Bqebn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC33A2098B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="WJSlTx53";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XDP8PIDA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2AC20DD4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jlX6B-0008Og-FW; Wed, 17 Jun 2020 12:23:23 +0000
+	id 1jlXBM-0003yI-7p; Wed, 17 Jun 2020 12:28:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wangxiaojun11@huawei.com>) id 1jlX6A-0008OZ-Ij
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jun 2020 12:23:22 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jlXBJ-0003y9-VV
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jun 2020 12:28:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=k9vmYhSqrLe98zAalhmL1pWPeeHC8WRLETpp+m+bXHk=; b=d6FgrZuKmUd7udjQrBETYJNLD1
- XTPNWkRVLGNeImH+kcITraVFAAEozObbxvEM5/bDe/MbA85nO4ccOWnlcPcs8muKB0W1QzTjmR0eJ
- Z6HZYZ/PGaQMYxKLX5S0vAoPX5TS3rfXuxXLDYcjgBzC7Z0GadCPMUe4WcgOd8C2R+l4=;
+ bh=nFsdFWcbLYBUlCYK3kE4wKXFEiCnwdJ9C5Nc4wdtPBk=; b=WJSlTx5372uzoRdm3/qdECWLKD
+ nkX/XXNdUv+37l0+Qx5HLMwGXusof6BpcsI7c4gHbv/d83xL0cEoYG0NAti5hCkrQirx4bFDSSZOr
+ vx9jemh8v+dg9liMbud9jMztP1uIuvusKjsVY2sCETJbeDFzSnvkcI+YwNx89TV349/c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=k9vmYhSqrLe98zAalhmL1pWPeeHC8WRLETpp+m+bXHk=; b=K
- 00Bqebnu7XKy4Hc8elJ/rZceiutTzTKpn85aZmoEVbxbw4+8pokKZ3fvNbRov7ck2Y0wEFib3YYTR
- uQ9amX5AjruwGILB+kMeylsnmcZr73+T1N4zw3EgrEshXsXQorc6zvi7GSSD3GaKxwUDFre1OrKKg
- cmwFWj35TW7WPKAc=;
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=nFsdFWcbLYBUlCYK3kE4wKXFEiCnwdJ9C5Nc4wdtPBk=; b=XDP8PIDA4SK2EYhcVuA1qMzD/Q
+ dH8GDsRJpxeyCAdZTbW+0gYhHHKwZQZnd2FwrG23rlxJFPGy56DxBQwmnZ1jFz1ZquqgWv9BXtHWs
+ J7Nic/+dIvg7skdLAc3wEC9VvWZ+dMLc+J69nU07eeAgsV+fGkwB/3jfXVQUyBZlA2ys=;
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jlX66-006N2x-LE
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jun 2020 12:23:22 +0000
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id C4AC25D8AB68C9856E66
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 17 Jun 2020 20:23:10 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.487.0; Wed, 17 Jun 2020
- 20:23:07 +0800
-From: Wang Xiaojun <wangxiaojun11@huawei.com>
-To: <linux-f2fs-devel@lists.sourceforge.net>
-Date: Wed, 17 Jun 2020 20:30:12 +0800
-Message-ID: <20200617123012.90643-1-wangxiaojun11@huawei.com>
-X-Mailer: git-send-email 2.26.0.106.g9fadedd
+ id 1jlXBH-006qRa-Pu
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Jun 2020 12:28:41 +0000
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id 7EC3826641B5BDBD1DA9;
+ Wed, 17 Jun 2020 20:28:21 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 17 Jun
+ 2020 20:28:16 +0800
+To: <zhaowuyun@wingtech.com>, <jaegeuk@kernel.org>
+References: <1592384659-20203-1-git-send-email-zhaowuyun@wingtech.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <86069ba3-cba3-7bc9-c90b-e931abd0dde5@huawei.com>
+Date: Wed, 17 Jun 2020 20:28:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Originating-IP: [10.90.53.225]
+In-Reply-To: <1592384659-20203-1-git-send-email-zhaowuyun@wingtech.com>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jlX66-006N2x-LE
-Subject: [f2fs-dev] [PATCH] f2fs: use kfree() to free variables allocated by
- match_strdup()
+X-Headers-End: 1jlXBH-006qRa-Pu
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix a race condition between
+ f2fs_write_end_io and f2fs_del_fsync_node_entry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,162 +85,92 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use kfree() instead of kvfree() to free variables allocated
-by match_strdup(). Because the memory is allocated with kmalloc
-inside match_strdup().
+On 2020/6/17 17:04, zhaowuyun@wingtech.com wrote:
+> From: Wuyun Zhao <zhaowuyun@wingtech.com>
+> 
+> Under some condition, the __write_node_page will submit a page which is not
+> f2fs_in_warm_node_list and will not call f2fs_add_fsync_node_entry.
+> f2fs_gc continue to run to invoke f2fs_iget -> do_read_inode to read the same node page
+> and set code node, which make f2fs_in_warm_node_list become true,
+> that will cause f2fs_bug_on in f2fs_del_fsync_node_entry when f2fs_write_end_io called.
+Could you please add below race condition description into commit message?
 
-Signed-off-by: Wang Xiaojun <wangxiaojun11@huawei.com>
----
- fs/f2fs/super.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+- f2fs_write_end_io
+					- f2fs_iget
+					 - do_read_inode
+					  - set_cold_node
+					  recover cold node flag
+ - f2fs_in_warm_node_list
+  - is_cold_node
+  if node is cold, assume we have added
+  node to fsync_node_list during writepages()
+ - f2fs_del_fsync_node_entry
+  - f2fs_bug_on() due to node page
+  is not in fsync_node_list
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 20e56b0fa46a..6298d4cf3112 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -348,7 +348,7 @@ static int f2fs_set_qf_name(struct super_block *sb, int qtype,
- 	set_opt(sbi, QUOTA);
- 	return 0;
- errout:
--	kvfree(qname);
-+	kfree(qname);
- 	return ret;
- }
- 
-@@ -360,7 +360,7 @@ static int f2fs_clear_qf_name(struct super_block *sb, int qtype)
- 		f2fs_err(sbi, "Cannot change journaled quota options when quota turned on");
- 		return -EINVAL;
- 	}
--	kvfree(F2FS_OPTION(sbi).s_qf_names[qtype]);
-+	kfree(F2FS_OPTION(sbi).s_qf_names[qtype]);
- 	F2FS_OPTION(sbi).s_qf_names[qtype] = NULL;
- 	return 0;
- }
-@@ -494,10 +494,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			} else if (!strcmp(name, "sync")) {
- 				F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_SYNC;
- 			} else {
--				kvfree(name);
-+				kfree(name);
- 				return -EINVAL;
- 			}
--			kvfree(name);
-+			kfree(name);
- 			break;
- 		case Opt_disable_roll_forward:
- 			set_opt(sbi, DISABLE_ROLL_FORWARD);
-@@ -654,17 +654,17 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			if (!strcmp(name, "adaptive")) {
- 				if (f2fs_sb_has_blkzoned(sbi)) {
- 					f2fs_warn(sbi, "adaptive mode is not allowed with zoned block device feature");
--					kvfree(name);
-+					kfree(name);
- 					return -EINVAL;
- 				}
- 				F2FS_OPTION(sbi).fs_mode = FS_MODE_ADAPTIVE;
- 			} else if (!strcmp(name, "lfs")) {
- 				F2FS_OPTION(sbi).fs_mode = FS_MODE_LFS;
- 			} else {
--				kvfree(name);
-+				kfree(name);
- 				return -EINVAL;
- 			}
--			kvfree(name);
-+			kfree(name);
- 			break;
- 		case Opt_io_size_bits:
- 			if (args->from && match_int(args, &arg))
-@@ -790,10 +790,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			} else if (!strcmp(name, "fs-based")) {
- 				F2FS_OPTION(sbi).whint_mode = WHINT_MODE_FS;
- 			} else {
--				kvfree(name);
-+				kfree(name);
- 				return -EINVAL;
- 			}
--			kvfree(name);
-+			kfree(name);
- 			break;
- 		case Opt_alloc:
- 			name = match_strdup(&args[0]);
-@@ -805,10 +805,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			} else if (!strcmp(name, "reuse")) {
- 				F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_REUSE;
- 			} else {
--				kvfree(name);
-+				kfree(name);
- 				return -EINVAL;
- 			}
--			kvfree(name);
-+			kfree(name);
- 			break;
- 		case Opt_fsync:
- 			name = match_strdup(&args[0]);
-@@ -822,10 +822,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 				F2FS_OPTION(sbi).fsync_mode =
- 							FSYNC_MODE_NOBARRIER;
- 			} else {
--				kvfree(name);
-+				kfree(name);
- 				return -EINVAL;
- 			}
--			kvfree(name);
-+			kfree(name);
- 			break;
- 		case Opt_test_dummy_encryption:
- 			ret = f2fs_set_test_dummy_encryption(sb, p, &args[0],
-@@ -1250,7 +1250,7 @@ static void f2fs_put_super(struct super_block *sb)
- 	mempool_destroy(sbi->write_io_dummy);
- #ifdef CONFIG_QUOTA
- 	for (i = 0; i < MAXQUOTAS; i++)
--		kvfree(F2FS_OPTION(sbi).s_qf_names[i]);
-+		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
- #endif
- 	fscrypt_free_dummy_context(&F2FS_OPTION(sbi).dummy_enc_ctx);
- 	destroy_percpu_info(sbi);
-@@ -1754,7 +1754,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 				GFP_KERNEL);
- 			if (!org_mount_opt.s_qf_names[i]) {
- 				for (j = 0; j < i; j++)
--					kvfree(org_mount_opt.s_qf_names[j]);
-+					kfree(org_mount_opt.s_qf_names[j]);
- 				return -ENOMEM;
- 			}
- 		} else {
-@@ -1879,7 +1879,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- #ifdef CONFIG_QUOTA
- 	/* Release old quota file names */
- 	for (i = 0; i < MAXQUOTAS; i++)
--		kvfree(org_mount_opt.s_qf_names[i]);
-+		kfree(org_mount_opt.s_qf_names[i]);
- #endif
- 	/* Update the POSIXACL Flag */
- 	sb->s_flags = (sb->s_flags & ~SB_POSIXACL) |
-@@ -1900,7 +1900,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- #ifdef CONFIG_QUOTA
- 	F2FS_OPTION(sbi).s_jquota_fmt = org_mount_opt.s_jquota_fmt;
- 	for (i = 0; i < MAXQUOTAS; i++) {
--		kvfree(F2FS_OPTION(sbi).s_qf_names[i]);
-+		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
- 		F2FS_OPTION(sbi).s_qf_names[i] = org_mount_opt.s_qf_names[i];
- 	}
- #endif
-@@ -3811,7 +3811,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- free_options:
- #ifdef CONFIG_QUOTA
- 	for (i = 0; i < MAXQUOTAS; i++)
--		kvfree(F2FS_OPTION(sbi).s_qf_names[i]);
-+		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
- #endif
- 	fscrypt_free_dummy_context(&F2FS_OPTION(sbi).dummy_enc_ctx);
- 	kvfree(options);
--- 
-2.26.0.106.g9fadedd
+BTW, I'm curious about why we can lose cold flag for non-dir inode?
+any clue to reproduce this bug (I mean losing cold flag)?
 
+> 
+> [   34.966133] Call trace:
+> [   34.969902]  f2fs_del_fsync_node_entry+0x100/0x108
+> [   34.976071]  f2fs_write_end_io+0x1e0/0x288
+> [   34.981539]  bio_endio+0x248/0x270
+> [   34.986289]  blk_update_request+0x2b0/0x4d8
+> [   34.991841]  scsi_end_request+0x40/0x440
+> [   34.997126]  scsi_io_completion+0xa4/0x748
+> [   35.002593]  scsi_finish_command+0xdc/0x110
+> [   35.008143]  scsi_softirq_done+0x118/0x150
+> [   35.013610]  blk_done_softirq+0x8c/0xe8
+> [   35.018811]  __do_softirq+0x2e8/0x578
+> [   35.023828]  irq_exit+0xfc/0x120
+> [   35.028398]  handle_IPI+0x1d8/0x330
+> [   35.033233]  gic_handle_irq+0x110/0x1d4
+> [   35.038433]  el1_irq+0xb4/0x130
+> [   35.042917]  kmem_cache_alloc+0x3f0/0x418
+> [   35.048288]  radix_tree_node_alloc+0x50/0xf8
+> [   35.053933]  __radix_tree_create+0xf8/0x188
+> [   35.059484]  __radix_tree_insert+0x3c/0x128
+> [   35.065035]  add_gc_inode+0x90/0x118
+> [   35.069967]  f2fs_gc+0x1b80/0x2d70
+> [   35.074718]  f2fs_disable_checkpoint+0x94/0x1d0
+> [   35.080621]  f2fs_fill_super+0x10c4/0x1b88
+> [   35.086088]  mount_bdev+0x194/0x1e0
+> [   35.090923]  f2fs_mount+0x40/0x50
+> [   35.095589]  mount_fs+0xb4/0x190
+> [   35.100159]  vfs_kern_mount+0x80/0x1d8
+> [   35.105260]  do_mount+0x478/0xf18
+> [   35.109926]  ksys_mount+0x90/0xd0
+> [   35.114592]  __arm64_sys_mount+0x24/0x38
+> 
+> Signed-off-by: Wuyun Zhao <zhaowuyun@wingtech.com>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+> ---
+>  fs/f2fs/inode.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index be6ac33..0df5c8c 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -402,6 +402,7 @@ static int do_read_inode(struct inode *inode)
+>  
+>  	/* try to recover cold bit for non-dir inode */
+>  	if (!S_ISDIR(inode->i_mode) && !is_cold_node(node_page)) {
+> +		f2fs_wait_on_page_writeback(node_page, NODE, true, true);
+>  		set_cold_node(node_page, false);
+>  		set_page_dirty(node_page);
+>  	}
+> 
 
 
 _______________________________________________
