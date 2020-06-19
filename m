@@ -2,93 +2,80 @@ Return-Path: <SRS0=tUrj=AA=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83281C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 Jun 2020 09:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A797CC433E3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 Jun 2020 11:56:11 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4E9AC20786;
-	Fri, 19 Jun 2020 09:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7269D2083B;
+	Fri, 19 Jun 2020 11:56:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bs0iEgIG";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="i456dIxC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YjpvJgVY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E9AC20786
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bDvuVoci";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VJQIusxT";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YmQH+Tq3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7269D2083B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jmDVK-0000iF-Q5; Fri, 19 Jun 2020 09:40:10 +0000
+	id 1jmFcw-0006lS-JX; Fri, 19 Jun 2020 11:56:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <agruenba@redhat.com>) id 1jmDVJ-0000i5-Ba
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Jun 2020 09:40:09 +0000
+ (envelope-from <willy@infradead.org>) id 1jmFcu-0006kt-GN
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Jun 2020 11:56:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SldHT58QWZEaNH+GrGNea/awooFbiqL4jxPiQBrZZXc=; b=bs0iEgIG8zvXnER8v0hovQDC40
- Jgn38vDZlmDVO8S8JmRjdTbAXaogtKD6Zm7Q/14aMgQwUCLRhMaxnSZRVvZklcypSsHBERJVF5zUm
- niyP1obE3+I5sAdfvma9Nkkt01EkZvDvDMWQEHC/BgXH+O28KHmIu+Z6VKBlXnfpm+Nk=;
+ bh=qkiSuMBHq1jJPg79H69BLQzOTNgh3NSXy1sjSUD7sso=; b=bDvuVociXwWhmwmSGq+s+iwUn4
+ c/x0/WWwtyeRZohXu5rhfSuMeeayz9zCN1q50VdDJww6AmAAdEpUgsJza1GhO1CD0MTwl2aNBZ4Ax
+ puis8kfHMXxyw8yfVugP5oPwaJzI0t7JPOSwopK8ZlvCCaogWDmPRhzG6Uk7kGSjzBz8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=SldHT58QWZEaNH+GrGNea/awooFbiqL4jxPiQBrZZXc=; b=i456dIxCPj/J273fO96vdF7BKp
- JAEEXDxu8BF7vbrMQWzeEjAcey+BVOE4tJ1vDaBn98ps53G5SWAgixRIDHlLRMRPHPPJSPw9nCbfa
- u0G3dB6p+UDsaF4SRfc4zM145SntcKZlexrO0NGcVZdr2RZNohK4Ph5F0+hL61Afh2I0=;
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]
- helo=us-smtp-delivery-1.mimecast.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-SHA384:256) (Exim 4.92.2)
- id 1jmDVH-00BohX-Km
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Jun 2020 09:40:09 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1592559601;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=SldHT58QWZEaNH+GrGNea/awooFbiqL4jxPiQBrZZXc=;
- b=YjpvJgVYRnJx2GnfY2WKvVkQYWkDJjsicEKvaimanQhqabfPuxDAsGwbZ1SCBGgF31H7zY
- zq1sBlLnWkX9gAmlL+2YawoxUkN00jJIdaS0MfbVLgr+8G3z0AVnnX0flrc5rb+ZQjyT2n
- IpiLcH1Z4dizVBaeacTxpf+LUFtOQPo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-366-SIB5PbDMObCm2YydCZpjNg-1; Fri, 19 Jun 2020 05:39:37 -0400
-X-MC-Unique: SIB5PbDMObCm2YydCZpjNg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com
- [10.5.11.14])
- (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
- (No client certificate requested)
- by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E25C218FF660;
- Fri, 19 Jun 2020 09:39:34 +0000 (UTC)
-Received: from max.home.com (unknown [10.40.195.140])
- by smtp.corp.redhat.com (Postfix) with ESMTP id 258625D9EF;
- Fri, 19 Jun 2020 09:39:26 +0000 (UTC)
-From: Andreas Gruenbacher <agruenba@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 19 Jun 2020 11:39:15 +0200
-Message-Id: <20200619093916.1081129-2-agruenba@redhat.com>
-In-Reply-To: <20200619093916.1081129-1-agruenba@redhat.com>
+ bh=qkiSuMBHq1jJPg79H69BLQzOTNgh3NSXy1sjSUD7sso=; b=VJQIusxTCLW2NyvgkwLZ9w/zD+
+ 2PYeGyHP0IXgERmNYHdIfa6kUD5atDbQGABIPRZm22BbfTVCYqG+dg2kufJfB3iFgKlNZGSnA8HkE
+ 1xB0goPozuI6RMpmJ/kBp/aFW7XhkgBWXlgbVz+mz0bduxEQvz9dHnw4tkjrRnMGaqGQ=;
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jmFcs-008wDO-QC
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 19 Jun 2020 11:56:08 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=qkiSuMBHq1jJPg79H69BLQzOTNgh3NSXy1sjSUD7sso=; b=YmQH+Tq34JCOA4Fpp+Ct6KEZnt
+ 8L0h3XQhFTfcl+EZx9PD/QmFfjIZnpy4HoPgNnfBqHv64Iq5KfuRrtvHpLcfBtAlvvzZLZIa6wd8f
+ WBdUMayWL2szYgJzuQAOr0qIZuM5ocftxFPIzNGVjJSWVMSlvpoZeOYI4S4AGQO8Nb0yis8YPFDTs
+ gFrJkRAnXtTDuea5wOUzzuns5noEUpSfRbZfvMS0JhmrqudLco3NaWgMJzebBPpoOvVOvwgRaFW3F
+ NclEHximP3q4U57rebPA25c4PcGKBj5TM+IBkvwcGuWphYM+ITP6Po2I7wixaC/wuvOd6BghDK1It
+ 5dgYN/wg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red
+ Hat Linux)) id 1jmFcc-0002c8-O0; Fri, 19 Jun 2020 11:55:50 +0000
+Date: Fri, 19 Jun 2020 04:55:50 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+Message-ID: <20200619115550.GY8681@bombadil.infradead.org>
 References: <20200619093916.1081129-1-agruenba@redhat.com>
+ <20200619093916.1081129-3-agruenba@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Headers-End: 1jmDVH-00BohX-Km
-Subject: [f2fs-dev] [PATCH 1/2] fs: Add IOCB_CACHED flag for
- generic_file_read_iter
+Content-Disposition: inline
+In-Reply-To: <20200619093916.1081129-3-agruenba@redhat.com>
+X-Headers-End: 1jmFcs-008wDO-QC
+Subject: Re: [f2fs-dev] [PATCH 2/2] gfs2: Rework read and page fault locking
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,96 +88,149 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
- Andreas Gruenbacher <agruenba@redhat.com>,
  Joseph Qi <joseph.qi@linux.alibaba.com>, John Hubbard <jhubbard@nvidia.com>,
- linux-kernel@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
- linux-xfs <linux-xfs@vger.kernel.org>,
+ linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Junxiao Bi <junxiao.bi@oracle.com>, linux-xfs <linux-xfs@vger.kernel.org>,
  William Kucharski <william.kucharski@oracle.com>,
  Christoph Hellwig <hch@lst.de>, linux-btrfs@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-erofs@lists.ozlabs.org,
- linux-mm@kvack.org, ocfs2-devel@oss.oracle.com
+ linux-f2fs-devel@lists.sourceforge.net,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ ocfs2-devel@oss.oracle.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add an IOCB_CACHED flag which indicates to generic_file_read_iter that
-it should only regard the page cache, without triggering any filesystem
-I/O for the actual request or for readahead.  With this flag, -EAGAIN is
-returned when regular I/O would be triggered similar to the IOCB_NOWAIT
-flag, and -ECANCELED is returned when readahead would be triggered.
+On Fri, Jun 19, 2020 at 11:39:16AM +0200, Andreas Gruenbacher wrote:
+>  static int gfs2_readpage(struct file *file, struct page *page)
+>  {
+> -	struct address_space *mapping = page->mapping;
+> -	struct gfs2_inode *ip = GFS2_I(mapping->host);
+> -	struct gfs2_holder gh;
+>  	int error;
+>  
+> -	unlock_page(page);
+> -	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
+> -	error = gfs2_glock_nq(&gh);
+> -	if (unlikely(error))
+> -		goto out;
+> -	error = AOP_TRUNCATED_PAGE;
+> -	lock_page(page);
+> -	if (page->mapping == mapping && !PageUptodate(page))
+> -		error = __gfs2_readpage(file, page);
+> -	else
+> -		unlock_page(page);
+> -	gfs2_glock_dq(&gh);
+> -out:
+> -	gfs2_holder_uninit(&gh);
+> -	if (error && error != AOP_TRUNCATED_PAGE)
+> +	error = __gfs2_readpage(file, page);
+> +	if (error)
+>  		lock_page(page);
+>  	return error;
 
-This allows the caller to perform a tentative read out of the page
-cache, and to retry the read if the requested pages are not cached.
+I don't think this is right.  If you return an error from ->readpage, I'm
+pretty sure you're supposed to unlock that page.  Looking at
+generic_file_buffered_read():
 
-Please see the next commit for what this is used for.
+                error = mapping->a_ops->readpage(filp, page);
+                if (unlikely(error)) {
+                        if (error == AOP_TRUNCATED_PAGE) {
+                                put_page(page);
+                                error = 0;
+                                goto find_page;
+                        }
+                        goto readpage_error;
+                }
+...
+readpage_error:
+                put_page(page);
+                goto out;
+...
+out:
+        ra->prev_pos = prev_index;
+        ra->prev_pos <<= PAGE_SHIFT;
+        ra->prev_pos |= prev_offset;
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- include/linux/fs.h |  1 +
- mm/filemap.c       | 16 ++++++++++++++--
- 2 files changed, 15 insertions(+), 2 deletions(-)
+        *ppos = ((loff_t)index << PAGE_SHIFT) + offset;
+        file_accessed(filp);
+        return written ? written : error;
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 6c4ab4dc1cd7..74eade571b1c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -315,6 +315,7 @@ enum rw_hint {
- #define IOCB_SYNC		(1 << 5)
- #define IOCB_WRITE		(1 << 6)
- #define IOCB_NOWAIT		(1 << 7)
-+#define IOCB_CACHED		(1 << 8)
- 
- struct kiocb {
- 	struct file		*ki_filp;
-diff --git a/mm/filemap.c b/mm/filemap.c
-index f0ae9a6308cb..bd11f27bf6ae 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2028,7 +2028,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 
- 		page = find_get_page(mapping, index);
- 		if (!page) {
--			if (iocb->ki_flags & IOCB_NOWAIT)
-+			if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_CACHED))
- 				goto would_block;
- 			page_cache_sync_readahead(mapping,
- 					ra, filp,
-@@ -2038,12 +2038,17 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 				goto no_cached_page;
- 		}
- 		if (PageReadahead(page)) {
-+			if (iocb->ki_flags & IOCB_CACHED) {
-+				put_page(page);
-+				error = -ECANCELED;
-+				goto out;
-+			}
- 			page_cache_async_readahead(mapping,
- 					ra, filp, page,
- 					index, last_index - index);
- 		}
- 		if (!PageUptodate(page)) {
--			if (iocb->ki_flags & IOCB_NOWAIT) {
-+			if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_CACHED)) {
- 				put_page(page);
- 				goto would_block;
- 			}
-@@ -2249,6 +2254,13 @@ EXPORT_SYMBOL_GPL(generic_file_buffered_read);
-  *
-  * This is the "read_iter()" routine for all filesystems
-  * that can use the page cache directly.
-+ *
-+ * In the IOCB_NOWAIT flag in iocb->ki_flags indicates that -EAGAIN should be
-+ * returned if completing the request would require I/O; this does not prevent
-+ * readahead.  The IOCB_CACHED flag indicates that -EAGAIN should be returned
-+ * as under the IOCB_NOWAIT flag, and that -ECANCELED should be returned when
-+ * readhead would be triggered.
-+ *
-  * Return:
-  * * number of bytes copied, even for partial reads
-  * * negative error code if nothing was read
--- 
-2.26.2
+so we don't call unlock_page() in generic code, which means the next time
+we try to get this page, we'll do ...
+
+                page = find_get_page(mapping, index);
+...
+                if (!PageUptodate(page)) {
+                        error = wait_on_page_locked_killable(page);
+and presumably we'll wait forever because nobody is going to unlock this
+page?
+
+> @@ -598,16 +582,9 @@ static void gfs2_readahead(struct readahead_control *rac)
+>  {
+>  	struct inode *inode = rac->mapping->host;
+>  	struct gfs2_inode *ip = GFS2_I(inode);
+> -	struct gfs2_holder gh;
+>  
+> -	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
+> -	if (gfs2_glock_nq(&gh))
+> -		goto out_uninit;
+>  	if (!gfs2_is_stuffed(ip))
+>  		mpage_readahead(rac, gfs2_block_map);
+> -	gfs2_glock_dq(&gh);
+> -out_uninit:
+> -	gfs2_holder_uninit(&gh);
+>  }
+
+Not for this patch, obviously, but why do you go to the effort of using
+iomap_readpage() to implement gfs2_readpage(), but don't use iomap for
+gfs2_readahead()?  Far more pages are brought in through ->readahead
+than are brought in through ->readpage.
+
+>  static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  {
+> +	struct gfs2_inode *ip;
+> +	struct gfs2_holder gh;
+> +	size_t written = 0;
+>  	ssize_t ret;
+>  
+> +	gfs2_holder_mark_uninitialized(&gh);
+>  	if (iocb->ki_flags & IOCB_DIRECT) {
+>  		ret = gfs2_file_direct_read(iocb, to);
+
+Again, future work, but you probably want to pass in &gh here so you
+don't have to eat up another 32 bytes or so of stack space on an unused
+gfs2_holder.
+
+>  		if (likely(ret != -ENOTBLK))
+>  			return ret;
+>  		iocb->ki_flags &= ~IOCB_DIRECT;
+>  	}
+> -	return generic_file_read_iter(iocb, to);
+> +	iocb->ki_flags |= IOCB_CACHED;
+> +	ret = generic_file_read_iter(iocb, to);
+> +	iocb->ki_flags &= ~IOCB_CACHED;
+> +	if (ret >= 0) {
+> +		if (!iov_iter_count(to))
+> +			return ret;
+> +		written = ret;
+> +	} else {
+> +		switch(ret) {
+> +		case -EAGAIN:
+> +			if (iocb->ki_flags & IOCB_NOWAIT)
+> +				return ret;
+> +			break;
+> +		case -ECANCELED:
+> +			break;
+> +		default:
+> +			return ret;
+> +		}
+> +	}
+
+I'm wondering if we want to do this in common code rather than making it
+something special only a few filesystems do (either because they care
+about workloads with many threads accessing the same file, or because
+their per-file locks are very heavy-weight).
 
 
 
