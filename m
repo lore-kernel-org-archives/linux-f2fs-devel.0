@@ -2,80 +2,87 @@ Return-Path: <SRS0=nHTy=AG=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95024C433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Jun 2020 00:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449D3C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Jun 2020 12:40:46 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 57CD120781;
-	Thu, 25 Jun 2020 00:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 09635206BE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Jun 2020 12:40:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="D34zvBdC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="FDxYuxV+";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDskKqXp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CD120781
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="ev/oz79R";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Xj4YLF5h";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="JL/rqMEt";
+	dkim=neutral (0-bit key) header.d=aliyun.com header.i=@aliyun.com header.b="sXJDwku6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09635206BE
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:MIME-Version:Message-Id:Date:To:Sender:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
+	bh=KG6tE0/FRuHvCR3UJjH7eb6PgxBbso8B+LHUYeCWOUs=; b=ev/oz79RZORQONxgPOHC/oEapf
+	9+Kzpg3RUn9mH8f90TcHyGCfEiYu8qtufQAjwCjZkejuzUS0cfPtoyX8rhf+2rh/y3b7901aARm4O
+	qcegK1wihZXH9U21rMCD4fg7XXwsmgQDiz7M91Gex+Mv9/KhLRB5jix6MbQMLNElx7wM=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1joFrx-0001Cs-1e; Thu, 25 Jun 2020 00:35:57 +0000
+	id 1joRBL-0007CT-HF; Thu, 25 Jun 2020 12:40:43 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1joFrv-0001Ci-19
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jun 2020 00:35:55 +0000
+ (envelope-from <fishland@aliyun.com>) id 1joRBJ-0007CG-U2
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jun 2020 12:40:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sGG+VAkdXEMKn+z9CcSnjOrNdzj17nH/Eh18dsMEtII=; b=D34zvBdCoYPG9ctg3LpQsjkb+R
- sPwGa3Klyo5NKvZXkFWcqUx4HwD4dKTlW882gsHC15r+EAcxv1ajbksXEtKLdp8OkphOnC8blk7Ei
- +4ZcnmXqfZFhZCbTMrxKJ4RLEw9oUVJsobLAiRIqUO8CJGLy/VgeoO9/re9cGK02IrQ0=;
+ bh=OrUK9NlrDcqjCu5GwHoEIoauj09eZSsplfxNdAoL6+o=; b=Xj4YLF5hNPkQxMkfAbJwPF5I1o
+ p1fzgqERd42u64owCQ+gwHXNW8JfM2FGS445R2ZthrvATZA45qtRfZHk8epIxdGFeKWZoVa3DSAP8
+ jLjhnaFTLZFPut8nkeqb1xxGBalpY4fnaCRk/ulmoH2uCBgTZpeDX074onkuvwZTV8IU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=sGG+VAkdXEMKn+z9CcSnjOrNdzj17nH/Eh18dsMEtII=; b=FDxYuxV+4j1JxpdR0mzAtOwjRd
- zOFw1xhBQZk2K/d4r0MGJkC56Vw18MyrOJYCWLc7aS5S/eUwgcAsiAy8rNYids3HjmB/xDXjYtNe8
- sNqHuE3Kz5GZgmViHR32ccGkSK1833HrL4yZLuc72RrJI1jKe6dMK1KktdDjEE2Odg58=;
-Received: from mail.kernel.org ([198.145.29.99])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=OrUK9NlrDcqjCu5GwHoEIoauj09eZSsplfxNdAoL6+o=; b=J
+ L/rqMEtXE/qseydm3bzHYKB2Elv/jH9OlRrZ2JfyJpcV2mZGuQ3iMBgIkUNxhp2hMUqHbv1fAeV39
+ 1LxB9V7DAU7qCDdDITaWwVBmHamOGPAHoPPkne4LdMyT+El1dT3f0vne+8ypS8hu4DLrUznffslXF
+ 9Rs4qOesXlkPEHDM=;
+Received: from out30-28.freemail.mail.aliyun.com ([115.124.30.28])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1joFrs-00HCoy-3D
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jun 2020 00:35:54 +0000
-Received: from localhost (unknown [104.132.1.66])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 0EF892078D;
- Thu, 25 Jun 2020 00:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1593045344;
- bh=9/yif0uED8r0mBA3VK8O5YzprCAsTE6sgzq4YVVCc/M=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=gDskKqXpfqJhDcdBBjy0d6SJy1+sv2YszPkTe5/AvZu1ZdygZFbm2BbwFTP6fHN7O
- 25lPKfWryj4fxscB0Ngo9WI0El14RmKXS1wyXw6bFWK7YFuLtRd6jMqXpw7e4XYMm6
- NYdlqYXMoI0FK1FOE/9MluFCxpsH2Hym2YuGQSz0=
-Date: Wed, 24 Jun 2020 17:35:43 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Didier Spaier <didier@slint.fr>
-Message-ID: <20200625003543.GA34187@google.com>
-References: <13e19af7-69d5-6db3-441e-3be4921983de@slint.fr>
+ id 1joRBH-000Vqt-Bh
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Jun 2020 12:40:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aliyun.com; s=s1024;
+ t=1593088819; h=From:To:Subject:Date:Message-Id:MIME-Version;
+ bh=OrUK9NlrDcqjCu5GwHoEIoauj09eZSsplfxNdAoL6+o=;
+ b=sXJDwku6JJSnoTMc8N0uS6FVkcuiSk5C1oRNzc/56SOsK5VuhvpVtJ/Yl0jM84xMSn2g/CaOduGtwdd5FSsqMq5ENm2Dsv1GuaDQOCsqx/4IbnjqmPpvRKIVrE5ETZ46St4MbSYFqORkVUB0GVLkETk7+OUeJ1b8tDQB59VBh1w=
+X-Alimail-AntiSpam: AC=CONTINUE; BC=0.1650266|-1; CH=green; DM=|CONTINUE|false|;
+ DS=CONTINUE|ham_system_inform|0.0132381-0.000659421-0.986103;
+ FP=0|0|0|0|0|-1|-1|-1; HT=e01e01422; MF=fishland@aliyun.com; NM=1; PH=DS; RN=5;
+ RT=5; SR=0; TI=SMTPD_---0U0ggW-2_1593088813; 
+Received: from localhost.localdomain(mailfrom:fishland@aliyun.com
+ fp:SMTPD_---0U0ggW-2_1593088813) by smtp.aliyun-inc.com(127.0.0.1);
+ Thu, 25 Jun 2020 20:40:19 +0800
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Thu, 25 Jun 2020 20:40:11 +0800
+Message-Id: <20200625124011.8072-1-fishland@aliyun.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <13e19af7-69d5-6db3-441e-3be4921983de@slint.fr>
-X-Headers-End: 1joFrs-00HCoy-3D
-Subject: Re: [f2fs-dev] Questions about using f2fs to format the root
- partition during Slint installation.
+X-Headers-End: 1joRBH-000Vqt-Bh
+Subject: [f2fs-dev] [PATCH] f2fs: fix typo in comment of f2fs_do_add_link
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,99 +94,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+From: Liu Song via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Liu Song <fishland@aliyun.com>
+Cc: Liu Song <fishland@aliyun.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi,
+stakable/stackable
 
-On 06/25, Didier Spaier wrote:
-> Hello list,
-> 
-> this email is a follow-up of:
-> https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg14390.html
-> 
-> I will number the questions Q1, Q2 etc.
-> 
-> To summarize the context and goal: I want that the Slint installer
-> format the root partition with f2fs when appropriate, if possible
-> without asking questions to the user about the device.
-> 
-> I target usage of f2fs for the root file system in cases of USB flash
-> drives aka USB sticks, SD cards, eMMC, as if I understand correctly
-> these kinds of devices benefit the most of wear minimization and
-> increase of performance when using f2fs. I plan to use ext4 for SSD
-> (including NVMe) and hard disks.
-> 
-> This leads to several questions:
-> 
-> Q1: Comments about this choice of target devices for f2fs, knowing that
-> I favor security over performances and that the "auto" option of the
-> installer is intended for your grand-mother? I am a grand father myself
-> <smile>.
+Signed-off-by: Liu Song <fishland@aliyun.com>
+---
+ fs/f2fs/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Which security and performance feature do you want to use in the system?
-For example, mkfs.f2fs requires some options like:
-- fscrypt : -O encrypt
-- quota : -O quota
-- fsverity : -O verity
-- compression : -O compression -O extra_attr
-- casefolding : -O casefold -C utf8
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index d35976785e8c..069f498af1e3 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -779,7 +779,7 @@ int f2fs_do_add_link(struct inode *dir, const struct qstr *name,
+ 		return err;
+ 
+ 	/*
+-	 * An immature stakable filesystem shows a race condition between lookup
++	 * An immature stackable filesystem shows a race condition between lookup
+ 	 * and create. If we have same task when doing lookup and create, it's
+ 	 * definitely fine as expected by VFS normally. Otherwise, let's just
+ 	 * verify on-disk dentry one more time, which guarantees filesystem
+-- 
+2.20.1
 
-> 
-> Q2. How-to determine if the drive fall in one of the types listed above
-> without asking the user if possible?
-> 
-> I have considered using the output of lsblk and/or "udevadm info" but
-> that doesn't seem to provide enough information on the device.
-> 
-> As an aside, I have seen rota=1 for an USB boot stick. ??? 
-
-I don't have a good idea to detect this. Maybe by measuring write bandwidth
-and checking IO interface?
-
-> 
-> Q3. What would be the safest options to include in the relevant line of
-> /etc/fstab forthe root partition using f2fs?
-
-default + any features that you're interested in?
-We've been using the below option for several years in Android.
-https://android.googlesource.com/device/google/coral/+/refs/heads/master/fstab.hardware#11
-
-> 
-> Q4. do you confirm the statement below? it is a quote of web page:
-> https://wiki.gentoo.org/wiki/F2FS
-> > When using f2fs > When using f2fs as rootfs fsck fails on boot.
-> > Solutions are either disabling fsck in /etc/fstab (setting the last
-> > number to 0) or enabling the force-flag for fsck in /etc/conf.d/fsck.
-> > See bug #671786
-
-Yes, likewise e2fsprogs, fsck.f2fs doesn't allow to open ro-mounted disk
-with "-a". But we added a patch to allow it with "-f".
-
-> 
-> Q5. I am correct f2fs can be expanded but not shrinked. Is it still
-> true? Will it planned to bring this feature?
-
-That can be done by ioctl() in runtime since v5.3.
-https://lore.kernel.org/linux-f2fs-devel/20190711171336.GA66396@jaegeuk-macbookpro.roam.corp.google.com/#r
-
-> 
-> Q6. Currently we ship a 4.19 kernel. Would it be preferable to ship a
-> 5.4 one instead shipped in Slackware-current at time of writing, knowing
-> that we ship an no patched (aka vanilla) kernel and what would be the
-> benefit of doing so wrt f2fs?
-
-v5.4 would be better, and if you have some time, it'd be great to sync
-my backporting patches from the below branches. These are all mirrored to
-Android common kernels as well.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-stable.git/log/?h=linux-5.4.y
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-stable.git/log/?h=linux-4.19.y
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-stable.git/log/?h=linux-4.14.y
-
-Thanks,
 
 
 _______________________________________________
