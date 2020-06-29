@@ -2,83 +2,78 @@ Return-Path: <SRS0=zfsZ=AK=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE90C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jun 2020 06:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F33C433E1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jun 2020 08:00:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2366523134;
-	Mon, 29 Jun 2020 06:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4DC42206E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 Jun 2020 08:00:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="WAArj9AS";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Nb9+9nhU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2366523134
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="K1KOIw+Y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VaREAUNg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC42206E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jpn6w-0000Tf-Rm; Mon, 29 Jun 2020 06:17:46 +0000
+	id 1jpoih-0004a4-2Y; Mon, 29 Jun 2020 08:00:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <SRS0=zG+Q=AK=bugzilla.kernel.org=bugzilla-daemon@kernel.org>)
- id 1jpn6w-0000TZ-60
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jun 2020 06:17:46 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jpoid-0004Zu-Lp
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jun 2020 08:00:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jcWgmxhD4vJ/rdZ5SjyW5mWQXdOjIMRqfHHTsBys0B4=; b=WAArj9ASsFz1OYR9kiCw6uCL3R
- Tq1IZWR7YvHWNV1qmEftzxN1nqkKwcAwznTHrXXA2v+igrgAvecBWdcrOd88R25vfvBm3ukEvcVl7
- Cfj34TeLNrYK9v3+c1TE0qnv5YsqRpTPCFFRgahn6X6TvXQuaxPB+RHaM4XyXULwEczw=;
+ bh=io2izBrpIb6zBpyiqnJk+LDnBcqzO6El7soSuFrAlAI=; b=K1KOIw+YWJ0ti0phD0AHq4KOci
+ +dJCr6T9dSfXkni9H6czjeiAyZW7WcK0IQyT/RYBSCzc7MHe1cvlRIjPfWuOnFkBozVZqXKfb9L6Z
+ 6O0z9qQ1eYikydtVKE/iFFk8gJX0e/lUIma2N845/h3hTGZtnkt0V2+YC2FC4y+fsCD0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=jcWgmxhD4vJ/rdZ5SjyW5mWQXdOjIMRqfHHTsBys0B4=; b=Nb9+9nhUFnscO5Yh0+5DMHgAtX
- agpkPGFo46wqOLYsQQvEzqPqV1Nqrt8ZYyaktN0d2xsO/zwFQs6oTWcUcjqObQ0HV8hF8bKNiVA96
- eSUhMXSjQ01bqB2ajSTS6YPJaNmrK8vmqpqQU+5TvT0BFLRYaDSogZBbyWlOHEWXo+1o=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=io2izBrpIb6zBpyiqnJk+LDnBcqzO6El7soSuFrAlAI=; b=VaREAUNgzoBM8wHxLg2gsNY/7I
+ FAAlqqmY22hfNfU6jeaevSn/QQHmfp+hw/DU61TInkCCvuRI9BzdM4b8ir5aBD2DJOKtatJbrAxMF
+ cMUgI79D7ATD2qkphwAmDl25SVMrCqybKMRv9nF8YN/TpscePuWZl2UzCPJzfRzYecJU=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jpn6t-004ZEL-0a
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jun 2020 06:17:46 +0000
-From: bugzilla-daemon@bugzilla.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon, 29 Jun 2020 06:17:37 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: zKqri0@gmail.com
-X-Bugzilla-Status: NEEDINFO
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-208325-202145-wQGCCxe9Df@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-208325-202145@https.bugzilla.kernel.org/>
-References: <bug-208325-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ id 1jpoib-004jFS-Ga
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 29 Jun 2020 08:00:47 +0000
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+ by Forcepoint Email with ESMTP id 543F54E9FF7E02924904;
+ Mon, 29 Jun 2020 16:00:09 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 29 Jun
+ 2020 16:00:07 +0800
+To: Liu Song <fishland@aliyun.com>, <jaegeuk@kernel.org>, <chao@kernel.org>
+References: <20200628134813.37192-1-fishland@aliyun.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <b2b1b72a-1987-d2ea-349c-c1fbe464ecb4@huawei.com>
+Date: Mon, 29 Jun 2020 16:00:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Headers-End: 1jpn6t-004ZEL-0a
-Subject: [f2fs-dev] [Bug 208325] f2fs inconsistent node block
+In-Reply-To: <20200628134813.37192-1-fishland@aliyun.com>
+Content-Language: en-US
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jpoib-004jFS-Ga
+Subject: Re: [f2fs-dev] [PATCH] f2fs: remove useless parameter of
+ __insert_free_nid()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,53 +85,24 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-f2fs-devel@lists.sourceforge.net, liu.song11@zte.com.cn,
+ linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=208325
+On 2020/6/28 21:48, Liu Song via Linux-f2fs-devel wrote:
+> From: Liu Song <liu.song11@zte.com.cn>
+> 
+> In current version, @state will only be FREE_NID. This parameter
+> has no real effect so remove it to keep clean.
+> 
+> Signed-off-by: Liu Song <liu.song11@zte.com.cn>
 
---- Comment #2 from zKqri0@gmail.com ---
-(In reply to Chao Yu from comment #1)
-> Hi, thanks for the report.
-> 
-> What's you mkfs/mount option?
-> 
-> I've no idea whether this is a f2fs bug or not, as you said device can be
-> trusted, so almostly it should be a software bug.
-> 
-> One case I can image could be that apps bypassing filesystem to write data
-> via LBA directly, then data can be corrupted.
-> 
-> If possible, could you please help to add below three patches to recompile
-> the kernel
-> 
-> https://lore.kernel.org/linux-f2fs-devel/20200628122940.29665-1-
-> yuchao0@huawei.com/T/#t
-> 
-> [f2fs-dev] [PATCH 1/3] f2fs: fix wrong return value of f2fs_bmap_compress()
-> [f2fs-dev] [PATCH 2/3] f2fs: support to trace f2fs_bmap()
-> [f2fs-dev] [PATCH 3/3] f2fs: support to trace f2fs_fiemap()
-> 
-> Then, use below commands to see whether there is apps are lookuping LBA:
-> 
-> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_bmap/enable
-> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_fiemap/enable
-> cat /sys/kernel/debug/tracing/trace_pipe |grep f2fs
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Mount options are "/dev/sda2 on / type f2fs
-(rw,relatime,lazytime,background_gc=on,discard,no_heap,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,extent_cache,mode=adaptive,active_logs=6,alloc_mode=default,fsync_mode=posix)".
+Thanks,
 
-I patched my laptop's kernel with those patches but I don't see anything in
-"trace_pipe" while I'm getting invalid argument errors. Also I noticed that the
-"nid" and "node_footer" are the same always in the error so its only one node
-block that's messed up. 
-
-Maybe a raw copy of that node block will help find what caused it ?
-
--- 
-You are receiving this mail because:
-You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
