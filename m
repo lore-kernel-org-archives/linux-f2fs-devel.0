@@ -2,78 +2,76 @@ Return-Path: <SRS0=3N/Z=AL=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE82C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jun 2020 07:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4E0C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jun 2020 10:04:55 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B8BA12073E
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jun 2020 07:48:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4C7E920675
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 Jun 2020 10:04:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="F/EV4KSX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="leFzlfep"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BA12073E
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="QTUCdEW7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WfI5Vea1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C7E920675
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jqAzx-00008Z-2Z; Tue, 30 Jun 2020 07:48:09 +0000
+	id 1jqD8I-0005KQ-96; Tue, 30 Jun 2020 10:04:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jqAzv-00008R-6P
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Jun 2020 07:48:07 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jqD8G-0005Jf-LI
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Jun 2020 10:04:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9qHjoGzk6N93j2sKfzots5j672V3UlZr4q0RAwpTRug=; b=F/EV4KSXbzOFP10L7LF9W5V+sk
- C1wSZXRi7qslxp1dz/T+DAEj3P6MyGPIuBbnZ8xrxrzikporSAzF943KsqWS4xyxlQfC010XAAnSA
- fllS+6QHbHWPnygv2a9kKlVNFYziOHxL5+YollWTfqiYnJhxf/bdixNrDph5HmgHeL0o=;
+ bh=0jj43jltZh+E/8+dQWUKsKZAkqr3NdcTw+nDI2pq3bg=; b=QTUCdEW7a+ykyKnxHhq5Pp+B1f
+ UqYIGSW72c+808tosE2IirFSOXUEL2WCgh2knUFVndFn9UmSD59npD6FwCF/s28EFFgxg+EGeYf0i
+ groiboVx5ZCAhmO9M22f760+rvV+sG1oNereRtqg7H8b0daQPE3dkQoeTd7KvIjM/i1s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9qHjoGzk6N93j2sKfzots5j672V3UlZr4q0RAwpTRug=; b=leFzlfepGSEqxgJK7jp0bPfpHZ
- c7cpKxLkzO8cTI/gg+1ENCmXBRMjlz2X6mj3++KGv6LkzmabnLDr6oizVXGOgG+BcLG0OKWz1odQM
- OTz09nB+BN8gUlcfjYT2Z0QgRqpOsgGhO4u+YMeq851//YfLpehfbYP9g9oZhpIaLUeY=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ bh=0jj43jltZh+E/8+dQWUKsKZAkqr3NdcTw+nDI2pq3bg=; b=WfI5Vea1cVXKBx2PhKas3Wj/GK
+ DKJU3GyELtPm4NVycQgzyrF4Gi4QY9R2QN5MtLx6RIMdpJynA/FKnsUy4T5hm0vPjw1GbLn90RA8F
+ DgB5Rfj01FFNKjhZqYo7K+df/ZbYqi+qn2vGzz32RqeGSy8O+HKxCJZdRsCjLV7KrXvA=;
+Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jqAzs-005j0r-Oj
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Jun 2020 07:48:07 +0000
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id BDBDCAE3EB74445900F9;
- Tue, 30 Jun 2020 15:47:54 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 30 Jun
- 2020 15:47:48 +0800
-To: Jia Yang <jiayang5@huawei.com>, <chao@kernel.org>, <jaegeuk@kernel.org>
-References: <20200630044504.24148-1-jiayang5@huawei.com>
+ id 1jqD8D-007AYv-5e
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 30 Jun 2020 10:04:52 +0000
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 3BA0BC1F9C3760ACAEC7;
+ Tue, 30 Jun 2020 18:04:42 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.487.0; Tue, 30 Jun 2020 18:04:35 +0800
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <53ec5160-3d0f-970c-f146-d36a957f599e@huawei.com>
-Date: Tue, 30 Jun 2020 15:47:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+To: <jaegeuk@kernel.org>
+Date: Tue, 30 Jun 2020 18:04:25 +0800
+Message-ID: <20200630100428.19105-2-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200630100428.19105-1-yuchao0@huawei.com>
+References: <20200630100428.19105-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20200630044504.24148-1-jiayang5@huawei.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
+X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jqAzs-005j0r-Oj
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove unused parameter in
- f2fs_get_read_data_page()
+X-Headers-End: 1jqD8D-007AYv-5e
+Subject: [f2fs-dev] [PATCH RFC 2/5] f2fs: record average update time of
+ segment
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,90 +83,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/6/30 12:45, Jia Yang wrote:
-> The parameter "op_flags" is not used in f2fs_get_read_data_page(),
-> so it can be removed.
+Previously, once we update one block in segment, we will update mtime of
+segment to last time, making aged segment becoming freshest, result in
+that GC with cost benefit algorithm missing such segment, So this patch
+changes to record mtime as average block updating time instead of last
+updating time.
 
-I don't think so, there is one missing case as below, in where op_flag
-was set incorrectly in f2fs_grab_read_bio(), we need to add one more
-parameter to pass op_flag value.
+It's not needed to reset mtime for prefree segment, as se->valid_blocks
+is zero, then old se->mtime won't take any weight with below calculation:
 
-- gc_data_segment
- - f2fs_get_read_data_page(.., op_flag = REQ_RAHEAD,..)
-  - f2fs_submit_page_read
-   - f2fs_grab_read_bio(.., op_flag = 0, ..)
+	se->mtime = (se->mtime * se->valid_blocks + mtime) /
+				(se->valid_blocks + 1);
 
-> 
-> Signed-off-by: Jia Yang <jiayang5@huawei.com>
-> ---
->  fs/f2fs/data.c | 6 +++---
->  fs/f2fs/f2fs.h | 2 +-
->  fs/f2fs/gc.c   | 2 +-
->  3 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 326c63879ddc..f1b85185e9df 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1157,7 +1157,7 @@ int f2fs_get_block(struct dnode_of_data *dn, pgoff_t index)
->  }
->  
->  struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
-> -						int op_flags, bool for_write)
-> +						bool for_write)
->  {
->  	struct address_space *mapping = inode->i_mapping;
->  	struct dnode_of_data dn;
-> @@ -1237,7 +1237,7 @@ struct page *f2fs_find_data_page(struct inode *inode, pgoff_t index)
->  		return page;
->  	f2fs_put_page(page, 0);
->  
-> -	page = f2fs_get_read_data_page(inode, index, 0, false);
-> +	page = f2fs_get_read_data_page(inode, index, false);
->  	if (IS_ERR(page))
->  		return page;
->  
-> @@ -1263,7 +1263,7 @@ struct page *f2fs_get_lock_data_page(struct inode *inode, pgoff_t index,
->  	struct address_space *mapping = inode->i_mapping;
->  	struct page *page;
->  repeat:
-> -	page = f2fs_get_read_data_page(inode, index, 0, for_write);
-> +	page = f2fs_get_read_data_page(inode, index, for_write);
->  	if (IS_ERR(page))
->  		return page;
->  
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index b35a50f4953c..41ef50714a39 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3441,7 +3441,7 @@ int f2fs_get_block(struct dnode_of_data *dn, pgoff_t index);
->  int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from);
->  int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index);
->  struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
-> -			int op_flags, bool for_write);
-> +			bool for_write);
->  struct page *f2fs_find_data_page(struct inode *inode, pgoff_t index);
->  struct page *f2fs_get_lock_data_page(struct inode *inode, pgoff_t index,
->  			bool for_write);
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 5b95d5a146eb..487f75d9136c 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1094,7 +1094,7 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  			}
->  
->  			data_page = f2fs_get_read_data_page(inode,
-> -						start_bidx, REQ_RAHEAD, true);
-> +						start_bidx, true);
->  			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  			if (IS_ERR(data_page)) {
->  				iput(inode);
-> 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/segment.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 863ec6f1fb87..906c313835ad 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2150,6 +2150,22 @@ static void __set_sit_entry_type(struct f2fs_sb_info *sbi, int type,
+ 		__mark_sit_entry_dirty(sbi, segno);
+ }
+ 
++static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr)
++{
++	unsigned int segno = GET_SEGNO(sbi, blkaddr);
++	struct seg_entry *se = get_seg_entry(sbi, segno);
++	unsigned long long mtime = get_mtime(sbi, false);
++
++	if (!se->mtime) {
++		se->mtime = mtime;
++	} else {
++		se->mtime = (se->mtime * se->valid_blocks + mtime) /
++						(se->valid_blocks + 1);
++	}
++	if (mtime > SIT_I(sbi)->max_mtime)
++		SIT_I(sbi)->max_mtime = mtime;
++}
++
+ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ {
+ 	struct seg_entry *se;
+@@ -2169,10 +2185,9 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 	f2fs_bug_on(sbi, (new_vblocks >> (sizeof(unsigned short) << 3) ||
+ 				(new_vblocks > sbi->blocks_per_seg)));
+ 
++	update_segment_mtime(sbi, blkaddr);
++
+ 	se->valid_blocks = new_vblocks;
+-	se->mtime = get_mtime(sbi, false);
+-	if (se->mtime > SIT_I(sbi)->max_mtime)
+-		SIT_I(sbi)->max_mtime = se->mtime;
+ 
+ 	/* Update valid block bitmap */
+ 	if (del > 0) {
+-- 
+2.26.2
+
 
 
 _______________________________________________
