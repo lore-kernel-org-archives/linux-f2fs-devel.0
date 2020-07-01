@@ -2,81 +2,74 @@ Return-Path: <SRS0=TgVm=AM=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61642C433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  1 Jul 2020 02:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209A8C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  1 Jul 2020 02:20:57 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2F5512053B;
-	Wed,  1 Jul 2020 02:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id DD1332073E;
+	Wed,  1 Jul 2020 02:20:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bWQ8bjns";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lT4AjRkV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F5512053B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="G1PEQhth";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="SxcI27mm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD1332073E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jqS2u-00015z-R3; Wed, 01 Jul 2020 02:00:20 +0000
+	id 1jqSMq-0007cb-GD; Wed, 01 Jul 2020 02:20:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jqS2t-00015q-7A
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 Jul 2020 02:00:19 +0000
+ (envelope-from <jiayang5@huawei.com>) id 1jqSMp-0007cR-0u
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 Jul 2020 02:20:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=A2WMAPdO5Lf1fbJYedJY0uGV8RoMcyyS/7PY5yJUZZw=; b=bWQ8bjns2ZDOtxr9B8yDtbKCLj
- EAsm18kHU8HOBwXIxNAekH9IVgiJ9x3Ahjzg/0gwB+MfDfnMb6b5cR3xph5SX0uApc6T3MpSTbxtb
- mEy1mbv4RAehikDiXF4tigfmf9171Tr9aPhSzN8828MgXPe3sy04DSz+4p+dqdVcIqGo=;
+ bh=5F9fK5bpTIPkIKYRYpGGkNBomnjte+h0lZtlhBdGrCI=; b=G1PEQhthQzFl4AWUVgSU02U0D4
+ O7gyonRtuzbw0jsvi5VXvznpxjaEKU9kwdxDezBelTEr+gXjbaEK3wVEH/lN2hXNduZ1lYookWywv
+ sGsmsyyQZXF8dZERbiRxzUwVi2MRDvDnw7hhefv2FeC0qqAREt+n4LONB8e4tRid0zRM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=A2WMAPdO5Lf1fbJYedJY0uGV8RoMcyyS/7PY5yJUZZw=; b=lT4AjRkVjPE8NuXZEKPnq4yndw
- vQdlI+WwY1x+jkpDxlE9dr4BL2k6zkFzVbnbltjMOij4ABCaZU+DOkopirPT/6ug1dpLMIOUIahv1
- kMJn82Fv2cXDzfDk8x6mJVI/F61Ncm9lAjO8kNUbpTmDK5sJVxCt/48SG3pi8xAdPUt8=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=5F9fK5bpTIPkIKYRYpGGkNBomnjte+h0lZtlhBdGrCI=; b=S
+ xcI27mmFZ+A6GD6S4lfj5N04tas6Ui1Hi1l8hI3g5KY/gphUVGbFvSaLKYkwBEsWEAqllvQDzOCGg
+ oOOoIQC5cky21rNDDWqhlnfbiHp0Jfi2JaoQJsMrQr3Mq1v1HvHWR7U2lMVovR8vNXmg8gPcBZ4Q8
+ i/pafugv2brbf//E=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jqS2q-0089s5-JL
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 Jul 2020 02:00:19 +0000
+ id 1jqSMn-003fP2-4X
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 01 Jul 2020 02:20:54 +0000
 Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 4681418191EF47DAEB71;
- Wed,  1 Jul 2020 10:00:01 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 1 Jul 2020
- 09:59:55 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Nathan Chancellor
- <natechancellor@gmail.com>
-References: <20200624012148.180050-1-jaegeuk@kernel.org>
- <20200629150323.GA3293033@google.com> <20200629202720.GA230664@google.com>
- <20200630204348.GA2504307@ubuntu-s3-xlarge-x86>
- <20200630205635.GB1396584@google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <285a4e16-2cbc-d1e9-8464-8a06bacbaaa0@huawei.com>
-Date: Wed, 1 Jul 2020 09:59:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ by Forcepoint Email with ESMTP id C3BE029C2F442C38DDAA;
+ Wed,  1 Jul 2020 10:20:43 +0800 (CST)
+Received: from localhost.localdomain (10.90.53.225) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 1 Jul 2020 10:20:37 +0800
+From: Jia Yang <jiayang5@huawei.com>
+To: <yuchao0@huawei.com>, <jaegeuk@kernel.org>
+Date: Wed, 1 Jul 2020 10:27:40 +0800
+Message-ID: <20200701022740.109089-1-jiayang5@huawei.com>
+X-Mailer: git-send-email 2.26.0.106.g9fadedd
 MIME-Version: 1.0
-In-Reply-To: <20200630205635.GB1396584@google.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
+X-Originating-IP: [10.90.53.225]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jqS2q-0089s5-JL
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid readahead race condition
+X-Headers-End: 1jqSMn-003fP2-4X
+Subject: [f2fs-dev] [PATCH] f2fs: add parameter op_flag in
+ f2fs_submit_page_read()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,62 +81,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gMjAyMC83LzEgNDo1NiwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4gT24gMDYvMzAsIE5hdGhhbiBD
-aGFuY2VsbG9yIHdyb3RlOgo+PiBPbiBNb24sIEp1biAyOSwgMjAyMCBhdCAwMToyNzoyMFBNIC0w
-NzAwLCBKYWVnZXVrIEtpbSB3cm90ZToKPj4+IElmIHR3byByZWFkYWhlYWQgdGhyZWFkcyBoYXZp
-bmcgc2FtZSBvZmZzZXQgZW50ZXIgaW4gcmVhZHBhZ2VzLCBldmVyeSByZWFkCj4+PiBJT3MgYXJl
-IHNwbGl0IGFuZCBpc3N1ZWQgdG8gdGhlIGRpc2sgd2hpY2ggZ2l2aW5nIGxvd2VyIGJhbmR3aWR0
-aC4KPj4+Cj4+PiBUaGlzIHBhdGNoIHRyaWVzIHRvIGF2b2lkIHJlZHVuZGFudCByZWFkYWhlYWQg
-Y2FsbHMuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogSmFlZ2V1ayBLaW0gPGphZWdldWtAa2VybmVs
-Lm9yZz4KPj4+IC0tLQo+Pj4gdjM6Cj4+PiAgLSB1c2UgUkVBRHxXUklURV9PTkNFCj4+PiB2MjoK
-Pj4+ICAgLSBhZGQgbWlzc2luZyBjb2RlIHRvIGJ5cGFzcyByZWFkCj4+PiAgCj4+PiAgZnMvZjJm
-cy9kYXRhLmMgIHwgMTggKysrKysrKysrKysrKysrKysrCj4+PiAgZnMvZjJmcy9mMmZzLmggIHwg
-IDEgKwo+Pj4gIGZzL2YyZnMvc3VwZXIuYyB8ICAyICsrCj4+PiAgMyBmaWxlcyBjaGFuZ2VkLCAy
-MSBpbnNlcnRpb25zKCspCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZGF0YS5jIGIvZnMv
-ZjJmcy9kYXRhLmMKPj4+IGluZGV4IDk5NWNmNzhiMjNjNWUuLjM2MGI0YzkwODBkOTcgMTAwNjQ0
-Cj4+PiAtLS0gYS9mcy9mMmZzL2RhdGEuYwo+Pj4gKysrIGIvZnMvZjJmcy9kYXRhLmMKPj4+IEBA
-IC0yMjk2LDYgKzIyOTYsNyBAQCBzdGF0aWMgaW50IGYyZnNfbXBhZ2VfcmVhZHBhZ2VzKHN0cnVj
-dCBpbm9kZSAqaW5vZGUsCj4+PiAgCXVuc2lnbmVkIG5yX3BhZ2VzID0gcmFjID8gcmVhZGFoZWFk
-X2NvdW50KHJhYykgOiAxOwo+Pj4gIAl1bnNpZ25lZCBtYXhfbnJfcGFnZXMgPSBucl9wYWdlczsK
-Pj4+ICAJaW50IHJldCA9IDA7Cj4+PiArCWJvb2wgZHJvcF9yYSA9IGZhbHNlOwo+Pj4gIAo+Pj4g
-IAltYXAubV9wYmxrID0gMDsKPj4+ICAJbWFwLm1fbGJsayA9IDA7Cj4+PiBAQCAtMjMwNiwxMCAr
-MjMwNywyNCBAQCBzdGF0aWMgaW50IGYyZnNfbXBhZ2VfcmVhZHBhZ2VzKHN0cnVjdCBpbm9kZSAq
-aW5vZGUsCj4+PiAgCW1hcC5tX3NlZ190eXBlID0gTk9fQ0hFQ0tfVFlQRTsKPj4+ICAJbWFwLm1f
-bWF5X2NyZWF0ZSA9IGZhbHNlOwo+Pj4gIAo+Pj4gKwkvKgo+Pj4gKwkgKiBUd28gcmVhZGFoZWFk
-IHRocmVhZHMgZm9yIHNhbWUgYWRkcmVzcyByYW5nZSBjYW4gY2F1c2UgcmFjZSBjb25kaXRpb24K
-Pj4+ICsJICogd2hpY2ggZnJhZ21lbnRzIHNlcXVlbnRpYWwgcmVhZCBJT3MuIFNvIGxldCdzIGF2
-b2lkIGVhY2ggb3RoZXIuCj4+PiArCSAqLwo+Pj4gKwlpZiAocmFjICYmIHJlYWRhaGVhZF9jb3Vu
-dChyYWMpKSB7Cj4+PiArCQlpZiAoUkVBRF9PTkNFKEYyRlNfSShpbm9kZSktPnJhX29mZnNldCkg
-PT0gcmVhZGFoZWFkX2luZGV4KHJhYykpCj4+PiArCQkJZHJvcF9yYSA9IHRydWU7Cj4+PiArCQll
-bHNlCj4+PiArCQkJV1JJVEVfT05DRShGMkZTX0koaW5vZGUpLT5yYV9vZmZzZXQsCj4+PiArCQkJ
-CQkJcmVhZGFoZWFkX2luZGV4KHJhYykpOwo+Pj4gKwl9Cj4+PiArCj4+PiAgCWZvciAoOyBucl9w
-YWdlczsgbnJfcGFnZXMtLSkgewo+Pj4gIAkJaWYgKHJhYykgewo+Pj4gIAkJCXBhZ2UgPSByZWFk
-YWhlYWRfcGFnZShyYWMpOwo+Pj4gIAkJCXByZWZldGNodygmcGFnZS0+ZmxhZ3MpOwo+Pj4gKwkJ
-CWlmIChkcm9wX3JhKQo+Pj4gKwkJCQlnb3RvIG5leHRfcGFnZTsKPj4KPj4gV2hlbiBDT05GSUdf
-RjJGU19GU19DT01QUkVTU0lPTiBpcyBub3Qgc2V0IChpLmUuIHg4Nl82NCBkZWZjb25maWcgKwo+
-PiBDT05GSUdfRjJGU19GUz15KToKPj4KPj4gJCBtYWtlIC1za2oiJChucHJvYykiIE89b3V0IGRp
-c3RjbGVhbiBkZWZjb25maWcgZnMvZjJmcy9kYXRhLm8KPj4gLi4vZnMvZjJmcy9kYXRhLmM6IElu
-IGZ1bmN0aW9uIOKAmGYyZnNfbXBhZ2VfcmVhZHBhZ2Vz4oCZOgo+PiAuLi9mcy9mMmZzL2RhdGEu
-YzoyMzI3OjU6IGVycm9yOiBsYWJlbCDigJhuZXh0X3BhZ2XigJkgdXNlZCBidXQgbm90IGRlZmlu
-ZWQKPj4gIDIzMjcgfCAgICAgZ290byBuZXh0X3BhZ2U7Cj4+ICAgICAgIHwgICAgIF5+fn4KPj4g
-Li4uCj4gCj4gVGhhbmtzLiBJIHB1c2hlZCB0aGUgZml4IGZvciAtbmV4dC4KPiBodHRwczovL2xv
-cmUua2VybmVsLm9yZy9saW51eC1mMmZzLWRldmVsLzFiZTE4Mzk3LTdmYzYtNzAzZS0xMjFiLWUy
-MTBlMTAxMzU3ZkBpbmZyYWRlYWQub3JnL1QvI3QKClJldmlld2VkLWJ5OiBDaGFvIFl1IDx5dWNo
-YW8wQGh1YXdlaS5jb20+CgpUaGFua3MsCgo+IAo+IFRoYW5rcywKPiAKPj4KPj4gQ2hlZXJzLAo+
-PiBOYXRoYW4KPj4KPj4KPj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KPj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gTGludXgtZjJmcy1k
-ZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5u
-ZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo+IAo+IAo+IF9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWls
-aW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBz
-Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
-PiAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
-eC1mMmZzLWRldmVsCg==
+The parameter op_flag is not used in f2fs_get_read_data_page(),
+but it is used in f2fs_grab_read_bio(). Obviously, op_flag is
+not passed to f2fs_grab_read_bio() successfully. We need to add
+parameter in f2fs_submit_page_read() to pass it.
+
+The case:
+- gc_data_segment
+ - f2fs_get_read_data_page(.., op_flag = REQ_RAHEAD,..)
+  - f2fs_submit_page_read
+   - f2fs_grab_read_bio(.., op_flag = 0, ..)
+
+Signed-off-by: Jia Yang <jiayang5@huawei.com>
+---
+ fs/f2fs/data.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 326c63879ddc..7935dba78d84 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1025,12 +1025,13 @@ static void f2fs_release_read_bio(struct bio *bio)
+ 
+ /* This can handle encryption stuffs */
+ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+-						block_t blkaddr, bool for_write)
++				 block_t blkaddr, int op_flags, bool for_write)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct bio *bio;
+ 
+-	bio = f2fs_grab_read_bio(inode, blkaddr, 1, 0, page->index, for_write);
++	bio = f2fs_grab_read_bio(inode, blkaddr, 1, op_flags,
++					page->index, for_write);
+ 	if (IS_ERR(bio))
+ 		return PTR_ERR(bio);
+ 
+@@ -1217,7 +1218,7 @@ struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+ 		return page;
+ 	}
+ 
+-	err = f2fs_submit_page_read(inode, page, dn.data_blkaddr, for_write);
++	err = f2fs_submit_page_read(inode, page, dn.data_blkaddr, op_flags, for_write);
+ 	if (err)
+ 		goto put_err;
+ 	return page;
+@@ -3382,7 +3383,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 			err = -EFSCORRUPTED;
+ 			goto fail;
+ 		}
+-		err = f2fs_submit_page_read(inode, page, blkaddr, true);
++		err = f2fs_submit_page_read(inode, page, blkaddr, 0, true);
+ 		if (err)
+ 			goto fail;
+ 
+-- 
+2.26.0.106.g9fadedd
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
