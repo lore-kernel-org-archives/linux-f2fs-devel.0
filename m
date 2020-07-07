@@ -2,77 +2,78 @@ Return-Path: <SRS0=+EsW=AS=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AE6C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 01:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A972BC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 02:53:35 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 56BA420708;
-	Tue,  7 Jul 2020 01:42:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 73B73206E2;
+	Tue,  7 Jul 2020 02:53:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OM1Hm5qC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="UwV9swOU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56BA420708
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Df+MW2OX";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="X4AeQ6dn";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEPaJCX2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B73206E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jsccS-0005pv-0M; Tue, 07 Jul 2020 01:42:00 +0000
+	id 1jsdjh-0000b7-FG; Tue, 07 Jul 2020 02:53:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jsccQ-0005pn-4V
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 01:41:58 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1jsdjf-0000av-Gj
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 02:53:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=no8XrCFr+rzBIEgR5Nm+i+BIr0eAjJ/qPLUddimeqn8=; b=OM1Hm5qCUZwG5L+vWYCM97RVCx
- cnJj2Fz7j3uKn+4hEBqQdYo76s1n6SYvjI/6fQ89ZsBvIOTAOjBhI4WTT+ot1VPOspEkYpCRFsV9T
- 1vEa0YVrhig5TFPqdDXTXWi8kaIwSg8giXHppLk87LIZfbzBTFAyx+FY8glwtZOq9C6I=;
+ bh=6Muef5ZMAEojM7eaD2RMq99cLR5KiDK8RqkYT0tfPwQ=; b=Df+MW2OXzXZGk0HKHz18QqjY4G
+ B5JTun9/KNxOYIqZoC/gobRdnMQZAx8hdYFf63qyoLbf92eaCBvWlr+1XihPWFx+IKVGitxfnyW2c
+ 4jE1Kvps0s0ty6zCOQeMneVQp47gy9v/lr2ZJae826B/Z5h4WmjLXHc8NbaraX2vRZQU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=no8XrCFr+rzBIEgR5Nm+i+BIr0eAjJ/qPLUddimeqn8=; b=UwV9swOUnpn3YqWO+jvjLSooTK
- vGTj3R6YXEOr2i4C/MEg8AqGlsrdjU56m79ZvD61Dr0TdXm3bxzMy37M7ZMKCAUYk86xuIySzR8nX
- kSnfHuGAjntYuqtB9cnEaGKBYqNrFZ8FdcIGHNtfjrfcCnu91BdV1AQqqo116fJedKs4=;
-Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=6Muef5ZMAEojM7eaD2RMq99cLR5KiDK8RqkYT0tfPwQ=; b=X
+ 4AeQ6dn5QzE/M58NfgFZbk/0H5P3ulsn1y3S0LZgJzLqSm5UrepARtLAr/ecD+wtZHflz8IIv0wiv
+ z6YBW9M0XOjO2FpqxxjPtHX1X+4xfOadP5dCiFwOSFAgmZLS6f3/EGHc7JZeDxwo9QvwOYRftya98
+ dHrjQk1tKuMlPEdg=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jsccO-00CmDt-95
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 01:41:58 +0000
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id CEFE8416D08DDED7C637;
- Tue,  7 Jul 2020 09:41:47 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 7 Jul 2020
- 09:41:45 +0800
-To: lampahome <pahome.chen@mirlab.org>,
- <linux-f2fs-devel@lists.sourceforge.net>
-References: <CAB3eZfvr=SXA1abObaCpcz7ONXyoCHXDSEvSCTSJ6SGnazm8dw@mail.gmail.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <faca33bd-6cd0-dd13-ad45-72eb0cd7d72c@huawei.com>
-Date: Tue, 7 Jul 2020 09:41:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1jsdjb-009obK-UO
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 02:53:31 +0000
+Received: from localhost (unknown [104.132.1.66])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 904F4206E2;
+ Tue,  7 Jul 2020 02:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1594090390;
+ bh=LaU+0ZYM10OLtJaGJeV0gSGOzB+lm3E8uqIIBigwAxQ=;
+ h=From:To:Cc:Subject:Date:From;
+ b=EEPaJCX2PoWuGAeKyyCJGVjUwLRr+2/jP9occ0NLz2F6RFVpVd6YKP5qX2jyUuX3W
+ SMi6rpCzvIhG4LO+PHzse39VsfiyLZYGOct/ga5xKdNu83NxdCpsTH74Znwmo9C6wZ
+ aLkAg1QOTWZ0jQjwvLyS7nYU1qjmQ9PnK5Jq4lxI=
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Mon,  6 Jul 2020 19:53:09 -0700
+Message-Id: <20200707025309.3124296-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
 MIME-Version: 1.0
-In-Reply-To: <CAB3eZfvr=SXA1abObaCpcz7ONXyoCHXDSEvSCTSJ6SGnazm8dw@mail.gmail.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jsccO-00CmDt-95
-Subject: Re: [f2fs-dev] If submit 2MB directIO, full or append?
+X-Headers-End: 1jsdjb-009obK-UO
+Subject: [f2fs-dev] [PATCH] dump.f2fs: dump symlink contents in lost_found
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,30 +85,35 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/7/6 19:01, lampahome wrote:
-> If I submit one 2MB directIO to f2fs, will f2fs find a segment which
-> can fit the 2MB data, or will append it to the existing non-full
-> segment?
+Let's allow to show symlink path.
 
-Could you use trace system and combining codes to check f2fs behavior?
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fsck/dump.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_<xxx>/enable
-cat /sys/kernel/debug/tracing/trace_pipe |grep f2fs
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 001b7cb..e472eb7 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -424,7 +424,8 @@ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 		return;
+ 	}
+ 
+-	if (!S_ISREG(imode) || namelen == 0 || namelen > F2FS_NAME_LEN) {
++	if ((!S_ISREG(imode) && !S_ISLNK(imode)) ||
++				namelen == 0 || namelen > F2FS_NAME_LEN) {
+ 		MSG(force, "Not a regular file or wrong name info\n\n");
+ 		return;
+ 	}
+-- 
+2.27.0.383.g050319c2ae-goog
 
-To trace allocation, we can enable f2fs_submit_page_write tracepoint.
-
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
 
 
 _______________________________________________
