@@ -2,107 +2,109 @@ Return-Path: <SRS0=+EsW=AS=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 837F4C433E3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D19C433E5
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:45:29 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 504012077D
+	by mail.kernel.org (Postfix) with ESMTPS id 95070206F6
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:45:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="WzmpiPl+";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AY8cQl6e";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="kuDwKBXE";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="vaUinhNZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504012077D
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="D/AHzB1m";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hmHxLiss";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HlSeXNwt";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="WRXoJKTW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95070206F6
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=Agx89swR5Q1BQzYautQ6v2o/6qNoNlQDvehDFrwqGjg=; b=WzmpiPl+wUSGeQOrqaEYqN/kwz
-	BEXg01I4kLd4mll0h7SnzHYuqHDNGgqJQNzCx1A5qMSggy3ImARMntsLPNpswgF9+yuCraaqgfG3c
-	VwtBANm/GA4MCBsH88AT/YVLv6BlXsBisncdti0qssD+5m1Zwy9yiJvTK0vGXyOZUpec=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=CT+J7rJkpd1wWT9LG1STM022vJthS46dtuE94ZKVAd4=; b=D/AHzB1mq/euM36huAMs/uM3n
+	PswofEzRS72b5zJvGf2BUKYqvxdJpz+cyUp7VGdVzZO5w+uItqqk85hXt7C8EaVekIgqcA5GImYG4
+	dgE5pNUcfjbyvQiHOGwHqqRqumHe9Q2HZIWpZa0h+P1rnkwmLiHnlEugMP7L/18FjMTqo=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jsm2R-00009i-Tz; Tue, 07 Jul 2020 11:45:27 +0000
+	id 1jsm2S-0006iR-JN; Tue, 07 Jul 2020 11:45:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3R2AEXwYKABg1FCG2B4CC492.0CA@flex--drosen.bounces.google.com>)
- id 1jsm2Q-00009P-EE
+ (envelope-from <3T2AEXwYKACA9NKOAJCKKCHA.8KI@flex--drosen.bounces.google.com>)
+ id 1jsm2Q-0006iD-Sg
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 11:45:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
- Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LLQSBg64iwWxTtcpWWM6iR9wTgF8QbEH02Vy+2bg9Hg=; b=AY8cQl6et/L3WL6JMvu8ZY302C
- Y4bKSVQga0YoIn1saJyUb0ctzj3+JbbmxuW5kXYMKIDIogmBPrBLKZuXf599hAzdGGRpnrd3uyoZ8
- yAR9UcyAs92OuIQtwdR9/unb8RUZ3uVvZnKqAGQXwdU4LKIR4g/AMhL4+/YoXVRfcsz4=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
+ Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=3s5nIcgeCVK/8qOOuqTu13U9YGTPVq58/PSMtQuprZI=; b=hmHxLissafXBICzXCL6Sc+tKX
+ 3hdUiidk84mn2pVGXXh0eTO8PaX2s0HXgi7mP3batxU9lmeRelkUtWuia6amm3zENiOK5wd/m8Tmj
+ 6Vc8a82DWxyv/oxj2fqICLTk0HmnFoIaLPMEcU78VVRhE63UYhEoMaOOrkzPUHb+OoNGg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=LLQSBg64iwWxTtcpWWM6iR9wTgF8QbEH02Vy+2bg9Hg=; b=k
- uDwKBXEIYNRwsPoW37jg8cyVr7vihZY1AM8+512B6hlf5wO9+miEl+TuWt66gBiLNAmMW0x2Whvd/
- fGn+QjYf2i2cz4qwi4wNXy3zzP41lu07gy+00jfdWEgIsXW6pFs6JjlV+6fUL68OWVgme7WbjMB/d
- Qq4at8Qm3/leOU/Q=;
-Received: from mail-yb1-f202.google.com ([209.85.219.202])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=3s5nIcgeCVK/8qOOuqTu13U9YGTPVq58/PSMtQuprZI=; b=HlSeXNwtTmHZn4HT605yPPM51F
+ F7cijGxqnFxOnEK7Ei1+19lCIXpTWb7ZAXRlsRL3PAy7upETmxeJNrlT6wpHhjL8y5c2V5LbTfz/n
+ vgtVbRbq3j09hm9XR7uo7yJbvvrujrtjzrm/bhgtIwdDCMWbP3BVxuReDFYwWGOzIVXk=;
+Received: from mail-yb1-f201.google.com ([209.85.219.201])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jsm2O-00G6lS-4h
+ id 1jsm2P-00A9MH-4l
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 11:45:26 +0000
-Received: by mail-yb1-f202.google.com with SMTP id d202so1103162ybh.12
+Received: by mail-yb1-f201.google.com with SMTP id t7so32128429ybk.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 07 Jul 2020 04:45:24 -0700 (PDT)
+ Tue, 07 Jul 2020 04:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:message-id:mime-version:subject:from:to:cc;
- bh=LLQSBg64iwWxTtcpWWM6iR9wTgF8QbEH02Vy+2bg9Hg=;
- b=vaUinhNZkQN3RAVXNuIvu2m9UALKLZu6+nRg7EiTfijttvY5uvU/HlfVTs6MFI3BjD
- Er2jhbF7pByOmGUAkA0Rwjx6r1yRJYYD9O+cl25wvja83NKdtmmp1zngnkV02lhR5H60
- b5PjacpY1TP2NcUr9fiYcugKPCAjjR9rmlEhUHB0wiSX4QdOcSpvSGrvsQV0rT/nifCK
- 2ZKi0Cmb2t3TuutVgBjI50QCH9omrBcU2W/h5TS/pS3DnoIpdnsJzSM7wmedPsCcY2wS
- ytB1vf691KXilc3nIafaO0kmcuwa8X3LA+tSoYg6SrxvtuS6RBnGMpkCLIhuojqhRuKM
- 4b2g==
+ h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+ :cc; bh=3s5nIcgeCVK/8qOOuqTu13U9YGTPVq58/PSMtQuprZI=;
+ b=WRXoJKTWwr4Gb+hZzYoMdLk2Q7/ioGM3tI+FlNcA+R+J8AQ1FLnBgp3rwlXYoEMjoJ
+ bOVeKakePD8LGgSDH8vIt5+A2kNgawedL13u++yVsnZtYOS4JZbsU9DwuxSiLNaO5qPO
+ CANVbUigy4SA0/gWM6G0DFkYFS/L1OZGL0fRjHr52TFJBhBQ9s32CsDJmKPqGuIW9kSD
+ oju1ksqMtQal/f7qAt6gT9C2iUj809tWLNIzqHbjE2CIYr62oK3kDI8QNped/QEY0m/5
+ KoRDW+9JsDwQRcRuSHstTkT0ideRgDhlTDIcPGFRIoryQs0HHIvE2Kup75/G1dvyeng6
+ Bnkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
- bh=LLQSBg64iwWxTtcpWWM6iR9wTgF8QbEH02Vy+2bg9Hg=;
- b=lZ/wxTrq3DnXLYxH+JAfULcrkf5tEYbU5TsDhYAQCGk1BH/UGFRZBLnRlvGDpzBXBL
- 7DHE3m557Sy7w4OfFFwn9kcTTic3VqWqDmEH7F7gz5Fy3EGCsD1IXRHkqbASIMGBUY9w
- aye1KTnFf0qMuhNfI5qJ5oZikNem9Yg9NwliO4x4wKKLDp3KUcaEb6mBjseeu8KyCYyD
- wH1sVrbq/JbuHIBdH9g8aRAxQGceRRkT+iYXn4/7+dZFlarXTBp5Cz4qoytD2K/HtwDj
- 6rcGLFQw+sQTDiax3RtJH8ezj2HFCP4m3cJh4tGKE3iogxFPlj46OsBbSIIJyDZN7Apf
- n5XQ==
-X-Gm-Message-State: AOAM531+MTZx7ohUaEFGjG0ggR5+JJjNHrxWq6hFwDiTowVTUafdEaHW
- 8xTnt4zBjGs2vyVlJrSoUDFvlLkWmZU=
-X-Google-Smtp-Source: ABdhPJwLxIHBchd80Gve4mlw6g7Mb8civMvZG5ZcJoCOlzyO/mCAmx2JmX2IzIWBOuqsBIRGM+219TLjngU=
-X-Received: by 2002:a25:b903:: with SMTP id x3mr32504935ybj.445.1594122311275; 
- Tue, 07 Jul 2020 04:45:11 -0700 (PDT)
-Date: Tue,  7 Jul 2020 04:31:19 -0700
-Message-Id: <20200707113123.3429337-1-drosen@google.com>
+ h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+ :references:subject:from:to:cc;
+ bh=3s5nIcgeCVK/8qOOuqTu13U9YGTPVq58/PSMtQuprZI=;
+ b=iHwx6HYtCwzGLB90dtrxFnxBKGVbT/pcG9PNkt2hobAtuIvHFeLL/uz7WDtLLoAxae
+ A0S8gBZObdJSMed3LcmMiObZALVb0jVOmsamyKE2WqeXqt+8TrLWsuhSMPpzHCydyMb2
+ AeXNMQ+WcHXI/MsfDjeftf7yYSei+p0zI9HkqP8FO6Y6VtFG0s1SCYkEO0YEDcbMqSxL
+ 13fqHFLaGPUhejbPJHnkZGsQALMdF5jB6ILjiSYL30/bPO4+rsVPM4xB16YVeyxS3Tw1
+ IwHGEFKMblfCJvDI6TgYj21OE37SR0zGaqBn+sBQlOXSlQFoIRChz7sHeQoClX+w4yOm
+ Vy0A==
+X-Gm-Message-State: AOAM533EUjCcLciCoVe780MvBymgqQqBJeTEHwxMNIt44PJkTKNuO5Hv
+ mV7tq/sKGz8Z8Gi1JcsGTjH0vKE35r0=
+X-Google-Smtp-Source: ABdhPJwId0/keByMgLsxhh0MM7LAMkq0XI6EPu/O6sZuWm039e27GvYG+0E78UHhWcbAYK57WjBZPvp8I/o=
+X-Received: by 2002:a25:6f02:: with SMTP id k2mr78641348ybc.481.1594122319302; 
+ Tue, 07 Jul 2020 04:45:19 -0700 (PDT)
+Date: Tue,  7 Jul 2020 04:31:23 -0700
+In-Reply-To: <20200707113123.3429337-1-drosen@google.com>
+Message-Id: <20200707113123.3429337-5-drosen@google.com>
 Mime-Version: 1.0
+References: <20200707113123.3429337-1-drosen@google.com>
 X-Mailer: git-send-email 2.27.0.212.ge8ba1cc988-goog
 To: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org, 
  Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
  linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>, 
  linux-fscrypt@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-X-Headers-End: 1jsm2O-00G6lS-4h
-Subject: [f2fs-dev] [PATCH v10 0/4] Prepare for upcoming
- Casefolding/Encryption patches
+X-Headers-End: 1jsm2P-00A9MH-4l
+Subject: [f2fs-dev] [PATCH v10 4/4] ext4: Use generic casefolding support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,37 +126,264 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This lays the ground work for enabling casefolding and encryption at the
-same time for ext4 and f2fs. A future set of patches will enable that
-functionality.
+This switches ext4 over to the generic support provided in
+the previous patch.
 
-These unify the highly similar dentry_operations that ext4 and f2fs both
-use for casefolding. In addition, they improve d_hash by not requiring a
-new string allocation, and ensure we don't attempt to casefold the no-key
-token of an encrypted filename.
+Since casefolded dentries behave the same in ext4 and f2fs, we decrease
+the maintenance burden by unifying them, and any optimizations will
+immediately apply to both.
 
-Daniel Rosenberg (4):
-  unicode: Add utf8_casefold_hash
-  fs: Add standard casefolding support
-  f2fs: Use generic casefolding support
-  ext4: Use generic casefolding support
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fs/ext4/dir.c   | 64 ++-----------------------------------------------
+ fs/ext4/ext4.h  | 12 ----------
+ fs/ext4/hash.c  |  2 +-
+ fs/ext4/namei.c | 20 +++++++---------
+ fs/ext4/super.c | 12 +++++-----
+ 5 files changed, 17 insertions(+), 93 deletions(-)
 
- fs/ext4/dir.c           | 64 +--------------------------
- fs/ext4/ext4.h          | 12 ------
- fs/ext4/hash.c          |  2 +-
- fs/ext4/namei.c         | 20 ++++-----
- fs/ext4/super.c         | 12 +++---
- fs/f2fs/dir.c           | 83 ++++-------------------------------
- fs/f2fs/f2fs.h          |  4 --
- fs/f2fs/super.c         | 10 ++---
- fs/f2fs/sysfs.c         | 10 +++--
- fs/libfs.c              | 96 +++++++++++++++++++++++++++++++++++++++++
- fs/unicode/utf8-core.c  | 23 +++++++++-
- include/linux/f2fs_fs.h |  3 --
- include/linux/fs.h      | 16 +++++++
- include/linux/unicode.h |  3 ++
- 14 files changed, 174 insertions(+), 184 deletions(-)
-
+diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+index 1d82336b1cd4..b437120f0b3f 100644
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -669,68 +669,8 @@ const struct file_operations ext4_dir_operations = {
+ };
+ 
+ #ifdef CONFIG_UNICODE
+-static int ext4_d_compare(const struct dentry *dentry, unsigned int len,
+-			  const char *str, const struct qstr *name)
+-{
+-	struct qstr qstr = {.name = str, .len = len };
+-	const struct dentry *parent = READ_ONCE(dentry->d_parent);
+-	const struct inode *inode = READ_ONCE(parent->d_inode);
+-	char strbuf[DNAME_INLINE_LEN];
+-
+-	if (!inode || !IS_CASEFOLDED(inode) ||
+-	    !EXT4_SB(inode->i_sb)->s_encoding) {
+-		if (len != name->len)
+-			return -1;
+-		return memcmp(str, name->name, len);
+-	}
+-
+-	/*
+-	 * If the dentry name is stored in-line, then it may be concurrently
+-	 * modified by a rename.  If this happens, the VFS will eventually retry
+-	 * the lookup, so it doesn't matter what ->d_compare() returns.
+-	 * However, it's unsafe to call utf8_strncasecmp() with an unstable
+-	 * string.  Therefore, we have to copy the name into a temporary buffer.
+-	 */
+-	if (len <= DNAME_INLINE_LEN - 1) {
+-		memcpy(strbuf, str, len);
+-		strbuf[len] = 0;
+-		qstr.name = strbuf;
+-		/* prevent compiler from optimizing out the temporary buffer */
+-		barrier();
+-	}
+-
+-	return ext4_ci_compare(inode, name, &qstr, false);
+-}
+-
+-static int ext4_d_hash(const struct dentry *dentry, struct qstr *str)
+-{
+-	const struct ext4_sb_info *sbi = EXT4_SB(dentry->d_sb);
+-	const struct unicode_map *um = sbi->s_encoding;
+-	const struct inode *inode = READ_ONCE(dentry->d_inode);
+-	unsigned char *norm;
+-	int len, ret = 0;
+-
+-	if (!inode || !IS_CASEFOLDED(inode) || !um)
+-		return 0;
+-
+-	norm = kmalloc(PATH_MAX, GFP_ATOMIC);
+-	if (!norm)
+-		return -ENOMEM;
+-
+-	len = utf8_casefold(um, str, norm, PATH_MAX);
+-	if (len < 0) {
+-		if (ext4_has_strict_mode(sbi))
+-			ret = -EINVAL;
+-		goto out;
+-	}
+-	str->hash = full_name_hash(dentry, norm, len);
+-out:
+-	kfree(norm);
+-	return ret;
+-}
+-
+ const struct dentry_operations ext4_dentry_ops = {
+-	.d_hash = ext4_d_hash,
+-	.d_compare = ext4_d_compare,
++	.d_hash = generic_ci_d_hash,
++	.d_compare = generic_ci_d_compare,
+ };
+ #endif
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 42f5060f3cdf..5cd8be24a4fd 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1393,14 +1393,6 @@ struct ext4_super_block {
+ 
+ #define EXT4_ENC_UTF8_12_1	1
+ 
+-/*
+- * Flags for ext4_sb_info.s_encoding_flags.
+- */
+-#define EXT4_ENC_STRICT_MODE_FL	(1 << 0)
+-
+-#define ext4_has_strict_mode(sbi) \
+-	(sbi->s_encoding_flags & EXT4_ENC_STRICT_MODE_FL)
+-
+ /*
+  * fourth extended-fs super-block data in memory
+  */
+@@ -1450,10 +1442,6 @@ struct ext4_sb_info {
+ 	struct kobject s_kobj;
+ 	struct completion s_kobj_unregister;
+ 	struct super_block *s_sb;
+-#ifdef CONFIG_UNICODE
+-	struct unicode_map *s_encoding;
+-	__u16 s_encoding_flags;
+-#endif
+ 
+ 	/* Journaling */
+ 	struct journal_s *s_journal;
+diff --git a/fs/ext4/hash.c b/fs/ext4/hash.c
+index 3e133793a5a3..143b0073b3f4 100644
+--- a/fs/ext4/hash.c
++++ b/fs/ext4/hash.c
+@@ -275,7 +275,7 @@ int ext4fs_dirhash(const struct inode *dir, const char *name, int len,
+ 		   struct dx_hash_info *hinfo)
+ {
+ #ifdef CONFIG_UNICODE
+-	const struct unicode_map *um = EXT4_SB(dir->i_sb)->s_encoding;
++	const struct unicode_map *um = dir->i_sb->s_encoding;
+ 	int r, dlen;
+ 	unsigned char *buff;
+ 	struct qstr qstr = {.name = name, .len = len };
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 56738b538ddf..6ffd53e6455e 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1286,8 +1286,8 @@ static void dx_insert_block(struct dx_frame *frame, u32 hash, ext4_lblk_t block)
+ int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
+ 		    const struct qstr *entry, bool quick)
+ {
+-	const struct ext4_sb_info *sbi = EXT4_SB(parent->i_sb);
+-	const struct unicode_map *um = sbi->s_encoding;
++	const struct super_block *sb = parent->i_sb;
++	const struct unicode_map *um = sb->s_encoding;
+ 	int ret;
+ 
+ 	if (quick)
+@@ -1299,7 +1299,7 @@ int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
+ 		/* Handle invalid character sequence as either an error
+ 		 * or as an opaque byte sequence.
+ 		 */
+-		if (ext4_has_strict_mode(sbi))
++		if (sb_has_strict_encoding(sb))
+ 			return -EINVAL;
+ 
+ 		if (name->len != entry->len)
+@@ -1316,7 +1316,7 @@ void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+ {
+ 	int len;
+ 
+-	if (!IS_CASEFOLDED(dir) || !EXT4_SB(dir->i_sb)->s_encoding) {
++	if (!IS_CASEFOLDED(dir) || !dir->i_sb->s_encoding) {
+ 		cf_name->name = NULL;
+ 		return;
+ 	}
+@@ -1325,7 +1325,7 @@ void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
+ 	if (!cf_name->name)
+ 		return;
+ 
+-	len = utf8_casefold(EXT4_SB(dir->i_sb)->s_encoding,
++	len = utf8_casefold(dir->i_sb->s_encoding,
+ 			    iname, cf_name->name,
+ 			    EXT4_NAME_LEN);
+ 	if (len <= 0) {
+@@ -1362,7 +1362,7 @@ static inline bool ext4_match(const struct inode *parent,
+ #endif
+ 
+ #ifdef CONFIG_UNICODE
+-	if (EXT4_SB(parent->i_sb)->s_encoding && IS_CASEFOLDED(parent)) {
++	if (parent->i_sb->s_encoding && IS_CASEFOLDED(parent)) {
+ 		if (fname->cf_name.name) {
+ 			struct qstr cf = {.name = fname->cf_name.name,
+ 					  .len = fname->cf_name.len};
+@@ -2171,9 +2171,6 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
+ 	struct buffer_head *bh = NULL;
+ 	struct ext4_dir_entry_2 *de;
+ 	struct super_block *sb;
+-#ifdef CONFIG_UNICODE
+-	struct ext4_sb_info *sbi;
+-#endif
+ 	struct ext4_filename fname;
+ 	int	retval;
+ 	int	dx_fallback=0;
+@@ -2190,9 +2187,8 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
+ 		return -EINVAL;
+ 
+ #ifdef CONFIG_UNICODE
+-	sbi = EXT4_SB(sb);
+-	if (ext4_has_strict_mode(sbi) && IS_CASEFOLDED(dir) &&
+-	    sbi->s_encoding && utf8_validate(sbi->s_encoding, &dentry->d_name))
++	if (sb_has_strict_encoding(sb) && IS_CASEFOLDED(dir) &&
++	    sb->s_encoding && utf8_validate(sb->s_encoding, &dentry->d_name))
+ 		return -EINVAL;
+ #endif
+ 
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 330957ed1f05..d097771a374f 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1102,7 +1102,7 @@ static void ext4_put_super(struct super_block *sb)
+ 	fs_put_dax(sbi->s_daxdev);
+ 	fscrypt_free_dummy_context(&sbi->s_dummy_enc_ctx);
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sbi->s_encoding);
++	utf8_unload(sb->s_encoding);
+ #endif
+ 	kfree(sbi);
+ }
+@@ -4035,7 +4035,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto failed_mount;
+ 
+ #ifdef CONFIG_UNICODE
+-	if (ext4_has_feature_casefold(sb) && !sbi->s_encoding) {
++	if (ext4_has_feature_casefold(sb) && !sb->s_encoding) {
+ 		const struct ext4_sb_encodings *encoding_info;
+ 		struct unicode_map *encoding;
+ 		__u16 encoding_flags;
+@@ -4066,8 +4066,8 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 			 "%s-%s with flags 0x%hx", encoding_info->name,
+ 			 encoding_info->version?:"\b", encoding_flags);
+ 
+-		sbi->s_encoding = encoding;
+-		sbi->s_encoding_flags = encoding_flags;
++		sb->s_encoding = encoding;
++		sb->s_encoding_flags = encoding_flags;
+ 	}
+ #endif
+ 
+@@ -4678,7 +4678,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 	}
+ 
+ #ifdef CONFIG_UNICODE
+-	if (sbi->s_encoding)
++	if (sb->s_encoding)
+ 		sb->s_d_op = &ext4_dentry_ops;
+ #endif
+ 
+@@ -4873,7 +4873,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 		crypto_free_shash(sbi->s_chksum_driver);
+ 
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sbi->s_encoding);
++	utf8_unload(sb->s_encoding);
+ #endif
+ 
+ #ifdef CONFIG_QUOTA
 -- 
 2.27.0.212.ge8ba1cc988-goog
 
