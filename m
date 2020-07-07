@@ -2,73 +2,76 @@ Return-Path: <SRS0=+EsW=AS=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BED4C433E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23390C433E8
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:22:07 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1E5B8206CD
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:22:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id ECEFC206CD
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:22:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="RD1eV1KC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WrwofSKV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5B8206CD
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="aX2ycAvT";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="b2TbFQU2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEFC206CD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jslfr-0007Eu-Qf; Tue, 07 Jul 2020 11:22:07 +0000
+	id 1jslfq-0007ET-MQ; Tue, 07 Jul 2020 11:22:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jslfq-0007EM-7a
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 11:22:06 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jslfm-0007E9-Ie
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 11:22:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9gWSQ9DNClV5owEVsSjYH/PythGbHOqqr+LfIZPAj7Q=; b=RD1eV1KCtND8RvCC5tfwZ1Ckfw
- een2UF2qpWPyf+VR775SQLWm8E7u2tleftDxRFMgHOZ9PtHCGQKaYdzzdAZVxbnxTeD3qMnkClKPH
- qg0dbn4zgkBO04T9L80XoXGXjx3H8qE+fzLbsswNgeCVmbXD5TZiqZ5AGOJNWp8bpAk8=;
+ bh=PEdhq+0r0FYHSU3+7ROeDCNqYDUPjiFWpTKOT4mNZaw=; b=aX2ycAvTnYh7sSv+YboncwUIvS
+ V17aMTQ0oTqli/CpTKYtwvxTBmGHnxG0zIRcCV+PJF/bAeXQGsfbaAJuHin+Bo3kRvyyjwR/0OH7V
+ 8r5CO/qkoZtQLVsGJDIWwETMkoJsZ20kiHj4wGgN57wQYz7jtIKZpB9Uuj86u2bpgvlY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=9gWSQ9DNClV5owEVsSjYH/PythGbHOqqr+LfIZPAj7Q=; b=W
- rwofSKVFD29rRrx/u3gFxDvcTpbcrQ/NbvAeKX5HvCPOOfcLFTY9knmvLymgvXHvxd0l4b2dBZbWK
- 0vPFJruiz7BXy9yLm4z4OoR6hZ2VG1s1S2KzVyeSatGJlCeKva5lE7ztFd7unuL5hY64yYD0TOKnm
- qbeuzNXyTnrx07x0=;
-Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=PEdhq+0r0FYHSU3+7ROeDCNqYDUPjiFWpTKOT4mNZaw=; b=b2TbFQU2r3l6E9vvY677ZKr8f/
+ FquY6Ve0/pHieLRsmoz3BWdMXVeId6KnLxriAeXdEgC6qKUj1NzOJp1jWjTv92DpCyr3MS6SG8Sqp
+ RrZIvsbO6fvDtGOcsHz2mbIg7Pl1Xdc4QzQzGvSpFRdtxH7TDfXEFLoXme9f4artp4Xw=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jslfo-00G5QQ-0p
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 11:22:06 +0000
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 202F7CD21BFBA125AEEB;
- Tue,  7 Jul 2020 19:21:48 +0800 (CST)
+ id 1jslfk-00A8Bl-D2
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 11:22:02 +0000
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 454DC69D844962D85932;
+ Tue,  7 Jul 2020 19:21:53 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.487.0; Tue, 7 Jul 2020 19:21:39 +0800
+ 14.3.487.0; Tue, 7 Jul 2020 19:21:45 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Tue, 7 Jul 2020 19:21:23 +0800
-Message-ID: <20200707112128.89136-1-yuchao0@huawei.com>
+Date: Tue, 7 Jul 2020 19:21:26 +0800
+Message-ID: <20200707112128.89136-4-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200707112128.89136-1-yuchao0@huawei.com>
+References: <20200707112128.89136-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jslfo-00G5QQ-0p
-Subject: [f2fs-dev] [PATCH 0/5] Support Age-Threshold based Garbage
- Collection for f2fs
+X-Headers-End: 1jslfk-00A8Bl-D2
+Subject: [f2fs-dev] [PATCH 3/5] f2fs: inherit mtime of original block during
+ GC
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,87 +88,213 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch series introduce a new garbage collection algorithm named ATGC
-(Age Threshold based Garbage Collection) in order to enhance efficiency and
-effect of background garbage collection.
+Don't let f2fs inner GC ruins original aging degree of segment.
 
-ATGC algorithm tries to fliter few oldest candidates according to defined
-age threshold, it selects source section in those candidates and then
-select target segment which has almost the same age of source section,
-finally, it migrates valid blocks from source section into target segment
-with SSR allocator, enhancement shows in below aspects:
-- it avoids selecting young victim section which may have high update
-frequency;
-- SSR write avoids unneeded movement of blocks locate in target segment;
-- source section and target segment has almost the same age (update
-frequency), it keeps well hot/cold separation effect;
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c    |  2 +-
+ fs/f2fs/f2fs.h    |  5 +++--
+ fs/f2fs/gc.c      |  4 ++--
+ fs/f2fs/segment.c | 55 ++++++++++++++++++++++++++++++++++++-----------
+ 4 files changed, 49 insertions(+), 17 deletions(-)
 
-Patch 1 introduces in-memory curseg, since it only exists in memory, so it
-avoids on-disk layout change whenever we want to add a new type of log.
-Firstly, adapting aligned pinfile allocation to use in-memory curseg,
-later, we will use in-memory curseg in ATGC feature for migration as well.
-
-Patch 2 changes segment's mtime definition from recording last update time
-to recording average update time, so that it can indicate more precise
-update time of each valid blocks in segment.
-
-Patch 3 changes segment mtime update policy during GC, 1) don't update
-original segment's mtime; 2) inherit segment's mtime from original segment
-to target segment.
-
-Patch 4 adds to support 64-bits key in rb-tree node entry, and introduce
-f2fs_lookup_rb_tree_ext() to support lookup functionality with 64-bits key.
-
-Patch 5 adds to support ATGC skeleton to enhance effect and efficiency
-of BGGC.
-
-Test and result:
-- create 160 dirty segments:
- * half of them have 128 valid blocks per segment
- * left of them have 384 valid blocks per segment
-- run background GC
-
-Benefit: GC count and block movement count both decrease obviously:
-
-- Before:
-GC calls: 162 (BG: 220)
-
-Try to move 41454 blocks (BG: 41454)
-  - data blocks : 40960 (40960)
-
-SSR: 0 blocks in 0 segments
-LFS: 41364 blocks in 81 segments
-
-- After:
-GC calls: 75 (BG: 76)
-
-Try to move 12813 blocks (BG: 12813)
-  - data blocks : 12544 (12544)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 44645f4f914b..7f108684de1d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1368,7 +1368,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+ 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+ 	old_blkaddr = dn->data_blkaddr;
+ 	f2fs_allocate_data_block(sbi, NULL, old_blkaddr, &dn->data_blkaddr,
+-					&sum, seg_type, NULL);
++				&sum, seg_type, NULL, false);
+ 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
+ 		invalidate_mapping_pages(META_MAPPING(sbi),
+ 					old_blkaddr, old_blkaddr);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ce4305ac42dd..dcf99f1bdfe1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3383,7 +3383,8 @@ void f2fs_outplace_write_data(struct dnode_of_data *dn,
+ int f2fs_inplace_write_data(struct f2fs_io_info *fio);
+ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 			block_t old_blkaddr, block_t new_blkaddr,
+-			bool recover_curseg, bool recover_newaddr);
++			bool recover_curseg, bool recover_newaddr,
++			bool from_gc);
+ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
+ 			block_t old_addr, block_t new_addr,
+ 			unsigned char version, bool recover_curseg,
+@@ -3391,7 +3392,7 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
+ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 			block_t old_blkaddr, block_t *new_blkaddr,
+ 			struct f2fs_summary *sum, int type,
+-			struct f2fs_io_info *fio);
++			struct f2fs_io_info *fio, bool from_gc);
+ void f2fs_wait_on_page_writeback(struct page *page,
+ 			enum page_type type, bool ordered, bool locked);
+ void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 755641047978..da187aec988f 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -877,7 +877,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 	}
  
-SSR: 12032 blocks in 77 segments
-LFS: 855 blocks in 2 segments
-
-Chao Yu (5):
-  f2fs: introduce inmem curseg
-  f2fs: record average update time of segment
-  f2fs: inherit mtime of original block during GC
-  f2fs: support 64-bits key in f2fs rb-tree node entry
-  f2fs: support age threshold based garbage collection
-
- fs/f2fs/checkpoint.c        |   7 +-
- fs/f2fs/data.c              |   2 +-
- fs/f2fs/debug.c             |  10 +-
- fs/f2fs/extent_cache.c      |  37 +++-
- fs/f2fs/f2fs.h              |  50 ++++-
- fs/f2fs/file.c              |   3 +-
- fs/f2fs/gc.c                | 373 +++++++++++++++++++++++++++++++++++-
- fs/f2fs/gc.h                |  25 +++
- fs/f2fs/segment.c           | 331 +++++++++++++++++++++++++-------
- fs/f2fs/segment.h           |  40 +++-
- fs/f2fs/super.c             |  19 +-
- include/trace/events/f2fs.h |   8 +-
- 12 files changed, 798 insertions(+), 107 deletions(-)
-
+ 	f2fs_allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
+-					&sum, CURSEG_COLD_DATA, NULL);
++				&sum, CURSEG_COLD_DATA, NULL, true);
+ 
+ 	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(fio.sbi),
+ 				newaddr, FGP_LOCK | FGP_CREAT, GFP_NOFS);
+@@ -927,7 +927,7 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ recover_block:
+ 	if (err)
+ 		f2fs_do_replace_block(fio.sbi, &sum, newaddr, fio.old_blkaddr,
+-								true, true);
++							true, true, true);
+ up_out:
+ 	if (lfs_mode)
+ 		up_write(&fio.sbi->io_order_lock);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9d10285932f9..222d28c44e4f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2149,12 +2149,28 @@ static void __set_sit_entry_type(struct f2fs_sb_info *sbi, int type,
+ 	if (modified)
+ 		__mark_sit_entry_dirty(sbi, segno);
+ }
++static inline unsigned long long get_segment_mtime(struct f2fs_sb_info *sbi,
++								block_t blkaddr)
++{
++	unsigned int segno = GET_SEGNO(sbi, blkaddr);
++
++	if (segno == NULL_SEGNO)
++		return 0;
++	return get_seg_entry(sbi, segno)->mtime;
++}
+ 
+-static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr)
++static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr,
++						unsigned long long old_mtime)
+ {
++	struct seg_entry *se;
+ 	unsigned int segno = GET_SEGNO(sbi, blkaddr);
+-	struct seg_entry *se = get_seg_entry(sbi, segno);
+-	unsigned long long mtime = get_mtime(sbi, false);
++	unsigned long long ctime = get_mtime(sbi, false);
++	unsigned long long mtime = old_mtime ? old_mtime : ctime;
++
++	if (segno == NULL_SEGNO)
++		return;
++
++	se = get_seg_entry(sbi, segno);
+ 
+ 	if (!se->mtime)
+ 		se->mtime = mtime;
+@@ -2162,8 +2178,8 @@ static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 		se->mtime = div_u64(se->mtime * se->valid_blocks + mtime,
+ 						se->valid_blocks + 1);
+ 
+-	if (mtime > SIT_I(sbi)->max_mtime)
+-		SIT_I(sbi)->max_mtime = mtime;
++	if (ctime > SIT_I(sbi)->max_mtime)
++		SIT_I(sbi)->max_mtime = ctime;
+ }
+ 
+ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+@@ -2185,8 +2201,6 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 	f2fs_bug_on(sbi, (new_vblocks >> (sizeof(unsigned short) << 3) ||
+ 				(new_vblocks > sbi->blocks_per_seg)));
+ 
+-	update_segment_mtime(sbi, blkaddr);
+-
+ 	se->valid_blocks = new_vblocks;
+ 
+ 	/* Update valid block bitmap */
+@@ -2280,6 +2294,7 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+ 	/* add it into sit main buffer */
+ 	down_write(&sit_i->sentry_lock);
+ 
++	update_segment_mtime(sbi, addr, 0);
+ 	update_sit_entry(sbi, addr, -1);
+ 
+ 	/* add it into dirty seglist */
+@@ -3188,10 +3203,11 @@ static int __get_segment_type(struct f2fs_io_info *fio)
+ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 		block_t old_blkaddr, block_t *new_blkaddr,
+ 		struct f2fs_summary *sum, int type,
+-		struct f2fs_io_info *fio)
++		struct f2fs_io_info *fio, bool from_gc)
+ {
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, type);
++	unsigned long long old_mtime;
+ 
+ 	down_read(&SM_I(sbi)->curseg_lock);
+ 
+@@ -3213,6 +3229,14 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 
+ 	stat_inc_block_count(sbi, curseg);
+ 
++	if (from_gc) {
++		old_mtime = get_segment_mtime(sbi, old_blkaddr);
++	} else {
++		update_segment_mtime(sbi, old_blkaddr, 0);
++		old_mtime = 0;
++	}
++	update_segment_mtime(sbi, *new_blkaddr, old_mtime);
++
+ 	/*
+ 	 * SIT information should be updated before segment allocation,
+ 	 * since SSR needs latest valid block information.
+@@ -3289,7 +3313,8 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ 		down_read(&fio->sbi->io_order_lock);
+ reallocate:
+ 	f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
+-			&fio->new_blkaddr, sum, type, fio);
++			&fio->new_blkaddr, sum, type, fio,
++			is_cold_data(fio->page));
+ 	if (GET_SEGNO(fio->sbi, fio->old_blkaddr) != NULL_SEGNO)
+ 		invalidate_mapping_pages(META_MAPPING(fio->sbi),
+ 					fio->old_blkaddr, fio->old_blkaddr);
+@@ -3405,7 +3430,8 @@ static inline int __f2fs_get_curseg(struct f2fs_sb_info *sbi,
+ 
+ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 				block_t old_blkaddr, block_t new_blkaddr,
+-				bool recover_curseg, bool recover_newaddr)
++				bool recover_curseg, bool recover_newaddr,
++				bool from_gc)
+ {
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct curseg_info *curseg;
+@@ -3456,11 +3482,16 @@ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 	curseg->next_blkoff = GET_BLKOFF_FROM_SEG0(sbi, new_blkaddr);
+ 	__add_sum_entry(sbi, type, sum);
+ 
+-	if (!recover_curseg || recover_newaddr)
++	if (!recover_curseg || recover_newaddr) {
++		if (!from_gc)
++			update_segment_mtime(sbi, new_blkaddr, 0);
+ 		update_sit_entry(sbi, new_blkaddr, 1);
++	}
+ 	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO) {
+ 		invalidate_mapping_pages(META_MAPPING(sbi),
+ 					old_blkaddr, old_blkaddr);
++		if (!from_gc)
++			update_segment_mtime(sbi, old_blkaddr, 0);
+ 		update_sit_entry(sbi, old_blkaddr, -1);
+ 	}
+ 
+@@ -3492,7 +3523,7 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
+ 	set_summary(&sum, dn->nid, dn->ofs_in_node, version);
+ 
+ 	f2fs_do_replace_block(sbi, &sum, old_addr, new_addr,
+-					recover_curseg, recover_newaddr);
++					recover_curseg, recover_newaddr, false);
+ 
+ 	f2fs_update_data_blkaddr(dn, new_addr);
+ }
 -- 
 2.26.2
 
