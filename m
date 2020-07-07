@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D43E9C433E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E69C433E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:22:05 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A42F0206CD
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:22:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2DE11206CD
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jul 2020 11:22:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HBYLv0At";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fEtbfCl7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A42F0206CD
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="eNjsNQLv";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lsFMOnQo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DE11206CD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jslfo-0005ab-8D; Tue, 07 Jul 2020 11:22:04 +0000
+	id 1jslfo-0005aT-5j; Tue, 07 Jul 2020 11:22:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jslfm-0005aH-Nt
+ (envelope-from <yuchao0@huawei.com>) id 1jslfm-0005aB-Fn
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 11:22:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
@@ -35,9 +35,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=n84N7M6ll973nCmT+bT4PV1uyN1mDR1TL1DwqZKaqpI=; b=HBYLv0AtBJpBQzDxm2luWd0XO6
- PkWqCcAAXmRN5FgIVCbPt4CfPQxPaxcm3Z0uMACzWDUInigZ4rUCpMdVjzpc2SH//USFCCJUD1MEv
- k4DQLUO+eP3bpyMOSr3wI0VLOPXqwK+C6Mhfj/nN10OocevV6K/JCvNnhA6Ta4VZ5Obc=;
+ bh=uJCfycduqa9vTYAKP8rPtQCLdirXlsx85Gtuopnq07w=; b=eNjsNQLvPVP53RRUv50Ahyy0+D
+ 2E1nZZQVXs6V+YuS48/ve957xUbTpw5obLtJYPTbYdFPP68mueEHtb1fcSdupq4iNJ3w6gJlUd1nB
+ bKKzqu42qr7IzJGPT7AHS+zShILRBFniAbtrJBs+tMYbk+11pERPzSVKKYBy5h27mskk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -45,32 +45,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=n84N7M6ll973nCmT+bT4PV1uyN1mDR1TL1DwqZKaqpI=; b=fEtbfCl7O8+m07ZmMZU3Xt8t4R
- uAO3dJV5YvpelF6Q6TpOn95/bZ5qnXhWVsz/1LhRJlErZT1n0CwfHtoYIGbKfQhBsT/WoKRbQHacP
- yBfyhdP7HKziy9KhVqCObC93L35UN6F8m427FMtJaplZlVi6EPey3oPwkQDZZMhuUe5s=;
+ bh=uJCfycduqa9vTYAKP8rPtQCLdirXlsx85Gtuopnq07w=; b=lsFMOnQoOf6K6EgKdGwMa1Wd/K
+ FsKuWvL3WXnzyeJi2Bk+g8C59WgM7i5sUojUPBpEDAtuctght4hn5oHie4wRwCLvxhHmnjpFcj1df
+ +lCr3TbcWhquQF1whe2jUpdkl25OI4uOJ04a1/7zHtVinLTyl2nhaFCr2vc9dB9hCNns=;
 Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jslfk-00D8KL-S0
+ id 1jslfj-00A8Bk-UR
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jul 2020 11:22:02 +0000
 Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 33509EE35359BBB50C41;
+ by Forcepoint Email with ESMTP id 3843FBA025BB331CADEA;
  Tue,  7 Jul 2020 19:21:53 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.487.0; Tue, 7 Jul 2020 19:21:44 +0800
+ 14.3.487.0; Tue, 7 Jul 2020 19:21:45 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Tue, 7 Jul 2020 19:21:25 +0800
-Message-ID: <20200707112128.89136-3-yuchao0@huawei.com>
+Date: Tue, 7 Jul 2020 19:21:27 +0800
+Message-ID: <20200707112128.89136-5-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200707112128.89136-1-yuchao0@huawei.com>
 References: <20200707112128.89136-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jslfk-00D8KL-S0
-Subject: [f2fs-dev] [PATCH 2/5] f2fs: record average update time of segment
+X-Headers-End: 1jslfj-00A8Bk-UR
+Subject: [f2fs-dev] [PATCH 4/5] f2fs: support 64-bits key in f2fs rb-tree
+ node entry
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,63 +88,146 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Previously, once we update one block in segment, we will update mtime of
-segment to last time, making aged segment becoming freshest, result in
-that GC with cost benefit algorithm missing such segment, So this patch
-changes to record mtime as average block updating time instead of last
-updating time.
-
-It's not needed to reset mtime for prefree segment, as se->valid_blocks
-is zero, then old se->mtime won't take any weight with below calculation:
-
-	se->mtime = div_u64(se->mtime * se->valid_blocks + mtime,
-					se->valid_blocks + 1);
+then, we can add specified entry into rb-tree with 64-bits segment time
+as key.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ fs/f2fs/extent_cache.c | 37 +++++++++++++++++++++++++++++++++++--
+ fs/f2fs/f2fs.h         | 15 ++++++++++++---
+ fs/f2fs/segment.c      |  4 ++--
+ 3 files changed, 49 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 7419aa07cf08..9d10285932f9 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2150,6 +2150,22 @@ static void __set_sit_entry_type(struct f2fs_sb_info *sbi, int type,
- 		__mark_sit_entry_dirty(sbi, segno);
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 686c68b98610..3ebf976a682d 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -58,6 +58,29 @@ struct rb_entry *f2fs_lookup_rb_tree(struct rb_root_cached *root,
+ 	return re;
  }
  
-+static void update_segment_mtime(struct f2fs_sb_info *sbi, block_t blkaddr)
++struct rb_node **f2fs_lookup_rb_tree_ext(struct f2fs_sb_info *sbi,
++					struct rb_root_cached *root,
++					struct rb_node **parent,
++					unsigned long long key, bool *leftmost)
 +{
-+	unsigned int segno = GET_SEGNO(sbi, blkaddr);
-+	struct seg_entry *se = get_seg_entry(sbi, segno);
-+	unsigned long long mtime = get_mtime(sbi, false);
++	struct rb_node **p = &root->rb_root.rb_node;
++	struct rb_entry *re;
 +
-+	if (!se->mtime)
-+		se->mtime = mtime;
-+	else
-+		se->mtime = div_u64(se->mtime * se->valid_blocks + mtime,
-+						se->valid_blocks + 1);
++	while (*p) {
++		*parent = *p;
++		re = rb_entry(*parent, struct rb_entry, rb_node);
 +
-+	if (mtime > SIT_I(sbi)->max_mtime)
-+		SIT_I(sbi)->max_mtime = mtime;
++		if (key < re->key) {
++			p = &(*p)->rb_left;
++		} else {
++			p = &(*p)->rb_right;
++			*leftmost = false;
++		}
++	}
++
++	return p;
 +}
 +
- static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ struct rb_node **f2fs_lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
+ 				struct rb_root_cached *root,
+ 				struct rb_node **parent,
+@@ -166,7 +189,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
+ }
+ 
+ bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+-						struct rb_root_cached *root)
++				struct rb_root_cached *root, bool check_key)
  {
- 	struct seg_entry *se;
-@@ -2169,10 +2185,9 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 	f2fs_bug_on(sbi, (new_vblocks >> (sizeof(unsigned short) << 3) ||
- 				(new_vblocks > sbi->blocks_per_seg)));
+ #ifdef CONFIG_F2FS_CHECK_FS
+ 	struct rb_node *cur = rb_first_cached(root), *next;
+@@ -183,13 +206,23 @@ bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+ 		cur_re = rb_entry(cur, struct rb_entry, rb_node);
+ 		next_re = rb_entry(next, struct rb_entry, rb_node);
  
-+	update_segment_mtime(sbi, blkaddr);
++		if (check_key) {
++			if (cur_re->key > next_re->key) {
++				f2fs_info(sbi, "inconsistent rbtree, "
++					"cur(%llu) next(%llu)",
++					cur_re->key, next_re->key);
++				return false;
++			}
++			goto next;
++		}
 +
- 	se->valid_blocks = new_vblocks;
--	se->mtime = get_mtime(sbi, false);
--	if (se->mtime > SIT_I(sbi)->max_mtime)
--		SIT_I(sbi)->max_mtime = se->mtime;
+ 		if (cur_re->ofs + cur_re->len > next_re->ofs) {
+ 			f2fs_info(sbi, "inconsistent rbtree, cur(%u, %u) next(%u, %u)",
+ 				  cur_re->ofs, cur_re->len,
+ 				  next_re->ofs, next_re->len);
+ 			return false;
+ 		}
+-
++next:
+ 		cur = next;
+ 	}
+ #endif
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index dcf99f1bdfe1..3430964f0f6a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -635,8 +635,13 @@ enum {
  
- 	/* Update valid block bitmap */
- 	if (del > 0) {
+ struct rb_entry {
+ 	struct rb_node rb_node;		/* rb node located in rb-tree */
+-	unsigned int ofs;		/* start offset of the entry */
+-	unsigned int len;		/* length of the entry */
++	union {
++		struct {
++			unsigned int ofs;	/* start offset of the entry */
++			unsigned int len;	/* length of the entry */
++		};
++		unsigned long long key;		/* 64-bits key */
++	};
+ };
+ 
+ struct extent_info {
+@@ -3828,6 +3833,10 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi);
+  */
+ struct rb_entry *f2fs_lookup_rb_tree(struct rb_root_cached *root,
+ 				struct rb_entry *cached_re, unsigned int ofs);
++struct rb_node **f2fs_lookup_rb_tree_ext(struct f2fs_sb_info *sbi,
++				struct rb_root_cached *root,
++				struct rb_node **parent,
++				unsigned long long key, bool *left_most);
+ struct rb_node **f2fs_lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
+ 				struct rb_root_cached *root,
+ 				struct rb_node **parent,
+@@ -3838,7 +3847,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
+ 		struct rb_node ***insert_p, struct rb_node **insert_parent,
+ 		bool force, bool *leftmost);
+ bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+-						struct rb_root_cached *root);
++				struct rb_root_cached *root, bool check_key);
+ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
+ void f2fs_init_extent_tree(struct inode *inode, struct page *ipage);
+ void f2fs_drop_extent_tree(struct inode *inode);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 222d28c44e4f..b66ac28d9aa5 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1521,7 +1521,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 			goto next;
+ 		if (unlikely(dcc->rbtree_check))
+ 			f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
+-								&dcc->root));
++							&dcc->root, false));
+ 		blk_start_plug(&plug);
+ 		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+ 			f2fs_bug_on(sbi, dc->state != D_PREP);
+@@ -2887,7 +2887,7 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+ 	mutex_lock(&dcc->cmd_lock);
+ 	if (unlikely(dcc->rbtree_check))
+ 		f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
+-								&dcc->root));
++							&dcc->root, false));
+ 
+ 	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
+ 					NULL, start,
 -- 
 2.26.2
 
