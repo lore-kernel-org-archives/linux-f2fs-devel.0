@@ -2,109 +2,102 @@ Return-Path: <SRS0=VsZi=AT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE688C433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jul 2020 03:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B28C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jul 2020 03:57:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8CB7520720
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jul 2020 03:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 7F88020738;
+	Wed,  8 Jul 2020 03:57:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="mybykk//";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="e37CfzA+";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bClIq4jL";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="m+aeCWp1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB7520720
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Jg4O6E5y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WcJlRTx5";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGbBrRma"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F88020738
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
-	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=pjbfcv0DHoyOV+T9TlDTWSlH1SBdF4ePdqit3WKMmT8=; b=mybykk///Oqy4OZAc36h3IOHY
-	0GTYWTqViab2Mc1KsleD6+EgumDF25NTwjFKjs4SXLmKXtykIGjNqxNJ51egAaTv2+b5S6hkgc4FW
-	mhJbEvd4x8PIUGpF6Uczx2vgohCTl56BWOCyGzhYDpbnuIix7FsiWSSEVc6DczWVRoOII=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jt0Xh-0005zj-2v; Wed, 08 Jul 2020 03:14:41 +0000
+	id 1jt1DL-0007oc-EJ; Wed, 08 Jul 2020 03:57:43 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3GDgFXwYKAJs8MJN9IBJJBG9.7JH@flex--drosen.bounces.google.com>)
- id 1jt0Xf-0005za-II
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 03:14:39 +0000
+ (envelope-from <daeho43@gmail.com>) id 1jt1DK-0007oU-80
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 03:57:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
- Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=aP+qpq9rpJgxeSxNlmZTY/t2cTRkQbWyuBAcSHQgTQs=; b=e37CfzA+FBHRiiPCDwOzmWg29
- 81mqGhVijMClYLYfZjXbPxk8ugE62pzykj6XRLZSDXbNYNBcTiYH87R+KaBP5QQZK45Uf6KprIL6I
- MacPLp8r964KrxAkdoVdCLhirDNl8gzlj8e3pqCysAqOAEH1WXHPugDSCV50SxGHBgruE=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=z9xDGWiWNhqxBos92VKlsJJl8JqQTIwwlNq2XYhQwHA=; b=Jg4O6E5y+PsdOLjjY2BdPjqH0b
+ OIDeZejdwuuVFpFDpWN54nS5leZCXxCLKw+C1DO1UQXZhA1Z76gtfYU+PUISPX2Z0brPiKJkE4xRV
+ NpX13rY/3tJ0Z/M1mA/VrI0H9wKrpMP07Mkgz5+xo7ZugYi9wlkuVqYWLyZfHoi7pNWQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=aP+qpq9rpJgxeSxNlmZTY/t2cTRkQbWyuBAcSHQgTQs=; b=bClIq4jL5stHNyZSxdX9HaRlzz
- cZc6m0sDXNcVMPo3j16ItYEdpBPiPtaOFBYQVQM3p/4NPR5MjvA6utSzmqP2KNodgWokcZgUkYSD8
- hRpcH+ywdUR7KKAqcC8e2SmRD8NoU8CXn922r549BVwOoyVmpt5cVuoiuE3EuLJR1uoo=;
-Received: from mail-ua1-f73.google.com ([209.85.222.73])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=z9xDGWiWNhqxBos92VKlsJJl8JqQTIwwlNq2XYhQwHA=; b=W
+ cJlRTx5F+IK3yWHRItVTL2+kQ+QpK/8ZP2mADdj8sCCKc4c5bgMzC/fEo+EoZjMeGavDIDKRPJXbI
+ X7JVUwnuMdDgqzcnCKjnkBdBrAcbJOXR8TU0aYS3/SbXAqQdS/6iiITMS7l9h3hGFF1HkgzkQdxDa
+ 18veExEfoqcRGCW0=;
+Received: from mail-pf1-f193.google.com ([209.85.210.193])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jt0Xe-00GrKS-0l
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 03:14:39 +0000
-Received: by mail-ua1-f73.google.com with SMTP id u13so10505120uap.7
+ id 1jt1DH-00Dpjv-LA
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 03:57:41 +0000
+Received: by mail-pf1-f193.google.com with SMTP id j20so3690517pfe.5
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 07 Jul 2020 20:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=aP+qpq9rpJgxeSxNlmZTY/t2cTRkQbWyuBAcSHQgTQs=;
- b=m+aeCWp1t2z+5Z871kAgTbmai1ropLBYbvcXIUdYvVLoQwv7bCZx9iAftANT1IFFlo
- QrtYdfunNKy9AaoKtNSQBk1PZ25S99QOMMhRkH0PyI0AN013bUZia2v+UAabrZEBy14d
- RiTqQXttxwcSVNwRvXV9zgUU9FegPldt1rBYu52LGG6DpKKW6PfhcN5ZGnD1HoKhPKHP
- Jf/9YTrxgNdgIgRJN3x5db9w2OGaf606GucLydCmVE5d6C/GNBFHG2SKoUeWvTMEIIq5
- NZ08TOPAUQDoO9WmgandJMJ1ZODqAQzcViyU5FckE2bVW3GJSGm67JTKMG06JzgpEJLt
- 0Cww==
+ Tue, 07 Jul 2020 20:57:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=z9xDGWiWNhqxBos92VKlsJJl8JqQTIwwlNq2XYhQwHA=;
+ b=JGbBrRmabx5c6VLbbCmjZTCudG52gT6t2J+dTwym8AqH3xDVir0jEl4o06tX/Yj9R7
+ WsT57Md76xWuvD88h6nJ9LhPa5m+gdWW9W8cKEyG3V8dm697RpthIOGykB2DWxKWogZi
+ B2D+ihOxMW0HgmiN9RvcZFdfKSOEXbQ0b+zyUqp9UES6w4QZX77b4YJQ1YXxuzVWFe3g
+ NVigfJN8q9J/iocVuu049LlmJUaQCNF+rKjNiZYkEC/orlnyC1ril4xrb/zQaijentwv
+ N6aI0tULlZ8vUPkUjZ8RGH94ZaFcEcHjH5oudy9J2qxnFFrqTUQFWq5+sRxqwkRsxXMr
+ g6jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:date:in-reply-to:message-id:mime-version
- :references:subject:from:to:cc;
- bh=aP+qpq9rpJgxeSxNlmZTY/t2cTRkQbWyuBAcSHQgTQs=;
- b=uN48GeBT61dfYZ38MTYbcRqH0kVOCYhiqQAuTyqN8R15zaI3LeIvJerMeceHUc+kLM
- NENgV7L15RTRZyrtB/PMtsTwwaFKJ2Q7i2mo8YyG0Bmp6ULuVtQ/Kae/rh36ZnYJj89c
- fhP23qcE16ZMwvD0KpoOr2eJioZqdbAhqdNoIR44bVYQLkfydmaibBFNJQTiTvYZ8BEs
- 4BOaluRt221462ItNPqTetX6Sx6Ib7g5QcDysccWtwE/8XWdqHnbWxvqthhlKpkqNP8P
- rKNG3Yy6eig4vExvHokTk0naSNK+O7gsAMZfxjRx5eWNIFEgXrKLLDURaaWk7AP6qWLd
- kfmQ==
-X-Gm-Message-State: AOAM531mqKi7YrQhWMWRFl5zudp+nDApsSPRprF7g4kmx4DlzX+VMmeH
- IHCKID3g77ZzvkxI42jc5X58qdP8DPA=
-X-Google-Smtp-Source: ABdhPJwmp/3DBzVmW1crO9pyD1v6lO1Fz70RtK41dha0MasE0b9UyCZs9e0+Ma4HXeEoDd3iPo/uo4BY1go=
-X-Received: by 2002:a0c:dd87:: with SMTP id v7mr51408250qvk.192.1594177560817; 
- Tue, 07 Jul 2020 20:06:00 -0700 (PDT)
-Date: Tue,  7 Jul 2020 20:05:50 -0700
-In-Reply-To: <20200708030552.3829094-1-drosen@google.com>
-Message-Id: <20200708030552.3829094-3-drosen@google.com>
-Mime-Version: 1.0
-References: <20200708030552.3829094-1-drosen@google.com>
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=z9xDGWiWNhqxBos92VKlsJJl8JqQTIwwlNq2XYhQwHA=;
+ b=msaUKPCBDmlqso0089pjYJdEojsp5mTemGMKcuY1VtVFAEhWUINUc+k3Z0M895eKdu
+ 5xQBlEdAVTvdo0eyuadTdYUBJIhFb4qIz9157ugdE2BUgpD+uPCSHgF6YfUKoGN+mwXD
+ 0WedbEDDsVSUX2sstGjn8zZ9uuxhZ6Be/wepaFCJirZV0ThKpcrhqoc3WF/cviQoI2Ye
+ dKWFOJgEvSZW6Ya0GBiUqRvAuM/uVE/viV3wX0tz5v1S9tW69KzXsS0mqqKtqAtnfBiY
+ 4NPNYV/6nFdpKst+K6V955VGgzTCW+n1MlIlGeHheQnDxXuXj97DhVo39A2RXbo2baPT
+ HhTw==
+X-Gm-Message-State: AOAM530bOWd6E4f3dxuH/sjcitacjMV3Uda5+LAsgAdu3sk6IAjdtDzG
+ 1R9qgDEts6LNIbTI0jmdgOQ=
+X-Google-Smtp-Source: ABdhPJyA+2edR/jphXkfTYKosuC9Ld8ZjDtR9oCeBBF5l5nT6e8bv4UYZdSf3338rEeICNHxtWdzsw==
+X-Received: by 2002:a63:d951:: with SMTP id e17mr46889325pgj.318.1594180653048; 
+ Tue, 07 Jul 2020 20:57:33 -0700 (PDT)
+Received: from daehojeong1.seo.corp.google.com
+ ([2401:fa00:d:1:a6ae:11ff:fe18:6ce2])
+ by smtp.gmail.com with ESMTPSA id c188sm23603092pfc.143.2020.07.07.20.57.30
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 07 Jul 2020 20:57:32 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Wed,  8 Jul 2020 12:57:25 +0900
+Message-Id: <20200708035725.1130254-1-daeho43@gmail.com>
 X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
-To: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org, 
- Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>, 
- linux-fscrypt@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-X-Headers-End: 1jt0Xe-00GrKS-0l
-Subject: [f2fs-dev] [PATCH v11 2/4] fs: Add standard casefolding support
+MIME-Version: 1.0
+X-Headers-End: 1jt1DH-00Dpjv-LA
+Subject: [f2fs-dev] [PATCH v5] f2fs: add F2FS_IOC_SEC_TRIM_FILE ioctl
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,183 +109,277 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Rosenberg via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Rosenberg <drosen@google.com>
-Cc: Daniel Rosenberg <drosen@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
- linux-fsdevel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Daeho Jeong <daehojeong@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This adds general supporting functions for filesystems that use
-utf8 casefolding. It provides standard dentry_operations and adds the
-necessary structures in struct super_block to allow this standardization.
+From: Daeho Jeong <daehojeong@google.com>
 
-The new dentry operations are functionally equivalent to the existing
-operations in ext4 and f2fs, apart from the use of utf8_casefold_hash to
-avoid an allocation.
+Added a new ioctl to send discard commands or/and zero out
+to selected data area of a regular file for security reason.
 
-By providing a common implementation, all users can benefit from any
-optimizations without needing to port over improvements.
-
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/libfs.c         | 94 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h | 16 ++++++++
- 2 files changed, 110 insertions(+)
+ fs/f2fs/f2fs.h |  15 ++++
+ fs/f2fs/file.c | 181 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 196 insertions(+)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 4d08edf19c78..fe22e2be6f7a 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -20,6 +20,8 @@
- #include <linux/fs_context.h>
- #include <linux/pseudo_fs.h>
- #include <linux/fsnotify.h>
-+#include <linux/unicode.h>
-+#include <linux/fscrypt.h>
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b35a50f4953c..917fb2f63cd7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -434,6 +434,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+ 					_IOR(F2FS_IOCTL_MAGIC, 18, __u64)
+ #define F2FS_IOC_RESERVE_COMPRESS_BLOCKS				\
+ 					_IOR(F2FS_IOCTL_MAGIC, 19, __u64)
++#define F2FS_IOC_SEC_TRIM_FILE		_IOW(F2FS_IOCTL_MAGIC, 20,	\
++						struct f2fs_sectrim_range)
  
- #include <linux/uaccess.h>
+ #define F2FS_IOC_GET_VOLUME_NAME	FS_IOC_GETFSLABEL
+ #define F2FS_IOC_SET_VOLUME_NAME	FS_IOC_SETFSLABEL
+@@ -453,6 +455,13 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+ #define F2FS_GOING_DOWN_METAFLUSH	0x3	/* going down with meta flush */
+ #define F2FS_GOING_DOWN_NEED_FSCK	0x4	/* going down to trigger fsck */
  
-@@ -1363,3 +1365,95 @@ bool is_empty_dir_inode(struct inode *inode)
- 	return (inode->i_fop == &empty_dir_operations) &&
- 		(inode->i_op == &empty_dir_inode_operations);
- }
-+
-+#ifdef CONFIG_UNICODE
 +/*
-+ * Determine if the name of a dentry should be casefolded.
-+ *
-+ * Return: if names will need casefolding
++ * Flags used by F2FS_IOC_SEC_TRIM_FILE
 + */
-+static bool needs_casefold(const struct inode *dir)
++#define F2FS_TRIM_FILE_DISCARD		0x1	/* send discard command */
++#define F2FS_TRIM_FILE_ZEROOUT		0x2	/* zero out */
++#define F2FS_TRIM_FILE_MASK		0x3
++
+ #if defined(__KERNEL__) && defined(CONFIG_COMPAT)
+ /*
+  * ioctl commands in 32 bit emulation
+@@ -488,6 +497,12 @@ struct f2fs_flush_device {
+ 	u32 segments;		/* # of segments to flush */
+ };
+ 
++struct f2fs_sectrim_range {
++	u64 start;
++	u64 len;
++	u64 flags;
++};
++
+ /* for inline stuff */
+ #define DEF_INLINE_RESERVED_SIZE	1
+ static inline int get_extra_isize(struct inode *inode);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 98721f9bef25..41d057ffa8c3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -21,6 +21,7 @@
+ #include <linux/uuid.h>
+ #include <linux/file.h>
+ #include <linux/nls.h>
++#include <linux/sched/signal.h>
+ 
+ #include "f2fs.h"
+ #include "node.h"
+@@ -3754,6 +3755,183 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+ 	return ret;
+ }
+ 
++static int f2fs_secure_erase(struct block_device *bdev, block_t block,
++					block_t len, u32 flags)
 +{
-+	return IS_CASEFOLDED(dir) && dir->i_sb->s_encoding;
-+}
-+
-+/**
-+ * generic_ci_d_compare - generic d_compare implementation for casefolding filesystems
-+ * @dentry:	dentry whose name we are checking against
-+ * @len:	len of name of dentry
-+ * @str:	str pointer to name of dentry
-+ * @name:	Name to compare against
-+ *
-+ * Return: 0 if names match, 1 if mismatch, or -ERRNO
-+ */
-+int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-+			  const char *str, const struct qstr *name)
-+{
-+	const struct dentry *parent = READ_ONCE(dentry->d_parent);
-+	const struct inode *inode = READ_ONCE(parent->d_inode);
-+	const struct super_block *sb = dentry->d_sb;
-+	const struct unicode_map *um = sb->s_encoding;
-+	struct qstr qstr = QSTR_INIT(str, len);
-+	char strbuf[DNAME_INLINE_LEN];
-+	int ret;
-+
-+	if (!inode || !needs_casefold(inode))
-+		goto fallback;
-+	/*
-+	 * If the dentry name is stored in-line, then it may be concurrently
-+	 * modified by a rename.  If this happens, the VFS will eventually retry
-+	 * the lookup, so it doesn't matter what ->d_compare() returns.
-+	 * However, it's unsafe to call utf8_strncasecmp() with an unstable
-+	 * string.  Therefore, we have to copy the name into a temporary buffer.
-+	 */
-+	if (len <= DNAME_INLINE_LEN - 1) {
-+		memcpy(strbuf, str, len);
-+		strbuf[len] = 0;
-+		qstr.name = strbuf;
-+		/* prevent compiler from optimizing out the temporary buffer */
-+		barrier();
-+	}
-+	ret = utf8_strncasecmp(um, name, &qstr);
-+	if (ret >= 0)
-+		return ret;
-+
-+	if (sb_has_strict_encoding(sb))
-+		return -EINVAL;
-+fallback:
-+	if (len != name->len)
-+		return 1;
-+	return !!memcmp(str, name->name, len);
-+}
-+EXPORT_SYMBOL(generic_ci_d_compare);
-+
-+/**
-+ * generic_ci_d_hash - generic d_hash implementation for casefolding filesystems
-+ * @dentry:	dentry whose name we are hashing
-+ * @str:	qstr of name whose hash we should fill in
-+ *
-+ * Return: 0 if hash was successful, or -ERRNO
-+ */
-+int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
-+{
-+	const struct inode *inode = READ_ONCE(dentry->d_inode);
-+	struct super_block *sb = dentry->d_sb;
-+	const struct unicode_map *um = sb->s_encoding;
++	struct request_queue *q = bdev_get_queue(bdev);
++	sector_t sector = SECTOR_FROM_BLOCK(block);
++	sector_t nr_sects = SECTOR_FROM_BLOCK(len);
 +	int ret = 0;
 +
-+	if (!inode || !needs_casefold(inode))
-+		return 0;
++	if (!q)
++		return -ENXIO;
 +
-+	ret = utf8_casefold_hash(um, dentry, str);
-+	if (ret < 0)
-+		goto err;
++	if (flags & F2FS_TRIM_FILE_DISCARD)
++		ret = blkdev_issue_discard(bdev, sector, nr_sects, GFP_NOFS,
++						blk_queue_secure_erase(q) ?
++						BLKDEV_DISCARD_SECURE : 0);
 +
-+	return 0;
-+err:
-+	if (sb_has_strict_encoding(sb))
-+		ret = -EINVAL;
-+	else
-+		ret = 0;
++	if (!ret && (flags & F2FS_TRIM_FILE_ZEROOUT))
++		ret = blkdev_issue_zeroout(bdev, sector, nr_sects, GFP_NOFS, 0);
++
 +	return ret;
 +}
-+EXPORT_SYMBOL(generic_ci_d_hash);
-+#endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3f881a892ea7..af8f2ecec8ff 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1392,6 +1392,12 @@ extern int send_sigurg(struct fown_struct *fown);
- #define SB_ACTIVE	(1<<30)
- #define SB_NOUSER	(1<<31)
- 
-+/* These flags relate to encoding and casefolding */
-+#define SB_ENC_STRICT_MODE_FL	(1 << 0)
 +
-+#define sb_has_strict_encoding(sb) \
-+	(sb->s_encoding_flags & SB_ENC_STRICT_MODE_FL)
++static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct address_space *mapping = inode->i_mapping;
++	struct block_device *prev_bdev = NULL;
++	struct f2fs_sectrim_range range;
++	pgoff_t index, pg_end;
++	block_t prev_block = 0, len = 0;
++	loff_t end_addr;
++	bool to_end;
++	int ret = 0;
 +
- /*
-  *	Umount options
-  */
-@@ -1461,6 +1467,10 @@ struct super_block {
- #endif
- #ifdef CONFIG_FS_VERITY
- 	const struct fsverity_operations *s_vop;
-+#endif
-+#ifdef CONFIG_UNICODE
-+	struct unicode_map *s_encoding;
-+	__u16 s_encoding_flags;
- #endif
- 	struct hlist_bl_head	s_roots;	/* alternate root dentries for NFS */
- 	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
-@@ -3385,6 +3395,12 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- 
- extern int generic_check_addressable(unsigned, u64);
- 
-+#ifdef CONFIG_UNICODE
-+extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
-+extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-+				const char *str, const struct qstr *name);
-+#endif
++	if (!(filp->f_mode & FMODE_WRITE))
++		return -EBADF;
 +
- #ifdef CONFIG_MIGRATION
- extern int buffer_migrate_page(struct address_space *,
- 				struct page *, struct page *,
++	if (copy_from_user(&range, (struct f2fs_sectrim_range __user *)arg,
++				sizeof(range)))
++		return -EFAULT;
++
++	if (range.flags == 0 || (range.flags & ~F2FS_TRIM_FILE_MASK) ||
++			!S_ISREG(inode->i_mode))
++		return -EINVAL;
++
++	if ((range.flags & F2FS_TRIM_FILE_DISCARD) &&
++			!f2fs_hw_support_discard(sbi))
++		return -EOPNOTSUPP;
++
++	file_start_write(filp);
++	inode_lock(inode);
++
++	if (f2fs_is_atomic_file(inode) || f2fs_compressed_file(inode)) {
++		ret = -EINVAL;
++		goto err;
++	}
++
++	if (range.start >= inode->i_size) {
++		ret = -EINVAL;
++		goto err;
++	}
++
++	if (inode->i_size - range.start < range.len) {
++		ret = -E2BIG;
++		goto err;
++	}
++	end_addr = range.start + range.len;
++
++	to_end = (end_addr == inode->i_size);
++	if (!IS_ALIGNED(range.start, F2FS_BLKSIZE) ||
++			(!to_end && !IS_ALIGNED(end_addr, F2FS_BLKSIZE))) {
++		ret = -EINVAL;
++		goto err;
++	}
++
++	index = F2FS_BYTES_TO_BLK(range.start);
++	pg_end = DIV_ROUND_UP(end_addr, F2FS_BLKSIZE);
++
++	ret = f2fs_convert_inline_inode(inode);
++	if (ret)
++		goto err;
++
++	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++	down_write(&F2FS_I(inode)->i_mmap_sem);
++
++	ret = filemap_write_and_wait_range(mapping, range.start, end_addr - 1);
++	if (ret)
++		goto out;
++
++	truncate_inode_pages_range(mapping, range.start,
++			to_end ? -1 : end_addr - 1);
++
++	while (index < pg_end) {
++		struct dnode_of_data dn;
++		pgoff_t end_offset, count;
++		int i;
++
++		set_new_dnode(&dn, inode, NULL, NULL, 0);
++		ret = f2fs_get_dnode_of_data(&dn, index, LOOKUP_NODE);
++		if (ret) {
++			if (ret == -ENOENT) {
++				index = f2fs_get_next_page_offset(&dn, index);
++				continue;
++			}
++			goto out;
++		}
++
++		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
++		count = min(end_offset - dn.ofs_in_node, pg_end - index);
++		for (i = 0; i < count; i++, dn.ofs_in_node++) {
++			struct block_device *cur_bdev;
++			block_t blkaddr = f2fs_data_blkaddr(&dn);
++
++			if (!__is_valid_data_blkaddr(blkaddr))
++				continue;
++
++			if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
++						DATA_GENERIC_ENHANCE)) {
++				ret = -EFSCORRUPTED;
++				f2fs_put_dnode(&dn);
++				goto out;
++			}
++
++			cur_bdev = f2fs_target_device(sbi, blkaddr, NULL);
++			if (f2fs_is_multi_device(sbi)) {
++				int di = f2fs_target_device_index(sbi, blkaddr);
++
++				blkaddr -= FDEV(di).start_blk;
++			}
++
++			if (len) {
++				if (prev_bdev == cur_bdev &&
++					blkaddr == prev_block + len) {
++					len++;
++				} else {
++					ret = f2fs_secure_erase(prev_bdev,
++						prev_block, len, range.flags);
++					if (ret) {
++						f2fs_put_dnode(&dn);
++						goto out;
++					}
++
++					len = 0;
++				}
++			}
++
++			if (!len) {
++				prev_bdev = cur_bdev;
++				prev_block = blkaddr;
++				len = 1;
++			}
++		}
++
++		f2fs_put_dnode(&dn);
++		index += count;
++
++		if (fatal_signal_pending(current)) {
++			ret = -EINTR;
++			goto out;
++		}
++		cond_resched();
++	}
++
++	if (len)
++		ret = f2fs_secure_erase(prev_bdev, prev_block, len,
++				range.flags);
++out:
++	up_write(&F2FS_I(inode)->i_mmap_sem);
++	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++err:
++	inode_unlock(inode);
++	file_end_write(filp);
++
++	return ret;
++}
++
+ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
+@@ -3840,6 +4018,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_release_compress_blocks(filp, arg);
+ 	case F2FS_IOC_RESERVE_COMPRESS_BLOCKS:
+ 		return f2fs_reserve_compress_blocks(filp, arg);
++	case F2FS_IOC_SEC_TRIM_FILE:
++		return f2fs_sec_trim_file(filp, arg);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -4009,6 +4189,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_GET_COMPRESS_BLOCKS:
+ 	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
+ 	case F2FS_IOC_RESERVE_COMPRESS_BLOCKS:
++	case F2FS_IOC_SEC_TRIM_FILE:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
 -- 
 2.27.0.383.g050319c2ae-goog
 
