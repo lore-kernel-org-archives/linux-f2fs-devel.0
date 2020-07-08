@@ -2,110 +2,83 @@ Return-Path: <SRS0=VsZi=AT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C572C433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jul 2020 09:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1EAC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jul 2020 10:05:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D607B20658
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jul 2020 09:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1CFD2204EC;
+	Wed,  8 Jul 2020 10:05:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="aa+J2ByX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="N3TSBicL";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="MQgxr5CI";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="q96aTbim"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D607B20658
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="e9Yg7u+a";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fX9lsDrF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8OClbpM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CFD2204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
-	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=S4r83GGIMIrMs+kSoPlW8wngdtiS9LJ174415JmDTMA=; b=aa+J2ByXQGNCoRkSwkYnRI9nj
-	DDNW+sZGKeZQLX8XzYBvYgce+/yY+Dcbr6kz32Oc3+Gwh58hWp38FQ5F3XXOEiIV+Z7l1Hq11h31w
-	lo7vmjGBxLfGFlE6Pf2bGbI3iZoqVdk7JqnyheZo3nk8EKUxIHuHCMPM/1uK6g7zIdnCM=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jt68T-0006bt-PJ; Wed, 08 Jul 2020 09:13:01 +0000
+	id 1jt6xR-000483-PF; Wed, 08 Jul 2020 10:05:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3DI4FXwYKAD0cqnrdmfnnfkd.bnl@flex--drosen.bounces.google.com>)
- id 1jt68R-0006bb-QV
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 09:12:59 +0000
+ (envelope-from <gregkh@linuxfoundation.org>) id 1jt6xP-00045j-Ue
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 10:05:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
- Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8+TC1+grcd9+1L+bfv/X5qx9D+VjZ57HqDGHlmrwyxg=; b=N3TSBicLmL7AVMA4i2Sftd2YC
- 3/QqJemmjACchTiebM+3NJMjSfUUfBRpBoYwnTXxlouiMq6BHPOXTivHHBzTnNgIumhdE0E8CSxJ/
- rtrm4fWlg9qKleQQv8qUz7MtjlKSRETNeOGAx1S8BCLab0R8tvy0Tmnn3BdkpRtFiDDTs=;
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=oJKfhpS2TAv3dfAMEih1hdrRNJEaMuKN0Xzg9BWeoSo=; b=e9Yg7u+aBgFflqQgzT4GWFiYym
+ rULnohbwh80HYOv41rI0pZVmAxqIzyaFw5+hzqVmiIpvNFN++eKVbx8xe3jDSgDbEct0CmQsJCsOj
+ LUDXk2O0OItsKVmdu3j4KRMpZvk50QX//nfqw/obAEru982PmiXZK1qr+4qE0/mwx6OM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8+TC1+grcd9+1L+bfv/X5qx9D+VjZ57HqDGHlmrwyxg=; b=MQgxr5CIXrqBB1ukxZdZgyEnCV
- ogBEW4iihnitlP+pX0ohajXRcNCDe5n5UL8TglMFkaZVOe5NxY668Lhi3ZhmPpg2b8eeNYBoWdae4
- VDAGXilzkqURCO9c/MqfVahznsk6fMYyvCky0qkjW6Gq4h3kE55wYoIYcVAG56JKjw6U=;
-Received: from mail-pg1-f201.google.com ([209.85.215.201])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jt68P-00H7Xv-LV
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 09:12:59 +0000
-Received: by mail-pg1-f201.google.com with SMTP id h5so30881179pgq.4
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 08 Jul 2020 02:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=8+TC1+grcd9+1L+bfv/X5qx9D+VjZ57HqDGHlmrwyxg=;
- b=q96aTbimluUtEdhrrGai6ITGwzBJEtjxuyK5R4Ohgo8jMj9xT3CE2pEQIPnI7YgKU0
- iZ+R+ujBZAkfm3i2yakoOqzAq77sDJ/DKwpxAwoYSJS5CsOoGES9CaumlTPPXerTo9rC
- svZP+qq435cqH5JMxhzd9HO0liyx1FRkgh+/JRijSnPZOCQoUUtu6NWMnDdYja6WCMQl
- WiOQFv8qa0NeOoqy7UgLEytqpfiFUb9Urs87YvVE9ZEk4azikkjjTTgMNa/LP41wArMS
- hovD05z9U+Vg3zkwPRG7uM3rnKL7GPzr6qaRxTaPbnB06HagWo8ViUYYrUf2i+6dDvHW
- p/RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:date:in-reply-to:message-id:mime-version
- :references:subject:from:to:cc;
- bh=8+TC1+grcd9+1L+bfv/X5qx9D+VjZ57HqDGHlmrwyxg=;
- b=LImd2AwXp/xdvUKDIw36zPoUMqeKevMMBOUE6AenbHplPqRYNckgvADWZP3uDM/+LV
- p0Bnw1zsy7TS/rNjo0u7fh2YZPv7wvuMhK3fzZjQt4pjMRniM/XI+rUG1kBIW/02fyJc
- rlvDcswm80w061cKu903WnCwXreQbWmZ6CV3pNPkldtwvlPJBF/B465SiAikN3mdGVhs
- ffeNz2N3swNWt2AoaGGLpW5WhPBnJDUH0qVYuaONJe43jtwUuSuuNfCKK3492Dihl7+9
- mRXpOKahEbYxfkLyTlCcIYlhLOdDWmZvWe1OgGHhzBLFEleSZu6wg2NH9//IywT3+UKI
- UoFg==
-X-Gm-Message-State: AOAM532xkLHlBuPaGAZJNKQm5dP3ZYv7v4eJ4gIcgjKEuOKEBOYi8IQ4
- abwcTgE3UgM2Zu0QOwcRoSq8s2wiJjE=
-X-Google-Smtp-Source: ABdhPJymFIDabeVHG9reQJ9gahP1lHCXjNoctA7rMpb+c+pa+O+mAAY16K2hflrIoUySyNa//P1EBBAuC2Y=
-X-Received: by 2002:a17:90b:1993:: with SMTP id
- mv19mr8603393pjb.39.1594199564949; 
- Wed, 08 Jul 2020 02:12:44 -0700 (PDT)
-Date: Wed,  8 Jul 2020 02:12:35 -0700
-In-Reply-To: <20200708091237.3922153-1-drosen@google.com>
-Message-Id: <20200708091237.3922153-3-drosen@google.com>
-Mime-Version: 1.0
-References: <20200708091237.3922153-1-drosen@google.com>
-X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
-To: "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org, 
- Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>, 
- linux-fscrypt@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-X-Headers-End: 1jt68P-00H7Xv-LV
-Subject: [f2fs-dev] [PATCH v12 2/4] fs: Add standard casefolding support
+ bh=oJKfhpS2TAv3dfAMEih1hdrRNJEaMuKN0Xzg9BWeoSo=; b=fX9lsDrFCERteebNLEi43SpVnE
+ f1P0IFjW7OgqdfzlL4ukJy/qrtw4L7OxJISEh5Ac0Lj3TGXfDWe6KMq8XT0Zxg7N5MOuG7bKHa9XZ
+ DRsgruovmMBe65qdithtGKaJ7T0QpSODNnitfrhV7F7EE0L9yYjvvcBtrbBDsgcliPmU=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jt6xO-00B3dO-7O
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 10:05:39 +0000
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl
+ [83.86.89.107])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 8B6CA204EC;
+ Wed,  8 Jul 2020 10:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1594202731;
+ bh=yTKUIgGMoXAh3uS6fiL+0DHrR3iq2vwf7Im4h1Eez5A=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=O8OClbpMbY9OCMuHPR8z/AuEAjgWpqOX7j8VzUdtfTaahbtr4MtPYKhaOBXiw6sg+
+ MWc3Jgcpu1fCrkNyH5b7QbY3pkYE3aNGJGn/l1f6N0H7EGaVSbdJjdk9D6xJg7dinV
+ ecIALBSNJXAlmjN1/7LbgOjOH8YdGRKqMCebod6w=
+Date: Wed, 8 Jul 2020 12:05:27 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Daeho Jeong <daeho43@gmail.com>
+Message-ID: <20200708100527.GA448589@kroah.com>
+References: <20200703065420.3544269-1-daeho43@gmail.com>
+ <20200703141359.GA2953162@kroah.com>
+ <CACOAw_yweR--34vBXBV07xEGxGhO2r9o_XYVw6h9dMP=C6zp5Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <CACOAw_yweR--34vBXBV07xEGxGhO2r9o_XYVw6h9dMP=C6zp5Q@mail.gmail.com>
+X-Headers-End: 1jt6xO-00B3dO-7O
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: add symbolic link to kobject in
+ sysfs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,179 +90,63 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Rosenberg via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Rosenberg <drosen@google.com>
-Cc: Daniel Rosenberg <drosen@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
- linux-fsdevel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This adds general supporting functions for filesystems that use
-utf8 casefolding. It provides standard dentry_operations and adds the
-necessary structures in struct super_block to allow this standardization.
+On Mon, Jul 06, 2020 at 08:47:07AM +0900, Daeho Jeong wrote:
+> > No Documentation/ABI/ entry for your new sysfs file/link?
+> 
+> This is for adding a symbolic link to a pre-existed
+> /sys/fs/f2fs/<disk> directory and it means /sys/fs/f2fs/<mount> points
+> to /sys/fs/f2fs/<disk>. I already added the description of this in
+> Documentation/filesystems/f2fs.rst.
 
-The new dentry operations are functionally equivalent to the existing
-operations in ext4 and f2fs, apart from the use of utf8_casefold_hash to
-avoid an allocation.
+Ok, but that's not the standard location for sysfs file documentation.
 
-By providing a common implementation, all users can benefit from any
-optimizations without needing to port over improvements.
+> > And what does this help with?
+> 
+> Some system daemons in Android access with the pre-defined sysfs entry
+> name in the json file. So whenever the project changes and the
+> partition layout is changed, we have to follow up the changes and
+> modify /sys/fs/f2fs/<disk> name in the json file accordingly.
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fs/libfs.c         | 87 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h | 16 +++++++++
- 2 files changed, 103 insertions(+)
+That's what partition names are for, you should never depend on a
+"random number".
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 4d08edf19c78..72407cf151d4 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -20,6 +20,8 @@
- #include <linux/fs_context.h>
- #include <linux/pseudo_fs.h>
- #include <linux/fsnotify.h>
-+#include <linux/unicode.h>
-+#include <linux/fscrypt.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -1363,3 +1365,88 @@ bool is_empty_dir_inode(struct inode *inode)
- 	return (inode->i_fop == &empty_dir_operations) &&
- 		(inode->i_op == &empty_dir_inode_operations);
- }
-+
-+#ifdef CONFIG_UNICODE
-+/*
-+ * Determine if the name of a dentry should be casefolded.
-+ *
-+ * Return: if names will need casefolding
-+ */
-+static bool needs_casefold(const struct inode *dir)
-+{
-+	return IS_CASEFOLDED(dir) && dir->i_sb->s_encoding;
-+}
-+
-+/**
-+ * generic_ci_d_compare - generic d_compare implementation for casefolding filesystems
-+ * @dentry:	dentry whose name we are checking against
-+ * @len:	len of name of dentry
-+ * @str:	str pointer to name of dentry
-+ * @name:	Name to compare against
-+ *
-+ * Return: 0 if names match, 1 if mismatch, or -ERRNO
-+ */
-+int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-+			  const char *str, const struct qstr *name)
-+{
-+	const struct dentry *parent = READ_ONCE(dentry->d_parent);
-+	const struct inode *dir = READ_ONCE(parent->d_inode);
-+	const struct super_block *sb = dentry->d_sb;
-+	const struct unicode_map *um = sb->s_encoding;
-+	struct qstr qstr = QSTR_INIT(str, len);
-+	char strbuf[DNAME_INLINE_LEN];
-+	int ret;
-+
-+	if (!dir || !needs_casefold(dir))
-+		goto fallback;
-+	/*
-+	 * If the dentry name is stored in-line, then it may be concurrently
-+	 * modified by a rename.  If this happens, the VFS will eventually retry
-+	 * the lookup, so it doesn't matter what ->d_compare() returns.
-+	 * However, it's unsafe to call utf8_strncasecmp() with an unstable
-+	 * string.  Therefore, we have to copy the name into a temporary buffer.
-+	 */
-+	if (len <= DNAME_INLINE_LEN - 1) {
-+		memcpy(strbuf, str, len);
-+		strbuf[len] = 0;
-+		qstr.name = strbuf;
-+		/* prevent compiler from optimizing out the temporary buffer */
-+		barrier();
-+	}
-+	ret = utf8_strncasecmp(um, name, &qstr);
-+	if (ret >= 0)
-+		return ret;
-+
-+	if (sb_has_strict_encoding(sb))
-+		return -EINVAL;
-+fallback:
-+	if (len != name->len)
-+		return 1;
-+	return !!memcmp(str, name->name, len);
-+}
-+EXPORT_SYMBOL(generic_ci_d_compare);
-+
-+/**
-+ * generic_ci_d_hash - generic d_hash implementation for casefolding filesystems
-+ * @dentry:	dentry of the parent directory
-+ * @str:	qstr of name whose hash we should fill in
-+ *
-+ * Return: 0 if hash was successful or unchanged, and -EINVAL on error
-+ */
-+int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
-+{
-+	const struct inode *dir = READ_ONCE(dentry->d_inode);
-+	struct super_block *sb = dentry->d_sb;
-+	const struct unicode_map *um = sb->s_encoding;
-+	int ret = 0;
-+
-+	if (!dir || !needs_casefold(dir))
-+		return 0;
-+
-+	ret = utf8_casefold_hash(um, dentry, str);
-+	if (ret < 0 && sb_has_strict_encoding(sb))
-+		return -EINVAL;
-+	return 0;
-+}
-+EXPORT_SYMBOL(generic_ci_d_hash);
-+#endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3f881a892ea7..af8f2ecec8ff 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1392,6 +1392,12 @@ extern int send_sigurg(struct fown_struct *fown);
- #define SB_ACTIVE	(1<<30)
- #define SB_NOUSER	(1<<31)
- 
-+/* These flags relate to encoding and casefolding */
-+#define SB_ENC_STRICT_MODE_FL	(1 << 0)
-+
-+#define sb_has_strict_encoding(sb) \
-+	(sb->s_encoding_flags & SB_ENC_STRICT_MODE_FL)
-+
- /*
-  *	Umount options
-  */
-@@ -1461,6 +1467,10 @@ struct super_block {
- #endif
- #ifdef CONFIG_FS_VERITY
- 	const struct fsverity_operations *s_vop;
-+#endif
-+#ifdef CONFIG_UNICODE
-+	struct unicode_map *s_encoding;
-+	__u16 s_encoding_flags;
- #endif
- 	struct hlist_bl_head	s_roots;	/* alternate root dentries for NFS */
- 	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
-@@ -3385,6 +3395,12 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- 
- extern int generic_check_addressable(unsigned, u64);
- 
-+#ifdef CONFIG_UNICODE
-+extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
-+extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-+				const char *str, const struct qstr *name);
-+#endif
-+
- #ifdef CONFIG_MIGRATION
- extern int buffer_migrate_page(struct address_space *,
- 				struct page *, struct page *,
--- 
-2.27.0.383.g050319c2ae-goog
+> This will help them access all the f2fs sysfs entries consistently
+> without requiring to know those changes.
 
+No, please use a partition name, that is the only way to always know you
+are mounting the correct partition.  You have created a random number
+here that might, or might not, change between boots depending on the
+order of the filesystem being mounted.  It is not persistant or
+deterministic at all, please do not treat it as such.
+
+> > If it's really needed, why don't we do this for all filesystem types?
+> 
+> This is for the daemon to change the mode of only F2FS with the power
+> hint of Android.
+
+Again, the point is that a filesystem type is not unique, this, if
+really really needed, should be an attribute for ALL filesystem types,
+f2fs is not special here at all.
+
+Please do not rely on this number ever being the same across boots,
+because your code is such that you can not guarantee that.
+
+And again, if you really want to know the partition you are mounting
+really is the partition you think you are mounting, use the partition
+label name, that is what it is there for, and is why we have been
+relying on that for decades.  A new special per-filesystem-attribute
+that is semi-random is not the correct solution for the problem you are
+describing as far as I can determine.
+
+thanks,
+
+greg k-h
 
 
 _______________________________________________
