@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60609C433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jul 2020 17:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7141CC433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jul 2020 17:18:32 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 320B92065F;
-	Wed,  8 Jul 2020 17:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3B0BF2065F;
+	Wed,  8 Jul 2020 17:18:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Zi4OQbx9";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bz7aDhbn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 320B92065F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="A5EQIRgB";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Igw17mK+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B0BF2065F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jtDel-0001wB-J5; Wed, 08 Jul 2020 17:14:51 +0000
+	id 1jtDiJ-0004AB-Pv; Wed, 08 Jul 2020 17:18:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <tytso@mit.edu>) id 1jtDek-0001vy-7a
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 17:14:50 +0000
+ (envelope-from <tytso@mit.edu>) id 1jtDiI-0004A4-Oq
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 17:18:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ixhyvEhFDHCepLgAKgp2gzSfDXTRXTpXEaPYpvrukuQ=; b=Zi4OQbx9xry/2VlCExYkWo+OnB
- wlCEzV0Qk3JRHaADYAmM1Zjsy4klkXafEDV2jeNoBxViHzdQ36pGohhwVH19yLehEOt3LYBB8HXfc
- tQ0PpJn1uY/7msJPJBo19YluAv4TtQ3SoSgkozJObFwiyLpDkFAo0C+ZKxTIkXpyZsxs=;
+ bh=h8Tar3PYJiYXBx8ugqdapOOuHbrWsgNFVfIxIZAvx6k=; b=A5EQIRgB9DoCSOnxig9dr9CBhW
+ +CeXUTAgr21QBxfGDqmxBr0qTM5f0VNn3sY9PVqSY5yfCvyn8lXofeTqKRpzevr7nH9vkN7yLdK65
+ iFKpkCGcVI6fWJEfajVs5EzOiscVwWybhyy842guqgZ6Isa0iwL4HddoHVANlnOYxgiA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,33 +44,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ixhyvEhFDHCepLgAKgp2gzSfDXTRXTpXEaPYpvrukuQ=; b=bz7aDhbnVncruoXDQF60xSvXOo
- ex45LArlXc34HA5VbavSTlkI5sd7/2ziMqrNzAMdjYs84/5B+Q6+86Iw8ah9KbCHmsKjcaODldWlT
- xcU0M1wFEGk88AEiZSFKG0xn3lDCoSOZHt32wFuEk71M/0UmXnW2aRT7yFzJCf48eOK8=;
+ bh=h8Tar3PYJiYXBx8ugqdapOOuHbrWsgNFVfIxIZAvx6k=; b=Igw17mK++jIuTn69s3Rdua8edo
+ JPXVQm/gYCZi2wXjhr8c+CcMj2F8VaiGoaL674DIieD1YwcG1cnni+R3RgUhk0oyPa72rwmv655ZT
+ SIXMSrBravXKfR3kO1HsifADqJO6Hs2i8lydLLojdDIoJeySxWr7dFjx02c0AOZb2VlU=;
 Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jtDei-00HVnI-Ee
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 17:14:50 +0000
+ id 1jtDiH-00HVzn-41
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jul 2020 17:18:30 +0000
 Received: from callcc.thunk.org (pool-96-230-252-158.bstnma.fios.verizon.net
  [96.230.252.158]) (authenticated bits=0)
  (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 068HES9I021454
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 068HIC0f023584
  (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 8 Jul 2020 13:14:29 -0400
+ Wed, 8 Jul 2020 13:18:13 -0400
 Received: by callcc.thunk.org (Postfix, from userid 15806)
- id 5EA4D420304; Wed,  8 Jul 2020 13:14:28 -0400 (EDT)
-Date: Wed, 8 Jul 2020 13:14:28 -0400
+ id B4682420304; Wed,  8 Jul 2020 13:18:12 -0400 (EDT)
+Date: Wed, 8 Jul 2020 13:18:12 -0400
 From: tytso@mit.edu
 To: Satya Tangirala <satyat@google.com>
-Message-ID: <20200708171428.GE1627842@mit.edu>
+Message-ID: <20200708171812.GF1627842@mit.edu>
 References: <20200702015607.1215430-1-satyat@google.com>
- <20200702015607.1215430-3-satyat@google.com>
+ <20200702015607.1215430-5-satyat@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200702015607.1215430-3-satyat@google.com>
-X-Headers-End: 1jtDei-00HVnI-Ee
-Subject: Re: [f2fs-dev] [PATCH v4 2/4] fscrypt: add inline encryption support
+In-Reply-To: <20200702015607.1215430-5-satyat@google.com>
+X-Headers-End: 1jtDiH-00HVzn-41
+Subject: Re: [f2fs-dev] [PATCH v4 4/4] ext4: add inline encryption support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,42 +82,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-ext4@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jul 02, 2020 at 01:56:05AM +0000, Satya Tangirala wrote:
-> Add support for inline encryption to fs/crypto/.  With "inline
-> encryption", the block layer handles the decryption/encryption as part
-> of the bio, instead of the filesystem doing the crypto itself via
-> Linux's crypto API. This model is needed in order to take advantage of
-> the inline encryption hardware present on most modern mobile SoCs.
+On Thu, Jul 02, 2020 at 01:56:07AM +0000, Satya Tangirala wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> To use inline encryption, the filesystem needs to be mounted with
-> '-o inlinecrypt'. Blk-crypto will then be used instead of the traditional
-> filesystem-layer crypto whenever possible to encrypt the contents
-> of any encrypted files in that filesystem. Fscrypt still provides the key
-> and IV to use, and the actual ciphertext on-disk is still the same;
-> therefore it's testable using the existing fscrypt ciphertext verification
-> tests.
+> Wire up ext4 to support inline encryption via the helper functions which
+> fs/crypto/ now provides.  This includes:
 > 
-> Note that since blk-crypto has a fallback to Linux's crypto API, and
-> also supports all the encryption modes currently supported by fscrypt,
-> this feature is usable and testable even without actual inline
-> encryption hardware.
+> - Adding a mount option 'inlinecrypt' which enables inline encryption
+>   on encrypted files where it can be used.
 > 
-> Per-filesystem changes will be needed to set encryption contexts when
-> submitting bios and to implement the 'inlinecrypt' mount option.  This
-> patch just adds the common code.
+> - Setting the bio_crypt_ctx on bios that will be submitted to an
+>   inline-encrypted file.
 > 
-> Co-developed-by: Eric Biggers <ebiggers@google.com>
+>   Note: submit_bh_wbc() in fs/buffer.c also needed to be patched for
+>   this part, since ext4 sometimes uses ll_rw_block() on file data.
+> 
+> - Not adding logically discontiguous data to bios that will be submitted
+>   to an inline-encrypted file.
+> 
+> - Not doing filesystem-layer crypto on inline-encrypted files.
+> 
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Co-developed-by: Satya Tangirala <satyat@google.com>
 > Signed-off-by: Satya Tangirala <satyat@google.com>
-> Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> Reviewed-by: Eric Biggers <ebiggers@google.com>
 
 Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
