@@ -7,19 +7,19 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A50C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4DC5C433E1
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 Jul 2020 19:48:13 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 13FFE206DF;
-	Thu,  9 Jul 2020 19:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A7356206DF;
+	Thu,  9 Jul 2020 19:48:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="YE347tnE";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="f1B9NQmo";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="O9GCkc4X";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="Ni3dskAT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13FFE206DF
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="YFia2eEz";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="l8sgW3H7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="duXcI/+0";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="n/RhV/jx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7356206DF
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,28 +28,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=AZCg3NKsW3LNZHIxHL0tbVasnX7mIeomS9RvFrqnPRo=; b=YE347tnE6TNF7Th5n23H/1lux
-	v5/tjFHY1TvseqfkWvmTFVGlqCNqj+S2q9zDU0dLO9LqFIS6TLi4lr5m6mFSndTRUK5tp0pOY4t8R
-	Vzld7qSYyTyM9RvT8mYrKCPFZkTOGYbGo+W2/uZySgtP2UpNgSIf4XjzgGmCiRaFhOvXQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	 bh=e0uFkhkHz6qbqNdpzhp4jHC7hRcmbTcRYwowoCmtUME=; b=YFia2eEzE38xGihZWwC010fza
+	ewmyZ8oiELK2fpdH47lsTbOCCvTUHlzqofq+7jdiyMU6p487fGzcRet7dluYboqEHvpaXXhTJVuql
+	p3ZaFmdMSC4ygE2hXn0zQOoo7b6QCA3TUocYfSj/rfJNZdUCXxZyWtzL7SF/TPBw9bqCg=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jtcWh-0007tW-UQ; Thu, 09 Jul 2020 19:48:11 +0000
+	id 1jtcWi-0007AG-QP; Thu, 09 Jul 2020 19:48:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3cnQHXwYKAHcnVotVobjjbgZ.Xjh@flex--satyat.bounces.google.com>)
- id 1jtcWf-0007tM-F5
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 09 Jul 2020 19:48:09 +0000
+ (envelope-from <3dHQHXwYKAHkpXqvXqdlldib.Zlj@flex--satyat.bounces.google.com>)
+ id 1jtcWg-00079z-Vk
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 09 Jul 2020 19:48:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rwbjEFtn1GWMpUE4S/kWQzWtXcP4lb72aoJySrvCSqw=; b=f1B9NQmokqT+mMFiB6Km0VVW3
- RTVzJhUPfrg2Ac1+OqebyYNtI3Rsy/AVBT++XMAsJ0RccraYevltmu4+kWW8E4FbZIs7pdmgj2C75
- bSwPZmWGWE0KN/nA93Zv9nwTG+uEHwDCm9uRt2dx/UbiZ/QMLRrD7bFIoK5hY8QZnE0Hk=;
+ bh=8aV8dCnXtWjQg88XS3xPlXLAc+zOek3bqtseJMfDQ8w=; b=l8sgW3H7S/dlZfhwtguJ9glCS
+ 4/6RKL4NndwwJU7FjLqfwpXHM7ta92EGNUNcL9MyR3jit1cxnbtyFfQBXJVuDadgIJtsOKS5mtUPn
+ EPGBvMsQ27LKzD1MkKSRjA+mm832d22AvWK4JiS8uvVZTGqwk8WsE4fyAWe3aaQTpwV7k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -57,52 +57,52 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=rwbjEFtn1GWMpUE4S/kWQzWtXcP4lb72aoJySrvCSqw=; b=O9GCkc4X9OZdQOAJGATiDEaSBk
- Z5vaa6A/G8uhaT/O20ZygcicJJ3Ra1pBMEQonbzXOIKRXRT+U47pPV1SwjtcreHojgS0FFSWZGoOv
- N/LS2AmdAnkHFHrNyg8KXQNp5gX4YWpDquXpWE0I6vGK+LaHdDp2rHfD0w/6jcGYFKVk=;
-Received: from mail-yb1-f201.google.com ([209.85.219.201])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=8aV8dCnXtWjQg88XS3xPlXLAc+zOek3bqtseJMfDQ8w=; b=duXcI/+0H1Nxh6+LpnwdPAXQLy
+ HI1rScLifgJZT0Edyv0DxyYe32ORqm4bwZTEFuKa6T9s30C/wQzVZKVEbEmSS7WDi82O+x6eW6NHz
+ zMLtGjBGO0O33WCnG4tFdlHXpDP6YZlb+ydiHPP3D2PY5u+uxDH8TfQ6xlla5FeCKsbQ=;
+Received: from mail-yb1-f202.google.com ([209.85.219.202])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jtcWe-001DCk-7D
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 09 Jul 2020 19:48:09 +0000
-Received: by mail-yb1-f201.google.com with SMTP id r17so4091031ybj.22
+ id 1jtcWf-00CUBs-Tq
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 09 Jul 2020 19:48:10 +0000
+Received: by mail-yb1-f202.google.com with SMTP id s7so4121447ybg.10
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 09 Jul 2020 12:48:08 -0700 (PDT)
+ Thu, 09 Jul 2020 12:48:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=rwbjEFtn1GWMpUE4S/kWQzWtXcP4lb72aoJySrvCSqw=;
- b=Ni3dskATOxYJ3Tcou/e65RLNqvkujfDEqEt8oCq4+JTTsuIx3HbTN0WrZ9IycRBL/O
- TJL2j7H0gJ5dCFtN9P528A9cSXAEEFM9S/d3qQ39Blq6q6GXsqpcsUuQxmLEnMSc01Ct
- IzXeUSJ4rafu5s+r01Of1jOoVwyRm/EY4m32sYcxbDTWtfWKK3J5R+N3r/qbdUdvnwoo
- k/9hbVc5Xo59Cbat+Kl6P2i5mS9X0PdbksquM3NIC/nnSiK39eepPvZwPiAmftVMoD9H
- 1pescv+NQm6GgJGb1DJMeV28SVU4y756tuYAb5GrroFxPRMzWFeqjuqEB5PaD41tHPWV
- rpxg==
+ :cc; bh=8aV8dCnXtWjQg88XS3xPlXLAc+zOek3bqtseJMfDQ8w=;
+ b=n/RhV/jx+TfIUyZEOgxV3/59HC7DmDgP2fFHs9KJ6uT8Y/c9BmryDZ6OS48cFc2fqs
+ TiR7FFxJ/P7YhcosGFO3tylYEdj+BoEQmRBg8FEQMEky9Rm7jtA+5D0rcALnSVHwXnfK
+ nBDNqzuk3M3zwBj8YcFMlB0fUuQEI44285Bw8Uli43Zzasc8aEe8NzunSZGzlBeidW4X
+ NocTmLAWIDEIUWqIvRzXdCKx/WROIfOofognfNWydIrK2Ct5JqacT5pfx7r7bw4OgLki
+ X2JyldU8RVZfG4NyWJ1tkoQXa1aq8I7zauOqoi5d9wG5qRRu3YK/sO6rc5yYIJFmtmCv
+ 48lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=rwbjEFtn1GWMpUE4S/kWQzWtXcP4lb72aoJySrvCSqw=;
- b=MetRTovejwk6BiLnlUHTeJ/4PXAZxIR8cwVPaguM0g3wnmJoY2G6KgwO7TPGfnp6me
- Wr8LKIttzhqkvrgn2na4xCsExAe2I7WPLWhUCkc7wGGwxRBb4XDpxLXy5uYHvrvavqt8
- BksMoukO2Y5DAZm2AEzlqtFlEEEtlMmp4pZP6k8cX1J+IYzwgXYI/3eCfVp0oN11GtnI
- HVij/cwkhoA6nT8qarcoqh6hicvequbZzMqrNWPvo5ONPv12vu6/H37fKuLvCb369Tj+
- Hu489XED+PU31P8Zquf4MId+BLV8cC1AjD/pVVXJQPeq7Hm8V42OQwyICK3ljAUgWOzs
- qE8A==
-X-Gm-Message-State: AOAM531IsIxQErAtQXZoGcP9eZrYp6KyNpPQ1qA9mV4gGDbFeMxgwKrY
- nyHimwxydKJb9rHYebKwvifm+nABVvw=
-X-Google-Smtp-Source: ABdhPJx3NvWhZ+XQotweCss427Fvg18zXF043v/X5vRII5O4su0czV7qo/Ra6b6aKypDdPmHsc2gJLC2uUs=
-X-Received: by 2002:a25:5d5:: with SMTP id 204mr99009732ybf.24.1594324082481; 
- Thu, 09 Jul 2020 12:48:02 -0700 (PDT)
-Date: Thu,  9 Jul 2020 19:47:50 +0000
+ bh=8aV8dCnXtWjQg88XS3xPlXLAc+zOek3bqtseJMfDQ8w=;
+ b=rX553ryH17kyeYwISVWVGhLe1MipOS0HbM+oIvJ32BHfHRxleXkHlwJRLxkbWTpvMq
+ crjTKTmq7smKw0eykVLCv5FS9MOxyi9t45xtqEOZ6od8ItsHC76d0FOaM0epRspXAEqb
+ kCVyhlLnVPhXEMvh4BSk71zKPKG3p8jFtnQ1FdOnXOvJe/cHZ70+Dpi8Ax99liWNcTgS
+ iQ3RCEW4tCedWFvhhgQe3AJGfWEgZffei63qlbFQFCQUeJJ90ometp6HkniwTy4x0jUH
+ g8epv/KCskSIUmWSK2ln/rplX2yTAWr8OKdveX2mwTDt0JKtoiNxAexD2p7qHKydXKjY
+ +h8Q==
+X-Gm-Message-State: AOAM533CZx8e/i8Zytfq4OUS/xka4AgedIacD9VjFEiPkDuqUipTyweJ
+ CE+QSiHBjDJ49ltlsguHIVqexsjDcV4=
+X-Google-Smtp-Source: ABdhPJzr4fyHtEPxxGa/1oyxhYhm2fG5/oqmJ5MeTeSHxI205PX0i6Oqf4DnZTvfIEvI68X3kJYfz/lkbU0=
+X-Received: by 2002:a5b:2cd:: with SMTP id h13mr57148875ybp.319.1594324084188; 
+ Thu, 09 Jul 2020 12:48:04 -0700 (PDT)
+Date: Thu,  9 Jul 2020 19:47:51 +0000
 In-Reply-To: <20200709194751.2579207-1-satyat@google.com>
-Message-Id: <20200709194751.2579207-5-satyat@google.com>
+Message-Id: <20200709194751.2579207-6-satyat@google.com>
 Mime-Version: 1.0
 References: <20200709194751.2579207-1-satyat@google.com>
 X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
 To: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-X-Headers-End: 1jtcWe-001DCk-7D
-Subject: [f2fs-dev] [PATCH 4/5] ext4: support direct I/O with fscrypt using
+X-Headers-End: 1jtcWf-00CUBs-Tq
+Subject: [f2fs-dev] [PATCH 5/5] f2fs: support direct I/O with fscrypt using
  blk-crypto
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -125,50 +125,29 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Wire up ext4 with fscrypt direct I/O support.
+Wire up f2fs with fscrypt direct I/O support.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
- fs/ext4/file.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ fs/f2fs/f2fs.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 2a01e31a032c..d534f72675d9 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -36,9 +36,11 @@
- #include "acl.h"
- #include "truncate.h"
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b35a50f4953c..6d662a37b445 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4082,7 +4082,9 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	int rw = iov_iter_rw(iter);
  
--static bool ext4_dio_supported(struct inode *inode)
-+static bool ext4_dio_supported(struct kiocb *iocb, struct iov_iter *iter)
- {
--	if (IS_ENABLED(CONFIG_FS_ENCRYPTION) && IS_ENCRYPTED(inode))
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+
+-	if (f2fs_post_read_required(inode))
 +	if (!fscrypt_dio_supported(iocb, iter))
- 		return false;
- 	if (fsverity_active(inode))
- 		return false;
-@@ -61,7 +63,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		inode_lock_shared(inode);
- 	}
- 
--	if (!ext4_dio_supported(inode)) {
-+	if (!ext4_dio_supported(iocb, to)) {
- 		inode_unlock_shared(inode);
- 		/*
- 		 * Fallback to buffered I/O if the operation being performed on
-@@ -490,7 +492,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	}
- 
- 	/* Fallback to buffered I/O if the inode does not support direct I/O. */
--	if (!ext4_dio_supported(inode)) {
-+	if (!ext4_dio_supported(iocb, from)) {
- 		if (ilock_shared)
- 			inode_unlock_shared(inode);
- 		else
++		return true;
++	if (fsverity_active(inode))
+ 		return true;
+ 	if (f2fs_is_multi_device(sbi))
+ 		return true;
 -- 
 2.27.0.383.g050319c2ae-goog
 
