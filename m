@@ -2,77 +2,97 @@ Return-Path: <SRS0=iBya=AU=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2FCC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 Jul 2020 03:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71751C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  9 Jul 2020 04:15:58 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D8CEC206DF;
-	Thu,  9 Jul 2020 03:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3E9C42070E;
+	Thu,  9 Jul 2020 04:15:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ByiX94+7";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="eLIKft6i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8CEC206DF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="b/sRUDKe";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="MZBE3V7v";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zz+n6Iv9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E9C42070E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jtMsV-0002ac-Vs; Thu, 09 Jul 2020 03:05:39 +0000
+	id 1jtNyW-0005Rb-3F; Thu, 09 Jul 2020 04:15:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jtMsU-0002aV-Pk
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 09 Jul 2020 03:05:38 +0000
+ (envelope-from <daeho43@gmail.com>) id 1jtNyU-0005RP-Sc
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 09 Jul 2020 04:15:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9FiNnjyOP8GnRW/3u9MXqOWMSM/Par+LqhGagyhx9uY=; b=ByiX94+7TYdEJUWlnf5YXvLLbq
- bnAsG51vn+3jlHnLD2OwhxOZa5htLAKP9xCd7EG/vOUhW56Boj1nyavcwe+4ulMlcAeOlYC+P6fca
- lli8f0tesTs85aY+FjuRcSSb1nGgCLkehOW/keAvWHZ/Uu5dT83LlLEL2/KLYlgy8KSY=;
+ bh=xDk1ZHF1bMnWFPlFovEjZecEcOKh7UBQd7WZyIXM1mQ=; b=b/sRUDKeVTmfP9d4AfzJAE9gWe
+ K99Fvz8oILyxIXchGPFMNFHxBFurSVBYIniRRNaQUEItxbLlkFmQz6rBBYdbem68y0KdEkpMWLa31
+ v2JMGOZ1Whw86F4vZeVGVJtTuLIITYsUKvWwpTsWy4C7et2r4nEcAqlLqPWTnRC+vdAI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9FiNnjyOP8GnRW/3u9MXqOWMSM/Par+LqhGagyhx9uY=; b=eLIKft6iJ1lC/v99oXg0vXdu6g
- y5hNw29E9x52c/v6sDKo6VMmvgP1mBh0UU64gw95wPzDyUPADPfxu0HKF20bc+tDCrCntJTK/vPVw
- /VMHy8QVlWwJqsZ9vtmrCbU21XpemruC9D4xYLd233LbhPbVr9AnuNeXiFvRTH3RXr+8=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jtMsQ-00Bipk-B4
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 09 Jul 2020 03:05:38 +0000
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id B75356259D08A9F78B28;
- Thu,  9 Jul 2020 11:05:18 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 9 Jul 2020
- 11:05:16 +0800
-To: Daeho Jeong <daeho43@gmail.com>, <linux-kernel@vger.kernel.org>,
- <linux-f2fs-devel@lists.sourceforge.net>, <kernel-team@android.com>
-References: <20200709015739.1653668-1-daeho43@gmail.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <619af72b-2f8a-4a84-f73e-ac49989ba79f@huawei.com>
-Date: Thu, 9 Jul 2020 11:05:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ bh=xDk1ZHF1bMnWFPlFovEjZecEcOKh7UBQd7WZyIXM1mQ=; b=MZBE3V7vmSCqZwUrCDfwjR12dz
+ 7VxhYLy1ahvmkfxunfcQWtNqZA4Wj4DLEMje9WeJm494LrKTYftFJSKT34xIIP+J6x7MhD9DhNHzf
+ Ama1nqE7qE0l7oVghrs46btSRBquy05ixR0uon2MRgGaLuTYCd25bZjmVEO4TpQrcxCE=;
+Received: from mail-lf1-f66.google.com ([209.85.167.66])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1jtNyT-000O8X-Fm
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 09 Jul 2020 04:15:54 +0000
+Received: by mail-lf1-f66.google.com with SMTP id y13so350230lfe.9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 08 Jul 2020 21:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :cc:content-transfer-encoding;
+ bh=xDk1ZHF1bMnWFPlFovEjZecEcOKh7UBQd7WZyIXM1mQ=;
+ b=Zz+n6Iv90qbX2LLt1L1X0f49gNMpYaHpesM+xr7jYmBUxaW+HFN0lPNlmasFBxdxuK
+ +gncMdXlSnR4UiJdWhr4J85WOlmhCxqxbbCR0S1DgjAMEYMRdtqb1Mzb54xDUVSLAfS7
+ yCluwZZ9h+ezgrajYs0fWwbQu/wxFBR6Wh99XmGnRa9q9zmPXKLs1ayNINnS4kZs6cj3
+ LxPixzkYmsL9mxM4syOXkS7kOQ1dtvg8x/cXhFf1pIVlqSH6z3GGbGc6dCebtdIamEOC
+ FtHJ+mFyjRuyYgoEGMCTajyci09Wa9uAC76mLWjO7/JooP8AhR9GfrFJzkubT3NWAeb7
+ 7rKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc:content-transfer-encoding;
+ bh=xDk1ZHF1bMnWFPlFovEjZecEcOKh7UBQd7WZyIXM1mQ=;
+ b=DuTk3mqRHy2dFlEPxIESAt+1s4EKi/RX70haZ1G+mK1PcVR6HOsx0VrOhmK9UKspQi
+ VpzhtgP2oIxbcwTpjfawM48/ht1kZ7VipdILLx7qfexttLetS1rPVAJIODFnUJNPB6mj
+ Pfd+3Q4PHdIkqeMdd5Qp84IbLhMqJXIBwGYxMWy5Bu6GuDMVb7KnNrI98Qp5bslv/YQI
+ VYxLgOKSUca4VaoYRQr2ubxXFogDMuSKqltKiB6fyrKevNIsUdNUBdr2OjOh2qJ3kYw8
+ HrY+f194xnnfHSCYvpKo+BjUOJ+lXwtc7bJzthAQJPsHOHn00OlGgRLIxRtj+hBO1dwh
+ 0LpQ==
+X-Gm-Message-State: AOAM530nGd7oTSi735Ga/HIC9f/LAPFIsggutZlj+rJin3gyUVuLjwva
+ aOh2iTv6tjryoqg6mNXKeUVLh0GVGdnJDn06kcw=
+X-Google-Smtp-Source: ABdhPJyAG61hK3KeNkBxu+KrPK1uEtZq51mJTOtlJ1WejkUa0oUSsYxdEmxuIChtmYimHLfFEPWpxQjFLRFDjrvokHw=
+X-Received: by 2002:a19:e61a:: with SMTP id d26mr33048773lfh.96.1594268146758; 
+ Wed, 08 Jul 2020 21:15:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200709015739.1653668-1-daeho43@gmail.com>
-Content-Language: en-US
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1jtMsQ-00Bipk-B4
+References: <20200709015739.1653668-1-daeho43@gmail.com>
+ <619af72b-2f8a-4a84-f73e-ac49989ba79f@huawei.com>
+In-Reply-To: <619af72b-2f8a-4a84-f73e-ac49989ba79f@huawei.com>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Thu, 9 Jul 2020 13:15:35 +0900
+Message-ID: <CACOAw_x7GkM0os2xo+2CX+pysCBb6QbWxxr0jC3C703iFQi+1A@mail.gmail.com>
+To: Chao Yu <yuchao0@huawei.com>
+X-Headers-End: 1jtNyT-000O8X-Fm
 Subject: Re: [f2fs-dev] [PATCH] f2fs: ignore when len of range in
  f2fs_sec_trim_file is zero
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -86,61 +106,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/7/9 9:57, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> When end_addr comes to zero, it'll trigger different behaviour.
-> To prevent this, we need to ignore the case of that range.len is
-> zero in the function.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> ---
->  fs/f2fs/file.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 368c80f8e2a1..98b0a8dbf669 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3813,15 +3813,14 @@ static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
->  	file_start_write(filp);
->  	inode_lock(inode);
->  
-> -	if (f2fs_is_atomic_file(inode) || f2fs_compressed_file(inode)) {
-> +	if (f2fs_is_atomic_file(inode) || f2fs_compressed_file(inode) ||
-> +			range.start >= inode->i_size) {
->  		ret = -EINVAL;
->  		goto err;
->  	}
->  
-> -	if (range.start >= inode->i_size) {
-> -		ret = -EINVAL;
-> +	if (range.len == 0)
->  		goto err;
-> -	}
->  
->  	if (inode->i_size - range.start < range.len) {
->  		ret = -E2BIG;
-
-How about the case trimming last partial written block?
-
-i_size = 8000
-range.start = 4096
-range.len = 4096
-
-Do we need to roundup(isize, PAGE_SIZE) before comparison?
-
-Thanks,
-
-> 
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+SSB0aG91Z2h0IGl0J3MgYmV0dGVyIHRvIHRyZWF0IHRoaXMgYXMgdGhlIGVycm9yIGNhc2UsIHNp
+bmNlIHRoZSByYW5nZQphbHJlYWR5IHBhc3NlZCBvdXQgb2YgdGhlIGlfc2l6ZSByYW5nZS4KSWYg
+d2UgYWxsb3cgdGhhdCwgdGhlIHVzZXIgbmVlZHMgdG8gc2VuZCB0aGUgcmFuZ2UgcGFyYW1ldGVy
+IGJlaW5nCmFsaWduZWQgbGlrZSBzdGFydDowIGFuZCBsZW46IHJvdW5kdXAoaV9zaXplLCBQQUdF
+X1NJWkUpLCBldmVuIGlmIGhlCm9yIHNoZSB3YW50cyB0byBlcmFzZSB0aGUgd2hvbGUgZmlsZS4K
+CjIwMjDrhYQgN+yblCA57J28ICjrqqkpIOyYpO2bhCAxMjowNSwgQ2hhbyBZdSA8eXVjaGFvMEBo
+dWF3ZWkuY29tPuuLmOydtCDsnpHshLE6Cj4KPiBPbiAyMDIwLzcvOSA5OjU3LCBEYWVobyBKZW9u
+ZyB3cm90ZToKPiA+IEZyb206IERhZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5jb20+Cj4g
+Pgo+ID4gV2hlbiBlbmRfYWRkciBjb21lcyB0byB6ZXJvLCBpdCdsbCB0cmlnZ2VyIGRpZmZlcmVu
+dCBiZWhhdmlvdXIuCj4gPiBUbyBwcmV2ZW50IHRoaXMsIHdlIG5lZWQgdG8gaWdub3JlIHRoZSBj
+YXNlIG9mIHRoYXQgcmFuZ2UubGVuIGlzCj4gPiB6ZXJvIGluIHRoZSBmdW5jdGlvbi4KPiA+Cj4g
+PiBTaWduZWQtb2ZmLWJ5OiBEYWVobyBKZW9uZyA8ZGFlaG9qZW9uZ0Bnb29nbGUuY29tPgo+ID4g
+LS0tCj4gPiAgZnMvZjJmcy9maWxlLmMgfCA3ICsrKy0tLS0KPiA+ICAxIGZpbGUgY2hhbmdlZCwg
+MyBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+ID4KPiA+IGRpZmYgLS1naXQgYS9mcy9m
+MmZzL2ZpbGUuYyBiL2ZzL2YyZnMvZmlsZS5jCj4gPiBpbmRleCAzNjhjODBmOGUyYTEuLjk4YjBh
+OGRiZjY2OSAxMDA2NDQKPiA+IC0tLSBhL2ZzL2YyZnMvZmlsZS5jCj4gPiArKysgYi9mcy9mMmZz
+L2ZpbGUuYwo+ID4gQEAgLTM4MTMsMTUgKzM4MTMsMTQgQEAgc3RhdGljIGludCBmMmZzX3NlY190
+cmltX2ZpbGUoc3RydWN0IGZpbGUgKmZpbHAsIHVuc2lnbmVkIGxvbmcgYXJnKQo+ID4gICAgICAg
+ZmlsZV9zdGFydF93cml0ZShmaWxwKTsKPiA+ICAgICAgIGlub2RlX2xvY2soaW5vZGUpOwo+ID4K
+PiA+IC0gICAgIGlmIChmMmZzX2lzX2F0b21pY19maWxlKGlub2RlKSB8fCBmMmZzX2NvbXByZXNz
+ZWRfZmlsZShpbm9kZSkpIHsKPiA+ICsgICAgIGlmIChmMmZzX2lzX2F0b21pY19maWxlKGlub2Rl
+KSB8fCBmMmZzX2NvbXByZXNzZWRfZmlsZShpbm9kZSkgfHwKPiA+ICsgICAgICAgICAgICAgICAg
+ICAgICByYW5nZS5zdGFydCA+PSBpbm9kZS0+aV9zaXplKSB7Cj4gPiAgICAgICAgICAgICAgIHJl
+dCA9IC1FSU5WQUw7Cj4gPiAgICAgICAgICAgICAgIGdvdG8gZXJyOwo+ID4gICAgICAgfQo+ID4K
+PiA+IC0gICAgIGlmIChyYW5nZS5zdGFydCA+PSBpbm9kZS0+aV9zaXplKSB7Cj4gPiAtICAgICAg
+ICAgICAgIHJldCA9IC1FSU5WQUw7Cj4gPiArICAgICBpZiAocmFuZ2UubGVuID09IDApCj4gPiAg
+ICAgICAgICAgICAgIGdvdG8gZXJyOwo+ID4gLSAgICAgfQo+ID4KPiA+ICAgICAgIGlmIChpbm9k
+ZS0+aV9zaXplIC0gcmFuZ2Uuc3RhcnQgPCByYW5nZS5sZW4pIHsKPiA+ICAgICAgICAgICAgICAg
+cmV0ID0gLUUyQklHOwo+Cj4gSG93IGFib3V0IHRoZSBjYXNlIHRyaW1taW5nIGxhc3QgcGFydGlh
+bCB3cml0dGVuIGJsb2NrPwo+Cj4gaV9zaXplID0gODAwMAo+IHJhbmdlLnN0YXJ0ID0gNDA5Ngo+
+IHJhbmdlLmxlbiA9IDQwOTYKPgo+IERvIHdlIG5lZWQgdG8gcm91bmR1cChpc2l6ZSwgUEFHRV9T
+SVpFKSBiZWZvcmUgY29tcGFyaXNvbj8KPgo+IFRoYW5rcywKPgo+ID4KCgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxp
+bmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xp
+c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
