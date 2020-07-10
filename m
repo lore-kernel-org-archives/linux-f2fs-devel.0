@@ -2,53 +2,42 @@ Return-Path: <SRS0=2C9g=AV=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891B3C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2020 03:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC6AC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Jul 2020 03:25:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5290F20657;
-	Fri, 10 Jul 2020 03:23:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 46D6B2065C;
+	Fri, 10 Jul 2020 03:25:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="ElejrUSN";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="F9lDyAVN";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PWLRliK5";
-	dkim=neutral (0-bit key) header.d=aol.com header.i=@aol.com header.b="qXRgCBr7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5290F20657
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="aW3SePQF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="kiwMRdBU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejAQEHyY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46D6B2065C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:In-Reply-To:MIME-Version:References:
-	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=Ghcffa87RhscqvhMT5QaKGUFRtFnjC4GDbM7JC1m39M=; b=ElejrUSNdg+WVUTH4dxOgzeEK
-	cTMvfm7zKC+PehFZ9YvYh3i2xxAvCtwqKI6//qq4gsqADKXGt16eQfyDs1KTLfZmg/aYmvTLsxcta
-	Aw4awCy9Tanj6nlBxw691RNjCtJH9JdSysRWQEF0VwsN8vFegVIUs5TmcUl3F8ykKU/mc=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jtjdX-0005G0-W5; Fri, 10 Jul 2020 03:23:43 +0000
+	id 1jtjfX-0000Kg-9b; Fri, 10 Jul 2020 03:25:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hsiangkao@aol.com>) id 1jtjdW-0005Fq-5q
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Jul 2020 03:23:42 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1jtjfW-0000Ka-ST
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Jul 2020 03:25:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+e8G6U8M17K6Sqs+JivuMFEW/2OMSL/SNP3HX45wqnY=; b=F9lDyAVNZ6TuCIDzjNh9xSBqAG
- eHO2RPZg2PnGGIeqOiHNUKi60e/E/Z8D1CbPt1wMZQGR7FfGDUJXGEOgxPZcnwEsuarW5IPSpIRUG
- mKDaydrgqbGjpYtVnNbjvlzcNTRol2GBcpISm6Q9y6EKoGjoWBRlTnKPOXFm1nSZOW6M=;
+ bh=YoNjQxDIPI5XIINsDLCIvlNnhsTROJTP9WFdFHXOM3U=; b=aW3SePQFD5Ywygl5eE1w4hmwSK
+ HPP8JjcHeyefQRJYuqVUJ8De71lkwLTps62KJvjSzYYW3qJ3cPpBN1v/gNI62WrVunmlei+ple09A
+ 10OMwCO4UM9XjybueM5aJpxzWHyGcc9sx/kChYkJyXMNZH4T/4mohVX/88DiVIy0qung=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -56,56 +45,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+e8G6U8M17K6Sqs+JivuMFEW/2OMSL/SNP3HX45wqnY=; b=PWLRliK56RYR9RGEfzsZ19fOEZ
- mqjSS24oanEB4HJn1A1elhJqncDQQAfEtuIjRO4rHcB9RzeVN2Lj/k3VlRGVBx/ZxHbl4DhCiSmnn
- prLB0Mv2aK+oXU9iBdpsC0HWmieH92RwKVphOMXyPdJn4gRa9X0CTOrmjtfsp0VF8csU=;
-Received: from sonic314-21.consmr.mail.gq1.yahoo.com ([98.137.69.84])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jtjdQ-001aOt-Nd
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Jul 2020 03:23:42 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048;
- t=1594351411; bh=+e8G6U8M17K6Sqs+JivuMFEW/2OMSL/SNP3HX45wqnY=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject;
- b=qXRgCBr7SitTXoKAM+dmapU/ZZhWactuUARI59P1RNKuSM7s5/EWT5pVHPPWYO9fWmHOZ8QO12urH+UdE2oI5XWKRK6tFpgkCIFn4RqVOzNRnM7GURIYzIQrA/khyMKlUXBlEAPhqf9blMctxf6oYkzv63j2ym5OlJRW6IH/fWBOGAc6B7x4xVkYVwhk2owiTj09Oer5iLwibPy8edTXZddXbQYpkzLl8bHTv9SUIxm/Jugi4/0G2ccZUc5Vu3txtjqV1hghzLxmSBo19jf3D6rNLiIjv+s7JjgTHvt4oTIwWtcVGFuEX1MQQOVFYxAianX2+GRonbkS8d2KmJ4+sA==
-X-YMail-OSG: MYgNXAoVM1nUwgbCK.4aoFID1lBjrDYPdrSuO6.u.qF1KggE2pJ1orjrlrXRm_X
- wco0kNn00kw2_1o8ZBHZyo7F._ondZYPgL0cteRS_l0r2uTxMlHTrjdMWeKM4K95RouhwejNBSec
- IImmdu9io6m_hfr99am7L9m61dA6Ki7zo8_6NHadweYLzSEKfOuLW7bAp6ZRxDi5E5ZPNT2JSTy8
- 9iC4hkG5.IzlwgaQ3AJx3mzFJDzhd7vvdQ9j9xwthoTwl12Fbl2QDz7krptkS5nttDAtA3ejTTRr
- H7gOjgED0NeZLduI.7izcOkZJl8q3a3hIVfl1G50gJ0l5UYykDV4JNBkAdTNuSCaetoN7Lck38lU
- D9HXGDwvTi3ju5vaiyauUVK9azsdNYJOZDebVlu_6iH3E8WOwkAHdyYOciDW91C1F9WmG1U2Swx0
- WNnFeAZ_fXW5uPdT7z6gQOxk0Gr9m.6ip6ENMw9o6wmqO_g9XxV2oeCIc7zo4ZIUYoImgF.2nEHM
- 5FmS7.SpR2sjUQt45Vpo4I6jKiGat7ZNOTFf4.UYbS0fMwW0wY4Z8VvCsnoimp2biSSiuwh0eMse
- aBdnQuZYtU8Ne7KdV.DRj01Sya9yAHThU02VfL7OdMuS.VtEmn7nMmRJFUNaOnt4ncSCYiKfm4kW
- cvVXqhRv_7m7347pIV1MJst1w.NeQlJ4nPz7S.zhO1bkhdgrsPVTXfamjSTvcS2FsaIiPGS8QdYf
- T7411XutiWKKDyZVDvKHYYCECKZuuU9U_8vW4.8yhHZzgWVE01ehKUXL46jhTl3Ipj2MB89Gb4ve
- vVkeeCHF.Us364bif5zmhHEnmRbqM5TzLKbYXGI6wknIA.DN4aFDjCMcRWjROWDwdqoj7O6woP2p
- XRquFMmsU58llK1RAnepDh0XKjWW3V..BifwfUPQfaN2x8OS3K7Aah4MwLJzFg2pay_w.g9RtL6p
- .A1JGgiYV83aX7pOKoThTvUCqoJ4I1b3fXHhntGQLX7h9YIqJ6L69fiHEOKsmAm8Ou13iCbC57do
- .y5bsDuTjh4tjtCMyN8VvTtFUk9XnXOZtXf.fs8YxapZ1SPqGj0W_p23Q5umf0cW3Yq9C0DZxyBI
- K_AfdzDjpLw2YFQJuR7iWma7EIVMwU9948Lyi34_BXdCA4VACsj6uBYNnRbhACkWL0ZKpjXW_vdu
- DSt6Yus3GosW5y3tsh_bxbwaMJZOjDLQBwdIrpaY1Az2trdxW26jfQONawsWekXjkaNTu_RgGQfV
- oVoTsmjsNIA30Q08Ww799CVcdI0HM0GQoJMoObCCKA5u8cRif8eDjJovGgtcWh1bxlIJHy6KvNIL
- B.3XEuP0jvDPv5Aqv_g.vy.BrKghaI3SQe9ga2FsK8BVgiWzi8ivs6U4B7A7iwqaXuP5IZIIi2xb
- 9
-Received: from sonic.gate.mail.ne1.yahoo.com by
- sonic314.consmr.mail.gq1.yahoo.com with HTTP; Fri, 10 Jul 2020 03:23:31 +0000
-Received: by smtp420.mail.ir2.yahoo.com (VZM Hermes SMTP Server) with ESMTPA
- ID 3c08875b14f4e747f97ee43ba08a498a; 
- Fri, 10 Jul 2020 03:03:07 +0000 (UTC)
-Date: Fri, 10 Jul 2020 11:02:59 +0800
-To: Chao Yu <yuchao0@huawei.com>
-Message-ID: <20200710030257.GA5695@hsiangkao-HP-ZHAN-66-Pro-G1>
-References: <20200710023019.GD2916@codeaurora.org>
- <dcb68985-d621-6ef1-7452-172280148aa1@huawei.com>
+ bh=YoNjQxDIPI5XIINsDLCIvlNnhsTROJTP9WFdFHXOM3U=; b=kiwMRdBUCRjirjC2s/5R3azdJs
+ tEynr+QRTvLDMyz17O0dbitjy8WKwU01hzIU4jMJ5M5TWGnjDobb6RHxkmUHn/uO7cnEXdR74AdzA
+ U1EUBtgS49VtTO0xfLNTxNRIBbrnvGUXqXXj601PWa/Ta5kh6xQIxa9r0Bw/Mwd1daKw=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jtjfV-00Coht-LB
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Jul 2020 03:25:46 +0000
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net
+ [107.3.166.239])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id D14EA2065C;
+ Fri, 10 Jul 2020 03:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1594351533;
+ bh=yu4mEjxbnjkjZzRIjB5mnWuk0m2YiSQbrdpmN1gRhqM=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=ejAQEHyYdq51BJ0MUh+81fQkYKHt0zpT5KoWtQR8dvJE0AAqcyuSwvH3KKtG8nrnQ
+ AtX+6ruou0CVTsqc8g7FTaboCuPTZIAaPg796ivBI+LmRB/iqhhTyWyDmjz/AtFMKe
+ A02HtIsjKAGeaS72AvpGCReSZmpaSA5jfQkioyR0=
+Date: Thu, 9 Jul 2020 20:25:31 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Message-ID: <20200710032531.GA2805@sol.localdomain>
+References: <20200710021505.2405872-1-daeho43@gmail.com>
+ <20200710030246.GA545837@google.com>
+ <CACOAw_yJvQgDsLRd0-iJqXN06wDXmC3_OqKgKey7p=WeqxzMFA@mail.gmail.com>
+ <20200710032035.GB545837@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <dcb68985-d621-6ef1-7452-172280148aa1@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Mailer: WebService/1.1.16197 hermes_aol Apache-HttpAsyncClient/4.1.4
- (Java/11.0.7)
-X-Headers-End: 1jtjdQ-001aOt-Nd
-Subject: Re: [f2fs-dev] IO hang due to f2fs checkpoint and writeback stuck
+In-Reply-To: <20200710032035.GB545837@google.com>
+X-Headers-End: 1jtjfV-00Coht-LB
+Subject: Re: [f2fs-dev] [PATCH] f2fs: change the way of handling range.len
+ in F2FS_IOC_SEC_TRIM_FILE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,49 +91,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Gao Xiang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Gao Xiang <hsiangkao@aol.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com,
+ Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jul 10, 2020 at 10:54:13AM +0800, Chao Yu wrote:
-> Hi Sahitya,
+On Thu, Jul 09, 2020 at 08:20:35PM -0700, Jaegeuk Kim wrote:
+> On 07/10, Daeho Jeong wrote:
+> > 1. The valid data will be within i_size.
+> > 2. All the trim operations will be done in a unit of block, even if
+> > i_size is not aligned with BLKSIZE like the below.
+> > 
+> >         index = F2FS_BYTES_TO_BLK(range.start);
+> >         pg_end = DIV_ROUND_UP(end_addr, F2FS_BLKSIZE);     <= BLKSIZE aligned
+> > 
+> > Are you worried about the case that sudden power-off occurs while a
+> > file is being truncated?
+> > ex) 1GB file is being truncated to 4KB -> sudden power-off ->
+> > i_size(4KB), i_blocks(maybe somewhere between 4KB and 1GB)
 > 
-> It looks block plug has already been removed by Jaegeuk with
-> below commit:
+> Yes. Basically, I believe we can have some data beyond i_size like fsverity.
 > 
-> commit 1f5f11a3c41e2b23288b2769435a00f74e02496b
-> Author: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date:   Fri May 8 12:25:45 2020 -0700
-> 
->     f2fs: remove blk_plugging in block_operations
-> 
->     blk_plugging doesn't seem to give any benefit.
-> 
-> How about backporting this patch?
 
-Yeah, also notice that
+Note that fs-verity files are read-only, and therefore this ioctl can't be used
+on them (since it requires a writable file descriptor).  So that case doesn't
+need to be handled here.
 
-commit bd900d4580107c899d43b262fbbd995f11097a43
-Author: Jens Axboe <jaxboe@fusionio.com>
-Date:   Mon Apr 18 22:06:57 2011 +0200
-
-    block: kill blk_flush_plug_list() export
-
-    With all drivers and file systems converted, we only have
-    in-core use of this function. So remove the export.
-
-    Reporteed-by: Christoph Hellwig <hch@lst.de>
-    Signed-off-by: Jens Axboe <jaxboe@fusionio.com>
-
-blk_flush_plug_list() is not an exported symbol for now except for in-core use,
-as well as blk_flush_plug().
-
-Thanks,
-Gao Xiang
-
+- Eric
 
 
 _______________________________________________
