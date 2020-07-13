@@ -2,103 +2,82 @@ Return-Path: <SRS0=jZDD=AY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CD5C433E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2020 03:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE790C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 13 Jul 2020 17:57:41 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 94EDD2068F;
-	Mon, 13 Jul 2020 03:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 76E8F20738;
+	Mon, 13 Jul 2020 17:57:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="gFUmCk4N";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="UK189Bun";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMkxg68p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94EDD2068F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="b6y51bCJ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TYHRJywl";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCVD4DES"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E8F20738
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1juotw-0004wV-10; Mon, 13 Jul 2020 03:13:08 +0000
+	id 1jv2hw-0001Je-9Z; Mon, 13 Jul 2020 17:57:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <daeho43@gmail.com>) id 1juotv-0004wO-9j
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Jul 2020 03:13:07 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1jv2hu-0001JS-Mj
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Jul 2020 17:57:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=psxzbrOp99J5mngwlPoMiQAT+alHBEBXUBDoOJ1/0T0=; b=gFUmCk4NZLKqCR9vE+JoRiDFGX
- Cm6SH0E0q6I7r7kGDAhZnWSilFVxLZoYNjfGZ4xUv/FRNOTdJWr+1UdrZB49H6wjRia8nj0SkKbrG
- HAtdrrVnBHdwLo59HawXZ9jrmhUETMa2yx2GlJIPMuFdJ77OOZq5FhOG1U34PliEaV+E=;
+ bh=IDEDvZ1KhWCckkgm+pGeu6gQm9rIv3F0Ni7iMfynom8=; b=b6y51bCJAiCXpTthHWMCm+wc2z
+ 2JJb6UNJ5cL3mfI+dCAqGXuaF9I/Mf1WrK2XXsxI9jD+fgzwJlcElLbKyyT9ixMwdc0LWxtR2IzME
+ cFHmom41xHlyM4gPlgw0JVj3k1QeuXY5AX5VAXujDZk+ovvFA11mWuC6n/OXnPSlRAzo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=psxzbrOp99J5mngwlPoMiQAT+alHBEBXUBDoOJ1/0T0=; b=U
- K189Bunvgxj3ukbtzod7DCcDzST+//0MYrHiEmAIYbOgZLFqks39IUv2ydJr40BdS5PnA1axAQ5jj
- mR+UxYEPwz5Y86k/BJS4Yj1zFxo2tSjLNeOLIM5j6swgGozZNM+Y2XebRAHyOAiso0vGTc2khX5Tz
- PUrUg4c5VcL03AEc=;
-Received: from mail-pl1-f196.google.com ([209.85.214.196])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1juotu-00Fav4-3o
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Jul 2020 03:13:07 +0000
-Received: by mail-pl1-f196.google.com with SMTP id t6so1732914plo.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 12 Jul 2020 20:13:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=psxzbrOp99J5mngwlPoMiQAT+alHBEBXUBDoOJ1/0T0=;
- b=bMkxg68pIh+RvX2AC4XXKe6pe1QOex4aB1n7ujCqFRZd69+OnuEEgrE4tbSiQHzr2w
- HUONe3Rz9kqrSbjvW1EW7ygCDQ/aWO1wdWhs3MyPk8wX/x/ejLAIA2GGvf5BPpEdxpUK
- xboFHzonjwMPK3n9xEddAHBnE6DMrvun0X5PBgA59sAi87sum89ri+yl19ri98UFYIrz
- RhmOZAmNgecT2cwN+1+yJWn5QLeyeeBvAe85s+moYqIXda9vTBgiueAIHIYf70nqgLGB
- ABFcbyIbOa6l2P83EU6Ak68QAD2KGHrHF/zaKiPrPHqgGBnSirLubl0ZLyJMl4w+YAVF
- 4oXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=psxzbrOp99J5mngwlPoMiQAT+alHBEBXUBDoOJ1/0T0=;
- b=Uaxp6dkjTfx8ARe45Y5DQjVR2yA8ZJ1Ngwakp2KzhO66GXET8I0ZKCG/GAJrkxwbsy
- lWcrujBPf6EtT2lATtuqbwRiCeDYqJdInRXxSkboFvAxNuZL9ahoxAsExZ58kBp592nN
- Ld+MbZhb5Aj3oA20u7tczXLBGHBH945OJE3jVfwZyHtt0IbiTbMXuXYMkjT86Mri5CBf
- QZazOmHL/lVIBbhL1dSIYA2drhoncD2jGxi4OnX//fZgTTQgn8wQSidaPV0iZC7M4M9j
- bEfxcqmFfudk0F6QTOjEPmV5psn2zI6AQXfFW7pDaGu8Qg3j8IwZR6cDwRZuQj5ygHRt
- 3mHA==
-X-Gm-Message-State: AOAM531+Rcl9AAZ5xrtkL6/ZVbEaWGAKpE821tK25TCuY8HS2/MpPMh8
- Y++92lPKy57A7NSA8R5LRto=
-X-Google-Smtp-Source: ABdhPJwWlxM5jkFHf6rPbXsTiEijCyx0KGUV3hHGgDVb+KR9EnkUi27lPfgLbJA7ICFZ7bgXL6pYMQ==
-X-Received: by 2002:a17:902:b905:: with SMTP id
- bf5mr37221828plb.250.1594609980408; 
- Sun, 12 Jul 2020 20:13:00 -0700 (PDT)
-Received: from daehojeong1.seo.corp.google.com ([172.30.115.29])
- by smtp.gmail.com with ESMTPSA id cl17sm12635508pjb.50.2020.07.12.20.12.58
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 12 Jul 2020 20:12:59 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Mon, 13 Jul 2020 12:12:52 +0900
-Message-Id: <20200713031252.3873546-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=IDEDvZ1KhWCckkgm+pGeu6gQm9rIv3F0Ni7iMfynom8=; b=TYHRJywlJwoWqpzeJ1LhJ6KGg/
+ DpvOO/qE2H+AxOUjoanWOzmdU+aueRq7t+ShSj7BjUHoI4K1dqCuXDX/brynuQt1q+VimcCJcHbfd
+ hb0fMfJ4Ov2PwvrDYZU3E+298M90UwY//v6Bb7wUGU+qTueW2bA9lD3pnMSBe4xSsi4A=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jv2hs-001nKN-Ld
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 13 Jul 2020 17:57:38 +0000
+Received: from localhost (unknown [104.132.1.66])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id EFC6A206F5;
+ Mon, 13 Jul 2020 17:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1594663039;
+ bh=4lGqok9ZnMLUmMBJcKRnIAK2Gz+SOEYye9V1B97Hjds=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=gCVD4DESvGA39dT5lS+tpqrkYSJ4mkM0oKPyr011us5cUkVWlN3Pq5iGQPpIrUXH4
+ ZWxAzIy0ptsbHZLofYMVgUmlupsljctP0+Om9MjCxoXPrt3Gy85xpZgGf75PWa6hva
+ t13PEPAlRzK+1c1k/eiTSpMAADrG52iscQ9DVWG4=
+Date: Mon, 13 Jul 2020 10:57:18 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: lampahome <pahome.chen@mirlab.org>
+Message-ID: <20200713175718.GA2910046@google.com>
+References: <CAB3eZftzcywNU-cf7mRWqtj-74VqgzLHC32a6v_CycVcRsiu0A@mail.gmail.com>
+ <20200710034114.GG545837@google.com>
+ <CAB3eZfuaBhGPHDCt8v_9MrFW1byni17wzLtwG-Ny40q6jj9jkw@mail.gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1juotu-00Fav4-3o
-Subject: [f2fs-dev] [PATCH v2] f2fs: change the way of handling range.len in
- F2FS_IOC_SEC_TRIM_FILE
+Content-Disposition: inline
+In-Reply-To: <CAB3eZfuaBhGPHDCt8v_9MrFW1byni17wzLtwG-Ny40q6jj9jkw@mail.gmail.com>
+X-Headers-End: 1jv2hs-001nKN-Ld
+Subject: Re: [f2fs-dev] possible to allocate a full segment for a direct IO
+ with blocksize 2MB?
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,90 +89,75 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+On 07/10, lampahome wrote:
+> >
+> > 1. fd = create()
+> > 2. ioctl(fd, F2FS_IOC_SET_PIN_FILE)
+> > 3. fallocate(1GB)
+> >  -> will allocate 2MB segments to the 1GB space
+> >
+> >
+> I tried but it shows ioctl failed: Bad address.
 
-Changed the way of handling range.len of F2FS_IOC_SEC_TRIM_FILE.
- 1. Added -1 value support for range.len to secure trim the whole blocks
-    starting from range.start regardless of i_size.
- 2. If the end of the range passes over the end of file, it means until
-    the end of file (i_size).
- 3. ignored the case of that range.len is zero to prevent the function
-    from making end_addr zero and triggering different behaviour of
-    the function.
+Hmm, can I ask which kernel you're using?
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
-Changes in v2:
- - Changed -1 range.len option to mean the whole blocks starting from
-   range.start regardless of i_size
----
- fs/f2fs/file.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+Thanks,
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 368c80f8e2a1..2485841e3b2d 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3792,7 +3792,7 @@ static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
- 	pgoff_t index, pg_end;
- 	block_t prev_block = 0, len = 0;
- 	loff_t end_addr;
--	bool to_end;
-+	bool to_end = false;
- 	int ret = 0;
- 
- 	if (!(filp->f_mode & FMODE_WRITE))
-@@ -3813,23 +3813,23 @@ static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
- 	file_start_write(filp);
- 	inode_lock(inode);
- 
--	if (f2fs_is_atomic_file(inode) || f2fs_compressed_file(inode)) {
-+	if (f2fs_is_atomic_file(inode) || f2fs_compressed_file(inode) ||
-+			range.start >= inode->i_size) {
- 		ret = -EINVAL;
- 		goto err;
- 	}
- 
--	if (range.start >= inode->i_size) {
--		ret = -EINVAL;
-+	if (range.len == 0)
- 		goto err;
--	}
- 
--	if (inode->i_size - range.start < range.len) {
--		ret = -E2BIG;
--		goto err;
-+	if (inode->i_size - range.start > range.len) {
-+		end_addr = range.start + range.len;
-+	} else {
-+		end_addr = range.len == (u64)-1 ?
-+			sbi->sb->s_maxbytes : inode->i_size;
-+		to_end = true;
- 	}
--	end_addr = range.start + range.len;
- 
--	to_end = (end_addr == inode->i_size);
- 	if (!IS_ALIGNED(range.start, F2FS_BLKSIZE) ||
- 			(!to_end && !IS_ALIGNED(end_addr, F2FS_BLKSIZE))) {
- 		ret = -EINVAL;
-@@ -3846,7 +3846,8 @@ static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
- 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 	down_write(&F2FS_I(inode)->i_mmap_sem);
- 
--	ret = filemap_write_and_wait_range(mapping, range.start, end_addr - 1);
-+	ret = filemap_write_and_wait_range(mapping, range.start,
-+			to_end ? LLONG_MAX : end_addr - 1);
- 	if (ret)
- 		goto out;
- 
--- 
-2.27.0.383.g050319c2ae-goog
-
+> 
+> Code below:
+> #define _GNU_SOURCE
+> #include <stdlib.h>
+> #include <stdio.h>
+> #include <sys/ioctl.h>
+> #include <fcntl.h>
+> #include <unistd.h>
+> #include <string.h>
+> #include <sys/param.h>
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <stdint.h>
+> 
+> typedef uint32_t __u32;
+> 
+> #define F2FS_IOCTL_MAGIC                0xf5
+> #define F2FS_IOC_SET_PIN_FILE           _IOW(F2FS_IOCTL_MAGIC, 13, __u32)
+> 
+> int main() {
+>  char prefix[] = "/mnt/f2fsdir/";
+>  char path[5][10] = {"ggg1","ggg2","ggg3","ggg4","ggg5"};
+>  int i, num=1, ret;
+>  int fd;
+>  FILE *fp;
+>  off_t off = 0;
+>  off_t size = 512;
+>  char buf[256];
+>  mode_t mode = S_IWUSR | S_IWGRP | S_IWOTH | S_IRUSR | S_IRGRP | S_IROTH;
+> 
+> 
+>  for (int j=0;j<num;j++) {
+>   memset(buf, 0, sizeof(buf));
+>   snprintf(buf, sizeof(buf), "%s%s", prefix, path[j]);
+>   fd = creat(buf, mode);
+>   if (fd < 0)
+>    perror("open fd failed");
+> 
+>   ret = ioctl(fd, F2FS_IOC_SET_PIN_FILE);
+>   if (ret < 0)
+>    perror("ioctl failed");
+> 
+>   if (fallocate(fd, 0, off, size)<0)
+>    perror("could not allocate");
+> 
+>   close(fd);
+>  }
+> 
+>  return 0;
+> }
 
 
 _______________________________________________
