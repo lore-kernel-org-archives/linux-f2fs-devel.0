@@ -2,106 +2,84 @@ Return-Path: <SRS0=CtUu=A4=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2ABC433E4
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 17 Jul 2020 01:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EA1C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 17 Jul 2020 01:55:10 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CFCFA2076D;
-	Fri, 17 Jul 2020 01:54:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1185A2076D;
+	Fri, 17 Jul 2020 01:55:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="Stl4GYGX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Xx4YDX36";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="GCoxsNVM";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="J+mnXJRV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFCFA2076D
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Gd3HnNNM";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="iiSHLZNY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1185A2076D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=/dAE8c1q8ieGkx5YJbfL+e0QH6BgjyBndIt7ziOk7aw=; b=Stl4GYGXP/LBlrXQ17FbWIIf5j
-	LhW4VrPW4oLBaDWs4852mJBchqiMeoeDRlpL6dds+7mPtLt+k7sG159h8726akbpX+4/trKM8jxV/
-	XuEhQf5/rEl3HsFe0HPRR3/wbrMuZSrrOho/JK4eT2g+ERounzu0WGRm9nUpngv3GYzk=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jwFZe-0003Mz-Cb; Fri, 17 Jul 2020 01:54:06 +0000
+	id 1jwFaf-0003R0-Nu; Fri, 17 Jul 2020 01:55:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3xwIRXwYKABA8q9Eq9w44w1u.s42@flex--satyat.bounces.google.com>)
- id 1jwFZd-0003Ml-5J
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 17 Jul 2020 01:54:05 +0000
+ (envelope-from <SRS0=JQga=A4=bugzilla.kernel.org=bugzilla-daemon@kernel.org>)
+ id 1jwFad-0003Qn-7r
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 17 Jul 2020 01:55:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
- Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+7NEyAtngBQ+NtsVner/xkX+DqdKiAPFh6L75+tULz8=; b=Xx4YDX363qODnThygwyUl5+RGG
- TQN1H9bODJ65OM1lAtPUWmza9Y98Jg5Jp7wqQXbqyWaTigeJLj4/vSqU9Qadqt5GunPcnaqATQjU7
- x6I/jbk8RFR82PlT9yGPtyF3AaCcu6i5PW4LRb1BotgqpiGRjxDVMqpIAXXUJQRffJAc=;
+ bh=7UQ8VQBroExL9CDQRy16+Mz0QggHhvSWqDBfkDLETqM=; b=Gd3HnNNMKa943kP+m5DtBA+J0C
+ NsJONufDpm/vRyC1AQbqISVRKkbjrAyJgspjM1HJ59GoWU9v6WJ99lhybkNGLguEsuPZLI4YfBQln
+ 0A5hQv0OSpUNLYYKNP3Y1X9H6GhAxr1Gg70F4FJGTf6xd1PXnNzSMKt63FeoeikfXOto=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=+7NEyAtngBQ+NtsVner/xkX+DqdKiAPFh6L75+tULz8=; b=G
- CoxsNVM/JnMOQibG4Bq5boO1NwpDORlS/nqY444/sqYhP2GZGAtjcDXUVoFqhP1+Hesrlp6fA5oa+
- /npvfaTynCWmsB2idQNcYg5vsJsn87doGtK5yQy0UeYEE0kJ04jmDHhxPYGpOfeMr/5b50NTvhBTg
- rodGLL4kgFCtRqSU=;
-Received: from mail-pg1-f201.google.com ([209.85.215.201])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jwFZb-00BMQe-MA
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 17 Jul 2020 01:54:05 +0000
-Received: by mail-pg1-f201.google.com with SMTP id x184so6840852pgb.7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 16 Jul 2020 18:54:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:message-id:mime-version:subject:from:to:cc;
- bh=+7NEyAtngBQ+NtsVner/xkX+DqdKiAPFh6L75+tULz8=;
- b=J+mnXJRVYMafFS+o+P1bnt+16uWofUiyPCntsNg3XT8Ib1llpcyxPal6f8PIhCbEDg
- Bo3vrtVP+ewSO7mAdmr/5QJ9Q+8lznYArog6g6Yn/TfIOxtFnyBUbMMAwMzb387Hy+4n
- NQYc29hAipQB21eO+fNDCbt/nxbJdxHIpwdS6q5E+lrkLVzIPyKreakfHHlXU24OaGvS
- 3sXbnd44eyIaABhMDfgRBS8/v+RMqJjd4+Y7VXgScSnrFKX+q5auEO7ITSrLsysG3q8i
- cwejZgsFGxkO262PT1lH8HbVFmp3uClJ+EgYMnzYiw35fV3DZjxG3i2PWmg+wIKT4XiR
- t2Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
- bh=+7NEyAtngBQ+NtsVner/xkX+DqdKiAPFh6L75+tULz8=;
- b=Cwkn1n8GrGdNWSF7Fc7PuJ1RdnjPiOvkTTimO354IazeX53aZ7OU7Uv2Alw83hHc67
- TaB7vxLaxoFFm1S+uhLa6aOJXaoflsOxte5+U1J9yCVY4//BFo4LlWiwXaHar6x5Ja/L
- q2Rd4nfi1jAATFNFnm+HUAEQ+Z/7ILEgNC2zx3Hwcqr/9XnIbNN2GfSnl/E2Xjsi4tuc
- bNVAbpWjNXux0lNrZL119OAOsIWmrtOizM88e+fI1vdbm/z4o99AzH6wXl4by88Yju9u
- UpyxQIuCwMAsC+BRA4d9g+Hc5mDWyM6K+UeHAEivTOfvM7cvDCPSZ4lCAZjcj4BY4Gcg
- XDXw==
-X-Gm-Message-State: AOAM532OplI2gayeY21OmD1Z3FiI42fe8/hXx4vMIICeBesMJR/Xa7xs
- Reb8ltDRH2AGBiykiQLqv9uph5qvmoc=
-X-Google-Smtp-Source: ABdhPJyaOqu4ad+t9uE7Zf0fPE6MJrUBppYirFS0r4ZA4lohiyuJAJadPtXvIAZN/YC0+AHkJyLwA8Dg4AI=
-X-Received: by 2002:a17:902:ed13:: with SMTP id
- b19mr5756330pld.294.1594950343440; 
- Thu, 16 Jul 2020 18:45:43 -0700 (PDT)
-Date: Fri, 17 Jul 2020 01:45:33 +0000
-Message-Id: <20200717014540.71515-1-satyat@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.28.0.rc0.105.gf9edc3c819-goog
-To: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-X-Headers-End: 1jwFZb-00BMQe-MA
-Subject: [f2fs-dev] [PATCH v3 0/7] add support for direct I/O with fscrypt
- using blk-crypto
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=7UQ8VQBroExL9CDQRy16+Mz0QggHhvSWqDBfkDLETqM=; b=iiSHLZNYwnwDo96ByU/6Y8QHUS
+ JK0v7n8lRI2jA8c1ie21FBDyDa28bmvohYcsL8oD2wbZTbMo1CmgQHwFoRbciUSeXDbAbWEjcsp6Z
+ ukZNgG1JFxVlU4rQvs0TKn47NYKA+0zTzC2JBfhK3jwYWwhoL5f4qchWXboOFCMLyzGI=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jwFaY-003m4p-9Q
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 17 Jul 2020 01:55:07 +0000
+From: bugzilla-daemon@bugzilla.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 17 Jul 2020 01:54:54 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: high
+X-Bugzilla-Who: chao@kernel.org
+X-Bugzilla-Status: ASSIGNED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status cc
+Message-ID: <bug-208565-202145-XFNFsM5yxE@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-208565-202145@https.bugzilla.kernel.org/>
+References: <bug-208565-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
+MIME-Version: 1.0
+X-Headers-End: 1jwFaY-003m4p-9Q
+Subject: [f2fs-dev] [Bug 208565] There may be dead lock for cp_rwsem during
+ checkpoint
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -113,78 +91,33 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Satya Tangirala via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Satya Tangirala <satyat@google.com>
-Cc: linux-xfs@vger.kernel.org, Satya Tangirala <satyat@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch series adds support for direct I/O with fscrypt using
-blk-crypto. It has been rebased on fscrypt/master.
+https://bugzilla.kernel.org/show_bug.cgi?id=208565
 
-Patch 1 adds two functions to fscrypt that need to be called to determine
-if direct I/O is supported for a request.
+Chao Yu (chao@kernel.org) changed:
 
-Patches 2 and 3 wire up direct-io and iomap respectively with the functions
-introduced in Patch 1 and set bio crypt contexts on bios when appropriate
-by calling into fscrypt.
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |ASSIGNED
+                 CC|                            |chao@kernel.org
 
-Patches 4 and 5 allow ext4 and f2fs direct I/O to support fscrypt without
-falling back to buffered I/O.
+--- Comment #2 from Chao Yu (chao@kernel.org) ---
+(In reply to Jaegeuk Kim from comment #1)
+> Thank you for the report.
+> 
+> I think this is valid point that we need to fix.
+> I'm testing a RFC patch like this. Thanks.
+> 
 
-Patches 6 and 7 update the fscrypt documentation for inline encryption
-support and direct I/O. The documentation now notes the required conditions
-for inline encryption and direct I/O on encrypted files.
-
-This patch series was tested by running xfstests with test_dummy_encryption
-with and without the 'inlinecrypt' mount option, and there were no
-meaningful regressions. One regression was for generic/587 on ext4,
-but that test isn't compatible with test_dummy_encryption in the first
-place, and the test "incorrectly" passes without the 'inlinecrypt' mount
-option - a patch will be sent out to exclude that test when
-test_dummy_encryption is turned on with ext4 (like the other quota related
-tests that use user visible quota files). The other regression was for
-generic/252 on ext4, which does direct I/O with a buffer aligned to the
-block device's blocksize, but not necessarily aligned to the filesystem's
-block size, which direct I/O with fscrypt requires.
-
-Changes v2 => v3:
- - add changelog to coverletter
-
-Changes v1 => v2:
- - Fix bug in f2fs caused by replacing f2fs_post_read_required() with
-   !fscrypt_dio_supported() since the latter doesn't check for
-   compressed inodes unlike the former.
- - Add patches 6 and 7 for fscrypt documentation
- - cleanups and comments
-
-Eric Biggers (5):
-  fscrypt: Add functions for direct I/O support
-  direct-io: add support for fscrypt using blk-crypto
-  iomap: support direct I/O with fscrypt using blk-crypto
-  ext4: support direct I/O with fscrypt using blk-crypto
-  f2fs: support direct I/O with fscrypt using blk-crypto
-
-Satya Tangirala (2):
-  fscrypt: document inline encryption support
-  fscrypt: update documentation for direct I/O support
-
- Documentation/filesystems/fscrypt.rst | 36 +++++++++++-
- fs/crypto/crypto.c                    |  8 +++
- fs/crypto/inline_crypt.c              | 80 +++++++++++++++++++++++++++
- fs/direct-io.c                        | 15 ++++-
- fs/ext4/file.c                        | 10 ++--
- fs/f2fs/f2fs.h                        |  6 +-
- fs/iomap/direct-io.c                  |  8 +++
- include/linux/fscrypt.h               | 19 +++++++
- 8 files changed, 173 insertions(+), 9 deletions(-)
+Could you please check generic/204 testcase? as this fix diff skips codes added
+in commit 052a82d85a3b ("f2fs: fix to writeout dirty inode during node flush").
 
 -- 
-2.28.0.rc0.105.gf9edc3c819-goog
-
-
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
