@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663F9C43445
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2020 23:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C077C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2020 23:01:09 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 300FE2077D;
-	Tue, 21 Jul 2020 23:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id F045420720;
+	Tue, 21 Jul 2020 23:01:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OO+0BSby";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="a/vKi8A+";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UD7wGV6o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300FE2077D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="La4gjZ09";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YtkIRa4X";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR6ircD6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F045420720
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jy1Fz-0007fH-CY; Tue, 21 Jul 2020 23:01:07 +0000
+	id 1jy1Fz-00081G-Uc; Tue, 21 Jul 2020 23:01:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1jy1Fy-0007f9-01
+ (envelope-from <ebiggers@kernel.org>) id 1jy1Fy-00080v-Lu
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Jul 2020 23:01:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -35,9 +35,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HvcLflWjuqNtzV0xZg7g9BoATtXXHpLygyrp2udaDaQ=; b=OO+0BSbyhB+k+m3mDGju5LVD7n
- bc+ywl0JcT3DeEMk+ZUUzr1W4Gn8hbg02cjqMadMzUOXmuMHZ/QRc1c1tf+XjFEJMzMtsqDin1sWd
- BVaxrqZsu9hnnV4JNvN2Ofck5vAGkfyNOJ9jZKb0wrtrYtl3JY0wvktBvBXXavm9weJ8=;
+ bh=BY03pxjeJ4OoV+qeNV/4qRxhGAl99MM5BGOPaay3wug=; b=La4gjZ09Yytkrw6y4MjsWsB5mE
+ VuHzW7Y30MnbJLYgCi3BjtopPdrIPpr+4tYJVgyuB8Ds/ahwYhwt9zBN7/r90MWMDR7bfGxoGM5sG
+ BiGEN1pnbIRaTklSso9AzfVnNPQDcrhCW+Joe92UMmyiCtEBnUTaWfRtj6LOjPGMK3Qc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=HvcLflWjuqNtzV0xZg7g9BoATtXXHpLygyrp2udaDaQ=; b=a/vKi8A+o4M0eEhIRNeniln0E8
- Saga0VnnJN0ZZ5Ypqv1t8bsD/qMRhotH2bcq/OnFX55yKhm404k/pHSpsl315IIseSYYXnmXwocT7
- L2r/baaAPjzJqO2gQYzdHPTnD0dUmqKPJudAvmYBwEtWv1Uov7yObWDEaAJztXw08lKY=;
+ bh=BY03pxjeJ4OoV+qeNV/4qRxhGAl99MM5BGOPaay3wug=; b=YtkIRa4X8BYYU7ENyAVCgrvjwi
+ uC30q7sP6ehhOFY0uBV+iPmaQNhUj1lBVB0Py0TlbEJx8t7RC02YizRsq/k+5NDVW3uV0z/+f0HqL
+ WNrmfCap01BxkV51VdfaVXFxx8ExQz/MkYSPULZ5Pp15ZuXt5xWMtJVWX88Nh36sGuFY=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jy1Fw-00Cikw-PY
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Jul 2020 23:01:05 +0000
+ id 1jy1Fx-00FjTL-Dv
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Jul 2020 23:01:06 +0000
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
  [107.3.166.239])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 47D762077D;
+ by mail.kernel.org (Postfix) with ESMTPSA id E00EE207DD;
  Tue, 21 Jul 2020 23:00:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1595372459;
- bh=+JzszfrnukA7rp34K4rJ987oveUxD8x6PQPTeTcR6H0=;
+ s=default; t=1595372460;
+ bh=8CFq23ApT2mi7bzagu5otAQAJtf6QR9J0mMn4N8FXeY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=UD7wGV6o8j/007/nURLRwUgh3FtROGYfwXlRmz2E+hWc/ErhCaZg7QhEk0J6rE/0G
- BJHPNkKnY4vns9lZKCHYAn0AyRVj/MdMod0spy99kT4HspV3dOEXWcfNm82loSvY4+
- Kl/7BHiom0gFkPFuluRnlrqwmYTBIXRPyd2QkAtk=
+ b=SR6ircD6vFmclMJka0AoeoQ9p3CzMhFXM0C/JTPKEDNRmpvX+YWX2C6WaCXWupSs0
+ 887U4yLW+4Zwi3HLY0Smlz3Zc0Kmv4SmZz4fMM8qfuia9S23AKRjvGCGfVKjsAMXWK
+ kaW5huWBgPPHacSfH1KGUwxg9hb9Wg0y3Bc0t6pE=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Tue, 21 Jul 2020 15:59:17 -0700
-Message-Id: <20200721225920.114347-3-ebiggers@kernel.org>
+Date: Tue, 21 Jul 2020 15:59:19 -0700
+Message-Id: <20200721225920.114347-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200721225920.114347-1-ebiggers@kernel.org>
 References: <20200721225920.114347-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1jy1Fw-00Cikw-PY
-Subject: [f2fs-dev] [PATCH 2/5] fscrypt: use smp_load_acquire() for
- fscrypt_prepared_key
+X-Headers-End: 1jy1Fx-00FjTL-Dv
+Subject: [f2fs-dev] [PATCH 4/5] fscrypt: use smp_load_acquire() for
+ ->i_crypt_info
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,8 +88,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
- linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -103,94 +103,133 @@ published memory must only be accessed in a way that involves the
 pointer itself.  This may not be the case if allocating the object also
 involves initializing a static or global variable, for example.
 
-fscrypt_prepared_key includes a pointer to a crypto_skcipher object,
-which is internal to and is allocated by the crypto subsystem.  By using
-READ_ONCE() for it, we're relying on internal implementation details of
-the crypto subsystem.
+fscrypt_info includes various sub-objects which are internal to and are
+allocated by other kernel subsystems such as keyrings and crypto.  So by
+using READ_ONCE() for ->i_crypt_info, we're relying on internal
+implementation details of these other kernel subsystems.
 
 Remove this fragile assumption by using smp_load_acquire() instead.
 
 (Note: I haven't seen any real-world problems here.  This change is just
 fixing the code to be guaranteed correct and less fragile.)
 
-Fixes: 5fee36095cda ("fscrypt: add inline encryption support")
-Cc: Satya Tangirala <satyat@google.com>
+Fixes: e37a784d8b6a ("fscrypt: use READ_ONCE() to access ->i_crypt_info")
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/fscrypt_private.h | 15 +++++++++------
- fs/crypto/inline_crypt.c    |  6 ++++--
- fs/crypto/keysetup.c        |  6 ++++--
- 3 files changed, 17 insertions(+), 10 deletions(-)
+ fs/crypto/keysetup.c    | 12 +++++++++++-
+ fs/crypto/policy.c      |  4 ++--
+ include/linux/fscrypt.h | 29 ++++++++++++++++++++++++-----
+ 3 files changed, 37 insertions(+), 8 deletions(-)
 
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index bc1a3fcd45ed..8117a61b6f55 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -351,13 +351,16 @@ fscrypt_is_key_prepared(struct fscrypt_prepared_key *prep_key,
- 			const struct fscrypt_info *ci)
- {
- 	/*
--	 * The READ_ONCE() here pairs with the smp_store_release() in
--	 * fscrypt_prepare_key().  (This only matters for the per-mode keys,
--	 * which are shared by multiple inodes.)
-+	 * The two smp_load_acquire()'s here pair with the smp_store_release()'s
-+	 * in fscrypt_prepare_inline_crypt_key() and fscrypt_prepare_key().
-+	 * I.e., in some cases (namely, if this prep_key is a per-mode
-+	 * encryption key) another task can publish blk_key or tfm concurrently,
-+	 * executing a RELEASE barrier.  We need to use smp_load_acquire() here
-+	 * to safely ACQUIRE the memory the other task published.
- 	 */
- 	if (fscrypt_using_inline_encryption(ci))
--		return READ_ONCE(prep_key->blk_key) != NULL;
--	return READ_ONCE(prep_key->tfm) != NULL;
-+		return smp_load_acquire(&prep_key->blk_key) != NULL;
-+	return smp_load_acquire(&prep_key->tfm) != NULL;
- }
- 
- #else /* CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
-@@ -391,7 +394,7 @@ static inline bool
- fscrypt_is_key_prepared(struct fscrypt_prepared_key *prep_key,
- 			const struct fscrypt_info *ci)
- {
--	return READ_ONCE(prep_key->tfm) != NULL;
-+	return smp_load_acquire(&prep_key->tfm) != NULL;
- }
- #endif /* !CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
- 
-diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-index d7aecadf33c1..dfb06375099a 100644
---- a/fs/crypto/inline_crypt.c
-+++ b/fs/crypto/inline_crypt.c
-@@ -176,8 +176,10 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
- 		}
- 	}
- 	/*
--	 * Pairs with READ_ONCE() in fscrypt_is_key_prepared().  (Only matters
--	 * for the per-mode keys, which are shared by multiple inodes.)
-+	 * Pairs with the smp_load_acquire() in fscrypt_is_key_prepared().
-+	 * I.e., here we publish ->blk_key with a RELEASE barrier so that
-+	 * concurrent tasks can ACQUIRE it.  Note that this concurrency is only
-+	 * possible for per-mode keys, not for per-file keys.
- 	 */
- 	smp_store_release(&prep_key->blk_key, blk_key);
- 	return 0;
 diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index 22a94b18fe70..7f85fc645602 100644
+index 7f85fc645602..fea6226afc2b 100644
 --- a/fs/crypto/keysetup.c
 +++ b/fs/crypto/keysetup.c
-@@ -129,8 +129,10 @@ int fscrypt_prepare_key(struct fscrypt_prepared_key *prep_key,
- 	if (IS_ERR(tfm))
- 		return PTR_ERR(tfm);
+@@ -518,7 +518,17 @@ int fscrypt_get_encryption_info(struct inode *inode)
+ 	if (res)
+ 		goto out;
+ 
++	/*
++	 * Multiple tasks may race to set ->i_crypt_info, so use
++	 * cmpxchg_release().  This pairs with the smp_load_acquire() in
++	 * fscrypt_get_info().  I.e., here we publish ->i_crypt_info with a
++	 * RELEASE barrier so that other tasks can ACQUIRE it.
++	 */
+ 	if (cmpxchg_release(&inode->i_crypt_info, NULL, crypt_info) == NULL) {
++		/*
++		 * We won the race and set ->i_crypt_info to our crypt_info.
++		 * Now link it into the master key's inode list.
++		 */
+ 		if (master_key) {
+ 			struct fscrypt_master_key *mk =
+ 				master_key->payload.data[0];
+@@ -589,7 +599,7 @@ EXPORT_SYMBOL(fscrypt_free_inode);
+  */
+ int fscrypt_drop_inode(struct inode *inode)
+ {
+-	const struct fscrypt_info *ci = READ_ONCE(inode->i_crypt_info);
++	const struct fscrypt_info *ci = fscrypt_get_info(inode);
+ 	const struct fscrypt_master_key *mk;
+ 
  	/*
--	 * Pairs with READ_ONCE() in fscrypt_is_key_prepared().  (Only matters
--	 * for the per-mode keys, which are shared by multiple inodes.)
-+	 * Pairs with the smp_load_acquire() in fscrypt_is_key_prepared().
-+	 * I.e., here we publish ->tfm with a RELEASE barrier so that
-+	 * concurrent tasks can ACQUIRE it.  Note that this concurrency is only
-+	 * possible for per-mode keys, not for per-file keys.
- 	 */
- 	smp_store_release(&prep_key->tfm, tfm);
- 	return 0;
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index 8a8ad0e44bb8..2a2d0c06147b 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -338,7 +338,7 @@ static int fscrypt_get_policy(struct inode *inode, union fscrypt_policy *policy)
+ 	union fscrypt_context ctx;
+ 	int ret;
+ 
+-	ci = READ_ONCE(inode->i_crypt_info);
++	ci = fscrypt_get_info(inode);
+ 	if (ci) {
+ 		/* key available, use the cached policy */
+ 		*policy = ci->ci_policy;
+@@ -627,7 +627,7 @@ int fscrypt_inherit_context(struct inode *parent, struct inode *child,
+ 	if (res < 0)
+ 		return res;
+ 
+-	ci = READ_ONCE(parent->i_crypt_info);
++	ci = fscrypt_get_info(parent);
+ 	if (ci == NULL)
+ 		return -ENOKEY;
+ 
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index bb257411365f..991ff8575d0e 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -74,10 +74,15 @@ struct fscrypt_operations {
+ 			    struct request_queue **devs);
+ };
+ 
+-static inline bool fscrypt_has_encryption_key(const struct inode *inode)
++static inline struct fscrypt_info *fscrypt_get_info(const struct inode *inode)
+ {
+-	/* pairs with cmpxchg_release() in fscrypt_get_encryption_info() */
+-	return READ_ONCE(inode->i_crypt_info) != NULL;
++	/*
++	 * Pairs with the cmpxchg_release() in fscrypt_get_encryption_info().
++	 * I.e., another task may publish ->i_crypt_info concurrently, executing
++	 * a RELEASE barrier.  We need to use smp_load_acquire() here to safely
++	 * ACQUIRE the memory the other task published.
++	 */
++	return smp_load_acquire(&inode->i_crypt_info);
+ }
+ 
+ /**
+@@ -234,9 +239,9 @@ static inline void fscrypt_set_ops(struct super_block *sb,
+ }
+ #else  /* !CONFIG_FS_ENCRYPTION */
+ 
+-static inline bool fscrypt_has_encryption_key(const struct inode *inode)
++static inline struct fscrypt_info *fscrypt_get_info(const struct inode *inode)
+ {
+-	return false;
++	return NULL;
+ }
+ 
+ static inline bool fscrypt_needs_contents_encryption(const struct inode *inode)
+@@ -619,6 +624,20 @@ static inline bool fscrypt_inode_uses_fs_layer_crypto(const struct inode *inode)
+ 	       !__fscrypt_inode_uses_inline_crypto(inode);
+ }
+ 
++/**
++ * fscrypt_has_encryption_key() - check whether an inode has had its key set up
++ * @inode: the inode to check
++ *
++ * Return: %true if the inode has had its encryption key set up, else %false.
++ *
++ * Usually this should be preceded by fscrypt_get_encryption_info() to try to
++ * set up the key first.
++ */
++static inline bool fscrypt_has_encryption_key(const struct inode *inode)
++{
++	return fscrypt_get_info(inode) != NULL;
++}
++
+ /**
+  * fscrypt_require_key() - require an inode's encryption key
+  * @inode: the inode we need the key for
 -- 
 2.27.0
 
