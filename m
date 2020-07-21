@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 107A0C43458
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2020 23:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0768C43459
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Jul 2020 23:01:15 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D0DF220720;
-	Tue, 21 Jul 2020 23:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id BDAD920720;
+	Tue, 21 Jul 2020 23:01:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="TF5C+ir1";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PotzS/ZD";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yTeekrEW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0DF220720
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="G93HmOk0";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Njw9wZ4C";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2UrKh8jV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDAD920720
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jy1GC-0007gf-GH; Tue, 21 Jul 2020 23:01:20 +0000
+	id 1jy1G6-0002qF-CN; Tue, 21 Jul 2020 23:01:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1jy1GB-0007gW-46
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Jul 2020 23:01:19 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1jy1G4-0002q0-QT
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Jul 2020 23:01:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FSadQW/F/bTxXKUZClyPNiRPC/AfqeYKG+f9NuleUak=; b=TF5C+ir1iGfZ2AUBspnE1r4r/8
- yZEAU5ruYfHL6DKNTPuoBkVlMEXYusWC1UsmB3Hkp3x5hioBa5gQ6cxcXza9bU4hwyVeo+xsUTVcm
- /4/51N75kd1BZ2OnPaeT6FmJxUdBWLvZne5R/RugJcprqCw8RMtbqHf7/4ZDFFh6Fo8Q=;
+ bh=cQP1rrwn96wGq2CH+ioYXuMzwryRVrSkJXn+De2N/z8=; b=G93HmOk0jiuOS4m3xq2BfWqXeq
+ yF7CdOqeqz7tYI0LTzst08Vlhrl5NsvMV6sBX4/anKxSB55EloPfCC1c1WJyk3Dg8B2uA1aUxghBU
+ V97JmMExMpkZdFyH4Jkcz/JbpoeZJ0U+qFG4BMRjAGC+QtZ7FXmAVq91YFl1NxQ9cLsw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FSadQW/F/bTxXKUZClyPNiRPC/AfqeYKG+f9NuleUak=; b=PotzS/ZDMFGuICUD7baIiP+Klv
- Jahk8CWbY1N73ZRCsjgNdUZk2rgrTzW5XPvglu58sZY8SbNVHPIMtG+YzXXPc4jR15Y/iDlw9RjPS
- srpzWI/eTjHlo+EsC5Xlbmpm79T4+xBUA90uH1KGdUwid0dExBiFQPUqoF3xuOLc1FMg=;
+ bh=cQP1rrwn96wGq2CH+ioYXuMzwryRVrSkJXn+De2N/z8=; b=Njw9wZ4CXq4pSnqAecw5s0KdqD
+ uFLAabq4pf+VJLYjYYM0xrLBjJS3LNCD9mGaYX7dh7kWOtdbtuEKm6VfeU7c5HRzoKhxsFvQ5qjS8
+ Uc7ZxeqxJCAOyTbLpK8vVmqkAAdf+MAuFao88MM7abk2v8+8DhO1R+dPi+qOZrl5wHC8=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jy1GA-00CimD-0D
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Jul 2020 23:01:19 +0000
+ id 1jy1G3-00Cile-Jr
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 21 Jul 2020 23:01:12 +0000
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
  [107.3.166.239])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 359C42080D;
- Tue, 21 Jul 2020 23:01:00 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id ED9DF2073A;
+ Tue, 21 Jul 2020 23:00:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1595372460;
- bh=bm/93v1WSvC6J93NR1nVeFT9ERB8Qnq16lzUB1BPqPE=;
+ s=default; t=1595372459;
+ bh=i10MleHpPiD+UlqvEBbCBk40R3U1eodRZ9LmKRTef48=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=yTeekrEWE34bWmgyoc8iAznT5bvWxJDueciA3ij6RH6rLKNuOnEk0MOy7iokq1aFB
- RuBNvzBsxiqhd7gPu+ZphlSWCK0lXcg6Pxg9KqXbYpGT8njiwXoXfX+quheoo8oXmE
- bhMmzYGK06j+1a+jUGVTDO7CMxfvYQHgh4nIFytI=
+ b=2UrKh8jVKP4YqMR+ott79ppUtxS+O7gHH9ShvxNTAuNFBZmTmqlCG5CWy9w79n+Cg
+ XiIpP7yNESIvQqfvRZiaQZxEVS7x37eKyEqXzXOksAXo5PoR6DPlVSMqDfBnF9DnxQ
+ 6p9F6n2gtDZpXH1niAqfrcTbH+cjpR+CZkOdM19g=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Tue, 21 Jul 2020 15:59:20 -0700
-Message-Id: <20200721225920.114347-6-ebiggers@kernel.org>
+Date: Tue, 21 Jul 2020 15:59:16 -0700
+Message-Id: <20200721225920.114347-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200721225920.114347-1-ebiggers@kernel.org>
 References: <20200721225920.114347-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1jy1GA-00CimD-0D
-Subject: [f2fs-dev] [PATCH 5/5] fs-verity: use smp_load_acquire() for
- ->i_verity_info
+X-Headers-End: 1jy1G3-00Cile-Jr
+Subject: [f2fs-dev] [PATCH 1/5] fscrypt: switch fscrypt_do_sha256() to use
+ the SHA-256 library
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,89 +89,132 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+ Daniel Rosenberg <drosen@google.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Normally smp_store_release() or cmpxchg_release() is paired with
-smp_load_acquire().  Sometimes smp_load_acquire() can be replaced with
-the more lightweight READ_ONCE().  However, for this to be safe, all the
-published memory must only be accessed in a way that involves the
-pointer itself.  This may not be the case if allocating the object also
-involves initializing a static or global variable, for example.
+fscrypt_do_sha256() is only used for hashing encrypted filenames to
+create no-key tokens, which isn't performance-critical.  Therefore a C
+implementation of SHA-256 is sufficient.
 
-fsverity_info::tree_params.hash_alg->tfm is a crypto_ahash object that's
-internal to and is allocated by the crypto subsystem.  So by using
-READ_ONCE() for ->i_verity_info, we're relying on internal
-implementation details of the crypto subsystem.
+Also, the logic to create no-key tokens is always potentially needed.
+This differs from fscrypt's other dependencies on crypto API algorithms,
+which are conditionally needed depending on what encryption policies
+userspace is using.  Therefore, for fscrypt there isn't much benefit to
+allowing SHA-256 to be a loadable module.
 
-Remove this fragile assumption by using smp_load_acquire() instead.
+So, make fscrypt_do_sha256() use the SHA-256 library instead of the
+crypto_shash API.  This is much simpler, since it avoids having to
+implement one-time-init (which is hard to do correctly, and in fact was
+implemented incorrectly) and handle failures to allocate the
+crypto_shash object.
 
-Also fix the cmpxchg logic to correctly execute an ACQUIRE barrier when
-losing the cmpxchg race, since cmpxchg doesn't guarantee a memory
-barrier on failure.
-
-(Note: I haven't seen any real-world problems here.  This change is just
-fixing the code to be guaranteed correct and less fragile.)
-
-Fixes: fd2d1acfcadf ("fs-verity: add the hook for file ->open()")
+Fixes: edc440e3d27f ("fscrypt: improve format of no-key names")
+Cc: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/verity/open.c         | 15 ++++++++++++---
- include/linux/fsverity.h |  9 +++++++--
- 2 files changed, 19 insertions(+), 5 deletions(-)
+ fs/crypto/Kconfig |  2 +-
+ fs/crypto/fname.c | 41 ++++++++++-------------------------------
+ 2 files changed, 11 insertions(+), 32 deletions(-)
 
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index d007db0c9304..bfe0280c14e4 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -221,11 +221,20 @@ struct fsverity_info *fsverity_create_info(const struct inode *inode,
- void fsverity_set_info(struct inode *inode, struct fsverity_info *vi)
+diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+index f1f11a6228eb..a5f5c30368a2 100644
+--- a/fs/crypto/Kconfig
++++ b/fs/crypto/Kconfig
+@@ -4,6 +4,7 @@ config FS_ENCRYPTION
+ 	select CRYPTO
+ 	select CRYPTO_HASH
+ 	select CRYPTO_SKCIPHER
++	select CRYPTO_LIB_SHA256
+ 	select KEYS
+ 	help
+ 	  Enable encryption of files and directories.  This
+@@ -21,7 +22,6 @@ config FS_ENCRYPTION_ALGS
+ 	select CRYPTO_CTS
+ 	select CRYPTO_ECB
+ 	select CRYPTO_HMAC
+-	select CRYPTO_SHA256
+ 	select CRYPTO_SHA512
+ 	select CRYPTO_XTS
+ 
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index d828e3df898b..011830f84d8d 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -61,30 +61,13 @@ struct fscrypt_nokey_name {
+  */
+ #define FSCRYPT_NOKEY_NAME_MAX	offsetofend(struct fscrypt_nokey_name, sha256)
+ 
+-static struct crypto_shash *sha256_hash_tfm;
+-
+-static int fscrypt_do_sha256(const u8 *data, unsigned int data_len, u8 *result)
++static void fscrypt_do_sha256(const u8 *data, unsigned int data_len, u8 *result)
  {
- 	/*
--	 * Multiple processes may race to set ->i_verity_info, so use cmpxchg.
--	 * This pairs with the READ_ONCE() in fsverity_get_info().
-+	 * Multiple tasks may race to set ->i_verity_info, so use
-+	 * cmpxchg_release().  This pairs with the smp_load_acquire() in
-+	 * fsverity_get_info().  I.e., here we publish ->i_verity_info with a
-+	 * RELEASE barrier so that other tasks can ACQUIRE it.
- 	 */
--	if (cmpxchg(&inode->i_verity_info, NULL, vi) != NULL)
-+	if (cmpxchg_release(&inode->i_verity_info, NULL, vi) != NULL) {
-+		/* Lost the race, so free the fsverity_info we allocated. */
- 		fsverity_free_info(vi);
-+		/*
-+		 * Afterwards, the caller may access ->i_verity_info directly,
-+		 * so make sure to ACQUIRE the winning fsverity_info.
-+		 */
-+		(void)fsverity_get_info(inode);
-+	}
+-	struct crypto_shash *tfm = READ_ONCE(sha256_hash_tfm);
+-
+-	if (unlikely(!tfm)) {
+-		struct crypto_shash *prev_tfm;
+-
+-		tfm = crypto_alloc_shash("sha256", 0, 0);
+-		if (IS_ERR(tfm)) {
+-			fscrypt_err(NULL,
+-				    "Error allocating SHA-256 transform: %ld",
+-				    PTR_ERR(tfm));
+-			return PTR_ERR(tfm);
+-		}
+-		prev_tfm = cmpxchg(&sha256_hash_tfm, NULL, tfm);
+-		if (prev_tfm) {
+-			crypto_free_shash(tfm);
+-			tfm = prev_tfm;
+-		}
+-	}
++	struct sha256_state sctx;
+ 
+-	return crypto_shash_tfm_digest(tfm, data, data_len, result);
++	sha256_init(&sctx);
++	sha256_update(&sctx, data, data_len);
++	sha256_final(&sctx, result);
  }
  
- void fsverity_free_info(struct fsverity_info *vi)
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 78201a6d35f6..c1144a450392 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -115,8 +115,13 @@ struct fsverity_operations {
+ static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+@@ -349,7 +332,6 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 	const struct qstr qname = FSTR_TO_QSTR(iname);
+ 	struct fscrypt_nokey_name nokey_name;
+ 	u32 size; /* size of the unencoded no-key name */
+-	int err;
  
- static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
- {
--	/* pairs with the cmpxchg() in fsverity_set_info() */
--	return READ_ONCE(inode->i_verity_info);
-+	/*
-+	 * Pairs with the cmpxchg_release() in fsverity_set_info().
-+	 * I.e., another task may publish ->i_verity_info concurrently,
-+	 * executing a RELEASE barrier.  We need to use smp_load_acquire() here
-+	 * to safely ACQUIRE the memory the other task published.
-+	 */
-+	return smp_load_acquire(&inode->i_verity_info);
+ 	if (fscrypt_is_dot_dotdot(&qname)) {
+ 		oname->name[0] = '.';
+@@ -387,11 +369,9 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 	} else {
+ 		memcpy(nokey_name.bytes, iname->name, sizeof(nokey_name.bytes));
+ 		/* Compute strong hash of remaining part of name. */
+-		err = fscrypt_do_sha256(&iname->name[sizeof(nokey_name.bytes)],
+-					iname->len - sizeof(nokey_name.bytes),
+-					nokey_name.sha256);
+-		if (err)
+-			return err;
++		fscrypt_do_sha256(&iname->name[sizeof(nokey_name.bytes)],
++				  iname->len - sizeof(nokey_name.bytes),
++				  nokey_name.sha256);
+ 		size = FSCRYPT_NOKEY_NAME_MAX;
+ 	}
+ 	oname->len = base64_encode((const u8 *)&nokey_name, size, oname->name);
+@@ -530,9 +510,8 @@ bool fscrypt_match_name(const struct fscrypt_name *fname,
+ 		return false;
+ 	if (memcmp(de_name, nokey_name->bytes, sizeof(nokey_name->bytes)))
+ 		return false;
+-	if (fscrypt_do_sha256(&de_name[sizeof(nokey_name->bytes)],
+-			      de_name_len - sizeof(nokey_name->bytes), sha256))
+-		return false;
++	fscrypt_do_sha256(&de_name[sizeof(nokey_name->bytes)],
++			  de_name_len - sizeof(nokey_name->bytes), sha256);
+ 	return !memcmp(sha256, nokey_name->sha256, sizeof(sha256));
  }
- 
- /* enable.c */
+ EXPORT_SYMBOL_GPL(fscrypt_match_name);
 -- 
 2.27.0
 
