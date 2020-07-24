@@ -2,104 +2,108 @@ Return-Path: <SRS0=sdIt=BD=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DAEC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2020 12:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85243C433EA
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2020 12:19:45 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A4EDF2065E;
-	Fri, 24 Jul 2020 12:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 48B592065E;
+	Fri, 24 Jul 2020 12:19:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="ZSR9p87r";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KVvLhue0";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="RIXj97j9";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="LU3Hl6Xb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4EDF2065E
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="kSU3YRn0";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="U2zbCxXa";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fJjWpC+P";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="KoB83sJ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48B592065E
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=PXf7ikhzHo15uIP4gVmg9Z2cfCyDiHKVRP27RFjKAv8=; b=ZSR9p87r4YzAC1uExjZc82Ds7P
-	mcPAKI0/H9127VbgW1WTOyEEASg+WoawjhrCgQSkm44yPWR1rRV08xBUYpffu2uTdAryx3ZPAL3jm
-	WpPzWmMi7Z3dzwyJblRW+8+D+RPqM8h7MRCXJE1IsK/WS61KYxTVNjngmG9jOc1OkdhE=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=R761vhhU9gqptoxiGf9YQLpCvvswflgcqjpLQkPe/vs=; b=kSU3YRn0FFhmhbqLZzEglSxaQ
+	7vlFOBJI0C//8J29YxEzFhWs68dznz65mfi2vRWMCE+39e8fS8wt5ShwlYXvfxmShqCitoxD0L8y+
+	zACU7uMf416iaCfodJCiaky98oQ3ItxqynIOjpLZjt5j62GVOR32YZBtNnRxFXK2UeOYU=;
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jywes-0003AF-94; Fri, 24 Jul 2020 12:18:38 +0000
+	id 1jywfw-0003Xi-Su; Fri, 24 Jul 2020 12:19:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3BdAaXwYKABA8q9Eq9w44w1u.s42@flex--satyat.bounces.google.com>)
- id 1jyweq-0003A5-QV
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Jul 2020 12:18:36 +0000
+ (envelope-from <3CtAaXwYKABUDvEJvE19916z.x97@flex--satyat.bounces.google.com>)
+ id 1jywft-0003XN-2T
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Jul 2020 12:19:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
- Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iD4FUEMenVr5lbrZY3MfjlLwUfP0+0if0gfZ+EqYyLI=; b=KVvLhue0dzmmMn8a/55A8qVFcS
- /QpTDHRvKt6sFsdYdKRmgXO9ycQW/sHG26Yq7LCKFjrCN0k2QbeoR8rxALztUsysJ+U+WtS+tW9Zu
- NxCY42tzzEalOcJzGUNksZ/kWYVd4SD2axGw+Q9l7ChfXTU+ICCOXiVX9zDvQbRPJ8PE=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
+ Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=cZRHJd9vm6wSJv/XnptuJQLr+rxaeXJfolkFtRJQLFQ=; b=U2zbCxXaeBVRiExt7RIbPd2wT
+ FbIhno2bXmgNJab/pZcY3oJKDdxyKBPnRR76tglPV+uh5PzFrZYBTIT73hl4UagaWWc2yJTl0BsKN
+ f15zfzWLXd0UQMVwZ70VVnstfVinh1IkXM9l538LUN8ugQ9sCaOk2T/IqVnWufqIloZ0A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=iD4FUEMenVr5lbrZY3MfjlLwUfP0+0if0gfZ+EqYyLI=; b=R
- IXj97j94F/3VUZ/l5I/Vwh+E3VxwirRpxiwYPuLaC+Nt2Q2SwCwDmW7PSIKvrMePH8UIal/l5ZIrw
- z2qVhsTCk6Tu6JPhQ7ybs1mmM4BPdbF+UdP5ZZ0tueSgYKO32igirREt75uz9WE/0HDnhruhgEZln
- ujlB98ZDhqHQFfWU=;
-Received: from mail-pg1-f202.google.com ([209.85.215.202])
+ h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=cZRHJd9vm6wSJv/XnptuJQLr+rxaeXJfolkFtRJQLFQ=; b=fJjWpC+PyX3HKj5AIonivJieNh
+ KzoRGktOrWDkxw7UC94xrSKnAEU02hM941gU5lhVL+yIlfJjVJ1z66kF+l5ZH0SFOlLuWxIzry6j+
+ pGpIbNry3bIaYE62ktiZF/LoGcG2pKMH69jUnrJBeioEB7arm6TgiK/khyJ+1kB6qW34=;
+Received: from mail-oo1-f73.google.com ([209.85.161.73])
  by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jywef-001Mhy-9D
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Jul 2020 12:18:36 +0000
-Received: by mail-pg1-f202.google.com with SMTP id z16so6186437pgh.21
+ id 1jywfr-001Mm2-Pg
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Jul 2020 12:19:41 +0000
+Received: by mail-oo1-f73.google.com with SMTP id d143so4561105oob.4
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 24 Jul 2020 05:18:25 -0700 (PDT)
+ Fri, 24 Jul 2020 05:19:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:message-id:mime-version:subject:from:to:cc;
- bh=iD4FUEMenVr5lbrZY3MfjlLwUfP0+0if0gfZ+EqYyLI=;
- b=LU3Hl6Xb+kMb570dums3X91bS1lNWjAd6VAivVVwirnidnc44D39+JcML+BJHAGiYb
- /hLd0zQi1FE3LxsnU7ZCOiHAwNYFdEQm0Bw4lVG08rIUvLsp792e/7XMSZZKpfCuj9Wi
- Mc8RxN2om8nGrDd3CaWoXZVr6lkr8/IILg3NAUhby99DW4FbyIdip+AGS2zLfcAtbz/F
- O9L2jZzffcKwr1Nl0ZHrIcY6HnWsZBa3k0OuPKOQb9xFpTMvj12C/tW6+hn7DR9DEsn4
- VKLlFLHhKUhRXgHCiOcqBzkEP20Hlp9PqlgiscGHlUoNdDb1QOOHybUTJiChgSWV7ZW+
- 1eeg==
+ h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+ :cc; bh=cZRHJd9vm6wSJv/XnptuJQLr+rxaeXJfolkFtRJQLFQ=;
+ b=KoB83sJ7CUVdLVzAAXXB1d5HIww3b9w4WXANf6RJDhlArPSiHhTK/PK8WuhB2tEWdE
+ kCcFKQn/yySmnkf4jT6de1v2OPxpX9sjJn+U5/tromL2TKBfU60c+bjV00XwXIrTLEu4
+ 8vI0PugTGuvm/QxFdiB0sqTcNW/MonZSsudP+hxmFGx4UuhVFhTp54Uxrhu5H9iG4l9R
+ KkcujV6MJnRby0uWob+6hiQIuEJret9I5UCLvXr8+0CAJYPwHv6lDGhKsfT9uWS8Cli0
+ 18olVrcMqQGc8/lazYnAKA5yuqsfJKFeFrR+BYovE5b8eq9DSEwSvqm/zrJXl71JukyE
+ b5yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
- bh=iD4FUEMenVr5lbrZY3MfjlLwUfP0+0if0gfZ+EqYyLI=;
- b=Z/9QbREYYTuNgIlouJkVvfH3gFEahWM2rE3BAfenomULVBA61B9UFFgHalLCQxUcpx
- AOZAaUtE4EW/U48Ua+p69geskRlzyz+Y9wTUmHYlegRgPvsk72nui9FECnaO9VJobTyO
- YUxL8BkT+d5Xq85PRHXPKpniBc56fPpodZ6HzKfUpsJvu1RjG25F7cXqX4/UBJLgw8li
- 5n8xzUUR3y/xia3BtO+aC4Y+UQNNfy7qALHOLBjQDzhw7Ox9olSRwnTHD3Zq1xLJvaBw
- y1AF4jUGXiicS/g4kIkzUZXOlP79N4Uv/vHR5SPPdgB+SK9Z8rREknR1RdUHx2NNmjid
- IGUw==
-X-Gm-Message-State: AOAM533DZrbv/GYWsyEiavGeVBjkgGR6WGz3Mwml84XRsl/GWbTIlbsD
- dlgTUrY4WPDO7IK7QVl2+2POxQvB42U=
-X-Google-Smtp-Source: ABdhPJyWpT2NfcWEy4aLcDx08oXPKDl45eq2YPnQvm8sfH2moUaX/HTt1lJWyIEHpqxaEqJ3QKBmMRx778Y=
-X-Received: by 2002:a63:4b44:: with SMTP id k4mr2076411pgl.305.1595592709047; 
- Fri, 24 Jul 2020 05:11:49 -0700 (PDT)
-Date: Fri, 24 Jul 2020 12:11:36 +0000
-Message-Id: <20200724121143.1589121-1-satyat@google.com>
+ h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+ :references:subject:from:to:cc;
+ bh=cZRHJd9vm6wSJv/XnptuJQLr+rxaeXJfolkFtRJQLFQ=;
+ b=HZefpHdHusvz60lnwZjDijFRVI3EoY72j2LyUt4I8y4Dj+5+v0byoJdNAY/wlazQKd
+ UTyFoCMoxriTzxDflGPXIFKLPpxVy4YnOHHirBlVJnaEDOFFBWMq8Pn1MBxvsP+hwB+7
+ 7dL58OiPD6Vr0zkdDl3ACQnlQ8Xw4Hc6gAkfCvF59e9whm1JqhT8Wi17NJsvFVMKOp10
+ XbdbW+51DnK7seeKQuBrJ4n2NW1SLn6YwuvccQ1cEZDAHmEjL88GHK2eBZqDDi40XDuw
+ 9bNqFx5E4x+0QL+S+96xgpplvOxboDwV/jsyTnjAp1u4CMJqiYth3J68FbQ3Y1PMVtKT
+ TtJg==
+X-Gm-Message-State: AOAM531IwGLV/sdaRcVdI1UQGdANaKFL0R9wicib7zcxoWpcvfXaajdl
+ TJMW+TaVKDFRdYuYVeH/hJHBBHiND6g=
+X-Google-Smtp-Source: ABdhPJzqW0b3TqyL5cn0deoeV5HaYLyzoiAc0kf0C/GsHjnYYMOhspEGJ3mRFCHxl3UhNASvV8FA7vQBd2k=
+X-Received: by 2002:a17:90b:f05:: with SMTP id
+ br5mr5218030pjb.42.1595592714411; 
+ Fri, 24 Jul 2020 05:11:54 -0700 (PDT)
+Date: Fri, 24 Jul 2020 12:11:39 +0000
+In-Reply-To: <20200724121143.1589121-1-satyat@google.com>
+Message-Id: <20200724121143.1589121-4-satyat@google.com>
 Mime-Version: 1.0
+References: <20200724121143.1589121-1-satyat@google.com>
 X-Mailer: git-send-email 2.28.0.rc0.142.g3c755180ce-goog
 To: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
  linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-X-Headers-End: 1jywef-001Mhy-9D
-Subject: [f2fs-dev] [PATCH v5 0/7] add support for direct I/O with fscrypt
+X-Headers-End: 1jywfr-001Mm2-Pg
+Subject: [f2fs-dev] [PATCH v5 3/7] iomap: support direct I/O with fscrypt
  using blk-crypto
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -115,92 +119,63 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Satya Tangirala via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Satya Tangirala <satyat@google.com>
-Cc: linux-xfs@vger.kernel.org, Satya Tangirala <satyat@google.com>
+Cc: linux-xfs@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+ Eric Biggers <ebiggers@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch series adds support for direct I/O with fscrypt using
-blk-crypto. It has been rebased on fscrypt/master (i.e. the "master"
-branch of the fscrypt tree at
-https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git)
+From: Eric Biggers <ebiggers@google.com>
 
-Patch 1 adds two functions to fscrypt that need to be called to determine
-if direct I/O is supported for a request.
+Set bio crypt contexts on bios by calling into fscrypt when required.
+No DUN contiguity checks are done - callers are expected to set up the
+iomap correctly to ensure that each bio submitted by iomap will not have
+blocks with incontiguous DUNs by calling fscrypt_limit_io_blocks()
+appropriately.
 
-Patches 2 and 3 modify direct-io and iomap respectively to set bio crypt
-contexts on bios when appropriate by calling into fscrypt.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Co-developed-by: Satya Tangirala <satyat@google.com>
+Signed-off-by: Satya Tangirala <satyat@google.com>
+---
+ fs/iomap/direct-io.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Patches 4 and 5 allow ext4 and f2fs direct I/O to support fscrypt without
-falling back to buffered I/O.
-
-Patches 6 and 7 update the fscrypt documentation for inline encryption
-support and direct I/O. The documentation now notes the required conditions
-for inline encryption and direct I/O on encrypted files.
-
-This patch series was tested by running xfstests with test_dummy_encryption
-with and without the 'inlinecrypt' mount option, and there were no
-meaningful regressions. One regression was for generic/587 on ext4,
-but that test isn't compatible with test_dummy_encryption in the first
-place, and the test "incorrectly" passes without the 'inlinecrypt' mount
-option - a patch will be sent out to exclude that test when
-test_dummy_encryption is turned on with ext4 (like the other quota related
-tests that use user visible quota files). The other regression was for
-generic/252 on ext4, which does direct I/O with a buffer aligned to the
-block device's blocksize, but not necessarily aligned to the filesystem's
-block size, which direct I/O with fscrypt requires.
-
-Changes v4 => v5:
- - replace fscrypt_limit_io_pages() with fscrypt_limit_io_block(), which
-   is now called by individual filesystems (currently only ext4) instead
-   of the iomap code. This new function serves the same end purpose as
-   the one it replaces (ensuring that DUNs within a bio are contiguous)
-   but operates purely with blocks instead of with pages.
- - make iomap_dio_zero() set bio_crypt_ctx's again, instead of just a
-   WARN_ON() since some folks prefer that instead.
- - add Reviewed-by's
-
-Changes v3 => v4:
- - Fix bug in iomap_dio_bio_actor() where fscrypt_limit_io_pages() was
-   being called too early (thanks Eric!)
- - Improve comments and fix formatting in documentation
- - iomap_dio_zero() is only called to zero out partial blocks, but
-   direct I/O is only supported on encrypted files when I/O is
-   blocksize aligned, so it doesn't need to set encryption contexts on
-   bios. Replace setting the encryption context with a WARN_ON(). (Eric)
-
-Changes v2 => v3:
- - add changelog to coverletter
-
-Changes v1 => v2:
- - Fix bug in f2fs caused by replacing f2fs_post_read_required() with
-   !fscrypt_dio_supported() since the latter doesn't check for
-   compressed inodes unlike the former.
- - Add patches 6 and 7 for fscrypt documentation
- - cleanups and comments
-
-Eric Biggers (5):
-  fscrypt: Add functions for direct I/O support
-  direct-io: add support for fscrypt using blk-crypto
-  iomap: support direct I/O with fscrypt using blk-crypto
-  ext4: support direct I/O with fscrypt using blk-crypto
-  f2fs: support direct I/O with fscrypt using blk-crypto
-
-Satya Tangirala (2):
-  fscrypt: document inline encryption support
-  fscrypt: update documentation for direct I/O support
-
- Documentation/filesystems/fscrypt.rst | 36 +++++++++++--
- fs/crypto/crypto.c                    |  8 +++
- fs/crypto/inline_crypt.c              | 75 +++++++++++++++++++++++++++
- fs/direct-io.c                        | 15 +++++-
- fs/ext4/file.c                        | 10 ++--
- fs/ext4/inode.c                       |  7 +++
- fs/f2fs/f2fs.h                        |  6 ++-
- fs/iomap/direct-io.c                  |  6 +++
- include/linux/fscrypt.h               | 19 +++++++
- 9 files changed, 173 insertions(+), 9 deletions(-)
-
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index ec7b78e6feca..a8785bffdc7c 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -6,6 +6,7 @@
+ #include <linux/module.h>
+ #include <linux/compiler.h>
+ #include <linux/fs.h>
++#include <linux/fscrypt.h>
+ #include <linux/iomap.h>
+ #include <linux/backing-dev.h>
+ #include <linux/uio.h>
+@@ -183,11 +184,14 @@ static void
+ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+ 		unsigned len)
+ {
++	struct inode *inode = file_inode(dio->iocb->ki_filp);
+ 	struct page *page = ZERO_PAGE(0);
+ 	int flags = REQ_SYNC | REQ_IDLE;
+ 	struct bio *bio;
+ 
+ 	bio = bio_alloc(GFP_KERNEL, 1);
++	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
++				  GFP_KERNEL);
+ 	bio_set_dev(bio, iomap->bdev);
+ 	bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+ 	bio->bi_private = dio;
+@@ -270,6 +274,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		}
+ 
+ 		bio = bio_alloc(GFP_KERNEL, nr_pages);
++		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
++					  GFP_KERNEL);
+ 		bio_set_dev(bio, iomap->bdev);
+ 		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+ 		bio->bi_write_hint = dio->iocb->ki_hint;
 -- 
 2.28.0.rc0.142.g3c755180ce-goog
 
