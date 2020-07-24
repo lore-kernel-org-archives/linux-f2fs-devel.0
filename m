@@ -2,94 +2,78 @@ Return-Path: <SRS0=sdIt=BD=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E133C433EA
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2020 00:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB913C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2020 01:22:31 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CDAAE206E3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 24 Jul 2020 00:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8F2C120714;
+	Fri, 24 Jul 2020 01:22:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="PJIdOwsd";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HpOQzY7b";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="awreHD28"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDAAE206E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hovv/fo6";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Bty4TP9f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2C120714
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jylPJ-000470-Gf; Fri, 24 Jul 2020 00:17:49 +0000
+	id 1jymPs-0007bV-3w; Fri, 24 Jul 2020 01:22:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <drinkcat@chromium.org>) id 1jylPF-00046o-91
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Jul 2020 00:17:45 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jymPr-0007bF-H2
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Jul 2020 01:22:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Tn6bqYg/1KWkV4kpAzCYFhcP+XCPRuDgdoeZet33vWk=; b=PJIdOwsdcavhGJpzF/C0TaC5fE
- KXQrfYgN5fpQWb4voloTR6xjnvZcUBtUi6YaMMBtS7ANu+rLNl5Ims+VqspTHGFh2FsfNfhKnS4fj
- eP/BKjgjR83qlXY2/LYJC+yLn3njy9BBeeT1HSKK7pQIeSae6meEv4Sr5brgqa7wllQY=;
+ bh=OhczWMiOW/AVaGffc/ePybZL/TGt3D0olVFYNy3bjME=; b=hovv/fo6vJJOmczj8x/L2cgOI0
+ ww1tF8xDL+hNpe+wiz2Ui9dH0vus01iHWHTQTFNwxpUE0w4tj8lzJMw+s8Vi0e6Ljry4PG7e6hmWK
+ jVlrbkipLbkMstEKISWRn1CzW/X8oE94rZC68L5wmtzpB+l7MqIQc34r3oOve3tP5qrE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Tn6bqYg/1KWkV4kpAzCYFhcP+XCPRuDgdoeZet33vWk=; b=HpOQzY7b/MfJom4BIXGtHYK3Mu
- YLvS2OamofKWvhaJ7mOYoQXVsT6izdawyQFF0nROBTq0oGkmlZXSfMZPhz7+hbidukq9BqKj5Aqhv
- P6elbX7pQal41wkP7EW/M4mlpjWEb5CASDDAN431eRiUdOiEHCm0RWcbUq5DCCXybnE0=;
-Received: from mail-ua1-f68.google.com ([209.85.222.68])
- by sfi-mx-4.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1jylPC-000t9t-Pf
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Jul 2020 00:17:44 +0000
-Received: by mail-ua1-f68.google.com with SMTP id r63so2408375uar.9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 23 Jul 2020 17:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chromium.org; s=google;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc; bh=Tn6bqYg/1KWkV4kpAzCYFhcP+XCPRuDgdoeZet33vWk=;
- b=awreHD28nDVNZexMGVyopatjZJnZVe7HOWZqVLh+RCrrko33Dtr7aUGgwOkz5TkDTZ
- 0yYGVwi8WX8RUoZPeer0O6R6Mkxv2fwqIKd57tgnZhCiaJXkJVcV2SPbhNZ3XCGWvsmS
- wfHBen5QSZrel1hvkK/0sXZYsKhLRDS4KyFac=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc;
- bh=Tn6bqYg/1KWkV4kpAzCYFhcP+XCPRuDgdoeZet33vWk=;
- b=iX2JJAnYkIaVc2rlQCc13wDOVD/6fYR1fDccrL8ce/Y00Sa9AzWXaDWgn7CmGJ32PT
- kte3ylMlp0I0T5Axd2L3hXpD2yeC6GVpNuKfeErtUq0YhG3+buVvSfp/jyUKHdghOp04
- 2bRzVKSo2L73C8vLChJLuQmdoJ1XnNJGBkGGmpWxVFp46bC/V9rQ8xbipvZoENrN2Pbl
- xDrluj1N3PuOVPTMAuPp3MX+PQD/KH8QWf1bhkyXu+eWXZZ9ssAzOfFWp01YzESmkKWe
- PMAvx0I5HmbtvoAg2+CuyH0bsoCD6gJIJKrGUsYR8zqk+Y/3M7uZ1+HXYYhqQkCFuUpc
- CA5A==
-X-Gm-Message-State: AOAM532qjmiEzYjOEPCl5TlBsSPPAnDff15aDe7hSJOMf6ZWP4FC/1QH
- RE3GtF/s4mIyVYMY9aNQm/jtplM5brbWdC9Thhi0Cg==
-X-Google-Smtp-Source: ABdhPJyap0e7CTwf8HrhrJhPhF9DOR7AKPD9OIoxL1bXe7v3Dk4cmLWDUcc1+/hhsto3hTn53fbsk/M7qmHWyPm46q8=
-X-Received: by 2002:a9f:22c4:: with SMTP id 62mr6134025uan.135.1595549856863; 
- Thu, 23 Jul 2020 17:17:36 -0700 (PDT)
+ bh=OhczWMiOW/AVaGffc/ePybZL/TGt3D0olVFYNy3bjME=; b=Bty4TP9f8tDr8kNergphT1h/SW
+ p1Jf6JZ4L9B6Xi0SRWUJCWmbnbxiiSpOWSKyzNp41CKJ9rBWAu9t2tm37eYyUBU8rkzwsn4Nz/VQl
+ YxyGdOd2y8fUmlQhrblZutw/n+5hsjfrtGVCSlRV9rSMLLI66oPHkR3H8jrtGWirhR8A=;
+Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1jymPp-006zVd-0I
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 24 Jul 2020 01:22:27 +0000
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 2C112B95D81FDF460943;
+ Fri, 24 Jul 2020 09:22:16 +0800 (CST)
+Received: from [10.164.122.247] (10.164.122.247) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.487.0; Fri, 24 Jul
+ 2020 09:22:11 +0800
+To: Song Feng <songfengcn@163.com>
+References: <20200723102806.9662-1-yuchao0@huawei.com>
+ <666af139.9663.1737c480519.Coremail.songfengcn@163.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <85b9af8d-0062-9c6b-0ad7-c48870a5cf2b@huawei.com>
+Date: Fri, 24 Jul 2020 09:22:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20200627070307.516803-1-drinkcat@chromium.org>
- <20200627070307.516803-2-drinkcat@chromium.org> <878sfanzft.fsf@kernel.org>
-In-Reply-To: <878sfanzft.fsf@kernel.org>
-From: Nicolas Boichat <drinkcat@chromium.org>
-Date: Fri, 24 Jul 2020 08:17:25 +0800
-Message-ID: <CANMq1KDugXcmvrGOJzcvWvbzScPDsQVuJ4gSDXTJan+FY1H3Ew@mail.gmail.com>
-To: Felipe Balbi <balbi@kernel.org>
-X-Headers-End: 1jylPC-000t9t-Pf
-Subject: Re: [f2fs-dev] [PATCH 1/4] usb: cdns3: gadget: Replace trace_printk
- by dev_dbg
+In-Reply-To: <666af139.9663.1737c480519.Coremail.songfengcn@163.com>
+Content-Language: en-US
+X-Originating-IP: [10.164.122.247]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1jymPp-006zVd-0I
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix use-after-free issue
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,84 +85,74 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Peter Chen <peter.chen@nxp.com>,
- "Guilherme G . Piccoli" <gpiccoli@canonical.com>,
- Rafael Aquini <aquini@redhat.com>, Sam Ravnborg <sam@ravnborg.org>,
- David Airlie <airlied@linux.ie>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Todor Tomov <todor.too@gmail.com>,
- Bjorn Andersson <bjorn.andersson@linaro.org>,
- David Howells <dhowells@redhat.com>, Tiezhu Yang <yangtiezhu@loongson.cn>,
- Will Deacon <will@kernel.org>,
- Christian Brauner <christian.brauner@ubuntu.com>,
- Kees Cook <keescook@chromium.org>, devel@driverdev.osuosl.org,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jayshri Pawar <jpawar@cadence.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Andy Gross <agross@kernel.org>,
- Tomas Winkler <tomas.winkler@intel.com>, Alexey Dobriyan <adobriyan@gmail.com>,
- Linux Media Mailing List <linux-media@vger.kernel.org>,
- Pawel Laszczak <pawell@cadence.com>, Daniel Vetter <daniel@ffwll.ch>,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>,
- Steven Rostedt <rostedt@goodmis.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Roger Quadros <rogerq@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- dri-devel <dri-devel@lists.freedesktop.org>, linux-usb@vger.kernel.org,
- lkml <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Colin Ian King <colin.king@canonical.com>,
- Andrew Morton <akpm@linux-foundation.org>, Divya Indi <divya.indi@oracle.com>
-Content-Type: text/plain; charset="us-ascii"
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jul 23, 2020 at 9:17 PM Felipe Balbi <balbi@kernel.org> wrote:
->
-> Nicolas Boichat <drinkcat@chromium.org> writes:
->
-> > trace_printk should not be used in production code, replace it
-> > call with dev_dbg.
-> >
-> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> >
-> > ---
-> >
-> > Unclear why a trace_printk was used in the first place, it's
-> > possible that some rate-limiting is necessary here.
-> >
-> >  drivers/usb/cdns3/gadget.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-> > index 5e24c2e57c0d8c8..c303ab7c62d1651 100644
-> > --- a/drivers/usb/cdns3/gadget.c
-> > +++ b/drivers/usb/cdns3/gadget.c
-> > @@ -421,7 +421,7 @@ static int cdns3_start_all_request(struct cdns3_device *priv_dev,
-> >               if ((priv_req->flags & REQUEST_INTERNAL) ||
-> >                   (priv_ep->flags & EP_TDLCHK_EN) ||
-> >                       priv_ep->use_streams) {
-> > -                     trace_printk("Blocking external request\n");
-> > +                     dev_dbg(priv_dev->dev, "Blocking external request\n");
->
-> Instead, I would suggest adding a proper trace event here; one that
-> includes "priv_ep->flags" in the output.
+Hi Feng,
 
-The patch was already merged by Greg
-(https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/usb/cdns3/gadget.c?id=b3a5ce874c2619c9b8a6c5bbcfefdb95e0227600),
-but feel free to do that as a follow-up CL.
+Thanks for the reminder. :)
 
-Looks like Peter -- the main author, is ok with dev_dbg (also,
-apologies for missing the R-b tag when I sent a v2 -- which is the one
-that was merged by Greg).
+Jaegeuk, could you please fix this while merging.
 
 Thanks,
 
->
-> --
-> balbi
+On 2020/7/23 23:26, Song Feng wrote:
+> At 2020-07-23 17:28:06, "Chao Yu" <yuchao0@huawei.com> wrote:
+> 
+>> From: Li Guifu <bluce.liguifu@huawei.com>
+>>
+>> During umount, f2fs_put_super() unregisters procfs entries after
+>> f2fs_destroy_segment_manager(), it may cause use-after-free
+>> issue when umount races with procfs accessing, fix it by relcating
+> typo issue: relcating -> relocating?
+>> f2fs_unregister_sysfs().
+>>
+>> [Chao Yu: change commit title/message a bit]
+>>
+>> Signed-off-by: Li Guifu <bluce.liguifu@huawei.com>
+>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> fs/f2fs/super.c | 5 +++--
+>> 1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 80cb7cd358f8..bf8bd64c8380 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -1175,6 +1175,9 @@ static void f2fs_put_super(struct super_block *sb)
+>> 	int i;
+>> 	bool dropped;
+>>
+>> +	/* unregister procfs/sysfs entries to avoid race case */
+>> +	f2fs_unregister_sysfs(sbi);
+>> +
+>> 	f2fs_quota_off_umount(sb);
+>>
+>> 	/* prevent remaining shrinker jobs */
+>> @@ -1240,8 +1243,6 @@ static void f2fs_put_super(struct super_block *sb)
+>>
+>> 	kvfree(sbi->ckpt);
+>>
+>> -	f2fs_unregister_sysfs(sbi);
+>> -
+>> 	sb->s_fs_info = NULL;
+>> 	if (sbi->s_chksum_driver)
+>> 		crypto_free_shash(sbi->s_chksum_driver);
+>> -- 
+>> 2.26.2
+>>
+>>
+>>
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> please check typo issue for comment: relcating->relocating?
+> 
 
 
 _______________________________________________
