@@ -2,79 +2,78 @@ Return-Path: <SRS0=ThHd=BE=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A191C433E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jul 2020 01:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DAEC433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 25 Jul 2020 02:07:13 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8BC4C2067D;
-	Sat, 25 Jul 2020 01:24:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4BCC72067D;
+	Sat, 25 Jul 2020 02:07:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VYzSj9gc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="llTCicry"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC4C2067D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fBjNKI+1";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VtsE+DW9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BCC72067D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1jz8vk-0005H1-0V; Sat, 25 Jul 2020 01:24:52 +0000
+	id 1jz9ah-00067O-NY; Sat, 25 Jul 2020 02:07:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1jz8vj-0005Gu-2D
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Jul 2020 01:24:51 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1jz9ag-00067H-L6
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Jul 2020 02:07:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GKTiIpdMKQVzuDzQClcnNXxOcoc1fsWBrlfVDQNzKT4=; b=VYzSj9gcDy9DcV86H6m/Jx9HsZ
- 7ZzjLNSs5iKwVQ+Y19ufhwxIfZXvXXJXAnw4FdCvIWWV3RV4dMd30ToTBAyYtcjuHNpElCyAAtMPw
- 7qPyTbIE9jJRYKvpH8oiJyX2UmeNCDo79J48ouogAV9AtVDrPTJyQ6nPKOhWliWvL49c=;
+ bh=F9Fc9uv5ghnPXmbW9uGffC+iq+d57rgO1+yxjoXMsL0=; b=fBjNKI+1mVY5YMQnFyRuF4CW44
+ SgoHE0jSjGjWMVov5QtGDZn+E8iQ5qj8VzVdOOZ2kIEdE3lW9WI+W1oO83Zrsr99gzQMJC1Q6WyxA
+ oOkW3jG/obTMyeuEim6cQ/ZylDld0R6DRmva08gl0VGd4Oigi54WKo+cK5g4L2cGMw/g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GKTiIpdMKQVzuDzQClcnNXxOcoc1fsWBrlfVDQNzKT4=; b=llTCicryuuTgxFDG4u55A0w4+c
- b6Z9ivo1KIZyqZrjfwUZpV2Oghh7K7A+OLAvVTFhkvX3o8Rcv+FU9L0Hjhpnjh0+Sty2NXwXAvlF1
- v2R7WAAOXTgEw1Tlo8GlRCJ+b1ig88CBDjROGeL3zrXKWcyPmyMSAtnq/+2oASu8mbMQ=;
+ bh=F9Fc9uv5ghnPXmbW9uGffC+iq+d57rgO1+yxjoXMsL0=; b=VtsE+DW9bnjgQo7Lt2KjygvmYV
+ v5l/tt5V7NThtAsWFg2L6/ds1dz2TbovHLdLmgreYb92/akeCA+Z+5TfdVifb43OSa+hP9dY0xbSw
+ F9XKFPjAsyojBpNrhR/F61cOkl9Mh/M43AgxE0dggzJIlZQgPzCldZQyVRd9Hhw1i88I=;
 Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1jz8vh-00GTnF-Ji
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Jul 2020 01:24:50 +0000
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 494E489B49F5EB2E533F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 25 Jul 2020 09:24:42 +0800 (CST)
+ id 1jz9ae-001vIj-QP
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 25 Jul 2020 02:07:10 +0000
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 59A479F81D57FE7DE9DC;
+ Sat, 25 Jul 2020 10:06:50 +0800 (CST)
 Received: from [10.164.122.247] (10.164.122.247) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.487.0; Sat, 25 Jul
- 2020 09:24:33 +0800
-To: Jack Qiu <jack.qiu@huawei.com>, <linux-f2fs-devel@lists.sourceforge.net>
-References: <20200725014952.19036-1-jack.qiu@huawei.com>
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.487.0; Sat, 25 Jul
+ 2020 10:06:48 +0800
+To: Norbert Lange <nolange79@gmail.com>
+References: <f3094e40-13ff-ea31-faf1-9e78867f4a8d@huawei.com>
+ <20200724081125.3376-1-nolange79@gmail.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <c45c1d4d-5cfb-da9d-19e6-749881823029@huawei.com>
-Date: Sat, 25 Jul 2020 09:24:33 +0800
+Message-ID: <c05c0e81-ea55-99e0-0060-df803b3586b6@huawei.com>
+Date: Sat, 25 Jul 2020 10:06:48 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20200725014952.19036-1-jack.qiu@huawei.com>
+In-Reply-To: <20200724081125.3376-1-nolange79@gmail.com>
 Content-Language: en-US
 X-Originating-IP: [10.164.122.247]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1jz8vh-00GTnF-Ji
-Subject: Re: [f2fs-dev] [PATCH] f2fs: use kfree() to free sbi->gc_thread
- allocated by f2fs_kmalloc
+X-Headers-End: 1jz9ae-001vIj-QP
+Subject: Re: [f2fs-dev] Possible issues with fsck of f2fs root
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,56 +85,76 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+On 2020/7/24 16:11, Norbert Lange wrote:
+> Hello,
+> 
+> I ran into this problem with fsck.f2fs 1.13.0, it seems that problem is not
+> fixed in master either.
+> 
+> My setup is an embedded device with systemd and I did nothing but swap the
+> filesystem from ext4 to f2fs. The result was that the init system would
+> try to fsck the ro mounted root partition, fsck.f2fs would fail (as noted),
+> and the init system would reboot (rinse, repeat) with no real chance to
+> interact remotely (headless system).
+> 
+> Thats pretty much as bad as it gets for an unwanted sideffect ;)
+> 
+> I first reported it to systemd, quite reasonably they expect fsck tools
+> to behave the same [1].
+> 
+> The systemd-fsck tool will end up calling fsck.f2fs with the parameter below,
+> and will fail as this device is mounted (tries to open it in exclusive mode).
+> 
+> $ fsck.f2fs -a /dev/mmcblk0p5; echo $?
+> Info: Fix the reported corruption.
+> Info: Mounted device!
+> Info: Check FS only on RO mounted device
+> Error: Failed to open the device!
+> 255
 
-Let's check and do conversion for all possible cases rather than do
-one by one.
+I tried ext4, it acts the same as f2fs... except different return value.
 
-On 2020/7/25 9:49, Jack Qiu wrote:
-> Use kfree() instead of kvfree() to free sbi->gc_thread allocated
-> by f2fs_kmalloc(). Because the memory is allocated with kmalloc
-> inside f2fs_kmalloc().
+fsck -t ext4 -a /dev/zram1; echo $?
+fsck 1.45.0 (6-Mar-2019)
+/dev/zram1 is mounted.
+e2fsck: Cannot continue, aborting.
+
+
+8
+
+fsck -t ext4 -a -f /dev/zram1; echo $?
+fsck 1.45.0 (6-Mar-2019)
+Warning!  /dev/zram1 is mounted.
+/dev/zram1: 11/1179648 files (0.0% non-contiguous), 118065/4718592 blocks
+0
+
+I'd like to know what behavior of fsck does systemd expect?
+fsck -a should work (check & report or check & report & repaire)
+on readonly mounted device?
+
+Thanks,
+
 > 
-> Signed-off-by: Jack Qiu <jack.qiu@huawei.com>
-> ---
->   fs/f2fs/gc.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> A workaround would be to force or skip the check
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 5b95d5a146eb..696ceeedc76d 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -147,7 +147,7 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
->   			"f2fs_gc-%u:%u", MAJOR(dev), MINOR(dev));
->   	if (IS_ERR(gc_th->f2fs_gc_task)) {
->   		err = PTR_ERR(gc_th->f2fs_gc_task);
-> -		kvfree(gc_th);
-> +		kfree(gc_th);
->   		sbi->gc_thread = NULL;
->   	}
->   out:
-> @@ -160,7 +160,7 @@ void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
->   	if (!gc_th)
->   		return;
->   	kthread_stop(gc_th->f2fs_gc_task);
-> -	kvfree(gc_th);
-> +	kfree(gc_th);
->   	sbi->gc_thread = NULL;
->   }
+> fsck.f2fs -a -f /dev/mmcblk0p5; echo $?
+> Info: Fix the reported corruption.
+> .....
+> Done: 0.232165 secs
+> 0
 > 
-> --
-> 2.17.1
+> So, Id consider this a critical issue, and I dont see whats the conclusion
+> of this discussion is.
 > 
+> Norbert
 > 
 > 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> [1] - https://github.com/systemd/systemd/issues/15106
 > .
 > 
 
