@@ -7,76 +7,74 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A63C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CDFC433E0
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2020 13:22:54 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 43E4D20809;
+	by mail.kernel.org (Postfix) with ESMTPS id 6D19F20829;
 	Wed, 29 Jul 2020 13:22:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="iIeOZkGB";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="a4vPJsZq";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTlBiron"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E4D20809
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Dp1eW8Qi";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="gsh4iOzl";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="af4M7BI8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D19F20829
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1k0m2n-0002uS-Mh; Wed, 29 Jul 2020 13:22:53 +0000
+	id 1k0m2m-0003UW-0s; Wed, 29 Jul 2020 13:22:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1k0m2k-0002uI-OR
+ (envelope-from <chao@kernel.org>) id 1k0m2k-0003UF-5o
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Jul 2020 13:22:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=K/+JemGahTDJRKqL8W6Ja5EXCUXKsS+u4UrvQQNfusg=; b=iIeOZkGBFrfGax4AulJNJlnVv6
- DJ51FqT5g57fMY/O1kl0yTO50PLsyfd4yBBOJRH1JzdJlfsuw4FG2NnS+GBHP9VcmVAU2C6Ddusji
- zGJbvVde+0lFoY8MNJwU6mlgpfTqKZD4WgIfvnXmLUkH/z14tr/8rKUphC0uLuT924z8=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=K/+JemGahTDJRKqL8W6Ja5EXCUXKsS+u4UrvQQNfusg=; b=a4vPJsZq/O6sZv/qbPHorUzqUS
- tUlnVPki27/WBUCyBlSvTu/TkNviJZ93rcot+6KF/j4+iBwP2xPOpS6A/S+C80UtORLsmNdZ8cXis
- 3ULcPX/EdgrK0iMvDwWrK9+CypK1dbEdH0OmuDw+l1GK6rZ/CIOyjuOVMGfZ0ybCqJgo=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=b2Xz04eTIPQnx4IvluO0nM4yDEKqBUDXabOKBm+pyJs=; b=Dp1eW8QiTF+8VEqx0HYi3EQDPc
+ N9E6akuAfKk0OeG48gc+ttP4/4kR3e7d3TylVB69Onc79bHVU/ckbqJIiH4vgu/r66TvPUus9g+dz
+ vq2qNUG5VgIMfTnaLb7jPT0254pNVODIF0rR1cdH+zK1PyXdT3ys8Dc4bFWFF3Acdf1c=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=b2Xz04eTIPQnx4IvluO0nM4yDEKqBUDXabOKBm+pyJs=; b=g
+ sh4iOzlhirgx5mW80e6nBqIlMs7Lgrss5JmYJxN1p13uEcaavsEEunX2HFbc7XRHQQPcd+HPC01cs
+ 2cuNHFCxa4agRpxefIISc8b08jLVQ+auVT3n+vmldr0qfyUR29Xb1oDHr04pjBcVCYz4UX50hlVYE
+ dyF4GtgdmVM0dbSs=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1k0m2Z-00DQIx-Dq
+ id 1k0m2e-003EaC-4v
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Jul 2020 13:22:50 +0000
 Received: from localhost.localdomain (unknown [49.65.247.178])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 445C420829;
- Wed, 29 Jul 2020 13:22:32 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id C049220809;
+ Wed, 29 Jul 2020 13:22:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1596028953;
- bh=2nO1aS9EUs24pPVkavg7mosszYZtF5AQTrcRye3PWI0=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=sTlBironlpJOkLWkS4ZrSH2Cu33V9KhUh0n/hJq7JEr8gq7JDcAhG/+zYxjMpjsFG
- DCVIplbZTbeV/GfSaktdtqs6o/uAGR0dYQb74POhIZK1bG8T30wmjPXao2v+iCmSzc
- edDC3+n4lGO/vK66ZnwBn1TAaTqKt2JLhLLRPJLk=
+ s=default; t=1596028951;
+ bh=Phtwyl6TA4Aztd1IQmv6O6oOJmp4MMAckE8fKe9Vl4c=;
+ h=From:To:Cc:Subject:Date:From;
+ b=af4M7BI8cvABf6YStyR4IEEdIi13eHIZKeSO+OKlT/9ruFDgnJSDbOllN2rNmmv3F
+ FdChXRnsBzTyi/XG+/sEL36+WzHvv0X0jaccvErdJYyk0gCCgzDnNoqBSvqbSFnXU0
+ o70FoKmaXZ+BvX5jkjWiKaqfIJTAohNLVlXqsFBo=
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Wed, 29 Jul 2020 21:21:36 +0800
-Message-Id: <20200729132136.11134-2-chao@kernel.org>
+Date: Wed, 29 Jul 2020 21:21:35 +0800
+Message-Id: <20200729132136.11134-1-chao@kernel.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200729132136.11134-1-chao@kernel.org>
-References: <20200729132136.11134-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1k0m2Z-00DQIx-Dq
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: compress: disable compression mount
- option if compression is off
+X-Headers-End: 1k0m2e-003EaC-4v
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: compress: add sanity check during
+ compressed cluster read
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,64 +93,31 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-If CONFIG_F2FS_FS_COMPRESSION is off, don't allow to configure or
-show compression related mount option.
+In f2fs_read_multi_pages(), we don't have to check cluster's type
+again, since overwrite or partial truncation need page lock in
+cluster which has already been held by reader, so cluster's type
+is stable, let's change check condition to sanity check.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/super.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ fs/f2fs/data.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5e0a3eeb8ca4..cdca2087dba0 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -460,9 +460,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	substring_t args[MAX_OPT_ARGS];
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
- 	unsigned char (*ext)[F2FS_EXTENSION_LEN];
-+	int ext_cnt;
-+#endif
- 	char *p, *name;
--	int arg = 0, ext_cnt;
-+	int arg = 0;
- 	kuid_t uid;
- 	kgid_t gid;
- 	int ret;
-@@ -853,6 +856,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		case Opt_checkpoint_enable:
- 			clear_opt(sbi, DISABLE_CHECKPOINT);
- 			break;
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
- 		case Opt_compress_algorithm:
- 			if (!f2fs_sb_has_compression(sbi)) {
- 				f2fs_err(sbi, "Compression feature if off");
-@@ -918,6 +922,13 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			F2FS_OPTION(sbi).compress_ext_cnt++;
- 			kfree(name);
- 			break;
-+#else
-+		case Opt_compress_algorithm:
-+		case Opt_compress_log_size:
-+		case Opt_compress_extension:
-+			f2fs_info(sbi, "compression options not supported");
-+			break;
-+#endif
- 		default:
- 			f2fs_err(sbi, "Unrecognized mount option \"%s\" or missing value",
- 				 p);
-@@ -1608,7 +1619,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 	else if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_NOBARRIER)
- 		seq_printf(seq, ",fsync_mode=%s", "nobarrier");
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index bc89bc987513..c1b676be67b9 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2170,9 +2170,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 	if (ret)
+ 		goto out;
  
-+#ifdef CONFIG_F2FS_FS_COMPRESSION
- 	f2fs_show_compress_options(seq, sbi->sb);
-+#endif
- 	return 0;
- }
+-	/* cluster was overwritten as normal cluster */
+-	if (dn.data_blkaddr != COMPRESS_ADDR)
+-		goto out;
++	f2fs_bug_on(sbi, dn.data_blkaddr != COMPRESS_ADDR);
  
+ 	for (i = 1; i < cc->cluster_size; i++) {
+ 		block_t blkaddr;
 -- 
 2.22.0
 
