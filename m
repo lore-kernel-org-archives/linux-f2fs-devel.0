@@ -2,79 +2,81 @@ Return-Path: <SRS0=2Gie=BI=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CDFC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2020 13:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78861C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2020 16:22:02 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6D19F20829;
-	Wed, 29 Jul 2020 13:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3B7D42075D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jul 2020 16:22:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Dp1eW8Qi";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="gsh4iOzl";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="af4M7BI8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D19F20829
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="eSJZN0Zy";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WrQWEHD7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Byo40t5P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B7D42075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1k0m2m-0003UW-0s; Wed, 29 Jul 2020 13:22:52 +0000
+	id 1k0oq8-0003Li-C6; Wed, 29 Jul 2020 16:22:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1k0m2k-0003UF-5o
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Jul 2020 13:22:50 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1k0oq7-0003La-6l
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Jul 2020 16:21:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=b2Xz04eTIPQnx4IvluO0nM4yDEKqBUDXabOKBm+pyJs=; b=Dp1eW8QiTF+8VEqx0HYi3EQDPc
- N9E6akuAfKk0OeG48gc+ttP4/4kR3e7d3TylVB69Onc79bHVU/ckbqJIiH4vgu/r66TvPUus9g+dz
- vq2qNUG5VgIMfTnaLb7jPT0254pNVODIF0rR1cdH+zK1PyXdT3ys8Dc4bFWFF3Acdf1c=;
+ bh=FjwOx/1YMnYWkBs5w+sbZtNz9UnliXhLhIMvmLD2uk0=; b=eSJZN0Zyfs3ANURBIBeAY9Anr4
+ QiD9pZoKISYpuqKyVgkDSV0P6FDSKi6LMslNTIeckfKAuCigAEajvWyY0jQc+bQu8pMDjXlMfb9Ht
+ AuDJCTnZtG9ViWxkG5eli9u/4VbkyWFGc2Y/YQsN5pL7VOvuj8tOkXtTMF9i1ioD0QYk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=b2Xz04eTIPQnx4IvluO0nM4yDEKqBUDXabOKBm+pyJs=; b=g
- sh4iOzlhirgx5mW80e6nBqIlMs7Lgrss5JmYJxN1p13uEcaavsEEunX2HFbc7XRHQQPcd+HPC01cs
- 2cuNHFCxa4agRpxefIISc8b08jLVQ+auVT3n+vmldr0qfyUR29Xb1oDHr04pjBcVCYz4UX50hlVYE
- dyF4GtgdmVM0dbSs=;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=FjwOx/1YMnYWkBs5w+sbZtNz9UnliXhLhIMvmLD2uk0=; b=WrQWEHD7V0GScBlEfvkNu/rEdD
+ 0JLi42a4l30majgQj2TNpbuANLjZiQSCoLCYmIztFpQ+5cmnFnqOA4X4M+3t/8Q0si9HROFWtxh5b
+ oW9Nf/QS60d+36i9w/s/5jwJsZ+uaBIRsqqjf3cT/tumTt1TGlKUrmS39kkgtorKyfhs=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1k0m2e-003EaC-4v
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Jul 2020 13:22:50 +0000
-Received: from localhost.localdomain (unknown [49.65.247.178])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+ id 1k0oq5-006KP1-UY
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Jul 2020 16:21:59 +0000
+Received: from localhost (unknown [104.132.1.66])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id C049220809;
- Wed, 29 Jul 2020 13:22:28 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 4FA8F2075D;
+ Wed, 29 Jul 2020 16:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1596028951;
- bh=Phtwyl6TA4Aztd1IQmv6O6oOJmp4MMAckE8fKe9Vl4c=;
- h=From:To:Cc:Subject:Date:From;
- b=af4M7BI8cvABf6YStyR4IEEdIi13eHIZKeSO+OKlT/9ruFDgnJSDbOllN2rNmmv3F
- FdChXRnsBzTyi/XG+/sEL36+WzHvv0X0jaccvErdJYyk0gCCgzDnNoqBSvqbSFnXU0
- o70FoKmaXZ+BvX5jkjWiKaqfIJTAohNLVlXqsFBo=
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Wed, 29 Jul 2020 21:21:35 +0800
-Message-Id: <20200729132136.11134-1-chao@kernel.org>
-X-Mailer: git-send-email 2.22.0
+ s=default; t=1596039705;
+ bh=kU7UT3i0MXW7gqzbaCFlt/VbDV/ZBUwOIl76CXUqX2c=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=Byo40t5PhbmfTgovNn4pTryjQyJPinICU2cOtioUZM9MofRtpmqMkeY+Cri6Gb+R9
+ uKjxjiG4JQdUMbNG1WjF+crg9tQ8vQvJ0hDGyKOcWMtTP/Vy6nk9OYz2qE8gy+vo6Q
+ z5/2p7KaXf1M0R8ovcuf5rS/UWswH3NSXXsA9NKI=
+Date: Wed, 29 Jul 2020 09:21:44 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <20200729162144.GA1460954@google.com>
+References: <20200729070244.584518-1-jaegeuk@kernel.org>
+ <054f161c-05db-73b7-3d83-be7addcd6015@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1k0m2e-003EaC-4v
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: compress: add sanity check during
- compressed cluster read
+Content-Disposition: inline
+In-Reply-To: <054f161c-05db-73b7-3d83-be7addcd6015@kernel.org>
+X-Headers-End: 1k0oq5-006KP1-UY
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix deadlock between quota writes and
+ checkpoint
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,41 +88,68 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On 07/29, Chao Yu wrote:
+> On 2020-7-29 15:02, Jaegeuk Kim wrote:
+> > f2fs_write_data_pages(quota_mapping)
+> >  __f2fs_write_data_pages             f2fs_write_checkpoint
+> >   * blk_start_plug(&plug);
+> >   * add bio in write_io[DATA]
+> >                                       - block_operations
+> >                                       - skip syncing quota by
+> >                                                 >DEFAULT_RETRY_QUOTA_FLUSH_COUNT
+> >                                       - down_write(&sbi->node_write);
+> >   - f2fs_write_single_data_page
+> 
+> After commit 79963d967b49 ("f2fs: shrink node_write lock coverage"),
+> node_write lock was moved to f2fs_write_single_data_page() and
+> f2fs_write_compressed_pages().
+> 
+> So it needs to update the callstack.
+> 
+> - down_write(node_write)
 
-In f2fs_read_multi_pages(), we don't have to check cluster's type
-again, since overwrite or partial truncation need page lock in
-cluster which has already been held by reader, so cluster's type
-is stable, let's change check condition to sanity check.
+Yeah, applied. :)
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index bc89bc987513..c1b676be67b9 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2170,9 +2170,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 	if (ret)
- 		goto out;
- 
--	/* cluster was overwritten as normal cluster */
--	if (dn.data_blkaddr != COMPRESS_ADDR)
--		goto out;
-+	f2fs_bug_on(sbi, dn.data_blkaddr != COMPRESS_ADDR);
- 
- 	for (i = 1; i < cc->cluster_size; i++) {
- 		block_t blkaddr;
--- 
-2.22.0
-
+> 
+> Otherwise it looks good to me.
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
+> Thanks,
+> 
+> >     - f2fs_do_write_data_page
+> >       - f2fs_outplace_write_data
+> >         - do_write_page
+> >            - f2fs_allocate_data_block
+> >             - down_write(node_write)
+> >                                       - f2fs_wait_on_all_pages(F2FS_WB_CP_DATA);
+> > 
+> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/checkpoint.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index 8c782d3f324f0..99c8061da55b9 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -1269,6 +1269,8 @@ void f2fs_wait_on_all_pages(struct f2fs_sb_info *sbi, int type)
+> >  		if (type == F2FS_DIRTY_META)
+> >  			f2fs_sync_meta_pages(sbi, META, LONG_MAX,
+> >  							FS_CP_META_IO);
+> > +		else if (type == F2FS_WB_CP_DATA)
+> > +			f2fs_submit_merged_write(sbi, DATA);
+> >  		io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+> >  	}
+> >  	finish_wait(&sbi->cp_wait, &wait);
+> > 
 
 
 _______________________________________________
