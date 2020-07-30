@@ -2,79 +2,69 @@ Return-Path: <SRS0=xc4u=BJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=BAYES_40,DKIM_INVALID,
+	DKIM_SIGNED,FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6796C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Jul 2020 07:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A03DC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Jul 2020 19:20:26 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 98AE2204EA;
-	Thu, 30 Jul 2020 07:10:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EAED220829;
+	Thu, 30 Jul 2020 19:20:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YP6wvUg8";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="RzqebYVx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98AE2204EA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="m4KkTyss";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="boQBLaVj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAED220829
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mirdoraghi.ir
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1k12hk-0001Gm-B9; Thu, 30 Jul 2020 07:10:16 +0000
+	id 1k1E6K-0003dE-1J; Thu, 30 Jul 2020 19:20:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1k12hi-0001GW-5w
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Jul 2020 07:10:14 +0000
+ (envelope-from <sm@mirdoraghi.ir>) id 1k1E6J-0003d7-2a
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Jul 2020 19:20:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Reply-To:Date:From:To:Subject:Content-Description:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Message-ID:Cc:
+ Content-ID:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:
+ Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Cns8VwXC3G+xOeT0UZKsW6Sof1reNIDL6lvhwO4+GIk=; b=YP6wvUg8wf2kSNJA3a1W1tgqHG
- NidoxT2fkwcJfJoW6EHDEhPtPsW55Wq+OzGXsE1JJERU6hYP08J6RZ8Gg/1JpDUOXaE2nWrpfhE1k
- TcR9yZt/aWbXE1DucmQCrP8whbz8CFkGXe24raL4P20hUC//4zDx0MJl9ibyGD8oca5s=;
+ bh=x2sUyHyMlYiY+SqcgExGcb1cT8rLtpfsXc+JnPDKJmQ=; b=m4KkTyssizlF9Velre5/+sI9pl
+ yun/ZiAxLRt3qDFb1rRz5H48RufQg4BNktwDeQBlXUDVfmwv+dqXKmqOUr+phVa/UWbPVnH4AGDBJ
+ 5DakrP9dX6vlHQz8pkCl222ool6U4VzP5XkO21XYugMQfOqQh0FKeStRH0HiVN6G9bVc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Cns8VwXC3G+xOeT0UZKsW6Sof1reNIDL6lvhwO4+GIk=; b=RzqebYVxdFQ4gtaj2VkWbBcJwD
- gst+3elD2ErOQIKcR9dWZbaIEgrj3TtgIMf6IC5oHBrAxgK5GLIWb+r9D/pcsIPpf8R+z9TWJgp3Z
- 3obMiVEvVAHO8W3KhxlOZZ97UVkyzCvCINWoSQ+ETPrQEAHnJemBh8nUzNMtIteDNvtU=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ ; h=Reply-To:Date:From:To:Subject:Content-Description:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Message-ID:Cc:
+ Content-ID:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:
+ Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=x2sUyHyMlYiY+SqcgExGcb1cT8rLtpfsXc+JnPDKJmQ=; b=boQBLaVj2FDhRiEKRNpRc6KQZa
+ DkwWgXn4dWTOE9PGflvboMhQbyC3OlToicGhWlFQffRp5sKX0YjUgn/dpKF6tIo5M4Dy2x2WEc2ir
+ Uqc38QAoKGAFcj4aXmK2BQwlfm+0rGUl7N4eAIA8BuzTbHBgR2dMgtM0JRpb/grd+azI=;
+Received: from static.76.64.203.116.clients.your-server.de ([116.203.64.76]
+ helo=mirdoraghi.ir) by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1k12hg-00EPaN-Ce
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Jul 2020 07:10:14 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 02941ECF4156EA5097E8
+ id 1k1E6H-00F4mN-PG
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 30 Jul 2020 19:20:23 +0000
+Received: from [172.20.10.3] (128.80.136.77.rev.sfr.net [77.136.80.128])
+ by mirdoraghi.ir (Postfix) with ESMTPA id D59BDAB9CF
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 30 Jul 2020 15:09:49 +0800 (CST)
-Received: from [10.164.122.247] (10.164.122.247) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 30 Jul
- 2020 15:09:41 +0800
-To: Jack Qiu <jack.qiu@huawei.com>, <linux-f2fs-devel@lists.sourceforge.net>
-References: <20200729012901.29151-1-jack.qiu@huawei.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <545a37a5-e0d6-6d81-61d3-a3d96baea1e7@huawei.com>
-Date: Thu, 30 Jul 2020 15:09:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thu, 30 Jul 2020 20:42:29 +0200 (CEST)
 MIME-Version: 1.0
-In-Reply-To: <20200729012901.29151-1-jack.qiu@huawei.com>
-Content-Language: en-US
-X-Originating-IP: [10.164.122.247]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1k12hg-00EPaN-Ce
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: use macro instead of f2fs verity
- version
+Content-Description: Mail message body
+To: linux-f2fs-devel@lists.sourceforge.net
+From: "James kenneth" <sm@mirdoraghi.ir>
+Date: Thu, 30 Jul 2020 20:42:29 +0200
+X-Antivirus: Avast (VPS 200730-2, 30/07/2020), Outbound message
+X-Antivirus-Status: Clean
+X-Headers-End: 1k1E6H-00F4mN-PG
+Subject: [f2fs-dev] BUSINESS PROPOSAL
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,19 +76,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Reply-To: trustfinance1994@outlook.com
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Message-Id: <E1k1E6K-0003dE-1J@sfs-ml-1.v29.lw.sourceforge.com>
 
-On 2020/7/29 9:29, Jack Qiu wrote:
-> Because fsverity_descriptor_location.version is constant,
-> so use macro for better reading.
-> 
-> Signed-off-by: Jack Qiu<jack.qiu@huawei.com>
+Hello, =
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+     Apply for a loan, at a 3% interest rate.
 
-Thanks,
+    Do you need a personal loan?
+    Do you need a business loan?
+    Do you need a consolidation loan? =
+
+    Do you need a secure loan?
+    Do you need an unsecured loan?
+    Do you need a mortgage loan?
+    Do you need a pay off debt loan?
+    Do you need a project loan?
+    Do you need a student loan?
+       =
+
+Whatever loan that you are looking for, kindly send us a mail:  (trustfinan=
+ce1994@outlook.com)
+
+Mr. James kenneth
+Managing Director
+
+-- =
+
+L'absence de virus dans ce courrier =E9lectronique a =E9t=E9 v=E9rifi=E9e p=
+ar le logiciel antivirus Avast.
+https://www.avast.com/antivirus
+
 
 
 _______________________________________________
