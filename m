@@ -1,79 +1,94 @@
-Return-Path: <SRS0=rqvk=BR=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=E0H7=BT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB187C433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 Aug 2020 02:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D189C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  9 Aug 2020 08:11:53 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A6F9B2177B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 Aug 2020 02:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3AE8C206C0
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  9 Aug 2020 08:11:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="eKk4yLRx";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="g/oQrKqd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6F9B2177B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="dZwLLZo3";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HC8xepLz";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bkkHn0A1";
+	dkim=neutral (0-bit key) header.d=aliyun.com header.i=@aliyun.com header.b="l+JhuNol"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE8C206C0
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:In-Reply-To:References:MIME-Version:
+	Message-ID:To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=F7wGIYhd3ptdvuk7mf0ctFtVG+4JjUWYmjKc2U2fN6Y=; b=dZwLLZo36oSaDT/3X1yUkEOga
+	VUNfX7ABsYveRLbNzG5fPc2PzESs5kZSbATTtJJWnn2vUDLXOnlEXAGfsmN6GuLqZXJEp2Tb+98pf
+	/HeyIaw8iKAwG0je8lKuU5FyugEWJU7+TeYmpjmBtaioGOG4B0TvxfjletyRcfxh/1tUA=;
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1k3rrG-0001Wi-7A; Fri, 07 Aug 2020 02:11:46 +0000
+	id 1k4gQo-00044G-97; Sun, 09 Aug 2020 08:11:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1k3rrE-0001WX-8Z
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 07 Aug 2020 02:11:44 +0000
+ (envelope-from <fishland@aliyun.com>) id 1k4gQm-00043r-LE
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 09 Aug 2020 08:11:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ References:MIME-Version:Subject:Message-ID:Reply-To:Cc:To:From:Date:Sender:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CbJf+XZuvAId6uHZgKXJ68UcAvvGfq3Vh65G5VXpPZM=; b=eKk4yLRxJzGINKVqnaH0ssbcGJ
- fo42RrOxRr3u6M4kr8GJQwqc7zJuFF6bEsN/4xhwz+rtHrHU0lhou/JYGVG1OIAxTAuBtCEWumKWo
- 98Vz0ikC1eX7rkfiM1qRlkzR2uYGHGGIAmxwWjfvggWOxgKICz0l8MXt3xxkdT1kIQxE=;
+ bh=WaWrPpi24z4JBZmLtbHgcGUuOU6VQ5inLugH4jU6A1o=; b=HC8xepLzywI6fv/ky6d8BJFLaE
+ t/6wNe8Y9mG6zHWJ/ss3GC7ny10470AlHVHCUtmqQluuw+eBwu23KNKTUAFwxytLsHTMe3WdSLx+Z
+ r7Dpz8+meeHtrd6d7aRUd4Vy1Ma91VHgEU0RGYhssZFj9MFLaQ2mEAbcekZQlKm6bVm8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+ MIME-Version:Subject:Message-ID:Reply-To:Cc:To:From:Date:Sender:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=CbJf+XZuvAId6uHZgKXJ68UcAvvGfq3Vh65G5VXpPZM=; b=g/oQrKqdWOXib66zpkjlEfcXMq
- aia7cY3XvhksBaK1S96tbUsoIx4f1uU8oET+rKHloRvKwjMc0RwgyTyjMv2aCDrb2XqY1xJ/xlSxv
- oGOv3NJlugLAmkJR8A0IXmuA4BNCmzzqE0t3udREkDqSAXoQ/wwnvZkOWyfQuoZI453U=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=WaWrPpi24z4JBZmLtbHgcGUuOU6VQ5inLugH4jU6A1o=; b=bkkHn0A1tsEvSw4XIVm+Od7H5R
+ 7WUS94imSlQ7G+mCB0IQEYA/XkBAOOr91pOMs0JR7d8C2D0pIaztfhzCGcj38ov2dmeesEPLhaeTH
+ VubNCK5tlAWsPtn0g2aBuuZX9K0ehoKZ4FlAewb7BmCnuhUbv8Y/vcQz7B2ftQSUvh2Y=;
+Received: from out30-50.freemail.mail.aliyun.com ([115.124.30.50])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1k3rrC-00F8tk-7y
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 07 Aug 2020 02:11:44 +0000
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
- by Forcepoint Email with ESMTP id 66EEC3AA4F0D1AE01613;
- Fri,  7 Aug 2020 10:11:24 +0800 (CST)
-Received: from [10.164.122.247] (10.164.122.247) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.487.0; Fri, 7 Aug 2020
- 10:11:23 +0800
-To: Liu Song <fishland@aliyun.com>, <jaegeuk@kernel.org>, <chao@kernel.org>
-References: <20200806150317.34618-1-fishland@aliyun.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <ea87263e-57d9-7521-6094-9aa7e1796f07@huawei.com>
-Date: Fri, 7 Aug 2020 10:11:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1k4gQj-00BwF4-N2
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 09 Aug 2020 08:11:48 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aliyun.com; s=s1024;
+ t=1596960698; h=Date:From:To:Message-ID:Subject:MIME-Version:Content-Type;
+ bh=WaWrPpi24z4JBZmLtbHgcGUuOU6VQ5inLugH4jU6A1o=;
+ b=l+JhuNolBIypYHO8D2gXv4Ol2AOE4SQ3SUBcAnkwqDQtAkFcMr6uEyzKHDTSwWrKAEGP3m8nAtIfFvYnB5mjMi3ZRlkSHOP3t7opwDnnnyBwWyZ4ocrCHsV2Eu2X+yJ+1BJ51V3dCRYXVISO/YAiox+gw+KL8BOGLmklpUUWIL8=
+X-Alimail-AntiSpam: AC=CONTINUE; BC=0.08215642|-1; CH=green;
+ DM=|CONTINUE|false|; DS=CONTINUE|ham_alarm|0.0177874-0.00216376-0.980049;
+ FP=0|0|0|0|0|-1|-1|-1; HT=e01e04407; MF=fishland@aliyun.com; NM=1; PH=DW; RN=6;
+ RT=6; SR=0; TI=W4_5948689_v5_0AB101C3_1596960565318_o7001c78q; 
+Received: from WS-web
+ (fishland@aliyun.com[W4_5948689_v5_0AB101C3_1596960565318_o7001c78q]) by
+ e01e01422.eu6 at Sun, 09 Aug 2020 16:11:37 +0800
+Date: Sun, 09 Aug 2020 16:11:37 +0800
+To: "Chao Yu" <yuchao0@huawei.com>, "jaegeuk" <jaegeuk@kernel.org>,
+ "chao" <chao@kernel.org>
+Message-ID: <f8bbac05-8b27-463b-9681-92a7ce127410.fishland@aliyun.com>
+X-Mailer: [Alimail-Mailagent][W4_5948689][v5][Chrome]
 MIME-Version: 1.0
-In-Reply-To: <20200806150317.34618-1-fishland@aliyun.com>
-Content-Language: en-US
-X-Originating-IP: [10.164.122.247]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1k3rrC-00F8tk-7y
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove unnecessary judgment in
- f2fs_drop_inode
+References: <20200806150317.34618-1-fishland@aliyun.com>,
+ <ea87263e-57d9-7521-6094-9aa7e1796f07@huawei.com>
+x-aliyun-mail-creator: W4_5948689_v5_AoSTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV09XNjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS84NC4wLjQxNDcuMTA1IFNhZmFyaS81MzcuMzY=zN
+In-Reply-To: <ea87263e-57d9-7521-6094-9aa7e1796f07@huawei.com>
+X-Headers-End: 1k4gQj-00BwF4-N2
+Subject: Re: [f2fs-dev] 
+ =?utf-8?q?=5BPATCH=5D_f2fs=3A_remove_unnecessary_judg?=
+ =?utf-8?q?ment_in_f2fs=5Fdrop=5Finode?=
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,43 +100,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net, liu.song11@zte.com.cn,
- linux-kernel@vger.kernel.org
+From: fishland via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: fishland <fishland@aliyun.com>
+Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>,
+ "liu.song11" <liu.song11@zte.com.cn>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/8/6 23:03, Liu Song via Linux-f2fs-devel wrote:
-> From: Liu Song <liu.song11@zte.com.cn>
-> 
-> Inode hash has been removed in "make_bad_inode". If inode_unhashed
-> is false, it must not be a bad inode.
-> 
-> Signed-off-by: Liu Song <liu.song11@zte.com.cn>
-> ---
->   fs/f2fs/super.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 20e56b0fa46a..ee01d15effe3 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1043,7 +1043,7 @@ static int f2fs_drop_inode(struct inode *inode)
->   	 *       - inode_wait_for_writeback(inode)
->   	 */
->   	if ((!inode_unhashed(inode) && inode->i_state & I_SYNC)) {
+>> From: Liu Song <liu.song11@zte.com.cn>
+>> 
+>> Inode hash has been removed in "make_bad_inode". If inode_unhashed
+>> is false, it must not be a bad inode.
+>> 
+>> Signed-off-by: Liu Song <liu.song11@zte.com.cn>
+>> ---
+>>   fs/f2fs/super.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 20e56b0fa46a..ee01d15effe3 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -1043,7 +1043,7 @@ static int f2fs_drop_inode(struct inode *inode)
+>>     *       - inode_wait_for_writeback(inode)
+>>     */
+>>    if ((!inode_unhashed(inode) && inode->i_state & I_SYNC)) {
+>
+>Since logic of "bad inode should be removed from hash" is not controlled by
+>f2fs, so let's add below condition to make sure the rule of vfs is as it is.
 
-Since logic of "bad inode should be removed from hash" is not controlled by
-f2fs, so let's add below condition to make sure the rule of vfs is as it is.
+Very reasonable, thank you for your reply :D
 
-f2fs_bug_on(sbi, is_bad_inode(inode));
+Thanks
+Liu Song
 
-> -		if (!inode->i_nlink && !is_bad_inode(inode)) {
-> +		if (!inode->i_nlink) {
->   			/* to avoid evict_inode call simultaneously */
->   			atomic_inc(&inode->i_count);
->   			spin_unlock(&inode->i_lock);
-> 
+>
+>f2fs_bug_on(sbi, is_bad_inode(inode));
+>
+>> -  if (!inode->i_nlink && !is_bad_inode(inode)) {
+>> +  if (!inode->i_nlink) {
+>>      /* to avoid evict_inode call simultaneously */
+>>      atomic_inc(&inode->i_count);
+>>      spin_unlock(&inode->i_lock);
+>>
 
 
 _______________________________________________
