@@ -3,94 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3310C433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2020 08:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C89B5C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Aug 2020 20:18:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id ABDB1206B2;
-	Fri, 14 Aug 2020 08:16:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 89B2720768;
+	Fri, 14 Aug 2020 20:18:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KtD/nxD7";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TbAKlP0c";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="KvWq3ndV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABDB1206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="dTu8FnHN";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Z2fWVj+P";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYsa9io3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B2720768
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1k6UtC-0002E3-Cc; Fri, 14 Aug 2020 08:16:38 +0000
+	id 1k6g9i-00009w-At; Fri, 14 Aug 2020 20:18:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <bounce+103f7e.be9e4a-linux-f2fs-devel=lists.sourceforge.net@mg.codeaurora.org>)
- id 1k6UtB-0002Dx-8y
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 14 Aug 2020 08:16:37 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1k6g9g-00009U-MU
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 14 Aug 2020 20:18:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
- MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6d/qFv3cEZlLIhaVDTxHzAfM/r1caVHTV4qP/SQRLr8=; b=KtD/nxD7O++URTh45+rQGyXrLd
- 20VERiVUHmDkxDGpycmgFbU4Oq/dmKkX1T86cakf5uSEXIIg6OdsqF1FHrouPTClSSlyZ2gzJgVqS
- mCZHaARIEOLVf3JhydrKBb5upnL+WIbBhawT9CJ4Q3KY11ZeNfx5gbdYhwau3huDkBNQ=;
+ bh=fDrl6XXaol/OU+6KwIGrPwkuER1yuw4jrp90QVk3f+E=; b=dTu8FnHNoQiTzmjx8sngrLnjxB
+ ajcy6qzDjpLAPdeStStyAN+jngaTGUmCUo9DGZzRTyrLTn83mFw0mxFt23/zHL2dTyZ8gTg3AUloL
+ OhBDBcBHPjHa5HQrNPg/tIyFDTsF7x8KdD/hJfrA6wUtYPSP/cXBP7f2OH8Ju+5rfGPo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:
- Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=6d/qFv3cEZlLIhaVDTxHzAfM/r1caVHTV4qP/SQRLr8=; b=TbAKlP0cJaNYCXlVoVyiAeeE+U
- DGuhewJqfQqziHvp2s4nyOOp6WRve05M8PcwrbJ25/u5LxeFDoqE0YnhRBqvIiwZAKNngaxlsSDXg
- j+ntm+9TP8RI7/ByaW+2wzZ+NlZgwPXBa7QsAUPZArifDRzHuEyRZN+FWgz/9jq2GwHw=;
-Received: from m43-7.mailgun.net ([69.72.43.7])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1k6Ut8-00BFX0-GM
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 14 Aug 2020 08:16:37 +0000
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
- q=dns/txt; 
- s=smtp; t=1597392995; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=6d/qFv3cEZlLIhaVDTxHzAfM/r1caVHTV4qP/SQRLr8=;
- b=KvWq3ndVrsMCLjyRVB3jNgadajbVZ0YWIKTt8CCOD6Y5N5zoYy1+X8awGGsaMsSU1A8yTQcF
- IVVN/KDSQYwkQ/aQhQM4KFK8mNJygfPyy3j2Wd8V+QVirx+Kx8cWihvLLaJv7ohjWBW85L4D
- tCnO3V7N9m2FD08sBbN9dBeqH6I=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI2M2Y4ZiIsICJsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
- 5f3645e74c787f237bef49be (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 14 Aug 2020 08:05:59
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
- id 95F62C43391; Fri, 14 Aug 2020 08:05:58 +0000 (UTC)
-Received: from codeaurora.org (unknown [202.46.22.19])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
- (No client certificate requested) (Authenticated sender: stummala)
- by smtp.codeaurora.org (Postfix) with ESMTPSA id 58009C433C6;
- Fri, 14 Aug 2020 08:05:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 58009C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- spf=none smtp.mailfrom=stummala@codeaurora.org
-From: Sahitya Tummala <stummala@codeaurora.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
- linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 14 Aug 2020 13:35:35 +0530
-Message-Id: <1597392335-4998-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-X-Headers-End: 1k6Ut8-00BFX0-GM
-Subject: [f2fs-dev] [PATCH] f2fs: fix indefinite loop scanning for free nid
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=fDrl6XXaol/OU+6KwIGrPwkuER1yuw4jrp90QVk3f+E=; b=Z
+ 2fWVj+PDgBBXlcqaWLylFKDbdSs6J0m7CElq0pmw4FyC7noudJFZNOaW/KauKZFpZWQvQKO7Wg/tI
+ /H8ii7xHo55Ol2XosurIh2grFRFVdsHWnaRSrJIbMWvAA96OkyWs5PpDowWmpaKaEYtvgGGj8IXqP
+ GOJOTn49AfJfMqGs=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1k6g9a-00Eb1v-Nv
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 14 Aug 2020 20:18:24 +0000
+Received: from localhost (unknown [104.132.1.66])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 4618320768;
+ Fri, 14 Aug 2020 20:18:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1597436293;
+ bh=LHpYN13MSqprTmN0FRfF6cmVeafn5vcjng9yZ8PeqaU=;
+ h=From:To:Cc:Subject:Date:From;
+ b=UYsa9io3/Se/HAJuHdHOFJvgpkhXmdc4JhUooSfwygEkqNsydTbAeNWsmyB0XTZm5
+ /65jx+N1zICXWPSonQt9Vqo7Fgnq4BjjfWfZ+FlAnjdZx8GadjYjHsbD8hL6wAtAWR
+ yk+phiM3PZ9Ipo9Gd0kPSx4f8Nxv6Ly1W47JdjpQ=
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 14 Aug 2020 13:18:11 -0700
+Message-Id: <20200814201811.702661-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.28.0.220.ged08abb693-goog
+MIME-Version: 1.0
+X-Headers-End: 1k6g9a-00Eb1v-Nv
+Subject: [f2fs-dev] [PATCH] f2fs_io: measure performance of write()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,47 +84,86 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org
-MIME-Version: 1.0
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If the sbi->ckpt->next_free_nid is not NAT block aligned and if there
-are free nids in that NAT block between the start of the block and
-next_free_nid, then those free nids will not be scanned in scan_nat_page().
-This results into mismatch between nm_i->available_nids and the sum of
-nm_i->free_nid_count of all NAT blocks scanned. And nm_i->available_nids
-will always be greater than the sum of free nids in all the blocks.
-Under this condition, if we use all the currently scanned free nids,
-then it will loop forever in f2fs_alloc_nid() as nm_i->available_nids
-is still not zero but nm_i->free_nid_count of that partially scanned
-NAT block is zero.
-
-Fix this to align the nm_i->next_scan_nid to the first nid of the
-corresponding NAT block.
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/node.c | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/f2fs_io/f2fs_io.c | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 9bbaa26..d615e59 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2402,6 +2402,8 @@ static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
- 			if (IS_ERR(page)) {
- 				ret = PTR_ERR(page);
- 			} else {
-+				if (nid % NAT_ENTRY_PER_BLOCK)
-+					nid = NAT_BLOCK_OFFSET(nid) * NAT_ENTRY_PER_BLOCK;
- 				ret = scan_nat_page(sbi, page, nid);
- 				f2fs_put_page(page, 1);
- 			}
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index 70a077a..6177d29 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -130,6 +130,25 @@ static void full_write(int fd, const void *buf, size_t count)
+ 	}
+ }
+ 
++#if defined(__APPLE__)
++static u64 get_current_us()
++{
++#ifdef HAVE_MACH_TIME_H
++	return mach_absolute_time() / 1000;
++#else
++	return 0;
++#endif
++}
++#else
++static u64 get_current_us()
++{
++	struct timespec t;
++	t.tv_sec = t.tv_nsec = 0;
++	clock_gettime(CLOCK_BOOTTIME, &t);
++	return (u64)t.tv_sec * 1000000LL + t.tv_nsec / 1000;
++}
++#endif
++
+ #define fsync_desc "fsync"
+ #define fsync_help						\
+ "f2fs_io fsync [file]\n\n"					\
+@@ -434,6 +453,7 @@ static void do_write(int argc, char **argv, const struct cmd_desc *cmd)
+ 	unsigned bs, count, i;
+ 	int flags = 0;
+ 	int fd;
++	u64 total_time = 0, max_time = 0, max_time_t = 0;
+ 
+ 	srand(time(0));
+ 
+@@ -468,6 +488,7 @@ static void do_write(int argc, char **argv, const struct cmd_desc *cmd)
+ 
+ 	fd = xopen(argv[6], O_CREAT | O_WRONLY | flags, 0755);
+ 
++	total_time = get_current_us();
+ 	for (i = 0; i < count; i++) {
+ 		if (!strcmp(argv[4], "inc_num"))
+ 			*(int *)buf = inc_num++;
+@@ -475,13 +496,20 @@ static void do_write(int argc, char **argv, const struct cmd_desc *cmd)
+ 			*(int *)buf = rand();
+ 
+ 		/* write data */
++		max_time_t = get_current_us();
+ 		ret = pwrite(fd, buf, buf_size, offset + buf_size * i);
++		max_time_t = get_current_us() - max_time_t;
++		if (max_time < max_time_t)
++			max_time = max_time_t;
+ 		if (ret != buf_size)
+ 			break;
+ 		written += ret;
+ 	}
+ 
+-	printf("Written %"PRIu64" bytes with pattern=%s\n", written, argv[4]);
++	printf("Written %"PRIu64" bytes with pattern=%s, total_time=%"PRIu64" us, max_latency=%"PRIu64" us\n",
++				written, argv[4],
++				get_current_us() - total_time,
++				max_time);
+ 	exit(0);
+ }
+ 
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.28.0.220.ged08abb693-goog
 
 
 
