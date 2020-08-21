@@ -1,80 +1,79 @@
-Return-Path: <SRS0=adi4=B6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=Tg9B=B7=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF64CC433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Aug 2020 16:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9AA5C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Aug 2020 01:37:42 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 838AE2072D
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 20 Aug 2020 16:14:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 873132075E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Aug 2020 01:37:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="QbHtkM4g";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="AwexrfMY";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxxGeEcR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 838AE2072D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AEURVSZi";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="lUmgfQnp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 873132075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1k8nCa-0001f5-4Z; Thu, 20 Aug 2020 16:14:08 +0000
+	id 1k8vzw-0003hl-Fl; Fri, 21 Aug 2020 01:37:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1k8nCY-0001eq-KJ
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Aug 2020 16:14:06 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1k8vzu-0003hd-S6
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Aug 2020 01:37:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=O3oHFqZU1XlIyDoXJ5Eacn0vCBlnMiEPFl+Lk35kd5s=; b=QbHtkM4g26cxsSXGgOALkaJv0p
- CmqnECYG64hPQzx76Jlm9vrUOPNFfIELzKkr2NRT2K7gSBDGLr+EqA8CSF2XvetZKRkVyCEgg0rIe
- OW2gra1voyysHua9584mzhB+p76hlONYLw20HZC8DcRNo3EhT1p8fDL5i9rz4k3hAgOI=;
+ bh=UVwm9Xlt022Y2IC/bNGgy+xn39IgTZy+/vFNyeAQKWQ=; b=AEURVSZirHHiWYSuH58S2Lag3v
+ 4RRSoOrOHAQbTTZdOcVTYWGVivr9UflB9wx2Zbfk3a0SDd+4iSla7wxRQZowUtUcn5jbfwRjZ4Uki
+ kBDoT3tDNBHuSJU0tNgMaHJkyylHpx7YZVeKWgMdLzSJp86ChftnKyVBdYn/9c4UH/MI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=O3oHFqZU1XlIyDoXJ5Eacn0vCBlnMiEPFl+Lk35kd5s=; b=AwexrfMYXN1iJags5eJVB2/M9j
- Ze9UeQB/vI0y7AyIppl23HnuweaDPGsldb/Yw9BbaUTPXGn3JnE9VJh0Hp4mFFLalcE0ZBix5qHRV
- GimsSAXALzwkG0bxpr+Euqitt7b5C4J61Wq/rJftheQmlSeguHrNl0vHaENW9y5fB+mE=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=UVwm9Xlt022Y2IC/bNGgy+xn39IgTZy+/vFNyeAQKWQ=; b=lUmgfQnpSvcqxbmIhU5o34JwAz
+ xaMlYa0Sd5hmxjz0zPRH1Ze8s0dZmd2TC8ScM6LzQkj8hTnnPi1UUpO79F3bc1wqW2pg/tZS4EkLC
+ oLGZWhrz/8iaqFXPBLaXN3NHnYeQAXEYNH5Inoe5G4JOMw3o1Xc8ghXMWXPFILdvx/u0=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1k8nCX-00Ddzy-G6
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 20 Aug 2020 16:14:06 +0000
-Received: from localhost (unknown [104.132.1.66])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 0B0E52072D;
- Thu, 20 Aug 2020 16:14:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1597940040;
- bh=inkVScu8YnKW3Kj0Rfpvc2K7aHPX6KN8CibER59mPLQ=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=sxxGeEcRfnwmJsuNNrTDEE+A1l8deIPxTlbxMr1/Ar3BlerSBgFtdGkOf4fWdkniC
- WQQa2qabyiQRBWWWB6Y/NGw6bPC+E9Umpdz0puGiqXG96sVrkYwIkni/IrBZ44hEaI
- TxmFbqY/5afDE/jc4evMaVg9y1WjFfmCGTwcjgrQ=
-Date: Thu, 20 Aug 2020 09:13:59 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Gabriel Krisman Bertazi <krisman@collabora.com>
-Message-ID: <20200820161359.GB2375181@google.com>
+ id 1k8vzs-00E2NR-Jd
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 Aug 2020 01:37:38 +0000
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 1D640FABB2D3D12F11C1;
+ Fri, 21 Aug 2020 09:37:25 +0800 (CST)
+Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.487.0; Fri, 21 Aug
+ 2020 09:37:20 +0800
+To: Gabriel Krisman Bertazi <krisman@collabora.com>,
+ <viro@zeniv.linux.org.uk>, <jaegeuk@kernel.org>, <chao@kernel.org>
 References: <20200819200731.2972195-1-krisman@collabora.com>
  <20200819200731.2972195-3-krisman@collabora.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <1c036ee5-a864-f50d-d439-e2d520e18b32@huawei.com>
+Date: Fri, 21 Aug 2020 09:37:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
 In-Reply-To: <20200819200731.2972195-3-krisman@collabora.com>
-X-Headers-End: 1k8nCX-00Ddzy-G6
+Content-Language: en-US
+X-Originating-IP: [10.136.114.67]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1k8vzs-00E2NR-Jd
 Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: Return EOF on unaligned end of
  file DIO read
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -89,18 +88,12 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-fsdevel@vger.kernel.org, kernel@collabora.com,
- viro@zeniv.linux.org.uk, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Gabriel,
-
-Thank you for the patch. Let me take this separately from the patch set.
-
-Thanks,
-
-On 08/19, Gabriel Krisman Bertazi wrote:
+On 2020/8/20 4:07, Gabriel Krisman Bertazi wrote:
 > Reading past end of file returns EOF for aligned reads but -EINVAL for
 > unaligned reads on f2fs.  While documentation is not strict about this
 > corner case, most filesystem returns EOF on this case, like iomap
@@ -112,38 +105,22 @@ On 08/19, Gabriel Krisman Bertazi wrote:
 > following code fails on an unaligned file on f2fs, but not on
 > btrfs, ext4, and xfs.
 > 
->   while (done < total) {
->     ssize_t delta = pread(fd, buf + done, total - done, off + done);
->     if (!delta)
->       break;
->     ...
->   }
+>    while (done < total) {
+>      ssize_t delta = pread(fd, buf + done, total - done, off + done);
+>      if (!delta)
+>        break;
+>      ...
+>    }
 > 
 > It is arguable whether filesystems should actually return EOF or
 > -EINVAL, but since iomap filesystems support it, and so does the
 > original DIO code, it seems reasonable to consolidate on that.
 > 
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> ---
->  fs/f2fs/data.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 5f527073143e..d9834ffe1da9 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3510,6 +3510,9 @@ static int check_direct_IO(struct inode *inode, struct iov_iter *iter,
->  	unsigned long align = offset | iov_iter_alignment(iter);
->  	struct block_device *bdev = inode->i_sb->s_bdev;
->  
-> +	if (iov_iter_rw(iter) == READ && offset >= i_size_read(inode))
-> +		return 1;
-> +
->  	if (align & blocksize_mask) {
->  		if (bdev)
->  			blkbits = blksize_bits(bdev_logical_block_size(bdev));
-> -- 
-> 2.28.0
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
 
 
 _______________________________________________
