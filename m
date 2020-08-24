@@ -1,85 +1,82 @@
-Return-Path: <SRS0=WgEi=CB=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=HdqB=CC=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2259C433E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 23 Aug 2020 16:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F1FC433E3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2020 06:35:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 72B442074D;
-	Sun, 23 Aug 2020 16:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id CA67922CF6;
+	Mon, 24 Aug 2020 06:18:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="h73PdJgB";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cvbS7MPY";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=slint.fr header.i=@slint.fr header.b="L0VIgiJ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B442074D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=slint.fr
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mllIKYDA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="T7zY19bC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOFOzAVN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA67922CF6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1k9sbW-0001sK-RJ; Sun, 23 Aug 2020 16:12:22 +0000
+	id 1kA5od-0000we-P1; Mon, 24 Aug 2020 06:18:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <didier@slint.fr>) id 1k9sbV-0001sC-EO
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 23 Aug 2020 16:12:21 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kA5oZ-0000wE-Ac
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Aug 2020 06:18:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bRc3W0Qk2p7CYsgQhUGCoq9KkdlVhBZZI7iJGoQrzsE=; b=h73PdJgBZvE1SVmFzjlbLRkSMY
- RYLH0ai4W5uHSbYU0z/qASwMA324LCZrfIoGCSty+nHhMnyf3Gi++p6ZPSuEnNievbpRiyvargAwW
- 8a4G4luJDqSmXfCCK4lWJjk6p49Bx6eDmm5hOyhKTrPoERP2QqcdPNaYkldK5ug6hwOo=;
+ bh=mYqKmrJ4535Zk7fLSph2muuBwBxLAybsRAMYE+GByN8=; b=mllIKYDASF5ULgkMIlTqjTWqNZ
+ RYM+fP8xdRhu/hX/5oq0KHB8NHFuwm29fgfy/k+4YoArQS/mh+6/hSmSpbA1Ow8pAzzUNWmdfrvt6
+ tpVKLJaoCOXjN4qlgrPDYHrwBcbzxMHP5RNA/+DZ5rQMAKy46/QWxSWzsAtVKJqhZx7I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=bRc3W0Qk2p7CYsgQhUGCoq9KkdlVhBZZI7iJGoQrzsE=; b=cvbS7MPY3bb6SFhz0koROC2arg
- 9RB6O3Rtepp0miw7DQ+1bMBKhczmKqCIUhTUAdncLhU6eDOahg9guzCRcgKvgV+7h5X1tzAuRwOK7
- Gm6BP1XcjSjdWhAhKRnjDONUgQAGx7nAV0LPCdBKHATt8GbbGtkkg93yUikuCLg8EJyc=;
-Received: from darkstar.slint.fr ([172.105.89.79])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.92.2)
- id 1k9sbS-00GIhd-VW
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 23 Aug 2020 16:12:21 +0000
-Received: from ici.slint.fr (men75-h08-176-172-247-100.dsl.sta.abo.bbox.fr
- [176.172.247.100])
- by darkstar.slint.fr (Postfix) with ESMTPSA id 03C10BE797;
- Sun, 23 Aug 2020 16:52:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=slint.fr; s=default;
- t=1598194343; bh=ChTla2m80R5GRJQq21wdejIRB1dfjzUjtoQye+DhtFg=;
- h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
- b=L0VIgiJ4fHySQx4dcq/fQspuP1JDrhI4mWmCQv6984yHPnY20zlvYjXapj5radGl4
- EHU+lLqYJuiZiKF6YWnXB5wCVm2xPiXAIvjW0BdOurgTUqdD8bG8inPa83kwPMmQid
- pnhE9trpKq4ynnwKfqnuArTVbIg3/YsavC5IZhukSGzh9K8hTdQFNk0CcqrBGgfZAI
- 5ZoGCzFFuNwepDdbrcOVc+rsi+ebRckwsZhDzDUKq9Ysnh69et4z4y3jV8n6sm9qT8
- wxF1l+qdCBwM4xAp0ueTOcCOHNasOjShm1HQByYYfl6uzQMeqs0ev4CYIwbe10xk4N
- scR3RT2+gcFRw==
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <13e19af7-69d5-6db3-441e-3be4921983de@slint.fr>
- <20200625003543.GA34187@google.com>
-From: Didier Spaier <didier@slint.fr>
-Message-ID: <f153c668-5463-eb2e-d232-64c0d9df7d49@slint.fr>
-Date: Sun, 23 Aug 2020 17:53:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+ bh=mYqKmrJ4535Zk7fLSph2muuBwBxLAybsRAMYE+GByN8=; b=T7zY19bCSNx5xM0Yatcn5siUHW
+ EdLO3H2K0JkRGCRyy1mia0M4h6RvhnaurHXN1V2J3BzrdmLlXxwvVZ5/IwjyAfOkuqZOfyVMKUHlB
+ 4B3Etu9AIC7zXQbgKkXzLLfaaAe2qfG2e3YECboLB5himq6Td7fGt9neVDrQYZcW8SGk=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1kA5oY-002EwE-3N
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Aug 2020 06:18:43 +0000
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
+ [107.3.166.239])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 9733422BEA;
+ Mon, 24 Aug 2020 06:18:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1598249900;
+ bh=FIdPAQ4uVgqepfVvwpPtlAMJGJ/BCwZf2dDwk5M0shA=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=aOFOzAVN6aex+LS5Y2deYUb9Qjxp+H46wBD4Q4HDvUhaKg92JKU/CLVURb4LyzBUw
+ 2+WvbtU7sO6GQxDGsaEnuYSknW0lS3fpbkqF4Evz/SyGisvOuCd6oEkWg/7aYH/ioI
+ 8+eqiG/nQFxpH2RSz/7EstoUxgliPnfNi17KeKtQ=
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Sun, 23 Aug 2020 23:17:12 -0700
+Message-Id: <20200824061712.195654-9-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200824061712.195654-1-ebiggers@kernel.org>
+References: <20200824061712.195654-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200625003543.GA34187@google.com>
-Content-Language: en-US
-X-Headers-End: 1k9sbS-00GIhd-VW
-Subject: Re: [f2fs-dev] Questions about using f2fs to format the root
- partition during Slint installation.
+X-Headers-End: 1kA5oY-002EwE-3N
+Subject: [f2fs-dev] [RFC PATCH 8/8] fscrypt: stop pretending that key setup
+ is nofs-safe
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,81 +88,132 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SGksCgp0aGFua3MgZm9yIHlvdXIgYW5zd2VyLCB3aGljaCBsZWFkcyB0byBtb3JlIHF1ZXN0aW9u
-cyBhbmQgYSByZXF1ZXN0LgoKSSB3aWxsIHF1b3RlIG9ubHkgdGhlIHJlbGV2YW50IHBhcnRzIG9m
-IHRoaXMgYW5zd2VyIGJlbG93LgoKTGUgMjUvMDYvMjAyMCDDoCAwMjozNSwgSmFlZ2V1ayBLaW0g
-YSDDqWNyaXQgOgo+IE9uIDA2LzI1LCBEaWRpZXIgU3BhaWVyIHdyb3RlOgoKPj4gdGhpcyBlbWFp
-bCBpcyBhIGZvbGxvdy11cCBvZjoKPj4gaHR0cHM6Ly93d3cubWFpbC1hcmNoaXZlLmNvbS9saW51
-eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldC9tc2cxNDM5MC5odG1sCgouLi4KCj4+
-IFExOiBDb21tZW50cyBhYm91dCB0aGlzIGNob2ljZSBvZiB0YXJnZXQgZGV2aWNlcyBmb3IgZjJm
-cywga25vd2luZyB0aGF0Cj4+IEkgZmF2b3Igc2VjdXJpdHkgb3ZlciBwZXJmb3JtYW5jZXMgYW5k
-IHRoYXQgdGhlICJhdXRvIiBvcHRpb24gb2YgdGhlCj4+IGluc3RhbGxlciBpcyBpbnRlbmRlZCBm
-b3IgeW91ciBncmFuZC1tb3RoZXI/IEkgYW0gYSBncmFuZCBmYXRoZXIgbXlzZWxmCj4+IDxzbWls
-ZT4uCj4gCj4gV2hpY2ggc2VjdXJpdHkgYW5kIHBlcmZvcm1hbmNlIGZlYXR1cmUgZG8geW91IHdh
-bnQgdG8gdXNlIGluIHRoZSBzeXN0ZW0/Cj4gRm9yIGV4YW1wbGUsIG1rZnMuZjJmcyByZXF1aXJl
-cyBzb21lIG9wdGlvbnMgbGlrZToKPiAtIGZzY3J5cHQgOiAtTyBlbmNyeXB0Cj4gLSBxdW90YSA6
-IC1PIHF1b3RhCj4gLSBmc3Zlcml0eSA6IC1PIHZlcml0eQo+IC0gY29tcHJlc3Npb24gOiAtTyBj
-b21wcmVzc2lvbiAtTyBleHRyYV9hdHRyCj4gLSBjYXNlZm9sZGluZyA6IC1PIGNhc2Vmb2xkIC1D
-IHV0ZjgKRG8gSSB1bmRlcnN0YW5kIHdlbGwgdGhhdCB0aGVzZSBmZWF0dXJlcyBhcmUgZGVmaW5l
-ZCBpbiBmMmZzLmg/CkluIExpbnV4IDUuNC42MDoKI2RlZmluZSBGMkZTX0ZFQVRVUkVfRU5DUllQ
-VAkJMHgwMDAxCiNkZWZpbmUgRjJGU19GRUFUVVJFX0JMS1pPTkVECQkweDAwMDIKI2RlZmluZSBG
-MkZTX0ZFQVRVUkVfQVRPTUlDX1dSSVRFCTB4MDAwNAojZGVmaW5lIEYyRlNfRkVBVFVSRV9FWFRS
-QV9BVFRSCQkweDAwMDgKI2RlZmluZSBGMkZTX0ZFQVRVUkVfUFJKUVVPVEEJCTB4MDAxMAojZGVm
-aW5lIEYyRlNfRkVBVFVSRV9JTk9ERV9DSEtTVU0JMHgwMDIwCiNkZWZpbmUgRjJGU19GRUFUVVJF
-X0ZMRVhJQkxFX0lOTElORV9YQVRUUgkweDAwNDAKI2RlZmluZSBGMkZTX0ZFQVRVUkVfUVVPVEFf
-SU5PCQkweDAwODAKI2RlZmluZSBGMkZTX0ZFQVRVUkVfSU5PREVfQ1JUSU1FCTB4MDEwMAojZGVm
-aW5lIEYyRlNfRkVBVFVSRV9MT1NUX0ZPVU5ECQkweDAyMDAKI2RlZmluZSBGMkZTX0ZFQVRVUkVf
-VkVSSVRZCQkweDA0MDAKI2RlZmluZSBGMkZTX0ZFQVRVUkVfU0JfQ0hLU1VNCQkweDA4MDAKI2Rl
-ZmluZSBGMkZTX0ZFQVRVUkVfQ0FTRUZPTEQJCTB4MTAwMAogIApJIGFzayBiZWNhdXNlIEkgZG9u
-J3Qgc2VlIHRoZW0gbGlzdGVkIGluIGEgbWFuIHBhZ2Ugd2hlcmUgSSB3b3VsZCBoYXZlCmV4cGVj
-dGVkIHRvIGZpbmQgdGhlbSwgbGlrZSBta2ZzLmYyZnMgKDgpIG9yIG1vdW50ICg4KQoKSSBkb24n
-dCBzZWUgdGhlbSBsaXN0ZWQgaW46Cmh0dHBzOi8vZ2l0aHViLmNvbS90b3J2YWxkcy9saW51eC9i
-bG9iL21hc3Rlci9Eb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL2YyZnMucnN0CgouLi4gCgo+PiBR
-My4gV2hhdCB3b3VsZCBiZSB0aGUgc2FmZXN0IG9wdGlvbnMgdG8gaW5jbHVkZSBpbiB0aGUgcmVs
-ZXZhbnQgbGluZSBvZgo+PiAvZXRjL2ZzdGFiIGZvcnRoZSByb290IHBhcnRpdGlvbiB1c2luZyBm
-MmZzPwo+IAo+IGRlZmF1bHQgKyBhbnkgZmVhdHVyZXMgdGhhdCB5b3UncmUgaW50ZXJlc3RlZCBp
-bj8KPiBXZSd2ZSBiZWVuIHVzaW5nIHRoZSBiZWxvdyBvcHRpb24gZm9yIHNldmVyYWwgeWVhcnMg
-aW4gQW5kcm9pZC4KPiBodHRwczovL2FuZHJvaWQuZ29vZ2xlc291cmNlLmNvbS9kZXZpY2UvZ29v
-Z2xlL2NvcmFsLysvcmVmcy9oZWFkcy9tYXN0ZXIvZnN0YWIuaGFyZHdhcmUjMTEKClRoZSBtb3Vu
-dCBmbGFncyBhbmQgb3B0aW9ucyBhcmUgZGVzY3JpYmVkIGluIGYyZnMucnN0IGJ1dCBJIGRvbid0
-IGV4cGVjdCBhCmNhc3VhbCB1c2VyIHRvIHJlYWQgdGhhdC4KClNvIEkgc3VnZ2VzdCB0aGF0IGFs
-bCB0aGUgbW91bnQgb3B0aW9ucyBzcGVjaWZpYyB0byBmMmZzIGJlIGxpc3RlZCBpbiBhbgpkb2N1
-bWVudCBpbnRlbmRlZCBmb3IgZW5kIHVzZXJzIChtYW4gZjJmcz8pIGFzIHRoYXQgY291bGQgaGVs
-cCBmYXZvciBpdHMKYWRvcHRpb24gYnkgTGludXggZGlzdHJpYnV0aW9ucyBhcyBhbiBhbHRlcm5h
-dGl2ZSB0byBleHQ0IHdoZW4gcmVsZXZhbnQuCgpNYXliZSB5b3UgY291bGQgY29uc3VsdCB3aXRo
-IHV0aWwtbGludXggZGV2cywgYXMgbWFuIG1vdW50IGlzIHBhcnQgb2YgdGhlCnV0aWwtbGludXgg
-cGFja2FnZTsgdG8ganVzdCBhZGQgYSBsaW5lIHRvIHRoZSB0ZXh0IHF1b3RlZCBiZWxvdz8KCkZJ
-TEVTWVNURU0tU1BFQ0lGSUMgTU9VTlQgT1BUSU9OUwogICAgICAgVGhpcyBzZWN0aW9uIGxpc3Rz
-IG9wdGlvbnMgdGhhdCBhcmUgc3BlY2lmaWMgdG8gcGFydGljdWxhcgogICAgICAgZmlsZXN5c3Rl
-bXMuICBXaGVyZSAgcG9zc2libGUsIHlvdSAgc2hvdWxkICBmaXJzdCAgY29uc3VsdAogICAgICAg
-ZmlsZXN5c3RlbS1zcGVjaWZpYyBtYW51YWwgcGFnZXMgZm9yIGRldGFpbHMuICBTb21lIG9mIHRo
-b3NlIHBhZ2VzCiAgICAgICBhcmUgbGlzdGVkIGluIHRoZSBmb2xsb3dpbmcgdGFibGUuCiAgICAg
-ICAgICAgICAgCiAgICAgICBGaWxlc3lzdGVtKHMpICAgICAgTWFudWFsIHBhZ2UKICAgICAgIGJ0
-cmZzICAgICAgICAgICAgICBidHJmcyg1KQogICAgICAgY2lmcyAgICAgICAgICAgICAgIG1vdW50
-LmNpZnMoOCkKICAgICAgIGV4dDIsIGV4dDMsIGV4dDQgICBleHQ0KDUpCiAgICAgICBmdXNlICAg
-ICAgICAgICAgICAgZnVzZSg4KQogICAgICAgbmZzICAgICAgICAgICAgICAgIG5mcyg1KQogICAg
-ICAgdG1wZnMgICAgICAgICAgICAgIHRtcGZzKDUpCiAgICAgICB4ZnMgICAgICAgICAgICAgICAg
-eGZzKDUpCgp0aGUgYWRkZWQgbGluZSB3b3VsZCBqdXN0IGJlIGZvciBpbnN0YW5jZToKCiAgICAg
-ICBmMmZzICAgICAgICAgICAgICAgZjJmcyg4KQoKSW5kZWVkIAoKSSBrbm93IEkgc2hvdWxkIHBy
-b3Bvc2UgdG8gY29udHJpYnV0ZSB3cml0aW5nIG1hbiBmMmZzLCB1bmZvcnR1bmF0ZWx5IG15Cmtu
-b3dsZWRnZSBvZiBmMmZzIGlzIHZlcnkgY2xvc2UgdG8gbm9uIGV4aXN0ZW50LgoKSW5jaWRlbnRh
-bGx5LCB0aGUgb3B0aW9ucyBsaXN0ZWQgaW4KaHR0cHM6Ly9hbmRyb2lkLmdvb2dsZXNvdXJjZS5j
-b20vZGV2aWNlL2dvb2dsZS9jb3JhbC8rL3JlZnMvaGVhZHMvbWFzdGVyL2ZzdGFiLmhhcmR3YXJl
-IzExCmluZGljYXRlIHRoYXQgZjJmcyBpcyBvbmx5IHVzZWQgZm9yIHRoZSBwYXJ0aXRpb24gbW91
-bnRlZCBhcyAvZGF0YS4KCkkgZG9uJ3Qga25vdyBBbmRyb2lkIGF0IGFsbCBidXQgdGhvdWdodCB0
-aGF0IC9zeXN0ZW0gaXMgbW9yZSBvciBsZXNzIHRoZQplcXVpdmFsZW50IG9mIHJvb3QgKC8pIGlu
-IG90aGVyIExpbnV4IGRpc3RyaWJ1dGlvbnMuIElmIHRoYXQncyB0aGUgY2FzZSwKd2h5IG5vdCB1
-cyBhbHNvIGYyZnMgZm9yIGl0PyBNYXliZSBJIGFtIGZ1bGx5IHdyb25nLCBwbGVhc2UgY29ycmVj
-dCBtZS4KSSB3b3VsZCBiZSBncmF0ZWZ1bCBmb3IgYW55IHBvaW50ZXIgdG8gYSBkb2N1bWVudCBl
-eHBsYWluaW5nIHRoZSBwdXJwb3NlcwpvZiB0aGUgdmFyaW91cyBtb3VudCBwb2ludHMgaW4gQW5k
-cm9pZCBhcyB0aGV5IGRpZmZlciBmcm9tIHRoZSBGSFM6Cmh0dHBzOi8vcmVmc3BlY3MubGludXhm
-b3VuZGF0aW9uLm9yZy9maHMuc2h0bWwKCkJlc3QgcmVnYXJkcywKCkRpZGllcgogIAoKCgoKCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
-ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
-Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
-ZGV2ZWwK
+From: Eric Biggers <ebiggers@google.com>
+
+fscrypt_get_encryption_info() has never actually been safe to call in a
+context that needs GFP_NOFS, since it calls crypto_alloc_skcipher().
+
+crypto_alloc_skcipher() isn't GFP_NOFS-safe, even if called under
+memalloc_nofs_save().  This is because it may load kernel modules, and
+also because it internally takes crypto_alg_sem.  Other tasks can do
+GFP_KERNEL allocations while holding crypto_alg_sem for write.
+
+The use of fscrypt_init_mutex isn't GFP_NOFS-safe either.
+
+So, stop pretending that fscrypt_get_encryption_info() is nofs-safe.
+I.e., when it allocates memory, just use GFP_KERNEL instead of GFP_NOFS.
+
+Note, another reason to do this is that GFP_NOFS is deprecated in favor
+of using memalloc_nofs_save() in the proper places.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/inline_crypt.c | 7 ++-----
+ fs/crypto/keysetup.c     | 2 +-
+ fs/crypto/keysetup_v1.c  | 8 ++++----
+ 3 files changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index faa25541ccb68..89bffa82ed74a 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -106,7 +106,7 @@ int fscrypt_select_encryption_impl(struct fscrypt_info *ci)
+ 	crypto_cfg.data_unit_size = sb->s_blocksize;
+ 	crypto_cfg.dun_bytes = fscrypt_get_dun_bytes(ci);
+ 	num_devs = fscrypt_get_num_devices(sb);
+-	devs = kmalloc_array(num_devs, sizeof(*devs), GFP_NOFS);
++	devs = kmalloc_array(num_devs, sizeof(*devs), GFP_KERNEL);
+ 	if (!devs)
+ 		return -ENOMEM;
+ 	fscrypt_get_devices(sb, num_devs, devs);
+@@ -135,9 +135,8 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+ 	struct fscrypt_blk_crypto_key *blk_key;
+ 	int err;
+ 	int i;
+-	unsigned int flags;
+ 
+-	blk_key = kzalloc(struct_size(blk_key, devs, num_devs), GFP_NOFS);
++	blk_key = kzalloc(struct_size(blk_key, devs, num_devs), GFP_KERNEL);
+ 	if (!blk_key)
+ 		return -ENOMEM;
+ 
+@@ -166,10 +165,8 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+ 		}
+ 		queue_refs++;
+ 
+-		flags = memalloc_nofs_save();
+ 		err = blk_crypto_start_using_key(&blk_key->base,
+ 						 blk_key->devs[i]);
+-		memalloc_nofs_restore(flags);
+ 		if (err) {
+ 			fscrypt_err(inode,
+ 				    "error %d starting to use blk-crypto", err);
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index 6ac816d3e8478..ad64525ec6800 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -477,7 +477,7 @@ fscrypt_setup_encryption_info(struct inode *inode,
+ 	struct key *master_key = NULL;
+ 	int res;
+ 
+-	crypt_info = kmem_cache_zalloc(fscrypt_info_cachep, GFP_NOFS);
++	crypt_info = kmem_cache_zalloc(fscrypt_info_cachep, GFP_KERNEL);
+ 	if (!crypt_info)
+ 		return -ENOMEM;
+ 
+diff --git a/fs/crypto/keysetup_v1.c b/fs/crypto/keysetup_v1.c
+index a3cb52572b05c..2762c53504323 100644
+--- a/fs/crypto/keysetup_v1.c
++++ b/fs/crypto/keysetup_v1.c
+@@ -60,7 +60,7 @@ static int derive_key_aes(const u8 *master_key,
+ 		goto out;
+ 	}
+ 	crypto_skcipher_set_flags(tfm, CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
+-	req = skcipher_request_alloc(tfm, GFP_NOFS);
++	req = skcipher_request_alloc(tfm, GFP_KERNEL);
+ 	if (!req) {
+ 		res = -ENOMEM;
+ 		goto out;
+@@ -99,7 +99,7 @@ find_and_lock_process_key(const char *prefix,
+ 	const struct user_key_payload *ukp;
+ 	const struct fscrypt_key *payload;
+ 
+-	description = kasprintf(GFP_NOFS, "%s%*phN", prefix,
++	description = kasprintf(GFP_KERNEL, "%s%*phN", prefix,
+ 				FSCRYPT_KEY_DESCRIPTOR_SIZE, descriptor);
+ 	if (!description)
+ 		return ERR_PTR(-ENOMEM);
+@@ -228,7 +228,7 @@ fscrypt_get_direct_key(const struct fscrypt_info *ci, const u8 *raw_key)
+ 		return dk;
+ 
+ 	/* Nope, allocate one. */
+-	dk = kzalloc(sizeof(*dk), GFP_NOFS);
++	dk = kzalloc(sizeof(*dk), GFP_KERNEL);
+ 	if (!dk)
+ 		return ERR_PTR(-ENOMEM);
+ 	refcount_set(&dk->dk_refcount, 1);
+@@ -272,7 +272,7 @@ static int setup_v1_file_key_derived(struct fscrypt_info *ci,
+ 	 * This cannot be a stack buffer because it will be passed to the
+ 	 * scatterlist crypto API during derive_key_aes().
+ 	 */
+-	derived_key = kmalloc(ci->ci_mode->keysize, GFP_NOFS);
++	derived_key = kmalloc(ci->ci_mode->keysize, GFP_KERNEL);
+ 	if (!derived_key)
+ 		return -ENOMEM;
+ 
+-- 
+2.28.0
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
