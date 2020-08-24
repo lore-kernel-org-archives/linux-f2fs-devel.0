@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70150C43470
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CB8C4347E
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Aug 2020 06:35:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 423D322B43;
-	Mon, 24 Aug 2020 06:18:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EFC75214F1;
+	Mon, 24 Aug 2020 06:18:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="YqKtMUb7";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="P6ArYrol";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDKODAQp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 423D322B43
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="jRex+FiB";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="m0qtE0Yx";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J03KdJQJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC75214F1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kA5oR-0002Ce-U4; Mon, 24 Aug 2020 06:18:35 +0000
+	id 1kA5oT-0000vE-M3; Mon, 24 Aug 2020 06:18:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kA5oP-0002Bv-9Z
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Aug 2020 06:18:33 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kA5oR-0000v0-Jr
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Aug 2020 06:18:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MP8qlXNuL1EiYOJAiD5rlAIIVRNLl5s58ky8k1GHPlY=; b=YqKtMUb76rC/VEe53McnTpBtnw
- r/3cudeFAPje+kjRLRKxi157Qfn/4HKD9ln0VY3m8WNU9wbJ6wIebIOt7HA2w9lESz4piAMxt9n0L
- oMLhmcIlmNMXcK3WrNg1fZQ8eMG6QEW81uj8yfQMM/ctiLmlkPdtzpwHrH1FhQKrgxlo=;
+ bh=5hAA+wCyPe8fM5j4dMXVkijwsZ/Ria5XYU8I4epx544=; b=jRex+FiB+FtWTQlT9BCm4bkNLr
+ LgqDte7D0z0U2WdjKy6DjHcqMHNgHHmbfdcaN2oZ9mTiMK+IpADizD+ThUhhPPVchcvZsdeya/RZl
+ gTSrYKrvi8IqX9NuVGKHLB53GMLajZoIrzNNOH9QVr9UnnrrrHsF/QHlrYfwagsufn28=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=MP8qlXNuL1EiYOJAiD5rlAIIVRNLl5s58ky8k1GHPlY=; b=P6ArYrolP3p8fEpj4Ls822GhH5
- rN7Z1VlAJZd389/OAQj7tBAdOv989kozNSuJkopPFg2DqejtqP3lkgJLzEu4aDk5I5RukKKEyJsqS
- +wsmqHlMFMf2tP07AUwhaDemFpHK5Am/0GnZbGah4G/Y8dAqLaLb9DOQZhPgYfUi0iJw=;
+ bh=5hAA+wCyPe8fM5j4dMXVkijwsZ/Ria5XYU8I4epx544=; b=m0qtE0Yxw8rt2Fi7QCYX20OZAM
+ Qf5frKnduer5Uj1mW4qBg+JSaoUOg711zB6YEeltGdbA6SfFeW0KOkJHVXOLybfIQSpzId8yp6IBR
+ SU+6aEeR59LseFTi9FP29i6Ds73VKwlm79zodR39uOjcKQxfQQYHHHYIdNphofCaP+NA=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kA5oN-002Evf-Jd
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Aug 2020 06:18:33 +0000
+ id 1kA5oQ-002Evl-Ff
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Aug 2020 06:18:35 +0000
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net
  [107.3.166.239])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id E15422087D;
- Mon, 24 Aug 2020 06:18:18 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 92272214F1;
+ Mon, 24 Aug 2020 06:18:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=default; t=1598249899;
- bh=IH6sTOwkbzPMf4x5Li5gjFgkfm2HNIgk1xMl8TNxDTc=;
+ bh=z1QylT8I+NmBP0tutYhzY5oX1yelfT7mim0uD9smtgw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=JDKODAQpPTq5huUKShVPhJTG2Df1AHur6QPxO7Njy/ZJwbOEtmt/3AwrwdxS7/TVN
- ZMC92UTKIOeYa+JwpYJPxIO128wY9hOL8oTYduzs1O3YrW9UDLUMuf7TCoC739bDtJ
- CfMQrNc+4ZGVgY9GdtXke3sxODPPYPwCrcKZmOoM=
+ b=J03KdJQJPdY77kdOSQzv1oF4glUgsguRLqZPw0bmItnjV4mkJE5kE2RoajSp2OA2U
+ 27gS97vYGnq70XXtnvPMkPnmelOpJ2j1BFFb6SLZjQ7BCzkaB8YdwP8CBA5bGWNP6A
+ Kp0XyIGXauI0bFNXQVHCYVjI6Ho7Gg6A1rHVfTck=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Sun, 23 Aug 2020 23:17:07 -0700
-Message-Id: <20200824061712.195654-4-ebiggers@kernel.org>
+Date: Sun, 23 Aug 2020 23:17:09 -0700
+Message-Id: <20200824061712.195654-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200824061712.195654-1-ebiggers@kernel.org>
 References: <20200824061712.195654-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kA5oN-002Evf-Jd
-Subject: [f2fs-dev] [RFC PATCH 3/8] ext4: remove some #ifdefs in
- ext4_xattr_credits_for_new_inode()
+X-Headers-End: 1kA5oQ-002Evl-Ff
+Subject: [f2fs-dev] [RFC PATCH 5/8] f2fs: use fscrypt_prepare_new_inode()
+ and fscrypt_set_context()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,45 +97,92 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-We don't need #ifdefs for CONFIG_SECURITY and CONFIG_INTEGRITY;
-IS_ENABLED() is sufficient.
+Convert f2fs to use the new functions fscrypt_prepare_new_inode() and
+fscrypt_set_context().  This avoids calling
+fscrypt_get_encryption_info() from under f2fs_lock_op(), which can
+deadlock because fscrypt_get_encryption_info() isn't GFP_NOFS-safe.
+
+For more details about this problem, see the earlier patch
+"fscrypt: add fscrypt_prepare_new_inode() and fscrypt_set_context()".
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/ialloc.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ fs/f2fs/dir.c   |  2 +-
+ fs/f2fs/f2fs.h  | 16 ----------------
+ fs/f2fs/namei.c |  7 ++++++-
+ 3 files changed, 7 insertions(+), 18 deletions(-)
 
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 0cc576005a923..3e9c50eb857be 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -763,13 +763,12 @@ static int ext4_xattr_credits_for_new_inode(struct inode *dir, mode_t mode,
- 	}
- #endif
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 069f498af1e38..d627ca97fc500 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -537,7 +537,7 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
+ 			goto put_error;
  
--#ifdef CONFIG_SECURITY
--	{
-+	if (IS_ENABLED(CONFIG_SECURITY)) {
- 		int num_security_xattrs = 1;
+ 		if (IS_ENCRYPTED(inode)) {
+-			err = fscrypt_inherit_context(dir, inode, page, false);
++			err = fscrypt_set_context(inode, page);
+ 			if (err)
+ 				goto put_error;
+ 		}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 16322ea5b4630..eb37d1974ba8e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4022,22 +4022,6 @@ static inline bool f2fs_lfs_mode(struct f2fs_sb_info *sbi)
+ 	return F2FS_OPTION(sbi).fs_mode == FS_MODE_LFS;
+ }
  
--#ifdef CONFIG_INTEGRITY
--		num_security_xattrs++;
+-static inline bool f2fs_may_encrypt(struct inode *dir, struct inode *inode)
+-{
+-#ifdef CONFIG_FS_ENCRYPTION
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+-	umode_t mode = inode->i_mode;
+-
+-	/*
+-	 * If the directory encrypted or dummy encryption enabled,
+-	 * then we should encrypt the inode.
+-	 */
+-	if (IS_ENCRYPTED(dir) || DUMMY_ENCRYPTION_ENABLED(sbi))
+-		return (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode));
 -#endif
-+		if (IS_ENABLED(CONFIG_INTEGRITY))
-+			num_security_xattrs++;
+-	return false;
+-}
+-
+ static inline bool f2fs_may_compress(struct inode *inode)
+ {
+ 	if (IS_SWAPFILE(inode) || f2fs_is_pinned_file(inode) ||
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 84e4bbc1a64de..45f324511a19e 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -28,6 +28,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 	nid_t ino;
+ 	struct inode *inode;
+ 	bool nid_free = false;
++	bool encrypt = false;
+ 	int xattr_size = 0;
+ 	int err;
+ 
+@@ -69,13 +70,17 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 		F2FS_I(inode)->i_projid = make_kprojid(&init_user_ns,
+ 							F2FS_DEF_PROJID);
+ 
++	err = fscrypt_prepare_new_inode(dir, inode, &encrypt);
++	if (err)
++		goto fail_drop;
 +
- 		/*
- 		 * We assume that security xattrs are never more than 1k.
- 		 * In practice they are under 128 bytes.
-@@ -779,7 +778,7 @@ static int ext4_xattr_credits_for_new_inode(struct inode *dir, mode_t mode,
- 						 NULL /* block_bh */, 1024,
- 						 true /* is_create */);
- 	}
--#endif
-+
- 	if (encrypt)
- 		nblocks += __ext4_xattr_set_credits(sb,
- 						    NULL /* inode */,
+ 	err = dquot_initialize(inode);
+ 	if (err)
+ 		goto fail_drop;
+ 
+ 	set_inode_flag(inode, FI_NEW_INODE);
+ 
+-	if (f2fs_may_encrypt(dir, inode))
++	if (encrypt)
+ 		f2fs_set_encrypted_inode(inode);
+ 
+ 	if (f2fs_sb_has_extra_attr(sbi)) {
 -- 
 2.28.0
 
