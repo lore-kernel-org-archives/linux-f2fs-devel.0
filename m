@@ -2,76 +2,68 @@ Return-Path: <SRS0=cZzv=CE=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=0.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,HK_LOTTO,LOTS_OF_MONEY,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 501B3C433E1
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2020 14:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A516BC433E4
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2020 14:51:39 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1D917208E4
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2020 14:43:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4DE092078D;
+	Wed, 26 Aug 2020 14:51:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DPkQwD8W";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="da+oDUaq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D917208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mxEl35wQ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Gl0LhiFV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE092078D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=respector.by
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kAweW-0001Zq-6F; Wed, 26 Aug 2020 14:43:52 +0000
+	id 1kAwm0-0005Rh-FM; Wed, 26 Aug 2020 14:51:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1kAweU-0001ZY-Ot
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Aug 2020 14:43:50 +0000
+ (envelope-from <support@respector.by>) id 1kAwly-0005RX-FH
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Aug 2020 14:51:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Message-ID:Reply-To:From:Date:Subject:To:Sender:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5+qtskjr3f0uw7MAukdMX7YXrVmQwia/EW4XdMS8O1E=; b=DPkQwD8WEagaNPCt6uu3aEc2Fx
- urM+ZaupvRtgwEJqlHcngLcWpGwd/0Z4dgy1v6XYzBxt+RukxlB5ZfqleVARaU5UTMEanObvzkgyE
- /HubZcW80MepsTD4qmvKOik7Dv1aC1SRFvsR9q4seyRzyS7SzD5Wgx/WRwZcCs+GRX4o=;
+ bh=ID/UxVpaDLPOw3g2VV6igw5r+i1opNklAO+67Z4bZDM=; b=mxEl35wQ7w6ErPavHH4t3UHQ5b
+ TNZALdfPjDx0bh08Vez6sRGrxgcTuQUOJXI0e9E9nO2qrinqHLSazgNObuzNKzB3tS1ehzTnOoxz4
+ XhnXS3Qei6PGsp8GrqFnVKYBUwW/tETqw78kCEmHaYBqkRvr0G3+ZYf02nWe1UdubiV4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=5+qtskjr3f0uw7MAukdMX7YXrVmQwia/EW4XdMS8O1E=; b=da+oDUaqwLz+LYeRa48mcywLSt
- /D8eoNOysNSwbvZteG/F24ZWlk+0iPfF1FMrKOus8amuhsT3lI1dHQLVtVojrVSLV7Al+iDO5BxNZ
- 8EM/HvFc5wWXljm9usjU3lMVXc1OCzTzbAGJ00gNMpm2t8DkFkGAMgafedoebos7xpQE=;
-Received: from mx2.suse.de ([195.135.220.15])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Reply-To:
+ From:Date:Subject:To:Sender:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=ID/UxVpaDLPOw3g2VV6igw5r+i1opNklAO+67Z4bZDM=; b=G
+ l0LhiFV5LgpchxlDmwpxm4lqfhgJFUzBSKSbKAkpKrF38K8fW9kdk1F2m4o6w3/zTi+7Wj6hE79DG
+ rEKcdgXtqVkd/mxtU3jFBBT+vS+3teGhl+wu7jjY9c6tmt8OiQmLWiA0SclONMKC+O47ZIJd+8SoC
+ irHw83/CzR4UQRBg=;
+Received: from [185.179.83.124] (helo=www.respector.by)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kAweT-001N2g-0t
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Aug 2020 14:43:50 +0000
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
- by mx2.suse.de (Postfix) with ESMTP id A0627AC46;
- Wed, 26 Aug 2020 14:29:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
- id DE0881E12AF; Wed, 26 Aug 2020 16:28:57 +0200 (CEST)
-Date: Wed, 26 Aug 2020 16:28:57 +0200
-From: Jan Kara <jack@suse.cz>
-To: Gabriel Krisman Bertazi <krisman@collabora.com>
-Message-ID: <20200826142857.GA8760@quack2.suse.cz>
-References: <20200819200731.2972195-1-krisman@collabora.com>
- <20200819200731.2972195-2-krisman@collabora.com>
+ id 1kAwlw-0047IV-4T
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Aug 2020 14:51:34 +0000
+Received: from respector by www.respector.by with local (Exim 4.92)
+ (envelope-from <support@respector.by>) id 1kAuhO-0003Mm-Fx
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Aug 2020 15:38:42 +0300
+To: linux-f2fs-devel@lists.sourceforge.net
+X-PHP-Originating-Script: 507:oro.php
+Date: Wed, 26 Aug 2020 15:38:42 +0300
+From: El Gordo de la Primitiva Lotterien Spanien <support@respector.by>
+Message-ID: <212f06c8e119f2c4c7673676f35c27cc@respector.by>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200819200731.2972195-2-krisman@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1kAweT-001N2g-0t
-Subject: Re: [f2fs-dev] [PATCH 1/2] direct-io: defer alignment check until
- after EOF check
+X-Headers-End: 1kAwlw-0047IV-4T
+Subject: [f2fs-dev] Auszeichnungen gewinnen
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,129 +75,98 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jamie Liu <jamieliu@google.com>, linux-f2fs-devel@lists.sourceforge.net,
- viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
- kernel@collabora.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Reply-To: beratergabriel.sp@consultant.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed 19-08-20 16:07:30, Gabriel Krisman Bertazi wrote:
-> From: Jamie Liu <jamieliu@google.com>
-> 
-> Prior to commit 9fe55eea7e4b ("Fix race when checking i_size on direct
-> i/o read"), an unaligned direct read past end of file would trigger EOF,
-> since generic_file_aio_read detected this read-at-EOF condition and
-> skipped the direct IO read entirely, returning 0. After that change, the
-> read now reaches dio_generic, which detects the misalignment and returns
-> EINVAL.
-> 
-> This consolidates the generic direct-io to follow the same behavior of
-> filesystems.  Apparently, this fix will only affect ocfs2 since other
-> filesystems do this verification before calling do_blockdev_direct_IO,
-> with the exception of f2fs, which has the same bug, but is fixed in the
-> next patch.
-> 
-> it can be verified by a read loop on a file that does a partial read
-> before EOF (On file that doesn't end at an aligned address).  The
-> following code fails on an unaligned file on filesystems without
-> prior validation without this patch, but not on btrfs, ext4, and xfs.
-> 
->   while (done < total) {
->     ssize_t delta = pread(fd, buf + done, total - done, off + done);
->     if (!delta)
->       break;
->     ...
->   }
-> 
-> Fix this regression by moving the misalignment check to after the EOF
-> check added by commit 74cedf9b6c60 ("direct-io: Fix negative return from
-> dio read beyond eof").
-> 
-> Signed-off-by: Jamie Liu <jamieliu@google.com>
-> Co-developed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
-Looks sane to me but I'd note that your patch also makes unaligned 0-length
-reads succeed (probably don't care). Also your patch makes unaligned DIO reads
-write-out page cache before returning EINVAL - that actually looks a bit
-strange. Not that it would be outright bug but it seems strange to wait
-couple of seconds doing writeback only to return EINVAL... So I'd maybe
-restructure the code like:
-
-	if (dio->flags & DIO_LOCKING && iov_iter_rw(iter) == READ)
-		inode_lock(inode)
-	dio->i_size = i_size_read(inode);
-	... i_size checks ...
-	... alignment checks ...
-	if (dio->flags & DIO_LOCKING && iov_iter_rw(iter) == READ)
-		... writeout ...
-
-What do you think?
-								Honza
-
-> ---
->  fs/direct-io.c | 31 ++++++++++++++++++-------------
->  1 file changed, 18 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/direct-io.c b/fs/direct-io.c
-> index 183299892465..77400b033d63 100644
-> --- a/fs/direct-io.c
-> +++ b/fs/direct-io.c
-> @@ -1160,19 +1160,6 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
->  	struct blk_plug plug;
->  	unsigned long align = offset | iov_iter_alignment(iter);
->  
-> -	/*
-> -	 * Avoid references to bdev if not absolutely needed to give
-> -	 * the early prefetch in the caller enough time.
-> -	 */
-> -
-> -	if (align & blocksize_mask) {
-> -		if (bdev)
-> -			blkbits = blksize_bits(bdev_logical_block_size(bdev));
-> -		blocksize_mask = (1 << blkbits) - 1;
-> -		if (align & blocksize_mask)
-> -			goto out;
-> -	}
-> -
->  	/* watch out for a 0 len io from a tricksy fs */
->  	if (iov_iter_rw(iter) == READ && !count)
->  		return 0;
-> @@ -1217,6 +1204,24 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
->  		goto out;
->  	}
->  
-> +	/*
-> +	 * Avoid references to bdev if not absolutely needed to give
-> +	 * the early prefetch in the caller enough time.
-> +	 */
-> +
-> +	if (align & blocksize_mask) {
-> +		if (bdev)
-> +			blkbits = blksize_bits(bdev_logical_block_size(bdev));
-> +		blocksize_mask = (1 << blkbits) - 1;
-> +		if (align & blocksize_mask) {
-> +			if (iov_iter_rw(iter) == READ && dio->flags & DIO_LOCKING)
-> +				inode_unlock(inode);
-> +			kmem_cache_free(dio_cache, dio);
-> +			retval = -EINVAL;
-> +			goto out;
-> +		}
-> +	}
-> +
->  	/*
->  	 * For file extending writes updating i_size before data writeouts
->  	 * complete can expose uninitialized blocks in dumb filesystems.
-> -- 
-> 2.28.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+RWwgR29yZG8gZGUgbGEgUHJpbWl0aXZhIExvdHRlcmllbiBTcGFuaWVuIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgCkFkcmVzc2U6IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgCkNhbGxlIGRlbCBQcsOtbmNp
+cGUgZGUgVmVyZ2FyYSwgMzgsIDI4MDAxIE1hZHJpZCBFc3Bhw7FhIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIApFIG1haWw6
+XWFuc3BydWNoZ2V3aW5uLm1tdC5lc0BzcGFpbm1haWwuY29tXQpLb250YWt0IGF1Zm5laG1lbiB1
+bnRlcjpdICAzNDYwMiA4MTAgMTg1IGZheCAgMzQ5MzU0NTc0OTBdCkFrdGVuemVpY2hlbjpdUDA5
+LzAxLzAyLzIwMjAuXQpMb3NudW1tZXI6XSBFU1AgNDQ0Ny8xMTQ2NDExODgwMjAxXQrCoERhdHVt
+OiAxOC8wOC8yMDIwCsKgCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgCkhhbGxvLCDCoCDCoCDCoCDCoCAK
+ICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICBPRkZJWklFTExFIE1JVFRFSUxVTkcsCsKg
+CkRpZXNlIEVsIEdvcmRvIGRlIGxhIFByaW1pdGl2YSBTb21tZXIgQm9uYW56YSDCoExvdHRlcmll
+IHd1cmRlIMKgIHVuZCBNaW5pc3RlcmlvIGRlIEluZHVzdHJpYSwgQ29tZXJjaW8geSBUdXJpc21v
+IMKgZ2VzcG9uc2VydCB1bSBUb3VyaXNtdXMgaW4gRXNwYcOxYSDCoHp1IGbDtnJkZXJuLgrCoApX
+aXIgc2luZCBlcmZyZXV0IElobmVuIG1pdCB6dSB0ZWlsZW4sIGRhc3MgZGllIEdld2lubmVyIGRl
+cyBTb25kZXIgU3BhbmlzaCBUb3VyaXNtdXMgUHJvbW90aW9uYWwgRHJhdyBiZWthbm50IGdlZ2Vi
+ZW4gd29yZGVuIHNpbmQuIERpZSBvZmZpemllbGxlIExpc3RlIGRlciBHZXdpbm5lciDCoGVyc2No
+aWVuIGFtIMKgU2Ftc3RhZyBkZXIgMjIvMDcvMjAyMC4gCsKgCklocmUgZW1haWwgYWRyZXNzZSDC
+oG1pdCBkZXIgYW5ow6RuZ2VuZGVuIExvc251bW1lcjogRVNQIDQ0NDcvMTE0NjQxMTg4MDIwMSDC
+oHVuZCBtaXQgZGVyIFNlcmllbm51bW1lcjogRVNQLzAxODgxMS0yMDIwIHpvZyBkaWUgR2zDvGNr
+c251bW1lcjogNi4xNi4xOC4zMy40Ny41MSBCb251OjI5LEVsIEdvcmRvIGRlIGxhIFByaW1pdGl2
+YSDCoExvdHRlcmllIMKgNiAvNDkgaW4gZGVyIDMuIEthdGVnb3JpZS4KwqAKU2llIHNpbmQgZGFt
+aXQgZ2V3aW5uZXIgdm9uOiDigqw5OTEsMDAwLjAwIEV1cm8uIERpZSBTdW1tZSBlcmdpYnQgc2lj
+aCBhdXMgZWluZXIgR2V3aW5uYXVzc2Now7x0dHVuZyB2b246IOKCrDY5MzcsMDAwLjAwIEV1cm8s
+IGRpZSBkdXJjaCBkaWUgZXJzdGVuIHNpZWJlbiAoNykgR2V3aW5uZXIgYXVzIGRlciBnbGVpY2hl
+biBLYXRlZ29yaWUgZ2V0ZWlsdCB3dXJkZS4gwqBEaXIgZ2V3aW5uIGlzdCBiZWkgZWluZXIgc2lj
+aGVyaGVpdHNmaXJtYSBoaW50ZXJsZWd0IHVuZCBpbiBpaHJlbiBuYW1lbi9lbWFpbCDCoHZlcnNp
+Y2hlcnQuIHVtIGtlaW5lIGtvbXBsaWthdGlvbmVuIGJlaSBkZXIgYWJ3aWNrbHVuZyBkZXIgemFo
+bHVuZyB6dSB2ZXJ1cnNhY2hlbiBiaXR0ZW4gd2lyIHNpZSBkaWVzZSBvZmZpemllbGxlIG1pdHRl
+aWx1bmcgLCBkaXNrcmV0IHp1IGJlaGFuZGVsbi4sZXMgaXN0IGVpbiB0ZWlsIHVuc2VyZXMgc2lj
+aGVyaGVpdHNwcm90b2tvbGxzIHVuZCBnYXJhbnRpZXJ0IGlobmVuIGVpbmVuIHJlaWJ1bmdzbG9z
+ZW4gQWJsYXVmLgrCoApBbGxlIGdld2lubmVyIHd1cmRlbiBwZXIgY29tcHV0ZXIgYXVzIFVybGF1
+YnNob3RlbHMsIEZsdWdnZXNlbGxzY2hhZnRlbiB1bmQgUmVpc2Viw7xyb3MgbWFpbGVuIERhdGVu
+IHZvbiBmw7xuZiBNaWxsaW9uZW4gKDUwMDAwMDApIEVtYWlsIGFkcmVzc2VuIGF1c2dld8OkaGx0
+LCBhbHMgdGVpbCB1bnNlcmVyIEludGVybmF0aW9uYWxlbiB0b3VyaXNtdXMgcHJvbW90aW9uIHBy
+b2dyYW1tcywgd2VsY2hlcyB3aXIgZWlubWFsIGltIGphaHIgdmVyYW5zdGFsdGVuIHVtIFRvdXJp
+c211cyBpbiBTcGFuaWVuIHp1IGbDtnJkZXJuLgrCoApCaXR0ZSBrb250YWt0aWVyZW4gc2llIHVu
+c2VyZW4gYXVzbGFuZHMgc2FjaGJlYXJiZWl0ZXIgSGVyciBHYWJyaWVsIMKgYmVpIGRlciBzaWNo
+ZXJoZWl0c2Zpcm1hIFNhbnRhbHVjaWEgU2ljaGVyaGVpdHNmaXJtYTpQZXIgRW1haWwgYW46YmVy
+YXRlcmdhYnJpZWwuc3BAY29uc3VsdGFudC5jb20gb2RlciBhbnJ1ZmVuOiAzNCA2MDIgODEwIDE4
+NSAmIEZheDogIDM0IDkzMSA3MCAyMTIwLCB1bSBJaHIgR2VsZCBzY2huZWxsIHp1IGJla29tbWVu
+LgrCoApEZW5rZW4gU2llIGRhcmFuLCBqZWRlciBnZXdpbm5hbnNwcnVjaCBtdXNzIGJpcyB6dW0g
+MjIvOS8yMDIwIEFuZ2VtZWxkZXRlIHNlaW4uIEplZGVyIG5pY2h0IGFuZ2VtZWxkZXQgR2V3aW5u
+YW5zcHJ1Y2ggdmVyZsOkbGx0IHVuZCBnZWh0IHp1cnVjayBhbiBkYXMgU3BhbmlzY2hlIFN0YWF0
+c2thc3NlLgrCoCAKV0lDSFRJRzogdW0gdmVyesO2Z2VydW5nZW4gdW5kIGtvbXBsaWthdGlvbmVu
+IHp1IHZlcm1laWRlbiwgYml0dGUgaW1tZXIgQWt0ZW56ZWljaGVuIGFuZ2ViZW4uIMKgQW5iZWkg
+ZWluIGFubWVsZGVmb3JtdWxhciwgYml0dGUgYXVzZsO8bGxlbiB1bmQgenVyw7xjayBQZXIgZW1h
+aWwgYW46YmVyYXRlcmdhYnJpZWwuc3BAY29uc3VsdGFudC5jb20gb2RlciBhbnJ1ZmVuOiAgMzQg
+NjAyIDgxMDE4NSAmIEZheDogIDM0IDkzMSA3MCAyMTIwIGRpZSBzaWNoZXJoZWl0c2Zpcm1hIFNh
+bnRhbHVjaWEgU2ljaGVyaGVpdHNmaXJtYS4KwqAKSEVSWkxJQ0hFTiBHTFVDS1dVTlNDSOKApiEK
+TWl0IGZyZXVuZGxpY2hlbiBHcsO8w59lbgpNQVJJQSBISURBTEdPClZJWkVQUsOEU0lERU5USU4K
+wqAKQsOcUk8sU0FOVEFMVUNJQSBTRUdVUk9TIFMuQSBFc3Bhw7FhIApQbGF6YSBFc3Bhw7FhLCAx
+NSAtIC0xNiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoApNYWRyaWQs
+IDI4MDA4IEVzcGHDsWEKwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAK
+wqAKQU5NRUxERUZPUk1VTEFSIFpVUiBHRVdJTk5BTlNQUlVDSFMKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fIApCaXR0ZSBmw7xsbGVuIFNpZSBkYXMgRm9ybXVs
+YXIgc29yZ2bDpGx0aWcgYXVzIHVuZCBzZW5kZW4gZXMgcGVyIGUgbWFpbDpzYW50YWx1Y2lhLnNn
+LmVzQHNwYWlubWFpbC5jb20gYW4gZGVyIFNhbnRhbHVjaWEgU2ljaGVyaGVpdHNmaXJtYSBtaXQg
+S29waWUgSWhyZXMgUGVyc29uYWxhdXN3ZWlzZXMgb2RlciBSZWlzZXBhc3Nlcy4KwqAKR0VXSU5O
+QkVUUkFHOl9fX19fIEFLVEVOWkVJQ0hFTiBfX19fX19fX19fCk5BTUU6X19fX19fX19fX19fIFZP
+Uk5BTUU6X19fX19fX19fX19fX19fX18KR0VCVVJUU0RBVFVNOl9fX19fTkFUSU9OQUxJVEFUX19f
+X19fX19fX19fXwpMT1NOVU1NRVI6X19fX19fX19fX18gR0zDnENLU1pBSExFTiBfX19fX19fXwpT
+VFJBU1NFOl9fX19fX19fX19fX19fXyBOVU1NRVI6X19fX19fX19fX19fXwpXT0hOT1JUOl9fX19f
+IFBPU1RMRUlUWkFITF9fX19fTEFORCBfX19fX19fXwpEaXJla3RlciBLb250YWt0IEUtTWFpbF9f
+X19fX19fX19fX19fX19fX19fXwpURUxFRk9OOl9fX19fX19fX18gSEFORFk6X19fX19fX19fXyBG
+QVg6X19fX18KQkVSVUY6X19fX18gRkFNSUxJRU5TVEFORDpfX19fXyhHRVNDSExFQ0hUKV9fXyDC
+oCDCoArCoApXRUxDSEUgWkFITFVOR1NGT1JNIEJFVk9SWlVHRU4gU0lFPyDCoChBKSBCQU5Lw5xC
+RVJXRUlTVU5HOiDCoChCKSBCQVJTQ0hFQ0sgwqAKQkFOS0RBVEVOIFNJTkQgTlVSIE5PVFdFTkRJ
+RyBXRU5OIFNJRSBTSUNIIEbDnFIgRUlORSBCQU5Lw5xCRVJXRUlTVU5HIEVOVFNDSElFREVOIEhB
+QkVOLgrCoApOQU1FIERFUyBHRUxESU5TVElUVVRTOl9fX19fX19fX19fX19fCktPTlRPTlVNTUVS
+Ol9fX19fX19fX19fX19fX19fX19fX19fXyAKSUJBTjpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCkJBTksgQUREUkVTUzpfX19fX19fX19fX19fX19fX19fX19fX18KCsKgCsKgIMKgICBF
+UktMw4RSVU5HIERFUyBCRUfDnE5TVElHVEVOCklDSCBfX19fX19fX19fX19fX19fX19fX19fX19f
+X19CRVNUw4RUSUdFIEhJRVJNSVQsIERBU1MgQUxMRSBJTkZPUk1BVElPTkVOLCBLT1JSRUtUIFNJ
+TkQsIFVORCBESUUgVkVSQU5TVEFMVEVSIERFUiBFbCBTUEFOSVNIIExPVFRFUlkgLyBTQU5UQUxV
+Q0lBIFNJQ0hFUkhFSVRTRklSTUEgTklDSFQgVkVSQU5UV09SVExJQ0ggR0VNQUNIVCBXRVJERU4s
+IFdFTk4gRVMgWlUgRUlORVIgVU5CRVJFQ0hUSUdURU4gWkFITFVORyBEVVJDSCBVTkdFTkFVRSBJ
+TkZPUk1BVElPTkVOLCBESUUgSUNIIElOIERJRVNFTSBGT1JNVUxBUiBBTkdFQkUgS09NTVQuREFT
+UyAxMCUgUFJPVklTSU9OIERFUiBTQU5UQSBMVUNJQSBTRUNVUklUWSBDT01QQU5ZIEdFSD9SRU4s
+IFNPQkFMRCBTSUUgSUhSRU4gR0VXSU5OIEZPTkRTIEVSSEFMVEVOLiBESUVTRSBaRUhOIFBST1pF
+TlQgV0VSREVOIElITkVOIFNPRk9SVCBaVVLDnENLR0VHRUJFTiwgU0lFIEVSSEFMVEVOIElIUkVO
+IEdFV0lOTiBBVUYgSUhSRU0gS09OVE8uIChBQ0hUVU5HIFdpciBiaXR0ZW4gU2llLCBhdWYgZGll
+c2UgRS1NYWlsLUFkcmVzc2UgenUgYW50d29ydGVuKHNhbnRhbHVjaWEuc2cuZXNAc3BhaW5tYWls
+LmNvbSkgQsOcUk8tS09OVE9JTkZPUk1BVElPTkVOLUlCQU4gRVMxNyAyMTAwIDU2MjQgMTEwMiAw
+MDExIDc3MTkgU1dJRlQgQ09ERTogQ0FJWEVTQkJYWFguIMKgS09OVE9OQU1FLExBIFBMQUNJVEEg
+REVMIE1JUkFET1IgUy5MIFNQQUlOLgpVcmhlYmVycmVjaHTCqSAyMDAyLTIwMjAgTXVsdGktU3Rh
+YXQgTG90dGVyaWUgVmVyYmFuZC4gQWxsZSBSZWNodGUKCgoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
+TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
