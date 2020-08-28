@@ -1,69 +1,104 @@
-Return-Path: <SRS0=cZzv=CE=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=koxI=CG=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,HK_LOTTO,LOTS_OF_MONEY,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=no
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A516BC433E4
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Aug 2020 14:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 268CDC433E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Aug 2020 03:50:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4DE092078D;
-	Wed, 26 Aug 2020 14:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id DF89320684;
+	Fri, 28 Aug 2020 03:50:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mxEl35wQ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Gl0LhiFV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE092078D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=respector.by
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="dN1RG7nr";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="U1myOxyX";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwLq5JbY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF89320684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kAwm0-0005Rh-FM; Wed, 26 Aug 2020 14:51:36 +0000
+	id 1kBVP2-00034P-5d; Fri, 28 Aug 2020 03:50:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <support@respector.by>) id 1kAwly-0005RX-FH
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Aug 2020 14:51:34 +0000
+ (envelope-from <daeho43@gmail.com>) id 1kBVP0-00034I-GR
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Aug 2020 03:50:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:Reply-To:From:Date:Subject:To:Sender:Cc:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ID/UxVpaDLPOw3g2VV6igw5r+i1opNklAO+67Z4bZDM=; b=mxEl35wQ7w6ErPavHH4t3UHQ5b
- TNZALdfPjDx0bh08Vez6sRGrxgcTuQUOJXI0e9E9nO2qrinqHLSazgNObuzNKzB3tS1ehzTnOoxz4
- XhnXS3Qei6PGsp8GrqFnVKYBUwW/tETqw78kCEmHaYBqkRvr0G3+ZYf02nWe1UdubiV4=;
+ bh=ril6mM8eHq++BAUOfHk3aWEeikdrpFxtZWvZ7zO9QRg=; b=dN1RG7nrTF3I8LNlcs9chpvvk6
+ Q1LLHEU8Xw0aByNio/PSs17ijeSsm6z/V+yK/aFBMCl1RE7CGAWIu9VpOTTHBX79mhKRuPR6XHq+O
+ Wnl+JSftnISCNMj+FOfrpAim+UvjGOM9yvas8qw2iXH650GxASo5Ks+EPnv8DWNZNhoY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Reply-To:
- From:Date:Subject:To:Sender:Cc:Content-ID:Content-Description:Resent-Date:
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=ID/UxVpaDLPOw3g2VV6igw5r+i1opNklAO+67Z4bZDM=; b=G
- l0LhiFV5LgpchxlDmwpxm4lqfhgJFUzBSKSbKAkpKrF38K8fW9kdk1F2m4o6w3/zTi+7Wj6hE79DG
- rEKcdgXtqVkd/mxtU3jFBBT+vS+3teGhl+wu7jjY9c6tmt8OiQmLWiA0SclONMKC+O47ZIJd+8SoC
- irHw83/CzR4UQRBg=;
-Received: from [185.179.83.124] (helo=www.respector.by)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kAwlw-0047IV-4T
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Aug 2020 14:51:34 +0000
-Received: from respector by www.respector.by with local (Exim 4.92)
- (envelope-from <support@respector.by>) id 1kAuhO-0003Mm-Fx
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 26 Aug 2020 15:38:42 +0300
-To: linux-f2fs-devel@lists.sourceforge.net
-X-PHP-Originating-Script: 507:oro.php
-Date: Wed, 26 Aug 2020 15:38:42 +0300
-From: El Gordo de la Primitiva Lotterien Spanien <support@respector.by>
-Message-ID: <212f06c8e119f2c4c7673676f35c27cc@respector.by>
+ List-Owner:List-Archive; bh=ril6mM8eHq++BAUOfHk3aWEeikdrpFxtZWvZ7zO9QRg=; b=U
+ 1myOxyX08MyUdBgB2KtxVk/2Yf1j5ggNaou4ke5RKYZOu2UGmK1tH5OMq3tvQfrPDBfz6R7hrT2IX
+ 3mSa7lLeA9Z5+wZm+EMHpSfg39Czc8h836UwM6nf8iRLrfq6B24KZN+yF7wUiGKVGhc6nx4eWMEgE
+ BWb+5ne4Rw01v0g8=;
+Received: from mail-pf1-f196.google.com ([209.85.210.196])
+ by sfi-mx-4.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1kBVOw-008Doj-9e
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Aug 2020 03:50:10 +0000
+Received: by mail-pf1-f196.google.com with SMTP id t185so5113967pfd.13
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 27 Aug 2020 20:50:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=ril6mM8eHq++BAUOfHk3aWEeikdrpFxtZWvZ7zO9QRg=;
+ b=PwLq5JbY5jLfQxWzR9cG/5+zL7h9uYDDkawWkmdLX5CcG2vSWFtp4TR2MxB4Mb4aVl
+ xzqC+6pIWigkjb2mtxatGMiiWe+T9FIDqD6wjwZVgiIGARNUhOk/f0UW/pIwQWJupSnB
+ ASScs20C3ryf30Rhyvdaq0THE96xQcvRU9qRGPOwz7wX5VjIhZtQJSVBPRqT05eOKHxS
+ Eb5/ArjtyFpM7HCi7G7LQhBsZ4DLrwPW9/OAckiY1aW6mhK4POUzGl6V9K5oDBFyv//j
+ XfqwUeQZxZ+PwX1wTn+BfIMIgrdwHOs1gYH1fJPXIJeyNQhuAQ8ZszkkRU/mdbp5phHy
+ qyaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=ril6mM8eHq++BAUOfHk3aWEeikdrpFxtZWvZ7zO9QRg=;
+ b=HHbhP6zgNij3O43wQkwbq4Gb3u5xcv9Tv/maFMNMtM2Dkx8080BxW0RjZfD4gxQ/SS
+ BMEwFB+EnUWpjNHyy6UKvfUjpZ+dxSLLZbTbj1LNHTF7ZPcBuY1fhl670xJkxajdVyMi
+ yzSLJjl+OMAAhG6dDvCr3f2+AKeto99EuIbofxbBYoatlZZVW0FmmxrjbGUQOKvThK8w
+ f3HMDTHkLWfAmjI8Y3BHaKPqO1S//f39pv3hIyFGRWUH8fysvxeBn53cn5w/18Bzrg7P
+ feczb7jVzOCm6n15rw4w7SvnTBTm7yB+eRjFdmZUNq5764MnE2kqzJOugaYpzYkLU2JI
+ F+zA==
+X-Gm-Message-State: AOAM530Fv3zihT/KQ81qV0WbkUD9S9Lcom2pUfL1bsSbTp15eu/Yf87t
+ pclXzZS9L4/e0N1jJxK0rPo=
+X-Google-Smtp-Source: ABdhPJykyulWdg7Brj9+hcRFRnuiRui2vd+PyMnAaNGqaM5ee1pPQhyFXHFwS5lhCvyjtsSY7+EX0Q==
+X-Received: by 2002:a63:f09:: with SMTP id e9mr3706068pgl.334.1598586600598;
+ Thu, 27 Aug 2020 20:50:00 -0700 (PDT)
+Received: from daehojeong1.seo.corp.google.com
+ ([2401:fa00:d:1:a6ae:11ff:fe18:6ce2])
+ by smtp.gmail.com with ESMTPSA id il13sm3271523pjb.0.2020.08.27.20.49.58
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 27 Aug 2020 20:49:59 -0700 (PDT)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Fri, 28 Aug 2020 12:49:53 +0900
+Message-Id: <20200828034953.354267-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.28.0.402.g5ffc5be6b7-goog
 MIME-Version: 1.0
-X-Headers-End: 1kAwlw-0047IV-4T
-Subject: [f2fs-dev] Auszeichnungen gewinnen
+X-Headers-End: 1kBVOw-008Doj-9e
+Subject: [f2fs-dev] [PATCH] f2fs: make fibmap consistent with fiemap for
+ compression chunk
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -75,98 +110,80 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: beratergabriel.sp@consultant.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Daeho Jeong <daehojeong@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-RWwgR29yZG8gZGUgbGEgUHJpbWl0aXZhIExvdHRlcmllbiBTcGFuaWVuIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgCkFkcmVzc2U6IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgCkNhbGxlIGRlbCBQcsOtbmNp
-cGUgZGUgVmVyZ2FyYSwgMzgsIDI4MDAxIE1hZHJpZCBFc3Bhw7FhIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIApFIG1haWw6
-XWFuc3BydWNoZ2V3aW5uLm1tdC5lc0BzcGFpbm1haWwuY29tXQpLb250YWt0IGF1Zm5laG1lbiB1
-bnRlcjpdICAzNDYwMiA4MTAgMTg1IGZheCAgMzQ5MzU0NTc0OTBdCkFrdGVuemVpY2hlbjpdUDA5
-LzAxLzAyLzIwMjAuXQpMb3NudW1tZXI6XSBFU1AgNDQ0Ny8xMTQ2NDExODgwMjAxXQrCoERhdHVt
-OiAxOC8wOC8yMDIwCsKgCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgCkhhbGxvLCDCoCDCoCDCoCDCoCAK
-ICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICBPRkZJWklFTExFIE1JVFRFSUxVTkcsCsKg
-CkRpZXNlIEVsIEdvcmRvIGRlIGxhIFByaW1pdGl2YSBTb21tZXIgQm9uYW56YSDCoExvdHRlcmll
-IHd1cmRlIMKgIHVuZCBNaW5pc3RlcmlvIGRlIEluZHVzdHJpYSwgQ29tZXJjaW8geSBUdXJpc21v
-IMKgZ2VzcG9uc2VydCB1bSBUb3VyaXNtdXMgaW4gRXNwYcOxYSDCoHp1IGbDtnJkZXJuLgrCoApX
-aXIgc2luZCBlcmZyZXV0IElobmVuIG1pdCB6dSB0ZWlsZW4sIGRhc3MgZGllIEdld2lubmVyIGRl
-cyBTb25kZXIgU3BhbmlzaCBUb3VyaXNtdXMgUHJvbW90aW9uYWwgRHJhdyBiZWthbm50IGdlZ2Vi
-ZW4gd29yZGVuIHNpbmQuIERpZSBvZmZpemllbGxlIExpc3RlIGRlciBHZXdpbm5lciDCoGVyc2No
-aWVuIGFtIMKgU2Ftc3RhZyBkZXIgMjIvMDcvMjAyMC4gCsKgCklocmUgZW1haWwgYWRyZXNzZSDC
-oG1pdCBkZXIgYW5ow6RuZ2VuZGVuIExvc251bW1lcjogRVNQIDQ0NDcvMTE0NjQxMTg4MDIwMSDC
-oHVuZCBtaXQgZGVyIFNlcmllbm51bW1lcjogRVNQLzAxODgxMS0yMDIwIHpvZyBkaWUgR2zDvGNr
-c251bW1lcjogNi4xNi4xOC4zMy40Ny41MSBCb251OjI5LEVsIEdvcmRvIGRlIGxhIFByaW1pdGl2
-YSDCoExvdHRlcmllIMKgNiAvNDkgaW4gZGVyIDMuIEthdGVnb3JpZS4KwqAKU2llIHNpbmQgZGFt
-aXQgZ2V3aW5uZXIgdm9uOiDigqw5OTEsMDAwLjAwIEV1cm8uIERpZSBTdW1tZSBlcmdpYnQgc2lj
-aCBhdXMgZWluZXIgR2V3aW5uYXVzc2Now7x0dHVuZyB2b246IOKCrDY5MzcsMDAwLjAwIEV1cm8s
-IGRpZSBkdXJjaCBkaWUgZXJzdGVuIHNpZWJlbiAoNykgR2V3aW5uZXIgYXVzIGRlciBnbGVpY2hl
-biBLYXRlZ29yaWUgZ2V0ZWlsdCB3dXJkZS4gwqBEaXIgZ2V3aW5uIGlzdCBiZWkgZWluZXIgc2lj
-aGVyaGVpdHNmaXJtYSBoaW50ZXJsZWd0IHVuZCBpbiBpaHJlbiBuYW1lbi9lbWFpbCDCoHZlcnNp
-Y2hlcnQuIHVtIGtlaW5lIGtvbXBsaWthdGlvbmVuIGJlaSBkZXIgYWJ3aWNrbHVuZyBkZXIgemFo
-bHVuZyB6dSB2ZXJ1cnNhY2hlbiBiaXR0ZW4gd2lyIHNpZSBkaWVzZSBvZmZpemllbGxlIG1pdHRl
-aWx1bmcgLCBkaXNrcmV0IHp1IGJlaGFuZGVsbi4sZXMgaXN0IGVpbiB0ZWlsIHVuc2VyZXMgc2lj
-aGVyaGVpdHNwcm90b2tvbGxzIHVuZCBnYXJhbnRpZXJ0IGlobmVuIGVpbmVuIHJlaWJ1bmdzbG9z
-ZW4gQWJsYXVmLgrCoApBbGxlIGdld2lubmVyIHd1cmRlbiBwZXIgY29tcHV0ZXIgYXVzIFVybGF1
-YnNob3RlbHMsIEZsdWdnZXNlbGxzY2hhZnRlbiB1bmQgUmVpc2Viw7xyb3MgbWFpbGVuIERhdGVu
-IHZvbiBmw7xuZiBNaWxsaW9uZW4gKDUwMDAwMDApIEVtYWlsIGFkcmVzc2VuIGF1c2dld8OkaGx0
-LCBhbHMgdGVpbCB1bnNlcmVyIEludGVybmF0aW9uYWxlbiB0b3VyaXNtdXMgcHJvbW90aW9uIHBy
-b2dyYW1tcywgd2VsY2hlcyB3aXIgZWlubWFsIGltIGphaHIgdmVyYW5zdGFsdGVuIHVtIFRvdXJp
-c211cyBpbiBTcGFuaWVuIHp1IGbDtnJkZXJuLgrCoApCaXR0ZSBrb250YWt0aWVyZW4gc2llIHVu
-c2VyZW4gYXVzbGFuZHMgc2FjaGJlYXJiZWl0ZXIgSGVyciBHYWJyaWVsIMKgYmVpIGRlciBzaWNo
-ZXJoZWl0c2Zpcm1hIFNhbnRhbHVjaWEgU2ljaGVyaGVpdHNmaXJtYTpQZXIgRW1haWwgYW46YmVy
-YXRlcmdhYnJpZWwuc3BAY29uc3VsdGFudC5jb20gb2RlciBhbnJ1ZmVuOiAzNCA2MDIgODEwIDE4
-NSAmIEZheDogIDM0IDkzMSA3MCAyMTIwLCB1bSBJaHIgR2VsZCBzY2huZWxsIHp1IGJla29tbWVu
-LgrCoApEZW5rZW4gU2llIGRhcmFuLCBqZWRlciBnZXdpbm5hbnNwcnVjaCBtdXNzIGJpcyB6dW0g
-MjIvOS8yMDIwIEFuZ2VtZWxkZXRlIHNlaW4uIEplZGVyIG5pY2h0IGFuZ2VtZWxkZXQgR2V3aW5u
-YW5zcHJ1Y2ggdmVyZsOkbGx0IHVuZCBnZWh0IHp1cnVjayBhbiBkYXMgU3BhbmlzY2hlIFN0YWF0
-c2thc3NlLgrCoCAKV0lDSFRJRzogdW0gdmVyesO2Z2VydW5nZW4gdW5kIGtvbXBsaWthdGlvbmVu
-IHp1IHZlcm1laWRlbiwgYml0dGUgaW1tZXIgQWt0ZW56ZWljaGVuIGFuZ2ViZW4uIMKgQW5iZWkg
-ZWluIGFubWVsZGVmb3JtdWxhciwgYml0dGUgYXVzZsO8bGxlbiB1bmQgenVyw7xjayBQZXIgZW1h
-aWwgYW46YmVyYXRlcmdhYnJpZWwuc3BAY29uc3VsdGFudC5jb20gb2RlciBhbnJ1ZmVuOiAgMzQg
-NjAyIDgxMDE4NSAmIEZheDogIDM0IDkzMSA3MCAyMTIwIGRpZSBzaWNoZXJoZWl0c2Zpcm1hIFNh
-bnRhbHVjaWEgU2ljaGVyaGVpdHNmaXJtYS4KwqAKSEVSWkxJQ0hFTiBHTFVDS1dVTlNDSOKApiEK
-TWl0IGZyZXVuZGxpY2hlbiBHcsO8w59lbgpNQVJJQSBISURBTEdPClZJWkVQUsOEU0lERU5USU4K
-wqAKQsOcUk8sU0FOVEFMVUNJQSBTRUdVUk9TIFMuQSBFc3Bhw7FhIApQbGF6YSBFc3Bhw7FhLCAx
-NSAtIC0xNiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoApNYWRyaWQs
-IDI4MDA4IEVzcGHDsWEKwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAK
-wqAKQU5NRUxERUZPUk1VTEFSIFpVUiBHRVdJTk5BTlNQUlVDSFMKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fIApCaXR0ZSBmw7xsbGVuIFNpZSBkYXMgRm9ybXVs
-YXIgc29yZ2bDpGx0aWcgYXVzIHVuZCBzZW5kZW4gZXMgcGVyIGUgbWFpbDpzYW50YWx1Y2lhLnNn
-LmVzQHNwYWlubWFpbC5jb20gYW4gZGVyIFNhbnRhbHVjaWEgU2ljaGVyaGVpdHNmaXJtYSBtaXQg
-S29waWUgSWhyZXMgUGVyc29uYWxhdXN3ZWlzZXMgb2RlciBSZWlzZXBhc3Nlcy4KwqAKR0VXSU5O
-QkVUUkFHOl9fX19fIEFLVEVOWkVJQ0hFTiBfX19fX19fX19fCk5BTUU6X19fX19fX19fX19fIFZP
-Uk5BTUU6X19fX19fX19fX19fX19fX18KR0VCVVJUU0RBVFVNOl9fX19fTkFUSU9OQUxJVEFUX19f
-X19fX19fX19fXwpMT1NOVU1NRVI6X19fX19fX19fX18gR0zDnENLU1pBSExFTiBfX19fX19fXwpT
-VFJBU1NFOl9fX19fX19fX19fX19fXyBOVU1NRVI6X19fX19fX19fX19fXwpXT0hOT1JUOl9fX19f
-IFBPU1RMRUlUWkFITF9fX19fTEFORCBfX19fX19fXwpEaXJla3RlciBLb250YWt0IEUtTWFpbF9f
-X19fX19fX19fX19fX19fX19fXwpURUxFRk9OOl9fX19fX19fX18gSEFORFk6X19fX19fX19fXyBG
-QVg6X19fX18KQkVSVUY6X19fX18gRkFNSUxJRU5TVEFORDpfX19fXyhHRVNDSExFQ0hUKV9fXyDC
-oCDCoArCoApXRUxDSEUgWkFITFVOR1NGT1JNIEJFVk9SWlVHRU4gU0lFPyDCoChBKSBCQU5Lw5xC
-RVJXRUlTVU5HOiDCoChCKSBCQVJTQ0hFQ0sgwqAKQkFOS0RBVEVOIFNJTkQgTlVSIE5PVFdFTkRJ
-RyBXRU5OIFNJRSBTSUNIIEbDnFIgRUlORSBCQU5Lw5xCRVJXRUlTVU5HIEVOVFNDSElFREVOIEhB
-QkVOLgrCoApOQU1FIERFUyBHRUxESU5TVElUVVRTOl9fX19fX19fX19fX19fCktPTlRPTlVNTUVS
-Ol9fX19fX19fX19fX19fX19fX19fX19fXyAKSUJBTjpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCkJBTksgQUREUkVTUzpfX19fX19fX19fX19fX19fX19fX19fX18KCsKgCsKgIMKgICBF
-UktMw4RSVU5HIERFUyBCRUfDnE5TVElHVEVOCklDSCBfX19fX19fX19fX19fX19fX19fX19fX19f
-X19CRVNUw4RUSUdFIEhJRVJNSVQsIERBU1MgQUxMRSBJTkZPUk1BVElPTkVOLCBLT1JSRUtUIFNJ
-TkQsIFVORCBESUUgVkVSQU5TVEFMVEVSIERFUiBFbCBTUEFOSVNIIExPVFRFUlkgLyBTQU5UQUxV
-Q0lBIFNJQ0hFUkhFSVRTRklSTUEgTklDSFQgVkVSQU5UV09SVExJQ0ggR0VNQUNIVCBXRVJERU4s
-IFdFTk4gRVMgWlUgRUlORVIgVU5CRVJFQ0hUSUdURU4gWkFITFVORyBEVVJDSCBVTkdFTkFVRSBJ
-TkZPUk1BVElPTkVOLCBESUUgSUNIIElOIERJRVNFTSBGT1JNVUxBUiBBTkdFQkUgS09NTVQuREFT
-UyAxMCUgUFJPVklTSU9OIERFUiBTQU5UQSBMVUNJQSBTRUNVUklUWSBDT01QQU5ZIEdFSD9SRU4s
-IFNPQkFMRCBTSUUgSUhSRU4gR0VXSU5OIEZPTkRTIEVSSEFMVEVOLiBESUVTRSBaRUhOIFBST1pF
-TlQgV0VSREVOIElITkVOIFNPRk9SVCBaVVLDnENLR0VHRUJFTiwgU0lFIEVSSEFMVEVOIElIUkVO
-IEdFV0lOTiBBVUYgSUhSRU0gS09OVE8uIChBQ0hUVU5HIFdpciBiaXR0ZW4gU2llLCBhdWYgZGll
-c2UgRS1NYWlsLUFkcmVzc2UgenUgYW50d29ydGVuKHNhbnRhbHVjaWEuc2cuZXNAc3BhaW5tYWls
-LmNvbSkgQsOcUk8tS09OVE9JTkZPUk1BVElPTkVOLUlCQU4gRVMxNyAyMTAwIDU2MjQgMTEwMiAw
-MDExIDc3MTkgU1dJRlQgQ09ERTogQ0FJWEVTQkJYWFguIMKgS09OVE9OQU1FLExBIFBMQUNJVEEg
-REVMIE1JUkFET1IgUy5MIFNQQUlOLgpVcmhlYmVycmVjaHTCqSAyMDAyLTIwMjAgTXVsdGktU3Rh
-YXQgTG90dGVyaWUgVmVyYmFuZC4gQWxsZSBSZWNodGUKCgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
-TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+From: Daeho Jeong <daehojeong@google.com>
+
+Currently fibmap returns zero address for compression chunk. But it
+is not consistent with the output of fiemap, since fiemap returns
+real pysical block address related to the compression chunk. Therefore
+I suggest fibmap returns the same output with fiemap.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fs/f2fs/data.c | 33 ---------------------------------
+ 1 file changed, 33 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index c1b676be67b9..8c26c5d0c778 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3708,36 +3708,6 @@ static int f2fs_set_data_page_dirty(struct page *page)
+ 	return 0;
+ }
+ 
+-
+-static sector_t f2fs_bmap_compress(struct inode *inode, sector_t block)
+-{
+-#ifdef CONFIG_F2FS_FS_COMPRESSION
+-	struct dnode_of_data dn;
+-	sector_t start_idx, blknr = 0;
+-	int ret;
+-
+-	start_idx = round_down(block, F2FS_I(inode)->i_cluster_size);
+-
+-	set_new_dnode(&dn, inode, NULL, NULL, 0);
+-	ret = f2fs_get_dnode_of_data(&dn, start_idx, LOOKUP_NODE);
+-	if (ret)
+-		return 0;
+-
+-	if (dn.data_blkaddr != COMPRESS_ADDR) {
+-		dn.ofs_in_node += block - start_idx;
+-		blknr = f2fs_data_blkaddr(&dn);
+-		if (!__is_valid_data_blkaddr(blknr))
+-			blknr = 0;
+-	}
+-
+-	f2fs_put_dnode(&dn);
+-	return blknr;
+-#else
+-	return 0;
+-#endif
+-}
+-
+-
+ static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
+ {
+ 	struct inode *inode = mapping->host;
+@@ -3753,9 +3723,6 @@ static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
+ 	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+ 		filemap_write_and_wait(mapping);
+ 
+-	if (f2fs_compressed_file(inode))
+-		blknr = f2fs_bmap_compress(inode, block);
+-
+ 	if (!get_data_block_bmap(inode, block, &tmp, 0))
+ 		blknr = tmp.b_blocknr;
+ out:
+-- 
+2.28.0.402.g5ffc5be6b7-goog
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
