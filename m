@@ -1,88 +1,82 @@
-Return-Path: <SRS0=rsPV=CV=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=rFT3=CW=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2958C433E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 12 Sep 2020 06:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C4AC433E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 13 Sep 2020 08:38:17 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id ED54D208FE;
-	Sat, 12 Sep 2020 06:20:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 67DFF2168B;
+	Sun, 13 Sep 2020 08:38:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="bMYVsbBq";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Uf9u3ag2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED54D208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gtsys.com.hk
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="PF52O1jk";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="CDWwb3It";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V00kf5XL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67DFF2168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kGytH-0000bt-FF; Sat, 12 Sep 2020 06:20:03 +0000
+	id 1kHNWa-0000tu-DZ; Sun, 13 Sep 2020 08:38:16 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chris.ruehl@gtsys.com.hk>) id 1kGytG-0000bl-85
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 12 Sep 2020 06:20:02 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kHNWX-0000ry-0f
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 13 Sep 2020 08:38:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=W5f2qTrr94gpYfeOt0I0woVUvi7vm1mkNylmUr9zc7Y=; b=bMYVsbBq0Kg4G5FXtw2eHDMcfD
- TRQOfAIjzWNaLfG43dWRbPTJBJXugpz6x6f9BaAWKpkgA66NWH7Imd6UQlYXa+jNV/+Gs49nJ/xro
- axPkYIr9noMUec+eWTcqNThk/mWE5UpVVViY9f7VMcbJ0hwzIK5B1CQAv5cxMKNO63eI=;
+ bh=7inl4iDTs1sUfnfmXUCNr8WdngGjZ5TSiCL7EjsxWtY=; b=PF52O1jk+2z3yFoH57yyXZV153
+ YbrO1MIlsaPem3QBzfNyaugvXs7QWh6R2W1jUF4dHWMlv8Bx6qFwWooDRpCIjkyxxkRg7uR3uFRG0
+ wDxPBn09IgdqyZakZ1lCqWVuIxXPtpev4lPP9bCcNqSjp1TjogKuK3IKCqd4ZVceHr3s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=W5f2qTrr94gpYfeOt0I0woVUvi7vm1mkNylmUr9zc7Y=; b=Uf9u3ag2qVEqPiPkhdB7GxQ9eY
- Aa7w03EdtoDumWa1IIM5P5bTgqG/pnPCpD+PzpbDVWHuo7DPwd9SF5WWEeq3NspDQMZghJ7Nd4UOE
- 5UqQhaHriBjW+rHWnkrTwy+Bt3N/3cnyvYbfn9gjNQ/bayRgZAsEc8PHbHPy2ctowblQ=;
-Received: from [27.111.83.178] (helo=mail.gtsys.com.hk)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=7inl4iDTs1sUfnfmXUCNr8WdngGjZ5TSiCL7EjsxWtY=; b=CDWwb3ItXPozfc1CfPkLL3ytAp
+ wKG9HSxfUCKijs0HuEj0+ELCsrYl7l5Ldhde9QahNjTeTyfpddGfdjKwQ1mZUWfGGYhjrvtC5cQkB
+ viBHPRt49fuE4Ge+cD7J4Vs5onoRMSqRG1zEkxWBqm4/WF2Il8Jg8RyEndSiUO4ipzhE=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kGytA-005kca-Hb
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 12 Sep 2020 06:20:02 +0000
-Received: from localhost (localhost [127.0.0.1])
- by mail.gtsys.com.hk (Postfix) with ESMTP id 2681D20460E7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 12 Sep 2020 14:19:40 +0800 (HKT)
-X-Virus-Scanned: Debian amavisd-new at gtsys.com.hk
-Received: from mail.gtsys.com.hk ([127.0.0.1])
- by localhost (mail.gtsys.com.hk [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id FD8PEO6gknmh
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 12 Sep 2020 14:19:40 +0800 (HKT)
-Received: from s01.gtsys.com.hk (unknown [10.128.4.2])
- by mail.gtsys.com.hk (Postfix) with ESMTP id 062DD20460E6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 12 Sep 2020 14:19:40 +0800 (HKT)
-Received: from [10.128.2.32] (unknown [124.217.188.80])
- by s01.gtsys.com.hk (Postfix) with ESMTPSA id D789DC019F4
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 12 Sep 2020 14:19:39 +0800 (HKT)
-To: linux-f2fs-devel@lists.sourceforge.net
-References: <b278baec-65df-312e-5d26-89dc1ea25c86@gtsys.com.hk>
-From: Chris Ruehl <chris.ruehl@gtsys.com.hk>
-Message-ID: <fbd0fa14-f7a8-f6ff-abd4-37310228f694@gtsys.com.hk>
-Date: Sat, 12 Sep 2020 14:19:39 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+ id 1kHNWN-006q6D-QY
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 13 Sep 2020 08:38:12 +0000
+Received: from sol.attlocal.net
+ (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 3FAA52168B;
+ Sun, 13 Sep 2020 08:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1599986278;
+ bh=nVSMprpeSosbO3HIVvYvcbOcUNBMzSOQM0td1dFGCwI=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=V00kf5XLm9lY1xt1ty/xgqrsenfsXZ6pzt+SXbnRKQ3e9fVR6We4G0EY8hjqo9Ald
+ 7n09iIpMN42vGdntBunQgRVEPLY2cfh/w6QreksAz+rvIEV8FQLnt7JmweobGQXsxw
+ p7XoXPrRGWn4KIukK34qwLiwqe0gAihlc1Aj3XQs=
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Sun, 13 Sep 2020 01:36:11 -0700
+Message-Id: <20200913083620.170627-3-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200913083620.170627-1-ebiggers@kernel.org>
+References: <20200913083620.170627-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <b278baec-65df-312e-5d26-89dc1ea25c86@gtsys.com.hk>
-Content-Language: en-US
-X-Headers-End: 1kGytA-005kca-Hb
-Subject: Re: [f2fs-dev] F2fs failed on fresh installation 1st boot
+X-Headers-End: 1kHNWN-006q6D-QY
+Subject: [f2fs-dev] [PATCH v2 02/11] ext4: factor out
+ ext4_xattr_credits_for_new_inode()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,66 +88,143 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Cc: Daniel Rosenberg <drosen@google.com>, Jeff Layton <jlayton@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org,
+ ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-VXBkYXRlCk9uIDEyLzkvMjAyMCAxMjoyMCBwbSwgQ2hyaXMgUnVlaGwgd3JvdGU6Cj4gSGksCj4g
-Cj4gd2UgZW5jb3VudGVyIHJhbmRvbSBjcmFzaCBvbiBuZXcgaW5zdGFsbGVkIHBhcnRpdGlvbiBh
-dAo+IGZpcnN0IGJvb3QuCj4gS2VybmVsOiA0LjkuMjM1Cj4gS2VybmVsOiA1LjQuNjQgKGJsb3cp
-Cj4gZjJmcy10b29sczogMS40LjAKPiAKPiBbwqDCoMKgIDEuNTIwODI5XSBtbWMxOiBuZXcgRERS
-IE1NQyBjYXJkIGF0IGFkZHJlc3MgMDAwMQo+IAo+IFvCoMKgwqAgMS41MjYyMjNdIG1tY2JsazE6
-IG1tYzE6MDAwMSBERzQwMDggNy4yOCBHaUIKPiAKPiBbwqDCoMKgIDEuNTMxMDM3XSBtbWNibGsx
-Ym9vdDA6IG1tYzE6MDAwMSBERzQwMDggcGFydGl0aW9uIDEgNC4wMCBNaUIKPiAKPiBbwqDCoMKg
-IDEuNTM3MjQ0XSBtbWNibGsxYm9vdDE6IG1tYzE6MDAwMSBERzQwMDggcGFydGl0aW9uIDIgNC4w
-MCBNaUIKPiAKPiBbwqDCoMKgIDEuNTQzNDE2XSBtbWNibGsxcnBtYjogbW1jMTowMDAxIERHNDAw
-OCBwYXJ0aXRpb24gMyA0LjAwIE1pQiwgY2hhcmRldiAoMjQ3OjApCj4gW8KgwqDCoCAxLjU1NDQ0
-NV3CoCBtbWNibGsxOiBwMSBwMgo+IAo+IFvCoMKgwqAgMS41NzIzMjNdIEYyRlMtZnMgKG1tY2Js
-azFwMik6IE1pc21hdGNoIHZhbGlkIGJsb2NrcyA1MTIgdnMuIDUwOAo+IAo+IFvCoMKgwqAgMS41
-Nzg1NTJdIEYyRlMtZnMgKG1tY2JsazFwMik6IEZhaWxlZCB0byBpbml0aWFsaXplIEYyRlMgc2Vn
-bWVudCBtYW5hZ2VyIAo+ICgtMTE3KQo+IFvCoMKgwqAgMS41ODYzNzRdIFZGUzogQ2Fubm90IG9w
-ZW4gcm9vdCBkZXZpY2UgIm1tY2JsazFwMiIgb3IgdW5rbm93bi1ibG9jaygxNzksMik6IAo+IGVy
-cm9yIC0xMTcKPiBbwqDCoMKgIDEuNTk0NDk2XSBQbGVhc2UgYXBwZW5kIGEgY29ycmVjdCAicm9v
-dD0iIGJvb3Qgb3B0aW9uOyBoZXJlIGFyZSB0aGUgCj4gYXZhaWxhYmxlIHBhcnRpdGlvbnM6Cj4g
-Cj4gSSByZWJvb3QgaW50byB0aGUgaW5zdGFsbGF0aW9uIFNEQ2FyZCBhbmQgcnVuIHRoZSBmc2Nr
-LmYyZnMgd2l0aCBubyBlcnJvcnMKPiAKPiByb290QGJhODFiYThiNjEyNTp+IyBmc2NrLmYyZnMg
-L2Rldi9tbWNibGsxcDIKPiBJbmZvOiBTZWdtZW50cyBwZXIgc2VjdGlvbiA9IDEKPiBJbmZvOiBT
-ZWN0aW9ucyBwZXIgem9uZSA9IDEKPiBJbmZvOiBzZWN0b3Igc2l6ZSA9IDUxMgo+IEluZm86IHRv
-dGFsIHNlY3RvcnMgPSA3NTIwMDAwICgzNjcxIE1CKQo+IEluZm86IE1LRlMgdmVyc2lvbgo+ICDC
-oCAiTGludXggdmVyc2lvbiA1LjQuNjQgKHh4eCkgKGdjYyB2ZXJzaW9uIDguMy4wIChEZWJpYW4g
-OC4zLjAtMikpICM3NCBTTVAgU2F0IAo+IFNlcCAxMiAxMDo1NjoyNCBIS1QgMjAyMCIKPiBJbmZv
-OiBGU0NLIHZlcnNpb24KPiAgwqAgZnJvbSAiTGludXggdmVyc2lvbiA1LjQuNjQgKHh4eCkgKGdj
-YyB2ZXJzaW9uIDguMy4wIChEZWJpYW4gOC4zLjAtMikpICM3NCBTTVAgCj4gU2F0IFNlcCAxMiAx
-MDo1NjoyNCBIS1QgMjAyMCIKPiAgwqDCoMKgIHRvICJMaW51eCB2ZXJzaW9uIDUuNC42NCAoeHh4
-KSAoZ2NjIHZlcnNpb24gOC4zLjAgKERlYmlhbiA4LjMuMC0yKSkgIzc0IFNNUCAKPiBTYXQgU2Vw
-IDEyIDEwOjU2OjI0IEhLVCAyMDIwIgo+IEluZm86IHN1cGVyYmxvY2sgZmVhdHVyZXMgPSAwIDoK
-PiBJbmZvOiBzdXBlcmJsb2NrIGVuY3J5cHQgbGV2ZWwgPSAwLCBzYWx0ID0gMDAwMDAwMDAwMDAw
-MDAwMDAwMDAwMDAwMDAwMDAwMDAKPiBJbmZvOiB0b3RhbCBGUyBzZWN0b3JzID0gNzUyMDAwMCAo
-MzY3MSBNQikKPiBJbmZvOiBDS1BUIHZlcnNpb24gPSAxNGY5ODdiNwo+IEluZm86IENoZWNrZWQg
-dmFsaWQgbmF0X2JpdHMgaW4gY2hlY2twb2ludAo+IEluZm86IGNoZWNrcG9pbnQgc3RhdGUgPSAx
-YzUgOsKgIHRyaW1tZWQgbmF0X2JpdHMgY3JjIGNvbXBhY3RlZF9zdW1tYXJ5IHVubW91bnQKPiAK
-PiBbRlNDS10gVW5yZWFjaGFibGUgbmF0IGVudHJpZXPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgIFtPay4uXSBbMHgwXQo+IFtGU0NLXSBTSVQgdmFsaWQgYmxv
-Y2sgYml0bWFwIGNoZWNraW5nwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFtPay4uXQo+
-IFtGU0NLXSBIYXJkIGxpbmsgY2hlY2tpbmcgZm9yIHJlZ3VsYXIgZmlsZcKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgW09rLi5dIFsweDddCj4gW0ZTQ0tdIHZhbGlkX2Jsb2NrX2NvdW50IG1hdGNoaW5n
-IHdpdGggQ1DCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgW09rLi5dIFsweDFjMjlmXQo+IFtGU0NL
-XSB2YWxpZF9ub2RlX2NvdW50IG1hdGNoaW5nIHdpdGggQ1AgKGRlIGxvb2t1cCnCoCBbT2suLl0g
-WzB4NTk2Yl0KPiBbRlNDS10gdmFsaWRfbm9kZV9jb3VudCBtYXRjaGluZyB3aXRoIENQIChuYXQg
-bG9va3VwKSBbT2suLl0gWzB4NTk2Yl0KPiBbRlNDS10gdmFsaWRfaW5vZGVfY291bnQgbWF0Y2hl
-ZCB3aXRoIENQwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgW09rLi5dIFsweDU5NTNdCj4gW0ZT
-Q0tdIGZyZWUgc2VnbWVudF9jb3VudCBtYXRjaGVkIHdpdGggQ1DCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgW09rLi5dIFsweDYyNV0KPiBbRlNDS10gbmV4dCBibG9jayBvZmZzZXQgaXMgZnJlZcKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBbT2suLl0KPiBbRlNDS10g
-Zml4aW5nIFNJVCB0eXBlcwo+IFtGU0NLXSBvdGhlciBjb3JydXB0ZWQgYnVnc8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgW09rLi5dCj4gCj4gRG9u
-ZTogNS41OTI3MjQgc2Vjcwo+IAo+IFJlZ2FyZHMKPiBDaHJpcwo+IAo+IAo+IF9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0
-dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2
-ZWwKCkNPTkZJR19ISU1FTSBpcyBub3Qgc2V0CkNPTkZJR19QUkVFTVBUX05PTkUgaXMgc2V0LgoK
-UHJvYmxlbSBub3Qgc2VlbiB3aGVuIHNldApDT05GSUdfUFJFRU1QVAoKSWYgdGhhdCBoZWxwIHRv
-IHBvaW50IHRvIHRoZSBidWcuCgotQ2hyaXMKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1m
-MmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdl
-Lm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+From: Eric Biggers <ebiggers@google.com>
+
+To compute a new inode's xattr credits, we need to know whether the
+inode will be encrypted or not.  When we switch to use the new helper
+function fscrypt_prepare_new_inode(), we won't find out whether the
+inode will be encrypted until slightly later than is currently the case.
+That will require moving the code block that computes the xattr credits.
+
+To make this easier and reduce the length of __ext4_new_inode(), move
+this code block into a new function ext4_xattr_credits_for_new_inode().
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/ext4/ialloc.c | 90 +++++++++++++++++++++++++++---------------------
+ 1 file changed, 51 insertions(+), 39 deletions(-)
+
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index df25d38d65393..0cc576005a923 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -742,6 +742,53 @@ static int find_inode_bit(struct super_block *sb, ext4_group_t group,
+ 	return 1;
+ }
+ 
++static int ext4_xattr_credits_for_new_inode(struct inode *dir, mode_t mode,
++					    bool encrypt)
++{
++	struct super_block *sb = dir->i_sb;
++	int nblocks = 0;
++#ifdef CONFIG_EXT4_FS_POSIX_ACL
++	struct posix_acl *p = get_acl(dir, ACL_TYPE_DEFAULT);
++
++	if (IS_ERR(p))
++		return PTR_ERR(p);
++	if (p) {
++		int acl_size = p->a_count * sizeof(ext4_acl_entry);
++
++		nblocks += (S_ISDIR(mode) ? 2 : 1) *
++			__ext4_xattr_set_credits(sb, NULL /* inode */,
++						 NULL /* block_bh */, acl_size,
++						 true /* is_create */);
++		posix_acl_release(p);
++	}
++#endif
++
++#ifdef CONFIG_SECURITY
++	{
++		int num_security_xattrs = 1;
++
++#ifdef CONFIG_INTEGRITY
++		num_security_xattrs++;
++#endif
++		/*
++		 * We assume that security xattrs are never more than 1k.
++		 * In practice they are under 128 bytes.
++		 */
++		nblocks += num_security_xattrs *
++			__ext4_xattr_set_credits(sb, NULL /* inode */,
++						 NULL /* block_bh */, 1024,
++						 true /* is_create */);
++	}
++#endif
++	if (encrypt)
++		nblocks += __ext4_xattr_set_credits(sb,
++						    NULL /* inode */,
++						    NULL /* block_bh */,
++						    FSCRYPT_SET_CONTEXT_MAX_SIZE,
++						    true /* is_create */);
++	return nblocks;
++}
++
+ /*
+  * There are two policies for allocating an inode.  If the new inode is
+  * a directory, then a forward search is made for a block group with both
+@@ -796,45 +843,10 @@ struct inode *__ext4_new_inode(handle_t *handle, struct inode *dir,
+ 	}
+ 
+ 	if (!handle && sbi->s_journal && !(i_flags & EXT4_EA_INODE_FL)) {
+-#ifdef CONFIG_EXT4_FS_POSIX_ACL
+-		struct posix_acl *p = get_acl(dir, ACL_TYPE_DEFAULT);
+-
+-		if (IS_ERR(p))
+-			return ERR_CAST(p);
+-		if (p) {
+-			int acl_size = p->a_count * sizeof(ext4_acl_entry);
+-
+-			nblocks += (S_ISDIR(mode) ? 2 : 1) *
+-				__ext4_xattr_set_credits(sb, NULL /* inode */,
+-					NULL /* block_bh */, acl_size,
+-					true /* is_create */);
+-			posix_acl_release(p);
+-		}
+-#endif
+-
+-#ifdef CONFIG_SECURITY
+-		{
+-			int num_security_xattrs = 1;
+-
+-#ifdef CONFIG_INTEGRITY
+-			num_security_xattrs++;
+-#endif
+-			/*
+-			 * We assume that security xattrs are never
+-			 * more than 1k.  In practice they are under
+-			 * 128 bytes.
+-			 */
+-			nblocks += num_security_xattrs *
+-				__ext4_xattr_set_credits(sb, NULL /* inode */,
+-					NULL /* block_bh */, 1024,
+-					true /* is_create */);
+-		}
+-#endif
+-		if (encrypt)
+-			nblocks += __ext4_xattr_set_credits(sb,
+-					NULL /* inode */, NULL /* block_bh */,
+-					FSCRYPT_SET_CONTEXT_MAX_SIZE,
+-					true /* is_create */);
++		ret2 = ext4_xattr_credits_for_new_inode(dir, mode, encrypt);
++		if (ret2 < 0)
++			return ERR_PTR(ret2);
++		nblocks += ret2;
+ 	}
+ 
+ 	ngroups = ext4_get_groups_count(sb);
+-- 
+2.28.0
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
