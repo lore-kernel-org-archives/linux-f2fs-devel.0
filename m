@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9C6C433E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 13 Sep 2020 08:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A691BC43461
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 13 Sep 2020 08:38:25 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0B732207C3;
-	Sun, 13 Sep 2020 08:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4B2CF207C3;
+	Sun, 13 Sep 2020 08:38:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="RSkQ1MoY";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="RPRINLFz";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n11IT1hh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B732207C3
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="eSRJQhJW";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ZrAUMcpm";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUtAxnwO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B2CF207C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kHNWg-0001Aq-Ko; Sun, 13 Sep 2020 08:38:22 +0000
+	id 1kHNWi-0001BM-RC; Sun, 13 Sep 2020 08:38:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kHNWd-0001AQ-5B
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 13 Sep 2020 08:38:19 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kHNWg-0001Aa-BI
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 13 Sep 2020 08:38:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jCCXnk4zfmZAps+M1etMw4MZAHFNyFmTc1gdUR/5gsg=; b=RSkQ1MoYcfe2DFcgcJFuPHiyXN
- H2DsgtTIo12PVsOWOMUHBsMvpiybdaVoqJ3hwVvdKhaVw7iVNBt1pnAdJJPgN5CN9ISKxOstPanQ7
- 4ICswNVA3dCrQj+gUiYV0WgvcsuTLPc5Iu0SRZCmewPOpj6R7rOiwNUvztvZ88afCMxo=;
+ bh=EOL42wPeURqtTV7VNYY5CnaXebGzA/DaDOZ4xYhkxcw=; b=eSRJQhJWnAABeIwpIiYXGbpmrE
+ k1IjlrinnQ+zg5zkB196iW5xMUFv6nDWxLtDJQp1KZJVlwmREB2cySg8oLTrTsJRX+6fxkVYhbqws
+ QP9wkAqua3XDmm6J5cHxHIJBtw/69UpISL2AdRIa8hwQ5ujqrM3NjqX7/REFJbKCRl+Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=jCCXnk4zfmZAps+M1etMw4MZAHFNyFmTc1gdUR/5gsg=; b=RPRINLFzogk/JZ5wyaji8vae2s
- LX/zXc9EuNYRgON0O0c4Kny9DjlO7uZB4v+dvuNXZ/bVwZ+ppnQ69yRmLNJA25D4JEZbQJtfvoimD
- jBt6S47hItzC0BzzQyuFg6i86hk5yqkRh1Z4dasJ4+vIA93EK3hTi924/oZ8hVjqFiU8=;
+ bh=EOL42wPeURqtTV7VNYY5CnaXebGzA/DaDOZ4xYhkxcw=; b=ZrAUMcpmyxAsnEzb0vLFv28+di
+ qfZXeV912eQRgGTwKS7LZ/cqsaj0gh1MqzKk+avXdDMWhXQoTsoJn3mKEIJNFdqPYgveNDCrg2n1G
+ kYAwAnQUeml+KtMpTEnWXGRDhhOxIUYlgVx87WPaIsDX+nFd+32dgBq0tJq47DyllrzI=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kHNWO-006q6X-CC
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 13 Sep 2020 08:38:19 +0000
+ id 1kHNWc-006qAq-8c
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 13 Sep 2020 08:38:22 +0000
 Received: from sol.attlocal.net
  (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id CCDDB21655;
- Sun, 13 Sep 2020 08:37:58 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 668D421D1A;
+ Sun, 13 Sep 2020 08:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=default; t=1599986279;
- bh=zejOgicpkvvmMFhZrMwnmiCb7goGZK7Q97xiTR6JSH8=;
+ bh=QcAYVOOtDATZpIRqzv/LkDypHnDI6SB1ZfPpGvjEMKo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=n11IT1hhQb77UCP2bEEcG/beILGMlhRe+fSjff5reIPEWW9kdcATSTO9XHz1V4Chi
- h4xzhbz1a5sYUiKr6b243U/wP/4X+I4AMc3n+bQXWx/m3bS8jTnUO031AbOxjTg2L7
- vNC21WM7uk+GO93acsK5nw+857QFhbNttSg0o4uk=
+ b=oUtAxnwOQeM7Dr2kgVlV4dfly4HkPpXojureiWqD3KugJJtonikaBJ/0WmS3mzwuK
+ qMm4vt2DVIHEOZTV+hdqzAxhm6zjVO48B+OZgoviTP4C8OaMEwnUsQFSxeKIaiKp0X
+ OfnRS1CorFgwModQHk4r5wqxh3MkMjhLTDRNgh6Y=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Sun, 13 Sep 2020 01:36:13 -0700
-Message-Id: <20200913083620.170627-5-ebiggers@kernel.org>
+Date: Sun, 13 Sep 2020 01:36:15 -0700
+Message-Id: <20200913083620.170627-7-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200913083620.170627-1-ebiggers@kernel.org>
 References: <20200913083620.170627-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kHNWO-006q6X-CC
-Subject: [f2fs-dev] [PATCH v2 04/11] f2fs: use fscrypt_prepare_new_inode()
- and fscrypt_set_context()
+X-Headers-End: 1kHNWc-006qAq-8c
+Subject: [f2fs-dev] [PATCH v2 06/11] fscrypt: remove
+ fscrypt_inherit_context()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,158 +97,91 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Convert f2fs to use the new functions fscrypt_prepare_new_inode() and
-fscrypt_set_context().  This avoids calling
-fscrypt_get_encryption_info() from under f2fs_lock_op(), which can
-deadlock because fscrypt_get_encryption_info() isn't GFP_NOFS-safe.
+Now that all filesystems have been converted to use
+fscrypt_prepare_new_inode() and fscrypt_set_context(),
+fscrypt_inherit_context() is no longer used.  Remove it.
 
-For more details about this problem, see the earlier patch
-"fscrypt: add fscrypt_prepare_new_inode() and fscrypt_set_context()".
-
-This also fixes a f2fs-specific deadlock when the filesystem is mounted
-with '-o test_dummy_encryption' and a file is created in an unencrypted
-directory other than the root directory:
-
-    INFO: task touch:207 blocked for more than 30 seconds.
-          Not tainted 5.9.0-rc4-00099-g729e3d0919844 #2
-    "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-    task:touch           state:D stack:    0 pid:  207 ppid:   167 flags:0x00000000
-    Call Trace:
-     [...]
-     lock_page include/linux/pagemap.h:548 [inline]
-     pagecache_get_page+0x25e/0x310 mm/filemap.c:1682
-     find_or_create_page include/linux/pagemap.h:348 [inline]
-     grab_cache_page include/linux/pagemap.h:424 [inline]
-     f2fs_grab_cache_page fs/f2fs/f2fs.h:2395 [inline]
-     f2fs_grab_cache_page fs/f2fs/f2fs.h:2373 [inline]
-     __get_node_page.part.0+0x39/0x2d0 fs/f2fs/node.c:1350
-     __get_node_page fs/f2fs/node.c:35 [inline]
-     f2fs_get_node_page+0x2e/0x60 fs/f2fs/node.c:1399
-     read_inline_xattr+0x88/0x140 fs/f2fs/xattr.c:288
-     lookup_all_xattrs+0x1f9/0x2c0 fs/f2fs/xattr.c:344
-     f2fs_getxattr+0x9b/0x160 fs/f2fs/xattr.c:532
-     f2fs_get_context+0x1e/0x20 fs/f2fs/super.c:2460
-     fscrypt_get_encryption_info+0x9b/0x450 fs/crypto/keysetup.c:472
-     fscrypt_inherit_context+0x2f/0xb0 fs/crypto/policy.c:640
-     f2fs_init_inode_metadata+0xab/0x340 fs/f2fs/dir.c:540
-     f2fs_add_inline_entry+0x145/0x390 fs/f2fs/inline.c:621
-     f2fs_add_dentry+0x31/0x80 fs/f2fs/dir.c:757
-     f2fs_do_add_link+0xcd/0x130 fs/f2fs/dir.c:798
-     f2fs_add_link fs/f2fs/f2fs.h:3234 [inline]
-     f2fs_create+0x104/0x290 fs/f2fs/namei.c:344
-     lookup_open.isra.0+0x2de/0x500 fs/namei.c:3103
-     open_last_lookups+0xa9/0x340 fs/namei.c:3177
-     path_openat+0x8f/0x1b0 fs/namei.c:3365
-     do_filp_open+0x87/0x130 fs/namei.c:3395
-     do_sys_openat2+0x96/0x150 fs/open.c:1168
-     [...]
-
-That happened because f2fs_add_inline_entry() locks the directory
-inode's page in order to add the dentry, then f2fs_get_context() tries
-to lock it recursively in order to read the encryption xattr.  This
-problem is specific to "test_dummy_encryption" because normally the
-directory's fscrypt_info would be set up prior to
-f2fs_add_inline_entry() in order to encrypt the new filename.
-
-Regardless, the new design fixes this test_dummy_encryption deadlock as
-well as potential deadlocks with fs reclaim, by setting up any needed
-fscrypt_info structs prior to taking so many locks.
-
-The test_dummy_encryption deadlock was reported by Daniel Rosenberg.
-
-Reported-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/dir.c   |  2 +-
- fs/f2fs/f2fs.h  | 23 -----------------------
- fs/f2fs/namei.c |  7 ++++++-
- 3 files changed, 7 insertions(+), 25 deletions(-)
+ fs/crypto/policy.c      | 37 -------------------------------------
+ include/linux/fscrypt.h |  9 ---------
+ 2 files changed, 46 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index b2530b9507bd9..414bc94fbd546 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -537,7 +537,7 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
- 			goto put_error;
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index 7e96953d385ec..4ff893f7b030a 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -628,43 +628,6 @@ int fscrypt_has_permitted_context(struct inode *parent, struct inode *child)
+ }
+ EXPORT_SYMBOL(fscrypt_has_permitted_context);
  
- 		if (IS_ENCRYPTED(inode)) {
--			err = fscrypt_inherit_context(dir, inode, page, false);
-+			err = fscrypt_set_context(inode, page);
- 			if (err)
- 				goto put_error;
- 		}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d9e52a7f3702f..0503371f88ed4 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1315,13 +1315,6 @@ enum fsync_mode {
- #define IS_IO_TRACED_PAGE(page) (0)
- #endif
- 
--#ifdef CONFIG_FS_ENCRYPTION
--#define DUMMY_ENCRYPTION_ENABLED(sbi) \
--	(unlikely(F2FS_OPTION(sbi).dummy_enc_ctx.ctx != NULL))
--#else
--#define DUMMY_ENCRYPTION_ENABLED(sbi) (0)
--#endif
+-/**
+- * fscrypt_inherit_context() - Sets a child context from its parent
+- * @parent: Parent inode from which the context is inherited.
+- * @child:  Child inode that inherits the context from @parent.
+- * @fs_data:  private data given by FS.
+- * @preload:  preload child i_crypt_info if true
+- *
+- * Return: 0 on success, -errno on failure
+- */
+-int fscrypt_inherit_context(struct inode *parent, struct inode *child,
+-						void *fs_data, bool preload)
+-{
+-	u8 nonce[FSCRYPT_FILE_NONCE_SIZE];
+-	union fscrypt_context ctx;
+-	int ctxsize;
+-	struct fscrypt_info *ci;
+-	int res;
 -
- /* For compression */
- enum compress_algorithm_type {
- 	COMPRESS_LZO,
-@@ -4022,22 +4015,6 @@ static inline bool f2fs_lfs_mode(struct f2fs_sb_info *sbi)
- 	return F2FS_OPTION(sbi).fs_mode == FS_MODE_LFS;
+-	res = fscrypt_get_encryption_info(parent);
+-	if (res < 0)
+-		return res;
+-
+-	ci = fscrypt_get_info(parent);
+-	if (ci == NULL)
+-		return -ENOKEY;
+-
+-	get_random_bytes(nonce, FSCRYPT_FILE_NONCE_SIZE);
+-	ctxsize = fscrypt_new_context(&ctx, &ci->ci_policy, nonce);
+-
+-	BUILD_BUG_ON(sizeof(ctx) != FSCRYPT_SET_CONTEXT_MAX_SIZE);
+-	res = parent->i_sb->s_cop->set_context(child, &ctx, ctxsize, fs_data);
+-	if (res)
+-		return res;
+-	return preload ? fscrypt_get_encryption_info(child): 0;
+-}
+-EXPORT_SYMBOL(fscrypt_inherit_context);
+-
+ /**
+  * fscrypt_set_context() - Set the fscrypt context of a new inode
+  * @inode: a new inode
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 9cf7ca90f3abb..81d6ded243288 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -156,8 +156,6 @@ int fscrypt_ioctl_get_policy(struct file *filp, void __user *arg);
+ int fscrypt_ioctl_get_policy_ex(struct file *filp, void __user *arg);
+ int fscrypt_ioctl_get_nonce(struct file *filp, void __user *arg);
+ int fscrypt_has_permitted_context(struct inode *parent, struct inode *child);
+-int fscrypt_inherit_context(struct inode *parent, struct inode *child,
+-			    void *fs_data, bool preload);
+ int fscrypt_set_context(struct inode *inode, void *fs_data);
+ 
+ struct fscrypt_dummy_context {
+@@ -343,13 +341,6 @@ static inline int fscrypt_has_permitted_context(struct inode *parent,
+ 	return 0;
  }
  
--static inline bool f2fs_may_encrypt(struct inode *dir, struct inode *inode)
+-static inline int fscrypt_inherit_context(struct inode *parent,
+-					  struct inode *child,
+-					  void *fs_data, bool preload)
 -{
--#ifdef CONFIG_FS_ENCRYPTION
--	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
--	umode_t mode = inode->i_mode;
--
--	/*
--	 * If the directory encrypted or dummy encryption enabled,
--	 * then we should encrypt the inode.
--	 */
--	if (IS_ENCRYPTED(dir) || DUMMY_ENCRYPTION_ENABLED(sbi))
--		return (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode));
--#endif
--	return false;
+-	return -EOPNOTSUPP;
 -}
 -
- static inline bool f2fs_may_compress(struct inode *inode)
+ static inline int fscrypt_set_context(struct inode *inode, void *fs_data)
  {
- 	if (IS_SWAPFILE(inode) || f2fs_is_pinned_file(inode) ||
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 84e4bbc1a64de..45f324511a19e 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -28,6 +28,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	nid_t ino;
- 	struct inode *inode;
- 	bool nid_free = false;
-+	bool encrypt = false;
- 	int xattr_size = 0;
- 	int err;
- 
-@@ -69,13 +70,17 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 		F2FS_I(inode)->i_projid = make_kprojid(&init_user_ns,
- 							F2FS_DEF_PROJID);
- 
-+	err = fscrypt_prepare_new_inode(dir, inode, &encrypt);
-+	if (err)
-+		goto fail_drop;
-+
- 	err = dquot_initialize(inode);
- 	if (err)
- 		goto fail_drop;
- 
- 	set_inode_flag(inode, FI_NEW_INODE);
- 
--	if (f2fs_may_encrypt(dir, inode))
-+	if (encrypt)
- 		f2fs_set_encrypted_inode(inode);
- 
- 	if (f2fs_sb_has_extra_attr(sbi)) {
+ 	return -EOPNOTSUPP;
 -- 
 2.28.0
 
