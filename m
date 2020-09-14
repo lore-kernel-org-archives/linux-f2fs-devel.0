@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2B4C433E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Sep 2020 08:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9F4C433E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Sep 2020 08:47:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EEFF6206DC
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Sep 2020 08:47:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 65CB9206DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Sep 2020 08:47:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="KMZ7l///";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="SuhTeze1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEFF6206DC
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="j0FfRqdN";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="iFV7oPts"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65CB9206DC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kHk8y-0005l7-QX; Mon, 14 Sep 2020 08:47:24 +0000
+	id 1kHk93-0005eO-UU; Mon, 14 Sep 2020 08:47:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kHk8x-0005kz-1Y
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Sep 2020 08:47:23 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kHk92-0005dg-PZ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Sep 2020 08:47:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KOXJEPNT4G0EF0jgg0VBx9HTq9iN2eWEkxSZ7T6TpO8=; b=KMZ7l///ZYkQmZGMJCFfmXH2dP
- VMghBfcv65d1Ggh0P7iimSHwAcriltkuJi6IOmY4c8us/bNOtIkmf6Q/M0Wyzs58OTQBvB26u+5Q3
- BKlT7aVSGFogYx5qMGpxp5NFA7OVBBTRv/bdr8qHiBu4ZYzN9gVrNzfUqqMoyO4MOfk0=;
+ bh=KhoUX/kFv13FBnJ3h/CnWLKct9NXGtH0V3Wcm4e6pX0=; b=j0FfRqdNsYISbhfq8MhE8nS7rT
+ GLsBxKfbJqM0eTcQ6GvZCIE7js5nh8+WwXLp0LFXikllcHezvig0k0AL+zPdJSChDGxWy4sYlBlbu
+ FfHrGP33yifTsgG7V9DjYZVt4nLSfFMoKG6HUQkT1Xx4z7ebVPDalX+TcKT4V0od6dTk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
  Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=KOXJEPNT4G0EF0jgg0VBx9HTq9iN2eWEkxSZ7T6TpO8=; b=S
- uhTeze1VT/oiA2jviVKrcOZwdsT/RV95T+rmbWImkRZUByrNZraGXLseeRxxUjnoYCzcM+uL4e6IZ
- QR7Oh42++1mh94IRduleEd7JNMpgkF8fGhKYd2AmpeB/90FJnVvXGIvxERQV4zDVp/NVN0WCj0gl7
- 3Fjr87UVXTmlhwQM=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=KhoUX/kFv13FBnJ3h/CnWLKct9NXGtH0V3Wcm4e6pX0=; b=i
+ FV7oPtsorngZubtlzXLV69TKN+BuG4n0uReZkZVpFfcb9YuRlezktU2gDxRR5WZm5+eI34soFATez
+ WYfdEj5/x9+xURBkTVx5CbtWBlgnH8nyNTS4EXaTfd6iJND5wlDSfTbx+KtpTchBQOqGtbiuOx9Da
+ a6afOsTQ5/+KjCd4=;
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kHk8r-008AoA-BU
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Sep 2020 08:47:22 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 6D7A9749817C5FE586B7;
- Mon, 14 Sep 2020 16:46:59 +0800 (CST)
+ id 1kHk8v-008tZe-S2
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Sep 2020 08:47:28 +0000
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id 4A9E42DC6B1C9CF3D833;
+ Mon, 14 Sep 2020 16:47:12 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.487.0; Mon, 14 Sep 2020 16:46:51 +0800
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.487.0; Mon, 14 Sep 2020 16:47:04 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Mon, 14 Sep 2020 16:46:44 +0800
-Message-ID: <20200914084645.44063-1-yuchao0@huawei.com>
+Date: Mon, 14 Sep 2020 16:47:00 +0800
+Message-ID: <20200914084700.44149-1-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kHk8r-008AoA-BU
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: compress: introduce page array slab
- cache
+X-Headers-End: 1kHk8v-008tZe-S2
+Subject: [f2fs-dev] [PATCH] f2fs: clean up kvfree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,296 +85,318 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add a per-sbi slab cache "f2fs_page_array_entry-%u:%u" for memory
-allocation of page pointer array in compress context.
+After commit 0b6d4ca04a86 ("f2fs: don't return vmalloc() memory from
+f2fs_kmalloc()"), f2fs_k{m,z}alloc() will not return vmalloc()'ed
+memory, so clean up to use kfree() instead of kvfree() to free
+vmalloc()'ed memory.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/compress.c | 86 +++++++++++++++++++++++++++++++++-------------
- fs/f2fs/f2fs.h     |  7 ++++
- fs/f2fs/super.c    |  8 ++++-
- 3 files changed, 77 insertions(+), 24 deletions(-)
+ fs/f2fs/acl.c     |  6 +++---
+ fs/f2fs/data.c    |  2 +-
+ fs/f2fs/debug.c   |  2 +-
+ fs/f2fs/dir.c     |  2 +-
+ fs/f2fs/file.c    |  2 +-
+ fs/f2fs/gc.c      |  4 ++--
+ fs/f2fs/inline.c  |  4 ++--
+ fs/f2fs/namei.c   |  2 +-
+ fs/f2fs/node.c    |  2 +-
+ fs/f2fs/segment.c | 24 ++++++++++++------------
+ fs/f2fs/xattr.c   |  8 ++++----
+ 11 files changed, 29 insertions(+), 29 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 7895186cc765..c6fcd68df71a 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -17,6 +17,32 @@
- #include "node.h"
- #include <trace/events/f2fs.h>
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 217b290ae3a5..306413589827 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -160,7 +160,7 @@ static void *f2fs_acl_to_disk(struct f2fs_sb_info *sbi,
+ 	return (void *)f2fs_acl;
  
-+static void *page_array_alloc(struct inode *inode)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	unsigned int size = sizeof(struct page *) <<
-+				F2FS_I(inode)->i_log_cluster_size;
-+
-+	if (likely(size == sbi->page_array_slab_size))
-+		return kmem_cache_zalloc(sbi->page_array_slab, GFP_NOFS);
-+	return f2fs_kzalloc(sbi, size, GFP_NOFS);
-+}
-+
-+static void page_array_free(struct inode *inode, void *pages)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	unsigned int size = sizeof(struct page *) <<
-+				F2FS_I(inode)->i_log_cluster_size;
-+
-+	if (!pages)
-+		return;
-+
-+	if (likely(size == sbi->page_array_slab_size))
-+		kmem_cache_free(sbi->page_array_slab, pages);
-+	else
-+		kfree(pages);
-+}
-+
- struct f2fs_compress_ops {
- 	int (*init_compress_ctx)(struct compress_ctx *cc);
- 	void (*destroy_compress_ctx)(struct compress_ctx *cc);
-@@ -130,19 +156,16 @@ struct page *f2fs_compress_control_page(struct page *page)
- 
- int f2fs_init_compress_ctx(struct compress_ctx *cc)
- {
--	struct f2fs_sb_info *sbi = F2FS_I_SB(cc->inode);
--
- 	if (cc->nr_rpages)
- 		return 0;
- 
--	cc->rpages = f2fs_kzalloc(sbi, sizeof(struct page *) <<
--					cc->log_cluster_size, GFP_NOFS);
-+	cc->rpages = page_array_alloc(cc->inode);
- 	return cc->rpages ? 0 : -ENOMEM;
+ fail:
+-	kvfree(f2fs_acl);
++	kfree(f2fs_acl);
+ 	return ERR_PTR(-EINVAL);
  }
  
- void f2fs_destroy_compress_ctx(struct compress_ctx *cc)
- {
--	kfree(cc->rpages);
-+	page_array_free(cc->inode, cc->rpages);
- 	cc->rpages = NULL;
- 	cc->nr_rpages = 0;
- 	cc->nr_cpages = 0;
-@@ -573,7 +596,6 @@ static void *f2fs_vmap(struct page **pages, unsigned int count)
+@@ -190,7 +190,7 @@ static struct posix_acl *__f2fs_get_acl(struct inode *inode, int type,
+ 		acl = NULL;
+ 	else
+ 		acl = ERR_PTR(retval);
+-	kvfree(value);
++	kfree(value);
  
- static int f2fs_compress_pages(struct compress_ctx *cc)
- {
--	struct f2fs_sb_info *sbi = F2FS_I_SB(cc->inode);
- 	struct f2fs_inode_info *fi = F2FS_I(cc->inode);
- 	const struct f2fs_compress_ops *cops =
- 				f2fs_cops[fi->i_compress_algorithm];
-@@ -592,8 +614,7 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
- 	max_len = COMPRESS_HEADER_SIZE + cc->clen;
- 	cc->nr_cpages = DIV_ROUND_UP(max_len, PAGE_SIZE);
+ 	return acl;
+ }
+@@ -240,7 +240,7 @@ static int __f2fs_set_acl(struct inode *inode, int type,
  
--	cc->cpages = f2fs_kzalloc(sbi, sizeof(struct page *) *
--					cc->nr_cpages, GFP_NOFS);
-+	cc->cpages = page_array_alloc(cc->inode);
- 	if (!cc->cpages) {
- 		ret = -ENOMEM;
- 		goto destroy_compress_ctx;
-@@ -667,7 +688,7 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
- 		if (cc->cpages[i])
- 			f2fs_compress_free_page(cc->cpages[i]);
+ 	error = f2fs_setxattr(inode, name_index, "", value, size, ipage, 0);
+ 
+-	kvfree(value);
++	kfree(value);
+ 	if (!error)
+ 		set_cached_acl(inode, type, acl);
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 411029ec4fe8..db020a74fd84 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3570,7 +3570,7 @@ static void f2fs_dio_end_io(struct bio *bio)
+ 	bio->bi_private = dio->orig_private;
+ 	bio->bi_end_io = dio->orig_end_io;
+ 
+-	kvfree(dio);
++	kfree(dio);
+ 
+ 	bio_endio(bio);
+ }
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index f3cc34db86d7..a8357fd4f5fa 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -574,7 +574,7 @@ void f2fs_destroy_stats(struct f2fs_sb_info *sbi)
+ 	list_del(&si->stat_list);
+ 	mutex_unlock(&f2fs_stat_mutex);
+ 
+-	kvfree(si);
++	kfree(si);
+ }
+ 
+ void __init f2fs_create_root_stats(void)
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 069f498af1e3..703cf8e21fc0 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -1170,7 +1170,7 @@ static int f2fs_d_hash(const struct dentry *dentry, struct qstr *str)
  	}
--	kfree(cc->cpages);
-+	page_array_free(cc->inode, cc->cpages);
- 	cc->cpages = NULL;
- destroy_compress_ctx:
- 	if (cops->destroy_compress_ctx)
-@@ -706,8 +727,7 @@ void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity)
- 		goto out_free_dic;
+ 	str->hash = full_name_hash(dentry, norm, len);
+ out:
+-	kvfree(norm);
++	kfree(norm);
+ 	return ret;
+ }
+ 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index dcc7d4d1268c..58e464cc15f0 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3373,7 +3373,7 @@ static int f2fs_ioc_getfslabel(struct file *filp, unsigned long arg)
+ 				min(FSLABEL_MAX, count)))
+ 		err = -EFAULT;
+ 
+-	kvfree(vbuf);
++	kfree(vbuf);
+ 	return err;
+ }
+ 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 84b9dac942e3..05641a1e36cc 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -152,7 +152,7 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
+ 			"f2fs_gc-%u:%u", MAJOR(dev), MINOR(dev));
+ 	if (IS_ERR(gc_th->f2fs_gc_task)) {
+ 		err = PTR_ERR(gc_th->f2fs_gc_task);
+-		kvfree(gc_th);
++		kfree(gc_th);
+ 		sbi->gc_thread = NULL;
  	}
+ out:
+@@ -165,7 +165,7 @@ void f2fs_stop_gc_thread(struct f2fs_sb_info *sbi)
+ 	if (!gc_th)
+ 		return;
+ 	kthread_stop(gc_th->f2fs_gc_task);
+-	kvfree(gc_th);
++	kfree(gc_th);
+ 	sbi->gc_thread = NULL;
+ }
  
--	dic->tpages = f2fs_kzalloc(sbi, sizeof(struct page *) *
--					dic->cluster_size, GFP_NOFS);
-+	dic->tpages = page_array_alloc(dic->inode);
- 	if (!dic->tpages) {
- 		ret = -ENOMEM;
- 		goto out_free_dic;
-@@ -1046,6 +1066,7 @@ bool f2fs_compress_write_end(struct inode *inode, void *fsdata,
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 102df444f623..70384e31788d 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -524,7 +524,7 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
+ 			!f2fs_has_inline_xattr(dir))
+ 		F2FS_I(dir)->i_inline_xattr_size = 0;
  
- {
- 	struct compress_ctx cc = {
-+		.inode = inode,
- 		.log_cluster_size = F2FS_I(inode)->i_log_cluster_size,
- 		.cluster_size = F2FS_I(inode)->i_cluster_size,
- 		.rpages = fsdata,
-@@ -1179,8 +1200,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 	cic->magic = F2FS_COMPRESSED_PAGE_MAGIC;
- 	cic->inode = inode;
- 	atomic_set(&cic->pending_pages, cc->nr_cpages);
--	cic->rpages = f2fs_kzalloc(sbi, sizeof(struct page *) <<
--			cc->log_cluster_size, GFP_NOFS);
-+	cic->rpages = page_array_alloc(cc->inode);
- 	if (!cic->rpages)
- 		goto out_put_cic;
- 
-@@ -1278,7 +1298,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
+-	kvfree(backup_dentry);
++	kfree(backup_dentry);
  	return 0;
+ recover:
+ 	lock_page(ipage);
+@@ -535,7 +535,7 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
+ 	set_page_dirty(ipage);
+ 	f2fs_put_page(ipage, 1);
  
- out_destroy_crypt:
--	kfree(cic->rpages);
-+	page_array_free(cc->inode, cic->rpages);
- 
- 	for (--i; i >= 0; i--)
- 		fscrypt_finalize_bounce_page(&cc->cpages[i]);
-@@ -1322,7 +1342,7 @@ void f2fs_compress_write_end_io(struct bio *bio, struct page *page)
- 		end_page_writeback(cic->rpages[i]);
- 	}
- 
--	kfree(cic->rpages);
-+	page_array_free(cic->inode, cic->rpages);
- 	kfree(cic);
+-	kvfree(backup_dentry);
++	kfree(backup_dentry);
+ 	return err;
  }
  
-@@ -1419,7 +1439,7 @@ int f2fs_write_multi_pages(struct compress_ctx *cc,
- 
- 		err = f2fs_write_compressed_pages(cc, submitted,
- 							wbc, io_type);
--		kfree(cc->cpages);
-+		page_array_free(cc->inode, cc->cpages);
- 		cc->cpages = NULL;
- 		if (!err)
- 			return 0;
-@@ -1446,8 +1466,7 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
- 	if (!dic)
- 		return ERR_PTR(-ENOMEM);
- 
--	dic->rpages = f2fs_kzalloc(sbi, sizeof(struct page *) <<
--			cc->log_cluster_size, GFP_NOFS);
-+	dic->rpages = page_array_alloc(cc->inode);
- 	if (!dic->rpages) {
- 		kfree(dic);
- 		return ERR_PTR(-ENOMEM);
-@@ -1466,8 +1485,7 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
- 		dic->rpages[i] = cc->rpages[i];
- 	dic->nr_rpages = cc->cluster_size;
- 
--	dic->cpages = f2fs_kzalloc(sbi, sizeof(struct page *) *
--					dic->nr_cpages, GFP_NOFS);
-+	dic->cpages = page_array_alloc(dic->inode);
- 	if (!dic->cpages)
- 		goto out_free;
- 
-@@ -1502,7 +1520,7 @@ void f2fs_free_dic(struct decompress_io_ctx *dic)
- 				continue;
- 			f2fs_compress_free_page(dic->tpages[i]);
- 		}
--		kfree(dic->tpages);
-+		page_array_free(dic->inode, dic->tpages);
- 	}
- 
- 	if (dic->cpages) {
-@@ -1511,10 +1529,10 @@ void f2fs_free_dic(struct decompress_io_ctx *dic)
- 				continue;
- 			f2fs_compress_free_page(dic->cpages[i]);
- 		}
--		kfree(dic->cpages);
-+		page_array_free(dic->inode, dic->cpages);
- 	}
- 
--	kfree(dic->rpages);
-+	page_array_free(dic->inode, dic->rpages);
- 	kfree(dic);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 84e4bbc1a64d..90565432559c 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -707,7 +707,7 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	f2fs_handle_failed_inode(inode);
+ out_free_encrypted_link:
+ 	if (disk_link.name != (unsigned char *)symname)
+-		kvfree(disk_link.name);
++		kfree(disk_link.name);
+ 	return err;
  }
  
-@@ -1543,3 +1561,25 @@ void f2fs_decompress_end_io(struct page **rpages,
- 		unlock_page(rpage);
- 	}
- }
-+
-+int f2fs_init_page_array_cache(struct f2fs_sb_info *sbi)
-+{
-+	dev_t dev = sbi->sb->s_bdev->bd_dev;
-+	char slab_name[32];
-+
-+	sprintf(slab_name, "f2fs_page_array_entry-%u:%u", MAJOR(dev), MINOR(dev));
-+
-+	sbi->page_array_slab_size = sizeof(struct page *) <<
-+					F2FS_OPTION(sbi).compress_log_size;
-+
-+	sbi->page_array_slab = f2fs_kmem_cache_create(slab_name,
-+					sbi->page_array_slab_size);
-+	if (!sbi->page_array_slab)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+void f2fs_destroy_page_array_cache(struct f2fs_sb_info *sbi)
-+{
-+	kmem_cache_destroy(sbi->page_array_slab);
-+}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8efa19baf33d..3cfed2d8bd05 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1626,6 +1626,9 @@ struct f2fs_sb_info {
- 
- 	struct kmem_cache *inline_xattr_slab;	/* inline xattr entry */
- 	unsigned int inline_xattr_slab_size;	/* default inline xattr slab size */
-+
-+	struct kmem_cache *page_array_slab;	/* page array entry */
-+	unsigned int page_array_slab_size;	/* default page array slab size */
- };
- 
- struct f2fs_private_dio {
-@@ -3933,6 +3936,8 @@ void f2fs_decompress_end_io(struct page **rpages,
- int f2fs_init_compress_ctx(struct compress_ctx *cc);
- void f2fs_destroy_compress_ctx(struct compress_ctx *cc);
- void f2fs_init_compress_info(struct f2fs_sb_info *sbi);
-+int f2fs_init_page_array_cache(struct f2fs_sb_info *sbi);
-+void f2fs_destroy_page_array_cache(struct f2fs_sb_info *sbi);
- #else
- static inline bool f2fs_is_compressed_page(struct page *page) { return false; }
- static inline bool f2fs_is_compress_backend_ready(struct inode *inode)
-@@ -3949,6 +3954,8 @@ static inline struct page *f2fs_compress_control_page(struct page *page)
- }
- static inline int f2fs_init_compress_mempool(void) { return 0; }
- static inline void f2fs_destroy_compress_mempool(void) { }
-+static inline int f2fs_init_page_array_cache(struct f2fs_sb_info *sbi) { return 0; }
-+static inline void f2fs_destroy_page_array_cache(struct f2fs_sb_info *sbi) { }
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index cb1b5b61a1da..85efa13fc3c3 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -3257,7 +3257,7 @@ void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi)
+ 	kvfree(nm_i->nat_bitmap_mir);
  #endif
+ 	sbi->nm_info = NULL;
+-	kvfree(nm_i);
++	kfree(nm_i);
+ }
  
- static inline void set_compress_context(struct inode *inode)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 844ea837ebd7..d7336914d2b3 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1277,6 +1277,7 @@ static void f2fs_put_super(struct super_block *sb)
- 	kfree(sbi->raw_super);
- 
- 	destroy_device_list(sbi);
-+	f2fs_destroy_page_array_cache(sbi);
- 	f2fs_destroy_xattr_caches(sbi);
- 	mempool_destroy(sbi->write_io_dummy);
- #ifdef CONFIG_QUOTA
-@@ -3613,13 +3614,16 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	err = f2fs_init_xattr_caches(sbi);
- 	if (err)
- 		goto free_io_dummy;
-+	err = f2fs_init_page_array_cache(sbi);
-+	if (err)
-+		goto free_xattr_cache;
- 
- 	/* get an inode for meta space */
- 	sbi->meta_inode = f2fs_iget(sb, F2FS_META_INO(sbi));
- 	if (IS_ERR(sbi->meta_inode)) {
- 		f2fs_err(sbi, "Failed to read F2FS meta data inode");
- 		err = PTR_ERR(sbi->meta_inode);
--		goto free_xattr_cache;
-+		goto free_page_array_cache;
+ int __init f2fs_create_node_manager_caches(void)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6335523090e9..13ecd2c2c361 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -728,7 +728,7 @@ int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi)
+ 				"f2fs_flush-%u:%u", MAJOR(dev), MINOR(dev));
+ 	if (IS_ERR(fcc->f2fs_issue_flush)) {
+ 		err = PTR_ERR(fcc->f2fs_issue_flush);
+-		kvfree(fcc);
++		kfree(fcc);
+ 		SM_I(sbi)->fcc_info = NULL;
+ 		return err;
  	}
+@@ -747,7 +747,7 @@ void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free)
+ 		kthread_stop(flush_thread);
+ 	}
+ 	if (free) {
+-		kvfree(fcc);
++		kfree(fcc);
+ 		SM_I(sbi)->fcc_info = NULL;
+ 	}
+ }
+@@ -2105,7 +2105,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+ 				"f2fs_discard-%u:%u", MAJOR(dev), MINOR(dev));
+ 	if (IS_ERR(dcc->f2fs_issue_discard)) {
+ 		err = PTR_ERR(dcc->f2fs_issue_discard);
+-		kvfree(dcc);
++		kfree(dcc);
+ 		SM_I(sbi)->dcc_info = NULL;
+ 		return err;
+ 	}
+@@ -2129,7 +2129,7 @@ static void destroy_discard_cmd_control(struct f2fs_sb_info *sbi)
+ 	if (unlikely(atomic_read(&dcc->discard_cmd_cnt)))
+ 		f2fs_issue_discard_timeout(sbi);
  
- 	err = f2fs_get_valid_checkpoint(sbi);
-@@ -3895,6 +3899,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	make_bad_inode(sbi->meta_inode);
- 	iput(sbi->meta_inode);
- 	sbi->meta_inode = NULL;
-+free_page_array_cache:
-+	f2fs_destroy_page_array_cache(sbi);
- free_xattr_cache:
- 	f2fs_destroy_xattr_caches(sbi);
- free_io_dummy:
+-	kvfree(dcc);
++	kfree(dcc);
+ 	SM_I(sbi)->dcc_info = NULL;
+ }
+ 
+@@ -5151,7 +5151,7 @@ static void destroy_dirty_segmap(struct f2fs_sb_info *sbi)
+ 
+ 	destroy_victim_secmap(sbi);
+ 	SM_I(sbi)->dirty_info = NULL;
+-	kvfree(dirty_i);
++	kfree(dirty_i);
+ }
+ 
+ static void destroy_curseg(struct f2fs_sb_info *sbi)
+@@ -5163,10 +5163,10 @@ static void destroy_curseg(struct f2fs_sb_info *sbi)
+ 		return;
+ 	SM_I(sbi)->curseg_array = NULL;
+ 	for (i = 0; i < NR_CURSEG_TYPE; i++) {
+-		kvfree(array[i].sum_blk);
+-		kvfree(array[i].journal);
++		kfree(array[i].sum_blk);
++		kfree(array[i].journal);
+ 	}
+-	kvfree(array);
++	kfree(array);
+ }
+ 
+ static void destroy_free_segmap(struct f2fs_sb_info *sbi)
+@@ -5177,7 +5177,7 @@ static void destroy_free_segmap(struct f2fs_sb_info *sbi)
+ 	SM_I(sbi)->free_info = NULL;
+ 	kvfree(free_i->free_segmap);
+ 	kvfree(free_i->free_secmap);
+-	kvfree(free_i);
++	kfree(free_i);
+ }
+ 
+ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+@@ -5189,7 +5189,7 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+ 
+ 	if (sit_i->sentries)
+ 		kvfree(sit_i->bitmap);
+-	kvfree(sit_i->tmp_map);
++	kfree(sit_i->tmp_map);
+ 
+ 	kvfree(sit_i->sentries);
+ 	kvfree(sit_i->sec_entries);
+@@ -5201,7 +5201,7 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+ 	kvfree(sit_i->sit_bitmap_mir);
+ 	kvfree(sit_i->invalid_segmap);
+ #endif
+-	kvfree(sit_i);
++	kfree(sit_i);
+ }
+ 
+ void f2fs_destroy_segment_manager(struct f2fs_sb_info *sbi)
+@@ -5217,7 +5217,7 @@ void f2fs_destroy_segment_manager(struct f2fs_sb_info *sbi)
+ 	destroy_free_segmap(sbi);
+ 	destroy_sit_info(sbi);
+ 	sbi->sm_info = NULL;
+-	kvfree(sm_info);
++	kfree(sm_info);
+ }
+ 
+ int __init f2fs_create_segment_manager_caches(void)
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 1b0736ce0918..65afcc3cc68a 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -39,7 +39,7 @@ static void xattr_free(struct f2fs_sb_info *sbi, void *xattr_addr,
+ 	if (is_inline)
+ 		kmem_cache_free(sbi->inline_xattr_slab, xattr_addr);
+ 	else
+-		kvfree(xattr_addr);
++		kfree(xattr_addr);
+ }
+ 
+ static int f2fs_xattr_generic_get(const struct xattr_handler *handler,
+@@ -425,7 +425,7 @@ static int read_all_xattrs(struct inode *inode, struct page *ipage,
+ 	*base_addr = txattr_addr;
+ 	return 0;
+ fail:
+-	kvfree(txattr_addr);
++	kfree(txattr_addr);
+ 	return err;
+ }
+ 
+@@ -610,7 +610,7 @@ ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
+ 	}
+ 	error = buffer_size - rest;
+ cleanup:
+-	kvfree(base_addr);
++	kfree(base_addr);
+ 	return error;
+ }
+ 
+@@ -750,7 +750,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 	if (!error && S_ISDIR(inode->i_mode))
+ 		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
+ exit:
+-	kvfree(base_addr);
++	kfree(base_addr);
+ 	return error;
+ }
+ 
 -- 
 2.26.2
 
