@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D19C433E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Sep 2020 08:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9DAC433E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Sep 2020 08:49:40 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DBF9E20872;
-	Wed, 16 Sep 2020 08:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 6B08720872;
+	Wed, 16 Sep 2020 08:49:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="MULXVS3e";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="l3qsD2Co";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VjiIW+S5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBF9E20872
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="SzDYLHd7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="dowsZy4u";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ncdb8mKI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B08720872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kIT7l-0003tn-6s; Wed, 16 Sep 2020 08:49:09 +0000
+	id 1kIT8F-0007h7-5V; Wed, 16 Sep 2020 08:49:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from
  <BATV+ec02f9a336edee825c28+6233+infradead.org+hch@casper.srs.infradead.org>)
- id 1kIT7h-0003tO-5n; Wed, 16 Sep 2020 08:49:05 +0000
+ id 1kIT87-0007fE-8W; Wed, 16 Sep 2020 08:49:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=zkDLxhq3ExbTfk+r0z7F7YPIpcLsGT2h6q/f53LrBqs=; b=MULXVS3enyn/VTLCK8qUqgth9E
- RcIGE0IcnXsHDNiOeBQOpXSzx56QKWWFg+KgLupcCK0X73hCMSSamlSYdiQAurPeWgUiOaxZHVljC
- Gi7+VNcVsAOz1fI3aphMKK3vZoV1ZvFbKzWZ1G3Cl4T94kpI73dnFLOK5IjlVdRxLmFA=;
+ bh=yFjrMsePDJlQkzG4d2Vn8z/692IKzJ049uA8PvEMcO4=; b=SzDYLHd7wUTtCn7C8mFNcTg3Z+
+ wiwaeRCW2Gcq7awTO68IwBLGfYFTW00PWzcgKSvQ0tJ3R6BzC5IhSBsVLtXbYoJFNwc0uijN/vr+n
+ tX8KbIbLpWFPT/Zj79rWVnoG1amBDdR9L0GnEOO+2yRoDTD1TJBdJjx37e/4jcC3a4UM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -46,38 +46,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=zkDLxhq3ExbTfk+r0z7F7YPIpcLsGT2h6q/f53LrBqs=; b=l3qsD2CoiNZXy/15mQTHkT+/SU
- uA6MRCuLorz3foj5r+AvkGmh8mLuv0NFjXVFzvjlLnkBvcAyulP71Ojmb6pjWISINtpW1Su3cCQVY
- o+1XW0NCEHxyRIDTmio70ACQsjzC/gfFiwFAlrlxQNrzv4MlVeL3r5S8iTSbE//ciWXk=;
+ bh=yFjrMsePDJlQkzG4d2Vn8z/692IKzJ049uA8PvEMcO4=; b=dowsZy4u99HGveSJCjyeWJ1J++
+ V5ldK35+x+lQlKI4nGgfJVTv19y1kgPqzrAe+67WA48pv0yqFJhtb5foiqBXXECDZRwElv0uNHYoW
+ h+I1Y4Zf4+T1H5OhaiyPQy2OPAfmKT32S9n9DULyAOlMUAtbda9kId83PFXBtmNcIdng=;
 Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kIT7K-00C64c-G2; Wed, 16 Sep 2020 08:49:04 +0000
+ id 1kIT7y-00B5Js-QY; Wed, 16 Sep 2020 08:49:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
  References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=zkDLxhq3ExbTfk+r0z7F7YPIpcLsGT2h6q/f53LrBqs=; b=VjiIW+S5mYOvePRcTHr4e0bMdB
- OLQbwGWcZtEdJnipfq7KzYukg8H9VIOSqJOzfugbyS0+zSsfVWbugK2CLBiWgsmC2eb4CdDjRdP0H
- qMvKcY3Ux9RDoB5mcDoTghSETFAa4XSGEQBsqeKY3nNBnbGrhvS2I9hAG7ixso0JLWasO4LTZ9vyj
- eZIr8JXKaiKifRCpYTOGMwPRbNnhyiPTvAYFd+nw/Om5lfitGBODfDQfCongaJYE82F0gWXbxIBm+
- x/vFfRA8jXtyjYexrp4cIpmwzL0igff2VQxwnT+3HuMg+RiHtmwozUfnR36iGMQawK2hicLsxqPSy
- 0M/u3qjQ==;
+ bh=yFjrMsePDJlQkzG4d2Vn8z/692IKzJ049uA8PvEMcO4=; b=Ncdb8mKIyo2jzNf/4eaE4LnpE4
+ vFj38ShjIXOy8kyLU7yoLOGb+kFF78Rsm0VwpmpGVyTX3s306CGrpGaxuvnR2qMJRP/c+7onbjD2o
+ xlf88CQo90s+kNfDXNdGx9DpBk2YXjtyBEKR057ZhUmbPSKKoohMzOxPdp7lOD776J/L8ar5x3vPr
+ tCur5rOtVXOE1W9N7ysn155eEtqs8hrBxog4BoZUqAD++P78ZzqZzJWUKHLBbQ7CHtoPIBSnVqexZ
+ 2weYDIUQokHvqdlyaP1xT/gi4Ao0WZ/BebOnYeahK2Pb4/KNNOKj97cffPeG/WKbGYSFx+5AdAQky
+ jzrMrnIw==;
 Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat
- Linux)) id 1kIT77-0008Ib-JM; Wed, 16 Sep 2020 08:48:29 +0000
-Date: Wed, 16 Sep 2020 09:48:29 +0100
+ Linux)) id 1kIT7l-0008Lu-46; Wed, 16 Sep 2020 08:49:09 +0000
+Date: Wed, 16 Sep 2020 09:49:09 +0100
 From: Christoph Hellwig <hch@infradead.org>
 To: Nick Terrell <nickrterrell@gmail.com>
-Message-ID: <20200916084829.GA31608@infradead.org>
+Message-ID: <20200916084909.GB31608@infradead.org>
 References: <20200916034307.2092020-1-nickrterrell@gmail.com>
- <20200916034307.2092020-2-nickrterrell@gmail.com>
+ <20200916034307.2092020-5-nickrterrell@gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200916034307.2092020-2-nickrterrell@gmail.com>
+In-Reply-To: <20200916034307.2092020-5-nickrterrell@gmail.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  casper.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1kIT7K-00C64c-G2
-Subject: Re: [f2fs-dev] [PATCH 1/9] lib: zstd: Add zstd compatibility wrapper
+X-Headers-End: 1kIT7y-00B5Js-QY
+Subject: Re: [f2fs-dev] [PATCH 4/9] crypto: zstd: Switch to zstd-1.4.6 API
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,23 +100,16 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Sep 15, 2020 at 08:42:54PM -0700, Nick Terrell wrote:
-> From: Nick Terrell <terrelln@fb.com>
-> 
-> Adds zstd_compat.h which provides the necessary functions from the
-> current zstd.h API. It is only active for zstd versions 1.4.6 and newer.
-> That means it is disabled currently, but will become active when a later
-> patch in this series updates the zstd library in the kernel to 1.4.6.
-> 
-> This header allows the zstd upgrade to 1.4.6 without changing any
-> callers, since they all include zstd through the compatibility wrapper.
-> Later patches in this series transition each caller away from the
-> compatibility wrapper. After all the callers have been transitioned away
-> from the compatibility wrapper, the final patch in this series deletes
-> it.
+> +	const size_t wksp_size = ZSTD_estimateCCtxSize(ZSTD_DEF_LEVEL);
+> +
+> +	if (ZSTD_isError(wksp_size)) {
+> +		ret = -EINVAL;
+> +		goto out_free;
+> +	}
 
-Please just add wrappes to the main header instead of causing all
-this churn.
+Pleas switch to properly named functions when you touch this.
+
+The API names here look like a cat threw up on the keyboard.
 
 
 _______________________________________________
