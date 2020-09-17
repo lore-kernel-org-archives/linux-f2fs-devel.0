@@ -4,41 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EA5C2BBD1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE12C43461
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2020 04:13:43 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C57AD22205;
+	by mail.kernel.org (Postfix) with ESMTPS id A38BD22204;
 	Thu, 17 Sep 2020 04:13:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CJwBmzBO";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="FcbNLLDM";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjOZn/iF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C57AD22205
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="T6KwuIO4";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="QgFUM2te";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0aZjJ50k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38BD22204
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kIlIk-0006Dl-Fl; Thu, 17 Sep 2020 04:13:42 +0000
+	id 1kIlIj-0006eH-6i; Thu, 17 Sep 2020 04:13:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kIlIe-0006CY-V2
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:36 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kIlIc-0006dI-Hv
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dlZh8CacO0jmMHNg0hq1/LPjo+9l+arjszSTZwB7Chg=; b=CJwBmzBOjCRScdCV+tICTYeCxC
- sH8RETXUfCa2gVfeO5pLjBeTHBwdVp2MtF9h9OEqRHqLEHgVgLgsHiswbbFf0fSqoYMO2LokfH87h
- 5td6b6jeof7Pdr1rvX8oToQCXzHa1Bh759fszPM99beYb+lHwu3j4u6QMLy7b0XLOerA=;
+ bh=vwuwyW3Mkc/+44AJ6/Q4zGoyv2mP8DqJB3+QEP609hQ=; b=T6KwuIO4brKkvJo52Ts8yo69ii
+ Uh/zX9Qx6ps9R30l8G3HK1GQeTUIkA9JKwjsg1Hj/cvqDMFEmf9PKmDVp2a1BSJxZ/0podw0E6QOt
+ LlXGUYzqpLRoR4EWxzN7ejd7EU5EO8eSkLv+4Ox5iO51W7Cvm6rowUaE6rJVw38BcZrQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dlZh8CacO0jmMHNg0hq1/LPjo+9l+arjszSTZwB7Chg=; b=FcbNLLDMc5yjOG7TKc+hHcgOTq
- gDtCfTlDSWxSAkAWbDmn8VPh2UR4vqDSYtRS8of5mJ3JBDRBb3g0xm7awq7BmdrVvyW3mKBn5Ayvh
- tRw6er+StZmFT5gEd5AytGA7kPa/QvwHWXPzI3xmepPZiPInIOTCto2mbNWFQBTNgKK0=;
+ bh=vwuwyW3Mkc/+44AJ6/Q4zGoyv2mP8DqJB3+QEP609hQ=; b=QgFUM2te1Aw8GXSmwyLFEdfgvB
+ HcoYB0cRPgvU+uZwOxyy6n/du6lLDt/Cc1zNImF0WafzTLdu+q0QvqAk+I2HDmD5pEAUJjWSPd9KP
+ GVPcgieYSp0swpQsLe2Jal5T3yNvcETuXhLUv44F2tftMjb2bIW6MguWcoTd2tQfoNSc=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kIlIb-00DZed-JJ
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:36 +0000
+ id 1kIlIY-00CRcQ-TY
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:34 +0000
 Received: from sol.attlocal.net
  (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 9750121D41;
- Thu, 17 Sep 2020 04:13:09 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id F35EA221E8;
+ Thu, 17 Sep 2020 04:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1600315989;
- bh=pcuDTH9STD/mcWVjY9xk4V3olh0O7QdLKYJXVZYhQo8=;
+ s=default; t=1600315991;
+ bh=SHrYUdtm1g7ntgYtdzixMrvNEz6L5/D07nXI8RMvuM4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=WjOZn/iFKAnidcOCFe+ysawmOaq+wZI9ahIoTC+JpTCuGheF3T5BHxOwXh1kL3zCZ
- 3bymu2kDogYINSoFHUgY+sOPCKrKs0XS/Hi5wozjy5gL6kj6NUPkMa8IZcCNDveVRT
- WvDDwm829kBpdreaI9WfPgzWgY3w2UuXhMRU3Kk4=
+ b=0aZjJ50kI4WEJr9D62QjYoMh11x5Tz6VA/g+py5rlDxfKeC3rajPvnUPVqMZknrFY
+ SuDXRZDPiTFzMBkCxcHGjYVuu5AN236OvZ4HJ4kYKHBG5HEMQlSdjEC39hh/8n1BjV
+ V6rVVgLbSNn9KahPShkzKXqNX9H1Ek/XaZTG/iJ0=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Wed, 16 Sep 2020 21:11:29 -0700
-Message-Id: <20200917041136.178600-7-ebiggers@kernel.org>
+Date: Wed, 16 Sep 2020 21:11:34 -0700
+Message-Id: <20200917041136.178600-12-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200917041136.178600-1-ebiggers@kernel.org>
 References: <20200917041136.178600-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kIlIb-00DZed-JJ
-Subject: [f2fs-dev] [PATCH v3 06/13] fscrypt: adjust logging for in-creation
- inodes
+X-Headers-End: 1kIlIY-00CRcQ-TY
+Subject: [f2fs-dev] [PATCH v3 11/13] fscrypt: move fscrypt_prepare_symlink()
+ out-of-line
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,63 +97,171 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Now that a fscrypt_info may be set up for inodes that are currently
-being created and haven't yet had an inode number assigned, avoid
-logging confusing messages about "inode 0".
+In preparation for moving the logic for "get the encryption policy
+inherited by new files in this directory" to a single place, make
+fscrypt_prepare_symlink() a regular function rather than an inline
+function that wraps __fscrypt_prepare_symlink().
+
+This way, the new function fscrypt_policy_to_inherit() won't need to be
+exported to filesystems.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/crypto.c  | 4 +++-
- fs/crypto/keyring.c | 9 +++++++--
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ fs/crypto/hooks.c       | 39 ++++++++++++++++++++++---
+ include/linux/fscrypt.h | 63 ++++++++++-------------------------------
+ 2 files changed, 50 insertions(+), 52 deletions(-)
 
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 9212325763b0f..4ef3f714046aa 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -343,9 +343,11 @@ void fscrypt_msg(const struct inode *inode, const char *level,
- 	va_start(args, fmt);
- 	vaf.fmt = fmt;
- 	vaf.va = &args;
--	if (inode)
-+	if (inode && inode->i_ino)
- 		printk("%sfscrypt (%s, inode %lu): %pV\n",
- 		       level, inode->i_sb->s_id, inode->i_ino, &vaf);
-+	else if (inode)
-+		printk("%sfscrypt (%s): %pV\n", level, inode->i_sb->s_id, &vaf);
- 	else
- 		printk("%sfscrypt: %pV\n", level, &vaf);
- 	va_end(args);
-diff --git a/fs/crypto/keyring.c b/fs/crypto/keyring.c
-index e74f239c44280..53cc552a7b8fd 100644
---- a/fs/crypto/keyring.c
-+++ b/fs/crypto/keyring.c
-@@ -817,6 +817,7 @@ static int check_for_busy_inodes(struct super_block *sb,
- 	struct list_head *pos;
- 	size_t busy_count = 0;
- 	unsigned long ino;
-+	char ino_str[50] = "";
- 
- 	spin_lock(&mk->mk_decrypted_inodes_lock);
- 
-@@ -838,11 +839,15 @@ static int check_for_busy_inodes(struct super_block *sb,
- 	}
- 	spin_unlock(&mk->mk_decrypted_inodes_lock);
- 
-+	/* If the inode is currently being created, ino may still be 0. */
-+	if (ino)
-+		snprintf(ino_str, sizeof(ino_str), ", including ino %lu", ino);
-+
- 	fscrypt_warn(NULL,
--		     "%s: %zu inode(s) still busy after removing key with %s %*phN, including ino %lu",
-+		     "%s: %zu inode(s) still busy after removing key with %s %*phN%s",
- 		     sb->s_id, busy_count, master_key_spec_type(&mk->mk_spec),
- 		     master_key_spec_len(&mk->mk_spec), (u8 *)&mk->mk_spec.u,
--		     ino);
-+		     ino_str);
- 	return -EBUSY;
+diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
+index 7748db5092409..a399c54947f28 100644
+--- a/fs/crypto/hooks.c
++++ b/fs/crypto/hooks.c
+@@ -166,12 +166,43 @@ int fscrypt_prepare_setflags(struct inode *inode,
+ 	return 0;
  }
  
+-int __fscrypt_prepare_symlink(struct inode *dir, unsigned int len,
+-			      unsigned int max_len,
+-			      struct fscrypt_str *disk_link)
++/**
++ * fscrypt_prepare_symlink() - prepare to create a possibly-encrypted symlink
++ * @dir: directory in which the symlink is being created
++ * @target: plaintext symlink target
++ * @len: length of @target excluding null terminator
++ * @max_len: space the filesystem has available to store the symlink target
++ * @disk_link: (out) the on-disk symlink target being prepared
++ *
++ * This function computes the size the symlink target will require on-disk,
++ * stores it in @disk_link->len, and validates it against @max_len.  An
++ * encrypted symlink may be longer than the original.
++ *
++ * Additionally, @disk_link->name is set to @target if the symlink will be
++ * unencrypted, but left NULL if the symlink will be encrypted.  For encrypted
++ * symlinks, the filesystem must call fscrypt_encrypt_symlink() to create the
++ * on-disk target later.  (The reason for the two-step process is that some
++ * filesystems need to know the size of the symlink target before creating the
++ * inode, e.g. to determine whether it will be a "fast" or "slow" symlink.)
++ *
++ * Return: 0 on success, -ENAMETOOLONG if the symlink target is too long,
++ * -ENOKEY if the encryption key is missing, or another -errno code if a problem
++ * occurred while setting up the encryption key.
++ */
++int fscrypt_prepare_symlink(struct inode *dir, const char *target,
++			    unsigned int len, unsigned int max_len,
++			    struct fscrypt_str *disk_link)
+ {
+ 	int err;
+ 
++	if (!IS_ENCRYPTED(dir) && !fscrypt_get_dummy_context(dir->i_sb)) {
++		disk_link->name = (unsigned char *)target;
++		disk_link->len = len + 1;
++		if (disk_link->len > max_len)
++			return -ENAMETOOLONG;
++		return 0;
++	}
++
+ 	/*
+ 	 * To calculate the size of the encrypted symlink target we need to know
+ 	 * the amount of NUL padding, which is determined by the flags set in
+@@ -207,7 +238,7 @@ int __fscrypt_prepare_symlink(struct inode *dir, unsigned int len,
+ 	disk_link->name = NULL;
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(__fscrypt_prepare_symlink);
++EXPORT_SYMBOL_GPL(fscrypt_prepare_symlink);
+ 
+ int __fscrypt_encrypt_symlink(struct inode *inode, const char *target,
+ 			      unsigned int len, struct fscrypt_str *disk_link)
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 81d6ded243288..39e7397a3f103 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -225,9 +225,9 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
+ 			     struct fscrypt_name *fname);
+ int fscrypt_prepare_setflags(struct inode *inode,
+ 			     unsigned int oldflags, unsigned int flags);
+-int __fscrypt_prepare_symlink(struct inode *dir, unsigned int len,
+-			      unsigned int max_len,
+-			      struct fscrypt_str *disk_link);
++int fscrypt_prepare_symlink(struct inode *dir, const char *target,
++			    unsigned int len, unsigned int max_len,
++			    struct fscrypt_str *disk_link);
+ int __fscrypt_encrypt_symlink(struct inode *inode, const char *target,
+ 			      unsigned int len, struct fscrypt_str *disk_link);
+ const char *fscrypt_get_symlink(struct inode *inode, const void *caddr,
+@@ -520,15 +520,21 @@ static inline int fscrypt_prepare_setflags(struct inode *inode,
+ 	return 0;
+ }
+ 
+-static inline int __fscrypt_prepare_symlink(struct inode *dir,
+-					    unsigned int len,
+-					    unsigned int max_len,
+-					    struct fscrypt_str *disk_link)
++static inline int fscrypt_prepare_symlink(struct inode *dir,
++					  const char *target,
++					  unsigned int len,
++					  unsigned int max_len,
++					  struct fscrypt_str *disk_link)
+ {
+-	return -EOPNOTSUPP;
++	if (IS_ENCRYPTED(dir))
++		return -EOPNOTSUPP;
++	disk_link->name = (unsigned char *)target;
++	disk_link->len = len + 1;
++	if (disk_link->len > max_len)
++		return -ENAMETOOLONG;
++	return 0;
+ }
+ 
+-
+ static inline int __fscrypt_encrypt_symlink(struct inode *inode,
+ 					    const char *target,
+ 					    unsigned int len,
+@@ -793,45 +799,6 @@ static inline int fscrypt_prepare_setattr(struct dentry *dentry,
+ 	return 0;
+ }
+ 
+-/**
+- * fscrypt_prepare_symlink() - prepare to create a possibly-encrypted symlink
+- * @dir: directory in which the symlink is being created
+- * @target: plaintext symlink target
+- * @len: length of @target excluding null terminator
+- * @max_len: space the filesystem has available to store the symlink target
+- * @disk_link: (out) the on-disk symlink target being prepared
+- *
+- * This function computes the size the symlink target will require on-disk,
+- * stores it in @disk_link->len, and validates it against @max_len.  An
+- * encrypted symlink may be longer than the original.
+- *
+- * Additionally, @disk_link->name is set to @target if the symlink will be
+- * unencrypted, but left NULL if the symlink will be encrypted.  For encrypted
+- * symlinks, the filesystem must call fscrypt_encrypt_symlink() to create the
+- * on-disk target later.  (The reason for the two-step process is that some
+- * filesystems need to know the size of the symlink target before creating the
+- * inode, e.g. to determine whether it will be a "fast" or "slow" symlink.)
+- *
+- * Return: 0 on success, -ENAMETOOLONG if the symlink target is too long,
+- * -ENOKEY if the encryption key is missing, or another -errno code if a problem
+- * occurred while setting up the encryption key.
+- */
+-static inline int fscrypt_prepare_symlink(struct inode *dir,
+-					  const char *target,
+-					  unsigned int len,
+-					  unsigned int max_len,
+-					  struct fscrypt_str *disk_link)
+-{
+-	if (IS_ENCRYPTED(dir) || fscrypt_get_dummy_context(dir->i_sb) != NULL)
+-		return __fscrypt_prepare_symlink(dir, len, max_len, disk_link);
+-
+-	disk_link->name = (unsigned char *)target;
+-	disk_link->len = len + 1;
+-	if (disk_link->len > max_len)
+-		return -ENAMETOOLONG;
+-	return 0;
+-}
+-
+ /**
+  * fscrypt_encrypt_symlink() - encrypt the symlink target if needed
+  * @inode: symlink inode
 -- 
 2.28.0
 
