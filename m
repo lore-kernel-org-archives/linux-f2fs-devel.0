@@ -2,87 +2,81 @@ Return-Path: <SRS0=dtVZ=C2=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B4FC433E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2020 03:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF1CC43461
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2020 04:13:26 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 37A7220707;
-	Thu, 17 Sep 2020 03:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D5C3C22204;
+	Thu, 17 Sep 2020 04:13:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="a4hJSU2n";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TyDB/MKg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A7220707
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Fe+V6X2U";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WKbwA0+A";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0urzfH3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5C3C22204
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kIl0F-0005Kq-M5; Thu, 17 Sep 2020 03:54:35 +0000
+	id 1kIlIQ-0002tY-OG; Thu, 17 Sep 2020 04:13:22 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wangxiaojun11@huawei.com>) id 1kIl0E-0005HI-IA
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 03:54:34 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kIlIP-0002tQ-6U
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tC0fZ3FavrW06sBUspf920opbQMiuozOUof2KncmX3U=; b=a4hJSU2nH7J9ruPz5OUwuptIcA
- HfgWHp7cbp6d5lpULMCt/2od9lrd6a5eZ3+RlgQnCh7kzui4sl9/F30Swlp937qLW5odo3Flcla9S
- JsCoaFw8RSo0TkiMfMvC6TUgfcDvPSZPxseCntN7vKGCc4zQ4sQrIh7zj+XzQyCy/gjA=;
+ bh=7inl4iDTs1sUfnfmXUCNr8WdngGjZ5TSiCL7EjsxWtY=; b=Fe+V6X2U34pjZ/sUULXeebSsU/
+ DylXfYnpGGfOMt/ULJeJJZk1qDHs4tzMHOT+QyIuRs8m6vYRfZHHsXGe0ZVyJ9AYmAQMDp1Xyzzxu
+ mNxdUKJSOL0Y7LmxGmiIF3ytW1uCULMLCVzUN093EErd1negu2bzyHLgmWKUyLno+RGQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:Message-ID
- :Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=tC0fZ3FavrW06sBUspf920opbQMiuozOUof2KncmX3U=; b=T
- yDB/MKgJJQrHHZqgRQMkQENHyVcZTSY1y8LTyHvcuFy/zwfhVHZZKIP/6dZiXZ/VK9t5no/6qMZBV
- KDblbjX30sYUOaMDli0ECTwEGIqk8m7/C4hF8BYB1fOAsthRObB8LUDgod0atPnMzIG/hiMprWoSL
- MurzEAzy18jHd0Ek=;
-Received: from szxga03-in.huawei.com ([45.249.212.189] helo=huawei.com)
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=7inl4iDTs1sUfnfmXUCNr8WdngGjZ5TSiCL7EjsxWtY=; b=WKbwA0+A4qdHD2cKSScQX9rnFT
+ bj9i5U7Rkm4sSYIrSPaGzzUhmNzXpu5OxqyD3zRXOHrMqJqjB48HZjDLOBAbhotEitfRdnTKYUuFC
+ v3mrk8YK3jhYf8eXEw+8blUbdE5tWz/Wewp1YxAGkfWptQfc3miTA8vVKkdLKnmOLPDc=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kIl0B-00CPUr-CY
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 03:54:34 +0000
-Received: from dggeml406-hub.china.huawei.com (unknown [172.30.72.54])
- by Forcepoint Email with ESMTP id CAC5BAF5127805EA7C6F;
- Thu, 17 Sep 2020 11:54:18 +0800 (CST)
-Received: from DGGEML422-HUB.china.huawei.com (10.1.199.39) by
- dggeml406-hub.china.huawei.com (10.3.17.50) with Microsoft SMTP Server (TLS)
- id 14.3.487.0; Thu, 17 Sep 2020 11:54:18 +0800
-Received: from DGGEML531-MBX.china.huawei.com ([169.254.6.224]) by
- dggeml422-hub.china.huawei.com ([10.1.199.39]) with mapi id 14.03.0487.000;
- Thu, 17 Sep 2020 11:54:11 +0800
-From: "wangxiaojun (N)" <wangxiaojun11@huawei.com>
-To: "Yuchao (T)" <yuchao0@huawei.com>, "jaegeuk@kernel.org"
- <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>
-Thread-Topic: [PATCH] f2fs: fix wrong total_sections check
-Thread-Index: AQHWi9UQ/+csPOjKN0qV4RXXgcAYAg==
-Date: Thu, 17 Sep 2020 03:54:11 +0000
-Message-ID: <6FEAADAF081CC14C95AF288712F254AE1D6EEB15@dggeml531-mbx.china.huawei.com>
-References: <20200916015410.4135737-1-wangxiaojun11@huawei.com>
- <3041cb44-8666-1db2-7474-367cf19f46c7@huawei.com>
- <6FEAADAF081CC14C95AF288712F254AE1D6CBA0A@dggeml531-mbx.china.huawei.com>
- <35370655-1c32-c2d9-2952-08a36e959dde@huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.174.179.148]
+ id 1kIlIM-00CRaD-Q6
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:21 +0000
+Received: from sol.attlocal.net
+ (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 781BF208DB;
+ Thu, 17 Sep 2020 04:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1600315988;
+ bh=nVSMprpeSosbO3HIVvYvcbOcUNBMzSOQM0td1dFGCwI=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=W0urzfH3q0MMsp14SUg7JlcaqllmX1jfO7tG13brvInJk91ZUIyf37gd3H1t3Y6N0
+ X0w81XrZ7k0TGIMcy31iKgejPGB3hYwc5PTdSPxQXvlIgL3VPhFS1Ha+S29TQy0A4D
+ oYAc2dvgQn7bST0BPVAK/JGpQb9y9zNOGy8Yxr/Y=
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Wed, 16 Sep 2020 21:11:25 -0700
+Message-Id: <20200917041136.178600-3-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200917041136.178600-1-ebiggers@kernel.org>
+References: <20200917041136.178600-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
-X-Headers-End: 1kIl0B-00CPUr-CY
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix wrong total_sections check
+X-Headers-End: 1kIlIM-00CRaD-Q6
+Subject: [f2fs-dev] [PATCH v3 02/13] ext4: factor out
+ ext4_xattr_credits_for_new_inode()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,79 +88,139 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Type: text/plain; charset="iso-2022-jp"
+Cc: Daniel Rosenberg <drosen@google.com>, Jeff Layton <jlayton@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org,
+ ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-在 2020/9/16 17:49, Yuchao (T) 写道:
-> On 2020/9/16 14:56, wangxiaojun (N) wrote:
->> 在 2020/9/16 10:57, Yuchao (T) 写道:
->>> On 2020/9/16 9:54, Xiaojun Wang wrote:
->>>> Meta area is not included in section_count computation.
->>>> The code in mkfs/f2fs_format.c is:
->>>> 	total_zones = get_sb(segment_count) / (c.segs_per_zone) -
->>>> 					total_meta_zones;
->>>> 	set_sb(section_count, total_zones * c.secs_per_zone);
->>>>
->>>> So the minimum total_sections is 1.
->>>>
->>>> Signed-off-by: Xiaojun Wang <wangxiaojun11@huawei.com>
->>>> ---
->>>>    fs/f2fs/super.c | 3 +--
->>>>    1 file changed, 1 insertion(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>> index dfa072fa8081..a450c8589841 100644
->>>> --- a/fs/f2fs/super.c
->>>> +++ b/fs/f2fs/super.c
->>>> @@ -2799,8 +2799,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
->>>>    		return -EFSCORRUPTED;
->>>>    	}
->>>>    
->>>> -	if (total_sections > segment_count ||
->>>> -			total_sections < F2FS_MIN_SEGMENTS ||
->>>> +	if (total_sections > segment_count || total_sections < 1 ||
->>>>    			segs_per_sec > segment_count || !segs_per_sec) {
->>> Here, we try to check sanity on segs_per_sec config directly and indirectly:
->>> - directly: check raw_super->segs_per_sec field
->>> - indirectly: check whether segment_count / total_sections is less than 1
->>>
->>> So I guess that first condition is wrong as well, should change it like?
->>>
->>> if (total_sections > segment_count - 'total_meta_segment_count' ||
->>>
->>> Thoughts?
->>>
->>> Thanks,
->> Hi Chao, aggree with you.
->>
->> 'total_meta_segment_count' = le32_to_cpu(raw_super->segment_count_ckpt) +
->> 			le32_to_cpu(raw_super->segment_count_sit) +
->> 			le32_to_cpu(raw_super->segment_count_nat) +
->> 			le32_to_cpu(raw_super->segment_count_ssa)
->> But the above values will be checked in sanity_check_area_boundary() which will be called later.
->> So can we move the total_sections checking to sanity_check_area_boundary
-> I think we'd better keep segs_per_sec check in sanity_check_raw_super(), as
-> it's a field of superblock.
-OK
->>   ensure the 'total_meta_segment_count' is correct ?
-> It looks the condition below is wrong as well for the same reason you mentioned
-> in commit message?
->
-> if (unlikely(fsmeta < F2FS_MIN_SEGMENTS ||
->
-> Thanks,
+From: Eric Biggers <ebiggers@google.com>
 
-Will updated in V2
+To compute a new inode's xattr credits, we need to know whether the
+inode will be encrypted or not.  When we switch to use the new helper
+function fscrypt_prepare_new_inode(), we won't find out whether the
+inode will be encrypted until slightly later than is currently the case.
+That will require moving the code block that computes the xattr credits.
 
-Thanks,
+To make this easier and reduce the length of __ext4_new_inode(), move
+this code block into a new function ext4_xattr_credits_for_new_inode().
 
->>>>    		f2fs_info(sbi, "Invalid segment/section count (%u, %u x %u)",
->>>>    			  segment_count, total_sections, segs_per_sec);
->>>>
->>
->> .
->>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/ext4/ialloc.c | 90 +++++++++++++++++++++++++++---------------------
+ 1 file changed, 51 insertions(+), 39 deletions(-)
+
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index df25d38d65393..0cc576005a923 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -742,6 +742,53 @@ static int find_inode_bit(struct super_block *sb, ext4_group_t group,
+ 	return 1;
+ }
+ 
++static int ext4_xattr_credits_for_new_inode(struct inode *dir, mode_t mode,
++					    bool encrypt)
++{
++	struct super_block *sb = dir->i_sb;
++	int nblocks = 0;
++#ifdef CONFIG_EXT4_FS_POSIX_ACL
++	struct posix_acl *p = get_acl(dir, ACL_TYPE_DEFAULT);
++
++	if (IS_ERR(p))
++		return PTR_ERR(p);
++	if (p) {
++		int acl_size = p->a_count * sizeof(ext4_acl_entry);
++
++		nblocks += (S_ISDIR(mode) ? 2 : 1) *
++			__ext4_xattr_set_credits(sb, NULL /* inode */,
++						 NULL /* block_bh */, acl_size,
++						 true /* is_create */);
++		posix_acl_release(p);
++	}
++#endif
++
++#ifdef CONFIG_SECURITY
++	{
++		int num_security_xattrs = 1;
++
++#ifdef CONFIG_INTEGRITY
++		num_security_xattrs++;
++#endif
++		/*
++		 * We assume that security xattrs are never more than 1k.
++		 * In practice they are under 128 bytes.
++		 */
++		nblocks += num_security_xattrs *
++			__ext4_xattr_set_credits(sb, NULL /* inode */,
++						 NULL /* block_bh */, 1024,
++						 true /* is_create */);
++	}
++#endif
++	if (encrypt)
++		nblocks += __ext4_xattr_set_credits(sb,
++						    NULL /* inode */,
++						    NULL /* block_bh */,
++						    FSCRYPT_SET_CONTEXT_MAX_SIZE,
++						    true /* is_create */);
++	return nblocks;
++}
++
+ /*
+  * There are two policies for allocating an inode.  If the new inode is
+  * a directory, then a forward search is made for a block group with both
+@@ -796,45 +843,10 @@ struct inode *__ext4_new_inode(handle_t *handle, struct inode *dir,
+ 	}
+ 
+ 	if (!handle && sbi->s_journal && !(i_flags & EXT4_EA_INODE_FL)) {
+-#ifdef CONFIG_EXT4_FS_POSIX_ACL
+-		struct posix_acl *p = get_acl(dir, ACL_TYPE_DEFAULT);
+-
+-		if (IS_ERR(p))
+-			return ERR_CAST(p);
+-		if (p) {
+-			int acl_size = p->a_count * sizeof(ext4_acl_entry);
+-
+-			nblocks += (S_ISDIR(mode) ? 2 : 1) *
+-				__ext4_xattr_set_credits(sb, NULL /* inode */,
+-					NULL /* block_bh */, acl_size,
+-					true /* is_create */);
+-			posix_acl_release(p);
+-		}
+-#endif
+-
+-#ifdef CONFIG_SECURITY
+-		{
+-			int num_security_xattrs = 1;
+-
+-#ifdef CONFIG_INTEGRITY
+-			num_security_xattrs++;
+-#endif
+-			/*
+-			 * We assume that security xattrs are never
+-			 * more than 1k.  In practice they are under
+-			 * 128 bytes.
+-			 */
+-			nblocks += num_security_xattrs *
+-				__ext4_xattr_set_credits(sb, NULL /* inode */,
+-					NULL /* block_bh */, 1024,
+-					true /* is_create */);
+-		}
+-#endif
+-		if (encrypt)
+-			nblocks += __ext4_xattr_set_credits(sb,
+-					NULL /* inode */, NULL /* block_bh */,
+-					FSCRYPT_SET_CONTEXT_MAX_SIZE,
+-					true /* is_create */);
++		ret2 = ext4_xattr_credits_for_new_inode(dir, mode, encrypt);
++		if (ret2 < 0)
++			return ERR_PTR(ret2);
++		nblocks += ret2;
+ 	}
+ 
+ 	ngroups = ext4_get_groups_count(sb);
+-- 
+2.28.0
 
 
 
