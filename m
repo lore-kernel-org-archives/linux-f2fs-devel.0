@@ -2,89 +2,75 @@ Return-Path: <SRS0=dtVZ=C2=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F2DC433E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2020 10:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EAE1C43461
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2020 11:10:18 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1EED6206A1;
-	Thu, 17 Sep 2020 10:05:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3C9E92075E;
+	Thu, 17 Sep 2020 11:10:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="StqdSR5t";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="U+39bXwK";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T6E1hto/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EED6206A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="MdROV/Hh";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KsD3S2kb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C9E92075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kIqnV-0001pw-6I; Thu, 17 Sep 2020 10:05:49 +0000
+	id 1kIrnm-0002Rq-IY; Thu, 17 Sep 2020 11:10:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <BATV+c88049fb72e75cdfbebb+6234+infradead.org+hch@casper.srs.infradead.org>)
- id 1kIqnO-0001pa-O7; Thu, 17 Sep 2020 10:05:42 +0000
+ (envelope-from <wangxiaojun11@huawei.com>) id 1kIrnl-0002RY-86
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 11:10:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=etDu0solC5EHZ0a6cTnafdPGtZwvbpt/Q8uDwacTzb0=; b=StqdSR5ttxN7n4JY+mZeBM816x
- u14aCULSaWqxSiBVKT/JZTHFAiJWXEmcSGnjOFeQrSHxwtlZxv6pr5W8Ps0fvGIlJifZoZI3AsXPa
- TnSWD6fzz8bhnSU1MsIysNElkoiKQZj7SvLSJitPxwvW/km5zer5I2QoeveDgu3Zn43c=;
+ bh=Uw4pMnKqeIgBrzJtLhUVx5XvRqt7oAW3PhdxhSB7krE=; b=MdROV/Hhvz5I+3LQ0NvNlaCUie
+ s4slgGH6e0tZKNXAaUtsYjKmiGKZWCIgqM3OpINMNyA716pgxQbL7vfOkM6aNB0+LT2TLjY8oEZAX
+ SY6bIbRmUvGLMfL7ddTxcf1heE6XP7EeHUMlhSr/BNrWpS1ToK6pcLayQykZXPgIW92M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=etDu0solC5EHZ0a6cTnafdPGtZwvbpt/Q8uDwacTzb0=; b=U+39bXwKFexEWJhTrMLOj+HQZ3
- KsRDcwWUPhbFsx3HbLwb5Rjt1Gkw7fAGcK3HaPqZpuYy8dk9wvlNTbZ2P1J5bH3wu70pfxs/N8wIC
- dMX8dgM232cCRfSLmh61AtZ8BuivdEb44u8cNxnOXmeRes04kL0a0eX3To+CZzeb2PiU=;
-Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Uw4pMnKqeIgBrzJtLhUVx5XvRqt7oAW3PhdxhSB7krE=; b=K
+ sD3S2kbx1934QWH9pbSJW4MaT9I8+gGjkyV5ty7TEJfpBcnK4e+/YIa+PwvZp/G1LJYfbvm9GLpfI
+ BwfHXF9glosnB0TMhb5sQsgd0gZoGCXNDPPDqpoKZL+3zxE/5p8VBUHDkB6BrayLeP1SqNINsMIlW
+ wG0gpJheu6Nap2lc=;
+Received: from szxga04-in.huawei.com ([45.249.212.190] helo=huawei.com)
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kIqnH-00Dzkr-7Y; Thu, 17 Sep 2020 10:05:42 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=etDu0solC5EHZ0a6cTnafdPGtZwvbpt/Q8uDwacTzb0=; b=T6E1hto/3ToiS8tEe7XA6ZOPy9
- yaNF0YLLVxqLa0YJWuGC9geGUEt8Hy4qoH4Pp52NSuKJyxc9jtFzsMsCaP5q3u8w+Lgjq+NYS1pig
- uyOaqV36xtAolloyVQruPOXo+likgIAY9YgMNVRVuKech2GAFb0zBapdM+74nUPJJUKKpNqO0UfSS
- ZndZBx0Y/nPQG6s1N9rvUGUHnAJ13mbDBbWl7qu/X3ozlNMnm1qkI0m3Vz/BRt8n+gN2WzZzPhW0Q
- GP9v3fCEozhHXdvVXwV8b2HrAxL+BWnTpz4UE0ZwfxqLmHj8nGf85YleQo6QTcXR9dKJuUol8RLPI
- /Pb6boJw==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat
- Linux)) id 1kIqmg-0007Lt-NG; Thu, 17 Sep 2020 10:04:58 +0000
-Date: Thu, 17 Sep 2020 11:04:58 +0100
-From: Christoph Hellwig <hch@infradead.org>
-To: Rik van Riel <riel@surriel.com>
-Message-ID: <20200917100458.GA28031@infradead.org>
-References: <20200916034307.2092020-1-nickrterrell@gmail.com>
- <20200916034307.2092020-7-nickrterrell@gmail.com>
- <20200916084958.GC31608@infradead.org>
- <CCDAB4AB-DE8D-4ADE-9221-02AE732CBAE2@fb.com>
- <20200916143046.GA13543@infradead.org>
- <1CAB33F1-95DB-4BC5-9023-35DD2E4E0C20@fb.com>
- <20200916144618.GB16392@infradead.org>
- <4D04D534-75BD-4B13-81B9-31B9687A6B64@fb.com>
- <b1eec667d42849f757bbd55f014739509498a59d.camel@surriel.com>
+ id 1kIrnc-00Csxx-Qi
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 11:10:09 +0000
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+ by Forcepoint Email with ESMTP id B9A41E76C9A4476D369A;
+ Thu, 17 Sep 2020 19:09:45 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.487.0; Thu, 17 Sep 2020
+ 19:09:35 +0800
+From: Wang Xiaojun <wangxiaojun11@huawei.com>
+To: <yuchao0@huawei.com>, <jaegeuk@kernel.org>,
+ <linux-f2fs-devel@lists.sourceforge.net>
+Date: Thu, 17 Sep 2020 19:11:58 +0800
+Message-ID: <20200917111158.3480458-1-wangxiaojun11@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <b1eec667d42849f757bbd55f014739509498a59d.camel@surriel.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- casper.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1kIqnH-00Dzkr-7Y
-Subject: Re: [f2fs-dev] [PATCH 5/9] btrfs: zstd: Switch to the zstd-1.4.6 API
+X-Originating-IP: [10.175.124.27]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1kIrnc-00Csxx-Qi
+Subject: [f2fs-dev] [PATCH v2] f2fs: fix wrong total_sections check and
+ fsmeta check
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,42 +82,77 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "squashfs-devel@lists.sourceforge.net"
- <squashfs-devel@lists.sourceforge.net>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Nick Terrell <nickrterrell@gmail.com>, Yann Collet <cyan@fb.com>,
- Petr Malat <oss@malat.biz>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- Christoph Hellwig <hch@infradead.org>, Chris Mason <clm@fb.com>,
- Nick Terrell <terrelln@fb.com>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- Kernel Team <Kernel-team@fb.com>, Niket Agarwal <niketa@fb.com>,
- Btrfs BTRFS <linux-btrfs@vger.kernel.org>, Johannes Weiner <jweiner@fb.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Sep 16, 2020 at 09:35:51PM -0400, Rik van Riel wrote:
-> > One possibility is to have a kernel wrapper on top of the zstd API to
-> > make it
-> > more ergonomic. I personally don???t really see the value in it, since
-> > it adds
-> > another layer of indirection between zstd and the caller, but it
-> > could be done.
-> 
-> Zstd would not be the first part of the kernel to
-> come from somewhere else, and have wrappers when
-> it gets integrated into the kernel. There certainly
-> is precedence there.
-> 
-> It would be interesting to know what Christoph's
-> preference is.
+Meta area is not included in section_count computation.
+So the minimum number of total_sections is 1 meanwhile it cannot be
+greater than segment_count_main.
 
-Yes, I think kernel wrappers would be a pretty sensible step forward.
-That also avoid the need to do strange upgrades to a new version,
-and instead we can just change APIs on a as-needed basis.
+The minimum number of meta segments is 8 (SB + 2 (CP + SIT + NAT) + SSA).
+
+Signed-off-by: Wang Xiaojun <wangxiaojun11@huawei.com>
+---
+ fs/f2fs/segment.h | 1 +
+ fs/f2fs/super.c   | 8 ++++----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 752b177073b2..6b60b302e26b 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -16,6 +16,7 @@
+ #define DEF_MAX_RECLAIM_PREFREE_SEGMENTS	4096	/* 8GB in maximum */
+ 
+ #define F2FS_MIN_SEGMENTS	9 /* SB + 2 (CP + SIT + NAT) + SSA + MAIN */
++#define F2FS_MIN_META_SEGMENTS	8 /* SB + 2 (CP + SIT + NAT) + SSA */
+ 
+ /* L: Logical segment # in volume, R: Relative segment # in main area */
+ #define GET_L2R_SEGNO(free_i, segno)	((segno) - (free_i)->start_segno)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index dfa072fa8081..70c5f07e65f1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2715,7 +2715,7 @@ static inline bool sanity_check_area_boundary(struct f2fs_sb_info *sbi,
+ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 				struct buffer_head *bh)
+ {
+-	block_t segment_count, segs_per_sec, secs_per_zone;
++	block_t segment_count, segs_per_sec, secs_per_zone, segment_count_main;
+ 	block_t total_sections, blocks_per_seg;
+ 	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
+ 					(bh->b_data + F2FS_SUPER_OFFSET);
+@@ -2786,6 +2786,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	segment_count = le32_to_cpu(raw_super->segment_count);
++	segment_count_main = le32_to_cpu(raw_super->segment_count_main);
+ 	segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
+ 	secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
+ 	total_sections = le32_to_cpu(raw_super->section_count);
+@@ -2799,8 +2800,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 		return -EFSCORRUPTED;
+ 	}
+ 
+-	if (total_sections > segment_count ||
+-			total_sections < F2FS_MIN_SEGMENTS ||
++	if (total_sections > segment_count_main || total_sections < 1 ||
+ 			segs_per_sec > segment_count || !segs_per_sec) {
+ 		f2fs_info(sbi, "Invalid segment/section count (%u, %u x %u)",
+ 			  segment_count, total_sections, segs_per_sec);
+@@ -2907,7 +2907,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 	ovp_segments = le32_to_cpu(ckpt->overprov_segment_count);
+ 	reserved_segments = le32_to_cpu(ckpt->rsvd_segment_count);
+ 
+-	if (unlikely(fsmeta < F2FS_MIN_SEGMENTS ||
++	if (unlikely(fsmeta < F2FS_MIN_META_SEGMENTS ||
+ 			ovp_segments == 0 || reserved_segments == 0)) {
+ 		f2fs_err(sbi, "Wrong layout: check mkfs.f2fs version");
+ 		return 1;
+-- 
+2.25.1
+
 
 
 _______________________________________________
