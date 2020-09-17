@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDECC43461
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2020 04:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1010EC433E2
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2020 04:13:38 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AC7F622204;
-	Thu, 17 Sep 2020 04:13:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A2CDE22204;
+	Thu, 17 Sep 2020 04:13:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VDXYiFTj";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="e2NhxZoC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UV/Wrbzm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC7F622204
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hhfz5dpa";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="kCUXpgI/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lr++qrX7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2CDE22204
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kIlIZ-0006cl-In; Thu, 17 Sep 2020 04:13:31 +0000
+	id 1kIlIe-0006CA-AH; Thu, 17 Sep 2020 04:13:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kIlIW-0006cO-57
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:28 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kIlIb-0006Ay-Sm
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jkNrjTt8shjtg+o0ygBkC+ogiOmaLBRtatna970dw3w=; b=VDXYiFTjv83ryz3I7U20PuLxUD
- ln/7jVKALKGyjYgZYVtAbdIRMt8q5QyBkA+TZZFGFhl5Rtu3M+BhCscvV9F4BX3Axw4Y6i+vPhOLo
- 8KwF6S5rkp1dkuCesr7xFn7UEevmJs/WQD42+K7je5nSlb8WJgaE64uuZfBt/Hh6qMs8=;
+ bh=YB3ucxhdpW5PyqPSP1dUSsOJphNwZhVBRcw55hFYmGY=; b=hhfz5dpayaZfC8WQFFKQE8Qi3m
+ vAI6jwiZj1s6vTyroceDI/sYt6zVjC4QtRGQxvzmoTPbo8tqiR7irg0aQYTw8aJ89s65vSJFDkt0c
+ EFZR7kUKQ9u9mmhntXHrejUpiSc94qyPqjvctd3JcVIDnOHUXAVeg0QG33QNPfTcOYbo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=jkNrjTt8shjtg+o0ygBkC+ogiOmaLBRtatna970dw3w=; b=e2NhxZoCfIIs2/Vv/OaDWMxbtw
- J4751nWFxbRh1Kewhu8esZasedYY9l2gWazRnkHKy8RdivvOSF7F/+fh7qgec368Tsf9O2yVWTKLn
- FShj1Q6d6nmhc84MAk4aaHMCYipksoQip5NT1Z76QsukYkaTmHFerAEz0HCyoditYIW8=;
+ bh=YB3ucxhdpW5PyqPSP1dUSsOJphNwZhVBRcw55hFYmGY=; b=kCUXpgI/Kzn2F1MoASXlUNHhbv
+ 7yet+idw4ga1cObUnqvOiqssF7gyF8GbOiMdJuTZj0ohr6t0aB/GEWcbNQ2jzN0bTVB1xOwLyQKzc
+ bbKVWwsPMGTJdk5pjVXg/Cd/Yy2i01JHyjWbeSxlc3BsaZsd64v9NlpWjTQHvAFe7UNQ=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kIlIU-00CRbs-EM
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:28 +0000
+ id 1kIlIY-00DZeF-UA
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:33 +0000
 Received: from sol.attlocal.net
  (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 53BB021D1B;
- Thu, 17 Sep 2020 04:13:09 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 8E959221EE;
+ Thu, 17 Sep 2020 04:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1600315989;
- bh=kONvZL9ec2SBbE4EAel9mci0YCQN1pZc7hmFt/F6qwY=;
+ s=default; t=1600315991;
+ bh=MedRkQM4S6L0pv+MPP4bqqDFZVyFMtpnCXSEEWcRDY0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=UV/WrbzmMh/m1GcJfVh/IfrXQYzbYI++xzjHNF1UVeIGheoZk8x4jPK18g8sIGotG
- CbC5PHYju1c79ieBLnAf26mkx6hB5TXPaWBq2uxvQ+NKofgZXvuUg5y5OThKsE4CBu
- fosUQqDRp3/xsmxSqVSrTDuIO8vQ3CRlBZZ7H3ws=
+ b=lr++qrX77fU11azDYwRHdjmB89MkN+vJsWsCYTA4dAjbWyUJg+qh44OEDffyMmHSK
+ Hnhok4h3gzgLNqlK3jugfTl1CZwhbMvPUQUKwjILjTUICYKTC4k6+ieMEZQOTrJsJN
+ xR//al7xCw7MtWVJ6WYy1tbCrzwXX7nbyDYv6HPg=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Wed, 16 Sep 2020 21:11:28 -0700
-Message-Id: <20200917041136.178600-6-ebiggers@kernel.org>
+Date: Wed, 16 Sep 2020 21:11:36 -0700
+Message-Id: <20200917041136.178600-14-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200917041136.178600-1-ebiggers@kernel.org>
 References: <20200917041136.178600-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kIlIU-00CRbs-EM
-Subject: [f2fs-dev] [PATCH v3 05/13] ubifs: use fscrypt_prepare_new_inode()
- and fscrypt_set_context()
+X-Headers-End: 1kIlIY-00DZeF-UA
+Subject: [f2fs-dev] [PATCH v3 13/13] fscrypt: make
+ fscrypt_set_test_dummy_encryption() take a 'const char *'
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,103 +97,131 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Convert ubifs to use the new functions fscrypt_prepare_new_inode() and
-fscrypt_set_context().
+fscrypt_set_test_dummy_encryption() requires that the optional argument
+to the test_dummy_encryption mount option be specified as a substring_t.
+That doesn't work well with filesystems that use the new mount API,
+since the new way of parsing mount options doesn't use substring_t.
 
-Unlike ext4 and f2fs, this doesn't appear to fix any deadlock bug.  But
-it does shorten the code slightly and get all filesystems using the same
-helper functions, so that fscrypt_inherit_context() can be removed.
+Make it take the argument as a 'const char *' instead.
 
-It also fixes an incorrect error code where ubifs returned EPERM instead
-of the expected ENOKEY.
+Instead of moving the match_strdup() into the callers in ext4 and f2fs,
+make them just use arg->from directly.  Since the pattern is
+"test_dummy_encryption=%s", the argument will be null-terminated.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ubifs/dir.c | 38 ++++++++++++++++----------------------
- 1 file changed, 16 insertions(+), 22 deletions(-)
+ fs/crypto/policy.c      | 20 ++++++--------------
+ fs/ext4/super.c         |  2 +-
+ fs/f2fs/super.c         |  2 +-
+ include/linux/fscrypt.h |  5 +----
+ 4 files changed, 9 insertions(+), 20 deletions(-)
 
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index a9c1f5a9c9bdd..155521e51ac57 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -81,19 +81,6 @@ struct inode *ubifs_new_inode(struct ubifs_info *c, struct inode *dir,
- 	struct ubifs_inode *ui;
- 	bool encrypted = false;
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index 97cf07543651f..4441d9944b9ef 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -697,8 +697,7 @@ EXPORT_SYMBOL_GPL(fscrypt_set_context);
+ /**
+  * fscrypt_set_test_dummy_encryption() - handle '-o test_dummy_encryption'
+  * @sb: the filesystem on which test_dummy_encryption is being specified
+- * @arg: the argument to the test_dummy_encryption option.
+- *	 If no argument was specified, then @arg->from == NULL.
++ * @arg: the argument to the test_dummy_encryption option.  May be NULL.
+  * @dummy_policy: the filesystem's current dummy policy (input/output, see
+  *		  below)
+  *
+@@ -712,29 +711,23 @@ EXPORT_SYMBOL_GPL(fscrypt_set_context);
+  *         -EEXIST if a different dummy policy is already set;
+  *         or another -errno value.
+  */
+-int fscrypt_set_test_dummy_encryption(struct super_block *sb,
+-				      const substring_t *arg,
++int fscrypt_set_test_dummy_encryption(struct super_block *sb, const char *arg,
+ 				      struct fscrypt_dummy_policy *dummy_policy)
+ {
+-	const char *argstr = "v2";
+-	const char *argstr_to_free = NULL;
+ 	struct fscrypt_key_specifier key_spec = { 0 };
+ 	int version;
+ 	union fscrypt_policy *policy = NULL;
+ 	int err;
  
--	if (IS_ENCRYPTED(dir)) {
--		err = fscrypt_get_encryption_info(dir);
--		if (err) {
--			ubifs_err(c, "fscrypt_get_encryption_info failed: %i", err);
--			return ERR_PTR(err);
--		}
--
--		if (!fscrypt_has_encryption_key(dir))
--			return ERR_PTR(-EPERM);
--
--		encrypted = true;
+-	if (arg->from) {
+-		argstr = argstr_to_free = match_strdup(arg);
+-		if (!argstr)
+-			return -ENOMEM;
 -	}
--
- 	inode = new_inode(c->vfs_sb);
- 	ui = ubifs_inode(inode);
- 	if (!inode)
-@@ -112,6 +99,12 @@ struct inode *ubifs_new_inode(struct ubifs_info *c, struct inode *dir,
- 			 current_time(inode);
- 	inode->i_mapping->nrpages = 0;
++	if (!arg)
++		arg = "v2";
  
-+	err = fscrypt_prepare_new_inode(dir, inode, &encrypted);
-+	if (err) {
-+		ubifs_err(c, "fscrypt_prepare_new_inode failed: %i", err);
-+		goto out_iput;
-+	}
-+
- 	switch (mode & S_IFMT) {
- 	case S_IFREG:
- 		inode->i_mapping->a_ops = &ubifs_file_address_operations;
-@@ -131,7 +124,6 @@ struct inode *ubifs_new_inode(struct ubifs_info *c, struct inode *dir,
- 	case S_IFBLK:
- 	case S_IFCHR:
- 		inode->i_op  = &ubifs_file_inode_operations;
--		encrypted = false;
- 		break;
- 	default:
- 		BUG();
-@@ -151,9 +143,8 @@ struct inode *ubifs_new_inode(struct ubifs_info *c, struct inode *dir,
- 		if (c->highest_inum >= INUM_WATERMARK) {
- 			spin_unlock(&c->cnt_lock);
- 			ubifs_err(c, "out of inode numbers");
--			make_bad_inode(inode);
--			iput(inode);
--			return ERR_PTR(-EINVAL);
-+			err = -EINVAL;
-+			goto out_iput;
- 		}
- 		ubifs_warn(c, "running out of inode numbers (current %lu, max %u)",
- 			   (unsigned long)c->highest_inum, INUM_WATERMARK);
-@@ -171,16 +162,19 @@ struct inode *ubifs_new_inode(struct ubifs_info *c, struct inode *dir,
- 	spin_unlock(&c->cnt_lock);
- 
- 	if (encrypted) {
--		err = fscrypt_inherit_context(dir, inode, &encrypted, true);
-+		err = fscrypt_set_context(inode, NULL);
- 		if (err) {
--			ubifs_err(c, "fscrypt_inherit_context failed: %i", err);
--			make_bad_inode(inode);
--			iput(inode);
--			return ERR_PTR(err);
-+			ubifs_err(c, "fscrypt_set_context failed: %i", err);
-+			goto out_iput;
- 		}
- 	}
- 
- 	return inode;
-+
-+out_iput:
-+	make_bad_inode(inode);
-+	iput(inode);
-+	return ERR_PTR(err);
+-	if (!strcmp(argstr, "v1")) {
++	if (!strcmp(arg, "v1")) {
+ 		version = FSCRYPT_POLICY_V1;
+ 		key_spec.type = FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR;
+ 		memset(key_spec.u.descriptor, 0x42,
+ 		       FSCRYPT_KEY_DESCRIPTOR_SIZE);
+-	} else if (!strcmp(argstr, "v2")) {
++	} else if (!strcmp(arg, "v2")) {
+ 		version = FSCRYPT_POLICY_V2;
+ 		key_spec.type = FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER;
+ 		/* key_spec.u.identifier gets filled in when adding the key */
+@@ -785,7 +778,6 @@ int fscrypt_set_test_dummy_encryption(struct super_block *sb,
+ 	err = 0;
+ out:
+ 	kfree(policy);
+-	kfree(argstr_to_free);
+ 	return err;
  }
+ EXPORT_SYMBOL_GPL(fscrypt_set_test_dummy_encryption);
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 7e77722406e2f..ed5624285a475 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1893,7 +1893,7 @@ static int ext4_set_test_dummy_encryption(struct super_block *sb,
+ 			 "Can't set test_dummy_encryption on remount");
+ 		return -1;
+ 	}
+-	err = fscrypt_set_test_dummy_encryption(sb, arg,
++	err = fscrypt_set_test_dummy_encryption(sb, arg->from,
+ 						&sbi->s_dummy_enc_policy);
+ 	if (err) {
+ 		if (err == -EEXIST)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f2b3d1a279fb7..c72d22c0c52e7 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -438,7 +438,7 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
+ 		return -EINVAL;
+ 	}
+ 	err = fscrypt_set_test_dummy_encryption(
+-		sb, arg, &F2FS_OPTION(sbi).dummy_enc_policy);
++		sb, arg->from, &F2FS_OPTION(sbi).dummy_enc_policy);
+ 	if (err) {
+ 		if (err == -EEXIST)
+ 			f2fs_warn(sbi,
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index b3b0c5675c6b1..fc67c4cbaa968 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -15,7 +15,6 @@
  
- static int dbg_check_name(const struct ubifs_info *c,
+ #include <linux/fs.h>
+ #include <linux/mm.h>
+-#include <linux/parser.h>
+ #include <linux/slab.h>
+ #include <uapi/linux/fscrypt.h>
+ 
+@@ -153,9 +152,7 @@ struct fscrypt_dummy_policy {
+ 	const union fscrypt_policy *policy;
+ };
+ 
+-int fscrypt_set_test_dummy_encryption(
+-				struct super_block *sb,
+-				const substring_t *arg,
++int fscrypt_set_test_dummy_encryption(struct super_block *sb, const char *arg,
+ 				struct fscrypt_dummy_policy *dummy_policy);
+ void fscrypt_show_test_dummy_encryption(struct seq_file *seq, char sep,
+ 					struct super_block *sb);
 -- 
 2.28.0
 
