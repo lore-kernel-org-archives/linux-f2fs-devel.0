@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4FFC433E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2020 04:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBB7C43461
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Sep 2020 04:13:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5A93522204;
+	by mail.kernel.org (Postfix) with ESMTPS id 8E5DA22205;
 	Thu, 17 Sep 2020 04:13:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VqHSgf42";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="G3DSyQN3";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBiN5rds"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A93522204
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="evpX8Ww6";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="RC7k4wEP";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KuwrpsyK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5DA22205
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kIlIo-0002wi-Vc; Thu, 17 Sep 2020 04:13:46 +0000
+	id 1kIlIp-0002xA-8q; Thu, 17 Sep 2020 04:13:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kIlIb-0002v3-Sg
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:33 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kIlIc-0002vL-JH
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AGEkovunS7dU2Ykk0C3iWfQOmlfDqLZBafXQ/zScJJ8=; b=VqHSgf42fkgDaozKsJWUH0c7nO
- /NhN3LEcwmJntUP1USksBqJ2an2eZhGROkFV9QNAbOANAX1OdfYopnGbAqieRaOQozKio7D5hVDoh
- WLBEgUMzfTvE6C0Qef/lbQJ4ZdHdPQmLg2kHpCSjuElfi0/nLNaLR0mUT8jVtjqXhJIA=;
+ bh=EyjFKoST5U0kuWnqnUhGCsU4YqesdRAlUpxPIzb2lI0=; b=evpX8Ww6C2pgSPLLKrUGZgjUU4
+ pfUWyg4Y94yJAe9ZDmeT+KbUynKXc/UGATTYfnxSZLTfVOZ+NcGKk1XRpFPpvY3tF74ch0QnrbjR6
+ /nTcRRH/Qxi3SaWPJrYDhbzHROCDrhdOb8abrFuOqlDQQPZOss0ANby5bvmEqFoxAMOI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AGEkovunS7dU2Ykk0C3iWfQOmlfDqLZBafXQ/zScJJ8=; b=G3DSyQN3yUx7CD7NP82rC/km5L
- wU+K/hej/SI+QjCAwMMqPVg/KwdKohxGB9A9mCwqjMXNVTAIvZ4MFAIwB6aP5J4XyjFH176XeiZ5I
- 9L2Yjfj9bRHmY8XZDo/ghfELwEvSZWm0qRSjrv2n9l3th9xvGQviQ2jFMlTFhXP6RM+s=;
+ bh=EyjFKoST5U0kuWnqnUhGCsU4YqesdRAlUpxPIzb2lI0=; b=RC7k4wEPod9JhqEud0SWJ/qBIH
+ 1BGK+F0n6BNb+fVZcwK2ifYY21OUawaIjuiJbNHwDZ9D3GCaJo1zXoucS81tX2itKDCT7A+9rz+Wl
+ 01oE2hW/TS2lUzRbVUqSwtWjio7cmuavLWmYzP46F4ySV05bho27vhx7gojut21Ro0/A=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kIlIY-00DZe6-As
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:33 +0000
+ id 1kIlIY-00DZe7-Ar
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Sep 2020 04:13:34 +0000
 Received: from sol.attlocal.net
  (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 29B3521D7F;
+ by mail.kernel.org (Postfix) with ESMTPSA id AF604221E7;
  Thu, 17 Sep 2020 04:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=default; t=1600315990;
- bh=ZzMv1pUhY0NvnbJHjrS2ra7ESt6vtXPBJHTWIdsGFCY=;
+ bh=7wQf9Y1Ge/SR2fWtRDGBHBDQ9VcJIvgAiZJHiDlXVEw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=rBiN5rdstflHX1It/vJX6MDn0Ra/3t+jyzeqs5yBDq9mOlzDoS5YBNrAfmfXthztF
- I7/1sT0nuq74DNCTvjM6CzObqwT702hidEHtOiXnpFWbZ0K0C5eA4q7LTCh4pikwvV
- 0QSOSfG7cfsP3i34K7E+BadmEiPvsm9a882Jz/NE=
+ b=KuwrpsyKR6Az33Os8au9dNORztVK5lPaO//5B4B9GGkqISAfjzCoMKvSaFMdYkK+H
+ cTfwdylHR5zS/tWU4yj+Sm4uxrUgf/O1/jB19DUFCvaoNPk/KtcTePbae7Dup7hHHg
+ AlchzaMoe4dDGfi2GfcedI9GWx9Qsvh1eLld4LG4=
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Wed, 16 Sep 2020 21:11:31 -0700
-Message-Id: <20200917041136.178600-9-ebiggers@kernel.org>
+Date: Wed, 16 Sep 2020 21:11:33 -0700
+Message-Id: <20200917041136.178600-11-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200917041136.178600-1-ebiggers@kernel.org>
 References: <20200917041136.178600-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kIlIY-00DZe6-As
-Subject: [f2fs-dev] [PATCH v3 08/13] fscrypt: require that
- fscrypt_encrypt_symlink() already has key
+X-Headers-End: 1kIlIY-00DZe7-Ar
+Subject: [f2fs-dev] [PATCH v3 10/13] fscrypt: make "#define fscrypt_policy"
+ user-only
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,38 +97,73 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Now that all filesystems have been converted to use
-fscrypt_prepare_new_inode(), the encryption key for new symlink inodes
-is now already set up whenever we try to encrypt the symlink target.
-Enforce this rather than try to set up the key again when it may be too
-late to do so safely.
+The fscrypt UAPI header defines fscrypt_policy to fscrypt_policy_v1,
+for source compatibility with old userspace programs.
+
+Internally, the kernel doesn't want that compatibility definition.
+Instead, fscrypt_private.h #undefs it and re-defines it to a union.
+
+That works for now.  However, in order to add
+fscrypt_operations::get_dummy_policy(), we'll need to forward declare
+'union fscrypt_policy' in include/linux/fscrypt.h.  That would cause
+build errors because "fscrypt_policy" is used in ioctl numbers.
+
+To avoid this, modify the UAPI header to make the fscrypt_policy
+compatibility definition conditional on !__KERNEL__, and make the ioctls
+use fscrypt_policy_v1 instead of fscrypt_policy.
+
+Note that this doesn't change the actual ioctl numbers.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/hooks.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/crypto/fscrypt_private.h  | 1 -
+ include/uapi/linux/fscrypt.h | 6 +++---
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-index 491b252843eb9..7748db5092409 100644
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -217,9 +217,13 @@ int __fscrypt_encrypt_symlink(struct inode *inode, const char *target,
- 	struct fscrypt_symlink_data *sd;
- 	unsigned int ciphertext_len;
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 355f6d9377517..ac3352086ee44 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -97,7 +97,6 @@ static inline const u8 *fscrypt_context_nonce(const union fscrypt_context *ctx)
+ 	return NULL;
+ }
  
--	err = fscrypt_require_key(inode);
--	if (err)
--		return err;
-+	/*
-+	 * fscrypt_prepare_new_inode() should have already set up the new
-+	 * symlink inode's encryption key.  We don't wait until now to do it,
-+	 * since we may be in a filesystem transaction now.
-+	 */
-+	if (WARN_ON_ONCE(!fscrypt_has_encryption_key(inode)))
-+		return -ENOKEY;
+-#undef fscrypt_policy
+ union fscrypt_policy {
+ 	u8 version;
+ 	struct fscrypt_policy_v1 v1;
+diff --git a/include/uapi/linux/fscrypt.h b/include/uapi/linux/fscrypt.h
+index 7875709ccfebf..e5de603369381 100644
+--- a/include/uapi/linux/fscrypt.h
++++ b/include/uapi/linux/fscrypt.h
+@@ -45,7 +45,6 @@ struct fscrypt_policy_v1 {
+ 	__u8 flags;
+ 	__u8 master_key_descriptor[FSCRYPT_KEY_DESCRIPTOR_SIZE];
+ };
+-#define fscrypt_policy	fscrypt_policy_v1
  
- 	if (disk_link->name) {
- 		/* filesystem-provided buffer */
+ /*
+  * Process-subscribed "logon" key description prefix and payload format.
+@@ -156,9 +155,9 @@ struct fscrypt_get_key_status_arg {
+ 	__u32 __out_reserved[13];
+ };
+ 
+-#define FS_IOC_SET_ENCRYPTION_POLICY		_IOR('f', 19, struct fscrypt_policy)
++#define FS_IOC_SET_ENCRYPTION_POLICY		_IOR('f', 19, struct fscrypt_policy_v1)
+ #define FS_IOC_GET_ENCRYPTION_PWSALT		_IOW('f', 20, __u8[16])
+-#define FS_IOC_GET_ENCRYPTION_POLICY		_IOW('f', 21, struct fscrypt_policy)
++#define FS_IOC_GET_ENCRYPTION_POLICY		_IOW('f', 21, struct fscrypt_policy_v1)
+ #define FS_IOC_GET_ENCRYPTION_POLICY_EX		_IOWR('f', 22, __u8[9]) /* size + version */
+ #define FS_IOC_ADD_ENCRYPTION_KEY		_IOWR('f', 23, struct fscrypt_add_key_arg)
+ #define FS_IOC_REMOVE_ENCRYPTION_KEY		_IOWR('f', 24, struct fscrypt_remove_key_arg)
+@@ -170,6 +169,7 @@ struct fscrypt_get_key_status_arg {
+ 
+ /* old names; don't add anything new here! */
+ #ifndef __KERNEL__
++#define fscrypt_policy			fscrypt_policy_v1
+ #define FS_KEY_DESCRIPTOR_SIZE		FSCRYPT_KEY_DESCRIPTOR_SIZE
+ #define FS_POLICY_FLAGS_PAD_4		FSCRYPT_POLICY_FLAGS_PAD_4
+ #define FS_POLICY_FLAGS_PAD_8		FSCRYPT_POLICY_FLAGS_PAD_8
 -- 
 2.28.0
 
