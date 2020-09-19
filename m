@@ -2,73 +2,79 @@ Return-Path: <SRS0=nAgU=C4=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8036BC43464
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 19 Sep 2020 03:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F47C43463
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 19 Sep 2020 07:20:36 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F342D21897;
-	Sat, 19 Sep 2020 03:33:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 22D05206A4;
+	Sat, 19 Sep 2020 07:20:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fWjoGUf2";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="QAvGkKAb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F342D21897
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="duTVipqH";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="dK6p4+pK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D05206A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kJTca-0003K1-OL; Sat, 19 Sep 2020 03:33:08 +0000
+	id 1kJXAe-0006Bf-O5; Sat, 19 Sep 2020 07:20:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wangxiaojun11@huawei.com>) id 1kJTcY-0003Jk-OJ
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 19 Sep 2020 03:33:06 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kJXAc-0006BB-A0
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 19 Sep 2020 07:20:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VKcu4akA2WUwACL03jbZBTBBCZR5JN4uSZcGQPsxh0k=; b=fWjoGUf29W1KBqlK7JuyKJPfjS
- FnAKmKqzWSpoCEK/Sz0uFeqwVOxdoHDhSHCXZJASeUB5m7zrADuJcu8vM23tIIGQQuPKC2kP+Nedr
- E9qa+WoEjornFvUEWCFjOx77S6DxZW05E5WaJ5rtf+An3HW4T/rUhNdYoMlJbGlOE+Uw=;
+ bh=abFM6S/JqTPlLPoGkHMNpQQmczCOLyay42lAfO1HURk=; b=duTVipqHBHvyBjrTC5oQHLuScy
+ XvKN+bKfW/xBHzUYXI0PtgDZAfH6lWU0B8mRn2QvfxJMut3cT2CucTfKkVKRi3ksipf8Zxc0uoRzj
+ yFJZbNFvhc0GGn1WPL/U0KeiRCEd7os3M4QR0qSxlVZvWx3yP6J9eOdMu9CXyhbLu1B8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=VKcu4akA2WUwACL03jbZBTBBCZR5JN4uSZcGQPsxh0k=; b=Q
- AvGkKAbnNZ7k32r/9sCHr/hYlbKrT7l1VedPk48OKxBIqfyke6GHFtJSWcDbfB3df5PxZPZLGfu+h
- LFlGc0ULA3V9ZYgvOLWssIfGospAiaOSpGVOYtx2T+H2ZLSAyOmzRnS0kR7vUt4UWGds6N1/vZwnm
- 5+RUDL2api1tEPXo=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=abFM6S/JqTPlLPoGkHMNpQQmczCOLyay42lAfO1HURk=; b=dK6p4+pKMxQMxn37qIaW/tfQpK
+ BTZAj8EnNt+0exUKe7MmLxe9lIQqcHfvLjE970cxk32Nsn2fJAyISeEfGNqxxivETxoMyXLrzQ/Ps
+ isCV6JZNHIITD6us+G+psx4nlF8nQH5rDErKupqfLYAkyAojJ8seXarXJNLx1pMhnWAo=;
+Received: from szxga05-in.huawei.com ([45.249.212.191] helo=huawei.com)
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kJTcS-00EyO3-Up
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 19 Sep 2020 03:33:06 +0000
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 201563989844E7C05BDA;
- Sat, 19 Sep 2020 11:32:49 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Sat, 19 Sep 2020
- 11:32:43 +0800
-From: Wang Xiaojun <wangxiaojun11@huawei.com>
-To: <yuchao0@huawei.com>, <jaegeuk@kernel.org>
-Date: Sat, 19 Sep 2020 11:35:05 +0800
-Message-ID: <20200919033505.317527-1-wangxiaojun11@huawei.com>
-X-Mailer: git-send-email 2.25.1
+ id 1kJXAW-00F4fy-8i
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 19 Sep 2020 07:20:30 +0000
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+ by Forcepoint Email with ESMTP id A52BBCB7D8CE7EE200EE;
+ Sat, 19 Sep 2020 15:20:07 +0800 (CST)
+Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.487.0; Sat, 19 Sep
+ 2020 15:19:58 +0800
+To: Wang Xiaojun <wangxiaojun11@huawei.com>, <jaegeuk@kernel.org>,
+ <linux-f2fs-devel@lists.sourceforge.net>
+References: <20200917111158.3480458-1-wangxiaojun11@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <e3df6fc5-8e03-0960-c19e-d18040bd976c@huawei.com>
+Date: Sat, 19 Sep 2020 15:19:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Originating-IP: [10.175.124.27]
+In-Reply-To: <20200917111158.3480458-1-wangxiaojun11@huawei.com>
+Content-Language: en-US
+X-Originating-IP: [10.136.114.67]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kJTcS-00EyO3-Up
-Subject: [f2fs-dev] [PATCH] f2fs: remove unused check on version_bitmap
+X-Headers-End: 1kJXAW-00F4fy-8i
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix wrong total_sections check and
+ fsmeta check
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,36 +86,22 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-A NULL will not be return by __bitmap_ptr here.
-Remove the unused check.
+On 2020/9/17 19:11, Wang Xiaojun wrote:
+> Meta area is not included in section_count computation.
+> So the minimum number of total_sections is 1 meanwhile it cannot be
+> greater than segment_count_main.
+> 
+> The minimum number of meta segments is 8 (SB + 2 (CP + SIT + NAT) + SSA).
+> 
+> Signed-off-by: Wang Xiaojun <wangxiaojun11@huawei.com>
 
-Signed-off-by: Wang Xiaojun <wangxiaojun11@huawei.com>
----
- fs/f2fs/node.c | 3 ---
- 1 file changed, 3 deletions(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index cb1b5b61a1da..2cf11662f784 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -3105,9 +3105,6 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	nm_i->next_scan_nid = le32_to_cpu(sbi->ckpt->next_free_nid);
- 	nm_i->bitmap_size = __bitmap_size(sbi, NAT_BITMAP);
- 	version_bitmap = __bitmap_ptr(sbi, NAT_BITMAP);
--	if (!version_bitmap)
--		return -EFAULT;
--
- 	nm_i->nat_bitmap = kmemdup(version_bitmap, nm_i->bitmap_size,
- 					GFP_KERNEL);
- 	if (!nm_i->nat_bitmap)
--- 
-2.25.1
-
+Thanks,
 
 
 _______________________________________________
