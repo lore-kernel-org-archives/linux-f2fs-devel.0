@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
 	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5C7C2D0E2
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Sep 2020 21:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 086DCC4727D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Sep 2020 21:06:41 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B585D206FB;
-	Tue, 22 Sep 2020 21:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 543DA206FB;
+	Tue, 22 Sep 2020 21:06:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Wz6rP+Jz";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="fhjApVEs";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ML0s+z4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B585D206FB
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="P/YDFS7x";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YocPMLTQ";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRnjbhaR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 543DA206FB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kKpU5-0001G7-Nk; Tue, 22 Sep 2020 21:05:57 +0000
+	id 1kKpUk-0001NV-DM; Tue, 22 Sep 2020 21:06:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <nickrterrell@gmail.com>)
- id 1kKpU3-0001Fg-0X; Tue, 22 Sep 2020 21:05:55 +0000
+ id 1kKpUi-0001N8-MC; Tue, 22 Sep 2020 21:06:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=981H7COrDglg2y2OsdhN4Ry4swXs13dJrOliSNOnl9g=; b=Wz6rP+JzMP0f98KPHovQDrvSyF
- HpU4O4HpCD4h3Hu8QICc7R1Cu2l2ABW4wmtZ14yOQURnoJk+B59qOjER58St0rIdT2OY0xbXMITTF
- LcJndoAENX0l9nM1sbkYuFBUoRQcgeCJ9lXqXzsqaVTBvaOOeg1EJipwpKeCajLKOcho=;
+ bh=5fKNeZSsXX3F75uWAvoclig0FCLwLLfStaZMUpC2Nwo=; b=P/YDFS7xv+oPP49AdXeaSrTHGx
+ yAv+13aRm+XdRA6PRett2eM9k3/aUVMdwISMsKvyA5pMB6Dv0GDVS5t6BNlEEkFsclUvB3VOta5J8
+ K3O4ON4gvB0dFCoyoU6cKOHwLqrTb9TXozHJ+ntaI2QoBf1LzRUyfcA64M8VmVnuP2WM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -47,58 +47,57 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=981H7COrDglg2y2OsdhN4Ry4swXs13dJrOliSNOnl9g=; b=fhjApVEsopixTBHCMWFS3twKgx
- RbKwJY1RGHl0D0S+0AoUN3JqMvH9q5zsYsL9ig6tNt6ZvsrK3GSF2TOrxwVh8Ux23FmW7wbqk1Q9j
- v9gQg6BenapwXR2PfLhcaCffBc7NDk/1gMDXATFK8vqaAIv+tyMMNF1pgsvCBriG263w=;
-Received: from mail-pf1-f196.google.com ([209.85.210.196])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=5fKNeZSsXX3F75uWAvoclig0FCLwLLfStaZMUpC2Nwo=; b=YocPMLTQEUHjx5WMXqZ8jgn9x8
+ z8a4s2CQkd/Ds2o8vSARrcKTRh+CT3f90fhUG+Wz/6kU2Rjv6atRMX3mslK2SuOOhU1jn4USYPZRC
+ M+PVr/39zDAfofpIcJz6bp89RpkWxtcM9zLYhFjhXGHV/bd38sISct7DlrWdkK+lPzA4=;
+Received: from mail-pj1-f67.google.com ([209.85.216.67])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kKpTn-001ipR-P8; Tue, 22 Sep 2020 21:05:54 +0000
-Received: by mail-pf1-f196.google.com with SMTP id b124so13582919pfg.13;
- Tue, 22 Sep 2020 14:05:39 -0700 (PDT)
+ id 1kKpUg-003eQW-Tm; Tue, 22 Sep 2020 21:06:36 +0000
+Received: by mail-pj1-f67.google.com with SMTP id v14so2036515pjd.4;
+ Tue, 22 Sep 2020 14:06:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
  h=from:to:cc:subject:date:message-id:in-reply-to:references
  :mime-version:content-transfer-encoding;
- bh=981H7COrDglg2y2OsdhN4Ry4swXs13dJrOliSNOnl9g=;
- b=ML0s+z4JiTGGpbGPOVB62fUQXSz8pBkrRGE1exLoA5L8vRau2DwvSWAXq5wm8EfgfS
- eO88W0lcJ0tX/ctYDhv/PwogvmF3gpvH7/XNB5AAcGy4qZwD0VnfGjN7iNStIFA4+Fxy
- wwTL4MzsEQAkh2IEJc/x9MH7j3pe5wliicssOGpMOFguasGvioTiF87/VBdMCrlDhJaz
- vCxOZJw/Q+TH2sSIr+kVXxR8lOFWnCWswm6nDTZSRPz9GFvZBl8VTRsyEtf/GIaeVGbQ
- Z6+Ld/5dYMMq+fGLtJ8DOS0JNLuc5IB0IaSeUql+ezqKOXj7lCQVXHfU7W/GpalbKAjE
- qEjg==
+ bh=5fKNeZSsXX3F75uWAvoclig0FCLwLLfStaZMUpC2Nwo=;
+ b=VRnjbhaR7u9Ns94IhEs7xpF9rCvZP/sm8ZtuC2hiGWNyBU5tXf+QSFQ8I0G4DjB5xC
+ qDtgHGeKqCSWhFG8djLjeMnW8cFhirccyxDMwJPsX2vr67u5OpinvTkMg6Wn/4VIXevz
+ ldZxz0mKv7SZ8al4MvEsKIljAGH3E5rDJZGVIq9N4zU8crSgNWLENnGFwRL2LWXdTO9k
+ EMvSnwUANSC7UZmHeMmeYSG0VxtlBve0n7AxG2+VqfcPILKrEbRPAwmtydEdYKb+29Ck
+ hJuLuR4rd6WG/q2Qh36hB4UYMfRaW/6hmC5NwoL2Yzw8/zCSFOeVPdK6YZ+S9y/s+czm
+ JnnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
  :references:mime-version:content-transfer-encoding;
- bh=981H7COrDglg2y2OsdhN4Ry4swXs13dJrOliSNOnl9g=;
- b=LbWaTAvDMhcHHOnlanfkrdCABSx7WQfW4MxVDkMZlLx4WsCynZXhQQkBisaHGa56aA
- OOGenf1ISdNr0zL71w5vIvQHdAuBwNZzatOJHzwEE16V0PjkXQGxgo5HAY+BtjiExC4P
- ekPYT/aeMm+Wo9nQtwYdvzP/yQq0sIYQ8ByrXosDQMv1b1/fgiuWBVeZ83WmDPDI2vRh
- ++dfIBL0pk86biF1fAzYp4d/VY+qJP6OYyQSkRBZFDq/LSvfG1fUpqfnKhQsqNYzFH6p
- bZcgw0syO2bikBjAuGspyG8gdBClyd2PWSZkLKjKFCuZgQDLT5+dYEaRLgd3dBOD5T+1
- xEkQ==
-X-Gm-Message-State: AOAM533zegHynYJvR0JCifKQyjiiuB8UpTfA3z8f2PE4PH31aACnmtDG
- ntiRh7UPtQF7ofiCyLO4p4A=
-X-Google-Smtp-Source: ABdhPJzpIRe/uXi9oko6PATw8guaQq7mv8V7LLBJQB2a9sT+vfvvH75/JxXt+7bx/mgfndJLJK6jQQ==
-X-Received: by 2002:a17:902:aa02:b029:d0:cbe1:e7b4 with SMTP id
- be2-20020a170902aa02b02900d0cbe1e7b4mr6181491plb.37.1600808734213; 
- Tue, 22 Sep 2020 14:05:34 -0700 (PDT)
+ bh=5fKNeZSsXX3F75uWAvoclig0FCLwLLfStaZMUpC2Nwo=;
+ b=Ig4V69Awgx0flv6blv3GTyNuE8qSaGgEHOyZfO8W0WpzJCzHR9ErS3iG5hY4x/sVZz
+ QTccL6gaa1XbllRxKQB8S8QTkJ0bA05uQgzSGsvSwEBJmCF13ob/XH2mYFi9Ct/sVRPR
+ zUx6k32n+wwwAAAzeSf1GZjagVBeJs3G2S3mMhwf8ffeo2fD3V2fathL9s2oHd7Q7BWy
+ U9SYWI6wcI0PkjZsYc2qLwa6LZtyGq+mHi3Bgnak4n00CYfXj+uoVSXNY5icfjvxlWlQ
+ QGttlCv0/AREtycBawmobRaBMz54HrdayPSKTnWXp+zz+IBul+R4EXShHdmyhdNA+vYz
+ gBAA==
+X-Gm-Message-State: AOAM531vPMtOdnwKMlj1Ks0JbdvzDfMaCYQ6jFlvWpb1OpT5OblBpEtm
+ 3y3h9JnuJ4dW0/Yqbc8cfGs=
+X-Google-Smtp-Source: ABdhPJxHNlmwtyEyY3QaIV8vUtWmW8GG7n0PfB1SNTU3deVbHxrNSzwE43B7Y8Qf8j7SkAAUpzLrkQ==
+X-Received: by 2002:a17:90a:d812:: with SMTP id
+ a18mr5422822pjv.228.1600808789298; 
+ Tue, 22 Sep 2020 14:06:29 -0700 (PDT)
 Received: from nickserv.localdomain (c-98-33-101-203.hsd1.ca.comcast.net.
  [98.33.101.203])
- by smtp.gmail.com with ESMTPSA id i15sm16118945pfk.145.2020.09.22.14.05.32
+ by smtp.gmail.com with ESMTPSA id i15sm16118945pfk.145.2020.09.22.14.06.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 22 Sep 2020 14:05:33 -0700 (PDT)
+ Tue, 22 Sep 2020 14:06:28 -0700 (PDT)
 From: Nick Terrell <nickrterrell@gmail.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Tue, 22 Sep 2020 14:09:17 -0700
-Message-Id: <20200922210924.1725-3-nickrterrell@gmail.com>
+Date: Tue, 22 Sep 2020 14:09:19 -0700
+Message-Id: <20200922210924.1725-5-nickrterrell@gmail.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200922210924.1725-1-nickrterrell@gmail.com>
 References: <20200922210924.1725-1-nickrterrell@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1kKpTn-001ipR-P8
-Subject: [f2fs-dev] [PATCH v2 2/9] lib: zstd: Add decompress_sources.h for
- decompress_unzstd
+X-Headers-End: 1kKpUg-003eQW-Tm
+Subject: [f2fs-dev] [PATCH v2 4/9] crypto: zstd: Switch to zstd-1.4.6 API
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -123,57 +122,88 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Nick Terrell <terrelln@fb.com>
 
-Adds decompress_sources.h which includes every .c file necessary for
-zstd decompression. This is used in decompress_unzstd.c so the internal
-structure of the library isn't exposed.
-
-This allows us to upgrade the zstd library version without modifying any
-callers. Instead we just need to update decompress_sources.h.
+Move away from the compatibility wrapper to the zstd-1.4.6 API. This
+code is functionally equivalent.
 
 Signed-off-by: Nick Terrell <terrelln@fb.com>
 ---
- lib/decompress_unzstd.c       |  6 +-----
- lib/zstd/decompress_sources.h | 14 ++++++++++++++
- 2 files changed, 15 insertions(+), 5 deletions(-)
- create mode 100644 lib/zstd/decompress_sources.h
+ crypto/zstd.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-diff --git a/lib/decompress_unzstd.c b/lib/decompress_unzstd.c
-index dbc290af26b4..a79f705f236d 100644
---- a/lib/decompress_unzstd.c
-+++ b/lib/decompress_unzstd.c
-@@ -68,11 +68,7 @@
- #ifdef STATIC
- # define UNZSTD_PREBOOT
- # include "xxhash.c"
--# include "zstd/entropy_common.c"
--# include "zstd/fse_decompress.c"
--# include "zstd/huf_decompress.c"
--# include "zstd/zstd_common.c"
--# include "zstd/decompress.c"
-+# include "zstd/decompress_sources.h"
- #endif
+diff --git a/crypto/zstd.c b/crypto/zstd.c
+index dcda3cad3b5c..767fe2fbe009 100644
+--- a/crypto/zstd.c
++++ b/crypto/zstd.c
+@@ -11,7 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/net.h>
+ #include <linux/vmalloc.h>
+-#include <linux/zstd_compat.h>
++#include <linux/zstd.h>
+ #include <crypto/internal/scompress.h>
  
- #include <linux/decompress/mm.h>
-diff --git a/lib/zstd/decompress_sources.h b/lib/zstd/decompress_sources.h
-new file mode 100644
-index 000000000000..ccb4960ea0cd
---- /dev/null
-+++ b/lib/zstd/decompress_sources.h
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0-only
+ 
+@@ -24,16 +24,15 @@ struct zstd_ctx {
+ 	void *dwksp;
+ };
+ 
+-static ZSTD_parameters zstd_params(void)
+-{
+-	return ZSTD_getParams(ZSTD_DEF_LEVEL, 0, 0);
+-}
+-
+ static int zstd_comp_init(struct zstd_ctx *ctx)
+ {
+ 	int ret = 0;
+-	const ZSTD_parameters params = zstd_params();
+-	const size_t wksp_size = ZSTD_CCtxWorkspaceBound(params.cParams);
++	const size_t wksp_size = ZSTD_estimateCCtxSize(ZSTD_DEF_LEVEL);
 +
-+/*
-+ * This file includes every .c file needed for decompression.
-+ * It is used by lib/decompress_unzstd.c to include the decompression
-+ * source into the translation-unit, so it can be used for kernel
-+ * decompression.
-+ */
-+
-+#include "entropy_common.c"
-+#include "fse_decompress.c"
-+#include "huf_decompress.c"
-+#include "zstd_common.c"
-+#include "decompress.c"
++	if (ZSTD_isError(wksp_size)) {
++		ret = -EINVAL;
++		goto out_free;
++	}
+ 
+ 	ctx->cwksp = vzalloc(wksp_size);
+ 	if (!ctx->cwksp) {
+@@ -41,7 +40,7 @@ static int zstd_comp_init(struct zstd_ctx *ctx)
+ 		goto out;
+ 	}
+ 
+-	ctx->cctx = ZSTD_initCCtx(ctx->cwksp, wksp_size);
++	ctx->cctx = ZSTD_initStaticCCtx(ctx->cwksp, wksp_size);
+ 	if (!ctx->cctx) {
+ 		ret = -EINVAL;
+ 		goto out_free;
+@@ -56,7 +55,7 @@ static int zstd_comp_init(struct zstd_ctx *ctx)
+ static int zstd_decomp_init(struct zstd_ctx *ctx)
+ {
+ 	int ret = 0;
+-	const size_t wksp_size = ZSTD_DCtxWorkspaceBound();
++	const size_t wksp_size = ZSTD_estimateDCtxSize();
+ 
+ 	ctx->dwksp = vzalloc(wksp_size);
+ 	if (!ctx->dwksp) {
+@@ -64,7 +63,7 @@ static int zstd_decomp_init(struct zstd_ctx *ctx)
+ 		goto out;
+ 	}
+ 
+-	ctx->dctx = ZSTD_initDCtx(ctx->dwksp, wksp_size);
++	ctx->dctx = ZSTD_initStaticDCtx(ctx->dwksp, wksp_size);
+ 	if (!ctx->dctx) {
+ 		ret = -EINVAL;
+ 		goto out_free;
+@@ -152,9 +151,8 @@ static int __zstd_compress(const u8 *src, unsigned int slen,
+ {
+ 	size_t out_len;
+ 	struct zstd_ctx *zctx = ctx;
+-	const ZSTD_parameters params = zstd_params();
+ 
+-	out_len = ZSTD_compressCCtx(zctx->cctx, dst, *dlen, src, slen, params);
++	out_len = ZSTD_compressCCtx(zctx->cctx, dst, *dlen, src, slen, ZSTD_DEF_LEVEL);
+ 	if (ZSTD_isError(out_len))
+ 		return -EINVAL;
+ 	*dlen = out_len;
 -- 
 2.28.0
 
