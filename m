@@ -5,21 +5,22 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F9CC4363D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E79C4727F
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Sep 2020 01:38:47 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C0A962371F
+	by mail.kernel.org (Postfix) with ESMTPS id DC07D238A1
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Sep 2020 01:38:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="a7QgaSQp";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GIyfSu9E";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HIDlB1XB";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="Fw/pQ9kO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0A962371F
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="MhUu4hKF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="h/TG+kH9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TCLllYfK";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="r+SN94Ex"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC07D238A1
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,28 +29,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=Glogy97xh2S+jHvRtF5V+nQtkw2R2KviJL+OYZIbgRU=; b=a7QgaSQpLgXj7hhU8mtIKpXE4
-	C0nVqIiBH0W3yWyJqlFXj5m22WcR6ZqGT6oe4gq8mR7VqLevMeFiX2gyK/doii3ooazoqtYanlckI
-	NXBA44mW7KKw0MNmuG+xa4LzPM64G3YM4kl7/Q8qwKLlWqmF9qGpGraaBzYMIW/XY2oVk=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	 bh=g97l5coPPnMhuGd/Wai39KDhSn0Rwp5iXlz5v6rw8Ko=; b=MhUu4hKFbVrM4YqIZaOhuFvEr
+	6PV4pcZWdRjSZOeINmTypFy53uHYUkgFDan8yt71j5CLH4jaKRI9XeUsLrOnrwrQ8F746Eww1Hr1E
+	640bKfikzknuARLpMwXNMrwQ20I/PByF65Bf3I1A7QMSltowauyRJFjfwseZsDHKNFDkU=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kKtk6-0003ME-GC; Wed, 23 Sep 2020 01:38:46 +0000
+	id 1kKtk5-00075F-3D; Wed, 23 Sep 2020 01:38:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3R6BqXwYKADQTheiUdWeeWbU.Sec@flex--drosen.bounces.google.com>)
- id 1kKtk5-0003M3-BV
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Sep 2020 01:38:45 +0000
+ (envelope-from <3S6BqXwYKADgXlimYhaiiafY.Wig@flex--drosen.bounces.google.com>)
+ id 1kKtk3-000752-JF
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Sep 2020 01:38:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6Jea0D8IQymzKa0cePGlWsc3mYiPTYFJmjhFuidHEKk=; b=GIyfSu9E6pliL0U+R38X3U6uS
- lZFKjSsLKq9a9rx5JUpjECoJUol4tcq/Op+nS3qx+n+srQpvm10iLComPpNvPGCvKBIwymWI3OVFO
- wmfacEwRyZiQHh9Y1ml99wjnueeNC1GFsReo/ScnYNCJqiONeHR/w/gnI+QGWDTOfdzlw=;
+ bh=5NzLmrfIvFl4vmHDsUrqH66sakxn3yn+5FHfj9CLrSk=; b=h/TG+kH91mItTfL7SkFdWCr/J
+ /ZG5o1VK3mgG860wbpRMu1dDjJEUtwD212Yh/U/FyILO0ZuGExEb3+4+BG3uK77UbqdmK1FBmkPeV
+ g5yWVcSDIkI6iAT8xaCVDEvjQ++wrfS6QHV0kZ8rqHsol/z/cJBbK6pbe7g6qsYk+IEAE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -57,48 +58,47 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=6Jea0D8IQymzKa0cePGlWsc3mYiPTYFJmjhFuidHEKk=; b=HIDlB1XBaAXK3z8Wtj2UYrfz8g
- MfMZCtfRMHWqURrL+hx0+80SU0/zLa1Rz6BmRWuAAvXWrLFI10vYmaFV65iwGhZQkMWTEDNE5NzPC
- 7TeulKhcM8jLrBRuyW5mM3fTsIrsXtSdA98cquLcEaww8YY1x4aQPWIuoSwZu6SYIz6E=;
-Received: from mail-pl1-f201.google.com ([209.85.214.201])
+ bh=5NzLmrfIvFl4vmHDsUrqH66sakxn3yn+5FHfj9CLrSk=; b=TCLllYfKHnkAaEbJDooo/cDP3x
+ ejsKGnMLDcbWWx/UN/x/WkfiVvhGggZhagm2ynF4iTjqf7u7GIo3Iq3AyE1iFGs7CO6sXgTlKo3ih
+ nzOkcHS9SYmzk3LAJzAdmNQhDYH/gAAYfZqL2zvuJUoJKD/qHQZvGHgGdNBTjy/nlaGU=;
+Received: from mail-qk1-f202.google.com ([209.85.222.202])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kKtjy-001vGH-Ff
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Sep 2020 01:38:45 +0000
-Received: by mail-pl1-f201.google.com with SMTP id r9so306552plo.13
+ id 1kKtjs-001vFw-9d
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Sep 2020 01:38:43 +0000
+Received: by mail-qk1-f202.google.com with SMTP id m23so15428202qkh.10
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 22 Sep 2020 18:38:38 -0700 (PDT)
+ Tue, 22 Sep 2020 18:38:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=sender:date:in-reply-to:message-id:mime-version:references:subject
- :from:to:cc; bh=6Jea0D8IQymzKa0cePGlWsc3mYiPTYFJmjhFuidHEKk=;
- b=Fw/pQ9kOsMZOp4qcT//rGk0Ty0QnPBIDZAQyCHbGz+EB0pENDjiV0Msb9s3Us7Rqy8
- LW694CF7h2UAEaewdIWmuHdo6GPeQxAY3OMDp4A30swVcAgrTfLA9IKzxZJbhW2PZdV4
- 4El+U8pvEnZ2ke/FYErM9S7pWsuw25W9oV0xGx2RW3h0AZQ0QWD/TCHm+TdQsnsVamCU
- HP8rIZr6ZqIXyFSFq6oumaQoSIMxhMCoxpT8dXxHepR7EUpmiSTu9hAWCSGTl1ejKyC7
- Z5ARTwIW+48S7v6wv+Ryn4ULJPl8AS1R4hZUc5xYPa2P7yyEnjnn8uzXiByNpwqIICgl
- lI8w==
+ :from:to:cc; bh=5NzLmrfIvFl4vmHDsUrqH66sakxn3yn+5FHfj9CLrSk=;
+ b=r+SN94ExEtQMPsSJHIerdOB77MAXWzmZwyFneNmoAk49k6roAYOafIpq6/bVGJgknf
+ xDip3oHkpH42R6dI4QewUZcaBwPMVq6ODAPkayZv/4kxo++i/JjDTb3jmigDwMuponz+
+ gQ9QBOprkNqmFdjMbG30Ik+3nu+B4dlxFOozhLEhJ3zcb+ZEZZvMqS+YJqw3NXZh5XV1
+ 0heENiRe5ihlsoHmsFVz0rx4o9ZBU50Y8OfhTNND68hRdv8PQG6Xc8x4mjB7eVbYcjUM
+ VtMkXdZn29qoBgfIzG9ScD8gQ4rFVM+uiAHi8/TfBcqqF7Bd0GlNAEsmqAT+bUm9nkRm
+ sIeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=6Jea0D8IQymzKa0cePGlWsc3mYiPTYFJmjhFuidHEKk=;
- b=d6Vdpjfea4QgvS+UFgimmfezfZCsqCpsQa4MNj6RkTEsYRUbT5qQltC0fU/h9jRPQh
- X0Go3gJOcaCZpxhq0x6wjYkTPZXa+D/JPx28qIkXMbuG8ryEjXuF2WRd7wLhy+AI+xvk
- dxzSvYEj+psSx/DZSn1RRuMSiIYUalgq+Yu4FqT43NmJGP/1UKjV9jkxhk1gRE9MS3O/
- prGpbvD1gXp5pw9zyYZ5wIfMO4m6JsRjpp4L2d2B5SH2OqGhQllkCmHs1q8vBcrVM9aF
- hByiOLBuL2YX9oVFSz2m+V+UnKnwtJ5IMQuMEUuJ/6pK46BD3scA3l16a/+91TmV3LL/
- AGUQ==
-X-Gm-Message-State: AOAM532jpYcUXMDGwXJHfwEIOypgDiJPj9rRKqv7E/za4JBVweejH+jD
- fKtqi1ffHfSxJD48A7p1HePCnRI/TJs=
-X-Google-Smtp-Source: ABdhPJw5cOhPCfYuz52eXjYlgKJA9wCJZI1O/01lTyF39qWXyCNTFLUsASASM8K3SUHFB6H7JtIckRIlheI=
+ bh=5NzLmrfIvFl4vmHDsUrqH66sakxn3yn+5FHfj9CLrSk=;
+ b=kJap1UobPIm0MVtrb6ra6x5XR8SZyPx5goj0awU5VGwHYTxrHNtOC3LH268YtO98il
+ YgpKvaGcfVr++e/xEmawXU8tlg1sgCzzfu3pk3bVL3LLLPY9A2GM9F3Houq03S6/Uy8j
+ uaPH8XUBGudHbUmgvtEd4I/2x5HZFcdTRsajxCv1ljVJZMkEaE1vofVryIXnSDKddGoM
+ X1OqqPpY9hGNHYx1nhHigB3gxtcaaSznCUKC4IaNH8zNUl78hZ02lcr9O3QMU7fIh7pX
+ YgwmBnuPXGSQ7FCAOrna4GhU77l2CVsvx3p+beSsAAx1aOacaI9D/4P4FWfQJsx1P6eu
+ 6nzQ==
+X-Gm-Message-State: AOAM532AkHHLMqmZ+BeIoP+JI/STj7ssNxMTABIWeYweoAGnnYFU/u39
+ hwfb2lDLXuszS4cGLncdQ3PPgsaXeWc=
+X-Google-Smtp-Source: ABdhPJxv1Hdlfj8ugCdnaEAvvXDxMVYKo8a2NyX+Ru6k+x2fIYfIZAKDUuzPfngdOaYjfUIXgJFf9ofvshM=
 X-Received: from drosen.c.googlers.com ([fda3:e722:ac3:10:24:72f4:c0a8:4e6f])
- (user=drosen job=sendgmr) by 2002:a62:1451:0:b029:13e:d13d:a058
- with SMTP id
- 78-20020a6214510000b029013ed13da058mr6581273pfu.30.1600823367027; Tue, 22 Sep
- 2020 18:09:27 -0700 (PDT)
-Date: Wed, 23 Sep 2020 01:01:49 +0000
+ (user=drosen job=sendgmr) by 2002:a0c:b29e:: with SMTP id
+ r30mr9102695qve.38.1600823371337; 
+ Tue, 22 Sep 2020 18:09:31 -0700 (PDT)
+Date: Wed, 23 Sep 2020 01:01:51 +0000
 In-Reply-To: <20200923010151.69506-1-drosen@google.com>
-Message-Id: <20200923010151.69506-4-drosen@google.com>
+Message-Id: <20200923010151.69506-6-drosen@google.com>
 Mime-Version: 1.0
 References: <20200923010151.69506-1-drosen@google.com>
 X-Mailer: git-send-email 2.28.0.681.g6f77f65b4e-goog
@@ -107,9 +107,8 @@ To: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
  Chao Yu <chao@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Richard Weinberger <richard@nod.at>, linux-fscrypt@vger.kernel.org,
  linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1kKtjy-001vGH-Ff
-Subject: [f2fs-dev] [PATCH 3/5] libfs: Add generic function for setting
- dentry_ops
+X-Headers-End: 1kKtjs-001vFw-9d
+Subject: [f2fs-dev] [PATCH 5/5] f2fs: Handle casefolding with Encryption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,101 +123,244 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Daniel Rosenberg via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Daniel Rosenberg <drosen@google.com>
-Cc: Daniel Rosenberg <drosen@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc: Daniel Rosenberg <drosen@google.com>, Eric Biggers <ebiggers@google.com>,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This adds a function to set dentry operations at lookup time that will
-work for both encrypted files and casefolded filenames.
+Expand f2fs's casefolding support to include encrypted directories.  To
+index casefolded+encrypted directories, we use the SipHash of the
+casefolded name, keyed by a key derived from the directory's fscrypt
+master key.  This ensures that the dirhash doesn't leak information
+about the plaintext filenames.
 
-A filesystem that supports both features simultaneously can use this
-function during lookup preperations to set up its dentry operations once
-fscrypt no longer does that itself.
+Encryption keys are unavailable during roll-forward recovery, so we
+can't compute the dirhash when recovering a new dentry in an encrypted +
+casefolded directory.  To avoid having to force a checkpoint when a new
+file is fsync'ed, store the dirhash on-disk appended to i_name.
 
-Currently the casefolding dentry operation are always set because the
-feature is toggleable on empty directories. Since we don't know what
-set of functions we'll eventually need, and cannot change them later,
-we add just add them.
+This patch incorporates work by Eric Biggers <ebiggers@google.com>
+and Jaegeuk Kim <jaegeuk@kernel.org>.
 
+Co-developed-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 ---
- fs/libfs.c         | 49 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h |  1 +
- 2 files changed, 50 insertions(+)
+ fs/f2fs/dir.c      | 57 +++++++++++++++++++++++++++++++++++++++-------
+ fs/f2fs/f2fs.h     |  8 ++++---
+ fs/f2fs/hash.c     | 11 ++++++++-
+ fs/f2fs/recovery.c | 12 +++++++++-
+ fs/f2fs/super.c    |  6 -----
+ 5 files changed, 75 insertions(+), 19 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index fc34361c1489..83303858f1fe 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1449,4 +1449,53 @@ int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
- 	return 0;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 0766e6250a88..07004eb6edf8 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -5,6 +5,7 @@
+  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+  *             http://www.samsung.com/
+  */
++#include <asm/unaligned.h>
+ #include <linux/fs.h>
+ #include <linux/f2fs_fs.h>
+ #include <linux/sched/signal.h>
+@@ -218,9 +219,28 @@ static bool f2fs_match_ci_name(const struct inode *dir, const struct qstr *name,
+ {
+ 	const struct super_block *sb = dir->i_sb;
+ 	const struct unicode_map *um = sb->s_encoding;
++	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
+ 	struct qstr entry = QSTR_INIT(de_name, de_name_len);
+ 	int res;
+ 
++	if (IS_ENCRYPTED(dir)) {
++		const struct fscrypt_str encrypted_name =
++			FSTR_INIT((u8 *)de_name, de_name_len);
++
++		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(dir)))
++			return false;
++
++		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
++		if (!decrypted_name.name)
++			return false;
++		res = fscrypt_fname_disk_to_usr(dir, 0, 0, &encrypted_name,
++						&decrypted_name);
++		if (res < 0)
++			goto out;
++		entry.name = decrypted_name.name;
++		entry.len = decrypted_name.len;
++	}
++
+ 	res = utf8_strncasecmp_folded(um, name, &entry);
+ 	if (res < 0) {
+ 		/*
+@@ -228,9 +248,12 @@ static bool f2fs_match_ci_name(const struct inode *dir, const struct qstr *name,
+ 		 * fall back to treating them as opaque byte sequences.
+ 		 */
+ 		if (sb_has_strict_encoding(sb) || name->len != entry.len)
+-			return false;
+-		return !memcmp(name->name, entry.name, name->len);
++			res = 1;
++		else
++			res = memcmp(name->name, entry.name, name->len);
+ 	}
++out:
++	kfree(decrypted_name.name);
+ 	return res == 0;
  }
- EXPORT_SYMBOL(generic_ci_d_hash);
+ #endif /* CONFIG_UNICODE */
+@@ -455,17 +478,39 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
+ 	f2fs_put_page(page, 1);
+ }
+ 
+-static void init_dent_inode(const struct f2fs_filename *fname,
++static void init_dent_inode(struct inode *dir, struct inode *inode,
++			    const struct f2fs_filename *fname,
+ 			    struct page *ipage)
+ {
+ 	struct f2fs_inode *ri;
+ 
++	if (!fname) /* tmpfile case? */
++		return;
 +
-+static const struct dentry_operations generic_ci_dentry_ops = {
-+	.d_hash = generic_ci_d_hash,
-+	.d_compare = generic_ci_d_compare,
-+};
-+#endif
+ 	f2fs_wait_on_page_writeback(ipage, NODE, true, true);
+ 
+ 	/* copy name info. to this inode page */
+ 	ri = F2FS_INODE(ipage);
+ 	ri->i_namelen = cpu_to_le32(fname->disk_name.len);
+ 	memcpy(ri->i_name, fname->disk_name.name, fname->disk_name.len);
++	if (IS_ENCRYPTED(dir)) {
++		file_set_enc_name(inode);
++		/*
++		 * Roll-forward recovery doesn't have encryption keys available,
++		 * so it can't compute the dirhash for encrypted+casefolded
++		 * filenames.  Append it to i_name if possible.  Else, disable
++		 * roll-forward recovery of the dentry (i.e., make fsync'ing the
++		 * file force a checkpoint) by setting LOST_PINO.
++		 */
++		if (IS_CASEFOLDED(dir)) {
++			if (fname->disk_name.len + sizeof(f2fs_hash_t) <=
++			    F2FS_NAME_LEN)
++				put_unaligned(fname->hash, (f2fs_hash_t *)
++					&ri->i_name[fname->disk_name.len]);
++			else
++				file_lost_pino(inode);
++		}
++	}
+ 	set_page_dirty(ipage);
+ }
+ 
+@@ -548,11 +593,7 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
+ 			return page;
+ 	}
+ 
+-	if (fname) {
+-		init_dent_inode(fname, page);
+-		if (IS_ENCRYPTED(dir))
+-			file_set_enc_name(inode);
+-	}
++	init_dent_inode(dir, inode, fname, page);
+ 
+ 	/*
+ 	 * This file should be checkpointed during fsync.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index af1d469e8c1e..9d58fd5dae13 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -533,9 +533,11 @@ struct f2fs_filename {
+ #ifdef CONFIG_UNICODE
+ 	/*
+ 	 * For casefolded directories: the casefolded name, but it's left NULL
+-	 * if the original name is not valid Unicode or if the filesystem is
+-	 * doing an internal operation where usr_fname is also NULL.  In these
+-	 * cases we fall back to treating the name as an opaque byte sequence.
++	 * if the original name is not valid Unicode, if the directory is both
++	 * casefolded and encrypted and its encryption key is unavailable, or if
++	 * the filesystem is doing an internal operation where usr_fname is also
++	 * NULL.  In all these cases we fall back to treating the name as an
++	 * opaque byte sequence.
+ 	 */
+ 	struct fscrypt_str cf_name;
+ #endif
+diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
+index de841aaf3c43..e3beac546c63 100644
+--- a/fs/f2fs/hash.c
++++ b/fs/f2fs/hash.c
+@@ -111,7 +111,9 @@ void f2fs_hash_filename(const struct inode *dir, struct f2fs_filename *fname)
+ 		 * If the casefolded name is provided, hash it instead of the
+ 		 * on-disk name.  If the casefolded name is *not* provided, that
+ 		 * should only be because the name wasn't valid Unicode, so fall
+-		 * back to treating the name as an opaque byte sequence.
++		 * back to treating the name as an opaque byte sequence.  Note
++		 * that to handle encrypted directories, the fallback must use
++		 * usr_fname (plaintext) rather than disk_name (ciphertext).
+ 		 */
+ 		WARN_ON_ONCE(!fname->usr_fname->name);
+ 		if (fname->cf_name.name) {
+@@ -121,6 +123,13 @@ void f2fs_hash_filename(const struct inode *dir, struct f2fs_filename *fname)
+ 			name = fname->usr_fname->name;
+ 			len = fname->usr_fname->len;
+ 		}
++		if (IS_ENCRYPTED(dir)) {
++			struct qstr tmp = QSTR_INIT(name, len);
 +
-+#ifdef CONFIG_FS_ENCRYPTION
-+static const struct dentry_operations generic_encrypted_dentry_ops = {
-+	.d_revalidate = fscrypt_d_revalidate,
-+};
-+#endif
-+
-+#if IS_ENABLED(CONFIG_UNICODE) && IS_ENABLED(CONFIG_FS_ENCRYPTION)
-+static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
-+	.d_hash = generic_ci_d_hash,
-+	.d_compare = generic_ci_d_compare,
-+	.d_revalidate = fscrypt_d_revalidate,
-+};
-+#endif
-+
-+/**
-+ * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
-+ * @dentry:	dentry to set ops on
-+ *
-+ * This function sets the dentry ops for the given dentry to handle both
-+ * casefolding and encryption of the dentry name.
-+ */
-+void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
-+{
-+#ifdef CONFIG_FS_ENCRYPTION
-+	if (dentry->d_flags & DCACHE_ENCRYPTED_NAME) {
-+#ifdef CONFIG_UNICODE
-+		if (dentry->d_sb->s_encoding) {
-+			d_set_d_op(dentry, &generic_encrypted_ci_dentry_ops);
++			fname->hash =
++				cpu_to_le32(fscrypt_fname_siphash(dir, &tmp));
 +			return;
 +		}
+ 	}
  #endif
-+		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
-+		return;
-+	}
-+#endif
-+#ifdef CONFIG_UNICODE
-+	if (dentry->d_sb->s_encoding) {
-+		d_set_d_op(dentry, &generic_ci_dentry_ops);
-+		return;
-+	}
-+#endif
-+}
-+EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bc5417c61e12..6627896db835 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3277,6 +3277,7 @@ extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
- extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
- 				const char *str, const struct qstr *name);
- #endif
-+extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
+ 	fname->hash = cpu_to_le32(TEA_hash_name(name, len));
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 4f12ade6410a..0947d36af1a8 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -5,6 +5,7 @@
+  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+  *             http://www.samsung.com/
+  */
++#include <asm/unaligned.h>
+ #include <linux/fs.h>
+ #include <linux/f2fs_fs.h>
+ #include "f2fs.h"
+@@ -128,7 +129,16 @@ static int init_recovered_filename(const struct inode *dir,
+ 	}
  
- #ifdef CONFIG_MIGRATION
- extern int buffer_migrate_page(struct address_space *,
+ 	/* Compute the hash of the filename */
+-	if (IS_CASEFOLDED(dir)) {
++	if (IS_ENCRYPTED(dir) && IS_CASEFOLDED(dir)) {
++		/*
++		 * In this case the hash isn't computable without the key, so it
++		 * was saved on-disk.
++		 */
++		if (fname->disk_name.len + sizeof(f2fs_hash_t) > F2FS_NAME_LEN)
++			return -EINVAL;
++		fname->hash = get_unaligned((f2fs_hash_t *)
++				&raw_inode->i_name[fname->disk_name.len]);
++	} else if (IS_CASEFOLDED(dir)) {
+ 		err = f2fs_init_casefolded_name(dir, fname);
+ 		if (err)
+ 			return err;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 63c744c6aeff..c2e441b256a7 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3382,12 +3382,6 @@ static int f2fs_setup_casefold(struct f2fs_sb_info *sbi)
+ 		struct unicode_map *encoding;
+ 		__u16 encoding_flags;
+ 
+-		if (f2fs_sb_has_encrypt(sbi)) {
+-			f2fs_err(sbi,
+-				"Can't mount with encoding and encryption");
+-			return -EINVAL;
+-		}
+-
+ 		if (f2fs_sb_read_encoding(sbi->raw_super, &encoding_info,
+ 					  &encoding_flags)) {
+ 			f2fs_err(sbi,
 -- 
 2.28.0.681.g6f77f65b4e-goog
 
