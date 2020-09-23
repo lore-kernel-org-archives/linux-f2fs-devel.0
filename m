@@ -2,111 +2,114 @@ Return-Path: <SRS0=HlB9=DA=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C27C4363D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Sep 2020 01:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F9CC4363D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Sep 2020 01:38:47 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 689422371F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Sep 2020 01:38:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id C0A962371F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Sep 2020 01:38:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="WhcggQsX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="kV5XMmpe";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="FBqbYock";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="VzYml5mR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 689422371F
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="a7QgaSQp";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GIyfSu9E";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HIDlB1XB";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="Fw/pQ9kO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0A962371F
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=NO06jLI7SiyehXO2TT9FaEfB+ulmFp4Zcni81Y83lbU=; b=WhcggQsXeC5RtSz17Ded/qg5pA
-	vcWkVxC+DimrwC/egXTfeiVKj+QC8gGqaLkaOouOt2WtR1nm9bGwS/ZX9fc/bzjX57x3BalrQAHRM
-	u2MC17uEgqzhN/9XqNi+sFBymDD3YUy3nWorV5Q9K75GiqwUc6LloEkHY8SLV03dFs3o=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=Glogy97xh2S+jHvRtF5V+nQtkw2R2KviJL+OYZIbgRU=; b=a7QgaSQpLgXj7hhU8mtIKpXE4
+	C0nVqIiBH0W3yWyJqlFXj5m22WcR6ZqGT6oe4gq8mR7VqLevMeFiX2gyK/doii3ooazoqtYanlckI
+	NXBA44mW7KKw0MNmuG+xa4LzPM64G3YM4kl7/Q8qwKLlWqmF9qGpGraaBzYMIW/XY2oVk=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kKtjm-0004vX-Tw; Wed, 23 Sep 2020 01:38:26 +0000
+	id 1kKtk6-0003ME-GC; Wed, 23 Sep 2020 01:38:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3PqBqXwYKACsKYVZLUNVVNSL.JVT@flex--drosen.bounces.google.com>)
- id 1kKtjl-0004vG-Iq
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Sep 2020 01:38:25 +0000
+ (envelope-from <3R6BqXwYKADQTheiUdWeeWbU.Sec@flex--drosen.bounces.google.com>)
+ id 1kKtk5-0003M3-BV
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Sep 2020 01:38:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
- Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gd9BXK6Qogm8GWzcEx/RRuoN03o4stNhU2BMPs3db+g=; b=kV5XMmpe7RXigfYN+/1N7b+MCg
- FyKJ/goVRZjenVfg5F8FiA3k8pcA+HvDqz8e2r2z6KWmNvgW4uprXEo6tPdZFvaFQHezLv95QFaSl
- vjpbs52kmL0LjRCiOlWaI8avON/hQHFZ2Xb4Bqla+bPhdvEWDZWjRVOIM/Cj+yU5DLRI=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
+ Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=6Jea0D8IQymzKa0cePGlWsc3mYiPTYFJmjhFuidHEKk=; b=GIyfSu9E6pliL0U+R38X3U6uS
+ lZFKjSsLKq9a9rx5JUpjECoJUol4tcq/Op+nS3qx+n+srQpvm10iLComPpNvPGCvKBIwymWI3OVFO
+ wmfacEwRyZiQHh9Y1ml99wjnueeNC1GFsReo/ScnYNCJqiONeHR/w/gnI+QGWDTOfdzlw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=gd9BXK6Qogm8GWzcEx/RRuoN03o4stNhU2BMPs3db+g=; b=F
- BqbYock5Ub1uA7BhXosJlA9+O+pjVi4HvLAVOSPr+RscAJA5bCXo+a9GTl1z9od2rnsnlGLNbDQwY
- nIP/4EnCEKU2LyxKkTnbU4t2v5FBaoO/oTxf2GAIeZqTWG3nzZDjhE/s5T3OPp2E583Ghde6WaMiA
- M2arATVsL2Ako4Gk=;
-Received: from mail-yb1-f202.google.com ([209.85.219.202])
+ h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=6Jea0D8IQymzKa0cePGlWsc3mYiPTYFJmjhFuidHEKk=; b=HIDlB1XBaAXK3z8Wtj2UYrfz8g
+ MfMZCtfRMHWqURrL+hx0+80SU0/zLa1Rz6BmRWuAAvXWrLFI10vYmaFV65iwGhZQkMWTEDNE5NzPC
+ 7TeulKhcM8jLrBRuyW5mM3fTsIrsXtSdA98cquLcEaww8YY1x4aQPWIuoSwZu6SYIz6E=;
+Received: from mail-pl1-f201.google.com ([209.85.214.201])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kKtjd-001vFR-0e
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Sep 2020 01:38:25 +0000
-Received: by mail-yb1-f202.google.com with SMTP id e190so17912096ybf.18
+ id 1kKtjy-001vGH-Ff
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 23 Sep 2020 01:38:45 +0000
+Received: by mail-pl1-f201.google.com with SMTP id r9so306552plo.13
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 22 Sep 2020 18:38:16 -0700 (PDT)
+ Tue, 22 Sep 2020 18:38:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=sender:date:message-id:mime-version:subject:from:to:cc;
- bh=gd9BXK6Qogm8GWzcEx/RRuoN03o4stNhU2BMPs3db+g=;
- b=VzYml5mRARymBMqJuBNvlalVRmIpcIRL7rCYhdalEJ6bKiRq37APrmAer+cndQz7ow
- HDgQ8sObYp4idOZvJsIB8XMBdAbJDoPCXf8RcjD8zqSkhEpxPKkDqW19XQG4XFjZvJaz
- 8jEIjxaKoJcRnQ8fhGfMGPAbu8NwMdXX1LmNNI+9aYl3v1FIDXUdjNESPhuk/al8UMRu
- iwH+o2SnESdtrDrKMurtAfxp8eGbb3YAnwpecd7/CBg1WdTaJUzuh/5gxIJHiCHdeBs/
- OuNNmgOyE5L/7V98+v4aCcawDaDAqbTrPsoF6o6qWk/oSi7nQACkmrj0atUkhEeP/rkK
- mCjw==
+ h=sender:date:in-reply-to:message-id:mime-version:references:subject
+ :from:to:cc; bh=6Jea0D8IQymzKa0cePGlWsc3mYiPTYFJmjhFuidHEKk=;
+ b=Fw/pQ9kOsMZOp4qcT//rGk0Ty0QnPBIDZAQyCHbGz+EB0pENDjiV0Msb9s3Us7Rqy8
+ LW694CF7h2UAEaewdIWmuHdo6GPeQxAY3OMDp4A30swVcAgrTfLA9IKzxZJbhW2PZdV4
+ 4El+U8pvEnZ2ke/FYErM9S7pWsuw25W9oV0xGx2RW3h0AZQ0QWD/TCHm+TdQsnsVamCU
+ HP8rIZr6ZqIXyFSFq6oumaQoSIMxhMCoxpT8dXxHepR7EUpmiSTu9hAWCSGTl1ejKyC7
+ Z5ARTwIW+48S7v6wv+Ryn4ULJPl8AS1R4hZUc5xYPa2P7yyEnjnn8uzXiByNpwqIICgl
+ lI8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
- :to:cc;
- bh=gd9BXK6Qogm8GWzcEx/RRuoN03o4stNhU2BMPs3db+g=;
- b=W2dl2DN3Qtf0YV0ob16pMDKs3agpiJrqVJW/uuKWhZPJUXZWXa9cue3xdCYxAjJARB
- 5gBqrFp0hH0wxHcLJzJPuv8B1XT6yuvQBFxx7FAVKSG7OYVB0EtHYfMWrtRMlP5rf+hy
- ac+X+1btHILtV2kbKfdG+320ZeDtvVeaFZcrnKt8ZhFygn+E7oMsCbhIMUYl/bJzdnOM
- 1dMKZ36i70PD85Rs6Xd2sxYVv85t84CtW31iqH7e0vRS1aP37OL7DOmK2SbX4eXKwLwW
- +ZkfLC7aTDnl3EmF+XOdrJJoJznB53CfpoyfkfAfyp8UoHZwnRYbMe3g3WfqJsONAiEo
- NyvQ==
-X-Gm-Message-State: AOAM5306qfeg5t3ijo4J/vMJptkS5OK7qSoubcP4R7+iQNp9h1Sav2kW
- HEsYI2J1PzUOKSE98dbSoKu5Omsr58g=
-X-Google-Smtp-Source: ABdhPJw5IYwBppbdbWip5F74kDHHvTSDqolnxLv2PtjxebJu9eXnJbODevPPAagFkTBzSK+vbQomxUmmEHU=
+ h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+ :references:subject:from:to:cc;
+ bh=6Jea0D8IQymzKa0cePGlWsc3mYiPTYFJmjhFuidHEKk=;
+ b=d6Vdpjfea4QgvS+UFgimmfezfZCsqCpsQa4MNj6RkTEsYRUbT5qQltC0fU/h9jRPQh
+ X0Go3gJOcaCZpxhq0x6wjYkTPZXa+D/JPx28qIkXMbuG8ryEjXuF2WRd7wLhy+AI+xvk
+ dxzSvYEj+psSx/DZSn1RRuMSiIYUalgq+Yu4FqT43NmJGP/1UKjV9jkxhk1gRE9MS3O/
+ prGpbvD1gXp5pw9zyYZ5wIfMO4m6JsRjpp4L2d2B5SH2OqGhQllkCmHs1q8vBcrVM9aF
+ hByiOLBuL2YX9oVFSz2m+V+UnKnwtJ5IMQuMEUuJ/6pK46BD3scA3l16a/+91TmV3LL/
+ AGUQ==
+X-Gm-Message-State: AOAM532jpYcUXMDGwXJHfwEIOypgDiJPj9rRKqv7E/za4JBVweejH+jD
+ fKtqi1ffHfSxJD48A7p1HePCnRI/TJs=
+X-Google-Smtp-Source: ABdhPJw5cOhPCfYuz52eXjYlgKJA9wCJZI1O/01lTyF39qWXyCNTFLUsASASM8K3SUHFB6H7JtIckRIlheI=
 X-Received: from drosen.c.googlers.com ([fda3:e722:ac3:10:24:72f4:c0a8:4e6f])
- (user=drosen job=sendgmr) by 2002:a25:6dc6:: with SMTP id
- i189mr10208913ybc.355.1600823358686; 
- Tue, 22 Sep 2020 18:09:18 -0700 (PDT)
-Date: Wed, 23 Sep 2020 01:01:46 +0000
-Message-Id: <20200923010151.69506-1-drosen@google.com>
+ (user=drosen job=sendgmr) by 2002:a62:1451:0:b029:13e:d13d:a058
+ with SMTP id
+ 78-20020a6214510000b029013ed13da058mr6581273pfu.30.1600823367027; Tue, 22 Sep
+ 2020 18:09:27 -0700 (PDT)
+Date: Wed, 23 Sep 2020 01:01:49 +0000
+In-Reply-To: <20200923010151.69506-1-drosen@google.com>
+Message-Id: <20200923010151.69506-4-drosen@google.com>
 Mime-Version: 1.0
+References: <20200923010151.69506-1-drosen@google.com>
 X-Mailer: git-send-email 2.28.0.681.g6f77f65b4e-goog
 To: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
  Eric Biggers <ebiggers@kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>, 
  Chao Yu <chao@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
  Richard Weinberger <richard@nod.at>, linux-fscrypt@vger.kernel.org,
  linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1kKtjd-001vFR-0e
-Subject: [f2fs-dev] [PATCH 0/5] Add support for Encryption and Casefolding
- in F2FS
+X-Headers-End: 1kKtjy-001vGH-Ff
+Subject: [f2fs-dev] [PATCH 3/5] libfs: Add generic function for setting
+ dentry_ops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,50 +131,94 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-These patches are on top of the f2fs dev branch
+This adds a function to set dentry operations at lookup time that will
+work for both encrypted files and casefolded filenames.
 
-F2FS currently supports casefolding and encryption, but not at
-the same time. These patches aim to rectify that. In a later follow up,
-this will be added for Ext4 as well. I've included one ext4 patch from
-the previous set since it isn't in the f2fs branch, but is needed for the
-fscrypt changes.
+A filesystem that supports both features simultaneously can use this
+function during lookup preperations to set up its dentry operations once
+fscrypt no longer does that itself.
 
-The f2fs-tools changes have already been applied.
+Currently the casefolding dentry operation are always set because the
+feature is toggleable on empty directories. Since we don't know what
+set of functions we'll eventually need, and cannot change them later,
+we add just add them.
 
-Since both fscrypt and casefolding require their own dentry operations,
-I've moved the responsibility of setting the dentry operations from fscrypt
-to the filesystems and provided helper functions that should work for most
-cases.
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fs/libfs.c         | 49 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  1 +
+ 2 files changed, 50 insertions(+)
 
-These are a follow-up to the previously sent patch set
-"[PATCH v12 0/4] Prepare for upcoming Casefolding/Encryption patches"
-
-Daniel Rosenberg (5):
-  ext4: Use generic casefolding support
-  fscrypt: Export fscrypt_d_revalidate
-  libfs: Add generic function for setting dentry_ops
-  fscrypt: Have filesystems handle their d_ops
-  f2fs: Handle casefolding with Encryption
-
- fs/crypto/fname.c       |  7 ++---
- fs/crypto/hooks.c       |  1 -
- fs/ext4/dir.c           | 67 -----------------------------------------
- fs/ext4/ext4.h          | 16 ----------
- fs/ext4/hash.c          |  2 +-
- fs/ext4/namei.c         | 21 ++++++-------
- fs/ext4/super.c         | 15 +++------
- fs/f2fs/dir.c           | 64 ++++++++++++++++++++++++++++++---------
- fs/f2fs/f2fs.h          | 11 +++----
- fs/f2fs/hash.c          | 11 ++++++-
- fs/f2fs/namei.c         |  1 +
- fs/f2fs/recovery.c      | 12 +++++++-
- fs/f2fs/super.c         |  7 -----
- fs/libfs.c              | 49 ++++++++++++++++++++++++++++++
- fs/ubifs/dir.c          |  1 +
- include/linux/fs.h      |  1 +
- include/linux/fscrypt.h |  6 ++--
- 17 files changed, 148 insertions(+), 144 deletions(-)
-
+diff --git a/fs/libfs.c b/fs/libfs.c
+index fc34361c1489..83303858f1fe 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1449,4 +1449,53 @@ int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ 	return 0;
+ }
+ EXPORT_SYMBOL(generic_ci_d_hash);
++
++static const struct dentry_operations generic_ci_dentry_ops = {
++	.d_hash = generic_ci_d_hash,
++	.d_compare = generic_ci_d_compare,
++};
++#endif
++
++#ifdef CONFIG_FS_ENCRYPTION
++static const struct dentry_operations generic_encrypted_dentry_ops = {
++	.d_revalidate = fscrypt_d_revalidate,
++};
++#endif
++
++#if IS_ENABLED(CONFIG_UNICODE) && IS_ENABLED(CONFIG_FS_ENCRYPTION)
++static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
++	.d_hash = generic_ci_d_hash,
++	.d_compare = generic_ci_d_compare,
++	.d_revalidate = fscrypt_d_revalidate,
++};
++#endif
++
++/**
++ * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
++ * @dentry:	dentry to set ops on
++ *
++ * This function sets the dentry ops for the given dentry to handle both
++ * casefolding and encryption of the dentry name.
++ */
++void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
++{
++#ifdef CONFIG_FS_ENCRYPTION
++	if (dentry->d_flags & DCACHE_ENCRYPTED_NAME) {
++#ifdef CONFIG_UNICODE
++		if (dentry->d_sb->s_encoding) {
++			d_set_d_op(dentry, &generic_encrypted_ci_dentry_ops);
++			return;
++		}
+ #endif
++		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
++		return;
++	}
++#endif
++#ifdef CONFIG_UNICODE
++	if (dentry->d_sb->s_encoding) {
++		d_set_d_op(dentry, &generic_ci_dentry_ops);
++		return;
++	}
++#endif
++}
++EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bc5417c61e12..6627896db835 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3277,6 +3277,7 @@ extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
+ extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+ 				const char *str, const struct qstr *name);
+ #endif
++extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
+ 
+ #ifdef CONFIG_MIGRATION
+ extern int buffer_migrate_page(struct address_space *,
 -- 
 2.28.0.681.g6f77f65b4e-goog
 
