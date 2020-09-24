@@ -1,104 +1,97 @@
-Return-Path: <SRS0=HlB9=DA=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=IJe+=DB=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF1CC4363D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 23 Sep 2020 22:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A75BC2D0A8
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Sep 2020 03:06:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DCEB4214F1;
-	Wed, 23 Sep 2020 22:39:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D1FFC23119;
+	Thu, 24 Sep 2020 03:06:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="GphaI5mU";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HP7Fjw55";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rntHv/l8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCEB4214F1
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="gJBhIXbP";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="KFzKIgAF";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KS+yIFZU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1FFC23119
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kLDQU-0002wQ-5M; Wed, 23 Sep 2020 22:39:50 +0000
+	id 1kLHaS-0005tn-EX; Thu, 24 Sep 2020 03:06:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <nickrterrell@gmail.com>)
- id 1kLDQN-0002vl-Eq; Wed, 23 Sep 2020 22:39:43 +0000
+ id 1kLHaP-0005tY-Ql; Thu, 24 Sep 2020 03:06:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=290Bo0sJTh/t678nA8yWOfHRoSh5E7Ekj1ME0hd0Klk=; b=GphaI5mUCLXo/A+TfAxLGDOO+u
- J0eQbvuHUN7F4zhsxIR4mhKqQOe7MIsZbQkUcmWXck8Uk9Fc/k6zSw0tvsH5iiZDNoCGAC2Z/GHiH
- zgQvSAsxW31cF58doBrGbtvRpNU/fWwPZbuzCu/Ut8oZLl0uw5M4xKi6WsqjidrWR6l8=;
+ bh=u+AMXhkc8gQOOArFCuMtLDRMg0ycafzPZM+2quzOAFg=; b=gJBhIXbP4uVRfcZt843pVxpBVY
+ RmS2c2DHzXCOtgMBU5GndNcaTRuiB8I5gns8OwTBavEOvqv4lXJNrfFyEvtldzjNeaGoxUdrSlmVO
+ q6prLdZVWzHHKJ9M3+BW247Ga7ExOKZ9WOpIolw1yoFzQazdTjYLNuROtzSxJ2dyeErE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=290Bo0sJTh/t678nA8yWOfHRoSh5E7Ekj1ME0hd0Klk=; b=HP7Fjw55HDMGMRGrwaEB3w235v
- nNoEaPs+DReEKQxxu4WX4g6xNpoxLQRJdz/5PFoZ8p+rJzJvifkzsLTmlQk1eKAX+Vsi1/b3SY7dr
- YCl200WH5rZt1SVzIAYHNLAUUFLTFNBIXS1iUal7Ll9y1bSxVLIdDYbQEJJivotpAWE0=;
-Received: from mail-pg1-f196.google.com ([209.85.215.196])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=u+AMXhkc8gQOOArFCuMtLDRMg0ycafzPZM+2quzOAFg=; b=KFzKIgAFOesq/IbxB5kSFyJTtE
+ tFTKFdVzfzH54UnQfZRuSMWn8CbrXNN3LoP5cUsc4Y+5tURp7lWebPVIzdUMbxNVDRbUfz1Z5Xzkw
+ yPDxhTxtKsxm5K22Mg1tPjEgTmzVbPPoWwPtdUx4p58yQyOHv73xUDYc3ika7RHAtaZI=;
+Received: from mail-wr1-f66.google.com ([209.85.221.66])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kLDQB-0038K3-Kg; Wed, 23 Sep 2020 22:39:43 +0000
-Received: by mail-pg1-f196.google.com with SMTP id l71so621983pge.4;
- Wed, 23 Sep 2020 15:39:31 -0700 (PDT)
+ id 1kLHaG-005Syj-Tw; Thu, 24 Sep 2020 03:06:21 +0000
+Received: by mail-wr1-f66.google.com with SMTP id c18so2075063wrm.9;
+ Wed, 23 Sep 2020 20:06:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=from:to:cc:subject:date:message-id:in-reply-to:references
- :mime-version:content-transfer-encoding;
- bh=290Bo0sJTh/t678nA8yWOfHRoSh5E7Ekj1ME0hd0Klk=;
- b=rntHv/l8i81xrUrJZaum/4CBHjVaChe93wcHMpr4kzhSayGTC4JlwUReQdim/gtble
- IW3nWXYd8niBBBYiaTnC+8/MzFwoZFPaXqfgPUL4NZE5HzFziZ9U1rU1ng4pdet+QXWz
- bCUFdYUxktEXcB8Cdl8aLthah9Q66m1Qk/WZiQ0eWyjtAD/Y77/UsoAhXePNaXjkSnD0
- ljujAj6qnYv6sRv3yX1AHCK9QngPBUzlrkdEmo7dxRHrM7ra+Deb6Cldrc1XGJqyW4nD
- lCvvBAe7kd5DY1k4Mu+WtGIrnzbvgdTN3Vp32EMSXlww1CxjD7UJFgpbHh9MuZ5SMx/4
- ejeQ==
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :cc; bh=u+AMXhkc8gQOOArFCuMtLDRMg0ycafzPZM+2quzOAFg=;
+ b=KS+yIFZUeS/PUDTUKGGTQsqHupnyMwA3s1N/ks81eixFP5uVUzK0y/63T5cNr327Xx
+ 6LoIbWbD/nyUdI0AvFgGz4uRQKOIfztyhwGOK6Ay2O+VA4d5ihkNjpm6Uv3OoSQdf0KF
+ K9b40mOtqTjqllMcCikNhed+QaCG7keqm67Bzd5+uZZq4zbv6+USoQ2ysqGaRFOev7wk
+ dk7ARQDWHpeumc9maX1arMdJDZx9hflMaO/lygxJz6cMjctMMqLj5Nn/leFYnL2sYmrY
+ 2nrnP911NBgl9V4aPQQKn7ZCQpcKXoqGBZbdbA2Qz9I+K8qMyWgYmwONaWvXck28s0g2
+ 6TGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
- :references:mime-version:content-transfer-encoding;
- bh=290Bo0sJTh/t678nA8yWOfHRoSh5E7Ekj1ME0hd0Klk=;
- b=ngZtOO6JFexo1w+SNuKljZzE3M6VPJ2wZxHTBYiAC5M0+Umup6bUOlsfuEXaLK8l4d
- 64XxwcaMSPHOeoVg36j3W3VJsRl8AVzg714NqAloGJgRu1XreZmvb2w1q7gmC8AfQbcr
- gPH2X7qPJbaQdjNXdFkTWNsd2E4iWFtdI2nkxnFPtwdsFFSYzFNp2et1tys8YIZm73cR
- Kos77ePvWMHqpWQFlmc30mTL+YQR572d1QIbfmwWE4cfEY/OCq/EsxbMbL2z/ZVVICFn
- 7nxYRWS3VkB4pViFCfyTuseEAhSX2F7h3xr0vrfObZnornPOs7yX1VdJwjWcG86v673q
- 82qQ==
-X-Gm-Message-State: AOAM531tuCy/LpBC8+yFLGFuMGWcTEsNZ2DgGNjgW/9Js2O4HMAnOtqI
- 9HG2jg5NlMPZAnUcoTEUvi4=
-X-Google-Smtp-Source: ABdhPJwxxbrCN2rraAHy6PxgAVcj0F+cZCxi+3LujAkBcpHIA4r7LjmnWzG/ktYMG+XnAVCJ0r5a+w==
-X-Received: by 2002:a62:19c4:0:b029:13e:d13d:a081 with SMTP id
- 187-20020a6219c40000b029013ed13da081mr1867606pfz.24.1600900758806; 
- Wed, 23 Sep 2020 15:39:18 -0700 (PDT)
-Received: from nickserv.localdomain (c-98-33-101-203.hsd1.ca.comcast.net.
- [98.33.101.203])
- by smtp.gmail.com with ESMTPSA id d20sm417964pjv.39.2020.09.23.15.39.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 23 Sep 2020 15:39:18 -0700 (PDT)
-From: Nick Terrell <nickrterrell@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Wed, 23 Sep 2020 15:42:04 -0700
-Message-Id: <20200923224206.68968-8-nickrterrell@gmail.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200923224206.68968-1-nickrterrell@gmail.com>
-References: <20200923224206.68968-1-nickrterrell@gmail.com>
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc;
+ bh=u+AMXhkc8gQOOArFCuMtLDRMg0ycafzPZM+2quzOAFg=;
+ b=tZxmw2ssievAbFEc9RO04M9wa1Y7MQBSIn7cGS3d+duem0zZ3lzAcT+VxEbsJv/RWY
+ yqhgOTmCCSfxOWcLw3WJ2NC4wkN5K9At+QwbqthE4Y/Izt3P0+L7b/MhONG+MYlCa/r7
+ OG5yRIxKl2XEF3tQwoxNmnIU1SBXbVS4Fdbv9WF931TVXtj4IRZBNbYcpXidBxq/O5iN
+ nfIlzGgMQDn58qC6HSuTxfR0x1w5jWKQGykqfkqJvK3c8Q4LhkW9TkVnoy7wVOikz26Y
+ HI9iyweHln/IFNAvH06G6JiuvVYf4kBSSwPmikQaa9JQ3KTrX1nI+DvA7oTzCEgcQ7/s
+ T66A==
+X-Gm-Message-State: AOAM5337EcA99datfoKxhsVAdn/r9DVtsYLJOKETdJDUBnBkqkk2jBZH
+ 7h6qK3jDXKhKZOpBBoskQRpJDenRCO15YcpKo/8=
+X-Google-Smtp-Source: ABdhPJzvlLf/ESS96Z0UOO6R+IKLhoTuNhlPNNMBLXe0ODwve4RRV/DbrSW1+Y9zuttOdAXJF44gEkp5NmSJlJxn2/o=
+X-Received: by 2002:adf:80e4:: with SMTP id 91mr2546542wrl.223.1600916766170; 
+ Wed, 23 Sep 2020 20:06:06 -0700 (PDT)
 MIME-Version: 1.0
-X-Headers-End: 1kLDQB-0038K3-Kg
-Subject: [f2fs-dev] [PATCH v3 7/9] squashfs: zstd: Switch to the zstd-1.4.6
- API
+References: <20200923224206.68968-4-nickrterrell@gmail.com>
+ <202009241007.ZmzDeiuB%lkp@intel.com>
+In-Reply-To: <202009241007.ZmzDeiuB%lkp@intel.com>
+From: Nick Terrell <nickrterrell@gmail.com>
+Date: Wed, 23 Sep 2020 20:05:55 -0700
+Message-ID: <CANr2Dbd1DXb66_Gf9aAB7PCn6=yz_Or5_JWZtm_cHndYrO+28A@mail.gmail.com>
+To: kernel test robot <lkp@intel.com>
+X-Headers-End: 1kLHaG-005Syj-Tw
+Subject: Re: [f2fs-dev] [PATCH v3 3/9] lib: zstd: Upgrade to latest upstream
+ zstd version 1.4.6
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,71 +103,273 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: squashfs-devel@lists.sourceforge.net, Johannes Weiner <jweiner@fb.com>,
- Christoph Hellwig <hch@infradead.org>, Nick Terrell <nickrterrell@gmail.com>,
- Yann Collet <cyan@fb.com>, linux-kernel@vger.kernel.org,
+Cc: squashfs-devel@lists.sourceforge.net,
+ Chris Mason <chris.mason@fusionio.com>, kbuild-all@lists.01.org,
+ Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, Petr Malat <oss@malat.biz>,
- Chris Mason <clm@fb.com>, Nick Terrell <terrelln@fb.com>,
  linux-crypto@vger.kernel.org, Kernel Team <Kernel-team@fb.com>,
- Niket Agarwal <niketa@fb.com>, linux-btrfs@vger.kernel.org
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Nick Terrell <terrelln@fb.com>
+On Wed, Sep 23, 2020 at 7:28 PM kernel test robot <lkp@intel.com> wrote:
+>
+> Hi Nick,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on kdave/for-next]
+> [also build test ERROR on f2fs/dev-test linus/master v5.9-rc6 next-20200923]
+> [cannot apply to cryptodev/master crypto/master]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch]
+>
+> url:    https://github.com/0day-ci/linux/commits/Nick-Terrell/Update-to-zstd-1-4-6/20200924-064102
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
+> config: h8300-randconfig-p002-20200923 (attached as .config)
+> compiler: h8300-linux-gcc (GCC) 9.3.0
+> reproduce (this is a W=1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=h8300
+>
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kernel test robot <lkp@intel.com>
+>
+> All errors (new ones prefixed by >>):
+>
+>    h8300-linux-ld: lib/zstd/common/entropy_common.o: in function `MEM_swap32':
+> >> lib/zstd/common/mem.h:179: undefined reference to `__bswapsi2'
+> >> h8300-linux-ld: lib/zstd/common/mem.h:179: undefined reference to `__bswapsi2'
+> >> h8300-linux-ld: lib/zstd/common/mem.h:179: undefined reference to `__bswapsi2'
+> >> h8300-linux-ld: lib/zstd/common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/common/fse_decompress.o: in function `MEM_swap32':
+> >> lib/zstd/common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/common/fse_decompress.o:lib/zstd/common/mem.h:179: more undefined references to `__bswapsi2' follow
+>    h8300-linux-ld: lib/zstd/compress/zstd_compress.o: in function `MEM_swap64':
+> >> lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/compress/zstd_compress.o: in function `MEM_swap32':
+> >> lib/zstd/compress/../common/mem.h:179: undefined reference to `__bswapsi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:179: undefined reference to `__bswapsi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:179: undefined reference to `__bswapsi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:179: undefined reference to `__bswapsi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/compress/zstd_compress.o:lib/zstd/compress/../common/mem.h:179: more undefined references to `__bswapsi2' follow
+>    h8300-linux-ld: lib/zstd/compress/zstd_double_fast.o: in function `MEM_swap64':
+> >> lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/compress/zstd_double_fast.o:lib/zstd/compress/../common/mem.h:192: more undefined references to `__bswapdi2' follow
+>    h8300-linux-ld: lib/zstd/compress/zstd_opt.o: in function `MEM_swap32':
+> >> lib/zstd/compress/../common/mem.h:179: undefined reference to `__bswapsi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/compress/zstd_opt.o: in function `MEM_swap64':
+> >> lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+> >> h8300-linux-ld: lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/compress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/compress/zstd_opt.o:lib/zstd/compress/../common/mem.h:192: more undefined references to `__bswapdi2' follow
+>    h8300-linux-ld: lib/zstd/decompress/huf_decompress.o: in function `MEM_swap32':
+>    lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/huf_decompress.o:lib/zstd/decompress/../common/mem.h:179: more undefined references to `__bswapsi2' follow
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap64':
+>    lib/zstd/decompress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap32':
+>    lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o:lib/zstd/decompress/../common/mem.h:179: more undefined references to `__bswapsi2' follow
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap64':
+>    lib/zstd/decompress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap32':
+>    lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap64':
+>    lib/zstd/decompress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap32':
+>    lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap64':
+>    lib/zstd/decompress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap32':
+>    lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap64':
+>    lib/zstd/decompress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap32':
+>    lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o:lib/zstd/decompress/../common/mem.h:179: more undefined references to `__bswapsi2' follow
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap64':
+>    lib/zstd/decompress/../common/mem.h:192: undefined reference to `__bswapdi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress.o: in function `MEM_swap32':
+>    lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress_block.o: in function `MEM_swap32':
+>    lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/../common/mem.h:179: undefined reference to `__bswapsi2'
+>    h8300-linux-ld: lib/zstd/decompress/zstd_decompress_block.o:lib/zstd/decompress/../common/mem.h:179: more undefined references to `__bswapsi2' follow
 
-Move away from the compatibility wrapper to the zstd-1.4.6 API. This
-code is functionally equivalent.
+Looks like I need to fix these. It looks like I should use the swab*()
+functions from include/linux/swab.h. I'll put up a v4 shortly.
 
-Signed-off-by: Nick Terrell <terrelln@fb.com>
----
- fs/squashfs/zstd_wrapper.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+> cppcheck warnings: (new ones prefixed by >>)
+>
+> >> lib/zstd/decompress/zstd_ddict.c:147:32: warning: Boolean result is used in bitwise operation. Clarify expression with parentheses. [clarifyCondition]
+>        if (!customMem.customAlloc ^ !customMem.customFree) return NULL;
+>                                   ^
 
-diff --git a/fs/squashfs/zstd_wrapper.c b/fs/squashfs/zstd_wrapper.c
-index f8c512a6204e..add582409866 100644
---- a/fs/squashfs/zstd_wrapper.c
-+++ b/fs/squashfs/zstd_wrapper.c
-@@ -11,7 +11,7 @@
- #include <linux/mutex.h>
- #include <linux/bio.h>
- #include <linux/slab.h>
--#include <linux/zstd_compat.h>
-+#include <linux/zstd.h>
- #include <linux/vmalloc.h>
- 
- #include "squashfs_fs.h"
-@@ -34,7 +34,7 @@ static void *zstd_init(struct squashfs_sb_info *msblk, void *buff)
- 		goto failed;
- 	wksp->window_size = max_t(size_t,
- 			msblk->block_size, SQUASHFS_METADATA_SIZE);
--	wksp->mem_size = ZSTD_DStreamWorkspaceBound(wksp->window_size);
-+	wksp->mem_size = ZSTD_estimateDStreamSize(wksp->window_size);
- 	wksp->mem = vmalloc(wksp->mem_size);
- 	if (wksp->mem == NULL)
- 		goto failed;
-@@ -71,7 +71,7 @@ static int zstd_uncompress(struct squashfs_sb_info *msblk, void *strm,
- 	struct bvec_iter_all iter_all = {};
- 	struct bio_vec *bvec = bvec_init_iter_all(&iter_all);
- 
--	stream = ZSTD_initDStream(wksp->window_size, wksp->mem, wksp->mem_size);
-+	stream = ZSTD_initStaticDStream(wksp->mem, wksp->mem_size);
- 
- 	if (!stream) {
- 		ERROR("Failed to initialize zstd decompressor\n");
-@@ -122,8 +122,7 @@ static int zstd_uncompress(struct squashfs_sb_info *msblk, void *strm,
- 			break;
- 
- 		if (ZSTD_isError(zstd_err)) {
--			ERROR("zstd decompression error: %d\n",
--					(int)ZSTD_getErrorCode(zstd_err));
-+			ERROR("zstd decompression error: %s\n", ZSTD_getErrorName(zstd_err));
- 			error = -EIO;
- 			break;
- 		}
--- 
-2.28.0
+This one is a bit silly, but I will fix it.
 
+> >> lib/zstd/common/zstd_deps.h:131:0: warning: syntax error [syntaxError]
+>
+>    ^
+> >> lib/zstd/compress/zstd_ldm.c:571:0: warning: Array 'rep[3]' accessed at index 3, which is out of bounds. [arrayIndexOutOfBounds]
+>        ZSTD_blockCompressor const blockCompressor =
+>    ^
+
+This seems like a false positive.
+
+> >> lib/zstd/common/zstd_deps.h:131:0: warning: syntax error [syntaxError]
+>
+>    ^
+> >> lib/zstd/decompress/zstd_decompress.c:133:32: warning: Boolean result is used in bitwise operation. Clarify expression with parentheses. [clarifyCondition]
+>        if (!customMem.customAlloc ^ !customMem.customFree) return NULL;
+>                                   ^
+> >> lib/zstd/decompress/zstd_decompress.c:1751:28: warning: Variable 'zds->inPos' is reassigned a value before the old one has been used. [redundantAssignment]
+>                    zds->inPos = 0;   /* input is consumed */
+>                               ^
+>    lib/zstd/decompress/zstd_decompress.c:1747:28: note: Variable 'zds->inPos' is reassigned a value before the old one has been used.
+>                    zds->inPos += loadedSize;
+>                               ^
+>    lib/zstd/decompress/zstd_decompress.c:1751:28: note: Variable 'zds->inPos' is reassigned a value before the old one has been used.
+>                    zds->inPos = 0;   /* input is consumed */
+>                               ^
+
+This is a false positive. It is incorrectly analyzing the control flow.
+
+> >> lib/zstd/common/zstd_deps.h:131:0: warning: syntax error [syntaxError]
+>
+>    ^
+> >> lib/zstd/compress/zstd_compress.c:84:32: warning: Boolean result is used in bitwise operation. Clarify expression with parentheses. [clarifyCondition]
+>        if (!customMem.customAlloc ^ !customMem.customFree) return NULL;
+>                                   ^
+>    lib/zstd/compress/zstd_compress.c:200:32: warning: Boolean result is used in bitwise operation. Clarify expression with parentheses. [clarifyCondition]
+>        if (!customMem.customAlloc ^ !customMem.customFree) return NULL;
+>                                   ^
+>    lib/zstd/compress/zstd_compress.c:3345:32: warning: Boolean result is used in bitwise operation. Clarify expression with parentheses. [clarifyCondition]
+>        if (!customMem.customAlloc ^ !customMem.customFree) return NULL;
+>                                   ^
+> >> lib/zstd/common/zstd_internal.h:401:27: warning: Array 'DeBruijnClz[32]' accessed at index 509099, which is out of bounds. [arrayIndexOutOfBounds]
+>            return DeBruijnClz[(v * 0x07C4ACDDU) >> 27];
+>                              ^
+
+This is a false positive. v is a 32-bit integer, so the index must be
+less than 2^(32-27) = 32, which is the size of the array.
+
+>    lib/zstd/compress/zstd_compress.c:3494:40: note: Assignment 'limitedSrcSize=(uint32_t)(pledgedSrcSize<524288U?pledgedSrcSize:524288U)', assigned value is 524288
+>                U32 const limitedSrcSize = (U32)MIN(pledgedSrcSize, 1U << 19);
+>                                           ^
+>    lib/zstd/compress/zstd_compress.c:3495:90: note: Calling function 'ZSTD_highbit32', 1st argument 'limitedSrcSize-1' value is 524287
+>                U32 const limitedSrcLog = limitedSrcSize > 1 ? ZSTD_highbit32(limitedSrcSize - 1) + 1 : 1;
+>                                                                                             ^
+>    lib/zstd/common/zstd_internal.h:395:17: note: Assignment 'v=val', assigned value is 524287
+>            U32 v = val;
+>                    ^
+>    lib/zstd/common/zstd_internal.h:396:0: note: Assignment 'v=v|(v>>1)', assigned value is 524287
+>            v |= v >> 1;
+>    ^
+>    lib/zstd/common/zstd_internal.h:397:0: note: Assignment 'v=v|(v>>2)', assigned value is 524287
+>            v |= v >> 2;
+>    ^
+>    lib/zstd/common/zstd_internal.h:398:0: note: Assignment 'v=v|(v>>4)', assigned value is 524287
+>            v |= v >> 4;
+>    ^
+>    lib/zstd/common/zstd_internal.h:399:0: note: Assignment 'v=v|(v>>8)', assigned value is 524287
+>            v |= v >> 8;
+>    ^
+>    lib/zstd/common/zstd_internal.h:400:0: note: Assignment 'v=v|(v>>16)', assigned value is 524287
+>            v |= v >> 16;
+>    ^
+>    lib/zstd/common/zstd_internal.h:401:27: note: Array index out of bounds
+>            return DeBruijnClz[(v * 0x07C4ACDDU) >> 27];
+>                              ^
+> >> lib/zstd/common/zstd_deps.h:131:0: warning: syntax error [syntaxError]
+>
+>    ^
+> >> lib/zstd/compress/zstd_lazy.c:663:74: warning: Overflow in pointer arithmetic, NULL pointer is subtracted. [nullPointerArithmetic]
+>        const U32 dictAndPrefixLength = (U32)((ip - prefixLowest) + (dictEnd - dictLowest));
+>                                                                             ^
+>    lib/zstd/compress/zstd_lazy.c:658:70: note: Assignment 'dictEnd=dictMode==ZSTD_dictMatchState?dms->window.nextSrc:NULL', assigned value is 0
+>        const BYTE* const dictEnd      = dictMode == ZSTD_dictMatchState ?
+>                                                                         ^
+>    lib/zstd/compress/zstd_lazy.c:663:74: note: Null pointer subtraction
+>        const U32 dictAndPrefixLength = (U32)((ip - prefixLowest) + (dictEnd - dictLowest));
+>                                                                             ^
+> >> lib/zstd/common/zstd_deps.h:131:0: warning: syntax error [syntaxError]
+>
+>    ^
+> >> lib/zstd/compress/zstd_double_fast.c:97:75: warning: Overflow in pointer arithmetic, NULL pointer is subtracted. [nullPointerArithmetic]
+>        const U32 dictAndPrefixLength  = (U32)((ip - prefixLowest) + (dictEnd - dictStart));
+>                                                                              ^
+>    lib/zstd/compress/zstd_double_fast.c:88:70: note: Assignment 'dictEnd=dictMode==ZSTD_dictMatchState?dms->window.nextSrc:NULL', assigned value is 0
+>        const BYTE* const dictEnd      = dictMode == ZSTD_dictMatchState ?
+>                                                                         ^
+>    lib/zstd/compress/zstd_double_fast.c:97:75: note: Null pointer subtraction
+>        const U32 dictAndPrefixLength  = (U32)((ip - prefixLowest) + (dictEnd - dictStart));
+>                                                                              ^
+
+Seems like another false positive.
+
+> >> lib/zstd/common/zstd_deps.h:131:0: warning: syntax error [syntaxError]
+>
+>    ^
+>
+> # https://github.com/0day-ci/linux/commit/400786d3b08436113bcb3c9c16a97eefc31317c1
+> git remote add linux-review https://github.com/0day-ci/linux
+> git fetch --no-tags linux-review Nick-Terrell/Update-to-zstd-1-4-6/20200924-064102
+> git checkout 400786d3b08436113bcb3c9c16a97eefc31317c1
+> vim +179 lib/zstd/common/mem.h
+>
+>    173
+>    174
+>    175  MEM_STATIC U32 MEM_swap32(U32 in)
+>    176  {
+>    177  #if (defined (__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 403)) \
+>    178    || (defined(__clang__) && __has_builtin(__builtin_bswap32))
+>  > 179      return __builtin_bswap32(in);
+>    180  #else
+>    181      return  ((in << 24) & 0xff000000 ) |
+>    182              ((in <<  8) & 0x00ff0000 ) |
+>    183              ((in >>  8) & 0x0000ff00 ) |
+>    184              ((in >> 24) & 0x000000ff );
+>    185  #endif
+>    186  }
+>    187
+>
+> ---
+> 0-DAY CI Kernel Test Service, Intel Corporation
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
 
 _______________________________________________
