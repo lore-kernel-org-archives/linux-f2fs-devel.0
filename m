@@ -2,74 +2,80 @@ Return-Path: <SRS0=Han9=DF=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14132C2D0A8
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Sep 2020 09:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0362DC2D0A8
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Sep 2020 17:23:11 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3B5A021D95
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Sep 2020 09:43:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 6EBA92080A;
+	Mon, 28 Sep 2020 17:23:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="E3gkyO1s";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="MkbdmALg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B5A021D95
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Pjnlm0XL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="BBHGuU5Z";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEpTh4jM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EBA92080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kMpgh-0000QP-5L; Mon, 28 Sep 2020 09:43:15 +0000
+	id 1kMwrk-0002QK-MO; Mon, 28 Sep 2020 17:23:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kMpgf-0000QH-4w
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Sep 2020 09:43:13 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kMwrf-0002Q5-6G
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Sep 2020 17:23:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=js14lOO4nyfb3f026jh74JvOlwcAonZ7mp7TqRtXs/w=; b=E3gkyO1sDE+aM1uuyzG6gJhcmc
- WmpbyBeWeaqh4uWi14QjXf2s0/pRGiZmk2d8P1esGtO9eKzDIVs9zewjFTrsKn0nNktP+UARfF3lo
- GW5eYJUGyYvU4DJUggTwHedpd33GcrVJHkLD8PPO9LNCPJN/HLe86241R71n6WuaXY00=;
+ bh=i4wak0Zw72fBP2d8XJx7dJuRwKqclZ2Z4r71a+Dp/QQ=; b=Pjnlm0XLTKFk2gY0I+EKFB3Exd
+ UpNLMuB8gkkISfIhaBv9F+vQPu5k8pWMgzD3x7JCtlT9g+ldLYCI96qnTMY26ZNxa3J0nmBktSS0P
+ GCLsHNPwq2WNf/51stBHnz5dT9RdoK7xBk16ltoTf9ZTtbrb/1UhBBC5XbI93BKsGrRc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=js14lOO4nyfb3f026jh74JvOlwcAonZ7mp7TqRtXs/w=; b=M
- kbdmALgRY+uTeT9WagIrHpx9PJ/6VWZYth4UD4tKgEtCCXh/p90TTpAtkwPZOQtoF1jHZ/X0DCJk+
- 5o0TOv+NDTVWn3p7uNjW4UgTVu+XPXgeFoOhXsDlHMAtOc5ZXh4JB5Cmxrn8tdMK9zKyGEUzJKck4
- wTW+kitpxoOvWuv8=;
-Received: from szxga06-in.huawei.com ([45.249.212.32] helo=huawei.com)
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=i4wak0Zw72fBP2d8XJx7dJuRwKqclZ2Z4r71a+Dp/QQ=; b=BBHGuU5ZumjLcE8pv5UCB9Lbi8
+ UvrNl1564eVbJ6k09qxOTvZNxK3C/dne6a0h2VlAo8JvY5/0aaUId+XI6ca4dHps6pbW/Qgy4lUxy
+ U1hgN4vzcYyq4dXHrGpOfEJndkTC6PUPDbLa36s+HJ3kR1uPaoZKUXMe6eRLyRNT9Mpc=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kMpgS-008cE4-Qe
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Sep 2020 09:43:13 +0000
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
- by Forcepoint Email with ESMTP id 6A01EC669EBFA0EF986C;
- Mon, 28 Sep 2020 17:42:52 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.487.0; Mon, 28 Sep 2020 17:42:43 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Mon, 28 Sep 2020 17:42:39 +0800
-Message-ID: <20200928094239.66221-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.26.2
+ id 1kMwrY-0093fk-N2
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Sep 2020 17:23:03 +0000
+Received: from gmail.com (unknown [104.132.1.76])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 861582080A;
+ Mon, 28 Sep 2020 17:22:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1601313765;
+ bh=fz2lDG3BfSoRUxbEjDV3BhINBXvyXN2GInHCeg0Tsws=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=IEpTh4jM3F5JNIjMHz0qTaAiZ0JAjlcX73GNLKLrQhiC0JJLiM8VbwaE8PVrDH0W2
+ zooI9O300LaM0a7Ds/n+Jc1k9MCG8NyDbw7u3OPCTzNqvkpftzD3YDU/m3qVYfxQNc
+ 0YNq0mPC3fEnniLpvbUNNr2fopDFdukDTLaFg5WM=
+Date: Mon, 28 Sep 2020 10:22:30 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <20200928172230.GA169646@gmail.com>
+References: <20200928091254.60750-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1kMpgS-008cE4-Qe
-Subject: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on segment/section
- count
+Content-Disposition: inline
+In-Reply-To: <20200928091254.60750-1-yuchao0@huawei.com>
+X-Headers-End: 1kMwrY-0093fk-N2
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to check segment boundary during
+ SIT page readahead
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,72 +87,18 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-As syzbot reported:
+On Mon, Sep 28, 2020 at 05:12:54PM +0800, Chao Yu wrote:
+> As syzbot reported:
 
-BUG: KASAN: slab-out-of-bounds in init_min_max_mtime fs/f2fs/segment.c:4710 [inline]
-BUG: KASAN: slab-out-of-bounds in f2fs_build_segment_manager+0x9302/0xa6d0 fs/f2fs/segment.c:4792
-Read of size 8 at addr ffff8880a1b934a8 by task syz-executor682/6878
+Please include the Reported-by line that the syzbot report said to include.      
 
-CPU: 1 PID: 6878 Comm: syz-executor682 Not tainted 5.9.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x198/0x1fd lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
- __kasan_report mm/kasan/report.c:513 [inline]
- kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
- init_min_max_mtime fs/f2fs/segment.c:4710 [inline]
- f2fs_build_segment_manager+0x9302/0xa6d0 fs/f2fs/segment.c:4792
- f2fs_fill_super+0x381a/0x6e80 fs/f2fs/super.c:3633
- mount_bdev+0x32e/0x3f0 fs/super.c:1417
- legacy_get_tree+0x105/0x220 fs/fs_context.c:592
- vfs_get_tree+0x89/0x2f0 fs/super.c:1547
- do_new_mount fs/namespace.c:2875 [inline]
- path_mount+0x1387/0x20a0 fs/namespace.c:3192
- do_mount fs/namespace.c:3205 [inline]
- __do_sys_mount fs/namespace.c:3413 [inline]
- __se_sys_mount fs/namespace.c:3390 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3390
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-The root cause is: if segs_per_sec is larger than one, and segment count
-in last section is less than segs_per_sec, we will suffer out-of-boundary
-memory access on sit_i->sentries[] in init_min_max_mtime().
-
-Fix this by adding sanity check among segment count, section count and
-segs_per_sec value in sanity_check_raw_super().
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/super.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index a24980aa425d..79d5e0e2225a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2834,6 +2834,12 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		return -EFSCORRUPTED;
- 	}
- 
-+	if (segment_count_main != total_sections * segs_per_sec) {
-+		f2fs_info(sbi, "Invalid segment/section count (%u != %u * %u)",
-+			  segment_count_main, total_sections, segs_per_sec);
-+		return -EFSCORRUPTED;
-+	}
-+
- 	if ((segment_count / segs_per_sec) < total_sections) {
- 		f2fs_info(sbi, "Small segment_count (%u < %u * %u)",
- 			  segment_count, segs_per_sec, total_sections);
--- 
-2.26.2
-
+- Eric
 
 
 _______________________________________________
