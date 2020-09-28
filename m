@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0362DC2D0A8
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Sep 2020 17:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEB5C2D0A8
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Sep 2020 17:23:54 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6EBA92080A;
-	Mon, 28 Sep 2020 17:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B2D672080A;
+	Mon, 28 Sep 2020 17:23:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Pjnlm0XL";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="BBHGuU5Z";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEpTh4jM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EBA92080A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="iqJI5rqU";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="D4fxk2+R";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZt0JYPX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2D672080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kMwrk-0002QK-MO; Mon, 28 Sep 2020 17:23:08 +0000
+	id 1kMwsT-0003UK-6n; Mon, 28 Sep 2020 17:23:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kMwrf-0002Q5-6G
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Sep 2020 17:23:03 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kMwsR-0003Sz-EI
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Sep 2020 17:23:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=i4wak0Zw72fBP2d8XJx7dJuRwKqclZ2Z4r71a+Dp/QQ=; b=Pjnlm0XLTKFk2gY0I+EKFB3Exd
- UpNLMuB8gkkISfIhaBv9F+vQPu5k8pWMgzD3x7JCtlT9g+ldLYCI96qnTMY26ZNxa3J0nmBktSS0P
- GCLsHNPwq2WNf/51stBHnz5dT9RdoK7xBk16ltoTf9ZTtbrb/1UhBBC5XbI93BKsGrRc=;
+ bh=3KMAWSEKq7H09MfVihSBQMAUZXAAwDdewBeHU1AqHjw=; b=iqJI5rqUQ1QEmtipTpy7ZjDdl5
+ Shg8TcltQABtV8y6vDOcnJOKsUmM9bgp0yZZjrWLvlnP8hkgXo4k59RW/QhY0tHDp1zSZ1GgLJAnD
+ 3kbiPvMtfR0vnBvNmK69UK8gWy6I4O8kyaV15sh8GhT2Tnx+MfZE6aComyVRZv/4oSRM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,37 +45,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=i4wak0Zw72fBP2d8XJx7dJuRwKqclZ2Z4r71a+Dp/QQ=; b=BBHGuU5ZumjLcE8pv5UCB9Lbi8
- UvrNl1564eVbJ6k09qxOTvZNxK3C/dne6a0h2VlAo8JvY5/0aaUId+XI6ca4dHps6pbW/Qgy4lUxy
- U1hgN4vzcYyq4dXHrGpOfEJndkTC6PUPDbLa36s+HJ3kR1uPaoZKUXMe6eRLyRNT9Mpc=;
+ bh=3KMAWSEKq7H09MfVihSBQMAUZXAAwDdewBeHU1AqHjw=; b=D4fxk2+RKq5RpAd/rY06nPPl7P
+ oJ//7/7m9kF4RBCzseYXa5gdM2wze5WSH1PWsf7P9k+jPK+miNn4Za1zPDuOmMd9nwIUEKHdxUQgw
+ U+543nycRAQaOfhK922sbyYAgfzPOm07gg1J/3dUiFSijHDp7Y+B0EJijGPAFIPIOC3o=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kMwrY-0093fk-N2
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Sep 2020 17:23:03 +0000
+ id 1kMws5-00Bo3J-6y
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Sep 2020 17:23:43 +0000
 Received: from gmail.com (unknown [104.132.1.76])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 861582080A;
- Mon, 28 Sep 2020 17:22:45 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 4DB7B2080A;
+ Mon, 28 Sep 2020 17:23:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1601313765;
- bh=fz2lDG3BfSoRUxbEjDV3BhINBXvyXN2GInHCeg0Tsws=;
+ s=default; t=1601313796;
+ bh=3KMAWSEKq7H09MfVihSBQMAUZXAAwDdewBeHU1AqHjw=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=IEpTh4jM3F5JNIjMHz0qTaAiZ0JAjlcX73GNLKLrQhiC0JJLiM8VbwaE8PVrDH0W2
- zooI9O300LaM0a7Ds/n+Jc1k9MCG8NyDbw7u3OPCTzNqvkpftzD3YDU/m3qVYfxQNc
- 0YNq0mPC3fEnniLpvbUNNr2fopDFdukDTLaFg5WM=
-Date: Mon, 28 Sep 2020 10:22:30 -0700
+ b=IZt0JYPX83WpCKydjEkOeffBj9RV0jwQ9/+0Hg8GfP2lE+Vy46hIXTWXBH9oGgw/I
+ PzkKKEW73gtNWg8isLLeI1VcpoZV42+Q9YjkF0r/taQTow2p+1MlIxETbEcXpFffg9
+ R+HMp5982g1J5NOy4qi4DU3WZ9eAriFd6ai6H5aE=
+Date: Mon, 28 Sep 2020 10:23:14 -0700
 From: Eric Biggers <ebiggers@kernel.org>
 To: Chao Yu <yuchao0@huawei.com>
-Message-ID: <20200928172230.GA169646@gmail.com>
-References: <20200928091254.60750-1-yuchao0@huawei.com>
+Message-ID: <20200928172314.GB169646@gmail.com>
+References: <20200928094239.66221-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20200928091254.60750-1-yuchao0@huawei.com>
-X-Headers-End: 1kMwrY-0093fk-N2
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to check segment boundary during
- SIT page readahead
+In-Reply-To: <20200928094239.66221-1-yuchao0@huawei.com>
+X-Headers-End: 1kMws5-00Bo3J-6y
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on
+ segment/section count
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,10 +93,10 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Sep 28, 2020 at 05:12:54PM +0800, Chao Yu wrote:
+On Mon, Sep 28, 2020 at 05:42:39PM +0800, Chao Yu wrote:
 > As syzbot reported:
 
-Please include the Reported-by line that the syzbot report said to include.      
+Please include the Reported-by line that the syzbot report said to include.
 
 - Eric
 
