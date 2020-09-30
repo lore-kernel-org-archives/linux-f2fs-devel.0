@@ -1,85 +1,103 @@
-Return-Path: <SRS0=n0iD=DG=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=SiSV=DH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F4FC4727C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 29 Sep 2020 12:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BD0C2D0A8
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Sep 2020 06:49:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CA7D720674;
-	Tue, 29 Sep 2020 12:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 2C55B2075F;
+	Wed, 30 Sep 2020 06:49:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="g4KUq/Wy";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="dz8rpZGb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA7D720674
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="T/RvO06A";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="WlHL4Ef9";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D53LlBR9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C55B2075F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kNEQN-0001V5-Cc; Tue, 29 Sep 2020 12:08:03 +0000
+	id 1kNVvv-0002Gb-OO; Wed, 30 Sep 2020 06:49:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kNEQK-0001UV-0U
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 Sep 2020 12:08:00 +0000
+ (envelope-from <nickrterrell@gmail.com>)
+ id 1kNVvt-0002GL-50; Wed, 30 Sep 2020 06:49:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dK9YcN+ZhwySd0heCQK9vQHqQ5J8zPDPm7jsavhRyng=; b=g4KUq/WyQeZjkEUbn33061gtvZ
- oyIMZiWz11oZczuesQqYWttTC8mXORDNwyKGPVn4OhQhwFNqwVrh2cwXJ02C7Q8NW2qzXrbfdRh9F
- vXyzASPI9kV+OhgZ06cGTIGGEW/SvC23z16vgfVP648WYRNAqQiWo/X7jQw5ph8mW6DQ=;
+ bh=4G8NJ7gBvmk7nE2Yhc5f36mYV1caN+TA2ng5rrNJ52k=; b=T/RvO06A+c5hMpzFrrveMRdtlg
+ qQBypVPeLXIf7ArC56+pHAGxgT+7V/z0LXjEZDttu4DjSTZwEgv1drrS0oNHduwPcIxV+mn0GbiLd
+ D9+KsiXqi/Mo7sRJe+1dxo+4YkaGNJrMGAWj7OnsqAYrKcsLiEswqH5+6sZUxurhV2gU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dK9YcN+ZhwySd0heCQK9vQHqQ5J8zPDPm7jsavhRyng=; b=dz8rpZGbRIqs5sMJ07oiuqor54
- skKP4xLKldXswGlLW7fWJ0ZFMwuNWYpZR/MsazAgB6HAxyhlmO/27nL/kEi1gMPemZHLetZvL+iVI
- JgHluxzLj+SzhVaZzYEBbEGk6XIFLcXD7MGUx2sHwKXD9U5wQtaHevfNCAdq7eLMbgN0=;
-Received: from szxga07-in.huawei.com ([45.249.212.35] helo=huawei.com)
+ bh=4G8NJ7gBvmk7nE2Yhc5f36mYV1caN+TA2ng5rrNJ52k=; b=WlHL4Ef9YpfD/+FAlK1QZEpRCF
+ nlAg/lFt+xylUWxE4lILFb24rHaM/puBYl70CVVlX47C0do5KmFop+VKpX9V3IP85UFETj3kb9ycq
+ TscppWn/VaYKxGcva2Tu2mRQFAdoCjy6HK3OThrdrflqBD/e7shMHUQco9zg7pgm8GPg=;
+Received: from mail-pl1-f193.google.com ([209.85.214.193])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kNEQ8-00CtNL-DX
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 29 Sep 2020 12:07:59 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
- by Forcepoint Email with ESMTP id 2C9FB6FBC48F72C23B8B;
- Tue, 29 Sep 2020 20:07:37 +0800 (CST)
-Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 29 Sep
- 2020 20:07:31 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20200914090514.50102-1-yuchao0@huawei.com>
- <20200929082306.GA1567825@google.com>
- <6e7639db-9120-d406-0a46-ec841845bb28@huawei.com>
- <20200929084739.GB1567825@google.com>
- <1b9774da-b2a8-2009-7796-9c576af1b4c4@huawei.com>
- <5872f50c-4f3c-84bb-636f-6a6bd748c25f@huawei.com>
- <20200929094605.GD1567825@google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <4d203fa5-1814-bdd3-da31-7ee207b4bdd8@huawei.com>
-Date: Tue, 29 Sep 2020 20:07:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1kNVvp-00DzZk-SB; Wed, 30 Sep 2020 06:49:45 +0000
+Received: by mail-pl1-f193.google.com with SMTP id t13so421195plb.10;
+ Tue, 29 Sep 2020 23:49:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=from:to:cc:subject:date:message-id:in-reply-to:references
+ :mime-version:content-transfer-encoding;
+ bh=4G8NJ7gBvmk7nE2Yhc5f36mYV1caN+TA2ng5rrNJ52k=;
+ b=D53LlBR9L7nrdaFb2IIuRkXp8b2j3LrmYGoswlRfObBBgSM7whfGXpH+sUOX8o21Wt
+ YDsFgjXK/QZlAOmlnYW2HRQUNwrRHJramd5BNTGwCZ7gvv+yeYu80+/EUgTehpQj5vF4
+ nwUdaGTsnSSHHXDj5wLWwDoOeBVWFodJer7E8NqPNmW+eBdEIaw9lmntvzpcGPk+TSQU
+ eqcwK5CwhR6icRS7fJeR7suc0eW7H+GiSagSflO4hwOFbTGYf8aefH9kAmvVw/pocson
+ yQewTYtJohqua8w/nnbW15JzQtZ2yyyOJW9P9M+4gxsOIfoeHtPeVRzH9oSegzqF8+Uu
+ 0jSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+ :references:mime-version:content-transfer-encoding;
+ bh=4G8NJ7gBvmk7nE2Yhc5f36mYV1caN+TA2ng5rrNJ52k=;
+ b=TS4HTCIuH00xraI6Tk7Hoy/7LzX4HKTmYDTqkK/I/Jw+qmoEQHl2trADVjg/WCk6PN
+ /lRGfLC8SP2eQHrmTxmEwRhW7exNgISk2AAdKFHl5TGpRstcIu+d+Kz/qa6qiGbtv4xR
+ Mlo4Oyo+PT1FyrLlVCp6aRgqE4UwOg4GuKelufIxQW0IdKMZjZ3HW8GsVcbk4wZ1cFMn
+ tYrR78BXhLg6d2jksTTg05U16DDhvoGxrDlp4gZmpnTPdpxWq6H+sgrvZOUlPdyvab1Q
+ Yv2KVoD4ZSvh1B7pSSlp13XvR6GI2WOHIBKtrhopovpBsEIdJ+UFic7HvnduU2Vtrpc+
+ bNaw==
+X-Gm-Message-State: AOAM533HJ/xXmHB4yhd4nnwnX4w6JSP4jNSO5fsERYSqgZRQh7MsRmZg
+ dgcZm7+hXOHyAmH/gadQk4o=
+X-Google-Smtp-Source: ABdhPJwBONzuKshE2y1qgXfk+JFp5QWBKBQepuANx4pAjShnoSg/uYqiyx7G0gUB5IDTNaMBWxfJyQ==
+X-Received: by 2002:a17:90b:4ac2:: with SMTP id
+ mh2mr1315558pjb.210.1601448576085; 
+ Tue, 29 Sep 2020 23:49:36 -0700 (PDT)
+Received: from nickserv.localdomain (c-98-33-101-203.hsd1.ca.comcast.net.
+ [98.33.101.203])
+ by smtp.gmail.com with ESMTPSA id 190sm1100865pfy.22.2020.09.29.23.49.34
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 29 Sep 2020 23:49:35 -0700 (PDT)
+From: Nick Terrell <nickrterrell@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Tue, 29 Sep 2020 23:53:10 -0700
+Message-Id: <20200930065318.3326526-2-nickrterrell@gmail.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200930065318.3326526-1-nickrterrell@gmail.com>
+References: <20200930065318.3326526-1-nickrterrell@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200929094605.GD1567825@google.com>
-Content-Language: en-US
-X-Originating-IP: [10.136.114.67]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1kNEQ8-00CtNL-DX
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: compress: introduce page array
- slab cache
+X-Headers-End: 1kNVvp-00DzZk-SB
+Subject: [f2fs-dev] [PATCH v4 1/9] lib: zstd: Add zstd compatibility wrapper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,267 +109,232 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: squashfs-devel@lists.sourceforge.net, Johannes Weiner <jweiner@fb.com>,
+ Christoph Hellwig <hch@infradead.org>, Nick Terrell <nickrterrell@gmail.com>,
+ Yann Collet <cyan@fb.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Petr Malat <oss@malat.biz>,
+ Chris Mason <clm@fb.com>, Nick Terrell <terrelln@fb.com>,
+ linux-crypto@vger.kernel.org, Kernel Team <Kernel-team@fb.com>,
+ Niket Agarwal <niketa@fb.com>, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/9/29 17:46, Jaegeuk Kim wrote:
-> On 09/29, Chao Yu wrote:
->> On 2020/9/29 17:15, Chao Yu wrote:
->>> On 2020/9/29 16:47, Jaegeuk Kim wrote:
->>>> On 09/29, Chao Yu wrote:
->>>>> On 2020/9/29 16:23, Jaegeuk Kim wrote:
->>>>>> I found a bug related to the number of page pointer allocation related to
->>>>>> nr_cpages.
->>>>>
->>>>> Jaegeuk,
->>>>>
->>>>> If I didn't miss anything, you mean that nr_cpages could be larger
->>>>> than nr_rpages, right? the problematic case here is lzo/lzo-rle:
->>>>>
->>>>> cc->clen = lzo1x_worst_compress(PAGE_SIZE << cc->log_cluster_size);
->>>>>
->>>>> As we can't limited clen as we did for lz4/zstd:
->>>>>
->>>>> cc->clen = cc->rlen - PAGE_SIZE - COMPRESS_HEADER_SIZE;
->>>>
->>>> Yes, I've seen some memory corruption in lzo test. Here is another patch to fix
->>>> mem leak.
->>>>
->>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>> ---
->>>>     fs/f2fs/compress.c | 67 ++++++++++++++++++++++++++++------------------
->>>>     1 file changed, 41 insertions(+), 26 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
->>>> index f086ac43ca825..ba2d4897744d8 100644
->>>> --- a/fs/f2fs/compress.c
->>>> +++ b/fs/f2fs/compress.c
->>>> @@ -20,22 +20,20 @@
->>>>     static struct kmem_cache *cic_entry_slab;
->>>>     static struct kmem_cache *dic_entry_slab;
->>>> -static void *page_array_alloc(struct inode *inode)
->>>> +static void *page_array_alloc(struct inode *inode, int nr)
->>>>     {
->>>>     	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>>> -	unsigned int size = sizeof(struct page *) <<
->>>> -				F2FS_I(inode)->i_log_cluster_size;
->>>> +	unsigned int size = sizeof(struct page *) * nr;
->>>>     	if (likely(size == sbi->page_array_slab_size))
->>>>     		return kmem_cache_zalloc(sbi->page_array_slab, GFP_NOFS);
->>>>     	return f2fs_kzalloc(sbi, size, GFP_NOFS);
->>>>     }
->>>> -static void page_array_free(struct inode *inode, void *pages)
->>>> +static void page_array_free(struct inode *inode, void *pages, int nr)
->>>>     {
->>>>     	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>>> -	unsigned int size = sizeof(struct page *) <<
->>>> -				F2FS_I(inode)->i_log_cluster_size;
->>>> +	unsigned int size = sizeof(struct page *) * nr;
->>>>     	if (!pages)
->>>>     		return;
->>>> @@ -162,13 +160,13 @@ int f2fs_init_compress_ctx(struct compress_ctx *cc)
->>>>     	if (cc->rpages)
->>>>     		return 0;
->>>> -	cc->rpages = page_array_alloc(cc->inode);
->>>> +	cc->rpages = page_array_alloc(cc->inode, cc->cluster_size);
->>>>     	return cc->rpages ? 0 : -ENOMEM;
->>>>     }
->>>>     void f2fs_destroy_compress_ctx(struct compress_ctx *cc)
->>>>     {
->>>> -	page_array_free(cc->inode, cc->rpages);
->>>> +	page_array_free(cc->inode, cc->rpages, cc->cluster_size);
->>>>     	cc->rpages = NULL;
->>>>     	cc->nr_rpages = 0;
->>>>     	cc->nr_cpages = 0;
->>>> @@ -602,7 +600,8 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
->>>>     	struct f2fs_inode_info *fi = F2FS_I(cc->inode);
->>>>     	const struct f2fs_compress_ops *cops =
->>>>     				f2fs_cops[fi->i_compress_algorithm];
->>>> -	unsigned int max_len, nr_cpages;
->>>> +	unsigned int max_len, new_nr_cpages;
->>>> +	struct page **new_cpages;
->>>>     	int i, ret;
->>>>     	trace_f2fs_compress_pages_start(cc->inode, cc->cluster_idx,
->>>> @@ -617,7 +616,7 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
->>>>     	max_len = COMPRESS_HEADER_SIZE + cc->clen;
->>>>     	cc->nr_cpages = DIV_ROUND_UP(max_len, PAGE_SIZE);
->>>> -	cc->cpages = page_array_alloc(cc->inode);
->>>> +	cc->cpages = page_array_alloc(cc->inode, cc->nr_cpages);
->>>
->>> Well, cc->nr_cpages will be set to cc->nr_rpages - 1 for zstd/lz4 cases, so
->>> this will make cpages allocation fallback to kmalloc, which can cause more
->>> memory use.
->>
->> Could we handle cpages allocation for lzo/lzo-rle separately as:
->>
->> force_xxx = is_lzo/lzo-rle_algorithm and is_cpages_array_allocation
->>
->> page_array_alloc(, force_kmalloc)
->> page_array_free(, force_kfree)
-> 
-> What about:
->    if (likely(size <= sbi->page_array_slab_size))
-> 	  return kmem_cache_zalloc(sbi->page_array_slab, GFP_NOFS);
+From: Nick Terrell <terrelln@fb.com>
 
-Better, :)
+Adds zstd_compat.h which provides the necessary functions from the
+current zstd.h API. It is only active for zstd versions 1.4.6 and newer.
+That means it is disabled currently, but will become active when a later
+patch in this series updates the zstd library in the kernel to 1.4.6.
 
-Thanks,
+This header allows the zstd upgrade to 1.4.6 without changing any
+callers, since they all include zstd through the compatibility wrapper.
+Later patches in this series transition each caller away from the
+compatibility wrapper. After all the callers have been transitioned away
+from the compatibility wrapper, the final patch in this series deletes
+it.
 
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>>     	if (!cc->cpages) {
->>>>     		ret = -ENOMEM;
->>>>     		goto destroy_compress_ctx;
->>>> @@ -659,16 +658,28 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
->>>>     	for (i = 0; i < COMPRESS_DATA_RESERVED_SIZE; i++)
->>>>     		cc->cbuf->reserved[i] = cpu_to_le32(0);
->>>> -	nr_cpages = DIV_ROUND_UP(cc->clen + COMPRESS_HEADER_SIZE, PAGE_SIZE);
->>>> +	new_nr_cpages = DIV_ROUND_UP(cc->clen + COMPRESS_HEADER_SIZE, PAGE_SIZE);
->>>> +
->>>> +	/* Now we're going to cut unnecessary tail pages */
->>>> +	new_cpages = page_array_alloc(cc->inode, new_nr_cpages);
->>>> +	if (new_cpages) {
->>>> +		ret = -ENOMEM;
->>>> +		goto out_vunmap_cbuf;
->>>> +	}
->>>>     	/* zero out any unused part of the last page */
->>>>     	memset(&cc->cbuf->cdata[cc->clen], 0,
->>>> -	       (nr_cpages * PAGE_SIZE) - (cc->clen + COMPRESS_HEADER_SIZE));
->>>> +			(new_nr_cpages * PAGE_SIZE) -
->>>> +			(cc->clen + COMPRESS_HEADER_SIZE));
->>>>     	vm_unmap_ram(cc->cbuf, cc->nr_cpages);
->>>>     	vm_unmap_ram(cc->rbuf, cc->cluster_size);
->>>> -	for (i = nr_cpages; i < cc->nr_cpages; i++) {
->>>> +	for (i = 0; i < cc->nr_cpages; i++) {
->>>> +		if (i < new_nr_cpages) {
->>>> +			new_cpages[i] = cc->cpages[i];
->>>> +			continue;
->>>> +		}
->>>>     		f2fs_compress_free_page(cc->cpages[i]);
->>>>     		cc->cpages[i] = NULL;
->>>>     	}
->>>> @@ -676,7 +687,9 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
->>>>     	if (cops->destroy_compress_ctx)
->>>>     		cops->destroy_compress_ctx(cc);
->>>> -	cc->nr_cpages = nr_cpages;
->>>> +	page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
->>>> +	cc->cpages = new_cpages;
->>>> +	cc->nr_cpages = new_nr_cpages;
->>>>     	trace_f2fs_compress_pages_end(cc->inode, cc->cluster_idx,
->>>>     							cc->clen, ret);
->>>> @@ -691,7 +704,7 @@ static int f2fs_compress_pages(struct compress_ctx *cc)
->>>>     		if (cc->cpages[i])
->>>>     			f2fs_compress_free_page(cc->cpages[i]);
->>>>     	}
->>>> -	page_array_free(cc->inode, cc->cpages);
->>>> +	page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
->>>>     	cc->cpages = NULL;
->>>>     destroy_compress_ctx:
->>>>     	if (cops->destroy_compress_ctx)
->>>> @@ -730,7 +743,7 @@ void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity)
->>>>     		goto out_free_dic;
->>>>     	}
->>>> -	dic->tpages = page_array_alloc(dic->inode);
->>>> +	dic->tpages = page_array_alloc(dic->inode, dic->cluster_size);
->>>>     	if (!dic->tpages) {
->>>>     		ret = -ENOMEM;
->>>>     		goto out_free_dic;
->>>> @@ -1203,7 +1216,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
->>>>     	cic->magic = F2FS_COMPRESSED_PAGE_MAGIC;
->>>>     	cic->inode = inode;
->>>>     	atomic_set(&cic->pending_pages, cc->nr_cpages);
->>>> -	cic->rpages = page_array_alloc(cc->inode);
->>>> +	cic->rpages = page_array_alloc(cc->inode, cc->cluster_size);
->>>>     	if (!cic->rpages)
->>>>     		goto out_put_cic;
->>>> @@ -1297,11 +1310,13 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
->>>>     	spin_unlock(&fi->i_size_lock);
->>>>     	f2fs_put_rpages(cc);
->>>> +	page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
->>>> +	cc->cpages = NULL;
->>>>     	f2fs_destroy_compress_ctx(cc);
->>>>     	return 0;
->>>>     out_destroy_crypt:
->>>> -	page_array_free(cc->inode, cic->rpages);
->>>> +	page_array_free(cc->inode, cic->rpages, cc->cluster_size);
->>>>     	for (--i; i >= 0; i--)
->>>>     		fscrypt_finalize_bounce_page(&cc->cpages[i]);
->>>> @@ -1310,6 +1325,8 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
->>>>     			continue;
->>>>     		f2fs_put_page(cc->cpages[i], 1);
->>>>     	}
->>>> +	page_array_free(cc->inode, cc->cpages, cc->nr_cpages);
->>>> +	cc->cpages = NULL;
->>>>     out_put_cic:
->>>>     	kmem_cache_free(cic_entry_slab, cic);
->>>>     out_put_dnode:
->>>> @@ -1345,7 +1362,7 @@ void f2fs_compress_write_end_io(struct bio *bio, struct page *page)
->>>>     		end_page_writeback(cic->rpages[i]);
->>>>     	}
->>>> -	page_array_free(cic->inode, cic->rpages);
->>>> +	page_array_free(cic->inode, cic->rpages, cic->nr_rpages);
->>>>     	kmem_cache_free(cic_entry_slab, cic);
->>>>     }
->>>> @@ -1442,8 +1459,6 @@ int f2fs_write_multi_pages(struct compress_ctx *cc,
->>>>     		err = f2fs_write_compressed_pages(cc, submitted,
->>>>     							wbc, io_type);
->>>> -		page_array_free(cc->inode, cc->cpages);
->>>> -		cc->cpages = NULL;
->>>>     		if (!err)
->>>>     			return 0;
->>>>     		f2fs_bug_on(F2FS_I_SB(cc->inode), err != -EAGAIN);
->>>> @@ -1468,7 +1483,7 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
->>>>     	if (!dic)
->>>>     		return ERR_PTR(-ENOMEM);
->>>> -	dic->rpages = page_array_alloc(cc->inode);
->>>> +	dic->rpages = page_array_alloc(cc->inode, cc->cluster_size);
->>>>     	if (!dic->rpages) {
->>>>     		kmem_cache_free(dic_entry_slab, dic);
->>>>     		return ERR_PTR(-ENOMEM);
->>>> @@ -1487,7 +1502,7 @@ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc)
->>>>     		dic->rpages[i] = cc->rpages[i];
->>>>     	dic->nr_rpages = cc->cluster_size;
->>>> -	dic->cpages = page_array_alloc(dic->inode);
->>>> +	dic->cpages = page_array_alloc(dic->inode, dic->nr_cpages);
->>>>     	if (!dic->cpages)
->>>>     		goto out_free;
->>>> @@ -1522,7 +1537,7 @@ void f2fs_free_dic(struct decompress_io_ctx *dic)
->>>>     				continue;
->>>>     			f2fs_compress_free_page(dic->tpages[i]);
->>>>     		}
->>>> -		page_array_free(dic->inode, dic->tpages);
->>>> +		page_array_free(dic->inode, dic->tpages, dic->cluster_size);
->>>>     	}
->>>>     	if (dic->cpages) {
->>>> @@ -1531,10 +1546,10 @@ void f2fs_free_dic(struct decompress_io_ctx *dic)
->>>>     				continue;
->>>>     			f2fs_compress_free_page(dic->cpages[i]);
->>>>     		}
->>>> -		page_array_free(dic->inode, dic->cpages);
->>>> +		page_array_free(dic->inode, dic->cpages, dic->nr_cpages);
->>>>     	}
->>>> -	page_array_free(dic->inode, dic->rpages);
->>>> +	page_array_free(dic->inode, dic->rpages, dic->nr_rpages);
->>>>     	kmem_cache_free(dic_entry_slab, dic);
->>>>     }
->>>>
->>>
->>>
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>> .
->>>
-> .
-> 
+Signed-off-by: Nick Terrell <terrelln@fb.com>
+---
+ crypto/zstd.c               |   2 +-
+ fs/btrfs/zstd.c             |   2 +-
+ fs/f2fs/compress.c          |   2 +-
+ fs/squashfs/zstd_wrapper.c  |   2 +-
+ include/linux/zstd_compat.h | 116 ++++++++++++++++++++++++++++++++++++
+ lib/decompress_unzstd.c     |   2 +-
+ 6 files changed, 121 insertions(+), 5 deletions(-)
+ create mode 100644 include/linux/zstd_compat.h
+
+diff --git a/crypto/zstd.c b/crypto/zstd.c
+index 1a3309f066f7..dcda3cad3b5c 100644
+--- a/crypto/zstd.c
++++ b/crypto/zstd.c
+@@ -11,7 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/net.h>
+ #include <linux/vmalloc.h>
+-#include <linux/zstd.h>
++#include <linux/zstd_compat.h>
+ #include <crypto/internal/scompress.h>
+ 
+ 
+diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
+index 9a4871636c6c..a7367ff573d4 100644
+--- a/fs/btrfs/zstd.c
++++ b/fs/btrfs/zstd.c
+@@ -16,7 +16,7 @@
+ #include <linux/refcount.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+-#include <linux/zstd.h>
++#include <linux/zstd_compat.h>
+ #include "misc.h"
+ #include "compression.h"
+ #include "ctree.h"
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 1dfb126a0cb2..e056f3a2b404 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -11,7 +11,7 @@
+ #include <linux/backing-dev.h>
+ #include <linux/lzo.h>
+ #include <linux/lz4.h>
+-#include <linux/zstd.h>
++#include <linux/zstd_compat.h>
+ 
+ #include "f2fs.h"
+ #include "node.h"
+diff --git a/fs/squashfs/zstd_wrapper.c b/fs/squashfs/zstd_wrapper.c
+index b7cb1faa652d..f8c512a6204e 100644
+--- a/fs/squashfs/zstd_wrapper.c
++++ b/fs/squashfs/zstd_wrapper.c
+@@ -11,7 +11,7 @@
+ #include <linux/mutex.h>
+ #include <linux/bio.h>
+ #include <linux/slab.h>
+-#include <linux/zstd.h>
++#include <linux/zstd_compat.h>
+ #include <linux/vmalloc.h>
+ 
+ #include "squashfs_fs.h"
+diff --git a/include/linux/zstd_compat.h b/include/linux/zstd_compat.h
+new file mode 100644
+index 000000000000..cda9208bf04a
+--- /dev/null
++++ b/include/linux/zstd_compat.h
+@@ -0,0 +1,116 @@
++/*
++ * Copyright (c) 2016-present, Facebook, Inc.
++ * All rights reserved.
++ *
++ * This source code is licensed under the BSD-style license found in the
++ * LICENSE file in the root directory of https://github.com/facebook/zstd.
++ * An additional grant of patent rights can be found in the PATENTS file in the
++ * same directory.
++ *
++ * This program is free software; you can redistribute it and/or modify it under
++ * the terms of the GNU General Public License version 2 as published by the
++ * Free Software Foundation. This program is dual-licensed; you may select
++ * either version 2 of the GNU General Public License ("GPL") or BSD license
++ * ("BSD").
++ */
++
++#ifndef ZSTD_COMPAT_H
++#define ZSTD_COMPAT_H
++
++#include <linux/zstd.h>
++
++#if defined(ZSTD_VERSION_NUMBER) && (ZSTD_VERSION_NUMBER >= 10406)
++/*
++ * This header provides backwards compatibility for the zstd-1.4.6 library
++ * upgrade. This header allows us to upgrade the zstd library version without
++ * modifying any callers. Then we will migrate callers from the compatibility
++ * wrapper one at a time until none remain. At which point we will delete this
++ * header.
++ *
++ * It is temporary and will be deleted once the upgrade is complete.
++ */
++
++#include <linux/zstd_errors.h>
++
++static inline size_t ZSTD_CCtxWorkspaceBound(ZSTD_compressionParameters compression_params)
++{
++    return ZSTD_estimateCCtxSize_usingCParams(compression_params);
++}
++
++static inline size_t ZSTD_CStreamWorkspaceBound(ZSTD_compressionParameters compression_params)
++{
++    return ZSTD_estimateCStreamSize_usingCParams(compression_params);
++}
++
++static inline size_t ZSTD_DCtxWorkspaceBound(void)
++{
++    return ZSTD_estimateDCtxSize();
++}
++
++static inline size_t ZSTD_DStreamWorkspaceBound(unsigned long long window_size)
++{
++    return ZSTD_estimateDStreamSize(window_size);
++}
++
++static inline ZSTD_CCtx* ZSTD_initCCtx(void* wksp, size_t wksp_size)
++{
++    if (wksp == NULL)
++        return NULL;
++    return ZSTD_initStaticCCtx(wksp, wksp_size);
++}
++
++static inline ZSTD_CStream* ZSTD_initCStream_compat(ZSTD_parameters params, uint64_t pledged_src_size, void* wksp, size_t wksp_size)
++{
++    ZSTD_CStream* cstream;
++    size_t ret;
++
++    if (wksp == NULL)
++        return NULL;
++
++    cstream = ZSTD_initStaticCStream(wksp, wksp_size);
++    if (cstream == NULL)
++        return NULL;
++
++    /* 0 means unknown in old API but means 0 in new API */
++    if (pledged_src_size == 0)
++        pledged_src_size = ZSTD_CONTENTSIZE_UNKNOWN;
++
++    ret = ZSTD_initCStream_advanced(cstream, NULL, 0, params, pledged_src_size);
++    if (ZSTD_isError(ret))
++        return NULL;
++
++    return cstream;
++}
++#define ZSTD_initCStream ZSTD_initCStream_compat
++
++static inline ZSTD_DCtx* ZSTD_initDCtx(void* wksp, size_t wksp_size)
++{
++    if (wksp == NULL)
++        return NULL;
++    return ZSTD_initStaticDCtx(wksp, wksp_size);
++}
++
++static inline ZSTD_DStream* ZSTD_initDStream_compat(unsigned long long window_size, void* wksp, size_t wksp_size)
++{
++    if (wksp == NULL)
++        return NULL;
++    (void)window_size;
++    return ZSTD_initStaticDStream(wksp, wksp_size);
++}
++#define ZSTD_initDStream ZSTD_initDStream_compat
++
++typedef ZSTD_frameHeader ZSTD_frameParams;
++
++static inline size_t ZSTD_getFrameParams(ZSTD_frameParams* frame_params, const void* src, size_t src_size)
++{
++    return ZSTD_getFrameHeader(frame_params, src, src_size);
++}
++
++static inline size_t ZSTD_compressCCtx_compat(ZSTD_CCtx* cctx, void* dst, size_t dst_capacity, const void* src, size_t src_size, ZSTD_parameters params)
++{
++    return ZSTD_compress_advanced(cctx, dst, dst_capacity, src, src_size, NULL, 0, params);
++}
++#define ZSTD_compressCCtx ZSTD_compressCCtx_compat
++
++#endif /* ZSTD_VERSION_NUMBER >= 10406 */
++#endif /* ZSTD_COMPAT_H */
+diff --git a/lib/decompress_unzstd.c b/lib/decompress_unzstd.c
+index 0ad2c15479ed..dbc290af26b4 100644
+--- a/lib/decompress_unzstd.c
++++ b/lib/decompress_unzstd.c
+@@ -77,7 +77,7 @@
+ 
+ #include <linux/decompress/mm.h>
+ #include <linux/kernel.h>
+-#include <linux/zstd.h>
++#include <linux/zstd_compat.h>
+ 
+ /* 128MB is the maximum window size supported by zstd. */
+ #define ZSTD_WINDOWSIZE_MAX	(1 << ZSTD_WINDOWLOG_MAX)
+-- 
+2.28.0
+
 
 
 _______________________________________________
