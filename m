@@ -1,109 +1,83 @@
-Return-Path: <SRS0=I552=DM=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=f5/U=DO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338B7C4363A
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Oct 2020 08:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F860C4727F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Oct 2020 03:48:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BD7742064C;
-	Mon,  5 Oct 2020 08:47:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8B5A5208C3;
+	Wed,  7 Oct 2020 03:48:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="h1WlQFzo";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ZXOau5lw";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="a839GVwn";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="EP1SkITH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD7742064C
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XdcPEdIs";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="GQogAeAJ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAaVPOwJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5A5208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=l7z5+Gkd/lFuhadzyKv9K65uw8MFYRxUhwFAbySTADQ=; b=h1WlQFzoNmYAipji0/JTy9BEQ1
-	+1FSsozx9M7tMjNrW0fWfYZfD1E/8l7DPiykKcEY8ZSjcUrAFVB67rouQIejD4mFf5KVxeds13RlB
-	mp+fWbuVR3k8WXBWpVYAJ/NNkmZUkEbwmr5vcsskyKZh+ZprNj8hT5AxHm5e/H/fjv14=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kPMA2-00008u-7I; Mon, 05 Oct 2020 08:47:58 +0000
+	id 1kQ0RZ-0001lC-2U; Wed, 07 Oct 2020 03:48:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3Ms56XwYKALstbuzbuhpphmf.dpn@flex--satyat.bounces.google.com>)
- id 1kPM9z-00006U-0B
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Oct 2020 08:47:56 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kQ0RX-0001l3-TR
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Oct 2020 03:48:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
- Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cGuAlaeZa+fmThCbpZs6t/+dBJ0JbAyRdYvCYkXQIzo=; b=ZXOau5lwREW7byW0BDNqzzuCwl
- Vp+JbXa7VfmUOz99B7QPPwNxJjZhR9HeZaL4ieFizLrKYuem0ASXXX/D0mu+Jes2e5FKUiSzphvya
- 8yZYjMqEQGwY5BF1nNgtaCJ4VFS4tS7H9dN9ZQ8dA9QoeAa/zDDSHDhCKtf3u6CIsJjc=;
+ bh=OV5o2NczlKU7Pjs0Vu/50U97nvxvdbAazpXbRz5PEBI=; b=XdcPEdIsZupmoWwHYUa5J3ET3s
+ m7VAHnTFeK0C562EG1ySAUrZ1T45hQKYBDZ3bDmMkXJxMzZiDWbR0ZnZdcdzLCknKSTscVXOlrYuS
+ IPK036/hGIKJbu0Hm3s4j2xTffBsGGXqDq9dFDPlzOwTR9Y2ktZtunSFC8fD4oVnrvGw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=cGuAlaeZa+fmThCbpZs6t/+dBJ0JbAyRdYvCYkXQIzo=; b=a
- 839GVwnKbLueGAplbWyOhAwDM+8Lz3bhYzIkS1FLtea7daKVavi61suYz6fsxViqzYidR3vN6dbTc
- zaqWj0/H68kZ9V6eYwpB2D0wjf7FPEchObHlJUK3lr6o2Xog6JIXRE1/1OUyh3H7++mDzsXKCvkDN
- /bp8TMfnb8eQ65zE=;
-Received: from mail-pf1-f202.google.com ([209.85.210.202])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kPM9t-00H57Z-Mk
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 05 Oct 2020 08:47:54 +0000
-Received: by mail-pf1-f202.google.com with SMTP id 192so1176392pfb.21
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 05 Oct 2020 01:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=sender:date:message-id:mime-version:subject:from:to:cc;
- bh=cGuAlaeZa+fmThCbpZs6t/+dBJ0JbAyRdYvCYkXQIzo=;
- b=EP1SkITH6nDQZDWUU1Uc+q768nllvBnXoM0IIfWmlFqo3T0ux+TM7Mf2z1UAwoqFxj
- PaeTydbB3wNHeOtz9oXhetYgUlc766ol57BbEf33wkb5Cf5V+aUl7gGlOmKMAFAH2OeO
- 2TIOPF2+WcgQmQiyror2IePJNc212sveSA+nwOE7VhGBBNC0CANv6GVUeL/lHXixhIsJ
- i53323nttLX+w3GBsyexL60Ii9jpzCCC6uPxxLViqO7MKFSvipW7cR9kgux5yVQms1dQ
- CWx23OCWHXyEK5zUvTdFHoTW2v65PPstXw+YkS25qKvhvWZoWVviSExFXkJnIjOQUMmQ
- 9TYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
- :to:cc;
- bh=cGuAlaeZa+fmThCbpZs6t/+dBJ0JbAyRdYvCYkXQIzo=;
- b=rCw0bpqvhxHo8uZ+AvPSdzF7JiWh5LQULYe0qPi8nAVZcN2Na+Ui5m+H+ZEwwXg0Kr
- W/E6XhPXoFee/FGHPVYmZB8gxcI/8o9207t4+Y0D/T95gQsoMQz5tpKSmxA9R1Ep6zE5
- NA1bfcZYOmS3396R7ZkvKFBmZXC1iq9gGNWOxtzA3YOolIcElH82lWc8NkyY+LzFwDdC
- gu6ivdxTSaqeO8doapLZS2URQvd3p01OzwqtUEIHj0lQPcE9FN1bmvJQR7yvQg5AMcxD
- 9Y1lDjMU/AeLvjOGSHsr3CK7MUSwAWmvepCW3xq9EEBeyo2XXZW7tSyqWS1+XquDjigd
- FTwQ==
-X-Gm-Message-State: AOAM531jXu/jNlZ2fYLoo/0kNyPQxB4wIPDtczKJpHTgYlyMm61jeVCh
- uFQAUxBbqjKiDXXXVaXflnUzEvjz+/M=
-X-Google-Smtp-Source: ABdhPJy6ycq5SeVkN+WkkgDF0w8+sYBA0b89QHrmuAKlNY/nUoXchIEgX2O5U5eKs0kimydvOqIJQHYl4iA=
-X-Received: from satyaprateek.c.googlers.com
- ([fda3:e722:ac3:10:24:72f4:c0a8:1092])
- (user=satyat job=sendgmr) by 2002:a0c:8c4c:: with SMTP id
- o12mr5153494qvb.46.1601883698196; 
- Mon, 05 Oct 2020 00:41:38 -0700 (PDT)
-Date: Mon,  5 Oct 2020 07:41:32 +0000
-Message-Id: <20201005074133.1958633-1-satyat@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.28.0.806.g8561365e88-goog
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Eric Biggers <ebiggers@kernel.org>
-X-Headers-End: 1kPM9t-00H57Z-Mk
-Subject: [f2fs-dev] [PATCH 0/1] userspace support for F2FS metadata
- encryption
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=OV5o2NczlKU7Pjs0Vu/50U97nvxvdbAazpXbRz5PEBI=; b=GQogAeAJB7v/UVwFaaAzh810C8
+ 0B9aq+ZADqQE8JIyDa6aPCD4+zqt9uAGi5b2wCzZYWyYxw/XGzhx+Yl/jYrPKc3yVzf8+dondntk/
+ c1uMiFIaSlbxAxYnxFIEJ4Xjiqb2pfiklGHVZjWQLVPH182D6szoXG7jcp8OMh5iDlF8=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1kQ0RQ-005ZFr-Gr
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 07 Oct 2020 03:48:43 +0000
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net
+ [172.10.235.113])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 9D231208C3;
+ Wed,  7 Oct 2020 03:48:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1602042511;
+ bh=utdOvzVHh89b4CpLVpb/B52DJTCKTgZ4TatN41r7vCM=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=DAaVPOwJ/Oo5GVLzk9uGENtdZtKxJUoCECj95UyceMUuaD19dko63qK5FPJ0xYvZH
+ pAKVj9DaXhWCjJPiqysw5TgaBKd2mEoW5WKs4CXTgaScgMmgfnSbCFukXhjCwI1ueM
+ RNPVtN8K/4Gz3YjOidGulDFCDFo3g2LJKJ30WO5c=
+Date: Tue, 6 Oct 2020 20:48:29 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+ Daeho Jeong <daehojeong@google.com>
+Message-ID: <20201007034829.GA912@sol.localdomain>
+References: <20201001002508.328866-1-ebiggers@kernel.org>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20201001002508.328866-1-ebiggers@kernel.org>
+X-Headers-End: 1kQ0RQ-005ZFr-Gr
+Subject: Re: [f2fs-dev] [PATCH 0/5] xfstests: test f2fs
+ compression+encryption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -115,59 +89,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Satya Tangirala via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Satya Tangirala <satyat@google.com>
-Cc: linux-fscrypt@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+Cc: linux-fscrypt@vger.kernel.org, fstests@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The kernel patches for F2FS metadata encryption are at:
+On Wed, Sep 30, 2020 at 05:25:02PM -0700, Eric Biggers wrote:
+> Add a test which verifies that encryption is done correctly when a file
+> on f2fs uses both compression and encryption at the same time.
+> 
+> Patches 1-4 add prerequisites for the test, while patch 5 adds the
+> actual test.  Patch 2 also fixes a bug which could cause the existing
+> test generic/602 to fail in extremely rare cases.  See the commit
+> messages for details.
+> 
+> The new test passes both with and without the inlinecrypt mount option.
+> It requires CONFIG_F2FS_FS_COMPRESSION=y.
+> 
+> I'd appreciate the f2fs developers taking a look.
+> 
+> Note, there is a quirk where the IVs in compressed files are off by one
+> from the "natural" values.  It's still secure, though it made the test
+> slightly harder to write.  I'm not sure how intentional this quirk was.
+> 
+> Eric Biggers (5):
+>   fscrypt-crypt-util: clean up parsing --block-size and --inode-number
+>   fscrypt-crypt-util: fix IV incrementing for --iv-ino-lblk-32
+>   fscrypt-crypt-util: add --block-number option
+>   common/f2fs: add _require_scratch_f2fs_compression()
+>   f2fs: verify ciphertext of compressed+encrypted file
 
-https://lore.kernel.org/linux-fscrypt/20201005073606.1949772-4-satyat@google.com/
+Jaegeuk, Chao, Daeho: any comments on this?
 
-This patch implements the userspace changes required for metadata
-encryption support as implemented in the kernel changes above. All blocks
-in the filesystem are encrypted with the user provided metadata encryption
-key except for the superblock (and its redundant copy). The DUN for a block
-is its offset from the start of the filesystem.
-
-This patch introduces two new options for the userspace tools: '-A' to
-specify the encryption algorithm, and '-M' to specify the encryption key.
-mkfs.f2fs will store the encryption algorithm used for metadata encryption
-in the superblock itself, so '-A' is only applicable to mkfs.f2fs. The rest
-of the tools only take the '-M' option, and will obtain the encryption
-algorithm from the superblock of the FS.
-
-Limitations: 
-Metadata encryption with sparse storage has not been implemented yet in
-this patch.
-
-This patch requires the metadata encryption key to be readable from
-userspace, and does not ensure that it is zeroed before the program exits
-for any reason.
-
-Satya Tangirala (1):
-  f2fs-tools: Introduce metadata encryption support
-
- fsck/main.c                   |  47 ++++++-
- fsck/mount.c                  |  33 ++++-
- include/f2fs_fs.h             |  10 +-
- include/f2fs_metadata_crypt.h |  21 ++++
- lib/Makefile.am               |   4 +-
- lib/f2fs_metadata_crypt.c     | 226 ++++++++++++++++++++++++++++++++++
- lib/libf2fs_io.c              |  87 +++++++++++--
- mkfs/f2fs_format.c            |   5 +-
- mkfs/f2fs_format_main.c       |  33 ++++-
- 9 files changed, 446 insertions(+), 20 deletions(-)
- create mode 100644 include/f2fs_metadata_crypt.h
- create mode 100644 lib/f2fs_metadata_crypt.c
-
--- 
-2.28.0.806.g8561365e88-goog
-
+- Eric
 
 
 _______________________________________________
