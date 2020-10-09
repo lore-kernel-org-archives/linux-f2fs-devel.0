@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6892C9DC8E
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 662C0C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:54:10 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 56722225A9;
-	Fri,  9 Oct 2020 19:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 1E12C22B48;
+	Fri,  9 Oct 2020 19:54:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="H43TyDsN";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="dtmIMlfh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56722225A9
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cH67zW11";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="LARvkJJr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E12C22B48
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kQySu-00029B-1J; Fri, 09 Oct 2020 19:54:08 +0000
+	id 1kQySv-0006kC-QU; Fri, 09 Oct 2020 19:54:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <ira.weiny@intel.com>)
- id 1kQySs-00028q-EH; Fri, 09 Oct 2020 19:54:06 +0000
+ id 1kQySs-0006i9-EG; Fri, 09 Oct 2020 19:54:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VmM4ECMBjF/f2pgpMktcDCFTZPlpXgytzdnlHY6G42g=; b=H43TyDsNKs5rgYaKXo9d6A9JVh
- 59W9CdpM5N7jZ6gJSoG5x5DeoL/Y9UeIeVlv5gMDJ0SolWPxUCY0NyCo6/RYhcv87lA2fd+KucqxD
- b1KL8OvZIK1dOmWTTZ2jV51f2/p2QN2CgRDhFaG3uV3O5TWzIi+wPLlpduryqcgLsNr8=;
+ bh=/V3uAD1bxrYj2Ot5J9thLw7J/tBvpnuILEfO6t9xn1I=; b=cH67zW11vRJTbg4RVOUpzZclls
+ EGULecgo3XY2fVPG2Nt4nkP4w+fZQkEUgFe20nBtrYF8JOYfjjKZsp11sYHLLT3XuVFHOrtMDaR/D
+ DgJJePeaHVnbv4qwVfAPAkx2dNA0FpVbP/D0bCz6fYVXyIGbjBxZ3wwf0E8FpuFdH3u4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,41 +45,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VmM4ECMBjF/f2pgpMktcDCFTZPlpXgytzdnlHY6G42g=; b=dtmIMlfhN0mAdwyMrgep955XJc
- S8eLXp+iashKUN2//p/HaQ+a7KSmJjCci8sBH0qPszrYPj4E/xlB+9p8x8PLGrdfNt5n2iwYn1gMj
- CrgFHAD8oC3dw6hAHvFUSbMqxm5y51CLm8ED+s6kYByjSLQq5RIaOhLPQU+3eegOVEE4=;
-Received: from mga01.intel.com ([192.55.52.88])
+ bh=/V3uAD1bxrYj2Ot5J9thLw7J/tBvpnuILEfO6t9xn1I=; b=LARvkJJrtoh7vTko8Z3pU+1zqC
+ yFx7MDAN9gBnEGC2wQEGUmPHlrb8tU5NYNsEuUvoMWzjz3YC3EyT3Fnmp0TOSJewhm8/4eqiFazrf
+ PJLa0JMggEobDwDBVm0BBtL1Qv3PG47+rg9YvCi+1miU+Y0EhbYtgI9Wgg6Yn54LWk+Q=;
+Received: from mga03.intel.com ([134.134.136.65])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kQySd-008s2j-Tu; Fri, 09 Oct 2020 19:54:06 +0000
-IronPort-SDR: +IVFt7BdyqOssbCfR8Q4YUf8sDAYlsnJI/UvYsM4E0MQHs394ecNIUuxJ5CioHiscQbr0OcUAY
- V4Md8oP7UaYw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="182976509"
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="182976509"
+ id 1kQySg-008s5t-5V; Fri, 09 Oct 2020 19:54:06 +0000
+IronPort-SDR: IhApqQEW3kNFRi7OHmvbrzVTdbVk+EqOvIMLJdlpNURKne0ufqjhlIQUyiyYHLGjvvzrPdKASp
+ 5hLhjOTahpDA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="165592521"
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="165592521"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
- by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:53:51 -0700
-IronPort-SDR: V1KD7wTraPak1zxWaGCn8NDyAgfcS4zsKsBv4Z0vY7HUn25qjJm9u99gQjtiJGVT+R+oXmWyM0
- H2mADCd5/x5Q==
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="462301148"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+ by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:53:41 -0700
+IronPort-SDR: t/zSGeR++7wfj+VtFM7nhfyp5h0blfdWqDlNHnP/5jl48Bm08GFuTiLpDu6MwkEQ7bZpMY8SQr
+ l7ztZVCdgy3g==
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="419537249"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
- by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:53:50 -0700
+ by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:53:40 -0700
 From: ira.weiny@intel.com
 To: Andrew Morton <akpm@linux-foundation.org>,
  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>
-Date: Fri,  9 Oct 2020 12:50:27 -0700
-Message-Id: <20201009195033.3208459-53-ira.weiny@intel.com>
+Date: Fri,  9 Oct 2020 12:50:24 -0700
+Message-Id: <20201009195033.3208459-50-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20201009195033.3208459-1-ira.weiny@intel.com>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-X-Headers-End: 1kQySd-008s2j-Tu
-Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 52/58] mm: Utilize new kmap_thread()
+X-Headers-End: 1kQySg-008s5t-5V
+Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 49/58] drivers/misc: Utilize new
+ kmap_thread()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,11 +111,11 @@ Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org, kvm@vger.kernel.org,
  reiserfs-devel@vger.kernel.org, linux-block@vger.kernel.org,
  linux-bcache@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
  io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
- kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ linux-ntfs-dev@lists.sourceforge.net,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -124,92 +125,64 @@ From: Ira Weiny <ira.weiny@intel.com>
 These kmap() calls are localized to a single thread.  To avoid the over
 head of global PKRS updates use the new kmap_thread() call.
 
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- mm/memory.c      | 8 ++++----
- mm/swapfile.c    | 4 ++--
- mm/userfaultfd.c | 4 ++--
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/misc/vmw_vmci/vmci_queue_pair.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index fcfc4ca36eba..75a054882d7a 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4945,7 +4945,7 @@ int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
- 			if (bytes > PAGE_SIZE-offset)
- 				bytes = PAGE_SIZE-offset;
+diff --git a/drivers/misc/vmw_vmci/vmci_queue_pair.c b/drivers/misc/vmw_vmci/vmci_queue_pair.c
+index 8531ae781195..f308abb8ad03 100644
+--- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
++++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
+@@ -343,7 +343,7 @@ static int qp_memcpy_to_queue_iter(struct vmci_queue *queue,
+ 		size_t to_copy;
  
--			maddr = kmap(page);
-+			maddr = kmap_thread(page);
- 			if (write) {
- 				copy_to_user_page(vma, page, addr,
- 						  maddr + offset, buf, bytes);
-@@ -4954,7 +4954,7 @@ int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
- 				copy_from_user_page(vma, page, addr,
- 						    buf, maddr + offset, bytes);
- 			}
--			kunmap(page);
-+			kunmap_thread(page);
- 			put_page(page);
+ 		if (kernel_if->host)
+-			va = kmap(kernel_if->u.h.page[page_index]);
++			va = kmap_thread(kernel_if->u.h.page[page_index]);
+ 		else
+ 			va = kernel_if->u.g.vas[page_index + 1];
+ 			/* Skip header. */
+@@ -357,12 +357,12 @@ static int qp_memcpy_to_queue_iter(struct vmci_queue *queue,
+ 		if (!copy_from_iter_full((u8 *)va + page_offset, to_copy,
+ 					 from)) {
+ 			if (kernel_if->host)
+-				kunmap(kernel_if->u.h.page[page_index]);
++				kunmap_thread(kernel_if->u.h.page[page_index]);
+ 			return VMCI_ERROR_INVALID_ARGS;
  		}
- 		len -= bytes;
-@@ -5216,14 +5216,14 @@ long copy_huge_page_from_user(struct page *dst_page,
- 
- 	for (i = 0; i < pages_per_huge_page; i++) {
- 		if (allow_pagefault)
--			page_kaddr = kmap(dst_page + i);
-+			page_kaddr = kmap_thread(dst_page + i);
- 		else
- 			page_kaddr = kmap_atomic(dst_page + i);
- 		rc = copy_from_user(page_kaddr,
- 				(const void __user *)(src + i * PAGE_SIZE),
- 				PAGE_SIZE);
- 		if (allow_pagefault)
--			kunmap(dst_page + i);
-+			kunmap_thread(dst_page + i);
- 		else
- 			kunmap_atomic(page_kaddr);
- 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index debc94155f74..e3296ff95648 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -3219,7 +3219,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 		error = PTR_ERR(page);
- 		goto bad_swap_unlock_inode;
+ 		bytes_copied += to_copy;
+ 		if (kernel_if->host)
+-			kunmap(kernel_if->u.h.page[page_index]);
++			kunmap_thread(kernel_if->u.h.page[page_index]);
  	}
--	swap_header = kmap(page);
-+	swap_header = kmap_thread(page);
  
- 	maxpages = read_swap_header(p, swap_header, inode);
- 	if (unlikely(!maxpages)) {
-@@ -3395,7 +3395,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 		filp_close(swap_file, NULL);
- out:
- 	if (page && !IS_ERR(page)) {
--		kunmap(page);
-+		kunmap_thread(page);
- 		put_page(page);
+ 	return VMCI_SUCCESS;
+@@ -391,7 +391,7 @@ static int qp_memcpy_from_queue_iter(struct iov_iter *to,
+ 		int err;
+ 
+ 		if (kernel_if->host)
+-			va = kmap(kernel_if->u.h.page[page_index]);
++			va = kmap_thread(kernel_if->u.h.page[page_index]);
+ 		else
+ 			va = kernel_if->u.g.vas[page_index + 1];
+ 			/* Skip header. */
+@@ -405,12 +405,12 @@ static int qp_memcpy_from_queue_iter(struct iov_iter *to,
+ 		err = copy_to_iter((u8 *)va + page_offset, to_copy, to);
+ 		if (err != to_copy) {
+ 			if (kernel_if->host)
+-				kunmap(kernel_if->u.h.page[page_index]);
++				kunmap_thread(kernel_if->u.h.page[page_index]);
+ 			return VMCI_ERROR_INVALID_ARGS;
+ 		}
+ 		bytes_copied += to_copy;
+ 		if (kernel_if->host)
+-			kunmap(kernel_if->u.h.page[page_index]);
++			kunmap_thread(kernel_if->u.h.page[page_index]);
  	}
- 	if (name)
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 9a3d451402d7..4d38c881bb2d 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -586,11 +586,11 @@ static __always_inline ssize_t __mcopy_atomic(struct mm_struct *dst_mm,
- 			mmap_read_unlock(dst_mm);
- 			BUG_ON(!page);
  
--			page_kaddr = kmap(page);
-+			page_kaddr = kmap_thread(page);
- 			err = copy_from_user(page_kaddr,
- 					     (const void __user *) src_addr,
- 					     PAGE_SIZE);
--			kunmap(page);
-+			kunmap_thread(page);
- 			if (unlikely(err)) {
- 				err = -EFAULT;
- 				goto out;
+ 	return VMCI_SUCCESS;
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
