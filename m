@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58699C561F8
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 542E3C5517B
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:51:14 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F2A4B22282;
-	Fri,  9 Oct 2020 19:51:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EF68322365;
+	Fri,  9 Oct 2020 19:51:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="G0L+tVii";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Yy2d4JR7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A4B22282
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VQI7m0xJ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cvRR4WmB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF68322365
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kQyQ4-0005su-Kd; Fri, 09 Oct 2020 19:51:12 +0000
+	id 1kQyQ5-00017x-AS; Fri, 09 Oct 2020 19:51:13 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <ira.weiny@intel.com>)
- id 1kQyQ3-0005sZ-3F; Fri, 09 Oct 2020 19:51:11 +0000
+ id 1kQyQ3-00017b-1m; Fri, 09 Oct 2020 19:51:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Pq+5H0Tb8kpWR+AdJnT+a+sSRzDgUP6g7wD70nRElTg=; b=G0L+tViiff2UstTAn4MUJS/aGT
- lOJUt0xGp4b4XK7Uxe+Vk6ulMtBU2wm55oSU2PRqgoA5IUw5AZIN0BGv6RFjggViyjwghDidPZLuv
- YkNaT16qQP7HNL+iDIdqfCF+7tFW/KgowWsuu/9Nyo3Dx1f8DApSo/Eoxb1uJFFGEsRA=;
+ bh=IY5deMVpAxtUphJEw/krVSSF9zIspaKdfQTqz7XNp1Q=; b=VQI7m0xJx9RArXv3flir2TjOgp
+ 5yzpetaiGrnCXKc6m6puENzIgwYG6HUjuNmzVzk53AEUMJ7M4Xd/FR+06D917OCbmuQiSBHEFw+xc
+ KlnzslpAejvF6oNvS7IwdkLhZS+m3JpfWMwrrZhemX+YPKwIieOg0rncHbzPk42X0nN8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,42 +45,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Pq+5H0Tb8kpWR+AdJnT+a+sSRzDgUP6g7wD70nRElTg=; b=Yy2d4JR7ikAL1wkE9p9jLooRyE
- 1VL/bwx2ETUt+0GImK5UDAM4pTKDW5UaUTPCOcrBUzPfuiTuuYTyZYf7OtOZdyJwSccrKAoQxnnzO
- 5Q10Oo+nvi9rZGS5BgDPdXPL8486XVSG/vzl33dJJg0GA+SCZXf6NZyYjhzYB/oTkIMc=;
-Received: from mga09.intel.com ([134.134.136.24])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=IY5deMVpAxtUphJEw/krVSSF9zIspaKdfQTqz7XNp1Q=; b=cvRR4WmBHhNMwhzIWphlPE3n6c
+ Rragx1cjjygpc2y9atF/IziriaKwyL/xe43HCAMgCY8Bpu1l5luv9+ZN1V26X7SWgcVZ5CW1tRBDU
+ TXAhFZA7PkedawbNo+/revBIBeeJVQgeban1IukXFndOc6G5UHHZD18+8TFexSj+lR98=;
+Received: from mga03.intel.com ([134.134.136.65])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kQyPy-008rg8-BJ; Fri, 09 Oct 2020 19:51:11 +0000
-IronPort-SDR: 0QLRcfhQmt4fTf5wWuFivy6ByYWgORTaXOYnJKKSaXAAWS1uiyBTFIg9VjQd232rnbp2lUdEEd
- LPyz4hjGKehA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="165642843"
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="165642843"
+ id 1kQyPw-004aCA-Ks; Fri, 09 Oct 2020 19:51:11 +0000
+IronPort-SDR: pt6Dc/YD8hcy6NDKjGnJ59swBGScbMD7VenunsIPhOMROjsRnp1+nWfq/iL4IVL+Sy8f6uCCuD
+ GHn7JBVaQtsQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="165591937"
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="165591937"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
- by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:51:00 -0700
-IronPort-SDR: /j9oTf64Lc/fwCVe0LT3Z3/pz5zJXnOJNQAbfqyJqoBSoEhIO3zt/eOhOuH8Xl1K1eBwx2q0zq
- 2edyiKrU43UQ==
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="519846797"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+ by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:50:51 -0700
+IronPort-SDR: r9rFWs4LxSt/DLhc0vk8qSUxzY/hR2W3QZLi44jmj/rGXS9Mfwq/Fn231GdfrO+iUZYF22umi/
+ 70MWS29lQZXg==
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="529052813"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
- by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:50:59 -0700
+ by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:50:50 -0700
 From: ira.weiny@intel.com
 To: Andrew Morton <akpm@linux-foundation.org>,
  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>
-Date: Fri,  9 Oct 2020 12:49:39 -0700
-Message-Id: <20201009195033.3208459-5-ira.weiny@intel.com>
+Date: Fri,  9 Oct 2020 12:49:37 -0700
+Message-Id: <20201009195033.3208459-3-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20201009195033.3208459-1-ira.weiny@intel.com>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-X-Headers-End: 1kQyPy-008rg8-BJ
-Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 04/58] kmap: Add stray access
- protection for device pages
+X-Headers-End: 1kQyPw-004aCA-Ks
+Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 02/58] x86/pks/test: Add testing for
+ global option
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -112,150 +112,215 @@ Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org, kvm@vger.kernel.org,
  linux-bcache@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
  io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
  linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
- Randy Dunlap <rdunlap@infradead.org>, kexec@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+ kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Device managed pages may have additional protections.  These protections
-need to be removed prior to valid use by kernel users.
+Now that PKS can be enabled globaly (for all threads) add a test which
+spawns a thread and tests the same PKS functionality.
 
-Check for special treatment of device managed pages in kmap and take
-action if needed.  We use kmap as an interface for generic kernel code
-because under normal circumstances it would be a bug for general kernel
-code to not use kmap prior to accessing kernel memory.  Therefore, this
-should allow any valid kernel users to seamlessly use these pages
-without issues.
+The test enables/disables PKS in 1 thread while attempting to access the
+page in another thread.  We use the same test array as in the 'local'
+PKS testing.
 
-Because of the critical nature of kmap it must be pointed out that the
-over head on regular DRAM is carefully implemented to be as fast as
-possible.  Furthermore the underlying MSR write required on device pages
-when protected is better than a normal MSR write.
-
-Specifically, WRMSR(MSR_IA32_PKRS) is not serializing but still
-maintains ordering properties similar to WRPKRU.  The current SDM
-section on PKRS needs updating but should be the same as that of WRPKRU.
-So to quote from the WRPKRU text:
-
-	WRPKRU will never execute speculatively. Memory accesses
-	affected by PKRU register will not execute (even speculatively)
-	until all prior executions of WRPKRU have completed execution
-	and updated the PKRU register.
-
-Still this will make accessing pmem more expensive from the kernel but
-the overhead is minimized and many pmem users access this memory through
-user page mappings which are not affected at all.
-
-Cc: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- include/linux/highmem.h | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+ arch/x86/mm/fault.c |   4 ++
+ lib/pks/pks_test.c  | 128 +++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 124 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index 14e6202ce47f..2a9806e3b8d2 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -8,6 +8,7 @@
- #include <linux/mm.h>
- #include <linux/uaccess.h>
- #include <linux/hardirq.h>
-+#include <linux/memremap.h>
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 4b4ff9efa298..4c74f52fbc23 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1108,6 +1108,10 @@ static int spurious_kernel_fault_check(unsigned long error_code, pte_t *pte,
+ 		if (global_pkey_is_enabled(pte, is_write, irq_state))
+ 			return 1;
  
- #include <asm/cacheflush.h>
++		/*
++		 * NOTE: This must be after the global_pkey_is_enabled() call
++		 * to allow the fixup code to be tested.
++		 */
+ 		if (handle_pks_testing(error_code, irq_state))
+ 			return 1;
  
-@@ -31,6 +32,20 @@ static inline void invalidate_kernel_vmap_range(void *vaddr, int size)
+diff --git a/lib/pks/pks_test.c b/lib/pks/pks_test.c
+index 286c8b8457da..dfddccbe4cb6 100644
+--- a/lib/pks/pks_test.c
++++ b/lib/pks/pks_test.c
+@@ -154,7 +154,8 @@ static void check_exception(irqentry_state_t *irq_state)
+ 	}
  
- #include <asm/kmap_types.h>
+ 	/* Check the exception state */
+-	if (!check_pkrs(test_armed_key, PKEY_DISABLE_ACCESS)) {
++	if (!check_pkrs(test_armed_key,
++			PKEY_DISABLE_ACCESS | PKEY_DISABLE_WRITE)) {
+ 		pr_err("     FAIL: PKRS cache and MSR\n");
+ 		test_exception_ctx->pass = false;
+ 	}
+@@ -308,24 +309,29 @@ static int test_it(struct pks_test_ctx *ctx, struct pks_access_test *test, void
+ 	return ret;
+ }
  
-+static inline void dev_page_enable_access(struct page *page, bool global)
-+{
-+	if (!page_is_access_protected(page))
-+		return;
-+	dev_access_enable(global);
+-static int run_access_test(struct pks_test_ctx *ctx,
+-			   struct pks_access_test *test,
+-			   void *ptr)
++static void set_protection(int pkey, enum pks_access_mode mode, bool global)
+ {
+-	switch (test->mode) {
++	switch (mode) {
+ 		case PKS_TEST_NO_ACCESS:
+-			pks_mknoaccess(ctx->pkey, false);
++			pks_mknoaccess(pkey, global);
+ 			break;
+ 		case PKS_TEST_RDWR:
+-			pks_mkrdwr(ctx->pkey, false);
++			pks_mkrdwr(pkey, global);
+ 			break;
+ 		case PKS_TEST_RDONLY:
+-			pks_mkread(ctx->pkey, false);
++			pks_mkread(pkey, global);
+ 			break;
+ 		default:
+ 			pr_err("BUG in test invalid mode\n");
+ 			break;
+ 	}
 +}
 +
-+static inline void dev_page_disable_access(struct page *page, bool global)
++static int run_access_test(struct pks_test_ctx *ctx,
++			   struct pks_access_test *test,
++			   void *ptr)
 +{
-+	if (!page_is_access_protected(page))
-+		return;
-+	dev_access_disable(global);
++	set_protection(ctx->pkey, test->mode, false);
+ 
+ 	return test_it(ctx, test, ptr);
+ }
+@@ -516,6 +522,110 @@ static void run_exception_test(void)
+ 		 pass ? "PASS" : "FAIL");
+ }
+ 
++struct shared_data {
++	struct mutex lock;
++	struct pks_test_ctx *ctx;
++	void *kmap_addr;
++	struct pks_access_test *test;
++};
++
++static int thread_main(void *d)
++{
++	struct shared_data *data = d;
++	struct pks_test_ctx *ctx = data->ctx;
++
++	while (!kthread_should_stop()) {
++		mutex_lock(&data->lock);
++		/*
++		 * wait for the main thread to hand us the page
++		 * We should be spinning so hopefully we will not have gotten
++		 * the global value from a schedule in.
++		 */
++		if (data->kmap_addr) {
++			if (test_it(ctx, data->test, data->kmap_addr))
++				ctx->pass = false;
++			data->kmap_addr = NULL;
++		}
++		mutex_unlock(&data->lock);
++	}
++
++	return 0;
 +}
 +
- #ifdef CONFIG_HIGHMEM
- extern void *kmap_atomic_high_prot(struct page *page, pgprot_t prot);
- extern void kunmap_atomic_high(void *kvaddr);
-@@ -55,6 +70,11 @@ static inline void *kmap(struct page *page)
- 	else
- 		addr = kmap_high(page);
- 	kmap_flush_tlb((unsigned long)addr);
-+	/*
-+	 * Even non-highmem pages may have additional access protections which
-+	 * need to be checked and potentially enabled.
-+	 */
-+	dev_page_enable_access(page, true);
- 	return addr;
++static void run_thread_access_test(struct shared_data *data,
++				   struct pks_test_ctx *ctx,
++				   struct pks_access_test *test,
++				   void *ptr)
++{
++	set_protection(ctx->pkey, test->mode, true);
++
++	pr_info("checking...  mode %s; write %s\n",
++			get_mode_str(test->mode), test->write ? "TRUE" : "FALSE");
++
++	mutex_lock(&data->lock);
++	data->test = test;
++	data->kmap_addr = ptr;
++	mutex_unlock(&data->lock);
++
++	while (data->kmap_addr) {
++		msleep(10);
++	}
++}
++
++static void run_global_test(void)
++{
++	struct task_struct *other_task;
++	struct pks_test_ctx *ctx;
++	struct shared_data data;
++	bool pass = true;
++	void *ptr;
++	int i;
++
++	pr_info("     ***** BEGIN: global pkey checking\n");
++
++	/* Set up context, data pgae, and thread */
++	ctx = alloc_ctx("global pkey test");
++	if (IS_ERR(ctx)) {
++		pr_err("     FAIL: no context\n");
++		pass = false;
++		goto result;
++	}
++	ptr = alloc_test_page(ctx->pkey);
++	if (!ptr) {
++		pr_err("     FAIL: no vmalloc page\n");
++		pass = false;
++		goto free_context;
++	}
++	other_task = kthread_run(thread_main, &data, "PKRS global test");
++	if (IS_ERR(other_task)) {
++		pr_err("     FAIL: Failed to start thread\n");
++		pass = false;
++		goto free_page;
++	}
++
++	memset(&data, 0, sizeof(data));
++	mutex_init(&data.lock);
++	data.ctx = ctx;
++
++	/* Start testing */
++	ctx->pass = true;
++
++	for (i = 0; i < ARRAY_SIZE(pkey_test_ary); i++) {
++		run_thread_access_test(&data, ctx, &pkey_test_ary[i], ptr);
++	}
++
++	kthread_stop(other_task);
++	pass = ctx->pass;
++
++free_page:
++	vfree(ptr);
++free_context:
++	free_ctx(ctx);
++result:
++	pr_info("     ***** END: global pkey checking : %s\n",
++		 pass ? "PASS" : "FAIL");
++}
++
+ static void run_all(void)
+ {
+ 	struct pks_test_ctx *ctx[PKS_NUM_KEYS];
+@@ -538,6 +648,8 @@ static void run_all(void)
+ 	}
+ 
+ 	run_exception_test();
++
++	run_global_test();
  }
  
-@@ -63,6 +83,11 @@ void kunmap_high(struct page *page);
- static inline void kunmap(struct page *page)
- {
- 	might_sleep();
-+	/*
-+	 * Even non-highmem pages may have additional access protections which
-+	 * need to be checked and potentially disabled.
-+	 */
-+	dev_page_disable_access(page, true);
- 	if (!PageHighMem(page))
- 		return;
- 	kunmap_high(page);
-@@ -85,6 +110,7 @@ static inline void *kmap_atomic_prot(struct page *page, pgprot_t prot)
- {
- 	preempt_disable();
- 	pagefault_disable();
-+	dev_page_enable_access(page, false);
- 	if (!PageHighMem(page))
- 		return page_address(page);
- 	return kmap_atomic_high_prot(page, prot);
-@@ -137,6 +163,7 @@ static inline unsigned long totalhigh_pages(void) { return 0UL; }
- static inline void *kmap(struct page *page)
- {
- 	might_sleep();
-+	dev_page_enable_access(page, true);
- 	return page_address(page);
- }
- 
-@@ -146,6 +173,7 @@ static inline void kunmap_high(struct page *page)
- 
- static inline void kunmap(struct page *page)
- {
-+	dev_page_disable_access(page, true);
- #ifdef ARCH_HAS_FLUSH_ON_KUNMAP
- 	kunmap_flush_on_unmap(page_address(page));
- #endif
-@@ -155,6 +183,7 @@ static inline void *kmap_atomic(struct page *page)
- {
- 	preempt_disable();
- 	pagefault_disable();
-+	dev_page_enable_access(page, false);
- 	return page_address(page);
- }
- #define kmap_atomic_prot(page, prot)	kmap_atomic(page)
-@@ -216,7 +245,8 @@ static inline void kmap_atomic_idx_pop(void)
- #define kunmap_atomic(addr)                                     \
- do {                                                            \
- 	BUILD_BUG_ON(__same_type((addr), struct page *));       \
--	kunmap_atomic_high(addr);                                  \
-+	dev_page_disable_access(kmap_to_page(addr), false);     \
-+	kunmap_atomic_high(addr);                               \
- 	pagefault_enable();                                     \
- 	preempt_enable();                                       \
- } while (0)
+ static void crash_it(void)
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
