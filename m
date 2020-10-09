@@ -2,81 +2,80 @@ Return-Path: <SRS0=0BeM=DQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EABC433DF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 21:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 272B3C433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 22:21:55 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 12E5622247;
-	Fri,  9 Oct 2020 21:35:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id ABCDE22281
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 22:21:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="aEZ9FBuW";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="deCWEHBf";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAKgXcy5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12E5622247
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="f232RqeY";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TWyJ5zrL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCQYEc43"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCDE22281
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kR02V-0004JL-Am; Fri, 09 Oct 2020 21:34:59 +0000
+	id 1kR0ls-0000fA-6q; Fri, 09 Oct 2020 22:21:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>)
- id 1kR02U-0004J5-3f; Fri, 09 Oct 2020 21:34:58 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kR0lo-0000ew-5q
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Oct 2020 22:21:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Wq/qsSCEH4NVWw6oW/tG/tZKe2knEdJ5S/IraLdWzlU=; b=aEZ9FBuWAVuwa9fgPhvNO5HREn
- L26yocwPFoEE4haeP+RkzRO5xAJIwIYhfsis3dHvWerQCmTWN7rZaqWNRxrIirCh31AhmzMmx13OR
- ZHAA3z9gGRp0sqUohUIipLzyg5QeIU2Wc9gq7p/jVpshJkeiiLod780tbXIqMbO6MF0Q=;
+ bh=PyMmyAPQGUVnjeK3LLAjy5gdMwYfK7y4rtQZfnkgKoA=; b=f232RqeY0lSu8ovT2KpAdd73Dy
+ lvLJ7sOqNv+oZ9WrVkCjtX6MhJZx3vPd2unNerGGcuRIbfKWUFnlD00VDEDEAZ89xgxSmYgpooott
+ EQhy6DifW3AM1QgGJVv2JSz2ZzpwrkXdOHtsXzBtHVtO8kaFbk6qwuOJc7VGYqVRM2cw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Wq/qsSCEH4NVWw6oW/tG/tZKe2knEdJ5S/IraLdWzlU=; b=deCWEHBfooX4FDNW4yD+PhcW4p
- bdqNgrgeBrVP8rwmAYpFksrrPyeuEJrhowDGKdKvit/ON64EdqFFXyDhgooDn+jJHL3iy9fLqoflk
- Zfoa1KCt098bK2tCd5NjRQs+IMpAiL+dy7HfskUXFPYhKJFuogJUL80cNIUJ9tRWwivo=;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:To:From:
+ Sender:Reply-To:Cc:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=PyMmyAPQGUVnjeK3LLAjy5gdMwYfK7y4rtQZfnkgKoA=; b=T
+ WyJ5zrL5Q4mWbRDdDjTrTT+v+ETpVTl/M88A9+bn3izny+3siQOh4UpO0DMuPXL1/PuNBlRu1DBI6
+ 8AhK4HsgF+QmdbLwLDkyQ2KfZ9ieumVkHLPIb+xT/ckwLD4cYlAtPK/JnwRmfrowlnx+oauPEPGlD
+ fbqODDbeJeuJ2sqg=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kR02P-004fyX-45; Fri, 09 Oct 2020 21:34:58 +0000
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net
- [172.10.235.113])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ id 1kR0lb-004hs8-Of
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Oct 2020 22:21:48 +0000
+Received: from sol.attlocal.net
+ (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 44F7C21D6C;
- Fri,  9 Oct 2020 21:34:36 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 3F63322281;
+ Fri,  9 Oct 2020 22:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1602279277;
- bh=af4HYKUXjfzQEnpRkoqrLOtb/VuZgD2GaaA85DESAB8=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=mAKgXcy5CifgRYN2i2C2c94+Jg5oLVaoZk49jTIFxseeqdMtEOOqP5cL66hXhKNTI
- eNSQDBkgqgAc1Wd7XIXje+joGiBVI4yatMIDb1+kpBlSLeGvwRiFFGcw+A+0IeryZM
- wi38bfOOqpr1rBlahq6SJoGGKG4xvvKCLXOhXA9s=
-Date: Fri, 9 Oct 2020 14:34:34 -0700
+ s=default; t=1602282090;
+ bh=b0QYoWJ4F1WKIt0I1G7QvmM3e40+q3joXMgKY+q8cOE=;
+ h=From:To:Subject:Date:From;
+ b=pCQYEc43BEOVLbNiW1Y9/SoLAip+b3E24g6IPm/rLkuovuWkIL5Ylkb/xJKi0OLvU
+ oLBDyS+RTcQbgxIhrb1C1VusyAu2m3WeBgt9/go52DetRRpE+/TM9vCxaiTTgn67Ks
+ bgIwVMQ8+Rv1gC/0dtCsQFbjJBgfeCI4Af8POmtg=
 From: Eric Biggers <ebiggers@kernel.org>
-To: ira.weiny@intel.com
-Message-ID: <20201009213434.GA839@sol.localdomain>
-References: <20201009195033.3208459-1-ira.weiny@intel.com>
- <20201009195033.3208459-23-ira.weiny@intel.com>
+To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <chao@kernel.org>
+Date: Fri,  9 Oct 2020 15:20:56 -0700
+Message-Id: <20201009222056.5376-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20201009195033.3208459-23-ira.weiny@intel.com>
-X-Headers-End: 1kR02P-004fyX-45
-Subject: Re: [f2fs-dev] [PATCH RFC PKS/PMEM 22/58] fs/f2fs: Utilize new
- kmap_thread()
+X-Headers-End: 1kR0lb-004hs8-Of
+Subject: [f2fs-dev] [f2fs-tools PATCH] mkfs.f2fs.8: document the verity
+ feature
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,73 +87,33 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- linux-mmc@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
- dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
- target-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-kselftest@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- drbd-dev@lists.linbit.com, devel@driverdev.osuosl.org,
- linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-nvdimm@lists.01.org,
- linux-rdma@vger.kernel.org, x86@kernel.org, amd-gfx@lists.freedesktop.org,
- linux-afs@lists.infradead.org, cluster-devel@redhat.com,
- Ingo Molnar <mingo@redhat.com>, intel-wired-lan@lists.osuosl.org,
- kexec@lists.infradead.org, xen-devel@lists.xenproject.org,
- linux-ext4@vger.kernel.org, bpf@vger.kernel.org,
- Dan Williams <dan.j.williams@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
- intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
- linux-um@lists.infradead.org, reiserfs-devel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
- Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
- Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
- io-uring@vger.kernel.org, linux-cachefs@redhat.com, linux-nfs@vger.kernel.org,
- linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, samba-technical@lists.samba.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Oct 09, 2020 at 12:49:57PM -0700, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> The kmap() calls in this FS are localized to a single thread.  To avoid
-> the over head of global PKRS updates use the new kmap_thread() call.
-> 
-> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> Cc: Chao Yu <chao@kernel.org>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
->  fs/f2fs/f2fs.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index d9e52a7f3702..ff72a45a577e 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2410,12 +2410,12 @@ static inline struct page *f2fs_pagecache_get_page(
->  
->  static inline void f2fs_copy_page(struct page *src, struct page *dst)
->  {
-> -	char *src_kaddr = kmap(src);
-> -	char *dst_kaddr = kmap(dst);
-> +	char *src_kaddr = kmap_thread(src);
-> +	char *dst_kaddr = kmap_thread(dst);
->  
->  	memcpy(dst_kaddr, src_kaddr, PAGE_SIZE);
-> -	kunmap(dst);
-> -	kunmap(src);
-> +	kunmap_thread(dst);
-> +	kunmap_thread(src);
->  }
+From: Eric Biggers <ebiggers@google.com>
 
-Wouldn't it make more sense to switch cases like this to kmap_atomic()?
-The pages are only mapped to do a memcpy(), then they're immediately unmapped.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ man/mkfs.f2fs.8 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Eric
+diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
+index e2aee76..1bdd778 100644
+--- a/man/mkfs.f2fs.8
++++ b/man/mkfs.f2fs.8
+@@ -183,7 +183,7 @@ Enable inode creation time feature. Requires extra attr.
+ Enable lost+found feature.
+ .TP
+ .B verity
+-Reserved feature.
++Enable support for verity protected files (a.k.a. fs-verity).
+ .TP
+ .B sb_checksum
+ Enable superblock checksum.
+-- 
+2.28.0
+
 
 
 _______________________________________________
