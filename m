@@ -2,85 +2,81 @@ Return-Path: <SRS0=0BeM=DQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C47EFC9DCB8
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EABC433DF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 21:35:01 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 798B122B48;
-	Fri,  9 Oct 2020 19:54:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 12E5622247;
+	Fri,  9 Oct 2020 21:35:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="PRRUe22z";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XEB9MaZn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 798B122B48
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="aEZ9FBuW";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="deCWEHBf";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAKgXcy5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12E5622247
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kQyTE-0002EP-5E; Fri, 09 Oct 2020 19:54:28 +0000
+	id 1kR02V-0004JL-Am; Fri, 09 Oct 2020 21:34:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ira.weiny@intel.com>)
- id 1kQyTA-0002Da-S2; Fri, 09 Oct 2020 19:54:24 +0000
+ (envelope-from <ebiggers@kernel.org>)
+ id 1kR02U-0004J5-3f; Fri, 09 Oct 2020 21:34:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nAcApbTuHNvexDy6MnL+FDxzHaL/eZ+GQDmnJGnP7ic=; b=PRRUe22zqWk1w7MdZZ2QUh5dnb
- U/wxthAV7J4OB/C8a7sBSTYu3z7HjtmSsmBAoHyA+Yna+/GE8BKuYfqAXwexWfTBxg533Du3qlp4h
- b08LckHsp9F4g2gUy/91e7HQ6rJ1uekf8ZfFcOorBJKmhmV4sQMS7QUuHBVPHnGvawEY=;
+ bh=Wq/qsSCEH4NVWw6oW/tG/tZKe2knEdJ5S/IraLdWzlU=; b=aEZ9FBuWAVuwa9fgPhvNO5HREn
+ L26yocwPFoEE4haeP+RkzRO5xAJIwIYhfsis3dHvWerQCmTWN7rZaqWNRxrIirCh31AhmzMmx13OR
+ ZHAA3z9gGRp0sqUohUIipLzyg5QeIU2Wc9gq7p/jVpshJkeiiLod780tbXIqMbO6MF0Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=nAcApbTuHNvexDy6MnL+FDxzHaL/eZ+GQDmnJGnP7ic=; b=XEB9MaZn+GPHmVdHUXv0l+0qW/
- nA+NH95nDcgw65+i09wBBQBVUQsIoOMilxpZ+7oVpUBmu1SS2wFYpatIgovXNiDiFxPFR4ThYcBcK
- ja27TywHADN+JK2h8XqlAOFk2eAevr+v7q8j8CG0W6fQEiRUfaRU3HXq/r1n/BC2PxHw=;
-Received: from mga06.intel.com ([134.134.136.31])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=Wq/qsSCEH4NVWw6oW/tG/tZKe2knEdJ5S/IraLdWzlU=; b=deCWEHBfooX4FDNW4yD+PhcW4p
+ bdqNgrgeBrVP8rwmAYpFksrrPyeuEJrhowDGKdKvit/ON64EdqFFXyDhgooDn+jJHL3iy9fLqoflk
+ Zfoa1KCt098bK2tCd5NjRQs+IMpAiL+dy7HfskUXFPYhKJFuogJUL80cNIUJ9tRWwivo=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kQyT1-008s8G-N4; Fri, 09 Oct 2020 19:54:24 +0000
-IronPort-SDR: 9SX0XOa5+H8DZ57c8VARJS6C0G/D2YwL2z311+BiGQu5AzxIfUULO0SpFKdOi8oRSmRv/PqHXK
- BAjZGNgu3y/Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="227179228"
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="227179228"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
- by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:54:07 -0700
-IronPort-SDR: src9VKOvZKZdzmhAmOplZF/CbXKWViy2IZEce2k3Dk75HVdMa01qWYEbu8ywq24hGpakhLlrfI
- iYxmJaXcxtuw==
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="519847335"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
- by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:54:06 -0700
-From: ira.weiny@intel.com
-To: Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Date: Fri,  9 Oct 2020 12:50:32 -0700
-Message-Id: <20201009195033.3208459-58-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
-In-Reply-To: <20201009195033.3208459-1-ira.weiny@intel.com>
+ id 1kR02P-004fyX-45; Fri, 09 Oct 2020 21:34:58 +0000
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net
+ [172.10.235.113])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 44F7C21D6C;
+ Fri,  9 Oct 2020 21:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1602279277;
+ bh=af4HYKUXjfzQEnpRkoqrLOtb/VuZgD2GaaA85DESAB8=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=mAKgXcy5CifgRYN2i2C2c94+Jg5oLVaoZk49jTIFxseeqdMtEOOqP5cL66hXhKNTI
+ eNSQDBkgqgAc1Wd7XIXje+joGiBVI4yatMIDb1+kpBlSLeGvwRiFFGcw+A+0IeryZM
+ wi38bfOOqpr1rBlahq6SJoGGKG4xvvKCLXOhXA9s=
+Date: Fri, 9 Oct 2020 14:34:34 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: ira.weiny@intel.com
+Message-ID: <20201009213434.GA839@sol.localdomain>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
+ <20201009195033.3208459-23-ira.weiny@intel.com>
 MIME-Version: 1.0
-X-Headers-End: 1kQyT1-008s8G-N4
-Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 57/58] nvdimm/pmem: Stray access
- protection for pmem->virt_addr
+Content-Disposition: inline
+In-Reply-To: <20201009195033.3208459-23-ira.weiny@intel.com>
+X-Headers-End: 1kR02P-004fyX-45
+Subject: Re: [f2fs-dev] [PATCH RFC PKS/PMEM 22/58] fs/f2fs: Utilize new
+ kmap_thread()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,77 +89,72 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>, dri-devel@lists.freedesktop.org,
- linux-mm@kvack.org, target-devel@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-kselftest@vger.kernel.org,
- samba-technical@lists.samba.org, Ira Weiny <ira.weiny@intel.com>,
- ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
- devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
- linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, x86@kernel.org,
- amd-gfx@lists.freedesktop.org, linux-afs@lists.infradead.org,
- cluster-devel@redhat.com, linux-cachefs@redhat.com,
- intel-wired-lan@lists.osuosl.org, xen-devel@lists.xenproject.org,
- linux-ext4@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
- linux-um@lists.infradead.org, intel-gfx@lists.freedesktop.org,
- ecryptfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- reiserfs-devel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-bcache@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
- io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-doc@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ linux-mmc@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+ target-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-kselftest@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ drbd-dev@lists.linbit.com, devel@driverdev.osuosl.org,
+ linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-nvdimm@lists.01.org,
+ linux-rdma@vger.kernel.org, x86@kernel.org, amd-gfx@lists.freedesktop.org,
+ linux-afs@lists.infradead.org, cluster-devel@redhat.com,
+ Ingo Molnar <mingo@redhat.com>, intel-wired-lan@lists.osuosl.org,
+ kexec@lists.infradead.org, xen-devel@lists.xenproject.org,
+ linux-ext4@vger.kernel.org, bpf@vger.kernel.org,
+ Dan Williams <dan.j.williams@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+ intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
+ linux-um@lists.infradead.org, reiserfs-devel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+ Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-cachefs@redhat.com, linux-nfs@vger.kernel.org,
  linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
- kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ linuxppc-dev@lists.ozlabs.org, samba-technical@lists.samba.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Fri, Oct 09, 2020 at 12:49:57PM -0700, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> The kmap() calls in this FS are localized to a single thread.  To avoid
+> the over head of global PKRS updates use the new kmap_thread() call.
+> 
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <chao@kernel.org>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  fs/f2fs/f2fs.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index d9e52a7f3702..ff72a45a577e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2410,12 +2410,12 @@ static inline struct page *f2fs_pagecache_get_page(
+>  
+>  static inline void f2fs_copy_page(struct page *src, struct page *dst)
+>  {
+> -	char *src_kaddr = kmap(src);
+> -	char *dst_kaddr = kmap(dst);
+> +	char *src_kaddr = kmap_thread(src);
+> +	char *dst_kaddr = kmap_thread(dst);
+>  
+>  	memcpy(dst_kaddr, src_kaddr, PAGE_SIZE);
+> -	kunmap(dst);
+> -	kunmap(src);
+> +	kunmap_thread(dst);
+> +	kunmap_thread(src);
+>  }
 
-The pmem driver uses a cached virtual address to access its memory
-directly.  Because the nvdimm driver is well aware of the special
-protections it has mapped memory with, we call dev_access_[en|dis]able()
-around the direct pmem->virt_addr (pmem_addr) usage instead of the
-unnecessary overhead of trying to get a page to kmap.
+Wouldn't it make more sense to switch cases like this to kmap_atomic()?
+The pages are only mapped to do a memcpy(), then they're immediately unmapped.
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
----
- drivers/nvdimm/pmem.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index fab29b514372..e4dc1ae990fc 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -148,7 +148,9 @@ static blk_status_t pmem_do_read(struct pmem_device *pmem,
- 	if (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
- 		return BLK_STS_IOERR;
- 
-+	dev_access_enable(false);
- 	rc = read_pmem(page, page_off, pmem_addr, len);
-+	dev_access_disable(false);
- 	flush_dcache_page(page);
- 	return rc;
- }
-@@ -180,11 +182,13 @@ static blk_status_t pmem_do_write(struct pmem_device *pmem,
- 	 * after clear poison.
- 	 */
- 	flush_dcache_page(page);
-+	dev_access_enable(false);
- 	write_pmem(pmem_addr, page, page_off, len);
- 	if (unlikely(bad_pmem)) {
- 		rc = pmem_clear_poison(pmem, pmem_off, len);
- 		write_pmem(pmem_addr, page, page_off, len);
- 	}
-+	dev_access_disable(false);
- 
- 	return rc;
- }
--- 
-2.28.0.rc0.12.gb6a658bd00c9
-
+- Eric
 
 
 _______________________________________________
