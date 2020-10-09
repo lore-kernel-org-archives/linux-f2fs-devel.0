@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 542E3C5517B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16016C388CD
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:51:18 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EF68322365;
-	Fri,  9 Oct 2020 19:51:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id B177E22282;
+	Fri,  9 Oct 2020 19:51:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VQI7m0xJ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cvRR4WmB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF68322365
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hDnbX90x";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="LjafL9+2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B177E22282
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kQyQ5-00017x-AS; Fri, 09 Oct 2020 19:51:13 +0000
+	id 1kQyQ8-0001bA-Nc; Fri, 09 Oct 2020 19:51:16 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <ira.weiny@intel.com>)
- id 1kQyQ3-00017b-1m; Fri, 09 Oct 2020 19:51:11 +0000
+ id 1kQyQ6-0001aL-5Z; Fri, 09 Oct 2020 19:51:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IY5deMVpAxtUphJEw/krVSSF9zIspaKdfQTqz7XNp1Q=; b=VQI7m0xJx9RArXv3flir2TjOgp
- 5yzpetaiGrnCXKc6m6puENzIgwYG6HUjuNmzVzk53AEUMJ7M4Xd/FR+06D917OCbmuQiSBHEFw+xc
- KlnzslpAejvF6oNvS7IwdkLhZS+m3JpfWMwrrZhemX+YPKwIieOg0rncHbzPk42X0nN8=;
+ bh=r9WRS+YWBuzHC2SJZuv2cHxivjJb7K7xUS+3AI/4Deo=; b=hDnbX90xlNyllmiDeYJHEYr64S
+ /B+yo0fmpOdrIU2DBWrAKyUjJWX2ESwyOOQD6p/cpDIkCtYSo9mP4KaRZb0iAwWt+zbHO5jFceQFk
+ oQyua/SNzIEELMf5pae6KbrhxheYSJwQVLiKyw5VOvf/WeqVWQRHwVdo2YsbdsAoCsng=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,42 +45,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=IY5deMVpAxtUphJEw/krVSSF9zIspaKdfQTqz7XNp1Q=; b=cvRR4WmBHhNMwhzIWphlPE3n6c
- Rragx1cjjygpc2y9atF/IziriaKwyL/xe43HCAMgCY8Bpu1l5luv9+ZN1V26X7SWgcVZ5CW1tRBDU
- TXAhFZA7PkedawbNo+/revBIBeeJVQgeban1IukXFndOc6G5UHHZD18+8TFexSj+lR98=;
-Received: from mga03.intel.com ([134.134.136.65])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=r9WRS+YWBuzHC2SJZuv2cHxivjJb7K7xUS+3AI/4Deo=; b=LjafL9+2JGSKadTWV4yXHmC0Vo
+ ESZ36cf8eG/sSwLATXYIbw5ZQm29+hmejzYuBpxfnRkTtCGgkvy/xoKrlBoYCVor42maOn2UfLu9A
+ LH2hP0po48yTvzVhVu1lMzKiZpvHyutXqUeFpHqdAtlUgOKBKdc78i3ghUKkbrtBbkRI=;
+Received: from mga02.intel.com ([134.134.136.20])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kQyPw-004aCA-Ks; Fri, 09 Oct 2020 19:51:11 +0000
-IronPort-SDR: pt6Dc/YD8hcy6NDKjGnJ59swBGScbMD7VenunsIPhOMROjsRnp1+nWfq/iL4IVL+Sy8f6uCCuD
- GHn7JBVaQtsQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="165591937"
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="165591937"
+ id 1kQyQ1-008rgY-AD; Fri, 09 Oct 2020 19:51:14 +0000
+IronPort-SDR: 9sKYY8ah8AhGgTi4wpYj9j4T+A9fDrBDA+Km50DRlVXe3a5eS2FSQnsk3hEohS1LQF2VTmkLVa
+ xqRpqg+V9XsQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="152450764"
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="152450764"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
- by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:50:51 -0700
-IronPort-SDR: r9rFWs4LxSt/DLhc0vk8qSUxzY/hR2W3QZLi44jmj/rGXS9Mfwq/Fn231GdfrO+iUZYF22umi/
- 70MWS29lQZXg==
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="529052813"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+ by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:51:03 -0700
+IronPort-SDR: Zj7B8Ym6Opm+j7NgzILIxHvFMHLpJ+KeG5qMdRlGsqJzYlMhgHY+wciO+/VIwDrpca7gdal3tS
+ LaUxL8Xa1x8w==
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="343971995"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
- by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:50:50 -0700
+ by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:51:02 -0700
 From: ira.weiny@intel.com
 To: Andrew Morton <akpm@linux-foundation.org>,
  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>
-Date: Fri,  9 Oct 2020 12:49:37 -0700
-Message-Id: <20201009195033.3208459-3-ira.weiny@intel.com>
+Date: Fri,  9 Oct 2020 12:49:40 -0700
+Message-Id: <20201009195033.3208459-6-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20201009195033.3208459-1-ira.weiny@intel.com>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-X-Headers-End: 1kQyPw-004aCA-Ks
-Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 02/58] x86/pks/test: Add testing for
- global option
+X-Headers-End: 1kQyQ1-008rgY-AD
+Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 05/58] kmap: Introduce
+ k[un]map_thread
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -112,215 +112,144 @@ Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org, kvm@vger.kernel.org,
  linux-bcache@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
  io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
  linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
- kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ Randy Dunlap <rdunlap@infradead.org>, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Now that PKS can be enabled globaly (for all threads) add a test which
-spawns a thread and tests the same PKS functionality.
+To correctly support the semantics of kmap() with Kernel protection keys
+(PKS), kmap() may be required to set the protections on multiple
+processors (globally).  Enabling PKS globally can be very expensive
+depending on the requested operation.  Furthermore, enabling a domain
+globally reduces the protection afforded by PKS.
 
-The test enables/disables PKS in 1 thread while attempting to access the
-page in another thread.  We use the same test array as in the 'local'
-PKS testing.
+Most kmap() (Aprox 209 of 229) callers use the map within a single thread and
+have no need for the protection domain to be enabled globally.  However, the
+remaining callers do not follow this pattern and, as best I can tell, expect
+the mapping to be 'global' and available to any thread who may access the
+mapping.[1]
 
+We don't anticipate global mappings to pmem, however in general there is a
+danger in changing the semantics of kmap().  Effectively, this would cause an
+unresolved page fault with little to no information about why the failure
+occurred.
+
+To resolve this a number of options were considered.
+
+1) Attempt to change all the thread local kmap() calls to kmap_atomic()[2]
+2) Introduce a flags parameter to kmap() to indicate if the mapping should be
+   global or not
+3) Change ~20 call sites to 'kmap_global()' to indicate that they require a
+   global enablement of the pages.
+4) Change ~209 call sites to 'kmap_thread()' to indicate that the mapping is to
+   be used within that thread of execution only
+
+Option 1 is simply not feasible.  Option 2 would require all of the call sites
+of kmap() to change.  Option 3 seems like a good minimal change but there is a
+danger that new code may miss the semantic change of kmap() and not get the
+behavior the developer intended.  Therefore, #4 was chosen.
+
+Subsequent patches will convert most ~90% of the kmap callers to this new call
+leaving about 10% of the existing kmap callers to enable PKS globally.
+
+Cc: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- arch/x86/mm/fault.c |   4 ++
- lib/pks/pks_test.c  | 128 +++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 124 insertions(+), 8 deletions(-)
+ include/linux/highmem.h | 34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 4b4ff9efa298..4c74f52fbc23 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1108,6 +1108,10 @@ static int spurious_kernel_fault_check(unsigned long error_code, pte_t *pte,
- 		if (global_pkey_is_enabled(pte, is_write, irq_state))
- 			return 1;
+diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+index 2a9806e3b8d2..ef7813544719 100644
+--- a/include/linux/highmem.h
++++ b/include/linux/highmem.h
+@@ -60,7 +60,7 @@ static inline void kmap_flush_tlb(unsigned long addr) { }
+ #endif
  
-+		/*
-+		 * NOTE: This must be after the global_pkey_is_enabled() call
-+		 * to allow the fixup code to be tested.
-+		 */
- 		if (handle_pks_testing(error_code, irq_state))
- 			return 1;
- 
-diff --git a/lib/pks/pks_test.c b/lib/pks/pks_test.c
-index 286c8b8457da..dfddccbe4cb6 100644
---- a/lib/pks/pks_test.c
-+++ b/lib/pks/pks_test.c
-@@ -154,7 +154,8 @@ static void check_exception(irqentry_state_t *irq_state)
- 	}
- 
- 	/* Check the exception state */
--	if (!check_pkrs(test_armed_key, PKEY_DISABLE_ACCESS)) {
-+	if (!check_pkrs(test_armed_key,
-+			PKEY_DISABLE_ACCESS | PKEY_DISABLE_WRITE)) {
- 		pr_err("     FAIL: PKRS cache and MSR\n");
- 		test_exception_ctx->pass = false;
- 	}
-@@ -308,24 +309,29 @@ static int test_it(struct pks_test_ctx *ctx, struct pks_access_test *test, void
- 	return ret;
- }
- 
--static int run_access_test(struct pks_test_ctx *ctx,
--			   struct pks_access_test *test,
--			   void *ptr)
-+static void set_protection(int pkey, enum pks_access_mode mode, bool global)
+ void *kmap_high(struct page *page);
+-static inline void *kmap(struct page *page)
++static inline void *__kmap(struct page *page, bool global)
  {
--	switch (test->mode) {
-+	switch (mode) {
- 		case PKS_TEST_NO_ACCESS:
--			pks_mknoaccess(ctx->pkey, false);
-+			pks_mknoaccess(pkey, global);
- 			break;
- 		case PKS_TEST_RDWR:
--			pks_mkrdwr(ctx->pkey, false);
-+			pks_mkrdwr(pkey, global);
- 			break;
- 		case PKS_TEST_RDONLY:
--			pks_mkread(ctx->pkey, false);
-+			pks_mkread(pkey, global);
- 			break;
- 		default:
- 			pr_err("BUG in test invalid mode\n");
- 			break;
- 	}
-+}
-+
-+static int run_access_test(struct pks_test_ctx *ctx,
-+			   struct pks_access_test *test,
-+			   void *ptr)
-+{
-+	set_protection(ctx->pkey, test->mode, false);
+ 	void *addr;
  
- 	return test_it(ctx, test, ptr);
- }
-@@ -516,6 +522,110 @@ static void run_exception_test(void)
- 		 pass ? "PASS" : "FAIL");
+@@ -74,20 +74,20 @@ static inline void *kmap(struct page *page)
+ 	 * Even non-highmem pages may have additional access protections which
+ 	 * need to be checked and potentially enabled.
+ 	 */
+-	dev_page_enable_access(page, true);
++	dev_page_enable_access(page, global);
+ 	return addr;
  }
  
-+struct shared_data {
-+	struct mutex lock;
-+	struct pks_test_ctx *ctx;
-+	void *kmap_addr;
-+	struct pks_access_test *test;
-+};
-+
-+static int thread_main(void *d)
-+{
-+	struct shared_data *data = d;
-+	struct pks_test_ctx *ctx = data->ctx;
-+
-+	while (!kthread_should_stop()) {
-+		mutex_lock(&data->lock);
-+		/*
-+		 * wait for the main thread to hand us the page
-+		 * We should be spinning so hopefully we will not have gotten
-+		 * the global value from a schedule in.
-+		 */
-+		if (data->kmap_addr) {
-+			if (test_it(ctx, data->test, data->kmap_addr))
-+				ctx->pass = false;
-+			data->kmap_addr = NULL;
-+		}
-+		mutex_unlock(&data->lock);
-+	}
-+
-+	return 0;
-+}
-+
-+static void run_thread_access_test(struct shared_data *data,
-+				   struct pks_test_ctx *ctx,
-+				   struct pks_access_test *test,
-+				   void *ptr)
-+{
-+	set_protection(ctx->pkey, test->mode, true);
-+
-+	pr_info("checking...  mode %s; write %s\n",
-+			get_mode_str(test->mode), test->write ? "TRUE" : "FALSE");
-+
-+	mutex_lock(&data->lock);
-+	data->test = test;
-+	data->kmap_addr = ptr;
-+	mutex_unlock(&data->lock);
-+
-+	while (data->kmap_addr) {
-+		msleep(10);
-+	}
-+}
-+
-+static void run_global_test(void)
-+{
-+	struct task_struct *other_task;
-+	struct pks_test_ctx *ctx;
-+	struct shared_data data;
-+	bool pass = true;
-+	void *ptr;
-+	int i;
-+
-+	pr_info("     ***** BEGIN: global pkey checking\n");
-+
-+	/* Set up context, data pgae, and thread */
-+	ctx = alloc_ctx("global pkey test");
-+	if (IS_ERR(ctx)) {
-+		pr_err("     FAIL: no context\n");
-+		pass = false;
-+		goto result;
-+	}
-+	ptr = alloc_test_page(ctx->pkey);
-+	if (!ptr) {
-+		pr_err("     FAIL: no vmalloc page\n");
-+		pass = false;
-+		goto free_context;
-+	}
-+	other_task = kthread_run(thread_main, &data, "PKRS global test");
-+	if (IS_ERR(other_task)) {
-+		pr_err("     FAIL: Failed to start thread\n");
-+		pass = false;
-+		goto free_page;
-+	}
-+
-+	memset(&data, 0, sizeof(data));
-+	mutex_init(&data.lock);
-+	data.ctx = ctx;
-+
-+	/* Start testing */
-+	ctx->pass = true;
-+
-+	for (i = 0; i < ARRAY_SIZE(pkey_test_ary); i++) {
-+		run_thread_access_test(&data, ctx, &pkey_test_ary[i], ptr);
-+	}
-+
-+	kthread_stop(other_task);
-+	pass = ctx->pass;
-+
-+free_page:
-+	vfree(ptr);
-+free_context:
-+	free_ctx(ctx);
-+result:
-+	pr_info("     ***** END: global pkey checking : %s\n",
-+		 pass ? "PASS" : "FAIL");
-+}
-+
- static void run_all(void)
+ void kunmap_high(struct page *page);
+ 
+-static inline void kunmap(struct page *page)
++static inline void __kunmap(struct page *page, bool global)
  {
- 	struct pks_test_ctx *ctx[PKS_NUM_KEYS];
-@@ -538,6 +648,8 @@ static void run_all(void)
- 	}
+ 	might_sleep();
+ 	/*
+ 	 * Even non-highmem pages may have additional access protections which
+ 	 * need to be checked and potentially disabled.
+ 	 */
+-	dev_page_disable_access(page, true);
++	dev_page_disable_access(page, global);
+ 	if (!PageHighMem(page))
+ 		return;
+ 	kunmap_high(page);
+@@ -160,10 +160,10 @@ static inline struct page *kmap_to_page(void *addr)
  
- 	run_exception_test();
-+
-+	run_global_test();
+ static inline unsigned long totalhigh_pages(void) { return 0UL; }
+ 
+-static inline void *kmap(struct page *page)
++static inline void *__kmap(struct page *page, bool global)
+ {
+ 	might_sleep();
+-	dev_page_enable_access(page, true);
++	dev_page_enable_access(page, global);
+ 	return page_address(page);
  }
  
- static void crash_it(void)
+@@ -171,9 +171,9 @@ static inline void kunmap_high(struct page *page)
+ {
+ }
+ 
+-static inline void kunmap(struct page *page)
++static inline void __kunmap(struct page *page, bool global)
+ {
+-	dev_page_disable_access(page, true);
++	dev_page_disable_access(page, global);
+ #ifdef ARCH_HAS_FLUSH_ON_KUNMAP
+ 	kunmap_flush_on_unmap(page_address(page));
+ #endif
+@@ -238,6 +238,24 @@ static inline void kmap_atomic_idx_pop(void)
+ 
+ #endif
+ 
++static inline void *kmap(struct page *page)
++{
++	return __kmap(page, true);
++}
++static inline void kunmap(struct page *page)
++{
++	__kunmap(page, true);
++}
++
++static inline void *kmap_thread(struct page *page)
++{
++	return __kmap(page, false);
++}
++static inline void kunmap_thread(struct page *page)
++{
++	__kunmap(page, false);
++}
++
+ /*
+  * Prevent people trying to call kunmap_atomic() as if it were kunmap()
+  * kunmap_atomic() should get the return value of kmap_atomic, not the page.
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
