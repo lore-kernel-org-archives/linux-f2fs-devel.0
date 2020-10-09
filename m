@@ -5,39 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81158C83038
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72974C83B8E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:54:00 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3640D22B39;
-	Fri,  9 Oct 2020 19:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id F16DE2250F;
+	Fri,  9 Oct 2020 19:53:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="R5dR8jYw";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Im3SvL2P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3640D22B39
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fxNc/zJ+";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="U5ayV4Cl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16DE2250F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kQySd-00025n-TY; Fri, 09 Oct 2020 19:53:51 +0000
+	id 1kQySl-0001sV-JL; Fri, 09 Oct 2020 19:53:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <ira.weiny@intel.com>)
- id 1kQySb-00025M-W4; Fri, 09 Oct 2020 19:53:49 +0000
+ id 1kQySi-0001ra-4l; Fri, 09 Oct 2020 19:53:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UxyXfvb2CxZqMFZKZtqo+jWNZCQYpNhOhyv9VITCSnc=; b=R5dR8jYwmKV84SYkfN2BhgYZFN
- XLJPLLIzCjLn8jBPo6A9iiBVsnzKPQRJ1tTkXK13PKiR4hEgDuKXLU4xgQYLs+sgMVPZfAxNx17UR
- F8NMHxwDeUxG1CgRMgnEOnhE+K9Nu6DLFfZ5CiWhDsqmkCKDqUjTCZSEASgIGUDH0RXE=;
+ bh=G6608u12tJWqJ1JQ7kzv5O+uOtac8j7YaMdqsmur0Dg=; b=fxNc/zJ+hsgl9qgN6v+rGNq4I/
+ YuV6xaInRYnG1UVQhHGc7fM5YTmkTq0pnRQ7SLBPAtd/Q35igQeBqV8VDyJoOGzKLFPvATNer7ITw
+ eAiD42dWrpCKqAzpV2yogxYdnAXZJWXaPv7Xec5TCXBa9/+ohcw1z+khxpzvGo5MEmbw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,41 +45,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UxyXfvb2CxZqMFZKZtqo+jWNZCQYpNhOhyv9VITCSnc=; b=Im3SvL2Pz1lrXG9HJ6qsNlSAEN
- 3cSorTiP66/HnBaRJxboGp2hkshvLsTvKoqRkW0StdC7Lr3f0s2n/xddOa8Ykr+fRXftj8eVkUFiR
- 8qrQ335ie1ycJzszil2CZGAAuwU+VOVyya0005MnoIA0TI2utCaUEt3hG6qo0TbXZ454=;
-Received: from mga17.intel.com ([192.55.52.151])
+ bh=G6608u12tJWqJ1JQ7kzv5O+uOtac8j7YaMdqsmur0Dg=; b=U5ayV4ClmW1UGyHqLF3o8TV+3+
+ nZxXXuWJ7fMSDyOFip73Kv6yFSUT2umko705gQCSz4Vw20q3Z7cdhhhJEazF5Fu2UsKg7wKjJc4G4
+ kC6olx/jfN31/bWJ4ATdglsla4s3trQvz3Ekj+eRc6O8mxIPkCPBn8AGBjzEQwUW3TzE=;
+Received: from mga11.intel.com ([192.55.52.93])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kQySW-004aWn-VH; Fri, 09 Oct 2020 19:53:49 +0000
-IronPort-SDR: bsDxdhp4HUA69Q2WQ4pjW9te4IqYdVBgMsujzwpSvs0f1wpS1/VJ9MfidSj/2gHPGRi4WFPR1O
- Iw650Dz2onZQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="145397623"
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="145397623"
+ id 1kQySf-004aZ8-An; Fri, 09 Oct 2020 19:53:56 +0000
+IronPort-SDR: lJgYcT4Eih/EEbS+fbaOTsq/BU5gfoODj4Vl9bhFB1n5bIdsOW2hwWP0t8rLmgibxkImGcxFiO
+ DDW8w+/1mzHg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="162068196"
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="162068196"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
- by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:53:35 -0700
-IronPort-SDR: 1BDjhBWRiZHjmax0H5jHPL9Ee2R7VPzFxt4XNyUZ5d5LafdvLgy40B0wtQFVU3AX2TCQgDyRso
- HhmDRI33qIDA==
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="345148602"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+ by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:53:47 -0700
+IronPort-SDR: hSLATPILKZexzU9UbulfkIo/q3wPUuwdHpgGfd67f9RjOUrzIM+GeKhbZtX4gmiSR0zMVEA6Pm
+ bSqmX2bz2skQ==
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="529054109"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
- by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:53:34 -0700
+ by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:53:46 -0700
 From: ira.weiny@intel.com
 To: Andrew Morton <akpm@linux-foundation.org>,
  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>
-Date: Fri,  9 Oct 2020 12:50:22 -0700
-Message-Id: <20201009195033.3208459-48-ira.weiny@intel.com>
+Date: Fri,  9 Oct 2020 12:50:26 -0700
+Message-Id: <20201009195033.3208459-52-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20201009195033.3208459-1-ira.weiny@intel.com>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-X-Headers-End: 1kQySW-004aWn-VH
-Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 47/58] drivers/mtd: Utilize new
+X-Headers-End: 1kQySf-004aZ8-An
+Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 51/58] kernel: Utilize new
  kmap_thread()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -92,19 +92,17 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org,
- Vignesh Raghavendra <vigneshr@ti.com>, kvm@vger.kernel.org,
+Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org, kvm@vger.kernel.org,
  linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org,
  Dave Hansen <dave.hansen@linux.intel.com>, dri-devel@lists.freedesktop.org,
  linux-mm@kvack.org, target-devel@vger.kernel.org,
  linux-mtd@lists.infradead.org, linux-kselftest@vger.kernel.org,
- Miquel Raynal <miquel.raynal@bootlin.com>, samba-technical@lists.samba.org,
- Ira Weiny <ira.weiny@intel.com>, ceph-devel@vger.kernel.org,
- drbd-dev@lists.linbit.com, devel@driverdev.osuosl.org,
- linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-nvdimm@lists.01.org,
- linux-rdma@vger.kernel.org, Richard Weinberger <richard@nod.at>,
- x86@kernel.org, amd-gfx@lists.freedesktop.org, linux-afs@lists.infradead.org,
+ samba-technical@lists.samba.org, Ira Weiny <ira.weiny@intel.com>,
+ ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+ devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
+ linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, x86@kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-afs@lists.infradead.org,
  cluster-devel@redhat.com, linux-cachefs@redhat.com,
  intel-wired-lan@lists.osuosl.org, xen-devel@lists.xenproject.org,
  linux-ext4@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
@@ -115,66 +113,64 @@ Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org,
  io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
  linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
  kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ linux-f2fs-devel@lists.sourceforge.net, Eric Biederman <ebiederm@xmission.com>,
+ linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-These kmap() calls are localized to a single thread.  To avoid the over
+This kmap() call is localized to a single thread.  To avoid the over
 head of global PKRS updates use the new kmap_thread() call.
 
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- drivers/mtd/mtd_blkdevs.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ kernel/kexec_core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
-index 0c05f77f9b21..4b18998273fa 100644
---- a/drivers/mtd/mtd_blkdevs.c
-+++ b/drivers/mtd/mtd_blkdevs.c
-@@ -88,14 +88,14 @@ static blk_status_t do_blktrans_request(struct mtd_blktrans_ops *tr,
- 			return BLK_STS_IOERR;
- 		return BLK_STS_OK;
- 	case REQ_OP_READ:
--		buf = kmap(bio_page(req->bio)) + bio_offset(req->bio);
-+		buf = kmap_thread(bio_page(req->bio)) + bio_offset(req->bio);
- 		for (; nsect > 0; nsect--, block++, buf += tr->blksize) {
- 			if (tr->readsect(dev, block, buf)) {
--				kunmap(bio_page(req->bio));
-+				kunmap_thread(bio_page(req->bio));
- 				return BLK_STS_IOERR;
- 			}
- 		}
--		kunmap(bio_page(req->bio));
-+		kunmap_thread(bio_page(req->bio));
- 		rq_flush_dcache_pages(req);
- 		return BLK_STS_OK;
- 	case REQ_OP_WRITE:
-@@ -103,14 +103,14 @@ static blk_status_t do_blktrans_request(struct mtd_blktrans_ops *tr,
- 			return BLK_STS_IOERR;
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index c19c0dad1ebe..272a9920c0d6 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -815,7 +815,7 @@ static int kimage_load_normal_segment(struct kimage *image,
+ 		if (result < 0)
+ 			goto out;
  
- 		rq_flush_dcache_pages(req);
--		buf = kmap(bio_page(req->bio)) + bio_offset(req->bio);
-+		buf = kmap_thread(bio_page(req->bio)) + bio_offset(req->bio);
- 		for (; nsect > 0; nsect--, block++, buf += tr->blksize) {
- 			if (tr->writesect(dev, block, buf)) {
--				kunmap(bio_page(req->bio));
-+				kunmap_thread(bio_page(req->bio));
- 				return BLK_STS_IOERR;
- 			}
+-		ptr = kmap(page);
++		ptr = kmap_thread(page);
+ 		/* Start with a clear page */
+ 		clear_page(ptr);
+ 		ptr += maddr & ~PAGE_MASK;
+@@ -828,7 +828,7 @@ static int kimage_load_normal_segment(struct kimage *image,
+ 			memcpy(ptr, kbuf, uchunk);
+ 		else
+ 			result = copy_from_user(ptr, buf, uchunk);
+-		kunmap(page);
++		kunmap_thread(page);
+ 		if (result) {
+ 			result = -EFAULT;
+ 			goto out;
+@@ -879,7 +879,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			goto out;
  		}
--		kunmap(bio_page(req->bio));
-+		kunmap_thread(bio_page(req->bio));
- 		return BLK_STS_OK;
- 	default:
- 		return BLK_STS_IOERR;
+ 		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+-		ptr = kmap(page);
++		ptr = kmap_thread(page);
+ 		ptr += maddr & ~PAGE_MASK;
+ 		mchunk = min_t(size_t, mbytes,
+ 				PAGE_SIZE - (maddr & ~PAGE_MASK));
+@@ -895,7 +895,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 		else
+ 			result = copy_from_user(ptr, buf, uchunk);
+ 		kexec_flush_icache_page(page);
+-		kunmap(page);
++		kunmap_thread(page);
+ 		arch_kexec_pre_free_pages(page_address(page), 1);
+ 		if (result) {
+ 			result = -EFAULT;
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
