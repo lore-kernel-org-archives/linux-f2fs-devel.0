@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E71A9C9DCB5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49808C9DCB3
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:54:24 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9511C22CAD;
-	Fri,  9 Oct 2020 19:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 00DEE22B4B;
+	Fri,  9 Oct 2020 19:54:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="gWGADp0T";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Yx4UQIWj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9511C22CAD
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="dKPr2QhH";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Z1/3ohP/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00DEE22B4B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kQyT9-0006rU-H6; Fri, 09 Oct 2020 19:54:23 +0000
+	id 1kQyT9-0002Cz-Lh; Fri, 09 Oct 2020 19:54:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <ira.weiny@intel.com>)
- id 1kQyT8-0006r6-Ds; Fri, 09 Oct 2020 19:54:22 +0000
+ id 1kQyT7-0002Cf-Pa; Fri, 09 Oct 2020 19:54:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ezPFVQ9vruey7ZxyB/8VBQee+N11zVdxSsYoMeSFkhA=; b=gWGADp0T8aSbwZ7ePcWkzB8+iK
- 4Grf9AW+F+hTdCaeJnBQEwmgU+c5tVBYNGH1l8vaCMfXJ0hOBXwZ0SB2s5gcAqk9/xV2wG/QvkqZe
- m9fFk3Z7LTI4b97Gjnem5aySYdb7ms0bC6FEOoX68k03CMYvDUWJgaomt1J+wscpGPbI=;
+ bh=vMd+K0j/SwmBbJFHAehTTW6xOz814BSeMFTE1lEGRe8=; b=dKPr2QhH68JG0Vh9xjLJrLj50l
+ OO825QF5MIQ7JfyCAyuW8fjDTtsgF1tJ7KyUc+YiIPmm142jmIT04DdhZE7Jo+hW+oGIF+KdxR3Kf
+ elsfliHJsJz7SzJgxFJPrYyWdisYgbiMl2xT3yT0FbkLrthKVgV/RIwtbBWiiQOZEh6I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,42 +45,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ezPFVQ9vruey7ZxyB/8VBQee+N11zVdxSsYoMeSFkhA=; b=Yx4UQIWjkwgjDlSFApgc1y9y3q
- dFRA/1kp/psOUw0rSFXzNzncW9A22CuQwF+cIq2CAkZRfbPRL9MdoB8iCxDlTaaS1C60sfgdIu2L0
- u4vq5cCH3MY+lBhMvw4pCz8vG4JQwwW1Rj06+GGfNcnCtAV0I75j8FQ/lGMotvUXhdFs=;
-Received: from mga05.intel.com ([192.55.52.43])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=vMd+K0j/SwmBbJFHAehTTW6xOz814BSeMFTE1lEGRe8=; b=Z1/3ohP/DnoFprZR64K3kLuwDw
+ PI9r4p2YZk1Gup0L3eDUtt0PpJdKgl20CZRoAGMnxMIpU78tKlfYnlZ3xFHXJPKRcDF9SehCR5tnK
+ jUio3hEUKZ7ZceR+niD1nOq4aKrG/Djsgd+VQo18DJYnk/Fc4dvcub1bUWcxwCHFjZAQ=;
+Received: from mga18.intel.com ([134.134.136.126])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kQyT1-008s9E-Lf; Fri, 09 Oct 2020 19:54:22 +0000
-IronPort-SDR: O9BTk4sL6UAOmL/KocK1+1MraieD4qEQRKdhNejCaKyB9wxs+lSHCkGYbZW5eKfhLS4KvilDWT
- 4xzba3dw0ygQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="250226398"
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="250226398"
+ id 1kQyT0-004abV-3K; Fri, 09 Oct 2020 19:54:21 +0000
+IronPort-SDR: eYppb3DoMYwN7t/WX6EdMLLQageVanKiyMQxHSZbeRnxYlbcM2khpssPZ2oPW2R3dAoeQcrkPA
+ YRqL3bHywnfw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="153363869"
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="153363869"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
- by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:54:10 -0700
-IronPort-SDR: LoljxrxdEbdUiebRGt6guGtjo6SPfpWGHMJuLgTgYB7BeDU8CJtiGau7DzbQyZ+Y5gpHVnCtT5
- urTwCEpflSRg==
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="343972696"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+ by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:54:01 -0700
+IronPort-SDR: vscQ8/PPGEHFzlszF4epup1/yO0Zdiea6PUky2hcTMxo6TNU67DufPr1A76ntRogBKZEHAEf8L
+ bsjRzl3g/9bQ==
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="529054196"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
- by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:54:09 -0700
+ by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:54:00 -0700
 From: ira.weiny@intel.com
 To: Andrew Morton <akpm@linux-foundation.org>,
  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>
-Date: Fri,  9 Oct 2020 12:50:33 -0700
-Message-Id: <20201009195033.3208459-59-ira.weiny@intel.com>
+Date: Fri,  9 Oct 2020 12:50:30 -0700
+Message-Id: <20201009195033.3208459-56-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20201009195033.3208459-1-ira.weiny@intel.com>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-X-Headers-End: 1kQyT1-008s9E-Lf
-Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 58/58] [dax|pmem]: Enable stray
- access protection
+X-Headers-End: 1kQyT0-004abV-3K
+Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 55/58] samples: Utilize new
+ kmap_thread()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,81 +93,63 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-doc@vger.kernel.org, kexec@lists.infradead.org,
  Dave Hansen <dave.hansen@linux.intel.com>, dri-devel@lists.freedesktop.org,
- linux-mm@kvack.org, target-devel@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-kselftest@vger.kernel.org,
- samba-technical@lists.samba.org, Ira Weiny <ira.weiny@intel.com>,
- ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
- devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
- linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, x86@kernel.org,
- amd-gfx@lists.freedesktop.org, linux-afs@lists.infradead.org,
- cluster-devel@redhat.com, linux-cachefs@redhat.com,
- intel-wired-lan@lists.osuosl.org, xen-devel@lists.xenproject.org,
- linux-ext4@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
- linux-um@lists.infradead.org, intel-gfx@lists.freedesktop.org,
- ecryptfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- reiserfs-devel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-bcache@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
- io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
- kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ linux-mm@kvack.org, Kirti Wankhede <kwankhede@nvidia.com>,
+ target-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-kselftest@vger.kernel.org, samba-technical@lists.samba.org,
+ Ira Weiny <ira.weiny@intel.com>, ceph-devel@vger.kernel.org,
+ drbd-dev@lists.linbit.com, devel@driverdev.osuosl.org,
+ linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-nvdimm@lists.01.org,
+ linux-rdma@vger.kernel.org, x86@kernel.org, amd-gfx@lists.freedesktop.org,
+ linux-afs@lists.infradead.org, cluster-devel@redhat.com,
+ linux-cachefs@redhat.com, intel-wired-lan@lists.osuosl.org,
+ xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
+ Fenghua Yu <fenghua.yu@intel.com>, linux-um@lists.infradead.org,
+ intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, reiserfs-devel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+ Dan Williams <dan.j.williams@intel.com>, io-uring@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+ netdev@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Protecting against stray writes is particularly important for PMEM
-because, unlike writes to anonymous memory, writes to PMEM persists
-across a reboot.  Thus data corruption could result in permanent loss of
-data.
+These kmap() calls are localized to a single thread.  To avoid the over
+head of global PKRS updates use the new kmap_thread() call.
 
-While stray writes are more serious than reads, protection is also
-enabled for reads.  This helps to detect bugs in code which would
-incorrectly access device memory and prevents a more serious machine
-checks should those bug reads from a poison page.
-
-Enable stray access protection by setting the flag in pgmap which
-requests it.  There is no option presented to the user.  If Zone Device
-Access Protection not be supported this flag will have no affect.
-
+Cc: Kirti Wankhede <kwankhede@nvidia.com>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- drivers/dax/device.c  | 2 ++
- drivers/nvdimm/pmem.c | 2 ++
- 2 files changed, 4 insertions(+)
+ samples/vfio-mdev/mbochs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 1e89513f3c59..e6fb35b4f0fb 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -430,6 +430,8 @@ int dev_dax_probe(struct device *dev)
- 	}
+diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
+index 3cc5e5921682..6d95422c0b46 100644
+--- a/samples/vfio-mdev/mbochs.c
++++ b/samples/vfio-mdev/mbochs.c
+@@ -479,12 +479,12 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
+ 		pos -= MBOCHS_MMIO_BAR_OFFSET;
+ 		poff = pos & ~PAGE_MASK;
+ 		pg = __mbochs_get_page(mdev_state, pos >> PAGE_SHIFT);
+-		map = kmap(pg);
++		map = kmap_thread(pg);
+ 		if (is_write)
+ 			memcpy(map + poff, buf, count);
+ 		else
+ 			memcpy(buf, map + poff, count);
+-		kunmap(pg);
++		kunmap_thread(pg);
+ 		put_page(pg);
  
- 	dev_dax->pgmap.type = MEMORY_DEVICE_GENERIC;
-+	dev_dax->pgmap.flags |= PGMAP_PROT_ENABLED;
-+
- 	addr = devm_memremap_pages(dev, &dev_dax->pgmap);
- 	if (IS_ERR(addr))
- 		return PTR_ERR(addr);
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index e4dc1ae990fc..9fcd8338e23f 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -426,6 +426,8 @@ static int pmem_attach_disk(struct device *dev,
- 		return -EBUSY;
- 	}
- 
-+	pmem->pgmap.flags |= PGMAP_PROT_ENABLED;
-+
- 	q = blk_alloc_queue(dev_to_node(dev));
- 	if (!q)
- 		return -ENOMEM;
+ 	} else {
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
