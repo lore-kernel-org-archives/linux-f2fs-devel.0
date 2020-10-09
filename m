@@ -2,42 +2,42 @@ Return-Path: <SRS0=0BeM=DQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1890C8300C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C10C84603
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Oct 2020 19:52:53 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 781DD2242F;
-	Fri,  9 Oct 2020 19:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 194B4223AE;
+	Fri,  9 Oct 2020 19:52:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Q30JBqut";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TDWgIgZi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781DD2242F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XlnSPSvK";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VbcwGrky"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 194B4223AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kQyRd-0001rv-HU; Fri, 09 Oct 2020 19:52:49 +0000
+	id 1kQyRg-0001t3-Li; Fri, 09 Oct 2020 19:52:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <ira.weiny@intel.com>)
- id 1kQyRc-0001rh-1h; Fri, 09 Oct 2020 19:52:48 +0000
+ id 1kQyRf-0001sb-3V; Fri, 09 Oct 2020 19:52:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9KbsfZWLnD6r/Dd+XCCtLeQxjuyiauqNm6DkII+MfbA=; b=Q30JBqutzTAPec5/zeTTrf0EFE
- owKEyHG5dfTnVdzDNQaoD1MqTYzNWpNa3zdA5vd4WeBYwcFkvB7vF/JeWW1iX5J5yTqJxmBP50s1t
- /K52g5LQakzD9siDje/kK3Mpi4zBcLk/mMDd2FG14TYoXhX5OdtE5Q2cWPE05jsa9o1o=;
+ bh=AdyqCM5wRuQzg6yZB/pAa1WOhV+jILZ6Olqh8Q1SACk=; b=XlnSPSvK/EfYYRgUnyRr0oidws
+ +rMm9l0qKRS/w8s9vwnM/2z9Evf+FPdCxL7UiQyOjvzypsmrhHT3SFp4uu5sAbevvXkqfhhdc5qXB
+ JMlJQVl7cz7miLltQAme01NhvHeq5noMQBdRfHvfNwYzTO9YcqO68+YXThixCTNTDZpU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -45,41 +45,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9KbsfZWLnD6r/Dd+XCCtLeQxjuyiauqNm6DkII+MfbA=; b=TDWgIgZiWwUCPoN3sZzDogM/r1
- L+T9pV3jTEbw2+lCYFhXYK/7nStQj70+sFpF7liXHK0Bdk9R7wFnqVzU9v5Ppmne8COLEMm2l5EMv
- lDjlIL3oCdet8hGQMMrVPHb3GpPHSlLoFxOeGkBFGayjQa2ClK8gwiv8/s4mF+QJBaxY=;
-Received: from mga06.intel.com ([134.134.136.31])
+ bh=AdyqCM5wRuQzg6yZB/pAa1WOhV+jILZ6Olqh8Q1SACk=; b=VbcwGrkyq7OnFJnJ6qol8u/n+t
+ VgfxanDiND1ja5t7tHR3PlffYzqgZhn/kU/5phb8HTszVfT/sZBDMnjk+PHFx8BuZgSy50bUvqIrq
+ uwhK+gADW5Tyj7tnrHNY/3/kNU/f7SsYbBqp+KfwJ2VMEYnSffFG2TY8H7MFyZckYYv0=;
+Received: from mga07.intel.com ([134.134.136.100])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kQyRT-008rvf-2c; Fri, 09 Oct 2020 19:52:47 +0000
-IronPort-SDR: iykC/4v0DSsFqgQOg8JJPnpXwzvAMAep1FKbPCIGduu56EbZkcePEvobwnYScLYO/MmdPShO9D
- iD9Hvr44CVNQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="227179027"
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="227179027"
+ id 1kQyRa-008rwT-7V; Fri, 09 Oct 2020 19:52:51 +0000
+IronPort-SDR: 3R7F82OIyHzPf9TAPBNsEJHYnvWn03mN35z1yFn/t20kQvUmAB9G4znS2SFP7jAR3ISeVX5Vlh
+ ILb2wL7OJraA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="229715226"
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="229715226"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
- by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:52:26 -0700
-IronPort-SDR: enOwdrUvox960YRmC5C0rYPH71vGkXRrRSf++MkJJnBOIwe1z1BLjEriaudfjb7SF8F3v1X02a
- epHq/DZLuLjw==
-X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="355863002"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+ by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:52:33 -0700
+IronPort-SDR: XHP7HCDttdXyLYHE1MyL2Bm/StJaryejpRmS+iQtfLlXLzP04sJOdLalPQz60Qvt6cf6bIW1lg
+ L4ex5grUzrzg==
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; d="scan'208";a="298419726"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
- by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2020 12:52:25 -0700
+ by fmsmga007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2020 12:52:32 -0700
 From: ira.weiny@intel.com
 To: Andrew Morton <akpm@linux-foundation.org>,
  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
  Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>
-Date: Fri,  9 Oct 2020 12:50:02 -0700
-Message-Id: <20201009195033.3208459-28-ira.weiny@intel.com>
+Date: Fri,  9 Oct 2020 12:50:04 -0700
+Message-Id: <20201009195033.3208459-30-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20201009195033.3208459-1-ira.weiny@intel.com>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-X-Headers-End: 1kQyRT-008rvf-2c
-Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 27/58] fs/ubifs: Utilize new
+X-Headers-End: 1kQyRa-008rwT-7V
+Subject: [f2fs-dev] [PATCH RFC PKS/PMEM 29/58] fs/ntfs: Utilize new
  kmap_thread()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -101,8 +101,7 @@ Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org, kvm@vger.kernel.org,
  ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
  devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
  linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org,
- Richard Weinberger <richard@nod.at>, x86@kernel.org,
+ linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, x86@kernel.org,
  amd-gfx@lists.freedesktop.org, linux-afs@lists.infradead.org,
  cluster-devel@redhat.com, linux-cachefs@redhat.com,
  intel-wired-lan@lists.osuosl.org, xen-devel@lists.xenproject.org,
@@ -111,12 +110,12 @@ Cc: linux-aio@kvack.org, linux-efi@vger.kernel.org, kvm@vger.kernel.org,
  ecryptfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
  reiserfs-devel@vger.kernel.org, linux-block@vger.kernel.org,
  linux-bcache@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
- io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
- kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-btrfs@vger.kernel.org
+ io-uring@vger.kernel.org, Anton Altaparmakov <anton@tuxera.com>,
+ linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+ netdev@vger.kernel.org, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -126,88 +125,34 @@ From: Ira Weiny <ira.weiny@intel.com>
 The kmap() calls in this FS are localized to a single thread.  To avoid
 the over head of global PKRS updates use the new kmap_thread() call.
 
-Cc: Richard Weinberger <richard@nod.at>
+Cc: Anton Altaparmakov <anton@tuxera.com>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- fs/ubifs/file.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/ntfs/aops.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index b77d1637bbbc..a3537447a885 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -111,7 +111,7 @@ static int do_readpage(struct page *page)
- 	ubifs_assert(c, !PageChecked(page));
- 	ubifs_assert(c, !PagePrivate(page));
- 
--	addr = kmap(page);
-+	addr = kmap_thread(page);
- 
- 	block = page->index << UBIFS_BLOCKS_PER_PAGE_SHIFT;
- 	beyond = (i_size + UBIFS_BLOCK_SIZE - 1) >> UBIFS_BLOCK_SHIFT;
-@@ -174,7 +174,7 @@ static int do_readpage(struct page *page)
- 	SetPageUptodate(page);
- 	ClearPageError(page);
- 	flush_dcache_page(page);
--	kunmap(page);
-+	kunmap_thread(page);
- 	return 0;
- 
- error:
-@@ -182,7 +182,7 @@ static int do_readpage(struct page *page)
+diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
+index bb0a43860ad2..11633d732809 100644
+--- a/fs/ntfs/aops.c
++++ b/fs/ntfs/aops.c
+@@ -1099,7 +1099,7 @@ static int ntfs_write_mst_block(struct page *page,
+ 	if (!nr_bhs)
+ 		goto done;
+ 	/* Map the page so we can access its contents. */
+-	kaddr = kmap(page);
++	kaddr = kmap_thread(page);
+ 	/* Clear the page uptodate flag whilst the mst fixups are applied. */
+ 	BUG_ON(!PageUptodate(page));
  	ClearPageUptodate(page);
- 	SetPageError(page);
- 	flush_dcache_page(page);
--	kunmap(page);
-+	kunmap_thread(page);
- 	return err;
- }
- 
-@@ -616,7 +616,7 @@ static int populate_page(struct ubifs_info *c, struct page *page,
- 	dbg_gen("ino %lu, pg %lu, i_size %lld, flags %#lx",
- 		inode->i_ino, page->index, i_size, page->flags);
- 
--	addr = zaddr = kmap(page);
-+	addr = zaddr = kmap_thread(page);
- 
- 	end_index = (i_size - 1) >> PAGE_SHIFT;
- 	if (!i_size || page->index > end_index) {
-@@ -692,7 +692,7 @@ static int populate_page(struct ubifs_info *c, struct page *page,
+@@ -1276,7 +1276,7 @@ static int ntfs_write_mst_block(struct page *page,
+ 		iput(VFS_I(base_tni));
+ 	}
  	SetPageUptodate(page);
- 	ClearPageError(page);
- 	flush_dcache_page(page);
 -	kunmap(page);
 +	kunmap_thread(page);
- 	*n = nn;
- 	return 0;
- 
-@@ -700,7 +700,7 @@ static int populate_page(struct ubifs_info *c, struct page *page,
- 	ClearPageUptodate(page);
- 	SetPageError(page);
- 	flush_dcache_page(page);
--	kunmap(page);
-+	kunmap_thread(page);
- 	ubifs_err(c, "bad data node (block %u, inode %lu)",
- 		  page_block, inode->i_ino);
- 	return -EINVAL;
-@@ -918,7 +918,7 @@ static int do_writepage(struct page *page, int len)
- 	/* Update radix tree tags */
- 	set_page_writeback(page);
- 
--	addr = kmap(page);
-+	addr = kmap_thread(page);
- 	block = page->index << UBIFS_BLOCKS_PER_PAGE_SHIFT;
- 	i = 0;
- 	while (len) {
-@@ -950,7 +950,7 @@ static int do_writepage(struct page *page, int len)
- 	ClearPagePrivate(page);
- 	ClearPageChecked(page);
- 
--	kunmap(page);
-+	kunmap_thread(page);
- 	unlock_page(page);
- 	end_page_writeback(page);
- 	return err;
+ done:
+ 	if (unlikely(err && err != -ENOMEM)) {
+ 		/*
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
