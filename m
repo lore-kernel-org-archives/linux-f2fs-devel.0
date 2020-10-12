@@ -2,41 +2,42 @@ Return-Path: <SRS0=LL+R=DT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164E5C2D0A2
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Oct 2020 19:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EEF4C433E7
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Oct 2020 20:04:53 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6E65220878;
-	Mon, 12 Oct 2020 19:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id F0ECF206D4;
+	Mon, 12 Oct 2020 20:04:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Mo/Jummy";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Oxn7AU63"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E65220878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Sni/+pE+";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Mo54/UtK";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="osm7lCKh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0ECF206D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kS3tY-0001cN-Rl; Mon, 12 Oct 2020 19:54:08 +0000
+	id 1kS43w-0003RM-BG; Mon, 12 Oct 2020 20:04:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ira.weiny@intel.com>)
- id 1kS3tW-0001cB-Po; Mon, 12 Oct 2020 19:54:06 +0000
+ (envelope-from <willy@infradead.org>)
+ id 1kS43o-0003QS-Qr; Mon, 12 Oct 2020 20:04:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SeAUKmaa4qmcT/Oo4wC1ykGiRUW14uIO30nVrUae4sQ=; b=Mo/JummyUrhQd4SmhQ8QlHtLKA
- Vjp3j8SP0Z0nRVjVHd9xuUiOWDTzNQaBpvnwifqen4TVjKgYoYireWszIzbiQx47TMFow9im6cumt
- XNxQ2No40mi52YFF1/WdjEhs4rHdbY88ENYLaRj0e1ErUYl3eb4HkNWNSBev8zE0Spjk=;
+ bh=bCWIFHvT8FvIPrDMc3maof4qHUnzu6oS60i9lgfyu+w=; b=Sni/+pE+6UYkoeLFvDIPVmrI/s
+ jw9lSwPnFhw7COy0mYJ/4jkLDox06j//j4rxfcrdzF6z2+NZOgICzUtVjnh+u4FxEcrmuNZsh593E
+ SZGMkpldq7d/jV9UDRgVMKvg3/7Wn7ifiNPPw2IwaXyhRivaOu+TeaCCzm9gvvEVKBG0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,32 +45,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=SeAUKmaa4qmcT/Oo4wC1ykGiRUW14uIO30nVrUae4sQ=; b=Oxn7AU63gzZl7athADb8Ie3h76
- ucU9EUkTpQEyw6vpxA1/4VNUgdibhEwfVmpF1oRS84PZfm++H0f1sKJomDGZAhWuWj5bQ88BhWUZt
- Hw7qM0ltP5WXVkX0OWNd0bOlDcZ21BNEb3Ux8Dg5q1KQz645ayLDwpKDbzFO205UXlMw=;
-Received: from mga02.intel.com ([134.134.136.20])
+ bh=bCWIFHvT8FvIPrDMc3maof4qHUnzu6oS60i9lgfyu+w=; b=Mo54/UtKwGTxKAcuntyVQHBRIJ
+ wJC+Egpwfsype/AsYQ0022zYBUV7/8sO69txa85WTUIr19jBwGJCjvcnxlKqlzbW7LD1UhSp960mp
+ F5EbDOZmhgAdez6DHNkLRuDp1jn8usVl3hzkZoMq9X0cKS73AsRJVGcWF/gHk6Aaja9k=;
+Received: from [90.155.50.34] (helo=casper.infradead.org)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kS3tR-00CYOt-UY; Mon, 12 Oct 2020 19:54:06 +0000
-IronPort-SDR: 4cIdaCH9c0MvmEcuo668T0eeKiOBXQymi152cSxoJDJFcbIiHx7R23GPoX2k3M0Gmrn+NUbHrV
- oz/oZDrZamBw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9772"; a="152725071"
-X-IronPort-AV: E=Sophos;i="5.77,367,1596524400"; d="scan'208";a="152725071"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
- by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Oct 2020 12:53:55 -0700
-IronPort-SDR: fkO3cV1AstS50IlWJFeIR7IMIWTUvxOVu0RxBH9tBAb2aFjzmjvlioAsa4gAQcEu3X0zxNtHVX
- KqidbmrXoAPg==
-X-IronPort-AV: E=Sophos;i="5.77,367,1596524400"; d="scan'208";a="530096227"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
- by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Oct 2020 12:53:54 -0700
-Date: Mon, 12 Oct 2020 12:53:54 -0700
-From: Ira Weiny <ira.weiny@intel.com>
-To: Matthew Wilcox <willy@infradead.org>
-Message-ID: <20201012195354.GC2046448@iweiny-DESK2.sc.intel.com>
+ id 1kS43b-00CYwC-Rj; Mon, 12 Oct 2020 20:04:44 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=bCWIFHvT8FvIPrDMc3maof4qHUnzu6oS60i9lgfyu+w=; b=osm7lCKhtCxcgsJVmnbUIZHhMp
+ 5nvioHkxA8AhlfbRA0tXQBSBlQdovP0UNFUmlu/tYL30pdEacRnzwKeBjNLJ8YRj+D/sF4f+x4FRA
+ 68EE5VyuQPlhkPgzE4vuiuikkji/6lzFKcK2qIYtpBfSW0scT+5xZ65/me+9ijMgWVh8NM56bexcy
+ gJZd0qYjXWzdg4a2mFecVVyLa3Rwg0gTTp9KEwoseCi8fLlQXob3uBfLwA1anIPkZvUKPjVJpvK3u
+ UT+9cSbb34PGNNH3jL974SwKTCytz2qfL4ONXzbZAaSn1ZoiKQGnXIIuZa+WQOp/Awa/qjp/ly6GK
+ H6D/8XHQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red
+ Hat Linux)) id 1kS422-0000HA-AX; Mon, 12 Oct 2020 20:02:54 +0000
+Date: Mon, 12 Oct 2020 21:02:54 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Ira Weiny <ira.weiny@intel.com>
+Message-ID: <20201012200254.GB20115@casper.infradead.org>
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
  <20201009195033.3208459-23-ira.weiny@intel.com>
  <20201009213434.GA839@sol.localdomain>
@@ -79,11 +77,11 @@ References: <20201009195033.3208459-1-ira.weiny@intel.com>
  <20201012161946.GA858@sol.localdomain>
  <5d621db9-23d4-e140-45eb-d7fca2093d2b@intel.com>
  <20201012164438.GA20115@casper.infradead.org>
+ <20201012195354.GC2046448@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20201012164438.GA20115@casper.infradead.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
-X-Headers-End: 1kS3tR-00CYOt-UY
+In-Reply-To: <20201012195354.GC2046448@iweiny-DESK2.sc.intel.com>
+X-Headers-End: 1kS43b-00CYwC-Rj
 Subject: Re: [f2fs-dev] [PATCH RFC PKS/PMEM 22/58] fs/f2fs: Utilize new
  kmap_thread()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -128,41 +126,45 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Oct 12, 2020 at 05:44:38PM +0100, Matthew Wilcox wrote:
-> On Mon, Oct 12, 2020 at 09:28:29AM -0700, Dave Hansen wrote:
-> > kmap_atomic() is always preferred over kmap()/kmap_thread().
-> > kmap_atomic() is _much_ more lightweight since its TLB invalidation is
-> > always CPU-local and never broadcast.
+On Mon, Oct 12, 2020 at 12:53:54PM -0700, Ira Weiny wrote:
+> On Mon, Oct 12, 2020 at 05:44:38PM +0100, Matthew Wilcox wrote:
+> > On Mon, Oct 12, 2020 at 09:28:29AM -0700, Dave Hansen wrote:
+> > > kmap_atomic() is always preferred over kmap()/kmap_thread().
+> > > kmap_atomic() is _much_ more lightweight since its TLB invalidation is
+> > > always CPU-local and never broadcast.
+> > > 
+> > > So, basically, unless you *must* sleep while the mapping is in place,
+> > > kmap_atomic() is preferred.
 > > 
-> > So, basically, unless you *must* sleep while the mapping is in place,
-> > kmap_atomic() is preferred.
+> > But kmap_atomic() disables preemption, so the _ideal_ interface would map
+> > it only locally, then on preemption make it global.  I don't even know
+> > if that _can_ be done.  But this email makes it seem like kmap_atomic()
+> > has no downsides.
 > 
-> But kmap_atomic() disables preemption, so the _ideal_ interface would map
-> it only locally, then on preemption make it global.  I don't even know
-> if that _can_ be done.  But this email makes it seem like kmap_atomic()
-> has no downsides.
+> And that is IIUC what Thomas was trying to solve.
+> 
+> Also, Linus brought up that kmap_atomic() has quirks in nesting.[1]
+> 
+> >From what I can see all of these discussions support the need to have something
+> between kmap() and kmap_atomic().
+> 
+> However, the reason behind converting call sites to kmap_thread() are different
+> between Thomas' patch set and mine.  Both require more kmap granularity.
+> However, they do so with different reasons and underlying implementations but
+> with the _same_ resulting semantics; a thread local mapping which is
+> preemptable.[2]  Therefore they each focus on changing different call sites.
+> 
+> While this patch set is huge I think it serves a valuable purpose to identify a
+> large number of call sites which are candidates for this new semantic.
 
-And that is IIUC what Thomas was trying to solve.
+Yes, I agree.  My problem with this patch-set is that it ties it to
+some Intel feature that almost nobody cares about.  Maybe we should
+care about it, but you didn't try very hard to make anyone care about
+it in the cover letter.
 
-Also, Linus brought up that kmap_atomic() has quirks in nesting.[1]
-
-From what I can see all of these discussions support the need to have something
-between kmap() and kmap_atomic().
-
-However, the reason behind converting call sites to kmap_thread() are different
-between Thomas' patch set and mine.  Both require more kmap granularity.
-However, they do so with different reasons and underlying implementations but
-with the _same_ resulting semantics; a thread local mapping which is
-preemptable.[2]  Therefore they each focus on changing different call sites.
-
-While this patch set is huge I think it serves a valuable purpose to identify a
-large number of call sites which are candidates for this new semantic.
-
-Ira
-
-[1] https://lore.kernel.org/lkml/CAHk-=wgbmwsTOKs23Z=71EBTrULoeaH2U3TNqT2atHEWvkBKdw@mail.gmail.com/
-[2] It is important to note these implementations are not incompatible with
-each other.  So I don't see yet another 'kmap_something()' being required.
+For a future patch-set, I'd like to see you just introduce the new
+API.  Then you can optimise the Intel implementation of it afterwards.
+Those patch-sets have entirely different reviewers.
 
 
 _______________________________________________
