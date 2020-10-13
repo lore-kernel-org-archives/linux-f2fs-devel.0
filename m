@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BC9C433E7
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2020 19:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7305EC43457
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Oct 2020 19:42:09 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5E9FE20BED;
-	Tue, 13 Oct 2020 19:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id EFB2C208D5;
+	Tue, 13 Oct 2020 19:42:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="CwlG+ZOl";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="AtxDA5VI";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="DayNIijN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E9FE20BED
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="RB/sShlx";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Gx6ESCFD";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="kTjS5KS3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFB2C208D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kSQ7c-0004hd-OJ; Tue, 13 Oct 2020 19:38:08 +0000
+	id 1kSQBT-0005gq-KS; Tue, 13 Oct 2020 19:42:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <dan.j.williams@intel.com>) id 1kSQ7a-0004hL-Vc
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Oct 2020 19:38:06 +0000
+ (envelope-from <dan.j.williams@intel.com>) id 1kSQBS-0005gi-8U
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Oct 2020 19:42:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
  In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
  :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ACWQZXFIYAYZvPtA0kqqET9/h2VeNuWUmvFkuiSdGDk=; b=CwlG+ZOlmoleD4MXVl+erPGd5n
- xfwsYCtJ7gTxD/4AGPKI8kRecz1v1Bj7Jj9Nz6Dg7qGKbuKXYgCO/yns4dgUJxcI4cVwA/ZxirkGm
- o2qQmCuVTPFAklrZu1uCgZk0DDRn+zJjWEe1eCqQfoDhepW/FO7WSzPOxOa1UnckzgVk=;
+ bh=jlOzF1QhqikCoQxsvfJV6M6Hjgbrow9dB9uNs1AoGLE=; b=RB/sShlxm/e7JD6ZYScIXrYSZT
+ 2j+6Odq4UG+SZLAnGuAWTQBgyjzN3gEtEU0MF/RBSCKvBx465XnsimIDAm3ptLelw55S1+B4lrVw0
+ Ls27et61t8JIYum6L02E1tIw82gOhpGo1kfdNbZ8JcjcmW2+I4tJAzYICbmJZpacouBM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
@@ -46,52 +46,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ACWQZXFIYAYZvPtA0kqqET9/h2VeNuWUmvFkuiSdGDk=; b=AtxDA5VI8NUrTyPgj0z0X/pscu
- fF5Qs4EZ2wEGFR26gSW/PZym5KA/G0RCRIh8JjAr/pg+ihIaz/KqFkE3xpQ458L0mejLGVppBN1Uu
- ubzoB40jACLF+YgBQRt4pWQTLNH1xhpMTwQBgXjtG4gZEajrFTUFzDqYSU9hWQYEuxxY=;
-Received: from mail-ej1-f67.google.com ([209.85.218.67])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=jlOzF1QhqikCoQxsvfJV6M6Hjgbrow9dB9uNs1AoGLE=; b=Gx6ESCFDMggMWCBtSTDvf4A4vQ
+ QWN+PaNX3/l+SA6zIPYTWrRaWZ1zGt4jibNcU6su1KuHwzRLciBRNTrvp6QugHGqrX7EKi4id7j9l
+ Gf0NCu0mq0xY/V0RLAwrytSaRIwEN5YO0lBraYLqrV4r6lN+9bxmD0xMIucTzDEP/BMc=;
+Received: from mail-ej1-f66.google.com ([209.85.218.66])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kSQ7Q-0092HT-OI
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Oct 2020 19:38:06 +0000
-Received: by mail-ej1-f67.google.com with SMTP id ce10so1449738ejc.5
+ id 1kSQBG-00Du7o-Kb
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 13 Oct 2020 19:42:06 +0000
+Received: by mail-ej1-f66.google.com with SMTP id ce10so1465140ejc.5
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 13 Oct 2020 12:37:56 -0700 (PDT)
+ Tue, 13 Oct 2020 12:41:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=intel-com.20150623.gappssmtp.com; s=20150623;
  h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc; bh=ACWQZXFIYAYZvPtA0kqqET9/h2VeNuWUmvFkuiSdGDk=;
- b=DayNIijN9rJ4wynxycYBrXAQR84x3xjByl1z2VFzt7YCa69TNkAlkIdWKG0xwP6Yp3
- 3F/H2nz44gihJO9JHyXWzYL4P1dc46CKqiaNR3yRo/w37eMMjkAo/koyRg9J9cet4J5o
- 8pAZLke452kN1ce4bdWIlGHc47qEL6KSVsDbeqJDAMDzDUrFyC9OKIrNu9C/VaSoREWg
- 9B9an2yfiyuzSelcHqdOabrCOxSG6vx+IObNMb98zyieMNME4f/11W7Es7O7m/+Kevvk
- a0bkM4fWgVplo/2Lunr6iSwR8tSVOWAyX1+gyP4UJdvdg+R8/4qIc/xXlFMWt9dzq4A3
- WVxw==
+ :cc; bh=jlOzF1QhqikCoQxsvfJV6M6Hjgbrow9dB9uNs1AoGLE=;
+ b=kTjS5KS3nYcf/wrvTsuRt1BvzGw557kJOoPvyzYoBgiqb4b8bKtbI2/mMLiZYyRjFR
+ J9ydTuu0x47x+MEvbUBFhFH3/2QgRWgMVRtg9k6OLuYDe131Mp/cuPa30fJMGhSFjepr
+ cqBBXWNROTwzHkSN49lY/psarWhxU27El5EYWXEJaiWvhTqo66L6QK98x3Y0Yvi2nF9y
+ UTW/CUag9LBP+VfPW+1mn8JfLpPCSXoAzeg5FBjWoJMu0+7UEW9Ka5T8iigFwOd+JDvR
+ rrctnvxFOZW164mxjZq4IMmZGZxG4l2jAUbsCf6skOMzcKIRAwJ8OakZ/jL0rfexuXSd
+ 7ngQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:mime-version:references:in-reply-to:from:date
  :message-id:subject:to:cc;
- bh=ACWQZXFIYAYZvPtA0kqqET9/h2VeNuWUmvFkuiSdGDk=;
- b=tAMOhhS+yNlm6OkkD/N7HKOIaVnluadCJm3f2qNgvdlMagHm+3RjLtjvxDKln0TOEK
- Cea3Eq8ZUFR1VjF9o8yNHVZTBJwqW6Ci6ctiScdHd2aryFmDivsb4T02Xod4KbsNBftc
- K22uS0VWDKl+vkvXOjf+zwHBGzhoripY5/HQHRjSai/OtAUi3Q8YAxddoz11wCIRMGHR
- plIK4kMGywXf9H/gdnlhW+FZSVSgbxdxCBQZ6pI2IFiiQIYj0uqo+5j6JUF7S5j0i2yk
- jNhIGEUWYprwdnNh603/u/TcEYbGfTb59QWu3PrfVZLVV2xaB5rKt2ykBRQDWsi5+VWa
- KKnw==
-X-Gm-Message-State: AOAM531e7US9pMsXRwNhHEdsHRVta/Bq0Yb2oodVqOgkm0Dh7/nCq3jD
- TRCiZrDpg6dWrMs2NwQ4LJKWyTrxcY4lD++210oWGu4784s=
-X-Google-Smtp-Source: ABdhPJx/D4CFI8iBKDneanR6scqyHSM4b5ae7bBsGU7JbHG59bZqw8grXz+3fxsJ2hpJPfBR1HipQc3XH+/A2xgb2Ys=
-X-Received: by 2002:a50:8e1e:: with SMTP id 30mr1027503edw.354.1602614681174; 
- Tue, 13 Oct 2020 11:44:41 -0700 (PDT)
+ bh=jlOzF1QhqikCoQxsvfJV6M6Hjgbrow9dB9uNs1AoGLE=;
+ b=K2+0Ic0Sqk5eeEcP5LlP4vJow1ggodglofdWUimyLxD+1X5L06zIn0O71mK4kcYFN1
+ +/Io9WRg+PNU2IeeVU+YboIneTlvWFXkrvajQ6YgtbBCb/Q+hBiwi3dOidQW4ceKdnc8
+ F/+VEUAi9etWdFnZPMY8yMnahW0dhLrSkk+SypUnenUG2ok9+7qzNUNOqxjflLvZmZbl
+ /RuSozyd2nBBzH6GtO+/o58EVP2ExZ0ZyqstbV9MMlcGtN3Hv03zP1CjTmMTsFZMRbFo
+ w1FY8KKCFST2GRVws6Afmn2Hz/z4oq8S4Xl9BdlFjzfA3QAXNuygY/XWMtxrnbHMyLAK
+ 1STg==
+X-Gm-Message-State: AOAM5338nvmk4z2F+MeXtsGTAS6lF7nQKguLGd6bd0OhS4lvQOWB88w3
+ ws+xQKwNWFkffhlGCNdxXQcO6NaAjIw3rYP904BWFg==
+X-Google-Smtp-Source: ABdhPJxGxhMZ7o2BYtIDXOupUr3pSHVXck0tIwC9HMZ0nIbp0pU6AQKRljKqMwVkoxmX0BYp74elTVEnpYvo3LWFH24=
+X-Received: by 2002:a17:906:7e47:: with SMTP id
+ z7mr1390518ejr.418.1602618108255; 
+ Tue, 13 Oct 2020 12:41:48 -0700 (PDT)
 MIME-Version: 1.0
 References: <20201009195033.3208459-1-ira.weiny@intel.com>
  <20201009195033.3208459-34-ira.weiny@intel.com>
-In-Reply-To: <20201009195033.3208459-34-ira.weiny@intel.com>
+ <CAPcyv4gL3jfw4d+SJGPqAD3Dp4F_K=X3domuN4ndAA1FQDGcPg@mail.gmail.com>
+ <20201013193643.GK20115@casper.infradead.org>
+In-Reply-To: <20201013193643.GK20115@casper.infradead.org>
 From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 13 Oct 2020 11:44:29 -0700
-Message-ID: <CAPcyv4gL3jfw4d+SJGPqAD3Dp4F_K=X3domuN4ndAA1FQDGcPg@mail.gmail.com>
-To: "Weiny, Ira" <ira.weiny@intel.com>
-X-Headers-End: 1kSQ7Q-0092HT-OI
+Date: Tue, 13 Oct 2020 12:41:36 -0700
+Message-ID: <CAPcyv4gL70FcLe8az7ezmpcZV=bG0Cka7daKWcCdmV4GoenSZw@mail.gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+X-Headers-End: 1kSQBG-00Du7o-Kb
 Subject: Re: [f2fs-dev] [PATCH RFC PKS/PMEM 33/58] fs/cramfs: Utilize new
  kmap_thread()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -113,10 +116,10 @@ Cc: linux-aio@kvack.org, linux-efi <linux-efi@vger.kernel.org>,
  Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
  Linux MM <linux-mm@kvack.org>, target-devel@vger.kernel.org,
  linux-mtd@lists.infradead.org, linux-kselftest@vger.kernel.org,
- samba-technical@lists.samba.org, ceph-devel@vger.kernel.org,
- drbd-dev@lists.linbit.com, devel@driverdev.osuosl.org,
- linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- linux-scsi <linux-scsi@vger.kernel.org>,
+ samba-technical@lists.samba.org, "Weiny, Ira" <ira.weiny@intel.com>,
+ ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+ devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
+ linux-nilfs@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
  linux-nvdimm <linux-nvdimm@lists.01.org>,
  linux-rdma <linux-rdma@vger.kernel.org>, X86 ML <x86@kernel.org>,
  amd-gfx list <amd-gfx@lists.freedesktop.org>, io-uring@vger.kernel.org,
@@ -142,34 +145,52 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Oct 9, 2020 at 12:52 PM <ira.weiny@intel.com> wrote:
+On Tue, Oct 13, 2020 at 12:37 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> From: Ira Weiny <ira.weiny@intel.com>
+> On Tue, Oct 13, 2020 at 11:44:29AM -0700, Dan Williams wrote:
+> > On Fri, Oct 9, 2020 at 12:52 PM <ira.weiny@intel.com> wrote:
+> > >
+> > > From: Ira Weiny <ira.weiny@intel.com>
+> > >
+> > > The kmap() calls in this FS are localized to a single thread.  To avoid
+> > > the over head of global PKRS updates use the new kmap_thread() call.
+> > >
+> > > Cc: Nicolas Pitre <nico@fluxnic.net>
+> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > > ---
+> > >  fs/cramfs/inode.c | 10 +++++-----
+> > >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+> > > index 912308600d39..003c014a42ed 100644
+> > > --- a/fs/cramfs/inode.c
+> > > +++ b/fs/cramfs/inode.c
+> > > @@ -247,8 +247,8 @@ static void *cramfs_blkdev_read(struct super_block *sb, unsigned int offset,
+> > >                 struct page *page = pages[i];
+> > >
+> > >                 if (page) {
+> > > -                       memcpy(data, kmap(page), PAGE_SIZE);
+> > > -                       kunmap(page);
+> > > +                       memcpy(data, kmap_thread(page), PAGE_SIZE);
+> > > +                       kunmap_thread(page);
+> >
+> > Why does this need a sleepable kmap? This looks like a textbook
+> > kmap_atomic() use case.
 >
-> The kmap() calls in this FS are localized to a single thread.  To avoid
-> the over head of global PKRS updates use the new kmap_thread() call.
+> There's a lot of code of this form.  Could we perhaps have:
 >
-> Cc: Nicolas Pitre <nico@fluxnic.net>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> ---
->  fs/cramfs/inode.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> static inline void copy_to_highpage(struct page *to, void *vfrom, unsigned int size)
+> {
+>         char *vto = kmap_atomic(to);
 >
-> diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-> index 912308600d39..003c014a42ed 100644
-> --- a/fs/cramfs/inode.c
-> +++ b/fs/cramfs/inode.c
-> @@ -247,8 +247,8 @@ static void *cramfs_blkdev_read(struct super_block *sb, unsigned int offset,
->                 struct page *page = pages[i];
+>         memcpy(vto, vfrom, size);
+>         kunmap_atomic(vto);
+> }
 >
->                 if (page) {
-> -                       memcpy(data, kmap(page), PAGE_SIZE);
-> -                       kunmap(page);
-> +                       memcpy(data, kmap_thread(page), PAGE_SIZE);
-> +                       kunmap_thread(page);
+> in linux/highmem.h ?
 
-Why does this need a sleepable kmap? This looks like a textbook
-kmap_atomic() use case.
+Nice, yes, that could also replace the local ones in lib/iov_iter.c
+(memcpy_{to,from}_page())
 
 
 _______________________________________________
