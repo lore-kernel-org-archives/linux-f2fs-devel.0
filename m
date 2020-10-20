@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFB2C388F2
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Oct 2020 19:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33994C4363A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Oct 2020 19:53:29 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CF27921D7F;
-	Tue, 20 Oct 2020 19:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9591B21D7F;
+	Tue, 20 Oct 2020 19:53:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="WVuzEjwB";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Wtotc9mP";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qh93qn0g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF27921D7F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Yl8ZB7Js";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="NMjr6KJs";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hf6mBkBd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9591B21D7F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kUxhG-0008A5-68; Tue, 20 Oct 2020 19:53:26 +0000
+	id 1kUxhH-0003lq-Gk; Tue, 20 Oct 2020 19:53:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1kUxhF-00089x-BT
+ (envelope-from <jaegeuk@kernel.org>) id 1kUxhF-0003lV-BY
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Oct 2020 19:53:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -36,9 +36,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2PeEjEDQdL0oGAodPM0OT9lqMWvZe0lC+G9KysQrN8U=; b=WVuzEjwBDjQPiXEmm942mE3S/u
- LU8yujGsNTV+fT7ItbmUYNgVYNwIHlayIQWNLHLs9csTHi60f2IR5q5S9Jd7FsYhQKpTa/cixQVzD
- SRVx4c6P/wjwhUWHPQheU4fspT+i6Y76W05iCw5nzbMDV8SNGqLsfEnkBm37G3IBUmXQ=;
+ bh=dYdb/xpWrPXQyhztClmkUwZ2ARnTX+aGFl2iCeQm1ew=; b=Yl8ZB7Js/3eb74NsJwnIwwdTro
+ hwaw/7mLBL8PhbVYGAEXuhCizfly0BAtB7HfTnnbr7EmUDTNRLDGG7nWC59JNabyWMRxkc5EXwwan
+ UiLCbgkK2Bz+vC5LF4aGRQdKEFYgpVxHYUk+qETO8ugiWGJmQebIbGMZ8KgN4o6mnbZk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,37 +46,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2PeEjEDQdL0oGAodPM0OT9lqMWvZe0lC+G9KysQrN8U=; b=Wtotc9mPNSTDd9QGyuLFha7FZL
- rsjQSg3dUzev7GOvCdoTzG2bX2v5ijhZxeNEEQep8F4Jn2UbaTzrGZ6LHZx32eyuD1DrurNjGLKqu
- INMrRUt65T5Ul8vFJtso1S25cdC+JQtzEW0p02yPBpVmmM2sOCTOGpYnHxXuusp2viC4=;
+ bh=dYdb/xpWrPXQyhztClmkUwZ2ARnTX+aGFl2iCeQm1ew=; b=NMjr6KJsSIAHdkIAKKUu6hU/m/
+ SscLqRD07WyU0ElGbc8gqKQgdF3YA/aTNaE6R1XY3dMVNC6I+Bt6+Q9v8ZfXNqcOdiMJJ+Z30FpFD
+ bi0jqLMTE75c6WB2+uWMieItDME5psgi45DFeVmQY/uCPG5mE+Xfx7FxnGziYXlNEX6E=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kUxhA-0008qT-Ar
+ id 1kUxhA-0008qW-PE
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Oct 2020 19:53:25 +0000
 Received: from localhost (unknown [104.132.1.66])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id A77E622282;
- Tue, 20 Oct 2020 19:53:06 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 108262225D;
+ Tue, 20 Oct 2020 19:53:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1603223586;
- bh=HFw5+71HxddWiKI+OKbHJX9yPW71lc2G7ouCtgAn7H8=;
+ s=default; t=1603223588;
+ bh=3mNMAH34s6dDmoYB+7iHPe6OOtDN1SqxKqRVioVfTCI=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=qh93qn0gxoSkPfnbNv42ZaqbpkOU4v+AhENYU9zbvcumaQvrtkmibx2qUrM7YVFtr
- eCiEvqEKmjZvAgXuwRUhycdL0ehjKQ0rzVVWo+c5ZJdgjh2VsLj5519UOEAHxZO5JN
- mNtAvucjDN+7XLBphtWmVvsh0TVoew8mS9BD7INw=
+ b=hf6mBkBd05pexukSMkul4zejxom9h9PlDCXE+JgaE6NmdOBdNdDZ/KKA47JmYyb1f
+ CPnhabiHN8d0X88CXQKgJvuFpY/14D8ohRzzI6yQqc7kDGpFQQATSThekefkba+/LN
+ opmFOtQ9VWA3Sqy2LzF80vztiFeaVpUvOuUHyDsk=
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-Date: Tue, 20 Oct 2020 12:52:55 -0700
-Message-Id: <20201020195258.2005605-3-jaegeuk@kernel.org>
+Date: Tue, 20 Oct 2020 12:52:57 -0700
+Message-Id: <20201020195258.2005605-5-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
 In-Reply-To: <20201020195258.2005605-1-jaegeuk@kernel.org>
 References: <20201020195258.2005605-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kUxhA-0008qT-Ar
-Subject: [f2fs-dev] [PATCH v2 2/5] scsi: ufs: clear UAC for FFU and RPMB LUNs
+X-Headers-End: 1kUxhA-0008qW-PE
+Subject: [f2fs-dev] [PATCH v2 4/5] scsi: add more contexts in the ufs
+ tracepoints
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,135 +97,106 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Jaegeuk Kim <jaegeuk@google.com>
 
-In order to conduct FFU or RPMB operations, UFS needs to clear UAC. This patch
-clears it explicitly, so that we could get no failure given early execution.
+This adds user-friendly tracepoints with group id.
 
 Cc: Alim Akhtar <alim.akhtar@samsung.com>
 Cc: Avri Altman <avri.altman@wdc.com>
-Cc: Can Guo <cang@codeaurora.org>
+Reviewed-by: Can Guo <cang@codeaurora.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
 ---
- drivers/scsi/ufs/ufshcd.c | 70 +++++++++++++++++++++++++++++++++++----
- drivers/scsi/ufs/ufshcd.h |  1 +
- 2 files changed, 65 insertions(+), 6 deletions(-)
+ drivers/scsi/ufs/ufshcd.c  |  6 ++++--
+ include/trace/events/ufs.h | 21 +++++++++++++++++----
+ 2 files changed, 21 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 7344353a9167..feb10ebf7a35 100644
+index 0858c0b55eac..b5ca0effe636 100644
 --- a/drivers/scsi/ufs/ufshcd.c
 +++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7057,7 +7057,6 @@ static inline void ufshcd_blk_pm_runtime_init(struct scsi_device *sdev)
- static int ufshcd_scsi_add_wlus(struct ufs_hba *hba)
+@@ -348,7 +348,7 @@ static void ufshcd_add_command_trace(struct ufs_hba *hba,
+ 		unsigned int tag, const char *str)
  {
- 	int ret = 0;
--	struct scsi_device *sdev_rpmb;
- 	struct scsi_device *sdev_boot;
- 
- 	hba->sdev_ufs_device = __scsi_add_device(hba->host, 0, 0,
-@@ -7070,14 +7069,14 @@ static int ufshcd_scsi_add_wlus(struct ufs_hba *hba)
- 	ufshcd_blk_pm_runtime_init(hba->sdev_ufs_device);
- 	scsi_device_put(hba->sdev_ufs_device);
- 
--	sdev_rpmb = __scsi_add_device(hba->host, 0, 0,
-+	hba->sdev_rpmb = __scsi_add_device(hba->host, 0, 0,
- 		ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_RPMB_WLUN), NULL);
--	if (IS_ERR(sdev_rpmb)) {
--		ret = PTR_ERR(sdev_rpmb);
-+	if (IS_ERR(hba->sdev_rpmb)) {
-+		ret = PTR_ERR(hba->sdev_rpmb);
- 		goto remove_sdev_ufs_device;
+ 	sector_t lba = -1;
+-	u8 opcode = 0;
++	u8 opcode = 0, group_id = 0;
+ 	u32 intr, doorbell;
+ 	struct ufshcd_lrb *lrbp = &hba->lrb[tag];
+ 	struct scsi_cmnd *cmd = lrbp->cmd;
+@@ -374,13 +374,15 @@ static void ufshcd_add_command_trace(struct ufs_hba *hba,
+ 				lba = cmd->request->bio->bi_iter.bi_sector;
+ 			transfer_len = be32_to_cpu(
+ 				lrbp->ucd_req_ptr->sc.exp_data_transfer_len);
++			if (opcode == WRITE_10)
++				group_id = lrbp->cmd->cmnd[6];
+ 		}
  	}
--	ufshcd_blk_pm_runtime_init(sdev_rpmb);
--	scsi_device_put(sdev_rpmb);
-+	ufshcd_blk_pm_runtime_init(hba->sdev_rpmb);
-+	scsi_device_put(hba->sdev_rpmb);
  
- 	sdev_boot = __scsi_add_device(hba->host, 0, 0,
- 		ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_BOOT_WLUN), NULL);
-@@ -7601,6 +7600,63 @@ static int ufshcd_add_lus(struct ufs_hba *hba)
- 	return ret;
+ 	intr = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
+ 	doorbell = ufshcd_readl(hba, REG_UTP_TRANSFER_REQ_DOOR_BELL);
+ 	trace_ufshcd_command(dev_name(hba->dev), str, tag,
+-				doorbell, transfer_len, intr, lba, opcode);
++			doorbell, transfer_len, intr, lba, opcode, group_id);
  }
  
-+static int
-+ufshcd_send_request_sense(struct ufs_hba *hba, struct scsi_device *sdp);
-+
-+static int ufshcd_clear_ua_wlun(struct ufs_hba *hba, u8 wlun)
-+{
-+	struct scsi_device *sdp;
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	spin_lock_irqsave(hba->host->host_lock, flags);
-+	if (wlun  == UFS_UPIU_UFS_DEVICE_WLUN)
-+		sdp = hba->sdev_ufs_device;
-+	else if (wlun  == UFS_UPIU_RPMB_WLUN)
-+		sdp = hba->sdev_rpmb;
-+	else
-+		BUG_ON(1);
-+	if (sdp) {
-+		ret = scsi_device_get(sdp);
-+		if (!ret && !scsi_device_online(sdp)) {
-+			ret = -ENODEV;
-+			scsi_device_put(sdp);
-+		}
-+	} else {
-+		ret = -ENODEV;
-+	}
-+	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	if (ret)
-+		goto out_err;
-+
-+	ret = ufshcd_send_request_sense(hba, sdp);
-+	scsi_device_put(sdp);
-+out_err:
-+	if (ret)
-+		dev_err(hba->dev, "%s: UAC clear LU=%x ret = %d\n",
-+				__func__, wlun, ret);
-+	return ret;
-+}
-+
-+static int ufshcd_clear_ua_wluns(struct ufs_hba *hba)
-+{
-+	int ret = 0;
-+
-+	if (!hba->wlun_dev_clr_ua)
-+		goto out;
-+
-+	ret = ufshcd_clear_ua_wlun(hba, UFS_UPIU_UFS_DEVICE_WLUN);
-+	if (!ret)
-+		ret = ufshcd_clear_ua_wlun(hba, UFS_UPIU_RPMB_WLUN);
-+	if (!ret)
-+		hba->wlun_dev_clr_ua = false;
-+out:
-+	if (ret)
-+		dev_err(hba->dev, "%s: Failed to clear UAC WLUNS ret = %d\n",
-+				__func__, ret);
-+	return ret;
-+}
-+
- /**
-  * ufshcd_probe_hba - probe hba to detect device and initialize
-  * @hba: per-adapter instance
-@@ -7720,6 +7776,8 @@ static void ufshcd_async_scan(void *data, async_cookie_t cookie)
- 		pm_runtime_put_sync(hba->dev);
- 		ufshcd_exit_clk_scaling(hba);
- 		ufshcd_hba_exit(hba);
-+	} else {
-+		ufshcd_clear_ua_wluns(hba);
- 	}
- }
+ static void ufshcd_print_clk_freqs(struct ufs_hba *hba)
+diff --git a/include/trace/events/ufs.h b/include/trace/events/ufs.h
+index 84841b3a7ffd..50654f352639 100644
+--- a/include/trace/events/ufs.h
++++ b/include/trace/events/ufs.h
+@@ -11,6 +11,15 @@
  
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 47eb1430274c..718881d038f5 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -681,6 +681,7 @@ struct ufs_hba {
- 	 * "UFS device" W-LU.
- 	 */
- 	struct scsi_device *sdev_ufs_device;
-+	struct scsi_device *sdev_rpmb;
+ #include <linux/tracepoint.h>
  
- 	enum ufs_dev_pwr_mode curr_dev_pwr_mode;
- 	enum uic_link_state uic_link_state;
++#define str_opcode(opcode)						\
++	__print_symbolic(opcode,					\
++		{ WRITE_16,		"WRITE_16" },			\
++		{ WRITE_10,		"WRITE_10" },			\
++		{ READ_16,		"READ_16" },			\
++		{ READ_10,		"READ_10" },			\
++		{ SYNCHRONIZE_CACHE,	"SYNC" },			\
++		{ UNMAP,		"UNMAP" })
++
+ #define UFS_LINK_STATES			\
+ 	EM(UIC_LINK_OFF_STATE)		\
+ 	EM(UIC_LINK_ACTIVE_STATE)	\
+@@ -215,9 +224,10 @@ DEFINE_EVENT(ufshcd_template, ufshcd_init,
+ TRACE_EVENT(ufshcd_command,
+ 	TP_PROTO(const char *dev_name, const char *str, unsigned int tag,
+ 			u32 doorbell, int transfer_len, u32 intr, u64 lba,
+-			u8 opcode),
++			u8 opcode, u8 group_id),
+ 
+-	TP_ARGS(dev_name, str, tag, doorbell, transfer_len, intr, lba, opcode),
++	TP_ARGS(dev_name, str, tag, doorbell, transfer_len,
++				intr, lba, opcode, group_id),
+ 
+ 	TP_STRUCT__entry(
+ 		__string(dev_name, dev_name)
+@@ -228,6 +238,7 @@ TRACE_EVENT(ufshcd_command,
+ 		__field(u32, intr)
+ 		__field(u64, lba)
+ 		__field(u8, opcode)
++		__field(u8, group_id)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -239,13 +250,15 @@ TRACE_EVENT(ufshcd_command,
+ 		__entry->intr = intr;
+ 		__entry->lba = lba;
+ 		__entry->opcode = opcode;
++		__entry->group_id = group_id;
+ 	),
+ 
+ 	TP_printk(
+-		"%s: %s: tag: %u, DB: 0x%x, size: %d, IS: %u, LBA: %llu, opcode: 0x%x",
++		"%s: %s: tag: %u, DB: 0x%x, size: %d, IS: %u, LBA: %llu, opcode: 0x%x (%s), group_id: 0x%x",
+ 		__get_str(str), __get_str(dev_name), __entry->tag,
+ 		__entry->doorbell, __entry->transfer_len,
+-		__entry->intr, __entry->lba, (u32)__entry->opcode
++		__entry->intr, __entry->lba, (u32)__entry->opcode,
++		str_opcode(__entry->opcode), (u32)__entry->group_id
+ 	)
+ );
+ 
 -- 
 2.29.0.rc1.297.gfa9743e501-goog
 
