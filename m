@@ -2,95 +2,81 @@ Return-Path: <SRS0=w++r=D4=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C891CC4363D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Oct 2020 02:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACC2C4363D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Oct 2020 04:37:01 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2873D20870;
-	Wed, 21 Oct 2020 02:16:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9997B20795;
+	Wed, 21 Oct 2020 04:37:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="cy1XLCEa";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PhIbqAsy";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="ov89IIAM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2873D20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="XgYTa6dA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="LzftEYiq";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qm0rDQEM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9997B20795
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kV3fd-0002KE-I7; Wed, 21 Oct 2020 02:16:09 +0000
+	id 1kV5rt-0002rX-7q; Wed, 21 Oct 2020 04:36:57 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <bounce+103f7e.be9e4a-linux-f2fs-devel=lists.sourceforge.net@mg.codeaurora.org>)
- id 1kV3fb-0002Jy-Rd
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Oct 2020 02:16:07 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kV5rm-0002qh-1s
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Oct 2020 04:36:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Message-ID:References:In-Reply-To:Subject:Cc:To:
- From:Date:Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=S5lmg/47eSMB0cMlWY5RcQ2SoXrP4WZ/K1BZsdaCAF8=; b=cy1XLCEam7G32OpcChjbZEPpsR
- a5vVs3x1I7Pqx+aMkLY8U5AN9fz3Uy2xO+UYn4Be4eNKAc9U7/n/DZiqSWDWonVSgKkjEpm/v5v7D
- XbsSty0O7ONUgLhaUGDCGjQE41JuFffX/Aab0f0qy8uF9l9T66YvGGn7Ia8eoQcePn6U=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Message-ID:References:In-Reply-To:Subject:Cc:To:From:Date:
- Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=S5lmg/47eSMB0cMlWY5RcQ2SoXrP4WZ/K1BZsdaCAF8=; b=PhIbqAsykuJYxKLAO4EaqJS40v
- 0QFIloJPia57plncHxs47cx/WM71Xhim7fY930UPLRMn9x+DISk+I1WHYq9CPRfUasZJHe1y+/vRR
- m6u28PDJNiT3PZX4zDvUFYK455m9kEwW+PjBQwyUR+75kAFGKWUDulXaRWFG2uVb5ufA=;
-Received: from m42-4.mailgun.net ([69.72.42.4])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kV3fP-006OFP-Oj
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Oct 2020 02:16:07 +0000
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
- q=dns/txt; 
- s=smtp; t=1603246555; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=S5lmg/47eSMB0cMlWY5RcQ2SoXrP4WZ/K1BZsdaCAF8=;
- b=ov89IIAMX3VelrDYq6EfzrM387hNbJUw8rv4Ox0P5gN/W9LoXTF5JOV+OSi2hVyBdbqiT0Gn
- BhcbMV7KAzUFE7IUnRKi1ljv12j7iIGrLDo2Mg/e74Vx7koMNZfq3RtsqP/UQ6xMqyqdjxPw
- OfBDDFlESRvw4q55E6nWD3ywFqo=
-X-Mailgun-Sending-Ip: 69.72.42.4
-X-Mailgun-Sid: WyI2M2Y4ZiIsICJsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n02.prod.us-west-2.postgun.com with SMTP id
- 5f8f9762a03b63d673963f9f (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 21 Oct 2020 02:05:22
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
- id 7819AC433FE; Wed, 21 Oct 2020 02:05:22 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
- (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
- (No client certificate requested) (Authenticated sender: cang)
- by smtp.codeaurora.org (Postfix) with ESMTPSA id 4AD07C433C9;
- Wed, 21 Oct 2020 02:05:21 +0000 (UTC)
+ bh=lESAiDDvvz5V+Lr5Rzb9SIGtKe3pfdrGxS83jzaKtnU=; b=XgYTa6dAhCb/H2khD7F+oxsFaL
+ fQOMbzlv/XesbTa/ycpAGL0eAWfeL3XLnrr48SOIlkfxk+I6U60ctEW5Yj2rR8YMLJcQKHrqG8Y0d
+ 23f3IlZqZTyFpMvSFc6bl9IShGqL0dKWV+0SZRZuLijsez+NqVQ2hnD8KHyBeTShF6yA=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=lESAiDDvvz5V+Lr5Rzb9SIGtKe3pfdrGxS83jzaKtnU=; b=LzftEYiqp1n39SQX4TKwybzSP9
+ tyBM29lM/6l5bXXlXQjbqMNlJxfn/BcWwNekFKBkkmYDQ8CFrehTgdFOxQZhFu5CEuaYObFB63SUz
+ UPwkz7rVRqW/NhWVMKB+PJwwzvltFMyRGRqFrN5Zbwuu0sGSfVA31LTCge1WOg8XP6fA=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1kV5ra-000e4d-VH
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 21 Oct 2020 04:36:48 +0000
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net
+ [172.10.235.113])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 706FC20795;
+ Wed, 21 Oct 2020 04:36:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1603254982;
+ bh=US29mnjG65+3xtVs/p9mRVy5ww8iDF1b1Klps/Bj9SM=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=qm0rDQEMO6FxAufRXSJzGlC11JAZp8mUhBKuSp8/KCUbIVIz2e3ZK/zpuc9tPHQJR
+ xyVfn1ffwy98bI3Y3wxsYh0nkkT9hg8MGFpOvuXp8EUj10fAEZ6+6sgukkKLVVjRK6
+ brPMbI6yrVgvbZp0gRAXZ0jaD+ei+bUGI3exsISc=
+Date: Tue, 20 Oct 2020 21:36:20 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Daeho Jeong <daeho43@gmail.com>
+Message-ID: <20201021043620.GA3939@sol.localdomain>
+References: <20201016051455.1913795-1-daeho43@gmail.com>
 MIME-Version: 1.0
-Date: Wed, 21 Oct 2020 10:05:21 +0800
-From: Can Guo <cang@codeaurora.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-In-Reply-To: <20201020195258.2005605-2-jaegeuk@kernel.org>
-References: <20201020195258.2005605-1-jaegeuk@kernel.org>
- <20201020195258.2005605-2-jaegeuk@kernel.org>
-Message-ID: <6c7bc6794b215a0ae1ae0cd9d448efa3@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
-X-Headers-End: 1kV3fP-006OFP-Oj
-Subject: Re: [f2fs-dev] [PATCH v2 1/5] scsi: ufs: atomic update for
- clkgating_enable
+Content-Disposition: inline
+In-Reply-To: <20201016051455.1913795-1-daeho43@gmail.com>
+X-Headers-End: 1kV5ra-000e4d-VH
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add compr_inode and compr_blocks sysfs
+ nodes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,69 +88,46 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Avri Altman <avri.altman@wdc.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, kernel-team@android.com,
- Jaegeuk Kim <jaegeuk@google.com>
+Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020-10-21 03:52, Jaegeuk Kim wrote:
-> From: Jaegeuk Kim <jaegeuk@google.com>
+On Fri, Oct 16, 2020 at 02:14:55PM +0900, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> When giving a stress test which enables/disables clkgating, we hit 
-> device
-> timeout sometimes. This patch avoids subtle racy condition to address 
-> it.
+> Added compr_inode to show compressed inode count and compr_blocks to
+> show compressed block count in sysfs.
 > 
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: Avri Altman <avri.altman@wdc.com>
-> Cc: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
-
-Reviewed-by: Can Guo <cang@codeaurora.org>
-
-Next time can you have a cover letter in case of multiple patches?
-
-Thanks,
-
-Can Guo.
-
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
 > ---
->  drivers/scsi/ufs/ufshcd.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  Documentation/ABI/testing/sysfs-fs-f2fs | 10 ++++++++++
+>  fs/f2fs/sysfs.c                         | 17 +++++++++++++++++
+>  2 files changed, 27 insertions(+)
 > 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index b8f573a02713..7344353a9167 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -1807,19 +1807,19 @@ static ssize_t
-> ufshcd_clkgate_enable_store(struct device *dev,
->  		return -EINVAL;
-> 
->  	value = !!value;
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index 834d0becae6d..a01c26484c69 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -350,3 +350,13 @@ Date:		April 2020
+>  Contact:	"Daeho Jeong" <daehojeong@google.com>
+>  Description:	Give a way to change iostat_period time. 3secs by default.
+>  		The new iostat trace gives stats gap given the period.
 > +
-> +	spin_lock_irqsave(hba->host->host_lock, flags);
->  	if (value == hba->clk_gating.is_enabled)
->  		goto out;
-> 
-> -	if (value) {
-> -		ufshcd_release(hba);
-> -	} else {
-> -		spin_lock_irqsave(hba->host->host_lock, flags);
-> +	if (value)
-> +		__ufshcd_release(hba);
-> +	else
->  		hba->clk_gating.active_reqs++;
-> -		spin_unlock_irqrestore(hba->host->host_lock, flags);
-> -	}
-> 
->  	hba->clk_gating.is_enabled = value;
->  out:
-> +	spin_unlock_irqrestore(hba->host->host_lock, flags);
->  	return count;
->  }
+> +What:		/sys/fs/f2fs/<disk>/compr_inode
+> +Date:		October 2020
+> +Contact:	"Daeho Jeong" <daehojeong@google.com>
+> +Description:	Show compressed inode count
+> +
+> +What:		/sys/fs/f2fs/<disk>/compr_blocks
+> +Date:		October 2020
+> +Contact:	"Daeho Jeong" <daehojeong@google.com>
+> +Description:	Show compressed block count
+
+Is it the count in memory, or on disk?
+
+- Eric
 
 
 _______________________________________________
