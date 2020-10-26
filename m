@@ -2,103 +2,85 @@ Return-Path: <SRS0=JrMS=EB=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DFAC2D0A3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2020 23:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73EDC4363A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2020 23:49:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 09DBB20714;
-	Mon, 26 Oct 2020 23:45:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4EE9D20773;
+	Mon, 26 Oct 2020 23:49:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="PVckOqjJ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YeTXXdmm";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AiXZUswt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09DBB20714
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hrvJMXzH";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="TEOtLYor";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7E0TKQI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE9D20773
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kXCAm-0000n1-91; Mon, 26 Oct 2020 23:45:08 +0000
+	id 1kXCEw-0000zp-4J; Mon, 26 Oct 2020 23:49:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <daeho43@gmail.com>) id 1kXCAl-0000ml-9M
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 23:45:07 +0000
+ (envelope-from <sashal@kernel.org>) id 1kXCEv-0000zQ-Fn
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 23:49:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=U+ci8HfK0Jx/bpDWJmMVdhckawMI3McUJ3Muf62Y3os=; b=PVckOqjJ1Y02EqR7WkcdR4l6JC
- OWoFbEbwMpxEPQaa+V/4wcmZY/UDfeOuzl9EpYv84c2NLC1y1ssvt7sA5kwsWA1rg7DEeoPcYBAAQ
- qolQf18AjimZxeOTciphoMcP8yGhsrRQkr8/gCEghZiloMt3MGx57eGNwwlA3+/iYPCU=;
+ bh=/bWqzIdEKPGXJ/2DrRIw3Q2OgtQ1JuuRvxn68dO++LE=; b=hrvJMXzHg+pXGDYOS/ALVbQuyX
+ T+4Fa1kYQFg1sdNzRKqW34IycpFU0FcGdBsGdwtRNZRIN5Uvy+N9Mw6vdwg4edLzINU+fpT8NOQ1f
+ 5drc0sfYK12HkKgshi1BeVDTxVpyaSzeE+ZXc7mjSszZ8eyU3TAf/8ai8VxsxTSbXrYA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=U+ci8HfK0Jx/bpDWJmMVdhckawMI3McUJ3Muf62Y3os=; b=YeTXXdmm2PrRj3k8IhwphYCmMI
- qU5V7GDDTUEsN0h7nlAbIB3ANiMNFvkEfaS6H6YBJHLPuuxeoo1t5OmJkmfwfJUazlHAhIIYT/Bgp
- 6+yWEhPXBrQzWASB4V+sAfh54LV3XcoMSBdaRU3E8EEsBVpgL9vXUeh+cSBSHJS3/Mrw=;
-Received: from mail-lf1-f67.google.com ([209.85.167.67])
+ bh=/bWqzIdEKPGXJ/2DrRIw3Q2OgtQ1JuuRvxn68dO++LE=; b=TEOtLYorB1NcOg+AShE/thcOs/
+ oZ29R6AhL5GdeOMUrhF9bJ7vQRVj0TyqDrR74jd51M77ZyPLFDyx8CwAAwwSC742khM1Gn2Mb/Hnv
+ gopt5CmDRpXWIjOHgVLyP22icOZb2SNAjubtgrGN5HwhLcJOitTDe1+hnzkJcQBaSglI=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kXCAh-00Etla-QS
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 23:45:07 +0000
-Received: by mail-lf1-f67.google.com with SMTP id h6so14670611lfj.3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 26 Oct 2020 16:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc:content-transfer-encoding;
- bh=U+ci8HfK0Jx/bpDWJmMVdhckawMI3McUJ3Muf62Y3os=;
- b=AiXZUswtdTYC3oZ4+GUHPWtVP9jG18MnP79xWB/+b5a0T/FWq6q/+HReapl8Mjdyta
- AC3tnFDBxmu2mNZBS5h3nlUUY/L+X8ndPHc0sVuYATjf3U+cHkR/7sCAcQEcHsDmZkX0
- 8F0y9YI7Mti9Up+dZ8Wq4KqMaSxOLeteiaLDLw91zaDQyys/tVyzaRlkrWTLRwyzLC+T
- FQje7c7Mn6OTXDhLi4l1IJoI9Ufe7yZ27TDH5OxywgPzx82BfrnJGbiaeCnwbhHRQoXw
- B9f+8raORPERSnfpRA8CP0S0JcnRgtXKSDhzM8ENJL3hGK3P7DazLlzc3BnGJDOk/jmj
- ssaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc:content-transfer-encoding;
- bh=U+ci8HfK0Jx/bpDWJmMVdhckawMI3McUJ3Muf62Y3os=;
- b=Ps6HiV2yLt7DGoX8tENaPY4TMmmej2VhyUSJYt2u7wzeb3V1E/ILdybx825Flgx9Qk
- lETpJV2Y/PWl7jncIC6UItaMnBys7y0BYC6nk/nHlypR2FCfvAd22u4DtfMY3r/cZ+1p
- fFhXfmVnBjTZHKMxCg04/pp0LdOFYfKanp4NYETIzyBgpQyXmoeBggxtrzkqEp6KpSVm
- BNM9ctag0q0RorkLWIV1CLkuI+2Hk6RXte5zp1a2Vs67rbGRwB/K1/Zn3g3GAm68Wdbk
- rnZBAP/L01av0AzyUpiMtUhkff0hv2NQgY23ANPq3P9rfoNU0Xd6VhncsRSlH56C1STJ
- AtTw==
-X-Gm-Message-State: AOAM533IdgtTZ3/NyCkDYl7Yx8sh/TK76bDCZ0r66G9KMTh+F1jGTXe6
- WoF8MAC9fY4QB1jwKNjbY8PSryLzxzuiyhgOaUzPmvnl7QI=
-X-Google-Smtp-Source: ABdhPJy7g9BoxTMajgkhgTXmYywo57QYN/3JVTnSY/v2Anbz2XwZHF5bXTKb/yYHnp+DPltcJ7Qhsnpzm62OdfT5o1c=
-X-Received: by 2002:a19:f71a:: with SMTP id z26mr5752205lfe.90.1603755897185; 
- Mon, 26 Oct 2020 16:44:57 -0700 (PDT)
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1kXCEt-00Etyd-Ho
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 23:49:25 +0000
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net
+ [73.47.72.35])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id 70EEB2075B;
+ Mon, 26 Oct 2020 23:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1603756158;
+ bh=wJ7tx26oXbwyvOoGgHEzr8rD6oBnYrEO0hRZuOwrsRE=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=U7E0TKQI4k3G6BBMkBdxLTZnPorQpAc/BLrsFtdNflUvuni2ihbpWEDRHmlqQ6IUt
+ l1rFYPF6zszV89o0+1OR4ixb3XKT5x3B2THOpnrAHuaDM+BBsu9oUf7NWM6Bj4DZAR
+ yc5OaCyUI4xtAGgRZ0cu4KdSLVHDQLLQ+uwyWSWs=
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Date: Mon, 26 Oct 2020 19:46:48 -0400
+Message-Id: <20201026234905.1022767-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201026234905.1022767-1-sashal@kernel.org>
+References: <20201026234905.1022767-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20201026041656.2785980-1-daeho43@gmail.com>
- <20201026190406.GL858@sol.localdomain>
- <CACOAw_xFijZOokM4R1XYKoFvRthk-ZfC+hNz0c-HqQuurjp87g@mail.gmail.com>
- <20201026230555.GB1947033@gmail.com>
- <CACOAw_wLE_om3YChs_jsBTORrOsp2M6SZ+t2arP9tHQeojsgKQ@mail.gmail.com>
- <20201026232712.GC1947033@gmail.com>
- <CABdZyew=D=S7MmitF55K8Jd6QiVzdJzFuQ2JkJ6x_T_a=AVMvQ@mail.gmail.com>
-In-Reply-To: <CABdZyew=D=S7MmitF55K8Jd6QiVzdJzFuQ2JkJ6x_T_a=AVMvQ@mail.gmail.com>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Tue, 27 Oct 2020 08:44:46 +0900
-Message-ID: <CACOAw_xYHr7YY_e-cLYUurh07T-T=CNTM6gKUv5VKjYp9=h9nw@mail.gmail.com>
-To: Daeho Jeong <daehojeong@google.com>
-X-Headers-End: 1kXCAh-00Etla-QS
-Subject: Re: [f2fs-dev] [PATCH v3 1/2] f2fs: add
- F2FS_IOC_GET_COMPRESS_OPTION ioctl
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-Headers-End: 1kXCEt-00Etyd-Ho
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.9 010/147] f2fs: do sanity check on
+ zoned block device path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,22 +92,72 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Eric Biggers <ebiggers@kernel.org>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T29wcywgdHlwb3MuLi4KCjIwMjDrhYQgMTDsm5QgMjfsnbwgKO2ZlCkg7Jik7KCEIDg6NDMsIERh
-ZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5jb20+64uY7J20IOyekeyEsToKPgo+IE9vcHMs
-IHR5cG9zLi4uCj4KPiBPbiBUdWUsIE9jdCAyNywgMjAyMCBhdCA4OjI3IEFNIEVyaWMgQmlnZ2Vy
-cyA8ZWJpZ2dlcnNAa2VybmVsLm9yZz4gd3JvdGU6Cj4+Cj4+IE9uIFR1ZSwgT2N0IDI3LCAyMDIw
-IGF0IDA4OjE4OjQ0QU0gKzA5MDAsIERhZWhvIEplb25nIHdyb3RlOgo+PiA+IEkgY2hlY2tlZCB0
-aGF0LiBXZSBzZWVtIHRvIG5lZWQgdG8gY29tcGxlbWVudCBtaXNzaW5nIHBhcnRzIGluY2x1ZGlu
-Zwo+PiA+IG90aGVyIGlvY3RscyBpbiBEb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL2ZzY3J5cHQu
-cnN0Lgo+PiA+Cj4+ID4gVGhhbmtzfgo+PiA+Cj4+Cj4+IFdlbGwsIHRoZSBmMmZzLXNwZWNpZmlj
-IGlvY3RscyBzaG91bGQgcHJvYmFibHkgYmUgZG9jdW1lbnRlZCBpbgo+PiBEb2N1bWVudGF0aW9u
-L2ZpbGVzeXN0ZW1zL2YyZnMucnN0Lgo+Pgo+PiAtIEVyaWMKCgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
-dApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNv
-dXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+From: Chao Yu <yuchao0@huawei.com>
+
+[ Upstream commit 07eb1d699452de04e9d389ff17fb8fc9e975d7bf ]
+
+sbi->devs would be initialized only if image enables multiple device
+feature or blkzoned feature, if blkzoned feature flag was set by fuzz
+in non-blkzoned device, we will suffer below panic:
+
+get_zone_idx fs/f2fs/segment.c:4892 [inline]
+f2fs_usable_zone_blks_in_seg fs/f2fs/segment.c:4943 [inline]
+f2fs_usable_blks_in_seg+0x39b/0xa00 fs/f2fs/segment.c:4999
+Call Trace:
+ check_block_count+0x69/0x4e0 fs/f2fs/segment.h:704
+ build_sit_entries fs/f2fs/segment.c:4403 [inline]
+ f2fs_build_segment_manager+0x51da/0xa370 fs/f2fs/segment.c:5100
+ f2fs_fill_super+0x3880/0x6ff0 fs/f2fs/super.c:3684
+ mount_bdev+0x32e/0x3f0 fs/super.c:1417
+ legacy_get_tree+0x105/0x220 fs/fs_context.c:592
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1547
+ do_new_mount fs/namespace.c:2896 [inline]
+ path_mount+0x12ae/0x1e70 fs/namespace.c:3216
+ do_mount fs/namespace.c:3229 [inline]
+ __do_sys_mount fs/namespace.c:3437 [inline]
+ __se_sys_mount fs/namespace.c:3414 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3414
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+
+Add sanity check to inconsistency on factors: blkzoned flag, device
+path and device character to avoid above panic.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/f2fs/super.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index dfa072fa80815..be5050292caa5 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2832,6 +2832,12 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+ 					segment_count, dev_seg_count);
+ 			return -EFSCORRUPTED;
+ 		}
++	} else {
++		if (__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_BLKZONED) &&
++					!bdev_is_zoned(sbi->sb->s_bdev)) {
++			f2fs_info(sbi, "Zoned block device path is missing");
++			return -EFSCORRUPTED;
++		}
+ 	}
+ 
+ 	if (secs_per_zone > total_sections || !secs_per_zone) {
+-- 
+2.25.1
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
