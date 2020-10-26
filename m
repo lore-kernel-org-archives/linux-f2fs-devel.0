@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A3DC5DF9D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2020 23:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6AEC2D0A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2020 23:52:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6BA5E20882;
+	by mail.kernel.org (Postfix) with ESMTPS id BC6272224E;
 	Mon, 26 Oct 2020 23:52:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="HVG50AIK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="EWbhv57e";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvqDNmtD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA5E20882
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="BxVZpLis";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="SzM0eMc4";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNXVT/Bl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC6272224E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kXCHw-0000Ro-S5; Mon, 26 Oct 2020 23:52:32 +0000
+	id 1kXCI0-0001Fq-EM; Mon, 26 Oct 2020 23:52:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1kXCHv-0000Qu-3A
+ (envelope-from <sashal@kernel.org>) id 1kXCHv-0001EE-3B
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 23:52:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -36,9 +36,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=v0rGW9GjUzHcP9d2HMwFfukuAwitZTkYC7CF2ZTX86s=; b=HVG50AIKgRyJdn6/owoYkqJrBZ
- xb/hQeWpTtdImckf1zr5XhkD06jd//3PuoDLZzF2rSCAY3+4Er9p0yp/9KqlntZ8bGxOUDFQV38Tk
- WcXPivO41xF2n8ERSdCXM2IWOsxZYhnISgmvnoB1IV6lMAgK5X+PIgCY2QKAgpPLJ6/U=;
+ bh=sR7jnoVBYD+w3UcFbPyF8ICD4LQvpLuXOm5uvEATG+0=; b=BxVZpLisifTNxhLZnJoRq+qCBg
+ Oc6BdfsRgXzaLA7iqo8EV8rPx1OxoXhCk6HYI8Fvqrhs7D7nRYCp9OgErUUQOkIQc33CBIAgaYOBF
+ GN20nAAOo7JG98SuIPGo4UNUgMjRQypmhZwbCwXgxe/gwlXQIsRIkZpBajtrew4r4ovM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -46,41 +46,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=v0rGW9GjUzHcP9d2HMwFfukuAwitZTkYC7CF2ZTX86s=; b=EWbhv57egLVpmUPRi/YBlNL02L
- UFwatYpziwNfAKkQ/q5+JD7WAhk5HO/4fe07pVphIsWQW9C+Gsv7v0w9+LzWI8awsYfxwSw2BoT5W
- 9xvu7pRIVzY2UHVooX6B2/TKZBucrsK40KO4VQyrRtcN5dHNOdGH29nTac0DB5vGlBhI=;
+ bh=sR7jnoVBYD+w3UcFbPyF8ICD4LQvpLuXOm5uvEATG+0=; b=SzM0eMc4hXO4Fd7WXbCMyKc3uK
+ KaoUy/HxD4xjNvYIvlxTlEjrwbdvJwaf3pWHrnNTCRX7JAmZ1MrzMrW6hIeu1G6oZhYTnrzFZLZIG
+ Z79aVqFQV0c7XCS88MNNYcbdN/R5Tq7BGmdozJ2ePxqxRnkH16MzQ/q/r/lNHapzspJQ=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kXCHl-00Eu9H-OG
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 23:52:25 +0000
+ id 1kXCHe-00Eu8v-Nx
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 23:52:19 +0000
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net
  [73.47.72.35])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id B092C217A0;
- Mon, 26 Oct 2020 23:52:15 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 9502F222C8;
+ Mon, 26 Oct 2020 23:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1603756336;
- bh=9tZeHih8e7Uh4LwY8MPzkfHHfIefV9R/hNqCIllSfx0=;
+ s=default; t=1603756329;
+ bh=MLlX5pu9y4LtLqUQIZXzIODt8iyhZLUJ6FC9cWhFCYo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=SvqDNmtDZ2ONNJTsdldX6NnxZHRUqICrlPseNLkXCEKyKbqcZHlgflrPDTCF4tGlB
- 7AkxanL/z7iZSqyuGdJdhZwk1pF9J8oQFW7qREaTtyve+o49D5rwO7R5giKz0P/y9e
- rErGH3thfr928Wg53m97+cW6jkGKCx7u1FcQMVOo=
+ b=iNXVT/Bl+yQxDnVmO96KfmXWqQMUqSKaIdo6e/4OzJ2Vh+mlPeh0NWCBH9SrDFnDY
+ syfdV2/jt9CtuDQ/XjV0gqb8bSwUa4EN2XJvRbymOIZLb6AAT+peH4e1w2rzWwKoxN
+ 6EuzzxWhcaYCYJkA84FZ3rzg/4MgVi/xgt8yyu74=
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Mon, 26 Oct 2020 19:50:01 -0400
-Message-Id: <20201026235205.1023962-9-sashal@kernel.org>
+Date: Mon, 26 Oct 2020 19:49:55 -0400
+Message-Id: <20201026235205.1023962-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201026235205.1023962-1-sashal@kernel.org>
 References: <20201026235205.1023962-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1kXCHl-00Eu9H-OG
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.8 009/132] f2fs: do sanity check on
- zoned block device path
+X-Headers-End: 1kXCHe-00Eu8v-Nx
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.8 003/132] f2fs: allocate proper size
+ memory for zstd decompress
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,65 +93,89 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
+ 5kft <5kft@5kft.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 07eb1d699452de04e9d389ff17fb8fc9e975d7bf ]
+[ Upstream commit 0e2b7385cb59e566520cfd0a04b4b53bc9461e98 ]
 
-sbi->devs would be initialized only if image enables multiple device
-feature or blkzoned feature, if blkzoned feature flag was set by fuzz
-in non-blkzoned device, we will suffer below panic:
+As 5kft <5kft@5kft.org> reported:
 
-get_zone_idx fs/f2fs/segment.c:4892 [inline]
-f2fs_usable_zone_blks_in_seg fs/f2fs/segment.c:4943 [inline]
-f2fs_usable_blks_in_seg+0x39b/0xa00 fs/f2fs/segment.c:4999
-Call Trace:
- check_block_count+0x69/0x4e0 fs/f2fs/segment.h:704
- build_sit_entries fs/f2fs/segment.c:4403 [inline]
- f2fs_build_segment_manager+0x51da/0xa370 fs/f2fs/segment.c:5100
- f2fs_fill_super+0x3880/0x6ff0 fs/f2fs/super.c:3684
- mount_bdev+0x32e/0x3f0 fs/super.c:1417
- legacy_get_tree+0x105/0x220 fs/fs_context.c:592
- vfs_get_tree+0x89/0x2f0 fs/super.c:1547
- do_new_mount fs/namespace.c:2896 [inline]
- path_mount+0x12ae/0x1e70 fs/namespace.c:3216
- do_mount fs/namespace.c:3229 [inline]
- __do_sys_mount fs/namespace.c:3437 [inline]
- __se_sys_mount fs/namespace.c:3414 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3414
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ kworker/u9:3: page allocation failure: order:9, mode:0x40c40(GFP_NOFS|__GFP_COMP), nodemask=(null),cpuset=/,mems_allowed=0
+ CPU: 3 PID: 8168 Comm: kworker/u9:3 Tainted: G         C        5.8.3-sunxi #trunk
+ Hardware name: Allwinner sun8i Family
+ Workqueue: f2fs_post_read_wq f2fs_post_read_work
+ [<c010d6d5>] (unwind_backtrace) from [<c0109a55>] (show_stack+0x11/0x14)
+ [<c0109a55>] (show_stack) from [<c056d489>] (dump_stack+0x75/0x84)
+ [<c056d489>] (dump_stack) from [<c0243b53>] (warn_alloc+0xa3/0x104)
+ [<c0243b53>] (warn_alloc) from [<c024473b>] (__alloc_pages_nodemask+0xb87/0xc40)
+ [<c024473b>] (__alloc_pages_nodemask) from [<c02267c5>] (kmalloc_order+0x19/0x38)
+ [<c02267c5>] (kmalloc_order) from [<c02267fd>] (kmalloc_order_trace+0x19/0x90)
+ [<c02267fd>] (kmalloc_order_trace) from [<c047c665>] (zstd_init_decompress_ctx+0x21/0x88)
+ [<c047c665>] (zstd_init_decompress_ctx) from [<c047e9cf>] (f2fs_decompress_pages+0x97/0x228)
+ [<c047e9cf>] (f2fs_decompress_pages) from [<c045d0ab>] (__read_end_io+0xfb/0x130)
+ [<c045d0ab>] (__read_end_io) from [<c045d141>] (f2fs_post_read_work+0x61/0x84)
+ [<c045d141>] (f2fs_post_read_work) from [<c0130b2f>] (process_one_work+0x15f/0x3b0)
+ [<c0130b2f>] (process_one_work) from [<c0130e7b>] (worker_thread+0xfb/0x3e0)
+ [<c0130e7b>] (worker_thread) from [<c0135c3b>] (kthread+0xeb/0x10c)
+ [<c0135c3b>] (kthread) from [<c0100159>]
 
-Add sanity check to inconsistency on factors: blkzoned flag, device
-path and device character to avoid above panic.
+zstd may allocate large size memory for {,de}compression, it may cause
+file copy failure on low-end device which has very few memory.
 
+For decompression, let's just allocate proper size memory based on current
+file's cluster size instead of max cluster size.
+
+Reported-by: 5kft <5kft@5kft.org>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/f2fs/compress.c | 7 ++++---
+ fs/f2fs/f2fs.h     | 2 +-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 0deb839da0a03..28ab6cf26954a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2782,6 +2782,12 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 					segment_count, dev_seg_count);
- 			return -EFSCORRUPTED;
- 		}
-+	} else {
-+		if (__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_BLKZONED) &&
-+					!bdev_is_zoned(sbi->sb->s_bdev)) {
-+			f2fs_info(sbi, "Zoned block device path is missing");
-+			return -EFSCORRUPTED;
-+		}
- 	}
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 2390f7943f6c8..47b62099533bd 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -375,16 +375,17 @@ static int zstd_init_decompress_ctx(struct decompress_io_ctx *dic)
+ 	ZSTD_DStream *stream;
+ 	void *workspace;
+ 	unsigned int workspace_size;
++	unsigned int max_window_size =
++			MAX_COMPRESS_WINDOW_SIZE(dic->log_cluster_size);
  
- 	if (secs_per_zone > total_sections || !secs_per_zone) {
+-	workspace_size = ZSTD_DStreamWorkspaceBound(MAX_COMPRESS_WINDOW_SIZE);
++	workspace_size = ZSTD_DStreamWorkspaceBound(max_window_size);
+ 
+ 	workspace = f2fs_kvmalloc(F2FS_I_SB(dic->inode),
+ 					workspace_size, GFP_NOFS);
+ 	if (!workspace)
+ 		return -ENOMEM;
+ 
+-	stream = ZSTD_initDStream(MAX_COMPRESS_WINDOW_SIZE,
+-					workspace, workspace_size);
++	stream = ZSTD_initDStream(max_window_size, workspace, workspace_size);
+ 	if (!stream) {
+ 		printk_ratelimited("%sF2FS-fs (%s): %s ZSTD_initDStream failed\n",
+ 				KERN_ERR, F2FS_I_SB(dic->inode)->sb->s_id,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7d9afd54e9d8f..f03c573e427a5 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1392,7 +1392,7 @@ struct decompress_io_ctx {
+ #define NULL_CLUSTER			((unsigned int)(~0))
+ #define MIN_COMPRESS_LOG_SIZE		2
+ #define MAX_COMPRESS_LOG_SIZE		8
+-#define MAX_COMPRESS_WINDOW_SIZE	((PAGE_SIZE) << MAX_COMPRESS_LOG_SIZE)
++#define MAX_COMPRESS_WINDOW_SIZE(log_size)	((PAGE_SIZE) << (log_size))
+ 
+ struct f2fs_sb_info {
+ 	struct super_block *sb;			/* pointer to VFS super block */
 -- 
 2.25.1
 
