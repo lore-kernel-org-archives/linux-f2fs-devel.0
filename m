@@ -2,24 +2,24 @@ Return-Path: <SRS0=JrMS=EB=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05787C4363A
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2020 10:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3EA9C56202
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2020 11:23:12 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 50A7E20723
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2020 10:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 356382464E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 26 Oct 2020 11:23:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="CBPJnf2j";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="he9ZJ25Z";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Kpi2pGxx";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="q0uzHGPN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A7E20723
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="fxxMxNb2";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="fSIjG68Y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YHEFwLXA";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="hmJWGdpq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 356382464E
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,84 +28,84 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=as/wjTmPZI0bim/RuifJ2Z48yrb361dvPPsPreHCOJc=; b=CBPJnf2jVrLyxCkQE/YhS37rSE
-	sv8H170p0HrpgstJcPCIzScs/+Fn7zdkcCIQuJ54QIw5/A4osH7WJ+ZrFUQ3I63w16qC76R1t4CmJ
-	FA/K5SCdaFXnaPlu2q02GQ1E/JT6oGLPkMsj960cpTny+LhiK3ZCAd7s/daPaAJyjG6s=;
+	bh=xn9iJH2Gi2wU8V2EpdHb3hDps1RbC8OoutgBt+xlxeI=; b=fxxMxNb2S7GYA77kZuxbDFQAvw
+	Eo/rHPDvUxBJvqVwi58+XhPxlTi/r3YMl7Tkq/TwWyHcmBLD+j2UTtTpnvlkiYK7Fii4pBFR2dnPN
+	+Axg7LVfheH1VZw85IrebJbc3Wyk3WgbZJdVhLifmCC4/sc/zjYXbCh2iXTecFDANnws=;
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kWzNG-00045n-5W; Mon, 26 Oct 2020 10:05:10 +0000
+	id 1kX0ai-0007oy-5h; Mon, 26 Oct 2020 11:23:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from
- <3UZmWXwgKAOATQDKPJUWIQQING.EQO@flex--robinhsu.bounces.google.com>)
- id 1kWzNF-00045g-7t
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 10:05:09 +0000
+ <3fpmWXwgKAA863qx2w79v33v0t.r31@flex--robinhsu.bounces.google.com>)
+ id 1kX0ag-0007og-Gz
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 11:23:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
  Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sqeklWdICtGUlm4BzSZyDT81vCJHA9YvFrN0eJR+mck=; b=he9ZJ25Z7xzlsT+TzQrOHg3m9e
- Qfyvp8f+9d+Ps6Tef1uG36iSUnm/pHpXt+UGaho9oidwgQdT2Yu2b9dnzD7ANTkgi6amPjTuVdeRo
- FbYdDRa5ykoNtmPICKzKSjgcUvnCL/Uqj9gzOlzgKVOf/OHPMGdHOnP/0o9SQP1gPdtU=;
+ bh=iuncRZU/n/qdgI7S//uwAQmqKe3LmFdZ5wVUdpPMh/w=; b=fSIjG68Yqx/KTFuzbw7hLXctFf
+ uWESP1Yhp49NV2ceaTxcE7bzY2NFEXzZU8BEJH+YN8kXre3NfTc4nSX3Ot0Frea7RqsOsK5rh5ZN+
+ Kdlu4KYRSmKBqGrbWvokX5iepZ/T1kOwa1LPMSJBvhD5B+oW3WqGpwkWNQqbVS0is5/4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
  Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=sqeklWdICtGUlm4BzSZyDT81vCJHA9YvFrN0eJR+mck=; b=K
- pi2pGxxATHkHnm1tKwu3MPXPAqwM1w/U9YakWw2Y8byrTX/ee0ZT0xqOvrxFeWZpJQq6FGLUCxTOR
- Y81IBvHJs+ackbsT9seiP/fL7IXVwnSvEdemizsozPqhV6FwEiWbAiFViUw6M6jlXPi68+kClqrRs
- 5+dImEA3YLg+V/E0=;
-Received: from mail-yb1-f201.google.com ([209.85.219.201])
+ List-Owner:List-Archive; bh=iuncRZU/n/qdgI7S//uwAQmqKe3LmFdZ5wVUdpPMh/w=; b=Y
+ HEFwLXACS5btHE//JGLOTYGuAa9lK6FdCSiZo3FLuTg8FDNtni+uyXc3W1OewRtYBqKoNaxBqsE3E
+ Ff1OsUn1dLRLJIWjcfUzWCWxba7qNlhz3OWUCJQaUkgNy3Jkaf1AYGzWY3q2FzvqNE6rPEeab5OML
+ AiqaOco5FodLd1mQ=;
+Received: from mail-pj1-f73.google.com ([209.85.216.73])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kWzN5-00E1bP-9G
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 10:05:09 +0000
-Received: by mail-yb1-f201.google.com with SMTP id u13so3041966ybk.9
+ id 1kX0ab-00E6Cv-AE
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 26 Oct 2020 11:23:06 +0000
+Received: by mail-pj1-f73.google.com with SMTP id bp7so2504086pjb.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 26 Oct 2020 03:04:59 -0700 (PDT)
+ Mon, 26 Oct 2020 04:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=sender:date:message-id:mime-version:subject:from:to:cc;
- bh=sqeklWdICtGUlm4BzSZyDT81vCJHA9YvFrN0eJR+mck=;
- b=q0uzHGPNjB5m1DuTHX4iXRw0kDatf3gJdNLuyPAoc/OoZMHn82lSqBSuYL377RR528
- /bVZeqM166p83zgSj11HJKhhW9gUo7lXKl9RdfDAa+7AOY/3sKVIK5BTZtg8ByhHHkjm
- WH6zCR0CC2P4FYzZRF/RpMbfC2W1Te6ineAHUoWCh2su8MJua+sbQWk3svw7IUvmchYa
- yutOjAhUpFSu/S9jKvDNjHnRAvPgiZz4gUWp9UBEmswxChldZq/prb3tgQKfe3nIbDhz
- 0+kUfEceCsFlW9fViKpWTGJGVSdlJcBVReSuJvgTCjZ91b/56ULdH0rTB4rz26NdxgZx
- so4A==
+ bh=iuncRZU/n/qdgI7S//uwAQmqKe3LmFdZ5wVUdpPMh/w=;
+ b=hmJWGdpqiRn4Qj3L1IygZpzGMSUe6R8DMaJrpkXSHQNw39KBa6RMIe5uzIiB6ALHx6
+ 7mf+S0RUDSiwwxcgUUs2g6tU+OdLYm1nKIqq5KDm6ufIwwB0GIU1jQKNY/1b7RjRCnxP
+ 5Y4ejCYnwj0alqRFXaHpjum/4p0iNzF2DB9ksst+SKHVKXZqfeJI5gWldJTvvAU/kl2X
+ lkvCJ4do2DG/ivLaxOTCeXASrBgPukGqE1x6TWKC+Vm+f8ZGS54j9kCS/fF+YnD1VuPU
+ yENvmvyMy1Tn74qP91YQFTRR4CPScRNkvVnq/ITJEE9/ncpgTc1eudPTKtluTEgNMexN
+ LKFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
  :to:cc;
- bh=sqeklWdICtGUlm4BzSZyDT81vCJHA9YvFrN0eJR+mck=;
- b=BvaEWaicrTFZjiLoPFGFcLcQY69LH4Zew5gZpGrwUeYp/2A7U6Zx0KjMRFxLV6aXGL
- r1ePtRjFnVOI5icV4QQvYADjlhKMU6hqiYy2gVBCVqI/YLfM1b87+h77Iryquc8EyL3N
- eZ1wF08cxQZwHL/iD8oFIKGZts8HL5BuYtq0Zc3ljwR8nbXzeLDhe0AS4oY/RgKVs/N1
- OXnxer+jtl0gHfH7ktWxGDn3ODGPY5mvSkJS40wwqvKo5JSOYXPPij6SML0yZt36AJW5
- SRkctZwEzwBSUG7aTEPC05M6jXLdrlQIKRJuskgh8b5Wt8bFN/JqNSs7UNHVtJZCIjWb
- jGvQ==
-X-Gm-Message-State: AOAM5324UStf/yjZYbhOTjAqcvo5IuVaC+CSPsa4BZniE3tQPq/92EsK
- a+71Qq9yUcw8O1gpfpKr66yhnsK6dvvjXc7JS4CjxcTAYnRlln5WLxTTtHscT8nZGh4wXHHFwLA
- NepS4vAqmm+Zl490XOBHTwbG7HrMEm2B/um0dq2VkfdDe6pF0MmLlrSdYvtf05lwNV9uA4VSR88
- kyFidibrmoL00m
-X-Google-Smtp-Source: ABdhPJz/h1idORhGUhGdrHKqXxETBi3Ayx3ZvwrPgqcdXpBVB/CzsBES44aCJ+epbOE6UDkQOQsramwRYyPHbw==
+ bh=iuncRZU/n/qdgI7S//uwAQmqKe3LmFdZ5wVUdpPMh/w=;
+ b=d+OF2UU52Yn3tbfBEU6GynPcSgh3dYkBADc4Zfh4umR7HlBnQkgZt/IJYSD27ZuIjp
+ Y5cdmfnqMVXhwrTHMuPGvHT3XDVYGeE8ytS39NdoxuzUijEqVi3gyawKcBh1inaT3W4W
+ iDRc+jULSVKUUFQ45IiqQphyZBeE6xSSzP9ySRLx53iuN7uslZB7YDv30a5gwCyqRlRp
+ usQa0L4t5NhqcJ4hBUwcXaGixsSQU+tNde/4kHUEVOvnVg7Zur+ODrrBNH5W5HJAPPIX
+ h9xo9rhwyQ59S1WeOXdw5mS4c1aPsjuzCZhxopZj7CCOMJxISl5npcbeCHId32riz/zB
+ nWfw==
+X-Gm-Message-State: AOAM533vYQuHiIEy/Ly3aNGV/Z4S/8jKzLD4vfiuemRsxueKuKhg3CFv
+ yBfgEsSoe4dzGrA4rxUMi69TdDvgoAf1y19jlLjUmh4pK4TLotu6FSQg9tjBahIcqBpdsfbmPTw
+ jgeZLck2WzfDVRHlHFmGFoGnw/uv1eK03bdZGQRpy8McInklTsOMDbU4gcRHqrSfNR92ss9MHmO
+ ZHnQWU27HnPDFS
+X-Google-Smtp-Source: ABdhPJy+mI0vnmKylwtlFsmVxcnM1tY+7eaIo+ulq7WWs25n80yx/lSw9fa2rKak9PfsRXDP0qke3U9F+1cAUQ==
 X-Received: from robinhsu-p520.ntc.corp.google.com
  ([2401:fa00:fc:202:1ea0:b8ff:fe77:fe45])
- (user=robinhsu job=sendgmr) by 2002:a25:da4e:: with SMTP id
- n75mr21019061ybf.425.1603705169605; Mon, 26 Oct 2020 02:39:29 -0700 (PDT)
-Date: Mon, 26 Oct 2020 17:39:05 +0800
-Message-Id: <20201026093905.1498859-1-robinhsu@google.com>
+ (user=robinhsu job=sendgmr) by 2002:a0c:e054:: with SMTP id
+ y20mr16670180qvk.30.1603705214218; Mon, 26 Oct 2020 02:40:14 -0700 (PDT)
+Date: Mon, 26 Oct 2020 17:40:00 +0800
+Message-Id: <20201026094000.1500425-1-robinhsu@google.com>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.29.0.rc2.309.g374f81d7ae-goog
 To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, 
  chao@kernel.org
-X-Headers-End: 1kWzN5-00E1bP-9G
-Subject: [f2fs-dev] [PATCH 0/1] f2fs-tools:fsck.f2fs Fix bad return value
+X-Headers-End: 1kX0ab-00E6Cv-AE
+Subject: [f2fs-dev] [PATCH 1/1] f2fs-toos:fsck.f2fs Fix bad return value
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -124,15 +124,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs-tools:fsck.f2fs: Fix always return 1 (error) after asking user to restore
-           lost files into ./lost_found
+'ret' should not have been used here: otherwise, it would be wrongly used
+as the error code and then be returned from main().
 
-Robin Hsu (1):
-  f2fs-toos:fsck.f2fs Fix bad return value
-
+Signed-off-by: Robin Hsu <robinhsu@google.com>
+---
  fsck/fsck.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index f97e9fb..66e4e3f 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -3137,8 +3137,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 		char ans[255] = {0};
+ 
+ 		printf("\nDo you want to restore lost files into ./lost_found/? [Y/N] ");
+-		ret = scanf("%s", ans);
+-		ASSERT(ret >= 0);
++		ASSERT(scanf("%s", ans) >= 0);
+ 		if (!strcasecmp(ans, "y")) {
+ 			for (i = 0; i < fsck->nr_nat_entries; i++) {
+ 				if (f2fs_test_bit(i, fsck->nat_area_bitmap))
 -- 
 2.29.0.rc2.309.g374f81d7ae-goog
 
