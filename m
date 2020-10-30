@@ -5,102 +5,99 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
 	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A58C4363A
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2020 02:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A613C4363A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2020 02:28:43 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AC65C2076B;
-	Fri, 30 Oct 2020 02:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9016620756;
+	Fri, 30 Oct 2020 02:28:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="mTtpdln2";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Z36gBgnf";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDv6bjtL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC65C2076B
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="j2gT2xns";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Jih3PASA";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwGyii0v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9016620756
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kYK9F-0001Nw-7d; Fri, 30 Oct 2020 02:28:13 +0000
+	id 1kYK9h-0002gU-Ua; Fri, 30 Oct 2020 02:28:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <daeho43@gmail.com>) id 1kYK9D-0001Ni-Vu
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Oct 2020 02:28:12 +0000
+ (envelope-from <daeho43@gmail.com>) id 1kYK9G-0002fT-LU
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Oct 2020 02:28:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6j0d1liRXtmZgJz/uib04kzQvCzDNmh9oEoxa0otezM=; b=mTtpdln22Mhz6ur+fb81og0q/B
- WenZEeEP4D3gBn/eFHhx4WuSqjdh86jLAgeNEcksamgiCnR1EGOsPFCpSuySdIQmEcng49uLDdN9L
- QUSXtfQjWTdeJN4zyXWg4nmTyojIEgLUfJWrXsdTkW5yLlOhI58b/vkFEyVa66vZJHNs=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=6j0d1liRXtmZgJz/uib04kzQvCzDNmh9oEoxa0otezM=; b=Z36gBgnfhlDs0by6P8vgFk9/Tl
- L8P1UlhRrSbkne/ENyK8oVutxFcvcScgoAylyqUXBei7zImH+mSFQyXFyiIijmiIGLiwkIPh3P6vn
- hrTWs6yt0DjMvWbccjYKWQlQMdhiL22C6HR7AvxhOQWxfMNfXlmWRE4SzpUKLKeEeJ/A=;
-Received: from mail-pg1-f196.google.com ([209.85.215.196])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=B60xVbhPe7rb6EgjNTjb/8plxpCQprGZrIuoqWSL9gY=; b=j2gT2xnsZ1MCRiPHetEQMCUZOZ
+ lU0ds7WNPWgjVz7wX0DM+mVb4wTN2LFsCLV7TM0xINoogXzHQMww7+9e8PcUzZ4mQTy5YUQv4vHb0
+ vUJjrH2fwqKH7XmN0l4aLMe8wV2AxUYYqXPFjB759CumStpLf4Rl+gOjcECBERFhuIJs=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=B60xVbhPe7rb6EgjNTjb/8plxpCQprGZrIuoqWSL9gY=; b=J
+ ih3PASAlw6bGGvktauR3njxj5qv3CekvrWG2BXwkyVEFRzmnJl45QJHxhEosTSyBwkQLk4ly4cFL9
+ VI7xZ5Rv+hRtnlg0S8H5j/TDrsMlumuAHb8MElfP6y0gjbsoOyuIACRk/536F5fQ8u0iII9vVTPOg
+ y+FLtYGT3MSlY5kE=;
+Received: from mail-pg1-f194.google.com ([209.85.215.194])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kYK97-00CO2E-02
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Oct 2020 02:28:11 +0000
-Received: by mail-pg1-f196.google.com with SMTP id o3so3903912pgr.11
+ id 1kYK94-001uwd-04
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Oct 2020 02:28:14 +0000
+Received: by mail-pg1-f194.google.com with SMTP id n16so3903769pgv.13
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 29 Oct 2020 19:28:04 -0700 (PDT)
+ Thu, 29 Oct 2020 19:28:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=from:to:cc:subject:date:message-id:in-reply-to:references
- :mime-version:content-transfer-encoding;
- bh=6j0d1liRXtmZgJz/uib04kzQvCzDNmh9oEoxa0otezM=;
- b=FDv6bjtLnEOT5O/NcTH5wV1jVuDd+7yn9o2ukpKpMDQahiSu7djlAbtrulpvYh2G4N
- e90DlJLg5EpQDVwxvftmvCqTJ7ab5qNT9eDDNwps/JGWRSMY/wvY5bZ977EO39PcfOEG
- k+439UJ3NMX9qjEBnu0maECcChJq5ScsffK2drf4R3xVBaOqR2r5QWUqkd9G9l0ryC+U
- Hw4w2DROuTbClfSnSa/iZ/n9bmeZ0MhNjxKCFm+p1M1w41gb3FooV2tglo4kavD6Gz7u
- 1Dh9bVT8CtcOzXsNa9ZgvKVEBpjVtWfjNMsOK3B1pGIm4EatJfUu0K+Ks4gJaMtyeFWF
- LVDw==
+ h=from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=B60xVbhPe7rb6EgjNTjb/8plxpCQprGZrIuoqWSL9gY=;
+ b=ZwGyii0vEEV7yAtOirV25Mk5Ork0AfFf9W4/77JUJw/QyA70vkLNYpMdO/MFDUUwA9
+ JMRskGNLJ0+LuplA0Tu1gia4MqUHewyZCkqGDqNFMxnPTHC1bjChm7Gz9uYsEuCcN1M7
+ oVGfaTiffXVwU47KqajHfqT3gr1T8mzROtCGGecI+KQaPxjoIRGBKNYwHg0E+1XeiBNs
+ xAwZMgozJvTdj6a2d6CJNN45vMXFXTUn9zjnNiKP5HR15Wg30Eg/JO7qL7aRtBDQX7Up
+ qv9ofQpNCPJ4K5AEjdxuLdxvMxtT9cl/bWL5sGAu2a3viaVL8vs2Q67l4Mh2cx1kQ1ul
+ I34Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
- :references:mime-version:content-transfer-encoding;
- bh=6j0d1liRXtmZgJz/uib04kzQvCzDNmh9oEoxa0otezM=;
- b=eJNQPHFqzymNEu4c1o8S36CDAFwaDNDuPNXmr5PU9ZRQMawbHe/JEnlr6c6Vmy4ICl
- HDjSD0gUr+Hli7Q2ZzSPGKtw5zwZM7v/QCeIqnaVFtEO3tkahUSnyfXERhS/TRfZR/aO
- x9IPOHxDW4h5sTdzpvdjqIzlFbrj8kgqMq1SRqTxF1wsTJsTvSYbo1XDx/rUq+5xRM9T
- KSXlGuMVTBdjVMt413o4ZpjXBToFmkQDbEPpqv+6I6sb8mC1cbIJo+uz9eor3kXi5Ap9
- 85Q+YrB2vDiwUF+YNT4BvS+Qkn8kHNXhMEIFQujaZiI4xnJDK3FAifjVC57aGamH9V39
- bS3Q==
-X-Gm-Message-State: AOAM532AipZ5D4UDwRXdnMd17BqWFHoizkJhMZJEt2csxXQhm0iXIOMp
- DI3QytbcLZCzI34vhxGpvgQ=
-X-Google-Smtp-Source: ABdhPJwlSI6t5JHN2/b65h/7qnwcJGwBJx+/0pPaBmCnuF1PDb/HNgjprhaBwAHp6h64BE0hQ1ClmQ==
-X-Received: by 2002:a17:90a:a514:: with SMTP id
- a20mr76054pjq.213.1604024879497; 
- Thu, 29 Oct 2020 19:27:59 -0700 (PDT)
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=B60xVbhPe7rb6EgjNTjb/8plxpCQprGZrIuoqWSL9gY=;
+ b=fDXQZ9trJuY2D/z6nMeqMtyI9fPeKwWCw5/2gfLjEOFi0niXltRZCV6vV/8L9O7ALX
+ pb3SPppDqNh6dAPVSUf+q3b8CtEEzW9s/pKAxi+0SGrz9fU1B3yRx2dzGoD7V7RICMPC
+ S3zc8ioKYnt1wIEPHeRStpxOwAN19Em4VTGv8XT44bumo8Dturk90Ax6/sOwyQphYs6a
+ QFPTuWJ8tuAlI66qN9fQYKQcAagca1PHVnMCEPIFRW+4hvEkZDLMXJrYWYGOjmFwqOSQ
+ Nmvc2q2+4fnUgfS1PyZ+c15y24s5pMGS8/Cd2DV2vkxj4e9ogJlxRkssSY8eJDIT2GVt
+ pImA==
+X-Gm-Message-State: AOAM531rEcVZROD/iswrYDQ5oXNMLOTbW543SmICXktj+ZhZt0DPF6j5
+ U9jetgm7HVyFuZ6VfHFDeeA=
+X-Google-Smtp-Source: ABdhPJxqEJU7lcRxu0xqThY5dQsPj+rwQXsaHEyD1VedG6oepKlzs6U69vxwmyyFyI/MFbuiR2A9Og==
+X-Received: by 2002:a65:4b84:: with SMTP id t4mr237102pgq.138.1604024876259;
+ Thu, 29 Oct 2020 19:27:56 -0700 (PDT)
 Received: from daehojeong1.seo.corp.google.com
  ([2401:fa00:d:11:a6ae:11ff:fe18:6ce2])
- by smtp.gmail.com with ESMTPSA id mp13sm1207967pjb.36.2020.10.29.19.27.57
+ by smtp.gmail.com with ESMTPSA id mp13sm1207967pjb.36.2020.10.29.19.27.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 29 Oct 2020 19:27:58 -0700 (PDT)
+ Thu, 29 Oct 2020 19:27:55 -0700 (PDT)
 From: Daeho Jeong <daeho43@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  kernel-team@android.com
-Date: Fri, 30 Oct 2020 11:27:48 +0900
-Message-Id: <20201030022748.332831-2-daeho43@gmail.com>
+Date: Fri, 30 Oct 2020 11:27:47 +0900
+Message-Id: <20201030022748.332831-1-daeho43@gmail.com>
 X-Mailer: git-send-email 2.29.1.341.ge80a0c044ae-goog
-In-Reply-To: <20201030022748.332831-1-daeho43@gmail.com>
-References: <20201030022748.332831-1-daeho43@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1kYK97-00CO2E-02
-Subject: [f2fs-dev] [PATCH v6 2/2] f2fs: add F2FS_IOC_SET_COMPRESS_OPTION
+X-Headers-End: 1kYK94-001uwd-04
+Subject: [f2fs-dev] [PATCH v6 1/2] f2fs: add F2FS_IOC_GET_COMPRESS_OPTION
  ioctl
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -120,8 +117,8 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Daeho Jeong <daehojeong@google.com>
 
-Added a new F2FS_IOC_SET_COMPRESS_OPTION ioctl to change file
-compression option of a file.
+Added a new F2FS_IOC_GET_COMPRESS_OPTION ioctl to get file compression
+option of a file.
 
 struct f2fs_comp_option {
     u8 algorithm;         => compression algorithm
@@ -132,151 +129,96 @@ struct f2fs_comp_option {
 
 struct f2fs_comp_option option;
 
-option.algorithm = 1;
-option.log_cluster_size = 7;
-
-ioctl(fd, F2FS_IOC_SET_COMPRESS_OPTION, &option);
+ioctl(fd, F2FS_IOC_GET_COMPRESS_OPTION, &option);
 
 Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
 
-v6: changed the function name of checking compression algorithm validity.
-v5: allowed to set algorithm which is not currently enabled by kernel.
 v4: changed commit message.
 v3: changed the error number more specific.
-    folded in fix for build breakage reported by kernel test robot
-    <lkp@intel.com> and Dan Carpenter <dan.carpenter@oracle.com>.
 v2: added ioctl description.
 ---
- fs/f2fs/compress.c |  5 +++++
- fs/f2fs/f2fs.h     |  7 ++++++
- fs/f2fs/file.c     | 54 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 66 insertions(+)
+ fs/f2fs/f2fs.h |  7 +++++++
+ fs/f2fs/file.c | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 7895186cc765..b0144670d320 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -514,6 +514,11 @@ bool f2fs_is_compress_backend_ready(struct inode *inode)
- 	return f2fs_cops[F2FS_I(inode)->i_compress_algorithm];
- }
- 
-+bool f2fs_is_compress_algorithm_valid(unsigned char algorithm)
-+{
-+	return f2fs_cops[algorithm] != NULL;
-+}
-+
- static mempool_t *compress_page_pool;
- static int num_compress_pages = 512;
- module_param(num_compress_pages, uint, 0444);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a33c90cf979b..70a8a2196888 100644
+index 53fe2853579c..a33c90cf979b 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -435,6 +435,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+@@ -433,6 +433,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+ 					_IOR(F2FS_IOCTL_MAGIC, 19, __u64)
+ #define F2FS_IOC_SEC_TRIM_FILE		_IOW(F2FS_IOCTL_MAGIC, 20,	\
  						struct f2fs_sectrim_range)
- #define F2FS_IOC_GET_COMPRESS_OPTION	_IOR(F2FS_IOCTL_MAGIC, 21,	\
- 						struct f2fs_comp_option)
-+#define F2FS_IOC_SET_COMPRESS_OPTION	_IOW(F2FS_IOCTL_MAGIC, 22,	\
++#define F2FS_IOC_GET_COMPRESS_OPTION	_IOR(F2FS_IOCTL_MAGIC, 21,	\
 +						struct f2fs_comp_option)
  
  /*
   * should be same as XFS_IOC_GOINGDOWN.
-@@ -3915,6 +3917,7 @@ bool f2fs_compress_write_end(struct inode *inode, void *fsdata,
- int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock);
- void f2fs_compress_write_end_io(struct bio *bio, struct page *page);
- bool f2fs_is_compress_backend_ready(struct inode *inode);
-+bool f2fs_is_compress_algorithm_valid(unsigned char algorithm);
- int f2fs_init_compress_mempool(void);
- void f2fs_destroy_compress_mempool(void);
- void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity);
-@@ -3945,6 +3948,10 @@ static inline bool f2fs_is_compress_backend_ready(struct inode *inode)
- 	/* not support compression */
- 	return false;
- }
-+static inline bool f2fs_is_compress_algorithm_valid(unsigned char algorithm)
-+{
-+	return false;
-+}
- static inline struct page *f2fs_compress_control_page(struct page *page)
- {
- 	WARN_ON_ONCE(1);
+@@ -481,6 +483,11 @@ struct f2fs_sectrim_range {
+ 	u64 flags;
+ };
+ 
++struct f2fs_comp_option {
++	u8 algorithm;
++	u8 log_cluster_size;
++};
++
+ /* for inline stuff */
+ #define DEF_INLINE_RESERVED_SIZE	1
+ static inline int get_extra_isize(struct inode *inode);
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 8922ab191a9d..9fbe98a90301 100644
+index ef5a844de53f..8922ab191a9d 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -3963,6 +3963,57 @@ static int f2fs_ioc_get_compress_option(struct file *filp, unsigned long arg)
- 	return 0;
+@@ -3936,6 +3936,33 @@ static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
+ 	return ret;
  }
  
-+static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
++static int f2fs_ioc_get_compress_option(struct file *filp, unsigned long arg)
 +{
 +	struct inode *inode = file_inode(filp);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
 +	struct f2fs_comp_option option;
-+	int ret = 0;
 +
-+	if (!f2fs_sb_has_compression(sbi))
++	if (!f2fs_sb_has_compression(F2FS_I_SB(inode)))
 +		return -EOPNOTSUPP;
 +
-+	if (!(filp->f_mode & FMODE_WRITE))
-+		return -EBADF;
++	inode_lock(inode);
 +
-+	if (copy_from_user(&option, (struct f2fs_comp_option __user *)arg,
++	if (!f2fs_compressed_file(inode)) {
++		inode_unlock(inode);
++		return -ENODATA;
++	}
++
++	option.algorithm = F2FS_I(inode)->i_compress_algorithm;
++	option.log_cluster_size = F2FS_I(inode)->i_log_cluster_size;
++
++	inode_unlock(inode);
++
++	if (copy_to_user((struct f2fs_comp_option __user *)arg, &option,
 +				sizeof(option)))
 +		return -EFAULT;
 +
-+	if (!f2fs_compressed_file(inode) ||
-+			option.log_cluster_size < MIN_COMPRESS_LOG_SIZE ||
-+			option.log_cluster_size > MAX_COMPRESS_LOG_SIZE ||
-+			option.algorithm >= COMPRESS_MAX)
-+		return -EINVAL;
-+
-+	file_start_write(filp);
-+	inode_lock(inode);
-+
-+	if (f2fs_is_mmap_file(inode) || get_dirty_pages(inode)) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	if (inode->i_size != 0) {
-+		ret = -EFBIG;
-+		goto out;
-+	}
-+
-+	F2FS_I(inode)->i_compress_algorithm = option.algorithm;
-+	F2FS_I(inode)->i_log_cluster_size = option.log_cluster_size;
-+	F2FS_I(inode)->i_cluster_size = 1 << option.log_cluster_size;
-+	f2fs_mark_inode_dirty_sync(inode, true);
-+
-+	if (!f2fs_is_compress_algorithm_valid(option.algorithm))
-+		f2fs_warn(sbi, "compression algorithm is successfully set, "
-+			"but current kernel doesn't support this algorithm.");
-+out:
-+	inode_unlock(inode);
-+	file_end_write(filp);
-+
-+	return ret;
++	return 0;
 +}
 +
  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
  {
  	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
-@@ -4053,6 +4104,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+@@ -4024,6 +4051,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_reserve_compress_blocks(filp, arg);
+ 	case F2FS_IOC_SEC_TRIM_FILE:
  		return f2fs_sec_trim_file(filp, arg);
- 	case F2FS_IOC_GET_COMPRESS_OPTION:
- 		return f2fs_ioc_get_compress_option(filp, arg);
-+	case F2FS_IOC_SET_COMPRESS_OPTION:
-+		return f2fs_ioc_set_compress_option(filp, arg);
++	case F2FS_IOC_GET_COMPRESS_OPTION:
++		return f2fs_ioc_get_compress_option(filp, arg);
  	default:
  		return -ENOTTY;
  	}
-@@ -4224,6 +4277,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+@@ -4194,6 +4223,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_RELEASE_COMPRESS_BLOCKS:
  	case F2FS_IOC_RESERVE_COMPRESS_BLOCKS:
  	case F2FS_IOC_SEC_TRIM_FILE:
- 	case F2FS_IOC_GET_COMPRESS_OPTION:
-+	case F2FS_IOC_SET_COMPRESS_OPTION:
++	case F2FS_IOC_GET_COMPRESS_OPTION:
  		break;
  	default:
  		return -ENOIOCTLCMD;
