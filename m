@@ -2,80 +2,80 @@ Return-Path: <SRS0=Y/5H=EF=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E68EC4741F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2020 02:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EAA8C4741F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Oct 2020 02:38:08 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6D9B3206DC;
-	Fri, 30 Oct 2020 02:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 9D4B32076E;
+	Fri, 30 Oct 2020 02:38:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="IPqbd58M";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="e5x4G23E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D9B3206DC
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="OT9A4LJ5";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="LazOi8k7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4B32076E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kYKHv-0002SM-6X; Fri, 30 Oct 2020 02:37:11 +0000
+	id 1kYKIp-00035d-1K; Fri, 30 Oct 2020 02:38:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kYKHu-0002SA-2q
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Oct 2020 02:37:10 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kYKIn-00035W-MC
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Oct 2020 02:38:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ MIME-Version:Date:Message-ID:References:CC:To:From:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rwEhH3u9gIAPrnG5+i8fKHYrU3ItDWeMB/S5yew4eHI=; b=IPqbd58MT3fDvN3XAurVlOsQ+W
- UoJJYu5FIqwwb/lrsSLbqpbPnNSrOxB/9vEffKsrvtEdvTV4jmYWW+3Fuu2JTmDIus0H3twl0T//b
- hXN1S70rPfcXOKKDnnevwGzAxxnRllK/m/1Epzzg5EmTy8G2bKjiWCCZSUdREhWhO6pA=;
+ bh=zrRRUAJFPridZfM/u/ExFQ6aq+bhT4nn1lKI4vxNtqI=; b=OT9A4LJ544tlGfYIx7EeIc8gKk
+ B21ML+pszIoke+lAg0zUOtXq3AnFWIsJMQxTxc9mz6hmly5qUjkyIhIzsrTlsms9fWiFmZH4hIB31
+ Nm+ZCXyVyTVzR1OHOSz27Lrt714/4Rs2T+FiUaR5wy5PNtjYe5+mYiPpLht+Jp8XMsFA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ Message-ID:References:CC:To:From:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=rwEhH3u9gIAPrnG5+i8fKHYrU3ItDWeMB/S5yew4eHI=; b=e5x4G23E+Mf55by728Ot4P3fGP
- afRgKWyfMT80sPn+/t+cORey5OF+39q8t7YoZrz0mPNIwUVYCsyoSOU926tr/8N02ne5tiSebnrOV
- c0+h3OWXg70HTMiDTXWkd6SDMbCOTcG9Hl23VJTw2Q1kCGG7Gp/2v0FFDIVfWlIHUAnA=;
-Received: from szxga04-in.huawei.com ([45.249.212.190])
+ bh=zrRRUAJFPridZfM/u/ExFQ6aq+bhT4nn1lKI4vxNtqI=; b=LazOi8k7o3UKUbEaeKeeKOcyT3
+ +Cesr7/fyTZEZFH35aom0T7+T3xjZ+bhcj/QO/mWGKcQ3RQu+nR77M6HciQpkv71RXUTGjrl89HQn
+ ACyb7W0so84NlZHd/bMORUgtu6eqjAQz2W5O7AafOjOGQcptna+sCnlJiCavXpO+8C9A=;
+Received: from szxga06-in.huawei.com ([45.249.212.32])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kYKHj-001vUU-AD
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Oct 2020 02:37:10 +0000
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CMmfR4ZVQz15LL0;
- Fri, 30 Oct 2020 10:36:47 +0800 (CST)
+ id 1kYKIh-001vYV-NI
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 30 Oct 2020 02:38:05 +0000
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+ by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4CMmgh63FFzhd3g;
+ Fri, 30 Oct 2020 10:37:52 +0800 (CST)
 Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.487.0; Fri, 30 Oct
- 2020 10:36:43 +0800
+ (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.487.0; Fri, 30 Oct
+ 2020 10:37:45 +0800
+From: Chao Yu <yuchao0@huawei.com>
 To: Daeho Jeong <daeho43@gmail.com>, <linux-kernel@vger.kernel.org>,
  <linux-f2fs-devel@lists.sourceforge.net>, <kernel-team@android.com>
-References: <20201030022748.332831-1-daeho43@gmail.com>
- <20201030022748.332831-2-daeho43@gmail.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <0b009361-7aff-d2e4-59b7-3316a299627d@huawei.com>
-Date: Fri, 30 Oct 2020 10:36:43 +0800
+References: <20201029041538.4165209-1-daeho43@gmail.com>
+ <861e569d-feae-c521-35b7-dcb8b79cdfba@huawei.com>
+Message-ID: <61d43f5d-f26c-525a-6405-bae0ca495c6d@huawei.com>
+Date: Fri, 30 Oct 2020 10:37:45 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20201030022748.332831-2-daeho43@gmail.com>
+In-Reply-To: <861e569d-feae-c521-35b7-dcb8b79cdfba@huawei.com>
 Content-Language: en-US
 X-Originating-IP: [10.136.114.67]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kYKHj-001vUU-AD
-Subject: Re: [f2fs-dev] [PATCH v6 2/2] f2fs: add
- F2FS_IOC_SET_COMPRESS_OPTION ioctl
+X-Headers-End: 1kYKIh-001vYV-NI
+Subject: Re: [f2fs-dev] [PATCH v5 1/2] f2fs: add
+ F2FS_IOC_GET_COMPRESS_OPTION ioctl
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,29 +92,32 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/10/30 10:27, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> Added a new F2FS_IOC_SET_COMPRESS_OPTION ioctl to change file
-> compression option of a file.
-> 
-> struct f2fs_comp_option {
->      u8 algorithm;         => compression algorithm
->                            => 0:lzo, 1:lz4, 2:zstd, 3:lzorle
->      u8 log_cluster_size;  => log scale cluster size
->                            => 2 ~ 8
-> };
-> 
-> struct f2fs_comp_option option;
-> 
-> option.algorithm = 1;
-> option.log_cluster_size = 7;
-> 
-> ioctl(fd, F2FS_IOC_SET_COMPRESS_OPTION, &option);
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+On 2020/10/29 15:24, Chao Yu wrote:
+> On 2020/10/29 12:15, Daeho Jeong wrote:
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>> +	inode_lock(inode);
+> 
+> It's minor,
+> 
+> inode_lock_shared()?
+> 
+>> +
+>> +	if (!f2fs_compressed_file(inode)) {
+>> +		inode_unlock(inode);
+> 
+> inode_unlock_shared()?
+> 
+>> +		return -ENODATA;
+>> +	}
+>> +
+>> +	option.algorithm = F2FS_I(inode)->i_compress_algorithm;
+>> +	option.log_cluster_size = F2FS_I(inode)->i_log_cluster_size;
+>> +
+>> +	inode_unlock(inode);
+> 
+> ditto.
+
+Any comments?
 
 Thanks,
 
