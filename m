@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A661AC2D0A3
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  1 Nov 2020 10:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B36B5C388F9
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  1 Nov 2020 10:38:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3E7C12071A;
-	Sun,  1 Nov 2020 10:38:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4CDFB2071A;
+	Sun,  1 Nov 2020 10:38:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="LSZn8BzM";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="dv/AkbUz";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b0vw96aB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E7C12071A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="DkluKCzL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XWCS+F+n";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2lWiw1mX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CDFB2071A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kZAl5-0003ad-PQ; Sun, 01 Nov 2020 10:38:47 +0000
+	id 1kZAl9-0007cj-05; Sun, 01 Nov 2020 10:38:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <gregkh@linuxfoundation.org>) id 1kZAl4-0003aW-4E
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Nov 2020 10:38:46 +0000
+ (envelope-from <gregkh@linuxfoundation.org>) id 1kZAl5-0007c4-TF
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Nov 2020 10:38:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
  :Message-ID:In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+jgQTde2j3YUZgEFrrLZ18oZm1spAOrvzy+6IFF7vpk=; b=LSZn8BzM7EUrfNOqp9kqHS7KVw
- g9RYaKG4e4ri8ljbUnMmkeBEcRKkH3dehxezDs9eZvYAQPGSxxB/xQooL6uXgiUBsJ+Pb2Yv8SrTI
- qxz/a2WVMCTJCh1hLLRSO74qj1K24yO2h04JDjwKdqt/uljmQlGXUfaoi+8BrYSqmfd8=;
+ bh=y/+j07ACkR2aDeIa1w5hCJ4VHeVNt9O/NJCzJ1Q1J+w=; b=DkluKCzLwz5TpcThVUOOCZTucC
+ ZCmwyrvf2QikkajrKMQx9ey2DkIPRqo7WiPkYSCvW8TWerQlwj7JO87x/oJwufgG0QDyIkmBY2y/e
+ N6l/5WUfal0jmmWlrnp36P5iHzPmOVcVKauKivdQiHma2Mxm6wqUM/Dkq3Uz81xdtZIM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
@@ -46,39 +46,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+jgQTde2j3YUZgEFrrLZ18oZm1spAOrvzy+6IFF7vpk=; b=dv/AkbUz9pRHxvuMr0nnRsom1j
- pNwm9mYrglW0gLcjEFiZFeiJsVgEDR+uiwsG9tBbRfPpZmVfiZK8gII/F/giuBH3Lb+j4EINshJLW
- jnkBg4m8i7xx3N1unn49J0QA1lGGRm+Dzvn2kYG2PidEp9TkXFMvkoIuzw9asd1dzdXg=;
+ bh=y/+j07ACkR2aDeIa1w5hCJ4VHeVNt9O/NJCzJ1Q1J+w=; b=XWCS+F+nKbXdTxt6787dkg0L3J
+ 0zB/eeik5ZSYa8sDUl5phvse+2FaOor2R2jqc9KjjQ2ERc/JFDDX8eluL/pPxMl96QZCQvC8JjMNY
+ pnR0ElLi1KLbDX7MonTSrnvsC0zBD6ALNjVQucda/M8HuQlXcfsxGB7GohfBdVJ4K4dg=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kZAkz-00FAYR-0q
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Nov 2020 10:38:45 +0000
+ id 1kZAkz-00FAYT-0s
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Nov 2020 10:38:47 +0000
 Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256
  bits)) (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id D5AA520731;
- Sun,  1 Nov 2020 10:38:24 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id AE9B32084C;
+ Sun,  1 Nov 2020 10:38:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1604227105;
- bh=eaB443rEm8dR9x1CWeKO5RamcSe+2dBaJZ1p9MEoMeA=;
+ s=default; t=1604227113;
+ bh=GurUq4W2huofrU6jLCvJXLA6jIU5fQdCFuhJS993u6E=;
  h=Subject:To:Cc:From:Date:In-Reply-To:From;
- b=b0vw96aBbwgYOmYkk4MaVWq8NqWCaEjxpuSGuJPtLa+ApI+gC4lMN+2z7iPMdyZEW
- tUMURgvo3jfkX7OEWDANRX+5LXI+T1maiwV3MMuxiHdIN2jmoMe3DK/hu7+EyPzHn/
- hfjymMyeTP4Me9diFHrM0NWNbQw5vZmXrPECU5jo=
+ b=2lWiw1mXJ0SoS9dgV9xDlVrZ8eDEvpwXalYswfzWJXPSY0p3zwVK0W0ZP9FmrPdLD
+ xo0RocQoOywk9q7FfV2I7+/NtOB/5NE/MKQXCMv+K8/zekAlTs5uMM0S3+f4H0KulY
+ 09NvbtBVE67vUyWYTIrjAuLs+Fd36lNMCPphN9L8=
 To: ebiggers@google.com, ebiggers@kernel.org, gregkh@linuxfoundation.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org,
  tytso@mit.edu
 From: <gregkh@linuxfoundation.org>
-Date: Sun, 01 Nov 2020 11:39:02 +0100
-In-Reply-To: <20201031220553.1085782-3-ebiggers@kernel.org>
-Message-ID: <160422714210845@kroah.com>
+Date: Sun, 01 Nov 2020 11:39:03 +0100
+In-Reply-To: <20201031220553.1085782-5-ebiggers@kernel.org>
+Message-ID: <16042271439860@kroah.com>
 MIME-Version: 1.0
 X-stable: commit
 X-Patchwork-Hint: ignore 
-X-Headers-End: 1kZAkz-00FAYR-0q
-Subject: [f2fs-dev] Patch "fscrypt: fix race allowing rename() and link() of
- ciphertext dentries" has been added to the 4.19-stable tree
+X-Headers-End: 1kZAkz-00FAYT-0s
+Subject: [f2fs-dev] Patch "fscrypt: only set dentry_operations on ciphertext
+ dentries" has been added to the 4.19-stable tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,13 +98,13 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 This is a note to let you know that I've just added the patch titled
 
-    fscrypt: fix race allowing rename() and link() of ciphertext dentries
+    fscrypt: only set dentry_operations on ciphertext dentries
 
 to the 4.19-stable tree which can be found at:
     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
 The filename of the patch is:
-     fscrypt-fix-race-allowing-rename-and-link-of-ciphertext-dentries.patch
+     fscrypt-only-set-dentry_operations-on-ciphertext-dentries.patch
 and it can be found in the queue-4.19 subdirectory.
 
 If you, or anyone else, feels it should not be added to the stable tree,
@@ -113,107 +113,55 @@ please let <stable@vger.kernel.org> know about it.
 
 From foo@baz Sun Nov  1 11:35:18 AM CET 2020
 From: Eric Biggers <ebiggers@kernel.org>
-Date: Sat, 31 Oct 2020 15:05:50 -0700
-Subject: fscrypt: fix race allowing rename() and link() of ciphertext dentries
+Date: Sat, 31 Oct 2020 15:05:52 -0700
+Subject: fscrypt: only set dentry_operations on ciphertext dentries
 To: stable@vger.kernel.org
 Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Theodore Ts'o <tytso@mit.edu>
-Message-ID: <20201031220553.1085782-3-ebiggers@kernel.org>
+Message-ID: <20201031220553.1085782-5-ebiggers@kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 968dd6d0c6d6b6a989c6ddb9e2584a031b83e7b5 upstream.
+commit d456a33f041af4b54f3ce495a86d00c246165032 upstream.
 
-Close some race conditions where fscrypt allowed rename() and link() on
-ciphertext dentries that had been looked up just prior to the key being
-concurrently added.  It's better to return -ENOKEY in this case.
+Plaintext dentries are always valid, so only set fscrypt_d_ops on
+ciphertext dentries.
 
-This avoids doing the nonsensical thing of encrypting the names a second
-time when searching for the actual on-disk dir entries.  It also
-guarantees that DCACHE_ENCRYPTED_NAME dentries are never rename()d, so
-the dcache won't have support all possible combinations of moving
-DCACHE_ENCRYPTED_NAME around during __d_move().
+Besides marginally improved performance, this allows overlayfs to use an
+fscrypt-encrypted upperdir, provided that all the following are true:
+
+    (1) The fscrypt encryption key is placed in the keyring before
+	mounting overlayfs, and remains while the overlayfs is mounted.
+
+    (2) The overlayfs workdir uses the same encryption policy.
+
+    (3) No dentries for the ciphertext names of subdirectories have been
+	created in the upperdir or workdir yet.  (Since otherwise
+	d_splice_alias() will reuse the old dentry with ->d_op set.)
+
+One potential use case is using an ephemeral encryption key to encrypt
+all files created or changed by a container, so that they can be
+securely erased ("crypto-shredded") after the container stops.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/crypto/hooks.c               |   12 +++++++++++-
- include/linux/fscrypt.h         |    2 +-
- include/linux/fscrypt_notsupp.h |    4 ++--
- include/linux/fscrypt_supp.h    |    3 ++-
- 4 files changed, 16 insertions(+), 5 deletions(-)
+ fs/crypto/hooks.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 --- a/fs/crypto/hooks.c
 +++ b/fs/crypto/hooks.c
-@@ -49,7 +49,8 @@ int fscrypt_file_open(struct inode *inod
- }
- EXPORT_SYMBOL_GPL(fscrypt_file_open);
- 
--int __fscrypt_prepare_link(struct inode *inode, struct inode *dir)
-+int __fscrypt_prepare_link(struct inode *inode, struct inode *dir,
-+			   struct dentry *dentry)
- {
- 	int err;
- 
-@@ -57,6 +58,10 @@ int __fscrypt_prepare_link(struct inode
- 	if (err)
- 		return err;
- 
-+	/* ... in case we looked up ciphertext name before key was added */
-+	if (dentry->d_flags & DCACHE_ENCRYPTED_NAME)
-+		return -ENOKEY;
-+
- 	if (!fscrypt_has_permitted_context(dir, inode))
- 		return -EXDEV;
- 
-@@ -78,6 +83,11 @@ int __fscrypt_prepare_rename(struct inod
- 	if (err)
- 		return err;
- 
-+	/* ... in case we looked up ciphertext name(s) before key was added */
-+	if ((old_dentry->d_flags | new_dentry->d_flags) &
-+	    DCACHE_ENCRYPTED_NAME)
-+		return -ENOKEY;
-+
- 	if (old_dir != new_dir) {
- 		if (IS_ENCRYPTED(new_dir) &&
- 		    !fscrypt_has_permitted_context(new_dir,
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -97,7 +97,7 @@ static inline int fscrypt_prepare_link(s
- 				       struct dentry *dentry)
- {
- 	if (IS_ENCRYPTED(dir))
--		return __fscrypt_prepare_link(d_inode(old_dentry), dir);
-+		return __fscrypt_prepare_link(d_inode(old_dentry), dir, dentry);
+@@ -115,9 +115,8 @@ int __fscrypt_prepare_lookup(struct inod
+ 		spin_lock(&dentry->d_lock);
+ 		dentry->d_flags |= DCACHE_ENCRYPTED_NAME;
+ 		spin_unlock(&dentry->d_lock);
++		d_set_d_op(dentry, &fscrypt_d_ops);
+ 	}
+-
+-	d_set_d_op(dentry, &fscrypt_d_ops);
  	return 0;
  }
- 
---- a/include/linux/fscrypt_notsupp.h
-+++ b/include/linux/fscrypt_notsupp.h
-@@ -183,8 +183,8 @@ static inline int fscrypt_file_open(stru
- 	return 0;
- }
- 
--static inline int __fscrypt_prepare_link(struct inode *inode,
--					 struct inode *dir)
-+static inline int __fscrypt_prepare_link(struct inode *inode, struct inode *dir,
-+					 struct dentry *dentry)
- {
- 	return -EOPNOTSUPP;
- }
---- a/include/linux/fscrypt_supp.h
-+++ b/include/linux/fscrypt_supp.h
-@@ -184,7 +184,8 @@ extern int fscrypt_zeroout_range(const s
- 
- /* hooks.c */
- extern int fscrypt_file_open(struct inode *inode, struct file *filp);
--extern int __fscrypt_prepare_link(struct inode *inode, struct inode *dir);
-+extern int __fscrypt_prepare_link(struct inode *inode, struct inode *dir,
-+				  struct dentry *dentry);
- extern int __fscrypt_prepare_rename(struct inode *old_dir,
- 				    struct dentry *old_dentry,
- 				    struct inode *new_dir,
+ EXPORT_SYMBOL_GPL(__fscrypt_prepare_lookup);
 
 
 Patches currently in stable-queue which might be from ebiggers@kernel.org are
