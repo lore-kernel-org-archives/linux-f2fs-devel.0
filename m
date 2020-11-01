@@ -2,42 +2,42 @@ Return-Path: <SRS0=ESBw=EH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC62C2D0A3
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  1 Nov 2020 10:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D293C55178
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  1 Nov 2020 10:31:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7CFC320709;
-	Sun,  1 Nov 2020 10:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 198C62071A;
+	Sun,  1 Nov 2020 10:31:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="dDxVFNcx";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XAg2Kf9D";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PsZc0CNM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CFC320709
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="aPLCvxOI";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HM3bIdpM";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSPlMPRn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 198C62071A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kZAdE-0003Gp-Rk; Sun, 01 Nov 2020 10:30:40 +0000
+	id 1kZAeL-0000Hv-A9; Sun, 01 Nov 2020 10:31:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <gregkh@linuxfoundation.org>) id 1kZAdC-0003Gg-Tb
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Nov 2020 10:30:38 +0000
+ (envelope-from <gregkh@linuxfoundation.org>) id 1kZAeJ-0000Hn-HN
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Nov 2020 10:31:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FSbv+vGAfbshFYcSeja7FJLP7k61ca1G5dRn0fz9+nM=; b=dDxVFNcx7luRSECfEnak8EOJSK
- 5IyFO4NIhyktAqt49UNo050Fc6Prqjdqox1qFlNEwLZoWqmWiuxO9RcEiM9n4MpjzRTvZKv7kyDG5
- DhMBbRs9RfazY2fagcfikk5WHkoTs1RgFIYq+Bo07jMHXr23VtM+XXP6hABBNCqv6bFU=;
+ bh=pIh+Jzk7nS3IwPNqWjOiFM1v1dCnHmLnLd2APKudKlw=; b=aPLCvxOICcrxM2q/qisNhKsg2a
+ +dmXFhTp0pgZ79kfpGN7wXXvs2drHDv/PYiAY8rVGcPron61I+nYO2uWvQmhcRHnYl6hFtS2Oc2p4
+ la8f4wD00+CaVx7XVX1eNSx4CXOKKGoW1AJHP85ilZR5ZXOcZrucs008ATart+m7Knqk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,37 +45,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FSbv+vGAfbshFYcSeja7FJLP7k61ca1G5dRn0fz9+nM=; b=XAg2Kf9DhME5iT/fXd8bCtzbdB
- XMYcPKFSXzMmPg7vjdVrMwrOHBu31NAaz7r39+8aaR2nR2VO3Cssd2v7W0oWaEALBa8Lv+w/YyFYo
- njeFJfKKtv8PaDjqI5iA0SdR4hQaMvWn3245YUQoX0qzTkvf+06kV93larrip0vucvdg=;
+ bh=pIh+Jzk7nS3IwPNqWjOiFM1v1dCnHmLnLd2APKudKlw=; b=HM3bIdpMIIHYwmc6OSQPIY5Rzu
+ Ilt5Q6FfQFD/0oMjwThLoLYNKJ2go5IlY9U0wDqnUuunROGJ8BkR/QZnXVlj5Wn3mXzoqRtrVB9sd
+ q3+zYK8BmIux9hTbTAv9tU8G7YMhWWktmoumL2lzAmOFJ6E6nuDxS13cHn8MMUmr+SLs=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kZAd5-0053Tz-IN
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Nov 2020 10:30:38 +0000
+ id 1kZAeE-0053ZG-4b
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 Nov 2020 10:31:47 +0000
 Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256
  bits)) (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id A957E20709;
- Sun,  1 Nov 2020 10:30:20 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id E5EA320709;
+ Sun,  1 Nov 2020 10:31:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1604226621;
- bh=uBOxgKGox72Khbv7lHPCWHnvMnC3J+LhFgAQQopAVW0=;
+ s=default; t=1604226689;
+ bh=DPX6AqOeUcQoNkcotTpifBY//U9/BpeCO3qRgX3yETM=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=PsZc0CNMRSOPIv5SATUZJDagBRiPVhMPpvYxGP99Rcv0eGc6EZl9qE7oqL/xu8MGk
- UUdAcmz7buYJ05NClfswKpy601VQ96XPxL+xhlBJSXCrwztcGRm1GpsWPekHzqqfvn
- FCtbvR0HETcrhosbUWm8Tglq1ys0oNS6Aoli8J+s=
-Date: Sun, 1 Nov 2020 11:31:04 +0100
+ b=HSPlMPRnh6lZBTO0HHm1VH7uN3qQbhGx6+ZMKKu29QmsNqP0+U2jn3ArQzYfa8bqp
+ 3/BahxDNmZ8gLeU+N6HWEbUn/ZPpjlK/RBpgOk+GHAzBsvgO3eodF/Nd5/TITb/Rcf
+ VDl22aIO+2YZRBk7JDddg9drkKagJEhxScR00uHQ=
+Date: Sun, 1 Nov 2020 11:32:13 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20201101103104.GB2558892@kroah.com>
-References: <20201031195809.377983-1-ebiggers@kernel.org>
+Message-ID: <20201101103213.GC2558892@kroah.com>
+References: <20201031231124.1199710-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20201031195809.377983-1-ebiggers@kernel.org>
-X-Headers-End: 1kZAd5-0053Tz-IN
-Subject: Re: [f2fs-dev] [PATCH 4.4] f2fs crypto: avoid unneeded memory
- allocation in ->readdir
+In-Reply-To: <20201031231124.1199710-1-ebiggers@kernel.org>
+X-Headers-End: 1kZAeE-0053ZG-4b
+Subject: Re: [f2fs-dev] [PATCH 4.9 0/2] backport some more fscrypt fixes to
+ 4.9
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,36 +87,27 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-fscrypt@vger.kernel.org,
+Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
  stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sat, Oct 31, 2020 at 12:58:09PM -0700, Eric Biggers wrote:
-> From: Chao Yu <yuchao0@huawei.com>
+On Sat, Oct 31, 2020 at 04:11:22PM -0700, Eric Biggers wrote:
+> Backport some fscrypt fixes from 4.10 and 4.11 to 4.9-stable.
+> These will be needed for xfstest generic/395 to pass if
+> https://lkml.kernel.org/fstests/20201031054018.695314-1-ebiggers@kernel.org
+> is applied.
 > 
-> commit e06f86e61d7a67fe6e826010f57aa39c674f4b1b upstream.
-> [This backport fixes a regression in 4.4-stable caused by commit
-> 11a6e8f89521 ("f2fs: check memory boundary by insane namelen"), which
-> depended on this missing commit.  This bad backport broke f2fs
-> encryption because it moved the incrementing of 'bit_pos' to earlier in
-> f2fs_fill_dentries() without accounting for it being used in the
-> encrypted dir case.  This caused readdir() on encrypted directories to
-> start failing.  Tested with 'kvm-xfstests -c f2fs -g encrypt'.]
+> These are clean cherry picks.
 > 
-> When decrypting dirents in ->readdir, fscrypt_fname_disk_to_usr won't
-> change content of original encrypted dirent, we don't need to allocate
-> additional buffer for storing mirror of it, so get rid of it.
+> Tested with 'kvm-xfstests -c ext4,f2fs -g encrypt'.
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/f2fs/dir.c | 7 -------
->  1 file changed, 7 deletions(-)
+> Eric Biggers (2):
+>   fscrypto: move ioctl processing more fully into common code
+>   fscrypt: use EEXIST when file already uses different policy
 
-Now queued up, thanks.
+All now queued up, thanks.
 
 greg k-h
 
