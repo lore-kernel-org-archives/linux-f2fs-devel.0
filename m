@@ -2,42 +2,42 @@ Return-Path: <SRS0=9+GF=EJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72387C388F2
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2020 08:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144BAC2D0A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2020 09:02:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E2BC22071A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2020 08:50:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 83C0320756
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2020 09:02:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Lk1v5HoG";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="XPJbprm8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2BC22071A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Rs1C+yC2";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="mh2P8xCJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83C0320756
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kZs1c-0004rP-Ro; Tue, 03 Nov 2020 08:50:44 +0000
+	id 1kZsCU-00072h-4u; Tue, 03 Nov 2020 09:01:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kZs1Z-0004qU-Px
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Nov 2020 08:50:41 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kZsCS-00072W-QL
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Nov 2020 09:01:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qsbyzQy/SNKZNPnrAV1I0ubh1CF2F1xc8rWy+VybJIw=; b=Lk1v5HoG6EbVkpF4ZWRM2bXEJe
- 19Kc4dowRlHJmbQEQzDVyXMyS6LtM6bc7FAVdeMRKZuS4p9tb2sYcKjGYtcxun6UwrxIogwposnKR
- MSy/x4W4m0oTn/MeCXdoBTOrTZsvKlO4Q69VnM1oDyBjkJTgnBQqi5H01AEtie/MQh5w=;
+ bh=o12VY5wEqyIvKiVy7gQYf6mEI936BrgLpo94W8Ng4DI=; b=Rs1C+yC2ucu8wPbagYpAsMEV2B
+ mJ3+HlQOrz3zgzdPA4TerbQ/OkYRrDAX6qaYpWNlgb/pBw+FVJ9Y0XSnBS/VeQc+83BtWT61di7M9
+ RSYIrWTUqe/37+AUWX2cfBTqvDVhp7tTGrjs5UndUfRD+eVqFIniAYpGooC5bVZYprIc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -45,36 +45,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qsbyzQy/SNKZNPnrAV1I0ubh1CF2F1xc8rWy+VybJIw=; b=XPJbprm8awMY21MbY6pjOWLy6D
- s6CPkz2kiWjNx5WOeFdHS3Y+cogCClysZPHmXikq8BIz4pjQQeXfe6QaiS0AKxrOatkNbD6OwsZDU
- yzFEo3OxyPARMhjiiMjotWPScM761XHHNSt4OdWG5/3OTmEVCV301ZjZrVZKd+SrehwQ=;
-Received: from szxga05-in.huawei.com ([45.249.212.191])
+ bh=o12VY5wEqyIvKiVy7gQYf6mEI936BrgLpo94W8Ng4DI=; b=mh2P8xCJDx6Dy9X1oOt3+lObBf
+ 2RKNNhW9LFj9MV+/PoZmcbxTUKYfq5FgSllMGD/T70m2kbE8vDwwW7WOSjpT2T/wxeqrw4Xc1o6Ss
+ I15ouPlMcMf6MLwkPMIBOlk6r8LdOXyGilnpiZ4f2q+5t6FzP+OKXdd5SWLF2PhpQqTM=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kZs1T-007Ugq-4i
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Nov 2020 08:50:41 +0000
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CQNGm0GWrzLt4H;
- Tue,  3 Nov 2020 16:28:48 +0800 (CST)
+ id 1kZsCM-007VWF-DI
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Nov 2020 09:01:56 +0000
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CQP0c512kzkdXq;
+ Tue,  3 Nov 2020 17:01:36 +0800 (CST)
 Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 3 Nov 2020
- 16:28:50 +0800
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 3 Nov 2020
+ 17:01:36 +0800
 To: <daejun7.park@samsung.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
  "chao@kernel.org" <chao@kernel.org>
-References: <CGME20201103064039epcms2p30ecac0e7cefff0d50745f2e2e61ce38e@epcms2p3>
- <20201103064039epcms2p30ecac0e7cefff0d50745f2e2e61ce38e@epcms2p3>
+References: <CGME20201103083832epcms2p6c8b0e4470f1392772317ab2b25256b3d@epcms2p6>
+ <20201103083832epcms2p6c8b0e4470f1392772317ab2b25256b3d@epcms2p6>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <609445f8-de3b-eb79-449c-020125799449@huawei.com>
-Date: Tue, 3 Nov 2020 16:28:49 +0800
+Message-ID: <c885ff38-fce2-43d2-cfe1-57e0a3a0b449@huawei.com>
+Date: Tue, 3 Nov 2020 17:01:36 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20201103064039epcms2p30ecac0e7cefff0d50745f2e2e61ce38e@epcms2p3>
+In-Reply-To: <20201103083832epcms2p6c8b0e4470f1392772317ab2b25256b3d@epcms2p6>
 Content-Language: en-US
 X-Originating-IP: [10.136.114.67]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kZs1T-007Ugq-4i
-Subject: Re: [f2fs-dev] [PATCH] f2fs: change write_hint for hot/warm nodes
+X-Headers-End: 1kZsCM-007VWF-DI
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: change write_hint for hot/warm nodes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,9 +89,8 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Cc: yongmyung lee <ymhungry.lee@samsung.com>,
  Jieon Seol <jieon.seol@samsung.com>, Sang-yoon Oh <sangyoon.oh@samsung.com>,
  Sung-Jun Park <sungjun07.park@samsung.com>,
- Mankyu PARK <manq.park@samsung.com>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Keoseong Park <keosung.park@samsung.com>,
+ Mankyu PARK <manq.park@samsung.com>, Keoseong Park <keosung.park@samsung.com>,
  SEUNGUK SHIN <seunguk.shin@samsung.com>,
  "linux-f2fs-devel@lists.sourceforge.net"
  <linux-f2fs-devel@lists.sourceforge.net>,
@@ -101,12 +100,7 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/11/3 14:40, Daejun Park wrote:
->>From 818a76a9aee5bf225565264274d211edb07bae7d Mon Sep 17 00:00:00 2001
-> From: Daejun Park <daejun7.park@samsung.com>
-> Date: Tue, 3 Nov 2020 15:30:26 +0900
-> 
-> 
+On 2020/11/3 16:38, Daejun Park wrote:
 > In the fs-based mode of F2FS, the mapping of hot/warm node to
 > WRITE_LIFE_NOT_SET should be changed to WRITE_LIFE_SHORT.
 > 
@@ -123,31 +117,12 @@ On 2020/11/3 14:40, Daejun Park wrote:
 > * Liang, Yu, et al. "An empirical study of F2FS on mobile devices." 2017
 > IEEE 23rd International Conference on Embedded and Real-Time Computing
 > Systems and Applications (RTCSA).
-
-Could you please update Documentation/filesystems/f2fs.rst as well?
-
-Thanks,
-
 > 
 > Signed-off-by: Daejun Park <daejun7.park@samsung.com>
-> ---
->   fs/f2fs/segment.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 1596502f7375..7b42bb10c6c3 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -3208,7 +3208,7 @@ enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
->   				return WRITE_LIFE_EXTREME;
->   		} else if (type == NODE) {
->   			if (temp == WARM || temp == HOT)
-> -				return WRITE_LIFE_NOT_SET;
-> +				return WRITE_LIFE_SHORT;
->   			else if (temp == COLD)
->   				return WRITE_LIFE_NONE;
->   		} else if (type == META) {
-> 
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
 
 
 _______________________________________________
