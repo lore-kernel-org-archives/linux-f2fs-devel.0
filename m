@@ -2,79 +2,130 @@ Return-Path: <SRS0=9+GF=EJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-9.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891ACC2D0A3
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2020 08:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0FCC2D0A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2020 08:33:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 11278206E3;
-	Tue,  3 Nov 2020 08:18:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 46FCB22264
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2020 08:33:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="b8Ov8Bv6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="c+7xi63X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11278206E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="K3qG5DyD";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="cpb1EhJb";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L1Z/DcDJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46FCB22264
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kZrW6-0004Er-IW; Tue, 03 Nov 2020 08:18:10 +0000
+	id 1kZrlK-0005es-Qj; Tue, 03 Nov 2020 08:33:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kZrW5-0004ES-E8
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Nov 2020 08:18:09 +0000
+ (envelope-from <daejun7.park@samsung.com>) id 1kZrlI-0005eh-P5
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Nov 2020 08:33:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
+ Date:Message-ID:In-Reply-To:CC:To:From:Sender:Reply-To:Subject:Mime-Version:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YSpE2U4fdmK4eX1DLBur3NtlBBMiXhEXzRUl+i9xRHY=; b=b8Ov8Bv60PJo7K6DIqUzfhyer8
- kmc0WQ9VC5rqFz4fBOHKxSqLZT1MAb2x4tS9xIJba0G7PBC9kYuPpf57H4V3r2earkMhT9XKejMey
- s+gPZsZLciHzBAgon/qBHVCWDjvdeJw3Zt8Ppn18YyVhoP4ltQwa6dpBiBbBiKc7utvo=;
+ bh=TxGvMOanx4q5d+aeauiVFV2oHKiQjYO6kUB0hmAZVQo=; b=K3qG5DyDhg6R68DOcFCFyIHf+D
+ IrrkUCMWdiQDm6YE4B8yev4YGeJ/rl/KrLM7KqcN399kcK5K040uBrmP2+A+9EKoyJRHfmWZqf9rr
+ IjrzytwnZaZDdTM93SEVkRSxYltioU4RXgRYv0jjH3Yt/BslMHZfgFLHET0slIOOe7V8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:
+ In-Reply-To:CC:To:From:Sender:Reply-To:Subject:Mime-Version:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=YSpE2U4fdmK4eX1DLBur3NtlBBMiXhEXzRUl+i9xRHY=; b=c+7xi63XpcZfCRvROvKrLxFrGJ
- UTM/vGxBVLhmBvMH5G94kiP18TgQwDTicEQabinB58lfZJrwEg22Hln1i4UbHSkDDB/dZyUMCK0/J
- RuvH6/61C4NQPrZLgOicyDZc4YuBVoSLojemIlMpsV9BikJ4Bkg+A1dI09YTYaGcT9GU=;
-Received: from szxga05-in.huawei.com ([45.249.212.191])
+ bh=TxGvMOanx4q5d+aeauiVFV2oHKiQjYO6kUB0hmAZVQo=; b=cpb1EhJbfOKKy/rMgigAsG9/TE
+ r4ciRUelfwTPzOTRlJaSPXPDOdkxWMTE8PlbHhlbtzJzslOvbaNJVmzNuRctcrMS65UqXngnzWZCA
+ cehjzfuSBrp0pTp253TcIH0EWPMMe1/EM/HOhlnG9fVPZ3xwIqMpJJhrfJysbv5Ova+I=;
+Received: from mailout3.samsung.com ([203.254.224.33])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kZrVx-007S9C-UD
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Nov 2020 08:18:09 +0000
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CQN1v6N41zLsqq;
- Tue,  3 Nov 2020 16:17:39 +0800 (CST)
-Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.487.0; Tue, 3 Nov 2020
- 16:17:40 +0800
-To: Eric Biggers <ebiggers@kernel.org>
-References: <20201102062131.14205-1-yuchao0@huawei.com>
- <20201103032234.GB2875@sol.localdomain>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <c7e47bac-16e6-2038-3eb3-0fdb787ce977@huawei.com>
-Date: Tue, 3 Nov 2020 16:17:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20201103032234.GB2875@sol.localdomain>
-Content-Language: en-US
-X-Originating-IP: [10.136.114.67]
+ id 1kZrl4-007TMp-Ga
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Nov 2020 08:33:52 +0000
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+ by mailout3.samsung.com (KnoxPortal) with ESMTP id
+ 20201103083312epoutp03afe76f1cd823cf5f949e1d6cf54f16de~D8mGIamDS2843428434epoutp033
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  3 Nov 2020 08:33:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com
+ 20201103083312epoutp03afe76f1cd823cf5f949e1d6cf54f16de~D8mGIamDS2843428434epoutp033
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+ s=mail20170921; t=1604392393;
+ bh=TxGvMOanx4q5d+aeauiVFV2oHKiQjYO6kUB0hmAZVQo=;
+ h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+ b=L1Z/DcDJPfa9zQLtjWvjrGedE1nnfUWYQimRrz4J4Kc6G2FHNwFJPgprJIEDaf2DF
+ +EMd6BKGHrNUmf6UOfolqjIBqrMcajBVD8fIL8VS2Py+q2ej9EKgdQ8zy6vO68RDdI
+ XQ7byPwg55Kg2udoAeHOjMDnXHHFkkOlCjMHJmkw=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+ epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+ 20201103083312epcas2p453b1c487800a823b54e7bd7c456f285a~D8mFWDGK53273432734epcas2p4T;
+ Tue,  3 Nov 2020 08:33:12 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.40.184]) by
+ epsnrtp1.localdomain (Postfix) with ESMTP id 4CQNMn6Dp6zMqYm0; Tue,  3 Nov
+ 2020 08:33:09 +0000 (GMT)
+X-AuditID: b6c32a48-a9948a800000cd1f-b6-5fa115c3fdfc
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+ epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+ EC.0D.52511.3C511AF5; Tue,  3 Nov 2020 17:33:07 +0900 (KST)
+Mime-Version: 1.0
+From: Daejun Park <daejun7.park@samsung.com>
+To: Chao Yu <yuchao0@huawei.com>, Daejun Park <daejun7.park@samsung.com>,
+ "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
+ <chao@kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <609445f8-de3b-eb79-449c-020125799449@huawei.com>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20201103083306epcms2p804f8fcbe11584488f476cacb9e28c5ac@epcms2p8>
+Date: Tue, 03 Nov 2020 17:33:06 +0900
+X-CMS-MailID: 20201103083306epcms2p804f8fcbe11584488f476cacb9e28c5ac
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphl+LIzCtJLcpLzFFi42LZdljTTPew6MJ4gwdXOC1OTz3LZPHykKbF
+ qgfhFr39W9ksnqyfxWyx+eAGZottnwUtjp98x2hxaZG7xeVdc9gsOi59ZrKY8HIJi8XtLVwW
+ ndPXsFgsWribxWLq47WsDgIeLUfesnpsWtXJ5rF7wWcmj74tqxg9Pm+SC2CNamC0SSxKzsgs
+ S1VIzUvOT8nMS7dVCg1x07VQUsjILy6xVYo2tDDSM7Q01TOx1DMyj7UyNDAwMlVSyEvMTbVV
+ qtCF6lZSKEouAKouSS0uKUpNTgUKFTkUlySmp+oVJ+YWl+al6yXn5yoplCXmlAL1Kenb2WSk
+ JqakFikkPGHM+LdhI0vBVb6Kc0ueMjUw3uLuYuTkkBAwkWj9NIexi5GLQ0hgB6PEsqtHWbsY
+ OTh4BQQl/u4QBqkRFgiQ+LV3NzuILSSgJLH+4ix2iLiexK2HaxhBbDYBHYnpJ+6zg8wREZjD
+ KPF/0WkmEIdZYBKLxNfGaawQ23glZrQ/ZYGwpSW2L98K1s0pYCex78crqBoNiR/LepkhbFGJ
+ m6vfssPY74/NZ4SwRSRa752FqhGUePBzN1RcUuLY7g9MEHa9xNY7v8A+kxDoYZQ4vPMW1AJ9
+ iWsdG8GO4BXwlXg9cRvYAhYBVYlLB39ADXWRmDqtGWwos4C8xPa3c5hBocIsoCmxfpc+iCkh
+ oCxx5BYLzFsNG3+zo7OZBfgkOg7/hYvvmPcE6jQ1iXU/1zNNYFSehQjqWUh2zULYtYCReRWj
+ WGpBcW56arFRgQlyTG9iBKdoLY8djLPfftA7xMjEwXiIUYKDWUmEtyZyXrwQb0piZVVqUX58
+ UWlOavEhxiqgLycyS4km5wOzRF5JvKGZgZGZqbGJsbGpiSnZwqZGZmYGlqYWpmZGFkrivKEr
+ ++KFBNITS1KzU1MLUotgljNxcEo1MEWt/VR3n+X0VnUXxU0V69XWBwXeyq/j2Lb9azXDhtwP
+ Wxcev1VZ7HV9lUx/x7Ild8quHTNoUv+yanap+2KVCX9/XpZeK7jU0SDWaZ+ycEn0n7lnLwtN
+ ybqy/2/hF5kis01Lf785/Iblep+7Vds3gZCnX1NvpO7ccebX/j8mX2t3us3x0vzs5VE2Mbnh
+ NfutG0Y3kySd3d9MClaTuZg7Q0Jy9sop2jzzL10X9H22rvrgz703fpmcjn141mXOB1mZP5Zq
+ 7Lm83lKGn9fcbFU4+qZcY1+a1gnTY3usNjO8M+5uVniXJSQnevjNfe8q3Tmem6fbNQg/vVHn
+ X328zNdG/dcrgYOeC5R1C2MUD2vsrvuhxFKckWioxVxUnAgAbx65sp8EAAA=
+DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kZrVx-007S9C-UD
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: move ioctl interface definitions to
- separated file
+X-CMS-RootMailID: 20201103064039epcms2p30ecac0e7cefff0d50745f2e2e61ce38e
+References: <609445f8-de3b-eb79-449c-020125799449@huawei.com>
+ <20201103064039epcms2p30ecac0e7cefff0d50745f2e2e61ce38e@epcms2p3>
+ <CGME20201103064039epcms2p30ecac0e7cefff0d50745f2e2e61ce38e@epcms2p8>
+X-Headers-End: 1kZrl4-007TMp-Ga
+Subject: Re: [f2fs-dev] [PATCH] f2fs: change write_hint for hot/warm nodes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,72 +137,75 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Reply-To: daejun7.park@samsung.com
+Cc: yongmyung lee <ymhungry.lee@samsung.com>,
+ Jieon Seol <jieon.seol@samsung.com>, Sang-yoon Oh <sangyoon.oh@samsung.com>,
+ Sung-Jun Park <sungjun07.park@samsung.com>,
+ Mankyu PARK <manq.park@samsung.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Keoseong Park <keosung.park@samsung.com>,
+ SEUNGUK SHIN <seunguk.shin@samsung.com>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>,
+ Jinyoung CHOI <j-young.choi@samsung.com>,
+ Jaemyung Lee <jaemyung.lee@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/11/3 11:22, Eric Biggers wrote:
-> On Mon, Nov 02, 2020 at 02:21:31PM +0800, Chao Yu wrote:
->> +#define F2FS_IOC_MOVE_RANGE		_IOWR(F2FS_IOCTL_MAGIC, 9,	\
->> +						struct f2fs_move_range)
-> [...]
->> +#define F2FS_IOC_GARBAGE_COLLECT_RANGE	_IOW(F2FS_IOCTL_MAGIC, 11,	\
->> +						struct f2fs_gc_range)
-> [...]
->> +
->> +struct f2fs_gc_range {
->> +	__u32 sync;
->> +	__u64 start;
->> +	__u64 len;
->> +};
-> [...]
->> +struct f2fs_move_range {
->> +	__u32 dst_fd;		/* destination fd */
->> +	__u64 pos_in;		/* start position in src_fd */
->> +	__u64 pos_out;		/* start position in dst_fd */
->> +	__u64 len;		/* size to move */
->> +};
-> 
-> These two structs are weird because there is implicit padding between the __u32
-> field and the following __u64 field on some 32-bit architectures (e.g. x86_32)
-> but not others (e.g. arm32).
-> 
-> But f2fs_compat_ioctl() doesn't handle these two ioctls specially, but rather
-> just calls through to f2fs_ioctl().  That's wrong, and it means that
-> F2FS_IOC_MOVE_RANGE and F2FS_IOC_GARBAGE_COLLECT_RANGE won't work when called
-> from an x86_32 binary on an x86_64 kernel.
 
-Nice catch!
+>>>From 818a76a9aee5bf225565264274d211edb07bae7d Mon Sep 17 00:00:00 2001
+>> From: Daejun Park <daejun7.park@samsung.com>
+>> Date: Tue, 3 Nov 2020 15:30:26 +0900
+>> 
+>> 
+>> In the fs-based mode of F2FS, the mapping of hot/warm node to
+>> WRITE_LIFE_NOT_SET should be changed to WRITE_LIFE_SHORT.
+>> 
+>> As a result of analyzing the write pattern of f2fs using real workload,
+>> hot/warm nodes have high update ratio close to hot data.[*]
+>> However, F2FS passes write hints for hot/warm nodes as WRITE_LIFE_NOT_SET.
+>> 
+>> Furthermore, WRITE_LIFE_NOT_SET is a default value of write hint when it is
+>> not provided from the file system.
+>> In storage, write_hint is used to distinguish streams (e.g. NVMe).
+>> So, the hot/warm node of F2FS is not distinguished from other write_hints,
+>> which can make the wrong stream seperation.
+>> 
+>> * Liang, Yu, et al. "An empirical study of F2FS on mobile devices." 2017
+>> IEEE 23rd International Conference on Embedded and Real-Time Computing
+>> Systems and Applications (RTCSA).
+>
+>Could you please update Documentation/filesystems/f2fs.rst as well?
+>
+>Thanks,
 
-> 
-> So something needs to be fixed.  I wonder if it's safe to just explicitly add
-> the padding field after the fact.  If no one is actually using these two ioctls
-> in a case where both userspace and the kernel lack the implicit padding (e.g.,
-> x86_32 userspace with x86_32 kernel), it should be fine...
+Sure, I will make it next patch.
 
-IIRC, Jaegeuk added those interfaces, I hope it's not the requirement from other
-f2fs userspace developers...if it is, there may be users.
+Thanks
 
-I found one patch in ext4 which fixes the similar issue, I guess we can fix this
-with the same way, thoughts?
-
-commit 4d92dc0f00a775dc2e1267b0e00befb783902fe7
-Author: Ben Hutchings <ben@decadent.org.uk>
-Date:   Mon May 17 06:00:00 2010 -0400
-
-     ext4: Fix compat EXT4_IOC_ADD_GROUP
-
-     struct ext4_new_group_input needs to be converted because u64 has
-     only 32-bit alignment on some 32-bit architectures, notably i386.
-
-Thanks,
-
-> 
-> - Eric
-> .
-> 
+>> 
+>> Signed-off-by: Daejun Park <daejun7.park@samsung.com>
+>> ---
+>>   fs/f2fs/segment.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 1596502f7375..7b42bb10c6c3 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -3208,7 +3208,7 @@ enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
+>>   				return WRITE_LIFE_EXTREME;
+>>   		} else if (type == NODE) {
+>>   			if (temp == WARM || temp == HOT)
+>> -				return WRITE_LIFE_NOT_SET;
+>> +				return WRITE_LIFE_SHORT;
+>>   			else if (temp == COLD)
+>>   				return WRITE_LIFE_NONE;
+>>   		} else if (type == META) {
+>> 
+>
+>
 
 
 _______________________________________________
