@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
 	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81032C388F2
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2020 06:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ADAC388F2
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Nov 2020 06:02:42 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 17F4222277;
-	Tue,  3 Nov 2020 06:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4230322277;
+	Tue,  3 Nov 2020 06:02:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ROsuq0w4";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="AU7AGkOA";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iEqbPFcm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17F4222277
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="m0gpyznW";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VWKkAOYq";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tmkhJaJU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4230322277
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kZpOx-0007Yb-0h; Tue, 03 Nov 2020 06:02:39 +0000
+	id 1kZpOz-0007Z3-8e; Tue, 03 Nov 2020 06:02:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <nickrterrell@gmail.com>)
- id 1kZpOm-0007XR-OM; Tue, 03 Nov 2020 06:02:28 +0000
+ id 1kZpOw-0007YQ-9K; Tue, 03 Nov 2020 06:02:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2E/IwoJzArQOI0tLeIWcAV63W6gwJ92+ohjyeEw8pg8=; b=ROsuq0w4s39Ez67W9k+a7tOl5P
- mKPx8BdWpuGAr59llL8MTke+tXl2X42+GSMdRMay8wzBoIvdRq4f6SHVw+/ylt7gBhqRw1ytBXcRk
- UoUrda1mIEmPD6Wxhj93DBtFzzgpvTQwZGR26MVbf0zJUNvHHU0KQORPjI5dqoW0IUwE=;
+ bh=290Bo0sJTh/t678nA8yWOfHRoSh5E7Ekj1ME0hd0Klk=; b=m0gpyznWw6iQyKltrqTaZAejZG
+ lbqZyZIyNGzePS12Zu9n6xq3E2vs5Pj66M0lsK6rHoh1jW/UNdV0we0LNIwch1ClP4d4V6J1vKkvL
+ 4TSu+rrsDHgh3U7udaxz6dfQ/ehFlE1AmiXvDb/TfHcbLWNwaslvqjn1DlQ1KazVx4g4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -47,56 +47,58 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2E/IwoJzArQOI0tLeIWcAV63W6gwJ92+ohjyeEw8pg8=; b=AU7AGkOABmMRiCV2NrNmn3KRA3
- jru7eic0M/E6pZThLLkiFQ5a17BTVyNtxxGSx6Wnw6XG0krf0eg/YFnSTU8iBY0SLDN4mMHCQckY1
- ScRrdkjxsPdX8O9vCDM44/OAVJRKUfJ42sexpIrHfUAUfXQw5GpjWGgBDf6dKb589SGI=;
-Received: from mail-pf1-f196.google.com ([209.85.210.196])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=290Bo0sJTh/t678nA8yWOfHRoSh5E7Ekj1ME0hd0Klk=; b=VWKkAOYqhOwkZRX3E9W3yE+L1w
+ cupwhBGp14szk/rcvmCV0J808aGQ+4stn/5GNVGRWLBcFWOtrey6yXmROj00yJM9bYkOEZwKM+yxe
+ pUZ50+9XKGpSo+jIC+08la+EH/wlHx+d3uq6L98aZVzHm75v7XZno/61QeKRBmwAlUuM=;
+Received: from mail-pl1-f194.google.com ([209.85.214.194])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kZpOg-00HAL3-R1; Tue, 03 Nov 2020 06:02:28 +0000
-Received: by mail-pf1-f196.google.com with SMTP id 72so6559798pfv.7;
- Mon, 02 Nov 2020 22:02:22 -0800 (PST)
+ id 1kZpOn-007Kiw-8R; Tue, 03 Nov 2020 06:02:38 +0000
+Received: by mail-pl1-f194.google.com with SMTP id g11so1552347pll.13;
+ Mon, 02 Nov 2020 22:02:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
  h=from:to:cc:subject:date:message-id:in-reply-to:references
  :mime-version:content-transfer-encoding;
- bh=2E/IwoJzArQOI0tLeIWcAV63W6gwJ92+ohjyeEw8pg8=;
- b=iEqbPFcmoBVXXCzrGQK2134vW+8Xz0YWFUGJNPGE6qJxp0tCM0nsNFXXC4h+P1xzAD
- RbBL+COQhh47jkqv5/sjqYoTs+bvTCVUYiVeJLSPeBykfty17A15g1dGz5KLHAwrnbnL
- jfvTqAeL/w3PsoiBSs4kOok9tzIiJPLdAgMdtRc3w3MZXnhWixUYI51c+QjDl8YrX7cE
- CUswOLRvdyxH4x/EqRZKpCMOjGikIZ3SgigzOwqhm3i9s0EVg6BbA8tpVlRSCnVYCyEt
- XCfTdYqaZXUBPJE+5ku4PMi6En22dNHhdVv82IsiWGYbeSNF2ra1lj/e0zSsQN/sNBy8
- N/Kg==
+ bh=290Bo0sJTh/t678nA8yWOfHRoSh5E7Ekj1ME0hd0Klk=;
+ b=tmkhJaJU3VHkDyTbru8lROAJsbWUowjJpfjeebweaYui9+dmpz9dp4CiqwVroJXu4r
+ e8qFLTGO7BrrkBcyAJfn8s2nTfvG5gjJ1khl+BjW/1+PVJUxqn9EqV6ZrD0gvug7z8gA
+ eY4KuYCaGxS6cQdPkeOmoQrc8TarN3zTBK2tbwqJ7YpAUJ56ov1ZOXJtfACGI+zExXPc
+ Esk7bBmXTyf2iTDq9UrZRBWZgsW/jfXOYpNJA72ELOZo6kAHQHKxX3i+3VligPWKziIs
+ cVthbjCjS21wLR2JkMrbXMLO8Y4DC/h+kZ4de4lLQ9n3XmynYbfmAnxyI0QNS8VeNWXW
+ 0rjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
  :references:mime-version:content-transfer-encoding;
- bh=2E/IwoJzArQOI0tLeIWcAV63W6gwJ92+ohjyeEw8pg8=;
- b=pjKoujqHiGley/dzgmm39M8s8SZJElm0HpWDKJRKACDlTuRgVlEQrxs5z2gDeloxb/
- 4ScYYT40aheOpUnPQYrddvMtwWchGMRZ3WdsrcxuXCuaWc/rqLXXI9EqcGz6n4XogTPb
- B/wWwPwiUHMnvmR0ud4CpDsxlxcUU+Js+/RdqeJhPMluPAbk9hYFQwWs7YdKKKnOfuiM
- KbTO9AuzzzPMUNLPs8iVCveZyvgXb+Cbi73FQ9gKGcwRnAkhx4q1/QF8TndgaXlY6aOD
- scYSxe36X6/sbjrZ0XUdPMJ43dFlObnqaNBNDjdY8n+apyv93hB57u8hrvkRQtfFeEtj
- LsBw==
-X-Gm-Message-State: AOAM53253Zk3KpjjXFwSmzxZ4OLsaEqxiOWKW6IRscdjsfIPvCeKio93
- pHbKIYzcFDg6m3Dgte/jWMlE1B/+8x8=
-X-Google-Smtp-Source: ABdhPJyGVtb0kQhKxDOQ3rgCyFM7CMKxKblu6sRqk+tIeYGAbfG3LCMa/grSJQZbBh9QW8E7X+cIbQ==
-X-Received: by 2002:a63:c64:: with SMTP id 36mr5263358pgm.255.1604383337287;
- Mon, 02 Nov 2020 22:02:17 -0800 (PST)
+ bh=290Bo0sJTh/t678nA8yWOfHRoSh5E7Ekj1ME0hd0Klk=;
+ b=QsmwfIsSmg703YbsBbIbFBo4RetIrLbpXbeypi2gcV2vQCWJt6AqYd2kc5qI7tkI6t
+ alFSAur3MDi8TbzITU22kzPWJxtHIb4aXlJRYPSEddjYnhIwnVB8MY9Q5M3gEKLrL5Cc
+ E0hhy1NgSUu4UQZkfg7NAJLuruzb1XBpYVGR5zfeWcY57GCzroj2+l2bLBwWttpYQJnm
+ 8Y7AOOaOTNuxcEigxoho2iV/UeuxqAtutcAi6S32vfXieVwoEuDR+Dgt3JEFai0rmjWS
+ /zVTiL9pSlkQzjFLRrOTeSe+D9v9PIdYdi0SZ/VfjEuZuRWak+NSKytQD/echKx1e+tF
+ YZWg==
+X-Gm-Message-State: AOAM533W2MZTZ7Q/MfxDAoetY4doQ0V/HTgpO8xq6PcuW4yXnvnFEMzV
+ El853rhSZeZgd+APSQScRTc=
+X-Google-Smtp-Source: ABdhPJxRj4C0s/7LRqkG1TAIaPpnRoWT0V5FJT5A21qtBTEslWRfNbGEXSp9WpAS5/zlFWRkm2d7KQ==
+X-Received: by 2002:a17:902:8d95:b029:d6:521f:2f2d with SMTP id
+ v21-20020a1709028d95b02900d6521f2f2dmr24445166plo.76.1604383343728; 
+ Mon, 02 Nov 2020 22:02:23 -0800 (PST)
 Received: from nickserv.localdomain (c-98-33-101-203.hsd1.ca.comcast.net.
  [98.33.101.203])
- by smtp.gmail.com with ESMTPSA id b16sm15647269pfp.195.2020.11.02.22.02.15
+ by smtp.gmail.com with ESMTPSA id b16sm15647269pfp.195.2020.11.02.22.02.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Nov 2020 22:02:16 -0800 (PST)
+ Mon, 02 Nov 2020 22:02:23 -0800 (PST)
 From: Nick Terrell <nickrterrell@gmail.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon,  2 Nov 2020 22:05:31 -0800
-Message-Id: <20201103060535.8460-6-nickrterrell@gmail.com>
+Date: Mon,  2 Nov 2020 22:05:33 -0800
+Message-Id: <20201103060535.8460-8-nickrterrell@gmail.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201103060535.8460-1-nickrterrell@gmail.com>
 References: <20201103060535.8460-1-nickrterrell@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1kZpOg-00HAL3-R1
-Subject: [f2fs-dev] [PATCH v5 5/9] btrfs: zstd: Switch to the zstd-1.4.6 API
+X-Headers-End: 1kZpOn-007Kiw-8R
+Subject: [f2fs-dev] [PATCH v5 7/9] squashfs: zstd: Switch to the zstd-1.4.6
+ API
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -126,129 +128,49 @@ code is functionally equivalent.
 
 Signed-off-by: Nick Terrell <terrelln@fb.com>
 ---
- fs/btrfs/zstd.c | 48 ++++++++++++++++++++++++++++--------------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
+ fs/squashfs/zstd_wrapper.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
-index a7367ff573d4..6b466e090cd7 100644
---- a/fs/btrfs/zstd.c
-+++ b/fs/btrfs/zstd.c
-@@ -16,7 +16,7 @@
- #include <linux/refcount.h>
- #include <linux/sched.h>
+diff --git a/fs/squashfs/zstd_wrapper.c b/fs/squashfs/zstd_wrapper.c
+index f8c512a6204e..add582409866 100644
+--- a/fs/squashfs/zstd_wrapper.c
++++ b/fs/squashfs/zstd_wrapper.c
+@@ -11,7 +11,7 @@
+ #include <linux/mutex.h>
+ #include <linux/bio.h>
  #include <linux/slab.h>
 -#include <linux/zstd_compat.h>
 +#include <linux/zstd.h>
- #include "misc.h"
- #include "compression.h"
- #include "ctree.h"
-@@ -159,8 +159,8 @@ static void zstd_calc_ws_mem_sizes(void)
- 			zstd_get_btrfs_parameters(level, ZSTD_BTRFS_MAX_INPUT);
- 		size_t level_size =
- 			max_t(size_t,
--			      ZSTD_CStreamWorkspaceBound(params.cParams),
--			      ZSTD_DStreamWorkspaceBound(ZSTD_BTRFS_MAX_INPUT));
-+			      ZSTD_estimateCStreamSize_usingCParams(params.cParams),
-+			      ZSTD_estimateDStreamSize(ZSTD_BTRFS_MAX_INPUT));
+ #include <linux/vmalloc.h>
  
- 		max_size = max_t(size_t, max_size, level_size);
- 		zstd_ws_mem_sizes[level - 1] = max_size;
-@@ -389,13 +389,23 @@ int zstd_compress_pages(struct list_head *ws, struct address_space *mapping,
- 	*total_in = 0;
+ #include "squashfs_fs.h"
+@@ -34,7 +34,7 @@ static void *zstd_init(struct squashfs_sb_info *msblk, void *buff)
+ 		goto failed;
+ 	wksp->window_size = max_t(size_t,
+ 			msblk->block_size, SQUASHFS_METADATA_SIZE);
+-	wksp->mem_size = ZSTD_DStreamWorkspaceBound(wksp->window_size);
++	wksp->mem_size = ZSTD_estimateDStreamSize(wksp->window_size);
+ 	wksp->mem = vmalloc(wksp->mem_size);
+ 	if (wksp->mem == NULL)
+ 		goto failed;
+@@ -71,7 +71,7 @@ static int zstd_uncompress(struct squashfs_sb_info *msblk, void *strm,
+ 	struct bvec_iter_all iter_all = {};
+ 	struct bio_vec *bvec = bvec_init_iter_all(&iter_all);
  
- 	/* Initialize the stream */
--	stream = ZSTD_initCStream(params, len, workspace->mem,
--			workspace->size);
-+	stream = ZSTD_initStaticCStream(workspace->mem, workspace->size);
+-	stream = ZSTD_initDStream(wksp->window_size, wksp->mem, wksp->mem_size);
++	stream = ZSTD_initStaticDStream(wksp->mem, wksp->mem_size);
+ 
  	if (!stream) {
--		pr_warn("BTRFS: ZSTD_initCStream failed\n");
-+		pr_warn("BTRFS: ZSTD_initStaticCStream failed\n");
- 		ret = -EIO;
- 		goto out;
- 	}
-+	{
-+		size_t ret2;
-+
-+		ret2 = ZSTD_initCStream_advanced(stream, NULL, 0, params, len);
-+		if (ZSTD_isError(ret2)) {
-+			pr_warn("BTRFS: ZSTD_initCStream_advanced returned %s\n",
-+					ZSTD_getErrorName(ret2));
-+			ret = -EIO;
-+			goto out;
-+		}
-+	}
+ 		ERROR("Failed to initialize zstd decompressor\n");
+@@ -122,8 +122,7 @@ static int zstd_uncompress(struct squashfs_sb_info *msblk, void *strm,
+ 			break;
  
- 	/* map in the first page of input data */
- 	in_page = find_get_page(mapping, start >> PAGE_SHIFT);
-@@ -421,8 +431,8 @@ int zstd_compress_pages(struct list_head *ws, struct address_space *mapping,
- 		ret2 = ZSTD_compressStream(stream, &workspace->out_buf,
- 				&workspace->in_buf);
- 		if (ZSTD_isError(ret2)) {
--			pr_debug("BTRFS: ZSTD_compressStream returned %d\n",
--					ZSTD_getErrorCode(ret2));
-+			pr_debug("BTRFS: ZSTD_compressStream returned %s\n",
-+					ZSTD_getErrorName(ret2));
- 			ret = -EIO;
- 			goto out;
- 		}
-@@ -489,8 +499,8 @@ int zstd_compress_pages(struct list_head *ws, struct address_space *mapping,
- 
- 		ret2 = ZSTD_endStream(stream, &workspace->out_buf);
- 		if (ZSTD_isError(ret2)) {
--			pr_debug("BTRFS: ZSTD_endStream returned %d\n",
--					ZSTD_getErrorCode(ret2));
-+			pr_debug("BTRFS: ZSTD_endStream returned %s\n",
-+					ZSTD_getErrorName(ret2));
- 			ret = -EIO;
- 			goto out;
- 		}
-@@ -557,10 +567,9 @@ int zstd_decompress_bio(struct list_head *ws, struct compressed_bio *cb)
- 	unsigned long buf_start;
- 	unsigned long total_out = 0;
- 
--	stream = ZSTD_initDStream(
--			ZSTD_BTRFS_MAX_INPUT, workspace->mem, workspace->size);
-+	stream = ZSTD_initStaticDStream(workspace->mem, workspace->size);
- 	if (!stream) {
--		pr_debug("BTRFS: ZSTD_initDStream failed\n");
-+		pr_debug("BTRFS: ZSTD_initStaticDStream failed\n");
- 		ret = -EIO;
- 		goto done;
- 	}
-@@ -579,8 +588,8 @@ int zstd_decompress_bio(struct list_head *ws, struct compressed_bio *cb)
- 		ret2 = ZSTD_decompressStream(stream, &workspace->out_buf,
- 				&workspace->in_buf);
- 		if (ZSTD_isError(ret2)) {
--			pr_debug("BTRFS: ZSTD_decompressStream returned %d\n",
--					ZSTD_getErrorCode(ret2));
-+			pr_debug("BTRFS: ZSTD_decompressStream returned %s\n",
-+					ZSTD_getErrorName(ret2));
- 			ret = -EIO;
- 			goto done;
- 		}
-@@ -633,10 +642,9 @@ int zstd_decompress(struct list_head *ws, unsigned char *data_in,
- 	unsigned long pg_offset = 0;
- 	char *kaddr;
- 
--	stream = ZSTD_initDStream(
--			ZSTD_BTRFS_MAX_INPUT, workspace->mem, workspace->size);
-+	stream = ZSTD_initStaticDStream(workspace->mem, workspace->size);
- 	if (!stream) {
--		pr_warn("BTRFS: ZSTD_initDStream failed\n");
-+		pr_warn("BTRFS: ZSTD_initStaticDStream failed\n");
- 		ret = -EIO;
- 		goto finish;
- 	}
-@@ -667,8 +675,8 @@ int zstd_decompress(struct list_head *ws, unsigned char *data_in,
- 		ret2 = ZSTD_decompressStream(stream, &workspace->out_buf,
- 				&workspace->in_buf);
- 		if (ZSTD_isError(ret2)) {
--			pr_debug("BTRFS: ZSTD_decompressStream returned %d\n",
--					ZSTD_getErrorCode(ret2));
-+			pr_debug("BTRFS: ZSTD_decompressStream returned %s\n",
-+					ZSTD_getErrorName(ret2));
- 			ret = -EIO;
- 			goto finish;
+ 		if (ZSTD_isError(zstd_err)) {
+-			ERROR("zstd decompression error: %d\n",
+-					(int)ZSTD_getErrorCode(zstd_err));
++			ERROR("zstd decompression error: %s\n", ZSTD_getErrorName(zstd_err));
+ 			error = -EIO;
+ 			break;
  		}
 -- 
 2.28.0
