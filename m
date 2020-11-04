@@ -2,79 +2,77 @@ Return-Path: <SRS0=uFMh=EK=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1260C2D0A3
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Nov 2020 02:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B4BC2D0A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Nov 2020 02:52:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1A807216C4;
-	Wed,  4 Nov 2020 02:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id A008D2236F;
+	Wed,  4 Nov 2020 02:52:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="ZQdQ+LbY";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="imS431Hs";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUbc06gc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A807216C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="U0DwC5EW";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="SLGs3ieI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A008D2236F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ka8Y5-00019r-CY; Wed, 04 Nov 2020 02:29:21 +0000
+	id 1ka8uk-0002Fn-5O; Wed, 04 Nov 2020 02:52:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1ka8Y4-00019k-KN
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Nov 2020 02:29:20 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1ka8ui-0002Fa-6a
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Nov 2020 02:52:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Knza/ewcgshF8lMqycVcm7mlIJXnFgmJ6yQV/T16U+Q=; b=ZQdQ+LbYMY5YZtk/cVLGH2chT7
- ADYFDF5P+w0u83DVPz4TpgwvRhmzERgb6e+hNTwzRfYIIWW36Kq5eqsv+R4LajE6ExA6d9Uh6yCWG
- 7bulD8wN17GDQW1iaU/rnt45zTr7kp4+yvEdHAltzhZ3VtL5UTu7QajO+DL/EqZLkMsg=;
+ bh=PjperagnsSXNR1M/Vl5WUpraD/wLfKttsQ/NFXSQ5ms=; b=U0DwC5EW2vqfms2hYOa741Th93
+ +qcWx2DyelhmyiG7NnHSXyY98mYLpmEBap8WgTPNpB8Jc7wDwUM5X/l0pmt3pjDeChuXaIo28JiEl
+ AkHJp36w20IUwoGt88MwtBMhLLSfHJ+OJ57S60Scx64RI4JAHmqkxoK0rpAJIRiDvpc8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Knza/ewcgshF8lMqycVcm7mlIJXnFgmJ6yQV/T16U+Q=; b=imS431Hsw0KnvG5yET935Qwpvu
- VYy54vSg/AOCB1jOoUWfhLaTvJxFcJxfg6riB6gmndNyFxgD5DVo+UHHIMH/S52s6Cv/79l1NKnQu
- +KBR0RrI+o5MZYhq99z7WztwXOSga3bwXExtlHCqhTHmooNsDNTV1sXAzYMKoTjGq+Wc=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=PjperagnsSXNR1M/Vl5WUpraD/wLfKttsQ/NFXSQ5ms=; b=SLGs3ieINgCCuuNcpUvRaaV7jz
+ aO5BQeW/pw0LT6iaRoDPVordj+cdXrgyBAkwcOWM7+HyLROxAhbYz208qUxdqOc+el5hFYu4KGzjz
+ WTkMRA9jqAMmyPEvaVuSeCoQnAF/5VSIIOkkFDjtTp1DlQ9vtvv9G82Yv2huUmiwcqa4=;
+Received: from szxga05-in.huawei.com ([45.249.212.191])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ka8Xz-000i6F-EW
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Nov 2020 02:29:20 +0000
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net
- [172.10.235.113])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id D861C216C4;
- Wed,  4 Nov 2020 02:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1604456950;
- bh=2ZfJqIORjLB7q6zIRwiMeO00SRx9XOpoB4zxqcAStZQ=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=JUbc06gcfBLn8oELert5Splrgauetjeyxyh9ubPz1PBQ2Bjm7XHR0I2uod6IRs2XE
- i/dA/HaJqxwKJ+pcRpLYr+7KSW6WopibJ5K3yrQBVW2cAjWnHU2QL2hx/+b6brHtMv
- YHVYFNlOTWVA7DSDUjnGQ7mltm/2DrNMsC/paekY=
-Date: Tue, 3 Nov 2020 18:29:08 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Message-ID: <20201104022908.GA832@sol.localdomain>
+ id 1ka8uX-000j12-Oj
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Nov 2020 02:52:43 +0000
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CQrlx4zPzzhZlN;
+ Wed,  4 Nov 2020 10:52:13 +0800 (CST)
+Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 4 Nov 2020
+ 10:52:14 +0800
+To: Eric Biggers <ebiggers@kernel.org>
 References: <20201104021906.108534-1-yuchao0@huawei.com>
+ <20201104022908.GA832@sol.localdomain>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <2d1f5f85-f1a1-edf1-82a4-ee47fd46c349@huawei.com>
+Date: Wed, 4 Nov 2020 10:52:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20201104021906.108534-1-yuchao0@huawei.com>
-X-Headers-End: 1ka8Xz-000i6F-EW
+In-Reply-To: <20201104022908.GA832@sol.localdomain>
+Content-Language: en-US
+X-Originating-IP: [10.136.114.67]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1ka8uX-000j12-Oj
 Subject: Re: [f2fs-dev] [PATCH RFC] f2fs: fix compat F2FS_IOC_{MOVE,
  GARBAGE_COLLECT}_RANGE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -90,64 +88,78 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Nov 04, 2020 at 10:19:06AM +0800, Chao Yu wrote:
-> Eric reported a ioctl bug in below link:
+On 2020/11/4 10:29, Eric Biggers wrote:
+> On Wed, Nov 04, 2020 at 10:19:06AM +0800, Chao Yu wrote:
+>> Eric reported a ioctl bug in below link:
+>>
+>> https://lore.kernel.org/linux-f2fs-devel/20201103032234.GB2875@sol.localdomain/
+>>
+>> That said, on some 32-bit architectures, u64 has only 32-bit alignment,
+>> notably i386 and x86_32, so that size of struct f2fs_gc_range compiled
+>> in x86_32 is 20 bytes, however the size in x86_64 is 24 bytes, binary
+>> compiled in x86_32 can not call F2FS_IOC_GARBAGE_COLLECT_RANGE successfully
+>> due to mismatched value of ioctl command in betweeen binary and f2fs
+>> module, similarly, F2FS_IOC_MOVE_RANGE will fail too.
+>>
+>> In this patch we introduce two ioctls for compatibility of above special
+>> 32-bit binary:
+>> - F2FS_IOC32_GARBAGE_COLLECT_RANGE
+>> - F2FS_IOC32_MOVE_RANGE
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>
+>> Jaegeuk, Eric,
+>>
+>> I have no 32-bit machine now, so I don't run any test on this patch,
+>> please take a look at this RFC patch first.
 > 
-> https://lore.kernel.org/linux-f2fs-devel/20201103032234.GB2875@sol.localdomain/
-> 
-> That said, on some 32-bit architectures, u64 has only 32-bit alignment,
-> notably i386 and x86_32, so that size of struct f2fs_gc_range compiled
-> in x86_32 is 20 bytes, however the size in x86_64 is 24 bytes, binary
-> compiled in x86_32 can not call F2FS_IOC_GARBAGE_COLLECT_RANGE successfully
-> due to mismatched value of ioctl command in betweeen binary and f2fs
-> module, similarly, F2FS_IOC_MOVE_RANGE will fail too.
-> 
-> In this patch we introduce two ioctls for compatibility of above special
-> 32-bit binary:
-> - F2FS_IOC32_GARBAGE_COLLECT_RANGE
-> - F2FS_IOC32_MOVE_RANGE
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> 
-> Jaegeuk, Eric,
-> 
-> I have no 32-bit machine now, so I don't run any test on this patch,
-> please take a look at this RFC patch first.
+> You can test this by running a 32-bit binary on a machine with a 64-bit kernel.
+> E.g. on x86_64, compile a binary with 'gcc -m32'.
 
-You can test this by running a 32-bit binary on a machine with a 64-bit kernel.
-E.g. on x86_64, compile a binary with 'gcc -m32'.
+Ah, thanks for providing the option, I can try that.
 
->  #ifdef CONFIG_COMPAT
-> +static int f2fs_compat_ioc_gc_range(struct file *file, unsigned long arg)
-> +{
-> +	struct compat_f2fs_gc_range __user *urange;
-> +	struct f2fs_gc_range range;
-> +	int err;
-> +
-> +	urange = compat_ptr(arg);
-> +	err = get_user(range.sync, &urange->sync);
-> +	err |= get_user(range.start, &urange->start);
-> +	err |= get_user(range.len, &urange->len);
-> +	if (err)
-> +		return -EFAULT;
-> +	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(file)))))
-> +		return -EIO;
-> +	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(file_inode(file))))
-> +		return -ENOSPC;
-> +	return f2fs_ioc_gc_range(file, (unsigned long)&range);
-> +}
+> 
+>>   #ifdef CONFIG_COMPAT
+>> +static int f2fs_compat_ioc_gc_range(struct file *file, unsigned long arg)
+>> +{
+>> +	struct compat_f2fs_gc_range __user *urange;
+>> +	struct f2fs_gc_range range;
+>> +	int err;
+>> +
+>> +	urange = compat_ptr(arg);
+>> +	err = get_user(range.sync, &urange->sync);
+>> +	err |= get_user(range.start, &urange->start);
+>> +	err |= get_user(range.len, &urange->len);
+>> +	if (err)
+>> +		return -EFAULT;
+>> +	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(file)))))
+>> +		return -EIO;
+>> +	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(file_inode(file))))
+>> +		return -ENOSPC;
+>> +	return f2fs_ioc_gc_range(file, (unsigned long)&range);
+>> +}
+> 
+> This won't work because f2fs_ioc_gc_range() expects a user pointer.  You'll need
+> to make the native and compat versions do the copy from user separately, and
+> have them call a helper function that takes a pointer to the argument in kernel
+> memory.
 
-This won't work because f2fs_ioc_gc_range() expects a user pointer.  You'll need
-to make the native and compat versions do the copy from user separately, and
-have them call a helper function that takes a pointer to the argument in kernel
-memory.
+Yes, I need to introduce function like __f2fs_ioc_gc_range() to accepted pointer
+parameter which points kernel memory.
 
-- Eric
+Will do test and resend v2 soon.
+
+Thanks,
+
+> 
+> - Eric
+> .
+> 
 
 
 _______________________________________________
