@@ -1,83 +1,81 @@
-Return-Path: <SRS0=uFMh=EK=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=z4rm=EL=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90470C2D0A3
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Nov 2020 18:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 999E0C2D0A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Nov 2020 01:01:31 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F169020780
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Nov 2020 18:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 0FAC4206D4;
+	Thu,  5 Nov 2020 01:01:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Nxfzho2i";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="HDL+rJaN";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q24jLDwe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F169020780
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="BH/cjUBg";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Z+vMwNXt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FAC4206D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kaNuk-0005W4-By; Wed, 04 Nov 2020 18:53:46 +0000
+	id 1kaTea-0004BH-MI; Thu, 05 Nov 2020 01:01:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1kaNui-0005Vn-Ky
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Nov 2020 18:53:44 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kaTeX-0004B5-KR
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Nov 2020 01:01:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=U4x1MXz5tbIvT1cORoWiOryU1faGGNbGUjdU+7mF3HQ=; b=Nxfzho2ix5jMkNJcBrrwFsoVyc
- Gw+i+IYxKpWMR1bsp/fw1mnZWc/n6jgr/rjv0QsvPerGYXB9xz/jMxxxuUShSxmCoV2resEffnP3l
- vsQlhWLY+l8tRS3Ghc+UCujyBDhkl3/7oyY5jMaRINcKLDUdew8F/d84hcZFr/ke3WGE=;
+ bh=deYhQxEoIE1YLwyzlLXaTbIaoKfq7PUxqicRTlZpWTk=; b=BH/cjUBgflcPrLRkPwvGNToyzn
+ SddmhTzrHrngInbdHjBEdQ3yplGl1ACPvvipd8tvByXKJtPacnS43Klt0HL98l4+lxJbWVvO/XUbr
+ stE/jD3FjRyl5fDGteiJTA+HaapnTAdCWmAy5E2TPeZkcQ55UC1wyp6D0Wh+YhYDuYlM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=U4x1MXz5tbIvT1cORoWiOryU1faGGNbGUjdU+7mF3HQ=; b=HDL+rJaNZwvkRtXoIA3dvXYDyF
- icmuRlhDknBOPTePQMzzV7lZ1WyYFk2SRReNPA9ZiXLWEaSNwj22e+Z1/GOtQ5sYGpZdwclTq8WhJ
- 3RzR3PDj5TLeQLYWLhTU0k5yrdpem0seItQmBIKVFHsCit7NnWRd1sixEtmBfX8ueXJg=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=deYhQxEoIE1YLwyzlLXaTbIaoKfq7PUxqicRTlZpWTk=; b=Z+vMwNXtbLT3sV2dtIGoQ4fHH1
+ Z2eYgceHvhHVXVZ0Wp84JOriFOEN0pBGynZObq7fiAIfI+BTh49F7dgjUuPsY1cuwJdIWUCJzscX0
+ 9BXU9NQOwcwhh01jA5efLKvvsC1k5KU111ms15nlq6au/ApaTOWvDv6SJBf6+jzPgZNc=;
+Received: from szxga07-in.huawei.com ([45.249.212.35])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kaNuR-009XjY-AB
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 04 Nov 2020 18:53:44 +0000
-Received: from google.com (unknown [104.132.1.66])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 6FA6320782;
- Wed,  4 Nov 2020 18:53:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1604515994;
- bh=gmgwXt+wYX0tzEd4eikIaskpTiv2GPG3uhFSrn8iPa0=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=q24jLDweh2NM6hfE1ZDGJZmSgFQtFBUHeCWTOyKy2wCxzd2okKBB826gYkGDpJ5i7
- nyW2NRXYEONX+uznTSpTpBJxfBoEUyHhzyxVXDc1/Yf9wR9RWYJFj3J0PRhkh8X6Wl
- A9+OR6DyHKfLwhgovtxd9o+wZUYYkEZ0GxUXztNY=
-Date: Wed, 4 Nov 2020 10:53:12 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Robin Hsu <robinhsu@google.com>
-Message-ID: <20201104185312.GA134770@google.com>
-References: <20201026094000.1500425-1-robinhsu@google.com>
- <20201103025247.GA2875@sol.localdomain>
- <20201103032327.GA3655802@google.com>
- <CAH7-xNRd1QBJUaxajijjrMbWdKKO1AKS2-1Q5HAAkHSUF628ug@mail.gmail.com>
+ id 1kaTeT-009qgU-A0
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Nov 2020 01:01:25 +0000
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4CRQF92qWxz71p3;
+ Thu,  5 Nov 2020 09:01:01 +0800 (CST)
+Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 5 Nov 2020
+ 09:00:59 +0800
+To: Eric Biggers <ebiggers@kernel.org>
+References: <20201104064310.15769-1-yuchao0@huawei.com>
+ <20201104064310.15769-2-yuchao0@huawei.com>
+ <20201104180153.GB846@sol.localdomain>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <2bec3d16-e920-12b9-562d-0e055c1af28e@huawei.com>
+Date: Thu, 5 Nov 2020 09:00:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <CAH7-xNRd1QBJUaxajijjrMbWdKKO1AKS2-1Q5HAAkHSUF628ug@mail.gmail.com>
-X-Headers-End: 1kaNuR-009XjY-AB
-Subject: Re: [f2fs-dev] [PATCH 1/1] f2fs-toos:fsck.f2fs Fix bad return value
+In-Reply-To: <20201104180153.GB846@sol.localdomain>
+Content-Language: en-US
+X-Originating-IP: [10.136.114.67]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1kaTeT-009qgU-A0
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: fix compat F2FS_IOC_{MOVE,
+ GARBAGE_COLLECT}_RANGE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,169 +87,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 11/04, Robin Hsu wrote:
-> The root cause is the ASSERT() marco,  In fact, I already fixed it in one
-> of my recent work.
-> I separate it as an independent commit here:
+On 2020/11/5 2:01, Eric Biggers wrote:
+> On Wed, Nov 04, 2020 at 02:43:10PM +0800, Chao Yu wrote:
+>> +static int f2fs_ioc_gc_range(struct file *filp, unsigned long arg)
+>> +{
+>> +	struct f2fs_gc_range range;
+>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
+>> +
+>> +	if (!capable(CAP_SYS_ADMIN))
+>> +		return -EPERM;
+>> +	if (f2fs_readonly(sbi->sb))
+>> +		return -EROFS;
+>> +	if (copy_from_user(&range, (struct f2fs_gc_range __user *)arg,
+>> +							sizeof(range)))
+>> +		return -EFAULT;
+>> +
+>> +	return __f2fs_ioc_gc_range(filp, &range);
+>> +}
+> [...]
+>>   #ifdef CONFIG_COMPAT
+>> +static int f2fs_compat_ioc_gc_range(struct file *file, unsigned long arg)
+>> +{
+>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(file));
+>> +	struct compat_f2fs_gc_range __user *urange;
+>> +	struct f2fs_gc_range range;
+>> +	int err;
+>> +
+>> +	if (unlikely(f2fs_cp_error(sbi)))
+>> +		return -EIO;
+>> +	if (!f2fs_is_checkpoint_ready(sbi))
+>> +		return -ENOSPC;
+>> +	if (!capable(CAP_SYS_ADMIN))
+>> +		return -EPERM;
+>> +	if (f2fs_readonly(sbi->sb))
+>> +		return -EROFS;
+>> +
+>> +	urange = compat_ptr(arg);
+>> +	err = get_user(range.sync, &urange->sync);
+>> +	err |= get_user(range.start, &urange->start);
+>> +	err |= get_user(range.len, &urange->len);
+>> +	if (err)
+>> +		return -EFAULT;
+>> +
+>> +	return __f2fs_ioc_gc_range(file, &range);
+>> +}
 > 
-> >From 5359588b1804c5e555e9fad92203d76041ef09eb Mon Sep 17 00:00:00 2001
+> It would be better to have __f2fs_ioc_gc_range() handle the f2fs_cp_error(),
+> f2fs_is_checkpoint_ready(), capable(), and f2fs_readonly() checks, so that they
+> don't have to be duplicated in the native and compat cases.
 > 
-> From: Robin Hsu <robinhsu@google.com>
-> 
-> Date: Wed, 4 Nov 2020 10:50:28 +0800
-> 
-> Subject: [PATCH] Fix ASSERT() macro with '%' in the expression
-> 
-> 
-> 
-> Fix a compiling error triggered by ASSERT(exp), when exp contains '%'
-> 
-> (e.g. integer modular operator)
-> 
-> 
-> 
-> Signed-off-by: Robin Hsu <robinhsu@google.com>
-> 
-> Change-Id: I84708dbaf10c675b9950926c9b6ded5b5a3fbd59
+> Similarly for "move range".
 
-Thanks, applied as well. :)
+Will clean up in v3.
+
+Thanks,
 
 > 
-> ---
+> - Eric
+> .
 > 
->  include/f2fs_fs.h | 4 ++--
-> 
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> 
-> 
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> 
-> index b5bda13..1348e39 100644
-> 
-> --- a/include/f2fs_fs.h
-> 
-> +++ b/include/f2fs_fs.h
-> 
-> @@ -194,8 +194,8 @@ static inline uint64_t bswap_64(uint64_t val)
-> 
->  #define ASSERT(exp)                                                    \
-> 
->         do {                                                            \
-> 
->                 if (!(exp)) {                                           \
-> 
-> -                       printf("[ASSERT] (%s:%4d) " #exp"\n",           \
-> 
-> -                                       __func__, __LINE__);            \
-> 
-> +                       printf("[ASSERT] (%s:%4d) %s\n",                \
-> 
-> +                                       __func__, __LINE__, #exp);      \
-> 
->                         exit(-1);                                       \
-> 
->                 }                                                       \
-> 
->         } while (0)
-> 
-> --
-> 
-> 2.29.1.341.ge80a0c044ae-goog
-> 
-> 
-> On Tue, Nov 3, 2020 at 11:23 AM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> 
-> > On 11/02, Eric Biggers wrote:
-> > > On Mon, Oct 26, 2020 at 05:40:00PM +0800, Robin Hsu via Linux-f2fs-devel
-> > wrote:
-> > > > 'ret' should not have been used here: otherwise, it would be wrongly
-> > used
-> > > > as the error code and then be returned from main().
-> > > >
-> > > > Signed-off-by: Robin Hsu <robinhsu@google.com>
-> > > > ---
-> > > >  fsck/fsck.c | 3 +--
-> > > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/fsck/fsck.c b/fsck/fsck.c
-> > > > index f97e9fb..66e4e3f 100644
-> > > > --- a/fsck/fsck.c
-> > > > +++ b/fsck/fsck.c
-> > > > @@ -3137,8 +3137,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
-> > > >             char ans[255] = {0};
-> > > >
-> > > >             printf("\nDo you want to restore lost files into
-> > ./lost_found/? [Y/N] ");
-> > > > -           ret = scanf("%s", ans);
-> > > > -           ASSERT(ret >= 0);
-> > > > +           ASSERT(scanf("%s", ans) >= 0);
-> > > >             if (!strcasecmp(ans, "y")) {
-> > > >                     for (i = 0; i < fsck->nr_nat_entries; i++) {
-> > > >                             if (f2fs_test_bit(i,
-> > fsck->nat_area_bitmap))
-> > >
-> > > This patch causes a compiler warning:
-> > >
-> > >       In file included from f2fs.h:33,
-> > >                        from fsck.h:14,
-> > >                        from fsck.c:11:
-> > >       fsck.c: In function 'fsck_verify':
-> > >       ../include/f2fs_fs.h:197:11: warning: format '%s' expects a
-> > matching 'char *' argument [-Wformat=]
-> > >           printf("[ASSERT] (%s:%4d) " #exp"\n",  \
-> > >                  ^~~~~~~~~~~~~~~~~~~~
-> > >       fsck.c:3151:3: note: in expansion of macro 'ASSERT'
-> > >          ASSERT(scanf("%s", ans) >= 0);
-> > >          ^~~~~~
-> >
-> > Urg. Fixed by this.
-> >
-> > From c986140e3c5abb9eb7a08928a88acb8273f1bd52 Mon Sep 17 00:00:00 2001
-> > From: Robin Hsu <robinhsu@google.com>
-> > Date: Mon, 26 Oct 2020 17:40:00 +0800
-> > Subject: [PATCH] f2fs-toos: fsck.f2fs Fix bad return value
-> >
-> > 'ret' should not have been used here: otherwise, it would be wrongly used
-> > as the error code and then be returned from main().
-> >
-> > Signed-off-by: Robin Hsu <robinhsu@google.com>
-> > Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fsck/fsck.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fsck/fsck.c b/fsck/fsck.c
-> > index 647523397f3e..e52672032d2c 100644
-> > --- a/fsck/fsck.c
-> > +++ b/fsck/fsck.c
-> > @@ -3146,10 +3146,11 @@ int fsck_verify(struct f2fs_sb_info *sbi)
-> >  #ifndef WITH_ANDROID
-> >         if (nr_unref_nid && !c.ro) {
-> >                 char ans[255] = {0};
-> > +               int res;
-> >
-> >                 printf("\nDo you want to restore lost files into
-> > ./lost_found/? [Y/N] ");
-> > -               ret = scanf("%s", ans);
-> > -               ASSERT(ret >= 0);
-> > +               res = scanf("%s", ans);
-> > +               ASSERT(res >= 0);
-> >                 if (!strcasecmp(ans, "y")) {
-> >                         for (i = 0; i < fsck->nr_nat_entries; i++) {
-> >                                 if (f2fs_test_bit(i,
-> > fsck->nat_area_bitmap))
-> > --
-> > 2.29.1.341.ge80a0c044ae-goog
-> >
-> >
 
 
 _______________________________________________
