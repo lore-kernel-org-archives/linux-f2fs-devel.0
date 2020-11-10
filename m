@@ -1,81 +1,75 @@
-Return-Path: <SRS0=DjvX=EP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=jCLE=EQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32313C4741F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Nov 2020 22:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDE3C4741F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Nov 2020 01:26:15 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A8D03206C0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Nov 2020 22:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3A3942078D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Nov 2020 01:26:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="EF6PukrA";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ExJjPdQW";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x/RoupRN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D03206C0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Y2ize+DP";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Q7csM/6a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A3942078D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kcFzv-0005cK-EM; Mon, 09 Nov 2020 22:50:51 +0000
+	id 1kcIQF-0001GO-Fa; Tue, 10 Nov 2020 01:26:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kcFzu-0005cC-CO
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Nov 2020 22:50:50 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kcIQD-0001GF-HV
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Nov 2020 01:26:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JGy+32ZC9e1RVqm2nKfGZgnJQAtX2OPg9/sPfw9hd/I=; b=EF6PukrAju9TA9lYZ3IeuzsYDH
- DEchC8AzLClcKOe4u3cGAoBEhHfR0sAVZUIRqIE3vf+dnDQxV5eIyTltjYp3jV9FArZiGfuwofBA5
- PvjaETr9p/x0VRs7dOnkpSE08VVbmk38eHozGgF7SZKU4NgYtkH0tBMB9euXMsNm0e54=;
+ bh=7WDHMWNMdnfvdyJ61BguDg+nXCfZYDgKrvAvUQyK6q0=; b=Y2ize+DPDf2Zoq0iecP8Dy6UOM
+ 7snxMNyOTAC1Rsom05k1FlRxVhLEsosubKES0lSSIm5qGgWy+wMq4o2JbCY+aihDn1PL/ff4JP6/p
+ QpT/e6hy9VChwJxmhq1RFNIEZ+JAFC31xgNivkyaAmUPS0uWaqPspG/9VxCB7Ce6bEHw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=JGy+32ZC9e1RVqm2nKfGZgnJQAtX2OPg9/sPfw9hd/I=; b=ExJjPdQWN8lZsI7zbRmng453KG
- hHKPz4Y73rMOSXHJAW1XSGsp9e+xorgKwWR+mDZ3S0R934lJvDnmB1xtoRpWIx8gEtDe5lygTLQI4
- JjOqfM3tfv2DugkVgRaVcjddnKfj735pL+Y2hsv4QwIB1uQxxtVBIJkgoO55uiYC2XOs=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=7WDHMWNMdnfvdyJ61BguDg+nXCfZYDgKrvAvUQyK6q0=; b=Q
+ 7csM/6aR9ZDTfw46Heuqni33WVav5oxVX6juZALItwRXFcteex5boWW5EUvz6YTLfgIHlZ30XPQuu
+ //4X3F4Xj2ozd0MDJneyjb55xUtFT27NUFmLJ5KpdTPI3vnqC1Zh8NCWwODCYwfoLx36brG0UkL6r
+ P2e1/5qqKM6BVtPQ=;
+Received: from szxga06-in.huawei.com ([45.249.212.32])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kcFzk-0066TZ-Eu
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 09 Nov 2020 22:50:50 +0000
-Received: from gmail.com (unknown [104.132.1.84])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 28674206C0;
- Mon,  9 Nov 2020 22:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1604962234;
- bh=3zCrnmiSy4pI28U8wV8PlYqpeE16yEzdnAVoONyzohs=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=x/RoupRNbJK1Pi4mHAwErVHXP/WENGRJgQMMxq9le7k+nzQ6OMr3Ik9Tg6nhy36C1
- yFvZiu/Ji96oaWBRhoIDdUt+aBI3y0PNOh3QbRN0uliX4vy/xne5YwHqkCQB5XM4I4
- qxla2lpMXWy+XbxUgITCAREeyY8g3BQp6Zc+EBOk=
-Date: Mon, 9 Nov 2020 14:50:32 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Daniel Rosenberg <drosen@google.com>
-Message-ID: <20201109225032.GA2652236@gmail.com>
-References: <20200923010151.69506-1-drosen@google.com>
+ id 1kcIQ3-00EvOC-OF
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Nov 2020 01:26:09 +0000
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4CVVYN2sYkzhhH9;
+ Tue, 10 Nov 2020 09:25:44 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.487.0; Tue, 10 Nov 2020 09:25:38 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Tue, 10 Nov 2020 09:24:36 +0800
+Message-ID: <20201110012437.26482-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20200923010151.69506-1-drosen@google.com>
-X-Headers-End: 1kcFzk-0066TZ-Eu
-Subject: Re: [f2fs-dev] [PATCH 0/5] Add support for Encryption and
- Casefolding in F2FS
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1kcIQ3-00EvOC-OF
+Subject: [f2fs-dev] [PATCH v5 1/2] f2fs: avoid unneeded data copy in
+ f2fs_ioc_move_range()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,47 +81,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kernel-team@android.com, "Theodore Y . Ts'o" <tytso@mit.edu>,
- Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
- Andreas Dilger <adilger.kernel@dilger.ca>,
- Alexander Viro <viro@zeniv.linux.org.uk>, linux-mtd@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Sep 23, 2020 at 01:01:46AM +0000, Daniel Rosenberg wrote:
-> These patches are on top of the f2fs dev branch
-> 
-> F2FS currently supports casefolding and encryption, but not at
-> the same time. These patches aim to rectify that. In a later follow up,
-> this will be added for Ext4 as well. I've included one ext4 patch from
-> the previous set since it isn't in the f2fs branch, but is needed for the
-> fscrypt changes.
-> 
-> The f2fs-tools changes have already been applied.
-> 
-> Since both fscrypt and casefolding require their own dentry operations,
-> I've moved the responsibility of setting the dentry operations from fscrypt
-> to the filesystems and provided helper functions that should work for most
-> cases.
-> 
-> These are a follow-up to the previously sent patch set
-> "[PATCH v12 0/4] Prepare for upcoming Casefolding/Encryption patches"
-> 
-> Daniel Rosenberg (5):
->   ext4: Use generic casefolding support
->   fscrypt: Export fscrypt_d_revalidate
->   libfs: Add generic function for setting dentry_ops
->   fscrypt: Have filesystems handle their d_ops
->   f2fs: Handle casefolding with Encryption
+Fields in struct f2fs_move_range won't change in f2fs_ioc_move_range(),
+let's avoid copying this structure's data to userspace.
 
-Daniel, can you resend this for 5.11, with all remaining comments addressed?
-The first two patches made 5.10, but the others didn't.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v5:
+- no change.
+ fs/f2fs/file.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-- Eric
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 52417a2e3f4f..22ae8ae0072f 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2898,12 +2898,6 @@ static int f2fs_ioc_move_range(struct file *filp, unsigned long arg)
+ 					range.pos_out, range.len);
+ 
+ 	mnt_drop_write_file(filp);
+-	if (err)
+-		goto err_out;
+-
+-	if (copy_to_user((struct f2fs_move_range __user *)arg,
+-						&range, sizeof(range)))
+-		err = -EFAULT;
+ err_out:
+ 	fdput(dst);
+ 	return err;
+-- 
+2.26.2
+
 
 
 _______________________________________________
