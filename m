@@ -5,21 +5,21 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F537C2D0E4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9962C2D0E4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:10:10 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7104624198
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:05:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 5454824199
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:10:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="E58Z393v";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="kG+mraTR";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="DSinI/xM";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="EMyEaxPR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7104624198
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="Z9hPBp0l";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Oye520vc";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="f/CKS8T5";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="B6mSrSI+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5454824199
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,28 +28,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=+/3fzN/Rmp6LCjDyjLOMlqSHRPilvIEQ+vFrMW91LsU=; b=E58Z393vZSFuozOmiDKAtHbVm
-	3p3bXOetUmwX7RJ5SWws4746l7a7kB06m5Afy9OJEcxCNg9SeBsUBtHU3xfEYHk7S+23lAIN4JqI3
-	G0b8pnsn+fjvxIjDh+PoHEaCcSCNSjhNn3fjR70HovHr8m+l+RLTaCLBV413cSZ/piQhU=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	 bh=jROzgE61VPIwWf4m/Yhq0t6QIJ+cRxTOGvDcssIUD4k=; b=Z9hPBp0lVEDQ0PnblSlB2kE89
+	vKVgc95iFa1XrV7Vp8LRRP4TxC5TqrB0QQaOZn8VS8cpV+mR/fHnKvDxY+vT6v+6FgCUm6aSusb8U
+	3YNqK9/sgM8JyNxCf6xYI/FpTrE+vo6c8E/1nPH5qg4OfTqoNMSs5Mf44IzpsMLw26hTc=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kf2Xv-0000qD-Cl; Tue, 17 Nov 2020 15:05:27 +0000
+	id 1kf2cT-0000gT-G7; Tue, 17 Nov 2020 15:10:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3EtmzXwYKAJcJ1KP1K7FF7C5.3FD@flex--satyat.bounces.google.com>)
- id 1kf2Xt-0000pl-QG
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:05:25 +0000
+ (envelope-from <3K9mzXwYKALAiQjoQjWeeWbU.Sec@flex--satyat.bounces.google.com>)
+ id 1kf2cS-0000gH-Bi
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:10:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TAjmsBc6qqfsA6JtVzH7iXxCcqn3Re43ZeihhwJWblk=; b=kG+mraTRaZRBQdcYYKdn41L40
- mb3liy1TUycyY6oDagafq465nfeXkJsUMinlALBOuLL5fcV0H9LHBwPxr9ABbkkwN4H/XW8LH83oR
- RiN+lGSMUlod+CfUSzTOKvsjDQrf/xnU8y5siOpBQXAfqRmU9XP/O9gJaVdu7buehUrEw=;
+ bh=BwiyyJFpFKuHzxO9ElSEoW591wjEhbpMFVEeLerCK4A=; b=Oye520vc3pwvKyDL6jPNQUexu
+ Cg/JYPF4/3m2eVHbP7ljdl3U8DZ2mXPZJmir457iiXm8DPFzoT2jdZn/B09QBPPNMiyLWDgpbk+k+
+ 6RRXyiO1ttfuYLAnJxbh6uCoClSa0pUQvTTI3OsJEI94z5p2l5h3kmXGPPg5GW0J7EYMw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -57,57 +57,57 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TAjmsBc6qqfsA6JtVzH7iXxCcqn3Re43ZeihhwJWblk=; b=DSinI/xMDAOygpMYo7GoPZDEzu
- VTxyRfr1Cu2Bqw11xDWn8uWvOt+H8+P08ibVlP82LEIGIuYxZwUsNqH9T9Ve0sQNQQnAdArVijel5
- MtcMTg3ScI4x92jK0hhy0haGJxn4sqIrpEThc3rS+MROF6ejASKMTT3ha660k+FK6G+c=;
-Received: from mail-pl1-f201.google.com ([209.85.214.201])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=BwiyyJFpFKuHzxO9ElSEoW591wjEhbpMFVEeLerCK4A=; b=f/CKS8T5r9BLUU9Ouh8pYUUpL+
+ QeAXCXG8POlBUxQ4pSm/ZI0CBPRQkDel2aYC7RXoGOwzXQiM3QEIgw5beBkpDr1mwR5IxrNpXTN4z
+ MDrexQUv6l4NzTnlzOy9V/VkzCsXQOhzy+CNkq493ZJDKx5p7pLo2LpkEVS2DIK4ALs4=;
+Received: from mail-yb1-f202.google.com ([209.85.219.202])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kf2Xc-00AYNV-TZ
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:05:25 +0000
-Received: by mail-pl1-f201.google.com with SMTP id l3so11700466ply.6
+ id 1kf2cG-000tLp-0t
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:10:08 +0000
+Received: by mail-yb1-f202.google.com with SMTP id c9so25503993ybs.8
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 17 Nov 2020 07:05:08 -0800 (PST)
+ Tue, 17 Nov 2020 07:09:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=sender:date:in-reply-to:message-id:mime-version:references:subject
- :from:to:cc; bh=TAjmsBc6qqfsA6JtVzH7iXxCcqn3Re43ZeihhwJWblk=;
- b=EMyEaxPRqKp6BJmvLRed7xNjmflfFIDpyGmyIGRvHgAeWoukL1WjrHvHe+O3b8rvLF
- 8EI0zLB41F1sZawhV0uB603CdXjhro7CHUPP0rayhula8vN8WIdmPlSP60B1eecKULn5
- gTOQ9+9r5sq5GCsfD3ezd0jFpMuisFBf2mgC026o8DJmPV4x3edrmvcW+NXopyyf4nhT
- wBU/jWJT+2LhpPjmugxc0DLsv6/Dxj7PMbTbpFsa3ISpxIiBuqqwuXwNg2JTJr4GmTB8
- wopCcpBlc4k5j4S6DwLaJECovbaBQX0nBj85zqJi++0Rg8CIiknFMxqdKf/yhImhcATN
- s0KA==
+ :from:to:cc; bh=BwiyyJFpFKuHzxO9ElSEoW591wjEhbpMFVEeLerCK4A=;
+ b=B6mSrSI+KLsPLHZOubezapg1w7KyF48Gcd5KvqiZAUUomrvCt93BMFte58x4CeD/eg
+ k0xlCR7goDt3KvTfbq6ZMZJTRtCUUnhHZa0njAuLo6BAWtOyT0lG1N+rkq1ohiO1t97Q
+ qemqcHPO0pfn6jMj0SXbr2ZPFcNslQAZJlIrb9BwOmPHHl8x9VSfb8bJ8B9PJOSyLNxA
+ sh1xch+eqx6drXfRAgiE1e5/U0BiaXHV0kNKfFjq0GDmh5MgGwrgrpp+Gb33sSAE+/7N
+ uiK1X9QiX7TLKFELMTbOhucdRKr0jLm77xygNNOq76Vp9Flin7B1n7wnTkkNWd/qi3VO
+ sykw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=TAjmsBc6qqfsA6JtVzH7iXxCcqn3Re43ZeihhwJWblk=;
- b=NW+uoTTjdeeXBjuhYO0L/FCpcApT4aI+1XqApoOrHUqduLtujpsE57KEt+Ca0VVVDi
- +k43IFZiwilAguSeLJbrYmPSOAJ8bSM5htoL/g5I4N3pfm2h6Ko7RhmXXBpjsg6PVVTp
- 0FNMFlOtAzuEeNQPV4FN1oYJEGDh9yci29SEJx8RDv8sFnDg6cAUbaZVOrajoMRxNZch
- nZ79Vrpgg7uP1xuHVOFfwN38xzmvdqaZfjkAOK0qmjV2Hr1dOp8nmubkqbVuq3E8wGhC
- IbHWrsCHV3Zz5WUktWVkcwU9MAQ7uSixZNFoayl9GDCN5PfYp7WDSnGdCCa8EkwtGz5K
- LxeQ==
-X-Gm-Message-State: AOAM5319PBU6rkwlKeC2Lf92RhOPvAlORpEErYxpMuoR068oIRly7ii0
- fXJQqk9mUqNmIEka4hkFf3CMEpV7CNM=
-X-Google-Smtp-Source: ABdhPJyGAlbPfHrO4NdA530/bUyk6s6UcuhFEoGPXg9d+QKChA9y9f47sWaLpQrfr/X+MyYGDds7q+TuEqM=
+ bh=BwiyyJFpFKuHzxO9ElSEoW591wjEhbpMFVEeLerCK4A=;
+ b=nhOEGSgBySNK7lwW+oP545urHsPkegwkesorbUXENrg4nzs3+Tk+dgutSkulP2yANz
+ PB4GBMUEDX1JM5K6yTqIIApOTmYnnylWLlE9olOgU01OtyBflHpBSz8uKVulSho0gIac
+ ri/ijbdHGP+wQ52O+YC7h12o0szkl2jyK7Ovm0nqHk3ReYXhDuk2ryr7+H7ILE0+2Ei+
+ o3DV4LmNRunaI0QVXA4BsptmbKS8gRX/YaJ36W+m/kMwC3PMUWWd3LU0In0oX8B1V8PT
+ 2o5n7gPkA1qlS69PJdKchB5ZmBhYsGGQb8GMEfYszFRHkSbzp3TLDQtzLylbB9IQpC3+
+ lHSw==
+X-Gm-Message-State: AOAM533WbZlC1/Od1+PBGty+UMhD4iIxdGlzRLZtbot0NSDkfCRuC2Tj
+ x1Qou8y+mqnueWEAZWaJqP/4Iqm8C3g=
+X-Google-Smtp-Source: ABdhPJzSl4jy6BzVHmPfkYxBH8ET6UtBl4AEksaq1fddCMgxT0uxzDjjRNZm1PxWWWwhr7bOMNiWNibk17E=
 X-Received: from satyaprateek.c.googlers.com
  ([fda3:e722:ac3:10:24:72f4:c0a8:1092])
- (user=satyat job=sendgmr) by 2002:ad4:45eb:: with SMTP id
- q11mr21110656qvu.20.1605622034377; 
- Tue, 17 Nov 2020 06:07:14 -0800 (PST)
-Date: Tue, 17 Nov 2020 14:07:01 +0000
+ (user=satyat job=sendgmr) by 2002:a25:2fcf:: with SMTP id
+ v198mr26506998ybv.492.1605622059376; 
+ Tue, 17 Nov 2020 06:07:39 -0800 (PST)
+Date: Tue, 17 Nov 2020 14:07:07 +0000
 In-Reply-To: <20201117140708.1068688-1-satyat@google.com>
-Message-Id: <20201117140708.1068688-2-satyat@google.com>
+Message-Id: <20201117140708.1068688-8-satyat@google.com>
 Mime-Version: 1.0
 References: <20201117140708.1068688-1-satyat@google.com>
 X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
 To: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
  Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>,
  Jens Axboe <axboe@kernel.dk>, "Darrick J . Wong" <darrick.wong@oracle.com>
-X-Headers-End: 1kf2Xc-00AYNV-TZ
-Subject: [f2fs-dev] [PATCH v7 1/8] block: ensure bios are not split in
- middle of crypto data unit
+X-Headers-End: 1kf2cG-000tLp-0t
+Subject: [f2fs-dev] [PATCH v7 7/8] f2fs: support direct I/O with fscrypt
+ using blk-crypto
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,325 +122,50 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Satya Tangirala via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Satya Tangirala <satyat@google.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, Satya Tangirala <satyat@google.com>,
- linux-ext4@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ Satya Tangirala <satyat@google.com>, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Introduce blk_crypto_bio_sectors_alignment() that returns the required
-alignment for the number of sectors in a bio. Any bio split must ensure
-that the number of sectors in the resulting bios is aligned to that
-returned value. This patch also updates __blk_queue_split(),
-__blk_queue_bounce() and blk_crypto_split_bio_if_needed() to respect
-blk_crypto_bio_sectors_alignment() when splitting bios.
+From: Eric Biggers <ebiggers@google.com>
 
+Wire up f2fs with fscrypt direct I/O support. direct I/O with fscrypt is
+only supported through blk-crypto (i.e. CONFIG_BLK_INLINE_ENCRYPTION must
+have been enabled, the 'inlinecrypt' mount option must have been specified,
+and either hardware inline encryption support must be present or
+CONFIG_BLK_INLINE_ENCYRPTION_FALLBACK must have been enabled). Further,
+direct I/O on encrypted files is only supported when the *length* of the
+I/O is aligned to the filesystem block size (which is *not* necessarily the
+same as the block device's block size).
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Co-developed-by: Satya Tangirala <satyat@google.com>
 Signed-off-by: Satya Tangirala <satyat@google.com>
+Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- block/bio.c                 |  1 +
- block/blk-crypto-fallback.c | 10 ++--
- block/blk-crypto-internal.h | 18 +++++++
- block/blk-merge.c           | 96 ++++++++++++++++++++++++++++++++-----
- block/blk-mq.c              |  3 ++
- block/bounce.c              |  4 ++
- 6 files changed, 117 insertions(+), 15 deletions(-)
+ fs/f2fs/f2fs.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index fa01bef35bb1..259cef126df3 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1472,6 +1472,7 @@ struct bio *bio_split(struct bio *bio, int sectors,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index cb700d797296..d518e668618e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4120,7 +4120,11 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	int rw = iov_iter_rw(iter);
  
- 	BUG_ON(sectors <= 0);
- 	BUG_ON(sectors >= bio_sectors(bio));
-+	WARN_ON(!IS_ALIGNED(sectors, blk_crypto_bio_sectors_alignment(bio)));
- 
- 	/* Zone append commands cannot be split */
- 	if (WARN_ON_ONCE(bio_op(bio) == REQ_OP_ZONE_APPEND))
-diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
-index c162b754efbd..db2d2c67b308 100644
---- a/block/blk-crypto-fallback.c
-+++ b/block/blk-crypto-fallback.c
-@@ -209,20 +209,22 @@ static bool blk_crypto_alloc_cipher_req(struct blk_ksm_keyslot *slot,
- static bool blk_crypto_split_bio_if_needed(struct bio **bio_ptr)
- {
- 	struct bio *bio = *bio_ptr;
-+	struct bio_crypt_ctx *bc = bio->bi_crypt_context;
- 	unsigned int i = 0;
--	unsigned int num_sectors = 0;
-+	unsigned int len = 0;
- 	struct bio_vec bv;
- 	struct bvec_iter iter;
- 
- 	bio_for_each_segment(bv, bio, iter) {
--		num_sectors += bv.bv_len >> SECTOR_SHIFT;
-+		len += bv.bv_len;
- 		if (++i == BIO_MAX_PAGES)
- 			break;
- 	}
--	if (num_sectors < bio_sectors(bio)) {
-+	if (len < bio->bi_iter.bi_size) {
- 		struct bio *split_bio;
- 
--		split_bio = bio_split(bio, num_sectors, GFP_NOIO, NULL);
-+		len = round_down(len, bc->bc_key->crypto_cfg.data_unit_size);
-+		split_bio = bio_split(bio, len >> SECTOR_SHIFT, GFP_NOIO, NULL);
- 		if (!split_bio) {
- 			bio->bi_status = BLK_STS_RESOURCE;
- 			return false;
-diff --git a/block/blk-crypto-internal.h b/block/blk-crypto-internal.h
-index 0d36aae538d7..304e90ed99f5 100644
---- a/block/blk-crypto-internal.h
-+++ b/block/blk-crypto-internal.h
-@@ -60,6 +60,19 @@ static inline bool blk_crypto_rq_is_encrypted(struct request *rq)
- 	return rq->crypt_ctx;
- }
- 
-+/*
-+ * Returns the alignment requirement for the number of sectors in this bio based
-+ * on its bi_crypt_context. Any bios split from this bio must follow this
-+ * alignment requirement as well.
-+ */
-+static inline unsigned int blk_crypto_bio_sectors_alignment(struct bio *bio)
-+{
-+	if (!bio_has_crypt_ctx(bio))
-+		return 1;
-+	return bio->bi_crypt_context->bc_key->crypto_cfg.data_unit_size >>
-+								SECTOR_SHIFT;
-+}
-+
- #else /* CONFIG_BLK_INLINE_ENCRYPTION */
- 
- static inline bool bio_crypt_rq_ctx_compatible(struct request *rq,
-@@ -93,6 +106,11 @@ static inline bool blk_crypto_rq_is_encrypted(struct request *rq)
- 	return false;
- }
- 
-+static inline unsigned int blk_crypto_bio_sectors_alignment(struct bio *bio)
-+{
-+	return 1;
-+}
-+
- #endif /* CONFIG_BLK_INLINE_ENCRYPTION */
- 
- void __bio_crypt_advance(struct bio *bio, unsigned int bytes);
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index bcf5e4580603..f34dda7132f9 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -149,13 +149,15 @@ static inline unsigned get_max_io_size(struct request_queue *q,
- 	unsigned pbs = queue_physical_block_size(q) >> SECTOR_SHIFT;
- 	unsigned lbs = queue_logical_block_size(q) >> SECTOR_SHIFT;
- 	unsigned start_offset = bio->bi_iter.bi_sector & (pbs - 1);
-+	unsigned int bio_sectors_alignment =
-+					blk_crypto_bio_sectors_alignment(bio);
- 
- 	max_sectors += start_offset;
- 	max_sectors &= ~(pbs - 1);
--	if (max_sectors > start_offset)
--		return max_sectors - start_offset;
-+	if (max_sectors - start_offset >= bio_sectors_alignment)
-+		return round_down(max_sectors - start_offset, bio_sectors_alignment);
- 
--	return sectors & ~(lbs - 1);
-+	return round_down(sectors & ~(lbs - 1), bio_sectors_alignment);
- }
- 
- static inline unsigned get_max_segment_size(const struct request_queue *q,
-@@ -174,6 +176,41 @@ static inline unsigned get_max_segment_size(const struct request_queue *q,
- 			(unsigned long)queue_max_segment_size(q));
- }
- 
-+/**
-+ * update_aligned_sectors_and_segs() - Ensures that *@aligned_sectors is aligned
-+ *				       to @bio_sectors_alignment, and that
-+ *				       *@aligned_segs is the value of nsegs
-+ *				       when sectors reached/first exceeded that
-+ *				       value of *@aligned_sectors.
-+ *
-+ * @nsegs: [in] The current number of segs
-+ * @sectors: [in] The current number of sectors
-+ * @aligned_segs: [in,out] The number of segments that make up @aligned_sectors
-+ * @aligned_sectors: [in,out] The largest number of sectors <= @sectors that is
-+ *		     aligned to @sectors
-+ * @bio_sectors_alignment: [in] The alignment requirement for the number of
-+ *			  sectors
-+ *
-+ * Updates *@aligned_sectors to the largest number <= @sectors that is also a
-+ * multiple of @bio_sectors_alignment. This is done by updating *@aligned_sectors
-+ * whenever @sectors is at least @bio_sectors_alignment more than
-+ * *@aligned_sectors, since that means we can increment *@aligned_sectors while
-+ * still keeping it aligned to @bio_sectors_alignment and also keeping it <=
-+ * @sectors. *@aligned_segs is updated to the value of nsegs when @sectors first
-+ * reaches/exceeds any value that causes *@aligned_sectors to be updated.
-+ */
-+static inline void update_aligned_sectors_and_segs(const unsigned int nsegs,
-+						   const unsigned int sectors,
-+						   unsigned int *aligned_segs,
-+				unsigned int *aligned_sectors,
-+				const unsigned int bio_sectors_alignment)
-+{
-+	if (sectors - *aligned_sectors < bio_sectors_alignment)
-+		return;
-+	*aligned_sectors = round_down(sectors, bio_sectors_alignment);
-+	*aligned_segs = nsegs;
-+}
-+
- /**
-  * bvec_split_segs - verify whether or not a bvec should be split in the middle
-  * @q:        [in] request queue associated with the bio associated with @bv
-@@ -195,9 +232,12 @@ static inline unsigned get_max_segment_size(const struct request_queue *q,
-  * the block driver.
-  */
- static bool bvec_split_segs(const struct request_queue *q,
--			    const struct bio_vec *bv, unsigned *nsegs,
--			    unsigned *sectors, unsigned max_segs,
--			    unsigned max_sectors)
-+			    const struct bio_vec *bv, unsigned int *nsegs,
-+			    unsigned int *sectors, unsigned int *aligned_segs,
-+			    unsigned int *aligned_sectors,
-+			    unsigned int bio_sectors_alignment,
-+			    unsigned int max_segs,
-+			    unsigned int max_sectors)
- {
- 	unsigned max_len = (min(max_sectors, UINT_MAX >> 9) - *sectors) << 9;
- 	unsigned len = min(bv->bv_len, max_len);
-@@ -211,6 +251,11 @@ static bool bvec_split_segs(const struct request_queue *q,
- 
- 		(*nsegs)++;
- 		total_len += seg_size;
-+		update_aligned_sectors_and_segs(*nsegs,
-+						*sectors + (total_len >> 9),
-+						aligned_segs,
-+						aligned_sectors,
-+						bio_sectors_alignment);
- 		len -= seg_size;
- 
- 		if ((bv->bv_offset + total_len) & queue_virt_boundary(q))
-@@ -235,6 +280,8 @@ static bool bvec_split_segs(const struct request_queue *q,
-  * following is guaranteed for the cloned bio:
-  * - That it has at most get_max_io_size(@q, @bio) sectors.
-  * - That it has at most queue_max_segments(@q) segments.
-+ * - That the number of sectors in the returned bio is aligned to
-+ *   blk_crypto_bio_sectors_alignment(@bio)
-  *
-  * Except for discard requests the cloned bio will point at the bi_io_vec of
-  * the original bio. It is the responsibility of the caller to ensure that the
-@@ -252,6 +299,9 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
- 	unsigned nsegs = 0, sectors = 0;
- 	const unsigned max_sectors = get_max_io_size(q, bio);
- 	const unsigned max_segs = queue_max_segments(q);
-+	const unsigned int bio_sectors_alignment =
-+					blk_crypto_bio_sectors_alignment(bio);
-+	unsigned int aligned_segs = 0, aligned_sectors = 0;
- 
- 	bio_for_each_bvec(bv, bio, iter) {
- 		/*
-@@ -266,8 +316,14 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
- 		    bv.bv_offset + bv.bv_len <= PAGE_SIZE) {
- 			nsegs++;
- 			sectors += bv.bv_len >> 9;
--		} else if (bvec_split_segs(q, &bv, &nsegs, &sectors, max_segs,
--					 max_sectors)) {
-+			update_aligned_sectors_and_segs(nsegs, sectors,
-+							&aligned_segs,
-+							&aligned_sectors,
-+							bio_sectors_alignment);
-+		} else if (bvec_split_segs(q, &bv, &nsegs, &sectors,
-+					   &aligned_segs, &aligned_sectors,
-+					   bio_sectors_alignment, max_segs,
-+					   max_sectors)) {
- 			goto split;
- 		}
- 
-@@ -275,11 +331,24 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
- 		bvprvp = &bvprv;
- 	}
- 
-+	/*
-+	 * The input bio's number of sectors is assumed to be aligned to
-+	 * bio_sectors_alignment. If that's the case, then this function should
-+	 * ensure that aligned_segs == nsegs and aligned_sectors == sectors if
-+	 * the bio is not going to be split.
-+	 */
-+	WARN_ON(aligned_segs != nsegs || aligned_sectors != sectors);
- 	*segs = nsegs;
- 	return NULL;
- split:
--	*segs = nsegs;
--	return bio_split(bio, sectors, GFP_NOIO, bs);
-+	*segs = aligned_segs;
-+	if (WARN_ON(aligned_sectors == 0))
-+		goto err;
-+	return bio_split(bio, aligned_sectors, GFP_NOIO, bs);
-+err:
-+	bio->bi_status = BLK_STS_IOERR;
-+	bio_endio(bio);
-+	return bio;
- }
- 
- /**
-@@ -366,6 +435,9 @@ unsigned int blk_recalc_rq_segments(struct request *rq)
- {
- 	unsigned int nr_phys_segs = 0;
- 	unsigned int nr_sectors = 0;
-+	unsigned int nr_aligned_phys_segs = 0;
-+	unsigned int nr_aligned_sectors = 0;
-+	unsigned int bio_sectors_alignment;
- 	struct req_iterator iter;
- 	struct bio_vec bv;
- 
-@@ -381,9 +453,11 @@ unsigned int blk_recalc_rq_segments(struct request *rq)
- 		return 1;
- 	}
- 
-+	bio_sectors_alignment = blk_crypto_bio_sectors_alignment(rq->bio);
- 	rq_for_each_bvec(bv, rq, iter)
- 		bvec_split_segs(rq->q, &bv, &nr_phys_segs, &nr_sectors,
--				UINT_MAX, UINT_MAX);
-+				&nr_aligned_phys_segs, &nr_aligned_sectors,
-+				bio_sectors_alignment, UINT_MAX, UINT_MAX);
- 	return nr_phys_segs;
- }
- 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 55bcee5dc032..de5c97ab8e5a 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2161,6 +2161,9 @@ blk_qc_t blk_mq_submit_bio(struct bio *bio)
- 	blk_queue_bounce(q, &bio);
- 	__blk_queue_split(&bio, &nr_segs);
- 
-+	if (bio->bi_status != BLK_STS_OK)
-+		goto queue_exit;
-+
- 	if (!bio_integrity_prep(bio))
- 		goto queue_exit;
- 
-diff --git a/block/bounce.c b/block/bounce.c
-index 162a6eee8999..b15224799008 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -295,6 +295,7 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 	bool bounce = false;
- 	int sectors = 0;
- 	bool passthrough = bio_is_passthrough(*bio_orig);
-+	unsigned int bio_sectors_alignment;
- 
- 	bio_for_each_segment(from, *bio_orig, iter) {
- 		if (i++ < BIO_MAX_PAGES)
-@@ -305,6 +306,9 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
- 	if (!bounce)
- 		return;
- 
-+	bio_sectors_alignment = blk_crypto_bio_sectors_alignment(bio);
-+	sectors = round_down(sectors, bio_sectors_alignment);
-+
- 	if (!passthrough && sectors < bio_sectors(*bio_orig)) {
- 		bio = bio_split(*bio_orig, sectors, GFP_NOIO, &bounce_bio_split);
- 		bio_chain(bio, *bio_orig);
+-	if (f2fs_post_read_required(inode))
++	if (!fscrypt_dio_supported(iocb, iter))
++		return true;
++	if (fsverity_active(inode))
++		return true;
++	if (f2fs_compressed_file(inode))
+ 		return true;
+ 	if (f2fs_is_multi_device(sbi))
+ 		return true;
 -- 
 2.29.2.299.gdc1121823c-goog
 
