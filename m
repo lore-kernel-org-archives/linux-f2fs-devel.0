@@ -2,80 +2,113 @@ Return-Path: <SRS0=ovVE=EX=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 397FEC2D0E4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 04:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F31EDC2D0E4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 04:26:15 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BAF1424692;
-	Tue, 17 Nov 2020 04:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 4361F2463D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 04:26:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Lxx9ObA0";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="kUqFINTP";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+UDMrWZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF1424692
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="bjjZ5Ko4";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="afmV0Ggm";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="ZXkG1pvh";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="shg3+cQ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4361F2463D
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
-	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kesOj-0002PM-Gd; Tue, 17 Nov 2020 04:15:17 +0000
-Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kesOh-0002PB-0N
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 04:15:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kT2IJiq9vABCGnZpcT94UHSzFtZ6Cb6ALbwPgvhPm+k=; b=Lxx9ObA0aDPDAyle3e+21EeBtD
- Xp0D8LzJwEYrBkQSeNhJDOy5HWpWPUMyJ0n7AMvTkYLs4aymgqxBxWRyVhwYD7RE6STRJt75zx7DW
- q4HlehND14vUQdMPx+qkCGPrKjXCmeP+oDH7lNf6dSldaMeyEhlz1pCtzjTuuWXxTQjM=;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=rd2TebA6A+g+pzEz5UKziaYQ2UilHwqlNsF09tXKq8Y=; b=bjjZ5Ko4JH04R2g1XwHLUeZ52
+	1uUoxdhAKgU3rcqEcSCkTDjSv8sFW6lPuZGYpWB3oExGgr0bSN822zWa4LI+1/eG17Cax3YE8YZSI
+	nP/JxSXh3RfNHlxbxQG5MNTMkARRUCdXd+tFINuoPzWTZ06YXSgTVpAY+qPqochIDAjD4=;
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
+	id 1kesZJ-0002go-Ph; Tue, 17 Nov 2020 04:26:13 +0000
+Received: from [172.30.20.202] (helo=mx.sourceforge.net)
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <3iEuzXwYKAO8UifjVeXffXcV.Tfd@flex--drosen.bounces.google.com>)
+ id 1kesZH-0002gd-Sf
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 04:26:11 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
+ Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=26rm8pP8X1eqyqMFHjed3HgpBJsgTLVuVg1p5M5T4ac=; b=afmV0GgmfwQUPQ37aUgnQ07zI
+ J/b1D91rrFaVw7KV6gF9Zi2v3lWUk3PAmuPKNiNGDRa5vEhsZCVprL85nwnatEXuWth+kTMhyuRAO
+ yXTc4T5D+MWox+GGdoiloz3yPBgxNBfUiUDf0VGHDpWdErZHoqQPRD26OmY5XCbflqTJA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=kT2IJiq9vABCGnZpcT94UHSzFtZ6Cb6ALbwPgvhPm+k=; b=kUqFINTPqf5bHum8mAWGCmq8pf
- UcPWeS4r8Z0sW3Y7zQohj31imXBOFYfXT3qq8pWj7cOR4rwA8M+H6Qu7mZljR1E0Yp0unIuhFxo2l
- v48iZyOG4eSLd8Y/VCNfVElxw11NYvS6XfdXAjP1zLm7RzuKXsTLwCNzqlNOJHnB5Qzs=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=26rm8pP8X1eqyqMFHjed3HgpBJsgTLVuVg1p5M5T4ac=; b=ZXkG1pvhDxt4mCE9/2E71IScIj
+ Dhw6rm2zaerqs2xWCnSgG7R44sjXHc1Piz3/tFylntoPZPI399ZkgHqwOk5W3gMQVVABAjw58OQpd
+ LnEUjgtNh1h/ZbKjKHRIpG/kG9VY6z9XLMpOXa101g3U1hpHUhB1SssblWAh4XpY9uH0=;
+Received: from mail-yb1-f202.google.com ([209.85.219.202])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kesOY-00GkDz-M2
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 04:15:14 +0000
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net
- [172.10.235.113])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 39ED824692;
- Tue, 17 Nov 2020 04:14:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1605586496;
- bh=EUZuSaWR7L8DS5oY3+rH31vEa/9kDCzJ9/I0RDpwemM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=o+UDMrWZsAB8vfZVXXHBEyaOsdr9Z7jW4tHsDEc5ybT409kb0Clb58Jpk6Cj825Nv
- HgTZsdLl+uYtHt6Ane5SiOLN25muFQx6kjLVlOjMCQzVj5S0FPSE3/TTe+iffbu5vn
- ALSgWq4U4NURD7exEGe0A1i6idTtgKXtrZ97O5eQ=
-Date: Mon, 16 Nov 2020 20:14:54 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Daeho Jeong <daeho43@gmail.com>
-Message-ID: <X7NOPrbIMtHFvVwp@sol.localdomain>
-References: <20201117040223.858979-1-daeho43@gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20201117040223.858979-1-daeho43@gmail.com>
-X-Headers-End: 1kesOY-00GkDz-M2
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: add disable_auto_compr mount option
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1kesZF-00Gm0q-Vl
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 04:26:11 +0000
+Received: by mail-yb1-f202.google.com with SMTP id u37so23605627ybi.15
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 16 Nov 2020 20:26:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
+ h=sender:date:in-reply-to:message-id:mime-version:references:subject
+ :from:to:cc; bh=26rm8pP8X1eqyqMFHjed3HgpBJsgTLVuVg1p5M5T4ac=;
+ b=shg3+cQ9HKM0nPNtrMQTh+D5eQYXxiRjQHiCYna15DnDwGSI4q6hNF86FmwmCYrJ09
+ 0uszwptNamjvsfa2d+Ebp170YA7jdMrfds4LdsowSETcYPuptonfbiP7v8hpd4Y0MZkg
+ TcH5aai3GlIlPjDRJOutLlBhbMbEKGMg5F5w3kD5/X0fqC2FyU3uSCyFeDu5RIXt/ixa
+ 9s2Vzm7JxAfAo2lWEtY1zChL12tD9p7+0mwGYHx+TBdw2Ath0P70x0MCBOufxM8RBgRH
+ D/gZzY+rDOJ3wmUNZ5lYBs7E1V5A8uxoYtCXmruoFljhdbJ8IaBIehg5VrO1VZ4lsbQk
+ 6BPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+ :references:subject:from:to:cc;
+ bh=26rm8pP8X1eqyqMFHjed3HgpBJsgTLVuVg1p5M5T4ac=;
+ b=hEmdkcuKmRRPvqeUvqEs5pZ/0Mcq1XHgaDyYeBUAWepGou/qz29a2Cw2kT7qsa7Ppg
+ 3tW6WXhOqtxt8fn49S9sLbiamDUtfqRlVWI2nyXZDuRYXDvTWSZqU9oxsfHrOD+WwwJV
+ 0F2uZ2j+jAhS/K5VIqHbQWREDxqnDNWfVc/7qB9zh9XAJ9SEHZo7H3PMzRCgNNNKjhem
+ P1QbPepBbJECkwzFfiaYs6eCV9TtbvymzjY/oo9kkLpzdBWaKXtM5TDv22ddSWAWPeEk
+ glpBQ/XIOFcwJHp5v3z95OfMs3EwLonpzLztyYDu9QQWDrapnjZ5l09B+Sl0LmajM7DI
+ VtPg==
+X-Gm-Message-State: AOAM530C7LPt1coU5USPva09VUHKxA1EOqn0ne0wgp2Xo8uBIj5WO3Mj
+ aBALnR59tfueOJQe79bJywcJWdPzjUo=
+X-Google-Smtp-Source: ABdhPJzKALm1EBPTQ18K+cplc9Rj54/XCyTrRJBcCgve7DfHa3FcRADsKoXoWVc+0ELNdGgH6frN1aEubL8=
+X-Received: from drosen.c.googlers.com ([fda3:e722:ac3:10:24:72f4:c0a8:4e6f])
+ (user=drosen job=sendgmr) by 2002:a25:88a:: with SMTP id
+ 132mr26330262ybi.215.1605585800711; 
+ Mon, 16 Nov 2020 20:03:20 -0800 (PST)
+Date: Tue, 17 Nov 2020 04:03:13 +0000
+In-Reply-To: <20201117040315.28548-1-drosen@google.com>
+Message-Id: <20201117040315.28548-2-drosen@google.com>
+Mime-Version: 1.0
+References: <20201117040315.28548-1-drosen@google.com>
+X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
+To: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
+ Eric Biggers <ebiggers@kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+ Chao Yu <chao@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Richard Weinberger <richard@nod.at>, linux-fscrypt@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1kesZF-00Gm0q-Vl
+Subject: [f2fs-dev] [PATCH v2 1/3] libfs: Add generic function for setting
+ dentry_ops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,50 +120,118 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Daniel Rosenberg via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Daniel Rosenberg <drosen@google.com>
+Cc: Daniel Rosenberg <drosen@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patchset doesn't have a cover letter, and it doesn't apply to f2fs/dev, so
-I'm not sure what its purpose is.
+This adds a function to set dentry operations at lookup time that will
+work for both encrypted filenames and casefolded filenames.
 
-On Tue, Nov 17, 2020 at 01:02:22PM +0900, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> We will add a new disable_auto_compr mount option to turn off the
-> automaic compression on the compression enabled file, in order to
-> give discretion of choosing the target file and the timing of
-> compression to the user.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> ---
->  Documentation/filesystems/f2fs.rst |  4 ++++
->  fs/f2fs/data.c                     | 10 +++++-----
->  fs/f2fs/f2fs.h                     |  8 ++++++++
->  fs/f2fs/segment.c                  |  2 +-
->  fs/f2fs/super.c                    |  9 +++++++++
->  5 files changed, 27 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-> index b8ee761c9922..c36ca1e0f7ab 100644
-> --- a/Documentation/filesystems/f2fs.rst
-> +++ b/Documentation/filesystems/f2fs.rst
-> @@ -260,6 +260,10 @@ compress_extension=%s	 Support adding specified extension, so that f2fs can enab
->  			 For other files, we can still enable compression via ioctl.
->  			 Note that, there is one reserved special extension '*', it
->  			 can be set to enable compression for all files.
-> +disable_auto_compr       Even if compression feature is enabled, this option can
-> +                         disable automaic compression on the compression enabled
-> +                         file to give discretion of choosing the target file and
-> +                         the timing of compression to the user.
+A filesystem that supports both features simultaneously can use this
+function during lookup preparations to set up its dentry operations once
+fscrypt no longer does that itself.
 
-I don't understand.  How is this different from just not specifying the
-compress_extension mount option?  And how can a file have compression both
-enabled and disabled at the same time?
+Currently the casefolding dentry operation are always set if the
+filesystem defines an encoding because the features is toggleable on
+empty directories. Since we don't know what set of functions we'll
+eventually need, and cannot change them later, we add just add them.
 
-- Eric
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fs/libfs.c         | 60 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |  1 +
+ 2 files changed, 61 insertions(+)
+
+diff --git a/fs/libfs.c b/fs/libfs.c
+index fc34361c1489..dd8504f3ff5d 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1449,4 +1449,64 @@ int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ 	return 0;
+ }
+ EXPORT_SYMBOL(generic_ci_d_hash);
++
++static const struct dentry_operations generic_ci_dentry_ops = {
++	.d_hash = generic_ci_d_hash,
++	.d_compare = generic_ci_d_compare,
++};
+ #endif
++
++#ifdef CONFIG_FS_ENCRYPTION
++static const struct dentry_operations generic_encrypted_dentry_ops = {
++	.d_revalidate = fscrypt_d_revalidate,
++};
++#endif
++
++#if IS_ENABLED(CONFIG_UNICODE) && IS_ENABLED(CONFIG_FS_ENCRYPTION)
++static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
++	.d_hash = generic_ci_d_hash,
++	.d_compare = generic_ci_d_compare,
++	.d_revalidate = fscrypt_d_revalidate,
++};
++#endif
++
++/**
++ * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
++ * @dentry:	dentry to set ops on
++ *
++ * This function sets the dentry ops for the given dentry to handle both
++ * casefolded and encrypted dentry names.
++ *
++ * Encryption requires d_revalidate to remove nokey names once the key is present.
++ * Casefolding is toggleable on an empty directory. Since we can't change the
++ * operations later on, we just add the casefolding ops if the filesystem defines an
++ * encoding.
++ */
++void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
++{
++#ifdef CONFIG_FS_ENCRYPTION
++	bool needs_encrypt_ops = dentry->d_flags & DCACHE_NOKEY_NAME;
++#endif
++#ifdef CONFIG_UNICODE
++	bool needs_ci_ops = dentry->d_sb->s_encoding;
++#endif
++#if defined(CONFIG_FS_ENCRYPTION) && defined(CONFIG_UNICODE)
++	if (needs_encrypt_ops && needs_ci_ops) {
++		d_set_d_op(dentry, &generic_encrypted_ci_dentry_ops);
++			return;
++	}
++#endif
++#ifdef CONFIG_FS_ENCRYPTION
++	if (needs_encrypt_ops) {
++		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
++		return;
++	}
++#endif
++#ifdef CONFIG_UNICODE
++	if (needs_ci_ops) {
++		d_set_d_op(dentry, &generic_ci_dentry_ops);
++		return;
++	}
++#endif
++}
++EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 8667d0cdc71e..11345e66353b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3202,6 +3202,7 @@ extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
+ extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+ 				const char *str, const struct qstr *name);
+ #endif
++extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
+ 
+ #ifdef CONFIG_MIGRATION
+ extern int buffer_migrate_page(struct address_space *,
+-- 
+2.29.2.299.gdc1121823c-goog
+
 
 
 _______________________________________________
