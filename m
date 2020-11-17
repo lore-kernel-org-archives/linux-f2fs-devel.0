@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD72C5519F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 18:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0522C2D0E4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 18:31:35 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8C3AC221FD
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 18:17:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 3AAD82064C
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 18:31:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="F2WAneOR";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="VgMDm6gc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BIyHtChu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C3AC221FD
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="i1WghIOy";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="jqvRpA3/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAff5vQT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AAD82064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kf5Xk-0003JM-3q; Tue, 17 Nov 2020 18:17:28 +0000
+	id 1kf5lO-0002RB-0p; Tue, 17 Nov 2020 18:31:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kf5Xe-0003IY-Qv
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 18:17:22 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kf5lH-0002Qr-CA
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 18:31:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xo2hoVo6kjy9rNjJoWda4Xi/zFTJxlZl40M0wZmhrWQ=; b=F2WAneORGKGmQfzRQ0ugZILnJr
- FD9wkWJCgIuZupX/9MlqxIuP4uMMc+a/4FLTw4KTJCkjuwq7qTuxQnBGkzksG9HyF0HFo0uF3zbxc
- HJ7jEZlu4n/W5vj32T0uAzAb+ZIUIv2CoN3GCzqm4RBx8r+7f3Su35+r4asAj2t6FYUg=;
+ bh=miDlJ889+3+iZHkf2kcGjvSdrJTZKSU8CEMSH7/sSeA=; b=i1WghIOyueFEp4KVHovOTG2z1Q
+ /GEUrp6aT94cpGzUTIw8fCPU3GHvQPWymBE0QqXbfjt6QelCpgGX7Z7lXS6O+m4wa7XXj17LEdgQR
+ FkgtKdl2C+tCKYRx94taRlgEgJGPmGPAJVigsPr/GKI+ewmQ66t5zaNRqSTeXO+9j71M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -45,39 +45,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xo2hoVo6kjy9rNjJoWda4Xi/zFTJxlZl40M0wZmhrWQ=; b=VgMDm6gcvLR6kyzMI96ljE8pYA
- 1jmz+s52DU64ljeRSAtRMGPBm3aKOJFr/+rNZyX5bhjveZq4ylr2e/b+s4UQlyM3FKWf5zMlK5DXM
- tXYSGecCDFnfGKtWc1tDclzPG+16R+3oytrMrzxANso74Gxp/FUsA7LreK/jf5A7x9Pk=;
+ bh=miDlJ889+3+iZHkf2kcGjvSdrJTZKSU8CEMSH7/sSeA=; b=jqvRpA3/xa4lF5EvsyWmNMKwjm
+ 63FSuOlFbW+ROHbWTYBCS5ZLjgXPe4nsPY+8plyo1r56MgMwiZJcwwZgsWMlj2KJfgLiN6t7N8RGT
+ o5emffQltD442ZS1P1uDOlOnCJNs1VUDiI76vAf/v/3kun57PgoPYxIkLOl/A2t1Z75M=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kf5XN-001INK-18
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 18:17:22 +0000
+ id 1kf5lE-00B16o-MS
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 18:31:27 +0000
 Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net
  [172.10.235.113])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id E8B352222E;
- Tue, 17 Nov 2020 18:16:50 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 92D812222E;
+ Tue, 17 Nov 2020 18:31:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1605637011;
- bh=LYmQa3sjmY4vGoc9PzmWfJg6D+u8panQLU6mw2v2bU0=;
+ s=default; t=1605637879;
+ bh=ao2XoyFvOst/o/NixL3wR1q1+HrjIW+xRos2auX+cis=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=BIyHtChuKC/1Z2hfN01FJL2lQedY2Jopd9Xk6ljOb8WSU5039BmyYLu1lS/JerWeZ
- P+zilHNPhlrTLNiM1v44Y5EagbQsJhPY2JHB3h9CWIqeujkTkuhcWx5hjeDSPcyMf4
- ccWF5nBSvvcF0BXkSIJq0FUknVkLg8jyR9SxjF2Y=
-Date: Tue, 17 Nov 2020 10:16:49 -0800
+ b=fAff5vQTLS6o1LdCvxQyE8canT3iWN4lhOjqOGcJvd1BEB21bCVXFSHoF5miY2Gel
+ 79iEFHbzmxHaiCXtfzsJPMSKIhcmI/q+eODrQqe3gNsV6Hx+n0ZoUYbyeZyH63OkED
+ kRJNByTFXR1CQLcQyIyq+lVu8j/Kdfzeo2frG81U=
+Date: Tue, 17 Nov 2020 10:31:17 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Daniel Rosenberg <drosen@google.com>
-Message-ID: <X7QTkSyiMojM6T10@sol.localdomain>
+Message-ID: <X7QW9aqdF9ivHKBe@sol.localdomain>
 References: <20201117040315.28548-1-drosen@google.com>
- <20201117040315.28548-2-drosen@google.com>
+ <20201117040315.28548-3-drosen@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20201117040315.28548-2-drosen@google.com>
-X-Headers-End: 1kf5XN-001INK-18
-Subject: Re: [f2fs-dev] [PATCH v2 1/3] libfs: Add generic function for
- setting dentry_ops
+In-Reply-To: <20201117040315.28548-3-drosen@google.com>
+X-Headers-End: 1kf5lE-00B16o-MS
+Subject: Re: [f2fs-dev] [PATCH v2 2/3] fscrypt: Have filesystems handle
+ their d_ops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,130 +100,34 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Nov 17, 2020 at 04:03:13AM +0000, Daniel Rosenberg wrote:
-> 
-> Currently the casefolding dentry operation are always set if the
-> filesystem defines an encoding because the features is toggleable on
-> empty directories. Since we don't know what set of functions we'll
-> eventually need, and cannot change them later, we add just add them.
+On Tue, Nov 17, 2020 at 04:03:14AM +0000, Daniel Rosenberg wrote:
+> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+> index a8f7a43f031b..df2c66ca370e 100644
+> --- a/include/linux/fscrypt.h
+> +++ b/include/linux/fscrypt.h
+> @@ -741,8 +741,9 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
+>   * directory's encryption key is available, then the lookup is assumed to be by
+>   * plaintext name; otherwise, it is assumed to be by no-key name.
+>   *
+> - * This also installs a custom ->d_revalidate() method which will invalidate the
+> - * dentry if it was created without the key and the key is later added.
+> + * After calling this function, a filesystem should ensure that its dentry
+> + * operations contain fscrypt_d_revalidate if DCACHE_ENCRYPTED_NAME was set,
+> + * so that the dentry can be invalidated if the key is later added.
+>   *
+>   * Return: 0 on success; -ENOENT if the directory's key is unavailable but the
+>   * filename isn't a valid no-key name, so a negative dentry should be created;
 
-This isn't a very useful explanation, since encryption can be toggled on empty
-directories too (at least from off to on --- not the other way).  Why is
-casefolding different?
+This should say DCACHE_NOKEY_NAME, not DCACHE_ENCRYPTED_NAME.
 
-> +static const struct dentry_operations generic_ci_dentry_ops = {
-> +	.d_hash = generic_ci_d_hash,
-> +	.d_compare = generic_ci_d_compare,
-> +};
->  #endif
-> +
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +static const struct dentry_operations generic_encrypted_dentry_ops = {
-> +	.d_revalidate = fscrypt_d_revalidate,
-> +};
-> +#endif
-> +
-> +#if IS_ENABLED(CONFIG_UNICODE) && IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> +static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
-> +	.d_hash = generic_ci_d_hash,
-> +	.d_compare = generic_ci_d_compare,
-> +	.d_revalidate = fscrypt_d_revalidate,
-> +};
-> +#endif
-> +
-> +/**
-> + * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
-> + * @dentry:	dentry to set ops on
-> + *
-> + * This function sets the dentry ops for the given dentry to handle both
-> + * casefolded and encrypted dentry names.
-> + *
-> + * Encryption requires d_revalidate to remove nokey names once the key is present.
-> + * Casefolding is toggleable on an empty directory. Since we can't change the
-> + * operations later on, we just add the casefolding ops if the filesystem defines an
-> + * encoding.
-> + */
+But more importantly, the explanation here isn't very clear.  How about the
+following instead:
 
-There are some overly long lines here (> 80 columns).
-
-But more importantly this still isn't a good explanation.  Encryption can also
-be enabled on empty directories; what makes casefolding different?
-
-It's also not obvious why so many different copies of the dentry operations
-needed, instead of just using generic_encrypted_ci_dentry_ops on all.
-
-If I'm still struggling to understand this after following these patches for a
-long time, I expect everyone else will have trouble too...
-
-Here's a suggestion which I think explains it a lot better.  It's still possible
-I'm misunderstanding something, though, so please check it carefully:
-
-/**
- * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
- * @dentry:	dentry to set ops on
- *
- * Casefolded directories need d_hash and d_compare set, so that the dentries
- * contained in them are handled case-insensitively.  Note that these operations
- * are needed on the parent directory rather than on the dentries in it, and the
- * casefolding flag can be enabled on an empty directory later but the
- * dentry_operations can't be changed later.  As a result, if the filesystem has
- * casefolding support enabled at all, we have to give all dentries the
- * casefolding operations even if their inode doesn't have the casefolding flag
- * currently (and thus the casefolding ops would be no-ops for now).
- *
- * Encryption works differently in that the only dentry operation it needs is
- * d_revalidate, which it only needs on dentries that have the no-key name flag.
- * The no-key flag can't be set "later", so we don't have to worry about that.
- *
- * Finally, to maximize compatibility with overlayfs (which isn't compatible
- * with certain dentry operations) and to avoid taking an unnecessary
- * performance hit, we use custom dentry_operations for each possible
- * combination rather always installing all operations.
- */
-
-> +void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
-> +{
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	bool needs_encrypt_ops = dentry->d_flags & DCACHE_NOKEY_NAME;
-> +#endif
-> +#ifdef CONFIG_UNICODE
-> +	bool needs_ci_ops = dentry->d_sb->s_encoding;
-> +#endif
-> +#if defined(CONFIG_FS_ENCRYPTION) && defined(CONFIG_UNICODE)
-> +	if (needs_encrypt_ops && needs_ci_ops) {
-> +		d_set_d_op(dentry, &generic_encrypted_ci_dentry_ops);
-> +			return;
-> +	}
-
-The return statement above has the wrong indentation level.
-
-> +#endif
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	if (needs_encrypt_ops) {
-> +		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
-> +		return;
-> +	}
-> +#endif
-> +#ifdef CONFIG_UNICODE
-> +	if (needs_ci_ops) {
-> +		d_set_d_op(dentry, &generic_ci_dentry_ops);
-> +		return;
-> +	}
-> +#endif
-> +}
-> +EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 8667d0cdc71e..11345e66353b 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3202,6 +3202,7 @@ extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
->  extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
->  				const char *str, const struct qstr *name);
->  #endif
-> +extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
->  
->  #ifdef CONFIG_MIGRATION
->  extern int buffer_migrate_page(struct address_space *,
+ * This will set DCACHE_NOKEY_NAME on the dentry if the lookup is by no-key
+ * name.  In this case the filesystem must assign the dentry a dentry_operations
+ * which contains fscrypt_d_revalidate (or contains a d_revalidate method that
+ * calls fscrypt_d_revalidate), so that the dentry will be invalidated if the
+ * directory's encryption key is later added.
 
 
 _______________________________________________
