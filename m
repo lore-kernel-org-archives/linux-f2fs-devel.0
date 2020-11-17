@@ -2,112 +2,84 @@ Return-Path: <SRS0=ovVE=EX=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,FSL_HELO_FAKE,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F38FC2D0E4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CEEC5519F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 16:41:03 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C013624198
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 8B289217A0;
+	Tue, 17 Nov 2020 16:41:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="k7ZAzOhg";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Sg4edKjX";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Xb8F4T6N";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="A1VqI+LM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C013624198
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="gBqk/K39";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="gjnDAcSu";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AplUYdKV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B289217A0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
-	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=xz/klGmQdBDPYZUxFthFqf8XwLU0EZmaJZC+47H90LM=; b=k7ZAzOhgKTUIbRKGzrBLdyNTI
-	eI7sLhLB+mS7snKpveq45e2myTy2Wb8ClWJcEo3GYd0YFuR1n/ZyDV62cb3z5NIe9+OKENBMaANRr
-	RMCpzFGoWG6Nqo5niaWNrYe2SIfeQMoJvVt/32x5M1fIJXBOP1KgtQOKKBxpttGWTSdqY=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kf2id-0002xE-1D; Tue, 17 Nov 2020 15:16:31 +0000
+	id 1kf42P-0005rw-D4; Tue, 17 Nov 2020 16:41:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3HNmzXwYKAKETBUZBUHPPHMF.DPN@flex--satyat.bounces.google.com>)
- id 1kf2ia-0002wf-K9
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:16:28 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1kf42M-0005rf-UM
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 16:40:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
- Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=R5CBswLlpIQJapBKDpTXO8RLcdpazdMLHFE+h8xz3Es=; b=Sg4edKjX9KJ4AeOZvxGff1rEn
- 9ZW/8nPmbuTh1WUNNaO3ZRNgeBwVC9dGbbJ6HcrZc2JCycO1meWr9dduB9FxJN9QvtmAR1x3q5zn7
- dtUhkOeW+ljFso4MKTl+QLKoLdqHu4zBz2vYE+aVhGb32J0G+Ljn1j39PKKxJ2mXTqx+I=;
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=G4nJyWOOgFVPNjN26OQYXP+EpUr8BtD9ZArelFtwfVM=; b=gBqk/K39utGQZ93Soi2xJrItcY
+ wVZpWqJ7Zpwl7ihngdXIpO4Bze075qUax86CcG1xhhyPviCG83aelH0xdZ2E3pv6OPLbQFrd7DjEi
+ A1S08BnobwOLxhmo755ISY3SsRJTK0YDR57oJPdn67oCJC6QUGUBvM2juPQI4IAb/New=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=R5CBswLlpIQJapBKDpTXO8RLcdpazdMLHFE+h8xz3Es=; b=Xb8F4T6NaFTB2txzh4JmO7+ms1
- fyFZ9VqO+CgMCNjzcu5kz58o+7qAWIHKGNPYpBj/0JcCkr6NFrz41K6YC5uCPDXZB5qZsOIPatPa/
- eLkvaKroMf36GLxREundxYVLkSsYrq8ypwmqap1EI/L0nLUiwMVDaFRgi7OY2WlNFT04=;
-Received: from mail-pl1-f201.google.com ([209.85.214.201])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kf2iN-00AZvy-HA
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:16:27 +0000
-Received: by mail-pl1-f201.google.com with SMTP id x3so9610368plr.23
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 17 Nov 2020 07:16:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=sender:date:in-reply-to:message-id:mime-version:references:subject
- :from:to:cc; bh=R5CBswLlpIQJapBKDpTXO8RLcdpazdMLHFE+h8xz3Es=;
- b=A1VqI+LMloxuA0/HprdxN9YHfC55pEdsHf9BWLtT4qqvVhKEvzYgxNkj+PEH42zjXI
- OeoVgtNcR3CaOyVZPb0/+EZGu6RDYd31W6zu2oEy2+C+HnSD+jn7TyQ7D+HZa8IjozkG
- 4hAqocgyLQCoHqVkyG8GyLQLIaRU2/fq6uT/ZkAsK9xFCvgEfNnS4Hongmf7BNJPyj8x
- UbUJ9UUgodrohuPK1/l/tCv4x6Xms0f/fdtBrte0iHuY0WAnhEc6rzUTBxXXLvNrFyIl
- IaO2TCGhJ4uq4s+QPe2kWWVsyJGVNENdgx1rzkljewjoPQlOzUEgn/9ZvFhUmL7E+Gll
- 5Oig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
- :references:subject:from:to:cc;
- bh=R5CBswLlpIQJapBKDpTXO8RLcdpazdMLHFE+h8xz3Es=;
- b=L82i/rJMtRyiRPYNJxfVntSULdIj2rZUwonSpsHSquGkONq4Ql+fNHsG6FofZmwO6t
- BLj+FpyZs58FltU7nm5CliVKzO6sbyU48FmLqin0EQTH0aGbQpia9zUjiD7G+PjncMcP
- F2o3+US11T9JhYx8i5kjObTeffstK/WQ2HLrQR1kY93FlQ0UkVgy3G0P3zZcHgh2fswZ
- 0vRQUZePqI2iZsZZYMHzC9cz3wgHAO6edbJPElJRTZ9Bj6oOFO0XQsUkY2kWDkCvP4+y
- CoLWK7ArPYZVXqYDXe8TO8TZfQdPysUl3Obbun8tTQtPEbeCocjWgyAHk5fes+YVDSsX
- I+jA==
-X-Gm-Message-State: AOAM532UxHPpT8wnO8jnF9SL1yE/m6Rmahmv+/UNvzS421LJji9lUgno
- C3PSkoeV6uDa9irvqcw/delsZsNXzKQ=
-X-Google-Smtp-Source: ABdhPJyWmh3Iv+b4cPEzHM54qrtBxKCx9Mi+c3ZCqdPzBuuo/b+Pkvkr7t7Q1Y5hP7E1a6CpiFyWdFgF074=
-X-Received: from satyaprateek.c.googlers.com
- ([fda3:e722:ac3:10:24:72f4:c0a8:1092])
- (user=satyat job=sendgmr) by 2002:a62:17c8:0:b029:18b:5a97:a8d1 with SMTP id
- 191-20020a6217c80000b029018b5a97a8d1mr18265685pfx.15.1605622044271; Tue, 17
- Nov 2020 06:07:24 -0800 (PST)
-Date: Tue, 17 Nov 2020 14:07:06 +0000
-In-Reply-To: <20201117140708.1068688-1-satyat@google.com>
-Message-Id: <20201117140708.1068688-7-satyat@google.com>
-Mime-Version: 1.0
-References: <20201117140708.1068688-1-satyat@google.com>
-X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
-To: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
- Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, "Darrick J . Wong" <darrick.wong@oracle.com>
-X-Headers-End: 1kf2iN-00AZvy-HA
-Subject: [f2fs-dev] [PATCH v7 6/8] ext4: support direct I/O with fscrypt
- using blk-crypto
+ bh=G4nJyWOOgFVPNjN26OQYXP+EpUr8BtD9ZArelFtwfVM=; b=gjnDAcSuM9p0YvIgF4eE0w9nNT
+ O7wiqcF576u2jYXIIFa4sv7M8iJhM6nCOnBTvtFQwUNhVGj4OrPYfJbuU4NCJQc0wgDakOrGLHo8u
+ cE6aZjpVll2dMOjDdlDQpol626CvgxqcZc1V6o4NGizrQZiJDXyKtjhXbLtL+j4455EM=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1kf420-0016Xf-Ov
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 16:40:58 +0000
+Received: from google.com (unknown [104.132.1.66])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by mail.kernel.org (Postfix) with ESMTPSA id AE6CA21D7E;
+ Tue, 17 Nov 2020 16:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=default; t=1605631224;
+ bh=dVxDFAXp6FT9+XWoqU4EDdf3Oe33FE/vSylhfLqTJVk=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=AplUYdKVw+5q2guEA+7SSOzhDI0mbCO+QtVbEflBbv070cX030TV4iVc6rUOziYdB
+ 27J3C+KSf4VJoMOGT0Nk5yUbx4D4xdvGG/KAwfqz3OZScMP4MBGXPAllELo+2XtJhJ
+ kMzl/pywyeWOgjdAhxxyB8m69EHSLWVV/GlQjQRo=
+Date: Tue, 17 Nov 2020 08:40:21 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <20201117164021.GA1636127@google.com>
+References: <20201109170012.2129411-1-jaegeuk@kernel.org>
+ <20201112053414.GB3826485@google.com>
+ <20201112054051.GA4092972@google.com>
+ <4aae85c2-1829-06c0-8fd1-4148100dc0b9@huawei.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <4aae85c2-1829-06c0-8fd1-4148100dc0b9@huawei.com>
+X-Headers-End: 1kf420-0016Xf-Ov
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid race condition for shinker
+ count
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,100 +91,58 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Satya Tangirala via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Satya Tangirala <satyat@google.com>
-Cc: linux-block@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- Satya Tangirala <satyat@google.com>, linux-ext4@vger.kernel.org
+Cc: kernel-team@android.com, linux-kernel@vger.kernel.org,
+ Light Hsieh <Light.Hsieh@mediatek.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+On 11/12, Chao Yu wrote:
+> On 2020/11/12 13:40, Jaegeuk Kim wrote:
+> > Light reported sometimes shinker gets nat_cnt < dirty_nat_cnt resulting in
+> > wrong do_shinker work. Let's avoid to get stale data by using nat_tree_lock.
+> > 
+> > Reported-by: Light Hsieh <Light.Hsieh@mediatek.com>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> > v3:
+> >   - fix to use NM_I(sbi)
+> > 
+> >   fs/f2fs/shrinker.c | 6 +++++-
+> >   1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+> > index d66de5999a26..555712ba06d8 100644
+> > --- a/fs/f2fs/shrinker.c
+> > +++ b/fs/f2fs/shrinker.c
+> > @@ -18,7 +18,11 @@ static unsigned int shrinker_run_no;
+> >   static unsigned long __count_nat_entries(struct f2fs_sb_info *sbi)
+> >   {
+> > -	long count = NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
+> > +	long count;
+> > +
+> > +	down_read(&NM_I(sbi)->nat_tree_lock);
+> > +	count = NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
+> > +	up_read(&NM_I(sbi)->nat_tree_lock);
+> >   	return count > 0 ? count : 0;
+> 
+> Minor thing,
+> 
+> Just return count is enough? since count should never be smaller than 0.
 
-Wire up ext4 with fscrypt direct I/O support. Direct I/O with fscrypt is
-only supported through blk-crypto (i.e. CONFIG_BLK_INLINE_ENCRYPTION must
-have been enabled, the 'inlinecrypt' mount option must have been specified,
-and either hardware inline encryption support must be present or
-CONFIG_BLK_INLINE_ENCYRPTION_FALLBACK must have been enabled). Further,
-direct I/O on encrypted files is only supported when the *length* of the
-I/O is aligned to the filesystem block size (which is *not* necessarily the
-same as the block device's block size).
+Yeah, but let me keep this just in case.
 
-fscrypt_limit_io_blocks() is called before setting up the iomap to ensure
-that the blocks of each bio that iomap will submit will have contiguous
-DUNs. Note that fscrypt_limit_io_blocks() is normally a no-op, as normally
-the DUNs simply increment along with the logical blocks. But it's needed
-to handle an edge case in one of the fscrypt IV generation methods.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Co-developed-by: Satya Tangirala <satyat@google.com>
-Signed-off-by: Satya Tangirala <satyat@google.com>
-Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/ext4/file.c  | 10 ++++++----
- fs/ext4/inode.c |  7 +++++++
- 2 files changed, 13 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 3ed8c048fb12..be77b7732c8e 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -36,9 +36,11 @@
- #include "acl.h"
- #include "truncate.h"
- 
--static bool ext4_dio_supported(struct inode *inode)
-+static bool ext4_dio_supported(struct kiocb *iocb, struct iov_iter *iter)
- {
--	if (IS_ENABLED(CONFIG_FS_ENCRYPTION) && IS_ENCRYPTED(inode))
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+
-+	if (!fscrypt_dio_supported(iocb, iter))
- 		return false;
- 	if (fsverity_active(inode))
- 		return false;
-@@ -61,7 +63,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		inode_lock_shared(inode);
- 	}
- 
--	if (!ext4_dio_supported(inode)) {
-+	if (!ext4_dio_supported(iocb, to)) {
- 		inode_unlock_shared(inode);
- 		/*
- 		 * Fallback to buffered I/O if the operation being performed on
-@@ -495,7 +497,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	}
- 
- 	/* Fallback to buffered I/O if the inode does not support direct I/O. */
--	if (!ext4_dio_supported(inode)) {
-+	if (!ext4_dio_supported(iocb, from)) {
- 		if (ilock_shared)
- 			inode_unlock_shared(inode);
- 		else
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 0d8385aea898..0ef3d805bb8c 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3473,6 +3473,13 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	if (ret < 0)
- 		return ret;
- out:
-+	/*
-+	 * When inline encryption is enabled, sometimes I/O to an encrypted file
-+	 * has to be broken up to guarantee DUN contiguity. Handle this by
-+	 * limiting the length of the mapping returned.
-+	 */
-+	map.m_len = fscrypt_limit_io_blocks(inode, map.m_lblk, map.m_len);
-+
- 	ext4_set_iomap(inode, iomap, &map, offset, length);
- 
- 	return 0;
--- 
-2.29.2.299.gdc1121823c-goog
-
+> 
+> Anyway,
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> 
+> Thanks,
+> 
+> Thanks,
+> 
+> >   }
+> > 
 
 
 _______________________________________________
