@@ -5,21 +5,21 @@ X-Spam-Level:
 X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9962C2D0E4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CDFC2D0E4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:11:33 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5454824199
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 0E9AE24654
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Nov 2020 15:11:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="Z9hPBp0l";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="Oye520vc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="f/CKS8T5";
-	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="B6mSrSI+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5454824199
+	dkim=pass (1024-bit key) header.d=lists.sourceforge.net header.i=@lists.sourceforge.net header.b="bbToU1Ng";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="NKC+VSaX";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="YH6JQzUR";
+	dkim=neutral (0-bit key) header.d=google.com header.i=@google.com header.b="nFNLxAfP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E9AE24654
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -28,28 +28,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=jROzgE61VPIwWf4m/Yhq0t6QIJ+cRxTOGvDcssIUD4k=; b=Z9hPBp0lVEDQ0PnblSlB2kE89
-	vKVgc95iFa1XrV7Vp8LRRP4TxC5TqrB0QQaOZn8VS8cpV+mR/fHnKvDxY+vT6v+6FgCUm6aSusb8U
-	3YNqK9/sgM8JyNxCf6xYI/FpTrE+vo6c8E/1nPH5qg4OfTqoNMSs5Mf44IzpsMLw26hTc=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	 bh=aLWSsLK86qZEo7DwBPuaCYjl/okwwMSrVx1IjT062qc=; b=bbToU1Ngr5ovwSDg13ToBXaP6
+	zTHW7Da3TMrLAgJyk+XDA/Gei8gqQnVUmP7RRMRX4XbIditwIZBnFgOd5cOvR2GzJGjPKwqUE0XRo
+	CwMag8gtJ43WrWlbhl3ttlJxlDSa1mCFu+lxvdBOACeeyBnVN29SjeCAotVdDz6WqhIak=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kf2cT-0000gT-G7; Tue, 17 Nov 2020 15:10:09 +0000
+	id 1kf2dn-0001DV-4n; Tue, 17 Nov 2020 15:11:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3K9mzXwYKALAiQjoQjWeeWbU.Sec@flex--satyat.bounces.google.com>)
- id 1kf2cS-0000gH-Bi
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:10:08 +0000
+ (envelope-from <3GNmzXwYKAJ0P7QV7QDLLDIB.9LJ@flex--satyat.bounces.google.com>)
+ id 1kf2dm-0001DN-DD
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:11:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BwiyyJFpFKuHzxO9ElSEoW591wjEhbpMFVEeLerCK4A=; b=Oye520vc3pwvKyDL6jPNQUexu
- Cg/JYPF4/3m2eVHbP7ljdl3U8DZ2mXPZJmir457iiXm8DPFzoT2jdZn/B09QBPPNMiyLWDgpbk+k+
- 6RRXyiO1ttfuYLAnJxbh6uCoClSa0pUQvTTI3OsJEI94z5p2l5h3kmXGPPg5GW0J7EYMw=;
+ bh=4NJdRU1Ce0aa6Hnfqmub71YUmFd4Qx8kk5Y17DesY40=; b=NKC+VSaXZ1iAUQBsI1qNOHSd7
+ MeOOpklclxAfEE7d65Hd70YseBUd/i8ZJtNfUFjN6cMnb/6yUdlHbAwSdjha16zA9aryEXYI0C28V
+ tCdeAEFaLFebGimPX9l0oM1LKc6V0ClZQmaKmK+Y4jFJ8vvLAs+BmcMcvo3LUh1QR+06A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -57,57 +57,56 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BwiyyJFpFKuHzxO9ElSEoW591wjEhbpMFVEeLerCK4A=; b=f/CKS8T5r9BLUU9Ouh8pYUUpL+
- QeAXCXG8POlBUxQ4pSm/ZI0CBPRQkDel2aYC7RXoGOwzXQiM3QEIgw5beBkpDr1mwR5IxrNpXTN4z
- MDrexQUv6l4NzTnlzOy9V/VkzCsXQOhzy+CNkq493ZJDKx5p7pLo2LpkEVS2DIK4ALs4=;
-Received: from mail-yb1-f202.google.com ([209.85.219.202])
+ bh=4NJdRU1Ce0aa6Hnfqmub71YUmFd4Qx8kk5Y17DesY40=; b=YH6JQzURQERdWw3cEkN9mTLlW7
+ uvA11wu9EN4qALGswYjDvGfxe8bDOuJPuVkRSG+jsgFt1nl8ntkZcZcPWIeXrGxtm7/UHb6XFBT60
+ lu4GO2XkQYOMTuQpYyH6fnXUiKM1I0bF+odHPPKXBkViVz+Ti2ofuWZpo8lqvZOuWSGc=;
+Received: from mail-ot1-f73.google.com ([209.85.210.73])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kf2cG-000tLp-0t
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:10:08 +0000
-Received: by mail-yb1-f202.google.com with SMTP id c9so25503993ybs.8
+ id 1kf2dR-000tY7-HY
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 Nov 2020 15:11:29 +0000
+Received: by mail-ot1-f73.google.com with SMTP id w1so3709225otp.21
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 17 Nov 2020 07:09:55 -0800 (PST)
+ Tue, 17 Nov 2020 07:11:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=sender:date:in-reply-to:message-id:mime-version:references:subject
- :from:to:cc; bh=BwiyyJFpFKuHzxO9ElSEoW591wjEhbpMFVEeLerCK4A=;
- b=B6mSrSI+KLsPLHZOubezapg1w7KyF48Gcd5KvqiZAUUomrvCt93BMFte58x4CeD/eg
- k0xlCR7goDt3KvTfbq6ZMZJTRtCUUnhHZa0njAuLo6BAWtOyT0lG1N+rkq1ohiO1t97Q
- qemqcHPO0pfn6jMj0SXbr2ZPFcNslQAZJlIrb9BwOmPHHl8x9VSfb8bJ8B9PJOSyLNxA
- sh1xch+eqx6drXfRAgiE1e5/U0BiaXHV0kNKfFjq0GDmh5MgGwrgrpp+Gb33sSAE+/7N
- uiK1X9QiX7TLKFELMTbOhucdRKr0jLm77xygNNOq76Vp9Flin7B1n7wnTkkNWd/qi3VO
- sykw==
+ :from:to:cc; bh=4NJdRU1Ce0aa6Hnfqmub71YUmFd4Qx8kk5Y17DesY40=;
+ b=nFNLxAfPd8e/zZTqlZUXpXuN77+dJdfeaniNFRSeDnLdmkHZ4pPlCypUrVhliOogm2
+ 4Dwh4eHqmw2aUK8kmS7CCa6ww0SDvMftt2FkxmnXssuFtIw0EusEu5Tkclj14gnChFDP
+ nxiC5qrIaleDvreRVgMA2Wlvc7e6OAIU8ncMChxF9U+5y5/JiD5FTbKCl+/WuKfwvoEH
+ mCKaCC4qnI+2FSmVaNkQ7Him8OftmfrHMw8NaMSBnAohoHm15k5RFsSppzf8zmthwEic
+ mYwEOwBuIURqwBhUSgbh3+kM8mQOu63f4FrhK7OWUC5IlMyZLtGBLvhREdbtOF4tBIKo
+ hkEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=BwiyyJFpFKuHzxO9ElSEoW591wjEhbpMFVEeLerCK4A=;
- b=nhOEGSgBySNK7lwW+oP545urHsPkegwkesorbUXENrg4nzs3+Tk+dgutSkulP2yANz
- PB4GBMUEDX1JM5K6yTqIIApOTmYnnylWLlE9olOgU01OtyBflHpBSz8uKVulSho0gIac
- ri/ijbdHGP+wQ52O+YC7h12o0szkl2jyK7Ovm0nqHk3ReYXhDuk2ryr7+H7ILE0+2Ei+
- o3DV4LmNRunaI0QVXA4BsptmbKS8gRX/YaJ36W+m/kMwC3PMUWWd3LU0In0oX8B1V8PT
- 2o5n7gPkA1qlS69PJdKchB5ZmBhYsGGQb8GMEfYszFRHkSbzp3TLDQtzLylbB9IQpC3+
- lHSw==
-X-Gm-Message-State: AOAM533WbZlC1/Od1+PBGty+UMhD4iIxdGlzRLZtbot0NSDkfCRuC2Tj
- x1Qou8y+mqnueWEAZWaJqP/4Iqm8C3g=
-X-Google-Smtp-Source: ABdhPJzSl4jy6BzVHmPfkYxBH8ET6UtBl4AEksaq1fddCMgxT0uxzDjjRNZm1PxWWWwhr7bOMNiWNibk17E=
+ bh=4NJdRU1Ce0aa6Hnfqmub71YUmFd4Qx8kk5Y17DesY40=;
+ b=UtbYi+fp2ztnm+16QEDZXNJiAU132irRKcA3wLP5rdIYQuTsv0+oD8rzCr9Zocv5Wo
+ v5USKVq6ievDAAnckfkVC3SsxwNGeDxVwAIV2bDkYpduS4BdnxEmghFmxCqtTULuFn2t
+ zDtEjM/Yps9seXJwVoimbzIe/N08kaMMlJCxNqi5si5nPuWk52omzq2Fq7jxbh9cT7p5
+ ndGwpI3br4UZKBc+IiOOm0slhZ0Lx+59juUxEtCWToC1RAGFYbQz+GqiOo40Kh0//0cL
+ iWY/QqXPaCADYmBFeclBEcbKsLnlrGo+maUOroe/QE/kVwoPGuIXLDQvPz2c68WuPNbZ
+ DbZA==
+X-Gm-Message-State: AOAM533Rio6LfTns14a+n7OODrMcnWY3tdyoNMGp5ON809x0I+aNc8Gp
+ he9xyONYByictEWn1NSC0QrRQ5Ut7dY=
+X-Google-Smtp-Source: ABdhPJxfrRrknOI/BvOJaGPc6TEIdJJ1naDUKZko8kN45MeyLyMTe361mEhiYF+cx+Qes0o2OJZjXCGY5eY=
 X-Received: from satyaprateek.c.googlers.com
  ([fda3:e722:ac3:10:24:72f4:c0a8:1092])
- (user=satyat job=sendgmr) by 2002:a25:2fcf:: with SMTP id
- v198mr26506998ybv.492.1605622059376; 
- Tue, 17 Nov 2020 06:07:39 -0800 (PST)
-Date: Tue, 17 Nov 2020 14:07:07 +0000
+ (user=satyat job=sendgmr) by 2002:a17:90a:8043:: with SMTP id
+ e3mr4901058pjw.52.1605622040427; Tue, 17 Nov 2020 06:07:20 -0800 (PST)
+Date: Tue, 17 Nov 2020 14:07:04 +0000
 In-Reply-To: <20201117140708.1068688-1-satyat@google.com>
-Message-Id: <20201117140708.1068688-8-satyat@google.com>
+Message-Id: <20201117140708.1068688-5-satyat@google.com>
 Mime-Version: 1.0
 References: <20201117140708.1068688-1-satyat@google.com>
 X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
 To: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
  Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>,
  Jens Axboe <axboe@kernel.dk>, "Darrick J . Wong" <darrick.wong@oracle.com>
-X-Headers-End: 1kf2cG-000tLp-0t
-Subject: [f2fs-dev] [PATCH v7 7/8] f2fs: support direct I/O with fscrypt
- using blk-crypto
+X-Headers-End: 1kf2dR-000tY7-HY
+Subject: [f2fs-dev] [PATCH v7 4/8] direct-io: add support for fscrypt using
+ blk-crypto
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -132,40 +131,69 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Wire up f2fs with fscrypt direct I/O support. direct I/O with fscrypt is
-only supported through blk-crypto (i.e. CONFIG_BLK_INLINE_ENCRYPTION must
-have been enabled, the 'inlinecrypt' mount option must have been specified,
-and either hardware inline encryption support must be present or
-CONFIG_BLK_INLINE_ENCYRPTION_FALLBACK must have been enabled). Further,
-direct I/O on encrypted files is only supported when the *length* of the
-I/O is aligned to the filesystem block size (which is *not* necessarily the
-same as the block device's block size).
+Set bio crypt contexts on bios by calling into fscrypt when required,
+and explicitly check for DUN continuity when adding pages to the bio.
+(While DUN continuity is usually implied by logical block contiguity,
+this is not the case when using certain fscrypt IV generation methods
+like IV_INO_LBLK_32).
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Co-developed-by: Satya Tangirala <satyat@google.com>
 Signed-off-by: Satya Tangirala <satyat@google.com>
-Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/f2fs.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/direct-io.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cb700d797296..d518e668618e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4120,7 +4120,11 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int rw = iov_iter_rw(iter);
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index d53fa92a1ab6..f6672c4030e3 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -24,6 +24,7 @@
+ #include <linux/module.h>
+ #include <linux/types.h>
+ #include <linux/fs.h>
++#include <linux/fscrypt.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
+ #include <linux/highmem.h>
+@@ -392,6 +393,7 @@ dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
+ 	      sector_t first_sector, int nr_vecs)
+ {
+ 	struct bio *bio;
++	struct inode *inode = dio->inode;
  
--	if (f2fs_post_read_required(inode))
-+	if (!fscrypt_dio_supported(iocb, iter))
-+		return true;
-+	if (fsverity_active(inode))
-+		return true;
-+	if (f2fs_compressed_file(inode))
- 		return true;
- 	if (f2fs_is_multi_device(sbi))
- 		return true;
+ 	/*
+ 	 * bio_alloc() is guaranteed to return a bio when allowed to sleep and
+@@ -399,6 +401,9 @@ dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
+ 	 */
+ 	bio = bio_alloc(GFP_KERNEL, nr_vecs);
+ 
++	fscrypt_set_bio_crypt_ctx(bio, inode,
++				  sdio->cur_page_fs_offset >> inode->i_blkbits,
++				  GFP_KERNEL);
+ 	bio_set_dev(bio, bdev);
+ 	bio->bi_iter.bi_sector = first_sector;
+ 	bio_set_op_attrs(bio, dio->op, dio->op_flags);
+@@ -763,9 +768,17 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
+ 		 * current logical offset in the file does not equal what would
+ 		 * be the next logical offset in the bio, submit the bio we
+ 		 * have.
++		 *
++		 * When fscrypt inline encryption is used, data unit number
++		 * (DUN) contiguity is also required.  Normally that's implied
++		 * by logical contiguity.  However, certain IV generation
++		 * methods (e.g. IV_INO_LBLK_32) don't guarantee it.  So, we
++		 * must explicitly check fscrypt_mergeable_bio() too.
+ 		 */
+ 		if (sdio->final_block_in_bio != sdio->cur_page_block ||
+-		    cur_offset != bio_next_offset)
++		    cur_offset != bio_next_offset ||
++		    !fscrypt_mergeable_bio(sdio->bio, dio->inode,
++					   cur_offset >> dio->inode->i_blkbits))
+ 			dio_bio_submit(dio, sdio);
+ 	}
+ 
 -- 
 2.29.2.299.gdc1121823c-goog
 
