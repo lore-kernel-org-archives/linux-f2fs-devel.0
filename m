@@ -2,81 +2,73 @@ Return-Path: <SRS0=F/Dq=E7=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9464C63798
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Nov 2020 00:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C06C2D0E4
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Nov 2020 03:00:00 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4EE1821527;
-	Wed, 25 Nov 2020 00:26:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id 41E5C20872
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 Nov 2020 02:59:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="AV5RhGMP";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="Q5rIh6Md";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNLet1ZG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE1821527
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="FiJMdx34";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="GDn9E5tC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E5C20872
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1khidH-00052n-E3; Wed, 25 Nov 2020 00:26:03 +0000
+	id 1khl2D-0000gh-Je; Wed, 25 Nov 2020 02:59:57 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1khicH-0004z1-2y
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Nov 2020 00:25:01 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1khl1D-0000Z9-2n
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Nov 2020 02:58:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3g7zdwMCiXF/pazFOlaLO4Sn7y2r701x5vWhtKn2IIU=; b=AV5RhGMPK4KuPJ2lTosA0qoSjw
- 8XWTiXe6KuHJXNPCE1V9e675Pt8/u+vy+QpvW0aw6aYtuD5xL9CI9obzfSpLfsWP4FFEi6JRCIXRg
- jhg5hT73N5FSNrMJYtMlGIx4BTE8IYeleB/viq+mza3ULIp685pdOEJ0bCinZ547A/ao=;
+ bh=kz5/n0CueZSVi6hSz9uokUTI3SKa0oXeNU/MRa6FOaY=; b=FiJMdx34HuEIC0q/5pB5Xr7UMa
+ QwgyJ3LnTblsPL3mbOvhS3ATkVilVh9ozb/+28MI5X7i2HOU31el2L0NFeKSE0FemaUjGTLuP6sk9
+ YBIJQTUfIi7vTc2vjld4cr40/XgCFgdO9DEXfqgoiQv99oybPB/XDG4M//tsS5EYRo9I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=3g7zdwMCiXF/pazFOlaLO4Sn7y2r701x5vWhtKn2IIU=; b=Q5rIh6Md3CI1EQNgkRKW/Y3HsY
- Jk+lSQoEcDKPsgyGsSlsPP3HLSiJtNre65dGyxvLbzYMz5WhC2rXejMB39DRZT5fZrrW4671L3yy+
- AVgHSd+1elYj20dzYHqraYvZ03S/ZvoTOqrNjsF4H6g26+EuMoQmscAmdm0/KWvCLHxs=;
-Received: from mail.kernel.org ([198.145.29.99])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=kz5/n0CueZSVi6hSz9uokUTI3SKa0oXeNU/MRa6FOaY=; b=G
+ Dn9E5tC0o2usk4GIJhM/P9oUS5eQ4quAvXelDxOdv63iVKqeQdO2EgwVJDUMJWwQ1MTvOhtiaRK0U
+ nyIxy4h9T4hq2CcQRvZJa5JKI43lRXeFMCjEEBxL227gIhFnEo2R+tnQhO3tC91vKRkB7KDRGirGu
+ nuhGF0T1u0Mn0Yt4=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1khicF-00E1RI-7T
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Nov 2020 00:25:01 +0000
-Received: from sol.attlocal.net
- (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 7E01321534;
- Wed, 25 Nov 2020 00:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1606263886;
- bh=fQf+fnaZQ02pcMEuBF1tBcPKD9HF9tGTFk+IDwiZp4A=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=tNLet1ZGE/CSRBfltP6K7lEGDh8V0fPQXQop96Z8CQDltO+ttQbkZUgKcBixSINvf
- 268ymGtXK8m+tNIEqeWpmji485xYf22gcpI6X8MVK/vwxmVcLcMHogHu8lwh9N1/O3
- dgVXB719889w/ATW8gPyfytv/NMQO/Fv+FNOUBsU=
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Date: Tue, 24 Nov 2020 16:23:30 -0800
-Message-Id: <20201125002336.274045-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201125002336.274045-1-ebiggers@kernel.org>
-References: <20201125002336.274045-1-ebiggers@kernel.org>
+ id 1khl16-00E9di-EH
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 Nov 2020 02:58:55 +0000
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Cglv34JSVz15RqZ;
+ Wed, 25 Nov 2020 10:58:07 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 25 Nov 2020 10:58:19 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Wed, 25 Nov 2020 10:57:36 +0800
+Message-ID: <20201125025736.58540-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-X-Headers-End: 1khicF-00E1RI-7T
-Subject: [f2fs-dev] [PATCH 3/9] ubifs: remove ubifs_dir_open()
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1khl16-00E9di-EH
+Subject: [f2fs-dev] [PATCH] f2fs: fix to avoid REQ_TIME and CP_TIME collision
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,56 +80,149 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Lei Li <noctis.akm@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+Lei Li reported a issue: if foreground operations are frequent, background
+checkpoint may be always skipped due to below check, result in losing more
+data after sudden power-cut.
 
-Since encrypted directories can be opened without their encryption key
-being available, and each readdir tries to set up the key, trying to set
-up the key in ->open() too isn't really useful.
+f2fs_balance_fs_bg()
+...
+	if (!is_idle(sbi, REQ_TIME) &&
+		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
+		return;
 
-Just remove it so that directories don't need an ->open() method
-anymore, and so that we eliminate a use of fscrypt_get_encryption_info()
-(which I'd like to stop exporting to filesystems).
+E.g:
+cp_interval = 5 second
+idle_interval = 2 second
+foreground operation interval = 1 second (append 1 byte per second into file)
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+In such case, no matter when it calls f2fs_balance_fs_bg(), is_idle(, REQ_TIME)
+returns false, result in skipping background checkpoint.
+
+This patch changes as below to make trigger condition being more reasonable:
+- trigger sync_fs() if dirty_{nats,nodes} and prefree segs exceeds threshold;
+- skip triggering sync_fs() if there is any background inflight IO or there is
+foreground operation recently and meanwhile cp_rwsem is being held by someone;
+
+Reported-by: Lei Li <noctis.akm@gmail.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/ubifs/dir.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ fs/f2fs/f2fs.h    | 19 +++++++++++++------
+ fs/f2fs/segment.c | 47 +++++++++++++++++++++++++++--------------------
+ 2 files changed, 40 insertions(+), 26 deletions(-)
 
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index 08fde777c324..009fbf844d3e 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -1619,14 +1619,6 @@ int ubifs_getattr(const struct path *path, struct kstat *stat,
- 	return 0;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 4f2766f3d2c1..b5054ffe3e1c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2416,24 +2416,31 @@ static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
+ 	return entry;
  }
  
--static int ubifs_dir_open(struct inode *dir, struct file *file)
--{
--	if (IS_ENCRYPTED(dir))
--		return fscrypt_get_encryption_info(dir) ? -EACCES : 0;
+-static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
++static inline bool is_inflight_io(struct f2fs_sb_info *sbi, int type)
+ {
+-	if (sbi->gc_mode == GC_URGENT_HIGH)
+-		return true;
 -
--	return 0;
--}
+ 	if (get_pages(sbi, F2FS_RD_DATA) || get_pages(sbi, F2FS_RD_NODE) ||
+ 		get_pages(sbi, F2FS_RD_META) || get_pages(sbi, F2FS_WB_DATA) ||
+ 		get_pages(sbi, F2FS_WB_CP_DATA) ||
+ 		get_pages(sbi, F2FS_DIO_READ) ||
+ 		get_pages(sbi, F2FS_DIO_WRITE))
+-		return false;
++		return true;
+ 
+ 	if (type != DISCARD_TIME && SM_I(sbi) && SM_I(sbi)->dcc_info &&
+ 			atomic_read(&SM_I(sbi)->dcc_info->queued_discard))
+-		return false;
++		return true;
+ 
+ 	if (SM_I(sbi) && SM_I(sbi)->fcc_info &&
+ 			atomic_read(&SM_I(sbi)->fcc_info->queued_flush))
++		return true;
++	return false;
++}
++
++static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
++{
++	if (sbi->gc_mode == GC_URGENT_HIGH)
++		return true;
++
++	if (is_inflight_io(sbi, type))
+ 		return false;
+ 
+ 	if (sbi->gc_mode == GC_URGENT_LOW &&
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 39d6dce09fb7..bd066cff0bf9 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -529,31 +529,38 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi, bool from_bg)
+ 	else
+ 		f2fs_build_free_nids(sbi, false, false);
+ 
+-	if (!is_idle(sbi, REQ_TIME) &&
+-		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
++	if (excess_dirty_nats(sbi) || excess_dirty_nodes(sbi) ||
++		excess_prefree_segs(sbi))
++		goto do_sync;
++
++	/* there is background inflight IO or foreground operation recently */
++	if (is_inflight_io(sbi, REQ_TIME) ||
++		(!f2fs_time_over(sbi, REQ_TIME) && rwsem_is_locked(&sbi->cp_rwsem)))
+ 		return;
+ 
++	/* exceed periodical checkpoint timeout threshold */
++	if (f2fs_time_over(sbi, CP_TIME))
++		goto do_sync;
++
+ 	/* checkpoint is the only way to shrink partial cached entries */
+-	if (!f2fs_available_free_memory(sbi, NAT_ENTRIES) ||
+-			!f2fs_available_free_memory(sbi, INO_ENTRIES) ||
+-			excess_prefree_segs(sbi) ||
+-			excess_dirty_nats(sbi) ||
+-			excess_dirty_nodes(sbi) ||
+-			f2fs_time_over(sbi, CP_TIME)) {
+-		if (test_opt(sbi, DATA_FLUSH) && from_bg) {
+-			struct blk_plug plug;
 -
- const struct inode_operations ubifs_dir_inode_operations = {
- 	.lookup      = ubifs_lookup,
- 	.create      = ubifs_create,
-@@ -1653,7 +1645,6 @@ const struct file_operations ubifs_dir_operations = {
- 	.iterate_shared = ubifs_readdir,
- 	.fsync          = ubifs_fsync,
- 	.unlocked_ioctl = ubifs_ioctl,
--	.open		= ubifs_dir_open,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl   = ubifs_compat_ioctl,
- #endif
+-			mutex_lock(&sbi->flush_lock);
+-
+-			blk_start_plug(&plug);
+-			f2fs_sync_dirty_inodes(sbi, FILE_INODE);
+-			blk_finish_plug(&plug);
++	if (f2fs_available_free_memory(sbi, NAT_ENTRIES) ||
++		f2fs_available_free_memory(sbi, INO_ENTRIES))
++		return;
+ 
+-			mutex_unlock(&sbi->flush_lock);
+-		}
+-		f2fs_sync_fs(sbi->sb, true);
+-		stat_inc_bg_cp_count(sbi->stat_info);
++do_sync:
++	if (test_opt(sbi, DATA_FLUSH) && from_bg) {
++		struct blk_plug plug;
++
++		mutex_lock(&sbi->flush_lock);
++
++		blk_start_plug(&plug);
++		f2fs_sync_dirty_inodes(sbi, FILE_INODE);
++		blk_finish_plug(&plug);
++
++		mutex_unlock(&sbi->flush_lock);
+ 	}
++	f2fs_sync_fs(sbi->sb, true);
++	stat_inc_bg_cp_count(sbi->stat_info);
+ }
+ 
+ static int __submit_flush_wait(struct f2fs_sb_info *sbi,
 -- 
-2.29.2
+2.26.2
 
 
 
