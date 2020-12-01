@@ -4,41 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FF1C64E7A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Dec 2020 04:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7700EC64E7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Dec 2020 04:10:05 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E7DD2206F9;
-	Tue,  1 Dec 2020 04:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id D647F206F9;
+	Tue,  1 Dec 2020 04:10:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="K6aIUo1M";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="PspKOQA2";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vhD0Tvkj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7DD2206F9
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hxNJMBPC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bv4SDhFY";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wLR20K2t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D647F206F9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kjwzD-0007R7-IN; Tue, 01 Dec 2020 04:09:55 +0000
+	id 1kjwzM-0003lA-E7; Tue, 01 Dec 2020 04:10:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1kjwz8-0007Qk-PT
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Dec 2020 04:09:50 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1kjwzK-0003ku-TE
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Dec 2020 04:10:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YXWXUmy8VnqQOFw+dBpKwfPaZd0e7QZQ0IRCFArdx5E=; b=K6aIUo1Mpx+S5evuteVSfIFYuk
- udkBmyjn95vnG/A1HxQravABbi5qtqTOfZ8f4e1XUTtQPk+kq/fyS19KDEWvotjYiEbLjSNssHQca
- xoYx2vcFTQNBuGulGlxs8oRhvFGkiFPAac3t738+13SvD8PpYvZrT6GdSWBI+ygz7HLU=;
+ bh=ucnd2QHGe6a82lKNJ42bzAN/ufOa7Sx/v9GvzYNnBqs=; b=hxNJMBPCRe+xVt9DdK3wUT9vaS
+ TsQ9jPeNobdpgb+0qyKqqPbQx3F+CrCIw0Q1iCZ1OdPAgsuzuKv32TEmIL7LzUD+XTVe0kCYud7Eb
+ mtZ1ydhAlwVnwBoCVv1kojov9ME1DTpH7rKkncCWIUT5hwU7IzUuXzDGFlDeajxUNB6o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -46,38 +45,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=YXWXUmy8VnqQOFw+dBpKwfPaZd0e7QZQ0IRCFArdx5E=; b=PspKOQA2GEGDPCr2EF+/7QqTET
- 7d8MN9HaAiDO9yWbC+CmF5cwhlQLDHIpnJ0zpyqisQKQ0L/MU8rAr90LqnfOOMapBB4zUpdkeGqAj
- CAegrK+SI1HocOjrIv59SlH5BiArySQELteF7/RU+k0v32p5jzYLI9xUuddDOS4/+K1c=;
+ bh=ucnd2QHGe6a82lKNJ42bzAN/ufOa7Sx/v9GvzYNnBqs=; b=bv4SDhFYeKKOoFGv4mxLcHEzml
+ ek99cvlLVUfj+Bab82U0YoB0ViNt42SgV8Cq9p8V8hV4CEkkHuPoL+xTuq3QHZcjFhW4Kh1Tef1MY
+ mSDA50EdGfVhtjS4KBTuI8ZNbSZz16QoVKI0ExpQDEQ0w2MQt829WBQsh/veFudlwfc8=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kjwyu-00DJyN-Um
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Dec 2020 04:09:50 +0000
+ id 1kjwzG-00DK1J-E2
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Dec 2020 04:10:02 +0000
 Received: from google.com (unknown [104.132.1.66])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 2440820725;
- Tue,  1 Dec 2020 04:09:26 +0000 (UTC)
+ by mail.kernel.org (Postfix) with ESMTPSA id 85CB8207FF;
+ Tue,  1 Dec 2020 04:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1606795766;
- bh=BAgEpJ6BGLuJ3PtlCbRXJw8ygfJO07p8H3Ol4SFC2FA=;
+ s=default; t=1606795785;
+ bh=alV+iNbD6jv9Jf4on2H+QdoZhJwJ7hF8xZXgwLkI8m8=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=vhD0TvkjlBXXwg0prphXu/VmRrzM5lipQjA+/zpaJ1jlQ4oZZ7/rmsQXcj9IHabX+
- 4OTLGIsC59PvlhMWrf7sCeZUiC6iR4Wfh1TOGQGeyNugEyHyKrHZCKYzSRWIszlOOS
- MYE/PrxSgFG39nzMSlq7rXbCU+1mory9ryJgdQ14=
-Date: Mon, 30 Nov 2020 20:09:24 -0800
+ b=wLR20K2t81nEaaAf7p5Bc4BU8mTBWjknGAvTGoRBA/YOURmhOX96mnZUGco5o+5rj
+ 9xBlB6JkM5t40ajj7uX84kUlmLCubL7Qf9+1b1LdiMukdNOBmRxNFpI5j7c1LDOOKa
+ zDEK1mfeDMj+pCwIyDh09d6BktVndeWbxMOIs8GY=
+Date: Mon, 30 Nov 2020 20:09:44 -0800
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-kernel@vger.kernel.org, kernel-team@android.com
-Message-ID: <20201201040924.GB3858797@google.com>
+Message-ID: <20201201040944.GD3858797@google.com>
 References: <20201126022416.3068426-1-jaegeuk@kernel.org>
- <20201126022416.3068426-4-jaegeuk@kernel.org>
+ <20201126022416.3068426-2-jaegeuk@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20201126022416.3068426-4-jaegeuk@kernel.org>
-X-Headers-End: 1kjwyu-00DJyN-Um
-Subject: Re: [f2fs-dev] [PATCH 4/4] f2fs: remove buffer_head which has
- 32bits limit
+In-Reply-To: <20201126022416.3068426-2-jaegeuk@kernel.org>
+X-Headers-End: 1kjwzG-00DK1J-E2
+Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: use new conversion functions
+ between blks and bytes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,192 +88,152 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Light Hsieh <Light.Hsieh@mediatek.com>,
- Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+Cc: Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 11/25, Jaegeuk Kim wrote:
-> This patch removes buffer_head dependency when getting block addresses.
-> Light reported there's a 32bit issue in f2fs_fiemap where map_bh.b_size is
-> 32bits while len is 64bits given by user. This will give wrong length to
-> f2fs_map_block.
+> This patch cleans up blks and bytes conversions.
 > 
-> Reported-by: Light Hsieh <Light.Hsieh@mediatek.com>
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/data.c | 76 ++++++++++++++++++++++----------------------------
->  1 file changed, 34 insertions(+), 42 deletions(-)
+>  fs/f2fs/data.c | 46 +++++++++++++++++++++-------------------------
+>  1 file changed, 21 insertions(+), 25 deletions(-)
 > 
 > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index e49c14ccfafe..bfe0d787c9e6 100644
+> index a8612c6f40ab..a84e5bc09337 100644
 > --- a/fs/f2fs/data.c
 > +++ b/fs/f2fs/data.c
-> @@ -1783,15 +1783,6 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
+> @@ -1750,6 +1750,16 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
+>  	return true;
+>  }
+>  
+> +static inline u64 bytes_to_blks(struct inode *inode, u64 bytes)
+> +{
+> +	return (bytes >> inode->i_blkbits);
+> +}
+> +
+> +static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
+> +{
+> +	return (blks << inode->i_blkbits);
+> +}
+> +
+>  static int __get_data_block(struct inode *inode, sector_t iblock,
+>  			struct buffer_head *bh, int create, int flag,
+>  			pgoff_t *next_pgofs, int seg_type, bool may_write)
+> @@ -1758,7 +1768,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
+>  	int err;
+>  
+>  	map.m_lblk = iblock;
+> -	map.m_len = bh->b_size >> inode->i_blkbits;
+> +	map.m_len = bytes_to_blks(inode, bh->b_size);
+>  	map.m_next_pgofs = next_pgofs;
+>  	map.m_next_extent = NULL;
+>  	map.m_seg_type = seg_type;
+> @@ -1768,7 +1778,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
+>  	if (!err) {
+>  		map_bh(bh, inode->i_sb, map.m_pblk);
+>  		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
+> -		bh->b_size = (u64)map.m_len << inode->i_blkbits;
+> +		bh->b_size = blks_to_bytes(inode, map.m_len);
+>  	}
 >  	return err;
 >  }
->  
-> -static int get_data_block(struct inode *inode, sector_t iblock,
-> -			struct buffer_head *bh_result, int create, int flag,
-> -			pgoff_t *next_pgofs)
-> -{
-> -	return __get_data_block(inode, iblock, bh_result, create,
-> -							flag, next_pgofs,
-> -							NO_CHECK_TYPE, create);
-> -}
-> -
->  static int get_data_block_dio_write(struct inode *inode, sector_t iblock,
->  			struct buffer_head *bh_result, int create)
->  {
-> @@ -1810,14 +1801,6 @@ static int get_data_block_dio(struct inode *inode, sector_t iblock,
->  				false);
+> @@ -1808,16 +1818,6 @@ static int get_data_block_bmap(struct inode *inode, sector_t iblock,
+>  						NO_CHECK_TYPE, create);
 >  }
 >  
-> -static int get_data_block_bmap(struct inode *inode, sector_t iblock,
-> -			struct buffer_head *bh_result, int create)
+> -static inline u64 bytes_to_blks(struct inode *inode, u64 bytes)
 > -{
-> -	return __get_data_block(inode, iblock, bh_result, create,
-> -						F2FS_GET_BLOCK_BMAP, NULL,
-> -						NO_CHECK_TYPE, create);
+> -	return (bytes >> inode->i_blkbits);
+> -}
+> -
+> -static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
+> -{
+> -	return (blks << inode->i_blkbits);
 > -}
 > -
 >  static int f2fs_xattr_fiemap(struct inode *inode,
 >  				struct fiemap_extent_info *fieinfo)
 >  {
-> @@ -1913,7 +1896,7 @@ static loff_t max_inode_blocks(struct inode *inode)
->  int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  		u64 start, u64 len)
+> @@ -2053,8 +2053,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+>  					bool is_readahead)
 >  {
-> -	struct buffer_head map_bh;
-> +	struct f2fs_map_blocks map;
->  	sector_t start_blk, last_blk;
->  	pgoff_t next_pgofs;
->  	u64 logical = 0, phys = 0, size = 0;
-> @@ -1952,19 +1935,21 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  	last_blk = bytes_to_blks(inode, start + len - 1);
+>  	struct bio *bio = *bio_ret;
+> -	const unsigned blkbits = inode->i_blkbits;
+> -	const unsigned blocksize = 1 << blkbits;
+> +	const unsigned blocksize = blks_to_bytes(inode, 1);
+>  	sector_t block_in_file;
+>  	sector_t last_block;
+>  	sector_t last_block_in_file;
+> @@ -2063,8 +2062,8 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
 >  
->  next:
-> -	memset(&map_bh, 0, sizeof(struct buffer_head));
-> -	map_bh.b_size = len;
-> +	memset(&map, 0, sizeof(map));
-> +	map.m_lblk = start_blk;
-> +	map.m_len = bytes_to_blks(inode, len);
-> +	map.m_next_pgofs = &next_pgofs;
-> +	map.m_seg_type = NO_CHECK_TYPE;
+>  	block_in_file = (sector_t)page_index(page);
+>  	last_block = block_in_file + nr_pages;
+> -	last_block_in_file = (f2fs_readpage_limit(inode) + blocksize - 1) >>
+> -							blkbits;
+> +	last_block_in_file = bytes_to_blks(inode,
+> +			f2fs_readpage_limit(inode) + blocksize - 1);
+>  	if (last_block > last_block_in_file)
+>  		last_block = last_block_in_file;
 >  
->  	if (compr_cluster)
-> -		map_bh.b_size = blks_to_bytes(inode, cluster_size - 1);
-> +		map.m_len = cluster_size - 1;
+> @@ -2177,16 +2176,15 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>  	struct bio *bio = *bio_ret;
+>  	unsigned int start_idx = cc->cluster_idx << cc->log_cluster_size;
+>  	sector_t last_block_in_file;
+> -	const unsigned blkbits = inode->i_blkbits;
+> -	const unsigned blocksize = 1 << blkbits;
+> +	const unsigned blocksize = blks_to_bytes(inode, 1);
+>  	struct decompress_io_ctx *dic = NULL;
+>  	int i;
+>  	int ret = 0;
 >  
-> -	ret = get_data_block(inode, start_blk, &map_bh, 0,
-> -					F2FS_GET_BLOCK_FIEMAP, &next_pgofs);
-> +	ret = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_FIEMAP);
->  	if (ret)
->  		goto out;
+>  	f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
 >  
->  	/* HOLE */
-> -	if (!buffer_mapped(&map_bh)) {
-> +	if (!(map.m_flags & F2FS_MAP_FLAGS)) {
->  		start_blk = next_pgofs;
+> -	last_block_in_file = (f2fs_readpage_limit(inode) +
+> -					blocksize - 1) >> blkbits;
+> +	last_block_in_file = bytes_to_blks(inode,
+> +			f2fs_readpage_limit(inode) + blocksize - 1);
 >  
->  		if (blks_to_bytes(inode, start_blk) < blks_to_bytes(inode,
-> @@ -1994,7 +1979,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  
->  
->  		logical = blks_to_bytes(inode, start_blk - 1);
-> -		phys = blks_to_bytes(inode, map_bh.b_blocknr);
-> +		phys = blks_to_bytes(inode, map.m_pblk);
->  		size = blks_to_bytes(inode, cluster_size);
->  
->  		flags |= FIEMAP_EXTENT_ENCODED;
-> @@ -2007,17 +1992,17 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->  		goto prep_next;
->  	}
->  
-> -	if (map_bh.b_blocknr == COMPRESS_ADDR) {
-> +	if (map.m_pblk == COMPRESS_ADDR) {
->  		compr_cluster = true;
->  		start_blk++;
->  		goto prep_next;
->  	}
->  
->  	logical = blks_to_bytes(inode, start_blk);
-> -	phys = blks_to_bytes(inode, map_bh.b_blocknr);
-> -	size = map_bh.b_size;
-> +	phys = blks_to_bytes(inode, map.m_pblk);
-> +	size = blks_to_bytes(inode, map.m_len);
->  	flags = 0;
-> -	if (buffer_unwritten(&map_bh))
-> +	if (map.m_flags & F2FS_MAP_UNWRITTEN)
->  		flags = FIEMAP_EXTENT_UNWRITTEN;
->  
->  	start_blk += bytes_to_blks(inode, size);
-> @@ -3797,9 +3782,6 @@ static sector_t f2fs_bmap_compress(struct inode *inode, sector_t block)
->  static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
->  {
+>  	/* get rid of pages beyond EOF */
+>  	for (i = 0; i < cc->cluster_size; i++) {
+> @@ -3968,7 +3966,6 @@ static int check_swap_activate(struct swap_info_struct *sis,
 >  	struct inode *inode = mapping->host;
-> -	struct buffer_head tmp = {
-> -		.b_size = i_blocksize(inode),
-> -	};
->  	sector_t blknr = 0;
+>  	unsigned blocks_per_page;
+>  	unsigned long page_no;
+> -	unsigned blkbits;
+>  	sector_t probe_block;
+>  	sector_t last_block;
+>  	sector_t lowest_block = -1;
+> @@ -3979,8 +3976,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
+>  	if (PAGE_SIZE == F2FS_BLKSIZE)
+>  		return check_swap_activate_fast(sis, swap_file, span);
 >  
->  	if (f2fs_has_inline_data(inode))
-> @@ -3816,8 +3798,16 @@ static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
->  	if (f2fs_compressed_file(inode)) {
->  		blknr = f2fs_bmap_compress(inode, block);
->  	} else {
-> -		if (!get_data_block_bmap(inode, block, &tmp, 0))
-> -			blknr = tmp.b_blocknr;
-> +		struct f2fs_map_blocks map;
-> +
-> +		memset(&map, 0, sizeof(map));
-> +		map.m_lblk = block;
-> +		map.m_len = 1;
-> +		map.m_next_pgofs = NULL;
-> +		map.m_seg_type = NO_CHECK_TYPE;
-> +
-> +		if (!f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_BMAP))
-> +			blknr = map.m_pblk;
->  	}
->  out:
->  	trace_f2fs_bmap(inode, block, blknr);
-> @@ -3905,25 +3895,27 @@ static int check_swap_activate_fast(struct swap_info_struct *sis,
->  	len = i_size_read(inode);
+> -	blkbits = inode->i_blkbits;
+> -	blocks_per_page = PAGE_SIZE >> blkbits;
+> +	blocks_per_page = bytes_to_blks(inode, PAGE_SIZE);
 >  
->  	while (cur_lblock <= last_lblock && cur_lblock < sis->max) {
-> -		struct buffer_head map_bh;
-> +		struct f2fs_map_blocks map;
->  		pgoff_t next_pgofs;
+>  	/*
+>  	 * Map all the blocks into the extent list.  This code doesn't try
+> @@ -3988,7 +3984,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
+>  	 */
+>  	probe_block = 0;
+>  	page_no = 0;
+> -	last_block = i_size_read(inode) >> blkbits;
+> +	last_block = bytes_to_blks(inode, i_size_read(inode));
+>  	while ((probe_block + blocks_per_page) <= last_block &&
+>  			page_no < sis->max) {
+>  		unsigned block_in_page;
+> @@ -4028,7 +4024,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
+>  			}
+>  		}
 >  
->  		cond_resched();
->  
-> -		memset(&map_bh, 0, sizeof(struct buffer_head));
-> -		map_bh.b_size = len - blks_to_bytes(inode, cur_lblock);
-> +		memset(&map, 0, sizeof(map));
-> +		map.m_lblk = cur_lblock;
-> +		map.m_len = bytes_to_blks(inode, len) - cur_lblock;
-> +		map.m_next_pgofs = &next_pgofs;
-> +		map.m_seg_type = NO_CHECK_TYPE;
->  
-> -		ret = get_data_block(inode, cur_lblock, &map_bh, 0,
-> -					F2FS_GET_BLOCK_FIEMAP, &next_pgofs);
-> +		ret = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_FIEMAP);
->  		if (ret)
->  			goto err_out;
->  
->  		/* hole */
-> -		if (!buffer_mapped(&map_bh))
-> +		if (!(map.m_flags & F2FS_MAP_FLAGS))
->  			goto err_out;
->  
-> -		pblock = map_bh.b_blocknr;
-> -		nr_pblocks = bytes_to_blks(inode, map_bh.b_size);
-> +		pblock = map.m_pblk;
-> +		nr_pblocks = map.m_len;
->  
->  		if (cur_lblock + nr_pblocks >= sis->max)
->  			nr_pblocks = sis->max - cur_lblock;
+> -		first_block >>= (PAGE_SHIFT - blkbits);
+> +		first_block >>= (PAGE_SHIFT - inode->i_blkbits);
+>  		if (page_no) {	/* exclude the header page */
+>  			if (first_block < lowest_block)
+>  				lowest_block = first_block;
 > -- 
 > 2.29.2.454.gaff20da3a2-goog
 
