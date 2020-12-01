@@ -2,81 +2,73 @@ Return-Path: <SRS0=qLlU=FF=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7700EC64E7A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Dec 2020 04:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8580FC64E7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Dec 2020 06:45:46 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D647F206F9;
-	Tue,  1 Dec 2020 04:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTPS id BBACE20757;
+	Tue,  1 Dec 2020 06:45:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="hxNJMBPC";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="bv4SDhFY";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wLR20K2t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D647F206F9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sourceforge.net header.i=@sourceforge.net header.b="VydaAYMf";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sf.net header.i=@sf.net header.b="M/yhqmta"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBACE20757
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kjwzM-0003lA-E7; Tue, 01 Dec 2020 04:10:04 +0000
+	id 1kjzPz-0005Zi-BH; Tue, 01 Dec 2020 06:45:43 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1kjwzK-0003ku-TE
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Dec 2020 04:10:02 +0000
+ (envelope-from <jack.qiu@huawei.com>) id 1kjzPx-0005ZQ-0G
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Dec 2020 06:45:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Date:Subject:
+ CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ucnd2QHGe6a82lKNJ42bzAN/ufOa7Sx/v9GvzYNnBqs=; b=hxNJMBPCRe+xVt9DdK3wUT9vaS
- TsQ9jPeNobdpgb+0qyKqqPbQx3F+CrCIw0Q1iCZ1OdPAgsuzuKv32TEmIL7LzUD+XTVe0kCYud7Eb
- mtZ1ydhAlwVnwBoCVv1kojov9ME1DTpH7rKkncCWIUT5hwU7IzUuXzDGFlDeajxUNB6o=;
+ bh=uMToet0znSRwfKo3OmJ7HGKn/8IUWvwxLeY76WSpyVc=; b=VydaAYMfevjgqcp2F577lXjSgE
+ rvA23elMzG8gnncJEA+dqWaqCA5g5KoB+M2UYwg/flGyDCKc/7XMhmTnOOBo5xiUU6bHTiUstpdhq
+ udqn+qgblud/prFXQqz2BYRLMm+2iyvqVxyr4YXdMJyyVNwmSEGHISWnr/EuLuMPpVLQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ucnd2QHGe6a82lKNJ42bzAN/ufOa7Sx/v9GvzYNnBqs=; b=bv4SDhFYeKKOoFGv4mxLcHEzml
- ek99cvlLVUfj+Bab82U0YoB0ViNt42SgV8Cq9p8V8hV4CEkkHuPoL+xTuq3QHZcjFhW4Kh1Tef1MY
- mSDA50EdGfVhtjS4KBTuI8ZNbSZz16QoVKI0ExpQDEQ0w2MQt829WBQsh/veFudlwfc8=;
-Received: from mail.kernel.org ([198.145.29.99])
+ h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From:Sender:
+ Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=uMToet0znSRwfKo3OmJ7HGKn/8IUWvwxLeY76WSpyVc=; b=M
+ /yhqmtaCVW1/PHhJ0fNR76M2zX6ejj5rpL3qR1i76oxKrunxvpbYV71hS/m5pPqYPfLzuMdaFN/SJ
+ KhZXW2c0FsvOJYoq2wX9evvhxhezR/JWcttf70+RiPb/JNsPFBdkYmlmtrBQso0FQlB81LoWU6xvd
+ 3hKWTr7j8vOcoqFc=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kjwzG-00DK1J-E2
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Dec 2020 04:10:02 +0000
-Received: from google.com (unknown [104.132.1.66])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by mail.kernel.org (Postfix) with ESMTPSA id 85CB8207FF;
- Tue,  1 Dec 2020 04:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=default; t=1606795785;
- bh=alV+iNbD6jv9Jf4on2H+QdoZhJwJ7hF8xZXgwLkI8m8=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=wLR20K2t81nEaaAf7p5Bc4BU8mTBWjknGAvTGoRBA/YOURmhOX96mnZUGco5o+5rj
- 9xBlB6JkM5t40ajj7uX84kUlmLCubL7Qf9+1b1LdiMukdNOBmRxNFpI5j7c1LDOOKa
- zDEK1mfeDMj+pCwIyDh09d6BktVndeWbxMOIs8GY=
-Date: Mon, 30 Nov 2020 20:09:44 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, kernel-team@android.com
-Message-ID: <20201201040944.GD3858797@google.com>
-References: <20201126022416.3068426-1-jaegeuk@kernel.org>
- <20201126022416.3068426-2-jaegeuk@kernel.org>
+ id 1kjzPq-00DXy0-NU
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Dec 2020 06:45:40 +0000
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ClXds5lK9z15TpS;
+ Tue,  1 Dec 2020 14:44:49 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Tue, 1 Dec 2020
+ 14:45:13 +0800
+From: Jack Qiu <jack.qiu@huawei.com>
+To: <linux-f2fs-devel@lists.sourceforge.net>
+Date: Tue, 1 Dec 2020 15:45:47 +0800
+Message-ID: <20201201074547.1872-1-jack.qiu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20201126022416.3068426-2-jaegeuk@kernel.org>
-X-Headers-End: 1kjwzG-00DK1J-E2
-Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: use new conversion functions
- between blks and bytes
+X-Originating-IP: [10.175.101.6]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1kjzPq-00DXy0-NU
+Subject: [f2fs-dev] [PATCH] f2fs: init dirty_secmap incorrectly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,154 +80,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+Cc: stable@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 11/25, Jaegeuk Kim wrote:
-> This patch cleans up blks and bytes conversions.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/data.c | 46 +++++++++++++++++++++-------------------------
->  1 file changed, 21 insertions(+), 25 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index a8612c6f40ab..a84e5bc09337 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1750,6 +1750,16 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len)
->  	return true;
->  }
->  
-> +static inline u64 bytes_to_blks(struct inode *inode, u64 bytes)
-> +{
-> +	return (bytes >> inode->i_blkbits);
-> +}
-> +
-> +static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
-> +{
-> +	return (blks << inode->i_blkbits);
-> +}
-> +
->  static int __get_data_block(struct inode *inode, sector_t iblock,
->  			struct buffer_head *bh, int create, int flag,
->  			pgoff_t *next_pgofs, int seg_type, bool may_write)
-> @@ -1758,7 +1768,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
->  	int err;
->  
->  	map.m_lblk = iblock;
-> -	map.m_len = bh->b_size >> inode->i_blkbits;
-> +	map.m_len = bytes_to_blks(inode, bh->b_size);
->  	map.m_next_pgofs = next_pgofs;
->  	map.m_next_extent = NULL;
->  	map.m_seg_type = seg_type;
-> @@ -1768,7 +1778,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
->  	if (!err) {
->  		map_bh(bh, inode->i_sb, map.m_pblk);
->  		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
-> -		bh->b_size = (u64)map.m_len << inode->i_blkbits;
-> +		bh->b_size = blks_to_bytes(inode, map.m_len);
->  	}
->  	return err;
->  }
-> @@ -1808,16 +1818,6 @@ static int get_data_block_bmap(struct inode *inode, sector_t iblock,
->  						NO_CHECK_TYPE, create);
->  }
->  
-> -static inline u64 bytes_to_blks(struct inode *inode, u64 bytes)
-> -{
-> -	return (bytes >> inode->i_blkbits);
-> -}
-> -
-> -static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
-> -{
-> -	return (blks << inode->i_blkbits);
-> -}
-> -
->  static int f2fs_xattr_fiemap(struct inode *inode,
->  				struct fiemap_extent_info *fieinfo)
->  {
-> @@ -2053,8 +2053,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
->  					bool is_readahead)
->  {
->  	struct bio *bio = *bio_ret;
-> -	const unsigned blkbits = inode->i_blkbits;
-> -	const unsigned blocksize = 1 << blkbits;
-> +	const unsigned blocksize = blks_to_bytes(inode, 1);
->  	sector_t block_in_file;
->  	sector_t last_block;
->  	sector_t last_block_in_file;
-> @@ -2063,8 +2062,8 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
->  
->  	block_in_file = (sector_t)page_index(page);
->  	last_block = block_in_file + nr_pages;
-> -	last_block_in_file = (f2fs_readpage_limit(inode) + blocksize - 1) >>
-> -							blkbits;
-> +	last_block_in_file = bytes_to_blks(inode,
-> +			f2fs_readpage_limit(inode) + blocksize - 1);
->  	if (last_block > last_block_in_file)
->  		last_block = last_block_in_file;
->  
-> @@ -2177,16 +2176,15 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
->  	struct bio *bio = *bio_ret;
->  	unsigned int start_idx = cc->cluster_idx << cc->log_cluster_size;
->  	sector_t last_block_in_file;
-> -	const unsigned blkbits = inode->i_blkbits;
-> -	const unsigned blocksize = 1 << blkbits;
-> +	const unsigned blocksize = blks_to_bytes(inode, 1);
->  	struct decompress_io_ctx *dic = NULL;
->  	int i;
->  	int ret = 0;
->  
->  	f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
->  
-> -	last_block_in_file = (f2fs_readpage_limit(inode) +
-> -					blocksize - 1) >> blkbits;
-> +	last_block_in_file = bytes_to_blks(inode,
-> +			f2fs_readpage_limit(inode) + blocksize - 1);
->  
->  	/* get rid of pages beyond EOF */
->  	for (i = 0; i < cc->cluster_size; i++) {
-> @@ -3968,7 +3966,6 @@ static int check_swap_activate(struct swap_info_struct *sis,
->  	struct inode *inode = mapping->host;
->  	unsigned blocks_per_page;
->  	unsigned long page_no;
-> -	unsigned blkbits;
->  	sector_t probe_block;
->  	sector_t last_block;
->  	sector_t lowest_block = -1;
-> @@ -3979,8 +3976,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
->  	if (PAGE_SIZE == F2FS_BLKSIZE)
->  		return check_swap_activate_fast(sis, swap_file, span);
->  
-> -	blkbits = inode->i_blkbits;
-> -	blocks_per_page = PAGE_SIZE >> blkbits;
-> +	blocks_per_page = bytes_to_blks(inode, PAGE_SIZE);
->  
->  	/*
->  	 * Map all the blocks into the extent list.  This code doesn't try
-> @@ -3988,7 +3984,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
->  	 */
->  	probe_block = 0;
->  	page_no = 0;
-> -	last_block = i_size_read(inode) >> blkbits;
-> +	last_block = bytes_to_blks(inode, i_size_read(inode));
->  	while ((probe_block + blocks_per_page) <= last_block &&
->  			page_no < sis->max) {
->  		unsigned block_in_page;
-> @@ -4028,7 +4024,7 @@ static int check_swap_activate(struct swap_info_struct *sis,
->  			}
->  		}
->  
-> -		first_block >>= (PAGE_SHIFT - blkbits);
-> +		first_block >>= (PAGE_SHIFT - inode->i_blkbits);
->  		if (page_no) {	/* exclude the header page */
->  			if (first_block < lowest_block)
->  				lowest_block = first_block;
-> -- 
-> 2.29.2.454.gaff20da3a2-goog
+section is dirty, but dirty_secmap may not set
+
+Reported-by: Jia Yang <jiayang5@huawei.com>
+Fixes: da52f8ade40b ("f2fs: get the right gc victim section when section
+has several segments")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jack Qiu <jack.qiu@huawei.com>
+---
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1596502f7375..f2a4265318f5 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4544,7 +4544,7 @@ static void init_dirty_segmap(struct f2fs_sb_info *sbi)
+ 		return;
+
+ 	mutex_lock(&dirty_i->seglist_lock);
+-	for (segno = 0; segno < MAIN_SECS(sbi); segno += blks_per_sec) {
++	for (segno = 0; segno < MAIN_SEGS(sbi); segno += sbi->segs_per_sec) {
+ 		valid_blocks = get_valid_blocks(sbi, segno, true);
+ 		secno = GET_SEC_FROM_SEG(sbi, segno);
+
+--
+2.17.1
+
 
 
 _______________________________________________
