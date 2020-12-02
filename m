@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E75FC64E8A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Dec 2020 01:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBBCC64E7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Dec 2020 01:52:45 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EB6F72064B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Dec 2020 01:51:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB6F72064B
+	by mail.kernel.org (Postfix) with ESMTPS id 81A162064B;
+	Wed,  2 Dec 2020 01:52:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81A162064B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kkHIb-0007K3-7l; Wed, 02 Dec 2020 01:51:17 +0000
+	id 1kkHJx-0006i4-NS; Wed, 02 Dec 2020 01:52:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kkHIZ-0007Jm-MX
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Dec 2020 01:51:15 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kkHJv-0006hw-H4
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Dec 2020 01:52:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=p6Slouxa6VhIJgicKINaCB33LDIOdYe7ZadmrqfKCbc=; b=FSqtWTagyyx3ZF4GrFOHROr0zD
- g1Rn3idVQQG6aRyixetNQ6idiwjlJ4kUQin0cjm8syJYED7jKVDA9gj6Y9TXJ7QwmogDi5THljnMt
- s17KIxhLcM31ewRZo5wmMydaOAoDwnHGpQ0jyeBc8cIa1iQWTQmQaT4S7KLKVUsIwp8w=;
+ bh=5KHXDCUnRk40HJLWikL1Muz5ZzcrC90gYrgji3P9VUM=; b=IfrFyj1cR3u2Q86nVDcVDb14Lo
+ UhAfzyXnt5LJdAq+L5fK52mKUEYa5avOcU/7YDAWBVrMagxWpBAH0AcyQ+wxXraXAHbUPfH/nRPkW
+ sZ/UChUgG0CMj4lDWeykTCv/cKdIaYRTw2QEjlFJxbNoqGGhz6T59Jlkh6qKJ1RvoskY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -42,35 +42,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=p6Slouxa6VhIJgicKINaCB33LDIOdYe7ZadmrqfKCbc=; b=Xk4/zZ+YKtW7VzS99u4k3srloI
- nliSXt3uSDH4eujDCQxDIQahFcM7BxE/Qa1B/UzANPdu9FcH3KB7hMKYmygmwlFmZdKAiWvXGJeBh
- 6z6BKhCwCVWnET9judzAlIE2Ckpn9IuOVWlgqbFQu3rZEpOisWDWysbqtZcVzttyxKt4=;
-Received: from szxga07-in.huawei.com ([45.249.212.35])
+ bh=5KHXDCUnRk40HJLWikL1Muz5ZzcrC90gYrgji3P9VUM=; b=OQm1RTgIpw/Q62DKltXG1L6G7P
+ KnR6pBTxTjxPR2YqWd/27BHgERH8jKJHJRHrDU1lfVKDg23yU8RM3RTjfUddykhvz/76oWXVMISDd
+ fnDEAgoJs+aF3E9dr/T8v2DWJIsn32eA/5MmK0kEJeXcjSiZpS9oA1Nk6rWYy8dhTuG0=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kkHIS-00Ezir-F4
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Dec 2020 01:51:15 +0000
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
- by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Cm23v4Ql1z73g6;
- Wed,  2 Dec 2020 09:50:35 +0800 (CST)
+ id 1kkHJp-00Ezr9-5V
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Dec 2020 01:52:39 +0000
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Cm25F4pjhz15VC3;
+ Wed,  2 Dec 2020 09:51:45 +0800 (CST)
 Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 2 Dec 2020
- 09:50:56 +0800
-To: Shuosheng Huang <huangshuosheng@allwinnertech.com>, <jaegeuk@kernel.org>, 
- <chao@kernel.org>
-References: <20201201071739.13301-1-huangshuosheng@allwinnertech.com>
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 2 Dec 2020
+ 09:52:04 +0800
+To: Jack Qiu <jack.qiu@huawei.com>, <linux-f2fs-devel@lists.sourceforge.net>
+References: <20201201074547.1872-1-jack.qiu@huawei.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <a79534af-b1c2-4b1d-bc09-b0727147623d@huawei.com>
-Date: Wed, 2 Dec 2020 09:50:56 +0800
+Message-ID: <e2f5f972-7333-9758-22f5-e9413a37e703@huawei.com>
+Date: Wed, 2 Dec 2020 09:52:04 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20201201071739.13301-1-huangshuosheng@allwinnertech.com>
+In-Reply-To: <20201201074547.1872-1-jack.qiu@huawei.com>
 Content-Language: en-US
 X-Originating-IP: [10.136.114.67]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kkHIS-00Ezir-F4
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: Remove unnecessary unlikely()
+X-Headers-End: 1kkHJp-00Ezr9-5V
+Subject: Re: [f2fs-dev] [PATCH] f2fs: init dirty_secmap incorrectly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,20 +81,19 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: tiny.windzz@gmail.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: stable@vger.kernel.org
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/12/1 15:17, Shuosheng Huang wrote:
-> From: Yangtao Li <tiny.windzz@gmail.com>
+On 2020/12/1 15:45, Jack Qiu wrote:
+> section is dirty, but dirty_secmap may not set
 > 
-> WARN_ON() already contains an unlikely(), so it's not necessary
-> to use unlikely.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> Signed-off-by: Shuosheng Huang <huangshuosheng@allwinnertech.com>
+> Reported-by: Jia Yang <jiayang5@huawei.com>
+> Fixes: da52f8ade40b ("f2fs: get the right gc victim section when section
+> has several segments")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Jack Qiu <jack.qiu@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
