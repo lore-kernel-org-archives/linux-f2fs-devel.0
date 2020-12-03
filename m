@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A28C6369E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 02:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 868BEC6369E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 02:27:33 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B071322244;
-	Thu,  3 Dec 2020 02:23:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B071322244
+	by mail.kernel.org (Postfix) with ESMTPS id EEF2A21D91;
+	Thu,  3 Dec 2020 02:27:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF2A21D91
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kkeHG-0001Is-8X; Thu, 03 Dec 2020 02:23:26 +0000
+	id 1kkeLE-0001qk-9b; Thu, 03 Dec 2020 02:27:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kkeHE-0001Ia-MZ
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:23:24 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kkeGs-0001AS-JE
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:23:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6J4Rx3OcCXGdjyCabL5zCWDlLLtfSPkJHxu7m674tMs=; b=OarHP+nn4CzZf96xP99W4TZOZv
- +Ubt4FwIMvFNtQ+fK9vTQzn0uhEuQuI2N4+743+f2wVVajnBvChEEdxtomLrlBRj9cvfx6/O84NTm
- glxHE0ZTfL0QlwnGUhOUBMqC3fKy30M5sxqQMFnYJrttGfiV1PJ9o72Wk66nZSLuHjBE=;
+ bh=8br3x4k9pXI77eytM2IZZTYC0mxqrNaCjoK2lGM+tyo=; b=gMwsrN+BUZrUGt0iR7ecSwaMHl
+ o9ToXRnmewSzsGyQ5UUBx1ATletmxlGzxFIvuesDzdg878yHp77/jsZ+1qR3xFuvI5M++MsZu9nBo
+ 9Oe/1mtgliq8xmry5vluoPcZ0dvgFxbe117zanf8RboC4gb0fLNDIzbusO/yuX1fOzMI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,27 +42,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=6J4Rx3OcCXGdjyCabL5zCWDlLLtfSPkJHxu7m674tMs=; b=Hjm7p/8TT0Qqu55t5yjB0+NeDo
- oimi5QsLkR0oxAYWkMJENanB2qp1Bi1PR+q/LJsxycERZhQDpPQAALvnybpnPN9Lhctq4d1bHq1TE
- bu/3fF2Um+f8ZL1kczD0sLSTCO0OuyjbujVfxbk90fMbvNtFfGhSzHxrz5oWKitXj8tk=;
+ bh=8br3x4k9pXI77eytM2IZZTYC0mxqrNaCjoK2lGM+tyo=; b=BXR6vmXsmh5dQgiTaAUCddekRC
+ C9jx7R4/mhPALRB1tGOQd5Kdb19rICOyXHhL40E/mg2zRo5vgspitR1isTO2DrNO/CwBvdPnlu6HY
+ yppE3yuCKdygZKww9qsNMUG4k76sj1RdA5VQ4rIMk/i09CSfAnaiQ6kC6op7lT/raMbg=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kkeH2-00Gwbu-Eq
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:23:24 +0000
+ id 1kkeGn-00CSo6-Gb
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:23:02 +0000
 From: Eric Biggers <ebiggers@kernel.org>
 Authentication-Results: mail.kernel.org;
  dkim=permerror (bad message/signature format)
 To: linux-fscrypt@vger.kernel.org
-Date: Wed,  2 Dec 2020 18:20:39 -0800
-Message-Id: <20201203022041.230976-8-ebiggers@kernel.org>
+Date: Wed,  2 Dec 2020 18:20:33 -0800
+Message-Id: <20201203022041.230976-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201203022041.230976-1-ebiggers@kernel.org>
 References: <20201203022041.230976-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kkeH2-00Gwbu-Eq
-Subject: [f2fs-dev] [PATCH v2 7/9] fscrypt: move fscrypt_require_key() to
- fscrypt_private.h
+X-Headers-End: 1kkeGn-00CSo6-Gb
+Subject: [f2fs-dev] [PATCH v2 1/9] ext4: remove ext4_dir_open()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,91 +82,46 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-fscrypt_require_key() is now only used by files in fs/crypto/.  So
-reduce its visibility to fscrypt_private.h.  This is also a prerequsite
-for unexporting fscrypt_get_encryption_info().
+Since encrypted directories can be opened and searched without their key
+being available, and each readdir and ->lookup() tries to set up the
+key, trying to set up the key in ->open() too isn't really useful.
+
+Just remove it so that directories don't need an ->open() method
+anymore, and so that we eliminate a use of fscrypt_get_encryption_info()
+(which I'd like to stop exporting to filesystems).
 
 Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/fscrypt_private.h | 26 ++++++++++++++++++++++++++
- include/linux/fscrypt.h     | 26 --------------------------
- 2 files changed, 26 insertions(+), 26 deletions(-)
+ fs/ext4/dir.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index a61d4dbf0a0b0..16dd55080127a 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -571,6 +571,32 @@ int fscrypt_derive_dirhash_key(struct fscrypt_info *ci,
- void fscrypt_hash_inode_number(struct fscrypt_info *ci,
- 			       const struct fscrypt_master_key *mk);
- 
-+/**
-+ * fscrypt_require_key() - require an inode's encryption key
-+ * @inode: the inode we need the key for
-+ *
-+ * If the inode is encrypted, set up its encryption key if not already done.
-+ * Then require that the key be present and return -ENOKEY otherwise.
-+ *
-+ * No locks are needed, and the key will live as long as the struct inode --- so
-+ * it won't go away from under you.
-+ *
-+ * Return: 0 on success, -ENOKEY if the key is missing, or another -errno code
-+ * if a problem occurred while setting up the encryption key.
-+ */
-+static inline int fscrypt_require_key(struct inode *inode)
-+{
-+	if (IS_ENCRYPTED(inode)) {
-+		int err = fscrypt_get_encryption_info(inode);
-+
-+		if (err)
-+			return err;
-+		if (!fscrypt_has_encryption_key(inode))
-+			return -ENOKEY;
-+	}
-+	return 0;
-+}
-+
- /* keysetup_v1.c */
- 
- void fscrypt_put_direct_key(struct fscrypt_direct_key *dk);
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index b20900bb829fc..a07610f279266 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -688,32 +688,6 @@ static inline bool fscrypt_has_encryption_key(const struct inode *inode)
- 	return fscrypt_get_info(inode) != NULL;
+diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+index ca50c90adc4c4..16bfbdd5007c7 100644
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -616,13 +616,6 @@ static int ext4_dx_readdir(struct file *file, struct dir_context *ctx)
+ 	return 0;
  }
  
--/**
-- * fscrypt_require_key() - require an inode's encryption key
-- * @inode: the inode we need the key for
-- *
-- * If the inode is encrypted, set up its encryption key if not already done.
-- * Then require that the key be present and return -ENOKEY otherwise.
-- *
-- * No locks are needed, and the key will live as long as the struct inode --- so
-- * it won't go away from under you.
-- *
-- * Return: 0 on success, -ENOKEY if the key is missing, or another -errno code
-- * if a problem occurred while setting up the encryption key.
-- */
--static inline int fscrypt_require_key(struct inode *inode)
+-static int ext4_dir_open(struct inode * inode, struct file * filp)
 -{
--	if (IS_ENCRYPTED(inode)) {
--		int err = fscrypt_get_encryption_info(inode);
--
--		if (err)
--			return err;
--		if (!fscrypt_has_encryption_key(inode))
--			return -ENOKEY;
--	}
+-	if (IS_ENCRYPTED(inode))
+-		return fscrypt_get_encryption_info(inode) ? -EACCES : 0;
 -	return 0;
 -}
 -
- /**
-  * fscrypt_prepare_link() - prepare to link an inode into a possibly-encrypted
-  *			    directory
+ static int ext4_release_dir(struct inode *inode, struct file *filp)
+ {
+ 	if (filp->private_data)
+@@ -664,7 +657,6 @@ const struct file_operations ext4_dir_operations = {
+ 	.compat_ioctl	= ext4_compat_ioctl,
+ #endif
+ 	.fsync		= ext4_sync_file,
+-	.open		= ext4_dir_open,
+ 	.release	= ext4_release_dir,
+ };
+ 
 -- 
 2.29.2
 
