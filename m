@@ -2,39 +2,39 @@ Return-Path: <SRS0=U9Id=FH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67931C64E7B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 06:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A255C63777
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 07:07:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 83F9620758;
-	Thu,  3 Dec 2020 06:57:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83F9620758
+	by mail.kernel.org (Postfix) with ESMTPS id 54E102086A;
+	Thu,  3 Dec 2020 07:07:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E102086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kkiYY-0004vI-Du; Thu, 03 Dec 2020 06:57:34 +0000
+	id 1kkiiT-0002Pt-Kl; Thu, 03 Dec 2020 07:07:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kkiXK-0004sD-Ch
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:56:18 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kkigi-0002Cl-Fl
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 07:06:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Y9+Sx+Gwsuvxgygzo7chEmP+3h07+K9vwR88EPhqRq4=; b=nKbgERGglSMA6Gho7pa2NYO3ee
- LFimNx5X8QQj5vxH466kCWxdJuZqVpXVIn7DFfrV7+/UKovKbqNpGsE8/pKJq5ducUuC+Aqz/VhSl
- w5DjQWGBIR0mene9ft/5i3hMgMsry3yxVZ3Ihf9yOh91KD+iIBJ64tF53ZOgkhobq0W4=;
+ bh=zXz9sDTaEdMWMorMtPZ/PyhVuvDK+LWzNG4nMAuWBkM=; b=Reu8jpi503KLOA6ZPRJpDVqMjS
+ YK5uzE9zh6eTdHbdZGx/r/fe0+P9msi3DXJH2A8TuqGK+lYRoMbMwiLT9vNms/4M3aZYybXjR6dja
+ mVHLCr6Pxz5pDJKl6iGiWDMeZpkjEEAzfZ91p8NpJS+G9f3FFXCrJSWncissVyUzObC4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -42,38 +42,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Y9+Sx+Gwsuvxgygzo7chEmP+3h07+K9vwR88EPhqRq4=; b=YlPa4ZrUWyEpo9qEVbiQjDuzEV
- u0vz6Mu72BRLf2h77wv/QZd/3vVo4YM9EWVbLxmDtvHFjT391k3FUgPnP0F7fof6rvU6VsCKH7mEp
- eyXNHGIQ0qv3ySVPCoDH23Pvif3xU6/6w/uDvoGm9c13qlCqDQlhuEtM9eZfkm9+Xd5w=;
+ bh=zXz9sDTaEdMWMorMtPZ/PyhVuvDK+LWzNG4nMAuWBkM=; b=Js2Gm+DRZ8QylMMfQoagnFK9lO
+ +Y/hhK/gBRErXGyPwfXOR3iLPPZpvdaUcH8h9t8ycg2PcVyHdm774PCGNgamve9epsFFYZCXgAjFh
+ 53LePAWq7z5VLwkQLGGnJeP1xT5blx2nW3ZlLVnWmRrBJHli46hlNC9dI1j9BQ70gvVs=;
 Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kkiXG-00CokX-L0
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:56:18 +0000
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CmmnF0crGz15LKB;
- Thu,  3 Dec 2020 14:55:29 +0800 (CST)
+ id 1kkige-00HGdF-FY
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 07:06:00 +0000
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Cmn0J5m47zkkmH;
+ Thu,  3 Dec 2020 15:05:04 +0800 (CST)
 Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 3 Dec 2020
- 14:55:50 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 3 Dec 2020
+ 15:05:36 +0800
+To: Daeho Jeong <daeho43@gmail.com>, <linux-kernel@vger.kernel.org>,
  <linux-f2fs-devel@lists.sourceforge.net>, <kernel-team@android.com>
-References: <20201109170012.2129411-1-jaegeuk@kernel.org>
- <20201112053414.GB3826485@google.com> <20201112054051.GA4092972@google.com>
- <X8iAh7quYw77O6XC@google.com>
+References: <20201201040803.3590442-1-daeho43@gmail.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <df364dab-6640-654b-c36e-3f84f4bcbc2b@huawei.com>
-Date: Thu, 3 Dec 2020 14:55:50 +0800
+Message-ID: <f132a75d-4c06-0799-aabf-8697391d4a87@huawei.com>
+Date: Thu, 3 Dec 2020 15:05:36 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <X8iAh7quYw77O6XC@google.com>
+In-Reply-To: <20201201040803.3590442-1-daeho43@gmail.com>
 Content-Language: en-US
 X-Originating-IP: [10.136.114.67]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kkiXG-00CokX-L0
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid race condition for shinker
- count
+X-Headers-End: 1kkige-00HGdF-FY
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: add compress_mode mount option
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,100 +82,27 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Light Hsieh <Light.Hsieh@mediatek.com>
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/12/3 14:07, Jaegeuk Kim wrote:
-> On 11/11, Jaegeuk Kim wrote:
->> Light reported sometimes shinker gets nat_cnt < dirty_nat_cnt resulting in
->> wrong do_shinker work. Let's avoid to get stale data by using nat_tree_lock.
->>
->> Reported-by: Light Hsieh <Light.Hsieh@mediatek.com>
->> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->> ---
->> v3:
->>   - fix to use NM_I(sbi)
->>
->>   fs/f2fs/shrinker.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
->> index d66de5999a26..555712ba06d8 100644
->> --- a/fs/f2fs/shrinker.c
->> +++ b/fs/f2fs/shrinker.c
->> @@ -18,7 +18,11 @@ static unsigned int shrinker_run_no;
->>   
->>   static unsigned long __count_nat_entries(struct f2fs_sb_info *sbi)
->>   {
->> -	long count = NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
->> +	long count;
->> +
->> +	down_read(&NM_I(sbi)->nat_tree_lock);
->> +	count = NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
->> +	up_read(&NM_I(sbi)->nat_tree_lock);
+On 2020/12/1 12:08, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> I just fosund this can give kernel hang due to the following backtrace.
-> f2fs_shrink_count
-> shrink_slab
-> shrink_node
-> do_try_to_free_pages
-> try_to_free_pages
-> __alloc_pages_nodemask
-> alloc_pages_current
-> allocate_slab
-> __slab_alloc
-> __slab_alloc
-> kmem_cache_alloc
-> add_free_nid
-> f2fs_flush_nat_entries
-> f2fs_write_checkpoint
+> We will add a new "compress_mode" mount option to control file
+> compression mode. This supports "fs" and "user". In "fs" mode (default),
+> f2fs does automatic compression on the compression enabled files.
+> In "user" mode, f2fs disables the automaic compression and gives the
+> user discretion of choosing the target file and the timing. It means
+> the user can do manual compression/decompression on the compression
+> enabled files using ioctls.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
 
-Oh, I missed that case.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-> 
-> Let me just check like this.
-> 
->>From 971163330224449d90aac90957ea38f77d494f0f Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Fri, 6 Nov 2020 13:22:05 -0800
-> Subject: [PATCH] f2fs: avoid race condition for shrinker count
-> 
-> Light reported sometimes shinker gets nat_cnt < dirty_nat_cnt resulting in
-> wrong do_shinker work. Let's avoid to return insane overflowed value.
-> 
-> Reported-by: Light Hsieh <Light.Hsieh@mediatek.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->   fs/f2fs/shrinker.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-> index d66de5999a26..75b5b4aaed99 100644
-> --- a/fs/f2fs/shrinker.c
-> +++ b/fs/f2fs/shrinker.c
-> @@ -18,9 +18,9 @@ static unsigned int shrinker_run_no;
->   
->   static unsigned long __count_nat_entries(struct f2fs_sb_info *sbi)
->   {
-> -	long count = NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
-> -
-> -	return count > 0 ? count : 0;
-> +	if (NM_I(sbi)->nat_cnt > NM_I(sbi)->dirty_nat_cnt)
-> +		return NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
-
-Hmm.. in the case that we are not in checkpoint progress, nat_cnt and dirty_nat_cnt
-is mutable, how can we make sure the calculation is non-negative after the check
-condition? :(
-
-Thanks
-
-> +	return 0;
->   }
->   
->   static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
-> 
+Thanks,
 
 
 _______________________________________________
