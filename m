@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF34C71155
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 02:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FCA2C64E7C
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 02:23:12 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 2E8E822244;
-	Thu,  3 Dec 2020 02:23:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8E822244
+	by mail.kernel.org (Postfix) with ESMTPS id 0195322244;
+	Thu,  3 Dec 2020 02:23:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0195322244
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kkeGz-0001Gs-66; Thu, 03 Dec 2020 02:23:09 +0000
+	id 1kkeH1-0007s5-HN; Thu, 03 Dec 2020 02:23:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kkeGy-0001Gk-No
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:23:08 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kkeGz-0007rm-3A
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:23:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wv7DRX0wb6CDcKY0HhWrgrge+5U22b+VShdXuDn5Cv4=; b=NTXbGoAEsNsnDcP2B8NYKAmrhz
- uwNZX6jm7G+WwsgTaUDmXjlCGSJvuCuzZ3XfpMK7wvlThr6G+3eVw54Gvb/vq+qUwAvz0jGHPry7v
- GyVw0/acVbQbKmIwjduNXB4Ozm8K1QAstbr7rgS2hc/rDnJCMI3QaJ9xg9xvG5jMoTjg=;
+ bh=U3b0B8HCS3uJ2lx7XRmyu7rMlITmjx3B1Li5gAaFvV8=; b=cwX0U/y9gk+gHYHd28jSP1a/gU
+ 3lfO8no0EOIBocEqPNud/TLgMl6ahokzt0EDzIns1d+Z8jvq9XtDYsNt9FDCczKc8WDeyXEE9K95p
+ L1J2QJjApxXVQQpdGW4g4JUtdgKpCSluS6YF+yzL8SFyj13er5RVAnmoyClaOv0/3iPQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,27 +42,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=wv7DRX0wb6CDcKY0HhWrgrge+5U22b+VShdXuDn5Cv4=; b=TW65nPAp3Jpb5eDxYGaivAacGa
- 3lVMSZVAQnMU4BcAlaLW+cyhonanGduzVZQXyIA7wHKBpm9Lj9Ku6IaJQQKlpxr5FgG9/XQsGc2TK
- 5rIpVLNygQt5t6+f4gMy/PLyD1QYZoQfoNPm2fXG1Kg4PsXhY3WvhFGd1+KjU78aruIg=;
+ bh=U3b0B8HCS3uJ2lx7XRmyu7rMlITmjx3B1Li5gAaFvV8=; b=hZYMbidHd8GmSy+vK+LgDqBjoY
+ HZ6hCTYUefz/h5CbBdREpIaeL2PNHFj3hTvbjU4ix+BDuK1CLJ3tjAPMxDnNB9hK0MzkFgJEFF20I
+ VNdGhpy2Obzy8ZjdHOtDqY86EC0Y95wu9ujGwz43Yf1m74Rqnb7hOtdU4HF6oIEksPZo=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kkeGu-00CSp4-Ta
+ id 1kkeGr-00CSon-9t
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:23:08 +0000
 From: Eric Biggers <ebiggers@kernel.org>
 Authentication-Results: mail.kernel.org;
  dkim=permerror (bad message/signature format)
 To: linux-fscrypt@vger.kernel.org
-Date: Wed,  2 Dec 2020 18:20:40 -0800
-Message-Id: <20201203022041.230976-9-ebiggers@kernel.org>
+Date: Wed,  2 Dec 2020 18:20:36 -0800
+Message-Id: <20201203022041.230976-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201203022041.230976-1-ebiggers@kernel.org>
 References: <20201203022041.230976-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kkeGu-00CSp4-Ta
-Subject: [f2fs-dev] [PATCH v2 8/9] fscrypt: unexport
- fscrypt_get_encryption_info()
+X-Headers-End: 1kkeGr-00CSon-9t
+Subject: [f2fs-dev] [PATCH v2 4/9] ext4: don't call
+ fscrypt_get_encryption_info() from dx_show_leaf()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,76 +83,44 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Now that fscrypt_get_encryption_info() is only called from files in
-fs/crypto/ (due to all key setup now being handled by higher-level
-helper functions instead of directly by filesystems), unexport it and
-move its declaration to fscrypt_private.h.
+The call to fscrypt_get_encryption_info() in dx_show_leaf() is too low
+in the call tree; fscrypt_get_encryption_info() should have already been
+called when starting the directory operation.  And indeed, it already
+is.  Moreover, the encryption key is guaranteed to already be available
+because dx_show_leaf() is only called when adding a new directory entry.
+
+And even if the key wasn't available, dx_show_leaf() uses
+fscrypt_fname_disk_to_usr() which knows how to create a no-key name.
+
+So for the above reasons, and because it would be desirable to stop
+exporting fscrypt_get_encryption_info() directly to filesystems, remove
+the call to fscrypt_get_encryption_info() from dx_show_leaf().
 
 Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/fscrypt_private.h | 2 ++
- fs/crypto/keysetup.c        | 1 -
- include/linux/fscrypt.h     | 7 +------
- 3 files changed, 3 insertions(+), 7 deletions(-)
+ fs/ext4/namei.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 16dd55080127a..c1c302656c345 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -571,6 +571,8 @@ int fscrypt_derive_dirhash_key(struct fscrypt_info *ci,
- void fscrypt_hash_inode_number(struct fscrypt_info *ci,
- 			       const struct fscrypt_master_key *mk);
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 793fc7db9d28f..7b31aea3e0253 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -643,13 +643,7 @@ static struct stats dx_show_leaf(struct inode *dir,
  
-+int fscrypt_get_encryption_info(struct inode *inode);
-+
- /**
-  * fscrypt_require_key() - require an inode's encryption key
-  * @inode: the inode we need the key for
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index 50675b42d5b7c..6339b3069a400 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -589,7 +589,6 @@ int fscrypt_get_encryption_info(struct inode *inode)
- 		res = 0;
- 	return res;
- }
--EXPORT_SYMBOL(fscrypt_get_encryption_info);
- 
- /**
-  * fscrypt_prepare_new_inode() - prepare to create a new inode in a directory
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index a07610f279266..4b163f5e58e9f 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -75,7 +75,7 @@ struct fscrypt_operations {
- static inline struct fscrypt_info *fscrypt_get_info(const struct inode *inode)
- {
- 	/*
--	 * Pairs with the cmpxchg_release() in fscrypt_get_encryption_info().
-+	 * Pairs with the cmpxchg_release() in fscrypt_setup_encryption_info().
- 	 * I.e., another task may publish ->i_crypt_info concurrently, executing
- 	 * a RELEASE barrier.  We need to use smp_load_acquire() here to safely
- 	 * ACQUIRE the memory the other task published.
-@@ -200,7 +200,6 @@ int fscrypt_ioctl_remove_key_all_users(struct file *filp, void __user *arg);
- int fscrypt_ioctl_get_key_status(struct file *filp, void __user *arg);
- 
- /* keysetup.c */
--int fscrypt_get_encryption_info(struct inode *inode);
- int fscrypt_prepare_new_inode(struct inode *dir, struct inode *inode,
- 			      bool *encrypt_ret);
- void fscrypt_put_encryption_info(struct inode *inode);
-@@ -408,10 +407,6 @@ static inline int fscrypt_ioctl_get_key_status(struct file *filp,
- }
- 
- /* keysetup.c */
--static inline int fscrypt_get_encryption_info(struct inode *inode)
--{
--	return -EOPNOTSUPP;
--}
- 
- static inline int fscrypt_prepare_new_inode(struct inode *dir,
- 					    struct inode *inode,
+ 				name  = de->name;
+ 				len = de->name_len;
+-				if (IS_ENCRYPTED(dir))
+-					res = fscrypt_get_encryption_info(dir);
+-				if (res) {
+-					printk(KERN_WARNING "Error setting up"
+-					       " fname crypto: %d\n", res);
+-				}
+-				if (!fscrypt_has_encryption_key(dir)) {
++				if (!IS_ENCRYPTED(dir)) {
+ 					/* Directory is not encrypted */
+ 					ext4fs_dirhash(dir, de->name,
+ 						de->name_len, &h);
 -- 
 2.29.2
 
