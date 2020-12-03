@@ -2,78 +2,100 @@ Return-Path: <SRS0=U9Id=FH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E9DC71155
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 06:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3E1C63777
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 06:57:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EBDF62067D;
-	Thu,  3 Dec 2020 06:32:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBDF62067D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 1CAFE2063A;
+	Thu,  3 Dec 2020 06:57:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CAFE2063A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kki9s-0005BY-J6; Thu, 03 Dec 2020 06:32:04 +0000
+	id 1kkiY3-0003FI-0a; Thu, 03 Dec 2020 06:57:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kkhzg-0003yx-7g
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:21:32 +0000
+ (envelope-from <daeho43@gmail.com>) id 1kkiXc-0003EE-SE
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:56:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IOsuQ8SWGIS2kqdSD0hIxOxfwfwGVrAG/grdvgdD36I=; b=IVt/kWObVqkUllE+XyLCacR0GM
- cUG/TqCAGC1x7wyKBDE0wH0PK5hUlE67LedelRRpHOjTtgoWSDi7V0XB9PvimVAxxzDfQEyaOrhdC
- V7JMUhvrHOBT2DfG+urwq6jfuz5E3DqXbnEKUuEyfaMvkMcpB+ULI9e5IhtEf0JCPq80=;
+ bh=lc7bOrg/2FPLXC69S/OBOmR0G1J50Q697SgCANI/bBs=; b=kcNjHCswIcaNiGSv/ID+M+ezoj
+ yeIAKshciPCohMdBJhpgEN2gFgYPZIuERHQLYpK7qXWch3kJweXif1Kn5KKjWBEZi+GrImgXBFGKj
+ PEbc2t52qqjIoPP7XB8GSYXWSXYiT82jOsnIHZgYq7X6hYk4IsL8GxSBe8dL7fJTO1rU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=IOsuQ8SWGIS2kqdSD0hIxOxfwfwGVrAG/grdvgdD36I=; b=PpjEAAZBTSKFH4vmLvie1t9EpA
- zmGvxd0SSXJiZjSrkXXAi5wL/4mpXbUS7R1FXQ7KOobr6uvdI2uaIalPMl6mRFSsrMovvA+oBYoJU
- wsnY9RvvXNPXo1fUMvOEtVN54wVlrOkuSivelVohZGx0bVHCZqwVfaSGK5ZnC5vP6afU=;
-Received: from szxga06-in.huawei.com ([45.249.212.32])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=lc7bOrg/2FPLXC69S/OBOmR0G1J50Q697SgCANI/bBs=; b=l
+ bA+6dOktaUtDgKwozOPGJcZvmKvlevw+sH9cxzJDanoxqhUWO/EMzjSML+R50uSxHp5GALEIAwYFb
+ FLLtjzb/Gvh/z7LXANqwS6N4LDXjia5taXbeonIFdKZJyVfVtVTTaXSUfchG3SrqZDbbNpfbkXqtp
+ fRtj4Ik9ZzT3UpOA=;
+Received: from mail-pj1-f65.google.com ([209.85.216.65])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kkhzV-00HCH0-O1
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:21:32 +0000
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Cmm1F4g79zhYDB;
- Thu,  3 Dec 2020 14:20:49 +0800 (CST)
-Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 3 Dec 2020
- 14:21:06 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20201030041035.394565-1-daeho43@gmail.com>
- <20201030041035.394565-2-daeho43@gmail.com>
- <dcf074e3-821c-6858-eb17-63dcc05e7039@huawei.com>
- <X8h6XK6cYwXqGnV7@google.com> <X8iAyiB0RIgm/EgB@google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <4ce24298-a531-723d-77a8-1a5eda181869@huawei.com>
-Date: Thu, 3 Dec 2020 14:21:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1kkiXU-00HFiC-Uv
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:56:36 +0000
+Received: by mail-pj1-f65.google.com with SMTP id iq13so582546pjb.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 02 Dec 2020 22:56:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=lc7bOrg/2FPLXC69S/OBOmR0G1J50Q697SgCANI/bBs=;
+ b=QQ9ZUZ84N4fy6aMyDjIfHfgqPPGjv53vw1SQLLrNnZb5YU2D+jaaH8GUYCCyGEpPr/
+ UDrE0j+T5G4nPfsYN0dDIlIO38AD3xaxobQ2xiR7eK33kfSiQcv5LvKcT8mDaSUZJYAF
+ JaYJfdQu0o57sZaSdAgnA0JTBvOTQ640EZOEsVGeS8AZjoLkkOcqRFROi2Qd1vnL7fzg
+ 9281Blg9eZTDyUH/zxyjY1+ZjYOItGg5bylRrPhbXYw0UNFFmmI2zrgGrRtWKV+G8pZf
+ f5a6w8wgMsVtbWr18IujwTH+lm3xoqbxiLdKD45ftLIq+xlX+kkg9ivt39DS/gwjAjcH
+ +sww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+ :content-transfer-encoding;
+ bh=lc7bOrg/2FPLXC69S/OBOmR0G1J50Q697SgCANI/bBs=;
+ b=DmpDherYg2tGzsNG0gKkizLqYFfDX/Imk9Nk37AgPgXgpJ7yzQg0RVhAgJ9rim+/Mg
+ hi53CAhOiPBWdfbmfuXYfUKjEEFUqy6mYwEs3Lb+cxYYgJGPMTxLgQTKTqVTRy6WS77g
+ kv7DUt3jUZtKaZ7U/PfK+11xMB/Z5L4JZ/TGmYrXCeJTOTZq8S7tWbDJm75x3mloIUGi
+ qOAWN5JlOiL/wwwRNjH8WHSnnC6a9ooRyN/p0A7CejFB7i6LNy1qHXaQkGhvZ54DbDHY
+ uPiIrgBbr5VmAzlcwjgQtx/CCTUpnaJjxAz8UCcaHk03NAoh8HWcZBNX6ELRqdEaxAJM
+ OE2w==
+X-Gm-Message-State: AOAM531ERzYnbQeycIDrZJCeSpUvH102jgCFUUQWg8+BIURJepCKe4xv
+ BDvaPlZUyPalC1EzZa5UbeM=
+X-Google-Smtp-Source: ABdhPJzEZ2uZ4dnP4N+fcWX96To1xyNjRf0eSHN3fFkdvGVmHHaFGFHV31Issgu0wU4cctRtTG9rtg==
+X-Received: by 2002:a17:902:44e:b029:da:b944:b798 with SMTP id
+ 72-20020a170902044eb02900dab944b798mr1906507ple.6.1606978583225; 
+ Wed, 02 Dec 2020 22:56:23 -0800 (PST)
+Received: from daehojeong1.seo.corp.google.com
+ ([2401:fa00:d:11:a6ae:11ff:fe18:6ce2])
+ by smtp.gmail.com with ESMTPSA id c66sm637885pfa.0.2020.12.02.22.56.20
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 02 Dec 2020 22:56:22 -0800 (PST)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
+Date: Thu,  3 Dec 2020 15:56:15 +0900
+Message-Id: <20201203065615.402494-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.29.2.576.ga3fc446d84-goog
 MIME-Version: 1.0
-In-Reply-To: <X8iAyiB0RIgm/EgB@google.com>
-Content-Language: en-US
-X-Originating-IP: [10.136.114.67]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1kkhzV-00HCH0-O1
-Subject: Re: [f2fs-dev] [PATCH v7 2/2] f2fs: add
- F2FS_IOC_SET_COMPRESS_OPTION ioctl
+X-Headers-End: 1kkiXU-00HFiC-Uv
+Subject: [f2fs-dev] [PATCH v3] f2fs: add F2FS_IOC_DECOMPRESS_FILE and
+ F2FS_IOC_COMPRESS_FILE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,271 +107,254 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com,
- Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org
+Cc: Daeho Jeong <daehojeong@google.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/12/3 14:08, Jaegeuk Kim wrote:
-> On 12/02, Jaegeuk Kim wrote:
->> On 12/03, Chao Yu wrote:
->>> Jaegeuk, not sure, is it too late to merge this cleanup into original patch?
->>
->> Let me merge this on top of tree. Thanks. :)
-> 
-> I integrated this into the original patch since I had to revise this commit. :(
-> ("f2fs: avoid race condition for shinker count")
+From: Daeho Jeong <daehojeong@google.com>
 
-It's fine to me. :)
+Added two ioctl to decompress/compress explicitly the compression
+enabled file in "compress_mode=user" mount option.
 
-Thanks,
+Using these two ioctls, the users can make a control of compression
+and decompression of their files.
 
-> 
->>
->>>
->>>  From a5c63ec58e0cda6eb5d186b46942eea46422b7a9 Mon Sep 17 00:00:00 2001
->>> From: Chao Yu <yuchao0@huawei.com>
->>> Date: Thu, 3 Dec 2020 10:04:26 +0800
->>> Subject: [PATCH] f2fs: remove f2fs_is_compress_algorithm_valid() for cleanup
->>>
->>> No logic changes.
->>>
->>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>> ---
->>>   fs/f2fs/compress.c | 5 -----
->>>   fs/f2fs/f2fs.h     | 5 -----
->>>   fs/f2fs/file.c     | 2 +-
->>>   3 files changed, 1 insertion(+), 11 deletions(-)
->>>
->>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
->>> index dfadbc78946c..869b047a4801 100644
->>> --- a/fs/f2fs/compress.c
->>> +++ b/fs/f2fs/compress.c
->>> @@ -574,11 +574,6 @@ bool f2fs_is_compress_backend_ready(struct inode *inode)
->>>   	return f2fs_cops[F2FS_I(inode)->i_compress_algorithm];
->>>   }
->>>
->>> -bool f2fs_is_compress_algorithm_valid(unsigned char algorithm)
->>> -{
->>> -	return f2fs_cops[algorithm] != NULL;
->>> -}
->>> -
->>>   static mempool_t *compress_page_pool;
->>>   static int num_compress_pages = 512;
->>>   module_param(num_compress_pages, uint, 0444);
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index b70c8d553439..17b45c2d2b04 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -3882,7 +3882,6 @@ bool f2fs_compress_write_end(struct inode *inode, void *fsdata,
->>>   int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock);
->>>   void f2fs_compress_write_end_io(struct bio *bio, struct page *page);
->>>   bool f2fs_is_compress_backend_ready(struct inode *inode);
->>> -bool f2fs_is_compress_algorithm_valid(unsigned char algorithm);
->>>   int f2fs_init_compress_mempool(void);
->>>   void f2fs_destroy_compress_mempool(void);
->>>   void f2fs_do_decompress_pages(struct decompress_io_ctx *dic, bool verity);
->>> @@ -3927,10 +3926,6 @@ static inline bool f2fs_is_compress_backend_ready(struct inode *inode)
->>>   	/* not support compression */
->>>   	return false;
->>>   }
->>> -static inline bool f2fs_is_compress_algorithm_valid(unsigned char algorithm)
->>> -{
->>> -	return false;
->>> -}
->>>   static inline struct page *f2fs_compress_control_page(struct page *page)
->>>   {
->>>   	WARN_ON_ONCE(1);
->>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>> index 300355fe25f0..0453b441228d 100644
->>> --- a/fs/f2fs/file.c
->>> +++ b/fs/f2fs/file.c
->>> @@ -4016,7 +4016,7 @@ static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
->>>   	F2FS_I(inode)->i_cluster_size = 1 << option.log_cluster_size;
->>>   	f2fs_mark_inode_dirty_sync(inode, true);
->>>
->>> -	if (!f2fs_is_compress_algorithm_valid(option.algorithm))
->>> +	if (!f2fs_is_compress_backend_ready(inode))
->>>   		f2fs_warn(sbi, "compression algorithm is successfully set, "
->>>   			"but current kernel doesn't support this algorithm.");
->>>   out:
->>> -- 
->>> 2.26.2
->>>
->>>
->>>
->>>
->>>
->>> On 2020/10/30 12:10, Daeho Jeong wrote:
->>>> From: Daeho Jeong <daehojeong@google.com>
->>>>
->>>> Added a new F2FS_IOC_SET_COMPRESS_OPTION ioctl to change file
->>>> compression option of a file.
->>>>
->>>> struct f2fs_comp_option {
->>>>       u8 algorithm;         => compression algorithm
->>>>                             => 0:lzo, 1:lz4, 2:zstd, 3:lzorle
->>>>       u8 log_cluster_size;  => log scale cluster size
->>>>                             => 2 ~ 8
->>>> };
->>>>
->>>> struct f2fs_comp_option option;
->>>>
->>>> option.algorithm = 1;
->>>> option.log_cluster_size = 7;
->>>>
->>>> ioctl(fd, F2FS_IOC_SET_COMPRESS_OPTION, &option);
->>>>
->>>> Signed-off-by: Daeho Jeong <daehojeong@google.com>
->>>> ---
->>>>
->>>> v6: changed the function name of checking compression algorithm validity.
->>>> v5: allowed to set algorithm which is not currently enabled by kernel.
->>>> v4: changed commit message.
->>>> v3: changed the error number more specific.
->>>>       folded in fix for build breakage reported by kernel test robot
->>>>       <lkp@intel.com> and Dan Carpenter <dan.carpenter@oracle.com>.
->>>> v2: added ioctl description.
->>>> ---
->>>>    fs/f2fs/compress.c |  5 +++++
->>>>    fs/f2fs/f2fs.h     |  7 ++++++
->>>>    fs/f2fs/file.c     | 54 ++++++++++++++++++++++++++++++++++++++++++++++
->>>>    3 files changed, 66 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
->>>> index 7895186cc765..b0144670d320 100644
->>>> --- a/fs/f2fs/compress.c
->>>> +++ b/fs/f2fs/compress.c
->>>> @@ -514,6 +514,11 @@ bool f2fs_is_compress_backend_ready(struct inode *inode)
->>>>    	return f2fs_cops[F2FS_I(inode)->i_compress_algorithm];
->>>>    }
->>>> +bool f2fs_is_compress_algorithm_valid(unsigned char algorithm)
->>>> +{
->>>> +	return f2fs_cops[algorithm] != NULL;
->>>> +}
->>>> +
->>>>    static mempool_t *compress_page_pool;
->>>>    static int num_compress_pages = 512;
->>>>    module_param(num_compress_pages, uint, 0444);
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index a33c90cf979b..70a8a2196888 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -435,6 +435,8 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
->>>>    						struct f2fs_sectrim_range)
->>>>    #define F2FS_IOC_GET_COMPRESS_OPTION	_IOR(F2FS_IOCTL_MAGIC, 21,	\
->>>>    						struct f2fs_comp_option)
->>>> +#define F2FS_IOC_SET_COMPRESS_OPTION	_IOW(F2FS_IOCTL_MAGIC, 22,	\
->>>> +						struct f2fs_comp_option)
->>>>    /*
->>>>     * should be same as XFS_IOC_GOINGDOWN.
->>>> @@ -3915,6 +3917,7 @@ bool f2fs_compress_write_end(struct inode *inode, void *fsdata,
->>>>    int f2fs_truncate_partial_cluster(struct inode *inode, u64 from, bool lock);
->>>>    void f2fs_compress_write_end_io(struct bio *bio, struct page *page);
->>>>    bool f2fs_is_compress_backend_ready(struct inode *inode);
->>>> +bool f2fs_is_compress_algorithm_valid(unsigned char algorithm);
->>>>    int f2fs_init_compress_mempool(void);
->>>>    void f2fs_destroy_compress_mempool(void);
->>>>    void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity);
->>>> @@ -3945,6 +3948,10 @@ static inline bool f2fs_is_compress_backend_ready(struct inode *inode)
->>>>    	/* not support compression */
->>>>    	return false;
->>>>    }
->>>> +static inline bool f2fs_is_compress_algorithm_valid(unsigned char algorithm)
->>>> +{
->>>> +	return false;
->>>> +}
->>>>    static inline struct page *f2fs_compress_control_page(struct page *page)
->>>>    {
->>>>    	WARN_ON_ONCE(1);
->>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>> index bd52df84219d..be56702e4939 100644
->>>> --- a/fs/f2fs/file.c
->>>> +++ b/fs/f2fs/file.c
->>>> @@ -3963,6 +3963,57 @@ static int f2fs_ioc_get_compress_option(struct file *filp, unsigned long arg)
->>>>    	return 0;
->>>>    }
->>>> +static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
->>>> +{
->>>> +	struct inode *inode = file_inode(filp);
->>>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>>> +	struct f2fs_comp_option option;
->>>> +	int ret = 0;
->>>> +
->>>> +	if (!f2fs_sb_has_compression(sbi))
->>>> +		return -EOPNOTSUPP;
->>>> +
->>>> +	if (!(filp->f_mode & FMODE_WRITE))
->>>> +		return -EBADF;
->>>> +
->>>> +	if (copy_from_user(&option, (struct f2fs_comp_option __user *)arg,
->>>> +				sizeof(option)))
->>>> +		return -EFAULT;
->>>> +
->>>> +	if (!f2fs_compressed_file(inode) ||
->>>> +			option.log_cluster_size < MIN_COMPRESS_LOG_SIZE ||
->>>> +			option.log_cluster_size > MAX_COMPRESS_LOG_SIZE ||
->>>> +			option.algorithm >= COMPRESS_MAX)
->>>> +		return -EINVAL;
->>>> +
->>>> +	file_start_write(filp);
->>>> +	inode_lock(inode);
->>>> +
->>>> +	if (f2fs_is_mmap_file(inode) || get_dirty_pages(inode)) {
->>>> +		ret = -EBUSY;
->>>> +		goto out;
->>>> +	}
->>>> +
->>>> +	if (inode->i_size != 0) {
->>>> +		ret = -EFBIG;
->>>> +		goto out;
->>>> +	}
->>>> +
->>>> +	F2FS_I(inode)->i_compress_algorithm = option.algorithm;
->>>> +	F2FS_I(inode)->i_log_cluster_size = option.log_cluster_size;
->>>> +	F2FS_I(inode)->i_cluster_size = 1 << option.log_cluster_size;
->>>> +	f2fs_mark_inode_dirty_sync(inode, true);
->>>> +
->>>> +	if (!f2fs_is_compress_algorithm_valid(option.algorithm))
->>>> +		f2fs_warn(sbi, "compression algorithm is successfully set, "
->>>> +			"but current kernel doesn't support this algorithm.");
->>>> +out:
->>>> +	inode_unlock(inode);
->>>> +	file_end_write(filp);
->>>> +
->>>> +	return ret;
->>>> +}
->>>> +
->>>>    long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->>>>    {
->>>>    	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
->>>> @@ -4053,6 +4104,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->>>>    		return f2fs_sec_trim_file(filp, arg);
->>>>    	case F2FS_IOC_GET_COMPRESS_OPTION:
->>>>    		return f2fs_ioc_get_compress_option(filp, arg);
->>>> +	case F2FS_IOC_SET_COMPRESS_OPTION:
->>>> +		return f2fs_ioc_set_compress_option(filp, arg);
->>>>    	default:
->>>>    		return -ENOTTY;
->>>>    	}
->>>> @@ -4224,6 +4277,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->>>>    	case F2FS_IOC_RESERVE_COMPRESS_BLOCKS:
->>>>    	case F2FS_IOC_SEC_TRIM_FILE:
->>>>    	case F2FS_IOC_GET_COMPRESS_OPTION:
->>>> +	case F2FS_IOC_SET_COMPRESS_OPTION:
->>>>    		break;
->>>>    	default:
->>>>    		return -ENOIOCTLCMD;
->>>>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+v3: changed error condition and use get_dirty_pages for flush routine
+v2: reformed codes based on comments and put gradual flush routine
+---
+ fs/f2fs/file.c            | 185 ++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/f2fs.h |   2 +
+ 2 files changed, 187 insertions(+)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index be8db06aca27..3678e25ed17a 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4026,6 +4026,185 @@ static int f2fs_ioc_set_compress_option(struct file *filp, unsigned long arg)
+ 	return ret;
+ }
+ 
++static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
++{
++	DEFINE_READAHEAD(ractl, NULL, inode->i_mapping, page_idx);
++	struct address_space *mapping = inode->i_mapping;
++	struct page *page;
++	pgoff_t redirty_idx = page_idx;
++	int i, page_len = 0, ret = 0;
++
++	page_cache_ra_unbounded(&ractl, len, 0);
++
++	for (i = 0; i < len; i++, page_idx++) {
++		page = read_cache_page(mapping, page_idx, NULL, NULL);
++		if (IS_ERR(page)) {
++			ret = PTR_ERR(page);
++			break;
++		}
++		page_len++;
++	}
++
++	for (i = 0; i < page_len; i++, redirty_idx++) {
++		page = find_lock_page(mapping, redirty_idx);
++		if (!page)
++			ret = -ENOENT;
++		set_page_dirty(page);
++		f2fs_put_page(page, 1);
++		f2fs_put_page(page, 0);
++	}
++
++	return ret;
++}
++
++static int f2fs_ioc_decompress_file(struct file *filp, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct f2fs_inode_info *fi = F2FS_I(inode);
++	pgoff_t page_idx = 0, last_idx;
++	unsigned int blk_per_seg = sbi->blocks_per_seg;
++	int cluster_size = F2FS_I(inode)->i_cluster_size;
++	int count, ret;
++
++	if (!f2fs_sb_has_compression(sbi) ||
++			F2FS_OPTION(sbi).compress_mode != COMPR_MODE_USER)
++		return -EOPNOTSUPP;
++
++	if (!(filp->f_mode & FMODE_WRITE))
++		return -EBADF;
++
++	if (!f2fs_compressed_file(inode))
++		return -EINVAL;
++
++	f2fs_balance_fs(F2FS_I_SB(inode), true);
++
++	file_start_write(filp);
++	inode_lock(inode);
++
++	if (!f2fs_is_compress_backend_ready(inode)) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
++
++	if (f2fs_is_mmap_file(inode)) {
++		ret = -EBUSY;
++		goto out;
++	}
++
++	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
++	if (ret)
++		goto out;
++
++	if (!atomic_read(&fi->i_compr_blocks))
++		goto out;
++
++	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
++
++	count = last_idx - page_idx;
++	while (count) {
++		int len = min(cluster_size, count);
++
++		ret = redirty_blocks(inode, page_idx, len);
++		if (ret < 0)
++			break;
++
++		if (get_dirty_pages(inode) >= blk_per_seg)
++			filemap_fdatawrite(inode->i_mapping);
++
++		count -= len;
++		page_idx += len;
++	}
++
++	if (!ret)
++		ret = filemap_write_and_wait_range(inode->i_mapping, 0,
++							LLONG_MAX);
++
++	if (ret)
++		f2fs_warn(sbi, "%s: The file might be partially decompressed "
++				"(errno=%d). Please delete the file.\n",
++				__func__, ret);
++out:
++	inode_unlock(inode);
++	file_end_write(filp);
++
++	return ret;
++}
++
++static int f2fs_ioc_compress_file(struct file *filp, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	pgoff_t page_idx = 0, last_idx;
++	unsigned int blk_per_seg = sbi->blocks_per_seg;
++	int cluster_size = F2FS_I(inode)->i_cluster_size;
++	int count, ret;
++
++	if (!f2fs_sb_has_compression(sbi) ||
++			F2FS_OPTION(sbi).compress_mode != COMPR_MODE_USER)
++		return -EOPNOTSUPP;
++
++	if (!(filp->f_mode & FMODE_WRITE))
++		return -EBADF;
++
++	if (!f2fs_compressed_file(inode))
++		return -EINVAL;
++
++	f2fs_balance_fs(F2FS_I_SB(inode), true);
++
++	file_start_write(filp);
++	inode_lock(inode);
++
++	if (!f2fs_is_compress_backend_ready(inode)) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
++
++	if (f2fs_is_mmap_file(inode)) {
++		ret = -EBUSY;
++		goto out;
++	}
++
++	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
++	if (ret)
++		goto out;
++
++	set_inode_flag(inode, FI_ENABLE_COMPRESS);
++
++	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
++
++	count = last_idx - page_idx;
++	while (count) {
++		int len = min(cluster_size, count);
++
++		ret = redirty_blocks(inode, page_idx, len);
++		if (ret < 0)
++			break;
++
++		if (get_dirty_pages(inode) >= blk_per_seg)
++			filemap_fdatawrite(inode->i_mapping);
++
++		count -= len;
++		page_idx += len;
++	}
++
++	if (!ret)
++		ret = filemap_write_and_wait_range(inode->i_mapping, 0,
++							LLONG_MAX);
++
++	clear_inode_flag(inode, FI_ENABLE_COMPRESS);
++
++	if (ret)
++		f2fs_warn(sbi, "%s: The file might be partially compressed "
++				"(errno=%d). Please delete the file.\n",
++				__func__, ret);
++out:
++	inode_unlock(inode);
++	file_end_write(filp);
++
++	return ret;
++}
++
+ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	switch (cmd) {
+@@ -4113,6 +4292,10 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_ioc_get_compress_option(filp, arg);
+ 	case F2FS_IOC_SET_COMPRESS_OPTION:
+ 		return f2fs_ioc_set_compress_option(filp, arg);
++	case F2FS_IOC_DECOMPRESS_FILE:
++		return f2fs_ioc_decompress_file(filp, arg);
++	case F2FS_IOC_COMPRESS_FILE:
++		return f2fs_ioc_compress_file(filp, arg);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -4352,6 +4535,8 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_SEC_TRIM_FILE:
+ 	case F2FS_IOC_GET_COMPRESS_OPTION:
+ 	case F2FS_IOC_SET_COMPRESS_OPTION:
++	case F2FS_IOC_DECOMPRESS_FILE:
++	case F2FS_IOC_COMPRESS_FILE:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
+index f00199a2e38b..352a822d4370 100644
+--- a/include/uapi/linux/f2fs.h
++++ b/include/uapi/linux/f2fs.h
+@@ -40,6 +40,8 @@
+ 						struct f2fs_comp_option)
+ #define F2FS_IOC_SET_COMPRESS_OPTION	_IOW(F2FS_IOCTL_MAGIC, 22,	\
+ 						struct f2fs_comp_option)
++#define F2FS_IOC_DECOMPRESS_FILE	_IO(F2FS_IOCTL_MAGIC, 23)
++#define F2FS_IOC_COMPRESS_FILE		_IO(F2FS_IOCTL_MAGIC, 24)
+ 
+ /*
+  * should be same as XFS_IOC_GOINGDOWN.
+-- 
+2.29.2.576.ga3fc446d84-goog
+
 
 
 _______________________________________________
