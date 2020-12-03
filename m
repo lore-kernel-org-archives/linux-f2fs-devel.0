@@ -3,65 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E3AC6369E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 02:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCF5C64E7C
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 02:23:09 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1548722247;
-	Thu,  3 Dec 2020 02:23:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1548722247
+	by mail.kernel.org (Postfix) with ESMTPS id 9314022244;
+	Thu,  3 Dec 2020 02:23:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9314022244
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kkeGq-0007qg-7c; Thu, 03 Dec 2020 02:23:00 +0000
+	id 1kkeGy-0001GV-4E; Thu, 03 Dec 2020 02:23:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kkeGp-0007qa-Gr
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:22:59 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kkeGv-0001GK-LN
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:23:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hRD8hbHzPF1EOaQwh7ZVAc/pj3cTjcFQqLfuuGbNAHk=; b=aUiCIP/E7L09DO8oxAtVwfcbPg
- yVW5lz3ecugfTK6cjntTmYyHeK4YLUjo5HevJ0MlAp1GmrXmkBpXOzEdueh35P29epri0WJQRAxFW
- UvMsrd4bHjpE8rsO17hp08tgbpQ9SlxsHnDrF8y/SW6mksNIV44s/WFPeWxSpIxh2XHo=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=hRD8hbHzPF1EOaQwh7ZVAc/pj3cTjcFQqLfuuGbNAHk=; b=Ua/XYpHc6s1mJBcJd++byELy4j
- SjvQjz0spY5GtBuWVOryq+VOpBbPRxaXC2EPZcnY2bK79bboDfOKucCvfKQRwqjTxYSIUlrEXLo0j
- XUDrIpmNDBvAIqTTQcbbwtp2Fkz97r3GtpBOKH2HXTsZ96J8it4h3YPYfGeeUs5k/Vg8=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=vedVFNHKKMnQrKdQtENUqBG9S2lmj1uGSaGiAV8HLJ8=; b=ZpbCS8LGOlZb8udfQ6u6uXD3Nw
+ KInwmXjPHJmBSWdyhjOKXgdWfZ41v6a9oOJdmHjWBoVGjMC1ZqYL0S+Apdgos2GvgxE/GhIcvS2ks
+ 8L+7d181qgufcgd1K+5ydqWX0cIOXYUbbnDmRAAzBFcK3r8vp8QtCn9MAr+i3Lgofam0=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=vedVFNHKKMnQrKdQtENUqBG9S2lmj1uGSaGiAV8HLJ8=; b=h
+ LYteREhA1jBagFg1auTOibQy7qKmU4Oipt3LDV5gMjFt7oLg0gGE50LG1S5rMxP7PpzbpaVZWshAN
+ nsRWKdA5QGd113WcY9PD14HWZa5l9snDwlZmYhgy03Og9SQxXCDKPI1Vg14CnM9LvsQopI0bo6rM5
+ QIZvuheDGxcjyP34=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kkeGn-00GwaW-2c
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:22:59 +0000
+ id 1kkeGn-00GwaT-2i
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 02:23:05 +0000
 From: Eric Biggers <ebiggers@kernel.org>
 Authentication-Results: mail.kernel.org;
  dkim=permerror (bad message/signature format)
 To: linux-fscrypt@vger.kernel.org
-Date: Wed,  2 Dec 2020 18:20:34 -0800
-Message-Id: <20201203022041.230976-3-ebiggers@kernel.org>
+Date: Wed,  2 Dec 2020 18:20:32 -0800
+Message-Id: <20201203022041.230976-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201203022041.230976-1-ebiggers@kernel.org>
-References: <20201203022041.230976-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kkeGn-00GwaW-2c
-Subject: [f2fs-dev] [PATCH v2 2/9] f2fs: remove f2fs_dir_open()
+X-Headers-End: 1kkeGn-00GwaT-2i
+Subject: [f2fs-dev] [PATCH v2 0/9] Allow deleting files with unsupported
+ encryption policy
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,46 +78,58 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+Currently it's impossible to delete files that use an unsupported
+encryption policy, as the kernel will just return an error when
+performing any operation on the top-level encrypted directory, even just
+a path lookup into the directory or opening the directory for readdir.
 
-Since encrypted directories can be opened and searched without their key
-being available, and each readdir and ->lookup() tries to set up the
-key, trying to set up the key in ->open() too isn't really useful.
+It's desirable to return errors for most operations on files that use an
+unsupported encryption policy, but the current behavior is too strict.
+We need to allow enough to delete files, so that people can't be stuck
+with undeletable files when downgrading kernel versions.  That includes
+allowing directories to be listed and allowing dentries to be looked up.
 
-Just remove it so that directories don't need an ->open() method
-anymore, and so that we eliminate a use of fscrypt_get_encryption_info()
-(which I'd like to stop exporting to filesystems).
+This series fixes this (on ext4, f2fs, and ubifs) by treating an
+unsupported encryption policy in the same way as "key unavailable" in
+the cases that are required for a recursive delete to work.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/dir.c | 8 --------
- 1 file changed, 8 deletions(-)
+The actual fix is in patch 9, so see that for more details.
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 4b9ef8bbfa4a9..47bee953fc8d8 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -1081,19 +1081,11 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 	return err < 0 ? err : 0;
- }
- 
--static int f2fs_dir_open(struct inode *inode, struct file *filp)
--{
--	if (IS_ENCRYPTED(inode))
--		return fscrypt_get_encryption_info(inode) ? -EACCES : 0;
--	return 0;
--}
--
- const struct file_operations f2fs_dir_operations = {
- 	.llseek		= generic_file_llseek,
- 	.read		= generic_read_dir,
- 	.iterate_shared	= f2fs_readdir,
- 	.fsync		= f2fs_sync_file,
--	.open		= f2fs_dir_open,
- 	.unlocked_ioctl	= f2fs_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl   = f2fs_compat_ioctl,
+Patches 1-8 are cleanups that prepare for the actual fix by removing
+direct use of fscrypt_get_encryption_info() by filesystems.
+
+This patchset applies to branch "master" (commit 4a4b8721f1a5) of
+https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git.
+
+Changed since v1:
+  - Made some minor updates to commit messages.
+  - Added Reviewed-by tags.
+
+Eric Biggers (9):
+  ext4: remove ext4_dir_open()
+  f2fs: remove f2fs_dir_open()
+  ubifs: remove ubifs_dir_open()
+  ext4: don't call fscrypt_get_encryption_info() from dx_show_leaf()
+  fscrypt: introduce fscrypt_prepare_readdir()
+  fscrypt: move body of fscrypt_prepare_setattr() out-of-line
+  fscrypt: move fscrypt_require_key() to fscrypt_private.h
+  fscrypt: unexport fscrypt_get_encryption_info()
+  fscrypt: allow deleting files with unsupported encryption policy
+
+ fs/crypto/fname.c           |  8 +++-
+ fs/crypto/fscrypt_private.h | 28 ++++++++++++++
+ fs/crypto/hooks.c           | 16 +++++++-
+ fs/crypto/keysetup.c        | 20 ++++++++--
+ fs/crypto/policy.c          | 22 +++++++----
+ fs/ext4/dir.c               | 16 ++------
+ fs/ext4/namei.c             | 10 +----
+ fs/f2fs/dir.c               | 10 +----
+ fs/ubifs/dir.c              | 11 +-----
+ include/linux/fscrypt.h     | 75 +++++++++++++++++++------------------
+ 10 files changed, 126 insertions(+), 90 deletions(-)
+
+
+base-commit: 4a4b8721f1a5e4b01e45b3153c68d5a1014b25de
 -- 
 2.29.2
 
