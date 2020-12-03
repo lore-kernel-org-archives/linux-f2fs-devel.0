@@ -2,75 +2,74 @@ Return-Path: <SRS0=U9Id=FH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D5AC63777
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 08:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D379C63777
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 13:46:19 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D2A1B2065E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 08:57:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A1B2065E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id B6806206EC
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 13:46:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6806206EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kkkQR-0000Me-1G; Thu, 03 Dec 2020 08:57:19 +0000
+	id 1kkow4-00063v-Ve; Thu, 03 Dec 2020 13:46:16 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kkkQ0-0000L6-U0
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 08:56:52 +0000
+ (envelope-from <tytso@mit.edu>) id 1kkovq-00063W-5C
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 13:46:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3sBmPvrswxg8hUM3vMOOPx5cnGxwLmQ22jtLiOuBMrw=; b=kOo5fftlOlsAC0+b4SnEV5O/fR
- gGE3nNMAjMOmp4qdvkHxa/uwO84oQwwb3ifNAeOD9VraP0z9EDxuLs7tqS1PeyhTkU16ty03NFpoj
- FIBSrkK5xjte3BgWWgv6t2ZhxZPdkthfRfTEhtVmlX8MlFSEK0+7CGHL3DwCIfGUPZZA=;
+ bh=ES4ERj1cnhFwDNi2dwh/q2Gl2T9Ed+f/+AV0TUXjD2c=; b=S2oY4wJ9nbiy7TDD9KrjtjGNBg
+ +x0SAaGcr4W1DCZd/ddlq7bBcnpt9HOicOsZXHbKZKcpOu4h7xwZBMixtnQgTw/wfA20Ctt4n41E8
+ +Y4E6/3VBOK53EiQPXjgVEdNres0gENH83VRHWxI25/WxLvRwZsQRvZ71AQm46kpUav8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3sBmPvrswxg8hUM3vMOOPx5cnGxwLmQ22jtLiOuBMrw=; b=SevXke9VcNlrkxj4iANzDCTVDT
- KyXFodrGipWwF9mOpxw769m8sSfWJ5oxe5muFtphBELB8Jxxzeox1KYhiAmGKxjgkY/n1L+h5fJwf
- CJe9VtIbWCA1nG9UHEWr4WCndiRdf+OMgS3yHdZA/4GTFwjgVUiWoGP35OsqT5tUMABk=;
-Received: from szxga06-in.huawei.com ([45.249.212.32])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ bh=ES4ERj1cnhFwDNi2dwh/q2Gl2T9Ed+f/+AV0TUXjD2c=; b=RgdX1pRxlLXjJL5owiYBnFYd6r
+ VGYbzCrOeW7U4AxYz6MePYAJvISJzblgq+eCmW4PDb6Ex22YBd9V4XIVjLGsSbQ2IIGNIXb0ByWQ+
+ Q2gQgGT7U+n4ucRX2ddPSYkS4T2AladbjQRi0CEBVtBT7HODEGAq5y7mlf2fdkXKqTE0=;
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kkkPv-00HTyH-8x
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 08:56:52 +0000
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4CmqSX3j9wzhl8h;
- Thu,  3 Dec 2020 16:56:12 +0800 (CST)
-Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 3 Dec 2020
- 16:56:27 +0800
-To: <jaegeuk@kernel.org>
-References: <20201127090118.84235-1-yuchao0@huawei.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <af26ca56-1dbf-e59b-b7b0-63ce817fd94d@huawei.com>
-Date: Thu, 3 Dec 2020 16:56:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1kkovm-00DTE3-W3
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 13:46:02 +0000
+Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net
+ [72.74.133.215]) (authenticated bits=0)
+ (User authenticated as tytso@ATHENA.MIT.EDU)
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 0B3DjdIr014834
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 3 Dec 2020 08:45:40 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+ id 58FF3420136; Thu,  3 Dec 2020 08:45:39 -0500 (EST)
+Date: Thu, 3 Dec 2020 08:45:39 -0500
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Satya Tangirala <satyat@google.com>
+Message-ID: <20201203134539.GB441757@mit.edu>
+References: <20201117140708.1068688-1-satyat@google.com>
+ <20201117140708.1068688-7-satyat@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20201127090118.84235-1-yuchao0@huawei.com>
-Content-Language: en-US
-X-Originating-IP: [10.136.114.67]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1kkkPv-00HTyH-8x
-Subject: Re: [f2fs-dev] [PATCH] f2fs: introduce a new per-sb directory in
- sysfs
+Content-Disposition: inline
+In-Reply-To: <20201117140708.1068688-7-satyat@google.com>
+X-Headers-End: 1kkovm-00DTE3-W3
+Subject: Re: [f2fs-dev] [PATCH v7 6/8] ext4: support direct I/O with fscrypt
+ using blk-crypto
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,153 +81,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jens Axboe <axboe@kernel.dk>, linux-xfs@vger.kernel.org,
+ "Darrick J . Wong" <darrick.wong@oracle.com>, linux-kernel@vger.kernel.org,
+ Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net,
+ Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
+ linux-block@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Jaegeuk,
+On Tue, Nov 17, 2020 at 02:07:06PM +0000, Satya Tangirala wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Wire up ext4 with fscrypt direct I/O support. Direct I/O with fscrypt is
+> only supported through blk-crypto (i.e. CONFIG_BLK_INLINE_ENCRYPTION must
+> have been enabled, the 'inlinecrypt' mount option must have been specified,
+> and either hardware inline encryption support must be present or
+> CONFIG_BLK_INLINE_ENCYRPTION_FALLBACK must have been enabled). Further,
+> direct I/O on encrypted files is only supported when the *length* of the
+> I/O is aligned to the filesystem block size (which is *not* necessarily the
+> same as the block device's block size).
+> 
+> fscrypt_limit_io_blocks() is called before setting up the iomap to ensure
+> that the blocks of each bio that iomap will submit will have contiguous
+> DUNs. Note that fscrypt_limit_io_blocks() is normally a no-op, as normally
+> the DUNs simply increment along with the logical blocks. But it's needed
+> to handle an edge case in one of the fscrypt IV generation methods.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Co-developed-by: Satya Tangirala <satyat@google.com>
+> Signed-off-by: Satya Tangirala <satyat@google.com>
+> Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Can you comment on this patch?
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 
-On 2020/11/27 17:01, Chao Yu wrote:
-> Add a new directory 'stat' in path of /sys/fs/f2fs/<devname>/, later
-> we can add new readonly stat sysfs file into this directory, it will
-> make <devname> directory less mess.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->   fs/f2fs/f2fs.h  |  5 +++-
->   fs/f2fs/sysfs.c | 69 +++++++++++++++++++++++++++++++++++++++++++++----
->   2 files changed, 68 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 0d38f2135016..a20059dece46 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1510,9 +1510,12 @@ struct f2fs_sb_info {
->   	unsigned int node_io_flag;
->   
->   	/* For sysfs suppport */
-> -	struct kobject s_kobj;
-> +	struct kobject s_kobj;			/* /sys/fs/f2fs/<devname> */
->   	struct completion s_kobj_unregister;
->   
-> +	struct kobject s_stat_kobj;		/* /sys/fs/f2fs/<devname>/stat */
-> +	struct completion s_stat_kobj_unregister;
-> +
->   	/* For shrinker support */
->   	struct list_head s_list;
->   	int s_ndevs;				/* number of devices */
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index ec77ccfea923..8c63a6e61dfd 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -708,6 +708,11 @@ static struct attribute *f2fs_feat_attrs[] = {
->   };
->   ATTRIBUTE_GROUPS(f2fs_feat);
->   
-> +static struct attribute *f2fs_stat_attrs[] = {
-> +	NULL,
-> +};
-> +ATTRIBUTE_GROUPS(f2fs_stat);
-> +
->   static const struct sysfs_ops f2fs_attr_ops = {
->   	.show	= f2fs_attr_show,
->   	.store	= f2fs_attr_store,
-> @@ -736,6 +741,44 @@ static struct kobject f2fs_feat = {
->   	.kset	= &f2fs_kset,
->   };
->   
-> +static ssize_t f2fs_stat_attr_show(struct kobject *kobj,
-> +				struct attribute *attr, char *buf)
-> +{
-> +	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
-> +								s_stat_kobj);
-> +	struct f2fs_attr *a = container_of(attr, struct f2fs_attr, attr);
-> +
-> +	return a->show ? a->show(a, sbi, buf) : 0;
-> +}
-> +
-> +static ssize_t f2fs_stat_attr_store(struct kobject *kobj, struct attribute *attr,
-> +						const char *buf, size_t len)
-> +{
-> +	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
-> +								s_stat_kobj);
-> +	struct f2fs_attr *a = container_of(attr, struct f2fs_attr, attr);
-> +
-> +	return a->store ? a->store(a, sbi, buf, len) : 0;
-> +}
-> +
-> +static void f2fs_stat_kobj_release(struct kobject *kobj)
-> +{
-> +	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
-> +								s_stat_kobj);
-> +	complete(&sbi->s_stat_kobj_unregister);
-> +}
-> +
-> +static const struct sysfs_ops f2fs_stat_attr_ops = {
-> +	.show	= f2fs_stat_attr_show,
-> +	.store	= f2fs_stat_attr_store,
-> +};
-> +
-> +static struct kobj_type f2fs_stat_ktype = {
-> +	.default_groups = f2fs_stat_groups,
-> +	.sysfs_ops	= &f2fs_stat_attr_ops,
-> +	.release	= f2fs_stat_kobj_release,
-> +};
-> +
->   static int __maybe_unused segment_info_seq_show(struct seq_file *seq,
->   						void *offset)
->   {
-> @@ -942,11 +985,15 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
->   	init_completion(&sbi->s_kobj_unregister);
->   	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_sb_ktype, NULL,
->   				"%s", sb->s_id);
-> -	if (err) {
-> -		kobject_put(&sbi->s_kobj);
-> -		wait_for_completion(&sbi->s_kobj_unregister);
-> -		return err;
-> -	}
-> +	if (err)
-> +		goto put_sb_kobj;
-> +
-> +	sbi->s_stat_kobj.kset = &f2fs_kset;
-> +	init_completion(&sbi->s_stat_kobj_unregister);
-> +	err = kobject_init_and_add(&sbi->s_stat_kobj, &f2fs_stat_ktype,
-> +						&sbi->s_kobj, "stat");
-> +	if (err)
-> +		goto put_stat_kobj;
->   
->   	if (f2fs_proc_root)
->   		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
-> @@ -962,6 +1009,13 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
->   				victim_bits_seq_show, sb);
->   	}
->   	return 0;
-> +put_stat_kobj:
-> +	kobject_put(&sbi->s_stat_kobj);
-> +	wait_for_completion(&sbi->s_stat_kobj_unregister);
-> +put_sb_kobj:
-> +	kobject_put(&sbi->s_kobj);
-> +	wait_for_completion(&sbi->s_kobj_unregister);
-> +	return err;
->   }
->   
->   void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
-> @@ -973,6 +1027,11 @@ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
->   		remove_proc_entry("victim_bits", sbi->s_proc);
->   		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
->   	}
-> +
-> +	kobject_del(&sbi->s_stat_kobj);
-> +	kobject_put(&sbi->s_stat_kobj);
-> +	wait_for_completion(&sbi->s_stat_kobj_unregister);
-> +
->   	kobject_del(&sbi->s_kobj);
->   	kobject_put(&sbi->s_kobj);
->   	wait_for_completion(&sbi->s_kobj_unregister);
-> 
 
 
 _______________________________________________
