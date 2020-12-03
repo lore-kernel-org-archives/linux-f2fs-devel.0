@@ -2,78 +2,70 @@ Return-Path: <SRS0=U9Id=FH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B41C63777
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 06:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4F0C63777
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 06:18:19 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0655420705;
-	Thu,  3 Dec 2020 06:12:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0655420705
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 30F22206CB
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  3 Dec 2020 06:18:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30F22206CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kkhrB-0002vN-4K; Thu, 03 Dec 2020 06:12:45 +0000
+	id 1kkhwX-0001Oy-3N; Thu, 03 Dec 2020 06:18:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1kkhm3-0002jd-Dh
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:07:27 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kkhwE-0001OH-M6
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:17:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Z92OVo44RqEr+pK+EWF4aEiJh9A7Ij2ah0rKWdjFbr0=; b=i3DVecu956iuNeBl7gfB3tIWHD
- MIlJFHc0s+Hj87yBh5o7w29hh5pjUdAYyqmXqT8lS3IU0g2Rh8ruN7waXApfMF21QPbrnVIaR4CJQ
- JwYbSi9NShf8QOMwnDJv++uj0rGBBjBm9TNbnmQExSla4kNpunwPiGt1gmvAudoYkZDw=;
+ bh=X0f0e7nOWbAaGqXzdJZL92lEjr1V0ymrcafQAkiUicg=; b=ddBkppKNu/9+V1OGARt4AXKxHl
+ o8rzihrRLmhqRIH8ARpAc1rktxJruqaBXGRKP+qWrlWMu/11lw0ZQZn7NQaET0hCVD2e6DHIVFjer
+ B9zTjy/zaGY21ctHmJUH1CKEN3avc+Xli6JSRr/R0jdktd/wMRAeOIGAmkk+HEB0orZU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Z92OVo44RqEr+pK+EWF4aEiJh9A7Ij2ah0rKWdjFbr0=; b=QRmPRUVqw8Rvp2m+UtuHeR1w+4
- Tyoq75EiFd9FKXXxwiqc4s6XT/g9FFt6g1NTUTDYd5ABh5w9cJhxwhtJESznSJ3b0WiZihBLC7v5Z
- QF5+39W0wixxBgrUFwXVah31Adi1V/pVttYSTkNOUW09uaSJrR+QSu9vm30/ZRMT0Ik4=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=X0f0e7nOWbAaGqXzdJZL92lEjr1V0ymrcafQAkiUicg=; b=b
+ L5zPT56eQzgXZjw83pbhwP6DkVAmhBmU2uCWS7f3jA22p6eK3PwsrtmIRfGjMMddO1WTr3WdV60Ug
+ 0OXq3WjosGEwqUKB7ddS/Qh6dVu4qixmLXy1g9AHvd/rKF0CYQ7IFMbjV8W9CkrFY0GLc3h0e5AL+
+ ePKfXRZY1OPVfl2k=;
+Received: from szxga06-in.huawei.com ([45.249.212.32])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kkhlt-00CjVJ-U5
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:07:27 +0000
-Date: Wed, 2 Dec 2020 22:07:03 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1606975625;
- bh=4kjEtMFrjeavxN2mKqcqGSsSXeUIsDMbjS/Wf+Mx0Pg=;
- h=From:To:Cc:Subject:References:In-Reply-To:From;
- b=CNLKdNI9nav5vjFiwqpHfrqa7SXQ6v+4dePorn5Eg16hdtZTBTzPd+tYZWN3U9l44
- vZSmWU1IJVsGnGqIx8p87LRPDCxyE7BkqxfI21iqJjY8lDT1q0CV+3ZMFAiio9gPdC
- lwxr/vFiSI/xOanTRDPbsEQWC8RzrN5438XfqhvGtR2ol0GhOWTVFvdZKYaEzHTye1
- 8h18Igg0otkF9koO/n1u1r6ZZ88Pc+1Z4Zjmh2hN5A6Tld/6gWbZ6b2WvFrk7GSnlf
- wBmycrI6GhoEXGUyAbi+Eh0MalQcEuLbLL740WeKgfZGxnhfOMD+4GOOt1zyc7wyGV
- ej9vku+173V2Q==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Message-ID: <X8iAh7quYw77O6XC@google.com>
-References: <20201109170012.2129411-1-jaegeuk@kernel.org>
- <20201112053414.GB3826485@google.com>
- <20201112054051.GA4092972@google.com>
+ id 1kkhw8-00HBww-Fy
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 03 Dec 2020 06:17:58 +0000
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Cmlx2710QzhkBQ;
+ Thu,  3 Dec 2020 14:17:10 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 3 Dec 2020 14:17:20 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Thu, 3 Dec 2020 14:17:15 +0800
+Message-ID: <20201203061715.60447-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20201112054051.GA4092972@google.com>
-X-Headers-End: 1kkhlt-00CjVJ-U5
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: avoid race condition for shinker
- count
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1kkhw8-00HBww-Fy
+Subject: [f2fs-dev] [PATCH v6] f2fs: compress: support compress level
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,105 +77,302 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Light Hsieh <Light.Hsieh@mediatek.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 11/11, Jaegeuk Kim wrote:
-> Light reported sometimes shinker gets nat_cnt < dirty_nat_cnt resulting in
-> wrong do_shinker work. Let's avoid to get stale data by using nat_tree_lock.
-> 
-> Reported-by: Light Hsieh <Light.Hsieh@mediatek.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
-> v3:
->  - fix to use NM_I(sbi)
-> 
->  fs/f2fs/shrinker.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-> index d66de5999a26..555712ba06d8 100644
-> --- a/fs/f2fs/shrinker.c
-> +++ b/fs/f2fs/shrinker.c
-> @@ -18,7 +18,11 @@ static unsigned int shrinker_run_no;
->  
->  static unsigned long __count_nat_entries(struct f2fs_sb_info *sbi)
->  {
-> -	long count = NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
-> +	long count;
-> +
-> +	down_read(&NM_I(sbi)->nat_tree_lock);
-> +	count = NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
-> +	up_read(&NM_I(sbi)->nat_tree_lock);
+Expand 'compress_algorithm' mount option to accept parameter as format of
+<algorithm>:<level>, by this way, it gives a way to allow user to do more
+specified config on lz4 and zstd compression level, then f2fs compression
+can provide higher compress ratio.
 
-I just fosund this can give kernel hang due to the following backtrace.
-f2fs_shrink_count
-shrink_slab
-shrink_node
-do_try_to_free_pages
-try_to_free_pages
-__alloc_pages_nodemask
-alloc_pages_current
-allocate_slab
-__slab_alloc
-__slab_alloc
-kmem_cache_alloc
-add_free_nid
-f2fs_flush_nat_entries
-f2fs_write_checkpoint
+In order to set compress level for lz4 algorithm, it needs to set
+CONFIG_LZ4HC_COMPRESS and CONFIG_F2FS_FS_LZ4HC config to enable lz4hc
+compress algorithm.
 
-Let me just check like this.
-
-From 971163330224449d90aac90957ea38f77d494f0f Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri, 6 Nov 2020 13:22:05 -0800
-Subject: [PATCH] f2fs: avoid race condition for shrinker count
-
-Light reported sometimes shinker gets nat_cnt < dirty_nat_cnt resulting in
-wrong do_shinker work. Let's avoid to return insane overflowed value.
-
-Reported-by: Light Hsieh <Light.Hsieh@mediatek.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/shrinker.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+v6:
+- fix warning reported by checkpatch.pl
+ Documentation/filesystems/f2fs.rst |  5 +++
+ fs/f2fs/Kconfig                    |  9 ++++
+ fs/f2fs/compress.c                 | 40 +++++++++++++++--
+ fs/f2fs/f2fs.h                     |  9 ++++
+ fs/f2fs/super.c                    | 72 +++++++++++++++++++++++++++++-
+ include/linux/f2fs_fs.h            |  3 ++
+ 6 files changed, 133 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-index d66de5999a26..75b5b4aaed99 100644
---- a/fs/f2fs/shrinker.c
-+++ b/fs/f2fs/shrinker.c
-@@ -18,9 +18,9 @@ static unsigned int shrinker_run_no;
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index fd413d319e93..73ab31bbf694 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -249,6 +249,11 @@ checkpoint=%s[:%u[%]]	 Set to "disable" to turn off checkpointing. Set to "enabl
+ 			 This space is reclaimed once checkpoint=enable.
+ compress_algorithm=%s	 Control compress algorithm, currently f2fs supports "lzo",
+ 			 "lz4", "zstd" and "lzo-rle" algorithm.
++compress_algorithm=%s:%d Control compress algorithm and its compress level, now, only
++			 "lz4" and "zstd" support compress level config.
++			 algorithm	level range
++			 lz4		3 - 16
++			 zstd		1 - 22
+ compress_log_size=%u	 Support configuring compress cluster size, the size will
+ 			 be 4KB * (1 << %u), 16KB is minimum size, also it's
+ 			 default size.
+diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+index d13c5c6a9787..8134b145ae4f 100644
+--- a/fs/f2fs/Kconfig
++++ b/fs/f2fs/Kconfig
+@@ -119,6 +119,15 @@ config F2FS_FS_LZ4
+ 	help
+ 	  Support LZ4 compress algorithm, if unsure, say Y.
  
- static unsigned long __count_nat_entries(struct f2fs_sb_info *sbi)
++config F2FS_FS_LZ4HC
++	bool "LZ4HC compression support"
++	depends on F2FS_FS_COMPRESSION
++	depends on F2FS_FS_LZ4
++	select LZ4HC_COMPRESS
++	default y
++	help
++	  Support LZ4HC compress algorithm, if unsure, say Y.
++
+ config F2FS_FS_ZSTD
+ 	bool "ZSTD compression support"
+ 	depends on F2FS_FS_COMPRESSION
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index db82da311fe4..dfadbc78946c 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -254,8 +254,13 @@ static const struct f2fs_compress_ops f2fs_lzo_ops = {
+ #ifdef CONFIG_F2FS_FS_LZ4
+ static int lz4_init_compress_ctx(struct compress_ctx *cc)
  {
--	long count = NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
--
--	return count > 0 ? count : 0;
-+	if (NM_I(sbi)->nat_cnt > NM_I(sbi)->dirty_nat_cnt)
-+		return NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
-+	return 0;
+-	cc->private = f2fs_kvmalloc(F2FS_I_SB(cc->inode),
+-				LZ4_MEM_COMPRESS, GFP_NOFS);
++	unsigned int size;
++	unsigned char level = F2FS_I(cc->inode)->i_compress_flag >>
++						COMPRESS_LEVEL_OFFSET;
++
++	size = level ? LZ4HC_MEM_COMPRESS : LZ4_MEM_COMPRESS;
++
++	cc->private = f2fs_kvmalloc(F2FS_I_SB(cc->inode), size, GFP_NOFS);
+ 	if (!cc->private)
+ 		return -ENOMEM;
+ 
+@@ -274,10 +279,34 @@ static void lz4_destroy_compress_ctx(struct compress_ctx *cc)
+ 	cc->private = NULL;
  }
  
- static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
++#ifdef CONFIG_F2FS_FS_LZ4HC
++static int lz4hc_compress_pages(struct compress_ctx *cc)
++{
++	unsigned char level = F2FS_I(cc->inode)->i_compress_flag >>
++						COMPRESS_LEVEL_OFFSET;
++	int len;
++
++	if (level)
++		len = LZ4_compress_HC(cc->rbuf, cc->cbuf->cdata, cc->rlen,
++					cc->clen, level, cc->private);
++	else
++		len = LZ4_compress_default(cc->rbuf, cc->cbuf->cdata, cc->rlen,
++						cc->clen, cc->private);
++	if (!len)
++		return -EAGAIN;
++
++	cc->clen = len;
++	return 0;
++}
++#endif
++
+ static int lz4_compress_pages(struct compress_ctx *cc)
+ {
+ 	int len;
+ 
++#ifdef CONFIG_F2FS_FS_LZ4HC
++	return lz4hc_compress_pages(cc);
++#endif
+ 	len = LZ4_compress_default(cc->rbuf, cc->cbuf->cdata, cc->rlen,
+ 						cc->clen, cc->private);
+ 	if (!len)
+@@ -327,8 +356,13 @@ static int zstd_init_compress_ctx(struct compress_ctx *cc)
+ 	ZSTD_CStream *stream;
+ 	void *workspace;
+ 	unsigned int workspace_size;
++	unsigned char level = F2FS_I(cc->inode)->i_compress_flag >>
++						COMPRESS_LEVEL_OFFSET;
++
++	if (!level)
++		level = F2FS_ZSTD_DEFAULT_CLEVEL;
+ 
+-	params = ZSTD_getParams(F2FS_ZSTD_DEFAULT_CLEVEL, cc->rlen, 0);
++	params = ZSTD_getParams(level, cc->rlen, 0);
+ 	workspace_size = ZSTD_CStreamWorkspaceBound(params.cParams);
+ 
+ 	workspace = f2fs_kvmalloc(F2FS_I_SB(cc->inode),
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 377a2e2bf466..76edec7483f3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -147,6 +147,7 @@ struct f2fs_mount_info {
+ 	/* For compression */
+ 	unsigned char compress_algorithm;	/* algorithm type */
+ 	unsigned char compress_log_size;	/* cluster log size */
++	unsigned char compress_level;		/* compress level */
+ 	bool compress_chksum;			/* compressed data chksum */
+ 	unsigned char compress_ext_cnt;		/* extension count */
+ 	int compress_mode;			/* compression mode */
+@@ -736,6 +737,7 @@ struct f2fs_inode_info {
+ 	atomic_t i_compr_blocks;		/* # of compressed blocks */
+ 	unsigned char i_compress_algorithm;	/* algorithm type */
+ 	unsigned char i_log_cluster_size;	/* log of cluster size */
++	unsigned char i_compress_level;		/* compress level (lz4hc,zstd) */
+ 	unsigned short i_compress_flag;		/* compress flag */
+ 	unsigned int i_cluster_size;		/* cluster size */
+ };
+@@ -1308,6 +1310,8 @@ struct compress_data {
+ 
+ #define F2FS_COMPRESSED_PAGE_MAGIC	0xF5F2C000
+ 
++#define	COMPRESS_LEVEL_OFFSET	8
++
+ /* compress context */
+ struct compress_ctx {
+ 	struct inode *inode;		/* inode the context belong to */
+@@ -3959,6 +3963,11 @@ static inline void set_compress_context(struct inode *inode)
+ 				1 << COMPRESS_CHKSUM : 0;
+ 	F2FS_I(inode)->i_cluster_size =
+ 			1 << F2FS_I(inode)->i_log_cluster_size;
++	if (F2FS_I(inode)->i_compress_algorithm == COMPRESS_LZ4 &&
++			F2FS_OPTION(sbi).compress_level)
++		F2FS_I(inode)->i_compress_flag |=
++				F2FS_OPTION(sbi).compress_level <<
++				COMPRESS_LEVEL_OFFSET;
+ 	F2FS_I(inode)->i_flags |= F2FS_COMPR_FL;
+ 	set_inode_flag(inode, FI_COMPRESSED_FILE);
+ 	stat_inc_compr_inode(inode);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 8442333ca0e2..44ba870bb352 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -25,6 +25,8 @@
+ #include <linux/quota.h>
+ #include <linux/unicode.h>
+ #include <linux/part_stat.h>
++#include <linux/zstd.h>
++#include <linux/lz4.h>
+ 
+ #include "f2fs.h"
+ #include "node.h"
+@@ -466,6 +468,57 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_F2FS_FS_COMPRESSION
++static int f2fs_compress_set_level(struct f2fs_sb_info *sbi, const char *str,
++						int type)
++{
++	unsigned int level;
++	int len;
++
++	if (type == COMPRESS_LZ4)
++		len = 3;
++	else if (type == COMPRESS_ZSTD)
++		len = 4;
++	else
++		return 0;
++
++	if (strlen(str) == len)
++		return 0;
++
++	str += len;
++
++	if (str[0] != ':') {
++		f2fs_info(sbi, "wrong format, e.g. <alg_name>:<compr_level>");
++		return -EINVAL;
++	}
++	if (kstrtouint(str + 1, 10, &level))
++		return -EINVAL;
++	if (type == COMPRESS_LZ4) {
++#ifdef CONFIG_F2FS_FS_LZ4HC
++		if (level < LZ4HC_MIN_CLEVEL || level > LZ4HC_MAX_CLEVEL) {
++			f2fs_info(sbi, "invalid lz4hc compress level: %d", level);
++			return -EINVAL;
++		}
++#else
++		f2fs_info(sbi, "doesn't support lz4hc compression");
++		return 0;
++#endif
++	} else if (type == COMPRESS_ZSTD) {
++#ifdef CONFIG_F2FS_FS_ZSTD
++		if (!level || level > ZSTD_maxCLevel()) {
++			f2fs_info(sbi, "invalid zstd compress level: %d", level);
++			return -EINVAL;
++		}
++#else
++		f2fs_info(sbi, "doesn't support zstd compression");
++		return 0;
++#endif
++	}
++	F2FS_OPTION(sbi).compress_level = level;
++	return 0;
++}
++#endif
++
+ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -886,10 +939,22 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 			if (!strcmp(name, "lzo")) {
+ 				F2FS_OPTION(sbi).compress_algorithm =
+ 								COMPRESS_LZO;
+-			} else if (!strcmp(name, "lz4")) {
++			} else if (!strncmp(name, "lz4", 3)) {
++				ret = f2fs_compress_set_level(sbi, name,
++								COMPRESS_LZ4);
++				if (ret) {
++					kfree(name);
++					return -EINVAL;
++				}
+ 				F2FS_OPTION(sbi).compress_algorithm =
+ 								COMPRESS_LZ4;
+-			} else if (!strcmp(name, "zstd")) {
++			} else if (!strncmp(name, "zstd", 4)) {
++				ret = f2fs_compress_set_level(sbi, name,
++								COMPRESS_ZSTD);
++				if (ret) {
++					kfree(name);
++					return -EINVAL;
++				}
+ 				F2FS_OPTION(sbi).compress_algorithm =
+ 								COMPRESS_ZSTD;
+ 			} else if (!strcmp(name, "lzo-rle")) {
+@@ -1547,6 +1612,9 @@ static inline void f2fs_show_compress_options(struct seq_file *seq,
+ 	}
+ 	seq_printf(seq, ",compress_algorithm=%s", algtype);
+ 
++	if (!F2FS_OPTION(sbi).compress_level)
++		seq_printf(seq, ":%d", F2FS_OPTION(sbi).compress_level);
++
+ 	seq_printf(seq, ",compress_log_size=%u",
+ 			F2FS_OPTION(sbi).compress_log_size);
+ 
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 55be7afeee90..2dcc63fe8494 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -275,6 +275,9 @@ struct f2fs_inode {
+ 			__u8 i_compress_algorithm;	/* compress algorithm */
+ 			__u8 i_log_cluster_size;	/* log of cluster size */
+ 			__le16 i_compress_flag;		/* compress flag */
++						/* 0 bit: chksum flag
++						 * [10,15] bits: compress level
++						 */
+ 			__le32 i_extra_end[0];	/* for attribute size calculation */
+ 		} __packed;
+ 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
 -- 
-2.29.2.454.gaff20da3a2-goog
+2.26.2
 
-
-
->  
->  	return count > 0 ? count : 0;
->  }
-> -- 
-> 2.29.2.299.gdc1121823c-goog
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 _______________________________________________
