@@ -7,69 +7,66 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D34C4361B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 11:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27593C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 11:00:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B13AA2158C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 11:00:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B13AA2158C
+	by mail.kernel.org (Postfix) with ESMTPS id 98BDD2158C
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 11:00:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98BDD2158C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=allwinnertech.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kmEFY-0002Dg-Hr; Mon, 07 Dec 2020 11:00:12 +0000
+	id 1kmEFd-0000h8-Vl; Mon, 07 Dec 2020 11:00:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <liush@allwinnertech.com>) id 1kmEFV-0002Cz-8e
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 11:00:09 +0000
+ (envelope-from <liush@allwinnertech.com>) id 1kmEFa-0000gt-Pt
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 11:00:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:
- To:From:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=pQvDsTgLogbhQpnASGAMoKaFIEGjmsxH1nOn7dd7BfY=; b=nSZ3LfU5+WeiORYaQxYb2x9IJS
- c6uYgAab/UEAR3MCdho5srwGaCx6uILLU0B0cgvcgRYJRADF0PY/yRtyeaFZvSjaVJnbtNsgqFC17
- vZqgHM5xYqZjQDr9ag9810SgMkMN+cy5QBWgaqGRebhZMrFf7GvXOe/M9RweQSaaIqaQ=;
+ bh=hghRK4yd8P4g5MPg2/zet41UQzFNslY+xZNfQc0jv6k=; b=i6kgQvVpLBGivjYH5kpJUxJdTh
+ LJGl6Nn6DY+g37/127uGPBTtw2Au5W25yOL5j8m+IyISF9RH6M7TQRA3kkbY+kHG6EIaqOPSJdJMz
+ TY3tJg2xLCEFeYVOPdrPi0WZ+5Hqh9q0/7PSRt1JmdCOKDxb3foIoOlGgPzkrRhRDN8A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To
- :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:
+ Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=pQvDsTgLogbhQpnASGAMoKaFIEGjmsxH1nOn7dd7BfY=; b=G84rERbEAwYPikLDejCxmWDMjx
- kx/0qb2mLkXS7IIncku9QJ6JbUoAEBwJIFvBfzHDwW04lGi8+Y8Va7ANyblA0qe6eCv19NRqCgZz/
- 572VeUm5PRVxl5SHs/cE/xhfQmYRzb9AvkoELLrpFPoy04flG/32YZB8PtOp5FpoD/ro=;
+ bh=hghRK4yd8P4g5MPg2/zet41UQzFNslY+xZNfQc0jv6k=; b=UTEBInpVwMzh1yxAal9MsmMz/I
+ CyMZgXm+CZvkvMwHFfCFEaT+D4g63bmV+/Hi6XlzMpvnroY2OdwIKEu5pTag4jxCclA9na2NPAVkP
+ DW3BnilH6yDIUaD51KWasZRxDBs77iUFj9yh83nJUv4JPxPsKoP0TtV4laGs+xpYTThw=;
 Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kmEFM-001rCw-W7
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 11:00:08 +0000
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.1358769|-1; CH=green; DM=|CONTINUE|false|;
- DS=CONTINUE|ham_system_inform|0.0423175-0.000134208-0.957548;
- FP=14281600786208716458|1|1|4|0|-1|-1|-1; HT=ay29a033018047206;
+ id 1kmEFJ-005EmF-Qs
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 11:00:12 +0000
+X-Alimail-AntiSpam: AC=CONTINUE; BC=0.2116129|-1; CH=green; DM=|CONTINUE|false|;
+ DS=CONTINUE|ham_system_inform|0.0159781-0.000759197-0.983263;
+ FP=11324991882870974183|1|1|4|0|-1|-1|-1; HT=ay29a033018047202;
  MF=liush@allwinnertech.com; NM=1; PH=DS; RN=6; RT=6; SR=0;
  TI=SMTPD_---.J47Legk_1607338777; 
 Received: from localhost.localdomain(mailfrom:liush@allwinnertech.com
  fp:SMTPD_---.J47Legk_1607338777)
  by smtp.aliyun-inc.com(10.147.42.253);
- Mon, 07 Dec 2020 18:59:45 +0800
+ Mon, 07 Dec 2020 18:59:42 +0800
 From: liush <liush@allwinnertech.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Mon,  7 Dec 2020 18:59:34 +0800
-Message-Id: <1607338774-8541-2-git-send-email-liush@allwinnertech.com>
+Date: Mon,  7 Dec 2020 18:59:33 +0800
+Message-Id: <1607338774-8541-1-git-send-email-liush@allwinnertech.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1607338774-8541-1-git-send-email-liush@allwinnertech.com>
-References: <1607338774-8541-1-git-send-email-liush@allwinnertech.com>
-X-Headers-End: 1kmEFM-001rCw-W7
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: don't check PAGE_SIZE again in
- sanity_check_raw_super()
+X-Headers-End: 1kmEFJ-005EmF-Qs
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: convert to F2FS_*_INO macro
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,36 +87,32 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-Many flash devices read and write a single IO based on a multiple
-of 4KB, and we support only 4KB page cache size now.
-
-Since we already check page size in init_f2fs_fs(), so remove page
-size check in sanity_check_raw_super().
+Use F2FS_ROOT_INO, F2FS_NODE_INO and F2FS_META_INO macro
+for better code readability.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: Shaohua Liu <liush@allwinnertech.com>
 ---
- fs/f2fs/super.c | 7 -------
- 1 file changed, 7 deletions(-)
+ fs/f2fs/super.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d3ccf89647df..a39a81ab8dee 100644
+index 00eff2f51807..d3ccf89647df 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -2770,13 +2770,6 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		}
- 	}
- 
--	/* Currently, support only 4KB page cache size */
--	if (F2FS_BLKSIZE != PAGE_SIZE) {
--		f2fs_info(sbi, "Invalid page_cache_size (%lu), supports only 4KB",
--			  PAGE_SIZE);
--		return -EFSCORRUPTED;
--	}
--
- 	/* Currently, support only 4KB block size */
- 	blocksize = 1 << le32_to_cpu(raw_super->log_blocksize);
- 	if (blocksize != F2FS_BLKSIZE) {
+@@ -3071,9 +3071,9 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	sbi->total_node_count =
+ 		(le32_to_cpu(raw_super->segment_count_nat) / 2)
+ 			* sbi->blocks_per_seg * NAT_ENTRY_PER_BLOCK;
+-	sbi->root_ino_num = le32_to_cpu(raw_super->root_ino);
+-	sbi->node_ino_num = le32_to_cpu(raw_super->node_ino);
+-	sbi->meta_ino_num = le32_to_cpu(raw_super->meta_ino);
++	F2FS_ROOT_INO(sbi) = le32_to_cpu(raw_super->root_ino);
++	F2FS_NODE_INO(sbi) = le32_to_cpu(raw_super->node_ino);
++	F2FS_META_INO(sbi) = le32_to_cpu(raw_super->meta_ino);
+ 	sbi->cur_victim_sec = NULL_SECNO;
+ 	sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
+ 	sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
 -- 
 2.25.1
 
