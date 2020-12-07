@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A3BC4361B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 07:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32565C4361B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 07:55:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3E0202220B;
-	Mon,  7 Dec 2020 07:51:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E0202220B
+	by mail.kernel.org (Postfix) with ESMTPS id B979D2220B;
+	Mon,  7 Dec 2020 07:55:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B979D2220B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kmBJL-0003mR-6S; Mon, 07 Dec 2020 07:51:55 +0000
+	id 1kmBNC-0003x8-RV; Mon, 07 Dec 2020 07:55:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kmBJI-0003mJ-Rv
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 07:51:52 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kmBNB-0003wy-Oq
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 07:55:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BkeeEwFPhyjBrFg8Q+93pXuIch2cPpfkNY6jToTMbMk=; b=KrfElXhW2zlK2h8SF8SsBlutz7
- fMnt6hlvaDJEs2toP7OTqMg+4eqf1t92bNoLdT+ij59MPeHlJxPOOwMLPk7mV/ddAu79C5h389tpU
- 6BtdpMqxWucaar2EdOeVmFVMwcqAiYLh5/gUrBueaVWAcFcmQiv5EOPYMHk1zz/vksx8=;
+ bh=2V+/UuTNPt8nMUiAjAtPOfcW/IIpRBN2Wnh50cNwUlE=; b=MWhzy/99mivXiV4G7GBVvn++4v
+ /ketjShBkP90ay/Dc7Meo+eGNLiOcSqeSaB+D0ilZPrIXWlxJUjSRRMBNMSpvKgUVhsrweuEJ+3sA
+ jwpr9DVAI4yxIRFkm4r4kjl50OGUu86QhtBlk3dWIvkrJOUI67ANuvEgYBU14q7ZnqsM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -42,36 +42,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BkeeEwFPhyjBrFg8Q+93pXuIch2cPpfkNY6jToTMbMk=; b=HeYdI/7wymA9i+xXCs/Xxa2PHY
- WMAwTxd9dkJsDid3+KaLlZFjC0yg/hUGzzIJ2/UCXxMdhn1tZCrPMXEYTWVMiW+RWga1wwirTjal/
- NV+WG8b0BRT+k01zohFy5YTLgiQHMSap3gUY7CHLsC/5FJVd4i8QktG80TVnbh5/wzeI=;
-Received: from szxga05-in.huawei.com ([45.249.212.191])
+ bh=2V+/UuTNPt8nMUiAjAtPOfcW/IIpRBN2Wnh50cNwUlE=; b=kYLd1aGcdSU+l6srq5bYIVAsse
+ GQ8WsnirvJjm1zdxpRCnxS3Wm1wZGjTL9ifpcU7hHkeNebWzL1+DyL9DhxilSGTrmttri2Ycw+auV
+ Cva4gBe4LrOXpRjgMIPI5s60W6dwfB3XRqltnFvwY5EFYXofm0aG1PDwMH1UDOyKDL2Q=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kmBJD-001fR2-Qu
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 07:51:52 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CqFqL3bwNzM1Yf;
- Mon,  7 Dec 2020 15:50:54 +0800 (CST)
+ id 1kmBN1-001fgf-SX
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 07:55:53 +0000
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CqFvx1bcYzkmS2;
+ Mon,  7 Dec 2020 15:54:53 +0800 (CST)
 Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
  (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.487.0; Mon, 7 Dec 2020
- 15:51:28 +0800
+ 15:55:31 +0800
 To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
  <linux-f2fs-devel@lists.sourceforge.net>, <kernel-team@android.com>
 References: <20201203205522.891082-1-jaegeuk@kernel.org>
+ <20201203205522.891082-2-jaegeuk@kernel.org>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <48d45bbd-baaf-e29e-8351-df375ee5a8b0@huawei.com>
-Date: Mon, 7 Dec 2020 15:51:28 +0800
+Message-ID: <7c32e34a-1c16-1cdb-0930-3f144db46858@huawei.com>
+Date: Mon, 7 Dec 2020 15:55:30 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20201203205522.891082-1-jaegeuk@kernel.org>
+In-Reply-To: <20201203205522.891082-2-jaegeuk@kernel.org>
 Content-Language: en-US
 X-Originating-IP: [10.136.114.67]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kmBJD-001fR2-Qu
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: don't allow any writes on readonly
- mount
+X-Headers-End: 1kmBN1-001fgf-SX
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: introduce max_io_bytes,
+ a sysfs entry, to limit bio size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,33 +89,10 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2020/12/4 4:55, Jaegeuk Kim wrote:
-> generic_make_request: Trying to write to read-only block-device dm-5 (partno 0)
-> WARNING: CPU: 7 PID: 546 at block/blk-core.c:2190 generic_make_request_checks+0x664/0x690
-> pc : generic_make_request_checks+0x664/0x690
-> lr : generic_make_request_checks+0x664/0x690
-> Call trace:
->   generic_make_request_checks+0x664/0x690
->   generic_make_request+0xf0/0x3a4
->   submit_bio+0x80/0x250
->   __submit_merged_bio+0x368/0x4e0
->   __submit_merged_write_cond.llvm.12294350193007536502+0xe0/0x3e8
->   f2fs_wait_on_page_writeback+0x84/0x128
->   f2fs_convert_inline_page+0x35c/0x6f8
->   f2fs_convert_inline_inode+0xe0/0x2e0
->   f2fs_file_mmap+0x48/0x9c
->   mmap_region+0x41c/0x74c
->   do_mmap+0x40c/0x4fc
->   vm_mmap_pgoff+0xb8/0x114
->   vm_mmap+0x34/0x48
->   elf_map+0x68/0x108
->   load_elf_binary+0x538/0xb70
->   search_binary_handler+0xac/0x1dc
->   exec_binprm+0x50/0x15c
->   __do_execve_file+0x620/0x740
->   __arm64_sys_execve+0x54/0x68
->   el0_svc_common+0x9c/0x168
->   el0_svc_handler+0x60/0x6c
->   el0_svc+0x8/0xc
+> This patch adds max_io_bytes to limit bio size when f2fs tries to merge
+> consecutive IOs. This can give a testing point to split out bios and check
+> end_io handles those bios correctly. This is used to capture a recent bug
+> on the decompression and fsverity flow.
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
