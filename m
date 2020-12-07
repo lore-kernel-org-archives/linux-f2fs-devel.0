@@ -2,39 +2,39 @@ Return-Path: <SRS0=a7YV=FL=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,
-	PDS_TONAME_EQ_TOLOCAL_SHORT,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92E1C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 15:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F74C4361B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 15:06:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6798823716;
-	Mon,  7 Dec 2020 15:05:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6798823716
+	by mail.kernel.org (Postfix) with ESMTPS id 350ED23715;
+	Mon,  7 Dec 2020 15:06:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 350ED23715
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kmI4S-0008To-OL; Mon, 07 Dec 2020 15:05:00 +0000
+	id 1kmI6E-0007pm-Pt; Mon, 07 Dec 2020 15:06:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1kmI4P-0008SU-H1
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 15:04:57 +0000
+ (envelope-from <chao@kernel.org>) id 1kmI6D-0007pe-QL
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 15:06:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=27TbVxViQ4DMTPA6gQMcPBS4WkglgEtkmDD0MeoKeic=; b=OEaIrEzj34ZkiueFsEm6JBdKZW
- v7emY7q4zV8/ln2K2vJ9kzmxodoU7QkI5U7X6xIjaP3mdLPScoS2OiUSBZz31Vo+htQhD2v1qqgfM
- kGUbDJ6q+cmJKytYoKVMp67GNjKHDSDjkxYzVIYKKNDMOLlmBYPo/BrdJgY6uzUhmu7U=;
+ bh=dfvUFys5PlyLlUBaZxoL5D39xceuNUcpnMuxryCUGG0=; b=f5YtucXS4BoNNH9Evv97Im4zDu
+ /dpNZp5LzcuX1f0Ynzv/oUeZ9esevrfKFWZBhOIBvhD232LWyGOGyw6Je/7zmqU26rbMWcZSEgLr8
+ 9a4NWqHipcOWT/A/UHxftDSJvNrlUurp5tJrp15s08TaftJOmxfNYd/C1C6+ytytcdZs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -42,36 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=27TbVxViQ4DMTPA6gQMcPBS4WkglgEtkmDD0MeoKeic=; b=LXjnu1jZW20kEJbyn7xwmkP3Nt
- RuIw2ZRDgVY/5j28WpHOSyDFeaqKhRGzdV2dUurwCYFsEj9AIEJUhKapHYFS50xA3yiBA1JP3fDcX
- ZEWA6IXm0lWaQGOUsOoV12PQZESENDCXNx1ugJ19mOx3yCIRGnxN3RYmKjJsuwFNJYfg=;
+ bh=dfvUFys5PlyLlUBaZxoL5D39xceuNUcpnMuxryCUGG0=; b=TwZo6iCxva1OP03hDqkKKIzIC6
+ GpKIgz1JkIstuPF2cM31iiWb+B5fv3kKOxPCNdlFQOvxG3nZ2YudxcdEdl0cScY+LpLh33pCuy9hb
+ tNnXrAKC85hXDhhZO9IuKKGgoHuT0p8PwMs9m84+e0iFn+2f5J4yuPrWg40d4fVGg3wY=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kmI4F-0028NQ-5j
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 15:04:57 +0000
+ id 1kmI60-005TKX-9t
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 15:06:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1607353474;
- bh=+m4VjiTjGFNz/muvZcdSPiu21+zcpdowj4/SxbH6yow=;
+ s=k20201202; t=1607353586;
+ bh=UknzbuqDK9Fr9lU5a/hvPbN5gZqB4HgBYDMvW5xk22o=;
  h=To:Cc:References:From:Date:In-Reply-To:From;
- b=CTWxiZRRSGXZ8oY4RJbseR5Ci6mHqzSqqjTYcvm0e8o9z0ogrrfkxS55oBR+MXFik
- VvECt4yfIRr8d3hMftu+DRG6NC8gqvJEc5MkOaMtMz4cKBgME8P2El1HAuKnG3JZyZ
- u+uw3n4UQwyPGZHLKajuY4+nDWdS0v4KHouAfONeLyPhOUzjPcoFk2ayReEbdzibJs
- vUkDzwSi1qe4iv4BKoKatN/Edh1NEh3OuEO/Qs9rkv82ksQKhJbYofvjKdwPYPeRdZ
- B6CiBj/qAQvK8DOeqWcfGVSHK7jkunhSgQQPIT4NlyR5DM7eV7NiwqusdFIsFtevsG
- CG341T8tOPrAQ==
+ b=RdeVVeFZ+1EebKQ1sop+/hBrxDOp+MY5WY5bTSTdqhkWNqC26tjopTYHot3Ixq+Gy
+ eHrF+NdoYGKzYzY38gWBXZMdq/Xxg6F5CWIx0UjCoZf2FB63/OyiJrZeb4XlPjD/AE
+ xo66czp1Y9Cx//p6M8Yq5vr4rhq1dHncn9trFzQGRtEEnQnQTZzvWTdun3MyJHdoMX
+ m901JKk07azeW3SP9DV7UuhFw/DHW3qBLsBEWwCj/Vy1RiIrKo6DRkq98AB9eLoAF1
+ yqgCXM/z8yDP4WHh947/nu67TpVrZhDZIPM62wUBDbdLV8ZnfqOToa/M6KM/k0Qkq3
+ Gm4uYIzLFp00A==
 To: liush <liush@allwinnertech.com>, jaegeuk@kernel.org
 References: <1607338774-8541-1-git-send-email-liush@allwinnertech.com>
+ <1607338774-8541-2-git-send-email-liush@allwinnertech.com>
 From: Chao Yu <chao@kernel.org>
-Message-ID: <b78048de-f69a-79fd-1512-cf55321dbb3a@kernel.org>
-Date: Mon, 7 Dec 2020 23:04:03 +0800
+Message-ID: <b576e982-3d7f-4fd2-bc70-e7986847a549@kernel.org>
+Date: Mon, 7 Dec 2020 23:06:19 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.5.1
 MIME-Version: 1.0
-In-Reply-To: <1607338774-8541-1-git-send-email-liush@allwinnertech.com>
+In-Reply-To: <1607338774-8541-2-git-send-email-liush@allwinnertech.com>
 Content-Language: en-US
-X-Headers-End: 1kmI4F-0028NQ-5j
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: convert to F2FS_*_INO macro
+X-Headers-End: 1kmI60-005TKX-9t
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: don't check PAGE_SIZE again in
+ sanity_check_raw_super()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,8 +94,11 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 On 2020/12/7 18:59, liush wrote:
 > From: Yangtao Li <tiny.windzz@gmail.com>
 > 
-> Use F2FS_ROOT_INO, F2FS_NODE_INO and F2FS_META_INO macro
-> for better code readability.
+> Many flash devices read and write a single IO based on a multiple
+> of 4KB, and we support only 4KB page cache size now.
+> 
+> Since we already check page size in init_f2fs_fs(), so remove page
+> size check in sanity_check_raw_super().
 > 
 > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > Signed-off-by: Shaohua Liu <liush@allwinnertech.com>
