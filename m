@@ -1,75 +1,101 @@
-Return-Path: <SRS0=qoVt=FK=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=a7YV=FL=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
+	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CCBC4361B
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  6 Dec 2020 23:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B651C4361B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 06:43:53 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7956323120;
-	Sun,  6 Dec 2020 23:13:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7956323120
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 3C993227C3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 06:43:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C993227C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1km3DG-0004IZ-NH; Sun, 06 Dec 2020 23:13:06 +0000
+	id 1kmAFT-000548-1H; Mon, 07 Dec 2020 06:43:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1km3DE-0004IF-J1
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 06 Dec 2020 23:13:04 +0000
+ (envelope-from <robinh3123@gmail.com>) id 1kmAFR-00053S-0i
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 06:43:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9qZrqlaMB2tTpefeeVjxhTwoUbe/jVj6o5YOtC3GPX8=; b=TNoiXX9VrDM6Ypp9XlX8Xg0JDE
- IOAM6UTVhITjwNEph/Tw7wNiLtqDJvsrcDkwVaR9ga/AMvpArI9S4T6CKC424ODtMvyOv2TBAZEBR
- zFxR3zMHZaMTo5eEhKErufuwpmBkhwaVKpbzVn9irWeq2zVjcLA2zwVH+DhASTKsWLi0=;
+ bh=otQkiR2Uy8rxb1pUSHnhE2UFpTc3iYNCzbqKsfb2NA4=; b=KHJmxr3mY6DWi1rpVQYT94Cv+W
+ Diw2E70L4Vu962v9pXl5Nu8Wx9S45Ri1Fr4kg/dI+N7BmnjEUxKGrkHtT4IqtRHAhMOMyeEO7vZKw
+ lj0Gx2y3w86gXC3viRrhCqW44caYQ+TmbRuDtBQqi4tsQo0D6+EuNk90YKNVF0mU/Ml0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9qZrqlaMB2tTpefeeVjxhTwoUbe/jVj6o5YOtC3GPX8=; b=IwiYvn2MBMctaJ8tIX4XWQ4ODz
- o10BBDu+R99xHYKr3eU9iJWwTgkMONuA1xo7uLuQ7ZhjfcgStiP3kRWVUI2nd2aJ+x0Kjf0cseDLC
- 6Tj+ttYnzsuOHKVMPs0eNqh45G3Dp++EIEZeRt7hKyLjQKUhw/JFq0tKxbvrijdmqOXM=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=otQkiR2Uy8rxb1pUSHnhE2UFpTc3iYNCzbqKsfb2NA4=; b=OEv3MeCVA6cRwIrlJ6s0QoOJs4
+ szpNqmnp1RLKCA2I1dwPpXtO1Jo34QR++dT/qKpERsITjgjlv9InS78hNvFFNjRBzvXi1hHGzXwkY
+ tXvhiajJQCtpvpgLklCBgLvg+tldk/GGCz5MoRt1ToPIME5RziBA3wFK2IVz0iqvbzIY=;
+Received: from mail-pf1-f178.google.com ([209.85.210.178])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1km3D5-004iU2-0i
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 06 Dec 2020 23:13:04 +0000
-Date: Sun, 6 Dec 2020 15:12:25 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1607296347;
- bh=wRedg1gNvQnfzRd6Sc7Ch4DYbkAvFJu/PD8ZGSHjgdQ=;
- h=From:To:Cc:Subject:References:In-Reply-To:From;
- b=p/xjEKdNmYBgu8ertFQ3kUSFZYs3wZW1WKv60D5Oq2w7r1BqLZpkeVCObJviLcO9c
- mn+fdEsig3KRc+N+WZ0ZB3QtuvA/8UBzd+2zhfU/qvEoJzXAgwaJsTSVb4tDD0revn
- FThRM3xGsbpwK/GH4RDGh1eLB6BesQ0OXu28aTHkTl2XK/CIdOnmQT71ogyuIca+Rj
- d/G0x3Gv47eJEDJlnGLra/FTf9tKEYa7heydAUn5gFubAeTAglA/+VFvAulBht2ne/
- khg13oQdPfbl6LqgKhnsG7vNz0V/N69ZbgosskWCY2TNS/me34ryQYoL+20rOBYjIQ
- qJhC9wCHWNrvg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Message-ID: <X81lWZeMaSHi5gz4@sol.localdomain>
-References: <20201203022041.230976-1-ebiggers@kernel.org>
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1kmAFK-0052du-Ob
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 06:43:48 +0000
+Received: by mail-pf1-f178.google.com with SMTP id 131so8813424pfb.9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 06 Dec 2020 22:43:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=from:to:cc:subject:date:message-id:in-reply-to:references
+ :mime-version:content-transfer-encoding;
+ bh=otQkiR2Uy8rxb1pUSHnhE2UFpTc3iYNCzbqKsfb2NA4=;
+ b=DYtvR1R7Wtnp8S64BLo/0lOTgKaVJO3rSudD5Y7dxHxnvcnlueoBtU7pTJrjoA9JR+
+ H3GMBP4nifMBidpjNOyTPToW97WOsqmTGNRMxDZg+OdvVwr5IvLbipg6JwoBd8Seg8XP
+ Q71YUCVq/76glb2VBJCxMzuOFe5H086ncAnIsdVW6ir2lr1dDBL4NtuenTnPT57HANpf
+ O7Mm4mDZO8ZMDlU9ziZ+gjCeySlvIGQZmTu10fa7aJl2l1jgIredfD5eNMYe/+CuGZXa
+ Fbe5aEETbX6flXqIZ0zuX8VUnxMq/yPSdpfP5SuqlmSxAjJu2votKNzWS80QLzmMJJRG
+ akPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+ :references:mime-version:content-transfer-encoding;
+ bh=otQkiR2Uy8rxb1pUSHnhE2UFpTc3iYNCzbqKsfb2NA4=;
+ b=sC7KPCXZPe0q8K1n0iP2jFdzARRYv3AnLCaQo4Nk5xn8sgfbSGRvzOqpw/bHlQRvHe
+ vAA4S8T2K3D8s82LRkwXFtjKxcJuRdCCz7UnmWt7ePH1giacz9dEWXymMQBMUpvuenNO
+ SC7SSTyzRRVKkRYF8ziBp3aizwFQGlz+xgOcCEbUoylQcM4/yl82ZkX7yBkIHdgv+3am
+ dIxX1yEkgxTz2GA8kgvs3Q6gL8VXhm6xXKpOpn1Tw2GZ4HWYxvQ2xtN3PTHrF0TJ5+Mh
+ U2iD+mC1EBQ/nrTP86z0ou3A1q3czFKutLXqhepeRuy+Mn48yNDv2ogp3vFXd6KKWZ5T
+ qCLQ==
+X-Gm-Message-State: AOAM530Kc/Awv1x5XJIKTWIeqjbUkDR+LfCaf1u6z6WtY2Rr4D+hb7ZH
+ GJqaqmLP7qIHtMa9gaAOLQtrI/iOt38=
+X-Google-Smtp-Source: ABdhPJwPpnqJ3+aM79hweW/me2ydhRM5t0xuGUZv0BphpJ+fO+PgpgfvNgCsdNBb3I3V31eGKEhR9g==
+X-Received: by 2002:a17:902:70cc:b029:d7:e8ad:26d4 with SMTP id
+ l12-20020a17090270ccb02900d7e8ad26d4mr14539708plt.33.1607323417021; 
+ Sun, 06 Dec 2020 22:43:37 -0800 (PST)
+Received: from robinhsu-p520.ntc.corp.google.com
+ ([2401:fa00:fc:202:1ea0:b8ff:fe77:fe45])
+ by smtp.gmail.com with ESMTPSA id o9sm9079984pjl.11.2020.12.06.22.43.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 06 Dec 2020 22:43:36 -0800 (PST)
+From: Robin Hsu <robinh3123@gmail.com>
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, chao@kernel.org
+Date: Mon,  7 Dec 2020 14:42:48 +0800
+Message-Id: <20201207064250.272240-2-robinh3123@gmail.com>
+X-Mailer: git-send-email 2.29.2.576.ga3fc446d84-goog
+In-Reply-To: <20201207064250.272240-1-robinh3123@gmail.com>
+References: <20201207064250.272240-1-robinh3123@gmail.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20201203022041.230976-1-ebiggers@kernel.org>
-X-Headers-End: 1km3D5-004iU2-0i
-Subject: Re: [f2fs-dev] [PATCH v2 0/9] Allow deleting files with unsupported
- encryption policy
+X-Headers-End: 1kmAFK-0052du-Ob
+Subject: [f2fs-dev] [PATCH v2 1/3] f2fs-tools: Added #ifdef WITH_func
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,69 +107,123 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Dec 02, 2020 at 06:20:32PM -0800, Eric Biggers wrote:
-> Currently it's impossible to delete files that use an unsupported
-> encryption policy, as the kernel will just return an error when
-> performing any operation on the top-level encrypted directory, even just
-> a path lookup into the directory or opening the directory for readdir.
-> 
-> It's desirable to return errors for most operations on files that use an
-> unsupported encryption policy, but the current behavior is too strict.
-> We need to allow enough to delete files, so that people can't be stuck
-> with undeletable files when downgrading kernel versions.  That includes
-> allowing directories to be listed and allowing dentries to be looked up.
-> 
-> This series fixes this (on ext4, f2fs, and ubifs) by treating an
-> unsupported encryption policy in the same way as "key unavailable" in
-> the cases that are required for a recursive delete to work.
-> 
-> The actual fix is in patch 9, so see that for more details.
-> 
-> Patches 1-8 are cleanups that prepare for the actual fix by removing
-> direct use of fscrypt_get_encryption_info() by filesystems.
-> 
-> This patchset applies to branch "master" (commit 4a4b8721f1a5) of
-> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git.
-> 
-> Changed since v1:
->   - Made some minor updates to commit messages.
->   - Added Reviewed-by tags.
-> 
-> Eric Biggers (9):
->   ext4: remove ext4_dir_open()
->   f2fs: remove f2fs_dir_open()
->   ubifs: remove ubifs_dir_open()
->   ext4: don't call fscrypt_get_encryption_info() from dx_show_leaf()
->   fscrypt: introduce fscrypt_prepare_readdir()
->   fscrypt: move body of fscrypt_prepare_setattr() out-of-line
->   fscrypt: move fscrypt_require_key() to fscrypt_private.h
->   fscrypt: unexport fscrypt_get_encryption_info()
->   fscrypt: allow deleting files with unsupported encryption policy
-> 
->  fs/crypto/fname.c           |  8 +++-
->  fs/crypto/fscrypt_private.h | 28 ++++++++++++++
->  fs/crypto/hooks.c           | 16 +++++++-
->  fs/crypto/keysetup.c        | 20 ++++++++--
->  fs/crypto/policy.c          | 22 +++++++----
->  fs/ext4/dir.c               | 16 ++------
->  fs/ext4/namei.c             | 10 +----
->  fs/f2fs/dir.c               | 10 +----
->  fs/ubifs/dir.c              | 11 +-----
->  include/linux/fscrypt.h     | 75 +++++++++++++++++++------------------
->  10 files changed, 126 insertions(+), 90 deletions(-)
-> 
-> 
-> base-commit: 4a4b8721f1a5e4b01e45b3153c68d5a1014b25de
+From: Robin Hsu <robinhsu@google.com>
 
-All applied to fscrypt.git#master for 5.11.
+Add proprocessor defines (options) 'WITH_func',
+where func = DUMP, DEFRAG, RESIZE, or SLOAD
 
-- Eric
+Bug: 161486536
+Test: n/a (trivial)
+Signed-off-by: Robin Hsu <robinhsu@google.com>
+Change-Id: I813755548cc71dd8b026abd06893ed0fcf1d8b26
+---
+ fsck/main.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/fsck/main.c b/fsck/main.c
+index e70048b..b20498f 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -345,6 +345,7 @@ void f2fs_parse_options(int argc, char *argv[])
+ 				break;
+ 		}
+ 	} else if (!strcmp("dump.f2fs", prog)) {
++#ifdef WITH_DUMP
+ 		const char *option_string = "d:i:n:s:Sa:b:V";
+ 		static struct dump_option dump_opt = {
+ 			.nid = 0,	/* default root ino */
+@@ -426,7 +427,9 @@ void f2fs_parse_options(int argc, char *argv[])
+ 		}
+ 
+ 		c.private = &dump_opt;
++#endif
+ 	} else if (!strcmp("defrag.f2fs", prog)) {
++#ifdef WITH_DEFRAG
+ 		const char *option_string = "d:s:Sl:t:iV";
+ 
+ 		c.func = DEFRAG;
+@@ -484,7 +487,9 @@ void f2fs_parse_options(int argc, char *argv[])
+ 			if (err != NOERROR)
+ 				break;
+ 		}
++#endif
+ 	} else if (!strcmp("resize.f2fs", prog)) {
++#ifdef WITH_RESIZE
+ 		const char *option_string = "d:st:iV";
+ 
+ 		c.func = RESIZE;
+@@ -526,7 +531,9 @@ void f2fs_parse_options(int argc, char *argv[])
+ 			if (err != NOERROR)
+ 				break;
+ 		}
++#endif
+ 	} else if (!strcmp("sload.f2fs", prog)) {
++#ifdef WITH_SLOAD
+ 		const char *option_string = "C:d:f:p:s:St:T:V";
+ #ifdef HAVE_LIBSELINUX
+ 		int max_nr_opt = (int)sizeof(c.seopt_file) /
+@@ -595,6 +602,7 @@ void f2fs_parse_options(int argc, char *argv[])
+ 			if (err != NOERROR)
+ 				break;
+ 		}
++#endif /* WITH_SLOAD */
+ 	}
+ 
+ 	if (err == NOERROR) {
+@@ -707,6 +715,7 @@ static int do_fsck(struct f2fs_sb_info *sbi)
+ 	return FSCK_ERRORS_LEFT_UNCORRECTED;
+ }
+ 
++#ifdef WITH_DUMP
+ static void do_dump(struct f2fs_sb_info *sbi)
+ {
+ 	struct dump_option *opt = (struct dump_option *)c.private;
+@@ -733,7 +742,9 @@ static void do_dump(struct f2fs_sb_info *sbi)
+ 	print_cp_state(flag);
+ 
+ }
++#endif
+ 
++#ifdef WITH_DEFRAG
+ static int do_defrag(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+@@ -782,7 +793,9 @@ out_range:
+ 				c.defrag_target);
+ 	return -1;
+ }
++#endif
+ 
++#ifdef WITH_RESIZE
+ static int do_resize(struct f2fs_sb_info *sbi)
+ {
+ 	if (!c.target_sectors)
+@@ -796,7 +809,9 @@ static int do_resize(struct f2fs_sb_info *sbi)
+ 
+ 	return f2fs_resize(sbi);
+ }
++#endif
+ 
++#ifdef WITH_SLOAD
+ static int do_sload(struct f2fs_sb_info *sbi)
+ {
+ 	if (!c.from_dir) {
+@@ -808,6 +823,7 @@ static int do_sload(struct f2fs_sb_info *sbi)
+ 
+ 	return f2fs_sload(sbi);
+ }
++#endif
+ 
+ #if defined(__APPLE__)
+ static u64 get_boottime_ns()
+-- 
+2.29.2.576.ga3fc446d84-goog
+
 
 
 _______________________________________________
