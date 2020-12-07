@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 725D5C4361B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 11:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 020E2C4361B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Dec 2020 11:01:15 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 176DA2158C;
-	Mon,  7 Dec 2020 11:01:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 176DA2158C
+	by mail.kernel.org (Postfix) with ESMTPS id 84C652158C;
+	Mon,  7 Dec 2020 11:01:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C652158C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kmEGS-0004KR-Ki; Mon, 07 Dec 2020 11:01:08 +0000
+	id 1kmEGY-0002VJ-0G; Mon, 07 Dec 2020 11:01:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack.qiu@huawei.com>) id 1kmEGN-0004KF-IA
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 11:01:03 +0000
+ (envelope-from <jack.qiu@huawei.com>) id 1kmEGT-0002U3-8A
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 11:01:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
  Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0qtkr3tAsrpYcUrtndWYjtWMU6l9M3lBUsXC6KSa6y8=; b=FPwUNKyaTlwnHhFR8oabWi6AlG
- 2w4lBjT4BhGqBb23YY/9l6jUEtQADCaa9B3C6ZtGZdHko1PEW2IA2CTbPSxArXwbXTIyfWPobLpGh
- pnB933EE+I5P4WLPfBT+rOmb/qFGT4VGBm6fhxv23uSDxvjAT9sXTuExM47SuxX7djQc=;
+ bh=7k4XM8/c79+5G3q2LgN7JdZ0dWMdCDmpjLCIIsCst98=; b=hnBvuJTExfrdis1vSNVaA27NbQ
+ RB7CL3+55e0E28xmBTb5ghHTSmJhoaMdttrYAPIiErr4JHl4deucI0wR1FFCIFuGOQEnEx5kM5D4c
+ kgsBPN4XuSxzSrs/urC7t89rFdtl3OHkX9722tGC5EHXWZSATgzbr+OWl/QwmC/sQY7I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
@@ -42,33 +42,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0qtkr3tAsrpYcUrtndWYjtWMU6l9M3lBUsXC6KSa6y8=; b=bxz9zte3VejhuxDjQt5LD5Yhss
- uzXkW5HFQA/aEuS6cu3+fHb/NPG7yvzqD/ILliJHFxQEJRKaLoh+vpditFNC9zx1DIiQ0G9LCBdqD
- pe5xh23Rs1WjOq1Cs13sV98AF5l4CzM7QM1FRWzfd9cDPGL8qqCeXVoG9qVGHSp+lIIQ=;
+ bh=7k4XM8/c79+5G3q2LgN7JdZ0dWMdCDmpjLCIIsCst98=; b=H7/J1fQtXdEiVt3epr8KwLna8U
+ lfRRRICq+Zc3WLoT5YHnCGArFTd7ROlumzj/z17F7tgMnM4SHLhL3hyR87pA5+uiM6OlpYQfSSLNm
+ 7EK1uwyzi8C2qNTk0/XejZJUsjYYILyNyFCu8LRDe1SA1NHjrCWP8yjphnkQhkdR6ySY=;
 Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kmEGJ-001rGW-Cg
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 11:01:03 +0000
+ id 1kmEGM-005EpX-4J
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Dec 2020 11:01:09 +0000
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CqL1w3VNjzhnrf
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CqL1w3DPHzhnqQ
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Mon,  7 Dec 2020 19:00:20 +0800 (CST)
 Received: from huawei.com (10.175.101.6) by DGGEMS407-HUB.china.huawei.com
  (10.3.19.207) with Microsoft SMTP Server id 14.3.487.0; Mon, 7 Dec 2020
- 19:00:49 +0800
+ 19:00:48 +0800
 From: Jack Qiu <jack.qiu@huawei.com>
 To: <linux-f2fs-devel@lists.sourceforge.net>
-Date: Mon, 7 Dec 2020 20:01:14 +0800
-Message-ID: <20201207120114.25642-4-jack.qiu@huawei.com>
+Date: Mon, 7 Dec 2020 20:01:12 +0800
+Message-ID: <20201207120114.25642-2-jack.qiu@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201207120114.25642-1-jack.qiu@huawei.com>
 References: <20201207120114.25642-1-jack.qiu@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.175.101.6]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kmEGJ-001rGW-Cg
-Subject: [f2fs-dev] [PATCH v3 3/3] f2fs: inline: fix wrong inline inode stat
+X-Headers-End: 1kmEGM-005EpX-4J
+Subject: [f2fs-dev] [PATCH v3 1/3] f2fs: inline: correct comment in
+ f2fs_recover_inline_data
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,34 +85,27 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Miss to stat inline inode in f2fs_recover_inline_data.
+In 3rd scene, it should remove data blocks instead of inline_data.
 
 Signed-off-by: Jack Qiu <jack.qiu@huawei.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/inline.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/inline.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 0a8f7eefca7d..c37747f7028c 100644
+index 70384e31788d..0399531efcd3 100644
 --- a/fs/f2fs/inline.c
 +++ b/fs/f2fs/inline.c
-@@ -297,6 +297,7 @@ int f2fs_recover_inline_data(struct inode *inode, struct page *npage)
- 		if (IS_ERR(ipage))
- 			return PTR_ERR(ipage);
- 		f2fs_truncate_inline_inode(inode, ipage, 0);
-+		stat_dec_inline_inode(inode);
- 		clear_inode_flag(inode, FI_INLINE_DATA);
- 		f2fs_put_page(ipage, 1);
- 	} else if (ri && (ri->i_inline & F2FS_INLINE_DATA)) {
-@@ -305,6 +306,7 @@ int f2fs_recover_inline_data(struct inode *inode, struct page *npage)
- 		ret = f2fs_truncate_blocks(inode, 0, false);
- 		if (ret)
- 			return ret;
-+		stat_inc_inline_inode(inode);
- 		goto process_inline;
- 	}
- 	return 0;
+@@ -266,7 +266,7 @@ int f2fs_recover_inline_data(struct inode *inode, struct page *npage)
+ 	 * [prev.] [next] of inline_data flag
+ 	 *    o       o  -> recover inline_data
+ 	 *    o       x  -> remove inline_data, and then recover data blocks
+-	 *    x       o  -> remove inline_data, and then recover inline_data
++	 *    x       o  -> remove data blocks, and then recover inline_data
+ 	 *    x       x  -> recover data blocks
+ 	 */
+ 	if (IS_INODE(npage))
 --
 2.17.1
 
