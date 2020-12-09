@@ -2,82 +2,73 @@ Return-Path: <SRS0=RqgG=FN=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C88F2C4361B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Dec 2020 08:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D03DC4361B
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Dec 2020 08:44:13 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 45CA522D07;
-	Wed,  9 Dec 2020 08:42:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45CA522D07
+	by mail.kernel.org (Postfix) with ESMTPS id A773B23380
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  9 Dec 2020 08:44:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A773B23380
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kmv3e-000695-2A; Wed, 09 Dec 2020 08:42:46 +0000
+	id 1kmv52-0005eX-2U; Wed, 09 Dec 2020 08:44:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kmv3b-00068k-Ni
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 09 Dec 2020 08:42:43 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kmv50-0005eQ-LP
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 09 Dec 2020 08:44:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:References:CC:To:From:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9muWXIWigDMmV/icy4INHBzlQHFCw+63Mi2Af+3GDPM=; b=gkU/rLBpFY9oVrlyucYzdg3fl5
- YR5ImxSTT4ubES/bEAQElM4mX/v0ptOlJes7Ynoe8rs3ICn5hnnF9d68zz2QUjWvEVQtrYOtgR/0L
- XTZO9EJ+8ss2G8wtDK0EpI2g//j/k+v8kn3LZ1IB2+i9vnwbX7+oxSjX+AR+S5kuepcA=;
+ bh=NKfE+PlqgAnyiUlc+jb21xEU3+yK65w3/Al2g9p4XWk=; b=f41vZrpPmvXatZDBiUJNVM9+wz
+ 49dhoV+flp3JOpoNGtG0bfipUynZ8ifgcHiboP6avy1Md/DZcwdFFevnXPpRC4yK4vaqC3yr8UDe7
+ WYpOzDEhioVPaxIvNj5+yhP93zNkSVWSNj+CKEwkRNoaMl3Djh47fCryat7EvqifYA0o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:References:CC:To:From:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9muWXIWigDMmV/icy4INHBzlQHFCw+63Mi2Af+3GDPM=; b=T8G4Uvrbgp/uF9W7+69+1AcD5c
- qclkPgN+j34HqS09ytgf0VqOsbvhih9O5VCEjFjc7aMYTapjTJEHvc9WK+CEXkamgb+XWY0PguIY0
- 1FJuTmC4FDNdN3a/MK14WDuDeJTzv19mbgyhL0leXu4AWzrpwl5RHykDxkLLjSG14Mrs=;
-Received: from szxga05-in.huawei.com ([45.249.212.191])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=NKfE+PlqgAnyiUlc+jb21xEU3+yK65w3/Al2g9p4XWk=; b=MkHduSlunr1Lan+iZ1DtolSN/W
+ QPnb5jZK0TBaZtyPMEqjOwRuWQJf74q7Ujr6LLcGU5i7lOZDrfFshlfQXWKnl7DvC1QEWgZEKVn8a
+ lJwODV/PAOvdEWRI6hTM0av1nAoNqbFOOt+yoZFKMgr/fYsQfjZkZvtxw0OZX5TH0XpE=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kmv3P-004hkr-Go
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 09 Dec 2020 08:42:43 +0000
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CrVs82s3NzhpgZ;
- Wed,  9 Dec 2020 16:41:48 +0800 (CST)
-Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 9 Dec 2020
- 16:42:15 +0800
+ id 1kmv4x-007X0x-DM
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 09 Dec 2020 08:44:10 +0000
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CrVtr1wpBzkmpk;
+ Wed,  9 Dec 2020 16:43:16 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 9 Dec 2020 16:43:47 +0800
 From: Chao Yu <yuchao0@huawei.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20201208031437.56627-1-yuchao0@huawei.com>
- <22ac4df6-53ec-fb7c-c4dd-26435352a701@huawei.com>
- <X9A7Jn+cHRRcAmIi@google.com>
- <37d89d34-add1-5254-380b-233ef7a460d4@huawei.com>
- <X9BKX9PUMFkts9bI@google.com>
- <5398c880-d4d3-81b9-f3c9-765ba1470e96@huawei.com>
- <0d4a20ec-f6e4-ff24-8733-94cc3762195d@huawei.com>
- <X9CJc7xas7OqTZv2@google.com>
- <b3e385d6-b473-c4c9-308d-0285bc71b5b0@huawei.com>
-Message-ID: <e773f0bf-16ea-c503-4138-0fd6fabc13a3@huawei.com>
-Date: Wed, 9 Dec 2020 16:42:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+To: <jaegeuk@kernel.org>
+Date: Wed, 9 Dec 2020 16:43:27 +0800
+Message-ID: <20201209084328.30416-4-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201209084328.30416-1-yuchao0@huawei.com>
+References: <20201209084328.30416-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <b3e385d6-b473-c4c9-308d-0285bc71b5b0@huawei.com>
-Content-Language: en-US
-X-Originating-IP: [10.136.114.67]
+X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kmv3P-004hkr-Go
-Subject: Re: [f2fs-dev] [PATCH v4] f2fs: compress: support chksum
+X-Headers-End: 1kmv4x-007X0x-DM
+Subject: [f2fs-dev] [PATCH RESEND v2 4/5] f2fs: introduce a new per-sb
+ directory in sysfs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,88 +81,149 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/12/9 16:31, Chao Yu wrote:
-> On 2020/12/9 16:23, Jaegeuk Kim wrote:
->> On 12/09, Chao Yu wrote:
->>> On 2020/12/9 12:28, Chao Yu wrote:
->>>> On 2020/12/9 11:54, Jaegeuk Kim wrote:
->>>>> Ah, could you please write another patch to adjust the new changes?
->>>>
->>>> No problem, will drop "f2fs: compress:support chksum" based on your dev branch, and
->>>> apply all compress related patches on top of dev branch.
->>>
->>> Jaegeuk, could you please
->>> - drop "f2fs: compress:support chksum",
->>
->> What I mean is keeping the old version in dev branch as is, since it gives
->> another conflicts when dropping it. That can add another bug at this point.
->> Can I get a separate patch to fix any issues in that original patch?
-> 
-> Oops...
-
-The diff is as below:
-
- From 1ad86c640d3a295292960f6b90802cc5a9be7a0d Mon Sep 17 00:00:00 2001
-From: Chao Yu <yuchao0@huawei.com>
-Date: Wed, 9 Dec 2020 16:36:58 +0800
-Subject: [PATCH] fix_chksum
+Add a new directory 'stat' in path of /sys/fs/f2fs/<devname>/, later
+we can add new readonly stat sysfs file into this directory, it will
+make <devname> directory less mess.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-  fs/f2fs/compress.c | 3 +--
-  fs/f2fs/compress.h | 0
-  2 files changed, 1 insertion(+), 2 deletions(-)
-  create mode 100644 fs/f2fs/compress.h
+ fs/f2fs/f2fs.h  |  5 +++-
+ fs/f2fs/sysfs.c | 69 +++++++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 68 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index f05d409fd0ed..4bcbacfe3325 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -796,7 +796,7 @@ void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity)
-
-  	ret = cops->decompress_pages(dic);
-
--	if (!ret && fi->i_compress_flag & 1 << COMPRESS_CHKSUM) {
-+	if (!ret && (fi->i_compress_flag & 1 << COMPRESS_CHKSUM)) {
-  		u32 provided = le32_to_cpu(dic->cbuf->chksum);
-  		u32 calculated = f2fs_crc32(sbi, dic->cbuf->cdata, dic->clen);
-
-@@ -809,7 +809,6 @@ void f2fs_decompress_pages(struct bio *bio, struct page *page, bool verity)
-  					provided, calculated);
-  			}
-  			set_sbi_flag(sbi, SBI_NEED_FSCK);
--			WARN_ON_ONCE(1);
-  		}
-  	}
-
-diff --git a/fs/f2fs/compress.h b/fs/f2fs/compress.h
-new file mode 100644
-index 000000000000..e69de29bb2d1
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index fbaef39e51df..cb94f650ec3d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1549,9 +1549,12 @@ struct f2fs_sb_info {
+ 	unsigned int node_io_flag;
+ 
+ 	/* For sysfs suppport */
+-	struct kobject s_kobj;
++	struct kobject s_kobj;			/* /sys/fs/f2fs/<devname> */
+ 	struct completion s_kobj_unregister;
+ 
++	struct kobject s_stat_kobj;		/* /sys/fs/f2fs/<devname>/stat */
++	struct completion s_stat_kobj_unregister;
++
+ 	/* For shrinker support */
+ 	struct list_head s_list;
+ 	int s_ndevs;				/* number of devices */
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 989a649cfa8b..ebca0b4961e8 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -711,6 +711,11 @@ static struct attribute *f2fs_feat_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(f2fs_feat);
+ 
++static struct attribute *f2fs_stat_attrs[] = {
++	NULL,
++};
++ATTRIBUTE_GROUPS(f2fs_stat);
++
+ static const struct sysfs_ops f2fs_attr_ops = {
+ 	.show	= f2fs_attr_show,
+ 	.store	= f2fs_attr_store,
+@@ -739,6 +744,44 @@ static struct kobject f2fs_feat = {
+ 	.kset	= &f2fs_kset,
+ };
+ 
++static ssize_t f2fs_stat_attr_show(struct kobject *kobj,
++				struct attribute *attr, char *buf)
++{
++	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
++								s_stat_kobj);
++	struct f2fs_attr *a = container_of(attr, struct f2fs_attr, attr);
++
++	return a->show ? a->show(a, sbi, buf) : 0;
++}
++
++static ssize_t f2fs_stat_attr_store(struct kobject *kobj, struct attribute *attr,
++						const char *buf, size_t len)
++{
++	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
++								s_stat_kobj);
++	struct f2fs_attr *a = container_of(attr, struct f2fs_attr, attr);
++
++	return a->store ? a->store(a, sbi, buf, len) : 0;
++}
++
++static void f2fs_stat_kobj_release(struct kobject *kobj)
++{
++	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
++								s_stat_kobj);
++	complete(&sbi->s_stat_kobj_unregister);
++}
++
++static const struct sysfs_ops f2fs_stat_attr_ops = {
++	.show	= f2fs_stat_attr_show,
++	.store	= f2fs_stat_attr_store,
++};
++
++static struct kobj_type f2fs_stat_ktype = {
++	.default_groups = f2fs_stat_groups,
++	.sysfs_ops	= &f2fs_stat_attr_ops,
++	.release	= f2fs_stat_kobj_release,
++};
++
+ static int __maybe_unused segment_info_seq_show(struct seq_file *seq,
+ 						void *offset)
+ {
+@@ -945,11 +988,15 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
+ 	init_completion(&sbi->s_kobj_unregister);
+ 	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_sb_ktype, NULL,
+ 				"%s", sb->s_id);
+-	if (err) {
+-		kobject_put(&sbi->s_kobj);
+-		wait_for_completion(&sbi->s_kobj_unregister);
+-		return err;
+-	}
++	if (err)
++		goto put_sb_kobj;
++
++	sbi->s_stat_kobj.kset = &f2fs_kset;
++	init_completion(&sbi->s_stat_kobj_unregister);
++	err = kobject_init_and_add(&sbi->s_stat_kobj, &f2fs_stat_ktype,
++						&sbi->s_kobj, "stat");
++	if (err)
++		goto put_stat_kobj;
+ 
+ 	if (f2fs_proc_root)
+ 		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
+@@ -965,6 +1012,13 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
+ 				victim_bits_seq_show, sb);
+ 	}
+ 	return 0;
++put_stat_kobj:
++	kobject_put(&sbi->s_stat_kobj);
++	wait_for_completion(&sbi->s_stat_kobj_unregister);
++put_sb_kobj:
++	kobject_put(&sbi->s_kobj);
++	wait_for_completion(&sbi->s_kobj_unregister);
++	return err;
+ }
+ 
+ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
+@@ -976,6 +1030,11 @@ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
+ 		remove_proc_entry("victim_bits", sbi->s_proc);
+ 		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
+ 	}
++
++	kobject_del(&sbi->s_stat_kobj);
++	kobject_put(&sbi->s_stat_kobj);
++	wait_for_completion(&sbi->s_stat_kobj_unregister);
++
+ 	kobject_del(&sbi->s_kobj);
+ 	kobject_put(&sbi->s_kobj);
+ 	wait_for_completion(&sbi->s_kobj_unregister);
 -- 
 2.29.2
 
-> 
-> Thanks,
-> 
->>
->>> - manually fix conflict when applying "f2fs: add compress_mode mount option"
->>> - and then apply last my resent patches.
->>>
->>> Thanks,
->> .
->>
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
 
 
 _______________________________________________
