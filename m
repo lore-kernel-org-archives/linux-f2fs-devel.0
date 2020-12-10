@@ -2,71 +2,97 @@ Return-Path: <SRS0=2O7d=FO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD8DC0018C
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Dec 2020 09:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EE8C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Dec 2020 15:28:55 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0526022BF5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Dec 2020 09:21:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0526022BF5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 6B64023B45;
+	Thu, 10 Dec 2020 15:28:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B64023B45
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=getseam.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1knI8P-0002lm-M3; Thu, 10 Dec 2020 09:21:13 +0000
+	id 1knNsD-0002WS-3a; Thu, 10 Dec 2020 15:28:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1knI8O-0002lO-De
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Dec 2020 09:21:12 +0000
+ (envelope-from <jordan@getseam.com>) id 1knNrs-0002VU-W5
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Dec 2020 15:28:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:Subject:Mime-Version:
+ Content-Transfer-Encoding:Content-Type:From:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ljOGx+43D4+GhBOESTCLgih0o2QhMYHESC3eyJnO6e8=; b=C07LCRkzqkE9/4HVQ2AHHMYMp/
- LyEoO5h2mw5vJIlJBBqt68Pn3Mzcy5fxHvqNp9lBQTFcJqjK0Aeu3JlsDGH4eaDk8nhUaL0oio3Uu
- KQi59eS3xdUqquNlWB5xRzFpalQnp0cl40ssjuk+HjFd5Bnftdn4TYb2X2edzdfZdH3s=;
+ bh=tfo7npM872OHY9B+W/QPveqfqhAzXEaU9sKNPwRLoxQ=; b=hgMPO/5xco8KGmqs1cAv3qUc1s
+ 7YyKA7u3eJSFNP20TtgP8UqZ1mXk6FM4QaCePg6auo1DSSHv3GkxYLCj6hz6HhwcY0ocK67s5Bv28
+ RNF5olilBR0arBt+u2kfuOgkADcBKjypuz/pUPI2+rRMgZCKZ9i94Ud0DI0SIOhe8jEo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=ljOGx+43D4+GhBOESTCLgih0o2QhMYHESC3eyJnO6e8=; b=A
- zmjrQl+kCykQcW4hNBIukybfNEoJwFJ9CuDsdCnsIOsE2+yxDRGAGOqS+yJXX/KalYYahg11qTeS1
- fvMo0Cm8yxy6zB+RLOduN4KcoxjY8Asud8pJJ5qE/ocRZqhdXxfgkhLu2vvc8SqJWRoTjZ3Q6u6Le
- ujsd7IZM7wcuXCgE=;
-Received: from szxga06-in.huawei.com ([45.249.212.32])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1knI8J-008kEi-SA
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Dec 2020 09:21:12 +0000
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Cs7g9024CzhqBR;
- Thu, 10 Dec 2020 17:20:21 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.487.0; Thu, 10 Dec 2020 17:20:36 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Thu, 10 Dec 2020 17:20:20 +0800
-Message-ID: <20201210092020.66245-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.29.2
-MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1knI8J-008kEi-SA
-Subject: [f2fs-dev] [PATCH RFC] f2fs: compress: add compress_flag in struct
- f2fs_comp_option
+ h=To:Date:Message-Id:Subject:Mime-Version:Content-Transfer-Encoding:
+ Content-Type:From:Sender:Reply-To:Cc:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=tfo7npM872OHY9B+W/QPveqfqhAzXEaU9sKNPwRLoxQ=; b=nJeqgPpJzYX2c0xyH5rLHJgOuI
+ hbhpS2C61Jq1EFx1GhuttD84kLspfTmQnXQo4LrU26WMaiwIhBdxt66b2cnPZUzNzXPH3Qwwgj/mC
+ TXQg2o9rOZTDM3QySmCLlEodqqQlK7ZCivc/YSfkaJJ/iEk98r7mBt5lDmN1Voiry8G4=;
+Received: from mail-io1-f52.google.com ([209.85.166.52])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1knNrm-006dMK-7h
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Dec 2020 15:28:32 +0000
+Received: by mail-io1-f52.google.com with SMTP id i18so5909077ioa.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 10 Dec 2020 07:28:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=getseam-com.20150623.gappssmtp.com; s=20150623;
+ h=from:content-transfer-encoding:mime-version:subject:message-id:date
+ :to; bh=tfo7npM872OHY9B+W/QPveqfqhAzXEaU9sKNPwRLoxQ=;
+ b=rGUdGQP5Ca1qQTF7g3FwfDW39hYbljQlTwZK8pRl7dHEZ8A+9eL9zi7ZQQwHsd3SE3
+ HF817aUslv3fBzFg2LSYR6h/pUwaHxuXABGA7whv28BGQEMycUyd2Tn5bChSzur5sNjv
+ 01mzfZIVciZgZtfGxarTuqdeZ9cNVqh1Sf/2zD3RVtCTakn7cgSAFbR0lvo+R46XHGk3
+ 33d4UyapnYk1NZ/hM/9/JBT3ouumXUN5RQNRmYjFPQgm1yrxLv7yAHG9eSKzdeI6uQ7M
+ 8YArEnhENtIEhBYCa+NekifJTsN2dErndRgvlBRi37dnVOLSm20PZCXJfSQ/fUdw+Twn
+ Zcxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:from:content-transfer-encoding:mime-version
+ :subject:message-id:date:to;
+ bh=tfo7npM872OHY9B+W/QPveqfqhAzXEaU9sKNPwRLoxQ=;
+ b=RmvkvPJhhFvOJa6o1qnWxb9pUw+9r/lc6CoGmmcl1fY9dSjxU4w7JFWL0yYdOw5bx3
+ ZgTAdEHeArsa6IswoqcSLGOjTemj2IUbydolt4Rht/LJogrf6OKEpUuDrmxKE+NHb5JP
+ IpYdSID6irC+tP4zjFIbCZIbvhDgJIJ2tMwhtkzTNfClhMIGGK7Hsjayhmj7wK0R6t6j
+ ww//QPtzmbML4v8vygvL9FSwNUq5urKpzeRRz+IdrexGofEWqqAosv40AhJmzvrLvdDl
+ PCr4WzcKkZjlCNeQ2sUqBw+TTgoLgOfmUHX2ML+qSbZNgwsvdsMNZAMwl4sUyWoHgFsx
+ 8G8w==
+X-Gm-Message-State: AOAM533bd5hI3IzXzfd8+XzkQ1DzPk+IgyZMFUc5HAsm1/yxaX7nWk6T
+ IKVVSr89Nq43yTmkMsRNPUhl2jJM/uZNZEn1
+X-Google-Smtp-Source: ABdhPJxq4y46bL/Np+SbLMc+nQxAa68t0/kc3QldmS81vH4uvPcPNr+tPX6gxX5QBZbyyHliAFYfQQ==
+X-Received: by 2002:a02:c8c7:: with SMTP id q7mr9382971jao.7.1607614092985;
+ Thu, 10 Dec 2020 07:28:12 -0800 (PST)
+Received: from dorothy.webb.haus ([24.148.31.157])
+ by smtp.gmail.com with ESMTPSA id w9sm3430211ilq.43.2020.12.10.07.28.11
+ for <linux-f2fs-devel@lists.sourceforge.net>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Thu, 10 Dec 2020 07:28:12 -0800 (PST)
+From: Jordan Webb <jordan@getseam.com>
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.20.0.2.21\))
+Message-Id: <D741743D-EAFA-4C26-ACC2-2066AF51DCD4@getseam.com>
+Date: Thu, 10 Dec 2020 09:28:11 -0600
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Mailer: Apple Mail (2.3654.20.0.2.21)
+X-Headers-End: 1knNrm-006dMK-7h
+Subject: [f2fs-dev] [PATCH v2] f2fs-tools: Make sload.f2fs reproduce hard
+ links
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,56 +104,255 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add a extra field compress_flag to get/set more compress option from/to
-compressed inode.
+If sload.f2fs encounters a file with nr_links > 1, it will mark it
+as a possible hard link by remembering the original device and
+inode. When sload.f2fs creates the file, it will check if it has
+already created a file for the same original device and inode. If
+so, it will add the original inode to the directory and increment
+the number of links to it, instead of writing a new inode.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+This allows sload.f2fs to accurately reproduce a directory tree that
+contains hard links, such as those created by ostree. Without this
+patch, directory trees containing hard links result in the content of
+the files being duplicated.
+
+This is version 2 of the patch; it has been rebased against the dev
+branch and includes a fix from Jaegeuk Kim to avoid building data 
+contents twice on hard linked files.
+
+Co-authored-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Jordan Webb <jordan@getseam.com>
 ---
+ fsck/dir.c     | 73 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ fsck/f2fs.h    | 10 +++++++
+ fsck/fsck.h    |  2 ++
+ fsck/segment.c | 11 ++++++++
+ fsck/sload.c   |  9 +++++++
+ 5 files changed, 104 insertions(+), 1 deletion(-)
 
-Daeho, Jaegeuk,
-
-Could you please check whether we could add this new field to struct
-f2fs_comp_option? so we can expand to allow user to query/config more
-options of compressed inode via new ioctl.
-
-It needs to consider before original patches goes to merge window, let
-me know you have other concerns.
-
- fs/f2fs/file.c            | 1 +
- include/uapi/linux/f2fs.h | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 16ea10f2bcf5..fbf06311c88d 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3965,6 +3965,7 @@ static int f2fs_ioc_get_compress_option(struct file *filp, unsigned long arg)
+diff --git a/fsck/dir.c b/fsck/dir.c
+index dc03c98..37b32f1 100644
+--- a/fsck/dir.c
++++ b/fsck/dir.c
+@@ -15,6 +15,7 @@
+  */
+ #include "fsck.h"
+ #include "node.h"
++#include <search.h>
  
- 	option.algorithm = F2FS_I(inode)->i_compress_algorithm;
- 	option.log_cluster_size = F2FS_I(inode)->i_log_cluster_size;
-+	option.compress_flag = F2FS_I(inode)->i_compress_flag;
+ static int room_for_filename(const u8 *bitmap, int slots, int max_slots)
+ {
+@@ -634,10 +635,42 @@ int convert_inline_dentry(struct f2fs_sb_info *sbi, struct f2fs_node *node,
+ 	return 0;
+ }
  
- 	inode_unlock_shared(inode);
++static int cmp_from_devino(const void *a, const void *b) {
++	u64 devino_a = ((struct hardlink_cache_entry*) a)->from_devino;
++	u64 devino_b = ((struct hardlink_cache_entry*) b)->from_devino;
++
++	return (devino_a > devino_b) - (devino_a < devino_b);
++}
++
++struct hardlink_cache_entry *f2fs_search_hardlink(struct f2fs_sb_info *sbi,
++						struct dentry *de)
++{
++	struct hardlink_cache_entry *find_hardlink = NULL;
++	struct hardlink_cache_entry *found_hardlink = NULL;
++	void *search_result;
++
++	/* This might be a hardlink, try to find it in the cache */
++	find_hardlink = calloc(1, sizeof(struct hardlink_cache_entry));
++	find_hardlink->from_devino = de->from_devino;
++
++	search_result = tsearch(find_hardlink, &(sbi->hardlink_cache), cmp_from_devino);
++	ASSERT(search_result != 0);
++
++	found_hardlink = *(struct hardlink_cache_entry**) search_result;
++	ASSERT(find_hardlink->from_devino == found_hardlink->from_devino);
++
++	/* If it was already in the cache, free the entry we just created */
++	if (found_hardlink != find_hardlink)
++		free(find_hardlink);
++
++	return found_hardlink;
++}
++
+ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
+ {
+ 	struct f2fs_node *parent, *child;
+-	struct node_info ni;
++	struct hardlink_cache_entry *found_hardlink = NULL;
++	struct node_info ni, hardlink_ni;
+ 	struct f2fs_summary sum;
+ 	block_t blkaddr = NULL_ADDR;
+ 	int ret;
+@@ -671,10 +704,27 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
+ 		goto free_parent_dir;
+ 	}
  
-diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
-index 352a822d4370..2b9c4c99ceee 100644
---- a/include/uapi/linux/f2fs.h
-+++ b/include/uapi/linux/f2fs.h
-@@ -93,6 +93,7 @@ struct f2fs_sectrim_range {
- struct f2fs_comp_option {
- 	__u8 algorithm;
- 	__u8 log_cluster_size;
-+	__u16 compress_flag;
++	if (de->from_devino)
++		found_hardlink = f2fs_search_hardlink(sbi, de);
++
+ 	child = calloc(BLOCK_SZ, 1);
+ 	ASSERT(child);
+ 
++	if (found_hardlink && found_hardlink->to_ino ) {
++		/* If we found this devino in the cache, we're creating a hard link */
++		get_node_info(sbi, found_hardlink->to_ino, &hardlink_ni);
++		if (hardlink_ni.blk_addr == NULL_ADDR) {
++			MSG(0, "No original inode for hard link to_ino=%x\n", found_hardlink->to_ino);
++			return -1;
++		}
++
++		/* Use previously-recorded inode */
++		de->ino = found_hardlink->to_ino;
++		blkaddr = hardlink_ni.blk_addr;
++		MSG(0, "Creating \"%s\" as hard link to inode %d\n", de->path, de->ino);
++	} else {
+ 		f2fs_alloc_nid(sbi, &de->ino);
++	}
+ 
+ 	init_inode_block(sbi, child, de);
+ 
+@@ -689,6 +739,26 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
+ 		goto free_child_dir;
+ 	}
+ 
++	if (found_hardlink) {
++		if (!found_hardlink->to_ino) {
++			MSG(0, "Adding inode %d from %s to hardlink cache\n", de->ino, de->path);
++			found_hardlink->to_ino = de->ino;
++		} else {
++			/* Replace child with original block */
++			free(child);
++			child = calloc(BLOCK_SZ, 1);
++			ASSERT(child);
++
++			ret = dev_read_block(child, blkaddr);
++			ASSERT(ret >= 0);
++
++			/* Increment links and skip to writing block */
++			child->i.i_links++;
++			MSG(0, "Number of links on inode %d is now %d\n", de->ino, child->i.i_links);
++			goto write_child_dir;
++		}
++	}
++
+ 	/* write child */
+ 	set_summary(&sum, de->ino, 0, ni.version);
+ 	ret = reserve_new_block(sbi, &blkaddr, &sum, CURSEG_HOT_NODE, 1);
+@@ -697,6 +767,7 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
+ 	/* update nat info */
+ 	update_nat_blkaddr(sbi, de->ino, de->ino, blkaddr);
+ 
++write_child_dir:
+ 	ret = dev_write_block(child, blkaddr);
+ 	ASSERT(ret >= 0);
+ 
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index 76e8272..9c6b0e4 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -221,6 +221,7 @@ struct dentry {
+ 	uint64_t capabilities;
+ 	nid_t ino;
+ 	nid_t pino;
++	u64 from_devino;
  };
  
- #endif /* _UAPI_LINUX_F2FS_H */
+ /* different from dnode_of_data in kernel */
+@@ -234,6 +235,12 @@ struct dnode_of_data {
+ 	int idirty, ndirty;
+ };
+ 
++struct hardlink_cache_entry {
++	u64 from_devino;
++	nid_t to_ino;
++	int nbuild;
++};
++
+ struct f2fs_sb_info {
+ 	struct f2fs_fsck *fsck;
+ 
+@@ -276,6 +283,9 @@ struct f2fs_sb_info {
+ 
+ 	/* true if late_build_segment_manger() is called */
+ 	bool seg_manager_done;
++
++	/* keep track of hardlinks so we can recreate them */
++	void *hardlink_cache;
+ };
+ 
+ static inline struct f2fs_super_block *F2FS_RAW_SUPER(struct f2fs_sb_info *sbi)
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index c5e85fe..037aea9 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -296,6 +296,8 @@ int f2fs_find_path(struct f2fs_sb_info *, char *, nid_t *);
+ nid_t f2fs_lookup(struct f2fs_sb_info *, struct f2fs_node *, u8 *, int);
+ int f2fs_add_link(struct f2fs_sb_info *, struct f2fs_node *,
+ 		const unsigned char *, int, nid_t, int, block_t, int);
++struct hardlink_cache_entry *f2fs_search_hardlink(struct f2fs_sb_info *sbi,
++						struct dentry *de);
+ 
+ /* xattr.c */
+ void *read_all_xattrs(struct f2fs_sb_info *, struct f2fs_node *);
+diff --git a/fsck/segment.c b/fsck/segment.c
+index 0487f41..878fb85 100644
+--- a/fsck/segment.c
++++ b/fsck/segment.c
+@@ -351,6 +351,17 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
+ 	if (de->ino == 0)
+ 		return -1;
+ 
++ 	if (de->from_devino) {
++ 		struct hardlink_cache_entry *found_hardlink;
++
++ 		found_hardlink = f2fs_search_hardlink(sbi, de);
++ 		if (found_hardlink && found_hardlink->to_ino &&
++ 				found_hardlink->nbuild)
++ 			return 0;
++
++ 		found_hardlink->nbuild++;
++ 	}
++
+ 	fd = open(de->full_path, O_RDONLY);
+ 	if (fd < 0) {
+ 		MSG(0, "Skip: Fail to open %s\n", de->full_path);
+diff --git a/fsck/sload.c b/fsck/sload.c
+index 14012fb..f3a6c12 100644
+--- a/fsck/sload.c
++++ b/fsck/sload.c
+@@ -148,6 +148,12 @@ static void set_inode_metadata(struct dentry *de)
+ 	}
+ 
+ 	if (S_ISREG(stat.st_mode)) {
++		if (stat.st_nlink > 1) {
++			/* This file might have multiple links to it, so remember device and inode */
++			de->from_devino = stat.st_dev;
++			de->from_devino <<= 32;
++			de->from_devino |= stat.st_ino;
++		}
+ 		de->file_type = F2FS_FT_REG_FILE;
+ 	} else if (S_ISDIR(stat.st_mode)) {
+ 		de->file_type = F2FS_FT_DIR;
+@@ -333,6 +339,9 @@ int f2fs_sload(struct f2fs_sb_info *sbi)
+ 	/* flush NAT/SIT journal entries */
+ 	flush_journal_entries(sbi);
+ 
++	/* initialize empty hardlink cache */
++	sbi->hardlink_cache = 0;
++
+ 	ret = build_directory(sbi, c.from_dir, "/",
+ 					c.target_out_dir, F2FS_ROOT_INO(sbi));
+ 	if (ret) {
 -- 
-2.29.2
+2.24.3 (Apple Git-128)
+
 
 
 
