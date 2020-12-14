@@ -2,141 +2,72 @@ Return-Path: <SRS0=ikBs=FS=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CF9C4361B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Dec 2020 04:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05B7C4361B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Dec 2020 05:53:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 788BD20771
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Dec 2020 04:29:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788BD20771
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oppo.com
+	by mail.kernel.org (Postfix) with ESMTPS id 7108C207A0;
+	Mon, 14 Dec 2020 05:53:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7108C207A0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kofUh-000504-K5; Mon, 14 Dec 2020 04:29:55 +0000
+	id 1kognu-0003SB-Mp; Mon, 14 Dec 2020 05:53:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <guoweichao@oppo.com>) id 1kofUg-0004zx-DI
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Dec 2020 04:29:54 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kognt-0003Rz-W1
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Dec 2020 05:53:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Message-Id:Date:Subject:
- Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+ From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fU5X1BM+qu4MBrnRgwHh6bUvZf+Ri25ZdfcfmR2ltWI=; b=HtLPFfeKO+D8npaBxlCeDmFIbq
- 6kXKs9Zp7/kKgVmvEGSxk1bLl9vT3uH707AQ7IASlYNAvL/B+EvDOzUvU8nV2igEPcjfsLyjA+r8C
- ZbA0oJiEd543Y3ETFD336RCdMKX1O+K3GBsX+Am6C7kRSUb/py2eglHUUicxkzpkMmXk=;
+ bh=Dp+nU55IT4YkVFkL5ZNB+8NNZt/ADeTRdb/5UMcxfpw=; b=RX8V18oQW03NY0PgjYG5jLXswA
+ XNEJff1omh3qF6imbzKsBErb3mAFk1qoHSC2UAj8T+s/+CUQ2KRcftGEw8RWw2oKLLe9NyfwmnnjW
+ n88xSJ9fnfEOfD/1HxVPnGcki+7hqHRl8WD5YckOCoXrUx29pgcq32oRlts6mCys6DgE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Type:Message-Id:Date:Subject:Cc:To:From:Sender:
+ h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
  Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=fU5X1BM+qu4MBrnRgwHh6bUvZf+Ri25ZdfcfmR2ltWI=; b=h
- e5e3sFU1NB/EIWitaAyHRg7rorcX/NVeDxxWN//EYJADV1cGw8KAgD1gkjYfkBfG9PeSPSQtcqO/0
- zpJrkA618B7ue9Rrt00Bd73VJzmkZqYXmMP8RRKTQzKdIrI7sTM1ibPnsBL0Gd+HY06kX9Y0Q9mFl
- 90vu2URJAOJpu7Hc=;
-Received: from mail-eopbgr1310041.outbound.protection.outlook.com
- ([40.107.131.41] helo=APC01-SG2-obe.outbound.protection.outlook.com)
+ List-Owner:List-Archive; bh=Dp+nU55IT4YkVFkL5ZNB+8NNZt/ADeTRdb/5UMcxfpw=; b=G
+ p/YZQK1b6CzM6Gfvq+c1t+ISx6GQr+5FqyFhFl5bZekAupn/dY77+nPzoGaXbFo/uTRlcsPl9IA1L
+ 09w7SA7sU9WEUAQTnzio06txJzfKHxHweqiFWxQWyKOVGTVpE99sdMw5TH30yAGbz6/JLc+X201rM
+ tip27CKtEiIUge7Q=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kofUS-00D9RD-3j
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Dec 2020 04:29:54 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WOZuFBobWGt7qOhYxHWgO9aUc9zVjO01MPWgYAY6zm0vvguVuVS86utxLanJxf9wUfx2BW0r/zH8qlY3vLZzI9IU9fQSwWQSLJoDppjcBuiYzD22DmuH+sY5a1aJ0GzDuSTojv4hOOnJgHmRWN7EXXZKH+UGjB4DrhlvDNW3+YtlAtnGGdR2PmG9KF4ABpGsdYryqmHTU2KG6G/BLH01q0UhL0dCfxC5A7+6JdhwBlI4RNltca5/Y6Mw42qWvI6n1vQWWUoApWd42c3Tx3SGjOsfI8t9eaYtrSE/7mo0bLOsNc6/AYyoJFUlGEvr6p9XlsvRagkL5qeO6Ud3EIcFnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fU5X1BM+qu4MBrnRgwHh6bUvZf+Ri25ZdfcfmR2ltWI=;
- b=QgTTECJM6SjKF2/ZF7LeEd6Puka50w71isjmqBII4O/94dNhQiciGUVUOFozO++bXT5zvyw7tC31/FMGikMGY1rrHaqdvyvCEfmblF7kaGsfZrJpymJlIisqd9+vVzyMX6PAfKuhq1JByIpv4F5PDsMhtzWGKeGq8Yg6f+OsGDE9IrzITi3EonVH8ppn6QI4KDBC2MY7/HEAeJ0NAVYWiYOtcBVjaXSQvxdnIBBrwaE/Ho139w9TaIaX2amJypP/rKEKhOn99nMHPbmJpPjZ0xzLKnupThgNu46WkYGI3RELXuw1NPz4OF5UeYNdLYx48Dj/Zd/hKW5Gbqr/Gzec2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oppoglobal.onmicrosoft.com; s=selector1-oppoglobal-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fU5X1BM+qu4MBrnRgwHh6bUvZf+Ri25ZdfcfmR2ltWI=;
- b=DPNikAk5VL14vB9UCB2ji0vICjQFFwaubl0dnWW3xWiYNHmz+pJDouwzYn8dDhW61UMpRDYa0DlQgaA82rMdRlJx2o0AZB+zp7QxVpvBND4i3juQ6ZHFrFfL7MNOss3kd4ZQ/AbpGwqv2KN4PjPM7bkUZvvNUGiky5D9votBjw4=
-Authentication-Results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=oppo.com;
-Received: from HK0PR02MB2690.apcprd02.prod.outlook.com (2603:1096:203:6e::12)
- by HK0PR02MB2817.apcprd02.prod.outlook.com (2603:1096:203:6a::18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3654.12; Mon, 14 Dec
- 2020 03:55:08 +0000
-Received: from HK0PR02MB2690.apcprd02.prod.outlook.com
- ([fe80::d5a6:bc00:7ae0:f691]) by HK0PR02MB2690.apcprd02.prod.outlook.com
- ([fe80::d5a6:bc00:7ae0:f691%3]) with mapi id 15.20.3654.023; Mon, 14 Dec 2020
- 03:55:07 +0000
-From: Weichao Guo <guoweichao@oppo.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Mon, 14 Dec 2020 11:54:53 +0800
-Message-Id: <1607918093-204-1-git-send-email-guoweichao@oppo.com>
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [58.252.5.68]
-X-ClientProxiedBy: HK2PR04CA0059.apcprd04.prod.outlook.com
- (2603:1096:202:14::27) To HK0PR02MB2690.apcprd02.prod.outlook.com
- (2603:1096:203:6e::12)
+ id 1kognk-00DDqU-AR
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Dec 2020 05:53:49 +0000
+Date: Sun, 13 Dec 2020 21:53:27 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1607925209;
+ bh=i16BifUJiG908ADKX33lN3E+d1H+NPST+DKFRlua0sc=;
+ h=From:To:Cc:Subject:From;
+ b=Vz742K6NGVNpmN1b2Mu7MfDQY8/MpslxDH3rDOKvNd87Tq2HQdUGp9Zb28PahoBTo
+ 9KPjGVineDijLgwV+U7csBNuX0nb9QN6k83hjaxFeZNk2GTahWNQFC71XfcguogXN8
+ +trPJwx0qNFUM8+41Iv05enSTy0VwY4KkCf/G/1i8NTMKV0TNzg7yRbHKXd9MN43wh
+ po+FoQ3oHkG05hHTVnwWwtKuf+W4TvAE0FIZV7YWp16KTnzUOa8xR21rrX8gQn/3lF
+ RbpB4SoHtb7EzqCCoueVr6+UL4NR02NttEHOBGIwt2+YnC4k2oUvX7yo4kzowW8Ygr
+ wlnxN5hS3PGqg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <X9b910/Ldj6kdljm@sol.localdomain>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from N80263842.adc.com (58.252.5.68) by
- HK2PR04CA0059.apcprd04.prod.outlook.com (2603:1096:202:14::27) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.3654.12 via Frontend Transport; Mon, 14 Dec 2020 03:55:07 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4fb51a06-7bba-43da-0d4f-08d89fe40c36
-X-MS-TrafficTypeDiagnostic: HK0PR02MB2817:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <HK0PR02MB2817E9881EC8ED124C8F0E71B6C70@HK0PR02MB2817.apcprd02.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2657;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: IDTi3c+Wxts4t91Bfu4jwZ3Fy5KDXEwzdMJQg5chhwdj+FZZEQu0ZCt5xDwwLfMHpAclXCKVg3Lt1BB83UKezCgz5+EUixCKeAuIADy3ZfJsjJbv9yYMdTbxdQ8velN9XeSedVbIm6b3kaOwzRSa/xjzwjReTdhpCK7/6t1k3QqGHajryOXKm6TBXjth0KHtWJUFKWfADqKVZzweI7ZAzYgUsGbOqhymezAm8iU/uZy8DMMoCc36zO9HLBU6ocjyg1R9TSGNFlLuszypxTRjxJGKA/+VCorzdx3Oi/3TyWxWLKwf9GZDTblW8ZHLNnKRhp4J4lnxy3JRMJI9qY4Ahg+7UHh9rMjc7wFvomiJ/8vSWeuslVFRcSCTtZbHFFPG
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:HK0PR02MB2690.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(4636009)(39860400002)(366004)(396003)(376002)(136003)(346002)(8676002)(54906003)(6666004)(6506007)(36756003)(2616005)(83380400001)(4744005)(478600001)(107886003)(66946007)(956004)(86362001)(26005)(6486002)(2906002)(316002)(16526019)(66476007)(5660300002)(52116002)(6512007)(66556008)(186003)(8936002)(4326008)(11606006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?4H+jYPjXtfbUJj8/Zuhc2kVnFM+2HUlEH7DLiEyVtf5A4l7qT/p9SDt45Lo3?=
- =?us-ascii?Q?sp+cpzp9mj83mlB/KIMCz/j85nBNxdVV+iS0ZcQUx8j8NZtovL66hyIwGtiI?=
- =?us-ascii?Q?EuSdx90ZCFcQJATQEjZj37mZy0dCwgubQJnpMmdBYqmaATNY1PP58t+VNIuI?=
- =?us-ascii?Q?rR58rf+0vXBL3c+oieZfL8D2Rvehl45GgULEllr/rirOt+UgAAWGvViErPtU?=
- =?us-ascii?Q?0mNCInAldVZKhu5PElrEzIKdvqYNl688p6LZUuC9os4cdR0VW7e3d2SeavFX?=
- =?us-ascii?Q?lglc0Uqw93Z35pjXkcT28f0qlw7pcNxm3TYA2jskktmmCnWEzxf7V53Ik1ep?=
- =?us-ascii?Q?xAD6QajhU9c6jOvEn43W3KBwRlfvWJ3Q91BArh1jy2Sq3tKaH5VdHWogYbvq?=
- =?us-ascii?Q?0t2pZz3dlMspqM0tIUpNNWI4fuRC/eVr2mZOCqBLSXtqG+8byZecLIClvfSd?=
- =?us-ascii?Q?AR99BVYJOeBsa5flAsc70fR7uH1yEWegz3pJmaIKOxopVKCpB8TOD9uG0NgU?=
- =?us-ascii?Q?KeikXZlobyBgMOGL+Kd0Y4S8VFuwU9B9ZvNUQN1uj+BsJOCpnk8j8Xh7MOgw?=
- =?us-ascii?Q?9m+KOMMvLNg4h44RDQ2G/eECkE/RcBOTUQk0fre0UWrzw3ndL+TXifhQhB8B?=
- =?us-ascii?Q?gZkYCqU08ghM46Ewm+odw32DgRKps5RDyC0M/AruC870nWo4kSKsRy185lW/?=
- =?us-ascii?Q?nC5VL/Pw6WCo5jTEr1V4T22ECaniv4Bq4BETZZ8872PUJCHY15ZxBgwqIRDm?=
- =?us-ascii?Q?x5jCMZnt+pDOS2JLpXYe4Xcrvr9BwK3AginNWZd5sWeDZJAQMTtXughRzi02?=
- =?us-ascii?Q?5blHul2rjSDnisl1wMASOcB6py9q4MR1uNXXiYPESDoNe31gR1MW9GYj1J4Q?=
- =?us-ascii?Q?fBzuQoy3kLEfjD307xVnH3/KJOJF8ZJdVmBcWXPj4RvD9eu1n44yLV+KaZFR?=
- =?us-ascii?Q?IWWMTM0UkuLy64LTRMTxVu0d4/f7lzCghrWLrWJ5ikQ4aUNO+WZbzzto+3Qe?=
- =?us-ascii?Q?puJk?=
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-AuthSource: HK0PR02MB2690.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Dec 2020 03:55:07.8224 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4fb51a06-7bba-43da-0d4f-08d89fe40c36
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YZ0MYG/4lFZvnXUgGNsvVwbXYQRSM1BvGiAvzNFgdhZoq9JwFKkf9dQV6NxumgZunwjjUeCdq7AwNJixNUxHVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR02MB2817
-X-Headers-End: 1kofUS-00D9RD-3j
-Subject: [f2fs-dev] [PATCH] f2fs: fix to set inode->i_mode correctly for
- posix_acl_update_mode
+Content-Disposition: inline
+X-Headers-End: 1kognk-00DDqU-AR
+Subject: [f2fs-dev] [GIT PULL] fsverity updates for 5.11
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -148,45 +79,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Bin Shu <shubin@oppo.com>, fh@oppo.com,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-We should update the ~S_IRWXUGO part of inode->i_mode in __setattr_copy,
-because posix_acl_update_mode updates mode based on inode->i_mode,
-which finally overwrites the ~S_IRWXUGO part of i_acl_mode with old i_mode.
+The following changes since commit 09162bc32c880a791c6c0668ce0745cf7958f576:
 
-Testcase to reproduce this bug:
-0. adduser abc
-1. mkfs.f2fs /dev/sdd
-2. mount -t f2fs /dev/sdd /mnt/f2fs
-3. mkdir /mnt/f2fs/test
-4. setfacl -m u:abc:r /mnt/f2fs/test
-5. chmod +s /mnt/f2fs/test
+  Linux 5.10-rc4 (2020-11-15 16:44:31 -0800)
 
-Signed-off-by: Weichao Guo <guoweichao@oppo.com>
-Signed-off-by: Bin Shu <shubin@oppo.com>
----
- fs/f2fs/file.c | 1 +
- 1 file changed, 1 insertion(+)
+are available in the Git repository at:
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 16ea10f..4d355f9 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -850,6 +850,7 @@ static void __setattr_copy(struct inode *inode, const struct iattr *attr)
- 
- 		if (!in_group_p(inode->i_gid) && !capable(CAP_FSETID))
- 			mode &= ~S_ISGID;
-+		inode->i_mode = (inode->i_mode & S_IRWXUGO) | (mode & ~S_IRWXUGO);
- 		set_acl_inode(inode, mode);
- 	}
- }
--- 
-2.7.4
+  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fsverity-for-linus
 
+for you to fetch changes up to bde493349025ca0559e2fff88592935af3b8df19:
+
+  fs-verity: move structs needed for file signing to UAPI header (2020-11-23 19:30:14 -0800)
+
+----------------------------------------------------------------
+
+Some cleanups for fs-verity:
+
+- Rename some names that have been causing confusion.
+
+- Move structs needed for file signing to the UAPI header.
+
+----------------------------------------------------------------
+Eric Biggers (4):
+      fs-verity: remove filenames from file comments
+      fs-verity: rename fsverity_signed_digest to fsverity_formatted_digest
+      fs-verity: rename "file measurement" to "file digest"
+      fs-verity: move structs needed for file signing to UAPI header
+
+ Documentation/filesystems/fsverity.rst | 68 ++++++++++++++++------------------
+ fs/verity/enable.c                     |  8 ++--
+ fs/verity/fsverity_private.h           | 36 ++----------------
+ fs/verity/hash_algs.c                  |  2 +-
+ fs/verity/init.c                       |  2 +-
+ fs/verity/measure.c                    | 12 +++---
+ fs/verity/open.c                       | 24 ++++++------
+ fs/verity/signature.c                  | 14 +++----
+ fs/verity/verify.c                     |  2 +-
+ include/uapi/linux/fsverity.h          | 49 ++++++++++++++++++++++++
+ 10 files changed, 116 insertions(+), 101 deletions(-)
 
 
 _______________________________________________
