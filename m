@@ -2,71 +2,79 @@ Return-Path: <SRS0=ikBs=FS=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B24C4361B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Dec 2020 09:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA13C4361B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Dec 2020 20:56:53 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AA40620771
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 14 Dec 2020 09:21:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA40620771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 1C8D422B3B;
+	Mon, 14 Dec 2020 20:56:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8D422B3B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kok30-0000MF-O0; Mon, 14 Dec 2020 09:21:38 +0000
+	id 1koutn-0008Vb-Dv; Mon, 14 Dec 2020 20:56:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kok2l-0000Ll-VB
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Dec 2020 09:21:23 +0000
+ (envelope-from <pr-tracker-bot@kernel.org>) id 1koutm-0008VR-VL
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Dec 2020 20:56:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:Date:Message-Id:References:In-Reply-To:From:
+ Subject:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NNqZ1jNwIEQWqMwh7TUFhnYCWZUWGLixYSU+gzKtXBo=; b=PsLF2Gwij9b52z6cspQtR2bc2g
- zfELnv112fpqYLvdsvgE17TSvNgnRYnE5+4XWW7C45hARsUtEedi9iRhHOV90svjiD4Tiyz5gcXzA
- J6wyCGHCUDdWtNEDCCSUOJH7oOxoMY2UiDXDNQT9XrCcPZhs3Le/MyETNQfOdzYLMZaU=;
+ bh=ZCvYkVNA6efi8yus+M5IZiPKHZDAd9Y9vmXy3c2CiKA=; b=kn2Ibx5F7hhYv1JLhs1z16epAJ
+ tRd3ZnhZC1gq831XM/7w52e+3tpqhxK0mhHmwmNDpH7pcJvdOyxH7KCRKgKc80vC37fv56VAscrxr
+ w4cGj2XnaGEpWyASbLVYatoBPuE2KWvdfOClafpm0BcEX4egmmFcrPpYwX63VxCDafnM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=NNqZ1jNwIEQWqMwh7TUFhnYCWZUWGLixYSU+gzKtXBo=; b=c
- Nkw/DPjL+QAu6Hy+krA8eWMHPjcdqJUQJ3E45yHIJ4uAGxdlZfxAD2BIq8lhiIemnzK/HSmSc0kH/
- vjEqDGroH0kHUL49cXMiHYIOkP94sv0SXsjzCJRUIy1S20ofYeHC5NFuNI9TPRW3IQZDHCf3tn/BC
- xf81GvFfc93MBWag=;
-Received: from szxga07-in.huawei.com ([45.249.212.35])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ h=Cc:To:Date:Message-Id:References:In-Reply-To:From:Subject:Sender:Reply-To
+ :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ZCvYkVNA6efi8yus+M5IZiPKHZDAd9Y9vmXy3c2CiKA=; b=Rvspz/yeAhYz8DUxW/xrgeVLC7
+ Cn5Dht+fPsp+Mzia+zLiHgRIOGYEjxO43x6XrZqasooZma3tiTAvfW1j8ksk6qi39+OBqtPlSsXjJ
+ WUPp10AcRt/yjCW6Arxi7n3vbZQpWwks6PigFnUzEVnman5YF82HNfvFl0bHmNpO5y7o=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kok2d-00DPI0-Sx
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Dec 2020 09:21:23 +0000
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4CvbTV4tSCz7Fq6;
- Mon, 14 Dec 2020 17:20:30 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 14 Dec 2020 17:21:00 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Mon, 14 Dec 2020 17:20:57 +0800
-Message-ID: <20201214092057.21629-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.29.2
-MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1kok2d-00DPI0-Sx
-Subject: [f2fs-dev] [PATCH] f2fs: fix to tag FIEMAP_EXTENT_MERGED in
- f2fs_fiemap()
+ id 1koutk-00D1Uk-Qg
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 14 Dec 2020 20:56:50 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1607979389;
+ bh=SYq1bIYMrR7dKenr5O6tsqn7Cs9DoPJBsBbmjg3Pi4w=;
+ h=From:In-Reply-To:References:Date:To:Cc:From;
+ b=D5RYJr1xHimBJzu0z4RPdsPgwzc83vHfyuniQ8o8Ypw/C58SdGKFotbwWwt8kUMEC
+ aSr191iwAitghakUcscUOHJlfdEvkbLS7A1P3aAeSDVRAjUfTEw7yXy0/b6sJPs2JU
+ jJIgNFuBuhFbgR7D4f9W0IxZjGN4RIro0rwuBEfQXhB3SPvfNHLHPPTGT0+ILjjkmj
+ Z3HaPRCzQBk6RTGY4QQoe+xhv5wnXGzQFRFdp1oz56afzCMC+/YVdzpj7zoqzuBZ+s
+ ZmHvBkGQYTLYrZKijUzX9ytGRe5b0BIHN6txWgodrLePpiLCvO2opPorLSXQZlh/Rw
+ wcEDaxnFxsQKA==
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <X9b910/Ldj6kdljm@sol.localdomain>
+References: <X9b910/Ldj6kdljm@sol.localdomain>
+X-PR-Tracked-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+X-PR-Tracked-Message-Id: <X9b910/Ldj6kdljm@sol.localdomain>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
+ tags/fsverity-for-linus
+X-PR-Tracked-Commit-Id: bde493349025ca0559e2fff88592935af3b8df19
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 51895d58c7c0c65afac21570cc14a7189942959a
+Message-Id: <160797938955.26822.4023695605419451387.pr-tracker-bot@kernel.org>
+Date: Mon, 14 Dec 2020 20:56:29 +0000
+To: Eric Biggers <ebiggers@kernel.org>
+X-Headers-End: 1koutk-00D1Uk-Qg
+Subject: Re: [f2fs-dev] [GIT PULL] fsverity updates for 5.11
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,36 +86,27 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs does not natively support extents in metadata, 'extent' in f2fs
-is used as a virtual concept, so in f2fs_fiemap() interface, it needs
-to tag FIEMAP_EXTENT_MERGED flag to indicated the extent status is a
-result of merging.
+The pull request you sent on Sun, 13 Dec 2020 21:53:27 -0800:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c | 1 +
- 1 file changed, 1 insertion(+)
+> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fsverity-for-linus
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 894c5680db4a..baa9ccf84e2c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1971,6 +1971,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	}
- 
- 	if (size) {
-+		flags |= FIEMAP_EXTENT_MERGED;
- 		if (IS_ENCRYPTED(inode))
- 			flags |= FIEMAP_EXTENT_DATA_ENCRYPTED;
- 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/51895d58c7c0c65afac21570cc14a7189942959a
+
+Thank you!
+
 -- 
-2.29.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
 
 _______________________________________________
