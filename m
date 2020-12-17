@@ -5,16 +5,16 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB9DC2BB48
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Dec 2020 15:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B37C4361B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Dec 2020 15:10:42 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 63915235F9
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Dec 2020 15:05:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63915235F9
+	by mail.kernel.org (Postfix) with ESMTPS id 4B9ED235FD
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Dec 2020 15:10:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9ED235FD
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,28 +23,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=kEf9IiX0WN4wqHK2Fl83TM/wS4mKQ6kicqC64uGnUMw=; b=QwoG9RCMqJjOHFDOqkGiLtRDh
-	OMFVD27myGY2o2KfvxKBOqGcgqERokJyO6oOjqTb/iYUKAkPCXAL5Qov8F1hxnen5TeGnpFvOGy18
-	iZ/cpP60iLToXP2sbZRvf5JG+FTAIDosTAejGchBHGQ4qO9Hsu1c9Oe0QwzVFKfqeQNSg=;
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	 bh=soUNwq3XDqpKNpGdUXOJbvxToloR3X/QQj4VQxqUwMg=; b=l8Ry1405684ca+Fj+hwQJWW+1
+	vGSuih10xjCBdCsux5Ms8FB4xQrOhSP7WZaWy6+8wYyAWtfXMeleC/XCkma7ppRdj7f+85bBvf1Iw
+	+sF2y0wXCBO4LG5XV51daocNwNeV1DR/YZefeEYU7K0k9Phm2CSYsysKyonF2JYftDfwQ=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kpuqB-0005aK-0L; Thu, 17 Dec 2020 15:05:15 +0000
+	id 1kpuvR-0004fJ-QL; Thu, 17 Dec 2020 15:10:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3k3PbXwYKAOwgOhmOhUccUZS.Qca@flex--satyat.bounces.google.com>)
- id 1kpuq7-0005a8-H6
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Dec 2020 15:05:11 +0000
+ (envelope-from <35nTbXwYKAEMxfy3fylttlqj.htr@flex--satyat.bounces.google.com>)
+ id 1kpuvP-0004ep-TX
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Dec 2020 15:10:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gUHtlY29KgYt4sJ00WK6RieWdOsnGeYeOfjOKvllIlw=; b=Li1ZUuGnWVgcizMoVYf7jdxbw
- ixI4dNihlfjpc0F8D4Gp61v/xm7Tb9NKxNueGbCs6Ku7MzOUMTYXaUfyrcDcBt/qUqwkZFMMrezwD
- dcFk5YcWsCxyC0/xYS3cQ7Wns9CHI6UEulI/HszLRA2X6p5aNKwOO47J/nuGlZG5y4xPM=;
+ bh=++TotkQ1z+X0zzxeRHf1h4kyqkNEnjDXm22E4kriCUQ=; b=keBUdEN0p3cMG5KKYJqIBvW6k
+ k9NEmRBqcpN1vKDY7sIvyAdc+IWTHRR2fnwnG6Yp94U+kW2Lnur5ihS25gxNFjqFrJflA7huL930h
+ E5623QwfX6wOP74vZU3ZPHLatBFRRRr8vWcBSBiqNMDziTWL1QgWYrcj2zUWWdwe6D0IE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -52,55 +52,56 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gUHtlY29KgYt4sJ00WK6RieWdOsnGeYeOfjOKvllIlw=; b=GI3bFKLUM0BA6huWL9j5qxfgrp
- ppNsu51Z34ANo5s+09gXKc+wTAi4xXVS/zs6cWBkeKAPX84yJpE3Qw2oG/EfhozqjlFOb7TEgAW6d
- XkwJUoSSz9G338dRM56N9XYVuEUjd78rlrxguZDAYocsEvekZIOjZx/t/+M1/WOaPgOQ=;
-Received: from mail-qk1-f201.google.com ([209.85.222.201])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=++TotkQ1z+X0zzxeRHf1h4kyqkNEnjDXm22E4kriCUQ=; b=eklIokiO5la+k5Rj2U8r1li0g1
+ zzwsislVWGsmeHexVgzqfftMpg4/7fkicv1gDb4rUw9zgz3gR06h6wfCA2bpPSpnKLuCYw10rnFvD
+ ybVP+BmDxIRwjcT4oqstnwGKw1BzhoopOAWVZVEIYSnt2/XNVZ6vOcjkxxb8W6BF5Fdc=;
+Received: from mail-pf1-f202.google.com ([209.85.210.202])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kpupt-000266-16
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Dec 2020 15:05:11 +0000
-Received: by mail-qk1-f201.google.com with SMTP id n190so22466684qkf.18
+ id 1kpuvM-000FNF-2H
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Dec 2020 15:10:39 +0000
+Received: by mail-pf1-f202.google.com with SMTP id q22so18701876pfj.20
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 17 Dec 2020 07:04:56 -0800 (PST)
+ Thu, 17 Dec 2020 07:10:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=sender:date:in-reply-to:message-id:mime-version:references:subject
- :from:to:cc; bh=gUHtlY29KgYt4sJ00WK6RieWdOsnGeYeOfjOKvllIlw=;
- b=hXnpH4iybBNdXkdra8xGAeRwak4mM5FsawfYx5o+i4XIL6/L+yIeNbxDaYs90z8g22
- excIt5dg2/HLr6cd3Lkm5YLaShtVzP8uvz5cb+54qwVzUHqFoguDecYQVWkeXAM3XYqz
- P8nQNJtuCctra0nAmlQ8umC2QMe4BKnpEgsQYKAM1fs+NMByfDmv60kd5yuwXJjTPvu0
- I+mpiun5a98CObtZMoDjuO+HHLOhiGJUcQQ0tri4E4mjRm5IoXIr72s28SFCJqgUNeGN
- b925rRpfbYE8YOsKsauH6l0c8V9kSX16sN8Hi1C733lL2AqXIHjJiHRc9zG+CnJDtKRH
- jdsg==
+ :from:to:cc; bh=++TotkQ1z+X0zzxeRHf1h4kyqkNEnjDXm22E4kriCUQ=;
+ b=FKQ6cyW6OEGxmCmb11+E+YMDad6B6aAZ9T6FLYoi/ongAFylaPKIK0tKmj0cHOU1FG
+ 4FNj7PXW/P2qpwA4Dpe/qEB6oprXqrgh6PWfPKEmkBANShvsFlZAzq8Ip2fyTv6j9C5d
+ QJU1qMCuoYNKdVWTsOvQ3vcyPDTBVa++i2devEn/sG+P9baaFbyapF9kRtQX5XZUxIk9
+ G4GjhPMwf/7u7tTaV1JE/2JG8WWt6WN75ff1JdgX3nj5ZIYwuNZwKpFME4k3adMitGrc
+ h3GJM8okmTe+j940Hh6Mm2s4rQAwzX1wa/QhRdPiFE0S6iVBsQJ9BdJ7Ovaq9hEfAFrO
+ 6T8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=gUHtlY29KgYt4sJ00WK6RieWdOsnGeYeOfjOKvllIlw=;
- b=ibeD//pqE/kg1hxc9AAqh8Hc/CLP3X8FcQ5wQ836cvoNFDsWco+LSPbPtDn+EuGgkB
- pbfPO9kzantS0j3HkjQHQf9NFlMLKNcRfu4lidTHFvitARytNR5rL6ueIox7p/bJ2GLh
- m16exUwLReXny7AjmYqCs07I0XMx1UAg1Ie/mOEwNBYpwbmBYUxOFAJQdnyv6CPQzK5M
- NHEYRWWbtS96zyK56twkZKljSoy5wZy8g9BdA6p9XvlQlPUMooslbQW1F+wnNwMdo1SY
- PIJIUQMvGsFFP92Fv/hnflwn0P2BpXIjBwoIfPvnpizOJEvsXxDn/o3GFxOntILEHv3I
- PYSA==
-X-Gm-Message-State: AOAM532OqSWXw653ZxOaZ+thsim7YF+zjFU9QyQSqzMDpO5IH6E2eXhv
- No0QBlliwUfVSU/oU6pMf8cGS1DJRU4=
-X-Google-Smtp-Source: ABdhPJxfVLg4dVq1oQLbKGyjfcacFaij6ffBEa7ezVhjup4u5DaiBk1bP+eQsCkMuUm56B9OLd27A3wZ5NQ=
+ bh=++TotkQ1z+X0zzxeRHf1h4kyqkNEnjDXm22E4kriCUQ=;
+ b=qAQ4WbgCv2yIDsrahh4EncbTOUiGiOWD+dMV3bsaH+FiHnAa/b+XONaf+kuN2LZizi
+ l7gMHuIcRKWW2IzOHSQoMX3dGUwkx15Q4k/4rDE1hRYnuWE9NFrDzVI5zwA//0PxZ2wa
+ ltFmbHD/aKLr68wI9DXETtN6vH9OnvY14Bgd6sGtvXiBtmcrHP2seSUio32j4G+J9rvi
+ mfQVhi4X2QVjaC46C2CYPElgL9n8E7ODpR2/M8qQ4BUtBIMK1j5S7UF7chp3BMoKkK8a
+ bf1M+Wn4Wf6w+FPh4uieY0ok8+qx89nJl7+2oVxfV0XsgOi53KzndVxbygcB7/t9lF4F
+ xyNw==
+X-Gm-Message-State: AOAM530FNLYMEUm5G1aktGUr5z7mtyZG7xb9WZBBesqzcFhyMzEMO3hK
+ k1qAheaylmabpOeSQo5r14HfZBW2UZE=
+X-Google-Smtp-Source: ABdhPJxnATrAurdLM44eyMC0wK1oz60VltCe4DRXvsIOL0RNtohr3hXjx987O7Fc0j7JcYYRcYXxDjscYFw=
 X-Received: from satyaprateek.c.googlers.com
  ([fda3:e722:ac3:10:24:72f4:c0a8:1092])
- (user=satyat job=sendgmr) by 2002:a0c:f00e:: with SMTP id
- z14mr28530594qvk.25.1608217491181; 
- Thu, 17 Dec 2020 07:04:51 -0800 (PST)
-Date: Thu, 17 Dec 2020 15:04:35 +0000
-In-Reply-To: <20201217150435.1505269-1-satyat@google.com>
-Message-Id: <20201217150435.1505269-4-satyat@google.com>
+ (user=satyat job=sendgmr) by 2002:a17:902:9a49:b029:da:b3b0:94a1 with SMTP id
+ x9-20020a1709029a49b02900dab3b094a1mr6572158plv.11.1608217830230; Thu, 17 Dec
+ 2020 07:10:30 -0800 (PST)
+Date: Thu, 17 Dec 2020 15:10:12 +0000
+In-Reply-To: <20201217151013.1513045-1-satyat@google.com>
+Message-Id: <20201217151013.1513045-2-satyat@google.com>
 Mime-Version: 1.0
-References: <20201217150435.1505269-1-satyat@google.com>
+References: <20201217151013.1513045-1-satyat@google.com>
 X-Mailer: git-send-email 2.29.2.684.gfbc64c5ab5-goog
-To: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
- Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>
-X-Headers-End: 1kpupt-000266-16
-Subject: [f2fs-dev] [PATCH v2 3/3] f2fs: Add metadata encryption support
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+ Chao Yu <chao@kernel.org>
+X-Headers-End: 1kpuvM-000FNF-2H
+Subject: [f2fs-dev] [PATCH v2 1/2] f2fs-tools: Introduce metadata encryption
+ support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -115,268 +116,981 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Satya Tangirala via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Satya Tangirala <satyat@google.com>
-Cc: linux-fscrypt@vger.kernel.org, Satya Tangirala <satyat@google.com>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Satya Tangirala <satyat@google.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Wire up metadata encryption support with the fscrypt metadata crypt
-additions. Note that this feature relies on the blk-crypto framework
-for encryption, and thus requires either hardware inline encryption
-support or the blk-crypto-fallback.
+Introduce native metadata encryption support for f2fs. All blocks
+other than the super block (and its redundant copy) are encrypted with the
+specified metadata encryption key and algorithm. The IV for each block is
+its block number in the filesystem.
 
-Filesystems can be configured with metadata encryption support using the
-f2fs userspace tools (mkfs.f2fs). Once formatted, F2FS filesystems with
-metadata encryption can be mounted as long as the required key is present.
-fscrypt looks for a logon key with the key descriptor=
-fscrypt:<metadata_key_identifier>. The metadata_key_identifier is stored in
-the filesystem superblock (and the userspace tools print the required
-key descriptor).
+This patch introduces two new options '-A' and '-M' for specifying metadata
+crypt options to mkfs.f2fs. '-A' takes the desired metadata encryption
+algorithm as argument. '-M' takes the linux key_serial of the metadata
+crypt key as the argument. The keyring key provided must be of a key
+type that supports reading the payload from userspace.
 
-Right now, the superblock of the filesystem is itself not encrypted. F2FS
-reads the superblock using sb_bread, which uses the bd_inode of the block
-device as the address space for any data it reads from the block device -
-the data read under the bd_inode address space must be what is physically
-present on disk (i.e. if the superblock is encrypted, then the ciphertext
-of the superblock must be present in the page cache in the bd_inode's
-address space), but f2fs requires that the superblock is decrypted by
-blk-crypto, which would put the decrypted page contents into the page cache
-instead. We could make f2fs read the superblock by submitting bios directly
-with a separate address space, but we choose to just not encrypt the
-superblock for now.
+mkfs.f2fs stores the encryption algorithm and the key's identifier in the
+superblock of the FS. The key's identifier is derived from the raw metadata
+key. The key identifier will be verified at mount time by the kernel by
+doing the same derivation on the raw metadata key (hence the metadata
+crypt key must be inserted with the same description as what mkfs.f2fs
+stores in the superblock and prints to stdout, before the filesystem can
+be mounted). The actual metadata encryption key used to encrypt metadata
+is derived from the raw metadata key (for details, refer to
+f2fs_metadata_process_key_serial()).
 
-Not encrypting the superblock allows us to store the encryption algorithm
-used for metadata encryption within the superblock itself, which simplifies
-a few things. The userspace tools will store the encryption algorithm in
-the superblock when formatting the FS.
-
-Direct I/O with metadata encryption is also not supported for now.
-Attempts to do direct I/O on a metadata encrypted F2FS filesystem will fall
-back to using buffered I/O (just as attempts to do direct I/O on fscrypt
-encrypted files also fall back to buffered I/O).
+The rest of the programs use the encryption algorithm and the key
+identifier stored in the superblock of the FS. They also verify that
+the payload of the key matches the identifier of the key, before proceeding
+to use the key.
 
 Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
- fs/f2fs/data.c          | 17 ++++++++--------
- fs/f2fs/f2fs.h          |  2 ++
- fs/f2fs/super.c         | 44 +++++++++++++++++++++++++++++++++++++----
- include/linux/f2fs_fs.h |  7 ++++++-
- 4 files changed, 57 insertions(+), 13 deletions(-)
+ README                        |   2 +
+ configure.ac                  |   2 +
+ fsck/main.c                   |   2 +
+ fsck/mount.c                  |  27 +++-
+ include/f2fs_fs.h             |  21 ++-
+ include/f2fs_metadata_crypt.h |  33 ++++
+ lib/Makefile.am               |   4 +-
+ lib/f2fs_metadata_crypt.c     | 284 ++++++++++++++++++++++++++++++++++
+ lib/libf2fs.c                 |   3 -
+ lib/libf2fs_io.c              |  78 +++++++++-
+ man/fsck.f2fs.8               |   5 +-
+ man/mkfs.f2fs.8               |  44 ++++++
+ mkfs/f2fs_format.c            |   8 +-
+ mkfs/f2fs_format_main.c       |  35 ++++-
+ 14 files changed, 529 insertions(+), 19 deletions(-)
+ create mode 100644 include/f2fs_metadata_crypt.h
+ create mode 100644 lib/f2fs_metadata_crypt.c
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 627164706029..4bb7d1dd2a18 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -460,8 +460,8 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
- 	return bio;
+diff --git a/README b/README
+index 4ea3356..881bebc 100644
+--- a/README
++++ b/README
+@@ -13,6 +13,8 @@ You should install the following packages.
+  - autoconf
+  - libtool
+  - libselinux1-dev
++ - libkeyutils-dev
++ - libkcapi-dev
+ 
+ Initial compilation
+ -------------------
+diff --git a/configure.ac b/configure.ac
+index 1e5619d..ddda70a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -85,9 +85,11 @@ AC_CHECK_HEADERS(m4_flatten([
+ 	attr/xattr.h
+ 	byteswap.h
+ 	fcntl.h
++	kcapi.h
+ 	linux/blkzoned.h
+ 	linux/falloc.h
+ 	linux/fs.h
++	linux/fscrypt.h
+ 	linux/hdreg.h
+ 	linux/limits.h
+ 	linux/posix_acl.h
+diff --git a/fsck/main.c b/fsck/main.c
+index 32559f1..36c9095 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -26,6 +26,8 @@
+ #include <stdbool.h>
+ #include "quotaio.h"
+ 
++#include "f2fs_metadata_crypt.h"
++
+ struct f2fs_fsck gfsck;
+ 
+ #ifdef WITH_ANDROID
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 8ebc5b0..5cbc962 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -11,6 +11,7 @@
+ #include "fsck.h"
+ #include "node.h"
+ #include "xattr.h"
++#include "f2fs_metadata_crypt.h"
+ #include <locale.h>
+ #include <stdbool.h>
+ #ifdef HAVE_LINUX_POSIX_ACL_H
+@@ -561,12 +562,21 @@ void print_sb_state(struct f2fs_super_block *sb)
+ 	if (f & cpu_to_le32(F2FS_FEATURE_COMPRESSION)) {
+ 		MSG(0, "%s", " compression");
+ 	}
++
+ 	MSG(0, "\n");
+ 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+ 					sb->encryption_level);
+ 	for (i = 0; i < 16; i++)
+ 		MSG(0, "%02x", sb->encrypt_pw_salt[i]);
+ 	MSG(0, "\n");
++
++	if (sb->metadata_crypt_alg) {
++		MSG(0, "Info: Metadata encryption enabled. Alg = %d, key identifier = fscrypt:",
++		    get_sb(metadata_crypt_alg));
++	}
++	for (i = 0; i < FSCRYPT_KEY_IDENTIFIER_SIZE; i++)
++		MSG(0, "%02x", sb->metadata_crypt_key_ident[i]);
++	MSG(0, "\n");
  }
  
--static void f2fs_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
--				  pgoff_t first_idx,
-+static void f2fs_set_bio_crypt_ctx(struct bio *bio, block_t blk_addr,
-+				  const struct inode *inode, pgoff_t first_idx,
- 				  const struct f2fs_io_info *fio,
- 				  gfp_t gfp_mask)
- {
-@@ -470,7 +470,7 @@ static void f2fs_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
- 	 * read/write raw data without encryption.
- 	 */
- 	if (!fio || !fio->encrypted_page)
--		fscrypt_set_bio_crypt_ctx(bio, 0, inode, first_idx, gfp_mask);
-+		fscrypt_set_bio_crypt_ctx(bio, blk_addr, inode, first_idx, gfp_mask);
- }
- 
- static bool f2fs_crypt_mergeable_bio(struct bio *bio, const struct inode *inode,
-@@ -712,7 +712,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	/* Allocate a new bio */
- 	bio = __bio_alloc(fio, 1);
- 
--	f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
-+	f2fs_set_bio_crypt_ctx(bio, fio->new_blkaddr, fio->page->mapping->host,
- 			       fio->page->index, fio, GFP_NOIO);
- 
- 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
-@@ -918,7 +918,8 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
- 	if (!bio) {
- 		bio = __bio_alloc(fio, BIO_MAX_PAGES);
- 		__attach_io_flag(fio);
--		f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
-+		f2fs_set_bio_crypt_ctx(bio, fio->new_blkaddr,
-+				       fio->page->mapping->host,
- 				       fio->page->index, fio, GFP_NOIO);
- 		bio_set_op_attrs(bio, fio->op, fio->op_flags);
- 
-@@ -992,7 +993,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 			goto skip;
+ static inline bool is_valid_data_blkaddr(block_t blkaddr)
+@@ -686,7 +696,7 @@ void update_superblock(struct f2fs_super_block *sb, int sb_mask)
+ 	memcpy(buf + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+ 	for (addr = SB0_ADDR; addr < SB_MAX_ADDR; addr++) {
+ 		if (SB_MASK(addr) & sb_mask) {
+-			ret = dev_write_block(buf, addr);
++			ret = dev_write_block_no_encrypt(buf, addr);
+ 			ASSERT(ret >= 0);
  		}
- 		io->bio = __bio_alloc(fio, BIO_MAX_PAGES);
--		f2fs_set_bio_crypt_ctx(io->bio, fio->page->mapping->host,
-+		f2fs_set_bio_crypt_ctx(io->bio, fio->new_blkaddr,
-+				       fio->page->mapping->host,
- 				       bio_page->index, fio, GFP_NOIO);
- 		io->fio = *fio;
  	}
-@@ -1039,9 +1041,8 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
- 	if (!bio)
- 		return ERR_PTR(-ENOMEM);
+@@ -940,7 +950,7 @@ int validate_super_block(struct f2fs_sb_info *sbi, enum SB_ADDR sb_addr)
+ 	if (!sbi->raw_super)
+ 		return -ENOMEM;
  
--	f2fs_set_bio_crypt_ctx(bio, inode, first_idx, NULL, GFP_NOFS);
--
- 	f2fs_target_device(sbi, blkaddr, bio);
-+	f2fs_set_bio_crypt_ctx(bio, blkaddr, inode, first_idx, NULL, GFP_NOFS);
- 	bio->bi_end_io = f2fs_read_end_io;
- 	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
+-	if (dev_read_block(buf, sb_addr))
++	if (dev_read_block_no_decrypt(buf, sb_addr))
+ 		return -1;
  
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cb700d797296..af2c1f5136d9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4122,6 +4122,8 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 
- 	if (f2fs_post_read_required(inode))
- 		return true;
-+	if (fscrypt_metadata_crypted(sbi->sb))
-+		return true;
- 	if (f2fs_is_multi_device(sbi))
- 		return true;
- 	/*
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 4872973d7a22..d817aa1cfc18 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -981,7 +981,6 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		return -EINVAL;
+ 	memcpy(sbi->raw_super, buf + F2FS_SUPER_OFFSET,
+@@ -3499,6 +3509,19 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
  	}
- #endif
--
- 	if (F2FS_IO_SIZE_BITS(sbi) && !f2fs_lfs_mode(sbi)) {
- 		f2fs_err(sbi, "Should set mode=lfs with %uKB-sized IO",
- 			 F2FS_IO_SIZE_KB(sbi));
-@@ -1268,6 +1267,8 @@ static void f2fs_put_super(struct super_block *sb)
- 	iput(sbi->meta_inode);
- 	sbi->meta_inode = NULL;
+ 	sb = F2FS_RAW_SUPER(sbi);
  
-+	fscrypt_free_metadata_encryption(sb);
++	/* Setup metadata encryption */
++	c.metadata_crypt_alg = get_sb(metadata_crypt_alg);
++	if (c.metadata_crypt_alg) {
++		ret = f2fs_metadata_process_key_ident(
++						sb->metadata_crypt_key_ident);
++		if (ret)
++			return ret;
 +
- 	/*
- 	 * iput() can update stat information, if f2fs_write_checkpoint()
- 	 * above failed with error.
-@@ -2533,6 +2534,9 @@ static int f2fs_get_num_devices(struct super_block *sb)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 
-+	if (!sbi)
-+		return 0;
-+
- 	if (f2fs_is_multi_device(sbi))
- 		return sbi->s_ndevs;
- 	return 1;
-@@ -2910,6 +2914,13 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		return -EFSCORRUPTED;
- 	}
- 
-+	/* Check if FS has metadata encryption if kernel doesn't support it */
-+#ifndef CONFIG_FS_ENCRYPTION_METADATA
-+	if (raw_super->metadata_crypt_alg) {
-+		f2fs_err(sbi, "Filesystem has metadata encryption but kernel support for it wasn't enabled");
-+		return -EINVAL;
-+	}
-+#endif
- 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
- 	if (sanity_check_area_boundary(sbi, bh))
- 		return -EFSCORRUPTED;
-@@ -3510,6 +3521,21 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 						sizeof(raw_super->uuid));
- 
- 	default_options(sbi);
-+
-+#ifdef CONFIG_FS_ENCRYPTION
-+	sb->s_cop = &f2fs_cryptops;
-+#endif
-+	if (sbi->raw_super->metadata_crypt_alg) {
-+		err = fscrypt_setup_metadata_encryption(sb,
-+				sbi->raw_super->metadata_crypt_key_ident,
-+				le32_to_cpu(sbi->raw_super->metadata_crypt_alg),
-+				sizeof(block_t));
-+		if (err) {
-+			f2fs_err(sbi, "Could not setup metadata encryption");
-+			goto free_sb_buf;
-+		}
++		ret = f2fs_metadata_verify_args();
++		if (ret)
++			return ret;
 +	}
 +
- 	/* parse mount options */
- 	options = kstrdup((const char *)data, GFP_KERNEL);
- 	if (data && !options) {
-@@ -3544,9 +3570,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	ret = check_sector_size(sb);
+ 	if (ret)
+ 		return -1;
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index b5bda13..1f12607 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -49,6 +49,8 @@
+ #include <selinux/label.h>
  #endif
  
- 	sb->s_op = &f2fs_sops;
--#ifdef CONFIG_FS_ENCRYPTION
--	sb->s_cop = &f2fs_cryptops;
--#endif
- #ifdef CONFIG_FS_VERITY
- 	sb->s_vop = &f2fs_verityops;
- #endif
-@@ -3658,6 +3681,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_devices;
- 	}
- 
-+	err = fscrypt_metadata_crypt_prepare_all_devices(sb);
-+	if (err) {
-+		f2fs_err(sbi, "Failed to initialize metadata crypt on all devices");
-+		goto free_devices;
-+	}
-+
- 	err = f2fs_init_post_read_wq(sbi);
- 	if (err) {
- 		f2fs_err(sbi, "Failed to initialize post read workqueue");
-@@ -3860,6 +3889,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	f2fs_notice(sbi, "Mounted with checkpoint version = %llx",
- 		    cur_cp_version(F2FS_CKPT(sbi)));
-+	if (fscrypt_metadata_crypted(sb)) {
-+		f2fs_notice(sbi, "Mounted with metadata key identifier = %s%*phN",
-+			    FSCRYPT_KEY_DESC_PREFIX,
-+			    FSCRYPT_KEY_IDENTIFIER_SIZE,
-+			    sbi->raw_super->metadata_crypt_key_ident);
-+	}
- 	f2fs_update_time(sbi, CP_TIME);
- 	f2fs_update_time(sbi, REQ_TIME);
- 	clear_sbi_flag(sbi, SBI_CP_DISABLED_QUICK);
-@@ -3931,6 +3966,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
- 	kvfree(options);
- free_sb_buf:
-+	fscrypt_free_metadata_encryption(sb);
- 	kfree(raw_super);
- free_sbi:
- 	if (sbi->s_chksum_driver)
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index a5dbb57a687f..34b2f6156694 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -10,6 +10,7 @@
- 
- #include <linux/pagemap.h>
- #include <linux/types.h>
 +#include <linux/fscrypt.h>
++
+ #ifdef UNUSED
+ #elif defined(__GNUC__)
+ # define UNUSED(x) UNUSED_ ## x __attribute__((unused))
+@@ -175,6 +177,9 @@ static inline uint64_t bswap_64(uint64_t val)
  
- #define F2FS_SUPER_OFFSET		1024	/* byte-size offset */
- #define F2FS_MIN_LOG_SECTOR_SIZE	9	/* 9 bits for 512 bytes */
-@@ -115,7 +116,11 @@ struct f2fs_super_block {
+ #define NULL_SEGNO	((unsigned int)~0)
+ 
++#define ARRAY_SIZE(array)			\
++	(sizeof(array) / sizeof(array[0]))
++
+ /*
+  * Debugging interfaces
+  */
+@@ -345,6 +350,7 @@ typedef struct {
+ 	bool dbg_en;
+ } dev_cache_config_t;
+ 
++struct kcapi_handle;
+ struct f2fs_configuration {
+ 	u_int32_t reserved_segments;
+ 	u_int32_t new_reserved_segments;
+@@ -441,6 +447,13 @@ struct f2fs_configuration {
+ 
+ 	/* cache parameters */
+ 	dev_cache_config_t cache_config;
++
++	/* metadata encryption */
++	__u8 *metadata_crypt_key;
++	__u8 metadata_crypt_key_ident[FSCRYPT_KEY_IDENTIFIER_SIZE];
++	int metadata_crypt_key_len;
++	int metadata_crypt_alg;
++	struct kcapi_handle *kcapi_handle;
+ };
+ 
+ #ifdef CONFIG_64BIT
+@@ -675,7 +688,11 @@ struct f2fs_super_block {
  	__u8 hot_ext_count;		/* # of hot file extension */
  	__le16  s_encoding;		/* Filename charset encoding */
  	__le16  s_encoding_flags;	/* Filename charset encoding flags */
 -	__u8 reserved[306];		/* valid reserved region */
 +	/* The metadata encryption algorithm (FSCRYPT_MODE_*) */
 +	__le32 metadata_crypt_alg;
-+	/* The metadata encryption key identifier */
++	/* The metadata crypt key identifier */
 +	__u8 metadata_crypt_key_ident[FSCRYPT_KEY_IDENTIFIER_SIZE];
 +	__u8 reserved[286];		/* valid reserved region */
  	__le32 crc;			/* checksum of superblock */
- } __packed;
+ } __attribute__((packed));
  
+@@ -1237,12 +1254,14 @@ extern int dev_readahead(__u64, size_t UNUSED(len));
+ #endif
+ extern int dev_write(void *, __u64, size_t);
+ extern int dev_write_block(void *, __u64);
++extern int dev_write_block_no_encrypt(void *, __u64);
+ extern int dev_write_dump(void *, __u64, size_t);
+ /* All bytes in the buffer must be 0 use dev_fill(). */
+ extern int dev_fill(void *, __u64, size_t);
+ extern int dev_fill_block(void *, __u64);
+ 
+ extern int dev_read_block(void *, __u64);
++extern int dev_read_block_no_decrypt(void *, __u64);
+ extern int dev_reada_block(__u64);
+ 
+ extern int dev_read_version(void *, __u64, size_t);
+diff --git a/include/f2fs_metadata_crypt.h b/include/f2fs_metadata_crypt.h
+new file mode 100644
+index 0000000..6aece31
+--- /dev/null
++++ b/include/f2fs_metadata_crypt.h
+@@ -0,0 +1,33 @@
++/**
++ * f2fs_metadata_crypt.h
++ *
++ * Copyright (c) 2020 Google LLC
++ *
++ * Dual licensed under the GPL or LGPL version 2 licenses.
++ */
++
++#include <inttypes.h>
++#include <linux/fscrypt.h>
++#include <keyutils.h>
++
++#ifndef HKDF_CONTEXT_METADATA_ENC_KEY
++#define HKDF_CONTEXT_KEY_IDENTIFIER	1
++#define HKDF_CONTEXT_METADATA_ENC_KEY	8
++#endif
++
++#ifndef FSCRYPT_MAX_IV_SIZE
++#define FSCRYPT_MAX_IV_SIZE 32
++#endif
++
++int f2fs_get_crypt_alg(const char *optarg);
++
++void f2fs_print_crypt_algs(void);
++
++int f2fs_metadata_process_key_serial(key_serial_t key_serial);
++
++int f2fs_metadata_process_key_ident(u8 key_ident[FSCRYPT_KEY_IDENTIFIER_SIZE]);
++
++int f2fs_metadata_verify_args(void);
++
++void *f2fs_metadata_crypt_blocks(void *src_buf, size_t len, __u64 blk_addr,
++	bool encrypt);
+diff --git a/lib/Makefile.am b/lib/Makefile.am
+index 871d773..a0173d0 100644
+--- a/lib/Makefile.am
++++ b/lib/Makefile.am
+@@ -2,10 +2,10 @@
+ 
+ lib_LTLIBRARIES = libf2fs.la
+ 
+-libf2fs_la_SOURCES = libf2fs.c libf2fs_io.c libf2fs_zoned.c nls_utf8.c
++libf2fs_la_SOURCES = libf2fs.c libf2fs_io.c libf2fs_zoned.c nls_utf8.c f2fs_metadata_crypt.c
+ libf2fs_la_CFLAGS = -Wall
+ libf2fs_la_CPPFLAGS = -I$(top_srcdir)/include
+-libf2fs_la_LDFLAGS = -version-info $(LIBF2FS_CURRENT):$(LIBF2FS_REVISION):$(LIBF2FS_AGE)
++libf2fs_la_LDFLAGS = -lkeyutils -lkcapi -version-info $(LIBF2FS_CURRENT):$(LIBF2FS_REVISION):$(LIBF2FS_AGE)
+ 
+ root_libdir=@root_libdir@
+ 
+diff --git a/lib/f2fs_metadata_crypt.c b/lib/f2fs_metadata_crypt.c
+new file mode 100644
+index 0000000..3869788
+--- /dev/null
++++ b/lib/f2fs_metadata_crypt.c
+@@ -0,0 +1,284 @@
++/**
++ * f2fs_metadata_crypt.c
++ *
++ * Copyright (c) 2020 Google LLC
++ *
++ * Dual licensed under the GPL or LGPL version 2 licenses.
++ */
++#include <string.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <sys/socket.h>
++#include <linux/if_alg.h>
++#include <linux/socket.h>
++#include <assert.h>
++#include <errno.h>
++#include <kcapi.h>
++
++#include "f2fs_fs.h"
++#include "f2fs_metadata_crypt.h"
++
++extern struct f2fs_configuration c;
++const struct f2fs_crypt_mode {
++	const char *friendly_name;
++	const char *cipher_str;
++	unsigned int keysize;
++	unsigned int ivlen;
++} f2fs_crypt_modes[] = {
++	[FSCRYPT_MODE_AES_256_XTS] = {
++		.friendly_name = "AES-256-XTS",
++		.cipher_str = "xts(aes)",
++		.keysize = 64,
++		.ivlen = 16,
++	},
++	[FSCRYPT_MODE_ADIANTUM] = {
++		.friendly_name = "Adiantum",
++		.cipher_str = "adiantum(xchacha12,aes)",
++		.keysize = 32,
++		.ivlen = 32,
++	},
++};
++#define MAX_IV_LEN 32
++
++void f2fs_print_crypt_algs(void)
++{
++	int i;
++
++	for (i = 1; i < ARRAY_SIZE(f2fs_crypt_modes); i++) {
++		if (!f2fs_crypt_modes[i].friendly_name)
++			continue;
++		MSG(0, "\t%s\n", f2fs_crypt_modes[i].friendly_name);
++	}
++}
++
++int f2fs_get_crypt_alg(const char *optarg)
++{
++	int i;
++
++	for (i = 1; i < ARRAY_SIZE(f2fs_crypt_modes); i++) {
++		if (f2fs_crypt_modes[i].friendly_name &&
++		    !strcmp(f2fs_crypt_modes[i].friendly_name, optarg)) {
++			return i;
++		}
++	}
++
++	return 0;
++}
++
++int f2fs_metadata_hkdf(u8 *key, unsigned int keysize,
++			u8 context_byte, u8 *dest, unsigned int dest_len)
++{
++	u8 info[9];
++
++	memcpy(info, "fscrypt\0", 8);
++	info[8] = context_byte;
++
++	return kcapi_hkdf("hmac(sha512)", key, keysize, NULL, 0,
++			  info, sizeof(info), dest, dest_len);
++}
++
++int f2fs_metadata_process_key_serial(key_serial_t key_serial)
++{
++	int err = 0;
++	u8 *metadata_key;
++
++	c.metadata_crypt_key_len =
++		keyctl_read_alloc(key_serial, (void **)&metadata_key);
++
++	if (c.metadata_crypt_key_len < 0) {
++		MSG(0, "\tSpecified metadata crypt key not found.\n");
++		return errno;
++	}
++
++	err = f2fs_metadata_hkdf(metadata_key, c.metadata_crypt_key_len,
++				 HKDF_CONTEXT_KEY_IDENTIFIER,
++				 c.metadata_crypt_key_ident,
++				 FSCRYPT_KEY_IDENTIFIER_SIZE);
++	if (err)
++		goto out;
++
++	c.metadata_crypt_key = malloc(c.metadata_crypt_key_len);
++	if (!c.metadata_crypt_key) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	err = f2fs_metadata_hkdf(metadata_key, c.metadata_crypt_key_len,
++				 HKDF_CONTEXT_METADATA_ENC_KEY,
++				 c.metadata_crypt_key,
++				 c.metadata_crypt_key_len);
++	if (err)
++		goto out_free_metadata_crypt_key;
++
++	goto out;
++
++out_free_metadata_crypt_key:
++	free(c.metadata_crypt_key);
++out:
++	free(metadata_key);
++	return err;
++}
++
++int f2fs_metadata_process_key_ident(u8 key_ident[FSCRYPT_KEY_IDENTIFIER_SIZE])
++{
++	char key_desc[FSCRYPT_KEY_DESC_PREFIX_SIZE +
++		      FSCRYPT_KEY_IDENTIFIER_SIZE * 2 + 1];
++	char *prefix = "fscrypt:";
++	int prefix_len = strlen(prefix);
++	int offset = prefix_len;
++	int i = 0;
++	key_serial_t key_serial;
++	int err;
++
++	memcpy(key_desc, prefix, prefix_len);
++	for (i = 0; i < FSCRYPT_KEY_IDENTIFIER_SIZE; i++, offset += 2)
++		sprintf(key_desc + offset, "%02x", key_ident[i]);
++
++	key_serial = request_key("user", key_desc, NULL, 0);
++	if (key_serial == -1) {
++		MSG(0, "The metadata key was not found. Expected to find a key with type \"user\" in a process subscribed keyring.\n");
++		MSG(0, "The required key descriptor is %s\n", key_desc);
++		return -errno;
++	}
++
++	err = f2fs_metadata_process_key_serial(key_serial);
++	if (err)
++		return err;
++
++	if (memcmp(key_ident, c.metadata_crypt_key_ident,
++		   FSCRYPT_KEY_IDENTIFIER_SIZE)) {
++		MSG(0, "The metadata key had incorrect key identifier\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++int f2fs_metadata_verify_args(void)
++{
++	const struct f2fs_crypt_mode *crypt_mode;
++	int ret;
++
++	/* If neither specified, nothing to do */
++	if (!c.metadata_crypt_key && !c.metadata_crypt_alg)
++		return 0;
++
++	/* We need both specified */
++	if (!c.metadata_crypt_key || !c.metadata_crypt_alg)
++		return -EINVAL;
++
++	if (c.metadata_crypt_alg < 0 ||
++	    c.metadata_crypt_alg >= ARRAY_SIZE(f2fs_crypt_modes))
++		return -EINVAL;
++
++	crypt_mode = &f2fs_crypt_modes[c.metadata_crypt_alg];
++
++	if (!crypt_mode->keysize) {
++		MSG(0, "\tInvalid crypto mode %d\n", c.metadata_crypt_alg);
++		return -EINVAL;
++	}
++
++	if (c.metadata_crypt_key_len != crypt_mode->keysize) {
++		MSG(0, "\tMetadata encryption key length %d didn't match required size %d\n",
++		    c.metadata_crypt_key_len, crypt_mode->keysize);
++
++		return -EINVAL;
++	}
++
++	ret = kcapi_cipher_init(&c.kcapi_handle, crypt_mode->cipher_str, 0);
++
++	if (ret) {
++		switch (ret) {
++		case -ENOENT:
++			MSG(0, "The required metadata crypto algorithm %s was not available. Maybe support for the algorithm or CRYPTO_USER_API_SKCIPHER wasn't enabled in the kernel config.\n",
++			    crypt_mode->cipher_str);
++			break;
++		case -EOPNOTSUPP:
++			MSG(0, "The AF_ALG family isn't available. Maybe it's not enabled in the kernel config, or its use isn't allowed by the SELinux policy.\n");
++			break;
++		case -EINVAL:
++			MSG(0, "The accept syscall failed while trying to use the kernel crypto API.\n");
++			break;
++		case -ENOMEM:
++			MSG(0, "Not enough memory to allocate crypto cipher.\n");
++			break;
++		default:
++			MSG(0, "Something went wrong while setting up the crypto cipher %d\n",
++			    ret);
++		}
++		return ret;
++	}
++
++	ret = kcapi_cipher_setkey(c.kcapi_handle, c.metadata_crypt_key,
++				  c.metadata_crypt_key_len);
++	if (ret < 0) {
++		MSG(0, "Couldn't set key for metadata cipher.\n");
++		kcapi_cipher_destroy(c.kcapi_handle);
++		return ret;
++	}
++
++	return 0;
++}
++
++void f2fs_metadata_crypt_gen_iv(u8 iv[FSCRYPT_MAX_IV_SIZE], __u64 blk_addr)
++{
++	int i = 0;
++
++	memset(iv, 0, FSCRYPT_MAX_IV_SIZE);
++
++	while (blk_addr > 0) {
++		iv[i] = blk_addr & 0xFF;
++		blk_addr >>= 8;
++		i++;
++	}
++}
++
++int f2fs_metadata_crypt_block(u8 *buf, u8 iv[FSCRYPT_MAX_IV_SIZE], bool encrypt)
++{
++	int ret;
++
++	if (encrypt)
++		ret = kcapi_cipher_encrypt(c.kcapi_handle, buf, F2FS_BLKSIZE,
++					   iv, buf, F2FS_BLKSIZE, 0);
++	else
++		ret = kcapi_cipher_decrypt(c.kcapi_handle, buf, F2FS_BLKSIZE,
++					   iv, buf, F2FS_BLKSIZE, 0);
++	if (ret != F2FS_BLKSIZE) {
++		if (ret < 0)
++			MSG(0, "\tFailed to en/decrypt blocks. Errno %d\n", ret);
++		else
++			MSG(0, "\tFailed to en/decrypt the entire block (only part of it was en/decrypted)\n");
++		return -1;
++	}
++
++	return 0;
++}
++
++void *f2fs_metadata_crypt_blocks(void *buf, size_t len, __u64 blk_addr,
++				 bool encrypt)
++{
++	u8 *out_buf;
++	u8 iv[FSCRYPT_MAX_IV_SIZE];
++	int blk_offset;
++	int ret;
++
++	if (!c.metadata_crypt_key)
++		return buf;
++
++	out_buf = malloc(len);
++	memcpy(out_buf, buf, len);
++
++	for (blk_offset = 0; blk_offset < len / F2FS_BLKSIZE; blk_offset++) {
++		f2fs_metadata_crypt_gen_iv(iv, blk_addr + blk_offset);
++		ret = f2fs_metadata_crypt_block(
++					out_buf + blk_offset * F2FS_BLKSIZE,
++					iv, encrypt);
++		if (ret) {
++			free(out_buf);
++			return NULL;
++		}
++	}
++
++	return out_buf;
++}
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 55fa391..6950c04 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -1270,9 +1270,6 @@ unsigned int calc_extra_isize(void)
+ 	return size - F2FS_EXTRA_ISIZE_OFFSET;
+ }
+ 
+-#define ARRAY_SIZE(array)			\
+-	(sizeof(array) / sizeof(array[0]))
+-
+ static const struct {
+ 	char *name;
+ 	__u16 encoding_magic;
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index 138285d..df3723d 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -33,6 +33,7 @@
+ #include <assert.h>
+ #include <inttypes.h>
+ #include "f2fs_fs.h"
++#include "f2fs_metadata_crypt.h"
+ 
+ struct f2fs_configuration c;
+ 
+@@ -499,10 +500,12 @@ static int sparse_write_blk(__u64 block, int count, const void *buf) { return 0;
+ static int sparse_write_zeroed_blk(__u64 block, int count) { return 0; }
+ #endif
+ 
+-int dev_read(void *buf, __u64 offset, size_t len)
++static int __dev_read(void *buf, __u64 offset, size_t len, bool metadata_decrypt)
+ {
+ 	int fd;
++	__u64 blk_addr = offset >> F2FS_BLKSIZE_BITS;
+ 	int err;
++	void *new_buf = NULL;
+ 
+ 	if (c.sparse_mode)
+ 		return sparse_read_blk(offset / F2FS_BLKSIZE,
+@@ -521,9 +524,24 @@ int dev_read(void *buf, __u64 offset, size_t len)
+ 		return -1;
+ 	if (read(fd, buf, len) < 0)
+ 		return -1;
++	if (metadata_decrypt) {
++		new_buf = f2fs_metadata_crypt_blocks(buf, len, blk_addr, false);
++		if (!new_buf)
++			return -1;
++		if (new_buf != buf) {
++			memcpy(buf, new_buf, len);
++			free(new_buf);
++		}
++	}
++
+ 	return 0;
+ }
+ 
++int dev_read(void *buf, __u64 offset, size_t len)
++{
++	return __dev_read(buf, offset, len, true);
++}
++
+ #ifdef POSIX_FADV_WILLNEED
+ int dev_readahead(__u64 offset, size_t len)
+ #else
+@@ -541,9 +559,13 @@ int dev_readahead(__u64 offset, size_t UNUSED(len))
+ #endif
+ }
+ 
+-int dev_write(void *buf, __u64 offset, size_t len)
++static int __dev_write(void *buf, __u64 offset, size_t len,
++		       bool metadata_encrypt)
+ {
+ 	int fd;
++	__u64 blk_addr = offset >> F2FS_BLKSIZE_BITS;
++	void *src_buf = buf;
++	int err = -1;
+ 
+ 	if (c.dry_run)
+ 		return 0;
+@@ -562,11 +584,26 @@ int dev_write(void *buf, __u64 offset, size_t len)
+ 	 */
+ 	if (dcache_update_cache(fd, buf, (off64_t)offset, len) < 0)
+ 		return -1;
++	if (metadata_encrypt) {
++		buf = f2fs_metadata_crypt_blocks(buf, len, blk_addr, true);
++		if (!buf)
++			return -1;
++	}
+ 	if (lseek64(fd, (off64_t)offset, SEEK_SET) < 0)
+-		return -1;
++		goto out;
+ 	if (write(fd, buf, len) < 0)
+-		return -1;
+-	return 0;
++		goto out;
++
++	err = 0;
++out:
++	if (buf != src_buf)
++		free(buf);
++	return err;
++}
++
++int dev_write(void *buf, __u64 offset, size_t len)
++{
++	return __dev_write(buf, offset, len, true);
+ }
+ 
+ int dev_write_block(void *buf, __u64 blk_addr)
+@@ -574,6 +611,12 @@ int dev_write_block(void *buf, __u64 blk_addr)
+ 	return dev_write(buf, blk_addr << F2FS_BLKSIZE_BITS, F2FS_BLKSIZE);
+ }
+ 
++int dev_write_block_no_encrypt(void *buf, __u64 blk_addr)
++{
++	return __dev_write(buf, blk_addr << F2FS_BLKSIZE_BITS, F2FS_BLKSIZE,
++			   false);
++}
++
+ int dev_write_dump(void *buf, __u64 offset, size_t len)
+ {
+ 	if (lseek64(c.dump_fd, (off64_t)offset, SEEK_SET) < 0)
+@@ -586,6 +629,9 @@ int dev_write_dump(void *buf, __u64 offset, size_t len)
+ int dev_fill(void *buf, __u64 offset, size_t len)
+ {
+ 	int fd;
++	__u64 blk_addr = offset >> F2FS_BLKSIZE_BITS;
++	void *src_buf = buf;
++	int err = -1;
+ 
+ 	if (c.sparse_mode)
+ 		return sparse_write_zeroed_blk(offset / F2FS_BLKSIZE,
+@@ -598,11 +644,21 @@ int dev_fill(void *buf, __u64 offset, size_t len)
+ 	/* Only allow fill to zero */
+ 	if (*((__u8*)buf))
+ 		return -1;
+-	if (lseek64(fd, (off64_t)offset, SEEK_SET) < 0)
++
++	buf = f2fs_metadata_crypt_blocks(buf, len, blk_addr, true);
++	if (!buf)
+ 		return -1;
++
++	if (lseek64(fd, (off64_t)offset, SEEK_SET) < 0)
++		goto out;
+ 	if (write(fd, buf, len) < 0)
+-		return -1;
+-	return 0;
++		goto out;
++
++	err = 0;
++out:
++	if (buf != src_buf)
++		free(buf);
++	return err;
+ }
+ 
+ int dev_fill_block(void *buf, __u64 blk_addr)
+@@ -615,6 +671,12 @@ int dev_read_block(void *buf, __u64 blk_addr)
+ 	return dev_read(buf, blk_addr << F2FS_BLKSIZE_BITS, F2FS_BLKSIZE);
+ }
+ 
++int dev_read_block_no_decrypt(void *buf, __u64 blk_addr)
++{
++	return __dev_read(buf, blk_addr << F2FS_BLKSIZE_BITS, F2FS_BLKSIZE,
++			  false);
++}
++
+ int dev_reada_block(__u64 blk_addr)
+ {
+ 	return dev_readahead(blk_addr << F2FS_BLKSIZE_BITS, F2FS_BLKSIZE);
+diff --git a/man/fsck.f2fs.8 b/man/fsck.f2fs.8
+index af1076c..56943cd 100644
+--- a/man/fsck.f2fs.8
++++ b/man/fsck.f2fs.8
+@@ -30,7 +30,10 @@ fsck.f2fs \- check a Linux F2FS file system
+ .B fsck.f2fs
+ is used to check an f2fs file system (usually in a disk partition).
+ \fIdevice\fP is the special file corresponding to the device (e.g.
+-\fI/dev/sdXX\fP).
++\fI/dev/sdXX\fP). If the filesystem has metadata encryption enabled,
++then the required metadata encryption key should be added to a process
++subscribed keyring with key-type "user". The other requirements for
++metadata encryption are listed under the \-M option for mkfs.f2fs.
+ .PP
+ The exit code returned by
+ .B fsck.f2fs
+diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
+index e2aee76..0ea114f 100644
+--- a/man/mkfs.f2fs.8
++++ b/man/mkfs.f2fs.8
+@@ -12,6 +12,10 @@ mkfs.f2fs \- create an F2FS file system
+ .I heap-based-allocation
+ ]
+ [
++.B \-A
++.I metadata-encryption-algorithm
++]
++[
+ .B \-c
+ .I device-list
+ ]
+@@ -44,6 +48,10 @@ mkfs.f2fs \- create an F2FS file system
+ .B \-m
+ ]
+ [
++.B \-M
++.I metadata-crypt-key-serial
++]
++[
+ .B \-o
+ .I overprovision-ratio-percentage
+ ]
+@@ -110,6 +118,24 @@ Specify 1 or 0 to enable/disable heap based block allocation policy.
+ If the value is equal to 1, each of active log areas are initially
+ assigned separately according to the whole volume size.
+ The default value is 1.
++
++.TP
++.BI \-A " metadata-encryption-algorithm"
++Specify the encryption algorithm to use for metadata encryption. The \-M
++option must also be specified, providing the metadata crypt key to use.
++Check the description of the \-M option for requirements before using this
++pair of options.
++The following values are supported for this option:
++.RS 1.2i
++.TP 1.2i
++.B AES-256-XTS
++Use xts(aes) for metadata encryption. The required key length is 64 bytes.
++.TP
++.B Adiantum
++Use adiantum (adiantum(xchacha12,aes)) for metadata encryption. The
++required key length is 32 bytes.
++.RE
++
+ .TP
+ .BI \-c " device-list"
+ Build f2fs with these additional comma separated devices, so that the user can
+@@ -147,6 +173,24 @@ Specify the volume label to the partition mounted as F2FS.
+ .BI \-m
+ Specify f2fs filesystem to supports the block zoned feature.
+ Without it, the filesystem doesn't support the feature.
++
++.TP
++.BI \-M
++Specify the key_serial (as returned by keyctl) of the metadata crypt key to
++use for metadata encryption. This key is not used directly as the
++encryption key - the encryption key is derived from this key using
++hmac(sha512). This option must be specified along with the \-A option.
++The length of the key must match the required key length of the chosen
++algorithm.
++.P
++.RS
++The kernel must support the AF_ALG socket family (and it must be allowed
++by the SELinux policy), the kernel crypto userspace API for symmetric
++ciphers (i.e. CONFIG_CRYPTO_USER_API_SKCIPHER) must be enabled, and
++crypto API support for the chosen encryption algorithm must be enabled for
++this option to work.
++.RE
++
+ .TP
+ .BI \-o " overprovision-ratio-percentage"
+ Specify the percentage of the volume that will be used as overprovision area.
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index a6c542e..2d68aa4 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -537,6 +537,12 @@ static int f2fs_prepare_super_block(void)
+ 		set_sb(s_encoding_flags, c.s_encoding_flags);
+ 	}
+ 
++	if (c.metadata_crypt_key) {
++		set_sb(metadata_crypt_alg, c.metadata_crypt_alg);
++		memcpy(sb->metadata_crypt_key_ident, c.metadata_crypt_key_ident,
++		       FSCRYPT_KEY_IDENTIFIER_SIZE);
++	}
++
+ 	sb->feature = c.feature;
+ 
+ 	if (get_sb(feature) & F2FS_FEATURE_SB_CHKSUM) {
+@@ -1046,7 +1052,7 @@ static int f2fs_write_super_block(void)
+ 	memcpy(zero_buff + F2FS_SUPER_OFFSET, sb, sizeof(*sb));
+ 	DBG(1, "\tWriting super block, at offset 0x%08x\n", 0);
+ 	for (index = 0; index < 2; index++) {
+-		if (dev_write_block(zero_buff, index)) {
++		if (dev_write_block_no_encrypt(zero_buff, index)) {
+ 			MSG(1, "\tError: While while writing super_blk "
+ 					"on disk!!! index : %d\n", index);
+ 			free(zero_buff);
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index f2f0a80..139251c 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -28,6 +28,7 @@
+ 
+ #include "f2fs_fs.h"
+ #include "f2fs_format_utils.h"
++#include "f2fs_metadata_crypt.h"
+ 
+ #ifdef WITH_ANDROID
+ #include <sparse/sparse.h>
+@@ -44,6 +45,7 @@ static void mkfs_usage()
+ 	MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
+ 	MSG(0, "[options]:\n");
+ 	MSG(0, "  -a heap-based allocation [default:0]\n");
++	MSG(0, "  -A Metadata encryption algorithm\n");
+ 	MSG(0, "  -c device1[,device2,...] up to 7 additional devices, except meta device\n");
+ 	MSG(0, "  -d debug level [default:0]\n");
+ 	MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
+@@ -54,6 +56,7 @@ static void mkfs_usage()
+ 	MSG(0, "  -l label\n");
+ 	MSG(0, "  -U uuid\n");
+ 	MSG(0, "  -m support zoned block device [default:0]\n");
++	MSG(0, "  -M Metadata encryption key_serial in keyring\n");
+ 	MSG(0, "  -o overprovision percentage [default:auto]\n");
+ 	MSG(0, "  -O feature1[,feature2,...] e.g. \"encrypt\"\n");
+ 	MSG(0, "  -C [encoding[:flag1,...]] Support casefolding with optional flags\n");
+@@ -73,6 +76,8 @@ static void mkfs_usage()
+ 
+ static void f2fs_show_info()
+ {
++	int i;
++
+ 	MSG(0, "\n\tF2FS-tools: mkfs.f2fs Ver: %s (%s)\n\n",
+ 				F2FS_TOOLS_VERSION,
+ 				F2FS_TOOLS_DATE);
+@@ -97,6 +102,14 @@ static void f2fs_show_info()
+ 					f2fs_encoding2str(c.s_encoding));
+ 	if (c.feature & le32_to_cpu(F2FS_FEATURE_PRJQUOTA))
+ 		MSG(0, "Info: Enable Project quota\n");
++
++	if (c.metadata_crypt_alg) {
++		MSG(0, "Info: Metadata alg is %d\n", c.metadata_crypt_alg);
++		MSG(0, "Info: Metadata key ident is fscrypt:");
++		for (i = 0; i < FSCRYPT_KEY_IDENTIFIER_SIZE; i++)
++			MSG(0, "%02x", c.metadata_crypt_key_ident[i]);
++		MSG(0, "\n");
++	}
+ }
+ 
+ static void add_default_options(void)
+@@ -125,7 +138,7 @@ static void add_default_options(void)
+ 
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+-	static const char *option_string = "qa:c:C:d:e:E:g:il:mo:O:rR:s:S:z:t:T:U:Vfw:";
++	static const char *option_string = "qa:A:c:C:d:e:E:g:il:mM:o:O:rR:s:S:z:t:T:U:Vfw:";
+ 	int32_t option=0;
+ 	int val;
+ 	char *token;
+@@ -138,6 +151,14 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		case 'a':
+ 			c.heap = atoi(optarg);
+ 			break;
++		case 'A':
++			c.metadata_crypt_alg = f2fs_get_crypt_alg(optarg);
++			if (c.metadata_crypt_alg < 0) {
++				MSG(0, "Error: invalid crypt algorithm specified. The choices are:");
++				f2fs_print_crypt_algs();
++				exit(1);
++			}
++			break;
+ 		case 'c':
+ 			if (c.ndevs >= MAX_DEVICES) {
+ 				MSG(0, "Error: Too many devices\n");
+@@ -178,6 +199,15 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		case 'm':
+ 			c.zoned_mode = 1;
+ 			break;
++		case 'M': {
++			key_serial_t key_serial = strtol(optarg, NULL, 10);
++
++			if (f2fs_metadata_process_key_serial(key_serial)) {
++				MSG(0, "Error: Invalid metadata key\n");
++				mkfs_usage();
++			}
++			break;
++		}
+ 		case 'o':
+ 			c.overprovision = atof(optarg);
+ 			break;
+@@ -244,6 +274,9 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		}
+ 	}
+ 
++	if (f2fs_metadata_verify_args())
++		exit(1);
++
+ 	add_default_options();
+ 
+ 	if (!(c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR))) {
 -- 
 2.29.2.729.g45daf8777d-goog
 
