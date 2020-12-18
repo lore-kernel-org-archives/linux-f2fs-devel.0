@@ -2,77 +2,82 @@ Return-Path: <SRS0=SvoF=FW=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB793C4361B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Dec 2020 01:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6103BC4361B
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Dec 2020 01:15:29 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 345AE23A53
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Dec 2020 01:06:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 345AE23A53
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 037EE23A57;
+	Fri, 18 Dec 2020 01:15:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 037EE23A57
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kq4EF-0007lR-8c; Fri, 18 Dec 2020 01:06:43 +0000
+	id 1kq4Mh-0004U5-54; Fri, 18 Dec 2020 01:15:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kq4ED-0007lJ-JH
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Dec 2020 01:06:41 +0000
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1kq4Mf-0004Tn-5Z
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Dec 2020 01:15:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JTEVLzIO6rEPanr2dgQVi/ZSGNAoaoz8lHgNYjWfvIY=; b=XVK9jrNx2qeLIEPr5xpzedrO7e
- njUKLgtOAvsfhiLS4DRqQ4DmqpzxYEJnhHG3RHCTUN63rn20c42enAJjpDjoecYVZ8wP6w+4PBc4J
- FBLGrbvQyuuQCAE8rvCm8E57P7qSMsHXzoPhGywH7q6odpN7b31rRICDUYwkBDNrYI0A=;
+ bh=4D6mgiNGP2KAAgVBpPnx7KwUS9FFbTun4Acd1iL8OrE=; b=XsFmPX6YX8qN+l5uIfAAMYGlko
+ tZBuCSfjbXo0MTnEMYcFI9q57Ekd92g65UugjwVgKLWhqurfA+SSN6wseHaOcf1tOcem7AZmTefmf
+ TkNJ6SblRUOIiksYAk1EtFY25PdVo6bHAOskFFdpvJZnu/55/7freo0mIq989mCB56pU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=JTEVLzIO6rEPanr2dgQVi/ZSGNAoaoz8lHgNYjWfvIY=; b=QG2auMME8lbRaGXizmDWqZim1Z
- /0kY+4SoARkFMNmGhEupHHSzV4dynkaeAx4OUuYGjMLVzWO/1LUoddMl8X49qNoo9ILFWO8gl8jFB
- 5k5p7dJD+QYocfOlP9ETYfZoIzetL+o605PgVI9/htskDAzPckwHhdD9iUQQv72SPRTI=;
-Received: from szxga07-in.huawei.com ([45.249.212.35])
+ bh=4D6mgiNGP2KAAgVBpPnx7KwUS9FFbTun4Acd1iL8OrE=; b=Fhe3Zvjm6OWtTUKnN2LYEkqprB
+ PcZaptBat57siWKgJRBOKMmOe0w+YV2N6yFpf/FCWDmyzKjZrJLxYbINZR2IAuMdCo6EvM/Y/jSC2
+ Xvc+9ywfOfyfnvUttEtRewdNUzYx7eQ5l/amlV0D3xjJYIgdvzbTs0tckpRa0+lnDm2U=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kq4E0-000ip0-16
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Dec 2020 01:06:41 +0000
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
- by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4CxrJX67dXz7C3S;
- Fri, 18 Dec 2020 09:05:32 +0800 (CST)
-Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 18 Dec
- 2020 09:06:05 +0800
-To: Satya Tangirala <satyat@google.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>
-References: <20201217151013.1513045-1-satyat@google.com>
- <20201217151013.1513045-2-satyat@google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <84319aff-1b78-ecbc-635e-bad990ed5d4e@huawei.com>
-Date: Fri, 18 Dec 2020 09:06:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1kq4Mc-000jHg-Jz
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Dec 2020 01:15:25 +0000
+From: bugzilla-daemon@bugzilla.kernel.org
+Authentication-Results: mail.kernel.org;
+ dkim=permerror (bad message/signature format)
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 18 Dec 2020 01:15:16 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: blocking
+X-Bugzilla-Who: chao@kernel.org
+X-Bugzilla-Status: ASSIGNED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status cc
+Message-ID: <bug-210765-202145-vWt3pVgdCw@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-210765-202145@https.bugzilla.kernel.org/>
+References: <bug-210765-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-In-Reply-To: <20201217151013.1513045-2-satyat@google.com>
-Content-Language: en-US
-X-Originating-IP: [10.136.114.67]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1kq4E0-000ip0-16
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs-tools: Introduce metadata
- encryption support
+X-Headers-End: 1kq4Mc-000jHg-Jz
+Subject: [f2fs-dev] [Bug 210765] F2FS causes access invalid blkaddr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,22 +89,29 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/12/17 23:10, Satya Tangirala via Linux-f2fs-devel wrote:
-> Introduce native metadata encryption support for f2fs. All blocks
-> other than the super block (and its redundant copy) are encrypted with the
-> specified metadata encryption key and algorithm. The IV for each block is
-> its block number in the filesystem.
+https://bugzilla.kernel.org/show_bug.cgi?id=210765
 
-The same question as kernel side patchset, for node block, why not using its
-nid as IV value?
+Chao Yu (chao@kernel.org) changed:
 
-Thanks,
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |ASSIGNED
+                 CC|                            |chao@kernel.org
 
+--- Comment #1 from Chao Yu (chao@kernel.org) ---
+Fixed in 5.11, could you please backport this patch?
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7a6e59d719ef0ec9b3d765cba3ba98ee585cbde3
+
+-- 
+You may reply to this email to add a comment.
+
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
