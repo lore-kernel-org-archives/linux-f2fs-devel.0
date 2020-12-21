@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A3DC433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Dec 2020 08:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF15C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Dec 2020 08:44:31 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C817D22B43;
-	Mon, 21 Dec 2020 08:30:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C817D22B43
+	by mail.kernel.org (Postfix) with ESMTPS id 594C622BF5;
+	Mon, 21 Dec 2020 08:44:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 594C622BF5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1krGaB-0000YI-7i; Mon, 21 Dec 2020 08:30:19 +0000
+	id 1krGnt-0001JA-Vd; Mon, 21 Dec 2020 08:44:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1krGa8-0000Y7-BM
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Dec 2020 08:30:16 +0000
+ id 1krGnt-0001J4-6y
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Dec 2020 08:44:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
  :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=s1aezxLfgXFa1B6MfGSRXb9gv8uLwcVNEArG9hw77bM=; b=NdUHUZl5TVnPWnTLzHa6jxXrBF
- ziCLhJOXarVlriXZDAb0yFjFXKCH790kRrkaH32Nqg9bz2gd/gpw1O8MZnGKp5RaFsceo1FQCwz4w
- RmHh0o6+pyoYTapouIxQzbbqi0EItJnhRlEaMBch7SZhSnVr9vU8avREKj9avbgpVENk=;
+ bh=lT5GS+Uyizchjv8mS/RQrF9Gnh2GRo5zsb7hgpdXD3w=; b=Sb5soNP+Xy0NmRRpNbO9jfZZAk
+ EsZGcTEcgRocPwyx40v8sThdam0pGYpi7BdtWmuksoDObyn5ne8EW/MpeuVZJcxDwPiUIaVe1vipT
+ EQwNajXMhUtIMXhq/vREHFn6vyE6N0jm8qCRa6T1HH4u3bqRw/jIVlHkv1mJqxIax30E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
@@ -42,19 +42,19 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=s1aezxLfgXFa1B6MfGSRXb9gv8uLwcVNEArG9hw77bM=; b=gfrvjH2WnNV7WtyLAMd2/yO+oY
- aJ8RarxiQeggqbyGsvtbchsWs3cmPM3haTlNjXAkpsI7UgXQx0Kvu1rbr/hLcByc7EZRMvncO6i8J
- 3EkviODLgnEYyagXjedtm7IPwAyBQ6vfYUe6pvh8/M+LDPxncEBbEAQKpPUkBsjumcok=;
+ bh=lT5GS+Uyizchjv8mS/RQrF9Gnh2GRo5zsb7hgpdXD3w=; b=gT39l/QbGfywT46YNFQRKWMQaD
+ RgwD87p7dtAXk82EXyDZYCiZcLeijn5npuVj3TDBeMWwGz1Eql0CmPO5vroPuYPZbxJ270QAqoMkp
+ dcEvO6po5hqgu+uSYR3moFXeKu6MMXWyseBkEP4+BcpnCwue1x1zGUQxCwInMFkA6owE=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1krGZv-003SRY-Ty
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Dec 2020 08:30:16 +0000
+ id 1krGnq-004Rw1-Bj
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 21 Dec 2020 08:44:29 +0000
 From: bugzilla-daemon@bugzilla.kernel.org
 Authentication-Results: mail.kernel.org;
  dkim=permerror (bad message/signature format)
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon, 21 Dec 2020 08:29:58 +0000
+Date: Mon, 21 Dec 2020 08:44:13 +0000
 X-Bugzilla-Reason: None
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
@@ -70,13 +70,13 @@ X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-210745-202145-IsPmjlJFoJ@https.bugzilla.kernel.org/>
+Message-ID: <bug-210745-202145-IkBCIxovmW@https.bugzilla.kernel.org/>
 In-Reply-To: <bug-210745-202145@https.bugzilla.kernel.org/>
 References: <bug-210745-202145@https.bugzilla.kernel.org/>
 X-Bugzilla-URL: https://bugzilla.kernel.org/
 Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1krGZv-003SRY-Ty
+X-Headers-End: 1krGnq-004Rw1-Bj
 Subject: [f2fs-dev] [Bug 210745] kernel crash during umounting a partition
  with f2fs filesystem
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -96,9 +96,33 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 https://bugzilla.kernel.org/show_bug.cgi?id=210745
 
---- Comment #3 from Chao Yu (chao@kernel.org) ---
-nm_i->nat_list_lock was introduced in 4.19, are you sure your codebase is
-4.14.193?
+--- Comment #4 from Chao Yu (chao@kernel.org) ---
+(In reply to Zhiguo.Niu from comment #2)
+> hi Chao, 
+> 
+> Thanks for your reply, I have checked my codebase, there is no any other
+> private patches in current version.
+> 
+> I find that local variables natvec & setvec in f2fs_destroy_node_manager may
+> be inited as 0xaa and 0xaaaaaaaaaaaaaaaa, just like :
+> 
+> void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi)
+> {
+>       struct f2fs_nm_info *nm_i = NM_I(sbi);
+>       struct free_nid *i, *next_i;
+>       struct nat_entry *natvec[NATVEC_SIZE];
+>       struct nat_entry_set *setvec[SETVEC_SIZE];
+> 
+
+I don't think so, natvec array will be assigned in __gang_lookup_nat_cache(),
+and natvec[0..found - 1] will be valid, in "destroy nat cache" loop, we will
+not access natvec array out-of-range.
+
+Can you please check whether @found is valid or not (@found should be less or
+equal than NATVEC_SIZE)?
+
+BTW, one possible case could be stack overflow, but during umount(), would
+that really happen?
 
 -- 
 You may reply to this email to add a comment.
