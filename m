@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE739C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Dec 2020 02:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2751C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Dec 2020 02:53:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 71077224B1;
-	Thu, 24 Dec 2020 02:53:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71077224B1
+	by mail.kernel.org (Postfix) with ESMTPS id 67E57224B1
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Dec 2020 02:53:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67E57224B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ksGkk-0004kE-IR; Thu, 24 Dec 2020 02:53:22 +0000
+	id 1ksGkq-0001xq-0H; Thu, 24 Dec 2020 02:53:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1ksGki-0004k7-UM
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Dec 2020 02:53:20 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1ksGkm-0001xg-1A
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Dec 2020 02:53:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vRnsYUtnpZtWmXo74/uphTjsXxo77efTbKo2jJrZvBo=; b=BhuYephl6loTLIg6Bnc+oiXiFo
- hVAK4Z/UazYUwz6PL9Kb7rLx45xAoxngMYbuoO++W0UPfjH5nhXm3gPu7u7Evw+nrFnliN8OhhoSp
- nPM3odW8+LrP2ohwa/j7Azy+9PRHEYX8PIKI3Rwmc2eL17leQVkiy8ao8sPXc+gJGUNo=;
+ bh=4Qc9YHyIeA7dXxvbIXIXGSk6w/JwTOy6UIROG6WdhPc=; b=PCaSKH57QsWSvoCnhEKR8ZTot0
+ rghzt7XfQxMn9W0XM71pR08MCfVQK3SLUkOfpSA5moef5JWC8CvoQZkWbRCaZcrpt07pAx4gaxPc0
+ g59mG2R3zUSxZfGx5lg/UGb4H4MX+0+wcNSVJMU3T2taKW1ciTtBcyZ41IfKmyuOOpTU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -42,36 +42,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=vRnsYUtnpZtWmXo74/uphTjsXxo77efTbKo2jJrZvBo=; b=mIxib6xARAESs0pUfHN/ZdWEiL
- YlpsNfjw6Yt9hXDACYz5SKrseEq2EFSBFGob8jJ847+D8Rh8gKU4LNBTB3iowwzikhMUtxztIGtME
- /W0QMqpjN7aIRuR5ea1LkisASZm3lv6XWaEBL8r9lKmPBaBB8xuU8T2H+n28nMplW6Pg=;
+ bh=4Qc9YHyIeA7dXxvbIXIXGSk6w/JwTOy6UIROG6WdhPc=; b=Na1ePjQKv1mbvnpAw3+4LLz1sU
+ Vii+PjydKyhht3QGI96ZpHVd72VNNOEPFBOTOTkaT8214jQayNCiX6muL+TsIykTHQ/RK4ozysJyD
+ nRtGlEOOnXqKJTwV5sP18HDCnTPYAyYxNYuZQEOTMC/6RD3aeVpnXtWrzxNFFJxH94/Y=;
 Received: from szxga07-in.huawei.com ([45.249.212.35])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ksGke-009rm4-Cg
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Dec 2020 02:53:20 +0000
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4D1ZP56jy7z6tr5;
- Thu, 24 Dec 2020 10:52:25 +0800 (CST)
+ id 1ksGkc-009rll-Mo
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 24 Dec 2020 02:53:23 +0000
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4D1ZP20f55z7JrS;
+ Thu, 24 Dec 2020 10:52:22 +0800 (CST)
 Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 24 Dec
- 2020 10:53:04 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-f2fs-devel@lists.sourceforge.net>, <kernel-team@android.com>
-References: <20201223200242.2078243-1-jaegeuk@kernel.org>
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 24 Dec
+ 2020 10:52:57 +0800
+To: Zheng Yongjun <zhengyongjun3@huawei.com>, <jaegeuk@kernel.org>,
+ <chao@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+ <linux-kernel@vger.kernel.org>
+References: <20201222133415.19915-1-zhengyongjun3@huawei.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <21d9993b-cfbb-c08f-349f-b7b8f1e2f807@huawei.com>
-Date: Thu, 24 Dec 2020 10:53:03 +0800
+Message-ID: <36c3cca5-8bd0-19e3-9298-9a67403c5ca4@huawei.com>
+Date: Thu, 24 Dec 2020 10:52:57 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20201223200242.2078243-1-jaegeuk@kernel.org>
+In-Reply-To: <20201222133415.19915-1-zhengyongjun3@huawei.com>
 Content-Language: en-US
 X-Originating-IP: [10.136.114.67]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1ksGke-009rm4-Cg
-Subject: Re: [f2fs-dev] [PATCH] f2fs: handle unallocated section and zone on
- pinned/atgc
+X-Headers-End: 1ksGkc-009rll-Mo
+Subject: Re: [f2fs-dev] [PATCH -next] f2fs: Replace expression with
+ offsetof()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,15 +88,10 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2020/12/24 4:02, Jaegeuk Kim wrote:
-> If we have large section/zone, unallocated segment makes them corrupted.
+On 2020/12/22 21:34, Zheng Yongjun wrote:
+> Use the existing offsetof() macro instead of duplicating code.
 > 
-> E.g.,
-> 
->    - Pinned file:       -1 119304647 119304647
->    - ATGC   data:       -1 119304647 119304647
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
