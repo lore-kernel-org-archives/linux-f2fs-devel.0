@@ -2,73 +2,76 @@ Return-Path: <SRS0=tmuo=GA=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F5EC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Dec 2020 19:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B2BC433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Dec 2020 19:13:36 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6C51722B37;
+	by mail.kernel.org (Postfix) with ESMTPS id 067A322B37;
 	Mon, 28 Dec 2020 19:13:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C51722B37
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 067A322B37
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ktxxW-0000wR-Su; Mon, 28 Dec 2020 19:13:34 +0000
+	id 1ktxxW-0000wb-VV; Mon, 28 Dec 2020 19:13:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1ktxxW-0000wF-Cv
+ (envelope-from <ebiggers@kernel.org>) id 1ktxxW-0000wG-Cv
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Dec 2020 19:13:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OkFfEWuU83JPFhg7R4Gkk7eoH8H9Q3HOR9fY2Rz5l5k=; b=iBoB4FCXbBgtmd5Qanu8UMRDMg
- ewtFz+KWqGN90kxTfVTxYkwEZkQPClVKecJRIRTNeQYfwhQWdbwU+Ulx55ZRtfK1EFYAohcnbO1Xb
- +/YcQ99XIwpIE0/NAKYVh9vVjjIgxS1LJfj5KJQT3JuVDa0OahF50AHuJfds8RzXrszI=;
+ bh=H7wBkScKlh545+jNDPyExD6bES0ElhkJBDoIa1kNlnU=; b=bQyWwLEWt+CRTsF2sXSibTl5fc
+ yu3CyTe9BLvuGhtLKyUl3p6BW1VwgvEyD9sTLOQNxWiOphTMSinDnZ7ddpVil5ha005YO2VAu/7vc
+ 58gGszQetEXkB5ZSGbJcYbpfxm8InW72QGklqt/bv+aVD4svEm/bTzhqql2h7Eo5SVoA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=OkFfEWuU83JPFhg7R4Gkk7eoH8H9Q3HOR9fY2Rz5l5k=; b=K
- sn6QjWRKT2FUzK2mJ3vGocms4xLWFCrIzA22qAEPEnAd79J0smmbRzN6ebvfrwE/HKn9J3B3Z7lOr
- 17cnWkryrqt94BxAq5GF5zrp0zftuQt6lntoakH84L/6uJ1stvJQMR4ZxkE3s0DVJp31dV6mEHEv2
- 4wnFPdTkJqDGOq+c=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=H7wBkScKlh545+jNDPyExD6bES0ElhkJBDoIa1kNlnU=; b=PgHCoShGLvxUgpwlUBAD0Hx2BL
+ SCqW0rwK7qe1dDSydIMaMtjH5/ScEowbdJJ5fweUuoyyzbR3Ze0WiDjnlBZ9ZJ8sAABAU1HGxb3qY
+ 2aiT/CfXqSZtaW0UzguhQavgcqZhf0xGpBa0JHBr4wnNZTuoKC688UvuwJpQa6TnCw2s=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ktxxQ-003H5r-T0
+ id 1ktxxR-003H5x-Sl
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Dec 2020 19:13:34 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 328CF229EF;
- Mon, 28 Dec 2020 19:13:16 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3A51022B2C;
+ Mon, 28 Dec 2020 19:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1609182796;
- bh=WfRrNEImpr0j+Oo7HcTLI/gAY4EckaLzvRW0Nnzz9QA=;
- h=From:To:Cc:Subject:Date:From;
- b=QOEccFRDvvHr/4eKSIAJZC9fjOwN3vBNabeHqiWacoH3tyHdSDbB8u4lpQ+8ivZxl
- Vj85wtNi/mrufL/iKzCrKR1/nEgU9SrebR++4bzxFl2/Mshw+ScfXbUGolntZpLcZE
- zR/pJJuYEA50Ka0SdVTXsXN6PD2pSUJF8c7MYQoQhutE/MoeyIxxhKk6gUyxpWeFUi
- +0bbHBksTbZrbahMx4nfKbVwhjK/ZpuA+wCDeiY7tX1IQ55bIU4t4Mgo21/1nR8+sT
- 8+BUv+NXhmRp7IYFdAl2VBy8p/RCY7xctzJSOrcD5z4ydBVzm8Z0p4lpURPSIy4ONa
- Ecy4xLRIL/voA==
+ s=k20201202; t=1609182797;
+ bh=IXmvQye9ZM3vzPLg/kY4jseJxfvpVBcbyPuNjzHTWF4=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=jQya9WijPGAu5QKp6aRvs3aDB653D8Hv76AV5phKUMDyWFMiaAg4MHTwjj1RBt+7M
+ iyq/ZgVltry9M+5t2oZs30wMF/G6NKjpDSCP1XT4ZmTnB067VauLZvLoC91sIZm7iw
+ rkxpkiOCBwKY6rs/hwNhLjIlse4VYM8/FyBwuFDsCrFl3caRxhXwwvflQNIoNXRn5N
+ ZDtjg/qlyXGK7W8/kndpbTOxYKbUJvmR7QFeuUdu+YQ1SZCDndIiP2EQkHPrLdN9kJ
+ gfuDSlv09IpTCUmUEzasmBHTocNpQCUBmrVFqWHIx7yE7hUOJk8jOcu73YMA8+60hO
+ KxlKk0BLmhKuA==
 From: Eric Biggers <ebiggers@kernel.org>
 To: stable@vger.kernel.org
-Date: Mon, 28 Dec 2020 11:12:07 -0800
-Message-Id: <20201228191211.138300-1-ebiggers@kernel.org>
+Date: Mon, 28 Dec 2020 11:12:10 -0800
+Message-Id: <20201228191211.138300-4-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201228191211.138300-1-ebiggers@kernel.org>
+References: <20201228191211.138300-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ktxxQ-003H5r-T0
-Subject: [f2fs-dev] [PATCH 4.19 0/4] fscrypt: prevent creating duplicate
+X-Headers-End: 1ktxxR-003H5x-Sl
+Subject: [f2fs-dev] [PATCH 4.19 3/4] f2fs: prevent creating duplicate
  encrypted filenames
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -87,23 +90,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Backport four commits from v5.11-rc1.  I resolved conflicts in the first
-two.
+From: Eric Biggers <ebiggers@google.com>
 
-Eric Biggers (4):
-  fscrypt: add fscrypt_is_nokey_name()
-  ext4: prevent creating duplicate encrypted filenames
-  f2fs: prevent creating duplicate encrypted filenames
-  ubifs: prevent creating duplicate encrypted filenames
+commit bfc2b7e8518999003a61f91c1deb5e88ed77b07d upstream.
 
- fs/crypto/hooks.c               | 10 +++++-----
- fs/ext4/namei.c                 |  3 +++
- fs/f2fs/f2fs.h                  |  2 ++
- fs/ubifs/dir.c                  | 17 +++++++++++++----
- include/linux/fscrypt_notsupp.h |  5 +++++
- include/linux/fscrypt_supp.h    | 29 +++++++++++++++++++++++++++++
- 6 files changed, 57 insertions(+), 9 deletions(-)
+As described in "fscrypt: add fscrypt_is_nokey_name()", it's possible to
+create a duplicate filename in an encrypted directory by creating a file
+concurrently with adding the directory's encryption key.
 
+Fix this bug on f2fs by rejecting no-key dentries in f2fs_add_link().
+
+Note that the weird check for the current task in f2fs_do_add_link()
+seems to make this bug difficult to reproduce on f2fs.
+
+Fixes: 9ea97163c6da ("f2fs crypto: add filename encryption for f2fs_add_link")
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20201118075609.120337-4-ebiggers@kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/f2fs/f2fs.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 53ffa6fe207a3..aacd8e11758ca 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2857,6 +2857,8 @@ bool f2fs_empty_dir(struct inode *dir);
+ 
+ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+ {
++	if (fscrypt_is_nokey_name(dentry))
++		return -ENOKEY;
+ 	return f2fs_do_add_link(d_inode(dentry->d_parent), &dentry->d_name,
+ 				inode, inode->i_ino, inode->i_mode);
+ }
 -- 
 2.29.2
 
