@@ -2,39 +2,39 @@ Return-Path: <SRS0=tmuo=GA=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4136EC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3997C433E6
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Dec 2020 18:55:47 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E318A22B2B;
-	Mon, 28 Dec 2020 18:55:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E318A22B2B
+	by mail.kernel.org (Postfix) with ESMTPS id 5FA3F22B2E;
+	Mon, 28 Dec 2020 18:55:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FA3F22B2E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ktxgG-0000HR-RY; Mon, 28 Dec 2020 18:55:44 +0000
+	id 1ktxgJ-0003d2-08; Mon, 28 Dec 2020 18:55:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1ktxgC-0000HC-So
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Dec 2020 18:55:40 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1ktxgH-0003cc-4E
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Dec 2020 18:55:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KZOfmF8UiMDBPQ4cWz4LK2NmU2gNSCctfPCuTGD5lNo=; b=YTU/shR5UVM+nrbxtOFRZvYJYB
- XH9l1mbyb37Bmmc9B25XqrpfXXnbKVCzTedksApj0KuUloWLbspnbcd4SW32DyAS4MoHLrm6kJmSy
- s/uBsRDS6NSNmkKigFDt03PnFAiHtFvBHObAmu5m3+9EJzmpehlZOhF00pgJr/RsBx78=;
+ bh=GvH6XJ0eCafbyID1zTPsiYuDf8AWOwTRVhojDoXYHh8=; b=M5ZdXCKsA4As4odIrUNAF5lfh2
+ DdzrdIs0Ni7hQ82LmmrRrUAPjDmTNH7XevBH8fw8imlMfnOXRTorYgZYifg9pI5XTASf3pVym4do0
+ YOcqW2vRYLO8i6LgilfEh9Z0bVETvLj6ixzhnxy80QmBQ6lJqSH6+vSVtP/Njg97N6MI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,36 +42,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KZOfmF8UiMDBPQ4cWz4LK2NmU2gNSCctfPCuTGD5lNo=; b=ICSieYE7P+hmnto0/qNT+lcJDT
- GF68hYGLDcshLcCf14ooVRKnm2kY8OW2frn59eT7+ZjdEE78SMeaeTEZoL2qjE6INGQRjelEiUKDW
- Y7aaX5fAgHybgew+SSZqlOA4I9Hwz+NbKEf68Orac4ZfBz6t5LkVmu55Z5ERGdo6iIAA=;
+ bh=GvH6XJ0eCafbyID1zTPsiYuDf8AWOwTRVhojDoXYHh8=; b=Sxw7Lwry3OCsI6NRvBPPCdxX6J
+ f5swN49xa02NRkyCGcfq0I3mz9iD0XPATrehzLDmm73FsAbp+gDkkKIpYbBYJb4ZY7n+XKg0X1JwO
+ kE5mC8WBsnoBOrysfNT472WgEKUJLC8JMWq//JR6M9Gc+7L5l1XqCMLYpxMTtbFCtovM=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ktxgB-003G44-B3
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Dec 2020 18:55:40 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D183A22AAD;
- Mon, 28 Dec 2020 18:55:28 +0000 (UTC)
+ id 1ktxgB-003G45-B3
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Dec 2020 18:55:43 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7FF7822B2A;
+ Mon, 28 Dec 2020 18:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1609181729;
- bh=Qv8XPvD4Whz8DkvwGwAf7mmtYtvGPNNWzNeowimMGrM=;
+ bh=AM4SZDPH0pYqGNnbfRm/8TPtkieKxQQnEo9JrY1d/L0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=k0LLBzMoZ0aHGfOBsg3ITTIW0dgo1gTH+nM+OngQXse5z6gWy3lvNwUyvKs6g+p9M
- WRElB9XR6KPx8r9J9nxTkurn05YA7qHcQ8c89ve1zpJp3m1+uT89+1x2bueSLqkNHh
- 3HR9gG6QzcO36mQf1mr1IToFU2ia1oxP6TB107pAeDSlI+9XNgChm5GGD0xvh/uIYP
- 5Cv8F1LqjQZ3fb4/NkaXYU9ekLU9g7lHPVkOVRgpEDP+A6Y0ATp2yUuULup5HwyMG5
- 4/fQRDmYSPSMECifsZACf/4Fp0VnZXeIUJsGi86UuidY7mBk5IlZQhBtlsqlzYp5w0
- GF1YPOknLE9nA==
+ b=ay/InPrZKA8998PTQNbH6QB1A6ChsCgP3BrVvi2UdjpLhi1uwG1Yk3Dr1W57szGyR
+ jk6FYEWb/RG/VdnXR5ubDKN3dbKhZTtSoD70mUuTzUGqv3d1SKQUg2JtfVryzXXmSD
+ mBa7FrvEu8ZQHfDlgzoW8p5Kf3eJv7ACV4cuudo95nLhJXkGaUFEkFkS4QrYOZIfhK
+ 8yl3w2Ho/lHg9DhBzCmed+LaYHdRhGvKyLzvsSJzR0Qq64NDtwLqZCP1z+N8IqXx2J
+ 2JWoxKk9gztQRvpRZ6nPrMcW5o6QYQMIoT+bGOjHLZineJdFZuBkXTeEzccv4uM/zO
+ tiOiQsbYk1lew==
 From: Eric Biggers <ebiggers@kernel.org>
 To: stable@vger.kernel.org
-Date: Mon, 28 Dec 2020 10:54:31 -0800
-Message-Id: <20201228185433.61129-3-ebiggers@kernel.org>
+Date: Mon, 28 Dec 2020 10:54:33 -0800
+Message-Id: <20201228185433.61129-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201228185433.61129-1-ebiggers@kernel.org>
 References: <20201228185433.61129-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ktxgB-003G44-B3
-Subject: [f2fs-dev] [PATCH 5.4 2/4] ext4: prevent creating duplicate
+X-Headers-End: 1ktxgB-003G45-B3
+Subject: [f2fs-dev] [PATCH 5.4 4/4] ubifs: prevent creating duplicate
  encrypted filenames
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -92,40 +92,86 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 75d18cd1868c2aee43553723872c35d7908f240f upstream.
+commit 76786a0f083473de31678bdb259a3d4167cf756d upstream.
 
 As described in "fscrypt: add fscrypt_is_nokey_name()", it's possible to
 create a duplicate filename in an encrypted directory by creating a file
 concurrently with adding the directory's encryption key.
 
-Fix this bug on ext4 by rejecting no-key dentries in ext4_add_entry().
+Fix this bug on ubifs by rejecting no-key dentries in ubifs_create(),
+ubifs_mkdir(), ubifs_mknod(), and ubifs_symlink().
 
-Note that the duplicate check in ext4_find_dest_de() sometimes prevented
-this bug.  However in many cases it didn't, since ext4_find_dest_de()
-doesn't examine every dentry.
+Note that ubifs doesn't actually report the duplicate filenames from
+readdir, but rather it seems to replace the original dentry with a new
+one (which is still wrong, just a different effect from ext4).
 
-Fixes: 4461471107b7 ("ext4 crypto: enable filename encryption")
+On ubifs, this fixes xfstest generic/595 as well as the new xfstest I
+wrote specifically for this bug.
+
+Fixes: f4f61d2cc6d8 ("ubifs: Implement encrypted filenames")
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20201118075609.120337-3-ebiggers@kernel.org
+Link: https://lore.kernel.org/r/20201118075609.120337-5-ebiggers@kernel.org
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/namei.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/ubifs/dir.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 36a81b57012a5..59038e361337c 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2192,6 +2192,9 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
- 	if (!dentry->d_name.len)
- 		return -EINVAL;
+diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+index 6c0e19f7a21f4..a5e5e9b9d4e31 100644
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -278,6 +278,15 @@ static struct dentry *ubifs_lookup(struct inode *dir, struct dentry *dentry,
+ 	return d_splice_alias(inode, dentry);
+ }
  
++static int ubifs_prepare_create(struct inode *dir, struct dentry *dentry,
++				struct fscrypt_name *nm)
++{
 +	if (fscrypt_is_nokey_name(dentry))
 +		return -ENOKEY;
 +
- #ifdef CONFIG_UNICODE
- 	if (ext4_has_strict_mode(sbi) && IS_CASEFOLDED(dir) &&
- 	    sbi->s_encoding && utf8_validate(sbi->s_encoding, &dentry->d_name))
++	return fscrypt_setup_filename(dir, &dentry->d_name, 0, nm);
++}
++
+ static int ubifs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 			bool excl)
+ {
+@@ -301,7 +310,7 @@ static int ubifs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	if (err)
+ 		return err;
+ 
+-	err = fscrypt_setup_filename(dir, &dentry->d_name, 0, &nm);
++	err = ubifs_prepare_create(dir, dentry, &nm);
+ 	if (err)
+ 		goto out_budg;
+ 
+@@ -961,7 +970,7 @@ static int ubifs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	if (err)
+ 		return err;
+ 
+-	err = fscrypt_setup_filename(dir, &dentry->d_name, 0, &nm);
++	err = ubifs_prepare_create(dir, dentry, &nm);
+ 	if (err)
+ 		goto out_budg;
+ 
+@@ -1046,7 +1055,7 @@ static int ubifs_mknod(struct inode *dir, struct dentry *dentry,
+ 		return err;
+ 	}
+ 
+-	err = fscrypt_setup_filename(dir, &dentry->d_name, 0, &nm);
++	err = ubifs_prepare_create(dir, dentry, &nm);
+ 	if (err) {
+ 		kfree(dev);
+ 		goto out_budg;
+@@ -1130,7 +1139,7 @@ static int ubifs_symlink(struct inode *dir, struct dentry *dentry,
+ 	if (err)
+ 		return err;
+ 
+-	err = fscrypt_setup_filename(dir, &dentry->d_name, 0, &nm);
++	err = ubifs_prepare_create(dir, dentry, &nm);
+ 	if (err)
+ 		goto out_budg;
+ 
 -- 
 2.29.2
 
