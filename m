@@ -1,72 +1,78 @@
-Return-Path: <SRS0=Un00=F7=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=tmuo=GA=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5596FC433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 27 Dec 2020 13:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4136EC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Dec 2020 18:55:47 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7CEE7207E8;
-	Sun, 27 Dec 2020 13:43:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CEE7207E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+	by mail.kernel.org (Postfix) with ESMTPS id E318A22B2B;
+	Mon, 28 Dec 2020 18:55:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E318A22B2B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ktWKz-0004q2-UC; Sun, 27 Dec 2020 13:43:57 +0000
+	id 1ktxgG-0000HR-RY; Mon, 28 Dec 2020 18:55:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <pmenzel@molgen.mpg.de>) id 1ktWKu-0004pk-Ni
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 27 Dec 2020 13:43:52 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1ktxgC-0000HC-So
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Dec 2020 18:55:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bvUON/Nd2XSEwFI9ZSE/PE/teUEUMMpkUzIAJOnNZsc=; b=OB0shFE76enoJQuNiAYXmE6oIR
- LJ+GyWjbQZzhp01qiyysjUBkclGXT9oxZt2ngXoctZOWSSbC38CUmMCuwd/Y2ONzwWPF6KUdnk3aa
- Qtez3vuxsqqoeippfdoqcB7zqlSq4EPkfVPP2EizHQ3exqW/JBCjsX+eboXIWQ4C2MFg=;
+ bh=KZOfmF8UiMDBPQ4cWz4LK2NmU2gNSCctfPCuTGD5lNo=; b=YTU/shR5UVM+nrbxtOFRZvYJYB
+ XH9l1mbyb37Bmmc9B25XqrpfXXnbKVCzTedksApj0KuUloWLbspnbcd4SW32DyAS4MoHLrm6kJmSy
+ s/uBsRDS6NSNmkKigFDt03PnFAiHtFvBHObAmu5m3+9EJzmpehlZOhF00pgJr/RsBx78=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Message-ID:
- Subject:From:Cc:To:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=bvUON/Nd2XSEwFI9ZSE/PE/teUEUMMpkUzIAJOnNZsc=; b=h
- cxYJl1JLSIdbdu9m8bXdlkDk8L1iMh1/WP31uQBiKa4aLD2hr+2yTDWrVqZCXfGjgqvmBkIARjq6U
- JYxibeUwWg8G/TLJq1R4V0aUVsF+umSGL2JrsvxbJclaEla72T5UQgqZjdFAJi5CgGMrNRQ15y4bo
- 6lTgWHpJEYucwmEs=;
-Received: from mx3.molgen.mpg.de ([141.14.17.11] helo=mx1.molgen.mpg.de)
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=KZOfmF8UiMDBPQ4cWz4LK2NmU2gNSCctfPCuTGD5lNo=; b=ICSieYE7P+hmnto0/qNT+lcJDT
+ GF68hYGLDcshLcCf14ooVRKnm2kY8OW2frn59eT7+ZjdEE78SMeaeTEZoL2qjE6INGQRjelEiUKDW
+ Y7aaX5fAgHybgew+SSZqlOA4I9Hwz+NbKEf68Orac4ZfBz6t5LkVmu55Z5ERGdo6iIAA=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ktWKk-00HRO4-48
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 27 Dec 2020 13:43:52 +0000
-Received: from [192.168.1.11]
- (dynamic-077-013-243-215.77.13.pool.telefonica.de [77.13.243.215])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
- (No client certificate requested) (Authenticated sender: pmenzel)
- by mx.molgen.mpg.de (Postfix) with ESMTPSA id D2B0120225BD3;
- Sun, 27 Dec 2020 14:27:12 +0100 (CET)
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <96184c8e-6ea3-caa7-ba2b-b5644b70b2a9@molgen.mpg.de>
-Date: Sun, 27 Dec 2020 14:27:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+ id 1ktxgB-003G44-B3
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Dec 2020 18:55:40 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D183A22AAD;
+ Mon, 28 Dec 2020 18:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1609181729;
+ bh=Qv8XPvD4Whz8DkvwGwAf7mmtYtvGPNNWzNeowimMGrM=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=k0LLBzMoZ0aHGfOBsg3ITTIW0dgo1gTH+nM+OngQXse5z6gWy3lvNwUyvKs6g+p9M
+ WRElB9XR6KPx8r9J9nxTkurn05YA7qHcQ8c89ve1zpJp3m1+uT89+1x2bueSLqkNHh
+ 3HR9gG6QzcO36mQf1mr1IToFU2ia1oxP6TB107pAeDSlI+9XNgChm5GGD0xvh/uIYP
+ 5Cv8F1LqjQZ3fb4/NkaXYU9ekLU9g7lHPVkOVRgpEDP+A6Y0ATp2yUuULup5HwyMG5
+ 4/fQRDmYSPSMECifsZACf/4Fp0VnZXeIUJsGi86UuidY7mBk5IlZQhBtlsqlzYp5w0
+ GF1YPOknLE9nA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: stable@vger.kernel.org
+Date: Mon, 28 Dec 2020 10:54:31 -0800
+Message-Id: <20201228185433.61129-3-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201228185433.61129-1-ebiggers@kernel.org>
+References: <20201228185433.61129-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Language: en-US
-X-Headers-End: 1ktWKk-00HRO4-48
-Subject: [f2fs-dev] 120 s delay during boot with smaller initrd
+X-Headers-End: 1ktxgB-003G44-B3
+Subject: [f2fs-dev] [PATCH 5.4 2/4] ext4: prevent creating duplicate
+ encrypted filenames
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,81 +84,54 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-RGVhciBMaW51eCBmb2xrcywKCgpVc2luZyBhbiBpbml0cmQgY3JlYXRlZCBieSB0aW55LWluaXRy
-YW1mcyBbMV0sIHRoZSBib290IHN0YWxscyBmb3IgdHdvIAptaW51dGVzICphZnRlciogdGhlIGlu
-aXRyZCBoYXMgcnVuIGFuZCBzeXN0ZW1kIGhhcyBhbHJlYWR5IHN0YXJ0ZWQuIEFuIApGMkZTIHJv
-b3QgcGFydGl0aW9uIGlzIHVzZWQuCgpgYGAKWyAgICAwLjAwMDAwMF0gbWljcm9jb2RlOiBtaWNy
-b2NvZGUgdXBkYXRlZCBlYXJseSB0byByZXZpc2lvbiAweGEwYiwgCmRhdGUgPSAyMDEwLTA5LTI4
-ClsgICAgMC4wMDAwMDBdIExpbnV4IHZlcnNpb24gNS45LjAtNS1hbWQ2NCAKKGRlYmlhbi1rZXJu
-ZWxAbGlzdHMuZGViaWFuLm9yZykgKGdjYy0xMCAoRGViaWFuIDEwLjIuMS0xKSAxMC4yLjEgCjIw
-MjAxMjA3LCBHTlUgbGQgKEdOVSBCaW51dGlscyBmb3IgRGViaWFuKSAyLjM1LjEpICMxIFNNUCBE
-ZWJpYW4gCjUuOS4xNS0xICgyMDIwLTEyLTE3KQpbICAgIDAuMDAwMDAwXSBDb21tYW5kIGxpbmU6
-IEJPT1RfSU1BR0U9L2Jvb3Qvdm1saW51ei01LjkuMC01LWFtZDY0IApyb290PS9kZXYvc2RhMiBy
-byBxdWlldCBub2lzYXBucCBjcnlwdG9tZ3Iubm90ZXN0cyByYW5kb20udHJ1c3RfY3B1PW9uIAp0
-c2M9dW5zdGFibGUgZGVidWcgbG9nX2J1Zl9sZW49Mk0gaW5pdGNhbGxfZGVidWcKW+KApl0KWyAg
-ICAwLjY1MDE2OF0gVHJ5aW5nIHRvIHVucGFjayByb290ZnMgaW1hZ2UgYXMgaW5pdHJhbWZzLi4u
-ClsgICAgMC42NjEzNDNdIEZyZWVpbmcgaW5pdHJkIG1lbW9yeTogMTAyNEsKW+KApl0KWyAgICA2
-LjAzMzA0NF0gc3lzdGVtZFsxXTogc3lzdGVtZCAyNDcuMi0zIHJ1bm5pbmcgaW4gc3lzdGVtIG1v
-ZGUuICgrUEFNIAorQVVESVQgK1NFTElOVVggK0lNQSArQVBQQVJNT1IgK1NNQUNLICtTWVNWSU5J
-VCArVVRNUCArTElCQ1JZUFRTRVRVUCAKK0dDUllQVCArR05VVExTICtBQ0wgK1haICtMWjQgK1pT
-VEQgK1NFQ0NPTVAgK0JMS0lEICtFTEZVVElMUyArS01PRCAKK0lETjIgLUlETiArUENSRTIgZGVm
-YXVsdC1oaWVyYXJjaHk9dW5pZmllZCkKW+KApl0KWyAgICA5LjM3MjEzNF0gZnVzZTogaW5pdCAo
-QVBJIHZlcnNpb24gNy4zMSkKWyAgICA5LjM5Njk5MF0gY2FsbGluZyAgcGtjczhfa2V5X2luaXQr
-MHgwLzB4MTAwMCBbcGtjczhfa2V5X3BhcnNlcl0gQCAxMTQKWyAgICA5LjQxMzk1Nl0gQXN5bW1l
-dHJpYyBrZXkgcGFyc2VyICdwa2NzOCcgcmVnaXN0ZXJlZApbICAgIDkuNDIxMzc4XSBpbml0Y2Fs
-bCBwa2NzOF9rZXlfaW5pdCsweDAvMHgxMDAwIFtwa2NzOF9rZXlfcGFyc2VyXSAKcmV0dXJuZWQg
-MCBhZnRlciAxNTkxMiB1c2VjcwpbICAgIDkuNDMzOTg5XSBpbml0Y2FsbCBmdXNlX2luaXQrMHgw
-LzB4MTQyIFtmdXNlXSByZXR1cm5lZCAwIGFmdGVyIAoyODIwNiB1c2VjcwpbICAgIDkuNDQzMjI5
-XSBjYWxsaW5nICBkcm1fY29yZV9pbml0KzB4MC8weDEwMDAgW2RybV0gQCAxMTAKWyAgICA5LjQ4
-MDc0MF0gaW5pdGNhbGwgZHJtX2NvcmVfaW5pdCsweDAvMHgxMDAwIFtkcm1dIHJldHVybmVkIDAg
-YWZ0ZXIgCjI4ODg4IHVzZWNzClsgICAxMi4wNTc0NTZdIHJhbmRvbTogY3JuZyBpbml0IGRvbmUK
-WyAgIDEyLjA2MDgxMV0gcmFuZG9tOiA3IHVyYW5kb20gd2FybmluZyhzKSBtaXNzZWQgZHVlIHRv
-IHJhdGVsaW1pdGluZwpbICAxMzUuODcxOTg4XSBwZXJmOiBpbnRlcnJ1cHQgdG9vayB0b28gbG9u
-ZyAoMjUwOSA+IDI1MDApLCBsb3dlcmluZyAKa2VybmVsLnBlcmZfZXZlbnRfbWF4X3NhbXBsZV9y
-YXRlIHRvIDc5NTAwClsgIDE0MC4yODYxNTddIGF1ZGl0OiB0eXBlPTE0MDAgYXVkaXQoMTYwOTA2
-NDc4OC4wMTI6Mik6IAphcHBhcm1vcj0iU1RBVFVTIiBvcGVyYXRpb249InByb2ZpbGVfbG9hZCIg
-cHJvZmlsZT0idW5jb25maW5lZCIgCm5hbWU9Im52aWRpYV9tb2Rwcm9iZSIgcGlkPTE0MiBjb21t
-PSJhcHBhcm1vcl9wYXJzZXIiClsgIDE0MC4zMTUxNTJdIGF1ZGl0OiB0eXBlPTE0MDAgYXVkaXQo
-MTYwOTA2NDc4OC4wMTI6Myk6IAphcHBhcm1vcj0iU1RBVFVTIiBvcGVyYXRpb249InByb2ZpbGVf
-bG9hZCIgcHJvZmlsZT0idW5jb25maW5lZCIgCm5hbWU9Im52aWRpYV9tb2Rwcm9iZS8va21vZCIg
-cGlkPTE0MiBjb21tPSJhcHBhcm1vcl9wYXJzZXIiClsgIDE0MC4zNDg2MjNdIGF1ZGl0OiB0eXBl
-PTE0MDAgYXVkaXQoMTYwOTA2NDc4OC4wNzI6NCk6IAphcHBhcm1vcj0iU1RBVFVTIiBvcGVyYXRp
-b249InByb2ZpbGVfbG9hZCIgcHJvZmlsZT0idW5jb25maW5lZCIgCm5hbWU9Ii91c3IvYmluL21h
-biIgcGlkPTE1NSBjb21tPSJhcHBhcm1vcl9wYXJzZXIiClsgIDE0MC4zODI3NDRdIGF1ZGl0OiB0
-eXBlPTE0MDAgYXVkaXQoMTYwOTA2NDc4OC4wNzI6NSk6IAphcHBhcm1vcj0iU1RBVFVTIiBvcGVy
-YXRpb249InByb2ZpbGVfbG9hZCIgcHJvZmlsZT0idW5jb25maW5lZCIgCm5hbWU9Im1hbl9maWx0
-ZXIiIHBpZD0xNTUgY29tbT0iYXBwYXJtb3JfcGFyc2VyIgpbICAxNDAuNDA4NzkxXSBhdWRpdDog
-dHlwZT0xNDAwIGF1ZGl0KDE2MDkwNjQ3ODguMDcyOjYpOiAKYXBwYXJtb3I9IlNUQVRVUyIgb3Bl
-cmF0aW9uPSJwcm9maWxlX2xvYWQiIHByb2ZpbGU9InVuY29uZmluZWQiIApuYW1lPSJtYW5fZ3Jv
-ZmYiIHBpZD0xNTUgY29tbT0iYXBwYXJtb3JfcGFyc2VyIgpbICAxNDAuNDM5ODYwXSBhdWRpdDog
-dHlwZT0xNDAwIGF1ZGl0KDE2MDkwNjQ3ODguMDcyOjcpOiAKYXBwYXJtb3I9IlNUQVRVUyIgb3Bl
-cmF0aW9uPSJwcm9maWxlX2xvYWQiIHByb2ZpbGU9InVuY29uZmluZWQiIApuYW1lPSIvdXNyL2xp
-Yi9jdXBzL2JhY2tlbmQvY3Vwcy1wZGYiIHBpZD0xNDEgY29tbT0iYXBwYXJtb3JfcGFyc2VyIiAK
-ClsgIDE0MC40ODE1MjFdIGNhbGxpbmcgIGFjcGlfY3B1ZnJlcV9pbml0KzB4MC8weDEwMDAgW2Fj
-cGlfY3B1ZnJlcV0gQCAxNTQKW+KApl0KYGBgCgpUaGUgdXNlcnNwYWNlIGxvZyBkdXJpbmcgdGhh
-dCB0aW1lIGNvdWxkIGJlOgoKYGBgCkRleiAyNyAxMToyNDoxNyBzaXRvcGFuYWtpIHN5c3RlbWRb
-MV06IEZpbmlzaGVkIENvbGRwbHVnIEFsbCB1ZGV2IERldmljZXMuCkRleiAyNyAxMToyNDoxNyBz
-aXRvcGFuYWtpIHN5c3RlbWRbMV06IHN5c3RlbWQtdWRldi10cmlnZ2VyLnNlcnZpY2U6IApDb250
-cm9sIGdyb3VwIGlzIGVtcHR5LgpEZXogMjcgMTE6MjQ6MTcgc2l0b3BhbmFraSBzeXN0ZW1kWzFd
-OiBzeXNpbml0LnRhcmdldDogc3RhcnRpbmcgaGVsZCAKYmFjaywgd2FpdGluZyBmb3I6IHN5c3Rl
-bWQtaHdkYi11cGRhdGUuc2VydmljZQpEZXogMjcgMTE6MjY6MDIgc2l0b3BhbmFraSBzeXN0ZW1k
-WzFdOiBzeXN0ZW1kLWpvdXJuYWxkLnNlcnZpY2U6IEdvdCAKbm90aWZpY2F0aW9uIG1lc3NhZ2Ug
-ZnJvbSBQSUQgMTEzIChXQVRDSERPRz0xKQpEZXogMjcgMTE6MjY6Mjcgc2l0b3BhbmFraSBzeXN0
-ZW1kLWZzY2tbMTE5XTogSW5mbzogRml4IHRoZSByZXBvcnRlZCAKY29ycnVwdGlvbi4KRGV6IDI3
-IDExOjI2OjI3IHNpdG9wYW5ha2kgc3lzdGVtZC1mc2NrWzExOV06IEluZm86IE1vdW50ZWQgZGV2
-aWNlIQpEZXogMjcgMTE6MjY6Mjcgc2l0b3BhbmFraSBzeXN0ZW1kLWZzY2tbMTE5XTogSW5mbzog
-Q2hlY2sgRlMgb25seSBkdWUgdG8gUk8KYGBgCgpBcyBpdCBkb2VzIG5vdCBoYXBwZW4gd2l0aCB0
-aGUgaW5pdHJkIGNyZWF0ZWQgYnkgaW5pdHJhbWZzLXRvb2xzLCBidXQgCnRoZSBpbml0cmQgd2Fz
-IHN1Y2Nlc3NmdWxseSBydW4sIEkgYW0gcXVpdGUgY29uZnVzZWQuIENvdWxkIGl0IGJlIEYyRlMg
-CnJlbGF0ZWQ/IFBsZWFzZSBmaW5kIHRoZSBmdWxsIGxvZ3Mgb2YgYm90aCBzdGFydHMgYXR0YWNo
-ZWQgdG8gYnVnIAojMjEwOTE3IFsyXS4KCgpLaW5kIHJlZ2FyZHMsCgpQYXVsCgoKWzFdOiBodHRw
-czovL2dpdGh1Yi5jb20vY2hyaXMtc2UvdGlueS1pbml0cmFtZnMvClsyXTogaHR0cHM6Ly9idWd6
-aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0yMTA5MTcKCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcg
-bGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3Rz
-LnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+From: Eric Biggers <ebiggers@google.com>
+
+commit 75d18cd1868c2aee43553723872c35d7908f240f upstream.
+
+As described in "fscrypt: add fscrypt_is_nokey_name()", it's possible to
+create a duplicate filename in an encrypted directory by creating a file
+concurrently with adding the directory's encryption key.
+
+Fix this bug on ext4 by rejecting no-key dentries in ext4_add_entry().
+
+Note that the duplicate check in ext4_find_dest_de() sometimes prevented
+this bug.  However in many cases it didn't, since ext4_find_dest_de()
+doesn't examine every dentry.
+
+Fixes: 4461471107b7 ("ext4 crypto: enable filename encryption")
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20201118075609.120337-3-ebiggers@kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/ext4/namei.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 36a81b57012a5..59038e361337c 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2192,6 +2192,9 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
+ 	if (!dentry->d_name.len)
+ 		return -EINVAL;
+ 
++	if (fscrypt_is_nokey_name(dentry))
++		return -ENOKEY;
++
+ #ifdef CONFIG_UNICODE
+ 	if (ext4_has_strict_mode(sbi) && IS_CASEFOLDED(dir) &&
+ 	    sbi->s_encoding && utf8_validate(sbi->s_encoding, &dentry->d_name))
+-- 
+2.29.2
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
