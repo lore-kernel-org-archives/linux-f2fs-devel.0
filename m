@@ -2,38 +2,38 @@ Return-Path: <SRS0=kJcA=GC=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D5AC433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Dec 2020 15:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 883A2C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Dec 2020 18:02:14 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C00D220575;
-	Wed, 30 Dec 2020 15:56:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C00D220575
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	by mail.kernel.org (Postfix) with ESMTPS id 2D8E22229C;
+	Wed, 30 Dec 2020 18:02:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8E22229C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kudqC-0005e3-6f; Wed, 30 Dec 2020 15:56:48 +0000
+	id 1kufnX-0000rg-MF; Wed, 30 Dec 2020 18:02:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <greg@kroah.com>) id 1kudqA-0005dt-PG
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Dec 2020 15:56:46 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kufnX-0000rT-2S
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Dec 2020 18:02:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=InRV2t3SNNnx0dg/YV55vnEea5563XkQ8Wd0NGN+R3E=; b=JrTy470m1pvnG4hMsSCk1WWozC
- lIEzPTE9+8Yt9YI9lJCU1JKWMK1eItuBilbZuAubIQPYpG+M3A14oXmArD4JGLFgpRxKunCqWalag
- Zp9NMOVMCgRJbPx0MFuOTcII+iThuz8PkYAzrQk/DmmnfXoFtDeQPL7yQ7cfIDbdbzao=;
+ bh=C114N6DT/of0HUWtJEroVeqEHZpXGaS3KkcANDpfUE0=; b=ZYcU9BZlSyuDEV1i3hXgkCtVbx
+ piyciINfWqMHI6jHlqMc+I5J1KiBudgGOKAU4MMrXV0nf7IdMf+tcEosKh0pFJRyso4SwW84dOkcL
+ Ne91UnZ52BQt6Ao9CUXY793GOlzvv4mYFQF4ckV5c1r0MmmOEfvLJb6PPCBSzxfF3y8M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -41,68 +41,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=InRV2t3SNNnx0dg/YV55vnEea5563XkQ8Wd0NGN+R3E=; b=QuR8MLM07o8zMJBB9A9wezwrlp
- X+MlhjfKaHcNpEzKpyoXj773AtRnc3EQBtylyp1eCDixybeOlpPKxYSBN1Y9yIVIZPpPlI19IVNYy
- mx1nKfrN5FH12z6pTluwieNdteSUfIJZztdS5WDt1kRQ3UzBYmjG8oCT76Ahub11xGao=;
-Received: from out4-smtp.messagingengine.com ([66.111.4.28])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=C114N6DT/of0HUWtJEroVeqEHZpXGaS3KkcANDpfUE0=; b=X2qLGp+E90U7rTc+v5auE57NGB
+ KZ/8VzgvJ8wDHGBRNIV4Aa7wNogWBKt/beqRS/r6bTctlF7OLAkqcWgL1QfgQan/hNOXxD8UszWv9
+ 6CpQsylLetQeYyh6KyPuA6qhIE5vm9sl+rljVr0NqMxbLplna1iiA9MVEkyFSf2kVUpU=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kudpy-00DFSY-J8
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Dec 2020 15:56:46 +0000
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
- by mailout.nyi.internal (Postfix) with ESMTP id 2A3F85C0126;
- Wed, 30 Dec 2020 10:38:22 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
- by compute5.internal (MEProxy); Wed, 30 Dec 2020 10:38:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
- date:from:to:cc:subject:message-id:references:mime-version
- :content-type:in-reply-to; s=fm2; bh=InRV2t3SNNnx0dg/YV55vnEea55
- 63XkQ8Wd0NGN+R3E=; b=GPBardpKLEh2z1uzWPRP+tgWvEqjk7ksnQyhmDVBoxj
- nW/wCS7TnLggbjCGqLQ/tfAG+TIxbCz17SG2wOO6Xty+4EELhGZc85EGSc9SX0cP
- bKlgrjakgKyZL9B99hxldJDV31AWHFKdEJV9Bbx8atatPCm2TtORKONcGfRMQ/ce
- RQvngOP2g9OfUFOFi9kttiExMDUuIu4X4CInI7KD4aVIELWr6y317ykEahC1vdsL
- +EwHXs3ypdA0OYjS9DR3ZGJZDa3GoHdWzyOHl0GX8Q/Tji3a6ueSfMCH5nXFW4Lf
- d9nA6w52aXITFTVEJdjmq/uCQ1g7ZxoC8Xom9OMK7cw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to:x-me-proxy
- :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=InRV2t
- 3SNNnx0dg/YV55vnEea5563XkQ8Wd0NGN+R3E=; b=Jh7znz4k8pK638beSiZcKY
- hnbeW2eviCnEHu1uOqFEtJNLDZUSVQxyqbxMQXkCstNajXZpv+iLUE/wcS6dZ1we
- 71SmL+0cbO5eUncCVlVC+x5R3QWFGL8mj8edd3pHGjCdIAijP5NpdHzbtT0jcsRs
- DymUiek1ZpJsuJ65TCqdk7OnJgYwuExnotDihq/9Gt9Di2cm9GJun8FSsuySo/WE
- QfIFWP4GTKmeBlmLVJOxyNeTs6fNMaSydcJ5aSGf7QhluWfUF+lV+vchPgkC6BbR
- M3XBM0wNlFH03yM4A7ImZE3UJ0gntKJdSpLvM7uFc8NKEptVxRSFiNSylsP31YcA
- ==
-X-ME-Sender: <xms:7Z7sX7Nz4-L15lmALMZKoxMLm9S8QeKuMe_0LX7Bo74enEekjZ7cOg>
- <xme:7Z7sX16WREB5KyJl-UVokscOc0lz8BJm_2to6atX_Boj-IQdLcoMPQU5Nc-HywfRC
- wP_hLSfGDw7Hg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrvddvfedgjeekucetufdoteggodetrfdotf
- fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
- uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
- cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
- mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
- fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucfkphepkeef
- rdekiedrjeegrdeigeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
- hlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:7Z7sX3JvGcDgzQudF61rzqfGkl0wyBPXWs09FV3tMJIAJrAZbM2qiw>
- <xmx:7Z7sX3fMt_9mKZI_ZCkgHhA_kxVFdzg4F80PLyxfidBCKxZqnA-WTQ>
- <xmx:7Z7sXycCqMHvvv7nrqXaeuG3Qxe1Rhy2NrPeVuG2wRN21TTGmT8yJw>
- <xmx:7p7sXzLc7QbMMgrw9FJSA2QwD7Nv5dz0f69hS-drTbzNMbNUbi6wQg>
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
- by mail.messagingengine.com (Postfix) with ESMTPA id 1E5BF1080057;
- Wed, 30 Dec 2020 10:38:21 -0500 (EST)
-Date: Wed, 30 Dec 2020 16:39:24 +0100
-From: Greg KH <greg@kroah.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <X+yfLAyAw8kOcOGz@kroah.com>
-References: <20201228185433.61129-1-ebiggers@kernel.org>
+ id 1kufnP-009Wv5-9y
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Dec 2020 18:02:11 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9DE9C22287;
+ Wed, 30 Dec 2020 18:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1609351317;
+ bh=1EEHMEPXKBgaCrorRSDRdGyZ2w5tbvnf1YgxY5j8NVo=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=tU8Q28xTgSvY0NTPdbWeODcyYzhRYoozlDWcxAqqbcfrDDo+bkO2k5j8Yop0iJNHD
+ CBOZd1nQ++IXpbg5/9ToK/BF85rVtqXkDdtJr6yIVrlEXu2ionquerG8HWPrG+VskS
+ UJfJIOPERNA2d3MvGbAiQiPDYMYiKrbOP4ec/GIl6Ct4yxy9pvYLiDyocMDRV6NL22
+ mwoqQ1HLmnk/5lmxvqIQrDVv0P7b8pU1XqiBMEfPMMDGe6cuCfB6D7bbjmiNWqx862
+ ssbWWVyU9ClV29V3lco8LoVnH2AeO6T2aYPsuNUdlx/dXnGJZcLuXPrOFPzY1Runzr
+ rYOkr93Wo7wcg==
+Date: Wed, 30 Dec 2020 10:01:56 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Message-ID: <X+zAlEu+0JSvXaMu@sol.localdomain>
+References: <20201230130314.3636961-1-sashal@kernel.org>
+ <20201230130314.3636961-10-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20201228185433.61129-1-ebiggers@kernel.org>
-X-Headers-End: 1kudpy-00DFSY-J8
-Subject: Re: [f2fs-dev] [PATCH 5.4 0/4] fscrypt: prevent creating duplicate
- encrypted filenames
+In-Reply-To: <20201230130314.3636961-10-sashal@kernel.org>
+X-Headers-End: 1kufnP-009Wv5-9y
+Subject: Re: [f2fs-dev] [PATCH AUTOSEL 5.10 10/31] f2fs: Handle casefolding
+ with Encryption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -114,28 +84,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-mtd@lists.infradead.org, stable@vger.kernel.org,
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Daniel Rosenberg <drosen@google.com>,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Dec 28, 2020 at 10:54:29AM -0800, Eric Biggers wrote:
-> Backport four commits from v5.11-rc1.  I resolved a conflict in the
-> first one.  The rest are clean cherry-picks which didn't get picked up
-> yet because they depend on the first one.
+On Wed, Dec 30, 2020 at 08:02:52AM -0500, Sasha Levin wrote:
+> From: Daniel Rosenberg <drosen@google.com>
 > 
-> Eric Biggers (4):
->   fscrypt: add fscrypt_is_nokey_name()
->   ext4: prevent creating duplicate encrypted filenames
->   f2fs: prevent creating duplicate encrypted filenames
->   ubifs: prevent creating duplicate encrypted filenames
+> [ Upstream commit 7ad08a58bf67594057362e45cbddd3e27e53e557 ]
 > 
+> Expand f2fs's casefolding support to include encrypted directories.  To
+> index casefolded+encrypted directories, we use the SipHash of the
+> casefolded name, keyed by a key derived from the directory's fscrypt
+> master key.  This ensures that the dirhash doesn't leak information
+> about the plaintext filenames.
+> 
+> Encryption keys are unavailable during roll-forward recovery, so we
+> can't compute the dirhash when recovering a new dentry in an encrypted +
+> casefolded directory.  To avoid having to force a checkpoint when a new
+> file is fsync'ed, store the dirhash on-disk appended to i_name.
+> 
+> This patch incorporates work by Eric Biggers <ebiggers@google.com>
+> and Jaegeuk Kim <jaegeuk@kernel.org>.
+> 
+> Co-developed-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> Reviewed-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-All now applied, thanks.
+Please don't backport this to the LTS kernels.  This is a new feature, not a
+fix, and you missed prerequisite patches...
 
-greg k-h
+- Eric
 
 
 _______________________________________________
