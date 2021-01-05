@@ -2,93 +2,77 @@ Return-Path: <SRS0=actn=GI=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BD5C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  5 Jan 2021 00:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29727C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  5 Jan 2021 00:55:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E73782255F;
-	Tue,  5 Jan 2021 00:04:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73782255F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTPS id D752D227C3;
+	Tue,  5 Jan 2021 00:55:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D752D227C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kwZqL-0006bs-4O; Tue, 05 Jan 2021 00:04:57 +0000
+	id 1kwadD-0006LT-5W; Tue, 05 Jan 2021 00:55:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <daeho43@gmail.com>) id 1kwZqK-0006bi-0y
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 00:04:56 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kwadC-0006L7-Dd
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 00:55:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
- Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
- Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
- :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RIAu8uS5feNbhsyipiwLYRptnpa/P53/nDDHuTAmANU=; b=eYnp8H46Zf+wZld180w2IRvu74
- 2Xf0F3xvOOSNOrkIeKC5rS5pK8tmyKEtugWwvtGCCcfCQzTjYy2hx9FimGBhGS/nkV62xb5S3tFPK
- NwOTiIz+cxAvtIMdkEVRauH9N7bbDuZJHbRxd7UgYKuWwQ6TvG78rxo20N6IyUemVl0w=;
+ bh=FWe+5FS4Qo4SrmCId/BqNjqaAIZ85jwflOdqAHuNDlE=; b=Bigp21DokIRDKPjqNNjgZBW4UH
+ XuipiHXy4wpdI93PKXSAtRfV7r1Ox+KGsdgElUzSvBKGfcNz7XwqqKg4JtaGyvvG18K30A41cp3rC
+ 3TFdKJsnXqK7K/kZSK/vBj7+1AE4Sxi9E2Bdz+eleilFGwMX5LGvbgrbIH861wJ27l/c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
- :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=RIAu8uS5feNbhsyipiwLYRptnpa/P53/nDDHuTAmANU=; b=KO0tMxp6l7c2BfnxwnFZioSl6+
- xPCdGePxRc8xdEAXGpKDg85HDApqvrBZ75eGNvbPtKshWQFn+IcV499sOcgCNlLFu+L6kCZ58KkxJ
- DIxJEyMpl5JWNJ8LGFS29TGF8DfkXZ3d5wk4rI4yMdJ1aGQBZjfv4Pf4VYoQiZecPnVc=;
-Received: from mail-lf1-f49.google.com ([209.85.167.49])
+ bh=FWe+5FS4Qo4SrmCId/BqNjqaAIZ85jwflOdqAHuNDlE=; b=ipvKSx5ouQJNTfTJUuk8zoh4/A
+ hqHqvMR/0vVPt4fzWidjyDHJCP9q1g4AZCiiAx4oqbDSEEdIpHVN/RTjZX6yI4PHFORRyXpH1biE5
+ D0gx7EkR7Mxs7eNlZxZQ1S16Yrr2fGHJ5mS1G3QnFv1GJzpvjtPeOckeIk45kojSjABg=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kwZqB-00DswF-Tl
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 00:04:55 +0000
-Received: by mail-lf1-f49.google.com with SMTP id 23so68525400lfg.10
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 04 Jan 2021 16:04:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc:content-transfer-encoding;
- bh=RIAu8uS5feNbhsyipiwLYRptnpa/P53/nDDHuTAmANU=;
- b=Bg9iEFVIyFaOS5eu9+24tFOHTVbPYXmXuPa8fLOxoTJNvzX7lxDPyZ8FAgHgcuxGaB
- rNhgDMM2EisQbSa2Aj0W4NSs3lhHF6a74Ql9LVu/WjaiGVHd7gE92eQZ0c/CRKtu4JzJ
- t/mD5T/ww180To3bcVRi1WuBNjyUSBRo97HViY0FMmvBtDXhlUIIrTy/XTGz3fIwFHkK
- kHiEZC0MaxBAUF8ROHsWr7rD5NvAzo4FTMeU+gGGXMJmHuv8bjr4kABJUaH6RTCw5DHh
- /9K7UvN+ot87vJi5tatgaZ6zBm8NK9C6k3l1aHFojaY0KShox6iK0tzjrdDt0ysO/eRQ
- 41Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc:content-transfer-encoding;
- bh=RIAu8uS5feNbhsyipiwLYRptnpa/P53/nDDHuTAmANU=;
- b=O85kB8XMfSEgcjtXuBqKji/VpeCg/3Z+kdpvPDhvFgeeeZYlOV6BPU6zmjDKTI/iMB
- 6WRyGFHJv6ABoen2pBx0QM/h3rhlHr4+RP2DVScwTvg2l5Q0aji/XqgJBH3uyi2SAes8
- 8O+dNOVEt0nsKJLp2wXnjLr20CzDtjxf1yiCkAFpfQr0pst8B4Zcwse9OSw8AdpEZJ7z
- gA1kuYD8pDan+5RDEPx6gGBp34zPps149QdR9C3sM7y7h+mO5RscH1d3qaW0A78ys84k
- oesGPAh2Q7RBmJzw4e76KgBeHTGOG5pw4UucGJPiZTB43C5ZcUJYUI/79CT+tc2JYc9/
- oN2A==
-X-Gm-Message-State: AOAM5322Vu9QyQX3MFrmyXK6xyyAE3y3x3VE0iOxBqvfLVyD7SlXrqFE
- /bShDM/1BSy/ev2CewaJUNAi1HpDsuqJi0aR4uw=
-X-Google-Smtp-Source: ABdhPJzCBtNw3KUV+mj0Gs5HT7pcbktTyblGdVU5raqwsE0oZINcZDbSwiY7ga3F3OiSvTBdo312EebrkCkPF+R6x98=
-X-Received: by 2002:a19:301:: with SMTP id 1mr31231450lfd.67.1609805081256;
- Mon, 04 Jan 2021 16:04:41 -0800 (PST)
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1kwad3-00E0Oy-0K
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 00:55:26 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 879B722582;
+ Tue,  5 Jan 2021 00:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1609808107;
+ bh=moPvKfHUYW5Xbk7fp9PqSrbSDfWUFwePDygO+DUtRFo=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=odLOb9jW7zdbgQ19pnxfQeV0LZCahNWh2pJHvvskuGhaoTAJINjva3sXgUpuQUx4C
+ 9Q4jVEGDvC4JAbMDOb0ntyBgGZGYCD7D5RQ+uTFsyV3drMND3coDDlh3n+eJeaDR4P
+ hil5l822YPp+3ttvEctfsdcoutR9fY1zMzcy5DOf6/m5irfC1tIlgTw7cCQNZnYr2n
+ osSXWG3OuD+6/7zLbzpZ0kcTNtAhXkxI9E8LYaVMNzhVDRqwBsPc/DbKgZ8L/a763U
+ fTbNyD1NhYvp7LInib3/VaOfA36sk0VY6JASj7UsjCeOh2iBGsxYCeMQqSIOQuqYJT
+ QcZ5iZypbSAwA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Date: Mon,  4 Jan 2021 16:54:42 -0800
+Message-Id: <20210105005452.92521-4-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210105005452.92521-1-ebiggers@kernel.org>
+References: <20210105005452.92521-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <1acf4202-e5e6-f3fb-73c3-11bc965d3058@canonical.com>
-In-Reply-To: <1acf4202-e5e6-f3fb-73c3-11bc965d3058@canonical.com>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Tue, 5 Jan 2021 09:04:30 +0900
-Message-ID: <CACOAw_zqsY9u4t5zhh+yk-bNVVhZS2J3f6fyOX78tZBc19JeBg@mail.gmail.com>
-To: Colin Ian King <colin.king@canonical.com>
-X-Headers-End: 1kwZqB-00DswF-Tl
-Subject: Re: [f2fs-dev] f2fs: add F2FS_IOC_DECOMPRESS_FILE and
- F2FS_IOC_COMPRESS_FILE
+X-Headers-End: 1kwad3-00E0Oy-0K
+Subject: [f2fs-dev] [PATCH 03/13] fs: only specify I_DIRTY_TIME when needed
+ in generic_update_time()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,64 +84,90 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- Daeho Jeong <daehojeong@google.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SGkgQ29saW4sCgpUaGFua3MgZm9yIG5vdGlmeWluZyBtZS4gV2UgbmVlZCB0byBqdXN0IGNvbnRp
-bnVlIHdpdGhvdXQKc2V0X3BhZ2VfZGlydHkoKSBhbmQgZjJmc19wdXRfcGFnZSgpLgoKMjAyMeuF
-hCAx7JuUIDTsnbwgKOyblCkg7Jik7ZuEIDExOjQzLCBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2lu
-Z0BjYW5vbmljYWwuY29tPuuLmOydtCDsnpHshLE6Cj4KPiBIaSwKPgo+IFN0YXRpYyBhbmFseXNp
-cyB1c2luZyBDb3Zlcml0eSBoYXMgZGV0ZWN0ZWQgYSBwb3RlbnRpYWwgbnVsbCBwb2ludGVyCj4g
-ZGVyZWZlcmVuY2UgYWZ0ZXIgYSBudWxsIGNoZWNrIGluIHRoZSBmb2xsb3dpbmcgY29tbWl0Ogo+
-Cj4gY29tbWl0IDVmZGIzMjJmZjJjMmI0YWQ1MTlmNDkwZGNiN2ViYjk2YzU0MzlhZjcKPiBBdXRo
-b3I6IERhZWhvIEplb25nIDxkYWVob2plb25nQGdvb2dsZS5jb20+Cj4gRGF0ZTogICBUaHUgRGVj
-IDMgMTU6NTY6MTUgMjAyMCArMDkwMAo+Cj4gICAgIGYyZnM6IGFkZCBGMkZTX0lPQ19ERUNPTVBS
-RVNTX0ZJTEUgYW5kIEYyRlNfSU9DX0NPTVBSRVNTX0ZJTEUKPgo+IFRoZSBhbmFseXNpcyBpcyBh
-cyBmb2xsb3dzOgo+Cj4gNDAyNSBzdGF0aWMgaW50IHJlZGlydHlfYmxvY2tzKHN0cnVjdCBpbm9k
-ZSAqaW5vZGUsIHBnb2ZmX3QgcGFnZV9pZHgsCj4gaW50IGxlbikKPiA0MDI2IHsKPiA0MDI3ICAg
-ICAgICBERUZJTkVfUkVBREFIRUFEKHJhY3RsLCBOVUxMLCBpbm9kZS0+aV9tYXBwaW5nLCBwYWdl
-X2lkeCk7Cj4gNDAyOCAgICAgICAgc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcgPSBpbm9k
-ZS0+aV9tYXBwaW5nOwo+IDQwMjkgICAgICAgIHN0cnVjdCBwYWdlICpwYWdlOwo+IDQwMzAgICAg
-ICAgIHBnb2ZmX3QgcmVkaXJ0eV9pZHggPSBwYWdlX2lkeDsKPiA0MDMxICAgICAgICBpbnQgaSwg
-cGFnZV9sZW4gPSAwLCByZXQgPSAwOwo+IDQwMzIKPiA0MDMzICAgICAgICBwYWdlX2NhY2hlX3Jh
-X3VuYm91bmRlZCgmcmFjdGwsIGxlbiwgMCk7Cj4gNDAzNAo+Cj4gICAgIDEuIENvbmRpdGlvbiBp
-IDwgbGVuLCB0YWtpbmcgdHJ1ZSBicmFuY2guCj4gICAgIDQuIENvbmRpdGlvbiBpIDwgbGVuLCB0
-YWtpbmcgdHJ1ZSBicmFuY2guCj4KPiA0MDM1ICAgICAgICBmb3IgKGkgPSAwOyBpIDwgbGVuOyBp
-KyssIHBhZ2VfaWR4KyspIHsKPiA0MDM2ICAgICAgICAgICAgICAgIHBhZ2UgPSByZWFkX2NhY2hl
-X3BhZ2UobWFwcGluZywgcGFnZV9pZHgsIE5VTEwsIE5VTEwpOwo+Cj4gICAgIDIuIENvbmRpdGlv
-biBJU19FUlIocGFnZSksIHRha2luZyBmYWxzZSBicmFuY2guCj4gICAgIDUuIENvbmRpdGlvbiBJ
-U19FUlIocGFnZSksIHRha2luZyB0cnVlIGJyYW5jaC4KPgo+IDQwMzcgICAgICAgICAgICAgICAg
-aWYgKElTX0VSUihwYWdlKSkgewo+IDQwMzggICAgICAgICAgICAgICAgICAgICAgICByZXQgPSBQ
-VFJfRVJSKHBhZ2UpOwo+Cj4gICAgIDYuIEJyZWFraW5nIGZyb20gbG9vcC4KPgo+IDQwMzkgICAg
-ICAgICAgICAgICAgICAgICAgICBicmVhazsKPiA0MDQwICAgICAgICAgICAgICAgIH0KPiA0MDQx
-ICAgICAgICAgICAgICAgIHBhZ2VfbGVuKys7Cj4KPiAgICAgMy4gSnVtcGluZyBiYWNrIHRvIHRo
-ZSBiZWdpbm5pbmcgb2YgdGhlIGxvb3AuCj4KPiA0MDQyICAgICAgICB9Cj4gNDA0Mwo+Cj4gICAg
-IDcuIENvbmRpdGlvbiBpIDwgcGFnZV9sZW4sIHRha2luZyB0cnVlIGJyYW5jaC4KPgo+IDQwNDQg
-ICAgICAgIGZvciAoaSA9IDA7IGkgPCBwYWdlX2xlbjsgaSsrLCByZWRpcnR5X2lkeCsrKSB7Cj4g
-NDA0NSAgICAgICAgICAgICAgICBwYWdlID0gZmluZF9sb2NrX3BhZ2UobWFwcGluZywgcmVkaXJ0
-eV9pZHgpOwo+Cj4gICAgIDguIENvbmRpdGlvbiAhcGFnZSwgdGFraW5nIHRydWUgYnJhbmNoLgo+
-ICAgICA5LiB2YXJfY29tcGFyZV9vcDogQ29tcGFyaW5nIHBhZ2UgdG8gbnVsbCBpbXBsaWVzIHRo
-YXQgcGFnZSBtaWdodCBiZQo+IG51bGwuCj4KPiA0MDQ2ICAgICAgICAgICAgICAgIGlmICghcGFn
-ZSkKPiA0MDQ3ICAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0gLUVOT0VOVDsKPgo+IERlcmVm
-ZXJlbmNlIGFmdGVyIG51bGwgY2hlY2sgKEZPUldBUkRfTlVMTCkKPgo+ICAgIDEwLiB2YXJfZGVy
-ZWZfbW9kZWw6IFBhc3NpbmcgbnVsbCBwb2ludGVyIHBhZ2UgdG8gc2V0X3BhZ2VfZGlydHksCj4g
-d2hpY2ggZGVyZWZlcmVuY2VzIGl0Lgo+Cj4gNDA0OCAgICAgICAgICAgICAgICBzZXRfcGFnZV9k
-aXJ0eShwYWdlKTsKPiA0MDQ5ICAgICAgICAgICAgICAgIGYyZnNfcHV0X3BhZ2UocGFnZSwgMSk7
-Cj4gNDA1MCAgICAgICAgICAgICAgICBmMmZzX3B1dF9wYWdlKHBhZ2UsIDApOwo+IDQwNTEgICAg
-ICAgIH0KPiA0MDUyCj4gNDA1MyAgICAgICAgcmV0dXJuIHJldDsKPiA0MDU0IH0KPgo+IFRoZSAh
-cGFnZSBjaGVjayBvbiBsaW5lIDQwNDYgc2V0cyByZXQgYXBwcm9wcmlhdGVseSBidXQgd2UgaGF2
-ZSBhCj4gZm9sbG93aW5nIGNhbGwgdG8gc2V0X3BhZ2VfZGlydHkgb24gYSBudWxsIHBhZ2UgdGhh
-dCBjYXVzZXMgdGhlIGVycm9yLgo+IE5vdCBzdXJlIGhvdyB0aGlzIHNob3VsZCBiZSBmaXhlZCwg
-c2hvdWxkIHRoZSBjaGVjayBiYWlsIG91dCBpbW1lZGlhdGVseQo+IG9yIGp1c3QgYXZvaWQgdGhl
-IGZvbGxvd2luZyBzZXRfcGFnZV9kaXJ0eSBhbmYgZjJmc19wdXRfcGFnZSBjYWxscz8KPgo+IENv
-bGluCj4KPgo+Cj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlz
-dHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMv
-bGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYy
-ZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+From: Eric Biggers <ebiggers@google.com>
+
+generic_update_time() always passes I_DIRTY_TIME to
+__mark_inode_dirty(), which doesn't really make sense because (a)
+generic_update_time() might be asked to do only an i_version update, not
+also a timestamps update; and (b) I_DIRTY_TIME is only supposed to be
+set in i_state if the filesystem has lazytime enabled, so using it
+unconditionally in generic_update_time() is inconsistent.
+
+As a result there is a weird edge case where if only an i_version update
+was requested (not also a timestamps update) but it is no longer needed
+(i.e. inode_maybe_inc_iversion() returns false), then I_DIRTY_TIME will
+be set in i_state even if the filesystem isn't mounted with lazytime.
+
+Fix this by only passing I_DIRTY_TIME to __mark_inode_dirty() if the
+timestamps were updated and the filesystem has lazytime enabled.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/inode.c | 38 ++++++++++++++++++++------------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 6442d97d9a4ab..d0fa43d8e9d5c 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1743,24 +1743,26 @@ static int relatime_need_update(struct vfsmount *mnt, struct inode *inode,
+ 
+ int generic_update_time(struct inode *inode, struct timespec64 *time, int flags)
+ {
+-	int iflags = I_DIRTY_TIME;
+-	bool dirty = false;
+-
+-	if (flags & S_ATIME)
+-		inode->i_atime = *time;
+-	if (flags & S_VERSION)
+-		dirty = inode_maybe_inc_iversion(inode, false);
+-	if (flags & S_CTIME)
+-		inode->i_ctime = *time;
+-	if (flags & S_MTIME)
+-		inode->i_mtime = *time;
+-	if ((flags & (S_ATIME | S_CTIME | S_MTIME)) &&
+-	    !(inode->i_sb->s_flags & SB_LAZYTIME))
+-		dirty = true;
+-
+-	if (dirty)
+-		iflags |= I_DIRTY_SYNC;
+-	__mark_inode_dirty(inode, iflags);
++	int dirty_flags = 0;
++
++	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
++		if (flags & S_ATIME)
++			inode->i_atime = *time;
++		if (flags & S_CTIME)
++			inode->i_ctime = *time;
++		if (flags & S_MTIME)
++			inode->i_mtime = *time;
++
++		if (inode->i_sb->s_flags & SB_LAZYTIME)
++			dirty_flags |= I_DIRTY_TIME;
++		else
++			dirty_flags |= I_DIRTY_SYNC;
++	}
++
++	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
++		dirty_flags |= I_DIRTY_SYNC;
++
++	__mark_inode_dirty(inode, dirty_flags);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(generic_update_time);
+-- 
+2.30.0
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
