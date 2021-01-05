@@ -2,73 +2,77 @@ Return-Path: <SRS0=actn=GI=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36E9C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA272C433E6
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  5 Jan 2021 00:55:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 76500227C3;
+	by mail.kernel.org (Postfix) with ESMTPS id 7AC89229C4;
 	Tue,  5 Jan 2021 00:55:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76500227C3
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC89229C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kwadD-0006LJ-0C; Tue, 05 Jan 2021 00:55:27 +0000
+	id 1kwadE-0008MQ-4V; Tue, 05 Jan 2021 00:55:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kwadC-0006L4-CI
+ (envelope-from <ebiggers@kernel.org>) id 1kwadC-0008MJ-Bz
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 00:55:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PRk5+6EVp3WSU1VS97bf7o8y4AWEtF1SVBGxWq9BCU0=; b=XorPeTdg5Lb5svmNKH7CW2uKf0
- 1rNcU1IKwg3fhxcehbs+M15b3duXvHbiWCex/JO4Wlh2vepv5twVPe8yNCfbUEaT5gJ7HkbP+xpnS
- mgY2n3K5r7rorKGA4OZJ1tOZF7gru/pmKsWvf6x1B9q/AuQ2L8KdgrAS4zS78EpTgOkc=;
+ bh=mxKsEjU/k1rAOMYFiicyp2jl0lXAM4AN2gxxyEBSJu4=; b=OZBsmJAR00Dz0CRwNdiUiD+osP
+ KwJ8dM2BiRVNEQCM/dVE7KL/xY+3RqDWCw8u2bsRiy6OcISHdUPfh1mqXSkmgthBpeXKnxT1nfDPX
+ Fldl+FxHfGWrtPZoXW4GhIIVFaRzEOlMylJdzCMldkVZlFjaOyCRtXYUCBbUL3euOcDk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=PRk5+6EVp3WSU1VS97bf7o8y4AWEtF1SVBGxWq9BCU0=; b=h
- cYEolaChH4xPQFt4dloBuSH93rTNoIU71q2qxixxMw/1j/pogMgWc0d7Pz8DOZQ0uTODcCGXBf/0b
- uqw0cYu7OVs+TuoKtrV4KzRiVHLw5bEglgjrbZWrVvHo2wcC9pI+ND8jJmV4JGr/RuDZih0rWGT2q
- QAlksdKR5xLU0F3Q=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=mxKsEjU/k1rAOMYFiicyp2jl0lXAM4AN2gxxyEBSJu4=; b=HjY9bKiGtuXmk87Pa9Oi3wrmVf
+ uNjNygoBIyPeNbnHLt/1uCgwEJjKQbhU6wTg6tfr1pFQj2oY1nQMIRgmb6GkaFP/2rtTmJ9HtTovM
+ s8lHrpfrh0blqNSaDtNdEKQnSHAXrIZ0c3IhouEM4qiAyKB9uN7x18+pJAK4UI6gNsEg=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kwad3-00E0Ou-0J
+ id 1kwad3-00E0P0-0J
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 00:55:26 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 86D102253A;
- Tue,  5 Jan 2021 00:55:06 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D625F2256F;
+ Tue,  5 Jan 2021 00:55:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1609808106;
- bh=vW1bfeQdX9BhgUQwC/CMk7URLM4cDiT6xtDR+MDGdnQ=;
- h=From:To:Cc:Subject:Date:From;
- b=a/rhmmA4Es5Lzendc5wuI1ciHBAOd3gT6tF/EzCaBjP2l0zF5PZ9pojAY3DnXJva0
- DlZuSQHH92CNOdm1BG+JTmpCMMX4k0kVkV1FHaAQk/vjdhcJwrLg/4WvEw5nF8CE/U
- um4gEedPsGkVB7BgrbxccekFmgV24iTBeM7WkWN2/V0eYeepsznEHuToM9UU3qNMEo
- zp+L2h0LtaCb5rS31RmumwRxoe9N7xVg47WtRrCC7USmlmuDxPXAUIelxMCwACy0GR
- xsyQce5EFxzNpw0gczY5F3PhY2Oy33072x40R1SSLLjFCjTaX0tKIkGfigfe/iOgel
- irKjq6A7uNQiw==
+ s=k20201202; t=1609808108;
+ bh=gBV7rjbDvtj1IoteKM7jbO9E67+Za0GVgMCAesn4G6k=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=ASJXzrsaVLLasAKCmNGQSKOsMzoHtyRTKBaHFlVXFQWcoZqc+MWcqkJo30DvIHloH
+ AQT6fY5xNbAtk+zgP7jYSZLRrOAJ4ve0S6wO5OlKd7JqhskWjzWVlZfkpD3Cf4WlE+
+ 0N+puDoBQbAkS3G1vkyoVmd86/9RkrxKI5CoTed7Wx289cf491pErIMcw4G67tPHA8
+ a5J36fPKHrZkxGBc4tFW4r89vKZSAxjDy5WWIk1Ep3l1oUo0Kqtv4R55KrHvZRsO78
+ 7NTU8xToN3ZsCH91q93mkbVXgUg7Yt4K6c7WBIk64cBmgCNGKKaSrWQCiH9ZKxWTSC
+ EM9WBiVZRtw2w==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Mon,  4 Jan 2021 16:54:39 -0800
-Message-Id: <20210105005452.92521-1-ebiggers@kernel.org>
+Date: Mon,  4 Jan 2021 16:54:43 -0800
+Message-Id: <20210105005452.92521-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210105005452.92521-1-ebiggers@kernel.org>
+References: <20210105005452.92521-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kwad3-00E0Ou-0J
-Subject: [f2fs-dev] [PATCH 00/13] lazytime fixes and cleanups
+X-Headers-End: 1kwad3-00E0P0-0J
+Subject: [f2fs-dev] [PATCH 04/13] fat: only specify I_DIRTY_TIME when needed
+ in fat_update_time()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,73 +91,55 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+From: Eric Biggers <ebiggers@google.com>
 
-This patchset fixes the lazytime bug which I reported last year
-(https://lore.kernel.org/r/20200306004555.GB225345@gmail.com).  This bug
-causes inodes with dirty timestamps to remain dirty after a sync, which
-causes the inodes to be unnecessarily written again, and also causes the
-FS_IOC_REMOVE_ENCRYPTION_KEY ioctl to not work properly.  This bug is
-causing xfstest generic/580 to fail when lazytime is enabled.
+As was done for generic_update_time(), only pass I_DIRTY_TIME to
+__mark_inode_dirty() when the inode's timestamps were actually updated
+and lazytime is enabled.  This avoids a weird edge case where
+I_DIRTY_TIME could be set in i_state when lazytime isn't enabled.
 
-Ted and Christoph proposed fixes for this.  Ted's fix
-(https://lore.kernel.org/r/20200307020043.60118-1-tytso@mit.edu) changed
-the call to mark_inode_dirty_sync(inode) in __writeback_single_inode()
-to ->dirty_inode(inode, I_DIRTY_TIME_EXPIRED).  However this would have
-broken XFS, which wants an I_DIRTY_SYNC notification.  Also, people
-preferred a larger rework involving adding a ->lazytime_expired method.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/fat/misc.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-Christoph's fix
-(https://lore.kernel.org/r/20200325122825.1086872-3-hch@lst.de)
-introduced ->lazytime_expired, but it wasn't correct because it didn't
-consider cases in which timestamps are force-expired.
-
-To resolve this, I propose that we first fix the bug by making
-__writeback_single_inode() do an I_DIRTY_SYNC notification if the
-timestamps expired (patch #1).
-
-Then, the remaining patches introduce ->lazytime_expired and make XFS
-use it.  They also clean up various things, such as improving comments.
-
-Also, it turns out that lazytime on XFS is broken because it doesn't
-actually write timestamps to disk after a sync() or after 24 hours.
-This is fixed by the patch to switch XFS to use ->lazytime_expired.
-I've written an xfstest which reproduces this bug.
-
-This patchset applies to v5.11-rc2.
-
-Eric Biggers (13):
-  fs: avoid double-writing inodes on lazytime expiration
-  gfs2: don't worry about I_DIRTY_TIME in gfs2_fsync()
-  fs: only specify I_DIRTY_TIME when needed in generic_update_time()
-  fat: only specify I_DIRTY_TIME when needed in fat_update_time()
-  fs: don't call ->dirty_inode for lazytime timestamp updates
-  fs: pass only I_DIRTY_INODE flags to ->dirty_inode
-  fs: correctly document the inode dirty flags
-  ext4: simplify i_state checks in __ext4_update_other_inode_time()
-  fs: drop redundant checks from __writeback_single_inode()
-  fs: clean up __mark_inode_dirty() a bit
-  fs: add a lazytime_expired method
-  xfs: remove a stale comment from xfs_file_aio_write_checks()
-  xfs: implement lazytime_expired
-
- Documentation/filesystems/locking.rst |  2 +
- Documentation/filesystems/vfs.rst     | 15 ++++-
- fs/ext4/inode.c                       | 20 ++----
- fs/f2fs/super.c                       |  3 -
- fs/fat/misc.c                         | 21 +++---
- fs/fs-writeback.c                     | 94 +++++++++++++++++++--------
- fs/gfs2/file.c                        |  4 +-
- fs/gfs2/super.c                       |  2 -
- fs/inode.c                            | 40 ++++++------
- fs/sync.c                             |  2 +-
- fs/xfs/xfs_file.c                     |  6 --
- fs/xfs/xfs_super.c                    | 12 +---
- include/linux/fs.h                    | 25 +++++--
- 13 files changed, 143 insertions(+), 103 deletions(-)
-
-
-base-commit: e71ba9452f0b5b2e8dc8aa5445198cd9214a6a62
+diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+index f1b2a1fc2a6a4..33e1e0c9fd634 100644
+--- a/fs/fat/misc.c
++++ b/fs/fat/misc.c
+@@ -329,21 +329,22 @@ EXPORT_SYMBOL_GPL(fat_truncate_time);
+ 
+ int fat_update_time(struct inode *inode, struct timespec64 *now, int flags)
+ {
+-	int iflags = I_DIRTY_TIME;
+-	bool dirty = false;
++	int dirty_flags = 0;
+ 
+ 	if (inode->i_ino == MSDOS_ROOT_INO)
+ 		return 0;
+ 
+-	fat_truncate_time(inode, now, flags);
+-	if (flags & S_VERSION)
+-		dirty = inode_maybe_inc_iversion(inode, false);
+-	if ((flags & (S_ATIME | S_CTIME | S_MTIME)) &&
+-	    !(inode->i_sb->s_flags & SB_LAZYTIME))
+-		dirty = true;
++	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
++		fat_truncate_time(inode, now, flags);
++		if (inode->i_sb->s_flags & SB_LAZYTIME)
++			dirty_flags |= I_DIRTY_TIME;
++		else
++			dirty_flags |= I_DIRTY_SYNC;
++	}
++
++	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
++		dirty_flags |= I_DIRTY_SYNC;
+ 
+-	if (dirty)
+-		iflags |= I_DIRTY_SYNC;
+ 	__mark_inode_dirty(inode, iflags);
+ 	return 0;
+ }
 -- 
 2.30.0
 
