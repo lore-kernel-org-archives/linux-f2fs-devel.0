@@ -2,99 +2,76 @@ Return-Path: <SRS0=actn=GI=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C69C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  5 Jan 2021 01:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2D2C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  5 Jan 2021 01:45:02 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0312122581;
-	Tue,  5 Jan 2021 01:29:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0312122581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTPS id F3657207A9;
+	Tue,  5 Jan 2021 01:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3657207A9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kwb9g-0001va-RR; Tue, 05 Jan 2021 01:29:00 +0000
+	id 1kwbPA-00030w-81; Tue, 05 Jan 2021 01:45:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <daeho43@gmail.com>) id 1kwb9f-0001vL-EC
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 01:28:59 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kwbP9-00030p-FQ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 01:44:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=C3UjD26QN0UA/ub3IY5/65dvjqpB+2GS72iiAT/kBTU=; b=bHZC6LylWBCWCgZVKxBji4Rk0W
- FteWljVN9mxqu9YyJA2EiD4n3Pbw622Jn7zdMJxT/+vPbsJqyp9s7zVqmLT13kxq9eGbF2Ig9u1OK
- HBPflw+N39FdfEg/o3gMZ1NFinC3TWE1C6xIgtQTGeAqJQmFB8Men2ud+L6xrfTGm/7E=;
+ bh=wJF3KY9cW6HjotaN5y0ihKRrAFwMTDglpDkFPCXTvEk=; b=TC5i/VX0eG3Wol4tp1WIW4vYXG
+ +cfCG6iw7RnRTNik0c/jEdB59MfS8RoC/+dQ9yW6IkBqP7FvomjoUWsFFBNa07TqeUw9rF8bYMi6q
+ t7DnArQRKQraPs7bZRKQnoxKfjiCSRUSryRT+kGUXZgVeC87MrR8jHlxvVja0LwLCJhI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=C3UjD26QN0UA/ub3IY5/65dvjqpB+2GS72iiAT/kBTU=; b=d
- 1zUt8BlMlC/661DV4FD0WwMcKFpx2wm6vCCZgjoZtFp7xs9j3cTYMF9njwzJYFcAflldf/Z/R5cSU
- hsOAJlL5MIfgdl4+QKVbEXkF4929UncocaW1+OcqzSgj9SxSX+NGl86s4z+DHCLhsPPSn9qCylyfd
- MLqFkukvFhaeVKHM=;
-Received: from mail-pj1-f44.google.com ([209.85.216.44])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=wJF3KY9cW6HjotaN5y0ihKRrAFwMTDglpDkFPCXTvEk=; b=CFcajvHj94UZtdoqDFUy7NVYhU
+ tJiHht2FV89A/Ahma7RftIQpTdrbNJwxN+dsuyhbEXFNFeFt3ack7X6nAFOQhqalLrWTipAvhPiEB
+ SwugXvahrdD/cEoxhW3FZin0MpxjgWtNfLg9+gQcsGpbb4/lwht5BH01suhs8taUpWtY=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1kwb9a-00E402-C3
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 01:28:59 +0000
-Received: by mail-pj1-f44.google.com with SMTP id b5so735013pjl.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 04 Jan 2021 17:28:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=C3UjD26QN0UA/ub3IY5/65dvjqpB+2GS72iiAT/kBTU=;
- b=Slobn0e8o4BZv6BeB5DyM/pu1y93XUeoGPA3Fp5x33Lx8DO5Emw6mGz9vvERtceiwD
- LxLfX4kdY04SBYfvOz/lIJBB0qcMpb9Z0wDeTM58BUXOhPmJu75OMJe0CPOciSCq04Ka
- Y8OpIhDFY5Tj0Di8BCVPz/XhvpoS/uI+/07hQKYFBnF3+M5zRBsv2NNH/FcbFBQti0DX
- KS1/wV4dBtMND6OJkUIbRk8HBShwdL9Lhi1RzBX4FmWn5nh4995NXeVs6BeQuhbFobyV
- YjQ0Wwi6pOKywkEgkUwTTC1J/oTf4TyRFaDWA364u4me/ve7tgCGbt6I9V5G3NbNSczU
- DcUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=C3UjD26QN0UA/ub3IY5/65dvjqpB+2GS72iiAT/kBTU=;
- b=jWg1wrV2kKoo2c/Sqep1FYKSqaAvsEdIx5rAeCjSMrOHXzdta4Ei1B9tygLEWdt+7y
- Pm6Om+fTKb9wl5LjswxDdIkQeMp1WhX4y1nkTgxAT3hMofQcGVuQFYww/2sGHBqqpU1K
- cHLSDY0BlbQaJANQHogAnjAzPdMwkto1xlZNMZRItzxjYreRi0BxUD1yKdm3qwb3TA2r
- Og2BquGu7/XwKUZnaY0EEJa7Gf86OQpsijncDdQ5nGW2k1toXZJdQtHuRbhToaqv8vyZ
- QbzXJIVcOPNSbsDC/0DXe5+8ZwqJSbVmgfiqcbBET4zXcokbs/NJSTI5vyNZJtpRIsCq
- T3oQ==
-X-Gm-Message-State: AOAM532NEB+wujfaN8kiDHdaAz4P7mjL6VNs83dnNwF6HvFkOCdbFscI
- Md9ex1B6PMo2A2eTstOG7Ic=
-X-Google-Smtp-Source: ABdhPJxrKeoDrpk/5rKEEhyYr9KaUFCepjqwD9TehEVWXuoIAm/tlbIcKWcAzv1OubjLUWL/lR3lIQ==
-X-Received: by 2002:a17:90a:5914:: with SMTP id
- k20mr1582782pji.199.1609810121409; 
- Mon, 04 Jan 2021 17:28:41 -0800 (PST)
-Received: from daehojeong1.seo.corp.google.com
- ([2401:fa00:d:11:a6ae:11ff:fe18:6ce2])
- by smtp.gmail.com with ESMTPSA id gk8sm531043pjb.52.2021.01.04.17.28.39
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 04 Jan 2021 17:28:40 -0800 (PST)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Tue,  5 Jan 2021 10:28:26 +0900
-Message-Id: <20210105012826.956800-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.29.2.729.g45daf8777d-goog
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1kwbOx-00E5Su-34
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 05 Jan 2021 01:44:59 +0000
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4D8wHr5B5Gzl0DQ;
+ Tue,  5 Jan 2021 09:43:20 +0800 (CST)
+Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 5 Jan 2021
+ 09:44:26 +0800
+To: Daeho Jeong <daeho43@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <linux-f2fs-devel@lists.sourceforge.net>, <kernel-team@android.com>
+References: <20210105012826.956800-1-daeho43@gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <904b7677-3655-2e81-52e0-48296cf1c0da@huawei.com>
+Date: Tue, 5 Jan 2021 09:44:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Headers-End: 1kwb9a-00E402-C3
-Subject: [f2fs-dev] [PATCH] f2fs: fix null page reference in redirty_blocks
+In-Reply-To: <20210105012826.956800-1-daeho43@gmail.com>
+Content-Language: en-US
+X-Originating-IP: [10.136.114.67]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1kwbOx-00E5Su-34
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix null page reference in
+ redirty_blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -108,41 +85,51 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Colin Ian King <colin.king@canonical.com>,
  Daeho Jeong <daehojeong@google.com>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+On 2021/1/5 9:28, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> Fixed null page reference when find_lock_page() fails in
+> redirty_blocks().
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> Reported-by: Colin Ian King <colin.king@canonical.com>
+> Fixes: 5fdb322ff2c2 ("f2fs: add F2FS_IOC_DECOMPRESS_FILE and F2FS_IOC_COMPRESS_FILE")
+> ---
+>   fs/f2fs/file.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 9e5275716be8..bf6682a52433 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -4060,8 +4060,10 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
+>   
+>   	for (i = 0; i < page_len; i++, redirty_idx++) {
+>   		page = find_lock_page(mapping, redirty_idx);
+> -		if (!page)
+> +		if (!page) {
+>   			ret = -ENOENT;
 
-Fixed null page reference when find_lock_page() fails in
-redirty_blocks().
+ret = -ENOMEM;
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Fixes: 5fdb322ff2c2 ("f2fs: add F2FS_IOC_DECOMPRESS_FILE and F2FS_IOC_COMPRESS_FILE")
----
- fs/f2fs/file.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> +			continue;
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 9e5275716be8..bf6682a52433 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4060,8 +4060,10 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
- 
- 	for (i = 0; i < page_len; i++, redirty_idx++) {
- 		page = find_lock_page(mapping, redirty_idx);
--		if (!page)
-+		if (!page) {
- 			ret = -ENOENT;
-+			continue;
-+		}
- 		set_page_dirty(page);
- 		f2fs_put_page(page, 1);
- 		f2fs_put_page(page, 0);
--- 
-2.29.2.729.g45daf8777d-goog
+How about breaking the loop for out-of-memory case, because in such condition
+we have less chance to dirty whole cluster due to no memory, and continue to
+allocate pages for target file will make system suffer more memory pressure,
+it will make many thing slower.
 
+Thnaks,
+
+> +		}
+>   		set_page_dirty(page);
+>   		f2fs_put_page(page, 1);
+>   		f2fs_put_page(page, 0);
+> 
 
 
 _______________________________________________
