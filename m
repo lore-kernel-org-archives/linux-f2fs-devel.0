@@ -2,74 +2,94 @@ Return-Path: <SRS0=Njst=GJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D43B8C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Jan 2021 01:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4BDC433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Jan 2021 03:36:23 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 359B2221E2;
-	Wed,  6 Jan 2021 01:03:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 359B2221E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id C877922D01;
+	Wed,  6 Jan 2021 03:36:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C877922D01
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kwxEY-0001pB-4f; Wed, 06 Jan 2021 01:03:30 +0000
+	id 1kwzcT-0000Ia-B7; Wed, 06 Jan 2021 03:36:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kwxEW-0001p3-9I
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Jan 2021 01:03:28 +0000
+ (envelope-from <daeho43@gmail.com>) id 1kwzcR-0000IL-Si
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Jan 2021 03:36:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Xw9rKABBLhxipqqh0s5RPLCgWGX6LtUAOv4zKgAriNo=; b=ZDzQUDZ1JMlJICvsyuQc+Oh+97
- 4aObwJSics7qxjs0fnOHF/TyXoBDEskqCiPgweX5lSJHvwd51EYJ5L0sVLTy+jOzDPotjZAruKssr
- YSalg2xjskH6AZ8RTtJO+qopA3IfAfuZq7W3DJlX4OIo+CHA6DAgf3niv+r5AFqFMiWs=;
+ bh=2snO45VnQ9DfpOQUXz5os2mTBvmAqZ+J43JJFFTkk28=; b=jJg05xV1a/n0rtycqlguIRgfLM
+ h+RlKIOoNFpdPtt6ec6KI73QPQ9CvRojOOb5anurH3RdRQZkqqGisv3F+QIis2svJMCrOhxESt/1r
+ Q/PEAXmm52hHDVUJmobt0/9QE2M0iAWNPaAQBdW9ac/06XdytJklXJQnP4EkCtyWenM4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Xw9rKABBLhxipqqh0s5RPLCgWGX6LtUAOv4zKgAriNo=; b=Osu6LWrYCBcamFm/10wIF+Hz9u
- eKCtvx9dnlMmvSeUwR2zjAYoP+dufXWzEOEQOPMBDXbAMMUpqxugZ+2kJY6duwUN2o7GyKNHQHjnO
- TpX+QohLtWyuR8Wwu8eOah08a//tTO9a1H1s33U0ufjmVUCFOb3eNwWyjQDlqnlg5e7Q=;
-Received: from szxga05-in.huawei.com ([45.249.212.191])
+ bh=2snO45VnQ9DfpOQUXz5os2mTBvmAqZ+J43JJFFTkk28=; b=K9We1Fu8umGg5yHenKphtVuUow
+ UCgK2QUUVNLz94Q6a95cE9fXmJLwIQXqlrCSat/aVMbfmKKsi3B0tunZfptHIXameoloxRVDFeqpi
+ Yykx6E43KnzeKvcW2H24cEjsMG2aP6B8jAdvccjY7PEgZF+xjZm1tK30iaBV8pnmyU70=;
+Received: from mail-lf1-f47.google.com ([209.85.167.47])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kwxEP-000wlc-4k
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Jan 2021 01:03:28 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4D9WKh0WRbzMFxr;
- Wed,  6 Jan 2021 09:02:00 +0800 (CST)
-Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.498.0; Wed, 6 Jan 2021
- 09:03:08 +0800
-To: Daeho Jeong <daehojeong@google.com>
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
+ id 1kwzcJ-001dWU-D9
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 06 Jan 2021 03:36:19 +0000
+Received: by mail-lf1-f47.google.com with SMTP id o13so3590421lfr.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 05 Jan 2021 19:36:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :cc:content-transfer-encoding;
+ bh=2snO45VnQ9DfpOQUXz5os2mTBvmAqZ+J43JJFFTkk28=;
+ b=BxzymUjKVx+WjEM1RGa5cBOvn9Q5KkUj32bIVyB6xAujEHAJpCJMoYPoNehAl2jN7H
+ PuwALS1bXxIoCZpV5ofFT3bysPxSxPZ02kzaPNDQHEz3ws3CSzalTEYCQKo/N3Cr75U7
+ Li7jyB4gWQ/RUCB+KY9vEM1bCIGh9B0DRZiofOnl17ZU05vHn5vIPdI+ZJT6jEjtCE7J
+ gJgFayYFT8IYIdiid94DZahr3+4pB0GBewn2ixGbjhp0z8HeyJgGGbxTx1TW4cZwehAs
+ Z/T7DeACIHLWbHYUU4qZYo0tbD4LCd0zrrLE40M9ewoCSSvoBrn/qbRK7ui/rpYg+zdr
+ ky4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc:content-transfer-encoding;
+ bh=2snO45VnQ9DfpOQUXz5os2mTBvmAqZ+J43JJFFTkk28=;
+ b=hBWX5LMDSDvz9y5kNcR4aI2Jdv98PaKflBWp2E7jmrr1RMZ2iFn8UwKU0SW+CkoybW
+ 97jTaontA4nAStiTJX/LAugvRUuPcykPHUmsg8fvL4IP+OB9BVTVcBeOfMOe5556qcjX
+ lFiI2HrTvebWCzvV2aE8HRF2DtvXtMRoKbJw7eLBPQeAErV0QQ9S+VEjH3m32omeuvjB
+ mluN/xORtE+QKibhsIggMynMrkXZCgQ0nl9EqQMfxnpTpH/w6TkirNeg1KotHZhQoEck
+ AUBaESJ1s0FEHwcuorlrmhQgazj8yenOBi0uRXLyr1bC4DcdrANxZ0L6urFLlSMVXgyf
+ yGnA==
+X-Gm-Message-State: AOAM531e2OVmgMVfQYL2loUa3SQQb/45z6bP1//gc3E89wNBV2DDSm3S
+ ewhDn+LzTad1A7Q7JLnbN8br2mn5CDNtdDDjaC8Ella7aYPIQw==
+X-Google-Smtp-Source: ABdhPJwAoJvTQAyXXm5os8FCgE/dnwkr4Z6fBn2DAwhxeExEsV64TG0r0pOfaFH+aARaxG2E+EzzkxiWgCAEiOa5g4c=
+X-Received: by 2002:ac2:5ff1:: with SMTP id s17mr1114188lfg.139.1609904164760; 
+ Tue, 05 Jan 2021 19:36:04 -0800 (PST)
+MIME-Version: 1.0
 References: <20210105041630.1393157-1-daeho43@gmail.com>
  <dba4be04-70dd-d48b-391c-1f2355591097@web.de>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <6c8e6561-8a5d-010f-3d7c-8c051b4027e6@huawei.com>
-Date: Wed, 6 Jan 2021 09:03:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <dba4be04-70dd-d48b-391c-1f2355591097@web.de>
-Content-Language: en-US
-X-Originating-IP: [10.136.114.67]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1kwxEP-000wlc-4k
+ <6c8e6561-8a5d-010f-3d7c-8c051b4027e6@huawei.com>
+In-Reply-To: <6c8e6561-8a5d-010f-3d7c-8c051b4027e6@huawei.com>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Wed, 6 Jan 2021 12:35:53 +0900
+Message-ID: <CACOAw_wCh_Zh83SgRU2z_NR1OztKZ4b85JFkxWWhV3D6TGQCew@mail.gmail.com>
+To: Chao Yu <yuchao0@huawei.com>
+X-Headers-End: 1kwzcJ-001dWU-D9
 Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix null page reference in
  redirty_blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -83,50 +103,39 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Markus Elfring <Markus.Elfring@web.de>,
+Cc: Daeho Jeong <daehojeong@google.com>, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ Markus Elfring <Markus.Elfring@web.de>,
  Colin Ian King <colin.king@canonical.com>, kernel-team@android.com
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Daeho,
-
-FYI
-
-https://www.spinics.net/lists/kernel/msg3595944.html
-
-On 2021/1/5 20:04, Markus Elfring wrote:
->> Fixed null page reference when find_lock_page() fails in
->> redirty_blocks().
-> 
-> I suggest to choose an other imperative wording for this change description.
-> 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=36bbbd0e234d817938bdc52121a0f5473b3e58f5#n89
-> 
-> 
->> v2: changed error value and break the loop when error occurs
-> 
-> I propose to use a return statement instead of a break in the second if branch
-> for this function implementation.
-> 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?id=36bbbd0e234d817938bdc52121a0f5473b3e58f5#n481
-> 
-> Regards,
-> Markus
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+VGhhbmtzIGZvciB0aGUgbm90aWNlfgoKMjAyMeuFhCAx7JuUIDbsnbwgKOyImCkg7Jik7KCEIDEw
+OjA0LCBDaGFvIFl1IDx5dWNoYW8wQGh1YXdlaS5jb20+64uY7J20IOyekeyEsToKPgo+IERhZWhv
+LAo+Cj4gRllJCj4KPiBodHRwczovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9rZXJuZWwvbXNnMzU5
+NTk0NC5odG1sCj4KPiBPbiAyMDIxLzEvNSAyMDowNCwgTWFya3VzIEVsZnJpbmcgd3JvdGU6Cj4g
+Pj4gRml4ZWQgbnVsbCBwYWdlIHJlZmVyZW5jZSB3aGVuIGZpbmRfbG9ja19wYWdlKCkgZmFpbHMg
+aW4KPiA+PiByZWRpcnR5X2Jsb2NrcygpLgo+ID4KPiA+IEkgc3VnZ2VzdCB0byBjaG9vc2UgYW4g
+b3RoZXIgaW1wZXJhdGl2ZSB3b3JkaW5nIGZvciB0aGlzIGNoYW5nZSBkZXNjcmlwdGlvbi4KPiA+
+Cj4gPiBTZWUgYWxzbzoKPiA+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9r
+ZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL0RvY3VtZW50YXRpb24vcHJvY2Vzcy9z
+dWJtaXR0aW5nLXBhdGNoZXMucnN0P2lkPTM2YmJiZDBlMjM0ZDgxNzkzOGJkYzUyMTIxYTBmNTQ3
+M2IzZTU4ZjUjbjg5Cj4gPgo+ID4KPiA+PiB2MjogY2hhbmdlZCBlcnJvciB2YWx1ZSBhbmQgYnJl
+YWsgdGhlIGxvb3Agd2hlbiBlcnJvciBvY2N1cnMKPiA+Cj4gPiBJIHByb3Bvc2UgdG8gdXNlIGEg
+cmV0dXJuIHN0YXRlbWVudCBpbnN0ZWFkIG9mIGEgYnJlYWsgaW4gdGhlIHNlY29uZCBpZiBicmFu
+Y2gKPiA+IGZvciB0aGlzIGZ1bmN0aW9uIGltcGxlbWVudGF0aW9uLgo+ID4KPiA+IFNlZSBhbHNv
+Ogo+ID4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9y
+dmFsZHMvbGludXguZ2l0L3RyZWUvRG9jdW1lbnRhdGlvbi9wcm9jZXNzL2NvZGluZy1zdHlsZS5y
+c3Q/aWQ9MzZiYmJkMGUyMzRkODE3OTM4YmRjNTIxMjFhMGY1NDczYjNlNThmNSNuNDgxCj4gPgo+
+ID4gUmVnYXJkcywKPiA+IE1hcmt1cwo+ID4KPiA+Cj4gPiBfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwo+ID4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
+c3QKPiA+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gPiBodHRwczov
+L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCj4g
+PiAuCj4gPgo+Cj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBs
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0
+cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgt
+ZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3Jn
+ZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
