@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6FFC433E6
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Jan 2021 09:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C56FDC433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Jan 2021 09:11:08 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0198F22248;
-	Fri,  8 Jan 2021 09:11:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0198F22248
+	by mail.kernel.org (Postfix) with ESMTPS id 57A9E22248;
+	Fri,  8 Jan 2021 09:11:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57A9E22248
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kxnnV-0008V1-UN; Fri, 08 Jan 2021 09:11:05 +0000
+	id 1kxnnX-0005xl-S6; Fri, 08 Jan 2021 09:11:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hch@lst.de>) id 1kxnnP-0008UR-5P
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Jan 2021 09:10:59 +0000
+ (envelope-from <hch@lst.de>) id 1kxnnW-0005xI-J1
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Jan 2021 09:11:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=gI0hfC65BohUmoqADGGRIkNoPn
- ZOWbHr014bPXRbi9Fvj/xat10lYVA0FAZLAfGFMV5Lbybw100SR1mJ5DWw6emuO+K22zVRGWODNMu
- kamlUkJf0Dunv65xtQiMw1p9vIrD4LvmPN7f7YMCyYnLzk4BHFUJq2dq26+WPkHhbCRY=;
+ bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=hvX7dSCJtDEWQxYlUvpfrEZqrN
+ GkFyvVSD6rlE5PXFyv17LuGXFTNCxlG7xyai6VuqjfdricGgAcIKcdv27rg5P+/m+re2LgM5nGu9z
+ MS6jJsQjONqmlUWhwogfb+o3PLJHjft6G9FjFrftu/xHc9ojiVQ7kvOReJyU/9JFox8k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,29 +42,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=L7hDBuGemy4fZ+xnQJ0qrd5VKo
- y156fRKFkP1NZRksbbWML/GAhCFtrJGeuuGc2Xp5iWZLdVNJJn19pJRL4xkJy9LJlW+WZ6WBo0eaT
- JP1i6Z+PRUAOZPRxZ6qpQV/hX5Cl8TAqcOmJz4poDqb4RgEi73dteJtR6S9kffmR4XVs=;
+ bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=CuL3oYBpYvmgBDvx/ww70E7b8W
+ qApX50GaeT+yItHzDwNayiBpnMfpbmbicRxLNGzA/PVLKBxY9mLfPHsXhtutzKQFBlaLdzeRg+IiV
+ 0IimO8sxRlmkhJZaW28uCW7KJHDimimabIHewQY+DEnaizXFXbTQQOoioykDlvkxw1Uo=;
 Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kxnnM-009Y5b-AO
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Jan 2021 09:10:59 +0000
+ id 1kxnnM-009Y5c-PO
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Jan 2021 09:11:06 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 63AC868C4E; Fri,  8 Jan 2021 10:03:19 +0100 (CET)
-Date: Fri, 8 Jan 2021 10:03:19 +0100
+ id C4F5668BFE; Fri,  8 Jan 2021 10:02:56 +0100 (CET)
+Date: Fri, 8 Jan 2021 10:02:56 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20210108090319.GG1438@lst.de>
+Message-ID: <20210108090256.GF1438@lst.de>
 References: <20210105005452.92521-1-ebiggers@kernel.org>
- <20210105005452.92521-8-ebiggers@kernel.org>
+ <20210105005452.92521-7-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20210105005452.92521-8-ebiggers@kernel.org>
+In-Reply-To: <20210105005452.92521-7-ebiggers@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1kxnnM-009Y5b-AO
-Subject: Re: [f2fs-dev] [PATCH 07/13] fs: correctly document the inode dirty
- flags
+X-Headers-End: 1kxnnM-009Y5c-PO
+Subject: Re: [f2fs-dev] [PATCH 06/13] fs: pass only I_DIRTY_INODE flags to
+ ->dirty_inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
