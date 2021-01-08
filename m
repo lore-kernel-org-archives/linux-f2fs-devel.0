@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE147C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Jan 2021 09:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 378DBC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Jan 2021 09:11:16 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8A6AD22248;
-	Fri,  8 Jan 2021 09:11:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A6AD22248
+	by mail.kernel.org (Postfix) with ESMTPS id A638B22248;
+	Fri,  8 Jan 2021 09:11:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A638B22248
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kxnnZ-0005z3-TT; Fri, 08 Jan 2021 09:11:09 +0000
+	id 1kxnnf-00004t-27; Fri, 08 Jan 2021 09:11:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hch@lst.de>) id 1kxnnW-0005ye-8r
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Jan 2021 09:11:06 +0000
+ (envelope-from <hch@lst.de>) id 1kxnnZ-0008Vl-B0
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Jan 2021 09:11:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=aJE8/iI49JdNE9LdjKb2dA/GXgfep4SGnV6+vbIfjg8=; b=QQzsfHKUNho48czCBxp+3VIl+l
- juOgb1uoG2oM6noJ/6rJVg7pseQN6I5pFrPfNwbjCMrw5fX9Xg3+Hjv/f/p2CKBA6/5olILQE1vho
- sqpNu4gEqBtDxew4rZegwBoYdQpFBkJiAcyfp/RKYNqJKsa8LOHXVdz6WDj20rdlNGSw=;
+ bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=lYTY6/K1EElQD3q+mNJnqnvo9H
+ kIw14WdkKHKocewm1fKDJFe+Hua9OxhmLGo3tHi010EWaX5mxI0lLGOJB3wYk7GkVDExGcAbYIm5R
+ r4YHZ0kjdzQ/ltjaKPLtMJ5P//+0FqP/nqqanJFOTsgwcKSt9FCIo+LmTVbNPLsYssvY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,28 +42,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=aJE8/iI49JdNE9LdjKb2dA/GXgfep4SGnV6+vbIfjg8=; b=MTrvKMF+45l3j06cvjeO/cyDab
- 8wMKB/WLCVf2LbYDcqtm6o3n/NTjkjYnk3GE/WnVj/on08CVmUY1tVYldvDU6JXzYVTRFpadbJyLo
- Cvr2HMYvkpEbaU7RjYpwkg1FJ8AtzQ/s4gu1IMwBrEjDf5R9Hr5sVFk6XX1cxSnVheOg=;
+ bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=GKlFpRNaozZ9rnoxH/tYD17PL/
+ q1LAt8J4CtvSJsld+4xbIJkGsO9RKEyPG9OExQbSgyEmEKJvMBwiB+gYND2rDA8uTEm5pqYR6adxK
+ XUy4+eO1psWai9xi5X9XOMtN3lF9iH5HPnqrvVTcbUpFB7Dg/tJelCq2ZDVy4MF2kGPI=;
 Received: from verein.lst.de ([213.95.11.211])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kxnnO-009Y5q-MU
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Jan 2021 09:11:06 +0000
+ id 1kxnnV-00Gpqw-Nc
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Jan 2021 09:11:09 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 74A2768C65; Fri,  8 Jan 2021 10:10:48 +0100 (CET)
-Date: Fri, 8 Jan 2021 10:10:48 +0100
+ id DB90168AFE; Fri,  8 Jan 2021 09:54:58 +0100 (CET)
+Date: Fri, 8 Jan 2021 09:54:58 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20210108091048.GA2587@lst.de>
+Message-ID: <20210108085458.GB1438@lst.de>
 References: <20210105005452.92521-1-ebiggers@kernel.org>
- <20210105005452.92521-11-ebiggers@kernel.org>
+ <20210105005452.92521-3-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20210105005452.92521-11-ebiggers@kernel.org>
+In-Reply-To: <20210105005452.92521-3-ebiggers@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1kxnnO-009Y5q-MU
-Subject: Re: [f2fs-dev] [PATCH 10/13] fs: clean up __mark_inode_dirty() a bit
+X-Headers-End: 1kxnnV-00Gpqw-Nc
+Subject: Re: [f2fs-dev] [PATCH 02/13] gfs2: don't worry about I_DIRTY_TIME
+ in gfs2_fsync()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,19 +83,7 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jan 04, 2021 at 04:54:49PM -0800, Eric Biggers wrote:
-> +	} else {
-> +		/*
-> +		 * Else it's either I_DIRTY_PAGES, I_DIRTY_TIME, or nothing.
-> +		 * (We don't support setting both I_DIRTY_PAGES and I_DIRTY_TIME
-> +		 * in one call to __mark_inode_dirty().)
-> +		 */
-> +		dirtytime = flags & I_DIRTY_TIME;
-> +		WARN_ON_ONCE(dirtytime && (flags != I_DIRTY_TIME));
-
-No need for the inner braces here.
-
-Otherwise looks good:
+Looks good,
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 
