@@ -1,80 +1,87 @@
-Return-Path: <SRS0=L0OP=GM=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=qwd7=GN=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 055AFC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  9 Jan 2021 17:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA68C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Jan 2021 11:50:11 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9ED6D236FB;
-	Sat,  9 Jan 2021 17:11:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED6D236FB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id C0148238E9
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 10 Jan 2021 11:50:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0148238E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mykernel.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kyHmH-0000iD-3d; Sat, 09 Jan 2021 17:11:49 +0000
+	id 1kyZEX-0000QR-FT; Sun, 10 Jan 2021 11:50:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kyHmF-0000i4-UO
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Jan 2021 17:11:47 +0000
+ (envelope-from <cgxu519@mykernel.net>) id 1kyZEN-0000Pr-8m
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 10 Jan 2021 11:49:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZYhJUc5ZXLsKUyRktfIqadLFqckCilBHf3LctYd4O60=; b=klLCMFqAVdD6+U0SqBacJQWxTe
- lthFYBNWV4QOEoFQiFgP8VL2T1Zril8f5nlWhXHNjoLKS4z7X5YQU2PSnXOX9si4krl+Y3qExpW1j
- +gOfCQjOgwz0DATWyGZ+eNbVfZTasPPjQys62y1IMEdN3yE9jUfDTlym54QgWtVKDfSw=;
+ bh=mxMpmXkWJjwEMdM/O2b4C7lt+bY2lLcCMWNFO28q1tQ=; b=Fu0UHD+iY/O5D8ErkJM8FsyNP1
+ b/p6ABlKLQn5DJvAUZ6trbX7efXqQ+rtpFqfG8zKp22t7Jx7I6/g9Z98sjQE5fADRMeVJXO9VgA8n
+ HfhNa36JcITTrh1v/M0kKE2kVwFFjFyG+UC4mSWwt5kpUrHlfp8kcw1J1lYuYJ2XYXHA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:
+ Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZYhJUc5ZXLsKUyRktfIqadLFqckCilBHf3LctYd4O60=; b=fiSEWuLwaCfqioZKoWELm4E2gf
- uFyHkFRf0Wpf33IeOVSxH+W7vyLy8kSenUgtrmqiABLX9sGHYApGmDAHZCDqig33n38TKF5eq0deO
- XP1mrbYTvrbNJ7YWO40ROfT3fvTbLMmXZFaBRplzWN5IDs8+9eTr+DKuX579LmP/Xt84=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=mxMpmXkWJjwEMdM/O2b4C7lt+bY2lLcCMWNFO28q1tQ=; b=Mm++L15HbQ7nyxyaucofKdr77L
+ BHFTAUQtHFvFvUxNRpahYmsnSfVXT3eWnmcH+uydONRhmfWi2s9UPGCTwr5UP0DRpENLKpYDL6Ssv
+ 4XF+AejhhX74Do1Wqp9IWF0uYwaPGGIfqosaTe6gcs+eSSuz9ExM9YySLgyB1KI5sfPs=;
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kyHm7-0055s6-Aq
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Jan 2021 17:11:47 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 52DF32343F;
- Sat,  9 Jan 2021 17:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1610212293;
- bh=i8Ku1/73rYowfl/ZwVRB3ZZQr3ISV6I1jnO+n26Fujk=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=d4xvqIKvtTClFnLpzv7E3zlN8gpkDmspUC18y8blQE4mEjl6J6DwpUtkg0AsMFn1w
- ahciPeIFOIkv0TJP21Q5uwxKXvqczOXaqsxkAdxXVwlK56MB8+oMpWb4Nw+NU/RxLy
- 4RN1VQdBnnYwcBHRHIoo4cH8g3cXIMNLklV7weqsNXYImcGPtwbDUg1HEEA2ymKlsX
- 7VcGOa7iZHIzvZSbFwgEOJKArpB7AGolFYsXhzq3Vczv2+9gDwbED9svjGEmxeDOix
- AdBRfOG7b7GylsjDdJGyv9ZUWnrgrlXqXp0DGM4CA6dhfjb4ciODpHGf0HPh58yrTa
- 6gHyWRrhARYqw==
-Date: Sat, 9 Jan 2021 09:11:31 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <X/njw9b+qqK3vlMs@sol.localdomain>
-References: <20210105005452.92521-1-ebiggers@kernel.org>
- <20210105005452.92521-2-ebiggers@kernel.org>
- <20210107144709.GG12990@quack2.suse.cz>
- <20210108090133.GD1438@lst.de>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20210108090133.GD1438@lst.de>
-X-Headers-End: 1kyHm7-0055s6-Aq
-Subject: Re: [f2fs-dev] [PATCH 01/13] fs: avoid double-writing inodes on
- lazytime expiration
+ id 1kyZE7-00Gfbr-1q
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 10 Jan 2021 11:49:59 +0000
+ARC-Seal: i=1; a=rsa-sha256; t=1610279346; cv=none; d=zoho.com.cn; s=zohoarc; 
+ b=L99go08AE3Zef507Jweb6b4QZ/gYRiOB228igUPVeCWA9/GSnXPJNmufU8QhhUvMg+qYpgw2BgoBFtOIgr53NDuODJMyI9wB/6GGj1Qqjdb91u4ljlykSEpO9eBZzoZRghcthvayIxsKxsEltfconUGMuxwbAcEJsCDrV7xcAPQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn;
+ s=zohoarc; 
+ t=1610279346; h=Cc:Date:From:Message-ID:Subject:To; 
+ bh=mxMpmXkWJjwEMdM/O2b4C7lt+bY2lLcCMWNFO28q1tQ=; 
+ b=ngQIEPxiANpQRUrbdJi2mdePchI/4YtyCQiuskAJmRBc3dUEuAvvDO4xFNlJqtseqywrsDfTTp2SF/hrWbLObGufNkieQ9+ROEH90/Yb1zmmDn/ZbziaPFex5fqRcHRcEIlyqXSyT9TTltnpON8Egi5Y1pDQj1yI3SFYkVvEyt0=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+ dkim=pass  header.i=mykernel.net;
+ spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+ dmarc=pass header.from=<cgxu519@mykernel.net>
+ header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1610279346; 
+ s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+ h=From:To:Cc:Subject:Date:Message-Id;
+ bh=mxMpmXkWJjwEMdM/O2b4C7lt+bY2lLcCMWNFO28q1tQ=;
+ b=BTUlSIw8t6aG2NoATt6V0JLyaDB5CNHV45KJMRGkQzXs0SEzYngtoHaZuNDL5Zxz
+ EuKfwoxrWnJ0WvYXNP+RYLDwia5++BoY1NHVCkx0AEATgkT8D5tq75ACquMflN2HPZZ
+ MbPo+2HSgKxaSWGCB1m/yYdgrdgkNRsVVEPkffBQ=
+Received: from VM-144-5-centos.localdomain (159.75.205.129 [159.75.205.129])
+ by mx.zoho.com.cn with SMTPS id 1610279344385182.4112417494863;
+ Sun, 10 Jan 2021 19:49:04 +0800 (CST)
+From: Chengguang Xu <cgxu519@mykernel.net>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Sun, 10 Jan 2021 19:48:49 +0800
+Message-Id: <1610279329-5733-1-git-send-email-cgxu519@mykernel.net>
+X-Mailer: git-send-email 1.8.3.1
+X-ZohoCNMailClient: External
+X-Headers-End: 1kyZE7-00Gfbr-1q
+Subject: [f2fs-dev] [RFC PATCH] f2fs: using generic_file_llseek() instead of
+ generic_file_llseek_size()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,43 +93,46 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jan Kara <jack@suse.cz>, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
- linux-ext4@vger.kernel.org
+Cc: Chengguang Xu <cgxu519@mykernel.net>,
+ linux-f2fs-devel@lists.sourceforge.net
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jan 08, 2021 at 10:01:33AM +0100, Christoph Hellwig wrote:
-> > +	/*
-> > +	 * If inode has dirty timestamps and we need to write them, call
-> > +	 * mark_inode_dirty_sync() to notify filesystem about it.
-> > +	 */
-> > +	if (inode->i_state & I_DIRTY_TIME &&
-> > +	    (wbc->for_sync || wbc->sync_mode == WB_SYNC_ALL ||
-> > +	     time_after(jiffies, inode->dirtied_time_when +
-> > +			dirtytime_expire_interval * HZ))) {
-> 
-> If we're touching this area, it would be nice to split this condition
-> into a readable helper ala:
-> 
-> static inline bool inode_needs_timestamp_sync(struct writeback_control *wbc,
-> 		struct inode *inode)
-> {
-> 	if (!(inode->i_state & I_DIRTY_TIME))
-> 		return false;
-> 	if (wbc->for_sync || wbc->sync_mode == WB_SYNC_ALL)
-> 		return true;
-> 	return time_after(jiffies, inode->dirtied_time_when +
-> 			  dirtytime_expire_interval * HZ);
-> }
+generic_file_llseek_size() is used for filesystems that have
+a custom maximum size and a custom EOF position. so it's better
+to replace it using generic_file_llseek().
 
-I didn't end up doing this since it would only be called once, and IMO it's more
-readable to keep it inlined next to the comment that explains what's going on.
-Especially considering the later patch that drops the check for wbc->for_sync.
+Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+---
+ fs/f2fs/file.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
--  Eric
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f585545..2ca22ea 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -480,15 +480,11 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+ 
+ static loff_t f2fs_llseek(struct file *file, loff_t offset, int whence)
+ {
+-	struct inode *inode = file->f_mapping->host;
+-	loff_t maxbytes = inode->i_sb->s_maxbytes;
+-
+ 	switch (whence) {
+ 	case SEEK_SET:
+ 	case SEEK_CUR:
+ 	case SEEK_END:
+-		return generic_file_llseek_size(file, offset, whence,
+-						maxbytes, i_size_read(inode));
++		return generic_file_llseek(file, offset, whence);
+ 	case SEEK_DATA:
+ 	case SEEK_HOLE:
+ 		if (offset < 0)
+-- 
+1.8.3.1
+
 
 
 _______________________________________________
