@@ -2,87 +2,78 @@ Return-Path: <SRS0=V0x5=GO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E83C4C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Jan 2021 13:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CC4C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Jan 2021 14:38:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0D87F22203
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Jan 2021 13:48:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D87F22203
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mykernel.net
+	by mail.kernel.org (Postfix) with ESMTPS id B9E8D21744;
+	Mon, 11 Jan 2021 14:38:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9E8D21744
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kyxYx-00019Q-DF; Mon, 11 Jan 2021 13:48:51 +0000
+	id 1kyyLF-0002WN-U4; Mon, 11 Jan 2021 14:38:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <cgxu519@mykernel.net>) id 1kyxYt-00019E-TC
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 13:48:49 +0000
+ (envelope-from <chao@kernel.org>) id 1kyyLE-0002W9-TT
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 14:38:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Subject:References:In-Reply-To:Message-ID:Cc:To:Reply-To:From:Date:Sender:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Xw/HisupCoc6KT9u5qI1+0kpxZF4OlHo1CcnzjK8Hes=; b=gukhAeyUzEJi4VE8ViGXeWQrDA
- PPTeK1oO2jEWdVcQkuNwd+yNDd4E9fSuh5N2bsgkkt+cSNQwn9NxJku0OdUmIT4WeDvK/AyxuPDc1
- Mtu7avbu3W7X9QwM87teZ3FGdDKzMH7BsRFYu7sN5zlS0BJN77dMFA5AhCiwKWRI2JKk=;
+ bh=MEn5D2H1DvseGnHco2QmUfP8UjBCu5RqQQV0I8FZO5s=; b=eM0dkDExqKG9nyyQBPZABIi5gp
+ iaDm+mK5v18Q2HgSFa0TeHJkfn0Z3JSfmwT8YDvm+IUsvzSpygWPC0l1CFO31BRBm4EutgkZbUvdc
+ zCtZ8Ojy6N9sp2k/bEV1o5BS8qawF6OaMNrneZgD2y62ouNrxJJ6qwC0trAtWv3Y1T6M=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:References:
- In-Reply-To:Message-ID:Cc:To:Reply-To:From:Date:Sender:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Xw/HisupCoc6KT9u5qI1+0kpxZF4OlHo1CcnzjK8Hes=; b=Z3Y+OL4r2U06mZZDGzz+OUY8+g
- u2yc4Am1cWRON3zrKFtJR9vibXL0kLsS/RfVJu+dmkf0tM1cL/bBlDXO7T56DYsCqQznwdk60tGqT
- Y9p5acVIVK4DvJ0w7zs6qDuwIh0VqvESipCzUaA4honh4csUV5tQaKJytLn2lG2b196Y=;
-Received: from [163.53.93.251] (helo=sender2-pp-o92.zoho.com.cn)
+ bh=MEn5D2H1DvseGnHco2QmUfP8UjBCu5RqQQV0I8FZO5s=; b=MatNA00WFCKPjwVILCWFnDZkY3
+ AUx1jcMsHRQXvd+CY519yU5LesxNh6QEVP+8Pi2P45SGdjDlgwCMyfZxc18yVF901oCpi8ngTt0g/
+ 5mVUOiySfUwkTNIYdGyw/DAZ+M4hV200bsYGS+QEjMOcR9cqRVa1rH7NNJTOS9rWkTT8=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kyxYW-009NOu-T7
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 13:48:47 +0000
-ARC-Seal: i=1; a=rsa-sha256; t=1610372854; cv=none; d=zoho.com.cn; s=zohoarc; 
- b=TKQ3aVMJOgTwQXyUuoysDTF4sRI8H3f2nA+hLaQQZEA3blzX3YdOFWAQiXqvRuclLc9RZK9czZa8u4W9WNk+AH0BICbF4fHD+1btlan3RLBnYrNf4JmD5TKNOJOJYWwNGd4B4NY5S1GbvXkbrt98tIF2QF1IsNxXaBwzefB3PG0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn;
- s=zohoarc; t=1610372854;
- h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To;
- bh=Xw/HisupCoc6KT9u5qI1+0kpxZF4OlHo1CcnzjK8Hes=; 
- b=YOn0LZAvYdrtmmluvDI4PPmnAVnDB3P/HpNdiWoTopIRyJSZ3RgoVNLwzt0VjPcCTSKgS67UIp+Dd22AAZmix9bQycJC3PNAYnqzg5wr8KYA1ZdyYsx5tk4rM8Z3v1MDX61p1vhI5d5fRBGQ+mVUYJVdbQv0uO5VegdgIDT09/0=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
- dkim=pass  header.i=mykernel.net;
- spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
- dmarc=pass header.from=<cgxu519@mykernel.net>
- header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1610372854; 
- s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
- h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=Xw/HisupCoc6KT9u5qI1+0kpxZF4OlHo1CcnzjK8Hes=;
- b=YW5NveZ3e9bvRytdSDA2Pstc/LQPeAqz08BhDyCZ5HzwtH2eMUVIpjNA6OF0Aa4x
- esMNo0t0ksYv81JVAeXcU2+783dSwoQLYkrSWo+8V8H/qzLiVIy7iiJHUaCRu/gQ+Rk
- x4wGibCFwNzWvGJ6i3D0iR0gWwZWp7GVIflwb8KQ=
-Received: from mail.baihui.com by mx.zoho.com.cn
- with SMTP id 1610372851185713.8995608830727;
- Mon, 11 Jan 2021 21:47:31 +0800 (CST)
-Date: Mon, 11 Jan 2021 21:47:31 +0800
-From: Chengguang Xu <cgxu519@mykernel.net>
-To: "Chao Yu" <yuchao0@huawei.com>
-Message-ID: <176f1b3a5ee.deaba0f757366.7662150588541968972@mykernel.net>
-In-Reply-To: <cbdc0859-929b-3e8c-a5ed-4f458f6c4bcc@huawei.com>
+ id 1kyyL4-009Xf3-1M
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 14:38:44 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F0B8721744;
+ Mon, 11 Jan 2021 14:38:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1610375901;
+ bh=u29FyUdZFH58g/whPLDIPxaQeAlRSOYjc55k0QhxjUw=;
+ h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+ b=gQZ29FWGO8BTW6PmW+kiI9GrVMEyTk2Ud25cJSzojV1bMjQRy1hC2ByXYSjMrPIBc
+ sqLaAaHpVQd8OWPGC/JueO3bCA0G1v8cWfPOUSG28jfeFzBg/IquMNFKA+q9Ol/Mxi
+ MBh07J2nbXRBXRo9tYkRMtWyA3nKHnPyq98fs/K0neC8SWMqa/xOWLWp+9LQVzEd+X
+ equDLVnEk3Fs6PGuuG9iEAojFJshb/L/rezLulief77ikOagbdeALcYeE/FhhjbIAS
+ B9JsBhA3vzlmaJcg0PsqXebIRvxFkDUB2vCo7l0KkOoLDmTvGwq0OP67oTnXAeH/Wo
+ YDjvNPXn/RNag==
+To: cgxu519@mykernel.net, Chao Yu <yuchao0@huawei.com>
 References: <1610279329-5733-1-git-send-email-cgxu519@mykernel.net>
  <cbdc0859-929b-3e8c-a5ed-4f458f6c4bcc@huawei.com>
+ <176f1b3a5ee.deaba0f757366.7662150588541968972@mykernel.net>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <6f0624b3-1f22-1599-1833-eef118ae24eb@kernel.org>
+Date: Mon, 11 Jan 2021 22:38:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
-X-Headers-End: 1kyxYW-009NOu-T7
+In-Reply-To: <176f1b3a5ee.deaba0f757366.7662150588541968972@mykernel.net>
+Content-Language: en-US
+X-Headers-End: 1kyyL4-009Xf3-1M
 Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: using generic_file_llseek()
  instead of generic_file_llseek_size()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -96,28 +87,29 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: cgxu519@mykernel.net
 Cc: jaegeuk <jaegeuk@kernel.org>,
  linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-IC0tLS0g5ZyoIOaYn+acn+S4gCwgMjAyMS0wMS0xMSAxNTozNTowNyBDaGFvIFl1IDx5dWNoYW8w
-QGh1YXdlaS5jb20+IOaSsOWGmSAtLS0tCiA+IE9uIDIwMjEvMS8xMCAxOTo0OCwgQ2hlbmdndWFu
-ZyBYdSB3cm90ZToKID4gPiBnZW5lcmljX2ZpbGVfbGxzZWVrX3NpemUoKSBpcyB1c2VkIGZvciBm
-aWxlc3lzdGVtcyB0aGF0IGhhdmUKID4gPiBhIGN1c3RvbSBtYXhpbXVtIHNpemUgYW5kIGEgY3Vz
-dG9tIEVPRiBwb3NpdGlvbi4gc28gaXQncyBiZXR0ZXIKID4gPiB0byByZXBsYWNlIGl0IHVzaW5n
-IGdlbmVyaWNfZmlsZV9sbHNlZWsoKS4KID4gCiA+IEYyRlMgaW5vZGUgbWF5IGhhdmUgZGlmZmVy
-ZW50IG1heCBzaXplLCBlLmcuIGNvbXByZXNzZWQgZmlsZSBoYXZlCiA+IGxlc3MgYmxrYWRkciBl
-bnRyaWVzIGluIGFsbCBpdHMgZGlyZWN0LW5vZGUgYmxvY2tzLCByZXN1bHQgaW4gYmVpbmcKID4g
-d2l0aCBsZXNzIG1heCBmaWxlc2l6ZS4KID4gCiA+IEkgZ3Vlc3Mgd2Ugc2hvdWxkIGNvbnNpZGVy
-IHRoYXQgd2hlbiBjaGVja2luZyBib3VuZGFyeSB3aXRoIHNfbWF4Ynl0ZXMsCiA+IHNvIGhvdyBh
-Ym91dCB1c2luZyBiZWxvdyBwYXRjaCBpbnN0ZWFkOgogPiAKID4gU3ViamVjdDogW1BBVENIXSBm
-MmZzOiBmaXggdG8gdXNlIHBlci1pbm9kZSBtYXhieXRlcwoKSGkgQ2hhbywKClRoYW5rcyBmb3Ig
-eW91ciByZXZpZXcgYW5kIHN1Z2dlc3Rpb24uIEl0IGxvb2tzIGEgcHJvcGVyIGZpeC4KV291bGQg
-eW91IG1pbmQgbWUgc2VuZGluZyByZXZpc2VkIHBhdGNoIGZvbGxvdyB5b3VyIHN1Z2dlc3Rpb24/
-CgpUaGFua3MKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNv
-dXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5m
-by9saW51eC1mMmZzLWRldmVsCg==
+T24gMjAyMS8xLzExIDIxOjQ3LCBDaGVuZ2d1YW5nIFh1IHdyb3RlOgo+ICAgLS0tLSDlnKgg5pif
+5pyf5LiALCAyMDIxLTAxLTExIDE1OjM1OjA3IENoYW8gWXUgPHl1Y2hhbzBAaHVhd2VpLmNvbT4g
+5pKw5YaZIC0tLS0KPiAgID4gT24gMjAyMS8xLzEwIDE5OjQ4LCBDaGVuZ2d1YW5nIFh1IHdyb3Rl
+Ogo+ICAgPiA+IGdlbmVyaWNfZmlsZV9sbHNlZWtfc2l6ZSgpIGlzIHVzZWQgZm9yIGZpbGVzeXN0
+ZW1zIHRoYXQgaGF2ZQo+ICAgPiA+IGEgY3VzdG9tIG1heGltdW0gc2l6ZSBhbmQgYSBjdXN0b20g
+RU9GIHBvc2l0aW9uLiBzbyBpdCdzIGJldHRlcgo+ICAgPiA+IHRvIHJlcGxhY2UgaXQgdXNpbmcg
+Z2VuZXJpY19maWxlX2xsc2VlaygpLgo+ICAgPgo+ICAgPiBGMkZTIGlub2RlIG1heSBoYXZlIGRp
+ZmZlcmVudCBtYXggc2l6ZSwgZS5nLiBjb21wcmVzc2VkIGZpbGUgaGF2ZQo+ICAgPiBsZXNzIGJs
+a2FkZHIgZW50cmllcyBpbiBhbGwgaXRzIGRpcmVjdC1ub2RlIGJsb2NrcywgcmVzdWx0IGluIGJl
+aW5nCj4gICA+IHdpdGggbGVzcyBtYXggZmlsZXNpemUuCj4gICA+Cj4gICA+IEkgZ3Vlc3Mgd2Ug
+c2hvdWxkIGNvbnNpZGVyIHRoYXQgd2hlbiBjaGVja2luZyBib3VuZGFyeSB3aXRoIHNfbWF4Ynl0
+ZXMsCj4gICA+IHNvIGhvdyBhYm91dCB1c2luZyBiZWxvdyBwYXRjaCBpbnN0ZWFkOgo+ICAgPgo+
+ICAgPiBTdWJqZWN0OiBbUEFUQ0hdIGYyZnM6IGZpeCB0byB1c2UgcGVyLWlub2RlIG1heGJ5dGVz
+Cj4gCj4gSGkgQ2hhbywKPiAKPiBUaGFua3MgZm9yIHlvdXIgcmV2aWV3IGFuZCBzdWdnZXN0aW9u
+LiBJdCBsb29rcyBhIHByb3BlciBmaXguCj4gV291bGQgeW91IG1pbmQgbWUgc2VuZGluZyByZXZp
+c2VkIHBhdGNoIGZvbGxvdyB5b3VyIHN1Z2dlc3Rpb24/CgpIaSBDaGVuZ2d1YW5nLAoKSXQncyBm
+aW5lIHRvIG1lLgoKVGhhbmtzLAoKPiAKPiBUaGFua3MKPiAKCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
+dApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNv
+dXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
