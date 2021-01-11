@@ -2,39 +2,38 @@ Return-Path: <SRS0=V0x5=GO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A0CC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Jan 2021 10:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACD4C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Jan 2021 10:54:08 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9D5A2221ED;
-	Mon, 11 Jan 2021 10:53:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D5A2221ED
+	by mail.kernel.org (Postfix) with ESMTPS id 4A21F221ED;
+	Mon, 11 Jan 2021 10:54:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A21F221ED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kyup2-0006EU-Kt; Mon, 11 Jan 2021 10:53:16 +0000
+	id 1kyupr-0003aV-PB; Mon, 11 Jan 2021 10:54:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hch@lst.de>) id 1kyup1-0006EN-HX
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 10:53:15 +0000
+ (envelope-from <hch@lst.de>) id 1kyupr-0003aP-2V
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 10:54:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=QT+gvGa+L4vytQ/Ecm2bpbQqQf
- tbvXIjETYSfKDkc4BPhL4MzirNqwSp6/srCkl9b4n/xvSxzUBt+1T1xTtHFqCXIhat4O458XcX3z4
- ksnbMLj/rcsBsisAbrXfi+v/BQrOwCaxsc7bKgrXV+WeiMJHc4xyVUzNHcIW3Ai2XzbQ=;
+ bh=tndQR8x4jskg5bt9X3Bn3b3/vXcQTQYX2ICPpgTVyVI=; b=Dz+Y7vHkELnvfzExE8hb4gzfAn
+ Mh/WcRe3B8hVqid2YHyVdHXPy6iqL7oto3Qzud4FXteHmEbQzFPQx0fjohKmotBjCbOYiuvRpcemM
+ x3KbXtgKiCkHOJ+O7wcnMjZLcap5ssH5bmHx2nXJAk/Dps0XG2mq5K8LByEgdjp448As=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,29 +41,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=HAaLJDxfN0gBGILcxaj4bWAEB6
- wgiXzPZge+xSo5ORQc8iqtM/z19UoUvEtLJfYsxhABUY4KLdRk7Cu4LFy0oEqHysmKexdNStfiAfo
- hox0UvCZJAYUSsJ/B0SFHXn/CRVhHhig+vqNccyVhwze/tB4nvitG3UIib9FaP4kx4y4=;
+ bh=tndQR8x4jskg5bt9X3Bn3b3/vXcQTQYX2ICPpgTVyVI=; b=ftEoVErI9CH97vmifvFjpIXGMh
+ 410wFLPA2c5YiF7fWZ5mgmY1W17XNSGc2Lv3kgIVsSTp9tJAAzcmhlLk2+7he3QVucNEmlqrALWqN
+ sOUvWRTV15+OKf41A5HfVXPgriZx3ZPbeRO68NwzzLrJwyK5MpV38W1+Xr5mumr3eIAA=;
 Received: from verein.lst.de ([213.95.11.211])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kyuot-008upu-Vd
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 10:53:15 +0000
+ id 1kyuph-000rsQ-CR
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 10:54:06 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 190C567373; Mon, 11 Jan 2021 11:53:01 +0100 (CET)
-Date: Mon, 11 Jan 2021 11:53:00 +0100
+ id 2323F67373; Mon, 11 Jan 2021 11:53:43 +0100 (CET)
+Date: Mon, 11 Jan 2021 11:53:42 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20210111105300.GD2502@lst.de>
+Message-ID: <20210111105342.GE2502@lst.de>
 References: <20210109075903.208222-1-ebiggers@kernel.org>
- <20210109075903.208222-10-ebiggers@kernel.org>
+ <20210109075903.208222-12-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20210109075903.208222-10-ebiggers@kernel.org>
+In-Reply-To: <20210109075903.208222-12-ebiggers@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1kyuot-008upu-Vd
-Subject: Re: [f2fs-dev] [PATCH v2 09/12] fs: improve comments for
- writeback_single_inode()
+X-Headers-End: 1kyuph-000rsQ-CR
+Subject: Re: [f2fs-dev] [PATCH v2 11/12] ext4: simplify i_state checks in
+ __ext4_update_other_inode_time()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,9 +82,22 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Looks good,
+On Fri, Jan 08, 2021 at 11:59:02PM -0800, Eric Biggers wrote:
+>  	if ((inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW |
+> -			       I_DIRTY_INODE)) ||
+> -	    ((inode->i_state & I_DIRTY_TIME) == 0))
+> +			       I_DIRTY_TIME)) != I_DIRTY_TIME)
+>  		return;
+>  
+>  	spin_lock(&inode->i_lock);
+> -	if (((inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW |
+> -				I_DIRTY_INODE)) == 0) &&
+> -	    (inode->i_state & I_DIRTY_TIME)) {
+> +	if ((inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW |
+> +			       I_DIRTY_TIME)) == I_DIRTY_TIME) {
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+I think a descriptively named inline helper in fs.h would really improve
+this..
 
 
 _______________________________________________
