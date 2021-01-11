@@ -2,39 +2,38 @@ Return-Path: <SRS0=V0x5=GO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F17B5C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Jan 2021 10:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B911C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 11 Jan 2021 10:52:32 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7C9A82226A;
-	Mon, 11 Jan 2021 10:48:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C9A82226A
+	by mail.kernel.org (Postfix) with ESMTPS id A1EF4221ED;
+	Mon, 11 Jan 2021 10:52:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1EF4221ED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kyukV-00063C-1b; Mon, 11 Jan 2021 10:48:35 +0000
+	id 1kyuoH-0003VZ-7E; Mon, 11 Jan 2021 10:52:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <hch@lst.de>) id 1kyukT-000634-EN
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 10:48:33 +0000
+ (envelope-from <hch@lst.de>) id 1kyuoE-0003VR-Gt
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 10:52:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=fmmdmTKUxshIQukVm+LbZMn5Pm
- leeSHhPTlXiwVBuIWs+UcJpnZqBCDQuVG63p6aVg/cNA2VCnTRiV5fCE4HeTc5gAMltaYwrgpmGqd
- /f20D5mNqLXpx+wjaMnpTj5J3a9/zATQpHN9fx4Qn/b0R0rojt3bj+uSLBcCX3giQ2Jg=;
+ bh=IaYdBSGUjwcGobnfE4rIQuNSY3j7qjMKg1oAIajMpoc=; b=ZB20LXZWQtQbwd2G3hT3uTSZqM
+ jhEZ00D6Wzwl+6ANFqH2/z+20ZmkWSURqtkHULR9zdhzb7XztCMS4pmKzf5TE/ASQvMz0DYrOSw3H
+ xTWxKSIjJTvbnO2IVYlvw2T5zKqFYCXSSyPTnc9iQXi5s+lloHhfNyI/NRw/My2ebIbo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,29 +41,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=ZFOpqorHSQ4Bu5OvQXK1ffa99l
- sDhUnZPDNwKkSzuwLjjLkNKi4RwcED3EGlmNx7Se3Mk5noC0qXWr5Vk2DgnLMPrG8zhlgRxQPAOn+
- oXtuBEJ/56sdZx+aFIx/feVfHK7Q1BczAeHCSDuzUy0C/RfABqAr6n5u+m4wslU3F67E=;
+ bh=IaYdBSGUjwcGobnfE4rIQuNSY3j7qjMKg1oAIajMpoc=; b=LSeBAAF5HYKvC/cQLsWv8NCy4z
+ Ml5x2Ap+ICzksyERiuDvYUZJJhV3/h5fsdQhcxNC7bVG1MLhz3fxRK8ByZJso4TvhjluCJiyl7lrM
+ M74YFLhUSH8AwEdgeybtMoEQIQIOkZz7Cz6PQCpFbIlDoSanKdVUf3iliUsSvDVuZwoQ=;
 Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kyukJ-000r8o-JG
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 10:48:33 +0000
+ id 1kyuo4-000rmh-98
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 11 Jan 2021 10:52:26 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 5721567373; Mon, 11 Jan 2021 11:48:05 +0100 (CET)
-Date: Mon, 11 Jan 2021 11:48:04 +0100
+ id C478967373; Mon, 11 Jan 2021 11:52:01 +0100 (CET)
+Date: Mon, 11 Jan 2021 11:52:01 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20210111104804.GA2502@lst.de>
+Message-ID: <20210111105201.GB2502@lst.de>
 References: <20210109075903.208222-1-ebiggers@kernel.org>
- <20210109075903.208222-2-ebiggers@kernel.org>
+ <20210109075903.208222-5-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20210109075903.208222-2-ebiggers@kernel.org>
+In-Reply-To: <20210109075903.208222-5-ebiggers@kernel.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1kyukJ-000r8o-JG
-Subject: Re: [f2fs-dev] [PATCH v2 01/12] fs: fix lazytime expiration
- handling in __writeback_single_inode()
+X-Headers-End: 1kyuo4-000rmh-98
+Subject: Re: [f2fs-dev] [PATCH v2 04/12] fat: only specify I_DIRTY_TIME when
+ needed in fat_update_time()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,17 +75,18 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Theodore Ts'o <tytso@mit.edu>, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Looks good,
+On Fri, Jan 08, 2021 at 11:58:55PM -0800, Eric Biggers wrote:
+> +	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
+> +		dirty_flags |= I_DIRTY_SYNC;
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+fat does not support i_version updates, so this bit can be skipped.
 
 
 _______________________________________________
