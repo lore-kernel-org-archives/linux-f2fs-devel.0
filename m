@@ -2,77 +2,77 @@ Return-Path: <SRS0=pHl4=GP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EF8C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 17:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0EAC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 19:04:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F303022AED;
-	Tue, 12 Jan 2021 17:31:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F303022AED
+	by mail.kernel.org (Postfix) with ESMTPS id 00A7323136;
+	Tue, 12 Jan 2021 19:04:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00A7323136
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kzNWA-0002DE-GY; Tue, 12 Jan 2021 17:31:42 +0000
+	id 1kzOxm-0000qh-SK; Tue, 12 Jan 2021 19:04:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <djwong@kernel.org>) id 1kzNW9-0002D1-13
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 17:31:41 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kzOxk-0000qP-RA
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=94j1NQqEfWmJG8kLI2EYm1aaeKvzyQGgr0k7/UAV73Y=; b=LxhGVOKXfS3HvbZXAUD/YuNnkE
- J2E0buXtTWqKZW3h0YYuKRzzlW5G+ewm2wgj3TObEI3edanBpAKjYifqk3RkXnfW+zeiB8OEo9J1C
- V/vmwG8MC38lwBdXSlksP54ktrw4/BUIZsORy/eHTI005vYYYmcjk34lwFIAd6J9o2uY=;
+ bh=uKg/QRNNI5xvHdl9PJPgRJOgHt87zeQAaZhatFx+Bbo=; b=i5dGN4uG1WfpkPmBnTHEhxNGbd
+ CGhpVkIHULaZujAqa6Eb71QEL3ERqALX0ZVrpFX8iiRN8AYCudTwA0tfBKptY8TtKOZgrdcBCpCI0
+ NAo4teaBMElrYEM1y/1o5gHQKbyY6Sg770EKy+3BPcWMox+nLsJ4DaRjbFsRbCqaDALY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=94j1NQqEfWmJG8kLI2EYm1aaeKvzyQGgr0k7/UAV73Y=; b=FDdXGbqzyj2GQ3sRDSGbp27sKz
- vfpWwzstqbPUh7whcOai4xZbrpcQ4X1LzjHbF9OoIQaH+2scyovQREUP7tHNckZ/GzcDaJncRnztt
- 7qRs+Nk+OnPkVChtzsNHDrjvo099qU3nJ4VhiOipi0XU8fk3CivxGJph26CEfbrCk2wk=;
+ bh=uKg/QRNNI5xvHdl9PJPgRJOgHt87zeQAaZhatFx+Bbo=; b=Qff14wIF3TGchC30EuPIYw70lT
+ BxJe9ARTFUfXNPVQL+Xp1RxvZziak+BsdLLwvi/v+YD/JEObXE2aL5i7iGnk/KXESZCme3AFF0zsI
+ WVMbOYrT5voNlP9eIzKAgxGXGY0EW9MNk2LXkTnrQPbLxnEtp7egBkD0APc/nDZMPTsg=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kzNW2-004oT6-Dl
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 17:31:40 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C0662311F;
- Tue, 12 Jan 2021 17:31:21 +0000 (UTC)
+ id 1kzOxi-00EmwX-Bq
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:16 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 923412312E;
+ Tue, 12 Jan 2021 19:04:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1610472681;
- bh=hx3kcnBTK+3EJoLgdpAJwhITPHZ0HHh1DKuSieNfJfg=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Z9gjqutsZnsUP356ckbPegqUDZKsQXXxP9eJGdZyOU8bBk8u4FYIkX3C7Wx3NeqMk
- v+aEGfiH5lnMkDGIggxZUuRuwpwUD8mpUPHEGc5T0OvUqiMZDNG0b7VMf4cFd2qcjz
- 1HUwMirf62JvcEXIn0EP6SGiYqXY168L+JodLgoWfsyM84qy1ePCxcQXZhFeTp5f+J
- IVNPVJewaAWGGqZt3iZtqq6T4aeMnwMVIacz3qiZgsHIbx6N+rcSfbb8cUdU2TjOQS
- d8TcjcUJWf4dgqNPZF22czS9lFJYH20ifNFJJd5kriPwY2GYNOiqJS6j++Rx/6DXd6
- q4YFbbdwHGkwQ==
-Date: Tue, 12 Jan 2021 09:31:20 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <20210112173120.GQ1164246@magnolia>
-References: <20210109075903.208222-1-ebiggers@kernel.org>
- <20210109075903.208222-13-ebiggers@kernel.org>
+ s=k20201202; t=1610478248;
+ bh=Im78Be+l2W/o6jR27EyuvYkjiWas8r9WoosYuDAbde8=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=syN/64Ze9BPTw/FQlbXRtegquYCvbp6MN/LUOptcOWXJ43srztSL/gPkj57THDruo
+ ADQhvuPjq+WjSpkMxAC9sg5wP1CSb289QZOhDC7FMdWr1dBVpfa3kZrZl43Ocz6ytM
+ uX4SvKPbu2vCrP/ZPiZFYFCTmVY+UylacvoRndaRJ75G2/OxDs5FTGn8AFD4lWi2P3
+ Ls3XcNOy6EK6PxQRib6bWVJdUYyNGFcO8N2WfTIH0FFPjF9Dl0RUtsHu0Bsqadmvbg
+ EAj0ZdFRpNP4Ijqq9L7z0drcxD2HO9gSJgcEjBugoRb7Sr5dSbuqxa6VpsUabCrhDs
+ ok7FMXKtizsUg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Date: Tue, 12 Jan 2021 11:02:46 -0800
+Message-Id: <20210112190253.64307-5-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210112190253.64307-1-ebiggers@kernel.org>
+References: <20210112190253.64307-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20210109075903.208222-13-ebiggers@kernel.org>
-X-Headers-End: 1kzNW2-004oT6-Dl
-Subject: Re: [f2fs-dev] [PATCH v2 12/12] xfs: remove a stale comment from
- xfs_file_aio_write_checks()
+X-Headers-End: 1kzOxi-00EmwX-Bq
+Subject: [f2fs-dev] [PATCH v3 04/11] fat: only specify I_DIRTY_TIME when
+ needed in fat_update_time()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,57 +84,69 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+Cc: Jan Kara <jack@suse.cz>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
  linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jan 08, 2021 at 11:59:03PM -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> The comment in xfs_file_aio_write_checks() about calling file_modified()
-> after dropping the ilock doesn't make sense, because the code that
-> unconditionally acquires and drops the ilock was removed by
-> commit 467f78992a07 ("xfs: reduce ilock hold times in
-> xfs_file_aio_write_checks").
-> 
-> Remove this outdated comment.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+From: Eric Biggers <ebiggers@google.com>
 
-Yep, thanks for the update. :)
+As was done for generic_update_time(), only pass I_DIRTY_TIME to
+__mark_inode_dirty() when the inode's timestamps were actually updated
+and lazytime is enabled.  This avoids a weird edge case where
+I_DIRTY_TIME could be set in i_state when lazytime isn't enabled.
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/fat/misc.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
---D
+diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+index f1b2a1fc2a6a4..18a50a46b57f8 100644
+--- a/fs/fat/misc.c
++++ b/fs/fat/misc.c
+@@ -329,22 +329,23 @@ EXPORT_SYMBOL_GPL(fat_truncate_time);
+ 
+ int fat_update_time(struct inode *inode, struct timespec64 *now, int flags)
+ {
+-	int iflags = I_DIRTY_TIME;
+-	bool dirty = false;
++	int dirty_flags = 0;
+ 
+ 	if (inode->i_ino == MSDOS_ROOT_INO)
+ 		return 0;
+ 
+-	fat_truncate_time(inode, now, flags);
+-	if (flags & S_VERSION)
+-		dirty = inode_maybe_inc_iversion(inode, false);
+-	if ((flags & (S_ATIME | S_CTIME | S_MTIME)) &&
+-	    !(inode->i_sb->s_flags & SB_LAZYTIME))
+-		dirty = true;
++	if (flags & (S_ATIME | S_CTIME | S_MTIME)) {
++		fat_truncate_time(inode, now, flags);
++		if (inode->i_sb->s_flags & SB_LAZYTIME)
++			dirty_flags |= I_DIRTY_TIME;
++		else
++			dirty_flags |= I_DIRTY_SYNC;
++	}
++
++	if ((flags & S_VERSION) && inode_maybe_inc_iversion(inode, false))
++		dirty_flags |= I_DIRTY_SYNC;
+ 
+-	if (dirty)
+-		iflags |= I_DIRTY_SYNC;
+-	__mark_inode_dirty(inode, iflags);
++	__mark_inode_dirty(inode, dirty_flags);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(fat_update_time);
+-- 
+2.30.0
 
-> ---
->  fs/xfs/xfs_file.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 5b0f93f738372..4927c6653f15d 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -389,12 +389,6 @@ xfs_file_aio_write_checks(
->  	} else
->  		spin_unlock(&ip->i_flags_lock);
->  
-> -	/*
-> -	 * Updating the timestamps will grab the ilock again from
-> -	 * xfs_fs_dirty_inode, so we have to call it after dropping the
-> -	 * lock above.  Eventually we should look into a way to avoid
-> -	 * the pointless lock roundtrip.
-> -	 */
->  	return file_modified(file);
->  }
->  
-> -- 
-> 2.30.0
-> 
 
 
 _______________________________________________
