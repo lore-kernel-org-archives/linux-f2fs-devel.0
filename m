@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB11C433E6
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 19:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F1D0C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 19:04:34 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5CF0023107;
-	Tue, 12 Jan 2021 19:04:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CF0023107
+	by mail.kernel.org (Postfix) with ESMTPS id 29E6623107;
+	Tue, 12 Jan 2021 19:04:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29E6623107
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kzOy0-0002Xp-D5; Tue, 12 Jan 2021 19:04:32 +0000
+	id 1kzOy1-0005fL-Ok; Tue, 12 Jan 2021 19:04:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kzOxx-0002XF-9T
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:29 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kzOy0-0005f9-BC
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hcExk2f6Sm8ZvG3v+PFv+rRunGcm2v5qD67EKAPPR2g=; b=bEujLm9KUg9QTomF7lFjXg6KYj
- Zf+OkO1/yh4rKJ5iueV0tKOfK2WzLc+focd4GG/Roah2VlHiMZ9WOLQkr0MUqnKJZNA3z1wTmnaz0
- sNtA+xTXal1BKMx622Sswz9jHY1kpdgbr1mLq1C0PqKjep6msUPYVH1C+8+59j/rmJn8=;
+ bh=nXJuYu4jGoS1Z3s6c+gliaJMk7NA/xWMAybJ4nDKP1Y=; b=WDS16CHE4ST8QOx7WxknBJ/k05
+ ho4r232gAwWhRlnTNhfmmFj8EbyzEzaHMYA/J291V9KuVQ+mfby56br2O2AQTDVKyeO+ilw4cUjOs
+ dhnO9hIre3ZSaceb6zRdGRmdv3TLgJqwPqm6QmvKfWq/14BrphNtWq7asLE1hq2wx4uw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,37 +42,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hcExk2f6Sm8ZvG3v+PFv+rRunGcm2v5qD67EKAPPR2g=; b=W1A7PadVIxjYP9vfGidh/uANgL
- 9I8E52THJ8OeuQw6jp0XAcFglJmbsvCOmbHu0acuRyCxECWqhWUbrYU7QDcM7G9fKz6a/gefE5kgj
- HA+g37dKhrTeBOfIu+/s6nkc49Crw9jEuPc+B2pcBSo7Kf1RHGYcXVk0A1Oc2Wf7QNXY=;
+ bh=nXJuYu4jGoS1Z3s6c+gliaJMk7NA/xWMAybJ4nDKP1Y=; b=VJOQz0cCdi7lE4sJhEoA7NXp8O
+ OToia5pNYmrvnIuxG95KUX27aPeTWeb0XPNVWFNyQYSmZdTmBOVcfGb5hY6NhzLmUCja6NGx9Tx2m
+ LcN8I72knF/t5Bb/8ufU7jAVOBwgKJhzkiVCBJHZ3Fb2Y8cn+DTre/xlpuXDcWbla23s=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kzOxp-004zCY-4n
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:29 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 146C723122;
- Tue, 12 Jan 2021 19:04:07 +0000 (UTC)
+ id 1kzOxx-004zDH-85
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:32 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1A3DD2312F;
+ Tue, 12 Jan 2021 19:04:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1610478247;
- bh=uysMXhLZXAuo/mSxEqV+P4QVsQJXJfSW39mwx9woK3o=;
+ s=k20201202; t=1610478249;
+ bh=hmxMN17tKWaM2hsNCmfmSb2YECH36i4GDPyEe2gO7gw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=QIDskA3pVkFs/x6CipzZbX0v6kEn6sSrJCtM5eE81Z6NjmSUeIPNqUXfQgDimHu6e
- AM2BJUcd86cKKBl5XGNDz50wdzBsrVEIcGPUhvDjsFS3vlTql1t0CQ0/Q57gzKTNeW
- g3sK93c2eDJxPkUrt6+YXJkxqUovGeYi5UFcTPDX1nd5A8RD5LH/I1K/53hZfwBcx8
- vwnOSjs8fzC199bdyHADqspNJvz9wbY/jxC4O5cCGwWRQl1C48M4ZD58B4lV5C8/1T
- Y3R6plqiLykaNOr/uoOxmVL3DuVvVPDUeVJ9xSigF1l72OGqAD0P/M2f7LtTA6zKq0
- BDzQBd86oWl3g==
+ b=jfP9ayF3Bht5l+XL74ExT6oANuXRjIN05trgBbs+srth9qeDfGwxeUu0QcJZv8VCE
+ edaeKWIsx2TiW/iK+uEBPM8hTUTnv09wng43nlxBKFjdT8km0rqByuPKmCHPrXhFZs
+ nyTTgwS7cHbByEkW3TA7q+2wLyXHvHN9Bp9wwWSHkQIECBojD9jx6ebwmDVf007wP1
+ yvlBMTdo3kMFalEKHJM3sC7o2mozf3itA8TSFwN3eYT6K58qpzO08YQhxWsDNa/TIs
+ 3tczf7gw3/0t/yTPXN47F2C2HFSSCmaiUZGa9Z4f+VOt/tqMWuhjV8Ebz6K6RbCAD9
+ rwZ6XAe3/39Cw==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Tue, 12 Jan 2021 11:02:43 -0800
-Message-Id: <20210112190253.64307-2-ebiggers@kernel.org>
+Date: Tue, 12 Jan 2021 11:02:47 -0800
+Message-Id: <20210112190253.64307-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112190253.64307-1-ebiggers@kernel.org>
 References: <20210112190253.64307-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kzOxp-004zCY-4n
-Subject: [f2fs-dev] [PATCH v3 01/11] fs: fix lazytime expiration handling in
- __writeback_single_inode()
+X-Headers-End: 1kzOxx-004zDH-85
+Subject: [f2fs-dev] [PATCH v3 05/11] fs: don't call ->dirty_inode for
+ lazytime timestamp updates
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,118 +84,118 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Theodore Ts'o <tytso@mit.edu>, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>
+Cc: Jan Kara <jack@suse.cz>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+ linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-When lazytime is enabled and an inode is being written due to its
-in-memory updated timestamps having expired, either due to a sync() or
-syncfs() system call or due to dirtytime_expire_interval having elapsed,
-the VFS needs to inform the filesystem so that the filesystem can copy
-the inode's timestamps out to the on-disk data structures.
+There is no need to call ->dirty_inode for lazytime timestamp updates
+(i.e. for __mark_inode_dirty(I_DIRTY_TIME)), since by the definition of
+lazytime, filesystems must ignore these updates.  Filesystems only need
+to care about the updated timestamps when they expire.
 
-This is done by __writeback_single_inode() calling
-mark_inode_dirty_sync(), which then calls ->dirty_inode(I_DIRTY_SYNC).
+Therefore, only call ->dirty_inode when I_DIRTY_INODE is set.
 
-However, this occurs after __writeback_single_inode() has already
-cleared the dirty flags from ->i_state.  This causes two bugs:
+Based on a patch from Christoph Hellwig:
+https://lore.kernel.org/r/20200325122825.1086872-4-hch@lst.de
 
-- mark_inode_dirty_sync() redirties the inode, causing it to remain
-  dirty.  This wastefully causes the inode to be written twice.  But
-  more importantly, it breaks cases where sync_filesystem() is expected
-  to clean dirty inodes.  This includes the FS_IOC_REMOVE_ENCRYPTION_KEY
-  ioctl (as reported at
-  https://lore.kernel.org/r/20200306004555.GB225345@gmail.com), as well
-  as possibly filesystem freezing (freeze_super()).
-
-- Since ->i_state doesn't contain I_DIRTY_TIME when ->dirty_inode() is
-  called from __writeback_single_inode() for lazytime expiration,
-  xfs_fs_dirty_inode() ignores the notification.  (XFS only cares about
-  lazytime expirations, and it assumes that i_state will contain
-  I_DIRTY_TIME during those.)  Therefore, lazy timestamps aren't
-  persisted by sync(), syncfs(), or dirtytime_expire_interval on XFS.
-
-Fix this by moving the call to mark_inode_dirty_sync() to earlier in
-__writeback_single_inode(), before the dirty flags are cleared from
-i_state.  This makes filesystems be properly notified of the timestamp
-expiration, and it avoids incorrectly redirtying the inode.
-
-This fixes xfstest generic/580 (which tests
-FS_IOC_REMOVE_ENCRYPTION_KEY) when run on ext4 or f2fs with lazytime
-enabled.  It also fixes the new lazytime xfstest I've proposed, which
-reproduces the above-mentioned XFS bug
-(https://lore.kernel.org/r/20210105005818.92978-1-ebiggers@kernel.org).
-
-Alternatively, we could call ->dirty_inode(I_DIRTY_SYNC) directly.  But
-due to the introduction of I_SYNC_QUEUED, mark_inode_dirty_sync() is the
-right thing to do because mark_inode_dirty_sync() now knows not to move
-the inode to a writeback list if it is currently queued for sync.
-
-Fixes: 0ae45f63d4ef ("vfs: add support for a lazytime mount option")
-Cc: stable@vger.kernel.org
-Depends-on: 5afced3bf281 ("writeback: Avoid skipping inode writeback")
-Suggested-by: Jan Kara <jack@suse.cz>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/fs-writeback.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ fs/ext4/inode.c   | 12 +-----------
+ fs/f2fs/super.c   |  3 ---
+ fs/fs-writeback.c |  6 +++---
+ fs/gfs2/super.c   |  2 --
+ 4 files changed, 4 insertions(+), 19 deletions(-)
 
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 27946882d4ce4..4cc6c7834312f 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5933,26 +5933,16 @@ int __ext4_mark_inode_dirty(handle_t *handle, struct inode *inode,
+  * If the inode is marked synchronous, we don't honour that here - doing
+  * so would cause a commit on atime updates, which we don't bother doing.
+  * We handle synchronous inodes at the highest possible level.
+- *
+- * If only the I_DIRTY_TIME flag is set, we can skip everything.  If
+- * I_DIRTY_TIME and I_DIRTY_SYNC is set, the only inode fields we need
+- * to copy into the on-disk inode structure are the timestamp files.
+  */
+ void ext4_dirty_inode(struct inode *inode, int flags)
+ {
+ 	handle_t *handle;
+ 
+-	if (flags == I_DIRTY_TIME)
+-		return;
+ 	handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
+ 	if (IS_ERR(handle))
+-		goto out;
+-
++		return;
+ 	ext4_mark_inode_dirty(handle, inode);
+-
+ 	ext4_journal_stop(handle);
+-out:
+-	return;
+ }
+ 
+ int ext4_change_inode_journal_flag(struct inode *inode, int val)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index b4a07fe62d1a5..cc98dc49f4a26 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1196,9 +1196,6 @@ static void f2fs_dirty_inode(struct inode *inode, int flags)
+ 			inode->i_ino == F2FS_META_INO(sbi))
+ 		return;
+ 
+-	if (flags == I_DIRTY_TIME)
+-		return;
+-
+ 	if (is_inode_flag_set(inode, FI_AUTO_RECOVER))
+ 		clear_inode_flag(inode, FI_AUTO_RECOVER);
+ 
 diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index acfb55834af23..c41cb887eb7d3 100644
+index c41cb887eb7d3..b7616bbd55336 100644
 --- a/fs/fs-writeback.c
 +++ b/fs/fs-writeback.c
-@@ -1474,21 +1474,25 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
- 	}
- 
- 	/*
--	 * Some filesystems may redirty the inode during the writeback
--	 * due to delalloc, clear dirty metadata flags right before
--	 * write_inode()
-+	 * If the inode has dirty timestamps and we need to write them, call
-+	 * mark_inode_dirty_sync() to notify the filesystem about it and to
-+	 * change I_DIRTY_TIME into I_DIRTY_SYNC.
+@@ -2255,16 +2255,16 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 	 * Don't do this for I_DIRTY_PAGES - that doesn't actually
+ 	 * dirty the inode itself
  	 */
--	spin_lock(&inode->i_lock);
--
--	dirty = inode->i_state & I_DIRTY;
- 	if ((inode->i_state & I_DIRTY_TIME) &&
--	    ((dirty & I_DIRTY_INODE) ||
--	     wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
-+	    (wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
- 	     time_after(jiffies, inode->dirtied_time_when +
- 			dirtytime_expire_interval * HZ))) {
--		dirty |= I_DIRTY_TIME;
- 		trace_writeback_lazytime(inode);
-+		mark_inode_dirty_sync(inode);
- 	}
+-	if (flags & (I_DIRTY_INODE | I_DIRTY_TIME)) {
++	if (flags & I_DIRTY_INODE) {
+ 		trace_writeback_dirty_inode_start(inode, flags);
+ 
+ 		if (sb->s_op->dirty_inode)
+ 			sb->s_op->dirty_inode(inode, flags);
+ 
+ 		trace_writeback_dirty_inode(inode, flags);
+-	}
+-	if (flags & I_DIRTY_INODE)
 +
-+	/*
-+	 * Some filesystems may redirty the inode during the writeback
-+	 * due to delalloc, clear dirty metadata flags right before
-+	 * write_inode()
-+	 */
-+	spin_lock(&inode->i_lock);
-+	dirty = inode->i_state & I_DIRTY;
- 	inode->i_state &= ~dirty;
+ 		flags &= ~I_DIRTY_TIME;
++	}
+ 	dirtytime = flags & I_DIRTY_TIME;
  
  	/*
-@@ -1509,8 +1513,6 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
+index 2f56acc41c049..042b94288ff11 100644
+--- a/fs/gfs2/super.c
++++ b/fs/gfs2/super.c
+@@ -562,8 +562,6 @@ static void gfs2_dirty_inode(struct inode *inode, int flags)
+ 	int need_endtrans = 0;
+ 	int ret;
  
- 	spin_unlock(&inode->i_lock);
- 
--	if (dirty & I_DIRTY_TIME)
--		mark_inode_dirty_sync(inode);
- 	/* Don't write the inode if only I_DIRTY_PAGES was set */
- 	if (dirty & ~I_DIRTY_PAGES) {
- 		int err = write_inode(inode, wbc);
+-	if (!(flags & I_DIRTY_INODE))
+-		return;
+ 	if (unlikely(gfs2_withdrawn(sdp)))
+ 		return;
+ 	if (!gfs2_glock_is_locked_by_me(ip->i_gl)) {
 -- 
 2.30.0
 
