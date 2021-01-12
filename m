@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C002C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 19:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60BDFC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 19:04:38 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C6C2423107;
-	Tue, 12 Jan 2021 19:04:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6C2423107
+	by mail.kernel.org (Postfix) with ESMTPS id E579123107;
+	Tue, 12 Jan 2021 19:04:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E579123107
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kzOy2-0000uw-Ds; Tue, 12 Jan 2021 19:04:34 +0000
+	id 1kzOy5-0002Yk-Fl; Tue, 12 Jan 2021 19:04:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kzOy0-0000uK-DC
+ (envelope-from <ebiggers@kernel.org>) id 1kzOy0-0002Xk-BO
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I1d7yQJTUHPGRl1SpSvJf5KE2Awd1XcVAZZcvy3J9Vs=; b=IbgVe653j+9N1q4VNs17OEy+6d
- OlNaKO7EyBa0pvsgzLSliWRwLPSd25PtBgeVlpKK6KuAaDqeBDR9YzFpqz0RTKWISn+T0SmNJteeA
- Mo3EOweAQ7mOylHzxTWxVRaaE31ZDERagiPa2lb8633OlzhlYpXmgRKyUn+Q+u+TQLfQ=;
+ bh=Rg6XG/WDIcDP3E0r9OBXbFle30UPazWx1lgH4OUnCBI=; b=fQVrQQLJa8wAYu+lbWfBA1ClEo
+ OCdycuiRGGPFV48O4cQ3/QQJeckC8d5z3GQVzq3fP4nO3QuwaNyNDLLlkvuamR05EwvSjX6donbTN
+ v33GTElmtF6p67qpCrOgrPYyuAM3l/Bh6OT+l68Ubll2n7csz1c4ApMGoz8f7Z7X5uJM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,37 +42,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=I1d7yQJTUHPGRl1SpSvJf5KE2Awd1XcVAZZcvy3J9Vs=; b=FErE37VTkmjxv6d6KUG3hqVNiX
- 8yFLWStFvZlee2nhvvDOXLeqqC5bdq/VToGVyc53UcWvDaYngHm4y/taFu3bcyVadppM3l7V8t0pw
- c1uXJ4u4y2lh8LeeC0lHGudlVGTH4x4FbFOcThtTc5p12rxiwqjKieWUBbLhqcU+dpfg=;
+ bh=Rg6XG/WDIcDP3E0r9OBXbFle30UPazWx1lgH4OUnCBI=; b=P6Il4N25ENISMwX5ihr47/FZvw
+ xe1N79BPVzxYU8XewQMnBG1vrNWnbhmFt3V4+QY8eXosURJ6/aA4vIa5qSfdrsbAQ92t3F9QO77sx
+ HdhUHo+mdJvnI4O4GpKFW0idQSXxvxfOLL961FDaljIIITHgEdInFC3XaxVovM2c6FtM=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kzOxw-004zDF-9g
+ id 1kzOxw-00Emxk-8o
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:32 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 44D8F23134;
- Tue, 12 Jan 2021 19:04:12 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5E9BA23132;
+ Tue, 12 Jan 2021 19:04:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1610478252;
- bh=6FqWuQrXV+HGHkzTR42Ape3on4H7NKo1rahsTeQDI4c=;
+ s=k20201202; t=1610478251;
+ bh=RLKOMcBL8am63rYI4fsUwzcZTwQyT2DYyaU+TcBiZcw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=RZNZ7JkkNHWRoE3L2XHIBFGDbwLmXQ+WYmrSQ2HH5mrAH3MtFyOQ0LJ3XzuG+BY4y
- Ji+rdyAJ/Veytz+4dA94ERGnUigqHy0UnTkMBHX3hMM1lpgpo62tkwB8hq57YCbBS2
- mSpxDL4QT3QnH5GgvYEHuAvdrKqC/sWHNDwlpy7hlUjEyBW/VUJPoonFZt7omR5ygJ
- u+3VdJWj6zeBFzD0LHf+ThYBySvpcxA7LHRs2EujZ9L/va74iZnRNhyVvauDdUf+To
- kefvDtvLXHBcCaVR/JzpiX8n8OVbP6jRDf4CZ8F0mW0jGMkcAqjwaEqOQF2vg/QhvM
- gWcEr3/JZZHjA==
+ b=prDObSC3fNIuV+JuCcjPhkBKm0KJEg30E0uCAMUI9HFACYZ7xn+4yBaYadQzKhQj+
+ x83BIiQ+VyEf3ufI7Ws4W11oVXnHPi+fxc7Uk4LnFXC13Ksacy+IgXkqtjqZpzUMp6
+ uhN6pH0Aqj1CYrxNTTUo6dqZfLctFSeFcoH4ulfXdlVqjz3WqORpVimyUcGmvPgU6b
+ UFYUSi3gmv1LPuSEweRsrbRHAvrMstGIcNLzcwPxe1Tg6yMw+GVEx+xMV3fSK3RJ/T
+ UWs109dZeR4pSZl/quTRazedg3GTL5IT+koU9lHtqmH0SgxFEF9aDllPNmvhG5VNoT
+ 2Za4o1IY4CQGw==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Tue, 12 Jan 2021 11:02:53 -0800
-Message-Id: <20210112190253.64307-12-ebiggers@kernel.org>
+Date: Tue, 12 Jan 2021 11:02:51 -0800
+Message-Id: <20210112190253.64307-10-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112190253.64307-1-ebiggers@kernel.org>
 References: <20210112190253.64307-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kzOxw-004zDF-9g
-Subject: [f2fs-dev] [PATCH v3 11/11] ext4: simplify i_state checks in
- __ext4_update_other_inode_time()
+X-Headers-End: 1kzOxw-00Emxk-8o
+Subject: [f2fs-dev] [PATCH v3 09/11] fs: improve comments for
+ writeback_single_inode()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,75 +84,129 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
- Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Jan Kara <jack@suse.cz>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+ linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Since I_DIRTY_TIME and I_DIRTY_INODE are mutually exclusive in i_state,
-there's no need to check for I_DIRTY_TIME && !I_DIRTY_INODE.  Just check
-for I_DIRTY_TIME.
+Some comments for writeback_single_inode() and
+__writeback_single_inode() are outdated or not very helpful, especially
+with regards to writeback list handling.  Update them.
 
-Also introduce a helper function in include/linux/fs.h to do this check.
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ext4/inode.c    |  8 ++------
- include/linux/fs.h | 15 +++++++++++++++
- 2 files changed, 17 insertions(+), 6 deletions(-)
+ fs/fs-writeback.c | 57 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 33 insertions(+), 24 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 4cc6c7834312f..d809a06b6ef7f 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4961,15 +4961,11 @@ static void __ext4_update_other_inode_time(struct super_block *sb,
- 	if (!inode)
- 		return;
- 
--	if ((inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW |
--			       I_DIRTY_INODE)) ||
--	    ((inode->i_state & I_DIRTY_TIME) == 0))
-+	if (!inode_is_dirtytime_only(inode))
- 		return;
- 
- 	spin_lock(&inode->i_lock);
--	if (((inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW |
--				I_DIRTY_INODE)) == 0) &&
--	    (inode->i_state & I_DIRTY_TIME)) {
-+	if (inode_is_dirtytime_only(inode)) {
- 		struct ext4_inode_info	*ei = EXT4_I(inode);
- 
- 		inode->i_state &= ~I_DIRTY_TIME;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 45a0303b2aeb6..de0c789104c26 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2194,6 +2194,21 @@ static inline void mark_inode_dirty_sync(struct inode *inode)
- 	__mark_inode_dirty(inode, I_DIRTY_SYNC);
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index cee1df6e3bd43..e91980f493884 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1442,9 +1442,15 @@ static void requeue_inode(struct inode *inode, struct bdi_writeback *wb,
  }
  
-+/*
-+ * Returns true if the given inode itself only has dirty timestamps (its pages
-+ * may still be dirty) and isn't currently being allocated or freed.
-+ * Filesystems should call this if when writing an inode when lazytime is
-+ * enabled, they want to opportunistically write the timestamps of other inodes
-+ * located very nearby on-disk, e.g. in the same inode block.  This returns true
-+ * if the given inode is in need of such an opportunistic update.  Requires
-+ * i_lock, or at least later re-checking under i_lock.
-+ */
-+static inline bool inode_is_dirtytime_only(struct inode *inode)
-+{
-+	return (inode->i_state & (I_DIRTY_TIME | I_NEW |
-+				  I_FREEING | I_WILL_FREE)) == I_DIRTY_TIME;
-+}
-+
- extern void inc_nlink(struct inode *inode);
- extern void drop_nlink(struct inode *inode);
- extern void clear_nlink(struct inode *inode);
+ /*
+- * Write out an inode and its dirty pages. Do not update the writeback list
+- * linkage. That is left to the caller. The caller is also responsible for
+- * setting I_SYNC flag and calling inode_sync_complete() to clear it.
++ * Write out an inode and its dirty pages (or some of its dirty pages, depending
++ * on @wbc->nr_to_write), and clear the relevant dirty flags from i_state.
++ *
++ * This doesn't remove the inode from the writeback list it is on, except
++ * potentially to move it from b_dirty_time to b_dirty due to timestamp
++ * expiration.  The caller is otherwise responsible for writeback list handling.
++ *
++ * The caller is also responsible for setting the I_SYNC flag beforehand and
++ * calling inode_sync_complete() to clear it afterwards.
+  */
+ static int
+ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+@@ -1487,9 +1493,10 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+ 	}
+ 
+ 	/*
+-	 * Some filesystems may redirty the inode during the writeback
+-	 * due to delalloc, clear dirty metadata flags right before
+-	 * write_inode()
++	 * Get and clear the dirty flags from i_state.  This needs to be done
++	 * after calling writepages because some filesystems may redirty the
++	 * inode during writepages due to delalloc.  It also needs to be done
++	 * after handling timestamp expiration, as that may dirty the inode too.
+ 	 */
+ 	spin_lock(&inode->i_lock);
+ 	dirty = inode->i_state & I_DIRTY;
+@@ -1524,12 +1531,13 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+ }
+ 
+ /*
+- * Write out an inode's dirty pages. Either the caller has an active reference
+- * on the inode or the inode has I_WILL_FREE set.
++ * Write out an inode's dirty data and metadata on-demand, i.e. separately from
++ * the regular batched writeback done by the flusher threads in
++ * writeback_sb_inodes().  @wbc controls various aspects of the write, such as
++ * whether it is a data-integrity sync (%WB_SYNC_ALL) or not (%WB_SYNC_NONE).
+  *
+- * This function is designed to be called for writing back one inode which
+- * we go e.g. from filesystem. Flusher thread uses __writeback_single_inode()
+- * and does more profound writeback list handling in writeback_sb_inodes().
++ * To prevent the inode from going away, either the caller must have a reference
++ * to the inode, or the inode must have I_WILL_FREE or I_FREEING set.
+  */
+ static int writeback_single_inode(struct inode *inode,
+ 				  struct writeback_control *wbc)
+@@ -1544,23 +1552,23 @@ static int writeback_single_inode(struct inode *inode,
+ 		WARN_ON(inode->i_state & I_WILL_FREE);
+ 
+ 	if (inode->i_state & I_SYNC) {
+-		if (wbc->sync_mode != WB_SYNC_ALL)
+-			goto out;
+ 		/*
+-		 * It's a data-integrity sync. We must wait. Since callers hold
+-		 * inode reference or inode has I_WILL_FREE set, it cannot go
+-		 * away under us.
++		 * Writeback is already running on the inode.  For WB_SYNC_NONE,
++		 * that's enough and we can just return.  For WB_SYNC_ALL, we
++		 * must wait for the existing writeback to complete, then do
++		 * writeback again if there's anything left.
+ 		 */
++		if (wbc->sync_mode != WB_SYNC_ALL)
++			goto out;
+ 		__inode_wait_for_writeback(inode);
+ 	}
+ 	WARN_ON(inode->i_state & I_SYNC);
+ 	/*
+-	 * Skip inode if it is clean and we have no outstanding writeback in
+-	 * WB_SYNC_ALL mode. We don't want to mess with writeback lists in this
+-	 * function since flusher thread may be doing for example sync in
+-	 * parallel and if we move the inode, it could get skipped. So here we
+-	 * make sure inode is on some writeback list and leave it there unless
+-	 * we have completely cleaned the inode.
++	 * If the inode is already fully clean, then there's nothing to do.
++	 *
++	 * For data-integrity syncs we also need to check whether any pages are
++	 * still under writeback, e.g. due to prior WB_SYNC_NONE writeback.  If
++	 * there are any such pages, we'll need to wait for them.
+ 	 */
+ 	if (!(inode->i_state & I_DIRTY_ALL) &&
+ 	    (wbc->sync_mode != WB_SYNC_ALL ||
+@@ -1576,8 +1584,9 @@ static int writeback_single_inode(struct inode *inode,
+ 	wb = inode_to_wb_and_lock_list(inode);
+ 	spin_lock(&inode->i_lock);
+ 	/*
+-	 * If inode is clean, remove it from writeback lists. Otherwise don't
+-	 * touch it. See comment above for explanation.
++	 * If the inode is now fully clean, then it can be safely removed from
++	 * its writeback list (if any).  Otherwise the flusher threads are
++	 * responsible for the writeback lists.
+ 	 */
+ 	if (!(inode->i_state & I_DIRTY_ALL))
+ 		inode_io_list_del_locked(inode, wb);
 -- 
 2.30.0
 
