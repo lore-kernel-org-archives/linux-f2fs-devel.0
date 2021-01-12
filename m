@@ -2,78 +2,70 @@ Return-Path: <SRS0=pHl4=GP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B44AC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 01:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0A7C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 01:55:57 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B418522E01;
-	Tue, 12 Jan 2021 01:33:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B418522E01
+	by mail.kernel.org (Postfix) with ESMTPS id F1CF722E03
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 01:55:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CF722E03
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kz8ZE-0000PZ-QC; Tue, 12 Jan 2021 01:33:52 +0000
+	id 1kz8uZ-0001JQ-Ho; Tue, 12 Jan 2021 01:55:55 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1kz8ZD-0000PJ-6J
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 01:33:51 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1kz8uY-0001JJ-DN
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 01:55:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:References:CC:To:From:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3yJaPZSomunv5J3BT7uEk8RFouV5OSAUZAM9hC/U7nU=; b=XaKdAM3ARcP4580qQzyaCC28Yo
- 0PWe167P4vD3LstuyT4ocXATU+rP8VqwzipvN51JMCqZeUpa5eQX0cbr9slkYbC8Y78ZaXhCg5WyD
- hPcgWYn0PsjvcpUGTtlhn94tb4MLW2TjFLGId9fNUhATa+OkZH7E5w0HNaz3WbmwcB0c=;
+ bh=6UN5JoFHNVB71+8JpK9+t89lnpzgcLB6nCZrqmD/hV4=; b=Y8WjwNFTdV3/FD+c1BPftLbO/m
+ E9ATR7oHtdcwax2g2dijgBHcOoHtJ/f80GAdC4NHn9E7q8BLoAB4B+rdkTNwmSEbTnvyVFzrIuhm7
+ GesUEOA316X3j/jLeMlIMDozU1qnqmKkzHuqts9zW9FU4tvOsmPRTDJm3QcaTAID0efE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:References:CC:To:From:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=3yJaPZSomunv5J3BT7uEk8RFouV5OSAUZAM9hC/U7nU=; b=ea827YFdumZM8qunaQ+EhS+rfw
- +ixsGMr5mmY0UMv9CuyxOHljFhyz1gaFaoY6NTwpL0XNBay+NwMeSxbiayiWQ/z1C/jM3hzsl+ayz
- 9XE8AKdvk6Wnz37R6CL1HkDvzIl56UDiJRPrjvPWDGvjHpZHWQAbq/VPDJCqNPOIa38Y=;
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=6UN5JoFHNVB71+8JpK9+t89lnpzgcLB6nCZrqmD/hV4=; b=V
+ Kspc1p3T/op+w+H82NmXdVzUz8MMhLLN2mrlFk+KZoupLDktAhgb0Mlyyt51Z6squTnkp4DNfLSzp
+ Ja33LcMxOYsqymXzDgxfeyUP+4avyAQswL2QM/ecge3zW0Xy4zmYKGhk4NrbDoxREeYVYl4e807pX
+ prpDLfaYvjMiQWFI=;
 Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-3.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kz8Z4-002Ru1-M4
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 01:33:51 +0000
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DFCk86KzFz15nt2;
- Tue, 12 Jan 2021 09:32:32 +0800 (CST)
-Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 12 Jan
- 2021 09:33:29 +0800
+ id 1kz8uO-00B20m-CO
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 01:55:54 +0000
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DFDCB5MGPzl3vf;
+ Tue, 12 Jan 2021 09:54:14 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.498.0; Tue, 12 Jan 2021 09:55:23 +0800
 From: Chao Yu <yuchao0@huawei.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20210107093126.116958-1-yuchao0@huawei.com>
- <X/we0NoUqAwuW82+@google.com>
- <6b0060b9-460a-617a-3778-e67f35d551f0@huawei.com>
- <cdd681ad-462d-cb37-2b4b-8f9d547bc718@huawei.com>
-Message-ID: <b44c2af4-d142-baff-387c-6b967f76065c@huawei.com>
-Date: Tue, 12 Jan 2021 09:33:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+To: <jaegeuk@kernel.org>
+Date: Tue, 12 Jan 2021 09:55:09 +0800
+Message-ID: <20210112015509.28083-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <cdd681ad-462d-cb37-2b4b-8f9d547bc718@huawei.com>
-Content-Language: en-US
-X-Originating-IP: [10.136.114.67]
+X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1kz8Z4-002Ru1-M4
-Subject: Re: [f2fs-dev] [PATCH v3 1/5] f2fs: compress: add compress_inode to
- cache compressed blocks
+X-Headers-End: 1kz8uO-00B20m-CO
+Subject: [f2fs-dev] [PATCH] f2fs: fix to set/clear I_LINKABLE under i_lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,58 +78,87 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/1/11 19:45, Chao Yu wrote:
-> On 2021/1/11 18:31, Chao Yu wrote:
->> On 2021/1/11 17:48, Jaegeuk Kim wrote:
->>> Hi Chao,
->>>
->>> After quick test of fsstress w/ fault injection, it gave wrong block address
->>> errors. Could you please run the test a bit?
->>
->> Jaegeuk,
->>
->> Oh, I've covered with fstest cases and there is no such error message, let me
->> try fault injection + SPO case soon.
-> 
-> Till now, I haven't see any problem... will let the test run for longer time in
-> this night.
-> 
-> Could you share me detailed error message you encounter?
+fsstress + fault injection test case reports a warning message as
+below:
 
-Still, I don't see wrong block address error...
+WARNING: CPU: 13 PID: 6226 at fs/inode.c:361 inc_nlink+0x32/0x40
+Call Trace:
+ f2fs_init_inode_metadata+0x25c/0x4a0 [f2fs]
+ f2fs_add_inline_entry+0x153/0x3b0 [f2fs]
+ f2fs_add_dentry+0x75/0x80 [f2fs]
+ f2fs_do_add_link+0x108/0x160 [f2fs]
+ f2fs_rename2+0x6ab/0x14f0 [f2fs]
+ vfs_rename+0x70c/0x940
+ do_renameat2+0x4d8/0x4f0
+ __x64_sys_renameat2+0x4b/0x60
+ do_syscall_64+0x33/0x80
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Did the error occur from below path:
+Following race case can cause this:
+Thread A				Kworker
+- f2fs_rename
+ - f2fs_create_whiteout
+  - __f2fs_tmpfile
+   - f2fs_i_links_write
+    - f2fs_mark_inode_dirty_sync
+     - mark_inode_dirty_sync
+					- writeback_single_inode
+					 - __writeback_single_inode
+					  - spin_lock(&inode->i_lock)
+   - inode->i_state |= I_LINKABLE
+					  - inode->i_state &= ~dirty
+					  - spin_unlock(&inode->i_lock)
+ - f2fs_add_link
+  - f2fs_do_add_link
+   - f2fs_add_dentry
+    - f2fs_add_inline_entry
+     - f2fs_init_inode_metadata
+      - f2fs_i_links_write
+       - inc_nlink
+        - WARN_ON(!(inode->i_state & I_LINKABLE))
 
-- f2fs_end_read_compressed_page
-  - f2fs_cache_compressed_page
-   - f2fs_is_valid_blkaddr
+Fix to add i_lock to avoid i_state update race condition.
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->> .
->>
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> .
-> 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/namei.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 6edb1ab579a1..887804968576 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -855,7 +855,11 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+ 
+ 	if (whiteout) {
+ 		f2fs_i_links_write(inode, false);
++
++		spin_lock(&inode->i_lock);
+ 		inode->i_state |= I_LINKABLE;
++		spin_unlock(&inode->i_lock);
++
+ 		*whiteout = inode;
+ 	} else {
+ 		d_tmpfile(dentry, inode);
+@@ -1041,7 +1045,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		err = f2fs_add_link(old_dentry, whiteout);
+ 		if (err)
+ 			goto put_out_dir;
++
++		spin_lock(&whiteout->i_lock);
+ 		whiteout->i_state &= ~I_LINKABLE;
++		spin_unlock(&whiteout->i_lock);
++
+ 		iput(whiteout);
+ 	}
+ 
+-- 
+2.29.2
+
 
 
 _______________________________________________
