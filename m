@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40828C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 19:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 648B4C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Jan 2021 19:04:45 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E083923107;
-	Tue, 12 Jan 2021 19:04:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E083923107
+	by mail.kernel.org (Postfix) with ESMTPS id 003FE23107;
+	Tue, 12 Jan 2021 19:04:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003FE23107
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1kzOy8-0005gi-Qv; Tue, 12 Jan 2021 19:04:40 +0000
+	id 1kzOyC-0000y3-Je; Tue, 12 Jan 2021 19:04:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1kzOy7-0005gR-2g
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:39 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1kzOyA-0000xV-59
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=eayOnzYxBxMQaZ/Hp+Qxcx4VXfb0GVw/Xz7jdVH0HOg=; b=fbPMBQordPyv9SgnPxiBTj6xpK
- aB2dfrEz7EQnd8AcOIUl3J8ikVGfc/QefhgIlBNoDGD6rI5hGvaQjXuePm9U77g9y6dDgRRfzqt+S
- RtuuCYYqyocp68zuco1eKq1sdcFnXBAOQX5N53b0fhPxKBx0k8F8TxoaJokGEU+t9HCE=;
+ bh=uRJj+xf/6+AtHz7iQcnFbkBrvu2f68eBMZQdXHvuHfg=; b=UmDiMITRz9RgGqDjGvGm89Vguu
+ G1/mMMzvnKyEMX3eqRtRAwcTqvA06/02TXhjhzLQRngz7y92O8DyikuQq/CuzYwyeszQZf0XJPkpU
+ rFhRihRdsYwQXBGs0bO0nlh6AZ0/Ntl39sQ/FQlFmb8EncRmpZgpRzU6l2TYv/jB4GFA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,37 +42,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=eayOnzYxBxMQaZ/Hp+Qxcx4VXfb0GVw/Xz7jdVH0HOg=; b=CCkXIv0NaYgdzn1tbp5Czl+6hN
- b5HQBXPuWrzwLuqUW8oygwxajJRTUl07/6qTzu+zpf128C3gtiEKGiC9yplqvUPfaaKk+IMStMNrM
- EqwrCKodTptnW8iyWfKIFIr4yGaTgVNHuX3dGRD2LlQBXQWNKvYTaR8xxwkejAC5rZ4Q=;
+ bh=uRJj+xf/6+AtHz7iQcnFbkBrvu2f68eBMZQdXHvuHfg=; b=a1lBX/uF983vokbrNa2Dof39xb
+ SPJcF4h629LtEizz6L2VnnHxx2k2wDXnUs8m19LTUwXpy4LR44gf03y59Zkcxmbq+QyqonJ5lLZW7
+ X8mxoR0u8OlD7VdofbHxN57A+yJqNpPOs6HkN6L5bOnMh3Ec9gajoEIQtCiQS9ev4Lzw=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1kzOy0-00Emy9-BM
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:39 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DB97D2312A;
- Tue, 12 Jan 2021 19:04:10 +0000 (UTC)
+ id 1kzOy3-004zDh-G2
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Jan 2021 19:04:42 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BE1EC23133;
+ Tue, 12 Jan 2021 19:04:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1610478251;
- bh=iS9NaJbF6WGlfwyaEVylnwoccWtqZ29B1EFuOerPM2c=;
+ s=k20201202; t=1610478252;
+ bh=APAXDrWezK5HVIGjbIEklXvxKBuY3jOk4QoaXXPyPsU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=R9W+OfB/I0d3D9RbfhDSKnCAhk4DCLkG9op4kyVEfKGUF/Pzpt6RoHWPlcr2V/XHp
- EV0Y3n+nH1cwsTI1KtLNKJZlgKwWAMTLtH6+/i1rp58AtnGGEQ67lHflffmmwuxk8Z
- LQr7EsPW9Rgr35YPJBUOTGrdheviC4ThppaXO18jOO2thXuOz0sEDK0TFa5NzA24QS
- L0GHvTobDXLFPZwcwr+uj/Faq9uFi70PgUrtKsyt4Jyhw5gMyP+bxeetwyIeeHX1b4
- TzVeL2TBiN0d5qWOrsOcRn1PdWWYAxb6PvZIyGJ1Nr44mH5yUjWdPP6BV0CpsciDVB
- ZVYG8cM0p0p/A==
+ b=JR7BV63iI5jgPGhz2qNN+JPf5iJrmkunJig27hVsc1kwuLgvJdp4+dgOLu6cMvvFO
+ wshU9koqNENnrej7mbVBZMChiirLpyecMJObe1DnzKBfexuGtnuguZvDktJL8nMorp
+ 3Sfggo5INVs5GQnRsFgVkXpxicS2m+h2jXSKPnhDis9/BdX5y6cgjYGm1/lILslham
+ V+ttL7qFmRKTyq2biIaIvwRwfY7r5PzzJm7X5gYGfvDbHmztq4ICemQaQKQc3682FE
+ p7HGwU8nrWCMKTeDXAG3DDd6sOXLq4KJpsxJQSV5BOy+L8cD8w5hKGz4Xi7pbNmAym
+ s6nuriYCc1LWA==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Tue, 12 Jan 2021 11:02:50 -0800
-Message-Id: <20210112190253.64307-9-ebiggers@kernel.org>
+Date: Tue, 12 Jan 2021 11:02:52 -0800
+Message-Id: <20210112190253.64307-11-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112190253.64307-1-ebiggers@kernel.org>
 References: <20210112190253.64307-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1kzOy0-00Emy9-BM
-Subject: [f2fs-dev] [PATCH v3 08/11] fs: drop redundant check from
- __writeback_single_inode()
+X-Headers-End: 1kzOy3-004zDh-G2
+Subject: [f2fs-dev] [PATCH v3 10/11] gfs2: don't worry about I_DIRTY_TIME in
+ gfs2_fsync()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,29 +93,43 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-wbc->for_sync implies wbc->sync_mode == WB_SYNC_ALL, so there's no need
-to check for both.  Just check for WB_SYNC_ALL.
+The I_DIRTY_TIME flag is primary used within the VFS, and there's no
+reason for ->fsync() implementations to do anything with it.  This is
+because when !datasync, the VFS will expire dirty timestamps before
+calling ->fsync().  (See vfs_fsync_range().)  This turns I_DIRTY_TIME
+into I_DIRTY_SYNC.
+
+Therefore, change gfs2_fsync() to not check for I_DIRTY_TIME.
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/fs-writeback.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/gfs2/file.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 80ee9816d9df5..cee1df6e3bd43 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1479,7 +1479,7 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
- 	 * change I_DIRTY_TIME into I_DIRTY_SYNC.
- 	 */
- 	if ((inode->i_state & I_DIRTY_TIME) &&
--	    (wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
-+	    (wbc->sync_mode == WB_SYNC_ALL ||
- 	     time_after(jiffies, inode->dirtied_time_when +
- 			dirtytime_expire_interval * HZ))) {
- 		trace_writeback_lazytime(inode);
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index b39b339feddc9..7fe2497755a37 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -749,7 +749,7 @@ static int gfs2_fsync(struct file *file, loff_t start, loff_t end,
+ {
+ 	struct address_space *mapping = file->f_mapping;
+ 	struct inode *inode = mapping->host;
+-	int sync_state = inode->i_state & I_DIRTY_ALL;
++	int sync_state = inode->i_state & I_DIRTY;
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+ 	int ret = 0, ret1 = 0;
+ 
+@@ -762,7 +762,7 @@ static int gfs2_fsync(struct file *file, loff_t start, loff_t end,
+ 	if (!gfs2_is_jdata(ip))
+ 		sync_state &= ~I_DIRTY_PAGES;
+ 	if (datasync)
+-		sync_state &= ~(I_DIRTY_SYNC | I_DIRTY_TIME);
++		sync_state &= ~I_DIRTY_SYNC;
+ 
+ 	if (sync_state) {
+ 		ret = sync_inode_metadata(inode, 1);
 -- 
 2.30.0
 
