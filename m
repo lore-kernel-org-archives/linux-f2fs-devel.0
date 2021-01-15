@@ -2,75 +2,77 @@ Return-Path: <SRS0=/NUP=GS=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 416CAC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Jan 2021 18:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 353A4C433E9
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Jan 2021 18:21:08 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F26AB23A6C;
-	Fri, 15 Jan 2021 18:21:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26AB23A6C
+	by mail.kernel.org (Postfix) with ESMTPS id E9B0423A5E;
+	Fri, 15 Jan 2021 18:21:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B0423A5E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1l0Tib-00051x-De; Fri, 15 Jan 2021 18:21:05 +0000
+	id 1l0Tid-0002Ii-KN; Fri, 15 Jan 2021 18:21:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1l0TiY-0004vy-LB
+ (envelope-from <ebiggers@kernel.org>) id 1l0TiY-0002Fz-L8
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Jan 2021 18:21:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HpfEbhiJqQaa5V9MGL8bKK8lJunaM7qGUqzg+0d9QQg=; b=OBmhX2XTy6DjJyiKpz1z0H/Gs/
- D0CdGKdiD3VfsG14X2dXRu7ZpbSWkAou4j7AOs2fjZPM/8QSSFQpMB3fo091Z/eNvTEXzrN0+vrSC
- 8F+aN28+oEpKVehMUZoUfI0NXE2QncYOG03DVvrs/2IcXH+VBYl1nzw+tYeFjQBZTgXE=;
+ bh=ZINA+BQJeU1Qtx5R665RVk6DzXR7e/CN5277Xc0IzS8=; b=XuFrXuwCaeH2G+4eQaeJPbGXxl
+ qN//oXAgVmUiSYxG1XvWwmXMVaovBdIq/bGgeK8LzQKV6hVp4sxELiiuFYsV/tOMPTBvs7If1alhg
+ DblTtZego/YrPYJKm4uv3QgZaxzC66JYWO90fb2S1jMl4vP3m4IN2TkBYu7PTTJQ7rck=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=HpfEbhiJqQaa5V9MGL8bKK8lJunaM7qGUqzg+0d9QQg=; b=B
- WywGCPMW/GdiqaKS7so9CwEqjvN2aWo1rP6tgTLz7u8hwGD+OPB+R1HKJCA5FthBFrVcKqlahbOIw
- mBBry0Cmm7rK5LPAElJG0QTYjr3gqFD2a2rdLWXeaiKvWrdFNGo5bMQpc1LZLytBvhUU3savkkydb
- IDYVO9tP2YrLI67M=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ZINA+BQJeU1Qtx5R665RVk6DzXR7e/CN5277Xc0IzS8=; b=LYefLTv7iFbBvBhoQ7zC9dtTIi
+ 7inSL8UCueuBhUu43RpWkUCqNEc54Rjr4E1RqYshm2X+zZs4KWjF3Vjp9+02mzyW+mFhk5DCskkOd
+ +P+Ty+Fr/nVOJJsdPlRqHEylVQ2St1k+rZiz9kEQmtBU8xRoXQk60nzrPwZe7jvh/if8=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1l0ThJ-00GNJw-5W
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Jan 2021 18:19:57 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3550423A58;
- Fri, 15 Jan 2021 18:19:32 +0000 (UTC)
+ id 1l0ThQ-005PE8-NX
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Jan 2021 18:19:54 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 283E923A9C;
+ Fri, 15 Jan 2021 18:19:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1610734772;
- bh=7HZGCsiZfKx7k8RTP6gegLOEC7SUZGN0WL2KEa1MIqw=;
- h=From:To:Cc:Subject:Date:From;
- b=OLgSi9dXP1/YkA9HyFOY/X6hDj3RaQ6Ohe7A5+afoRqJVi76p4BsVaWFg67i7xPN+
- 6tZ+JGUzOYkAc4C6Sqpk7z0yCXnts0hnTQUE9wijYEKFxyXOS+SYpEz0qXShSdLEMS
- IeVxDBKO7PWFFEmTKsOKfgQW8p3OWYonyQJLlena81DsNsqLA9MvUbaXw3qdaBVUFQ
- RlvnXyxdljEpWdHSNlQ0ZgoJ6VenS6b64yLhH9TfUezjo6pSp27OciWtK9MAPSrZ7P
- yat9Uam8Fm2+YLYUl4HU+10eRYuebg0aC9S/umMOtp6WfZpH/R0zghGYgHcWvoPGz3
- P26n77xWu0DGw==
+ s=k20201202; t=1610734774;
+ bh=3tf17MDWrGIlvy8SI+oes67sgJXnVSJsC3e5U1cikIA=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=VfR8z95ZOmifI/nt1Ul75/gFtn3/rXrThfnWJPtXyqIfpUq513T+uuan3RXnnyo2A
+ 2UZ32crGW4PhR2kgdr3O6J/kwXPA3YgtTo7R7ZIvG9JMn9a0ppiQDkwZJAtK9GjvDS
+ f6Qfx90EVmIvpy57svhDWbbWkHq+4cd68DxdDy9a8mRz+5vDt7U06QmfXQ8MJsqV4G
+ yKYvO7Y5MLy2olMSMYkM725mCK1+WLHeJ+dRRy0X3jqY5K2W0H4JqS7GKfMkySGaok
+ CVDZLQurZCdzDKZRK7pYeeQPY7rDttg5Dx96Q7+8mOtcHJX4j8xvLLmDU5WYBogX+O
+ QCKkgpkmuwuFw==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Fri, 15 Jan 2021 10:18:13 -0800
-Message-Id: <20210115181819.34732-1-ebiggers@kernel.org>
+Date: Fri, 15 Jan 2021 10:18:18 -0800
+Message-Id: <20210115181819.34732-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210115181819.34732-1-ebiggers@kernel.org>
+References: <20210115181819.34732-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1l0ThJ-00GNJw-5W
-Subject: [f2fs-dev] [PATCH 0/6] fs-verity: add an ioctl to read verity
- metadata
+X-Headers-End: 1l0ThQ-005PE8-NX
+Subject: [f2fs-dev] [PATCH 5/6] fs-verity: support reading descriptor with
+ ioctl
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,80 +92,123 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-[This patchset applies to v5.11-rc3]
+From: Eric Biggers <ebiggers@google.com>
 
-Add an ioctl FS_IOC_READ_VERITY_METADATA which allows reading verity
-metadata from a file that has fs-verity enabled, including:
+Add support for FS_VERITY_METADATA_TYPE_DESCRIPTOR to
+FS_IOC_READ_VERITY_METADATA.  This allows a userspace server program to
+retrieve the fs-verity descriptor of a file for serving to a client
+which implements fs-verity compatible verification.  See the patch which
+introduced FS_IOC_READ_VERITY_METADATA for more details.
 
-- The Merkle tree
-- The fsverity_descriptor (not including the signature if present)
-- The built-in signature, if present
+"fs-verity descriptor" here means only the part that userspace cares
+about because it is hashed to produce the file digest.  It doesn't
+include the signature which ext4 and f2fs append to the
+fsverity_descriptor struct when storing it on-disk, since that way of
+storing the signature is an implementation detail.  The next patch adds
+a separate metadata_type value for retrieving the signature separately.
 
-This ioctl has similar semantics to pread().  It is passed the type of
-metadata to read (one of the above three), and a buffer, offset, and
-size.  It returns the number of bytes read or an error.
+This has been tested using a new xfstest which calls this ioctl via a
+new subcommand for the 'fsverity' program from fsverity-utils.
 
-This ioctl doesn't make any assumption about where the metadata is
-stored on-disk.  It does assume the metadata is in a stable format, but
-that's basically already the case:
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ Documentation/filesystems/fsverity.rst |  4 +++
+ fs/verity/read_metadata.c              | 40 ++++++++++++++++++++++++++
+ include/uapi/linux/fsverity.h          |  1 +
+ 3 files changed, 45 insertions(+)
 
-- The Merkle tree and fsverity_descriptor are defined by how fs-verity
-  file digests are computed; see the "File digest computation" section
-  of Documentation/filesystems/fsverity.rst.  Technically, the way in
-  which the levels of the tree are ordered relative to each other wasn't
-  previously specified, but it's logical to put the root level first.
-
-- The built-in signature is the value passed to FS_IOC_ENABLE_VERITY.
-
-This ioctl is useful because it allows writing a server program that
-takes a verity file and serves it to a client program, such that the
-client can do its own fs-verity compatible verification of the file.
-This only makes sense if the client doesn't trust the server and if the
-server needs to provide the storage for the client.
-
-More concretely, there is interest in using this ability in Android to
-export APK files (which are protected by fs-verity) to "protected VMs".
-This would use Protected KVM (https://lwn.net/Articles/836693), which
-provides an isolated execution environment without having to trust the
-traditional "host".  A "guest" VM can boot from a signed image and
-perform specific tasks in a minimum trusted environment using files that
-have fs-verity enabled on the host, without trusting the host or
-requiring that the guest has its own trusted storage.
-
-Technically, it would be possible to duplicate the metadata and store it
-in separate files for serving.  However, that would be less efficient
-and would require extra care in userspace to maintain file consistency.
-
-In addition to the above, the ability to read the built-in signatures is
-useful because it allows a system that is using the in-kernel signature
-verification to migrate to userspace signature verification.
-
-This patchset has been tested by new xfstests which call this new ioctl
-via a new subcommand for the 'fsverity' program from fsverity-utils.
-
-Eric Biggers (6):
-  fs-verity: factor out fsverity_get_descriptor()
-  fs-verity: don't pass whole descriptor to fsverity_verify_signature()
-  fs-verity: add FS_IOC_READ_VERITY_METADATA ioctl
-  fs-verity: support reading Merkle tree with ioctl
-  fs-verity: support reading descriptor with ioctl
-  fs-verity: support reading signature with ioctl
-
- Documentation/filesystems/fsverity.rst |  76 ++++++++++
- fs/ext4/ioctl.c                        |   7 +
- fs/f2fs/file.c                         |  11 ++
- fs/verity/Makefile                     |   1 +
- fs/verity/fsverity_private.h           |  13 +-
- fs/verity/open.c                       | 133 +++++++++++------
- fs/verity/read_metadata.c              | 195 +++++++++++++++++++++++++
- fs/verity/signature.c                  |  20 +--
- include/linux/fsverity.h               |  12 ++
- include/uapi/linux/fsverity.h          |  14 ++
- 10 files changed, 417 insertions(+), 65 deletions(-)
- create mode 100644 fs/verity/read_metadata.c
-
-
-base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
+index 50b47a6d9ea11..6dc5772037ef9 100644
+--- a/Documentation/filesystems/fsverity.rst
++++ b/Documentation/filesystems/fsverity.rst
+@@ -235,6 +235,7 @@ need this ioctl.
+ This ioctl takes in a pointer to the following structure::
+ 
+    #define FS_VERITY_METADATA_TYPE_MERKLE_TREE     1
++   #define FS_VERITY_METADATA_TYPE_DESCRIPTOR      2
+ 
+    struct fsverity_read_metadata_arg {
+            __u64 metadata_type;
+@@ -252,6 +253,9 @@ This ioctl takes in a pointer to the following structure::
+   the same order that their hashes are themselves hashed.
+   See `Merkle tree`_ for more information.
+ 
++- ``FS_VERITY_METADATA_TYPE_DESCRIPTOR`` reads the fs-verity
++  descriptor.  See `fs-verity descriptor`_.
++
+ The semantics are similar to those of ``pread()``.  ``offset``
+ specifies the offset in bytes into the metadata item to read from, and
+ ``length`` specifies the maximum number of bytes to read from the
+diff --git a/fs/verity/read_metadata.c b/fs/verity/read_metadata.c
+index 0f8ad2991cf90..2dea6dd3bb05a 100644
+--- a/fs/verity/read_metadata.c
++++ b/fs/verity/read_metadata.c
+@@ -76,6 +76,44 @@ static int fsverity_read_merkle_tree(struct inode *inode,
+ 	}
+ 	return retval ? retval : err;
+ }
++
++/* Copy the requested portion of the buffer to userspace. */
++static int fsverity_read_buffer(void __user *dst, u64 offset, int length,
++				const void *src, size_t src_length)
++{
++	if (offset >= src_length)
++		return 0;
++	src += offset;
++	src_length -= offset;
++
++	length = min_t(size_t, length, src_length);
++
++	if (copy_to_user(dst, src, length))
++		return -EFAULT;
++
++	return length;
++}
++
++static int fsverity_read_descriptor(struct inode *inode,
++				    void __user *buf, u64 offset, int length)
++{
++	struct fsverity_descriptor *desc;
++	size_t desc_size;
++	int res;
++
++	res = fsverity_get_descriptor(inode, &desc, &desc_size);
++	if (res)
++		return res;
++
++	/* don't include the signature */
++	desc_size = offsetof(struct fsverity_descriptor, signature);
++	desc->sig_size = 0;
++
++	res = fsverity_read_buffer(buf, offset, length, desc, desc_size);
++
++	kfree(desc);
++	return res;
++}
+ /**
+  * fsverity_ioctl_read_metadata() - read verity metadata from a file
+  * @filp: file to read the metadata from
+@@ -118,6 +156,8 @@ int fsverity_ioctl_read_metadata(struct file *filp, const void __user *uarg)
+ 	case FS_VERITY_METADATA_TYPE_MERKLE_TREE:
+ 		return fsverity_read_merkle_tree(inode, vi, buf, arg.offset,
+ 						 length);
++	case FS_VERITY_METADATA_TYPE_DESCRIPTOR:
++		return fsverity_read_descriptor(inode, buf, arg.offset, length);
+ 	default:
+ 		return -EINVAL;
+ 	}
+diff --git a/include/uapi/linux/fsverity.h b/include/uapi/linux/fsverity.h
+index 94003b153cb3d..41abc283dbccb 100644
+--- a/include/uapi/linux/fsverity.h
++++ b/include/uapi/linux/fsverity.h
+@@ -84,6 +84,7 @@ struct fsverity_formatted_digest {
+ };
+ 
+ #define FS_VERITY_METADATA_TYPE_MERKLE_TREE	1
++#define FS_VERITY_METADATA_TYPE_DESCRIPTOR	2
+ 
+ struct fsverity_read_metadata_arg {
+ 	__u64 metadata_type;
 -- 
 2.30.0
 
