@@ -2,76 +2,78 @@ Return-Path: <SRS0=jeoe=GW=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC234C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 Jan 2021 02:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91566C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 Jan 2021 19:07:00 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7FA222054F;
-	Tue, 19 Jan 2021 02:37:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA222054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 44B8B22E00
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 Jan 2021 19:07:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44B8B22E00
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1l1gtE-0003HB-6j; Tue, 19 Jan 2021 02:37:04 +0000
+	id 1l1wLC-0001GV-0q; Tue, 19 Jan 2021 19:06:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1l1gtC-0003Gm-Eu
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Jan 2021 02:37:02 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1l1wLB-0001GE-0Z
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Jan 2021 19:06:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=c5Mo8/SO/ldmO3EgAd4HYQmbjcGmYLlzsX+KjPJKqwI=; b=YUba3M/u0tf4NoHhNJngMyDlrA
- B01dqaFb7Eq2yMLYuUf4llaCzNwBTmHMIFRgePV79AJqv8uKIApYABIQwSZG4hoqoqiXGs3uO+I+s
- faTJ4Eyog6O7xmXtuzc8agzrN6P7ydc4vJC6Yb/nKCIEL34Lbx972eQjI7YHQHWvmLpw=;
+ bh=X3Gm7Nhg8eqOhuzng6A5BY7EBOpWqOeDfG6f4uIaHWA=; b=Gm8F0LEn9BoeGOh7NBX0Qq+Jzi
+ pMmUNIAz29IrP+dN/hnbEcFRiSitGMEW/Capt/6+/ix25MuNDV84MBn82E27BTMa0Djd9AquMXBH/
+ LdaocntjWKKziBCfx6ej6o+7h+SEtfQDXjeQBvqLGWOewOrNVqIsmLxzhzbtgeIG25yI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=c5Mo8/SO/ldmO3EgAd4HYQmbjcGmYLlzsX+KjPJKqwI=; b=CKuAcuB7ZHYX9mOtPjecePR2qr
- BMX80xcDs4/o6H04DkTDlsmpBQh0uSgqPwNrsRVNl7fGkaeKYf4tqliFu4dp6WQzpqTgnCcKyVd4O
- IPT/00C2mEXXVT/7e9TnzG2GtHBh89pKYM9pV1kbGI1WcECPMJfqC+qWmEUbVNlN/SMM=;
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=X3Gm7Nhg8eqOhuzng6A5BY7EBOpWqOeDfG6f4uIaHWA=; b=QHHZb7ClN9nsV6sKySzENkeOHO
+ oYVnsHRvT5VnTZ05myB2pkofGaHFnOyBfs5WkBfEUeVQ27tODtvHlMrhmto3p3Vydw66U4SyuOUJH
+ JsiCzd4VHS6HKo6ekOmsfgWHyKWCykCooqZKthEMHItjFYW8o5yv84BMLrvalpkLcvX4=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-3.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1l1gsz-006hnY-Ed
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Jan 2021 02:37:02 +0000
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DKXnG4S31zl6Dj;
- Tue, 19 Jan 2021 10:35:14 +0800 (CST)
-Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 19 Jan
- 2021 10:36:34 +0800
-To: Daeho Jeong <daeho43@gmail.com>, <linux-kernel@vger.kernel.org>,
- <linux-f2fs-devel@lists.sourceforge.net>, <kernel-team@android.com>
-References: <20210119000043.1206345-1-daeho43@gmail.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <c58c25bd-c76e-5371-1020-910ef0875560@huawei.com>
-Date: Tue, 19 Jan 2021 10:36:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1l1wL3-00FKAN-Oy
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Jan 2021 19:06:56 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 959F620706;
+ Tue, 19 Jan 2021 19:06:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1611083193;
+ bh=GFMcQd7MCGExxp99LiWFW+po75/fewRWAf29QDD2b68=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=Sr0IvLwt5KD1z2YKY0WKaQt210uFFKSvdgLdnsDzgUguo6V/qWCcsRSkTtbBJzPQL
+ XGe9OfQlyL4XG0lISytwN9eZxrd8kJCfRsliwuGXBElmMaTZpVLfUtm/a1ezRAQbac
+ x3m1XjlEKCbJNKiEaGTnf8fetUdVTH4J+rUYVijzoEEByS+2YnnVKX13PMELaLacZG
+ esAUOxhCuR+7607vK8qvLIX4nBuPJFyknZ52/Qy8EvBfNj6/KqHoZm16ANo8S1gTdJ
+ 6XKHVlcAYbQqLlPkp6A+xzGNBNKCbhxQSI+GggUoDE9LuWPhk/ZyGikAUP5POKfhYs
+ YYsqyYnve9x8A==
+Date: Tue, 19 Jan 2021 11:06:32 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <YActuF2es8IGJfGj@google.com>
+References: <20201230075557.108818-1-yuchao0@huawei.com>
+ <YAC9a6quO2VOirLi@google.com>
+ <3923906d-f208-f6c2-f121-5e77e8fb6b28@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20210119000043.1206345-1-daeho43@gmail.com>
-Content-Language: en-US
-X-Originating-IP: [10.136.110.154]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1l1gsz-006hnY-Ed
-Subject: Re: [f2fs-dev] [PATCH v4 1/2] f2fs: introduce checkpoint=merge
- mount option
+Content-Disposition: inline
+In-Reply-To: <3923906d-f208-f6c2-f121-5e77e8fb6b28@huawei.com>
+X-Headers-End: 1l1wL3-00FKAN-Oy
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to keep isolation of atomic
+ write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,56 +85,138 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sungjong Seo <sj1557.seo@samsung.com>, Daeho Jeong <daehojeong@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/1/19 8:00, Daeho Jeong wrote:
-> From: Daeho Jeong<daehojeong@google.com>
+On 01/15, Chao Yu wrote:
+> On 2021/1/15 5:53, Jaegeuk Kim wrote:
+> > On 12/30, Chao Yu wrote:
+> > > ThreadA					ThreadB
+> > > - f2fs_ioc_start_atomic_write
+> > > - write
+> > > - f2fs_ioc_commit_atomic_write
+> > >   - f2fs_commit_inmem_pages
+> > >   - f2fs_drop_inmem_pages
+> > >   - f2fs_drop_inmem_pages
+> > >    - __revoke_inmem_pages
+> > > 					- f2fs_vm_page_mkwrite
+> > > 					 - set_page_dirty
+> > > 					  - tag ATOMIC_WRITTEN_PAGE and add page
+> > > 					    to inmem_pages list
+> > >    - clear_inode_flag(FI_ATOMIC_FILE)
+> > > 					- f2fs_vm_page_mkwrite
+> > > 					  - set_page_dirty
+> > > 					   - f2fs_update_dirty_page
+> > > 					    - f2fs_trace_pid
+> > > 					     - tag inmem page private to pid
+> > 
+> > Hmm, how about removing fs/f2fs/trace.c to make private more complicated
+> > like this? I think we can get IO traces from tracepoints.
 > 
-> We've added a new mount option "checkpoint=merge", which creates a
-> kernel daemon and makes it to merge concurrent checkpoint requests as
-> much as possible to eliminate redundant checkpoint issues. Plus, we
-> can eliminate the sluggish issue caused by slow checkpoint operation
-> when the checkpoint is done in a process context in a cgroup having
-> low i/o budget and cpu shares. To make this do better, we set the
-> default i/o priority of the kernel daemon to "3", to give one higher
-> priority than other kernel threads. The below verification result
-> explains this.
-> The basic idea has come fromhttps://opensource.samsung.com.
+> Hmm, actually, there is are issues, one is the trace IO, the other is the
+> race issue (atomic_start,commit,drop vs mkwrite) which can make isolation
+> semantics of transaction be broken.
 > 
-> [Verification]
-> Android Pixel Device(ARM64, 7GB RAM, 256GB UFS)
-> Create two I/O cgroups (fg w/ weight 100, bg w/ wight 20)
-> Set "strict_guarantees" to "1" in BFQ tunables
-> 
-> In "fg" cgroup,
-> - thread A => trigger 1000 checkpoint operations
->    "for i in `seq 1 1000`; do touch test_dir1/file; fsync test_dir1;
->     done"
-> - thread B => gererating async. I/O
->    "fio --rw=write --numjobs=1 --bs=128k --runtime=3600 --time_based=1
->         --filename=test_img --name=test"
-> 
-> In "bg" cgroup,
-> - thread C => trigger repeated checkpoint operations
->    "echo $$ > /dev/blkio/bg/tasks; while true; do touch test_dir2/file;
->     fsync test_dir2; done"
-> 
-> We've measured thread A's execution time.
-> 
-> [ w/o patch ]
-> Elapsed Time: Avg. 68 seconds
-> [ w/  patch ]
-> Elapsed Time: Avg. 48 seconds
-> 
-> Signed-off-by: Daeho Jeong<daehojeong@google.com>
-> Signed-off-by: Sungjong Seo<sj1557.seo@samsung.com>
+> Or can we avoid atomic file racing with file mmap?
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+No, we can't. We may need to find other way to check the race. :)
 
-Thanks,
+> 
+> - atomic_start			- file_mmap
+> 				 - inode_lock
+> 				 - if (FI_ATOMIC_FILE) return
+>  - inode_lock
+>  - if (FI_MMAP_FILE) return
+> 
+> Thanks,
+> 
+> > 
+> > > 					- truncate
+> > > 					 - f2fs_invalidate_page
+> > > 					 - set page->mapping to NULL
+> > > 					  then it will cause panic once we
+> > > 					  access page->mapping
+> > > 
+> > > The root cause is we missed to keep isolation of atomic write in the case
+> > > of commit_atomic_write vs mkwrite, let commit_atomic_write helds i_mmap_sem
+> > > lock to avoid this issue.
+> > > 
+> > > Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> > > ---
+> > > v2:
+> > > - use i_mmap_sem to avoid mkwrite racing with below flows:
+> > >   * f2fs_ioc_start_atomic_write
+> > >   * f2fs_drop_inmem_pages
+> > >   * f2fs_commit_inmem_pages
+> > > 
+> > >   fs/f2fs/file.c    | 3 +++
+> > >   fs/f2fs/segment.c | 7 +++++++
+> > >   2 files changed, 10 insertions(+)
+> > > 
+> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > index 4e6d4b9120a8..a48ec650d691 100644
+> > > --- a/fs/f2fs/file.c
+> > > +++ b/fs/f2fs/file.c
+> > > @@ -2050,6 +2050,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> > >   		goto out;
+> > >   	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > > +	down_write(&F2FS_I(inode)->i_mmap_sem);
+> > >   	/*
+> > >   	 * Should wait end_io to count F2FS_WB_CP_DATA correctly by
+> > > @@ -2060,6 +2061,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> > >   			  inode->i_ino, get_dirty_pages(inode));
+> > >   	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+> > >   	if (ret) {
+> > > +		up_write(&F2FS_I(inode)->i_mmap_sem);
+> > >   		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > >   		goto out;
+> > >   	}
+> > > @@ -2073,6 +2075,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> > >   	/* add inode in inmem_list first and set atomic_file */
+> > >   	set_inode_flag(inode, FI_ATOMIC_FILE);
+> > >   	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> > > +	up_write(&F2FS_I(inode)->i_mmap_sem);
+> > >   	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > >   	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > > index d8570b0359f5..dab870d9faf6 100644
+> > > --- a/fs/f2fs/segment.c
+> > > +++ b/fs/f2fs/segment.c
+> > > @@ -327,6 +327,8 @@ void f2fs_drop_inmem_pages(struct inode *inode)
+> > >   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> > >   	struct f2fs_inode_info *fi = F2FS_I(inode);
+> > > +	down_write(&F2FS_I(inode)->i_mmap_sem);
+> > > +
+> > >   	while (!list_empty(&fi->inmem_pages)) {
+> > >   		mutex_lock(&fi->inmem_lock);
+> > >   		__revoke_inmem_pages(inode, &fi->inmem_pages,
+> > > @@ -344,6 +346,8 @@ void f2fs_drop_inmem_pages(struct inode *inode)
+> > >   		sbi->atomic_files--;
+> > >   	}
+> > >   	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> > > +
+> > > +	up_write(&F2FS_I(inode)->i_mmap_sem);
+> > >   }
+> > >   void f2fs_drop_inmem_page(struct inode *inode, struct page *page)
+> > > @@ -467,6 +471,7 @@ int f2fs_commit_inmem_pages(struct inode *inode)
+> > >   	f2fs_balance_fs(sbi, true);
+> > >   	down_write(&fi->i_gc_rwsem[WRITE]);
+> > > +	down_write(&F2FS_I(inode)->i_mmap_sem);
+> > >   	f2fs_lock_op(sbi);
+> > >   	set_inode_flag(inode, FI_ATOMIC_COMMIT);
+> > > @@ -478,6 +483,8 @@ int f2fs_commit_inmem_pages(struct inode *inode)
+> > >   	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
+> > >   	f2fs_unlock_op(sbi);
+> > > +
+> > > +	up_write(&F2FS_I(inode)->i_mmap_sem);
+> > >   	up_write(&fi->i_gc_rwsem[WRITE]);
+> > >   	return err;
+> > > -- 
+> > > 2.29.2
+> > .
+> > 
 
 
 _______________________________________________
