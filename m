@@ -2,101 +2,107 @@ Return-Path: <SRS0=r45A=GY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6453BC433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Jan 2021 13:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5087BC433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Jan 2021 23:03:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 002B423444;
-	Thu, 21 Jan 2021 13:46:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 002B423444
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTPS id F2E8423A5B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Jan 2021 23:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E8423A5B
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
+	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
+	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=e4ad6hKY97WXFAYNf9myxqws+1lbOIto+jStzvU07FE=; b=YQwq3wD1NHIh9/UzS5gpz/9y1
+	IyHwyWJ+lZkV52s1KooFUk71/vxDExkWxTZA09jlv7HI11mgdczFtQv4Xu8MJnIPl0/Yh05CIWthI
+	o8OszPniqrmtlAs0LCuLVamLhpQauTte54TULwuQiCcI6kGVyK5YaGOjxsDYLzdOxIyvc=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1l2aHi-0002yL-Gh; Thu, 21 Jan 2021 13:46:02 +0000
+	id 1l2iza-0002hY-1t; Thu, 21 Jan 2021 23:03:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <daeho43@gmail.com>) id 1l2aHh-0002xc-5C
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jan 2021 13:46:01 +0000
+ (envelope-from <3TwgKYAYKAI4AsBGsBy66y3w.u64@flex--satyat.bounces.google.com>)
+ id 1l2izY-0002hG-Pt
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jan 2021 23:03:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=H+cAKQ+EbfZbCGBT5NQTPPSVG3VMZwAzb6PXC21HENg=; b=jKfgNAioQguoA0YDVFj38ZGpY0
- hVSWU1GV92ddTonk7TA2cHQEDbwDYoagn+x4JceAQNYdCoXFKVS0SlE8RGZO2pdSJGXoKwX8ho+Uf
- MfXnG2EvH/CxVN8IE869FQVpGs/2q6Xd1E0MR31h3JWpw8DNcbdupOO4eLYO0mR7lQT8=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
+ Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=BAlJPK4qVbFO+YocbKUqMkxk0C4PzWuOV8MSNSKCIhI=; b=fDEhckMGRd4YOI0Ad7d4+0AEi
+ KE9f1jNFvIW2ONPaN3fWEGH2FdSCRUQX7d1PLEOzAXsSMKF6DOCa94NF7QM+EJ4VEtnREoIKZn9t3
+ 67glHqzZ86FPJpwWlnFjHtfJY2LsNSzMtf15S1CuvaArqRW+cubLjn7q9NMeQYUIyoU7g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=H+cAKQ+EbfZbCGBT5NQTPPSVG3VMZwAzb6PXC21HENg=; b=FxqSHaMowYgzLWJ46jqyt6l+1+
- KAAa6+q9o83ad9roV7G6nQOKtVd5vlZeaR0XGERZlVCs977v/R95m4G5FJxwxZrOTaklo5NZpRHKc
- AfIhcJnRxQ+pr7V2MyTjey5uArZEBLsR9uuuAcmiZiNUG/HcmxfHd0pqErKZvCtZ7deA=;
-Received: from mail-pl1-f175.google.com ([209.85.214.175])
+ bh=BAlJPK4qVbFO+YocbKUqMkxk0C4PzWuOV8MSNSKCIhI=; b=cTkc8bJxQM4G09JZnXTwpfv5J7
+ DQNpWenU9MQEKIRGNhyPk1Vi/Ivu5spdWrZsxLO+/j/iTorPV7qTb5gJ6edKtkfXGhP0j/nQBihBD
+ 4jKi6uKqkSRHaq+FaXdu4RzhI70KiXLsjW2bSNUdAWNqlUCIimjYpi9yRokoSVXV/1sM=;
+Received: from mail-yb1-f202.google.com ([209.85.219.202])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.2)
- id 1l2aHV-002zSH-9L
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jan 2021 13:46:01 +0000
-Received: by mail-pl1-f175.google.com with SMTP id q4so1306128plr.7
+ id 1l2izU-006Hgk-VB
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Jan 2021 23:03:52 +0000
+Received: by mail-yb1-f202.google.com with SMTP id k33so3664107ybj.14
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 21 Jan 2021 05:45:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=from:to:cc:subject:date:message-id:in-reply-to:references
- :mime-version:content-transfer-encoding;
- bh=H+cAKQ+EbfZbCGBT5NQTPPSVG3VMZwAzb6PXC21HENg=;
- b=LN9YU/w4vC3z2fK6Co+zq7IxcNce2QyC4QyFI8uXGpKrTvdMM6bDA9S20xZiVyXEnH
- HdeeltTjL8o8hPTxPKWL3hs/E5c/QTXYsRFk2ALLEjtWFFLWiBJUy09+1kGO/x4JiynD
- EzIgSCjJ45pfs1xnjEJdAkteMRNQ63PQoNoxCoKcaALh1LAypn/LeVX4fGa9BvI9iSDq
- dnxIAmqC+wTBtULlG7nruwDzq8NFETXvH0bRRzBB0JOwH2ahTwM0zwulsBAj/Sp8Tm8F
- gyph3/fY0ZRUCPra2duuBMNNv076GSvsIHCXFTb3/BRe8ykmfarj7UPC/qFgA8ah4buN
- r2QQ==
+ Thu, 21 Jan 2021 15:03:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
+ h=sender:date:in-reply-to:message-id:mime-version:references:subject
+ :from:to:cc; bh=BAlJPK4qVbFO+YocbKUqMkxk0C4PzWuOV8MSNSKCIhI=;
+ b=QpJhHzvp1GXeEjDGYNxaJ+4dbtZiUzLq85/2LS484mjd4YFHF0DMU88K4lo+zwGWkM
+ 9LWilqjyHM5F5TtGZpKac7DrVr7HfcqlaVQK2F+DnPn7HQ1OpLiTN2syMLwN6sUYSfyq
+ kMRuDoXMZo7mTk3nzJtbmwY7+bGtriVPvGjQkk+MnGqGoiLkOelUThpM6hXWK0x36ohG
+ e4kaG1rglU1iTZ1tDhy7HPk7x9BjPJ8bIRyrdO3svNhEMvqS/Hns9be4EINUxvy/KNns
+ rOQqszDYyJegCrtkYY9PpwY9HTVsvA0YScQQg5XyqxRJ8fMZK7LQEekKi+Z66tBXsO7I
+ 6JBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
- :references:mime-version:content-transfer-encoding;
- bh=H+cAKQ+EbfZbCGBT5NQTPPSVG3VMZwAzb6PXC21HENg=;
- b=YtwkwZN6x3PcONRWtIEH9EY5XzfGD9fOz6fQ0v1D8LobnykUnVaQ+9adROa/ZUVvna
- fbFA1P/Z5jjWttK9bWwLYbNn+b1DQL6DMygVBGA/D6xr1Y8BlJUkRR+ahd1LIPEnO/OV
- UIjGjFispF55LpEZ+nogzzfbeKdgsN4u7CYA2ReCqEpD2y6L8ou3YoKVgKwKyRwUW6zv
- fe4/nWa/xag2UrK8O4I33LuhkAES9wgOyj8DOkoqQzqlC4CeYhRGKhUUOhT0bOpKI38H
- dpmrj3C+xmW3M0RfKRSG41zdHWFrvkYyHS2w0+4op+0c//b0nfwcGtW0vnQvW/uFnb0V
- a1Kw==
-X-Gm-Message-State: AOAM531mrVaVTnAJZunBrSQkYAzCJX54N7v4kv4P+GE9x4Gdm69GbkbQ
- Bxj4Sf4vrLvIGF/nSkKn+D8=
-X-Google-Smtp-Source: ABdhPJwEa1HnYUHRmvdPV+XvtLGiBL8yspI7TCj4Bdg/6ZtFVrfHkDZ1XoTg44p5tnkls8rV9StPzA==
-X-Received: by 2002:a17:90a:1c09:: with SMTP id
- s9mr12057456pjs.83.1611236743713; 
- Thu, 21 Jan 2021 05:45:43 -0800 (PST)
-Received: from daehojeong1.seo.corp.google.com
- ([2401:fa00:d:11:a6ae:11ff:fe18:6ce2])
- by smtp.gmail.com with ESMTPSA id e3sm5451618pgs.60.2021.01.21.05.45.41
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 21 Jan 2021 05:45:42 -0800 (PST)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Thu, 21 Jan 2021 22:45:29 +0900
-Message-Id: <20210121134529.1201249-2-daeho43@gmail.com>
-X-Mailer: git-send-email 2.30.0.296.g2bfb1c46d8-goog
-In-Reply-To: <20210121134529.1201249-1-daeho43@gmail.com>
-References: <20210121134529.1201249-1-daeho43@gmail.com>
-MIME-Version: 1.0
-X-Headers-End: 1l2aHV-002zSH-9L
-Subject: [f2fs-dev] [PATCH v5 2/2] f2fs: add ckpt_thread_ioprio sysfs node
+ h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+ :references:subject:from:to:cc;
+ bh=BAlJPK4qVbFO+YocbKUqMkxk0C4PzWuOV8MSNSKCIhI=;
+ b=BlW7Y0R3j7jTaydYPiRmzCumB9iakygWBKZnqWDctcIlTNaW4j8cwhwOhUdUc+QzUw
+ oZgqOhlYMd2i/LiSn/9+EtbXB5t/pSnJ5lwvD1B79uZq/EN4iDxhCuLmfNtkfaCXyIdF
+ +ROfwrltvKy00/SzDXlVpGvHtZWCOrJtCv665Rza3+iAKEpHyJlF10kJsmRObTBhqN8f
+ QQzs+LfAe7yEfz9w5KFwsIfcvJ+KMBzoBxc+qBElURyl3js+S5KRKRgSKIVJPo9sXB41
+ zasgxP4+Kv5NigvhhNRhUiPGLgO9S1mi0YALba9esD9M/iKaGAI90JGUjieESfslvbTr
+ vFBQ==
+X-Gm-Message-State: AOAM531iAFC5ujvvp8O6jQ0C7jckx5xbcVgBdFxmoyCswpLAP66CbkjQ
+ +CofcG5DV0bOaaLBd+7FTfo4ydhQrI0=
+X-Google-Smtp-Source: ABdhPJwxayAKSF6mXmBJ8++TA75KLd08uhG910WxJC5CctiAVx3ai3oKRw6joRzYaCJBGp4lZOg1Q76giQM=
+X-Received: from satyaprateek.c.googlers.com
+ ([fda3:e722:ac3:10:24:72f4:c0a8:1092])
+ (user=satyat job=sendgmr) by 2002:a25:9d83:: with SMTP id
+ v3mr2313605ybp.368.1611270223182; 
+ Thu, 21 Jan 2021 15:03:43 -0800 (PST)
+Date: Thu, 21 Jan 2021 23:03:30 +0000
+In-Reply-To: <20210121230336.1373726-1-satyat@google.com>
+Message-Id: <20210121230336.1373726-3-satyat@google.com>
+Mime-Version: 1.0
+References: <20210121230336.1373726-1-satyat@google.com>
+X-Mailer: git-send-email 2.30.0.280.ga3ce27912f-goog
+To: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
+ Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, "Darrick J . Wong" <darrick.wong@oracle.com>
+X-Headers-End: 1l2izU-006Hgk-VB
+Subject: [f2fs-dev] [PATCH v8 2/8] block: blk-crypto: relax alignment
+ requirements for bvecs in bios
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -108,187 +114,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
+From: Satya Tangirala via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Satya Tangirala <satyat@google.com>
+Cc: linux-block@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ Satya Tangirala <satyat@google.com>, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+blk-crypto only accepted bios whose bvecs' offsets and lengths were aligned
+to the crypto data unit size, since blk-crypto-fallback required that to
+work correctly.
 
-Added "ckpt_thread_ioprio" sysfs node to give a way to change checkpoint
-merge daemon's io priority. Its default value is "be,3", which means
-"BE" I/O class and I/O priority "3". We can select the class between "rt"
-and "be", and set the I/O priority within valid range of it.
-"," delimiter is necessary in between I/O class and priority number.
+Now that the blk-crypto-fallback has been updated to work without that
+assumption, we relax the alignment requirement - blk-crypto now only needs
+the total size of the bio to be aligned to the crypto data unit size.
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Co-developed-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
-v2:
-- adapt to inlining ckpt_req_control of f2fs_sb_info
-v5:
-- initialized cprc->ckpt_thread_ioprio
----
- Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++
- fs/f2fs/checkpoint.c                    |  3 +-
- fs/f2fs/f2fs.h                          |  1 +
- fs/f2fs/sysfs.c                         | 51 +++++++++++++++++++++++++
- 4 files changed, 62 insertions(+), 1 deletion(-)
+ block/blk-crypto.c | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 3dfee94e0618..0c48b2e7dfd4 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -377,3 +377,11 @@ Description:	This gives a control to limit the bio size in f2fs.
- 		Default is zero, which will follow underlying block layer limit,
- 		whereas, if it has a certain bytes value, f2fs won't submit a
- 		bio larger than that size.
-+What:		/sys/fs/f2fs/<disk>/ckpt_thread_ioprio
-+Date:		January 2021
-+Contact:	"Daeho Jeong" <daehojeong@google.com>
-+Description:	Give a way to change checkpoint merge daemon's io priority.
-+		Its default value is "be,3", which means "BE" I/O class and
-+		I/O priority "3". We can select the class between "rt" and "be",
-+		and set the I/O priority within valid range of it. "," delimiter
-+		is necessary in between I/O class and priority number.
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index ef6ad3d1957d..a3549923762d 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1854,7 +1854,7 @@ int f2fs_start_ckpt_thread(struct f2fs_sb_info *sbi)
- 		return PTR_ERR(cprc->f2fs_issue_ckpt);
- 	}
- 
--	set_task_ioprio(cprc->f2fs_issue_ckpt, DEFAULT_CHECKPOINT_IOPRIO);
-+	set_task_ioprio(cprc->f2fs_issue_ckpt, cprc->ckpt_thread_ioprio);
- 
- 	return 0;
- }
-@@ -1880,6 +1880,7 @@ void f2fs_init_ckpt_req_control(struct f2fs_sb_info *sbi)
- 	atomic_set(&cprc->issued_ckpt, 0);
- 	atomic_set(&cprc->total_ckpt, 0);
- 	atomic_set(&cprc->queued_ckpt, 0);
-+	cprc->ckpt_thread_ioprio = DEFAULT_CHECKPOINT_IOPRIO;
- 	init_waitqueue_head(&cprc->ckpt_wait_queue);
- 	init_llist_head(&cprc->issue_list);
- 	spin_lock_init(&cprc->stat_lock);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f2ae075aa723..517eb0eda638 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -276,6 +276,7 @@ struct ckpt_req {
- 
- struct ckpt_req_control {
- 	struct task_struct *f2fs_issue_ckpt;	/* checkpoint task */
-+	int ckpt_thread_ioprio;			/* checkpoint merge thread ioprio */
- 	wait_queue_head_t ckpt_wait_queue;	/* waiting queue for wake-up */
- 	atomic_t issued_ckpt;		/* # of actually issued ckpts */
- 	atomic_t total_ckpt;		/* # of total ckpts */
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 30bae57428d1..ddd70395148d 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -11,6 +11,7 @@
- #include <linux/f2fs_fs.h>
- #include <linux/seq_file.h>
- #include <linux/unicode.h>
-+#include <linux/ioprio.h>
- 
- #include "f2fs.h"
- #include "segment.h"
-@@ -34,6 +35,7 @@ enum {
- 	FAULT_INFO_TYPE,	/* struct f2fs_fault_info */
- #endif
- 	RESERVED_BLOCKS,	/* struct f2fs_sb_info */
-+	CPRC_INFO,	/* struct ckpt_req_control */
- };
- 
- struct f2fs_attr {
-@@ -70,6 +72,8 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
- 	else if (struct_type == STAT_INFO)
- 		return (unsigned char *)F2FS_STAT(sbi);
- #endif
-+	else if (struct_type == CPRC_INFO)
-+		return (unsigned char *)&sbi->cprc_info;
- 	return NULL;
+diff --git a/block/blk-crypto.c b/block/blk-crypto.c
+index 5da43f0973b4..fcee0038f7e0 100644
+--- a/block/blk-crypto.c
++++ b/block/blk-crypto.c
+@@ -200,22 +200,6 @@ bool bio_crypt_ctx_mergeable(struct bio_crypt_ctx *bc1, unsigned int bc1_bytes,
+ 	return !bc1 || bio_crypt_dun_is_contiguous(bc1, bc1_bytes, bc2->bc_dun);
  }
  
-@@ -255,6 +259,23 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 		return len;
+-/* Check that all I/O segments are data unit aligned. */
+-static bool bio_crypt_check_alignment(struct bio *bio)
+-{
+-	const unsigned int data_unit_size =
+-		bio->bi_crypt_context->bc_key->crypto_cfg.data_unit_size;
+-	struct bvec_iter iter;
+-	struct bio_vec bv;
+-
+-	bio_for_each_segment(bv, bio, iter) {
+-		if (!IS_ALIGNED(bv.bv_len | bv.bv_offset, data_unit_size))
+-			return false;
+-	}
+-
+-	return true;
+-}
+-
+ blk_status_t __blk_crypto_init_request(struct request *rq)
+ {
+ 	return blk_ksm_get_slot_for_key(rq->q->ksm, rq->crypt_ctx->bc_key,
+@@ -271,7 +255,8 @@ bool __blk_crypto_bio_prep(struct bio **bio_ptr)
+ 		goto fail;
  	}
  
-+	if (!strcmp(a->attr.name, "ckpt_thread_ioprio")) {
-+		struct ckpt_req_control *cprc = &sbi->cprc_info;
-+		int len = 0;
-+		int class = IOPRIO_PRIO_CLASS(cprc->ckpt_thread_ioprio);
-+		int data = IOPRIO_PRIO_DATA(cprc->ckpt_thread_ioprio);
-+
-+		if (class == IOPRIO_CLASS_RT)
-+			len += scnprintf(buf + len, PAGE_SIZE - len, "rt,");
-+		else if (class == IOPRIO_CLASS_BE)
-+			len += scnprintf(buf + len, PAGE_SIZE - len, "be,");
-+		else
-+			return -EINVAL;
-+
-+		len += scnprintf(buf + len, PAGE_SIZE - len, "%d\n", data);
-+		return len;
-+	}
-+
- 	ui = (unsigned int *)(ptr + a->offset);
- 
- 	return sprintf(buf, "%u\n", *ui);
-@@ -308,6 +329,34 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return ret ? ret : count;
+-	if (!bio_crypt_check_alignment(bio)) {
++	if (!IS_ALIGNED(bio->bi_iter.bi_size,
++			bc_key->crypto_cfg.data_unit_size)) {
+ 		bio->bi_status = BLK_STS_IOERR;
+ 		goto fail;
  	}
- 
-+	if (!strcmp(a->attr.name, "ckpt_thread_ioprio")) {
-+		const char *name = strim((char *)buf);
-+		struct ckpt_req_control *cprc = &sbi->cprc_info;
-+		int class;
-+		long data;
-+		int ret;
-+
-+		if (!strncmp(name, "rt,", 3))
-+			class = IOPRIO_CLASS_RT;
-+		else if (!strncmp(name, "be,", 3))
-+			class = IOPRIO_CLASS_BE;
-+		else
-+			return -EINVAL;
-+
-+		name += 3;
-+		ret = kstrtol(name, 10, &data);
-+		if (ret)
-+			return ret;
-+		if (data >= IOPRIO_BE_NR || data < 0)
-+			return -EINVAL;
-+
-+		cprc->ckpt_thread_ioprio = IOPRIO_PRIO_VALUE(class, data);
-+		ret = set_task_ioprio(cprc->f2fs_issue_ckpt,
-+				cprc->ckpt_thread_ioprio);
-+
-+		return count;
-+	}
-+
- 	ui = (unsigned int *)(ptr + a->offset);
- 
- 	ret = kstrtoul(skip_spaces(buf), 0, &t);
-@@ -567,6 +616,7 @@ F2FS_RW_ATTR(FAULT_INFO_TYPE, f2fs_fault_info, inject_type, inject_type);
- #endif
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, data_io_flag, data_io_flag);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, node_io_flag, node_io_flag);
-+F2FS_RW_ATTR(CPRC_INFO, ckpt_req_control, ckpt_thread_ioprio, ckpt_thread_ioprio);
- F2FS_GENERAL_RO_ATTR(dirty_segments);
- F2FS_GENERAL_RO_ATTR(free_segments);
- F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
-@@ -652,6 +702,7 @@ static struct attribute *f2fs_attrs[] = {
- #endif
- 	ATTR_LIST(data_io_flag),
- 	ATTR_LIST(node_io_flag),
-+	ATTR_LIST(ckpt_thread_ioprio),
- 	ATTR_LIST(dirty_segments),
- 	ATTR_LIST(free_segments),
- 	ATTR_LIST(unusable),
 -- 
-2.30.0.296.g2bfb1c46d8-goog
+2.30.0.280.ga3ce27912f-goog
 
 
 
