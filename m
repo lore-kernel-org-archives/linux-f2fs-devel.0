@@ -2,100 +2,70 @@ Return-Path: <SRS0=c5UM=HD=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F407C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Feb 2021 11:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 577D5C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Feb 2021 12:22:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E9CEF60C41;
-	Mon,  1 Feb 2021 11:48:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9CEF60C41
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTPS id AE88864E94
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Feb 2021 12:22:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE88864E94
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1l6Xgn-0002v5-8G; Mon, 01 Feb 2021 11:48:17 +0000
+	id 1l6YDw-0001pn-JP; Mon, 01 Feb 2021 12:22:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <daeho43@gmail.com>) id 1l6Xgm-0002uq-Iv
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Feb 2021 11:48:16 +0000
+ (envelope-from <hch@lst.de>) id 1l6YDu-0001pG-SH
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Feb 2021 12:22:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/GyMrZIJMYa4hWkLXbLjixtU8s2LOA6drIR1e6+hZdE=; b=ZDglxzfRMjgEPOrO2lAKc3H3VB
- QSGvJ9FMu5BIe1K/J8Kv+tVjLcPEtJg7ASd4bpicFqwtnxkC6OLXSnBs2agJdYRCI84pDthMxk6TU
- +3XM8DwmVgzcFyYKpQL748ij1Sdjy2oKf6YHB+ux6tYVBpQOAdm+8YOlrna1Oip5d6Cg=;
+ bh=ESQnaWFIoi03pycYkB6Y3rBV7W4I8KmEGEqRt1L7SDQ=; b=b/IeHo3Sg3kEAZJSvAEo5vRDG8
+ U//rhRxFUFNdkJCPz7sIttIEYtAux/9VlhBTRn1Qv/Q8LAtv9iMwPjB9SDgfiT214kpha1avht28E
+ XARNe1LKjCRRKZapim6Mm1JTB0D7uIo+LZ2wff/p1XLIq0S7dpsw+VW+00edArD8K0s4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=/GyMrZIJMYa4hWkLXbLjixtU8s2LOA6drIR1e6+hZdE=; b=l
- 1mjvh0S7kk01BzxgK0BQa/Ncjr54DiysTtyEiMmvYeSIMzczncziWotQSMu2ReU4w25SPYFYgPfjE
- 2Npob8nwb1m4oZlOijt/YcyRovWkOsF6r5DxXTojaS/nWQiCWbWfc7eGnTCuajabAGyAH7O65+xDR
- Rs0HaEHyKb5giGK8=;
-Received: from mail-oi1-f175.google.com ([209.85.167.175])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ESQnaWFIoi03pycYkB6Y3rBV7W4I8KmEGEqRt1L7SDQ=; b=KVxAygV6tMPElhIqbrdgJZhKdi
+ vQ9819BGm0L/QLVfePOfNLJmewyjX1Wyi/frkJ5IoNSXI+Q/C2uOSkihLyoaVbqIJxqIVlBEWJ55Z
+ kra42ruBS8ifTquildkLrgj4ErjonLESvZk/HKDvOpvXCwgU7zYiAmYYEjsl9cxIIhdw=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1l6Xga-0000Ru-Og
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Feb 2021 11:48:16 +0000
-Received: by mail-oi1-f175.google.com with SMTP id x71so18433001oia.9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 01 Feb 2021 03:48:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=/GyMrZIJMYa4hWkLXbLjixtU8s2LOA6drIR1e6+hZdE=;
- b=vZ2dyIKBpxc5iexyZO9GvuWFrZfEra0Govh3FQGQxYfnWoi5k7ySTtxd9BGs1/B1OO
- sXgV4IeVQmGe9mHdchY6x7pyoearfug7tLMU7SCtMgSU6JjXyEISXs1x5G2iqz1/2Et5
- yIzoDU1QAxvYXuzL6pHh/bnJHr1mmyYeF0DjwimSU/eGoZdQbkRx511W1xCYr3Vpknqj
- ywf33fNx8NpjWk/1flBwj0mgJ/e+snOGz+hIxOB/+VqL/5BcKEkqleBAT1WHfUYI6k5M
- j2tBLlz5NuDiCdZMVSbVuEnwFmOwpzgCvf8Gkc6lyiwauuHwax3ZVOmM1DScHHFJwCwT
- tNhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=/GyMrZIJMYa4hWkLXbLjixtU8s2LOA6drIR1e6+hZdE=;
- b=UqKSCeiXU/rFcxUq/VtP41Exr2uvLsobTVOYmVzxJuEAYQWBpiDmfPfcYCFqwoJL1n
- zlyng8lYV1P6e1PC4CFmoGD5la56yji+eBz7epP/hSG5VXW7xn+VCFXIP8Qv3w1g7U/0
- VSsAq7XbeDMr6eqfSw1R2z/vtc4x+mlPMTp+08p2B3ineTsWxlcNgEk0vF+NBpjqO7DZ
- kuX8kQjHqwVi8KFmAH88qwYcpBx8WMpioStrmmW+WmRnSr5E4uAMEnwzlMdqsLZCRwEP
- VNJ6BF4T47weydB4uukTK8Q/h1rGaZ2CivoSRPrf/kMQKVfmQZDA5ANR2o9DPDXToFTF
- tBWA==
-X-Gm-Message-State: AOAM533kn84ASQzTqouu+1EMdxXVb/IwxmBrh+j4vliHCTzd4PVhrzxX
- 7qf/xwXIvNQQQx46GEGeLcTo/jc7BVI=
-X-Google-Smtp-Source: ABdhPJz5XtjkCjTVC1c7AaZfb3CpLURfPrzg1hkc9gWukuIjOmchtvE/UPY0ZLsnaFGZaFHLjuNcZQ==
-X-Received: by 2002:a17:90b:3104:: with SMTP id
- gc4mr4419257pjb.151.1612137975635; 
- Sun, 31 Jan 2021 16:06:15 -0800 (PST)
-Received: from daehojeong1.seo.corp.google.com
- ([2401:fa00:d:11:3d90:5212:5281:e85d])
- by smtp.gmail.com with ESMTPSA id 16sm13317903pjc.28.2021.01.31.16.06.13
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 31 Jan 2021 16:06:15 -0800 (PST)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- kernel-team@android.com
-Date: Mon,  1 Feb 2021 09:06:06 +0900
-Message-Id: <20210201000606.2206740-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.30.0.365.g02bc693789-goog
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1l6YDj-0003dT-8J
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Feb 2021 12:22:30 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id CCB7C6736F; Mon,  1 Feb 2021 13:22:04 +0100 (CET)
+Date: Mon, 1 Feb 2021 13:22:04 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Matthew Wilcox <willy@infradead.org>
+Message-ID: <20210201122204.GA22727@lst.de>
+References: <20210126145247.1964410-1-hch@lst.de>
+ <20210126145247.1964410-5-hch@lst.de>
+ <20210130035646.GH308988@casper.infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1l6Xga-0000Ru-Og
-Subject: [f2fs-dev] [PATCH] f2fs: fix checkpoint mount option wrong
- combination
+Content-Disposition: inline
+In-Reply-To: <20210130035646.GH308988@casper.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1l6YDj-0003dT-8J
+Subject: Re: [f2fs-dev] [PATCH 04/17] block: split bio_kmalloc from
+ bio_alloc_bioset
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -107,67 +77,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+ dm-devel@redhat.com, Christoph Hellwig <hch@lst.de>, drbd-dev@lists.linbit.com,
+ Naohiro Aota <naohiro.aota@wdc.com>, linux-nilfs@vger.kernel.org,
+ Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
+ linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
+ Lars Ellenberg <lars.ellenberg@linbit.com>, David Sterba <dsterba@suse.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ Damien Le Moal <damien.lemoal@wdc.com>, linux-mm@kvack.org,
+ Philipp Reisner <philipp.reisner@linbit.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-nfs@vger.kernel.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+On Sat, Jan 30, 2021 at 03:56:46AM +0000, Matthew Wilcox wrote:
+> On Tue, Jan 26, 2021 at 03:52:34PM +0100, Christoph Hellwig wrote:
+> > bio_kmalloc shares almost no logic with the bio_set based fast path
+> > in bio_alloc_bioset.  Split it into an entirely separate implementation.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  block/bio.c         | 167 ++++++++++++++++++++++----------------------
+> >  include/linux/bio.h |   6 +-
+> >  2 files changed, 86 insertions(+), 87 deletions(-)
+> 
+> This patch causes current linux-next to OOM for me when running xfstests
+> after about ten minutes.  Haven't looked into why yet, this is just the
+> results of a git bisect.
 
-As checkpoint=merge comes in, mount option setting related to
-checkpoint had been mixed up. Fixed it.
-
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
- fs/f2fs/super.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 56696f6cfa86..8231c888c772 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -930,20 +930,25 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 				return -EINVAL;
- 			F2FS_OPTION(sbi).unusable_cap_perc = arg;
- 			set_opt(sbi, DISABLE_CHECKPOINT);
-+			clear_opt(sbi, MERGE_CHECKPOINT);
- 			break;
- 		case Opt_checkpoint_disable_cap:
- 			if (args->from && match_int(args, &arg))
- 				return -EINVAL;
- 			F2FS_OPTION(sbi).unusable_cap = arg;
- 			set_opt(sbi, DISABLE_CHECKPOINT);
-+			clear_opt(sbi, MERGE_CHECKPOINT);
- 			break;
- 		case Opt_checkpoint_disable:
- 			set_opt(sbi, DISABLE_CHECKPOINT);
-+			clear_opt(sbi, MERGE_CHECKPOINT);
- 			break;
- 		case Opt_checkpoint_enable:
- 			clear_opt(sbi, DISABLE_CHECKPOINT);
-+			clear_opt(sbi, MERGE_CHECKPOINT);
- 			break;
- 		case Opt_checkpoint_merge:
-+			clear_opt(sbi, DISABLE_CHECKPOINT);
- 			set_opt(sbi, MERGE_CHECKPOINT);
- 			break;
- #ifdef CONFIG_F2FS_FS_COMPRESSION
-@@ -1142,12 +1147,6 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		return -EINVAL;
- 	}
- 
--	if (test_opt(sbi, DISABLE_CHECKPOINT) &&
--			test_opt(sbi, MERGE_CHECKPOINT)) {
--		f2fs_err(sbi, "checkpoint=merge cannot be used with checkpoint=disable\n");
--		return -EINVAL;
--	}
--
- 	/* Not pass down write hints if the number of active logs is lesser
- 	 * than NR_CURSEG_PERSIST_TYPE.
- 	 */
--- 
-2.30.0.365.g02bc693789-goog
-
+I've run tests on linux-next all weekend and could not reproduce
+the issue.  Can you share your .config?
 
 
 _______________________________________________
