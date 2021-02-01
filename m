@@ -1,79 +1,76 @@
-Return-Path: <SRS0=XM6F=HB=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=c5UM=HD=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021F8C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 30 Jan 2021 03:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C95A2C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Feb 2021 09:27:50 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CD22264DDE
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 30 Jan 2021 03:57:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD22264DDE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTPS id 2FB5E64EAA
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  1 Feb 2021 09:27:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FB5E64EAA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1l5hO4-0003KX-4b; Sat, 30 Jan 2021 03:57:28 +0000
+	id 1l6VUj-0002a3-EF; Mon, 01 Feb 2021 09:27:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <willy@infradead.org>) id 1l5hO3-0003KR-Oa
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Jan 2021 03:57:27 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1l6VUi-0002ZP-AV
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Feb 2021 09:27:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DenP85I1Njjb0sm/Pv5awH6u78JiwmjeMN74Dl7XDmA=; b=mdF7og4mgblGRylmCO0fupqgZC
- EbkCBiehINk4iqohmP+sB3PPZI8JTPyv6nkdabxCk674I9ousqD+dHJXPp+0pZaUbHQFUUe6ioMhu
- KYFH+Ia/wNyBJKuaM8H+wb16vn6PHIoY6ye1/oIwaanFLQ8LRd1/zidnO9PMJKQ4iHAM=;
+ bh=kc83Ucbc/GThGJKCCDoQuu+tdZbtj/5Ia9YguU6kQsw=; b=BYd1TBTFZFMpKlXLnmVADYq6N7
+ 5J2ZEG6lqEO2mXov3XesXLzfQVSNRtuTQEGz2zJ5+s3ykDDHysEIilsXyPHxU1PMeeL+pOAG5ABXn
+ Oi3rSC2tDj47rNtVcwaQf51NTAr4SSxgthmU5pXIzX1o7R3oSRN1nqv2o5TFcBf8ih/A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DenP85I1Njjb0sm/Pv5awH6u78JiwmjeMN74Dl7XDmA=; b=eDWvsCD8Tg2ZtZBybdpnxl2yPa
- UUu3tKA7oxVr0BTRcFJwFufZmJKPz9amP7OHTUnY8sJ84LymKjO0Gnkj0NjSxlFPb9B4NlUMq9cwb
- LsLttdBhPcMY5a7SH4Nke46Fi7HuB+NhcWiMXddzF9DRUvmPEK07FKjlt0nj4sjzbIIs=;
-Received: from casper.infradead.org ([90.155.50.34])
+ bh=kc83Ucbc/GThGJKCCDoQuu+tdZbtj/5Ia9YguU6kQsw=; b=GVOdcaoh53Ae9sNDacN5zC4Qp+
+ dvpurIwtaLspMno24/vYIZ+oJgALsZeaPrqlYehvqQLq0EJIsIpF5khi4/BjYa+29HyJqP+A86s9V
+ j/5C6C+GySxJr2EXOJMF/DgW3orjS0sWyMWkNAW3nXbUsyoF3hlHT2uycGZWT2dTQgpw=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1l5hNo-00015E-He
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 30 Jan 2021 03:57:27 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
- Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
- Sender:Reply-To:Content-ID:Content-Description;
- bh=DenP85I1Njjb0sm/Pv5awH6u78JiwmjeMN74Dl7XDmA=; b=H8SDl3brId4iyEQMOwW4BfEUQ2
- Xy9mZcqFmFvcWvR6dxLgQ3QUwF+RwC9GNnBM28jr+2J7JQ5Bm8pWtzkJy9Bu5683unOHOgLMv+gFM
- jYIfOM6Ao2NNEjEzqoWU83ro0i2k1QtT++2jpOr8mpPL1+MxGJTvy2GRgyUg+z6xssmGMSAnWY2zd
- lqlVaZEtkQfNNrYTdAkx5Dh4tKL60XSKbWMPsTXg7ShS8Q1MALyQ1L4XvADIPpEa3DQT7A35auYCK
- RYKeUzMDMR7ROqaOWCMHMSpzECR3dkUR8mtXMmO0lgMzXZcgza2tXYiFwaZvQ9UvVr3UoISIOLjsY
- syMo01WQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat
- Linux)) id 1l5hNO-00Afhm-T1; Sat, 30 Jan 2021 03:56:47 +0000
-Date: Sat, 30 Jan 2021 03:56:46 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20210130035646.GH308988@casper.infradead.org>
-References: <20210126145247.1964410-1-hch@lst.de>
- <20210126145247.1964410-5-hch@lst.de>
+ id 1l6VUc-000351-UI
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 01 Feb 2021 09:27:39 +0000
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DTY1n0tQ6z162GY;
+ Mon,  1 Feb 2021 11:13:49 +0800 (CST)
+Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 1 Feb 2021
+ 11:15:01 +0800
+To: Liu Song <fishland@aliyun.com>, <jaegeuk@kernel.org>, <chao@kernel.org>
+References: <20210131122605.3296-1-fishland@aliyun.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <5cbe4b42-9aaa-c05c-b46a-46dc3c6c14f3@huawei.com>
+Date: Mon, 1 Feb 2021 11:15:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20210126145247.1964410-5-hch@lst.de>
-X-Headers-End: 1l5hNo-00015E-He
-Subject: Re: [f2fs-dev] [PATCH 04/17] block: split bio_kmalloc from
- bio_alloc_bioset
+In-Reply-To: <20210131122605.3296-1-fishland@aliyun.com>
+Content-Language: en-US
+X-Originating-IP: [10.136.110.154]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1l6VUc-000351-UI
+Subject: Re: [f2fs-dev] [PATCH] f2fs: remove unnecessary initialization in
+ xattr.c
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,42 +82,23 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
- dm-devel@redhat.com, drbd-dev@lists.linbit.com,
- Naohiro Aota <naohiro.aota@wdc.com>, linux-nilfs@vger.kernel.org,
- Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
- linux-raid@vger.kernel.org, linux-bcache@vger.kernel.org,
- David Sterba <dsterba@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Ryusuke Konishi <konishi.ryusuke@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- linux-block@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- Philipp Reisner <philipp.reisner@linbit.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- Lars Ellenberg <lars.ellenberg@linbit.com>, linux-nfs@vger.kernel.org,
- linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-f2fs-devel@lists.sourceforge.net, liu.song11@zte.com.cn,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jan 26, 2021 at 03:52:34PM +0100, Christoph Hellwig wrote:
-> bio_kmalloc shares almost no logic with the bio_set based fast path
-> in bio_alloc_bioset.  Split it into an entirely separate implementation.
+On 2021/1/31 20:26, Liu Song via Linux-f2fs-devel wrote:
+> From: Liu Song <liu.song11@zte.com.cn>
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  block/bio.c         | 167 ++++++++++++++++++++++----------------------
->  include/linux/bio.h |   6 +-
->  2 files changed, 86 insertions(+), 87 deletions(-)
+> These variables will be explicitly assigned before use,
+> so there is no need to initialize.
+> 
+> Signed-off-by: Liu Song <liu.song11@zte.com.cn>
 
-This patch causes current linux-next to OOM for me when running xfstests
-after about ten minutes.  Haven't looked into why yet, this is just the
-results of a git bisect.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-The qemu command line is:
-
-qemu-system-x86_64 -nodefaults -nographic -cpu host -machine accel=kvm,nvdimm -m 2G,slots=8,maxmem=1T -smp 6 -kernel /home/willy/kernel/folio/.build_test_kernel-x86_64/kpgk/vmlinuz -append console=hvc0 root=/dev/sda rw log_buf_len=8M ktest.dir=/home/willy/kernel/ktest ktest.env=/tmp/build-test-kernel-nJO6QgxOmo/env quiet systemd.show_status=0 systemd.log-target=journal crashkernel=128M no_console_suspend -device virtio-serial -chardev stdio,id=console -device virtconsole,chardev=console -serial unix:/tmp/build-test-kernel-nJO6QgxOmo/vm-kgdb,server,nowait -monitor unix:/tmp/build-test-kernel-nJO6QgxOmo/vm-mon,server,nowait -gdb unix:/tmp/build-test-kernel-nJO6QgxOmo/vm-gdb,server,nowait -device virtio-rng-pci -virtfs local,path=/,mount_tag=host,security_model=none -device virtio-scsi-pci,id=hba -nic user,model=virtio,hostfwd=tcp:127.0.0.1:24674-:22 -drive if=none,format=raw,id=disk0,file=/var/lib/ktest/root.amd64,snapshot=on -device scsi-hd,bus=hba.0,drive=disk0 -drive if=none,format=
- raw,id=disk1,file=/tmp/build-test-kernel-nJO6QgxOmo/dev-1,cache=unsafe -device scsi-hd,bus=hba.0,drive=disk1 -drive if=none,format=raw,id=disk2,file=/tmp/build-test-kernel-nJO6QgxOmo/dev-2,cache=unsafe -device scsi-hd,bus=hba.0,drive=disk2 -drive if=none,format=raw,id=disk3,file=/tmp/build-test-kernel-nJO6QgxOmo/dev-3,cache=unsafe -device scsi-hd,bus=hba.0,drive=disk3
-
+Thanks,
 
 
 _______________________________________________
