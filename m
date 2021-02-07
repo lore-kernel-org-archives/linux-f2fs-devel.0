@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7F1C4332B
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 19:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B52FC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 19:06:23 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F348564E2C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 19:05:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F348564E2C
+	by mail.kernel.org (Postfix) with ESMTPS id B707A64E2C
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 19:06:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B707A64E2C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1l8pNb-0004tq-Dn; Sun, 07 Feb 2021 19:05:55 +0000
+	id 1l8pO1-0004vu-KQ; Sun, 07 Feb 2021 19:06:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=665305f4c=chaitanya.kulkarni@wdc.com>)
- id 1l8pNa-0004tj-Bd
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 19:05:54 +0000
+ id 1l8pNz-0004vl-69
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 19:06:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8PZE03PiHxgVMYl5aK9+neT60QRfxMxQFn/lXYmiUHs=; b=LoqRA04YN+Nj/gEmIlgIEg2JTF
- GNHDZvgS4yQSB+VzY87NYSt46WZcfLqa/KQ8qaZXzu0/2d3VYud5uiFRYv9BP5ivRpOEQoBUriB0K
- Hf0w4YD0YNdImxkDP/HGB7GD/kPF513ss4e0nVDuqFkY3r4AKtx/3hHYLU+6cN5cqubg=;
+ bh=hPZ0HhtSIHk0aEF1vEdfjvjORQs0jU1MuFrHM8crlQ8=; b=QaS41kWATrV25o28Ik1rD8tOYp
+ nYYWqvGODEZIzAh9BuoIm1cLa50P7H7rnl1TlUXCd3SyfIx9GZJNy4lW6hSSjMSyOgLJ5Gh7oS79w
+ zZXkS7kCcn6Iqz80nNlUY972+zNM8SEsjGozGMa+U1MhlpY76iaUKXOFLm/vxD1N6374=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -43,63 +43,63 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8PZE03PiHxgVMYl5aK9+neT60QRfxMxQFn/lXYmiUHs=; b=YGZEG4URF39esqP0hD+yJxj6mq
- 9hlx6u7nC4KLthqUWT6JfVuS3KS+RyiK0UTCp3bZnGqxokGXa8da2DCR7L1IXmlJosuYsRYh+zI6T
- cvfWj6Cg703VS5VKFJTImx0t2J/lyDUkSrrLJYq1HsgXSUpkGtz9BF49AYDuQNq8fTHo=;
-Received: from esa4.hgst.iphmx.com ([216.71.154.42])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1l8pNT-0000g5-7f
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 19:05:54 +0000
+ bh=hPZ0HhtSIHk0aEF1vEdfjvjORQs0jU1MuFrHM8crlQ8=; b=hqTTTXkdVfBnoBBTObtzyc9Ouq
+ CM51/Mj4i0mPHDDLeakO7v9T9SUzOgVGtXG9ckDLgHjaFHwinJ0WXGsI/ZaN1pt1Xl0FBtX8RAcKg
+ XbuW8wLeLWwZStypNZLR0s/u8B5rUHTIXmrPcLR/XZ6tHMxmlAbSnefod8RyY2a8WzOQ=;
+Received: from esa3.hgst.iphmx.com ([216.71.153.141])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1l8pNs-00Dxfg-Fs
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 19:06:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1612724747; x=1644260747;
+ t=1612724772; x=1644260772;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=rNdz9k9ffw5LAUxhwO57X4gVRFYzjraWgYm8UMbARD0=;
- b=p7XumpPRc8PK/m2mGSLywZYd1sn9CFyEzGxoMNtbfei9/K+e9EZ0UlT0
- xcGBbF15q1OsqvbtRG+92xO6OS1yb423L6F032FvW26tM5kHRKTP7o++o
- bJ5iHEy6E8BUbkyH3RuxQCSqnZ3cuIWQUIcgMN6nj1U/jlNpKcar0eJIe
- gucA+pwO3NgDeIIjfjDi2flLxK9R8rhYxwwAIcqyewpMA9I5n09pmJ+8o
- wWrDE3po2TrHcoFNe4FfYbpXA7h6u8zLOjBXv30RHIjN0sIMy/vnSd0zb
- /92dLqLqBbaTl1mgA3FVQhME1o3zox3pcdIrEz9Vkofdm57snGXSQpiCf w==;
-IronPort-SDR: +hIZ29k8Va38/NVc2KpCik/x2Anm9ujTMA4axvcF1XJ8pBKxKiPTmJWgxasLuLwJhRwCN0gwcc
- bEctLHflA4S7lLHnvMmInZdTXxrAwcOexLG52Vi7IY2BkfVPMtAXbPEVhhCElaI6r1cGvKECnY
- RHT2brXhpZaUXrSVDBbreU3Jy7d8wOwGMKfz27VY+nW+ByAUCK0GTlwsExA1J3gfTDJxfualog
- 7hEG26E/Cl9IDvz3nC5jPQr1h3jwRZNLRhZAjgR7bJrlQ1xGGjxa7MQd4OHD/Qs2kODjUSwGCn
- zA0=
-X-IronPort-AV: E=Sophos;i="5.81,160,1610380800"; d="scan'208";a="159383142"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com)
- ([199.255.45.14])
- by ob1.hgst.iphmx.com with ESMTP; 08 Feb 2021 03:05:41 +0800
-IronPort-SDR: 7ezNQ2bN5USYOAyJBDedwPjP5AKQ8Ys5m8G5YPYDYaAcxoFH04AO0zw+pcxAIZdOz4GcCWeSVa
- RzIcRKJsjKjm/kktcuKZT+OIBa2qnX936QBoAxP/z+CRBU3tMw76P442yMl4kSKKcZx7jD1aT1
- SWG6W/4TwrDaJLsQZ9n8Y9zvZtUF2ATr/5bPtYTa6O1dCwF3S6aILhUz7BG7j9ArPsYBE47CQk
- Mhn/9wtKbKDkI01yoGPaRky8BZZ+mTeinkYb1L1/HbH1A0SBOs7JKjPLK5RJdGS30onx3qyWty
- YSGRWX3b/V92DkvmwjB0Uzsl
+ bh=X5WW6UV6FqDYJmbiL6yKTiQZQYZsZ0lHrvx/ZJ7Pr8o=;
+ b=GnpC9FouRrQjtUQE2cvvFKDYVZYpeRwDd1fus+/SrdwQxyzxUhB5VPnJ
+ hib2HDMPqJKwL1QM1Nw57ca6o70PNRgVwrjwZ+v/M57oTM379F0xJQ+pg
+ p70A5Y8NnRvS/C+gFpCwTzQSRogzkSUpqPhJ+LSOO0Hszu1dDrkpMs/Gi
+ BDcavkh4a/LcQpJ0QW5aR1sW1r8CDoP+Lx6A6m8JG/YUblNEIDZ5otvgm
+ QvcsKKpjhBEZGMoXGMbkxKGISqTWf23Clmr12ay0lNT0+ewjU5vEX5AQ6
+ v5IgAt5XCmmsgwzVSM2t4vnjKS84U6ei5yy8E9NMxFAksQKSJ8wRRWstv Q==;
+IronPort-SDR: PUpirSJyRvA2PLUjsOliBFS2Nlq6rztZUa8jPv3mok57fcA2j0XSIXgAHcPy83eIrs0nceRubY
+ IIcTdIqDRnfUsys69yR2wC9adx6bwZeLtaP1MJXfQmwjerOUzdbKVX4XV7O4ahBSB9rpiS/OWa
+ fegmroQEWjdGthXnqSHEvf0svOemCe9A50lwMRIS/vMFKTrUMa4wbz2evMNY+6bKoQswhGmKgR
+ yvYhGy+89uk2plnuGilHUOT6eH6+sfBDR5P28wRcEUPVXkJv7KBlyyjvvo+NBN/fEJ11pqIHLt
+ 4/A=
+X-IronPort-AV: E=Sophos;i="5.81,160,1610380800"; d="scan'208";a="163856653"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com)
+ ([199.255.45.15])
+ by ob1.hgst.iphmx.com with ESMTP; 08 Feb 2021 03:06:06 +0800
+IronPort-SDR: UOqhVWiJK/FvnzWPe0L7jq10G7fAYqrbM5203453I/OgArR1lB9AWW7ivKz7xLCqL/RQDtHfWu
+ 8sJNKF/IjCge6xFVGmVTtRAO9ls36NBJWyaZjxDY134ZQYxBXRPAHY9WKfkoVOKlFhsOMcGbtq
+ R84nlu8Qrow2pW3Bs9j+mbOFJEFX4lpLv7z3BTTKOMKwB327spx40M7QpGYcLSYS3NO2vxUzwC
+ v6S2np1jw0oAZuqlScJ2nFSIdn5BBMZaiSyKOJ2eCTB0IJ+Pb6yUExYNBadOUFin9qauL7KQDW
+ 2aJvAvgELyuBsJjiixjbXAIM
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
- by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Feb 2021 10:49:35 -0800
-IronPort-SDR: Mqq4oD3AeYBOMQHpGBqpa7pFTs3cc0c1FqPIJAN7pudJdrjE1cjRu0dCs025PGzN1w2mJSwrI8
- aLMozTCLuRjHR3U2Ava6HaEOdzuNs6BKCjySlUFnlbnsz2mfLlHcpwKmSdmyHd92gceMCoHjff
- SrgH+/UBPE/azNd55IrtFOrGh9hfZBqgwHFD1ONIv1Su/ou3XzTuek77zBP92E3JHf9gMZ3g5V
- C8UdjLamPyOsH/7UOibmR6FxstwDhtHmvtbREVOVNEGrv3OlsgYYoV5l9pJ5DScQGhniarovqX
- 2lg=
+ by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Feb 2021 10:48:02 -0800
+IronPort-SDR: eyQcbbPL+QE6lR4V/WtfUglic+gwcpaSMs80dOnTDv4VmXGl6LWoRb6mk/guyFq9if3KfEA4Y7
+ +tXG9BYvfbMPOgq037oqaHmEsxLw9V2PI5yErlrc6L+Mh7JJRASNpQxBfRv1jha4D9cZKuX2NR
+ CEtpkb5dd411Mei9z3RfYAwX5MHsi5Vi8Lbnj8j8d6gvT1bJ8mcdu5dS6zyy6dputIXiXA8OjF
+ EAX3KlQYEoDQohdZGm9+Ljm8wP8nr0e3RDoa13Z+INL4FM6854rdwUGB35CmhKO2Y25D1ePrlH
+ 8Ts=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
- by uls-op-cesaip02.wdc.com with ESMTP; 07 Feb 2021 11:05:42 -0800
+ by uls-op-cesaip02.wdc.com with ESMTP; 07 Feb 2021 11:06:07 -0800
 From: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To: linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Date: Sun,  7 Feb 2021 11:04:22 -0800
-Message-Id: <20210207190425.38107-6-chaitanya.kulkarni@wdc.com>
+Date: Sun,  7 Feb 2021 11:04:25 -0800
+Message-Id: <20210207190425.38107-9-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1
 In-Reply-To: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
 References: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
 MIME-Version: 1.0
-X-Headers-End: 1l8pNT-0000g5-7f
-Subject: [f2fs-dev] [RFC PATCH 5/8] ext4: use memcpy_from_page() in
- pagecache_read()
+X-Headers-End: 1l8pNs-00Dxfg-Fs
+Subject: [f2fs-dev] [RFC PATCH 8/8] f2fs: use memcpy_to_page() in
+ pagecache_write()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,31 +122,32 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 ---
- fs/ext4/verity.c | 5 +----
+ fs/f2fs/verity.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index 5b7ba8f71153..c8e07f8a792d 100644
---- a/fs/ext4/verity.c
-+++ b/fs/ext4/verity.c
-@@ -45,16 +45,13 @@ static int pagecache_read(struct inode *inode, void *buf, size_t count,
- 		size_t n = min_t(size_t, count,
+diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+index 44e057bdc416..ca019685a944 100644
+--- a/fs/f2fs/verity.c
++++ b/fs/f2fs/verity.c
+@@ -79,7 +79,6 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
  				 PAGE_SIZE - offset_in_page(pos));
  		struct page *page;
+ 		void *fsdata;
 -		void *addr;
+ 		int res;
  
- 		page = read_mapping_page(inode->i_mapping, pos >> PAGE_SHIFT,
- 					 NULL);
- 		if (IS_ERR(page))
- 			return PTR_ERR(page);
+ 		res = pagecache_write_begin(NULL, inode->i_mapping, pos, n, 0,
+@@ -87,9 +86,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+ 		if (res)
+ 			return res;
  
 -		addr = kmap_atomic(page);
--		memcpy(buf, addr + offset_in_page(pos), n);
+-		memcpy(addr + offset_in_page(pos), buf, n);
 -		kunmap_atomic(addr);
-+		memcpy_from_page(buf, page, offset_in_page(pos), n);
++		memcpy_to_page(page, offset_in_page(pos) buf, n);
  
- 		put_page(page);
- 
+ 		res = pagecache_write_end(NULL, inode->i_mapping, pos, n, n,
+ 					  page, fsdata);
 -- 
 2.22.1
 
