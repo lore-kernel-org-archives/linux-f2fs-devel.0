@@ -2,101 +2,104 @@ Return-Path: <SRS0=fAWp=HJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8CAC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 19:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DFFC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 19:04:58 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AEE9264E2C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 19:04:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE9264E2C
+	by mail.kernel.org (Postfix) with ESMTPS id 58C3364E2C
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 19:04:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C3364E2C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1l8pMZ-0004oj-6s; Sun, 07 Feb 2021 19:04:51 +0000
+	id 1l8pMf-0004pM-9M; Sun, 07 Feb 2021 19:04:57 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=665305f4c=chaitanya.kulkarni@wdc.com>)
- id 1l8pMW-0004oa-9n
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 19:04:48 +0000
+ id 1l8pMe-0004pE-BW
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 19:04:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dQH47KFNBqwhXElKVENOyFZ0w2cvoJOpXJzwEIn1FF4=; b=MFLZBpE/PxuzD3nrot7kb9e+3e
- BA+9yjIT3aW6gOywAJjfi51qe7ZONMQivjs1wzpFTX+pXzWZHnIdp1ANssLu64HpEOODlPBWr4lt/
- ZSO+TDAzSwPhtsJK7Sbb8S4Upl3s0l6ZtGJMf0ZUNqFTxM/Aojo72XZ0pggWgsPSXJXE=;
+ bh=UbkH58hdVXR2BgjNBrLxJQutjcJUYyZSDhNVdXpDtDA=; b=gxqBknmu76+SErzq8ktRK4vXQs
+ 10j97Ci4aMWCsq1iltk1WInAALN5D0d9ERATm4f9YsglRfBlP2zeQv2rzA4gz1jeWmEE42MEL+67t
+ JQRCgtnkL7o/9IQbgOedsWvdffKdGZeZHqynZZaEbIwRBNs33Ho4aVMnzXLK8FeOH7Mc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=dQH47KFNBqwhXElKVENOyFZ0w2cvoJOpXJzwEIn1FF4=; b=H
- xrQKO8H/yEQqlks9dk7WEtA/Tihd+zPJTt/dtvlU3Bq7jYRmT4wDVnslH3P0R8+FtMdWGeyOJS42/
- kfuBOhIocBa/aPVebxkpfkYcNScNaaq0uFOJMkr4jLmA4oy8yzCchiRuzyqFgU15tQfNUqdHEIbVU
- DxWLE/8p+34vHe/U=;
-Received: from esa3.hgst.iphmx.com ([216.71.153.141])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=UbkH58hdVXR2BgjNBrLxJQutjcJUYyZSDhNVdXpDtDA=; b=l65pzWjf3/eNoI3v/hxhNdaejh
+ vldIcP4WF7qrlpAQZcnssJRMJc7Yh+ioSpZNeUDLE+urTrJ60b7VQDowas532ll4MizF4cRnGw0+D
+ Mp6LTdTEdJh6h7yjteZAxOGsm53EezbndRqvkeWEoc67zIqXqP09OrW+GsCu7QN9ez5I=;
+Received: from esa4.hgst.iphmx.com ([216.71.154.42])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1l8pMM-00DxQu-N7
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 19:04:48 +0000
+ id 1l8pMS-00DxYS-DH
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 19:04:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1612724678; x=1644260678;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=w6zlqoB4qKT1nXBrbOhQGOcEIB8ZlcLodmo+qNAVwo8=;
- b=UCfNs0x0OsK/l20kfl8kwFDbriYifkJ5zrIPTq6M68Lcl8MXp77yFo1P
- CdKAIr0u4VY5DcvRnh4xf3n+fA/IgQl09hl8dAM+fruGaj7G1erOAH/qx
- NYH/hFy7Anoa+4Y6FB2o8h3fMjTmMNJVKU9ZkbzR4wtGRAWG/vFZk0Jrw
- LTqjd3UedzoQeJPM1NrTE7hEQPmprbtiwX5pjDIlgrAOwTq67rRacxYnq
- xlH6BtdjCTlmnWy87gmO/p8QOWO6R1SfiN3u3QNf+9NyKStDnDbho2eww
- RM6quhQxR8Un0E4h/NfONgkktT5HEATEDA8GmuvfGKv5NiqYAn9YT6aSY w==;
-IronPort-SDR: feNwWh9//8pm3cscKVlO2JvZsozTHbFDPOUvu6f9xHSXupQXAUPAJ0s9oXgdytCf9Nrv1LbloS
- rtM/zvyngMTucvT6lwPbQbTD3+80FCIwEz2IYVd4M0eJioP+S4Q+Z9sK/n2LWp6bliJmksOb8q
- hLYtNJR5lDfwKIEV6Mq9JbT35ExB0VZ3ALZSuOY9cmQXJq+HmFUdaT3rKybE91dkj0KJBR7fdi
- vAHJwgmxBH7b6tkCqrXkUue3tBVtHrcwtao4i3XEFF8IqbmsPQFP9CalcLBj15fkItNdP+z/Ig
- UV0=
-X-IronPort-AV: E=Sophos;i="5.81,160,1610380800"; d="scan'208";a="163856596"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com)
+ t=1612724684; x=1644260684;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=F38JIOmH/bO60aVqbPLRnyXb9cZeXf1sDr0Po0447lk=;
+ b=BsScReBrkObUJ/lG4zC8qbxU3WUeqvAE0+56vXucQKBbbQoNKTsA7Amr
+ GhnCwBx+jgJkTRtvNVqHy1fpqtQex7Jiuzy/W0FmFa0QSe6YNZt008YY0
+ AyldpwhFn0q8Y1P+9BioydAYsQWWxB92Gvo8qjAQ28KVBYHoBOqua3VR3
+ fQLvRnhjWlkXU4mCRL9HWBMuS0lHdmX3xzOQhGCSKaUTLc0BoVPJ7hwjb
+ riXVOhxbeLlu4AyuZLc5aePvs9UmePq8bZh6e4xjaaQr918w2+AkcsZEW
+ Sw3TkMYyH+AR5Ow96eh2M/kgV8HAkCf84fQMV0wmZdscxggEHsNfafz0v Q==;
+IronPort-SDR: bD83EpB6Z0u9Gq6uDmqcTvb5D0eRX3NnRBLQMFmqfZQfL7uleQzaSFs8D5pnE27HeUR5/mXIR0
+ U1CcwHWS8p8L2KR4mx8HprjpaHidbJvzKipgpGGqQYgtuF5ZYFtScabmtDcfAuc+7xiULuv/yl
+ eknswHhTST6zGqzz5nqupj4PscZjXRiyQr5Go4bVXSEyg+qQzGbToklldAZpSL/kaCMBumf+Dq
+ yNgaOnZtJsuoo8offFhobVmCi8yWKUYLoxx1ATi5b14vJh8MZV+wj58wswMQM4KKkUKhkyHqQn
+ 8u0=
+X-IronPort-AV: E=Sophos;i="5.81,160,1610380800"; d="scan'208";a="159383111"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com)
  ([199.255.45.14])
- by ob1.hgst.iphmx.com with ESMTP; 08 Feb 2021 03:04:28 +0800
-IronPort-SDR: BLEdlyoizb5FgkdONHiuBcdFffufYaXt3sKVXpVX2nk0d/rKaU75ED0RfL7LqGtzilbLPpku5g
- OA7I4SLmgL8NtijXZp2uEwWIadTv+Rn6dPZzgBKDuc3eeOKw5FPv3RIbVJY2L7+VDflK5mnRJ0
- i7b1xicGPcNZGMyDCEciQlROOa7wlyp6A6D9841XIuvOeZNR+H1P++kOk7KukApjhFF9IzVLy3
- PoT9tqAXx1f8epJ51zGt/LW+Rn/hbTIIjlrns7J0ejj3BLnb3wh1Wx4gEjvCFhaBbOQvJg76qo
- iXwnz1Pc4lOX2xMqyOmVSyra
+ by ob1.hgst.iphmx.com with ESMTP; 08 Feb 2021 03:04:38 +0800
+IronPort-SDR: AaF5Wputb9kgeBL/BwCmX+uqHGS4Ngqt13wodKK0ZgULo9BUDEMzIAzwJ9ZXpjc8nZ09ekwdq3
+ VX39a6X3RVDzbzmhcny8MB/eL8HMvBUOp2PJRmuQa6FXI/Eg2Q1mwbGhamGSdv6johGFFyBeF/
+ bMoRdfJCqlcndocWNvnXORpfKYaY9NMbNKiGkoizmcICV8+tAHolwUWK8mRFpwy22Ztu4rXTb4
+ EVdi9oidxfYaQayOZxExieRdc9iWkIh0jZJJgnqDCTrm1tOj+0lqIOzkahsA4lX3VlWOihC8i3
+ dzcSlM3zmAdyUDtO5vJ4E8Et
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Feb 2021 10:48:22 -0800
-IronPort-SDR: G5UkKRJXYnZF6S2td3KTLC+tstktMSOx5USrJ/8vqHVbIEJIIqHE54GblQXzzWDKDkJYqqMIm8
- /grFclx6OokLW8XLT0EahhHRmjldgbrOtSVmPY2iDCY5Jwp+My9e1mLwkFllm9yHbk9+aju3il
- 15LQnCcS+ED+Ppe8kNeaBlIGJhrSuXnC4oBjsWuwx0fM688vkAbf9ysIyG2UljqmNHOexojEFr
- /H6RbprJtDTtcF2llfZVRwZ4x57vttCqniYZ/8MvLzgQIKhpwqYUiaZvOJJ8ufVCYjb+mvKwd7
- 3Os=
+ 07 Feb 2021 10:48:32 -0800
+IronPort-SDR: 95X1JNQjuKEYeODWhVDVzpmJeAmRC+qi6PkDW1g7K+Lf+5rq7gnfFOS12ox+MhnE326Q1n/6S6
+ 6EeT5PpazKBHTW6Af6ZI24rlL7mUtxPXZeOi2iq1msSf5Oh+xFVcV9PJ0eGtZs3Muxtfy8HpMz
+ skaukzAmdnakYARnvPHY6ukLuiyfq8Uxxg4k+mgcLA4JpOAvz3OVHl6QDgN26CLYAB9XLT86O0
+ gjQoItL/O4VqWgBcHrgBs24UkssGH8iK8vn2r6od9A8XyvTcgMv+IOEk3E7gkqHk1Kum4mDhh7
+ 05Q=
 WDCIronportException: Internal
 Received: from vm.labspan.wdc.com (HELO vm.sc.wdc.com) ([10.6.137.102])
- by uls-op-cesaip02.wdc.com with ESMTP; 07 Feb 2021 11:04:28 -0800
+ by uls-op-cesaip02.wdc.com with ESMTP; 07 Feb 2021 11:04:39 -0800
 From: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 To: linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Date: Sun,  7 Feb 2021 11:04:17 -0800
-Message-Id: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
+Date: Sun,  7 Feb 2021 11:04:18 -0800
+Message-Id: <20210207190425.38107-2-chaitanya.kulkarni@wdc.com>
 X-Mailer: git-send-email 2.22.1
+In-Reply-To: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
+References: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
 MIME-Version: 1.0
-X-Headers-End: 1l8pMM-00DxQu-N7
-Subject: [f2fs-dev] [RFC PATCH 0/8] use core page calls instead of kmaps
+X-Headers-End: 1l8pMS-00DxYS-DH
+Subject: [f2fs-dev] [RFC PATCH 1/8] brd: use memcpy_from_page() in
+ copy_from_brd()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,33 +120,30 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This RFC is based on the discussion going on the linux-fsdevel [1].
+Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+---
+ drivers/block/brd.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-I've tested this on the brd and null_blk. The fio verify job seems to
-run without any error on the top of the original series applied [1].
-
-Any feedback is welcome to move this forward.
-
--ck
-
-[1] https://lore.kernel.org/linux-fsdevel/20210205232304.1670522-1-ira.weiny@intel.com/T/#m53145c155fa3631595594877da96a3a75b71e909
-
-Chaitanya Kulkarni (8):
-  brd: use memcpy_from_page() in copy_from_brd()
-  brd: use memcpy_from_page() in copy_from_brd()
-  null_blk: use memcpy_page() in copy_to_nullb()
-  null_blk: use memcpy_page() in copy_from_nullb()
-  ext4: use memcpy_from_page() in pagecache_read()
-  ext4: use memcpy_to_page() in pagecache_write()
-  f2fs: use memcpy_from_page() in pagecache_read()
-  f2fs: use memcpy_to_page() in pagecache_write()
-
- drivers/block/brd.c           | 17 ++++++-----------
- drivers/block/null_blk/main.c | 23 ++++++-----------------
- fs/ext4/verity.c              | 10 ++--------
- fs/f2fs/verity.c              | 10 ++--------
- 4 files changed, 16 insertions(+), 44 deletions(-)
-
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index cb5c872ac9b2..d41b7d489e9f 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -226,11 +226,9 @@ static void copy_from_brd(void *dst, struct brd_device *brd,
+ 
+ 	copy = min_t(size_t, n, PAGE_SIZE - offset);
+ 	page = brd_lookup_page(brd, sector);
+-	if (page) {
+-		src = kmap_atomic(page);
+-		memcpy(dst, src + offset, copy);
+-		kunmap_atomic(src);
+-	} else
++	if (page)
++		memcpy_from_page(dst, page, offset, copy);
++	else
+ 		memset(dst, 0, copy);
+ 
+ 	if (copy < n) {
 -- 
 2.22.1
 
