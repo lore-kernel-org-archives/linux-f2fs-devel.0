@@ -2,76 +2,76 @@ Return-Path: <SRS0=fAWp=HJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 930DEC433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 08:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7411C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  7 Feb 2021 08:32:50 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3031164E6E;
-	Sun,  7 Feb 2021 08:02:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3031164E6E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 159C564E72;
+	Sun,  7 Feb 2021 08:32:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159C564E72
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1l8f1B-0001ex-Q9; Sun, 07 Feb 2021 08:02:05 +0000
+	id 1l8fUs-0002Zf-RH; Sun, 07 Feb 2021 08:32:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1l8f1A-0001ep-FG
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 08:02:04 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1l8fUp-0002ZR-GF
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 08:32:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=j4FUk3nM5YOPvP8qEdTCpRD68yUTdM+3Ie9EAwqcZ0E=; b=K/6rNzaB0gy+xAWhKPoLnvqLbc
- KLhmJn7fopRF2G5lREWD10xT+izlZtnG2TgWSZtgtc2VftoKqNk2TIH2ne4JfNCNg8zF1St8nS312
- rFPtwNTG8IxgmWfF/qdZ4ShB5tqj2Ot/I4HYZl/M57DaPNbQeBkHdXv2t1e/KYD29XD0=;
+ bh=WXOS1nV7vBv7T/lTaCzQAtJbWPUenAuqIvW3qVy9XFk=; b=RZYbXv+uKMO+b/hceZGt8n7mWh
+ ZDkKJE/gvKywZeFZjRWGFZwijSI2i+Km514UBnjxffDs0c5kRswJMaGmnW4rsmzuXkE2RaKPNX5yD
+ U8agvgVuqGiAzOn4F32iOyhF0MpYksO+2el4ob02N0j0BDJwvdxrwhnd4wkwNQr/tyJg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=j4FUk3nM5YOPvP8qEdTCpRD68yUTdM+3Ie9EAwqcZ0E=; b=Cqfw8HZ5wdBsgm4q6NY5Nj7/CF
- ohLomRONGuNF0UtqhxreV7EPVPaJxa8jUAhDSS2rlW/sJcxbeb3RESCzejg+HLDU9EezZqFpDT8XB
- 0kCWDEjEM22mXwosTerOEJfytfEPTGd/g6id4RMOGoykKNyl2+IK2nF1Tu2uTiyZHuio=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1l8f0z-0007zt-4s
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 08:02:04 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5BA2C64E02;
- Sun,  7 Feb 2021 08:01:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1612684907;
- bh=JQzrq1MRRknUQVbsQI9IjA///ymlH5drgaU78MxNp4I=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=kGxAEFMHm4BZoeFf1tOFxeRr7r09QtjCoBTxFRDdxsUEvSYRG+itkNzvROaEzHlzq
- cAGv8CwZ+x5cIMwK0vR9H5kWd+IMJUXKT8K/wSNQu/lM/K7zLZnJWhTl3OKMiHPFd0
- dEJ6nsD0RbRS9DwGVcPXikGC45FoEfDIlSPAlVbRzGQowU8XZawCB/Sii2XAEkQJSs
- g2EgBCSVOL5aT/jTa48oVBOLuYj4kyEF+zfsQlVQiUp+h/qB3dSXYy1RALtMB/V305
- x/g5ovIJy3IaLvVsU0ZBaKW9LCdhPZMX7DzhVmX+Wbte7vomS6KRc4shYZp6bn3c/g
- gcGo6QU6Vhk7g==
-Date: Sun, 7 Feb 2021 00:01:45 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Message-ID: <YB+ead3SvsQy5ULH@sol.localdomain>
+ bh=WXOS1nV7vBv7T/lTaCzQAtJbWPUenAuqIvW3qVy9XFk=; b=MfrtI+ulAdW6IBf/wn2mEbkhoB
+ XGxEdpxKiKdJ+u9RcILJlOB5Roqyeddf2d/Svdv5tCxio+4TuPy9GA4wzWprlbxi09/9GFgUlRTN7
+ L0Y7M1+oMMXrX3lqRgIHSe+LyQxC1NsICQos/Xuu2JceXt5PBvf/bqagpFtriq/HrRjM=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1l8fUe-00CxFT-R3
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 07 Feb 2021 08:32:43 +0000
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DYMmx4fsHz164sT;
+ Sun,  7 Feb 2021 16:30:57 +0800 (CST)
+Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.498.0; Sun, 7 Feb 2021
+ 16:32:18 +0800
+To: Eric Biggers <ebiggers@kernel.org>
 References: <20210115181819.34732-1-ebiggers@kernel.org>
  <20210115181819.34732-4-ebiggers@kernel.org>
  <107cf2f2-a6fe-57c2-d17d-57679d7c612d@huawei.com>
+ <YB+ead3SvsQy5ULH@sol.localdomain>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <fbe787cc-fcba-7c97-d5ca-cb67345d0c8c@huawei.com>
+Date: Sun, 7 Feb 2021 16:32:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <107cf2f2-a6fe-57c2-d17d-57679d7c612d@huawei.com>
-X-Headers-End: 1l8f0z-0007zt-4s
+In-Reply-To: <YB+ead3SvsQy5ULH@sol.localdomain>
+Content-Language: en-US
+X-Originating-IP: [10.136.110.154]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1l8fUe-00CxFT-R3
 Subject: Re: [f2fs-dev] [PATCH 3/6] fs-verity: add
  FS_IOC_READ_VERITY_METADATA ioctl
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -89,36 +89,53 @@ Cc: Theodore Ts'o <tytso@mit.edu>, linux-api@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
  linux-ext4@vger.kernel.org, Victor Hsieh <victorhsieh@google.com>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Sun, Feb 07, 2021 at 03:46:43PM +0800, Chao Yu wrote:
-> Hi Eric,
+On 2021/2/7 16:01, Eric Biggers wrote:
+> On Sun, Feb 07, 2021 at 03:46:43PM +0800, Chao Yu wrote:
+>> Hi Eric,
+>>
+>> On 2021/1/16 2:18, Eric Biggers wrote:
+>>> +static int f2fs_ioc_read_verity_metadata(struct file *filp, unsigned long arg)
+>>> +{
+>>> +	if (!f2fs_sb_has_verity(F2FS_I_SB(file_inode(filp))))
+>>> +		return -EOPNOTSUPP;
+>>
+>> One case is after we update kernel image, f2fs module may no longer support
+>> compress algorithm which current file was compressed with, to avoid triggering
+>> IO with empty compress engine (struct f2fs_compress_ops pointer):
+>>
+>> It needs to add f2fs_is_compress_backend_ready() check condition here?
+>>
+>> Thanks,
+>>
+>>> +
+>>> +	return fsverity_ioctl_read_metadata(filp, (const void __user *)arg);
+>>> +}
 > 
-> On 2021/1/16 2:18, Eric Biggers wrote:
-> > +static int f2fs_ioc_read_verity_metadata(struct file *filp, unsigned long arg)
-> > +{
-> > +	if (!f2fs_sb_has_verity(F2FS_I_SB(file_inode(filp))))
-> > +		return -EOPNOTSUPP;
-> 
-> One case is after we update kernel image, f2fs module may no longer support
-> compress algorithm which current file was compressed with, to avoid triggering
-> IO with empty compress engine (struct f2fs_compress_ops pointer):
-> 
-> It needs to add f2fs_is_compress_backend_ready() check condition here?
-> 
-> Thanks,
-> 
-> > +
-> > +	return fsverity_ioctl_read_metadata(filp, (const void __user *)arg);
-> > +}
+> In that case it wouldn't have been possible to open the file, because
+> f2fs_file_open() checks for it.  So it's not necessary to repeat the same check
+> in every operation on the file descriptor.
 
-In that case it wouldn't have been possible to open the file, because
-f2fs_file_open() checks for it.  So it's not necessary to repeat the same check
-in every operation on the file descriptor.
+Oh, yes, it's safe now.
 
-- Eric
+I'm thinking we need to remove the check in f2fs_file_open(), because the check
+will fail metadata access/update (via f{g,s}etxattr/ioctl), however original
+intention of that check is only to avoid syscalls to touch compressed data w/o
+the engine, anyway this is another topic.
+
+The whole patchset looks fine to me, feel free to add:
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+> 
+> - Eric
+> .
+> 
 
 
 _______________________________________________
