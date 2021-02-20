@@ -7,67 +7,66 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A66B2C433E6
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Feb 2021 09:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD18C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Feb 2021 09:39:07 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3D12564E2F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Feb 2021 09:36:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D12564E2F
+	by mail.kernel.org (Postfix) with ESMTPS id CD64F64E2F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Feb 2021 09:39:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD64F64E2F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lDOgT-0008UK-Au; Sat, 20 Feb 2021 09:36:17 +0000
+	id 1lDOjB-0000Cc-RO; Sat, 20 Feb 2021 09:39:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lDOgQ-0008Tn-Om
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Feb 2021 09:36:14 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1lDOjB-0000CW-4c
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Feb 2021 09:39:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Zafii94NULn0362N5yv+tj8AXCFTcHJKEwKo4m99SmQ=; b=Cx1lwL2nt2/Eud1TwVAYLJ+KIm
- Gq/zNORi2nl+ctvW/fx84C+aRqTf37Ip8n8TkBgOERN5ot+odMELGj4It6zl2PQuwNYSGI4liPjSD
- 5jF3ctf/0VcRvTnCBCx400IhOPYpBE1rD6Gfehovyy8Oosa1UDmWWa81K/c6gYK7PbvI=;
+ bh=0Zc7D0MjyGxUpwE46jTGCQGEyd63ovf3oAdtCBT+4ng=; b=MMXHPZ1XiiQkPNrFdfp/G1A1Ef
+ g3oL1cxB7ttKjJ9Iqj6+LPmXKI6aO2MeqpJj278aPiFFZIoBb9UKMo03D1Htrty0aGjIMaJh76exy
+ Tqj61fb0qs8iOnhlFAdKEB7KRPn474w+R09ww05jLUw5dny3GX734pCLCsFqAzLmMJz4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Zafii94NULn0362N5yv+tj8AXCFTcHJKEwKo4m99SmQ=; b=BUTRzDZSuqpsENjBUG8cX476VG
- FVLuqwBpxuYwGsJe3xUXw7/n1XPdQITf2c+IdkoHuyMCAjtzBw2yBk6ZVcXMuP69osOBJAZeNldWE
- cgLuMPTDOsYcMoE9kUuDKKnve2KSpszh0T9fdcF4DmxqmNxeDzQeyTJFPArfWSq1IaO8=;
-Received: from szxga06-in.huawei.com ([45.249.212.32])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=0Zc7D0MjyGxUpwE46jTGCQGEyd63ovf3oAdtCBT+4ng=; b=A
+ 8hlVzVqBXH5OINM5lO9pd+93c5wFxccWpfhgBnpnE7REz+Rc7quvped5wrP2ZeOy6MnUCzFhqMmlo
+ nHX1Xvxud/TPlj1kI1qPnZTldLj9ty456hEyTq1jTeglhf8sM509L43uGBVCaPJ0oVopRZDbhMRio
+ gjbcZTsKAxCXkbGc=;
+Received: from szxga05-in.huawei.com ([45.249.212.191])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lDOgF-00GNsr-49
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Feb 2021 09:36:08 +0000
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4DjNZR21CWzjPMh;
- Sat, 20 Feb 2021 17:34:39 +0800 (CST)
+ id 1lDOj4-00GO9F-IG
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Feb 2021 09:39:05 +0000
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DjNdW0gdRzjMgl;
+ Sat, 20 Feb 2021 17:37:19 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.498.0; Sat, 20 Feb 2021 17:35:44 +0800
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.498.0; Sat, 20 Feb 2021 17:38:44 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Sat, 20 Feb 2021 17:35:41 +0800
-Message-ID: <20210220093541.63899-2-yuchao0@huawei.com>
+Date: Sat, 20 Feb 2021 17:38:41 +0800
+Message-ID: <20210220093843.64379-1-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210220093541.63899-1-yuchao0@huawei.com>
-References: <20210220093541.63899-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1lDOgF-00GNsr-49
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: fix panic during f2fs_resize_fs()
+X-Headers-End: 1lDOj4-00GO9F-IG
+Subject: [f2fs-dev] [PATCH 1/3] f2fs: avoid unused
+ f2fs_show_compress_options()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,72 +78,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs_resize_fs() hangs in below callstack with testcase:
-- mkfs 16GB image & mount image
-- dd 8GB fileA
-- dd 8GB fileB
-- sync
-- rm fileA
-- sync
-- resize filesystem to 8GB
+LKP reports:
 
-kernel BUG at segment.c:2484!
-Call Trace:
- allocate_segment_by_default+0x92/0xf0 [f2fs]
- f2fs_allocate_data_block+0x44b/0x7e0 [f2fs]
- do_write_page+0x5a/0x110 [f2fs]
- f2fs_outplace_write_data+0x55/0x100 [f2fs]
- f2fs_do_write_data_page+0x392/0x850 [f2fs]
- move_data_page+0x233/0x320 [f2fs]
- do_garbage_collect+0x14d9/0x1660 [f2fs]
- free_segment_range+0x1f7/0x310 [f2fs]
- f2fs_resize_fs+0x118/0x330 [f2fs]
- __f2fs_ioctl+0x487/0x3680 [f2fs]
- __x64_sys_ioctl+0x8e/0xd0
- do_syscall_64+0x33/0x80
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+   fs/f2fs/super.c:1516:20: warning: unused function 'f2fs_show_compress_options' [-Wunused-function]
+   static inline void f2fs_show_compress_options(struct seq_file *seq,
 
-The root cause is we forgot to check that whether we have enough space
-in resized filesystem to store all valid blocks in before-resizing
-filesystem, then allocator will run out-of-space during block migration
-in free_segment_range().
+Fix this issue by covering f2fs_show_compress_options() with
+CONFIG_F2FS_FS_COMPRESSION macro.
 
-Fixes: b4b10061ef98 ("f2fs: refactor resize_fs to avoid meta updates in progress")
+Fixes: 4c8ff7095bef ("f2fs: support data compression")
+Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/gc.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ fs/f2fs/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index b3af76340026..86ba8ed0b8a7 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1977,7 +1977,20 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 78d9e54bc4f7..042925c6c2cb 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1620,6 +1620,7 @@ static inline void f2fs_show_quota_options(struct seq_file *seq,
+ #endif
+ }
  
- 	/* stop CP to protect MAIN_SEC in free_segment_range */
- 	f2fs_lock_op(sbi);
-+
-+	spin_lock(&sbi->stat_lock);
-+	if (shrunk_blocks + valid_user_blocks(sbi) +
-+		sbi->current_reserved_blocks + sbi->unusable_block_count +
-+		F2FS_OPTION(sbi).root_reserved_blocks > sbi->user_block_count)
-+		err = -ENOSPC;
-+	spin_unlock(&sbi->stat_lock);
-+
-+	if (err)
-+		goto out_unlock;
-+
- 	err = free_segment_range(sbi, secs, true);
-+
-+out_unlock:
- 	f2fs_unlock_op(sbi);
- 	up_write(&sbi->gc_lock);
- 	if (err)
++#ifdef CONFIG_F2FS_FS_COMPRESSION
+ static inline void f2fs_show_compress_options(struct seq_file *seq,
+ 							struct super_block *sb)
+ {
+@@ -1665,6 +1666,7 @@ static inline void f2fs_show_compress_options(struct seq_file *seq,
+ 	else if (F2FS_OPTION(sbi).compress_mode == COMPR_MODE_USER)
+ 		seq_printf(seq, ",compress_mode=%s", "user");
+ }
++#endif
+ 
+ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ {
 -- 
 2.29.2
 
