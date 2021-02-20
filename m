@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31757C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Feb 2021 09:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387D7C433E6
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Feb 2021 09:39:11 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E270164ED7
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Feb 2021 09:39:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E270164ED7
+	by mail.kernel.org (Postfix) with ESMTPS id E90FA64E2F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Feb 2021 09:39:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E90FA64E2F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lDOjF-0006A6-Jv; Sat, 20 Feb 2021 09:39:09 +0000
+	id 1lDOjG-0006Xf-Kp; Sat, 20 Feb 2021 09:39:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lDOjE-00069y-79
+ (envelope-from <yuchao0@huawei.com>) id 1lDOjE-0006XF-7B
  for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Feb 2021 09:39:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KpmEHUlt4nvFcwx3SBN1s9cI6nwQWvXLmnnAFSkCiq4=; b=VoA1kfoKTUcXCfBmyJqGefZaeN
- 0gB2unP/M61NFKXk6JQk6B5p3045uOpeyzcSq8O/438WbfxqXG4vZt6fTYu8WchcRSPLZ3joDXlp6
- hdnDjVqKc281jyS9Oq6TlKtF5NFWH7eb5s3vLWSwAj3luClAIx1zs1atgsMAL/nleTWo=;
+ bh=/v0cwuG0ILIPLuSAOt1BSoLx/Db5cQkrAQlWGSva2Qs=; b=PD9RiSSrkbTk+Rq48zHDiSpAtI
+ ZGFil0dSraWOzw645FGF7brZFN8j4/C+ZfoMZI6oLlBxER1lxKSP4MHpXrpiCWqyDABWTjFKEoSNQ
+ GfKag+oZvQTabl4MxBWu09Thea6zfe+MjbaTYeriicwhMiic6SQItYo1x6+mo9k/dCcM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -42,32 +42,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KpmEHUlt4nvFcwx3SBN1s9cI6nwQWvXLmnnAFSkCiq4=; b=JZriVH5RAbtUfPPxxSbtHyejI3
- 3G9hI2c6aWKJpzLjP/Dfdhq4ueXse4j9lIQ8D4KYaf1xE+PL3lNcGMA5ah0q/6/qicIFhIKmk3cAC
- GPNSv7Fzcun/Jj3K3kZ32BoLec5UeLreeOaMDGrosX0Au3qAFQUqkDtussBdRexokugQ=;
+ bh=/v0cwuG0ILIPLuSAOt1BSoLx/Db5cQkrAQlWGSva2Qs=; b=INrqAcVUrPsm265cLZ8fRlazZM
+ MPJZk+ZAvYC8GWdoCiDmTJ4KXcZ4FEDLYE9CvNkquyiDFNfRPQZ0ogDcnT0us60bBsT0FhYnpXEqe
+ iSdOwQeSGHTq5maJnTAE0J/T0dwT7ohpXm3bvZkoVeOc6VEStWY+DBiidzRUtTqwzULo=;
 Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lDOj9-00GO9O-9L
+ id 1lDOj9-00GO9N-NL
  for linux-f2fs-devel@lists.sourceforge.net; Sat, 20 Feb 2021 09:39:08 +0000
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DjNdc0xhvz169WF;
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DjNdc0V3Dz1695F;
  Sat, 20 Feb 2021 17:37:24 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.498.0; Sat, 20 Feb 2021 17:38:45 +0800
+ 14.3.498.0; Sat, 20 Feb 2021 17:38:46 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Sat, 20 Feb 2021 17:38:42 +0800
-Message-ID: <20210220093843.64379-2-yuchao0@huawei.com>
+Date: Sat, 20 Feb 2021 17:38:43 +0800
+Message-ID: <20210220093843.64379-3-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210220093843.64379-1-yuchao0@huawei.com>
 References: <20210220093843.64379-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1lDOj9-00GO9O-9L
-Subject: [f2fs-dev] [PATCH 2/3] f2fs: remove unused FORCE_FG_GC macro
+X-Headers-End: 1lDOj9-00GO9N-NL
+Subject: [f2fs-dev] [PATCH 3/3] f2fs: update comments for explicit memory
+ barrier
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,31 +85,49 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-FORCE_FG_GC was introduced by commit 6aefd93b0137 ("f2fs: introduce
-background_gc=sync mount option"), but never be used, remove it.
+Add more detailed comments for explicit memory barrier used by
+f2fs, in order to enhance code readability.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.h | 2 --
- 1 file changed, 2 deletions(-)
+ fs/f2fs/checkpoint.c | 6 +++++-
+ fs/f2fs/segment.c    | 6 +++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 229814b4f4a6..144980b62f9e 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -172,12 +172,10 @@ enum {
- /*
-  * BG_GC means the background cleaning job.
-  * FG_GC means the on-demand cleaning job.
-- * FORCE_FG_GC means on-demand cleaning job in background.
-  */
- enum {
- 	BG_GC = 0,
- 	FG_GC,
--	FORCE_FG_GC,
- };
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 174a0819ad96..c75866cd72fa 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1818,7 +1818,11 @@ int f2fs_issue_checkpoint(struct f2fs_sb_info *sbi)
+ 	llist_add(&req.llnode, &cprc->issue_list);
+ 	atomic_inc(&cprc->queued_ckpt);
  
- /* for a function parameter to select a victim segment */
+-	/* update issue_list before we wake up issue_checkpoint thread */
++	/*
++	 * update issue_list before we wake up issue_checkpoint thread,
++	 * this smp_mb() pairs with another barrier in ___wait_event(),
++	 * see more details in comments of waitqueue_active().
++	 */
+ 	smp_mb();
+ 
+ 	if (waitqueue_active(&cprc->ckpt_wait_queue))
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 2190910c68b0..2d5a82c4ca15 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -663,7 +663,11 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi, nid_t ino)
+ 
+ 	llist_add(&cmd.llnode, &fcc->issue_list);
+ 
+-	/* update issue_list before we wake up issue_flush thread */
++	/*
++	 * update issue_list before we wake up issue_flush thread, this
++	 * smp_mb() pairs with another barrier in ___wait_event(), see
++	 * more details in comments of waitqueue_active().
++	 */
+ 	smp_mb();
+ 
+ 	if (waitqueue_active(&fcc->flush_wait_queue))
 -- 
 2.29.2
 
