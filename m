@@ -2,75 +2,71 @@ Return-Path: <SRS0=nBYv=HY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B3DC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Feb 2021 09:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D315DC433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Feb 2021 10:08:54 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6582664E09
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Feb 2021 09:35:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6582664E09
+	by mail.kernel.org (Postfix) with ESMTPS id 680DC614A5
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 Feb 2021 10:08:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 680DC614A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lE7cb-0000U4-BQ; Mon, 22 Feb 2021 09:35:17 +0000
+	id 1lE897-00008n-6o; Mon, 22 Feb 2021 10:08:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lE7ca-0000Tk-1b
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Feb 2021 09:35:16 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1lE88N-00006h-Ef
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Feb 2021 10:08:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AnXMhb5hiH723H9V/ffz3RMZC49Q3pxikyGOWWu7H70=; b=gydX4wiNgUz7YUaeH5WqcoreIK
- h7wMbHqZBif3bfOM2oV5rFUbsjM7C56njM5jVUeSGM4a+CJbXuui45ed3EPytTnvAep6U006StCF+
- wQNw1ljDVLLWXBwkciykipSdeGfn4O67UztS7JAVNhmyh+bwtnA5Ey3Cw3lpHouA1K+c=;
+ bh=jMJRNKISOBGNc0oBzZsf07QPtMcwmEMGeSu426xbN5s=; b=RcvjXyq3iB6cWxh7i66/QzBwyg
+ n49fmBL7GEDcGnxYwG4jhI8qrtBq60zTPvNXMfK+rBIXPD2XkrBiIlvo1UfKKfjmEpfcTE/TyCOwJ
+ jin4CcGQ0O5kvOfWRIQl4Kj5VvOOkPCdtKTQ92ChFedPbkuAZUnaJ0VEvlkDV5d+MbiA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=AnXMhb5hiH723H9V/ffz3RMZC49Q3pxikyGOWWu7H70=; b=NKqG7OG/h8/tOnctrEYCLryFaw
- V8zV0F2797YSBKNLFwKSFTJQImvl6EmD93Ed9vNI8uDPduZDCrMENCkfu+CBo2QbEZkJcI/kyIIvu
- mueAXq4fMdcyVaUBqeddiqd8RmhcNLjA/ffa9R+21XNdvXpC4zc6a8k90/zmxtFDZNi4=;
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=jMJRNKISOBGNc0oBzZsf07QPtMcwmEMGeSu426xbN5s=; b=C
+ ArKX6Kz6kk03lJn8Luyc943VPA7oNgIXlJFwbxUlc8dRtwwMDc28hJnlh8DL3ffGAD7TdcgxUxIxO
+ MPxSakl21NdEbcxssL62UQMplT86/YwOUcq3YID2KfQnFXatgvcEoPJB4oj0tXTgdlxHh5drtelWI
+ 8Awq/WT9orFIJFwI=;
 Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lE7cP-001260-5s
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Feb 2021 09:35:16 +0000
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DkcS06Gl3z16BRl;
- Mon, 22 Feb 2021 17:33:20 +0800 (CST)
-Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 22 Feb
- 2021 17:34:52 +0800
-To: Yehan Xu <yehanxu1@gmail.com>, <jaegeuk@kernel.org>, <chao@kernel.org>
-References: <1613963083-29332-1-git-send-email-yehanxu1@gmail.com>
+ id 1lE88H-0013wn-N8
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 22 Feb 2021 10:08:07 +0000
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Dkd9y69fqz16BRj;
+ Mon, 22 Feb 2021 18:06:14 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 22 Feb 2021 18:07:39 +0800
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <7e9adfa1-b72f-7e97-84e9-f5aa9542b690@huawei.com>
-Date: Mon, 22 Feb 2021 17:34:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+To: <jaegeuk@kernel.org>
+Date: Mon, 22 Feb 2021 18:07:33 +0800
+Message-ID: <20210222100733.120224-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <1613963083-29332-1-git-send-email-yehanxu1@gmail.com>
-Content-Language: en-US
-X-Originating-IP: [10.136.110.154]
+X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1lE7cP-001260-5s
-Subject: Re: [f2fs-dev] [PATCH] Documentation/ABI/testing: Fix a spelling
- error
+X-Headers-End: 1lE88H-0013wn-N8
+Subject: [f2fs-dev] [PATCH] f2fs: check discard command number before
+ traversing discard pending list
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,25 +78,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: xuyehan <xuyehan@xiaomi.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/2/22 11:04, Yehan Xu wrote:
-> From: xuyehan <xuyehan@xiaomi.com>
-> 
-> Delete the letter 'e' before 'number'
+In trim thread, let's add a condition to check discard command number
+before traversing discard pending list, it can avoid unneeded traversing
+if there is no discard command.
 
-The patch title should be: "f2fs: fix a spelling error"
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/segment.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> Signed-off-by: xuyehan <xuyehan@xiaomi.com>
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index deaf57e13125..1e674c117ce3 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1769,6 +1769,8 @@ static int issue_discard_thread(void *data)
+ 			wait_ms = dpolicy.max_interval;
+ 			continue;
+ 		}
++		if (!atomic_read(&dcc->discard_cmd_cnt))
++			continue;
+ 
+ 		if (sbi->gc_mode == GC_URGENT_HIGH)
+ 			__init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE, 1);
+-- 
+2.29.2
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
 
 
 _______________________________________________
