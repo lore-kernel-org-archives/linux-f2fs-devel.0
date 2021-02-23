@@ -2,39 +2,39 @@ Return-Path: <SRS0=ADZO=HZ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9A1C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Feb 2021 06:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E9BC433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Feb 2021 07:42:57 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4962964E2E
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Feb 2021 06:51:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4962964E2E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 12B1564E32
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Feb 2021 07:42:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12B1564E32
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lERXO-0005RV-GE; Tue, 23 Feb 2021 06:51:14 +0000
+	id 1lESLN-0006DF-6Y; Tue, 23 Feb 2021 07:42:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <masahiroy@kernel.org>) id 1lERXN-0005RJ-12
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Feb 2021 06:51:13 +0000
+ (envelope-from <geert.uytterhoeven@gmail.com>) id 1lESLM-0006D8-2b
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Feb 2021 07:42:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
  In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
  :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=i56WdVsWktzkTtf2ykDokTjRmIRG0eQTLJqtolZ9vCE=; b=ZFfjDdm64rudRJJ94fZdmqqhl5
- xdx6A8QcrkbsxRLnYrUbimZTw2OKpOpvlES44l3DqANgAWit9Ti5sHRlDQ6tJGrYAM62UA9aL1yvM
- zlTa5Zwf8P0jg7hhvrHD4hPvfjmKwJggZSPr+QKaOhjq6t7WE8C6zLlEP9FqCilfcm3Q=;
+ bh=WJFI5RyzuifHOR96lwKCSFonlTIiLRUIGVDJn5EnP2g=; b=m46+kJP45UVQpT7RGS+T+OMehz
+ 37HTSkuMa4RzSSTun//RP8BZUfRKWWHTdD00fVh7l5mXdufoEP7GSih0Ov+DJY/QcqCmX3+QG5fjj
+ 35Bhw19uPH/qm73VA/fvUNYvhOBpaRUkr+32f2LhKsGzie8u7TpdyOCEXp+SZNNM8Ez4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
@@ -42,51 +42,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=i56WdVsWktzkTtf2ykDokTjRmIRG0eQTLJqtolZ9vCE=; b=N6naDdd3HaZaReIkAWLgrlYrzx
- C0coGNeRaOGeQpNkMFe+b34nXEj/EImwejEXw1nKhwp3hVogYYsC1LVNRMPVpd4FjNTL63LjsrwiE
- gLzQOnOo9ehVsap5v/4/TNKOczNOldM5CjZrMpghr3R5gQXg/6BWeAoWM1u3bb8Wde88=;
-Received: from condef-06.nifty.com ([202.248.20.71])
+ bh=WJFI5RyzuifHOR96lwKCSFonlTIiLRUIGVDJn5EnP2g=; b=YLaYs8kfg8Ouc9HAjScEhW1gzU
+ DBXgQlD6fVu4LM+wnbx71Js3AfqU2aBdP3TLk5cAMn6AijANF6buG48GI5wkM/nM/Jmuwxw0+hS9M
+ ZsnG7CB/Z5Re+FVZxv5o+FkIhB5tVIfjSDqobRwtfg7GsrI/fG/D2V7SnuwYvY+OS0G0=;
+Received: from mail-oi1-f178.google.com ([209.85.167.178])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lERX9-0008VZ-GY
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Feb 2021 06:51:09 +0000
-Received: from conssluserg-06.nifty.com ([10.126.8.85])by condef-06.nifty.com
- with ESMTP id 11N6W1A8010206
- for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 23 Feb 2021 15:32:01 +0900
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180]) (authenticated)
- by conssluserg-06.nifty.com with ESMTP id 11N6VW6o018149
- for <linux-f2fs-devel@lists.sourceforge.net>; Tue, 23 Feb 2021 15:31:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 11N6VW6o018149
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
- s=dec2015msa; t=1614061893;
- bh=i56WdVsWktzkTtf2ykDokTjRmIRG0eQTLJqtolZ9vCE=;
- h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
- b=bMn+O73XeUcdtVzazgQOUUnCFTGNoqzHO52G1fKU3AYcFPdoMsa+SnBAGYFJXxBuU
- joDOSwDC05qeFq+/GBvV8oHx54neFXmw7x89GndwmpSvh+RMmRFPBZ2vOGbh0W0Vqi
- 9rwhsHury3Ddln67IDWvZiErLJEy4brOZNST5Jxtis00zaC2UWk4rMeJWDR15KtZFk
- +omPGxc1ph4wZu2YwYlzOwDOcvi9XoLD2fc3LEQCqu7e1U5PmLQVuh4OB4MMJJQPju
- i1x0T09RmZItk1TOq0mVFcUI8m4ZlTWU6tvAcJFmsg38HwfgjGng/e7orF7EMnToP4
- F2EcuBSr+EBLQ==
-X-Nifty-SrcIP: [209.85.214.180]
-Received: by mail-pl1-f180.google.com with SMTP id w18so6078523plc.12
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
+ id 1lESLD-0001aR-BA
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Feb 2021 07:42:51 +0000
+Received: by mail-oi1-f178.google.com with SMTP id d20so16759509oiw.10
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 22 Feb 2021 22:31:32 -0800 (PST)
-X-Gm-Message-State: AOAM533gCm3N4f4fFgSKAI3658LEQppO/wFlax90KzDDODG9C1m0xp/u
- m0sC+DXgU8NFjvxk/WHuaqercNDEeiRnztPBveE=
-X-Google-Smtp-Source: ABdhPJx8LCxSkJhDZ9fEucr6DWMc5kde3IXJe9NZMo9kEKJtiYNWeidCR1G8RePwZm8NFIXjoBOzcFv1N8CRuKMGY38=
-X-Received: by 2002:a17:90a:5510:: with SMTP id
- b16mr27655654pji.87.1614061891643; 
- Mon, 22 Feb 2021 22:31:31 -0800 (PST)
+ Mon, 22 Feb 2021 23:42:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20161025;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc;
+ bh=WJFI5RyzuifHOR96lwKCSFonlTIiLRUIGVDJn5EnP2g=;
+ b=DZaU1+l9qvAu3m6nfrgq97IDgppuLkqp6i8DsFnGjqMB1P/aRqWwXauRb9X8+6nlXt
+ n1hz7EgTkdcLY/ISAltz6N1Zn9/mUI8MgNQyYZYw7/TXJWRA3MmSDmR2cxroUrYRPB8N
+ PIgqEGcd91Fp2QA74kCXcFBja0fQeK9VV5VG9sJpXJ7TGplooFM33VL6A2baJPgT3ns/
+ irtPSNFPS7sEz/ok4Sc325PGZYMmWhuRe816aMNJ3lm3iH8dNpR7ofOCSwSIVIC1IVF5
+ GfPWBVhpeDMGfUAitzBk3WtJSq9jDZeAk2ZPsZnbpECa3GJvH3vMUUfd0nDLDqW1SLqJ
+ 8ylA==
+X-Gm-Message-State: AOAM530B0aRoJrzTZYbZmDZEC3eIclHXjzy9sDBNUvXgoa3pEoFJKmic
+ 7L1PLMqL9T4iOdIoiaWknL4GcP6aSnpXUxXbqMI=
+X-Google-Smtp-Source: ABdhPJxwLA+IJ2oFZ0i1C36eBSf9oCeHNZMyyblRWQXyCdK6Xd17NBm7c6MpnurOGmZ/pbWEvX+1HBvWalN3LSvmV8U=
+X-Received: by 2002:aca:d908:: with SMTP id q8mr17857257oig.148.1614066157844; 
+ Mon, 22 Feb 2021 23:42:37 -0800 (PST)
 MIME-Version: 1.0
 References: <20210222125916.4168804-1-geert@linux-m68k.org>
-In-Reply-To: <20210222125916.4168804-1-geert@linux-m68k.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 23 Feb 2021 15:30:54 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARxO6O7aRwzJ+i9hEGvWBTCukpwGBC6B79c7UdO=f0Ymw@mail.gmail.com>
-Message-ID: <CAK7LNARxO6O7aRwzJ+i9hEGvWBTCukpwGBC6B79c7UdO=f0Ymw@mail.gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-X-Headers-End: 1lERX9-0008VZ-GY
+ <CAK7LNARxO6O7aRwzJ+i9hEGvWBTCukpwGBC6B79c7UdO=f0Ymw@mail.gmail.com>
+In-Reply-To: <CAK7LNARxO6O7aRwzJ+i9hEGvWBTCukpwGBC6B79c7UdO=f0Ymw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 23 Feb 2021 08:42:26 +0100
+Message-ID: <CAMuHMdX-t4Z27RnWn0Sp1AoO3A=+aT8GXkcGC5gSArtm+W9w1Q@mail.gmail.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+X-Headers-End: 1lESLD-0001aR-BA
 Subject: Re: [f2fs-dev] [PATCH] f2fs: compress: Allow modular
  (de)compression algorithms
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -108,157 +99,105 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 22, 2021 at 9:59 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> If F2FS_FS is modular, enabling the compressions options
-> F2FS_FS_{LZ4,LZ4HZ,LZO,LZORLE,ZSTD} will make the (de)compression
-> algorithms {LZ4,LZ4HC,LZO,ZSTD}_{,DE}COMPRESS builtin instead of
-> modular, as the former depend on an intermediate boolean
-> F2FS_FS_COMPRESSION, which in-turn depends on tristate F2FS_FS.
->
-> Indeed, if a boolean symbol A depends directly on a tristate symbol B
-> and selects another tristate symbol C:
->
->     tristate B
->
->     tristate C
->
->     bool A
->       depends on B
->       select C
->
-> and B is modular, then C will also be modular.
->
-> However, if there is an intermediate boolean D in the dependency chain
-> between A and B:
->
->     tristate B
->
->     tristate C
->
->     bool D
->       depends on B
->
->     bool A
->       depends on D
->       select C
->
-> then the modular state won't propagate from B to C, and C will be
-> builtin instead of modular.
->
-> Fix this by making the various compression options depend directly on
-> F2FS_FS using a big if/endif block.  Drop the now superfluous
-> dependencies on F2FS_FS from individual symbols.
->
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> Perhaps the propagation logic in Kconfig should be fixed instead?
-> Else people may reintroduce this issue when removing seemingly-unneeded
-> dependencies.
+Hi Yamada-san,
 
-I checked the code in menu_finalize(), and this seems to work like this.
-
-I discussed the oddity of the select behavior before
-(https://lore.kernel.org/linux-kbuild/e1a6228d-1341-6264-d97a-e2bd52a65c82@infradead.org/),
-but I was not confident about what the right direction was.
-
-
-Anyway, the behavior is obscure from the current code.
-
-If you want to make this more robust,
-you can write as follows:
-
-config F2FS_FS
-        tristate "F2FS filesystem support"
-        depends on BLOCK
-        select NLS
-        select CRYPTO
-        select CRYPTO_CRC32
-        select F2FS_FS_XATTR if FS_ENCRYPTION
-        select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
-        select LZO_COMPRESS if F2FS_FS_LZO
-        select LZO_DECOMPRESS if F2FS_FS_LZO
-        select LZ4_COMPRESS if F2FS_FS_LZ4
-        select LZ4_DECOMPRESS if F2FS_FS_LZ4
-        select LZ4HC_COMPRESS if F2FS_FS_LZ4HC
-        select ZSTD_COMPRESS if F2FS_FS_ZSTD
-        select ZSTD_DECOMPRESS if F2FS_FS_ZSTD
-
-The code is a bit clumsy, but it is clear
-that the module (F2FS_FS) is selecting the
-compress/decompress libraries.
-
-
-
-
-
-
-> ---
->  fs/f2fs/Kconfig | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+On Tue, Feb 23, 2021 at 7:31 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> On Mon, Feb 22, 2021 at 9:59 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > If F2FS_FS is modular, enabling the compressions options
+> > F2FS_FS_{LZ4,LZ4HZ,LZO,LZORLE,ZSTD} will make the (de)compression
+> > algorithms {LZ4,LZ4HC,LZO,ZSTD}_{,DE}COMPRESS builtin instead of
+> > modular, as the former depend on an intermediate boolean
+> > F2FS_FS_COMPRESSION, which in-turn depends on tristate F2FS_FS.
+> >
+> > Indeed, if a boolean symbol A depends directly on a tristate symbol B
+> > and selects another tristate symbol C:
+> >
+> >     tristate B
+> >
+> >     tristate C
+> >
+> >     bool A
+> >       depends on B
+> >       select C
+> >
+> > and B is modular, then C will also be modular.
+> >
+> > However, if there is an intermediate boolean D in the dependency chain
+> > between A and B:
+> >
+> >     tristate B
+> >
+> >     tristate C
+> >
+> >     bool D
+> >       depends on B
+> >
+> >     bool A
+> >       depends on D
+> >       select C
+> >
+> > then the modular state won't propagate from B to C, and C will be
+> > builtin instead of modular.
+> >
+> > Fix this by making the various compression options depend directly on
+> > F2FS_FS using a big if/endif block.  Drop the now superfluous
+> > dependencies on F2FS_FS from individual symbols.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > ---
+> > Perhaps the propagation logic in Kconfig should be fixed instead?
+> > Else people may reintroduce this issue when removing seemingly-unneeded
+> > dependencies.
 >
-> diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-> index 62e638a49bbf089a..20a82ecb72b42f84 100644
-> --- a/fs/f2fs/Kconfig
-> +++ b/fs/f2fs/Kconfig
-> @@ -20,9 +20,10 @@ config F2FS_FS
+> I checked the code in menu_finalize(), and this seems to work like this.
 >
->           If unsure, say N.
+> I discussed the oddity of the select behavior before
+> (https://lore.kernel.org/linux-kbuild/e1a6228d-1341-6264-d97a-e2bd52a65c82@infradead.org/),
+> but I was not confident about what the right direction was.
 >
-> +if F2FS_FS
-> +
->  config F2FS_STAT_FS
->         bool "F2FS Status Information"
-> -       depends on F2FS_FS
->         default y
->         help
->           /sys/kernel/debug/f2fs/ contains information about all the partitions
-> @@ -35,7 +36,6 @@ config F2FS_STAT_FS
 >
->  config F2FS_FS_XATTR
->         bool "F2FS extended attributes"
-> -       depends on F2FS_FS
->         default y
->         help
->           Extended attributes are name:value pairs associated with inodes by
-> @@ -70,7 +70,6 @@ config F2FS_FS_SECURITY
+> Anyway, the behavior is obscure from the current code.
 >
->  config F2FS_CHECK_FS
->         bool "F2FS consistency checking feature"
-> -       depends on F2FS_FS
->         help
->           Enables BUG_ONs which check the filesystem consistency in runtime.
+> If you want to make this more robust,
+> you can write as follows:
 >
-> @@ -78,7 +77,6 @@ config F2FS_CHECK_FS
+> config F2FS_FS
+>         tristate "F2FS filesystem support"
+>         depends on BLOCK
+>         select NLS
+>         select CRYPTO
+>         select CRYPTO_CRC32
+>         select F2FS_FS_XATTR if FS_ENCRYPTION
+>         select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
+>         select LZO_COMPRESS if F2FS_FS_LZO
+>         select LZO_DECOMPRESS if F2FS_FS_LZO
+>         select LZ4_COMPRESS if F2FS_FS_LZ4
+>         select LZ4_DECOMPRESS if F2FS_FS_LZ4
+>         select LZ4HC_COMPRESS if F2FS_FS_LZ4HC
+>         select ZSTD_COMPRESS if F2FS_FS_ZSTD
+>         select ZSTD_DECOMPRESS if F2FS_FS_ZSTD
 >
->  config F2FS_FAULT_INJECTION
->         bool "F2FS fault injection facility"
-> -       depends on F2FS_FS
->         help
->           Test F2FS to inject faults such as ENOMEM, ENOSPC, and so on.
->
-> @@ -86,7 +84,6 @@ config F2FS_FAULT_INJECTION
->
->  config F2FS_FS_COMPRESSION
->         bool "F2FS compression feature"
-> -       depends on F2FS_FS
->         help
->           Enable filesystem-level compression on f2fs regular files,
->           multiple back-end compression algorithms are supported.
-> @@ -137,3 +134,5 @@ config F2FS_FS_LZORLE
->         default y
->         help
->           Support LZO-RLE compress algorithm, if unsure, say Y.
-> +
-> +endif
-> --
-> 2.25.1
->
+> The code is a bit clumsy, but it is clear
+> that the module (F2FS_FS) is selecting the
+> compress/decompress libraries.
 
+Actually the above is what I tried first ;-)  Works fine.
 
---
-Best Regards
-Masahiro Yamada
+Then I started to look for similar cases in other file systems (e.g.
+EROFS_FS_ZIP), and discovered the issue doesn't happen there, which
+sparked my investigation.  So I settled on the direct dependency,
+because it keeps all compression-related logic together.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
 
 _______________________________________________
