@@ -2,78 +2,69 @@ Return-Path: <SRS0=fkhx=IA=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64958C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Mar 2021 20:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF50C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  2 Mar 2021 20:07:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 188A364F2E;
-	Tue,  2 Mar 2021 20:05:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 188A364F2E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id BDECC64F2E;
+	Tue,  2 Mar 2021 20:07:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDECC64F2E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lHBGv-0006q4-0g; Tue, 02 Mar 2021 20:05:33 +0000
+	id 1lHBIk-0006xz-F1; Tue, 02 Mar 2021 20:07:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1lHBGi-0006ox-Dz
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Mar 2021 20:05:20 +0000
+ (envelope-from <colin.king@canonical.com>) id 1lHBIi-0006xr-QX
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Mar 2021 20:07:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Date:Message-ID:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=N/7E2Ynz3RwXOxU0zaLTinAWcLRgNY1bBsWy9+VcIHM=; b=F2EENl8OqsJ+dvR7GCnwSOGL9Z
- 2nz2Nsnpbz1dHMXRfoakanbYE1imsOiXY1wI6m0kyOk14ZVUcCBjMkNjuL5iEerAUaUA5s2rYk1C2
- BkzK9ykprqMhxs/HaAloCXmnhtyV1ZsZcO812S8ZPnvdi11M+hsmUOgFJLQEi7Bw4kB0=;
+ bh=NeTlkZk3hI/k7ou7Q2bN5AgN3kOgCc096l4kbFtHQP8=; b=d2+5ZGp7aFMkJrVuyhSG4+ylZ/
+ Kqi6pJtEC/0QPQFfEqfWSt8RQrtSKI3DLiP/zyUZcjBcFtB3mBOK4hUeOWiBh+GUA2f8D3nqflwmd
+ 2Rqp4JRWfZMvt7A9pRqD/hp9DYZhiaY50tlGgctZJ8g9ihc8E9dokUMRLL99BjFpKvWA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=N/7E2Ynz3RwXOxU0zaLTinAWcLRgNY1bBsWy9+VcIHM=; b=dvVt0ePdfJdpltmV91K54mzccY
- XL1hg64SxNQuGvnaVu0NcLdDUtRvnvr5U8VxZdl/ThFuIWvKQrlwes56Ionta/vqA1AunLk5MdfD0
- YAr72Z4a1iHq05JVxRo1WxCrYHS3Z55svVPviHk5fWCQTgr9HMPSVRBvidLAdUcNGCVA=;
-Received: from mail.kernel.org ([198.145.29.99])
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Message-ID:
+ Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=NeTlkZk3hI/k7ou7Q2bN5AgN3kOgCc096l4kbFtHQP8=; b=l
+ CYNB05nI6jDUEpzZctSda/sBMzyf14N/glVxCjOrNtAymDJhMaTAARlfZxQhrOj462gRvkzEDg4P+
+ 4+AwzjXCUw8lgIrEy2SMxUa89+6jfk9eDdqLZl8qsLWYT1hVV1J7J4IwVVp1NDEygshAQhkMH6Rbg
+ qbHVLmCa/PKHO7AM=;
+Received: from youngberry.canonical.com ([91.189.89.112])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lHBGX-00Be2D-Tc
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Mar 2021 20:05:19 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3CF6164F21;
- Tue,  2 Mar 2021 20:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1614715504;
- bh=PsxMo4HzObRVzmAihudWFkfU25b1OePLRuCHAZt3lws=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=gFYkSokSkZIrOsAhufSj4OgDGiZzR1QFqw6ap7Q8lsdWmzsGRrm8FoKp4gA60lJcp
- mPW8rZYuJQlmL7QpSElzGmJ5ikWWo6rNVZvfm0eFqML5xylkOrq4XWgt0/zxFZM2/M
- v1GR4H0YUyQb7pBds78dOcYpSyi9ffAnm2Wjv75UUIpTN74QHFX06e34cvRhC+JJEo
- q8v/BnsoP+QZdjN9ZZiNAxnc1a5LIaaWYyEwtCsGBju9Bnlx/s/5MY6nzMrtpfqqrR
- bV7j415NAb9Jq/xdjU/nSBcAxBT0enq51G2Hv3tb68MnP4TxLAX8IVg86vMwT9Rs5M
- 4B/dWwkV/klVw==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Tue,  2 Mar 2021 12:04:19 -0800
-Message-Id: <20210302200420.137977-2-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210302200420.137977-1-ebiggers@kernel.org>
-References: <20210302200420.137977-1-ebiggers@kernel.org>
+ (TLSv1.2:ECDHE-RSA-AES128-SHA:128) (Exim 4.92.2) id 1lHBIa-00Be8x-Mt
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 02 Mar 2021 20:07:24 +0000
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+ by youngberry.canonical.com with esmtpsa
+ (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128) (Exim 4.86_2)
+ (envelope-from <colin.king@canonical.com>)
+ id 1lHBIT-0008BB-AE; Tue, 02 Mar 2021 20:07:09 +0000
+From: Colin Ian King <colin.king@canonical.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>,
+ Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <9fcca081-9a60-8ae3-5cac-d8aa38c38ff2@canonical.com>
+Date: Tue, 2 Mar 2021 20:07:08 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-X-Headers-End: 1lHBGX-00Be2D-Tc
-Subject: [f2fs-dev] [PATCH 1/2] ext4: fix error handling in
- ext4_end_enable_verity()
+Content-Language: en-US
+X-Headers-End: 1lHBIa-00Be8x-Mt
+Subject: [f2fs-dev] f2fs_convert_inline_inode causing rebalance based on
+ random uninitialized value in dn.node_changed
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,152 +76,115 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fscrypt@vger.kernel.org, stable@vger.kernel.org
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+Hi,
 
-ext4 didn't properly clean up if verity failed to be enabled on a file:
+Static analysis on linux-next detected a potential uninitialized
+variable dn.node_changed that does not get set when a call to
+f2fs_get_node_page() fails.  This uninitialized value gets used in the
+call to f2fs_balance_fs() that may or not may not balances dirty node
+and dentry pages depending on the uninitialized state of the variable.
 
-- It left verity metadata (pages past EOF) in the page cache, which
-  would be exposed to userspace if the file was later extended.
+I believe the issue was introduced by commit:
 
-- It didn't truncate the verity metadata at all (either from cache or
-  from disk) if an error occurred while setting the verity bit.
+commit 2a3407607028f7c780f1c20faa4e922bf631d340
+Author: Jaegeuk Kim <jaegeuk@kernel.org>
+Date:   Tue Dec 22 13:23:35 2015 -0800
 
-Fix these bugs by adding a call to truncate_inode_pages() and ensuring
-that we truncate the verity metadata (both from cache and from disk) in
-all error paths.  Also rework the code to cleanly separate the success
-path from the error paths, which makes it much easier to understand.
+    f2fs: call f2fs_balance_fs only when node was changed
 
-Reported-by: Yunlei He <heyunlei@hihonor.com>
-Fixes: c93d8f885809 ("ext4: add basic fs-verity support")
-Cc: <stable@vger.kernel.org> # v5.4+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/ext4/verity.c | 90 ++++++++++++++++++++++++++++++------------------
- 1 file changed, 56 insertions(+), 34 deletions(-)
 
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index 5b7ba8f711538..acb12441c549b 100644
---- a/fs/ext4/verity.c
-+++ b/fs/ext4/verity.c
-@@ -201,55 +201,77 @@ static int ext4_end_enable_verity(struct file *filp, const void *desc,
- 	struct inode *inode = file_inode(filp);
- 	const int credits = 2; /* superblock and inode for ext4_orphan_del() */
- 	handle_t *handle;
-+	struct ext4_iloc iloc;
- 	int err = 0;
--	int err2;
- 
--	if (desc != NULL) {
--		/* Succeeded; write the verity descriptor. */
--		err = ext4_write_verity_descriptor(inode, desc, desc_size,
--						   merkle_tree_size);
--
--		/* Write all pages before clearing VERITY_IN_PROGRESS. */
--		if (!err)
--			err = filemap_write_and_wait(inode->i_mapping);
--	}
-+	/*
-+	 * If an error already occurred (which fs/verity/ signals by passing
-+	 * desc == NULL), then only clean-up is needed.
-+	 */
-+	if (desc == NULL)
-+		goto cleanup;
- 
--	/* If we failed, truncate anything we wrote past i_size. */
--	if (desc == NULL || err)
--		ext4_truncate(inode);
-+	/* Append the verity descriptor. */
-+	err = ext4_write_verity_descriptor(inode, desc, desc_size,
-+					   merkle_tree_size);
-+	if (err)
-+		goto cleanup;
- 
- 	/*
--	 * We must always clean up by clearing EXT4_STATE_VERITY_IN_PROGRESS and
--	 * deleting the inode from the orphan list, even if something failed.
--	 * If everything succeeded, we'll also set the verity bit in the same
--	 * transaction.
-+	 * Write all pages (both data and verity metadata).  Note that this must
-+	 * happen before clearing EXT4_STATE_VERITY_IN_PROGRESS; otherwise pages
-+	 * beyond i_size won't be written properly.  For crash consistency, this
-+	 * also must happen before the verity inode flag gets persisted.
- 	 */
-+	err = filemap_write_and_wait(inode->i_mapping);
-+	if (err)
-+		goto cleanup;
- 
--	ext4_clear_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
-+	/*
-+	 * Finally, set the verity inode flag and remove the inode from the
-+	 * orphan list (in a single transaction).
-+	 */
- 
- 	handle = ext4_journal_start(inode, EXT4_HT_INODE, credits);
- 	if (IS_ERR(handle)) {
--		ext4_orphan_del(NULL, inode);
--		return PTR_ERR(handle);
-+		err = PTR_ERR(handle);
-+		goto cleanup;
- 	}
- 
--	err2 = ext4_orphan_del(handle, inode);
--	if (err2)
--		goto out_stop;
-+	err = ext4_orphan_del(handle, inode);
-+	if (err)
-+		goto stop_and_cleanup;
- 
--	if (desc != NULL && !err) {
--		struct ext4_iloc iloc;
-+	err = ext4_reserve_inode_write(handle, inode, &iloc);
-+	if (err)
-+		goto stop_and_cleanup;
-+
-+	ext4_set_inode_flag(inode, EXT4_INODE_VERITY);
-+	ext4_set_inode_flags(inode, false);
-+	err = ext4_mark_iloc_dirty(handle, inode, &iloc);
-+	if (err)
-+		goto stop_and_cleanup;
- 
--		err = ext4_reserve_inode_write(handle, inode, &iloc);
--		if (err)
--			goto out_stop;
--		ext4_set_inode_flag(inode, EXT4_INODE_VERITY);
--		ext4_set_inode_flags(inode, false);
--		err = ext4_mark_iloc_dirty(handle, inode, &iloc);
--	}
--out_stop:
- 	ext4_journal_stop(handle);
--	return err ?: err2;
-+
-+	ext4_clear_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
-+	return 0;
-+
-+
-+stop_and_cleanup:
-+	ext4_journal_stop(handle);
-+cleanup:
-+	/*
-+	 * Verity failed to be enabled, so clean up by truncating any verity
-+	 * metadata that was written beyond i_size (both from cache and from
-+	 * disk), removing the inode from the orphan list (if it wasn't done
-+	 * already), and clearing EXT4_STATE_VERITY_IN_PROGRESS.
-+	 */
-+	truncate_inode_pages(inode->i_mapping, inode->i_size);
-+	ext4_truncate(inode);
-+	ext4_orphan_del(NULL, inode);
-+	ext4_clear_inode_state(inode, EXT4_STATE_VERITY_IN_PROGRESS);
-+	return err;
- }
- 
- static int ext4_get_verity_descriptor_location(struct inode *inode,
--- 
-2.30.1
+The analysis is a follows:
+
+184 int f2fs_convert_inline_inode(struct inode *inode)
+185 {
+186        struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+
+   1. var_decl: Declaring variable dn without initializer.
+
+187        struct dnode_of_data dn;
+
+   NOTE dn is not initialized here.
+
+188        struct page *ipage, *page;
+189        int err = 0;
+190
+
+   2. Condition !f2fs_has_inline_data(inode), taking false branch.
+   3. Condition f2fs_hw_is_readonly(sbi), taking false branch.
+   4. Condition f2fs_readonly(sbi->sb), taking false branch.
+
+191        if (!f2fs_has_inline_data(inode) ||
+192                        f2fs_hw_is_readonly(sbi) ||
+f2fs_readonly(sbi->sb))
+193                return 0;
+194
+195        err = dquot_initialize(inode);
+
+   5. Condition err, taking false branch.
+
+196        if (err)
+197                return err;
+198
+199        page = f2fs_grab_cache_page(inode->i_mapping, 0, false);
+
+   6. Condition !page, taking false branch.
+
+200        if (!page)
+201                return -ENOMEM;
+202
+203        f2fs_lock_op(sbi);
+204
+205        ipage = f2fs_get_node_page(sbi, inode->i_ino);
+
+   7. Condition IS_ERR(ipage), taking true branch.
+
+206        if (IS_ERR(ipage)) {
+207                err = PTR_ERR(ipage);
+
+   8. Jumping to label out.
+
+208                goto out;
+209        }
+210
+
+   NOTE: set_new_dnode memset's dn so sets the flag to false, but we
+don't get to this memset if IS_ERR(ipage) above is true.
+
+211        set_new_dnode(&dn, inode, ipage, ipage, 0);
+212
+213        if (f2fs_has_inline_data(inode))
+214                err = f2fs_convert_inline_page(&dn, page);
+215
+216        f2fs_put_dnode(&dn);
+217 out:
+218        f2fs_unlock_op(sbi);
+219
+220        f2fs_put_page(page, 1);
+221
+
+Uninitialized scalar variable:
+
+   9. uninit_use_in_call: Using uninitialized value dn.node_changed when
+calling f2fs_balance_fs.
+
+222        f2fs_balance_fs(sbi, dn.node_changed);
+223
+224        return err;
+225 }
+
+I think a suitable fix will be to set dn.node_changed to false on in
+line 207-208 but I'm concerned if I'm missing something subtle to the
+rebalancing if I do this.
+
+Comments?
+
+Colin
+
 
 
 
