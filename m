@@ -1,72 +1,73 @@
-Return-Path: <SRS0=WIjR=ID=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=PjF1=IE=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CAF8C433E6
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  5 Mar 2021 10:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0694C433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  6 Mar 2021 18:54:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 846AD64FE9
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  5 Mar 2021 10:00:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 846AD64FE9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 69ED2650DB;
+	Sat,  6 Mar 2021 18:54:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69ED2650DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=beroal.in.ua
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lI7Fu-0000GT-OM; Fri, 05 Mar 2021 10:00:22 +0000
+	id 1lIc4e-0003O5-O7; Sat, 06 Mar 2021 18:54:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lI7CM-0008T0-4M
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Mar 2021 09:56:42 +0000
+ (envelope-from <me@beroal.in.ua>) id 1lIc4d-0003Ny-G1
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 06 Mar 2021 18:54:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=m9+Emy4FUJ25L9S9vd3Vsfq9wUSYFR4RLRxMK8pRmD4=; b=CuFi/bsWRq6896W+0h19LnnN3G
- lPLYRcDUIfxWAO8wbMIYn8tOZceccLLK+xTm4b9kaa5V6w2VCRfgjLL4lxBntI3vPa9Wn/ZBfK1Jm
- Bs6f+u/J9cSfQpFIktBob/Iqp0JsQLnaxPMDwfZLBx8onO902hEDHFU/MrUhzw9Vs1fw=;
+ bh=tW6+hSvxBxT7dZ8qAWP4iWQTU2ga1qotXDQmrzhkX8Y=; b=fCtPjrky/omXJpbxkNWGgsjgUt
+ 0qjlPEx8iH6ErVm3iO3XxCTKv5IoI8++WAGH285/TGuv49o3vzNKAzQwteSjvYpWVj4Wykm5Kslay
+ Cqi/i8z+P6LKAkPrAh6kEVq9Re/uarPKKngsKXgMBYCZ1U7yQQYztTQ5iiN4AJFvCTS0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Message-ID:
+ Subject:From:To:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=m9+Emy4FUJ25L9S9vd3Vsfq9wUSYFR4RLRxMK8pRmD4=; b=V
- y2rYXsGw0cpHyqXL8pvcVa5oIBtirVEESfhDl1UqNLOfsIak2j/n9xekvk3ZSp21axPzR+vWKH0CZ
- psV+Z/byoszTL8Dp0z7HdhjhtMC9qBH+bZsNLT9a++jUFuPOGso0LvLfty/d60rUI+2DW+5NEEgP9
- 2JLKhrX2+iSMbUG8=;
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lI7CE-00ErYG-Fx
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 05 Mar 2021 09:56:42 +0000
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DsNPT1VkYz16G97;
- Fri,  5 Mar 2021 17:54:37 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 5 Mar 2021 17:56:12 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Fri, 5 Mar 2021 17:56:01 +0800
-Message-ID: <20210305095601.96591-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.29.2
+ List-Owner:List-Archive; bh=tW6+hSvxBxT7dZ8qAWP4iWQTU2ga1qotXDQmrzhkX8Y=; b=N
+ Wl5VES798SCaLaNBEK3hmTfkNBd7eQDXwJ1XcGIl0yYYRGVFNK3N3nmssp6CFwiXzaciAMFeDjN/U
+ o/2JX0wtRnFCn6EvDYCMHTdPBw/WdFQtlpifzd9mWUqu1EOPd08xY7Pu6UenvqQG/vAHOHw8YTudM
+ RmSVEhwCWMf2tCO0=;
+Received: from smtp-1.1gb.com.ua ([195.234.4.10] helo=u1.1gb.ua)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.92.3)
+ id 1lIc4U-0004A1-CH
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 06 Mar 2021 18:54:47 +0000
+Received: from Spooler by u1.1gb.ua (Mercury/32 v4.52) ID MO006572;
+ 6 Mar 2021 20:54:38 +0200
+Received: from spooler by mail-u1-robots.in-solve.hidden (Mercury/32 v4.52);
+ 6 Mar 2021 20:34:05 +0200
+Received: from ul1.1gb.ua (195.234.4.24) by smtp-1.1gb.com.ua (Mercury/32
+ v4.52) with ESMTP ID MG006571; 6 Mar 2021 20:34:03 +0200
+Received: from [192.162.141.53] ([192.162.141.53]) (authenticated bits=0)
+ by ul1.1gb.ua (8.14.9/8.14.9) with ESMTP id 126IY2ni002582
+ (version=TLSv1/SSLv3 cipher=AES128-GCM-SHA256 bits=128 verify=NO)
+ for <linux-f2fs-devel@lists.sourceforge.net>; Sat, 6 Mar 2021 20:34:02 +0200
+To: linux-f2fs-devel@lists.sourceforge.net
+From: me@beroal.in.ua
+Message-ID: <9894d09e-4e10-646a-0815-8e0f9f463486@beroal.in.ua>
+Date: Sat, 6 Mar 2021 20:34:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1lI7CE-00ErYG-Fx
-Subject: [f2fs-dev] [PATCH] f2fs: fix to align to section for fallocate() on
- pinned file
+Content-Language: uk-UA
+X-Headers-End: 1lIc4U-0004A1-CH
+Subject: [f2fs-dev] bug in f2fs-tools
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,124 +79,12 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Now, fallocate() on a pinned file only allocates blocks which aligns
-to segment rather than section, so GC may try to migrate pinned file's
-block, and after several times of failure, pinned file's block could
-be migrated to other place, however user won't be aware of such
-condition, and then old obsolete block address may be readed/written
-incorrectly.
-
-To avoid such condition, let's try to allocate pinned file's blocks
-with section alignment.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/file.c    |  2 +-
- fs/f2fs/segment.c | 34 ++++++++++++++++++++++++++--------
- 3 files changed, 28 insertions(+), 10 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 700ef46e4147..ff6c212bf2c5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3399,7 +3399,7 @@ void f2fs_get_new_segment(struct f2fs_sb_info *sbi,
- 			unsigned int *newseg, bool new_sec, int dir);
- void f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
- 					unsigned int start, unsigned int end);
--void f2fs_allocate_new_segment(struct f2fs_sb_info *sbi, int type);
-+void f2fs_allocate_new_section(struct f2fs_sb_info *sbi, int type);
- void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
- int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range);
- bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 1863944f4073..1b70b56434e4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1666,7 +1666,7 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
- 		down_write(&sbi->pin_sem);
- 
- 		f2fs_lock_op(sbi);
--		f2fs_allocate_new_segment(sbi, CURSEG_COLD_DATA_PINNED);
-+		f2fs_allocate_new_section(sbi, CURSEG_COLD_DATA_PINNED);
- 		f2fs_unlock_op(sbi);
- 
- 		map.m_seg_type = CURSEG_COLD_DATA_PINNED;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b26217910b85..ff50e79d2bb7 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2918,7 +2918,8 @@ void f2fs_allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type,
- 	up_read(&SM_I(sbi)->curseg_lock);
- }
- 
--static void __allocate_new_segment(struct f2fs_sb_info *sbi, int type)
-+static void __allocate_new_segment(struct f2fs_sb_info *sbi, int type,
-+								bool new_sec)
- {
- 	struct curseg_info *curseg = CURSEG_I(sbi, type);
- 	unsigned int old_segno;
-@@ -2926,10 +2927,22 @@ static void __allocate_new_segment(struct f2fs_sb_info *sbi, int type)
- 	if (!curseg->inited)
- 		goto alloc;
- 
--	if (!curseg->next_blkoff &&
--		!get_valid_blocks(sbi, curseg->segno, false) &&
--		!get_ckpt_valid_blocks(sbi, curseg->segno))
--		return;
-+	if (curseg->next_blkoff ||
-+		get_valid_blocks(sbi, curseg->segno, new_sec))
-+		goto alloc;
-+
-+	if (new_sec) {
-+		unsigned int segno = START_SEGNO(curseg->segno);
-+		int i;
-+
-+		for (i = 0; i < sbi->segs_per_sec; i++, segno++) {
-+			if (get_ckpt_valid_blocks(sbi, segno))
-+				goto alloc;
-+		}
-+	} else {
-+		if (!get_ckpt_valid_blocks(sbi, curseg->segno))
-+			return;
-+	}
- 
- alloc:
- 	old_segno = curseg->segno;
-@@ -2937,10 +2950,15 @@ static void __allocate_new_segment(struct f2fs_sb_info *sbi, int type)
- 	locate_dirty_segment(sbi, old_segno);
- }
- 
--void f2fs_allocate_new_segment(struct f2fs_sb_info *sbi, int type)
-+static void __allocate_new_section(struct f2fs_sb_info *sbi, int type)
-+{
-+	__allocate_new_segment(sbi, type, true);
-+}
-+
-+void f2fs_allocate_new_section(struct f2fs_sb_info *sbi, int type)
- {
- 	down_write(&SIT_I(sbi)->sentry_lock);
--	__allocate_new_segment(sbi, type);
-+	__allocate_new_section(sbi, type);
- 	up_write(&SIT_I(sbi)->sentry_lock);
- }
- 
-@@ -2950,7 +2968,7 @@ void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
- 
- 	down_write(&SIT_I(sbi)->sentry_lock);
- 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++)
--		__allocate_new_segment(sbi, i);
-+		__allocate_new_segment(sbi, i, false);
- 	up_write(&SIT_I(sbi)->sentry_lock);
- }
- 
--- 
-2.29.2
+Hi. Sorry if I am posting to an inappropriate mailing list. What is the 
+proper place to report bugs in `f2fs-tools`?
 
 
 
