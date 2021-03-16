@@ -2,101 +2,76 @@ Return-Path: <SRS0=m56K=IO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51906C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Mar 2021 09:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB89C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Mar 2021 11:09:25 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0214864FD6;
-	Tue, 16 Mar 2021 09:34:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0214864FD6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTPS id 00C2664FA5;
+	Tue, 16 Mar 2021 11:09:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00C2664FA5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lM667-0002Ht-9l; Tue, 16 Mar 2021 09:34:43 +0000
+	id 1lM7Zi-0000zQ-PY; Tue, 16 Mar 2021 11:09:22 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <bounce+103f7e.be9e4a-linux-f2fs-devel=lists.sourceforge.net@mg.codeaurora.org>)
- id 1lM665-0002HV-Nh
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Mar 2021 09:34:41 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <yuchao0@huawei.com>) id 1lM7Zh-0000zI-28
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Mar 2021 11:09:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9UfEyw436vIESU6W/ayoumRpdy+NziJpgKqhqz2zc6A=; b=UNyGq+4HgbzOZ96RPVv16o5hTJ
- 2K8VFzebceezDorYRIXSx6/iKmn17kH4D8zKses9rOV5mvckoZdkhP95eXw5cy9DlnENtj+mRuom+
- e1bnW5MeS+x8qya3IqX8lq+U6qWQlT/yMltX9YwPPtxkaq/57Kwywzt6vMrq9soUr6R8=;
+ bh=OFtX+PIKrPWVjHh7uzVfH7+KsCwnQmpBgFHLcwaMAvs=; b=imunUzAQcYKAfyxNWa5rnPHP9O
+ Qd7C/D0YvGxFiB2FfnBCmMrziHZuUctS5+CplG7Xnn7R3L9jYC+49O945Il/tTjAI2vT6BCmu4K5e
+ Xpfqn0C8Wh9pF53wvU6uUqLZlV2msmU3xAv5Ig9d7DiOQpRQPeXj+aZh+d/IpRluM8ts=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9UfEyw436vIESU6W/ayoumRpdy+NziJpgKqhqz2zc6A=; b=P8h1xwQmexB/3v1+w/gUNTOwWp
- QsjEdTN/ZUsVCTjWzFe1rx2wwWQ7lxO/U6TsETrdvI/ap2CyNXvqhR2UZ+C7RZznxHyYD3TxiGVka
- wBQNwnKgcPywnZu9cjKc7A06p32A+a7KwX0yklssBwFb5DDKkn/lYcS2l0ZuElMz4WYs=;
-Received: from m42-2.mailgun.net ([69.72.42.2])
+ bh=OFtX+PIKrPWVjHh7uzVfH7+KsCwnQmpBgFHLcwaMAvs=; b=UUKoL8iEwm77eC6ozw3owBWfUJ
+ Bw8Cnd+7MKEkQbfOh8bnZEZfWfHSvICSj8gSB3AKZ0eDlFicwbCYejjuJSLmclkdB8gKP2RxhdPED
+ 7rO+ZTGkVXPnoXDcOJelxbmI1Yum6h0DT1n+JOCkjZIHckkrrw80aggpl6beIvOYr9mo=;
+Received: from szxga05-in.huawei.com ([45.249.212.191])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1lM65r-0006Q7-Tz
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Mar 2021 09:34:41 +0000
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
- q=dns/txt; 
- s=smtp; t=1615887269; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=9UfEyw436vIESU6W/ayoumRpdy+NziJpgKqhqz2zc6A=;
- b=ZfgAP/+UmmWXV/8AsaqcrA4vF0Zi7SsM/lqEgVpt6trlttI2ov+nBcsz9b8iLrwIoRIzwuAM
- uDccVjN4Qy03TDoxSEkRKlVTazBjCWu5DJ/VmN/qN3yE/A1oNu05vmWTOwdB9iSE93k1jHqP
- 1TpfD8Q02AKjlCVGlzAlCru9l+g=
-X-Mailgun-Sending-Ip: 69.72.42.2
-X-Mailgun-Sid: WyI2M2Y4ZiIsICJsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 60507b944db3bb6801bfba6c (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 16 Mar 2021 09:34:12
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
- id 219A1C4346B; Tue, 16 Mar 2021 09:34:12 +0000 (UTC)
-Received: from codeaurora.org (unknown [202.46.22.19])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
- (No client certificate requested) (Authenticated sender: stummala)
- by smtp.codeaurora.org (Postfix) with ESMTPSA id 35FC2C433CA;
- Tue, 16 Mar 2021 09:34:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 35FC2C433CA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- spf=fail smtp.mailfrom=stummala@codeaurora.org
-Date: Tue, 16 Mar 2021 15:04:06 +0530
-From: Sahitya Tummala <stummala@codeaurora.org>
-To: Chao Yu <yuchao0@huawei.com>
-Message-ID: <20210316093406.GC8562@codeaurora.org>
-References: <1615784186-2693-1-git-send-email-stummala@codeaurora.org>
- <49be0c70-4fe4-6acd-b508-08621f0623c0@huawei.com>
- <20210315074645.GA8562@codeaurora.org>
- <0c7220d7-416e-32b7-96cb-effd3f84d6e2@huawei.com>
- <20210315094502.GB8562@codeaurora.org>
- <f0da1e4c-24b0-211c-670a-686067203d08@huawei.com>
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lM7ZX-00027x-0r
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Mar 2021 11:09:20 +0000
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4F09V56rSBzrXBF;
+ Tue, 16 Mar 2021 19:07:09 +0800 (CST)
+Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 16 Mar
+ 2021 19:08:58 +0800
+To: Sahitya Tummala <stummala@codeaurora.org>, Jaegeuk Kim
+ <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>
+References: <1615886958-717-1-git-send-email-stummala@codeaurora.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <3c453b72-892f-7044-2edd-224b82202608@huawei.com>
+Date: Tue, 16 Mar 2021 19:08:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <f0da1e4c-24b0-211c-670a-686067203d08@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Headers-End: 1lM65r-0006Q7-Tz
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix the discard thread sleep timeout
- under high utilization
+In-Reply-To: <1615886958-717-1-git-send-email-stummala@codeaurora.org>
+Content-Language: en-US
+X-Originating-IP: [10.136.110.154]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1lM7ZX-00027x-0r
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: allow to change discard policy
+ based on cached discard cmds
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -108,245 +83,24 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Chao,
+On 2021/3/16 17:29, Sahitya Tummala wrote:
+> With the default DPOLICY_BG discard thread is ioaware, which prevents
+> the discard thread from issuing the discard commands. On low RAM setups,
+> it is observed that these discard commands in the cache are consuming
+> high memory. This patch aims to relax the memory pressure on the system
+> due to f2fs pending discard cmds by changing the policy to DPOLICY_FORCE
+> based on the nm_i->ram_thresh configured.
+> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 
-Thanks for the review and suggestions.
-
-I think the below code should work and cover all the cases we discussed.
-Let me test it and then put up a new patchset for review.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-Sahitya.
-
-Mon, Mar 15, 2021 at 06:31:00PM +0800, Chao Yu wrote:
-> Hi Sahitya,
-> 
-> On 2021/3/15 17:45, Sahitya Tummala wrote:
-> >Hi Chao,
-> >
-> >On Mon, Mar 15, 2021 at 04:10:22PM +0800, Chao Yu wrote:
-> >>Hi Sahitya,
-> >>
-> >>On 2021/3/15 15:46, Sahitya Tummala wrote:
-> >>>Hi Chao,
-> >>>
-> >>>On Mon, Mar 15, 2021 at 02:12:44PM +0800, Chao Yu wrote:
-> >>>>Sahitya,
-> >>>>
-> >>>>On 2021/3/15 12:56, Sahitya Tummala wrote:
-> >>>>>When f2fs is heavily utilized over 80%, the current discard policy
-> >>>>>sets the max sleep timeout of discard thread as 50ms
-> >>>>>(DEF_MIN_DISCARD_ISSUE_TIME). But this is set even when there are
-> >>>>>no pending discard commands to be issued. This results into
-> >>>>>unnecessary frequent and periodic wake ups of the discard thread.
-> >>>>>This patch adds check for pending  discard commands in addition
-> >>>>>to heavy utilization condition to prevent those wake ups.
-> >>>>
-> >>>>Could this commit fix your issue?
-> >>>>
-> >>>>https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=43f8c47ea7d59c7b2270835f1d7c4618a1ea27b6
-> >>>>
-> >>>I don't think it will help because we are changing the max timeout of the
-> >>>dpolicy itself in __init_discard_policy() when util > 80% as below -
-> >>>
-> >>>dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> >>>
-> >>>And issue_discard_thread() uses this value as wait_ms, when there
-> >>>are no more pending discard commands to be issued.
-> >>><snip>
-> >>>                 } else {
-> >>>                         wait_ms = dpolicy.max_interval;
-> >>>                 }
-> >>><snip>
-> >>>
-> >>>The new patch posted above is not changing anything related to the  max_interval.
-> >>>Hence, I think it won't help the uncessary wakeup problem I am trying to solve
-> >>>for this condition - util > 80% and when there are no pending discards.
-> >>>
-> >>>Please let me know if i am missing something.
-> >>
-> >>Copied, thanks for the explanation.
-> >>
-> >>But there is another case which can cause this issue in the case of
-> >>disk util < 80%.
-> >>
-> >>wait_ms = DEF_MIN_DISCARD_ISSUE_TIME;
-> >>
-> >>do {
-> >>	wait_event_interruptible_timeout(, wait_ms);
-> >>
-> >>	...
-> >>
-> >>	if (!atomic_read(&dcc->discard_cmd_cnt))
-> >>[1] new statement
-> >>		continue;
-> >>
-> >>} while();
-> >>
-> >>Then the loop will wakeup whenever 50ms timeout.
-> >>
-> >Yes, only for a short period of time i.e., until the first discard command
-> >is issued. Once a discard is issued, it will use
-> >wait_ms = dpolicy.max_interval;
-> >
-> >>So, to avoid this case, shouldn't we reset wait_ms to dpolicy.max_interval
-> >>at [1]?
-> >>
-> >Yes, we can add that to cover the above case.
-> >
-> >>Meanwhile, how about relocating discard_cmd_cnt check after
-> >>__init_discard_policy(DPOLICY_FORCE)? and olny set .max_interval to
-> >>DEF_MAX_DISCARD_ISSUE_TIME if there is no discard command, and keep
-> >>.granularity to 1?
-> >>
-> >
-> >There is not need to change .granularity, right? It will be controlled
-> 
-> I think so.
-> 
-> >as per utilization as it is done today. Only max_interval and wait_ms
-> >needs to be updated. Does this look good?
-> >
-> >diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >index d7076796..958ad1e 100644
-> >--- a/fs/f2fs/segment.c
-> >+++ b/fs/f2fs/segment.c
-> >@@ -1772,13 +1772,16 @@ static int issue_discard_thread(void *data)
-> >                         wait_ms = dpolicy.max_interval;
-> >                         continue;
-> >                 }
-> >-               if (!atomic_read(&dcc->discard_cmd_cnt))
-> >-                       continue;
-> >-
-> >                 if (sbi->gc_mode == GC_URGENT_HIGH ||
-> >                         !f2fs_available_free_memory(sbi, DISCARD_CACHE))
-> >                         __init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE, 1);
-> >
-> >+               if (!atomic_read(&dcc->discard_cmd_cnt)) {
-> >+                       dpolicy.max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
-> >+                       wait_ms = dpolicy.max_interval;
-> >+                       continue;
-> >+               }
-> 
-> Hmm.. how about cleaning up to configure discard policy in
-> __init_discard_policy()?
-> 
-> Something like:
-> 
-> ---
->  fs/f2fs/segment.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 592927ccffa7..684463a70eb9 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1118,7 +1118,9 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
->  		dpolicy->ordered = true;
->  		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
->  			dpolicy->granularity = 1;
-> -			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> +			if (atomic_read(&SM_I(sbi)->dcc_info->discard_cmd_cnt))
-> +				dpolicy->max_interval =
-> +					DEF_MIN_DISCARD_ISSUE_TIME;
->  		}
->  	} else if (discard_type == DPOLICY_FORCE) {
->  		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> @@ -1734,8 +1736,15 @@ static int issue_discard_thread(void *data)
->  	set_freezable();
-> 
->  	do {
-> -		__init_discard_policy(sbi, &dpolicy, DPOLICY_BG,
-> -					dcc->discard_granularity);
-> +		if (sbi->gc_mode == GC_URGENT_HIGH ||
-> +			!f2fs_available_free_memory(sbi, DISCARD_CACHE))
-> +			__init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE, 1);
-> +		else
-> +			__init_discard_policy(sbi, &dpolicy, DPOLICY_BG,
-> +						dcc->discard_granularity);
-> +
-> +		if (!atomic_read(&dcc->discard_cmd_cnt))
-> +			wait_ms = dpolicy.max_interval;
-> 
->  		wait_event_interruptible_timeout(*q,
->  				kthread_should_stop() || freezing(current) ||
-> @@ -1762,10 +1771,6 @@ static int issue_discard_thread(void *data)
->  		if (!atomic_read(&dcc->discard_cmd_cnt))
->  			continue;
-> 
-> -		if (sbi->gc_mode == GC_URGENT_HIGH ||
-> -			!f2fs_available_free_memory(sbi, DISCARD_CACHE))
-> -			__init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE, 1);
-> -
->  		sb_start_intwrite(sbi->sb);
-> 
->  		issued = __issue_discard_cmd(sbi, &dpolicy);
-> -- 
-> 2.29.2
-> 
-> Thoughts?
-> 
-> Thanks,
-> 
-> >+
-> >                 sb_start_intwrite(sbi->sb);
-> >
-> >                 issued = __issue_discard_cmd(sbi, &dpolicy);
-> >
-> >thanks,
-> >Sahitya.
-> >
-> >>Thanks,
-> >>
-> >>>
-> >>>Thanks,
-> >>>Sahitya.
-> >>>
-> >>>>Thanks,
-> >>>>
-> >>>>>
-> >>>>>Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> >>>>>---
-> >>>>>  fs/f2fs/segment.c | 5 ++++-
-> >>>>>  1 file changed, 4 insertions(+), 1 deletion(-)
-> >>>>>
-> >>>>>diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>>>index dced46c..df30220 100644
-> >>>>>--- a/fs/f2fs/segment.c
-> >>>>>+++ b/fs/f2fs/segment.c
-> >>>>>@@ -1112,6 +1112,8 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
-> >>>>>  				struct discard_policy *dpolicy,
-> >>>>>  				int discard_type, unsigned int granularity)
-> >>>>>  {
-> >>>>>+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> >>>>>+
-> >>>>>  	/* common policy */
-> >>>>>  	dpolicy->type = discard_type;
-> >>>>>  	dpolicy->sync = true;
-> >>>>>@@ -1129,7 +1131,8 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
-> >>>>>  		dpolicy->io_aware = true;
-> >>>>>  		dpolicy->sync = false;
-> >>>>>  		dpolicy->ordered = true;
-> >>>>>-		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL) {
-> >>>>>+		if (utilization(sbi) > DEF_DISCARD_URGENT_UTIL &&
-> >>>>>+				atomic_read(&dcc->discard_cmd_cnt)) {
-> >>>>>  			dpolicy->granularity = 1;
-> >>>>>  			dpolicy->max_interval = DEF_MIN_DISCARD_ISSUE_TIME;
-> >>>>>  		}
-> >>>>>
-> >>>
-> >
-
--- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
 
 
 _______________________________________________
