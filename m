@@ -1,72 +1,78 @@
-Return-Path: <SRS0=WiIO=IP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=HV4I=IQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 471B7C433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Mar 2021 09:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC087C433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 18 Mar 2021 17:18:02 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EE77564F67
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 17 Mar 2021 09:56:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE77564F67
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 7912464EF6
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 18 Mar 2021 17:18:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7912464EF6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lMSus-0006jV-H5; Wed, 17 Mar 2021 09:56:38 +0000
+	id 1lMwHZ-0004dv-De; Thu, 18 Mar 2021 17:18:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lMSur-0006jB-GS
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Mar 2021 09:56:37 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <jaegeuk@kernel.org>) id 1lMwHT-0004dg-A0
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Mar 2021 17:17:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=D1gSK5XQZheuw6cJxSoQFUe6jvZIU8eUYgZr3yXcwtA=; b=MrBegDEQyXMnKGy46IuTNJDeLk
- dsivzON11W7zp/kkK/uwIiUb8oxwLcVj4RrxwNonfRG5+Rdt5OAXytmuTKwpNeNSLyoibalM96dd5
- QA5AkH4nDVuiYbPt7SuCFPOjA58j6EdzOpsz4L5VqhafLA/Wa0JgzhwhFKqTUGgqOB2E=;
+ bh=iDp//PKAV4Sjo56KnAqgLYa0tid7A8GS2x1jiL572RM=; b=A38LGYk8v18DHm2ztodUQA06KF
+ hLJHQHYWkDAtaG8faUVKMa9Wx+uDMlE47JJbDoDlmkZfyXzMyHqiLw3ZCU9TK+2y3hh3vP+1AItJV
+ oz65F7P0+hTjOfjqtlAhpZi/oGCmxmdjOK5xTji1LKAd6oJ4egmecZ+NqQqE/InOb+Tk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=D1gSK5XQZheuw6cJxSoQFUe6jvZIU8eUYgZr3yXcwtA=; b=C
- T8VZqVhN8A3PzearwAtQm92ysSZqWuo7qmcKfFge9osp7olFAzl3+s8y6gfhCJzJAvW+Ic+hizb3s
- QYfehFnlVCmoQx/aChEFzEBfgERzN5C9dAIbL+LQZMrM61ZsaQUJ7SPmxrNFG+JBe/tZaGsNyOf4t
- vgCVFtrr2oSdQmG4=;
-Received: from szxga06-in.huawei.com ([45.249.212.32])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=iDp//PKAV4Sjo56KnAqgLYa0tid7A8GS2x1jiL572RM=; b=d4PbvpcYAErVzJZx06U0Dhfx3T
+ edub242q/WaJZJHXrJD9GEsb+4YBQQjC3jWh/RGtHtW8rS8kdgQVPhSGmsUuNP6P3mTd1M/9v33Uj
+ M9TC1U9gNrmICYfcX3lKs0nBIsV6xg/0w42/pgzT3Y4z/5QAHwoQMh3PWvDVhGQgSQg0=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lMSum-009zfE-Ly
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 17 Mar 2021 09:56:37 +0000
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4F0lr913WxzkZvM;
- Wed, 17 Mar 2021 17:54:49 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 17 Mar 2021 17:56:11 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Wed, 17 Mar 2021 17:56:03 +0800
-Message-ID: <20210317095604.125820-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.29.2
+ id 1lMwHL-00Fgd0-Ce
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 18 Mar 2021 17:17:55 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D1D5464EF6;
+ Thu, 18 Mar 2021 17:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1616087862;
+ bh=NUnPDKzhQeaSoqgrIqhWRHlq+IUR51l4CsCRg8M4VCE=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=HI7lJteHsflfTFzGXv7EWlusKHSAslONvXEL+tT01xU5gm4ulM/uW5Rrp3ugbXbkm
+ JtNeEPEuwN5pOLkof/GHvk+nFXVwvC/dW2ZCmfDCRZK0nGoGYVXOAhdezAiGzRSVYx
+ TwwX40FMevDIMw46jwBmGZnS0NjTpSQbN2qivPfLVm9rBoIv0JbIX1x0R07F7Kb2yd
+ paCh9thU8rVmYsoiPi1jzaNjBfXjMZ5cJus5ZvQh6sW0O82nIkAYgiP6KTxJDTu6v7
+ gt/NADZNwAe/t/7Ch3A94ww9/K5UJYAd7sG5iIf3aH9YsUM4cYypWYIGc8ChWfdol4
+ 6vrQJ44Bqku4A==
+Date: Thu, 18 Mar 2021 10:17:40 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <YFOLNGo+/8sKQ7si@google.com>
+References: <20210220094052.64905-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1lMSum-009zfE-Ly
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: don't start checkpoint thread in
- readonly mountpoint
+Content-Disposition: inline
+In-Reply-To: <20210220094052.64905-1-yuchao0@huawei.com>
+X-Headers-End: 1lMwHL-00Fgd0-Ce
+Subject: Re: [f2fs-dev] [PATCH RFC] f2fs: fix to avoid selecting full
+ segment w/ {AT, }SSR allocator
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,52 +89,113 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In readonly mountpoint, there should be no write IOs include checkpoint
-IO, so that it's not needed to create kernel checkpoint thread.
+On 02/20, Chao Yu wrote:
+> In cp disabling mode, there could be a condition
+> - target segment has 128 ckpt valid blocks
+> - GC migrates 128 valid blocks to other segment (segment is still in
+> dirty list)
+> - GC migrates 384 blocks to target segment (segment has 128 cp_vblocks
+> and 384 vblocks)
+> - If GC selects target segment via {AT,}SSR allocator, however there is
+> no free space in targe segment.
+> 
+> Fixes: 4354994f097d ("f2fs: checkpoint disabling")
+> Fixes: 093749e296e2 ("f2fs: support age threshold based garbage collection")
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/f2fs.h    |  1 +
+>  fs/f2fs/gc.c      | 17 +++++++++++++----
+>  fs/f2fs/segment.c | 20 ++++++++++++++++++++
+>  3 files changed, 34 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index ed7807103c8e..9c753eff0814 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3376,6 +3376,7 @@ block_t f2fs_get_unusable_blocks(struct f2fs_sb_info *sbi);
+>  int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable);
+>  void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
+>  int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
+> +bool segment_has_free_slot(struct f2fs_sb_info *sbi, int segno);
+>  void f2fs_init_inmem_curseg(struct f2fs_sb_info *sbi);
+>  void f2fs_save_inmem_curseg(struct f2fs_sb_info *sbi);
+>  void f2fs_restore_inmem_curseg(struct f2fs_sb_info *sbi);
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 86ba8ed0b8a7..a1d8062cdace 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -392,10 +392,6 @@ static void add_victim_entry(struct f2fs_sb_info *sbi,
+>  		if (p->gc_mode == GC_AT &&
+>  			get_valid_blocks(sbi, segno, true) == 0)
+>  			return;
+> -
+> -		if (p->alloc_mode == AT_SSR &&
+> -			get_seg_entry(sbi, segno)->ckpt_valid_blocks == 0)
+> -			return;
+>  	}
+>  
+>  	for (i = 0; i < sbi->segs_per_sec; i++)
+> @@ -736,6 +732,19 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>  		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
+>  			goto next;
+>  
+> +		if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+> +			/*
+> +			 * to avoid selecting candidate which has below valid
+> +			 * block distribution:
+> +			 * partial blocks are valid and all left ones are valid
+> +			 * in previous checkpoint.
+> +			 */
+> +			if (p.alloc_mode == SSR || p.alloc_mode == AT_SSR) {
+> +				if (!segment_has_free_slot(sbi, segno))
+> +					goto next;
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/super.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Do we need to change this to check free_slot instead of get_ckpt_valid_blocks()?
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index ce88db0170fa..6716af216dca 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2091,8 +2091,10 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		}
- 	}
- 
--	if (!test_opt(sbi, DISABLE_CHECKPOINT) &&
--			test_opt(sbi, MERGE_CHECKPOINT)) {
-+	if ((*flags & SB_RDONLY) || test_opt(sbi, DISABLE_CHECKPOINT) ||
-+			!test_opt(sbi, MERGE_CHECKPOINT)) {
-+		f2fs_stop_ckpt_thread(sbi);
-+	} else {
- 		err = f2fs_start_ckpt_thread(sbi);
- 		if (err) {
- 			f2fs_err(sbi,
-@@ -2100,8 +2102,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 			    err);
- 			goto restore_gc;
- 		}
--	} else {
--		f2fs_stop_ckpt_thread(sbi);
- 	}
- 
- 	/*
-@@ -3857,7 +3857,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	/* setup checkpoint request control and start checkpoint issue thread */
- 	f2fs_init_ckpt_req_control(sbi);
--	if (!test_opt(sbi, DISABLE_CHECKPOINT) &&
-+	if (!f2fs_readonly(sb) && !test_opt(sbi, DISABLE_CHECKPOINT) &&
- 			test_opt(sbi, MERGE_CHECKPOINT)) {
- 		err = f2fs_start_ckpt_thread(sbi);
- 		if (err) {
--- 
-2.29.2
+ 732                 if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED) &&
+ 733                                         get_ckpt_valid_blocks(sbi, segno) &&
+ 734                                         p.alloc_mode == LFS))
 
+
+> +			}
+> +		}
+> +
+>  		if (is_atgc) {
+>  			add_victim_entry(sbi, &p, segno);
+>  			goto next;
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 2d5a82c4ca15..deaf57e13125 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -2650,6 +2650,26 @@ static void __refresh_next_blkoff(struct f2fs_sb_info *sbi,
+>  		seg->next_blkoff++;
+>  }
+>  
+> +bool segment_has_free_slot(struct f2fs_sb_info *sbi, int segno)
+> +{
+> +	struct sit_info *sit = SIT_I(sbi);
+> +	struct seg_entry *se = get_seg_entry(sbi, segno);
+> +	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
+> +	unsigned long *target_map = SIT_I(sbi)->tmp_map;
+> +	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
+> +	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
+> +	int i, pos;
+> +
+> +	down_write(&sit->sentry_lock);
+> +	for (i = 0; i < entries; i++)
+> +		target_map[i] = ckpt_map[i] | cur_map[i];
+> +
+> +	pos = __find_rev_next_zero_bit(target_map, sbi->blocks_per_seg, 0);
+> +	up_write(&sit->sentry_lock);
+> +
+> +	return pos < sbi->blocks_per_seg;
+> +}
+> +
+>  /*
+>   * This function always allocates a used segment(from dirty seglist) by SSR
+>   * manner, so it should recover the existing segment information of valid blocks
+> -- 
+> 2.29.2
 
 
 _______________________________________________
