@@ -2,73 +2,78 @@ Return-Path: <SRS0=MO+R=IV=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA01AC433C1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Mar 2021 18:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C612AC433E9
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Mar 2021 18:34:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A38E361963
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Mar 2021 18:33:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38E361963
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTPS id 903EE619C6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Mar 2021 18:34:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903EE619C6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lOlq7-0006fU-0N; Tue, 23 Mar 2021 18:33:15 +0000
+	id 1lOlqw-0003zY-65; Tue, 23 Mar 2021 18:34:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shreeya.patel@collabora.com>) id 1lOlpt-0006d7-5e
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Mar 2021 18:33:01 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1lOlpx-0003wq-Ss
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Mar 2021 18:33:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JqUmAeMnxXKxHE0Qbq4kYFVcGtdNZH6Q/L92+UvLw6w=; b=QGBrxx6BnAAM1+E9ZFgS0Hysya
- eDppwDH9yiNjsJj+SUsFlBJzflELTc6DHNK8oW4UIwT9zIRMx241P7PTXlJeUIa/PrErME8m6wjXu
- JQwt0kcZJjq8HtpdLBuS9Hd799owupi6n52f2ha8KHZToTLAcpk2vLzwhsLI4irIuopQ=;
+ bh=4ACpTaTaccGZz22NVLefFKJA0kreKzoZN1bibjo5Od0=; b=W48ssWhnnn4XsmW+bymlov2uda
+ 2mx8fsmYX1uLKluMF/o01TMwssTfoIXqazyRKIgS5r4xKgsJSk4Gq3j99sKCQ1AY3OzXWKX7oGStR
+ 0Ggj5iY2IErDWiegg5+3u7d2QEbFjnxS/Xknbcqj8dD8+GkyKiwm0AmRSbnLodmnZI3E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=JqUmAeMnxXKxHE0Qbq4kYFVcGtdNZH6Q/L92+UvLw6w=; b=WMQp+1sqrG7yF/DVQV18+Y85KW
- 7MlGr568q2jOPVW+TTsgRkWnFqqaH0e+R1pP41vLjE9htgMekNWFEFnfqOqUV8HS9zvLyMhnXRHIf
- FFx7EigoSdxdfVv4FyG5WcapIcanNxdkC6y6aJFfoGHD0i/UEGVnldg5f0SdIx9Vru/o=;
-Received: from bhuna.collabora.co.uk ([46.235.227.227])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lOlpr-0029Wv-HS
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Mar 2021 18:33:01 +0000
-Received: from localhost.localdomain (unknown
- [IPv6:2401:4900:5170:240f:f606:c194:2a1c:c147])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
- (No client certificate requested) (Authenticated sender: shreeya)
- by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 368961F44A70;
- Tue, 23 Mar 2021 18:32:41 +0000 (GMT)
-From: Shreeya Patel <shreeya.patel@collabora.com>
-To: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
- chao@kernel.org, krisman@collabora.com, ebiggers@google.com,
- drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
-Date: Wed, 24 Mar 2021 00:01:58 +0530
-Message-Id: <20210323183201.812944-3-shreeya.patel@collabora.com>
-X-Mailer: git-send-email 2.30.1
-In-Reply-To: <20210323183201.812944-1-shreeya.patel@collabora.com>
-References: <20210323183201.812944-1-shreeya.patel@collabora.com>
+ bh=4ACpTaTaccGZz22NVLefFKJA0kreKzoZN1bibjo5Od0=; b=KYPs2vrdKCX8mnKGv+xrAy9Qfu
+ 0Urhnce94GGsKPqn/4YOoc4nCBXGyhhFhmokotdycfleUue3KQL4pRRcrpS6vgJt0m8WzbvrbgSW8
+ EFCApzD0/CBH1ZBwpVv+3aUjg0Nx56GI9Ad/VC74Whq81cDhkhS/WrdBUVgw7abUO5lg=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lOlpt-0007Db-05
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Mar 2021 18:33:05 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F2AEB619BB;
+ Tue, 23 Mar 2021 18:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1616524369;
+ bh=SrXcVBV4nIQgyIM/fSLSVHs7w6pMJ/2dsxCVsXvB8zY=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=rUjxWZ9gdwrdHn6tWK74f9t7uFHKIpK1FRY4C4+u0het+B+AG2OxVB/nx9jgS0UZ4
+ FeEa1ualNfMqtREFs8w3W4sm7yjOWOkDAfLCe7cmp1zF9fshivPKLAaE9ixmB0sYH2
+ h7pIoYN8jeDMLuja7RyiDJ4RaZ+rc4OzDcIN4OaocgEfAnB0tSypo3qDOidK6xAUW+
+ FKfU+nIIJu0GFVoBGQQTZtRqT9AEbm1ZuvpcGLhusOL7GeMzMmsE+of5ydaXRxPUMa
+ GI4OJ/q8aY5AeSIiVeGwy513R4nCNr/TwchCu0ZLrTIawt7d1abEKHM01bgbrtP437
+ R3wvGVqQYIWwQ==
+Date: Tue, 23 Mar 2021 11:32:47 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <YFo0Tz1zl4tw7lUP@google.com>
+References: <20210305095601.96591-1-yuchao0@huawei.com>
+ <d9c118eb-45b3-7f35-70bd-cb016957e6e8@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1lOlpr-0029Wv-HS
-Subject: [f2fs-dev] [PATCH v3 2/5] fs: Check if utf8 encoding is loaded
- before calling utf8_unload()
+Content-Disposition: inline
+In-Reply-To: <d9c118eb-45b3-7f35-70bd-cb016957e6e8@kernel.org>
+X-Headers-End: 1lOlpt-0007Db-05
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to align to section for
+ fallocate() on pinned file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,86 +85,68 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- andre.almeida@collabora.com, linux-ext4@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-utf8_unload is being called if CONFIG_UNICODE is enabled.
-The ifdef block doesn't check if utf8 encoding has been loaded
-or not before calling the utf8_unload() function.
-This is not the expected behavior since it would sometimes lead
-to unloading utf8 even before loading it.
-Hence, add a condition which will check if sb->encoding is NOT NULL
-before calling the utf8_unload().
+On 03/23, Chao Yu wrote:
+> On 2021/3/5 17:56, Chao Yu wrote:
+> > Now, fallocate() on a pinned file only allocates blocks which aligns
+> > to segment rather than section, so GC may try to migrate pinned file's
+> > block, and after several times of failure, pinned file's block could
+> > be migrated to other place, however user won't be aware of such
+> > condition, and then old obsolete block address may be readed/written
+> > incorrectly.
+> > 
+> > To avoid such condition, let's try to allocate pinned file's blocks
+> > with section alignment.
+> > 
+> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> 
+> Jaegeuk,
+> 
+> Could you please check and apply below diff into original patch?
+> 
+> ---
+>  fs/f2fs/file.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 236f3f69681a..24fa68fdcaa0 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -1648,13 +1648,13 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
+>  		return 0;
+> 
+>  	if (f2fs_is_pinned_file(inode)) {
+> -		block_t len = (map.m_len >> sbi->log_blocks_per_seg) <<
+> -					sbi->log_blocks_per_seg;
+> +		block_t sec_blks = BLKS_PER_SEC(sbi);
+> +		block_t len = rounddown(map.m_len, sec_blks);
 
-Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
----
+len is declared above, so let me rephrase this as well.
 
-Changes in v3
-  - Add this patch to the series which checks if utf8 encoding
-    was loaded before calling uft8_unload().
- 
- fs/ext4/super.c | 6 ++++--
- fs/f2fs/super.c | 9 ++++++---
- 2 files changed, 10 insertions(+), 5 deletions(-)
+> 
+> -		if (map.m_len % sbi->blocks_per_seg)
+> -			len += sbi->blocks_per_seg;
+> +		if (map.m_len % sec_blks)
+> +			len += sec_blks;
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index ad34a3727..e438d14f9 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1259,7 +1259,8 @@ static void ext4_put_super(struct super_block *sb)
- 	fs_put_dax(sbi->s_daxdev);
- 	fscrypt_free_dummy_policy(&sbi->s_dummy_enc_policy);
- #ifdef CONFIG_UNICODE
--	utf8_unload(sb->s_encoding);
-+	if (sb->s_encoding)
-+		utf8_unload(sb->s_encoding);
- #endif
- 	kfree(sbi);
- }
-@@ -5165,7 +5166,8 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 		crypto_free_shash(sbi->s_chksum_driver);
- 
- #ifdef CONFIG_UNICODE
--	utf8_unload(sb->s_encoding);
-+	if (sb->s_encoding)
-+		utf8_unload(sb->s_encoding);
- #endif
- 
- #ifdef CONFIG_QUOTA
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 706979375..0a04983c2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1430,7 +1430,8 @@ static void f2fs_put_super(struct super_block *sb)
- 	for (i = 0; i < NR_PAGE_TYPE; i++)
- 		kvfree(sbi->write_io[i]);
- #ifdef CONFIG_UNICODE
--	utf8_unload(sb->s_encoding);
-+	if (sb->s_encoding)
-+		utf8_unload(sb->s_encoding);
- #endif
- 	kfree(sbi);
- }
-@@ -4073,8 +4074,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		kvfree(sbi->write_io[i]);
- 
- #ifdef CONFIG_UNICODE
--	utf8_unload(sb->s_encoding);
--	sb->s_encoding = NULL;
-+	if (sb->s_encoding) {
-+		utf8_unload(sb->s_encoding);
-+		sb->s_encoding = NULL;
-+	}
- #endif
- free_options:
- #ifdef CONFIG_QUOTA
--- 
-2.24.3 (Apple Git-128)
+is this roundup()?
 
+Could you check this?
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=e1175f02291141bbd924fc578299305fcde35855
+
+> 
+> -		map.m_len = sbi->blocks_per_seg;
+> +		map.m_len = sec_blks;
+>  next_alloc:
+>  		if (has_not_enough_free_secs(sbi, 0,
+>  			GET_SEC_FROM_SEG(sbi, overprovision_segments(sbi)))) {
+> -- 
+> 2.22.1
+> 
 
 
 _______________________________________________
