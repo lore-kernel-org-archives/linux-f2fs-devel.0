@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA42C433EC
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Mar 2021 18:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EEEC433EB
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Mar 2021 18:34:07 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8D6246198E
+	by mail.kernel.org (Postfix) with ESMTPS id 030416198E
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 23 Mar 2021 18:34:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D6246198E
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030416198E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lOlqw-0003zp-8B; Tue, 23 Mar 2021 18:34:06 +0000
+	id 1lOlqw-0003zO-3a; Tue, 23 Mar 2021 18:34:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shreeya.patel@collabora.com>) id 1lOlqG-0003xN-PD
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Mar 2021 18:33:24 +0000
+ (envelope-from <shreeya.patel@collabora.com>) id 1lOlpq-0003wQ-DW
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Mar 2021 18:32:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SR9GYzClhPtlgbtKvTINRCmtCiv/xx+djENxsAUHwII=; b=FVlHkZuKjW0oqEiaf+MBOqVf17
- u8tWgtX73uUEtjHG6qzeZsyt85UXSoX8kP+QHlLnYSesOysnDDHnt05itzlQKTWQlzQNHVm+N30sg
- osdXc1cwPia2f5xWruY+SzVlW/qdbsclQ4Go0qF8Ot2daeUpkk6aQKCU0NoWIKDoC82I=;
+ bh=SzT9ktdwXZE0eVOLVEEEH8492frG/oDBRrb4LhS4vlk=; b=JT6/jo9Ueq5bsH1yblUyQADQaW
+ 0Fl9aV26RoqffFV9C4ShmUG7KAv1ZKAwh0mxAVepO6W81x/V2IVcY8LPp4Vg3uUdA5eGRGBI+y/us
+ XrFNZ4+hem0Ys3/lfWYtNDafL27yrTaUviNcieX/iK5flqn9Ma0coWw7nnjh4WsQaViE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,33 +42,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=SR9GYzClhPtlgbtKvTINRCmtCiv/xx+djENxsAUHwII=; b=UnkUdazDaDXNOOD+B3TY2UJIS7
- WhRA0ckEO8hFdF0sZc/WhXVZx5hS35WHB6TLHbhxUBzUCJLFqQcNbtHRexhbCVpRVQdwSDhnFuC5u
- XJOyiNpNFCY+vf3TjnPXtASfViVzRrSFaIzYb5CUKKUxFTPkhsipP3VBc3CGrZT29l3c=;
+ bh=SzT9ktdwXZE0eVOLVEEEH8492frG/oDBRrb4LhS4vlk=; b=HFjrrCp9s8pRTkjiXwIpE37vbL
+ pi62PX+LRXxEy4VcFAux0yhM4vgg4S7mAxOKykx2wqKB6e5t6E6m+cq9eVJS8G6KcyPLVQXL1AWc0
+ pFWBaGNfTuwyfjq94tT+cN24LLJG9KRFwC1SKnrGRELSTiNn+uT0+U9vgQr0W6Fbbwao=;
 Received: from bhuna.collabora.co.uk ([46.235.227.227])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lOlqC-0007G9-Uw
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Mar 2021 18:33:24 +0000
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1lOlpm-0029WQ-34
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 23 Mar 2021 18:32:58 +0000
 Received: from localhost.localdomain (unknown
  [IPv6:2401:4900:5170:240f:f606:c194:2a1c:c147])
  (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
  (No client certificate requested) (Authenticated sender: shreeya)
- by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 484801F44A65;
- Tue, 23 Mar 2021 18:33:04 +0000 (GMT)
+ by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 82FE31F44A66;
+ Tue, 23 Mar 2021 18:32:32 +0000 (GMT)
 From: Shreeya Patel <shreeya.patel@collabora.com>
 To: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
  chao@kernel.org, krisman@collabora.com, ebiggers@google.com,
  drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
-Date: Wed, 24 Mar 2021 00:02:00 +0530
-Message-Id: <20210323183201.812944-5-shreeya.patel@collabora.com>
+Date: Wed, 24 Mar 2021 00:01:57 +0530
+Message-Id: <20210323183201.812944-2-shreeya.patel@collabora.com>
 X-Mailer: git-send-email 2.30.1
 In-Reply-To: <20210323183201.812944-1-shreeya.patel@collabora.com>
 References: <20210323183201.812944-1-shreeya.patel@collabora.com>
 MIME-Version: 1.0
-X-Headers-End: 1lOlqC-0007G9-Uw
-Subject: [f2fs-dev] [PATCH v3 4/5] fs: unicode: Rename utf8-core file to
- unicode-core
+X-Headers-End: 1lOlpm-0029WQ-34
+Subject: [f2fs-dev] [PATCH v3 1/5] fs: unicode: Use strscpy() instead of
+ strncpy()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,41 +80,60 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- andre.almeida@collabora.com, linux-ext4@vger.kernel.org
+Cc: kernel@collabora.com, kernel test robot <lkp@intel.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, andre.almeida@collabora.com,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Rename the file name from utf8-core to unicode-core for transformation of
-utf8-core file into the unicode subsystem layer file and also for better
-understanding.
+Following warning was reported by Kernel Test Robot.
 
+In function 'utf8_parse_version',
+inlined from 'utf8_load' at fs/unicode/utf8mod.c:195:7:
+>> fs/unicode/utf8mod.c:175:2: warning: 'strncpy' specified bound 12 equals
+destination size [-Wstringop-truncation]
+175 |  strncpy(version_string, version, sizeof(version_string));
+    |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The -Wstringop-truncation warning highlights the unintended
+uses of the strncpy function that truncate the terminating NULL
+character from the source string.
+Unlike strncpy(), strscpy() always null-terminates the destination string,
+hence use strscpy() instead of strncpy().
+
+Fixes: 9d53690f0d4e5 (unicode: implement higher level API for string handling)
 Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+Reported-by: kernel test robot <lkp@intel.com>
 ---
- fs/unicode/Makefile                        | 2 +-
- fs/unicode/{utf8-core.c => unicode-core.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename fs/unicode/{utf8-core.c => unicode-core.c} (100%)
 
-diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
-index b88aecc86..fbf9a629e 100644
---- a/fs/unicode/Makefile
-+++ b/fs/unicode/Makefile
-@@ -3,7 +3,7 @@
- obj-$(CONFIG_UNICODE) += unicode.o
- obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
+Changes in v3
+  - Return error if strscpy() returns value < 0
+
+Changes in v2
+  - Resolve warning of -Wstringop-truncation reported by
+    kernel test robot.
+
+ fs/unicode/utf8-core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index dc25823bf..706f086bb 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -180,7 +180,10 @@ static int utf8_parse_version(const char *version, unsigned int *maj,
+ 		{0, NULL}
+ 	};
  
--unicode-y := utf8-norm.o utf8-core.o
-+unicode-y := utf8-norm.o unicode-core.o
+-	strncpy(version_string, version, sizeof(version_string));
++	int ret = strscpy(version_string, version, sizeof(version_string));
++
++	if (ret < 0)
++		return ret;
  
- $(obj)/utf8-norm.o: $(obj)/utf8data.h
- 
-diff --git a/fs/unicode/utf8-core.c b/fs/unicode/unicode-core.c
-similarity index 100%
-rename from fs/unicode/utf8-core.c
-rename to fs/unicode/unicode-core.c
+ 	if (match_token(version_string, token, args) != 1)
+ 		return -EINVAL;
 -- 
 2.24.3 (Apple Git-128)
 
