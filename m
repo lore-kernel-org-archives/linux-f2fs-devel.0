@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C744C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Mar 2021 15:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B30CC433C1
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Mar 2021 15:11:02 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CA0DD61A12
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Mar 2021 15:09:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0DD61A12
+	by mail.kernel.org (Postfix) with ESMTPS id 38E7260C3E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Mar 2021 15:11:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38E7260C3E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lPRbp-0003R6-97; Thu, 25 Mar 2021 15:09:17 +0000
+	id 1lPRdV-0002kV-Pe; Thu, 25 Mar 2021 15:11:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ira.weiny@intel.com>) id 1lPRbn-0003Qp-Kv
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Mar 2021 15:09:15 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <ira.weiny@intel.com>) id 1lPRdT-0002kB-Sl
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Mar 2021 15:10:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oWSLp3kztJr4m5/1tikMbEw6FHyHlIYtntDmWxUuIP8=; b=Y5s4Ga1Dfews0CbMzubOY5+dCk
- oWiQx11E5ZKot5dXLOdl9oSpgU3x+KMlsNFrZ4YjPXiT6hugB//3lB8LT6PZypjTjDeX/e98sFFRU
- HnR536/xjizrjJEq4bTMBEjGS3zI0StMDRICw5Ull5FeEffjYYlAhfoontMhxPNML/xo=;
+ bh=CD1hiTq1Yt9meGWzqd9lSosuyPGcxqAcgdo3oANFZUU=; b=MozJPBYMlxsNx601d9kWZ42Mea
+ YF+iTQZeEwSiPT1PXqlRbaCKZLlhWXZusE/o1ipTdK1wlFHyDfrwHE30QIpwmjZH9Z4OYEOr9IeTj
+ PdDy9jAjPcmSjCj0O/ArRjehWwix9EcaD1r7gPQ/rY3IQVjjjdaERPSlO75whA9Hseow=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -42,31 +42,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=oWSLp3kztJr4m5/1tikMbEw6FHyHlIYtntDmWxUuIP8=; b=D1ArAcOYbo9aQDmp5yRvrh58WH
- scn1m2nTHxmSS/2tJsLr4nJgGt3YCNgqWGvs1vYYdnW4NH5t8O7laatuzUQ0vM4CfVjxvB0Z0zR5/
- WxhGSzsadeWeiwu4AdujM4VycIL+FjirSZLecsIT/kEyZq/3H8cTE+JOH9AmSgCRheqk=;
-Received: from mga11.intel.com ([192.55.52.93])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lPRbl-00ADuH-Af
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Mar 2021 15:09:15 +0000
-IronPort-SDR: 1Hf4RdQVbq8pXp4YFRdtTkSPu86uZrMCqZHdNKnt0v34C+aCGnPBWgBf2EOkkKnMR/QjywdDcs
- O5NBdl7X/eZg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9934"; a="187645243"
-X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; d="scan'208";a="187645243"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
- by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Mar 2021 08:09:07 -0700
-IronPort-SDR: TdFsjK737sdvRzKo9OH8ApPIwJ7KYIKIbkmYaGTUalxVWLiB6dkDFjbzKYBEMfEIALjFk7Wsxm
- fC9V5/CgJMew==
-X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; d="scan'208";a="409406687"
+ bh=CD1hiTq1Yt9meGWzqd9lSosuyPGcxqAcgdo3oANFZUU=; b=O1nNgw2h2wNJVvEPtdzeUxzobs
+ sv+r6eOOwgzXibxSib7/MlxsWd3E6P4/3Jy9uX6ApCpHwFPHkX2bt1dNqwaCjKU2h6YwKDl8on48C
+ +yJUsdd7aghxdC0+TZOtIHk7dT7bN90tcvjjj1Q1ES3lzVTh/JpF7R2CTfbTGiHHEf08=;
+Received: from mga06.intel.com ([134.134.136.31])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lPRdO-0002c3-OL
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Mar 2021 15:10:59 +0000
+IronPort-SDR: 9eDpTeuOm1Z8MK8wJ307ND0kuL4DeoFMIYd/Tik0GrIH26fDMyI4zAqPiJ3FGYUZ6MiPWxHYpQ
+ ykEGiyBbr8nA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9934"; a="252305248"
+X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; d="scan'208";a="252305248"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+ by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Mar 2021 08:10:48 -0700
+IronPort-SDR: dPvFJNBPXz+6hB+ecIHrgxpLZawb8lLhygnp4vUuH4RjI/fPMOirG8taFHfKyYVt+tqxrpbPgs
+ xtVQhWYMifZA==
+X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; d="scan'208";a="416044528"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
- by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Mar 2021 08:09:07 -0700
-Date: Thu, 25 Mar 2021 08:09:06 -0700
+ by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Mar 2021 08:10:48 -0700
+Date: Thu, 25 Mar 2021 08:10:48 -0700
 From: Ira Weiny <ira.weiny@intel.com>
 To: Theodore Ts'o <tytso@mit.edu>
-Message-ID: <20210325150906.GW3014244@iweiny-DESK2.sc.intel.com>
+Message-ID: <20210325151047.GX3014244@iweiny-DESK2.sc.intel.com>
 References: <20210207190425.38107-1-chaitanya.kulkarni@wdc.com>
  <20210207190425.38107-7-chaitanya.kulkarni@wdc.com>
  <YFycvk4aMoPAZcwJ@mit.edu>
@@ -74,7 +74,7 @@ MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <YFycvk4aMoPAZcwJ@mit.edu>
 User-Agent: Mutt/1.11.1 (2018-12-01)
-X-Headers-End: 1lPRbl-00ADuH-Af
+X-Headers-End: 1lPRdO-0002c3-OL
 Subject: Re: [f2fs-dev] [RFC PATCH 6/8] ext4: use memcpy_to_page() in
  pagecache_write()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -110,10 +110,11 @@ On Thu, Mar 25, 2021 at 10:22:54AM -0400, Theodore Y. Ts'o wrote:
 > patches into their own trees?  The ext4 patches look good, and unless
 > you have any objections, I can take them through the ext4 tree.
 
-I think going through the ext4 tree would be fine.
+I should have sent the lore link to the fix:
 
-However, there was a fix needed in patch 2/8.  Chaitanya was a V1 sent?
+https://lore.kernel.org/linux-f2fs-devel/BYAPR04MB496564B786E293FDA21D06E6868F9@BYAPR04MB4965.namprd04.prod.outlook.com/
 
+Sorry,
 Ira
 
 
