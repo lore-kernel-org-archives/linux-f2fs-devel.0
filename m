@@ -2,66 +2,69 @@ Return-Path: <SRS0=qzJ6=IX=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D39C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Mar 2021 00:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0E6C433C1
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Mar 2021 00:08:54 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C2F31619B3
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Mar 2021 00:08:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F31619B3
+	by mail.kernel.org (Postfix) with ESMTPS id 923E2619F7
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 25 Mar 2021 00:08:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923E2619F7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lPDYL-0004eh-Cd; Thu, 25 Mar 2021 00:08:45 +0000
+	id 1lPDYU-0005V9-9C; Thu, 25 Mar 2021 00:08:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <shreeya.patel@collabora.com>) id 1lPDYK-0004ea-L2
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Mar 2021 00:08:44 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <shreeya.patel@collabora.com>) id 1lPDYT-0005Uo-2b
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Mar 2021 00:08:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VJPaYBiTfrTHaBRY1LC4konnt9xV9A/R3dw9kvRLg+E=; b=HeL+0Vhc8aPnSvpCVeP24O6tiy
- zEGpm6545Wja3rbIvVYnz8rlKvXcB0i4CiNGTN/urqcHwLKKmtgzC3rkNjC8QVopNm48ZzbhqlBBY
- JAZXiLSVUO/VauJ5W29ZUGuPaqXNPdkSav1HaHeALY6MUcL/hmIRyVaUWE0Wg9qxXOvk=;
+ bh=lWy4YCALxItmIDXBlIhuAXh+hJKEBlM81XEucGpRZ/A=; b=bnWCu23gdahbjWOfZZ9DlkSAAs
+ 7n7PgRQDd/hUqvTYUR8lGCqpHGv6qXCrd3Xz7ISuXzfYhSDO+T2tU/9ELW4EU8xFWNbU/zNCn+suJ
+ ipyay/qQ9BZTtYqo6bCL2ZLgQMTJsNQmlJdZemITqD4gxa0z8FCIZKBJiIBYpL7c5en4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=VJPaYBiTfrTHaBRY1LC4konnt9xV9A/R3dw9kvRLg+E=; b=H
- UE2fAQKVhOb5zXMvq1fi29qkmP7mO/sOaXwWpNImhg8PnIbdfWHFAYimRpTQx9gEnO52dsKg/pIMr
- +XhZPxk3CquQjFeKj4sOFnwfyste/oTpJsjJ9N3HC9rqwZgkqoOZ5WflqrR/ZYdx7LYkWV8AdD/cz
- YQXDlOvR/BG1m7is=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=lWy4YCALxItmIDXBlIhuAXh+hJKEBlM81XEucGpRZ/A=; b=E3DETMAQC7wHCswI8tANpc2f/z
+ EXtmk/0iP0bMXccsOXBF41GNxnt/REhpmDEpkfWM8qwjBzZU242BXMovejGf2fM5vB0LssQrVmNsr
+ p4boe5UfVLqCVlWFmtU/ajqiizziSi1mnJCYwtKLzu9SLx6C+ll/2mXTnsiAFz9BXrbQ=;
 Received: from bhuna.collabora.co.uk ([46.235.227.227])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lPDYE-007Toy-77
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Mar 2021 00:08:44 +0000
+ id 1lPDYJ-007TpD-Ml
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 25 Mar 2021 00:08:52 +0000
 Received: from [127.0.0.1] (localhost [127.0.0.1])
- (Authenticated sender: shreeya) with ESMTPSA id B47521F45F25
+ (Authenticated sender: shreeya) with ESMTPSA id 4D85F1F45F0B
 From: Shreeya Patel <shreeya.patel@collabora.com>
 To: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
  chao@kernel.org, krisman@collabora.com, ebiggers@google.com,
  drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
-Date: Thu, 25 Mar 2021 05:38:06 +0530
-Message-Id: <20210325000811.1379641-1-shreeya.patel@collabora.com>
+Date: Thu, 25 Mar 2021 05:38:08 +0530
+Message-Id: <20210325000811.1379641-3-shreeya.patel@collabora.com>
 X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20210325000811.1379641-1-shreeya.patel@collabora.com>
+References: <20210325000811.1379641-1-shreeya.patel@collabora.com>
 MIME-Version: 1.0
-X-Headers-End: 1lPDYE-007Toy-77
-Subject: [f2fs-dev] [PATCH v4 0/5] Make UTF-8 encoding loadable
+X-Headers-End: 1lPDYJ-007TpD-Ml
+Subject: [f2fs-dev] [PATCH v4 2/5] fs: Check if utf8 encoding is loaded
+ before calling utf8_unload()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,78 +83,72 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-utf8data.h_shipped has a large database table which is an auto-generated
-decodification trie for the unicode normalization functions and it is not
-necessary to carry this large table in the kernel.
-Goal is to make UTF-8 encoding loadable by converting it into a module
-and adding a layer between the filesystems and the utf8 module which will
-load the module whenever any filesystem that needs unicode is mounted.
+utf8_unload is being called if CONFIG_UNICODE is enabled.
+The ifdef block doesn't check if utf8 encoding has been loaded
+or not before calling the utf8_unload() function.
+This is not the expected behavior since it would sometimes lead
+to unloading utf8 even before loading it.
+Hence, add a condition which will check if sb->encoding is NOT NULL
+before calling the utf8_unload().
 
-1st patch in the series resolves the warning reported by kernel test robot
-and 2nd patch fixes the incorrect use of utf8_unload() in ext4 and
-f2fs filesystems.
-
-Unicode is the subsystem and utf8 is a charachter encoding for the
-subsystem, hence 3rd and 4th patches in the series are renaming functions
-and file name to unicode for better understanding the difference between
-UTF-8 module and unicode layer.
-
-Last patch in the series adds the layer and utf8 module and also uses
-static_call() function introducted for preventing speculative execution
-attacks.
-
+Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
 ---
-Changes in v4
-  - Return error from the static calls instead of doing nothing and
-    succeeding even without loading the module.
-  - Remove the complete usage of utf8_ops and use static calls at all
-    places.
-  - Restore the static calls to default values when module is unloaded.
-  - Decrement the reference of module after calling the unload function.
-  - Remove spinlock as there will be no race conditions after removing
-    utf8_ops.
+ fs/ext4/super.c | 6 ++++--
+ fs/f2fs/super.c | 9 ++++++---
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
-Changes in v3
-  - Add a patch which checks if utf8 is loaded before calling utf8_unload()
-    in ext4 and f2fs filesystems
-  - Return error if strscpy() returns value < 0
-  - Correct the conditions to prevent NULL pointer dereference while
-    accessing functions via utf8_ops variable.
-  - Add spinlock to avoid race conditions.
-  - Use static_call() for preventing speculative execution attacks.
-
-Changes in v2
-  - Remove the duplicate file from the last patch.
-  - Make the wrapper functions inline.
-  - Remove msleep and use try_module_get() and module_put()
-    for ensuring that module is loaded correctly and also
-    doesn't get unloaded while in use.
-  - Resolve the warning reported by kernel test robot.
-  - Resolve all the checkpatch.pl warnings.
-
-Shreeya Patel (5):
-  fs: unicode: Use strscpy() instead of strncpy()
-  fs: Check if utf8 encoding is loaded before calling utf8_unload()
-  fs: unicode: Rename function names from utf8 to unicode
-  fs: unicode: Rename utf8-core file to unicode-core
-  fs: unicode: Add utf8 module and a unicode layer
-
- fs/ext4/hash.c                             |   2 +-
- fs/ext4/namei.c                            |  12 +-
- fs/ext4/super.c                            |   8 +-
- fs/f2fs/dir.c                              |  12 +-
- fs/f2fs/super.c                            |  11 +-
- fs/libfs.c                                 |   6 +-
- fs/unicode/Kconfig                         |  11 +-
- fs/unicode/Makefile                        |   5 +-
- fs/unicode/unicode-core.c                  |  84 +++++++++++++
- fs/unicode/{utf8-core.c => unicode-utf8.c} |  93 +++++++++-----
- fs/unicode/utf8-selftest.c                 |   8 +-
- include/linux/unicode.h                    | 133 ++++++++++++++++++---
- 12 files changed, 307 insertions(+), 78 deletions(-)
- create mode 100644 fs/unicode/unicode-core.c
- rename fs/unicode/{utf8-core.c => unicode-utf8.c} (59%)
-
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index ad34a37278cd..e438d14f9a87 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1259,7 +1259,8 @@ static void ext4_put_super(struct super_block *sb)
+ 	fs_put_dax(sbi->s_daxdev);
+ 	fscrypt_free_dummy_policy(&sbi->s_dummy_enc_policy);
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sb->s_encoding);
++	if (sb->s_encoding)
++		utf8_unload(sb->s_encoding);
+ #endif
+ 	kfree(sbi);
+ }
+@@ -5165,7 +5166,8 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 		crypto_free_shash(sbi->s_chksum_driver);
+ 
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sb->s_encoding);
++	if (sb->s_encoding)
++		utf8_unload(sb->s_encoding);
+ #endif
+ 
+ #ifdef CONFIG_QUOTA
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 7069793752f1..0a04983c294e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1430,7 +1430,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 	for (i = 0; i < NR_PAGE_TYPE; i++)
+ 		kvfree(sbi->write_io[i]);
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sb->s_encoding);
++	if (sb->s_encoding)
++		utf8_unload(sb->s_encoding);
+ #endif
+ 	kfree(sbi);
+ }
+@@ -4073,8 +4074,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		kvfree(sbi->write_io[i]);
+ 
+ #ifdef CONFIG_UNICODE
+-	utf8_unload(sb->s_encoding);
+-	sb->s_encoding = NULL;
++	if (sb->s_encoding) {
++		utf8_unload(sb->s_encoding);
++		sb->s_encoding = NULL;
++	}
+ #endif
+ free_options:
+ #ifdef CONFIG_QUOTA
 -- 
 2.30.1
 
