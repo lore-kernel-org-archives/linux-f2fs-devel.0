@@ -2,97 +2,71 @@ Return-Path: <SRS0=0FbH=IY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B41D8C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 01:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B6EC433E0
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 01:46:59 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6278161A02;
-	Fri, 26 Mar 2021 01:44:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6278161A02
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTPS id A81AF619F8
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 01:46:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A81AF619F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lPbW4-0005ur-0o; Fri, 26 Mar 2021 01:44:00 +0000
+	id 1lPbYv-00063U-JJ; Fri, 26 Mar 2021 01:46:57 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from
- <bounce+103f7e.be9e4a-linux-f2fs-devel=lists.sourceforge.net@mg.codeaurora.org>)
- id 1lPbW2-0005uk-Up
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:43:58 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1lPbYu-00063K-Tm
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:46:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dbqyO5xp+Xc0AkR2FMEhZNoheUZwZy/NovyVB8pJPrw=; b=KELi1cO7hGzx4lZAMIlCQf0osn
- A0HPoZj2HraxIsMJN5eAqwrhthiTzid92QBDwGIag/NhHbiCuy9Xrzhkw07VTH0wybVFJ7SNVbBXB
- 2K2BfL/4N12n+pM5LPPHUKnd6mkceaQ3KUDXtGHYDfpzM/Zi9ye1jR62LMhNuEUSktCI=;
+ bh=IPEGYUcSvEFvu0ksdvGx/mO7ingRAaXVmvDwv4kBlJo=; b=OjO4JSTpWAZfRvXPcn0zDYDtNX
+ wsSQ8KZ7WpgX4hcHlgT4wBjB5NNIbUVDIPxnurCwzjsebvZcnxmHoT1PdIv7Fpj1GuTi4oiF38UbC
+ r+JAT+w9LY1m3c7/y1VQHSRKm3YwXek51cp97h0mQiJMxDmZgKJFYyyqP2W74hreiNzo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=dbqyO5xp+Xc0AkR2FMEhZNoheUZwZy/NovyVB8pJPrw=; b=kKlzmDRr5M0Dmat0hcwYmZTsiW
- fOaPwj3EStQYkT7qbkIBP0hFtNCbcXqczpVl0jSp5qXV6AcyTnR7R7Eh5BbX3wttv9jzDWfFy1XyL
- cJik3Hh0TQRbC/t7GG941mW20R8ovH8c9ixQVK3Qjzc/ZekhgEFwX5vZIzRgG0VmFOEQ=;
-Received: from m43-7.mailgun.net ([69.72.43.7])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1lPbVn-0001WP-4i
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:43:58 +0000
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org;
- q=dns/txt; 
- s=smtp; t=1616723023; h=In-Reply-To: Content-Type: MIME-Version:
- References: Message-ID: Subject: Cc: To: From: Date: Sender;
- bh=dbqyO5xp+Xc0AkR2FMEhZNoheUZwZy/NovyVB8pJPrw=;
- b=XbZ+y9W31w0564Nf2wd+wtt8aBYvX7lxDq6AtC/zQRf4kDLwD0ijapKq6oX9mq4NE8MsjLUP
- xPnTW55u19P61L4AhNHrF6XYgmwf5EsT3aj2GJvsSvtO1CgwqyAk3kd2Rw5+rhen5ufC3mdV
- TKaFGRLtOKFrdG1fNKDrNWAwW/Q=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI2M2Y4ZiIsICJsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
- 605d364a04a1954ec3aadf4c (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 26 Mar 2021 01:18:02
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
- id 6D06AC433C6; Fri, 26 Mar 2021 01:18:02 +0000 (UTC)
-Received: from codeaurora.org (unknown [202.46.22.19])
- (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
- (No client certificate requested) (Authenticated sender: stummala)
- by smtp.codeaurora.org (Postfix) with ESMTPSA id 67323C433CA;
- Fri, 26 Mar 2021 01:17:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67323C433CA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org;
- spf=fail smtp.mailfrom=stummala@codeaurora.org
-Date: Fri, 26 Mar 2021 06:47:56 +0530
-From: Sahitya Tummala <stummala@codeaurora.org>
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
-Message-ID: <20210326011756.GE8562@codeaurora.org>
-References: <1615886958-717-1-git-send-email-stummala@codeaurora.org>
- <3c453b72-892f-7044-2edd-224b82202608@huawei.com>
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=IPEGYUcSvEFvu0ksdvGx/mO7ingRAaXVmvDwv4kBlJo=; b=d
+ IlVfo5WvWJ4oON1YiC6NFlzNH4Twod3EPabxiBf2lR5861CRkw13g15mLiLaMWdLXcxxhCRFXqox7
+ gdm72Ar2TjX+heGSg9nPflmeYWuT/B5IICpWyLpZox7JPs8hmLEXcWr0hUeqCLprVGAgs4o59gz90
+ uXemLdl+0pG3VVFs=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1lPbYm-00C16j-L5
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:46:56 +0000
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F64XP3Bbpz19JJt;
+ Fri, 26 Mar 2021 09:44:37 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 26 Mar 2021 09:46:30 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Fri, 26 Mar 2021 09:46:22 +0800
+Message-ID: <20210326014622.111397-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <3c453b72-892f-7044-2edd-224b82202608@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Headers-End: 1lPbVn-0001WP-4i
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: allow to change discard policy
- based on cached discard cmds
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1lPbYm-00C16j-L5
+Subject: [f2fs-dev] [PATCH] f2fs: fix to cover __allocate_new_section() with
+ curseg_lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,41 +78,50 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jaegeuk,
+In order to avoid race with f2fs_do_replace_block().
 
-This latest v3 patch needs to be updated in f2fs tree.
-The f2fs tree currently points to older version of patch.
+Fixes: f5a53edcf01e ("f2fs: support aligned pinned file")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/segment.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Please make a note of it.
-
-Thanks,
-Sahitya.
-
-On Tue, Mar 16, 2021 at 07:08:58PM +0800, Chao Yu wrote:
-> On 2021/3/16 17:29, Sahitya Tummala wrote:
-> >With the default DPOLICY_BG discard thread is ioaware, which prevents
-> >the discard thread from issuing the discard commands. On low RAM setups,
-> >it is observed that these discard commands in the cache are consuming
-> >high memory. This patch aims to relax the memory pressure on the system
-> >due to f2fs pending discard cmds by changing the policy to DPOLICY_FORCE
-> >based on the nm_i->ram_thresh configured.
-> >
-> >Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> 
-> Thanks,
-
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index e533192545b2..f1b0e832e7c2 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2957,19 +2957,23 @@ static void __allocate_new_section(struct f2fs_sb_info *sbi, int type)
+ 
+ void f2fs_allocate_new_section(struct f2fs_sb_info *sbi, int type)
+ {
++	down_read(&SM_I(sbi)->curseg_lock);
+ 	down_write(&SIT_I(sbi)->sentry_lock);
+ 	__allocate_new_section(sbi, type);
+ 	up_write(&SIT_I(sbi)->sentry_lock);
++	up_read(&SM_I(sbi)->curseg_lock);
+ }
+ 
+ void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
+ {
+ 	int i;
+ 
++	down_read(&SM_I(sbi)->curseg_lock);
+ 	down_write(&SIT_I(sbi)->sentry_lock);
+ 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++)
+ 		__allocate_new_segment(sbi, i, false);
+ 	up_write(&SIT_I(sbi)->sentry_lock);
++	up_read(&SM_I(sbi)->curseg_lock);
+ }
+ 
+ static const struct segment_allocation default_salloc_ops = {
 -- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+2.29.2
+
 
 
 _______________________________________________
