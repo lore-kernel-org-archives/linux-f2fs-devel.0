@@ -2,74 +2,84 @@ Return-Path: <SRS0=0FbH=IY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B63C433DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 01:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4962C433C1
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 01:20:02 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EAF8F61A14
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 01:09:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAF8F61A14
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 5BB1461A2B;
+	Fri, 26 Mar 2021 01:20:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB1461A2B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lPayc-0004mU-IH; Fri, 26 Mar 2021 01:09:26 +0000
+	id 1lPb8r-0005Fn-SU; Fri, 26 Mar 2021 01:20:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lPaya-0004mJ-BN
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:09:24 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1lPb8q-0005Fg-E0
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:20:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dSxLRhzSvSqoDzc2LSsp+KieQHTYB5tE0hn3iJIaiPw=; b=HgI2Yxp2gvEon3AQZmWfTbOK+l
- 44CbCcOk3/QFoBfgcWEWHBJX55VNibdl7mi/aqyId9il469n9tPp5TD0hia3GHvU51XH69zh+2svr
- qKXgxnDK3v2UFZjVpggSJ/YLrNtTnYUj84SmKI80PJqisiwIqfWfjkFf+hdJ/kI9Jr64=;
+ bh=35B0Zpa1GuuuAPiiwEa2z1vPqV7o7V01Leab13ltBlg=; b=i+VsxGc/MBU0VHeT7VjjZqu/vB
+ wEhQw2OCyaFASdIC1YB1nwHxwSWnTaXDNK1Nz2gRGyWoveeH6aODRBnhOMo14vSzo1E2nmRnp45Sr
+ Lq3KbQimMb94Qt3SkoS390QQNFt1T7uVJcy6ywb8onVzw6h2zQiEiwzaauuO7qq7C+Kw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dSxLRhzSvSqoDzc2LSsp+KieQHTYB5tE0hn3iJIaiPw=; b=mcuQV569149LdbDhjS4lXA0THQ
- hjuy/QZQvuInOKggBpK1xdQ+/2y2+CJ6DohgxzxCX7Nf1+8J2zgL1FjWUVbNi5+UqHzNeYHWh1a7T
- FuDeoCg1uSknJUAsKxWbWg/ng0IVJXKxN81mYrHAu2WT0HU5zikwfxV92PXgxv6Ojnxk=;
-Received: from szxga04-in.huawei.com ([45.249.212.190])
+ bh=35B0Zpa1GuuuAPiiwEa2z1vPqV7o7V01Leab13ltBlg=; b=WCwLuhqmE1v4HvcAwsagwgxXJg
+ k+k3xkgFxkgnp2UYiw1OGGHEVBF8LBJ+95vwaWoGCIMoXvxhT/HdrEH/TB9hpB2s3TI9bFPhhfq5i
+ kuSOaL5w6NpfIdivlBtYXc9s9L7b7K5TORogVzhNG+A/2PZgyJQojS9yXYZ6VsVYT8Co=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lPayP-00Bz0v-Sb
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:09:23 +0000
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F63hT458LznWV1;
- Fri, 26 Mar 2021 09:06:33 +0800 (CST)
-Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 26 Mar
- 2021 09:08:59 +0800
-To: Ruiqi Gong <gongruiqi1@huawei.com>, <jaegeuk@kernel.org>, <chao@kernel.org>
-References: <20210325063811.6486-1-gongruiqi1@huawei.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <c151c786-4649-7d30-e7e0-a30c15cbae9e@huawei.com>
-Date: Fri, 26 Mar 2021 09:08:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1lPb8l-00Bzk2-Vt
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:20:00 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 915F161A2B;
+ Fri, 26 Mar 2021 01:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1616721585;
+ bh=aUjj7g5wXra24mXyN2v00BSWGgNE2xAbToirjTuSRyQ=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=qaBKcxHKSJOULmojprkywXDnbsrBPpEVfGysVTGuubOcRCUsnfYISDK/XjI974ran
+ qUAoCpqSNM3NRS7ipjIrR800VGhubMqlai3o6toiTx51DvN5Keyt6tJ68nUKImhd1/
+ B5gwU5M5YutxdNujlWjPiDT+Hz+fV1irGIlti3lK9sL40isVZZ7Bo+D+jB1VTTLi/S
+ nGIqgvFALnb3jHEgC6XKBcu9K0olxGKzOiwwcGo3guXE1D4WocEKoFRX6/YzdgKHvv
+ GHFTU/6s1xdKTmLJUjZYa/bOpz5CzxTwQxu9MWaVvpr0u61sQyqY3xXtwNfzBE6XZb
+ fsX5nYj7PYbIg==
+Date: Thu, 25 Mar 2021 18:19:44 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Message-ID: <YF02sFKa778eomr9@google.com>
+References: <20210323064155.12582-1-yuchao0@huawei.com>
+ <YFo16ADpWJ7OUAvK@google.com>
+ <107e671d-68ea-1a74-521e-ab2b6fe36416@huawei.com>
+ <YFq+aQW7eihFuSst@google.com>
+ <c5850f4b-ebe8-bc34-10c6-ab27d562d621@huawei.com>
+ <YFvA6uzDLeD7dRdY@google.com>
+ <8b0b0782-a667-9edc-5ee9-98ac9f67b7b7@huawei.com>
+ <c1e48546-f61b-5db9-13b6-6430ce368661@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20210325063811.6486-1-gongruiqi1@huawei.com>
-Content-Language: en-US
-X-Originating-IP: [10.136.110.154]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1lPayP-00Bz0v-Sb
-Subject: Re: [f2fs-dev] [PATCH -next] f2fs: fix a typo in inode.c
+Content-Disposition: inline
+In-Reply-To: <c1e48546-f61b-5db9-13b6-6430ce368661@huawei.com>
+X-Headers-End: 1lPb8l-00Bzk2-Vt
+Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: give a warning only for
+ readonly partition"
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,20 +92,179 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/3/25 14:38, Ruiqi Gong wrote:
-> Do a trivial typo fix.
-> s/runing/running
+On 03/26, Chao Yu wrote:
+> On 2021/3/25 9:59, Chao Yu wrote:
+> > On 2021/3/25 6:44, Jaegeuk Kim wrote:
+> > > On 03/24, Chao Yu wrote:
+> > > > On 2021/3/24 12:22, Jaegeuk Kim wrote:
+> > > > > On 03/24, Chao Yu wrote:
+> > > > > > On 2021/3/24 2:39, Jaegeuk Kim wrote:
+> > > > > > > On 03/23, Chao Yu wrote:
+> > > > > > > > This reverts commit 938a184265d75ea474f1c6fe1da96a5196163789.
+> > > > > > > > 
+> > > > > > > > Because that commit fails generic/050 testcase which expect failure
+> > > > > > > > during mount a recoverable readonly partition.
+> > > > > > > 
+> > > > > > > I think we need to change generic/050, since f2fs can recover this partition,
+> > > > > > 
+> > > > > > Well, not sure we can change that testcase, since it restricts all generic
+> > > > > > filesystems behavior. At least, ext4's behavior makes sense to me:
+> > > > > > 
+> > > > > > 	journal_dev_ro = bdev_read_only(journal->j_dev);
+> > > > > > 	really_read_only = bdev_read_only(sb->s_bdev) | journal_dev_ro;
+> > > > > > 
+> > > > > > 	if (journal_dev_ro && !sb_rdonly(sb)) {
+> > > > > > 		ext4_msg(sb, KERN_ERR,
+> > > > > > 			 "journal device read-only, try mounting with '-o ro'");
+> > > > > > 		err = -EROFS;
+> > > > > > 		goto err_out;
+> > > > > > 	}
+> > > > > > 
+> > > > > > 	if (ext4_has_feature_journal_needs_recovery(sb)) {
+> > > > > > 		if (sb_rdonly(sb)) {
+> > > > > > 			ext4_msg(sb, KERN_INFO, "INFO: recovery "
+> > > > > > 					"required on readonly filesystem");
+> > > > > > 			if (really_read_only) {
+> > > > > > 				ext4_msg(sb, KERN_ERR, "write access "
+> > > > > > 					"unavailable, cannot proceed "
+> > > > > > 					"(try mounting with noload)");
+> > > > > > 				err = -EROFS;
+> > > > > > 				goto err_out;
+> > > > > > 			}
+> > > > > > 			ext4_msg(sb, KERN_INFO, "write access will "
+> > > > > > 			       "be enabled during recovery");
+> > > > > > 		}
+> > > > > > 	}
+> > > > > > 
+> > > > > > > even though using it as readonly. And, valid checkpoint can allow for user to
+> > > > > > > read all the data without problem.
+> > > > > > 
+> > > > > > > >      		if (f2fs_hw_is_readonly(sbi)) {
+> > > > > > 
+> > > > > > Since device is readonly now, all write to the device will fail, checkpoint can
+> > > > > > not persist recovered data, after page cache is expired, user can see stale data.
+> > > > > 
+> > > > > My point is, after mount with ro, there'll be no data write which preserves the
+> > > > > current status. So, in the next time, we can recover fsync'ed data later, if
+> > > > > user succeeds to mount as rw. Another point is, with the current checkpoint, we
+> > > > > should not have any corrupted metadata. So, why not giving a chance to show what
+> > > > > data remained to user? I think this can be doable only with CoW filesystems.
+> > > > 
+> > > > I guess we're talking about the different things...
+> > > > 
+> > > > Let me declare two different readonly status:
+> > > > 
+> > > > 1. filesystem readonly: file system is mount with ro mount option, and
+> > > > app from userspace can not modify any thing of filesystem, but filesystem
+> > > > itself can modify data on device since device may be writable.
+> > > > 
+> > > > 2. device readonly: device is set to readonly status via 'blockdev --setro'
+> > > > command, and then filesystem should never issue any write IO to the device.
+> > > > 
+> > > > So, what I mean is, *when device is readonly*, rather than f2fs mountpoint
+> > > > is readonly (f2fs_hw_is_readonly() returns true as below code, instead of
+> > > > f2fs_readonly() returns true), in this condition, we should not issue any
+> > > > write IO to device anyway, because, AFAIK, write IO will fail due to
+> > > > bio_check_ro() check.
+> > > 
+> > > In that case, mount(2) will try readonly, no?
+> > 
+> > Yes, if device is readonly, mount (2) can not mount/remount device to rw
+> > mountpoint.
 > 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Ruiqi Gong <gongruiqi1@huawei.com>
+> Any other concern about this patch?
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Indeed we're talking about different things. :)
 
-Thanks,
+This case is mount(ro) with device(ro) having some data to recover.
+My point is why not giving a chance to mount(ro) to show the current data
+covered by a valid checkpoint. This doesn't change anything in the disk,
+and in the next time, it allows mount(rw|ro) with device(rw) to recover
+the data seamlessly.
+
+> 
+> Thanks,
+> 
+> > 
+> > Thanks,
+> > 
+> > > 
+> > > # blockdev --setro /dev/vdb
+> > > # mount -t f2fs /dev/vdb /mnt/test/
+> > > mount: /mnt/test: WARNING: source write-protected, mounted read-only.
+> > > 
+> > > > 
+> > > >    		if (f2fs_hw_is_readonly(sbi)) {
+> > > > -			if (!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
+> > > > -				err = -EROFS;
+> > > > +			if (!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG))
+> > > >    				f2fs_err(sbi, "Need to recover fsync data, but write access unavailable");
+> > > > -				goto free_meta;
+> > > > -			}
+> > > > -			f2fs_info(sbi, "write access unavailable, skipping recovery");
+> > > > +			else
+> > > > +				f2fs_info(sbi, "write access unavailable, skipping recovery");
+> > > >    			goto reset_checkpoint;
+> > > >    		}
+> > > > 
+> > > > For the case of filesystem is readonly and device is writable, it's fine
+> > > > to do recovery in order to let user to see fsynced data.
+> > > > 
+> > > > Thanks,
+> > > > 
+> > > > > 
+> > > > > > 
+> > > > > > Am I missing something?
+> > > > > > 
+> > > > > > Thanks,
+> > > > > > 
+> > > > > > > 
+> > > > > > > > 
+> > > > > > > > Fixes: 938a184265d7 ("f2fs: give a warning only for readonly partition")
+> > > > > > > > Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> > > > > > > > ---
+> > > > > > > >      fs/f2fs/super.c | 8 +++++---
+> > > > > > > >      1 file changed, 5 insertions(+), 3 deletions(-)
+> > > > > > > > 
+> > > > > > > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > > > > > > index b48281642e98..2b78ee11f093 100644
+> > > > > > > > --- a/fs/f2fs/super.c
+> > > > > > > > +++ b/fs/f2fs/super.c
+> > > > > > > > @@ -3952,10 +3952,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> > > > > > > >      		 * previous checkpoint was not done by clean system shutdown.
+> > > > > > > >      		 */
+> > > > > > > >      		if (f2fs_hw_is_readonly(sbi)) {
+> > > > > > > > -			if (!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG))
+> > > > > > > > +			if (!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
+> > > > > > > > +				err = -EROFS;
+> > > > > > > >      				f2fs_err(sbi, "Need to recover fsync data, but write access unavailable");
+> > > > > > > > -			else
+> > > > > > > > -				f2fs_info(sbi, "write access unavailable, skipping recovery");
+> > > > > > > > +				goto free_meta;
+> > > > > > > > +			}
+> > > > > > > > +			f2fs_info(sbi, "write access unavailable, skipping recovery");
+> > > > > > > >      			goto reset_checkpoint;
+> > > > > > > >      		}
+> > > > > > > > -- 
+> > > > > > > > 2.29.2
+> > > > > > > .
+> > > > > > > 
+> > > > > .
+> > > > > 
+> > > .
+> > > 
+> > 
+> > 
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > .
+> > 
 
 
 _______________________________________________
