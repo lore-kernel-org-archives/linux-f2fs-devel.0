@@ -2,71 +2,76 @@ Return-Path: <SRS0=0FbH=IY=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B6EC433E0
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 01:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A808DC433DB
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 07:33:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A81AF619F8
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 01:46:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A81AF619F8
+	by mail.kernel.org (Postfix) with ESMTPS id 0F865619D3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 Mar 2021 07:33:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F865619D3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lPbYv-00063U-JJ; Fri, 26 Mar 2021 01:46:57 +0000
+	id 1lPgyb-0003ss-RE; Fri, 26 Mar 2021 07:33:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <yuchao0@huawei.com>) id 1lPbYu-00063K-Tm
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:46:56 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1lPgya-0003sl-8w
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 07:33:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IPEGYUcSvEFvu0ksdvGx/mO7ingRAaXVmvDwv4kBlJo=; b=OjO4JSTpWAZfRvXPcn0zDYDtNX
- wsSQ8KZ7WpgX4hcHlgT4wBjB5NNIbUVDIPxnurCwzjsebvZcnxmHoT1PdIv7Fpj1GuTi4oiF38UbC
- r+JAT+w9LY1m3c7/y1VQHSRKm3YwXek51cp97h0mQiJMxDmZgKJFYyyqP2W74hreiNzo=;
+ bh=F9L6A6ctK8SIY7jRrh/6Z0pPbOLKcXKNKcPV879c2gQ=; b=iLkyT9czEW/JTtQCxHk7x98snL
+ 9F4dg7264zpoVBG0LdBci+NgTz0HDkE4e3TlhHUKa2/0LN8oOlGLePYNSRiunhRGA4e56T7lPFezI
+ fW6yTnZxiZzIGJ1h3zrZ+Df9AsrpvLh5ZsIOa+vgyaW60h3XowP7FADiiVLwQgJQqeSI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=IPEGYUcSvEFvu0ksdvGx/mO7ingRAaXVmvDwv4kBlJo=; b=d
- IlVfo5WvWJ4oON1YiC6NFlzNH4Twod3EPabxiBf2lR5861CRkw13g15mLiLaMWdLXcxxhCRFXqox7
- gdm72Ar2TjX+heGSg9nPflmeYWuT/B5IICpWyLpZox7JPs8hmLEXcWr0hUeqCLprVGAgs4o59gz90
- uXemLdl+0pG3VVFs=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=F9L6A6ctK8SIY7jRrh/6Z0pPbOLKcXKNKcPV879c2gQ=; b=TQuCVaxVBibxeOO5VuTK9uyBwF
+ jFe8st5jPt8R/m6K7XlpHwf+WG09EhuzesB4C7rCpKeyLWqGH/PTom8sIgwMWUAf8owz0gLOA5o5L
+ U7UEtap7I39AMLQjsna1EmRdaObnH7uqbaxq9ZiBgHzdLkDLoJTcMNKiongNOLPJ6Osw=;
 Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lPbYm-00C16j-L5
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 01:46:56 +0000
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F64XP3Bbpz19JJt;
- Fri, 26 Mar 2021 09:44:37 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.498.0; Fri, 26 Mar 2021 09:46:30 +0800
+ id 1lPgyT-00CyhB-Pt
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 26 Mar 2021 07:33:48 +0000
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F6DCt1LM0znWrS;
+ Fri, 26 Mar 2021 15:30:50 +0800 (CST)
+Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 26 Mar
+ 2021 15:33:22 +0800
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20210324031828.67133-1-yuchao0@huawei.com>
+ <YFvQGxLbpmDjxEzR@google.com>
 From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Fri, 26 Mar 2021 09:46:22 +0800
-Message-ID: <20210326014622.111397-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.29.2
+Message-ID: <2dfb085b-80ce-050b-5650-986675a07488@huawei.com>
+Date: Fri, 26 Mar 2021 15:33:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
+In-Reply-To: <YFvQGxLbpmDjxEzR@google.com>
+Content-Language: en-US
+X-Originating-IP: [10.136.110.154]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1lPbYm-00C16j-L5
-Subject: [f2fs-dev] [PATCH] f2fs: fix to cover __allocate_new_section() with
- curseg_lock
+X-Headers-End: 1lPgyT-00CyhB-Pt
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid touching checkpointed
+ data in get_victim()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,49 +84,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In order to avoid race with f2fs_do_replace_block().
+On 2021/3/25 7:49, Jaegeuk Kim wrote:
+> On 03/24, Chao Yu wrote:
+>> In CP disabling mode, there are two issues when using LFS or SSR | AT_SSR
+>> mode to select victim:
+>>
+>> 1. LFS is set to find source section during GC, the victim should have
+>> no checkpointed data, since after GC, section could not be set free for
+>> reuse.
+>>
+>> Previously, we only check valid chpt blocks in current segment rather
+>> than section, fix it.
+>>
+>> 2. SSR | AT_SSR are set to find target segment for writes which can be
+>> fully filled by checkpointed and newly written blocks, we should never
+>> select such segment, otherwise it can cause panic or data corruption
+>> during allocation, potential case is described as below:
+>>
+>>   a) target segment has 128 ckpt valid blocks
+>>   b) GC migrates 'n' (n < 512) valid blocks to other segment (segment is
+>>      still in dirty list)
 
-Fixes: f5a53edcf01e ("f2fs: support aligned pinned file")
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/segment.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I missed to change 128 to n, so comments should be updated as below:
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index e533192545b2..f1b0e832e7c2 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2957,19 +2957,23 @@ static void __allocate_new_section(struct f2fs_sb_info *sbi, int type)
- 
- void f2fs_allocate_new_section(struct f2fs_sb_info *sbi, int type)
- {
-+	down_read(&SM_I(sbi)->curseg_lock);
- 	down_write(&SIT_I(sbi)->sentry_lock);
- 	__allocate_new_section(sbi, type);
- 	up_write(&SIT_I(sbi)->sentry_lock);
-+	up_read(&SM_I(sbi)->curseg_lock);
- }
- 
- void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
- {
- 	int i;
- 
-+	down_read(&SM_I(sbi)->curseg_lock);
- 	down_write(&SIT_I(sbi)->sentry_lock);
- 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++)
- 		__allocate_new_segment(sbi, i, false);
- 	up_write(&SIT_I(sbi)->sentry_lock);
-+	up_read(&SM_I(sbi)->curseg_lock);
- }
- 
- static const struct segment_allocation default_salloc_ops = {
--- 
-2.29.2
+   a) target segment has 'n' (n < 512) ckpt valid blocks
+   b) GC migrates 'n' valid blocks to other segment (segment is still
+      in dirty list)
 
+Thanks,
+
+>>   c) GC migrates '512 - n' blocks to target segment (segment has 'n'
+>>      cp_vblocks and '512 - n' vblocks)
+>>   d) If GC selects target segment via {AT,}SSR allocator, however there
+>>      is no free space in targe segment.
 
 
 _______________________________________________
