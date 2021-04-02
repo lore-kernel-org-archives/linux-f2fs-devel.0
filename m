@@ -7,72 +7,69 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2EEC433ED
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Apr 2021 03:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB02C433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Apr 2021 03:27:19 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 456B6610EA;
-	Fri,  2 Apr 2021 03:27:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 456B6610EA
+	by mail.kernel.org (Postfix) with ESMTPS id 6122F610CE;
+	Fri,  2 Apr 2021 03:27:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6122F610CE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lSASm-00033s-Ok; Fri, 02 Apr 2021 03:27:12 +0000
+	id 1lSASt-0004Lx-1h; Fri, 02 Apr 2021 03:27:19 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <jaegeuk@kernel.org>) id 1lSASl-00033l-E7
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 03:27:11 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1lSASr-0004Lq-If
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 03:27:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rKKeUgsZ/qPEuARXi98KcF5qzCBB9ZXTNIrYTQ6HZ0E=; b=UiAVKag2mvPtcH4YaG5pkHlxvj
- zJzIaKXj1VsROLrb6b3QeiBWKFNJlcpt7D/Lkx8p1xc0pb8cNRh9QtNTGutn/gCICt7XwZjsFVPm2
- sI0VIlkgdkwXUKEUkw6GYhWGPDLjFWG//r+nENdYzxn1T8AvBX7yWWWCoAYiYz2jsLDA=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=rKKeUgsZ/qPEuARXi98KcF5qzCBB9ZXTNIrYTQ6HZ0E=; b=i3FTBBmHU54qHPmHYbZNfytpZg
- dt86pZYFkd49AsoELQLt8s0QBYKzS8Rw63keXdN6+YTisGpL5VNOGwNgNh3zRD7gO5isOS+IXt3bj
- 4QETjAZHWv+GSeJJNR65JTDbFpFyy9YuIoDOJrn0wqm55CClStB+UF1T2sffnEm5Pbjo=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=aTtwi2+8P6uKDze/MXSHJDhdR9aIl98rfXTYmBlwyik=; b=W7f5uyl3bkb71aXwqj1Jys++Rj
+ K5KI516nPuMg+zVxrXu6Mxijnzyo+vi21KaQZ0LeQG+4SHtQIIIwDv8djdOWFTeQV8XECYcVwgaxD
+ 64gWuqYEeYMJS0TAMymf64uOtq0SydCr1cY296fWGS0X4DaoUzaoFeeZKHP9N6PodWYM=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=aTtwi2+8P6uKDze/MXSHJDhdR9aIl98rfXTYmBlwyik=; b=m
+ fXGD5u8fqYDhJbTu58NUQ9dU/MlFV5fW5Bn298i10tKgzkCZXzFONyjqXCfbQXQvVhZWK3YvfkOZN
+ Nj79drYW3R9wJs6RhrBiZyFb56ljO6rzgzDAlOEyz4b077CzMke4rohUG6BdFb+MwjJnyo+s6OIkw
+ k9IdegP/WcG+E0lE=;
 Received: from [198.145.29.99] (helo=mail.kernel.org)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lSASj-0000l9-3b
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 03:27:11 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CA625610CE;
+ id 1lSASj-0000l7-3b
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 03:27:17 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4B4F560FDC;
  Fri,  2 Apr 2021 03:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1617334018;
- bh=UGjlJgcdvn75kCLUjie54uE8WR3ubcMaA5ftjG8dwO8=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=mlbpoPgRJC0fcOh6Q3uGO39nCUt1gS/UuRNBitT+WlRoIwLxBE30kCfvv6rAKSmcF
- +F5AfoyK1v1/UypIGTWcOtVts8sZyYAq37s+aA4qocCrbI1msE03GpeBEhKsGCYIQC
- 8HCcekwPUyJXecS6Ku81YBM50yRitompFUSikfbUTqVXAp5ZyJmV98oTSV+Lx5ARy2
- SuzY6KI29RU8i+vYXe29J3726YW1cTDaXPMsQTq+To5PKbPnLMF9kvuo3U+DoPKSWm
- QgoPRNW6bFPTUxc2rt0BvbCJwPN4sQ/avlYu2QbZPBhxVdJXt0L8QZgkYlg2MY/heP
- m3fnQ1ag/vHYg==
+ bh=cYl20oqyymcduVYyfQSf4qFqnpLjlRxnH846QLU2VQo=;
+ h=From:To:Cc:Subject:Date:From;
+ b=nWExemQskcJSdkGHamyL5V4smR3cZZC+B2SGB4CWY2zC6bqPEdbcrrycceiYZ0HZN
+ lvLtmdKGxHexpMYAKsGcmQod5Y8jiU0vTzdWA+I77NQFpDV6oBmli3irdhRx7bJtDV
+ S9rhD9B/HQnZaijLJt2d4pwCw6PxgcQ3dI/A8bMgMlyDg1YQVbZud+5vx8kjzU/G1B
+ jyOFdh/i2d2wrG/8KFFgbI/bYkSKwADq69ZhQI1horTAweOsAlkp7MENUFZKSr1e1w
+ K5to3sA04Ido3noZaHHnGAWBOWJwa3i5yz2vOaEqsZrQM8xz0HkdTjq9i51SElQPNm
+ AVShPLVw3bzdw==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu,  1 Apr 2021 20:26:42 -0700
-Message-Id: <20210402032642.2537641-2-jaegeuk@kernel.org>
+Date: Thu,  1 Apr 2021 20:26:41 -0700
+Message-Id: <20210402032642.2537641-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.31.0.208.g409f899ff0-goog
-In-Reply-To: <20210402032642.2537641-1-jaegeuk@kernel.org>
-References: <20210402032642.2537641-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1lSASj-0000l9-3b
-Subject: [f2fs-dev] [PATCH 2/2] resize.f2fs: add force option to rewrite
- broken calculation
+X-Headers-End: 1lSASj-0000l7-3b
+Subject: [f2fs-dev] [PATCH 1/2] resize.f2fs: fix wrong ovp calculation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,54 +86,49 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch adds "-f" for resize.f2fs to fix broken resized f2fs.
+beroal reported a mount failure due to broken valid_user_blocks.
+[ 6890.647749] F2FS-fs (loop0): Wrong valid_user_blocks: 16040048,
+user_block_count: 10016768
 
+From fsck,
+
+segment_count_main                      [0x    9a95 : 39573]
+-> 39573 * 2MB = 78GB as user space
+
+overprov_segment_count                  [0x    4e29 : 20009]
+-> 20009 * 2MB = 40GB as overprovisioned space which user can't see.
+
+But,
+[FSCK] valid_block_count matching with CP             [Ok..] [0xf4c070]
+-> 0xf4c070 = 16040048
+
+valid_block_count                       [0x  f4c070 : 16040048]
+-> So, this is correct.
+
+It turns out resize.f2fs gave very large and wrong overprovisioning space
+result in shortage of user blocks. The root cause was f2fs_get_usable_segments()
+didn't consider resize case which needs segment_count_main from new superblock.
+
+Fixes: f8410857b7a8 ("f2fs-tools: zns zone-capacity support")
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/main.c   | 6 +++++-
- fsck/resize.c | 5 +++--
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ lib/libf2fs_zoned.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fsck/main.c b/fsck/main.c
-index be30e0073a5e..64efa8789cd4 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -506,7 +506,7 @@ void f2fs_parse_options(int argc, char *argv[])
- #endif
- 	} else if (!strcmp("resize.f2fs", prog)) {
- #ifdef WITH_RESIZE
--		const char *option_string = "d:st:iV";
-+		const char *option_string = "d:fst:iV";
+diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
+index 56c97d1a65f7..ce73b9af66ec 100644
+--- a/lib/libf2fs_zoned.c
++++ b/lib/libf2fs_zoned.c
+@@ -495,6 +495,9 @@ uint32_t f2fs_get_usable_segments(struct f2fs_super_block *sb)
+ 	int i, j;
+ 	uint32_t usable_segs = 0, zone_segs;
  
- 		c.func = RESIZE;
- 		while ((option = getopt(argc, argv, option_string)) != EOF) {
-@@ -522,6 +522,10 @@ void f2fs_parse_options(int argc, char *argv[])
- 				MSG(0, "Info: Debug level = %d\n",
- 							c.dbg_lv);
- 				break;
-+			case 'f':
-+				c.force = 1;
-+				MSG(0, "Info: Force to resize\n");
-+				break;
- 			case 's':
- 				c.safe_resize = 1;
- 				break;
-diff --git a/fsck/resize.c b/fsck/resize.c
-index 46b1cfb218cf..0425498b9760 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -714,8 +714,9 @@ int f2fs_resize(struct f2fs_sb_info *sbi)
- 		} else {
- 			return f2fs_resize_shrink(sbi);
- 		}
--	else if ((c.target_sectors * c.sector_size >>
--			get_sb(log_blocksize)) > get_sb(block_count))
-+	else if (((c.target_sectors * c.sector_size >>
-+			get_sb(log_blocksize)) > get_sb(block_count)) ||
-+			c.force)
- 		return f2fs_resize_grow(sbi);
- 	else {
- 		MSG(0, "Nothing to resize.\n");
++	if (c.func == RESIZE)
++		return get_sb(segment_count_main);
++
+ 	for (i = 0; i < c.ndevs; i++) {
+ 		if (c.devices[i].zoned_model != F2FS_ZONED_HM) {
+ 			usable_segs += c.devices[i].total_segments;
 -- 
 2.31.0.208.g409f899ff0-goog
 
