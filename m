@@ -2,74 +2,71 @@ Return-Path: <SRS0=iwUc=I7=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB02C433ED
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Apr 2021 03:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816EAC433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Apr 2021 07:13:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6122F610CE;
-	Fri,  2 Apr 2021 03:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6122F610CE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 0B17160551
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Apr 2021 07:13:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B17160551
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lSASt-0004Lx-1h; Fri, 02 Apr 2021 03:27:19 +0000
+	id 1lSDzy-0003zK-ML; Fri, 02 Apr 2021 07:13:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1lSASr-0004Lq-If
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 03:27:17 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <yuchao0@huawei.com>) id 1lSDzx-0003z9-9M
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 07:13:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=aTtwi2+8P6uKDze/MXSHJDhdR9aIl98rfXTYmBlwyik=; b=W7f5uyl3bkb71aXwqj1Jys++Rj
- K5KI516nPuMg+zVxrXu6Mxijnzyo+vi21KaQZ0LeQG+4SHtQIIIwDv8djdOWFTeQV8XECYcVwgaxD
- 64gWuqYEeYMJS0TAMymf64uOtq0SydCr1cY296fWGS0X4DaoUzaoFeeZKHP9N6PodWYM=;
+ bh=4bTbeffMMGkwWpdDsIfbhqJ2nR1AeY0kiQobvMmw0OQ=; b=AvQFKgKcMrVLfdvsQgvOYjjZDp
+ VAP4q9MGwiO9kMGi35ogzUBnuwTM13DE6fAsz8sNp2w3XzdX/8ANysfyXEpq4anjskaztZMJOUdyB
+ X2pHAhqkiog7T54ovusShoTzEjkqhVnq+JKep3aJ6Djn6TjAcC52/AMyDkIAx1knK5XU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=aTtwi2+8P6uKDze/MXSHJDhdR9aIl98rfXTYmBlwyik=; b=m
- fXGD5u8fqYDhJbTu58NUQ9dU/MlFV5fW5Bn298i10tKgzkCZXzFONyjqXCfbQXQvVhZWK3YvfkOZN
- Nj79drYW3R9wJs6RhrBiZyFb56ljO6rzgzDAlOEyz4b077CzMke4rohUG6BdFb+MwjJnyo+s6OIkw
- k9IdegP/WcG+E0lE=;
-Received: from [198.145.29.99] (helo=mail.kernel.org)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lSASj-0000l7-3b
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 03:27:17 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4B4F560FDC;
- Fri,  2 Apr 2021 03:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1617334018;
- bh=cYl20oqyymcduVYyfQSf4qFqnpLjlRxnH846QLU2VQo=;
- h=From:To:Cc:Subject:Date:From;
- b=nWExemQskcJSdkGHamyL5V4smR3cZZC+B2SGB4CWY2zC6bqPEdbcrrycceiYZ0HZN
- lvLtmdKGxHexpMYAKsGcmQod5Y8jiU0vTzdWA+I77NQFpDV6oBmli3irdhRx7bJtDV
- S9rhD9B/HQnZaijLJt2d4pwCw6PxgcQ3dI/A8bMgMlyDg1YQVbZud+5vx8kjzU/G1B
- jyOFdh/i2d2wrG/8KFFgbI/bYkSKwADq69ZhQI1horTAweOsAlkp7MENUFZKSr1e1w
- K5to3sA04Ido3noZaHHnGAWBOWJwa3i5yz2vOaEqsZrQM8xz0HkdTjq9i51SElQPNm
- AVShPLVw3bzdw==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu,  1 Apr 2021 20:26:41 -0700
-Message-Id: <20210402032642.2537641-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.31.0.208.g409f899ff0-goog
+ List-Owner:List-Archive; bh=4bTbeffMMGkwWpdDsIfbhqJ2nR1AeY0kiQobvMmw0OQ=; b=M
+ KMZ9N/K3Yub32PvvJQhEFNAGp+b2fkzC/NpkkOWZ7qXmn9IMnA8PwNMBFsh+jKOW2iXRTtPSGOOWj
+ 2flFuoz616DhgysKlfyDaoGJpW80Z7N3oHyJq7tmucODTMjcByONd3A3LEliFf7rVQJo22Ss31Vna
+ U+4RXWXDtRgHfYc0=;
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1lSDzl-005pZN-9n
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 07:13:41 +0000
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FBWRG53jNzNsD8;
+ Fri,  2 Apr 2021 15:10:34 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.498.0; Fri, 2 Apr 2021 15:13:05 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Fri, 2 Apr 2021 15:12:43 +0800
+Message-ID: <20210402071243.101214-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-X-Headers-End: 1lSASj-0000l7-3b
-Subject: [f2fs-dev] [PATCH 1/2] resize.f2fs: fix wrong ovp calculation
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1lSDzl-005pZN-9n
+Subject: [f2fs-dev] [PATCH] resize.f2fs: fix wrong sit/nat bitmap during
+ rebuild_checkpoint()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,56 +78,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-beroal reported a mount failure due to broken valid_user_blocks.
-[ 6890.647749] F2FS-fs (loop0): Wrong valid_user_blocks: 16040048,
-user_block_count: 10016768
+As beroal <me@beroal.in.ua> reported: f2fs image can be corrupted
+after below testcase:
 
-From fsck,
+1. truncate -s $((256*1024*1024)) img
+2. mkfs.f2fs -f img
+3. mount -t f2fs -o loop img /mnt
+4. xfs_io -f /mnt/file -c "pwrite 0 2M" -c "fsync"
+5. umount /mnt
+6. resize.f2fs -s -t 262144 img
+7. fsck.f2fs img
 
-segment_count_main                      [0x    9a95 : 39573]
--> 39573 * 2MB = 78GB as user space
+The root cause is we forgot to copy original sit/nat bitmap to
+new checkpoint during rebuild_checkpoint(), fix it.
 
-overprov_segment_count                  [0x    4e29 : 20009]
--> 20009 * 2MB = 40GB as overprovisioned space which user can't see.
-
-But,
-[FSCK] valid_block_count matching with CP             [Ok..] [0xf4c070]
--> 0xf4c070 = 16040048
-
-valid_block_count                       [0x  f4c070 : 16040048]
--> So, this is correct.
-
-It turns out resize.f2fs gave very large and wrong overprovisioning space
-result in shortage of user blocks. The root cause was f2fs_get_usable_segments()
-didn't consider resize case which needs segment_count_main from new superblock.
-
-Fixes: f8410857b7a8 ("f2fs-tools: zns zone-capacity support")
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reported-by: beroal <me@beroal.in.ua>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- lib/libf2fs_zoned.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fsck/resize.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-index 56c97d1a65f7..ce73b9af66ec 100644
---- a/lib/libf2fs_zoned.c
-+++ b/lib/libf2fs_zoned.c
-@@ -495,6 +495,9 @@ uint32_t f2fs_get_usable_segments(struct f2fs_super_block *sb)
- 	int i, j;
- 	uint32_t usable_segs = 0, zone_segs;
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 46b1cfb218cf..b3920560974b 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -526,6 +526,11 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
  
-+	if (c.func == RESIZE)
-+		return get_sb(segment_count_main);
+ 	memcpy(new_cp, cp, (unsigned char *)cp->sit_nat_version_bitmap -
+ 						(unsigned char *)cp);
++	if (c.safe_resize)
++		memcpy((void *)new_cp + CP_BITMAP_OFFSET,
++			(void *)cp + CP_BITMAP_OFFSET,
++			F2FS_BLKSIZE - CP_BITMAP_OFFSET);
 +
- 	for (i = 0; i < c.ndevs; i++) {
- 		if (c.devices[i].zoned_model != F2FS_ZONED_HM) {
- 			usable_segs += c.devices[i].total_segments;
+ 	new_cp->checkpoint_ver = cpu_to_le64(cp_ver + 1);
+ 
+ 	crc = f2fs_checkpoint_chksum(new_cp);
 -- 
-2.31.0.208.g409f899ff0-goog
+2.29.2
 
 
 
