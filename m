@@ -2,75 +2,77 @@ Return-Path: <SRS0=iwUc=I7=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3564DC433ED
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Apr 2021 01:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2EEC433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Apr 2021 03:27:15 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E08856052B;
-	Fri,  2 Apr 2021 01:18:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08856052B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 456B6610EA;
+	Fri,  2 Apr 2021 03:27:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 456B6610EA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lS8Rq-0002D3-DI; Fri, 02 Apr 2021 01:18:06 +0000
+	id 1lSASm-00033s-Ok; Fri, 02 Apr 2021 03:27:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lS8Rp-0002Cs-Ge
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 01:18:05 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <jaegeuk@kernel.org>) id 1lSASl-00033l-E7
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 03:27:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2LEmAtSodFB6xM+RRo7P62vpkQOxzqvAjkBeD3pWfDA=; b=jHKo/kyCJIYBwbMN9dDE3IuTFx
- +y/IupLx+9CknyD60dYhclU6bshE4mo3ji/Z5rnV23HKwei7TK2nuO27Ukx2UxNxncq27mHlL40Vh
- lLO6BxSoXtlmkGmqtrXCmT3CAF2QI7JWYE215gSDl9bUgf3gv389wnYNpDeOc6yXW2HQ=;
+ bh=rKKeUgsZ/qPEuARXi98KcF5qzCBB9ZXTNIrYTQ6HZ0E=; b=UiAVKag2mvPtcH4YaG5pkHlxvj
+ zJzIaKXj1VsROLrb6b3QeiBWKFNJlcpt7D/Lkx8p1xc0pb8cNRh9QtNTGutn/gCICt7XwZjsFVPm2
+ sI0VIlkgdkwXUKEUkw6GYhWGPDLjFWG//r+nENdYzxn1T8AvBX7yWWWCoAYiYz2jsLDA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2LEmAtSodFB6xM+RRo7P62vpkQOxzqvAjkBeD3pWfDA=; b=bA+vVqMOojvK/aOdztIAQ8yyfU
- tzaakQjRoAlSOu727xoijy9EB32wjWENwCvVTgUQgYI4li6BUM9Emueb/mIaMl8nmPpkUP9ee7Puq
- YCCgkhgVspDAi8wgZAxrjRKgIRT991ct2nxM5/z+Bzd/ZGhLOoD4/kAUE5KmyFBz8ICY=;
-Received: from szxga07-in.huawei.com ([45.249.212.35])
+ bh=rKKeUgsZ/qPEuARXi98KcF5qzCBB9ZXTNIrYTQ6HZ0E=; b=i3FTBBmHU54qHPmHYbZNfytpZg
+ dt86pZYFkd49AsoELQLt8s0QBYKzS8Rw63keXdN6+YTisGpL5VNOGwNgNh3zRD7gO5isOS+IXt3bj
+ 4QETjAZHWv+GSeJJNR65JTDbFpFyy9YuIoDOJrn0wqm55CClStB+UF1T2sffnEm5Pbjo=;
+Received: from [198.145.29.99] (helo=mail.kernel.org)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lS8Rf-0004ea-S5
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 01:18:05 +0000
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
- by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FBMYm0V77z9vLq;
- Fri,  2 Apr 2021 09:15:40 +0800 (CST)
-Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 2 Apr 2021
- 09:17:41 +0800
-To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-f2fs-devel@lists.sourceforge.net>, <kernel-team@android.com>
-References: <20210402004225.1677382-1-jaegeuk@kernel.org>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <99fb34f8-3e89-dcb3-f7d9-17a37a57f0ca@huawei.com>
-Date: Fri, 2 Apr 2021 09:17:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1lSASj-0000l9-3b
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Apr 2021 03:27:11 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CA625610CE;
+ Fri,  2 Apr 2021 03:26:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1617334018;
+ bh=UGjlJgcdvn75kCLUjie54uE8WR3ubcMaA5ftjG8dwO8=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=mlbpoPgRJC0fcOh6Q3uGO39nCUt1gS/UuRNBitT+WlRoIwLxBE30kCfvv6rAKSmcF
+ +F5AfoyK1v1/UypIGTWcOtVts8sZyYAq37s+aA4qocCrbI1msE03GpeBEhKsGCYIQC
+ 8HCcekwPUyJXecS6Ku81YBM50yRitompFUSikfbUTqVXAp5ZyJmV98oTSV+Lx5ARy2
+ SuzY6KI29RU8i+vYXe29J3726YW1cTDaXPMsQTq+To5PKbPnLMF9kvuo3U+DoPKSWm
+ QgoPRNW6bFPTUxc2rt0BvbCJwPN4sQ/avlYu2QbZPBhxVdJXt0L8QZgkYlg2MY/heP
+ m3fnQ1ag/vHYg==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Thu,  1 Apr 2021 20:26:42 -0700
+Message-Id: <20210402032642.2537641-2-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.31.0.208.g409f899ff0-goog
+In-Reply-To: <20210402032642.2537641-1-jaegeuk@kernel.org>
+References: <20210402032642.2537641-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210402004225.1677382-1-jaegeuk@kernel.org>
-Content-Language: en-US
-X-Originating-IP: [10.136.110.154]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1lS8Rf-0004ea-S5
-Subject: Re: [f2fs-dev] [PATCH] f2fs: set checkpoint_merge by default
+X-Headers-End: 1lSASj-0000l9-3b
+Subject: [f2fs-dev] [PATCH 2/2] resize.f2fs: add force option to rewrite
+ broken calculation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,19 +84,62 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/4/2 8:42, Jaegeuk Kim wrote:
-> Once we introduced checkpoint_merge, we've seen some contention w/o the option.
-> In order to avoid it, let's set it by default.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+This patch adds "-f" for resize.f2fs to fix broken resized f2fs.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fsck/main.c   | 6 +++++-
+ fsck/resize.c | 5 +++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-Thanks,
+diff --git a/fsck/main.c b/fsck/main.c
+index be30e0073a5e..64efa8789cd4 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -506,7 +506,7 @@ void f2fs_parse_options(int argc, char *argv[])
+ #endif
+ 	} else if (!strcmp("resize.f2fs", prog)) {
+ #ifdef WITH_RESIZE
+-		const char *option_string = "d:st:iV";
++		const char *option_string = "d:fst:iV";
+ 
+ 		c.func = RESIZE;
+ 		while ((option = getopt(argc, argv, option_string)) != EOF) {
+@@ -522,6 +522,10 @@ void f2fs_parse_options(int argc, char *argv[])
+ 				MSG(0, "Info: Debug level = %d\n",
+ 							c.dbg_lv);
+ 				break;
++			case 'f':
++				c.force = 1;
++				MSG(0, "Info: Force to resize\n");
++				break;
+ 			case 's':
+ 				c.safe_resize = 1;
+ 				break;
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 46b1cfb218cf..0425498b9760 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -714,8 +714,9 @@ int f2fs_resize(struct f2fs_sb_info *sbi)
+ 		} else {
+ 			return f2fs_resize_shrink(sbi);
+ 		}
+-	else if ((c.target_sectors * c.sector_size >>
+-			get_sb(log_blocksize)) > get_sb(block_count))
++	else if (((c.target_sectors * c.sector_size >>
++			get_sb(log_blocksize)) > get_sb(block_count)) ||
++			c.force)
+ 		return f2fs_resize_grow(sbi);
+ 	else {
+ 		MSG(0, "Nothing to resize.\n");
+-- 
+2.31.0.208.g409f899ff0-goog
+
 
 
 _______________________________________________
