@@ -7,66 +7,67 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9B0C433ED
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Apr 2021 01:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFCBC433B4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Apr 2021 01:36:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4DEC1613EA
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Apr 2021 01:32:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEC1613EA
+	by mail.kernel.org (Postfix) with ESMTPS id 0A593610CC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Apr 2021 01:36:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A593610CC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lTaaN-0005D8-2M; Tue, 06 Apr 2021 01:32:55 +0000
+	id 1lTadp-00052I-HS; Tue, 06 Apr 2021 01:36:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lTaa3-0005B8-Vd
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Apr 2021 01:32:35 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <zhuangyi1@huawei.com>) id 1lTado-00052A-5t
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Apr 2021 01:36:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ :Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0UJ90hM7fHb+Q7M4nUrYZXNrM0Ct23G0WFSbv/ZScnw=; b=MKEALfBrmoV1fJNeyQD87p4hvO
- VJ6qEK5YudmyP7tKYJ6Rwt37M9+lUyIQ+C8S6xVdRd1zswy27XYR6ppQB6VPWRPZx5+cimIWBVQCt
- 8qwxBw5VlueHKkBkHQE4JyoiiQ1+sZt+fF5Navd6cbxSybYxx+qvD1hkGpfr05KPN2Rk=;
+ bh=lkrEc8HLNrCtwK1XTpX9rsMiLL4wWOtK+0zbl0C3SnE=; b=mIFllbGGwmcCtT1djTxlB6gkVF
+ zCZIQoWxP1sJGJRN4FL8BazyCMIfWzSrInXpGAQB5/npU/TH6QOhNA63SLnDB7UToMok3MkVqTKKx
+ Oh2pO2jCsZcvMNEsd4cSpV6w9WJwcNPgv+bOuzPrF/d60I3/jGaSSF600nIb5fqNWGd0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=0UJ90hM7fHb+Q7M4nUrYZXNrM0Ct23G0WFSbv/ZScnw=; b=k
- jKbhS352X95QtLlWt1xiBlrA+z2Q+37ZIdaoGpCO6CLCai6tR4hdoEB580+1BpjzjiT5mtiaRlrsG
- Ek0Zxr4rAQImR9+O9Rw1BA+BA6k8Fg4S/O9fMnvpmxSnG7mcXUr5Xo/cWr5R9YQnQ7Ag2f7zzJtHx
- QaepaiTh9bfiUtBI=;
+ List-Owner:List-Archive; bh=lkrEc8HLNrCtwK1XTpX9rsMiLL4wWOtK+0zbl0C3SnE=; b=j
+ x75sNTBKU9da/uqVfDBG8NdROJ0LD5LoGsiaPPT6tCulyN1dTQD8E0zX5fCBw+l4LM21ZbwXhvE6Z
+ xWFttlnCfa9dRAMpKKjxoj+O/7LMR/M7mdiZnugDHl/d+imobvj563Q89q3KT4APEloiUNWRUS0iP
+ pk7GhzFRyQ3vaNYQ=;
 Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lTaZt-0004hT-3v
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Apr 2021 01:32:35 +0000
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FDqhW2vCsz17QPn;
- Tue,  6 Apr 2021 09:30:03 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.498.0; Tue, 6 Apr 2021 09:32:06 +0800
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-Date: Tue, 6 Apr 2021 09:31:38 +0800
-Message-ID: <20210406013138.38378-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.29.2
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1lTadg-0083XH-HZ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Apr 2021 01:36:28 +0000
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FDqn45q1bz166hT;
+ Tue,  6 Apr 2021 09:34:00 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.498.0; Tue, 6 Apr 2021
+ 09:36:06 +0800
+From: Yi Zhuang <zhuangyi1@huawei.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>,
+ <linux-f2fs-devel@lists.sourceforge.net>
+Date: Tue, 6 Apr 2021 09:47:35 +0800
+Message-ID: <20210406014735.127457-1-zhuangyi1@huawei.com>
+X-Mailer: git-send-email 2.26.0.106.g9fadedd
 MIME-Version: 1.0
-X-Originating-IP: [10.120.216.130]
+X-Originating-IP: [10.90.53.225]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1lTaZt-0004hT-3v
-Subject: [f2fs-dev] [PATCH] resize.f2fs: fix to check free space before
- shrink
+X-Headers-End: 1lTadg-0083XH-HZ
+Subject: [f2fs-dev] [PATCH -next] f2fs: modify open brace '{' following
+ function definitions
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,61 +79,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Otherwise, after shrink, kernel will report below error message
-when we mount the image:
+Made suggested modifications from checkpatch in reference to ERROR:
+ open brace '{' following function definitions go on the next line
 
-F2FS-fs (loop0): invalid crc_offset: 0
-F2FS-fs (loop0): Wrong valid_user_blocks: 16404, user_block_count: 13312
-F2FS-fs (loop0): Failed to get valid F2FS checkpoint
-mount(2) system call failed: Structure needs cleaning.
-
-Reported-by: beroal <me@beroal.in.ua>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yi Zhuang <zhuangyi1@huawei.com>
 ---
- fsck/resize.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ fs/f2fs/segment.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fsck/resize.c b/fsck/resize.c
-index a083f68a809f..b043cd984dc6 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -650,8 +650,11 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	struct f2fs_super_block new_sb_raw;
- 	struct f2fs_super_block *new_sb = &new_sb_raw;
-+	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
- 	block_t old_end_blkaddr, old_main_blkaddr;
- 	block_t new_end_blkaddr, new_main_blkaddr, tmp_end_blkaddr;
-+	block_t user_block_count;
-+	unsigned int overprov_segment_count;
- 	unsigned int offset;
- 	int err = -1;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 213cc1b8279a..301121dc9f75 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4764,7 +4764,8 @@ static struct f2fs_dev_info *get_target_zoned_dev(struct f2fs_sb_info *sbi,
+ }
  
-@@ -662,6 +665,17 @@ static int f2fs_resize_shrink(struct f2fs_sb_info *sbi)
- 	if (get_new_sb(new_sb))
- 		return -1;
+ static int report_one_zone_cb(struct blk_zone *zone, unsigned int idx,
+-			      void *data) {
++			      void *data)
++{
+ 	memcpy(data, zone, sizeof(struct blk_zone));
+ 	return 0;
+ }
+@@ -4880,7 +4881,8 @@ struct check_zone_write_pointer_args {
+ };
  
-+	overprov_segment_count = (get_newsb(segment_count_main) -
-+			c.new_reserved_segments) *
-+			c.new_overprovision / 100;
-+	overprov_segment_count += c.new_reserved_segments;
-+
-+	user_block_count = (get_newsb(segment_count_main) -
-+			overprov_segment_count) * c.blks_per_seg;
-+
-+	if (get_cp(valid_block_count) > user_block_count)
-+		return -1;
-+
- 	/* check nat availability */
- 	if (get_sb(segment_count_nat) > get_newsb(segment_count_nat)) {
- 		err = shrink_nats(sbi, new_sb);
+ static int check_zone_write_pointer_cb(struct blk_zone *zone, unsigned int idx,
+-				      void *data) {
++				      void *data)
++{
+ 	struct check_zone_write_pointer_args *args;
+ 	args = (struct check_zone_write_pointer_args *)data;
+ 
 -- 
-2.29.2
+2.26.0.106.g9fadedd
 
 
 
