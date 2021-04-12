@@ -1,82 +1,77 @@
-Return-Path: <SRS0=qQzy=JI=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=qkV1=JJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1F7C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Apr 2021 07:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6786EC433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Apr 2021 00:31:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 47F2F61206;
-	Sun, 11 Apr 2021 07:02:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47F2F61206
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 183D7611AD;
+	Mon, 12 Apr 2021 00:31:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 183D7611AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lVU6w-0003SR-79; Sun, 11 Apr 2021 07:02:22 +0000
+	id 1lVkUX-0003CA-PX; Mon, 12 Apr 2021 00:31:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1lVU6s-0003Ry-NL
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Apr 2021 07:02:18 +0000
+ (envelope-from <jack.qiu@huawei.com>) id 1lVkUV-0003Bs-VS
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Apr 2021 00:31:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PmIPUqDY/QNWnROnk9djp1aJ9t10Kc7Rv7U6oV4ESoA=; b=ExCJWTvtO9Hlblpr3sjAOI7eX+
- bv94n2mPeuevnl8P170rB+x7Ww3G15HIPIaj62RJ/ELH64i3t4Ly4oFVZ0m5UYK8mFYj8HhI+LwqE
- aaGnSQ4pjyt9OkkC4XDkB1I8oeGl0Zuo5LujidwL5jIa6IggkwNN8bbvVaj19fCruvAU=;
+ bh=kbDOJ3AufrFDobAJ5UKR1ZSiXJr+O3U0ibIVDVE+tQI=; b=hYUeiF3CifJX6gH53oFnF96MpJ
+ ynGdIRCMEXGGsICz4xFqJvMdRTO3E/gnYDUf10OEQg2BLF9RFAhBzCkaAIO1aEZGX8i6Us2k18M2c
+ AVfyhR0hBBFUYCoEE8eS0FXysio5IqZU/n+PTn9BugFM47urKdCBKj+FUzhP26TUbpWQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=PmIPUqDY/QNWnROnk9djp1aJ9t10Kc7Rv7U6oV4ESoA=; b=Y4E3wFTMRcIKPPPuXz4ywz7KZu
- 8jyO4Qtfh0rYSQv8kiW2iwaoE0bCUtzsRb7l/cuzWyfIxL7HPRQ0r3EJLqWEu9HmKXg4HL8Xw8Gcd
- EcIUMJUPzLLX5ipxgSIyJPe3tCJtfuWtpR9ajOFjAB0wwDQuhqXDHnmQOFbClih2p8yM=;
-Received: from mail.kernel.org ([198.145.29.99])
+ bh=kbDOJ3AufrFDobAJ5UKR1ZSiXJr+O3U0ibIVDVE+tQI=; b=lt7RU2PyfjOHDtBNBv+NhUAZv5
+ RCqio3tVjgPEuMp/SaHRZvSccj5EeBSWnruDKjbcKmHmho/6Rbe+LWN0mRbrbU0x3MpMnygA+V1pI
+ JbFumdzoDDkR3Ez1vSBvfsSfRHoaHmdpaKcV+d//2bASLz5VKYVNrpMgLxLF9KgCYs2A=;
+Received: from szxga07-in.huawei.com ([45.249.212.35])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lVU6n-0008SZ-S2
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 11 Apr 2021 07:02:18 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8887361206;
- Sun, 11 Apr 2021 07:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1618124522;
- bh=dbu10ZxNnwrVX7m/W1f40w6BRJpvnEEL0J+cWh2TzEw=;
- h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
- b=MOi4YddZxzel+f1kOe/jTUfurJJUkG4JJgL4ANjNLKO2ombxnCbx4OA1ss+RIIJLE
- lIWura2Dt16fX8OreA1ubTOWXqymnKRE5/kPwDYUZdv6LouSg15IqqSd0l+VCgEW2w
- vZZBbJ/j2tlhqfXjPfUPXtwzpxM/lEbbi1HMGR2wQ2lAleEbO/iCeuhYc0hFbS3ega
- bFhetItvW5bhnRCL67otyz6ZuCcJEnF7IR27uiWFJvpTObe17AAQHAKgj00FWeQsyF
- 2FV20a7REI4NHlW9dJyOrGf8qLbtPLWpu61xEpWzYrOHldYLNLLHQ1H7JJjUYGHvBl
- 9Qv3geCSO/sfQ==
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20210324031828.67133-1-yuchao0@huawei.com>
- <YFvQGxLbpmDjxEzR@google.com>
- <2dfb085b-80ce-050b-5650-986675a07488@huawei.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <66e0a225-7f52-a33e-ccd6-e7bfa1067ed1@kernel.org>
-Date: Sun, 11 Apr 2021 15:01:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+ id 1lVkUL-0000i0-Ld
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Apr 2021 00:31:47 +0000
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FJV3X218Kz9yYF;
+ Mon, 12 Apr 2021 08:29:12 +0800 (CST)
+Received: from [10.174.177.53] (10.174.177.53) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 12 Apr 2021 08:31:16 +0800
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+References: <20210409034033.40937-1-jack.qiu@huawei.com>
+ <5f6cd575-00e5-a830-470a-67654f0d2149@huawei.com>
+ <YHBJ85/am9r6MjXm@google.com> <YHHjuiN+ASfV5RSN@google.com>
+From: Jack Qiu <jack.qiu@huawei.com>
+Message-ID: <2ed5f485-23ce-9b7b-f3b7-d7464b80b36b@huawei.com>
+Date: Mon, 12 Apr 2021 08:31:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <2dfb085b-80ce-050b-5650-986675a07488@huawei.com>
-Content-Language: en-US
-X-Headers-End: 1lVU6n-0008SZ-S2
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid touching checkpointed
- data in get_victim()
+In-Reply-To: <YHHjuiN+ASfV5RSN@google.com>
+X-Originating-IP: [10.174.177.53]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1lVkUL-0000i0-Ld
+Subject: Re: [f2fs-dev] [PATCH -next] f2fs: fix missing a blank line after
+ declarations
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,104 +83,17 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: zhuangyi1@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jaegeuk,
-
-Could you please help to merge below cleanup diff into original patch?
-or merge this separately if it is too late since it is near rc7.
-
- From 5a342a8f332a1b3281ec0e2b4d41b5287689c8ed Mon Sep 17 00:00:00 2001
-From: Chao Yu <yuchao0@huawei.com>
-Date: Sun, 11 Apr 2021 14:29:34 +0800
-Subject: [PATCH] f2fs: avoid duplicated codes for cleanup
-
-f2fs_segment_has_free_slot() was copied from __next_free_blkoff(),
-the main implementation of them is almost the same, clean up them to
-reuse common code as much as possible.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-  fs/f2fs/segment.c | 32 ++++++++++----------------------
-  1 file changed, 10 insertions(+), 22 deletions(-)
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b33273aa5c22..bd9056165d62 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2627,22 +2627,20 @@ static void new_curseg(struct f2fs_sb_info *sbi, int type, bool new_sec)
-  	curseg->alloc_type = LFS;
-  }
-
--static void __next_free_blkoff(struct f2fs_sb_info *sbi,
--			struct curseg_info *seg, block_t start)
-+static int __next_free_blkoff(struct f2fs_sb_info *sbi,
-+					int segno, block_t start)
-  {
--	struct seg_entry *se = get_seg_entry(sbi, seg->segno);
-+	struct seg_entry *se = get_seg_entry(sbi, segno);
-  	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
-  	unsigned long *target_map = SIT_I(sbi)->tmp_map;
-  	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
-  	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
--	int i, pos;
-+	int i;
-
-  	for (i = 0; i < entries; i++)
-  		target_map[i] = ckpt_map[i] | cur_map[i];
-
--	pos = __find_rev_next_zero_bit(target_map, sbi->blocks_per_seg, start);
--
--	seg->next_blkoff = pos;
-+	return __find_rev_next_zero_bit(target_map, sbi->blocks_per_seg, start);
-  }
-
-  /*
-@@ -2654,26 +2652,16 @@ static void __refresh_next_blkoff(struct f2fs_sb_info *sbi,
-  				struct curseg_info *seg)
-  {
-  	if (seg->alloc_type == SSR)
--		__next_free_blkoff(sbi, seg, seg->next_blkoff + 1);
-+		seg->next_blkoff =
-+			__next_free_blkoff(sbi, seg->segno,
-+						seg->next_blkoff + 1);
-  	else
-  		seg->next_blkoff++;
-  }
-
-  bool f2fs_segment_has_free_slot(struct f2fs_sb_info *sbi, int segno)
-  {
--	struct seg_entry *se = get_seg_entry(sbi, segno);
--	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
--	unsigned long *target_map = SIT_I(sbi)->tmp_map;
--	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
--	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
--	int i, pos;
--
--	for (i = 0; i < entries; i++)
--		target_map[i] = ckpt_map[i] | cur_map[i];
--
--	pos = __find_rev_next_zero_bit(target_map, sbi->blocks_per_seg, 0);
--
--	return pos < sbi->blocks_per_seg;
-+	return __next_free_blkoff(sbi, segno, 0) < sbi->blocks_per_seg;
-  }
-
-  /*
-@@ -2701,7 +2689,7 @@ static void change_curseg(struct f2fs_sb_info *sbi, int type, bool flush)
-
-  	reset_curseg(sbi, type, 1);
-  	curseg->alloc_type = SSR;
--	__next_free_blkoff(sbi, curseg, 0);
-+	__next_free_blkoff(sbi, curseg->segno, 0);
-
-  	sum_page = f2fs_get_sum_page(sbi, new_segno);
-  	if (IS_ERR(sum_page)) {
--- 
-2.22.1
+On 2021/4/11 1:43, Jaegeuk Kim wrote:
+> 
+> Like this?
+> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=5f029c045c948b6cb8ccfda614e73240c4a8363b
+> 
+Looks good to me, please go ahead. Thanks!
 
 
 
