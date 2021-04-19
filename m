@@ -1,101 +1,74 @@
-Return-Path: <SRS0=wuC7=JO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=G5v/=JQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=BAYES_00,
-	CHARSET_FARAWAY_HEADER,DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33018C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 17 Apr 2021 07:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFAEC433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Apr 2021 02:45:50 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D5EE8610CB;
-	Sat, 17 Apr 2021 07:03:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5EE8610CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTPS id B266760FEA
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Apr 2021 02:45:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B266760FEA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lXeyz-0005Pc-OK; Sat, 17 Apr 2021 07:03:09 +0000
+	id 1lYJv0-0001uW-U6; Mon, 19 Apr 2021 02:45:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <fengnanchang@gmail.com>) id 1lXeyw-0005PT-Tf
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 17 Apr 2021 07:03:06 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <wanjiabing@vivo.com>) id 1lYJuz-0001uJ-Ob
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Apr 2021 02:45:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ei/4Ehq6sC9+wKOAkqqlLCuUz+fcyp7UR7dxbDAo3hg=; b=e2BHTFk8iDCI1G/pft7+lhMBiY
- xABJBCnYS+anpwYExc9IctvNtWiITLsJ/qKOginUXLo4fgDQLvMfuGB4uDthUVYYIi2DAijuok6cP
- 5FiT3HK+yr7hjHFLCrMScCg5/JmI11ySdB+sG5kcCNwy1UwdIDD7KjpmCSUyb1KSXI8c=;
+ bh=hdIvNm2Ejv3eHDUNsOoSTKQcVZmZbzSmD9mKdRclFOg=; b=LFYgXKnWTpxNvZIPxwDgZuIyh5
+ lQcSvssfPdGhnHiwOBvGuvhzLzoGdo0yg3JPpGQdqdzSOOh4Ml0HUczk+JGrqmNUPZhx0KYKUH65I
+ 4AVXGcs5bHkaLmg7Ddp+3dZnURjP67N1dZSbfP/pt0jsapMwUcfa7kHY6uHCvr/ijQWI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Ei/4Ehq6sC9+wKOAkqqlLCuUz+fcyp7UR7dxbDAo3hg=; b=UoPpww30TYgWPzUgazNyS0Ej0M
- pprAcORSoswCjxi3mp0sXTk8YFNaCYV3Vo20JuJntKcIXX0LLvmALnQe0MhYoOc6rfRWIyLBmHnIq
- YWOFtzrbVEBZP9d9GnIMkPVlNQKFg7Q9l43tRuc355KMSqocUwIgsROWx8IKSW/ObZ58=;
-Received: from mail-pg1-f170.google.com ([209.85.215.170])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1lXeys-0005mu-5X
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 17 Apr 2021 07:03:06 +0000
-Received: by mail-pg1-f170.google.com with SMTP id z16so20649748pga.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 17 Apr 2021 00:03:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=from:to:cc:subject:date:message-id:in-reply-to:references
- :mime-version:content-transfer-encoding;
- bh=Ei/4Ehq6sC9+wKOAkqqlLCuUz+fcyp7UR7dxbDAo3hg=;
- b=Ytf1oICLV36nsO0vqvEAQRrUqbESzfPhNvI+ZuX4+6YSkgiKVel6zi+6Tciq6fYugL
- 9HI5eEJxlE3RRWfdR0T2L+TnbwQpUIL8H54xp5LWSxEzkdQyEy7Z4nnq5QiksaCT6TRA
- 6GGBlpXKAaA6JMmfFp6ftydpfJuFne5o4XCLf2oSOGd+cXWTCZQlnPOsxrwlvBiYzePn
- srgKcYc9h3AYyIy79unBON7OTe097/MTeJpqtR3tttFc7yW3YdPs+bQj6/yN13wH+1vJ
- XFuCNkQKU1t77Bmfql3TEPuhFQnA5UyrBkC72GE2wX+XQJ8FkyDjvKMpUX7cHuHJqqJM
- 4eBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
- :references:mime-version:content-transfer-encoding;
- bh=Ei/4Ehq6sC9+wKOAkqqlLCuUz+fcyp7UR7dxbDAo3hg=;
- b=VPe+MbptdYzVQaOJ/FqCiwZsy9qaHmdtXHUkR3LNKNDeKjAv7NeS165Ty/zsqMAYvi
- S3M9Bmb5Nhd6onW0kA73WbYcXbqgFskRNahMfDzpEJgb6wRO3PaB7Jq2enHBnsO4LXqd
- F5GgNJkhfwgMcrQiTaWkGAmaAP5nAdYvCbEDVAhgtnjpjzGA3PgiE3eVxNTiA8yD8+KR
- ++1aLmE6MpBpqyuRtY4wH8b5IEhe/ZfUbHWiJ0aZWFux6OeBWGSo5TZzoIxKvIG6hr9A
- OBoLXdMDlAwlXqTQEEV52YdGpeKUwch39eL6rtt8Aw0FZ2A9lXvwrot45ofg9doaNHkb
- BAGg==
-X-Gm-Message-State: AOAM531P9EUMvgIDrcpE7wC9qmW8tAbVma0PM+3oWL/WOWSeTRvHRWhY
- C2QyvfcoQr4v4JAoHOPMX6oCv4Bn/00=
-X-Google-Smtp-Source: ABdhPJy2G1763OIASIg/K8CXvT2EUyADKzK+TdTdcPN9cXf1F/sOBwVPyDsb7vweR5z7Elh6hfww9A==
-X-Received: by 2002:aa7:8389:0:b029:209:da1c:17b5 with SMTP id
- u9-20020aa783890000b0290209da1c17b5mr11103329pfm.29.1618642976742; 
- Sat, 17 Apr 2021 00:02:56 -0700 (PDT)
-Received: from localhost.localdomain ([103.138.53.220])
- by smtp.googlemail.com with ESMTPSA id e9sm6690233pgk.69.2021.04.17.00.02.53
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 17 Apr 2021 00:02:55 -0700 (PDT)
-From: Fengnan Chang <fengnanchang@gmail.com>
-To: yuchao0@huawei.com
-Date: Sat, 17 Apr 2021 15:02:51 +0800
-Message-Id: <20210417070251.42979-1-fengnanchang@gmail.com>
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=hdIvNm2Ejv3eHDUNsOoSTKQcVZmZbzSmD9mKdRclFOg=; b=O
+ mIpp24G+Ynak0jvGDw4QeDz4Zyt3noDHLK97SdvoRTJo9lK/borNaqIMJAkD5WFLarZuCOYsU80A9
+ h8NaE4eBubiS7b71P4NV1JeFTFnD5uNTQ64+Zn00n4HU58QBPGqwK0bAcnh986X4ltNr7VDciIKy9
+ nnpyplEW92jjBxNs=;
+Received: from mail-m17635.qiye.163.com ([59.111.176.35])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1lYJuu-00C6Kr-FX
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Apr 2021 02:45:45 +0000
+Received: from wanjb-virtual-machine.localdomain (unknown [36.152.145.182])
+ by mail-m17635.qiye.163.com (Hmail) with ESMTPA id B2ECD400253;
+ Mon, 19 Apr 2021 10:20:32 +0800 (CST)
+From: Wan Jiabing <wanjiabing@vivo.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Date: Mon, 19 Apr 2021 10:20:03 +0800
+Message-Id: <20210419022003.34172-1-wanjiabing@vivo.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <4dc282e0-b41c-caf2-c2ff-a6372e60a906@huawei.com>
-References: <4dc282e0-b41c-caf2-c2ff-a6372e60a906@huawei.com>
 MIME-Version: 1.0
-X-Headers-End: 1lXeys-0005mu-5X
-Subject: [f2fs-dev]
- =?y?q?Re=3A=20=5Bf2fs-dev=5D=20=E7=AD=94=E5=A4=8D=3A=20=20=5BRFC=20PATCH=5D=20f2fs=3A=20add=20no=20compress=20extensions=20support?=
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
+ oVCBIfWUFZQ05MSFYdSRlCGRlLGBhLSxpVEwETFhoSFyQUDg9ZV1kWGg8SFR0UWUFZT0tIVUpKS0
+ hKTFVLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mwg6SRw6Cj8QMBVCFxQBCDgw
+ OApPFDJVSlVKTUpDTEJDQ0hISU5IVTMWGhIXVQwaFRESGhkSFRw7DRINFFUYFBZFWVdZEgtZQVlI
+ TVVKTklVSk9OVUpDSVlXWQgBWUFKT05PNwY+
+X-HM-Tid: 0a78e7edeccad991kuwsb2ecd400253
+X-Headers-End: 1lYJuu-00C6Kr-FX
+Subject: [f2fs-dev] [PATCH] fs: f2fs: Remove unnecessary struct declaration
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -107,43 +80,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, changfengnan@vivo.com,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: multipart/mixed; boundary="===============0030318180835187861=="
+Cc: kael_w@yeah.net, Wan Jiabing <wanjiabing@vivo.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
---===============0030318180835187861==
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+struct dnode_of_data is defined at 897th line.
+The declaration here is unnecessary. Remove it.
 
-In this patch, we cannot handle files without extensions. At the moment there is just a rough idea，test a portion of the data to decide whether to compress it before performing a full compression. It may need more test.  Any other suggestions?
+Signed-off-by: Wan Jiabing <wanjiabing@vivo.com>
+---
+ fs/f2fs/f2fs.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-In my consider, the non-compress  flag has a higher priority than the compressed flag.
-1. the same extension name cannot not appear in both compress and non-compress extension at the same time， check this in mount process.
-2. If the compress extension specifies all files, the types specified by the non-compress extension will be treated as special cases and will not be compressed.
-3. If the non-compress extension specifies all files, should not specifies any compress extension, check in mount process too.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e2d302ae3a46..0757f9e50fd2 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3299,7 +3299,6 @@ void f2fs_hash_filename(const struct inode *dir, struct f2fs_filename *fname);
+ /*
+  * node.c
+  */
+-struct dnode_of_data;
+ struct node_info;
+ 
+ int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
+-- 
+2.25.1
 
-Any other suggestions?
-Thanks.
 
-
-
---===============0030318180835187861==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============0030318180835187861==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 _______________________________________________
 Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============0030318180835187861==--
