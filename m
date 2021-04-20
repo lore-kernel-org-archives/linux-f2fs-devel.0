@@ -2,38 +2,38 @@ Return-Path: <SRS0=SI9F=JR=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4B1C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Apr 2021 18:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488EEC433B4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Apr 2021 18:28:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 926DF6135F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 20 Apr 2021 18:26:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 926DF6135F
+	by mail.kernel.org (Postfix) with ESMTPS id DE7EB61002;
+	Tue, 20 Apr 2021 18:28:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE7EB61002
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lYv50-0002an-47; Tue, 20 Apr 2021 18:26:34 +0000
+	id 1lYv6Q-0002fV-GL; Tue, 20 Apr 2021 18:28:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <jaegeuk@kernel.org>) id 1lYv4y-0002af-8N
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Apr 2021 18:26:32 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1lYv6P-0002fD-Fa
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Apr 2021 18:28:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xzH3Ukv+VsMSFLBfooU973P2thpwN6R+a4UmZE0ALVI=; b=d7wq3slty1hYWGsnjT12j+r8sJ
- NteHs8gojyrOdumcPF2Bh6W8ZcThHPONX0u0HY6Ikd6uP0srLMJeWuTfcJi0KzLBqoZq7EtjHh9OL
- yRdUH75j0uyHBSOCY38vo6eJL1VEKxH+LCweXCB388dcuobrPGnYwC3s/7vomIOqyblc=;
+ bh=f1ZfqGwym81lZUWj9aQq9y9N0Q6QCE1lOQzugPdiXVk=; b=TiFRffYrCrPXYOlyCNTbXSdBFy
+ wQx9EmtjYSwEZDVx+Q2cgVehN3/ROtwgPzTnAYpin8tKwDtLiwQIH7ukSdcdfR36IX3F7mjhf0aSs
+ PDHxQct/poAfldf9pRCDjRzxh7lCWq3d9RtlUZleUn28CqGAXHjRVtWA6Fltrx4EqjiI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -41,39 +41,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xzH3Ukv+VsMSFLBfooU973P2thpwN6R+a4UmZE0ALVI=; b=K3DSs1stshOb+oOv+c5nBCrWNE
- lZqdscQrN+Hc86Vu8PIleuTq7WTp18YgcfyKFPUYBky/F2NW7onKVuFmvC0gKN+4kwRpdagzjP7aV
- nda77QmWnW1Z1PLV331RIRkSISEXub0OOx1HZCHigYQIgWWUkQejg6RjRUrRMhIAtUeI=;
+ bh=f1ZfqGwym81lZUWj9aQq9y9N0Q6QCE1lOQzugPdiXVk=; b=YPi5/SpAi9PCST+oXXBL0vje/6
+ WlUFVrgHr7QzYU3qH8gbGGX/3TsJ4k6sSkef1R4fAIG9dwoJVTp6vN7ZcfFp4Bm059WS1JN1hucz/
+ UzlA0iJCbhtB2RkhpHLp43B8ydhjqiuG4oB+2F0kJqzpRDvySYZ2UaEVtcbAjRnbpxD4=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lYv4o-0046TX-JA
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Apr 2021 18:26:32 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 42F8B613CE;
- Tue, 20 Apr 2021 18:26:10 +0000 (UTC)
+ id 1lYv6K-0046Yi-U2
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 20 Apr 2021 18:28:01 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0CE106052B;
+ Tue, 20 Apr 2021 18:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1618943170;
- bh=c6iMBvteXSLo2ps7WOwHOoMbvk0m6jpJVCFWhxgH69o=;
+ s=k20201202; t=1618943271;
+ bh=KKqI0CtdBHnooIUsDeB/ucsXCbS8kOelphJ+U2dDNfE=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=g0sHndMS7ZK5/RPC2Bsktxa539LTcmVdpcD9jH8JUH73KqAIJrn4fbX8jX51JB01i
- Ifk/mz0G88iEEDs1yIiH9eOWaFGzG9uUVvCBbCZc1Mp48BwQNhrY8U1cyKMnkLNySw
- eFBq3G03xqCmL+owlApJThjHGukMu8DEFmOWtpkc6FxvhByt9BGP0+MbF1XHbc9Kdu
- RBHMJJ/SdZn0TfQDwS9ajrfSsE1fBL9fEw3TMp5yzH4aEMJUBhONo299lMdaM4l54q
- 0T5InSGMitTrigg4A4bbWRdEcRMKfNmtQCFqtYrJnFyVcME1Q0zjdzRX49lS98QtJC
- Ly6g4KZxQe79Q==
-Date: Tue, 20 Apr 2021 11:26:08 -0700
+ b=tMeUBUM/+jZCj2JdxtT/7Fdp9QL90Wfk11n0DYy8kF9zUtstSlzZN75u9JANQoyCf
+ s2eYbxuLp8hFXHKeEoM9SMAAnGuNGH9IGy6e8ZQMGVfM0Efc5qkoAMRe7GbWk0CwiJ
+ 8fCgLcHp90AtT5MsUZU5H8POYsc9S/wk1n/xtaAbubyT3EOtVCmgRVaClPCRLP81pa
+ IHbMn+pBSQ6ORV5tVGXFHbVlVtXUqXfWrWuayR1YfIXBO+af2Pg/2dgIIuqvX7ptY5
+ to6xfFGwQSclnbqdu7mXMM+edDGlcydVnovqox9ILTBOjqX/IaaOadJbBCvu1jj0xX
+ 4ekaxTRy6V+og==
+Date: Tue, 20 Apr 2021 11:27:49 -0700
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Message-ID: <YH8cwK+g2PpjBK0Y@google.com>
-References: <20210414012134.128066-1-yuchao0@huawei.com>
- <YH22a55sexxwmGCe@google.com>
- <03dc1c69-9215-1b5f-b1cc-c38454f3b90a@huawei.com>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Message-ID: <YH8dJQCJm7iqsC+a@google.com>
+References: <20210322114730.71103-1-yuchao0@huawei.com>
+ <CAFcO6XMak8GSRqQbZ3nPdGvV_eM6DL0+P0z1X2y0G9hkrccaCg@mail.gmail.com>
+ <beff8953-d91a-c677-f50a-3aba27c15dde@huawei.com>
+ <YH8SvK+OLSKAEYpJ@eldamar.lan>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <03dc1c69-9215-1b5f-b1cc-c38454f3b90a@huawei.com>
-X-Headers-End: 1lYv4o-0046TX-JA
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to cover allocate_segment() with
- lock
+In-Reply-To: <YH8SvK+OLSKAEYpJ@eldamar.lan>
+X-Headers-End: 1lYv6K-0046Yi-U2
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to avoid out-of-bounds memory
+ access
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,63 +86,35 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: butt3rflyh4ck <butterflyhuangxx@gmail.com>,
+ LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 04/20, Chao Yu wrote:
-> On 2021/4/20 0:57, Jaegeuk Kim wrote:
-> > On 04/14, Chao Yu wrote:
-> > > As we did for other cases, in fix_curseg_write_pointer(), let's
-> > > change as below:
-> > > - use callback function s_ops->allocate_segment() instead of
-> > > raw function allocate_segment_by_default();
-> > > - cover allocate_segment() with curseg_lock and sentry_lock.
-> > > 
-> > > Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> > > ---
-> > >   fs/f2fs/segment.c | 7 ++++++-
-> > >   1 file changed, 6 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > > index b2ee6b7791b0..daf9531ec58f 100644
-> > > --- a/fs/f2fs/segment.c
-> > > +++ b/fs/f2fs/segment.c
-> > > @@ -4848,7 +4848,12 @@ static int fix_curseg_write_pointer(struct f2fs_sb_info *sbi, int type)
-> > >   	f2fs_notice(sbi, "Assign new section to curseg[%d]: "
-> > >   		    "curseg[0x%x,0x%x]", type, cs->segno, cs->next_blkoff);
-> > > -	allocate_segment_by_default(sbi, type, true);
-> > > +
-> > > +	down_read(&SM_I(sbi)->curseg_lock);
-> > > +	down_write(&SIT_I(sbi)->sentry_lock);
-> > > +	SIT_I(sbi)->s_ops->allocate_segment(sbi, type, true);
-> > > +	up_write(&SIT_I(sbi)->sentry_lock);
-> > > +	up_read(&SM_I(sbi)->curseg_lock);
-> > 
-> > Seems f2fs_allocate_new_section()?
-> 
-> f2fs_allocate_new_section() will allocate new section only when current
-> section has been initialized and has valid block/ckpt_block.
-> 
-> It looks fix_curseg_write_pointer() wants to force migrating current segment
-> to new section whenever write pointer and curseg->next_blkoff is inconsistent.
-> 
-> So how about adding a parameter to force f2fs_allocate_new_section() to
-> allocate new section?
+Hi,
 
-I think that can be doable. Hope to avoid native calls as much as possible.
+On 04/20, Salvatore Bonaccorso wrote:
+> Hi,
+> 
+> On Tue, Mar 23, 2021 at 02:43:29PM +0800, Chao Yu wrote:
+> > Hi butt3rflyh4ck,
+> > 
+> > On 2021/3/23 13:48, butt3rflyh4ck wrote:
+> > > Hi, I have tested the patch on 5.12.0-rc4+, it seems to fix the problem.
+> > 
+> > Thanks for helping to test this patch.
+> 
+> Was this patch applied? I do not see it in mainline (unless
+> miss-checked).
+
+Not yet. Queue for next merge window.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=b862676e371715456c9dade7990c8004996d0d9e
 
 > 
-> Thanks,
-> 
-> > 
-> > >   	/* check consistency of the zone curseg pointed to */
-> > >   	if (check_zone_write_pointer(sbi, zbd, &zone))
-> > > -- 
-> > > 2.29.2
-> > .
-> > 
+> Regards,
+> Salvatore
 
 
 _______________________________________________
