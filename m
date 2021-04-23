@@ -2,78 +2,69 @@ Return-Path: <SRS0=osJF=JW=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_24_48,
+	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF76C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 08:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EE1C433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 08:26:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 36F0E60724
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 08:11:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36F0E60724
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id D43C26128B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 08:26:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43C26128B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1laZrp-0005iE-Lp; Sun, 25 Apr 2021 08:11:49 +0000
+	id 1laa6E-0000Xn-5Y; Sun, 25 Apr 2021 08:26:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1laZro-0005hm-Bz
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 08:11:48 +0000
+ (envelope-from <shreeya.patel@collabora.com>) id 1laa6C-0000XN-Ji
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 08:26:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5pawa+SZFixAQNTJM4LuxQhT6hdG+H0NF3QNxIV7/8Q=; b=O0Ckrqz1JmwxzjcGhHFa/fhKly
- dgAFEbdniwP4w5jKufzZm55ekbXdzTjQeE5esMc96ya1qojQbWTAfKXEVy+a81zgI0Atr5ei9KMoC
- p+yHtw9nTbsZU4zSWoxw8cLW8SMqAkk0b2kLM/Qa0iiW5vbZZjmCY8wFKMZZvqut472Q=;
+ bh=vJA8UupobNW9INO4X6eIV+mC+FGSQvTp792YW6+E8Jc=; b=hXjPOLswWnvGs3BJVFafLRT8PG
+ lssJgJaoX5pfHo5RIbm/JVrUEP0yUQr8RGqBSePn8ZfQjK/wlmAVBNXS+TsdpqXEMHd3thtCTw4e9
+ iyzDmNqMBwS5i9Yrv/64AZsnoyDuTyFNnVE1YqcehW8UfcpgznQT44nxHxdbgsvhQMWo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=5pawa+SZFixAQNTJM4LuxQhT6hdG+H0NF3QNxIV7/8Q=; b=h/9uaUztNqR7KTroh2J7hy9Mte
- bXQzXpwWQ0IE5+AVGx+/HuMVkq3cRcmVX685lZ6MpKd03HANVxlw/NUvy1ccfwaGh7zuV+ggqgyAd
- i4azsqkqTJ3sa1VCCRaL1nmsoCQXNRIPwaeY7ktjmYIpRfFfPkVHN/IZZTEU2ke39d7k=;
-Received: from [198.145.29.99] (helo=mail.kernel.org)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1laZrj-005cdj-U9
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 08:11:48 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F2FCF613C4;
- Sun, 25 Apr 2021 00:47:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1619311658;
- bh=mijs84e9TdAULlSFMzEsjGetGLdyir4mZ+ORmJUQPxw=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=XkvpZaFuiMXZxiAo7kTJH47fZSBRkvK4MeVbZuQZVnqR3facBiY/7U1yUxzzSmpw6
- H6hN9sTuGUSinznQNiywDO6aIwjvnONqO4pn7AfL5me9xUF7rA99Je7yW4rTWgeEYe
- w8Zde1WJ7tySt5Oc3+DtfOOoKebLD8I6kf1lTHMwmikfQ277dA0NVLLziGeZokRfZN
- AqNbLcMnvEQKNrOzTZ0/71I0tqc9yD3OkB617y9Th5AIL63JgwSidgKJIW74UmCt/s
- zGFAI3V364zr5zNBaFkFJkYBUy0+mCEv5HGMDVxKtRi+WVa5GBluTIihP4miMChqOR
- +D9aZGoWXwSlw==
-Date: Sat, 24 Apr 2021 17:47:36 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Message-ID: <YIS8KHf9VPxZl85b@google.com>
-References: <20210421083941.66371-1-yuchao0@huawei.com>
- <YID1sqemJVeBcdqD@google.com>
- <2c6f17e6-ef23-f313-5df2-6bd63d7df2b1@huawei.com>
+ bh=vJA8UupobNW9INO4X6eIV+mC+FGSQvTp792YW6+E8Jc=; b=avsgxlAKPxYDayTO5JZfPLCL5T
+ rIi5Q66GaKFew0K9AtIghUy22nKtpoTXfIwlfV/d/0zvYkiF3frSldWlyu36qgtDlHEQZTSExOKCI
+ 0OZ2ZeEdsbWMIOs6622ckhJxQAYEpGYcb36XLF5EIkY/mRPLWlXIxq48Zsh2zaycJ3Zg=;
+Received: from bhuna.collabora.co.uk ([46.235.227.227])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1laa68-0007u7-Bn
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 08:26:40 +0000
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+ (Authenticated sender: shreeya) with ESMTPSA id 74E8E1F41F63
+From: Shreeya Patel <shreeya.patel@collabora.com>
+To: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+ chao@kernel.org, krisman@collabora.com, ebiggers@google.com,
+ drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
+Date: Sat, 24 Apr 2021 02:21:33 +0530
+Message-Id: <20210423205136.1015456-2-shreeya.patel@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210423205136.1015456-1-shreeya.patel@collabora.com>
+References: <20210423205136.1015456-1-shreeya.patel@collabora.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <2c6f17e6-ef23-f313-5df2-6bd63d7df2b1@huawei.com>
-X-Headers-End: 1laZrj-005cdj-U9
-Subject: Re: [f2fs-dev] [PATCH] f2fs: compress: remove unneed check condition
+X-Headers-End: 1laa68-0007u7-Bn
+Subject: [f2fs-dev] [PATCH v8 1/4] fs: unicode: Use strscpy() instead of
+ strncpy()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,66 +76,63 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel@collabora.com, kernel test robot <lkp@intel.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, andre.almeida@collabora.com,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 04/22, Chao Yu wrote:
-> On 2021/4/22 12:04, Jaegeuk Kim wrote:
-> > On 04/21, Chao Yu wrote:
-> > > In only call path of __cluster_may_compress(), __f2fs_write_data_pages()
-> > > has checked SBI_POR_DOING condition, and also cluster_may_compress()
-> > > has checked CP_ERROR_FLAG condition, so remove redundant check condition
-> > > in __cluster_may_compress() for cleanup.
-> > 
-> > I think cp_error can get any time without synchronization. Is it safe to say
-> > it's redundant?
-> 
-> Yes,
-> 
-> But no matter how late we check cp_error, cp_error can happen after our
-> check points, it won't cause regression if we remove cp_error check there,
-> because for compress write, it uses OPU, it won't overwrite any existed data
-> in device.
-> 
-> Seems it will be more appropriate to check cp_error in
-> f2fs_write_compressed_pages() like we did in f2fs_write_single_data_page()
-> rather than in __cluster_may_compress().
-> 
-> BTW, shouldn't we rename __cluster_may_compress() to
-> cluster_beyond_filesize() for better readability?
+Following warning was reported by Kernel Test Robot.
 
-f2fs_cluster_has_data()?
+In function 'utf8_parse_version',
+inlined from 'utf8_load' at fs/unicode/utf8mod.c:195:7:
+>> fs/unicode/utf8mod.c:175:2: warning: 'strncpy' specified bound 12 equals
+destination size [-Wstringop-truncation]
+175 |  strncpy(version_string, version, sizeof(version_string));
+    |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-> 
-> Thanks,
-> 
-> > 
-> > > 
-> > > Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> > > ---
-> > >   fs/f2fs/compress.c | 5 -----
-> > >   1 file changed, 5 deletions(-)
-> > > 
-> > > diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> > > index 3c9d797dbdd6..532c311e3a89 100644
-> > > --- a/fs/f2fs/compress.c
-> > > +++ b/fs/f2fs/compress.c
-> > > @@ -906,11 +906,6 @@ static bool __cluster_may_compress(struct compress_ctx *cc)
-> > >   		f2fs_bug_on(sbi, !page);
-> > > -		if (unlikely(f2fs_cp_error(sbi)))
-> > > -			return false;
-> > > -		if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
-> > > -			return false;
-> > > -
-> > >   		/* beyond EOF */
-> > >   		if (page->index >= nr_pages)
-> > >   			return false;
-> > > -- 
-> > > 2.29.2
-> > .
-> > 
+The -Wstringop-truncation warning highlights the unintended
+uses of the strncpy function that truncate the terminating NULL
+character if source string is longer than the destination size.
+
+strscpy() returns -E2BIG error code in case the source string doesn't
+fit into the destination. Hence, use strscpy() and return an error for
+overly-long strings instead of creating a non-null-terminated string
+with strncpy().
+
+Fixes: 9d53690f0d4e5 (unicode: implement higher level API for string handling)
+Acked-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+Reported-by: kernel test robot <lkp@intel.com>
+---
+Changes in v8
+  - Improve the commit message to decribe about how overly-long strings
+    are handled.
+
+ fs/unicode/utf8-core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index dc25823bfed9..f9e6a2718aba 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -179,8 +179,10 @@ static int utf8_parse_version(const char *version, unsigned int *maj,
+ 		{1, "%d.%d.%d"},
+ 		{0, NULL}
+ 	};
++	int ret = strscpy(version_string, version, sizeof(version_string));
+ 
+-	strncpy(version_string, version, sizeof(version_string));
++	if (ret < 0)
++		return ret;
+ 
+ 	if (match_token(version_string, token, args) != 1)
+ 		return -EINVAL;
+-- 
+2.30.2
+
 
 
 _______________________________________________
