@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEF7C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 14:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFF1C433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 14:12:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1942561364;
-	Sun, 25 Apr 2021 14:10:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1942561364
+	by mail.kernel.org (Postfix) with ESMTPS id 046906128B;
+	Sun, 25 Apr 2021 14:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 046906128B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lafSm-00062W-Pp; Sun, 25 Apr 2021 14:10:20 +0000
+	id 1lafV3-0006Us-Eb; Sun, 25 Apr 2021 14:12:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <willy@infradead.org>) id 1lafSl-00062I-0J
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 14:10:19 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <willy@infradead.org>) id 1lafSC-00063t-Od
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 14:09:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=19MC/ECN3OWEttJSfNKYhsEBI3DWNTT+3puFZa754BA=; b=RuuIC6cC7l1J+uFgC7O10JxY3S
- 03oZAQFewki0zWOhE+Vmnm9p0PBvKPoi1ORXma2vfutNmnEcwfqyuPPrdGk4Drh9c3Ucxs4H2tMKf
- +IH20JKjfKO/gUYtg/taa7XZYbliuxuwoXH2CEGU/WW3kMAKmOu2hZ96e/qgL7eLp9rw=;
+ bh=0RWHCLM3/c6H7Z+k5OkW53M3PGgAByaiGpKPD3i08lU=; b=hq4f/QMaUCennVn5O6HacG99a/
+ 6X4WHCoMSP8gsfGwXVV7lFvOe5G2VROhVxbNMlnX6qx6fdtV10c2h8+QxakKn5tQpYRrUsd30lwUu
+ Oc79p+x7W5q8h39e1Q4R1hYa6eAv101/jun1sdbS5C2WbOvpVFfeFHPNmXhMRduNKITM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -41,38 +41,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=19MC/ECN3OWEttJSfNKYhsEBI3DWNTT+3puFZa754BA=; b=DStNRc1tn0SHsar3FnehHZRhEt
- ijrcI7uXkcxv9HrGKaJQN9UrShcpiwL7Qyf0emcWSWWrUfnVzTpFxKa1uiurn1n6JMsRL5Te/pKhU
- Fdq+VREys5BLXtF00xmP84YVAt/Tcvu95P7pmGgFddJDw4tzPgpkviqyo4I3LacrPkeE=;
+ bh=0RWHCLM3/c6H7Z+k5OkW53M3PGgAByaiGpKPD3i08lU=; b=lcxqwUililSK53aGboLFY2quOA
+ +QA5+dnt7zEXnRP8EtO/w+hqlkgKjaIlKJnnEHb3q3UoElKdGuiiklK6VhLsiTb+/xP/Rd4maJAEA
+ Xxw7qmVkBUupSgJ524zGVXQMJPliP5jNh60IXBW4gXFXQaTqv0K7ULS0jM2heSGdBspM=;
 Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lafSj-007AxW-Ki
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 14:10:19 +0000
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lafS6-0007QB-BR
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 14:09:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
  References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=19MC/ECN3OWEttJSfNKYhsEBI3DWNTT+3puFZa754BA=; b=q2fnOVoW6AVeExxSOF8pr+ERGP
- yfxbQCEhL3SoJ9S4pecr6zRB0GmmsCxrZukyAdiAMif6SHNvdOE1E7U120Ij1sP+Z3+wdrWsoURWi
- PmYCkHgT1eriQFe7P0ERXjHBCO+9JlTYV8aQVmtgIJjR8lvgL3cyavi3FEjHoHFTxc21WAQ4f2Zz+
- sV1Z4B6IbOjs6KU46Pmsh7fntCFyTamR96j2R8oTTo7FP6sAhPbe7AQKxieTOEdSvtIYQdjJzcTxN
- +xIAsRybN9Pq4T5YBkQNFpvPqSZSTBjscy226S2phOUwKGDjVYieWIwk09t7BsYB4/T18YLR5tOTh
- NjjW6VQg==;
+ bh=0RWHCLM3/c6H7Z+k5OkW53M3PGgAByaiGpKPD3i08lU=; b=hp8p+Z8DNn1ZurqXmgj2wcS+eL
+ rJTz5xXktIyXySN7NXjYlkC3CaxpMHTDnvl0WySOWRASZ/2hQwb3FSRFd+IC7CdooqCKKIQanortM
+ M03aHr+F8Y2h/0tKuCSOOisyBXTJ8RJbnT2LTw3CO2+q8wng0SGU1SbYtPMN6dfVL90vHtFcYOTnN
+ r39G7yPrxoFM82lg9bY1SzQXwf26JkjX78Y6tOCl739/tP7daK4bgbvDKnWwWwGSJ7VaVSSKajec/
+ wSQyinWy5Nir/Utxh+PzZtksMDvn5wT3zIYm3ihveI6NJ9RK1v6Nm5o0Ash0JG/rUQlI5NoZQi+bJ
+ F18mbw0A==;
 Received: from willy by casper.infradead.org with local (Exim 4.94 #2 (Red Hat
- Linux)) id 1la0Zc-002EBZ-Af; Fri, 23 Apr 2021 18:30:48 +0000
-Date: Fri, 23 Apr 2021 19:30:40 +0100
+ Linux)) id 1la5aP-002WUO-SQ; Fri, 23 Apr 2021 23:51:55 +0000
+Date: Sat, 24 Apr 2021 00:51:49 +0100
 From: Matthew Wilcox <willy@infradead.org>
-To: Jan Kara <jack@suse.cz>
-Message-ID: <20210423183040.GD235567@casper.infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Message-ID: <20210423235149.GE235567@casper.infradead.org>
 References: <20210423171010.12-1-jack@suse.cz>
- <20210423173018.23133-2-jack@suse.cz>
+ <20210423220751.GB63242@dread.disaster.area>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20210423173018.23133-2-jack@suse.cz>
-X-Headers-End: 1lafSj-007AxW-Ki
-Subject: Re: [f2fs-dev] [PATCH 02/12] mm: Protect operations adding pages to
- page cache with invalidate_lock
+In-Reply-To: <20210423220751.GB63242@dread.disaster.area>
+X-Headers-End: 1lafS6-0007QB-BR
+Subject: Re: [f2fs-dev] [PATCH 0/12 v4] fs: Hole punch vs page cache filling
+ races
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,44 +84,33 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
- Damien Le Moal <damien.lemoal@wdc.com>, Ted Tso <tytso@mit.edu>,
- "Darrick J. Wong" <darrick.wong@oracle.com>, Hugh Dickins <hughd@google.com>,
- linux-ext4@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
- Dave Chinner <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net,
- Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
- Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
+Cc: linux-cifs@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+ Jan Kara <jack@suse.cz>, "Darrick J. Wong" <darrick.wong@oracle.com>,
+ Jeff Layton <jlayton@kernel.org>, linux-ext4@vger.kernel.org,
+ Amir Goldstein <amir73il@gmail.com>, Hugh Dickins <hughd@google.com>,
+ linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>,
+ linux-mm@kvack.org, Miklos Szeredi <miklos@szeredi.hu>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Ted Tso <tytso@mit.edu>, ceph-devel@vger.kernel.org,
  Johannes Thumshirn <jth@kernel.org>, Steve French <sfrench@samba.org>,
  linux-xfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Apr 23, 2021 at 07:29:31PM +0200, Jan Kara wrote:
-> Currently, serializing operations such as page fault, read, or readahead
-> against hole punching is rather difficult. The basic race scheme is
-> like:
-> 
-> fallocate(FALLOC_FL_PUNCH_HOLE)			read / fault / ..
->   truncate_inode_pages_range()
-> 						  <create pages in page
-> 						   cache here>
->   <update fs block mapping and free blocks>
-> 
-> Now the problem is in this way read / page fault / readahead can
-> instantiate pages in page cache with potentially stale data (if blocks
-> get quickly reused). Avoiding this race is not simple - page locks do
-> not work because we want to make sure there are *no* pages in given
-> range.
+On Sat, Apr 24, 2021 at 08:07:51AM +1000, Dave Chinner wrote:
+> I've got to spend time now reconstructing the patchset into a single
+> series because the delivery has been spread across three different
+> mailing lists and so hit 3 different procmail filters.  I'll comment
+> on the patches once I've reconstructed the series and read through
+> it as a whole...
 
-One of the things I've had in mind for a while is moving the DAX locked
-entry concept into the page cache proper.  It would avoid creating the
-new semaphore, at the cost of taking the i_pages lock twice (once to
-insert the entries that cover the range, and once to delete the entries).
+$ b4 mbox 20210423171010.12-1-jack@suse.cz
+Looking up https://lore.kernel.org/r/20210423171010.12-1-jack%40suse.cz
+Grabbing thread from lore.kernel.org/ceph-devel
+6 messages in the thread
+Saved ./20210423171010.12-1-jack@suse.cz.mbx
 
-It'd have pretty much the same effect, though -- read/fault/... would
-block until the entry was deleted from the page cache.
 
 
 _______________________________________________
