@@ -2,66 +2,71 @@ Return-Path: <SRS0=osJF=JW=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_24_48,
-	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AEFC433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 08:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DD7C433B4
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 08:34:00 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 81A96613B1
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 08:27:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81A96613B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTPS id 7A7F3613D1
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Apr 2021 08:34:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A7F3613D1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1laa71-0000mi-9m; Sun, 25 Apr 2021 08:27:31 +0000
+	id 1laaDH-0002cf-Fz; Sun, 25 Apr 2021 08:33:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <shreeya.patel@collabora.com>) id 1laa6x-0000lX-6F
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 08:27:27 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <yuchao0@huawei.com>) id 1laaDF-0002cU-BB
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 08:33:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3HbWpojlomNjsGxsQgSOb8kYauo5cu+Ol/t+mU060fY=; b=BD2g02mNie/OIOFwWYCm5G3HHl
- XD77jxHKjxxuyheXk+sXgOfmigqEZuRGFbZsIDfaXmJtLEYG7T4qQZ+GMjXcOxNr+EzRn/D0S7q7o
- MnYlsNg/v3lkIxCw5GWG4j8CNebiCB+TLv0t4F2c+Ql4dOWPtrgshzeYU9AYvHoS0pX4=;
+ bh=+v3W8TvFm8tbJduGFhpsLEuohpUSdchsv9MD/2/gGVI=; b=PR8BXVj9+SKEakRpxsm3v9EP70
+ KVs7lEI6TOCR6k4cAm69kgGj6qHXdqkk8/8e6xcGUaj+v/uEDPaWAMBZ5BkN2m9fV4qYcbYCGFvwo
+ MZBrqWf+zOD6Sw70PBsZgM/G8Y50tsqdxBSAyX82cJ1OQGjW8E/llcaLQnmNbY+2ZOFc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=3HbWpojlomNjsGxsQgSOb8kYauo5cu+Ol/t+mU060fY=; b=N
- jLJgHjEuL3bPMXDl1sGs3cYDkepA63Q5Nc87vlxuMFwBkMARFlHuIDZOxZWzLDJRvODRTh9iRIx1U
- hzU/wZ9dZZ6NX6Mla3sJYIYPQbzgwUYGVdoZBnQaKauWK2Zft84gdmEMgAxiVH3Gus1+T7tzcZXvI
- EMjW28JsHIOhmRbU=;
-Received: from bhuna.collabora.co.uk ([46.235.227.227])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1laa6j-0007yn-D2
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 08:27:27 +0000
-Received: from [127.0.0.1] (localhost [127.0.0.1])
- (Authenticated sender: shreeya) with ESMTPSA id B36B91F41B0E
-From: Shreeya Patel <shreeya.patel@collabora.com>
-To: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
- chao@kernel.org, krisman@collabora.com, ebiggers@google.com,
- drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com
-Date: Sat, 24 Apr 2021 02:21:32 +0530
-Message-Id: <20210423205136.1015456-1-shreeya.patel@collabora.com>
-X-Mailer: git-send-email 2.30.2
+ List-Owner:List-Archive; bh=+v3W8TvFm8tbJduGFhpsLEuohpUSdchsv9MD/2/gGVI=; b=f
+ FbQBD5oLBNHxZGgLu4PT06Zk1gojFRJHwxFUztOLAyf0uwc1SyfNq18hVaTUF9R3CnCMG2trz1M9e
+ mV9b/5VuffnaTIqT3SfWkMPQsHaeVyGluTdM93PPA6sfbM4wrSLaiumYJAeCvur8f9F/o1QeNR9nc
+ NAP0n6/0zGNmA4NU=;
+Received: from szxga07-in.huawei.com ([45.249.212.35])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1laaD7-005nMO-QE
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Apr 2021 08:33:57 +0000
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+ by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FSVK366lDz7vyN;
+ Sun, 25 Apr 2021 09:08:39 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.498.0; Sun, 25 Apr 2021 09:11:00 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Sun, 25 Apr 2021 09:10:53 +0800
+Message-ID: <20210425011053.44436-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-X-Headers-End: 1laa6j-0007yn-D2
-Subject: [f2fs-dev] [PATCH v8 0/4] Make UTF-8 encoding loadable
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
+X-Headers-End: 1laaD7-005nMO-QE
+Subject: [f2fs-dev] [PATCH v2] f2fs: reduce expensive checkpoint trigger
+ frequency
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -73,136 +78,115 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- andre.almeida@collabora.com, linux-ext4@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-utf8data.h_shipped has a large database table which is an auto-generated
-decodification trie for the unicode normalization functions and it is not
-necessary to carry this large table in the kernel unless it is required by
-the filesystem during boot time.
+We may trigger high frequent checkpoint for below case:
+1. mkdir /mnt/dir1; set dir1 encrypted
+2. touch /mnt/file1; fsync /mnt/file1
+3. mkdir /mnt/dir2; set dir2 encrypted
+4. touch /mnt/file2; fsync /mnt/file2
+...
 
-Goal is to make UTF-8 encoding loadable by converting it into a module
-and adding a unicode subsystem layer between the filesystems and the
-utf8 module.
-This layer will then load the module whenever any filesystem that
-needs unicode is mounted or utf8 can also be built into the kernel incase
-it is required by the filesystem during boot time.
+Although, newly created dir and file are not related, due to
+commit bbf156f7afa7 ("f2fs: fix lost xattrs of directories"), we will
+trigger checkpoint whenever fsync() comes after a new encrypted dir
+created.
 
-Currently, only UTF-8 encoding is supported but if any other encodings
-are supported in future then the layer file would be responsible for
-loading the desired encoding module.
+In order to avoid such condition, let's record an entry including
+directory's ino into global cache when we initialize encryption policy
+in a checkpointed directory, and then only trigger checkpoint() when
+target file's parent has non-persisted encryption policy, for the case
+its parent is not checkpointed, need_do_checkpoint() has cover that
+by verifying it with f2fs_is_checkpointed_node().
 
-1st patch in the series resolves the warning reported by kernel test
-robot by using strscpy instead of strncpy.
-
-Unicode is the subsystem and utf8 is a charachter encoding for the
-subsystem, hence 2nd and 3rd patches in the series are renaming functions
-and file name to unicode for better understanding the difference between
-UTF-8 module and unicode layer.
-
-Last patch in the series adds the layer and utf8 module and also uses
-static calls which gives performance benefit when compared to indirect
-calls using function pointers.
-
+Reported-by: Yunlei He <heyunlei@hihonor.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-Changes in v8
-  - Improve the commit message of patch 1 to decribe about how
-    overly-long strings should be handled.
-  - Improve the commit messages in patches 2/3/4 to better understand
-    the use of built-in option.
-  - Improve the help text in Kconfig for avoiding contradictory
-    statements.
-  - Make spinlock definition static.
-  - Use int instead of bool to avoid gcc warning.
-  - Add a comment for decribing why we are using
-    try_then_request_module() instead of request_module()
+v2:
+- fix to set ENC_DIR_INO only for encrypted directory
+ fs/f2fs/f2fs.h              | 2 ++
+ fs/f2fs/file.c              | 3 +++
+ fs/f2fs/xattr.c             | 6 ++++--
+ include/trace/events/f2fs.h | 3 ++-
+ 4 files changed, 11 insertions(+), 3 deletions(-)
 
-Changes in v7
-  - Update the help text in Kconfig
-  - Handle the unicode_load_static_call function failure by decrementing
-    the reference.
-  - Correct the code for handling built-in utf8 option as well.
-  - Correct the synchronization for accessing utf8mod.
-  - Make changes to unicode_unload() for handling the situation where
-    utf8mod != NULL and um == NULL.
-
-Changes in v6
-  - Add spinlock to protect utf8mod and avoid NULL pointer
-    dereference.
-  - Change the static call function names for being consistent with
-    kernel coding style.
-  - Merge the unicode_load_module function with unicode_load as it is
-    not really needed to have a separate function.
-  - Use try_then_module_get instead of module_get to avoid loading the
-    module even when it is already loaded.
-  - Improve the commit message.
-
-Changes in v5
-  - Remove patch which adds NULL check in ext4/super.c and f2fs/super.c
-    before calling unicode_unload().
-  - Rename global variables and default static call functions for better
-    understanding
-  - Make only config UNICODE_UTF8 visible and config UNICODE to be always
-    enabled provided UNICODE_UTF8 is enabled.  
-  - Improve the documentation for Kconfig
-  - Improve the commit message.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b9d5317db0a7..0fe881309a20 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -246,6 +246,7 @@ enum {
+ 	APPEND_INO,		/* for append ino list */
+ 	UPDATE_INO,		/* for update ino list */
+ 	TRANS_DIR_INO,		/* for trasactions dir ino list */
++	ENC_DIR_INO,		/* for encrypted dir ino list */
+ 	FLUSH_INO,		/* for multiple device flushing */
+ 	MAX_INO_ENTRY,		/* max. list */
+ };
+@@ -1090,6 +1091,7 @@ enum cp_reason_type {
+ 	CP_FASTBOOT_MODE,
+ 	CP_SPEC_LOG_NUM,
+ 	CP_RECOVER_DIR,
++	CP_ENC_DIR,
+ };
  
-Changes in v4
-  - Return error from the static calls instead of doing nothing and
-    succeeding even without loading the module.
-  - Remove the complete usage of utf8_ops and use static calls at all
-    places.
-  - Restore the static calls to default values when module is unloaded.
-  - Decrement the reference of module after calling the unload function.
-  - Remove spinlock as there will be no race conditions after removing
-    utf8_ops.
-
-Changes in v3
-  - Add a patch which checks if utf8 is loaded before calling utf8_unload()
-    in ext4 and f2fs filesystems
-  - Return error if strscpy() returns value < 0
-  - Correct the conditions to prevent NULL pointer dereference while
-    accessing functions via utf8_ops variable.
-  - Add spinlock to avoid race conditions.
-  - Use static_call() for preventing speculative execution attacks.
-
-Changes in v2
-  - Remove the duplicate file from the last patch.
-  - Make the wrapper functions inline.
-  - Remove msleep and use try_module_get() and module_put()
-    for ensuring that module is loaded correctly and also
-    doesn't get unloaded while in use.
-  - Resolve the warning reported by kernel test robot.
-  - Resolve all the checkpatch.pl warnings.
-
-Shreeya Patel (4):
-  fs: unicode: Use strscpy() instead of strncpy()
-  fs: unicode: Rename function names from utf8 to unicode
-  fs: unicode: Rename utf8-core file to unicode-core
-  fs: unicode: Add utf8 module and a unicode layer
-
- fs/ext4/hash.c                             |   2 +-
- fs/ext4/namei.c                            |  12 +-
- fs/ext4/super.c                            |   6 +-
- fs/f2fs/dir.c                              |  12 +-
- fs/f2fs/super.c                            |   6 +-
- fs/libfs.c                                 |   6 +-
- fs/unicode/Kconfig                         |  26 ++-
- fs/unicode/Makefile                        |   5 +-
- fs/unicode/unicode-core.c                  | 175 +++++++++++++++++++++
- fs/unicode/{utf8-core.c => unicode-utf8.c} |  98 +++++++-----
- fs/unicode/utf8-selftest.c                 |   8 +-
- include/linux/unicode.h                    | 100 ++++++++++--
- 12 files changed, 374 insertions(+), 82 deletions(-)
- create mode 100644 fs/unicode/unicode-core.c
- rename fs/unicode/{utf8-core.c => unicode-utf8.c} (57%)
-
+ enum iostat_type {
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index a595050c56d3..62af29ec0879 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -218,6 +218,9 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
+ 		f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
+ 							TRANS_DIR_INO))
+ 		cp_reason = CP_RECOVER_DIR;
++	else if (f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
++							ENC_DIR_INO))
++		cp_reason = CP_ENC_DIR;
+ 
+ 	return cp_reason;
+ }
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index c8f34decbf8e..70615d504f7e 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -630,6 +630,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 			const char *name, const void *value, size_t size,
+ 			struct page *ipage, int flags)
+ {
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct f2fs_xattr_entry *here, *last;
+ 	void *base_addr, *last_base_addr;
+ 	int found, newsize;
+@@ -745,8 +746,9 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 			!strcmp(name, F2FS_XATTR_NAME_ENCRYPTION_CONTEXT))
+ 		f2fs_set_encrypted_inode(inode);
+ 	f2fs_mark_inode_dirty_sync(inode, true);
+-	if (!error && S_ISDIR(inode->i_mode))
+-		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
++	if (!error && S_ISDIR(inode->i_mode) && f2fs_encrypted_file(inode) &&
++			f2fs_is_checkpointed_node(sbi, inode->i_ino))
++		f2fs_add_ino_entry(sbi, inode->i_ino, ENC_DIR_INO);
+ 
+ same:
+ 	if (is_inode_flag_set(inode, FI_ACL_MODE)) {
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 56b113e3cd6a..ca0cf12226e9 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -145,7 +145,8 @@ TRACE_DEFINE_ENUM(CP_RESIZE);
+ 		{ CP_NODE_NEED_CP,	"node needs cp" },		\
+ 		{ CP_FASTBOOT_MODE,	"fastboot mode" },		\
+ 		{ CP_SPEC_LOG_NUM,	"log type is 2" },		\
+-		{ CP_RECOVER_DIR,	"dir needs recovery" })
++		{ CP_RECOVER_DIR,	"dir needs recovery" },		\
++		{ CP_ENC_DIR,		"persist encryption policy" })
+ 
+ #define show_shutdown_mode(type)					\
+ 	__print_symbolic(type,						\
 -- 
-2.30.2
+2.29.2
 
 
 
