@@ -2,76 +2,73 @@ Return-Path: <SRS0=d8FT=KC=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33D1C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 May 2021 06:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9ABC433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 May 2021 09:45:59 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 26C49613C9;
-	Fri,  7 May 2021 06:53:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C49613C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 943CB61451
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  7 May 2021 09:45:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 943CB61451
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1leuM6-00082W-Aj; Fri, 07 May 2021 06:52:58 +0000
+	id 1lex3U-0007Rh-Az; Fri, 07 May 2021 09:45:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1leuM3-00082H-Uw
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 07 May 2021 06:52:55 +0000
+ (envelope-from <changfengnan@vivo.com>) id 1lex3S-0007RZ-HT
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 07 May 2021 09:45:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Uom50jfRon/dG69xPd422hTuZqyolkvUpc6Az29YWPY=; b=epvKN/+plxg3g+v4M02HOVHP9N
- ufYdjigccxr25JbHqu9vC6utuzPzZl6zQtpRCBv/LiTHJMQe+SbpFVEiHlp0xmQdgl2dO6b2i2K3U
- WJeJKeh9vtD/7bltLUjbaBibkFAbQjvHvfxwQBqNkA8QDkgZ2pB1Spr1ll5R8dcG0sEE=;
+ bh=KKE/qGqPTR9KTCsbAHM0BFFI5Dm7gcVPGwrFuI7x75s=; b=Ep4iWt/i5VSrHsltgxINUe/ZF1
+ TPeOPp2XhGsqp3b52QOfglrTf2swCW8B6ZYtvkhRwjzZE2O1eO13TCx7h/S/Zw3mnGZh16eTf2aTS
+ +13taPdOUnl1MQ16PEB34C44ePDb9dGcUI5B71uaTyA9+mK5x59L8sFVT9FTiCKc3/M4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Uom50jfRon/dG69xPd422hTuZqyolkvUpc6Az29YWPY=; b=kgh8Jl3pbLp6keyp+tasLzHosB
- /rQHpWKXQ6kS5nC1Ov2IPD6XBvILr+hjTH7mEId7yGlii93u7BHYPz4vIxb86XQvlJoCN9CQeNvJm
- bq9JyAkzEK0uu4ZoXOJkCGBiaSOfGGQfn4jUcvM0Qfvpn5qjSeNG7NTO49uRJ0rKfDXY=;
-Received: from szxga04-in.huawei.com ([45.249.212.190])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=KKE/qGqPTR9KTCsbAHM0BFFI5Dm7gcVPGwrFuI7x75s=; b=R
+ NnCsNckBHJZ23Gv/tO1B26Tlb2l2sQOcgWuW1ZiMdntaxep79Wybfdsb6JfVra2ZEyY9djn/Vnng9
+ fK2agtTdfgaP5j2AwUluXk41dbBy6vS45sNmJMSzIYCs4/TC3SUjqcPcFIeFtB5AfEvpxX935onw1
+ YSzwnhXjYI+DImIQ=;
+Received: from mail-m17657.qiye.163.com ([59.111.176.57])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1leuLu-008obd-TD
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 07 May 2021 06:52:57 +0000
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Fc1Jb73WTzqSx6;
- Fri,  7 May 2021 14:49:19 +0800 (CST)
-Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 7 May 2021
- 14:52:31 +0800
-To: Eric Biggers <ebiggers@kernel.org>
-References: <20210425011053.44436-1-yuchao0@huawei.com>
- <YJTfNeYeDT65GslB@sol.localdomain>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <92386fc3-4c23-f2da-28be-f2285343cce8@huawei.com>
-Date: Fri, 7 May 2021 14:52:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ id 1lex3O-009MJv-RT
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 07 May 2021 09:45:56 +0000
+Received: from SZ-11126892.vivo.xyz (unknown [58.250.176.229])
+ by mail-m17657.qiye.163.com (Hmail) with ESMTPA id C136328009A;
+ Fri,  7 May 2021 17:45:42 +0800 (CST)
+From: Fengnan Chang <changfengnan@vivo.com>
+To: jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Date: Fri,  7 May 2021 17:44:54 +0800
+Message-Id: <20210507094455.1695-1-changfengnan@vivo.com>
+X-Mailer: git-send-email 2.29.2.windows.2
 MIME-Version: 1.0
-In-Reply-To: <YJTfNeYeDT65GslB@sol.localdomain>
-Content-Language: en-US
-X-Originating-IP: [10.136.110.154]
-X-CFilter-Loop: Reflected
-X-Headers-End: 1leuLu-008obd-TD
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: reduce expensive checkpoint trigger
- frequency
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
+ oVCBIfWUFZGRhLH1ZMGB8aTU8ZHkpLHRpVEwETFhoSFyQUDg9ZV1kWGg8SFR0UWUFZT0tIVUpKS0
+ hKQ1VLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Oio6Dio4TT8QQjotTCEMAyo*
+ ATkwCw5VSlVKTUlLSENLTE9ISUpNVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
+ WU5DVUlOS1VKTE1VSUlCWVdZCAFZQUlKSEI3Bg++
+X-HM-Tid: 0a794637f4fdda03kuwsc136328009a
+X-Headers-End: 1lex3O-009MJv-RT
+Subject: [f2fs-dev] [PATCH v4] f2fs: compress: avoid unnecessary check in
+ f2fs_prepare_compress_overwrite
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,32 +80,50 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Fengnan Chang <changfengnan@vivo.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/5/7 14:33, Eric Biggers wrote:
-> On Sun, Apr 25, 2021 at 09:10:53AM +0800, Chao Yu wrote:
->> +	if (!error && S_ISDIR(inode->i_mode) && f2fs_encrypted_file(inode) &&
->> +			f2fs_is_checkpointed_node(sbi, inode->i_ino))
->> +		f2fs_add_ino_entry(sbi, inode->i_ino, ENC_DIR_INO);
-> 
-> This will never be true, since S_ISDIR() and f2fs_encrypted_file() are logically
-> contradictory (as f2fs_encrypted_file() only returns true when S_ISREG()).
-> 
-> How did you test this change?
+when write compressed file with O_TRUNC, there will be a lot of
+unnecessary check valid blocks in f2fs_prepare_compress_overwrite,
+especially when written in page size, remove it.
 
-I should add RFC tag in this v2 as v1, since I haven't test both
-with specified case because this idea should be discussed first.
+This patch will not bring significant performance improvements, I test
+this on mobile phone, use androbench, the sequential write test case was
+open file with O_TRUNC, set write size to 4KB,  performance improved
+about 2%-3%. If write size set to 32MB, performance improved about 0.5%.
 
-Thanks,
+Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
+---
+ fs/f2fs/data.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> 
-> - Eric
-> .
-> 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index cf935474ffba..b9ec7b182f45 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3303,9 +3303,17 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	if (f2fs_compressed_file(inode)) {
+ 		int ret;
++		pgoff_t end = (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
+
+ 		*fsdata = NULL;
+
++		/*
++		 * when write pos is bigger than inode size ,f2fs_prepare_compress_overwrite
++		 * always return 0, so check pos first to avoid this.
++		 */
++		if (index >= end)
++			goto repeat;
++
+ 		ret = f2fs_prepare_compress_overwrite(inode, pagep,
+ 							index, fsdata);
+ 		if (ret < 0) {
+--
+2.29.0
+
 
 
 _______________________________________________
