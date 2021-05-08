@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDE4C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  8 May 2021 06:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6B7C433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  8 May 2021 06:31:32 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CA94E6128A;
-	Sat,  8 May 2021 06:30:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA94E6128A
+	by mail.kernel.org (Postfix) with ESMTPS id B5C016145E;
+	Sat,  8 May 2021 06:31:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C016145E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lfGTr-0002L0-9N; Sat, 08 May 2021 06:30:27 +0000
+	id 1lfGUs-0000jJ-Pk; Sat, 08 May 2021 06:31:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lfGTp-0002Kn-E3
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 08 May 2021 06:30:25 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <yuchao0@huawei.com>) id 1lfGUq-0000jB-DH
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 08 May 2021 06:31:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vBX0zTj//y+zlVspA2TW0hOUCH1CLtOu3OlkLfqocP4=; b=ZTEG6gm6K/rRuULqi9vmkpi7Uc
- E2SL16lBV8cE7dG+jzVvA/XyIvu2UEe0G9hXNmFChL11wXVJv/MBrnmlNoLhq5d80rbxi5kZ1e/Ax
- Z02uQr9jLwxN8YdOvtHvatYRyMLpHpJkMZ8pcoXgND9ClHogIFjw0nMLcPrDZz8AU3T4=;
+ bh=7KAHUoM/ZWMN4NrD5XeBqTZAxyizpihTAqZmmIlbyBE=; b=Aac4I7Et4csFiWH2Wh/Zx+aEGO
+ YtErQ6tCOPqo3KhYhfhs0kEYyXMaFCJ8A7S46lPlCAPa9MBbEcfg0KyTVCDRxe5d/n2al5Rlc2HFM
+ 9JAJrhsEEqk0TH93QPx+sylMokZSxIoCprztNJ+w6aksQsj5wYTdkCxXcJMKXvDDeu6Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -42,37 +42,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=vBX0zTj//y+zlVspA2TW0hOUCH1CLtOu3OlkLfqocP4=; b=Cmuh8/RkqM1NEXSuhUR2jSMAme
- I9OpD4HUj1YXxmKPEQQjWoENyjztMhL8yDxOLB7IIPqAOEQoVEZIyprgTWB58LT/6PuhaME8mCojD
- fZmB8seObCTMDTkHPNdQJbywqR7IQAlAT3jqCbWir3Egx0KtHuaX33ebMTijaJCj81fU=;
-Received: from szxga04-in.huawei.com ([45.249.212.190])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lfGTm-00CKdM-NQ
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 08 May 2021 06:30:27 +0000
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FccmH0kzvzncHs;
- Sat,  8 May 2021 14:26:55 +0800 (CST)
+ bh=7KAHUoM/ZWMN4NrD5XeBqTZAxyizpihTAqZmmIlbyBE=; b=MhC+m98HLMvNOcPCjjYa38bqXB
+ mOfDbc65VLp+A0025Qs0ZH76QeiCSYhmw1OuNoRn6VHVIyU3bG+Aq7l6Ke2PQ55RZG7Ih8unOK6Oc
+ P+tI+pWtaHldkUTw4QGXdtMbOwOLK/IGdMILeQpjZjY7vxppV+z90pHuGU/kcVNXcKOI=;
+Received: from szxga05-in.huawei.com ([45.249.212.191])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lfGUh-00078I-Fg
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 08 May 2021 06:31:28 +0000
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FccpD5q5dzkX9C;
+ Sat,  8 May 2021 14:28:36 +0800 (CST)
 Received: from [10.136.110.154] (10.136.110.154) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.498.0; Sat, 8 May 2021
- 14:30:08 +0800
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.498.0; Sat, 8 May 2021
+ 14:31:12 +0800
 To: Seung-Woo Kim <sw0312.kim@samsung.com>, <jaegeuk@kernel.org>,
  <linux-f2fs-devel@lists.sourceforge.net>
-References: <CGME20210507110917epcas1p13e027d5e0319629c255524c8c6f6461b@epcas1p1.samsung.com>
- <20210507111224.29887-1-sw0312.kim@samsung.com>
+References: <20210507111224.29887-1-sw0312.kim@samsung.com>
+ <CGME20210507110917epcas1p4a2d7ebd7e2fd8cc630fdf627ad73a003@epcas1p4.samsung.com>
+ <20210507111224.29887-2-sw0312.kim@samsung.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <62135167-c553-259e-0228-8059cf238576@huawei.com>
-Date: Sat, 8 May 2021 14:30:08 +0800
+Message-ID: <37005c84-d93e-fd0b-af16-ce9f1260c0f2@huawei.com>
+Date: Sat, 8 May 2021 14:31:11 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20210507111224.29887-1-sw0312.kim@samsung.com>
+In-Reply-To: <20210507111224.29887-2-sw0312.kim@samsung.com>
 Content-Language: en-US
 X-Originating-IP: [10.136.110.154]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1lfGTm-00CKdM-NQ
-Subject: Re: [f2fs-dev] [RESEND][PATCH 1/2] resize.f2fs: fix memory leak
- caused by migrate_nat()
+X-Headers-End: 1lfGUh-00078I-Fg
+Subject: Re: [f2fs-dev] [RESEND][PATCH 2/2] mkfs.f2fs: fix memory leak in
+ not enough segments error path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,8 +91,8 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2021/5/7 19:12, Seung-Woo Kim wrote:
-> Alloced nat_block doesn't freed from migrate_nat(). Fix to free
-> nat_block.
+> In not enough segements error path of f2fs_write_check_point_pack(),
+> cp_payload is not freed. Fix the error path.
 > 
 > Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 
