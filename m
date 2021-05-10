@@ -7,66 +7,68 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF71C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 May 2021 09:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D6BC433B4
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 May 2021 09:30:59 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E99076142D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 May 2021 09:30:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99076142D
+	by mail.kernel.org (Postfix) with ESMTPS id 6801B600EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 May 2021 09:30:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6801B600EF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lg2FV-0007XZ-3y; Mon, 10 May 2021 09:30:49 +0000
+	id 1lg2Fd-0007Yq-Al; Mon, 10 May 2021 09:30:57 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1lg2FT-0007XR-Ew
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 May 2021 09:30:47 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1lg2Fa-0007YZ-WB
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 May 2021 09:30:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hLNLG7mijocPOx0PIpadveepFJMc9VlXHhgaltn+plI=; b=JDglbpWWHaV04qUXumcp/jj9kc
- D6GmAzFxnCtS/AItrm/BCI1pO4QLpZ32u9FfkPU6CKdJ62bFkYK6fZNMjPHWXa8Wme7wyIL2T/a2l
- Fdo7r+sKj1/CTD3bRWTzq2XvILmBVmKWuPAENfAdT4/szUxaX7pyCiybE6rZtM15Qj4E=;
+ bh=PifZ1I00dhgN1XKRg9/6hVSl/yNrdKAMoEaPBURIzuQ=; b=LM0ougrfzyFKDxbXffAmW/W/+V
+ gd4JyAUHB49J6LUZNQVHRdhuhT1XwHp5+SsIzhYIbuujpd8CG0bEgPxmDlProcYh2LXpzTAABZYzf
+ farCQF6gTKcmQnfKPaXsrrU1OCEBkDMxtRq1cIN6yfZMjZ7CjXraTjElZHDYixI1a710=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=hLNLG7mijocPOx0PIpadveepFJMc9VlXHhgaltn+plI=; b=R
- Dgg+cKm4EeGNTKRBw/+nU55FLgAoKX9aCheKJYoUW0bBnBb9HieaUNvHttwy6FAeK5tdr6UOLMluO
- +O+I2sdVLSxFMMXLQ6hvQk95uFr9xhRakYAoOAlI7QdMkhJS+vd6aALZrqKRHirlFoAjXP2ompfDd
- T9YliDU06Qs9VL4g=;
-Received: from szxga04-in.huawei.com ([45.249.212.190])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=PifZ1I00dhgN1XKRg9/6hVSl/yNrdKAMoEaPBURIzuQ=; b=eUquVusiWcesNjTqRvz1LkhugL
+ 2MOA0Yy27Z3odPq8r4qPIgs7W0ErOTLn0OblckEtUSBF3jXB0qzRjD95YQLaU4KChJVrRU9Qo9PS1
+ 5eAArOkobyjTGnebWEJoyl7tyuE/P9+q7jq52FprH5uQYHELzWaVmIgiJawhrQIsbydo=;
+Received: from szxga07-in.huawei.com ([45.249.212.35])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lg2FT-0014h6-EW
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 May 2021 09:30:49 +0000
+ id 1lg2FY-0014iP-NO
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 10 May 2021 09:30:56 +0000
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FdwgX42RmzqV1w;
- Mon, 10 May 2021 17:27:20 +0800 (CST)
+ by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4FdwhQ6XLkzCr8s;
+ Mon, 10 May 2021 17:28:06 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.498.0; Mon, 10 May 2021 17:30:34 +0800
+ 14.3.498.0; Mon, 10 May 2021 17:30:35 +0800
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
-Date: Mon, 10 May 2021 17:30:30 +0800
-Message-ID: <20210510093032.35466-1-yuchao0@huawei.com>
+Date: Mon, 10 May 2021 17:30:32 +0800
+Message-ID: <20210510093032.35466-3-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210510093032.35466-1-yuchao0@huawei.com>
+References: <20210510093032.35466-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-Headers-End: 1lg2FT-0014h6-EW
-Subject: [f2fs-dev] [PATCH 1/3] f2fs: compress: fix to call f2fs_put_dnode()
- paired with f2fs_get_block()
+X-Headers-End: 1lg2FY-0014iP-NO
+Subject: [f2fs-dev] [PATCH 3/3] f2fs: compress: fix to assign cc.cluster_idx
+ correctly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,27 +85,29 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs_get_block() and f2fs_put_dnode() should be called as a pair,
-add missing f2fs_put_dnode() in prepare_compress_overwrite().
+In f2fs_destroy_compress_ctx(), after f2fs_destroy_compress_ctx(),
+cc.cluster_idx will be cleared w/ NULL_CLUSTER, f2fs_cluster_blocks()
+may check wrong cluster metadata, fix it.
 
 Fixes: 4c8ff7095bef ("f2fs: support data compression")
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/compress.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/compress.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index c208563eac28..d5cb0ba9a0e1 100644
+index 340815cd0887..30b003447510 100644
 --- a/fs/f2fs/compress.c
 +++ b/fs/f2fs/compress.c
-@@ -1088,6 +1088,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
- 
- 		for (i = cc->cluster_size - 1; i > 0; i--) {
- 			ret = f2fs_get_block(&dn, start_idx + i);
-+			f2fs_put_dnode(&dn);
- 			if (ret) {
- 				i = cc->cluster_size;
- 				break;
+@@ -1066,6 +1066,8 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+ 			f2fs_put_rpages(cc);
+ 			f2fs_unlock_rpages(cc, i + 1);
+ 			f2fs_destroy_compress_ctx(cc);
++			cc->cluster_idx = index >>
++					F2FS_I(cc->inode)->i_log_cluster_size;
+ 			goto retry;
+ 		}
+ 	}
 -- 
 2.29.2
 
