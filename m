@@ -2,79 +2,76 @@ Return-Path: <SRS0=CSNb=KG=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,
-	CHARSET_FARAWAY_HEADER,DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965B6C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 May 2021 11:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C11C433B4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 May 2021 21:44:24 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 28A326134F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 May 2021 11:11:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A326134F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
+	by mail.kernel.org (Postfix) with ESMTPS id 8B653616E9;
+	Tue, 11 May 2021 21:44:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B653616E9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lgQIF-00086t-FK; Tue, 11 May 2021 11:11:15 +0000
+	id 1lgaAx-0003FF-B7; Tue, 11 May 2021 21:44:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <changfengnan@vivo.com>) id 1lgQIC-00086h-PM
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 May 2021 11:11:12 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1lgaAj-0003Ef-4F
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 May 2021 21:44:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:Date:Subject:In-Reply-To:References:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=keGaAvJuGa0chGSkADiADQHRPFFZ8eaTTPZHDLMg69M=; b=YzSbpYvRrYewUTRbmZE9J57kq4
- KEIZ2+Ig+fQO0YPxV6S65CvWNLMilXQD04b0ugHezqopFwDC4NUs95cad8ZeeMn5X9UNxPLjgUWsP
- DKGbZUAwZ/EKM1Rtx+aA73p8FAPxt3RpgJa96GUdwD3+m+MtakC11RKU18kdZEJOnFFU=;
+ bh=9FuhVWzL49HuAsTdVY7He650LNH1O81ziyQiFRbdETA=; b=Ho4BEP1kMHPHKE1VtMuYbtznY9
+ j7RPbLELUUlIMoRX1zPkIbNZObadj7ROdRlqexwgNRHB8DStN3cQmbSud0PRVOuWt428T/x6nQUZo
+ qcole+xJXEln8a+bVVttgwqp4MPkRqdNZ7kgFDKlxAHsh+tzxgXHg7OgQB4cDHUAMUj4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
- Subject:In-Reply-To:References:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=keGaAvJuGa0chGSkADiADQHRPFFZ8eaTTPZHDLMg69M=; b=UuVpHSNVGQZY5pusgv0rpJL6Tn
- V4rr430Nvt21Qx79AMaXcoP5VfCdw7gsBPtW6v5/bq7OZ1hielFRPTh5Vj/jpNc9VLzwZsqi5+fWd
- 0M/UffhbzWdk0yOLhtaHCkH2oz+tqdxl8PJ1KsGEtcS3YwaP8h0lrvu1V1BjXFSdS70M=;
-Received: from mail-m17657.qiye.163.com ([59.111.176.57])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lgQI6-003jGH-5f
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 May 2021 11:11:13 +0000
-Received: from SZ11126892 (unknown [58.251.74.232])
- by mail-m17657.qiye.163.com (Hmail) with ESMTPA id D81702800E3;
- Tue, 11 May 2021 19:10:57 +0800 (CST)
-From: <changfengnan@vivo.com>
-To: "'Jaegeuk Kim'" <jaegeuk@kernel.org>
-References: <20210507094455.1695-1-changfengnan@vivo.com>
- <YJlUpHJLONlORWWl@google.com>
-In-Reply-To: <YJlUpHJLONlORWWl@google.com>
-Date: Tue, 11 May 2021 19:10:57 +0800
-Message-ID: <000b01d74656$518e96f0$f4abc4d0$@vivo.com>
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=9FuhVWzL49HuAsTdVY7He650LNH1O81ziyQiFRbdETA=; b=F
+ IPBVpEmGLFBOB6P4taM3kmcrqwvbOHjurv2CfmXdWi10dWuiTbAmvdNW3R9qNnWdeu4gvvMCAtAHG
+ yZvU5Xtg2Uttn2hNT0TYdPe7UtYAC8Ygrxe5kPdDi2oUUOrCYGN0ZXeVPnoLaqCtROc+HkwBlJFv3
+ ynT1+lncu7IYYJ28=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lgaAb-0002zd-3n
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 May 2021 21:44:09 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 703CC61628;
+ Tue, 11 May 2021 21:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1620769430;
+ bh=uJajgRSXFIg/kSkTCl0T5ZiXJbHhBXOs6OX0ybiOsEY=;
+ h=From:To:Cc:Subject:Date:From;
+ b=mp6pyOM2YCKKNxFP69P7FNDyfOyRcnYxSN90nen0RTmSlTxPATnY4tAt1YfjQU8rN
+ Gh4WuDYdnktfntrcpxkt7CCLfhwLDllQIunIDTTL0lBNAfvNleZeEeo77AfIZxcv6f
+ gSvRX7BH35f6Q6RIVeonZG2Lxu6g2/wdcRn4LXNyis95Oi9LH+VnSVhOXlhx+NzEJw
+ 1wmheJMyhXkF209QMPizJVrgPIJEUu1LWv3qm1ATngPtLaBrC9wQUoM4emY/fJuxkD
+ +yD/1qx6Vrcm6S5H7bvzAFsqCAB1JHMxkDHzH/0mhYwK+P1SrpbU6qajpi6gwPJiWR
+ bTP/+jNgtuQzw==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Tue, 11 May 2021 14:43:37 -0700
+Message-Id: <20210511214337.2857522-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.31.1.607.g51e8a6a459-goog
 MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: zh-cn
-Thread-Index: AQHMWO6DzzIYy5cyNAl5YIMHDd6ZwQHXl5KvquU7QLA=
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
- oVCBIfWUFZQhlCQ1ZKGEpMSEpLS04dQkxVEwETFhoSFyQUDg9ZV1kWGg8SFR0UWUFZT0tIVUpKS0
- 9ISFVLWQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OSo6HCo6PT8UCTwDLTBJPQoJ
- D04KCypVSlVKTUlLTEhKT05DSUJLVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
- WU5DVUlOSlVMT1VJSElZV1kIAVlBSE1OTzcG
-X-HM-Tid: 0a795b1f71c2da03kuwsd81702800e3
-X-Headers-End: 1lgQI6-003jGH-5f
-Subject: [f2fs-dev] =?gb2312?b?tPC4tDogW1BBVENIIHY0XSBmMmZzOiBjb21wcmVz?=
-	=?gb2312?b?czogYXZvaWQgdW5uZWNlc3NhcnkgY2hlY2sgaW4gZjJmc19wcmVw?=
-	=?gb2312?b?YXJlX2NvbXByZXNzX292ZXJ3cml0ZQ==?=
+X-Headers-End: 1lgaAb-0002zd-3n
+Subject: [f2fs-dev] [PATCH] f2fs: avoid swapon failure by giving a warning
+ first
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,48 +83,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, kernel test robot <oliver.sang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SGkgSmFlZ2V1azoKCklmIHRoZXJlJ3JlIGV4aXN0aW5nIGNsdXN0ZXJzIGJleW9uZCBpX3NpemUs
-IG1heSBjYXVzZSBkYXRhIGNvcnJ1cHRpb24sIGJ1dAp3aWxsIHRoaXMgaGFwcGVuIGluIG5vcm1h
-bD8gbWF5YmUgc29tZSBlcnJvciBjYW4gY2F1c2UgdGhpcywgaWYgaV9zaXplIGlzCmVycm9yIHRo
-ZSBkYXRhIGJleW9uZCBzaXplIHN0aWxsIGNhbid0IGhhbmRsZSBwcm9wZXJseS4gIElzIHRoZXJl
-IG5vcm1hbApjYXNlIGNhbiBjYXN1ZSBleGlzdGluZyBjbHVzdGVycyBiZXlvbmQgaV9zaXplPwoK
-VGhhbmtzLgoKLS0tLS3Tyrz+1K28/i0tLS0tCreivP7IyzogSmFlZ2V1ayBLaW0gPGphZWdldWtA
-a2VybmVsLm9yZz4gCreiy83KsbzkOiAyMDIxxOo11MIxMMjVIDIzOjQ0CsrVvP7IyzogRmVuZ25h
-biBDaGFuZyA8Y2hhbmdmZW5nbmFuQHZpdm8uY29tPgqzrcvNOiBjaGFvQGtlcm5lbC5vcmc7IGxp
-bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Ctb3zOI6IFJlOiBbUEFUQ0ggdjRd
-IGYyZnM6IGNvbXByZXNzOiBhdm9pZCB1bm5lY2Vzc2FyeSBjaGVjayBpbgpmMmZzX3ByZXBhcmVf
-Y29tcHJlc3Nfb3ZlcndyaXRlCgpPbiAwNS8wNywgRmVuZ25hbiBDaGFuZyB3cm90ZToKPiB3aGVu
-IHdyaXRlIGNvbXByZXNzZWQgZmlsZSB3aXRoIE9fVFJVTkMsIHRoZXJlIHdpbGwgYmUgYSBsb3Qg
-b2YgCj4gdW5uZWNlc3NhcnkgY2hlY2sgdmFsaWQgYmxvY2tzIGluIGYyZnNfcHJlcGFyZV9jb21w
-cmVzc19vdmVyd3JpdGUsIAo+IGVzcGVjaWFsbHkgd2hlbiB3cml0dGVuIGluIHBhZ2Ugc2l6ZSwg
-cmVtb3ZlIGl0Lgo+IAo+IFRoaXMgcGF0Y2ggd2lsbCBub3QgYnJpbmcgc2lnbmlmaWNhbnQgcGVy
-Zm9ybWFuY2UgaW1wcm92ZW1lbnRzLCBJIHRlc3QgCj4gdGhpcyBvbiBtb2JpbGUgcGhvbmUsIHVz
-ZSBhbmRyb2JlbmNoLCB0aGUgc2VxdWVudGlhbCB3cml0ZSB0ZXN0IGNhc2UgCj4gd2FzIG9wZW4g
-ZmlsZSB3aXRoIE9fVFJVTkMsIHNldCB3cml0ZSBzaXplIHRvIDRLQiwgIHBlcmZvcm1hbmNlIAo+
-IGltcHJvdmVkIGFib3V0IDIlLTMlLiBJZiB3cml0ZSBzaXplIHNldCB0byAzMk1CLCBwZXJmb3Jt
-YW5jZSBpbXByb3ZlZAphYm91dCAwLjUlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEZlbmduYW4gQ2hh
-bmcgPGNoYW5nZmVuZ25hbkB2aXZvLmNvbT4KPiAtLS0KPiAgZnMvZjJmcy9kYXRhLmMgfCA4ICsr
-KysrKysrCj4gIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0
-IGEvZnMvZjJmcy9kYXRhLmMgYi9mcy9mMmZzL2RhdGEuYyBpbmRleCAKPiBjZjkzNTQ3NGZmYmEu
-LmI5ZWM3YjE4MmY0NSAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL2RhdGEuYwo+ICsrKyBiL2ZzL2Yy
-ZnMvZGF0YS5jCj4gQEAgLTMzMDMsOSArMzMwMywxNyBAQCBzdGF0aWMgaW50IGYyZnNfd3JpdGVf
-YmVnaW4oc3RydWN0IGZpbGUgKmZpbGUsIAo+IHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5n
-LCAgI2lmZGVmIENPTkZJR19GMkZTX0ZTX0NPTVBSRVNTSU9OCj4gIAlpZiAoZjJmc19jb21wcmVz
-c2VkX2ZpbGUoaW5vZGUpKSB7Cj4gIAkJaW50IHJldDsKPiArCQlwZ29mZl90IGVuZCA9IChpX3Np
-emVfcmVhZChpbm9kZSkgKyBQQUdFX1NJWkUgLSAxKSA+PgpQQUdFX1NISUZUOwo+IAo+ICAJCSpm
-c2RhdGEgPSBOVUxMOwo+IAo+ICsJCS8qCj4gKwkJICogd2hlbiB3cml0ZSBwb3MgaXMgYmlnZ2Vy
-IHRoYW4gaW5vZGUgc2l6ZQosZjJmc19wcmVwYXJlX2NvbXByZXNzX292ZXJ3cml0ZQo+ICsJCSAq
-IGFsd2F5cyByZXR1cm4gMCwgc28gY2hlY2sgcG9zIGZpcnN0IHRvIGF2b2lkIHRoaXMuCj4gKwkJ
-ICovCj4gKwkJaWYgKGluZGV4ID49IGVuZCkKPiArCQkJZ290byByZXBlYXQ7CgpXaGF0IGlmIHRo
-ZXJlJ3JlIGV4aXN0aW5nIGNsdXN0ZXJzIGJleW9uZCBpX3NpemU/IEdpdmVuIHBlcmZvcm1hbmNl
-IGltcGFjdHMsCmRvIHdlIHJlYWxseSBuZWVkIHRoaXM/Cgo+ICsKPiAgCQlyZXQgPSBmMmZzX3By
-ZXBhcmVfY29tcHJlc3Nfb3ZlcndyaXRlKGlub2RlLCBwYWdlcCwKPiAgCQkJCQkJCWluZGV4LCBm
-c2RhdGEpOwo+ICAJCWlmIChyZXQgPCAwKSB7Cj4gLS0KPiAyLjI5LjAKCgoKCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFp
-bGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8v
-bGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+The final solution can be migrating blocks to form a section-aligned file
+internally. Meanwhile, let's ask users to do that when preparing the swap
+file initially like:
+1) create()
+2) ioctl(F2FS_IOC_SET_PIN_FILE)
+3) fallocate()
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Fixes: 36e4d95891ed ("f2fs: check if swapfile is section-alligned")
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 33e56ae84e35..041f2d9ec972 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3833,9 +3833,13 @@ static int f2fs_is_file_aligned(struct inode *inode)
+ 
+ 		if ((pblock - main_blkaddr) & (blocks_per_sec - 1) ||
+ 			nr_pblocks & (blocks_per_sec - 1)) {
+-			f2fs_err(sbi, "Swapfile does not align to section");
+-			ret = -EINVAL;
+-			goto out;
++			if (f2fs_is_pinned_file(inode)) {
++				f2fs_err(sbi, "Swapfile does not align to section");
++				ret = -EINVAL;
++				goto out;
++			}
++			f2fs_warn(sbi, "Swapfile does not align to section: \n"
++				"\t1) creat(), 2) ioctl(F2FS_IOC_SET_PIN_FILE), 3) fallocate()");
+ 		}
+ 
+ 		cur_lblock += nr_pblocks;
+-- 
+2.31.1.607.g51e8a6a459-goog
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
