@@ -1,71 +1,77 @@
-Return-Path: <SRS0=s44c=KF=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=CSNb=KG=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C59C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 May 2021 22:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB2EC433B4
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 May 2021 00:21:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 3FF886157F;
-	Mon, 10 May 2021 22:34:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF886157F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
+	by mail.kernel.org (Postfix) with ESMTPS id 59B3B61076;
+	Tue, 11 May 2021 00:21:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B3B61076
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lgETU-0001Lh-LZ; Mon, 10 May 2021 22:34:04 +0000
+	id 1lgG9l-00063a-Rn; Tue, 11 May 2021 00:21:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <kilobyte@angband.pl>)
- id 1lgETT-0001LQ-Ag; Mon, 10 May 2021 22:34:03 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1lgG9j-00063S-FW
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 May 2021 00:21:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gJGpFaB3hD4HkiIWd+mO95z/N9f2/pmkZ9Bg1WNsE34=; b=GUROK94dwuu8GmkK/hr2JI7SyH
- wVr0t0p7lY88z0eU9dgzAiZXYGRNa+AV3EkZBAzuc5WGsGkh4XDjUEugu+YDslpLosGxedn5FdHyj
- 9Z06oadMPnB3MGE54qdK4pxtMuJdexPLUjHO9JqKUptQALkMZFaadAscIH0nMoEN9dKQ=;
+ bh=pVD109YQP66zpRyqEqfxdySVgnrFmb0t09GsRTtxVO4=; b=KOUMR/oEZi+Kcn6bwQWdzYIFKh
+ FtNwY7UrA3MNKlBu5jSW1Cr64F3o2rmzfCScPfRdcgplIm+VRVw+Z0YOPh6uDP/P+7eLQxmVYjzO8
+ LmDoAhxpYtPpnGqPYracEnO1LZ6eO8DG5MbBkRhqRVUJXrljohmUyl77OZAHxvHHkY9Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gJGpFaB3hD4HkiIWd+mO95z/N9f2/pmkZ9Bg1WNsE34=; b=LxJm6U7pAyC0HxgXfUbETaBkdM
- +OiVGqKXxPpThxkcNRtmIJSsaZam0ZCkS1YjfDZMK6OebbZDfdLeEtvbzD7vnKAm1CEDshrSAamv7
- ha5BvGy9d3M9ve8Tm8OEEGXP5jb7dsobVwiX7RZJWks/ThEMdUjq6PAhuYgGZ2y/JBjg=;
-Received: from tartarus.angband.pl ([51.83.246.204])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lgETN-0007am-UG; Mon, 10 May 2021 22:34:03 +0000
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.94.2)
- (envelope-from <kilobyte@angband.pl>)
- id 1lgDtp-00EKjz-Lm; Mon, 10 May 2021 23:57:13 +0200
-Date: Mon, 10 May 2021 23:57:13 +0200
-From: Adam Borowski <kilobyte@angband.pl>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Message-ID: <YJmsOYzPIsQ04Zxb@angband.pl>
-References: <cover.1620641727.git.mchehab+huawei@kernel.org>
+ bh=pVD109YQP66zpRyqEqfxdySVgnrFmb0t09GsRTtxVO4=; b=IQu0EILr/jIQLO/AInUMn98lGh
+ a2MOsQ7Z2PomCELbSIPT/+bi1URR5wDnZn3tpKKzMC9A4QSnq50u3b1+gUuIraaN7f7adwdRRioZU
+ 9qNwehZLamPntVpY04dzQFX+ywkgsxt6/1oWcGpyGUN3c/w9uPYlJx05RqpxfebjZfTQ=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1lgG9c-003CEy-2p
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 11 May 2021 00:21:49 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7F28A61076;
+ Tue, 11 May 2021 00:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1620692494;
+ bh=D7+FwB6wNN0y7dvFP+IevrpYhvlfmJwLrmX2r+rCwDE=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=UCXWIZy4TrRnCP1EkRT4CWaXC+/SMGJWlqplUeXY8l1cA9TOUxiP68X7bOE/vDGYR
+ o/W+bl9Y+919fZU+OUi+73a4GjLMt6iSwefA6Gi1Ng+k/H5xGRtvLLW/pAHodXnh/p
+ 0ZteAzCxRFkdWvT4ECp30MtuT2cAqQv8nX+FN+sHQpoaTjNgByqSmJXrw85MtdzQha
+ Pa32btRkDKsWq7ru/sAJXiW0Kb9eWsar9Po7c+y5vDT8gNb+tNwZ9O27xtXJ+JcNw0
+ 2HmAj0KklstW+SqSGjyHnp6zw1sgGPfOOywb5k+LUgow8sljxscNyq3qOdexKtlsy5
+ yUnmYDzdDw+iw==
+Date: Mon, 10 May 2021 17:21:33 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Message-ID: <YJnODYIke6E5i5TY@google.com>
+References: <20210506191347.1242802-1-jaegeuk@kernel.org>
+ <YJlGU+STYD5geyIc@google.com> <YJmznEhGCZTaER0+@gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <cover.1620641727.git.mchehab+huawei@kernel.org>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
-X-Headers-End: 1lgETN-0007am-UG
-Subject: Re: [f2fs-dev] [PATCH 00/53] Get rid of UTF-8 chars that can be
- mapped as ASCII
+In-Reply-To: <YJmznEhGCZTaER0+@gmail.com>
+X-Headers-End: 1lgG9c-003CEy-2p
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: support iflag change given the mask
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,59 +83,35 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: alsa-devel@alsa-project.org, kvm@vger.kernel.org,
- Linux Doc Mailing List <linux-doc@vger.kernel.org>, linux-iio@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-fpga@vger.kernel.org,
- dri-devel@lists.freedesktop.org, keyrings@vger.kernel.org,
- linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>,
- linux-rdma@vger.kernel.org, x86@kernel.org, linux-acpi@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, linux-input@vger.kernel.org,
- linux-ext4@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-sgx@vger.kernel.org, coresight@lists.linaro.org, rcu@vger.kernel.org,
- mjpeg-users@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org,
- linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org,
- netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gTW9uLCBNYXkgMTAsIDIwMjEgYXQgMTI6MjY6MTJQTSArMDIwMCwgTWF1cm8gQ2FydmFsaG8g
-Q2hlaGFiIHdyb3RlOgo+IFRoZXJlIGFyZSBzZXZlcmFsIFVURi04IGNoYXJhY3RlcnMgYXQgdGhl
-IEtlcm5lbCdzIGRvY3VtZW50YXRpb24uClsuLi5dCj4gT3RoZXIgVVRGLTggY2hhcmFjdGVycyB3
-ZXJlIGFkZGVkIGFsb25nIHRoZSB0aW1lLCBidXQgdGhleSdyZSBlYXNpbHkKPiByZXBsYWNlYWJs
-ZSBieSBBU0NJSSBjaGFycy4KPiAKPiBBcyBMaW51eCBkZXZlbG9wZXJzIGFyZSBhbGwgYXJvdW5k
-IHRoZSBnbG9iZSwgYW5kIG5vdCBldmVyeWJvZHkgaGFzIFVURi04Cj4gYXMgdGhlaXIgZGVmYXVs
-dCBjaGFyc2V0CgpJJ20gbm90IGF3YXJlIG9mIGEgZGlzdHJpYnV0aW9uIHRoYXQgc3RpbGwgYWxs
-b3dzIHNlbGVjdGluZyBhIG5vbi1VVEYtOApjaGFyc2V0IGluIGEgbm9ybWFsIGZsb3cgaW4gdGhl
-aXIgaW5zdGFsbGVyLiAgQW5kIGlmIHRoZXkgaGF2ZW4ndCBwdXJnZWQKc3VwcG9ydCBmb3IgYW5j
-aWVudCBlbmNvZGluZ3MsIHRoYXQgc3VwcG9ydCBpcyB0aG9yb3VnaGx5IGJpdHJvdHRlbi4KVGh1
-cywgSSBkaXNhZ3JlZSB0aGF0IHRoaXMgaXMgYSBsZWdpdGltYXRlIGNvbmNlcm4uCgpXaGF0IF9j
-b3VsZF8gYmUgYSBsZWdpdGltYXRlIHJlYXNvbiBpcyB0aGF0IHNvbWVvbmUgaXMgb24gYSBfdGVy
-bWluYWxfCnRoYXQgY2FuJ3QgZGlzcGxheSBhIHdpZGUgZW5vdWdoIHNldCBvZiBnbHlwaHMuICBT
-dWNoIHRlcm1pbmFscyBhcmU6CiDigKIgTGludXggY29uc29sZSAoYmVjYXVzZSBvZiB2Z2Fjb24g
-bGltaXRhdGlvbnM7IHBhdGNoc2V0cyB0byBpbXByb3ZlCiAgIG90aGVyIGNvbnMgaGF2ZW4ndCBi
-ZWVuIG1haW5saW5lZCkKIOKAoiBzb21lIFdpbmRvd3MgdGVybWluYWxzIChwdXR0eSwgb2xkIFdp
-bmRvd3MgY29uc29sZSkgdGhhdCBjYW4ndCBib3Jyb3cKICAgZ2x5cGhzIGZyb20gb3RoZXIgZm9u
-dHMgbGlrZSBmb250Y29uZmlnIGNhbgoKRm9yIHRoZSBmb3JtZXIsIGl0J3Mgd2hhdGV2ZXIgeW91
-ciBkaXN0cmlidXRpb24gc2hpcHMgaW4KL3Vzci9zaGFyZS9jb25zb2xlZm9udHMvIG9yIGFuIGVx
-dWl2YWxlbnQsIHdoaWNoIGlzIGJhc2VkIG9uIGhpc3RvcmljCklTTy04ODU5IGFuZCBWVDEwMCB0
-cmFkaXRpb25zLgoKRm9yIHRoZSBsYXR0ZXIsIHRoZSBuZWFyLWd1YXJhbnRlZWQgY2hhcmFjdGVy
-IHNldCBpcyBXR0w0LgoKClRodXMsIGF0IGxlYXN0IHR3byBvZiB5b3VyIGNob2ljZXMgc2VlbSB0
-byBkaXNhZ3JlZSB3aXRoIHRoZSBhYm92ZToKW2Ryb3BwZWRdCj4gCTB4ZDcgICA9PiAneCcsCQkj
-IE1VTFRJUExJQ0FUSU9OIFNJR04KW3JldGFpbmVkXQo+IAktIFUrMmIwZCAoJ+KsjScpOiBVUCBE
-T1dOIEJMQUNLIEFSUk9XCgrDlyBpcyBwcmVzZW50IGluIElTTy04ODU5LCBWMTAwLCBXR0w0OyBJ
-J3ZlIGZvdW5kIG5vIGZvbnQgaW4KL3Vzci9zaGFyZS9jb25zb2xlZm9udHMvIG9uIG15IERlYmlh
-biB1bnN0YWJsZSBib3ggdGhhdCBsYWNrcyB0aGlzCmNoYXJhY3Rlci4KCuKsjSBpcyBub3QgZm91
-bmQgaW4gYW55IG9mIHRoZSBhYm92ZS4gIFlvdSBtaWdodCB3YW50IHRvIGF0IGxlYXN0CmNvbnZl
-cnQgaXQgdG8g4oaVIHdoaWNoIGlzIGF0IGxlYXN0IHByZXNlbnQgaW4gV0dMNCwgYW5kIHRodXMg
-bGlrZWx5CnRvIGJlIHN1cHBvcnRlZCBpbiBmb250cyBoZWVkaW5nIFdpbmRvd3MvTWFjL09wZW5U
-eXBlIHJlY29tbWVuZGF0aW9ucy4KVGhhdCBzdGlsbCB3b24ndCBtYWtlIGl0IHdvcmsgb24gVlQu
-CgoKTWVvdyEKLS0gCuKigOKjtOKgvuKgu+KituKjpuKggCAuLS1bIE1ha2VmaWxlIF0K4qO+4qCB
-4qKg4qCS4qCA4qO/4qGBICMgYmV3YXJlIG9mIHJhY2VzCuKiv+KhhOKgmOKgt+KgmuKgi+KggCBh
-bGw6IHBpbGxhZ2UgYnVybgrioIjioLPio4TioIDioIDioIDioIAgYC0tLS0KCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
-aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
-L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+On 05/10, Eric Biggers wrote:
+> On Mon, May 10, 2021 at 07:42:27AM -0700, Jaegeuk Kim wrote:
+> > In f2fs_fileattr_set(),
+> > 
+> > 	if (!fa->flags_valid)
+> > 		mask &= FS_COMMON_FL;
+> > 
+> > In this case, we can set supported flags by mask only instead of BUG_ON.
+> > 
+> > /* Flags shared betwen flags/xflags */
+> > 	(FS_SYNC_FL | FS_IMMUTABLE_FL | FS_APPEND_FL | \
+> > 	 FS_NODUMP_FL |	FS_NOATIME_FL | FS_DAX_FL | \
+> > 	 FS_PROJINHERIT_FL)
+> > 
+> > Fixes: 4c5b47997521 ("vfs: add fileattr ops")
+> 
+> Shouldn't it be:
+> 
+> Fixes: 9b1bb01c8ae7 ("f2fs: convert to fileattr")
+
+Heh, thank you. I applied this change in the git. :)
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
