@@ -2,71 +2,71 @@ Return-Path: <SRS0=WM5+=KH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82008C43600
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 May 2021 13:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B937FC433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 May 2021 14:15:25 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1AFAE613EE;
-	Wed, 12 May 2021 13:47:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AFAE613EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTPS id 52789613BE;
+	Wed, 12 May 2021 14:15:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52789613BE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lgpCY-0003tW-6C; Wed, 12 May 2021 13:47:02 +0000
+	id 1lgpdz-0000KF-Ul; Wed, 12 May 2021 14:15:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1lgpCS-0003sO-N2
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 13:46:56 +0000
+ (envelope-from <tytso@mit.edu>)
+ id 1lgpdy-0000Jy-G8; Wed, 12 May 2021 14:15:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BsEFJERiVdoUYfzPc0MQwiR+Xi2Dt9ONSRObee+uovk=; b=c3uhqGtdotjdep/YrRcDteBuOT
- GDOPq5d6NbpFmWRZk1c9ZjHS3MH4XPgOnPp8mplIDz+JSKAOctxdgmseRYqaU1UykIskLt2tsHXRE
- aahSlLWvyuqCXRcRzuubpSddfV3zdoRH6iLBFU6NKFHynE++zlugRDwMiLuPC+THVphY=;
+ bh=o97F3Fr9+SNazjGuRfxB4iVRudNPfSsu2VSdVvH974s=; b=YFGtagoSmerXWdAB/DzcTJuN5T
+ ghDYOUjJe6Nbt1Seaaskyjgot1Ip+bbu0xvAdSA6Ye7IAhjPZ4/9kPpTEFJIOfFns/ryb7ny7Gp8D
+ RxB1v0sxKwu4rqeIMyURjJgfEvoG/n+zsQGyoYKFUp0hQjjn/4ImBZPAqvyTuoBcSprY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BsEFJERiVdoUYfzPc0MQwiR+Xi2Dt9ONSRObee+uovk=; b=Q+SmO0prOzYfEeRYRbrHS2domb
- B/os1HzEIzVPwTVY7FGcQRtaY6qADlL42kNWeAEgzQQPUhF6+AcMI+pelBOBw8CYvoJ3JAXbsFCG6
- RQaedR2TOBWLCaoyIBfVBwIdnvQirpEarkURsnT+XeFCbQsema22qMc3/C1sntzitSsg=;
-Received: from mx2.suse.de ([195.135.220.15])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lgpCK-005UJG-92
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 13:46:58 +0000
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
- by mx2.suse.de (Postfix) with ESMTP id BD05EB1A6;
- Wed, 12 May 2021 13:46:32 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
- id 0930B1F2B6C; Wed, 12 May 2021 15:46:32 +0200 (CEST)
-From: Jan Kara <jack@suse.cz>
-To: <linux-fsdevel@vger.kernel.org>
-Date: Wed, 12 May 2021 15:46:18 +0200
-Message-Id: <20210512134631.4053-10-jack@suse.cz>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210512101639.22278-1-jack@suse.cz>
-References: <20210512101639.22278-1-jack@suse.cz>
+ bh=o97F3Fr9+SNazjGuRfxB4iVRudNPfSsu2VSdVvH974s=; b=hR8dLSOyo5wQxk7g/PmAI/LzbF
+ E4CQQl2CXFr04ScvQO/qDfxASyB1XOx0EmJlXnkIiVxhDfzQr8HROUVxYXQdmqVPTgoL8xi+9kF8O
+ iSD9t+QzVPMyOSZMo2NVQT1E2AxnmJ64rNx1exaVSD9iRgb4V0omQcQHeyBKUl9zL+ZY=;
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lgpdo-0003z0-BL; Wed, 12 May 2021 14:15:22 +0000
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net
+ [72.74.133.215]) (authenticated bits=0)
+ (User authenticated as tytso@ATHENA.MIT.EDU)
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 14CEEiap031112
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 12 May 2021 10:14:45 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+ id 448C815C39C2; Wed, 12 May 2021 10:14:44 -0400 (EDT)
+Date: Wed, 12 May 2021 10:14:44 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Message-ID: <YJvi1L2ss5Tfi+My@mit.edu>
+References: <cover.1620823573.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1lgpCK-005UJG-92
-Subject: [f2fs-dev] [PATCH 10/11] ceph: Fix race between hole punch and page
- fault
+Content-Disposition: inline
+In-Reply-To: <cover.1620823573.git.mchehab+huawei@kernel.org>
+X-Headers-End: 1lgpdo-0003z0-BL
+Subject: Re: [f2fs-dev] [PATCH v2 00/40] Use ASCII subset instead of UTF-8
+ alternate symbols
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,93 +78,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-cifs@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
- linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>,
- "Darrick J. Wong" <darrick.wong@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- Steve French <sfrench@samba.org>, Dave Chinner <david@fromorbit.com>,
- Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
- Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
- Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
- Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
- Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org
+Cc: alsa-devel@alsa-project.org, kvm@vger.kernel.org,
+ Linux Doc Mailing List <linux-doc@vger.kernel.org>, linux-iio@vger.kernel.org,
+ linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ keyrings@vger.kernel.org, linux-sgx@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, linux-rdma@vger.kernel.org,
+ linux-acpi@vger.kernel.org, Mali DP Maintainers <malidp@foss.arm.com>,
+ linux-input@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+ linux-ext4@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+ coresight@lists.linaro.org, rcu@vger.kernel.org,
+ mjpeg-users@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org,
+ linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-integrity@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Ceph has a following race between hole punching and page fault:
+On Wed, May 12, 2021 at 02:50:04PM +0200, Mauro Carvalho Chehab wrote:
+> v2:
+> - removed EM/EN DASH conversion from this patchset;
 
-CPU1                                  CPU2
-ceph_fallocate()
-  ...
-  ceph_zero_pagecache_range()
-                                      ceph_filemap_fault()
-                                        faults in page in the range being
-                                        punched
-  ceph_zero_objects()
+Are you still thinking about doing the
 
-And now we have a page in punched range with invalid data. Fix the
-problem by using mapping->invalidate_lock similarly to other
-filesystems. Note that using invalidate_lock also fixes a similar race
-wrt ->readpage().
+EN DASH --> "--"
+EM DASH --> "---"
 
-CC: Jeff Layton <jlayton@kernel.org>
-CC: ceph-devel@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/ceph/addr.c | 9 ++++++---
- fs/ceph/file.c | 2 ++
- 2 files changed, 8 insertions(+), 3 deletions(-)
+conversion?  That's not going to change what the documentation will
+look like in the HTML and PDF output forms, and I think it would make
+life easier for people are reading and editing the Documentation/*
+files in text form.
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index c1570fada3d8..6d868faf97b5 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1401,9 +1401,11 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- 		ret = VM_FAULT_SIGBUS;
- 	} else {
- 		struct address_space *mapping = inode->i_mapping;
--		struct page *page = find_or_create_page(mapping, 0,
--						mapping_gfp_constraint(mapping,
--						~__GFP_FS));
-+		struct page *page;
-+
-+		down_read(&mapping->invalidate_lock);
-+		page = find_or_create_page(mapping, 0,
-+				mapping_gfp_constraint(mapping, ~__GFP_FS));
- 		if (!page) {
- 			ret = VM_FAULT_OOM;
- 			goto out_inline;
-@@ -1424,6 +1426,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
- 		vmf->page = page;
- 		ret = VM_FAULT_MAJOR | VM_FAULT_LOCKED;
- out_inline:
-+		up_read(&mapping->invalidate_lock);
- 		dout("filemap_fault %p %llu read inline data ret %x\n",
- 		     inode, off, ret);
- 	}
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 77fc037d5beb..91693d8b458e 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -2083,6 +2083,7 @@ static long ceph_fallocate(struct file *file, int mode,
- 	if (ret < 0)
- 		goto unlock;
- 
-+	down_write(&inode->i_mapping->invalidate_lock);
- 	ceph_zero_pagecache_range(inode, offset, length);
- 	ret = ceph_zero_objects(inode, offset, length);
- 
-@@ -2095,6 +2096,7 @@ static long ceph_fallocate(struct file *file, int mode,
- 		if (dirty)
- 			__mark_inode_dirty(inode, dirty);
- 	}
-+	up_write(&inode->i_mapping->invalidate_lock);
- 
- 	ceph_put_cap_refs(ci, got);
- unlock:
--- 
-2.26.2
-
+				- Ted
 
 
 _______________________________________________
