@@ -2,71 +2,68 @@ Return-Path: <SRS0=WM5+=KH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2355C2B9FB
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 May 2021 13:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F00C4363E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 May 2021 13:46:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8D7A1613DF;
-	Wed, 12 May 2021 13:46:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D7A1613DF
+	by mail.kernel.org (Postfix) with ESMTPS id 16E4960D07;
+	Wed, 12 May 2021 13:46:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16E4960D07
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lgpCF-0003qF-Ne; Wed, 12 May 2021 13:46:43 +0000
+	id 1lgpCM-0003R8-Tu; Wed, 12 May 2021 13:46:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1lgpCC-0003po-8y
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 13:46:40 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <jack@suse.cz>) id 1lgpCJ-0003Qs-K0
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 13:46:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lk7KBT5ZiYvhccuNilA5BAF8HpqJCTgi83U7AEOzoXI=; b=IeauWQAZLR+SdfHzWc07dZkS1P
- OsrT3VvkX3GgPmCsBKG8MFVUxYOeckk9B6gsyefm/h6Aij8tTFNc7DtjG+YUJXY+jpLYvJoJO+Rwr
- lPo+4HjwbZlvp/N35aCF89e4/cZKumA7XoYlKp1StDrG3m5xv0LmfMOgPJtfA3pvzorg=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=lk7KBT5ZiYvhccuNilA5BAF8HpqJCTgi83U7AEOzoXI=; b=GgDFVfR7RWWsJ3v5cAfiytv/Xz
- dxPxSfSHiIAWbNtKijKsLsQhpa9xBxTIWWyP6MGd9NEaeJurRXUL7rDTcsjX42Nj0XjW6DgFBgMZh
- B5D5m/9euI3YuOvkkWARGtpOWG3vt8A+c5geVWTwnWfo9vS8133hApLFAPgqx+XrCprA=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=w+8hD6b0gf+MzgIAwAuNldU7MnLi6OfAVQYGI+pnqlg=; b=KzKs3mOS+hHKwC9/pGfV1r7B6G
+ K4+EEFajoQKmqRS4Vosl+E+nVCQsIIju50WvydW4XYlPCp3eP2Thv2d/KsDCRXgZU0RjwoLFiS8T4
+ vPqc4G7xc/3rzusWq9z3C9LdKu6a9FafBDRsppLoryg3a5EEF4G4DVx06fgoRNY3jkEc=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=w+8hD6b0gf+MzgIAwAuNldU7MnLi6OfAVQYGI+pnqlg=; b=b
+ z1HfnjUWmCezgzJIUqe9e6paTss82STh7jnGBseizAMBpoOF+gCxk7QgWU9wskP752wQVGJErl4t6
+ a5DE0r43hid1DGenKiBDZHY0tyDjt65LXaoWW4XxXcBnEcNpUbEjiA+H5ieapvN5CwFcWCmibX76G
+ R0O9079h7WfnGNvg=;
 Received: from mx2.suse.de ([195.135.220.15])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lgpCB-005UIb-9z
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 13:46:42 +0000
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lgpCA-000201-4i
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 13:46:47 +0000
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
- by mx2.suse.de (Postfix) with ESMTP id 56D65B1AB;
+ by mx2.suse.de (Postfix) with ESMTP id 5897EB1B1;
  Wed, 12 May 2021 13:46:32 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
- id D98701E0A80; Wed, 12 May 2021 15:46:31 +0200 (CEST)
+ id D2B801E0A4C; Wed, 12 May 2021 15:46:31 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
-Date: Wed, 12 May 2021 15:46:10 +0200
-Message-Id: <20210512134631.4053-2-jack@suse.cz>
+Date: Wed, 12 May 2021 15:46:08 +0200
+Message-Id: <20210512101639.22278-1-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210512101639.22278-1-jack@suse.cz>
-References: <20210512101639.22278-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Headers-End: 1lgpCB-005UIb-9z
-Subject: [f2fs-dev] [PATCH 02/11] documentation: Sync file_operations
- members with reality
+X-Headers-End: 1lgpCA-000201-4i
+Subject: [f2fs-dev] [PATCH 0/11 v5] fs: Hole punch vs page cache filling
+ races
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,56 +88,87 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Sync listing of struct file_operations members with the real one in
-fs.h.
+Hello,
 
-Signed-off-by: Jan Kara <jack@suse.cz>
+here is another version of my patches to address races between hole punching
+and page cache filling functions for ext4 and other filesystems. The biggest
+change since the last time is update of the documentation to reflect the fact
+Dave Chinner spotted that some places also use this type of lock to block
+changes to existing page cache pages through memory mappings.
+
+Out of all filesystem supporting hole punching, only GFS2 and OCFS2 remain
+unresolved. GFS2 people are working on their own solution (cluster locking is
+involved), OCFS2 has even bigger issues (maintainers informed, looking into
+it).
+
+As a next step, I'd like to actually make sure all calls to
+truncate_inode_pages() happen under mapping->invalidate_lock, add the assert
+and then we can also get rid of i_size checks in some places (truncate can
+use the same serialization scheme as hole punch). But that step is mostly
+a cleanup so I'd like to get these functional fixes in first.
+
+Note that the first patch of the series is already in mm tree but I'm
+submitting it here so that the series applies to Linus' tree cleanly.
+
+Changes since v4:
+* Rebased onto 5.13-rc1
+* Removed shmfs conversion patches
+* Fixed up zonefs changelog
+* Fixed up XFS comments
+* Added patch fixing up definition of file_operations in Documentation/vfs/
+* Updated documentation and comments to explain invalidate_lock is used also
+  to prevent changes through memory mappings to existing pages for some VFS
+  operations.
+
+Changes since v3:
+* Renamed and moved lock to struct address_space
+* Added conversions of tmpfs, ceph, cifs, fuse, f2fs
+* Fixed error handling path in filemap_read()
+* Removed .page_mkwrite() cleanup from the series for now
+
+Changes since v2:
+* Added documentation and comments regarding lock ordering and how the lock is
+  supposed to be used
+* Added conversions of ext2, xfs, zonefs
+* Added patch removing i_mapping_sem protection from .page_mkwrite handlers
+
+Changes since v1:
+* Moved to using inode->i_mapping_sem instead of aops handler to acquire
+  appropriate lock
+
 ---
- Documentation/filesystems/locking.rst | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Motivation:
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index 1e894480115b..4ed2b22bd0a8 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -506,6 +506,7 @@ prototypes::
- 	ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
- 	ssize_t (*read_iter) (struct kiocb *, struct iov_iter *);
- 	ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
-+	int (*iopoll) (struct kiocb *kiocb, bool spin);
- 	int (*iterate) (struct file *, struct dir_context *);
- 	int (*iterate_shared) (struct file *, struct dir_context *);
- 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
-@@ -518,12 +519,6 @@ prototypes::
- 	int (*fsync) (struct file *, loff_t start, loff_t end, int datasync);
- 	int (*fasync) (int, struct file *, int);
- 	int (*lock) (struct file *, int, struct file_lock *);
--	ssize_t (*readv) (struct file *, const struct iovec *, unsigned long,
--			loff_t *);
--	ssize_t (*writev) (struct file *, const struct iovec *, unsigned long,
--			loff_t *);
--	ssize_t (*sendfile) (struct file *, loff_t *, size_t, read_actor_t,
--			void __user *);
- 	ssize_t (*sendpage) (struct file *, struct page *, int, size_t,
- 			loff_t *, int);
- 	unsigned long (*get_unmapped_area)(struct file *, unsigned long,
-@@ -536,6 +531,14 @@ prototypes::
- 			size_t, unsigned int);
- 	int (*setlease)(struct file *, long, struct file_lock **, void **);
- 	long (*fallocate)(struct file *, int, loff_t, loff_t);
-+	void (*show_fdinfo)(struct seq_file *m, struct file *f);
-+	unsigned (*mmap_capabilities)(struct file *);
-+	ssize_t (*copy_file_range)(struct file *, loff_t, struct file *,
-+			loff_t, size_t, unsigned int);
-+	loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
-+			struct file *file_out, loff_t pos_out,
-+			loff_t len, unsigned int remap_flags);
-+	int (*fadvise)(struct file *, loff_t, loff_t, int);
- 
- locking rules:
- 	All may block.
--- 
-2.26.2
+Amir has reported [1] a that ext4 has a potential issues when reads can race
+with hole punching possibly exposing stale data from freed blocks or even
+corrupting filesystem when stale mapping data gets used for writeout. The
+problem is that during hole punching, new page cache pages can get instantiated
+and block mapping from the looked up in a punched range after
+truncate_inode_pages() has run but before the filesystem removes blocks from
+the file. In principle any filesystem implementing hole punching thus needs to
+implement a mechanism to block instantiating page cache pages during hole
+punching to avoid this race. This is further complicated by the fact that there
+are multiple places that can instantiate pages in page cache.  We can have
+regular read(2) or page fault doing this but fadvise(2) or madvise(2) can also
+result in reading in page cache pages through force_page_cache_readahead().
+
+There are couple of ways how to fix this. First way (currently implemented by
+XFS) is to protect read(2) and *advise(2) calls with i_rwsem so that they are
+serialized with hole punching. This is easy to do but as a result all reads
+would then be serialized with writes and thus mixed read-write workloads suffer
+heavily on ext4. Thus this series introduces inode->i_mapping_sem and uses it
+when creating new pages in the page cache and looking up their corresponding
+block mapping. We also replace EXT4_I(inode)->i_mmap_sem with this new rwsem
+which provides necessary serialization with hole punching for ext4.
+
+								Honza
+
+[1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjQNmxqmtA_VbYW0Su9rKRk2zobJmahcyeaEVOFKVQ5dw@mail.gmail.com/
+
+Previous versions:
+Link: https://lore.kernel.org/linux-fsdevel/20210208163918.7871-1-jack@suse.cz/
+Link: http://lore.kernel.org/r/20210413105205.3093-1-jack@suse.cz
+Link: http://lore.kernel.org/r/20210423171010.12-1-jack@suse.cz
 
 
 
