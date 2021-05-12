@@ -2,121 +2,73 @@ Return-Path: <SRS0=WM5+=KH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C91AC433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 May 2021 09:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C8AC433ED
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 May 2021 09:53:29 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D2C1E611CA
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 May 2021 09:09:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2C1E611CA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTPS id 9F8B1613BC
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 May 2021 09:53:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8B1613BC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lgksI-0007G1-6I; Wed, 12 May 2021 09:09:50 +0000
+	id 1lglYU-0002Us-KA; Wed, 12 May 2021 09:53:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <daejun7.park@samsung.com>) id 1lgksH-0007Fl-2n
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 09:09:49 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <yuchao0@huawei.com>) id 1lglYS-0002UL-KM
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 09:53:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
- Date:Message-ID:CC:To:From:Sender:Reply-To:Subject:Mime-Version:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jsB6TAeu+Gzqs9Qhm/LfQhaqT2U/PKyrzK2xKp1ySZw=; b=HU8yrcYpVBbL+0CZEcmLs/A67n
- sB63slpqkXfOLNJrBJrICIxVOt3JukhljKuLIhtJfGqWy/vhbOThi+QnA/OtxCFRR7L/Rbfh2OzED
- TzYvaBF7vfxK5CWVaMLe1WWiSB/t9HKv0F5zOx62N16IXsPKZnt/6xM+YzB8TyHSAskA=;
+ bh=xSNHWFHaDPvKcOBXzDZgmP5NxxBOq0ecReOdawmsSjc=; b=PzXAT6X20ftUPG5fKLNQkZMK6b
+ /s6NrTkOTDrW3bBosTDRnFmZA3XSrw3yYLCPvfVyg1Bi1dt0tj0gl/mS7Xi20D1k5yEVkkbc4Qimv
+ 69yn54AIDR1TalF4LOj2GO6yD98JqhAS29yMg6MguUpZcoS3mC8c6nV9uwpI9yttc6lo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:CC:To:
- From:Sender:Reply-To:Subject:Mime-Version:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=jsB6TAeu+Gzqs9Qhm/LfQhaqT2U/PKyrzK2xKp1ySZw=; b=b
- 8f/26SFzOKAjfZUHBeLNBfiFm0iv4fwSKJh6CXzipmAeIjCk7nvYoEY3HePuGGLtdnFgIYAzg+FuD
- a6zUbuKufgCfZhnd/yPiCMgschsZzhRtfPsUWXpJhzIiLcoQtyKnSgG76XQ2ubJgHAD1G2evl8qA2
- CEbmqDQMP2qDUUR4=;
-Received: from mailout4.samsung.com ([203.254.224.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lgks8-0055h8-6D
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 09:09:49 +0000
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
- by mailout4.samsung.com (KnoxPortal) with ESMTP id
- 20210512090933epoutp04aff5a62088c77f0415b268c237a8ae82~_RqEPGF752410824108epoutp04t
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 12 May 2021 09:09:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com
- 20210512090933epoutp04aff5a62088c77f0415b268c237a8ae82~_RqEPGF752410824108epoutp04t
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1620810573;
- bh=jsB6TAeu+Gzqs9Qhm/LfQhaqT2U/PKyrzK2xKp1ySZw=;
- h=Subject:Reply-To:From:To:CC:Date:References:From;
- b=fZ/xCxI1TqCv8wFwuyN6n5pRH+mfkwtOIJH5F85TTU+vO9/94+0melLmBIUW+MVpn
- ZHxEhZw2fxQR6V/+/0nfGQwFOy7re4i5nYo3qoy2BdeA8mRhEcw3RgoowQSGkIExcR
- ooTYIrXhaAeITaINFRvS427vFIQcHfzUpQgAaBB4=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
- epcas2p1.samsung.com (KnoxPortal) with ESMTP id
- 20210512090933epcas2p1d504b74e0bde9e826cb3bc6b37505312~_RqDz7HuH2054420544epcas2p1m;
- Wed, 12 May 2021 09:09:33 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.40.186]) by
- epsnrtp3.localdomain (Postfix) with ESMTP id 4Fg8B32d7Bz4x9Pw; Wed, 12 May
- 2021 09:09:31 +0000 (GMT)
-X-AuditID: b6c32a45-db3ff70000002584-27-609b9b4ab08e
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
- epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
- 19.8F.09604.A4B9B906; Wed, 12 May 2021 18:09:30 +0900 (KST)
-Mime-Version: 1.0
-From: Daejun Park <daejun7.park@samsung.com>
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
- <chao@kernel.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20210512090930epcms2p2227112d22c961ca129462861108c03b6@epcms2p2>
-Date: Wed, 12 May 2021 18:09:30 +0900
-X-CMS-MailID: 20210512090930epcms2p2227112d22c961ca129462861108c03b6
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-CMS-TYPE: 102P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFKsWRmVeSWpSXmKPExsWy7bCmma7X7NkJBrv+a1icnnqWyeLlIU2L
- VQ/CLZ6sn8VscWmRu8XlXXPYHNg8Nq3qZPPYveAzk0ffllWMHp83yQWwROXYZKQmpqQWKaTm
- JeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gBtVlIoS8wpBQoFJBYXK+nb
- 2RTll5akKmTkF5fYKqUWpOQUGBoW6BUn5haX5qXrJefnWhkaGBiZAlUm5GT82nGFtaCHr6Lz
- +2qWBsbt3F2MnBwSAiYSy2/0MXUxcnEICexglNj+awdLFyMHB6+AoMTfHcIgNcIClhLfr19m
- A7GFBJQk1l+cxQ4R15O49XANI4jNJqAjMf3EfbC4iECIxOvJLWAzmQUOMUrMv3uXCWIZr8SM
- 9qcsELa0xPblWxkhbA2JH8t6mSFsUYmbq9+yw9jvj82HqhGRaL13FqpGUOLBz91QcUmJY7s/
- QM2vl9h65xcjyGIJgR5GicM7b7FCJPQlrnVsBFvMK+ArMXXfX7AGFgFViaXrWtkgalwkzs89
- AFbPLCAvsf3tHGZQQDALaEqs36UPYkoIKEscucUC80rDxt/s6GxmAT6JjsN/4eI75j2BOk1N
- Yt3P9UwQY2Qkbs1jnMCoNAsR0LOQrJ2FsHYBI/MqRrHUguLc9NRiowJD5LjdxAhOhFquOxgn
- v/2gd4iRiYMRGNoczEoivGJJsxOEeFMSK6tSi/Lji0pzUosPMZoCPTyRWUo0OR+YivNK4g1N
- jczMDCxNLUzNjCyUxHl/ptYlCAmkJ5akZqemFqQWwfQxcXBKNTBtrWHnfb6s007tQNziZcdr
- JNLOy/CbmRw+snv5rkXXeZ7y6nyXnTUh8j/rbI2dFzYtMZ+nnrunfvfCze9Yr285NmVpx9Hf
- qV5CUkwmR1NaFjgu65lwZaWm7PO7l6pT58pGuyX1xJX8TlYIvFO65Jd+uhyL/XSd8ouaJZdO
- /Fnnnpalp2F9pSnXdLb5z403xL8sUWkxlK94ub+PPZtf3NUi7mxZ3oJ/17jn/m7f1VK4mvf7
- 5IMvLlseWR31zI79z6HyT1Putb5Xn3zh5/3Uxz2aeQYCeyUUd217pfpSoJ3v4/y7rzrbFLbJ
- bJI4Ni8vZ5v6uiP1M1PbhQ/w6p7NVz3DV6fxbVN8uHfLreN359yrUGIpzkg01GIuKk4EAHPV
- ImUNBAAA
-DLP-Filter: Pass
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=xSNHWFHaDPvKcOBXzDZgmP5NxxBOq0ecReOdawmsSjc=; b=H0kNKZimcRIix+rvRyitE3dv8K
+ 0mUZrbA7lem6hr8zhd9GETnVHi928XrkcrXhqb6kynzTTyRMTmjKIZJpgz1YDtHL4xhG5AKVzvM10
+ QNQNbYw+UnJTwccHcTjnknP6xW1yo/lAVWGdPExjNW9lyyJ1dlkGyNpE8Q99Va1aXT+Y=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lglYM-0006bk-Vf
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 09:53:24 +0000
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Fg94Y191RzqTV6;
+ Wed, 12 May 2021 17:49:49 +0800 (CST)
+Received: from szvp000203569.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.498.0; Wed, 12 May 2021 17:53:04 +0800
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+Date: Wed, 12 May 2021 17:52:57 +0800
+Message-ID: <20210512095258.96918-2-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210512095258.96918-1-yuchao0@huawei.com>
+References: <20210512095258.96918-1-yuchao0@huawei.com>
+MIME-Version: 1.0
+X-Originating-IP: [10.120.216.130]
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210512090930epcms2p2227112d22c961ca129462861108c03b6
-References: <CGME20210512090930epcms2p2227112d22c961ca129462861108c03b6@epcms2p2>
-X-Headers-End: 1lgks8-0055h8-6D
-Subject: [f2fs-dev] [PATCH] f2fs: support cold file defragementation
+X-Headers-End: 1lglYM-0006bk-Vf
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: compress: clean up parameter of
+ __f2fs_cluster_blocks()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,69 +80,99 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: daejun7.park@samsung.com
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-F2FS_IOC_DEFRAGMENT performs defragmentation of a file. In
-f2fs_defragment_range(), it checks whether in-place update policy is
-applied, for avoiding unnecessary write operations.
-The cold file may be fragmented according to the write order. However,
-in the case of a cold file, the in-place update policy is applied, so it
-is can not be defragmented.
-This patch temporarily clears the cold bit so that the file can be
-defragmented.
+Previously, in order to reuse __f2fs_cluster_blocks(),
+f2fs_is_compressed_cluster() assigned a compress_ctx type variable,
+which is used to pass few parameters (cc.inode, cc.cluster_size,
+cc.cluster_idx), it's wasteful to allocate such large space in stack.
 
-Signed-off-by: Daejun Park <daejun7.park@samsung.com>
+Let's clean up parameters of __f2fs_cluster_blocks() to avoid that.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/file.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ fs/f2fs/compress.c | 33 +++++++++++++--------------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ceb575f99048..c38e9727ce25 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2536,11 +2536,23 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 	unsigned int total = 0, sec_num;
- 	block_t blk_end = 0;
- 	bool fragmented = false;
-+	bool is_cold = file_is_cold(inode);
- 	int err;
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 8bb9e57a6db8..b6bd6862eef2 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -898,14 +898,17 @@ static bool cluster_has_invalid_data(struct compress_ctx *cc)
+ 	return false;
+ }
  
-+	/*
-+	 * Cold file can be fragmented by write order. So we clear cold bit from
-+	 * the file temporarily.
-+	 */
-+	if (is_cold)
-+		file_clear_cold(inode);
-+
- 	/* if in-place-update policy is enabled, don't waste time here */
--	if (f2fs_should_update_inplace(inode, NULL))
-+	if (f2fs_should_update_inplace(inode, NULL)) {
-+		/* restore file temperature */
-+		if (is_cold)
-+			file_set_cold(inode);
- 		return -EINVAL;
-+	}
+-static int __f2fs_cluster_blocks(struct compress_ctx *cc, bool compr)
++static int __f2fs_cluster_blocks(struct inode *inode,
++				unsigned int cluster_idx, bool compr)
+ {
+ 	struct dnode_of_data dn;
++	unsigned int cluster_size = F2FS_I(inode)->i_cluster_size;
++	unsigned int start_idx = cluster_idx <<
++				F2FS_I(inode)->i_log_cluster_size;
+ 	int ret;
  
- 	pg_start = range->start >> PAGE_SHIFT;
- 	pg_end = (range->start + range->len) >> PAGE_SHIFT;
-@@ -2665,6 +2677,9 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 	clear_inode_flag(inode, FI_DO_DEFRAG);
- out:
- 	inode_unlock(inode);
-+	/* restore file temperature */
-+	if (is_cold)
-+		file_set_cold(inode);
- 	if (!err)
- 		range->len = (u64)total << PAGE_SHIFT;
- 	return err;
+-	set_new_dnode(&dn, cc->inode, NULL, NULL, 0);
+-	ret = f2fs_get_dnode_of_data(&dn, start_idx_of_cluster(cc),
+-							LOOKUP_NODE);
++	set_new_dnode(&dn, inode, NULL, NULL, 0);
++	ret = f2fs_get_dnode_of_data(&dn, start_idx, LOOKUP_NODE);
+ 	if (ret) {
+ 		if (ret == -ENOENT)
+ 			ret = 0;
+@@ -916,7 +919,7 @@ static int __f2fs_cluster_blocks(struct compress_ctx *cc, bool compr)
+ 		int i;
+ 
+ 		ret = 1;
+-		for (i = 1; i < cc->cluster_size; i++) {
++		for (i = 1; i < cluster_size; i++) {
+ 			block_t blkaddr;
+ 
+ 			blkaddr = data_blkaddr(dn.inode,
+@@ -938,25 +941,15 @@ static int __f2fs_cluster_blocks(struct compress_ctx *cc, bool compr)
+ /* return # of compressed blocks in compressed cluster */
+ static int f2fs_compressed_blocks(struct compress_ctx *cc)
+ {
+-	return __f2fs_cluster_blocks(cc, true);
++	return __f2fs_cluster_blocks(cc->inode, cc->cluster_idx, true);
+ }
+ 
+ /* return # of valid blocks in compressed cluster */
+-static int f2fs_cluster_blocks(struct compress_ctx *cc)
+-{
+-	return __f2fs_cluster_blocks(cc, false);
+-}
+-
+ int f2fs_is_compressed_cluster(struct inode *inode, pgoff_t index)
+ {
+-	struct compress_ctx cc = {
+-		.inode = inode,
+-		.log_cluster_size = F2FS_I(inode)->i_log_cluster_size,
+-		.cluster_size = F2FS_I(inode)->i_cluster_size,
+-		.cluster_idx = index >> F2FS_I(inode)->i_log_cluster_size,
+-	};
+-
+-	return f2fs_cluster_blocks(&cc);
++	return __f2fs_cluster_blocks(inode,
++		index >> F2FS_I(inode)->i_log_cluster_size,
++		false);
+ }
+ 
+ static bool cluster_may_compress(struct compress_ctx *cc)
+@@ -1007,7 +1000,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+ 	bool prealloc;
+ 
+ retry:
+-	ret = f2fs_cluster_blocks(cc);
++	ret = f2fs_is_compressed_cluster(cc->inode, start_idx);
+ 	if (ret <= 0)
+ 		return ret;
+ 
 -- 
-2.25.1
+2.29.2
 
 
 
