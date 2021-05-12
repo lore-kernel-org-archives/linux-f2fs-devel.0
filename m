@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D8AC43616
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82008C43600
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 12 May 2021 13:47:05 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B907D61040;
-	Wed, 12 May 2021 13:47:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B907D61040
+	by mail.kernel.org (Postfix) with ESMTPS id 1AFAE613EE;
+	Wed, 12 May 2021 13:47:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AFAE613EE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lgpCZ-00042r-70; Wed, 12 May 2021 13:47:03 +0000
+	id 1lgpCY-0003tW-6C; Wed, 12 May 2021 13:47:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1lgpCU-000411-A5
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 13:46:58 +0000
+ (envelope-from <jack@suse.cz>) id 1lgpCS-0003sO-N2
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 13:46:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NPG7rSZtUWrYa7tU8nruTUCADjjwW48p4ojYXvLEWJk=; b=GlULTAlkj1r/Tv8YuQ55DHIY1f
- M7lab4v44Cksh/eE/7rHO0qWQoZ//P11rAkBplk3ljHKlDPftHHOdVuJUS2+CFpw0LukbYkCjaMHT
- fa1CNop8/jX2FYSCF5S8CD3jQr7d4GkRqMsMWfKRE506+vMikn9smJzSLe1g7iNnGTxk=;
+ bh=BsEFJERiVdoUYfzPc0MQwiR+Xi2Dt9ONSRObee+uovk=; b=c3uhqGtdotjdep/YrRcDteBuOT
+ GDOPq5d6NbpFmWRZk1c9ZjHS3MH4XPgOnPp8mplIDz+JSKAOctxdgmseRYqaU1UykIskLt2tsHXRE
+ aahSlLWvyuqCXRcRzuubpSddfV3zdoRH6iLBFU6NKFHynE++zlugRDwMiLuPC+THVphY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,30 +42,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NPG7rSZtUWrYa7tU8nruTUCADjjwW48p4ojYXvLEWJk=; b=Tpr+zCDkkdLjFmheH7OO1hJSzr
- q4rhz82rA9Ydx1f2UEuEXB/kebsuH3awQ65VOnBTc4mrSq9T1BWdmtZM4PzUnsqYdgo5dHg7pKOvY
- GEKNbRkFGchfXzAolqSU8kXWlE1O9HFnH4rOmsyKHqzvFp+twkws7y5Y1QPMfGJhM/Jg=;
+ bh=BsEFJERiVdoUYfzPc0MQwiR+Xi2Dt9ONSRObee+uovk=; b=Q+SmO0prOzYfEeRYRbrHS2domb
+ B/os1HzEIzVPwTVY7FGcQRtaY6qADlL42kNWeAEgzQQPUhF6+AcMI+pelBOBw8CYvoJ3JAXbsFCG6
+ RQaedR2TOBWLCaoyIBfVBwIdnvQirpEarkURsnT+XeFCbQsema22qMc3/C1sntzitSsg=;
 Received: from mx2.suse.de ([195.135.220.15])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lgpCQ-005UK9-E6
+ id 1lgpCK-005UJG-92
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 12 May 2021 13:46:58 +0000
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
- by mx2.suse.de (Postfix) with ESMTP id D8C44B1B9;
+ by mx2.suse.de (Postfix) with ESMTP id BD05EB1A6;
  Wed, 12 May 2021 13:46:32 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
- id F126A1E61F0; Wed, 12 May 2021 15:46:31 +0200 (CEST)
+ id 0930B1F2B6C; Wed, 12 May 2021 15:46:32 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
-Date: Wed, 12 May 2021 15:46:15 +0200
-Message-Id: <20210512134631.4053-7-jack@suse.cz>
+Date: Wed, 12 May 2021 15:46:18 +0200
+Message-Id: <20210512134631.4053-10-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210512101639.22278-1-jack@suse.cz>
 References: <20210512101639.22278-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Headers-End: 1lgpCQ-005UK9-E6
-Subject: [f2fs-dev] [PATCH 07/11] zonefs: Convert to using invalidate_lock
+X-Headers-End: 1lgpCK-005UJG-92
+Subject: [f2fs-dev] [PATCH 10/11] ceph: Fix race between hole punch and page
+ fault
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,107 +91,77 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use invalidate_lock instead of zonefs' private i_mmap_sem. The intended
-purpose is exactly the same.
+Ceph has a following race between hole punching and page fault:
 
-CC: Damien Le Moal <damien.lemoal@wdc.com>
-CC: Johannes Thumshirn <jth@kernel.org>
-CC: <linux-fsdevel@vger.kernel.org>
+CPU1                                  CPU2
+ceph_fallocate()
+  ...
+  ceph_zero_pagecache_range()
+                                      ceph_filemap_fault()
+                                        faults in page in the range being
+                                        punched
+  ceph_zero_objects()
+
+And now we have a page in punched range with invalid data. Fix the
+problem by using mapping->invalidate_lock similarly to other
+filesystems. Note that using invalidate_lock also fixes a similar race
+wrt ->readpage().
+
+CC: Jeff Layton <jlayton@kernel.org>
+CC: ceph-devel@vger.kernel.org
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/zonefs/super.c  | 23 +++++------------------
- fs/zonefs/zonefs.h |  7 +++----
- 2 files changed, 8 insertions(+), 22 deletions(-)
+ fs/ceph/addr.c | 9 ++++++---
+ fs/ceph/file.c | 2 ++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index cd145d318b17..da2e95d98677 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -462,7 +462,7 @@ static int zonefs_file_truncate(struct inode *inode, loff_t isize)
- 	inode_dio_wait(inode);
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index c1570fada3d8..6d868faf97b5 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1401,9 +1401,11 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
+ 		ret = VM_FAULT_SIGBUS;
+ 	} else {
+ 		struct address_space *mapping = inode->i_mapping;
+-		struct page *page = find_or_create_page(mapping, 0,
+-						mapping_gfp_constraint(mapping,
+-						~__GFP_FS));
++		struct page *page;
++
++		down_read(&mapping->invalidate_lock);
++		page = find_or_create_page(mapping, 0,
++				mapping_gfp_constraint(mapping, ~__GFP_FS));
+ 		if (!page) {
+ 			ret = VM_FAULT_OOM;
+ 			goto out_inline;
+@@ -1424,6 +1426,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
+ 		vmf->page = page;
+ 		ret = VM_FAULT_MAJOR | VM_FAULT_LOCKED;
+ out_inline:
++		up_read(&mapping->invalidate_lock);
+ 		dout("filemap_fault %p %llu read inline data ret %x\n",
+ 		     inode, off, ret);
+ 	}
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 77fc037d5beb..91693d8b458e 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2083,6 +2083,7 @@ static long ceph_fallocate(struct file *file, int mode,
+ 	if (ret < 0)
+ 		goto unlock;
  
- 	/* Serialize against page faults */
--	down_write(&zi->i_mmap_sem);
 +	down_write(&inode->i_mapping->invalidate_lock);
+ 	ceph_zero_pagecache_range(inode, offset, length);
+ 	ret = ceph_zero_objects(inode, offset, length);
  
- 	/* Serialize against zonefs_iomap_begin() */
- 	mutex_lock(&zi->i_truncate_mutex);
-@@ -500,7 +500,7 @@ static int zonefs_file_truncate(struct inode *inode, loff_t isize)
- 
- unlock:
- 	mutex_unlock(&zi->i_truncate_mutex);
--	up_write(&zi->i_mmap_sem);
+@@ -2095,6 +2096,7 @@ static long ceph_fallocate(struct file *file, int mode,
+ 		if (dirty)
+ 			__mark_inode_dirty(inode, dirty);
+ 	}
 +	up_write(&inode->i_mapping->invalidate_lock);
  
- 	return ret;
- }
-@@ -575,18 +575,6 @@ static int zonefs_file_fsync(struct file *file, loff_t start, loff_t end,
- 	return ret;
- }
- 
--static vm_fault_t zonefs_filemap_fault(struct vm_fault *vmf)
--{
--	struct zonefs_inode_info *zi = ZONEFS_I(file_inode(vmf->vma->vm_file));
--	vm_fault_t ret;
--
--	down_read(&zi->i_mmap_sem);
--	ret = filemap_fault(vmf);
--	up_read(&zi->i_mmap_sem);
--
--	return ret;
--}
--
- static vm_fault_t zonefs_filemap_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
-@@ -607,16 +595,16 @@ static vm_fault_t zonefs_filemap_page_mkwrite(struct vm_fault *vmf)
- 	file_update_time(vmf->vma->vm_file);
- 
- 	/* Serialize against truncates */
--	down_read(&zi->i_mmap_sem);
-+	down_read(&inode->i_mapping->invalidate_lock);
- 	ret = iomap_page_mkwrite(vmf, &zonefs_iomap_ops);
--	up_read(&zi->i_mmap_sem);
-+	up_read(&inode->i_mapping->invalidate_lock);
- 
- 	sb_end_pagefault(inode->i_sb);
- 	return ret;
- }
- 
- static const struct vm_operations_struct zonefs_file_vm_ops = {
--	.fault		= zonefs_filemap_fault,
-+	.fault		= filemap_fault,
- 	.map_pages	= filemap_map_pages,
- 	.page_mkwrite	= zonefs_filemap_page_mkwrite,
- };
-@@ -1158,7 +1146,6 @@ static struct inode *zonefs_alloc_inode(struct super_block *sb)
- 
- 	inode_init_once(&zi->i_vnode);
- 	mutex_init(&zi->i_truncate_mutex);
--	init_rwsem(&zi->i_mmap_sem);
- 	zi->i_wr_refcnt = 0;
- 
- 	return &zi->i_vnode;
-diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
-index 51141907097c..7b147907c328 100644
---- a/fs/zonefs/zonefs.h
-+++ b/fs/zonefs/zonefs.h
-@@ -70,12 +70,11 @@ struct zonefs_inode_info {
- 	 * and changes to the inode private data, and in particular changes to
- 	 * a sequential file size on completion of direct IO writes.
- 	 * Serialization of mmap read IOs with truncate and syscall IO
--	 * operations is done with i_mmap_sem in addition to i_truncate_mutex.
--	 * Only zonefs_seq_file_truncate() takes both lock (i_mmap_sem first,
--	 * i_truncate_mutex second).
-+	 * operations is done with invalidate_lock in addition to
-+	 * i_truncate_mutex.  Only zonefs_seq_file_truncate() takes both lock
-+	 * (invalidate_lock first, i_truncate_mutex second).
- 	 */
- 	struct mutex		i_truncate_mutex;
--	struct rw_semaphore	i_mmap_sem;
- 
- 	/* guarded by i_truncate_mutex */
- 	unsigned int		i_wr_refcnt;
+ 	ceph_put_cap_refs(ci, got);
+ unlock:
 -- 
 2.26.2
 
