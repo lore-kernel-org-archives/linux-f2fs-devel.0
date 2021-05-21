@@ -7,69 +7,71 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AA6C4707C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 May 2021 19:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E60A3C4707A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 May 2021 19:02:47 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A7D1A61244;
-	Fri, 21 May 2021 19:00:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D1A61244
+	by mail.kernel.org (Postfix) with ESMTPS id A1534613B6;
+	Fri, 21 May 2021 19:02:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1534613B6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lkANv-000690-2I; Fri, 21 May 2021 19:00:35 +0000
+	id 1lkAQ0-0006KU-Bi; Fri, 21 May 2021 19:02:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1lkANs-00068m-TV
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 May 2021 19:00:32 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1lkAPz-0006KL-17
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 May 2021 19:02:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LQgtC2t1FtI7a7H+ltUX65dtcyDE6YSLW6Sic9BRZs4=; b=El5i9bRFYFsA8L06MpxacWWsUB
- PnAe0qltMng81sDSKjnE6I9yqVcRZVYwXvWe17nQQijT/pT5NZKoTdArPAyFuwGw4Wz2KXk+69FdX
- wSiPvwVyBW1MvPTvl1xLmS7XF1hAw0MmzVK+19UdbW2WYh0LEYDUjEwEfXmrF/AVTLAQ=;
+ bh=+n895/c/46BH4yndA70M3g8EXU06Bxj196JGwXNPNPA=; b=Je1UbklOFLn6t0wdHG6St9lkC+
+ mPfIWYgBsqM6iW5j6K01bBJJWxmtbC+QCvrHe2/zO2+u0pWTHV/W8eQvz5bDRTrJ7DSTz+8dFTaiS
+ wQBctk2mnFbU9Da84eyGeWxtQrrFpNqrowwaBaMudhBSN9r6uiDvrgijLRknODDUtG5A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=LQgtC2t1FtI7a7H+ltUX65dtcyDE6YSLW6Sic9BRZs4=; b=d
- Z61SKaA2sOJa25W0XKfZXlDl90PAWIuXgiyM10DnKCD557Z1XI/xqDtVrILlPvVvpdH25A7yWsiC2
- 2OaTkFDXd48etSw0/000yfX+pJ6qdbCGO4srRjKCt+LClw9jpjMY1K9PNHb/4/bGBE+brX+TfFe/B
- zQPmLBahlh6zMtqg=;
-Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1lkANl-000gIu-Aa
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 May 2021 19:00:35 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F4A761244;
- Fri, 21 May 2021 19:00:17 +0000 (UTC)
+ List-Owner:List-Archive; bh=+n895/c/46BH4yndA70M3g8EXU06Bxj196JGwXNPNPA=; b=e
+ f/S/mXgqQST2hqhrTAIySL30W8gNcbmeSYQsJ2EHeSLyYKMNGfd94JCFCtEwqVYSC8FR2qAH4gr7F
+ LsejR43TUzPWcdqBVrM4TOmXaC3BRFWmp8UdaLLTYjDEr9b1fgRII28F/ju3IApL5ai4/QaMw5nZv
+ vIlOBRv4dHKe9VY4=;
+Received: from [198.145.29.99] (helo=mail.kernel.org)
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lkAPt-0006KH-R1
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 May 2021 19:02:44 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5D98D613AD;
+ Fri, 21 May 2021 19:02:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1621623617;
- bh=t9RDAo8jm5ZgVpoUEYuQtZOyzEFQpNpbg7eqcxxT/+s=;
+ s=k20201202; t=1621623743;
+ bh=PwYVEBdAYioTg9dJDanRYBbNY1d6VzNe8pGxwNgHwts=;
  h=From:To:Cc:Subject:Date:From;
- b=qBKv5NmClLFh9YnG9a1uMsZp/UDR16fDTigg6Lz3y0IKy+S/WgUpwPzq1eoKuuoEt
- /z5mBrjkRf0aaAV1ef/2clTPhdmlhC39Zu7f4HgQffYPNRIEMCjlzQ+4MFlV9ovETR
- DsBDAyu05v+Lu9NCXOIELpPTjttfqGiZl4qFgvi9u8NNuOG3QV9LSGNgQAU0YECbIl
- eVRa3ME0WW19szMTWm9w1IZHuPmQFYHtMw63B+e1F847lt5P6uZoUbbEr5rKJovTpT
- ZUKxbQ5P0dVkgpW9iDfWB6s8MtOsnFCtZqBqJHUXcsp962rjv5wxSLjEjpr+3/tttb
- PVT2wJ0uvMMuw==
+ b=Z6pBlx9PqRwpvhLSpS84t22o70Jagai7OtGqHdaPV+fIYO5XMz1N/8T7Y09nXFFpg
+ 9Xe5GPyKesQTFirhUtEyFp9Npa+tHN0GMPSt7EenGDbQQHnqdziXFuFisgd6Y80mPd
+ B4je9HWSH56F2nC/Y0A26eeB/lnq93i2W13D55snJP0FdJkX5L+32CcFJlNm2HvDn8
+ iDlr191ukjmJm70oPL+tERx5bJdf+WHDklvTUbY6ur8+zYQ5ISdjaLfeTQUOncryiN
+ Zb+yuh9HETAuuTca0yIUZS8OoJvCMQ4r3awG/SqYztbThqjVNubiKub4axbdq4xH3C
+ ZNNCtxofktY3Q==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 21 May 2021 12:00:04 -0700
-Message-Id: <20210521190005.2483242-1-jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 21 May 2021 12:02:16 -0700
+Message-Id: <20210521190217.2484099-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.31.1.818.g46aad6cb9e-goog
 MIME-Version: 1.0
-X-Headers-End: 1lkANl-000gIu-Aa
-Subject: [f2fs-dev] [PATCH 1/2] f2fs_io: add to show immutable bit
+X-Headers-End: 1lkAPt-0006KH-R1
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: immutable file can have null address
+ in compressed chunk
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,57 +88,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+If we released compressed blocks having an immutable bit, we can see less
+number of compressed block addresses. Let's fix wrong BUG_ON.
+
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- tools/f2fs_io/f2fs_io.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ fs/f2fs/compress.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index fa7d3f5e4b36..aa1a7e4dd623 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -213,7 +213,8 @@ static void do_set_verity(int argc, char **argv, const struct cmd_desc *cmd)
- "  verity\n"							\
- "  casefold\n"							\
- "  compression\n"						\
--"  nocompression\n"
-+"  nocompression\n"						\
-+"  immutable\n"
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index d4f7371fb0d8..1189740aa141 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -927,7 +927,8 @@ static int __f2fs_cluster_blocks(struct inode *inode,
+ 			}
+ 		}
  
- static void do_getflags(int argc, char **argv, const struct cmd_desc *cmd)
- {
-@@ -271,6 +272,12 @@ static void do_getflags(int argc, char **argv, const struct cmd_desc *cmd)
- 		printf("nocow(pinned)");
- 		exist = 1;
+-		f2fs_bug_on(F2FS_I_SB(inode), !compr && ret != cluster_size);
++		f2fs_bug_on(F2FS_I_SB(inode),
++			!compr && ret != cluster_size && !IS_IMMUTABLE(inode));
  	}
-+	if (flag & FS_IMMUTABLE_FL) {
-+		if (exist)
-+			printf(",");
-+		printf("immutable");
-+		exist = 1;
-+	}
- 	if (!exist)
- 		printf("none");
- 	printf("\n");
-@@ -284,7 +291,8 @@ static void do_getflags(int argc, char **argv, const struct cmd_desc *cmd)
- "flag can be\n"							\
- "  casefold\n"							\
- "  compression\n"						\
--"  nocompression\n"
-+"  nocompression\n"						\
-+"  noimmutable\n"
- 
- static void do_setflags(int argc, char **argv, const struct cmd_desc *cmd)
- {
-@@ -310,6 +318,8 @@ static void do_setflags(int argc, char **argv, const struct cmd_desc *cmd)
- 		flag |= FS_COMPR_FL;
- 	else if (!strcmp(argv[1], "nocompression"))
- 		flag |= FS_NOCOMP_FL;
-+	else if (!strcmp(argv[1], "noimmutable"))
-+		flag &= ~FS_IMMUTABLE_FL;
- 
- 	ret = ioctl(fd, F2FS_IOC_SETFLAGS, &flag);
- 	printf("set a flag on %s ret=%d, flags=%s\n", argv[2], ret, argv[1]);
+ fail:
+ 	f2fs_put_dnode(&dn);
 -- 
 2.31.1.818.g46aad6cb9e-goog
 
