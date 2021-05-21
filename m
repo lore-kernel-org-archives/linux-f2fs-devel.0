@@ -2,139 +2,76 @@ Return-Path: <SRS0=X3cT=KQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FA9C433B4
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 May 2021 10:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B98C47076
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 May 2021 19:00:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0A08F60E0B;
-	Fri, 21 May 2021 10:33:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A08F60E0B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTPS id 01FCF61261;
+	Fri, 21 May 2021 19:00:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01FCF61261
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lk2Sp-0005Tx-3h; Fri, 21 May 2021 10:33:07 +0000
+	id 1lkANv-0001YN-D7; Fri, 21 May 2021 19:00:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <dwoo08.lee@samsung.com>) id 1lk2Sn-0005Tm-Q5
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 May 2021 10:33:05 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jaegeuk@kernel.org>) id 1lkANu-0001YB-HJ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 May 2021 19:00:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
- MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=43IvwOJnsL9N/6Fzsbz03An+SSdsuDcZ+kUxhZaEFwY=; b=C5tpClOt3Tfpt4oIZvQIIaSqIb
- 0gIPJ0FI0noGDWJYag1vSI53FpV6WSJM9ScDMdlIlI1tXI0nDK06OvY95o5P3w60IiOuPXFPZKXg2
- 1qcldmnwrAlcAeddwiP7Le+8tDKNR/5imoUFht0v9k4WFD8Bpwuf3qEjEoFPsT/3ICeQ=;
+ bh=awHUmZffNhJ/CDtQ3ZnC9tDtZiHofmGVY+4p1sI32Ls=; b=PSyH970LBw8FDkjNdvitpP/aiT
+ ba8AR+J+vvdqCKAyjSr59drt2NnUzpk+02KkjoN9LnuXCLrvprWKQzrXPY7B/NsYMKI1jSvdGzUe5
+ 3MQsj9ApLLw24c8ZguUIWS41GKPGg+pGQbJyczFGz5gLPYxgxHuMbV1rO571fwvX0h10=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id
- :Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=43IvwOJnsL9N/6Fzsbz03An+SSdsuDcZ+kUxhZaEFwY=; b=g
- h2Zr/ZAv+XI2ozJSQJ52HU4hid/KE0CGZtzpK54y/38WEm9m3ud/gq9JTjYiNwcrVokyahGtpNDX7
- aUffw1wcq9vkaXz+nE2hFZvk9rXXX773597yPxXvMYRQKSZUfm+t07UB7z20J3lcZJui2A/4oFJjt
- +k0UipeIlq5ygDv4=;
-Received: from mailout2.samsung.com ([203.254.224.25])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lk2Sc-0000cy-To
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 May 2021 10:33:05 +0000
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
- by mailout2.samsung.com (KnoxPortal) with ESMTP id
- 20210521103249epoutp0290936561ddad65afc33a58f3a9d06fc8~BDmVS2QAG1310313103epoutp02N
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 21 May 2021 10:32:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com
- 20210521103249epoutp0290936561ddad65afc33a58f3a9d06fc8~BDmVS2QAG1310313103epoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1621593169;
- bh=43IvwOJnsL9N/6Fzsbz03An+SSdsuDcZ+kUxhZaEFwY=;
- h=From:To:Cc:Subject:Date:References:From;
- b=poUwAy9ggqOKwN4rajclUhfKKjUaE/aaOobVm9zSXLKyOrAk7Ve4LeY0Gfszy7qYQ
- KOKBv16PntdGXZQFbuQ3+k4eIerRqDixsmHLI39n3r3Y3NsIg3bKNEUMq5eI6rzld4
- g3vntzsTB826Yw1JIIDOm4biJL1mgQHCYxYOVgIk=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
- epcas1p4.samsung.com (KnoxPortal) with ESMTP id
- 20210521103248epcas1p4e78a9daaf3686c3a7243c5e9aa429848~BDmU3TCu90457204572epcas1p4e;
- Fri, 21 May 2021 10:32:48 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.155]) by
- epsnrtp1.localdomain (Postfix) with ESMTP id 4Fmjby45XYz4x9Ps; Fri, 21 May
- 2021 10:32:46 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
- epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
- 0A.AE.09578.C4C87A06; Fri, 21 May 2021 19:32:44 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
- epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
- 20210521103244epcas1p3ca430731d1ea20559aef4e3e68e49870~BDmQjRywa0927909279epcas1p36;
- Fri, 21 May 2021 10:32:44 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
- epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
- 20210521103244epsmtrp17a6a62f22ec762c0d17343320dd7de7f~BDmQip4711929419294epsmtrp1f;
- Fri, 21 May 2021 10:32:44 +0000 (GMT)
-X-AuditID: b6c32a35-fcfff7000000256a-e6-60a78c4c0c23
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
- epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
- 40.3D.08637.B4C87A06; Fri, 21 May 2021 19:32:43 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.208]) by
- epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
- 20210521103243epsmtip15c3f1ac6d31a439d7403c80d38042b85~BDmQWj_Z20717907179epsmtip1u;
- Fri, 21 May 2021 10:32:43 +0000 (GMT)
-From: Dongwoo Lee <dwoo08.lee@samsung.com>
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=awHUmZffNhJ/CDtQ3ZnC9tDtZiHofmGVY+4p1sI32Ls=; b=OEqrawVp+Yr8e0WJL7awszwVEb
+ WcpwIFeqjR8cjL0NUjT/GEhZWWFp3qdSe6YDJWNUmQd7WFlaCjBNl6ua3hA/+nmzAf7YSbjnr3iea
+ j7RWu/pTPnrP+TSUSOoHXJWttDFgPDmgLBZwcGGJ5z/QpbTfw/38MdG0EEKUuATVpMbE=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
+ id 1lkANl-000gJ3-Aa
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 21 May 2021 19:00:35 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D420E61261;
+ Fri, 21 May 2021 19:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1621623618;
+ bh=/A9eC2fH5sshm4LJ1mfGuhLfYUxefjgwKRCEYNbo0vY=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=IMazRa4nL2hhYCGBe9tisqYmfxqu5LwPy/uwdQvHZBdZYkAtNEI1lpQLZyVNH7INu
+ +e4xWbD79A0yiuIZsIhHg20RaxpSKNy0Vm8OxxyLSsKP0NFfiC7FIPMMKSDLRmqyen
+ GZxENjB4jVeI2UvhrSSi/3+TJhdiHphEEzw8L1QMVZ9hRkmBhD2gazj8THjG8uGpBm
+ OUtDbFPpwjoipQpWOjJSeyU96MTZ3T5ULsQcv8Zb/tXMFOq22/274/CSw1TQaBzC+7
+ 0DF9yTqG16XIhw1In2UjMBD+q+H/zLvcYJ0BRfLD5wDwU1bQQbK4+gGU/JvUf6DAQG
+ H3DNiL4WOm5Rg==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 21 May 2021 19:32:38 +0900
-Message-Id: <20210521103238.261204-1-dwoo08.lee@samsung.com>
-X-Mailer: git-send-email 2.25.1
+Date: Fri, 21 May 2021 12:00:05 -0700
+Message-Id: <20210521190005.2483242-2-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.31.1.818.g46aad6cb9e-goog
+In-Reply-To: <20210521190005.2483242-1-jaegeuk@kernel.org>
+References: <20210521190005.2483242-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGKsWRmVeSWpSXmKPExsWy7bCmnq5Pz/IEg18HRSxaDtxgtri0yN2B
- yWP3gs9MHn1bVjEGMEVl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qba
- Krn4BOi6ZeYAjVdSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFFgW6BUn5haX5qXr
- JefnWhkaGBiZAhUmZGf8fGJUMEmnYun12SwNjBOVuxg5OSQETCQ2/JnO0sXIxSEksINR4tKf
- l4wQzidGif6ZPawQzjdGiVVvnrLBtHw4tIgJIrGXUWLbgYfMEM4XRol3HVuBhnFwsAloSez/
- VQzSIAJkTmz4ywhiMwtoSNw4+RZskLCAnsTRGQdYQGwWAVWJfwuOMIHYvAI2Epc2/2SFWCYv
- MfPSd3aIuKDEyZlPWCDmyEs0b50NtldCYDK7xLXl6xkhGlwkWg7sgLpUWOLV8S3sELaUxMv+
- Nii7WqL/wn5WiOYWRom3HddYIBLGEvuXTmYCeYBZQFNi/S59iLCixM7fc6Ee4JN49xUULBxA
- cV6JjjYhCFNFovkjM8ymde//QQ30kPjw7ixYXEggVuLjzhOsExjlZyH5ZhaSb2Yh7F3AyLyK
- USy1oDg3PbXYsMAQOU43MYITmJbpDsaJbz/oHWJk4mA8xCjBwawkwsvtuDxBiDclsbIqtSg/
- vqg0J7X4EKMpMHwnMkuJJucDU2heSbyhqZGxsbGFiaGZqaGhkjhvunN1gpBAemJJanZqakFq
- EUwfEwenVAOT2NQEn827GZJ313ib7TuxoybV6vhP7u1VhmfTq091hPfumGWYyvy4x+rEhcnv
- Y/V+eUm9eSfRKfxr7Re3qvelUU9FBGxVLZkall2SyKxnet6ko50fwWnyNzd5Rvj/jw9+LLcs
- mzfBq2rSjNldWvdrG9g1zuawFS94nl45a++OJJdMoWcnfvw+r5shPD1CQFfS2DI/blrKNf1N
- s9nTX881eKRnNM9R22Ub2+PwuY8n9LldE19Q6XDx/qMJtwp3G71b2bfiWE/Elwlhn4v33P94
- 9qGMbOH1T7q6jadWPfsmnL99nYmYXfdRNqfq8tXcp42u3pEuKr3auXxx+bm9ySU1pZf7fe/w
- +O+f6lmgvqNAiaU4I9FQi7moOBEAClsXXOkDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmluLIzCtJLcpLzFFi42LZdlhJTte7Z3mCwbYJVhYtB24wW1xa5O7A
- 5LF7wWcmj74tqxgDmKK4bFJSczLLUov07RK4Mn4+MSqYpFOx9PpslgbGicpdjJwcEgImEh8O
- LWLqYuTiEBLYzSjxZOFeti5GDqCElMS/NwIQprDE4cPFECWfGCWOrPrBDhJnE9CS2P+rGGSM
- CJA5seEvI4jNLKAhcePkWzYQW1hAT+LojAMsIDaLgKrEvwVHmEBsXgEbiUubf7JCnCAvMfPS
- d3aIuKDEyZlPWCDmyEs0b53NPIGRbxaS1CwkqQWMTKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz
- 0vWS83M3MYLDSUtzB+P2VR/0DjEycTAeYpTgYFYS4eV2XJ4gxJuSWFmVWpQfX1Sak1p8iFGa
- g0VJnPdC18l4IYH0xJLU7NTUgtQimCwTB6dUA9P0+MKMyZUVH7tWd7t4dRQsUC6atb/7hVDJ
- vb6zLEUvVD2+8AtvX8mQdP5nlIVi+i8n06S+cN2UTZn6Et/nnE7sfSkWG7srY+Nk/8ry22bH
- fn28MHOO4SoPefYZCxNX25Q/XfM/NZG91yh/he7+0PVzVj2ZqRCU/P66yt1GVcbFZteE1i/j
- 3/U24c3fxZ8Ej7ra/Tw8oyhZcefcTT0B50WzUo+kPDBmd14uLiz7tFVb4J/ttbK4Pw9OtG5e
- t/KuuBNnkPG5LjWOR/HhTPzT+nQ+bW237VKw+Xh8zaXNnHw8P5ddqPq29fgyz12M26Yq6/pP
- vtil+8hkpcykmeJCm2aZ6dWx/nvy6vn2srxfl4yVWIozEg21mIuKEwECS2MwlgIAAA==
-X-CMS-MailID: 20210521103244epcas1p3ca430731d1ea20559aef4e3e68e49870
-X-Msg-Generator: CA
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210521103244epcas1p3ca430731d1ea20559aef4e3e68e49870
-References: <CGME20210521103244epcas1p3ca430731d1ea20559aef4e3e68e49870@epcas1p3.samsung.com>
-X-Headers-End: 1lk2Sc-0000cy-To
-Subject: [f2fs-dev] [PATCH v3] tools: Introduce f2fslabel
+X-Headers-End: 1lkANl-000gJ3-Aa
+Subject: [f2fs-dev] [PATCH 2/2] f2fs-tools: support small RO partition
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -146,231 +83,573 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Although many other filesystems provide a tool for changing volume
-label, e.g. e2label for ext filesystem, but f2fs has no way to change
-volume label except set it while formatting with mkfs.f2fs.
+This patch adds a readonly feature on small partitions by eliminating
+on-disk layout for data writes such as provisioning/reserved space and
+SSA.
 
-This introduces f2fslabel, simple tool for changing label of f2fs
-volume.
+This requires f2fs updates to understand RO feature in superblock.
 
-Signed-off-by: Dongwoo Lee <dwoo08.lee@samsung.com>
+Tested 4 cases:
+ sload.f2fs -c -a lz0 -f kernel/fs $DEV
+ sload.f2fs -c -a lz4 -f kernel/fs $DEV
+ sload.f2fs -c -r -a lz4 -f kernel/fs $DEV
+ sload.f2fs -c -L 3 -r -a lz4 -f kernel/fs $DEV
+
+after:
+ mkfs.f2fs -O ro,compression,extra_attr -f $DEV
+ fsck.f2fs $DEV
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
+ fsck/fsck.c        |  22 ++++++++-
+ fsck/main.c        |   5 ++
+ fsck/mount.c       |  48 ++++++++++++-------
+ fsck/node.c        |   5 ++
+ fsck/segment.c     |   5 ++
+ include/f2fs_fs.h  |   5 +-
+ lib/libf2fs_io.c   |   9 ++++
+ mkfs/f2fs_format.c | 117 ++++++++++++++++++++++++++++++++-------------
+ 8 files changed, 163 insertions(+), 53 deletions(-)
 
-Changes in v3:
-- Use volume label parameter directly rather duplicating it
-
-Changes in v2:
-- Integrated into fsck/main.c instead of individual tool
-
- fsck/Makefile.am  |  1 +
- fsck/main.c       | 79 +++++++++++++++++++++++++++++++++++++++++++++++
- include/f2fs_fs.h |  2 ++
- man/Makefile.am   |  2 +-
- man/f2fslabel.8   | 33 ++++++++++++++++++++
- 5 files changed, 116 insertions(+), 1 deletion(-)
- create mode 100644 man/f2fslabel.8
-
-diff --git a/fsck/Makefile.am b/fsck/Makefile.am
-index e7d599c..e31d416 100644
---- a/fsck/Makefile.am
-+++ b/fsck/Makefile.am
-@@ -18,3 +18,4 @@ install-data-hook:
- 	ln -sf fsck.f2fs $(DESTDIR)/$(sbindir)/defrag.f2fs
- 	ln -sf fsck.f2fs $(DESTDIR)/$(sbindir)/resize.f2fs
- 	ln -sf fsck.f2fs $(DESTDIR)/$(sbindir)/sload.f2fs
-+	ln -sf fsck.f2fs $(DESTDIR)/$(sbindir)/f2fslabel
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 6019775dcb2d..fdc898d03371 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -144,6 +144,7 @@ static int find_and_dec_hard_link_list(struct f2fs_sb_info *sbi, u32 nid)
+ static int is_valid_ssa_node_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 							u32 blk_addr)
+ {
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct f2fs_summary_block *sum_blk;
+ 	struct f2fs_summary *sum_entry;
+ 	struct seg_entry * se;
+@@ -151,6 +152,9 @@ static int is_valid_ssa_node_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 	int need_fix = 0, ret = 0;
+ 	int type;
+ 
++	if (get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO))
++		return 0;
++
+ 	segno = GET_SEGNO(sbi, blk_addr);
+ 	offset = OFFSET_IN_SEG(sbi, blk_addr);
+ 
+@@ -261,6 +265,7 @@ out:
+ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
+ 		u32 parent_nid, u16 idx_in_node, u8 version)
+ {
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct f2fs_summary_block *sum_blk;
+ 	struct f2fs_summary *sum_entry;
+ 	struct seg_entry * se;
+@@ -268,6 +273,9 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
+ 	int need_fix = 0, ret = 0;
+ 	int type;
+ 
++	if (get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO))
++		return 0;
++
+ 	segno = GET_SEGNO(sbi, blk_addr);
+ 	offset = OFFSET_IN_SEG(sbi, blk_addr);
+ 
+@@ -2372,10 +2380,14 @@ static int check_curseg_write_pointer(struct f2fs_sb_info *UNUSED(sbi),
+ 
+ int check_curseg_offset(struct f2fs_sb_info *sbi, int type)
+ {
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, type);
+ 	struct seg_entry *se;
+ 	int j, nblocks;
+ 
++	if (get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO))
++		return 0;
++
+ 	if ((curseg->next_blkoff >> 3) >= SIT_VBLOCK_MAP_SIZE) {
+ 		ASSERT_MSG("Next block offset:%u is invalid, type:%d",
+ 			curseg->next_blkoff, type);
+@@ -2958,6 +2970,7 @@ void fsck_chk_and_fix_write_pointers(struct f2fs_sb_info *sbi)
+ 
+ int fsck_chk_curseg_info(struct f2fs_sb_info *sbi)
+ {
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct curseg_info *curseg;
+ 	struct seg_entry *se;
+ 	struct f2fs_summary_block *sum_blk;
+@@ -2968,6 +2981,10 @@ int fsck_chk_curseg_info(struct f2fs_sb_info *sbi)
+ 		se = get_seg_entry(sbi, curseg->segno);
+ 		sum_blk = curseg->sum_blk;
+ 
++		if ((get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO)) &&
++			(i != CURSEG_HOT_DATA && i != CURSEG_HOT_NODE))
++			continue;
++
+ 		if (se->type != i) {
+ 			ASSERT_MSG("Incorrect curseg [%d]: segno [0x%x] "
+ 				   "type(SIT) [%d]", i, curseg->segno,
+@@ -3050,7 +3067,10 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 		}
+ 		c.bug_on = 1;
+ 	}
+-
++	printf("[FSCK] Max image size: %"PRIu64" MB, Free space: %u MB\n",
++		c.max_size >> 20,
++		(sbi->user_block_count - sbi->total_valid_block_count) >>
++		(20 - F2FS_BLKSIZE_BITS));
+ 	printf("[FSCK] Unreachable nat entries                       ");
+ 	if (nr_unref_nid == 0x0) {
+ 		printf(" [Ok..] [0x%x]\n", nr_unref_nid);
 diff --git a/fsck/main.c b/fsck/main.c
-index 64efa87..f42ab0c 100644
+index 64efa8789cd4..392a68710566 100644
 --- a/fsck/main.c
 +++ b/fsck/main.c
-@@ -155,6 +155,14 @@ void sload_usage()
- 	exit(1);
- }
- 
-+void label_usage()
-+{
-+	MSG(0, "\nUsage: f2fslabel [options] device [volume-label]\n");
-+	MSG(0, "[options]:\n");
-+	MSG(0, "  -V print the version number and exit\n");
-+	exit(1);
-+}
-+
- static int is_digits(char *optarg)
+@@ -868,6 +868,11 @@ static int do_defrag(struct f2fs_sb_info *sbi)
  {
- 	unsigned int i;
-@@ -177,6 +185,8 @@ static void error_out(char *prog)
- 		resize_usage();
- 	else if (!strcmp("sload.f2fs", prog))
- 		sload_usage();
-+	else if (!strcmp("f2fslabel", prog))
-+		label_usage();
- 	else
- 		MSG(0, "\nWrong program.\n");
- }
-@@ -722,6 +732,39 @@ void f2fs_parse_options(int argc, char *argv[])
- 			}
- 		}
- #endif /* WITH_SLOAD */
-+	} else if (!strcmp("f2fslabel", prog)) {
-+#ifdef WITH_LABEL
-+		const char *option_string = "V";
-+
-+		c.func = LABEL;
-+		while ((option = getopt(argc, argv, option_string)) != EOF) {
-+			switch (option) {
-+			case 'V':
-+				show_version(prog);
-+				exit(0);
-+			default:
-+				err = EUNKNOWN_OPT;
-+				break;
-+			}
-+			if (err != NOERROR)
-+				break;
-+		}
-+
-+		if (argc > (optind + 2)) { /* unknown argument(s) is(are) passed */
-+			optind += 2;
-+			err = EUNKNOWN_ARG;
-+		} else if (argc == (optind + 2)) { /* change label */
-+			c.vol_label = argv[optind + 1];
-+			argc--;
-+		} else { /* print label */
-+			/*
-+			 * Since vol_label was initialized as "", in order to
-+			 * distinguish between clear label and print, set
-+			 * vol_label as NULL for print case
-+			 */
-+			c.vol_label = NULL;
-+		}
-+#endif /* WITH_LABEL */
- 	}
+ 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
  
- 	if (err == NOERROR) {
-@@ -971,6 +1014,36 @@ static int do_sload(struct f2fs_sb_info *sbi)
- }
- #endif
- 
-+#ifdef WITH_LABEL
-+static int do_label(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-+
-+	if (!c.vol_label) {
-+		char label[MAX_VOLUME_NAME];
-+
-+		utf16_to_utf8(label, sb->volume_name,
-+			      MAX_VOLUME_NAME, MAX_VOLUME_NAME);
-+		MSG(0, "Info: volume label = %s\n", label);
-+		return 0;
-+	}
-+
-+	if (strlen(c.vol_label) > MAX_VOLUME_NAME) {
-+		ERR_MSG("Label should not exceed %d characters\n", MAX_VOLUME_NAME);
++	if (get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO)) {
++		MSG(0, "Not support on readonly image.\n");
 +		return -1;
 +	}
 +
-+	utf8_to_utf16(sb->volume_name, (const char *)c.vol_label,
-+		      MAX_VOLUME_NAME, strlen(c.vol_label));
-+
-+	update_superblock(sb, SB_MASK_ALL);
-+
-+	MSG(0, "Info: volume label is changed to %s\n", c.vol_label);
-+
-+	return 0;
-+}
-+#endif
-+
- #if defined(__APPLE__)
- static u64 get_boottime_ns()
+ 	if (c.defrag_start > get_sb(block_count))
+ 		goto out_range;
+ 	if (c.defrag_start < SM_I(sbi)->main_blkaddr)
+diff --git a/fsck/mount.c b/fsck/mount.c
+index cc140a346b67..98262702687d 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -561,6 +561,9 @@ void print_sb_state(struct f2fs_super_block *sb)
+ 	if (f & cpu_to_le32(F2FS_FEATURE_COMPRESSION)) {
+ 		MSG(0, "%s", " compression");
+ 	}
++	if (f & cpu_to_le32(F2FS_FEATURE_RO)) {
++		MSG(0, "%s", " ro");
++	}
+ 	MSG(0, "\n");
+ 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
+ 					sb->encryption_level);
+@@ -856,9 +859,10 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, enum SB_ADDR sb_addr)
+ 		return -1;
+ 	}
+ 
+-	if (total_sections > segment_count ||
++	if (!(get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO)) &&
++			(total_sections > segment_count ||
+ 			total_sections < F2FS_MIN_SEGMENTS ||
+-			segs_per_sec > segment_count || !segs_per_sec) {
++			segs_per_sec > segment_count || !segs_per_sec)) {
+ 		MSG(0, "\tInvalid segment/section count (%u, %u x %u)\n",
+ 			segment_count, total_sections, segs_per_sec);
+ 		return 1;
+@@ -1255,8 +1259,9 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 	ovp_segments = get_cp(overprov_segment_count);
+ 	reserved_segments = get_cp(rsvd_segment_count);
+ 
+-	if (fsmeta < F2FS_MIN_SEGMENT || ovp_segments == 0 ||
+-					reserved_segments == 0) {
++	if (!(get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO)) &&
++		(fsmeta < F2FS_MIN_SEGMENT || ovp_segments == 0 ||
++					reserved_segments == 0)) {
+ 		MSG(0, "\tWrong layout: check mkfs.f2fs version\n");
+ 		return 1;
+ 	}
+@@ -1264,7 +1269,7 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ 	user_block_count = get_cp(user_block_count);
+ 	segment_count_main = get_sb(segment_count_main);
+ 	log_blocks_per_seg = get_sb(log_blocks_per_seg);
+-	if (!user_block_count || user_block_count >=
++	if (!user_block_count || user_block_count >
+ 			segment_count_main << log_blocks_per_seg) {
+ 		ASSERT_MSG("\tWrong user_block_count(%u)\n", user_block_count);
+ 
+@@ -1885,11 +1890,15 @@ static void read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ void update_sum_entry(struct f2fs_sb_info *sbi, block_t blk_addr,
+ 					struct f2fs_summary *sum)
  {
-@@ -1084,6 +1157,12 @@ fsck_again:
- 		c.func = FSCK;
- 		c.fix_on = 1;
- 		goto fsck_again;
-+#endif
-+#ifdef WITH_LABEL
-+	case LABEL:
-+		if (do_label(sbi))
-+			goto out_err;
-+		break;
- #endif
- 	default:
- 		ERR_MSG("Wrong program name\n");
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct f2fs_summary_block *sum_blk;
+ 	u32 segno, offset;
+ 	int type, ret;
+ 	struct seg_entry *se;
+ 
++	if (get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO))
++		return;
++
+ 	segno = GET_SEGNO(sbi, blk_addr);
+ 	offset = OFFSET_IN_SEG(sbi, blk_addr);
+ 
+@@ -2724,18 +2733,17 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left,
+ 		bitmap = get_seg_bitmap(sbi, se);
+ 		type = get_seg_type(sbi, se);
+ 
+-		if (vblocks == sbi->blocks_per_seg ||
+-				IS_CUR_SEGNO(sbi, segno)) {
+-			*to = left ? START_BLOCK(sbi, segno) - 1:
+-						START_BLOCK(sbi, segno + 1);
+-			continue;
+-		}
+-
+-		if (vblocks == 0 && not_enough) {
++		if (vblocks == sbi->blocks_per_seg) {
++next_segment:
+ 			*to = left ? START_BLOCK(sbi, segno) - 1:
+ 						START_BLOCK(sbi, segno + 1);
+ 			continue;
+ 		}
++		if (!(get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO)) &&
++						IS_CUR_SEGNO(sbi, segno))
++			goto next_segment;
++		if (vblocks == 0 && not_enough)
++			goto next_segment;
+ 
+ 		if (vblocks == 0 && !(segno % sbi->segs_per_sec)) {
+ 			struct seg_entry *se2;
+@@ -2766,12 +2774,16 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left,
+ static void move_one_curseg_info(struct f2fs_sb_info *sbi, u64 from, int left,
+ 				 int i)
+ {
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, i);
+ 	struct f2fs_summary_block buf;
+ 	u32 old_segno;
+ 	u64 ssa_blk, to;
+ 	int ret;
+ 
++	if ((get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO)))
++		return;
++
+ 	/* update original SSA too */
+ 	ssa_blk = GET_SUM_BLKADDR(sbi, curseg->segno);
+ 	ret = dev_write_block(curseg->sum_blk, ssa_blk);
+@@ -3015,10 +3027,12 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
+ 		ret = dev_write_block(curseg->sum_blk, cp_blk_no++);
+ 		ASSERT(ret >= 0);
+ 
+-		/* update original SSA too */
+-		ssa_blk = GET_SUM_BLKADDR(sbi, curseg->segno);
+-		ret = dev_write_block(curseg->sum_blk, ssa_blk);
+-		ASSERT(ret >= 0);
++		if (!(get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO))) {
++			/* update original SSA too */
++			ssa_blk = GET_SUM_BLKADDR(sbi, curseg->segno);
++			ret = dev_write_block(curseg->sum_blk, ssa_blk);
++			ASSERT(ret >= 0);
++		}
+ 	}
+ 
+ 	/* Write nat bits */
+diff --git a/fsck/node.c b/fsck/node.c
+index 1d291caa550f..c7988cbbb0df 100644
+--- a/fsck/node.c
++++ b/fsck/node.c
+@@ -61,6 +61,7 @@ void set_data_blkaddr(struct dnode_of_data *dn)
+ block_t new_node_block(struct f2fs_sb_info *sbi,
+ 				struct dnode_of_data *dn, unsigned int ofs)
+ {
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct f2fs_node *f2fs_inode;
+ 	struct f2fs_node *node_blk;
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+@@ -89,6 +90,10 @@ block_t new_node_block(struct f2fs_sb_info *sbi,
+ 			type = CURSEG_WARM_NODE;
+ 	}
+ 
++	if ((get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO)) &&
++					type != CURSEG_HOT_NODE)
++		type = CURSEG_HOT_NODE;
++
+ 	get_node_info(sbi, dn->nid, &ni);
+ 	set_summary(&sum, dn->nid, 0, ni.version);
+ 	ret = reserve_new_block(sbi, &blkaddr, &sum, type, !ofs);
+diff --git a/fsck/segment.c b/fsck/segment.c
+index 365c7f825f76..0b257364fd5b 100644
+--- a/fsck/segment.c
++++ b/fsck/segment.c
+@@ -104,11 +104,16 @@ int reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
+ int new_data_block(struct f2fs_sb_info *sbi, void *block,
+ 				struct dnode_of_data *dn, int type)
+ {
++	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	struct f2fs_summary sum;
+ 	struct node_info ni;
+ 	unsigned int blkaddr = datablock_addr(dn->node_blk, dn->ofs_in_node);
+ 	int ret;
+ 
++	if ((get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO)) &&
++					type != CURSEG_HOT_DATA)
++		type = CURSEG_HOT_DATA;
++
+ 	ASSERT(dn->node_blk);
+ 	memset(block, 0, BLOCK_SZ);
+ 
 diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index cdcce2c..5d49ed1 100644
+index cdcce2cd3b85..580aa6846027 100644
 --- a/include/f2fs_fs.h
 +++ b/include/f2fs_fs.h
-@@ -35,6 +35,7 @@
- #define WITH_DEFRAG
- #define WITH_RESIZE
- #define WITH_SLOAD
-+#define WITH_LABEL
- #endif
+@@ -439,6 +439,7 @@ struct f2fs_configuration {
+ 	u_int64_t wanted_total_sectors;
+ 	u_int64_t wanted_sector_size;
+ 	u_int64_t target_sectors;
++	u_int64_t max_size;
+ 	u_int32_t sectors_per_blk;
+ 	u_int32_t blks_per_seg;
+ 	__u8 init_version[VERSION_LEN + 1];
+@@ -696,7 +697,8 @@ enum {
+ #define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+ #define F2FS_FEATURE_SB_CHKSUM		0x0800
+ #define F2FS_FEATURE_CASEFOLD		0x1000
+- #define F2FS_FEATURE_COMPRESSION	0x2000
++#define F2FS_FEATURE_COMPRESSION	0x2000
++#define F2FS_FEATURE_RO			0x4000
  
- #include <inttypes.h>
-@@ -343,6 +344,7 @@ enum f2fs_config_func {
- 	DEFRAG,
- 	RESIZE,
- 	SLOAD,
-+	LABEL,
+ #define MAX_VOLUME_NAME		512
+ 
+@@ -1546,6 +1548,7 @@ struct feature feature_table[] = {					\
+ 	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
+ 	{ "casefold",			F2FS_FEATURE_CASEFOLD },	\
+ 	{ "compression",		F2FS_FEATURE_COMPRESSION },	\
++	{ "ro",				F2FS_FEATURE_RO},		\
+ 	{ NULL,				0x0},				\
  };
  
- enum default_set {
-diff --git a/man/Makefile.am b/man/Makefile.am
-index 1d16c6f..9363b82 100644
---- a/man/Makefile.am
-+++ b/man/Makefile.am
-@@ -1,3 +1,3 @@
- ## Makefile.am
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index dcedc173a8d9..320ee6c431f0 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -507,6 +507,9 @@ int dev_read(void *buf, __u64 offset, size_t len)
+ 	int fd;
+ 	int err;
  
--dist_man_MANS = mkfs.f2fs.8 fsck.f2fs.8 dump.f2fs.8 defrag.f2fs.8 resize.f2fs.8 sload.f2fs.8 f2fs_io.8
-+dist_man_MANS = mkfs.f2fs.8 fsck.f2fs.8 dump.f2fs.8 defrag.f2fs.8 resize.f2fs.8 sload.f2fs.8 f2fs_io.8 f2fslabel.8
-diff --git a/man/f2fslabel.8 b/man/f2fslabel.8
-new file mode 100644
-index 0000000..848ed3b
---- /dev/null
-+++ b/man/f2fslabel.8
-@@ -0,0 +1,33 @@
-+.\" Copyright (c) 2021 Samsung Electronics Co., Ltd.
-+.\"
-+.TH F2FSLABEL 8
-+.SH NAME
-+f2fslabel \- Change the label on an f2fs volume
-+.SH SYNOPSIS
-+.B f2fslabel
-+.I device
-+[
-+.I volume-label
-+]
-+.SH DESCRIPTION
-+.B f2fslabel
-+will display or change the volume label on the f2fs located on
-+.I device.
-+.PP
-+If the optional argument
-+.I volume-label
-+is present, then
-+.B f2fslabel
-+will set the volume label to be
-+.IR volume-label .
-+.PP
-+Otherwise,
-+.B f2fslabel
-+will simply show the current label.
-+.PP
-+.SH AUTHOR
-+.B f2fslabel
-+was written by Dongwoo Lee (dwoo08.lee@samsung.com).
-+.SH AVAILABILITY
-+.B f2fslabel
-+is available from git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git.
++	if (c.max_size < (offset + len))
++		c.max_size = offset + len;
++
+ 	if (c.sparse_mode)
+ 		return sparse_read_blk(offset / F2FS_BLKSIZE,
+ 					len / F2FS_BLKSIZE, buf);
+@@ -548,6 +551,9 @@ int dev_write(void *buf, __u64 offset, size_t len)
+ {
+ 	int fd;
+ 
++	if (c.max_size < (offset + len))
++		c.max_size = offset + len;
++
+ 	if (c.dry_run)
+ 		return 0;
+ 
+@@ -590,6 +596,9 @@ int dev_fill(void *buf, __u64 offset, size_t len)
+ {
+ 	int fd;
+ 
++	if (c.max_size < (offset + len))
++		c.max_size = offset + len;
++
+ 	if (c.sparse_mode)
+ 		return sparse_write_zeroed_blk(offset / F2FS_BLKSIZE,
+ 						len / F2FS_BLKSIZE);
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index fbecb05b3302..3565bd3e4bf1 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -212,7 +212,7 @@ static int f2fs_prepare_super_block(void)
+ 	u_int64_t total_meta_zones, total_meta_segments;
+ 	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
+ 	u_int32_t max_nat_bitmap_size, max_nat_segments;
+-	u_int32_t total_zones;
++	u_int32_t total_zones, avail_zones;
+ 	enum quota_type qtype;
+ 	int i;
+ 
+@@ -250,6 +250,9 @@ static int f2fs_prepare_super_block(void)
+ 		zone_size_bytes * zone_size_bytes -
+ 		(u_int64_t) c.start_sector * DEFAULT_SECTOR_SIZE;
+ 
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO))
++		zone_align_start_offset = 8192;
++
+ 	if (c.start_sector % DEFAULT_SECTORS_PER_BLOCK) {
+ 		MSG(1, "\t%s: Align start sector number to the page unit\n",
+ 				c.zoned_mode ? "FAIL" : "WARN");
+@@ -400,7 +403,10 @@ static int f2fs_prepare_super_block(void)
+ 			get_sb(segment_count_nat))) *
+ 			c.blks_per_seg;
+ 
+-	blocks_for_ssa = total_valid_blks_available /
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO))
++		blocks_for_ssa = 0;
++	else
++		blocks_for_ssa = total_valid_blks_available /
+ 				c.blks_per_seg + 1;
+ 
+ 	set_sb(segment_count_ssa, SEG_ALIGN(blocks_for_ssa));
+@@ -457,7 +463,13 @@ static int f2fs_prepare_super_block(void)
+ 			(2 * (100 / c.overprovision + 1) + NR_CURSEG_TYPE) *
+ 			round_up(f2fs_get_usable_segments(sb), get_sb(section_count));
+ 
+-	if (c.overprovision == 0 || c.total_segments < F2FS_MIN_SEGMENTS ||
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO)) {
++		c.overprovision = 0;
++		c.reserved_segments = 0;
++	}
++	if ((!(c.feature & cpu_to_le32(F2FS_FEATURE_RO)) &&
++		c.overprovision == 0) ||
++		c.total_segments < F2FS_MIN_SEGMENTS ||
+ 		(c.devices[0].total_sectors *
+ 			c.sector_size < zone_align_start_offset) ||
+ 		(get_sb(segment_count_main) - NR_CURSEG_TYPE) <
+@@ -503,13 +515,25 @@ static int f2fs_prepare_super_block(void)
+ 	if (c.feature & cpu_to_le32(F2FS_FEATURE_LOST_FOUND))
+ 		c.lpf_ino = c.next_free_nid++;
+ 
+-	if (total_zones <= 6) {
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO))
++		avail_zones = 2;
++	else
++		avail_zones = 6;
++
++	if (total_zones <= avail_zones) {
+ 		MSG(1, "\tError: %d zones: Need more zones "
+ 			"by shrinking zone size\n", total_zones);
+ 		return -1;
+ 	}
+ 
+-	if (c.heap) {
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO)) {
++		c.cur_seg[CURSEG_HOT_NODE] = 0;
++		c.cur_seg[CURSEG_WARM_NODE] = 0;
++		c.cur_seg[CURSEG_COLD_NODE] = 0;
++		c.cur_seg[CURSEG_HOT_DATA] = 1;
++		c.cur_seg[CURSEG_COLD_DATA] = 0;
++		c.cur_seg[CURSEG_WARM_DATA] = 0;
++	} else if (c.heap) {
+ 		c.cur_seg[CURSEG_HOT_NODE] =
+ 				last_section(last_zone(total_zones));
+ 		c.cur_seg[CURSEG_WARM_NODE] = prev_zone(CURSEG_HOT_NODE);
+@@ -538,7 +562,8 @@ static int f2fs_prepare_super_block(void)
+ 	}
+ 
+ 	/* if there is redundancy, reassign it */
+-	verify_cur_segs();
++	if (!(c.feature & cpu_to_le32(F2FS_FEATURE_RO)))
++		verify_cur_segs();
+ 
+ 	cure_extension_list();
+ 
+@@ -731,9 +756,15 @@ static int f2fs_write_check_point_pack(void)
+ 					c.reserved_segments);
+ 
+ 	/* main segments - reserved segments - (node + data segments) */
+-	set_cp(free_segment_count, f2fs_get_usable_segments(sb) - 6);
+-	set_cp(user_block_count, ((get_cp(free_segment_count) + 6 -
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO)) {
++		set_cp(free_segment_count, f2fs_get_usable_segments(sb) - 2);
++		set_cp(user_block_count, ((get_cp(free_segment_count) + 2 -
+ 			get_cp(overprov_segment_count)) * c.blks_per_seg));
++	} else {
++		set_cp(free_segment_count, f2fs_get_usable_segments(sb) - 6);
++		set_cp(user_block_count, ((get_cp(free_segment_count) + 6 -
++			get_cp(overprov_segment_count)) * c.blks_per_seg));
++	}
+ 	/* cp page (2), data summaries (1), node summaries (3) */
+ 	set_cp(cp_pack_total_block_count, 6 + get_sb(cp_payload));
+ 	flags = CP_UMOUNT_FLAG | CP_COMPACT_SUM_FLAG;
+@@ -847,8 +878,13 @@ static int f2fs_write_check_point_pack(void)
+ 	sum_compact_p += SUM_JOURNAL_SIZE;
+ 
+ 	memset(sum, 0, sizeof(struct f2fs_summary_block));
++
+ 	/* inode sit for root */
+-	journal->n_sits = cpu_to_le16(6);
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO))
++		journal->n_sits = cpu_to_le16(2);
++	else
++		journal->n_sits = cpu_to_le16(6);
++
+ 	journal->sit_j.entries[0].segno = cp->cur_node_segno[0];
+ 	journal->sit_j.entries[0].se.vblocks =
+ 				cpu_to_le16((CURSEG_HOT_NODE << 10) |
+@@ -859,30 +895,43 @@ static int f2fs_write_check_point_pack(void)
+ 	if (c.lpf_inum)
+ 		f2fs_set_bit(i, (char *)journal->sit_j.entries[0].se.valid_map);
+ 
+-	journal->sit_j.entries[1].segno = cp->cur_node_segno[1];
+-	journal->sit_j.entries[1].se.vblocks =
+-				cpu_to_le16((CURSEG_WARM_NODE << 10));
+-	journal->sit_j.entries[2].segno = cp->cur_node_segno[2];
+-	journal->sit_j.entries[2].se.vblocks =
+-				cpu_to_le16((CURSEG_COLD_NODE << 10));
+-
+-	/* data sit for root */
+-	journal->sit_j.entries[3].segno = cp->cur_data_segno[0];
+-	journal->sit_j.entries[3].se.vblocks =
+-				cpu_to_le16((CURSEG_HOT_DATA << 10) |
+-						(1 + c.quota_dnum + c.lpf_dnum));
+-	f2fs_set_bit(0, (char *)journal->sit_j.entries[3].se.valid_map);
+-	for (i = 1; i <= c.quota_dnum; i++)
+-		f2fs_set_bit(i, (char *)journal->sit_j.entries[3].se.valid_map);
+-	if (c.lpf_dnum)
+-		f2fs_set_bit(i, (char *)journal->sit_j.entries[3].se.valid_map);
+-
+-	journal->sit_j.entries[4].segno = cp->cur_data_segno[1];
+-	journal->sit_j.entries[4].se.vblocks =
+-				cpu_to_le16((CURSEG_WARM_DATA << 10));
+-	journal->sit_j.entries[5].segno = cp->cur_data_segno[2];
+-	journal->sit_j.entries[5].se.vblocks =
+-				cpu_to_le16((CURSEG_COLD_DATA << 10));
++	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO)) {
++		/* data sit for root */
++		journal->sit_j.entries[1].segno = cp->cur_data_segno[0];
++		journal->sit_j.entries[1].se.vblocks =
++					cpu_to_le16((CURSEG_HOT_DATA << 10) |
++							(1 + c.quota_dnum + c.lpf_dnum));
++		f2fs_set_bit(0, (char *)journal->sit_j.entries[1].se.valid_map);
++		for (i = 1; i <= c.quota_dnum; i++)
++			f2fs_set_bit(i, (char *)journal->sit_j.entries[1].se.valid_map);
++		if (c.lpf_dnum)
++			f2fs_set_bit(i, (char *)journal->sit_j.entries[1].se.valid_map);
++	} else {
++		journal->sit_j.entries[1].segno = cp->cur_node_segno[1];
++		journal->sit_j.entries[1].se.vblocks =
++					cpu_to_le16((CURSEG_WARM_NODE << 10));
++		journal->sit_j.entries[2].segno = cp->cur_node_segno[2];
++		journal->sit_j.entries[2].se.vblocks =
++					cpu_to_le16((CURSEG_COLD_NODE << 10));
++
++		/* data sit for root */
++		journal->sit_j.entries[3].segno = cp->cur_data_segno[0];
++		journal->sit_j.entries[3].se.vblocks =
++					cpu_to_le16((CURSEG_HOT_DATA << 10) |
++							(1 + c.quota_dnum + c.lpf_dnum));
++		f2fs_set_bit(0, (char *)journal->sit_j.entries[3].se.valid_map);
++		for (i = 1; i <= c.quota_dnum; i++)
++			f2fs_set_bit(i, (char *)journal->sit_j.entries[3].se.valid_map);
++		if (c.lpf_dnum)
++			f2fs_set_bit(i, (char *)journal->sit_j.entries[3].se.valid_map);
++
++		journal->sit_j.entries[4].segno = cp->cur_data_segno[1];
++		journal->sit_j.entries[4].se.vblocks =
++					cpu_to_le16((CURSEG_WARM_DATA << 10));
++		journal->sit_j.entries[5].segno = cp->cur_data_segno[2];
++		journal->sit_j.entries[5].se.vblocks =
++					cpu_to_le16((CURSEG_COLD_DATA << 10));
++	}
+ 
+ 	memcpy(sum_compact_p, &journal->n_sits, SUM_JOURNAL_SIZE);
+ 	sum_compact_p += SUM_JOURNAL_SIZE;
+@@ -1090,7 +1139,7 @@ static int f2fs_discard_obsolete_dnode(void)
+ 	u_int64_t start_inode_pos = get_sb(main_blkaddr);
+ 	u_int64_t last_inode_pos;
+ 
+-	if (c.zoned_mode)
++	if (c.zoned_mode || c.feature & cpu_to_le32(F2FS_FEATURE_RO))
+ 		return 0;
+ 
+ 	raw_node = calloc(sizeof(struct f2fs_node), 1);
 -- 
-2.25.1
+2.31.1.818.g46aad6cb9e-goog
 
 
 
