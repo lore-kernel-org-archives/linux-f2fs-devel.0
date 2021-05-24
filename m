@@ -2,39 +2,39 @@ Return-Path: <SRS0=md4e=KT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A94EC04FF3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 May 2021 11:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20681C47084
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 May 2021 11:45:42 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 370A361028
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 May 2021 11:38:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 370A361028
+	by mail.kernel.org (Postfix) with ESMTPS id CF91D61248;
+	Mon, 24 May 2021 11:45:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF91D61248
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ll8v2-0007ZE-K0; Mon, 24 May 2021 11:38:48 +0000
+	id 1ll91e-0005K1-WF; Mon, 24 May 2021 11:45:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <yuchao0@huawei.com>) id 1ll8v0-0007Yk-TL
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 May 2021 11:38:46 +0000
+ (envelope-from <yuchao0@huawei.com>) id 1ll91d-0005Jp-EP
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 May 2021 11:45:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ccCVINMdZ87xx/ThsWfN3Vi3IqJG+aNAuxRQK8LESak=; b=TW8Hvd5/Vmq6lijYFo5HeBIPBz
- 4Mmy92zr4Xjvc8zG2xjutHXjVlWsvqRn6/DO4GV70maA3ZBnsPAXhxx5cA/re8Luie3DWc7Z7vnaZ
- 2NNwAfl9Q+UMKAwQVcGE+h9An/PNaJoI972nF/otcqhQr97X7j9XUWOfbbnb4HUaE1oI=;
+ bh=fBBjRpAZYFlKyAtHZP0TeHP495OBwjVeFFWoAjHW2uw=; b=Rld3UWrwM6RigylkhyWxqB+lnx
+ Q4PLvqlU53QSHjHnS4w90wGI94/W84AztkMvGjTj52ABW6958erynZcMtGqlVh7t8rc4o+yD2CZC1
+ ugdWQoSDTXPkH/K32Jiyp/gU6s8d9Bnsu4Otlpaicr5pD2ZRMluv34DXDWzm4FijkX3s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -42,43 +42,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ccCVINMdZ87xx/ThsWfN3Vi3IqJG+aNAuxRQK8LESak=; b=nS8H8/xP9TDbsd/qUt+BH7bCl0
- WgKA0aBFqbyJyDBmvU0+EZJmO85EU9Z4fXbasHG0jYAq8Ke3tMw1MkuyJlMVpyaffjsGJpQ819PSl
- 4i30ato+lfAZQDaxP7KXBm0XAvCCkw6ccg/eC11ZdZ+LOCuAiRP6fmD/S+cgufzKykJU=;
-Received: from szxga05-in.huawei.com ([45.249.212.191])
+ bh=fBBjRpAZYFlKyAtHZP0TeHP495OBwjVeFFWoAjHW2uw=; b=fZZzV+v7/wyugar7BkgL1v3Uv4
+ Dedcyo35Meq5k1RXOQiDXqe2QU+uhTEjQmxq07YNiSvmv5Kw0gFAxWORzlorN7JoWtqJgg61Hi7uF
+ Q+ax3mtLZjvyTYdffa/AZj/cFUKcCOPzKzM233BV/DjXexWcSyndkGIRP8RPXpPeyVrU=;
+Received: from szxga04-in.huawei.com ([45.249.212.190])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.2)
- id 1ll8uw-0048Fz-9J
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 May 2021 11:38:47 +0000
-Received: from dggems703-chm.china.huawei.com (unknown [172.30.72.58])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4FpZs972tWzkYlL;
- Mon, 24 May 2021 19:35:41 +0800 (CST)
+ id 1ll91W-0048XD-5L
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 May 2021 11:45:39 +0000
+Received: from dggems705-chm.china.huawei.com (unknown [172.30.72.58])
+ by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Fpb130fJZz1BQyb;
+ Mon, 24 May 2021 19:42:31 +0800 (CST)
 Received: from dggemx753-chm.china.huawei.com (10.0.44.37) by
- dggems703-chm.china.huawei.com (10.3.19.180) with Microsoft SMTP Server
+ dggems705-chm.china.huawei.com (10.3.19.182) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Mon, 24 May 2021 19:38:32 +0800
+ 15.1.2176.2; Mon, 24 May 2021 19:45:21 +0800
 Received: from [10.136.110.154] (10.136.110.154) by
  dggemx753-chm.china.huawei.com (10.0.44.37) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Mon, 24 May 2021 19:38:31 +0800
-To: Fengnan Chang <changfengnan@vivo.com>, <jaegeuk@kernel.org>,
- <chao@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>
-References: <20210518125113.1712-1-changfengnan@vivo.com>
+ 15.1.2176.2; Mon, 24 May 2021 19:45:20 +0800
+To: Dongwoo Lee <dwoo08.lee@samsung.com>,
+ <linux-f2fs-devel@lists.sourceforge.net>
+References: <CGME20210521103244epcas1p3ca430731d1ea20559aef4e3e68e49870@epcas1p3.samsung.com>
+ <20210521103238.261204-1-dwoo08.lee@samsung.com>
 From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <7ad8bae8-6e38-5ff7-add8-fe1023569f43@huawei.com>
-Date: Mon, 24 May 2021 19:38:31 +0800
+Message-ID: <a1af192e-41ca-de6d-e3d8-c69d7bdb60a6@huawei.com>
+Date: Mon, 24 May 2021 19:45:20 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20210518125113.1712-1-changfengnan@vivo.com>
+In-Reply-To: <20210521103238.261204-1-dwoo08.lee@samsung.com>
 Content-Language: en-US
 X-Originating-IP: [10.136.110.154]
-X-ClientProxiedBy: dggemx702-chm.china.huawei.com (10.1.199.49) To
+X-ClientProxiedBy: dggemx704-chm.china.huawei.com (10.1.199.51) To
  dggemx753-chm.china.huawei.com (10.0.44.37)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1ll8uw-0048Fz-9J
-Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: compress: remove unneeded read
- when rewrite whole cluster
+X-Headers-End: 1ll91W-0048XD-5L
+Subject: Re: [f2fs-dev] [PATCH v3] tools: Introduce f2fslabel
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,22 +94,19 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/5/18 20:51, Fengnan Chang wrote:
-> For now,when overwrite compressed file, we need read old data to page
-> cache first and update pages.
-> But when we need overwrite whole cluster, we don't need old data
-> anymore.
+On 2021/5/21 18:32, Dongwoo Lee wrote:
+> Although many other filesystems provide a tool for changing volume
+> label, e.g. e2label for ext filesystem, but f2fs has no way to change
+> volume label except set it while formatting with mkfs.f2fs.
+> 
+> This introduces f2fslabel, simple tool for changing label of f2fs
+> volume.
+> 
+> Signed-off-by: Dongwoo Lee<dwoo08.lee@samsung.com>
 
-I only see you just check the whole page was dirty as below rather than
-the whole cluster is dirty during write().
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-
-> +	if (len == PAGE_SIZE)
-> +		return 0;
->   	/* compressed case */
->   	prealloc = (ret < cc->cluster_size);
->   
 
 
 _______________________________________________
