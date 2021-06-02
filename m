@@ -2,103 +2,106 @@ Return-Path: <SRS0=enZK=K4=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F812C47083
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Jun 2021 04:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CC9C4708F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Jun 2021 04:44:53 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id EB7D561159
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Jun 2021 04:42:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7D561159
+	by mail.kernel.org (Postfix) with ESMTPS id 31F09610E7
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Jun 2021 04:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F09610E7
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
 	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:Mime-Version:Message-Id:Date:Sender:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Owner;
-	bh=hiOj6Cq9iGgz5+7d1Guks28UDDEcdP2yS2DJEu8LAgw=; b=hOs6/uYxyp9BLsGrtroE9Whgmz
-	jAMmM+s5bpxyK7eXXqIGVYWgKEggxRKgMYw9Fp4Q2aaBn3ab/zlpfHo6tJ1DTfA7TdL21kgywk0YK
-	Qb7zSqbVgqRd1PiArm4TbMqqfZdUWDev0nYXnpimtIzm/qeM75VzJ5Ecgm1qc4KNyMOQ=;
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
+	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
+	 bh=67eJ5gtp8J4icMEOPJk7QHdEjIalIR3h8iJyz2vx0ao=; b=i5SyNQbrFkSU3GQ29u6QJpWQb
+	GpdeLYreij330NKg4IJ7jZqtoLKFRamytHZXuX6wVnivx865IBDidY1f7gwpCCK8WcWpKZBwrAjb5
+	SRPm08fJGFYK+1+0HDtv5zN1Y08fEMrzT53ZSe11g9gGOVagKD/lAemPa8nyHw9r8VKjE=;
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1loIiA-0007R4-EQ; Wed, 02 Jun 2021 04:42:34 +0000
+	id 1loIkL-0004Kz-23; Wed, 02 Jun 2021 04:44:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3_QW3YAYKAPAVjgkWfYggYdW.Uge@flex--drosen.bounces.google.com>)
- id 1loIi8-0007Qn-KT
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jun 2021 04:42:32 +0000
+ (envelope-from <3AQa3YAYKAPQZnkoajckkcha.Yki@flex--drosen.bounces.google.com>)
+ id 1loIkK-0004Kt-1s
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jun 2021 04:44:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Mime-Version:
- Message-Id:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3Qx5/477Yig5L61OFwMLDnCrLXWV7pw+VxgbIq/I9BM=; b=I07mHtlqyEC5QcaguRqA431jqv
- kb/9bhJRM/zOjkX89fLcj9nOiuFvm8joPF5FTGPykMNenBG6nLXFqyWYFHQK759Mzh7+EyQIb1jSb
- yGe5RCOINZmFvvns4Ik8GMTebx9GpZVKfrxUsA1nIM29B1rdkWrepticJX1ga8MZDgxk=;
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
+ Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=/z3sAxNyr4/XNOsFRohgOJPV/ZAL16y4mKhabq6Roac=; b=c1KpnKqilU9+0MMtnpwQUBY0u
+ 2FXPe/a5CO/sFtuOTdzyJPC68HKhHyfMyWPSUrF3dmeiskAcSTD66c/3OCj+DKmnxB8iQTb8itue+
+ DqAnRwmpuNEfMPrVzaFdr3E3SLbFQs0k8FBDmxvaJY2o2aGMEljzOUpHmlWxawDBV4xyY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Mime-Version:Message-Id:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=3Qx5/477Yig5L61OFwMLDnCrLXWV7pw+VxgbIq/I9BM=; b=j
- 1uiC4XjxxxOTnmpd4HmL2Yw9HrEd5VfOPkBcP2ZSOSw3dRdbk8UfhuWosGHcaSjbBg1/l72ISiKTo
- 1g6Y9In0aM8gMa/usvWzr6opNOmpPuHCK1B2WUcUI16ggrRqydz7KpvRwCY9B/J9/bbDZjS3kZ3+i
- sXVY7CQdczsl4O4I=;
-Received: from mail-ua1-f74.google.com ([209.85.222.74])
+ h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
+ In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=/z3sAxNyr4/XNOsFRohgOJPV/ZAL16y4mKhabq6Roac=; b=PONz9OjhMowX1ZOk0fBskZaMDv
+ JUT+1Srl+EsRYyAbdp/9nnJ8iDOT6vdlVWsba4od0bVhzVrv15debmOcf+lq7x7RsDqrPwrMI+Gu8
+ 3SDMmkGxM7mOmOn+2Ao+9Yv0GIfLIRgCqJdvpnsA1PCCKkVRiWBlE/NQOvXdtdiY+IXc=;
+Received: from mail-ua1-f73.google.com ([209.85.222.73])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1loIi8-006jsg-0F
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jun 2021 04:42:33 +0000
-Received: by mail-ua1-f74.google.com with SMTP id
- j9-20020ab060090000b0290256b90cfee7so464936ual.5
+ id 1loIkI-006jyM-Ga
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jun 2021 04:44:50 +0000
+Received: by mail-ua1-f73.google.com with SMTP id
+ r4-20020ab070c40000b02902064b454facso465227ual.6
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 01 Jun 2021 21:42:31 -0700 (PDT)
+ Tue, 01 Jun 2021 21:44:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:message-id:mime-version:subject:from:to:cc;
- bh=3Qx5/477Yig5L61OFwMLDnCrLXWV7pw+VxgbIq/I9BM=;
- b=L4wMXF1m8uq8W5WDMHlMk9MaVK+4srL2mJ9ZomD/pApmJ9j+gxFXP7dDFyydmkacHH
- WacTdf81pGqdvLvoz5gZadfm2l2WKrMeDLO+BiFjZXYjAxarXm/5RJ6ba0Mbj4+FvlPL
- 12VSAsoX/s/leIHxA7XELMO0/Y6NVtlv/w7FQIFKDdo9C7jZP5CpfKC46D1K9HPf5Gv0
- sFQWT7lFZtubTQF74Gj8SqrPY9HtpBPQ+UyoVXUB1vRDNaJ+wqdOSusVklrop/W4ZfIq
- 3vud/O85q5mpKbn0PT99LL5qmb34Nr7VCwN9iOy3iGewPTUm6JOPmhdvvpwb5Y0PTzS0
- C7dQ==
+ h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+ :cc; bh=/z3sAxNyr4/XNOsFRohgOJPV/ZAL16y4mKhabq6Roac=;
+ b=bqqkibubUcQfTOm+zRNWEg2yC3SutsWjbXs3cMSJa1NAVTjDGIqebv/pwYt2cN/CEJ
+ RO3Bwh1SNpskpQxZ9KqzDSVXhRTOjVy/IT5ZE01NrxVSqhnEBaL5rrP34AOLT1seNC3B
+ tZBz4jT8/ULpXWV5lAfk2wzvcbWowpX3/jE+W3Ey6kLhrmxxGTgCF0U4ly9DIDRN8CWE
+ +EDRzgu/KgGN/6pBi2RSIdeG2lrxxhzdEvjDd80qe7waAx6bwQ+f0dly+DgKhMH9H32O
+ t7rAx1WTZFl7DD7M4KZbUz8Dn/+E6IPgLyPbZbudoQQwgqKCl19FK4E9xrGoRpHZoCGQ
+ tGnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
- h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
- bh=3Qx5/477Yig5L61OFwMLDnCrLXWV7pw+VxgbIq/I9BM=;
- b=gEnTvGXYs8YGG5kqfKGqpSggGjqXIpQ0yTrRjHC2umarF1xkJ2zuYRQznflSVYz6YU
- 4F5o9GUtLIzucnbjBQGjGrgy9r3mvCoQp02hBHGFysv1MBiCmRGgpGiloixDXXFN6YBK
- 174TBzyEiSikdMy4iPPR7CfJtCCwOl8QKWucL1Y7finQrcBDyl3zhwU/CZzcQewaJQG0
- ZKFOu6cmbIJsk1yMapMueZpjfOvg0b9iQAtbxf3cfJ0ijAT6nH5y0p/BQ4EBLoCZeato
- EV+7miCSDel2aUlXoexhJ4KLfE+brthtpOXxYLnVn7n++bOr1L2B2J35iTMjdush9U0L
- Bbvw==
-X-Gm-Message-State: AOAM530+WJX+Bu69ppZvcNvDA7bD94i/KQHaCznv8NZ9JEKkM6AroKRc
- Q3xSmos6awBrQeDSkYSudHtN4evXF6o=
-X-Google-Smtp-Source: ABdhPJw5z7A0yAHelyWLEpnQXuueYkii5ep7MSUB4n11ebXmNMqnwoECb2sYiUUqoQDdLDNgwn/I6twKdPA=
+ h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+ :references:subject:from:to:cc;
+ bh=/z3sAxNyr4/XNOsFRohgOJPV/ZAL16y4mKhabq6Roac=;
+ b=qg9mNNqYDRgdGJD+5vorwBesAZm/HoI7Pdpoa12gHCY/JltnEaoExJ7aqux7fV2lsy
+ OO0V13rT/+EBtvMRt+Xe56TYABRLymMwHwcDMvBOh+lKUH/k/zI0llwjnyvSm1H6+5ZP
+ 0jUikis/O3ShorpsCGTCAOzkbICev+BCqnAv5/T36t4iGh+DN/uYJpSPFmSP8dPMYDWA
+ 31feZ7mlVJ2RotDkdhzy3SP4FBy+o5XpfNGLFbg50QynjM1tCZjYgS1+09WWKgdMJC6W
+ Sw/PygggctfJUOl1PEONh06p4d16PqQTlGyg4btfj91jn/mwpUURMBCidTuVg43dpoNJ
+ fRUg==
+X-Gm-Message-State: AOAM532HH8EmypuVT4XJubIF1JTMTjZiohPhVDwMguXi4czn9+d2JIBO
+ fy6FpTnaupqiuyCJeXnmZpTBKL9MYDM=
+X-Google-Smtp-Source: ABdhPJw1whS3sfZfBJvLGe85ZRsMy1o1HJW6TKg0vRD67RWCraVTN++TRNC9zYh3oMg0RKdm0X+os7U3GRs=
 X-Received: from drosen.c.googlers.com ([fda3:e722:ac3:10:24:72f4:c0a8:4e6f])
- (user=drosen job=sendgmr) by 2002:a05:6a00:882:b029:2de:b01d:755a
- with SMTP
- id q2-20020a056a000882b02902deb01d755amr25380274pfj.43.1622607357461; Tue, 01
- Jun 2021 21:15:57 -0700 (PDT)
-Date: Wed,  2 Jun 2021 04:15:37 +0000
-Message-Id: <20210602041539.123097-1-drosen@google.com>
+ (user=drosen job=sendgmr) by 2002:ad4:4e47:: with SMTP id
+ eb7mr3473070qvb.40.1622607361346; 
+ Tue, 01 Jun 2021 21:16:01 -0700 (PDT)
+Date: Wed,  2 Jun 2021 04:15:39 +0000
+In-Reply-To: <20210602041539.123097-1-drosen@google.com>
+Message-Id: <20210602041539.123097-3-drosen@google.com>
 Mime-Version: 1.0
+References: <20210602041539.123097-1-drosen@google.com>
 X-Mailer: git-send-email 2.32.0.rc0.204.g9fa02ecfa5-goog
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
  linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1loIi8-006jsg-0F
-Subject: [f2fs-dev] [PATCH 0/2] Fix up casefolding sysfs entries for F2FS
+X-Headers-End: 1loIkI-006jyM-Ga
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: Advertise encrypted casefolding in
+ sysfs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,19 +123,66 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-These correct displaying support for casefolding only when that capability
-is present, and advertise if encryption and casefolding are supported
-together. Casefolding requires CONFIG_UNICODE, and casefolding with
-encryption wasn't supported until commit 7ad08a58bf67
-("f2fs: Handle casefolding with Encryption")
+Older kernels don't support encryption with casefolding. This adds
+the sysfs entry encrypted_casefold to show support for those combined
+features. Support for this feature was originally added by
+commit 7ad08a58bf67 ("f2fs: Handle casefolding with Encryption")
 
-Daniel Rosenberg (2):
-  f2fs: Show casefolding support only when supported
-  f2fs: Advertise encrypted casefolding in sysfs
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fs/f2fs/sysfs.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
- fs/f2fs/sysfs.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 09e3f258eb52..3c1095a76710 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -161,6 +161,9 @@ static ssize_t features_show(struct f2fs_attr *a,
+ 	if (f2fs_sb_has_compression(sbi))
+ 		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
+ 				len ? ", " : "", "compression");
++	if (f2fs_sb_has_casefold(sbi) && f2fs_sb_has_encrypt(sbi))
++		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
++				len ? ", " : "", "encrypted_casefold");
+ 	len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
+ 				len ? ", " : "", "pin_file");
+ 	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
+@@ -579,6 +582,7 @@ enum feat_id {
+ 	FEAT_CASEFOLD,
+ 	FEAT_COMPRESSION,
+ 	FEAT_TEST_DUMMY_ENCRYPTION_V2,
++	FEAT_ENCRYPTED_CASEFOLD,
+ };
+ 
+ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+@@ -600,6 +604,7 @@ static ssize_t f2fs_feature_show(struct f2fs_attr *a,
+ 	case FEAT_CASEFOLD:
+ 	case FEAT_COMPRESSION:
+ 	case FEAT_TEST_DUMMY_ENCRYPTION_V2:
++	case FEAT_ENCRYPTED_CASEFOLD:
+ 		return sprintf(buf, "supported\n");
+ 	}
+ 	return 0;
+@@ -704,6 +709,9 @@ F2FS_GENERAL_RO_ATTR(avg_vblocks);
+ #ifdef CONFIG_FS_ENCRYPTION
+ F2FS_FEATURE_RO_ATTR(encryption, FEAT_CRYPTO);
+ F2FS_FEATURE_RO_ATTR(test_dummy_encryption_v2, FEAT_TEST_DUMMY_ENCRYPTION_V2);
++#ifdef CONFIG_UNICODE
++F2FS_FEATURE_RO_ATTR(encrypted_casefold, FEAT_ENCRYPTED_CASEFOLD);
++#endif
+ #endif
+ #ifdef CONFIG_BLK_DEV_ZONED
+ F2FS_FEATURE_RO_ATTR(block_zoned, FEAT_BLKZONED);
+@@ -815,6 +823,9 @@ static struct attribute *f2fs_feat_attrs[] = {
+ #ifdef CONFIG_FS_ENCRYPTION
+ 	ATTR_LIST(encryption),
+ 	ATTR_LIST(test_dummy_encryption_v2),
++#ifdef CONFIG_UNICODE
++	ATTR_LIST(encrypted_casefold),
++#endif
+ #endif
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	ATTR_LIST(block_zoned),
 -- 
 2.32.0.rc0.204.g9fa02ecfa5-goog
 
