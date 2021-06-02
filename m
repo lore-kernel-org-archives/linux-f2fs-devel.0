@@ -2,105 +2,87 @@ Return-Path: <SRS0=enZK=K4=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C163C47083
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Jun 2021 04:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6F1C47083
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Jun 2021 11:50:35 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9739661159
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  2 Jun 2021 04:47:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9739661159
-Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
+	by mail.kernel.org (Postfix) with ESMTPS id 411CD610A8;
+	Wed,  2 Jun 2021 11:50:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 411CD610A8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lists.sourceforge.net; s=beta; h=Content-Transfer-Encoding:Content-Type:Cc:
-	Reply-To:From:List-Subscribe:List-Help:List-Post:List-Archive:
-	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
-	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=ajR0wogTv0bBNmxcaGvJoo7rvuIk71/YcXbkbSYBxzs=; b=JdGHtov/7nHV8PmvtCwIYVFFJ
-	utZONifLuupOfxumVFo3+lUmeOE4QSeDjMXhPIMkUX2wlJOWr8wZ7L/kp8BNCrNnorSe1Xrth76Kp
-	mWR2gVPSZJFuIBED1TDlRqsQKGK7TosLARLZZCMtl/uyonNn5nIljK5vRs4uxAgOwKIOs=;
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1loInG-0004RN-CW; Wed, 02 Jun 2021 04:47:50 +0000
+	id 1loPOK-000469-1X; Wed, 02 Jun 2021 11:50:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3_wW3YAYKAPIXlimYhaiiafY.Wig@flex--drosen.bounces.google.com>)
- id 1loInF-0004RH-DI
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jun 2021 04:47:49 +0000
+ (envelope-from <chao@kernel.org>) id 1loPOJ-00045v-6I
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jun 2021 11:50:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
- Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BKOZH6cxK8H9gN/NAu+gVbuI/VQYZv1qm1QPaLOLjHI=; b=kV+oHVfo1Erl69ahvQro0U1gn
- iPnIl8b073Dv35xFPNpXeluXgYcaf+JrINA7unT927jHNToyTPhXfvPy63sSEdV3k71cxSBzBN7zZ
- xSplVERPjn3xmexj2Z9t40wRfomFTf/YyhsAAV7oO5M/taCSccX1iALUDhQF2i28l8xzA=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=R9tsDVJwPAYHqE4XRhlS4kep1vwxdjjwP1hrAGdf0wQ=; b=CaiF6OaralsN2MM5K2HFgHnHIs
+ C7mtXLxq2sib0VvFMsCiR/yaNLJ30g8lHzAa18763uOgAPndl6VjrOGTh6wqIugAqRvMx0eQ375Ng
+ RgwsGU75E3eBvhMsuDQ00Z2V1StUoT7jn3pw9K/1C8H0A/67QCX9o5NycpyhS5siCoXY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
- In-Reply-To:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BKOZH6cxK8H9gN/NAu+gVbuI/VQYZv1qm1QPaLOLjHI=; b=TN89MC+e/tlsKOofNTFDv9ilsb
- WaNP/x1y0imVUF3aAUJjLHp/jh/dGfxT5SK90ujcMK39fgJbA/F3606pDG10kI7WQgOG5kG15umWo
- k8gbBX+Fn/u93U9B7JKHBSWdhvvh/erq5joG/rZPvwWF+UHL6k88985oGuyLYWIrSC9U=;
-Received: from mail-ot1-f74.google.com ([209.85.210.74])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1loIn8-0007ot-4T
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jun 2021 04:47:51 +0000
-Received: by mail-ot1-f74.google.com with SMTP id
- c19-20020a0568303153b0290315c1232768so917154ots.9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 01 Jun 2021 21:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
- h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=BKOZH6cxK8H9gN/NAu+gVbuI/VQYZv1qm1QPaLOLjHI=;
- b=ilMn61oqRM2Lkr1rRMXwrky4dts/4DoVebjHQHw1fhnH/vuUOm9+LTKdaUCtMY/STw
- DzTLXbdzQGvl9s2K8N0w8cifD9rODA5xbpZq6u0RN/NBGoeAqA04HGELINuvvBQtKnUg
- OIrRZ0ofDcCstAan7FJfuEW3KOk3exzjGNHfKq22f9cv5yooM0VGy6RkEM+dsE5O3SYO
- 0RSonkVgvkONNTeSSM/6L7bMkURRhdr0QhQQhLk1PVN3heaECznM11cLY4AWzXmvOxDW
- MRNS5kHYa1r4GsB0YSobdNRAtEhh56hfEopCFOi6Qm9CQ2nz+tGtFk9ZttKn6Mz4w5o8
- 8Omw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:date:in-reply-to:message-id:mime-version
- :references:subject:from:to:cc;
- bh=BKOZH6cxK8H9gN/NAu+gVbuI/VQYZv1qm1QPaLOLjHI=;
- b=FpsRoiwAbO8+9OflCkmelDNylJHDKSzcMWsvVVeCMzuvPs5BskSXxkdaZEQwgNPnU+
- 5stL5SqNOFGUvih91/knJGxOcPhhQMUUCNXpOOkRlrXOKC6JkrYuQZKCPy2SC48Dbxu0
- VUfEBhpeAPme6nv72hhA2x1atzWPit4h43fzKTB14ULlAB60ZI5CSP9uVg8W3D4t2/BF
- T8p52j6mlyABaVh4KpZ6IMTojAk5K76a7GH3EBWXdwJ2RbAcWrRBjDDDQhTdqBE0LGJ9
- ndSMlC8nf8AdBMOEUJjw4NVpr1r+f16vWwwOuUXsnm7UwzPlGgXU/KWHAY6w5Tgbt7Oe
- i3nQ==
-X-Gm-Message-State: AOAM531vIFa63FQgt1y3NAAC8k6tVV2iYLjRhdLhnBgzHvyMiM2BRG9p
- MnGS5Pn5bCVxP96ECVY/0uwXknq3pCM=
-X-Google-Smtp-Source: ABdhPJx3EPn11cJAZFQbbLtQn7yZRTKw3SHAIWbgcrOqO941WNYsCpYzO0S8sqLgdG0Ts39zGQH2ZATm4Wg=
-X-Received: from drosen.c.googlers.com ([fda3:e722:ac3:10:24:72f4:c0a8:4e6f])
- (user=drosen job=sendgmr) by 2002:a17:90b:3b41:: with SMTP id
- ot1mr283480pjb.1.1622607359362; Tue, 01 Jun 2021 21:15:59 -0700 (PDT)
-Date: Wed,  2 Jun 2021 04:15:38 +0000
-In-Reply-To: <20210602041539.123097-1-drosen@google.com>
-Message-Id: <20210602041539.123097-2-drosen@google.com>
-Mime-Version: 1.0
-References: <20210602041539.123097-1-drosen@google.com>
-X-Mailer: git-send-email 2.32.0.rc0.204.g9fa02ecfa5-goog
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
- linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1loIn8-0007ot-4T
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: Show casefolding support only when
- supported
+ bh=R9tsDVJwPAYHqE4XRhlS4kep1vwxdjjwP1hrAGdf0wQ=; b=MVn+zpMVOWA5GlNa1nfUjSDZDf
+ Fmg+TShDvYIx3etoxT/IWQhMdy2dVBmYHIzypgGyndMuir8BnMGUwY29mpxuLq1fzzcbirR8bDxJ/
+ 96Ec+E5h8ZTs9oeFLIpI4dzzshFhclyqdnKhl8Bxz6Wbe5WytvYNS3gGJZyqOu1eIA60=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1loPO1-0078Uo-Hq
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 02 Jun 2021 11:50:32 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 52D8D610A8;
+ Wed,  2 Jun 2021 11:50:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1622634603;
+ bh=/XDBXOEWDZLJhkPEf7731KU5BWhU+sXSlLO2KR7uOFw=;
+ h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+ b=FTid54R9LI0ZIeApYUfTlASbI6qMnp/WYDGInWx7KMHabsTnT+T7eJ6LqN2LjIQAB
+ WJxUr1ETZuQgY0JLwvNDQ8owTT4P/2dm8UTPPGR58QRDRunLpQoRgaOycDE2Qxk+sr
+ X6WK8ptIOKphdNk+9VTK60uixVPdn5t0tKX27r0U9NohfgSRQGQc9uhTmOCDZ/SIIO
+ 42G0N1jUSm23z9RU1yhtaVXbOTds4o1Zhg0siDRsDKxUeTfm/OIXpYHpXZxqKL1/1o
+ KtTzP18jWp9MTTaLxBfHZ/oREctuw02ve93wr0cOQoGgK/Pk2B1PWBu1BnlFPl2RdI
+ Fn2E9fcAUlYQg==
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20210520115150.4718-1-chao@kernel.org>
+ <c82e63e9-e626-f9a6-ddbc-b9acd026dafa@huawei.com>
+ <YKz0VJSYYBEnF75V@google.com> <YKz1gGctmOJ+LjOn@google.com>
+ <2c4db877-b5e6-1139-98b5-be2d9e7872be@kernel.org>
+ <YK0DVi4aTNdXDN3L@google.com>
+ <dda2400f-4a06-0ef6-b4f5-8aafe86bd81d@huawei.com>
+ <YK5Mewfb3gMg1yGM@google.com>
+ <5140516c-e4c6-fd6a-69b2-7566c903cb53@kernel.org>
+ <YLZc0y0S3sGkU6f4@google.com> <YLZt+rFClf7xEzOa@google.com>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <09fa74d3-a9df-028f-3ebc-2b845e5cd609@kernel.org>
+Date: Wed, 2 Jun 2021 19:49:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.2
+MIME-Version: 1.0
+In-Reply-To: <YLZt+rFClf7xEzOa@google.com>
+Content-Language: en-US
+X-Headers-End: 1loPO1-0078Uo-Hq
+Subject: Re: [f2fs-dev] [PATCH v6] f2fs: compress: add compress_inode to
+ cache compressed blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -112,52 +94,158 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Daniel Rosenberg via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Daniel Rosenberg <drosen@google.com>
-Cc: linux-fsdevel@vger.kernel.org, kernel-team@android.com,
- Gabriel Krisman Bertazi <krisman@collabora.com>, linux-kernel@vger.kernel.org,
- Daniel Rosenberg <drosen@google.com>
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The casefolding feature is only supported when CONFIG_UNICODE is set.
-This modifies the feature list f2fs presents under sysfs accordingly.
+On 2021/6/2 1:27, Jaegeuk Kim wrote:
+> On 06/01, Jaegeuk Kim wrote:
+>> On 05/26, Chao Yu wrote:
+>>> On 2021/5/26 21:26, Jaegeuk Kim wrote:
+>>>> On 05/26, Chao Yu wrote:
+>>>>> On 2021/5/25 22:01, Jaegeuk Kim wrote:
+>>>>>> On 05/25, Chao Yu wrote:
+>>>>>>> On 2021/5/25 21:02, Jaegeuk Kim wrote:
+>>>>>>>> On 05/25, Jaegeuk Kim wrote:
+>>>>>>>>> On 05/25, Chao Yu wrote:
+>>>>>>>>>> Also, and queue this?
+>>>>>>>>>
+>>>>>>>>> Easy to get this?
+>>>>>>>>
+>>>>>>>> need GFP_NOFS?
+>>>>>>>
+>>>>>>> Not sure, I use __GFP_IO intentionally here to avoid __GFP_RECLAIM from
+>>>>>>> GFP_NOFS, because in low memory case, I don't want to instead page cache
+>>>>>>> of normal file with page cache of sbi->compress_inode.
+>>>>>>>
+>>>>>>> What is memory size in your vm?
+>>>>>>
+>>>>>> 4GB. If I set GFP_NOFS, I don't see the error anymore, at least.
+>>>>>
+>>>>> I applied below patch and don't see the warning message anymore.
+>>>>>
+>>>>> ---
+>>>>>    fs/f2fs/compress.c | 2 +-
+>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+>>>>> index 701dd0f6f4ec..ed5b7fabc604 100644
+>>>>> --- a/fs/f2fs/compress.c
+>>>>> +++ b/fs/f2fs/compress.c
+>>>>> @@ -1703,7 +1703,7 @@ void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+>>>>>    	avail_ram = si.totalram - si.totalhigh;
+>>>>>
+>>>>>    	/* free memory is lower than watermark, deny caching compress page */
+>>>>> -	if (free_ram <= sbi->compress_watermark / 100 * avail_ram)
+>>>
+>>> This is buggy, because sbi->compress_watermark equals to 20, so that
+>>> sbi->compress_watermark / 100 * avail_ram always be zero...
+>>>
+>>> After this change, if free ram is lower, we may just skip caching
+>>> compressed blocks here.
+>>
+>> Can we move this in f2fs_available_free_memory()?
 
-Fixes: 5aba54302a46 ("f2fs: include charset encoding information in the superblock")
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fs/f2fs/sysfs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+More clean.
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index dc71bc968c72..09e3f258eb52 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -720,7 +720,9 @@ F2FS_FEATURE_RO_ATTR(lost_found, FEAT_LOST_FOUND);
- F2FS_FEATURE_RO_ATTR(verity, FEAT_VERITY);
- #endif
- F2FS_FEATURE_RO_ATTR(sb_checksum, FEAT_SB_CHECKSUM);
-+#ifdef CONFIG_UNICODE
- F2FS_FEATURE_RO_ATTR(casefold, FEAT_CASEFOLD);
-+#endif
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- F2FS_FEATURE_RO_ATTR(compression, FEAT_COMPRESSION);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, compr_written_block, compr_written_block);
-@@ -829,7 +831,9 @@ static struct attribute *f2fs_feat_attrs[] = {
- 	ATTR_LIST(verity),
- #endif
- 	ATTR_LIST(sb_checksum),
-+#ifdef CONFIG_UNICODE
- 	ATTR_LIST(casefold),
-+#endif
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 	ATTR_LIST(compression),
- #endif
--- 
-2.32.0.rc0.204.g9fa02ecfa5-goog
+One comment below:
 
+> 
+> Testing this.
+> 
+> ---
+>   fs/f2fs/compress.c | 14 +-------------
+>   fs/f2fs/node.c     | 11 ++++++++++-
+>   fs/f2fs/node.h     |  1 +
+>   3 files changed, 12 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index 9fd62a0a646b..455561826c7d 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -1688,8 +1688,6 @@ void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+>   {
+>   	struct page *cpage;
+>   	int ret;
+> -	struct sysinfo si;
+> -	unsigned long free_ram, avail_ram;
+>   
+>   	if (!test_opt(sbi, COMPRESS_CACHE))
+>   		return;
+> @@ -1697,17 +1695,7 @@ void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+>   	if (!f2fs_is_valid_blkaddr(sbi, blkaddr, DATA_GENERIC_ENHANCE_READ))
+>   		return;
+>   
+> -	si_meminfo(&si);
+> -	free_ram = si.freeram;
+> -	avail_ram = si.totalram - si.totalhigh;
+> -
+> -	/* free memory is lower than watermark, deny caching compress page */
+> -	if (free_ram <= sbi->compress_watermark / 100 * avail_ram)
+> -		return;
+> -
+> -	/* cached page count exceed threshold, deny caching compress page */
+> -	if (COMPRESS_MAPPING(sbi)->nrpages >=
+
+Need to cover COMPRESS_MAPPING() with CONFIG_F2FS_FS_COMPRESSION.
+
+Thanks,
+
+> -			free_ram / 100 * sbi->compress_percent)
+> +	if (!f2fs_available_free_memory(sbi, COMPRESS_PAGE))
+>   		return;
+>   
+>   	cpage = find_get_page(COMPRESS_MAPPING(sbi), blkaddr);
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 3a8f7afa5059..67093416ce9c 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -45,7 +45,7 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
+>   	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>   	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+>   	struct sysinfo val;
+> -	unsigned long avail_ram;
+> +	unsigned long avail_ram, free_ram;
+>   	unsigned long mem_size = 0;
+>   	bool res = false;
+>   
+> @@ -56,6 +56,7 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
+>   
+>   	/* only uses low memory */
+>   	avail_ram = val.totalram - val.totalhigh;
+> +	free_ram = val.freeram;
+>   
+>   	/*
+>   	 * give 25%, 25%, 50%, 50%, 50% memory for each components respectively
+> @@ -97,6 +98,14 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
+>   		mem_size = (atomic_read(&dcc->discard_cmd_cnt) *
+>   				sizeof(struct discard_cmd)) >> PAGE_SHIFT;
+>   		res = mem_size < (avail_ram * nm_i->ram_thresh / 100);
+> +	} else if (type == COMPRESS_PAGE) {
+> +		/*
+> +		 * free memory is lower than watermark or cached page count
+> +		 * exceed threshold, deny caching compress page.
+> +		 */
+> +		res = (free_ram > avail_ram * sbi->compress_watermark / 100) &&
+> +			(COMPRESS_MAPPING(sbi)->nrpages <
+> +			 free_ram * sbi->compress_percent / 100);
+>   	} else {
+>   		if (!sbi->sb->s_bdi->wb.dirty_exceeded)
+>   			return true;
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index d85e8659cfda..84d45385d1f2 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -148,6 +148,7 @@ enum mem_type {
+>   	EXTENT_CACHE,	/* indicates extent cache */
+>   	INMEM_PAGES,	/* indicates inmemory pages */
+>   	DISCARD_CACHE,	/* indicates memory of cached discard cmds */
+> +	COMPRESS_PAGE,	/* indicates memory of cached compressed pages */
+>   	BASE_CHECK,	/* check kernel status */
+>   };
+>   
+> 
 
 
 _______________________________________________
