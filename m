@@ -7,14 +7,14 @@ X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 482F5C4743C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Jun 2021 21:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2E5C4743E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Jun 2021 21:32:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E3AFE61153
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Jun 2021 21:32:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3AFE61153
+	by mail.kernel.org (Postfix) with ESMTPS id 940E261287
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  4 Jun 2021 21:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940E261287
 Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,28 +23,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	List-Unsubscribe:List-Id:Subject:To:References:Mime-Version:Message-Id:
 	In-Reply-To:Date:Sender:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner;
-	 bh=9iFd2NDQHBmtCSijsfl4IQYl21w6vFFwV1cX4N7CWd4=; b=P96Dsa3sRVGtfqIO9MDpIm/Wl
-	n9M/fuUrwY85i7z2erDji2t4JDCErsTLOqoWzJ9v8cYf4HwtPw9aaHMMbQ5pZJzGZJf+MOh0MEriO
-	BGyF9UQL8sulJk93+paF1keqtZiGaUKq54OX2VhecI9iA91TKGyIoGb4T74mf/ZknHnPw=;
+	 bh=VH2QBsqiXSv3fDsOclMnnpB4SeNAf5GKVuhou9C0Be0=; b=aYxmJi5Hg3t2o1mf57rnsCnlS
+	72lG/FkwvEZViHxaJkjF2RW4KT0SoXELIkM/j8RZEMP2Y92YDmgV5OmXBnAjmP+KpVJil8kWTdjWD
+	MD0p2R5yC1NeilqZbz+T75dTMEFgU9wWDRfUn74p+kSao8xFbR9UwdVbzv6M07F23bAtE=;
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lpHQP-0003gH-Dp; Fri, 04 Jun 2021 21:32:17 +0000
+	id 1lpHQo-0003jg-Jc; Fri, 04 Jun 2021 21:32:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <3f5a6YAYKAKIUCVaCVIQQING.EQO@flex--satyat.bounces.google.com>)
- id 1lpHQO-0003g4-2r
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 Jun 2021 21:32:16 +0000
+ (envelope-from <3hpa6YAYKAKkbJchJcPXXPUN.LXV@flex--satyat.bounces.google.com>)
+ id 1lpHQn-0003jT-Dz
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 Jun 2021 21:32:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:References:
  Mime-Version:Message-Id:In-Reply-To:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
  List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XCMW74I69DeN8Z3kX5iYnnwjp70fgDZ7aIjMCwTUzeM=; b=VbVmMcg5E9SGLiHcrWhJrvZFl
- 5wdn9LnpFCKK7IkeSq0n2S6Hzu9lz1LOkzlckVOOSLxNdMQj0V3ZNIqXPhWQqZOMPZCNsw4+30nNc
- Kc9fhWaqaGeKT5mWa6/RSpHw0C1lQzizNpRp7UwyOtCPqz9bnA5yI6v+HOZKCPBvb3FcM=;
+ bh=8v+WJhPg9I/xdgL6B4MiQX3CWBXyQYuM5MOB3Jc9dDY=; b=lyxSOd8laE4px47kRioSXCJ7d
+ x06oQkDRb86NgBgAITLaeu1i6exDQ3nFeERoWQWL5UPd3FjQtGKh2GhQKg9CA0qNdt7sKiHoan71K
+ rKfroiMgi2lP2dmC4iyl0+vSx1dXBeMYHJGAFVCz7V2yaj2Ie0GEuMaXcWWUeciMF4rNc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:From:Subject:References:Mime-Version:Message-Id:
@@ -52,57 +52,58 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XCMW74I69DeN8Z3kX5iYnnwjp70fgDZ7aIjMCwTUzeM=; b=C1ZVA8XHZgXwCz+gnW4xLI0Qy/
- MTXsRgL519m8//GaZD39tkF4+R/HO9aeNZPBp8MUZgN8/GWoQo3QLp41sWhMNM+lC51wdpHzYG1Pf
- fNLgYA89ogFcvXY7ysFr12JfrE/d8Wl+vka+hF9OBTTCt6+Nyf0KUbxxN1UFgWIYBjsM=;
-Received: from mail-ua1-f73.google.com ([209.85.222.73])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=8v+WJhPg9I/xdgL6B4MiQX3CWBXyQYuM5MOB3Jc9dDY=; b=i9TR+HMxW822mgXHL95Ls6uuxp
+ 11BkUSpeibWLwRYgzIjKFHRYeIWGKxClB22dStTYc0OPRaEi6tx1yWPQ9PBCI+v+KXLrKi2icYDDz
+ Q29Cs4UM1bWZAGsTNZDmRhdn8O7RcnPYX2PCh/5LjxLNA381+RyxFOl2d8sBTsFyeDqs=;
+Received: from mail-vs1-f73.google.com ([209.85.217.73])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1lpHQB-0005wy-Dt
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 Jun 2021 21:32:16 +0000
-Received: by mail-ua1-f73.google.com with SMTP id
- z43-20020a9f372e0000b029020dcb32d820so4536598uad.2
+ id 1lpHQi-00AsH0-PN
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 04 Jun 2021 21:32:42 +0000
+Received: by mail-vs1-f73.google.com with SMTP id
+ g13-20020a0561020ccdb029023fe9ce9042so3480549vst.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 04 Jun 2021 14:32:04 -0700 (PDT)
+ Fri, 04 Jun 2021 14:32:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20161025;
  h=date:in-reply-to:message-id:mime-version:references:subject:from:to
- :cc; bh=XCMW74I69DeN8Z3kX5iYnnwjp70fgDZ7aIjMCwTUzeM=;
- b=Mw++crRiYfOUuxBBsYJaIjEa2wzFZ7uIymgYyHPMmfqTENGSHY2XJFEFHfB0uF7oKU
- q+30l4Moqzicat/BsS7qK98HMHFB/NLzIAJndkfQNTeAD2gynzn1R3KcC6ecx+103TBP
- GDOBRtGgHEnAavWAyXnjadC5RjL1xZKdJoiqVP9LX+Baz1NH8ZskxxPR83N7wSzYmGmy
- AzR1MNMkb9T8NXWXKltKXehqDno9ArTvpLAmBtZwsBDFWHY2DN8mTuZF85xYugPqWMzK
- yDR3nmN38QXxX3Feu5LZLFS1lswICuDdid9tBrfJEby3qDOgFQZQYjh0Whmxpid95T2Z
- py5w==
+ :cc; bh=8v+WJhPg9I/xdgL6B4MiQX3CWBXyQYuM5MOB3Jc9dDY=;
+ b=QRP2TwQixPWYnCinwP+Ayc/NX9oESif3zXsMESiFr/fPmLerJLAJJI31ktNvQoUUi/
+ 270xuMczduXDEX0vo2WK/GiF+vYlLeW1mKOFuNGgyPlQ58ZhE1qMy99pqSLvPW1zdSpI
+ 7WHShNVJE/9VUm/dGSwEosOgNVoiQe1PPfDMFzezYnam9YjQYccnGi34ygSa7XEX7oyb
+ 0LCE4C40aaOhyoeVm54LpIKdrTmC5JktSYenjEnkgNCDh1qyuQ5tx8nGQ9HAf956iCrx
+ BD3SroZd7ttHA4w1l8C5fBKwL3tag/vAJxI3kmg5oNF7aOlMV5WLKwZoVqv3hv8mcYMc
+ gRcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:date:in-reply-to:message-id:mime-version
  :references:subject:from:to:cc;
- bh=XCMW74I69DeN8Z3kX5iYnnwjp70fgDZ7aIjMCwTUzeM=;
- b=h3Jik7q6QSxajMgFRmQjL11VyhunNxHZQ22Etb7T4mlPw0XJflFLv+pICEMeXBBYVv
- vUh+qnUfW6r8SEAWwFevfiODaTIPauyYXB61yfVD5fdMoQPXMRJmrN9RwMFjOz7ZB/k6
- jFzyG7kqCg31A/cw3J0SjzeQXkEBvPsEm0S9T0XOqVb5Zk6iyvMf6gi4ZK866rHv2acL
- lQon80054ZBOsPeXlRnz/sR69H+e7PMhgLtoeGiufU8WZ/nivwjfbjtnaOOUr0jYB0l6
- PVzqQZQTHsFUkza+ZwUtrsX9zkWt59exdA7xkWJ4AncohcpO6GBB1SFPXa5ahFZ2F6pY
- /8Ug==
-X-Gm-Message-State: AOAM531DTTR14uEvZxSb81T/pNGY5AEDLXs/5LM7T9kea+Dkug66njUY
- gvUQ3M6DXheMN0DNKNr4UjxxcR/64q0=
-X-Google-Smtp-Source: ABdhPJxiSLZqcPqUF+AidxN8J2rs3GJOT86onesJOcAIexrEcLNAzcay/hdWehQRGDOJrX95PrTmEboMFxw=
+ bh=8v+WJhPg9I/xdgL6B4MiQX3CWBXyQYuM5MOB3Jc9dDY=;
+ b=jL/F8Ymb5EVCuoPRDJfzXjnr0smJ2LkllGN7BGs8jZV5Qif+YZuGMR94sqF8RPGH80
+ XyLgMYTVrySVnAlnbbceqJlgbUo0Wt2eM2Besk6CG3LTAXPrAXLmDK54cf7XhA+1YL2E
+ T/6caWSLhhxmwja44DjptzgznwwqsiTBmEZfssGaqzuAZXlxSenvxYbnwjLLJCjl+A5X
+ YYKT4/NUWdv5RdugoGBuD+wCAZJ53b7mBSNTecLw/qNqVOsxdLUmY7pIB1y5lRI2S68T
+ nx3HjwPhHIS3B+X+EHk8qfNQhSJihkYuSYWSMkNM9Zi3C+ptQ6C/eNHCCJmBrs2Lgzb7
+ NVKw==
+X-Gm-Message-State: AOAM5335F+udUtsBNUMie6yh/8vhlLGb5tQGwVhx35JH2og3cWjihYkr
+ CNLYV1JBWklAg+qsU0cvWpYLkV7kcG4=
+X-Google-Smtp-Source: ABdhPJyjv+YInqbg6KaJ0jOYrxG2sn5YDWcEehU2DlFwYYyA8k2F0TGVXbcKcmz67/7RnRJ6djeyEnwJoGQ=
 X-Received: from satyaprateek.c.googlers.com
  ([fda3:e722:ac3:10:24:72f4:c0a8:1092])
- (user=satyat job=sendgmr) by 2002:a05:6214:2aa3:: with SMTP id
- js3mr6751098qvb.56.1622840959831; Fri, 04 Jun 2021 14:09:19 -0700 (PDT)
-Date: Fri,  4 Jun 2021 21:09:04 +0000
+ (user=satyat job=sendgmr) by 2002:ad4:4e68:: with SMTP id
+ ec8mr6758723qvb.62.1622840966813; 
+ Fri, 04 Jun 2021 14:09:26 -0700 (PDT)
+Date: Fri,  4 Jun 2021 21:09:08 +0000
 In-Reply-To: <20210604210908.2105870-1-satyat@google.com>
-Message-Id: <20210604210908.2105870-6-satyat@google.com>
+Message-Id: <20210604210908.2105870-10-satyat@google.com>
 Mime-Version: 1.0
 References: <20210604210908.2105870-1-satyat@google.com>
 X-Mailer: git-send-email 2.32.0.rc1.229.g3e70b5a671-goog
 To: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
  Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>,
  Jens Axboe <axboe@kernel.dk>, "Darrick J . Wong" <darrick.wong@oracle.com>
-X-Headers-End: 1lpHQB-0005wy-Dt
-Subject: [f2fs-dev] [PATCH v9 5/9] block: Make bio_iov_iter_get_pages()
- respect bio_required_sector_alignment()
+X-Headers-End: 1lpHQi-00AsH0-PN
+Subject: [f2fs-dev] [PATCH v9 9/9] fscrypt: update documentation for direct
+ I/O support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -117,63 +118,63 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 From: Satya Tangirala via Linux-f2fs-devel
  <linux-f2fs-devel@lists.sourceforge.net>
 Reply-To: Satya Tangirala <satyat@google.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, Satya Tangirala <satyat@google.com>,
- linux-ext4@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ Satya Tangirala <satyat@google.com>, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Previously, bio_iov_iter_get_pages() wasn't used with bios that could have
-an encryption context. However, direct I/O support using blk-crypto
-introduces this possibility, so this function must now respect
-bio_required_sector_alignment() (otherwise, xfstests like generic/465 with
-ext4 will fail).
+Update fscrypt documentation to reflect the addition of direct I/O support
+and document the necessary conditions for direct I/O on encrypted files.
 
 Signed-off-by: Satya Tangirala <satyat@google.com>
+Reviewed-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- block/bio.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ Documentation/filesystems/fscrypt.rst | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 32f75f31bb5c..99c510f706e2 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1099,7 +1099,8 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
-  * The function tries, but does not guarantee, to pin as many pages as
-  * fit into the bio, or are requested in @iter, whatever is smaller. If
-  * MM encounters an error pinning the requested pages, it stops. Error
-- * is returned only if 0 pages could be pinned.
-+ * is returned only if 0 pages could be pinned. It also ensures that the number
-+ * of sectors added to the bio is aligned to bio_required_sector_alignment().
-  *
-  * It's intended for direct IO, so doesn't do PSI tracking, the caller is
-  * responsible for setting BIO_WORKINGSET if necessary.
-@@ -1107,6 +1108,7 @@ static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
- int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- {
- 	int ret = 0;
-+	unsigned int aligned_sectors;
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index 44b67ebd6e40..c0c1747fa2fb 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -1047,8 +1047,10 @@ astute users may notice some differences in behavior:
+   may be used to overwrite the source files but isn't guaranteed to be
+   effective on all filesystems and storage devices.
  
- 	if (iov_iter_is_bvec(iter)) {
- 		if (bio_op(bio) == REQ_OP_ZONE_APPEND)
-@@ -1121,6 +1123,15 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
- 			ret = __bio_iov_iter_get_pages(bio, iter);
- 	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
+-- Direct I/O is not supported on encrypted files.  Attempts to use
+-  direct I/O on such files will fall back to buffered I/O.
++- Direct I/O is supported on encrypted files only under some
++  circumstances (see `Direct I/O support`_ for details). When these
++  circumstances are not met, attempts to use direct I/O on encrypted
++  files will fall back to buffered I/O.
  
-+	/*
-+	 * Ensure that number of sectors in bio is aligned to
-+	 * bio_required_sector_align()
-+	 */
-+	aligned_sectors = round_down(bio_sectors(bio),
-+				     bio_required_sector_alignment(bio));
-+	iov_iter_revert(iter, (bio_sectors(bio) - aligned_sectors) << SECTOR_SHIFT);
-+	bio_truncate(bio, aligned_sectors << SECTOR_SHIFT);
+ - The fallocate operations FALLOC_FL_COLLAPSE_RANGE and
+   FALLOC_FL_INSERT_RANGE are not supported on encrypted files and will
+@@ -1121,6 +1123,21 @@ It is not currently possible to backup and restore encrypted files
+ without the encryption key.  This would require special APIs which
+ have not yet been implemented.
+ 
++Direct I/O support
++==================
 +
- 	/* don't account direct I/O as memory stall */
- 	bio_clear_flag(bio, BIO_WORKINGSET);
- 	return bio->bi_vcnt ? 0 : ret;
++Direct I/O on encrypted files is supported through blk-crypto. In
++particular, this means the kernel must have CONFIG_BLK_INLINE_ENCRYPTION
++enabled, the filesystem must have had the 'inlinecrypt' mount option
++specified, and either hardware inline encryption must be present, or
++CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK must have been enabled. Further,
++the starting position in the file and the length of any I/O must be aligned
++to the filesystem block size (*not* necessarily the same as the block
++device's block size). If any of these conditions isn't met, attempts to do
++direct I/O on an encrypted file will fall back to buffered I/O. However,
++there aren't any additional requirements on user buffer alignment (apart
++from those already present when using direct I/O on unencrypted files).
++
+ Encryption policy enforcement
+ =============================
+ 
 -- 
 2.32.0.rc1.229.g3e70b5a671-goog
 
