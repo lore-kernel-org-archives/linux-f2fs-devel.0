@@ -2,76 +2,80 @@ Return-Path: <SRS0=2MSU=LB=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAB4C4743D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Jun 2021 01:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88ADBC4743E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Jun 2021 01:41:48 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 54A0D6008E;
-	Mon,  7 Jun 2021 01:36:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54A0D6008E
+	by mail.kernel.org (Postfix) with ESMTPS id 5287660FE5;
+	Mon,  7 Jun 2021 01:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5287660FE5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lq4C5-0004JH-BD; Mon, 07 Jun 2021 01:36:45 +0000
+	id 1lq4Gu-0004hP-Pi; Mon, 07 Jun 2021 01:41:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1lq4C2-0004J3-Pr
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jun 2021 01:36:42 +0000
+ (envelope-from <chao@kernel.org>) id 1lq4Gt-0004hI-VE
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jun 2021 01:41:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oO9hE3OgTC3C8k06FQVIsaExZAPX0hEq/wKHE5K9Wus=; b=VIYl8I0CmwsxC07KirRUVXHdX4
- CTj6+qo7z2whoCzrGeRH9RrAwGwX0iET6U/jLE8CIAqKR5XvfuPPBcVJbU9Nb6Qi96w70QsASVtg8
- cy85r4O3qt7a6rzCEHgUNaNs7AK4EmJJftU47oVXqlkWAaN7ipN+VWqXF0oxsIitADGY=;
+ bh=W2BcUNzZI1qM2/m8JUVM+en7pWNGHc7w7dTo0WukG/4=; b=e5Qe73XAeNOl5UAuQO8FzK3ZTl
+ PZNQE79uyHPPCNuPqff1R70vkV49hS5+dBM5LxH3grVs88vxGWXyMl3UO41QzblwNdGmolohnBswS
+ XtcqK9Pd7Ards55U7trb0tGglIBrgT57b9ofejKosM+k38MA6Y54deNshA5VJXsjAHjo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=oO9hE3OgTC3C8k06FQVIsaExZAPX0hEq/wKHE5K9Wus=; b=OZR48UzRyjAuBoBsDq3d6bry8u
- 7vJIs0361GdpBFD0bh/Q3ZufX0mAakNMAbrCjQGDUW8agtJIkVu4C+6T+ez/9jQ4TKDmVWwl+5PiQ
- gCudjw9dvY9qPulzifQkICABkcfq7bjdGxjeXFTB+hIEW6ZEIWX2kDFScK7l2YER3xCY=;
+ bh=W2BcUNzZI1qM2/m8JUVM+en7pWNGHc7w7dTo0WukG/4=; b=K7tgNVRKkLknROLLxwaHNavNk/
+ HbW/ue6SDoqQXKgyPS98blAq0o1HkSwnRU76ORJjYbQIROc5KnXpPJttOVrjM6dw+vQDhTD0DLbGM
+ ttnvr7NUpi1sVBUm+rxchlsucMvjKXhMsxmPSO0NpPau4/ybgqc2mrcky9WnQe4+a2fM=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lq4Bx-0008H4-H6
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jun 2021 01:36:44 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B4CCB613E3;
- Sat,  5 Jun 2021 07:29:22 +0000 (UTC)
+ id 1lq4Gn-000199-N5
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jun 2021 01:41:46 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0DDAA6120F;
+ Sun,  6 Jun 2021 13:53:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1622878162;
- bh=sD4FdAhELqS0DLQbiQk64DhfSNBtsMQjztudND1DlMU=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Fz96jY/xij6RRMc+vj4SXRnz8YYgUg2aniupthXfB8pM8hH2eptOK+d6xLlHdPp7t
- wXjv6c6M2kVt3k68qhGNLn2pB882j/HYyleAHHyO5S8MmXebYY9odATWmXGp1sxMy9
- fumMv3DxqCMp+/blHZKRuVG37XXlhyhTr+kyApjRctqiFcZnP/uf4MxJ+v89//2BfG
- 8QJp1B+3TjUcEsJ30qA57YHjxXP2ATWyS5BpCMw2q3Pf3OVqsKYZKHPnEGfvp5Ue4f
- mwMYCWxPo745PN7jwWIQ4r/XWVyPRrSZ4SHpFM/MLkmxLGl0FapoxtGBuyRXqcEYwx
- rk/NXw35NFXeg==
-Date: Sat, 5 Jun 2021 00:29:21 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Message-ID: <YLsn0cws61VUrawv@sol.localdomain>
-References: <20210527225525.2365513-1-ebiggers@kernel.org>
+ s=k20201202; t=1622987612;
+ bh=T9Mid5vJotYKc1BgooDYJRNtn/k2VlQX+UetnopSvjc=;
+ h=Subject:To:References:From:Date:In-Reply-To:From;
+ b=K0EMoEIPoiytEnK7B4ovvewslqmX+eB63WcCV0ocRdygeYCTmCvmKdK5K6UAWBZki
+ m+vFDzkqKBqVgl6lN9Pyb+6f6vyhGO8TpXVraOur5v25UrBkjijp4ePXhcA1M//c3e
+ wihHXKIbmjNMD0r/FowSCotYo8W+m69t/q/WdmE0VKtFPIbDqgYI7XoFOyWgYDm8Uw
+ z4EolGrMokx9eEdIy3lQ2TrQpVfxp31h8yed1xgr2JMyJp+W7R3R8pUa9k+JYC1DZT
+ QugWbQN3lRYYtVKrAEP03HIVbCDiltfVWh2OLAYXtquDB0u972uhKgn4VMzNpYkwGa
+ n2mL+wkxvZ40w==
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20210525204955.2512409-1-jaegeuk@kernel.org>
+ <20210525204955.2512409-2-jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <95b5669f-a521-5865-2089-320e2a2493de@kernel.org>
+Date: Sun, 6 Jun 2021 21:53:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20210527225525.2365513-1-ebiggers@kernel.org>
-X-Headers-End: 1lq4Bx-0008H4-H6
-Subject: Re: [f2fs-dev] [PATCH] fscrypt: fix derivation of SipHash keys on
- big endian CPUs
+In-Reply-To: <20210525204955.2512409-2-jaegeuk@kernel.org>
+Content-Language: en-US
+X-Headers-End: 1lq4Gn-000199-N5
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: introduce FI_COMPRESS_RELEASED
+ instead of using IMMUTABLE bit
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,41 +87,25 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-ext4@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
- stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, May 27, 2021 at 03:55:25PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 2021/5/26 4:49, Jaegeuk Kim wrote:
+> Once we release compressed blocks, we used to set IMMUTABLE bit. But it turned
+> out it disallows every fs operations which we don't need for compression.
 > 
-> Typically, the cryptographic APIs that fscrypt uses take keys as byte
-> arrays, which avoids endianness issues.  However, siphash_key_t is an
-> exception.  It is defined as 'u64 key[2];', i.e. the 128-bit key is
-> expected to be given directly as two 64-bit words in CPU endianness.
+> Let's just prevent writing data only.
 > 
-> fscrypt_derive_dirhash_key() forgot to take this into account.
-> Therefore, the SipHash keys used to index encrypted+casefolded
-> directories differ on big endian vs. little endian platforms.
-> This makes such directories non-portable between these platforms.
-> 
-> Fix this by always using the little endian order.  This is a breaking
-> change for big endian platforms, but this should be fine in practice
-> since the encrypt+casefold support isn't known to actually be used on
-> any big endian platforms yet.
-> 
-> Fixes: aa408f835d02 ("fscrypt: derive dirhash key for casefolded directories")
-> Cc: <stable@vger.kernel.org> # v5.6+
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/crypto/keysetup.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-I missed that fscrypt_setup_iv_ino_lblk_32_key() has the same bug too.
-I'll send out a new patch which fixes both of these...
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-- Eric
+BTW, we need to expose .i_inline field to userspace since there is no
+way to check status of inode whether it has released blocks?
+
+Thanks,
+
 
 
 _______________________________________________
