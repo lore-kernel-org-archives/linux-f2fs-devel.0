@@ -2,39 +2,39 @@ Return-Path: <SRS0=2MSU=LB=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C4CC49EAF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Jun 2021 14:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48827C4743F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Jun 2021 14:53:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 10C1E61107;
-	Mon,  7 Jun 2021 14:53:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10C1E61107
+	by mail.kernel.org (Postfix) with ESMTPS id C616A60FE5;
+	Mon,  7 Jun 2021 14:53:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C616A60FE5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lqGcd-00010t-KY; Mon, 07 Jun 2021 14:52:59 +0000
+	id 1lqGch-00087P-Ph; Mon, 07 Jun 2021 14:53:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1lqGcb-00010M-FB
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jun 2021 14:52:57 +0000
+ (envelope-from <jack@suse.cz>) id 1lqGcg-000876-HJ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jun 2021 14:53:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=emP2yQ1eljPd1NFX6C4KS1pG2iKhLeUQkNZ2AuwC2+s=; b=nGvzmMyJ6ioyyRPUyn0fdPiWr9
- hAt946IF4o2HxCzF4F3a+EBruhu4x4VEVLXEOSkPw0jsS/mo/KACu/4kLDh9n+w4fNPzWOeigNCm+
- RC0c0wCwRxAA1xpBizKgKdJ0mcw+87fC4UugUFMqO/1eO8dRiwXGmssfXStEzENimqTU=;
+ bh=YK8GEJCDKjq8m4s9mPl+Cr6kVFf/7XBXLx1QgmSt22Q=; b=BySYhVn7HYwpHCOb+q13ymLI/I
+ KiVyqfBLM7dYcjyRkRlqIqTZhPatrned8mT1dRcI2BHt6TdVL44gW9jrqMT3qfLqJTccOboc8VF5j
+ hhrw097rxfkC84UWWox9Rq4kJB5M0fnRMzJHqUAX6oTWTuJmc0MAMaQpvtAHcY86fwvA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,61 +42,61 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=emP2yQ1eljPd1NFX6C4KS1pG2iKhLeUQkNZ2AuwC2+s=; b=lL+zHm6jXXp0CQt6ZK+xjApQ0m
- C6WsGNNHroTEJpEyrsU/wwHy0R+qcU+jI6omSxR1L8lTboFxZXHDBnPJMh7SLMx9/53yUh15HMH+G
- 0wD1OxJs8ypxeA4+pS35c7k0fFbb3i3L7i9sADN8xVIklZhOns65puW5rXVnrguRV9vA=;
+ bh=YK8GEJCDKjq8m4s9mPl+Cr6kVFf/7XBXLx1QgmSt22Q=; b=m8lzfZ04PWBv4vEEktVMKh8Y9G
+ kQDbK6Ku6WCJq3wJSKOakTzEPer2zR+cPMC2dDFb6OerDqNJ9ghe7yus7DbRx7wOqovPIPyUYPlOE
+ XTnrOkNI9gcdpraDNQ7uaI2UdN4LnIIFgKJje8KUV/j1jYqcqeu1cC+g9ytz2mfFX46Y=;
 Received: from smtp-out2.suse.de ([195.135.220.29])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1lqGcS-00065X-Tk
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jun 2021 14:52:59 +0000
+ id 1lqGcS-00065R-Tm
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Jun 2021 14:53:02 +0000
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
- by smtp-out2.suse.de (Postfix) with ESMTP id D2A781FDD4;
+ by smtp-out2.suse.de (Postfix) with ESMTP id D28CC1FDD2;
  Mon,  7 Jun 2021 14:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
  t=1623077557; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=emP2yQ1eljPd1NFX6C4KS1pG2iKhLeUQkNZ2AuwC2+s=;
- b=M0d+f8btnCIe1QK/dux+/6AQfIyyA/+aDbfV8qb30yBxhWh6TMzBgrC3+avIrmPbcZzJ9r
- ir1hn38uTd6Hgjk+8td+UxOlJXLbd8frAlcBvtF6DQYY3Lk1hTqrSbOxG+/kOVO/QvmUJ0
- +rfKfYtP0POGSeqCcArR+QX77x3kqzk=
+ bh=YK8GEJCDKjq8m4s9mPl+Cr6kVFf/7XBXLx1QgmSt22Q=;
+ b=ZPlrCJN1Q+nMRsgZETbRrkJxtgOotDXgTM7o/Tu5h0Gr8bAQMMOWm9ywdBWCrBwAI7CZji
+ XQ89VbYq6IO3nzIgL5B3Uyh2skJ78mL6D0ufMj4PSXgd24UOChI0BchwDit/Ibjypzxjl7
+ YB3X8fXTW/lTTi+z7pDiySNk0P53K8Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
  s=susede2_ed25519; t=1623077557;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=emP2yQ1eljPd1NFX6C4KS1pG2iKhLeUQkNZ2AuwC2+s=;
- b=Mrs92P348/BMc30iG2PezhMoktG73qKm6adBOt7FIzmlw6nEWuy6rlFva1dQf829UAqptu
- niFzpiGEe/n4UQBw==
+ bh=YK8GEJCDKjq8m4s9mPl+Cr6kVFf/7XBXLx1QgmSt22Q=;
+ b=SxBYwXZ92n/WdiLGzzzCaCsIzOkITvUlxhfnTWU+AtfUWr6eqleklDVqDXiKoJuS5uohUU
+ u91Krl7ddNuSAXCA==
 Received: from quack2.suse.cz (unknown [10.100.200.198])
- by relay2.suse.de (Postfix) with ESMTP id B4324A3B96;
+ by relay2.suse.de (Postfix) with ESMTP id B2199A3B8E;
  Mon,  7 Jun 2021 14:52:37 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
- id B10E21F2CB9; Mon,  7 Jun 2021 16:52:36 +0200 (CEST)
+ id A28761F2CB6; Mon,  7 Jun 2021 16:52:36 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
-Date: Mon,  7 Jun 2021 16:52:20 +0200
-Message-Id: <20210607145236.31852-10-jack@suse.cz>
+Date: Mon,  7 Jun 2021 16:52:17 +0200
+Message-Id: <20210607145236.31852-7-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210607144631.8717-1-jack@suse.cz>
 References: <20210607144631.8717-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3534; h=from:subject;
- bh=X1+FAHnRq/hvKiFmSNKc+MwXBtDprJwr7H1BxXLJ9wE=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBgvjKkL5zkdMExsJLTZiQSWW/f9riYmtp7RAK4a4BF
- P6yR1FuJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYL4ypAAKCRCcnaoHP2RA2dAfCA
- DQMh0/p+yS2UAZ84nujOxvtQWyQ6awdWkN4hNN/NdNp5tF69bN9+gs7jwWbp/UgDdJ220wsXGvYJJi
- l2EAGoCfm5elr4VAcWec5uAdxI7bkybITdz43ZbQNdoG4lLMGhMmUlcJuWoIxcmRYB/Vbz4++4lVy5
- YWxTPGE72IpnydtQTVWRFcrzV+Yh5gwq63DnNxLIlJzyJqjZzL4px5hWCRzj2BTRO5I8fDVED+93vB
- t8BHGAyhO1G3UR2EqKW06PigQJdrTfBpGHLGlIPkuQMrITkTMahJAzT839RpHEZVE/7E/lTMzdWSZP
- znTAQKojbwMw4ceZJxqEdetQR2BhGh
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4097; i=jack@suse.cz;
+ h=from:subject; bh=EyWkjLzMxBvucK3cTjl3wByc8CRPjLl12F487VSLK9k=;
+ b=owGbwMvMwME4Z+4qdvsUh5uMp9WSGBL2GS2sPKKyPeulwoHnToySDLXdc5y83cKnpbv1c6xXNbp3
+ WO1SJ6MxCwMjB4OsmCLL6siL2tfmGXVtDdWQgRnEygQyhYGLUwAmElzK/k99C/OZUBGvGTm+bpWfZo
+ W7yKq6BCfnG6l6VHLy3Wp+EbSn0t6ds1F+hWD105TVc+6WbF0VtfLdzeNapxayi29dfnhaT9fJ/pnT
+ BFMP+LPdFci78DnbR+V0RM/Tts8fpi2al+LWuPul1OtWVwPllpvT/h1/U3Xc3jciaJa0LytvV2PxJ/
+ fDP03yKioVHk/uteHTv5ya1WhiEJvu3axd9nmHtA7DNckdh+1NubaWqnOGrZvayXzmaa5K0+tnxnHu
+ fsWd617V/Ij1OczrefPUAweFJtGSQrG7C3YVO65x//t5h99p7z2F/wNkfj2cvLfxp8CG7SuCXlpdqD
+ uQdn3HYzE5Tx/jGUskWUViuRLCAA==
 X-Developer-Key: i=jack@suse.cz; a=openpgp;
  fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1lqGcS-00065X-Tk
-Subject: [f2fs-dev] [PATCH 10/14] zonefs: Convert to using invalidate_lock
+X-Headers-End: 1lqGcS-00065R-Tm
+Subject: [f2fs-dev] [PATCH 07/14] xfs: Refactor xfs_isilocked()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -108,121 +108,139 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-cifs@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
- linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>,
- "Darrick J. Wong" <darrick.wong@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- Steve French <sfrench@samba.org>, Dave Chinner <david@fromorbit.com>,
- Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
- Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
- Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
- Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
- Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+ linux-mm@kvack.org, Christoph Hellwig <hch@lst.de>, linux-cifs@vger.kernel.org,
+ "Darrick J. Wong" <darrick.wong@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>,
+ linux-ext4@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>,
+ Dave Chinner <dchinner@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ ceph-devel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ Damien Le Moal <damien.lemoal@wdc.com>, Ted Tso <tytso@mit.edu>,
+ Miklos Szeredi <miklos@szeredi.hu>, Jeff Layton <jlayton@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Steve French <sfrench@samba.org>,
+ Pavel Reichl <preichl@redhat.com>, Johannes Thumshirn <jth@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use invalidate_lock instead of zonefs' private i_mmap_sem. The intended
-purpose is exactly the same.
+From: Pavel Reichl <preichl@redhat.com>
 
-CC: Damien Le Moal <damien.lemoal@wdc.com>
-CC: Johannes Thumshirn <jth@kernel.org>
-CC: <linux-fsdevel@vger.kernel.org>
-Acked-by: Damien Le Moal <damien.lemoal@wdc.com>
+Refactor xfs_isilocked() to use newly introduced __xfs_rwsem_islocked().
+__xfs_rwsem_islocked() is a helper function which encapsulates checking
+state of rw_semaphores hold by inode.
+
+Signed-off-by: Pavel Reichl <preichl@redhat.com>
+Suggested-by: Dave Chinner <dchinner@redhat.com>
+Suggested-by: Eric Sandeen <sandeen@redhat.com>
+Suggested-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/zonefs/super.c  | 23 +++++------------------
- fs/zonefs/zonefs.h |  7 +++----
- 2 files changed, 8 insertions(+), 22 deletions(-)
+ fs/xfs/xfs_inode.c | 39 +++++++++++++++++++++++++++++++--------
+ fs/xfs/xfs_inode.h | 21 ++++++++++++++-------
+ 2 files changed, 45 insertions(+), 15 deletions(-)
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index cd145d318b17..8931a566038e 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -462,7 +462,7 @@ static int zonefs_file_truncate(struct inode *inode, loff_t isize)
- 	inode_dio_wait(inode);
- 
- 	/* Serialize against page faults */
--	down_write(&zi->i_mmap_sem);
-+	filemap_invalidate_lock(inode->i_mapping);
- 
- 	/* Serialize against zonefs_iomap_begin() */
- 	mutex_lock(&zi->i_truncate_mutex);
-@@ -500,7 +500,7 @@ static int zonefs_file_truncate(struct inode *inode, loff_t isize)
- 
- unlock:
- 	mutex_unlock(&zi->i_truncate_mutex);
--	up_write(&zi->i_mmap_sem);
-+	filemap_invalidate_unlock(inode->i_mapping);
- 
- 	return ret;
- }
-@@ -575,18 +575,6 @@ static int zonefs_file_fsync(struct file *file, loff_t start, loff_t end,
- 	return ret;
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 0369eb22c1bb..6247977870bd 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -342,9 +342,34 @@ xfs_ilock_demote(
  }
  
--static vm_fault_t zonefs_filemap_fault(struct vm_fault *vmf)
--{
--	struct zonefs_inode_info *zi = ZONEFS_I(file_inode(vmf->vma->vm_file));
--	vm_fault_t ret;
--
--	down_read(&zi->i_mmap_sem);
--	ret = filemap_fault(vmf);
--	up_read(&zi->i_mmap_sem);
--
--	return ret;
--}
--
- static vm_fault_t zonefs_filemap_page_mkwrite(struct vm_fault *vmf)
+ #if defined(DEBUG) || defined(XFS_WARN)
+-int
++static inline bool
++__xfs_rwsem_islocked(
++	struct rw_semaphore	*rwsem,
++	int			lock_flags,
++	int			shift)
++{
++	lock_flags >>= shift;
++
++	if (!debug_locks)
++		return rwsem_is_locked(rwsem);
++	/*
++	 * If the shared flag is not set, pass 0 to explicitly check for
++	 * exclusive access to the lock. If the shared flag is set, we typically
++	 * want to make sure the lock is at least held in shared mode
++	 * (i.e., shared | excl) but we don't necessarily care that it might
++	 * actually be held exclusive. Therefore, pass -1 to check whether the
++	 * lock is held in any mode rather than one of the explicit shared mode
++	 * values (1 or 2)."
++	 */
++	if (lock_flags & (1 << XFS_SHARED_LOCK_SHIFT)) {
++		return lockdep_is_held_type(rwsem, -1);
++	}
++	return lockdep_is_held_type(rwsem, 0);
++}
++
++bool
+ xfs_isilocked(
+-	xfs_inode_t		*ip,
++	struct xfs_inode	*ip,
+ 	uint			lock_flags)
  {
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
-@@ -607,16 +595,16 @@ static vm_fault_t zonefs_filemap_page_mkwrite(struct vm_fault *vmf)
- 	file_update_time(vmf->vma->vm_file);
+ 	if (lock_flags & (XFS_ILOCK_EXCL|XFS_ILOCK_SHARED)) {
+@@ -359,15 +384,13 @@ xfs_isilocked(
+ 		return rwsem_is_locked(&ip->i_mmaplock.mr_lock);
+ 	}
  
- 	/* Serialize against truncates */
--	down_read(&zi->i_mmap_sem);
-+	filemap_invalidate_lock_shared(inode->i_mapping);
- 	ret = iomap_page_mkwrite(vmf, &zonefs_iomap_ops);
--	up_read(&zi->i_mmap_sem);
-+	filemap_invalidate_unlock_shared(inode->i_mapping);
+-	if (lock_flags & (XFS_IOLOCK_EXCL|XFS_IOLOCK_SHARED)) {
+-		if (!(lock_flags & XFS_IOLOCK_SHARED))
+-			return !debug_locks ||
+-				lockdep_is_held_type(&VFS_I(ip)->i_rwsem, 0);
+-		return rwsem_is_locked(&VFS_I(ip)->i_rwsem);
++	if (lock_flags & (XFS_IOLOCK_EXCL | XFS_IOLOCK_SHARED)) {
++		return __xfs_rwsem_islocked(&VFS_I(ip)->i_rwsem, lock_flags,
++				XFS_IOLOCK_FLAG_SHIFT);
+ 	}
  
- 	sb_end_pagefault(inode->i_sb);
- 	return ret;
+ 	ASSERT(0);
+-	return 0;
++	return false;
  }
+ #endif
  
- static const struct vm_operations_struct zonefs_file_vm_ops = {
--	.fault		= zonefs_filemap_fault,
-+	.fault		= filemap_fault,
- 	.map_pages	= filemap_map_pages,
- 	.page_mkwrite	= zonefs_filemap_page_mkwrite,
- };
-@@ -1158,7 +1146,6 @@ static struct inode *zonefs_alloc_inode(struct super_block *sb)
+diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+index ca826cfba91c..1c0e15c480bc 100644
+--- a/fs/xfs/xfs_inode.h
++++ b/fs/xfs/xfs_inode.h
+@@ -262,12 +262,19 @@ static inline bool xfs_inode_has_bigtime(struct xfs_inode *ip)
+  * Bit ranges:	1<<1  - 1<<16-1 -- iolock/ilock modes (bitfield)
+  *		1<<16 - 1<<32-1 -- lockdep annotation (integers)
+  */
+-#define	XFS_IOLOCK_EXCL		(1<<0)
+-#define	XFS_IOLOCK_SHARED	(1<<1)
+-#define	XFS_ILOCK_EXCL		(1<<2)
+-#define	XFS_ILOCK_SHARED	(1<<3)
+-#define	XFS_MMAPLOCK_EXCL	(1<<4)
+-#define	XFS_MMAPLOCK_SHARED	(1<<5)
++
++#define XFS_IOLOCK_FLAG_SHIFT	0
++#define XFS_ILOCK_FLAG_SHIFT	2
++#define XFS_MMAPLOCK_FLAG_SHIFT	4
++
++#define XFS_SHARED_LOCK_SHIFT	1
++
++#define XFS_IOLOCK_EXCL		(1 << XFS_IOLOCK_FLAG_SHIFT)
++#define XFS_IOLOCK_SHARED	(XFS_IOLOCK_EXCL << XFS_SHARED_LOCK_SHIFT)
++#define XFS_ILOCK_EXCL		(1 << XFS_ILOCK_FLAG_SHIFT)
++#define XFS_ILOCK_SHARED	(XFS_ILOCK_EXCL << XFS_SHARED_LOCK_SHIFT)
++#define XFS_MMAPLOCK_EXCL	(1 << XFS_MMAPLOCK_FLAG_SHIFT)
++#define XFS_MMAPLOCK_SHARED	(XFS_MMAPLOCK_EXCL << XFS_SHARED_LOCK_SHIFT)
  
- 	inode_init_once(&zi->i_vnode);
- 	mutex_init(&zi->i_truncate_mutex);
--	init_rwsem(&zi->i_mmap_sem);
- 	zi->i_wr_refcnt = 0;
+ #define XFS_LOCK_MASK		(XFS_IOLOCK_EXCL | XFS_IOLOCK_SHARED \
+ 				| XFS_ILOCK_EXCL | XFS_ILOCK_SHARED \
+@@ -410,7 +417,7 @@ void		xfs_ilock(xfs_inode_t *, uint);
+ int		xfs_ilock_nowait(xfs_inode_t *, uint);
+ void		xfs_iunlock(xfs_inode_t *, uint);
+ void		xfs_ilock_demote(xfs_inode_t *, uint);
+-int		xfs_isilocked(xfs_inode_t *, uint);
++bool		xfs_isilocked(struct xfs_inode *, uint);
+ uint		xfs_ilock_data_map_shared(struct xfs_inode *);
+ uint		xfs_ilock_attr_map_shared(struct xfs_inode *);
  
- 	return &zi->i_vnode;
-diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
-index 51141907097c..7b147907c328 100644
---- a/fs/zonefs/zonefs.h
-+++ b/fs/zonefs/zonefs.h
-@@ -70,12 +70,11 @@ struct zonefs_inode_info {
- 	 * and changes to the inode private data, and in particular changes to
- 	 * a sequential file size on completion of direct IO writes.
- 	 * Serialization of mmap read IOs with truncate and syscall IO
--	 * operations is done with i_mmap_sem in addition to i_truncate_mutex.
--	 * Only zonefs_seq_file_truncate() takes both lock (i_mmap_sem first,
--	 * i_truncate_mutex second).
-+	 * operations is done with invalidate_lock in addition to
-+	 * i_truncate_mutex.  Only zonefs_seq_file_truncate() takes both lock
-+	 * (invalidate_lock first, i_truncate_mutex second).
- 	 */
- 	struct mutex		i_truncate_mutex;
--	struct rw_semaphore	i_mmap_sem;
- 
- 	/* guarded by i_truncate_mutex */
- 	unsigned int		i_wr_refcnt;
 -- 
 2.26.2
 
