@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDDAC47094
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Jun 2021 15:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D592DC47094
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Jun 2021 15:24:55 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 031D1610A7;
-	Thu, 10 Jun 2021 15:01:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 031D1610A7
+	by mail.kernel.org (Postfix) with ESMTPS id 9A1DB613AE;
+	Thu, 10 Jun 2021 15:24:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A1DB613AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lrMB8-0002QO-Md; Thu, 10 Jun 2021 15:01:06 +0000
+	id 1lrMY7-0003EO-SL; Thu, 10 Jun 2021 15:24:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1lrMB8-0002QI-2y
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Jun 2021 15:01:06 +0000
+ (envelope-from <chao@kernel.org>) id 1lrMY5-0003EG-Or
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Jun 2021 15:24:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3y1uOT68vrgdKOS8GjsBScOsyQHjWE8vTtwgasjaWw0=; b=kkc/WXSmzYugXf+QQrQUf+XIj+
- TfJZ2nHoWuKQb2f+vkvjrLIsBjaqfGSgxlqCYuHDpdU5G+VHiAplp8uEtF6rGkiBzUjx/07Sw28s0
- DqE+Kj77tZJsZnZxCo/+XcZJGgysvmrxhMNpQWPKc7vV/gsSEJPU1B1I29kcC/sC0oCY=;
+ bh=x8r0v1G5dXjtWTb1L1VQPJP4vY6mLtcahIjtsp1FQ1k=; b=RL9i4xKJX/InEqPOTPzXFwfMHI
+ 7Le+aPMgoxpxhuZNeSHlVklPu/M0RwAvAkES2V30gQFOSEStqi3gTE9oJk/iD1Ztq/tw7o6Us8OSJ
+ Bq5fX7KygxPPaXFQZMyxYAkyECJOCu/8rtamXddjynBFarT7XWyfBIcFXOTELV6mNrxs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -42,43 +42,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3y1uOT68vrgdKOS8GjsBScOsyQHjWE8vTtwgasjaWw0=; b=eDidciNbA6/FJHPNDP5/ct4/2H
- t+b06SEsP+dymfbT9zUIm9haUBqvpAL7qq2iZQZjSUQd0Zu15NO1+Kxk0LTdSEX29tOElQ+UeQmnj
- HR/JNcoZPbyUhc24UjG/uHmoZ+Uq8QRikn+xR+IXkta4Pv+HhAR4neMlLXzepdx0DGlA=;
+ bh=x8r0v1G5dXjtWTb1L1VQPJP4vY6mLtcahIjtsp1FQ1k=; b=KByDqscC4LKtxfWsnwAnnr0bqF
+ XCbwzH+dsM5/LIzR1UGmQcv+Sd87lKGvHSeHAuLWye0wjplSEp8AXVeAabO49rZDmCqu8XHSBk69U
+ OfogQY6RcNvkc9Jbhtp2brwwXul0aFsPzr3TzZvJHuMSTAs5RrigvrOkS7Ca7rwg+fuI=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lrMB0-0001oa-NN
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Jun 2021 15:01:08 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7452D610A7;
- Thu, 10 Jun 2021 15:00:50 +0000 (UTC)
+ id 1lrMY1-000352-Fx
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Jun 2021 15:24:51 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4F6F760231;
+ Thu, 10 Jun 2021 15:24:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1623337251;
- bh=wozgixq7baMQaX7zrRbfTIyBXN/uF7O+PeGlX9wdYbY=;
+ s=k20201202; t=1623338681;
+ bh=Z9DXrGBlZtJ7EjBpFHqP4z2CDz1wxkr66cHPD11hj/0=;
  h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
- b=o/DOYe4NzSe5YXAE96Gh24erJZMo7sWYmIwikpZNa2mJ75SmQbFdFGceqI+72fjoC
- EEh9T9ag3L0d1eqIBiusVpsbRme0+BaKG5jRWeAgnjiNKTtOZ8Ahlckl+bwY6MVGgM
- zLnu2J7VajMBQaIVXAkz93zYJtpY6y2nbN9lhJkOffYTQdYlm6WUd/NfJvbHAj0Nuk
- IHgCQ3cYRVqvI9qHNPA0FbiSVX/t1vG2N17GyJFTpQDAX10YXJjgfKeNr2r3Tf0k7y
- 94fUCBXptqgkkjjaLJRWlgX5JFjv9iEsOSQUaMLZxiwzQZRkapKeXYZsaGlPwW95Vb
- dY0gvI1Led7iw==
+ b=JgWUeglEwGBAd0KI4qaetEaUalbQ/G6ksjts/m19OO8rgW4RieRVI1cWNask25La7
+ 5lfYVHNd8b7UGAGZcDtL0biSM8dfOPQ6ZRV0IPUYmOKsKd2rBhYbzBxbSnhW3BX9vC
+ 2A6w5QORhE/8FjRe0VwhFbAODOxxmZuDSo2zfm4fz/Rw+uHuVapGU7adJ0UzOTKOvd
+ Scbfr0t1RkuaLewqa3qIPZ1VMkjgOHNzI2ILdzOJEg/z0UseJlQFM309ZneGu/f5G5
+ WbrMbg/+S+borMPowAaUMz5Mdbl2PSD4K6plT7VrvNLLaLYQHHmOtqsjwhEiFP5GWz
+ 3LGjnD/DBXUkQ==
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20210525205138.2512855-1-jaegeuk@kernel.org>
- <17318ac1-19e7-dfed-35f8-65a8e325fc61@kernel.org>
- <YL5Oth8oKnV7h8Pm@google.com>
- <53531f1e-7232-df4d-3a43-43db0e8581f1@kernel.org>
- <YMELoAH7T5b5HLhm@google.com>
+References: <20210525204955.2512409-1-jaegeuk@kernel.org>
+ <20210525204955.2512409-2-jaegeuk@kernel.org>
+ <95b5669f-a521-5865-2089-320e2a2493de@kernel.org>
+ <YL5P15nLsc/3GQOY@google.com>
+ <3f2c2543-c8a4-3477-76af-5c7614b643e8@kernel.org>
+ <YMEL06gZC5n3J2bX@google.com>
 From: Chao Yu <chao@kernel.org>
-Message-ID: <fec816fb-a4c9-0e65-5f09-8c9fdae73c87@kernel.org>
-Date: Thu, 10 Jun 2021 23:00:45 +0800
+Message-ID: <a7a3078e-918d-53f2-6bff-537934094631@kernel.org>
+Date: Thu, 10 Jun 2021 23:24:37 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <YMELoAH7T5b5HLhm@google.com>
+In-Reply-To: <YMEL06gZC5n3J2bX@google.com>
 Content-Language: en-US
-X-Headers-End: 1lrMB0-0001oa-NN
-Subject: Re: [f2fs-dev] [PATCH] sload.f2fs: use F2FS_COMPRESS_RELEASED
- instead of IMMUTABLE bit
+X-Headers-End: 1lrMY1-000352-Fx
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: introduce FI_COMPRESS_RELEASED
+ instead of using IMMUTABLE bit
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,33 +91,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/6/10 2:42, Jaegeuk Kim wrote:
+On 2021/6/10 2:43, Jaegeuk Kim wrote:
 > On 06/08, Chao Yu wrote:
->> On 2021/6/8 0:52, Jaegeuk Kim wrote:
+>> On 2021/6/8 0:56, Jaegeuk Kim wrote:
 >>> On 06/06, Chao Yu wrote:
->>>> On 2021/5/26 4:51, Jaegeuk Kim wrote:
->>>>> Let's use F2FS_COMPRESS_RELEASED to disallow writes only.
+>>>> On 2021/5/26 4:49, Jaegeuk Kim wrote:
+>>>>> Once we release compressed blocks, we used to set IMMUTABLE bit. But it turned
+>>>>> out it disallows every fs operations which we don't need for compression.
+>>>>>
+>>>>> Let's just prevent writing data only.
 >>>>>
 >>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 >>>>
 >>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>>
+>>>> BTW, we need to expose .i_inline field to userspace since there is no
+>>>> way to check status of inode whether it has released blocks?
 >>>
->>> Too late, as I published it in master.
+>>> Need to add some in F2FS_IOC_GET_COMPRESS_OPTION?
 >>
->> Oops, sorry for the delay.
->>
->> So does the patch "f2fs-tools: support small RO partition"?
+>> We should not change this interface, in order to keep its compatibility for
+>> userspace usage. How about adding it in F2FS_IOC_GET_COMPRESS_OPTION_EX?
 > 
-> sload.f2fs: use F2FS_COMPRESS_RELEASED instead of IMMUTABLE bit
+> Hmm, or need to add it in getflags?
 
-Oh, I mean does patch "f2fs-tools: support small RO partition" be
-pushed as well? if so, seems I don't need to reply with the
-reviewed-by flag.
+Not sure whether the flag may conflict with the bit FS_*_FL used in
+lsattr/chattr.
 
 Thanks,
 
