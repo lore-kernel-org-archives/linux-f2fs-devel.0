@@ -2,74 +2,76 @@ Return-Path: <SRS0=FjNr=LH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 200C7C48BDF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 13 Jun 2021 05:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5FCC48BE8
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 13 Jun 2021 05:56:04 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id BA757611CA;
-	Sun, 13 Jun 2021 05:56:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA757611CA
+	by mail.kernel.org (Postfix) with ESMTPS id AFB52611CE;
+	Sun, 13 Jun 2021 05:56:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB52611CE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lsJ6F-0002Hv-G6; Sun, 13 Jun 2021 05:55:59 +0000
+	id 1lsJ6G-0003r3-SA; Sun, 13 Jun 2021 05:56:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1lsJ6D-0002H6-QP
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 13 Jun 2021 05:55:57 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1lsJ6B-0003qd-Mx
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 13 Jun 2021 05:55:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nn6TfIRnQ3D+R0Zqu6TO32Q+xxP6AJGsbZrpVMygNwQ=; b=DIn+yY+mCviqpVIVTlMc6ecu5G
- 86Y1zCZbFcSe6FmuV3J4SYkFNLVhCNfGf2tOo++9eP+eMFMGNWt8lJAuJT+TLUD3JEo9MPiNXw43s
- LdxNWkV3yrOnAklZ5lwGHBp45o98RWZXYtgWuJ1bGwPo6YRPBgon6Og3jaZfrlai+Hf8=;
+ bh=w0n84qEBDm1h3O6L2LwtINLL39XckAdplQdnjOlDApU=; b=aLokU0iQeOhllNA4zzm+FG+WfQ
+ NpKs0ap6V7Skt2Lulf1qrHqpcrE9uA7Kg9rNQlGmkJPv8+NHSvgOG4CQcX/yuGEIw0a1wdX7v8kQO
+ Zfv2FUpSPXhLuaZ5z94m8lUPuOqdd7cclSZySs6qYxTYXSDgo1a9Kz9xKsYRyeQ/8mHo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=nn6TfIRnQ3D+R0Zqu6TO32Q+xxP6AJGsbZrpVMygNwQ=; b=d
- T2lvp4yyh6rn9X2JaO5DHDzoWblxAmYlOoCwoz/Y5xL9+9e6pSHlhGa+fZQ31DyLThW+Jv12dWB/Q
- RkAEAXRKhzVYm/AsDG/3mdqvqQMQ6WnCpGntZhD7YPaQgSVxAmlnUIJ4/OkRZDqAnS6CYKU0rXSCa
- Ft7Zh0Mv/lX4dQbw=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=w0n84qEBDm1h3O6L2LwtINLL39XckAdplQdnjOlDApU=; b=YhCfUHM1s46aM4hqoaO0spqj0r
+ CJ3WHRn16zyIU9he2N+j1yMO/3LQA6PlSEbea4hFdrkcWFLL32T24t5WjewT6tn/286WygVezhFBy
+ T5uNl9Rvatv7tk+73FuOq6eRRRP7HQeuN3ze3TA7TlNKyIzdcektAUfBqmMcMKVeRmQ8=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lsJ61-007HPK-NW
+ id 1lsJ61-007HPN-NX
  for linux-f2fs-devel@lists.sourceforge.net; Sun, 13 Jun 2021 05:55:54 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 15E4E611CC;
- Sun, 13 Jun 2021 05:55:32 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 283F0611CA;
+ Sun, 13 Jun 2021 05:55:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1623563732;
- bh=1ATLRdczhzkvB0se9TEZOPBht7+RY7QMzl5jiSz2U/E=;
- h=From:To:Cc:Subject:Date:From;
- b=A56X/LBURpfhEkxQP/5iKfkXlyYkmEOpmw4BtEBSdEFoBbGDbkQsd1kG8BusITtaR
- avmh1TWrT/3wKUaICCzxJz+Qurjuc93cAsK4f5mZ2INRzzNWY0BzS5asr92cka4KSS
- lia/fp4M6NG6TJDtiIjQdjspWfkTqB/V4+HNOUOQVETKdYWDRikkwTJpDIko/J2zfJ
- ODy3HsTU/GvwZLl5n25NR+qO1X81WBENx/cx/LrvvRgeSy/yFioj/uDw1e5yRjegyn
- uWcnQiV2PHCYyj9QtNbsy0se9DWti8H+lmHXfe+pKhfbrinCSP7FoySGyJNbeRFRIf
- 6ei8CJXfRB/0g==
+ s=k20201202; t=1623563733;
+ bh=0elZGHGYqjxB51hEh55CWRB/N+p+1GyG3Zhvn2wGB4Q=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=IY4AU/lZ1NaMYUJpOZbT8aBtFfve5Id0wlDSIT0TaDRp0rR++YO8YzETgtly6Vxen
+ y40Rgqv/sUnovLaBEyVzwjsCkktczzH1U2rNUWp/GkUexJSFANVPHGs93iuX0V+t1j
+ 1mf4EjqMKO8Hl3JKe1PaHexiSCdU8hi4ByHbaVpWB/btzVCe9u/Qob2Cd3KkW2C4ru
+ HIxTaH5y9dqwbyJ9OVZu9QFsU88rLoLt1rYz7aY6KX7lAaUDMPWLF42LJGLaWQBx0F
+ uQx4XPfv1J2P+mW73VxUO2gYXbyii4grJCLBXpoS8c5Dmw+LsBQspUm+GW1SjCUhc3
+ oKCSWQrIEQKPg==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Sat, 12 Jun 2021 22:55:27 -0700
-Message-Id: <20210613055529.2471492-1-jaegeuk@kernel.org>
+Date: Sat, 12 Jun 2021 22:55:29 -0700
+Message-Id: <20210613055529.2471492-3-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.32.0.272.g935e593368-goog
+In-Reply-To: <20210613055529.2471492-1-jaegeuk@kernel.org>
+References: <20210613055529.2471492-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1lsJ61-007HPK-NW
-Subject: [f2fs-dev] [PATCH 1/3] dump.f2fs: add -M to get block map
+X-Headers-End: 1lsJ61-007HPN-NX
+Subject: [f2fs-dev] [PATCH 3/3] mkfs.f2fs: remove android features for RO
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,155 +88,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+We don't need to enable all android features for RO.
+
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/dump.c     | 38 +++++++++++++++++++++++++++++++++++++-
- fsck/main.c     |  6 +++++-
- man/dump.f2fs.8 |  7 +++++++
- 3 files changed, 49 insertions(+), 2 deletions(-)
+ mkfs/f2fs_format_main.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 042a2e52edca..e25c70af84ed 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -23,6 +23,9 @@
- 
- #define BUF_SZ	80
- 
-+/* current extent info */
-+struct extent_info dump_extent = { 0, 0, 0};
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 03eb748170ad..031244d5d67a 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -110,11 +110,16 @@ static void add_default_options(void)
+ 		/* -d1 -f -O encrypt -O quota -O verity -w 4096 -R 0:0 */
+ 		c.dbg_lv = 1;
+ 		force_overwrite = 1;
++		c.wanted_sector_size = 4096;
++		c.root_uid = c.root_gid = 0;
 +
- const char *seg_type_name[SEG_TYPE_MAX + 1] = {
- 	"SEG_TYPE_DATA",
- 	"SEG_TYPE_CUR_DATA",
-@@ -227,6 +230,21 @@ void ssa_dump(struct f2fs_sb_info *sbi, int start_ssa, int end_ssa)
- 	close(fd);
- }
- 
-+static void print_extent(bool last)
-+{
-+	if (dump_extent.len == 1) {
-+		printf(" %d", dump_extent.blk);
-+		dump_extent.len = 0;
-+	} else {
-+		printf(" %d-%d",
-+			dump_extent.blk,
-+			dump_extent.blk + dump_extent.len - 1);
-+		dump_extent.len = 0;
-+	}
-+	if (last)
-+		printf("\n");
-+}
++		/* RO doesn't need any other features */
++		if (c.feature & cpu_to_le32(F2FS_FEATURE_RO))
++			return;
 +
- static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr)
- {
- 	char buf[F2FS_BLKSIZE];
-@@ -237,8 +255,19 @@ static void dump_data_blk(struct f2fs_sb_info *sbi, __u64 offset, u32 blkaddr)
- 	/* get data */
- 	if (blkaddr == NEW_ADDR || !IS_VALID_BLK_ADDR(sbi, blkaddr)) {
- 		memset(buf, 0, F2FS_BLKSIZE);
-+	} else if (c.show_file_map) {
-+		if (dump_extent.len == 0) {
-+			dump_extent.blk = blkaddr;
-+			dump_extent.len = 1;
-+		} else if (dump_extent.blk + dump_extent.len == blkaddr) {
-+			dump_extent.len++;
-+		} else {
-+			print_extent(false);
-+		}
-+		return;
- 	} else {
- 		int ret;
-+
- 		ret = dev_read_block(buf, blkaddr);
- 		ASSERT(ret >= 0);
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_QUOTA_INO);
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_VERITY);
+-		c.wanted_sector_size = 4096;
+-		c.root_uid = c.root_gid = 0;
+ 		break;
  	}
-@@ -404,6 +433,8 @@ static void dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 		else
- 			ASSERT(0);
- 	}
-+	/* last block in extent cache */
-+	print_extent(true);
- 
- 	dump_xattr(sbi, node_blk);
- }
-@@ -433,6 +464,10 @@ static void dump_file(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	if (force)
- 		goto dump;
- 
-+	/* dump file's data */
-+	if (c.show_file_map)
-+		return dump_inode_blk(sbi, ni->ino, node_blk);
-+
- 	printf("Do you want to dump this file into ./lost_found/? [Y/N] ");
- 	ret = scanf("%s", ans);
- 	ASSERT(ret >= 0);
-@@ -505,7 +540,8 @@ void dump_node(struct f2fs_sb_info *sbi, nid_t nid, int force)
- 
- 	if (le32_to_cpu(node_blk->footer.ino) == ni.ino &&
- 			le32_to_cpu(node_blk->footer.nid) == ni.nid) {
--		print_node_info(sbi, node_blk, force);
-+		if (!c.show_file_map)
-+			print_node_info(sbi, node_blk, force);
- 
- 		if (ni.ino == ni.nid)
- 			dump_file(sbi, &ni, node_blk, force);
-diff --git a/fsck/main.c b/fsck/main.c
-index c07be1edc94e..2588a01799c2 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -93,6 +93,7 @@ void dump_usage()
- 	MSG(0, "  -d debug level [default:0]\n");
- 	MSG(0, "  -i inode no (hex)\n");
- 	MSG(0, "  -n [NAT dump nid from #1~#2 (decimal), for all 0~-1]\n");
-+	MSG(0, "  -M show a block map\n");
- 	MSG(0, "  -s [SIT dump segno from #1~#2 (decimal), for all 0~-1]\n");
- 	MSG(0, "  -S sparse_mode\n");
- 	MSG(0, "  -a [SSA dump segno from #1~#2 (decimal), for all 0~-1]\n");
-@@ -376,7 +377,7 @@ void f2fs_parse_options(int argc, char *argv[])
- 		}
- 	} else if (!strcmp("dump.f2fs", prog)) {
- #ifdef WITH_DUMP
--		const char *option_string = "d:i:n:s:Sa:b:V";
-+		const char *option_string = "d:i:n:Ms:Sa:b:V";
- 		static struct dump_option dump_opt = {
- 			.nid = 0,	/* default root ino */
- 			.start_nat = -1,
-@@ -423,6 +424,9 @@ void f2fs_parse_options(int argc, char *argv[])
- 							&dump_opt.start_nat,
- 							&dump_opt.end_nat);
- 				break;
-+			case 'M':
-+				c.show_file_map = 1;
-+				break;
- 			case 's':
- 				ret = sscanf(optarg, "%d~%d",
- 							&dump_opt.start_sit,
-diff --git a/man/dump.f2fs.8 b/man/dump.f2fs.8
-index eedba855721f..1ddb7fc5d0d9 100644
---- a/man/dump.f2fs.8
-+++ b/man/dump.f2fs.8
-@@ -14,6 +14,10 @@ dump.f2fs \- retrieve directory and file entries from an F2FS-formated image
- .I NAT range
- ]
- [
-+.B \-M
-+.I Block map
-+]
-+[
- .B \-s
- .I SIT range
- ]
-@@ -51,6 +55,9 @@ Specify an inode number to dump out.
- .BI \-n " NAT range"
- Specify a range presented by nids to dump NAT entries.
- .TP
-+.BI \-M " Block map"
-+Show all the allocated block addresses given inode number.
-+.TP
- .BI \-s " SIT range"
- Specify a range presented by segment numbers to dump SIT entries.
- .TP
+ #ifdef CONF_CASEFOLD
 -- 
 2.32.0.272.g935e593368-goog
 
