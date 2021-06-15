@@ -2,102 +2,82 @@ Return-Path: <SRS0=n5IJ=LJ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC42C48BDF
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 15 Jun 2021 09:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A13A9C48BE5
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 15 Jun 2021 11:32:30 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E12EA61245;
-	Tue, 15 Jun 2021 09:19:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E12EA61245
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTPS id 5ADAC61459
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 15 Jun 2021 11:32:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ADAC61459
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lt5E7-0005B2-4J; Tue, 15 Jun 2021 09:19:19 +0000
+	id 1lt7Iv-0002zM-Cx; Tue, 15 Jun 2021 11:32:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1lt5DW-0004zh-P7
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 15 Jun 2021 09:18:42 +0000
+ (envelope-from <changfengnan@vivo.com>) id 1lt7Ic-0002yq-HH
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 15 Jun 2021 11:32:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FTye4HMfCHRW6CfzkB5PfXcLIugz729++Ha91ExOp18=; b=gYTBg8mvo/Cxj7SvJqCTbKHUcA
- d+K84LOlg56LOHfEJ3TBLqdRlAxttfShyswxWcX0pPb3o1nbThlX64pXty3U9/0+070jclWxrWMDW
- oSWNpeaAMYWQEdM9CH1uL6To6Kc1v1gGTFrH2crTkpUFwoXePbeFKF+r2PPDc1ubzDzA=;
+ bh=57xvSV5yVIRk/89bgyLc7tYum1zqF3jNifEjojFl8rc=; b=FBZGxk7RzHZ9w5L2mRt33uc7pp
+ CW5JMfwFnQlP9YUv00Pok7D7Cc87xVgFZ2+rcXC6Cl0kK6NAp1QxVErGbQjGLnESRz15Jbz2fPg41
+ Z7i1gktVxPBJg2JVuYC8hxo7AphofBnOb8Sbn6QcmxVEWLGMEuZeNS1f7tj23rAIf6kM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FTye4HMfCHRW6CfzkB5PfXcLIugz729++Ha91ExOp18=; b=ioRIzIhSscyOGoLcjkNxzKyW5g
- HpXuwYDMGO6rpjySzElAT/IvEa4Ho6JX29i+NlbXcYQsWKktL558sks8z3MXDmrZZRa6SWv0SMaBs
- ASK1D56XInNNdFHc8G3sqnLmQSOGx1WIyAO8SBxzHukeqlRTMUOAKGHuL9UrG1rEWkQs=;
-Received: from smtp-out1.suse.de ([195.135.220.28])
+ bh=57xvSV5yVIRk/89bgyLc7tYum1zqF3jNifEjojFl8rc=; b=Kp2pkWm/L75Z1WI48hzFXkjy/C
+ 9lESQWcEL30/0SdVowjtMiK4y2Zy/Iai1O6FxFqb3bCcluKsdX6+HIEppeB0a4MTd5B0JtBKfhkaM
+ u0eSycGiWbk4AOT/gpWj3wjqapmeYdxu91OQ3FwgXhIuM+N9R77l18VwjPdh04bNt+vU=;
+Received: from mail-m121144.qiye.163.com ([115.236.121.144])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1lt5DN-0001Ij-3J
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 15 Jun 2021 09:18:42 +0000
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
- by smtp-out1.suse.de (Postfix) with ESMTP id 41B09219D6;
- Tue, 15 Jun 2021 09:18:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1623748695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=FTye4HMfCHRW6CfzkB5PfXcLIugz729++Ha91ExOp18=;
- b=eaVM6sxKdiim21U0WDjcNiGugC7COieY3JyzXY/7/wZrAtJqsQx9tnMqb9tMzj0vd4s+vg
- g5BdGLJxw6yb5qQuOdjkYbv3VZxC/w3qvh5fiYJwAuV7wVC8Lg0bbtk1m+8o9c/F1bam4a
- VTZPjATYHZggrivMwNVnfjd6+rhpU+U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1623748695;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=FTye4HMfCHRW6CfzkB5PfXcLIugz729++Ha91ExOp18=;
- b=bb63UA5A0V7FlNRPRqf8NVLqe6LNsuQAFBBG5gx+KBnFfnhTshphJwqgcWWeI3jnNaw94r
- V075VQDEBjN2g8AA==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
- by relay2.suse.de (Postfix) with ESMTP id 1A77CA3B95;
- Tue, 15 Jun 2021 09:18:15 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
- id 365781F2CBD; Tue, 15 Jun 2021 11:18:14 +0200 (CEST)
-From: Jan Kara <jack@suse.cz>
-To: <linux-fsdevel@vger.kernel.org>
-Date: Tue, 15 Jun 2021 11:17:55 +0200
-Message-Id: <20210615091814.28626-5-jack@suse.cz>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210615090844.6045-1-jack@suse.cz>
-References: <20210615090844.6045-1-jack@suse.cz>
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lt7Ia-0004QI-BI
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 15 Jun 2021 11:32:08 +0000
+DKIM-Signature: a=rsa-sha256;
+ b=NvsIJrJYCdffearLuwa34aXkWwcQpVk2ayWSUZvqN0JnzA+gWKyl0bsN6W1FSeaClXPD+HDmicRitvxO2oQyM9Z80St8WZnMxuQ10Z33LDiZSJxMgVtjO5kOe6pbGKugP14qruMn1L5sjrWHLgc1TJGRo3NpcBQKHee3ZDjtusM=;
+ s=default; c=relaxed/relaxed; d=vivo.com; v=1;
+ bh=57xvSV5yVIRk/89bgyLc7tYum1zqF3jNifEjojFl8rc=;
+ h=date:mime-version:subject:message-id:from;
+Received: from [172.25.44.145] (unknown [58.250.176.229])
+ by mail-m121144.qiye.163.com (Hmail) with ESMTPA id E2B14AC03E0;
+ Tue, 15 Jun 2021 19:31:56 +0800 (CST)
+To: jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+References: <20210608111508.162249-1-changfengnan@vivo.com>
+From: Fengnan Chang <changfengnan@vivo.com>
+Message-ID: <29d11696-dc9d-75c5-037c-0c2d21c4e464@vivo.com>
+Date: Tue, 15 Jun 2021 19:31:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=15626; h=from:subject;
- bh=iQ9uZKJC3kKmRPaUO68W8vXe7LY4Nf41m+Lur66qXp4=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBgyHBERl4/E/EB/m2Dfoob/XGemNPV1M3nlvuKJ8je
- yw1FTJ+JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYMhwRAAKCRCcnaoHP2RA2TOHB/
- 4/NUM8wY4iJz45ftxXtSswJhIkU5CACM/BsD3o481iiOE8xxLnQU2P130La50j+v/6M0chts9ENCAN
- 2wCSPpttNZplYisDnGtmfEr8JLFqIDA+tEjTDxqnOYEPI7ch0Yi3hMaDwIqIQRLlyH0Hg3QPovqWeF
- klQzztNoU9VI55VdWWChFjG9ZiOCpWEObKATq7eN717cLU/nRN36zO/L6bu4h48vgOwwpgN4LHSjDy
- iE/b2HRYL6wn6quiDjDFjJqfG1tl5QFIuh6lHZe1hCwH10cPIQXGkk61oeIhWnjRA9gZetsP+mpAAF
- Jsn+STdf5ffK+RBkliYTID+pEfY06B
-X-Developer-Key: i=jack@suse.cz; a=openpgp;
- fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1lt5DN-0001Ij-3J
-Subject: [f2fs-dev] [PATCH 05/14] ext4: Convert to use
- mapping->invalidate_lock
+In-Reply-To: <20210608111508.162249-1-changfengnan@vivo.com>
+Content-Language: en-US
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
+ oVCBIfWUFZQ01NGVZNTRpDGEJJSUhCGUNVEwETFhoSFyQUDg9ZV1kWGg8SFR0UWUFZT0tIVUpKS0
+ hOSFVLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MAg6LBw6ET8TI0gXSkIPUR5N
+ GQoKCj5VSlVKTUlITE5NTEpMT0pIVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
+ WU5DVUlOS1VKTE1VSUlCWVdZCAFZQUpISkNCNwY+
+X-HM-Tid: 0a7a0f713bf4b039kuuue2b14ac03e0
+X-Headers-End: 1lt7Ia-0004QI-BI
+Subject: Re: [f2fs-dev] [PATCH v6] f2fs: compress: add nocompress extensions
+ support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -109,466 +89,297 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-cifs@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
- linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>,
- "Darrick J. Wong" <darrick.wong@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- Steve French <sfrench@samba.org>, Dave Chinner <david@fromorbit.com>,
- Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
- Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
- Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
- Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
- Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Convert ext4 to use mapping->invalidate_lock instead of its private
-EXT4_I(inode)->i_mmap_sem. This is mostly search-and-replace. By this
-conversion we fix a long standing race between hole punching and read(2)
-/ readahead(2) paths that can lead to stale page cache contents.
+Hi:
+   Any comments about this version?
 
-CC: <linux-ext4@vger.kernel.org>
-CC: Ted Tso <tytso@mit.edu>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/ext4/ext4.h     | 10 ----------
- fs/ext4/extents.c  | 25 +++++++++++++-----------
- fs/ext4/file.c     | 13 +++++++------
- fs/ext4/inode.c    | 47 +++++++++++++++++-----------------------------
- fs/ext4/ioctl.c    |  4 ++--
- fs/ext4/super.c    | 13 +++++--------
- fs/ext4/truncate.h |  8 +++++---
- 7 files changed, 50 insertions(+), 70 deletions(-)
+Thanks.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 37002663d521..ed64b4b217a1 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1077,15 +1077,6 @@ struct ext4_inode_info {
- 	 * by other means, so we have i_data_sem.
- 	 */
- 	struct rw_semaphore i_data_sem;
--	/*
--	 * i_mmap_sem is for serializing page faults with truncate / punch hole
--	 * operations. We have to make sure that new page cannot be faulted in
--	 * a section of the inode that is being punched. We cannot easily use
--	 * i_data_sem for this since we need protection for the whole punch
--	 * operation and i_data_sem ranks below transaction start so we have
--	 * to occasionally drop it.
--	 */
--	struct rw_semaphore i_mmap_sem;
- 	struct inode vfs_inode;
- 	struct jbd2_inode *jinode;
- 
-@@ -2962,7 +2953,6 @@ extern int ext4_chunk_trans_blocks(struct inode *, int nrblocks);
- extern int ext4_zero_partial_blocks(handle_t *handle, struct inode *inode,
- 			     loff_t lstart, loff_t lend);
- extern vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf);
--extern vm_fault_t ext4_filemap_fault(struct vm_fault *vmf);
- extern qsize_t *ext4_get_reserved_space(struct inode *inode);
- extern int ext4_get_projid(struct inode *inode, kprojid_t *projid);
- extern void ext4_da_release_space(struct inode *inode, int to_free);
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index cbf37b2cf871..db5d38af9ba8 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4470,6 +4470,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 			    loff_t len, int mode)
- {
- 	struct inode *inode = file_inode(file);
-+	struct address_space *mapping = file->f_mapping;
- 	handle_t *handle = NULL;
- 	unsigned int max_blocks;
- 	loff_t new_size = 0;
-@@ -4556,17 +4557,17 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 		 * Prevent page faults from reinstantiating pages we have
- 		 * released from page cache.
- 		 */
--		down_write(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_lock(mapping);
- 
- 		ret = ext4_break_layouts(inode);
- 		if (ret) {
--			up_write(&EXT4_I(inode)->i_mmap_sem);
-+			filemap_invalidate_unlock(mapping);
- 			goto out_mutex;
- 		}
- 
- 		ret = ext4_update_disksize_before_punch(inode, offset, len);
- 		if (ret) {
--			up_write(&EXT4_I(inode)->i_mmap_sem);
-+			filemap_invalidate_unlock(mapping);
- 			goto out_mutex;
- 		}
- 		/* Now release the pages and zero block aligned part of pages */
-@@ -4575,7 +4576,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 
- 		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
- 					     flags);
--		up_write(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_unlock(mapping);
- 		if (ret)
- 			goto out_mutex;
- 	}
-@@ -5217,6 +5218,7 @@ ext4_ext_shift_extents(struct inode *inode, handle_t *handle,
- static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- {
- 	struct super_block *sb = inode->i_sb;
-+	struct address_space *mapping = inode->i_mapping;
- 	ext4_lblk_t punch_start, punch_stop;
- 	handle_t *handle;
- 	unsigned int credits;
-@@ -5270,7 +5272,7 @@ static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	 * Prevent page faults from reinstantiating pages we have released from
- 	 * page cache.
- 	 */
--	down_write(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(mapping);
- 
- 	ret = ext4_break_layouts(inode);
- 	if (ret)
-@@ -5285,15 +5287,15 @@ static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	 * Write tail of the last page before removed range since it will get
- 	 * removed from the page cache below.
- 	 */
--	ret = filemap_write_and_wait_range(inode->i_mapping, ioffset, offset);
-+	ret = filemap_write_and_wait_range(mapping, ioffset, offset);
- 	if (ret)
- 		goto out_mmap;
- 	/*
- 	 * Write data that will be shifted to preserve them when discarding
- 	 * page cache below. We are also protected from pages becoming dirty
--	 * by i_mmap_sem.
-+	 * by i_rwsem and invalidate_lock.
- 	 */
--	ret = filemap_write_and_wait_range(inode->i_mapping, offset + len,
-+	ret = filemap_write_and_wait_range(mapping, offset + len,
- 					   LLONG_MAX);
- 	if (ret)
- 		goto out_mmap;
-@@ -5346,7 +5348,7 @@ static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	ext4_journal_stop(handle);
- 	ext4_fc_stop_ineligible(sb);
- out_mmap:
--	up_write(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(mapping);
- out_mutex:
- 	inode_unlock(inode);
- 	return ret;
-@@ -5363,6 +5365,7 @@ static int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- static int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
- {
- 	struct super_block *sb = inode->i_sb;
-+	struct address_space *mapping = inode->i_mapping;
- 	handle_t *handle;
- 	struct ext4_ext_path *path;
- 	struct ext4_extent *extent;
-@@ -5421,7 +5424,7 @@ static int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 	 * Prevent page faults from reinstantiating pages we have released from
- 	 * page cache.
- 	 */
--	down_write(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(mapping);
- 
- 	ret = ext4_break_layouts(inode);
- 	if (ret)
-@@ -5522,7 +5525,7 @@ static int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 	ext4_journal_stop(handle);
- 	ext4_fc_stop_ineligible(sb);
- out_mmap:
--	up_write(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(mapping);
- out_mutex:
- 	inode_unlock(inode);
- 	return ret;
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 816dedcbd541..d3b4ed91aa68 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -704,22 +704,23 @@ static vm_fault_t ext4_dax_huge_fault(struct vm_fault *vmf,
- 	 */
- 	bool write = (vmf->flags & FAULT_FLAG_WRITE) &&
- 		(vmf->vma->vm_flags & VM_SHARED);
-+	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
- 	pfn_t pfn;
- 
- 	if (write) {
- 		sb_start_pagefault(sb);
- 		file_update_time(vmf->vma->vm_file);
--		down_read(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_lock_shared(mapping);
- retry:
- 		handle = ext4_journal_start_sb(sb, EXT4_HT_WRITE_PAGE,
- 					       EXT4_DATA_TRANS_BLOCKS(sb));
- 		if (IS_ERR(handle)) {
--			up_read(&EXT4_I(inode)->i_mmap_sem);
-+			filemap_invalidate_unlock_shared(mapping);
- 			sb_end_pagefault(sb);
- 			return VM_FAULT_SIGBUS;
- 		}
- 	} else {
--		down_read(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_lock_shared(mapping);
- 	}
- 	result = dax_iomap_fault(vmf, pe_size, &pfn, &error, &ext4_iomap_ops);
- 	if (write) {
-@@ -731,10 +732,10 @@ static vm_fault_t ext4_dax_huge_fault(struct vm_fault *vmf,
- 		/* Handling synchronous page fault? */
- 		if (result & VM_FAULT_NEEDDSYNC)
- 			result = dax_finish_sync_fault(vmf, pe_size, pfn);
--		up_read(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_unlock_shared(mapping);
- 		sb_end_pagefault(sb);
- 	} else {
--		up_read(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_unlock_shared(mapping);
- 	}
- 
- 	return result;
-@@ -756,7 +757,7 @@ static const struct vm_operations_struct ext4_dax_vm_ops = {
- #endif
- 
- static const struct vm_operations_struct ext4_file_vm_ops = {
--	.fault		= ext4_filemap_fault,
-+	.fault		= filemap_fault,
- 	.map_pages	= filemap_map_pages,
- 	.page_mkwrite   = ext4_page_mkwrite,
- };
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index fe6045a46599..ee6e69d6f949 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3950,20 +3950,19 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
- 	return ret;
- }
- 
--static void ext4_wait_dax_page(struct ext4_inode_info *ei)
-+static void ext4_wait_dax_page(struct inode *inode)
- {
--	up_write(&ei->i_mmap_sem);
-+	filemap_invalidate_unlock(inode->i_mapping);
- 	schedule();
--	down_write(&ei->i_mmap_sem);
-+	filemap_invalidate_lock(inode->i_mapping);
- }
- 
- int ext4_break_layouts(struct inode *inode)
- {
--	struct ext4_inode_info *ei = EXT4_I(inode);
- 	struct page *page;
- 	int error;
- 
--	if (WARN_ON_ONCE(!rwsem_is_locked(&ei->i_mmap_sem)))
-+	if (WARN_ON_ONCE(!rwsem_is_locked(&inode->i_mapping->invalidate_lock)))
- 		return -EINVAL;
- 
- 	do {
-@@ -3974,7 +3973,7 @@ int ext4_break_layouts(struct inode *inode)
- 		error = ___wait_var_event(&page->_refcount,
- 				atomic_read(&page->_refcount) == 1,
- 				TASK_INTERRUPTIBLE, 0, 0,
--				ext4_wait_dax_page(ei));
-+				ext4_wait_dax_page(inode));
- 	} while (error == 0);
- 
- 	return error;
-@@ -4005,9 +4004,9 @@ int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t length)
- 
- 	ext4_clear_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA);
- 	if (ext4_has_inline_data(inode)) {
--		down_write(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_lock(mapping);
- 		ret = ext4_convert_inline_data(inode);
--		up_write(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_unlock(mapping);
- 		if (ret)
- 			return ret;
- 	}
-@@ -4058,7 +4057,7 @@ int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t length)
- 	 * Prevent page faults from reinstantiating pages we have released from
- 	 * page cache.
- 	 */
--	down_write(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(mapping);
- 
- 	ret = ext4_break_layouts(inode);
- 	if (ret)
-@@ -4131,7 +4130,7 @@ int ext4_punch_hole(struct inode *inode, loff_t offset, loff_t length)
- out_stop:
- 	ext4_journal_stop(handle);
- out_dio:
--	up_write(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(mapping);
- out_mutex:
- 	inode_unlock(inode);
- 	return ret;
-@@ -5426,11 +5425,11 @@ int ext4_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 			inode_dio_wait(inode);
- 		}
- 
--		down_write(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_lock(inode->i_mapping);
- 
- 		rc = ext4_break_layouts(inode);
- 		if (rc) {
--			up_write(&EXT4_I(inode)->i_mmap_sem);
-+			filemap_invalidate_unlock(inode->i_mapping);
- 			goto err_out;
- 		}
- 
-@@ -5506,7 +5505,7 @@ int ext4_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 				error = rc;
- 		}
- out_mmap_sem:
--		up_write(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_unlock(inode->i_mapping);
- 	}
- 
- 	if (!error) {
-@@ -5983,10 +5982,10 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
- 	 * data (and journalled aops don't know how to handle these cases).
- 	 */
- 	if (val) {
--		down_write(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_lock(inode->i_mapping);
- 		err = filemap_write_and_wait(inode->i_mapping);
- 		if (err < 0) {
--			up_write(&EXT4_I(inode)->i_mmap_sem);
-+			filemap_invalidate_unlock(inode->i_mapping);
- 			return err;
- 		}
- 	}
-@@ -6019,7 +6018,7 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
- 	percpu_up_write(&sbi->s_writepages_rwsem);
- 
- 	if (val)
--		up_write(&EXT4_I(inode)->i_mmap_sem);
-+		filemap_invalidate_unlock(inode->i_mapping);
- 
- 	/* Finally we can mark the inode as dirty. */
- 
-@@ -6063,7 +6062,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 	sb_start_pagefault(inode->i_sb);
- 	file_update_time(vma->vm_file);
- 
--	down_read(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock_shared(mapping);
- 
- 	err = ext4_convert_inline_data(inode);
- 	if (err)
-@@ -6176,7 +6175,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- out_ret:
- 	ret = block_page_mkwrite_return(err);
- out:
--	up_read(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock_shared(mapping);
- 	sb_end_pagefault(inode->i_sb);
- 	return ret;
- out_error:
-@@ -6184,15 +6183,3 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 	ext4_journal_stop(handle);
- 	goto out;
- }
--
--vm_fault_t ext4_filemap_fault(struct vm_fault *vmf)
--{
--	struct inode *inode = file_inode(vmf->vma->vm_file);
--	vm_fault_t ret;
--
--	down_read(&EXT4_I(inode)->i_mmap_sem);
--	ret = filemap_fault(vmf);
--	up_read(&EXT4_I(inode)->i_mmap_sem);
--
--	return ret;
--}
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index 31627f7dc5cd..c5ed562b4185 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -148,7 +148,7 @@ static long swap_inode_boot_loader(struct super_block *sb,
- 		goto journal_err_out;
- 	}
- 
--	down_write(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_lock(inode->i_mapping);
- 	err = filemap_write_and_wait(inode->i_mapping);
- 	if (err)
- 		goto err_out;
-@@ -256,7 +256,7 @@ static long swap_inode_boot_loader(struct super_block *sb,
- 	ext4_double_up_write_data_sem(inode, inode_bl);
- 
- err_out:
--	up_write(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(inode->i_mapping);
- journal_err_out:
- 	unlock_two_nondirectories(inode, inode_bl);
- 	iput(inode_bl);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index d29f6aa7d96e..c3c3cd8b0966 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -90,12 +90,9 @@ static struct inode *ext4_get_journal_inode(struct super_block *sb,
- /*
-  * Lock ordering
-  *
-- * Note the difference between i_mmap_sem (EXT4_I(inode)->i_mmap_sem) and
-- * i_mmap_rwsem (inode->i_mmap_rwsem)!
-- *
-  * page fault path:
-- * mmap_lock -> sb_start_pagefault -> i_mmap_sem (r) -> transaction start ->
-- *   page lock -> i_data_sem (rw)
-+ * mmap_lock -> sb_start_pagefault -> invalidate_lock (r) -> transaction start
-+ *   -> page lock -> i_data_sem (rw)
-  *
-  * buffered write path:
-  * sb_start_write -> i_mutex -> mmap_lock
-@@ -103,8 +100,9 @@ static struct inode *ext4_get_journal_inode(struct super_block *sb,
-  *   i_data_sem (rw)
-  *
-  * truncate:
-- * sb_start_write -> i_mutex -> i_mmap_sem (w) -> i_mmap_rwsem (w) -> page lock
-- * sb_start_write -> i_mutex -> i_mmap_sem (w) -> transaction start ->
-+ * sb_start_write -> i_mutex -> invalidate_lock (w) -> i_mmap_rwsem (w) ->
-+ *   page lock
-+ * sb_start_write -> i_mutex -> invalidate_lock (w) -> transaction start ->
-  *   i_data_sem (rw)
-  *
-  * direct IO:
-@@ -1350,7 +1348,6 @@ static void init_once(void *foo)
- 	INIT_LIST_HEAD(&ei->i_orphan);
- 	init_rwsem(&ei->xattr_sem);
- 	init_rwsem(&ei->i_data_sem);
--	init_rwsem(&ei->i_mmap_sem);
- 	inode_init_once(&ei->vfs_inode);
- 	ext4_fc_init_inode(&ei->vfs_inode);
- }
-diff --git a/fs/ext4/truncate.h b/fs/ext4/truncate.h
-index bcbe3668c1d4..ce84aa2786c7 100644
---- a/fs/ext4/truncate.h
-+++ b/fs/ext4/truncate.h
-@@ -11,14 +11,16 @@
-  */
- static inline void ext4_truncate_failed_write(struct inode *inode)
- {
-+	struct address_space *mapping = inode->i_mapping;
-+
- 	/*
- 	 * We don't need to call ext4_break_layouts() because the blocks we
- 	 * are truncating were never visible to userspace.
- 	 */
--	down_write(&EXT4_I(inode)->i_mmap_sem);
--	truncate_inode_pages(inode->i_mapping, inode->i_size);
-+	filemap_invalidate_lock(mapping);
-+	truncate_inode_pages(mapping, inode->i_size);
- 	ext4_truncate(inode);
--	up_write(&EXT4_I(inode)->i_mmap_sem);
-+	filemap_invalidate_unlock(mapping);
- }
- 
- /*
--- 
-2.26.2
 
+On 2021/6/8 19:15, Fengnan Chang wrote:
+> When we create a directory with enable compression, all file write into
+> directory will try to compress.But sometimes we may know, new file
+> cannot meet compression ratio requirements.
+> We need a nocompress extension to skip those files to avoid unnecessary
+> compress page test.
+> 
+> After add nocompress_extension, the priority should be:
+> dir_flag < comp_extention,nocompress_extension < comp_file_flag,
+> no_comp_file_flag.
+> 
+> Priority in between FS_COMPR_FL, FS_NOCOMP_FS, extensions:
+>     * compress_extension=so; nocompress_extension=zip; chattr +c dir;
+>       touch dir/foo.so; touch dir/bar.zip; touch dir/baz.txt; then foo.so
+>       and baz.txt should be compresse, bar.zip should be non-compressed.
+>       chattr +c dir/bar.zip can enable compress on bar.zip.
+>     * compress_extension=so; nocompress_extension=zip; chattr -c dir;
+>       touch dir/foo.so; touch dir/bar.zip; touch dir/baz.txt; then foo.so
+>       should be compresse, bar.zip and baz.txt should be non-compressed.
+>       chattr+c dir/bar.zip; chattr+c dir/baz.txt; can enable compress on
+>       bar.zip and baz.txt.
+> 
+> Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
+> ---
+>   Documentation/filesystems/f2fs.rst | 31 +++++++++++-
+>   fs/f2fs/f2fs.h                     |  2 +
+>   fs/f2fs/namei.c                    | 18 +++++--
+>   fs/f2fs/super.c                    | 79 +++++++++++++++++++++++++++++-
+>   4 files changed, 125 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+> index 992bf91eeec8..c68f1c822665 100644
+> --- a/Documentation/filesystems/f2fs.rst
+> +++ b/Documentation/filesystems/f2fs.rst
+> @@ -281,6 +281,18 @@ compress_extension=%s	 Support adding specified extension, so that f2fs can enab
+>   			 For other files, we can still enable compression via ioctl.
+>   			 Note that, there is one reserved special extension '*', it
+>   			 can be set to enable compression for all files.
+> +nocompress_extension=%s	   Support adding specified extension, so that f2fs can disable
+> +			 compression on those corresponding files, just contrary to compression extension.
+> +			 If you know exactly which files cannot be compressed, you can use this.
+> +			 The same extension name can't appear in both compress and nocompress
+> +			 extension at the same time.
+> +			 If the compress extension specifies all files, the types specified by the
+> +			 nocompress extension will be treated as special cases and will not be compressed.
+> +			 Don't allow use '*' to specifie all file in nocompress extension.
+> +			 After add nocompress_extension, the priority should be:
+> +			 dir_flag < comp_extention,nocompress_extension < comp_file_flag,no_comp_file_flag.
+> +			 See more in compression sections.
+> +
+>   compress_chksum		 Support verifying chksum of raw data in compressed cluster.
+>   compress_mode=%s	 Control file compression mode. This supports "fs" and "user"
+>   			 modes. In "fs" mode (default), f2fs does automatic compression
+> @@ -814,13 +826,30 @@ Compression implementation
+>     all logical blocks in cluster contain valid data and compress ratio of
+>     cluster data is lower than specified threshold.
+>   
+> -- To enable compression on regular inode, there are three ways:
+> +- To enable compression on regular inode, there are four ways:
+>   
+>     * chattr +c file
+>     * chattr +c dir; touch dir/file
+>     * mount w/ -o compress_extension=ext; touch file.ext
+>     * mount w/ -o compress_extension=*; touch any_file
+>   
+> +- To disable compression on regular inode, there are two ways:
+> +
+> +  * chattr -c file
+> +  * mount w/ -o nocompress_extension=ext; touch file.ext
+> +
+> +- Priority in between FS_COMPR_FL, FS_NOCOMP_FS, extensions:
+> +
+> +  * compress_extension=so; nocompress_extension=zip; chattr +c dir; touch
+> +    dir/foo.so; touch dir/bar.zip; touch dir/baz.txt; then foo.so and baz.txt
+> +    should be compresse, bar.zip should be non-compressed. chattr +c dir/bar.zip
+> +    can enable compress on bar.zip.
+> +  * compress_extension=so; nocompress_extension=zip; chattr -c dir; touch
+> +    dir/foo.so; touch dir/bar.zip; touch dir/baz.txt; then foo.so should be
+> +    compresse, bar.zip and baz.txt should be non-compressed.
+> +    chattr+c dir/bar.zip; chattr+c dir/baz.txt; can enable compress on bar.zip
+> +    and baz.txt.
+> +
+>   - At this point, compression feature doesn't expose compressed space to user
+>     directly in order to guarantee potential data updates later to the space.
+>     Instead, the main goal is to reduce data writes to flash disk as much as
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 9ad502f92529..7d13d4d64d59 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -150,8 +150,10 @@ struct f2fs_mount_info {
+>   	unsigned char compress_level;		/* compress level */
+>   	bool compress_chksum;			/* compressed data chksum */
+>   	unsigned char compress_ext_cnt;		/* extension count */
+> +	unsigned char nocompress_ext_cnt;		/* nocompress extension count */
+>   	int compress_mode;			/* compression mode */
+>   	unsigned char extensions[COMPRESS_EXT_NUM][F2FS_EXTENSION_LEN];	/* extensions */
+> +	unsigned char noextensions[COMPRESS_EXT_NUM][F2FS_EXTENSION_LEN]; /* extensions */
+>   };
+>   
+>   #define F2FS_FEATURE_ENCRYPT		0x0001
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index d4139e166b95..f343842da4f3 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -287,14 +287,16 @@ static void set_compress_inode(struct f2fs_sb_info *sbi, struct inode *inode,
+>   						const unsigned char *name)
+>   {
+>   	__u8 (*extlist)[F2FS_EXTENSION_LEN] = sbi->raw_super->extension_list;
+> +	unsigned char (*noext)[F2FS_EXTENSION_LEN] = F2FS_OPTION(sbi).noextensions;
+>   	unsigned char (*ext)[F2FS_EXTENSION_LEN];
+> -	unsigned int ext_cnt = F2FS_OPTION(sbi).compress_ext_cnt;
+> +	unsigned char ext_cnt = F2FS_OPTION(sbi).compress_ext_cnt;
+> +	unsigned char noext_cnt = F2FS_OPTION(sbi).nocompress_ext_cnt;
+>   	int i, cold_count, hot_count;
+>   
+>   	if (!f2fs_sb_has_compression(sbi) ||
+> -			is_inode_flag_set(inode, FI_COMPRESSED_FILE) ||
+>   			F2FS_I(inode)->i_flags & F2FS_NOCOMP_FL ||
+> -			!f2fs_may_compress(inode))
+> +			!f2fs_may_compress(inode) ||
+> +			(!ext_cnt && !noext_cnt))
+>   		return;
+>   
+>   	down_read(&sbi->sb_lock);
+> @@ -311,6 +313,16 @@ static void set_compress_inode(struct f2fs_sb_info *sbi, struct inode *inode,
+>   
+>   	up_read(&sbi->sb_lock);
+>   
+> +	for (i = 0; i < noext_cnt; i++) {
+> +		if (is_extension_exist(name, noext[i])) {
+> +			f2fs_disable_compressed_file(inode);
+> +			return;
+> +		}
+> +	}
+> +
+> +	if (is_inode_flag_set(inode, FI_COMPRESSED_FILE))
+> +		return;
+> +
+>   	ext = F2FS_OPTION(sbi).extensions;
+>   
+>   	for (i = 0; i < ext_cnt; i++) {
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 6788e7b71e27..e720323b900c 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -148,6 +148,7 @@ enum {
+>   	Opt_compress_algorithm,
+>   	Opt_compress_log_size,
+>   	Opt_compress_extension,
+> +	Opt_nocompress_extension,
+>   	Opt_compress_chksum,
+>   	Opt_compress_mode,
+>   	Opt_atgc,
+> @@ -222,6 +223,7 @@ static match_table_t f2fs_tokens = {
+>   	{Opt_compress_algorithm, "compress_algorithm=%s"},
+>   	{Opt_compress_log_size, "compress_log_size=%u"},
+>   	{Opt_compress_extension, "compress_extension=%s"},
+> +	{Opt_nocompress_extension, "nocompress_extension=%s"},
+>   	{Opt_compress_chksum, "compress_chksum"},
+>   	{Opt_compress_mode, "compress_mode=%s"},
+>   	{Opt_atgc, "atgc"},
+> @@ -473,6 +475,43 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
+>   }
+>   
+>   #ifdef CONFIG_F2FS_FS_COMPRESSION
+> +/*
+> + * 1. The same extension name cannot not appear in both compress and non-compress extension
+> + * at the same time.
+> + * 2. If the compress extension specifies all files, the types specified by the non-compress
+> + * extension will be treated as special cases and will not be compressed.
+> + * 3. Don't allow the non-compress extension specifies all files.
+> + */
+> +static int f2fs_test_compress_extension(struct f2fs_sb_info *sbi)
+> +{
+> +	unsigned char (*ext)[F2FS_EXTENSION_LEN];
+> +	unsigned char (*noext)[F2FS_EXTENSION_LEN];
+> +	int ext_cnt, noext_cnt, index = 0, no_index = 0;
+> +
+> +	ext = F2FS_OPTION(sbi).extensions;
+> +	ext_cnt = F2FS_OPTION(sbi).compress_ext_cnt;
+> +	noext = F2FS_OPTION(sbi).noextensions;
+> +	noext_cnt = F2FS_OPTION(sbi).nocompress_ext_cnt;
+> +
+> +	if (!noext_cnt)
+> +		return 0;
+> +
+> +	for (no_index = 0; no_index < noext_cnt; no_index++) {
+> +		if (!strcasecmp("*", noext[no_index])) {
+> +			f2fs_info(sbi, "Don't allow the nocompress extension specifies all files");
+> +			return -EINVAL;
+> +		}
+> +		for (index = 0; index < ext_cnt; index++) {
+> +			if (!strcasecmp(ext[index], noext[no_index])) {
+> +				f2fs_info(sbi, "Don't allow the same extension %s appear in both compress and nocompress extension",
+> +						ext[index]);
+> +				return -EINVAL;
+> +			}
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+>   #ifdef CONFIG_F2FS_FS_LZ4
+>   static int f2fs_set_lz4hc_level(struct f2fs_sb_info *sbi, const char *str)
+>   {
+> @@ -546,7 +585,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+>   	substring_t args[MAX_OPT_ARGS];
+>   #ifdef CONFIG_F2FS_FS_COMPRESSION
+>   	unsigned char (*ext)[F2FS_EXTENSION_LEN];
+> -	int ext_cnt;
+> +	unsigned char (*noext)[F2FS_EXTENSION_LEN];
+> +	int ext_cnt, noext_cnt;
+>   #endif
+>   	char *p, *name;
+>   	int arg = 0;
+> @@ -1049,6 +1089,30 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+>   			F2FS_OPTION(sbi).compress_ext_cnt++;
+>   			kfree(name);
+>   			break;
+> +		case Opt_nocompress_extension:
+> +			if (!f2fs_sb_has_compression(sbi)) {
+> +				f2fs_info(sbi, "Image doesn't support compression");
+> +				break;
+> +			}
+> +			name = match_strdup(&args[0]);
+> +			if (!name)
+> +				return -ENOMEM;
+> +
+> +			noext = F2FS_OPTION(sbi).noextensions;
+> +			noext_cnt = F2FS_OPTION(sbi).nocompress_ext_cnt;
+> +
+> +			if (strlen(name) >= F2FS_EXTENSION_LEN ||
+> +				noext_cnt >= COMPRESS_EXT_NUM) {
+> +				f2fs_err(sbi,
+> +					"invalid extension length/number");
+> +				kfree(name);
+> +				return -EINVAL;
+> +			}
+> +
+> +			strcpy(noext[noext_cnt], name);
+> +			F2FS_OPTION(sbi).nocompress_ext_cnt++;
+> +			kfree(name);
+> +			break;
+>   		case Opt_compress_chksum:
+>   			F2FS_OPTION(sbi).compress_chksum = true;
+>   			break;
+> @@ -1070,6 +1134,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+>   		case Opt_compress_algorithm:
+>   		case Opt_compress_log_size:
+>   		case Opt_compress_extension:
+> +		case Opt_nocompress_extension:
+>   		case Opt_compress_chksum:
+>   		case Opt_compress_mode:
+>   			f2fs_info(sbi, "compression options not supported");
+> @@ -1123,6 +1188,13 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+>   	}
+>   #endif
+>   
+> +#ifdef CONFIG_F2FS_FS_COMPRESSION
+> +	if (f2fs_test_compress_extension(sbi)) {
+> +		f2fs_err(sbi, "invalid compress or nocompress extension");
+> +		return -EINVAL;
+> +	}
+> +#endif
+> +
+>   	if (F2FS_IO_SIZE_BITS(sbi) && !f2fs_lfs_mode(sbi)) {
+>   		f2fs_err(sbi, "Should set mode=lfs with %uKB-sized IO",
+>   			 F2FS_IO_SIZE_KB(sbi));
+> @@ -1671,6 +1743,11 @@ static inline void f2fs_show_compress_options(struct seq_file *seq,
+>   			F2FS_OPTION(sbi).extensions[i]);
+>   	}
+>   
+> +	for (i = 0; i < F2FS_OPTION(sbi).nocompress_ext_cnt; i++) {
+> +		seq_printf(seq, ",nocompress_extension=%s",
+> +			F2FS_OPTION(sbi).noextensions[i]);
+> +	}
+> +
+>   	if (F2FS_OPTION(sbi).compress_chksum)
+>   		seq_puts(seq, ",compress_chksum");
+>   
+> 
 
 
 _______________________________________________
