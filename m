@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30087C49EB7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 695E9C4CC62
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 15 Jun 2021 09:18:36 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CEE7561434;
-	Tue, 15 Jun 2021 09:18:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEE7561434
+	by mail.kernel.org (Postfix) with ESMTPS id 24F8161432;
+	Tue, 15 Jun 2021 09:18:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F8161432
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lt5DN-0007h0-IY; Tue, 15 Jun 2021 09:18:33 +0000
+	id 1lt5DM-0004tA-AA; Tue, 15 Jun 2021 09:18:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <jack@suse.cz>) id 1lt5DG-0007gd-EG
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <jack@suse.cz>) id 1lt5DG-0004rg-Ls
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 15 Jun 2021 09:18:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=jzpVj8JlrB8ydY+vFRnq+G9CoeRUVMlFtm7aKp4N1TU=; b=d15xZOAa4gD0cDY1JTtfaicVDf
- cwR/Mxdfezb8idpjqyPaTrav8fU7RbbC5gZb+RS1WBOQX2nW0PKTCWJjdSwVqw6IKWBebFUUWxcxy
- bYMMvPFO80MElRqNIovX1yyibdtctT4tZx17SPiGq3h7KldfLfoQe2t9iYTMi1aNTR2M=;
+ bh=0XkV+RgC+fT2zb/9P8XJncXzoes6c7BbAf1UfyHkV6A=; b=hqNuoIc9r4cfiWZKbRtho5ChUa
+ c+BoEyq8zx/dw3PZy6g8UsNsqrkHLk7GljHjghIr0/Vqbfh/E4IyoHLTudue444n9jjelUzHLALvg
+ keRKnnoRuppRr6Hd8P201zZlzVH70UYdQGSwx+i2D1XKKnLbAGM05mJZKrxiMcLnE4n0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,62 +42,62 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=jzpVj8JlrB8ydY+vFRnq+G9CoeRUVMlFtm7aKp4N1TU=; b=aiuAloBpXlhowpOoGbGdBXPBmb
- lUAD9fS1DwDfyWrs87/rq/4GzLcKDgnJbIzjsf3/VXE/c3mAJd8M2Rmh2s8nu8HuRWWJB5+dUxBJm
- Jk5Ck7PLeYFqB+mQa0tyw6vZxMW1zYbD7Z5v5whkQuNGdCSmFuIqA10Zj190yqovjHmA=;
+ bh=0XkV+RgC+fT2zb/9P8XJncXzoes6c7BbAf1UfyHkV6A=; b=PKbNKaZha/dMxmv1M/qINhlnIs
+ ip4LaUmYXVL4vqhi4KQnp/W6MjczyvrjVhFanGyzdtpBi5i7w/c1CPdUINC7etdg0uw3k3oWfargD
+ 1wDfAeQknGWMzBpaPvF41Kz5MSe1KNCacuzGr3wXnp0Iqd8LEAattZ2WW7O9DwB25XBA=;
 Received: from smtp-out1.suse.de ([195.135.220.28])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1lt5DD-00AQjB-ED
+ id 1lt5DD-00AQj5-EF
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 15 Jun 2021 09:18:28 +0000
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
- by smtp-out1.suse.de (Postfix) with ESMTP id 2CB2D219CE;
+ by smtp-out1.suse.de (Postfix) with ESMTP id 0514321989;
  Tue, 15 Jun 2021 09:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
  t=1623748695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=jzpVj8JlrB8ydY+vFRnq+G9CoeRUVMlFtm7aKp4N1TU=;
- b=jIyNAG9KFenh2z2siQJXSnp6wk4j3u0lHvGIRuc95y2Iz7dJphW6jZer7NjmAMG3UAGSi8
- p2Gypy1k/cSMKrfPUvmpuqqmB51SVvAxH96AQ8OO5vuL4HqNwe5dNHmrQO+7omOhgmDGi+
- arYs+IWjE2JHjCyb+wNGIIcOkOlby0k=
+ bh=0XkV+RgC+fT2zb/9P8XJncXzoes6c7BbAf1UfyHkV6A=;
+ b=0e1HG1zyf9r0J2dNWokgc+OQ6H0UXR3iSbtdwrp9wm/bE28mhz4Fb/S8UqOpeYqRtSdOQu
+ cjzSydpXdO1I2vHzYya5mJAaN//RyXzr/7zzUn4xfaMsXEldyCft0OEcFgoH8uBWNaf9EV
+ K6ZVvlNwJx3pxSvhG+7r7Tc+dgN3eSM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
  s=susede2_ed25519; t=1623748695;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=jzpVj8JlrB8ydY+vFRnq+G9CoeRUVMlFtm7aKp4N1TU=;
- b=zdbe+wLegF9N6BdAYz21hwpOcpeFQLPCiznBaKEgMFDJgyBhBwUdkS2CCn44d3XZommyI9
- oXDi/0dmGOrNp2Bg==
+ bh=0XkV+RgC+fT2zb/9P8XJncXzoes6c7BbAf1UfyHkV6A=;
+ b=uT6drJDEI8MJfUI/sGn0NhkaG98lb5Jbe1P+6dH/SBVNuTJJgwgIMJ3LZV0NLinp+sR++m
+ YCE36wZaDGigUuDw==
 Received: from quack2.suse.cz (unknown [10.100.200.198])
- by relay2.suse.de (Postfix) with ESMTP id 1A965A3B99;
- Tue, 15 Jun 2021 09:18:15 +0000 (UTC)
+ by relay2.suse.de (Postfix) with ESMTP id 64B4CA3B95;
+ Tue, 15 Jun 2021 09:18:14 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
- id 45F9A1F2CC2; Tue, 15 Jun 2021 11:18:14 +0200 (CEST)
+ id 3153F1F2CBC; Tue, 15 Jun 2021 11:18:14 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
-Date: Tue, 15 Jun 2021 11:17:59 +0200
-Message-Id: <20210615091814.28626-9-jack@suse.cz>
+Date: Tue, 15 Jun 2021 11:17:54 +0200
+Message-Id: <20210615091814.28626-4-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210615090844.6045-1-jack@suse.cz>
 References: <20210615090844.6045-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4917; h=from:subject;
- bh=Pt3UjgWOKw5VBXlHinJjhLE0BJn5KyvbzUsgusJoyQ8=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBgyHBHQz7sYYGESLOPUM9je2BwnQMR+94bnROYEA4r
- PHSnKz2JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYMhwRwAKCRCcnaoHP2RA2ZcrB/
- 9gzkntEzMfcOHZzvFBHpOx8w6qa0DVwkTogkJwuD4ehyxoN26RDHjrHkpfGyuWmge5Xcv9Xe5qEzFU
- DGYDGiBq1WPXUespIfaU645ADMMvxG8mcSLWgoN8D2yaJfdCkNjHckHDbJGPAyg7+suX2Jjc/F6HQO
- qKDWxh+eH9kUWsv6zTuK/BGNGjb53iH4swqvoVGw29hTwqMA28nYxUM36aRdCe01AVXlq5ruTMiRfg
- xD0/4Jat8TpArX3qchGrDyDlRz2ff7SrsyOZ5Qf/Lieqn/YbcoQgskaWyXlMUv3LQANbfCq5+zeJ4Q
- 3ffjlRg4ZpEVIz1Q5fmJeRMUsHUJ9h
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2666; h=from:subject;
+ bh=oUYTBj0usYKZHAhcL7fto1zqDGKiVZb74yqc2jI2vTI=;
+ b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBgyHBDjHixD9ynk7cHWEaRc2rAtNglfOdu6LFrLdwd
+ AgRldvWJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYMhwQwAKCRCcnaoHP2RA2dx8B/
+ 4gR5b8Yria4/uQruq+8EWovN0cccZVV1BF92wjDcg5rTaSr5GwLxoWGNa1zmJPwwQ2NRH2fz9jBbWX
+ XTLnwG6OSvOA0TXxy9HTK9HZV6SHDFXUW3yhJ22X9hfGvy8bJz0s8f1eW8xywNms/Nly/xRu5UrXBT
+ GyDDHranBIdveS/GDQ6BdURWmvKQyXthCrw1Wzl56+seW+PZeDN12hTUHRuojD2IaCIEoViNboFWcx
+ jP6JhEYnZi/9K03+kpC2TWCBzY9VNPll6r5dkv4DCQIYTcVCyUPzhAmY4ETc89VR+5lWLjW0AVtXsz
+ vAlFo8n+VuIi4W+AICrWJ+aOTHxfPV
 X-Developer-Key: i=jack@suse.cz; a=openpgp;
  fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1lt5DD-00AQjB-ED
-Subject: [f2fs-dev] [PATCH 09/14] xfs: Convert double locking of MMAPLOCK to
- use VFS helpers
+X-Headers-End: 1lt5DD-00AQj5-EF
+Subject: [f2fs-dev] [PATCH 04/14] mm: Add functions to lock invalidate_lock
+ for two mappings
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,146 +116,89 @@ Cc: linux-cifs@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
  Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
  Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
  Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>,
- "Darrick J. Wong" <djwong@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ "Darrick J . Wong" <djwong@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
  ceph-devel@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>,
  linux-xfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Convert places in XFS that take MMAPLOCK for two inodes to use helper
-VFS provides for it (filemap_invalidate_down_write_two()). Note that
-this changes lock ordering for MMAPLOCK from inode number based ordering
-to pointer based ordering VFS generally uses.
+Some operations such as reflinking blocks among files will need to lock
+invalidate_lock for two mappings. Add helper functions to do that.
 
-CC: "Darrick J. Wong" <djwong@kernel.org>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/xfs/xfs_bmap_util.c | 15 ++++++++-------
- fs/xfs/xfs_inode.c     | 37 +++++++++++--------------------------
- 2 files changed, 19 insertions(+), 33 deletions(-)
+ include/linux/fs.h |  6 ++++++
+ mm/filemap.c       | 38 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+)
 
-diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-index 0936f3a96fe6..ef18269ad1f7 100644
---- a/fs/xfs/xfs_bmap_util.c
-+++ b/fs/xfs/xfs_bmap_util.c
-@@ -1626,7 +1626,6 @@ xfs_swap_extents(
- 	struct xfs_bstat	*sbp = &sxp->sx_stat;
- 	int			src_log_flags, target_log_flags;
- 	int			error = 0;
--	int			lock_flags;
- 	uint64_t		f;
- 	int			resblks = 0;
- 	unsigned int		flags = 0;
-@@ -1638,8 +1637,8 @@ xfs_swap_extents(
- 	 * do the rest of the checks.
- 	 */
- 	lock_two_nondirectories(VFS_I(ip), VFS_I(tip));
--	lock_flags = XFS_MMAPLOCK_EXCL;
--	xfs_lock_two_inodes(ip, XFS_MMAPLOCK_EXCL, tip, XFS_MMAPLOCK_EXCL);
-+	filemap_invalidate_lock_two(VFS_I(ip)->i_mapping,
-+				    VFS_I(tip)->i_mapping);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d8afbc9661d7..ddc11bafc183 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -849,6 +849,12 @@ static inline void filemap_invalidate_unlock_shared(
+ void lock_two_nondirectories(struct inode *, struct inode*);
+ void unlock_two_nondirectories(struct inode *, struct inode*);
  
- 	/* Verify that both files have the same format */
- 	if ((VFS_I(ip)->i_mode & S_IFMT) != (VFS_I(tip)->i_mode & S_IFMT)) {
-@@ -1711,7 +1710,6 @@ xfs_swap_extents(
- 	 * or cancel will unlock the inodes from this point onwards.
- 	 */
- 	xfs_lock_two_inodes(ip, XFS_ILOCK_EXCL, tip, XFS_ILOCK_EXCL);
--	lock_flags |= XFS_ILOCK_EXCL;
- 	xfs_trans_ijoin(tp, ip, 0);
- 	xfs_trans_ijoin(tp, tip, 0);
- 
-@@ -1830,13 +1828,16 @@ xfs_swap_extents(
- 	trace_xfs_swap_extent_after(ip, 0);
- 	trace_xfs_swap_extent_after(tip, 1);
- 
-+out_unlock_ilock:
-+	xfs_iunlock(ip, XFS_ILOCK_EXCL);
-+	xfs_iunlock(tip, XFS_ILOCK_EXCL);
- out_unlock:
--	xfs_iunlock(ip, lock_flags);
--	xfs_iunlock(tip, lock_flags);
-+	filemap_invalidate_unlock_two(VFS_I(ip)->i_mapping,
-+				      VFS_I(tip)->i_mapping);
- 	unlock_two_nondirectories(VFS_I(ip), VFS_I(tip));
- 	return error;
- 
- out_trans_cancel:
- 	xfs_trans_cancel(tp);
--	goto out_unlock;
-+	goto out_unlock_ilock;
- }
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index da0c3b62dae6..c963b9dc484b 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -551,12 +551,10 @@ xfs_lock_inodes(
- }
- 
++void filemap_invalidate_lock_two(struct address_space *mapping1,
++				 struct address_space *mapping2);
++void filemap_invalidate_unlock_two(struct address_space *mapping1,
++				   struct address_space *mapping2);
++
++
  /*
-- * xfs_lock_two_inodes() can only be used to lock one type of lock at a time -
-- * the mmaplock or the ilock, but not more than one type at a time. If we lock
-- * more than one at a time, lockdep will report false positives saying we have
-- * violated locking orders.  The iolock must be double-locked separately since
-- * we use i_rwsem for that.  We now support taking one lock EXCL and the other
-- * SHARED.
-+ * xfs_lock_two_inodes() can only be used to lock ilock. The iolock and
-+ * mmaplock must be double-locked separately since we use i_rwsem and
-+ * invalidate_lock for that. We now support taking one lock EXCL and the
-+ * other SHARED.
-  */
- void
- xfs_lock_two_inodes(
-@@ -574,15 +572,8 @@ xfs_lock_two_inodes(
- 	ASSERT(hweight32(ip1_mode) == 1);
- 	ASSERT(!(ip0_mode & (XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL)));
- 	ASSERT(!(ip1_mode & (XFS_IOLOCK_SHARED|XFS_IOLOCK_EXCL)));
--	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
--	       !(ip0_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
--	ASSERT(!(ip1_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
--	       !(ip1_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
--	ASSERT(!(ip1_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
--	       !(ip0_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
--	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
--	       !(ip1_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
--
-+	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)));
-+	ASSERT(!(ip1_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)));
- 	ASSERT(ip0->i_ino != ip1->i_ino);
+  * NOTE: in a 32bit arch with a preemptable kernel and
+  * an UP compile the i_size_read/write must be atomic
+diff --git a/mm/filemap.c b/mm/filemap.c
+index c8e7e451d81e..b8e9bccecd9f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1009,6 +1009,44 @@ struct page *__page_cache_alloc(gfp_t gfp)
+ EXPORT_SYMBOL(__page_cache_alloc);
+ #endif
  
- 	if (ip0->i_ino > ip1->i_ino) {
-@@ -3774,11 +3765,8 @@ xfs_ilock2_io_mmap(
- 	ret = xfs_iolock_two_inodes_and_break_layout(VFS_I(ip1), VFS_I(ip2));
- 	if (ret)
- 		return ret;
--	if (ip1 == ip2)
--		xfs_ilock(ip1, XFS_MMAPLOCK_EXCL);
--	else
--		xfs_lock_two_inodes(ip1, XFS_MMAPLOCK_EXCL,
--				    ip2, XFS_MMAPLOCK_EXCL);
-+	filemap_invalidate_lock_two(VFS_I(ip1)->i_mapping,
-+				    VFS_I(ip2)->i_mapping);
- 	return 0;
- }
- 
-@@ -3788,12 +3776,9 @@ xfs_iunlock2_io_mmap(
- 	struct xfs_inode	*ip1,
- 	struct xfs_inode	*ip2)
- {
--	bool			same_inode = (ip1 == ip2);
--
--	xfs_iunlock(ip2, XFS_MMAPLOCK_EXCL);
--	if (!same_inode)
--		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-+	filemap_invalidate_unlock_two(VFS_I(ip1)->i_mapping,
-+				      VFS_I(ip2)->i_mapping);
- 	inode_unlock(VFS_I(ip2));
--	if (!same_inode)
-+	if (ip1 != ip2)
- 		inode_unlock(VFS_I(ip1));
- }
++/*
++ * filemap_invalidate_lock_two - lock invalidate_lock for two mappings
++ *
++ * Lock exclusively invalidate_lock of any passed mapping that is not NULL.
++ *
++ * @mapping1: the first mapping to lock
++ * @mapping2: the second mapping to lock
++ */
++void filemap_invalidate_lock_two(struct address_space *mapping1,
++				 struct address_space *mapping2)
++{
++	if (mapping1 > mapping2)
++		swap(mapping1, mapping2);
++	if (mapping1)
++		down_write(&mapping1->invalidate_lock);
++	if (mapping2 && mapping1 != mapping2)
++		down_write_nested(&mapping2->invalidate_lock, 1);
++}
++EXPORT_SYMBOL(filemap_invalidate_lock_two);
++
++/*
++ * filemap_invalidate_unlock_two - unlock invalidate_lock for two mappings
++ *
++ * Unlock exclusive invalidate_lock of any passed mapping that is not NULL.
++ *
++ * @mapping1: the first mapping to unlock
++ * @mapping2: the second mapping to unlock
++ */
++void filemap_invalidate_unlock_two(struct address_space *mapping1,
++				   struct address_space *mapping2)
++{
++	if (mapping1)
++		up_write(&mapping1->invalidate_lock);
++	if (mapping2 && mapping1 != mapping2)
++		up_write(&mapping2->invalidate_lock);
++}
++EXPORT_SYMBOL(filemap_invalidate_unlock_two);
++
+ /*
+  * In order to wait for pages to become available there must be
+  * waitqueues associated with pages. By using a hash table of
 -- 
 2.26.2
 
