@@ -2,41 +2,40 @@ Return-Path: <SRS0=P3Wg=LK=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A89C48BE6
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Jun 2021 05:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4510EC48BE6
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Jun 2021 05:37:59 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CF6F361164;
-	Wed, 16 Jun 2021 05:36:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF6F361164
+	by mail.kernel.org (Postfix) with ESMTPS id 0B18E6128C;
+	Wed, 16 Jun 2021 05:37:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B18E6128C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ltOEG-0006vK-FM; Wed, 16 Jun 2021 05:36:44 +0000
+	id 1ltOFQ-0006yx-7g; Wed, 16 Jun 2021 05:37:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
  (envelope-from
  <BATV+ae8989e1668f84a74d37+6506+infradead.org+hch@casper.srs.infradead.org>)
- id 1ltOEE-0006v9-Mc
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Jun 2021 05:36:42 +0000
+ id 1ltOFO-0006yq-9A
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Jun 2021 05:37:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=Kwo7zJq5FOYh5pdQXC0jG2dD4y
- 9GK4VYcVxCzwgCR4HkEUEm44347Z/6jiNeYVlqiMLP+i4IYIKMAuV2GH+1K71WoY5Jcp5o8D9Lqiy
- NtYu+jhklJuoWQTXK25ylbaeCbJT8CSh+lH0Zmw953MFNPEnrEJJ8XOCOlRruOb/d8Bg=;
+ bh=XWnWDvKJzRqZbbua9HZlINwmc4WRunOl2lkBSeIoZuY=; b=N1mAWYxHSv8QR1yyUzDDH+Z3V6
+ lNm7vwduBaXety5x2YHIgWx8X1/O5SDO0Guri+GucaUIfU0BCddU1hqMXGu/wuNrYT8N02cepHs/U
+ oQp5l17YwpzrUi6CLtzpV6RwVH43Suucl01Epeyw/kvSNyISfs4at6CN4abDukRefi/Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,39 +43,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=UDFNkg+ThDibEAqKPjfh/6bmDU
- iTf+kVLOKuhnxRoQ6I+kB7NZHCMbK5v3j2LgdokEUjykI6WEWIY7JinpUF67Go7RQIR4mEu07xd4P
- W6bpTpZ2Du3iLydCCawiyT0FfRXCJdXl6JzXAaiN9t6WpzZbbLKCsPl4bu6vtknsWVs8=;
+ bh=XWnWDvKJzRqZbbua9HZlINwmc4WRunOl2lkBSeIoZuY=; b=UYF4QsMezCjweT+msxep7nEMaU
+ lo+1yZj6uQP36oDxPh35ct4RHqsMF4whWYhfDh8N3kIrGJ5eYk4OQcNO6VM3p7qWLfXOEwp2PoWLD
+ 5x4LBqKEzvQE+nnSkJG2OUd4AAwqrMIJ/5EYSlPR5dHmjYLYEBg88kA7TrjnZm8dWjds=;
 Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1ltOEA-0008CB-O8
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Jun 2021 05:36:43 +0000
+ id 1ltOFO-00BkHa-QX
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Jun 2021 05:37:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
  References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=GcjC/v1jpoOl7Q4Ko7HFRDkc7t
- nosqze1KdnYTHisDjYm25WTA7gANi3CJmJiYj298ZJ2R9oA6mU4RD85/13gINnozxwCJ0SX4/Mqhc
- 7iho7KAzmZ0ID42PFmK4nnPnRtn8uuIseQEHwZM1dRPoEP3k15I2w1R71E8E327SJiZpkBoqWNh9k
- uRQiHyNYpLeCABRop5Aj/0qfUdsREeuIp1D1WLizb6T0cxwbw5kOAIEn6At+L/nfsxGNG/lMEeb3a
- eOtBZe1cQDvFSeyQSZ4LW52VBVG9mqKPOtGhUn0ktp7Jpjup8l7gZAr40SFImVaBSLOAOoLoJt6+A
- gUr82bMA==;
+ bh=XWnWDvKJzRqZbbua9HZlINwmc4WRunOl2lkBSeIoZuY=; b=ahOIfpzE7hV8/mxMQnmQhY4hHQ
+ vG9uO31rLRo5gypfUe2hhoZnyQUQFUkp1djqBZ5GTRSkbWp0FWpEkDBekWLoaxQCTDR2tYRJgLVzf
+ SQXOHNmdHH6pOkB9YDa7i3NKcdcYLJMLbY9Q19m6k+cIj9UUYs46aq+Up/6M9MJ3Va+5292BL6sx0
+ 8Ha71Mr+CDDM0VeY+qwiz56e9Bzcyrl8zVnwQBemy0d4xWqTwm6WEKAdZtdUvLAx0v0rJy4hPEWg4
+ x3nJ0CTUpjMIjnfTKsIdFNCm53lmpASkZEDVTWyB1FgxWDywo0RpQO8Fu9DVOzJmeJuYUABuwl6xm
+ +W0YgeQg==;
 Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat
- Linux)) id 1ltOD6-007dpq-LG; Wed, 16 Jun 2021 05:35:39 +0000
-Date: Wed, 16 Jun 2021 06:35:32 +0100
+ Linux)) id 1ltOEi-007dwi-Jh; Wed, 16 Jun 2021 05:37:14 +0000
+Date: Wed, 16 Jun 2021 06:37:12 +0100
 From: Christoph Hellwig <hch@infradead.org>
 To: Jan Kara <jack@suse.cz>
-Message-ID: <YMmNpCmdKteS9fzk@infradead.org>
+Message-ID: <YMmOCK4wHc9lerEc@infradead.org>
 References: <20210615090844.6045-1-jack@suse.cz>
- <20210615091814.28626-6-jack@suse.cz>
+ <20210615091814.28626-7-jack@suse.cz>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20210615091814.28626-6-jack@suse.cz>
+In-Reply-To: <20210615091814.28626-7-jack@suse.cz>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  casper.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1ltOEA-0008CB-O8
-Subject: Re: [f2fs-dev] [PATCH 06/14] ext2: Convert to using invalidate_lock
+X-Headers-End: 1ltOFO-00BkHa-QX
+Subject: Re: [f2fs-dev] [PATCH 07/14] xfs: Refactor xfs_isilocked()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,22 +87,30 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-cifs@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
- linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>,
- "Darrick J. Wong" <darrick.wong@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- Steve French <sfrench@samba.org>, Dave Chinner <david@fromorbit.com>,
- Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
- Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
- Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
- Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org
+Cc: Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
+ linux-cifs@vger.kernel.org, "Darrick J. Wong" <darrick.wong@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>,
+ linux-ext4@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>,
+ Dave Chinner <dchinner@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ ceph-devel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ Damien Le Moal <damien.lemoal@wdc.com>, Ted Tso <tytso@mit.edu>,
+ Miklos Szeredi <miklos@szeredi.hu>, Jeff Layton <jlayton@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Steve French <sfrench@samba.org>,
+ linux-fsdevel@vger.kernel.org, Pavel Reichl <preichl@redhat.com>,
+ Johannes Thumshirn <jth@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Looks good,
+On Tue, Jun 15, 2021 at 11:17:57AM +0200, Jan Kara wrote:
+> From: Pavel Reichl <preichl@redhat.com>
+> 
+> Refactor xfs_isilocked() to use newly introduced __xfs_rwsem_islocked().
+> __xfs_rwsem_islocked() is a helper function which encapsulates checking
+> state of rw_semaphores hold by inode.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+__xfs_rwsem_islocked doesn't seem to actually existing in any tree I
+checked yet?
 
 
 _______________________________________________
