@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C789C48BE5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Jun 2021 05:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892A4C48BE6
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 16 Jun 2021 05:35:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0DF356128B;
-	Wed, 16 Jun 2021 05:35:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF356128B
+	by mail.kernel.org (Postfix) with ESMTPS id 4C09E6128B;
+	Wed, 16 Jun 2021 05:35:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C09E6128B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ltOCl-0003uC-En; Wed, 16 Jun 2021 05:35:11 +0000
+	id 1ltODE-0006Ug-AJ; Wed, 16 Jun 2021 05:35:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from
  <BATV+ae8989e1668f84a74d37+6506+infradead.org+hch@casper.srs.infradead.org>)
- id 1ltOCj-0003tv-P8
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Jun 2021 05:35:09 +0000
+ id 1ltODC-0006UZ-TV
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Jun 2021 05:35:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=d8w25h2VGN/s1upv9DhNmosDZ5
- ixHOO+lyFxS9KnnLWmRgmln18ScWPluSpSuZor+foC6u4FFj/pKfWM9YE2xP5t1LMl/V7qgA/hCW6
- XDKltiyilT/GH7Gj7ENqWZMmn7khrdIqIB6sXVyJ4T8XzQGkzSKt1sRU9MrAWm05t9Tg=;
+ bh=7WM3/Dl0NMSgUE40lDfACWPmQcemQr14B5cKG1DML9I=; b=jXRzY1yyD3HqGXzfnb91KeFQ7o
+ DBLajGeuGroscr5/cfG6ldZlgcXmiM5AcJX+89QwpE6RsMlsQtwM/qyC+HJGRVQzj3ekTCJd8c/55
+ CffTbxy5vkbGj4LLlY9MtBnnU9dnjwiXebkYWyG8Bf7nduklJhrsxw7T4sHsoKy/QGcw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,40 +44,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=XzlKIbvOKv5g3RhSPD5qa5shzz
- QnsNW7fMRpdEh0UTj8L8wKoArWazsLZZmEXZKDRNzTLWBtQlqe0lPuekMjbQkRlRk+1joKRz/GElN
- dydvkRxnFBG9hNy5yLyKU4d5hlptolrrCLJqTrhiXLjYgvsCtsRokCUFozgqrbxoMNY4=;
+ bh=7WM3/Dl0NMSgUE40lDfACWPmQcemQr14B5cKG1DML9I=; b=U4Bh49ijOlb7ANguRPTgmFhkS8
+ TMZKJ7t9Q7EPUlRpQ94jtRcaWpbwMsVmzyRj4j1sA5kIYW/13fnh/Z7NfYohDEj2CYOheitJylw83
+ oKMbq0qdBV9VHDo0NI6mRAOVZbbBOm2hwfu6KGPbg6Zv6QYfmmSag9K9iGN54OktpAnY=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1ltOCc-00Bk3G-3v
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Jun 2021 05:35:11 +0000
+ id 1ltODC-00Bk8b-W2
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 16 Jun 2021 05:35:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
  References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=KZl195pvRh/1mmP1HQAMM9NBG+
- zD34yyV2orlHEW5H/B0dha64DUHFrphWCq8oNO72/Z9Aug1EA16waS1mP7w9dmCdLHGPPG1C1e6jv
- CCb80gdb+Spp84eDqfmKp4hGqOYwj/jsrusvcYv/X0ECS0y0xs5Y6tZ9/rDt77mCGCyMdEfjKTfnd
- 1fEkofUNMF8iSW140L9H5pR1WiBcFmjs0ec8n5wveYXluMU1E3EkH9/+rwV+xMSrgKmtZM6n3VPh1
- Ocfduz2dpYNcRzlOeRFikJFGZQ/pCLRmtzSElAdI0ox1lzsY2ZlsYj8pP1Er8pDGOvng0KkPX6shJ
- 7iSFdoig==;
+ bh=7WM3/Dl0NMSgUE40lDfACWPmQcemQr14B5cKG1DML9I=; b=PMuF+TdHs0agnUqrOQZCxPj6T+
+ lVwXYf9rLAbSwsG85Ls5HxfIuoGQuZlm2QLmcdi9ZtRz4aX6NT6JGu9D8Nyc/TT/AsEg3ID7X3nGw
+ 9VfY5SBlnnrUf/EBA5kFXdr+qGVdZqkDYVMVKk1vI/OQQWuxIwYBiI7GgK2Z4/xX2UySlnfSfgAsb
+ Li3RgEp5YQzf8SO9YERFrETk6zGL7h5xz8lVuhXtERykXe9W0C8HbUJKTQRMRCK1foHibkO1RQLYd
+ PHBubU9QiolCcmrKOoAWyHLiGSCbgv+CJbR5XsrRDEkJ6Y/HODyfpMrVR6AdO1tD5yyGFKtQb80nc
+ /4X6sKOQ==;
 Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat
- Linux)) id 1ltOBT-007dgt-OF; Wed, 16 Jun 2021 05:33:53 +0000
-Date: Wed, 16 Jun 2021 06:33:51 +0100
+ Linux)) id 1ltOC9-007djU-26; Wed, 16 Jun 2021 05:34:39 +0000
+Date: Wed, 16 Jun 2021 06:34:33 +0100
 From: Christoph Hellwig <hch@infradead.org>
 To: Jan Kara <jack@suse.cz>
-Message-ID: <YMmNP7fjLUOIafzJ@infradead.org>
+Message-ID: <YMmNafE6x/kUbRqL@infradead.org>
 References: <20210615090844.6045-1-jack@suse.cz>
- <20210615091814.28626-3-jack@suse.cz>
+ <20210615091814.28626-4-jack@suse.cz>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20210615091814.28626-3-jack@suse.cz>
+In-Reply-To: <20210615091814.28626-4-jack@suse.cz>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  casper.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1ltOCc-00Bk3G-3v
-Subject: Re: [f2fs-dev] [PATCH 03/14] mm: Protect operations adding pages to
- page cache with invalidate_lock
+X-Headers-End: 1ltODC-00Bk8b-W2
+Subject: Re: [f2fs-dev] [PATCH 04/14] mm: Add functions to lock
+ invalidate_lock for two mappings
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,12 +95,20 @@ Cc: linux-cifs@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
  Steve French <sfrench@samba.org>, Dave Chinner <david@fromorbit.com>,
  Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
  Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
- Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
- Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org
+ Miklos Szeredi <miklos@szeredi.hu>, "Darrick J . Wong" <djwong@kernel.org>,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ ceph-devel@vger.kernel.org, Johannes Thumshirn <jth@kernel.org>,
+ linux-xfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+
+On Tue, Jun 15, 2021 at 11:17:54AM +0200, Jan Kara wrote:
+> Some operations such as reflinking blocks among files will need to lock
+> invalidate_lock for two mappings. Add helper functions to do that.
+> 
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: Jan Kara <jack@suse.cz>
 
 Looks good,
 
