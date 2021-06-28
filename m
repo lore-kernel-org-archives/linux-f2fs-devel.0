@@ -2,93 +2,78 @@ Return-Path: <SRS0=QpjO=LW=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D98CC2B9F4
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Jun 2021 12:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEDEC2B9F4
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Jun 2021 13:06:13 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E74FF61C31
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Jun 2021 12:41:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E74FF61C31
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTPS id 1EC22619AB
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Jun 2021 13:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EC22619AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lxqZk-0007U9-9z; Mon, 28 Jun 2021 12:41:20 +0000
+	id 1lxqxl-0008IN-PX; Mon, 28 Jun 2021 13:06:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <wangshilong1991@gmail.com>) id 1lxqZi-0007U1-13
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jun 2021 12:41:18 +0000
+ (envelope-from <changfengnan@vivo.com>) id 1lxqxk-0008IG-B3
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jun 2021 13:06:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=s5/zTfNR70aTjv1xZrZ4pWS2DjzkypAd9rzw9Aphd6w=; b=G2xtYug2yeiwnDnTNw3wIsoJxn
- gCzx9T/XS3HFgN45X+eD3TsoL/6kWO6j1YrtaY20v1pb0bYYZAS+u699gQdzyiYqQQVvtbmZ5t+Zg
- Xy3lxSplJGPwSdUF6O6ANPwPcfeQUr8okT4iAzrd++KD6eiG+mcB37g0mILOYOTNSaCA=;
+ bh=dYafs5kfin+Bo3Oph0RikhVDLy0JGfbQmdbgUsf1wvw=; b=maM8gRCF3KNs4o6f++DQsaxUik
+ qKtR33PFJD8jF94xlNeF8v/EtpcfNX47iScCkwyo+Bz2rh+jmoaeTRnVRJ0WBtBzdO2pQCa00zHT6
+ phMT6pYmT715itBX4bedSANJBxFP6VKV8OXkr0DbOZ9syhgZ0RydrB1drGa0boRzYqbk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=s5/zTfNR70aTjv1xZrZ4pWS2DjzkypAd9rzw9Aphd6w=; b=dheVTyzUaFtI+5M+Vbch7vJEK6
- hPg/Z5a/yVuROJlm9310P0fUBzyYHl3PjJhPyf19fZKePlGPgnNeo+yZYVnFpw/Nx/oYbTm3B8LZ3
- VzE0OXYqWilhDfxNDT6o8eO31FtaZMzPKETVGbvLpK9N1p07eUpqc9/dhzXeo66eYhDc=;
-Received: from mail-wr1-f52.google.com ([209.85.221.52])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=dYafs5kfin+Bo3Oph0RikhVDLy0JGfbQmdbgUsf1wvw=; b=S
+ HGzAywADGlKOI4Zk/5KqtmMgFPRk34N4AtJPqK8g7Hxfth8CpWDRfxJ98764Ln+AFwxyqjKx3In3J
+ PDNpvtSjQWQsIm/C0SuoUs5KyRdBhT3oBao9lAEfACUpRGLV2ty8HdWyOmUzo1HCG9r1Tqmtj5QlF
+ GjB5O7PNnDeC0NqM=;
+Received: from mail-m121144.qiye.163.com ([115.236.121.144])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1lxqZY-001r8y-Ue
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jun 2021 12:41:20 +0000
-Received: by mail-wr1-f52.google.com with SMTP id g7so16495672wri.7
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 28 Jun 2021 05:41:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc; bh=s5/zTfNR70aTjv1xZrZ4pWS2DjzkypAd9rzw9Aphd6w=;
- b=J5C0U2TwFeyCBDnIXoh3fP4g+kemM+leAvGcZn3foDep/O4eEbLPEHD8c25RsxPbL6
- eLFJSDTvy0lQYFSyIPj2imVd6MYmx9mRVdn8ntbJZ6B9u1AwL8FAlbil4duTRBhmmOBc
- 4r8zqxSccb5W7KIUsF+GwWXpH/h2ezdeg7GRZ8qg/8dIt8nORbww+6mLfY32NDkeyejI
- tE9JdcVzfnjcuTn48V5VmyRvQj9D3rAzFqB8Hf3TAcDNcBERorlvqrNmHzLkunKFAw6p
- nkkhJE3M9BZLS/CBHm3OnV5yECJQiniRE30MvuSGstI1Eatl5BjqZ2aOZBqhQ3BFkxu4
- rdPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc;
- bh=s5/zTfNR70aTjv1xZrZ4pWS2DjzkypAd9rzw9Aphd6w=;
- b=agvhoHnua30RppStAgMD/fwzi0CTVsoxqTi2DYyx0f8UEmYYLMNv/JadMdwFh5KNjl
- EsVisYRJPukxvxvckhpOAfdZDHSt9SEU0zjoTHL28FvLDzQb20cklHaKxH54fLAGX7aF
- wG3v2P56TNgbP+iDpin3qSs+/6xkTB5ApfOnLnhcilR/7s2T5kTX8WEsAFfpUHqaqR1q
- 7odd6CtDXDG5zH0hnMahSQfOoVDL2X00vu0JdJ6iVdFWIzNJBr1+cg17dxGI+cNcoN3H
- 28LKgEb+vEmaJ6AIhqHJgahA4hGKNyhAorSELkZCMy1mCUfA2THRbDep8vsmCl8F7VKY
- sP8g==
-X-Gm-Message-State: AOAM530aOLfe7KgRghnGftLBsQ3LRqITBEllZZ6FFi91inNEmJRsLLkM
- wsqORnmkkfa3ZvXaSShFCG0huT8+slCRV+2xLHk=
-X-Google-Smtp-Source: ABdhPJyHhX/JQxTm87Pus/NqKviVZfAbV9vG8LFegKu2AjKeS8GhZeo8uVu0UQM1AFUbp+TR2jkxwAO+9jx3YKl+fK8=
-X-Received: by 2002:a5d:6291:: with SMTP id k17mr27150390wru.225.1624884062719; 
- Mon, 28 Jun 2021 05:41:02 -0700 (PDT)
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1lxqxd-001sRx-VN
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Jun 2021 13:06:10 +0000
+DKIM-Signature: a=rsa-sha256;
+ b=mzV1eSyExtUOwA2Gryg3oB/Cmw2UyzezXAw1EIIQjsGgJryMbJygAn1NOQC84dnFP/k3731dmFAluFYyQTAlBVn4WpXZyvmV0uQ/YFQsmNAw3h9Y8PIpaYhMO+gG5WkGDQHfMLQyJqz48cBlJ5rdBW/UBstv8MdYlPMfUwCl7og=;
+ c=relaxed/relaxed; s=default; d=vivo.com; v=1;
+ bh=dYafs5kfin+Bo3Oph0RikhVDLy0JGfbQmdbgUsf1wvw=;
+ h=date:mime-version:subject:message-id:from;
+Received: from comdg01144017.vivo.xyz (unknown [218.104.188.164])
+ by mail-m121144.qiye.163.com (Hmail) with ESMTPA id 026A9AC02C7;
+ Mon, 28 Jun 2021 21:05:51 +0800 (CST)
+From: Fengnan Chang <changfengnan@vivo.com>
+To: jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Date: Mon, 28 Jun 2021 21:05:50 +0800
+Message-Id: <20210628130550.39696-1-changfengnan@vivo.com>
+X-Mailer: git-send-email 2.29.0
 MIME-Version: 1.0
-References: <20210625125026.5796-1-wangshilong1991@gmail.com>
- <9f6d607a-6b43-a3e2-7002-426f58513f9c@kernel.org>
-In-Reply-To: <9f6d607a-6b43-a3e2-7002-426f58513f9c@kernel.org>
-From: Wang Shilong <wangshilong1991@gmail.com>
-Date: Mon, 28 Jun 2021 20:40:51 +0800
-Message-ID: <CAP9B-Qn+eV5LSCtfbLAeXZpOJ3UDMzb7a9i6vJwfDN_zfKjHYA@mail.gmail.com>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1lxqZY-001r8y-Ue
-Subject: Re: [f2fs-dev] [PATCH] f2fs: forbid U32_MAX project ID
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZS1VLWVdZKFlBSE83V1ktWUFJV1kPCR
+ oVCBIfWUFZGh0ZSlYZHx9LSRlPGE8fSUhVEwETFhoSFyQUDg9ZV1kWGg8SFR0UWUFZT0tIVUpKS0
+ hKQ1VLWQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nz46PDo*MD9DSTRJNCEBGEIc
+ KzdPCSJVSlVKTUlPQ0NOTk5JTklMVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
+ WUlKQ1VKS09VSkNDVUpNT1lXWQgBWUFKTUlPNwY+
+X-HM-Tid: 0a7a52b9e41eb039kuuu026a9ac02c7
+X-Headers-End: 1lxqxd-001sRx-VN
+Subject: [f2fs-dev] [PATCH] f2fs: compress: allow write compress released
+ file after truncate to zero
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,57 +85,40 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Wang Shilong <wshilong@ddn.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Fengnan Chang <changfengnan@vivo.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Chao,
+We should allow write compress released file after truncate to zero.
 
-On Mon, Jun 28, 2021 at 8:32 PM Chao Yu <chao@kernel.org> wrote:
->
-> On 2021/6/25 20:50, Wang Shilong wrote:
-> > From: Wang Shilong <wshilong@ddn.com>
-> >
-> > U32_MAX is reserved for special purpose,
-> > qid_has_mapping() will return false if projid is
-> > 4294967295, dqget() will return NULL for it.
-> >
-> > So U32_MAX is unsupported Project ID, fix to forbid it.
-> >
-> > Signed-off-by: Wang Shilong <wshilong@ddn.com>
-> > ---
-> >   fs/f2fs/file.c | 2 ++
-> >   1 file changed, 2 insertions(+)
-> >
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index ceb575f99048..861edf3c01d5 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -3066,6 +3066,8 @@ int f2fs_fileattr_set(struct user_namespace *mnt_userns,
-> >       u32 iflags;
-> >       int err;
-> >
-> > +     if (fa->fsx_projid >= U32_MAX)
->
-> unlikely()? if this is really a corner case.
->
-> > +             return -EINVAL;
-> >       if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
-> >               return -EIO;
-> >       if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
->
-> I prefer to check fsx_projid here to keep line with check order in other
-> f2fs interfaces.
+Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
+---
+ fs/f2fs/file.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Just sent a v2 which tried to fix the problem in the VFS.
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6afd4562335f..b91ae8f751c5 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -730,9 +730,13 @@ int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 	 * for compressed file, only support cluster size
+ 	 * aligned truncation.
+ 	 */
+-	if (f2fs_compressed_file(inode))
++	if (f2fs_compressed_file(inode)) {
+ 		free_from = round_up(from,
+ 				F2FS_I(inode)->i_cluster_size << PAGE_SHIFT);
++		if (!free_from)
++			clear_inode_flag(inode, FI_COMPRESS_RELEASED);
++	}
++
+ #endif
+ 
+ 	err = f2fs_do_truncate_blocks(inode, free_from, lock);
+-- 
+2.29.0
 
->
-> Thoughts, Shilong?
->
-> Thanks,
->
-> >
 
 
 _______________________________________________
