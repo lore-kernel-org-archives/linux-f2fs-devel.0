@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A95C11F65
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Jun 2021 11:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7DDC11F68
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Jun 2021 11:32:06 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A0AAB61432
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Jun 2021 11:32:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0AAB61432
+	by mail.kernel.org (Postfix) with ESMTPS id 042E36128E
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 30 Jun 2021 11:32:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 042E36128E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lyYRn-0001mt-22; Wed, 30 Jun 2021 11:32:03 +0000
+	id 1lyYRo-0002Qe-SC; Wed, 30 Jun 2021 11:32:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sunke32@huawei.com>) id 1lyYRk-0001md-Uj
+ (envelope-from <sunke32@huawei.com>) id 1lyYRk-0002PL-UR
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Jun 2021 11:32:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2DJFSWIUwXCGUMVElcqRY0Q+DWkixSEFPZ0FvbC2ZQM=; b=HKInuBjrvvzvIQYma6Etj9IwJV
- mBYpDWfKBbF3VbwDySTZgVZ58mVLXQ/n+QxxJw4oRmIwjwTn2Y4wz8/oC7GTxwJub5ujpJyEiCGOk
- K1ZP4lGFUoL2Z7IcbW0tbpzunp4540czxAL4+NoW52/n02CQ8Z/gltU+srnnNpF+hZsE=;
+ bh=GEsrNndWydnW+YzcvrSQxL9cFyTsbb6V3it6lFZc5q4=; b=MIyQcaHA3qegT/xgMYmODBO3aG
+ i9TvRm5aPLZngtuoLPyfTzXVxCR9okG+iiaI5WvDH58jL6ShyXZSQgHwCG3TrkWzRpm1PjFb2EaaO
+ rWaIuiDUTJbR8f0towq6YKvvHymTtvSXXDOtYIrBp7ZCWB/9OHh9F+u80JmfiL8ApI+A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -42,30 +42,30 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2DJFSWIUwXCGUMVElcqRY0Q+DWkixSEFPZ0FvbC2ZQM=; b=XvVt9OysOxHD8n7d+aE9HJxupi
- M0RNGXxbedO6u3OxLheZz23+Iq9unxKOGrkgU8UouspD7YVX9PrQnqohtHX/5uMEagthJly+ZCUuw
- CFAEI9qK/d0RP7/NXwq3aM72eYWYZECo/PSyQHwz7C2ypDXvmzk3iitIbnJ4QofCTYR4=;
+ bh=GEsrNndWydnW+YzcvrSQxL9cFyTsbb6V3it6lFZc5q4=; b=GNspQRip3UNdXcCT44zw+DGgGj
+ GQUnS5JP8RPNx3EmHkrFaBNjQjUZ8GtitnihktRV04j5UUCQvYE2g9lStwe/2dMcPCsVvdeJfLLLm
+ DQl5fZ7DkRF6+0SWh1wd839xmU41R3JYCzIQWMAU96BzPjnwMqfJ7q4jRdU1NO7oDgRs=;
 Received: from szxga02-in.huawei.com ([45.249.212.188])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lyYRg-004dVY-HA
+ id 1lyYRh-0006MN-A2
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 30 Jun 2021 11:32:00 +0000
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GFJy13ZfRzZpDQ;
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.55])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GFJy10dbrzZpC2;
  Wed, 30 Jun 2021 19:28:41 +0800 (CST)
 Received: from dggema759-chm.china.huawei.com (10.1.198.201) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2176.2; Wed, 30 Jun 2021 19:31:48 +0800
+ 15.1.2176.2; Wed, 30 Jun 2021 19:31:47 +0800
 Received: from huawei.com (10.175.101.6) by dggema759-chm.china.huawei.com
  (10.1.198.201) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 30
- Jun 2021 19:31:47 +0800
+ Jun 2021 19:31:46 +0800
 From: Sun Ke <sunke32@huawei.com>
 To: <fstests@vger.kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
  <guan@eryu.me>, <chao@kernel.org>
-Date: Wed, 30 Jun 2021 19:37:35 +0800
-Message-ID: <20210630113736.551843-3-sunke32@huawei.com>
+Date: Wed, 30 Jun 2021 19:37:34 +0800
+Message-ID: <20210630113736.551843-2-sunke32@huawei.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20210630113736.551843-1-sunke32@huawei.com>
 References: <20210630113736.551843-1-sunke32@huawei.com>
@@ -74,9 +74,8 @@ X-Originating-IP: [10.175.101.6]
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  dggema759-chm.china.huawei.com (10.1.198.201)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1lyYRg-004dVY-HA
-Subject: [f2fs-dev] [PATCH v3 2/3] generic/103: special left calculation for
- f2fs
+X-Headers-End: 1lyYRh-0006MN-A2
+Subject: [f2fs-dev] [PATCH v3 1/3] generic/042: make a bigger img for f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,45 +92,34 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-It failed on f2fs:
-      QA output created by 103
-     +fallocate: No space left on device
-      Silence is golden.
-     ...
-
-f2fs uses index(radix) tree as mapping metadata, its space overhead
-is about one thousandth of the data.
+f2fs-utils 1.9.0 needs at least 38 MB space for f2fs image. However,
+f2fs-utils 1.14.0 needs at least 52 MB. Not sure if it will change again.
+So, just set it to 128M.
 
 Suggested-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Sun Ke <sunke32@huawei.com>
 ---
- tests/generic/103 | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ tests/generic/042 | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tests/generic/103 b/tests/generic/103
-index 795f851dc6c8..4efa1dc366f9 100755
---- a/tests/generic/103
-+++ b/tests/generic/103
-@@ -27,10 +27,18 @@ _require_xfs_io_command "falloc"
- _consume_freesp()
- {
- 	file=$1
-+	left=512
+diff --git a/tests/generic/042 b/tests/generic/042
+index 88cc2098221e..9419606fc82f 100755
+--- a/tests/generic/042
++++ b/tests/generic/042
+@@ -29,9 +29,11 @@ _crashtest()
+ 	file=$mnt/file
+ 	size=25M
  
- 	# consume nearly all available space (leave ~512kB)
- 	avail=`_get_available_space $SCRATCH_MNT`
--	filesizekb=$((avail / 1024 - 512))
-+
-+	# f2fs uses index(radix) tree as mapping metadata, its space overhead
-+	# is about one thousandth of the data
-+	if [ $FSTYP == "f2fs" ]; then
-+		left=$((left + avail / 1024000))
-+	fi
-+
-+	filesizekb=$((avail / 1024 - $left))
- 	$XFS_IO_PROG -fc "falloc 0 ${filesizekb}k" $file
- }
+-	# 25M is too small for f2fs.
++	# f2fs-utils 1.9.0 needs at least 38 MB space for f2fs image. However,
++	# f2fs-utils 1.14.0 needs at least 52 MB. Not sure if it will change
++	# again. So just set it 128M.
+ 	if [ $FSTYP == "f2fs" ]; then
+-		size=38M
++		size=128M
+ 	fi
  
+ 	# Create an fs on a small, initialized image. The pattern is written to
 -- 
 2.25.4
 
