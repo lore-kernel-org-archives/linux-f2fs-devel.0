@@ -2,77 +2,74 @@ Return-Path: <SRS0=Mutv=L2=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D67E5C11F68
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Jul 2021 06:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E7CC11F68
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Jul 2021 06:55:12 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9B8DB613F0;
-	Fri,  2 Jul 2021 06:55:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B8DB613F0
+	by mail.kernel.org (Postfix) with ESMTPS id 6518F61156;
+	Fri,  2 Jul 2021 06:55:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6518F61156
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1lzD4r-00082b-5T; Fri, 02 Jul 2021 06:55:05 +0000
+	id 1lzD4y-0007jl-2n; Fri, 02 Jul 2021 06:55:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1lzD4p-00082M-Hh
+ (envelope-from <ebiggers@kernel.org>) id 1lzD4p-0007jR-HF
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Jul 2021 06:55:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=O3NGSCkh0hnQlaNEpxOcMwB9yIc4wz9Bkksdr179CJg=; b=ef2Efmn56fqD+cvBrgOoOqh9Lo
- 8EbwPJ0hI5I1eSQZ1BhRz1f1Of/WwCgZnOLQu1iQ+mDkfNnLgIHm/xvXlbsm3jPaHy3LdnvwQx0f7
- 5Xjy14LDvBMRtszPg1iuBxTPQOxKik8UyV4gPDFxTlPH7XzUOD7PcvDGtAu8Gtim2QDw=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=O3NGSCkh0hnQlaNEpxOcMwB9yIc4wz9Bkksdr179CJg=; b=dOJxZxtVxsDOqA0Prz0MEl7h/d
- Cq66OkKPpm6OIoudLnyC7u2pgOwGZ3cMA+P8ISBvACASGbEUMZtzLXRrOCqdmunjgvjJtoeOIj+hQ
- 7lsCl3ZJkJomRXqridnk2XE55ejv/n744YMgd1kcz0Uo0YBGZR5BWuLqamuvElfUyGfw=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=9LzP3+lxRRBVQonHgS7VVulwJb/vPpVRfwfqivhYpXQ=; b=lP7/zsyGZNpBkEaTWnp3MHLZlE
+ kE4Ocj9YmoNwlW2g1/by4mMogPEqtu6fkkrc3PaCARjK9sOyquLLmElnmcsL3Qyv5UjhBbYf2p+lX
+ u6w3aOwj0P0e4d6/DZTlErOSrl0Z/Fpv6Pjr3pHY/E68kGdKN87jyeJr0r9a21VWeGL0=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=9LzP3+lxRRBVQonHgS7VVulwJb/vPpVRfwfqivhYpXQ=; b=B
+ CnEYhvxaOk9sa/Rea2tbVZ64bqARRPlg7dP8sR3NXjNzc18Wxr+OTvrRoZ2ZkNJAbCbtDoWLlTRzJ
+ JfQ5G/Bl7qQ+FDevvlgA95/NSEyb59Q+ghXPRAlkOQDaqhwHF8EqTYchvZTWxsRcza+MHQ4Nna41n
+ 9/37/xUkpnWjAY3c=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1lzD4m-0004OM-Vh
+ id 1lzD4m-0004OJ-Vi
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 02 Jul 2021 06:55:03 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 659D461413;
- Fri,  2 Jul 2021 06:54:51 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A2A7A613F0;
+ Fri,  2 Jul 2021 06:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1625208891;
- bh=oytk1FqAK/cRWx3e72Lrjf5gkgDm1h+IK3FE/F4jrDw=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=fBRQEhrJJ96bGUI9d8xd7QPa3WJ5ACNQiNFFlLiciyLDX/+kJJiMK4kdY7t2a/Hu8
- L/JOKII31seusjSyqQH0p0zJVYGN3K/WIcgd4EvZ76bvtCnhC2R1Qi/gBZ1nIw4M5l
- /qtnEb4tJYlMpY81DoSUpGC6zCG/nQqQ/+GfV7vfTFAIkkyWTE3QNeeLSLVuC6wUlG
- ZFUirevxfCcRDTK+uQT13qFXoBgPqyIzKhznOb6tw3I87oy1lri67ZPC8T7fSxItPB
- ZiksVnwYTJeunNRiKmM8dyfsMgSZAi9iigVse/a8GYIuCo22x+3oUZcck+67uOfckh
- 4dfuQHiZ4sTjQ==
+ s=k20201202; t=1625208890;
+ bh=2YEFNbCIRo9WHTdZ5XW0VKfk2fnVjJ1mVF7axmh20i4=;
+ h=From:To:Cc:Subject:Date:From;
+ b=hb2Z+thtoOA3Ut1D51UPw7NUY4/SDw+9ssqTVt7RSJrQ+PeUpckBpHqKThBKweN5k
+ lbd26NukQBtGrzVQZR0VApGV+hAOe4pbrKCoHqnOFYlvvNHWI6lLZN1slkg9znK7QA
+ PBWSIug3OcJx+ZYgHrfHDhJdMgqiEO97WuKXOGiLuCN5iUglvtfoBmTj4ieI5MLW3G
+ tp1fPywkkq9ZrOOj+xHVwcAFrOPXsgTGtWc0z7yMxtSeDXSWq4rpTGKc1p0Bg2NawI
+ OZWUn6F3LZrJuKBLEGWrDr3IwEyl6nIznqGrYnLPez8t9ykzve/FQxDyZEnZaiODQk
+ aT+b5KyTtBu6Q==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Thu,  1 Jul 2021 23:53:48 -0700
-Message-Id: <20210702065350.209646-4-ebiggers@kernel.org>
+Date: Thu,  1 Jul 2021 23:53:45 -0700
+Message-Id: <20210702065350.209646-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210702065350.209646-1-ebiggers@kernel.org>
-References: <20210702065350.209646-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1lzD4m-0004OM-Vh
-Subject: [f2fs-dev] [PATCH 3/5] f2fs: report correct st_size for encrypted
- symlinks
+X-Headers-End: 1lzD4m-0004OJ-Vi
+Subject: [f2fs-dev] [PATCH 0/5] fscrypt: report correct st_size for
+ encrypted symlinks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,55 +82,39 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-mtd@lists.infradead.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+ linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+This series makes the stat() family of syscalls start reporting the
+correct size for encrypted symlinks.
 
-The stat() family of syscalls report the wrong size for encrypted
-symlinks, which has caused breakage in several userspace programs.
+See patch 1 for a detailed explanation of the problem and solution.
 
-Fix this by calling fscrypt_symlink_getattr() after f2fs_getattr() for
-encrypted symlinks.  This function computes the correct size by reading
-and decrypting the symlink target (if it's not already cached).
+Patch 1 adds a helper function that computes the correct size for an
+encrypted symlink.  Patches 2-4 make the filesystems with fscrypt
+support use it, and patch 5 updates the documentation.
 
-For more details, see the commit which added fscrypt_symlink_getattr().
+This series applies to mainline commit 3dbdb38e2869.
 
-Fixes: cbaf042a3cc6 ("f2fs crypto: add symlink encryption")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/namei.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Eric Biggers (5):
+  fscrypt: add fscrypt_symlink_getattr() for computing st_size
+  ext4: report correct st_size for encrypted symlinks
+  f2fs: report correct st_size for encrypted symlinks
+  ubifs: report correct st_size for encrypted symlinks
+  fscrypt: remove mention of symlink st_size quirk from documentation
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index a9cd9cf97229..e2d540ae2293 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -1305,9 +1305,19 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 	return target;
- }
- 
-+static int f2fs_encrypted_symlink_getattr(struct user_namespace *mnt_userns,
-+					  const struct path *path,
-+					  struct kstat *stat, u32 request_mask,
-+					  unsigned int query_flags)
-+{
-+	f2fs_getattr(mnt_userns, path, stat, request_mask, query_flags);
-+
-+	return fscrypt_symlink_getattr(path, stat);
-+}
-+
- const struct inode_operations f2fs_encrypted_symlink_inode_operations = {
- 	.get_link	= f2fs_encrypted_get_link,
--	.getattr	= f2fs_getattr,
-+	.getattr	= f2fs_encrypted_symlink_getattr,
- 	.setattr	= f2fs_setattr,
- 	.listxattr	= f2fs_listxattr,
- };
+ Documentation/filesystems/fscrypt.rst |  5 ---
+ fs/crypto/hooks.c                     | 44 +++++++++++++++++++++++++++
+ fs/ext4/symlink.c                     | 12 +++++++-
+ fs/f2fs/namei.c                       | 12 +++++++-
+ fs/ubifs/file.c                       | 13 +++++++-
+ include/linux/fscrypt.h               |  7 +++++
+ 6 files changed, 85 insertions(+), 8 deletions(-)
+
+
+base-commit: 3dbdb38e286903ec220aaf1fb29a8d94297da246
 -- 
 2.32.0
 
