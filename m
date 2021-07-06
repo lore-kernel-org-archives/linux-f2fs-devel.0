@@ -4,39 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE38EC07E96
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jul 2021 13:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93806C07E96
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jul 2021 22:07:10 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8FF3A61CA6;
-	Tue,  6 Jul 2021 13:53:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF3A61CA6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTPS id 4523361C92;
+	Tue,  6 Jul 2021 22:07:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4523361C92
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m0lW0-0000nh-F1; Tue, 06 Jul 2021 13:53:32 +0000
+	id 1m0tDf-00009f-71; Tue, 06 Jul 2021 22:07:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from
- <BATV+7658d6c686f185282f96+6526+infradead.org+hch@casper.srs.infradead.org>)
- id 1m0lVy-0000na-EK
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Jul 2021 13:53:30 +0000
+ (envelope-from <david@fromorbit.com>) id 1m0tDd-00009R-QZ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Jul 2021 22:07:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YWMgMiz0NSkHLipT1VEThA/f8vA9y3xyiRXKfliC2FQ=; b=j6uoq53/d4iry9D6jDwR37nTgj
- JUO+NIRJGqWkfsSs2fS1HDQQGEUs4/UT9U1QxGTK/APmpViCW8oIQwBOQxC2xka5qjTut/mdt1uvZ
- FTp9M3JGxW4rwRldSdObI7XlVErYiJuX5QGcOYObpXKH/Pa6FnnJEH5/I3n5+5EsLSss=;
+ bh=1wfjeeW9xv5JxDXd+N4LOxrVb+XRNJYNZmohOySDnI4=; b=eHk/g5y9HZAWIVNzpblvhEYg0g
+ CYIQbY+nMyL1X1IXSoaQORmBkzl6nYmeNQLCMsN4YAPy7aLuTKcl7+r6aHp2Z1JksdX4b+ojbVPb3
+ lCR3Ji5WmUq3pmffqmEk4/lgrGUksdW/iabr60CtzylOuANA4vpreieEgkyAMJ4wGuXk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -44,37 +42,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=YWMgMiz0NSkHLipT1VEThA/f8vA9y3xyiRXKfliC2FQ=; b=a20yRW7fGgFzAhoEXTGL4YcfK5
- 5y2F47Sho6veBySnCo3FTQTxoJbm2FORWAmhslKqg8NbEMlTmGco9NX4KCcZjSa6m+7mBxIwVzUhW
- X3/THDi44BFedp72gW84P3kyo2mCPY5CiV2grmA1ALFRgcv6/nFlGSOrmG4ymnJefZ1k=;
-Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m0lVn-00CJMn-T4
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Jul 2021 13:53:30 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=YWMgMiz0NSkHLipT1VEThA/f8vA9y3xyiRXKfliC2FQ=; b=eEJjo64t1w7GzXpO1lD11M1r9W
- WPXSlO2KDH2Ib31wkN3RlL5OYWPdWaCfIEcbv6aUwwRwvyz3FloDabCdqH6JxLfsWDuFdBY2ZJc4T
- hXdxbvTiMvizZLyP71NAio0S8il8w1mNBOlxBsHPoT5TAuwyQjopHfQWCbqve7XkVrIhvnumyY1g5
- BClgKyBxQBK582tIev0TvyGSblgulZfmIf5irTzOU4rsWtOKhEf9aQL/+JiM9FwECdCMXdRV+JaIJ
- HJE5Qykdn8CIfeRDVmEbysxhW8fE/Gurc3ZJ47TEUDi6YORm/yzPsQ8jPTanei8ivUNU4In0eZWDT
- RPiEPZMw==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat
- Linux)) id 1m0lVI-00BRAt-Cl; Tue, 06 Jul 2021 13:52:50 +0000
-Date: Tue, 6 Jul 2021 14:52:48 +0100
-From: Christoph Hellwig <hch@infradead.org>
+ bh=1wfjeeW9xv5JxDXd+N4LOxrVb+XRNJYNZmohOySDnI4=; b=Pna89LUlez5RUW+yHCFj50KR1T
+ wlgyu/UZtfXca8nMJrd1KKAdQiL6uEbfSEQEcTFktlQMqUwyE+UAP5JWyhTp40JvMHq/geMsBZHrx
+ tiwz6ro+dmUKEJcNueHSGg5vJB1ZEij+MVbwvagQpkBosM0UEns3ruHRC7Dyi2i+covE=;
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.92.3)
+ id 1m0tDU-00Cqmf-R7
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 06 Jul 2021 22:07:05 +0000
+Received: from dread.disaster.area (pa49-179-204-119.pa.nsw.optusnet.com.au
+ [49.179.204.119])
+ by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id C796E7177;
+ Wed,  7 Jul 2021 08:06:47 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+ (envelope-from <david@fromorbit.com>)
+ id 1m0tDK-003Yhh-JT; Wed, 07 Jul 2021 08:06:46 +1000
+Date: Wed, 7 Jul 2021 08:06:46 +1000
+From: Dave Chinner <david@fromorbit.com>
 To: Wang Shilong <wangshilong1991@gmail.com>
-Message-ID: <YORgMAtpCBdc59cN@infradead.org>
+Message-ID: <20210706220646.GO664593@dread.disaster.area>
 References: <20210702140243.3615-1-wangshilong1991@gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <20210702140243.3615-1-wangshilong1991@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- casper.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1m0lVn-00CJMn-T4
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
+ a=Xomv9RKALs/6j/eO6r2ntA==:117 a=Xomv9RKALs/6j/eO6r2ntA==:17
+ a=kj9zAlcOel0A:10 a=e_q4qTt1xDgA:10 a=lB0dNpNiAAAA:8 a=7-415B0cAAAA:8
+ a=5GLb7GpSppZt8VVZA_8A:9 a=CjuIK1q_8ugA:10 a=c-ZiYqmG3AbHTdtsH08C:22
+ a=biEYGPWJfzWAr4FL6Ov7:22
+X-Headers-End: 1m0tDU-00Cqmf-R7
 Subject: Re: [f2fs-dev] [PATCH v3] fs: forbid invalid project ID
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -93,6 +89,21 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+On Fri, Jul 02, 2021 at 10:02:43AM -0400, Wang Shilong wrote:
+> fileattr_set_prepare() should check if project ID
+> is valid, otherwise dqget() will return NULL for
+> such project ID quota.
+> 
+> Signed-off-by: Wang Shilong <wshilong@ddn.com>
+> ---
+> v2->v3: move check before @fsx_projid is accessed
+> and use make_kprojid() helper.
+> 
+> v1->v2: try to fix in the VFS
+> ---
+>  fs/ioctl.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 > diff --git a/fs/ioctl.c b/fs/ioctl.c
 > index 1e2204fa9963..d7edc92df473 100644
 > --- a/fs/ioctl.c
@@ -104,12 +115,71 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 > +	if (!projid_valid(make_kprojid(&init_user_ns, fa->fsx_projid)))
 > +		return -EINVAL;
 >  	/*
+>  	 * Project Quota ID state is only allowed to change from within the init
+>  	 * namespace. Enforce that restriction only if we are trying to change
 
-And empty line before the comment would be nice for readability.
+I still don't think this is correct - read the comment directly
+below where you put this. That was the code block I was referring to
+early:
 
-Otherwise looks good:
+        /*
+         * Project Quota ID state is only allowed to change from within the init
+         * namespace. Enforce that restriction only if we are trying to change
+         * the quota ID state. Everything else is allowed in user namespaces.
+         */
+        if (current_user_ns() != &init_user_ns) {
+                if (old_ma->fsx_projid != fa->fsx_projid)
+                        return -EINVAL;
+                if ((old_ma->fsx_xflags ^ fa->fsx_xflags) &
+                                FS_XFLAG_PROJINHERIT)
+                        return -EINVAL;
+        }
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+IOWs: if we are not changing the projid, then we should not be
+checking it for validity because of the way the whole get/set
+interface works.
+
+The reason for this is that this interface is a get/set pair, where
+you first have to get the values from the filesystem, then modify
+them and send the set back to the filesystem. If the filesystem
+sends out fsx_projid = -1 (for whatever reason), the caller must
+send that same value back into the filesystem if they are not
+modifying the project ID. Hence we have to accept any projid from
+the caller that matches the current filesystem value, regardless of
+whether it is an invalid value or not.
+
+Therefore, we should only be checking if fa->fsx_projid is valid if
+it is different to the current filesystem value *and* we are allowed
+to change it. So:
+
+        /*
+         * Project Quota ID state is only allowed to change from within the init
+         * namespace. Enforce that restriction only if we are trying to change
+         * the quota ID state. Everything else is allowed in user namespaces.
+         */
+        if (current_user_ns() != &init_user_ns) {
+                if (old_ma->fsx_projid != fa->fsx_projid)
+                        return -EINVAL;
+                if ((old_ma->fsx_xflags ^ fa->fsx_xflags) &
+                                FS_XFLAG_PROJINHERIT)
+                        return -EINVAL;
+        } else {
+
+		/*
+		 * Caller is allowed to change the project ID. If it is being
+		 * changed, make sure that the new value is valid.
+		 */
+                if (old_ma->fsx_projid != fa->fsx_projid &&
+		    !projid_valid(make_kprojid(&init_user_ns, fa->fsx_projid)))
+			return -EINVAL;
+	}
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
 
 _______________________________________________
