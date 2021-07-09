@@ -1,91 +1,75 @@
-Return-Path: <SRS0=GmbE=MA=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=XZbR=MB=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5542AC07E96
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jul 2021 09:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E765C07E96
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Jul 2021 02:00:22 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1101060231;
-	Thu,  8 Jul 2021 09:52:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1101060231
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTPS id 14FD26144A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  9 Jul 2021 02:00:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FD26144A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m1Qi1-0007fA-Cw; Thu, 08 Jul 2021 09:52:41 +0000
+	id 1m1foS-0002s4-Ay; Fri, 09 Jul 2021 02:00:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1m1Qi0-0007f0-0H
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Jul 2021 09:52:40 +0000
+ (envelope-from <wangxiaojun11@huawei.com>) id 1m1foR-0002rs-3r
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Jul 2021 02:00:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PhlJNBpetjZSDV5/yCI47Cdt6ca/0zPJcaE8KUURNEc=; b=IkpnuOqX9joK3BQGSE6ahyotST
- OVobIkMuRO/NL48f2C4tYXit98o1jysEJ+1ptHCD3Ht/l/Es7MNZ1niUo/2Ep6fwiRFGinaTKTS8Q
- aODFBDlCVRO04/68kmLBQ+/M1m/luxB52i57hDsszJ72C5CvgQdgsFxKhDWBa47MMDIA=;
+ bh=yldrAxgCyNLcLRTgZq3OErvolJEUuqCHSL5onlV9C6g=; b=lG75ZfMG3CwiHEkvkLbrI309HC
+ BZ1tkoulkt6PLTtZf7KAdAG7zsywSqeIoATGm6wUfpSFTpiO/jtRnlTEAmUMTGlThmT59pvi6Bifk
+ MXKjdC9LVX985QQA28Xvw5xVvK6voxg5GhQcdkOcgaMznOucvz4NAslA3ALCgNmhz2fg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=PhlJNBpetjZSDV5/yCI47Cdt6ca/0zPJcaE8KUURNEc=; b=cZP9MylWE8s8ULTYc/C7lH0nC1
- bR66BA4NPTpDBFPhpJky5R8A2aladC3+15pzVZFHYPwIdx7s0DAs7UHoCLo8HorE12yYVAan+azzi
- viysD+zwVkH1CxbOtpOHeBuFCwSl9EuwpOWfKsev7+XLg2d4v04EshHa9yqj5AZ/cx3Q=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=yldrAxgCyNLcLRTgZq3OErvolJEUuqCHSL5onlV9C6g=; b=O
+ WOUmxWrTYfHPA6o2OU5eJwQx/QHge2a4YvJ/g/pzEEQ1HfFcFKi/nm+inJvqk2uNrsIg4Gx0N7IsK
+ 4RqYyg5Owd2NgF2YFE/v15+SUrPYwJxUbD/a7vZPxtIB7rf+fiRAxJ2JI56SnJxo4dVOGa3x5IrcC
+ uKjD3RxEL9JHez+k=;
+Received: from szxga02-in.huawei.com ([45.249.212.188])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1m1Qhk-0003nr-7S
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 08 Jul 2021 09:52:39 +0000
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
- by smtp-out2.suse.de (Postfix) with ESMTP id EA857201A1;
- Thu,  8 Jul 2021 09:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1625737937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=PhlJNBpetjZSDV5/yCI47Cdt6ca/0zPJcaE8KUURNEc=;
- b=f5l6TTOQAYB3MaKb1DZ9Ruzgb2xHoK54uI9sHiBGLRmiaQokt0TJV4zeh2rFYpiEfoPau5
- XeZ3Swqiy7Kn2+OChoCLUlIaO59Ad2dxOlkgrUmLH4X1YXZjIPwHDS6x8felX1bGIGQ1D+
- EJhdDiBG3+7H1nbAG25qMUAma5eROjY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1625737937;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=PhlJNBpetjZSDV5/yCI47Cdt6ca/0zPJcaE8KUURNEc=;
- b=J6vHDs5u3ru0i/nrlj6xKeplfW0Cbu6Uj5FAG7tRm2oWd5W0XLN9eUwnpV4eHv97lQYbCZ
- R4hE2UUNrTcoS2AA==
-Received: from quack2.suse.cz (unknown [10.163.43.118])
- by relay2.suse.de (Postfix) with ESMTP id D6302A3B88;
- Thu,  8 Jul 2021 09:52:17 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
- id 589961F2CAF; Thu,  8 Jul 2021 11:52:17 +0200 (CEST)
-Date: Thu, 8 Jul 2021 11:52:17 +0200
-From: Jan Kara <jack@suse.cz>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Message-ID: <20210708095217.GA32434@quack2.suse.cz>
-References: <YOYHejl3CgABOnhP@google.com>
- <20210708094647.7c0d3060@canb.auug.org.au>
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1m1foO-0001qq-Jq
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 09 Jul 2021 02:00:19 +0000
+Received: from dggeml756-chm.china.huawei.com (unknown [172.30.72.56])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GLbr46cRLzcbLY;
+ Fri,  9 Jul 2021 09:56:52 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggeml756-chm.china.huawei.com
+ (10.1.199.158) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Fri, 9 Jul
+ 2021 10:00:05 +0800
+From: Wang Xiaojun <wangxiaojun11@huawei.com>
+To: <chao@kernel.org>, <jaegeuk@kernel.org>
+Date: Fri, 9 Jul 2021 10:05:59 +0800
+Message-ID: <20210709020559.3885430-1-wangxiaojun11@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20210708094647.7c0d3060@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Headers-End: 1m1Qhk-0003nr-7S
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs for 5.14-rc1
+X-Originating-IP: [10.175.101.6]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggeml756-chm.china.huawei.com (10.1.199.158)
+X-CFilter-Loop: Reflected
+X-Headers-End: 1m1foO-0001qq-Jq
+Subject: [f2fs-dev] [PATCH] f2fs: avoid to create an empty string as the
+ extension_list
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,49 +81,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu 08-07-21 09:46:47, Stephen Rothwell wrote:
-> Hi Jaegeuk,
-> 
-> On Wed, 7 Jul 2021 12:58:50 -0700 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> >
-> > Could you please consider this pull request?
-> > 
-> > Thanks,
-> > 
-> > The following changes since commit bd3c9cdb21a2674dd0db70199df884828e37abd4:
-> > 
-> >   Merge tag 'arm64-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux (2021-05-14 10:52:47 -0700)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-5.14-rc1
-> > 
-> > for you to fetch changes up to 28607bf3aa6f9762b32dc7f1ed0488823c0651b8:
-> > 
-> >   f2fs: drop dirty node pages when cp is in error status (2021-07-06 22:05:06 -0700)
-> 
-> Its worth mentioning the semantic conflict against the ext3 tree (which
-> hasn't been merged by Linus yet, but presumably will be).
+When creating a file, we need to set the temperature based on
+extension_list. If the empty string is a valid extension_list,
+the is_extension_exist will always returns true,
+which affects the separation of hot and cold.
 
-Whether that particular series causing the conflict will be merged by Linus
-in this merge window is uncertain - Linus didn't like how filemap_fault()
-unconditionally acquired the lock. I've created an optimization patch to avoid
-that but review is pending... At this point I'm leaning towards the variant
-that series won't go in during the merge window. In that case I'll
-probably rebase on top of rc1 and force-push everything.
+Signed-off-by: Wang Xiaojun <wangxiaojun11@huawei.com>
+---
+ fs/f2fs/namei.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-								Honza
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index a9cd9cf97229..34341d3edb8d 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -219,6 +219,8 @@ int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
+ 	int start, count;
+ 	int i;
+ 
++	if (!strlen(name))
++		return -EINVAL;
+ 	if (set) {
+ 		if (total_count == F2FS_MAX_EXTENSION)
+ 			return -EINVAL;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.4
+
 
 
 _______________________________________________
