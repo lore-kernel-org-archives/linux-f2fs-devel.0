@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD12C11F69
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 10 Jul 2021 23:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F7EC07E9C
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 10 Jul 2021 23:49:37 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 472396135D;
-	Sat, 10 Jul 2021 23:49:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 472396135D
+	by mail.kernel.org (Postfix) with ESMTPS id 2842960234;
+	Sat, 10 Jul 2021 23:49:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2842960234
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m2Mim-0000Mz-0v; Sat, 10 Jul 2021 23:49:20 +0000
+	id 1m2Mj2-0003wI-59; Sat, 10 Jul 2021 23:49:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1m2Mik-0000Mt-M9
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Jul 2021 23:49:18 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <sashal@kernel.org>) id 1m2Mj1-0003w9-0Z
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Jul 2021 23:49:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ne2/RqaxvuiEAZK/ssiwscQg5eEGi5cXFZFDg974Gd8=; b=jRKNKq9fcpvbgKa68MwgQfeu4m
- iON44jfnG3dQdmZeVsujNvsR4msxSsKRpEBHgwn6drYqhrcXa2RfEHt7zkS0xA/gfW/RDgn7xdU3P
- jwpzxE135XOZvehth8AhtmIVsIT0EKNr3fNgFxFQtTNd65LpMdafYTB0PdfUHEncLYZM=;
+ bh=WKPy7FhFTmNS0IQjHB7vrJDPtxUozBL8RCBBpoGR7n0=; b=BL1rENUZ5uA74Elwv68IisDOY9
+ k3A+sgZpc3CKySWHFWxN30CmIeolOXojB8e30Fww87yDQBXT2gTAB42yXvXLlJIvAgZ69oetvK0+t
+ 30Yrh9AKQnNdeA6ER+bFwE8U4qRhI0sF1g2jLTYHOciQnJMhP/RK2agAKJTLJ5iZVPYo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,39 +42,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Ne2/RqaxvuiEAZK/ssiwscQg5eEGi5cXFZFDg974Gd8=; b=Vd/WYQDroxg2F1TiyXTv8Zr0jH
- /WM0t3bg6QWwP6VHRhghG/rLTsZ8RAGpsvhTmjS1w1SHlOl7auYqvW35nSU0TDambRYwLcT3N3vbD
- 11ynqXaiYGWRokE1q6I+itF99Qk3GtoFFSpfOX2dMjCo5eCDQsNb37jqJlPJR7WeqcoI=;
-Received: from [198.145.29.99] (helo=mail.kernel.org)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=WKPy7FhFTmNS0IQjHB7vrJDPtxUozBL8RCBBpoGR7n0=; b=mCoz0t6dF9fqMvvpRQFMIbO3XI
+ /wn9rfsS1zoElnkoQPVNCvwh9wJgWVhOalkGPr+oJ5uVV730pOneWDYaByQoIYZtSXNS8nDXbvocD
+ EntWWTOZz9zg8LcXY7sK0JLKGFDr4m6SZQt0F33hvWS+segdTooIXoraCfCOaDp116aE=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m2Mif-003ljh-FK
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Jul 2021 23:49:18 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E1836135B;
- Sat, 10 Jul 2021 23:49:01 +0000 (UTC)
+ id 1m2Mix-0006iS-Qq
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 10 Jul 2021 23:49:34 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7E15E6135E;
+ Sat, 10 Jul 2021 23:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1625960942;
- bh=z8ABZHzMaPXZZRS6oOIBPCfgrs48E9f8t8irqiQADTU=;
+ s=k20201202; t=1625960961;
+ bh=sjqpwY73C92VDCDjMUL/DRn6gBYIIH+bFVYETNWMmt4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=VDRmvq0A1kxSfAsI4loGJ/vnHS827wTxJQpkTihBibha8dJnc58aybXI+mfQJf4SV
- 3in7EjOWQSTdIq3DPHh9woT25zxru7TyoboMfam6SlYTriuObtXbXljDm/WJwALhhn
- flzOe7mz78IbjLSwIYYC83L5Ci19qORUZEMIYd9UGrnOF8ax//XHTBCSpBMvs4ykRD
- xfooxfOdrWxK2XShJ/5UxXrYZmfyMKBjvg2JlehaZJz8X8Cys/yLwqFrOKH34BKlxz
- f+p+RjptY0dNSqHZlAIZ9Sbic3cTlOgki+DF+OD5b0+frlflqEtcy7qA4uv7UNlVHT
- pxi/cOCwxm4xA==
+ b=Qu4j7/Dv3dcJtTlYL52PMpSFdBL61iaFxncKG1olRT8zoVnz13qDNuFqYCSKfrawq
+ XgbLXxODfd+Xo6o9Lilwhu/lLoZyqc053LNPxJ+yAB8Ou7t+kA/g7QZdNbGsHXoZxr
+ Zjd2jOe3JFTxIKJeicSyOhzq8+FZ7ZZZf/YnlXKeSYQe2DGiG55KQDdg9E9x/M8bqI
+ 9dRj1e/h5nG8AYk2jjHoXRR7cPEITnblehLa1v2QEDTsPb5oHgPdPHycXaEvObqQJG
+ rXpFsWOIBOhzm2SXlMAWj7DuNvdv36cGWrIbynSJi4+PqoYtwR2PoQ4B7TupAwjTIf
+ fIyh8p0QdYbag==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Sat, 10 Jul 2021 19:48:07 -0400
-Message-Id: <20210710234857.3220040-3-sashal@kernel.org>
+Date: Sat, 10 Jul 2021 19:48:35 -0400
+Message-Id: <20210710234915.3220342-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210710234857.3220040-1-sashal@kernel.org>
-References: <20210710234857.3220040-1-sashal@kernel.org>
+In-Reply-To: <20210710234915.3220342-1-sashal@kernel.org>
+References: <20210710234915.3220342-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1m2Mif-003ljh-FK
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.13 03/53] f2fs: fix to avoid racing on
+X-Headers-End: 1m2Mix-0006iS-Qq
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.12 03/43] f2fs: fix to avoid racing on
  fsync_entry_slab by multi filesystem instances
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -132,10 +132,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  3 files changed, 23 insertions(+), 10 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c83d90125ebd..a5de48e768d7 100644
+index f3fabb1edfe9..148fc1ce52d7 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3566,6 +3566,8 @@ void f2fs_destroy_garbage_collection_cache(void);
+@@ -3560,6 +3560,8 @@ void f2fs_destroy_garbage_collection_cache(void);
   */
  int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only);
  bool f2fs_space_for_roll_forward(struct f2fs_sb_info *sbi);
@@ -145,10 +145,10 @@ index c83d90125ebd..a5de48e768d7 100644
  /*
   * debug.c
 diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 422146c6d866..4b2f7d1d5bf4 100644
+index da75d5d52f0a..4ae055f39e21 100644
 --- a/fs/f2fs/recovery.c
 +++ b/fs/f2fs/recovery.c
-@@ -788,13 +788,6 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+@@ -787,13 +787,6 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
  	quota_enabled = f2fs_enable_quota_files(sbi, s_flags & SB_RDONLY);
  #endif
  
@@ -162,7 +162,7 @@ index 422146c6d866..4b2f7d1d5bf4 100644
  	INIT_LIST_HEAD(&inode_list);
  	INIT_LIST_HEAD(&tmp_inode_list);
  	INIT_LIST_HEAD(&dir_list);
-@@ -867,8 +860,6 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+@@ -866,8 +859,6 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
  		}
  	}
  
@@ -171,9 +171,9 @@ index 422146c6d866..4b2f7d1d5bf4 100644
  #ifdef CONFIG_QUOTA
  	/* Turn quotas off */
  	if (quota_enabled)
-@@ -878,3 +869,17 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+@@ -877,3 +868,17 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
  
- 	return ret ? ret : err;
+ 	return ret ? ret: err;
  }
 +
 +int __init f2fs_create_recovery_cache(void)
@@ -190,10 +190,10 @@ index 422146c6d866..4b2f7d1d5bf4 100644
 +	kmem_cache_destroy(fsync_entry_slab);
 +}
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7d325bfaf65a..096492caaa6b 100644
+index d852d96773a3..1f7bc4b3f6ae 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -4227,9 +4227,12 @@ static int __init init_f2fs_fs(void)
+@@ -4187,9 +4187,12 @@ static int __init init_f2fs_fs(void)
  	err = f2fs_create_checkpoint_caches();
  	if (err)
  		goto free_segment_manager_caches;
@@ -207,7 +207,7 @@ index 7d325bfaf65a..096492caaa6b 100644
  	err = f2fs_create_garbage_collection_cache();
  	if (err)
  		goto free_extent_cache;
-@@ -4278,6 +4281,8 @@ static int __init init_f2fs_fs(void)
+@@ -4238,6 +4241,8 @@ static int __init init_f2fs_fs(void)
  	f2fs_destroy_garbage_collection_cache();
  free_extent_cache:
  	f2fs_destroy_extent_cache();
@@ -216,7 +216,7 @@ index 7d325bfaf65a..096492caaa6b 100644
  free_checkpoint_caches:
  	f2fs_destroy_checkpoint_caches();
  free_segment_manager_caches:
-@@ -4303,6 +4308,7 @@ static void __exit exit_f2fs_fs(void)
+@@ -4263,6 +4268,7 @@ static void __exit exit_f2fs_fs(void)
  	f2fs_exit_sysfs();
  	f2fs_destroy_garbage_collection_cache();
  	f2fs_destroy_extent_cache();
