@@ -2,29 +2,29 @@ Return-Path: <SRS0=JrUz=ME=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9C9C11F66
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jul 2021 16:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96620C11F6B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jul 2021 16:56:29 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AD1B1611C0;
-	Mon, 12 Jul 2021 16:56:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD1B1611C0
+	by mail.kernel.org (Postfix) with ESMTPS id 49CEA6120A;
+	Mon, 12 Jul 2021 16:56:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49CEA6120A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m2zEK-0000Bj-Bw; Mon, 12 Jul 2021 16:56:28 +0000
+	id 1m2zEK-0000BW-93; Mon, 12 Jul 2021 16:56:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1m2zEI-0000B3-A3
+ (envelope-from <jack@suse.cz>) id 1m2zEI-0000B2-9Q
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Jul 2021 16:56:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9yEcA8XH1+Aq+HogCsZ38H71sADSF6n5eh1Yuc7mdUU=; b=RXRGkDerVoIxfOB6+rpm2YA4CJ
- pZwSvWm2noX0O9CDn76PyKflS+BmWoIm/TuWTNhoWwoxQwD7M817yH71Jtfdgop7NyelfdjLAJjuf
- Y5lk5zqAAS/Pr8NAUxDeIXqKBvpHn3C0zIW+SndiOWqdtLfoocOPQYR/Z80VQDySwxp0=;
+ bh=VgWT5tfqbtBkDrX2L7CznODEgq2BTXfXClIF6lsIWFg=; b=aQUmOVVtbAeTR5q8B0/5oQ2j0e
+ pWp6f6w4J7DLWBCXzmnIHGlpYKU/myvHjtNDHEddaQjW4iWkepXpLFLMkAz4mqoiy3z2Ty6fsPn1v
+ AsQ1FmKJyIo0bfhkWGsQZNkNXpjBH9uJby0nfK01cwSlrMCErn/rEVL28ttbXu5XprUE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,62 +42,61 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9yEcA8XH1+Aq+HogCsZ38H71sADSF6n5eh1Yuc7mdUU=; b=Cjh1FnYgDFsVFgXtDYFsr87VpU
- aXS0LRdg/XpUjw+5pvc975CqtQLxpXnpnS3SQwLHW3UfQJOOVHZNMzYBhEtOqmRuPw2yk3AjJ2oup
- 9h8c+918uA3085TTgPMlt16q9/lJMhv8uHg7fFZysp0tu5440SIxT5nM1yR+VAleg/e8=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=VgWT5tfqbtBkDrX2L7CznODEgq2BTXfXClIF6lsIWFg=; b=Di0qBoIO2QRhxACwbEO3w4w+iZ
+ YQlTvN6KZDEe1ufSaHOmF9acug14kQuB1IAZTnHSD+qcMyRFDXmNqevBiFHXDAeDkbHq3lIpT30oK
+ VrrjR7G+jmlf7jKWNZrh0Bu+mwPomVtwlBTgBzThgG3XsbfEf9QFVMoC/u92qnqVsQyw=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1m2zEA-0001y8-88
+ id 1m2zEB-005zK1-Pq
  for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Jul 2021 16:56:26 +0000
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
- by smtp-out2.suse.de (Postfix) with ESMTP id EB86D1FFC4;
- Mon, 12 Jul 2021 16:56:09 +0000 (UTC)
+ by smtp-out1.suse.de (Postfix) with ESMTP id 2BA3B2211B;
+ Mon, 12 Jul 2021 16:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1626108969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1626108970; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=9yEcA8XH1+Aq+HogCsZ38H71sADSF6n5eh1Yuc7mdUU=;
- b=idn4FWeQKRJqBP40knKINn6h25aesqwGHAjw7L1RcocMd7xaK5Sdkgkty5sOdKSFlnSjcQ
- Wx1nQrt2Tl6GrjF3TbktZrEOmbL4tGD4m1Guo8I0S7oA3N6d7tcoVda0FGu0Oa+7Wrxmcy
- f6k6UuSXjitgQ7/hDl54Nh/bLoWxSPk=
+ bh=VgWT5tfqbtBkDrX2L7CznODEgq2BTXfXClIF6lsIWFg=;
+ b=Sm5c7q5vWIleHI665sSlVqnIrmuMub99LSvmLfGEhJccZqjnJXyrAs5+vU7ohfHa6X49lk
+ j5Z1aOGlYv4JgU+r2T/j4S7bic9cq7vsqwGzRucEjnyD56rtZ9vxoByE2FwlqWDJlb7Aaf
+ VJcLT6/yo9sxoeIZzfkVhnm/dYkhVlE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1626108969;
+ s=susede2_ed25519; t=1626108970;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=9yEcA8XH1+Aq+HogCsZ38H71sADSF6n5eh1Yuc7mdUU=;
- b=ZtvIBDSSca7WOpnlIlhXywxDagDPFi2VN1PDK6bpSvMFWJOof37XoPjt9IuM2Aa1etLK4d
- IwxJC8LYfh/IL+AQ==
+ bh=VgWT5tfqbtBkDrX2L7CznODEgq2BTXfXClIF6lsIWFg=;
+ b=vuGVDsvOKxWoy5sgAZUaacamI2k1MtX0dlMhk/EuWnR85DX4i1myzVVkznWRlIEQiNzrfC
+ j+o+MM6xz4ia+LCw==
 Received: from quack2.suse.cz (unknown [10.100.224.230])
- by relay2.suse.de (Postfix) with ESMTP id D6CF2A3B89;
- Mon, 12 Jul 2021 16:56:09 +0000 (UTC)
+ by relay2.suse.de (Postfix) with ESMTP id 1A351A3B8F;
+ Mon, 12 Jul 2021 16:56:10 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
- id B98701F2AA9; Mon, 12 Jul 2021 18:56:09 +0200 (CEST)
+ id CA7FD1F2CD6; Mon, 12 Jul 2021 18:56:09 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
-Date: Mon, 12 Jul 2021 18:55:53 +0200
-Message-Id: <20210712165609.13215-2-jack@suse.cz>
+Date: Mon, 12 Jul 2021 18:55:57 +0200
+Message-Id: <20210712165609.13215-6-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210712163901.29514-1-jack@suse.cz>
 References: <20210712163901.29514-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2323; h=from:subject;
- bh=gIg3iIztJVQoIlghVq1+fJXqU7kYO/MEXF6k8jlkFes=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg7HQaQHe8HLcxNePecMEKAXHjeRLFAXwNY+MydxMY
- E0Cx61GJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYOx0GgAKCRCcnaoHP2RA2R0cCA
- Ce7oPViJYsHG8/ch4tj9ytaWabFvhU9qAa2Mb8zqfoRMDv3PZSuTmQfeSChslezfK004VtuHfp0Wmq
- rCIeQ1IA39fD/wH8pHDF9pTRbbS+RuYeuD+Qp2ai2I8WiGbhjmgWmV00gTKQl5q9RO3JOFuE19+kCU
- I2TmSof6im7HJ0YwA2WBiYNJqOD6I/WhnwSVxfn2Jdzdx+l1Zxo7seV8h6A7AEkjvteEF5JcwNuQN1
- TE99lrq1wdG8IDLk8JoAtPO9FRtpNj9iPNjC87pqN4qQl05cjwJVeUJmDQaqcw6lzEOcNP/qUSPbhe
- i68ih2izUsJFu4lY8I4EhFtvrB9K2g
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4727; h=from:subject;
+ bh=ym49Iu4QRUik/RZXy3TKmo1SdbNHjClhswakdveozJ4=;
+ b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg7HQdXqVppyqhs9Kow3gAlNxylsvMUO1Q8weiZrXk
+ EGLnB5OJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYOx0HQAKCRCcnaoHP2RA2UOjB/
+ 4vizzKQOY3566vzcBx+Oo+EVCYDCp8fWw67wRuEwuKvbkWrtvFa4EL5D3aZd+jpmPZZxmIAnsZsrge
+ TAVfNnOyq7uQPu5FJdfkukZLHHaiuZOyWEzBPvwKOc3mkzuQv+oZDpL+N9i7oyfcYTpZWJhjKZln49
+ h28u8FRs/Gy4s43hnmXsUcOGmvhjwgWRHOrLOlOSrB/0ui08NuYnuIEj+0JjNzno9wP0c/k0QxseC8
+ WBN1T3YIhaI3OV7ZLCv+UcIGM3Ezjm4TOkl0ZRxanSejUaZ9Nzg6D/EB7j9MvNZcCmolZUdqK6QCTK
+ lGzG4V/9QFGv3wSLKROh+XLf7n8Ep6
 X-Developer-Key: i=jack@suse.cz; a=openpgp;
  fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1m2zEA-0001y8-88
-Subject: [f2fs-dev] [PATCH 02/14] documentation: Sync file_operations
- members with reality
+X-Headers-End: 1m2zEB-005zK1-Pq
+Subject: [f2fs-dev] [PATCH 06/14] ext2: Convert to using invalidate_lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,56 +118,145 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Sync listing of struct file_operations members with the real one in
-fs.h.
+Ext2 has its private dax_sem used for synchronizing page faults and
+truncation. Use mapping->invalidate_lock instead as it is meant for this
+purpose.
 
-Acked-by: Darrick J. Wong <djwong@kernel.org>
+CC: <linux-ext4@vger.kernel.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- Documentation/filesystems/locking.rst | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ fs/ext2/ext2.h  | 11 -----------
+ fs/ext2/file.c  |  7 +++----
+ fs/ext2/inode.c | 12 ++++++------
+ fs/ext2/super.c |  3 ---
+ 4 files changed, 9 insertions(+), 24 deletions(-)
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index 2183fd8cc350..cdf15492c699 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -506,6 +506,7 @@ prototypes::
- 	ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
- 	ssize_t (*read_iter) (struct kiocb *, struct iov_iter *);
- 	ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
-+	int (*iopoll) (struct kiocb *kiocb, bool spin);
- 	int (*iterate) (struct file *, struct dir_context *);
- 	int (*iterate_shared) (struct file *, struct dir_context *);
- 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
-@@ -518,12 +519,6 @@ prototypes::
- 	int (*fsync) (struct file *, loff_t start, loff_t end, int datasync);
- 	int (*fasync) (int, struct file *, int);
- 	int (*lock) (struct file *, int, struct file_lock *);
--	ssize_t (*readv) (struct file *, const struct iovec *, unsigned long,
--			loff_t *);
--	ssize_t (*writev) (struct file *, const struct iovec *, unsigned long,
--			loff_t *);
--	ssize_t (*sendfile) (struct file *, loff_t *, size_t, read_actor_t,
--			void __user *);
- 	ssize_t (*sendpage) (struct file *, struct page *, int, size_t,
- 			loff_t *, int);
- 	unsigned long (*get_unmapped_area)(struct file *, unsigned long,
-@@ -536,6 +531,14 @@ prototypes::
- 			size_t, unsigned int);
- 	int (*setlease)(struct file *, long, struct file_lock **, void **);
- 	long (*fallocate)(struct file *, int, loff_t, loff_t);
-+	void (*show_fdinfo)(struct seq_file *m, struct file *f);
-+	unsigned (*mmap_capabilities)(struct file *);
-+	ssize_t (*copy_file_range)(struct file *, loff_t, struct file *,
-+			loff_t, size_t, unsigned int);
-+	loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
-+			struct file *file_out, loff_t pos_out,
-+			loff_t len, unsigned int remap_flags);
-+	int (*fadvise)(struct file *, loff_t, loff_t, int);
+diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
+index b0a694820cb7..81907a041570 100644
+--- a/fs/ext2/ext2.h
++++ b/fs/ext2/ext2.h
+@@ -667,9 +667,6 @@ struct ext2_inode_info {
+ 	struct rw_semaphore xattr_sem;
+ #endif
+ 	rwlock_t i_meta_lock;
+-#ifdef CONFIG_FS_DAX
+-	struct rw_semaphore dax_sem;
+-#endif
  
- locking rules:
- 	All may block.
+ 	/*
+ 	 * truncate_mutex is for serialising ext2_truncate() against
+@@ -685,14 +682,6 @@ struct ext2_inode_info {
+ #endif
+ };
+ 
+-#ifdef CONFIG_FS_DAX
+-#define dax_sem_down_write(ext2_inode)	down_write(&(ext2_inode)->dax_sem)
+-#define dax_sem_up_write(ext2_inode)	up_write(&(ext2_inode)->dax_sem)
+-#else
+-#define dax_sem_down_write(ext2_inode)
+-#define dax_sem_up_write(ext2_inode)
+-#endif
+-
+ /*
+  * Inode dynamic state flags
+  */
+diff --git a/fs/ext2/file.c b/fs/ext2/file.c
+index f98466acc672..eb97aa3d700e 100644
+--- a/fs/ext2/file.c
++++ b/fs/ext2/file.c
+@@ -81,7 +81,7 @@ static ssize_t ext2_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+  *
+  * mmap_lock (MM)
+  *   sb_start_pagefault (vfs, freeze)
+- *     ext2_inode_info->dax_sem
++ *     address_space->invalidate_lock
+  *       address_space->i_mmap_rwsem or page_lock (mutually exclusive in DAX)
+  *         ext2_inode_info->truncate_mutex
+  *
+@@ -91,7 +91,6 @@ static ssize_t ext2_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ static vm_fault_t ext2_dax_fault(struct vm_fault *vmf)
+ {
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+-	struct ext2_inode_info *ei = EXT2_I(inode);
+ 	vm_fault_t ret;
+ 	bool write = (vmf->flags & FAULT_FLAG_WRITE) &&
+ 		(vmf->vma->vm_flags & VM_SHARED);
+@@ -100,11 +99,11 @@ static vm_fault_t ext2_dax_fault(struct vm_fault *vmf)
+ 		sb_start_pagefault(inode->i_sb);
+ 		file_update_time(vmf->vma->vm_file);
+ 	}
+-	down_read(&ei->dax_sem);
++	filemap_invalidate_lock_shared(inode->i_mapping);
+ 
+ 	ret = dax_iomap_fault(vmf, PE_SIZE_PTE, NULL, NULL, &ext2_iomap_ops);
+ 
+-	up_read(&ei->dax_sem);
++	filemap_invalidate_unlock_shared(inode->i_mapping);
+ 	if (write)
+ 		sb_end_pagefault(inode->i_sb);
+ 	return ret;
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index dadb121beb22..33f874f0fc4a 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -1177,7 +1177,7 @@ static void ext2_free_branches(struct inode *inode, __le32 *p, __le32 *q, int de
+ 		ext2_free_data(inode, p, q);
+ }
+ 
+-/* dax_sem must be held when calling this function */
++/* mapping->invalidate_lock must be held when calling this function */
+ static void __ext2_truncate_blocks(struct inode *inode, loff_t offset)
+ {
+ 	__le32 *i_data = EXT2_I(inode)->i_data;
+@@ -1194,7 +1194,7 @@ static void __ext2_truncate_blocks(struct inode *inode, loff_t offset)
+ 	iblock = (offset + blocksize-1) >> EXT2_BLOCK_SIZE_BITS(inode->i_sb);
+ 
+ #ifdef CONFIG_FS_DAX
+-	WARN_ON(!rwsem_is_locked(&ei->dax_sem));
++	WARN_ON(!rwsem_is_locked(&inode->i_mapping->invalidate_lock));
+ #endif
+ 
+ 	n = ext2_block_to_path(inode, iblock, offsets, NULL);
+@@ -1276,9 +1276,9 @@ static void ext2_truncate_blocks(struct inode *inode, loff_t offset)
+ 	if (ext2_inode_is_fast_symlink(inode))
+ 		return;
+ 
+-	dax_sem_down_write(EXT2_I(inode));
++	filemap_invalidate_lock(inode->i_mapping);
+ 	__ext2_truncate_blocks(inode, offset);
+-	dax_sem_up_write(EXT2_I(inode));
++	filemap_invalidate_unlock(inode->i_mapping);
+ }
+ 
+ static int ext2_setsize(struct inode *inode, loff_t newsize)
+@@ -1308,10 +1308,10 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
+ 	if (error)
+ 		return error;
+ 
+-	dax_sem_down_write(EXT2_I(inode));
++	filemap_invalidate_lock(inode->i_mapping);
+ 	truncate_setsize(inode, newsize);
+ 	__ext2_truncate_blocks(inode, newsize);
+-	dax_sem_up_write(EXT2_I(inode));
++	filemap_invalidate_unlock(inode->i_mapping);
+ 
+ 	inode->i_mtime = inode->i_ctime = current_time(inode);
+ 	if (inode_needs_sync(inode)) {
+diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+index 21e09fbaa46f..987bcf32ed46 100644
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -206,9 +206,6 @@ static void init_once(void *foo)
+ 	init_rwsem(&ei->xattr_sem);
+ #endif
+ 	mutex_init(&ei->truncate_mutex);
+-#ifdef CONFIG_FS_DAX
+-	init_rwsem(&ei->dax_sem);
+-#endif
+ 	inode_init_once(&ei->vfs_inode);
+ }
+ 
 -- 
 2.26.2
 
