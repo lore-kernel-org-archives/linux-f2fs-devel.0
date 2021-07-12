@@ -5,36 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52ABEC11F70
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jul 2021 16:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E737C11F7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jul 2021 16:56:34 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id F08B261284;
-	Mon, 12 Jul 2021 16:56:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08B261284
+	by mail.kernel.org (Postfix) with ESMTPS id 1A097611CD;
+	Mon, 12 Jul 2021 16:56:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A097611CD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m2zEO-0000DB-MF; Mon, 12 Jul 2021 16:56:32 +0000
+	id 1m2zEP-0000Dq-Pm; Mon, 12 Jul 2021 16:56:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1m2zEL-0000C9-Al
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Jul 2021 16:56:29 +0000
+ (envelope-from <jack@suse.cz>) id 1m2zEO-0000D3-Df
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Jul 2021 16:56:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3UrWJRrmmZoeFsiXlatgXAwopNmimQ93wkzrLwvaNN0=; b=MwC86xCf0Cyg5DWhTMcATMaXAk
- sx/fxJaCzhzBPy2ClAVjka0Py3FUCZVvGl0o11RXUtXdMu72GE7o4vZyaRtTh2TxyZzawJtnBVPX5
- 07MW0nhsv/pWSWr37jTWoYvgCDqIUrqBg2eL3g6KKC3Ez5JdA/r2N0ASt4dydCBJL79U=;
+ bh=aHhQqe8KTjBCv9r4mi6xe2At5YRjoevCFxA6zjCOvEc=; b=E1iEArWF6yj3aLGdaZUDpYEKI8
+ OAETCKK6JPy3ztMzsDIrxliiDrCFlR9LD5vNwfFC2tKwPn4deSNJ/iPrDljWXugdCpshIjEcu1Tvz
+ MZT0lSEkVhj4nBleNiqV/kFp5I785j0z2FMQpv0J1KO/JUqJpAzsCxcOhzwZRYP0il5k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,61 +42,62 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3UrWJRrmmZoeFsiXlatgXAwopNmimQ93wkzrLwvaNN0=; b=HcNWSNYnZ59TkqJMjw9VaDA3ii
- P9tvQDu06My+OHHMIbc76NZDGUbXPXnc5f7Y/tq3OrOa935NCGfDXzIitlHWrFOCVeawtRXqCJ25Q
- INSr6J//X4P89tSBfbQmKQhxB8ys4Z104JEcPQMgzdncrGAr7BOOkkgChA9EP9HMCZRI=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=aHhQqe8KTjBCv9r4mi6xe2At5YRjoevCFxA6zjCOvEc=; b=IhVJ7gCtmfAJ9iHmTaKu2FH55l
+ XV77/ubiIlysQfM07U28Vjrcb6+8hF4ingpNK02IjAbtIYEDsZbZ3dWzqcn06wb25aWTjPD7cUJO3
+ GNJ+7F5SVMQrR7qxTnczZcFvAtlL6S01tBK3YxGijzUfHQP1jwc0kCE0M6BgJn118yk0=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1m2zEB-005zK2-RO
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Jul 2021 16:56:29 +0000
+ id 1m2zEI-0001ym-AO
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 12 Jul 2021 16:56:32 +0000
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
- by smtp-out2.suse.de (Postfix) with ESMTP id 3994D1FFD5;
+ by smtp-out1.suse.de (Postfix) with ESMTP id 4BC5F2212F;
  Mon, 12 Jul 2021 16:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
  t=1626108970; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=3UrWJRrmmZoeFsiXlatgXAwopNmimQ93wkzrLwvaNN0=;
- b=OoZipLAProXeUQwlzamKj0otwgyhRsb3O/pcugRpO8Ybwg1pbYzMK4x9w9LV0dmRyohoo/
- O083EpZsARaFYJ0N5/MzyEadqP0WiPrBtsJCD813PKcPt/pV8cMylSLMJuzupgbb19vYQj
- ABq70ngOyN39fG6CWj32dHOt7fxUHDA=
+ bh=aHhQqe8KTjBCv9r4mi6xe2At5YRjoevCFxA6zjCOvEc=;
+ b=ZESWo0+jV0zYOW8UBnDvLHP40wD4Mizkdi3GL2a5tQw4l+5H/3r+WCw8lG38ognWMuzAir
+ tcOcmkCMPX37xr1NU0VCTckY3UvvDDj7tTD3Bu1lsU8C3dGjMa8KO/+dkjOoL7uaQvat0m
+ liWED2/F46K5fur5cg9oAjmpvcw++80=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
  s=susede2_ed25519; t=1626108970;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=3UrWJRrmmZoeFsiXlatgXAwopNmimQ93wkzrLwvaNN0=;
- b=5iyyjB2aesPiOfQ9Kj3UZPS+jdt80S0tnRRb1Hx/M1h/B/iT6eo6l+1KByw1UAcD/GM/3o
- 56s5F3yalT9KrkBg==
+ bh=aHhQqe8KTjBCv9r4mi6xe2At5YRjoevCFxA6zjCOvEc=;
+ b=nwaFUtZvJiGfTCuyP2yCuDyUqORKcbdPqKWTp4GjFiBFK+dHUOfXJaNP2sLvWW4bNywxzi
+ Vs5yDOLGBuV5+AAg==
 Received: from quack2.suse.cz (unknown [10.100.224.230])
- by relay2.suse.de (Postfix) with ESMTP id 1EDBBA3B91;
+ by relay2.suse.de (Postfix) with ESMTP id 34EB6A3B8C;
  Mon, 12 Jul 2021 16:56:10 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
- id CDC2A1F2CD7; Mon, 12 Jul 2021 18:56:09 +0200 (CEST)
+ id EADE31F2CE6; Mon, 12 Jul 2021 18:56:09 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
-Date: Mon, 12 Jul 2021 18:55:58 +0200
-Message-Id: <20210712165609.13215-7-jack@suse.cz>
+Date: Mon, 12 Jul 2021 18:56:05 +0200
+Message-Id: <20210712165609.13215-14-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210712163901.29514-1-jack@suse.cz>
 References: <20210712163901.29514-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2663; i=jack@suse.cz;
- h=from:subject; bh=YmQSkQse9NO9b0qrNLfWFR/SLfIwnVnRgr/nYQ5R0lY=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg7HQehJIq6dexPtRN0mRaJPDIgpTC8p8HxaHKF5yv
- BEL61CyJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYOx0HgAKCRCcnaoHP2RA2aZ0CA
- DmMkxbR9qLrsukw83nRMmafvnSx1UgV9wddqFCwl3MYM26n9QK2HkjOUv/5lXjER/+Xc7hwqxRJJK3
- QW4giqCDesV3ACAsWDxpJzexMo/UAc9evJHeXzBhZYgTvZaWh63FTCn6WqNJuqqVFydnvmFPUmVz7d
- 0gc9RfNrf0waBvGaKbsk4ANoIme0JNxUeSNt5jEK7bLjasw0NCR1yQwlNlBgs4ldvO4nm+DfPRhP5/
- sBA74EnrGzVeVg9JHNKccZUK3uoM6JJoN1H+OCbhiKDkf7USnKdBFWKv9/x68yB0JVkbDiNO3QAywj
- 9TXMbtQNtgT3RKU9LX7xy29shO9zEP
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1533; h=from:subject;
+ bh=1e9BARQoajJDSgUdYORenFPF3ecMZ7Jduf79ehs8h7w=;
+ b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg7HQkAS6+mJ6okwtt/iRndokM6RsjeRiTUsodrmWd
+ daZifx6JATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYOx0JAAKCRCcnaoHP2RA2a2dB/
+ sGPl7L7iNC+Ygp3aaAb8TuC+CK7Fa16RT+41tzwVRlQcnfmi7CVZIqfg9wn8dFg+Rwo985dKOjqKBC
+ Rkbj05bjkHH9zmlZ5YZ+X92bgSHksva5hcdPkI3PM5v6sCXvIMGdeKJvQ7OUyLqoS8vAwHFZCA6FfN
+ oKBhzEjKFekquNo/8GdftAgbDSO70kSs2v1iR2SpAHq/DWr1NsJ0/SUel0YbkYCJVK/t1Jybo0fOS3
+ hzlpdrYgSafKZV1HZ762tDktI+gjO6r/m5sW8bVZitIHHqVxrctKOIPAGfL2NMRnxMzWVNlMBMdoo7
+ Y6A0YzNG5g9ezVbk8Vutbf63fL3esc
 X-Developer-Key: i=jack@suse.cz; a=openpgp;
  fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1m2zEB-005zK2-RO
-Subject: [f2fs-dev] [PATCH 07/14] xfs: Refactor xfs_isilocked()
+X-Headers-End: 1m2zEI-0001ym-AO
+Subject: [f2fs-dev] [PATCH 14/14] cifs: Fix race between hole punch and page
+ fault
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -109,104 +110,57 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-xfs@vger.kernel.org, Ted Tso <tytso@mit.edu>,
- Eric Sandeen <sandeen@redhat.com>, linux-cifs@vger.kernel.org,
- "Darrick J. Wong" <djwong@kernel.org>,
- "Darrick J . Wong" <darrick.wong@oracle.com>,
- Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>,
- linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
+ linux-cifs@vger.kernel.org, "Darrick J. Wong" <djwong@kernel.org>,
+ Steve French <sfrench@samba.org>, Dave Chinner <david@fromorbit.com>,
+ Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
+ Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
  Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org,
- linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
- Pavel Reichl <preichl@redhat.com>
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Pavel Reichl <preichl@redhat.com>
+Cifs has a following race between hole punching and page fault:
 
-Introduce a new __xfs_rwsem_islocked predicate to encapsulate checking
-the state of a rw_semaphore, then refactor xfs_isilocked to use it.
+CPU1                                            CPU2
+smb3_fallocate()
+  smb3_punch_hole()
+    truncate_pagecache_range()
+                                                filemap_fault()
+                                                  - loads old data into the
+                                                    page cache
+    SMB2_ioctl(..., FSCTL_SET_ZERO_DATA, ...)
 
-Signed-off-by: Pavel Reichl <preichl@redhat.com>
-Suggested-by: Dave Chinner <dchinner@redhat.com>
-Suggested-by: Eric Sandeen <sandeen@redhat.com>
-Suggested-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+And now we have stale data in the page cache. Fix the problem by locking
+out faults (as well as reads) using mapping->invalidate_lock while hole
+punch is running.
+
+CC: Steve French <sfrench@samba.org>
+CC: linux-cifs@vger.kernel.org
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/xfs/xfs_inode.c | 34 ++++++++++++++++++++++++++--------
- fs/xfs/xfs_inode.h |  2 +-
- 2 files changed, 27 insertions(+), 9 deletions(-)
+ fs/cifs/smb2ops.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index a835ceb79ba5..359e2cd44ad7 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -343,9 +343,29 @@ xfs_ilock_demote(
- }
- 
- #if defined(DEBUG) || defined(XFS_WARN)
--int
-+static inline bool
-+__xfs_rwsem_islocked(
-+	struct rw_semaphore	*rwsem,
-+	bool			shared)
-+{
-+	if (!debug_locks)
-+		return rwsem_is_locked(rwsem);
-+
-+	if (!shared)
-+		return lockdep_is_held_type(rwsem, 0);
-+
-+	/*
-+	 * We are checking that the lock is held at least in shared
-+	 * mode but don't care that it might be held exclusively
-+	 * (i.e. shared | excl). Hence we check if the lock is held
-+	 * in any mode rather than an explicit shared mode.
-+	 */
-+	return lockdep_is_held_type(rwsem, -1);
-+}
-+
-+bool
- xfs_isilocked(
--	xfs_inode_t		*ip,
-+	struct xfs_inode	*ip,
- 	uint			lock_flags)
- {
- 	if (lock_flags & (XFS_ILOCK_EXCL|XFS_ILOCK_SHARED)) {
-@@ -360,15 +380,13 @@ xfs_isilocked(
- 		return rwsem_is_locked(&ip->i_mmaplock.mr_lock);
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index e4c8f603dd58..458c546ce8cd 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -3588,6 +3588,7 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
+ 		return rc;
  	}
  
--	if (lock_flags & (XFS_IOLOCK_EXCL|XFS_IOLOCK_SHARED)) {
--		if (!(lock_flags & XFS_IOLOCK_SHARED))
--			return !debug_locks ||
--				lockdep_is_held_type(&VFS_I(ip)->i_rwsem, 0);
--		return rwsem_is_locked(&VFS_I(ip)->i_rwsem);
-+	if (lock_flags & (XFS_IOLOCK_EXCL | XFS_IOLOCK_SHARED)) {
-+		return __xfs_rwsem_islocked(&VFS_I(ip)->i_rwsem,
-+				(lock_flags & XFS_IOLOCK_SHARED));
- 	}
- 
- 	ASSERT(0);
--	return 0;
-+	return false;
++	filemap_invalidate_lock(inode->i_mapping);
+ 	/*
+ 	 * We implement the punch hole through ioctl, so we need remove the page
+ 	 * caches first, otherwise the data may be inconsistent with the server.
+@@ -3605,6 +3606,7 @@ static long smb3_punch_hole(struct file *file, struct cifs_tcon *tcon,
+ 			sizeof(struct file_zero_data_information),
+ 			CIFSMaxBufSize, NULL, NULL);
+ 	free_xid(xid);
++	filemap_invalidate_unlock(inode->i_mapping);
+ 	return rc;
  }
- #endif
- 
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 4b6703dbffb8..4b5202ae8ebb 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -410,7 +410,7 @@ void		xfs_ilock(xfs_inode_t *, uint);
- int		xfs_ilock_nowait(xfs_inode_t *, uint);
- void		xfs_iunlock(xfs_inode_t *, uint);
- void		xfs_ilock_demote(xfs_inode_t *, uint);
--int		xfs_isilocked(xfs_inode_t *, uint);
-+bool		xfs_isilocked(struct xfs_inode *, uint);
- uint		xfs_ilock_data_map_shared(struct xfs_inode *);
- uint		xfs_ilock_attr_map_shared(struct xfs_inode *);
  
 -- 
 2.26.2
