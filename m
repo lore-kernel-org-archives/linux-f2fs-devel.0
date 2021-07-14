@@ -2,95 +2,75 @@ Return-Path: <SRS0=KzLc=MG=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C885C07E9A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Jul 2021 12:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F71DC12002
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Jul 2021 23:19:22 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 44B1B613B6;
-	Wed, 14 Jul 2021 12:44:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44B1B613B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=web.de
+	by mail.kernel.org (Postfix) with ESMTPS id 20709613B9;
+	Wed, 14 Jul 2021 23:19:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20709613B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m3eG1-0006Og-NE; Wed, 14 Jul 2021 12:44:57 +0000
+	id 1m3o9w-0008Uu-N8; Wed, 14 Jul 2021 23:19:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <h_ayguen@web.de>) id 1m3eG0-0006OL-D2
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Jul 2021 12:44:56 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <jaegeuk@kernel.org>) id 1m3o9v-0008Um-3W
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Jul 2021 23:19:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Date:Message-ID:Subject:
- From:To:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YQ2GdceBpdmkAwqdb1XtWBA2HNPELY/igi7ARzYBRrg=; b=eyZ+3h0bFTmM/vOdAKos3hPHJZ
- rGD8qNpaEB7cZk9aBFu+559c+oXed5tgeAsThIAhADyhVS0KNyI0sJQykwoqZ/LrM6igy0H86G2W0
- TtMwOa/Gx2XfdzB34lPBwznRR0B7gboRhSlPyfdjml/++i85l2VSewbVbux49VFjgMwg=;
+ bh=Xd3JDUAAJoq2Ies4rf5gq8hoTQsuvdhZU8OrstZw0E4=; b=nCt0MeeOnJ0KIHToOFHNTQeNSs
+ 965Tk4Dhe6W/xR93Dr3Ca97JWKMU/8QpnrjGD6jBuZGUa9t4wXCbvsCjx6mg36m+yWiphofU1ChYJ
+ /qsnIQj4Ox1s73MBstJktHl3re0xt7rXxEpqychmmKetemFse1Mjwmv1tdjWtHbsqVcI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=YQ2GdceBpdmkAwqdb1XtWBA2HNPELY/igi7ARzYBRrg=; b=c
- L8o9uJJ1jaCuBf0HjAJM2rBm1T2IQRcZ0J1QNDNcXSyaicBBbPteTFAcAJjybRCUler78fs/botwQ
- mx/U+bgHOqT3jwpiRBepmvQDIF7lEOBFV5BAgWJ2TAm8OaVJFqb2nGnn2TMmqFyrx5gFmUq+CKrrD
- 0W36zneeiYMDYAs0=;
-Received: from mout.web.de ([212.227.17.11])
+ List-Owner:List-Archive; bh=Xd3JDUAAJoq2Ies4rf5gq8hoTQsuvdhZU8OrstZw0E4=; b=a
+ Gg4CjIchm8mE6539wZt0mL2bY46qj4kCQDK1OC6BRU1i//qbjAzqXJiUgQU2tx7zIE+bmceMAUOpq
+ 0OHtUar/oqa1q2LU3KZ4tTiI3/pbl2zqYbz2+VVxisTpuWgLf1bnldrK4G5Vdf4swcH4q3upOsq+S
+ i4kQaMGk+v/brAY0=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m3eFp-0083Va-6U
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Jul 2021 12:44:56 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
- s=dbaedf251592; t=1626266675;
- bh=YQ2GdceBpdmkAwqdb1XtWBA2HNPELY/igi7ARzYBRrg=;
- h=X-UI-Sender-Class:To:From:Subject:Date;
- b=XUjaFAogfw2+MfsGMab1hlTbjsyyQS3+DkyWc+80Brb1ubxQ4T1P0IaqEAyL/tKzH
- XwLezvSt09XX+T/tvq2mW5/+yfYlmPSYmIBPa7uLHOqzuW1FDIJdaqGAJVI6W65Mja
- +cvma2bWubFF6niUAbx1xbyOEivGnf7gF6yxvZq0=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.178.59] ([149.172.203.223]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MWi5i-1lfODz0qi0-00X3NJ for
- <linux-f2fs-devel@lists.sourceforge.net>; Wed, 14 Jul 2021 14:44:35 +0200
-To: linux-f2fs-devel@lists.sourceforge.net
-From: Hayati Ayguen <h_ayguen@web.de>
-Message-ID: <d1a34c8a-167f-1cf1-c272-026686ac2f22@web.de>
-Date: Wed, 14 Jul 2021 14:44:35 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+ id 1m3o9j-008Z5O-5Y
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Jul 2021 23:19:18 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 512066136E;
+ Wed, 14 Jul 2021 23:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1626304734;
+ bh=7ibYkMa/Q/QRDj3MQt3Cl24drEViJhJqRnCGjYpxIHQ=;
+ h=From:To:Cc:Subject:Date:From;
+ b=F10JlT0arMKc1w9jpjBvlC8MdN0dv2pvzJX2g8QZ4wF4w7y1CYduAQdwjJXVANBYt
+ cTdzkVnI4f+0vOCD8HyAiuiR8xcE6+KiOyEV1N0vQv+Jd+qU4F02blA7lPVxH94m8H
+ 5FX/CUOoSlVgp2VkAsonkccFGL8lSSTw2+0lhvWuS3oj2NDUrq0rVzGMTYannmyLcT
+ b2kzz/LQVAVDvj2Qm3wuvkL1dPgFue/NI0B88BZ0f1FvCrXmjPConh63ON7XonqmI5
+ VLnhJO+RQjxOW3uodo4RcyRtVC3YENIxHj3EfZgOSRQ/fn5zSw4R9KStbEdJhU4NAa
+ h5sMSqnEe/9mA==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Wed, 14 Jul 2021 16:18:50 -0700
+Message-Id: <20210714231850.2567509-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.32.0.93.g670b81a890-goog
 MIME-Version: 1.0
-X-Provags-ID: V03:K1:RhLGg3ZBkbKdi3p2uldLaM5hXxv3ptBbtTgFKiK4zje1MQPaWEK
- ZP1uF51V6gRde2p/Mjr75bLCWWrj7mRKAXEcbi3guv6Ydmw0zlWwexAQEHx/4la3dkli8sP
- 2zJmTXWPAgaAHvywCIn5UUV5v7oVK0g99ygMiA53SRU2y256LrJZWBW9DokV7+pCIwUvjrA
- dwcsYSfBl9Rr9093kVPbw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:HmMuj7/VDfk=:522S7qcvmIyMEZRxT/URqz
- vNbLru9sqxDrmCtCGEIRz33Jmf71hmhYZ1zFZ+BpEj6F6/NIgpoLR+yBtiWjUBPZcuE6WIHDV
- aIe2hE67ttBVpXjsaISv+/HNx3L8b4uxhpEi64st/+p4M9CsxIOhNXakBWitLn+a1Ft9wEpS5
- zjXw/zINVMjvjd6derLZTMOS3UDhbHTSIxwlizJnaeDzgglomfsGYymiIXCredmLJb+haGyg9
- JErjVXM/rbcGjnWpCwp/PBCSPYBk5PAYIV4cIHlI1sjKdfSpcJQBsjQH4I1uTH9Itwqgnn8g6
- bJ7YaGtAyL2eOen6extE6BMraV9AoPm3utJyKP1FoB+M5Ql/pmGQMGFFp0iw97+okBe/8A0g+
- opAFMif4xh3WVfHefdlWbvUGwDEZ/n/SbLfN4ijCHR9A0HbKtxkU15owVH1U3SKS9k8T17b5v
- O0kFLTP40mrw65MvRmyZSBeoXZn2sMEd2Y/Rwi9bfgrSb4fLed+WtBArAuwAO+p3W2OkCOwLS
- 1adwjEM/FuPeEaJL6vbGwhLNh8vF/n/gX+kVtEe9mVuAwuhayCTGbGhCz/fhlaMWm95tZ6g33
- PF1vufJTTGNuFVzyaZhC7XL0X+7X3MiFiC/0WkSt/ep8rfzu0ZfgOLFS6uXGE2w1R/OZalcDD
- ziRgQ7qY6CTk8GlDKcFXR1m2nCKVPt8T3EQj3RBM9fe5dHmrq79PUI+DAcxXL+K039NLLxRcc
- y2mWD+LUqYzvo9YMgCZz/X3tea+TZ4XrChhxs/i1b/BFgeZFR0oNK5UOnhf9nb2zPferrnPzJ
- 6VK0nxKAPEHryFx5X4HksXGOw20KcEOvu53QqmPoDddJE2yE+Ray3y2/Avw99QsOsYthDEb1s
- WzvVt5QthVn1Vqj4tfPb1C89Qo4Uu5ByC1aQJZCuB76lgQjOfFlHTYmzfynBdlU+/FZnO1MJz
- xtf6X3EIsovuZvf8eTF1tBEwMN2yXDHKWiFAIt4FAI3k0MMW1hYaz1Ph9hkyQN3fwUP9wa7EJ
- f2IcOzScI2YvnIMErAVDmH4eXycrs4wqSwTlcVCbUjE5jLhrpx15LEOYyeWkKn1guq4kgY7IL
- nilhti91M4HgGKddKXo2Wto5O2QZSQBZr20
-X-Headers-End: 1m3eFp-0083Va-6U
-Subject: [f2fs-dev] tests on (and howto increase) lifetime?
+X-Headers-End: 1m3o9j-008Z5O-5Y
+Subject: [f2fs-dev] [PATCH] f2fs: let's keep writing IOs on SBI_NEED_FSCK
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,47 +82,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+SBI_NEED_FSCK is an indicator that fsck.f2fs needs to be triggered, so it
+is not fully critical to stop any IO writes. So, let's allow to write data
+instead of reporting EIO forever given SBI_NEED_FSCK.
 
-Hi,
+Fixes: 955772787667 ("f2fs: drop inplace IO if fs status is abnormal")
+Cc: <stable@kernel.org> # v5.13+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[ probably i'm wrong in this mailing list .. but this is best, i could
-find. also i tried to search archive .. but couldn't find the right topic. ]
-
-
-i have a logging application on raspberry pi (3/4) writing to an
-usb-stick or sd-card through an usb-adapter - not the internal/boot
-sd-card with the operating system. see https://groups.io/g/fmlist-scanner
-some are used mobile: in a car or backpack.
-
-it's writing approximately 100 - 200 kB data (few new files: some csv
-and a zip) every 3 to 5 minutes. write speed/performance is no issue in
-my application. the raspberry pi's tends to freeze or reboot from time
-to time .. thus the data should be safely stored .. it's sync'ed after
-every write (of the few files).
-daily data is summarized, compressed, uploaded and moved into another
-directory.
-
-vfat formatted usb-sticks usually get broken regularly in some weeks to
-several months.
-that is why i meanwhile recommend f2fs: looks it behaves better - so far.
-
-
-are there any tests (scripts or programs) to tests the life
-duration/cycles of usb-memory-sticks or sd-cards independent of
-filesystem? i would be interested to compare vfat or some other
-filesystem vs. f2fs.
-
-is there a safe way to detect write errors - independent of file system
-- deactivating the system's cache buffers when test-reading?
-
-are there additional strategies to increase the life of sd-cards?
-
-kind regards,
-Hayati
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 15cc89eef28d..f9b7fb785e1d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3563,7 +3563,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ 		goto drop_bio;
+ 	}
+ 
+-	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK) || f2fs_cp_error(sbi)) {
++	if (f2fs_cp_error(sbi)) {
+ 		err = -EIO;
+ 		goto drop_bio;
+ 	}
+-- 
+2.32.0.93.g670b81a890-goog
 
 
 
