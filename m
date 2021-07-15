@@ -1,76 +1,103 @@
-Return-Path: <SRS0=KzLc=MG=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=t/PG=MH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F71DC12002
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Jul 2021 23:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D26C47E55
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Jul 2021 13:40:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 20709613B9;
-	Wed, 14 Jul 2021 23:19:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20709613B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id E0C0E613C3;
+	Thu, 15 Jul 2021 13:40:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C0E613C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m3o9w-0008Uu-N8; Wed, 14 Jul 2021 23:19:20 +0000
+	id 1m41bi-0002OU-Oo; Thu, 15 Jul 2021 13:40:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <jaegeuk@kernel.org>) id 1m3o9v-0008Um-3W
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Jul 2021 23:19:19 +0000
+ (envelope-from <jack@suse.cz>) id 1m41bh-0002ON-58
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Jul 2021 13:40:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Xd3JDUAAJoq2Ies4rf5gq8hoTQsuvdhZU8OrstZw0E4=; b=nCt0MeeOnJ0KIHToOFHNTQeNSs
- 965Tk4Dhe6W/xR93Dr3Ca97JWKMU/8QpnrjGD6jBuZGUa9t4wXCbvsCjx6mg36m+yWiphofU1ChYJ
- /qsnIQj4Ox1s73MBstJktHl3re0xt7rXxEpqychmmKetemFse1Mjwmv1tdjWtHbsqVcI=;
+ bh=1GlMykmW5dU6u8/oJfYiziq3SSg7iOhv9PkBlHqVviU=; b=SaHmAQXQHoZ28iAQ4qbEz0HhoX
+ 6A99QZ8WGWuAaAfgLodF+w1dqKJ2uf+gR5MC61G1t0fl2ypYTxXbAQ4lktEUIejcNyiVITcRCwb/F
+ PNV8mnKB0udMfBEkg1AzA+Ki7sQAqNxCFAjyqQzxO9WTGDwphcB2c+oNRRL0Wy9fQris=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Xd3JDUAAJoq2Ies4rf5gq8hoTQsuvdhZU8OrstZw0E4=; b=a
- Gg4CjIchm8mE6539wZt0mL2bY46qj4kCQDK1OC6BRU1i//qbjAzqXJiUgQU2tx7zIE+bmceMAUOpq
- 0OHtUar/oqa1q2LU3KZ4tTiI3/pbl2zqYbz2+VVxisTpuWgLf1bnldrK4G5Vdf4swcH4q3upOsq+S
- i4kQaMGk+v/brAY0=;
-Received: from mail.kernel.org ([198.145.29.99])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=1GlMykmW5dU6u8/oJfYiziq3SSg7iOhv9PkBlHqVviU=; b=RFloIaAgavoyj230J9fwS8YN3i
+ sRWKxMd3BJMSYOuIXe3OHSfN/ItrakNQ17L3DbM5LsJdohYbwyeo8O0ykgn72d7KMnLIO4SploTKG
+ Fk/apwXFHuGRG05nH4CzphnU8yU8WMxC1lSH/oPlG9Tx4vVetsIavQ6qRmjCc1To/rUM=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m3o9j-008Z5O-5Y
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 14 Jul 2021 23:19:18 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 512066136E;
- Wed, 14 Jul 2021 23:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1626304734;
- bh=7ibYkMa/Q/QRDj3MQt3Cl24drEViJhJqRnCGjYpxIHQ=;
- h=From:To:Cc:Subject:Date:From;
- b=F10JlT0arMKc1w9jpjBvlC8MdN0dv2pvzJX2g8QZ4wF4w7y1CYduAQdwjJXVANBYt
- cTdzkVnI4f+0vOCD8HyAiuiR8xcE6+KiOyEV1N0vQv+Jd+qU4F02blA7lPVxH94m8H
- 5FX/CUOoSlVgp2VkAsonkccFGL8lSSTw2+0lhvWuS3oj2NDUrq0rVzGMTYannmyLcT
- b2kzz/LQVAVDvj2Qm3wuvkL1dPgFue/NI0B88BZ0f1FvCrXmjPConh63ON7XonqmI5
- VLnhJO+RQjxOW3uodo4RcyRtVC3YENIxHj3EfZgOSRQ/fn5zSw4R9KStbEdJhU4NAa
- h5sMSqnEe/9mA==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 14 Jul 2021 16:18:50 -0700
-Message-Id: <20210714231850.2567509-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.32.0.93.g670b81a890-goog
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
+ id 1m41bd-009HUf-J8
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Jul 2021 13:40:53 +0000
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+ by smtp-out1.suse.de (Postfix) with ESMTP id 4E96922848;
+ Thu, 15 Jul 2021 13:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1626356433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=1GlMykmW5dU6u8/oJfYiziq3SSg7iOhv9PkBlHqVviU=;
+ b=IJzT8B6zNrMkbuJkaFuSGNx/cysqu+RHwJTvkH5yLbzpaIbQeDaLN4yPYW9wwFijZdvvLm
+ c1weTUJbX1lXzJouKlVauWsIjKwDZz/7dQiAzNr1hSvktboSq2/tcS6xcgWW12x0UXyVfK
+ UMccAy7ex6v78nqCgbiyD+ueRWxtNfI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1626356433;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=1GlMykmW5dU6u8/oJfYiziq3SSg7iOhv9PkBlHqVviU=;
+ b=jx+OTAvL9IZYxGuRCjFTGIz3mg3K4CyDjyms8YgB62fhqY6AcWjBS1fkDyxYMh1n5x1AND
+ Y9Tkw7oj4PW25mDw==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+ by relay2.suse.de (Postfix) with ESMTP id 3913DA3B99;
+ Thu, 15 Jul 2021 13:40:33 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+ id 053DD1E0BF4; Thu, 15 Jul 2021 15:40:33 +0200 (CEST)
+From: Jan Kara <jack@suse.cz>
+To: <linux-fsdevel@vger.kernel.org>
+Date: Thu, 15 Jul 2021 15:40:12 +0200
+Message-Id: <20210715134032.24868-2-jack@suse.cz>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20210715133202.5975-1-jack@suse.cz>
+References: <20210715133202.5975-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Headers-End: 1m3o9j-008Z5O-5Y
-Subject: [f2fs-dev] [PATCH] f2fs: let's keep writing IOs on SBI_NEED_FSCK
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2326; h=from:subject;
+ bh=Wk8yjaZi1nJ5yIUh0xIbMo5SndDvKgP46BqPUOtHcOc=;
+ b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg8Dq93WYq4ngjQmYdY8pwDNohIZO7my5PAfcPGE+q
+ NOtwZ9uJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYPA6vQAKCRCcnaoHP2RA2TSqB/
+ 9L720FlUO78Z0CB/KEXguatdutu1XO6ePPTnmUGaODlhryIwR9L3HEcKpAiQGju3/sA8lu09tpAFIr
+ Adp7t4J28YyaW36/FWzh6wN45FBPx/VNgfcXP3VZQ27AFjIl+ZJQylq49gJMtVEvZGP6NSNccm8qjL
+ jqIbMnCdJcadAeimaWt+xj4ArYK7uURLJPjY4qEO1Q8MlBeFGVr47y8nKkgDcv44NDfAuFnVw39V8S
+ gYKQlxM8zGBQP4CJqZbNna12R97EfFnnmd4XcitTPsdbwzHmaSCxzBSeoAbwzLBYBLLSSGa8X6mMZh
+ gHVaOXWmyyThBN3lWOFYwoBrCcR5cA
+X-Developer-Key: i=jack@suse.cz; a=openpgp;
+ fpr=93C6099A142276A28BBE35D815BC833443038D8C
+X-Headers-End: 1m41bd-009HUf-J8
+Subject: [f2fs-dev] [PATCH 02/14] documentation: Sync file_operations
+ members with reality
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,37 +109,68 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@kernel.org
+Cc: linux-xfs@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+ linux-cifs@vger.kernel.org, "Darrick J. Wong" <djwong@kernel.org>,
+ Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>,
+ linux-mm@kvack.org, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SBI_NEED_FSCK is an indicator that fsck.f2fs needs to be triggered, so it
-is not fully critical to stop any IO writes. So, let's allow to write data
-instead of reporting EIO forever given SBI_NEED_FSCK.
+Sync listing of struct file_operations members with the real one in
+fs.h.
 
-Fixes: 955772787667 ("f2fs: drop inplace IO if fs status is abnormal")
-Cc: <stable@kernel.org> # v5.13+
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/filesystems/locking.rst | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 15cc89eef28d..f9b7fb785e1d 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3563,7 +3563,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
- 		goto drop_bio;
- 	}
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index 2183fd8cc350..cdf15492c699 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -506,6 +506,7 @@ prototypes::
+ 	ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
+ 	ssize_t (*read_iter) (struct kiocb *, struct iov_iter *);
+ 	ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
++	int (*iopoll) (struct kiocb *kiocb, bool spin);
+ 	int (*iterate) (struct file *, struct dir_context *);
+ 	int (*iterate_shared) (struct file *, struct dir_context *);
+ 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
+@@ -518,12 +519,6 @@ prototypes::
+ 	int (*fsync) (struct file *, loff_t start, loff_t end, int datasync);
+ 	int (*fasync) (int, struct file *, int);
+ 	int (*lock) (struct file *, int, struct file_lock *);
+-	ssize_t (*readv) (struct file *, const struct iovec *, unsigned long,
+-			loff_t *);
+-	ssize_t (*writev) (struct file *, const struct iovec *, unsigned long,
+-			loff_t *);
+-	ssize_t (*sendfile) (struct file *, loff_t *, size_t, read_actor_t,
+-			void __user *);
+ 	ssize_t (*sendpage) (struct file *, struct page *, int, size_t,
+ 			loff_t *, int);
+ 	unsigned long (*get_unmapped_area)(struct file *, unsigned long,
+@@ -536,6 +531,14 @@ prototypes::
+ 			size_t, unsigned int);
+ 	int (*setlease)(struct file *, long, struct file_lock **, void **);
+ 	long (*fallocate)(struct file *, int, loff_t, loff_t);
++	void (*show_fdinfo)(struct seq_file *m, struct file *f);
++	unsigned (*mmap_capabilities)(struct file *);
++	ssize_t (*copy_file_range)(struct file *, loff_t, struct file *,
++			loff_t, size_t, unsigned int);
++	loff_t (*remap_file_range)(struct file *file_in, loff_t pos_in,
++			struct file *file_out, loff_t pos_out,
++			loff_t len, unsigned int remap_flags);
++	int (*fadvise)(struct file *, loff_t, loff_t, int);
  
--	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK) || f2fs_cp_error(sbi)) {
-+	if (f2fs_cp_error(sbi)) {
- 		err = -EIO;
- 		goto drop_bio;
- 	}
+ locking rules:
+ 	All may block.
 -- 
-2.32.0.93.g670b81a890-goog
+2.26.2
 
 
 
