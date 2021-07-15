@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74136C47E4E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Jul 2021 14:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5A0C1B08C
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Jul 2021 14:42:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 20508613C0;
-	Thu, 15 Jul 2021 14:42:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20508613C0
+	by mail.kernel.org (Postfix) with ESMTPS id 6CC66613C7;
+	Thu, 15 Jul 2021 14:42:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC66613C7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m42ZA-00060K-Nm; Thu, 15 Jul 2021 14:42:20 +0000
+	id 1m42ZA-00060V-R0; Thu, 15 Jul 2021 14:42:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jack@suse.cz>) id 1m41bj-0004y3-0M
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Jul 2021 13:40:55 +0000
+ (envelope-from <jack@suse.cz>) id 1m41bl-0004yG-0f
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Jul 2021 13:40:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VgWT5tfqbtBkDrX2L7CznODEgq2BTXfXClIF6lsIWFg=; b=avKB2xYqpKQqk5qvXtuFVxNLpY
- C0iKQc9Z95TNRIZrr7QqFTWt9YMSk323CZMkG4pZE3oQivFFmI8EgCVYlMLIEgqg8VssuE+qFurmg
- nI5PbMBp7wDuiS2l3eqzbxn00NrLRm1L0fSIk5Nio4spROLL8sOLjbfra719a3wTcoyI=;
+ bh=MAwH8p8fifiQg27/Bml9bQG8rBDFikpquMFbXnFLpF0=; b=i2o+vrE5F37nw3ZfiGt0J9/z4w
+ FCV8RDNo3O9d6SZf3Q3y98COoMQVft89dkI+RQSBsuN9L+dijfi3bkebiaXlvP4icAi5pJhXGz1J2
+ aMbCq0LGy9WLPJiX5PgcOArF3q3W47AjF5IE6Dtb++7+b8goNLsaKH8GAWOubK8dop+k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,61 +42,61 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VgWT5tfqbtBkDrX2L7CznODEgq2BTXfXClIF6lsIWFg=; b=HHRJcHIWVWXRV99HWSPj7Uwenj
- pQIU+3uPtWSfQvfTmQr1GpbtWdzwD9jCf1TupceAyeAXs3COANSWvB9HykhtOiAWJGE96DkuAI95Y
- baPWNbAMAPybnDUzbB8F14WRT+t5vKN/o5vVYdT8lYctIPQgOoMtjDriUw90/mDtf1WA=;
-Received: from smtp-out1.suse.de ([195.135.220.28])
+ bh=MAwH8p8fifiQg27/Bml9bQG8rBDFikpquMFbXnFLpF0=; b=aScYz/nt5StOXYsIn9oohuvgT3
+ 47tDuNAOXxZzTM20YlYIawd1WGophQhnF47bJ1eiri+WQOcBgqqKVBTejrWb7zdc0LNB8uQdr8Iu9
+ hDaZjOrsrZOBSPpwnSafo29g2oycqGe2lUGsp70r6B+ur/9uSpolKJw89UI/NJ79t+xc=;
+Received: from smtp-out2.suse.de ([195.135.220.29])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1m41ba-00075b-Vq
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Jul 2021 13:40:54 +0000
+ id 1m41bb-00075a-4a
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 15 Jul 2021 13:40:56 +0000
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
- by smtp-out1.suse.de (Postfix) with ESMTP id 740C222A7B;
+ by smtp-out2.suse.de (Postfix) with ESMTP id 7DC251FE27;
  Thu, 15 Jul 2021 13:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
  t=1626356433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=VgWT5tfqbtBkDrX2L7CznODEgq2BTXfXClIF6lsIWFg=;
- b=gGAAOtj/R/fvQnISwpVoNlCX95cynpLxqoTBi7etApByJozAjxDpXsF8d3i30UbXCML7jG
- fTs5TUqO+ZV0RlC7s0jsNNNhJRcpsrD9cFStpzyKr4P/ExgrJTkDLmaw7zJt/s/IEKfC2m
- zDr7JrvvwhmB/8NSfDfkbD1Y/7FDypY=
+ bh=MAwH8p8fifiQg27/Bml9bQG8rBDFikpquMFbXnFLpF0=;
+ b=1q5ce0ejgt4apY8fgVTLEINTJHtLlUEjqdpJyoJMEQqAHtLuv0S1nYHKW9ZiwZYJGHhGmq
+ U4OtCrGr/2NUurwNQjbZtjNex0WxR+v9w4St7cZS1mpjBvnP3rtA0RneqvpvRx0cBKiQn3
+ cXv95Z8fjgYc4eER5TpvmPJ9Zdc0n2s=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
  s=susede2_ed25519; t=1626356433;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=VgWT5tfqbtBkDrX2L7CznODEgq2BTXfXClIF6lsIWFg=;
- b=shEPb7ejWp4NsR1zkbD7mwxPzoc5euT22W3fMApWWWKV805FqStp/zNqf6W4W2KXimr60g
- Kfu9AYj1Y4dekvDw==
+ bh=MAwH8p8fifiQg27/Bml9bQG8rBDFikpquMFbXnFLpF0=;
+ b=9xIHoPuIEFkhAbxquASAEkhpL4ZXo2rGQPyJOmW9bHfFVpT+XZdv++REm1WNowbekYouoK
+ 8ifSoSuFzPpieIDw==
 Received: from quack2.suse.cz (unknown [10.100.200.198])
- by relay2.suse.de (Postfix) with ESMTP id 63481A3B9C;
+ by relay2.suse.de (Postfix) with ESMTP id 68590A3BA0;
  Thu, 15 Jul 2021 13:40:33 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
- id 16BF81E0BFF; Thu, 15 Jul 2021 15:40:33 +0200 (CEST)
+ id 2A1851E0E81; Thu, 15 Jul 2021 15:40:33 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: <linux-fsdevel@vger.kernel.org>
-Date: Thu, 15 Jul 2021 15:40:16 +0200
-Message-Id: <20210715134032.24868-6-jack@suse.cz>
+Date: Thu, 15 Jul 2021 15:40:21 +0200
+Message-Id: <20210715134032.24868-11-jack@suse.cz>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210715133202.5975-1-jack@suse.cz>
 References: <20210715133202.5975-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4727; h=from:subject;
- bh=ym49Iu4QRUik/RZXy3TKmo1SdbNHjClhswakdveozJ4=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg8DrAXqVppyqhs9Kow3gAlNxylsvMUO1Q8weiZrXk
- EGLnB5OJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYPA6wAAKCRCcnaoHP2RA2S+qCA
- CCBAY7LsLaKnOxsZuCxP4VBsac7Lk876C7u73EmUZtNt0EC5qDjOmRB0ATJwzIyVRUh3mHiGmtZ1uG
- 87F4zRdonHW0OV7lYuIq/jDqMylYcLuNrWsvfy68+3c4JlNG4CTc88aLlAJz1PR+F/oHknHoPSak1w
- VPjx0Vt7fUH0njMXhC0jG1FSWpZbkTSjiwmKvQMCTi0qyI+C8HIVMZ0HYymDZSg9hhGQQWYetUysOd
- IP2occRPzhyeNETOyCJt0vKz3NrVNjqxeWIs6WMZwSECHfTj05fJ672DgNM3IeSIBGb6ijVcclHFw5
- 04GlJM6nay0POEc0+MsPU2TXQ5EHjH
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12344; h=from:subject;
+ bh=ugTzdnQ5fwj65SlrJvAh5LPvP/ZLlo/IqJfGP2n6gZ0=;
+ b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBg8DrFIPcXwZZYwK4J88o6DMh61busWv3ks1R0FhPw
+ fmLfaECJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYPA6xQAKCRCcnaoHP2RA2fa3CA
+ CH20fdImRPyfVXQW24cQzPmd2KgQP3evXTQGNaeQc3pUMwcuRZwC61cem6pShqocaSYuBQrKdZfW+M
+ 6Dvn3opd8VKSn3rxWA+a+OWOaOVzvR2kKjubFOUZZpk2rC6A4o62lvfzBXBM8u3IQnabhG3zcCXfDj
+ xI2bMirEw8a58aG3vz8FgXxVfkv7xA/L/FypBBju4sUFEfKShNwEBJWuEJSz6aneoqiVJ4pp8CR/ST
+ iuUnQjnofwOZrQBnmotTE/JzHKP3DFc48oS4wbY0XXe67CUSkxhrZ8MI2ysrKzhDVr+uQkCEi3BM2J
+ s1dfvB0bGvaio6YBJwIddvYjl3nPQ0
 X-Developer-Key: i=jack@suse.cz; a=openpgp;
  fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1m41ba-00075b-Vq
-Subject: [f2fs-dev] [PATCH 06/14] ext2: Convert to using invalidate_lock
+X-Headers-End: 1m41bb-00075a-4a
+Subject: [f2fs-dev] [PATCH 11/14] f2fs: Convert to using invalidate_lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -110,153 +110,343 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-xfs@vger.kernel.org, Ted Tso <tytso@mit.edu>,
  linux-cifs@vger.kernel.org, "Darrick J. Wong" <djwong@kernel.org>,
- Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>,
- linux-mm@kvack.org, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org,
- linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+ Chao Yu <yuchao0@huawei.com>, Dave Chinner <david@fromorbit.com>,
+ Matthew Wilcox <willy@infradead.org>, linux-f2fs-devel@lists.sourceforge.net,
+ Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+ ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Ext2 has its private dax_sem used for synchronizing page faults and
-truncation. Use mapping->invalidate_lock instead as it is meant for this
-purpose.
+Use invalidate_lock instead of f2fs' private i_mmap_sem. The intended
+purpose is exactly the same. By this conversion we fix a long standing
+race between hole punching and read(2) / readahead(2) paths that can
+lead to stale page cache contents.
 
-CC: <linux-ext4@vger.kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+CC: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: Chao Yu <yuchao0@huawei.com>
+CC: linux-f2fs-devel@lists.sourceforge.net
+Acked-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/ext2/ext2.h  | 11 -----------
- fs/ext2/file.c  |  7 +++----
- fs/ext2/inode.c | 12 ++++++------
- fs/ext2/super.c |  3 ---
- 4 files changed, 9 insertions(+), 24 deletions(-)
+ fs/f2fs/data.c  |  8 +++----
+ fs/f2fs/f2fs.h  |  1 -
+ fs/f2fs/file.c  | 62 ++++++++++++++++++++++++-------------------------
+ fs/f2fs/super.c |  1 -
+ 4 files changed, 34 insertions(+), 38 deletions(-)
 
-diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-index b0a694820cb7..81907a041570 100644
---- a/fs/ext2/ext2.h
-+++ b/fs/ext2/ext2.h
-@@ -667,9 +667,6 @@ struct ext2_inode_info {
- 	struct rw_semaphore xattr_sem;
- #endif
- 	rwlock_t i_meta_lock;
--#ifdef CONFIG_FS_DAX
--	struct rw_semaphore dax_sem;
--#endif
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d2cf48c5a2e4..eb222b35edef 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3187,12 +3187,12 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
+ 	/* In the fs-verity case, f2fs_end_enable_verity() does the truncate */
+ 	if (to > i_size && !f2fs_verity_in_progress(inode)) {
+ 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-		down_write(&F2FS_I(inode)->i_mmap_sem);
++		filemap_invalidate_lock(mapping);
  
- 	/*
- 	 * truncate_mutex is for serialising ext2_truncate() against
-@@ -685,14 +682,6 @@ struct ext2_inode_info {
- #endif
- };
+ 		truncate_pagecache(inode, i_size);
+ 		f2fs_truncate_blocks(inode, i_size, true);
  
--#ifdef CONFIG_FS_DAX
--#define dax_sem_down_write(ext2_inode)	down_write(&(ext2_inode)->dax_sem)
--#define dax_sem_up_write(ext2_inode)	up_write(&(ext2_inode)->dax_sem)
--#else
--#define dax_sem_down_write(ext2_inode)
--#define dax_sem_up_write(ext2_inode)
--#endif
--
- /*
-  * Inode dynamic state flags
-  */
-diff --git a/fs/ext2/file.c b/fs/ext2/file.c
-index f98466acc672..eb97aa3d700e 100644
---- a/fs/ext2/file.c
-+++ b/fs/ext2/file.c
-@@ -81,7 +81,7 @@ static ssize_t ext2_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
-  *
-  * mmap_lock (MM)
-  *   sb_start_pagefault (vfs, freeze)
-- *     ext2_inode_info->dax_sem
-+ *     address_space->invalidate_lock
-  *       address_space->i_mmap_rwsem or page_lock (mutually exclusive in DAX)
-  *         ext2_inode_info->truncate_mutex
-  *
-@@ -91,7 +91,6 @@ static ssize_t ext2_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
- static vm_fault_t ext2_dax_fault(struct vm_fault *vmf)
- {
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
--	struct ext2_inode_info *ei = EXT2_I(inode);
- 	vm_fault_t ret;
- 	bool write = (vmf->flags & FAULT_FLAG_WRITE) &&
- 		(vmf->vma->vm_flags & VM_SHARED);
-@@ -100,11 +99,11 @@ static vm_fault_t ext2_dax_fault(struct vm_fault *vmf)
- 		sb_start_pagefault(inode->i_sb);
- 		file_update_time(vmf->vma->vm_file);
+-		up_write(&F2FS_I(inode)->i_mmap_sem);
++		filemap_invalidate_unlock(mapping);
+ 		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
  	}
--	down_read(&ei->dax_sem);
-+	filemap_invalidate_lock_shared(inode->i_mapping);
+ }
+@@ -3852,7 +3852,7 @@ static int f2fs_migrate_blocks(struct inode *inode, block_t start_blk,
+ 	int ret = 0;
  
- 	ret = dax_iomap_fault(vmf, PE_SIZE_PTE, NULL, NULL, &ext2_iomap_ops);
+ 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-	down_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_lock(inode->i_mapping);
  
--	up_read(&ei->dax_sem);
-+	filemap_invalidate_unlock_shared(inode->i_mapping);
- 	if (write)
- 		sb_end_pagefault(inode->i_sb);
+ 	set_inode_flag(inode, FI_ALIGNED_WRITE);
+ 
+@@ -3894,7 +3894,7 @@ static int f2fs_migrate_blocks(struct inode *inode, block_t start_blk,
+ 	clear_inode_flag(inode, FI_DO_DEFRAG);
+ 	clear_inode_flag(inode, FI_ALIGNED_WRITE);
+ 
+-	up_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_unlock(inode->i_mapping);
+ 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 
  	return ret;
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index dadb121beb22..33f874f0fc4a 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -1177,7 +1177,7 @@ static void ext2_free_branches(struct inode *inode, __le32 *p, __le32 *q, int de
- 		ext2_free_data(inode, p, q);
- }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ee8eb33e2c25..906b2c4b50e7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -754,7 +754,6 @@ struct f2fs_inode_info {
  
--/* dax_sem must be held when calling this function */
-+/* mapping->invalidate_lock must be held when calling this function */
- static void __ext2_truncate_blocks(struct inode *inode, loff_t offset)
+ 	/* avoid racing between foreground op and gc */
+ 	struct rw_semaphore i_gc_rwsem[2];
+-	struct rw_semaphore i_mmap_sem;
+ 	struct rw_semaphore i_xattr_sem; /* avoid racing between reading and changing EAs */
+ 
+ 	int i_extra_isize;		/* size of extra space located in i_addr */
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6afd4562335f..1ff333755721 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -38,10 +38,7 @@ static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+ 	vm_fault_t ret;
+ 
+-	down_read(&F2FS_I(inode)->i_mmap_sem);
+ 	ret = filemap_fault(vmf);
+-	up_read(&F2FS_I(inode)->i_mmap_sem);
+-
+ 	if (!ret)
+ 		f2fs_update_iostat(F2FS_I_SB(inode), APP_MAPPED_READ_IO,
+ 							F2FS_BLKSIZE);
+@@ -101,7 +98,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+ 
+ 	file_update_time(vmf->vma->vm_file);
+-	down_read(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_lock_shared(inode->i_mapping);
+ 	lock_page(page);
+ 	if (unlikely(page->mapping != inode->i_mapping ||
+ 			page_offset(page) > i_size_read(inode) ||
+@@ -159,7 +156,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	trace_f2fs_vm_page_mkwrite(page, DATA);
+ out_sem:
+-	up_read(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_unlock_shared(inode->i_mapping);
+ 
+ 	sb_end_pagefault(inode->i_sb);
+ err:
+@@ -940,7 +937,7 @@ int f2fs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		}
+ 
+ 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-		down_write(&F2FS_I(inode)->i_mmap_sem);
++		filemap_invalidate_lock(inode->i_mapping);
+ 
+ 		truncate_setsize(inode, attr->ia_size);
+ 
+@@ -950,7 +947,7 @@ int f2fs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		 * do not trim all blocks after i_size if target size is
+ 		 * larger than i_size.
+ 		 */
+-		up_write(&F2FS_I(inode)->i_mmap_sem);
++		filemap_invalidate_unlock(inode->i_mapping);
+ 		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 		if (err)
+ 			return err;
+@@ -1095,7 +1092,7 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 			blk_end = (loff_t)pg_end << PAGE_SHIFT;
+ 
+ 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-			down_write(&F2FS_I(inode)->i_mmap_sem);
++			filemap_invalidate_lock(mapping);
+ 
+ 			truncate_inode_pages_range(mapping, blk_start,
+ 					blk_end - 1);
+@@ -1104,7 +1101,7 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 			ret = f2fs_truncate_hole(inode, pg_start, pg_end);
+ 			f2fs_unlock_op(sbi);
+ 
+-			up_write(&F2FS_I(inode)->i_mmap_sem);
++			filemap_invalidate_unlock(mapping);
+ 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 		}
+ 	}
+@@ -1339,7 +1336,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 	/* avoid gc operation during block exchange */
+ 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-	down_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_lock(inode->i_mapping);
+ 
+ 	f2fs_lock_op(sbi);
+ 	f2fs_drop_extent_tree(inode);
+@@ -1347,7 +1344,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
+ 	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
+ 	f2fs_unlock_op(sbi);
+ 
+-	up_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_unlock(inode->i_mapping);
+ 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	return ret;
+ }
+@@ -1378,13 +1375,13 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 		return ret;
+ 
+ 	/* write out all moved pages, if possible */
+-	down_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_lock(inode->i_mapping);
+ 	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
+ 	truncate_pagecache(inode, offset);
+ 
+ 	new_size = i_size_read(inode) - len;
+ 	ret = f2fs_truncate_blocks(inode, new_size, true);
+-	up_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_unlock(inode->i_mapping);
+ 	if (!ret)
+ 		f2fs_i_size_write(inode, new_size);
+ 	return ret;
+@@ -1484,7 +1481,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 			pgoff_t end;
+ 
+ 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-			down_write(&F2FS_I(inode)->i_mmap_sem);
++			filemap_invalidate_lock(mapping);
+ 
+ 			truncate_pagecache_range(inode,
+ 				(loff_t)index << PAGE_SHIFT,
+@@ -1496,7 +1493,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 			ret = f2fs_get_dnode_of_data(&dn, index, ALLOC_NODE);
+ 			if (ret) {
+ 				f2fs_unlock_op(sbi);
+-				up_write(&F2FS_I(inode)->i_mmap_sem);
++				filemap_invalidate_unlock(mapping);
+ 				up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 				goto out;
+ 			}
+@@ -1508,7 +1505,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 			f2fs_put_dnode(&dn);
+ 
+ 			f2fs_unlock_op(sbi);
+-			up_write(&F2FS_I(inode)->i_mmap_sem);
++			filemap_invalidate_unlock(mapping);
+ 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 
+ 			f2fs_balance_fs(sbi, dn.node_changed);
+@@ -1543,6 +1540,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
  {
- 	__le32 *i_data = EXT2_I(inode)->i_data;
-@@ -1194,7 +1194,7 @@ static void __ext2_truncate_blocks(struct inode *inode, loff_t offset)
- 	iblock = (offset + blocksize-1) >> EXT2_BLOCK_SIZE_BITS(inode->i_sb);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct address_space *mapping = inode->i_mapping;
+ 	pgoff_t nr, pg_start, pg_end, delta, idx;
+ 	loff_t new_size;
+ 	int ret = 0;
+@@ -1565,14 +1563,14 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
  
- #ifdef CONFIG_FS_DAX
--	WARN_ON(!rwsem_is_locked(&ei->dax_sem));
-+	WARN_ON(!rwsem_is_locked(&inode->i_mapping->invalidate_lock));
- #endif
+ 	f2fs_balance_fs(sbi, true);
  
- 	n = ext2_block_to_path(inode, iblock, offsets, NULL);
-@@ -1276,9 +1276,9 @@ static void ext2_truncate_blocks(struct inode *inode, loff_t offset)
- 	if (ext2_inode_is_fast_symlink(inode))
- 		return;
+-	down_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_lock(mapping);
+ 	ret = f2fs_truncate_blocks(inode, i_size_read(inode), true);
+-	up_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_unlock(mapping);
+ 	if (ret)
+ 		return ret;
  
--	dax_sem_down_write(EXT2_I(inode));
+ 	/* write out all dirty pages from offset */
+-	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
++	ret = filemap_write_and_wait_range(mapping, offset, LLONG_MAX);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1583,7 +1581,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 	/* avoid gc operation during block exchange */
+ 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-	down_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_lock(mapping);
+ 	truncate_pagecache(inode, offset);
+ 
+ 	while (!ret && idx > pg_start) {
+@@ -1599,14 +1597,14 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 					idx + delta, nr, false);
+ 		f2fs_unlock_op(sbi);
+ 	}
+-	up_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_unlock(mapping);
+ 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 
+ 	/* write out all moved pages, if possible */
+-	down_write(&F2FS_I(inode)->i_mmap_sem);
+-	filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
++	filemap_invalidate_lock(mapping);
++	filemap_write_and_wait_range(mapping, offset, LLONG_MAX);
+ 	truncate_pagecache(inode, offset);
+-	up_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_unlock(mapping);
+ 
+ 	if (!ret)
+ 		f2fs_i_size_write(inode, new_size);
+@@ -3440,7 +3438,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
+ 		goto out;
+ 
+ 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-	down_write(&F2FS_I(inode)->i_mmap_sem);
 +	filemap_invalidate_lock(inode->i_mapping);
- 	__ext2_truncate_blocks(inode, offset);
--	dax_sem_up_write(EXT2_I(inode));
+ 
+ 	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+ 
+@@ -3476,7 +3474,7 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
+ 	}
+ 
+ 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-	up_write(&F2FS_I(inode)->i_mmap_sem);
 +	filemap_invalidate_unlock(inode->i_mapping);
- }
+ out:
+ 	inode_unlock(inode);
  
- static int ext2_setsize(struct inode *inode, loff_t newsize)
-@@ -1308,10 +1308,10 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
- 	if (error)
- 		return error;
+@@ -3593,7 +3591,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+ 	}
  
--	dax_sem_down_write(EXT2_I(inode));
+ 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-	down_write(&F2FS_I(inode)->i_mmap_sem);
 +	filemap_invalidate_lock(inode->i_mapping);
- 	truncate_setsize(inode, newsize);
- 	__ext2_truncate_blocks(inode, newsize);
--	dax_sem_up_write(EXT2_I(inode));
+ 
+ 	last_idx = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+ 
+@@ -3629,7 +3627,7 @@ static int f2fs_reserve_compress_blocks(struct file *filp, unsigned long arg)
+ 	}
+ 
+ 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-	up_write(&F2FS_I(inode)->i_mmap_sem);
 +	filemap_invalidate_unlock(inode->i_mapping);
  
- 	inode->i_mtime = inode->i_ctime = current_time(inode);
- 	if (inode_needs_sync(inode)) {
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index 21e09fbaa46f..987bcf32ed46 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -206,9 +206,6 @@ static void init_once(void *foo)
- 	init_rwsem(&ei->xattr_sem);
- #endif
- 	mutex_init(&ei->truncate_mutex);
--#ifdef CONFIG_FS_DAX
--	init_rwsem(&ei->dax_sem);
--#endif
- 	inode_init_once(&ei->vfs_inode);
- }
+ 	if (ret >= 0) {
+ 		clear_inode_flag(inode, FI_COMPRESS_RELEASED);
+@@ -3748,7 +3746,7 @@ static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
+ 		goto err;
  
+ 	down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-	down_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_lock(mapping);
+ 
+ 	ret = filemap_write_and_wait_range(mapping, range.start,
+ 			to_end ? LLONG_MAX : end_addr - 1);
+@@ -3835,7 +3833,7 @@ static int f2fs_sec_trim_file(struct file *filp, unsigned long arg)
+ 		ret = f2fs_secure_erase(prev_bdev, inode, prev_index,
+ 				prev_block, len, range.flags);
+ out:
+-	up_write(&F2FS_I(inode)->i_mmap_sem);
++	filemap_invalidate_unlock(mapping);
+ 	up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ err:
+ 	inode_unlock(inode);
+@@ -4313,9 +4311,9 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		/* if we couldn't write data, we should deallocate blocks. */
+ 		if (preallocated && i_size_read(inode) < target_size) {
+ 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-			down_write(&F2FS_I(inode)->i_mmap_sem);
++			filemap_invalidate_lock(inode->i_mapping);
+ 			f2fs_truncate(inode);
+-			up_write(&F2FS_I(inode)->i_mmap_sem);
++			filemap_invalidate_unlock(inode->i_mapping);
+ 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 		}
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 8fecd3050ccd..ce2ab1b85c11 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1289,7 +1289,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	mutex_init(&fi->inmem_lock);
+ 	init_rwsem(&fi->i_gc_rwsem[READ]);
+ 	init_rwsem(&fi->i_gc_rwsem[WRITE]);
+-	init_rwsem(&fi->i_mmap_sem);
+ 	init_rwsem(&fi->i_xattr_sem);
+ 
+ 	/* Will be used by directory only */
 -- 
 2.26.2
 
