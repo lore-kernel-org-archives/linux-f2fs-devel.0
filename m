@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A10C636CB
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BB7C07E95
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:41:12 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 7661E613F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:41:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7661E613F5
+	by mail.kernel.org (Postfix) with ESMTPS id BEFD0613F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:41:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEFD0613F5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m4P1X-0002ie-Gu; Fri, 16 Jul 2021 14:41:07 +0000
+	id 1m4P1b-0004xv-Ft; Fri, 16 Jul 2021 14:41:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <ebiggers@kernel.org>) id 1m4P1V-0002iM-MY
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:41:05 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1m4P1Z-0004xM-F4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:41:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TTukNAX5mpaGstElgSRKRQ+UO+gcSFHLK04fSoGfZpw=; b=MVrl//Tc/JxyuM7VePuqEFZ46M
- JwOfpcCric/pSdQR90rVhTcEy1mHIC5abP6emn6ehacqa9CNI7rdLxducmVY1iWB1MLxV1TXZQbHA
- YLydMatY0f9dt1EIA1LuvXBETAzP0dtGh60eKCwJLDDouBOVtcYiJTLWBzft1LD0LMyQ=;
+ bh=XqWzNiRjPrlOt7N68eArOxPCfI4Nih73NKHI4X6XI58=; b=PU2WxEiuktUuh96kcOrvAY9paU
+ QLOUKCxuJKp1tpba44ggGxWj4xYGuQUf5FnOsy5x5s6sbM9QjmWVby6riY0/Q5+dDezWzJArhoeXD
+ wkTOug7jUej7J70Muu1tR4q0cJ4lmGjQfCefH0wlsYozkJpgcGYZYl4g0Pdrxka3hAC4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,37 +42,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TTukNAX5mpaGstElgSRKRQ+UO+gcSFHLK04fSoGfZpw=; b=d/jkKV2yRfsI9KM4CMci6rnzKJ
- Guz57fg/zovUt6D7oGN5dFBHu+WZtZh5B4sIWJXcPCnP6hylShcGuuoRiXHJU9L9MngdqdSYu+Nib
- xNOR3Y2+ZTKuqoFsS74XNAD1I8rp2uWkqtxEx4mqWSJvbTW9zkqtqrAO3DcOMO5Q1BVU=;
+ bh=XqWzNiRjPrlOt7N68eArOxPCfI4Nih73NKHI4X6XI58=; b=dLSARl7GW7FKO9NnSCpYBzYouh
+ tYrMy4ZOEMUFopTnPgmTgtsd4t2+Brl8E/H75WE/fQt0tLRrow6CbAz54gpwqyr8jTri6cBR4rmNn
+ eqA3WY7QHQL0sJfz4nkGyDvQpThHA3nx7rEoasCvUHeZfgkr4qSUiVeAhD9FFbGcSmnM=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m4P1P-0004en-GB
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:41:05 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E5E961404;
- Fri, 16 Jul 2021 14:40:46 +0000 (UTC)
+ id 1m4P1T-0004f4-09
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:41:09 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2C1F161406;
+ Fri, 16 Jul 2021 14:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1626446447;
- bh=4AdX2bJE2x9cvVYUnKuR/I++uGU3+MB3vzYu6IeuHxU=;
+ s=k20201202; t=1626446450;
+ bh=aw4O7H66/f2LfOr5ltGk8A3nBKyRFz2VLyMrawYdLsw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=NWTviJbOiFoyzawLrUv/ZDlPkFMqjbS2jQj/kfy836Lm4XqWN1iCc4t0zuGvypRX0
- CqoJBaXxKVtnmgOh+yZK5p8EDb+qBcjVM+yVqT7wfGVRwrjWoDZgdslqFMolA0W3wl
- So/fKNnnQp/1BH3nxhDa7b1huuHDdHSpsli0xqKqIoXXp2XYbF74Zbt2Eui4DyzQ4L
- bsN43hqSN5plYEoxEK4fsfy2lgXU1ueKv8KWDddaj74CxSAxk/NM8kX6kQ8oVh926f
- r3axRiPhuOfquS/SdgJ1lUoObJbYWNv/dMwjYLD/kU1+D8gkvZmWm+Lw+35J2yk4OC
- HBWN+KlJKdh9w==
+ b=krh0VESz4Kjd88k9e6OiXT2L80R84tOL3XuT6WS+uiDOnZRizAcCLjS8C8Wd052qe
+ vZcMHvxcKAUI/e9WJBZ9xFCVLzHJvaG8Nh6MfPuLCyeb4CtPr1ZoEaE3uyRmSIkIfy
+ fWv5WgcUq25ytImHiC+13Qf+6ahzQNKgAVsXbSJm0IYj5ybpHE3o4/b40CBqs3bHdh
+ 7fLD914XW50bVv0eJLxTzTvUzVrPrvkD7qhExBDwBJzVO2/VDEuGhFUH7YI7JXs9YO
+ vi62IeE2r2YXUd0r7AibZF/r5a7s/9VoWbpW+XxdfvhN40l/+c9OVdhAiByYhmDvqO
+ Pmzy6+cBRFdEA==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
  Chao Yu <chao@kernel.org>
-Date: Fri, 16 Jul 2021 09:39:15 -0500
-Message-Id: <20210716143919.44373-6-ebiggers@kernel.org>
+Date: Fri, 16 Jul 2021 09:39:19 -0500
+Message-Id: <20210716143919.44373-10-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210716143919.44373-1-ebiggers@kernel.org>
 References: <20210716143919.44373-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1m4P1P-0004en-GB
-Subject: [f2fs-dev] [PATCH 5/9] f2fs: fix the f2fs_file_write_iter tracepoint
+X-Headers-End: 1m4P1T-0004f4-09
+Subject: [f2fs-dev] [PATCH 9/9] f2fs: remove f2fs_direct_IO()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,76 +94,237 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Pass in the original position and count rather than the position and
-count that were updated by the write.  Also use the correct types for
-all arguments, in particular the file offset which was being truncated
-to 32 bits on 32-bit platforms.
+Remove f2fs_direct_IO(), since it is no longer used because f2fs now
+uses iomap_dio_rw() instead.
+
+Set ->direct_IO to noop_direct_IO rather than NULL.  This is needed to
+continue to mark the inodes as supporting direct I/O, as mentioned in
+the comment for noop_direct_IO().
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/file.c              |  5 +++--
- include/trace/events/f2fs.h | 12 ++++++------
- 2 files changed, 9 insertions(+), 8 deletions(-)
+ fs/f2fs/data.c | 180 +------------------------------------------------
+ 1 file changed, 1 insertion(+), 179 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 878b2460f79b..279252c7f7bc 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4282,6 +4282,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 0d2bb651483d..4fbf28f5aaab 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1650,47 +1650,6 @@ static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
+ 	return (blks << inode->i_blkbits);
+ }
+ 
+-static int __get_data_block(struct inode *inode, sector_t iblock,
+-			struct buffer_head *bh, int create, int flag,
+-			pgoff_t *next_pgofs, int seg_type, bool may_write)
+-{
+-	struct f2fs_map_blocks map;
+-	int err;
+-
+-	map.m_lblk = iblock;
+-	map.m_len = bytes_to_blks(inode, bh->b_size);
+-	map.m_next_pgofs = next_pgofs;
+-	map.m_next_extent = NULL;
+-	map.m_seg_type = seg_type;
+-	map.m_may_create = may_write;
+-
+-	err = f2fs_map_blocks(inode, &map, create, flag);
+-	if (!err) {
+-		map_bh(bh, inode->i_sb, map.m_pblk);
+-		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
+-		bh->b_size = blks_to_bytes(inode, map.m_len);
+-	}
+-	return err;
+-}
+-
+-static int get_data_block_dio_write(struct inode *inode, sector_t iblock,
+-			struct buffer_head *bh_result, int create)
+-{
+-	return __get_data_block(inode, iblock, bh_result, create,
+-				F2FS_GET_BLOCK_DIO, NULL,
+-				f2fs_rw_hint_to_seg_type(inode->i_write_hint),
+-				true);
+-}
+-
+-static int get_data_block_dio(struct inode *inode, sector_t iblock,
+-			struct buffer_head *bh_result, int create)
+-{
+-	return __get_data_block(inode, iblock, bh_result, create,
+-				F2FS_GET_BLOCK_DIO, NULL,
+-				f2fs_rw_hint_to_seg_type(inode->i_write_hint),
+-				false);
+-}
+-
+ static int f2fs_xattr_fiemap(struct inode *inode,
+ 				struct fiemap_extent_info *fieinfo)
  {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file_inode(file);
-+	const loff_t orig_pos = iocb->ki_pos;
-+	const size_t orig_count = iov_iter_count(from);
- 	loff_t target_size;
- 	int preallocated;
- 	ssize_t ret;
-@@ -4363,8 +4365,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- out_unlock:
- 	inode_unlock(inode);
- out:
--	trace_f2fs_file_write_iter(inode, iocb->ki_pos,
--					iov_iter_count(from), ret);
-+	trace_f2fs_file_write_iter(inode, orig_pos, orig_count, ret);
- 	if (ret > 0)
- 		ret = generic_write_sync(iocb, ret);
- 	return ret;
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 56b113e3cd6a..bffb38622e9b 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -540,17 +540,17 @@ TRACE_EVENT(f2fs_truncate_partial_nodes,
+@@ -3410,29 +3369,6 @@ static int f2fs_write_end(struct file *file,
+ 	return copied;
+ }
  
- TRACE_EVENT(f2fs_file_write_iter,
+-static int check_direct_IO(struct inode *inode, struct iov_iter *iter,
+-			   loff_t offset)
+-{
+-	unsigned i_blkbits = READ_ONCE(inode->i_blkbits);
+-	unsigned blkbits = i_blkbits;
+-	unsigned blocksize_mask = (1 << blkbits) - 1;
+-	unsigned long align = offset | iov_iter_alignment(iter);
+-	struct block_device *bdev = inode->i_sb->s_bdev;
+-
+-	if (iov_iter_rw(iter) == READ && offset >= i_size_read(inode))
+-		return 1;
+-
+-	if (align & blocksize_mask) {
+-		if (bdev)
+-			blkbits = blksize_bits(bdev_logical_block_size(bdev));
+-		blocksize_mask = (1 << blkbits) - 1;
+-		if (align & blocksize_mask)
+-			return -EINVAL;
+-		return 1;
+-	}
+-	return 0;
+-}
+-
+ static void f2fs_dio_end_io(struct bio *bio)
+ {
+ 	struct f2fs_private_dio *dio = bio->bi_private;
+@@ -3448,35 +3384,6 @@ static void f2fs_dio_end_io(struct bio *bio)
+ 	bio_endio(bio);
+ }
  
--	TP_PROTO(struct inode *inode, unsigned long offset,
--		unsigned long length, int ret),
-+	TP_PROTO(struct inode *inode, loff_t offset, size_t length,
-+		 ssize_t ret),
+-static void f2fs_dio_submit_bio_old(struct bio *bio, struct inode *inode,
+-							loff_t file_offset)
+-{
+-	struct f2fs_private_dio *dio;
+-	bool write = (bio_op(bio) == REQ_OP_WRITE);
+-
+-	dio = f2fs_kzalloc(F2FS_I_SB(inode),
+-			sizeof(struct f2fs_private_dio), GFP_NOFS);
+-	if (!dio)
+-		goto out;
+-
+-	dio->inode = inode;
+-	dio->orig_end_io = bio->bi_end_io;
+-	dio->orig_private = bio->bi_private;
+-	dio->write = write;
+-
+-	bio->bi_end_io = f2fs_dio_end_io;
+-	bio->bi_private = dio;
+-
+-	inc_page_count(F2FS_I_SB(inode),
+-			write ? F2FS_DIO_WRITE : F2FS_DIO_READ);
+-
+-	submit_bio(bio);
+-	return;
+-out:
+-	bio->bi_status = BLK_STS_IOERR;
+-	bio_endio(bio);
+-}
+-
+ static blk_qc_t f2fs_dio_submit_bio(struct inode *inode, struct iomap *iomap,
+ 				    struct bio *bio, loff_t file_offset)
+ {
+@@ -3506,91 +3413,6 @@ static blk_qc_t f2fs_dio_submit_bio(struct inode *inode, struct iomap *iomap,
+ 	return BLK_QC_T_NONE;
+ }
  
- 	TP_ARGS(inode, offset, length, ret),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
- 		__field(ino_t,	ino)
--		__field(unsigned long, offset)
--		__field(unsigned long, length)
--		__field(int,	ret)
-+		__field(loff_t, offset)
-+		__field(size_t, length)
-+		__field(ssize_t, ret)
- 	),
- 
- 	TP_fast_assign(
-@@ -562,7 +562,7 @@ TRACE_EVENT(f2fs_file_write_iter,
- 	),
- 
- 	TP_printk("dev = (%d,%d), ino = %lu, "
--		"offset = %lu, length = %lu, written(err) = %d",
-+		"offset = %lld, length = %zu, written(err) = %zd",
- 		show_dev_ino(__entry),
- 		__entry->offset,
- 		__entry->length,
+-static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+-{
+-	struct address_space *mapping = iocb->ki_filp->f_mapping;
+-	struct inode *inode = mapping->host;
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct f2fs_inode_info *fi = F2FS_I(inode);
+-	size_t count = iov_iter_count(iter);
+-	loff_t offset = iocb->ki_pos;
+-	int rw = iov_iter_rw(iter);
+-	int err;
+-	enum rw_hint hint = iocb->ki_hint;
+-	int whint_mode = F2FS_OPTION(sbi).whint_mode;
+-	bool do_opu;
+-
+-	err = check_direct_IO(inode, iter, offset);
+-	if (err)
+-		return err < 0 ? err : 0;
+-
+-	if (f2fs_force_buffered_io(inode, iocb, iter))
+-		return 0;
+-
+-	do_opu = (rw == WRITE && f2fs_lfs_mode(sbi));
+-
+-	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+-
+-	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
+-		iocb->ki_hint = WRITE_LIFE_NOT_SET;
+-
+-	if (iocb->ki_flags & IOCB_NOWAIT) {
+-		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
+-			iocb->ki_hint = hint;
+-			err = -EAGAIN;
+-			goto out;
+-		}
+-		if (do_opu && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
+-			up_read(&fi->i_gc_rwsem[rw]);
+-			iocb->ki_hint = hint;
+-			err = -EAGAIN;
+-			goto out;
+-		}
+-	} else {
+-		down_read(&fi->i_gc_rwsem[rw]);
+-		if (do_opu)
+-			down_read(&fi->i_gc_rwsem[READ]);
+-	}
+-
+-	err = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev,
+-			iter, rw == WRITE ? get_data_block_dio_write :
+-			get_data_block_dio, NULL, f2fs_dio_submit_bio_old,
+-			rw == WRITE ? DIO_LOCKING | DIO_SKIP_HOLES :
+-			DIO_SKIP_HOLES);
+-
+-	if (do_opu)
+-		up_read(&fi->i_gc_rwsem[READ]);
+-
+-	up_read(&fi->i_gc_rwsem[rw]);
+-
+-	if (rw == WRITE) {
+-		if (whint_mode == WHINT_MODE_OFF)
+-			iocb->ki_hint = hint;
+-		if (err > 0) {
+-			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
+-									err);
+-			if (!do_opu)
+-				set_inode_flag(inode, FI_UPDATE_WRITE);
+-		} else if (err == -EIOCBQUEUED) {
+-			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
+-						count - iov_iter_count(iter));
+-		} else if (err < 0) {
+-			f2fs_write_failed(inode, offset + count);
+-		}
+-	} else {
+-		if (err > 0)
+-			f2fs_update_iostat(sbi, APP_DIRECT_READ_IO, err);
+-		else if (err == -EIOCBQUEUED)
+-			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_READ_IO,
+-						count - iov_iter_count(iter));
+-	}
+-
+-out:
+-	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
+-
+-	return err;
+-}
+-
+ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+ 							unsigned int length)
+ {
+@@ -4046,7 +3868,7 @@ const struct address_space_operations f2fs_dblock_aops = {
+ 	.set_page_dirty	= f2fs_set_data_page_dirty,
+ 	.invalidatepage	= f2fs_invalidate_page,
+ 	.releasepage	= f2fs_release_page,
+-	.direct_IO	= f2fs_direct_IO,
++	.direct_IO	= noop_direct_IO,
+ 	.bmap		= f2fs_bmap,
+ 	.swap_activate  = f2fs_swap_activate,
+ 	.swap_deactivate = f2fs_swap_deactivate,
 -- 
 2.32.0
 
