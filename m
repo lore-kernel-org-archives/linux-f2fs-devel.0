@@ -2,80 +2,74 @@ Return-Path: <SRS0=4Zpu=MI=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18515C07E95
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 06:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2444C12002
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:40:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C0A2B611AB;
-	Fri, 16 Jul 2021 06:04:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0A2B611AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTPS id 983DC613F8
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:40:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 983DC613F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m4Gxz-0008NA-2O; Fri, 16 Jul 2021 06:04:55 +0000
+	id 1m4P1L-0002em-OE; Fri, 16 Jul 2021 14:40:55 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <BATV+382ccfd9051a34597009+6536+infradead.org+hch@casper.srs.infradead.org>)
- id 1m4Gxj-0008My-S6
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 06:04:39 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <ebiggers@kernel.org>) id 1m4P1K-0002ef-7p
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:40:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VqN67i/AkXmoD+IiyttSlo//iBvW+McMPHFuPzEzzmk=; b=MzVoWzJdUz/ykOgc4R68MYjh8I
- ux3hU/yL2nTHg1KxXNqUivPmIh3Tljbc9vrHMXZG0EmSuFR0oa/IllYH4+Zh/mhC1+tqfoj1Qel1p
- wt+mfYJQ+4b/xf9HhGhPmbgAPvUb2PvkGmM7ZGdKwhHiYztSDkCWr1roozRIcq4HhLTc=;
+ bh=QTASHhvGc6vVu+JzCK6Z7g31D7AQVeOUVsaDS5m5zGs=; b=TXjn25SXxPxnrW4/8YmNIA9ihM
+ irCbRVwMg7AGy04NPwv5YmJcAHxyvc7ZwHHxQn3/k9qam6K8sezeI/6X0E5HhZ+TXB5/E35emje3r
+ lbDs8stFZTpEG0+gZ0lWk5zecujVZ4aIURakA6fMir4zo/Qj0rpnBDp474bMQ5rjQr/U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=VqN67i/AkXmoD+IiyttSlo//iBvW+McMPHFuPzEzzmk=; b=lYf4hXraDkhDsLmzZyGtsUJtL4
- Y1uP3zUsYwwzBS+mD92gBzgNA7YN5/WNDEAz2rNYRTQNTmgcsCbvzVROTCUxWFnsuRI9OkOJ/3Vb2
- bVG9QuHfVD8292Tu4OqoaCePcHyZaG3jNNMkOiJtotGo9TQbgL5CB4FyeXS9fmAi7Q70=;
-Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=QTASHhvGc6vVu+JzCK6Z7g31D7AQVeOUVsaDS5m5zGs=; b=m
+ 9anyo3HA7sW7CPJa4AUf45gp56Qt2XUOoGv039oXiaqHqbE/cv294/6GxwwSWX0V1jqEM0qui5VTz
+ KWQF0Y3onAfUlfN9aM5ViJI/ZPaI41RRSJwWokCiIhcNtWDTFYVDBGU/yKjbds6rE0+9pBjgorIOK
+ 1V81SZegO2eU/0jY=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m4Gxc-00A6uu-Jv
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 06:04:39 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=VqN67i/AkXmoD+IiyttSlo//iBvW+McMPHFuPzEzzmk=; b=GIT7UGi37zY+XOB7QjWwGW3XJ0
- 7qEph9PTVYX9s67VHkRG4pM2K1Afby+1zcT4sTbChUk0zhwAyvHMDjwKoyuHqzaYVj4pcuJsfBlu6
- Fk8V41n3n/B4RnuWGC7pC0bjPas3++sTAW+DXsW4mH4PMi4H+qc1/Itqs3Mg1NFZmSqbSdLAtprKm
- VVBCaBmhmAez+Y8TKo54kjUBLyCv/f1C4pNSPf06xj04j6eN/evkGTDW44O/CcnUbF++coSL2tlTe
- ftIE700GhNS7KbxUeVi0HolIM7XBwDI02Q+6FWVRqI3LsSKOvFhS+z6sl0H15g4PPZ2DyJSyqWuFp
- 6VB9QLWw==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat
- Linux)) id 1m4GvT-004CGX-Py; Fri, 16 Jul 2021 06:02:31 +0000
-Date: Fri, 16 Jul 2021 07:02:19 +0100
-From: Christoph Hellwig <hch@infradead.org>
-To: Jan Kara <jack@suse.cz>
-Message-ID: <YPEg63TU0pPzK5xB@infradead.org>
-References: <20210715133202.5975-1-jack@suse.cz>
+ id 1m4P1I-0004dx-Tz
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:40:54 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DE4D3613AF;
+ Fri, 16 Jul 2021 14:40:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1626446442;
+ bh=7TQ2wZS0o8rjARGf+YyE3LnEc8JXm7RWnWlgvVpHFQg=;
+ h=From:To:Cc:Subject:Date:From;
+ b=k0VWFJo3KwWNfUem7TO3aDtwyb9j6dkN+3TTCvFk7rKAri7TjWyW6iHXIneGPXQaC
+ MBJFcqLytNz4Dsp//LiCCz9ULWPcKbd/qLWH3YKn/EGQV7sweVjBWLJor6w/3gGWg2
+ +/b4dZrcIsGCd0L67vYfg3RnUZvZV82d3zU7AB6Kv80xG01WOtPH2idOsUNYmC57ir
+ M4OFWToanQQ1UaB+t6BdYLUSG1qHfMxEkFFDmINkNoJ+h7ISXQ3nW6Sfn33BLjE/Sq
+ DU9HEJ77uKQcyJ49jeQjlATWQ2iODCq7TX3NkwrFleGe1reU5lcLpgrTDSk15tTY9p
+ g1R6yoPQmwmZw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <chao@kernel.org>
+Date: Fri, 16 Jul 2021 09:39:10 -0500
+Message-Id: <20210716143919.44373-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20210715133202.5975-1-jack@suse.cz>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- casper.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1m4Gxc-00A6uu-Jv
-Subject: Re: [f2fs-dev] [PATCH 0/14 v10] fs: Hole punch vs page cache
- filling races
+X-Headers-End: 1m4P1I-0004dx-Tz
+Subject: [f2fs-dev] [PATCH 0/9] f2fs: use iomap for direct I/O
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,26 +81,64 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, Ted Tso <tytso@mit.edu>,
- linux-cifs@vger.kernel.org, "Darrick J. Wong" <djwong@kernel.org>,
- Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+ Satya Tangirala <satyaprateek2357@gmail.com>,
+ Changheun Lee <nanich.lee@samsung.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jul 15, 2021 at 03:40:10PM +0200, Jan Kara wrote:
-> Hello,
-> 
-> here is another version of my patches to address races between hole punching
-> and page cache filling functions for ext4 and other filesystems. The only
-> change since the last time is a small cleanup applied to changes of
-> filemap_fault() in patch 3/14 based on Christoph's & Darrick's feedback (thanks
-> guys!).  Darrick, Christoph, is the patch fine now?
+This series makes f2fs implement direct I/O using iomap_dio_rw() instead
+of __blockdev_direct_IO().  In order to do this, it adds f2fs_iomap_ops,
+since this is the first use of iomap in f2fs.
 
-Looks fine to me.
+The iomap direct I/O implementation is more efficient than the
+fs/direct-io.c implementation.  Switching to iomap also avoids the need
+to add new features and optimizations to the old implementation.  E.g.,
+see https://lore.kernel.org/r/20200710053406.GA25530@infradead.org and
+https://lore.kernel.org/r/YKJBWClI7sUeABDs@infradead.org.
+
+In general, this series preserves existing f2fs behavior (such as the
+conditions for falling back to buffered I/O) and is only an
+implementation change.
+
+Patches 1-5 contain cleanups and fixes for f2fs_file_write_iter().
+Patch 6 adds f2fs_iomap_ops, patch 7 and 8 switch direct I/O reads and
+writes to iomap, and patch 9 removes obsoleted code.
+
+Careful review is appreciated, as I'm not an expert in all areas here.
+
+This series has been tested with xfstests by running 'gce-xfstests -c
+f2fs -g auto -X generic/017' with and without this series; no
+regressions were seen.  (Some tests fail both before and after.
+generic/017 hangs both before and after, so it had to be excluded.)
+
+This series applies to v5.14-rc1.
+
+Eric Biggers (9):
+  f2fs: make f2fs_write_failed() take struct inode
+  f2fs: remove allow_outplace_dio()
+  f2fs: rework write preallocations
+  f2fs: reduce indentation in f2fs_file_write_iter()
+  f2fs: fix the f2fs_file_write_iter tracepoint
+  f2fs: implement iomap operations
+  f2fs: use iomap for direct I/O reads
+  f2fs: use iomap for direct I/O writes
+  f2fs: remove f2fs_direct_IO()
+
+ fs/f2fs/Kconfig             |   1 +
+ fs/f2fs/data.c              | 286 +++++++------------------
+ fs/f2fs/f2fs.h              |  29 +--
+ fs/f2fs/file.c              | 416 +++++++++++++++++++++++++++++-------
+ include/trace/events/f2fs.h |  12 +-
+ 5 files changed, 421 insertions(+), 323 deletions(-)
+
+
+base-commit: e73f0f0ee7541171d89f2e2491130c7771ba58d3
+-- 
+2.32.0
+
 
 
 _______________________________________________
