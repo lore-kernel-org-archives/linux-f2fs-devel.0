@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E74DC12002
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A10C636CB
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:41:08 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 4F2A5613F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:41:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F2A5613F5
+	by mail.kernel.org (Postfix) with ESMTPS id 7661E613F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jul 2021 14:41:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7661E613F5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m4P1W-0002fj-0H; Fri, 16 Jul 2021 14:41:06 +0000
+	id 1m4P1X-0002ie-Gu; Fri, 16 Jul 2021 14:41:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <ebiggers@kernel.org>) id 1m4P1T-0002fN-FX
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:41:03 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <ebiggers@kernel.org>) id 1m4P1V-0002iM-MY
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:41:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kTCW18c2I8sGXB2dklYOKCNNNVBLQAgXJNpSyh7I0vQ=; b=GKdnK9OLAwttqSFGDRe4+X4FU4
- Wfelt6DhvLFxa7hjlM2lcyOJQNqufXmgzpYExv7ocDKLzmY6blNBbPm7B2f7+ouvx/gMajsgPNSl0
- G4sQ+kekg5ZXfBUPi7rBEsM4LuH3SIGGo/8sCtpWTY9Bv5IYhj5yTWsTxE/aQQFtEkn0=;
+ bh=TTukNAX5mpaGstElgSRKRQ+UO+gcSFHLK04fSoGfZpw=; b=MVrl//Tc/JxyuM7VePuqEFZ46M
+ JwOfpcCric/pSdQR90rVhTcEy1mHIC5abP6emn6ehacqa9CNI7rdLxducmVY1iWB1MLxV1TXZQbHA
+ YLydMatY0f9dt1EIA1LuvXBETAzP0dtGh60eKCwJLDDouBOVtcYiJTLWBzft1LD0LMyQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,37 +42,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=kTCW18c2I8sGXB2dklYOKCNNNVBLQAgXJNpSyh7I0vQ=; b=YeP6/64sEDOqNGZFwaanj9TCn+
- Qe0TAIu7I80KG8JU7qCw2m3drZYEFCvZWeak9PjJhMqjhRmu8SLzpYeR7KZEVCkjE+0vwYmZjLn+5
- 32jCq157H/+rx93Y2NqGmEA8k6vI21rlBO2gC805ifRwLK0gpn6b6mAH20pkDUKD8VG0=;
+ bh=TTukNAX5mpaGstElgSRKRQ+UO+gcSFHLK04fSoGfZpw=; b=d/jkKV2yRfsI9KM4CMci6rnzKJ
+ Guz57fg/zovUt6D7oGN5dFBHu+WZtZh5B4sIWJXcPCnP6hylShcGuuoRiXHJU9L9MngdqdSYu+Nib
+ xNOR3Y2+ZTKuqoFsS74XNAD1I8rp2uWkqtxEx4mqWSJvbTW9zkqtqrAO3DcOMO5Q1BVU=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m4P1S-0004ex-6R
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:41:03 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 332E461402;
- Fri, 16 Jul 2021 14:40:48 +0000 (UTC)
+ id 1m4P1P-0004en-GB
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 16 Jul 2021 14:41:05 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6E5E961404;
+ Fri, 16 Jul 2021 14:40:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1626446448;
- bh=3us48jNa9I6IXFuMymwZsiIPZW4iBWQog9USG1tv/Hc=;
+ s=k20201202; t=1626446447;
+ bh=4AdX2bJE2x9cvVYUnKuR/I++uGU3+MB3vzYu6IeuHxU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=VPzme+1YH9+pJGMmH+B7yMOcWBcNLcaRgKEWnlef7evwiL8MLTPxjl+WlFfZKHUNC
- nxSr9WTzXgFR0jDJMLZ+RifFTUJbGnq95c222aNVMpBK+IDk5wndqTvW1mIwDm5Fpy
- MMWYQPLv0/wvyUnB3ZYLeo0JNg6WXZtJcQp+JfESh7bmrsIlQycJMnBR2pxrj5lNHb
- +ddNU9dJQycz9ciN/+ijalSmTCvenB2SyFMYHJ/AOiOS5xZcjdrXrIVWFEeznoeYet
- s7IIRwtvj+usVaOFg/LydfdFuhG/qQVSmkXpHxuzpzNqCesmrXxKnwzJo3LjTBYIt6
- TJs4zJpFMZ+vQ==
+ b=NWTviJbOiFoyzawLrUv/ZDlPkFMqjbS2jQj/kfy836Lm4XqWN1iCc4t0zuGvypRX0
+ CqoJBaXxKVtnmgOh+yZK5p8EDb+qBcjVM+yVqT7wfGVRwrjWoDZgdslqFMolA0W3wl
+ So/fKNnnQp/1BH3nxhDa7b1huuHDdHSpsli0xqKqIoXXp2XYbF74Zbt2Eui4DyzQ4L
+ bsN43hqSN5plYEoxEK4fsfy2lgXU1ueKv8KWDddaj74CxSAxk/NM8kX6kQ8oVh926f
+ r3axRiPhuOfquS/SdgJ1lUoObJbYWNv/dMwjYLD/kU1+D8gkvZmWm+Lw+35J2yk4OC
+ HBWN+KlJKdh9w==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
  Chao Yu <chao@kernel.org>
-Date: Fri, 16 Jul 2021 09:39:17 -0500
-Message-Id: <20210716143919.44373-8-ebiggers@kernel.org>
+Date: Fri, 16 Jul 2021 09:39:15 -0500
+Message-Id: <20210716143919.44373-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210716143919.44373-1-ebiggers@kernel.org>
 References: <20210716143919.44373-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1m4P1S-0004ex-6R
-Subject: [f2fs-dev] [PATCH 7/9] f2fs: use iomap for direct I/O reads
+X-Headers-End: 1m4P1P-0004en-GB
+Subject: [f2fs-dev] [PATCH 5/9] f2fs: fix the f2fs_file_write_iter tracepoint
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,153 +94,76 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Convert f2fs_file_read_iter() to use iomap_dio_rw() for direct I/O
-rather than using f2fs_direct_IO() via generic_file_read_iter().
-
-Besides the new direct I/O implementation being more efficient
-(especially with regards to the block mapping), this change retains the
-existing f2fs behavior such as the conditions for falling back to
-buffered I/O, the locking of i_gc_rwsem[READ], the iostat gathering, and
-the f2fs_direct_IO_{enter,exit} tracepoints.  An exception is that we no
-longer fall back to a buffered I/O read if a direct I/O read returns a
-short read (previously this was done by generic_file_read_iter()), as
-this doesn't appear to be a useful thing to do on f2fs.
+Pass in the original position and count rather than the position and
+count that were updated by the write.  Also use the correct types for
+all arguments, in particular the file offset which was being truncated
+to 32 bits on 32-bit platforms.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/f2fs.h |  7 ++---
- fs/f2fs/file.c | 84 +++++++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 82 insertions(+), 9 deletions(-)
+ fs/f2fs/file.c              |  5 +++--
+ include/trace/events/f2fs.h | 12 ++++++------
+ 2 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d2b1ef6976c4..f869c4a2f79f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3243,10 +3243,9 @@ static inline void f2fs_update_iostat(struct f2fs_sb_info *sbi,
- 			sbi->rw_iostat[APP_WRITE_IO] -
- 			sbi->rw_iostat[APP_DIRECT_IO];
- 
--	if (type == APP_READ_IO || type == APP_DIRECT_READ_IO)
--		sbi->rw_iostat[APP_BUFFERED_READ_IO] =
--			sbi->rw_iostat[APP_READ_IO] -
--			sbi->rw_iostat[APP_DIRECT_READ_IO];
-+	if (type == APP_BUFFERED_READ_IO || type == APP_DIRECT_READ_IO)
-+		sbi->rw_iostat[APP_READ_IO] += io_bytes;
-+
- 	spin_unlock(&sbi->iostat_lock);
- 
- 	f2fs_record_iostat(sbi);
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 279252c7f7bc..52de655ef833 100644
+index 878b2460f79b..279252c7f7bc 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -23,6 +23,7 @@
- #include <linux/nls.h>
- #include <linux/sched/signal.h>
- #include <linux/fileattr.h>
-+#include <linux/iomap.h>
- 
- #include "f2fs.h"
- #include "node.h"
-@@ -4201,20 +4202,93 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	return __f2fs_ioctl(filp, cmd, arg);
- }
- 
--static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-+/*
-+ * Return %true if the given read or write request should use direct I/O, or
-+ * %false if it should use buffered I/O.
-+ */
-+static bool f2fs_should_use_dio(struct inode *inode, struct kiocb *iocb,
-+				struct iov_iter *iter)
-+{
-+	unsigned int align;
-+
-+	if (!(iocb->ki_flags & IOCB_DIRECT))
-+		return false;
-+
-+	if (f2fs_force_buffered_io(inode, iocb, iter))
-+		return false;
-+
-+	/*
-+	 * Direct I/O not aligned to the disk's logical_block_size will be
-+	 * attempted, but will fail with -EINVAL.
-+	 *
-+	 * f2fs additionally requires that direct I/O be aligned to the
-+	 * filesystem block size, which is often a stricter requirement.
-+	 * However, f2fs traditionally falls back to buffered I/O on requests
-+	 * that are logical_block_size-aligned but not fs-block aligned.
-+	 *
-+	 * The below logic implements this behavior.
-+	 */
-+	align = iocb->ki_pos | iov_iter_alignment(iter);
-+	if (!IS_ALIGNED(align, i_blocksize(inode)) &&
-+	    IS_ALIGNED(align, bdev_logical_block_size(inode->i_sb->s_bdev)))
-+		return false;
-+
-+	return true;
-+}
-+
-+static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+@@ -4282,6 +4282,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
  {
  	struct file *file = iocb->ki_filp;
  	struct inode *inode = file_inode(file);
--	int ret;
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	const loff_t pos = iocb->ki_pos;
-+	const size_t count = iov_iter_count(to);
-+	ssize_t ret;
-+
-+	if (count == 0)
-+		return 0; /* skip atime update */
-+
-+	trace_f2fs_direct_IO_enter(inode, pos, count, READ);
-+
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!down_read_trylock(&fi->i_gc_rwsem[READ])) {
-+			ret = -EAGAIN;
-+			goto out;
-+		}
-+	} else {
-+		down_read(&fi->i_gc_rwsem[READ]);
-+	}
-+
-+	ret = iomap_dio_rw(iocb, to, &f2fs_iomap_ops, &f2fs_iomap_dio_ops, 0);
-+
-+	up_read(&fi->i_gc_rwsem[READ]);
-+
-+	file_accessed(file);
-+
-+	if (ret > 0)
-+		f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_READ_IO, ret);
-+	else if (ret == -EIOCBQUEUED)
-+		f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_READ_IO,
-+				   count - iov_iter_count(to));
-+out:
-+	trace_f2fs_direct_IO_exit(inode, pos, count, READ, ret);
-+	return ret;
-+}
-+
-+static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-+{
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+	ssize_t ret;
- 
- 	if (!f2fs_is_compress_backend_ready(inode))
- 		return -EOPNOTSUPP;
- 
--	ret = generic_file_read_iter(iocb, iter);
-+	if (f2fs_should_use_dio(inode, iocb, to))
-+		return f2fs_dio_read_iter(iocb, to);
- 
-+	ret = filemap_read(iocb, to, 0);
++	const loff_t orig_pos = iocb->ki_pos;
++	const size_t orig_count = iov_iter_count(from);
+ 	loff_t target_size;
+ 	int preallocated;
+ 	ssize_t ret;
+@@ -4363,8 +4365,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ out_unlock:
+ 	inode_unlock(inode);
+ out:
+-	trace_f2fs_file_write_iter(inode, iocb->ki_pos,
+-					iov_iter_count(from), ret);
++	trace_f2fs_file_write_iter(inode, orig_pos, orig_count, ret);
  	if (ret > 0)
--		f2fs_update_iostat(F2FS_I_SB(inode), APP_READ_IO, ret);
--
-+		f2fs_update_iostat(F2FS_I_SB(inode), APP_BUFFERED_READ_IO, ret);
+ 		ret = generic_write_sync(iocb, ret);
  	return ret;
- }
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 56b113e3cd6a..bffb38622e9b 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -540,17 +540,17 @@ TRACE_EVENT(f2fs_truncate_partial_nodes,
  
+ TRACE_EVENT(f2fs_file_write_iter,
+ 
+-	TP_PROTO(struct inode *inode, unsigned long offset,
+-		unsigned long length, int ret),
++	TP_PROTO(struct inode *inode, loff_t offset, size_t length,
++		 ssize_t ret),
+ 
+ 	TP_ARGS(inode, offset, length, ret),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+ 		__field(ino_t,	ino)
+-		__field(unsigned long, offset)
+-		__field(unsigned long, length)
+-		__field(int,	ret)
++		__field(loff_t, offset)
++		__field(size_t, length)
++		__field(ssize_t, ret)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -562,7 +562,7 @@ TRACE_EVENT(f2fs_file_write_iter,
+ 	),
+ 
+ 	TP_printk("dev = (%d,%d), ino = %lu, "
+-		"offset = %lu, length = %lu, written(err) = %d",
++		"offset = %lld, length = %zu, written(err) = %zd",
+ 		show_dev_ino(__entry),
+ 		__entry->offset,
+ 		__entry->length,
 -- 
 2.32.0
 
