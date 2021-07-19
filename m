@@ -2,74 +2,80 @@ Return-Path: <SRS0=w7Yd=ML=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DB2C12002
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jul 2021 08:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6522C12002
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jul 2021 08:55:03 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 674306120C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jul 2021 08:47:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 674306120C
+	by mail.kernel.org (Postfix) with ESMTPS id 64626611C0;
+	Mon, 19 Jul 2021 08:55:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64626611C0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m5OwG-0005hU-3X; Mon, 19 Jul 2021 08:47:48 +0000
+	id 1m5P3G-0003Wn-Us; Mon, 19 Jul 2021 08:55:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <chao@kernel.org>) id 1m5OwE-0005hK-OA
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Jul 2021 08:47:46 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1m5P3E-0003WZ-JO
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Jul 2021 08:55:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mBjq/SbqhP2+l7NFdW4jwEgSmXTGpzwTyh9Lq8m/ZH8=; b=hlaSIiCsa8sEP+ar//UuFqWiEH
- CFZJy9Dq7iu6zP1fUp6jKfymb087CyFs1boAogST0ByFpfLoPOxUAzCZnQhZb2i8e4LNQ+6aJXNoo
- CP8ACAKAt153cOmiJnnnwRGBXOXMi+wNPT1Y5psreIeNWjjOtqiUVDDP8TScUGRRcItE=;
+ bh=LipmBgXHdoM/SKGbryw/YccSnEKyKMjmVyBxb3Xqwnk=; b=SyDmmUct8lLjVZEQKlofarQeZL
+ sgcNO/eDqg4rBlwAxUcSY41hkpqzcYE4ZT4n4yCdRn6YhOXu9RdR+bO3cBfXqHzIk2Qtt95wyehnF
+ W4cJ+lSgnrupnEkM43KbNL5DZrvl6JUWpdauvdoLYObu9bvtrqF8bDXWqPoQRpPt4My0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=mBjq/SbqhP2+l7NFdW4jwEgSmXTGpzwTyh9Lq8m/ZH8=; b=X
- fk7DD0qYJzHK2Ozi9eCNpNvB9udX3S3Pl0idtW4FqTw6iLJdkFlqSpBkNs6O4PcpzWdv+yNRFATi5
- 6M38paWIk4thLn/UVdXBdAHRoC1KFONYXfdYbsJN5FOd6Za4iz7xuZ1iIEUHnYzw2HSzCAs7taBXl
- eF9uuuDGZGS/gRfI=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=LipmBgXHdoM/SKGbryw/YccSnEKyKMjmVyBxb3Xqwnk=; b=WezQdduN671oq5Wx5DK3b+O8dv
+ YFop37HLh3dSd6J1HkZlWsBeRc4GIMFRHs5aiIwwlgHtoEtw3CBY0asqbqZC60Zzu8Z2JmMLluGcs
+ 84HP7Y2pYAGmlCsEQ36DX/+MdYroL9EaD+jvwCr/iLFTnSkClGCStTt/smIXd+uSzPhU=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m5Ow8-0004Hg-AP
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Jul 2021 08:47:46 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A189661009;
- Mon, 19 Jul 2021 08:47:33 +0000 (UTC)
+ id 1m5P32-0004lb-HM
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Jul 2021 08:55:00 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 250FE61220;
+ Mon, 19 Jul 2021 08:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1626684454;
- bh=Z8QxgJGFP3p/nfg2SDMpVEKedbs0kk0rI6anNltZnjo=;
- h=From:To:Cc:Subject:Date:From;
- b=R1unZ01KJujtGTmo/J9J6hR8G0lo1mUHWxkHcROjETXmAY3mOFr8wU7azwnyqvsrA
- bnwio/yvyJf8bAIW7xjuExhrcY709L88xKdffd72aVGMQzNXOq8ucpviRTUzFkh89G
- rhh9XHEulz76ULCMS6hNKcuJ88eBERIljROHIz0LSpLferHS2XwUFPrdMsaM0Wfkbk
- MDOQfY894w4x644N+tZcem2Aeb+76QQyNBS2PoZVKsbA2CeuwvIYE57vUHjJGkkneZ
- WtCwbZsy1OzIB6i8ArNvEPp1nhZL8HQRmut1kULhCxYma7tCwvE9M/IWRizH8VSvHy
- OcRM8B7H5Yy7Q==
+ s=k20201202; t=1626684882;
+ bh=PNDJ3yy1GPRXY9a7Ib41rhUp0LSubtpNKhCmo000WW0=;
+ h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+ b=Wi22x+SkuOH27vAvSGfrA9zM/OPV2VsSbhqMH1RZBuH6r6mpLmE9Pt/Y4oo9Owpb8
+ IeQKkqM4xvS/wlUO4yxfF8XdiE+pLv/4Hricg5yMANx2Jh4ewrotwg48XdP2SvnEY8
+ PulIlWTHFgVWmV/Kp3whindn+ApSH6ol3ivPTKONkXr8SFAMBXugXZ6agtM/UJSGqt
+ 28ScV9MZ9Cn7DGpYht48nQ3mEqHSVf/B3/NFW1Uf2t9PDpqIDjARamFOQhpPaReUpD
+ 5t7o/ytjri2aLr9ojxBjlDClX6IZEedJv0QndKNlFSn9V8K98ebJDHnjerFOAGO9Wv
+ D/qdcm+cYhg3g==
+To: Yangtao Li <frank.li@vivo.com>, jaegeuk@kernel.org
+References: <20210427082106.2755-1-frank.li@vivo.com>
+ <12ae52df-bc5e-82c3-4f78-1eafe7723f93@huawei.com>
 From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Mon, 19 Jul 2021 16:47:29 +0800
-Message-Id: <20210719084729.26117-1-chao@kernel.org>
-X-Mailer: git-send-email 2.22.1
+Message-ID: <5f37995c-2390-e8ca-d002-3639ad39e0d3@kernel.org>
+Date: Mon, 19 Jul 2021 16:54:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-X-Headers-End: 1m5Ow8-0004Hg-AP
-Subject: [f2fs-dev] [PATCH] f2fs: multidevice: support direct IO
+In-Reply-To: <12ae52df-bc5e-82c3-4f78-1eafe7723f93@huawei.com>
+Content-Language: en-US
+X-Headers-End: 1m5P32-0004lb-HM
+Subject: Re: [f2fs-dev] [PATCH] f2fs: reset free segment to prefree status
+ when do_checkpoint() fail
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,315 +87,76 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Chao Yu <chao.yu@linux.dev>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Commit 3c62be17d4f5 ("f2fs: support multiple devices") missed
-to support direct IO for multiple device feature, this patch
-adds to support the missing part of multidevice feature.
+On 2021/4/27 20:37, Chao Yu wrote:
+> I think just reverting dirty/free bitmap is not enough if checkpoint fails,
+> due to we have updated sbi->cur_cp_pack and nat/sit bitmap, next CP tries
+> to overwrite last valid meta/node/data, then filesystem will be corrupted.
+> 
+> So I suggest to set cp_error if do_checkpoint() fails until we can handle
+> all cases, which is not so easy.
+> 
+> How do you think?
 
-In addition, for multiple device image, we should be aware of
-any issued direct write IO rather than just buffered write IO,
-so that fsync and syncfs can issue a preflush command to the
-device where direct write IO goes, to persist user data for
-posix compliant.
+Let's add below patch first before you figure out the patch which covers all
+things.
 
+ From 3af957c98e9e04259f8bb93ca0b74ba164f3f27e Mon Sep 17 00:00:00 2001
+From: Chao Yu <chao@kernel.org>
+Date: Mon, 19 Jul 2021 16:37:44 +0800
+Subject: [PATCH] f2fs: fix to stop filesystem update once CP failed
+
+During f2fs_write_checkpoint(), once we failed in
+f2fs_flush_nat_entries() or do_checkpoint(), metadata of filesystem
+such as prefree bitmap, nat/sit version bitmap won't be recovered,
+it may cause f2fs image to be inconsistent, let's just set CP error
+flag to avoid further updates until we figure out a scheme to rollback
+all metadatas in such condition.
+
+Reported-by: Yangtao Li <frank.li@vivo.com>
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c    | 52 +++++++++++++++++++++++++++++++++++++++++++++--
- fs/f2fs/f2fs.h    | 24 +++++++++++++++++++---
- fs/f2fs/segment.c | 29 +++++++++++++-------------
- fs/f2fs/super.c   |  7 +++++++
- 4 files changed, 93 insertions(+), 19 deletions(-)
+  fs/f2fs/checkpoint.c | 10 +++++++---
+  1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 095350ccf80d..be65dca0de40 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1451,10 +1451,16 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 	struct extent_info ei = {0,0,0};
- 	block_t blkaddr;
- 	unsigned int start_pgofs;
-+	int bidx = 0;
-+	bool multidevice_dio;
- 
- 	if (!maxblocks)
- 		return 0;
- 
-+	multidevice_dio = f2fs_allow_multi_device_dio(sbi, flag);
-+	if (multidevice_dio)
-+		map->m_bdev = sbi->sb->s_bdev;
-+
- 	map->m_len = 0;
- 	map->m_flags = 0;
- 
-@@ -1477,6 +1483,16 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 		if (flag == F2FS_GET_BLOCK_DIO)
- 			f2fs_wait_on_block_writeback_range(inode,
- 						map->m_pblk, map->m_len);
-+
-+		if (multidevice_dio) {
-+			bidx = f2fs_target_device_index(sbi, map->m_pblk);
-+			if (bidx) {
-+				map->m_bdev = FDEV(bidx).bdev;
-+				map->m_pblk -= FDEV(bidx).start_blk;
-+				map->m_len = min(map->m_len,
-+					FDEV(bidx).end_blk + 1 - map->m_pblk);
-+			}
-+		}
- 		goto out;
- 	}
- 
-@@ -1574,6 +1590,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 	if (flag == F2FS_GET_BLOCK_PRE_AIO)
- 		goto skip;
- 
-+	if (multidevice_dio)
-+		bidx = f2fs_target_device_index(sbi, blkaddr);
-+
- 	if (map->m_len == 0) {
- 		/* preallocated unwritten block should be mapped for fiemap. */
- 		if (blkaddr == NEW_ADDR)
-@@ -1582,10 +1601,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 
- 		map->m_pblk = blkaddr;
- 		map->m_len = 1;
-+
-+		if (multidevice_dio && map->m_bdev != FDEV(bidx).bdev)
-+			map->m_bdev = FDEV(bidx).bdev;
- 	} else if ((map->m_pblk != NEW_ADDR &&
- 			blkaddr == (map->m_pblk + ofs)) ||
- 			(map->m_pblk == NEW_ADDR && blkaddr == NEW_ADDR) ||
- 			flag == F2FS_GET_BLOCK_PRE_DIO) {
-+		if (multidevice_dio && map->m_bdev != FDEV(bidx).bdev)
-+			goto sync_out;
- 		ofs++;
- 		map->m_len++;
- 	} else {
-@@ -1638,11 +1662,27 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 
- sync_out:
- 
--	/* for hardware encryption, but to avoid potential issue in future */
--	if (flag == F2FS_GET_BLOCK_DIO && map->m_flags & F2FS_MAP_MAPPED)
-+	if (flag == F2FS_GET_BLOCK_DIO && map->m_flags & F2FS_MAP_MAPPED) {
-+		/*
-+		 * for hardware encryption, but to avoid potential issue
-+		 * in future
-+		 */
- 		f2fs_wait_on_block_writeback_range(inode,
- 						map->m_pblk, map->m_len);
- 
-+		if (multidevice_dio) {
-+			bidx = f2fs_target_device_index(sbi, map->m_pblk);
-+			if (bidx) {
-+				map->m_bdev = FDEV(bidx).bdev;
-+				map->m_pblk -= FDEV(bidx).start_blk;
-+				f2fs_bug_on(sbi,
-+					map->m_bdev != FDEV(bidx).bdev ||
-+					map->m_pblk + map->m_len >
-+						FDEV(bidx).end_blk + 1);
-+			}
-+		}
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 6c208108d69c..096c85022f62 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1639,8 +1639,10 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+
+  	/* write cached NAT/SIT entries to NAT/SIT area */
+  	err = f2fs_flush_nat_entries(sbi, cpc);
+-	if (err)
++	if (err) {
++		f2fs_stop_checkpoint(sbi, false);
+  		goto stop;
 +	}
-+
- 	if (flag == F2FS_GET_BLOCK_PRECACHE) {
- 		if (map->m_flags & F2FS_MAP_MAPPED) {
- 			unsigned int ofs = start_pgofs - map->m_lblk;
-@@ -1720,6 +1760,9 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
- 		map_bh(bh, inode->i_sb, map.m_pblk);
- 		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
- 		bh->b_size = blks_to_bytes(inode, map.m_len);
-+
-+		if (f2fs_allow_multi_device_dio(F2FS_I_SB(inode), flag))
-+			bh->b_bdev = map.m_bdev;
- 	}
- 	return err;
- }
-@@ -3511,6 +3554,7 @@ static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
- {
- 	struct f2fs_private_dio *dio;
- 	bool write = (bio_op(bio) == REQ_OP_WRITE);
-+	block_t blkaddr = SECTOR_TO_BLOCK(bio->bi_iter.bi_sector);
- 	unsigned int blkcnt = bio_sectors(bio) >> F2FS_LOG_SECTORS_PER_BLOCK;
- 
- 	dio = f2fs_kzalloc(F2FS_I_SB(inode),
-@@ -3527,6 +3571,10 @@ static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
- 	bio->bi_end_io = f2fs_dio_end_io;
- 	bio->bi_private = dio;
- 
-+	if (write)
-+		f2fs_update_device_state(F2FS_I_SB(inode), inode->i_ino,
-+							blkaddr, blkcnt);
-+
- 	inc_page_counts(F2FS_I_SB(inode),
- 			write ? F2FS_DIO_WRITE : F2FS_DIO_READ, dio->blkcnt);
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7369f8087f64..f3ac3cbad2e3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -607,6 +607,7 @@ struct extent_tree {
- 				F2FS_MAP_UNWRITTEN)
- 
- struct f2fs_map_blocks {
-+	struct block_device *m_bdev;	/* for multi-device */
- 	block_t m_pblk;
- 	block_t m_lblk;
- 	unsigned int m_len;
-@@ -1712,12 +1713,15 @@ struct f2fs_sb_info {
- 
- 	/* For shrinker support */
- 	struct list_head s_list;
-+	struct mutex umount_mutex;
-+	unsigned int shrinker_run_no;
-+
-+	/* For multi devices */
- 	int s_ndevs;				/* number of devices */
- 	struct f2fs_dev_info *devs;		/* for device list */
- 	unsigned int dirty_device;		/* for checkpoint data flush */
- 	spinlock_t dev_lock;			/* protect dirty_device */
--	struct mutex umount_mutex;
--	unsigned int shrinker_run_no;
-+	bool aligned_blksize;			/* all devices has the same logical blksize */
- 
- 	/* For write statistics */
- 	u64 sectors_written_start;
-@@ -3527,6 +3531,8 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 			block_t old_blkaddr, block_t *new_blkaddr,
- 			struct f2fs_summary *sum, int type,
- 			struct f2fs_io_info *fio);
-+void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
-+					block_t blkaddr, unsigned int blkcnt);
- void f2fs_wait_on_page_writeback(struct page *page,
- 			enum page_type type, bool ordered, bool locked);
- void f2fs_wait_on_block_writeback(struct inode *inode, block_t blkaddr);
-@@ -4334,6 +4340,16 @@ static inline int allow_outplace_dio(struct inode *inode,
- 				!block_unaligned_IO(inode, iocb, iter));
- }
- 
-+static inline bool f2fs_allow_multi_device_dio(struct f2fs_sb_info *sbi,
-+								int flag)
-+{
-+	if (!f2fs_is_multi_device(sbi))
-+		return false;
-+	if (flag != F2FS_GET_BLOCK_DIO)
-+		return false;
-+	return sbi->aligned_blksize;
-+}
-+
- static inline bool f2fs_force_buffered_io(struct inode *inode,
- 				struct kiocb *iocb, struct iov_iter *iter)
- {
-@@ -4342,7 +4358,9 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 
- 	if (f2fs_post_read_required(inode))
- 		return true;
--	if (f2fs_is_multi_device(sbi))
-+
-+	/* disallow direct IO if any of devices has unaligned blksize */
-+	if (f2fs_is_multi_device(sbi) && !sbi->aligned_blksize)
- 		return true;
- 	/*
- 	 * for blkzoned device, fallback direct IO to buffered IO, so
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 15cc89eef28d..6fcfd234108a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3442,24 +3442,24 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 	up_read(&SM_I(sbi)->curseg_lock);
- }
- 
--static void update_device_state(struct f2fs_io_info *fio)
-+void f2fs_update_device_state(struct f2fs_sb_info *sbi, nid_t ino,
-+					block_t blkaddr, unsigned int blkcnt)
- {
--	struct f2fs_sb_info *sbi = fio->sbi;
--	unsigned int devidx;
--
- 	if (!f2fs_is_multi_device(sbi))
- 		return;
- 
--	devidx = f2fs_target_device_index(sbi, fio->new_blkaddr);
-+	for (; blkcnt > 0; blkcnt--, blkaddr++) {
-+		unsigned int devidx = f2fs_target_device_index(sbi, blkaddr);
- 
--	/* update device state for fsync */
--	f2fs_set_dirty_device(sbi, fio->ino, devidx, FLUSH_INO);
-+		/* update device state for fsync */
-+		f2fs_set_dirty_device(sbi, ino, devidx, FLUSH_INO);
- 
--	/* update device state for checkpoint */
--	if (!f2fs_test_bit(devidx, (char *)&sbi->dirty_device)) {
--		spin_lock(&sbi->dev_lock);
--		f2fs_set_bit(devidx, (char *)&sbi->dirty_device);
--		spin_unlock(&sbi->dev_lock);
-+		/* update device state for checkpoint */
-+		if (!f2fs_test_bit(devidx, (char *)&sbi->dirty_device)) {
-+			spin_lock(&sbi->dev_lock);
-+			f2fs_set_bit(devidx, (char *)&sbi->dirty_device);
-+			spin_unlock(&sbi->dev_lock);
-+		}
- 	}
- }
- 
-@@ -3486,7 +3486,7 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- 		goto reallocate;
- 	}
- 
--	update_device_state(fio);
-+	f2fs_update_device_state(fio->sbi, fio->ino, fio->new_blkaddr, 1);
- 
- 	if (keep_order)
- 		up_read(&fio->sbi->io_order_lock);
-@@ -3575,7 +3575,8 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
- 	else
- 		err = f2fs_submit_page_bio(fio);
- 	if (!err) {
--		update_device_state(fio);
-+		f2fs_update_device_state(fio->sbi, fio->ino,
-+						fio->new_blkaddr, 1);
- 		f2fs_update_iostat(fio->sbi, fio->io_type, F2FS_BLKSIZE);
- 	}
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 72eb9d70969f..dced7778d530 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3646,6 +3646,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	unsigned int max_devices = MAX_DEVICES;
-+	unsigned int logical_blksize;
- 	int i;
- 
- 	/* Initialize single device information */
-@@ -3666,6 +3667,9 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 	if (!sbi->devs)
- 		return -ENOMEM;
- 
-+	logical_blksize = bdev_logical_block_size(sbi->sb->s_bdev);
-+	sbi->aligned_blksize = true;
-+
- 	for (i = 0; i < max_devices; i++) {
- 
- 		if (i > 0 && !RDEV(i).path[0])
-@@ -3702,6 +3706,9 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 		/* to release errored devices */
- 		sbi->s_ndevs = i + 1;
- 
-+		if (logical_blksize != bdev_logical_block_size(FDEV(i).bdev))
-+			sbi->aligned_blksize = false;
-+
- #ifdef CONFIG_BLK_DEV_ZONED
- 		if (bdev_zoned_model(FDEV(i).bdev) == BLK_ZONED_HM &&
- 				!f2fs_sb_has_blkzoned(sbi)) {
+
+  	f2fs_flush_sit_entries(sbi, cpc);
+
+@@ -1648,10 +1650,12 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+  	f2fs_save_inmem_curseg(sbi);
+
+  	err = do_checkpoint(sbi, cpc);
+-	if (err)
++	if (err) {
++		f2fs_stop_checkpoint(sbi, false);
+  		f2fs_release_discard_addrs(sbi);
+-	else
++	} else {
+  		f2fs_clear_prefree_segments(sbi, cpc);
++	}
+
+  	f2fs_restore_inmem_curseg(sbi);
+  stop:
 -- 
 2.22.1
-
 
 
 _______________________________________________
