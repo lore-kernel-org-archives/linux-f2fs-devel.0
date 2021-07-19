@@ -2,74 +2,75 @@ Return-Path: <SRS0=w7Yd=ML=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D22C12002
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jul 2021 08:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B5BC12002
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jul 2021 08:46:12 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CCFD5611CC
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jul 2021 08:45:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCFD5611CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTPS id 13B8361205
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Jul 2021 08:46:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13B8361205
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m5OuG-0002Lj-8I; Mon, 19 Jul 2021 08:45:44 +0000
+	id 1m5Ouh-0003M0-5r; Mon, 19 Jul 2021 08:46:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <wangxiaojun11@huawei.com>) id 1m5OuF-0002L5-2S
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Jul 2021 08:45:43 +0000
+ (envelope-from <chao@kernel.org>) id 1m5Ouf-0003Lo-U9
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Jul 2021 08:46:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=juhCzcXLoRq50iZRgwX4b5jTZOUsm14Eim43JPBzCKQ=; b=LZWYgjPGFBLguyKQYfP+2PMDuw
- ycmNbsFuf2eIgMBCHJHPjW0MImDvx8HhRBjzB/VyjzFINeZ6zm8zd4H5L/rfn3/K8aNSFEzkHC9mu
- ItdhtpPmV1piaJcXH3M76qSIn/6rkAM5B9l6HHR7wtwDEw6P1qbaUZu0OSAGjNHuqhj4=;
+ bh=gFZo5Z2SnLubprGqwTvLnV7F17tK/jRUcnktLlgb83w=; b=TuN8xr5xdVVAQq2Xxwf0uGMEA1
+ Xnfa/pxVkB5F9mNMiqeGiN0sbNQ/KzzkHPvnVih9iOTNlNGKJ9jAWM78znFRGJ46hBffRjdzDWtdf
+ Ha9mDftnNjUxORyqo+P+NqN5oTryOQn0+0v+TBEzBXpBI3lSEXxhuwc2qLcClWyRgcxs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=juhCzcXLoRq50iZRgwX4b5jTZOUsm14Eim43JPBzCKQ=; b=Q
- 50MOBq4jtYquw5Iw7HX+BLTDD9v/Cv+AHpePRuJSkJZWsbFwBdUuRIO7aj2dPD3Ubp57qe+vSfmZI
- 35idIQjQ/bFTo01vCCfOk19o3/ZJGa5NwZBmVGuV+dv8xi1+8YT7Nahpyj+tahhyrP78pA7GMkUXI
- bdL7mP3PPFypVHoM=;
-Received: from szxga01-in.huawei.com ([45.249.212.187])
+ List-Owner:List-Archive; bh=gFZo5Z2SnLubprGqwTvLnV7F17tK/jRUcnktLlgb83w=; b=c
+ IGldOXu6IyZfAup0d6KqJJNe5T+Fh6oA9c3IsETaE7Yz10GT4GvbPiPWjP0kAYrpaXYUTq8jGOB7a
+ YTN0okrsWWt1M4bMQKy8885PRP4weo02YOC5YMK54DxUvqIcL3pkw5N0wRd4IvryWoi6G6teLdGuS
+ sqxD8E9uWFxla/5A=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m5Ou2-00048B-Of
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Jul 2021 08:45:42 +0000
-Received: from dggeml756-chm.china.huawei.com (unknown [172.30.72.54])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4GSwLx4VW3zZqq7;
- Mon, 19 Jul 2021 16:42:01 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggeml756-chm.china.huawei.com
- (10.1.199.158) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 19
- Jul 2021 16:45:22 +0800
-From: Wang Xiaojun <wangxiaojun11@huawei.com>
-To: <chao@kernel.org>, <jaegeuk@kernel.org>
-Date: Mon, 19 Jul 2021 16:52:27 +0800
-Message-ID: <20210719085227.172254-1-wangxiaojun11@huawei.com>
-X-Mailer: git-send-email 2.25.4
+ id 1m5OuU-00049g-WE
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 19 Jul 2021 08:46:08 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9B112611CC;
+ Mon, 19 Jul 2021 08:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1626684353;
+ bh=TNFD7nvB5rMFEOYLBIiExOBM7/f5QTYMUplrVLlFeDQ=;
+ h=From:To:Cc:Subject:Date:From;
+ b=hYQweFO2oU4T7aQTOoLVFDPC1Xncdn00kd2JESAVOfrbKUu4gRwWoOHX9kDd0GPw4
+ JHRk1/9sufD4KY2cKkvVfDkPWQiWCPhNv1Wzkus5E2tjuElKnzrglzfpN8i8uBEPIZ
+ XO21c7mP756eq8LMzHpfw1b5NYVTP4+F0WbbyPeItA6JD1TG1R8f6f1sZDDnYFXv3H
+ AcOnQ+Orn2Tynx/GJmLdSeB4p147khbnwF7p54ZwtpmN6Afzi2K7bnF6xyLmbuBaem
+ gbjzfbhVDB9h1lLO4oiz+wmHoxA+32sFkFeUKrTjr61vxpnXPf5Z9IZ9p7ujq2cRHL
+ oX5Ny6kPLQCvw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Mon, 19 Jul 2021 16:45:48 +0800
+Message-Id: <20210719084548.25895-1-chao@kernel.org>
+X-Mailer: git-send-email 2.22.1
 MIME-Version: 1.0
-X-Originating-IP: [10.175.101.6]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggeml756-chm.china.huawei.com (10.1.199.158)
-X-CFilter-Loop: Reflected
-X-Headers-End: 1m5Ou2-00048B-Of
-Subject: [f2fs-dev] [PATCH v2] f2fs-tools: rebuild the quota inode if it is
- corrupted
+X-Headers-End: 1m5OuU-00049g-WE
+Subject: [f2fs-dev] [PATCH v2] f2fs: fix wrong inflight page stats for
+ directIO
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,241 +82,106 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Chao Yu <chao.yu@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If the following process returns an error,
-the quota inode, not the quota file, is damaged.
-(fsck_chk_quota_node-->fsck_chk_node_blk-->sanity_check_nid)
-The fsck does not have a process to rebuild the quota inode.
+Previously, we use sbi->nr_pages[] to account direct IO, the count should
+be based on page granularity rather than bio granularity, fix it.
 
-Because sanity_check_nid is not passed, fsck->nat_area_bitmap
-can not be cleared, and then the NAT of quota will be nullify
-during fix_nat_entries.
-
-During the next fsck check, the quota inode check fails
-because the address of the quota inode changes to 0.
-In addition, in fsck_chk_quota_files-->f2fs_filesize_update,
-data is written to address 0.
-
-Therefore, when the quota inode is corrupted, we need to rebuild it.
-
-Signed-off-by: Wang Xiaojun <wangxiaojun11@huawei.com>
+Fixes: 02b16d0a34a1 ("f2fs: add to account direct IO")
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
-v1->v2:
--Update footer.cp_ver based on CP_CRC_RECOVERY_FLAG.
--Add debug message in f2fs_rebuild_qf_inode.
--Add time_t parameter to the f2fs_init_qf_inode.
----
- fsck/fsck.c        |  2 ++
- fsck/fsck.h        |  1 +
- fsck/node.c        | 45 +++++++++++++++++++++++++++++++++++++++++++++
- include/f2fs_fs.h  | 40 ++++++++++++++++++++++++++++++++++++++++
- mkfs/f2fs_format.c | 34 +---------------------------------
- 5 files changed, 89 insertions(+), 33 deletions(-)
+v2:
+- There is one missing line when I reorder in development patches,
+so just resend the patch as v2, sorry.
+ fs/f2fs/data.c | 11 +++++++----
+ fs/f2fs/f2fs.h | 13 +++++++++++++
+ 2 files changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 6ca85f0..af6d332 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1899,6 +1899,8 @@ int fsck_chk_quota_node(struct f2fs_sb_info *sbi)
- 			ASSERT_MSG("wrong quota inode, qtype [%d] ino [0x%x]",
- 								qtype, ino);
- 			qf_szchk_type[qtype] = QF_SZCHK_ERR;
-+			if (c.fix_on)
-+				f2fs_rebuild_qf_inode(sbi, qtype);
- 		}
- 	}
- 	cur_qtype = -1;
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index d79afef..67390f0 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -286,6 +286,7 @@ void f2fs_alloc_nid(struct f2fs_sb_info *, nid_t *);
- void set_data_blkaddr(struct dnode_of_data *);
- block_t new_node_block(struct f2fs_sb_info *,
- 					struct dnode_of_data *, unsigned int);
-+int f2fs_rebuild_qf_inode(struct f2fs_sb_info *sbi, int qtype);
- 
- /* segment.c */
- struct quota_file;
-diff --git a/fsck/node.c b/fsck/node.c
-index c7988cb..e11f222 100644
---- a/fsck/node.c
-+++ b/fsck/node.c
-@@ -40,6 +40,51 @@ void f2fs_release_nid(struct f2fs_sb_info *sbi, nid_t nid)
- 	f2fs_clear_bit(nid, nm_i->nid_bitmap);
- }
- 
-+int f2fs_rebuild_qf_inode(struct f2fs_sb_info *sbi, int qtype)
-+{
-+	struct f2fs_node *raw_node = NULL;
-+	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
-+	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-+	struct f2fs_summary sum;
-+	struct node_info ni;
-+	nid_t ino = QUOTA_INO(sb, qtype);
-+	block_t blkaddr = NULL_ADDR;
-+	__u64 cp_ver = cur_cp_version(ckpt);
-+	int ret = 0;
-+
-+	raw_node = calloc(F2FS_BLKSIZE, 1);
-+	if (raw_node == NULL) {
-+		MSG(1, "\tError: Calloc Failed for raw_node!!!\n");
-+		return -ENOMEM;
-+	}
-+	f2fs_init_qf_inode(sb, raw_node, qtype, time(NULL));
-+
-+	if (is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
-+		cp_ver |= (cur_cp_crc(ckpt) << 32);
-+	raw_node->footer.cp_ver = cpu_to_le64(cp_ver);
-+
-+	get_node_info(sbi, ino, &ni);
-+	set_summary(&sum, ino, 0, ni.version);
-+	ret = reserve_new_block(sbi, &blkaddr, &sum, CURSEG_HOT_NODE, 1);
-+	if (ret)
-+		goto err_out;
-+
-+	ret = write_inode(raw_node, blkaddr);
-+	if (ret < 0) {
-+		MSG(1, "\tError: While rebuilding the quota inode to disk!\n");
-+		goto err_out;
-+	}
-+	update_nat_blkaddr(sbi, ino, ino, blkaddr);
-+
-+	f2fs_clear_bit(ino, F2FS_FSCK(sbi)->nat_area_bitmap);
-+	f2fs_set_bit(ino, NM_I(sbi)->nid_bitmap);
-+	DBG(1, "Rebuild quota inode ([%3d] ino [0x%x]) at offset:0x%x\n",
-+						qtype, ino, blkaddr);
-+err_out:
-+	free(raw_node);
-+	return ret;
-+}
-+
- void set_data_blkaddr(struct dnode_of_data *dn)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index e6f107de4c92..095350ccf80d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3494,8 +3494,9 @@ static void f2fs_dio_end_io(struct bio *bio)
  {
- 	__le32 *addr_array;
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 45f7257..69a4bf8 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -20,6 +20,7 @@
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <time.h>
- #ifdef HAVE_CONFIG_H
- #include <config.h>
- #endif
-@@ -1554,6 +1555,45 @@ static inline void show_version(const char *prog)
- #endif
+ 	struct f2fs_private_dio *dio = bio->bi_private;
+ 
+-	dec_page_count(F2FS_I_SB(dio->inode),
+-			dio->write ? F2FS_DIO_WRITE : F2FS_DIO_READ);
++	dec_page_counts(F2FS_I_SB(dio->inode),
++			dio->write ? F2FS_DIO_WRITE : F2FS_DIO_READ,
++			dio->blkcnt);
+ 
+ 	bio->bi_private = dio->orig_private;
+ 	bio->bi_end_io = dio->orig_end_io;
+@@ -3510,6 +3511,7 @@ static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
+ {
+ 	struct f2fs_private_dio *dio;
+ 	bool write = (bio_op(bio) == REQ_OP_WRITE);
++	unsigned int blkcnt = bio_sectors(bio) >> F2FS_LOG_SECTORS_PER_BLOCK;
+ 
+ 	dio = f2fs_kzalloc(F2FS_I_SB(inode),
+ 			sizeof(struct f2fs_private_dio), GFP_NOFS);
+@@ -3519,13 +3521,14 @@ static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
+ 	dio->inode = inode;
+ 	dio->orig_end_io = bio->bi_end_io;
+ 	dio->orig_private = bio->bi_private;
++	dio->blkcnt = blkcnt;
+ 	dio->write = write;
+ 
+ 	bio->bi_end_io = f2fs_dio_end_io;
+ 	bio->bi_private = dio;
+ 
+-	inc_page_count(F2FS_I_SB(inode),
+-			write ? F2FS_DIO_WRITE : F2FS_DIO_READ);
++	inc_page_counts(F2FS_I_SB(inode),
++			write ? F2FS_DIO_WRITE : F2FS_DIO_READ, dio->blkcnt);
+ 
+ 	submit_bio(bio);
+ 	return;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 867f2c5d9559..7369f8087f64 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1759,6 +1759,7 @@ struct f2fs_private_dio {
+ 	struct inode *inode;
+ 	void *orig_private;
+ 	bio_end_io_t *orig_end_io;
++	unsigned int blkcnt;
+ 	bool write;
+ };
+ 
+@@ -2267,6 +2268,12 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+ 		set_sbi_flag(sbi, SBI_IS_DIRTY);
  }
  
-+static inline void f2fs_init_qf_inode(struct f2fs_super_block *sb,
-+		struct f2fs_node *raw_node, int qtype, time_t mtime)
++static inline void inc_page_counts(struct f2fs_sb_info *sbi, int count_type,
++							unsigned int count)
 +{
-+	raw_node->footer.nid = sb->qf_ino[qtype];
-+	raw_node->footer.ino = sb->qf_ino[qtype];
-+	raw_node->footer.cp_ver = cpu_to_le64(1);
-+	raw_node->i.i_mode = cpu_to_le16(0x8180);
-+	raw_node->i.i_links = cpu_to_le32(1);
-+	raw_node->i.i_uid = cpu_to_le32(c.root_uid);
-+	raw_node->i.i_gid = cpu_to_le32(c.root_gid);
-+
-+	raw_node->i.i_size = cpu_to_le64(1024 * 6); /* Hard coded */
-+	raw_node->i.i_blocks = cpu_to_le64(1);
-+
-+	raw_node->i.i_atime = cpu_to_le32(mtime);
-+	raw_node->i.i_atime_nsec = 0;
-+	raw_node->i.i_ctime = cpu_to_le32(mtime);
-+	raw_node->i.i_ctime_nsec = 0;
-+	raw_node->i.i_mtime = cpu_to_le32(mtime);
-+	raw_node->i.i_mtime_nsec = 0;
-+	raw_node->i.i_generation = 0;
-+	raw_node->i.i_xattr_nid = 0;
-+	raw_node->i.i_flags = FS_IMMUTABLE_FL;
-+	raw_node->i.i_current_depth = cpu_to_le32(0);
-+	raw_node->i.i_dir_level = DEF_DIR_LEVEL;
-+
-+	if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
-+		raw_node->i.i_inline = F2FS_EXTRA_ATTR;
-+		raw_node->i.i_extra_isize = cpu_to_le16(calc_extra_isize());
-+	}
-+
-+	if (c.feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA))
-+		raw_node->i.i_projid = cpu_to_le32(F2FS_DEF_PROJID);
-+
-+	raw_node->i.i_ext.fofs = 0;
-+	raw_node->i.i_ext.blk_addr = 0;
-+	raw_node->i.i_ext.len = 0;
++	atomic_add(count, &sbi->nr_pages[count_type]);
 +}
 +
- struct feature {
- 	char *name;
- 	u32  mask;
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 2132852..d6a92f8 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -1373,43 +1373,14 @@ static int f2fs_write_qf_inode(int qtype)
- 		MSG(1, "\tError: Calloc Failed for raw_node!!!\n");
- 		return -1;
- 	}
-+	f2fs_init_qf_inode(sb, raw_node, qtype, mkfs_time);
+ static inline void inode_inc_dirty_pages(struct inode *inode)
+ {
+ 	atomic_inc(&F2FS_I(inode)->dirty_pages);
+@@ -2281,6 +2288,12 @@ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
+ 	atomic_dec(&sbi->nr_pages[count_type]);
+ }
  
--	raw_node->footer.nid = sb->qf_ino[qtype];
--	raw_node->footer.ino = sb->qf_ino[qtype];
--	raw_node->footer.cp_ver = cpu_to_le64(1);
- 	raw_node->footer.next_blkaddr = cpu_to_le32(
- 			get_sb(main_blkaddr) +
- 			c.cur_seg[CURSEG_HOT_NODE] *
- 			c.blks_per_seg + 1 + qtype + 1);
--
--	raw_node->i.i_mode = cpu_to_le16(0x8180);
--	raw_node->i.i_links = cpu_to_le32(1);
--	raw_node->i.i_uid = cpu_to_le32(c.root_uid);
--	raw_node->i.i_gid = cpu_to_le32(c.root_gid);
--
--	raw_node->i.i_size = cpu_to_le64(1024 * 6); /* Hard coded */
- 	raw_node->i.i_blocks = cpu_to_le64(1 + QUOTA_DATA(qtype));
- 
--	raw_node->i.i_atime = cpu_to_le32(mkfs_time);
--	raw_node->i.i_atime_nsec = 0;
--	raw_node->i.i_ctime = cpu_to_le32(mkfs_time);
--	raw_node->i.i_ctime_nsec = 0;
--	raw_node->i.i_mtime = cpu_to_le32(mkfs_time);
--	raw_node->i.i_mtime_nsec = 0;
--	raw_node->i.i_generation = 0;
--	raw_node->i.i_xattr_nid = 0;
--	raw_node->i.i_flags = FS_IMMUTABLE_FL;
--	raw_node->i.i_current_depth = cpu_to_le32(0);
--	raw_node->i.i_dir_level = DEF_DIR_LEVEL;
--
--	if (c.feature & cpu_to_le32(F2FS_FEATURE_EXTRA_ATTR)) {
--		raw_node->i.i_inline = F2FS_EXTRA_ATTR;
--		raw_node->i.i_extra_isize = cpu_to_le16(calc_extra_isize());
--	}
--
--	if (c.feature & cpu_to_le32(F2FS_FEATURE_PRJQUOTA))
--		raw_node->i.i_projid = cpu_to_le32(F2FS_DEF_PROJID);
--
- 	data_blk_nor = get_sb(main_blkaddr) +
- 		c.cur_seg[CURSEG_HOT_DATA] * c.blks_per_seg + 1;
- 
-@@ -1434,9 +1405,6 @@ static int f2fs_write_qf_inode(int qtype)
- 	for (i = 0; i < QUOTA_DATA(qtype); i++)
- 		raw_node->i.i_addr[get_extra_isize(raw_node) + i] =
- 					cpu_to_le32(data_blk_nor + i);
--	raw_node->i.i_ext.fofs = 0;
--	raw_node->i.i_ext.blk_addr = 0;
--	raw_node->i.i_ext.len = 0;
- 
- 	main_area_node_seg_blk_offset = get_sb(main_blkaddr);
- 	main_area_node_seg_blk_offset += c.cur_seg[CURSEG_HOT_NODE] *
++static inline void dec_page_counts(struct f2fs_sb_info *sbi, int count_type,
++							unsigned int count)
++{
++	atomic_sub(count, &sbi->nr_pages[count_type]);
++}
++
+ static inline void inode_dec_dirty_pages(struct inode *inode)
+ {
+ 	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
 -- 
-2.25.4
+2.22.1
 
 
 
