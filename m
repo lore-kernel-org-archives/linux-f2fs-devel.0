@@ -2,38 +2,38 @@ Return-Path: <SRS0=svdC=MO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B86E1C6377D
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jul 2021 17:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9A5C00142
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jul 2021 19:05:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 5B6F761409;
-	Thu, 22 Jul 2021 17:57:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B6F761409
+	by mail.kernel.org (Postfix) with ESMTPS id A5E4860EBC
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jul 2021 19:05:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org A5E4860EBC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=linux-f2fs-devel-bounces@lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m6cwx-0001kJ-TR; Thu, 22 Jul 2021 17:57:35 +0000
+	id 1m6e0W-0005oR-Sa; Thu, 22 Jul 2021 19:05:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <ebiggers@kernel.org>) id 1m6cww-0001kC-Ik
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Jul 2021 17:57:34 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <djwong@kernel.org>) id 1m6e0M-0005mu-AU
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Jul 2021 19:05:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TqDa+BTwjADl5/M4HO3Rx6uCbS+wXPUy+HIWshjFpdI=; b=koO3bARGepJV3X01kCj2YuWF4F
- 8JdiHo792UlCMM5nIvRvnlwYfIxyOLeXxwC/ULZaJCw0pRMDVXRXBZgJktBffkJ9sgNi9m03iH4sk
- QVT98SOLju1pEs3aE/bCbXPpsbnJwTnjeoWSW6VuXcIHsans7z1AMz9c8NgKiZrYHWZU=;
+ bh=QH69JZ0ro/6mMHp3t6fa0UGYS8OLDRprIsAx0T8NAgY=; b=mBk3GjUFv1oYg3eh3dLHIwW4qn
+ /gXfVhDJSkZDGJqp1f3hPRqxUAsXCqmCkyabgxZRJq5auARLWrArax6U2b4gZO/Y1h3Rskk1Ozq5e
+ yq74oDrvBQsf33tEamUT4oIukkaHZtnMwN9rLALMYE76xQzEYVD/A5hrJUmTjB2nsq5U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -41,45 +41,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TqDa+BTwjADl5/M4HO3Rx6uCbS+wXPUy+HIWshjFpdI=; b=Dxp6Sgfjs9IJhwIDRwndOddvcv
- Jo9+/18Bkilidp4bvr7jzh2MZYoufW6vy6UFvJPyNOH/DT6BYPhOx5AMtyYyJ1dGZD2AMZ8FNOn80
- lUnoHlPzxEOnOeYqtjRygXL4gjz+Ch06hqN7AJt8xE4YQ5uec5p6F/uvG93BR34u6HBs=;
+ bh=QH69JZ0ro/6mMHp3t6fa0UGYS8OLDRprIsAx0T8NAgY=; b=iJQGvrnG7I2gCBoEB+Ag7b6Qci
+ eLsrj5crfEbCQfs15bznZOkrD0jj3qr3XqDk2E3dK67QmpzDFS4kkRAGlz0KOtRDUIUb4RmKRq3ez
+ fP/IHf9TCfccK8BzoF1t1buMowlUlM01XyG4doZRKIn9LIEOsIaZhBYrV2KGGvjmtpBw=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m6cwv-00H4a3-9H
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Jul 2021 17:57:34 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C524261409;
- Thu, 22 Jul 2021 17:57:27 +0000 (UTC)
+ id 1m6e0B-00H7Jo-Vx
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 22 Jul 2021 19:05:09 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9748D60EB9;
+ Thu, 22 Jul 2021 19:04:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1626976647;
- bh=Av+Kg+qo1h87X98XcxKgXhZ8WVVGKok4e5W9b5kj9n4=;
+ s=k20201202; t=1626980689;
+ bh=oWDsz2mqAq9NcEEh1BJyznZQCPm+facoTqPnYlRRhJQ=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=Kd0vHy9MvLBeqi1w8pZV6DG+Y7qotFJDEO8c2DuMlYHgmPK2tvrVSCpmOifeQTIaw
- YFY8eNdR6c0nPoJ3uTziUEtBHR5QqMqXki9QlK7mP8DwAmG/3QGy3lHy9DHIvbIXyp
- aOumGiebLkUTgiHiB9FTeVm0jChh/5TiVwCibjIc7WssqYZ1vLh/wg7oi0/Y8+tRX0
- j5YFrQbh5EnmCMI3oCLuziI8zjjuXFVoZx0YIotUz2NEnp5p0phNCRg/C5EoTCbk10
- FozccR0fBqRC6svIB87FbnGoLaqNvGvPWG4co9NurqH8PLWunFVWNvVKu2KKl0/GbO
- vmiIY+8BcpY9A==
-Date: Thu, 22 Jul 2021 10:57:26 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Daeho Jeong <daeho43@gmail.com>
-Message-ID: <YPmxhiJrUazvHJTx@gmail.com>
-References: <CACOAw_yWAUNiziiQuZgRDaVrOxceuEpO8QtoYGmhxxJV2s7wWQ@mail.gmail.com>
- <YPjQQTjJ6rO2sx/o@sol.localdomain>
- <CACOAw_yfG494AK=XH_xzeTDWn-a1mYF+537=VTT6oX6RgLGxnw@mail.gmail.com>
- <YPmB8etJZ+vN0fDT@gmail.com>
- <CACOAw_y7vabxw6Ena4FSuA2bfA_Unq2bEpQq1pSJ0-zi3YCa8w@mail.gmail.com>
- <YPmaMFlR6/tJTmpQ@gmail.com> <YPmcMpbv3kxSZOs8@gmail.com>
- <CACOAw_zTHM_aYdLLxoSn7SvXB99CgVMu8eMKQ=Poqb_p_gVoOg@mail.gmail.com>
- <YPmsnYBgu4T5g1xj@gmail.com>
- <CACOAw_wGeX+D+Q7CDqi5Qt0YX=3YxZQwSf8ARiUhLUBANgs5ZQ@mail.gmail.com>
+ b=QilYXNDAdzMfF+frM57wtEsK8q1xBhGM/Fw6ySzsoC5LukRf2pi9r343XIPOGGjhw
+ inNMRBNKyr2+WCSrrUv7uZJuoNSJm64GbfIJc7Nquu2D6EMLTWmWw7Xcm69xxwN3em
+ MyoZQsSMilN6DlmympazHrgl3V3HkOqFgjlkpozftLq0ixlYnwg7iEVqAdfLcbBwTk
+ ZW76MEHP/kBQ047J1PXSwSXqVmaV5PZ0ohUOezoWPe17OJPGuQKeNSN8UQV9MkpcKg
+ zqijpJkmcGOjHCLVgEUIRAlnaOnsquR9/cTWbypuBNqFkKdQ78gVo4VnpOSwqM3DnS
+ zmr2Bt9gIvk1A==
+Date: Thu, 22 Jul 2021 12:04:49 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Satya Tangirala <satyat@google.com>
+Message-ID: <20210722190449.GH559212@magnolia>
+References: <20210604210908.2105870-1-satyat@google.com>
+ <20210604210908.2105870-7-satyat@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <CACOAw_wGeX+D+Q7CDqi5Qt0YX=3YxZQwSf8ARiUhLUBANgs5ZQ@mail.gmail.com>
-X-Headers-End: 1m6cwv-00H4a3-9H
-Subject: Re: [f2fs-dev] [PATCH] f2fs: change fiemap way in printing
- compression chunk
+In-Reply-To: <20210604210908.2105870-7-satyat@google.com>
+X-Headers-End: 1m6e0B-00H7Jo-Vx
+Subject: Re: [f2fs-dev] [PATCH v9 6/9] iomap: support direct I/O with
+ fscrypt using blk-crypto
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,86 +84,79 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jens Axboe <axboe@kernel.dk>, linux-xfs@vger.kernel.org,
+ "Theodore Y . Ts'o" <tytso@mit.edu>,
+ "Darrick J . Wong" <darrick.wong@oracle.com>, linux-kernel@vger.kernel.org,
+ Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net,
+ Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
+ linux-block@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jul 22, 2021 at 10:55:01AM -0700, Daeho Jeong wrote:
-> On Thu, Jul 22, 2021 at 10:36 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > On Thu, Jul 22, 2021 at 09:33:59AM -0700, Daeho Jeong wrote:
-> > > On Thu, Jul 22, 2021 at 9:26 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> > > >
-> > > > On Thu, Jul 22, 2021 at 09:17:54AM -0700, Eric Biggers wrote:
-> > > > > > I think it matches with FIEMAP_EXTENT_UNWRITTEN. Otherwise, we should
-> > > > > > shorten the last extent like below.
-> > > > > >
-> > > > > >         fe_logical=0    fe_physical=16384  length=4096
-> > > > > >         fe_logical=4096 fe_physical=81920  length=4096
-> > > > > >         fe_logical=8192 fe_physical=147456 length=4096
-> > > > > >
-> > > > > >
-> > > > > >   Unwritten extent - the extent is allocated but its data has not been
-> > > > > >   initialized.  This indicates the extent's data will be all zero if read
-> > > > > >   through the filesystem but the contents are undefined if read directly from
-> > > > > >   the device.
-> > > > >
-> > > > > Well, as I said before, using UNWRITTEN isn't appropriate because it indicates
-> > > > > that the data is all zeroes, which in this case it is not.  Similarly, reporting
-> > > > > a hole isn't appropriate because it also indicates that the data is all zeroes
-> > > > > and also that it has no space allocated on-disk at all.
-> > > > >
-> > > > > I think we should just over-report the physical length of the last extent in the
-> > > > > cluster, which is what btrfs does...
-> > > > >
-> > > >
-> > > > Also keep in mind that as far as fiemap is concerned, when FIEMAP_EXTENT_ENCODED
-> > > > is set (indicating that the data is compressed or encrypted), then reading the
-> > > > data from disk will have "undefined results"; see
-> > > > Documentation/filesystems/fiemap.rst.  As such, when someone decides to do so
-> > > > anyway (which is necessary for encryption testing), they really need to know
-> > > > *exactly* what they're doing.  So I think it's less bad to bend the rules on
-> > > > extents where FIEMAP_EXTENT_ENCODED is already set.
-> > > >
-> > > > In contrast, your suggestion would incorreectly report some parts of the file as
-> > > > standard extents (or holes) without FIEMAP_EXTENT_ENCODED, so it would be
-> > > > expected that the standard meaning would apply to those parts.
-> > > >
-> > > > - Eric
-> > >
-> > > I also think it is okay with the FIEMAP_EXTENT_ENCODED flag.
-> > > It is actually all zero in a view of the filesystem internal and still
-> > > undefined if read directly from the device.
-> > > If we remove this extent, it might be confusing to understand the layout of it.
-> >
-> > FIEMAP_EXTENT_ENCODED | FIEMAP_EXTENT_UNWRITTEN is contradictory, so that
-> > doesn't seem like a good option.  And no, the range is *not* zero when read from
-> > the file by userspace, which is what UNWRITTEN is supposed to indicate.
-> >
-> > Compressed data is terminated by an end-of-stream marker, so it is possible to
-> > decompress even if extra data is appended to it.  So that's another reason why I
-> > feel that my suggestion is not as bad as the other options.
-> >
-> > > Plus, I think we need to remove the last extent, when we return back
-> > > the block to the free space pool to filesystem using releasing
-> > > reserved space ioctl.
-> >
-> > This seems to be a filesystem implementation detail.  Again, FS_IOC_FIEMAP is
-> > just about returning the actual extent mapping, not about other filesystem
-> > implementation details.
-> >
-> > - Eric
+On Fri, Jun 04, 2021 at 09:09:05PM +0000, Satya Tangirala wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Understood. For confirmation, is this your final suggestion?
+> Set bio crypt contexts on bios by calling into fscrypt when required.
+> No DUN contiguity checks are done - callers are expected to set up the
+> iomap correctly to ensure that each bio submitted by iomap will not have
+> blocks with incontiguous DUNs by calling fscrypt_limit_io_blocks()
+> appropriately.
 > 
->        fe_logical=0    fe_physical=16384  length=4096
->        fe_logical=4096 fe_physical=81920  length=4096
->        fe_logical=8192 fe_physical=147456 length=8192
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Co-developed-by: Satya Tangirala <satyat@google.com>
+> Signed-off-by: Satya Tangirala <satyat@google.com>
 
-Yes.
+Looks like a straightforward conversion...
 
-- Eric
+Acked-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/iomap/direct-io.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 9398b8c31323..1c825deb36a9 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/module.h>
+>  #include <linux/compiler.h>
+>  #include <linux/fs.h>
+> +#include <linux/fscrypt.h>
+>  #include <linux/iomap.h>
+>  #include <linux/backing-dev.h>
+>  #include <linux/uio.h>
+> @@ -185,11 +186,14 @@ static void
+>  iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+>  		unsigned len)
+>  {
+> +	struct inode *inode = file_inode(dio->iocb->ki_filp);
+>  	struct page *page = ZERO_PAGE(0);
+>  	int flags = REQ_SYNC | REQ_IDLE;
+>  	struct bio *bio;
+>  
+>  	bio = bio_alloc(GFP_KERNEL, 1);
+> +	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+> +				  GFP_KERNEL);
+>  	bio_set_dev(bio, iomap->bdev);
+>  	bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+>  	bio->bi_private = dio;
+> @@ -306,6 +310,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		}
+>  
+>  		bio = bio_alloc(GFP_KERNEL, nr_pages);
+> +		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+> +					  GFP_KERNEL);
+>  		bio_set_dev(bio, iomap->bdev);
+>  		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+>  		bio->bi_write_hint = dio->iocb->ki_hint;
+> -- 
+> 2.32.0.rc1.229.g3e70b5a671-goog
+> 
 
 
 _______________________________________________
