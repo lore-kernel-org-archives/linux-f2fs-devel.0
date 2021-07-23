@@ -2,100 +2,77 @@ Return-Path: <SRS0=8t4+=MP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0763FC00143
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jul 2021 03:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C2BC4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jul 2021 04:27:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B421960F35
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jul 2021 03:58:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org B421960F35
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTPS id B146760E8E;
+	Fri, 23 Jul 2021 04:27:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org B146760E8E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m6mKs-0006LX-CU; Fri, 23 Jul 2021 03:58:54 +0000
+	id 1m6mmu-0007Qg-Vl; Fri, 23 Jul 2021 04:27:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <chaoliu719@gmail.com>) id 1m6mKq-0006LQ-Qg
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Jul 2021 03:58:53 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1m6mmt-0007QZ-Pt
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Jul 2021 04:27:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=un8J5f50KlXoN8UBa4hsGQdCO3pR6zbgd+IL6vlgdIA=; b=TSpQeXx/IHs0ChngcqS/XZ0TNZ
- ttqYODN3Xp+GWCojYLtQcHbvQRwbFvkYjUO+cgWDRbMn8Ou/wJ00Hy90uGIBTBpLlcwNQtJsAP9B7
- 2A8FmoQ5zz4GyVfD136t21Xy6bMCdNQ1kaBrfw2JWx2H4aJzrSgOwPWGkevGed+2FKfE=;
+ bh=xDcAUVCzw82O3btn3TMr+/l/TFQ5VodEzkcyj6On2Fw=; b=VFo2P6A163kZuymOfhd9wX0laV
+ +6V+hOwCvI/fhBDA3erxogsIJwBAANQXd56k3sTIUuHljppzLMdz27fq/+jYnFQIkjbzBzA0Zm72t
+ 0VJLe58I6IFqbTnAOYS8dGaHwX7ylyrHxprHO3dYWEOEr7QwvXKASOyxlDi79TS7h8UY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=un8J5f50KlXoN8UBa4hsGQdCO3pR6zbgd+IL6vlgdIA=; b=O
- ZUGeYfaCMEdaiTqn8INVT2UVuj2anxid7qGGbVZlGGFGunw02ol6L8bgJe1aS3HdmhhTCo0mI/HCy
- Q1M0/FBDeiQdPMn7wxKJZdeo9roqqseL8cNkzs7jNwEbWDk8XRanaofI7rNEPavMANBhvqSAxmseR
- d8oBgVbMjFDGpVoM=;
-Received: from mail-pl1-f171.google.com ([209.85.214.171])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
+ From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=xDcAUVCzw82O3btn3TMr+/l/TFQ5VodEzkcyj6On2Fw=; b=iJ+DSeeTWJ/wYgZ334SjU7XUIk
+ CJsAJYgBobiICSvlG09EXfEebac1lYjxs2kw7fYNPI7Edtjq6hT3qHB60NRtDjHrLaJnVkMqf+602
+ 4jiaE/TATyUe4yinZotjwi4Q6F5+azYUesqehwv+sQphsb2ByuRlYWhQF7L9eu4ZnqQ0=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1m6mKp-00HTtd-9d
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Jul 2021 03:58:52 +0000
-Received: by mail-pl1-f171.google.com with SMTP id k1so1574957plt.12
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 22 Jul 2021 20:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20161025;
- h=from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=un8J5f50KlXoN8UBa4hsGQdCO3pR6zbgd+IL6vlgdIA=;
- b=Zbs/2a6fQawK/CttSHM+tr2A79wyGBgbeXhuuOJLULOF14Nw1VYVjzO/8YcyLa+cXY
- ALoICMmLFg71PiIbbyBShV6mYQceCxLyYlrSmZoxwVpB1Pa30pDY6K5I/rqtL69spztX
- cep9NOSEN9uBdDtq7RsAfVTC8E8ECzsGOQBgywDGB7ieYXHi3SXDODIFof/cxJK6ZlfA
- hGVcBmJ2CxfYTFb6nJDdkcQxFjfTYanZ9SVJXqASwnS16VSTBGh/W2+mR966mSp1+OJr
- exBSR+Z0nMwBIHgoTq6JUqlXmGc0SmLKb8FqW4aADnCp+rc/3DCI6TxgIVT8DxDW5RJi
- B4jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=un8J5f50KlXoN8UBa4hsGQdCO3pR6zbgd+IL6vlgdIA=;
- b=grBBkeEVI7UVlKyL457ujaKgcvN0fM0JtSxU2/HOw6JaGm2mjSPUgl3Tzu6Z+Jcoem
- WthUrJvmF2VQ1DFJ7q7lbMtcsblHF9xjjvJR+iwXlo44Uzb4IOoLbYMdtuijMz0ef4HC
- Arn2VnIEAnx+1KDeQjSMlwFx3RF9Ry4hByfrk2ArD3nyR7NCrtdN/UAdpzB3qphjwVYK
- IoalzoE/8TCT7wMtcxrVwGywazwtLEO+QQPCshZKd9OkSn9yuIlXVUYi/28tdMcrr6Ty
- 15NBtuSybjP1NUPEiGY5HfnPMfQsUE9Uc1WfJ0sOm+cf/HVlpgxb0fII3eYF7BHvvtaO
- nDTw==
-X-Gm-Message-State: AOAM531XZnAPvkPp0CR67K3Wqb62ffXY+735bDF0zmihXAYR685raiWb
- oXkpxxdrwFje870ZgJTFQz622hOY3et1VPzi
-X-Google-Smtp-Source: ABdhPJw60JjpiyduZTVSwtK0+21UlfAsWzjv4g9tsxF57a7UL3pFL5+sybvri7NujsaWjUN6iv7ODw==
-X-Received: by 2002:a17:90a:b28a:: with SMTP id
- c10mr11587363pjr.59.1627012725726; 
- Thu, 22 Jul 2021 20:58:45 -0700 (PDT)
-Received: from liuchao12-Ubuntu.xiaomi.com ([209.9.72.214])
- by smtp.gmail.com with ESMTPSA id x40sm32710755pfu.176.2021.07.22.20.58.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 22 Jul 2021 20:58:45 -0700 (PDT)
-From: Chao Liu <chaoliu719@gmail.com>
-X-Google-Original-From: Chao Liu <liuchao12@xiaomi.com>
-To: chao@kernel.org,
-	jaegeuk@kernel.org
-Date: Fri, 23 Jul 2021 11:58:41 +0800
-Message-Id: <20210723035841.1829101-1-liuchao12@xiaomi.com>
-X-Mailer: git-send-email 2.32.0
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1m6mmk-00HVK9-CA
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Jul 2021 04:27:51 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 05FFF60E8E;
+ Fri, 23 Jul 2021 04:27:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1627014452;
+ bh=4AJtrL5EuFvtcmtmky/U4ejUKlCr3swf/oxZOxyr6aI=;
+ h=Date:From:To:Subject:References:In-Reply-To:From;
+ b=Q45twTiT/2jXymp9Xj6GP2lrkfi801xtC6RkmiTArDxQ67+Gp9RMoRPbOZQL7C9rd
+ TqbYEjczWge6siHnU5wKB9tZCqlY/HLfe4ZObqz4t9OpJWMS9HD+JlU66EQBbO4wZ/
+ kIBaE47XiEo9I/ohWHflTsIjQEpMOit43qbcBz2lznkLQPWiRfGjIRDqLe50tv7p5t
+ EX3zhbAV601LhsSqkYujoX7ftNErD9srSauXuelFzxFSz9l7CHFZt+wNKHeuGRdkj1
+ FdXPkMASfobIPCXNcVLwXTrp4W3CrGd5Vu5wwR+jhIX8Ba96JeXBx8xHJ2xAqVTuV3
+ 1gNdn+0nzSc3g==
+Date: Thu, 22 Jul 2021 21:27:30 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <YPpFMh0dDLStNTFH@google.com>
+References: <20210722014149.525166-1-jaegeuk@kernel.org>
+ <YPmufPvn9FJXfcip@google.com> <YPorDEwJcW3bi4DF@google.com>
 MIME-Version: 1.0
-X-Headers-End: 1m6mKp-00HTtd-9d
-Subject: [f2fs-dev] [PATCH] resize.f2fs: add option to manually specify new
- overprovision
+Content-Disposition: inline
+In-Reply-To: <YPorDEwJcW3bi4DF@google.com>
+X-Headers-End: 1m6mmk-00HVK9-CA
+Subject: Re: [f2fs-dev] [PATCH v4] f2fs: don't sleep while grabing
+ nat_tree_lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -107,84 +84,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Make.f2fs supports manually specifying overprovision, and we expect
-resize.f2fs to support it as well.
+This tries to fix priority inversion in the below condition resulting in
+long checkpoint delay.
 
-This change add a new '-o' option to manually specify overprovision.
+f2fs_get_node_info()
+ - nat_tree_lock
+  -> sleep to grab journal_rwsem by contention
 
-Signed-off-by: Chao Liu <liuchao12@xiaomi.com>
+                                     checkpoint
+                                     - waiting for nat_tree_lock
+
+In order to let checkpoint go, let's release nat_tree_lock, if there's a
+journal_rwsem contention.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/main.c   | 8 ++++++--
- fsck/resize.c | 9 ++++++++-
- 2 files changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/fsck/main.c b/fsck/main.c
-index 260ff29..06253e2 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -124,7 +124,8 @@ void resize_usage()
- 	MSG(0, "[options]:\n");
- 	MSG(0, "  -d debug level [default:0]\n");
- 	MSG(0, "  -i extended node bitmap, node ratio is 20%% by default\n");
--	MSG(0, "  -s safe resize (Does not resize metadata)");
-+	MSG(0, "  -o overprovision percentage [default:auto]\n");
-+	MSG(0, "  -s safe resize (Does not resize metadata)\n");
- 	MSG(0, "  -t target sectors [default: device size]\n");
- 	MSG(0, "  -V print the version number and exit\n");
- 	exit(1);
-@@ -529,7 +530,7 @@ void f2fs_parse_options(int argc, char *argv[])
- #endif
- 	} else if (!strcmp("resize.f2fs", prog)) {
- #ifdef WITH_RESIZE
--		const char *option_string = "d:fst:iV";
-+		const char *option_string = "d:fst:io:V";
+ Change log from v3:
+  - fix wrong condition check
 
- 		c.func = RESIZE;
- 		while ((option = getopt(argc, argv, option_string)) != EOF) {
-@@ -563,6 +564,9 @@ void f2fs_parse_options(int argc, char *argv[])
- 			case 'i':
- 				c.large_nat_bitmap = 1;
- 				break;
-+			case 'o':
-+				c.new_overprovision = atof(optarg);
-+				break;
- 			case 'V':
- 				show_version(prog);
- 				exit(0);
-diff --git a/fsck/resize.c b/fsck/resize.c
-index 78d578e..85a53c5 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -146,7 +146,9 @@ safe_resize:
- 						get_sb(segs_per_sec));
+ fs/f2fs/node.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
- 	/* Let's determine the best reserved and overprovisioned space */
--	c.new_overprovision = get_best_overprovision(sb);
-+	if (c.new_overprovision == 0)
-+		c.new_overprovision = get_best_overprovision(sb);
-+
- 	c.new_reserved_segments =
- 		(2 * (100 / c.new_overprovision + 1) + 6) *
- 						get_sb(segs_per_sec);
-@@ -476,6 +478,11 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
- 	set_cp(overprov_segment_count, get_cp(overprov_segment_count) +
- 						get_cp(rsvd_segment_count));
-
-+	MSG(0, "Info: Overprovision ratio = %.3lf%%\n", c.new_overprovision);
-+	MSG(0, "Info: Overprovision segments = %u (GC reserved = %u)\n",
-+					get_cp(overprov_segment_count),
-+					c.new_reserved_segments);
-+
- 	free_segment_count = get_free_segments(sbi);
- 	new_segment_count = get_newsb(segment_count_main) -
- 					get_sb(segment_count_main);
---
-2.32.0
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 0be9e2d7120e..c945a9730f3c 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -552,7 +552,7 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
+ 	int i;
+ 
+ 	ni->nid = nid;
+-
++retry:
+ 	/* Check nat cache */
+ 	down_read(&nm_i->nat_tree_lock);
+ 	e = __lookup_nat_cache(nm_i, nid);
+@@ -564,10 +564,19 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
+ 		return 0;
+ 	}
+ 
+-	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
++	/*
++	 * Check current segment summary by trying to grab journal_rwsem first.
++	 * This sem is on the critical path on the checkpoint requiring the above
++	 * nat_tree_lock. Therefore, we should retry, if we failed to grab here
++	 * while not bothering checkpoint.
++	 */
++	if (!rwsem_is_locked(&sbi->cp_global_sem)) {
++		down_read(&curseg->journal_rwsem);
++	} else if (!down_read_trylock(&curseg->journal_rwsem)) {
++		up_read(&nm_i->nat_tree_lock);
++		goto retry;
++	}
+ 
+-	/* Check current segment summary */
+-	down_read(&curseg->journal_rwsem);
+ 	i = f2fs_lookup_journal_in_cursum(journal, NAT_JOURNAL, nid, 0);
+ 	if (i >= 0) {
+ 		ne = nat_in_journal(journal, i);
+-- 
+2.32.0.432.gabb21c7263-goog
 
 
 
