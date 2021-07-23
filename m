@@ -2,78 +2,77 @@ Return-Path: <SRS0=8t4+=MP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1970C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jul 2021 02:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AE7C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jul 2021 02:36:16 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9972360EB2
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Jul 2021 02:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 9972360EB2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
+	by mail.kernel.org (Postfix) with ESMTPS id B21ED60EBE;
+	Fri, 23 Jul 2021 02:36:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org B21ED60EBE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m6kzf-0005Sn-A5; Fri, 23 Jul 2021 02:32:55 +0000
+	id 1m6l2t-0005jE-1o; Fri, 23 Jul 2021 02:36:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <changfengnan@vivo.com>) id 1m6kzb-0005Sg-Ce
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Jul 2021 02:32:51 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1m6l2s-0005j8-99
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Jul 2021 02:36:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BMPLRljUu5VJwyQ0KZQL2hUjgppEqhSMIt0jGwlD5a0=; b=JXe7/aK83VAW0JfBRVP6K38AKI
- G+mwvKsRc+ZuPNAuO+EZgU3WiORvVWd1E6r0IYBKqOSfOlp0uxjc9Be+ycifuBHbqXOyKKOmb9GNv
- b06FpM+1JkHpMZO8ITj6TfvWhYZTEOYOOahEM6d5d5IM94EUshmvVFWdYo6g2YJR3/lc=;
+ bh=3RsNRhoc4leQnQJYVhz9WAQj9eatICq7xn8tNbB2LDs=; b=F2VAZe/feaISmo3csGwc7RulWf
+ ImCmbx2Y+O6Jl4uJAvXpq1rZqjVDzEEE9QMqOIGqzPtgo28Z4NwnSqoUrxlx6mNh54NsnrMe5KpgV
+ HHgN0kPp6J5Zis+Z6ioOlayeBui22KPd+DFGM9U+T8TbYaeS8hkL+7ZXEc+J2tsYY+NU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=BMPLRljUu5VJwyQ0KZQL2hUjgppEqhSMIt0jGwlD5a0=; b=j
- NcvOhg6TXJRR1PgdODuQCCCqHGxzxA1Xh0E3Z4CUly82e1BBky6IMKMSRgZOAMh/eipzuNsGXpuTF
- Mg5Ymwge0vTqUAnp2kZq3EH7W/ay04ywKWvkH5ndR940JAMxxpCSYE+a8NspBcF0clFZwApr6slnX
- EbabwUPTPTMGn5YM=;
-Received: from mail-m121144.qiye.163.com ([115.236.121.144])
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
+ From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=3RsNRhoc4leQnQJYVhz9WAQj9eatICq7xn8tNbB2LDs=; b=RHb8MArKMKo8P8mL1xqLOzjGwl
+ EDueZTcFpoIHZIM+X5CyIYliCOySCAolw+WSBHr5Hk8UavpWU+IXO6EY6rMkUSZlsYsA1Mjvexu+B
+ mjgdKb43BDeHDyAfMW7IBZBDmhLskiolTtNdWAqFkByg9lFnaHg8L5I7krlm5U4loFWk=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m6kzS-0000iW-SG
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Jul 2021 02:32:51 +0000
-DKIM-Signature: a=rsa-sha256;
- b=VVGWegygrVPJgGtWMlG5HMx7aor5v3wufXNKxS0YwMiYCB7AGHOR+23DSsIpkbsvp49D6KvgFTOi1064AejuI/tLh1YKzORmV9WcgmrkRmfAJlY2SE1Nc+Tuh7PeMfXDCLzorJGYMl90Gm1vwjVlKVlUMIxqcatca1p+bBIspmE=;
- c=relaxed/relaxed; s=default; d=vivo.com; v=1;
- bh=BMPLRljUu5VJwyQ0KZQL2hUjgppEqhSMIt0jGwlD5a0=;
- h=date:mime-version:subject:message-id:from;
-Received: from comdg01144017.vivo.xyz (unknown [218.104.188.164])
- by mail-m121144.qiye.163.com (Hmail) with ESMTPA id 04C51AC0261;
- Fri, 23 Jul 2021 10:32:35 +0800 (CST)
-From: Fengnan Chang <changfengnan@vivo.com>
-To: jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 23 Jul 2021 10:31:31 +0800
-Message-Id: <20210723023131.131137-1-changfengnan@vivo.com>
-X-Mailer: git-send-email 2.29.0
+ id 1m6l2m-0000ou-GQ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 23 Jul 2021 02:36:14 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3263D60EBE;
+ Fri, 23 Jul 2021 02:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1627007758;
+ bh=/Mwrac25+uC81BGpDWykRwtoURQdfGp5sL5q4DXj/l0=;
+ h=Date:From:To:Subject:References:In-Reply-To:From;
+ b=YnRvh2lbNgYSQOdHwmOSjNxugVvcHBoIbv6a0ZZ+gW9aJrFU1qeiv2QZFqx/XauPA
+ 6kJixcenGQri9j7ONCZGaGBkYEnpxsFVUBR5vzCBVXlqrXiv0McEPar+FmtNUMU4Tf
+ /9Ae+BqLuk/gm06lL/rNegJy6srSACvlxKaX4+D9JEufxYPH9Wpyc3Gnpqsu9RcaUo
+ PZPfJ+/6UfpT+UZy4zqZMO11FWboir9YIcx2IkKn5wCgJtipLcwG6vfMrGl+6s7+co
+ j0SxnogBm+6qvuK8aJ1kk+q9OOwImWWmX4Vjx+tdwn1UQRDuCFiO3qu1vYLOXf/oBC
+ pA/3c//xEptyA==
+Date: Thu, 22 Jul 2021 19:35:56 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <YPorDEwJcW3bi4DF@google.com>
+References: <20210722014149.525166-1-jaegeuk@kernel.org>
+ <YPmufPvn9FJXfcip@google.com>
 MIME-Version: 1.0
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
- kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWUJDQ0hWTR4YGh0eH0pKH0
- xDVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWVVLWQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Oj46Hhw5Vj8CPkkPKUsPIj9M
- EQMKFA1VSlVKTUlMS0tMTk5NTkpNVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
- WUlKQ1VKS09VSkNDVUpNT1lXWQgBWUFKTE1DNwY+
-X-HM-Tid: 0a7ad1351a47b039kuuu04c51ac0261
-X-Headers-End: 1m6kzS-0000iW-SG
-Subject: [f2fs-dev] [PATCH v3] f2fs: compress: allow write compress released
- file after truncate to zero
+Content-Disposition: inline
+In-Reply-To: <YPmufPvn9FJXfcip@google.com>
+X-Headers-End: 1m6l2m-0000ou-GQ
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: don't sleep while grabing
+ nat_tree_lock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,40 +84,70 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Fengnan Chang <changfengnan@vivo.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-For compressed file, after release compress blocks, don't allow write
-direct, but we should allow write direct after truncate to zero.
+This tries to fix priority inversion in the below condition resulting in
+long checkpoint delay.
 
-Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
+f2fs_get_node_info()
+ - nat_tree_lock
+  -> sleep to grab journal_rwsem by contention
+
+                                     checkpoint
+                                     - waiting for nat_tree_lock
+
+In order to let checkpoint go, let's release nat_tree_lock, if there's a
+journal_rwsem contention.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ Change log from v2:
+  - don't bother checkpoint
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6afd4562335f..094f6546fd00 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -740,6 +740,14 @@ int f2fs_truncate_blocks(struct inode *inode, u64 from, bool lock)
- 		return err;
+ fs/f2fs/node.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 0be9e2d7120e..b26642daa3d2 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -552,7 +552,7 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
+ 	int i;
  
- #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	ni->nid = nid;
+-
++retry:
+ 	/* Check nat cache */
+ 	down_read(&nm_i->nat_tree_lock);
+ 	e = __lookup_nat_cache(nm_i, nid);
+@@ -564,10 +564,19 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
+ 		return 0;
+ 	}
+ 
+-	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
 +	/*
-+	 * For compressed file, after release compress blocks, don't allow write
-+	 * direct, but we should allow write direct after truncate to zero.
++	 * Check current segment summary by trying to grab journal_rwsem first.
++	 * This sem is on the critical path on the checkpoint requiring the above
++	 * nat_tree_lock. Therefore, we should retry, if we failed to grab here
++	 * while not bothering checkpoint.
 +	 */
-+	if (f2fs_compressed_file(inode) && !free_from
-+			&& is_inode_flag_set(inode, FI_COMPRESS_RELEASED))
-+		clear_inode_flag(inode, FI_COMPRESS_RELEASED);
-+
- 	if (from != free_from) {
- 		err = f2fs_truncate_partial_cluster(inode, from, lock);
- 		if (err)
++	if (rwsem_is_locked(&sbi->cp_global_sem)) {
++		down_read(&curseg->journal_rwsem);
++	} else if (!down_read_trylock(&curseg->journal_rwsem)) {
++		up_read(&nm_i->nat_tree_lock);
++		goto retry;
++	}
+ 
+-	/* Check current segment summary */
+-	down_read(&curseg->journal_rwsem);
+ 	i = f2fs_lookup_journal_in_cursum(journal, NAT_JOURNAL, nid, 0);
+ 	if (i >= 0) {
+ 		ne = nat_in_journal(journal, i);
 -- 
-2.29.0
+2.32.0.432.gabb21c7263-goog
 
 
 
