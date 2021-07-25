@@ -1,83 +1,81 @@
-Return-Path: <SRS0=9k4A=MQ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=Aiq0=MR=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04B4C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 24 Jul 2021 07:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4742C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Jul 2021 10:00:54 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 94F5D60E9C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 24 Jul 2021 07:20:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 94F5D60E9C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTPS id 9D0E860EB4;
+	Sun, 25 Jul 2021 10:00:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 9D0E860EB4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m7Bx8-0006q0-II; Sat, 24 Jul 2021 07:20:06 +0000
+	id 1m7awG-0002zK-TI; Sun, 25 Jul 2021 10:00:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from
- <BATV+9bd8c5f57f2c93d0ca7c+6544+infradead.org+hch@casper.srs.infradead.org>)
- id 1m7Bx5-0006pt-JO
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Jul 2021 07:20:03 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <chao@kernel.org>) id 1m7awE-0002zB-BH
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Jul 2021 10:00:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=O/XU7BaOJ1uvC1EkMCQUlQz3U2U8xvRd2MbfcwD2IpA=; b=bLoe5z6GGVLy430KAr7ZNcp2Rn
- EUwDnVtoB/ewoCOPHUMTnRdwghck3euS3PS7qg0hzsmC90yF8DMNSwpKkbvyxRRIAyjfBoc1sYrk5
- ZRXNizoQ401gZmt8XM+Ze3TzMP92+UC6x+gD+TJLEihmXC9a9Owi4OBvlyk9h3b120j0=;
+ bh=c/JJja6M/4eW6LRc7LnQAQHdYv1wmipAzy6Fc7gEwfQ=; b=AdHEfYY5obqSU6goD/lJpKjno2
+ IsZqPw+wOj7SMMrJy89k4pkPv+zL+U1teyQfdOkQ8FWsa3QHTyv6g0iscw1dY9221ubs7ZI7rx91v
+ bMHGEs+bYAt/sC2wE1WO3nQUjXSVt536NIhmilyCNXqRkWDiTjkciiykhY5hQa0aV6UU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=O/XU7BaOJ1uvC1EkMCQUlQz3U2U8xvRd2MbfcwD2IpA=; b=laVHdO/m7vDafWXL1APEWUSbik
- dWz6UKRSJr7td7ZcB+HL6JPsvW/FUdigZrvFjCu5SUuSwPw7bNyGjaFZIy2qvX6QKtg5fjv/+mQbc
- TuBYlQEKwruCNwhNBiOqD5JNQZS0mfp+ATUW8fyGex/hnkIDvsUeOsRjPFYaDWfVO6pw=;
-Received: from casper.infradead.org ([90.155.50.34])
+ bh=c/JJja6M/4eW6LRc7LnQAQHdYv1wmipAzy6Fc7gEwfQ=; b=LqQHfGPGEJUNhxNX+hp/tbAM5i
+ WqwXjWWljuVnGLsOTXeXJ0ROwN9fn2YZFWsTKFve/wkAZrcKEKt4RxHLQqadhPJcfkaQ2gyLZULOB
+ /XWsnaJfYzE38mDnfc31WR52yppZ4GyOwFgMopLoA85Nb3avyD7WiWO7m06UoAo3u7SU=;
+Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m7Bx1-000zWg-QY
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 24 Jul 2021 07:20:03 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=O/XU7BaOJ1uvC1EkMCQUlQz3U2U8xvRd2MbfcwD2IpA=; b=MDgreUOWODAfOvefRAPYEl3Oia
- dHU4LYmu8cbdWaaqhowrU9J6cLhO6rLSUkrKQy0hsdL3ePEwcProggNMwZU75a92cRzyw6YUByyPQ
- 5Y9tgXQqRw4Dlqh6wGhbGvJGcbVMxiFloSSZdc4WjU1y9Z0a0eStaG+OMLSPdiTV1bn6NuTRM9ZDF
- xUDXHwdc8arrh21Zj74m9ppkAhoqn0v6yJpyIxNTnNmDMOjsSClzfb7I+oUFSrsBHY15IW2yzWR66
- XSg8y9K9nagTX9+/MW2gvdnz6aUoY0TbQxc1iUbHC92XmfQd0Tym2t+KeBL/HI4T3iAfcR6zWo6OI
- ElGynbeA==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat
- Linux)) id 1m7BwJ-00C4tG-OZ; Sat, 24 Jul 2021 07:19:17 +0000
-Date: Sat, 24 Jul 2021 08:19:15 +0100
-From: Christoph Hellwig <hch@infradead.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Message-ID: <YPu+88KReGlt94o3@infradead.org>
-References: <20210604210908.2105870-1-satyat@google.com>
- <20210604210908.2105870-6-satyat@google.com>
- <YPs1jlAsvXLomSJJ@gmail.com>
+ id 1m7avv-00225J-2Y
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 25 Jul 2021 10:00:50 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 39F4560C51;
+ Sun, 25 Jul 2021 10:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1627207225;
+ bh=x7k4bz7Y7uiJ9HuwIGC00aa9QqIdMDVb+kj05Oe8caQ=;
+ h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+ b=K9xh3UjE9h8p4mNba4tJb72qMolVr5FH3ck2XHfJC3Nq04ce2eNk/tWZvYXz09Xa4
+ +iI6mJ90H2NO+S//WQjEpIA7XrQYfP831fQ0DmDfswAZvUdfBVU3UVjkxpgYhxTvi5
+ lZhDdEBVy61QSDHoJGEAc1B2kXpVIzulRFjasgiCNcKoGPiYDkI1fgZsMQjI8YgeDl
+ TtQPELL26wKbWqPPLasBDRNXpx4fiZPjnA2J3xmL4mlkQpsuerCiCsRR6l4Y9MmGya
+ rogIhPCQ1fgY+drq8dJVV4V/uBQH8/2i/YE78Ibc15+7mq+hGPP8xBm5m+vyyIGoa0
+ ZW9XoygA98WSw==
+To: Eric Biggers <ebiggers@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20210716143919.44373-1-ebiggers@kernel.org>
+ <20210716143919.44373-2-ebiggers@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <7bc676f9-dbaf-5c8d-2b6e-67c75383d02d@kernel.org>
+Date: Sun, 25 Jul 2021 18:00:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <YPs1jlAsvXLomSJJ@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- casper.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1m7Bx1-000zWg-QY
-Subject: Re: [f2fs-dev] [PATCH v9 5/9] block: Make bio_iov_iter_get_pages()
- respect bio_required_sector_alignment()
+In-Reply-To: <20210716143919.44373-2-ebiggers@kernel.org>
+Content-Language: en-US
+X-Headers-End: 1m7avv-00225J-2Y
+Subject: Re: [f2fs-dev] [PATCH 1/9] f2fs: make f2fs_write_failed() take
+ struct inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,38 +87,25 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
- linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>,
- "Darrick J . Wong" <darrick.wong@oracle.com>, linux-kernel@vger.kernel.org,
- Satya Tangirala <satyat@google.com>, linux-xfs@vger.kernel.org,
- linux-fscrypt@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+ Satya Tangirala <satyaprateek2357@gmail.com>,
+ Changheun Lee <nanich.lee@samsung.com>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Jul 23, 2021 at 02:33:02PM -0700, Eric Biggers wrote:
-> I do still wonder if we should just not support that...  Dave is the only person
-> who has asked for it, and it's a lot of trouble to support.
+On 2021/7/16 22:39, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> I also noticed that f2fs has always only supported direct I/O that is *fully*
-> fs-block aligned (including the I/O segments) anyway.  So presumably that
-> limitation is not really that important after all...
+> Make f2fs_write_failed() take a 'struct inode' directly rather than a
+> 'struct address_space', as this simplifies it slightly.
 > 
-> Does anyone else have thoughts on this?
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-There are some use cases that really like sector aligned direct I/O,
-what comes to mind is some data bases, and file system repair tools
-(the latter on the raw block device).  So it is nice to support, but not
-really required.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-So for now I'd much prefer to initially support inline encryption for
-direct I/O without that if that simplifies the support.  We can revisit
-the additional complexity later.
-
-Also note that for cheap flash media pretending support for 512 byte
-blocks is actually a bit awwkward, so just presenting the media as
-having 4096 sectors in these setups would be the better choice anyway.
+Thanks,
 
 
 _______________________________________________
