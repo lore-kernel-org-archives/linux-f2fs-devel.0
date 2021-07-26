@@ -2,81 +2,75 @@ Return-Path: <SRS0=TJoR=MT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DATE_IN_PAST_24_48,
+	DKIM_INVALID,DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53669C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jul 2021 15:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4EFC4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jul 2021 15:45:27 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1550761B4C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jul 2021 15:34:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 1550761B4C
+	by mail.kernel.org (Postfix) with ESMTPS id DD38F61B5F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jul 2021 15:45:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org DD38F61B5F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m8P5l-00065l-C6; Tue, 27 Jul 2021 15:34:01 +0000
+	id 1m8PGn-0008U7-Jd; Tue, 27 Jul 2021 15:45:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <djwong@kernel.org>) id 1m8P5i-00060j-Ph
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Jul 2021 15:33:58 +0000
+ (envelope-from <chao@kernel.org>) id 1m8PGm-0008To-1Y
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Jul 2021 15:45:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3BqbVFxx32zjKdv3Wx39WMlXk/fz/M+3Nd/MCA4VRbM=; b=ISg6ahgMkODFnBLtplFQKij7Yo
- i+CxBOKe+97dkUmYH1jbrijWeaWdMalQkeQ/vzBxw9vFAXqCMmopDqhY6v4w5Fnk+YBs5ZJnJ/djd
- EtiWvclDVlbyX/QRAM5aEog/qkpRifCKzA6lYdiNrbwDdcyECw6/tKOBvL99zVLSRroM=;
+ bh=kmplko0SoGr4Md/4wR0T5J7xYk5dwkmFK2pl19ghwnQ=; b=Qz6YxR37+BWhrsr3++ugkEy/Y9
+ Z565hOVZxXiuSnAUvXHIqX6D3tGpF6NF+NHWEhIXdWuVytgPvxHYvESeftw3aRmrLI8tPV9gHitM9
+ VmUtDK3Dn9lOzPHZj+NqS37DpGFg5NuRqKlvAete/4UPV7x8STpgKWGddNZ0ahNdgpeo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=3BqbVFxx32zjKdv3Wx39WMlXk/fz/M+3Nd/MCA4VRbM=; b=C46WezmNZjWmPM/F8avQ55xRic
- slZhWBKVDYc+jbrH/rfkzyuYGxzhxWb5Q0Qrw2MWxImVql74TxG2x9P9pjwYhG2FN6NsVuriea6Zw
- FRAfqI1n2dlisi3MoqqQs65OKsPKDUwxRZcsLaMCeo5KLmgcxYiN/MC1c4nfVcB68ThI=;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=kmplko0SoGr4Md/4wR0T5J7xYk5dwkmFK2pl19ghwnQ=; b=S
+ T65M/cR4YU5sDe9Z5w6wmaOSFYvVlcYG087uVuWs5qfeqZvQ988YDN22uMrPBppyp2VbkLwvtBJVG
+ moZrwNsV4CHF1bbA1y5iDBMtPUFFr1O1SfZzoLem615YJiNpfo9PW2sf70Si/68UaHf67kLhTuiMe
+ RJA2vHpn7mwwA+Bs=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m8P5X-0004gB-Lh
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Jul 2021 15:33:58 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1F65161B30;
- Tue, 27 Jul 2021 15:33:36 +0000 (UTC)
+ id 1m8PGf-004MqC-Qk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Jul 2021 15:45:23 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6DB3061B4C;
+ Tue, 27 Jul 2021 15:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1627400016;
- bh=4PZARTzEx+NyszsOAu6lbi7w9h8FOGeHdmwe6pE+9NE=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=jMfiwaUj6xWzdeDehxp1Kzifwu3wYRSTIGzv9URGKhVGQ7a5oKrqU5xwTPvM8rNx8
- pL33hpdBVSGbU0eDKRD5kdDDGpSsg07OudM+eVRisgp4MLTvCbY68gt6AFwrlEaWeL
- aopLejmyoFelH+9R0wF/F8FIhMojSeOMTZFJVWxqpP5Rgqa4t4zjqH2VX+AdH5XtWu
- uSZlHgfJSee0K/66CiOCohm2St51HvN8o1LX6E39pR4NUcaFuF7YLB9uTQuObrvHCe
- 87yYD/bifuFjreteUYJGN6RMd5ynEbjBdzoY0CxjBKru8RyTZKG4/VRSpIqcus1Gg1
- 6rq0L0f6sjiKQ==
-Date: Tue, 27 Jul 2021 08:33:35 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <20210727153335.GE559212@magnolia>
-References: <20210716143919.44373-1-ebiggers@kernel.org>
- <20210716143919.44373-4-ebiggers@kernel.org>
- <14782036-f6a5-878a-d21f-e7dd7008a285@kernel.org>
- <YP2l+1umf9ct/4Sp@sol.localdomain> <YP9oou9sx4oJF1sc@google.com>
- <70f16fec-02f6-cb19-c407-856101cacc23@kernel.org>
- <YP+38QzXS6kpLGn0@sol.localdomain>
- <70d9c954-d7f0-bbe2-f078-62273229342f@kernel.org>
+ s=k20201202; t=1627400712;
+ bh=d0zv6RtbSmg5wdXW/LCxn3s+mk2wN2t8jhgBEjbtGcc=;
+ h=From:To:Cc:Subject:Date:From;
+ b=QJxTwNcVj9ZRlBCjiVNHXxNaDn3M0D2kEY7aokJXewTZyoBklJZ6JFmkCR4RzDI3O
+ v2jnCsum3jODwmwbqLJru+pT7S832rAF7rDe6nLIMu4eeCG5SWYN1e3lkUcdLaXfZy
+ coFQRCN0R2omxu6T2vbBIwx4icx8ed0PSJP9kvZWzk+0i4c6GP6/gblxVzNTc8pbZn
+ ffsZdya+PbM5zANp4ElGDZmYL5IO4GFUgxLP0ITaUIZqM718MwlQGaIgEB2WdbY0Ll
+ nTLxXsTECQWE2kaOkKXxbTE5600gvXACrhbi3Rw1iNW5wkO5Qt6Mwl/Y+SjkWeuVaI
+ d1cuYQY1MMS7g==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Mon, 26 Jul 2021 09:05:20 +0800
+Message-Id: <20210726010520.778237-1-chao@kernel.org>
+X-Mailer: git-send-email 2.22.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <70d9c954-d7f0-bbe2-f078-62273229342f@kernel.org>
-X-Headers-End: 1m8P5X-0004gB-Lh
-Subject: Re: [f2fs-dev] [PATCH 3/9] f2fs: rework write preallocations
+X-Headers-End: 1m8PGf-004MqC-Qk
+Subject: [f2fs-dev] [PATCH] f2fs: fix wrong checkpoint_changed value in
+ f2fs_remount()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,51 +82,60 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Satya Tangirala <satyaprateek2357@gmail.com>, linux-xfs@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- Matthew Bobrowski <mbobrowski@mbobrowski.org>,
- Changheun Lee <nanich.lee@samsung.com>, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao.yu@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jul 27, 2021 at 04:30:16PM +0800, Chao Yu wrote:
-> On 2021/7/27 15:38, Eric Biggers wrote:
-> > That's somewhat helpful, but I've been doing some more investigation and now I'm
-> > even more confused.  How can f2fs support non-overwrite DIO writes at all
-> > (meaning DIO writes in LFS mode as well as DIO writes to holes in non-LFS mode),
-> > given that it has no support for unwritten extents?  AFAICS, as-is users can
-> 
-> I'm trying to pick up DAX support patch created by Qiuyang from huawei, and it
-> looks it faces the same issue, so it tries to fix this by calling sb_issue_zeroout()
-> in f2fs_map_blocks() before it returns.
+In f2fs_remount(), return value of test_opt() is an unsigned int type
+variable, however when we compare it to a bool type variable, it cause
+wrong result, fix it.
 
-I really hope you don't, because zeroing the region before memcpy'ing it
-is absurd.  I don't know if f2fs can do that (xfs can't really) without
-pinning resources during a potentially lengthy memcpy operation, but you
-/could/ allocate the space in ->iomap_begin, attach some record of that
-to iomap->private, and only commit the mapping update in ->iomap_end.
+Fixes: 4354994f097d ("f2fs: checkpoint disabling")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/super.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---D
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 41765e90caa2..18c1ffb8710e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2062,11 +2062,10 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	bool need_restart_ckpt = false, need_stop_ckpt = false;
+ 	bool need_restart_flush = false, need_stop_flush = false;
+ 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
+-	bool disable_checkpoint = test_opt(sbi, DISABLE_CHECKPOINT);
++	bool enable_checkpoint = !test_opt(sbi, DISABLE_CHECKPOINT);
+ 	bool no_io_align = !F2FS_IO_ALIGNED(sbi);
+ 	bool no_atgc = !test_opt(sbi, ATGC);
+ 	bool no_compress_cache = !test_opt(sbi, COMPRESS_CACHE);
+-	bool checkpoint_changed;
+ #ifdef CONFIG_QUOTA
+ 	int i, j;
+ #endif
+@@ -2111,8 +2110,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	err = parse_options(sb, data, true);
+ 	if (err)
+ 		goto restore_opts;
+-	checkpoint_changed =
+-			disable_checkpoint != test_opt(sbi, DISABLE_CHECKPOINT);
+ 
+ 	/*
+ 	 * Previous and new state of filesystem is RO,
+@@ -2234,7 +2231,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		need_stop_flush = true;
+ 	}
+ 
+-	if (checkpoint_changed) {
++	if (enable_checkpoint == !!test_opt(sbi, DISABLE_CHECKPOINT)) {
+ 		if (test_opt(sbi, DISABLE_CHECKPOINT)) {
+ 			err = f2fs_disable_checkpoint(sbi);
+ 			if (err)
+-- 
+2.22.1
 
-> > easily leak uninitialized disk contents on f2fs by issuing a DIO write that
-> > won't complete fully (or might not complete fully), then reading back the blocks
-> > that got allocated but not written to.
-> > 
-> > I think that f2fs will have to take the ext2 approach of not allowing
-> > non-overwrite DIO writes at all...
-> Yes,
-> 
-> Another option is to enhance f2fs metadata's scalability which needs to update layout
-> of dnode block or SSA block, after that we can record the status of unwritten data block
-> there... it's a big change though...
-> 
-> Thanks,
-> 
-> > 
-> > - Eric
-> > 
 
 
 _______________________________________________
