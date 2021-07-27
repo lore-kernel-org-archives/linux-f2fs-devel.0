@@ -2,75 +2,94 @@ Return-Path: <SRS0=TJoR=MT=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,DATE_IN_PAST_24_48,
-	DKIM_INVALID,DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4EFC4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jul 2021 15:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE53C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jul 2021 16:22:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DD38F61B5F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 27 Jul 2021 15:45:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org DD38F61B5F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 7C6D161B93;
+	Tue, 27 Jul 2021 16:22:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 7C6D161B93
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m8PGn-0008U7-Jd; Tue, 27 Jul 2021 15:45:25 +0000
+	id 1m8Pqd-0006uK-PU; Tue, 27 Jul 2021 16:22:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1m8PGm-0008To-1Y
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Jul 2021 15:45:24 +0000
+ (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
+ id 1m8Pqc-0006uE-Gy
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Jul 2021 16:22:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kmplko0SoGr4Md/4wR0T5J7xYk5dwkmFK2pl19ghwnQ=; b=Qz6YxR37+BWhrsr3++ugkEy/Y9
- Z565hOVZxXiuSnAUvXHIqX6D3tGpF6NF+NHWEhIXdWuVytgPvxHYvESeftw3aRmrLI8tPV9gHitM9
- VmUtDK3Dn9lOzPHZj+NqS37DpGFg5NuRqKlvAete/4UPV7x8STpgKWGddNZ0ahNdgpeo=;
+ bh=fS+MskyOHRCLf0R0oFYZaL6+w10V833hKF5obZAnuEo=; b=hRKUg5x66G6RfKEDNIRHIxkfAk
+ SkgV/ErBILe2j14r6qMJuOle0sBgV3tx83NSyYcPW+OF1XlTnGQRArlku7/KzHO3TcjHTcN/kG/1J
+ Z/HD4WTq3tcBMobUzCnXGfvfyrSJsTnv4olxN6XIOraQQ2x9IL6PBcY3ASB5ui0p3CaI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=kmplko0SoGr4Md/4wR0T5J7xYk5dwkmFK2pl19ghwnQ=; b=S
- T65M/cR4YU5sDe9Z5w6wmaOSFYvVlcYG087uVuWs5qfeqZvQ988YDN22uMrPBppyp2VbkLwvtBJVG
- moZrwNsV4CHF1bbA1y5iDBMtPUFFr1O1SfZzoLem615YJiNpfo9PW2sf70Si/68UaHf67kLhTuiMe
- RJA2vHpn7mwwA+Bs=;
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=fS+MskyOHRCLf0R0oFYZaL6+w10V833hKF5obZAnuEo=; b=IMbRbEBNol6vPatQopqbyoKfy0
+ nldrI0ErXewP1M42tVOoNX4txY65rGJs9OhgfF1d+6iC53ck0mj1o3LmgEE6kX8Y/BwtfI6z1HzUa
+ ls/myavYmwOlyzbt+rbAo8vYeFoKvCmkfiA3NhedGy4nCEKK5mKfZVhBi9G01OBhuXS4=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m8PGf-004MqC-Qk
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Jul 2021 15:45:23 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6DB3061B4C;
- Tue, 27 Jul 2021 15:45:11 +0000 (UTC)
+ id 1m8PqW-004OQa-7g
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 27 Jul 2021 16:22:26 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPS id E0C4B61B93
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 27 Jul 2021 16:22:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1627400712;
- bh=d0zv6RtbSmg5wdXW/LCxn3s+mk2wN2t8jhgBEjbtGcc=;
- h=From:To:Cc:Subject:Date:From;
- b=QJxTwNcVj9ZRlBCjiVNHXxNaDn3M0D2kEY7aokJXewTZyoBklJZ6JFmkCR4RzDI3O
- v2jnCsum3jODwmwbqLJru+pT7S832rAF7rDe6nLIMu4eeCG5SWYN1e3lkUcdLaXfZy
- coFQRCN0R2omxu6T2vbBIwx4icx8ed0PSJP9kvZWzk+0i4c6GP6/gblxVzNTc8pbZn
- ffsZdya+PbM5zANp4ElGDZmYL5IO4GFUgxLP0ITaUIZqM718MwlQGaIgEB2WdbY0Ll
- nTLxXsTECQWE2kaOkKXxbTE5600gvXACrhbi3Rw1iNW5wkO5Qt6Mwl/Y+SjkWeuVaI
- d1cuYQY1MMS7g==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Mon, 26 Jul 2021 09:05:20 +0800
-Message-Id: <20210726010520.778237-1-chao@kernel.org>
-X-Mailer: git-send-email 2.22.1
+ s=k20201202; t=1627402929;
+ bh=l90EQHjjmdNm8AFUf4uBb9TxdhAE/KK5Wmo4nKsJaks=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=TP+J5hPjLd4dOZ3/GVPQ+ebUKKHA/cAPESyVO2YtY8EOtBbxunw4Lso8cFX/srv2R
+ sV7Pzn2IKioHUzWh4NwDN46r2YiAzFfU0ymvAkxMlxXxVvSs4R6y7XAt+S/4V/h/PA
+ n1wW/CHtnRyfNzwM6b8L3V70xvNyPOPkN9pGJgoR8th+fQpxza/K4OSTB+uP7+90cF
+ CJ2U911rlL69DJLzqZKTfAFFVY8wgtY3sDOenhYSWui0A6LfmQhp1Pg5rGx/T6qVy8
+ ZWOrjRnnsjmV8FOZUHELLzDRkw/Oo6vINfKhCq2KHLuFU3GY0Nx5sCNzF6bZ8eU8bJ
+ YEM1/5Tll/68w==
+From: bugzilla-daemon@bugzilla.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Tue, 27 Jul 2021 16:22:09 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: trivial
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: chao@kernel.org
+X-Bugzilla-Status: ASSIGNED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_status cc
+Message-ID: <bug-213877-202145-UNoU7WE4rD@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-213877-202145@https.bugzilla.kernel.org/>
+References: <bug-213877-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1m8PGf-004MqC-Qk
-Subject: [f2fs-dev] [PATCH] f2fs: fix wrong checkpoint_changed value in
- f2fs_remount()
+X-Headers-End: 1m8PqW-004OQa-7g
+Subject: [f2fs-dev] [Bug 213877] Mount multiple SMR block devices exceed
+ certain number cause system non-response
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,61 +101,33 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Chao Yu <chao.yu@linux.dev>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In f2fs_remount(), return value of test_opt() is an unsigned int type
-variable, however when we compare it to a bool type variable, it cause
-wrong result, fix it.
+https://bugzilla.kernel.org/show_bug.cgi?id=213877
 
-Fixes: 4354994f097d ("f2fs: checkpoint disabling")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/super.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Chao Yu (chao@kernel.org) changed:
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 41765e90caa2..18c1ffb8710e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2062,11 +2062,10 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool need_restart_ckpt = false, need_stop_ckpt = false;
- 	bool need_restart_flush = false, need_stop_flush = false;
- 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
--	bool disable_checkpoint = test_opt(sbi, DISABLE_CHECKPOINT);
-+	bool enable_checkpoint = !test_opt(sbi, DISABLE_CHECKPOINT);
- 	bool no_io_align = !F2FS_IO_ALIGNED(sbi);
- 	bool no_atgc = !test_opt(sbi, ATGC);
- 	bool no_compress_cache = !test_opt(sbi, COMPRESS_CACHE);
--	bool checkpoint_changed;
- #ifdef CONFIG_QUOTA
- 	int i, j;
- #endif
-@@ -2111,8 +2110,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	err = parse_options(sb, data, true);
- 	if (err)
- 		goto restore_opts;
--	checkpoint_changed =
--			disable_checkpoint != test_opt(sbi, DISABLE_CHECKPOINT);
- 
- 	/*
- 	 * Previous and new state of filesystem is RO,
-@@ -2234,7 +2231,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		need_stop_flush = true;
- 	}
- 
--	if (checkpoint_changed) {
-+	if (enable_checkpoint == !!test_opt(sbi, DISABLE_CHECKPOINT)) {
- 		if (test_opt(sbi, DISABLE_CHECKPOINT)) {
- 			err = f2fs_disable_checkpoint(sbi);
- 			if (err)
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |ASSIGNED
+                 CC|                            |chao@kernel.org
+
+--- Comment #1 from Chao Yu (chao@kernel.org) ---
+Could you please apply below patch, and try nosmall_discard option during
+mount(), it expects that memory cost will decrease.
+
+*Please note that*, I haven't do any test w/ this patch now, so please backup
+your data before your test.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=misc&id=5dba79cc25c3c902942c2f68a6e2546586c65f96
+
 -- 
-2.22.1
+You may reply to this email to add a comment.
 
-
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
