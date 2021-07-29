@@ -2,38 +2,38 @@ Return-Path: <SRS0=A5bl=MV=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E6DC4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 29 Jul 2021 00:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91799C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 29 Jul 2021 00:41:08 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 81D906103B;
-	Thu, 29 Jul 2021 00:37:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 81D906103B
+	by mail.kernel.org (Postfix) with ESMTPS id 546AC6052B;
+	Thu, 29 Jul 2021 00:41:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 546AC6052B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1m8u3a-0005x6-9I; Thu, 29 Jul 2021 00:37:50 +0000
+	id 1m8u6l-0003oR-C5; Thu, 29 Jul 2021 00:41:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <chao@kernel.org>) id 1m8u3Z-0005wz-1d
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 29 Jul 2021 00:37:49 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1m8u6j-0003oL-Hn
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 29 Jul 2021 00:41:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qqWw+vA0vUKlaNP16C5Qr9XxtQOKXd8xnAmGappybWY=; b=Pt26kXx/2JFRHqgEFnei/Bzw28
- XXp0gQl7rxrueGTeeWIEGkw9VnMN6BLMG1ABF/AuTkKFSgVtiTvMHsXXurZVh7NEJK9AMoYUFvtRr
- HqRedJ4u8B9nxkn8dAoU8qX5rsnoXm+UXCe0piazZDcth2KuUAyPUdYkuynVHI68mGQA=;
+ bh=uNIc7pfoGu/FJThfBBj9+RPriWv7zO4JIA2SEJzetJU=; b=N5eBOjA9SCMfhW1eqmvAFFY1R3
+ w93t+I3x7cXLIUGk9sgj23jQKAsen9nP7u1Im1hol2nizIH/8/3OKERaY17kFj922+tF4Tp6EZB94
+ bY8Fw8OrRMYT7IvMvGFE2/nsKv5kPr/qFHBdeVrqqm+Ga7Yg3NXVNqjDEUMNcXqPh5TI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -41,39 +41,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qqWw+vA0vUKlaNP16C5Qr9XxtQOKXd8xnAmGappybWY=; b=SI5MQRTuW7xe/wNZCb4O1daHKI
- tReuhhYJJW7/9c9MlGLbHbSe6vd7LEKVLRTR/+dwwPfY6m+veGO5lmYb689wPMOvtfKzq8ROuM9zu
- Z51wcjHTi02HvEbs6lGPqNU4HwTX0kXyiLA1jH6gtPdqMePlZEew9rgDxMO5+2ErWtVA=;
+ bh=uNIc7pfoGu/FJThfBBj9+RPriWv7zO4JIA2SEJzetJU=; b=GMJa3LxePOWD/sJ9otEfx8LIMw
+ DWXcPUvr2mfB2FOlecbEChoVgKX4AjeYBfgaiRJCa8xL+shiF98AKwaENNGythWBOXdXvFbYJq08+
+ 6LVe32kH6kPyxe0HIaC0A8eJM1Fn85xoEhPAeV4gO1SycUo7ulqCxfBQYIZgSWWUisG8=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1m8u3R-0007JK-Eu
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 29 Jul 2021 00:37:48 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 95B616103B;
- Thu, 29 Jul 2021 00:37:26 +0000 (UTC)
+ id 1m8u6d-0007TC-Hi
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 29 Jul 2021 00:41:05 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A843C6103B;
+ Thu, 29 Jul 2021 00:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1627519047;
- bh=HKuJ/sGTGEoDM22RJYLhczo7YamW8A07HkBki046ZPs=;
+ s=k20201202; t=1627519254;
+ bh=uNIc7pfoGu/FJThfBBj9+RPriWv7zO4JIA2SEJzetJU=;
  h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
- b=W+nFlplcDkxPtR6FK3U73kf6y7ker+0HsuiHS9wyd/pPFKIAJmkEnT2usx4ttscK8
- Ut3KSQ8XWplcwRZeWCg6WVpxygCU8Dgeo6jDQrieKEQdD5bZ7f5wAMFC/dW+X/GTqP
- AkgWoL7GBpUMLLea8K7BEcXRi4Yd+VGM6SvAa3QKqDwcKDQ2JNvtSODKHGx6tAkaQ+
- GcEGdb7MTtemveefybubjMWR64Z70a6DPAJcRoiD49FBaeRC/3oSx46fTUFUkWQqXg
- a6LTP74Rr2/fCfDKtu94/BMf6+4Mjc/10Pn8PBIBVmA/+RyTKo0CU+j+9MrSus0zQl
- J1lZhmK8hjtvA==
-To: Daeho Jeong <daeho43@gmail.com>
+ b=OdyQCOsKhEDk9fPkieTeaxQN+hnutClJj5EUNp7HUhg8oXNR3w0AryUxZnQxWrUCv
+ Eq66HIf/Y7hi8i2sG2U3ICf8Bpe08driDJnah557lnpQMWGVZuE+KHQ9YMFLo6iDEo
+ 2rCgB5+H90rEHaH2pdeeM5Sv1NOv1P22K58TWFyJDHgWWGU5Jmr5TH4G+aaXDUGvi/
+ x1L2gA5CYtYWzK/CA5nXoOoizBq1AabMCzQKmo/AEtd3JNwSiE0PL9T6/lqYk42tZ7
+ JnYCmWWUokYUJ2Mntn5gPWnPe7BmRQbmv7YQNM16u1Y3fzgbourJ9MXcBulFnWN++0
+ ZT6jyeNs4HVSQ==
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 References: <20210726041819.2059593-1-daeho43@gmail.com>
  <f9555521-8878-2d46-36f1-3032bb8bbc0a@kernel.org>
- <CACOAw_zvFcV-5ePrFOr-bo2DxXyFzjDTSo-7aPcXG6jtNweEbA@mail.gmail.com>
+ <YQA/orZ5wXjwWeyy@google.com>
 From: Chao Yu <chao@kernel.org>
-Message-ID: <66d9419d-5ce6-626c-7ac8-d0592f34ec31@kernel.org>
-Date: Thu, 29 Jul 2021 08:37:26 +0800
+Message-ID: <8c0d05d2-3988-a8a4-5403-1173f25b822b@kernel.org>
+Date: Thu, 29 Jul 2021 08:40:52 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <CACOAw_zvFcV-5ePrFOr-bo2DxXyFzjDTSo-7aPcXG6jtNweEbA@mail.gmail.com>
+In-Reply-To: <YQA/orZ5wXjwWeyy@google.com>
 Content-Language: en-US
-X-Headers-End: 1m8u3R-0007JK-Eu
+X-Headers-End: 1m8u6d-0007TC-Hi
 Subject: Re: [f2fs-dev] [PATCH v4] f2fs: change fiemap way in printing
  compression chunk
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -88,42 +88,23 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Daeho Jeong <daehojeong@google.com>, Eric Biggers <ebiggers@google.com>,
- kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel-team@android.com
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/7/28 0:41, Daeho Jeong wrote:
-> How about adding this?
-> 
-> skip_fill:
-> 
->          if (map.m_pblk == COMPRESS_ADDR) {
-> 
->                  if (start_blk & (cluster_size - 1)) {
-> 
->                          ret = -EFSCORRUPTED;
-> 
->                          goto out;
-> 
->                  }
-> 
->                  compr_cluster = true;
-> 
->                  count_in_cluster = 1;
-> 
->          } else if (compr_appended) {
+On 2021/7/28 1:17, Jaegeuk Kim wrote:
+> Do we really need to catch this in fiemap? What about giving the current
 
-It seems we can add a separate patch to cover all cases that cluster metadata is
-going to be accessed rather than just fixing fiemap() case here?
+Yes, I think so.
 
->>> Signed-off-by: Daeho Jeong <daehojeong@google.com>
->>> Tested-by: Eric Biggers <ebiggers@google.com>
+> layout with warning message and setting NEED_FSCK?
 
-Anyway, this patch looks good to me.
+Sure,
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+How about doing sanity check on cluster metadata whenever it is going to
+be accessed, like we did for single blkaddr with f2fs_is_valid_blkaddr()?
 
 Thanks,
 
