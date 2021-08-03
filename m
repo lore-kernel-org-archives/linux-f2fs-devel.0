@@ -2,74 +2,75 @@ Return-Path: <SRS0=VCJL=M2=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
-	DKIM_INVALID,DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D18C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Aug 2021 00:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCF9C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Aug 2021 00:16:10 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B09F160EE8
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Aug 2021 00:11:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org B09F160EE8
+	by mail.kernel.org (Postfix) with ESMTPS id 429F86023E
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Aug 2021 00:16:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 429F86023E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mAi1U-0004TI-T8; Tue, 03 Aug 2021 00:11:08 +0000
+	id 1mAi6K-0004e0-Ed; Tue, 03 Aug 2021 00:16:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <chao@kernel.org>) id 1mAi1T-0004TB-IT
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Aug 2021 00:11:07 +0000
+ (envelope-from <chao@kernel.org>) id 1mAi6J-0004do-IE
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Aug 2021 00:16:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kEhzOhCT/9qjiDjj6s+HOIB0dTiD1butXLwz3J7I9fM=; b=A+o976SJH30vLizRkmhbxIL2Kz
- m3TlyZkUZeWw1EKEYMZx1Hd3BEBtTWm4JKL0K5z+NE6ePWRvQ6R0LL/CAOJcVDm29I0c8PTx9vUzs
- 5BO05GLqRFxPD69sqzRPqKQoq8wRFn/HuT0xpnRVgLQ3/UHdH6zXA2wM6h44Q8nQDY8I=;
+ bh=jfAli/clAxlAlbOTIcMLn/BLDOCAVuElvshUXUi+mnY=; b=Mug7JrRkwjp4AIMbfVAXwpXMtF
+ +4ypWpKGUsVOldHB0kwIwditxzfdC4CgJjUWUmJAG2T2BFJQxKxPkc5vuFLEuZ5zY6T0uXd+cMeUk
+ RlYb8J5Va3AUVcXM6sCqRlcjSqbfPm3qxEeooT/3CK5Fo/M6GwTVU2YCRoFWGAYoZHLA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=kEhzOhCT/9qjiDjj6s+HOIB0dTiD1butXLwz3J7I9fM=; b=P
- Y5UIbaQFkCPqcdMamvmB24FDWuEUcC2hKEPKlTZh6Cw8xTZ3YoyksAsbrEciC6/dXyeD7IA0xgBca
- 1jXPwaYDSvVtDYxemZJghQIqd+of9I10ykrocHsE5MneLvul+tTprM+j+yPWHkmHuiBohKjm2bVyW
- ND+v4N6hUJloTAoo=;
+ List-Owner:List-Archive; bh=jfAli/clAxlAlbOTIcMLn/BLDOCAVuElvshUXUi+mnY=; b=c
+ RuHe5uF7eKoY6M4bOk9F/E8hajOiYXc1b8taY25ux9pxUODctn66+0nL4K2m1wp88UyR8KPrvZxRP
+ jcSjOFnfxYz10/x1kG6Y3PqRO+ex2e9Vcb0wDajthKWnR191k4qyqe1p8VJFZpDL1hApTS8CSjtz+
+ ttYNw+uOfmPb63CA=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mAi1C-0000I7-Tm
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Aug 2021 00:11:07 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7C30260F36;
- Tue,  3 Aug 2021 00:10:39 +0000 (UTC)
+ id 1mAi6A-00Af8K-Rh
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Aug 2021 00:16:07 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 78C2760E76;
+ Tue,  3 Aug 2021 00:15:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1627949440;
- bh=q6qSM18puB8vZ6pq4c02WSxS4e/JIBKYdy9Cc143Uy4=;
+ s=k20201202; t=1627949748;
+ bh=XAUE9cWs45w6y52RY5ZdSN0FmxLGuHOFGxGQsS3SOY8=;
  h=From:To:Cc:Subject:Date:From;
- b=W5Pb4hyZ+Q65X23svpCib4+b0/87o07RkVXJf3/GZ0mLK3DycfbUGTBMX7nOs0F+k
- P/s73JugyXWQVV+UmE8sDZxUk+fesnGoz8cQRONjnwdvZFd3wP3l0KfFBEW+Jybi9h
- zJXZTdQRjPOjSpLnGlwwc7y0cjPihMJqZ15ywLCygcfvbL2DL66yYPT5z1Ir7+a2m5
- EqK6oqQvkbmmUKaHHy1nCMwW9JXaQWii7SoYYsmuI4quyB+68onRS0RHAO+kMBdMsk
- fRP3xNAHCcc5adFnbQY27YQky0gsUc0W87q24873C1Qih0abql1zlRxroKu1nZ75CM
- E0WwnzWd4B3HQ==
+ b=q8y+FKyozDaXvb7blny+riBPZPJIKQI1l+TkJpFmNPBrLZKLIh4RsU2toJX8rdZBl
+ E0N2Ht1dGKi8zXbv10Ek+wxh/xWjENzDzxa+Djo1QNg6qYf55DIIxYKKILa9NZVPoZ
+ Xet2L0GcUtlUkff1mlJEticxwtjPAl18KvVN4Yk32vQeGiMWHXOiqBLyhyagCG/MgV
+ KI2D3T+Ya2d1eDWWZsNQ9pU927VCDbjXj97YmusI+y4aed+RTNjyqjeymxUTYz62FR
+ pGWU6IhB0KOMLfU3+GXje5csMq2EKBDh+71s/f6MAUm4mMj/WF55YZvaG1ANx9dPDh
+ lhm70nZWCcqhg==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Mon,  2 Aug 2021 16:48:52 +0800
-Message-Id: <20210802084852.22688-1-chao@kernel.org>
+Date: Tue,  3 Aug 2021 08:15:43 +0800
+Message-Id: <20210803001543.23946-1-chao@kernel.org>
 X-Mailer: git-send-email 2.22.1
 MIME-Version: 1.0
-X-Headers-End: 1mAi1C-0000I7-Tm
-Subject: [f2fs-dev] [PATCH v2] f2fs: introduce discard_unit mount option
+X-Headers-End: 1mAi6A-00Af8K-Rh
+Subject: [f2fs-dev] [PATCH v2 RESEND] f2fs: introduce discard_unit mount
+ option
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -160,6 +161,9 @@ device by default.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
+v2:
+- fix naming issue.
+- resend this patch after resync time zone of my OS.
  Documentation/filesystems/f2fs.rst |  8 +++
  fs/f2fs/f2fs.h                     | 16 ++++++
  fs/f2fs/segment.c                  | 82 +++++++++++++++++++-----------
