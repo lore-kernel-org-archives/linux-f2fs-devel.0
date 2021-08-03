@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388BCC4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Aug 2021 18:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAF4C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Aug 2021 18:15:39 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DD74D60F94
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Aug 2021 18:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org DD74D60F94
+	by mail.kernel.org (Postfix) with ESMTPS id 02E4F60EC0
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Aug 2021 18:15:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 02E4F60EC0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mAywP-0007fF-ND; Tue, 03 Aug 2021 18:15:01 +0000
+	id 1mAywz-0007k8-Tc; Tue, 03 Aug 2021 18:15:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1mAywO-0007f4-PA
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Aug 2021 18:15:00 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1mAywy-0007jw-Hq
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Aug 2021 18:15:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3MtYGE6YQPbg2OrOxICEhhfyHqneeQlMquskxWutjWc=; b=cyF52dBn+xmSMIgf1zn8a9rlGQ
- o9yrDSUasNGr2nV0SqOoCG6HOrwR4AMqA+5ZxlpWbaWW7pZELBOP3jvOuBjwgHVSS9ysg9ENxj/SD
- oDWMlr6VXwgM3P0UWSEZEJ87xbDCXl3bpZGZgk7vsNhCFhALiZxDsflLhHXDSBrg8L4s=;
+ bh=sqEeYgzJi/iY9aijQtVczl6bwvL1zyczMwcpTZpOlAc=; b=V5zGJWAJUt0QDe6tvcfiOBYvmW
+ kQauxoVlCmSClnUz02OIjknOB84bJA0vIs7eLiYEkqYwXIt+yDREO3Ez2DgtHsZiXrxmOWYyG+vD8
+ nNbtr7+7Mg3cF2dxCfX/gnYZmFqG6kNBlVmwXD8R/0REnAhFdzyaSuob+BUzR375ceeU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -41,30 +41,30 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3MtYGE6YQPbg2OrOxICEhhfyHqneeQlMquskxWutjWc=; b=Gs8nYbD12Y/IF0bodKCvR6YMcV
- NiK+pSM1tASu9J8oy3jWVJ8HB/r+j+uNgmgJp8ruLi+CIaOqPT2/WOT9EiatsbUO34jB8kpXtXVZ8
- TONbyCQ6sogn77KAxKpizwqLzbGIeKMA3gkkI0CYouvzHgcWclI3iqI6uXm1YW9A+mew=;
+ bh=sqEeYgzJi/iY9aijQtVczl6bwvL1zyczMwcpTZpOlAc=; b=h3eGLfyB8GWRoqo+Kfq33OFBBx
+ cjSGH+k0CBDXfxEMIhEkLjJDT4RRvWvPsbGktEnLvSyXUtn4K8tFsogoqGzqC7JprVGIRX4jij4WT
+ LL5EoDzh6FIHrdF0X36Gi1+XZlTNZJEWm1tWy0tCl/m/1L1ap+ETAVbc3Xor1aBeqWAI=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mAywM-00BLFo-Uk
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Aug 2021 18:15:00 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 90E7A60F94;
- Tue,  3 Aug 2021 18:14:48 +0000 (UTC)
+ id 1mAywq-0004yy-0c
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 03 Aug 2021 18:15:36 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9733460F94;
+ Tue,  3 Aug 2021 18:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1628014488;
- bh=y6Owg5DoECYYo90go9bqM2xn64ncDckRi7C80Fr3184=;
+ s=k20201202; t=1628014517;
+ bh=hLVKfXDfBbYG+vuudBBsmhloXJZnrpsdo74uilvto0o=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=JWKjElDEt1G9/O8qKeH4tYxeXcb7xS3oY/mRfwZIPrLjFcEwm16HZDduvb6C0pajT
- Exhg4xOw5A/14T0+rBprLOA6n2cLTgU9N95kQUc16TPbWK4pdr58SMkyNMcG7qt5pE
- H30rFzZ/V5JXMjxxqbQ+cT2iX65lA+6ixpZNr9fGPyl6s+w30b28xji6FXrrPykTm0
- kWrtrADi1y9UuOUcSR15l/an6is99L/RyDxf7NpZvxYT0e8kodfYTiS0HJ40eOhwIJ
- sbBhdBBnyFeQVc1hnmrZe2jF8/rGc7NeEI5UY96UfCL0/JE/GMvJP6QpVDDLCK+d/V
- dT/QNl+yMnvdg==
-Date: Tue, 3 Aug 2021 11:14:47 -0700
+ b=LFs0iMYHM1AzNWC6XP5r12NGDGEE++nlqD1+TgrMtq9b9CVvEUjeJEqCpMc8i+Zln
+ X7AM16ZK6kKojRqYgkvUpyqZ2ph+eg7dFkz964UG1/sMiDdXqOFHrxfg+yfcZm7sb/
+ xKvF135uUQojTPEUYfmKOAdznldhlnIpbVYhwmkpQP5KlMWbh4va0Sqk+Qbs2bqs8E
+ 3YQQ+jU5g+JQ4PICvUybO0OX4FoO+45izlXJGFGU27WqXsOqVePPvxXqOzBFPybhfc
+ nqOZ2HAKoZhS/1hwJtSr20C099aFFHs3E8LkZ32bw0vaJIjsZtI4iXKhCS0XNHrtfL
+ DS6Du2XYi2AiA==
+Date: Tue, 3 Aug 2021 11:15:16 -0700
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: Chao Yu <chao@kernel.org>
-Message-ID: <YQmHl88ItokYGjj9@google.com>
+Message-ID: <YQmHtFQHMWNW8sFK@google.com>
 References: <12ae52df-bc5e-82c3-4f78-1eafe7723f93@huawei.com>
  <5f37995c-2390-e8ca-d002-3639ad39e0d3@kernel.org>
  <YPXDtEyBg5W2ToD/@google.com>
@@ -78,7 +78,7 @@ References: <12ae52df-bc5e-82c3-4f78-1eafe7723f93@huawei.com>
 MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <a37e3ec3-365d-6eb6-85e6-1d7610b93784@kernel.org>
-X-Headers-End: 1mAywM-00BLFo-Uk
+X-Headers-End: 1mAywq-0004yy-0c
 Subject: Re: [f2fs-dev] [PATCH] f2fs: reset free segment to prefree status
  when do_checkpoint() fail
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -238,9 +238,6 @@ On 08/03, Chao Yu wrote:
 > -	if (err)
 > +	if (err) {
 > +		f2fs_err(sbi, "do_checkpoint failed err:%d, stop checkpoint", err);
-
-		f2fs_bug_on(sbi, !f2fs_cp_error(sbi)); ?
-
 > +		f2fs_stop_checkpoint(sbi, false);
 >  		f2fs_release_discard_addrs(sbi);
 > -	else
@@ -271,9 +268,6 @@ On 08/03, Chao Yu wrote:
 > 
 >  	for (i = 1; i < sbi->s_ndevs; i++) {
 > +		int count = DEFAULT_RETRY_FLUSH_COUNT;
-
-Just use DEFAULT_RETRY_IO_COUNT?
-
 > +
 >  		if (!f2fs_test_bit(i, (char *)&sbi->dirty_device))
 >  			continue;
@@ -281,12 +275,12 @@ Just use DEFAULT_RETRY_IO_COUNT?
 > +
 > +		do {
 > +			ret = __submit_flush_wait(sbi, FDEV(i).bdev);
-
-			congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
-
 > +		} while (ret && --count);
 > +
 >  		if (ret)
+
+Actually, we need to stop checkpoint here?
+
 >  			break;
 > 
 > -- 
