@@ -2,76 +2,80 @@ Return-Path: <SRS0=icLK=M4=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2417C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Aug 2021 02:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75ABDC4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Aug 2021 03:04:39 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A52E260F14
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  5 Aug 2021 02:53:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org A52E260F14
+	by mail.kernel.org (Postfix) with ESMTPS id 29A7B61050;
+	Thu,  5 Aug 2021 03:04:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 29A7B61050
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mBTW6-0006cq-1u; Thu, 05 Aug 2021 02:53:54 +0000
+	id 1mBTgT-0006JO-M7; Thu, 05 Aug 2021 03:04:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <jaegeuk@kernel.org>) id 1mBTW5-0006ch-Fv
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Aug 2021 02:53:53 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <chao@kernel.org>) id 1mBTgT-0006JH-3a
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Aug 2021 03:04:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TNGvX8wQ8xlvkBYB7jF+/sPXDu3sV8Nt/1hONLud/XI=; b=NXsVZofTUWI2CzC3wS8fdm0w8x
- fSwlsV9QG9o6P6X8AiqHzA3YOehh9c/tJ3G+EpqBjKC5FU3jFKK7ICAVpndhgOEPBKsh8pPoZb0rN
- D2cxTKQke3K+9w5yYTPdeJxoQKeN4ok7dJyWFbv4HUBmKuNVoob1BU03Xw2i4WQK0kmY=;
+ bh=SXMBZYKFqlIx4Lvs95YrNKM2sRuEQgPXSm9odpdXikM=; b=gxyIrw5R4gQL8L7ynMpHoTVc26
+ mY/AMxb0m2UVPtqaqIimHVtwvk+Out5TAv+geIr+lYEEM/450ZWNs1fxi7IWQgonOmy1MczVReQP/
+ GC62D4x8nGZTpvjvTl5/8yHHGe9z+nBtyDkSVyumxtijcUXcPQeJhMaFLS9j1TOkeUz4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TNGvX8wQ8xlvkBYB7jF+/sPXDu3sV8Nt/1hONLud/XI=; b=AFJiezA0aCB1l+MBTUV32kkKUJ
- VHq34YK8ADvQ5CFXmez8NI9GG4zaaNrAFdI0lFYhzloEi/09OKo3bZFWaI/xRLIYG2YXPGM9HmBOh
- NlRrXQat9eVqzbUf9+Lw4WLVMxH+/+JwkzF9U4ZUrSpbtIvhNfzSgxCDL8xIghefGRhI=;
+ bh=SXMBZYKFqlIx4Lvs95YrNKM2sRuEQgPXSm9odpdXikM=; b=i9j7pi+8uNtS4UNdWv/nO3OzM5
+ BRKpdQ3DZHOB+ul80taK6Z7ip3UHEawordeHaMD2xIQjhdc8HvMe+I2bIEzGIxdAM9MJTXbsCIJh6
+ sh/c72gGx6rTZtg+xOquJC41NbtH7OAEjxKafmlKUmT3fHKZjbS3xoDcYIWPivTjWUu0=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mBTVw-0007s0-RP
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Aug 2021 02:53:53 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4B13C61037;
- Thu,  5 Aug 2021 02:53:34 +0000 (UTC)
+ id 1mBTgR-00ClWe-0q
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 05 Aug 2021 03:04:37 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AD0D661004;
+ Thu,  5 Aug 2021 03:04:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1628132014;
- bh=572pJp3ee6li9WZRwxOQIDTFDcCjD3QXQ/WZjb6zgeY=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=DmTDblh1tN1+QpEn+UvacJuYWlWX2dRSB1HpSLCWKRADbTV2s8nU+MlZKus2a9l4O
- MZMTI2ZpJYFLionCOsOPEtRzI0zg5VXm5HhD1gtUuIpoLOn+8qyQNQftQNSHB5drpf
- gKX+0LkMljb+neOdNispQ6zOL2XfMHnDk94R/+83Zr1s+hWJ9ilNApaeNNuOx6iYqY
- aiTBgnr9dQ4PJWn6KFf67gNMcQErsXI+2+5mwtfcgYrBnTH13GZXGctPhmHABxSZEp
- iMabJW1UZyRE2wVX64u+eqynXW/WuchP4U0CnMXVMMHe4a5o7M11C68z5gScVyMDrJ
- Zz9qqHylVsgJw==
-Date: Wed, 4 Aug 2021 19:53:32 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <YQtSrIx0/sAipDs4@google.com>
+ s=k20201202; t=1628132664;
+ bh=DoFtBqW8UB6ruKlkRSAEkUmYvCdD/NWqyxtofjx/IEo=;
+ h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+ b=Cvv2hzAVc/Y0Ko9wOqWwQ6eDKKp8phmjSGUKkGAUixj6TLKLpEbP/5Xou52GPQ52v
+ 4OsGSN8N0tCQ2O7TpNpgOi998eUE0In9YgHtsMMSir0V8m8f/AAsPReP3ko5XI9rYN
+ Y8kuw6pFcUknud+XlcEcUBiWfOBwWZ37i5YL2FOfboPgLnb62DsH3eeNzWQ3i3g6gP
+ 94XL/XW94+p13ZFM0n8f0mUcqZ49qYODEqJpAF/SXnuaIZyOhvM2XWyYKF/vInrUJP
+ tTLPyGcOzCOWGozvvnhEwJqC6DvqOTxYYAJfGc4jY8hAP0u+GeBeVCJoWHypOoynWa
+ v5gkfyyrZ3Sug==
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 References: <20210804022348.1414543-1-chao@kernel.org>
  <YQsIj0wKk6YbN/FJ@google.com> <YQsmfm3ibU6bhvZr@google.com>
  <0dad9863-4aa2-3ea3-fd97-457aa635ed66@kernel.org>
+ <YQtSrIx0/sAipDs4@google.com>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <62eb8902-90fa-4b1a-55ce-a178643baf90@kernel.org>
+Date: Thu, 5 Aug 2021 11:04:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <0dad9863-4aa2-3ea3-fd97-457aa635ed66@kernel.org>
-X-Headers-End: 1mBTVw-0007s0-RP
+In-Reply-To: <YQtSrIx0/sAipDs4@google.com>
+Content-Language: en-US
+X-Headers-End: 1mBTgR-00ClWe-0q
 Subject: Re: [f2fs-dev] [RFC v3] f2fs: extent cache: support unaligned extent
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -86,40 +90,46 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
  Chao Yu <chao.yu@linux.dev>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 08/05, Chao Yu wrote:
-> Jaegeuk,
+On 2021/8/5 10:53, Jaegeuk Kim wrote:
+> On 08/05, Chao Yu wrote:
+>> Jaegeuk,
+>>
+>> On 2021/8/5 7:45, Jaegeuk Kim wrote:
+>>> Chao,
+>>>
+>>> How about this?
+>>> https://github.com/jaegeuk/f2fs/commit/d6bbe121bc24dfabfedc07ba7cb6e921fb70ece0
+>>
+>> Looks more clean, thanks,
+>>
+>>>
+>>> I'm digging one bug in __insert_extent_tree w/ the patch tho.
+>>
+>> Shouldn't we initialize @ei in f2fs_update_extent_tree_range(), otherwise,
+>> __try_merge_extent_node(&ei) -> __is_extent_mergeable() will do the check
+>> w/ uninitialized c_len of @ei.
 > 
-> On 2021/8/5 7:45, Jaegeuk Kim wrote:
-> > Chao,
-> > 
-> > How about this?
-> > https://github.com/jaegeuk/f2fs/commit/d6bbe121bc24dfabfedc07ba7cb6e921fb70ece0
+> Fixed some bugs, but still getting another data corruption.
 > 
-> Looks more clean, thanks,
-> 
-> > 
-> > I'm digging one bug in __insert_extent_tree w/ the patch tho.
-> 
-> Shouldn't we initialize @ei in f2fs_update_extent_tree_range(), otherwise,
-> __try_merge_extent_node(&ei) -> __is_extent_mergeable() will do the check
-> w/ uninitialized c_len of @ei.
+> https://github.com/jaegeuk/f2fs/commit/c5d97919c55b467392407b60c1a7b1e3e81721ff
 
-Fixed some bugs, but still getting another data corruption.
+Let me rebase to your code, and do some tests.
 
-https://github.com/jaegeuk/f2fs/commit/c5d97919c55b467392407b60c1a7b1e3e81721ff
+Thanks
 
 > 
-> > > On 08/04, Chao Yu wrote:
-> > > > +	if (from_dnode)
-> > > > +		goto skip_reading_dnode;
-> 
-> Wrong condition here, thanks for fixing.
-> 
-> Thanks,
+>>
+>>>> On 08/04, Chao Yu wrote:
+>>>>> +	if (from_dnode)
+>>>>> +		goto skip_reading_dnode;
+>>
+>> Wrong condition here, thanks for fixing.
+>>
+>> Thanks,
 
 
 _______________________________________________
