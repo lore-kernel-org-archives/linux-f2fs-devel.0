@@ -2,98 +2,100 @@ Return-Path: <SRS0=dspS=M5=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDFAC4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 Aug 2021 05:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A44BDC4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 Aug 2021 05:12:07 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 1CE2E611C6;
-	Fri,  6 Aug 2021 05:11:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 1CE2E611C6
+	by mail.kernel.org (Postfix) with ESMTPS id 54DA8611C9;
+	Fri,  6 Aug 2021 05:12:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 54DA8611C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mBs9F-0006cp-AC; Fri, 06 Aug 2021 05:11:57 +0000
+	id 1mBs9O-0006eb-HM; Fri, 06 Aug 2021 05:12:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from <prvs=845ab97a1=damien.lemoal@wdc.com>)
- id 1mBs9C-0006cU-MN
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Aug 2021 05:11:54 +0000
+ id 1mBs9M-0006eH-IA
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Aug 2021 05:12:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yRHnOuFegd6UaLvsZx6ilRbSoLCfYMPohGhbs4s+8EQ=; b=G9hHJrD+mz90V2bN1+amHg3VKS
- +oy740PknBIerAawAXDnyfQCw4AMzePddRcUc6HoBGa4NrZOh/lsV52wB2QpErrfx2U/mV6B7auWE
- yEOVzITy7WMmes7XwTB1TWpLA2PHtU9Qmc/+8PPksTM0dEoQCuWzJGe3Z5hYI6g7UKQQ=;
+ bh=Ssm3hLHUD4qgPlzN99qkY7Hj0jOuR5DhxMkELscKL60=; b=dblthgQlrqrCBnT0MsqGouEu3+
+ NNSCya32KfdNWTvtg4XUqI7Y0Z0Pfdmx9ob3SVzyuqVZ9g1v5mwBIecrwF1uxiiYu448CtuWoB/Px
+ 0nQcEFb+vw4bFN7R7IFGeRgxDZkkWPsjsMJrEMucZ8+xKy6c8JpjovRsGKu9o7qrNbZA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:To:From:
- Sender:Reply-To:Cc:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=yRHnOuFegd6UaLvsZx6ilRbSoLCfYMPohGhbs4s+8EQ=; b=W
- n/gewxQ6aUT103uisJMzefFI/aCe3/qrYqFBROVe8s/ov1PzPZr+7QFxs/2iAyqhIBUDzs9rLeX5J
- r17K68TxyYBGVRvzv1+0JaTeKauMhpsCHWzR2r/COiNZr5I3/IUor1/f5VNCD5LU/mk6t6VenjU+F
- TTmfvpWz/bt8TirE=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Ssm3hLHUD4qgPlzN99qkY7Hj0jOuR5DhxMkELscKL60=; b=XS8FRPW3DFaumxcL3BAB0PPoOV
+ 3enC0zHL6x2JlHbaQXeeZNhy5EDS0Y+dQqpZZDfTed8fEwPz2nqi9aa+w+flBNRGOv/OC3RPNRoaz
+ 9lc6dFIUFMCBn03V2LG58NYwrXOjf8WEO0fo+n6VPf6GOOtRLv1PX5Lg0yIP/EEIMzmg=;
 Received: from esa3.hgst.iphmx.com ([216.71.153.141])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mBs98-0003LZ-2G
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Aug 2021 05:11:54 +0000
+ id 1mBs9H-0003ML-QM
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 Aug 2021 05:12:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1628226708; x=1659762708;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=gNBdiDD6x/yNjv/Ff1lf1OHWLKH/Q4+rYKGZ6B1EdjE=;
- b=cAz6YKLa0r1Jgsdv2Uf6NqSTAn54niAcQ3JVQ3sc0P33VsT1P/1Tq96s
- UGVpYQ+uOhzN7eFesC3AIfD6GBQSXuTREMI72nFC3Eo7zCaxVGsSjkXt3
- jhTk1KBOK3HwikQgJ5kGL65NnRTB1FAslQ145hpnqrT3srdeo/fJm6F3u
- KVDe5A8bwVpr3KGckPUbj+LRJVnOk3jJ/2YXLw9qW0F4Qei8pFJf7VPxc
- AgGgQBcCzeWGZFrZlvEc/sEk8zOdel6/syEb1RDFmEmakH0FlfVgmYd3R
- UHoWIAmjc8+pY078esjGia0ObhIhrVHkfCAiWMXu19M1HZrZM8lE6RnWT Q==;
-X-IronPort-AV: E=Sophos;i="5.84,299,1620662400"; d="scan'208";a="181285572"
+ t=1628226718; x=1659762718;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=yF/LJ6VOE4VEWoTqOdUoMSQXN8kTNgY8NlgLx4xkskI=;
+ b=I0S3b6/T17TjgwxOgmv4qJNcaBO4ksZEq5LnNlxvf7I0SPV3A9Kldsw4
+ Y9LyImwCv/Bd6vFoe2B6Ca4TbQRdLhGYcC7u/lwxpeJ0XF4teI3Ph3tas
+ F56XAvzDFp4XqtC1PcxQiB2PMyjILVauukekX5gGhkRG0a8zmEYSfl2KF
+ 66uuOgzccp3XQPKEaAdk70E45QYXeEDG87YtGylQhTRwkwX11eqV22WdM
+ G6pgXIKMNdEhcQnZXVfx1MYXx7lyA0GV8Fg6BDQPWF55E4kly3uVTC81+
+ CD+2kfe81YeXAn4qNtXm3aOqp1Xz40vMkNgsfTQer0cR+vK8EU4O02lkG A==;
+X-IronPort-AV: E=Sophos;i="5.84,299,1620662400"; d="scan'208";a="181285578"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com)
  ([199.255.45.15])
- by ob1.hgst.iphmx.com with ESMTP; 06 Aug 2021 13:11:43 +0800
-IronPort-SDR: XmWgv2xVIVnZkyG73hMv8/IIdnZzv/ryl+GkluR7MbBIHk0gXHY0lbjJ41URlvO/vBJ/3u5e+t
- eWISO9yOn0U0l2V+H927YIW2odYbUm9yLWAJDrN5gk2jBRU22Lv0ArPYWqV8W6fnddl5jvFQEV
- rQEcPNk5+GLc24r9FIUmTt8pfzVYuQ3y46qb7nB2hLuWVhAMqhab/Hfjgedu7KOR6P3Y2uI0oJ
- dAJvI7+nb66r+ZohTF2RWnmnB20lnfB3YFlhpnoHruagI+iqaVXldtghIaNAwlQJdpnF0MY4dF
- ZL3tvJFP/s7brbOdwEuUSGoX
+ by ob1.hgst.iphmx.com with ESMTP; 06 Aug 2021 13:11:45 +0800
+IronPort-SDR: oHPdyFhLvtXk+T9BtEHTomZKRDtPtxf3mB5q8WUIsRE/ol6c1705yQtM7aBFDNq0Bt9ZQv6TGW
+ 9IipwQ/8QUyyhl7Cf1/0TAaoT9zh1KCeF5GlL+yViuv2UCpxDiAZM1akg0ua9vBI8bfsjNVFZe
+ 1oOHfuv9RKHIvAXfkFqcyDyFQEAKiwhQgkfZSSiv/SRbkiCIGFPdO07cHmTKVELnMBzEL12eRV
+ wvoh8ZtcHCQTzat/zPv8ls2zgluhHSfCY011i9SmlnwTPArIqmNWe0D8dK5Q1QZtHSDJqQyGFY
+ IwXzErOqweQ1lvlkuFgCuIaS
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Aug 2021 21:47:20 -0700
-IronPort-SDR: Dasbz1sPEb225juJaMs5Lc3oN/myHAeiFF0S+7T+7mg0CeEADTCOLBbxt+JBqz3EysSoIeJ76y
- ym8aepy/zZCj1mvI1xL2yZkn61iWUnaD+tXjcY0TFT312+b7pKlMMWf3sHtEBc0AZXJeHQffGl
- GQPM6093S6hULmCfZJ21Zl/iQqFpI/gAbEQ/K8bS9/ZncYtnpARmlPn6s4w3oGbRhqgo4qiu4r
- rPZqlRlduk7jJqNu39z9wslfrTp+Sz2Eee+kfTJtpyjQQk0JlrG3AbLXFVG3C9lTPxkEfeGNCZ
- ujQ=
+ 05 Aug 2021 21:47:23 -0700
+IronPort-SDR: w8bV4j/ECwEnGb61JKPkK60ne7QZHiyOx4aiWPBKHc+/Lwy3T7i8PD2dgRL7CYtK930rAjoRuF
+ 5/pTFPHrvdZmAN56NEOh78/jBMsLjG0HGiwX81GtWrDlym4wBDdBgDXqYWnrZYJ02yE1nlqdCl
+ L6kz2o/M7pbjVMCB75iqE4K8LRq9bRWHe8OqCV/BlBjLsed/1e3E0RyfxRn6U++DEygyqBC9Vx
+ qDRmYHe9UNHk7x7x/M7uaLHmKdQvFNo/C+k2qqLiHpR5FduaUBBDZ6MfQtL0MHQIafShBwgOUp
+ HKI=
 WDCIronportException: Internal
 Received: from washi.fujisawa.hgst.com ([10.149.53.254])
- by uls-op-cesaip01.wdc.com with ESMTP; 05 Aug 2021 22:11:43 -0700
+ by uls-op-cesaip01.wdc.com with ESMTP; 05 Aug 2021 22:11:45 -0700
 From: Damien Le Moal <damien.lemoal@wdc.com>
 To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
  Paolo Valente <paolo.valente@linaro.org>,
  linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
  Chao Yu <yuchao0@huawei.com>
-Date: Fri,  6 Aug 2021 14:11:36 +0900
-Message-Id: <20210806051140.301127-1-damien.lemoal@wdc.com>
+Date: Fri,  6 Aug 2021 14:11:38 +0900
+Message-Id: <20210806051140.301127-3-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210806051140.301127-1-damien.lemoal@wdc.com>
+References: <20210806051140.301127-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-X-Headers-End: 1mBs98-0003LZ-2G
-Subject: [f2fs-dev] [PATCH v2 0/4] IO priority fixes and improvements
+X-Headers-End: 1mBs9H-0003ML-QM
+Subject: [f2fs-dev] [PATCH v2 2/4] block: fix ioprio interface
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -109,32 +111,124 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This series fixes problems with IO priority values handling and cleans
-up several macro names and code for clarity.
+An iocb aio_reqprio field is 16-bits (u16) but often handled as an int
+in the block layer. E.g. ioprio_check_cap() takes an int as argument.
+With such implicit int casting function calls, the upper 16-bits of the
+int argument may be left uninitialized by the compiler, resulting in
+invalid values for the IOPRIO_PRIO_CLASS() macro (garbage upper bits)
+and in an error return for functions such as ioprio_check_cap().
 
-Changes from v1:
-* Added patch 4 to unify the default priority value used in various
-  places.
-* Fixed patch 2 as suggested by Bart: remove extra parenthesis and move
-  ioprio_valid() from the uapi header to the kernel header.
-* In patch 2, add priority value masking.
+Fix this by masking the result of the shift by IOPRIO_CLASS_SHIFT bits
+in the IOPRIO_PRIO_CLASS() macro. The new macro IOPRIO_CLASS_MASK
+defines the 3-bits mask for the priority class.
 
-Damien Le Moal (4):
-  block: bfq: fix bfq_set_next_ioprio_data()
-  block: fix ioprio interface
-  block: rename IOPRIO_BE_NR
-  block: fix default IO priority handling
+While at it, cleanup the following:
+* Apply the mask IOPRIO_PRIO_MASK to the data argument of the
+  IOPRIO_PRIO_VALUE() macro to ignore upper bits of the data value.
+* Remove unnecessary parenthesis around fixed values in the macro
+  definitions in include/uapi/linux/ioprio.h.
+* Update the outdated mention of CFQ in the comment describing priority
+  classes and instead mention BFQ and mq-deadline.
+* Change the argument name of the IOPRIO_PRIO_CLASS() and
+  IOPRIO_PRIO_DATA() macros from "mask" to "ioprio" to reflect the fact
+  that an IO priority value should be passed rather than a mask.
+* Change the ioprio_valid() macro into an inline function, adding a
+  check on the maximum value of the class of a priority value as
+  defined by the IOPRIO_CLASS_MAX enum value. Move this function to
+  the kernel side in include/linux/ioprio.h.
+* Remove the unnecessary "else" after the return statements in
+  task_nice_ioclass().
 
- block/bfq-iosched.c          | 10 +++++-----
- block/bfq-iosched.h          |  4 ++--
- block/bfq-wf2q.c             |  6 +++---
- block/ioprio.c               |  9 ++++-----
- drivers/nvme/host/lightnvm.c |  2 +-
- fs/f2fs/sysfs.c              |  2 +-
- include/linux/ioprio.h       | 22 ++++++++++++++++++----
- include/uapi/linux/ioprio.h  | 23 +++++++++++++----------
- 8 files changed, 47 insertions(+), 31 deletions(-)
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ include/linux/ioprio.h      | 15 ++++++++++++---
+ include/uapi/linux/ioprio.h | 19 +++++++++++--------
+ 2 files changed, 23 insertions(+), 11 deletions(-)
 
+diff --git a/include/linux/ioprio.h b/include/linux/ioprio.h
+index ef9ad4fb245f..9b3a6d8172b4 100644
+--- a/include/linux/ioprio.h
++++ b/include/linux/ioprio.h
+@@ -8,6 +8,16 @@
+ 
+ #include <uapi/linux/ioprio.h>
+ 
++/*
++ * Check that a priority value has a valid class.
++ */
++static inline bool ioprio_valid(unsigned short ioprio)
++{
++	unsigned short class = IOPRIO_PRIO_CLASS(ioprio);
++
++	return class > IOPRIO_CLASS_NONE && class < IOPRIO_CLASS_MAX;
++}
++
+ /*
+  * if process has set io priority explicitly, use that. if not, convert
+  * the cpu scheduler nice value to an io priority
+@@ -25,10 +35,9 @@ static inline int task_nice_ioclass(struct task_struct *task)
+ {
+ 	if (task->policy == SCHED_IDLE)
+ 		return IOPRIO_CLASS_IDLE;
+-	else if (task_is_realtime(task))
++	if (task_is_realtime(task))
+ 		return IOPRIO_CLASS_RT;
+-	else
+-		return IOPRIO_CLASS_BE;
++	return IOPRIO_CLASS_BE;
+ }
+ 
+ /*
+diff --git a/include/uapi/linux/ioprio.h b/include/uapi/linux/ioprio.h
+index 77b17e08b0da..abc40965aa96 100644
+--- a/include/uapi/linux/ioprio.h
++++ b/include/uapi/linux/ioprio.h
+@@ -5,12 +5,15 @@
+ /*
+  * Gives us 8 prio classes with 13-bits of data for each class
+  */
+-#define IOPRIO_CLASS_SHIFT	(13)
++#define IOPRIO_CLASS_SHIFT	13
++#define IOPRIO_CLASS_MASK	0x07
+ #define IOPRIO_PRIO_MASK	((1UL << IOPRIO_CLASS_SHIFT) - 1)
+ 
+-#define IOPRIO_PRIO_CLASS(mask)	((mask) >> IOPRIO_CLASS_SHIFT)
+-#define IOPRIO_PRIO_DATA(mask)	((mask) & IOPRIO_PRIO_MASK)
+-#define IOPRIO_PRIO_VALUE(class, data)	(((class) << IOPRIO_CLASS_SHIFT) | data)
++#define IOPRIO_PRIO_CLASS(ioprio)	\
++	(((ioprio) >> IOPRIO_CLASS_SHIFT) & IOPRIO_CLASS_MASK)
++#define IOPRIO_PRIO_DATA(ioprio)	((ioprio) & IOPRIO_PRIO_MASK)
++#define IOPRIO_PRIO_VALUE(class, data)	\
++	(((class) << IOPRIO_CLASS_SHIFT) | ((data) & IOPRIO_PRIO_MASK))
+ 
+ /*
+  * These are the io priority groups as implemented by CFQ. RT is the realtime
+@@ -23,14 +26,14 @@ enum {
+ 	IOPRIO_CLASS_RT,
+ 	IOPRIO_CLASS_BE,
+ 	IOPRIO_CLASS_IDLE,
+-};
+ 
+-#define ioprio_valid(mask)	(IOPRIO_PRIO_CLASS((mask)) != IOPRIO_CLASS_NONE)
++	IOPRIO_CLASS_MAX,
++};
+ 
+ /*
+  * 8 best effort priority levels are supported
+  */
+-#define IOPRIO_BE_NR	(8)
++#define IOPRIO_BE_NR	8
+ 
+ enum {
+ 	IOPRIO_WHO_PROCESS = 1,
+@@ -41,6 +44,6 @@ enum {
+ /*
+  * Fallback BE priority
+  */
+-#define IOPRIO_NORM	(4)
++#define IOPRIO_NORM	4
+ 
+ #endif /* _UAPI_LINUX_IOPRIO_H */
 -- 
 2.31.1
 
