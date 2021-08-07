@@ -2,107 +2,75 @@ Return-Path: <SRS0=9WZ1=M6=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B96C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  7 Aug 2021 16:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF0EC4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  7 Aug 2021 16:56:11 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id AC1E061058;
-	Sat,  7 Aug 2021 16:48:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org AC1E061058
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTPS id 41AEE61004
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  7 Aug 2021 16:56:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 41AEE61004
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mCPUX-00033J-7T; Sat, 07 Aug 2021 16:48:09 +0000
+	id 1mCPcI-0004Jz-5W; Sat, 07 Aug 2021 16:56:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <axboe@kernel.dk>) id 1mCPUW-000331-4m
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Aug 2021 16:48:08 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1mCPcH-0004Jg-0p
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Aug 2021 16:56:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hSiQWcxOeb6H8lVeRKmlUrfbadCZCq/IN0zGwt6aOMU=; b=d5gJYbFnvR6zoda5zso0Aq2vRp
- VQNO/B+NBiz0VDUjw4eXeScSgh7UALAdCYIJznA035JlrQYyVrWi5OO4xbJ+msGYmPj/8M7NUt80F
- DMgunFIDlGckvGnAiPUCvSeSmeICQRTXhRyjXTtQ/xhZetbRvd+OI551cqvfFk6WReKY=;
+ bh=yKqt2xJsysPZOY3vNxOuFJIPK4PuA/tmDqw3BX5iBDY=; b=EOwbackjYn/R6eAxBEfsCWyi8Z
+ p/WP2K6gZjS7qoxhPF211Mo89PB4O/HN/JXtF0QRDWrYZoA6GVNQ4jETt4BvtYlSMuzMJ764bkccw
+ b02r9MY8ov/TI3heFBKLmip/+lrogMCoKffhywGnDnD0WsgKZ8udMcUPKOiX7LgIbJgk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hSiQWcxOeb6H8lVeRKmlUrfbadCZCq/IN0zGwt6aOMU=; b=UTquvd0OEKLDUBiZIblMzch2Ug
- q1R3oR7sgrYuHwh+97mGz8cZ59HJqaRK7Y6ol3Sr8C5F8jzAi8agk1xf6yjdsa5siXfTj6gNPfirk
- STrOrDS3ZvrF/WzB3AhIOBuL7ndpXfmd2ePa4bYSZ29E+Nng+11hJiyrGioDGDs57KKg=;
-Received: from mail-pj1-f51.google.com ([209.85.216.51])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1mCPUR-00G2wo-Jx
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Aug 2021 16:48:08 +0000
-Received: by mail-pj1-f51.google.com with SMTP id
- u5-20020a17090ae005b029017842fe8f82so13595485pjy.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 07 Aug 2021 09:48:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=kernel-dk.20150623.gappssmtp.com; s=20150623;
- h=subject:to:references:from:message-id:date:user-agent:mime-version
- :in-reply-to:content-language:content-transfer-encoding;
- bh=hSiQWcxOeb6H8lVeRKmlUrfbadCZCq/IN0zGwt6aOMU=;
- b=h+IjOjM/QHRahEtxOtPJ0luI2z0uupCF+/HWgHixl7GEsjmqkgXiYb0lVuGjoGHmSn
- A6GBt7YlD5bXTnNAqOwjdCBMYGDzIDpfLeju7oarB224Dr5mjaVT1kHrXRbHYZ4oVTNu
- VIj380LDnV1DJop+wNJSa3SgL8w3rdGPLgsoFGxQAzO3ynf6XsVRGYCo2Z70HNe+85MH
- PC2ejeJKOh9b2b0IA1NBN36IujdtaEr3VO/Pwt8f0reYNIaPe5XtbhPz3IuRYptEIOxc
- OhUduZI8FQzGAoKvhqgm7jinPuehwTGTcVc4NdyjU1HYLYIVDnOyYzmJEoBr15D6+RH7
- reHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20161025;
- h=x-gm-message-state:subject:to:references:from:message-id:date
- :user-agent:mime-version:in-reply-to:content-language
- :content-transfer-encoding;
- bh=hSiQWcxOeb6H8lVeRKmlUrfbadCZCq/IN0zGwt6aOMU=;
- b=BI8trhHO+1fQKlTD3BWESLALVgf7ZtyVq1sA9FeEFdKMU7iY50ZNfgIY7npHm5qU5U
- i4TNIgfcNknSK2qAGpD5mCkk5EQILGLChODy24Ict7iyeec/X92A5Bmi9ZTWl3xI91kx
- HKr4ReHS1FKfVnzpYZsWkWSSIzXlJQ8QAVnsM2NOypzBK8E+iQIwZ7wFPVjzAFXJXNka
- xpQla8qlS9Ssy8d19GOsYKtttbiDZRGaYlfJrR4k93QRyYKJ+cRtI8Z4r6kt6m5eh4gP
- 1TXsSBXHt5fwDK43SJ8pxeHvXn7gtsgzESvg4ICpQliJb9TJfNXumjh5TJF0wlrmdIgA
- vk8g==
-X-Gm-Message-State: AOAM530QdAR7rk3jjaX4mQ7CJSjDTAaID8vBaklSf5dEcG4kYsvFOjbo
- 3t6bLI5KJI5TDxZGABcITnX2hf3nJpZ8woQ8
-X-Google-Smtp-Source: ABdhPJyAiu0tJuRJYapivcu+TujecpU4eiJWcmiXFrpgW71PZtm6W1SstJsz9a57oqvzz880JnqWVg==
-X-Received: by 2002:a17:902:a406:b029:12b:c50a:4289 with SMTP id
- p6-20020a170902a406b029012bc50a4289mr13472963plq.56.1628353001915; 
- Sat, 07 Aug 2021 09:16:41 -0700 (PDT)
-Received: from [192.168.1.116] ([198.8.77.61])
- by smtp.gmail.com with ESMTPSA id c23sm14578792pfn.140.2021.08.07.09.16.40
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Sat, 07 Aug 2021 09:16:41 -0700 (PDT)
-To: Damien Le Moal <damien.lemoal@wdc.com>, linux-block@vger.kernel.org,
- Paolo Valente <paolo.valente@linaro.org>,
- linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <yuchao0@huawei.com>
-References: <20210806111857.488705-1-damien.lemoal@wdc.com>
- <20210806111857.488705-4-damien.lemoal@wdc.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <5f2640c5-0712-b822-9ac7-3daa974c0c30@kernel.dk>
-Date: Sat, 7 Aug 2021 10:16:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ bh=yKqt2xJsysPZOY3vNxOuFJIPK4PuA/tmDqw3BX5iBDY=; b=JaFSsPaKrB4I8FKmVEdVN2ulRw
+ 8stG+jx/AarW9hF/U/GPDladb9HiQtz6eR4tCYjYMkaaXaShI/YEkRJAP6Zuy2AChSW7pBGumd+xV
+ 3cpQBSjPdcGiWXY80CiWao6F3cAJTtI/VxBiOoyXstvMq3UfKxc9jItR67yGta2cLKuw=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1mCPc9-00076f-6u
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Aug 2021 16:56:08 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E104C61058;
+ Sat,  7 Aug 2021 16:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1628355353;
+ bh=xneXCef3FRjBCnaNoY9tPBcNVJGns+i3iXDMrVO58mU=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=U9cRwDNoB6btRNhwTev/FroT9STOvybHbTC5Wd7HQsfk7sHA/LRv2Jz4Ob60iTCW/
+ vzmIgNeKI+7hn91QKZPej+HhOnQebH/rf3tl/mjl57NIoOFNGY0CORfAKiMPACjmOS
+ PZ8VqjW4lyOC4Mq70yCjJYJ9QiLjZdhFC3ajV3x5onW0x0XJI7TsbOBEwAyLd9asNw
+ rO6BXHol6p6s0N0TjMuwKbdmtEIaGSBS9maUDC6DR57GirE9fV2eiZb3XL2C7qchwY
+ vPdsVBfmdSL7eRL002qBnjdFbCj9AoyZDEX8PCp1YzK9i1qlOyJhaQGb9W6K7rFY4f
+ hmJrE1sa3JyxA==
+Date: Sat, 7 Aug 2021 09:55:51 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Shreeya Patel <shreeya.patel@collabora.com>
+Message-ID: <YQ67FxJRlfTj5EGy@sol.localdomain>
+References: <20210730124333.6744-1-shreeya.patel@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20210806111857.488705-4-damien.lemoal@wdc.com>
-Content-Language: en-US
-X-Headers-End: 1mCPUR-00G2wo-Jx
-Subject: Re: [f2fs-dev] [PATCH v3 3/4] block: rename IOPRIO_BE_NR
+Content-Disposition: inline
+In-Reply-To: <20210730124333.6744-1-shreeya.patel@collabora.com>
+X-Headers-End: 1mCPc9-00076f-6u
+Subject: Re: [f2fs-dev] [PATCH] fs: unicode: Add utf8-data module
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -114,31 +82,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: yuchao0@huawei.com, tytso@mit.edu, drosen@google.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ kernel@collabora.com, adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
+ jaegeuk@kernel.org, andre.almeida@collabora.com, linux-ext4@vger.kernel.org,
+ krisman@collabora.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 8/6/21 5:18 AM, Damien Le Moal wrote:
-> diff --git a/include/uapi/linux/ioprio.h b/include/uapi/linux/ioprio.h
-> index abc40965aa96..99d37d4807b8 100644
-> --- a/include/uapi/linux/ioprio.h
-> +++ b/include/uapi/linux/ioprio.h
-> @@ -31,9 +31,9 @@ enum {
->  };
+On Fri, Jul 30, 2021 at 06:13:33PM +0530, Shreeya Patel wrote:
+> diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
+> index 0acd530c2c79..6843229bcb2b 100644
+> --- a/fs/unicode/utf8n.h
+> +++ b/fs/unicode/utf8n.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/export.h>
+>  #include <linux/string.h>
+>  #include <linux/module.h>
+> +#include <linux/spinlock.h>
 >  
->  /*
-> - * 8 best effort priority levels are supported
-> + * The RT and BE priority classes both support up to 8 priority levels.
->   */
-> -#define IOPRIO_BE_NR	8
-> +#define IOPRIO_NR_LEVELS	8
+>  /* Encoding a unicode version number as a single unsigned int. */
+>  #define UNICODE_MAJ_SHIFT		(16)
+> @@ -21,6 +22,11 @@
+>  	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
+>  	 ((unsigned int)(REV)))
+>  
+> +extern spinlock_t utf8_lock;
+> +
+> +extern struct utf8_data *utf8_ops;
+> +extern bool utf8data_loaded;
 
-That might not be a good idea, if an application already uses
-IOPRIO_BE_NR...
+The 'utf8data_loaded' variable is unnecessary, since it's equivalent to
+'utf8_ops != NULL'.
 
--- 
-Jens Axboe
+Also, there are no function pointer fields anymore, so this really should be
+called utf8_data, not utf8_ops.
 
+- Eric
 
 
 _______________________________________________
