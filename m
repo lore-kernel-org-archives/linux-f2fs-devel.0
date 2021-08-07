@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0EBC4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  7 Aug 2021 16:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B96C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  7 Aug 2021 16:48:10 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C717C61058;
-	Sat,  7 Aug 2021 16:44:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org C717C61058
+	by mail.kernel.org (Postfix) with ESMTPS id AC1E061058;
+	Sat,  7 Aug 2021 16:48:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org AC1E061058
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mCPRE-0003nN-F0; Sat, 07 Aug 2021 16:44:44 +0000
+	id 1mCPUX-00033J-7T; Sat, 07 Aug 2021 16:48:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <axboe@kernel.dk>) id 1mCPRD-0003nG-Ie
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Aug 2021 16:44:43 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <axboe@kernel.dk>) id 1mCPUW-000331-4m
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Aug 2021 16:48:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sE4J/KNRIhq4Qq1TJTV7nxoeSBjq593vfcTRyIoqZB8=; b=mkWKDJEOu+lMDT+lGRJ3rvpsP5
- SR13np5dcXNOAMNeWP8CYiiOV7t90scxd4PnYXAd4gFkLc5j8AASYkIoR0hn7AM1ZP6D5yLwnc//T
- PT6NLIujr52ebCYKB8FLimBVFdJZGFQVKgw8oizHQHf6TB3jx12QjqEjCLjihD3JU0jc=;
+ bh=hSiQWcxOeb6H8lVeRKmlUrfbadCZCq/IN0zGwt6aOMU=; b=d5gJYbFnvR6zoda5zso0Aq2vRp
+ VQNO/B+NBiz0VDUjw4eXeScSgh7UALAdCYIJznA035JlrQYyVrWi5OO4xbJ+msGYmPj/8M7NUt80F
+ DMgunFIDlGckvGnAiPUCvSeSmeICQRTXhRyjXTtQ/xhZetbRvd+OI551cqvfFk6WReKY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -42,67 +42,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=sE4J/KNRIhq4Qq1TJTV7nxoeSBjq593vfcTRyIoqZB8=; b=kkVnJdO6L/UfpEZoRrH5WlwBfw
- uJBhviD0se/h53qSttVRPTaDyPKxW2SDyGFSlSpffjJRRWqCdvTowIG49JK3E4GN5OffHKmYGwZpN
- mOya/fH9OXtTbsaLGWKWkNITi3AV2tN6gFPHrSTlvWYBn8mG49ilNuV8RERxIzf8cypk=;
-Received: from mail-pj1-f41.google.com ([209.85.216.41])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=hSiQWcxOeb6H8lVeRKmlUrfbadCZCq/IN0zGwt6aOMU=; b=UTquvd0OEKLDUBiZIblMzch2Ug
+ q1R3oR7sgrYuHwh+97mGz8cZ59HJqaRK7Y6ol3Sr8C5F8jzAi8agk1xf6yjdsa5siXfTj6gNPfirk
+ STrOrDS3ZvrF/WzB3AhIOBuL7ndpXfmd2ePa4bYSZ29E+Nng+11hJiyrGioDGDs57KKg=;
+Received: from mail-pj1-f51.google.com ([209.85.216.51])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1mCPRB-0006bU-O4
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Aug 2021 16:44:43 +0000
-Received: by mail-pj1-f41.google.com with SMTP id
- u13-20020a17090abb0db0290177e1d9b3f7so27426056pjr.1
+ id 1mCPUR-00G2wo-Jx
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 07 Aug 2021 16:48:08 +0000
+Received: by mail-pj1-f51.google.com with SMTP id
+ u5-20020a17090ae005b029017842fe8f82so13595485pjy.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 07 Aug 2021 09:44:41 -0700 (PDT)
+ Sat, 07 Aug 2021 09:48:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=kernel-dk.20150623.gappssmtp.com; s=20150623;
  h=subject:to:references:from:message-id:date:user-agent:mime-version
  :in-reply-to:content-language:content-transfer-encoding;
- bh=sE4J/KNRIhq4Qq1TJTV7nxoeSBjq593vfcTRyIoqZB8=;
- b=F8bJc5ayOa1NQ/0OLvIq7fauc1tSb4zx9pEU23QZ03TiiHbDjRvGxkf4tZiV/xmwuw
- qXJBY04ip1ae+q8XRoAgpltiT/vwxOfzHD1FSKvNBAAOdC0MgORNTxsnWjF/H1Oo90Ys
- 6E0jDg5fXZm/Tyhqi5xSbdJJefUZme4h1sR2G8NoGw5zfX2rEWHwu4moCjzi22X1sGt0
- Qt7/cxoAwgTwUaxfr1M8NIcx1iCOsCaMSUG239oKtOTnqvhJBUzmo7nfgYynFwFe/OqQ
- eV2pkrza5d5MrVkNZ/JJrxRer+hTlanySw3H7TR9VqkpgIRbAYnHI61HYrA+x9AT+NFm
- 2NcA==
+ bh=hSiQWcxOeb6H8lVeRKmlUrfbadCZCq/IN0zGwt6aOMU=;
+ b=h+IjOjM/QHRahEtxOtPJ0luI2z0uupCF+/HWgHixl7GEsjmqkgXiYb0lVuGjoGHmSn
+ A6GBt7YlD5bXTnNAqOwjdCBMYGDzIDpfLeju7oarB224Dr5mjaVT1kHrXRbHYZ4oVTNu
+ VIj380LDnV1DJop+wNJSa3SgL8w3rdGPLgsoFGxQAzO3ynf6XsVRGYCo2Z70HNe+85MH
+ PC2ejeJKOh9b2b0IA1NBN36IujdtaEr3VO/Pwt8f0reYNIaPe5XtbhPz3IuRYptEIOxc
+ OhUduZI8FQzGAoKvhqgm7jinPuehwTGTcVc4NdyjU1HYLYIVDnOyYzmJEoBr15D6+RH7
+ reHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20161025;
  h=x-gm-message-state:subject:to:references:from:message-id:date
  :user-agent:mime-version:in-reply-to:content-language
  :content-transfer-encoding;
- bh=sE4J/KNRIhq4Qq1TJTV7nxoeSBjq593vfcTRyIoqZB8=;
- b=mAFfnSGq8umNspteQuryt6c8stcmE34CykRaLHy0EM+qP74TxCHUlAvua5UR4KGHwB
- 1890hJ7+n0H/QMqtifbKUQu25vMlkTKy5p3ZnQaXR0oTIxm8QV5/pMCUNsOoSv7/DDGe
- 1PH7nXBFC3PllXXuzsXoqal7Lio91qKzlwO8EcemcMDeySn2dUd9Thac1Xcfta3IL43A
- LlK+TycnjrZuqXE+wQcKOxVqhVlVL9zH9KyU7wpXEsL7wV11ZQpFVFScuQHNa+xhbnta
- FEK1qrsf2WWPiKFcgESF1HcDLPzKLnKp98BLOS0rfwMi6gr/rPTFYo7+6387zySEfGef
- VzxQ==
-X-Gm-Message-State: AOAM531p73k8Dwtt0QgEDJQz1f2sKFoMsJxpYaBqFPMhq7cMw+uK/riG
- XYbshGYiVt4XmqgslcmTW+rig8bi70Ppxa6H
-X-Google-Smtp-Source: ABdhPJzk4/8bmVQ2Nl31owua5k69ZyxSZipU5YOIY/m7LVvU8DIehftrExiEXUCenqHaKirRIpmZYQ==
-X-Received: by 2002:a63:cc0e:: with SMTP id x14mr1332919pgf.352.1628353192079; 
- Sat, 07 Aug 2021 09:19:52 -0700 (PDT)
+ bh=hSiQWcxOeb6H8lVeRKmlUrfbadCZCq/IN0zGwt6aOMU=;
+ b=BI8trhHO+1fQKlTD3BWESLALVgf7ZtyVq1sA9FeEFdKMU7iY50ZNfgIY7npHm5qU5U
+ i4TNIgfcNknSK2qAGpD5mCkk5EQILGLChODy24Ict7iyeec/X92A5Bmi9ZTWl3xI91kx
+ HKr4ReHS1FKfVnzpYZsWkWSSIzXlJQ8QAVnsM2NOypzBK8E+iQIwZ7wFPVjzAFXJXNka
+ xpQla8qlS9Ssy8d19GOsYKtttbiDZRGaYlfJrR4k93QRyYKJ+cRtI8Z4r6kt6m5eh4gP
+ 1TXsSBXHt5fwDK43SJ8pxeHvXn7gtsgzESvg4ICpQliJb9TJfNXumjh5TJF0wlrmdIgA
+ vk8g==
+X-Gm-Message-State: AOAM530QdAR7rk3jjaX4mQ7CJSjDTAaID8vBaklSf5dEcG4kYsvFOjbo
+ 3t6bLI5KJI5TDxZGABcITnX2hf3nJpZ8woQ8
+X-Google-Smtp-Source: ABdhPJyAiu0tJuRJYapivcu+TujecpU4eiJWcmiXFrpgW71PZtm6W1SstJsz9a57oqvzz880JnqWVg==
+X-Received: by 2002:a17:902:a406:b029:12b:c50a:4289 with SMTP id
+ p6-20020a170902a406b029012bc50a4289mr13472963plq.56.1628353001915; 
+ Sat, 07 Aug 2021 09:16:41 -0700 (PDT)
 Received: from [192.168.1.116] ([198.8.77.61])
- by smtp.gmail.com with ESMTPSA id jz24sm12842797pjb.9.2021.08.07.09.19.50
+ by smtp.gmail.com with ESMTPSA id c23sm14578792pfn.140.2021.08.07.09.16.40
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Sat, 07 Aug 2021 09:19:51 -0700 (PDT)
+ Sat, 07 Aug 2021 09:16:41 -0700 (PDT)
 To: Damien Le Moal <damien.lemoal@wdc.com>, linux-block@vger.kernel.org,
  Paolo Valente <paolo.valente@linaro.org>,
  linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
  Chao Yu <yuchao0@huawei.com>
 References: <20210806111857.488705-1-damien.lemoal@wdc.com>
- <20210806111857.488705-5-damien.lemoal@wdc.com>
+ <20210806111857.488705-4-damien.lemoal@wdc.com>
 From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <4bfdceb3-36a7-c224-c1cc-ab273ab15589@kernel.dk>
-Date: Sat, 7 Aug 2021 10:19:50 -0600
+Message-ID: <5f2640c5-0712-b822-9ac7-3daa974c0c30@kernel.dk>
+Date: Sat, 7 Aug 2021 10:16:39 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20210806111857.488705-5-damien.lemoal@wdc.com>
+In-Reply-To: <20210806111857.488705-4-damien.lemoal@wdc.com>
 Content-Language: en-US
-X-Headers-End: 1mCPRB-0006bU-O4
-Subject: Re: [f2fs-dev] [PATCH v3 4/4] block: fix default IO priority
- handling
+X-Headers-End: 1mCPUR-00G2wo-Jx
+Subject: Re: [f2fs-dev] [PATCH v3 3/4] block: rename IOPRIO_BE_NR
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -120,20 +120,21 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 8/6/21 5:18 AM, Damien Le Moal wrote:
 > diff --git a/include/uapi/linux/ioprio.h b/include/uapi/linux/ioprio.h
-> index 99d37d4807b8..5b4a39c2f623 100644
+> index abc40965aa96..99d37d4807b8 100644
 > --- a/include/uapi/linux/ioprio.h
 > +++ b/include/uapi/linux/ioprio.h
-> @@ -42,8 +42,8 @@ enum {
+> @@ -31,9 +31,9 @@ enum {
 >  };
 >  
 >  /*
-> - * Fallback BE priority
-> + * Fallback BE priority level.
+> - * 8 best effort priority levels are supported
+> + * The RT and BE priority classes both support up to 8 priority levels.
 >   */
-> -#define IOPRIO_NORM	4
-> +#define IOPRIO_BE_NORM	4
+> -#define IOPRIO_BE_NR	8
+> +#define IOPRIO_NR_LEVELS	8
 
-This again seems like a very poor idea.
+That might not be a good idea, if an application already uses
+IOPRIO_BE_NR...
 
 -- 
 Jens Axboe
