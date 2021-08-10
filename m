@@ -7,68 +7,71 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 498AAC4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Aug 2021 03:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6026BC4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Aug 2021 13:27:26 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 017B860EBB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Aug 2021 03:39:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 017B860EBB
+	by mail.kernel.org (Postfix) with ESMTPS id 259E960EE9
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Aug 2021 13:27:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 259E960EE9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mDIcM-0000XR-7M; Tue, 10 Aug 2021 03:39:54 +0000
+	id 1mDRmv-0001dh-1T; Tue, 10 Aug 2021 13:27:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <changfengnan@vivo.com>) id 1mDIcL-0000XD-0a
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Aug 2021 03:39:53 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <frank.li@vivo.com>) id 1mDRmt-0001da-4Z
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Aug 2021 13:27:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Vs66zIX2NEGJUFZfdxqtw8Q2lnuIh1g16dRyXRF9Res=; b=gQiZ1NhsODqNcMAWd6dki0pbq4
- nH33Fqz2/cDbxCwRKVhSXj1qwJslKs1xXY/pZUNUWJVjEJenzHfTC92JIBl+OXqyzGLlemMUyTfJU
- oAmYiGadFNtCKiYjJo46iOwPiWLOl55AigwwQESPgUrnG2Ju5bIxMmR9wqRsL48f19NM=;
+ bh=J+sGIWiJ7PrDzidKXQLS/ZdG3/x0WxOb9Y8Pl/Qp+V8=; b=Lc9A/7zYjytW0K168gs+//Ubo/
+ 83B89V/E+Ropzx5WRIyW3gU+1kjsgw3HBkDT5M8bByYr/SL8d+GsMNF2Dd56G2z1zKo+WuuRu3YYz
+ lkXkwnoCNiiF5Lvgy8d6q1p73WnZLQUql3Iz8MKBLGP+EpwjsTlVG6MFkO9hf2azjkGY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Vs66zIX2NEGJUFZfdxqtw8Q2lnuIh1g16dRyXRF9Res=; b=G
- ho9sgnj1uU55j1UFQnQvWWLeC4RFZ53sevkDhJAto2TNwgiqE76EX6iXculFtYdY5gRgiCFKDax0H
- HE0rpR9LzED5m2nzh0mfa+4xan+tIFaCrx21uMQyhvXQS64HLEKLgqXAwLAGo73pkVSoTpc8XO7Fg
- JrMHXBI6pXV1C/2I=;
-Received: from mail-m17654.qiye.163.com ([59.111.176.54])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=J+sGIWiJ7PrDzidKXQLS/ZdG3/x0WxOb9Y8Pl/Qp+V8=; b=CjKjfAb83EJ7tGqlC9q7PlRmt3
+ XdRpEQ9qQGku8GAr07k0o/UqFQwuh7DvDFWvLxyLLVgqbOgGVY0ZZHfIjwB7/6HrfCwJwfPzyGgg1
+ e38RaIHU5Tsxew6mTyvvzA38pH+qA91wSEyKAuFMTs3AXwafDw3aO5C1VKJtjEBYKP84=;
+Received: from mail-m17636.qiye.163.com ([59.111.176.36])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mDIcC-0008II-6b
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Aug 2021 03:39:52 +0000
-Received: from comdg01144017.vivo.xyz (unknown [218.104.188.164])
- by mail-m17654.qiye.163.com (Hmail) with ESMTPA id 73933201AE;
- Tue, 10 Aug 2021 11:39:36 +0800 (CST)
-From: Fengnan Chang <changfengnan@vivo.com>
-To: jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Date: Tue, 10 Aug 2021 11:39:34 +0800
-Message-Id: <20210810033934.123709-1-changfengnan@vivo.com>
+ id 1mDRmq-001tpd-TE
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 10 Aug 2021 13:27:22 +0000
+Received: from comdg01144022.vivo.xyz (unknown [218.104.188.165])
+ by mail-m17636.qiye.163.com (Hmail) with ESMTPA id 8E48BC401B8;
+ Tue, 10 Aug 2021 21:27:13 +0800 (CST)
+From: Yangtao Li <frank.li@vivo.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Tue, 10 Aug 2021 21:27:07 +0800
+Message-Id: <20210810132707.349147-2-frank.li@vivo.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210810132707.349147-1-frank.li@vivo.com>
+References: <20210810132707.349147-1-frank.li@vivo.com>
 MIME-Version: 1.0
 X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
- kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRkYGE5WGEJLTkgZHhhIGE
- xLVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkNVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PFE6Tio4LD9DCy5JHxQZTxoY
- QgkKFAtVSlVKTUlDTk1NTExMS09KVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
- WUlKQ1VKS09VSkNDVUpNT1lXWQgBWUFISEJONwY+
-X-HM-Tid: 0a7b2e24eb22d9fdkuws73933201ae
-X-Headers-End: 1mDIcC-0008II-6b
-Subject: [f2fs-dev] [PATCH] f2fs: compress: avoid duplicate counting of
- valid blocks when read compressed file
+ kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRlCQ01WGUgYSR4eTx9NSE
+ pMVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkNVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NTI6Fgw*ET9MKSwhOhU8HhQf
+ FT5PCRlVSlVKTUlDTUtJS0hPSk9JVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
+ VUpLT1VKQ0NVSk1OWVdZCAFZQUlCTkI3Bg++
+X-HM-Tid: 0a7b303ee63ed996kuws8e48bc401b8
+X-Headers-End: 1mDRmq-001tpd-TE
+Subject: [f2fs-dev] [PATCH] f2fs: improve sbi status info in
+ debugfs/f2fs/status
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,84 +83,69 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Fengnan Chang <changfengnan@vivo.com>
+Cc: Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Since cluster is basic unit of compression, one cluster is compressed or
-not, so we can calculate valid blocks only for first page in cluster,
-the other pages just skip.
+Do not use numbers but strings to improve readability.
 
-Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
- fs/f2fs/compress.c |  1 +
- fs/f2fs/data.c     | 19 ++++++++++++++-----
- fs/f2fs/f2fs.h     |  1 +
- 3 files changed, 16 insertions(+), 5 deletions(-)
+ fs/f2fs/debug.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 7dbfd6965b97..71768f15752a 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -152,6 +152,7 @@ void f2fs_destroy_compress_ctx(struct compress_ctx *cc, bool reuse)
- 	cc->rpages = NULL;
- 	cc->nr_rpages = 0;
- 	cc->nr_cpages = 0;
-+	cc->nc_cluster_idx = NULL_CLUSTER;
- 	if (!reuse)
- 		cc->cluster_idx = NULL_CLUSTER;
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 473ad04d1891..91c0910b0bb7 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -323,22 +323,40 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
+ #endif
  }
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index df5e8d8c654e..bc5c0d94a6fa 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2294,6 +2294,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
- 		.log_cluster_size = F2FS_I(inode)->i_log_cluster_size,
- 		.cluster_size = F2FS_I(inode)->i_cluster_size,
- 		.cluster_idx = NULL_CLUSTER,
-+		.nc_cluster_idx = NULL_CLUSTER,
- 		.rpages = NULL,
- 		.cpages = NULL,
- 		.nr_rpages = 0,
-@@ -2331,12 +2332,20 @@ static int f2fs_mpage_readpages(struct inode *inode,
- 				if (ret)
- 					goto set_error_page;
- 			}
--			ret = f2fs_is_compressed_cluster(inode, page->index);
--			if (ret < 0)
--				goto set_error_page;
--			else if (!ret)
--				goto read_single_page;
-+			if (cc.cluster_idx == NULL_CLUSTER) {
-+				if (cc.nc_cluster_idx != NULL_CLUSTER)
-+					goto read_single_page;
  
-+				ret = f2fs_is_compressed_cluster(inode, page->index);
-+				if (ret < 0)
-+					goto set_error_page;
-+				else if (!ret) {
-+					cc.nc_cluster_idx = page->index >> cc.log_cluster_size;
-+					goto read_single_page;
-+				}
++static char *s_flag[] = {
++	[SBI_IS_DIRTY]		= " dirty",
++	[SBI_IS_CLOSE]		= " close",
++	[SBI_NEED_FSCK]		= " fsck",
++	[SBI_POR_DOING]		= " doing",
++	[SBI_NEED_SB_WRITE]	= " sb_write",
++	[SBI_NEED_CP]		= " cp",
++	[SBI_IS_SHUTDOWN]	= " shutdown",
++	[SBI_IS_RECOVERED]	= " recovered",
++	[SBI_CP_DISABLED]	= " cp_disabled",
++	[SBI_CP_DISABLED_QUICK]	= " cp_disabled_quick",
++	[SBI_QUOTA_NEED_FLUSH]	= " quota_need_flush",
++	[SBI_QUOTA_SKIP_FLUSH]	= " quota_skip_flush",
++	[SBI_QUOTA_NEED_REPAIR]	= " quota_need_repair",
++	[SBI_IS_RESIZEFS]	= " resizefs",
++};
 +
-+				cc.nc_cluster_idx = NULL_CLUSTER;
-+			}
- 			ret = f2fs_init_compress_ctx(&cc);
- 			if (ret)
- 				goto set_error_page;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e97b4d8c5efc..e9b6890a3f19 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1471,6 +1471,7 @@ struct compress_data {
- struct compress_ctx {
- 	struct inode *inode;		/* inode the context belong to */
- 	pgoff_t cluster_idx;		/* cluster index number */
-+	pgoff_t nc_cluster_idx;		/* cluster index number for non-compressed cluster use*/
- 	unsigned int cluster_size;	/* page count in cluster */
- 	unsigned int log_cluster_size;	/* log of cluster size */
- 	struct page **rpages;		/* pages store raw data in cluster */
+ static int stat_show(struct seq_file *s, void *v)
+ {
+ 	struct f2fs_stat_info *si;
+-	int i = 0;
+-	int j;
++	int i = 0, j = 0;
+ 
+ 	mutex_lock(&f2fs_stat_mutex);
+ 	list_for_each_entry(si, &f2fs_stat_list, stat_list) {
+ 		update_general_status(si->sbi);
+ 
+-		seq_printf(s, "\n=====[ partition info(%pg). #%d, %s, CP: %s (sbi: 0x%lx)]=====\n",
++		seq_printf(s, "\n=====[ partition info(%pg). #%d, %s, CP: %s (sbi:",
+ 			si->sbi->sb->s_bdev, i++,
+ 			f2fs_readonly(si->sbi->sb) ? "RO": "RW",
+ 			is_set_ckpt_flags(si->sbi, CP_DISABLED_FLAG) ?
+-			"Disabled": (f2fs_cp_error(si->sbi) ? "Error": "Good"),
+-			si->sbi->s_flag);
++			"Disabled" : (f2fs_cp_error(si->sbi) ? "Error" : "Good"));
++		for_each_set_bit(j, &si->sbi->s_flag, 32)
++			seq_puts(s, s_flag[j]);
++		seq_puts(s, ") ]=====\n");
+ 		seq_printf(s, "[SB: 1] [CP: 2] [SIT: %d] [NAT: %d] ",
+ 			   si->sit_area_segs, si->nat_area_segs);
+ 		seq_printf(s, "[SSA: %d] [MAIN: %d",
 -- 
 2.32.0
 
