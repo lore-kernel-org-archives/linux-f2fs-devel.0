@@ -2,77 +2,100 @@ Return-Path: <SRS0=Klf2=NC=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA35C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Aug 2021 03:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA58FC432BE
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Aug 2021 03:37:28 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CA82D60EB7
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Aug 2021 03:29:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org CA82D60EB7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
+	by mail.kernel.org (Postfix) with ESMTPS id 9E0A860F13;
+	Wed, 11 Aug 2021 03:37:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 9E0A860F13
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mDevY-0005ZI-Lb; Wed, 11 Aug 2021 03:29:12 +0000
+	id 1mDf3X-0005tb-EF; Wed, 11 Aug 2021 03:37:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bo.wu@vivo.com>) id 1mDevW-0005ZB-O2
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 03:29:10 +0000
+ (envelope-from <prvs=850e59ff9=damien.lemoal@wdc.com>)
+ id 1mDf3V-0005tJ-38
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 03:37:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=h6eT7zjAyvfxGWJLaWVfFewxb2qLTbMrNEf3kj8Ej3c=; b=byhjViw0llqMdjraXl3ll2zjL5
- 2sFueZx3xw2O5ko5RB98HwRhUtzcMP5O87lgXNHI8VS4WyoKnfzSk/I+5oOpEY5VbcnOa8S4vaYvg
- bkTFmlng1AO8jRi0l7LbCUzDGSlwGvAtGAZJOOlWIfeJZbu9APer+SvpgOcTKnw8T+k4=;
+ bh=yC7bB7BpUSHJNPnn9f86hpeEGfs6W8RAQZin4kvixzA=; b=bPGr0L+RrdRbg7twArdHNKzor9
+ jqJM/1ExlNYW2pkJwg9kuGNKa3dKY/r9IcojCQp90s0UxAxWEuoLrjlzuYXTeVWSZBupEXBgKoYLx
+ cKMSF4Gh0HPXPZV8DVPtOiPwvhfTQONzdi2I7Ha37xoIEjj1uNmMA+2ZPW007wtazLh4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=h6eT7zjAyvfxGWJLaWVfFewxb2qLTbMrNEf3kj8Ej3c=; b=RmqLhdIc/GDSHn6uuY4foM2cXs
- BndRpdmETp/GbbtMaydi9fA5jiKQjwK4p7OnC/0+SDXL2vn4A0uA1q+CvX+P0oVDmFRpd/CfKgfO6
- KQ7qR7cnQGYghyQ3To5g+9yLhx6xE5/6yLGwckZ7J5W4MjppnEY6/WYGn55NCkAAoveA=;
-Received: from mail-m17656.qiye.163.com ([59.111.176.56])
+ bh=yC7bB7BpUSHJNPnn9f86hpeEGfs6W8RAQZin4kvixzA=; b=E3X0zgIuw4S8233cDjOnqqi6vv
+ CO1QvNDBPHKZXb5mNXLWxJh3cVi7n76bD8hI04BDPR2Yv26M+eHs4G0U8w7uw7iJXfOWylV9pxr19
+ tEh+5ZEZasdFnQmImjePzqYzz9htZNBzcCYWH4lkt+wR9T0x2Jy25XeRq9Q+1+UjyNjw=;
+Received: from esa5.hgst.iphmx.com ([216.71.153.144])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mDevR-0002EW-Dh
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 03:29:10 +0000
-Received: from [172.25.45.51] (unknown [58.251.74.232])
- by mail-m17656.qiye.163.com (Hmail) with ESMTPA id C2186C40260;
- Wed, 11 Aug 2021 11:28:57 +0800 (CST)
-To: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <5b68208b-fd94-bf4e-fc4b-d79d13abf1c6@vivo.com>
- <6519b8b7-1eb0-f286-7593-5c5ebbfb5554@kernel.org>
-From: Wu Bo <bo.wu@vivo.com>
-Message-ID: <86e53ee7-13b5-5e8e-7c81-acb1736ebc8b@vivo.com>
-Date: Wed, 11 Aug 2021 11:28:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+ id 1mDf3Q-0002eF-Qd
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 03:37:25 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+ d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+ t=1628653040; x=1660189040;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=RGO3k7Im0/zmf/Hv3HDGjqGVpHrOQ5t3E9jTrtJYPo4=;
+ b=O+0nszcFgXa7cnu6Ne59QVp7R/li99XpbubKISDk67anFDVQxI8l451t
+ Ob/ZNTNY2thwIu5JsFMMzezUCOuDFPrr6NXbMYuokixy0MpnwBp1EJrRi
+ SUAehpiRh5ftZP2ubAU5NT9v1AgO7TOIGAqwf+5KjBA0aRTEuD8MJOo81
+ uboElpICrIa1NA3ryleb+eBGchHjSx3LAIvZ5GENGAbGX13RfeNPpzbfa
+ LzQxURdXxS7uGLitwRszoma9d51QjSQJVMx2xctpRYgpKubz16tVrGlL9
+ Gv2jT4Mgq3dUV2CzUfys7tp2/riH+wTJV9bJwP2a349vqZAbr7m6BXmgz A==;
+X-IronPort-AV: E=Sophos;i="5.84,311,1620662400"; d="scan'208";a="176890894"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com)
+ ([199.255.45.15])
+ by ob1.hgst.iphmx.com with ESMTP; 11 Aug 2021 11:37:05 +0800
+IronPort-SDR: G8up3OxKegNSuHk34l54xQGNqlWs7U2BdPITeFT7JhoAAOxtnABgh2y07OR+D6gPvOYggeSAHd
+ 7BbiotCuhamL2A2bNo7onDI/LyW6qPOK9yiq5LfA5tntLXt2/YMzQCWk8qb2phf8pggMcp/8gU
+ 9H/aERpD2hLgI1Huh/h7CfSyQnz6SWzsrkCRLpQZKzqc9Qfkk6uEPPvzCzw2+brwYd7m8sJZ4J
+ J0viUx+h32dl01W2CSIoeTQLJEZRndcdnm4lyxD1SIz+BjX6PLRd01t6gUGWFSRLc/9Twzi9jH
+ +xbMeNRfpfGv74gP9mz56VFi
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+ by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Aug 2021 20:12:36 -0700
+IronPort-SDR: trfAXxLIff8ymscFRb/l6NN/HkytkwfYfAw417EtaTEXyemhSBWjvjNC8ki0XCnK4sIwPxfn7k
+ Abmk4qG4Py4oSPrzhMTJ8hjxLYp18VB//UY4PolxdCzCaNGkpt5x1ayHXZak3TPz+dMw3tQ3zh
+ 0xPwojW92rU0BS4DXETNoZJT7r4e2GQmj6Pn+06g8VMiSUCVNotZJjyXMX+kOZZUKPFr0OOVL2
+ /e+b2/phSfkkHuzahvspJ7SV5uk+P9t3GLtkD3uT6gwqMLwRGrveyJuwzidx1JUrm6q3UVWdAU
+ QwQ=
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+ by uls-op-cesaip02.wdc.com with ESMTP; 10 Aug 2021 20:37:05 -0700
+From: Damien Le Moal <damien.lemoal@wdc.com>
+To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ Paolo Valente <paolo.valente@linaro.org>,
+ linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Chao Yu <yuchao0@huawei.com>
+Date: Wed, 11 Aug 2021 12:36:57 +0900
+Message-Id: <20210811033702.368488-2-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210811033702.368488-1-damien.lemoal@wdc.com>
+References: <20210811033702.368488-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <6519b8b7-1eb0-f286-7593-5c5ebbfb5554@kernel.org>
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
- kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRpKGk1WT05DGkkdTx5LHU
- MYVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktITUpVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NBQ6Sww5FT9NTCMQEhYxQwgc
- NB0KCUtVSlVKTUlDTU5JTkhDSUJIVTMWGhIXVRkUVQwOOw0SDRRVGBQWRVlXWRILWUFZTkNVSU5K
- VUxPVUlISVlXWQgBWUFITEtCNwY+
-X-HM-Tid: 0a7b33418820da02kuwsc2186c40260
-X-Headers-End: 1mDevR-0002EW-Dh
-Subject: Re: [f2fs-dev] f2fs do DIO write make file corruption
+X-Headers-End: 1mDf3Q-0002eF-Qd
+Subject: [f2fs-dev] [PATCH v4 1/6] block: bfq: fix bfq_set_next_ioprio_data()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,53 +107,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-CuWcqCAyMDIxLzgvMTEgMTE6MDMsIENoYW8gWXUg5YaZ6YGTOgo+IE9uIDIwMjEvOC8xMSAxMDo0
-OCwgV3UgQm8gd3JvdGU6Cj4+IEkgdXNlIHRoZSBmb2xsb3dpbmcgY29tbWFuZCB0byBjcmVhdGUg
-YSBmaWxlLCB0aGUgZmlsZSBtYXkgZ290IAo+PiBjb3JydXB0aW9uOgo+PiDCoMKgwqDCoGYyZnNf
-aW8gd3JpdGUgMiAwIDUxMiBpbmNfbnVtIGRpbyAkcGF0aAo+Pgo+PiBBbmQgd2hlbiBJIHVzZSBi
-aW8gb3IgdG8gc2V0IHRoZSBjaHVuayBzaXplIHRvIDEgYmxvY2ssIHRoZSBmaWxlIGlzCj4+IG5v
-cm1hbC4gVGhlIGNvbW1hbmRzIGFzIGZvbGxvd2luZzoKPj4gwqDCoMKgwqBmMmZzX2lvIHdyaXRl
-IDIgMCA1MTIgaW5jX251bSBidWZmZXJlZCAkcGF0aAo+PiDCoMKgwqDCoGYyZnNfaW8gd3JpdGUg
-MSAwIDUxMiBpbmNfbnVtIGRpbyAkcGF0aAo+Pgo+PiBJIGZpbmQgdGhpcyBidWcgb24gb2xkIGtl
-cm5lbCB2ZXJzaW9uIDQuMTQuMTE3LCBhbmQgbm90IGZpbmQgb24gdmVyc2lvbgo+PiA0LjE5LjE1
-Mi4gU28gdGhpcyBidWcgaXMgZml4ZWQuIENhbiBhbnlvbmUgY2FuIHRlbGwgbWUgd2hpY2ggcGF0
-Y2ggZml4ZWQKPj4gdGhpcyBidWc/Cj4gCj4gTm90IHN1cmUsCj4gCj4gaHR0cHM6Ly9naXQua2Vy
-bmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvc3RhYmxlL2xpbnV4LmdpdC9jb21taXQv
-P2g9bGludXgtNC4xOS55JmlkPTdiYWU4YjZiNzNlNDZjMzA3ZmEzNTVjZTA4NjgwMGI3YWQ2NjEw
-ZjggCj4gCgpUaGlzIHBhdGNoIGlzIGFwcGxpZWQuIFRoZSBpc3N1ZSBvY2N1cnMgd2hlbiBmMmZz
-IGRpbyB0cnkgdG8gcHJlYWxsb2NhdGUgCm11bHRpcGxlIGJsb2NrcyBhbmQgZ290IHNjYXR0ZXJl
-ZCBkaXNrIGJsb2Nrcy4gVGhlIGxvZyBhcyBmb2xsb3dpbmc6CiAgICAgICBteV9mMmZzX2lvLTEz
-NDI1IFswMDJdIC4uLi4gICAzOTUuNTgzNjM3OiBlbDBfaXJxX25ha2VkOiAKMTp0eXBlOjEsaW5v
-OjQwMTMyLG9mZjo3Njgsb2xkX2JsazowLG5ld19ibGs6MTg1NzY0CiAgICAgICBteV9mMmZzX2lv
-LTEzNDI1IFswMDJdIC4uLi4gICAzOTUuNTgzNzEwOiBlbDBfaXJxX25ha2VkOiAKMTp0eXBlOjEs
-aW5vOjQwMTMyLG9mZjo3Njksb2xkX2JsazowLG5ld19ibGs6MjA1ODI0CiAgICAgICBteV9mMmZz
-X2lvLTEzNDI1IFswMDJdIC4uLi4gICAzOTUuNTgzNzIxOiBmMmZzX21hcF9ibG9ja3M6IGRldiA9
-IAooMjU5LDIzKSwgaW5vID0gNDAxMzIsIGZpbGUgb2Zmc2V0ID0gNzY4LCBzdGFydCBibGthZGRy
-ID0gMHgyZDVhNCwgbGVuID0gCjB4MiwgZXJyID0gMAogICAgICAgbXlfZjJmc19pby0xMzQyNSBb
-MDAyXSAuLi4uICAgMzk1LjU4MzczNTogZjJmc19tYXBfYmxvY2tzOiBkZXYgPSAKKDI1OSwyMyks
-IGlubyA9IDQwMTMyLCBmaWxlIG9mZnNldCA9IDc2OCwgc3RhcnQgYmxrYWRkciA9IDB4MmQ1YTQs
-IGxlbiA9IAoweDEsIGVyciA9IDAKICAgICAgIG15X2YyZnNfaW8tMTM0MjUgWzAwMl0gLi4uLiAg
-IDM5NS41ODM3NDE6IGYyZnNfbWFwX2Jsb2NrczogZGV2ID0gCigyNTksMjMpLCBpbm8gPSA0MDEz
-MiwgZmlsZSBvZmZzZXQgPSA3NjksIHN0YXJ0IGJsa2FkZHIgPSAweDMyNDAwLCBsZW4gPSAKMHgx
-LCBlcnIgPSAwCgpBbmQgaWYgdGhlIGJsb2NrcyBhcmUgY29udGludW91c2x5LCB0aGUgZmlsZSBk
-YXRhIGlzIG5vcm1hbDoKCSAgbXlfZjJmc19pby0xMzQyNSBbMDAyXSAuLi4uICAgMzk1LjU4NDAz
-NzogZWwwX2lycV9uYWtlZDogCjE6dHlwZToxLGlubzo0MDEzMixvZmY6NzcwLG9sZF9ibGs6MCxu
-ZXdfYmxrOjIwNTgyNQogICAgICAgbXlfZjJmc19pby0xMzQyNSBbMDAyXSAuLi4uICAgMzk1LjU4
-NDA2NjogZWwwX2lycV9uYWtlZDogCjE6dHlwZToxLGlubzo0MDEzMixvZmY6NzcxLG9sZF9ibGs6
-MCxuZXdfYmxrOjIwNTgyNgogICAgICAgbXlfZjJmc19pby0xMzQyNSBbMDAyXSAuLi4uICAgMzk1
-LjU4NDA3NzogZjJmc19tYXBfYmxvY2tzOiBkZXYgPSAKKDI1OSwyMyksIGlubyA9IDQwMTMyLCBm
-aWxlIG9mZnNldCA9IDc3MCwgc3RhcnQgYmxrYWRkciA9IDB4MzI0MDEsIGxlbiA9IAoweDIsIGVy
-ciA9IDAKICAgICAgIG15X2YyZnNfaW8tMTM0MjUgWzAwMl0gLi4uLiAgIDM5NS41ODQwOTE6IGYy
-ZnNfbWFwX2Jsb2NrczogZGV2ID0gCigyNTksMjMpLCBpbm8gPSA0MDEzMiwgZmlsZSBvZmZzZXQg
-PSA3NzAsIHN0YXJ0IGJsa2FkZHIgPSAweDMyNDAxLCBsZW4gPSAKMHgyLCBlcnIgPSAwCgo+IAo+
-IFRoYW5rcywKPiAKPj4KPj4KPj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KPj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPj4gTGludXgtZjJm
-cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3Jn
-ZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo+Pgo+IAoKCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFp
-bGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8v
-bGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+For a request that has a priority level equal to or larger than
+IOPRIO_BE_NR, bfq_set_next_ioprio_data() prints a critical warning but
+defaults to setting the request new_ioprio field to IOPRIO_BE_NR. This
+is not consistent with the warning and the allowed values for priority
+levels. Fix this by setting the request new_ioprio field to
+IOPRIO_BE_NR - 1, the lowest priority level allowed.
+
+Cc: <stable@vger.kernel.org>
+Fixes: aee69d78dec0 ("block, bfq: introduce the BFQ-v0 I/O scheduler as an extra scheduler")
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+---
+ block/bfq-iosched.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index e4a61eda2d0f..e546a5f4bff9 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -5296,7 +5296,7 @@ bfq_set_next_ioprio_data(struct bfq_queue *bfqq, struct bfq_io_cq *bic)
+ 	if (bfqq->new_ioprio >= IOPRIO_BE_NR) {
+ 		pr_crit("bfq_set_next_ioprio_data: new_ioprio %d\n",
+ 			bfqq->new_ioprio);
+-		bfqq->new_ioprio = IOPRIO_BE_NR;
++		bfqq->new_ioprio = IOPRIO_BE_NR - 1;
+ 	}
+ 
+ 	bfqq->entity.new_weight = bfq_ioprio_to_weight(bfqq->new_ioprio);
+-- 
+2.31.1
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
