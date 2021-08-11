@@ -2,80 +2,74 @@ Return-Path: <SRS0=Klf2=NC=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DCDC4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Aug 2021 13:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0ABC4320A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Aug 2021 13:18:46 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 9648060FC0;
-	Wed, 11 Aug 2021 13:11:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 9648060FC0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 642DA610A2
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Aug 2021 13:18:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 642DA610A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mDo1D-0003yK-Cx; Wed, 11 Aug 2021 13:11:39 +0000
+	id 1mDo85-0004if-Sl; Wed, 11 Aug 2021 13:18:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1mDo1B-0003y5-TY
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 13:11:37 +0000
+ (envelope-from <frank.li@vivo.com>) id 1mDo84-0004iQ-7C
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 13:18:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Bv9tnqWEKXDM36RjsKhahEPRYyUpz7d0v2lTmJkm3Ak=; b=KZJ7o3jnTzzTdGbyMQGRbkfvjY
- StgJboLcULWCzr+4/qTL9/RTafqQiyZcTrqfxrnVyEsdaxpwvbEks0mOiho4JspGV4P5moDhJCQUf
- NBnDo/S/5YysmAGPwXpPiWPp8+bo8cn2uqlIcf6WdYX59gw+6Minl5cEhqEgh21n4sa8=;
+ bh=h2e8XZqa5YXI0doeDN9YIxWMLluf9SK2ARCVm4ObNW0=; b=aUWyVo9uMO0J4RBs1SBB1reLtQ
+ 1u299AX2MRIboWyzG0tdZCGy3uMS8qXeEV68fa3DK/xoTyL/6LQ1PohSlSoLtwxwt0HUKNF7TshFi
+ EuJxl1oxhZ+uCSU7kOMk5XPWYSdcXzPmISQSgu45DXFGfJT82110Ilyetz0Pt56FSgnc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=Bv9tnqWEKXDM36RjsKhahEPRYyUpz7d0v2lTmJkm3Ak=; b=mQLX1QKNDt+ssrak4GIMZv0L1w
- lowT3tV8SrgX6FnyYlQk/E6gd9C3qDAau+SYLTaI0K3NdhWOHzev71GJdp1W18fw5fPkRkWqVYmpZ
- NilADmXmEkV3eCavtg7170HbaW8hAD8+kZ+wB4zZjJVjnf6v6iGgJ3K/3+43vcKZRxCs=;
-Received: from mail.kernel.org ([198.145.29.99])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=h2e8XZqa5YXI0doeDN9YIxWMLluf9SK2ARCVm4ObNW0=; b=U
+ SJWcYjD4XaM9Io5dnpMDCafHz//SqNzgbNbNj6FA0Ky7Ie5nBx3rm98CRyLB7V33CLjsuNTWcPACq
+ XKTTh/5BlxF8xOR2D/5bbd6xeP7j60MN9CR0lFDgIpWuCGcE6r/dX/OH2nd6bgzx1qZNSEPvJD0sh
+ Lv1SYffZ7Qk0MojY=;
+Received: from mail-m17636.qiye.163.com ([59.111.176.36])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mDo18-000678-HN
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 13:11:37 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 53F3E60FC0;
- Wed, 11 Aug 2021 13:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1628687489;
- bh=arErSeTxKFOKmwmjY+5nHKiAkbqWd/NLbxTkOpTguIc=;
- h=Subject:To:References:From:Date:In-Reply-To:From;
- b=K/olm6rL23rLY0KTbOPjD9jNPmkoKdXzchCdaLg0gizmhfJIrae7ttIUbDldKjiZK
- spxeyqVtU8lALgGTwFYj0gYgDy0b2NV+3MbZvIs0ybMmrRxsGVPVUyprUV5xLduNFg
- T8gx8L3OTyIHoNgoblRX7xPNOkSO9awieSHUBWfcvvvJPj6R79TBnEo0bQjh9PP9PF
- rEmPN2w63p1l7A0SKy9vN3w2BYzIw6YQnH9kvdhBV6miFMNj1uorTaD2T8XyvjwVOi
- VQf6/GBb2QoKOUkb/8YLu26SvRCpBEXEubDDqTVMwq3NzjWHo/11MOht951q7E0uMe
- L6xk1HtpVgXLw==
-To: Fengnan Chang <changfengnan@vivo.com>, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20210811084004.3664-1-changfengnan@vivo.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <05eb345f-96cf-51ee-24cb-335f8d0e6a27@kernel.org>
-Date: Wed, 11 Aug 2021 21:11:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+ id 1mDo80-0006Pu-4U
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 13:18:44 +0000
+Received: from comdg01144022.vivo.xyz (unknown [218.104.188.165])
+ by mail-m17636.qiye.163.com (Hmail) with ESMTPA id A7411C40091;
+ Wed, 11 Aug 2021 21:18:31 +0800 (CST)
+From: Yangtao Li <frank.li@vivo.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Wed, 11 Aug 2021 21:18:25 +0800
+Message-Id: <20210811131826.223141-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210811084004.3664-1-changfengnan@vivo.com>
-Content-Language: en-US
-X-Headers-End: 1mDo18-000678-HN
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: compress: avoid duplicate counting
- of valid blocks when read compressed file
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
+ kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRkeHk5WQk9CGk5MHUsfSU
+ JDVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkNVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MQg6AQw*Qj9KHyIyPCw6IT8f
+ VjAaFChVSlVKTUlDTUNMQkpJSU5JVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
+ VUpLT1VKQ0NVSk1OWVdZCAFZQUpOQk83Bg++
+X-HM-Tid: 0a7b355d4b98d996kuwsa7411c40091
+X-Headers-End: 1mDo80-0006Pu-4U
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: fix potential memory leaks in
+ create_discard_cmd_control
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,104 +81,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/8/11 16:40, Fengnan Chang wrote:
-> Since cluster is basic unit of compression, one cluster is compressed or
-> not, so we can calculate valid blocks only for first page in cluster,
-> the other pages just skip.
-> 
-> Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
-> ---
->   fs/f2fs/compress.c |  1 +
->   fs/f2fs/data.c     | 21 ++++++++++++++++-----
->   fs/f2fs/f2fs.h     |  1 +
->   3 files changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index 7dbfd6965b97..71768f15752a 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -152,6 +152,7 @@ void f2fs_destroy_compress_ctx(struct compress_ctx *cc, bool reuse)
->   	cc->rpages = NULL;
->   	cc->nr_rpages = 0;
->   	cc->nr_cpages = 0;
-> +	cc->nc_cluster_idx = NULL_CLUSTER;
->   	if (!reuse)
->   		cc->cluster_idx = NULL_CLUSTER;
->   }
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index df5e8d8c654e..3ee1a88d8400 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2294,6 +2294,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
->   		.log_cluster_size = F2FS_I(inode)->i_log_cluster_size,
->   		.cluster_size = F2FS_I(inode)->i_cluster_size,
->   		.cluster_idx = NULL_CLUSTER,
-> +		.nc_cluster_idx = NULL_CLUSTER,
->   		.rpages = NULL,
->   		.cpages = NULL,
->   		.nr_rpages = 0,
+Release f2fs_issue_discard every time it is destroyed,
+otherwise it will cause memory leaks when remounting.
 
-pgoff_t nc_cluster_idx = NULL_CLUSTER;
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ fs/f2fs/segment.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> @@ -2331,12 +2332,22 @@ static int f2fs_mpage_readpages(struct inode *inode,
->   				if (ret)
->   					goto set_error_page;
->   			}
-> -			ret = f2fs_is_compressed_cluster(inode, page->index);
-> -			if (ret < 0)
-> -				goto set_error_page;
-> -			else if (!ret)
-> -				goto read_single_page;
-> +			if (cc.cluster_idx == NULL_CLUSTER) {
-> +				if (cc.nc_cluster_idx != NULL_CLUSTER &&
-> +					cc.nc_cluster_idx == page->index >> cc.log_cluster_size) {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index afe20c5c3c08..363779a4402d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1741,6 +1741,7 @@ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi)
+ 
+ 		dcc->f2fs_issue_discard = NULL;
+ 		kthread_stop(discard_thread);
++		put_task_struct(discard_thread);
+ 	}
+ }
+ 
+@@ -2168,6 +2169,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+ 		SM_I(sbi)->dcc_info = NULL;
+ 		return err;
+ 	}
++	get_task_struct(dcc->f2fs_issue_discard);
+ 
+ 	return err;
+ }
+-- 
+2.32.0
 
-				 if (nc_cluster_idx ==
-					page->index >> cc.log_cluster_size)
-
-> +					goto read_single_page;
-> +				}
-> +
-> +				ret = f2fs_is_compressed_cluster(inode, page->index);
-> +				if (ret < 0)
-> +					goto set_error_page;
-> +				else if (!ret) {
-> +					cc.nc_cluster_idx = page->index >> cc.log_cluster_size;
-
-					nc_cluster_idx =
-						page->index >> cc.log_cluster_size;
-
-> +					goto read_single_page;
-> +				}
->   
-> +				cc.nc_cluster_idx = NULL_CLUSTER;
-> +			}
->   			ret = f2fs_init_compress_ctx(&cc);
->   			if (ret)
->   				goto set_error_page;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index e97b4d8c5efc..e9b6890a3f19 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1471,6 +1471,7 @@ struct compress_data {
->   struct compress_ctx {
->   	struct inode *inode;		/* inode the context belong to */
->   	pgoff_t cluster_idx;		/* cluster index number */
-> +	pgoff_t nc_cluster_idx;		/* cluster index number for non-compressed cluster use*/
-
-We only use this field in read flow, please add a local variable to record
-last cluster index number of non-compressed cluster.
-
-Thanks,
-
->   	unsigned int cluster_size;	/* page count in cluster */
->   	unsigned int log_cluster_size;	/* log of cluster size */
->   	struct page **rpages;		/* pages store raw data in cluster */
-> 
 
 
 _______________________________________________
