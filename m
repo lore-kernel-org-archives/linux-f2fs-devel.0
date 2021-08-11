@@ -2,98 +2,101 @@ Return-Path: <SRS0=Klf2=NC=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF517C4320A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Aug 2021 03:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9453BC432BE
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Aug 2021 03:47:03 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 851FF60F22;
-	Wed, 11 Aug 2021 03:47:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 851FF60F22
+	by mail.kernel.org (Postfix) with ESMTPS id 5394F60F11;
+	Wed, 11 Aug 2021 03:47:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 5394F60F11
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mDfCo-0003wm-6U; Wed, 11 Aug 2021 03:47:02 +0000
+	id 1mDfCo-0003wy-C0; Wed, 11 Aug 2021 03:47:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
  (envelope-from <prvs=850e59ff9=damien.lemoal@wdc.com>)
- id 1mDf3Q-0003g2-QW
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 03:37:20 +0000
+ id 1mDf3Z-0003gL-7n
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 03:37:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iO2KLmW0AKdZBbf0VK15dXKGD5RQUMXf+w2bYuc++yU=; b=KN+D2CnN3tpQlbS49PYJKJJapy
- ltpNjZ/jrAkTaB7VDqP/hYAjcM1v8eE8972J9Nq84WMNeVG3MEl8jKolVURoov0mV16I3/7oP4NzM
- ikwSUBZSEV3p8+L8htzvw1iFmKp0mKFzMHQEchKEawNlm5bf/ongxzGmAQ80AMvywWB4=;
+ bh=caXEA/43AjbF0F+aUEF/TSnhWu1AbSP+C6PXyEJmuVw=; b=lRwF9vPTAceytFKu7gAtTMGCpZ
+ ljkOYqmSLfcNImm2z9CT1IzXvb7Jpn7rYoRZt1gB9Tmswrpimu9HwaeZhUXax9XgaeCwvBJxgZftk
+ OZDIXMZBd7Tt6HUTWV7nUZh2i7PfvkRuU7h54h5lIsQ8bE0fq7ORoEyhnz4dQkXsvGgc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:To:From:
- Sender:Reply-To:Cc:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=iO2KLmW0AKdZBbf0VK15dXKGD5RQUMXf+w2bYuc++yU=; b=n
- QfOuUughzlGKSlRoeTShHuYz3Yge47QqFqEdC5GqMnu04KO0Pgk2fJqIfQeNEqRoI1Z1L8ZFEd5Vu
- s+3cpUpYsQGMnAX9aXLEz089UsrYY0nzgIktkaxN9CuDJEUTmQ8W3x7faikop8h0umeRvKwLHjpCB
- +u0BYMs++uuTQtAs=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=caXEA/43AjbF0F+aUEF/TSnhWu1AbSP+C6PXyEJmuVw=; b=BnRMMGFHOVggbuTaPfxX9u1EVr
+ 8CyqaviyYgK8wH3JQVWhskuXw/0cFWmaJkEKkTITfCZmBjFGBYxgpsqYnvukwC6g7bhyowl4Ml7O7
+ rfLVuCYJ9hBK8PDG/MY/HpQfAqVhEjhh1UZB4Q1XNuzRykDhvlcOC3rrGOsBS0HdZRs8=;
 Received: from esa5.hgst.iphmx.com ([216.71.153.144])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mDf3L-0002eF-T8
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 03:37:20 +0000
+ id 1mDf3Y-0002eF-3c
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 11 Aug 2021 03:37:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1628653035; x=1660189035;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=TWCAljC1dx1YD2EZP0iY2/a0tIzDQsxuj/cNzvYBxDk=;
- b=Q4SNC+DKYNUfwr+L8IncY36zn8OHk6DACJRyumWMPIl0V3P1MHGJE61K
- tElznKhrbWi5+AaBJ0LPHvvFVtIh03RznJF9ze5hIciYwOKgrX/Ss5HtV
- zmuDZoysoO9TZL6C2FhuNLMhITJ9iXhL5/d5JqxQSl7eZ/1B4L0OjWhw7
- yUZ4Hucw3Y1bM1yYw+Z5o/fuA3JpWYta30FQ6Hq2gluwBcYaxYRcHjqYK
- 1a2bBns6pVAbkwUTaibcZXShkxI8JJ4ZtsnzP4C3dM1I9uNf+NbNDKvJw
- PoRvqnnnMYl/Or9b8bbHaAQbU2lVYPVnOc0kVCOZREq0C3U09qkO+pUgr w==;
-X-IronPort-AV: E=Sophos;i="5.84,311,1620662400"; d="scan'208";a="176890892"
+ t=1628653047; x=1660189047;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=j0s33+d09cJLd2qYDmoWRU5cJ5eobt/aSkEuXaJrC6o=;
+ b=AeDFlJDf8/Q7tFKY/1cTcF/5dL+FXzVrjH2XlGl61/KRki15CUQpznzn
+ 2SekAI3CXvaGJWJHaUeorb4SR2x2YhaZxfYtHX4M8VrlVRmYpy+ZzKjZE
+ hsReWPqPgt/y9Sydtg7ywaUI1IscwLn3NnzuLHpDVOjNkMEhYQZkbvadf
+ Aarn07k1nQ/NF2NiQ7FF8IlzGOPSk9L3a0yliu757gkHvD2R10ZFUcV5u
+ tKVo9WdIX7zFrtz2OM3GDWFR1DK9ySINmY/tgd86hcp3wgN6n+YFDHSPe
+ HC3AJc5uFE3KFPXfcHX6km+dXl4OOdemiIKFAVML+h3shi8H+zuwo41Z8 w==;
+X-IronPort-AV: E=Sophos;i="5.84,311,1620662400"; d="scan'208";a="176890900"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com)
  ([199.255.45.15])
- by ob1.hgst.iphmx.com with ESMTP; 11 Aug 2021 11:37:04 +0800
-IronPort-SDR: iGssvDEPwreAIeQa9I3lPvQeSV2ZX40gIy7cbX4+Lpv+jD1IV1xKxUP4fObaJ53n6HZhEAztEY
- 3uweGcetr3bBGhgA4vKmwD7WA/pRb6AuaTdjPRlTpZQxW2lhCF9wQtyk8sRHrAV+uv+atGujWL
- yCpovRXFRlDQOeSk8w/k9ff64xnN8pdnlHF6sF7ZVANmlGRqsziFjwPT06Jwi7rO4PGrD5tux2
- 2Er1SEOBe4/ZwrWdUf2dNsdFMtfzkMitl7ZKmVLD7CuInsYrjkQV8GTm8E7o9mibI8U1/+i40U
- Ry+R4YVWweq0NukW+v42VeEO
+ by ob1.hgst.iphmx.com with ESMTP; 11 Aug 2021 11:37:08 +0800
+IronPort-SDR: lgcDOwALee3sDXaSil7arxMoka2oqCgb/p2vLLcvFZrpP4ktH2J2A2zHCZtGSKtvCGaFbo2TT+
+ khAE43XfJP0rhRyAO6D0laRh5gTTXMPVnrcOziQrX3CtxNg1YANX5Bm5tZe/TaQG7iKrK9S+6J
+ v5IiMrNpWE9U4uR4UGOf5EEMzj0srvWjrcVhkLKHJqK0QbNQ/Ix8zTHWsGly8Gxw0OG3SbI6UP
+ J8EqNFJhzwLL0jvH01uFdhWttK4i8JJc7Dku00WKT4Rg77XDD+Kj4/aRX+b7H2w/ztbei745Xa
+ ia0Ezl61P3jKtBqHOrCd5M7I
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Aug 2021 20:12:35 -0700
-IronPort-SDR: qWpNUjsACDhWC0msNjVZw2DqXZyL+GyC++rO9ZylPLgNjE1KBjvCC62fAc32e19T3FsN+ZCZsu
- Pr48HgqwZDP4ZYVne5Nuca5zS16ItAZ8fqKM65JdcrAVTi4H7KV0BtsNDaBU7w6ZyS+r/WWbvZ
- LrycWVM9okuAhx5b33/B8rggnCgOpoD0xT20orIZGlCyA9aNFx8u80j82BvqIrfLZzlr1ayPPu
- S+W6WGje+933Bu4FDeEhV7q+VxkfS5do7VnmhFjTdnnDF5TduzOjvQmPuSGqrDcAklhwJcdFPK
- vzY=
+ 10 Aug 2021 20:12:39 -0700
+IronPort-SDR: QeCHXqY/a+FukCgR81BdGDYdIyE+0w1AzjKJpMCShWexbiAx90FnRJ+V+isIko4lu+mbaplzmz
+ oA7DjAgMs62UPnzMYSmnsht6YtMeZ2iBp/bI6NSwVuKuft8oiKSX2vTV7/bPGz5Tf3mypEolOq
+ +89DW0cpmueqKaxItD2d2DjFQDT6woxqHugcdKRmNKtYqSPKPRNkYP52qlFEUDoh1V1GDCW0OW
+ I7gNI5Zk1cE8IpvSwlaBfNTxuw/emiu2I25LFYlOK2SU2crMvZYnPkjrgmIjmDS4+WiKBVWuRe
+ wzo=
 WDCIronportException: Internal
 Received: from washi.fujisawa.hgst.com ([10.149.53.254])
- by uls-op-cesaip02.wdc.com with ESMTP; 10 Aug 2021 20:37:03 -0700
+ by uls-op-cesaip02.wdc.com with ESMTP; 10 Aug 2021 20:37:07 -0700
 From: Damien Le Moal <damien.lemoal@wdc.com>
 To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
  Paolo Valente <paolo.valente@linaro.org>,
  linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>,
  Chao Yu <yuchao0@huawei.com>
-Date: Wed, 11 Aug 2021 12:36:56 +0900
-Message-Id: <20210811033702.368488-1-damien.lemoal@wdc.com>
+Date: Wed, 11 Aug 2021 12:36:59 +0900
+Message-Id: <20210811033702.368488-4-damien.lemoal@wdc.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210811033702.368488-1-damien.lemoal@wdc.com>
+References: <20210811033702.368488-1-damien.lemoal@wdc.com>
 MIME-Version: 1.0
-X-Headers-End: 1mDf3L-0002eF-T8
-Subject: [f2fs-dev] [PATCH v4 0/6] IO priority fixes and improvements
+X-Headers-End: 1mDf3Y-0002eF-3c
+Subject: [f2fs-dev] [PATCH v4 3/6] block: change ioprio_valid() to an inline
+ function
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -109,45 +112,51 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This series fixes problems with IO priority values handling and cleans
-up several macro names and code for clarity.
+Change the ioprio_valid() macro in include/usapi/linux/ioprio.h to an
+inline function declared on the kernel side in include/linux/ioprio.h.
+Also improve checks on the class value by checking the upper bound
+value.
 
-Changes from v3:
-* Split former patch 2 into patches 2, 3 and 4 to facilitate review and
-  have more descriptive commit titles.
-* In patch 5, keep IOPRIO_BE_NR as an alias for the new IOPRIO_NR_LEVELS
-  macro. Change this patch title and commit message accordingly.
-* In patch 6, define IOPRIO_BE_NORM as an alias of IOPRIO_NORM.
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+---
+ include/linux/ioprio.h      | 10 ++++++++++
+ include/uapi/linux/ioprio.h |  2 --
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-Changes from v2:
-* Fixed typo in a comment in patch 3
-* Added reviewed-by tags
-
-Changes from v1:
-* Added patch 4 to unify the default priority value used in various
-  places.
-* Fixed patch 2 as suggested by Bart: remove extra parenthesis and move
-  ioprio_valid() from the uapi header to the kernel header.
-* In patch 2, add priority value masking.
-
-Damien Le Moal (6):
-  block: bfq: fix bfq_set_next_ioprio_data()
-  block: improve ioprio class description comment
-  block: change ioprio_valid() to an inline function
-  block: fix IOPRIO_PRIO_CLASS() and IOPRIO_PRIO_VALUE() macros
-  block: Introduce IOPRIO_NR_LEVELS
-  block: fix default IO priority handling
-
- block/bfq-iosched.c          | 10 +++++-----
- block/bfq-iosched.h          |  4 ++--
- block/bfq-wf2q.c             |  6 +++---
- block/ioprio.c               |  9 ++++-----
- drivers/nvme/host/lightnvm.c |  2 +-
- fs/f2fs/sysfs.c              |  2 +-
- include/linux/ioprio.h       | 17 ++++++++++++++++-
- include/uapi/linux/ioprio.h  | 34 ++++++++++++++++++++--------------
- 8 files changed, 52 insertions(+), 32 deletions(-)
-
+diff --git a/include/linux/ioprio.h b/include/linux/ioprio.h
+index ef9ad4fb245f..2ee3373684b1 100644
+--- a/include/linux/ioprio.h
++++ b/include/linux/ioprio.h
+@@ -8,6 +8,16 @@
+ 
+ #include <uapi/linux/ioprio.h>
+ 
++/*
++ * Check that a priority value has a valid class.
++ */
++static inline bool ioprio_valid(unsigned short ioprio)
++{
++	unsigned short class = IOPRIO_PRIO_CLASS(ioprio);
++
++	return class > IOPRIO_CLASS_NONE && class <= IOPRIO_CLASS_IDLE;
++}
++
+ /*
+  * if process has set io priority explicitly, use that. if not, convert
+  * the cpu scheduler nice value to an io priority
+diff --git a/include/uapi/linux/ioprio.h b/include/uapi/linux/ioprio.h
+index 6b735854aebd..5064e230374c 100644
+--- a/include/uapi/linux/ioprio.h
++++ b/include/uapi/linux/ioprio.h
+@@ -27,8 +27,6 @@ enum {
+ 	IOPRIO_CLASS_IDLE,
+ };
+ 
+-#define ioprio_valid(mask)	(IOPRIO_PRIO_CLASS((mask)) != IOPRIO_CLASS_NONE)
+-
+ /*
+  * 8 best effort priority levels are supported
+  */
 -- 
 2.31.1
 
