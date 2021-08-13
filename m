@@ -5,71 +5,72 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312C8C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 10:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEE5C4320E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 10:13:59 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id DBB5960F21
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 10:11:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org DBB5960F21
+	by mail.kernel.org (Postfix) with ESMTPS id 36EE96103E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 10:13:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 36EE96103E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mEUAF-0003h0-Vp; Fri, 13 Aug 2021 10:11:47 +0000
+	id 1mEUCM-00051o-T2; Fri, 13 Aug 2021 10:13:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <frank.li@vivo.com>) id 1mEUAE-0003gu-MS
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 10:11:46 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <frank.li@vivo.com>) id 1mEUCK-00051F-NV
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 10:13:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+uV0wnYahWEbtFkul2EgiXYzoii8RwkjEBj8I50mUxQ=; b=IKSteIjdJ2pfPJpwEPSUKSQ++U
- l9wRFVqKylwiK2kK96yYly7mFDCctlGWoMtKmx1ST2BmKngzVIzX9AZ4mQvmNsusyw/8yW1aAOuGr
- exmjbHEM4AeK3HLHDLkYtremazxrjX3NPQD7ZJ5MND4KPT6jQRsbOYAtNzzVB5TsgRag=;
+ bh=n/lNs4xvjFHK5wMFvcniKI+Ksa/rL1l1VDcY2A8BADg=; b=Vk4vojsmDxHSnyAdFfTotjT8Us
+ F1RcTm3cOiwaw4mWD3Xr6I4amVtNA76GyruPhJtLr6vV3YUSjw4bCn6kBYdYUx19TxTJZJfqO2ykC
+ T2Gsguet4ZfHDp9+LZc4pYAX7JoehNdXQZ5/f8snna+NVwXLmjv53yyxDB5NQz/r3gh8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=+uV0wnYahWEbtFkul2EgiXYzoii8RwkjEBj8I50mUxQ=; b=E
- bf2JG4mXECQ9Hmco5ZIXZmHupmxfQVVoQ6MLtpQ9fk7mhPjWiDyVG9Ohnz9pDT6sV5KLzfJghughK
- xXW3I8fVLq0Z/WtBZn54w+pw1uZA0oSRgNuqAIGcv+U4Vdbvve5qJWVqU65ajuzB2TvLhnBOCVlis
- ou5H04mz7hWKbt+8=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=n/lNs4xvjFHK5wMFvcniKI+Ksa/rL1l1VDcY2A8BADg=; b=CxZVp7ZqYvCfiYH0i71VC1oHnN
+ HES3NoG2ueCP9mhd3tPQjm98xUi8NjODmgYAB/cuiSVKNmd9l/w0OH6cv4sa/qbFq/nBmfw+LQcnA
+ VtB3Ykq6K+0vbxVi8G/cq5+xvoFIDUF6jHCm+W9PqXgYUoDwYoK2m7PntO2bqgsmVkvA=;
 Received: from mail-m17636.qiye.163.com ([59.111.176.36])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mEUAB-00044S-Ao
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 10:11:46 +0000
+ id 1mEUCI-000491-TN
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 10:13:56 +0000
 Received: from comdg01144022.vivo.xyz (unknown [218.104.188.165])
- by mail-m17636.qiye.163.com (Hmail) with ESMTPA id 19449C40221;
- Fri, 13 Aug 2021 18:11:34 +0800 (CST)
+ by mail-m17636.qiye.163.com (Hmail) with ESMTPA id 94954C401EA;
+ Fri, 13 Aug 2021 18:13:47 +0800 (CST)
 From: Yangtao Li <frank.li@vivo.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Fri, 13 Aug 2021 18:11:32 +0800
-Message-Id: <20210813101132.441389-1-frank.li@vivo.com>
+Date: Fri, 13 Aug 2021 18:13:42 +0800
+Message-Id: <20210813101342.442438-2-frank.li@vivo.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210813101342.442438-1-frank.li@vivo.com>
+References: <20210813101342.442438-1-frank.li@vivo.com>
 MIME-Version: 1.0
 X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
- kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRkdTk5WSE1LHk9PSEMfTE
- IZVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkNVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODY6Ayo4TT8MIRhOLUJJIQkT
- SDwaCQhVSlVKTUlDQ09CT0JPTE1KVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
- VUpLT1VKQ0NVSk1OWVdZCAFZQU1JSE03Bg++
-X-HM-Tid: 0a7b3efed916d996kuws19449c40221
-X-Headers-End: 1mEUAB-00044S-Ao
-Subject: [f2fs-dev] [PATCH v2] f2fs: Don't create discard thread when device
- not support realtime discard
+ kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRoYHx1WTh9NSEwYSxgZGh
+ 9DVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkNVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mww6SAw5Ij9RAxgBF00vGjMy
+ TCkKCwlVSlVKTUlDQ09CTUlDSkxNVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
+ VUpLT1VKQ0NVSk1OWVdZCAFZQUlDTUo3Bg++
+X-HM-Tid: 0a7b3f00e26ad996kuws94954c401ea
+X-Headers-End: 1mEUCI-000491-TN
+Subject: [f2fs-dev] [PATCH v4 2/2] f2fs: convert S_IRUGO to 0444
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,164 +83,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
- Fengnan Chang <changfengnan@vivo.com>, linux-f2fs-devel@lists.sourceforge.net
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Fengnan Chang <changfengnan@vivo.com>
+WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
++               proc_create_single_data("fsck_stack", S_IRUGO, sbi->s_proc,
 
-Don't create discard thread when device not support realtime discard.
-
-Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
 Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
- fs/f2fs/f2fs.h    |  1 +
- fs/f2fs/segment.c | 29 +++++++++++++++++++++--------
- fs/f2fs/super.c   | 34 ++++++++++++++++++++++++++++++++--
- 3 files changed, 54 insertions(+), 10 deletions(-)
+ fs/f2fs/debug.c |  2 +-
+ fs/f2fs/sysfs.c | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d24fd5045712..60a408af53a3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3483,6 +3483,7 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
- void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free);
- void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
- bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
-+int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
- void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
- void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi);
- bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index ca9876a6d396..b83a4a1e5023 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2112,7 +2112,27 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- wakeup:
- 	wake_up_discard_thread(sbi, false);
- }
-+int f2fs_start_discard_thread(struct f2fs_sb_info *sbi)
-+{
-+	dev_t dev = sbi->sb->s_bdev->bd_dev;
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	int err = 0;
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 473ad04d1891..401e5e34edd6 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -621,7 +621,7 @@ void __init f2fs_create_root_stats(void)
+ #ifdef CONFIG_DEBUG_FS
+ 	f2fs_debugfs_root = debugfs_create_dir("f2fs", NULL);
  
-+	if (!dcc)
-+		return -EINVAL;
-+	if (!f2fs_realtime_discard_enable(sbi))
-+		return 0;
-+
-+	dcc->f2fs_issue_discard = kthread_run(issue_discard_thread, sbi,
-+				"f2fs_discard-%u:%u", MAJOR(dev), MINOR(dev));
-+	if (IS_ERR(dcc->f2fs_issue_discard)) {
-+		err = PTR_ERR(dcc->f2fs_issue_discard);
-+		kfree(dcc);
-+		SM_I(sbi)->dcc_info = NULL;
-+		return err;
-+	}
-+	return err;
-+}
- static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- {
- 	dev_t dev = sbi->sb->s_bdev->bd_dev;
-@@ -2153,14 +2173,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	init_waitqueue_head(&dcc->discard_wait_queue);
- 	SM_I(sbi)->dcc_info = dcc;
- init_thread:
--	dcc->f2fs_issue_discard = kthread_run(issue_discard_thread, sbi,
--				"f2fs_discard-%u:%u", MAJOR(dev), MINOR(dev));
--	if (IS_ERR(dcc->f2fs_issue_discard)) {
--		err = PTR_ERR(dcc->f2fs_issue_discard);
--		kfree(dcc);
--		SM_I(sbi)->dcc_info = NULL;
--		return err;
--	}
-+	err = f2fs_start_discard_thread(sbi);
- 
- 	return err;
- }
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 84cd085020cd..ff19c30cd6a1 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2101,12 +2101,15 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool need_restart_gc = false, need_stop_gc = false;
- 	bool need_restart_ckpt = false, need_stop_ckpt = false;
- 	bool need_restart_flush = false, need_stop_flush = false;
-+	bool need_enable_ckpt = false, need_disable_ckpt = false;
- 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
- 	bool enable_checkpoint = !test_opt(sbi, DISABLE_CHECKPOINT);
- 	bool no_io_align = !F2FS_IO_ALIGNED(sbi);
- 	bool no_atgc = !test_opt(sbi, ATGC);
-+	bool no_discard = !test_opt(sbi, DISCARD);
- 	bool no_compress_cache = !test_opt(sbi, COMPRESS_CACHE);
- 	bool block_unit_discard = f2fs_block_unit_discard(sbi);
-+	struct discard_cmd_control *dcc;
- #ifdef CONFIG_QUOTA
- 	int i, j;
+-	debugfs_create_file("status", S_IRUGO, f2fs_debugfs_root, NULL,
++	debugfs_create_file("status", 0444, f2fs_debugfs_root, NULL,
+ 			    &stat_fops);
  #endif
-@@ -2274,7 +2277,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	} else {
- 		err = f2fs_create_flush_cmd_control(sbi);
- 		if (err)
--			goto restore_ckpt;
-+			goto restore_ckpt_thread;
- 		need_stop_flush = true;
- 	}
+ }
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index c134bbb99c7b..09bf8c4be2b1 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -1276,15 +1276,15 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
+ 		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
  
-@@ -2283,8 +2286,28 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 			err = f2fs_disable_checkpoint(sbi);
- 			if (err)
- 				goto restore_flush;
-+			need_enable_ckpt = true;
- 		} else {
- 			f2fs_enable_checkpoint(sbi);
-+			need_disable_ckpt = true;
-+		}
-+	}
-+
-+	if (no_discard == !!test_opt(sbi, DISCARD)) {
-+		if (test_opt(sbi, DISCARD)) {
-+			err = f2fs_start_discard_thread(sbi);
-+			if (err)
-+				goto restore_ckpt;
-+
-+		} else {
-+			dcc = SM_I(sbi)->dcc_info;
-+			if (!dcc) {
-+				err = -EINVAL;
-+				goto restore_ckpt;
-+			}
-+			f2fs_stop_discard_thread(sbi);
-+			if (unlikely(atomic_read(&dcc->discard_cmd_cnt)))
-+				f2fs_issue_discard_timeout(sbi);
- 		}
+ 	if (sbi->s_proc) {
+-		proc_create_single_data("segment_info", S_IRUGO, sbi->s_proc,
++		proc_create_single_data("segment_info", 0444, sbi->s_proc,
+ 				segment_info_seq_show, sb);
+-		proc_create_single_data("segment_bits", S_IRUGO, sbi->s_proc,
++		proc_create_single_data("segment_bits", 0444, sbi->s_proc,
+ 				segment_bits_seq_show, sb);
+-		proc_create_single_data("iostat_info", S_IRUGO, sbi->s_proc,
++		proc_create_single_data("iostat_info", 0444, sbi->s_proc,
+ 				iostat_info_seq_show, sb);
+-		proc_create_single_data("victim_bits", S_IRUGO, sbi->s_proc,
++		proc_create_single_data("victim_bits", 0444, sbi->s_proc,
+ 				victim_bits_seq_show, sb);
+-		proc_create_single_data("fsck_stack", S_IRUGO, sbi->s_proc,
++		proc_create_single_data("fsck_stack", 0444, sbi->s_proc,
+ 				fsck_stack_seq_show, sb);
  	}
- 
-@@ -2302,6 +2325,13 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	adjust_unusable_cap_perc(sbi);
- 	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
  	return 0;
-+restore_ckpt:
-+	if (need_enable_ckpt) {
-+		f2fs_enable_checkpoint(sbi);
-+	} else if (need_disable_ckpt) {
-+		if (f2fs_disable_checkpoint(sbi))
-+			f2fs_warn(sbi, "checkpoint has been enable");
-+	}
- restore_flush:
- 	if (need_restart_flush) {
- 		if (f2fs_create_flush_cmd_control(sbi))
-@@ -2310,7 +2340,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		clear_opt(sbi, FLUSH_MERGE);
- 		f2fs_destroy_flush_cmd_control(sbi, false);
- 	}
--restore_ckpt:
-+restore_ckpt_thread:
- 	if (need_restart_ckpt) {
- 		if (f2fs_start_ckpt_thread(sbi))
- 			f2fs_warn(sbi, "background ckpt thread has stopped");
 -- 
 2.32.0
 
