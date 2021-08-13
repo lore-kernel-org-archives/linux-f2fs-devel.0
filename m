@@ -2,79 +2,79 @@ Return-Path: <SRS0=A+6L=NE=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B88C432BE
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 14:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7980C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 14:18:04 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id CFFC560F14;
-	Fri, 13 Aug 2021 14:10:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org CFFC560F14
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 8983B60FC4
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 14:18:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 8983B60FC4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mEXtA-0003TQ-Fr; Fri, 13 Aug 2021 14:10:24 +0000
+	id 1mEY0a-0003VD-04; Fri, 13 Aug 2021 14:18:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1mEXt9-0003TK-4R
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 14:10:23 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <frank.li@vivo.com>) id 1mEY0Y-0003V5-ID
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 14:18:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Date:From:MIME-Version:In-Reply-To:Subject:Cc:To:
+ Message-ID:Content-Transfer-Encoding:Content-Type:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4AoAGh418XjLLxmsRFlAuTVrgIO2DEHcsoZKir+gGqk=; b=g1U2Q8nZrgRMlmOS8dg8W5jrj2
- REFmVzQWhBq/xCDpEymhJRwV1NrVk6R5VAhmLDZGjY2uN9PVQbDczUhJeTiilPLe8Hwax08DdtI/J
- iU1FZXErmdZIRSiGNDyZympnnLXFttB9RURCV+ETpIQlTtN0RUSyEbsJiFS8TGpD1FnQ=;
+ bh=QaykLfn1At6Vjs1MZj7fMDQeWo4CLY6KzFu2VwOSJsM=; b=hCaSueAQASSvw5WIYyJDtrjX+F
+ SVeV/jtnIuIbPXeexeRPxWtghQWUgxPunPE55f1893j3Ah2BEGdIrLNimpkaUffnWZvdIHYnJqLXw
+ 0no57zFLR4V+DuyLaqsrW4ocR7mPM9oMMKgxs7CkU8UZ0kPPhtGIlBz/3oTqGH9pE9xM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ h=Date:From:MIME-Version:In-Reply-To:Subject:Cc:To:Message-ID:
+ Content-Transfer-Encoding:Content-Type:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=4AoAGh418XjLLxmsRFlAuTVrgIO2DEHcsoZKir+gGqk=; b=mjPn9deTSS0GaPJHMJnkhtvKUq
- HkpmDpaTEi+zbHOm5Cl8jxVMd0mZ5Z+EqmK9/REjPlLFn1CL8QhjDSCshjqjemgjKBXgD/B+VH8dR
- NXCg5dJKgpiYtYEuhhe/rCgxkkhwakWzWRHEU9Ay0Okk/U/i+dg5bStDkVAEvCM6NLN0=;
-Received: from mail.kernel.org ([198.145.29.99])
+ :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=QaykLfn1At6Vjs1MZj7fMDQeWo4CLY6KzFu2VwOSJsM=; b=WIgcVYdtKv3RMz+gpeGn+2n80v
+ eDjQS+cCVl81CARRdMpLWZFm7piTiNfV11EYwDihJlZn1TktECSh69dQf0F7WW2EcSFHr44rg9ruj
+ bhwiPH8nwl8jTrHInLBPux+140dEufpujCX5Jas6AHrcIR8BliKKV2O8t838b1yk0Aes=;
+Received: from mail-m176236.qiye.163.com ([59.111.176.236])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mEXst-00069j-48
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 14:10:23 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B574E60F14;
- Fri, 13 Aug 2021 14:09:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1628863796;
- bh=PQZD4Nu7ZxDfBD002JLy8YbK0Jz4MmIKBcujAim5Td0=;
- h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
- b=Y7BACqmQkexVmUFI7dEnBlXk9hjQUU5aqF4P+/7zFS9oxGV6ZhRv3WeRjrB9RNdM6
- z85iPv1jSocmdqbAOmd+RUhDs+Ms3Rcg5ETNnabkCfKdMR+kviBN04wzIlBUhKPdAy
- p6tRf5uyE8kpP3TJeOeTUINoxGui5ST0FqHEIexONzHMA0CHCgK1jYjyAjTM3FnVTT
- xub+OyveTtPowrsGaD1J1KsvLuCpsQiUye2N9Kv22OooeZijfLA6UAnOZgq2+e8h7d
- OOdX2Y82jkhRDH8sPYYhWXbUpdKMg4auLgv8In3I2iCGFgp90QQcGpSeLV+HuYyAYf
- eNudOn9YVbhSA==
-To: Yangtao Li <frank.li@vivo.com>, jaegeuk@kernel.org
-References: <20210813140119.130321-1-frank.li@vivo.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <78fcfb53-66ec-b383-8477-3f25ee13f962@kernel.org>
-Date: Fri, 13 Aug 2021 22:09:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ id 1mEY0V-0006Wx-8p
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 14:18:02 +0000
+Received: from vivo.com (localhost [127.0.0.1])
+ by mail-m176236.qiye.163.com (Hmail) with ESMTP id D6BF2780146;
+ Fri, 13 Aug 2021 22:17:49 +0800 (CST)
+Message-ID: <AKcA0QDJDw7c2rSjY0-LUKqD.3.1628864269869.Hmail.frank.li@vivo.com>
+To: Chao Yu <chao@kernel.org>
+X-Priority: 3
+X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
+X-Originating-IP: 58.251.74.231
+In-Reply-To: <78fcfb53-66ec-b383-8477-3f25ee13f962@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20210813140119.130321-1-frank.li@vivo.com>
-Content-Language: en-US
-X-Headers-End: 1mEXst-00069j-48
-Subject: Re: [f2fs-dev] [PATCH] f2fs: convert
- /sys/fs/f2fs/<disk>/stat/sb_status to use string
+Received: from frank.li@vivo.com( [58.251.74.231) ] by ajax-webmail (
+ [127.0.0.1] ) ; Fri, 13 Aug 2021 22:17:49 +0800 (GMT+08:00)
+From: =?UTF-8?B?5p2O5oms6Z+s?= <frank.li@vivo.com>
+Date: Fri, 13 Aug 2021 22:17:49 +0800 (GMT+08:00)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
+ kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRkfH0lWT0gYT05OGBgaQx
+ 9PVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
+X-HM-Sender-Digest: e1kJHlYWEh9ZQU1OQkNLS0tJSkhJN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
+ WUc6MBg6Syo*MT8MTBhJCSgRIktWNy4wCj9VSFVKTUlDQ01PSUxLSE9PVTMWGhIXVR0JGhUQVRcS
+ Ow0SDRRVGBQWRVlXWRILWUFZTkNVSU5KVUxPVUlISllXWQgBWUFJTU5CNwY+
+X-HM-Tid: 0a7b3fe04e39d9aekuwsd6bf2780146
+X-Headers-End: 1mEY0V-0006Wx-8p
+Subject: Re: [f2fs-dev] 
+ =?utf-8?q?=5BPATCH=5D_f2fs=3A_convert_/sys/fs/f2fs/?=
+ =?utf-8?q?=3Cdisk=3E/stat/sb=5Fstatus_to_use_string?=
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,169 +86,24 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/8/13 22:01, Yangtao Li wrote:
-> Do not use numbers but strings to improve readability when flag is set.
-
-This breaks output rule of sysfs entry, see below link:
-
-https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg19001.html
-
-Thanks,
-
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
-> This patch is based on [v2] f2fs: improve sbi status info in debugfs/f2fs/status
-> 
->   Documentation/ABI/testing/sysfs-fs-f2fs | 34 ++++++++++++-------------
->   fs/f2fs/debug.c                         | 19 +-------------
->   fs/f2fs/f2fs.h                          |  1 +
->   fs/f2fs/sysfs.c                         | 26 ++++++++++++++++++-
->   4 files changed, 44 insertions(+), 36 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index 73211f77d11e..b07eb1e27c97 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -410,23 +410,23 @@ Date:		December 2020
->   Contact:	"Chao Yu" <yuchao0@huawei.com>
->   Description:	Show status of f2fs superblock in real time.
->   
-> -		====== ===================== =================================
-> -		value  sb status macro       description
-> -		0x1    SBI_IS_DIRTY          dirty flag for checkpoint
-> -		0x2    SBI_IS_CLOSE          specify unmounting
-> -		0x4    SBI_NEED_FSCK         need fsck.f2fs to fix
-> -		0x8    SBI_POR_DOING         recovery is doing or not
-> -		0x10   SBI_NEED_SB_WRITE     need to recover superblock
-> -		0x20   SBI_NEED_CP           need to checkpoint
-> -		0x40   SBI_IS_SHUTDOWN       shutdown by ioctl
-> -		0x80   SBI_IS_RECOVERED      recovered orphan/data
-> -		0x100  SBI_CP_DISABLED       CP was disabled last mount
-> -		0x200  SBI_CP_DISABLED_QUICK CP was disabled quickly
-> -		0x400  SBI_QUOTA_NEED_FLUSH  need to flush quota info in CP
-> -		0x800  SBI_QUOTA_SKIP_FLUSH  skip flushing quota in current CP
-> -		0x1000 SBI_QUOTA_NEED_REPAIR quota file may be corrupted
-> -		0x2000 SBI_IS_RESIZEFS       resizefs is in process
-> -		====== ===================== =================================
-> +		=====================	=================================
-> +		sb status		description
-> +		fs_dirty		dirty flag for checkpoint
-> +		closing			specify unmounting
-> +		need_fsck		need fsck.f2fs to fix
-> +		recovering		recovery is doing or not
-> +		sb_dirty		need to recover superblock
-> +		need_cp			need to checkpoint
-> +		shutdown		shutdown by ioctl
-> +		recovered		recovered orphan/data
-> +		cp_disabled		CP was disabled last mount
-> +		cp_disabled_quick	CP was disabled quickly
-> +		quota_need_flush	need to flush quota info in CP
-> +		quota_skip_flush	skip flushing quota in current CP
-> +		quota_need_repair	quota file may be corrupted
-> +		resizefs		resizefs is in process
-> +		=====================	=================================
->   
->   What:		/sys/fs/f2fs/<disk>/ckpt_thread_ioprio
->   Date:		January 2021
-> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> index d8c09346545d..298bf41a13b6 100644
-> --- a/fs/f2fs/debug.c
-> +++ b/fs/f2fs/debug.c
-> @@ -323,23 +323,6 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
->   #endif
->   }
->   
-> -static char *s_flag[] = {
-> -	[SBI_IS_DIRTY]		= " fs_dirty",
-> -	[SBI_IS_CLOSE]		= " closing",
-> -	[SBI_NEED_FSCK]		= " need_fsck",
-> -	[SBI_POR_DOING]		= " recovering",
-> -	[SBI_NEED_SB_WRITE]	= " sb_dirty",
-> -	[SBI_NEED_CP]		= " need_cp",
-> -	[SBI_IS_SHUTDOWN]	= " shutdown",
-> -	[SBI_IS_RECOVERED]	= " recovered",
-> -	[SBI_CP_DISABLED]	= " cp_disabled",
-> -	[SBI_CP_DISABLED_QUICK]	= " cp_disabled_quick",
-> -	[SBI_QUOTA_NEED_FLUSH]	= " quota_need_flush",
-> -	[SBI_QUOTA_SKIP_FLUSH]	= " quota_skip_flush",
-> -	[SBI_QUOTA_NEED_REPAIR]	= " quota_need_repair",
-> -	[SBI_IS_RESIZEFS]	= " resizefs",
-> -};
-> -
->   static int stat_show(struct seq_file *s, void *v)
->   {
->   	struct f2fs_stat_info *si;
-> @@ -357,7 +340,7 @@ static int stat_show(struct seq_file *s, void *v)
->   		if (si->sbi->s_flag) {
->   			seq_puts(s, "[SBI:");
->   			for_each_set_bit(j, &si->sbi->s_flag, 32)
-> -				seq_puts(s, s_flag[j]);
-> +				seq_printf(s, " %s", s_flag[j]);
->   			seq_puts(s, "]\n");
->   		}
->   		seq_printf(s, "[SB: 1] [CP: 2] [SIT: %d] [NAT: %d] ",
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 67faa43cc141..772dd3352c64 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1257,6 +1257,7 @@ enum {
->   	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
->   	SBI_IS_RESIZEFS,			/* resizefs is in process */
->   };
-> +extern char *s_flag[];
->   
->   enum {
->   	CP_TIME,
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index 0954761341d7..e6f87e3d8f2e 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -111,10 +111,34 @@ static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
->   				sbi->sectors_written_start) >> 1)));
->   }
->   
-> +char *s_flag[] = {
-> +	[SBI_IS_DIRTY]		= "fs_dirty",
-> +	[SBI_IS_CLOSE]		= "closing",
-> +	[SBI_NEED_FSCK]		= "need_fsck",
-> +	[SBI_POR_DOING]		= "recovering",
-> +	[SBI_NEED_SB_WRITE]	= "sb_dirty",
-> +	[SBI_NEED_CP]		= "need_cp",
-> +	[SBI_IS_SHUTDOWN]	= "shutdown",
-> +	[SBI_IS_RECOVERED]	= "recovered",
-> +	[SBI_CP_DISABLED]	= "cp_disabled",
-> +	[SBI_CP_DISABLED_QUICK]	= "cp_disabled_quick",
-> +	[SBI_QUOTA_NEED_FLUSH]	= "quota_need_flush",
-> +	[SBI_QUOTA_SKIP_FLUSH]	= "quota_skip_flush",
-> +	[SBI_QUOTA_NEED_REPAIR]	= "quota_need_repair",
-> +	[SBI_IS_RESIZEFS]	= "resizefs",
-> +};
-> +
->   static ssize_t sb_status_show(struct f2fs_attr *a,
->   		struct f2fs_sb_info *sbi, char *buf)
->   {
-> -	return sprintf(buf, "%lx\n", sbi->s_flag);
-> +	int len = 0, i = 0;
-> +
-> +	for_each_set_bit(i, &sbi->s_flag, 32)
-> +		len += scnprintf(buf + len, PAGE_SIZE - len, "%s%s",
-> +				 len ? ", " : "", s_flag[i]);
-> +	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
-> +
-> +	return len;
->   }
->   
->   static ssize_t features_show(struct f2fs_attr *a,
-> 
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+SEkgQ2hhbywKCkZyb206IENoYW8gWXUgPGNoYW9Aa2VybmVsLm9yZz4KRGF0ZTogMjAyMS0wOC0x
+MyAyMjowOTo1MwpUbzogIFlhbmd0YW8gTGkgPGZyYW5rLmxpQHZpdm8uY29tPixqYWVnZXVrQGtl
+cm5lbC5vcmcKQ2M6ICBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCxsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnClN1YmplY3Q6IFJlOiBbUEFUQ0hdIGYyZnM6IGNvbnZl
+cnQgL3N5cy9mcy9mMmZzLzxkaXNrPi9zdGF0L3NiX3N0YXR1cyB0byB1c2Ugc3RyaW5nPk9uIDIw
+MjEvOC8xMyAyMjowMSwgWWFuZ3RhbyBMaSB3cm90ZToKPj4gRG8gbm90IHVzZSBudW1iZXJzIGJ1
+dCBzdHJpbmdzIHRvIGltcHJvdmUgcmVhZGFiaWxpdHkgd2hlbiBmbGFnIGlzIHNldC4KPgo+VGhp
+cyBicmVha3Mgb3V0cHV0IHJ1bGUgb2Ygc3lzZnMgZW50cnksIHNlZSBiZWxvdyBsaW5rOgo+Cldo
+aWNoIHJ1bGU/IG9uZSBlbnRyeSBzaG91bGQgc2hvdyBvbmUgdmFsdWXvvJ8KCkJ1dCBJIHNlZSB0
+aGF0OgojIGNhdCAvc3lzL2ZzL2YyZnMvPGRpc2s+L2ZlYXR1cmVzCmVuY3J5cHRpb24sIHF1b3Rh
+X2lubywgdmVyaXR5LCBwaW5fZmlsZQoKU28gdGhlIGZvcm1hdCBvZiBmZWF0dXJlcyBhbHNvIHdy
+b25nPwoKVGh477yMDQoNCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxp
+c3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9s
+aXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
