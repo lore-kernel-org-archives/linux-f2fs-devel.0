@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D53D7C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 10:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E46BCC4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 12:32:42 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8D3A86103E
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 10:14:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 8D3A86103E
+	by mail.kernel.org (Postfix) with ESMTPS id 9422E60E78
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 Aug 2021 12:32:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 9422E60E78
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mEUCO-0007HT-US; Fri, 13 Aug 2021 10:14:00 +0000
+	id 1mEWMZ-000072-8u; Fri, 13 Aug 2021 12:32:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <frank.li@vivo.com>) id 1mEUCK-0007HI-MX
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 10:13:56 +0000
+ (envelope-from <frank.li@vivo.com>) id 1mEWMY-00006j-CQ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 12:32:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LT5j6jzIpCt8GM4eCtrmf2oNrWK3u/WRcDCpniiGoVs=; b=AS8S78BaGWPvSzXkALacKFovzI
- dCfPym3P9dok9tU5PNoUd0UQDCXWA7eNdpjOzdSUA1e+Weijal7rKJOg+IPhGeL4ipI4BdAnx5yoc
- XI5Pi2l+4MHc8R/nIslWxR+O9zjGNHawg8ss4iqqEd3pnx7zYx9xW+sXGXmZXEDfWbRk=;
+ bh=y+03og9gTkiw8UiJzLBpVy5LeXOB5ggpVcfB11gM070=; b=EjnVugVq6PAQwPnsTdhMN5tDDm
+ PYis5g0TZC86We/5PYga35ap+sGUEpMGk2P/p1KhP9ZQu4WJvB85RboRqPaFu9u7bCTLy1MU9B4uV
+ Ca9QA6lHhc2llVZoQ56jbGx/me3CX9GqzHPDjWDqpK9ttVe22MW1mqLJ2wH+2A8t+24I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=LT5j6jzIpCt8GM4eCtrmf2oNrWK3u/WRcDCpniiGoVs=; b=I
- 43FKCmnZcTICOT5ElbZDP60XTds3LqnOVz0Hf9B9JJj5j9PZHa36PcryWW/W4CGnR6NTBXlsqLdOA
- 2sO5h/Jlg33JaVKqDxkFDjCPbDbe0v41DJwD7nsbwIpCDeMSN9Y/R74UdEkInGdjbxxDfWa7JQKXV
- Y83s501bL1AsLEuo=;
+ List-Owner:List-Archive; bh=y+03og9gTkiw8UiJzLBpVy5LeXOB5ggpVcfB11gM070=; b=d
+ bs0v3Z1zdip2DWS2NuPXxPf1kdanIZxYPn74uVxqR3gg69vtFliKvMpgBmpFnmlTKxzIyi/CxGWyY
+ uSN9SxSbOYZzs7O0di4UiOyQ5KYcrvZ9xqVHHxqkfAB2YNWjxvMBu94h1UQML7YkLmTJzNVudadRr
+ SARvV0CGBVxuoIdQ=;
 Received: from mail-m17636.qiye.163.com ([59.111.176.36])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mEUCH-00559c-RL
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 10:13:56 +0000
+ id 1mEWMU-005Ao7-3p
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 Aug 2021 12:32:37 +0000
 Received: from comdg01144022.vivo.xyz (unknown [218.104.188.165])
- by mail-m17636.qiye.163.com (Hmail) with ESMTPA id 37AC1C40221;
- Fri, 13 Aug 2021 18:13:46 +0800 (CST)
+ by mail-m17636.qiye.163.com (Hmail) with ESMTPA id 3B6F3C40179;
+ Fri, 13 Aug 2021 20:32:26 +0800 (CST)
 From: Yangtao Li <frank.li@vivo.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Fri, 13 Aug 2021 18:13:41 +0800
-Message-Id: <20210813101342.442438-1-frank.li@vivo.com>
+Date: Fri, 13 Aug 2021 20:32:20 +0800
+Message-Id: <20210813123221.185591-1-frank.li@vivo.com>
 X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
- kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRlJT09WH0tCGEtOTB5DTE
- xIVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkNVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OE06FDo6Vj9JNRgQVkI6GjcU
- DjwaCkNVSlVKTUlDQ09CTUlNTENDVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
- VUpLT1VKQ0NVSk1OWVdZCAFZQU9DTUg3Bg++
-X-HM-Tid: 0a7b3f00dd04d996kuws37ac1c40221
-X-Headers-End: 1mEUCH-00559c-RL
-Subject: [f2fs-dev] [PATCH v4 1/2] f2fs: introduce
+ kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWUNLH0xWTkNDHR9JHUJMQx
+ keVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkNVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NRQ6CDo5Lz8DAxhDMRYwMSku
+ D0sKCx1VSlVKTUlDQ05MQk9NQ0xJVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
+ VUpLT1VKQ0NVSk1OWVdZCAFZQU9CTkI3Bg++
+X-HM-Tid: 0a7b3f7fd127d996kuws3b6f3c40179
+X-Headers-End: 1mEWMU-005Ao7-3p
+Subject: [f2fs-dev] [PATCH v5 1/2] f2fs: introduce
  proc/fs/f2fs/<dev>/fsck_stack node
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -95,23 +95,26 @@ Let's expose all fsck stack history in procfs.
 
 Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
- fs/f2fs/f2fs.h  | 33 ++++++++++++++++++++++++++++++++-
+v5:
+-fix implicit declaration of function 'stack_trace_save'
+ fs/f2fs/f2fs.h  | 34 +++++++++++++++++++++++++++++++++-
  fs/f2fs/sysfs.c | 26 ++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+), 1 deletion(-)
+ 2 files changed, 59 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 67faa43cc141..b2662fc56217 100644
+index 67faa43cc141..cbd06dea3c6a 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -24,6 +24,7 @@
+@@ -24,6 +24,8 @@
  #include <linux/quotaops.h>
  #include <linux/part_stat.h>
  #include <crypto/hash.h>
 +#include <linux/stackdepot.h>
++#include <linux/stacktrace.h>
  
  #include <linux/fscrypt.h>
  #include <linux/fsverity.h>
-@@ -119,6 +120,8 @@ typedef u32 nid_t;
+@@ -119,6 +121,8 @@ typedef u32 nid_t;
  
  #define COMPRESS_EXT_NUM		16
  
@@ -120,7 +123,7 @@ index 67faa43cc141..b2662fc56217 100644
  struct f2fs_mount_info {
  	unsigned int opt;
  	int write_io_size_bits;		/* Write IO size bits */
-@@ -1786,6 +1789,8 @@ struct f2fs_sb_info {
+@@ -1786,6 +1790,8 @@ struct f2fs_sb_info {
  	unsigned int compress_watermark;	/* cache page watermark */
  	atomic_t compress_page_hit;		/* cache hit count */
  #endif
@@ -129,7 +132,7 @@ index 67faa43cc141..b2662fc56217 100644
  };
  
  struct f2fs_private_dio {
-@@ -1997,9 +2002,35 @@ static inline bool is_sbi_flag_set(struct f2fs_sb_info *sbi, unsigned int type)
+@@ -1997,9 +2003,35 @@ static inline bool is_sbi_flag_set(struct f2fs_sb_info *sbi, unsigned int type)
  	return test_bit(type, &sbi->s_flag);
  }
  
