@@ -3,78 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D615C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 02:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A017EC4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 08:53:52 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B813A60C3E
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 02:42:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org B813A60C3E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
+	by mail.kernel.org (Postfix) with ESMTPS id 53C1E60F46
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 08:53:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 53C1E60F46
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mEjca-0002v8-1U; Sat, 14 Aug 2021 02:42:04 +0000
+	id 1mEpQM-0002yM-O5; Sat, 14 Aug 2021 08:53:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <frank.li@vivo.com>) id 1mEjcY-0002up-MG
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 02:42:02 +0000
+ (envelope-from
+ <BATV+f92b0dcacd1ebb3841ba+6565+infradead.org+hch@casper.srs.infradead.org>)
+ id 1mEpQK-0002xj-6L
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 08:53:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Date:From:MIME-Version:In-Reply-To:Subject:Cc:To:
- Message-ID:Content-Transfer-Encoding:Content-Type:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HCM8GE0gRMgNwcuTUHMxz76ntb0zQ/rzo1vkTdM0/uM=; b=IRdwRfjifoN0A2zixhjUoc5zqu
- +5PARpTQC7RkhIDoGIdHRtvz8SPfF6OYb3GbWKpXWKsWQGAMi/5DqVWDn86p1GzXwSL30pk3Hn96q
- cxIObo1e76w7JEnyHXl4Bl0d9FsiRckh7sheslAyBg8S9D1XLBQrKLo1zTo1JatLS2ZA=;
+ bh=QYtBZcQe1AYKFmFlbIK09tv77w22darIoGRUI9QRx4Q=; b=dz49Q/0mJjrId56ovXWohcIG58
+ RnGK0B3n6/kcozaG35DnKJLGg133TgEUEXbgeI3TRg+G6zNDOOQiH240WXhgaowZS3v7MuMbjzI9F
+ rVJyrke+0xQZ2crOZF/w5U/NYvhshDGmuKGT/L35DWjKz7/VaWBxJwfvc2NppGj7RAvo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Date:From:MIME-Version:In-Reply-To:Subject:Cc:To:Message-ID:
- Content-Transfer-Encoding:Content-Type:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HCM8GE0gRMgNwcuTUHMxz76ntb0zQ/rzo1vkTdM0/uM=; b=F4zLWAkvZB60pFwxekUp+vXM2l
- 2mzTJPvPjFJafM5Ys3lsZvip5OPKef1a7aLwwZQ3LmD+cX+G34imA8N0w2oHkn0N0LmTphl2yUVDw
- rbJWBeChO77bEOF9wVSjaW6XVLAx8ZPNM+VkogvQ0jK303ut/FtoLA9U5nSVs+V2c9Tk=;
-Received: from mail-m176236.qiye.163.com ([59.111.176.236])
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=QYtBZcQe1AYKFmFlbIK09tv77w22darIoGRUI9QRx4Q=; b=mOS9CnOQbNoIGyOncDbJqJuJz6
+ wL97Lp/eWTfPuhyi5dVLXDyfLPV7U+ZMeVVDDGG7UnKU8ZzgEllF5jQn/zS3ffvQTjCj23HRWhyne
+ db1ZVhGRr7xFKrtbMKjAwLRCn6B68fpVYqDcbuH+EM/D4o7u2A3WkONzVz3C6QH5hyag=;
+Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mEjcW-005gm9-8U
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 02:42:02 +0000
-Received: from vivo.com (localhost [127.0.0.1])
- by mail-m176236.qiye.163.com (Hmail) with ESMTP id 9812A7800C8;
- Sat, 14 Aug 2021 10:41:51 +0800 (CST)
-Message-ID: <AOcAowBKDxRdEVGR5gjSrqq6.3.1628908911313.Hmail.frank.li@vivo.com>
-To: Chao Yu <chao@kernel.org>
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
-X-Originating-IP: 58.251.74.231
-In-Reply-To: <9b000232-c3dc-458c-2507-1dde8a8d985c@kernel.org>
+ id 1mEpQH-005t3s-S0
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 08:53:48 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=QYtBZcQe1AYKFmFlbIK09tv77w22darIoGRUI9QRx4Q=; b=h8VSaeKeTYKSUjNY2+l/UHQ+hH
+ f76xrh1QUEmye8pmdbUDzToCSsMGGiAZ4xmxxAJsqcQ219C5QxCPU0HYdXxEuZE0y0CbN3MGsqNOt
+ d0PTDgfgmqjh/cII/Tnj9BjS6H1epuL1VyGBkXZK6p6wg/xBs0l6ZolEugo80fd2kbGb3dsoIs88f
+ 3SY91mqS1QRY2SxzwIZQ1cReuyXfhPjzXtGbu0ORczogDVGacAtveaAucXMWehWfP3sFto2niuJmJ
+ c4l64TiUm1GbMS9nvSzVk/a6PBYDmbzSYOCS6iTB5I3qrJUyZV43B5whiyuzOXWjWODrIGOTthy0D
+ 0qjhj08Q==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat
+ Linux)) id 1mEpPN-00GYAD-K5; Sat, 14 Aug 2021 08:53:03 +0000
+Date: Sat, 14 Aug 2021 09:52:49 +0100
+From: Christoph Hellwig <hch@infradead.org>
+To: Yangtao Li <frank.li@vivo.com>
+Message-ID: <YReEYTPl5ErJNiyj@infradead.org>
+References: <20210813123221.185591-1-frank.li@vivo.com>
 MIME-Version: 1.0
-Received: from frank.li@vivo.com( [58.251.74.231) ] by ajax-webmail (
- [127.0.0.1] ) ; Sat, 14 Aug 2021 10:41:51 +0800 (GMT+08:00)
-From: =?UTF-8?B?5p2O5oms6Z+s?= <frank.li@vivo.com>
-Date: Sat, 14 Aug 2021 10:41:51 +0800 (GMT+08:00)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
- kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRlKSRpWGE5KQxkdSR1ITB
- gZVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
-X-HM-Sender-Digest: e1kJHlYWEh9ZQU1OQkNLTUJLTE5DN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
- WUc6NBg6FAw5MD8DKR8#LTwpThwRKAkKCk1VSFVKTUlDQktDQkpKQkJPVTMWGhIXVR0JGhUQVRcS
- Ow0SDRRVGBQWRVlXWRILWUFZTkNVSU5KVUxPVUlISllXWQgBWUFIT0NMNwY+
-X-HM-Tid: 0a7b42897c09d9aekuws9812a7800c8
-X-Headers-End: 1mEjcW-005gm9-8U
-Subject: Re: [f2fs-dev] 
- =?utf-8?q?=5BPATCH=5D_f2fs=3A_convert_/sys/fs/f2fs/?=
- =?utf-8?q?=3Cdisk=3E/stat/sb=5Fstatus_to_use_string?=
+Content-Disposition: inline
+In-Reply-To: <20210813123221.185591-1-frank.li@vivo.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ casper.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1mEpQH-005t3s-S0
+Subject: Re: [f2fs-dev] [PATCH v5 1/2] f2fs: introduce
+ proc/fs/f2fs/<dev>/fsck_stack node
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,33 +89,14 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Pj4gSEkgQ2hhbywKPj4gCj4+IEZyb206IENoYW8gWXUgPGNoYW9Aa2VybmVsLm9yZz4KPj4gRGF0
-ZTogMjAyMS0wOC0xMyAyMjowOTo1Mwo+PiBUbzogIFlhbmd0YW8gTGkgPGZyYW5rLmxpQHZpdm8u
-Y29tPixqYWVnZXVrQGtlcm5lbC5vcmcKPj4gQ2M6ICBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNv
-dXJjZWZvcmdlLm5ldCxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCj4+IFN1YmplY3Q6IFJl
-OiBbUEFUQ0hdIGYyZnM6IGNvbnZlcnQgL3N5cy9mcy9mMmZzLzxkaXNrPi9zdGF0L3NiX3N0YXR1
-cyB0byB1c2Ugc3RyaW5nPk9uIDIwMjEvOC8xMyAyMjowMSwgWWFuZ3RhbyBMaSB3cm90ZToKPj4+
-PiBEbyBub3QgdXNlIG51bWJlcnMgYnV0IHN0cmluZ3MgdG8gaW1wcm92ZSByZWFkYWJpbGl0eSB3
-aGVuIGZsYWcgaXMgc2V0Lgo+Pj4KPj4+IFRoaXMgYnJlYWtzIG91dHB1dCBydWxlIG9mIHN5c2Zz
-IGVudHJ5LCBzZWUgYmVsb3cgbGluazoKPj4+Cj4+IFdoaWNoIHJ1bGU/IG9uZSBlbnRyeSBzaG91
-bGQgc2hvdyBvbmUgdmFsdWXvvJ8KPgo+WWVzLCBvbmUgdmFsdWUgcGVyIGZpbGUgcGxlYXNlLCB3
-aGljaCBpcyBzdWdnZXN0ZWQgYnkgR3JlZy4KPgo+aHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMjEv
-Ni8zLzMxOQo+Cj4+IAo+PiBCdXQgSSBzZWUgdGhhdDoKPj4gIyBjYXQgL3N5cy9mcy9mMmZzLzxk
-aXNrPi9mZWF0dXJlcwo+PiBlbmNyeXB0aW9uLCBxdW90YV9pbm8sIHZlcml0eSwgcGluX2ZpbGUK
-Pj4gCj4+IFNvIHRoZSBmb3JtYXQgb2YgZmVhdHVyZXMgYWxzbyB3cm9uZz8KPgo+ICBXaGF0OgkJ
-L3N5cy9mcy9mMmZzLzxkaXNrPi9mZWF0dXJlcwo+ICBEYXRlOgkJSnVseSAyMDE3Cj4gIENvbnRh
-Y3Q6CSJKYWVnZXVrIEtpbSIgPGphZWdldWtAa2VybmVsLm9yZz4KPiAgRGVzY3JpcHRpb246CTxk
-ZXByZWNhdGVkOiBzaG91bGQgdXNlIC9zeXMvZnMvZjJmcy88ZGlzaz4vZmVhdHVyZV9saXN0LwoK
-cm9vdEBrdm0teGZzdGVzdHM6fiMgY2F0IC9zeXMvZnMvZjJmcy9udm1lMG4xL2V4dGVuc2lvbl9s
-aXN0IApjb2xkIGZpbGUgZXh0ZW5zaW9uOgpqcGcKZ2lmCnBuZwphdmkKZGl2eAptcDQKbXAzCjNn
-cAp3bXYKd21hCm1wZWcKbWt2Cm1vdgphc3gKYXNmCndteApzdmkKd3Z4CndtCm1wZwptcGUKcm0K
-b2dnCmpwZWcKdmlkZW8KYXBrCnNvCmhvdCBmaWxlIGV4dGVuc2lvbjoKZGIKClNvIHdlIG5lZWQg
-cmVtb3ZlIGV4dGVuc2lvbl9saXN0IHRvIHByb2MgZnM/CgpNQlIsCllhbmd0YW8gCgoNCg0KCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
-ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
-Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
-ZGV2ZWwK
+Please don't add new non-process files to procfs.
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
