@@ -7,68 +7,71 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B382DC4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 09:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3E4C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 10:37:21 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6198C60EFE
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 09:08:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 6198C60EFE
+	by mail.kernel.org (Postfix) with ESMTPS id E0FE460F36
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 10:37:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org E0FE460F36
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mEper-0005qq-24; Sat, 14 Aug 2021 09:08:49 +0000
+	id 1mEr2U-000194-Ee; Sat, 14 Aug 2021 10:37:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <changfengnan@vivo.com>) id 1mEpep-0005qI-La
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 09:08:47 +0000
+ (envelope-from <frank.li@vivo.com>) id 1mEr2S-00018t-MV
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 10:37:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=awXRGrxTzQYBnTWIRd8CJ4tDJ9RQaHMxcfjZFvdw6GY=; b=bsv6nPc3CCPjM9JeQetuZ3KULi
- MWExhn9QnH6hFfPnTsJDWHagDA5rR2SjNXRkSa0IXgt1WugUbrEKGwEHtGn11wVsHUm7H7LEzP3EU
- meSlGPgAxA/wju1e5hT+dnhd2nzjDvJpISt3oeLhf7gvRtfDH2Ml/pLNENTudifERaA0=;
+ bh=JLxFXfJsdSWl3EWlYpUqqzXgD4pgtXf3p1PydiBH9zw=; b=VC+9S7/fkSmPNVhD9BdqwVLCh2
+ AMmcnwHZZs1MMAQeoiuNP5oRNZBDQWZ0R4TsgL/gDQYYTbkjL1G4gUwazvxDc8etQ8JK66CxptUEJ
+ EhotzyMiL9r7XghcRLd0uqQ2HmwV86U2ez2aThmt+qH+YRk7X4pEJJhsOwmT5F4l/5MQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=awXRGrxTzQYBnTWIRd8CJ4tDJ9RQaHMxcfjZFvdw6GY=; b=O
- MNuLsSQp2xx3yRKrhrC34fUPbQVK83L0GtzgoX0DPj+/BC7lKYcb2PUxPCSOqupY7edcFtVkAATtP
- Hz6jRpkXB3mJCxhB2QoL+QEkRtebgBhXFBxQelOwB/1s0q3NKKNJXmLwwtXphi9J8r6xlZoQugJNf
- 2lkm41Chzd6fmW5U=;
-Received: from mail-m17654.qiye.163.com ([59.111.176.54])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=JLxFXfJsdSWl3EWlYpUqqzXgD4pgtXf3p1PydiBH9zw=; b=g5FDJ5fnzv/bL4Q+CxvacRHxxT
+ l4tpBJcnNOTa6VpcuHHDhZDsyhhShgEIfYV1eKATXIiQsUag3WvAVEx5Ba9Birg84QIFpyElrPmgV
+ n7rQb6zyIyhxS9YwpUnOobH7sJYwEefbDjCqKHfZmC8wM4DpCveUkPr497nUPHxeRYVg=;
+Received: from mail-m17636.qiye.163.com ([59.111.176.36])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mEpeh-0001co-Bn
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 09:08:47 +0000
-Received: from comdg01144017.vivo.xyz (unknown [218.104.188.164])
- by mail-m17654.qiye.163.com (Hmail) with ESMTPA id 9F1D420108;
- Sat, 14 Aug 2021 17:08:31 +0800 (CST)
-From: Fengnan Chang <changfengnan@vivo.com>
-To: jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Date: Sat, 14 Aug 2021 17:08:29 +0800
-Message-Id: <20210814090829.139145-1-changfengnan@vivo.com>
+ id 1mEr2P-0003SC-F2
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 10:37:16 +0000
+Received: from comdg01144022.vivo.xyz (unknown [218.104.188.165])
+ by mail-m17636.qiye.163.com (Hmail) with ESMTPA id 394F3C4010B;
+ Sat, 14 Aug 2021 18:37:06 +0800 (CST)
+From: Yangtao Li <frank.li@vivo.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Sat, 14 Aug 2021 18:37:02 +0800
+Message-Id: <20210814103702.52405-2-frank.li@vivo.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210814103702.52405-1-frank.li@vivo.com>
+References: <20210814103702.52405-1-frank.li@vivo.com>
 MIME-Version: 1.0
 X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
- kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWRkfGBhWGR5IShhDSR5PGU
- IfVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mxw6Nhw6AT9CKR8RMB8xMRce
- Ay4KCQpVSlVKTUlDQkhJSkpJSU9MVTMWGhIXVRgTGhUcHR4VHBUaFTsNEg0UVRgUFkVZV1kSC1lB
- WUlKQ1VKS09VSkNDVUpNT1lXWQgBWUFOQk9ONwY+
-X-HM-Tid: 0a7b43eb7dc5d9fdkuws9f1d420108
-X-Headers-End: 1mEpeh-0001co-Bn
-Subject: [f2fs-dev] [PATCH v3] f2fs: Don't create discard thread when device
- not support realtime discard
+ kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWUJIGEJWSE9IHUkfGU4YQ0
+ tIVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAw6Cio6Cz9JSB8#GTQBViM2
+ AjYwCQ5VSlVKTUlDQkhMT0lNQ0tNVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
+ VUpLT1VKQ0NVSk1OWVdZCAFZQUxITkw3Bg++
+X-HM-Tid: 0a7b443c95ccd996kuws394f3c4010b
+X-Headers-End: 1mEr2P-0003SC-F2
+Subject: [f2fs-dev] [PATCH v6] f2fs: introduce
+ /sys/fs/f2fs/<disk>/fsck_stack node
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,156 +83,199 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Fengnan Chang <changfengnan@vivo.com>, Yangtao Li <frank.li@vivo.com>
+Cc: Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Don't create discard thread when device not support realtime discard.
+SBI_NEED_FSCK is an indicator that fsck.f2fs needs to be triggered,
+this flag is set in too many places. For some scenes that are not very
+reproducible, adding stack information will help locate the problem.
 
-Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
+Let's record all fsck stack history, I added F2FS_FSCK_STACK_TRACE
+configuration options and sysfs nodes. After opening the configuration
+options and enabling the node, it will start recording. The recorded
+stack information will not be clear, and we can get information form
+kernel log.
+
 Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
- fs/f2fs/f2fs.h    |  1 +
- fs/f2fs/segment.c | 36 ++++++++++++++++++++++++------------
- fs/f2fs/super.c   | 31 ++++++++++++++++++++++++++++++-
- 3 files changed, 55 insertions(+), 13 deletions(-)
+ Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++++
+ fs/f2fs/Kconfig                         | 10 ++++++
+ fs/f2fs/f2fs.h                          | 45 +++++++++++++++++++++++++
+ fs/f2fs/sysfs.c                         | 27 +++++++++++++++
+ 4 files changed, 89 insertions(+)
 
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index ef4b9218ae1e..047c398093cf 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -493,3 +493,10 @@ Contact:	"Chao Yu" <yuchao0@huawei.com>
+ Description:	When ATGC is on, it controls age threshold to bypass GCing young
+ 		candidates whose age is not beyond the threshold, by default it was
+ 		initialized as 604800 seconds (equals to 7 days).
++
++What:		/sys/fs/f2fs/<disk>/fsck_stack
++Date:		August 2021
++Contact:	"Yangtao Li" <frank.li@vivo.com>
++Description:	Controls to enable/disable fsck stack trace, you can get stack
++		information from kernel log. Note that the recorded stack information
++		will not be cleared.
+diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+index 7669de7b49ce..f451e567e4a8 100644
+--- a/fs/f2fs/Kconfig
++++ b/fs/f2fs/Kconfig
+@@ -135,3 +135,13 @@ config F2FS_FS_LZORLE
+ 	default y
+ 	help
+ 	  Support LZO-RLE compress algorithm, if unsure, say Y.
++
++config F2FS_FSCK_STACK_TRACE
++	bool "F2FS fsck stack information record"
++	depends on F2FS_FS
++	depends on STACKDEPOT
++	default y
++	help
++	 Support printing out fsck stack history. With this, you have to
++	 turn on "fsck_stack" sysfs node. Then you can get information
++	 from kernel log.
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0c978f934dcc..1e0d8d340546 100644
+index ee8eb33e2c25..b2d1d1a5a3fc 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3590,6 +3590,7 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
- void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free);
- void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
- bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
-+int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
- void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
- void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi);
- bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b4dd22134a73..b7de8ef5ccf1 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2114,11 +2114,32 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 	wake_up_discard_thread(sbi, false);
- }
+@@ -24,6 +24,8 @@
+ #include <linux/quotaops.h>
+ #include <linux/part_stat.h>
+ #include <crypto/hash.h>
++#include <linux/stackdepot.h>
++#include <linux/stacktrace.h>
  
--static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
-+int f2fs_start_discard_thread(struct f2fs_sb_info *sbi)
- {
- 	dev_t dev = sbi->sb->s_bdev->bd_dev;
-+	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-+	int err = 0;
-+
-+	if (!dcc)
-+		return -EINVAL;
-+	if (!f2fs_realtime_discard_enable(sbi))
-+		return 0;
-+
-+	dcc->f2fs_issue_discard = kthread_run(issue_discard_thread, sbi,
-+				"f2fs_discard-%u:%u", MAJOR(dev), MINOR(dev));
-+	if (IS_ERR(dcc->f2fs_issue_discard)) {
-+		err = PTR_ERR(dcc->f2fs_issue_discard);
-+		kfree(dcc);
-+		SM_I(sbi)->dcc_info = NULL;
-+		return err;
-+	}
-+	return err;
-+}
-+
-+static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
-+{
- 	struct discard_cmd_control *dcc;
--	int err = 0, i;
-+	int i;
+ #include <linux/fscrypt.h>
+ #include <linux/fsverity.h>
+@@ -117,6 +119,8 @@ typedef u32 nid_t;
  
- 	if (SM_I(sbi)->dcc_info) {
- 		dcc = SM_I(sbi)->dcc_info;
-@@ -2154,16 +2175,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	init_waitqueue_head(&dcc->discard_wait_queue);
- 	SM_I(sbi)->dcc_info = dcc;
- init_thread:
--	dcc->f2fs_issue_discard = kthread_run(issue_discard_thread, sbi,
--				"f2fs_discard-%u:%u", MAJOR(dev), MINOR(dev));
--	if (IS_ERR(dcc->f2fs_issue_discard)) {
--		err = PTR_ERR(dcc->f2fs_issue_discard);
--		kfree(dcc);
--		SM_I(sbi)->dcc_info = NULL;
--		return err;
--	}
--
--	return err;
-+	return f2fs_start_discard_thread(sbi);
- }
+ #define COMPRESS_EXT_NUM		16
  
- static void destroy_discard_cmd_control(struct f2fs_sb_info *sbi)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f92c582f8008..192af573b09c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2103,12 +2103,15 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool need_restart_gc = false, need_stop_gc = false;
- 	bool need_restart_ckpt = false, need_stop_ckpt = false;
- 	bool need_restart_flush = false, need_stop_flush = false;
-+	bool need_start_discard = false, need_stop_discard = false;
- 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
- 	bool enable_checkpoint = !test_opt(sbi, DISABLE_CHECKPOINT);
- 	bool no_io_align = !F2FS_IO_ALIGNED(sbi);
- 	bool no_atgc = !test_opt(sbi, ATGC);
-+	bool no_discard = !test_opt(sbi, DISCARD);
- 	bool no_compress_cache = !test_opt(sbi, COMPRESS_CACHE);
- 	bool block_unit_discard = f2fs_block_unit_discard(sbi);
-+	struct discard_cmd_control *dcc;
- #ifdef CONFIG_QUOTA
- 	int i, j;
++#define FSCK_STACK_DEPTH		64
++
+ struct f2fs_mount_info {
+ 	unsigned int opt;
+ 	int write_io_size_bits;		/* Write IO size bits */
+@@ -1748,6 +1752,11 @@ struct f2fs_sb_info {
+ 	unsigned int compress_watermark;	/* cache page watermark */
+ 	atomic_t compress_page_hit;		/* cache hit count */
  #endif
-@@ -2280,11 +2283,30 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		need_stop_flush = true;
- 	}
++#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
++	depot_stack_handle_t *fsck_stack_history;
++	unsigned int fsck_count;
++	bool fsck_stack;
++#endif
+ };
  
-+	if (no_discard == !!test_opt(sbi, DISCARD)) {
-+		if (test_opt(sbi, DISCARD)) {
-+			err = f2fs_start_discard_thread(sbi);
-+			if (err)
-+				goto restore_flush;
-+			need_stop_discard = true;
-+		} else {
-+			dcc = SM_I(sbi)->dcc_info;
-+			if (!dcc) {
-+				err = -EINVAL;
-+				goto restore_flush;
-+			}
-+			f2fs_stop_discard_thread(sbi);
-+			if (atomic_read(&dcc->discard_cmd_cnt))
-+				f2fs_issue_discard_timeout(sbi);
-+			need_start_discard = true;
-+		}
-+	}
+ struct f2fs_private_dio {
+@@ -1954,6 +1963,38 @@ static inline struct address_space *NODE_MAPPING(struct f2fs_sb_info *sbi)
+ 	return sbi->node_inode->i_mapping;
+ }
+ 
++#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
++static void fsck_stack_trace(struct f2fs_sb_info *sbi)
++{
++	unsigned long entries[FSCK_STACK_DEPTH];
++	depot_stack_handle_t stack, *new;
++	unsigned int nr_entries;
++	int i;
 +
- 	if (enable_checkpoint == !!test_opt(sbi, DISABLE_CHECKPOINT)) {
- 		if (test_opt(sbi, DISABLE_CHECKPOINT)) {
- 			err = f2fs_disable_checkpoint(sbi);
- 			if (err)
--				goto restore_flush;
-+				goto restore_discard;
- 		} else {
- 			f2fs_enable_checkpoint(sbi);
- 		}
-@@ -2304,6 +2326,13 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	adjust_unusable_cap_perc(sbi);
- 	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
- 	return 0;
-+restore_discard:
-+	if (need_start_discard) {
-+		if (f2fs_start_discard_thread(sbi))
-+			f2fs_warn(sbi, "discard has been stopped");
-+	} else if (need_stop_discard) {
-+		f2fs_stop_discard_thread(sbi);
++	if (!sbi->fsck_stack)
++		return;
++
++	nr_entries = stack_trace_save(entries, ARRAY_SIZE(entries), 0);
++	nr_entries = filter_irq_stacks(entries, nr_entries);
++	stack = stack_depot_save(entries, nr_entries, GFP_KERNEL);
++	if (!stack)
++		return;
++
++	/* Try to find an existing entry for this backtrace */
++	for (i = 0; i < sbi->fsck_count; i++)
++		if (sbi->fsck_stack_history[i] == stack)
++			return;
++
++	new = krealloc(sbi->fsck_stack_history, (sbi->fsck_count + 1) *
++		       sizeof(*sbi->fsck_stack_history), GFP_KERNEL);
++	if (!new)
++		return;
++
++	sbi->fsck_stack_history = new;
++	sbi->fsck_stack_history[sbi->fsck_count++] = stack;
++}
++#endif
++
+ static inline bool is_sbi_flag_set(struct f2fs_sb_info *sbi, unsigned int type)
+ {
+ 	return test_bit(type, &sbi->s_flag);
+@@ -1962,6 +2003,10 @@ static inline bool is_sbi_flag_set(struct f2fs_sb_info *sbi, unsigned int type)
+ static inline void set_sbi_flag(struct f2fs_sb_info *sbi, unsigned int type)
+ {
+ 	set_bit(type, &sbi->s_flag);
++#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
++	if (unlikely(type == SBI_NEED_FSCK))
++		fsck_stack_trace(sbi);
++#endif
+ }
+ 
+ static inline void clear_sbi_flag(struct f2fs_sb_info *sbi, unsigned int type)
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 204de4c2c818..4e786bb797e7 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -306,6 +306,26 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+ 	if (!strcmp(a->attr.name, "compr_new_inode"))
+ 		return sysfs_emit(buf, "%u\n", sbi->compr_new_inode);
+ #endif
++#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
++	if (!strcmp(a->attr.name, "fsck_stack")) {
++		unsigned long *entries;
++		unsigned int nr_entries;
++		unsigned int i;
++		int count;
++
++		count = sysfs_emit(buf, "%u\n", sbi->fsck_stack);
++		if (!sbi->fsck_stack)
++			return count;
++
++		for (i = 0; i < sbi->fsck_count; i++) {
++			nr_entries = stack_depot_fetch(sbi->fsck_stack_history[i], &entries);
++			if (!entries)
++				return count;
++			stack_trace_print(entries, nr_entries, 0);
++		}
++		return count;
 +	}
- restore_flush:
- 	if (need_restart_flush) {
- 		if (f2fs_create_flush_cmd_control(sbi))
++#endif
+ 
+ 	ui = (unsigned int *)(ptr + a->offset);
+ 
+@@ -740,6 +760,10 @@ F2FS_RW_ATTR(ATGC_INFO, atgc_management, atgc_candidate_count, max_candidate_cou
+ F2FS_RW_ATTR(ATGC_INFO, atgc_management, atgc_age_weight, age_weight);
+ F2FS_RW_ATTR(ATGC_INFO, atgc_management, atgc_age_threshold, age_threshold);
+ 
++#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
++F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, fsck_stack, fsck_stack);
++#endif
++
+ #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(gc_urgent_sleep_time),
+@@ -812,6 +836,9 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(atgc_candidate_count),
+ 	ATTR_LIST(atgc_age_weight),
+ 	ATTR_LIST(atgc_age_threshold),
++#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
++	ATTR_LIST(fsck_stack),
++#endif
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(f2fs);
 -- 
 2.32.0
 
