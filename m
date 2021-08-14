@@ -7,71 +7,68 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3E4C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 10:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CA8C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 10:37:24 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id E0FE460F36
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 10:37:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org E0FE460F36
+	by mail.kernel.org (Postfix) with ESMTPS id 6308060F36
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 14 Aug 2021 10:37:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 6308060F36
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mEr2U-000194-Ee; Sat, 14 Aug 2021 10:37:18 +0000
+	id 1mEr2Y-000780-LY; Sat, 14 Aug 2021 10:37:22 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <frank.li@vivo.com>) id 1mEr2S-00018t-MV
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 10:37:16 +0000
+ (envelope-from <frank.li@vivo.com>) id 1mEr2V-00077A-4u
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 10:37:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=JLxFXfJsdSWl3EWlYpUqqzXgD4pgtXf3p1PydiBH9zw=; b=VC+9S7/fkSmPNVhD9BdqwVLCh2
- AMmcnwHZZs1MMAQeoiuNP5oRNZBDQWZ0R4TsgL/gDQYYTbkjL1G4gUwazvxDc8etQ8JK66CxptUEJ
- EhotzyMiL9r7XghcRLd0uqQ2HmwV86U2ez2aThmt+qH+YRk7X4pEJJhsOwmT5F4l/5MQ=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=JLxFXfJsdSWl3EWlYpUqqzXgD4pgtXf3p1PydiBH9zw=; b=g5FDJ5fnzv/bL4Q+CxvacRHxxT
- l4tpBJcnNOTa6VpcuHHDhZDsyhhShgEIfYV1eKATXIiQsUag3WvAVEx5Ba9Birg84QIFpyElrPmgV
- n7rQb6zyIyhxS9YwpUnOobH7sJYwEefbDjCqKHfZmC8wM4DpCveUkPr497nUPHxeRYVg=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=0vSm78bxdlVODLiaokDACdbN7toEdi74RL20rjx6sA8=; b=NdMy8hJhiuFxilLX6bVbVmToJr
+ EeGsi4I2UvJr7cUr8DHztVpJY8iuKDBZnj06BPwVbjutDM3ddXgTJCq4MAQiR6IqDaH2WhbAXV6QM
+ l+yLAL6XWc7YRya1oVv0PMd1qjIfybbBxBizIaSKTOY/hO+L0uYHcRDmhGnUrCC85fGM=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=0vSm78bxdlVODLiaokDACdbN7toEdi74RL20rjx6sA8=; b=e
+ yyUijfnw1uLDUHWNlZuxFFrj+0kkPC7vA5cAxgMmUIVwj+y33+/hvQAqSruLhvLIOI3q1q4pAjMw2
+ EK4ZU/OwHNZpWKe/9HHgXqNsJG84R2EKZhbcLNFCoVQ/hpIts638YQ5+d8pF8j7cuPmkavs87HsYe
+ yJ/FQqZcoBlrv2lg=;
 Received: from mail-m17636.qiye.163.com ([59.111.176.36])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mEr2P-0003SC-F2
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 10:37:16 +0000
+ id 1mEr2O-0003S3-LA
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 14 Aug 2021 10:37:19 +0000
 Received: from comdg01144022.vivo.xyz (unknown [218.104.188.165])
- by mail-m17636.qiye.163.com (Hmail) with ESMTPA id 394F3C4010B;
- Sat, 14 Aug 2021 18:37:06 +0800 (CST)
+ by mail-m17636.qiye.163.com (Hmail) with ESMTPA id F1812C400E5;
+ Sat, 14 Aug 2021 18:37:04 +0800 (CST)
 From: Yangtao Li <frank.li@vivo.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Sat, 14 Aug 2021 18:37:02 +0800
-Message-Id: <20210814103702.52405-2-frank.li@vivo.com>
+Date: Sat, 14 Aug 2021 18:37:01 +0800
+Message-Id: <20210814103702.52405-1-frank.li@vivo.com>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210814103702.52405-1-frank.li@vivo.com>
-References: <20210814103702.52405-1-frank.li@vivo.com>
 MIME-Version: 1.0
 X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
- kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWUJIGEJWSE9IHUkfGU4YQ0
- tIVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAw6Cio6Cz9JSB8#GTQBViM2
- AjYwCQ5VSlVKTUlDQkhMT0lNQ0tNVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
- VUpLT1VKQ0NVSk1OWVdZCAFZQUxITkw3Bg++
-X-HM-Tid: 0a7b443c95ccd996kuws394f3c4010b
-X-Headers-End: 1mEr2P-0003SC-F2
-Subject: [f2fs-dev] [PATCH v6] f2fs: introduce
- /sys/fs/f2fs/<disk>/fsck_stack node
+ kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWUIaHk1WTU0fThkaQh0eSE
+ 4YVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkxVS1kG
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mgw6KSo4Ij9OFx84GTQ#Vi4y
+ DU5PFE5VSlVKTUlDQkhMT0lOTkhNVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
+ VUpLT1VKQ0NVSk1OWVdZCAFZQUlPSk43Bg++
+X-HM-Tid: 0a7b443c90efd996kuwsf1812c400e5
+X-Headers-End: 1mEr2O-0003S3-LA
+Subject: [f2fs-dev] [PATCH] f2fs: convert S_IRUGO to 0444
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,193 +86,50 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-SBI_NEED_FSCK is an indicator that fsck.f2fs needs to be triggered,
-this flag is set in too many places. For some scenes that are not very
-reproducible, adding stack information will help locate the problem.
-
-Let's record all fsck stack history, I added F2FS_FSCK_STACK_TRACE
-configuration options and sysfs nodes. After opening the configuration
-options and enabling the node, it will start recording. The recorded
-stack information will not be clear, and we can get information form
-kernel log.
+To fix:
+WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
 
 Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
- Documentation/ABI/testing/sysfs-fs-f2fs |  7 ++++
- fs/f2fs/Kconfig                         | 10 ++++++
- fs/f2fs/f2fs.h                          | 45 +++++++++++++++++++++++++
- fs/f2fs/sysfs.c                         | 27 +++++++++++++++
- 4 files changed, 89 insertions(+)
+ fs/f2fs/debug.c | 2 +-
+ fs/f2fs/sysfs.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index ef4b9218ae1e..047c398093cf 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -493,3 +493,10 @@ Contact:	"Chao Yu" <yuchao0@huawei.com>
- Description:	When ATGC is on, it controls age threshold to bypass GCing young
- 		candidates whose age is not beyond the threshold, by default it was
- 		initialized as 604800 seconds (equals to 7 days).
-+
-+What:		/sys/fs/f2fs/<disk>/fsck_stack
-+Date:		August 2021
-+Contact:	"Yangtao Li" <frank.li@vivo.com>
-+Description:	Controls to enable/disable fsck stack trace, you can get stack
-+		information from kernel log. Note that the recorded stack information
-+		will not be cleared.
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index 7669de7b49ce..f451e567e4a8 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -135,3 +135,13 @@ config F2FS_FS_LZORLE
- 	default y
- 	help
- 	  Support LZO-RLE compress algorithm, if unsure, say Y.
-+
-+config F2FS_FSCK_STACK_TRACE
-+	bool "F2FS fsck stack information record"
-+	depends on F2FS_FS
-+	depends on STACKDEPOT
-+	default y
-+	help
-+	 Support printing out fsck stack history. With this, you have to
-+	 turn on "fsck_stack" sysfs node. Then you can get information
-+	 from kernel log.
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ee8eb33e2c25..b2d1d1a5a3fc 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -24,6 +24,8 @@
- #include <linux/quotaops.h>
- #include <linux/part_stat.h>
- #include <crypto/hash.h>
-+#include <linux/stackdepot.h>
-+#include <linux/stacktrace.h>
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 833325038ef3..542c20e9ea0c 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -611,7 +611,7 @@ void __init f2fs_create_root_stats(void)
+ #ifdef CONFIG_DEBUG_FS
+ 	f2fs_debugfs_root = debugfs_create_dir("f2fs", NULL);
  
- #include <linux/fscrypt.h>
- #include <linux/fsverity.h>
-@@ -117,6 +119,8 @@ typedef u32 nid_t;
- 
- #define COMPRESS_EXT_NUM		16
- 
-+#define FSCK_STACK_DEPTH		64
-+
- struct f2fs_mount_info {
- 	unsigned int opt;
- 	int write_io_size_bits;		/* Write IO size bits */
-@@ -1748,6 +1752,11 @@ struct f2fs_sb_info {
- 	unsigned int compress_watermark;	/* cache page watermark */
- 	atomic_t compress_page_hit;		/* cache hit count */
+-	debugfs_create_file("status", S_IRUGO, f2fs_debugfs_root, NULL,
++	debugfs_create_file("status", 0444, f2fs_debugfs_root, NULL,
+ 			    &stat_fops);
  #endif
-+#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
-+	depot_stack_handle_t *fsck_stack_history;
-+	unsigned int fsck_count;
-+	bool fsck_stack;
-+#endif
- };
- 
- struct f2fs_private_dio {
-@@ -1954,6 +1963,38 @@ static inline struct address_space *NODE_MAPPING(struct f2fs_sb_info *sbi)
- 	return sbi->node_inode->i_mapping;
  }
- 
-+#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
-+static void fsck_stack_trace(struct f2fs_sb_info *sbi)
-+{
-+	unsigned long entries[FSCK_STACK_DEPTH];
-+	depot_stack_handle_t stack, *new;
-+	unsigned int nr_entries;
-+	int i;
-+
-+	if (!sbi->fsck_stack)
-+		return;
-+
-+	nr_entries = stack_trace_save(entries, ARRAY_SIZE(entries), 0);
-+	nr_entries = filter_irq_stacks(entries, nr_entries);
-+	stack = stack_depot_save(entries, nr_entries, GFP_KERNEL);
-+	if (!stack)
-+		return;
-+
-+	/* Try to find an existing entry for this backtrace */
-+	for (i = 0; i < sbi->fsck_count; i++)
-+		if (sbi->fsck_stack_history[i] == stack)
-+			return;
-+
-+	new = krealloc(sbi->fsck_stack_history, (sbi->fsck_count + 1) *
-+		       sizeof(*sbi->fsck_stack_history), GFP_KERNEL);
-+	if (!new)
-+		return;
-+
-+	sbi->fsck_stack_history = new;
-+	sbi->fsck_stack_history[sbi->fsck_count++] = stack;
-+}
-+#endif
-+
- static inline bool is_sbi_flag_set(struct f2fs_sb_info *sbi, unsigned int type)
- {
- 	return test_bit(type, &sbi->s_flag);
-@@ -1962,6 +2003,10 @@ static inline bool is_sbi_flag_set(struct f2fs_sb_info *sbi, unsigned int type)
- static inline void set_sbi_flag(struct f2fs_sb_info *sbi, unsigned int type)
- {
- 	set_bit(type, &sbi->s_flag);
-+#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
-+	if (unlikely(type == SBI_NEED_FSCK))
-+		fsck_stack_trace(sbi);
-+#endif
- }
- 
- static inline void clear_sbi_flag(struct f2fs_sb_info *sbi, unsigned int type)
 diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 204de4c2c818..4e786bb797e7 100644
+index 6642246206bd..204de4c2c818 100644
 --- a/fs/f2fs/sysfs.c
 +++ b/fs/f2fs/sysfs.c
-@@ -306,6 +306,26 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 	if (!strcmp(a->attr.name, "compr_new_inode"))
- 		return sysfs_emit(buf, "%u\n", sbi->compr_new_inode);
- #endif
-+#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
-+	if (!strcmp(a->attr.name, "fsck_stack")) {
-+		unsigned long *entries;
-+		unsigned int nr_entries;
-+		unsigned int i;
-+		int count;
-+
-+		count = sysfs_emit(buf, "%u\n", sbi->fsck_stack);
-+		if (!sbi->fsck_stack)
-+			return count;
-+
-+		for (i = 0; i < sbi->fsck_count; i++) {
-+			nr_entries = stack_depot_fetch(sbi->fsck_stack_history[i], &entries);
-+			if (!entries)
-+				return count;
-+			stack_trace_print(entries, nr_entries, 0);
-+		}
-+		return count;
-+	}
-+#endif
+@@ -1213,13 +1213,13 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
+ 		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
  
- 	ui = (unsigned int *)(ptr + a->offset);
- 
-@@ -740,6 +760,10 @@ F2FS_RW_ATTR(ATGC_INFO, atgc_management, atgc_candidate_count, max_candidate_cou
- F2FS_RW_ATTR(ATGC_INFO, atgc_management, atgc_age_weight, age_weight);
- F2FS_RW_ATTR(ATGC_INFO, atgc_management, atgc_age_threshold, age_threshold);
- 
-+#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
-+F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, fsck_stack, fsck_stack);
-+#endif
-+
- #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
- static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(gc_urgent_sleep_time),
-@@ -812,6 +836,9 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(atgc_candidate_count),
- 	ATTR_LIST(atgc_age_weight),
- 	ATTR_LIST(atgc_age_threshold),
-+#ifdef CONFIG_F2FS_FSCK_STACK_TRACE
-+	ATTR_LIST(fsck_stack),
-+#endif
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs);
+ 	if (sbi->s_proc) {
+-		proc_create_single_data("segment_info", S_IRUGO, sbi->s_proc,
++		proc_create_single_data("segment_info", 0444, sbi->s_proc,
+ 				segment_info_seq_show, sb);
+-		proc_create_single_data("segment_bits", S_IRUGO, sbi->s_proc,
++		proc_create_single_data("segment_bits", 0444, sbi->s_proc,
+ 				segment_bits_seq_show, sb);
+-		proc_create_single_data("iostat_info", S_IRUGO, sbi->s_proc,
++		proc_create_single_data("iostat_info", 0444, sbi->s_proc,
+ 				iostat_info_seq_show, sb);
+-		proc_create_single_data("victim_bits", S_IRUGO, sbi->s_proc,
++		proc_create_single_data("victim_bits", 0444, sbi->s_proc,
+ 				victim_bits_seq_show, sb);
+ 	}
+ 	return 0;
 -- 
 2.32.0
 
