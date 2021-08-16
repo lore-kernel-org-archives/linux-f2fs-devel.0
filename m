@@ -2,74 +2,77 @@ Return-Path: <SRS0=ksoz=NH=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF96DC4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Aug 2021 13:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AE5C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Aug 2021 23:43:34 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id A6AF8611C4
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Aug 2021 13:23:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org A6AF8611C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vivo.com
+	by mail.kernel.org (Postfix) with ESMTPS id A7CDB60F58
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 16 Aug 2021 23:43:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org A7CDB60F58
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mFcZx-0007Kr-1Q; Mon, 16 Aug 2021 13:23:01 +0000
+	id 1mFmGT-0007XS-2P; Mon, 16 Aug 2021 23:43:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <frank.li@vivo.com>) id 1mFcZw-0007Kg-1k
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Aug 2021 13:23:00 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <nathan@kernel.org>) id 1mFmGS-0007XL-8q
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Aug 2021 23:43:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=q14BlxwR4PhLL3juB3nbMUh9WWDQeHUCfmsNv0T5chE=; b=kipdy8s4RRE4oxmjCvCD89Qu+a
- x1zK4LWjjvdPPX95qlTRfuh/hyWjZlpMe5uZtNenfUTbS/GStlkTnAeE4qc57tmOUBky7EarJQaKY
- AyAp2JrAG3lwKTCDxmyXiGW/Qhwk+A2rBnZ3ZFlC+YZ3Eyyv9ZLdqErKsJWUVbVg8pmw=;
+ bh=IOmX+q8vEvS4lP/VvyMotGP6rDUcNUN10UnkQJ7s2to=; b=BmbOYRGkmyya9jFF4yzk+9DvvC
+ ubCGHaa1VM0OLTupXDN+uILm0szazLkHIS0aV2PLEDMEXmyNSD+CrA3fnCyn6FuusQ/e5O23iAkzk
+ +n5SYasn9CWWFHHEUjQLWa2xpyQ3xsldJH3jUd3UZayKjO89qALc8S5oZ4QWPKQz/B7U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=q14BlxwR4PhLL3juB3nbMUh9WWDQeHUCfmsNv0T5chE=; b=J
- V2NO/UgmxBmDfv5QFF41uQkyfkpGrWYEXGfWvX7Vt1It4rTKK/C6zVfksNbYApewuGBt1GhwK+Gzd
- S3q/jFoVU0uG8gSUzklNyDuyQ85lWEEAxXGbJD8GjJ0skMEoyklHtcw4c3UaKDnDw7ygSnKhd30ma
- i7SGhyzqYkD6a9xM=;
-Received: from mail-m17636.qiye.163.com ([59.111.176.36])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=IOmX+q8vEvS4lP/VvyMotGP6rDUcNUN10UnkQJ7s2to=; b=W
+ TIGF795nZCV1AnV7BYGNuiwhe0DFBBMuUPPr+ym1yLgHmxRd0W7UZ3AKyIxTFcqCAzP6uNJTxNsb2
+ x1GywTxAqq6e5j1Ti2xIHkZTyYikDbUeuiPfVqcer2QFNz5QVItaAXXW+1sspICtqy6/KDM9xyC/g
+ kaY/VQsduz7GXjA0=;
+Received: from mail.kernel.org ([198.145.29.99])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mFcZs-0004kc-QX
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Aug 2021 13:22:59 +0000
-Received: from comdg01144022.vivo.xyz (unknown [218.104.188.165])
- by mail-m17636.qiye.163.com (Hmail) with ESMTPA id 491E5C40261;
- Mon, 16 Aug 2021 21:22:49 +0800 (CST)
-From: Yangtao Li <frank.li@vivo.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Mon, 16 Aug 2021 21:22:48 +0800
-Message-Id: <20210816132248.276865-1-frank.li@vivo.com>
-X-Mailer: git-send-email 2.32.0
+ id 1mFmGP-008jvX-Ac
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 16 Aug 2021 23:43:32 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2182760EE0;
+ Mon, 16 Aug 2021 23:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1629157398;
+ bh=NrRsJNff5j+swFa8HAxh+3BW3YLAq/RCrLszGjLzw9k=;
+ h=From:To:Cc:Subject:Date:From;
+ b=uTWVsbUtGlZ8JfRT3RHEsJWL0fhLyk3snGshZLfgNl52/DOVnTzVof8jh41BRQOQ6
+ zRhTqzxmyHopbF2jvBa5INLeDwj4o3z7iElodM6sc6P9yVf6grdkDKAe/lHso2nqPC
+ TwNw2uMWzVDJeb31dvEsNESuk0tAeVDC6Xm5ZzW7eJH0+BEGsqkftGgwbTXiGZ3KRr
+ lLF3i/ykew6s777lGAfitw9HWx42oKHr0jEL/XrfE8Bnd12xHiHGXnHvwHdp2avQqF
+ oT7u0gfe/kp8i0vQR2U3vTj6xTxMorZwPqmG6xyXLIj2LE8DQIiE6A4kQNChbgJ1Jo
+ Mw+UItSjmIeNw==
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Date: Mon, 16 Aug 2021 16:42:47 -0700
+Message-Id: <20210816234247.139528-1-nathan@kernel.org>
+X-Mailer: git-send-email 2.33.0.rc2
 MIME-Version: 1.0
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZCBgUCR5ZQVlLVUtZV1
- kWDxoPAgseWUFZKDYvK1lXWShZQUhPN1dZLVlBSVdZDwkaFQgSH1lBWUJKGkNWHU9NGE0ZGElKSE
- geVRMBExYaEhckFA4PWVdZFhoPEhUdFFlBWU9LSFVKSktISkNVS1kG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MjY6PSo6Mz9JNRwzLBkSF08N
- SRMaCypVSlVKTUlCSklLSk1CQ05PVTMWGhIXVR0JGhUQVRcSOw0SDRRVGBQWRVlXWRILWUFZSUpD
- VUpLT1VKQ0NVSk1OWVdZCAFZQUpNQ0k3Bg++
-X-HM-Tid: 0a7b4f2105efd996kuws491e5c40261
-X-Headers-End: 1mFcZs-0004kc-QX
-Subject: [f2fs-dev] [PATCH] f2fs: always call f2fs_issue_checkpoint() in
- f2fs_sync_fs()
+X-Patchwork-Bot: notify
+X-Headers-End: 1mFmGP-008jvX-Ac
+Subject: [f2fs-dev] [PATCH] f2fs: Add missing inline to
+ f2fs_sanity_check_cluster() stub
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,45 +84,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
+Cc: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Sync is always 1, so delete the check of the value.
+Without this, there is a warning in nearly every fs/f2fs/ file when
+F2FS_FS_COMPRESSION is not set:
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
+In file included from fs/f2fs/super.c:31:
+fs/f2fs/f2fs.h:4251:13: warning: unused function 'f2fs_sanity_check_cluster' [-Wunused-function]
+static bool f2fs_sanity_check_cluster(struct dnode_of_data *dn) { return false; }
+            ^
+1 warning generated.
+
+Fixes: 1495870233e7 ("f2fs: compress: do sanity check on cluster")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
- fs/f2fs/super.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/f2fs/f2fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 98727e04d271..b823c7e3f303 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1553,7 +1553,6 @@ static void f2fs_put_super(struct super_block *sb)
- int f2fs_sync_fs(struct super_block *sb, int sync)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
--	int err = 0;
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return 0;
-@@ -1565,10 +1564,7 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
- 		return -EAGAIN;
- 
--	if (sync)
--		err = f2fs_issue_checkpoint(sbi);
--
--	return err;
-+	return f2fs_issue_checkpoint(sbi);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0c978f934dcc..fe1097e678da 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4248,7 +4248,7 @@ static inline void f2fs_put_page_dic(struct page *page)
+ 	WARN_ON_ONCE(1);
  }
- 
- static int f2fs_freeze(struct super_block *sb)
+ static inline unsigned int f2fs_cluster_blocks_are_contiguous(struct dnode_of_data *dn) { return 0; }
+-static bool f2fs_sanity_check_cluster(struct dnode_of_data *dn) { return false; }
++static inline bool f2fs_sanity_check_cluster(struct dnode_of_data *dn) { return false; }
+ static inline int f2fs_init_compress_inode(struct f2fs_sb_info *sbi) { return 0; }
+ static inline void f2fs_destroy_compress_inode(struct f2fs_sb_info *sbi) { }
+ static inline int f2fs_init_page_array_cache(struct f2fs_sb_info *sbi) { return 0; }
+
+base-commit: f4b05791dda93edb03ebb6b48f1be104b2e64274
 -- 
-2.32.0
+2.33.0.rc2
 
 
 
