@@ -2,79 +2,75 @@ Return-Path: <SRS0=FIBF=NP=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 534B1C4338F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Aug 2021 01:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D37C4338F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Aug 2021 01:20:09 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0D41C6127B;
-	Tue, 24 Aug 2021 01:08:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 0D41C6127B
+	by mail.kernel.org (Postfix) with ESMTPS id AE832613A7
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 24 Aug 2021 01:20:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org AE832613A7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mIKvt-0006RV-Ic; Tue, 24 Aug 2021 01:08:53 +0000
+	id 1mIL6m-0001YM-6g; Tue, 24 Aug 2021 01:20:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <chao@kernel.org>) id 1mIKvr-0006RN-Gt
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Aug 2021 01:08:51 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <chao@kernel.org>) id 1mIL6k-0001YC-81
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Aug 2021 01:20:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LSQQ8f2336RqKfQCfFwxIJbJmAz6IrEiwfJq0dXEJHs=; b=mdaNBPkz6bJBaP22s423bRnpJ5
- IQJ3Wotnr8mg2W9c7f/9PmjqOUE/QMllIQXWaks5xBlwYPVZXKTtlLB4/iN/tudOGTJQstZBYLXnq
- AXQfhanU8ieZa4O+TdJApbQcnfWBywiaE1F6bXSzMeat5OuNjcYR6lpJN3m/4aYAssPw=;
+ bh=2sBrzslN3z6tcRV86SDTjHGYg5jYol69ZJ4a12vGLFU=; b=GUlKM9681nsunAhzTpV5kZVZkl
+ eA0OdtMtazBb9lwP0bI+mgvLpRrKhiENwmZV2vpaKW/CtfmLg4pJN1Mn2dQMi3VdiDoQO8iB7TZgY
+ Cc7t2LbeOtqfQHKOf+HOp487YswfGqFd6dT8VtAyP/aEYMHsHfYNktnV0+4pTLzJWz6k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=LSQQ8f2336RqKfQCfFwxIJbJmAz6IrEiwfJq0dXEJHs=; b=lPC1XEc6EFzFcXCITUCHYBUm8B
- tOguub0BI3S0+dtXcEU7JzCxf4mWSqJ3864269hUepCz0YLilV8vSbo2/ip5QsOkftHRFPBJGUuqL
- AKz9kDxYhEpbZTYZXfiJo4g5DoW2vKaKeJm9fU+U8aquKef8JkYqji9IVrwMIBHAwb9Y=;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=2sBrzslN3z6tcRV86SDTjHGYg5jYol69ZJ4a12vGLFU=; b=F
+ HN//qJqbG7piPb2IrMg6m9WiNaD4OV8skHGYGUjFwtxQZslfosJgec343jgRY/05eYFo2u8Jh/nZE
+ qptH9wM1x+sUovqXqpBoFVO+zhAB0auRxkD5EnnKPrl1USdWAMpsCsSltZiZFc7tMhi39LXv3qVc/
+ Jev0DC5Lx2LL7Ry8=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mIKvq-0004yq-Bk
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Aug 2021 01:08:51 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 516CA60E75;
- Tue, 24 Aug 2021 01:08:44 +0000 (UTC)
+ id 1mIL6g-00GKRP-UV
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 24 Aug 2021 01:20:06 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7794861056;
+ Tue, 24 Aug 2021 01:19:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1629767324;
- bh=LSQQ8f2336RqKfQCfFwxIJbJmAz6IrEiwfJq0dXEJHs=;
- h=Subject:To:References:From:Date:In-Reply-To:From;
- b=peUVUEi8Ed4L1jgy0LaSo37hcPqErMZWI5INKYQYW7tajawga1E+uVRgJ0nXa0h8i
- nq+WNmTwJHGPq69mfkud/yitLjBCu9Sxa2iZaDlnvgsEbdt7IgLQRxJOto24XjSEib
- +HzEG5R8II8SVf017lbNUjBBESc5MvrY+YwZCKvlkEj0Bx4LDGiezdql+sE478/3mG
- Wum3s+qyR4bUrFJmfWi08MBOp9jAm7mlPwFHtFJlzpydoGDCPlhRbKKybijJZS2wjr
- z4H5pq7UdlyLoF9z7nUp/nCBQSTYOdbD7zG9ieNkBlYFIARjDu9kiMqdKq7ev4uN1O
- HTc+yD3IQvEyA==
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20210823170151.1434772-1-jaegeuk@kernel.org>
+ s=k20201202; t=1629767992;
+ bh=HVZTqOmU6yGjrnUz9nZy965JrWb9oPWaPbk7egBfE2Y=;
+ h=From:To:Cc:Subject:Date:From;
+ b=X9GgP3p07uB8vlItd0PUdqd+/ogUgdCMVK4ZKLbx0zCX3UNQyqJkLwdzu7IntfhnW
+ MPG8g+b37v0gi/vD+VaAJAb5gOZjzZv4zzuhOFh6Gj+nXwM7z+dJO+YPGMSbFjkltL
+ nDnNgbQi/jKiPTe94gRMgbKaoM7FP8JTOJkFV7rDiKxYqlHUzVjJRNem6X9dEc7wkI
+ 8LcY3zZB5WWAG8ry7uRx/C6Du1kOVuQQUTr3QdmQOSyk2fDhDv8QU6JrHtd/zY1XpU
+ N6zOllcfjo0+tsBrvLKf/yJJ1HfW/2njdP+tV+s+7ZpJJxlkmDeX5wU2Qb5HTnOD9M
+ i4b5fVkkFxwKQ==
 From: Chao Yu <chao@kernel.org>
-Message-ID: <baa8a361-1a22-76a0-423d-4378178f7073@kernel.org>
-Date: Tue, 24 Aug 2021 09:08:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+To: jaegeuk@kernel.org
+Date: Tue, 24 Aug 2021 09:19:48 +0800
+Message-Id: <20210824011948.15408-1-chao@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20210823170151.1434772-1-jaegeuk@kernel.org>
-Content-Language: en-US
-X-Headers-End: 1mIKvq-0004yq-Bk
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't ignore writing pages on fsync
- during checkpoint=disable
+X-Headers-End: 1mIL6g-00GKRP-UV
+Subject: [f2fs-dev] [PATCH] f2fs: fix wrong option name printed by
+ parse_options()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,30 +82,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Chao Yu <chao.yu@linux.dev>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/8/24 1:01, Jaegeuk Kim wrote:
-> We must flush dirty pages when calling fsync() during checkpoint=disable.
-> Returning zero makes inode being clear, which fails to flush them when
-> enabling checkpoint back even by sync_inodes_sb().
+It prints below kernel message during mounting w/ checkpoint=disable
+option:
 
-Without this patch, file can be persisted via checkpoint=enable as well, my
-testcase:
+"F2FS-fs (pmem0): checkpoint=merge cannot be used with checkpoint=disable"
 
-- mount -t f2fs -o checkpoint=disable,checkpoint_nomerge /dev/pmem0 /mnt/f2fs/
-- cp file /mnt/f2fs/
-- xfs_io /mnt/f2fs/file -c "fdatasync"
-- mount -o remount,checkpoint=enable /dev/pmem0 /mnt/f2fs/
-- umount /mnt/f2fs
-- mount /dev/pmem0 /mnt/f2fs
-- md5sum file /mnt/f2fs/file
-chksum values are the same.
+Fix typo "checkpoint=merge" w/ "checkpoint_merge"
 
-Am I missing something?
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/super.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Thanks,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 49e153fd8183..88c66e46bd5c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1289,6 +1289,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 		return -EINVAL;
+ 	}
+ 
++	if (test_opt(sbi, DISABLE_CHECKPOINT) &&
++			test_opt(sbi, MERGE_CHECKPOINT)) {
++		f2fs_err(sbi, "checkpoint_merge cannot be used with checkpoint=disable\n");
++		return -EINVAL;
++	}
++
+ 	/* Not pass down write hints if the number of active logs is lesser
+ 	 * than NR_CURSEG_PERSIST_TYPE.
+ 	 */
+-- 
+2.32.0
+
 
 
 _______________________________________________
