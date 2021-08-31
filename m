@@ -2,74 +2,81 @@ Return-Path: <SRS0=+lo7=NW=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF634C432BE
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 31 Aug 2021 16:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B8DC4320A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 31 Aug 2021 18:19:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6E1D0610CB;
-	Tue, 31 Aug 2021 16:24:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 6E1D0610CB
+	by mail.kernel.org (Postfix) with ESMTPS id 29C48610CA;
+	Tue, 31 Aug 2021 18:19:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 29C48610CA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mL6YS-0003KY-59; Tue, 31 Aug 2021 16:24:08 +0000
+	id 1mL8MV-0001UJ-0z; Tue, 31 Aug 2021 18:19:55 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <djwong@kernel.org>) id 1mL6YQ-0003KO-Ni
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Aug 2021 16:24:06 +0000
+ (envelope-from <pr-tracker-bot@kernel.org>) id 1mL8MT-0001Tn-Q9
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Aug 2021 18:19:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
- From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:Date:Message-Id:References:In-Reply-To:From:
+ Subject:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=y0R/Bd0/GkBWtglrzQz/JuCu0RSYjhWmYKY6JTGSzWc=; b=ScagUae3/PEk3aVSuue5Qd3/B9
- ay+NlDMApww2At8EkQPLbNzRTIftWly2RyzVIiyvfHUaaCDCf/M/Oe5BpCTGd6PPKqlqAyr8QPgq0
- BrX+wQIc0g3ys8o5w/7IZXD5cxs/fVxHNK1FQOjoAMsGBMxVhoogU0vBjbPozDPyS0Ug=;
+ bh=GBMWj5WYc4HTgIUMbLNt2NxYYru0lOtxms512T4jCEk=; b=gDUDQcyRtw9uVFvQyxj2y/uhXi
+ TIrH84nzn6fKEInjB47AaUxKRnWDiJ7igjLAonAl3Lq4spn5h5xxiifdeOBIf5phFUdGvggNQEBkc
+ 6OiMhDK15DpBd5aQRe77r5Mne0CrPltrncAQy3OzSIzUqcOgsaU2kdxVMGXM5r1hBSSs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=y0R/Bd0/GkBWtglrzQz/JuCu0RSYjhWmYKY6JTGSzWc=; b=m
- B01zhnFAyKCINMh/ptOH94zdCy5Puov7g528DNKNEIB3kChzuncWqs+T4r+rnXAeXMGU+KJpOqY2d
- W/nt6gF04qP1W8Rp8Wkb0I73AUAZzUtLWEz1afoKhzYX2eeKjkMVnTgZM9jfEg02B4E2vurEDmaoA
- rwfSS2XBDqTX/sT8=;
+ h=Cc:To:Date:Message-Id:References:In-Reply-To:From:Subject:Sender:Reply-To
+ :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=GBMWj5WYc4HTgIUMbLNt2NxYYru0lOtxms512T4jCEk=; b=YtLg4pZiAmp/feBjSvIpmSnAQ9
+ tz5nXcu13cWuDBJCNE1dJznuaz8TRk/gqsbYVGZtCRzbWCmA9KAAW7gemWGAUNijEpNR1sYDu8IoP
+ 9PnzJM4ZkLuS4vXAKb/bgry7CNifXHlRUjC//wOX6shpn52nuyyW8rBvTYNH28tZqMXg=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mL6YQ-009Dwz-7r
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Aug 2021 16:24:06 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DD886610CC;
- Tue, 31 Aug 2021 16:23:55 +0000 (UTC)
+ id 1mL8MR-009K4E-K4
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 Aug 2021 18:19:53 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPS id ADE2061051;
+ Tue, 31 Aug 2021 18:19:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1630427036;
- bh=3CBp1rvnjRLq+ik6Z1JLX8BGifdRSVjyPCQ/sJLco80=;
- h=Date:From:To:Cc:Subject:From;
- b=GJDt8FZiuX6BwPq8ZneIBQYR7/55jsZG3CALHsYjMPVq62nclr45gyns+NNlAa8Qq
- tnSATmOv1NJ9M+ylEXUMCGciXq5sWAQX3qXP6SO6VsImSo3KAAh/8V3YLRd6efOylv
- TBNZU3nIi9Xk94jVOmVqByqQ8nOiWAVqXgEu3e0t4VnTa6M46N8nzidH7sDzGxlnun
- TTGkZicia1PDQA+cECjev18ns/N1BhkJATV7IlUkK5m/VFQ1W5Rh39+vTzR2WbVxSQ
- 7dPlBOIE3YAY6M+R6iG2Jqgv2ToDR8g15q+YgogsjBR2rSEhP4Us6nqGi9yv+2Q0Nn
- NMlL3Y+mRJeMg==
-Date: Tue, 31 Aug 2021 09:23:55 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <20210831162355.GA9959@magnolia>
-MIME-Version: 1.0
-Content-Disposition: inline
-X-Headers-End: 1mL6YQ-009Dwz-7r
-Subject: [f2fs-dev] [GIT PULL] vfs: new code for 5.15
+ s=k20201202; t=1630433971;
+ bh=PgM+rDs46+2K+qL4znNPoYRobm/RKsxxaeXjArovSN8=;
+ h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+ b=SWOFg1QAapkZgOnNA55lnZXl0M1sBb7SznJoScFIfq/GCb5UzGord2w7FpFz+0Iqo
+ ErI9bpFhNW8BgCu1y21b9GDjnMI/oG0+gR4ICZ2vsW45Tn8V37mqWYeQsQi9HOo9GH
+ +w8voK2ZTzcJco29BILtsx70Sofl/0SQgDm35+vmlA+0o2PYmkYg828wmGqMXIY7TA
+ TJ0KWEjWx+TOdnyLRCfQb0yDSfu7N8BWPSlTo/eazDxoxocI6iST60/uxhwuShS1xt
+ O4qt69qcDdH/pLAtNrx0qRd30oFL4aZ0zPWL6FNWLmvimhauUEZDQsAi5sRT9iA0ea
+ aT1ruYletuzSQ==
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <YS0LlXIhvZc4r5Vt@sol.localdomain>
+References: <YS0LlXIhvZc4r5Vt@sol.localdomain>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <YS0LlXIhvZc4r5Vt@sol.localdomain>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
+ tags/fscrypt-for-linus
+X-PR-Tracked-Commit-Id: 38ef66b05cfa3560323344a0b3e09e583f1eb974
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: cd358208d703fca446b52f3cf8f23c18f9e7705e
+Message-Id: <163043397158.24672.5271221655251796062.pr-tracker-bot@kernel.org>
+Date: Tue, 31 Aug 2021 18:19:31 +0000
+To: Eric Biggers <ebiggers@kernel.org>
+X-Headers-End: 1mL8MR-009K4E-K4
+Subject: Re: [f2fs-dev] [GIT PULL] fscrypt updates for 5.15
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,47 +88,28 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Wang Shilong <wshilong@ddn.com>, Wang Shilong <wangshilong1991@gmail.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- Ext4 Developers List <linux-ext4@vger.kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Linus,
+The pull request you sent on Mon, 30 Aug 2021 09:47:17 -0700:
 
-Please pull this single VFS patch that prevents userspace from setting
-project quota ids on files that the VFS considers invalid.
+> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
 
-This branch merges cleanly against your upstream branch as of a few
-minutes ago, and does not introduce any fstests regressions for ext4 or
-xfs.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/cd358208d703fca446b52f3cf8f23c18f9e7705e
 
---D
+Thank you!
 
-The following changes since commit c500bee1c5b2f1d59b1081ac879d73268ab0ff17:
-
-  Linux 5.14-rc4 (2021-08-01 17:04:17 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/vfs-5.15-merge-1
-
-for you to fetch changes up to d03ef4daf33a33da8d7c397102fff8ae87d04a93:
-
-  fs: forbid invalid project ID (2021-08-03 09:48:04 -0700)
-
-----------------------------------------------------------------
-New code for 5.15:
- - Strengthen parameter checking for project quota ids.
-
-----------------------------------------------------------------
-Wang Shilong (1):
-      fs: forbid invalid project ID
-
- fs/ioctl.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
 
 _______________________________________________
