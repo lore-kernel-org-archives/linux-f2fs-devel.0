@@ -2,75 +2,106 @@ Return-Path: <SRS0=3yZJ=NZ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A714C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Sep 2021 13:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27043C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Sep 2021 14:17:15 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 230CC61059;
-	Fri,  3 Sep 2021 13:58:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 230CC61059
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTPS id D663060FC4;
+	Fri,  3 Sep 2021 14:17:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org D663060FC4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mM9iO-00056u-Kn; Fri, 03 Sep 2021 13:58:44 +0000
+	id 1mMA0H-0005iA-LD; Fri, 03 Sep 2021 14:17:13 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <gregkh@linuxfoundation.org>) id 1mM9iM-00056l-Ku
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 13:58:42 +0000
+ (envelope-from <greg@kroah.com>) id 1mMA0G-0005i2-17
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 14:17:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ssUP7lj5A3Hl5hz1lGf4ndjBPg5URIMSLctX8juBRWs=; b=TA8CqYRpqfnIA/lcRO1Gq0c834
- 6H3kybVU6AKlISbYjQq+8a4GkyD8alzZpYxwXSfdsw9NRT110izcBSoOxRe55iJuC9AWDoTDLXuDQ
- GpGmp0PVUrt9BatyRLaSomRr481Rk5VHSLuKDskh6khHVaWKFNr+f09TR83VVL4xLl5k=;
+ bh=ou2miFBf0Z/Mek7c6HsqgdNghxW0xkCyTnhz5o626Y8=; b=ex3LlqivZ3MfGI+U49u7lZFV6A
+ +ssd4lxCWgDPH2PisiylFZVdzvIgedsOc/qajCREDlq7sFsynPi+8Eft7VifC7WDAzmD6FMmKji7w
+ 7n3AcOSUMPiivdaTp7of5LwOthzymsQoENbz9st8vjB6iF9120sDQAizddhkgj6BO0Ks=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
- In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ssUP7lj5A3Hl5hz1lGf4ndjBPg5URIMSLctX8juBRWs=; b=O2fQGaT0Rr3Wzg0CKtXPR3RoZB
- uQiHaLT509ajx0XoK/srunu0b319BRJPUhpNj4TyhxSN8V512pcfgbTCIsIwHHpBR4vQ5ULvtzye0
- ne9/a8dT7BerXOSpilJ7v/XFqWoAGONjKK1tZN85/vBdNX/WdsVh82c5Gw6ZuSVN0tuI=;
-Received: from mail.kernel.org ([198.145.29.99])
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ou2miFBf0Z/Mek7c6HsqgdNghxW0xkCyTnhz5o626Y8=; b=EUb6ty9RYNMv9kZpzfhf15tnzg
+ mucnNsRfWOb5SniCAqURfto4GlmfmHjsNa467veuwvK4/iUj1KPP9ug6T59Z/ondjw8k+pclvbM2r
+ HlY3GUD7JUFrgOpTr3N1C67y+MgK8Xy9tVRpUuC9wUd2gU577Ibl0BfOWcLV0gjupbWY=;
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mM9iI-0006yy-Ue
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 13:58:42 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5AE40610CC;
- Fri,  3 Sep 2021 13:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
- s=korg; t=1630677506;
- bh=Ea7EjuTjbEDQ9AnHYBHnAlJD7Ojdp6hWVPL1UFcOz5A=;
- h=Subject:To:Cc:From:Date:In-Reply-To:From;
- b=R5SbABvE78Li3/b9yVnVoh/3jmM2SjcKp6Nc+2A3DpsoRLTDZoWhOZLDGrptRFvjo
- DxojzwXBXtnEquhIwi6gJc28LlqKecPOlWFFo33lZ2qjZQKhRPLfHlNw4UrJiPESiQ
- 90nRk4P9ad8GXALZjP+2fUX759AQ1SrIxrmg0tJg=
-To: ebiggers@google.com, ebiggers@kernel.org, gregkh@linuxfoundation.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org
-From: <gregkh@linuxfoundation.org>
-Date: Fri, 03 Sep 2021 15:58:16 +0200
-In-Reply-To: <20210901164041.176238-4-ebiggers@kernel.org>
-Message-ID: <16306774969145@kroah.com>
+ id 1mMA0D-00086L-Qe
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 14:17:11 +0000
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+ by mailnew.west.internal (Postfix) with ESMTP id B69662B01266;
+ Fri,  3 Sep 2021 09:57:13 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+ by compute4.internal (MEProxy); Fri, 03 Sep 2021 09:57:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+ date:from:to:cc:subject:message-id:references:mime-version
+ :content-type:in-reply-to; s=fm1; bh=ou2miFBf0Z/Mek7c6HsqgdNghxW
+ 0xkCyTnhz5o626Y8=; b=ujmvwFns1pMZ57Jl79UjlA3tREURGfhBIfb9nj7Xna8
+ LCCZ4jAIls9dKj64uPgX3j6A2Eqhimi6wKQd7yXicr4bCgyWDkekkceVCjekx1dC
+ jp4tQ35JTalEpBdn5S45k9r2kj9vQC/AMThtr6El6uKjz16BImd8xbkJxvh6G0KF
+ tP5xUPYQwkOLrM5E8P/0cdcJFRhjWy8atNaLCsv9QR+l7ncMX2moOETnG1KEvRUF
+ JLwPxYuGJl3aht2U4Y1hXwpUQreodEgTww7BsW+aO6Yn2lZB8vTDySnB38ZzdPBg
+ 7o+P2417ibAdq7D/ZU9xjjFfK5WhN8NccSoRwNh7qYg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to:x-me-proxy
+ :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ou2miF
+ Bf0Z/Mek7c6HsqgdNghxW0xkCyTnhz5o626Y8=; b=RfSgwpmViTbjmEQiDkUbqM
+ DEU0pQCf+sDaSdLie8qCH3a8qkxA6uxumJlPny74Hcky7774It0TMrK2dWn1TFrw
+ RN9Ny50Scw0acuFxJuKA2/cUokR27N3FdtP+Aa0nH093PSgzs500eYQDyYxXLTT1
+ D618M0GTgjc3LgwgPsk6Gkdkp2NT09Fd2dp1uZ2lPYltQfaVM8jyqihPSmxM5lbu
+ iDpbI0Ww7P2RdLt8fQTAQjLK960k+Amvp1i+xLzI3Jhigl770Pew4po6sZ7jAdU+
+ jj7YzYU1I6EQlSpcIuKSOCcbq820bD6IHGF1fia4LzR5lZPGv2HyUf5ymCJYCkOg
+ ==
+X-ME-Sender: <xms:uCkyYf2a-zGiwsDzkrR3pjixUG_0I4bNcs-yKnPgre8rucTh6CI9ZA>
+ <xme:uCkyYeFnkuRkQ1h0YchVeS7JfWgXtEwjUOid2OhnPiPcD-RuH7UrDJZ1y7TqJl-rB
+ sZd60JpLJiBLg>
+X-ME-Received: <xmr:uCkyYf64drTwrzWB2BXX4CBR3jP-q084OGpy4fMYNxakIQXbrBYuDQ2wTZnN72ejEoqIS0BuZwf8NjgG_8uM8izUzW6IzvcW>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddruddvjedgieelucetufdoteggodetrfdotf
+ fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+ uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+ cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+ mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
+ fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucevlhhushht
+ vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
+ drtghomh
+X-ME-Proxy: <xmx:uCkyYU1kzJNRa0MFr0hspEjs0xuHuRuWYFVgrO2V9_Suo-8TN3gMQQ>
+ <xmx:uCkyYSGnYwl5Q2AUUcgPJpO1bLT4Y_12Xx1PdiNVjtrlovwLoKz3fw>
+ <xmx:uCkyYV9r6Lh_cUyVg9LJ62hfOuhpPJKeW69cXZlEIfnBdepf5V_-yQ>
+ <xmx:uSkyYa9D9tQwAWiYU1pcksmD8tEVt3tsODE05e5cKq4_ViO9j_q-6qpGz6A>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Sep 2021 09:57:11 -0400 (EDT)
+Date: Fri, 3 Sep 2021 15:57:09 +0200
+From: Greg KH <greg@kroah.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Message-ID: <YTIptf2dFHf9sSIY@kroah.com>
+References: <20210901164041.176238-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-stable: commit
-X-Patchwork-Hint: ignore 
-X-Headers-End: 1mM9iI-0006yy-Ue
-Subject: [f2fs-dev] Patch "f2fs: report correct st_size for encrypted
- symlinks" has been added to the 5.4-stable tree
+Content-Disposition: inline
+In-Reply-To: <20210901164041.176238-1-ebiggers@kernel.org>
+X-Headers-End: 1mMA0D-00086L-Qe
+Subject: Re: [f2fs-dev] [PATCH 5.4 0/4] backport fscrypt symlink fixes to 5.4
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,87 +113,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: stable-commits@vger.kernel.org
+Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-mtd@lists.infradead.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+On Wed, Sep 01, 2021 at 09:40:37AM -0700, Eric Biggers wrote:
+> This series backports some patches that failed to apply to 5.4-stable
+> due to the prototype of inode_operations::getattr having changed in
+> v5.12, as well several other conflicts.  Please apply to 5.4-stable.
+> 
+> Eric Biggers (4):
+>   fscrypt: add fscrypt_symlink_getattr() for computing st_size
+>   ext4: report correct st_size for encrypted symlinks
+>   f2fs: report correct st_size for encrypted symlinks
+>   ubifs: report correct st_size for encrypted symlinks
+> 
+>  fs/crypto/hooks.c       | 44 +++++++++++++++++++++++++++++++++++++++++
+>  fs/ext4/symlink.c       | 11 ++++++++++-
+>  fs/f2fs/namei.c         | 11 ++++++++++-
+>  fs/ubifs/file.c         | 12 ++++++++++-
+>  include/linux/fscrypt.h |  7 +++++++
+>  5 files changed, 82 insertions(+), 3 deletions(-)
+> 
+> -- 
+> 2.33.0
+> 
 
-This is a note to let you know that I've just added the patch titled
+All now queued up, thanks.
 
-    f2fs: report correct st_size for encrypted symlinks
-
-to the 5.4-stable tree which can be found at:
-    http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
-
-The filename of the patch is:
-     f2fs-report-correct-st_size-for-encrypted-symlinks.patch
-and it can be found in the queue-5.4 subdirectory.
-
-If you, or anyone else, feels it should not be added to the stable tree,
-please let <stable@vger.kernel.org> know about it.
-
-
-From foo@baz Fri Sep  3 03:56:23 PM CEST 2021
-From: Eric Biggers <ebiggers@kernel.org>
-Date: Wed,  1 Sep 2021 09:40:40 -0700
-Subject: f2fs: report correct st_size for encrypted symlinks
-To: stable@vger.kernel.org
-Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org
-Message-ID: <20210901164041.176238-4-ebiggers@kernel.org>
-
-From: Eric Biggers <ebiggers@google.com>
-
-commit 461b43a8f92e68e96c4424b31e15f2b35f1bbfa9 upstream.
-
-The stat() family of syscalls report the wrong size for encrypted
-symlinks, which has caused breakage in several userspace programs.
-
-Fix this by calling fscrypt_symlink_getattr() after f2fs_getattr() for
-encrypted symlinks.  This function computes the correct size by reading
-and decrypting the symlink target (if it's not already cached).
-
-For more details, see the commit which added fscrypt_symlink_getattr().
-
-Fixes: cbaf042a3cc6 ("f2fs crypto: add symlink encryption")
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20210702065350.209646-4-ebiggers@kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/f2fs/namei.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -1256,9 +1256,18 @@ static const char *f2fs_encrypted_get_li
- 	return target;
- }
- 
-+static int f2fs_encrypted_symlink_getattr(const struct path *path,
-+					  struct kstat *stat, u32 request_mask,
-+					  unsigned int query_flags)
-+{
-+	f2fs_getattr(path, stat, request_mask, query_flags);
-+
-+	return fscrypt_symlink_getattr(path, stat);
-+}
-+
- const struct inode_operations f2fs_encrypted_symlink_inode_operations = {
- 	.get_link       = f2fs_encrypted_get_link,
--	.getattr	= f2fs_getattr,
-+	.getattr	= f2fs_encrypted_symlink_getattr,
- 	.setattr	= f2fs_setattr,
- #ifdef CONFIG_F2FS_FS_XATTR
- 	.listxattr	= f2fs_listxattr,
-
-
-Patches currently in stable-queue which might be from ebiggers@kernel.org are
-
-queue-5.4/ubifs-report-correct-st_size-for-encrypted-symlinks.patch
-queue-5.4/ext4-report-correct-st_size-for-encrypted-symlinks.patch
-queue-5.4/fscrypt-add-fscrypt_symlink_getattr-for-computing-st_size.patch
-queue-5.4/f2fs-report-correct-st_size-for-encrypted-symlinks.patch
+greg k-h
 
 
 _______________________________________________
