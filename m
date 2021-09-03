@@ -2,39 +2,39 @@ Return-Path: <SRS0=3yZJ=NZ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42880C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Sep 2021 13:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A714C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Sep 2021 13:58:45 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id ED616610CE;
-	Fri,  3 Sep 2021 13:58:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org ED616610CE
+	by mail.kernel.org (Postfix) with ESMTPS id 230CC61059;
+	Fri,  3 Sep 2021 13:58:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 230CC61059
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mM9iI-0007r8-G3; Fri, 03 Sep 2021 13:58:38 +0000
+	id 1mM9iO-00056u-Kn; Fri, 03 Sep 2021 13:58:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <gregkh@linuxfoundation.org>) id 1mM9iF-0007qX-Uk
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 13:58:35 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <gregkh@linuxfoundation.org>) id 1mM9iM-00056l-Ku
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 13:58:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
  :Message-ID:In-Reply-To:Date:From:Cc:To:Subject:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6/tFAYrQBdM/axq+G1OY6lmAqIcyejc71u54ON7pqM4=; b=RTK6cmEebWqJ8i/4XMR7WpPgV/
- 0buwiARfGK3zt6mw+OAZjTWwXU8EEQVBWeAEyLgGNtjeQaIl6lBCDjPdAZW+W4bTbrB2ASmEMUMPY
- 50mi5QfbZy1htPt/PPulKJJMq5dujptpy3lEm1VcvDI8FmnzZGwcsOaVVxAWFKr9+DJg=;
+ bh=ssUP7lj5A3Hl5hz1lGf4ndjBPg5URIMSLctX8juBRWs=; b=TA8CqYRpqfnIA/lcRO1Gq0c834
+ 6H3kybVU6AKlISbYjQq+8a4GkyD8alzZpYxwXSfdsw9NRT110izcBSoOxRe55iJuC9AWDoTDLXuDQ
+ GpGmp0PVUrt9BatyRLaSomRr481Rk5VHSLuKDskh6khHVaWKFNr+f09TR83VVL4xLl5k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
@@ -42,36 +42,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=6/tFAYrQBdM/axq+G1OY6lmAqIcyejc71u54ON7pqM4=; b=lB3gH21cA7mMYKvhH2hxS0byaN
- NHdU5OU8j8nhdoRFbMka9Ps7BdYfMS8Wow0wOZav9hrlSpEoiw8vN8IfFQdtRRInRgPCNAgB5QFkp
- NMrMGvG0nCo5JfupQ7i1ktJdID7LABag8QdFz90XHg3IYxNDmS0xqoNagEkCDRqBLJyA=;
+ bh=ssUP7lj5A3Hl5hz1lGf4ndjBPg5URIMSLctX8juBRWs=; b=O2fQGaT0Rr3Wzg0CKtXPR3RoZB
+ uQiHaLT509ajx0XoK/srunu0b319BRJPUhpNj4TyhxSN8V512pcfgbTCIsIwHHpBR4vQ5ULvtzye0
+ ne9/a8dT7BerXOSpilJ7v/XFqWoAGONjKK1tZN85/vBdNX/WdsVh82c5Gw6ZuSVN0tuI=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mM9iF-00D7os-5q
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 13:58:35 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3597E610CE;
- Fri,  3 Sep 2021 13:58:29 +0000 (UTC)
+ id 1mM9iI-0006yy-Ue
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 13:58:42 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5AE40610CC;
+ Fri,  3 Sep 2021 13:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
- s=korg; t=1630677509;
- bh=Vqg7yBvwxauUW5EmL46VZawUP/qFNnVXLQ6C7kO/his=;
+ s=korg; t=1630677506;
+ bh=Ea7EjuTjbEDQ9AnHYBHnAlJD7Ojdp6hWVPL1UFcOz5A=;
  h=Subject:To:Cc:From:Date:In-Reply-To:From;
- b=gmuKitD4OlzWHvCl4S4JtIDFvGgR33+msO3cfBy3U6r4KmYm6J7gy+balOwz1xwLM
- o5gpJcErl6Ys8WkMgU3EuzPNV4MM27PlkNZ/LYOrQWN7vXW30fufSP+ridi68qZdk2
- 0m6Oh7w3OCMhZf0z7ovss7Jh3EXfv3SXQzZSM8RY=
+ b=R5SbABvE78Li3/b9yVnVoh/3jmM2SjcKp6Nc+2A3DpsoRLTDZoWhOZLDGrptRFvjo
+ DxojzwXBXtnEquhIwi6gJc28LlqKecPOlWFFo33lZ2qjZQKhRPLfHlNw4UrJiPESiQ
+ 90nRk4P9ad8GXALZjP+2fUX759AQ1SrIxrmg0tJg=
 To: ebiggers@google.com, ebiggers@kernel.org, gregkh@linuxfoundation.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org,
- toybox@lists.landley.net
+ linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org
 From: <gregkh@linuxfoundation.org>
 Date: Fri, 03 Sep 2021 15:58:16 +0200
-In-Reply-To: <20210901164041.176238-2-ebiggers@kernel.org>
-Message-ID: <1630677496120@kroah.com>
+In-Reply-To: <20210901164041.176238-4-ebiggers@kernel.org>
+Message-ID: <16306774969145@kroah.com>
 MIME-Version: 1.0
 X-stable: commit
 X-Patchwork-Hint: ignore 
-X-Headers-End: 1mM9iF-00D7os-5q
-Subject: [f2fs-dev] Patch "fscrypt: add fscrypt_symlink_getattr() for
- computing st_size" has been added to the 5.4-stable tree
+X-Headers-End: 1mM9iI-0006yy-Ue
+Subject: [f2fs-dev] Patch "f2fs: report correct st_size for encrypted
+ symlinks" has been added to the 5.4-stable tree
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,13 +90,13 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 This is a note to let you know that I've just added the patch titled
 
-    fscrypt: add fscrypt_symlink_getattr() for computing st_size
+    f2fs: report correct st_size for encrypted symlinks
 
 to the 5.4-stable tree which can be found at:
     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
 
 The filename of the patch is:
-     fscrypt-add-fscrypt_symlink_getattr-for-computing-st_size.patch
+     f2fs-report-correct-st_size-for-encrypted-symlinks.patch
 and it can be found in the queue-5.4 subdirectory.
 
 If you, or anyone else, feels it should not be added to the stable tree,
@@ -106,152 +105,56 @@ please let <stable@vger.kernel.org> know about it.
 
 From foo@baz Fri Sep  3 03:56:23 PM CEST 2021
 From: Eric Biggers <ebiggers@kernel.org>
-Date: Wed,  1 Sep 2021 09:40:38 -0700
-Subject: fscrypt: add fscrypt_symlink_getattr() for computing st_size
+Date: Wed,  1 Sep 2021 09:40:40 -0700
+Subject: f2fs: report correct st_size for encrypted symlinks
 To: stable@vger.kernel.org
 Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org
-Message-ID: <20210901164041.176238-2-ebiggers@kernel.org>
+Message-ID: <20210901164041.176238-4-ebiggers@kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit d18760560593e5af921f51a8c9b64b6109d634c2 upstream.
+commit 461b43a8f92e68e96c4424b31e15f2b35f1bbfa9 upstream.
 
-Add a helper function fscrypt_symlink_getattr() which will be called
-from the various filesystems' ->getattr() methods to read and decrypt
-the target of encrypted symlinks in order to report the correct st_size.
+The stat() family of syscalls report the wrong size for encrypted
+symlinks, which has caused breakage in several userspace programs.
 
-Detailed explanation:
+Fix this by calling fscrypt_symlink_getattr() after f2fs_getattr() for
+encrypted symlinks.  This function computes the correct size by reading
+and decrypting the symlink target (if it's not already cached).
 
-As required by POSIX and as documented in various man pages, st_size for
-a symlink is supposed to be the length of the symlink target.
-Unfortunately, st_size has always been wrong for encrypted symlinks
-because st_size is populated from i_size from disk, which intentionally
-contains the length of the encrypted symlink target.  That's slightly
-greater than the length of the decrypted symlink target (which is the
-symlink target that userspace usually sees), and usually won't match the
-length of the no-key encoded symlink target either.
+For more details, see the commit which added fscrypt_symlink_getattr().
 
-This hadn't been fixed yet because reporting the correct st_size would
-require reading the symlink target from disk and decrypting or encoding
-it, which historically has been considered too heavyweight to do in
-->getattr().  Also historically, the wrong st_size had only broken a
-test (LTP lstat03) and there were no known complaints from real users.
-(This is probably because the st_size of symlinks isn't used too often,
-and when it is, typically it's for a hint for what buffer size to pass
-to readlink() -- which a slightly-too-large size still works for.)
-
-However, a couple things have changed now.  First, there have recently
-been complaints about the current behavior from real users:
-
-- Breakage in rpmbuild:
-  https://github.com/rpm-software-management/rpm/issues/1682
-  https://github.com/google/fscrypt/issues/305
-
-- Breakage in toybox cpio:
-  https://www.mail-archive.com/toybox@lists.landley.net/msg07193.html
-
-- Breakage in libgit2: https://issuetracker.google.com/issues/189629152
-  (on Android public issue tracker, requires login)
-
-Second, we now cache decrypted symlink targets in ->i_link.  Therefore,
-taking the performance hit of reading and decrypting the symlink target
-in ->getattr() wouldn't be as big a deal as it used to be, since usually
-it will just save having to do the same thing later.
-
-Also note that eCryptfs ended up having to read and decrypt symlink
-targets in ->getattr() as well, to fix this same issue; see
-commit 3a60a1686f0d ("eCryptfs: Decrypt symlink target for stat size").
-
-So, let's just bite the bullet, and read and decrypt the symlink target
-in ->getattr() in order to report the correct st_size.  Add a function
-fscrypt_symlink_getattr() which the filesystems will call to do this.
-
-(Alternatively, we could store the decrypted size of symlinks on-disk.
-But there isn't a great place to do so, and encryption is meant to hide
-the original size to some extent; that property would be lost.)
-
+Fixes: cbaf042a3cc6 ("f2fs crypto: add symlink encryption")
 Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20210702065350.209646-2-ebiggers@kernel.org
+Link: https://lore.kernel.org/r/20210702065350.209646-4-ebiggers@kernel.org
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/crypto/hooks.c       |   44 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fscrypt.h |    7 +++++++
- 2 files changed, 51 insertions(+)
+ fs/f2fs/namei.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -305,3 +305,47 @@ err_kfree:
- 	return ERR_PTR(err);
- }
- EXPORT_SYMBOL_GPL(fscrypt_get_symlink);
-+
-+/**
-+ * fscrypt_symlink_getattr() - set the correct st_size for encrypted symlinks
-+ * @path: the path for the encrypted symlink being queried
-+ * @stat: the struct being filled with the symlink's attributes
-+ *
-+ * Override st_size of encrypted symlinks to be the length of the decrypted
-+ * symlink target (or the no-key encoded symlink target, if the key is
-+ * unavailable) rather than the length of the encrypted symlink target.  This is
-+ * necessary for st_size to match the symlink target that userspace actually
-+ * sees.  POSIX requires this, and some userspace programs depend on it.
-+ *
-+ * This requires reading the symlink target from disk if needed, setting up the
-+ * inode's encryption key if possible, and then decrypting or encoding the
-+ * symlink target.  This makes lstat() more heavyweight than is normally the
-+ * case.  However, decrypted symlink targets will be cached in ->i_link, so
-+ * usually the symlink won't have to be read and decrypted again later if/when
-+ * it is actually followed, readlink() is called, or lstat() is called again.
-+ *
-+ * Return: 0 on success, -errno on failure
-+ */
-+int fscrypt_symlink_getattr(const struct path *path, struct kstat *stat)
-+{
-+	struct dentry *dentry = path->dentry;
-+	struct inode *inode = d_inode(dentry);
-+	const char *link;
-+	DEFINE_DELAYED_CALL(done);
-+
-+	/*
-+	 * To get the symlink target that userspace will see (whether it's the
-+	 * decrypted target or the no-key encoded target), we can just get it in
-+	 * the same way the VFS does during path resolution and readlink().
-+	 */
-+	link = READ_ONCE(inode->i_link);
-+	if (!link) {
-+		link = inode->i_op->get_link(dentry, inode, &done);
-+		if (IS_ERR(link))
-+			return PTR_ERR(link);
-+	}
-+	stat->size = strlen(link);
-+	do_delayed_call(&done);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(fscrypt_symlink_getattr);
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -298,6 +298,7 @@ extern int __fscrypt_encrypt_symlink(str
- extern const char *fscrypt_get_symlink(struct inode *inode, const void *caddr,
- 				       unsigned int max_size,
- 				       struct delayed_call *done);
-+int fscrypt_symlink_getattr(const struct path *path, struct kstat *stat);
- static inline void fscrypt_set_ops(struct super_block *sb,
- 				   const struct fscrypt_operations *s_cop)
- {
-@@ -585,6 +586,12 @@ static inline const char *fscrypt_get_sy
- 	return ERR_PTR(-EOPNOTSUPP);
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -1256,9 +1256,18 @@ static const char *f2fs_encrypted_get_li
+ 	return target;
  }
  
-+static inline int fscrypt_symlink_getattr(const struct path *path,
-+					  struct kstat *stat)
++static int f2fs_encrypted_symlink_getattr(const struct path *path,
++					  struct kstat *stat, u32 request_mask,
++					  unsigned int query_flags)
 +{
-+	return -EOPNOTSUPP;
++	f2fs_getattr(path, stat, request_mask, query_flags);
++
++	return fscrypt_symlink_getattr(path, stat);
 +}
 +
- static inline void fscrypt_set_ops(struct super_block *sb,
- 				   const struct fscrypt_operations *s_cop)
- {
+ const struct inode_operations f2fs_encrypted_symlink_inode_operations = {
+ 	.get_link       = f2fs_encrypted_get_link,
+-	.getattr	= f2fs_getattr,
++	.getattr	= f2fs_encrypted_symlink_getattr,
+ 	.setattr	= f2fs_setattr,
+ #ifdef CONFIG_F2FS_FS_XATTR
+ 	.listxattr	= f2fs_listxattr,
 
 
 Patches currently in stable-queue which might be from ebiggers@kernel.org are
