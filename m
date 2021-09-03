@@ -2,94 +2,74 @@ Return-Path: <SRS0=3yZJ=NZ=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDC0C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Sep 2021 00:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DD4C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Sep 2021 03:03:23 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 8620C60EE3;
-	Fri,  3 Sep 2021 00:56:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 8620C60EE3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=bugzilla.kernel.org
+	by mail.kernel.org (Postfix) with ESMTPS id 630D660F56
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Sep 2021 03:03:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 630D660F56
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mLxVK-0002UZ-9w; Fri, 03 Sep 2021 00:56:26 +0000
+	id 1mLzUA-0004pu-5V; Fri, 03 Sep 2021 03:03:22 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1mLxVI-0002US-I9
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 00:56:24 +0000
+ (envelope-from <chao@kernel.org>) id 1mLzU8-0004po-Bv
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 03:03:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=elMGajKsh7H6LzszukZ0t32XEFPXDfba5p0wP6VGPGs=; b=FHepQUpik8u5bhzhhdFCC4IiYz
- oYpVEKfmPtYa2koJe3uz0GT+0R/GnwNG8G+TLZ34XTyukdRzMyA70oGS6547e0kFY7u+xVh6jACPG
- vMd40L8Vp1iDewDLFHR62xm4PKh/4A0odlAJseIiGaQklX28Uur+48PM+RgrvRxFw0qU=;
+ bh=V4DmJnswoUlCh6to+2nJxFp2OInFJiLwiDlDz4KQb+Q=; b=XkxK/6R800fgRPoh1GdR15o/AC
+ x4VwUuDqcLZahiWgjyeBOq/+jLKPZ6eSARoTie9rJcHJlT56tiRi1bpQ3uSbaX4BpEUKgzcs+rbr5
+ PMwghQfd4YvC6Qw9DesfquBxeOPNapwFrRCDLg1JiQrjAXhuttujH20eIGLsn92hEMQM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:Message-ID:Date:
- Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=elMGajKsh7H6LzszukZ0t32XEFPXDfba5p0wP6VGPGs=; b=U
- vsGkWP/mES0E/+EQpHzzxqIWUh+jcq5k+GR3r72NSWAJqOpko3fZJeK77HPklPhiANiLM9xNiDZY8
- fpqUq4pVIzg8hlLy8h/WX9gmSqkrilkKJOC3UFXVUELzwfkNL5GrMdWwq11eKKBRFdYLrrapiZd3z
- 7QW83WUCCIU1JwZ0=;
+ List-Owner:List-Archive; bh=V4DmJnswoUlCh6to+2nJxFp2OInFJiLwiDlDz4KQb+Q=; b=a
+ 3ZsVZJ3DpFEVoUOlwIpiyuQigyl393zDK1yD4Xw3YJcCeKrCzTYTsjzKVnObIubQ2GUkARiGd6MDA
+ IgDSuGF+Sr95R0BNCE1YykSxeWIlk6CDMdkw8xNFNzf9ph7muMBw6MMxFMNKFQOtXYnFb4zNCFr6J
+ gwhKgpEb/qxnoYis=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mLxVF-00COLe-Mo
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 00:56:24 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPS id 6962A60F12
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  3 Sep 2021 00:56:11 +0000 (UTC)
+ id 1mLzU3-00CVTG-UI
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 03 Sep 2021 03:03:20 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5896360F56;
+ Fri,  3 Sep 2021 03:03:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1630630571;
- bh=gcfKwid/+P0pDCK1/fFqB/8p6B9o3T705wCBk1TR17E=;
- h=From:To:Subject:Date:From;
- b=Ln+cDXJTeKbSPEmutHX2lAX5sUsmbIHje8vRcKnuWXSufo1Pk2HcckKSfTSDPb7Gb
- o1cIa9L244mnXsY3Ii9c3T0lfPBUS36MxUVqrjbWwPRM0kBfOJVjv1w5/7O7hB61BL
- wLrEDdK5G3ffeP5PaYUCVS8I0TQVtNN/5opx5CeIbcEKpMDKWRQRLqG5YHclIP0LkZ
- RLgm3UXaKtwAIt9SNl5hj2XVTLCiOKUsIsrdF6iugYJvZ7V0ysYZwJ+/ZUrWIojxA0
- TvEpFTKM8lWHjOqJwloAIcrF1OCnDCTZ4hbV7kAyvMdS2Bou8JEvm8tfavHJYfgSvj
- dW3wwjiIj1tPA==
-From: bugzilla-daemon@bugzilla.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 03 Sep 2021 00:56:11 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: high
-X-Bugzilla-Who: zhuangyi1@huawei.com
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version
- cf_kernel_version rep_platform op_sys cf_tree bug_status bug_severity
- priority component assigned_to reporter cf_regression
-Message-ID: <bug-214299-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ s=k20201202; t=1630638182;
+ bh=gJtmSNZbKkbrzgxaPATLp8mnWtEdxwbpYMxFsan2BfI=;
+ h=From:To:Cc:Subject:Date:From;
+ b=LKME0aF4ROlzKUsehwZ5IRbV0HB3u23lNk6s3UluHX/esb12hgt/O9Pgv8u/iZZxn
+ PMFSpEFh7OBLiaZ2TuY1Z8nset3Ak0WT8VXRiXULLApsopxoH8oec4tkK/Qb/tXcrh
+ XbkHxpAzO3iZ5Pi+tRiECMVFqCSWiN9oC2OK6atMDQPczNMHVVyhz3S1iwzx9kEKNF
+ iCFDbYaamZCVFEnVQJHI3jY1fW0lGyHVgxaQVirr1t2pVPbQedn9aAKhLM9PE122ZM
+ sCxQKiTPKYBNdLPXZHQFOeIJh9tWczn3JcfNNZaZi8wPcGLGsrz1VRE8yKQSS23k2V
+ +domrfjCm341A==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Fri,  3 Sep 2021 10:38:11 +0800
+Message-Id: <20210903023811.3458-1-chao@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-Headers-End: 1mLxVF-00COLe-Mo
-Subject: [f2fs-dev] [Bug 214299] New: A deadlock problem caused by the
- quota_sem set in db6ec53b7e0
+X-Headers-End: 1mLzU3-00CVTG-UI
+Subject: [f2fs-dev] [PATCH] f2fs: quota: fix potential deadlock
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,49 +81,67 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-kernel@vger.kernel.org, Yi Zhuang <zhuangyi1@huawei.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+As Yi Zhuang reported in bugzilla:
+
 https://bugzilla.kernel.org/show_bug.cgi?id=214299
 
-            Bug ID: 214299
-           Summary: A deadlock problem caused by the quota_sem set in
-                    db6ec53b7e0
-           Product: File System
-           Version: 2.5
-    Kernel Version: 5.3.0
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: high
-          Priority: P1
-         Component: f2fs
-          Assignee: filesystem_f2fs@kernel-bugs.kernel.org
-          Reporter: zhuangyi1@huawei.com
-        Regression: No
+There is potential deadlock during quota data flush as below:
 
-thread 1:                        thread 2:
+Thread A:			Thread B:
 f2fs_dquot_acquire
 down_read(&sbi->quota_sem)
-                                 f2fs_write_checkpoint
-                                 block_operations
-                                 f2fs_look_all
-                                 down_write(&sbi->cp_rwsem)
+				f2fs_write_checkpoint
+				block_operations
+				f2fs_look_all
+				down_write(&sbi->cp_rwsem)
 f2fs_quota_write
 f2fs_write_begin
 __do_map_lock
-f2fs_lock_op 
-down_read(&sbi->cp_rwsem)        
-                                 __need_flush_qutoa
-                                 down_write(&sbi->quota_sem)
+f2fs_lock_op
+down_read(&sbi->cp_rwsem)
+				__need_flush_qutoa
+				down_write(&sbi->quota_sem)
 
+This patch changes block_operations() to use trylock, if it fails,
+it means there is potential quota data updater, in this condition,
+let's flush quota data first and then trylock again to check dirty
+status of quota data.
+
+The side effect is: in heavy race condition (e.g. multi quota data
+upaters vs quota data flusher), it may decrease the probability of
+synchronizing quota data successfully in checkpoint() due to limited
+retry time of quota flush.
+
+Reported-by: Yi Zhuang <zhuangyi1@huawei.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/checkpoint.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 7d8803a4cbc2..6f6a7d812d60 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1159,7 +1159,8 @@ static bool __need_flush_quota(struct f2fs_sb_info *sbi)
+ 	if (!is_journalled_quota(sbi))
+ 		return false;
+ 
+-	down_write(&sbi->quota_sem);
++	if (!down_write_trylock(&sbi->quota_sem))
++		return true;
+ 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH)) {
+ 		ret = false;
+ 	} else if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR)) {
 -- 
-You may reply to this email to add a comment.
+2.32.0
 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
