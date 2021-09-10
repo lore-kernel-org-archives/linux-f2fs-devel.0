@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB90BC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459CEC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:22:22 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B862760FE3
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:21:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org B862760FE3
+	by mail.kernel.org (Postfix) with ESMTPS id 1820C604DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:22:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 1820C604DC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mOUIn-0006pw-8B; Fri, 10 Sep 2021 00:21:57 +0000
+	id 1mOUJA-0001eu-Td; Fri, 10 Sep 2021 00:22:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1mOUIl-0006pg-P4
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:21:55 +0000
+ (envelope-from <sashal@kernel.org>) id 1mOUIz-0001eX-31
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:22:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=C7BS6InU2OecS4CY+QXX7pIGKW4dPL5XGonXLSlV3qQ=; b=GkJRjnku3itRZw3TboA8EdyW8B
- a/UbuUjPlA3WsNneViC64KPneDGgjJkF75u7zd/37FvbhIQVyo108A4wJU0KRchBn/7iOT+OGen4B
- Hd8hn6U4k5FvBSxD0oPBxJco6Y/QjWoCMHIYzYjXNuLq2HrdODXZk5+PPaLioAp70rsI=;
+ bh=tJcj4gc0EU1kSne09MyMD0+pHs+mDV7EqRRH9MCoXD8=; b=kaYw8OF9g+LFTC9tziR95nNP5b
+ bXQ0nOnWyIseKiSLcjBqaAjCRG2DIjTmgmoi/vs/k6D0TN8Y00rj2xVMfSIysiR2pJHo0LIduTyZl
+ EiYFCx/x5TDeulfKqdGoK0iHwBno7XK/UJfwc+R3jpGoUz3CjzI/2wTzc2RZDtwt4vD8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=C7BS6InU2OecS4CY+QXX7pIGKW4dPL5XGonXLSlV3qQ=; b=GpUcVR3BobxBYaqyqd0lkMV0xO
- WcAlTnU6OFZmS2PLTesEKq6YAT7Y37gy6Oe8QPsiwFjMXI3qTzjWfaH1lJchUjLHXuKh/XjMb497Z
- 4X7iK22hO755qCqbh1yI6DTGj9+A/lfv4B+BtyZKQY0imvIwhmrjwjEZtiCWjOg+4BA0=;
+ bh=tJcj4gc0EU1kSne09MyMD0+pHs+mDV7EqRRH9MCoXD8=; b=i3mdthQunL3OPIjvBYRbL5YoGT
+ HmVgEqf+W1doyrHJ0k4yX8GMlVAXaz1A1EI48hrz34cJ8s/VnhA+m/wMzYy8M95Y0XZ9gKhMHZhX0
+ zY+kn3dQfvaZYC8+bhaax2/HlIFWnyYqhHYqb755mbxuSG6Qlh4rVosEMD598KmmN9ik=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mOUIl-0004em-8b
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:21:55 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 497AB60FDA;
- Fri, 10 Sep 2021 00:21:48 +0000 (UTC)
+ id 1mOUIs-005SAB-Gj
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:22:02 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5568D6058D;
+ Fri, 10 Sep 2021 00:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1631233309;
- bh=n/v+KpbYLzu6XxAJStKkikqPZU9/FjMVaU997xlo8DE=;
+ s=k20201202; t=1631233317;
+ bh=rhqq6V+MojK31vuhxkYnM09Uc1gc31+hQcpB2u9iXCk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=ijpCvUtMrs5tgZq03MICO2EIdypY6YpRxCIsKyF7c2ALemgVrS0+xbEX3s4x2EDIS
- rka+nME+3X6SkC8hSQMLYybm7Ab1t4aXKi4IO+K8cZsovvn0WlNAHRlZkrkmK9RW0g
- lVPY3joUeNX/XZ3oE6hl6j6eHCw/AilQC9Ku5PRgi7l4yrwYB4dk6826FlyNvIGcSt
- 6Fkg3audB2hSRKQsqnUztc4xcmHGDEDm8o7iEE0H145JP29NHq+AReWjhaxIRtAQae
- VwAs4i36KveGgCmo7gReyvJH/7OdnAFJsfJ2ohh+zfgROFOBpvdVi7BNenw1opIaKp
- RxGHxOcpIlVcw==
+ b=U3s6N4DVKR+pwbmxMhDcOPFzJDbZ4GM6LpbqVYVoHopZ3qhTcfM3x0xvvQXIHa/Wl
+ DkW35XE8Fa07biQMGx1pJOZMO79ToaTYxbGLa/KTMDd4BN7DFUN9QdPxoxDyknz1TO
+ 5/RRccpkFTsBaxn4J7+jP7RegqvdQJ9z4UM6YGm3oVoZgkZkPUtsilsRfNqtU4C38r
+ qVBrqdnQhq+V+bUgPQPMr8YqT3RfnmZ7YfT6PixBHQQnvaGdxVoEAz24Ywfd4sSjxw
+ tTZyQDmKHkICZZTNfDrynLiXElggDEM0i/9+ZMKYotArq0Oo3cLDRaFazEF5JSPyJ7
+ X8P1IN79Cfc4Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Thu,  9 Sep 2021 20:21:09 -0400
-Message-Id: <20210910002143.175731-4-sashal@kernel.org>
+Date: Thu,  9 Sep 2021 20:21:15 -0400
+Message-Id: <20210910002143.175731-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210910002143.175731-1-sashal@kernel.org>
 References: <20210910002143.175731-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1mOUIl-0004em-8b
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.4 04/37] f2fs: Revert "f2fs: Fix
- indefinite loop in f2fs_gc() v1"
+X-Headers-End: 1mOUIs-005SAB-Gj
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.4 10/37] f2fs: fix min_seq_blocks can
+ not make sense in some scenes.
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,49 +87,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Jia Yang <jiayang5@huawei.com>
+From: Laibin Qiu <qiulaibin@huawei.com>
 
-[ Upstream commit 10d0786b39b3b91c4fbf8c2926e97ab456a4eea1 ]
+[ Upstream commit dc675a97129c4d9d5af55a3d7f23d7e092b8e032 ]
 
-This reverts commit 957fa47823dfe449c5a15a944e4e7a299a6601db.
+F2FS have dirty page count control for batched sequential
+write in writepages, and get the value of min_seq_blocks by
+blocks_per_seg * segs_per_sec(segs_per_sec defaults to 1).
+But in some scenes we set a lager section size, Min_seq_blocks
+will become too large to achieve the expected effect(eg. 4thread
+sequential write, the number of merge requests will be reduced).
 
-The patch "f2fs: Fix indefinite loop in f2fs_gc()" v1 and v4 are all
-merged. Patch v4 is test info for patch v1. Patch v1 doesn't work and
-may cause that sbi->cur_victim_sec can't be resetted to NULL_SEGNO,
-which makes SSR unable to get segment of sbi->cur_victim_sec.
-So it should be reverted.
-
-The mails record:
-[1] https://lore.kernel.org/linux-f2fs-devel/7288dcd4-b168-7656-d1af-7e2cafa4f720@huawei.com/T/
-[2] https://lore.kernel.org/linux-f2fs-devel/20190809153653.GD93481@jaegeuk-macbookpro.roam.corp.google.com/T/
-
-Signed-off-by: Jia Yang <jiayang5@huawei.com>
+Signed-off-by: Laibin Qiu <qiulaibin@huawei.com>
 Reviewed-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/gc.c | 2 +-
+ fs/f2fs/segment.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a78aa5480454..67e2b0de1ef4 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1332,7 +1332,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 		round++;
- 	}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5ba677f85533..d34fdedf7e86 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4403,7 +4403,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+ 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+ 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+ 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
+-	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
++	sm_info->min_seq_blocks = sbi->blocks_per_seg;
+ 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+ 	sm_info->min_ssr_sections = reserved_sections(sbi);
  
--	if (gc_type == FG_GC && seg_freed)
-+	if (gc_type == FG_GC)
- 		sbi->cur_victim_sec = NULL_SEGNO;
- 
- 	if (sync)
 -- 
 2.30.2
 
