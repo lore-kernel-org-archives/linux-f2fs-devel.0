@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 682E3C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C55C43217
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:16:33 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 275106023D;
-	Fri, 10 Sep 2021 00:16:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 275106023D
+	by mail.kernel.org (Postfix) with ESMTPS id 27AE8611BD
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:16:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 27AE8611BD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mOUDY-0005vk-Cs; Fri, 10 Sep 2021 00:16:32 +0000
+	id 1mOUDX-0004gK-Vr; Fri, 10 Sep 2021 00:16:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <sashal@kernel.org>) id 1mOUDW-0005vU-LC
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <sashal@kernel.org>) id 1mOUDW-0004gC-Lm
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:16:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -32,9 +32,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ayx2jLRzsZryXlwjcrASrCXD3mcVTzYONyge1J84iYM=; b=jS6u58A3zIoUPpgsO9+r3ca5HB
- s2kA48vCxNMWRDj5GD32o2NMEOA4fMkFXhv5juLyAlNXCTH3bsRHZ6nG/wpSQN7j0BJpIAT8urNPY
- SJ9Ga1RxBvc0NiYLavO773Rw9/nvhjbQZ5SgWGvsDv3/vahGrRwVw7f9E27kDDYiFJsI=;
+ bh=LTQ/NjWJY+Fc0U/aSzc6WALduYd8SVnJkJJx3kXhdek=; b=ceTczM8KS4jC4rDqdgfINw4qTZ
+ g1rZx8zAX6XMpgT4Mbz8P+IDFTrGOL2lr9T4TdpkiU5n9rEvxtG2ky+aRFi1KyGNMwAqrPaXgSjko
+ gDqD+HEFXk/ZdMspt7Y0hmgNg1QYvwq2Uffe0LafLG7r5UPoo8WKxzwdp61fOIuc2vXM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Ayx2jLRzsZryXlwjcrASrCXD3mcVTzYONyge1J84iYM=; b=htFF2Ri7O5TFXMsCUJxbghjY6Q
- dNVrbiECC5e/T63sThpyikf6pIb/w5M/nOsvIlw49Wh7JPbxTkhHLfZqmR2KUHT9FMVnByc5bn+LF
- hFlmLYvKfBnh6t0QzYWmF9u19c0LY+O971HZhEx1nMCpA/wt1aAsyPcVcVFOOFLOigeg=;
+ bh=LTQ/NjWJY+Fc0U/aSzc6WALduYd8SVnJkJJx3kXhdek=; b=UWJEmgroF+XIlyasQfzvjYW0su
+ XWKaUtXuSYbepw3rMlZsbtULlUFPFGwe0v+DN/RBaiWv8UtwHw+1cLtZ9bEkold3uuayrBHQTut8C
+ uG3/NLT9v2bl4Sw3BDLAfPw14dVAPPPaQV1UetfxOgqzViCcD7cQdz+sprYpM8sk1rdA=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mOUDW-005Run-3u
+ id 1mOUDT-005Ruf-F1
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:16:30 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 16D21611C4;
- Fri, 10 Sep 2021 00:16:24 +0000 (UTC)
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 335CD6023D;
+ Fri, 10 Sep 2021 00:16:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1631232984;
- bh=VaBm2al3Cu8b16XZ/MgCLZBRF+tZW045Gp6rlB+4fMI=;
+ s=k20201202; t=1631232982;
+ bh=9pN1/NsmF03j7sOApejhS8iz5KaF6E+5LzIyiCpZzlg=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Xt25bApc8tH7bS9kgLJRILqMk9JnqJL/j4UELNNao+qSAoxFH9wiOHhAFJu7tXIUG
- C9swJCtFdxuc9NyNV2krjdEfrqqCvk8pBmAXjbpSGEWSBbEyNGnmisOAoLjqO9zyWX
- GqWJ/hXt884g0Qxh4qv6UfBr76/TO3zGW45/Pef5cB8KkbiIvHYj6zEYjPjd3XZEk+
- HfHBUhyzrYxRfGe/PktHaNAoymbNmfwxGsUnzzNuZaNgY9yBH2g7W8ZGlI7pMx2tfw
- ZX26lkgiSbnksKzzh0GxwTLHJCc33wP2/tFNBd3Bz5b9zwNAThUD/Wgjaz+C9kBIMw
- JdlmVEsMkC5bg==
+ b=sCxzfxuR3/Qgxotr4O8R1lbn4Aje7UuwMF5oIeIUgHKOESgtvLDmsP75ub2Ww2plm
+ fch/kMLq5V/33JX3yw+Dytju1yhawUdEQT2J8VagMIunbT+Ujv7TodHpsD8KQY7B6c
+ syiebLIdEbdEhqobXhozIH9QVZgswGpkaAR4QxrrukD8lWwo3hko/acRPfv70k8K9S
+ 3c5JyoYIcylBVjsfvJ7952Akf/NkzBlNpivyLrdjzP0el+1V+J0XO66mKpZ5Tay/Lj
+ Y2t3Or04Co4FdDCgpmjhQSmkCqj+QJzWJ/031pS1NgV01Qcps39zy1iYL5XOo9Sepg
+ Nz/dp27GHdIfw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Thu,  9 Sep 2021 20:14:38 -0400
-Message-Id: <20210910001558.173296-19-sashal@kernel.org>
+Date: Thu,  9 Sep 2021 20:14:36 -0400
+Message-Id: <20210910001558.173296-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210910001558.173296-1-sashal@kernel.org>
 References: <20210910001558.173296-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1mOUDW-005Run-3u
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.14 19/99] f2fs: don't sleep while
- grabing nat_tree_lock
+X-Headers-End: 1mOUDT-005Ruf-F1
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.14 17/99] f2fs: Revert "f2fs: Fix
+ indefinite loop in f2fs_gc() v1"
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,72 +87,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Daeho Jeong <daehojeong@google.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Jia Yang <jiayang5@huawei.com>
 
-[ Upstream commit 2eeb0dce728a7eac3e4dfe355d98af40d61f7a26 ]
+[ Upstream commit 10d0786b39b3b91c4fbf8c2926e97ab456a4eea1 ]
 
-This tries to fix priority inversion in the below condition resulting in
-long checkpoint delay.
+This reverts commit 957fa47823dfe449c5a15a944e4e7a299a6601db.
 
-f2fs_get_node_info()
- - nat_tree_lock
-  -> sleep to grab journal_rwsem by contention
+The patch "f2fs: Fix indefinite loop in f2fs_gc()" v1 and v4 are all
+merged. Patch v4 is test info for patch v1. Patch v1 doesn't work and
+may cause that sbi->cur_victim_sec can't be resetted to NULL_SEGNO,
+which makes SSR unable to get segment of sbi->cur_victim_sec.
+So it should be reverted.
 
-                                     checkpoint
-                                     - waiting for nat_tree_lock
+The mails record:
+[1] https://lore.kernel.org/linux-f2fs-devel/7288dcd4-b168-7656-d1af-7e2cafa4f720@huawei.com/T/
+[2] https://lore.kernel.org/linux-f2fs-devel/20190809153653.GD93481@jaegeuk-macbookpro.roam.corp.google.com/T/
 
-In order to let checkpoint go, let's release nat_tree_lock, if there's a
-journal_rwsem contention.
-
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Jia Yang <jiayang5@huawei.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/node.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ fs/f2fs/gc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 0be9e2d7120e..c945a9730f3c 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -552,7 +552,7 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- 	int i;
- 
- 	ni->nid = nid;
--
-+retry:
- 	/* Check nat cache */
- 	down_read(&nm_i->nat_tree_lock);
- 	e = __lookup_nat_cache(nm_i, nid);
-@@ -564,10 +564,19 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- 		return 0;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 0e42ee5f7770..396b6f55ec24 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1747,7 +1747,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 		round++;
  	}
  
--	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
-+	/*
-+	 * Check current segment summary by trying to grab journal_rwsem first.
-+	 * This sem is on the critical path on the checkpoint requiring the above
-+	 * nat_tree_lock. Therefore, we should retry, if we failed to grab here
-+	 * while not bothering checkpoint.
-+	 */
-+	if (!rwsem_is_locked(&sbi->cp_global_sem)) {
-+		down_read(&curseg->journal_rwsem);
-+	} else if (!down_read_trylock(&curseg->journal_rwsem)) {
-+		up_read(&nm_i->nat_tree_lock);
-+		goto retry;
-+	}
+-	if (gc_type == FG_GC && seg_freed)
++	if (gc_type == FG_GC)
+ 		sbi->cur_victim_sec = NULL_SEGNO;
  
--	/* Check current segment summary */
--	down_read(&curseg->journal_rwsem);
- 	i = f2fs_lookup_journal_in_cursum(journal, NAT_JOURNAL, nid, 0);
- 	if (i >= 0) {
- 		ne = nat_in_journal(journal, i);
+ 	if (sync)
 -- 
 2.30.2
 
