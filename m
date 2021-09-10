@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E82C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C67A5C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:22:51 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 0C25E6103E
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:22:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 0C25E6103E
+	by mail.kernel.org (Postfix) with ESMTPS id 94C8B610A3
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:22:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 94C8B610A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mOUJC-00056p-NK; Fri, 10 Sep 2021 00:22:22 +0000
+	id 1mOUJf-000591-9q; Fri, 10 Sep 2021 00:22:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <sashal@kernel.org>) id 1mOUIz-000563-32
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:22:09 +0000
+ (envelope-from <sashal@kernel.org>) id 1mOUJd-00058t-WD
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:22:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=R79V15PIVdYr1wTl1SYgDr/OvE1lEbjtKTSVs61HbGw=; b=Bu1fq0B9fJVWY5rzEWpuHi34E1
- eNIYRXSCx9g32ySIv9nfrNDbP/fS4sfWbvx90kyYX0tbVGSgubeXo/+1Ohyt47c87R8AbuW0q4mFp
- lJadn2ZwkPuPzTe6vVl2rALqnKHfyLr/g6VoxIn+GXQ8nlcPzSNE/pK6DFzAz9rY9Wto=;
+ bh=F9zuPM7jZHmNfIBHv4k3loZDOOCJFOgYTGtRNs41vx4=; b=cI2+A0oqNliB6qhr86bzQwEGSh
+ 8XKppseITbFzGHWtjWXAkP0OxLZzzCJnZnnZWTqBwsCxSw+UIshtFxWLF9WNoZnYrwuaFsmzPWm4w
+ 1Q0Unz7wzqBiD4P4QAIgVwN9HTwm1Tp5J62RkrhogeFVn/CPTqYjpHdjLvziCAXhBTxw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=R79V15PIVdYr1wTl1SYgDr/OvE1lEbjtKTSVs61HbGw=; b=bUm/ZXtO+1e67jfVROEfMqF+Nj
- bBnBWtc/zXkFJfh65ePaicnR+LDFvJP8NiS9LrCj2Ba9PGdVOeJIqIIBJrs70U3IA3OS+iiCqZOkq
- /GZPJIPodEpcf7jXDyfGRWPCahWVECG2+LRmSzoktAvJkim361ugn2WLlbErveoXFFZI=;
+ bh=F9zuPM7jZHmNfIBHv4k3loZDOOCJFOgYTGtRNs41vx4=; b=Pey77FGe2Z+Y5c6zL9p8WOhffl
+ jlmUIxjIygiff/kuGA2NKlM9tmyaE3vXTrYhVhob9IZyQxYtbarGbRSorVA+n/NfVkYoL8xnRr52n
+ pSnSkCszLJ9tHXibFcBsNouwd/znmtL4ca8VHIzVarGIx12lLRk/8+42OKwZYVL+EJCA=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mOUIr-0004f8-7u
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:22:01 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2DB2060F24;
- Fri, 10 Sep 2021 00:21:55 +0000 (UTC)
+ id 1mOUJd-0004ho-FR
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:22:49 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5505E610A3;
+ Fri, 10 Sep 2021 00:22:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1631233315;
- bh=HUjSc51v8Q/VSajJJxCN9AZhLPCBhX+xYJx2+V+j7iY=;
+ s=k20201202; t=1631233364;
+ bh=QQk5/NFDbpoB4CsO/Nl1x01d4DAt+VrGutOoBU8flU8=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=TdD1sa2zsKvLwLZoVw7ODh+WTY6NT0yD+DmTeCYGGviwJQ8kcvWlaRuSCcGuHJFNt
- gzSwk3TqH3zNkuLAnk4Uq6RrtyGzmNT7gmRmi8QtBFZq01c1QRRytbG8wNWDkDiCgV
- 6fi1AwQVMlykRcT354s0KOp482jZNdZSQ8EyY8pn865284fnr1Cd77YWcE92OwfriU
- NxP+t7AX7hThizwQ10Ags0vnqBUGi1KdCMVx1BXNnOK88bdq7X5/g84RjkZMiD5ERh
- Zyl6NPRRzSJtEjWy+LUOPhSrsJw1pAFM//nzE37T1JGW1ourXowq9gYZf3duuiaCFt
- V083GuYvRw4Ew==
+ b=CvAStQW9pFxKVmYPDysJ6NZbC8neJEEVV6S2EplKHXogLy+u1S4FCzmvtimvWPLE8
+ nPdy0GPQ3sxf8oIJbp7GnKPYWwDBmhiUPKbW4zyz1X31GAzdQQpb12Kl2VxOd7rhVC
+ AIWCqxbL4+uomZJ0KtZpzMn0+F0xZZ2fVvFs+VM9CfIygnONkVqr8WYgxxTt/c3djV
+ 4J8w5KR9+ISGkJEPa2zabqbAeTDeaKHbB8uqGFqUG3dH7RDNJ/5xRnlAnpJpNIEr91
+ WGeZdJNWUUM1/wWQAYsPDeVAJvyU8or0S744nYaZRMFjojZKpmQ06e7MUh/J+4mWOR
+ RtUr56ki33coA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Thu,  9 Sep 2021 20:21:14 -0400
-Message-Id: <20210910002143.175731-9-sashal@kernel.org>
+Date: Thu,  9 Sep 2021 20:22:15 -0400
+Message-Id: <20210910002234.176125-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210910002143.175731-1-sashal@kernel.org>
-References: <20210910002143.175731-1-sashal@kernel.org>
+In-Reply-To: <20210910002234.176125-1-sashal@kernel.org>
+References: <20210910002234.176125-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1mOUIr-0004f8-7u
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.4 09/37] f2fs: fix to force keeping
- write barrier for strict fsync mode
+X-Headers-End: 1mOUJd-0004ho-FR
+Subject: [f2fs-dev] [PATCH AUTOSEL 4.19 07/25] f2fs: fix min_seq_blocks can
+ not make sense in some scenes.
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,63 +93,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Yu <chao@kernel.org>
+From: Laibin Qiu <qiulaibin@huawei.com>
 
-[ Upstream commit 2787991516468bfafafb9bf2b45a848e6b202e7c ]
+[ Upstream commit dc675a97129c4d9d5af55a3d7f23d7e092b8e032 ]
 
-[1] https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg15126.html
+F2FS have dirty page count control for batched sequential
+write in writepages, and get the value of min_seq_blocks by
+blocks_per_seg * segs_per_sec(segs_per_sec defaults to 1).
+But in some scenes we set a lager section size, Min_seq_blocks
+will become too large to achieve the expected effect(eg. 4thread
+sequential write, the number of merge requests will be reduced).
 
-As [1] reported, if lower device doesn't support write barrier, in below
-case:
-
-- write page #0; persist
-- overwrite page #0
-- fsync
- - write data page #0 OPU into device's cache
- - write inode page into device's cache
- - issue flush
-
-If SPO is triggered during flush command, inode page can be persisted
-before data page #0, so that after recovery, inode page can be recovered
-with new physical block address of data page #0, however there may
-contains dummy data in new physical block address.
-
-Then what user will see is: after overwrite & fsync + SPO, old data in
-file was corrupted, if any user do care about such case, we can suggest
-user to use STRICT fsync mode, in this mode, we will force to use atomic
-write sematics to keep write order in between data/node and last node,
-so that it avoids potential data corruption during fsync().
-
-Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Laibin Qiu <qiulaibin@huawei.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/file.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6e58b2e62b18..4fc0e62a5ef3 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -259,6 +259,18 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 				f2fs_exist_written_data(sbi, ino, UPDATE_INO))
- 			goto flush_out;
- 		goto out;
-+	} else {
-+		/*
-+		 * for OPU case, during fsync(), node can be persisted before
-+		 * data when lower device doesn't support write barrier, result
-+		 * in data corruption after SPO.
-+		 * So for strict fsync mode, force to use atomic write sematics
-+		 * to keep write order in between data/node and last node to
-+		 * avoid potential data corruption.
-+		 */
-+		if (F2FS_OPTION(sbi).fsync_mode ==
-+				FSYNC_MODE_STRICT && !atomic)
-+			atomic = true;
- 	}
- go_write:
- 	/*
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 0e3e590a250f..0ac907b06cb1 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4198,7 +4198,7 @@ int f2fs_build_segment_manager(struct f2fs_sb_info *sbi)
+ 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+ 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+ 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
+-	sm_info->min_seq_blocks = sbi->blocks_per_seg * sbi->segs_per_sec;
++	sm_info->min_seq_blocks = sbi->blocks_per_seg;
+ 	sm_info->min_hot_blocks = DEF_MIN_HOT_BLOCKS;
+ 	sm_info->min_ssr_sections = reserved_sections(sbi);
+ 
 -- 
 2.30.2
 
