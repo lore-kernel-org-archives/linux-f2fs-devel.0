@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C55C43217
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20846C43219
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:16:44 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 27AE8611BD
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:16:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 27AE8611BD
+	by mail.kernel.org (Postfix) with ESMTPS id D62076023D
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 10 Sep 2021 00:16:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org D62076023D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mOUDX-0004gK-Vr; Fri, 10 Sep 2021 00:16:31 +0000
+	id 1mOUDi-0001SH-PY; Fri, 10 Sep 2021 00:16:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <sashal@kernel.org>) id 1mOUDW-0004gC-Lm
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:16:30 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
+ (envelope-from <sashal@kernel.org>) id 1mOUDh-0001SA-KJ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:16:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LTQ/NjWJY+Fc0U/aSzc6WALduYd8SVnJkJJx3kXhdek=; b=ceTczM8KS4jC4rDqdgfINw4qTZ
- g1rZx8zAX6XMpgT4Mbz8P+IDFTrGOL2lr9T4TdpkiU5n9rEvxtG2ky+aRFi1KyGNMwAqrPaXgSjko
- gDqD+HEFXk/ZdMspt7Y0hmgNg1QYvwq2Uffe0LafLG7r5UPoo8WKxzwdp61fOIuc2vXM=;
+ bh=pTbuq+E6ZEO1jPs7OGEd0Pmn6+ntqqgj1LwuDyAuFxw=; b=Jd4561lPrnPIsFR6ho04lJoo0u
+ e8YSLg5x6Vnx+KqjSDHMrIMjqsA3l6XDnEa/oD0B7IbpTH1NVsQhY6iAhpou7ikmXzoZM3hwo2ZhR
+ WVifMq2wHE8YatguukDIkDnhqvI3kxivyZdkaEt66C70kve4Mt5OPaUSPB4qtLwqABi0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -42,40 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=LTQ/NjWJY+Fc0U/aSzc6WALduYd8SVnJkJJx3kXhdek=; b=UWJEmgroF+XIlyasQfzvjYW0su
- XWKaUtXuSYbepw3rMlZsbtULlUFPFGwe0v+DN/RBaiWv8UtwHw+1cLtZ9bEkold3uuayrBHQTut8C
- uG3/NLT9v2bl4Sw3BDLAfPw14dVAPPPaQV1UetfxOgqzViCcD7cQdz+sprYpM8sk1rdA=;
+ bh=pTbuq+E6ZEO1jPs7OGEd0Pmn6+ntqqgj1LwuDyAuFxw=; b=QyPWgEJOwRDl9AzkFy0nfuYbQN
+ nchJ3uAvqtVulN9cNTV/7VEj+OazDbQevKg1D/FRmy6MVCeHomwFSUZEodbi6TJV4GPvcx19DDEbE
+ 1kXPw/HeCF1uqr8tfjdpRTzD9GCensBfHjos7xSJl9CUn4Vc5Kfl72VzSQDr+pAFmyho=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mOUDT-005Ruf-F1
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:16:30 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 335CD6023D;
- Fri, 10 Sep 2021 00:16:21 +0000 (UTC)
+ id 1mOUDh-0004PP-2T
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 10 Sep 2021 00:16:41 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id ED51E611C7;
+ Fri, 10 Sep 2021 00:16:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1631232982;
- bh=9pN1/NsmF03j7sOApejhS8iz5KaF6E+5LzIyiCpZzlg=;
+ s=k20201202; t=1631232995;
+ bh=NGJRrDCmuWGVT2PPXb6O+gDawF3o8qQtxaYhR2D6vSc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=sCxzfxuR3/Qgxotr4O8R1lbn4Aje7UuwMF5oIeIUgHKOESgtvLDmsP75ub2Ww2plm
- fch/kMLq5V/33JX3yw+Dytju1yhawUdEQT2J8VagMIunbT+Ujv7TodHpsD8KQY7B6c
- syiebLIdEbdEhqobXhozIH9QVZgswGpkaAR4QxrrukD8lWwo3hko/acRPfv70k8K9S
- 3c5JyoYIcylBVjsfvJ7952Akf/NkzBlNpivyLrdjzP0el+1V+J0XO66mKpZ5Tay/Lj
- Y2t3Or04Co4FdDCgpmjhQSmkCqj+QJzWJ/031pS1NgV01Qcps39zy1iYL5XOo9Sepg
- Nz/dp27GHdIfw==
+ b=S7uPaXp8dEo5AKYsX4ODLjhm4Zpb8dAXoolLgFdSv/0OziD+4sKyBGn0mDFKgNHXu
+ i0oKkioh5/F15+HwTkUvHHeGA/09MjJpPcPB5QnXSu1Q3E5zHUx/BFIHWvFhZAhv5O
+ qZTNlBkP2AZixlWZiyCfqkZyPJy2MfdHRwqWswHNNzuYUWEUBGxIua+pXtQAUhe1R0
+ sGsRAaQv/FNV12OPH6c5RWsPu7M1EIpRza6wmJmQ6pGkYhzlyaD4540hyDSIETn9yz
+ KkE08zGF0lyZVfcI8YUWcWd/d9H53IeGCnQC07TruIfmZ3De/JSzCGSEwYo3O4miii
+ Vmt7iTkXqq4Bw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Thu,  9 Sep 2021 20:14:36 -0400
-Message-Id: <20210910001558.173296-17-sashal@kernel.org>
+Date: Thu,  9 Sep 2021 20:14:46 -0400
+Message-Id: <20210910001558.173296-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210910001558.173296-1-sashal@kernel.org>
 References: <20210910001558.173296-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1mOUDT-005Ruf-F1
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.14 17/99] f2fs: Revert "f2fs: Fix
- indefinite loop in f2fs_gc() v1"
+X-Headers-End: 1mOUDh-0004PP-2T
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.14 27/99] f2fs: fix to force keeping
+ write barrier for strict fsync mode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,49 +87,69 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sasha Levin <sashal@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Jia Yang <jiayang5@huawei.com>
+From: Chao Yu <chao@kernel.org>
 
-[ Upstream commit 10d0786b39b3b91c4fbf8c2926e97ab456a4eea1 ]
+[ Upstream commit 2787991516468bfafafb9bf2b45a848e6b202e7c ]
 
-This reverts commit 957fa47823dfe449c5a15a944e4e7a299a6601db.
+[1] https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg15126.html
 
-The patch "f2fs: Fix indefinite loop in f2fs_gc()" v1 and v4 are all
-merged. Patch v4 is test info for patch v1. Patch v1 doesn't work and
-may cause that sbi->cur_victim_sec can't be resetted to NULL_SEGNO,
-which makes SSR unable to get segment of sbi->cur_victim_sec.
-So it should be reverted.
+As [1] reported, if lower device doesn't support write barrier, in below
+case:
 
-The mails record:
-[1] https://lore.kernel.org/linux-f2fs-devel/7288dcd4-b168-7656-d1af-7e2cafa4f720@huawei.com/T/
-[2] https://lore.kernel.org/linux-f2fs-devel/20190809153653.GD93481@jaegeuk-macbookpro.roam.corp.google.com/T/
+- write page #0; persist
+- overwrite page #0
+- fsync
+ - write data page #0 OPU into device's cache
+ - write inode page into device's cache
+ - issue flush
 
-Signed-off-by: Jia Yang <jiayang5@huawei.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
+If SPO is triggered during flush command, inode page can be persisted
+before data page #0, so that after recovery, inode page can be recovered
+with new physical block address of data page #0, however there may
+contains dummy data in new physical block address.
+
+Then what user will see is: after overwrite & fsync + SPO, old data in
+file was corrupted, if any user do care about such case, we can suggest
+user to use STRICT fsync mode, in this mode, we will force to use atomic
+write sematics to keep write order in between data/node and last node,
+so that it avoids potential data corruption during fsync().
+
+Signed-off-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/gc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/file.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 0e42ee5f7770..396b6f55ec24 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1747,7 +1747,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 		round++;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6afd4562335f..00b45876eaa1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -301,6 +301,18 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+ 				f2fs_exist_written_data(sbi, ino, UPDATE_INO))
+ 			goto flush_out;
+ 		goto out;
++	} else {
++		/*
++		 * for OPU case, during fsync(), node can be persisted before
++		 * data when lower device doesn't support write barrier, result
++		 * in data corruption after SPO.
++		 * So for strict fsync mode, force to use atomic write sematics
++		 * to keep write order in between data/node and last node to
++		 * avoid potential data corruption.
++		 */
++		if (F2FS_OPTION(sbi).fsync_mode ==
++				FSYNC_MODE_STRICT && !atomic)
++			atomic = true;
  	}
- 
--	if (gc_type == FG_GC && seg_freed)
-+	if (gc_type == FG_GC)
- 		sbi->cur_victim_sec = NULL_SEGNO;
- 
- 	if (sync)
+ go_write:
+ 	/*
 -- 
 2.30.2
 
