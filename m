@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18429C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Sep 2021 07:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159BFC433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Sep 2021 07:02:34 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id C46A06056B;
-	Wed, 15 Sep 2021 07:01:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org C46A06056B
+	by mail.kernel.org (Postfix) with ESMTPS id C46F66112D
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 15 Sep 2021 07:02:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org C46F66112D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mQOvP-0004na-LN; Wed, 15 Sep 2021 07:01:43 +0000
+	id 1mQOwD-00026D-Cw; Wed, 15 Sep 2021 07:02:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
  (envelope-from
  <BATV+8aa05ddd91fea3e0ef51+6597+infradead.org+hch@casper.srs.infradead.org>)
- id 1mQOvN-0004nR-0u
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Sep 2021 07:01:41 +0000
+ id 1mQOwB-000267-1J
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Sep 2021 07:02:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nsp5N75MotLePoJobS9ZhodRN6ezBtzkmBOnAPp7UHg=; b=c2L261UFVKo9VEa8jPCSsm+d2f
- Noy/KQtvJHKfS1Hd2UroCL92E1xdR4CgtNKgDl4j0LQp5p0XFnzfS4g0XozgdCkq/LiM4GL7nKfAG
- VfPNkOBKkUiqna1NH9GilqDY1e0A5FESdxvVO9x4gEAv5Gtr7ltKxNeoxd227YGyPbGM=;
+ bh=BkB2SpdezulujHBf3WGhiV0+MkMtRlb+AsprXrCWmm8=; b=kcsqaHm1nMBPWO8EAkBXir5Nm5
+ 8O+BUUDNj7eJWfgKTEFd0C6PkPJFM2O4B8Bw5Xe5r+pYhU26KI4lTAZHzYhnbfai7hSE/XybJdU0N
+ bETwQTBUbHnK0TSC2wV5o7apvK2G/ZcKl8bxvmSn8nVjN6bCCxabj10zBEO2DXn5LdXM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -44,39 +44,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=nsp5N75MotLePoJobS9ZhodRN6ezBtzkmBOnAPp7UHg=; b=g5FxMXguzi8KCAWRKUmHVW1NHU
- eWA8Ky+/MfzductpysWZWaYefSaDJkQG4Ilrd6izNWHis+fXjzQlCAdq98OlxdcfivLDCl9WLI9vl
- ScE/G22alDpjdGMmSUzfp7bToBFIfaEER+jOT/w85FxxOzkQ8RxnVwElrveDqRYtMtOU=;
+ bh=BkB2SpdezulujHBf3WGhiV0+MkMtRlb+AsprXrCWmm8=; b=bl7jpyxvhcZl/U3gkv+/iow39Z
+ ya4AaxN1+KuBYPWZ+jIp4d/DxlIAf+DLLlgMoPoQw1HZcDnyeKFOEoPWkK6vKApyacqq7qXMZ9HBj
+ pgAPTr49p1R77xNE/m3Z/wgUntNYMKYtLoGbt6/ahuyW/PZyxOX+ZaFHPmeXeymFwKkk=;
 Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mQOvL-00BFMa-Tk
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Sep 2021 07:01:40 +0000
+ id 1mQOw7-0008KK-KY
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 15 Sep 2021 07:02:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=nsp5N75MotLePoJobS9ZhodRN6ezBtzkmBOnAPp7UHg=; b=koHYfJhi0kCowMyVCGjauAU5cB
- 3Ya1uhzNq+8fHnDU/raPWU0wmVfgHzoC6THMGYOBkO96qnQGi9yTzT57Ls/mvBXhiqQTiwez8wfI4
- 8sd0GsVp4XWh1ty9nUoHP4WBDryS6Z5f5oJm6hFd+iaXN4ZrRJQ0bRc+lF0mHENbDTp2PZOVB46N0
- Fj1HO7Y9OSCdUAjsWmNNSmyd33jmrcWa5CSQNnVvMMCBVv3W0uDjemvCwo4apSHF6kvSTqwLPZIva
- OGxBz/xUj2zd6kZA57Sve/gjjs5eUN59hAUdUv86QiKVhkUy5NbgilN7pklHgP9Lb6gvRmn0sAzuY
- m9pATu7Q==;
+ bh=BkB2SpdezulujHBf3WGhiV0+MkMtRlb+AsprXrCWmm8=; b=CEhy2KIoeV8zhbWw1mDQI8WkVj
+ CLnhwX3BIb339QkhSMZ9AmSm9Hkn5xabmVdK1kd5SdjcNHrGujJtM3g1lpzHY+NY9mzHhcyeFoaaH
+ hijYksPxsw336/qLWjnYBYVQRwMdHfraDnoi/utI17oE6OsiZWm6bB4hIdOkH9871U1e0r4aHJeHk
+ 7pzBnpB9XzmJlX4PDcY0xnm5VYhQPRWm8AfEeFyeT7hi17Rgs93CsruOtbDPxs1BCk3lyRg8nxIvT
+ ekiab8MaiFlItSV/aLpeIfOHPvaH3bWtDW3nDvkatE93WEDenz2GOQWxIuHC2WiGlcXv1EBzxY+E5
+ AsElWuFQ==;
 Received: from [2001:4bb8:184:72db:8457:d7a:6e21:dd20] (helo=localhost)
  by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1mQOuO-00FRV2-G5; Wed, 15 Sep 2021 07:00:46 +0000
+ id 1mQOv7-00FRW5-DA; Wed, 15 Sep 2021 07:01:32 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Gabriel Krisman Bertazi <krisman@collabora.com>
-Date: Wed, 15 Sep 2021 08:59:56 +0200
-Message-Id: <20210915070006.954653-2-hch@lst.de>
+Date: Wed, 15 Sep 2021 08:59:57 +0200
+Message-Id: <20210915070006.954653-3-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210915070006.954653-1-hch@lst.de>
 References: <20210915070006.954653-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  casper.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1mQOvL-00BFMa-Tk
-Subject: [f2fs-dev] [PATCH 01/11] ext4: simplify ext4_sb_read_encoding
+X-Headers-End: 1mQOw7-0008KK-KY
+Subject: [f2fs-dev] [PATCH 02/11] f2fs: simplify f2fs_sb_read_encoding
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,8 +88,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
- linux-ext4@vger.kernel.org, Shreeya Patel <shreeya.patel@collabora.com>,
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Shreeya Patel <shreeya.patel@collabora.com>,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -101,58 +101,61 @@ trivially.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-Acked-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Chao Yu <chao@kernel.org>
 ---
- fs/ext4/super.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ fs/f2fs/super.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 0775950ee84e3..7401a181878e5 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2017,24 +2017,17 @@ static const struct ext4_sb_encodings {
- 	{EXT4_ENC_UTF8_12_1, "utf8", "12.1.0"},
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 78ebc306ee2b5..4c457100f18ea 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -264,24 +264,17 @@ static const struct f2fs_sb_encodings {
+ 	{F2FS_ENC_UTF8_12_1, "utf8", "12.1.0"},
  };
  
--static int ext4_sb_read_encoding(const struct ext4_super_block *es,
--				 const struct ext4_sb_encodings **encoding,
+-static int f2fs_sb_read_encoding(const struct f2fs_super_block *sb,
+-				 const struct f2fs_sb_encodings **encoding,
 -				 __u16 *flags)
-+static const struct ext4_sb_encodings *
-+ext4_sb_read_encoding(const struct ext4_super_block *es)
++static const struct f2fs_sb_encodings *
++f2fs_sb_read_encoding(const struct f2fs_super_block *sb)
  {
- 	__u16 magic = le16_to_cpu(es->s_encoding);
+ 	__u16 magic = le16_to_cpu(sb->s_encoding);
  	int i;
  
- 	for (i = 0; i < ARRAY_SIZE(ext4_sb_encoding_map); i++)
- 		if (magic == ext4_sb_encoding_map[i].magic)
+ 	for (i = 0; i < ARRAY_SIZE(f2fs_sb_encoding_map); i++)
+ 		if (magic == f2fs_sb_encoding_map[i].magic)
 -			break;
 -
--	if (i >= ARRAY_SIZE(ext4_sb_encoding_map))
+-	if (i >= ARRAY_SIZE(f2fs_sb_encoding_map))
 -		return -EINVAL;
-+			return &ext4_sb_encoding_map[i];
++			return &f2fs_sb_encoding_map[i];
  
--	*encoding = &ext4_sb_encoding_map[i];
--	*flags = le16_to_cpu(es->s_encoding_flags);
+-	*encoding = &f2fs_sb_encoding_map[i];
+-	*flags = le16_to_cpu(sb->s_encoding_flags);
 -
 -	return 0;
 +	return NULL;
  }
- #endif
  
-@@ -4155,10 +4148,10 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 	if (ext4_has_feature_casefold(sb) && !sb->s_encoding) {
- 		const struct ext4_sb_encodings *encoding_info;
+ struct kmem_cache *f2fs_cf_name_slab;
+@@ -3843,13 +3836,14 @@ static int f2fs_setup_casefold(struct f2fs_sb_info *sbi)
  		struct unicode_map *encoding;
--		__u16 encoding_flags;
-+		__u16 encoding_flags = le16_to_cpu(es->s_encoding_flags);
+ 		__u16 encoding_flags;
  
--		if (ext4_sb_read_encoding(es, &encoding_info,
+-		if (f2fs_sb_read_encoding(sbi->raw_super, &encoding_info,
 -					  &encoding_flags)) {
-+		encoding_info = ext4_sb_read_encoding(es);
++		encoding_info = f2fs_sb_read_encoding(sbi->raw_super);
 +		if (!encoding_info) {
- 			ext4_msg(sb, KERN_ERR,
+ 			f2fs_err(sbi,
  				 "Encoding requested by superblock is unknown");
- 			goto failed_mount;
+ 			return -EINVAL;
+ 		}
+ 
++		encoding_flags = le16_to_cpu(sbi->raw_super->s_encoding_flags);
+ 		encoding = utf8_load(encoding_info->version);
+ 		if (IS_ERR(encoding)) {
+ 			f2fs_err(sbi,
 -- 
 2.30.2
 
