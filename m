@@ -2,38 +2,39 @@ Return-Path: <SRS0=Rvmn=OG=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB3EC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Sep 2021 09:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C93A6C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Sep 2021 09:42:11 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id D8CC560EE5;
-	Thu, 16 Sep 2021 09:29:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org D8CC560EE5
+	by mail.kernel.org (Postfix) with ESMTPS id 68F056112E;
+	Thu, 16 Sep 2021 09:42:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 68F056112E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mQniD-0000oL-Bt; Thu, 16 Sep 2021 09:29:45 +0000
+	id 1mQnuE-0007z1-RH; Thu, 16 Sep 2021 09:42:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1mQniB-0000oE-3C
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Sep 2021 09:29:43 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ (envelope-from <chao@kernel.org>) id 1mQnuC-0007yo-PN
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Sep 2021 09:42:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OrOxBTAGYZu2A2A4zb08A7Dzb9HVczbdm4W2/Je2C7M=; b=PfEUzId/2b1DUfT6xubSXVVOKo
- SU4qm3WgkPhxL7Qrsg4mYjO3FF63O/wAYZ4HVxpG/DsJ5nCeQEd9PLyNzO2tLwwgIhiQ0BHd2ErMQ
- 5AK03gUA2ndxpsmyRcYUs+k1UPZzdBzUYdr19F84jqL0q2HrA4+U+WgqRcwT0iYLYqNw=;
+ bh=OLtoXOHXKre0fp3CwyVjSyVEc2GFjGwqbu03K0Uq+a8=; b=EPfKFmyz7ElEYzS+fe765UlRwv
+ 8oZTqWkU5qcVZlt5B+gX4vNE2gDiI9i5VQVrWzndir2YsyCP49/4V9URQIVCAPwPo+MfSRL0qGKbU
+ v+e1TND9E2uY3lQ6eILKw2vW6udu6h73oIDpW8KCzeJ5dE3v984/7J2BCvnzD1+JzYdY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
@@ -41,39 +42,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=OrOxBTAGYZu2A2A4zb08A7Dzb9HVczbdm4W2/Je2C7M=; b=EuhwhObtBNiCUZvP8FsK8F1FY0
- zB9sffhGrAsfAmbIAeY/D3z+caJGXWBqttXAu549kbC3a90oV9uvvGxZnUlK2JDRJ++xdKRtzYxQu
- qzwNv5GBPCn7wPHy0Rw2/SfAJXbPEqCAyNZ+PruCUrkIf5oIIja1iFb7scdSqtNJVoEI=;
+ bh=OLtoXOHXKre0fp3CwyVjSyVEc2GFjGwqbu03K0Uq+a8=; b=gQ9jgfNDH4rR8BrRHfm+GywJjD
+ gqZK+xRFpAUFPBZqekDvgquyvy9v7dK26EKa0Q1GSCd3NGjoVs+vtl/jVRirA/ltu/mQ00KL75HCP
+ w4x1fwVX3GHNZiQFEZTSVwo/aNilJtjBMgiH1aZglxNnoCBnyLqi7f0crGpLEFaIaPsA=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mQniA-0002JD-IU
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Sep 2021 09:29:43 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id ED5426105A;
- Thu, 16 Sep 2021 09:29:33 +0000 (UTC)
+ id 1mQnu7-00Cayp-HC
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Sep 2021 09:42:04 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 53CEC60EB2;
+ Thu, 16 Sep 2021 09:41:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1631784574;
- bh=1xwGx6mCFguoiIzTx/ZWWvzHvEP11WwHMg+BrtskPRs=;
+ s=k20201202; t=1631785318;
+ bh=85dA2XyjoY542QEmjgXn4UFfziCeIubbSdkj/bi8v5E=;
  h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
- b=Aod9Y8wKUCXKs0Rm04bzVO+vxjD5bvqIJPHM5fmBG5UoOYwzOubqzR+w3WuYSp+Wh
- hmA9XAvyBBg/MCXc9OyQWmJGv8l9LFSA5OQPkyeqB+FGjyTRR3EnmZsQaLpX1GoMLK
- pjlaeBTCflV7+bumx0Co9Mrwtn4SedbyngCzlzLnQTAHeD48VXYe01pEfVIhp5f/1n
- 48X6K66lCyY9uvrZvquwQcz27U9NWGnsq3vsHJcsmGQgo6aCejU6SVcKLUyLcwwy/6
- 4nU7tNIHvbzZcpn+ZjWUrnPfOrkDs2CU4G2ef+ALCBxm5IDPR734Zn7vOA6yBI+MlD
- jcgXvHpA+HqlA==
+ b=mVuWXwRCAjg64D5w94FYhtprYgk8y+oVi1NAg6/ZrvxCyl5Es6WgS6Scjud2FP5Xf
+ 0aipPJW38/GwWtb2Z/5BJ5NMsyWqOnShgGrTGO/NwYjFzic5WE0AJVjdXf1sLiPTI1
+ eKVVDED/GWmyXgp7q52UWcsFwM7ZJBbFbOfPJpGgIuJ8HzfVW2BMXZAONQ6zoK+3QZ
+ Kh/s4GbByc3Ma0DieS36S76K61WJGd1RlrIZxd/d1TBCFgIqrdkc8Mr88V5gGFqKwe
+ hJbl/Z5Eum+2xfgnkVM8uj07Gq0MPH48lTg/0JR1It7JI3cbX1nxpBAgjKr/W13Wzp
+ h1KPC9ZSnP7CA==
 To: Fengnan Chang <fengnanchang@gmail.com>, jaegeuk@kernel.org
 References: <20210912015058.14063-1-fengnanchang@gmail.com>
+ <20210912015058.14063-2-fengnanchang@gmail.com>
 From: Chao Yu <chao@kernel.org>
-Message-ID: <022896bf-f5fe-1995-f158-c1da1a5b9017@kernel.org>
-Date: Thu, 16 Sep 2021 17:29:32 +0800
+Message-ID: <65c81c0c-1799-9154-b588-ff34c427defa@kernel.org>
+Date: Thu, 16 Sep 2021 17:41:55 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210912015058.14063-1-fengnanchang@gmail.com>
+In-Reply-To: <20210912015058.14063-2-fengnanchang@gmail.com>
 Content-Language: en-US
-X-Headers-End: 1mQniA-0002JD-IU
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: separate buffer and direct io in
- block allocation statistics
+X-Headers-End: 1mQnu7-00Cayp-HC
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: fix missing inplace count in
+ overwrite with direct io
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,21 +96,65 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 On 2021/9/12 9:50, Fengnan Chang wrote:
 > From: Fengnan Chang <changfengnan@vivo.com>
 > 
-> separate buffer and direct io in block allocation statistics.
+> For now, overwrite file with direct io use inplace policy, but
+> not counted, fix it.
 > 
-> New output will like this:
->             buffer     direct   segments
-> IPU:            0          0        N/A
-> SSR:            0          0          0
-> LFS:            0          0          0
-
-Need a blank line here.
-
 > Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
+> ---
+>   fs/f2fs/data.c | 7 ++++++-
+>   fs/f2fs/f2fs.h | 7 +++++++
+>   2 files changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index c1490b9a1345..b5d488c9f9f9 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1491,6 +1491,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>   		if (flag == F2FS_GET_BLOCK_DIO)
+>   			f2fs_wait_on_block_writeback_range(inode,
+>   						map->m_pblk, map->m_len);
+> +		if (!f2fs_lfs_mode(sbi) && flag == F2FS_GET_BLOCK_DIO &&
+> +				map->m_may_create)
+> +			stat_add_inplace_blocks(sbi, map->m_len, true);
+>   		goto out;
+>   	}
+>   
+> @@ -1553,7 +1556,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>   				goto sync_out;
+>   			blkaddr = dn.data_blkaddr;
+>   			set_inode_flag(inode, FI_APPEND_WRITE);
+> -		}
+> +		} else if (!create && !f2fs_lfs_mode(sbi) && flag == F2FS_GET_BLOCK_DIO &&
+> +				map->m_may_create)
+> +			stat_inc_inplace_blocks(sbi, true);
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+So, it's better to use stat_add_inplace_blocks(sbi, 1, ) instead of
+stat_inc_inplace_blocks(sb, )?
 
 Thanks,
+
+>   	} else {
+>   		if (create) {
+>   			if (unlikely(f2fs_cp_error(sbi))) {
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 3d4ee444db27..49230115d241 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3792,6 +3792,13 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+>   		else								\
+>   			(atomic_inc(&(sbi)->inplace_count[1]));		\
+>   	} while (0)
+> +#define stat_add_inplace_blocks(sbi, count, direct_io)			\
+> +	do {								\
+> +		if (direct_io)						\
+> +			(atomic_add(count, &(sbi)->inplace_count[0]));  \
+> +		else								\
+> +			(atomic_add(count, &(sbi)->inplace_count[1]));	\
+> +	} while (0)
+>   #define stat_update_max_atomic_write(inode)				\
+>   	do {								\
+>   		int cur = F2FS_I_SB(inode)->atomic_files;	\
+> 
 
 
 _______________________________________________
