@@ -1,79 +1,79 @@
-Return-Path: <SRS0=vQ9I=OI=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
+Return-Path: <SRS0=901F=OK=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E0FC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 18 Sep 2021 22:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D438C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Sep 2021 22:58:12 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id B63C460F6B;
-	Sat, 18 Sep 2021 22:34:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org B63C460F6B
+	by mail.kernel.org (Postfix) with ESMTPS id DD8C061184
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Sep 2021 22:58:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org DD8C061184
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.90_1)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mRiv7-0005xK-F4; Sat, 18 Sep 2021 22:34:53 +0000
+	id 1mSSEk-0001PB-Jp; Mon, 20 Sep 2021 22:58:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.90_1)
- (envelope-from <chao@kernel.org>) id 1mRiv6-0005xD-Lh
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 18 Sep 2021 22:34:52 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1mSSEj-0001P5-DP
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Sep 2021 22:58:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=FEniJ8WfdrcjwQQScuW1bbgYqfCMnnX8hTnxnalymz0=; b=iLPI05N/75fnpT2wu8+lXlvQLF
- 6rvYXuqYC21jkv0HuypJZzHIuLoJyhGwJbXOaQ4ahunnupWXYT3ZGPirJCjiESjRWzsG6JeMeI9E9
- qTJv/mBK1Ma4wcFhbfp9u2ersuoCCv+1gyEiBSrnSxrEZ3aXxmPftkMMUW7xYxxmDoBs=;
+ bh=d0Nemd4hHJgSVfWJNr3qQUJaMHliAtJbCFFPWym3UK8=; b=Hx2mv0SdeIfWgiy9I+bgy2VKOo
+ +csf7mCQtedtsBkbuoaoAvnPg+T+pa+gIsCr7I0GRGubQtojHotNzMi+ZxTLva0vjI2Acc07Gec+c
+ YdWYVZNRrN849n15tz2zwQolDB9RHiDwioBO0JaulYlLah7xzTgTS8hZ2xYF29D3otHM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=FEniJ8WfdrcjwQQScuW1bbgYqfCMnnX8hTnxnalymz0=; b=G2t1NzFB8Nea6GdfTUaaMhc8ie
- UjTUmdrrRx3sy0zOp6p0/5J0oBpIXMwGbfhxHNQUwrpHuTNjd723RmO1KvU2m53X/C2ku9m0lLLoo
- TebtX6AgiPlxj1Vz49iwhelL2ysdzbuNvXLF5eBDpxWIeaCtDMkzLZj2SzlX8w7cFkeA=;
+ bh=d0Nemd4hHJgSVfWJNr3qQUJaMHliAtJbCFFPWym3UK8=; b=Xw0Y/ercu3w8uZLrcri8bBhC8v
+ aj/aAkc3OFDn3njCY4CEVmQvZtiilsDSY+L1oUBudHcFIbhqC7kub+uZzQxVchd5A6D8wyMBIRi8n
+ XyQJ0UnEBlqrGVjhLryRNX+8Ggo7vEZB5euZItVAj2cB2Ps3R+y0SF0Ny0Rgpwx6RBAY=;
 Received: from mail.kernel.org ([198.145.29.99])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mRiv3-0006wj-OI
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 18 Sep 2021 22:34:52 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8EE30610A4;
- Sat, 18 Sep 2021 22:34:38 +0000 (UTC)
+ id 1mSSEh-00085J-82
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Sep 2021 22:58:09 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D02C0610A0;
+ Mon, 20 Sep 2021 22:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1632004479;
- bh=ZH75DAAdwjrKMRMHVmGXvimYUZRbWcaEAxZX30exIFg=;
- h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
- b=FFRtqijOqRgIjN3VQgk1KxZoXdd32i9SluGA7RLVwCxGt2JR5XeEv/dN9EhP14zvW
- boT4JkbGJ7XoE87tBYcFe723zS1ZbdY07182WWNseYxOmTIjFuy80HsBvw+etfktBh
- PO8V4sXIqKiO8/n12OxyqvIBjzfETXNqwmQWnYDEE8O/vwWw2ktpr2a+UU8pp0P0O/
- tl/xG71fDiQSPo75Gglit30i42gdBe4DRLRpvIh9dhTXTPIqIeqD+S6tQHLCE9Uelt
- iUnOSWsLoVKIrG5GYxCdhd2/Ndljm88QlBnwkRWNug7Lkc+uRQTXz9gYF9QqV7QACU
- Gi6vWWQoTcWEQ==
-To: Weichao Guo <guoweichao@oppo.com>, jaegeuk@kernel.org
-References: <1631969196-341-1-git-send-email-guoweichao@oppo.com>
-From: Chao Yu <chao@kernel.org>
-Message-ID: <d52c8848-f2d0-c5a4-17f1-8e88285856e3@kernel.org>
-Date: Sun, 19 Sep 2021 06:34:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+ s=k20201202; t=1632178677;
+ bh=t32r/UNDAKqQ2H+2kaeKxyON17il0qBt5QdF2iYLzZU=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=ZhosC+o0YPt67CpA3fw8kRB1RXniPzCZesIhuvdeBL+wpXNT4Sl12rr1CFkS9nmbI
+ d/EANN9Fmgkf2bjeqEoaQ69Lk0rCKQZ7sBupWl+xvyoBVt5iKUeXYX8MqrTGnpXV0l
+ Nm9MHTFMVrSLlj/twxw+Mm+bfJBRjYa3T1MV6IWH9SspASg2DiupGjmxNgTjQnH6jA
+ skrE0+DL6T4dB3xXfOwTYXnZn03oHmUQeZjsPN/O0FKqhUIxTToRusKwhCLiP73ljK
+ xa3YK3ozMBh78upKlfKDacQOxd2u8gi6mrSjGRvMNUaKyEGrP5Apo51dDt9/duXUEb
+ 0aRaK/ac7MQ2w==
+Date: Mon, 20 Sep 2021 15:57:55 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <YUkR84sklj0SgosC@google.com>
+References: <20210902172404.3517626-1-daeho43@gmail.com>
+ <YTvmhVhLlBPeASHT@google.com>
+ <9f4a2954-e8c9-abc5-5df4-a7cec53433a3@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1631969196-341-1-git-send-email-guoweichao@oppo.com>
-Content-Language: en-US
-X-Headers-End: 1mRiv3-0006wj-OI
-Subject: Re: [f2fs-dev] [PATCH] f2fs: set SBI_NEED_FSCK flag when
- inconsistent node block found
+Content-Disposition: inline
+In-Reply-To: <9f4a2954-e8c9-abc5-5df4-a7cec53433a3@kernel.org>
+X-Headers-End: 1mSSEh-00085J-82
+Subject: Re: [f2fs-dev] [PATCH v4] f2fs: introduce fragment allocation mode
+ mount option
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,23 +85,29 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: omega@oppo.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com,
+ Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/9/18 20:46, Weichao Guo wrote:
-> Inconsistent node block will cause a file fail to open or read,
-> which could make the user process crashes or stucks. Let's mark
-> SBI_NEED_FSCK flag to trigger a fix at next fsck time. After
-> unlinking the corrupted file, the user process could regenerate
-> a new one and work correctly.
+On 09/12, Chao Yu wrote:
+> On 2021/9/11 7:13, Jaegeuk Kim wrote:
+> > Wait. Why do we need to add so many options here? I was expecting to see
+> > performance difference when getting random segments or random blocks as
+> > an extreme case. I don't get the point why we need the middle of those cases.
 > 
-> Signed-off-by: Weichao Guo <guoweichao@oppo.com>
+> I guess we can simply the aging test procedure of filesystem by changing a bit
+> based on this patch.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+My question was on "fragment:fixed_block".
 
-Thanks,
+> 
+> See comments in below thread.
+> 
+> https://lore.kernel.org/lkml/425daf77-8020-26ce-dc9f-019d9a881b78@kernel.org/
+> 
+> Thanks,
 
 
 _______________________________________________
