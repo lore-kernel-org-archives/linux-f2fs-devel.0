@@ -2,34 +2,34 @@ Return-Path: <SRS0=rMhE=PO=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8E2C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 26 Oct 2021 00:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66414C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 26 Oct 2021 00:23:56 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 30BDF6101C;
-	Tue, 26 Oct 2021 00:20:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 30BDF6101C
+	by mail.kernel.org (Postfix) with ESMTPS id 1FABE60F0F;
+	Tue, 26 Oct 2021 00:23:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 1FABE60F0F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.92.3)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mfACA-0005Od-O5; Tue, 26 Oct 2021 00:20:02 +0000
+	id 1mfAFv-0005dk-Jz; Tue, 26 Oct 2021 00:23:55 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- (envelope-from <chao@kernel.org>) id 1mfAC9-0005OJ-FA
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Oct 2021 00:20:01 +0000
+ (envelope-from <chao@kernel.org>) id 1mfAFu-0005dZ-5b
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Oct 2021 00:23:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VtrkyVfrbDZRWJgPyQF5yL56qWIBM7V+6D39vy+9vCk=; b=mbQJAvVTdG0vN24aeDQbhceo4E
- n4DSVNNC+LubrAsr3s1/r4Z6+zAr98+NIt9H1q5OUO2Fbo2bT+NmrBdXl9XrN3ajG3gcr9nrIArw5
- 5s+bCrk8c2UMyBmnIF20B2S+VxuoiqmFCSiggkz8QuvdzmNtyeJEWgPTW35z738Bjl8M=;
+ bh=d3gvAYC7gisBvuQTd0NYnruT7z/289A2c9cG2Ak/cVQ=; b=W0L6Oo1j9buiq994mKwaR/amCr
+ aZgI49/5xKaHbcM0F2AWTjWvPpTu/c4NgJ9CVTYvi04Zd0lsQoSYXfAKx6TRLBUxmU+mxyuR8E6bp
+ xBnYwM8FJ0W1fIpp7UhdoevGainhPDULlNm+muqTBkmrAJ5T+fjYD2viJn1ODwMRl9yw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -37,38 +37,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VtrkyVfrbDZRWJgPyQF5yL56qWIBM7V+6D39vy+9vCk=; b=nBnQKcgfKCAMpmuTbcwAH5BM35
- LOlO1ZFA/Y1O9vWWtHKaozuOSZOwm3Si9iPCgEK0jsvd7Dmmpulz8CQZT7Ejq0zkAV4K+LEY1XFJw
- bZ/TTgM2pgfL1iLnXdgnshEvyYnxUR1ZWtifgp1jklDUYuGPrAEdf61Ij4I32viVIn3I=;
+ bh=d3gvAYC7gisBvuQTd0NYnruT7z/289A2c9cG2Ak/cVQ=; b=FJQ8i/V5KZ0DsEe5Sprryk50d5
+ 8T5CAqbfuvSvm6PeW1d1522x1RKEJSry77w+S03Ic5wGdGjF1T7Mjt5NhEP0lR+4y0x7lC7FvEY0J
+ K5YkacJzyT+fDN4keIb/iPnESLw3/+2HieHNfTAR8Cu14/ETmCda5x3YJ73ooh9C7nNY=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mfAC8-00GDVk-3H
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Oct 2021 00:20:01 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AD1EC60F92;
- Tue, 26 Oct 2021 00:19:48 +0000 (UTC)
+ id 1mfAFs-0005e5-Rk
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 26 Oct 2021 00:23:54 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B36FE60FC2;
+ Tue, 26 Oct 2021 00:23:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1635207589;
- bh=ewFMn7F/EMh7/+QcFBbhLnkKLeG/ezHK307YEtzASZE=;
+ s=k20201202; t=1635207822;
+ bh=X4URehZSW2EUW+6kqx7H/4YQ4IILjFVgONmjP9AEGRw=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Re+MAPo4aFCVE6mbCWNhJ61XgeUy4IVohht++U7W451VFSN1dWVT3u+dUIh3lQuWf
- 8IMfJpxbNWBNOiQIl1aScgQzm/NUOxTCVFrd89Jnid8EwR3CeWQgrfRvHzBXs+BXuL
- hzHnCrMwq1LhU7Un3XDuiDd1Ts4Epv6KHOtYOX80tQnhCG0KYQZCcmyL+x1iDATd1Y
- W/0ZlUQH7D/rDqtqnbHVc9LmCk4BNrRFnYIkfgzdkQo3PeXjAXA+bJbBbha+dyLUwg
- xd22nc4gWYkgItt/PnPTXz+y4IRFu/NPxQPPl10izxq/6mQjd2Rfuo3D+Bc12XuNEq
- 6F7gDyb/a7wDA==
-Message-ID: <0f1b32fa-1b2a-5586-9dc1-d50135a166f8@kernel.org>
-Date: Tue, 26 Oct 2021 08:19:46 +0800
+ b=F4GugLMD0oTkYf9qDSZ6dtfzf/YnWw/wA0xy9ntQZlIr6AcSqdLLYwNROgtJqdXW9
+ /3FMgdDVKS/LBa/D/z72Twu0173QSSccYBBxJXauVPtmfEiY/DMZPoFF6KWnI1UbV/
+ WF3jMKuVqfKcZT7X3q/9Et2ZRq26RTT2JEFbybKdH7NsMwAT6xre4TzSJGhxHfegny
+ QVKknz8b1e0VCkonusNY4yjh0PCvckG5onvju0WVv2BFrLqIuZaMLdlFCawLUfXgJu
+ UiSaMINXaWiqx8iCL27gOdb2dY93Pv0BXYeC7u6n5LgP/FvpzBs+9BzE7Fwfs+MdZD
+ iP2VkuSFV/oPA==
+Message-ID: <630e58f1-6c27-ad97-2c3e-72a959cd8142@kernel.org>
+Date: Tue, 26 Oct 2021 08:23:39 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.0.3
 Content-Language: en-US
-To: Fengnan Chang <changfengnan@vivo.com>, jaegeuk@kernel.org, corbet@lwn.net
-References: <20211023025833.216030-1-changfengnan@vivo.com>
+To: Jaegeuk Kim <jaegeuk.kim@gmail.com>, Fengnan Chang <changfengnan@vivo.com>
+References: <20211023030835.218219-1-changfengnan@vivo.com>
+ <CAOtxgye-6iZ8P7TdTib3wi+DRb2XHHnVdZe-0Yr3R-Wz017paw@mail.gmail.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20211023025833.216030-1-changfengnan@vivo.com>
-X-Headers-End: 1mfAC8-00GDVk-3H
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix f2fs.rst build warning
+In-Reply-To: <CAOtxgye-6iZ8P7TdTib3wi+DRb2XHHnVdZe-0Yr3R-Wz017paw@mail.gmail.com>
+X-Headers-End: 1mfAFs-0005e5-Rk
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: compress: fix overwrite may reduce
+ compress ratio unproperly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,18 +82,17 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-doc@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2021/10/23 10:58, Fengnan Chang wrote:
-> fix f2fs.rst build warning.
+On 2021/10/26 5:56, Jaegeuk Kim wrote:
+> Could you please take a look?
 > 
-> Fixes: 151b1982be5d (f2fs: compress: add nocompress extensions support)
-> Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
+> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=00426e4d450aad0ed66b04a16959e1895c1d29e7 
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Looks good to me.
 
 Thanks,
 
