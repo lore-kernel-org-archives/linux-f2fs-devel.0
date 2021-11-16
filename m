@@ -2,70 +2,72 @@ Return-Path: <SRS0=5Sob=QD=lists.sourceforge.net=linux-f2fs-devel-bounces@kernel
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD384C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Nov 2021 21:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F43C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 16 Nov 2021 21:45:41 +0000 (UTC)
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPS id 6C24861BC1;
-	Tue, 16 Nov 2021 21:45:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org 6C24861BC1
+	by mail.kernel.org (Postfix) with ESMTPS id DC80D61BC1;
+	Tue, 16 Nov 2021 21:45:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 mail.kernel.org DC80D61BC1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=lists.sourceforge.net
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mn6Gn-0003by-TX; Tue, 16 Nov 2021 21:45:37 +0000
+	id 1mn6Gn-0003c7-WF; Tue, 16 Nov 2021 21:45:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1mn6Gi-0003bU-4h
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Nov 2021 21:45:32 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1mn6Gl-0003bp-W6
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Nov 2021 21:45:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=a++E+5TGFZtQq6+FiHwS2oJ2Jz6155cPXs7dxwMNuh0=; b=KmpHdAGpRCqWQlgQ58JNThwkJf
- Jf61w3zjSH45uF8OiFfpeVieDDIoWOt4y5k0haOi2WDzaBmCIbXBiCqSFWXXRg98Nvn1XVD1aRt1j
- bxPt6GF6kcMmxjyzceyV+MN1oyc7cNVBaNc5WymK1Jd9PTiN3JWOehz4iUMG3igj9Blg=;
+ bh=MN1UqGXXenF6ob+RWVt/6XR2kvOGgaWCiIgQYxw70Uc=; b=RGn0rv5CR4YcpTpeBzvAh+ZyOl
+ NWtadvRjgeM+Wb+2xhJahY/akjqoHN0r2h3Qj3kRQrLkl2szTv4PqtmEXtKGtkLIWj5PrO538w07E
+ ofDT63JShqm8k1KubLOqQU6SxyZUtpw5Mfa+bXVklkFCINqWVeJV2xdvQKOq6WShuiFQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=a++E+5TGFZtQq6+FiHwS2oJ2Jz6155cPXs7dxwMNuh0=; b=O
- 8FARxPKn6ZDgT2rdDgZhdvadG4gUcJrk8FvNSEfteXWhOpvLxsXuUYOykQ9WoMcUnfIYuFc7ZLyVX
- EVAHqwGneQqSz4aj1/Gpjy6yqJSmEwD6l+DLqFqluO+tJueXYJSAS+PzDSg2bjuhArqckjFTHm8d7
- Axh8HgIcHmdztLOM=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=MN1UqGXXenF6ob+RWVt/6XR2kvOGgaWCiIgQYxw70Uc=; b=dfEiQ4brk/EHvm0BwCnUvOP7b7
+ jtiBmw9OJ0flGRDSUy0eTxHiSFlRxXjCs/eRe1syx49lo52syNWrJpdZBdmgFNSz4zwPbFpmyQfs8
+ /VYg2PLHOH/aAhTyN8o1iYtfCetSPBZrDEAGklgLJLYYku032uQXvHwWw8BHZOyP3Bf0=;
 Received: from mail.kernel.org ([198.145.29.99])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mn6Gd-00FLnw-5w
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Nov 2021 21:45:31 +0000
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D196D61A64;
- Tue, 16 Nov 2021 21:45:17 +0000 (UTC)
+ id 1mn6Gk-0006SV-Be
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 16 Nov 2021 21:45:35 +0000
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 707756324D;
+ Tue, 16 Nov 2021 21:45:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1637099117;
- bh=ZQEeWNCefRAQKzAbFIvzGe3ybEPLrzVqw9ktsJrDCik=;
- h=From:To:Cc:Subject:Date:From;
- b=jHlYOy+paQgU8HjCDRHXeH397oHDTas1uw9S6UfURS8zGcQCqQB4OBmYYIL7kPjLL
- 42yZyIhCUUVN9xmvnlMH+YVD3J8hGJrTAWuzsAzGqW18QcQNcWDabG3ZJCWCFY5nYh
- Z6nLR28STiWVRKi/TMrIfZ4J1s5/omumaD/RgOlLhrWjGGOVdZZEfFd6JsfZ/qt1O7
- VwYHVyq8JW1RZjwn77puPTAbvivc0pbEvhxK1c14ivJCpd1tVZDEREjVj6By5WLb4g
- bmnndDS1tXWF0AsM5ics61sZrfVV4SZBORqSbj6CUNGDvqUSv7pr1SaHzcKSEJuuck
- wnyGoaZPi/F5w==
+ s=k20201202; t=1637099120;
+ bh=UIaPdBTCmM79LePEG4sUxpZml9dwqb4e6ZUb/JMgRBw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=O79lcKGKgyT06PKHsFqW5wxlFb760NjRfXNuLXr9cT/edhZdyEy2Spl81HncgYPlT
+ hAs5VL4C0eQ50C9dHB130hH09/VBgRxy3DGrmVowHc6nyn9UaAaKTlV9pR/9l4XFz3
+ pB/7Md6zzf21cN000fJe6eZid52lS/IOGyv+rYjicfja0ItELl25RY4yQi8H8quKml
+ rz2LuPTSJL1Km2HTfAwYGXM/xBpjLtcblBSv5nt7ceOoaN/ZINIC+Zck4p5y2a4GDO
+ goiUMsHm7pxSKhmhDmUeyg92UNkFTPM6EMiQQM/Fw5xkKgk4irpmk8wgzdY9KCHG57
+ gJ+NZHVwdv1VQ==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net
-Date: Tue, 16 Nov 2021 13:45:05 -0800
-Message-Id: <20211116214510.2934905-1-jaegeuk@kernel.org>
+Date: Tue, 16 Nov 2021 13:45:10 -0800
+Message-Id: <20211116214510.2934905-6-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.34.0.rc1.387.gb447b232ab-goog
+In-Reply-To: <20211116214510.2934905-1-jaegeuk@kernel.org>
+References: <20211116214510.2934905-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1mn6Gd-00FLnw-5w
-Subject: [f2fs-dev] [PATCH 1/6] f2fs: rework write preallocations
+X-Headers-End: 1mn6Gk-0006SV-Be
+Subject: [f2fs-dev] [PATCH 6/6] f2fs: use iomap for direct I/O
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,308 +86,759 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-f2fs_write_begin() assumes that all blocks were preallocated by
-default unless FI_NO_PREALLOC is explicitly set.  This invites data
-corruption, as there are cases in which not all blocks are preallocated.
-Commit 47501f87c61a ("f2fs: preallocate DIO blocks when forcing
-buffered_io") fixed one case, but there are others remaining.
+Make f2fs_file_read_iter() and f2fs_file_write_iter() use the iomap
+direct I/O implementation instead of the fs/direct-io.c one.
 
-Fix up this logic by replacing this flag with FI_PREALLOCATED_ALL, which
-only gets set if all blocks for the current write were preallocated.
+The iomap implementation is more efficient, and it also avoids the need
+to add new features and optimizations to the old implementation.
 
-Also clean up f2fs_preallocate_blocks(), move it to file.c, and make it
-handle some of the logic that was previously in write_iter() directly.
+This new implementation also eliminates the need for f2fs to hook bio
+submission and completion and to allocate memory per-bio.  This is
+because it's possible to correctly update f2fs's in-flight DIO counters
+using __iomap_dio_rw() in combination with an implementation of
+iomap_dio_ops::end_io() (as suggested by Christoph Hellwig).
 
-Jaegeuk:
-DIO to holes are turning into buffered IO in f2fs_direct_IO, so we should
-not preallocate blocks.
+When possible, this new implementation preserves existing f2fs behavior
+such as the conditions for falling back to buffered I/O.
+
+This patch has been tested with xfstests by running 'gce-xfstests -c
+f2fs -g auto -X generic/017' with and without this patch; no regressions
+were seen.  (Some tests fail both before and after.  generic/017 hangs
+both before and after, so it had to be excluded.)
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c |  55 ++-------------------
- fs/f2fs/f2fs.h |   3 +-
- fs/f2fs/file.c | 130 +++++++++++++++++++++++++++++++------------------
- 3 files changed, 87 insertions(+), 101 deletions(-)
+ fs/f2fs/data.c   | 205 +---------------------------
+ fs/f2fs/f2fs.h   |   8 +-
+ fs/f2fs/file.c   | 343 +++++++++++++++++++++++++++++++++++++++++------
+ fs/f2fs/iostat.c |  15 +--
+ 4 files changed, 311 insertions(+), 260 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9f754aaef558..3b27fb7daa8b 100644
+index 43b3ca7cabe0..a9124d94a5d1 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1384,53 +1384,6 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+@@ -1377,11 +1377,6 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+ 		f2fs_invalidate_compress_page(sbi, old_blkaddr);
+ 	}
+ 	f2fs_update_data_blkaddr(dn, dn->data_blkaddr);
+-
+-	/*
+-	 * i_size will be updated by direct_IO. Otherwise, we'll get stale
+-	 * data from unwritten block via dio_read.
+-	 */
  	return 0;
  }
  
--int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+@@ -1743,50 +1738,6 @@ static inline u64 blks_to_bytes(struct inode *inode, u64 blks)
+ 	return (blks << inode->i_blkbits);
+ }
+ 
+-static int __get_data_block(struct inode *inode, sector_t iblock,
+-			struct buffer_head *bh, int create, int flag,
+-			pgoff_t *next_pgofs, int seg_type, bool may_write)
 -{
--	struct inode *inode = file_inode(iocb->ki_filp);
 -	struct f2fs_map_blocks map;
--	int flag;
--	int err = 0;
--	bool direct_io = iocb->ki_flags & IOCB_DIRECT;
+-	int err;
 -
--	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
--	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
--	if (map.m_len > map.m_lblk)
--		map.m_len -= map.m_lblk;
--	else
--		map.m_len = 0;
--
--	map.m_next_pgofs = NULL;
+-	map.m_lblk = iblock;
+-	map.m_len = bytes_to_blks(inode, bh->b_size);
+-	map.m_next_pgofs = next_pgofs;
 -	map.m_next_extent = NULL;
--	map.m_seg_type = NO_CHECK_TYPE;
--	map.m_may_create = true;
+-	map.m_seg_type = seg_type;
+-	map.m_may_create = may_write;
 -
--	if (direct_io) {
--		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
--		flag = f2fs_force_buffered_io(inode, iocb, from) ?
--					F2FS_GET_BLOCK_PRE_AIO :
--					F2FS_GET_BLOCK_PRE_DIO;
--		goto map_blocks;
--	}
--	if (iocb->ki_pos + iov_iter_count(from) > MAX_INLINE_DATA(inode)) {
--		err = f2fs_convert_inline_inode(inode);
--		if (err)
--			return err;
--	}
--	if (f2fs_has_inline_data(inode))
--		return err;
+-	err = f2fs_map_blocks(inode, &map, create, flag);
+-	if (!err) {
+-		map_bh(bh, inode->i_sb, map.m_pblk);
+-		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
+-		bh->b_size = blks_to_bytes(inode, map.m_len);
 -
--	flag = F2FS_GET_BLOCK_PRE_AIO;
--
--map_blocks:
--	err = f2fs_map_blocks(inode, &map, 1, flag);
--	if (map.m_len > 0 && err == -ENOSPC) {
--		if (!direct_io)
--			set_inode_flag(inode, FI_NO_PREALLOC);
--		err = 0;
+-		if (map.m_multidev_dio)
+-			bh->b_bdev = map.m_bdev;
 -	}
 -	return err;
 -}
 -
- void f2fs_do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
+-static int get_data_block_dio_write(struct inode *inode, sector_t iblock,
+-			struct buffer_head *bh_result, int create)
+-{
+-	return __get_data_block(inode, iblock, bh_result, create,
+-				F2FS_GET_BLOCK_DIO, NULL,
+-				f2fs_rw_hint_to_seg_type(inode->i_write_hint),
+-				true);
+-}
+-
+-static int get_data_block_dio(struct inode *inode, sector_t iblock,
+-			struct buffer_head *bh_result, int create)
+-{
+-	return __get_data_block(inode, iblock, bh_result, create,
+-				F2FS_GET_BLOCK_DIO, NULL,
+-				f2fs_rw_hint_to_seg_type(inode->i_write_hint),
+-				false);
+-}
+-
+ static int f2fs_xattr_fiemap(struct inode *inode,
+ 				struct fiemap_extent_info *fieinfo)
  {
- 	if (flag == F2FS_GET_BLOCK_PRE_AIO) {
-@@ -3339,12 +3292,10 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 	int flag;
- 
- 	/*
--	 * we already allocated all the blocks, so we don't need to get
--	 * the block addresses when there is no need to fill the page.
-+	 * If a whole page is being written and we already preallocated all the
-+	 * blocks, then there is no need to get a block address now.
- 	 */
--	if (!f2fs_has_inline_data(inode) && len == PAGE_SIZE &&
--	    !is_inode_flag_set(inode, FI_NO_PREALLOC) &&
--	    !f2fs_verity_in_progress(inode))
-+	if (len == PAGE_SIZE && is_inode_flag_set(inode, FI_PREALLOCATED_ALL))
- 		return 0;
- 
- 	/* f2fs_lock_op avoids race between write CP and convert_inline_page */
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ce9fc9f13000..be871a79c634 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -715,7 +715,7 @@ enum {
- 	FI_INLINE_DOTS,		/* indicate inline dot dentries */
- 	FI_DO_DEFRAG,		/* indicate defragment is running */
- 	FI_DIRTY_FILE,		/* indicate regular/symlink has dirty pages */
--	FI_NO_PREALLOC,		/* indicate skipped preallocated blocks */
-+	FI_PREALLOCATED_ALL,	/* all blocks for write were preallocated */
- 	FI_HOT_DATA,		/* indicate file is hot */
- 	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
- 	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
-@@ -3614,7 +3614,6 @@ void f2fs_update_data_blkaddr(struct dnode_of_data *dn, block_t blkaddr);
- int f2fs_reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count);
- int f2fs_reserve_new_block(struct dnode_of_data *dn);
- int f2fs_get_block(struct dnode_of_data *dn, pgoff_t index);
--int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from);
- int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index);
- struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
- 			int op_flags, bool for_write);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 92ec2699bc85..4bf77a5bf998 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4235,10 +4235,76 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	return ret;
+@@ -3262,7 +3213,7 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+ 			FS_CP_DATA_IO : FS_DATA_IO);
  }
  
+-static void f2fs_write_failed(struct inode *inode, loff_t to)
++void f2fs_write_failed(struct inode *inode, loff_t to)
+ {
+ 	loff_t i_size = i_size_read(inode);
+ 
+@@ -3550,158 +3501,6 @@ static int f2fs_write_end(struct file *file,
+ 	return copied;
+ }
+ 
+-static int check_direct_IO(struct inode *inode, struct iov_iter *iter,
+-			   loff_t offset)
+-{
+-	unsigned i_blkbits = READ_ONCE(inode->i_blkbits);
+-	unsigned blkbits = i_blkbits;
+-	unsigned blocksize_mask = (1 << blkbits) - 1;
+-	unsigned long align = offset | iov_iter_alignment(iter);
+-	struct block_device *bdev = inode->i_sb->s_bdev;
+-
+-	if (iov_iter_rw(iter) == READ && offset >= i_size_read(inode))
+-		return 1;
+-
+-	if (align & blocksize_mask) {
+-		if (bdev)
+-			blkbits = blksize_bits(bdev_logical_block_size(bdev));
+-		blocksize_mask = (1 << blkbits) - 1;
+-		if (align & blocksize_mask)
+-			return -EINVAL;
+-		return 1;
+-	}
+-	return 0;
+-}
+-
+-static void f2fs_dio_end_io(struct bio *bio)
+-{
+-	struct f2fs_private_dio *dio = bio->bi_private;
+-
+-	dec_page_count(F2FS_I_SB(dio->inode),
+-			dio->write ? F2FS_DIO_WRITE : F2FS_DIO_READ);
+-
+-	bio->bi_private = dio->orig_private;
+-	bio->bi_end_io = dio->orig_end_io;
+-
+-	kfree(dio);
+-
+-	bio_endio(bio);
+-}
+-
+-static void f2fs_dio_submit_bio(struct bio *bio, struct inode *inode,
+-							loff_t file_offset)
+-{
+-	struct f2fs_private_dio *dio;
+-	bool write = (bio_op(bio) == REQ_OP_WRITE);
+-
+-	dio = f2fs_kzalloc(F2FS_I_SB(inode),
+-			sizeof(struct f2fs_private_dio), GFP_NOFS);
+-	if (!dio)
+-		goto out;
+-
+-	dio->inode = inode;
+-	dio->orig_end_io = bio->bi_end_io;
+-	dio->orig_private = bio->bi_private;
+-	dio->write = write;
+-
+-	bio->bi_end_io = f2fs_dio_end_io;
+-	bio->bi_private = dio;
+-
+-	inc_page_count(F2FS_I_SB(inode),
+-			write ? F2FS_DIO_WRITE : F2FS_DIO_READ);
+-
+-	submit_bio(bio);
+-	return;
+-out:
+-	bio->bi_status = BLK_STS_IOERR;
+-	bio_endio(bio);
+-}
+-
+-static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+-{
+-	struct address_space *mapping = iocb->ki_filp->f_mapping;
+-	struct inode *inode = mapping->host;
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct f2fs_inode_info *fi = F2FS_I(inode);
+-	size_t count = iov_iter_count(iter);
+-	loff_t offset = iocb->ki_pos;
+-	int rw = iov_iter_rw(iter);
+-	int err;
+-	enum rw_hint hint = iocb->ki_hint;
+-	int whint_mode = F2FS_OPTION(sbi).whint_mode;
+-	bool do_opu;
+-
+-	err = check_direct_IO(inode, iter, offset);
+-	if (err)
+-		return err < 0 ? err : 0;
+-
+-	if (f2fs_force_buffered_io(inode, iocb, iter))
+-		return 0;
+-
+-	do_opu = rw == WRITE && f2fs_lfs_mode(sbi);
+-
+-	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+-
+-	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
+-		iocb->ki_hint = WRITE_LIFE_NOT_SET;
+-
+-	if (iocb->ki_flags & IOCB_NOWAIT) {
+-		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
+-			iocb->ki_hint = hint;
+-			err = -EAGAIN;
+-			goto out;
+-		}
+-		if (do_opu && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
+-			up_read(&fi->i_gc_rwsem[rw]);
+-			iocb->ki_hint = hint;
+-			err = -EAGAIN;
+-			goto out;
+-		}
+-	} else {
+-		down_read(&fi->i_gc_rwsem[rw]);
+-		if (do_opu)
+-			down_read(&fi->i_gc_rwsem[READ]);
+-	}
+-
+-	err = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev,
+-			iter, rw == WRITE ? get_data_block_dio_write :
+-			get_data_block_dio, NULL, f2fs_dio_submit_bio,
+-			rw == WRITE ? DIO_LOCKING | DIO_SKIP_HOLES :
+-			DIO_SKIP_HOLES);
+-
+-	if (do_opu)
+-		up_read(&fi->i_gc_rwsem[READ]);
+-
+-	up_read(&fi->i_gc_rwsem[rw]);
+-
+-	if (rw == WRITE) {
+-		if (whint_mode == WHINT_MODE_OFF)
+-			iocb->ki_hint = hint;
+-		if (err > 0) {
+-			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
+-									err);
+-			if (!do_opu)
+-				set_inode_flag(inode, FI_UPDATE_WRITE);
+-		} else if (err == -EIOCBQUEUED) {
+-			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_IO,
+-						count - iov_iter_count(iter));
+-		} else if (err < 0) {
+-			f2fs_write_failed(inode, offset + count);
+-		}
+-	} else {
+-		if (err > 0)
+-			f2fs_update_iostat(sbi, APP_DIRECT_READ_IO, err);
+-		else if (err == -EIOCBQUEUED)
+-			f2fs_update_iostat(F2FS_I_SB(inode), APP_DIRECT_READ_IO,
+-						count - iov_iter_count(iter));
+-	}
+-
+-out:
+-	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
+-
+-	return err;
+-}
+-
+ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+ 							unsigned int length)
+ {
+@@ -4157,7 +3956,7 @@ const struct address_space_operations f2fs_dblock_aops = {
+ 	.set_page_dirty	= f2fs_set_data_page_dirty,
+ 	.invalidatepage	= f2fs_invalidate_page,
+ 	.releasepage	= f2fs_release_page,
+-	.direct_IO	= f2fs_direct_IO,
++	.direct_IO	= noop_direct_IO,
+ 	.bmap		= f2fs_bmap,
+ 	.swap_activate  = f2fs_swap_activate,
+ 	.swap_deactivate = f2fs_swap_deactivate,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0d199e8f2c1d..26e92799ac6c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1806,13 +1806,6 @@ struct f2fs_sb_info {
+ #endif
+ };
+ 
+-struct f2fs_private_dio {
+-	struct inode *inode;
+-	void *orig_private;
+-	bio_end_io_t *orig_end_io;
+-	bool write;
+-};
+-
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ #define f2fs_show_injection_info(sbi, type)					\
+ 	printk_ratelimited("%sF2FS-fs (%s) : inject %s in %s of %pS\n",	\
+@@ -3641,6 +3634,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 				struct writeback_control *wbc,
+ 				enum iostat_type io_type,
+ 				int compr_blocks, bool allow_balance);
++void f2fs_write_failed(struct inode *inode, loff_t to);
+ void f2fs_invalidate_page(struct page *page, unsigned int offset,
+ 			unsigned int length);
+ int f2fs_release_page(struct page *page, gfp_t wait);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 709fa893d832..60e5e2f1c1e8 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -24,6 +24,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/fileattr.h>
+ #include <linux/fadvise.h>
++#include <linux/iomap.h>
+ 
+ #include "f2fs.h"
+ #include "node.h"
+@@ -4229,23 +4230,145 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	return __f2fs_ioctl(filp, cmd, arg);
+ }
+ 
+-static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
 +/*
-+ * Preallocate blocks for a write request, if it is possible and helpful to do
-+ * so.  Returns a positive number if blocks may have been preallocated, 0 if no
-+ * blocks were preallocated, or a negative errno value if something went
-+ * seriously wrong.  Also sets FI_PREALLOCATED_ALL on the inode if *all* the
-+ * requested blocks (not just some of them) have been allocated.
++ * Return %true if the given read or write request should use direct I/O, or
++ * %false if it should use buffered I/O.
 + */
-+static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter)
++static bool f2fs_should_use_dio(struct inode *inode, struct kiocb *iocb,
++				struct iov_iter *iter)
 +{
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	const loff_t pos = iocb->ki_pos;
-+	const size_t count = iov_iter_count(iter);
-+	struct f2fs_map_blocks map = {};
-+	bool dio = (iocb->ki_flags & IOCB_DIRECT) &&
-+		   !f2fs_force_buffered_io(inode, iocb, iter);
-+	int flag;
-+	int ret;
++	unsigned int align;
 +
-+	/* If it will be an out-of-place direct write, don't bother. */
-+	if (dio && f2fs_lfs_mode(sbi))
-+		return 0;
++	if (!(iocb->ki_flags & IOCB_DIRECT))
++		return false;
 +
-+	/* No-wait I/O can't allocate blocks. */
-+	if (iocb->ki_flags & IOCB_NOWAIT)
-+		return 0;
++	if (f2fs_force_buffered_io(inode, iocb, iter))
++		return false;
 +
-+	/* If it will be a short write, don't bother. */
-+	if (fault_in_iov_iter_readable(iter, count))
-+		return 0;
++	/*
++	 * Direct I/O not aligned to the disk's logical_block_size will be
++	 * attempted, but will fail with -EINVAL.
++	 *
++	 * f2fs additionally requires that direct I/O be aligned to the
++	 * filesystem block size, which is often a stricter requirement.
++	 * However, f2fs traditionally falls back to buffered I/O on requests
++	 * that are logical_block_size-aligned but not fs-block aligned.
++	 *
++	 * The below logic implements this behavior.
++	 */
++	align = iocb->ki_pos | iov_iter_alignment(iter);
++	if (!IS_ALIGNED(align, i_blocksize(inode)) &&
++	    IS_ALIGNED(align, bdev_logical_block_size(inode->i_sb->s_bdev)))
++		return false;
 +
-+	if (f2fs_has_inline_data(inode)) {
-+		/* If the data will fit inline, don't bother. */
-+		if (pos + count <= MAX_INLINE_DATA(inode))
-+			return 0;
-+		ret = f2fs_convert_inline_inode(inode);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	map.m_lblk = F2FS_BLK_ALIGN(pos);
-+	map.m_len = F2FS_BYTES_TO_BLK(pos + count);
-+	if (map.m_len > map.m_lblk)
-+		map.m_len -= map.m_lblk;
-+	else
-+		map.m_len = 0;
-+	map.m_may_create = true;
-+	if (dio) {
-+		map.m_seg_type = f2fs_rw_hint_to_seg_type(inode->i_write_hint);
-+		flag = F2FS_GET_BLOCK_PRE_DIO;
-+	} else {
-+		map.m_seg_type = NO_CHECK_TYPE;
-+		flag = F2FS_GET_BLOCK_PRE_AIO;
-+	}
-+
-+	ret = f2fs_map_blocks(inode, &map, 1, flag);
-+	/* -ENOSPC is only a fatal error if no blocks could be allocated. */
-+	if (ret < 0 && !(ret == -ENOSPC && map.m_len > 0))
-+		return ret;
-+	if (ret == 0)
-+		set_inode_flag(inode, FI_PREALLOCATED_ALL);
-+	return map.m_len;
++	return true;
 +}
 +
- static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
++static int f2fs_dio_read_end_io(struct kiocb *iocb, ssize_t size, int error,
++				unsigned int flags)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(iocb->ki_filp));
++
++	dec_page_count(sbi, F2FS_DIO_READ);
++	if (error)
++		return error;
++	f2fs_update_iostat(sbi, APP_DIRECT_READ_IO, size);
++	return 0;
++}
++
++static const struct iomap_dio_ops f2fs_iomap_dio_read_ops = {
++	.end_io = f2fs_dio_read_end_io,
++};
++
++static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
  {
  	struct file *file = iocb->ki_filp;
  	struct inode *inode = file_inode(file);
-+	loff_t target_size;
-+	int preallocated;
+-	int ret;
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct f2fs_inode_info *fi = F2FS_I(inode);
++	const loff_t pos = iocb->ki_pos;
++	const size_t count = iov_iter_count(to);
++	struct iomap_dio *dio;
++	ssize_t ret;
++
++	if (count == 0)
++		return 0; /* skip atime update */
++
++	trace_f2fs_direct_IO_enter(inode, pos, count, READ);
++
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!down_read_trylock(&fi->i_gc_rwsem[READ])) {
++			ret = -EAGAIN;
++			goto out;
++		}
++	} else {
++		down_read(&fi->i_gc_rwsem[READ]);
++	}
++
++	/*
++	 * We have to use __iomap_dio_rw() and iomap_dio_complete() instead of
++	 * the higher-level function iomap_dio_rw() in order to ensure that the
++	 * F2FS_DIO_READ counter will be decremented correctly in all cases.
++	 */
++	inc_page_count(sbi, F2FS_DIO_READ);
++	dio = __iomap_dio_rw(iocb, to, &f2fs_iomap_ops,
++			     &f2fs_iomap_dio_read_ops, 0, 0);
++	if (IS_ERR_OR_NULL(dio)) {
++		ret = PTR_ERR_OR_ZERO(dio);
++		if (ret != -EIOCBQUEUED)
++			dec_page_count(sbi, F2FS_DIO_READ);
++	} else {
++		ret = iomap_dio_complete(dio);
++	}
++
++	up_read(&fi->i_gc_rwsem[READ]);
++
++	file_accessed(file);
++out:
++	trace_f2fs_direct_IO_exit(inode, pos, count, READ, ret);
++	return ret;
++}
++
++static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++	ssize_t ret;
+ 
+ 	if (!f2fs_is_compress_backend_ready(inode))
+ 		return -EOPNOTSUPP;
+ 
+-	ret = generic_file_read_iter(iocb, iter);
++	if (f2fs_should_use_dio(inode, iocb, to))
++		return f2fs_dio_read_iter(iocb, to);
+ 
++	ret = filemap_read(iocb, to, 0);
+ 	if (ret > 0)
+-		f2fs_update_iostat(F2FS_I_SB(inode), APP_READ_IO, ret);
+-
++		f2fs_update_iostat(F2FS_I_SB(inode), APP_BUFFERED_READ_IO, ret);
+ 	return ret;
+ }
+ 
++static ssize_t f2fs_write_checks(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct file *file = iocb->ki_filp;
++	struct inode *inode = file_inode(file);
++	ssize_t count;
++	int err;
++
++	if (IS_IMMUTABLE(inode))
++		return -EPERM;
++
++	if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED))
++		return -EPERM;
++
++	count = generic_write_checks(iocb, from);
++	if (count <= 0)
++		return count;
++
++	err = file_modified(file);
++	if (err)
++		return err;
++	return count;
++}
++
+ /*
+  * Preallocate blocks for a write request, if it is possible and helpful to do
+  * so.  Returns a positive number if blocks may have been preallocated, 0 if no
+@@ -4253,15 +4376,14 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+  * seriously wrong.  Also sets FI_PREALLOCATED_ALL on the inode if *all* the
+  * requested blocks (not just some of them) have been allocated.
+  */
+-static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter)
++static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
++				   bool dio)
+ {
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	const loff_t pos = iocb->ki_pos;
+ 	const size_t count = iov_iter_count(iter);
+ 	struct f2fs_map_blocks map = {};
+-	bool dio = (iocb->ki_flags & IOCB_DIRECT) &&
+-		   !f2fs_force_buffered_io(inode, iocb, iter);
+ 	int flag;
+ 	int ret;
+ 
+@@ -4317,13 +4439,174 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter)
+ 	return map.m_len;
+ }
+ 
+-static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
++static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
++					struct iov_iter *from)
++{
++	struct file *file = iocb->ki_filp;
++	struct inode *inode = file_inode(file);
++	ssize_t ret;
++
++	if (iocb->ki_flags & IOCB_NOWAIT)
++		return -EOPNOTSUPP;
++
++	current->backing_dev_info = inode_to_bdi(inode);
++	ret = generic_perform_write(file, from, iocb->ki_pos);
++	current->backing_dev_info = NULL;
++
++	if (ret > 0) {
++		iocb->ki_pos += ret;
++		f2fs_update_iostat(F2FS_I_SB(inode), APP_BUFFERED_IO, ret);
++	}
++	return ret;
++}
++
++static int f2fs_dio_write_end_io(struct kiocb *iocb, ssize_t size, int error,
++				 unsigned int flags)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(iocb->ki_filp));
++
++	dec_page_count(sbi, F2FS_DIO_WRITE);
++	if (error)
++		return error;
++	f2fs_update_iostat(sbi, APP_DIRECT_IO, size);
++	return 0;
++}
++
++static const struct iomap_dio_ops f2fs_iomap_dio_write_ops = {
++	.end_io = f2fs_dio_write_end_io,
++};
++
++static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
++				   bool *may_need_sync)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file_inode(file);
++	struct f2fs_inode_info *fi = F2FS_I(inode);
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	const bool do_opu = f2fs_lfs_mode(sbi);
++	const int whint_mode = F2FS_OPTION(sbi).whint_mode;
++	const loff_t pos = iocb->ki_pos;
++	const ssize_t count = iov_iter_count(from);
++	const enum rw_hint hint = iocb->ki_hint;
++	unsigned int dio_flags;
++	struct iomap_dio *dio;
++	ssize_t ret;
++
++	trace_f2fs_direct_IO_enter(inode, pos, count, WRITE);
++
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		/* f2fs_convert_inline_inode() and block allocation can block */
++		if (f2fs_has_inline_data(inode) ||
++		    !f2fs_overwrite_io(inode, pos, count)) {
++			ret = -EAGAIN;
++			goto out;
++		}
++
++		if (!down_read_trylock(&fi->i_gc_rwsem[WRITE])) {
++			ret = -EAGAIN;
++			goto out;
++		}
++		if (do_opu && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
++			up_read(&fi->i_gc_rwsem[WRITE]);
++			ret = -EAGAIN;
++			goto out;
++		}
++	} else {
++		ret = f2fs_convert_inline_inode(inode);
++		if (ret)
++			goto out;
++
++		down_read(&fi->i_gc_rwsem[WRITE]);
++		if (do_opu)
++			down_read(&fi->i_gc_rwsem[READ]);
++	}
++	if (whint_mode == WHINT_MODE_OFF)
++		iocb->ki_hint = WRITE_LIFE_NOT_SET;
++
++	/*
++	 * We have to use __iomap_dio_rw() and iomap_dio_complete() instead of
++	 * the higher-level function iomap_dio_rw() in order to ensure that the
++	 * F2FS_DIO_WRITE counter will be decremented correctly in all cases.
++	 */
++	inc_page_count(sbi, F2FS_DIO_WRITE);
++	dio_flags = 0;
++	if (pos + count > inode->i_size)
++		dio_flags |= IOMAP_DIO_FORCE_WAIT;
++	dio = __iomap_dio_rw(iocb, from, &f2fs_iomap_ops,
++			     &f2fs_iomap_dio_write_ops, dio_flags, 0);
++	if (IS_ERR_OR_NULL(dio)) {
++		ret = PTR_ERR_OR_ZERO(dio);
++		if (ret == -ENOTBLK)
++			ret = 0;
++		if (ret != -EIOCBQUEUED)
++			dec_page_count(sbi, F2FS_DIO_WRITE);
++	} else {
++		ret = iomap_dio_complete(dio);
++	}
++
++	if (whint_mode == WHINT_MODE_OFF)
++		iocb->ki_hint = hint;
++	if (do_opu)
++		up_read(&fi->i_gc_rwsem[READ]);
++	up_read(&fi->i_gc_rwsem[WRITE]);
++
++	if (ret < 0)
++		goto out;
++	if (pos + ret > inode->i_size)
++		f2fs_i_size_write(inode, pos + ret);
++	if (!do_opu)
++		set_inode_flag(inode, FI_UPDATE_WRITE);
++
++	if (iov_iter_count(from)) {
++		ssize_t ret2;
++		loff_t bufio_start_pos = iocb->ki_pos;
++
++		/*
++		 * The direct write was partial, so we need to fall back to a
++		 * buffered write for the remainder.
++		 */
++
++		ret2 = f2fs_buffered_write_iter(iocb, from);
++		if (iov_iter_count(from))
++			f2fs_write_failed(inode, iocb->ki_pos);
++		if (ret2 < 0)
++			goto out;
++
++		/*
++		 * Ensure that the pagecache pages are written to disk and
++		 * invalidated to preserve the expected O_DIRECT semantics.
++		 */
++		if (ret2 > 0) {
++			loff_t bufio_end_pos = bufio_start_pos + ret2 - 1;
++
++			ret += ret2;
++
++			ret2 = filemap_write_and_wait_range(file->f_mapping,
++							    bufio_start_pos,
++							    bufio_end_pos);
++			if (ret2 < 0)
++				goto out;
++			invalidate_mapping_pages(file->f_mapping,
++						 bufio_start_pos >> PAGE_SHIFT,
++						 bufio_end_pos >> PAGE_SHIFT);
++		}
++	} else {
++		/* iomap_dio_rw() already handled the generic_write_sync(). */
++		*may_need_sync = false;
++	}
++out:
++	trace_f2fs_direct_IO_exit(inode, pos, count, WRITE, ret);
++	return ret;
++}
++
++static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
+ 	const loff_t orig_pos = iocb->ki_pos;
+ 	const size_t orig_count = iov_iter_count(from);
+ 	loff_t target_size;
++	bool dio;
++	bool may_need_sync = true;
+ 	int preallocated;
  	ssize_t ret;
  
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode)))) {
-@@ -4262,84 +4328,54 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 
- 	if (unlikely(IS_IMMUTABLE(inode))) {
- 		ret = -EPERM;
--		goto unlock;
-+		goto out_unlock;
+@@ -4346,44 +4629,26 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		inode_lock(inode);
  	}
  
- 	if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED)) {
- 		ret = -EPERM;
--		goto unlock;
-+		goto out_unlock;
+-	if (unlikely(IS_IMMUTABLE(inode))) {
+-		ret = -EPERM;
+-		goto out_unlock;
+-	}
+-
+-	if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED)) {
+-		ret = -EPERM;
+-		goto out_unlock;
+-	}
+-
+-	ret = generic_write_checks(iocb, from);
++	ret = f2fs_write_checks(iocb, from);
+ 	if (ret <= 0)
+ 		goto out_unlock;
+ 
+-	if (iocb->ki_flags & IOCB_NOWAIT) {
+-		if (!f2fs_overwrite_io(inode, iocb->ki_pos,
+-					iov_iter_count(from)) ||
+-				f2fs_has_inline_data(inode) ||
+-				f2fs_force_buffered_io(inode, iocb, from)) {
+-			ret = -EAGAIN;
+-			goto out_unlock;
+-		}
+-	}
++	/* Determine whether we will do a direct write or a buffered write. */
++	dio = f2fs_should_use_dio(inode, iocb, from);
+ 
+-	if (iocb->ki_flags & IOCB_DIRECT) {
+-		ret = f2fs_convert_inline_inode(inode);
+-		if (ret)
+-			goto out_unlock;
+-	}
+ 	/* Possibly preallocate the blocks for the write. */
+ 	target_size = iocb->ki_pos + iov_iter_count(from);
+-	preallocated = f2fs_preallocate_blocks(iocb, from);
++	preallocated = f2fs_preallocate_blocks(iocb, from, dio);
+ 	if (preallocated < 0) {
+ 		ret = preallocated;
+ 		goto out_unlock;
  	}
  
- 	ret = generic_write_checks(iocb, from);
- 	if (ret > 0) {
--		bool preallocated = false;
--		size_t target_size = 0;
--		int err;
--
--		if (fault_in_iov_iter_readable(from, iov_iter_count(from)))
--			set_inode_flag(inode, FI_NO_PREALLOC);
--
--		if ((iocb->ki_flags & IOCB_NOWAIT)) {
-+		if (iocb->ki_flags & IOCB_NOWAIT) {
- 			if (!f2fs_overwrite_io(inode, iocb->ki_pos,
- 						iov_iter_count(from)) ||
- 				f2fs_has_inline_data(inode) ||
- 				f2fs_force_buffered_io(inode, iocb, from)) {
--				clear_inode_flag(inode, FI_NO_PREALLOC);
--				inode_unlock(inode);
- 				ret = -EAGAIN;
--				goto out;
-+				goto out_unlock;
- 			}
--			goto write;
- 		}
--
--		if (is_inode_flag_set(inode, FI_NO_PREALLOC))
--			goto write;
--
- 		if (iocb->ki_flags & IOCB_DIRECT) {
--			/*
--			 * Convert inline data for Direct I/O before entering
--			 * f2fs_direct_IO().
--			 */
--			err = f2fs_convert_inline_inode(inode);
--			if (err)
--				goto out_err;
--			/*
--			 * If force_buffere_io() is true, we have to allocate
--			 * blocks all the time, since f2fs_direct_IO will fall
--			 * back to buffered IO.
--			 */
--			if (!f2fs_force_buffered_io(inode, iocb, from) &&
--					f2fs_lfs_mode(F2FS_I_SB(inode)))
--				goto write;
-+			ret = f2fs_convert_inline_inode(inode);
-+			if (ret)
-+				goto out_unlock;
- 		}
--		preallocated = true;
-+		/* Possibly preallocate the blocks for the write. */
- 		target_size = iocb->ki_pos + iov_iter_count(from);
--
--		err = f2fs_preallocate_blocks(iocb, from);
--		if (err) {
--out_err:
--			clear_inode_flag(inode, FI_NO_PREALLOC);
--			inode_unlock(inode);
--			ret = err;
--			goto out;
-+		preallocated = f2fs_preallocate_blocks(iocb, from);
-+		if (preallocated < 0) {
-+			ret = preallocated;
-+			goto out_unlock;
- 		}
--write:
-+
- 		ret = __generic_file_write_iter(iocb, from);
--		clear_inode_flag(inode, FI_NO_PREALLOC);
+-	ret = __generic_file_write_iter(iocb, from);
++	/* Do the actual write. */
++	if (dio)
++		ret = f2fs_dio_write_iter(iocb, from, &may_need_sync);
++	else
++		ret = f2fs_buffered_write_iter(iocb, from);
  
--		/* if we couldn't write data, we should deallocate blocks. */
--		if (preallocated && i_size_read(inode) < target_size) {
-+		/* Don't leave any preallocated blocks around past i_size. */
-+		if (preallocated > 0 && i_size_read(inode) < target_size) {
- 			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 			filemap_invalidate_lock(inode->i_mapping);
- 			f2fs_truncate(inode);
- 			filemap_invalidate_unlock(inode->i_mapping);
- 			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 		}
-+		clear_inode_flag(inode, FI_PREALLOCATED_ALL);
- 
- 		if (ret > 0)
- 			f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
+ 	/* Don't leave any preallocated blocks around past i_size. */
+ 	if (preallocated > 0 && i_size_read(inode) < target_size) {
+@@ -4398,15 +4663,11 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
  	}
--unlock:
-+out_unlock:
+ 
+ 	clear_inode_flag(inode, FI_PREALLOCATED_ALL);
+-
+-	if (ret > 0)
+-		f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
+-
+ out_unlock:
  	inode_unlock(inode);
  out:
- 	trace_f2fs_file_write_iter(inode, iocb->ki_pos,
+ 	trace_f2fs_file_write_iter(inode, orig_pos, orig_count, ret);
+-	if (ret > 0)
++	if (ret > 0 && may_need_sync)
+ 		ret = generic_write_sync(iocb, ret);
+ 	return ret;
+ }
+diff --git a/fs/f2fs/iostat.c b/fs/f2fs/iostat.c
+index cdcf54ae0db8..b911ea73c21a 100644
+--- a/fs/f2fs/iostat.c
++++ b/fs/f2fs/iostat.c
+@@ -166,15 +166,12 @@ void f2fs_update_iostat(struct f2fs_sb_info *sbi,
+ 	spin_lock(&sbi->iostat_lock);
+ 	sbi->rw_iostat[type] += io_bytes;
+ 
+-	if (type == APP_WRITE_IO || type == APP_DIRECT_IO)
+-		sbi->rw_iostat[APP_BUFFERED_IO] =
+-			sbi->rw_iostat[APP_WRITE_IO] -
+-			sbi->rw_iostat[APP_DIRECT_IO];
+-
+-	if (type == APP_READ_IO || type == APP_DIRECT_READ_IO)
+-		sbi->rw_iostat[APP_BUFFERED_READ_IO] =
+-			sbi->rw_iostat[APP_READ_IO] -
+-			sbi->rw_iostat[APP_DIRECT_READ_IO];
++	if (type == APP_BUFFERED_IO || type == APP_DIRECT_IO)
++		sbi->rw_iostat[APP_WRITE_IO] += io_bytes;
++
++	if (type == APP_BUFFERED_READ_IO || type == APP_DIRECT_READ_IO)
++		sbi->rw_iostat[APP_READ_IO] += io_bytes;
++
+ 	spin_unlock(&sbi->iostat_lock);
+ 
+ 	f2fs_record_iostat(sbi);
 -- 
 2.34.0.rc1.387.gb447b232ab-goog
 
