@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 19B0EC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 12 Dec 2021 04:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E3261C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 12 Dec 2021 04:04:37 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1mwG4l-00006u-C9; Sun, 12 Dec 2021 04:03:04 +0000
+	id 1mwG6F-0000Ct-Up; Sun, 12 Dec 2021 04:04:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
  (envelope-from <bugzilla-daemon@bugzilla.kernel.org>)
- id 1mwG4j-00006n-LU
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 12 Dec 2021 04:03:02 +0000
+ id 1mwG6E-0000Cn-8N
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 12 Dec 2021 04:04:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
  :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EUECYZqKApgFNwsxUK7P5vBk5dqnZEL8a5gm9v5eaQ8=; b=Aq3Kz1TJNfqB/jDP6x2kxN1/dU
- oiCHzjT/BU4Txkm0mCwf4ZPYf3DU7nyqb6DMRtoGRDHCtvoI1MgfMPbT05GnV2HXGdOqVEwgaKsbE
- 5CPeZq87YRzqEmg3irVFLMjA/5thUtHb83+XltasFzcpoRLBsQZnJmH8eDVHMt8mpUgY=;
+ bh=IZjqglTGpksmat0jENYrDkmSJWNDhDjKcV6S9oFwa+8=; b=UUbIxzSFyNIxMaBcNNUKndtpsk
+ sctNjBYr7yHH4ytSbRkD81OI0VfaqUVN/zmdxwvBhkssFPs6Tq/KlG4lTrZQwrfFPlRY2WdBfMEOT
+ NNDtc+RvoAdRmuhr0kQTwzKWjQKx6kmxe8kNmc/AQvUtQ4iejINf/k2oVuptPZ1cxSuI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
@@ -32,38 +32,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=EUECYZqKApgFNwsxUK7P5vBk5dqnZEL8a5gm9v5eaQ8=; b=JwVfir9pgSZbzJWofwwpdYG+OQ
- sp8xR08dkPXAdMHbXq7kTe0MeQF7Ski2Rs1lbnAN/rAdR1Wv319Qy5YBXja4v7aF7djbu4OBJabXl
- fc3sDjMpoFNbLBGFdrVZ+X8pRu6Uy5iMJGvvXgJ3QT9FvkYGfpNiQI/k6cH2Wr1FY0mM=;
+ bh=IZjqglTGpksmat0jENYrDkmSJWNDhDjKcV6S9oFwa+8=; b=DH/RnegGr3mrWvtLsLqBynr0ne
+ mg80PEI1IQKcbYe8wGD6kjgRxP71m2V0fGa0lYhzSfpWxaJElvjXKYkQ0Hv8k6p/kE+KqN0gGB/hO
+ x5bnj67AdJWJlF0Bilqhf7Ijh4qPKzG0avmifxZinfzpqYBkj5Acu2usQpOWRLpYndb4=;
 Received: from sin.source.kernel.org ([145.40.73.55])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1mwG4j-00073x-SO
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 12 Dec 2021 04:03:02 +0000
+ id 1mwG6E-00CixC-EU
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 12 Dec 2021 04:04:35 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by sin.source.kernel.org (Postfix) with ESMTPS id 19013CE0B10
+ by sin.source.kernel.org (Postfix) with ESMTPS id ABFA0CE0AE2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 12 Dec 2021 04:02:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4034EC341C6
+ Sun, 12 Dec 2021 04:04:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DDF4FC341C6
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 12 Dec 2021 04:02:50 +0000 (UTC)
+ Sun, 12 Dec 2021 04:04:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1639281770;
- bh=YfMqBgZomWJOlS/3gOw5Zi9eCnA18aEePQbSlxUf+R0=;
+ s=k20201202; t=1639281857;
+ bh=0YPwJgrQw8Py0Broi4n7cC2G4259eOwqFBwXZdSGqbg=;
  h=From:To:Subject:Date:In-Reply-To:References:From;
- b=JEcsAaN8TFv4zUPgH2miauYBUufjHm4TD69ll68l+DOk1iv70Z+GR02vqePDTfSmA
- J0H9CMy+c/tw0HvU0WMFg+VKY9UAlCTMS+nQ37VARJk5vu8FkDIIsOaBlBbukoRFAn
- GWS11vFYirL3lLBOya+w9Yqrn0HWT38rPOopuIlFe+alDiuBJlF+GAR0gSKA02Ig95
- QpHYLuBZyPTDOzaCfS3HXMoErX51wgegMJn/fFw06OleVwF1CrRy8KD96I1zK30ez9
- E4pdw2nHZRzznl1em3ESeEa5guT8mzRGItk93DlqlERzWREULVDRIF1K+ezltxzJNx
- Nj35SM1ELbDOQ==
+ b=JZ+oPjSbooDGq97wc70mAPuPnwQLyWifdQp6pjLKDnlBsmO/rgwM6/ti9EAEiVdtn
+ hWLLLHi44p8XR2zwbUFkttlLc4j3naIaJujpomgo710bkabi+5l2xR1Kef0RITrU1c
+ CZTTSxt7HqxW6jdorgmwjp8CO17cZqy0DLyLZDUo+QwvGPuCMm2qoqvxbgrYsxzQBo
+ YTbSytEnbXE8ce8s2em6rmzyz2+yHqEzhoSxNFgGn64XYXhJKJAoo90ZVLAZHQzBBM
+ TPhbocbxPLBV9Ghht+v9RtEEozf00heFksmyDf0WgdHKhkvWJEKZFgCFYlfV44UDKY
+ yD+ylvmKLLlLg==
 Received: by pdx-korg-bugzilla-2.web.codeaurora.org (Postfix, from userid 48)
- id 0F6A560F41; Sun, 12 Dec 2021 04:02:50 +0000 (UTC)
+ id B3D3C60F41; Sun, 12 Dec 2021 04:04:17 +0000 (UTC)
 From: bugzilla-daemon@bugzilla.kernel.org
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Sun, 12 Dec 2021 04:02:49 +0000
+Date: Sun, 12 Dec 2021 04:04:17 +0000
 X-Bugzilla-Reason: None
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
@@ -74,20 +74,19 @@ X-Bugzilla-Keywords:
 X-Bugzilla-Severity: normal
 X-Bugzilla-Who: chao@kernel.org
 X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: DUPLICATE
+X-Bugzilla-Resolution: PATCH_ALREADY_AVAILABLE
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_status resolution
-Message-ID: <bug-215295-202145-JNxOeawa0G@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-215295-202145@https.bugzilla.kernel.org/>
-References: <bug-215295-202145@https.bugzilla.kernel.org/>
+Message-ID: <bug-215293-202145-ya0SHB15HG@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-215293-202145@https.bugzilla.kernel.org/>
+References: <bug-215293-202145@https.bugzilla.kernel.org/>
 X-Bugzilla-URL: https://bugzilla.kernel.org/
 Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1mwG4j-00073x-SO
-Subject: [f2fs-dev] [Bug 215295] F2FS: BUG: KASAN: slab-out-of-bounds in
- reset_curseg+0x5ac/0x5e0 [f2fs]
+X-Headers-End: 1mwG6E-00CixC-EU
+Subject: [f2fs-dev] [Bug 215293] F2FS: kernel bug at fs/f2fs/segment.c:2543
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -103,19 +102,17 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=215295
+https://bugzilla.kernel.org/show_bug.cgi?id=215293
 
 Chao Yu (chao@kernel.org) changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
              Status|ASSIGNED                    |RESOLVED
-         Resolution|---                         |DUPLICATE
+         Resolution|---                         |PATCH_ALREADY_AVAILABLE
 
---- Comment #2 from Chao Yu (chao@kernel.org) ---
-
-
-*** This bug has been marked as a duplicate of bug 215293 ***
+--- Comment #8 from Chao Yu (chao@kernel.org) ---
+Thanks for verifying this issue! ;)
 
 -- 
 You may reply to this email to add a comment.
