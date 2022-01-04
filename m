@@ -4,16 +4,16 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 16F0EC433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Jan 2022 21:24:54 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65976C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Jan 2022 21:24:55 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1n4rIb-00077Y-E0; Tue, 04 Jan 2022 21:24:53 +0000
+	id 1n4rIa-0005sj-Q4; Tue, 04 Jan 2022 21:24:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1n4rIa-00077S-38
+ (envelope-from <jaegeuk@kernel.org>) id 1n4rIY-0005sF-WE
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jan 2022 21:24:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -21,9 +21,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9b+ZTKYELTWeXF+Jn1oeXciaQi0yfd1A0rP7uRpqFu4=; b=Ov2K3Qi+vEzWxf//xKZ4PzEf1O
- d67BWW8WR32htWfPfu41oUywwYNLqbEJdGbSOF4ByG9l0ECa8Gk9ucPg9SLP/ElyypbK0Gleq3qtB
- oyU+any1EGetutdFQs3eGXpjYsHnrk7NfjvFCxVh4zdP7E/I2BzitY1Q+Clkrj6rfgOg=;
+ bh=4mgWYZjcNNnLGIvHQ1aFtdw0FSWPCjBYZVV6cmkzN78=; b=k/hgPoEj0Jb+IFm9m5YvAcCydx
+ ByoCJfm03dYmTQyoAhvh6DMtHKbJaT4dgFtcFRyq29fhKJEKKM0YSNUQP8NmB4xyk3dTr1qt84GeT
+ RVfkFjqpo/HWrc560/BPLBRO6w28ycQ00qeE1wqn/4NHOuxJHGPoELWIrzocNEgfolx0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,42 +31,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9b+ZTKYELTWeXF+Jn1oeXciaQi0yfd1A0rP7uRpqFu4=; b=JUGxXN/vQR4kSAjxZpapEDOSYE
- 2cCD2l+2YFq1ZjFHB2VeDN/sHtfC6Vs8iw6929zSu8VtOi7PyPLr1lDRwRAXMD28Z98j0CtGiZOXv
- QNSUwqcU8GBrLq2Kee6FM7QQH0muqnG1oeDvRaMoj2ER59rUkLzsPCaAc4/saTdAo3Qo=;
+ bh=4mgWYZjcNNnLGIvHQ1aFtdw0FSWPCjBYZVV6cmkzN78=; b=VQ9l4YqsIzS5SuolJ5NdkI+xzh
+ 8lxPOZgfxZyWf9j8os/CM1UaAM2mBrriDvNOPfTXFQVbmaRLEDh9rrYCV1WWUu0tdFmt5I8bg9m1+
+ BkZo8xoxXCLOA4B8uKIv96RGrYoOfO5vRPx+KPUcse6b1VPZ2QlG/hr9p8NjUr+kD7+w=;
 Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1n4rIV-0007hI-Id
+ id 1n4rIV-0007hA-IX
  for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jan 2022 21:24:51 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 14AA4B817F8;
- Tue,  4 Jan 2022 21:24:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C360BC36AEF;
+ by ams.source.kernel.org (Postfix) with ESMTPS id 4CABEB817F6;
  Tue,  4 Jan 2022 21:24:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB919C36AF2;
+ Tue,  4 Jan 2022 21:24:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1641331473;
- bh=y2xNY0HY9A8NbEEj2QHr8XwYq+oJ8/qQ05hA0+bUxvE=;
+ s=k20201202; t=1641331472;
+ bh=YiWOX5NHugXaDJT6Ol1nD26li2vyW4k8fkEADYyvcpI=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=L8gPJTIyYJhnh+PvPeFHxvApcEVYjc+mNu/Hw23asRo8I/vyJ4YisfgdctXMg6+q3
- hf0SZKiBal3RDcv8jQfpr0BzmRv7AMj5/Pr4nAbjvDzuZGWks+6yHMrvZGbFmfzElK
- wLg0js5EBfu7aTvBtv2SXnqJirxojgie2rPkLLyrt4tbzWE9F7OquLtUSg72vXvkMH
- HO8bH3Pw0KG0AzSZql34w1B9WGANwg/nNKOzYeysRJJ05Z9K6t/SrXM0cNnY0W+o77
- 59vGDLTLPYNa2EVewV3KGFWZCByB5czGAMBdfIk+BNNqC1uk9iVOLRZhOxszyHtwmK
- cgVZoMmJiK9SA==
+ b=S/XeR0ge7IecEcEoypLgMUedgfPysRkHsJRD3+yW2ljdA8Q2wPGq71noN3eDTlbc6
+ 2/SAMRrXCjndlnTeiGs+bFaroRXJjwqWY64h9LQDmejyaR8NOdEQJubQTAiJVqCRzE
+ ZoF0f6h1DUEAScti5ZLYnfuVFmHnOHD20GcTCgMlW0xQES0vF7pJVcjB6eRwACRImo
+ EdBBH/cohz5xgJm70PGj4ofxBeyVXqzR6aBk3MM/xBexAfPacmjIdbZy3F7T1EYirf
+ NIVEgZOstRMqeuz+Kp0W1HFGhBsQ6OuLq8F/GxxvawQbeqrB2gXXM3Az/KpJTzjFOo
+ If7JG/hGy+wdA==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net
-Date: Tue,  4 Jan 2022 13:24:18 -0800
-Message-Id: <20220104212419.1879225-5-jaegeuk@kernel.org>
+Date: Tue,  4 Jan 2022 13:24:15 -0800
+Message-Id: <20220104212419.1879225-2-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.34.1.448.ga2b2bfdf31-goog
 In-Reply-To: <20220104212419.1879225-1-jaegeuk@kernel.org>
 References: <20220104212419.1879225-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1n4rIV-0007hI-Id
-Subject: [f2fs-dev] [PATCH 5/6] f2fs: implement iomap operations
+X-Headers-End: 1n4rIV-0007hA-IX
+Subject: [f2fs-dev] [PATCH 2/6] f2fs: reduce indentation in
+ f2fs_file_write_iter()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,115 +86,99 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Implement 'struct iomap_ops' for f2fs, in preparation for making f2fs
-use iomap for direct I/O.
-
-Note that this may be used for other things besides direct I/O in the
-future; however, for now I've only tested it for direct I/O.
+Replace 'if (ret > 0)' with 'if (ret <= 0) goto out_unlock;'.
+No change in behavior.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/Kconfig |  1 +
- fs/f2fs/data.c  | 56 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/f2fs.h  |  1 +
- 3 files changed, 58 insertions(+)
+ fs/f2fs/file.c | 64 +++++++++++++++++++++++++++-----------------------
+ 1 file changed, 34 insertions(+), 30 deletions(-)
 
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index 7eea3cfd894d..f46a7339d6cf 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -7,6 +7,7 @@ config F2FS_FS
- 	select CRYPTO_CRC32
- 	select F2FS_FS_XATTR if FS_ENCRYPTION
- 	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
-+	select FS_IOMAP
- 	select LZ4_COMPRESS if F2FS_FS_LZ4
- 	select LZ4_DECOMPRESS if F2FS_FS_LZ4
- 	select LZ4HC_COMPRESS if F2FS_FS_LZ4HC
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9c867de1ec29..57e6a6f0daf9 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -21,6 +21,7 @@
- #include <linux/cleancache.h>
- #include <linux/sched/signal.h>
- #include <linux/fiemap.h>
-+#include <linux/iomap.h>
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index fc87d0f5b82b..808a7c24d993 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4338,44 +4338,48 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	}
  
- #include "f2fs.h"
- #include "node.h"
-@@ -4237,3 +4238,58 @@ void f2fs_destroy_bio_entry_cache(void)
- {
- 	kmem_cache_destroy(bio_entry_slab);
- }
+ 	ret = generic_write_checks(iocb, from);
+-	if (ret > 0) {
+-		if (iocb->ki_flags & IOCB_NOWAIT) {
+-			if (!f2fs_overwrite_io(inode, iocb->ki_pos,
+-						iov_iter_count(from)) ||
++	if (ret <= 0)
++		goto out_unlock;
 +
-+static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
-+			    unsigned int flags, struct iomap *iomap,
-+			    struct iomap *srcmap)
-+{
-+	struct f2fs_map_blocks map = {};
-+	pgoff_t next_pgofs = 0;
-+	int err;
-+
-+	map.m_lblk = bytes_to_blks(inode, offset);
-+	map.m_len = bytes_to_blks(inode, offset + length - 1) - map.m_lblk + 1;
-+	map.m_next_pgofs = &next_pgofs;
-+	map.m_seg_type = f2fs_rw_hint_to_seg_type(inode->i_write_hint);
-+	if (flags & IOMAP_WRITE)
-+		map.m_may_create = true;
-+
-+	err = f2fs_map_blocks(inode, &map, flags & IOMAP_WRITE,
-+			      F2FS_GET_BLOCK_DIO);
-+	if (err)
-+		return err;
-+
-+	iomap->offset = blks_to_bytes(inode, map.m_lblk);
-+
-+	if (map.m_flags & (F2FS_MAP_MAPPED | F2FS_MAP_UNWRITTEN)) {
-+		iomap->length = blks_to_bytes(inode, map.m_len);
-+		if (map.m_flags & F2FS_MAP_MAPPED) {
-+			iomap->type = IOMAP_MAPPED;
-+			iomap->flags |= IOMAP_F_MERGED;
-+		} else {
-+			iomap->type = IOMAP_UNWRITTEN;
-+		}
-+		if (WARN_ON_ONCE(!__is_valid_data_blkaddr(map.m_pblk)))
-+			return -EINVAL;
-+
-+		iomap->bdev = map.m_bdev;
-+		iomap->addr = blks_to_bytes(inode, map.m_pblk);
-+	} else {
-+		iomap->length = blks_to_bytes(inode, next_pgofs) -
-+				iomap->offset;
-+		iomap->type = IOMAP_HOLE;
-+		iomap->addr = IOMAP_NULL_ADDR;
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!f2fs_overwrite_io(inode, iocb->ki_pos,
++					iov_iter_count(from)) ||
+ 				f2fs_has_inline_data(inode) ||
+ 				f2fs_force_buffered_io(inode, iocb, from)) {
+-				ret = -EAGAIN;
+-				goto out_unlock;
+-			}
+-		}
+-		if (iocb->ki_flags & IOCB_DIRECT) {
+-			ret = f2fs_convert_inline_inode(inode);
+-			if (ret)
+-				goto out_unlock;
+-		}
+-		/* Possibly preallocate the blocks for the write. */
+-		target_size = iocb->ki_pos + iov_iter_count(from);
+-		preallocated = f2fs_preallocate_blocks(iocb, from);
+-		if (preallocated < 0) {
+-			ret = preallocated;
++			ret = -EAGAIN;
+ 			goto out_unlock;
+ 		}
 +	}
-+
-+	if (map.m_flags & F2FS_MAP_NEW)
-+		iomap->flags |= IOMAP_F_NEW;
-+	if ((inode->i_state & I_DIRTY_DATASYNC) ||
-+	    offset + length > i_size_read(inode))
-+		iomap->flags |= IOMAP_F_DIRTY;
-+
-+	return 0;
-+}
-+
-+const struct iomap_ops f2fs_iomap_ops = {
-+	.iomap_begin	= f2fs_iomap_begin,
-+};
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d7435fcb9658..8242f47304a5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3655,6 +3655,7 @@ int f2fs_init_post_read_processing(void);
- void f2fs_destroy_post_read_processing(void);
- int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi);
- void f2fs_destroy_post_read_wq(struct f2fs_sb_info *sbi);
-+extern const struct iomap_ops f2fs_iomap_ops;
  
- /*
-  * gc.c
+-		ret = __generic_file_write_iter(iocb, from);
++	if (iocb->ki_flags & IOCB_DIRECT) {
++		ret = f2fs_convert_inline_inode(inode);
++		if (ret)
++			goto out_unlock;
++	}
++	/* Possibly preallocate the blocks for the write. */
++	target_size = iocb->ki_pos + iov_iter_count(from);
++	preallocated = f2fs_preallocate_blocks(iocb, from);
++	if (preallocated < 0) {
++		ret = preallocated;
++		goto out_unlock;
++	}
+ 
+-		/* Don't leave any preallocated blocks around past i_size. */
+-		if (preallocated > 0 && i_size_read(inode) < target_size) {
+-			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-			filemap_invalidate_lock(inode->i_mapping);
+-			f2fs_truncate(inode);
+-			filemap_invalidate_unlock(inode->i_mapping);
+-			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-		}
+-		clear_inode_flag(inode, FI_PREALLOCATED_ALL);
++	ret = __generic_file_write_iter(iocb, from);
+ 
+-		if (ret > 0)
+-			f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
++	/* Don't leave any preallocated blocks around past i_size. */
++	if (preallocated > 0 && i_size_read(inode) < target_size) {
++		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
++		filemap_invalidate_lock(inode->i_mapping);
++		f2fs_truncate(inode);
++		filemap_invalidate_unlock(inode->i_mapping);
++		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	}
++
++	clear_inode_flag(inode, FI_PREALLOCATED_ALL);
++
++	if (ret > 0)
++		f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
++
+ out_unlock:
+ 	inode_unlock(inode);
+ out:
 -- 
 2.34.1.448.ga2b2bfdf31-goog
 
