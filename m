@@ -4,70 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65976C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Jan 2022 21:24:55 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6F422C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Jan 2022 13:19:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1n4rIa-0005sj-Q4; Tue, 04 Jan 2022 21:24:53 +0000
+	id 1n56CW-0005XY-45; Wed, 05 Jan 2022 13:19:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1n4rIY-0005sF-WE
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jan 2022 21:24:52 +0000
+ (envelope-from <chao@kernel.org>) id 1n56CU-0005XS-Cc
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Jan 2022 13:19:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4mgWYZjcNNnLGIvHQ1aFtdw0FSWPCjBYZVV6cmkzN78=; b=k/hgPoEj0Jb+IFm9m5YvAcCydx
- ByoCJfm03dYmTQyoAhvh6DMtHKbJaT4dgFtcFRyq29fhKJEKKM0YSNUQP8NmB4xyk3dTr1qt84GeT
- RVfkFjqpo/HWrc560/BPLBRO6w28ycQ00qeE1wqn/4NHOuxJHGPoELWIrzocNEgfolx0=;
+ bh=zw5CC9m0m8IVO1gnSdiL1eWE1uP0AFL4MCtEPJU5YoA=; b=LVognLdzlcadl/VkgJMwq6F/Xx
+ CQfYaSX0eMCRjop2IsreCUP0Cd2Yt4bBREba2MC3JOOFbMrTpS2tf6xq4Zxw8NyQXrsDSWZOkYi/t
+ P7iF4JpY7Z5ecF3mK7MXmWu7C82ZRDIfetNoP8zG7SAujZyUcBqhmejPpYBW3xns+JRU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=4mgWYZjcNNnLGIvHQ1aFtdw0FSWPCjBYZVV6cmkzN78=; b=VQ9l4YqsIzS5SuolJ5NdkI+xzh
- 8lxPOZgfxZyWf9j8os/CM1UaAM2mBrriDvNOPfTXFQVbmaRLEDh9rrYCV1WWUu0tdFmt5I8bg9m1+
- BkZo8xoxXCLOA4B8uKIv96RGrYoOfO5vRPx+KPUcse6b1VPZ2QlG/hr9p8NjUr+kD7+w=;
+ bh=zw5CC9m0m8IVO1gnSdiL1eWE1uP0AFL4MCtEPJU5YoA=; b=AXjc9jNILxlRQXkVZ3VnzlLkv2
+ b+MyhxQe0GIQ9V17MQ1Jvi2A4trivgag38V5XtaaVENOvEosyK0sRBT4cj/T8kqxnU1OnA7F29Y0M
+ Rt8+0k1ZY0GW2OW2NeEQ0ozQVtSr/vs9EUZbdlioPXr+QO6qhyTWblTG/Y3bkElU1Y38=;
 Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1n4rIV-0007hA-IX
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 04 Jan 2022 21:24:51 +0000
+ id 1n56CQ-00032w-Qf
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 05 Jan 2022 13:19:34 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 4CABEB817F6;
- Tue,  4 Jan 2022 21:24:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB919C36AF2;
- Tue,  4 Jan 2022 21:24:31 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 98C05B81AA0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed,  5 Jan 2022 13:19:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADD8DC36AE0;
+ Wed,  5 Jan 2022 13:19:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1641331472;
- bh=YiWOX5NHugXaDJT6Ol1nD26li2vyW4k8fkEADYyvcpI=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=S/XeR0ge7IecEcEoypLgMUedgfPysRkHsJRD3+yW2ljdA8Q2wPGq71noN3eDTlbc6
- 2/SAMRrXCjndlnTeiGs+bFaroRXJjwqWY64h9LQDmejyaR8NOdEQJubQTAiJVqCRzE
- ZoF0f6h1DUEAScti5ZLYnfuVFmHnOHD20GcTCgMlW0xQES0vF7pJVcjB6eRwACRImo
- EdBBH/cohz5xgJm70PGj4ofxBeyVXqzR6aBk3MM/xBexAfPacmjIdbZy3F7T1EYirf
- NIVEgZOstRMqeuz+Kp0W1HFGhBsQ6OuLq8F/GxxvawQbeqrB2gXXM3Az/KpJTzjFOo
- If7JG/hGy+wdA==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Tue,  4 Jan 2022 13:24:15 -0800
-Message-Id: <20220104212419.1879225-2-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.34.1.448.ga2b2bfdf31-goog
-In-Reply-To: <20220104212419.1879225-1-jaegeuk@kernel.org>
-References: <20220104212419.1879225-1-jaegeuk@kernel.org>
+ s=k20201202; t=1641388758;
+ bh=+WwWNgnGqh9XKYRNXBRhQR5JlOjez82G+xx4+InuGTk=;
+ h=Date:Subject:To:References:From:In-Reply-To:From;
+ b=nnd1NXzGhmBCx2stpx6uM8DAuouE5BCINIPeMH9oYt8XOtqzqJyi2X9Zhhbp8ztlh
+ L7Fr0inLESAUrye5qEw3i60fI2R4Cx0YEkN1aixSzFlfOGdRo2ZoFj31c735d8clTB
+ Rqw5ReShkO92DUbHLjs4FrOEv87SR2YdSRyNu030IoIIAUhdl40Qt8DVMUdNdPdgI2
+ nKl1tR8ELGcqzCgPixdRQ2UWolsIkL7UrnX5ETsI6ObIyaoisep7vCeYXsEdxDaW4i
+ qR0cgopk6DMeX6Xt118mzP+SBAJx5LpdCmXu9+WNXX5j9vndmhCOtWnhGcZM6s0bIE
+ Fj+dSffn4z0Gg==
+Message-ID: <a2036978-81f9-fad4-90ce-15dadf048693@kernel.org>
+Date: Wed, 5 Jan 2022 21:19:12 +0800
 MIME-Version: 1.0
-X-Headers-End: 1n4rIV-0007hA-IX
-Subject: [f2fs-dev] [PATCH 2/6] f2fs: reduce indentation in
- f2fs_file_write_iter()
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20220104212419.1879225-1-jaegeuk@kernel.org>
+ <20220104212419.1879225-3-jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20220104212419.1879225-3-jaegeuk@kernel.org>
+X-Headers-End: 1n56CQ-00032w-Qf
+Subject: Re: [f2fs-dev] [PATCH 3/6] f2fs: do not expose unwritten blocks to
+ user by DIO
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,109 +83,21 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+On 2022/1/5 5:24, Jaegeuk Kim wrote:
+> DIO preallocates physical blocks before writing data, but if an error occurrs
+> or power-cut happens, we can see block contents from the disk. This patch tries
+> to fix it by 1) turning to buffered writes for DIO into holes, 2) truncating
+> unwritten blocks from error or power-cut.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Replace 'if (ret > 0)' with 'if (ret <= 0) goto out_unlock;'.
-No change in behavior.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
 Reviewed-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/file.c | 64 +++++++++++++++++++++++++++-----------------------
- 1 file changed, 34 insertions(+), 30 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index fc87d0f5b82b..808a7c24d993 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4338,44 +4338,48 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	}
- 
- 	ret = generic_write_checks(iocb, from);
--	if (ret > 0) {
--		if (iocb->ki_flags & IOCB_NOWAIT) {
--			if (!f2fs_overwrite_io(inode, iocb->ki_pos,
--						iov_iter_count(from)) ||
-+	if (ret <= 0)
-+		goto out_unlock;
-+
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!f2fs_overwrite_io(inode, iocb->ki_pos,
-+					iov_iter_count(from)) ||
- 				f2fs_has_inline_data(inode) ||
- 				f2fs_force_buffered_io(inode, iocb, from)) {
--				ret = -EAGAIN;
--				goto out_unlock;
--			}
--		}
--		if (iocb->ki_flags & IOCB_DIRECT) {
--			ret = f2fs_convert_inline_inode(inode);
--			if (ret)
--				goto out_unlock;
--		}
--		/* Possibly preallocate the blocks for the write. */
--		target_size = iocb->ki_pos + iov_iter_count(from);
--		preallocated = f2fs_preallocate_blocks(iocb, from);
--		if (preallocated < 0) {
--			ret = preallocated;
-+			ret = -EAGAIN;
- 			goto out_unlock;
- 		}
-+	}
- 
--		ret = __generic_file_write_iter(iocb, from);
-+	if (iocb->ki_flags & IOCB_DIRECT) {
-+		ret = f2fs_convert_inline_inode(inode);
-+		if (ret)
-+			goto out_unlock;
-+	}
-+	/* Possibly preallocate the blocks for the write. */
-+	target_size = iocb->ki_pos + iov_iter_count(from);
-+	preallocated = f2fs_preallocate_blocks(iocb, from);
-+	if (preallocated < 0) {
-+		ret = preallocated;
-+		goto out_unlock;
-+	}
- 
--		/* Don't leave any preallocated blocks around past i_size. */
--		if (preallocated > 0 && i_size_read(inode) < target_size) {
--			down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--			filemap_invalidate_lock(inode->i_mapping);
--			f2fs_truncate(inode);
--			filemap_invalidate_unlock(inode->i_mapping);
--			up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--		}
--		clear_inode_flag(inode, FI_PREALLOCATED_ALL);
-+	ret = __generic_file_write_iter(iocb, from);
- 
--		if (ret > 0)
--			f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
-+	/* Don't leave any preallocated blocks around past i_size. */
-+	if (preallocated > 0 && i_size_read(inode) < target_size) {
-+		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+		filemap_invalidate_lock(inode->i_mapping);
-+		f2fs_truncate(inode);
-+		filemap_invalidate_unlock(inode->i_mapping);
-+		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 	}
-+
-+	clear_inode_flag(inode, FI_PREALLOCATED_ALL);
-+
-+	if (ret > 0)
-+		f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
-+
- out_unlock:
- 	inode_unlock(inode);
- out:
--- 
-2.34.1.448.ga2b2bfdf31-goog
-
+Thanks,
 
 
 _______________________________________________
