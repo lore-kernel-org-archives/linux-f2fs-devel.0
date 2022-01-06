@@ -4,64 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EF722C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Jan 2022 11:40:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 26D88C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Jan 2022 11:48:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1n5R8O-0000Jp-GA; Thu, 06 Jan 2022 11:40:44 +0000
+	id 1n5RGF-0001yi-Mj; Thu, 06 Jan 2022 11:48:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <antoine@lesviallon.fr>) id 1n5R8M-0000Jj-OI
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jan 2022 11:40:42 +0000
+ (envelope-from <chao@kernel.org>) id 1n5RGE-0001yR-Ay
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jan 2022 11:48:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=References:In-Reply-To:Cc:To:Subject:Message-ID:
- From:Content-Transfer-Encoding:Content-Type:Date:MIME-Version:Sender:Reply-To
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=D2o0gvbQopB+4G68jrEFs5E0gRUjCXLdEimP4Pb9UyM=; b=b+1PEv9hf7BBMC9BMr0hr+hW/M
- +RObByN8MAa1i/MAwcJzkBiE0QCXA5y3hSQuZjEg12+VphKQR+gxdyDH2t6GIdnNOauha0HQ6wuPn
- FzWTqDXhDN1In0daC/rVitftJ3CAJkxJpvCwwiE3q4TE7xiGS5dNB84blJ5771MY+Qz4=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=References:In-Reply-To:Cc:To:Subject:Message-ID:From:
- Content-Transfer-Encoding:Content-Type:Date:MIME-Version:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=D2o0gvbQopB+4G68jrEFs5E0gRUjCXLdEimP4Pb9UyM=; b=N1y2MQbgZFoHSAZPjyNSyAYDzJ
- MMjiy0jbNnU4GDoNg86DE4WrusxX3lyp/XX47S+9aLe5MFuPMc8iLqR22HBc0VxGK3/crikooTQyD
- 0aMHZYKApfK11e+mqFeTGom4EuzMkp17Ay/fdmiuTktrps7j0a9PLp7pcQHPGkIcLBwc=;
-Received: from [82.66.80.223] (helo=lesviallon.fr)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=SFY4BkJiJMctliLHyDkXrysavEDbktWmq/qQiZUOQIg=; b=YkMZD9HcSym5lTSwF5DUR5Dy9c
+ WYsabga7RAN0puou5hSXVslqNp2naLzF35x6tzyeZkMegtrnaf4W34gdzF1z5zxLX3cobne6PObk2
+ kOAsWINfYuTN/dOnmMMMptTKO49twskeEDh4dteLEvq/HjnW8XB8ZNYl7gSnz8V4gwak=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=SFY4BkJiJMctliLHyDkXrysavEDbktWmq/qQiZUOQIg=; b=iPTWa44w9q+wrNeedl7OlyD7l7
+ Vcj+ruospr3xaJvJWZr5arvgUdonWefbCFs3JZMuafnIaDz1BZZHawYXUzj9pdCcO8x0S0bppxvxe
+ sgfYLWIal0kdH3EKoyPxwR+NHu2vyse0M01LDPQjKHIx8x/eKI75GOEdHlCNlyh95rv0=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1n5R8H-0008Uo-52
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jan 2022 11:40:42 +0000
-Received: from authenticated-user (lesviallon.fr [82.66.80.223])
- by lesviallon.fr (Postfix) with ESMTPA id 66FFA62A3C0C;
- Thu,  6 Jan 2022 11:40:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lesviallon.fr;
- s=dkim; t=1641469218;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=D2o0gvbQopB+4G68jrEFs5E0gRUjCXLdEimP4Pb9UyM=;
- b=CNZ8GEl+1nOBsecwB28v1prmIRqGDC9vbVuRr6lDCiP/sPYS/awpKwIgHPqa9ehoTrPK1M
- 1HDj/QZ7Tx8n6ZqBujMYKSRWPlb2n4GDrIa3eaqjpAIFPTQ8PzdrJ0uu3Toj+5GAVRl4+R
- FbSnWIcKE18Jovw2mGnCLjxdeW/xn7o=
+ id 1n5RG7-003wX6-V9
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 06 Jan 2022 11:48:49 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id B7D4DB81E2C;
+ Thu,  6 Jan 2022 11:48:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E054BC36AE5;
+ Thu,  6 Jan 2022 11:48:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1641469716;
+ bh=d2gd8KhQPNFfvNfTZv43oZIP/J3daKrSGoAZ8lTnei4=;
+ h=Date:Subject:To:References:From:In-Reply-To:From;
+ b=irIE32E/Dq+wDwTZA7fm1ZvBdCQX/KM0VlvNbvDO8FY79H1stkaPIEYydJOqhmEJ2
+ 4gtSjZQSAlIQSbZXFXy0MhUFiJM7N1TOyZkuqjdX3RZwuapxQ+gnSxFd0XbFXTc1s2
+ gkDNBCWvvOuF7arXwZPnq/Wam4ZBNZuVINHf0k41CbAGe319GhqTcMPKHYWtqbx/06
+ QV46BENfWbKMcWrWcWxKITIRPoLmz78ya5k/mW8Gpi1qSVLihQoXg/SaZj+PNDQMCO
+ BdG1XKvc7YAEWV9cOVeHx3bb+Mhc1jVCRObyFC5JcA3Z2aH78C6cGO/1nMqqMP6HtJ
+ xf+fZoAuVsVbg==
+Message-ID: <a6ee8d0b-1d67-0bcb-ba8c-06b0d691bb17@kernel.org>
+Date: Thu, 6 Jan 2022 19:48:32 +0800
 MIME-Version: 1.0
-Date: Thu, 06 Jan 2022 11:40:18 +0000
-Message-ID: <e78cb718fe6350f8f544d6ac5c9a3e91@lesviallon.fr>
-To: "Antoine Viallon" <antoine@lesviallon.fr>, jaegeuk@kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Content-Language: en-US
+To: Antoine Viallon <antoine@lesviallon.fr>,
+ Antoine Viallon via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+References: <20211230002942.298407-1-antoine@lesviallon.fr>
+ <e8b0f25177675008c0eb234220ceb31f@lesviallon.fr>
+From: Chao Yu <chao@kernel.org>
 In-Reply-To: <e8b0f25177675008c0eb234220ceb31f@lesviallon.fr>
-References: <e8b0f25177675008c0eb234220ceb31f@lesviallon.fr>
- <20211230002942.298407-1-antoine@lesviallon.fr>
-X-Spamd-Bar: /
-Authentication-Results: lesviallon.fr;
- auth=pass smtp.auth=antoine@lesviallon.fr smtp.mailfrom=antoine@lesviallon.fr
-X-Headers-End: 1n5R8H-0008Uo-52
+X-Headers-End: 1n5RG7-003wX6-V9
 Subject: Re: [f2fs-dev] [PATCH] fsck.f2fs: Add progression feedback
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -74,51 +81,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Antoine Viallon via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Antoine Viallon <antoine@lesviallon.fr>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+On 2021/12/30 8:59, Antoine Viallon via Linux-f2fs-devel wrote:
+> Some variable naming mistaskes were made in the last patch,
+> here is an updated version.
+> 
+> ---
+>   fsck/fsck.c | 9 +++++++++
+>   fsck/fsck.h | 1 +
+>   2 files changed, 10 insertions(+)
+> 
+> diff --git a/fsck/fsck.c b/fsck/fsck.c
+> index ecd87af..921db0f 100644
+> --- a/fsck/fsck.c
+> +++ b/fsck/fsck.c
+> @@ -546,6 +546,15 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+>          node_blk = (struct f2fs_node *)calloc(BLOCK_SZ, 1);
+>          ASSERT(node_blk != NULL);
+>   
+> +       /* Progress report */
+> +       sbi->fsck->chk.checked_node_cnt++;
+> +
+> +       if (sbi->fsck->chk.checked_node_cnt % 1000 == 0)
+> +               printf("[FSCK] Check node %u / %u (%.2f%%)\n",
+> +                          sbi->fsck->chk.checked_node_cnt,
+> +                          sbi->total_valid_node_count,
+> +                          100 * (float)(sbi->fsck->chk.checked_node_cnt) / sbi->total_valid_node_count);
 
-Hello, I know you are probably busy.
-However, even though my patch is pretty bad, I'd like to know if the general idea
-of having some progress feedback interests you at all.
+How about showing this message in debug mode? may be under level one?
 
-Perhaps it could be opt-in, using a --progress flag?
-Please tell me what is your opinion on the matter,
-Antoine Viallon
+Thanks,
 
-> On large SSDs filled with lots of data, fsck.f2fs can be very long to finish.
-> For instance, on my 1TB SSD filled at 99%, it takes literally 5 minutes to
-> complete.
->
-> Currently, the only way to have some feedback is to enable debug output,
-> but it is very verbose and doesn't tell the actual progress.
->
-> This patch implements a simple progress report in the longest
-> running part of the check (in fsck_chk_node_blk).
-> The number of checked node / total valid nodes is printed
-> every 1000 nodes checked, and the percentage of progress
-> is also calculated and printed.
-
------BEGIN PGP SIGNATURE-----
-Version: OpenPGP.js v2.6.2
-Comment: https://openpgpjs.org
-
-wsBcBAEBCAAQBQJh1tUaCRDRJrE6tVXhbwAADlsIAJnmen7XeO10Mi82fQwp
-LizYs/oT1bxXro564y7ggKXHcEr8cqAgo4yHxQJUMpSYo7Pe+3YO6c7ONQhO
-rOi7SfKsEI41YhWIzfv0dpwUgOrkwrkfuytQ4OpfUdR8zqFl2whA962qsCQi
-nRgAnOAmhdQl3HFD2ZvcXfdaU/sXzlY9vGCkSeL1aGph1gaPmaWXY4K/y0Ip
-7tk/ZssXJgzdtGZL5FHBopnEXAfm3Hk06oKL96VLQJ6OAH4+kUdAVY7P7FYM
-BtSUzGzQRJQKfxBR+jYEVPi9x/hpWKGxxekOWPHTrISYX5fQMmrNi8fCSO5Y
-cP8YcIwUfCT+WXAdOLrvI58=
-=6UQI
------END PGP SIGNATURE-----
+> +
+>          if (sanity_check_nid(sbi, nid, node_blk, ftype, ntype, &ni))
+>                  goto err;
+>   
+> diff --git a/fsck/fsck.h b/fsck/fsck.h
+> index 11846e1..535d6d5 100644
+> --- a/fsck/fsck.h
+> +++ b/fsck/fsck.h
+> @@ -93,6 +93,7 @@ struct f2fs_fsck {
+>          struct chk_result {
+>                  u64 valid_blk_cnt;
+>                  u32 valid_nat_entry_cnt;
+> +               u32 checked_node_cnt;
+>                  u32 valid_node_cnt;
+>                  u32 valid_inode_cnt;
+>                  u32 multi_hard_link_files;
 
 
 _______________________________________________
