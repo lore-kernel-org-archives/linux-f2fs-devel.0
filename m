@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4B81DC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 23 Jan 2022 23:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 94893C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Jan 2022 09:26:16 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nBltj-00049l-5G; Sun, 23 Jan 2022 23:03:46 +0000
+	id 1nBvc7-0002S7-KN; Mon, 24 Jan 2022 09:26:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <david@fromorbit.com>) id 1nBlth-00049d-Mc
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 23 Jan 2022 23:03:44 +0000
+ (envelope-from <hch@lst.de>) id 1nBvc6-0002S1-0q
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jan 2022 09:26:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=L8TGXrScynZPHu6plAWa9V0VOsgSS8vgE8qt5Wa1P80=; b=jH3FwdO2fRS9UV0FWBvHc12uYq
- OqePV1pLxlD9nRDB+h7BqcKMQ9Mf16ga1uAmyGX434JSX76RkCO5zwYar+n9u5nNmSyiuW7+vYHHH
- MvDWsu08hu7O5l0zFk8NT3pBJe6PBAaHZ2hp9ju0SDt2uyjjYKhPFsq4yd07TPphxnqw=;
+ bh=KcXJu9e6b5trBlmuwWUMc7FyxqkPEPmQ/xdjE9rNxO0=; b=VacUk2m1jDku7Qay0XUgTFyqmC
+ 3soSupsQDWE6p6dE8vILPL9ZUbdD+Y52LBxBrRoAczHfu587Ja3ssLIwfPZq/UemT/Vl12kB2ReEc
+ Khue4PyXniv/Hdnk2EUlng7qpzRqyEsrqta5jBGqEMXljmiYf5LQ1SUwgf2TWXdy5NBc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -31,43 +31,29 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=L8TGXrScynZPHu6plAWa9V0VOsgSS8vgE8qt5Wa1P80=; b=QrZ/o3o9xFAguEFucgJw/BQmZg
- cpXfUM4DAhZRi2fi9LwbAmeiR2Jh/LGnQC0/F9e7WenFups8OTJYgdlz3jQx0pLX7B676hBbToklu
- eqzdv7kSG7FSxQ8XQih/dm2nXvtfxvKL+O9JkUCgKGK/ymstT3fZpTmK42YsOXAp4xMI=;
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.92.3)
- id 1nBltc-009Tdh-TH
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 23 Jan 2022 23:03:44 +0000
-Received: from dread.disaster.area (pa49-179-45-11.pa.nsw.optusnet.com.au
- [49.179.45.11])
- by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2169362C1FD;
- Mon, 24 Jan 2022 10:03:34 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
- (envelope-from <david@fromorbit.com>)
- id 1nBltU-003QSN-Tk; Mon, 24 Jan 2022 10:03:32 +1100
-Date: Mon, 24 Jan 2022 10:03:32 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Message-ID: <20220123230332.GL59729@dread.disaster.area>
-References: <20220120071215.123274-1-ebiggers@kernel.org>
- <YekdnxpeunTGfXqX@infradead.org> <20220120171027.GL13540@magnolia>
- <YenIcshA706d/ziV@sol.localdomain>
- <20220120210027.GQ13540@magnolia>
- <20220120220414.GH59729@dread.disaster.area>
- <Yenm1Ipx87JAlyXg@sol.localdomain>
- <20220120235755.GI59729@dread.disaster.area>
- <20220121023603.GH13563@magnolia>
+ bh=KcXJu9e6b5trBlmuwWUMc7FyxqkPEPmQ/xdjE9rNxO0=; b=L/NbWZbFnjDXAd99L7fbtYS6Av
+ WsuvMPXOxDG64gOZoECrXRhv06cXyRuzgNiYG7iSiotqpgUT/2RFN29PxpAjEt+vCPSqSti+obAvS
+ mJrCTJ6fdcbUzZCGBbfE8N48Y4N09Uok0W98h1/CWt6wNiL6MTAA87z7W9R0MSwhtqIU=;
+Received: from verein.lst.de ([213.95.11.211])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
+ id 1nBvc0-00ACXa-A8
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 24 Jan 2022 09:26:12 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id B760268BEB; Mon, 24 Jan 2022 10:08:55 +0100 (CET)
+Date: Mon, 24 Jan 2022 10:08:55 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Gabriel Krisman Bertazi <krisman@collabora.com>
+Message-ID: <20220124090855.GA23041@lst.de>
+References: <20220118065614.1241470-1-hch@lst.de>
+ <87zgnp51wo.fsf@collabora.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20220121023603.GH13563@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=61eddec6
- a=Eslsx4mF8WGvnV49LKizaA==:117 a=Eslsx4mF8WGvnV49LKizaA==:17
- a=kj9zAlcOel0A:10 a=DghFqjY3_ZEA:10 a=7-415B0cAAAA:8
- a=ja5ArhmkF978jRwlfB8A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Headers-End: 1nBltc-009Tdh-TH
-Subject: Re: [f2fs-dev] [PATCH v10 0/5] add support for direct I/O with
- fscrypt using blk-crypto
+In-Reply-To: <87zgnp51wo.fsf@collabora.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1nBvc0-00ACXa-A8
+Subject: Re: [f2fs-dev] [PATCH] unicode: clean up the Kconfig symbol
+ confusion
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,76 +65,27 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Christoph Hellwig <hch@infradead.org>, Theodore Ts'o <tytso@mit.edu>,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jan 20, 2022 at 06:36:03PM -0800, Darrick J. Wong wrote:
-> On Fri, Jan 21, 2022 at 10:57:55AM +1100, Dave Chinner wrote:
-> Sure.  How's this?  I couldn't think of a real case of directio
-> requiring different alignments for pos and bytecount, so the only real
-> addition here is the alignment requirements for best performance.
+On Thu, Jan 20, 2022 at 08:10:47PM -0500, Gabriel Krisman Bertazi wrote:
+> > Fixes: 2b3d04787012 ("unicode: Add utf8-data module")
+> > Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > 
-> struct statx {
-> ...
-> 	/* 0x90 */
-> 	__u64	stx_mnt_id;
+> I fixed the typo and pushed the patch to a linux-next visible branch
 > 
-> 	/* Memory buffer alignment required for directio, in bytes. */
-> 	__u32	stx_dio_mem_align;
-
-	__32	stx_mem_align_dio;
-
-(for consistency with suggestions below)
-
+> https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git/commit/?h=for-next&id=5298d4bfe80f6ae6ae2777bcd1357b0022d98573
 > 
-> 	/* File range alignment required for directio, in bytes. */
-> 	__u32	stx_dio_fpos_align_min;
+> I'm also sending a patch series shortly turning IS_ENABLED into part of
+> the code flow where possible.
 
-"fpos" is not really a user term - "offset" is the userspace term for
-file position, and it's much less of a random letter salad if it's
-named that way. Also, we don't need "min" in the name; the
-description of the field in the man page can give all the gory
-details about it being the minimum required alignment.
-
-	__u32	stx_offset_align_dio;
-
-> 
-> 	/* 0xa0 */
-> 
-> 	/* File range alignment needed for best performance, in bytes. */
-> 	__u32	stx_dio_fpos_align_opt;
-
-This is a common property of both DIO and buffered IO, so no need
-for it to be dio-only property.
-
-	__u32	stx_offset_align_optimal;
-
-> 
-> 	/* Maximum size of a directio request, in bytes. */
-> 	__u32	stx_dio_max_iosize;
-
-Unnecessary, it will always be the syscall max IO size, because the
-internal DIO code will slice and dice it down to the max sizes the
-hardware supports.
-
-> #define STATX_DIRECTIO	0x00001000U	/* Want/got directio geometry */
-> 
-> How about that?
-
-Mostly seems reasonable at a first look.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks.  It might make sense to get the one patch to Linux for 5.17
+so that we don't have the new Kconfig symbol for just one release.
 
 
 _______________________________________________
