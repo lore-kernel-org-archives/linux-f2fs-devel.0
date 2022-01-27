@@ -4,71 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DB05AC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Jan 2022 22:14:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 81A37C43219
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Jan 2022 02:47:22 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nCU5D-0000l3-Fz; Tue, 25 Jan 2022 22:14:34 +0000
+	id 1nCuoj-0002Vo-Ih; Thu, 27 Jan 2022 02:47:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1nCU5C-0000kx-Bg
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jan 2022 22:14:32 +0000
+ (envelope-from <neilb@suse.de>) id 1nCuoh-0002Vd-Ir
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jan 2022 02:47:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=r2sq8NNfQfbWI8wK6CCJvSQBlG7rZ5GBhPXi5DbZCSQ=; b=FkLT8FKQz6WgvRMbVjaXtDWCgK
- 9fkPO2wr5YVtPunZbw3wQzpV+FwlWkbJL3ofyfCJJ22/Ua7RvETREJTPKsw+HyK594ynwWRLXc6lV
- sn4+u2prU2w4lhYZjiMXUGI6g3Tn7ygubB5rTduVoFyvm+xPt72ijY2ltH9T2FTSRVgs=;
+ bh=yDPdolIqP1BqbqmgH35S+RrYDCrJz/kAXtj6i96pLsQ=; b=cDKIYhtH0RZxlfQU1GFbQ9qm4/
+ 6CfvI17ow4CUBt9/541ANWcbTwC9sKPxLb2q3d1jeVtM2tRnh/ApNpsibOf/cDknoe1tbr7aiP9Zz
+ rbz7DUnzZIxMRbcUolLh7S8UIkY0j2IzNEvtVGyghoPgT26XFv/D8AaGJvJTy/GvkRgc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=r2sq8NNfQfbWI8wK6CCJvSQBlG7rZ5GBhPXi5DbZCSQ=; b=gXCGR1fvuExcODepF11LBQKtD1
- Yc+6UiVlY9+kHn/QQWZ+SjtKIA8mZgUjU8Yp5fewV3uY0uvQNm9wO+w2oM6A3qNBdVhAv6/D9hwAA
- OzMxhG/InDdSRw6mUL8BAeFbTzR9hSI5+a+J2LZD9Z4ZuBnX9ewRbKeMfLDH1QYv8iCs=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Cc:To
+ :From:Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=yDPdolIqP1BqbqmgH35S+RrYDCrJz/kAXtj6i96pLsQ=; b=g
+ 7sPDj5U048Z1kVFpm+Y438J1Wkd7ogpfJ+6o0FygqvVTOVX/gMuco0VKxDgk+YFcj8b/mjzCPCRKa
+ 30xf1aFyexoVOCPh2xcf/mw6Kp2tr4KqQFAJc7VLOtQhj2nycpi9vZQl/eQ3xyu2t5qhe7orFh7w9
+ jNT0glpBPZm7oEQM=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.92.3)
- id 1nCU56-0001P9-OI
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 25 Jan 2022 22:14:32 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
+ id 1nCuoe-0007ZE-GG
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jan 2022 02:47:18 +0000
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id A61F0B81AC6;
- Tue, 25 Jan 2022 22:14:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56ED3C340E0;
- Tue, 25 Jan 2022 22:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1643148856;
- bh=wzQ7De1OASBwcj3eJi86mBXPWkiGQw8ikhGXdFZuX4s=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=CD6N+fucU5W+Oe0l9yslZOos70un8YyAOxgmEVyiljOD5LNiUrrshae3qKmqz/UfW
- zRo5ffiEfJbWjIcVeOeKFBVlfi8vThLQ4Dp7jTb25WDhtEwOg+GO8zQJV0sgnYoc7B
- zUBR3soAR5Uil1cGxJO4zU/P2+yKngc3sDIJFNcBvovrpmW1Iv9kvRVwMBCQVDwATl
- hF6ATYuwsiQq+b8Tc4GiWzJMQISjrXzgNWvEqpruia1PUZaQu8HmvOW10mpVu3jwoz
- Oo1lIDqQOZbnTen10a52SgQm6goBIQ4PCtwIU9xzZ5vRJTkrP6ydheCM6WG71/qvO3
- j2hYTsaW5tIcg==
-Date: Tue, 25 Jan 2022 22:13:58 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Harry Austen <harryausten@hotmail.co.uk>
-Message-ID: <YfB2Jqs3RGRnH63R@gmail.com>
-References: <AM6PR10MB2838873D61CE1C0DB91EEDB9FA5C9@AM6PR10MB2838.EURPRD10.PROD.OUTLOOK.COM>
- <Ye79OLCFLR3H+GnY@gmail.com>
- <AM6PR10MB2838705554FCB6ACE86F12BBFA5F9@AM6PR10MB2838.EURPRD10.PROD.OUTLOOK.COM>
+ by smtp-out1.suse.de (Postfix) with ESMTPS id AB2D621905;
+ Thu, 27 Jan 2022 02:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1643251625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=yDPdolIqP1BqbqmgH35S+RrYDCrJz/kAXtj6i96pLsQ=;
+ b=hAN5Dg0REL/K5jKsVHYqM3X+M7oL7DolmPiPn5nkKXAbr4U3cj5oAi65hMwxiSWo27QmOB
+ cLQTty8i2cI986CYr180STDwieVyetu7kQ3qHdYo7SeahuPrc14qirLFBA73zPbrr4po2f
+ zGgWZWBXgqAPi8k0xRaMTCQlkN1djpM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1643251625;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=yDPdolIqP1BqbqmgH35S+RrYDCrJz/kAXtj6i96pLsQ=;
+ b=x6ydMXUFPK4DvzDKO6csSNrS9nejdxdCvtHG4Sf6wjFPHRmP2fhorasjEjQ6+4R4FunEK1
+ J47b6RQj8pZ6MXBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ (No client certificate requested)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E280813E46;
+ Thu, 27 Jan 2022 02:46:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+ by imap2.suse-dmz.suse.de with ESMTPSA id d+tYJ6IH8mGjKwAAMHmgww
+ (envelope-from <neilb@suse.de>); Thu, 27 Jan 2022 02:46:58 +0000
+From: NeilBrown <neilb@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+ Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ Miklos Szeredi <miklos@szeredi.hu>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Anna Schumaker <anna.schumaker@netapp.com>,
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ Philipp Reisner <philipp.reisner@linbit.com>,
+ Lars Ellenberg <lars.ellenberg@linbit.com>,
+ Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>
+Date: Thu, 27 Jan 2022 13:46:29 +1100
+Message-ID: <164325106958.29787.4865219843242892726.stgit@noble.brown>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <AM6PR10MB2838705554FCB6ACE86F12BBFA5F9@AM6PR10MB2838.EURPRD10.PROD.OUTLOOK.COM>
-X-Headers-End: 1nCU56-0001P9-OI
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix fileattr_set unsupported attribute
- handling
+X-Headers-End: 1nCuoe-0007ZE-GG
+Subject: [f2fs-dev] [PATCH 0/9] Remove remaining parts of congestions
+ tracking code.
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,83 +100,77 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ drbd-dev@lists.linbit.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jan 25, 2022 at 10:01:49PM +0000, Harry Austen wrote:
-> On Monday, 24 January 2022 19:25:44 GMT Eric Biggers wrote:
-> > On Sat, Jan 22, 2022 at 12:59:03PM +0000, Harry Austen wrote:
-> > > FS_IOC_SETFLAGS ioctl should return EOPNOTSUPP if the file attribute
-> > > (e.g. FS_NOCOW_FL) is not supported, rather than silently ignoring it
-> > > and returning success.
-> > > 
-> > > Fixes: 9b1bb01c8ae7 (f2fs: convert to fileattr)
-> > > Signed-off-by: Harry Austen <harryausten@hotmail.co.uk>
-> > > ---
-> > > 
-> > >  fs/f2fs/file.c | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > > index 92ec2699bc85..061bf35c2582 100644
-> > > --- a/fs/f2fs/file.c
-> > > +++ b/fs/f2fs/file.c
-> > > @@ -3085,9 +3085,8 @@ int f2fs_fileattr_set(struct user_namespace
-> > > *mnt_userns,> 
-> > >  		return -EIO;
-> > >  	
-> > >  	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
-> > >  	
-> > >  		return -ENOSPC;
-> > > 
-> > > -	if (fsflags & ~F2FS_GETTABLE_FS_FL)
-> > > +	if (fsflags & ~F2FS_SETTABLE_FS_FL)
-> > > 
-> > >  		return -EOPNOTSUPP;
-> > > 
-> > > -	fsflags &= F2FS_SETTABLE_FS_FL;
-> > > 
-> > >  	if (!fa->flags_valid)
-> > >  	
-> > >  		mask &= FS_COMMON_FL;
-> > 
-> > This is intentional, and matches what ext4 does; see the comment in the ext4
-> > implementation of this:
-> > 
-> >         /*
-> >          * chattr(1) grabs flags via GETFLAGS, modifies the result and
-> >          * passes that to SETFLAGS. So we cannot easily make SETFLAGS
-> >          * more restrictive than just silently masking off visible but
-> >          * not settable flags as we always did.
-> >          */
-> 
-> Ah, my apologies. I thought it looked a little too obvious. Clearly I
-> should have looked at the ext4 code. Please disregard this patch.
-> 
-> Is there anything else that could be done to improve unsettable
-> attribute handling? For example, is there a reason FS_NOCOW_FL is
-> gettable but not settable? Could it be added to the settable list?
+Congestion hasn't been reliably tracked for quite some time.
+Most MM uses of it for guiding writeback decisions were removed in 5.16.
+Some other uses were removed in 17-rc1.
 
-A lot of flags are gettable by FS_IOC_GETFLAGS but not settable by
-FS_IOC_SETFLAGS, typically because they can only be set through a dedicated
-interface.  For example, the encrypt flag can only be set using
-FS_IOC_SET_ENCRYPTION_POLICY, or via inheritance.
+This series removes the remaining places that test for congestion, and
+the few places which still set it.
 
-> > 
-> > Also, even if this patch was correct, the Fixes tag is wrong.
-> 
-> Having looked at this a bit more, I assume you are saying this due to
-> the missing double quotes around the commit summary? (just so I know for
-> next time as this is my first attempt at sending a kernel patch)
-> 
+The second patch touches a few filesystems.  I didn't think there was
+much value in splitting this out by filesystems, but if maintainers
+would rather I did that, I will.
 
-There's that, but more importantly the commit you listed is wrong.  The relevant
-code was added by an earlier commit, and that commit just moved it.
+The f2fs, cephfs, fuse, NFS, and block patches can go through the
+respective trees proving the final patch doesn't land until after they
+all do - so maybe it should be held for 5.18-rc2 if all the rest lands
+by 5.18-rc1.
 
-- Eric
+Thanks,
+NeilBrown
+
+---
+
+NeilBrown (9):
+      Remove inode_congested()
+      Remove bdi_congested() and wb_congested() and related functions
+      f2fs: change retry waiting for f2fs_write_single_data_page()
+      f2f2: replace some congestion_wait() calls with io_schedule_timeout()
+      cephfs: don't set/clear bdi_congestion
+      fuse: don't set/clear bdi_congested
+      NFS: remove congestion control.
+      block/bfq-iosched.c: use "false" rather than "BLK_RW_ASYNC"
+      Remove congestion tracking framework.
+
+
+ block/bfq-iosched.c              |  2 +-
+ drivers/block/drbd/drbd_int.h    |  3 --
+ drivers/block/drbd/drbd_req.c    |  3 +-
+ fs/ceph/addr.c                   | 27 ---------------
+ fs/ceph/super.c                  |  2 --
+ fs/ceph/super.h                  |  2 --
+ fs/ext2/ialloc.c                 |  2 --
+ fs/f2fs/compress.c               |  6 ++--
+ fs/f2fs/data.c                   |  9 +++--
+ fs/f2fs/segment.c                | 14 ++++----
+ fs/f2fs/super.c                  |  8 ++---
+ fs/fuse/control.c                | 17 ----------
+ fs/fuse/dev.c                    |  8 -----
+ fs/nfs/sysctl.c                  |  7 ----
+ fs/nfs/write.c                   | 53 +----------------------------
+ fs/nilfs2/segbuf.c               | 11 ------
+ fs/xfs/xfs_buf.c                 |  3 --
+ include/linux/backing-dev-defs.h |  8 -----
+ include/linux/backing-dev.h      | 28 ----------------
+ include/linux/nfs_fs.h           |  1 -
+ include/linux/nfs_fs_sb.h        |  1 -
+ include/trace/events/writeback.h | 28 ----------------
+ mm/backing-dev.c                 | 57 --------------------------------
+ mm/vmscan.c                      |  4 +--
+ 24 files changed, 25 insertions(+), 279 deletions(-)
+
+--
+Signature
+
 
 
 _______________________________________________
