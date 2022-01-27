@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 09702C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Jan 2022 02:48:04 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6FBF0C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 27 Jan 2022 02:48:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nCupP-0002Sb-OC; Thu, 27 Jan 2022 02:48:02 +0000
+	id 1nCupe-0002eM-QX; Thu, 27 Jan 2022 02:48:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <neilb@suse.de>) id 1nCupO-0002SN-J1
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jan 2022 02:48:01 +0000
+ (envelope-from <neilb@suse.de>) id 1nCupd-0002dY-IT
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jan 2022 02:48:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M8NYMcBcZD8GUv0cDvsP1eePtGigG8J8np/yV6nLjQQ=; b=apj5OwIuqmS9KzpzFQc8efrdoi
- /46I34ZrfRM3T4pu0hjHsXqQonctldRMeb7kMV3DaYTMXLA0/qOwU2vPSVDEmXzUx4WklCrBqS/YT
- 9/ZZD4G2up5ozRlyViQ/pWKQr7q4HGUhA0EuXp+MTmn60m7BxaGaKCN/J59NrkRU9O0o=;
+ bh=VLryoRKmUuPESAB8QyVLfrgvCJTCmPKkdu4P/OX5YBg=; b=Pre9JlltW7vWV/joTLYxxf4eHw
+ lTOHr7t82hwJI+te6rltOVj3x42LM/1revoiasMbvlWkdvm0oUzPEGaKuLh8QPXOCHJYZs2+bXxOv
+ Sc6MzK5TN3jv9vHq7nUzmwTK2bazdzfnuZiaCdru4CSJi/TzgCr4PJgg5+nevcaRYl5k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
@@ -31,47 +31,47 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=M8NYMcBcZD8GUv0cDvsP1eePtGigG8J8np/yV6nLjQQ=; b=iRqlnQyO2EaD85bWL7MHqjixZl
- ++EoAK6MyJVdxey4iUgIhEi8kr7pmRM8RTCdtP2pQBCay6pcRAvjW6a926oaucBQzLCFIjsbiMOEB
- hjGIUa6C58cacezgHxPEBdE2mKUTYclTtUU8pZBlcCovj/F9GY3/4nXezpcDuwpFxhaw=;
+ bh=VLryoRKmUuPESAB8QyVLfrgvCJTCmPKkdu4P/OX5YBg=; b=P7BhJb24Pk6VCkIRcZWycGfClY
+ HE5XFbVN30AqQq5ubc5Ky0JcSbPIMkGoeh6hcEUTSZO7nsfxSTDkJ6QACOP3d9G+jJwW9vBzmb1Cw
+ 7/Wf6DS/2VumQOyj7hCYEmYBEUCOIXVPzpiUOiiF2vVGnKjcBEa30OZa6eewR0SntEro=;
 Received: from smtp-out1.suse.de ([195.135.220.28])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.92.3)
- id 1nCupK-00FTNy-UH
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jan 2022 02:48:01 +0000
+ id 1nCupb-00FTPs-KJ
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 27 Jan 2022 02:48:16 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 2D50621901;
- Thu, 27 Jan 2022 02:47:48 +0000 (UTC)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 6B0A521959;
+ Thu, 27 Jan 2022 02:48:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1643251668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1643251689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=M8NYMcBcZD8GUv0cDvsP1eePtGigG8J8np/yV6nLjQQ=;
- b=lpTMtDdgzXu6IXlWF2Cla7JZeA4O6IZP0tjrp8fZaU7ivDos+PHoL/XQMfCABF+bEfNOP4
- asGZxs7WKvGfhEBJWG6JTtSILEhDDfyUZDxdz3isEFlXeNYP4t4z60IMGMWtpxXKM9DXAB
- qZWJthZJaYv1R8Swu1zG6SDpKtDJcMw=
+ bh=VLryoRKmUuPESAB8QyVLfrgvCJTCmPKkdu4P/OX5YBg=;
+ b=Qti4P3eej7SwU9djhiMhUMgJ1ckOKm8O/J1pSaUAEHDRhQb1izQ4dQZrO97++mAvn3WVVr
+ T2k2nCp5oMqLD8x4f8vee6NJClS2lg1UPexxPkHMg0zJIBN6c452+a+u50wURMgo/tIfRv
+ rD3QIr1LCF3psUh7SWng5ZjcDzYoDdQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1643251668;
+ s=susede2_ed25519; t=1643251689;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=M8NYMcBcZD8GUv0cDvsP1eePtGigG8J8np/yV6nLjQQ=;
- b=GajJ1CW7bGmknt+eypyqRIr6NQ5RkVudFMz7+fbL2W6FyuUKWG82yY6INCh5zJBg+nHfCU
- 1tfjV2LY/eskY2DQ==
+ bh=VLryoRKmUuPESAB8QyVLfrgvCJTCmPKkdu4P/OX5YBg=;
+ b=uJ63TZZVZJQxUDYCfYcbm2ZGgBe9Q6Vwcu+8BWf/uQNpUEqXNKCc6PHt7MlRhE+A1sBtn6
+ UgWYWcQsDNRd9WCg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5662613E46;
- Thu, 27 Jan 2022 02:47:40 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E9B1C13E46;
+ Thu, 27 Jan 2022 02:47:58 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id 1653BcwH8mHgKwAAMHmgww
- (envelope-from <neilb@suse.de>); Thu, 27 Jan 2022 02:47:40 +0000
+ by imap2.suse-dmz.suse.de with ESMTPSA id 8ZsrKd4H8mH6KwAAMHmgww
+ (envelope-from <neilb@suse.de>); Thu, 27 Jan 2022 02:47:58 +0000
 From: NeilBrown <neilb@suse.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
  Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
@@ -85,14 +85,14 @@ To: Andrew Morton <akpm@linux-foundation.org>,
  Lars Ellenberg <lars.ellenberg@linbit.com>,
  Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>
 Date: Thu, 27 Jan 2022 13:46:29 +1100
-Message-ID: <164325158956.29787.7016948342209980097.stgit@noble.brown>
+Message-ID: <164325158957.29787.2116312603613564596.stgit@noble.brown>
 In-Reply-To: <164325106958.29787.4865219843242892726.stgit@noble.brown>
 References: <164325106958.29787.4865219843242892726.stgit@noble.brown>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
-X-Headers-End: 1nCupK-00FTNy-UH
-Subject: [f2fs-dev] [PATCH 3/9] f2fs: change retry waiting for
- f2fs_write_single_data_page()
+X-Headers-End: 1nCupb-00FTPs-KJ
+Subject: [f2fs-dev] [PATCH 4/9] f2f2: replace some congestion_wait() calls
+ with io_schedule_timeout()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -113,61 +113,84 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs_write_single_data_page() can return -EAGAIN if it cannot get
-the cp_rwsem lock - it holds a page lock and so cannot wait for it.
-
-Some code which calls f2fs_write_single_data_page() use
-congestion_wait() and then tries again.  congestion_wait() doesn't do
-anything useful as congestion is no longer tracked.  So this is just a
-simple sleep.
-
-A better approach is it wait until the cp_rwsem lock can be taken - then
-try again.  There is certainly no point trying again *before* the lock
-can be taken.
+As congestion is no longer tracked, contestion_wait() is effectively
+equivalent to io_schedule_timeout().
+It isn't clear to me what these contestion_wait() calls are waiting
+for, so I cannot change them to wait for some particular event.
+So simply change them to io_schedule_timeout(), which will have
+exactly the same behaviour.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/f2fs/compress.c |    6 +++---
- fs/f2fs/data.c     |    9 ++++++---
- 2 files changed, 9 insertions(+), 6 deletions(-)
+ fs/f2fs/segment.c |   14 ++++++++------
+ fs/f2fs/super.c   |    8 ++++----
+ 2 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index d0c3aeba5945..58ff7f4b296c 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1505,9 +1505,9 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
- 				if (IS_NOQUOTA(cc->inode))
- 					return 0;
- 				ret = 0;
--				cond_resched();
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1dabc8244083..78e3fbc24e77 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -313,8 +313,8 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
+ skip:
+ 		iput(inode);
+ 	}
+-	congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
+-	cond_resched();
++	set_current_state(TASK_UNINTERRUPTIBLE);
++	io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 	if (gc_failure) {
+ 		if (++looped >= count)
+ 			return;
+@@ -802,9 +802,10 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi)
+ 
+ 		do {
+ 			ret = __submit_flush_wait(sbi, FDEV(i).bdev);
+-			if (ret)
 -				congestion_wait(BLK_RW_ASYNC,
 -						DEFAULT_IO_TIMEOUT);
-+				/* Wait until we can get the lock, then try again. */
-+				f2fs_lock_op(F2FS_I_SB(cc->inode));
-+				f2fs_unlock_op(F2FS_I_SB(cc->inode));
- 				goto retry_write;
++			if (ret) {
++				set_current_state(TASK_UNINTERRUPTIBLE);
++				io_schedule_timeout(DEFAULT_IO_TIMEOUT);
++			}
+ 		} while (ret && --count);
+ 
+ 		if (ret) {
+@@ -3133,7 +3134,8 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+ 			blk_finish_plug(&plug);
+ 			mutex_unlock(&dcc->cmd_lock);
+ 			trimmed += __wait_all_discard_cmd(sbi, NULL);
+-			congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
++			set_current_state(TASK_UNINTERRUPTIBLE);
++			io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 			goto next;
+ 		}
+ skip:
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 76e6a3df9aba..ae8dcbb71596 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2135,8 +2135,8 @@ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+ 	/* we should flush all the data to keep data consistency */
+ 	do {
+ 		sync_inodes_sb(sbi->sb);
+-		cond_resched();
+-		congestion_wait(BLK_RW_ASYNC, DEFAULT_IO_TIMEOUT);
++		set_current_state(TASK_UNINTERRUPTIBLE);
++		io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 	} while (get_pages(sbi, F2FS_DIRTY_DATA) && retry--);
+ 
+ 	if (unlikely(retry < 0))
+@@ -2504,8 +2504,8 @@ static ssize_t f2fs_quota_write(struct super_block *sb, int type,
+ 							&page, &fsdata);
+ 		if (unlikely(err)) {
+ 			if (err == -ENOMEM) {
+-				congestion_wait(BLK_RW_ASYNC,
+-						DEFAULT_IO_TIMEOUT);
++				set_current_state(TASK_UNINTERRUPTIBLE);
++				io_schedule_timeout(DEFAULT_IO_TIMEOUT);
+ 				goto retry;
  			}
- 			return ret;
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8c417864c66a..1d2341163e2c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3047,9 +3047,12 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 				} else if (ret == -EAGAIN) {
- 					ret = 0;
- 					if (wbc->sync_mode == WB_SYNC_ALL) {
--						cond_resched();
--						congestion_wait(BLK_RW_ASYNC,
--							DEFAULT_IO_TIMEOUT);
-+						/* Wait until we can get the
-+						 * lock, then try again.
-+						 */
-+						f2fs_lock_op(F2FS_I_SB(mapping->host));
-+						f2fs_unlock_op(F2FS_I_SB(mapping->host));
-+
- 						goto retry_write;
- 					}
- 					goto next;
+ 			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
 
 
 
