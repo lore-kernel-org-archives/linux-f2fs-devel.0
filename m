@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3B43C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Jan 2022 23:40:19 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7BB02C43217
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Jan 2022 23:40:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nDaqo-0007sr-OZ; Fri, 28 Jan 2022 23:40:17 +0000
+	id 1nDaqp-0000ni-Im; Fri, 28 Jan 2022 23:40:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1nDaqk-0007sd-Ef
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Jan 2022 23:40:13 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1nDaqo-0000nW-AM
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Jan 2022 23:40:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WE9Br5o5FVf06xw7HSL4VOv4cR5FaU6yJoLRpYHhEwQ=; b=h+bEfQKT7XtSVge1bhIrqluLrI
- vWlHqYDP6qBj9msL7WEPKnjama0uKj1sQN+C/1UtylXgn21b74/09eBktaTAbwGjwucccB9GlkagW
- vcYhsO85VWEeGnEF5Mf6CEUPYw1PhZwUbfwmI2It/1ZQYEstF1TjweKmq6fcpmjEWqxQ=;
+ bh=oV2fcRchoWpWgiCLsMolI7nmfWNIT4J8d+1ifzmsbBo=; b=PP2g9SSiYHuddT4Aw2pyv5NjOi
+ SOdJBtL3whGS9I4ZBQF3Zn45EfyS2M7s8dPtz5Tx9qNxvaMK/CJlB/coh6ybIcGOXDCeY3el1Z9B5
+ 5Z7to/ztgcRYuWByGM8Zf6VfghbZOn2VjYeuj4mWuWw+6Bwtyw7gJMLw3ZQGAJxdYh4E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,41 +31,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WE9Br5o5FVf06xw7HSL4VOv4cR5FaU6yJoLRpYHhEwQ=; b=FIvMT+QAWuitatKv3rj1+Yghwv
- ddJoF41fUhUn94V335MOxzRWY0SNegJxvyKw1tG/OsfSdA28NAnz55kT4oIcWFyxsR+mJ4/lFtH9F
- E1dKQSWGs14wdCfTQg/lF/3qmtQ3+b6sdsc1KwaINNssWI4G7Mpi9sXISpp6f4tS84CA=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=oV2fcRchoWpWgiCLsMolI7nmfWNIT4J8d+1ifzmsbBo=; b=HnkVTUzY84ooanLre53FIRRwiU
+ 8vZGQxFEl+7HBYyNHTEwE3wnMCGI5bG99Ct6LLLGGbwz7kG+Z8szbAWWtGRvRfVLhte6l/Kydemtj
+ ndeP4Vr2UT4BQnc5k+umx7gQrYCYReoWtbvtNqTfsu9sYoggfR1cDh0ohpQQxhXRf6k0=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nDaqh-0002He-TP
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Jan 2022 23:40:12 +0000
+ id 1nDaql-001YnL-NG
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Jan 2022 23:40:16 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id F389B61F3C;
- Fri, 28 Jan 2022 23:40:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C0AC340F2;
- Fri, 28 Jan 2022 23:40:03 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id A7D96B82733;
+ Fri, 28 Jan 2022 23:40:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01578C340FA;
+ Fri, 28 Jan 2022 23:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1643413203;
- bh=LuDFDhqfRMf5XNrJxODhsKvMEoMr5mmsePqMCFxBMwY=;
+ bh=oM29BnV9ToRiA87Xa8vy8Ps9akFPyNK8+ftmkwPDABQ=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=m4mBSoJ6eUvtHyPrP4gwPfdZRKUbE5cORinvPjBDH3fLCbfPpOsgdEK9mfPgXiatk
- +IOvMbz45hpLUufIIFh591vHBZKCWrpJr6UVb2daSwOfq6apsXEeZdxG1AM2sTCrSD
- 9jMU34IAOJrl/oVzg1IVzS+ZgXp+7Wfrjx6lerJYkN9y/1oC1KuG2EZPkYv9nbaRX1
- Ao4IFDkkteu8DugSNoKhIX75sxHXmlyKyu2+Um1GKfCjVsBSPAWo4PRkUtJkaXuRBK
- R8xzXV6+/s/aGrLoVLdGbQXKayJ0i+z2ZnFcHcRTisC6ds2XE64tcwMP5ZqMQP/OxO
- Gk7gN9UpoWejA==
+ b=ByH2OKYnBLJShtun1wY2/hje/k3qpSBktCbkbBFhJt+I1eDSwYZWhncN+2YEBotgp
+ UieLA//E4zlEzUBKKNk1wboM8vHakppCj1SxDrPiZJ8gaxbWvhjA3Ir/ks+dpkFEqF
+ VdiJpDiUSsdUlzylaZgoSJc4u0Km2ZB7ynv7ytUoeRp5HGW9d39cp7+t0VStVRxLdM
+ R5g4Hel17nV1LzVP9xq+LXqrArP2ONxbnIefYXlqmhwLrGa4FkAF8wmYalUlyoLPnH
+ uimhJD1dOK94KVt8Zhj1wwvVIozrMrt/b5kACue/LgRmkRRy9yn2Z3AbOd+wQ5t4uX
+ MNMGudgBTVO+g==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Fri, 28 Jan 2022 15:39:39 -0800
-Message-Id: <20220128233940.79464-5-ebiggers@kernel.org>
+Date: Fri, 28 Jan 2022 15:39:38 -0800
+Message-Id: <20220128233940.79464-4-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.35.0
 In-Reply-To: <20220128233940.79464-1-ebiggers@kernel.org>
 References: <20220128233940.79464-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1nDaqh-0002He-TP
-Subject: [f2fs-dev] [PATCH v11 4/5] f2fs: support direct I/O with fscrypt
+X-Headers-End: 1nDaql-001YnL-NG
+Subject: [f2fs-dev] [PATCH v11 3/5] ext4: support direct I/O with fscrypt
  using blk-crypto
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -94,14 +94,14 @@ encrypt/decrypt the data.  However, when the encryption is implemented
 using inline encryption (blk-crypto) instead of the traditional
 filesystem-layer encryption, it is straightforward to support DIO.
 
-Therefore, make f2fs support DIO on files that are using inline
-encryption.  Since f2fs uses iomap for DIO, and fscrypt support was
+Therefore, make ext4 support DIO on files that are using inline
+encryption.  Since ext4 uses iomap for DIO, and fscrypt support was
 already added to iomap DIO, this just requires two small changes:
 
 - Let DIO proceed when supported, by checking fscrypt_dio_supported()
   instead of assuming that encrypted files never support DIO.
 
-- In f2fs_iomap_begin(), use fscrypt_limit_io_blocks() to limit the
+- In ext4_iomap_begin(), use fscrypt_limit_io_blocks() to limit the
   length of the mapping in the rare case where a DUN discontiguity
   occurs in the middle of an extent.  The iomap DIO implementation
   requires this, since it assumes that it can submit a bio covering (up
@@ -109,20 +109,58 @@ already added to iomap DIO, this just requires two small changes:
 
 Co-developed-by: Satya Tangirala <satyat@google.com>
 Signed-off-by: Satya Tangirala <satyat@google.com>
+Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/data.c | 7 +++++++
- fs/f2fs/f2fs.h | 6 +++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ fs/ext4/file.c  | 10 ++++++----
+ fs/ext4/inode.c |  7 +++++++
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8c417864c66ae..020d47f97969c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -4044,6 +4044,13 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 8cc11715518ac..8bd66cdc41be2 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -36,9 +36,11 @@
+ #include "acl.h"
+ #include "truncate.h"
  
- 	iomap->offset = blks_to_bytes(inode, map.m_lblk);
+-static bool ext4_dio_supported(struct inode *inode)
++static bool ext4_dio_supported(struct kiocb *iocb, struct iov_iter *iter)
+ {
+-	if (IS_ENABLED(CONFIG_FS_ENCRYPTION) && IS_ENCRYPTED(inode))
++	struct inode *inode = file_inode(iocb->ki_filp);
++
++	if (!fscrypt_dio_supported(iocb, iter))
+ 		return false;
+ 	if (fsverity_active(inode))
+ 		return false;
+@@ -61,7 +63,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		inode_lock_shared(inode);
+ 	}
  
+-	if (!ext4_dio_supported(inode)) {
++	if (!ext4_dio_supported(iocb, to)) {
+ 		inode_unlock_shared(inode);
+ 		/*
+ 		 * Fallback to buffered I/O if the operation being performed on
+@@ -509,7 +511,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	}
+ 
+ 	/* Fallback to buffered I/O if the inode does not support direct I/O. */
+-	if (!ext4_dio_supported(inode)) {
++	if (!ext4_dio_supported(iocb, from)) {
+ 		if (ilock_shared)
+ 			inode_unlock_shared(inode);
+ 		else
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5f79d265d06a0..7af1bba34b8b8 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3409,6 +3409,13 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	if (ret < 0)
+ 		return ret;
+ out:
 +	/*
 +	 * When inline encryption is enabled, sometimes I/O to an encrypted file
 +	 * has to be broken up to guarantee DUN contiguity.  Handle this by
@@ -130,26 +168,9 @@ index 8c417864c66ae..020d47f97969c 100644
 +	 */
 +	map.m_len = fscrypt_limit_io_blocks(inode, map.m_lblk, map.m_len);
 +
- 	if (map.m_flags & (F2FS_MAP_MAPPED | F2FS_MAP_UNWRITTEN)) {
- 		iomap->length = blks_to_bytes(inode, map.m_len);
- 		if (map.m_flags & F2FS_MAP_MAPPED) {
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index eb22fa91c2b26..db46f3cf0885d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4371,7 +4371,11 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int rw = iov_iter_rw(iter);
+ 	ext4_set_iomap(inode, iomap, &map, offset, length, flags);
  
--	if (f2fs_post_read_required(inode))
-+	if (!fscrypt_dio_supported(iocb, iter))
-+		return true;
-+	if (fsverity_active(inode))
-+		return true;
-+	if (f2fs_compressed_file(inode))
- 		return true;
- 
- 	/* disallow direct IO if any of devices has unaligned blksize */
+ 	return 0;
 -- 
 2.35.0
 
