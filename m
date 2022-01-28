@@ -4,85 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C4B4CC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Jan 2022 21:36:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5AE7CC433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Jan 2022 23:40:17 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nDYv1-0007VX-VT; Fri, 28 Jan 2022 21:36:30 +0000
+	id 1nDaqm-0000fL-6B; Fri, 28 Jan 2022 23:40:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <neilb@suse.de>) id 1nDYv1-0007VR-8Q
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Jan 2022 21:36:30 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1nDaqk-0000fE-Ai
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Jan 2022 23:40:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Message-id:Date:References:In-reply-to:Subject:Cc:
- To:From:MIME-Version:Content-Transfer-Encoding:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NLILDfYIewMcTAbJZc9mPjKMlBqDlqhTsKM2N1uM+Vw=; b=RT2xi7108N1A0pOdJNXLLvQhNJ
- JdGI4C8lxMItG705ieJ8daleQWtILBMKVh2R6ftVUx8wcBWFws8nfiCcq1zAG9F8wsgx399B+SQcu
- EXme3i8o8yBCd4NzEHfgENzP7A73839e7vRnhLVDKfO8eVKCR9363RMeJw8Lo1B43lQo=;
+ bh=QxEJ40AeoBw6DRo7qVtMWD5cO+NHKKecr+L233EH/as=; b=knRC2sv8rsOuhTOt5OASXZC3x3
+ F6vK/vry1rKvB3WIB38yQzAbAIGN0m3igh6p/ByQWCVw7PUJphkCNDQfUrMicBX5TLhC1mI2AHSMo
+ 4rrAsxWR31C8YOqsrvjyLtHdYHipxuAuHcZbAbZ5cR4ZjOLamvkdsyOwRbLI70PcUfeE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Message-id:Date:References:In-reply-to:Subject:Cc:To:From:MIME-Version:
- Content-Transfer-Encoding:Content-Type:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NLILDfYIewMcTAbJZc9mPjKMlBqDlqhTsKM2N1uM+Vw=; b=f8xs/sI3Amr/7661rCY1t4aLl9
- RzNZFWGm5KoSP3FDB99Q8u1NxdGu0vu3HbsA4zJWYZEp9clJSlMmy+qkYIVQNyEX9/KmUER9oMzt5
- 4lkRKEZzxcd7t9EkNo+o6Oz3zDXJmnD2BUBmBBrPIEcd1fhn3ktIDZpenJLalqluUge0=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1nDYuv-001P0G-J3
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Jan 2022 21:36:29 +0000
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ bh=QxEJ40AeoBw6DRo7qVtMWD5cO+NHKKecr+L233EH/as=; b=FB6IiQYQfWsK+ODus76RV+iAbk
+ Qhv+VQpWWtZkn/rMHJcr2vj7GHfMeJvcdgLFhZnF38KrVuxY28EWySn2GgEpdjlTMUAH3HLVNC1lT
+ AMGgF/dC2wLy3yYgKmh9sK+K2HDQ3khkDYYAmuAKDDopa87XPNopVoWcWDA4D58Xask8=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
+ id 1nDaqh-0002Hd-TQ
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 28 Jan 2022 23:40:12 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id E19E31F385;
- Fri, 28 Jan 2022 21:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1643405774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=NLILDfYIewMcTAbJZc9mPjKMlBqDlqhTsKM2N1uM+Vw=;
- b=taayjmIQ/dw3pRt7LXMXgV+h3N2iGR9k6iWV1POVgUTfQy7v0b53WKl6W7epBEuQeWPNId
- 2nS5W8Zz+JDvOI2H2O325FIcHt7vLtCdfAuhacvrf751M2nGilH84Y1DtEW6P5pWfmkFXk
- 3R+tAum3D39BD7myqsYNPl0uf7Iudaw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1643405774;
- h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=NLILDfYIewMcTAbJZc9mPjKMlBqDlqhTsKM2N1uM+Vw=;
- b=24PK3VAQmVA51Rx99IGbDGj51tJod8UX27xeq8Emd3IiwsHonr+XB9p01yVh4lqGGFRKKK
- qudbZz9CfGjnNuAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
- (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1BAB613AA1;
- Fri, 28 Jan 2022 21:36:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id fu7bMcdh9GHRawAAMHmgww
- (envelope-from <neilb@suse.de>); Fri, 28 Jan 2022 21:36:07 +0000
+ by dfw.source.kernel.org (Postfix) with ESMTPS id CC89D61F3B;
+ Fri, 28 Jan 2022 23:40:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03707C340E8;
+ Fri, 28 Jan 2022 23:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1643413202;
+ bh=yiJ5auAF7JlzipXtd7lawfYtaCcPGJqBWUK7WtxVTJs=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=XdMaShpIV4mcMhEEUMQ+vmfTLdENDgUwM4qV149wNeY7xw8aE6S5zgQ1DNLvS2He+
+ JXLPtrbLOwALBQtzm45D58Dco9sOCUgIVINqAW9unbiplh6y4ATbb+S8FphWg06v3G
+ sm8TgSoft6a/6d3UqG0gJBmSudZrHHCREL/4bFe+L32I9MANMQE5L24lElKTiEV2L8
+ ZkM2V9txAiN3jkZDU0Jklr/7y62Z9skQgDd66R92uKE1GzkYHOnMFYzJdmihTO9quC
+ dr83hY4EzsmkedIW1PMg7KHDFgd6sl3jYVtwA4JCiiAghr+odI786ET/Hba2HUz4lh
+ T+ZAs3Dq0CKqg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Fri, 28 Jan 2022 15:39:36 -0800
+Message-Id: <20220128233940.79464-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.35.0
+In-Reply-To: <20220128233940.79464-1-ebiggers@kernel.org>
+References: <20220128233940.79464-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Miklos Szeredi" <miklos@szeredi.hu>
-In-reply-to: <CAJfpegt-igF8HqsDUcMzfU0jYv8WpofLy0Uv0YnXLzsfx=tkGg@mail.gmail.com>
-References: <164325106958.29787.4865219843242892726.stgit@noble.brown>,
- <164325158954.29787.7856652136298668100.stgit@noble.brown>,
- <CAJfpegt-igF8HqsDUcMzfU0jYv8WpofLy0Uv0YnXLzsfx=tkGg@mail.gmail.com>
-Date: Sat, 29 Jan 2022 08:36:02 +1100
-Message-id: <164340576289.5493.5784848964540459557@noble.neil.brown.name>
-X-Headers-End: 1nDYuv-001P0G-J3
-Subject: Re: [f2fs-dev] [PATCH 1/9] Remove inode_congested()
+X-Headers-End: 1nDaqh-0002Hd-TQ
+Subject: [f2fs-dev] [PATCH v11 1/5] fscrypt: add functions for direct I/O
+ support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,69 +78,218 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
- linux-mm <linux-mm@kvack.org>, drbd-dev@lists.linbit.com,
- Paolo Valente <paolo.valente@linaro.org>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Ilya Dryomov <idryomov@gmail.com>, Ext4 <linux-ext4@vger.kernel.org>,
- linux-block@vger.kernel.org, linux-nilfs@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
- Ryusuke Konishi <konishi.ryusuke@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Linux NFS list <linux-nfs@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>,
- Philipp Reisner <philipp.reisner@linbit.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- Lars Ellenberg <lars.ellenberg@linbit.com>,
- Anna Schumaker <anna.schumaker@netapp.com>
+Cc: Satya Tangirala <satyat@google.com>, Theodore Ts'o <tytso@mit.edu>,
+ "Darrick J . Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, 28 Jan 2022, Miklos Szeredi wrote:
-> On Thu, 27 Jan 2022 at 03:47, NeilBrown <neilb@suse.de> wrote:
-> >
-> > inode_congested() reports if the backing-device for the inode is
-> > congested.  Few bdi report congestion any more, only ceph, fuse, and
-> > nfs.  Having support just for those is unlikely to be useful.
-> >
-> > The places which test inode_congested() or it variants like
-> > inode_write_congested(), avoid initiating IO if congestion is present.
-> > We now have to rely on other places in the stack to back off, or abort
-> > requests - we already do for everything except these 3 filesystems.
-> >
-> > So remove inode_congested() and related functions, and remove the call
-> > sites, assuming that inode_congested() always returns 'false'.
-> 
-> Looks to me this is going to "break" fuse; e.g. readahead path will go
-> ahead and try to submit more requests, even if the queue is getting
-> congested.   In this case the readahead submission will eventually
-> block, which is counterproductive.
-> 
-> I think we should *first* make sure all call sites are substituted
-> with appropriate mechanisms in the affected filesystems and as a last
-> step remove the superfluous bdi congestion mechanism.
-> 
-> You are saying that all fs except these three already have such
-> mechanisms in place, right?  Can you elaborate on that?
+From: Eric Biggers <ebiggers@google.com>
 
-Not much.  I haven't looked into how other filesystems cope, I just know
-that they must because no other filesystem ever has a congested bdi
-(with one or two minor exceptions, like filesystems over drbd).
+Encrypted files traditionally haven't supported DIO, due to the need to
+encrypt/decrypt the data.  However, when the encryption is implemented
+using inline encryption (blk-crypto) instead of the traditional
+filesystem-layer encryption, it is straightforward to support DIO.
 
-Surely read-ahead should never block.  If it hits congestion, the
-read-ahead request should simply fail.  block-based filesystems seem to
-set REQ_RAHEAD which might get mapped to REQ_FAILFAST_MASK, though I
-don't know how that is ultimately used.
+In preparation for supporting this, add the following functions:
 
-Maybe fuse and others should continue to track 'congestion' and reject
-read-ahead requests when congested.
-Maybe also skip WB_SYNC_NONE writes..
+- fscrypt_dio_supported() checks whether a DIO request is supported as
+  far as encryption is concerned.  Encrypted files will only support DIO
+  when inline encryption is used and the I/O request is properly
+  aligned; this function checks these preconditions.
 
-Or maybe this doesn't really matter in practice...  I wonder if we can
-measure the usefulness of congestion.
+- fscrypt_limit_io_blocks() limits the length of a bio to avoid crossing
+  a place in the file that a bio with an encryption context cannot
+  cross due to a DUN discontiguity.  This function is needed by
+  filesystems that use the iomap DIO implementation (which operates
+  directly on logical ranges, so it won't use fscrypt_mergeable_bio())
+  and that support FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32.
 
-Thanks,
-NeilBrown
+Co-developed-by: Satya Tangirala <satyat@google.com>
+Signed-off-by: Satya Tangirala <satyat@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/crypto.c       |  8 ++++
+ fs/crypto/inline_crypt.c | 93 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/fscrypt.h  | 18 ++++++++
+ 3 files changed, 119 insertions(+)
+
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index 4ef3f714046aa..4fcca79f39aeb 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -69,6 +69,14 @@ void fscrypt_free_bounce_page(struct page *bounce_page)
+ }
+ EXPORT_SYMBOL(fscrypt_free_bounce_page);
+ 
++/*
++ * Generate the IV for the given logical block number within the given file.
++ * For filenames encryption, lblk_num == 0.
++ *
++ * Keep this in sync with fscrypt_limit_io_blocks().  fscrypt_limit_io_blocks()
++ * needs to know about any IV generation methods where the low bits of IV don't
++ * simply contain the lblk_num (e.g., IV_INO_LBLK_32).
++ */
+ void fscrypt_generate_iv(union fscrypt_iv *iv, u64 lblk_num,
+ 			 const struct fscrypt_info *ci)
+ {
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index c57bebfa48fea..93c2ca8580923 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -17,6 +17,7 @@
+ #include <linux/buffer_head.h>
+ #include <linux/sched/mm.h>
+ #include <linux/slab.h>
++#include <linux/uio.h>
+ 
+ #include "fscrypt_private.h"
+ 
+@@ -315,6 +316,10 @@ EXPORT_SYMBOL_GPL(fscrypt_set_bio_crypt_ctx_bh);
+  *
+  * fscrypt_set_bio_crypt_ctx() must have already been called on the bio.
+  *
++ * This function isn't required in cases where crypto-mergeability is ensured in
++ * another way, such as I/O targeting only a single file (and thus a single key)
++ * combined with fscrypt_limit_io_blocks() to ensure DUN contiguity.
++ *
+  * Return: true iff the I/O is mergeable
+  */
+ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
+@@ -363,3 +368,91 @@ bool fscrypt_mergeable_bio_bh(struct bio *bio,
+ 	return fscrypt_mergeable_bio(bio, inode, next_lblk);
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_mergeable_bio_bh);
++
++/**
++ * fscrypt_dio_supported() - check whether a DIO (direct I/O) request is
++ *			     supported as far as encryption is concerned
++ * @iocb: the file and position the I/O is targeting
++ * @iter: the I/O data segment(s)
++ *
++ * Return: %true if there are no encryption constraints that prevent DIO from
++ *	   being supported; %false if DIO is unsupported.  (Note that in the
++ *	   %true case, the filesystem might have other, non-encryption-related
++ *	   constraints that prevent DIO from actually being supported.)
++ */
++bool fscrypt_dio_supported(struct kiocb *iocb, struct iov_iter *iter)
++{
++	const struct inode *inode = file_inode(iocb->ki_filp);
++	const unsigned int blocksize = i_blocksize(inode);
++
++	/* If the file is unencrypted, no veto from us. */
++	if (!fscrypt_needs_contents_encryption(inode))
++		return true;
++
++	/* We only support DIO with inline crypto, not fs-layer crypto. */
++	if (!fscrypt_inode_uses_inline_crypto(inode))
++		return false;
++
++	/*
++	 * Since the granularity of encryption is filesystem blocks, the file
++	 * position and total I/O length must be aligned to the filesystem block
++	 * size -- not just to the block device's logical block size as is
++	 * traditionally the case for DIO on many filesystems.
++	 *
++	 * We require that the user-provided memory buffers be filesystem block
++	 * aligned too.  It is simpler to have a single alignment value required
++	 * for all properties of the I/O, as is normally the case for DIO.
++	 * Also, allowing less aligned buffers would imply that data units could
++	 * cross bvecs, which would greatly complicate the I/O stack, which
++	 * assumes that bios can be split at any bvec boundary.
++	 */
++	if (!IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(iter), blocksize))
++		return false;
++
++	return true;
++}
++EXPORT_SYMBOL_GPL(fscrypt_dio_supported);
++
++/**
++ * fscrypt_limit_io_blocks() - limit I/O blocks to avoid discontiguous DUNs
++ * @inode: the file on which I/O is being done
++ * @lblk: the block at which the I/O is being started from
++ * @nr_blocks: the number of blocks we want to submit starting at @lblk
++ *
++ * Determine the limit to the number of blocks that can be submitted in a bio
++ * targeting @lblk without causing a data unit number (DUN) discontiguity.
++ *
++ * This is normally just @nr_blocks, as normally the DUNs just increment along
++ * with the logical blocks.  (Or the file is not encrypted.)
++ *
++ * In rare cases, fscrypt can be using an IV generation method that allows the
++ * DUN to wrap around within logically contiguous blocks, and that wraparound
++ * will occur.  If this happens, a value less than @nr_blocks will be returned
++ * so that the wraparound doesn't occur in the middle of a bio, which would
++ * cause encryption/decryption to produce wrong results.
++ *
++ * Return: the actual number of blocks that can be submitted
++ */
++u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk, u64 nr_blocks)
++{
++	const struct fscrypt_info *ci;
++	u32 dun;
++
++	if (!fscrypt_inode_uses_inline_crypto(inode))
++		return nr_blocks;
++
++	if (nr_blocks <= 1)
++		return nr_blocks;
++
++	ci = inode->i_crypt_info;
++	if (!(fscrypt_policy_flags(&ci->ci_policy) &
++	      FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32))
++		return nr_blocks;
++
++	/* With IV_INO_LBLK_32, the DUN can wrap around from U32_MAX to 0. */
++
++	dun = ci->ci_hashed_ino + lblk;
++
++	return min_t(u64, nr_blocks, (u64)U32_MAX + 1 - dun);
++}
++EXPORT_SYMBOL_GPL(fscrypt_limit_io_blocks);
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 91ea9477e9bd2..50d92d805bd8c 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -714,6 +714,10 @@ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
+ bool fscrypt_mergeable_bio_bh(struct bio *bio,
+ 			      const struct buffer_head *next_bh);
+ 
++bool fscrypt_dio_supported(struct kiocb *iocb, struct iov_iter *iter);
++
++u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk, u64 nr_blocks);
++
+ #else /* CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
+ 
+ static inline bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
+@@ -742,6 +746,20 @@ static inline bool fscrypt_mergeable_bio_bh(struct bio *bio,
+ {
+ 	return true;
+ }
++
++static inline bool fscrypt_dio_supported(struct kiocb *iocb,
++					 struct iov_iter *iter)
++{
++	const struct inode *inode = file_inode(iocb->ki_filp);
++
++	return !fscrypt_needs_contents_encryption(inode);
++}
++
++static inline u64 fscrypt_limit_io_blocks(const struct inode *inode, u64 lblk,
++					  u64 nr_blocks)
++{
++	return nr_blocks;
++}
+ #endif /* !CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
+ 
+ /**
+-- 
+2.35.0
+
 
 
 _______________________________________________
