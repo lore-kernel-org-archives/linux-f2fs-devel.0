@@ -4,147 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 426D5C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Feb 2022 12:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EE8BBC433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 12 Feb 2022 14:20:42 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nIUnm-0000Tv-MF; Fri, 11 Feb 2022 12:13:25 +0000
+	id 1nItGV-00007U-0o; Sat, 12 Feb 2022 14:20:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chaitanyak@nvidia.com>) id 1nIUnl-0000To-Dw
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 11 Feb 2022 12:13:24 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1nItGT-00006M-Gn
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 12 Feb 2022 14:20:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-ID:
- Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From:Sender
- :Reply-To:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To
- :Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KhT5YiWLnew0VrPJOfN6l+a/a/WSpiyjWcAkGC3UDEs=; b=a2T/4WDP7kPRlg1UFF+aYUnrKB
- I1dhmZu3u94QI4+NcZdxCBtREG0Xywvxv/W3zljbh4egpUBI7n+FtdHxxuuaJPAffhubqwFIC34RH
- 47U9fvlAdrMoaqfkIFIoZ+Go3JKVO20hi7RXwbRVUHoYcNUw3wG1xZbZoKGJFfzegLHs=;
+ bh=rJ6drzor/rDVh95WIPQnHyIRxApULrvfl/C5pa0/YTs=; b=LkmJbQM6TqE1Gk4L3FkIhhMgOA
+ MG1dfho1qFI3J4aETnK7nLBKaIs/s8Tjn3/542vToUfK70v0OrywkCq9kDTbjNEaKDEA296VIh4HE
+ Rmux6M9/SSfHW/sRU8JgQWJwsMX53c+C2KkvKSw+k2TQNRWCd4OZQTINdK+LHfskSpAA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:
- In-Reply-To:References:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=KhT5YiWLnew0VrPJOfN6l+a/a/WSpiyjWcAkGC3UDEs=; b=U/jOl/Xrq6xmYcVsg69wDT9Xfh
- JBmuG4qlSs19Y2X8QjoLrKPuMFGlkqhe85QHAXCAEF2oqqXUW6ywuTzfE48s//AMaQFSk6f1K8VnU
- vmTEJ7d8/h9mLPXIKyIExdNpA3kiX3slFROnYm2m6YB775OjKsyQTP/s6fBYYSy8lc24=;
-Received: from mail-bn7nam10on2065.outbound.protection.outlook.com
- ([40.107.92.65] helo=NAM10-BN7-obe.outbound.protection.outlook.com)
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=rJ6drzor/rDVh95WIPQnHyIRxApULrvfl/C5pa0/YTs=; b=h
+ Tbl2QCHByrxUgQSwF45vAfGuwcjKeDpZQHcteAG33nS/+DrB21ubBdGfUkbuBDTNYJa7CcWzTAq48
+ 4Re9FXwWzktT+sLX+C3cLqGQQ4ndPpILP7HLMTun9C/zo0oOtKciHxfRM5o54vpr+BvThFowAG0Go
+ Rm5gLH180XhYZmWA=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nIUnf-00FMwW-PN
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 11 Feb 2022 12:13:23 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VUyyDM5z4h7VhXswr4btj6PhG+P5q5Klk973mzRU02h/4Qwbu0zZ5K+Dgz0S/2ZJTxBI+H8n3rzkNpQSAlC/LLTdyMFNny28sTnxdAGDtzLCyGUALCVcYAgeVAIKVrzMjfuooOSpDYtmFf1HX8reRxezwFN2oPYck0iUmU4rFjtndF1q85N4HFqgjX3T+9atz4vZ4vou5hTShrsAUhbqvNkJ3Igz1Rr0kykFexG5FLj4MmhYEt8+D4yIOKoCzkAUdoM9YjAi0XFSMAWcCN+IOadoCXppk7yZ33McWqiTBn+dQ1rrm7HXdslJrX6n1ZwtzlVYtaAZ6hZYfU/iPACwbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KhT5YiWLnew0VrPJOfN6l+a/a/WSpiyjWcAkGC3UDEs=;
- b=TJ8yIvJBhuiIFZyeuIQsOB/VTyqraLy2frS8nEkDqdfwGAawqvXGSzTuuRmTAJ3xEHveiL5A6XWc9Ib4AiR9b1a0MKbMLhDVcpiCcj/AJDDodOj0SZMNMG/QhO/PFoExxGlwU968l8z/cwqhMy3Fu42ThBDrUq0eANFK0wNBHVxD61hR1rudK0+lJwo/ncRUHtCqKvrgZwyu1tLTYKLIDjeQpFrK/PWBFkLVO0V67J77No8FyUj86St7o3+HeeIZMBrgLs/RXIEDYMJ6dvYrUCIhZ84FRgU51re9eBm4rlhjw6PumnM2xNa6PXtptrjzAighb7Z+eyvJPXL6TINMJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KhT5YiWLnew0VrPJOfN6l+a/a/WSpiyjWcAkGC3UDEs=;
- b=DNriNoyX58xMGp/o7whwoSj7X3mha7MzgOdkwQ1Z74XYuIQJi4gEiuiRn5z+BNYX8iIqdHoSKXugIeS0SPKDnJuETOFLNlqaoNFLnJE+/aZqWkt0eVNQxM3AMmsyqGVkex6ZBsoJ5wA3wbiCiK1gArfKC8oRNyRf7Q2GZrPyjO0Mg7np/sYJA+XPZU47hwTOmCZ93D1dkHnZl0CMQ3AOhteOssfyoNKIWS7bA+XoM++Cv/Q6KWvmb9+SEWyg3XAHP1afhC9vLGgl7w3Raj0DZuEqq1XUeAdYrX4or0yazTBZx9gCbqp8dfYhNXaNL05LtiIeqeJ5+agV5cTcvcxxnw==
-Received: from MW2PR12MB4667.namprd12.prod.outlook.com (2603:10b6:302:12::28)
- by MN2PR12MB3199.namprd12.prod.outlook.com (2603:10b6:208:ae::14)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4975.12; Fri, 11 Feb
- 2022 11:40:21 +0000
-Received: from MW2PR12MB4667.namprd12.prod.outlook.com
- ([fe80::846c:d3cd:5a30:c35]) by MW2PR12MB4667.namprd12.prod.outlook.com
- ([fe80::846c:d3cd:5a30:c35%5]) with mapi id 15.20.4951.019; Fri, 11 Feb 2022
- 11:40:21 +0000
-To: Eric Biggers <ebiggers@kernel.org>, "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>
-Thread-Topic: [RFC PATCH 1/7] statx: add I/O alignment information
-Thread-Index: AQHYHw6MhkvU3aWvQUef3qvKk4R/5KyOOi4A
-Date: Fri, 11 Feb 2022 11:40:21 +0000
-Message-ID: <1762970b-94b6-1cd0-8ae2-41a5d057f72a@nvidia.com>
-References: <20220211061158.227688-1-ebiggers@kernel.org>
- <20220211061158.227688-2-ebiggers@kernel.org>
-In-Reply-To: <20220211061158.227688-2-ebiggers@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a67e323c-eb06-4344-dc1e-08d9ed5348e9
-x-ms-traffictypediagnostic: MN2PR12MB3199:EE_
-x-microsoft-antispam-prvs: <MN2PR12MB3199759C4DC6E8EB9CF7A168A3309@MN2PR12MB3199.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2331;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: vXdHmGwpFnh7FvGwXqqZgLEl/oP7wzqIxVS3Rc29Kvj3Q8iqqbV7dKWC0TuvI+V1yMxJd8q9AdSPQVboG2EoCOfwCU0iqycUAISKnaaOJvS5NylCg4TMNM9Dxg8tXxYvWbsIdHprwPVW7k6X3EmwE3QzGob+dOBuOmU02zEP4rUjgcgxIBEY7OhwdAHiZO26zEub+5ld3IZNLneNeJbZsjH3AxBT5MFdLY4ozTlYjFPDXtdOPYXPySnNeynjlRpoZTZzjVXmHvbF+WbqtlhKX250059/yNxm6LdIjtR09R8CxriZywIZx6tp0KR7Ql2GviuRXjAxOjg8kxtgBB/h0Qqt/QZy0Md0/2paM9KfKMEo8p6kKqbQEmSj053whmOsQQqk53zawWUJ1gx0WZYitY5i7ErKFLy11I8iQZ95lfwCkhwojXMtv6W/uWYEhXLHNfn8AoZgvmiQfSoLsU8uadGn5Rc0tKiDqSvL0CSLOIWwBbtG//yu5uWPk1TtroaGfas4NBXnHpdEXTDNLAxasQqEvtCBxVctcPfCQhCKDq5onn5kbEeo6uIhOyud0XR640P28mt8aaTaLFFIUenDxxnLAu4PQV0mjDzqOIw3MdhXsJ7trU/6f2axwXN0L5ByZrzbkwf5hAONMnN5mu/pEo8uWe4qPs1trO/Vvcc4qoNjNJLXYdGMhT1gWEwYIJ1ve2ch784eXUlzFc1I8zKuPa3lDaitkkmYLBGSqMG0SGq78FxHlXblmjjt+xQ2ci1GoLgxXTUUZqjaobDgxmacrYpY0JPKlkoplFhX2jBC1kX0Xx03/iykCKvqdHvi5HSDbJ0o1nzVSHZgGwjRiw4zGMFJWuKKqd2eUJ4KMtYlAtZ8QqnlC1CQBzYEL9t7IQaANjdfHwT8K2q9gj7euCzISOUb2+EqKNR20FP8BfrfPd8=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MW2PR12MB4667.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230001)(4636009)(366004)(83380400001)(966005)(508600001)(71200400001)(6486002)(36756003)(5660300002)(31686004)(2906002)(64756008)(186003)(66476007)(8676002)(66556008)(4326008)(66946007)(91956017)(110136005)(54906003)(8936002)(316002)(6512007)(122000001)(2616005)(66446008)(38070700005)(76116006)(38100700002)(86362001)(31696002)(6506007)(53546011)(21314003)(45980500001)(43740500002);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?QkVKUUY0RkZNTTBSa2tHZnJiUnNoczdXTFNGWDJPTUJzbUxEbCtia2NzL2xW?=
- =?utf-8?B?dzMra1JmbFM4Y1JIWnRoRXRsMEFqY09Rc3JNQ0RqSmczWTNxRTlNblZsQTN0?=
- =?utf-8?B?WjdzNHVMSVQyVHB1MkFPUUZYL0lwZVRDVVA4NW8yZk1zVzZsNGVvY1Jac0F1?=
- =?utf-8?B?LzhIZDJwZXRyYzlpa2owVTk4VGl4THArTTNicGVxTWxXVlFISmh3WEFWYjJQ?=
- =?utf-8?B?MXQ2M3JyTTRGVkFJWlk1REdDUHB1U1BsSW9DdUhwT3g3cUJWbUpRb2ZxN3px?=
- =?utf-8?B?SlcwL09OZS9ERjZRa0hjS043N3Y2a3MxelpYWHQ0ejhibzlnbDY5dUxDN1Bs?=
- =?utf-8?B?U1g2ckUxS3VXS1NuVm1EVDBlWGVqWGN5Y002ejhGVzdwS2V0ZU5QN2gvYkNl?=
- =?utf-8?B?eThGQXA1RUh0cWxaRG9mZnlVaXJDbjBZR0VHblhleTI5blFGWWYwTTVCWDJI?=
- =?utf-8?B?QTVNU2tKZEpuWmxFZmYwcndyR011d09pc1BBeTZhWnVJQkJJSkFDOGtJUGxn?=
- =?utf-8?B?dGpNblgvZG13WXRCRzJmNmlEUFBUSWpDaGdHNGFvQys3djJWVnRpQVg5OEFX?=
- =?utf-8?B?ZWJEZFBQNVlvMnVQSy8zZ2M5UFZaWk0zaDFBWDNRMENoRU5oUHY1c2d4dkVB?=
- =?utf-8?B?K1VlcjV2QjlWWmVrSWtReWVaYW92b3dIVXY2Rnd6Z3Z4TGxtaTU3NEVUeHN3?=
- =?utf-8?B?d2p3NWdONisxN1hMUHJ3S1VmODJodTVqWk9zMzRaNGZERlJnRk8vclNEbnpy?=
- =?utf-8?B?Z1pSbGp5KzJPNWd3ZmRZeVdpNmpsSzdXYlFVNzVLSWdSM2hMYXB4Q2twYUM2?=
- =?utf-8?B?dzljeUtndFFMVTZCdGp1UU9FYXdpR2o5YWwxekkyT3VsUkkvZW5yanhjS2xw?=
- =?utf-8?B?b0I5WEs5cmoyd25LdzlPUkZOejhmdHQ1QW8rbkR4a1VOS3dtV2w1T3FUZG94?=
- =?utf-8?B?V1dPdGVuQnB1aFN4MjF3RHlveTBxQlRmOGpVRkhQRFZUcEV0Y0w4cVBpNElN?=
- =?utf-8?B?MHg3YnQ3UHAySG1tU0tNdzJUZnlnYUlvVGhwQkEvS1hxckxPb2RnV1pSK3Fl?=
- =?utf-8?B?alpyZzBvb05CRnllSTJVdzU5T3hQTnNoa01taGVTek9PQkswbERheFZ2dzJm?=
- =?utf-8?B?dEdPNU83elpObHJWNzM4dTlvcWJCWkNRNVhaRkpPMW8vYk0ycXMxVTlkcDRC?=
- =?utf-8?B?UUQrRDZ3R3F4R2dFVWRCWnMyU3BYM3F5NkNnc2dCNytZcjU1bUpCOWZ0d2lR?=
- =?utf-8?B?N2RrT1ppd3loa2w2SnFwZFQ1TlVvZFRwdVFZRU5wR2lwUFllQmFQS0ZUQzNo?=
- =?utf-8?B?NVdwVkhMZlBpNStzT1U2OUFNK2oxMzhFNDIrRWhwYkQvNzJGQTk1TzRtdklD?=
- =?utf-8?B?dE9PbE92YXI5N1lyMmZCWVdyTy9HSEQrM3lhbHhNOUpncXErRTVEM090aDJy?=
- =?utf-8?B?VWJhMU4vc3N2TTcyT1M4c2MxekltUmJnbXpSM1pNWWJKZTNBZUVsVzN5VWd0?=
- =?utf-8?B?VXBtOUUxSVNEc21yNEh2eUlKYWh5SnllVGdoekJDNVFNdmtsNWJUcHBscm5q?=
- =?utf-8?B?TkxaOFBpSE1vdjRrL1RyaVJTWTNQeEZFNEpDNVZleUtRc0xvK2wxS09BOTJ3?=
- =?utf-8?B?L1pCZHZMdkdiR2ZnK1p0dEZhcGRZczdJczB1eDdna3M2d2VFSVlWdERZdnE2?=
- =?utf-8?B?S0ZHeEs4eVdoTWNSUWVUUFA4YnBsRzN6RmtBWi9QMjVzamJQaUhMWVltY3ZB?=
- =?utf-8?B?VWdGTXk1UlJQWXpwNnNXdEg1ZFhXTVgrYWphVU43VUFIS1FkTVRYWEtGdjR4?=
- =?utf-8?B?dXcyTGNoYUZYVFlTS2hHNFJFTlhlclB6TUR1dGM2Y2dsT3dFdDIzY0loNVk5?=
- =?utf-8?B?Njk2cHhlSzNzRDk1VWwvMDUwN3NrUmQvQ3JjeGNjRjN4amt5RnNhZVJwWEwy?=
- =?utf-8?B?TVYzTkY1QTdnNEdOYUNmRm1DZ1N5SzBFaTZkTjlZRW96N3dEemc5RzkrMVZS?=
- =?utf-8?B?bzgvZ0haMGxMc0ttUHp6cVJMUGlFRXB2SjE4R2MwUkkvU2tkTHdqbnRpYlNG?=
- =?utf-8?B?VFp2WFR5N1N3dTBSaEpyTS80U0F1OFFoNlBaSlhBb0cvVzZzK2hvWnZFbWEz?=
- =?utf-8?B?eUN4Q25WVFQydXVVSzlmZ3NuL2J4OFp0T25xMVhrQzhrNkJYcmhWbVJqQTFX?=
- =?utf-8?Q?s/Ydwois7cqDk2qO8H/cR+/H5OLbmn4KAta49am2T2tf?=
-Content-ID: <5881397ACD1A9442B7B45570DFB29AB6@namprd12.prod.outlook.com>
+ id 1nItGR-00Gpzo-50
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 12 Feb 2022 14:20:40 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 3516EB8015B
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 12 Feb 2022 14:20:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6952C340E7;
+ Sat, 12 Feb 2022 14:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1644675629;
+ bh=TwVjv6DO9koJT4L7GHGE18JP/jnf2PVbKTb65YI4Hfc=;
+ h=From:To:Cc:Subject:Date:From;
+ b=mwVbT5Kao/Qa17cctx28ujIdQCuKm0o/P0yhq/GsWm4gm8Bwnd6POpr/36/W98o/L
+ A4qglr3kRgJ48UOLT7UqavPvsS/C/mJQJh/PLTwwA0oM/wzbs59nFQ3yN0nnpLUrN0
+ m4NtKAkyeiYIqf4+NZc6Okcqti8O8mqQKB00edjhTrhdxKEhz2Hf4wuTIqQiq+TJx3
+ h7vQk2LhEsAGpCcg9SmXpFF1DLT2YrjC8EGm0s8jMLOsuv8xuvX6BDBwmfxdK64kua
+ I4g855n4XdAnlKK2F7nEMwZTBHYEh7qAC3JVvlzlFvTZXTz5xMRNkj24mlmwmzgBKX
+ EoFfoYDBd5WqA==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Sat, 12 Feb 2022 06:20:22 -0800
+Message-Id: <20220212142023.2508247-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.35.1.265.g69c8d7142f-goog
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW2PR12MB4667.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a67e323c-eb06-4344-dc1e-08d9ed5348e9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2022 11:40:21.0208 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: c6YMl99caM+32qkVjLy6gIYGRbnP625QIlDREwGHM2c0CALVeu00Xi+4C0fys25km/a/fJcsWqpvqF5Z8iokbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3199
-X-Headers-End: 1nIUnf-00FMwW-PN
-Subject: Re: [f2fs-dev] [RFC PATCH 1/7] statx: add I/O alignment information
+X-Headers-End: 1nItGR-00Gpzo-50
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: fix missing free nid in
+ f2fs_handle_failed_inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -156,104 +78,109 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Chaitanya Kulkarni via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-Cc: "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
- "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2/10/22 10:11 PM, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Traditionally, the conditions for when DIO (direct I/O) is supported
-> were fairly simple: filesystems either supported DIO aligned to the
-> block device's logical block size, or didn't support DIO at all.
-> 
-> However, due to filesystem features that have been added over time (e.g,
-> data journalling, inline data, encryption, verity, compression,
-> checkpoint disabling, log-structured mode), the conditions for when DIO
-> is allowed on a file have gotten increasingly complex.  Whether a
-> particular file supports DIO, and with what alignment, can depend on
-> various file attributes and filesystem mount options, as well as which
-> block device(s) the file's data is located on.
-> 
-> XFS has an ioctl XFS_IOC_DIOINFO which exposes this information to
-> applications.  However, as discussed
-> (https://lore.kernel.org/linux-fsdevel/20220120071215.123274-1-ebiggers@kernel.org/T/#u),
-> this ioctl is rarely used and not known to be used outside of
-> XFS-specific code.  It also was never intended to indicate when a file
-> doesn't support DIO at all, and it only exposes the minimum I/O
-> alignment, not the optimal I/O alignment which has been requested too.
-> 
-> Therefore, let's expose this information via statx().  Add the
-> STATX_IOALIGN flag and three fields associated with it:
-> 
-> * stx_mem_align_dio: the alignment (in bytes) required for user memory
->    buffers for DIO, or 0 if DIO is not supported on the file.
-> 
-> * stx_offset_align_dio: the alignment (in bytes) required for file
->    offsets and I/O segment lengths for DIO, or 0 if DIO is not supported
->    on the file.  This will only be nonzero if stx_mem_align_dio is
->    nonzero, and vice versa.
-> 
-> * stx_offset_align_optimal: the alignment (in bytes) suggested for file
->    offsets and I/O segment lengths to get optimal performance.  This
->    applies to both DIO and buffered I/O.  It differs from stx_blocksize
->    in that stx_offset_align_optimal will contain the real optimum I/O
->    size, which may be a large value.  In contrast, for compatibility
->    reasons stx_blocksize is the minimum size needed to avoid page cache
->    read/write/modify cycles, which may be much smaller than the optimum
->    I/O size.  For more details about the motivation for this field, see
->    https://lore.kernel.org/r/20220210040304.GM59729@dread.disaster.area
-> 
-> Note that as with other statx() extensions, if STATX_IOALIGN isn't set
-> in the returned statx struct, then these new fields won't be filled in.
-> This will happen if the filesystem doesn't support STATX_IOALIGN, or if
-> the file isn't a regular file.  (It might be supported on block device
-> files in the future.)  It might also happen if the caller didn't include
-> STATX_IOALIGN in the request mask, since statx() isn't required to
-> return information that wasn't requested.
-> 
-> This commit adds the VFS-level plumbing for STATX_IOALIGN.  Individual
-> filesystems will still need to add code to support it.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
+This patch fixes xfstests/generic/475 failure.
 
+[  293.680694] F2FS-fs (dm-1): May loss orphan inode, run fsck to fix.
+[  293.685358] Buffer I/O error on dev dm-1, logical block 8388592, async page read
+[  293.691527] Buffer I/O error on dev dm-1, logical block 8388592, async page read
+[  293.691764] sh (7615): drop_caches: 3
+[  293.691819] sh (7616): drop_caches: 3
+[  293.694017] Buffer I/O error on dev dm-1, logical block 1, async page read
+[  293.695659] sh (7618): drop_caches: 3
+[  293.696979] sh (7617): drop_caches: 3
+[  293.700290] sh (7623): drop_caches: 3
+[  293.708621] sh (7626): drop_caches: 3
+[  293.711386] sh (7628): drop_caches: 3
+[  293.711825] sh (7627): drop_caches: 3
+[  293.716738] sh (7630): drop_caches: 3
+[  293.719613] sh (7632): drop_caches: 3
+[  293.720971] sh (7633): drop_caches: 3
+[  293.727741] sh (7634): drop_caches: 3
+[  293.730783] sh (7636): drop_caches: 3
+[  293.732681] sh (7635): drop_caches: 3
+[  293.732988] sh (7637): drop_caches: 3
+[  293.738836] sh (7639): drop_caches: 3
+[  293.740568] sh (7641): drop_caches: 3
+[  293.743053] sh (7640): drop_caches: 3
+[  293.821889] ------------[ cut here ]------------
+[  293.824654] kernel BUG at fs/f2fs/node.c:3334!
+[  293.826226] invalid opcode: 0000 [#1] PREEMPT SMP PTI
+[  293.828713] CPU: 0 PID: 7653 Comm: umount Tainted: G           OE     5.17.0-rc1-custom #1
+[  293.830946] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+[  293.832526] RIP: 0010:f2fs_destroy_node_manager+0x33f/0x350 [f2fs]
+[  293.833905] Code: e8 d6 3d f9 f9 48 8b 45 d0 65 48 2b 04 25 28 00 00 00 75 1a 48 81 c4 28 03 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 0f 0b
+[  293.837783] RSP: 0018:ffffb04ec31e7a20 EFLAGS: 00010202
+[  293.839062] RAX: 0000000000000001 RBX: ffff9df947db2eb8 RCX: 0000000080aa0072
+[  293.840666] RDX: 0000000000000000 RSI: ffffe86c0432a140 RDI: ffffffffc0b72a21
+[  293.842261] RBP: ffffb04ec31e7d70 R08: ffff9df94ca85780 R09: 0000000080aa0072
+[  293.843909] R10: ffff9df94ca85700 R11: ffff9df94e1ccf58 R12: ffff9df947db2e00
+[  293.845594] R13: ffff9df947db2ed0 R14: ffff9df947db2eb8 R15: ffff9df947db2eb8
+[  293.847855] FS:  00007f5a97379800(0000) GS:ffff9dfa77c00000(0000) knlGS:0000000000000000
+[  293.850647] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  293.852940] CR2: 00007f5a97528730 CR3: 000000010bc76005 CR4: 0000000000370ef0
+[  293.854680] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  293.856423] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  293.858380] Call Trace:
+[  293.859302]  <TASK>
+[  293.860311]  ? ttwu_do_wakeup+0x1c/0x170
+[  293.861800]  ? ttwu_do_activate+0x6d/0xb0
+[  293.863057]  ? _raw_spin_unlock_irqrestore+0x29/0x40
+[  293.864411]  ? try_to_wake_up+0x9d/0x5e0
+[  293.865618]  ? debug_smp_processor_id+0x17/0x20
+[  293.866934]  ? debug_smp_processor_id+0x17/0x20
+[  293.868223]  ? free_unref_page+0xbf/0x120
+[  293.869470]  ? __free_slab+0xcb/0x1c0
+[  293.870614]  ? preempt_count_add+0x7a/0xc0
+[  293.871811]  ? __slab_free+0xa0/0x2d0
+[  293.872918]  ? __wake_up_common_lock+0x8a/0xc0
+[  293.874186]  ? __slab_free+0xa0/0x2d0
+[  293.875305]  ? free_inode_nonrcu+0x20/0x20
+[  293.876466]  ? free_inode_nonrcu+0x20/0x20
+[  293.877650]  ? debug_smp_processor_id+0x17/0x20
+[  293.878949]  ? call_rcu+0x11a/0x240
+[  293.880060]  ? f2fs_destroy_stats+0x59/0x60 [f2fs]
+[  293.881437]  ? kfree+0x1fe/0x230
+[  293.882674]  f2fs_put_super+0x160/0x390 [f2fs]
+[  293.883978]  generic_shutdown_super+0x7a/0x120
+[  293.885274]  kill_block_super+0x27/0x50
+[  293.886496]  kill_f2fs_super+0x7f/0x100 [f2fs]
+[  293.887806]  deactivate_locked_super+0x35/0xa0
+[  293.889271]  deactivate_super+0x40/0x50
+[  293.890513]  cleanup_mnt+0x139/0x190
+[  293.891689]  __cleanup_mnt+0x12/0x20
+[  293.892850]  task_work_run+0x64/0xa0
+[  293.894035]  exit_to_user_mode_prepare+0x1b7/0x1c0
+[  293.895409]  syscall_exit_to_user_mode+0x27/0x50
+[  293.896872]  do_syscall_64+0x48/0xc0
+[  293.898090]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  293.899517] RIP: 0033:0x7f5a975cd25b
 
-I've actually worked on similar series to export alignment and 
-granularity for non-trivial operations, this implementation
-only exporting I/O alignments (mostly REQ_OP_WRITE/REQ_OP_READ) via
-stax.
+Fixes: 7735730d39d7 ("f2fs: fix to propagate error from __get_meta_page()")
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Since it is coming from :-
-bdev_logical_block_size()->q->limits.logical_block_size that is set when
-low level driver like nvme calls blk_queue_logical_block_size().
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 0ec8e32a00b4..ab8e0c06c78c 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -885,6 +885,7 @@ void f2fs_handle_failed_inode(struct inode *inode)
+ 	err = f2fs_get_node_info(sbi, inode->i_ino, &ni, false);
+ 	if (err) {
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		set_inode_flag(inode, FI_FREE_NID);
+ 		f2fs_warn(sbi, "May loss orphan inode, run fsck to fix.");
+ 		goto out;
+ 	}
+-- 
+2.35.1.265.g69c8d7142f-goog
 
- From my experience especially with SSDs, applications want to
-know similar information about different non-trivial requests such as
-REQ_OP_DISCARD/REQ_OP_WRITE_ZEROES/REQ_OP_VERIFY (work in progress see
-[1]) etc.
-
-It will be great to make this generic userspace interface where user can
-ask for specific REQ_OP_XXX such as generic I/O REQ_OP_READ/REQ_OP_WRITE
-and non generic REQ_OP_XX such as REQ_OP_DISCARD/REQ_OP_VERIFY etc ....
-
-Since I've worked on implementing REQ_OP_VERIFY support I don't want to
-implement separate interface for querying the REQ_OP_VERIFY or any other
-non-trivial REQ_OP_XXX granularity or alignment.
-
--ck
-
-[1] https://www.spinics.net/lists/linux-xfs/msg56826.html
 
 
 _______________________________________________
