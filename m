@@ -4,51 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 85746C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 17 Feb 2022 18:08:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 88FC6C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 18 Feb 2022 02:33:54 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nKlCN-0004TQ-A0; Thu, 17 Feb 2022 18:08:10 +0000
+	id 1nKt5k-0000fy-Cx; Fri, 18 Feb 2022 02:33:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <mail@qa.jcb.co.jp>) id 1nKlCL-0004TK-RN
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Feb 2022 18:08:08 +0000
+ (envelope-from <sunke32@huawei.com>) id 1nKt5i-0000fn-KD
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Feb 2022 02:33:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Date:Subject:To:From:Message-ID:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0oEAcQBqY3kIQahetKwOzCgapejaeZgWEGAgiY+5UiE=; b=KMBruj+vr1uB4n659+MXiYUssx
- npySkNEn/EsKJChxSUThySDxbzsRz34LM4+Ln4PtFt9TZMJ3jIw+gjiNEQpkgIKtj6Z0HW9oiehWr
- gjabbyLQL2Bd/5OEMhw+6ZWYho7Nqac9367ab50mIUuObGf7g8jFUrZbOk9enGO5ReLA=;
+ bh=JogWabmIrq96CIBO0bI2ffRIX3JxjL1M0gYdkrMU57A=; b=js/oWRuMuzm8eOE0LRfY2oKtEN
+ inOcN2F660gm7y2sAMmZIHjE94CathVO9Li+r8mSjCOoH+rxF383/Q0knWy13Ifkcvbo91ArClmk0
+ Pakt8ZHuRYWOXiDOQoS4+IAnusniUVy+he56iKDnvMVeSgAFgN/GjqJGkf4pusw4hklM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:Subject:To:From:
- Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=0oEAcQBqY3kIQahetKwOzCgapejaeZgWEGAgiY+5UiE=; b=N
- 0IWrui0innG9/9QCuXu6yxHgP3TxU6zxBkXMu+KrdG8EW29TY0lnTBjhRajPVUTmCl5WLIQnwwZwk
- eidR64WhimZFGuJgY/toiOoqSgUXfNSaMNL0c7GXM/h5LyAdGFhaLjMRgHYRN6L/+BT2OA0pUMPD4
- nXjRrwNRBTStTEQ4=;
-Received: from [152.32.158.100] (helo=qa.jcb.co.jp)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.94.2)
- id 1nKlCH-0055FC-Vq
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 17 Feb 2022 18:08:08 +0000
-Message-ID: <20220217233806071888@qa.jcb.co.jp>
-To: <linux-f2fs-devel@lists.sourceforge.net>
-Date: Thu, 17 Feb 2022 23:37:56 +0530
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=JogWabmIrq96CIBO0bI2ffRIX3JxjL1M0gYdkrMU57A=; b=TQ4c+08m6I855GmNNnTSMlHn0G
+ h1FHjO67sZSo99KCh8HMSSwGNX4B8Xt6FXZ7F+6oiJ4U+VArpTzDkXnQzSVDwMVk8EjCZmFS1T3SC
+ AQcY/2MD74/mjxytSB653dGeCmz4o7nQHjcLibe8f7FrGQUahyxhZeBCHSxcCubhrtBc=;
+Received: from szxga02-in.huawei.com ([45.249.212.188])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
+ id 1nKt5c-005WfT-Hl
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 18 Feb 2022 02:33:49 +0000
+Received: from kwepemi100014.china.huawei.com (unknown [172.30.72.57])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4K0G1l6xQ5zbkCf;
+ Fri, 18 Feb 2022 10:32:27 +0800 (CST)
+Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
+ kwepemi100014.china.huawei.com (7.221.188.106) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Fri, 18 Feb 2022 10:33:35 +0800
+Received: from [10.174.178.31] (10.174.178.31) by
+ kwepemm600010.china.huawei.com (7.193.23.86) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Fri, 18 Feb 2022 10:33:35 +0800
+To: <fstests@vger.kernel.org>, <guan@eryu.me>
+References: <20220208071624.1095904-1-sunke32@huawei.com>
+Message-ID: <99822864-808b-0672-ba5b-efebaa05d9ef@huawei.com>
+Date: Fri, 18 Feb 2022 10:33:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-X-mailer: Ezxinwn 1
-X-Headers-End: 1nKlCH-0055FC-Vq
-Subject: [f2fs-dev] =?iso-2022-jp?b?GyRCJCIkSiQ/JE4bKEJqY2IbJEIlKyE8GyhC?=
-	=?iso-2022-jp?b?GyRCJUkkSyRPJWolOSUvPGgweiQsJCIkaiReJDkkTiRHGyhC?=
-	=?iso-2022-jp?b?GyRCISIbKEIzGyRCRnwwSkZiJEslUSU5JW8hPCVJJHIbKEI=?=
-	=?iso-2022-jp?b?GyRCSlE5OSQ3ISIlaiU5JS8kcjJyPXwkNyRGJC8kQCQ1GyhC?=
-	=?iso-2022-jp?b?GyRCJCQbKEI=?=
+In-Reply-To: <20220208071624.1095904-1-sunke32@huawei.com>
+X-Originating-IP: [10.174.178.31]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600010.china.huawei.com (7.193.23.86)
+X-CFilter-Loop: Reflected
+X-Headers-End: 1nKt5c-005WfT-Hl
+Subject: Re: [f2fs-dev] [PATCH] common/attr: adbjust acl_max of f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -60,46 +75,44 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: JCB Webmaster via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: JCB Webmaster <mail@qa.jcb.co.jp>
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 7bit
+From: Sun Ke via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Sun Ke <sunke32@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="gbk"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-■□■━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-□■　　MyJCB Express News　［2022-02-17］
-本メールはドメインの運用（メール送受信やホームページの表示）に関わる
-　重要な通知となります。
-■　━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-　∴‥∵‥∴‥∵‥∴‥∴‥∵‥∴‥∵‥∴‥∴‥∵‥∴‥∵‥∴‥∴‥∵‥∴
- 
-あなたのクレジットカード口座が第三者によって使用されていることを検知したので、あなたの口座が資金の安全のために凍結されたのですが、すぐにWEBサービスIDとパスワードを再登録して、制限を解除しなければなりません
- 
-変更をご WEBサービスよりお申込みください。
- 
- 
-■ 変更をご 方法
-▼MyJCBログインはこちら
-https://my-jcb-co-jp.cyyan.xyz
- 
- 
- 
- 
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-　株式会社ジェーシービー 
-　東京都港区南青山5-1-22　青山ライズスクエア　〒107-8686
-　※本メールは送信専用です。
-　  お問い合わせは上のURLの、専用フォームよりお願いします。
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-　「MyJCB Express News」に掲載されているすべての記事、
-　文章等の無断転載を禁止します。
-　著作権はすべて、株式会社ジェーシービーに帰属します。
-　Copyright JCB Co., Ltd. 2020
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 E191010242
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+RnJpZW5kbHkgcGluZy4uLgoK1NogMjAyMi8yLzggMTU6MTYsIFN1biBLZSDQtLXAOgo+IGYyZnMg
+aGFzIHNldCBpbmxpbmVfeGF0dHIgYXMgYSBkZWZhdWx0IG9wdGlvbiwgYW5kIGludHJvZHVjZWQg
+YSBuZXcKPiBvcHRpb24gbmFtZWQgJ25vaW5saW5lX3hhdHRyJyBmb3IgZGlzYWJsaW5nIGRlZmF1
+bHQgaW5saW5lX3hhdHRyIG9wdGlvbi4KPiBTbyBpbiBfYWNsX2dldF9tYXggd2UgbmVlZCB0byBj
+aGVjayAnbm9pbmxpbmVfeGF0dHInIHN0cmluZyBpbiBmcwo+IG9wdGlvbiwgb3RoZXJ3aXNlIHdl
+IG1heSBzZWxlY3QgdGhlIHdyb25nIG1heCBhY2wgbnVtYmVyIHNpbmNlIHdlIGFsd2F5cwo+IGZv
+dW5kIHRoZSBzdHJpbmcgJ2lubGluZV94YXR0cicgaW4gZnMgb3B0aW9uLgo+Cj4gQWRkaXRpb25h
+bGx5LCBmMmZzIGhhcyBjaGFuZ2VkIGRpc2sgbGF5b3V0IG9mIHhhdHRyIGJsb2NrIGEgYml0LCBz
+byB3aWxsCj4gY29udGFpbiBvbmUgbW9yZSBlbnRyeSBpbiBib3RoIGlubGluZSBhbmQgbm9pbmxp
+bmUgeGF0dHIgaW5vZGUsIHRoaXMKPiBwYXRjaCB3aWxsIG1vZGlmeSB0aGUgbWF4IGFjbCBudW1i
+ZXIgdG8gYWRqdXN0IGl0Lgo+Cj4gU3VnZ2VzdGVkLWJ5OiBDaGFvIFl1IDxjaGFvQGtlcm5lbC5v
+cmc+Cj4gU2lnbmVkLW9mZi1ieTogU3VuIEtlIDxzdW5rZTMyQGh1YXdlaS5jb20+Cj4gLS0tCj4g
+ICBjb21tb24vYXR0ciB8IDE5ICsrKysrKysrKysrKysrKystLS0KPiAgIDEgZmlsZSBjaGFuZ2Vk
+LCAxNiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2NvbW1v
+bi9hdHRyIGIvY29tbW9uL2F0dHIKPiBpbmRleCAzNTY4MmQ3Yy4uZGFlOGExYmIgMTAwNjQ0Cj4g
+LS0tIGEvY29tbW9uL2F0dHIKPiArKysgYi9jb21tb24vYXR0cgo+IEBAIC0yNiwxMSArMjYsMjQg
+QEAgX2FjbF9nZXRfbWF4KCkKPiAgIAkJZWNobyA4MTkxCj4gICAJCTs7Cj4gICAJZjJmcykKPiAt
+CQlfZnNfb3B0aW9ucyAkVEVTVF9ERVYgfCBncmVwICJpbmxpbmVfeGF0dHIiID4vZGV2L251bGwg
+Mj4mMQo+ICsJCSMgSWYgbm9pbmxpbmVfeGF0dHIgaXMgZW5hYmxlZCwgbWF4IHhhdHRyIHNpemUg
+c2hvdWxkIGJlOgo+ICsJCSMgKDQwOTYgLSAyNCkgLSAoMjQgKyA0KSA9IDQwNDQKPiArCQkjIHRo
+ZW4gQUNMX01BWF9FTlRSSUVTIHNob3VsZCBiZToKPiArCQkjICg0MDQ0IC0gKDQgKyA0ICogNCkp
+IC8gOCArIDQgPSA1MDcKPiArCQlfZnNfb3B0aW9ucyAkVEVTVF9ERVYgfCBncmVwICJub2lubGlu
+ZV94YXR0ciIgPi9kZXYvbnVsbCAyPiYxCj4gICAJCWlmIFsgJD8gLWVxIDAgXTsgdGhlbgo+IC0J
+CQllY2hvIDUzMQo+ICsJCQllY2hvIDUwNwo+ICAgCQllbHNlCj4gLQkJCWVjaG8gNTA2Cj4gKwkJ
+CSMgSWYgaW5saW5lX3hhdHRyIGlzIGVuYWJsZWQsIG1heCB4YXR0ciBzaXplIHNob3VsZCBiZToK
+PiArCQkJIyAoNDA5NiAtIDI0ICsgMjAwKSAtICgyNCArIDQpID0gNDI0NAo+ICsJCQkjIHRoZW4g
+QUNMX01BWF9FTlRSSUVTIHNob3VsZCBiZToKPiArCQkJIyAoNDI0NCAtICg0ICsgNCAqIDQpKSAv
+IDggKyA0ID0gNTMyCj4gKwkJCV9mc19vcHRpb25zICRURVNUX0RFViB8IGdyZXAgImlubGluZV94
+YXR0ciIgPi9kZXYvbnVsbCAyPiYxCj4gKwkJCWlmIFsgJD8gLWVxIDAgXTsgdGhlbgo+ICsJCQkJ
+ZWNobyA1MzIKPiArCQkJZWxzZQo+ICsJCQkJZWNobyA1MDcKPiArCQkJZmkKPiAgIAkJZmkKPiAg
+IAkJOzsKPiAgIAliY2FjaGVmcykKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRl
+dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9s
+aXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
