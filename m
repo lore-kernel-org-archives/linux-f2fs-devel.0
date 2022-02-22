@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 99925C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Feb 2022 03:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C222BC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Feb 2022 03:19:08 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nMLhZ-0005dN-66; Tue, 22 Feb 2022 03:18:56 +0000
+	id 1nMLhk-0005fc-Hb; Tue, 22 Feb 2022 03:19:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <neilb@suse.de>) id 1nMLhX-0005dD-Ro
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Feb 2022 03:18:54 +0000
+ (envelope-from <neilb@suse.de>) id 1nMLhi-0005fD-RM
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Feb 2022 03:19:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Cc:To:From:Subject:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=j2iKmKfQAV47ltxyUTpJL5kF151jPpkpJZBMxZj0hPA=; b=XFOd9Qw1TYxuXv2i+HK+6IRFDG
- vUXGTv3ocuCVKAJ1DG+Te15SOm94mVzcssy/DGj38rivFUs84A53oGKLhmPgg4xxZgTuQj/6fa34W
- bYnIT1FiKazpr05vRZqjY0TZu/L78ZQ7w3HeAj5F4lgCtw+MxN9p08rgrvVZF9y37kTg=;
+ bh=CRQpTl6gU6MaBAdfwSalgYu+ynBw18B3JAwgtU5P7zs=; b=k0losm/ZoDGKxWvqsnjcg4TSa2
+ m4cy2TnnnnosSkoKW+DZU/58+sE4Tcz+nnrZBdhT1DwSNORzZ5VjUdzIZY0v+sdoWhaPmEqSE/7Is
+ SkSnaBk3pWOP7gzOJM83uLtT2kfrBIVYMBS9PnMdXUt+pAXgMtiSmtDdH3Cr9rssC6ZA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
@@ -31,47 +31,47 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=j2iKmKfQAV47ltxyUTpJL5kF151jPpkpJZBMxZj0hPA=; b=Z4mBh1n4u16JfeoUDsicjCBSi6
- fvCO+Z9TPv6vzLed3ZbPrb6OEIFGr9wbfIFKC+odBrhfUvfXogdvokFnrk1aH7yL8gqoExx+5FHXq
- FTIz7+JO7zp0t3k8eWdDkuOEiwYJ2d4B+Xmu4zG83/rP3oDRsf863tbu449gvEkh4K98=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=CRQpTl6gU6MaBAdfwSalgYu+ynBw18B3JAwgtU5P7zs=; b=WKNeXgv5ZTM5rlG77EAOw5i7RG
+ ZOZum11cQcsxERSHZI7EyQblbooc6Znaml9EMaZKDKicSaI61q5rekSL+Wh/x2n3ezKYUjjzKe4nv
+ sSFlzqFzftjZWevxrQmfRt1wLXyg7J5FmAOMM0d8vaCMZk71++e69gu5LbzSYOqglFxo=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1nMLhV-00AofF-Hl
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Feb 2022 03:18:54 +0000
+ id 1nMLhg-0005mn-Lw
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Feb 2022 03:19:05 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 562ED1F396;
- Tue, 22 Feb 2022 03:18:47 +0000 (UTC)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 75B9C21100;
+ Tue, 22 Feb 2022 03:18:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1645499927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1645499938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=j2iKmKfQAV47ltxyUTpJL5kF151jPpkpJZBMxZj0hPA=;
- b=0+g51AMGEI3r9A8ASMpz3wY3CyKSJDeDWn0AKqsQTwh9NMem16Yu3oX327mnvhNj8U+DA9
- 33oY/yjrsDIe2YUWn2bZG7jQOA+4FUB3X9JdnoOXaU38SgqeQ9WEuMqtv61aD05pH60kr9
- 62rxLcOCo92AZ73iiwrb3gpP+RZqT9c=
+ bh=CRQpTl6gU6MaBAdfwSalgYu+ynBw18B3JAwgtU5P7zs=;
+ b=rAWmkDzMUq5saT4diV9iyBOxbbUTYHnUd2tyt0hXJjU6qv76OdiJ5quclkFkgkZQZIH/wp
+ djrbwIjn2UoPBOT7mgohYOdjGbrka++Z8N5ut87wSQClx58gfzi3CCtWd2zWBc047trrfv
+ Pk48nRu5043YQll4VCkTE6CkokYW/jI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1645499927;
+ s=susede2_ed25519; t=1645499938;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=j2iKmKfQAV47ltxyUTpJL5kF151jPpkpJZBMxZj0hPA=;
- b=RQ5ZNUEdexnmqLSqD8rTQIgSPwQRUQeUCQajOzdhoZRnXzxb5C8Ud6kKPvOlourkGfZFR4
- QB7vKbrUxbKosNBQ==
+ bh=CRQpTl6gU6MaBAdfwSalgYu+ynBw18B3JAwgtU5P7zs=;
+ b=78ppJZNYmM3wJ075e/NaA+H//budRLqxkm37FXGyz0tkz7p2NRq8afWahvYZOHCZpahi12
+ jM7r94+t4KDXnMBQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A183013BA7;
- Tue, 22 Feb 2022 03:18:36 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 080F213BA7;
+ Tue, 22 Feb 2022 03:18:50 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id Pv19FwxWFGKWWgAAMHmgww
- (envelope-from <neilb@suse.de>); Tue, 22 Feb 2022 03:18:36 +0000
+ by imap2.suse-dmz.suse.de with ESMTPSA id IoVMLRpWFGKhWgAAMHmgww
+ (envelope-from <neilb@suse.de>); Tue, 22 Feb 2022 03:18:50 +0000
 From: NeilBrown <neilb@suse.de>
 To: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
  Wu Fengguang <fengguang.wu@intel.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
@@ -85,13 +85,13 @@ To: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
  Lars Ellenberg <lars.ellenberg@linbit.com>,
  Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>
 Date: Tue, 22 Feb 2022 14:17:17 +1100
-Message-ID: <164549983737.9187.2627117501000365074.stgit@noble.brown>
+Message-ID: <164549983738.9187.3972219847989393182.stgit@noble.brown>
 In-Reply-To: <164549971112.9187.16871723439770288255.stgit@noble.brown>
 References: <164549971112.9187.16871723439770288255.stgit@noble.brown>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
-X-Headers-End: 1nMLhV-00AofF-Hl
-Subject: [f2fs-dev] [PATCH 04/11] fuse: remove reliance on bdi congestion
+X-Headers-End: 1nMLhg-0005mn-Lw
+Subject: [f2fs-dev] [PATCH 05/11] nfs: remove reliance on bdi congestion
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -114,144 +114,94 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 The bdi congestion tracking in not widely used and will be removed.
 
-Fuse is one of a small number of filesystems that uses it, setting both
-the sync (read) and async (write) congestion flags at what it determines
-are appropriate times.
+NFS is one of a small number of filesystems that uses it, setting just
+the async (write) congestion flag at what it determines are appropriate
+times.
 
-The only remaining effect of the sync flag is to cause read-ahead to be
-skipped.
 The only remaining effect of the async flag is to cause (some)
 WB_SYNC_NONE writes to be skipped.
 
-So instead of setting the flags, change:
- - .readahead to stop when it has submitted all non-async pages
-    for read.
- - .writepages to do nothing if WB_SYNC_NONE and the flag would be set
+So instead of setting the flag, set an internal flag and change:
+ - .writepages to do nothing if WB_SYNC_NONE and the flag is set
  - .writepage to return AOP_WRITEPAGE_ACTIVATE if WB_SYNC_NONE
-    and the flag would be set.
+    and the flag is set.
 
 The writepages change causes a behavioural change in that pageout() can
 now return PAGE_ACTIVATE instead of PAGE_KEEP, so SetPageActive() will
-be called on the page which (I think) will further delay the next attempt
+be called on the page which (I think) wil further delay the next attempt
 at writeout.  This might be a good thing.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/fuse/control.c |   17 -----------------
- fs/fuse/dev.c     |    8 --------
- fs/fuse/file.c    |   17 +++++++++++++++++
- 3 files changed, 17 insertions(+), 25 deletions(-)
+ fs/nfs/write.c            |   14 +++++++++++---
+ include/linux/nfs_fs_sb.h |    1 +
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index 000d2e5627e9..7cede9a3bc96 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -164,7 +164,6 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
- {
- 	unsigned val;
- 	struct fuse_conn *fc;
--	struct fuse_mount *fm;
- 	ssize_t ret;
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 987a187bd39a..7c986164018e 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -417,7 +417,7 @@ static void nfs_set_page_writeback(struct page *page)
  
- 	ret = fuse_conn_limit_write(file, buf, count, ppos, &val,
-@@ -178,22 +177,6 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
- 	down_read(&fc->killsb);
- 	spin_lock(&fc->bg_lock);
- 	fc->congestion_threshold = val;
--
--	/*
--	 * Get any fuse_mount belonging to this fuse_conn; s_bdi is
--	 * shared between all of them
--	 */
--
--	if (!list_empty(&fc->mounts)) {
--		fm = list_first_entry(&fc->mounts, struct fuse_mount, fc_entry);
--		if (fc->num_background < fc->congestion_threshold) {
--			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
--			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
--		} else {
--			set_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
--			set_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
--		}
--	}
- 	spin_unlock(&fc->bg_lock);
- 	up_read(&fc->killsb);
- 	fuse_conn_put(fc);
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index cd54a529460d..e1b4a846c90d 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -315,10 +315,6 @@ void fuse_request_end(struct fuse_req *req)
- 				wake_up(&fc->blocked_waitq);
- 		}
+ 	if (atomic_long_inc_return(&nfss->writeback) >
+ 			NFS_CONGESTION_ON_THRESH)
+-		set_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
++		nfss->write_congested = 1;
+ }
  
--		if (fc->num_background == fc->congestion_threshold && fm->sb) {
--			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
--			clear_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
--		}
- 		fc->num_background--;
- 		fc->active_background--;
- 		flush_bg_queue(fc);
-@@ -540,10 +536,6 @@ static bool fuse_request_queue_background(struct fuse_req *req)
- 		fc->num_background++;
- 		if (fc->num_background == fc->max_background)
- 			fc->blocked = 1;
--		if (fc->num_background == fc->congestion_threshold && fm->sb) {
--			set_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
--			set_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
--		}
- 		list_add_tail(&req->list, &fc->bg_queue);
- 		flush_bg_queue(fc);
- 		queued = true;
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 829094451774..94747bac3489 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -966,6 +966,14 @@ static void fuse_readahead(struct readahead_control *rac)
- 		struct fuse_io_args *ia;
- 		struct fuse_args_pages *ap;
+ static void nfs_end_page_writeback(struct nfs_page *req)
+@@ -433,7 +433,7 @@ static void nfs_end_page_writeback(struct nfs_page *req)
  
-+		if (fc->num_background >= fc->congestion_threshold &&
-+		    rac->ra->async_size >= readahead_count(rac))
-+			/*
-+			 * Congested and only async pages left, so skip the
-+			 * rest.
-+			 */
-+			break;
-+
- 		nr_pages = readahead_count(rac) - nr_pages;
- 		if (nr_pages > max_pages)
- 			nr_pages = max_pages;
-@@ -1958,6 +1966,7 @@ static int fuse_writepage_locked(struct page *page)
+ 	end_page_writeback(req->wb_page);
+ 	if (atomic_long_dec_return(&nfss->writeback) < NFS_CONGESTION_OFF_THRESH)
+-		clear_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
++		nfss->write_congested = 0;
+ }
  
- static int fuse_writepage(struct page *page, struct writeback_control *wbc)
- {
-+	struct fuse_conn *fc = get_fuse_conn(page->mapping->host);
+ /*
+@@ -672,6 +672,10 @@ static int nfs_writepage_locked(struct page *page,
+ 	struct inode *inode = page_file_mapping(page)->host;
  	int err;
  
- 	if (fuse_page_is_writeback(page->mapping->host, page->index)) {
-@@ -1973,6 +1982,10 @@ static int fuse_writepage(struct page *page, struct writeback_control *wbc)
- 		return 0;
- 	}
- 
 +	if (wbc->sync_mode == WB_SYNC_NONE &&
-+	    fc->num_background >= fc->congestion_threshold)
++	    NFS_SERVER(inode)->write_congested)
 +		return AOP_WRITEPAGE_ACTIVATE;
 +
- 	err = fuse_writepage_locked(page);
- 	unlock_page(page);
- 
-@@ -2226,6 +2239,10 @@ static int fuse_writepages(struct address_space *mapping,
- 	if (fuse_is_bad(inode))
- 		goto out;
+ 	nfs_inc_stats(inode, NFSIOS_VFSWRITEPAGE);
+ 	nfs_pageio_init_write(&pgio, inode, 0,
+ 				false, &nfs_async_write_completion_ops);
+@@ -719,6 +723,10 @@ int nfs_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ 	int priority = 0;
+ 	int err;
  
 +	if (wbc->sync_mode == WB_SYNC_NONE &&
-+	    fc->num_background >= fc->congestion_threshold)
++	    NFS_SERVER(inode)->write_congested)
 +		return 0;
 +
- 	data.inode = inode;
- 	data.wpa = NULL;
- 	data.ff = NULL;
+ 	nfs_inc_stats(inode, NFSIOS_VFSWRITEPAGES);
+ 
+ 	if (!(mntflags & NFS_MOUNT_WRITE_EAGER) || wbc->for_kupdate ||
+@@ -1893,7 +1901,7 @@ static void nfs_commit_release_pages(struct nfs_commit_data *data)
+ 	}
+ 	nfss = NFS_SERVER(data->inode);
+ 	if (atomic_long_read(&nfss->writeback) < NFS_CONGESTION_OFF_THRESH)
+-		clear_bdi_congested(inode_to_bdi(data->inode), BLK_RW_ASYNC);
++		nfss->write_congested = 0;
+ 
+ 	nfs_init_cinfo(&cinfo, data->inode, data->dreq);
+ 	nfs_commit_end(cinfo.mds);
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index ca0959e51e81..6aa2a200676a 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -138,6 +138,7 @@ struct nfs_server {
+ 	struct nlm_host		*nlm_host;	/* NLM client handle */
+ 	struct nfs_iostats __percpu *io_stats;	/* I/O statistics */
+ 	atomic_long_t		writeback;	/* number of writeback pages */
++	unsigned int		write_congested;/* flag set when writeback gets too high */
+ 	unsigned int		flags;		/* various flags */
+ 
+ /* The following are for internal use only. Also see uapi/linux/nfs_mount.h */
 
 
 
