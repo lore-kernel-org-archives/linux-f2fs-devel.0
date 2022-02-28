@@ -4,73 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A28D5C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Feb 2022 22:01:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 22B56C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Feb 2022 22:02:58 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nOo5B-0002t9-Ty; Mon, 28 Feb 2022 22:01:28 +0000
+	id 1nOo6b-0006aX-UW; Mon, 28 Feb 2022 22:02:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <rppt@kernel.org>)
- id 1nOo5A-0002sd-MU; Mon, 28 Feb 2022 22:01:27 +0000
+ (envelope-from <segher@kernel.crashing.org>)
+ id 1nOo6Y-0006a9-Im; Mon, 28 Feb 2022 22:02:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:Mime-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=P/DNDgEd0l9TOpRCWF1a8Xko9Vhvu9jCGYlkYfT6DgM=; b=cKQ9/sfsT9b40VszQF5Dd9ltg4
- BvBNeu28QfYMVpHascLX9QeXD1gWN6FPfIlfrIQSvXGBN5+Q+pj9RbTow/v8FYppqf3xfiJEkc6bB
- +hZ6dVUMll1zsujgiGu13dFq/ppa7Ty9KyDS9/5OAwTrIdcwCXF4nMu/lErxhtGFu1iA=;
+ bh=QC3nIz+n91wpfCsPUnRTYwS86Hu+HklVlqnCRUpphJc=; b=Tq8+TF3tAFx3I3Sf+HYqqcdGNj
+ KNV4kKERX5MrBrm58l0cE8D/LT3ol85YIEKBE7kJNxxrAKDzd1IyJsulh9Hx6vE65CgEPY8tYNqAX
+ HE3vclBEgAMkjJ38ZXPol4Ej2FSNnUT/8OZyNwHeX2eW49ZEQ60YrTp+xEbmgaEiOL7Q=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:References
- :In-Reply-To:Subject:CC:To:From:Date:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:Mime-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=P/DNDgEd0l9TOpRCWF1a8Xko9Vhvu9jCGYlkYfT6DgM=; b=jEHFc0k9MwwF+Zl5kJjQaRm7EV
- 3Vvd8XL2XBv/eFPEcckIdrArQqvt1zTeDsZ730HtAtjPfComJ7zntKeDSj7ZuowEvxTAWuldzL074
- vw//4pgeQKewFQSzzRUa6/psoG9SCqhQhhErQ35Ii9SII6evvdDpJhjgrneqfRc7RU08=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nOo58-000XoG-Du; Mon, 28 Feb 2022 22:01:27 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 5CBD2B8169B;
- Mon, 28 Feb 2022 22:01:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 677EEC340F1;
- Mon, 28 Feb 2022 22:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1646085677;
- bh=bmzYeqH+wd1Y/i05gxZoeqc9TywPR9wpt0imv9Fx7Nw=;
- h=Date:From:To:CC:Subject:In-Reply-To:References:From;
- b=lb9MoeFhEeGqaET4WoooJnliR/Aftbuf2qgeJWcsJRMUD7lxaPDCkpbBw1fltPmKc
- jIEBu8SnVjgO3Aaf+8FYuXvVgG5MgAciJgva3R/8WVNn/ktDFk3hANDz2GKUoZWtxI
- SvipV/Wo2m8Yu0T44/FsB9ncJWS6zqb8Cis19xBBpG1gsQAhwdKCM2xymmzy1B6vAh
- NLgpj3CkfoCj7XXB9+t8bZHUSaMtCcXi/0/BYE3ppk5zRyoiwaHoQXmDsDHRdh2g9L
- BKDOg0IEHzQ+qInzyklcGdLSrMWPhR+ZxEuCQewyXU3mL+4cdRVVpWMroWAhmtcL3w
- /5xJdekiDQkIw==
-Date: Mon, 28 Feb 2022 23:59:07 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- =?ISO-8859-1?Q?Christian_K=F6nig?= <christian.koenig@amd.com>,
- Linus	Torvalds <torvalds@linux-foundation.org>
-User-Agent: K-9 Mail for Android
-In-Reply-To: <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+ bh=QC3nIz+n91wpfCsPUnRTYwS86Hu+HklVlqnCRUpphJc=; b=HUO5byxXsxn5otLysjTXPem/rv
+ FbwLh43QG+YkBr7YYw3AkgUyVCDSXveHoDADNGN9f49Djfk2TgBz2OiHzHoGJQgSqsqEJhMhgQFpP
+ M7+P9o9FgXOinfJMJTYCZZ9RTURuT21tU3PSSIv7v3eknWxvg34s7D1y8VX3DoyfK8YU=;
+Received: from gate.crashing.org ([63.228.1.57])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.94.2)
+ id 1nOo6V-0000pV-Ow; Mon, 28 Feb 2022 22:02:52 +0000
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+ by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 21SKr95E005627;
+ Mon, 28 Feb 2022 14:53:09 -0600
+Received: (from segher@localhost)
+ by gate.crashing.org (8.14.1/8.14.1/Submit) id 21SKr7Xe005624;
+ Mon, 28 Feb 2022 14:53:07 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to
+ segher@kernel.crashing.org using -f
+Date: Mon, 28 Feb 2022 14:53:07 -0600
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <20220228205307.GD614@gate.crashing.org>
 References: <20220228110822.491923-1-jakobkoschel@gmail.com>
  <20220228110822.491923-3-jakobkoschel@gmail.com>
  <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
  <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
- <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
- <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
-Message-ID: <7D0C2A5D-500E-4F38-AD0C-A76E132A390E@kernel.org>
-MIME-Version: 1.0
-X-Headers-End: 1nOo58-000XoG-Du
+ <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
+ <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
+ <CAHk-=wj27SZQ3kPTesBzkiGhe-mA3gOQqr_adt_bMFzmg1VNaA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj27SZQ3kPTesBzkiGhe-mA3gOQqr_adt_bMFzmg1VNaA@mail.gmail.com>
+User-Agent: Mutt/1.4.2.3i
+X-Headers-End: 1nOo6V-0000pV-Ow
 Subject: Re: [f2fs-dev] [PATCH 2/6] treewide: remove using list iterator
  after loop body as a ptr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -84,15 +74,15 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-wireless <linux-wireless@vger.kernel.org>,
- alsa-devel@alsa-project.org, KVM list <kvm@vger.kernel.org>,
+Cc: alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
  "Gustavo A. R. Silva" <gustavo@embeddedor.com>, linux-iio@vger.kernel.org,
  nouveau@lists.freedesktop.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
  dri-devel <dri-devel@lists.freedesktop.org>,
  Cristiano Giuffrida <c.giuffrida@vu.nl>, "Bos, H.J." <h.j.bos@vu.nl>,
- linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
- linux-arch <linux-arch@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>,
- linux-aspeed@lists.ozlabs.org, linux-scsi <linux-scsi@vger.kernel.org>,
+ samba-technical@lists.samba.org, linux1394-devel@lists.sourceforge.net,
+ drbd-dev@lists.linbit.com, linux-arch <linux-arch@vger.kernel.org>,
+ CIFS <linux-cifs@vger.kernel.org>, KVM list <kvm@vger.kernel.org>,
+ linux-scsi <linux-scsi@vger.kernel.org>,
  linux-rdma <linux-rdma@vger.kernel.org>, linux-staging@lists.linux.dev,
  amd-gfx list <amd-gfx@lists.freedesktop.org>, Jason Gunthorpe <jgg@ziepe.ca>,
  intel-wired-lan@lists.osuosl.org, kgdb-bugreport@lists.sourceforge.net,
@@ -103,7 +93,8 @@ Cc: linux-wireless <linux-wireless@vger.kernel.org>,
  Linux PM <linux-pm@vger.kernel.org>,
  intel-gfx <intel-gfx@lists.freedesktop.org>,
  Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
- Nathan Chancellor <nathan@kernel.org>, dma <dmaengine@vger.kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
  Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
  Jakob Koschel <jakobkoschel@gmail.com>, v9fs-developer@lists.sourceforge.net,
  linux-tegra <linux-tegra@vger.kernel.org>,
@@ -111,73 +102,68 @@ Cc: linux-wireless <linux-wireless@vger.kernel.org>,
  Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
  Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-sgx@vger.kernel.org,
  linux-block <linux-block@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
- linux-usb@vger.kernel.org, samba-technical@lists.samba.org,
+ linux-usb@vger.kernel.org, linux-wireless <linux-wireless@vger.kernel.org>,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>,
  tipc-discussion@lists.sourceforge.net,
  Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-mediatek@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ dma <dmaengine@vger.kernel.org>, linux-mediatek@lists.infradead.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+ Mike Rapoport <rppt@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-CgpPbiBGZWJydWFyeSAyOCwgMjAyMiAxMDo0Mjo1MyBQTSBHTVQrMDI6MDAsIEphbWVzIEJvdHRv
-bWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT4gd3JvdGU6Cj5PbiBN
-b24sIDIwMjItMDItMjggYXQgMjE6MDcgKzAxMDAsIENocmlzdGlhbiBLw7ZuaWcgd3JvdGU6Cj4+
-IEFtIDI4LjAyLjIyIHVtIDIwOjU2IHNjaHJpZWIgTGludXMgVG9ydmFsZHM6Cj4+ID4gT24gTW9u
-LCBGZWIgMjgsIDIwMjIgYXQgNDoxOSBBTSBDaHJpc3RpYW4gS8O2bmlnCj4+ID4gPGNocmlzdGlh
-bi5rb2VuaWdAYW1kLmNvbT4gd3JvdGU6Cj4+ID4gPiBJIGRvbid0IHRoaW5rIHRoYXQgdXNpbmcg
-dGhlIGV4dHJhIHZhcmlhYmxlIG1ha2VzIHRoZSBjb2RlIGluIGFueQo+PiA+ID4gd2F5Cj4+ID4g
-PiBtb3JlIHJlbGlhYmxlIG9yIGVhc2llciB0byByZWFkLgo+PiA+IFNvIEkgdGhpbmsgdGhlIG5l
-eHQgc3RlcCBpcyB0byBkbyB0aGUgYXR0YWNoZWQgcGF0Y2ggKHdoaWNoCj4+ID4gcmVxdWlyZXMK
-Pj4gPiB0aGF0ICItc3RkPWdudTExIiB0aGF0IHdhcyBkaXNjdXNzZWQgaW4gdGhlIG9yaWdpbmFs
-IHRocmVhZCkuCj4+ID4gCj4+ID4gVGhhdCB3aWxsIGd1YXJhbnRlZSB0aGF0IHRoZSAncG9zJyBw
-YXJhbWV0ZXIgb2YKPj4gPiBsaXN0X2Zvcl9lYWNoX2VudHJ5KCkKPj4gPiBpcyBvbmx5IHVwZGF0
-ZWQgSU5TSURFIHRoZSBmb3JfZWFjaF9saXN0X2VudHJ5KCkgbG9vcCwgYW5kIGNhbgo+PiA+IG5l
-dmVyCj4+ID4gcG9pbnQgdG8gdGhlICh3cm9uZ2x5IHR5cGVkKSBoZWFkIGVudHJ5Lgo+PiA+IAo+
-PiA+IEFuZCBJIHdvdWxkIGFjdHVhbGx5IGhvcGUgdGhhdCBpdCBzaG91bGQgYWN0dWFsbHkgY2F1
-c2UgY29tcGlsZXIKPj4gPiB3YXJuaW5ncyBhYm91dCBwb3NzaWJseSB1bmluaXRpYWxpemVkIHZh
-cmlhYmxlcyBpZiBwZW9wbGUgdGhlbiB1c2UKPj4gPiB0aGUKPj4gPiAncG9zJyBwb2ludGVyIG91
-dHNpZGUgdGhlIGxvb3AuIEV4Y2VwdAo+PiA+IAo+PiA+ICAgKGEpIHRoYXQgY29kZSBpbiBzZ3gv
-ZW5jbC5jIGN1cnJlbnRseSBpbml0aWFsaXplcyAndG1wJyB0byBOVUxMCj4+ID4gZm9yCj4+ID4g
-aW5leHBsaWNhYmxlIHJlYXNvbnMgLSBwb3NzaWJseSBiZWNhdXNlIGl0IGFscmVhZHkgZXhwZWN0
-ZWQgdGhpcwo+PiA+IGJlaGF2aW9yCj4+ID4gCj4+ID4gICAoYikgd2hlbiBJIHJlbW92ZSB0aGF0
-IE5VTEwgaW5pdGlhbGl6ZXIsIEkgc3RpbGwgZG9uJ3QgZ2V0IGEKPj4gPiB3YXJuaW5nLAo+PiA+
-IGJlY2F1c2Ugd2UndmUgZGlzYWJsZWQgLVduby1tYXliZS11bmluaXRpYWxpemVkIHNpbmNlIGl0
-IHJlc3VsdHMgaW4KPj4gPiBzbwo+PiA+IG1hbnkgZmFsc2UgcG9zaXRpdmVzLgo+PiA+IAo+PiA+
-IE9oIHdlbGwuCj4+ID4gCj4+ID4gQW55d2F5LCBnaXZlIHRoaXMgcGF0Y2ggYSBsb29rLCBhbmQg
-YXQgbGVhc3QgaWYgaXQncyBleHBhbmRlZCB0byBkbwo+PiA+ICIocG9zKSA9IE5VTEwiIGluIHRo
-ZSBlbnRyeSBzdGF0ZW1lbnQgZm9yIHRoZSBmb3ItbG9vcCwgaXQgd2lsbAo+PiA+IGF2b2lkIHRo
-ZSBIRUFEIHR5cGUgY29uZnVzaW9uIHRoYXQgSmFrb2IgaXMgd29ya2luZyBvbi4gQW5kIEkgdGhp
-bmsKPj4gPiBpbiBhIGNsZWFuZXIgd2F5IHRoYW4gdGhlIGhvcnJpZCBnYW1lcyBoZSBwbGF5cy4K
-Pj4gPiAKPj4gPiAoQnV0IGl0IHdvbid0IGF2b2lkIHBvc3NpYmxlIENQVSBzcGVjdWxhdGlvbiBv
-ZiBzdWNoIHR5cGUKPj4gPiBjb25mdXNpb24uIFRoYXQsIGluIG15IG9waW5pb24sIGlzIGEgY29t
-cGxldGVseSBkaWZmZXJlbnQgaXNzdWUpCj4+IAo+PiBZZXMsIGNvbXBsZXRlbHkgYWdyZWUuCj4+
-IAo+PiA+IEkgZG8gd2lzaCB3ZSBjb3VsZCBhY3R1YWxseSBwb2lzb24gdGhlICdwb3MnIHZhbHVl
-IGFmdGVyIHRoZSBsb29wCj4+ID4gc29tZWhvdyAtIGJ1dCBjbGVhcmx5IHRoZSAibWlnaHQgYmUg
-dW5pbml0aWFsaXplZCIgSSB3YXMgaG9waW5nIGZvcgo+PiA+IGlzbid0IHRoZSB3YXkgdG8gZG8g
-aXQuCj4+ID4gCj4+ID4gQW55Ym9keSBoYXZlIGFueSBpZGVhcz8KPj4gCj4+IEkgdGhpbmsgd2Ug
-c2hvdWxkIGxvb2sgYXQgdGhlIHVzZSBjYXNlcyB3aHkgY29kZSBpcyB0b3VjaGluZyAocG9zKQo+
-PiBhZnRlciB0aGUgbG9vcC4KPj4gCj4+IEp1c3QgZnJvbSBza2ltbWluZyBvdmVyIHRoZSBwYXRj
-aGVzIHRvIGNoYW5nZSB0aGlzIGFuZCBleHBlcmllbmNlCj4+IHdpdGggdGhlIGRyaXZlcnMvc3Vi
-c3lzdGVtcyBJIGhlbHAgdG8gbWFpbnRhaW4gSSB0aGluayB0aGUgcHJpbWFyeQo+PiBwYXR0ZXJu
-IGxvb2tzIHNvbWV0aGluZyBsaWtlIHRoaXM6Cj4+IAo+PiBsaXN0X2Zvcl9lYWNoX2VudHJ5KGVu
-dHJ5LCBoZWFkLCBtZW1iZXIpIHsKPj4gICAgICBpZiAoc29tZV9jb25kaXRpb25fY2hlY2tpbmco
-ZW50cnkpKQo+PiAgICAgICAgICBicmVhazsKPj4gfQo+PiBkb19zb21ldGhpbmdfd2l0aChlbnRy
-eSk7Cj4KPgo+QWN0dWFsbHksIHdlIHVzdWFsbHkgaGF2ZSBhIGNoZWNrIHRvIHNlZSBpZiB0aGUg
-bG9vcCBmb3VuZCBhbnl0aGluZywKPmJ1dCBpbiB0aGF0IGNhc2UgaXQgc2hvdWxkIHNvbWV0aGlu
-ZyBsaWtlCj4KPmlmIChsaXN0X2VudHJ5X2lzX2hlYWQoZW50cnksIGhlYWQsIG1lbWJlcikpIHsK
-PiAgICByZXR1cm4gd2l0aCBlcnJvcjsKPn0KPmRvX3NvbWV0aGluX3dpdGgoZW50cnkpOwo+Cj5T
-dWZmaWNlPyAgVGhlIGxpc3RfZW50cnlfaXNfaGVhZCgpIG1hY3JvIGlzIGRlc2lnbmVkIHRvIGNv
-cGUgd2l0aCB0aGUKPmJvZ3VzIGVudHJ5IG9uIGhlYWQgcHJvYmxlbS4KCldvbid0IHN1ZmZpY2Ug
-YmVjYXVzZSB0aGUgZW5kIGdvYWwgb2YgdGhpcyB3b3JrIGlzIHRvIGxpbWl0IHNjb3BlIG9mIGVu
-dHJ5IG9ubHkgdG8gbG9vcC4gSGVuY2UgdGhlIG5lZWQgZm9yIGFkZGl0aW9uYWwgdmFyaWFibGUu
-CgpCZXNpZGVzLCB0aGVyZSBhcmUgbm8gZ3VhcmFudGVlcyB0aGF0IHBlb3BsZSB3b24ndCBkb19z
-b21ldGhpbmdfd2l0aChlbnRyeSkgd2l0aG91dCB0aGUgY2hlY2sgb3Igd29uJ3QgY29tcGFyZSBl
-bnRyeSB0byBOVUxMIHRvIGNoZWNrIGlmIHRoZSBsb29wIGZpbmlzaGVkIHdpdGggYnJlYWsgb3Ig
-bm90LgoKPkphbWVzCgoKLS0gClNpbmNlcmVseSB5b3VycywKTWlrZQoKCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
-ZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
-dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On Mon, Feb 28, 2022 at 12:14:44PM -0800, Linus Torvalds wrote:
+> On Mon, Feb 28, 2022 at 12:10 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > We can do
+> >
+> >         typeof(pos) pos
+> >
+> > in the 'for ()' loop, and never use __iter at all.
+> >
+> > That means that inside the for-loop, we use a _different_ 'pos' than outside.
+> 
+> The thing that makes me throw up in my mouth a bit is that in that
+> 
+>         typeof(pos) pos
+> 
+> the first 'pos' (that we use for just the typeof) is that outer-level
+> 'pos', IOW it's a *different* 'pos' than the second 'pos' in that same
+> declaration that declares the inner level shadowing new 'pos'
+> variable.
+
+The new "pos" has not yet been declared, so this has to refer to the
+outer "pos", it cannot be the inner one.  Because it hasn't been
+declared yet :-)
+
+Compare this to
+  typeof (pos) pos = pos;
+where that last "pos" *does* refer to the newly declared one: that
+declaration has already been done!  (So this code is UB btw, 6.3.2.1/2).
+
+> If I was a compiler person, I would say "Linus, that thing is too ugly
+> to live", and I would hate it. I'm just hoping that even compiler
+> people say "that's *so* ugly it's almost beautiful".
+
+It is perfectly well-defined.  Well, it would be good if we (GCC) would
+document it does work, and if someone tested it on LLVM as well.  But it
+is really hard to implement it to *not* work :-)
+
+> Because it does seem to work. It's not pretty, but hey, it's not like
+> our headers are really ever be winning any beauty contests...
+
+It is very pretty!  Needs a comment though :-)
+
+
+Segher
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
