@@ -4,83 +4,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2F189C4167E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Feb 2022 11:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3D71BC35295
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Feb 2022 11:09:12 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nOdts-0005TC-Hn; Mon, 28 Feb 2022 11:09:07 +0000
+	id 1nOdtw-0005Vq-TN; Mon, 28 Feb 2022 11:09:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
  (envelope-from <jakobkoschel@gmail.com>)
- id 1nOdtq-0005ST-QQ; Mon, 28 Feb 2022 11:09:05 +0000
+ id 1nOdtv-0005Ug-RW; Mon, 28 Feb 2022 11:09:10 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DGHuYFjchXbmgUIZ1SnPPgINXW2r1tGfV7LKxanZ5rw=; b=ThoOcUPaw0DFX/p8k2Ntrh+8Vs
- WbwS8qdwBiEBY24WryrqTA2fyrjoXyG0xKprlqOFstcrCrrcCADRP7V4nRtQLm/RtFiIwVbZ304j1
- LvFHMlAP6JDfsANfudVU+u1eeCMsnKlKPJqsIa1SiFqtMi48J2nQnYjXJbyt5RyLpiHY=;
+ bh=HpiN/zwO1wBD5W8vJ5qwHzWs2Mz8GYwVSPoaDyTc8jQ=; b=kAQXUBNsC0WDLmDztTQ6xiEjkj
+ wSkgmGIyNRi0YO2kqAWJ8mqub38VGXEbqEhxedaUDlOutMB1j4pvdSPtMSj2JYbp6ky0FVx17qCxD
+ q/eqylbwFy4WHOYM9IIAwG40nxG1CNJI4GhNlgaNuJ5miMJhlv0TuPCCIAHMTTXr85n4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=DGHuYFjchXbmgUIZ1SnPPgINXW2r1tGfV7LKxanZ5rw=; b=c
- m/uGRHaRuXqKAmPeZf5kOO6wH7SJznKJc8/dDjMOtLLJekvquX+3brpXb71m/SKLkQ53au01Os+nP
- XjJPN9qKXEQKeKlQXIcPOaKcC/mILMa+FW50PZCDcl+9sTun6kV5z9pk+G70xI8Fr0szgZdvMYFRw
- bg9kUrraIDcijsxE=;
-Received: from mail-ej1-f53.google.com ([209.85.218.53])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=HpiN/zwO1wBD5W8vJ5qwHzWs2Mz8GYwVSPoaDyTc8jQ=; b=g1bBiJi0NuaS8vy9yfz/lirGFA
+ /HZVXDAxduh254X02m1AEd6DFhfYEGu/hGMtyBepBVPAJbchU1d7BGFg70o1Sd5chzQYuALLBfua0
+ v7aTBRfyQIpVIEciWjQNhR74jMaY6yEBJm7TvNVZGiDB6Y2XVGjM/t6vbXgBRWzjs4l8=;
+Received: from mail-ej1-f52.google.com ([209.85.218.52])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1nOdtj-0007IF-Jg; Mon, 28 Feb 2022 11:09:04 +0000
-Received: by mail-ej1-f53.google.com with SMTP id gb39so24032858ejc.1;
- Mon, 28 Feb 2022 03:08:59 -0800 (PST)
+ id 1nOdto-0001rk-Bn; Mon, 28 Feb 2022 11:09:10 +0000
+Received: by mail-ej1-f52.google.com with SMTP id p15so23996306ejc.7;
+ Mon, 28 Feb 2022 03:09:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
- h=from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=DGHuYFjchXbmgUIZ1SnPPgINXW2r1tGfV7LKxanZ5rw=;
- b=mx6+xil8F/OwTucWDkjx4s8oWe9qKYEvq+lRSteVfL7qHoHjMYzOaON1c2kL9OYiTX
- db1Mykp/ffS9il6Fqi76pAlN/G5rXNdswBXj/5Gig3gkxoatbBHPRDADsVd/P2bKgern
- FiNaHDXHNfiQkUQdDT0QxGTuel99Vo9xYQqWbNfVZEfqWt3+vAZeTOc1QbByn6ecNGa6
- S2BlhLxmBqy/aCRkfkMxvBR+4RMiFfh+//eOhtERGL+8TdWCfHba+zdrYCDUyKUpjEKv
- GoJF4WvvVQmT7fMcDismFLp5shdM79FKyOLpnEpulQji7R6fg8Aw9kXLsIi9eJ28dAK+
- e6Aw==
+ h=from:to:cc:subject:date:message-id:in-reply-to:references
+ :mime-version:content-transfer-encoding;
+ bh=HpiN/zwO1wBD5W8vJ5qwHzWs2Mz8GYwVSPoaDyTc8jQ=;
+ b=hjvTHeqAC17Nm2rqJFqOWVUlo+eMrb6KCGjEjnmUhT0UbOoSD99k2xAziOpWZa+Icu
+ SPp4Zg1lqK8FLNpUHi/iGpToynAZh7AAx7I6BqkiBOWQWPIrLjejJ7mt0E6lp79jr43P
+ Z8Tz3UxSCHK1qzDcri6ZY14M8lx9G0bi6GCGQHl0DVbHpgXti6eqzCprjBZYIcyI1uce
+ Dn/lOukn9J64/ASqyssuY+hk5ExgHfhAh8xyytTN1bW2SLq53AUCqmHXOqxQHzvGm8yg
+ Hb8Tr+NdyPNcInoLFcy82stmYANyPP1+b2zh81uncpq/hmnHTquj2t004aepXQhNWxPC
+ QShA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=DGHuYFjchXbmgUIZ1SnPPgINXW2r1tGfV7LKxanZ5rw=;
- b=Z6wKcmqTakK6TsRpiC+eYpbW2y3Ttd3HrOzli7ziEkqr2CwX6cGvA6CJU56KySkZVt
- sCnN7rpkzHfYGYELHcsZOeoWLYU6gJ2C2aFO70xP/A30sHLzeZ3ieStUxV64G1UovEVy
- /avUEyIFIKTxnZ7X+K6NSKzW196VpHNJhcpIp489RTa0staN2bHtmzePZQF5jAc8fQPM
- BOtcVxdcZcijHe6LsDnMcG/Ja98ij84Z1AbRhA2Qvu3nsMNFlslP7PURTs1/T8gQUmsO
- +AkvPwOh2vF2q1jfCGw7v/PA8CHAw2XiGb6fOGeBUuRRP4OGGLYxIQkSKFFluVHARSRI
- 7h+g==
-X-Gm-Message-State: AOAM530mnOvr9qyXbDOOGXlKszd1boDpxLAqHFE+lIWD1QKo0ITSYE+O
- 8RgjTrGOAe+KW8NyHXY8N+k=
-X-Google-Smtp-Source: ABdhPJzNctGRxtGORumk8xJxhLEhhYPBXw3MCY4PM4mZEwTJgQgzAy87Z2fgE8nw5jOtXDmEFeeNlg==
-X-Received: by 2002:a17:906:32d8:b0:6ce:d850:f79 with SMTP id
- k24-20020a17090632d800b006ced8500f79mr14260258ejk.414.1646046532887; 
- Mon, 28 Feb 2022 03:08:52 -0800 (PST)
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+ :references:mime-version:content-transfer-encoding;
+ bh=HpiN/zwO1wBD5W8vJ5qwHzWs2Mz8GYwVSPoaDyTc8jQ=;
+ b=i5KXNiVLx2jTVqmnrlsOj0sApXRhVVPuKsH5jxae/bLgQc0qTJuxZyW4BnfQ24npv9
+ eoCfarrmbZrqs+SLrLGY53gKeI0iNIpmEpdcNCNaZKwEe0HcAQGOP2tME0GYaZV5xPiy
+ 0r7SEKEr5MvgbwwTAM+G/fuA8Uv1bNoHz9ue6SR7UHBHd9+AWPYjPffKylAmVVuqCqZC
+ LTokNtn+ByEA1nbeu6iuNPafFrzkbvasTkRa8t/9JwDJPQGDCxvANT4aPnEDtCiXmnwj
+ k4HfX4JPWbCSpC66I6Dsdhb+nDVsezT1ZpckqoKt9il5NcZ60Yw/T1P6wpcJqRc6f3N+
+ yfng==
+X-Gm-Message-State: AOAM532i9fk3hRQgHjhyddr5ZFVnohZWwI+fwxzR+FnNb55JGvvuMl0A
+ 7Mo9Gv4ooYyTBdNljsbsKRY=
+X-Google-Smtp-Source: ABdhPJwIz1+OuMm91LqO5/9SwgL6U3RC8rZg6hPrO7zQUYJxh0T24GQzaSGRh+uNCyYPoPAvBQZaKw==
+X-Received: by 2002:a17:906:3803:b0:6cf:56b9:60a9 with SMTP id
+ v3-20020a170906380300b006cf56b960a9mr14108161ejc.716.1646046537823; 
+ Mon, 28 Feb 2022 03:08:57 -0800 (PST)
 Received: from localhost.localdomain (dhcp-077-250-038-153.chello.nl.
  [77.250.38.153]) by smtp.googlemail.com with ESMTPSA id
- z22-20020a17090655d600b006d229436793sm4209049ejp.223.2022.02.28.03.08.51
+ z22-20020a17090655d600b006d229436793sm4209049ejp.223.2022.02.28.03.08.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 28 Feb 2022 03:08:52 -0800 (PST)
+ Mon, 28 Feb 2022 03:08:57 -0800 (PST)
 From: Jakob Koschel <jakobkoschel@gmail.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 28 Feb 2022 12:08:16 +0100
-Message-Id: <20220228110822.491923-1-jakobkoschel@gmail.com>
+Date: Mon, 28 Feb 2022 12:08:19 +0100
+Message-Id: <20220228110822.491923-4-jakobkoschel@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220228110822.491923-1-jakobkoschel@gmail.com>
+References: <20220228110822.491923-1-jakobkoschel@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1nOdtj-0007IF-Jg
-Subject: [f2fs-dev] [PATCH 0/6] Remove usage of list iterator past the loop
- body
+X-Headers-End: 1nOdto-0001rk-Bn
+Subject: [f2fs-dev] [PATCH 3/6] treewide: fix incorrect use to determine if
+ list is empty
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -123,158 +125,106 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This is the first patch removing several categories of use cases of
-the list iterator variable past the loop.
-This is follow up to the discussion in:
-https://lore.kernel.org/all/20220217184829.1991035-1-jakobkoschel@gmail.com/
+The list iterator value will *always* be set by list_for_each_entry().
+It is incorrect to assume that the iterator value will be NULL if the
+list is empty.
 
-As concluded in:
-https://lore.kernel.org/all/YhdfEIwI4EdtHdym@kroah.com/
-the correct use should be using a separate variable after the loop
-and using a 'tmp' variable as the list iterator.
-The list iterator will not point to a valid structure after the loop
-if no break/goto was hit. Invalid uses of the list iterator variable
-can be avoided altogether by simply using a separate pointer to
-iterate the list.
+Instead of checking the pointer it should be checked if
+the list is empty.
+In acpi_get_pmu_hw_inf() instead of setting the pointer to NULL
+on the break, it is set to the correct value and leaving it
+NULL if no element was found.
 
-Linus and Greg agreed on the following pattern:
+Signed-off-by: Jakob Koschel <jakobkoschel@gmail.com>
+---
+ arch/powerpc/sysdev/fsl_gtm.c            |  4 ++--
+ drivers/media/pci/saa7134/saa7134-alsa.c |  4 ++--
+ drivers/perf/xgene_pmu.c                 | 13 +++++++------
+ 3 files changed, 11 insertions(+), 10 deletions(-)
 
--	struct gr_request *req;
-+	struct gr_request *req = NULL;
-+	struct gr_request *tmp;
-	struct gr_ep *ep;
-	int ret = 0;
+diff --git a/arch/powerpc/sysdev/fsl_gtm.c b/arch/powerpc/sysdev/fsl_gtm.c
+index 8963eaffb1b7..39186ad6b3c3 100644
+--- a/arch/powerpc/sysdev/fsl_gtm.c
++++ b/arch/powerpc/sysdev/fsl_gtm.c
+@@ -86,7 +86,7 @@ static LIST_HEAD(gtms);
+  */
+ struct gtm_timer *gtm_get_timer16(void)
+ {
+-	struct gtm *gtm = NULL;
++	struct gtm *gtm;
+ 	int i;
 
--	list_for_each_entry(req, &ep->queue, queue) {
--		if (&req->req == _req)
-+	list_for_each_entry(tmp, &ep->queue, queue) {
-+		if (&tmp->req == _req) {
-+			req = tmp;
-			break;
-+		}
-	}
--	if (&req->req != _req) {
-+	if (!req) {
-		ret = -EINVAL;
-		goto out;
-	}
+ 	list_for_each_entry(gtm, &gtms, list_node) {
+@@ -103,7 +103,7 @@ struct gtm_timer *gtm_get_timer16(void)
+ 		spin_unlock_irq(&gtm->lock);
+ 	}
 
+-	if (gtm)
++	if (!list_empty(&gtms))
+ 		return ERR_PTR(-EBUSY);
+ 	return ERR_PTR(-ENODEV);
+ }
+diff --git a/drivers/media/pci/saa7134/saa7134-alsa.c b/drivers/media/pci/saa7134/saa7134-alsa.c
+index fb24d2ed3621..d3cde05a6eba 100644
+--- a/drivers/media/pci/saa7134/saa7134-alsa.c
++++ b/drivers/media/pci/saa7134/saa7134-alsa.c
+@@ -1214,7 +1214,7 @@ static int alsa_device_exit(struct saa7134_dev *dev)
 
-With gnu89 the list iterator variable cannot yet be declared
-within the for loop of the list iterator.
-Moving to a more modern version of C would allow defining
-the list iterator variable within the macro, limiting
-the scope to the loop.
-This avoids any incorrect usage past the loop altogether.
+ static int saa7134_alsa_init(void)
+ {
+-	struct saa7134_dev *dev = NULL;
++	struct saa7134_dev *dev;
 
-This are around 30% of the cases where the iterator
-variable is used past the loop (identified with a slightly
-modified version of use_after_iter.cocci).
-I've decided to split it into at a few patches separated
-by similar use cases.
+ 	saa7134_dmasound_init = alsa_device_init;
+ 	saa7134_dmasound_exit = alsa_device_exit;
+@@ -1229,7 +1229,7 @@ static int saa7134_alsa_init(void)
+ 			alsa_device_init(dev);
+ 	}
 
-Because the output of get_maintainer.pl was too big,
-I included all the found lists and everyone from the
-previous discussion.
+-	if (dev == NULL)
++	if (list_empty(&saa7134_devlist))
+ 		pr_info("saa7134 ALSA: no saa7134 cards found\n");
 
-Jakob Koschel (6):
-  drivers: usb: remove usage of list iterator past the loop body
-  treewide: remove using list iterator after loop body as a ptr
-  treewide: fix incorrect use to determine if list is empty
-  drivers: remove unnecessary use of list iterator variable
-  treewide: remove dereference of list iterator after loop body
-  treewide: remove check of list iterator against head past the loop
-    body
+ 	return 0;
+diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
+index 2b6d476bd213..e255f9e665d1 100644
+--- a/drivers/perf/xgene_pmu.c
++++ b/drivers/perf/xgene_pmu.c
+@@ -1460,7 +1460,8 @@ xgene_pmu_dev_ctx *acpi_get_pmu_hw_inf(struct xgene_pmu *xgene_pmu,
+ 	struct hw_pmu_info *inf;
+ 	void __iomem *dev_csr;
+ 	struct resource res;
+-	struct resource_entry *rentry;
++	struct resource_entry *rentry = NULL;
++	struct resource_entry *tmp;
+ 	int enable_bit;
+ 	int rc;
 
- arch/arm/mach-mmp/sram.c                      |  9 ++--
- arch/arm/plat-pxa/ssp.c                       | 28 +++++-------
- arch/powerpc/sysdev/fsl_gtm.c                 |  4 +-
- arch/x86/kernel/cpu/sgx/encl.c                |  6 ++-
- drivers/block/drbd/drbd_req.c                 | 45 ++++++++++++-------
- drivers/counter/counter-chrdev.c              | 26 ++++++-----
- drivers/crypto/cavium/nitrox/nitrox_main.c    | 11 +++--
- drivers/dma/dw-edma/dw-edma-core.c            |  4 +-
- drivers/dma/ppc4xx/adma.c                     | 11 +++--
- drivers/firewire/core-transaction.c           | 32 +++++++------
- drivers/firewire/sbp2.c                       | 14 +++---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c        | 19 +++++---
- drivers/gpu/drm/drm_memory.c                  | 15 ++++---
- drivers/gpu/drm/drm_mm.c                      | 17 ++++---
- drivers/gpu/drm/drm_vm.c                      | 13 +++---
- drivers/gpu/drm/gma500/oaktrail_lvds.c        |  9 ++--
- drivers/gpu/drm/i915/gem/i915_gem_context.c   | 14 +++---
- .../gpu/drm/i915/gem/i915_gem_execbuffer.c    | 15 ++++---
- drivers/gpu/drm/i915/gt/intel_ring.c          | 15 ++++---
- .../gpu/drm/nouveau/nvkm/subdev/clk/base.c    | 11 +++--
- .../gpu/drm/nouveau/nvkm/subdev/fb/ramgk104.c | 13 +++---
- drivers/gpu/drm/scheduler/sched_main.c        | 14 +++---
- drivers/gpu/drm/ttm/ttm_bo.c                  | 19 ++++----
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c           | 22 +++++----
- drivers/infiniband/hw/hfi1/tid_rdma.c         | 16 ++++---
- drivers/infiniband/hw/mlx4/main.c             | 12 ++---
- drivers/media/dvb-frontends/mxl5xx.c          | 11 +++--
- drivers/media/pci/saa7134/saa7134-alsa.c      |  4 +-
- drivers/media/v4l2-core/v4l2-ctrls-api.c      | 31 +++++++------
- drivers/misc/mei/interrupt.c                  | 12 ++---
- .../net/ethernet/intel/i40e/i40e_ethtool.c    |  3 +-
- .../net/ethernet/qlogic/qede/qede_filter.c    | 11 +++--
- drivers/net/wireless/ath/ath6kl/htc_mbox.c    |  2 +-
- .../net/wireless/intel/ipw2x00/libipw_rx.c    | 15 ++++---
- drivers/perf/xgene_pmu.c                      | 13 +++---
- drivers/power/supply/cpcap-battery.c          | 11 +++--
- drivers/scsi/lpfc/lpfc_bsg.c                  | 16 ++++---
- drivers/scsi/scsi_transport_sas.c             | 17 ++++---
- drivers/scsi/wd719x.c                         | 12 +++--
- drivers/staging/rtl8192e/rtl819x_TSProc.c     | 17 +++----
- drivers/staging/rtl8192e/rtllib_rx.c          | 17 ++++---
- .../staging/rtl8192u/ieee80211/ieee80211_rx.c | 15 ++++---
- .../rtl8192u/ieee80211/rtl819x_TSProc.c       | 19 ++++----
- drivers/thermal/thermal_core.c                | 38 ++++++++++------
- drivers/usb/gadget/composite.c                |  9 ++--
- drivers/usb/gadget/configfs.c                 | 22 +++++----
- drivers/usb/gadget/udc/aspeed-vhub/epn.c      | 11 +++--
- drivers/usb/gadget/udc/at91_udc.c             | 26 ++++++-----
- drivers/usb/gadget/udc/atmel_usba_udc.c       | 11 +++--
- drivers/usb/gadget/udc/bdc/bdc_ep.c           | 11 +++--
- drivers/usb/gadget/udc/fsl_qe_udc.c           | 11 +++--
- drivers/usb/gadget/udc/fsl_udc_core.c         | 11 +++--
- drivers/usb/gadget/udc/goku_udc.c             | 11 +++--
- drivers/usb/gadget/udc/gr_udc.c               | 11 +++--
- drivers/usb/gadget/udc/lpc32xx_udc.c          | 11 +++--
- drivers/usb/gadget/udc/max3420_udc.c          | 11 +++--
- drivers/usb/gadget/udc/mv_u3d_core.c          | 11 +++--
- drivers/usb/gadget/udc/mv_udc_core.c          | 11 +++--
- drivers/usb/gadget/udc/net2272.c              | 12 ++---
- drivers/usb/gadget/udc/net2280.c              | 11 +++--
- drivers/usb/gadget/udc/omap_udc.c             | 11 +++--
- drivers/usb/gadget/udc/pxa25x_udc.c           | 11 +++--
- drivers/usb/gadget/udc/s3c-hsudc.c            | 11 +++--
- drivers/usb/gadget/udc/tegra-xudc.c           | 11 +++--
- drivers/usb/gadget/udc/udc-xilinx.c           | 11 +++--
- drivers/usb/mtu3/mtu3_gadget.c                | 11 +++--
- drivers/usb/musb/musb_gadget.c                | 11 +++--
- drivers/vfio/mdev/mdev_core.c                 | 11 +++--
- fs/cifs/smb2misc.c                            | 10 +++--
- fs/f2fs/segment.c                             |  9 ++--
- fs/proc/kcore.c                               | 13 +++---
- kernel/debug/kdb/kdb_main.c                   | 36 +++++++++------
- kernel/power/snapshot.c                       | 10 +++--
- kernel/trace/ftrace.c                         | 22 +++++----
- kernel/trace/trace_eprobe.c                   | 15 ++++---
- kernel/trace/trace_events.c                   | 11 ++---
- net/9p/trans_xen.c                            | 11 +++--
- net/ipv4/udp_tunnel_nic.c                     | 10 +++--
- net/tipc/name_table.c                         | 11 +++--
- net/tipc/socket.c                             | 11 +++--
- net/xfrm/xfrm_ipcomp.c                        | 11 +++--
- sound/soc/intel/catpt/pcm.c                   | 13 +++---
- sound/soc/sprd/sprd-mcdt.c                    | 13 +++---
- 83 files changed, 708 insertions(+), 465 deletions(-)
+@@ -1475,16 +1476,16 @@ xgene_pmu_dev_ctx *acpi_get_pmu_hw_inf(struct xgene_pmu *xgene_pmu,
+ 		return NULL;
+ 	}
 
+-	list_for_each_entry(rentry, &resource_list, node) {
+-		if (resource_type(rentry->res) == IORESOURCE_MEM) {
+-			res = *rentry->res;
+-			rentry = NULL;
++	list_for_each_entry(tmp, &resource_list, node) {
++		if (resource_type(tmp->res) == IORESOURCE_MEM) {
++			res = *tmp->res;
++			rentry = tmp;
+ 			break;
+ 		}
+ 	}
+ 	acpi_dev_free_resource_list(&resource_list);
 
-base-commit: 7ee022567bf9e2e0b3cd92461a2f4986ecc99673
+-	if (rentry) {
++	if (!rentry) {
+ 		dev_err(dev, "PMU type %d: No memory resource found\n", type);
+ 		return NULL;
+ 	}
 --
 2.25.1
+
 
 
 _______________________________________________
