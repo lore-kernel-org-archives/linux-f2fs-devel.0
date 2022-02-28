@@ -4,71 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0E41C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Feb 2022 21:13:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 44CB1C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Feb 2022 21:19:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nOnKx-0005da-6F; Mon, 28 Feb 2022 21:13:42 +0000
+	id 1nOnQN-0000qp-Tk; Mon, 28 Feb 2022 21:19:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <johannes@sipsolutions.net>)
- id 1nOnKv-0005d3-C1; Mon, 28 Feb 2022 21:13:40 +0000
+ (envelope-from <noloader@gmail.com>)
+ id 1nOnQM-0000qP-PH; Mon, 28 Feb 2022 21:19:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Content-Type
- :References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ Reply-To:In-Reply-To:References:MIME-Version:Sender:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uTSgVBk5w89AJnv82I9bqMWvwbVIn7Apzl6uMNeIbWY=; b=ihQage9o2fE5tYugLV3fhUlBUy
- OwrvN9mHonLMGG99jpnigxe/BHXySkqNprjeCHHvYpfIwEHqRC0yL3uZFEO7lEDCXKnHn0/N50Nmm
- WtrEdFG9tM3iG5hGfVF1zhdrYEix7boY0r4sihAnapDB9NchQgYL4GpOIiijHOdqONUI=;
+ bh=pX3FOaQ5tpG+krWAy5EzbawK39YqA5YwRZTg6hddt4E=; b=XplNfm8LsGKhFTiwD83nENoLUV
+ UpUaUqbvW/HCdjhV7qAqnPWeG7FeOlJFOJoMEdvlcV8ZNqW07ZC0v6a7y8GErlVx2Jax4ivgsE56r
+ 75owL7dTHz0iTIZ/gH2gnQrb9zSnJKNThTkTeCuTEDWt6WCKgDLCx1JgX6BK+JGKGLTA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:
- In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:Reply-To:In-Reply-To:
+ References:MIME-Version:Sender:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=uTSgVBk5w89AJnv82I9bqMWvwbVIn7Apzl6uMNeIbWY=; b=P9ba05hTvHwYq4tggT25Izb7z6
- WHFOjg5w79gvj/klQZAviqbQo8YgnkLZSLZEyxsTvKx1bVcAm9j9nS1AJVtq0F/W7ybJQxj2Yb9y1
- aUyzZk/hYh/dcpD6qLvtSuZfxT4F2C5ygotujSpkBzMqCdLHxOhdcCyXqn/a1xcanZVE=;
-Received: from s3.sipsolutions.net ([144.76.43.62] helo=sipsolutions.net)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nOnKp-0006lY-TE; Mon, 28 Feb 2022 21:13:39 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
- Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
- :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
- Resent-Cc:Resent-Message-ID; bh=uTSgVBk5w89AJnv82I9bqMWvwbVIn7Apzl6uMNeIbWY=; 
- t=1646082815; x=1647292415; b=qwebpD4Mx04jA2zOxZPDBlLSZTMAFF1XsQUOE8zzLzpobAX
- Pt4vlLBU/P/zaa2PATgDyp14aAxfrggiiz76HO5mouQjtGUn0CcDT2M4v8qbXRlet0qTOKolUA7an
- zLvQPiFPpv0MTPcf3HVc6APhpQ6esUzP9hByGiADr+kponGVs/EhgETv2wKma1QDRbDK/F+Hxthjw
- w7H4RxOnS7/GuPSK/3NN0VOZhq8oVMGY1aCJLN1wQUgX2Xkrxci2MyaTmCtyypq4ojRh2jecblrD4
- f7dShPi4/bhLsrdQBLXNEvTZE63cZoCVIR9jA6Yz5xsbiRCbfFGWv9OZo1dtp+yA==;
-Received: by sipsolutions.net with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.95) (envelope-from <johannes@sipsolutions.net>)
- id 1nOmc1-00716Q-Dh; Mon, 28 Feb 2022 21:27:17 +0100
-Message-ID: <e3bb7d0632f8ef60f18c19976d57330e1ef00584.camel@sipsolutions.net>
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Matthew Wilcox <willy@infradead.org>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Date: Mon, 28 Feb 2022 21:27:13 +0100
-In-Reply-To: <Yh0tl3Lni4weIMkl@casper.infradead.org>
+ bh=pX3FOaQ5tpG+krWAy5EzbawK39YqA5YwRZTg6hddt4E=; b=iFHr7ogXj3qexABixswVcFrK1f
+ hFhwNCncdtf6CGda1SUKSicLC7LENx7TtmZXS2h3qlkSGd3w4jAtE+J8tgiOl6WHOXiaZDYf+xCIK
+ eVDGHD/wEKqXQWXiotiCoKtTT3KFrUxqPte/UMqmeJr5qRblqhcO/k8wIviUSdj9xykM=;
+Received: from mail-pl1-f180.google.com ([209.85.214.180])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
+ id 1nOnQH-000W1i-Px; Mon, 28 Feb 2022 21:19:17 +0000
+Received: by mail-pl1-f180.google.com with SMTP id ay5so8989902plb.1;
+ Mon, 28 Feb 2022 13:19:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
+ h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+ :subject:to:cc;
+ bh=pX3FOaQ5tpG+krWAy5EzbawK39YqA5YwRZTg6hddt4E=;
+ b=JpEWCU5sl0Tb/FD34RSH61Ey9dRKreZqOQa3CJ02luf0uqIT78+8GWNevF0TXmNO1k
+ V82hjNGseb3oWLNgnnFwXHAFmfIF+pTCtPsXm95pt2iCzBmJFwg04njU2K1WfIC8K4PQ
+ JYTCrkA4ACMCh2biL4u47uoOFfhnbmO/1jCCSOx3OESfK5+oDGNitg9s7NqsmIU5fVsE
+ xsR4ABTTJUTksMDshckaPyVLHegSArBm3erCaRT01IEJkH2S1g98XNdRHKV6JZW5AanM
+ gI9+nSzlxhKCRaqGLAQjGqwME5o9/K6faQyfblLD265MKP0MWlgdnuFxCRxjUTwlasET
+ Zo4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+ :from:date:message-id:subject:to:cc;
+ bh=pX3FOaQ5tpG+krWAy5EzbawK39YqA5YwRZTg6hddt4E=;
+ b=phTAERSzYgyUAeXyuwrG3KCAc/FYxOXH07CjeCS3xCEbQvHXj0ZQ88p6/50ODgfO4+
+ QfXtdjKy7NONSHOPjZe2bwGK7RVeP0uopG2p9cRhCV78D70cu3rD1maC1sZPMWI5++Ya
+ X7wLFcA/R2pDnHaVtO6mJ8hQ0CURl+dsb0mNvoED+Cl0IZ3zbP5BT3+0K7C8rT+kd3Tq
+ UpAkugtB0oFwlpwXqWDlDJ0ORI6Sqw5Rj5m3rpLOR7HTO0xhOFZSU6eNWRU7bOIy1y2i
+ 8FpohddhVN4C3ZKSOJp3nZUKSZZuODxbOKN4PCLoAMerkZaDFNxdS80M9c6z5+qtJ7Nr
+ Nzwg==
+X-Gm-Message-State: AOAM5321gzXlt1YLZOdRXFqB2qrmy/y1MGT5cuKSQAeZ3hkGkzN55REB
+ 3ea1SDUDjif+fadKENS/yJgqQboRlZY8dkEbEnY=
+X-Google-Smtp-Source: ABdhPJxYQDaw0FFWrTXZCk3OvnKpy6mSdQ8Z9qbCWYQ2FvSetamSp4Rz90y2uoGU7tjomvOtre1MYsL9s+rZuYttBVs=
+X-Received: by 2002:a17:902:ce8a:b0:14f:fd0e:e4a4 with SMTP id
+ f10-20020a170902ce8a00b0014ffd0ee4a4mr22765912plg.47.1646083147399; Mon, 28
+ Feb 2022 13:19:07 -0800 (PST)
+MIME-Version: 1.0
 References: <20220228110822.491923-1-jakobkoschel@gmail.com>
  <20220228110822.491923-3-jakobkoschel@gmail.com>
  <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
  <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
- <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
- <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
- <Yh0tl3Lni4weIMkl@casper.infradead.org>
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
-MIME-Version: 1.0
-X-malware-bazaar: not-scanned
-X-Headers-End: 1nOnKp-0006lY-TE
+ <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
+ <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+In-Reply-To: <b2d20961dbb7533f380827a7fcc313ff849875c1.camel@HansenPartnership.com>
+From: Jeffrey Walton <noloader@gmail.com>
+Date: Mon, 28 Feb 2022 16:18:56 -0500
+Message-ID: <CAH8yC8nwp8f3rANhCiiP_Oiw2cjfqCwAgZdTXY9OxtN9Tmm7HA@mail.gmail.com>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+X-Headers-End: 1nOnQH-000W1i-Px
 Subject: Re: [f2fs-dev] [PATCH 2/6] treewide: remove using list iterator
  after loop body as a ptr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -82,6 +93,7 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Reply-To: noloader@gmail.com
 Cc: linux-wireless <linux-wireless@vger.kernel.org>,
  alsa-devel@alsa-project.org, KVM list <kvm@vger.kernel.org>,
  "Gustavo A. R. Silva" <gustavo@embeddedor.com>, linux-iio@vger.kernel.org,
@@ -100,6 +112,7 @@ Cc: linux-wireless <linux-wireless@vger.kernel.org>,
  Kees Cook <keescook@chromium.org>, Arnd Bergman <arnd@arndb.de>,
  Linux PM <linux-pm@vger.kernel.org>,
  intel-gfx <intel-gfx@lists.freedesktop.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
  Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
  Nathan Chancellor <nathan@kernel.org>, dma <dmaengine@vger.kernel.org>,
  Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
@@ -116,36 +129,43 @@ Cc: linux-wireless <linux-wireless@vger.kernel.org>,
  Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
  linux-fsdevel <linux-fsdevel@vger.kernel.org>,
  linux-mediatek@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
  Mike Rapoport <rppt@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, 2022-02-28 at 20:16 +0000, Matthew Wilcox wrote:
-> On Mon, Feb 28, 2022 at 12:10:24PM -0800, Linus Torvalds wrote:
-> > We can do
-> > 
-> >         typeof(pos) pos
-> > 
-> > in the 'for ()' loop, and never use __iter at all.
-> > 
-> > That means that inside the for-loop, we use a _different_ 'pos' than outside.
-> 
-> Then we can never use -Wshadow ;-(  I'd love to be able to turn it on;
-> it catches real bugs.
-> 
+On Mon, Feb 28, 2022 at 3:45 PM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+> ...
+> > Just from skimming over the patches to change this and experience
+> > with the drivers/subsystems I help to maintain I think the primary
+> > pattern looks something like this:
+> >
+> > list_for_each_entry(entry, head, member) {
+> >      if (some_condition_checking(entry))
+> >          break;
+> > }
+> > do_something_with(entry);
+>
+>
+> Actually, we usually have a check to see if the loop found anything,
+> but in that case it should something like
+>
+> if (list_entry_is_head(entry, head, member)) {
+>     return with error;
+> }
+> do_somethin_with(entry);
 
-I was just going to say the same thing...
+Borrowing from c++, perhaps an explicit end should be used:
 
-If we're willing to change the API for the macro, we could do
+  if (list_entry_not_end(entry))
+    do_somethin_with(entry)
 
-  list_for_each_entry(type, pos, head, member)
+It is modelled after c++ and the 'while(begin != end) {}' pattern.
 
-and then actually take advantage of -Wshadow?
-
-johannes
+Jeff
 
 
 _______________________________________________
