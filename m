@@ -4,142 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E5FCEC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Feb 2022 21:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 09C72C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Feb 2022 21:47:32 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nOnlT-00020W-CE; Mon, 28 Feb 2022 21:41:06 +0000
+	id 1nOnrg-0002KR-4z; Mon, 28 Feb 2022 21:47:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <Christian.Koenig@amd.com>)
- id 1nOnlR-0001zy-DE; Mon, 28 Feb 2022 21:41:04 +0000
+ (envelope-from <jakobkoschel@gmail.com>)
+ id 1nOnrT-0002Jk-T0; Mon, 28 Feb 2022 21:47:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:References:Message-Id:Content-Transfer-Encoding:
+ Cc:Date:In-Reply-To:From:Subject:Mime-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=1cP3BgbbNuGDusjcZMNEuDHV1LUQdbelhp6M0fWPy5M=; b=BAh5eegcaJz1jSzjE6soLfMXv7
- jqYIjmUyE+8X4Sm5HO4Q7Y4jUM6Ncrn+RScJHtH+3YhNtNNV60YuGBLAIcn+ywM3c/wThJ5kJkJqB
- 7fPsGPDcD0KsyB0VL99FDQ/UM9SCnUCEvxyYryOnns9HUl+vchfQY+FWWDe663aPRSFA=;
+ bh=U6qUODqKVLrC7qZqs553HfNOTdovwKFxE93drAu/Dlk=; b=Q/tieumxBfFoa+yhyidWrtcWvb
+ Z/XiI7A5PAgRrLoPQ90k8fk/8xuzfY5YCNCrEcMPwAGYh2XuUr2PiXozTnpwsdieXEuSTCsuX9R53
+ 3OlVb1NcI4tkeTzOq0E8ljp5+Vm/p6BaP9FrDaqGy9CMMYfWo0SbFXiVo68eOb1q5kHc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
- References:Cc:To:Subject:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:In-Reply-To:
+ From:Subject:Mime-Version:Content-Type:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=1cP3BgbbNuGDusjcZMNEuDHV1LUQdbelhp6M0fWPy5M=; b=f1ZZlp9aj+wdWEMws+bg7si22E
- +SWBSuvCcXKkVbdiNaFBWl2eDI3GAEnkxpEo886xSGfA/4uHqFqi7h8mUUwRUh40UqPSTgskvYKyB
- QVHtgV3T92VmZAQ8to2ugzbKlP3z31W/kMwdjOMaF8RE7BF04X7ffClC/Tace5f5rMfs=;
-Received: from mail-bn8nam12on2052.outbound.protection.outlook.com
- ([40.107.237.52] helo=NAM12-BN8-obe.outbound.protection.outlook.com)
+ bh=U6qUODqKVLrC7qZqs553HfNOTdovwKFxE93drAu/Dlk=; b=mDvZpTTNflDibiAN9ruZ9h6QuT
+ WJ332WPijP+EEIAaWlbr9k9icub9VxqsIajhHi58H/NbMFVmRBn90bsS+3W8dY9bZPM5978uWFRxH
+ LjqlPk3b8UvI/DFVKNaEWLtxSbABaAce0ElUxAaC5pV/GT0ywDhJvS1I80OdP63TZEcQ=;
+Received: from mail-ed1-f54.google.com ([209.85.208.54])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nOnlP-0008D6-1i; Mon, 28 Feb 2022 21:41:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gL9OvQXRZlLdS0nWu38zKJUPGpd8Lw1yhpw0d+9zMnw5veNcCSl+j10Lj2ZBjoB5CfikiNko3OGYPd5ME3Vpnpr6n3gUYUUXyI/nkCpK1pboNWydXnK5jyRh9RlwUC2J4LqkRcYIcUEdvbcAPOtxCPnt41mkj7xD+m15Kvaf2q7v/g8rWPGCeIDynZ/oNm9fnv9Ju75vK4G9aE6aBcPLDtlUp1ST1JK7/NKF82SiZ4n1XSg+J4DKH5YpYNZ2xk39/JLPCrAzvhJAKKUntlEf2q3g2Pj1J5/dfEOPCBMx04zbq/GH674VvLGDrCGvs5qux8fGUlsbgRV2o3e8r2NFDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1cP3BgbbNuGDusjcZMNEuDHV1LUQdbelhp6M0fWPy5M=;
- b=jdvC0+wMuIjUshRFXNDwX32c2zskPNpWzUT0ktJHw/5EiOrhAsU94pzDNGLqksNFWg+blmisV1k0kohfJdS4O05gRW7IHqVrOqq+Mv5c+HjZN3GrTnkeTf8cvr5w9XQlSh1NpbpQV9SfTtNox7n0FzrCxGIn2Y97pJ0Ozwd2zkUTZZwzZzxBKK4GvrZ+BR8TCxc8QZ0nYFwhOXfRlKMAnTFtySBUzXq/5mIt6py7gbpk+GQ1GQytDDsZI5lf5E8qHWfr02zFw9K3Qsuz9W3QSbnWtzK3Tll4VEq5yh73hCY4N6sQ7OaGkztdVoBWliieGcToSd9yyiqDpPsytzNReg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1cP3BgbbNuGDusjcZMNEuDHV1LUQdbelhp6M0fWPy5M=;
- b=yR2JVvc5BtwSjUOODC9WmjehMXRGxzHYe8ljFxqZPlt6ZskvnNvnIoLUWVTSqL4Nvnz3mlJ6Vj4yuzWXjUdfSbDpZboDHZVxGObnXC8gvFtZZmR10HmqPv3h4fJHh1C2OVQ9oxctvZyNbcFFjGdzd7Nu0zIl+DqaxiZBFvhDfEY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BN8PR12MB3587.namprd12.prod.outlook.com (2603:10b6:408:43::13)
- by CY4PR12MB1352.namprd12.prod.outlook.com (2603:10b6:903:3a::13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.26; Mon, 28 Feb
- 2022 20:07:16 +0000
-Received: from BN8PR12MB3587.namprd12.prod.outlook.com
- ([fe80::e03f:901a:be6c:b581]) by BN8PR12MB3587.namprd12.prod.outlook.com
- ([fe80::e03f:901a:be6c:b581%6]) with mapi id 15.20.5017.027; Mon, 28 Feb 2022
- 20:07:16 +0000
-Message-ID: <282f0f8d-f491-26fc-6ae0-604b367a5a1a@amd.com>
-Date: Mon, 28 Feb 2022 21:07:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
+ id 1nOnrK-00009l-Bj; Mon, 28 Feb 2022 21:47:12 +0000
+Received: by mail-ed1-f54.google.com with SMTP id p4so4399911edi.1;
+ Mon, 28 Feb 2022 13:47:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
+ h=mime-version:subject:from:in-reply-to:date:cc
+ :content-transfer-encoding:message-id:references:to;
+ bh=U6qUODqKVLrC7qZqs553HfNOTdovwKFxE93drAu/Dlk=;
+ b=DcAOXNn/ViLnmA/Pl4xJfWkhBybquVghVb27ULjvzphMd1cBlP8EnT2avc3nlq8Ncp
+ XU0OlwqVPcxmpQGfXIX8cDSYeDqzQFDIjUJw6vYkNcJJHsbpQaotozEaUyIGD250VuoD
+ 60I5wOFshLHgsaHS54p/JatmHLrrllGTo/egDJjxoeGmck3vK6ZaE0ldZN4szqLK845U
+ BQNwjpOC8zhohOQR/VOEr6j/DtNOqZN6I6F48XJrq+10cNhH40s7WdjZ8f4gJpCeR9JY
+ suF4D0bui+heOiMd0XjHUkKuJX/fj0a+j8l22tTUgDxT9LwW7gkDbHU26uOV2JCB+l1v
+ aZYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+ :content-transfer-encoding:message-id:references:to;
+ bh=U6qUODqKVLrC7qZqs553HfNOTdovwKFxE93drAu/Dlk=;
+ b=4BXN5DwKb8RvvFdQsbvJ+xEYFyL45evqBHxUtafvXmbopZRUvR2fLwX6VReHqmxIQD
+ 2VjBqXawk2WYX9PRVG3wgtgt6dT4an2iP5vqRr29PAyXvKKIsX95aMwrgz9SwAOofkh4
+ 4bvc4UiCZ8I9w2wRe3EInDXMkdPsWRKxDqAMTY0OpQYJ8C20Ht5kqc53mpBKohXt+TbI
+ 11sGVajdKK+zqMsECh5dCVJXimkSCh48/ZQxBapkd1xlnhArx0TCBBwILKMPbmhMCPNF
+ H1wcKGpYinJWxrlQ31WrYCvSgTLN3pQ+ul7zYVC/qVDYzTA4WyKvO1KoLhh4HvOr0qeS
+ RHxA==
+X-Gm-Message-State: AOAM5338C1TPb/hywKQF8nt6J0DzED8f5a7jloalN/C49+XSOCXWC0dC
+ +78PFkE71lckESni9l4Fttk=
+X-Google-Smtp-Source: ABdhPJxKG2ff16tCWsK6Ck3Y2a57p3q44AgnQUgUMRZ3ajKrFkwS/Wlp6PHXO9g9MP9OhOujc97TPw==
+X-Received: by 2002:a05:6402:40d0:b0:412:f86a:efd1 with SMTP id
+ z16-20020a05640240d000b00412f86aefd1mr21791110edb.194.1646084823834; 
+ Mon, 28 Feb 2022 13:47:03 -0800 (PST)
+Received: from smtpclient.apple ([2a02:8109:9d80:3f6c:957a:1d13:c949:d1f3])
+ by smtp.gmail.com with ESMTPSA id
+ ce7-20020a170906b24700b006cf095c2f5bsm4701847ejb.83.2022.02.28.13.47.01
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Mon, 28 Feb 2022 13:47:03 -0800 (PST)
+Mime-Version: 1.0 (Mac OS X Mail 15.0 \(3693.60.0.1.1\))
+From: Jakob Koschel <jakobkoschel@gmail.com>
+In-Reply-To: <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
+Date: Mon, 28 Feb 2022 22:47:00 +0100
+Message-Id: <FC710A1A-524E-481B-A668-FC258F529A2E@gmail.com>
 References: <20220228110822.491923-1-jakobkoschel@gmail.com>
  <20220228110822.491923-3-jakobkoschel@gmail.com>
  <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
  <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
-X-ClientProxiedBy: AM6P195CA0084.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:209:86::25) To BN8PR12MB3587.namprd12.prod.outlook.com
- (2603:10b6:408:43::13)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4780f435-f0f8-4e6e-4169-08d9faf5eaa6
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1352:EE_
-X-Microsoft-Antispam-PRVS: <CY4PR12MB1352374DF851D24C14A1673183019@CY4PR12MB1352.namprd12.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WfwKM4Ph3ffnU0p23PH6MmiWNssrAz4krll5evTSfx5ow0w1waswCyvqds83nXv/vKDqYeZ4nJPcE+5c6efbm9H+KF/V2vkIMjot7L3c4MJ2NUhhEHsU61Ft6hDBrl1jcnh9EapZmPmwTsw6ESVHpQs83QWblnrflHE+8n0pBPJGvO3BeOdLsq6sLykuPS1jfG+7mtvc1cC2b1biubmL14GLB/Sibk/qCZsfJd+KpT79kHhBzhYli4e6xf6Wf1XCotcM5PIbpVyqjZVKnKalewT7P85o/5nImHgkRdBqjmpldKbagBWNo3eLeex+hQocJ+uVVSXcSY7JFayKRxGcjUSrsgMDZrXESXUUKqA2mcVUrfGKkMgocWawoVlaIc8zSfyMrNNe3nWuqcEl1nUJv4F1V5m9d4aOTKdWVZb54C0D9BwOD0vvihgr/d8C1eTPDO8I+2XuopCbxIp48N14+nqKgxqddT9BQavA6sWNymzE8JSwtOP120c3NQbuDtR+2v/o2/9Bmx4GJDnVOim+gwVs91eOOaI51wF7Cfho1hyg5C8uiYQPM6RQIxlrMbnSX2DiyJmm7nOua0x6ZP0Vf9uP9VSnVikg0lwLJsx/nXxnp4VUactFuFQvm+o20VuEseTDTm8ixZYbdKCR2VF37spoXVt05gbXrIjEYGT1QRdZxRJAOxMWU/f0TemCgmhtJDDJ8n2ceV4KZQ7pwCR8VpLyLtZo05+32aCrevz7uZ8=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:BN8PR12MB3587.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230001)(4636009)(366004)(7406005)(86362001)(7366002)(7416002)(5660300002)(31696002)(2616005)(8936002)(316002)(6512007)(8676002)(66556008)(66476007)(66946007)(4326008)(2906002)(186003)(6506007)(53546011)(36756003)(66574015)(6486002)(6666004)(6916009)(83380400001)(508600001)(54906003)(38100700002)(31686004)(43740500002)(45980500001);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NVk3ZlI0aHd3U2MzRTQ0QkwvaWlpT1JkYWNicURJVHg1U3BkTWNEbjhxamVK?=
- =?utf-8?B?QWRpaER3c01nNWcwcXBWTjRqeDQyYVJjR01sZFUrd0FKbCswZXRYc2luTWRr?=
- =?utf-8?B?M3BRcmp2MmtvUEVxUEdJSU1YbXUvY3l2T0VlbW04TFVkM3ZVU0NacEJvOFMx?=
- =?utf-8?B?UjkxWGRjNVgxcENNZFFFTFJUbHA1Mzg1WStJMzRDb21zcUNmMitra3lES1Nj?=
- =?utf-8?B?dWxXV25UQW1NTHhKRnpweCsxZldJWGRmc3NwSU1ldFlmZnhaY3ZLbmNNSktv?=
- =?utf-8?B?a3RpQ2VhQUZDbTkyQTdRVkd6K09STzZTQ040TFU1NDZ6c3NBamFnQ3JWN3JR?=
- =?utf-8?B?R0taZkgwQzc0Q3VKRDJ5d21lNmdNRWtCNmlEVS9HRko3RXFNdzNReE4rVUVM?=
- =?utf-8?B?ZllFWDNjK3B5Wml4N0twOVNqOURNSXpNMVVra1hibUw0S2o5dnlIQzQzL2xh?=
- =?utf-8?B?QUY5WGZhODlMQXcxUTBDMGtBTjdsUHp1UFBlQVJBQUV2NklCMi92TEMzaS9O?=
- =?utf-8?B?Mmgra1dvQVh4SUoybk9IUzVSTWVlUTJaUnM1UmlhRE0vM0J5TWIrRldsNjhO?=
- =?utf-8?B?T0EvbFZlTHNWUnIxRkVIVllMTFRjTWhXTFNEQXJLZnNtSVcvaWthRHRLN3RJ?=
- =?utf-8?B?dTZtNzhuTSs4YXJhNDJLTHhnUThLSWE0VS9VSGlzQTFoN3AwSGR5RTNLWklk?=
- =?utf-8?B?aklyWXZyQ21pWFIwaGNJQW1wc2R4RGx2UDczeDJqcXh1S253WFhqVm9DeGt0?=
- =?utf-8?B?cUZncHozM0VOYllMWXdnaWRSNDhFczlIKzZVd1Fia1Q4b1M4T0hyQVIxTVdp?=
- =?utf-8?B?a0tFZzBzY1ZEemlqM2JmR1UrSlhoeDdLSUQ4c0VnaDMxZDJRS3hVM0I0dXlP?=
- =?utf-8?B?MGVzeVhzTlU1U0VSN0tBOC9CcUVkQjk5bm53STJsVFRBKzVoQVdUSUVmTDZm?=
- =?utf-8?B?UjBMYmIzR3VTWWszR2JtN0padGQyNitIbTlONXdPbUlsa1J4ckpEYnlRYlEv?=
- =?utf-8?B?WStUT2VxTHRWQmpVTDdlZ3pPWktOT1djUkU1QkhyK1lzeFJqOEJsWEFDcXpE?=
- =?utf-8?B?ZndXZE9saWpOMXBrUEtFbW0vZWpNNzY0ME1JNkp2NUZtNUtYMnY0eDlOWmFM?=
- =?utf-8?B?RlhQQzA1WXgrOG0yUUE4K0FOVkpIalp0RVF5WDYzbzlkcHNkb3ZNck5ZelpZ?=
- =?utf-8?B?bFBqeHVWekdheTRrL25YVG14OXdoNldjQkpkSTJIZ3l2aE05RDRaUThHNU1F?=
- =?utf-8?B?TGxBU1hIaHJIL3l5dVZsYVZNYTRyVDNJektucmlndUw0bFpVYkxTdGVCZURt?=
- =?utf-8?B?R082dmllRUlwYWY1SFlXYWVlSUErc3h2TkVSWXFYbWFMa1p4bFJLeUQvbUlB?=
- =?utf-8?B?Tm9WWjNWck9Nc2czQjJJajRDM2VvWG5BVWkyVGdxN1Y1YW51T2VFbjB4TmJK?=
- =?utf-8?B?V3BzNkpPaWpWemNRMlo0Zmpzdkt1MkJPQ1ZjOTRhTUZuSU9vQ0VlZkc0SHRy?=
- =?utf-8?B?VllCelFZSExvNEU5eW42SkoyOWZoc2RwLzFvaFZrVk5TYlZpeWllYi9DVDdF?=
- =?utf-8?B?VWJUZW02SU9hUjNud0RGdFhHS2VCVndtem1ycWtEVzFWY1dJT1JQb2lSRG9K?=
- =?utf-8?B?YTdOYVVINmNwOUVqZHREdTJyTnVWQ0p2Q2hPcEVyVHp1TzdXU2lPQ2NIWFcz?=
- =?utf-8?B?Z0xsNEo5VkVnSjlHb1c3Y3lvVGVtbjduOVJqRWlMRU02ZXBzZkdodkQ5Qjgw?=
- =?utf-8?B?SWRwZWlGckFDaG1zeEdoOHoramREZElwY1gwTW94V0daOGJDMUVDb1RocVVZ?=
- =?utf-8?B?T3daenQwci9BS08vUkhMR2tyaldua2dHUDNwV3IyaU90SC94eEp6a0h5a2hi?=
- =?utf-8?B?cGwvdkMySkY1Y3RZcEZzWkZQVGZEK280TnhaeTFMODlLdWNPUW9SVGZYNDZP?=
- =?utf-8?B?M3o4eHMxMWxlck13OHdWTEpMRnBuVDhMTUJkM244S2YrS3RPZ1RFR0NxNjA0?=
- =?utf-8?B?WFYxM1psMUpEWmpUYVVZdzk2alNEN3V5RmJaUzdGelcxVVp3TFlLVjFlWklJ?=
- =?utf-8?B?eFJIbHcwRjdRZ2pRK0lkbStvQ3I5MVNJWlUzM0g4N0lWTktxTDRySmZDZ1Yv?=
- =?utf-8?B?Yit3VlkwT0NvQ0RqODM0SjlyNVk1cTRrYjRUUDRROFBlZXkzdkh0Umk1V09L?=
- =?utf-8?Q?8uoT/2QhUUvglQjhlKjPyEE=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4780f435-f0f8-4e6e-4169-08d9faf5eaa6
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3587.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2022 20:07:16.2675 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9i/3JKdvHOc+ANDAjhzus2inu3JjqQ65q85KPxov4Nf4LQL0qSpalNxmpuhhtHy3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1352
-X-Headers-End: 1nOnlP-0008D6-1i
+ <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
+ <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+X-Mailer: Apple Mail (2.3693.60.0.1.1)
+X-Headers-End: 1nOnrK-00009l-Bj
 Subject: Re: [f2fs-dev] [PATCH 2/6] treewide: remove using list iterator
  after loop body as a ptr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -153,20 +99,18 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
 Cc: linux-wireless <linux-wireless@vger.kernel.org>,
  alsa-devel@alsa-project.org, KVM list <kvm@vger.kernel.org>,
  "Gustavo A. R. Silva" <gustavo@embeddedor.com>, linux-iio@vger.kernel.org,
  nouveau@lists.freedesktop.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
  dri-devel <dri-devel@lists.freedesktop.org>,
- Cristiano Giuffrida <c.giuffrida@vu.nl>, "Bos, H.J." <h.j.bos@vu.nl>,
+ Cristiano Giuffrida <c.giuffrida@vu.nl>,
+ amd-gfx list <amd-gfx@lists.freedesktop.org>,
  linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
  linux-arch <linux-arch@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>,
  linux-aspeed@lists.ozlabs.org, linux-scsi <linux-scsi@vger.kernel.org>,
- linux-rdma <linux-rdma@vger.kernel.org>, linux-staging@lists.linux.dev,
- amd-gfx list <amd-gfx@lists.freedesktop.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-rdma <linux-rdma@vger.kernel.org>, linux-staging@lists.linux.dev, "Bos,
+ H.J." <h.j.bos@vu.nl>, Jason Gunthorpe <jgg@ziepe.ca>,
  intel-wired-lan@lists.osuosl.org, kgdb-bugreport@lists.sourceforge.net,
  bcm-kernel-feedback-list@broadcom.com,
  Dan Carpenter <dan.carpenter@oracle.com>,
@@ -177,7 +121,7 @@ Cc: linux-wireless <linux-wireless@vger.kernel.org>,
  Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
  Nathan Chancellor <nathan@kernel.org>, dma <dmaengine@vger.kernel.org>,
  Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Jakob Koschel <jakobkoschel@gmail.com>, v9fs-developer@lists.sourceforge.net,
+ v9fs-developer@lists.sourceforge.net,
  linux-tegra <linux-tegra@vger.kernel.org>,
  Thomas Gleixner <tglx@linutronix.de>,
  Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -190,53 +134,71 @@ Cc: linux-wireless <linux-wireless@vger.kernel.org>,
  Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
  linux-fsdevel <linux-fsdevel@vger.kernel.org>,
  linux-mediatek@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Mike Rapoport <rppt@kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Mike Rapoport <rppt@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-QW0gMjguMDIuMjIgdW0gMjA6NTYgc2NocmllYiBMaW51cyBUb3J2YWxkczoKPiBPbiBNb24sIEZl
-YiAyOCwgMjAyMiBhdCA0OjE5IEFNIENocmlzdGlhbiBLw7ZuaWcKPiA8Y2hyaXN0aWFuLmtvZW5p
-Z0BhbWQuY29tPiB3cm90ZToKPj4gSSBkb24ndCB0aGluayB0aGF0IHVzaW5nIHRoZSBleHRyYSB2
-YXJpYWJsZSBtYWtlcyB0aGUgY29kZSBpbiBhbnkgd2F5Cj4+IG1vcmUgcmVsaWFibGUgb3IgZWFz
-aWVyIHRvIHJlYWQuCj4gU28gSSB0aGluayB0aGUgbmV4dCBzdGVwIGlzIHRvIGRvIHRoZSBhdHRh
-Y2hlZCBwYXRjaCAod2hpY2ggcmVxdWlyZXMKPiB0aGF0ICItc3RkPWdudTExIiB0aGF0IHdhcyBk
-aXNjdXNzZWQgaW4gdGhlIG9yaWdpbmFsIHRocmVhZCkuCj4KPiBUaGF0IHdpbGwgZ3VhcmFudGVl
-IHRoYXQgdGhlICdwb3MnIHBhcmFtZXRlciBvZiBsaXN0X2Zvcl9lYWNoX2VudHJ5KCkKPiBpcyBv
-bmx5IHVwZGF0ZWQgSU5TSURFIHRoZSBmb3JfZWFjaF9saXN0X2VudHJ5KCkgbG9vcCwgYW5kIGNh
-biBuZXZlcgo+IHBvaW50IHRvIHRoZSAod3JvbmdseSB0eXBlZCkgaGVhZCBlbnRyeS4KPgo+IEFu
-ZCBJIHdvdWxkIGFjdHVhbGx5IGhvcGUgdGhhdCBpdCBzaG91bGQgYWN0dWFsbHkgY2F1c2UgY29t
-cGlsZXIKPiB3YXJuaW5ncyBhYm91dCBwb3NzaWJseSB1bmluaXRpYWxpemVkIHZhcmlhYmxlcyBp
-ZiBwZW9wbGUgdGhlbiB1c2UgdGhlCj4gJ3BvcycgcG9pbnRlciBvdXRzaWRlIHRoZSBsb29wLiBF
-eGNlcHQKPgo+ICAgKGEpIHRoYXQgY29kZSBpbiBzZ3gvZW5jbC5jIGN1cnJlbnRseSBpbml0aWFs
-aXplcyAndG1wJyB0byBOVUxMIGZvcgo+IGluZXhwbGljYWJsZSByZWFzb25zIC0gcG9zc2libHkg
-YmVjYXVzZSBpdCBhbHJlYWR5IGV4cGVjdGVkIHRoaXMKPiBiZWhhdmlvcgo+Cj4gICAoYikgd2hl
-biBJIHJlbW92ZSB0aGF0IE5VTEwgaW5pdGlhbGl6ZXIsIEkgc3RpbGwgZG9uJ3QgZ2V0IGEgd2Fy
-bmluZywKPiBiZWNhdXNlIHdlJ3ZlIGRpc2FibGVkIC1Xbm8tbWF5YmUtdW5pbml0aWFsaXplZCBz
-aW5jZSBpdCByZXN1bHRzIGluIHNvCj4gbWFueSBmYWxzZSBwb3NpdGl2ZXMuCj4KPiBPaCB3ZWxs
-Lgo+Cj4gQW55d2F5LCBnaXZlIHRoaXMgcGF0Y2ggYSBsb29rLCBhbmQgYXQgbGVhc3QgaWYgaXQn
-cyBleHBhbmRlZCB0byBkbwo+ICIocG9zKSA9IE5VTEwiIGluIHRoZSBlbnRyeSBzdGF0ZW1lbnQg
-Zm9yIHRoZSBmb3ItbG9vcCwgaXQgd2lsbCBhdm9pZAo+IHRoZSBIRUFEIHR5cGUgY29uZnVzaW9u
-IHRoYXQgSmFrb2IgaXMgd29ya2luZyBvbi4gQW5kIEkgdGhpbmsgaW4gYQo+IGNsZWFuZXIgd2F5
-IHRoYW4gdGhlIGhvcnJpZCBnYW1lcyBoZSBwbGF5cy4KPgo+IChCdXQgaXQgd29uJ3QgYXZvaWQg
-cG9zc2libGUgQ1BVIHNwZWN1bGF0aW9uIG9mIHN1Y2ggdHlwZSBjb25mdXNpb24uCj4gVGhhdCwg
-aW4gbXkgb3BpbmlvbiwgaXMgYSBjb21wbGV0ZWx5IGRpZmZlcmVudCBpc3N1ZSkKClllcywgY29t
-cGxldGVseSBhZ3JlZS4KCj4gSSBkbyB3aXNoIHdlIGNvdWxkIGFjdHVhbGx5IHBvaXNvbiB0aGUg
-J3BvcycgdmFsdWUgYWZ0ZXIgdGhlIGxvb3AKPiBzb21laG93IC0gYnV0IGNsZWFybHkgdGhlICJt
-aWdodCBiZSB1bmluaXRpYWxpemVkIiBJIHdhcyBob3BpbmcgZm9yCj4gaXNuJ3QgdGhlIHdheSB0
-byBkbyBpdC4KPgo+IEFueWJvZHkgaGF2ZSBhbnkgaWRlYXM/CgpJIHRoaW5rIHdlIHNob3VsZCBs
-b29rIGF0IHRoZSB1c2UgY2FzZXMgd2h5IGNvZGUgaXMgdG91Y2hpbmcgKHBvcykgYWZ0ZXIgCnRo
-ZSBsb29wLgoKSnVzdCBmcm9tIHNraW1taW5nIG92ZXIgdGhlIHBhdGNoZXMgdG8gY2hhbmdlIHRo
-aXMgYW5kIGV4cGVyaWVuY2Ugd2l0aCAKdGhlIGRyaXZlcnMvc3Vic3lzdGVtcyBJIGhlbHAgdG8g
-bWFpbnRhaW4gSSB0aGluayB0aGUgcHJpbWFyeSBwYXR0ZXJuIApsb29rcyBzb21ldGhpbmcgbGlr
-ZSB0aGlzOgoKbGlzdF9mb3JfZWFjaF9lbnRyeShlbnRyeSwgaGVhZCwgbWVtYmVyKSB7CiDCoMKg
-wqAgaWYgKHNvbWVfY29uZGl0aW9uX2NoZWNraW5nKGVudHJ5KSkKIMKgwqDCoCDCoMKgwqAgYnJl
-YWs7Cn0KZG9fc29tZXRoaW5nX3dpdGgoZW50cnkpOwoKU28gdGhlIHNvbHV0aW9uIHNob3VsZCBw
-cm9iYWJseSBub3QgYmUgdG8gY2hhbmdlIGFsbCB0aG9zZSB1c2UgY2FzZXMgdG8gCnVzZSBtb3Jl
-IHRlbXBvcmFyeSB2YXJpYWJsZXMsIGJ1dCByYXRoZXIgdG8gYWRkIGEgbGlzdF9maW5kX2VudHJ5
-KC4uLiwgCmNvbmRpdGlvbikgbWFjcm8gYW5kIGNvbnNpc3RlbnRseSB1c2UgdGhhdCBvbmUgaW5z
-dGVhZC4KClJlZ2FyZHMsCkNocmlzdGlhbi4KCj4KPiAgICAgICAgICAgICAgICAgIExpbnVzCgoK
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYy
-ZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
-ZnMtZGV2ZWwK
+
+
+> On 28. Feb 2022, at 21:10, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> 
+> On Mon, Feb 28, 2022 at 12:03 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> 
+>> Side note: we do need *some* way to do it.
+> 
+> Ooh.
+> 
+> This patch is a work of art.
+> 
+> And I mean that in the worst possible way.
+> 
+> We can do
+> 
+>        typeof(pos) pos
+> 
+> in the 'for ()' loop, and never use __iter at all.
+> 
+> That means that inside the for-loop, we use a _different_ 'pos' than outside.
+> 
+> And then the compiler will not see some "might be uninitialized", but
+> the outer 'pos' *will* be uninitialized.
+> 
+> Unless, of course, the outer 'pos' had that pointless explicit initializer.
+
+The goal of this is to get compiler warnings right? This would indeed be great.
+
+Changing the list_for_each_entry() macro first will break all of those cases
+(e.g. the ones using 'list_entry_is_head()).
+I assumed it is better to fix those cases first and then have a simple
+coccinelle script changing the macro + moving the iterator into the scope
+of the macro.
+
+> 
+> Here - can somebody poke holes in this "work of art" patch?
+
+With this you are no longer able to set the 'outer' pos within the list
+iterator loop body or am I missing something? Like this it stays
+uninitialized but you'll probably want to set it from within the loop.
+
+You would then yet again need a variable with another name to use
+after the loop.
+
+I fail to see how this will make most of the changes in this
+patch obsolete (if that was the intention).
+
+> 
+>                     Linus
+> <patch.diff>
+
+- Jakob
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
