@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 15FBCC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Mar 2022 18:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 99801C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  1 Mar 2022 18:40:44 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nP6pi-0004qT-IW; Tue, 01 Mar 2022 18:02:45 +0000
+	id 1nP7QR-00065D-3c; Tue, 01 Mar 2022 18:40:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <gregkh@linuxfoundation.org>)
- id 1nP6pg-0004q0-50; Tue, 01 Mar 2022 18:02:43 +0000
+ (envelope-from <keescook@chromium.org>) id 1nP7QP-000657-IQ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Mar 2022 18:40:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=q0mocXxs/hTWdpmj3649SnJmiH/FUx/LJdt69H4diXQ=; b=JUlSuBllyHrZheynbzIrL5HkFX
- CHuQRRWUKDwbkBatu3xNY1+Qc66qOPUBKw2Qk6f4ViXFttPRbgCF7zjDk5b2uHgdx8SKq4QEistzT
- Prn39moGIgkm25+BgVK5j7QGFIi2uoUiiPo70PKpcH5YgsViYe9lmMwHiRSAF8mbu3tw=;
+ bh=N36sF4HUer+rUuc5VxWx2NxZT2Mje9G1bKhkVtQFmow=; b=PF91I/UXk5waEqFGU4fFMpji+d
+ gBl0B35FCQZ4eqVG0K6+bjOCUnsuGi6y2ki+j4Xrfb7qiiIY4hpLzfjTpyf6vRq4Tpsx8gig0FbGy
+ YmsRcixtmaURd2dYjbJmVkpgokDVU9ys4MwQFH1xukcz4NyZR7nAHg1j4JmzULjb5v/E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -31,39 +31,64 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=q0mocXxs/hTWdpmj3649SnJmiH/FUx/LJdt69H4diXQ=; b=k1fWnJlE1O0UqdUonfQSI2vbrp
- MNfwb4EdReC3ZO8g48+c7Mov38vHJ2Dw0JgzUBYUOCwFzt271W7y3G3yAg4uKstB7hFRS6rIrK0Ai
- DqvoNMmPkGSE0yCtnf2rkztQlyDMIWu3Wu5gqtean7xOqwpX3/e0Zw2pOjmZGga3cu1I=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nP6pa-001X82-NM; Tue, 01 Mar 2022 18:02:42 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 531B4B81BE7;
- Tue,  1 Mar 2022 17:37:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 071ADC340EE;
- Tue,  1 Mar 2022 17:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
- s=korg; t=1646156241;
- bh=pTV2MFZ+7d07p5uTbhq3otIc2cmXwQTMtR9OmiTt6ws=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=kpCJZz+2kmNYzjHFDfNSN8QomXtdcPSo3VhSYDe/9DvnLjw6+Gf8JZk1Z8B7/MpEr
- 7jyq5w6VtMe9h/eDSvv1UXjGNGEtGZwH42GPuJGwpwQgnv9I5iH7DWZlof3+dZGTFm
- esB5bRgUOyJTALvSP9KXHdoyU5cCbTmKTmS3YsdQ=
-Date: Tue, 1 Mar 2022 18:37:16 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jakob Koschel <jakobkoschel@gmail.com>
-Message-ID: <Yh5ZzNQQQE8rIexy@kroah.com>
+ bh=N36sF4HUer+rUuc5VxWx2NxZT2Mje9G1bKhkVtQFmow=; b=HJ8OR7y61q3UJXqhhXiwzK6Crx
+ c7i5OHns6QKnKYY538bLNb0rZBIg3f6WpAtsCpZz5dYNChz7veDK2eR7k9qPwgPAhC/fGwCnowVGW
+ ZqlXonwuIQ13tMaWcGV0kcMI/Gwe7irIWgytsCGBoBfxhFdkiIwYlUpPoacT8VSipkWc=;
+Received: from mail-pl1-f171.google.com ([209.85.214.171])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
+ id 1nP7QJ-0003mr-V5
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 01 Mar 2022 18:40:39 +0000
+Received: by mail-pl1-f171.google.com with SMTP id c9so14212912pll.0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 01 Mar 2022 10:40:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chromium.org; s=google;
+ h=date:from:to:cc:subject:message-id:references:mime-version
+ :content-disposition:in-reply-to;
+ bh=N36sF4HUer+rUuc5VxWx2NxZT2Mje9G1bKhkVtQFmow=;
+ b=O9Pc4FRhQaHO8JwtvKmEa7P/p93QhIWPziYnJxBP3SmXkKfXwbS/+UXcAcizlZe2qE
+ 5++D1AzgFSiNA6GVcHz58RghXwcZj0T+stAg2S8I6BdGwjnEpqEP1SHJlTJIwhdk7I/A
+ Km+JuAoSqO/aabb7J1BxN3aslickTdbOZI2Hw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+ :mime-version:content-disposition:in-reply-to;
+ bh=N36sF4HUer+rUuc5VxWx2NxZT2Mje9G1bKhkVtQFmow=;
+ b=7f9t+Kg43NWvEBqfWlatqbeAqwrwXyz2rpBBGOfvftmNSf11OH95PSzquO4J72zItD
+ VFlwJvwNCV5CdgRCfesogslN/UulHkTmEev8RSVbZYUp98/YPHivtDrV5Cx8hPCRcm7U
+ Pmd3o1VdDfra/8zSskbzIpHE26qvCd1Co5mwxmPmI8x2RSZ++P5UCVfNO+5yraujAuXG
+ HCiz5P/mTZ+FyNazLDHaLFL9F3x85BNcEdn0OZk5m0/ad52TrAcTZDZFPoLxG0qX/5c6
+ KLNBmOHMWNspNpNSjNbnbRyg56bL8g/eF2dLAwdysOrJCu1tpsEJz1ZeBp7LRPWfDfd4
+ YmUw==
+X-Gm-Message-State: AOAM533FVu0EE0il0rkpy70bU47K4ks3AW85VN2Y3dtQa3bCayMW2jLI
+ z57Xe3SjfRAC9bstHFNt7AtkHZftT+TLgQ==
+X-Google-Smtp-Source: ABdhPJwl/oZl7jTR8Xbiy0diMdVywUoBtjuUV8iCsVjT5dJdX8x+nPRIiFjmEv3Xm0s1V2wXWPjOfA==
+X-Received: by 2002:a62:d156:0:b0:4cd:fd21:e406 with SMTP id
+ t22-20020a62d156000000b004cdfd21e406mr28741951pfl.44.1646158448831; 
+ Tue, 01 Mar 2022 10:14:08 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+ by smtp.gmail.com with ESMTPSA id
+ nn10-20020a17090b38ca00b001bc3a60b324sm2540095pjb.46.2022.03.01.10.14.08
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 01 Mar 2022 10:14:08 -0800 (PST)
+Date: Tue, 1 Mar 2022 10:14:07 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <202203011008.AA0B5A2D@keescook>
 References: <20220228110822.491923-1-jakobkoschel@gmail.com>
  <20220228110822.491923-3-jakobkoschel@gmail.com>
- <Yhyv42ONIxTj04mg@kroah.com>
- <79FCD5F4-0EBA-4E3F-8B3F-D450BBA10367@gmail.com>
+ <2e4e95d6-f6c9-a188-e1cd-b1eae465562a@amd.com>
+ <CAHk-=wgQps58DPEOe4y5cTh5oE9EdNTWRLXzgMiETc+mFX7jzw@mail.gmail.com>
+ <CAHk-=wj8fkosQ7=bps5K+DDazBXk=ypfn49A0sEq+7-nZnyfXA@mail.gmail.com>
+ <CAHk-=wiTCvLQkHcJ3y0hpqH7FEk9D28LDvZZogC6OVLk7naBww@mail.gmail.com>
+ <Yh0tl3Lni4weIMkl@casper.infradead.org>
+ <CAHk-=wgBfJ1-cPA2LTvFyyy8owpfmtCuyiZi4+um8DhFNe+CyA@mail.gmail.com>
+ <Yh1aMm3hFe/j9ZbI@casper.infradead.org>
+ <CAHk-=wi0gSUMBr2SVF01Gy1xC1w1iGtJT5ztju9BPWYKjdh+NA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <79FCD5F4-0EBA-4E3F-8B3F-D450BBA10367@gmail.com>
-X-Headers-End: 1nP6pa-001X82-NM
+In-Reply-To: <CAHk-=wi0gSUMBr2SVF01Gy1xC1w1iGtJT5ztju9BPWYKjdh+NA@mail.gmail.com>
+X-Headers-End: 1nP7QJ-0003mr-V5
 Subject: Re: [f2fs-dev] [PATCH 2/6] treewide: remove using list iterator
  after loop body as a ptr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -77,92 +102,66 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: alsa-devel@alsa-project.org, linux-aspeed@lists.ozlabs.org,
+Cc: linux-wireless <linux-wireless@vger.kernel.org>,
+ alsa-devel@alsa-project.org, KVM list <kvm@vger.kernel.org>,
  "Gustavo A. R. Silva" <gustavo@embeddedor.com>, linux-iio@vger.kernel.org,
  nouveau@lists.freedesktop.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- dri-devel@lists.freedesktop.org, Cristiano Giuffrida <c.giuffrida@vu.nl>,
- amd-gfx@lists.freedesktop.org, samba-technical@lists.samba.org,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ Cristiano Giuffrida <c.giuffrida@vu.nl>, Matthew Wilcox <willy@infradead.org>,
  linux1394-devel@lists.sourceforge.net, drbd-dev@lists.linbit.com,
- linux-arch <linux-arch@vger.kernel.org>, linux-cifs@vger.kernel.org,
- kvm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-staging@lists.linux.dev, "Bos, H.J." <h.j.bos@vu.nl>,
- Jason Gunthorpe <jgg@ziepe.ca>, intel-wired-lan@lists.osuosl.org,
- kgdb-bugreport@lists.sourceforge.net, bcm-kernel-feedback-list@broadcom.com,
- Dan Carpenter <dan.carpenter@oracle.com>, linux-media@vger.kernel.org,
- Kees Cook <keescook@chromium.org>, Arnd Bergman <arnd@arndb.de>,
- linux-pm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
- Nathan Chancellor <nathan@kernel.org>, linux-fsdevel@vger.kernel.org,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- v9fs-developer@lists.sourceforge.net, linux-tegra@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>,
+ linux-arch <linux-arch@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>,
  Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-arm-kernel@lists.infradead.org, linux-sgx@vger.kernel.org,
- linux-block@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
- linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-aspeed@lists.ozlabs.org, linux-scsi <linux-scsi@vger.kernel.org>,
+ linux-rdma <linux-rdma@vger.kernel.org>, linux-staging@lists.linux.dev,
+ amd-gfx list <amd-gfx@lists.freedesktop.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ intel-wired-lan@lists.osuosl.org, kgdb-bugreport@lists.sourceforge.net,
+ bcm-kernel-feedback-list@broadcom.com,
+ Dan Carpenter <dan.carpenter@oracle.com>,
+ Linux Media Mailing List <linux-media@vger.kernel.org>,
+ Arnd Bergman <arnd@arndb.de>, Linux PM <linux-pm@vger.kernel.org>,
+ intel-gfx <intel-gfx@lists.freedesktop.org>, "Bos, H.J." <h.j.bos@vu.nl>,
+ Nathan Chancellor <nathan@kernel.org>, dma <dmaengine@vger.kernel.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Jakob Koschel <jakobkoschel@gmail.com>, v9fs-developer@lists.sourceforge.net,
+ linux-tegra <linux-tegra@vger.kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-sgx@vger.kernel.org,
+ linux-block <linux-block@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
+ linux-usb@vger.kernel.org, samba-technical@lists.samba.org,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, tipc-discussion@lists.sourceforge.net,
- linux-crypto@vger.kernel.org, netdev@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-mediatek@lists.infradead.org,
- Andrew Morton <akpm@linux-foundation.org>, linuxppc-dev@lists.ozlabs.org,
+ Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>,
+ tipc-discussion@lists.sourceforge.net,
+ Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ linux-mediatek@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
  Mike Rapoport <rppt@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Feb 28, 2022 at 01:06:57PM +0100, Jakob Koschel wrote:
-> 
-> 
-> > On 28. Feb 2022, at 12:20, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > 
-> > On Mon, Feb 28, 2022 at 12:08:18PM +0100, Jakob Koschel wrote:
-> >> If the list does not contain the expected element, the value of
-> >> list_for_each_entry() iterator will not point to a valid structure.
-> >> To avoid type confusion in such case, the list iterator
-> >> scope will be limited to list_for_each_entry() loop.
-> >> 
-> >> In preparation to limiting scope of a list iterator to the list traversal
-> >> loop, use a dedicated pointer to point to the found element.
-> >> Determining if an element was found is then simply checking if
-> >> the pointer is != NULL.
-> >> 
-> >> Signed-off-by: Jakob Koschel <jakobkoschel@gmail.com>
-> >> ---
-> >> arch/x86/kernel/cpu/sgx/encl.c       |  6 +++--
-> >> drivers/scsi/scsi_transport_sas.c    | 17 ++++++++-----
-> >> drivers/thermal/thermal_core.c       | 38 ++++++++++++++++++----------
-> >> drivers/usb/gadget/configfs.c        | 22 ++++++++++------
-> >> drivers/usb/gadget/udc/max3420_udc.c | 11 +++++---
-> >> drivers/usb/gadget/udc/tegra-xudc.c  | 11 +++++---
-> >> drivers/usb/mtu3/mtu3_gadget.c       | 11 +++++---
-> >> drivers/usb/musb/musb_gadget.c       | 11 +++++---
-> >> drivers/vfio/mdev/mdev_core.c        | 11 +++++---
-> >> 9 files changed, 88 insertions(+), 50 deletions(-)
-> > 
-> > The drivers/usb/ portion of this patch should be in patch 1/X, right?
-> 
-> I kept them separate since it's a slightly different case.
-> Using 'ptr' instead of '&ptr->other_member'. Regardless, I'll split
-> this commit up as you mentioned.
-> 
-> > 
-> > Also, you will have to split these up per-subsystem so that the
-> > different subsystem maintainers can take these in their trees.
-> 
-> Thanks for the feedback.
-> To clarify I understand you correctly:
-> I should do one patch set per-subsystem with every instance/(file?)
-> fixed as a separate commit?
+On Mon, Feb 28, 2022 at 04:45:11PM -0800, Linus Torvalds wrote:
+> Really. The "-Wshadow doesn't work on the kernel" is not some new
+> issue, because you have to do completely insane things to the source
+> code to enable it.
 
-Yes, each file needs a different commit as they are usually all written
-or maintained by different people.
+The first big glitch with -Wshadow was with shadowed global variables.
+GCC 4.8 fixed that, but it still yells about shadowed functions. What
+_almost_ works is -Wshadow=local. At first glace, all the warnings
+look solvable, but then one will eventually discover __wait_event()
+and associated macros that mix when and how deeply it intentionally
+shadows variables. :)
 
-As I said in my other response, if you need any help with this, just let
-me know, I'm glad to help.
+Another way to try to catch misused shadow variables is
+-Wunused-but-set-varible, but it, too, has tons of false positives.
 
-thanks,
+I tried to capture some of the rationale and research here:
+https://github.com/KSPP/linux/issues/152
 
-greg k-h
+-- 
+Kees Cook
 
 
 _______________________________________________
