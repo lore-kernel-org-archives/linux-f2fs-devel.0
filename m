@@ -4,71 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 61A3DC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Mar 2022 01:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C1B29C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  7 Mar 2022 07:54:07 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nR2P5-0001oz-GM; Mon, 07 Mar 2022 01:43:14 +0000
+	id 1nR8Bz-0004DJ-Pi; Mon, 07 Mar 2022 07:54:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1nR2P3-0001ot-Jn
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Mar 2022 01:43:12 +0000
+ (envelope-from <jiayang5@huawei.com>) id 1nR8By-0004D6-L9
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Mar 2022 07:54:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=x62ftUyM0wg/9i7HW/XAtqQhW5v9gjc3DAursd8pDNA=; b=Ys3uHVsy5bC31WMcgfvkvHzxoC
- hJljpGrot3QJPPUBCFPe8tHnj3Ah9pZZlUh1Oxies3S8eJnlUASzSg1pZRgQD3swgwDQ6hsPhUWlr
- ucYDn4FJ8G3PRnGFZjw+TZjakOLfNewzjqLwK4NQlBT+6vP3PWig6rQDk1eAGelo2tas=;
+ bh=iJfFzYKgbydt9eP+mDBfvLVw+9lkF/kgraTbnaTDPIg=; b=SgFibD4tfikCUwLT5A/imG9Vyj
+ lX1GXeFiiDYQj/sqvttOvanNL8uFX0dJqOLdTdQ/prN2+LyCB8o5OSTOSLI1xxoPXobuhrVYtoNct
+ NxGNAc9lW0BlRyqYoTmOC5fgewIGQbl1UcGzQVL1Rdq9XRVLWXQt3Ot4Ld8ZogHNx+ww=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=x62ftUyM0wg/9i7HW/XAtqQhW5v9gjc3DAursd8pDNA=; b=F+wtOSNEG/22qkE+v1nT42rS9+
- vkZhqbrP0dxBy0chrqGnsCmFOPxSfJnZHu7JqEifKK1BIPd945ln3ldoaCdRrIQexJ0ccgFV4nH+N
- ChQ5Eyh7M0FchNyYzvdDy/8mr4KZfAcP+KowH4Bj1Fr7UY0pH6JQeCgeskB4/NyG4Ay0=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=iJfFzYKgbydt9eP+mDBfvLVw+9lkF/kgraTbnaTDPIg=; b=O
+ A14l8TZZrqgIUJDP1lK/yKgp4uIq7KCDZQJY42gUsu0FEoEiLCQChDozvDOTpbDUWFVftoeAkoncM
+ b+jzo5315LbWQlYaQmh9HAqY+lWZUcxKuLKSaDaszN8RFHEE6l6c4BrLVdVqDlbn6hrqlUyIdcgwt
+ d/8Izoe/+Igh0rd8=;
+Received: from szxga02-in.huawei.com ([45.249.212.188])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nR2P1-006sSD-4i
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Mar 2022 01:43:11 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 97B4AB80EB7;
- Mon,  7 Mar 2022 01:43:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 054AEC340F5;
- Mon,  7 Mar 2022 01:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1646617383;
- bh=W1sCukf/hiAaVeAsFs6A3j0ipo4YX/zGw7DizbmR3mw=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=oi5UdKMVhoxMyCZBK1L7o8DQCv7wOaaYbnxqOeLGQpjih1QLA3QUzOzMYJsGzHA4R
- ODY5F+vVaZMhKSCHyNCjjfv7GgQZvaYrTEwZBUVJyKUX3MsHVGBlibh5EEArQ/BP8x
- oxeSM8c29m8alg+NWmG/GMwIaJMr8E77zYQ70rvArRhk7I5GzuLK6Jp6x/qTbwLD4b
- qrMUBajh4rlcUojEX+oz+dNkieeeQG3es9E8FvM2QW6BS99G7nsVdgxQzrVLhYUxwb
- qgIoRka76wuxveL7Rk8ez1/bmEM2eRV2KSwpWMgMmsv7ALmmqKSBE9uUGYa1b3Uqdt
- LeiGIHx3xq3XQ==
-Message-ID: <bc67518a-37c9-724d-9a27-d8e9354c5404@kernel.org>
-Date: Mon, 7 Mar 2022 09:42:59 +0800
+ id 1nR8Br-0078eV-Cn
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 07 Mar 2022 07:54:04 +0000
+Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.54])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KBrJY0g4YzBrdQ;
+ Mon,  7 Mar 2022 15:51:57 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Mon, 7 Mar 2022 15:53:50 +0800
+Received: from huawei.com (10.175.124.27) by dggpemm500007.china.huawei.com
+ (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Mon, 7 Mar
+ 2022 15:53:50 +0800
+To: <chao@kernel.org>, <jaegeuk@kernel.org>
+Date: Mon, 7 Mar 2022 16:12:27 +0800
+Message-ID: <20220307081227.1353957-1-jiayang5@huawei.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Content-Language: en-US
-To: Fengnan Chang <fengnanchang@gmail.com>, jaegeuk@kernel.org
-References: <20220305040019.225150-1-fengnanchang@gmail.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20220305040019.225150-1-fengnanchang@gmail.com>
-X-Headers-End: 1nR2P1-006sSD-4i
-Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: fix compress file start atomic
- write may cause data corruption
+X-Originating-IP: [10.175.124.27]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
+X-Headers-End: 1nR8Br-0078eV-Cn
+Subject: [f2fs-dev] [PATCH -next] f2fs: remove unnecessary read for
+ F2FS_FITS_IN_INODE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,61 +73,56 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: changfengnan@vivo.com, linux-f2fs-devel@lists.sourceforge.net
+From: Jia Yang via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jia Yang <jiayang5@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/3/5 12:00, Fengnan Chang wrote:
-> When compressed file has blocks, start atomic write will be failed, but
+F2FS_FITS_IN_INODE only cares the type of f2fs inode, so there
+is no need to read node page of f2fs inode.
 
-You mean f2fs_ioc_start_atomic_write will succeed, but compressed flag
-will be remained in inode?
+Signed-off-by: Jia Yang <jiayang5@huawei.com>
+---
+ fs/f2fs/file.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-> still set FI_ATOMIC_FILE flag, if write partial cluster and commit
-> atomic write will cause data corruption.
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index cfdc41f87f5d..4b93fbec2ec0 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2999,7 +2999,7 @@ static int f2fs_ioc_setproject(struct inode *inode, __u32 projid)
+ {
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct page *ipage;
++	struct f2fs_inode *ri;
+ 	kprojid_t kprojid;
+ 	int err;
+ 
+@@ -3023,17 +3023,11 @@ static int f2fs_ioc_setproject(struct inode *inode, __u32 projid)
+ 	if (IS_NOQUOTA(inode))
+ 		return err;
+ 
+-	ipage = f2fs_get_node_page(sbi, inode->i_ino);
+-	if (IS_ERR(ipage))
+-		return PTR_ERR(ipage);
+ 
+-	if (!F2FS_FITS_IN_INODE(F2FS_INODE(ipage), fi->i_extra_isize,
+-								i_projid)) {
++	if (!F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_projid)) {
+ 		err = -EOVERFLOW;
+-		f2fs_put_page(ipage, 1);
+ 		return err;
+ 	}
+-	f2fs_put_page(ipage, 1);
+ 
+ 	err = f2fs_dquot_initialize(inode);
+ 	if (err)
+-- 
+2.22.0
 
-Could you please explain more about why data will be corrupted?
-
-Thanks,
-
-> Fixes: 4c8ff7095bef (f2fs: support data compression)
-> Fixes: 7eab7a696827 (f2fs: compress: remove unneeded read when rewrite whole cluster)
-> 
-> Signed-off-by: Fengnan Chang <fengnanchang@gmail.com>
-> ---
->   fs/f2fs/data.c | 4 +---
->   fs/f2fs/file.c | 3 ++-
->   2 files changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 6b5f389ba998..5cbee4ed0982 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3358,8 +3358,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
->   		int ret;
->   
->   		*fsdata = NULL;
-> -
-> -		if (len == PAGE_SIZE)
-> +		if (len == PAGE_SIZE && !(f2fs_is_atomic_file(inode)))
->   			goto repeat;
->   
->   		ret = f2fs_prepare_compress_overwrite(inode, pagep,
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index cfdc41f87f5d..26a648ef9e1f 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2009,7 +2009,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->   
->   	inode_lock(inode);
->   
-> -	f2fs_disable_compressed_file(inode);
-> +	if (!f2fs_disable_compressed_file(inode))
-> +		return -EINVAL;
->   
->   	if (f2fs_is_atomic_file(inode)) {
->   		if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST))
 
 
 _______________________________________________
