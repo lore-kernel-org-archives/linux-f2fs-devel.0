@@ -4,70 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 61732C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Mar 2022 02:52:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A9AEDC433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 10 Mar 2022 07:33:54 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nS8uw-0006Pw-3F; Thu, 10 Mar 2022 02:52:40 +0000
+	id 1nSDJ4-000058-JR; Thu, 10 Mar 2022 07:33:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1nS8uv-0006Pp-Fv
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Mar 2022 02:52:40 +0000
+ (envelope-from <chao@kernel.org>) id 1nSDJ1-0008WO-PW
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Mar 2022 07:33:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=V1oeC4nusLmxbGSdtSvxcwfue4tToad/PIZRfqBjnVY=; b=NbliU+s6fiw61oJESzncEPXszP
- JQ0JoWOLyNgsvX9Otn/j2y/QpAPWoJ/PMfjzRoY/oimOufNTC0TFutNt8iynYW7mMItYLe8qaPpTS
- 4BTfhG84s/SUOLuArdar88la5BVkhejejGkX33NZ/G9Yof9oLhCOUD9z9hw6adob5dX8=;
+ bh=Tm82DVH7h3GGJgZrntvlBwOwJRinf+U5LpriYoQ4fxo=; b=AWGjBRN/LGjpPEcjYfd1qWdmp7
+ EK6a5lh0KXCdTOO41enRwze3Cm4ZazNyi0W6DoMnu1U+ElXpa7MMkVtttJ8g9nLSQvbRBqiWrDQe8
+ e2DWJ+2APQacEfjBl6YXdkxWxeAjzxGXo8aHmZ5yvipfnfrFxyCTI4J1H9tUAwBNXo0g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
- From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=V1oeC4nusLmxbGSdtSvxcwfue4tToad/PIZRfqBjnVY=; b=hZM/FuMYUYHJx4eCSDkB7Kcznj
- iPVJRinGnMyhbTPTflWKU6MBXBWngquHSx5RKB3WyVclzcyJXK8XKLzc/OVjWvBznE8a87rsoq5Ja
- 7bg7bq0qvJa0AJtV35+Bf4CgMeehtETK6j0bZjd1j8hq4yS2qro1FaoJtUuAtVJR2X14=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=Tm82DVH7h3GGJgZrntvlBwOwJRinf+U5LpriYoQ4fxo=; b=jIIAIl+Q81818LhDVT8dlte9x4
+ LNrEAa9lUxH+uQyhuYhmdeRW9iwnobgA5bBLgcptczWfPj7T8uOYpldwVu1PqK6LxW+kdEDTXOyRy
+ vlVO1ou5+H6akT8198J01ZSG4a6fNYfNcFlwIQ+fDmDSHEg0Cdx+Qx6fjYnt85Y5Sz3k=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nS8ur-0002ZQ-8P
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Mar 2022 02:52:39 +0000
+ id 1nSDIu-00Adls-8f
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 10 Mar 2022 07:33:50 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id DC8D5614FE
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 10 Mar 2022 02:52:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AEBDC340E8;
- Thu, 10 Mar 2022 02:52:31 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 18668B82191;
+ Thu, 10 Mar 2022 07:33:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 358CDC340E8;
+ Thu, 10 Mar 2022 07:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1646880751;
- bh=HpVTTTr8PbusXmul2H66Jzw0dd3D6fNFf0OwnRc1hII=;
- h=Date:From:To:Subject:References:In-Reply-To:From;
- b=f4MWATkQ+7vf8dtfeA81v0X/sgvqFAu+mM4dunCMdO8EAU2Y4LotDp/fkVC0H9HeO
- aUPaIIEPx92v6JQd7DetqSe6bQQBKE19S0mUnQcs7nSpEVh4bhsW9Yi1tNZjwWIdmR
- 3CE728pFYvQ5y0l3GwP2iKSOVjIMEVXHi/RD1THzMRWHh0agFf4W5DOH6oIUz66mPr
- P4HgUoL+IeVvZ5zXdX80GHxUq6ayMUCRSPclsuJH9ZOIA10ec6X1l+dcSpQVFpgOie
- KOrjP9Q0VSmGoARLl5LhsBlIcDhOlsqpdLPCpvAZ9X+vMPncAK5WrKw/yiIV3TRCbd
- eSXe+HjxrYxwg==
-Date: Wed, 9 Mar 2022 18:52:29 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Message-ID: <Yiln7Q/YgCzw1y9G@google.com>
-References: <20220309214834.3408741-1-jaegeuk@kernel.org>
+ s=k20201202; t=1646897611;
+ bh=iz9iB9++oDDcxQCiK7inZUtTqGCMtbCwweBQa6nJNWI=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=V/CYLz4XJuUYgf8d9M+lsU6YNrm5WdBxnNAWshS5sptPXNvtKMd87Js5J+LRMXOjl
+ uL3LJW2JabDF54GhaI3JG26wdT8PZMEizeLg6AhQweiILtbKQDw+0ZLQUoArHVCOb1
+ wIupXX5JPFBTE+ZVHAnCS/xi476tK6wiN2J9Ey1FQ/j49laDHjSkSJIwn18aJmCZSa
+ PXD8Hhlw2mTvvyEZ1zSB4K6RueeHrbzEfheIYStkSgKL7aZHRk6F5gH/Q3dAo6Jy6+
+ Ns12wtYZnrzjJe94dzDF0ZmK83qp74Ri7FYn8QAi5/zxuszMKAShK9NSgjhY0KcqLM
+ Vfd/jVBJr1smA==
+Message-ID: <99e07f53-0d37-7a7d-38af-6077ab5ba00e@kernel.org>
+Date: Thu, 10 Mar 2022 15:33:27 +0800
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20220309214834.3408741-1-jaegeuk@kernel.org>
-X-Headers-End: 1nS8ur-0002ZQ-8P
-Subject: Re: [f2fs-dev] [PATCH 1/2 v2] f2fs: do not expose unwritten blocks
- to user by DIO
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.2
+Content-Language: en-US
+To: Dave Chinner <david@fromorbit.com>
+References: <20220228035719.4102745-1-sunke32@huawei.com>
+ <cd2a245e-b9d2-c09c-0f8c-a7ca9157ca9f@oppo.com>
+ <20220309062223.GY3927073@dread.disaster.area>
+ <0a5c5efd-597e-7d13-9008-195cf6cf83f1@kernel.org>
+ <20220310014139.GZ3927073@dread.disaster.area>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20220310014139.GZ3927073@dread.disaster.area>
+X-Headers-End: 1nSDIu-00Adls-8f
+Subject: Re: [f2fs-dev] [PATCH] generic/066: attr1 is still there after log
+ replay on f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,153 +84,126 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
+Cc: jaegeuk@kernel.org, Sun Ke <sunke32@huawei.com>, guan@eryu.me,
+ fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-DIO preallocates physical blocks before writing data, but if an error occurrs
-or power-cut happens, we can see block contents from the disk. This patch tries
-to fix it by 1) turning to buffered writes for DIO into holes, 2) truncating
-unwritten blocks from error or power-cut.
+On 2022/3/10 9:41, Dave Chinner wrote:
+> On Wed, Mar 09, 2022 at 03:34:27PM +0800, Chao Yu wrote:
+>> On 2022/3/9 14:22, Dave Chinner wrote:
+>>> On Wed, Mar 09, 2022 at 12:31:17PM +0800, Chao Yu wrote:
+>>>> On 2022/2/28 11:57, Sun Ke via Linux-f2fs-devel wrote:
+>>>>> The test fail on f2fs:
+>>>>>         xattr names and values after second fsync log replay:
+>>>>>         # file: SCRATCH_MNT/foobar
+>>>>>        +user.attr1="val1"
+>>>>>         user.attr3="val3"
+>>>>>
+>>>>> attr1 is still there after log replay.
+>>>>> I guess it is f2fs's special feature to improve the performance.
+>>>>>
+>>>>> Signed-off-by: Sun Ke <sunke32@huawei.com>
+>>>>> ---
+>>>>>
+>>>>> Is it a BUG on f2fs?
+>>>>
+>>>> I don't think so, it fails due to f2fs doesn't follow recovery rule which
+>>>> btrfs/ext4/xfs does, but it doesn't mean f2fs has break posix semantics of
+>>>> fsync().
+>>>
+>>> I disagree.  A failure in this test is indicative of non-conformance
+>>> with the Linux definition of fsync() behaviour.
+>>>
+>>> You are right in that it does not break POSIX fsync semantics, but
+>>> POSIX allows "do nothing" as a valid implementation. However,
+>>> because of this loophole, the POSIX definition is complete garbage
+>>> and we do not use it.
+>>>
+>>> That behaviour that Linux filesytsems are supposed to implement is
+>>> defined in the Linux fsync() man page, and it goes way beyond what
+>>> POSIX requires:
+>>>
+>>> $ man fsync
+>>> ....
+>>> DESCRIPTION
+>>>       fsync() transfers ("flushes") all modified in-core data of
+>>>       (i.e., modified buffer cache pages for) the file referred to by
+>>>       the file descriptor fd to the disk device (or other permanent
+>>>       storage device) so that all changed information can be retrieved
+>>>       even if the  system  crashes  or  is rebooted.  This includes
+>>>       writing through or flushing a disk cache if present.  The call
+>>>       blocks until the device reports that the transfer has
+>>>       completed.
+>>>
+>>>       As well as flushing the file data, fsync() also flushes the
+>>>       metadata information associated with the file (see inode(7)).
+>>> ....
+>>>
+>>> IOWs, fsync() on Linux is supposed to persist all data and
+>>> metadata associated with the inode to stable storage such that it
+>>> can be retreived after a crash or reboot. "metadata information"
+>>> includes xattrs attached to the inode that is being fsync()d.
+>>
+>> Quoted from g/066:
+>>
+>> echo "hello world!" >> $SCRATCH_MNT/foobar
+>> $XFS_IO_PROG -c "fsync" $SCRATCH_MNT/foobar
+>> $SETFATTR_PROG -x user.attr1 $SCRATCH_MNT/foobar
+>> ln $SCRATCH_MNT/foobar $SCRATCH_MNT/foobar_link
+>> touch $SCRATCH_MNT/qwerty
+>> $XFS_IO_PROG -c "fsync" $SCRATCH_MNT/qwerty
+>>
+>> IIUC, to match what Linux fsync() manual restricts, if we want to persist the
+>> xattr removal, we should call fsync() on $SCRATCH_MNT/foobar after
+>> "$SETFATTR_PROG -x user.attr1 $SCRATCH_MNT/foobar"? rather than calling fsync()
+>> on unrelated $SCRATCH_MNT/qwerty.
+> 
+> It might look that way, but it's not that straight forward: there's
+> a carefully constructed object dependency chain in this test that
+> defines what the correct behaviour should be here.
+> 
+> What's the link count of $SCRATCH_MNT/foobar when
+> $SCRATCH_MNT/qwerty is present after recovery? Is it 1 or 2?  Does
+> $SCRATCH_MNT/foobar_link exist?  And if $SCRATCH_MNT/foobar_link
+> exists, and the link count is 2. The test doesn't even look at these
+> things, but if user.attr1 is not present, it means that foobar_link
+> and qwerty are present, $SCRATCH_MNT has a link count of 5 and
+> foobar has a link count of 2 because that's the dependency chain
+> that leads to the user.attr1 removal being recovered correctly.
+> 
+> So what does SCRATCH_MNT actually contain when f2fs fails this test?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- - log from v1: added documentation
+After f2fs recovery,
 
- fs/f2fs/data.c  |  5 ++++-
- fs/f2fs/f2fs.h  |  5 +++++
- fs/f2fs/file.c  | 27 ++++++++++++++++++---------
- fs/f2fs/inode.c |  8 ++++++++
- 4 files changed, 35 insertions(+), 10 deletions(-)
+SCRATCH_MNT contains two files: foobar and qwerty, link count of both
+files is 1, and foobar has two xattr entries: user.attr1 and user.attr3.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 3db0f3049b90..9c867de1ec29 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1543,8 +1543,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 					flag != F2FS_GET_BLOCK_DIO);
- 				err = __allocate_data_block(&dn,
- 							map->m_seg_type);
--				if (!err)
-+				if (!err) {
-+					if (flag == F2FS_GET_BLOCK_PRE_DIO)
-+						file_need_truncate(inode);
- 					set_inode_flag(inode, FI_APPEND_WRITE);
-+				}
- 			}
- 			if (err)
- 				goto sync_out;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6f196621f772..d7435fcb9658 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -654,6 +654,7 @@ enum {
- #define FADVISE_KEEP_SIZE_BIT	0x10
- #define FADVISE_HOT_BIT		0x20
- #define FADVISE_VERITY_BIT	0x40
-+#define FADVISE_TRUNC_BIT	0x80
- 
- #define FADVISE_MODIFIABLE_BITS	(FADVISE_COLD_BIT | FADVISE_HOT_BIT)
- 
-@@ -681,6 +682,10 @@ enum {
- #define file_is_verity(inode)	is_file(inode, FADVISE_VERITY_BIT)
- #define file_set_verity(inode)	set_file(inode, FADVISE_VERITY_BIT)
- 
-+#define file_should_truncate(inode)	is_file(inode, FADVISE_TRUNC_BIT)
-+#define file_need_truncate(inode)	set_file(inode, FADVISE_TRUNC_BIT)
-+#define file_dont_truncate(inode)	clear_file(inode, FADVISE_TRUNC_BIT)
-+
- #define DEF_DIR_LEVEL		0
- 
- enum {
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 808a7c24d993..e1445cf915ea 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1687,6 +1687,7 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
- 
- 		map.m_seg_type = CURSEG_COLD_DATA_PINNED;
- 		err = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_DIO);
-+		file_dont_truncate(inode);
- 
- 		up_write(&sbi->pin_sem);
- 
-@@ -4257,6 +4258,13 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter)
- 	/* If it will be an out-of-place direct write, don't bother. */
- 	if (dio && f2fs_lfs_mode(sbi))
- 		return 0;
-+	/*
-+	 * Don't preallocate holes aligned to DIO_SKIP_HOLES which turns into
-+	 * buffered IO, if DIO meets any holes.
-+	 */
-+	if (dio && i_size_read(inode) &&
-+		(F2FS_BYTES_TO_BLK(pos) < F2FS_BLK_ALIGN(i_size_read(inode))))
-+		return 0;
- 
- 	/* No-wait I/O can't allocate blocks. */
- 	if (iocb->ki_flags & IOCB_NOWAIT)
-@@ -4292,8 +4300,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter)
- 	}
- 
- 	ret = f2fs_map_blocks(inode, &map, 1, flag);
--	/* -ENOSPC is only a fatal error if no blocks could be allocated. */
--	if (ret < 0 && !(ret == -ENOSPC && map.m_len > 0))
-+	/* -ENOSPC|-EDQUOT are fine to report the number of allocated blocks. */
-+	if (ret < 0 && !((ret == -ENOSPC || ret == -EDQUOT) && map.m_len > 0))
- 		return ret;
- 	if (ret == 0)
- 		set_inode_flag(inode, FI_PREALLOCATED_ALL);
-@@ -4359,20 +4367,21 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	/* Possibly preallocate the blocks for the write. */
- 	target_size = iocb->ki_pos + iov_iter_count(from);
- 	preallocated = f2fs_preallocate_blocks(iocb, from);
--	if (preallocated < 0) {
-+	if (preallocated < 0)
- 		ret = preallocated;
--		goto out_unlock;
--	}
--
--	ret = __generic_file_write_iter(iocb, from);
-+	else
-+		ret = __generic_file_write_iter(iocb, from);
- 
- 	/* Don't leave any preallocated blocks around past i_size. */
--	if (preallocated > 0 && i_size_read(inode) < target_size) {
-+	if (preallocated && i_size_read(inode) < target_size) {
- 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 		filemap_invalidate_lock(inode->i_mapping);
--		f2fs_truncate(inode);
-+		if (!f2fs_truncate(inode))
-+			file_dont_truncate(inode);
- 		filemap_invalidate_unlock(inode->i_mapping);
- 		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	} else {
-+		file_dont_truncate(inode);
- 	}
- 
- 	clear_inode_flag(inode, FI_PREALLOCATED_ALL);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 0f8b2df3e1e0..6998eb1d6bdb 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -544,6 +544,14 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 		goto bad_inode;
- 	}
- 	f2fs_set_inode_flags(inode);
-+
-+	if (file_should_truncate(inode)) {
-+		ret = f2fs_truncate(inode);
-+		if (ret)
-+			goto bad_inode;
-+		file_dont_truncate(inode);
-+	}
-+
- 	unlock_new_inode(inode);
- 	trace_f2fs_iget(inode);
- 	return inode;
--- 
-2.34.1.400.ga245620fadb-goog
+So it means, f2fs only recover file/directory which has been fsync()ed before
+SPO... since f2fs doesn't support fs-op level transaction functionality, so it
+have no way to persist all metadata updates in one transaction.
 
+There is one alternative method to pass this case, as I suggested, we can
+use "fastboot" mountoption for this case, so during last fsync on qwerty,
+f2fs can trigger a checkpoint which will persist all metadata updates before
+fsync()...
+
+Thanks,
+
+> 
+> These depedencies exist because we can't just randomly re-order
+> recovery of modifications to individual inodes and certain
+> operations create atomic change dependencies between inodes. It's
+> those atomic change dependencies that this test is actually
+> exercising.  i.e. the link count changes tie directory modifications
+> to inode modifications and this creates cross-object ordering
+> dependencies down the line that fsync then exposes. That's what the
+> second part of this test is actually exercising....
+> 
+> Cheers,
+> 
+> Dave.
 
 
 _______________________________________________
