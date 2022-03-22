@@ -4,89 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 002BCC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Mar 2022 17:23:22 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B9097C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 22 Mar 2022 17:37:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nWiE5-00079B-Bo; Tue, 22 Mar 2022 17:23:19 +0000
+	id 1nWiRv-0008W0-7o; Tue, 22 Mar 2022 17:37:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <torvalds@linuxfoundation.org>) id 1nWiE3-000794-1n
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Mar 2022 17:23:17 +0000
+ (envelope-from <longman@redhat.com>) id 1nWiRu-0008Vt-2Y
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Mar 2022 17:37:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UI6IdkHO1Ce++v4SaLpwOnJOwU7d+FJPmUdI5pUTRyE=; b=YBSlVsYXwunt/SV31WX+0lVAlk
- J2206qFmvK6XCW538kspipIWsTqUo2Tjb9/FtvxXuwFLQTLBqHFB6pm5h/zMZUj8+SWd0/e1inUxd
- j6mk4H3CUXwyb7QS/4fVwJScZzPTt+G8JomBuRSpSk8nfc3gGC56UvBDR615guaEt9FU=;
+ bh=7XRQWPJTa2nAm0XTHwZnMEHTKHif4VV7vwzt+VcrTSk=; b=WP6TwS0G+DlkqvyYB8cg9G07M2
+ 4BTkMcwHireZTY0paj1xj8dOcANB+pBHWDKJMxDoA1Gr0BTxu84BYs0/0AhLBSYAUV6k62OPyOeVu
+ 9Njt95of01kaUQlhw7+W1HUYAN7RyO+s7all31u0v65R193HaHCu9wJ/02K7otzYhFto=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=UI6IdkHO1Ce++v4SaLpwOnJOwU7d+FJPmUdI5pUTRyE=; b=XjhKY4UY3pJi9GW1kWOtRoxRzy
- CPXDbMa/1vr4yLslz/5BFB4CclQVDtZzXxubJCSh5z22GPANESCmr+ovT+vT17Ta5cbACiraausu6
- Ujb3k2rEtCG0HGOF9IzrFf1MKNXTQIqyoZia/z80Yb4hM6A0NFZPrZvt/YCO2ttXCVDM=;
-Received: from mail-lj1-f180.google.com ([209.85.208.180])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1nWiE0-0007jD-IO
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Mar 2022 17:23:17 +0000
-Received: by mail-lj1-f180.google.com with SMTP id q5so24865650ljb.11
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 22 Mar 2022 10:23:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=linux-foundation.org; s=google;
- h=mime-version:references:in-reply-to:from:date:message-id:subject:to
- :cc; bh=UI6IdkHO1Ce++v4SaLpwOnJOwU7d+FJPmUdI5pUTRyE=;
- b=ODOcxjgtnTokJhq+iwqHbWCzeAZBV5BHLUnl+SfPcnQbCPUA32VYdzSgQPu+R0V5Oc
- LOX36yzr/Ok6oTqeCrrsPc9enhp/AEQ4fLBbhY9IM+kEdjwZ0kheWb9v+kvXcu2eaHu4
- 49yhuMftUCepZufEyK9CKXp+4gagEX4g0EloY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=x-gm-message-state:mime-version:references:in-reply-to:from:date
- :message-id:subject:to:cc;
- bh=UI6IdkHO1Ce++v4SaLpwOnJOwU7d+FJPmUdI5pUTRyE=;
- b=oR8E5kGGFkjdWnfPP4Wqr7Q8uWq/UHueZSbm/9nyfsLo1SnlfTUf4ywNy9RtZefOaG
- JdcELkS1EnleBNX+83Vl+HmhNHmqznUXXE0l3QzYY/jUrqfso9sb+72JZeMIBIxD7391
- 9jD75fDv4LuQBGETUZlGJFIlx+NA4Mw+m/QjJr3Re7xQxOjcb/fPB/Atj070Ab7eoK0Z
- h7X2sDEG0ab+rwllR/kpGfC13K60l8x1AH11PTlJdbrkzWbW9s2bMU459/WLprnBVGGr
- 9lzj9Ohrb4kwD8I0RtehgUqViMQkqs7jly5qANzIis3yKnXH8gTr/hSH+a3T8UnGb1oZ
- lJFw==
-X-Gm-Message-State: AOAM533NzPc8cQQ9U901zPXeUP0neBMDTFn6Pu37u57qYHbzt0ezNDAw
- Z4er7i8szYgJApL7NbiVYfvewBxZ1Sdq/GgM4kE=
-X-Google-Smtp-Source: ABdhPJzQACetAlzQCl9RSLIvObxVhW+CI3K1Ad+v2F56AzKTY+6K7HoP2uyjPMf/+Nb+BfvMrVEJgw==
-X-Received: by 2002:a2e:9692:0:b0:247:e508:714e with SMTP id
- q18-20020a2e9692000000b00247e508714emr19854946lji.375.1647969788657; 
- Tue, 22 Mar 2022 10:23:08 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com.
- [209.85.208.176]) by smtp.gmail.com with ESMTPSA id
- d6-20020a05651233c600b0044a3365f6f9sm587969lfg.145.2022.03.22.10.23.07
- for <linux-f2fs-devel@lists.sourceforge.net>
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 22 Mar 2022 10:23:07 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id q14so11609653ljc.12
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 22 Mar 2022 10:23:07 -0700 (PDT)
-X-Received: by 2002:a2e:9b10:0:b0:247:f28c:ffd3 with SMTP id
- u16-20020a2e9b10000000b00247f28cffd3mr19288283lji.152.1647969787311; Tue, 22
- Mar 2022 10:23:07 -0700 (PDT)
+ bh=7XRQWPJTa2nAm0XTHwZnMEHTKHif4VV7vwzt+VcrTSk=; b=CLPxzh/iHNcaDtlLkT0z6WAScz
+ bcG7hzcZe9XpDercW9+dG/NMqnmenwZad5SnG4M6meJT3lzqyslQTKAkzMjE5YfKUWXO+zl7d9YfA
+ 1EVH2R49bnaQhV9Q0V1yPun0GlpXVZPjqLkgd5L5GtedmwJNUjZLeeLlkTeHkURczgF8=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
+ id 1nWiRr-008knF-Gn
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 22 Mar 2022 17:37:36 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1647970649;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=7XRQWPJTa2nAm0XTHwZnMEHTKHif4VV7vwzt+VcrTSk=;
+ b=ewd55DkN9JhV78tpKu0aYsstzr7oRgQBbM7pqPPCnZ2uTClyHeKA2rAE1pLCeplB0IsxTa
+ XRzAlg+m0YNm8m82MA+MLdOYxRiUUty6HxMcdmtaDcJjXoVa360bP14R8h23qHMrcMrSd9
+ HXW6qcgQjg6ZNGvVBbSJA8qz43R6Wwk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-413-A0e0tYQ7NpOv-u0M9dblTQ-1; Tue, 22 Mar 2022 13:37:24 -0400
+X-MC-Unique: A0e0tYQ7NpOv-u0M9dblTQ-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com
+ [10.11.54.9])
+ (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+ (No client certificate requested)
+ by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8BA521029A87;
+ Tue, 22 Mar 2022 17:37:24 +0000 (UTC)
+Received: from [10.18.17.215] (dhcp-17-215.bos.redhat.com [10.18.17.215])
+ by smtp.corp.redhat.com (Postfix) with ESMTP id 3EE5D4029C6;
+ Tue, 22 Mar 2022 17:37:24 +0000 (UTC)
+Message-ID: <51cded74-3135-eed8-06d3-0b2165e3b379@redhat.com>
+Date: Tue, 22 Mar 2022 13:37:24 -0400
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jaegeuk Kim <jaegeuk@kernel.org>
 References: <YjjihIZuvZpUjaSs@google.com>
-In-Reply-To: <YjjihIZuvZpUjaSs@google.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 22 Mar 2022 10:22:50 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgsmvoJFKFWxQ2orEVUOWH1agk9iUNZ=-DFh5OXZL=Ldw@mail.gmail.com>
-Message-ID: <CAHk-=wgsmvoJFKFWxQ2orEVUOWH1agk9iUNZ=-DFh5OXZL=Ldw@mail.gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Waiman Long <longman@redhat.com>
-X-Headers-End: 1nWiE0-0007jD-IO
+ <CAHk-=wgsmvoJFKFWxQ2orEVUOWH1agk9iUNZ=-DFh5OXZL=Ldw@mail.gmail.com>
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <CAHk-=wgsmvoJFKFWxQ2orEVUOWH1agk9iUNZ=-DFh5OXZL=Ldw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+X-Headers-End: 1nWiRr-008knF-Gn
 Subject: Re: [f2fs-dev] [GIT PULL] f2fs for 5.18
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -101,36 +91,52 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Mar 21, 2022 at 1:39 PM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+On 3/22/22 13:22, Linus Torvalds wrote:
+> On Mon, Mar 21, 2022 at 1:39 PM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>> In this cycle, f2fs has some performance improvements for Android workloads such
+>> as using read-unfair rwsems [...]
+> I've pulled this, but that read-unfair rwsem code looks incredibly
+> dodgy. Doing your own locking is always a bad sign, and it ahs
+> traditionally come back to bite us pretty much every time. At least it
+> uses real lock primitives, just in a really odd way.
 >
-> In this cycle, f2fs has some performance improvements for Android workloads such
-> as using read-unfair rwsems [...]
+> The whole notion of making an rwsem unfair to readers sounds really
+> really odd.  I mean, the whole and only _point_ of an rwsem is to
+> allow concurrent readers, and traditionally if it's unfair it's unfair
+> to _writers_ because that tends to be better for throughput (but
+> unfairness can cause horrible latency).
+>
+> So it smells like there's something bad going on in f2fs.
+>
+> That said, I'm adding Waiman to the cc here in case he would have
+> ideas at least for a cleaner interface. Our rw_semaphores are
+> explicitly trying to be fair, because unfairness (the other way) was
+> such a big problem.
+>
+> I'm wondering it the optimistic read lock stealing is bothering f2fs?
 
-I've pulled this, but that read-unfair rwsem code looks incredibly
-dodgy. Doing your own locking is always a bad sign, and it ahs
-traditionally come back to bite us pretty much every time. At least it
-uses real lock primitives, just in a really odd way.
+I don't believe it is the optimistic read lock stealing code that is 
+bothering f2fs.
 
-The whole notion of making an rwsem unfair to readers sounds really
-really odd.  I mean, the whole and only _point_ of an rwsem is to
-allow concurrent readers, and traditionally if it's unfair it's unfair
-to _writers_ because that tends to be better for throughput (but
-unfairness can cause horrible latency).
+AFAICS, the read-unfair rwsem code is created to resolve a potential 
+lock starvation problem that they found on linux-5.10.y stable tree. I 
+believe I have fixed that in the v5.11 kernel, see commit 2f06f702925 
+("locking/rwsem: Prevent potential lock starvation"). However that 
+commit is not in the stable tree. In fact, I have moved forward and 
+taken out reader optimistic spinning but added just optimistic lock 
+stealing instead. I believe the problem would have solved by including 
+that patch series in their build. I haven't gotten any response as to 
+whether they had tested this or not.
 
-So it smells like there's something bad going on in f2fs.
+Apparently they prefer to upstream this stop-gap solution.
 
-That said, I'm adding Waiman to the cc here in case he would have
-ideas at least for a cleaner interface. Our rw_semaphores are
-explicitly trying to be fair, because unfairness (the other way) was
-such a big problem.
+Cheers,
+Longman
 
-I'm wondering it the optimistic read lock stealing is bothering f2fs?
-
-               Linus
 
 
 _______________________________________________
