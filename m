@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B0532C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Mar 2022 19:43:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B08C3C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Mar 2022 19:43:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nYvGy-0002m5-DG; Mon, 28 Mar 2022 19:43:27 +0000
+	id 1nYv9C-0004lY-8i; Mon, 28 Mar 2022 19:43:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <sashal@kernel.org>) id 1nYvGw-0002lf-Gg
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:43:25 +0000
+ (envelope-from <sashal@kernel.org>) id 1nYv9B-0004kH-1D
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:43:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4jnQkpFleSNnszE7RZOyb3yJO9mFQyfdUd8ASdFgl2o=; b=MVwcACrIlE0xMs2ezoioHQDhs9
- oe+aR6kHkS0tJRZMMJOe2fgY9w6y6Q1iiIZgircfLhxFr5afidUrLBqmRr+XSWkF0YZDaWiQRO0SY
- mUVRy4tZZv04iY/Wvo0ivwwkZAIXufPV76+8k2tAtKQvdy7jZyJyJI91ho6fqxIgCwOo=;
+ bh=QycTcrvarJXGmYtihgXvoX1Gc9jhU3gtJ32HeCxCrH0=; b=RKHZ2wbG1F/7gmaVyjIb3RUFFL
+ fPPE+DvvHuJRdG0VRVq6nHZ6zx/57r8df44ARwWYi2oL2o2NyHJFq4HDs37CplGdUf4h3iZuzTeKs
+ 9q6kelnAi/zOcmafrdYRf+FtZt5NZz4guFTVoPBe7g3vJO6nmzPn2Mlmm5Byj3+vin9g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,45 +31,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=4jnQkpFleSNnszE7RZOyb3yJO9mFQyfdUd8ASdFgl2o=; b=Tg7mmx3lSJSb12L5cWWCsZ4qc2
- +63unn+mongKtGRcKswk9WEAdevLzIuHaC2ZcK8VKh8ucIqHqI2kWFwYaGtntmLVUpzqXyqfMVIst
- NiYusMc2Y48Y3TjbgSIL0GBzRgmLRlajsZEguzhO4+9DYWUzVLY7zTuxSlcQ26RJV6UA=;
+ bh=QycTcrvarJXGmYtihgXvoX1Gc9jhU3gtJ32HeCxCrH0=; b=GE9tc9G3aAk3PLDu3QMBBh0as0
+ 04eHkGafpGEiPg2krmMqrHvD8ilcJtaj0fzW8Eo4Q0go9LIQAP+05+n4xyvVRc6OKT4BzAaiTH5K+
+ O3MWxZ5h0kjNWV9SDkoHehenb6GMbLcD50wT2lLdtYvKT+P/TPx1pLLdquN98CZ5GH34=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nYvGu-0006uz-E1
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:43:25 +0000
+ id 1nYvH5-00EwqO-Pr
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:43:36 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 0B1A7612CB;
- Mon, 28 Mar 2022 19:43:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 639F9C3410F;
- Mon, 28 Mar 2022 19:43:17 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 66FDF612BE;
+ Mon, 28 Mar 2022 19:43:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9DBC36AE3;
+ Mon, 28 Mar 2022 19:43:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1648496598;
- bh=Ho/BjnVNGfweAgBtMiS7dBtzUEAbt0AM1Wjb60i/UUs=;
+ s=k20201202; t=1648496609;
+ bh=UVSMQTDzbXysduxji4Mk7WYAfSuVvqdNDjO0KdD/6to=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=FV1BYg/BoYsTHhani2u0ZXeP/tINRWm2v1JT1OBy2knfqhNQiO0wvgGyHtYdEbLDK
- 54kYRj6aSG5hnLS10F8yk77VEgCZyVVgR1XZAC2NaXk0Twi5GTqGbSdtmYxb9mmmzd
- S4GEAmnSuQRcVwxvHVimmtRQpVN9MwpPdEcGdSzpNAmrP9dA675+KQtFuQZdERTxIg
- TzX2umxznPGZR37G7LcIQzZvUj19onL5HDgI5fIkCp37SWXbPO9wF4S6In1rX+zjc/
- ie86EjM580Ec1DEe3QT8FHQPynzcuhC8aZ2cMwaV7aPu8c00gKoKQTqN/TFR43XILd
- JcaxzN8y7CBMw==
+ b=Ub+o49ZEQYsbfGQqrmwrQuwjQJaGeQ089cKlt6V9IskDkAd4/sQffp2uYIM9SjbWS
+ YeQhqdVpK5XKqVi2JYTJ9Hdp1BD8T8DuKHNCcAksICqD6Tu5T5zRl08uPX6alvERV/
+ M8gDkvxT209HC1CP4AeWEu7ytZt+Rcshb3m9DQS8HgCO6npo5hPj/iNVPJZysYSHS4
+ pMauKivZbO8ADdVQ++WGslLzCS4FN88NA00QP2oAQu8MtghSURuVOmWphMVta+YYZV
+ K0AldwL3M7fp8+KH4vtm8fYfCQYbXZQ1zJkrDQ8rLOnNGK3TuIbJP0LCiJdT9MIfNl
+ m4YhDbmO6GpJA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Mon, 28 Mar 2022 15:42:56 -0400
-Message-Id: <20220328194300.1586178-13-sashal@kernel.org>
+Date: Mon, 28 Mar 2022 15:43:19 -0400
+Message-Id: <20220328194322.1586401-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220328194300.1586178-1-sashal@kernel.org>
-References: <20220328194300.1586178-1-sashal@kernel.org>
+In-Reply-To: <20220328194322.1586401-1-sashal@kernel.org>
+References: <20220328194322.1586401-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1nYvGu-0006uz-E1
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.15 13/16] f2fs: use spin_lock to avoid
- hang
+X-Headers-End: 1nYvH5-00EwqO-Pr
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.10 5/8] f2fs: fix to do sanity check on
+ curseg->alloc_type
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,139 +87,84 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
 
-[ Upstream commit 98237fcda4a24e67b0a4498c17d5aa4ad4537bc7 ]
+[ Upstream commit f41ee8b91c00770d718be2ff4852a80017ae9ab3 ]
 
-[14696.634553] task:cat             state:D stack:    0 pid:1613738 ppid:1613735 flags:0x00000004
-[14696.638285] Call Trace:
-[14696.639038]  <TASK>
-[14696.640032]  __schedule+0x302/0x930
-[14696.640969]  schedule+0x58/0xd0
-[14696.641799]  schedule_preempt_disabled+0x18/0x30
-[14696.642890]  __mutex_lock.constprop.0+0x2fb/0x4f0
-[14696.644035]  ? mod_objcg_state+0x10c/0x310
-[14696.645040]  ? obj_cgroup_charge+0xe1/0x170
-[14696.646067]  __mutex_lock_slowpath+0x13/0x20
-[14696.647126]  mutex_lock+0x34/0x40
-[14696.648070]  stat_show+0x25/0x17c0 [f2fs]
-[14696.649218]  seq_read_iter+0x120/0x4b0
-[14696.650289]  ? aa_file_perm+0x12a/0x500
-[14696.651357]  ? lru_cache_add+0x1c/0x20
-[14696.652470]  seq_read+0xfd/0x140
-[14696.653445]  full_proxy_read+0x5c/0x80
-[14696.654535]  vfs_read+0xa0/0x1a0
-[14696.655497]  ksys_read+0x67/0xe0
-[14696.656502]  __x64_sys_read+0x1a/0x20
-[14696.657580]  do_syscall_64+0x3b/0xc0
-[14696.658671]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[14696.660068] RIP: 0033:0x7efe39df1cb2
-[14696.661133] RSP: 002b:00007ffc8badd948 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-[14696.662958] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007efe39df1cb2
-[14696.664757] RDX: 0000000000020000 RSI: 00007efe399df000 RDI: 0000000000000003
-[14696.666542] RBP: 00007efe399df000 R08: 00007efe399de010 R09: 00007efe399de010
-[14696.668363] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000000000
-[14696.670155] R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
-[14696.671965]  </TASK>
-[14696.672826] task:umount          state:D stack:    0 pid:1614985 ppid:1614984 flags:0x00004000
-[14696.674930] Call Trace:
-[14696.675903]  <TASK>
-[14696.676780]  __schedule+0x302/0x930
-[14696.677927]  schedule+0x58/0xd0
-[14696.679019]  schedule_preempt_disabled+0x18/0x30
-[14696.680412]  __mutex_lock.constprop.0+0x2fb/0x4f0
-[14696.681783]  ? destroy_inode+0x65/0x80
-[14696.683006]  __mutex_lock_slowpath+0x13/0x20
-[14696.684305]  mutex_lock+0x34/0x40
-[14696.685442]  f2fs_destroy_stats+0x1e/0x60 [f2fs]
-[14696.686803]  f2fs_put_super+0x158/0x390 [f2fs]
-[14696.688238]  generic_shutdown_super+0x7a/0x120
-[14696.689621]  kill_block_super+0x27/0x50
-[14696.690894]  kill_f2fs_super+0x7f/0x100 [f2fs]
-[14696.692311]  deactivate_locked_super+0x35/0xa0
-[14696.693698]  deactivate_super+0x40/0x50
-[14696.694985]  cleanup_mnt+0x139/0x190
-[14696.696209]  __cleanup_mnt+0x12/0x20
-[14696.697390]  task_work_run+0x64/0xa0
-[14696.698587]  exit_to_user_mode_prepare+0x1b7/0x1c0
-[14696.700053]  syscall_exit_to_user_mode+0x27/0x50
-[14696.701418]  do_syscall_64+0x48/0xc0
-[14696.702630]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+As Wenqing Liu reported in bugzilla:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+https://bugzilla.kernel.org/show_bug.cgi?id=215657
+
+- Overview
+UBSAN: array-index-out-of-bounds in fs/f2fs/segment.c:3460:2 when mount and operate a corrupted image
+
+- Reproduce
+tested on kernel 5.17-rc4, 5.17-rc6
+
+1. mkdir test_crash
+2. cd test_crash
+3. unzip tmp2.zip
+4. mkdir mnt
+5. ./single_test.sh f2fs 2
+
+- Kernel dump
+[   46.434454] loop0: detected capacity change from 0 to 131072
+[   46.529839] F2FS-fs (loop0): Mounted with checkpoint version = 7548c2d9
+[   46.738319] ================================================================================
+[   46.738412] UBSAN: array-index-out-of-bounds in fs/f2fs/segment.c:3460:2
+[   46.738475] index 231 is out of range for type 'unsigned int [2]'
+[   46.738539] CPU: 2 PID: 939 Comm: umount Not tainted 5.17.0-rc6 #1
+[   46.738547] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+[   46.738551] Call Trace:
+[   46.738556]  <TASK>
+[   46.738563]  dump_stack_lvl+0x47/0x5c
+[   46.738581]  ubsan_epilogue+0x5/0x50
+[   46.738592]  __ubsan_handle_out_of_bounds+0x68/0x80
+[   46.738604]  f2fs_allocate_data_block+0xdff/0xe60 [f2fs]
+[   46.738819]  do_write_page+0xef/0x210 [f2fs]
+[   46.738934]  f2fs_do_write_node_page+0x3f/0x80 [f2fs]
+[   46.739038]  __write_node_page+0x2b7/0x920 [f2fs]
+[   46.739162]  f2fs_sync_node_pages+0x943/0xb00 [f2fs]
+[   46.739293]  f2fs_write_checkpoint+0x7bb/0x1030 [f2fs]
+[   46.739405]  kill_f2fs_super+0x125/0x150 [f2fs]
+[   46.739507]  deactivate_locked_super+0x60/0xc0
+[   46.739517]  deactivate_super+0x70/0xb0
+[   46.739524]  cleanup_mnt+0x11a/0x200
+[   46.739532]  __cleanup_mnt+0x16/0x20
+[   46.739538]  task_work_run+0x67/0xa0
+[   46.739547]  exit_to_user_mode_prepare+0x18c/0x1a0
+[   46.739559]  syscall_exit_to_user_mode+0x26/0x40
+[   46.739568]  do_syscall_64+0x46/0xb0
+[   46.739584]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+The root cause is we missed to do sanity check on curseg->alloc_type,
+result in out-of-bound accessing on sbi->block_count[] array, fix it.
+
+Signed-off-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/debug.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ fs/f2fs/segment.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 07ad0d81f0c5..b449c7a372a4 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -21,7 +21,7 @@
- #include "gc.h"
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index d04b449978aa..49f5cb532738 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4650,6 +4650,13 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
  
- static LIST_HEAD(f2fs_stat_list);
--static DEFINE_MUTEX(f2fs_stat_mutex);
-+static DEFINE_RAW_SPINLOCK(f2fs_stat_lock);
- #ifdef CONFIG_DEBUG_FS
- static struct dentry *f2fs_debugfs_root;
- #endif
-@@ -345,8 +345,9 @@ static int stat_show(struct seq_file *s, void *v)
- {
- 	struct f2fs_stat_info *si;
- 	int i = 0, j = 0;
-+	unsigned long flags;
+ 		sanity_check_seg_type(sbi, curseg->seg_type);
  
--	mutex_lock(&f2fs_stat_mutex);
-+	raw_spin_lock_irqsave(&f2fs_stat_lock, flags);
- 	list_for_each_entry(si, &f2fs_stat_list, stat_list) {
- 		update_general_status(si->sbi);
++		if (curseg->alloc_type != LFS && curseg->alloc_type != SSR) {
++			f2fs_err(sbi,
++				 "Current segment has invalid alloc_type:%d",
++				 curseg->alloc_type);
++			return -EFSCORRUPTED;
++		}
++
+ 		if (f2fs_test_bit(blkofs, se->cur_valid_map))
+ 			goto out;
  
-@@ -574,7 +575,7 @@ static int stat_show(struct seq_file *s, void *v)
- 		seq_printf(s, "  - paged : %llu KB\n",
- 				si->page_mem >> 10);
- 	}
--	mutex_unlock(&f2fs_stat_mutex);
-+	raw_spin_unlock_irqrestore(&f2fs_stat_lock, flags);
- 	return 0;
- }
- 
-@@ -585,6 +586,7 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	struct f2fs_stat_info *si;
-+	unsigned long flags;
- 	int i;
- 
- 	si = f2fs_kzalloc(sbi, sizeof(struct f2fs_stat_info), GFP_KERNEL);
-@@ -620,9 +622,9 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi)
- 	atomic_set(&sbi->max_aw_cnt, 0);
- 	atomic_set(&sbi->max_vw_cnt, 0);
- 
--	mutex_lock(&f2fs_stat_mutex);
-+	raw_spin_lock_irqsave(&f2fs_stat_lock, flags);
- 	list_add_tail(&si->stat_list, &f2fs_stat_list);
--	mutex_unlock(&f2fs_stat_mutex);
-+	raw_spin_unlock_irqrestore(&f2fs_stat_lock, flags);
- 
- 	return 0;
- }
-@@ -630,10 +632,11 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi)
- void f2fs_destroy_stats(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_stat_info *si = F2FS_STAT(sbi);
-+	unsigned long flags;
- 
--	mutex_lock(&f2fs_stat_mutex);
-+	raw_spin_lock_irqsave(&f2fs_stat_lock, flags);
- 	list_del(&si->stat_list);
--	mutex_unlock(&f2fs_stat_mutex);
-+	raw_spin_unlock_irqrestore(&f2fs_stat_lock, flags);
- 
- 	kfree(si);
- }
 -- 
 2.34.1
 
