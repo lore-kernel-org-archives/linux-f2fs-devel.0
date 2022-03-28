@@ -4,66 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 594F3C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Mar 2022 16:03:19 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F2676C4321E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Mar 2022 19:42:24 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nYrpu-0004Qr-OY; Mon, 28 Mar 2022 16:03:17 +0000
+	id 1nYvFw-0000hS-UA; Mon, 28 Mar 2022 19:42:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1nYrpt-0004Ql-OY
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 16:03:16 +0000
+ (envelope-from <sashal@kernel.org>) id 1nYvFw-0000hK-0x
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:42:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Rf0Q4o1GGvlCI92jlxalmkGvonjuggFeR32lGRWc7a4=; b=lGvo4JFQCceZosTPIoodAuUMk8
- d56/skoxaxoReJS7Trvm+QSXAc/486liIj+SH+pqwmc5ZBIbxy6Q4lnf+zu3FTNGXcZlHu8/VKd3T
- 2hAMVqn8xJ1mcYQ25g7gpG/+t3W+BelGj2vtFd6MfO+CPTCzzmfOBhZGOQGOAzedLVnM=;
+ bh=cK/FazBFEfOw/f8rLn9ZCs9tw8HqAHS7xribQCIT6sA=; b=BHKV9KEUZ7u4BL2dqLXNm0juRR
+ rY/sPXekg7JETosgY0b7v96AOKDrCW33Icd8VS8wDIRPnP/FKwGHxhZRsp/g6vJQb2FSx0zja32fp
+ 1TvTt8Hv7CZdTR7WLElrC853Buk70+n6SiEnPAqVGwj8LVrMHFI9apzw4x0kheYPakIM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Rf0Q4o1GGvlCI92jlxalmkGvonjuggFeR32lGRWc7a4=; b=m
- 7el6zq8y+RIQIuVzUnUE3PKw9isQtfcDrmiD4a/QSIAga3ln3kStpng3P3mK2fHy3zbhQBdziGSOx
- W2QlTFwh/BqfP7XXJF0nFy4QtQuqrSgXLAGZqa6Ouegz2ZETqW/tcfQx/tZfVHrdU3taoR/5je4j4
- ASrWzz5HWtSQ4xfU=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=cK/FazBFEfOw/f8rLn9ZCs9tw8HqAHS7xribQCIT6sA=; b=gfVJXe8jo185GM46vpq0sN5BNU
+ 3Y+idPUTR+qv3BX/ZsyiD7YF98nQXfkBVNCZ3n56PWPp2FlPmhVddIJSR30F19i7aNIxDjoMGdpCW
+ HIlVvEOQEZI7ct6hirhRA+P4hg1CNP1mVC1Xp612iTXpEeo9pIUFB4eyP24UqibSYN7Y=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nYrpp-00ElT9-Ap
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 16:03:16 +0000
+ id 1nYvFt-00EwnD-HW
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:42:22 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id DACA2B81164;
- Mon, 28 Mar 2022 16:03:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F74BC004DD;
- Mon, 28 Mar 2022 16:03:03 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 54C94612AC;
+ Mon, 28 Mar 2022 19:42:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4BAC34100;
+ Mon, 28 Mar 2022 19:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1648483385;
- bh=P0P3Lnt4gmVt++k6Xk8i+eUeKJePtopQkH5guyzaals=;
- h=From:To:Cc:Subject:Date:From;
- b=oEzW3aC2jtw45GDsyEznM0jFg8h+Yzbq/A+p0lUe6s0UE/V+mpj8F1WgbxJpOC1T/
- yPgto4nsBiPimjOwwvze5QLkxulYoqi3uh7+YyIGHf/Em/ACHGvYfjrhw5FM3z9pNt
- CdbLyYP3WOvSLPfWzJF++nW79ZiQClnPj1D3yFuNE3QLDx29iUO6EdDNGkLfxDWWQ8
- TPJl/vI91vEINeKuW7cDofEkBBUhxPqyvQomUur8LciuSTtpnGPhcygAf1cYNpZTuh
- qRrAel1D7zGYsEMNIZZoKiAZjnkr4YEfXbxmXpJDLTlZ6OXDt74jeS8Kspx82WcLn4
- g+ERzIdLrxWew==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Tue, 29 Mar 2022 00:02:53 +0800
-Message-Id: <20220328160253.3102-1-chao@kernel.org>
-X-Mailer: git-send-email 2.32.0
+ s=k20201202; t=1648496531;
+ bh=EhX138gT4xw4XP//qPi7bg6ZwwdT6/mNNofgRsU8Cnw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=ESbJdsysmyRjAysrUH/gqU48FtUBwsE2r8mSvsaNMPK0VFIz/Vsg5ifnWrRYkGgd3
+ +fU1G/u8niHnrerrzHyQHwbWR0FIrTS4UmrPV35/nuv7ZN1iX7OolHnEB6eOq0wURy
+ k21b1uBXQ/FeSb9fuyYb9UcKGeC3CS/vAdg0/Cmf0Re+UkAiz1aFOf8sNkbugCc8yj
+ rBxLXEOQh6M1i/OwKyWUsDuoolkQcAiVLra35zUP0uBKr3xjesAQ85xDSZO5J+HQIw
+ DfuDdhDu67lwEYKF+BPwtvTvCjyv5m0ZHaLbG98CUciwvhO9xHxrR2IS5clnweiNUE
+ 8dUoa17PFgiTA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Date: Mon, 28 Mar 2022 15:41:45 -0400
+Message-Id: <20220328194157.1585642-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220328194157.1585642-1-sashal@kernel.org>
+References: <20220328194157.1585642-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1nYrpp-00ElT9-Ap
-Subject: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on inline_dots inode
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-Headers-End: 1nYvFt-00EwnD-HW
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.17 10/21] f2fs: don't get FREEZE lock
+ in f2fs_evict_inode in frozen fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -75,73 +81,124 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Wenqing Liu <wenqingliu0120@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-As Wenqing reported in bugzilla:
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-https://bugzilla.kernel.org/show_bug.cgi?id=215765
+[ Upstream commit ba900534f807f0b327c92d5141c85d2313e2d55c ]
 
-It will cause a kernel panic with steps:
-- mkdir mnt
-- mount tmp40.img mnt
-- ls mnt
+Let's purge inode cache in order to avoid the below deadlock.
 
-folio_mark_dirty+0x33/0x50
-f2fs_add_regular_entry+0x541/0xad0 [f2fs]
-f2fs_add_dentry+0x6c/0xb0 [f2fs]
-f2fs_do_add_link+0x182/0x230 [f2fs]
-__recover_dot_dentries+0x2d6/0x470 [f2fs]
-f2fs_lookup+0x5af/0x6a0 [f2fs]
-__lookup_slow+0xac/0x200
-lookup_slow+0x45/0x70
-walk_component+0x16c/0x250
-path_lookupat+0x8b/0x1f0
-filename_lookup+0xef/0x250
-user_path_at_empty+0x46/0x70
-vfs_statx+0x98/0x190
-__do_sys_newlstat+0x41/0x90
-__x64_sys_newlstat+0x1a/0x30
-do_syscall_64+0x37/0xb0
-entry_SYSCALL_64_after_hwframe+0x44/0xae
+[freeze test]                         shrinkder
+freeze_super
+ - pwercpu_down_write(SB_FREEZE_FS)
+                                       - super_cache_scan
+                                         - down_read(&sb->s_umount)
+                                           - prune_icache_sb
+                                            - dispose_list
+                                             - evict
+                                              - f2fs_evict_inode
+thaw_super
+ - down_write(&sb->s_umount);
+                                              - __percpu_down_read(SB_FREEZE_FS)
 
-The root cause is for special file: e.g. character, block, fifo or
-socket file, f2fs doesn't assign address space operations pointer array
-for mapping->a_ops field, so, in a fuzzed image, if inline_dots flag was
-tagged in special file, during lookup(), when f2fs runs into
-__recover_dot_dentries(), it will cause NULL pointer access once
-f2fs_add_regular_entry() calls a_ops->set_dirty_page().
-
-Fixes: 510022a85839 ("f2fs: add F2FS_INLINE_DOTS to recover missing dot dentries")
-Reported-by: Wenqing Liu <wenqingliu0120@gmail.com>
-Signed-off-by: Chao Yu <chao.yu@oppo.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/namei.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 1 +
+ fs/f2fs/debug.c                         | 1 +
+ fs/f2fs/f2fs.h                          | 1 +
+ fs/f2fs/inode.c                         | 6 ++++--
+ fs/f2fs/super.c                         | 4 ++++
+ 5 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 906e9e301ac8..e3f23ae9bb19 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -461,6 +461,13 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
- 		return 0;
- 	}
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 2416b03ff283..137f16feee08 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -430,6 +430,7 @@ Description:	Show status of f2fs superblock in real time.
+ 		0x800  SBI_QUOTA_SKIP_FLUSH  skip flushing quota in current CP
+ 		0x1000 SBI_QUOTA_NEED_REPAIR quota file may be corrupted
+ 		0x2000 SBI_IS_RESIZEFS       resizefs is in process
++		0x4000 SBI_IS_FREEZING       freefs is in process
+ 		====== ===================== =================================
  
-+	if (!S_ISDIR(dir->i_mode)) {
-+		f2fs_err(sbi, "inconsistent inode status, skip recovering inline_dots inode (ino:%lu, i_mode:%u, pino:%u)",
-+			  dir->i_ino, dir->i_mode, pino);
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		return -ENOTDIR;
-+	}
+ What:		/sys/fs/f2fs/<disk>/ckpt_thread_ioprio
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 8c50518475a9..07ad0d81f0c5 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -338,6 +338,7 @@ static char *s_flag[] = {
+ 	[SBI_QUOTA_SKIP_FLUSH]	= " quota_skip_flush",
+ 	[SBI_QUOTA_NEED_REPAIR]	= " quota_need_repair",
+ 	[SBI_IS_RESIZEFS]	= " resizefs",
++	[SBI_IS_FREEZING]	= " freezefs",
+ };
+ 
+ static int stat_show(struct seq_file *s, void *v)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 68b44015514f..2514597f5b26 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1267,6 +1267,7 @@ enum {
+ 	SBI_QUOTA_SKIP_FLUSH,			/* skip flushing quota in current CP */
+ 	SBI_QUOTA_NEED_REPAIR,			/* quota file may be corrupted */
+ 	SBI_IS_RESIZEFS,			/* resizefs is in process */
++	SBI_IS_FREEZING,			/* freezefs is in process */
+ };
+ 
+ enum {
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 0ec8e32a00b4..026c2f79fd05 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -778,7 +778,8 @@ void f2fs_evict_inode(struct inode *inode)
+ 	f2fs_remove_ino_entry(sbi, inode->i_ino, UPDATE_INO);
+ 	f2fs_remove_ino_entry(sbi, inode->i_ino, FLUSH_INO);
+ 
+-	sb_start_intwrite(inode->i_sb);
++	if (!is_sbi_flag_set(sbi, SBI_IS_FREEZING))
++		sb_start_intwrite(inode->i_sb);
+ 	set_inode_flag(inode, FI_NO_ALLOC);
+ 	i_size_write(inode, 0);
+ retry:
+@@ -809,7 +810,8 @@ void f2fs_evict_inode(struct inode *inode)
+ 		if (dquot_initialize_needed(inode))
+ 			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+ 	}
+-	sb_end_intwrite(inode->i_sb);
++	if (!is_sbi_flag_set(sbi, SBI_IS_FREEZING))
++		sb_end_intwrite(inode->i_sb);
+ no_delete:
+ 	dquot_drop(inode);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index baefd398ec1a..e18726c5a564 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1662,11 +1662,15 @@ static int f2fs_freeze(struct super_block *sb)
+ 	/* ensure no checkpoint required */
+ 	if (!llist_empty(&F2FS_SB(sb)->cprc_info.issue_list))
+ 		return -EINVAL;
 +
- 	err = f2fs_dquot_initialize(dir);
- 	if (err)
- 		return err;
++	/* to avoid deadlock on f2fs_evict_inode->SB_FREEZE_FS */
++	set_sbi_flag(F2FS_SB(sb), SBI_IS_FREEZING);
+ 	return 0;
+ }
+ 
+ static int f2fs_unfreeze(struct super_block *sb)
+ {
++	clear_sbi_flag(F2FS_SB(sb), SBI_IS_FREEZING);
+ 	return 0;
+ }
+ 
 -- 
-2.32.0
+2.34.1
 
 
 
