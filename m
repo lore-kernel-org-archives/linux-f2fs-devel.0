@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70FA2C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96AD4C433FE
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Mar 2022 19:43:27 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nYvGy-0000nL-4S; Mon, 28 Mar 2022 19:43:26 +0000
+	id 1nYv8y-0004eT-4H; Mon, 28 Mar 2022 19:43:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <sashal@kernel.org>) id 1nYvGx-0000nE-4Z
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:43:25 +0000
+ (envelope-from <sashal@kernel.org>) id 1nYv8w-0004d3-5e
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:43:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=d7LZq9lymTCoUB9g7w6BQCN3fOCfqrT7aTq+Nkgvli8=; b=IDiqiLMfWIlGbeqcW3ETyRkX4h
- 539C5cNFgjH2B9zeOZ4azH4AEGEhl4DfrhjlMbueWwQ60UXVAgXVhlTSuhTecUkB3ba8G8BsZ9Y4P
- k6Pzepr0qaLE1kxwVbrT5zUNZt/DwDBRZfov8Js81mu1knTJltNvUm1IvWM76o2axbJI=;
+ bh=TuqaqLCRNXjjL8sqVHUgKcB/elUuG2o0JH7XZAc5L/4=; b=KRY6+WL4RDUDL726URPOYQaEKK
+ olGr9/BB9PnVd9gkArYdtGN0uVTkaYKXxHMqZVkvXWibKOTQVwj+Y+UUjxcAYEDjT0sF+UJEvZ+sC
+ ecMvgUFbgl6pzX9KMHrtUyNFz2Vsvfb4AlF+LSx8NcSJ9M88vSEQC5E2rhhSLmM8vYH0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,45 +31,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=d7LZq9lymTCoUB9g7w6BQCN3fOCfqrT7aTq+Nkgvli8=; b=i0HKSHwEd5sg9e+oUDo3zTn+U0
- UwQLL4DL3Y2akJkEJdkbpvEczPkc0RG1OI4gaB/H53KGophz6PsREi/dvXbxIWIcI5HkkHlpyewt5
- ind2/8YQajwWmEroYNuGG8285v+sDmiR8WkrKD5roa3mhmd92EI2U5lkrcKxYCNAg8N0=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=TuqaqLCRNXjjL8sqVHUgKcB/elUuG2o0JH7XZAc5L/4=; b=YissKR3mwtVGdAZi1p3hWypNGX
+ orxu9iybnNrbniCqIbWtQ36X99wgULKKXcV7ze1RAU+n9zBRaXsgUUUq0l3QO0bGfNUghIlzk0EYq
+ iC5EmRg6bkqnHZOq2FDKQALPOi2F2VXaB2C1vTrfwNrB1tPcyUaLUBdX4BOcG06zub+w=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nYvGu-0006v1-WB
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:43:25 +0000
+ id 1nYvGq-0006uh-HQ
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 28 Mar 2022 19:43:21 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 95DFC612BE;
- Mon, 28 Mar 2022 19:43:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D54CC36AE2;
- Mon, 28 Mar 2022 19:43:18 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 722D2B81216;
+ Mon, 28 Mar 2022 19:43:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5BC4C3410F;
+ Mon, 28 Mar 2022 19:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1648496599;
- bh=3mVceC6AcY9ncUUXgaCeHhUlEPjZyjB+lH7uocOn1Dw=;
+ s=k20201202; t=1648496591;
+ bh=AJfBjKjh2+RRkrw2MJojNVGL7DPhthwNBpPtrMeZIT8=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=k56QBf5bz/S7DAR1jKzeKT3s2IH/74M1QmXQWlP3My4eAmiRoU1/mVX3BZ1xzVaNs
- CWJt8oLQAnGCL31GIEvEBFrYey+9L9puh19EnTJuVZ9QzvKbmK/2gVMyunVerkNw+I
- sZJY+3ERehfH0Lig9VId3a8CTe/ZppK2ZF/NZQhAhkYCVNbF3jg43nvgqqADQwQzIa
- QvrOY4AzYQ6D/vt/Xxckueio1BXryd7if9aFHknubAseYaE5H+9aNtz9JgDLSkQrHz
- Vb14xrqzk1n/WlmG/s3OOBj9glXyC4yrfn4yhTtHImu/VGAIQkiJrKyFRhH0Pgsp5n
- QCIbo/hLvIDeQ==
+ b=PW3EITEfD1ceIh04cVEogDke+2JCzGpdkBEP34ujt1lGH9KJErKTYpWeRIAjOwq+J
+ 2/FJ/6ROfLDd3f5Ep00odVr+kTzo8VY9I6x4f4L8GYwTGhPPAiIXtyywXswwb5oDtA
+ vZTO2bqpUHcrLI+IP7+hrh/ostHwngT18z+JuAw3slXekAB8Ag6NHktyp3eGYwLcgS
+ 9V6v3Cng4oueU/heuvgWCYLiG1gm8KYu/Me+5jXHjvMfPgWACzjp8DIw6C9s1/ebSo
+ PT5AyCoPX+nYhtq5hByZn9+KtPkC77h/fusVCUfLOEgZ3ijIncvoaEu61yvt2KbzbD
+ U2+lRRhM7pj3g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Mon, 28 Mar 2022 15:42:57 -0400
-Message-Id: <20220328194300.1586178-14-sashal@kernel.org>
+Date: Mon, 28 Mar 2022 15:42:51 -0400
+Message-Id: <20220328194300.1586178-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220328194300.1586178-1-sashal@kernel.org>
 References: <20220328194300.1586178-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1nYvGu-0006v1-WB
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.15 14/16] f2fs: compress: fix to print
- raw data size in error path of lz4 decompression
+X-Headers-End: 1nYvGq-0006uh-HQ
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.15 08/16] f2fs: fix to do sanity check
+ on curseg->alloc_type
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,44 +81,90 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sasha Levin <sashal@kernel.org>, yuchao0@huawei.com,
- linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Chao Yu <chao@kernel.org>
 
-[ Upstream commit d284af43f703760e261b1601378a0c13a19d5f1f ]
+[ Upstream commit f41ee8b91c00770d718be2ff4852a80017ae9ab3 ]
 
-In lz4_decompress_pages(), if size of decompressed data is not equal to
-expected one, we should print the size rather than size of target buffer
-for decompressed data, fix it.
+As Wenqing Liu reported in bugzilla:
 
-Signed-off-by: Chao Yu <chao.yu@oppo.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=215657
+
+- Overview
+UBSAN: array-index-out-of-bounds in fs/f2fs/segment.c:3460:2 when mount and operate a corrupted image
+
+- Reproduce
+tested on kernel 5.17-rc4, 5.17-rc6
+
+1. mkdir test_crash
+2. cd test_crash
+3. unzip tmp2.zip
+4. mkdir mnt
+5. ./single_test.sh f2fs 2
+
+- Kernel dump
+[   46.434454] loop0: detected capacity change from 0 to 131072
+[   46.529839] F2FS-fs (loop0): Mounted with checkpoint version = 7548c2d9
+[   46.738319] ================================================================================
+[   46.738412] UBSAN: array-index-out-of-bounds in fs/f2fs/segment.c:3460:2
+[   46.738475] index 231 is out of range for type 'unsigned int [2]'
+[   46.738539] CPU: 2 PID: 939 Comm: umount Not tainted 5.17.0-rc6 #1
+[   46.738547] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+[   46.738551] Call Trace:
+[   46.738556]  <TASK>
+[   46.738563]  dump_stack_lvl+0x47/0x5c
+[   46.738581]  ubsan_epilogue+0x5/0x50
+[   46.738592]  __ubsan_handle_out_of_bounds+0x68/0x80
+[   46.738604]  f2fs_allocate_data_block+0xdff/0xe60 [f2fs]
+[   46.738819]  do_write_page+0xef/0x210 [f2fs]
+[   46.738934]  f2fs_do_write_node_page+0x3f/0x80 [f2fs]
+[   46.739038]  __write_node_page+0x2b7/0x920 [f2fs]
+[   46.739162]  f2fs_sync_node_pages+0x943/0xb00 [f2fs]
+[   46.739293]  f2fs_write_checkpoint+0x7bb/0x1030 [f2fs]
+[   46.739405]  kill_f2fs_super+0x125/0x150 [f2fs]
+[   46.739507]  deactivate_locked_super+0x60/0xc0
+[   46.739517]  deactivate_super+0x70/0xb0
+[   46.739524]  cleanup_mnt+0x11a/0x200
+[   46.739532]  __cleanup_mnt+0x16/0x20
+[   46.739538]  task_work_run+0x67/0xa0
+[   46.739547]  exit_to_user_mode_prepare+0x18c/0x1a0
+[   46.739559]  syscall_exit_to_user_mode+0x26/0x40
+[   46.739568]  do_syscall_64+0x46/0xb0
+[   46.739584]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+The root cause is we missed to do sanity check on curseg->alloc_type,
+result in out-of-bound accessing on sbi->block_count[] array, fix it.
+
+Signed-off-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/compress.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/f2fs/segment.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 58d255d3a518..6adf04725954 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -312,10 +312,9 @@ static int lz4_decompress_pages(struct decompress_io_ctx *dic)
- 	}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index d716553bdc02..338a57360bb8 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4747,6 +4747,13 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
  
- 	if (ret != PAGE_SIZE << dic->log_cluster_size) {
--		printk_ratelimited("%sF2FS-fs (%s): lz4 invalid rlen:%zu, "
-+		printk_ratelimited("%sF2FS-fs (%s): lz4 invalid ret:%d, "
- 					"expected:%lu\n", KERN_ERR,
--					F2FS_I_SB(dic->inode)->sb->s_id,
--					dic->rlen,
-+					F2FS_I_SB(dic->inode)->sb->s_id, ret,
- 					PAGE_SIZE << dic->log_cluster_size);
- 		return -EIO;
- 	}
+ 		sanity_check_seg_type(sbi, curseg->seg_type);
+ 
++		if (curseg->alloc_type != LFS && curseg->alloc_type != SSR) {
++			f2fs_err(sbi,
++				 "Current segment has invalid alloc_type:%d",
++				 curseg->alloc_type);
++			return -EFSCORRUPTED;
++		}
++
+ 		if (f2fs_test_bit(blkofs, se->cur_valid_map))
+ 			goto out;
+ 
 -- 
 2.34.1
 
