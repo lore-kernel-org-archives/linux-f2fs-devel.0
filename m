@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 60E62C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 00756C433F5
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  1 Apr 2022 07:04:43 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1naBCw-0002GY-66; Fri, 01 Apr 2022 07:04:41 +0000
+	id 1naBCw-0002GT-33; Fri, 01 Apr 2022 07:04:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <yuyufen@huawei.com>) id 1naBCv-0002GN-Dp
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Apr 2022 07:04:41 +0000
+ (envelope-from <yuyufen@huawei.com>) id 1naBCv-0002GG-0u
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Apr 2022 07:04:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0+zVhtSJFcjsFq4nyQ9R4ec2lD8KodOUN4VPgjtsoWk=; b=mvMxR/51Vi8wQE88U92+wKlamF
- 6vKb2u6oZBRhBJBiq1nqTLPyRcT9+6NUDAQc34EcX0nGC8SstZpg6WOBAEOyUILJxOxsqLK3ZfPiL
- PGRRJ+0aqEdIp3lG6pxlNmk4dQ6+y0qjZ/dkBfw3SNgEC9/MjaUJgh1gqfKvdGec0BOQ=;
+ bh=WHZEbyC0C5owL0phmJNRRz8HKyrNwvXha5YD14XerUE=; b=BT77sjw36S5hyk2otkPvzhhY9+
+ jH6KtrqPQ4nPcgCEAZbon2pBVp3/Ngw/SUYc+OSLPXojXHRY8PDvGmHy/HJhPwh4dE7l/rVgQDnl0
+ DNzbVGe5IKXKN8ST23MVPi5pnNN2yACorrQ/hp5k/N2XVPyyXVl68aQqm+hlGhvqn5xs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -31,28 +31,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0+zVhtSJFcjsFq4nyQ9R4ec2lD8KodOUN4VPgjtsoWk=; b=ApuTsa6buWYwa+/j/tXWHPnViD
- uu/OFJdHpkqZN5Z34KePttUoqx9+0ayvqqDfXTuOcLpYWtJ1hjAb66t4GvSkzwG7j2hSe7ZlPy+rw
- v9AQ9VbvMznVX9che2ughWhNU3N5gmaAcw2Th2gpBBEiXdhiGh2A5SnIM6MLarUw0L1I=;
-Received: from szxga03-in.huawei.com ([45.249.212.189])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=WHZEbyC0C5owL0phmJNRRz8HKyrNwvXha5YD14XerUE=; b=m/Eyjap797JJ9HBDJONKwndqke
+ 2UxFfOiM7mPleW1ePedS5eIWFQ4bmMqCxby7tGqpJ5jXiO/5m68NGPSwCFkvr+GA3h0phmcaEM+vj
+ ltc9KSn2qdwfjQus6cBtR2IAtS1y5krMUUfpvqhYITutu/5me2sohDSr04MzbzwKTTWc=;
+Received: from szxga08-in.huawei.com ([45.249.212.255])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1naBKn-001Yrb-SR
+ id 1naBKm-0005fe-Sx
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Apr 2022 07:04:40 +0000
-Received: from dggpeml500020.china.huawei.com (unknown [172.30.72.55])
- by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4KV9zV1g9QzBrvk;
- Fri,  1 Apr 2022 15:00:22 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
+ by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4KVB3p3Pg2z1HBKp;
+ Fri,  1 Apr 2022 15:04:06 +0800 (CST)
 Received: from dggpeml500009.china.huawei.com (7.185.36.209) by
- dggpeml500020.china.huawei.com (7.185.36.88) with Microsoft SMTP Server
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Fri, 1 Apr 2022 15:04:27 +0800
+ 15.1.2308.21; Fri, 1 Apr 2022 15:04:26 +0800
 Received: from huawei.com (10.175.127.227) by dggpeml500009.china.huawei.com
  (7.185.36.209) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Fri, 1 Apr
- 2022 15:04:27 +0800
+ 2022 15:04:25 +0800
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Fri, 1 Apr 2022 15:19:09 +0800
-Message-ID: <20220401071909.505086-6-yuyufen@huawei.com>
+Date: Fri, 1 Apr 2022 15:19:06 +0800
+Message-ID: <20220401071909.505086-3-yuyufen@huawei.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220401071909.505086-1-yuyufen@huawei.com>
 References: <20220401071909.505086-1-yuyufen@huawei.com>
@@ -61,8 +61,8 @@ X-Originating-IP: [10.175.127.227]
 X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
  dggpeml500009.china.huawei.com (7.185.36.209)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1naBKn-001Yrb-SR
-Subject: [f2fs-dev] [PATCH 5/5] f2fs: update doc for f2fs fault injection
+X-Headers-End: 1naBKm-0005fe-Sx
+Subject: [f2fs-dev] [PATCH 2/5] f2fs: use common fault injection frmework
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,149 +81,203 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Just update doc for fault injection.
+For now, f2fs use mount options 'fault_injection' and 'fault_type'
+to enable fault injection. We set inject_type and inject_rate in sysfs
+to control fault injection.
+
+In fact, common fault injection framework have provided a systematic
+way to support error injection via debugfs, which has more richer
+and easier control means than the current one.
+
+For example, we can set 'interval' to specify the interval between
+failures, and set 'times' to specify how many times failures may happen
+at most. More fault injection usage can be seen in (Documentation/
+fault-injection/fault-injection.rst)
 
 Signed-off-by: Yufen Yu <yuyufen@huawei.com>
 ---
- Documentation/filesystems/f2fs.rst | 118 ++++++++++++++++++++++-------
- 1 file changed, 90 insertions(+), 28 deletions(-)
+ fs/f2fs/Kconfig        |  2 +-
+ fs/f2fs/Makefile       |  1 +
+ fs/f2fs/f2fs.h         | 26 ++++++++++++++++
+ fs/f2fs/fault_inject.c | 67 ++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/super.c        |  3 ++
+ 5 files changed, 98 insertions(+), 1 deletion(-)
+ create mode 100644 fs/f2fs/fault_inject.c
 
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index 4a2426f0485a..e8dfe1541613 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -172,34 +172,6 @@ reserve_root=%d		 Support configuring reserved space which is used for
- 			 gid, unit: 4KB, the default limit is 0.2% of user blocks.
- resuid=%d		 The user ID which may use the reserved blocks.
- resgid=%d		 The group ID which may use the reserved blocks.
--fault_injection=%d	 Enable fault injection in all supported types with
--			 specified injection rate.
--fault_type=%d		 Support configuring fault injection type, should be
--			 enabled with fault_injection option, fault type value
--			 is shown below, it supports single or combined type.
--
--			 ===================	  ===========
--			 Type_Name		  Type_Value
--			 ===================	  ===========
--			 FAULT_KMALLOC		  0x000000001
--			 FAULT_KVMALLOC		  0x000000002
--			 FAULT_PAGE_ALLOC	  0x000000004
--			 FAULT_PAGE_GET		  0x000000008
--			 FAULT_ALLOC_BIO	  0x000000010 (obsolete)
--			 FAULT_ALLOC_NID	  0x000000020
--			 FAULT_ORPHAN		  0x000000040
--			 FAULT_BLOCK		  0x000000080
--			 FAULT_DIR_DEPTH	  0x000000100
--			 FAULT_EVICT_INODE	  0x000000200
--			 FAULT_TRUNCATE		  0x000000400
--			 FAULT_READ_IO		  0x000000800
--			 FAULT_CHECKPOINT	  0x000001000
--			 FAULT_DISCARD		  0x000002000
--			 FAULT_WRITE_IO		  0x000004000
--			 FAULT_SLAB_ALLOC	  0x000008000
--			 FAULT_DQUOT_INIT	  0x000010000
--			 FAULT_LOCK_OP		  0x000020000
--			 ===================	  ===========
- mode=%s			 Control block allocation mode which supports "adaptive"
- 			 and "lfs". In "lfs" mode, there should be no random
- 			 writes towards main area.
-@@ -367,6 +339,96 @@ The files in each per-device directory are shown in table below.
- Files in /sys/fs/f2fs/<devname>
- (see also Documentation/ABI/testing/sysfs-fs-f2fs)
+diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+index 03ef087537c7..d40a69077383 100644
+--- a/fs/f2fs/Kconfig
++++ b/fs/f2fs/Kconfig
+@@ -86,7 +86,7 @@ config F2FS_CHECK_FS
  
-+Fault Injection
-+=============
-+/sys/kernel/debug/f2fs/<devname>/fault_inject contains fault_inject control.
-+
-+Support configuring fault injection type by writing value to
-+/sys/kernel/debug/f2fs/<devname>/fault_inject/inject_type.
-+The values are shown below. They support single or combined type.
-+
-+			 ===================	  ===========
-+			 Type_Name		  Type_Value
-+			 ===================	  ===========
-+			 FAULT_KMALLOC		  0x000000001
-+			 FAULT_KVMALLOC		  0x000000002
-+			 FAULT_PAGE_ALLOC	  0x000000004
-+			 FAULT_PAGE_GET		  0x000000008
-+			 FAULT_ALLOC_BIO	  0x000000010 (obsolete)
-+			 FAULT_ALLOC_NID	  0x000000020
-+			 FAULT_ORPHAN		  0x000000040
-+			 FAULT_BLOCK		  0x000000080
-+			 FAULT_DIR_DEPTH	  0x000000100
-+			 FAULT_EVICT_INODE	  0x000000200
-+			 FAULT_TRUNCATE		  0x000000400
-+			 FAULT_READ_IO		  0x000000800
-+			 FAULT_CHECKPOINT	  0x000001000
-+			 FAULT_DISCARD		  0x000002000
-+			 FAULT_WRITE_IO		  0x000004000
-+			 FAULT_SLAB_ALLOC	  0x000008000
-+			 FAULT_DQUOT_INIT	  0x000010000
-+			 FAULT_LOCK_OP		  0x000020000
-+			 ===================	  ===========
-+
-+Example: Inject write io fail
-+---------------------------------------------------
-+
-+::
-+
-+    mount /dev/sda /mnt
-+    echo 0x000000800 > /sys/kernel/debug/f2fs/sda/fault_inject/inject_type
-+    echo 1 > /sys/kernel/debug/f2fs/sda/fault_inject/times
-+    echo 100 > /sys/kernel/debug/f2fs/sda/fault_inject/probability
-+    cp /mnt/file .
-+
-+Expected Result::
-+
-+    cat: /mnt/file: Input/output error
-+
-+Message from dmesg::
-+
-+    FAULT_INJECTION: forcing a failure.
-+    name fault_inject, interval 1, probability 100, space 0, times 1
-+    CPU: 30 PID: 0 Comm: swapper/30 Not tainted 5.17.0-rc8 #6
-+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-build
-+    Call Trace:
-+     <IRQ>
-+     ? dump_stack_lvl+0x73/0x9f
-+     ? dump_stack+0x13/0x1b
-+     ? should_fail.cold+0x4a/0x57
-+     ? f2fs_should_fail+0x3e/0x60
-+     ? f2fs_read_end_io+0x94/0x230
-+     ? bio_endio+0x15d/0x2d0
-+     ? blk_update_request+0x188/0x5b0
-+     ? kfree+0x138/0x4a0
-+     ? scsi_end_request+0x2f/0x230
-+     ? scsi_io_completion+0x86/0x9a0
-+     ? scsi_dec_host_busy+0xc6/0xe0
-+     ? scsi_finish_command+0xf0/0x160
-+     ? scsi_complete+0x9f/0x160
-+     ? blk_complete_reqs+0x5a/0x70
-+     ? blk_done_softirq+0x34/0x40
-+     ? __do_softirq+0x14f/0x4ef
-+     ? irq_exit_rcu+0x1a7/0x210
-+     ? common_interrupt+0xa4/0xc0
-+     </IRQ>
-+     <TASK>
-+     ? asm_common_interrupt+0x1e/0x40
-+     ? default_idle+0x38/0x50
-+     ? arch_cpu_idle+0x13/0x20
-+     ? default_idle_call+0x82/0x270
-+     ? do_idle+0x37c/0x4a0
-+     ? swake_up_locked+0x38/0x80
-+     ? _raw_spin_unlock_irqrestore+0x4b/0x90
-+     ? cpu_startup_entry+0x31/0x40
-+     ? start_secondary+0x222/0x280
-+     ? secondary_startup_64_no_verify+0xc3/0xcb
-+     </TASK>
-+    F2FS-fs (sda) : inject read IO error in f2fs_read_end_io of bio_endio+0x15d/0x2d0
-+
-+Files in /sys/kernel/debug/f2fs/<devname>/fault_inject
-+(see also Documentation/fault-injection/fault-injection.rst)
-+
- Usage
- =====
+ config F2FS_FAULT_INJECTION
+ 	bool "F2FS fault injection facility"
+-	depends on F2FS_FS
++	depends on F2FS_FS && FAULT_INJECTION && DEBUG_FS
+ 	help
+ 	  Test F2FS to inject faults such as ENOMEM, ENOSPC, and so on.
  
+diff --git a/fs/f2fs/Makefile b/fs/f2fs/Makefile
+index 8a7322d229e4..ff25d7095b95 100644
+--- a/fs/f2fs/Makefile
++++ b/fs/f2fs/Makefile
+@@ -10,3 +10,4 @@ f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) += acl.o
+ f2fs-$(CONFIG_FS_VERITY) += verity.o
+ f2fs-$(CONFIG_F2FS_FS_COMPRESSION) += compress.o
+ f2fs-$(CONFIG_F2FS_IOSTAT) += iostat.o
++f2fs-$(CONFIG_F2FS_FAULT_INJECTION)	+= fault_inject.o
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index be3014029a4e..50077b0388d1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -27,6 +27,7 @@
+ 
+ #include <linux/fscrypt.h>
+ #include <linux/fsverity.h>
++#include <linux/fault-inject.h>
+ 
+ struct pagevec;
+ 
+@@ -1592,6 +1593,14 @@ struct decompress_io_ctx {
+ 	struct work_struct verity_work;	/* work to verify the decompressed pages */
+ };
+ 
++struct f2fs_fault_inject {
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	struct fault_attr attr;
++	struct dentry *parent;
++	unsigned int inject_type;
++#endif
++};
++
+ #define NULL_CLUSTER			((unsigned int)(~0))
+ #define MIN_COMPRESS_LOG_SIZE		2
+ #define MAX_COMPRESS_LOG_SIZE		8
+@@ -1846,6 +1855,8 @@ struct f2fs_sb_info {
+ 	spinlock_t iostat_lat_lock;
+ 	struct iostat_lat_info *iostat_io_lat;
+ #endif
++
++	struct f2fs_fault_inject fault_inject;
+ };
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+@@ -1879,6 +1890,21 @@ static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
+ }
+ #endif
+ 
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++bool f2fs_should_fail(struct f2fs_sb_info *sbi, unsigned int type);
++void f2fs_fault_inject_init(struct f2fs_sb_info *sbi);
++void f2fs_fault_inject_fini(struct f2fs_sb_info *sbi);
++void f2fs_stop_fault_inject(struct f2fs_sb_info *sbi);
++#else
++static inline bool f2fs_should_fail(struct f2fs_sb_info *sbi, unsigned int type)
++{
++	return false;
++};
++static inline void f2fs_fault_inject_init(struct f2fs_sb_info *sbi) {};
++static inline void f2fs_fault_inject_fini(struct f2fs_sb_info *sbi) {};
++static inline void f2fs_stop_fault_inject(struct f2fs_sb_info *sbi) {};
++#endif
++
+ /*
+  * Test if the mounted volume is a multi-device volume.
+  *   - For a single regular disk volume, sbi->s_ndevs is 0.
+diff --git a/fs/f2fs/fault_inject.c b/fs/f2fs/fault_inject.c
+new file mode 100644
+index 000000000000..a62328b38ad6
+--- /dev/null
++++ b/fs/f2fs/fault_inject.c
+@@ -0,0 +1,67 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2022 Huawei Technologies Co., Ltd.
++ *
++ */
++#include <linux/f2fs_fs.h>
++#include "f2fs.h"
++
++static DECLARE_FAULT_ATTR(fail_default_attr);
++
++void f2fs_fault_inject_init(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_fault_inject *fault_inj = &sbi->fault_inject;
++	struct dentry *dir, *parent;
++	struct fault_attr *attr = &fault_inj->attr;
++	const char *name = sbi->sb->s_id;
++
++	if (!f2fs_debugfs_root) {
++		f2fs_warn(sbi, "root debugfs have not created");
++		return;
++	}
++
++	/* create debugfs directory and attribute */
++	parent = debugfs_create_dir(name, f2fs_debugfs_root);
++	if (!parent) {
++		f2fs_warn(sbi, "%s: failed to create debugfs directory\n", name);
++		return;
++	}
++
++	*attr = fail_default_attr;
++	dir = fault_create_debugfs_attr("fault_inject", parent, attr);
++	if (IS_ERR(dir)) {
++		f2fs_warn(sbi, "%s: failed to create debugfs attr\n", name);
++		debugfs_remove_recursive(parent);
++		return;
++	}
++	fault_inj->parent = parent;
++
++	debugfs_create_x32("inject_type", 0600, dir, &fault_inj->inject_type);
++}
++
++void f2fs_fault_inject_fini(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_fault_inject *fault_inj = &sbi->fault_inject;
++
++	debugfs_remove_recursive(fault_inj->parent);
++}
++
++bool f2fs_should_fail(struct f2fs_sb_info *sbi, unsigned int type)
++{
++	struct f2fs_fault_inject *fault_inj = &sbi->fault_inject;
++
++	if (!(fault_inj->inject_type & (1 << type)))
++		return false;
++
++	if (!should_fail(&fault_inj->attr, 1))
++		return false;
++
++	return true;
++}
++
++void f2fs_stop_fault_inject(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_fault_inject *fault_inj = &sbi->fault_inject;
++
++	fault_inj->inject_type = 0;
++}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 04e41360303c..4366469aae80 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1600,6 +1600,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 	 */
+ 	f2fs_destroy_stats(sbi);
+ 
++	f2fs_fault_inject_fini(sbi);
++
+ 	/* destroy f2fs internal modules */
+ 	f2fs_destroy_node_manager(sbi);
+ 	f2fs_destroy_segment_manager(sbi);
+@@ -4418,6 +4420,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	f2fs_update_time(sbi, CP_TIME);
+ 	f2fs_update_time(sbi, REQ_TIME);
+ 	clear_sbi_flag(sbi, SBI_CP_DISABLED_QUICK);
++	f2fs_fault_inject_init(sbi);
+ 	return 0;
+ 
+ sync_free_meta:
 -- 
 2.31.1
 
