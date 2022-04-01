@@ -4,85 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 70B80C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 31 Mar 2022 22:34:55 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 60E62C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  1 Apr 2022 07:04:43 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1na3NW-0002rg-6L; Thu, 31 Mar 2022 22:34:52 +0000
+	id 1naBCw-0002GY-66; Fri, 01 Apr 2022 07:04:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jakobkoschel@gmail.com>) id 1na3NV-0002rV-8J
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 31 Mar 2022 22:34:51 +0000
+ (envelope-from <yuyufen@huawei.com>) id 1naBCv-0002GN-Dp
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Apr 2022 07:04:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=acES2We7h+b61Mo8+oMpTpwxU8V43KYhLkYyDhUPIro=; b=Sl5hc5ci1rc1F7sB7cIymD6ixm
- LYJ5lyqsruR3Owrjk7c+YD3ZBump+Sc87CWrjQf2cFAt28HqshwPkDvseEDzKc+hJppxirbnkSIFl
- YP1+UPvb9pFrCtU1NtZXa+cljxAxfjdsCNQKI3Rm8cqGHwRDCu1nvJG+29D5LbZl1iKQ=;
+ bh=0+zVhtSJFcjsFq4nyQ9R4ec2lD8KodOUN4VPgjtsoWk=; b=mvMxR/51Vi8wQE88U92+wKlamF
+ 6vKb2u6oZBRhBJBiq1nqTLPyRcT9+6NUDAQc34EcX0nGC8SstZpg6WOBAEOyUILJxOxsqLK3ZfPiL
+ PGRRJ+0aqEdIp3lG6pxlNmk4dQ6+y0qjZ/dkBfw3SNgEC9/MjaUJgh1gqfKvdGec0BOQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=acES2We7h+b61Mo8+oMpTpwxU8V43KYhLkYyDhUPIro=; b=n
- S4dBsuDl6lLg81h265y0YVBBksKhINTPQ+WlavLNWhGDd3QxXPLd3e1mtt0LywQioKhCFor7oZaUu
- dxQ0JeZff9Zc70vOpWV0IZqxuvNNYx/b9KmDMvrUGg4I0H+dG7T6Be6eK2nf4oV+h2TyBefuVFu4d
- DUlLQKSeiScZvhK0=;
-Received: from mail-ej1-f53.google.com ([209.85.218.53])
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=0+zVhtSJFcjsFq4nyQ9R4ec2lD8KodOUN4VPgjtsoWk=; b=ApuTsa6buWYwa+/j/tXWHPnViD
+ uu/OFJdHpkqZN5Z34KePttUoqx9+0ayvqqDfXTuOcLpYWtJ1hjAb66t4GvSkzwG7j2hSe7ZlPy+rw
+ v9AQ9VbvMznVX9che2ughWhNU3N5gmaAcw2Th2gpBBEiXdhiGh2A5SnIM6MLarUw0L1I=;
+Received: from szxga03-in.huawei.com ([45.249.212.189])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1na3NP-0016Ce-Cc
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 31 Mar 2022 22:34:51 +0000
-Received: by mail-ej1-f53.google.com with SMTP id bq8so2160996ejb.10
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 31 Mar 2022 15:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
- h=from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=acES2We7h+b61Mo8+oMpTpwxU8V43KYhLkYyDhUPIro=;
- b=LaYaFxb4308Ra+8BjjJVsy1kSa2az3SVuCIrWBRxAdwHMtb/+VOVrzEaIBCha1ZCeo
- nJqROMozxayEBaxR7ZlTP5R9Y69YpLpIPao0v5fo+Bxo94EAkVGMSNrwxa8Pi6dGVM+y
- Eq7Xjbx7dHimCkNtsWvDyU0HHWO78PgW2flQULDz7Rbb8eweGlg6kdjzIsmDZ4/9r0V2
- UgDTxGdAbG7e4qOymXlueQxgdSazgglB5ivhKn/hzFxoikhFD0966apCjt2TOF7UI8XW
- FiWPMetAnbbhliZI+PxvIfzyZN2ZCcYtxEGL2Dr2JMUqDzxS4XeLBXH6DmivLNbJ6b3c
- tQ0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=acES2We7h+b61Mo8+oMpTpwxU8V43KYhLkYyDhUPIro=;
- b=WnkigjJt5ZvPYcWIRGbowS+nXnxC2Lw9TmfemDs12C/cTpFAPg1r9Py7QD6gtqg77u
- Pwfnn3U8Vt/a2erc10C0s6w6yFwtdBFsdh3F2ONFTP4xHArn2dro0mFOclpGheZqY+4I
- MlZEQsVFXa9izcH8bxWA2+QIJahV2Rl/wP2dBYjdlJgw8efMOL85Cd24qoTBuSXvr0HS
- yuOXSCxpz+lBCmBZvLKT2UbtddjtY3/03zU3jc1x95bff4n+kzVWMB2w0LHBsuZ02R0H
- FisaAHBXHfk/CX5m+7MMS7n+Z3sqagtQ/NljejytkiajKpAEUVhWQyo6j/Zq3J43CqC3
- NtnA==
-X-Gm-Message-State: AOAM532lxzsTxw8yY7vWNsZcIRe0OcoUXSpJynDG+AxP5KM2FAzzqodu
- nLDHn0m+8RtgiyKC0X5UpuGqgwakU/FULRwt
-X-Google-Smtp-Source: ABdhPJzu84nlagno7/B/iCTh45NIAtes3ADlYNLucnAQtD/vsIqDQRUwSN2TCW8BrJEBpEFPCzOewA==
-X-Received: by 2002:a17:906:c04d:b0:6b9:252:c51c with SMTP id
- bm13-20020a170906c04d00b006b90252c51cmr6916234ejb.470.1648766081039; 
- Thu, 31 Mar 2022 15:34:41 -0700 (PDT)
-Received: from localhost.localdomain (i130160.upc-i.chello.nl.
- [62.195.130.160]) by smtp.googlemail.com with ESMTPSA id
- bm23-20020a170906c05700b006d597fd51c6sm279739ejb.145.2022.03.31.15.34.40
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 31 Mar 2022 15:34:40 -0700 (PDT)
-From: Jakob Koschel <jakobkoschel@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri,  1 Apr 2022 00:34:14 +0200
-Message-Id: <20220331223414.901960-1-jakobkoschel@gmail.com>
-X-Mailer: git-send-email 2.25.1
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
+ id 1naBKn-001Yrb-SR
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Apr 2022 07:04:40 +0000
+Received: from dggpeml500020.china.huawei.com (unknown [172.30.72.55])
+ by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4KV9zV1g9QzBrvk;
+ Fri,  1 Apr 2022 15:00:22 +0800 (CST)
+Received: from dggpeml500009.china.huawei.com (7.185.36.209) by
+ dggpeml500020.china.huawei.com (7.185.36.88) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Fri, 1 Apr 2022 15:04:27 +0800
+Received: from huawei.com (10.175.127.227) by dggpeml500009.china.huawei.com
+ (7.185.36.209) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Fri, 1 Apr
+ 2022 15:04:27 +0800
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+Date: Fri, 1 Apr 2022 15:19:09 +0800
+Message-ID: <20220401071909.505086-6-yuyufen@huawei.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220401071909.505086-1-yuyufen@huawei.com>
+References: <20220401071909.505086-1-yuyufen@huawei.com>
 MIME-Version: 1.0
-X-Headers-End: 1na3NP-0016Ce-Cc
-Subject: [f2fs-dev] [PATCH] f2fs: fix dereference of stale list iterator
- after loop body
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500009.china.huawei.com (7.185.36.209)
+X-CFilter-Loop: Reflected
+X-Headers-End: 1naBKn-001Yrb-SR
+Subject: [f2fs-dev] [PATCH 5/5] f2fs: update doc for f2fs fault injection
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,66 +74,158 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, "Bos, H.J." <h.j.bos@vu.nl>,
- Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
- Cristiano Giuffrida <c.giuffrida@vu.nl>,
- Jakob Koschel <jakobkoschel@gmail.com>, linux-f2fs-devel@lists.sourceforge.net,
- Mike Rapoport <rppt@kernel.org>
+From: Yufen Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Yufen Yu <yuyufen@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The list iterator variable will be a bogus pointer if no break was hit.
-Dereferencing it (cur->page in this case) could load an out-of-bounds/undefined
-value making it unsafe to use that in the comparision to determine if the
-specific element was found.
+Just update doc for fault injection.
 
-Since 'cur->page' *can* be out-ouf-bounds it cannot be guaranteed that
-by chance (or intention of an attacker) it matches the value of 'page'
-even though the correct element was not found.
-
-This is fixed by using a separate list iterator variable for the loop
-and only setting the original variable if a suitable element was found.
-Then determing if the element was found is simply checking if the
-variable is set.
-
-Fixes: 8c242db9b8c0 ("f2fs: fix stale ATOMIC_WRITTEN_PAGE private pointer")
-Signed-off-by: Jakob Koschel <jakobkoschel@gmail.com>
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
 ---
- fs/f2fs/segment.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ Documentation/filesystems/f2fs.rst | 118 ++++++++++++++++++++++-------
+ 1 file changed, 90 insertions(+), 28 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 22dfeb991529..58695997d42f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -355,16 +355,19 @@ void f2fs_drop_inmem_page(struct inode *inode, struct page *page)
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct list_head *head = &fi->inmem_pages;
- 	struct inmem_pages *cur = NULL;
-+	struct inmem_pages *tmp;
-
- 	f2fs_bug_on(sbi, !page_private_atomic(page));
-
- 	mutex_lock(&fi->inmem_lock);
--	list_for_each_entry(cur, head, list) {
--		if (cur->page == page)
-+	list_for_each_entry(tmp, head, list) {
-+		if (tmp->page == page) {
-+			cur = tmp;
- 			break;
-+		}
- 	}
-
--	f2fs_bug_on(sbi, list_empty(head) || cur->page != page);
-+	f2fs_bug_on(sbi, !cur);
- 	list_del(&cur->list);
- 	mutex_unlock(&fi->inmem_lock);
-
-
-base-commit: f82da161ea75dc4db21b2499e4b1facd36dab275
---
-2.25.1
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 4a2426f0485a..e8dfe1541613 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -172,34 +172,6 @@ reserve_root=%d		 Support configuring reserved space which is used for
+ 			 gid, unit: 4KB, the default limit is 0.2% of user blocks.
+ resuid=%d		 The user ID which may use the reserved blocks.
+ resgid=%d		 The group ID which may use the reserved blocks.
+-fault_injection=%d	 Enable fault injection in all supported types with
+-			 specified injection rate.
+-fault_type=%d		 Support configuring fault injection type, should be
+-			 enabled with fault_injection option, fault type value
+-			 is shown below, it supports single or combined type.
+-
+-			 ===================	  ===========
+-			 Type_Name		  Type_Value
+-			 ===================	  ===========
+-			 FAULT_KMALLOC		  0x000000001
+-			 FAULT_KVMALLOC		  0x000000002
+-			 FAULT_PAGE_ALLOC	  0x000000004
+-			 FAULT_PAGE_GET		  0x000000008
+-			 FAULT_ALLOC_BIO	  0x000000010 (obsolete)
+-			 FAULT_ALLOC_NID	  0x000000020
+-			 FAULT_ORPHAN		  0x000000040
+-			 FAULT_BLOCK		  0x000000080
+-			 FAULT_DIR_DEPTH	  0x000000100
+-			 FAULT_EVICT_INODE	  0x000000200
+-			 FAULT_TRUNCATE		  0x000000400
+-			 FAULT_READ_IO		  0x000000800
+-			 FAULT_CHECKPOINT	  0x000001000
+-			 FAULT_DISCARD		  0x000002000
+-			 FAULT_WRITE_IO		  0x000004000
+-			 FAULT_SLAB_ALLOC	  0x000008000
+-			 FAULT_DQUOT_INIT	  0x000010000
+-			 FAULT_LOCK_OP		  0x000020000
+-			 ===================	  ===========
+ mode=%s			 Control block allocation mode which supports "adaptive"
+ 			 and "lfs". In "lfs" mode, there should be no random
+ 			 writes towards main area.
+@@ -367,6 +339,96 @@ The files in each per-device directory are shown in table below.
+ Files in /sys/fs/f2fs/<devname>
+ (see also Documentation/ABI/testing/sysfs-fs-f2fs)
+ 
++Fault Injection
++=============
++/sys/kernel/debug/f2fs/<devname>/fault_inject contains fault_inject control.
++
++Support configuring fault injection type by writing value to
++/sys/kernel/debug/f2fs/<devname>/fault_inject/inject_type.
++The values are shown below. They support single or combined type.
++
++			 ===================	  ===========
++			 Type_Name		  Type_Value
++			 ===================	  ===========
++			 FAULT_KMALLOC		  0x000000001
++			 FAULT_KVMALLOC		  0x000000002
++			 FAULT_PAGE_ALLOC	  0x000000004
++			 FAULT_PAGE_GET		  0x000000008
++			 FAULT_ALLOC_BIO	  0x000000010 (obsolete)
++			 FAULT_ALLOC_NID	  0x000000020
++			 FAULT_ORPHAN		  0x000000040
++			 FAULT_BLOCK		  0x000000080
++			 FAULT_DIR_DEPTH	  0x000000100
++			 FAULT_EVICT_INODE	  0x000000200
++			 FAULT_TRUNCATE		  0x000000400
++			 FAULT_READ_IO		  0x000000800
++			 FAULT_CHECKPOINT	  0x000001000
++			 FAULT_DISCARD		  0x000002000
++			 FAULT_WRITE_IO		  0x000004000
++			 FAULT_SLAB_ALLOC	  0x000008000
++			 FAULT_DQUOT_INIT	  0x000010000
++			 FAULT_LOCK_OP		  0x000020000
++			 ===================	  ===========
++
++Example: Inject write io fail
++---------------------------------------------------
++
++::
++
++    mount /dev/sda /mnt
++    echo 0x000000800 > /sys/kernel/debug/f2fs/sda/fault_inject/inject_type
++    echo 1 > /sys/kernel/debug/f2fs/sda/fault_inject/times
++    echo 100 > /sys/kernel/debug/f2fs/sda/fault_inject/probability
++    cp /mnt/file .
++
++Expected Result::
++
++    cat: /mnt/file: Input/output error
++
++Message from dmesg::
++
++    FAULT_INJECTION: forcing a failure.
++    name fault_inject, interval 1, probability 100, space 0, times 1
++    CPU: 30 PID: 0 Comm: swapper/30 Not tainted 5.17.0-rc8 #6
++    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20190727_073836-build
++    Call Trace:
++     <IRQ>
++     ? dump_stack_lvl+0x73/0x9f
++     ? dump_stack+0x13/0x1b
++     ? should_fail.cold+0x4a/0x57
++     ? f2fs_should_fail+0x3e/0x60
++     ? f2fs_read_end_io+0x94/0x230
++     ? bio_endio+0x15d/0x2d0
++     ? blk_update_request+0x188/0x5b0
++     ? kfree+0x138/0x4a0
++     ? scsi_end_request+0x2f/0x230
++     ? scsi_io_completion+0x86/0x9a0
++     ? scsi_dec_host_busy+0xc6/0xe0
++     ? scsi_finish_command+0xf0/0x160
++     ? scsi_complete+0x9f/0x160
++     ? blk_complete_reqs+0x5a/0x70
++     ? blk_done_softirq+0x34/0x40
++     ? __do_softirq+0x14f/0x4ef
++     ? irq_exit_rcu+0x1a7/0x210
++     ? common_interrupt+0xa4/0xc0
++     </IRQ>
++     <TASK>
++     ? asm_common_interrupt+0x1e/0x40
++     ? default_idle+0x38/0x50
++     ? arch_cpu_idle+0x13/0x20
++     ? default_idle_call+0x82/0x270
++     ? do_idle+0x37c/0x4a0
++     ? swake_up_locked+0x38/0x80
++     ? _raw_spin_unlock_irqrestore+0x4b/0x90
++     ? cpu_startup_entry+0x31/0x40
++     ? start_secondary+0x222/0x280
++     ? secondary_startup_64_no_verify+0xc3/0xcb
++     </TASK>
++    F2FS-fs (sda) : inject read IO error in f2fs_read_end_io of bio_endio+0x15d/0x2d0
++
++Files in /sys/kernel/debug/f2fs/<devname>/fault_inject
++(see also Documentation/fault-injection/fault-injection.rst)
++
+ Usage
+ =====
+ 
+-- 
+2.31.1
 
 
 
