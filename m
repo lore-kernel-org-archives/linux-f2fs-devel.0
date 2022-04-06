@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 697BBC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Apr 2022 06:06:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6F60EC4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Apr 2022 06:06:31 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nbyoH-0001MO-Qk; Wed, 06 Apr 2022 06:06:29 +0000
+	id 1nbyoH-0005WB-PP; Wed, 06 Apr 2022 06:06:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2) (envelope-from
  <BATV+4210fbe0094d03a681f9+6800+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1nbyoG-0001Ll-7a; Wed, 06 Apr 2022 06:06:27 +0000
+ id 1nbyoF-0005V1-OF; Wed, 06 Apr 2022 06:06:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=h9nRIyL4wrpJ3ypc009/z3A2dTvKLKo4vnaU7ryfwvk=; b=PQqthkR4pytR5o0Gd2iEeuewNF
- RZ4tuJVSkJsfC0dJe9wcbwSYQckQNEytZagmZP7ttmce/6HCEyFaL0CZ5Noet9uqWcnI4Y1p1bNcy
- mboHjVzZ1n6vmHSqv19lvOHC0WM1gW9AFa3UwhxdsJ3l2MglqBayVVE3KZfQkT3YTkWw=;
+ bh=6QVq+WRTbBiZAGVnN7IJPNcrDbkE5gjblRwCavAMwLY=; b=ZqNWXNSqrcX1l0mVE9QF6Ny4+O
+ NHRi44WqXk1kIE24aEkUWb2Homa5YOc5d7jzX3pFW0bIPQ+oC7rnTVtjCNYeFoVuuPLYS3BFY7dJB
+ rf9xq9v47BXJtI2jYNobQOuPdQwg9Y0uhRuwavLx3kgrBv3dtyc5yrOWQfF71RthFQeI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,39 +31,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=h9nRIyL4wrpJ3ypc009/z3A2dTvKLKo4vnaU7ryfwvk=; b=DeFc6eN+jXg0BcxqIgQ54vrd94
- +odnzlZzoMwFV4EE6Tw8prz3S3PmlzAFTLvMwKl27jvNtjqYnOeIgarwEtmqziQ8lQT0y/chAkUib
- cGk9GnNeRHsy611nx7wHVbCZktD+czog5zwGt+HZ6xWFDgsQLRC5072HnHYPGByTqS6I=;
+ bh=6QVq+WRTbBiZAGVnN7IJPNcrDbkE5gjblRwCavAMwLY=; b=CJEAFJbkUDU3a/EsLsLUYuDjPr
+ 7n3mJifJsILmN985Yrsy+p2vJBHcIIDFzZmmqkZSZtcXVaSpyJDwZ5WKqtST9akEsrQkmomJH4AEC
+ iVulFmkOKOdiBsv5VHeFFznHFeKEQStUohE2o0lDNX2kv9cGIcWJP/8UUpbidBfsqVVU=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nbyoE-0000wI-9U; Wed, 06 Apr 2022 06:06:27 +0000
+ id 1nbyoB-0000w0-BN; Wed, 06 Apr 2022 06:06:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=h9nRIyL4wrpJ3ypc009/z3A2dTvKLKo4vnaU7ryfwvk=; b=a9oCdCdHg2UWHjdBX3bxPs2eKR
- 5hve9tuJweiHtNscXmQk+Ivzu2Q7V3Mhv54LpOAbMMyQCJFe1pzLSFTspFhvQH5RSd3zutfvDVBle
- gc7aQWZ1G4DVpBQSlfEnNf2ldCbJPt3gAAT/HH2ojp1/M3c6g9Su6hdyodjAivFbD+KIhySRZQL+J
- uMGgYqy0Bvib+9naGiIp1U//m5d564u8ZAFKPpmnTrgGDKoliPoyKaR90tTLnVja4b5oVEZAers0q
- p77NmZVl/ZfqKctngEgkCmQ/GGwXLM4DulJii5cEYj/W60uypGBwfA+RHY+qWe7ISyRLJtvjwNf2V
- jwMR1eTA==;
+ bh=6QVq+WRTbBiZAGVnN7IJPNcrDbkE5gjblRwCavAMwLY=; b=iYaG9VkUCm4D5TSOODWzio+3DR
+ ytZ5+1QAyty9m+UBWG1IlrNmfBUfcieyEgGbnGvY+TeziydmDWxyUyplf08DqEXPrSA6ogGWlWBdc
+ eN+NdSm2eI+GluAazic6ThRfk6EDWhUlwAFB1sgAiTcA0zTyVy4xoxDN7lNirp1PXWPDjCYKA8P/e
+ a8Slx22YjqPgPpaGfnOLHtBTxMkfAK1Qngg3xOt/ieRRfzMYcYXFMoAX7pejVqOX04vm+E3B6daNl
+ No56Cgl46IA8J2O0CAKFddZqGLAK02p4IZLzzaiPdfWcvculhrlYOGpmXilPV0+0lJWjaiLUMp8xe
+ qYLNQzvg==;
 Received: from 213-225-3-188.nat.highway.a1.net ([213.225.3.188]
  helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1nbyny-003vFI-1v; Wed, 06 Apr 2022 06:06:10 +0000
+ id 1nbynq-003v9s-8N; Wed, 06 Apr 2022 06:06:02 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Wed,  6 Apr 2022 08:05:02 +0200
-Message-Id: <20220406060516.409838-14-hch@lst.de>
+Date: Wed,  6 Apr 2022 08:05:00 +0200
+Message-Id: <20220406060516.409838-12-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220406060516.409838-1-hch@lst.de>
 References: <20220406060516.409838-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1nbyoE-0000wI-9U
-Subject: [f2fs-dev] [PATCH 13/27] block: add a bdev_stable_writes helper
+X-Headers-End: 1nbyoB-0000w0-BN
+Subject: [f2fs-dev] [PATCH 11/27] block: add a bdev_write_cache helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,75 +93,100 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add a helper to check the stable writes flag based on the block_device
+Add a helper to check the write cache flag based on the block_device
 instead of having to poke into the block layer internal request_queue.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/dm-table.c  | 4 +---
- fs/super.c             | 2 +-
- include/linux/blkdev.h | 6 ++++++
- mm/swapfile.c          | 2 +-
- 4 files changed, 9 insertions(+), 5 deletions(-)
+ drivers/block/rnbd/rnbd-srv.c       | 2 +-
+ drivers/block/xen-blkback/xenbus.c  | 2 +-
+ drivers/target/target_core_iblock.c | 8 ++------
+ fs/btrfs/disk-io.c                  | 3 +--
+ include/linux/blkdev.h              | 5 +++++
+ 5 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 5e38d0dd009d5..d46839faa0ca5 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -1950,9 +1950,7 @@ static int device_requires_stable_pages(struct dm_target *ti,
- 					struct dm_dev *dev, sector_t start,
- 					sector_t len, void *data)
+diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
+index f04df6294650b..f8cc3c5fecb4b 100644
+--- a/drivers/block/rnbd/rnbd-srv.c
++++ b/drivers/block/rnbd/rnbd-srv.c
+@@ -558,7 +558,7 @@ static void rnbd_srv_fill_msg_open_rsp(struct rnbd_msg_open_rsp *rsp,
+ 	rsp->secure_discard =
+ 		cpu_to_le16(rnbd_dev_get_secure_discard(rnbd_dev));
+ 	rsp->cache_policy = 0;
+-	if (test_bit(QUEUE_FLAG_WC, &q->queue_flags))
++	if (bdev_write_cache(rnbd_dev->bdev))
+ 		rsp->cache_policy |= RNBD_WRITEBACK;
+ 	if (blk_queue_fua(q))
+ 		rsp->cache_policy |= RNBD_FUA;
+diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+index f09040435e2e5..8b691fe50475f 100644
+--- a/drivers/block/xen-blkback/xenbus.c
++++ b/drivers/block/xen-blkback/xenbus.c
+@@ -517,7 +517,7 @@ static int xen_vbd_create(struct xen_blkif *blkif, blkif_vdev_t handle,
+ 		vbd->type |= VDISK_REMOVABLE;
+ 
+ 	q = bdev_get_queue(bdev);
+-	if (q && test_bit(QUEUE_FLAG_WC, &q->queue_flags))
++	if (bdev_write_cache(bdev))
+ 		vbd->flush_support = true;
+ 
+ 	if (q && blk_queue_secure_erase(q))
+diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
+index b41ee5c3b5b82..03013e85ffc03 100644
+--- a/drivers/target/target_core_iblock.c
++++ b/drivers/target/target_core_iblock.c
+@@ -737,7 +737,7 @@ iblock_execute_rw(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+ 		if (test_bit(QUEUE_FLAG_FUA, &q->queue_flags)) {
+ 			if (cmd->se_cmd_flags & SCF_FUA)
+ 				opf |= REQ_FUA;
+-			else if (!test_bit(QUEUE_FLAG_WC, &q->queue_flags))
++			else if (!bdev_write_cache(ib_dev->ibd_bd))
+ 				opf |= REQ_FUA;
+ 		}
+ 	} else {
+@@ -886,11 +886,7 @@ iblock_parse_cdb(struct se_cmd *cmd)
+ 
+ static bool iblock_get_write_cache(struct se_device *dev)
  {
--	struct request_queue *q = bdev_get_queue(dev->bdev);
+-	struct iblock_dev *ib_dev = IBLOCK_DEV(dev);
+-	struct block_device *bd = ib_dev->ibd_bd;
+-	struct request_queue *q = bdev_get_queue(bd);
 -
--	return blk_queue_stable_writes(q);
-+	return bdev_stable_writes(dev->bdev);
+-	return test_bit(QUEUE_FLAG_WC, &q->queue_flags);
++	return bdev_write_cache(IBLOCK_DEV(dev)->ibd_bd);
  }
  
- int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
-diff --git a/fs/super.c b/fs/super.c
-index f1d4a193602d6..60f57c7bc0a69 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1204,7 +1204,7 @@ static int set_bdev_super(struct super_block *s, void *data)
- 	s->s_dev = s->s_bdev->bd_dev;
- 	s->s_bdi = bdi_get(s->s_bdev->bd_disk->bdi);
+ static const struct target_backend_ops iblock_ops = {
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index b30309f187cf0..d80adee32128d 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -4247,8 +4247,7 @@ static void write_dev_flush(struct btrfs_device *device)
+ 	 * of simplicity, since this is a debug tool and not meant for use in
+ 	 * non-debug builds.
+ 	 */
+-	struct request_queue *q = bdev_get_queue(device->bdev);
+-	if (!test_bit(QUEUE_FLAG_WC, &q->queue_flags))
++	if (bdev_write_cache(device->bdev))
+ 		return;
+ #endif
  
--	if (blk_queue_stable_writes(s->s_bdev->bd_disk->queue))
-+	if (bdev_stable_writes(s->s_bdev))
- 		s->s_iflags |= SB_I_STABLE_WRITES;
- 	return 0;
- }
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 075b16d4560e7..a433798c3343e 100644
+index 3a9578e14a6b0..807a49aa5a27a 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -1330,6 +1330,12 @@ static inline bool bdev_nonrot(struct block_device *bdev)
+@@ -1331,6 +1331,11 @@ static inline bool bdev_nonrot(struct block_device *bdev)
  	return blk_queue_nonrot(bdev_get_queue(bdev));
  }
  
-+static inline bool bdev_stable_writes(struct block_device *bdev)
++static inline bool bdev_write_cache(struct block_device *bdev)
 +{
-+	return test_bit(QUEUE_FLAG_STABLE_WRITES,
-+			&bdev_get_queue(bdev)->queue_flags);
++	return test_bit(QUEUE_FLAG_WC, &bdev_get_queue(bdev)->queue_flags);
 +}
 +
- static inline bool bdev_write_cache(struct block_device *bdev)
+ static inline enum blk_zoned_model bdev_zoned_model(struct block_device *bdev)
  {
- 	return test_bit(QUEUE_FLAG_WC, &bdev_get_queue(bdev)->queue_flags);
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index d5ab7ec4d92ca..4069f17a82c8e 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -3065,7 +3065,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 		goto bad_swap_unlock_inode;
- 	}
- 
--	if (p->bdev && blk_queue_stable_writes(p->bdev->bd_disk->queue))
-+	if (p->bdev && bdev_stable_writes(p->bdev))
- 		p->flags |= SWP_STABLE_WRITES;
- 
- 	if (p->bdev && p->bdev->bd_disk->fops->rw_page)
+ 	struct request_queue *q = bdev_get_queue(bdev);
 -- 
 2.30.2
 
