@@ -4,64 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1869FC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 87831C43217
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  6 Apr 2022 06:05:52 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nbyne-0005Kd-DE; Wed, 06 Apr 2022 06:05:51 +0000
+	id 1nbynf-0005ZF-Oc; Wed, 06 Apr 2022 06:05:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2) (envelope-from
  <BATV+4210fbe0094d03a681f9+6800+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1nbynb-0005KA-V4; Wed, 06 Apr 2022 06:05:49 +0000
+ id 1nbynd-0005Z0-P8; Wed, 06 Apr 2022 06:05:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=eIMQeXXWWkWx5FDwNbE0TlkL2lmBU9S9LJMrY9Onkc8=; b=Ksq8mURfhiAd1VlXX7ze7OUOJn
- gKU58oWuwFDuMA7Fe5WFMMtJWd49kLdTK7tciEZEfC72dHeyN7y4Nl6kriEtMCG/dzGHkMBY32DdJ
- z5AeEiVnEbRr/PgHQwomz8UXTHKYhm5bYKgXI4V8jX7kA9tC+n/wckNT4FbhMtLB7Zsk=;
+ bh=L9ybHoqkMQFtFgAKSKAUEOlBEraEcHfvZKxNTrnAqQ8=; b=XtM9aVN5qFOFmlJh0UGpMYiB13
+ GZf38PSKGXZ1bdeEA5ThQ5naRWWyyP5bB1wz7GcjDuhL9MCfgM3A0nx+rDWTsXIrc6NHINB1fkeSu
+ 4StGKdNrP+RR7Bk5Xnh1xa+a4YjbNgFYjBICbpxcT7/Y5crFAJtf+duZIG+QnkrdRb8E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=eIMQeXXWWkWx5FDwNbE0TlkL2lmBU9S9LJMrY9Onkc8=; b=V
- RwW+J0HT6iPRLK+uIuNiMeQvQTKe58lKDGSJBfsPBZw9qDLcEXxYEWyT2rVKtrJc5JyJ2DzNYXSBx
- ikg7AB9YcUmXQJma0AANHdZrG6G47lNcKBpC+uTf3z5x59y+R0jf/lVHEUTd0oS3WVqNu1syWZ+lM
- LDvh6pnJAXyhuNOI=;
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=L9ybHoqkMQFtFgAKSKAUEOlBEraEcHfvZKxNTrnAqQ8=; b=GONQTaMNgphf6Z6QrXPzspunZg
+ MzYEp0LWNvhOsuoj+Ytr3AIZkSjdpx6fsS8AHd3DeAaEI4exe6ND7ZBhGwHfhayi0FzfXcl6IdwpF
+ xgIw6YicYc49m8ZFyilDvmJU1d/LkZv3PcomVaDeOD36lYMkewg9YiYTHVL1uzjIEjq8=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nbynZ-0000tM-Fg; Wed, 06 Apr 2022 06:05:48 +0000
+ id 1nbynb-0000td-LM; Wed, 06 Apr 2022 06:05:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:In-Reply-To:References;
- bh=eIMQeXXWWkWx5FDwNbE0TlkL2lmBU9S9LJMrY9Onkc8=; b=VZ+7ypRmFaBJu2hWoqIAVoWmYj
- 4xuOKPhldWs90pyh7ymg8zDgtPiY3fUX65YZt7O8odlZK2biQektgi2RBU0M6b67r5qzYVAWooKMG
- RUcSTyL9JbVdK+NxQGE8XxOqcy/ecJseZVyWJSGGYU9geNZke8bWZ+0hwzP7GapHHPs8RfgfuSXJe
- Y6P+Puu3Utc5OgunETt6hMAarqS36XMC4GrXZMgHCqwyaBIKi8AV3Se7oh/6MaZCw/a19Dt2QCcAQ
- 3dQhNCC9soJ3UjvoF59FChYkHOkYI2VJYBUrVQVE7FpoCLMPp5lZq0dB9zF2n/zhNS+Ksy6vRUvVU
- mD8TTxXw==;
+ Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
+ To:From:Sender:Reply-To:Content-ID:Content-Description;
+ bh=L9ybHoqkMQFtFgAKSKAUEOlBEraEcHfvZKxNTrnAqQ8=; b=txJ9J4YPrbulci+oxX/K1jvzXj
+ 8gms4zn8OqR/RStS8wT9jgDaq6tCr0xQ50GF2QciDZSPopEVcnXqcG9w2/K5XJ1BTwpW2RGCMVDA3
+ jmixF0VaBheGVq3jZaojwfuYLAQ4/4Mglf66TIU/khX83gOPm4zJJDJ3ou8TXUFMlSJvyOL8I9hxL
+ hx9nNbqp2gLScWmRlyHDlcj4q4nSOat130S2f7AGVfoaMNZ1nXqC2ZbfhhUNn3oLONf4dJ00se0wZ
+ /QPbSgFP9I0m9WnIywznAmgQ/IfAzP4kiOxdsv2B4GrBWPwAkOiqBswZsWccIWUz5jFEPpf/f4t6x
+ GlFV09uw==;
 Received: from 213-225-3-188.nat.highway.a1.net ([213.225.3.188]
  helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1nbynA-003ukl-9g; Wed, 06 Apr 2022 06:05:20 +0000
+ id 1nbynL-003uoA-Rk; Wed, 06 Apr 2022 06:05:32 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Wed,  6 Apr 2022 08:04:49 +0200
-Message-Id: <20220406060516.409838-1-hch@lst.de>
+Date: Wed,  6 Apr 2022 08:04:52 +0200
+Message-Id: <20220406060516.409838-4-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220406060516.409838-1-hch@lst.de>
+References: <20220406060516.409838-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1nbynZ-0000tM-Fg
-Subject: [f2fs-dev] use block_device based APIs in block layer consumers
+X-Headers-End: 1nbynb-0000td-LM
+Subject: [f2fs-dev] [PATCH 03/27] target: fix discard alignment on partitions
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,114 +89,28 @@ Cc: jfs-discussion@lists.sourceforge.net, linux-nvme@lists.infradead.org,
  linux-xfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
  linux-fsdevel@vger.kernel.org, ntfs3@lists.linux.dev,
  linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jens,
-
-this series cleanups up the block layer API so that APIs consumed
-by file systems are (almost) only struct block_devic based, so that
-file systems don't have to poke into block layer internals like the
-request_queue.
-
-I also found a bunch of existing bugs related to partition offsets
-and discard so these are fixed while going along.
-
-Diffstat:
- arch/um/drivers/ubd_kern.c           |    2 
- block/blk-core.c                     |    4 -
- block/blk-lib.c                      |  124 ++++++++++++++++++++---------------
- block/blk-mq-debugfs.c               |    2 
- block/blk-settings.c                 |   74 ++++++++++++++++++++
- block/blk.h                          |   14 ---
- block/fops.c                         |    2 
- block/genhd.c                        |    4 -
- block/ioctl.c                        |   48 ++++++++++---
- block/partitions/core.c              |   12 ---
- drivers/block/drbd/drbd_main.c       |   53 +++++++-------
- drivers/block/drbd/drbd_nl.c         |   94 +++++++++++---------------
- drivers/block/drbd/drbd_receiver.c   |   13 +--
- drivers/block/loop.c                 |   15 +---
- drivers/block/nbd.c                  |    3 
- drivers/block/null_blk/main.c        |    1 
- drivers/block/rbd.c                  |    1 
- drivers/block/rnbd/rnbd-clt.c        |    6 -
- drivers/block/rnbd/rnbd-srv-dev.h    |    8 --
- drivers/block/rnbd/rnbd-srv.c        |    5 -
- drivers/block/virtio_blk.c           |    2 
- drivers/block/xen-blkback/blkback.c  |   15 ++--
- drivers/block/xen-blkback/xenbus.c   |    9 --
- drivers/block/xen-blkfront.c         |    7 -
- drivers/block/zram/zram_drv.c        |    1 
- drivers/md/bcache/alloc.c            |    2 
- drivers/md/bcache/request.c          |    4 -
- drivers/md/bcache/super.c            |    3 
- drivers/md/bcache/sysfs.c            |    2 
- drivers/md/dm-cache-target.c         |    9 --
- drivers/md/dm-clone-target.c         |    9 --
- drivers/md/dm-io.c                   |    2 
- drivers/md/dm-log-writes.c           |    3 
- drivers/md/dm-raid.c                 |    9 --
- drivers/md/dm-table.c                |   25 +------
- drivers/md/dm-thin.c                 |   15 ----
- drivers/md/dm.c                      |    3 
- drivers/md/md-linear.c               |   11 ---
- drivers/md/md.c                      |    5 -
- drivers/md/raid0.c                   |    7 -
- drivers/md/raid1.c                   |   18 -----
- drivers/md/raid10.c                  |   20 -----
- drivers/md/raid5-cache.c             |    8 +-
- drivers/md/raid5.c                   |   14 +--
- drivers/mmc/core/queue.c             |    3 
- drivers/mtd/mtd_blkdevs.c            |    1 
- drivers/nvme/host/core.c             |    6 -
- drivers/nvme/target/io-cmd-bdev.c    |    2 
- drivers/nvme/target/zns.c            |    3 
- drivers/s390/block/dasd_fba.c        |    1 
- drivers/scsi/sd.c                    |    2 
- drivers/target/target_core_device.c  |   19 ++---
- drivers/target/target_core_file.c    |   10 +-
- drivers/target/target_core_iblock.c  |   17 +---
- fs/btrfs/disk-io.c                   |    3 
- fs/btrfs/extent-tree.c               |    8 +-
- fs/btrfs/ioctl.c                     |   12 +--
- fs/btrfs/volumes.c                   |    4 -
- fs/btrfs/zoned.c                     |    3 
- fs/direct-io.c                       |   32 +--------
- fs/exfat/file.c                      |    5 -
- fs/exfat/super.c                     |   10 --
- fs/ext4/ioctl.c                      |   10 --
- fs/ext4/mballoc.c                    |   10 +-
- fs/ext4/super.c                      |   10 --
- fs/f2fs/f2fs.h                       |    3 
- fs/f2fs/file.c                       |   19 ++---
- fs/f2fs/segment.c                    |    8 --
- fs/fat/file.c                        |    5 -
- fs/fat/inode.c                       |   10 --
- fs/gfs2/rgrp.c                       |    7 -
- fs/iomap/direct-io.c                 |    3 
- fs/jbd2/journal.c                    |    9 --
- fs/jfs/ioctl.c                       |    5 -
- fs/jfs/super.c                       |    8 --
- fs/nilfs2/ioctl.c                    |    6 -
- fs/nilfs2/sufile.c                   |    4 -
- fs/nilfs2/the_nilfs.c                |    4 -
- fs/ntfs3/file.c                      |    6 -
- fs/ntfs3/super.c                     |   10 +-
- fs/ocfs2/ioctl.c                     |    5 -
- fs/super.c                           |    2 
- fs/xfs/xfs_discard.c                 |    8 +-
- fs/xfs/xfs_log_cil.c                 |    2 
- fs/xfs/xfs_super.c                   |   12 +--
- fs/zonefs/super.c                    |    3 
- include/linux/blkdev.h               |  112 +++++++++++--------------------
- include/target/target_core_backend.h |    4 -
- mm/swapfile.c                        |   31 ++------
- 89 files changed, 493 insertions(+), 652 deletions(-)
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+VXNlIHRoZSBwcm9wZXIgYmRldl9kaXNjYXJkX2FsaWdubWVudCBoZWxwZXIgdGhhdCBhY2NvdW50
+cyBmb3IgcGFydGl0aW9uCm9mZnNldHMuCgpG0ZZ4ZXM6IGM2NmFjOWRiOGQ0YSAoIltTQ1NJXSB0
+YXJnZXQ6IEFkZCBMSU8gdGFyZ2V0IGNvcmUgdjQuMC4wLXJjNiIpClNpZ25lZC1vZmYtYnk6IENo
+cmlzdG9waCBIZWxsd2lnIDxoY2hAbHN0LmRlPgotLS0KIGRyaXZlcnMvdGFyZ2V0L3RhcmdldF9j
+b3JlX2RldmljZS5jIHwgNCArKy0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAy
+IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvdGFyZ2V0L3RhcmdldF9jb3JlX2Rl
+dmljZS5jIGIvZHJpdmVycy90YXJnZXQvdGFyZ2V0X2NvcmVfZGV2aWNlLmMKaW5kZXggM2ExZWM3
+MDVjZDgwYi4uMTZlNzc1YmNmNGE3YyAxMDA2NDQKLS0tIGEvZHJpdmVycy90YXJnZXQvdGFyZ2V0
+X2NvcmVfZGV2aWNlLmMKKysrIGIvZHJpdmVycy90YXJnZXQvdGFyZ2V0X2NvcmVfZGV2aWNlLmMK
+QEAgLTg0OSw4ICs4NDksOCBAQCBib29sIHRhcmdldF9jb25maWd1cmVfdW5tYXBfZnJvbV9xdWV1
+ZShzdHJ1Y3Qgc2VfZGV2X2F0dHJpYiAqYXR0cmliLAogCSAqLwogCWF0dHJpYi0+bWF4X3VubWFw
+X2Jsb2NrX2Rlc2NfY291bnQgPSAxOwogCWF0dHJpYi0+dW5tYXBfZ3JhbnVsYXJpdHkgPSBxLT5s
+aW1pdHMuZGlzY2FyZF9ncmFudWxhcml0eSAvIGJsb2NrX3NpemU7Ci0JYXR0cmliLT51bm1hcF9n
+cmFudWxhcml0eV9hbGlnbm1lbnQgPSBxLT5saW1pdHMuZGlzY2FyZF9hbGlnbm1lbnQgLwotCQkJ
+CQkJCQlibG9ja19zaXplOworCWF0dHJpYi0+dW5tYXBfZ3JhbnVsYXJpdHlfYWxpZ25tZW50ID0K
+KwkJYmRldl9kaXNjYXJkX2FsaWdubWVudChiZGV2KSAvIGJsb2NrX3NpemU7CiAJcmV0dXJuIHRy
+dWU7CiB9CiBFWFBPUlRfU1lNQk9MKHRhcmdldF9jb25maWd1cmVfdW5tYXBfZnJvbV9xdWV1ZSk7
+Ci0tIAoyLjMwLjIKCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0
+cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
+dGluZm8vbGludXgtZjJmcy1kZXZlbAo=
