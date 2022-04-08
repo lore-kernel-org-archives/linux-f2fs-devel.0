@@ -4,94 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7D94FC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  7 Apr 2022 15:44:17 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9D8F6C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  8 Apr 2022 05:44:07 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ncUIz-0005dj-K0; Thu, 07 Apr 2022 15:44:16 +0000
+	id 1nchPi-0004Hl-3D; Fri, 08 Apr 2022 05:44:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <dsterba@suse.cz>)
- id 1ncUIx-0005dA-AP; Thu, 07 Apr 2022 15:44:14 +0000
+ (envelope-from <dzm91@hust.edu.cn>) id 1nchPg-0004Ha-Om
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Apr 2022 05:44:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RtA+SPF4j8BVXsqmszO7xH0OxCICEh+Est/knHN20Pw=; b=B4ikSjPqmneBExgtnKNrYIVxmD
- ndR9mXEbQDTKLCLVuXp+W2afWQrW0XaK1hSf0BLKw0HuN1dDCnAzbHpGewFd0FFNdIZJwLpTNK9lv
- qlYEf1ATYnUpD8VcBbXoa5yI+9HKIM9nLuMdJll1osJkfa5SRW7BHAKHrW/AQdchcQjY=;
+ bh=fCd8fFcmC3MxMth2q/Gkxm9sxVqNUIf55fBEtjQSvHc=; b=i9CdcjgYn6EXr+box8RcyBQU32
+ Az2Lgz91qlx8T/YElE2UmqWlWm3wkOTHUqHAWW8ZIl7S8oImEf+65h/kNtRdvKUuQuN9/Zne+Zscv
+ HoC16AU5omA/YaRn6QkVx498abtDg3WK0JvXmg1I9gH2Fvr328yA6yhuSjkfcvxR6Hws=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Reply-To:Message-ID:
- Subject:Cc:To:From:Date:Sender:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=RtA+SPF4j8BVXsqmszO7xH0OxCICEh+Est/knHN20Pw=; b=P2EdHOciQDuhXWeNq7i07HLEPb
- rtv/SYAS9qvPTSw1EhLtwGDoH2Vx+uX3lM5k7hJ0ecQqZ9sIYFrkIrTWtM/lon0KuEHyNGt8OtpF2
- YVUPaYtMBXa43Bn9U5dD1WuM7ozXpiTGNoZumMEUhdz7YKyAV1TA/xz8qAZWLmpijzjc=;
-Received: from smtp-out1.suse.de ([195.135.220.28])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=fCd8fFcmC3MxMth2q/Gkxm9sxVqNUIf55fBEtjQSvHc=; b=N
+ o1cdsngIPBeeNPLaf/4GypqwmK0KATv/TlyeXOuMz0rp82+o3X+HCGukqipg7l3Ta69iAEveqek1+
+ jhpn9YnUxYPNN+ryq/dljo+nlRFcBq8WtDdip/j/1vraUn2HGCxQUwkoT3eKlZc955GUMm1c/ZI/C
+ rlX/I9MgbtQI2QdU=;
+Received: from mail.hust.edu.cn ([202.114.0.240] helo=hust.edu.cn)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1ncUIu-00051Z-Ga; Thu, 07 Apr 2022 15:44:14 +0000
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
- by smtp-out1.suse.de (Postfix) with ESMTP id D66A6212CA;
- Thu,  7 Apr 2022 15:24:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1649345092;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=RtA+SPF4j8BVXsqmszO7xH0OxCICEh+Est/knHN20Pw=;
- b=JdwcskixEmG8Id6CFcHmK2HMPcVcB071Gxs55mSKq7gYvR2Ikd8MNoO/fLtEbVpgdj1eqK
- 9zmwivWn67QHHcgD9Kfm5GQ7CXBQeMe5lW9iJ9AGGV3Pl0ul2ocJyd3loaCvdRBmNQxip+
- WgCnpcThcFxRJmTkxC30BSU3q0i1qd4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1649345092;
- h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
- cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=RtA+SPF4j8BVXsqmszO7xH0OxCICEh+Est/knHN20Pw=;
- b=pkLC9VLc/9JNFZ5DsOV/UM/28hXligCH1VLYaRzzl6m3sxWEGPlvl1H8p8FVldpalCYBR6
- DsLUEWMcp0v/ApCw==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
- by relay2.suse.de (Postfix) with ESMTP id ADAE4A3B82;
- Thu,  7 Apr 2022 15:24:52 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
- id 25B6BDA80E; Thu,  7 Apr 2022 17:20:50 +0200 (CEST)
-Date: Thu, 7 Apr 2022 17:20:49 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20220407152049.GH15609@twin.jikos.cz>
-Mail-Followup-To: dsterba@suse.cz, Christoph Hellwig <hch@lst.de>,
- Jens Axboe <axboe@kernel.dk>, dm-devel@redhat.com,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-um@lists.infradead.org, linux-block@vger.kernel.org,
- drbd-dev@lists.linbit.com, nbd@other.debian.org,
- ceph-devel@vger.kernel.org,
- virtualization@lists.linux-foundation.org,
- xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
- linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
- target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
- linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
- ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
-References: <20220406060516.409838-1-hch@lst.de>
- <20220406060516.409838-8-hch@lst.de>
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
+ id 1nchPc-0001UT-9d
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 08 Apr 2022 05:44:03 +0000
+Received: from localhost.localdomain ([222.20.126.44])
+ (user=dzm91@hust.edu.cn mech=LOGIN bits=0)
+ by mx1.hust.edu.cn  with ESMTP id 2385ME7N017799-2385ME7Q017799
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+ Fri, 8 Apr 2022 13:22:20 +0800
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Date: Fri,  8 Apr 2022 13:22:06 +0800
+Message-Id: <20220408052207.209856-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20220406060516.409838-8-hch@lst.de>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Headers-End: 1ncUIu-00051Z-Ga
-Subject: Re: [f2fs-dev] [PATCH 07/27] btrfs: use bdev_max_active_zones
- instead of open coding it
+X-FEAS-AUTH-USER: dzm91@hust.edu.cn
+X-Headers-End: 1nchPc-0001UT-9d
+Subject: [f2fs-dev] [PATCH] fs: f2fs: remove WARN_ON in f2fs_is_valid_blkaddr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -103,31 +64,53 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: dsterba@suse.cz
-Cc: jfs-discussion@lists.sourceforge.net, linux-nvme@lists.infradead.org,
- virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
- dm-devel@redhat.com, target-devel@vger.kernel.org,
- linux-mtd@lists.infradead.org, drbd-dev@lists.linbit.com,
- linux-s390@vger.kernel.org, linux-nilfs@vger.kernel.org,
- linux-scsi@vger.kernel.org, cluster-devel@redhat.com,
- xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
- linux-um@lists.infradead.org, nbd@other.debian.org,
- linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
- ceph-devel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
- ntfs3@lists.linux.dev, linux-btrfs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ syzbot+763ae12a2ede1d99d4dc@syzkaller.appspotmail.com,
+ Dongliang Mu <mudongliangabcd@gmail.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Apr 06, 2022 at 08:04:56AM +0200, Christoph Hellwig wrote:
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+From: Dongliang Mu <mudongliangabcd@gmail.com>
 
-As it's a standalone patch I can take it (possibly with other similar
-prep btrfs patches) in current development cycle to relieve the
-inter-tree dependencies.
+In f2fs_is_valid_blkaddr, if type is DATA_GENERIC_ENHANCE or
+DATA_GENERIC_ENHANCE_READ, it invokes WARN_ON(1) not matter
+blkaddr is in the range or not.
+
+Fix this by removing WARN_ON.
+
+Note that, syzbot patch testing does not incur any further issues
+
+Reported-by: syzbot+763ae12a2ede1d99d4dc@syzkaller.appspotmail.com
+Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+---
+ fs/f2fs/checkpoint.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index f5366feea82d..521498b2dd8c 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -158,7 +158,6 @@ static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr,
+ 		f2fs_err(sbi, "Inconsistent error blkaddr:%u, sit bitmap:%d",
+ 			 blkaddr, exist);
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		WARN_ON(1);
+ 	}
+ 	return exist;
+ }
+@@ -196,7 +195,6 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 			f2fs_warn(sbi, "access invalid blkaddr:%u",
+ 				  blkaddr);
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+-			WARN_ON(1);
+ 			return false;
+ 		} else {
+ 			return __is_bitmap_valid(sbi, blkaddr, type);
+-- 
+2.25.1
+
 
 
 _______________________________________________
