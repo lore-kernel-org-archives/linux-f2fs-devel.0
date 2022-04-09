@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A9A15C4167E
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D4389C433EF
 	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  9 Apr 2022 04:52:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nd35G-0006Ay-VV; Sat, 09 Apr 2022 04:52:28 +0000
+	id 1nd35I-0002Ym-9B; Sat, 09 Apr 2022 04:52:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2) (envelope-from
  <BATV+43fc5532e856fea764d1+6803+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1nd35F-00064s-9E; Sat, 09 Apr 2022 04:52:26 +0000
+ id 1nd356-0002Rp-Qr; Sat, 09 Apr 2022 04:52:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LA03+v2RMrt5LLwAfTBpcNFXpYhSXKyM/LEXrkZN1Tc=; b=DL9QHYWyI41HT9+1U3Tth0ydTP
- foi63oOOIMqYIsb6V+ugkqoB9ikpw4MgLJ6dGGGImgY3kkpdVjmRvtPp5FxPujBkhoTdMflNHVjXY
- 6WVbjWiesp3YW93mEz8OJppPpD+1eVg+KkqjwTep2bkdZ0tOuAwl30LFBtLL7rqoMsks=;
+ bh=q2ranmlO4Nl6vweHnkN5W/lhAXFqjXPKY6W4cI6bGNw=; b=gI2eRo6lxjwb34+TtLXSsdvqTT
+ Qjs3n35hCijDsASc16UiIwoZH320xZ6bDtSKyayz2F4g7LCawnMpK2jBR+5TCZVfZ1Tk/etteN3/a
+ vLgE13O81h6utHf7RGWCI6YXaGyvFOa/u825CqSJM5wrzvJBIqnQdDdOjwbzgt+h5B+E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,40 +31,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=LA03+v2RMrt5LLwAfTBpcNFXpYhSXKyM/LEXrkZN1Tc=; b=TO/GAz4S8kyU4ePmnwfOdgJJpa
- 0nZbTR2XtHJNx+fFGwPgkkrChYOa/I4SNcAMunTlNhLiaD9AmR0xULO/09fT2pacNuGDXkyVpwWco
- x7CEl4QMIB68Slr+0X6u9WfbpW7W7Vt4/Nf4NWod0a7Lra7GByvfTDGNaNTPVynpr0nA=;
+ bh=q2ranmlO4Nl6vweHnkN5W/lhAXFqjXPKY6W4cI6bGNw=; b=h2ZcMpvZ/zsj8jp3MVQALXZQlR
+ nOgW/9EWTahkSqYEsZTRTcEpM9KKT+d94DD+c4SC7KTluZNxZrXEzuIav4kUa8ZBtcpmiekuku5H2
+ 5B0iKkmIGjG9G0SUheMhdZL80Gi4MY1sqt13ZDvdZN8oR3KOCHph8gJcGQ4BMWA1CbVQ=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nd352-00APdc-Jd; Sat, 09 Apr 2022 04:52:18 +0000
+ id 1nd351-0001A5-PE; Sat, 09 Apr 2022 04:52:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=LA03+v2RMrt5LLwAfTBpcNFXpYhSXKyM/LEXrkZN1Tc=; b=TToQ+IG68ZTma6i9nDz6xx4LYK
- D0aw9uFluTWmoLPN8wS4Tw4ptzJ/n+LwG2AuHxcLmQEWYx1aZe+l+/EUb07HA13ebYd+zXWtHqs00
- wx9o5AAPH2KJPl0+jag4OLclg/JD37wQiqgJHq6T1H6FWx+UFz58+SDkab9YWBuWtwT6h/pIgt6FR
- AzrhjmPB8W4cd/F2sRVPHfKdDw0YBBrQTFPQ9a74BSKEWHHl6H0cqEhdUPbu4a8zWq2vD/QaSCtLv
- QCIx9f2iUsf6SUo5Q4SNMv/t99ukC9ZdAasasKnk54ghRUz188l1onQf3RFgK9e1sPw7Yo1mCiQup
- PdxOz5qQ==;
+ bh=q2ranmlO4Nl6vweHnkN5W/lhAXFqjXPKY6W4cI6bGNw=; b=ZwXWqq27tMeyVdjCd9/fIV+62b
+ YxoMIWLS5QBW9+N570g/a7MqnPHccUJQp/73S/ehTJ9VEsGu0nZXpLT2GsIb95dlGJnKSkFIT7WNJ
+ Q2sY9of4Z8TkC7fc/FklkIOgdhls0Ao3F7MloWBwUhbTcUSp/MjOHIau/ybVaMror8iobGwcOp0AA
+ +a4GNDWpu5gRhJyLqGbdZW5DNs6lIAJYj08W7f1olcpdRSmv2+7GaRf1xJ5QApQRYFU40mFosdlZy
+ 0ALRAEA3rIIwBWnBlj8QEgYL1eIM3It3IcCM+Tc/eC3LmnRLah4kAgVmx2WJTHuXLjilmSIpHNWrZ
+ 1FnhvyJg==;
 Received: from 213-147-167-116.nat.highway.webapn.at ([213.147.167.116]
  helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1nd34e-0021EZ-Bz; Sat, 09 Apr 2022 04:51:48 +0000
+ id 1nd34b-0021Bd-D3; Sat, 09 Apr 2022 04:51:45 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Sat,  9 Apr 2022 06:50:34 +0200
-Message-Id: <20220409045043.23593-19-hch@lst.de>
+Date: Sat,  9 Apr 2022 06:50:33 +0200
+Message-Id: <20220409045043.23593-18-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220409045043.23593-1-hch@lst.de>
 References: <20220409045043.23593-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1nd352-00APdc-Jd
-Subject: [f2fs-dev] [PATCH 18/27] block: move bdev_alignment_offset and
- queue_limit_alignment_offset out of line
+X-Headers-End: 1nd351-0001A5-PE
+Subject: [f2fs-dev] [PATCH 17/27] block: use bdev_alignment_offset in
+ disk_alignment_offset_show
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,85 +94,48 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-No need to inline these fairly larger helpers.
+This does the same as the open coded variant except for an extra branch,
+and allows to remove queue_alignment_offset entirely.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 ---
- block/blk-settings.c   | 23 +++++++++++++++++++++++
- include/linux/blkdev.h | 21 +--------------------
- 2 files changed, 24 insertions(+), 20 deletions(-)
+ block/genhd.c          | 2 +-
+ include/linux/blkdev.h | 8 --------
+ 2 files changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index b83df3d2eebca..94410a13c0dee 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -468,6 +468,16 @@ void blk_queue_io_opt(struct request_queue *q, unsigned int opt)
- }
- EXPORT_SYMBOL(blk_queue_io_opt);
- 
-+static int queue_limit_alignment_offset(struct queue_limits *lim,
-+		sector_t sector)
-+{
-+	unsigned int granularity = max(lim->physical_block_size, lim->io_min);
-+	unsigned int alignment = sector_div(sector, granularity >> SECTOR_SHIFT)
-+		<< SECTOR_SHIFT;
-+
-+	return (granularity + lim->alignment_offset - alignment) % granularity;
-+}
-+
- static unsigned int blk_round_down_sectors(unsigned int sectors, unsigned int lbs)
+diff --git a/block/genhd.c b/block/genhd.c
+index b8b6759d670f0..712031ce19070 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -1010,7 +1010,7 @@ static ssize_t disk_alignment_offset_show(struct device *dev,
  {
- 	sectors = round_down(sectors, lbs >> SECTOR_SHIFT);
-@@ -901,3 +911,16 @@ void blk_queue_set_zoned(struct gendisk *disk, enum blk_zoned_model model)
- 	}
+ 	struct gendisk *disk = dev_to_disk(dev);
+ 
+-	return sprintf(buf, "%d\n", queue_alignment_offset(disk->queue));
++	return sprintf(buf, "%d\n", bdev_alignment_offset(disk->part0));
  }
- EXPORT_SYMBOL_GPL(blk_queue_set_zoned);
-+
-+int bdev_alignment_offset(struct block_device *bdev)
-+{
-+	struct request_queue *q = bdev_get_queue(bdev);
-+
-+	if (q->limits.misaligned)
-+		return -1;
-+	if (bdev_is_partition(bdev))
-+		return queue_limit_alignment_offset(&q->limits,
-+				bdev->bd_start_sect);
-+	return q->limits.alignment_offset;
-+}
-+EXPORT_SYMBOL_GPL(bdev_alignment_offset);
+ 
+ static ssize_t disk_discard_alignment_show(struct device *dev,
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index d5346e72e3645..0a1795ac26275 100644
+index f8c50b77543eb..d5346e72e3645 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -1251,26 +1251,7 @@ bdev_zone_write_granularity(struct block_device *bdev)
+@@ -1251,14 +1251,6 @@ bdev_zone_write_granularity(struct block_device *bdev)
  	return queue_zone_write_granularity(bdev_get_queue(bdev));
  }
  
--static inline int queue_limit_alignment_offset(struct queue_limits *lim, sector_t sector)
+-static inline int queue_alignment_offset(const struct request_queue *q)
 -{
--	unsigned int granularity = max(lim->physical_block_size, lim->io_min);
--	unsigned int alignment = sector_div(sector, granularity >> SECTOR_SHIFT)
--		<< SECTOR_SHIFT;
--
--	return (granularity + lim->alignment_offset - alignment) % granularity;
--}
--
--static inline int bdev_alignment_offset(struct block_device *bdev)
--{
--	struct request_queue *q = bdev_get_queue(bdev);
--
 -	if (q->limits.misaligned)
 -		return -1;
--	if (bdev_is_partition(bdev))
--		return queue_limit_alignment_offset(&q->limits,
--				bdev->bd_start_sect);
+-
 -	return q->limits.alignment_offset;
 -}
-+int bdev_alignment_offset(struct block_device *bdev);
- 
- static inline int queue_discard_alignment(const struct request_queue *q)
+-
+ static inline int queue_limit_alignment_offset(struct queue_limits *lim, sector_t sector)
  {
+ 	unsigned int granularity = max(lim->physical_block_size, lim->io_min);
 -- 
 2.30.2
 
