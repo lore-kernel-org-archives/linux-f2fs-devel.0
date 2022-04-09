@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96CA5C43219
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  9 Apr 2022 04:51:38 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9CADFC4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  9 Apr 2022 04:51:48 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nd34U-0008PK-LH; Sat, 09 Apr 2022 04:51:37 +0000
+	id 1nd34e-0002Hu-OW; Sat, 09 Apr 2022 04:51:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2) (envelope-from
  <BATV+43fc5532e856fea764d1+6803+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1nd34Q-0008Ng-7c; Sat, 09 Apr 2022 04:51:32 +0000
+ id 1nd34d-0002H3-62; Sat, 09 Apr 2022 04:51:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fe1mhxHvUNcHX31X2/v6QhlWCpL7rHNmKlyfX6pAQx8=; b=X7acWgcgOVQw4DFFOyi4XgUo2Q
- xpKH50jisaUDnzoNxP3/VFU4ZRURR+72WSNnMDSC4gp4uk8sDg2M1M49UpZgo3O902GlgbahXOfQa
- i1LTzIqgYInU7kFgLgyy6EG/8OdleS2tBkZ0a5/Hnwi2BF1adcVhUsU07V+fDz/EunxM=;
+ bh=HrgNfnZXHjI7+oEfFDB5J5Uuocj6xy8pedsh1Yy5WG4=; b=KCebIxbodiMxr+PzWyeaxoq3KX
+ x2bgZmJXVbzWYPwRMTIeDpeUKHEbSAsxYepCPotpwZus7zjRE4lnvJ+frG9FXqqClm2Jd9vpsWEyK
+ SmGraEDElJHSCu98Xqbxa5JQXdcFqhUoD4Q9ZiT2wH896JZFZpy/wj6+n+M0NXZPHsyk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=fe1mhxHvUNcHX31X2/v6QhlWCpL7rHNmKlyfX6pAQx8=; b=YDJj43HwAPSDk71hh9HlSlzvOS
- MhSBRNEO4PT1GV31AnJShFe8C1xVAS7EZzNJy2x6XvdRxc4mlceaXYlma6scSP4KIfjSOVxUnsPxn
- jRNfPiI9Fes18VmPgnjkQiXdxpmNVKZRtLPZiYQwFXodaRxCc0HTXh7f/MYeWZUVls0w=;
+ bh=HrgNfnZXHjI7+oEfFDB5J5Uuocj6xy8pedsh1Yy5WG4=; b=G8OyjT8FpsgfZ6RXff/Kg9JNjC
+ sc5NNgw7Kdj1LPlNJ729kcf0TsQrIOHXRRsUOUOzqcD54GuzCrNSGwk7XtyVeNUAfEzsyAwoIrJyi
+ BUxKsdO9+kHkS5GHi3Gpc8pYG6cuAiZGfIfb0GgK25ps4VW+MRsR3IOFWoHpYFZfXZ4o=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nd34K-00APb4-UI; Sat, 09 Apr 2022 04:51:32 +0000
+ id 1nd34b-00017t-9X; Sat, 09 Apr 2022 04:51:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
- To:From:Sender:Reply-To:Content-ID:Content-Description;
- bh=fe1mhxHvUNcHX31X2/v6QhlWCpL7rHNmKlyfX6pAQx8=; b=Ln3yxSObowNxJM1FMrhr+K57R6
- b4hm67oQXj8QHYSsDtTeswkmQMzhTUbmcFXZ8wSKANWZ3f2uawh1SArLLQwyfG/9xFBJpY85CXdw2
- ds/PrbeW2qhvBxLbQUlZJnupwwXSwTpD5oVVdXoHNH+XQIFpfq6JutVFrQurNrlSwXfXPm8nAVF8g
- 3O6uBqOGhFXMyQobgkP5h+IgaBO6+coY7mEesusFLc5Uf97qVgiCBrdqIzpOVhA93gJW7XwjtIRj9
- o9pUqGiB3fZ23DPiIOWZiMJonzuJNE4ezkBUWAzOu6pd1udnLd7cjlnkVEEt0MQfIsCBUce9aPyz9
- Bxbzzdhw==;
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=HrgNfnZXHjI7+oEfFDB5J5Uuocj6xy8pedsh1Yy5WG4=; b=JZn3/ma9EZNU+0AUx4JUCbkUtN
+ 1gVYrPS6nGU/IPVNAsMIwQdRVonqngYyJd/5mhM6maNoNh8obBvlUsS7xZb+5IUtAzAckVAhB18lZ
+ +hrt4X59ZUCzvTl8qWpsGsw7hVsJEekVtl3RSG9SEZSyM3Dc6qTHcoJlxPY/bwd5cgRNy3jh2HOzR
+ p+IuIpokNAkYT5clDeS8cbdmw/Ihai/S5xZiBqxQ1pZvQuDgw8Fcl5/kNcDb1PCUpcqc7zMLa6+0C
+ d2fURrC8Mx6BC4ojaSxAuzEcsPTExC6oj9FsjDDX8JgFsv800gQEvMZCYj+50CSJny3gvo3JzP0lv
+ 0Zpon8ww==;
 Received: from 213-147-167-116.nat.highway.webapn.at ([213.147.167.116]
  helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1nd341-0020d9-Mx; Sat, 09 Apr 2022 04:51:10 +0000
+ id 1nd34E-0020oX-PD; Sat, 09 Apr 2022 04:51:23 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Sat,  9 Apr 2022 06:50:23 +0200
-Message-Id: <20220409045043.23593-8-hch@lst.de>
+Date: Sat,  9 Apr 2022 06:50:27 +0200
+Message-Id: <20220409045043.23593-12-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220409045043.23593-1-hch@lst.de>
 References: <20220409045043.23593-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1nd34K-00APb4-UI
-Subject: [f2fs-dev] [PATCH 07/27] drbd: cleanup decide_on_discard_support
+X-Headers-End: 1nd34b-00017t-9X
+Subject: [f2fs-dev] [PATCH 11/27] block: add a bdev_nonrot helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,95 +84,245 @@ Cc: jfs-discussion@lists.sourceforge.net, linux-nvme@lists.infradead.org,
  xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
  linux-um@lists.infradead.org, nbd@other.debian.org,
  linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-raid@vger.kernel.org,
+ David Sterba <dsterba@suse.com>, ceph-devel@vger.kernel.org,
+ linux-raid@vger.kernel.org, "Martin K . Petersen" <martin.petersen@oracle.com>,
  linux-mmc@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org,
- =?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
- ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
- ntfs3@lists.linux.dev, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ linux-xfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+ linux-fsdevel@vger.kernel.org, ntfs3@lists.linux.dev,
+ linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-U2FuaXRpemUgdGhlIGNhbGxpbmcgY29udmVudGlvbnMgYW5kIHVzZSBhIGdvdG8gbGFiZWwgdG8g
-Y2xlYW51cCB0aGUKY29kZSBmbG93LgoKU2lnbmVkLW9mZi1ieTogQ2hyaXN0b3BoIEhlbGx3aWcg
-PGhjaEBsc3QuZGU+CkFja2VkLWJ5OiBDaHJpc3RvcGggQsO2aG13YWxkZXIgPGNocmlzdG9waC5i
-b2VobXdhbGRlckBsaW5iaXQuY29tPgotLS0KIGRyaXZlcnMvYmxvY2svZHJiZC9kcmJkX25sLmMg
-fCA2OCArKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2Vk
-LCAzNSBpbnNlcnRpb25zKCspLCAzMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2Jsb2NrL2RyYmQvZHJiZF9ubC5jIGIvZHJpdmVycy9ibG9jay9kcmJkL2RyYmRfbmwuYwppbmRl
-eCAwMjAzMGM5YzRkM2IxLi40MGJiMGIzNTZhNmQ2IDEwMDY0NAotLS0gYS9kcml2ZXJzL2Jsb2Nr
-L2RyYmQvZHJiZF9ubC5jCisrKyBiL2RyaXZlcnMvYmxvY2svZHJiZC9kcmJkX25sLmMKQEAgLTEy
-MDQsMzggKzEyMDQsNDIgQEAgc3RhdGljIHVuc2lnbmVkIGludCBkcmJkX21heF9kaXNjYXJkX3Nl
-Y3RvcnMoc3RydWN0IGRyYmRfY29ubmVjdGlvbiAqY29ubmVjdGlvbikKIH0KIAogc3RhdGljIHZv
-aWQgZGVjaWRlX29uX2Rpc2NhcmRfc3VwcG9ydChzdHJ1Y3QgZHJiZF9kZXZpY2UgKmRldmljZSwK
-LQkJCXN0cnVjdCByZXF1ZXN0X3F1ZXVlICpxLAotCQkJc3RydWN0IHJlcXVlc3RfcXVldWUgKmIs
-Ci0JCQlib29sIGRpc2NhcmRfemVyb2VzX2lmX2FsaWduZWQpCisJCXN0cnVjdCBkcmJkX2JhY2tp
-bmdfZGV2ICpiZGV2KQogewotCS8qIHEgPSBkcmJkIGRldmljZSBxdWV1ZSAoZGV2aWNlLT5ycV9x
-dWV1ZSkKLQkgKiBiID0gYmFja2luZyBkZXZpY2UgcXVldWUgKGRldmljZS0+bGRldi0+YmFja2lu
-Z19iZGV2LT5iZF9kaXNrLT5xdWV1ZSksCi0JICogICAgIG9yIE5VTEwgaWYgZGlza2xlc3MKLQkg
-Ki8KLQlzdHJ1Y3QgZHJiZF9jb25uZWN0aW9uICpjb25uZWN0aW9uID0gZmlyc3RfcGVlcl9kZXZp
-Y2UoZGV2aWNlKS0+Y29ubmVjdGlvbjsKLQlib29sIGNhbl9kbyA9IGIgPyBibGtfcXVldWVfZGlz
-Y2FyZChiKSA6IHRydWU7Ci0KLQlpZiAoY2FuX2RvICYmIGNvbm5lY3Rpb24tPmNzdGF0ZSA+PSBD
-X0NPTk5FQ1RFRCAmJiAhKGNvbm5lY3Rpb24tPmFncmVlZF9mZWF0dXJlcyAmIERSQkRfRkZfVFJJ
-TSkpIHsKLQkJY2FuX2RvID0gZmFsc2U7Ci0JCWRyYmRfaW5mbyhjb25uZWN0aW9uLCAicGVlciBE
-UkJEIHRvbyBvbGQsIGRvZXMgbm90IHN1cHBvcnQgVFJJTTogZGlzYWJsaW5nIGRpc2NhcmRzXG4i
-KTsKLQl9Ci0JaWYgKGNhbl9kbykgewotCQkvKiBXZSBkb24ndCBjYXJlIGZvciB0aGUgZ3JhbnVs
-YXJpdHksIHJlYWxseS4KLQkJICogU3RhY2tpbmcgbGltaXRzIGJlbG93IHNob3VsZCBmaXggaXQg
-Zm9yIHRoZSBsb2NhbAotCQkgKiBkZXZpY2UuICBXaGV0aGVyIG9yIG5vdCBpdCBpcyBhIHN1aXRh
-YmxlIGdyYW51bGFyaXR5Ci0JCSAqIG9uIHRoZSByZW1vdGUgZGV2aWNlIGlzIG5vdCBvdXIgcHJv
-YmxlbSwgcmVhbGx5LiBJZgotCQkgKiB5b3UgY2FyZSwgeW91IG5lZWQgdG8gdXNlIGRldmljZXMg
-d2l0aCBzaW1pbGFyCi0JCSAqIHRvcG9sb2d5IG9uIGFsbCBwZWVycy4gKi8KLQkJYmxrX3F1ZXVl
-X2Rpc2NhcmRfZ3JhbnVsYXJpdHkocSwgNTEyKTsKLQkJcS0+bGltaXRzLm1heF9kaXNjYXJkX3Nl
-Y3RvcnMgPSBkcmJkX21heF9kaXNjYXJkX3NlY3RvcnMoY29ubmVjdGlvbik7Ci0JCWJsa19xdWV1
-ZV9mbGFnX3NldChRVUVVRV9GTEFHX0RJU0NBUkQsIHEpOwotCQlxLT5saW1pdHMubWF4X3dyaXRl
-X3plcm9lc19zZWN0b3JzID0gZHJiZF9tYXhfZGlzY2FyZF9zZWN0b3JzKGNvbm5lY3Rpb24pOwot
-CX0gZWxzZSB7Ci0JCWJsa19xdWV1ZV9mbGFnX2NsZWFyKFFVRVVFX0ZMQUdfRElTQ0FSRCwgcSk7
-Ci0JCWJsa19xdWV1ZV9kaXNjYXJkX2dyYW51bGFyaXR5KHEsIDApOwotCQlxLT5saW1pdHMubWF4
-X2Rpc2NhcmRfc2VjdG9ycyA9IDA7Ci0JCXEtPmxpbWl0cy5tYXhfd3JpdGVfemVyb2VzX3NlY3Rv
-cnMgPSAwOworCXN0cnVjdCBkcmJkX2Nvbm5lY3Rpb24gKmNvbm5lY3Rpb24gPQorCQlmaXJzdF9w
-ZWVyX2RldmljZShkZXZpY2UpLT5jb25uZWN0aW9uOworCXN0cnVjdCByZXF1ZXN0X3F1ZXVlICpx
-ID0gZGV2aWNlLT5ycV9xdWV1ZTsKKworCWlmIChiZGV2ICYmICFibGtfcXVldWVfZGlzY2FyZChi
-ZGV2LT5iYWNraW5nX2JkZXYtPmJkX2Rpc2stPnF1ZXVlKSkKKwkJZ290byBub3Rfc3VwcG9ydGVk
-OworCisJaWYgKGNvbm5lY3Rpb24tPmNzdGF0ZSA+PSBDX0NPTk5FQ1RFRCAmJgorCSAgICAhKGNv
-bm5lY3Rpb24tPmFncmVlZF9mZWF0dXJlcyAmIERSQkRfRkZfVFJJTSkpIHsKKwkJZHJiZF9pbmZv
-KGNvbm5lY3Rpb24sCisJCQkicGVlciBEUkJEIHRvbyBvbGQsIGRvZXMgbm90IHN1cHBvcnQgVFJJ
-TTogZGlzYWJsaW5nIGRpc2NhcmRzXG4iKTsKKwkJZ290byBub3Rfc3VwcG9ydGVkOwogCX0KKwor
-CS8qCisJICogV2UgZG9uJ3QgY2FyZSBmb3IgdGhlIGdyYW51bGFyaXR5LCByZWFsbHkuCisJICoK
-KwkgKiBTdGFja2luZyBsaW1pdHMgYmVsb3cgc2hvdWxkIGZpeCBpdCBmb3IgdGhlIGxvY2FsIGRl
-dmljZS4gIFdoZXRoZXIgb3IKKwkgKiBub3QgaXQgaXMgYSBzdWl0YWJsZSBncmFudWxhcml0eSBv
-biB0aGUgcmVtb3RlIGRldmljZSBpcyBub3Qgb3VyCisJICogcHJvYmxlbSwgcmVhbGx5LiBJZiB5
-b3UgY2FyZSwgeW91IG5lZWQgdG8gdXNlIGRldmljZXMgd2l0aCBzaW1pbGFyCisJICogdG9wb2xv
-Z3kgb24gYWxsIHBlZXJzLgorCSAqLworCWJsa19xdWV1ZV9kaXNjYXJkX2dyYW51bGFyaXR5KHEs
-IDUxMik7CisJcS0+bGltaXRzLm1heF9kaXNjYXJkX3NlY3RvcnMgPSBkcmJkX21heF9kaXNjYXJk
-X3NlY3RvcnMoY29ubmVjdGlvbik7CisJYmxrX3F1ZXVlX2ZsYWdfc2V0KFFVRVVFX0ZMQUdfRElT
-Q0FSRCwgcSk7CisJcS0+bGltaXRzLm1heF93cml0ZV96ZXJvZXNfc2VjdG9ycyA9CisJCWRyYmRf
-bWF4X2Rpc2NhcmRfc2VjdG9ycyhjb25uZWN0aW9uKTsKKwlyZXR1cm47CisKK25vdF9zdXBwb3J0
-ZWQ6CisJYmxrX3F1ZXVlX2ZsYWdfY2xlYXIoUVVFVUVfRkxBR19ESVNDQVJELCBxKTsKKwlibGtf
-cXVldWVfZGlzY2FyZF9ncmFudWxhcml0eShxLCAwKTsKKwlxLT5saW1pdHMubWF4X2Rpc2NhcmRf
-c2VjdG9ycyA9IDA7CisJcS0+bGltaXRzLm1heF93cml0ZV96ZXJvZXNfc2VjdG9ycyA9IDA7CiB9
-CiAKIHN0YXRpYyB2b2lkIGZpeHVwX2Rpc2NhcmRfaWZfbm90X3N1cHBvcnRlZChzdHJ1Y3QgcmVx
-dWVzdF9xdWV1ZSAqcSkKQEAgLTEyNzMsNyArMTI3Nyw2IEBAIHN0YXRpYyB2b2lkIGRyYmRfc2V0
-dXBfcXVldWVfcGFyYW0oc3RydWN0IGRyYmRfZGV2aWNlICpkZXZpY2UsIHN0cnVjdCBkcmJkX2Jh
-Y2tpCiAJdW5zaWduZWQgaW50IG1heF9zZWdtZW50cyA9IDA7CiAJc3RydWN0IHJlcXVlc3RfcXVl
-dWUgKmIgPSBOVUxMOwogCXN0cnVjdCBkaXNrX2NvbmYgKmRjOwotCWJvb2wgZGlzY2FyZF96ZXJv
-ZXNfaWZfYWxpZ25lZCA9IHRydWU7CiAKIAlpZiAoYmRldikgewogCQliID0gYmRldi0+YmFja2lu
-Z19iZGV2LT5iZF9kaXNrLT5xdWV1ZTsKQEAgLTEyODIsNyArMTI4NSw2IEBAIHN0YXRpYyB2b2lk
-IGRyYmRfc2V0dXBfcXVldWVfcGFyYW0oc3RydWN0IGRyYmRfZGV2aWNlICpkZXZpY2UsIHN0cnVj
-dCBkcmJkX2JhY2tpCiAJCXJjdV9yZWFkX2xvY2soKTsKIAkJZGMgPSByY3VfZGVyZWZlcmVuY2Uo
-ZGV2aWNlLT5sZGV2LT5kaXNrX2NvbmYpOwogCQltYXhfc2VnbWVudHMgPSBkYy0+bWF4X2Jpb19i
-dmVjczsKLQkJZGlzY2FyZF96ZXJvZXNfaWZfYWxpZ25lZCA9IGRjLT5kaXNjYXJkX3plcm9lc19p
-Zl9hbGlnbmVkOwogCQlyY3VfcmVhZF91bmxvY2soKTsKIAogCQlibGtfc2V0X3N0YWNraW5nX2xp
-bWl0cygmcS0+bGltaXRzKTsKQEAgLTEyOTIsNyArMTI5NCw3IEBAIHN0YXRpYyB2b2lkIGRyYmRf
-c2V0dXBfcXVldWVfcGFyYW0oc3RydWN0IGRyYmRfZGV2aWNlICpkZXZpY2UsIHN0cnVjdCBkcmJk
-X2JhY2tpCiAJLyogVGhpcyBpcyB0aGUgd29ya2Fyb3VuZCBmb3IgImJpbyB3b3VsZCBuZWVkIHRv
-LCBidXQgY2Fubm90LCBiZSBzcGxpdCIgKi8KIAlibGtfcXVldWVfbWF4X3NlZ21lbnRzKHEsIG1h
-eF9zZWdtZW50cyA/IG1heF9zZWdtZW50cyA6IEJMS19NQVhfU0VHTUVOVFMpOwogCWJsa19xdWV1
-ZV9zZWdtZW50X2JvdW5kYXJ5KHEsIFBBR0VfU0laRS0xKTsKLQlkZWNpZGVfb25fZGlzY2FyZF9z
-dXBwb3J0KGRldmljZSwgcSwgYiwgZGlzY2FyZF96ZXJvZXNfaWZfYWxpZ25lZCk7CisJZGVjaWRl
-X29uX2Rpc2NhcmRfc3VwcG9ydChkZXZpY2UsIGJkZXYpOwogCiAJaWYgKGIpIHsKIAkJYmxrX3N0
-YWNrX2xpbWl0cygmcS0+bGltaXRzLCAmYi0+bGltaXRzLCAwKTsKLS0gCjIuMzAuMgoKCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
-dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
-dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
-dmVsCg==
+Add a helper to check the nonrot flag based on the block_device instead
+of having to poke into the block layer internal request_queue.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Acked-by: David Sterba <dsterba@suse.com> [btrfs]
+---
+ block/ioctl.c                       | 2 +-
+ drivers/block/loop.c                | 2 +-
+ drivers/md/dm-table.c               | 4 +---
+ drivers/md/md.c                     | 3 +--
+ drivers/md/raid1.c                  | 2 +-
+ drivers/md/raid10.c                 | 2 +-
+ drivers/md/raid5.c                  | 2 +-
+ drivers/target/target_core_file.c   | 3 +--
+ drivers/target/target_core_iblock.c | 2 +-
+ fs/btrfs/volumes.c                  | 4 ++--
+ fs/ext4/mballoc.c                   | 2 +-
+ include/linux/blkdev.h              | 5 +++++
+ mm/swapfile.c                       | 4 ++--
+ 13 files changed, 19 insertions(+), 18 deletions(-)
+
+diff --git a/block/ioctl.c b/block/ioctl.c
+index 4a86340133e46..ad3771b268b81 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -489,7 +489,7 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
+ 				    queue_max_sectors(bdev_get_queue(bdev)));
+ 		return put_ushort(argp, max_sectors);
+ 	case BLKROTATIONAL:
+-		return put_ushort(argp, !blk_queue_nonrot(bdev_get_queue(bdev)));
++		return put_ushort(argp, !bdev_nonrot(bdev));
+ 	case BLKRASET:
+ 	case BLKFRASET:
+ 		if(!capable(CAP_SYS_ADMIN))
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index a58595f5ee2c8..8d800d46e4985 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -903,7 +903,7 @@ static void loop_update_rotational(struct loop_device *lo)
+ 
+ 	/* not all filesystems (e.g. tmpfs) have a sb->s_bdev */
+ 	if (file_bdev)
+-		nonrot = blk_queue_nonrot(bdev_get_queue(file_bdev));
++		nonrot = bdev_nonrot(file_bdev);
+ 
+ 	if (nonrot)
+ 		blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 03541cfc2317c..5e38d0dd009d5 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1820,9 +1820,7 @@ static int device_dax_write_cache_enabled(struct dm_target *ti,
+ static int device_is_rotational(struct dm_target *ti, struct dm_dev *dev,
+ 				sector_t start, sector_t len, void *data)
+ {
+-	struct request_queue *q = bdev_get_queue(dev->bdev);
+-
+-	return !blk_queue_nonrot(q);
++	return !bdev_nonrot(dev->bdev);
+ }
+ 
+ static int device_is_not_random(struct dm_target *ti, struct dm_dev *dev,
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 309b3af906ad3..19636c2f2cda4 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -5991,8 +5991,7 @@ int md_run(struct mddev *mddev)
+ 		bool nonrot = true;
+ 
+ 		rdev_for_each(rdev, mddev) {
+-			if (rdev->raid_disk >= 0 &&
+-			    !blk_queue_nonrot(bdev_get_queue(rdev->bdev))) {
++			if (rdev->raid_disk >= 0 && !bdev_nonrot(rdev->bdev)) {
+ 				nonrot = false;
+ 				break;
+ 			}
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 99d5464a51f81..d81b896855f9f 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -704,7 +704,7 @@ static int read_balance(struct r1conf *conf, struct r1bio *r1_bio, int *max_sect
+ 			/* At least two disks to choose from so failfast is OK */
+ 			set_bit(R1BIO_FailFast, &r1_bio->state);
+ 
+-		nonrot = blk_queue_nonrot(bdev_get_queue(rdev->bdev));
++		nonrot = bdev_nonrot(rdev->bdev);
+ 		has_nonrot_disk |= nonrot;
+ 		pending = atomic_read(&rdev->nr_pending);
+ 		dist = abs(this_sector - conf->mirrors[disk].head_position);
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index dfe7d62d3fbdd..7816c8b2e8087 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -796,7 +796,7 @@ static struct md_rdev *read_balance(struct r10conf *conf,
+ 		if (!do_balance)
+ 			break;
+ 
+-		nonrot = blk_queue_nonrot(bdev_get_queue(rdev->bdev));
++		nonrot = bdev_nonrot(rdev->bdev);
+ 		has_nonrot_disk |= nonrot;
+ 		pending = atomic_read(&rdev->nr_pending);
+ 		if (min_pending > pending && nonrot) {
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 351d341a1ffa4..0bbae0e638666 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -7242,7 +7242,7 @@ static struct r5conf *setup_conf(struct mddev *mddev)
+ 	rdev_for_each(rdev, mddev) {
+ 		if (test_bit(Journal, &rdev->flags))
+ 			continue;
+-		if (blk_queue_nonrot(bdev_get_queue(rdev->bdev))) {
++		if (bdev_nonrot(rdev->bdev)) {
+ 			conf->batch_bio_dispatch = false;
+ 			break;
+ 		}
+diff --git a/drivers/target/target_core_file.c b/drivers/target/target_core_file.c
+index 8d191fdc33217..b6ba582b06775 100644
+--- a/drivers/target/target_core_file.c
++++ b/drivers/target/target_core_file.c
+@@ -135,7 +135,6 @@ static int fd_configure_device(struct se_device *dev)
+ 	inode = file->f_mapping->host;
+ 	if (S_ISBLK(inode->i_mode)) {
+ 		struct block_device *bdev = I_BDEV(inode);
+-		struct request_queue *q = bdev_get_queue(bdev);
+ 		unsigned long long dev_size;
+ 
+ 		fd_dev->fd_block_size = bdev_logical_block_size(bdev);
+@@ -160,7 +159,7 @@ static int fd_configure_device(struct se_device *dev)
+ 		 */
+ 		dev->dev_attrib.max_write_same_len = 0xFFFF;
+ 
+-		if (blk_queue_nonrot(q))
++		if (bdev_nonrot(bdev))
+ 			dev->dev_attrib.is_nonrot = 1;
+ 	} else {
+ 		if (!(fd_dev->fbd_flags & FBDF_HAS_SIZE)) {
+diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
+index b886ce1770bfd..b41ee5c3b5b82 100644
+--- a/drivers/target/target_core_iblock.c
++++ b/drivers/target/target_core_iblock.c
+@@ -133,7 +133,7 @@ static int iblock_configure_device(struct se_device *dev)
+ 	else
+ 		dev->dev_attrib.max_write_same_len = 0xFFFF;
+ 
+-	if (blk_queue_nonrot(q))
++	if (bdev_nonrot(bd))
+ 		dev->dev_attrib.is_nonrot = 1;
+ 
+ 	bi = bdev_get_integrity(bd);
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 2cfbc74a3b4ee..77f1a5696842b 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -643,7 +643,7 @@ static int btrfs_open_one_device(struct btrfs_fs_devices *fs_devices,
+ 			set_bit(BTRFS_DEV_STATE_WRITEABLE, &device->dev_state);
+ 	}
+ 
+-	if (!blk_queue_nonrot(bdev_get_queue(bdev)))
++	if (!bdev_nonrot(bdev))
+ 		fs_devices->rotating = true;
+ 
+ 	device->bdev = bdev;
+@@ -2706,7 +2706,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
+ 
+ 	atomic64_add(device->total_bytes, &fs_info->free_chunk_space);
+ 
+-	if (!blk_queue_nonrot(bdev_get_queue(bdev)))
++	if (!bdev_nonrot(bdev))
+ 		fs_devices->rotating = true;
+ 
+ 	orig_super_total_bytes = btrfs_super_total_bytes(fs_info->super_copy);
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 252c168454c7f..c3668c977cd99 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -3498,7 +3498,7 @@ int ext4_mb_init(struct super_block *sb)
+ 		spin_lock_init(&lg->lg_prealloc_lock);
+ 	}
+ 
+-	if (blk_queue_nonrot(bdev_get_queue(sb->s_bdev)))
++	if (bdev_nonrot(sb->s_bdev))
+ 		sbi->s_mb_max_linear_groups = 0;
+ 	else
+ 		sbi->s_mb_max_linear_groups = MB_DEFAULT_LINEAR_LIMIT;
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 60d0161389971..3a9578e14a6b0 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1326,6 +1326,11 @@ static inline unsigned int bdev_write_zeroes_sectors(struct block_device *bdev)
+ 	return 0;
+ }
+ 
++static inline bool bdev_nonrot(struct block_device *bdev)
++{
++	return blk_queue_nonrot(bdev_get_queue(bdev));
++}
++
+ static inline enum blk_zoned_model bdev_zoned_model(struct block_device *bdev)
+ {
+ 	struct request_queue *q = bdev_get_queue(bdev);
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 4c7537162af5e..d5ab7ec4d92ca 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -2466,7 +2466,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
+ 	if (p->flags & SWP_CONTINUED)
+ 		free_swap_count_continuations(p);
+ 
+-	if (!p->bdev || !blk_queue_nonrot(bdev_get_queue(p->bdev)))
++	if (!p->bdev || !bdev_nonrot(p->bdev))
+ 		atomic_dec(&nr_rotate_swap);
+ 
+ 	mutex_lock(&swapon_mutex);
+@@ -3071,7 +3071,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 	if (p->bdev && p->bdev->bd_disk->fops->rw_page)
+ 		p->flags |= SWP_SYNCHRONOUS_IO;
+ 
+-	if (p->bdev && blk_queue_nonrot(bdev_get_queue(p->bdev))) {
++	if (p->bdev && bdev_nonrot(p->bdev)) {
+ 		int cpu;
+ 		unsigned long ci, nr_cluster;
+ 
+-- 
+2.30.2
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
