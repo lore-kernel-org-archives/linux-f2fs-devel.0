@@ -4,73 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A01A5C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  9 Apr 2022 03:46:50 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3AE20C4167B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  9 Apr 2022 04:51:31 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nd23j-0004MN-1y; Sat, 09 Apr 2022 03:46:48 +0000
+	id 1nd34M-0002C3-Ft; Sat, 09 Apr 2022 04:51:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1nd23h-0004MG-Nh
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Apr 2022 03:46:46 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2) (envelope-from
+ <BATV+43fc5532e856fea764d1+6803+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1nd34L-0002Bf-3a; Sat, 09 Apr 2022 04:51:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IwUrIJEU98WEv61+EHwnggzRRFTPCUi5XxcGjNxx670=; b=MlRhaW9hBJN3s1cC1RFIINhU+W
- 3jMjmrQOwS8GK4e56jqVjRl/EGkCegKYppKwwLF44VCvQzZk6krzWCNaQKnNhKPFkKtwcx0CO7eJC
- MMoIKIfaeV7EjNx8w3ofHMGeA2OOl6eSCTkYTYhoLHI8XdR2MZh8pZqm/om9VIRUiPfk=;
+ bh=o0hivJC1zBmf2OLswEv2WeM9LwYiU39b8DIC3mFzVkc=; b=GNECw4PppgDmOlcprwufwnWanr
+ MBaa8zL5e2aOgFA6fWAVygJFO6sQlIupZ88lz2kwZ5cZ/B6yAU3LuwIvvkwoJrljS/WJ7AS7CXjf+
+ +Q1TuOh/wTjfIihFcXiURB1OJkiy/gpWyvDCrvg75h+6DGbS4hiY78UtTi1GUSSpMKbY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=IwUrIJEU98WEv61+EHwnggzRRFTPCUi5XxcGjNxx670=; b=VGl52pu2UvaYU9PnsIl2hi+4J3
- 95u7qf1TN94SzRL7UGqjXRXe03maxvddGKGzK+9zkdYe1WXxARCu8Iec3fb3UvO1KxUnfQa/YpIeG
- oy3uTxi4DrHIfl23FSMNLwliUdsyPiixp/TbIWotxyJCE7gcUE+Xa9q2Xk4+hUFnpRL0=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=o0hivJC1zBmf2OLswEv2WeM9LwYiU39b8DIC3mFzVkc=; b=JCbHZDsE6mx4x1mCbkxc7TO+mi
+ x40ArUDr+BfBMhViL7pkX73aJyDHvSHyZVVnLiOQuwsMEmdEi7FLTraUT/EGkoyX73UN0oO6WSvVx
+ SQP52/VBruMXrjJKxab9it+uQKZBFcM9GIv7Mwa1q4F7sJcMw7fHsN8NUrkZ8BpYCaiY=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nd23g-00ANhH-TN
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 09 Apr 2022 03:46:46 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 964EDB82E43;
- Sat,  9 Apr 2022 03:46:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF7DC385A4;
- Sat,  9 Apr 2022 03:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1649475989;
- bh=Ayb5hOX+i0FYgvnXG3e1nz3NSgrfl8nSbqPlfEV1NhA=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=TXNmTKxdaftbGYQMVbAiJH2mRxMbkP5glhSOccafVmsDCxPowFIweppa8qoKJOdez
- Ep4e3+dW4L5f+Xi9QhRTfg0zRymursmVLlBlPeQgfIzt23UyVO7hPzAoR1p/FK0+XD
- CnLAamE4Dxnr/Vz2kaQvKTKQAdeTejWzDBB36V9AhpbuJCPm870etSUggDWbJ+E8MG
- U7mB8HqhWrdCoK5uExhJL/Nk0REPEw0zPDWPSMmm9jC6QGnAq30QZIpHr5Nml6lYjr
- LcYFkOIEXoC1UtjFOhUto0fkP0M/bG+WgG/YJHRNrVflme49SrISGpOZ44nNn0C7m1
- /ti9U6AhhefuQ==
-Message-ID: <7e896205-027d-32e2-32b5-8951231132ac@kernel.org>
-Date: Sat, 9 Apr 2022 11:46:25 +0800
+ id 1nd34G-00APau-3U; Sat, 09 Apr 2022 04:51:27 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
+ To:From:Sender:Reply-To:Content-ID:Content-Description;
+ bh=o0hivJC1zBmf2OLswEv2WeM9LwYiU39b8DIC3mFzVkc=; b=3F4Gy8p9Tvq+5pylL46uvOJn7h
+ o2XZpRogXFQL3VJFZPE+ZZDtjrf9Pc2OTl5fZtGSYd57hTdFlYXIdIHOqaBXa/gwwIgNeTwpzh8E1
+ QxRCn+KG2Muq11G9sBZPqcFJsQdF+RO1A1/vOYvAkvrZpiLwvpNlQupw5qXMvPBGR692SLA9Gc4O9
+ +WQuMA5xQqJyH9AX6svLk38kVSqqX8kZssANUh1VF1n2HxXeQbt2B929yqhRSjrF5mSUtQQl9u3kF
+ pbbIDtUGIe8ib42MP8DoNYMKEID8G4oja6vJ3M+Cjui+ZmorwUZF4pyM0UDyDdlGBMS8H8gcMK1Fa
+ XnV5hFlQ==;
+Received: from 213-147-167-116.nat.highway.webapn.at ([213.147.167.116]
+ helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+ id 1nd33w-0020Yw-4P; Sat, 09 Apr 2022 04:51:04 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>
+Date: Sat,  9 Apr 2022 06:50:21 +0200
+Message-Id: <20220409045043.23593-6-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220409045043.23593-1-hch@lst.de>
+References: <20220409045043.23593-1-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Content-Language: en-US
-To: Dongliang Mu <mudongliangabcd@gmail.com>
-References: <20220408052207.209856-1-dzm91@hust.edu.cn>
- <f125ece9-872e-39d9-48a5-15b85508f6b6@kernel.org>
- <CAD-N9QV7RUfBreaVOmC0JUwVfieM3kOYigOav8=vpAoak6Uc6A@mail.gmail.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAD-N9QV7RUfBreaVOmC0JUwVfieM3kOYigOav8=vpAoak6Uc6A@mail.gmail.com>
-X-Headers-End: 1nd23g-00ANhH-TN
-Subject: Re: [f2fs-dev] [PATCH] fs: f2fs: remove WARN_ON in
- f2fs_is_valid_blkaddr
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1nd34G-00APau-3U
+Subject: [f2fs-dev] [PATCH 05/27] drbd: use bdev based limit helpers in
+ drbd_send_sizes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,82 +76,57 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Dongliang Mu <dzm91@hust.edu.cn>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- syzbot+763ae12a2ede1d99d4dc@syzkaller.appspotmail.com,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Cc: jfs-discussion@lists.sourceforge.net, linux-nvme@lists.infradead.org,
+ virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
+ dm-devel@redhat.com, target-devel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, drbd-dev@lists.linbit.com,
+ linux-s390@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ linux-scsi@vger.kernel.org, cluster-devel@redhat.com,
+ xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
+ linux-um@lists.infradead.org, nbd@other.debian.org,
+ linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+ ceph-devel@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org,
+ =?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+ ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+ ntfs3@lists.linux.dev, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/4/9 9:34, Dongliang Mu wrote:
-> On Sat, Apr 9, 2022 at 8:27 AM Chao Yu <chao@kernel.org> wrote:
->>
->> On 2022/4/8 13:22, Dongliang Mu wrote:
->>> From: Dongliang Mu <mudongliangabcd@gmail.com>
->>>
->>> In f2fs_is_valid_blkaddr, if type is DATA_GENERIC_ENHANCE or
->>> DATA_GENERIC_ENHANCE_READ, it invokes WARN_ON(1) not matter
->>> blkaddr is in the range or not.
->>
->> If we run into the path where we invoke WARN_ON(1) in f2fs_is_valid_blkaddr(),
->> It means f2fs image may be broken, or there is a bug in f2fs.
->>
->> So, do you suffer any related issue in your environment?
-> 
-> related issue? Can you explain a little?
-> 
-> If you mean if this warning occurs, any other issues or crash
-
-I mean have you seen any warning info printed in the path of
-f2fs_is_valid_blkaddr() before applying this patch, and if so, w/ what
-reproducer? or you just figure out this patch from perspective of code
-review?
-
-Thanks,
-
-> behaviors are generated? I tested on the syzbot. After removing the
-> WARN_ON, there is no abnormal issue or crash behaviors followed with
-> the corresponding reproducer.
-> 
-> 
->>
->> Thanks,
->>
->>>
->>> Fix this by removing WARN_ON.
->>>
->>> Note that, syzbot patch testing does not incur any further issues
->>>
->>> Reported-by: syzbot+763ae12a2ede1d99d4dc@syzkaller.appspotmail.com
->>> Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
->>> ---
->>>    fs/f2fs/checkpoint.c | 2 --
->>>    1 file changed, 2 deletions(-)
->>>
->>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>> index f5366feea82d..521498b2dd8c 100644
->>> --- a/fs/f2fs/checkpoint.c
->>> +++ b/fs/f2fs/checkpoint.c
->>> @@ -158,7 +158,6 @@ static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr,
->>>                f2fs_err(sbi, "Inconsistent error blkaddr:%u, sit bitmap:%d",
->>>                         blkaddr, exist);
->>>                set_sbi_flag(sbi, SBI_NEED_FSCK);
->>> -             WARN_ON(1);
->>>        }
->>>        return exist;
->>>    }
->>> @@ -196,7 +195,6 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
->>>                        f2fs_warn(sbi, "access invalid blkaddr:%u",
->>>                                  blkaddr);
->>>                        set_sbi_flag(sbi, SBI_NEED_FSCK);
->>> -                     WARN_ON(1);
->>>                        return false;
->>>                } else {
->>>                        return __is_bitmap_valid(sbi, blkaddr, type);
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+VXNlIHRoZSBiZGV2IGJhc2VkIGxpbWl0cyBoZWxwZXJzIHdoZXJlIHRoZXkgZXhpc3QuCgpTaWdu
+ZWQtb2ZmLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4KQWNrZWQtYnk6IENocmlz
+dG9waCBCw7ZobXdhbGRlciA8Y2hyaXN0b3BoLmJvZWhtd2FsZGVyQGxpbmJpdC5jb20+Ci0tLQog
+ZHJpdmVycy9ibG9jay9kcmJkL2RyYmRfbWFpbi5jIHwgMTIgKysrKysrKy0tLS0tCiAxIGZpbGUg
+Y2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvYmxvY2svZHJiZC9kcmJkX21haW4uYyBiL2RyaXZlcnMvYmxvY2svZHJiZC9kcmJkX21h
+aW4uYwppbmRleCAxMjYyZmUxYzMzNjE4Li5hYTJjMjFhZWI3NDdjIDEwMDY0NAotLS0gYS9kcml2
+ZXJzL2Jsb2NrL2RyYmQvZHJiZF9tYWluLmMKKysrIGIvZHJpdmVycy9ibG9jay9kcmJkL2RyYmRf
+bWFpbi5jCkBAIC05MjQsNyArOTI0LDkgQEAgaW50IGRyYmRfc2VuZF9zaXplcyhzdHJ1Y3QgZHJi
+ZF9wZWVyX2RldmljZSAqcGVlcl9kZXZpY2UsIGludCB0cmlnZ2VyX3JlcGx5LCBlbnUKIAogCW1l
+bXNldChwLCAwLCBwYWNrZXRfc2l6ZSk7CiAJaWYgKGdldF9sZGV2X2lmX3N0YXRlKGRldmljZSwg
+RF9ORUdPVElBVElORykpIHsKLQkJc3RydWN0IHJlcXVlc3RfcXVldWUgKnEgPSBiZGV2X2dldF9x
+dWV1ZShkZXZpY2UtPmxkZXYtPmJhY2tpbmdfYmRldik7CisJCXN0cnVjdCBibG9ja19kZXZpY2Ug
+KmJkZXYgPSBkZXZpY2UtPmxkZXYtPmJhY2tpbmdfYmRldjsKKwkJc3RydWN0IHJlcXVlc3RfcXVl
+dWUgKnEgPSBiZGV2X2dldF9xdWV1ZShiZGV2KTsKKwogCQlkX3NpemUgPSBkcmJkX2dldF9tYXhf
+Y2FwYWNpdHkoZGV2aWNlLT5sZGV2KTsKIAkJcmN1X3JlYWRfbG9jaygpOwogCQl1X3NpemUgPSBy
+Y3VfZGVyZWZlcmVuY2UoZGV2aWNlLT5sZGV2LT5kaXNrX2NvbmYpLT5kaXNrX3NpemU7CkBAIC05
+MzMsMTMgKzkzNSwxMyBAQCBpbnQgZHJiZF9zZW5kX3NpemVzKHN0cnVjdCBkcmJkX3BlZXJfZGV2
+aWNlICpwZWVyX2RldmljZSwgaW50IHRyaWdnZXJfcmVwbHksIGVudQogCQltYXhfYmlvX3NpemUg
+PSBxdWV1ZV9tYXhfaHdfc2VjdG9ycyhxKSA8PCA5OwogCQltYXhfYmlvX3NpemUgPSBtaW4obWF4
+X2Jpb19zaXplLCBEUkJEX01BWF9CSU9fU0laRSk7CiAJCXAtPnFsaW0tPnBoeXNpY2FsX2Jsb2Nr
+X3NpemUgPQotCQkJY3B1X3RvX2JlMzIocXVldWVfcGh5c2ljYWxfYmxvY2tfc2l6ZShxKSk7CisJ
+CQljcHVfdG9fYmUzMihiZGV2X3BoeXNpY2FsX2Jsb2NrX3NpemUoYmRldikpOwogCQlwLT5xbGlt
+LT5sb2dpY2FsX2Jsb2NrX3NpemUgPQotCQkJY3B1X3RvX2JlMzIocXVldWVfbG9naWNhbF9ibG9j
+a19zaXplKHEpKTsKKwkJCWNwdV90b19iZTMyKGJkZXZfbG9naWNhbF9ibG9ja19zaXplKGJkZXYp
+KTsKIAkJcC0+cWxpbS0+YWxpZ25tZW50X29mZnNldCA9CiAJCQljcHVfdG9fYmUzMihxdWV1ZV9h
+bGlnbm1lbnRfb2Zmc2V0KHEpKTsKLQkJcC0+cWxpbS0+aW9fbWluID0gY3B1X3RvX2JlMzIocXVl
+dWVfaW9fbWluKHEpKTsKLQkJcC0+cWxpbS0+aW9fb3B0ID0gY3B1X3RvX2JlMzIocXVldWVfaW9f
+b3B0KHEpKTsKKwkJcC0+cWxpbS0+aW9fbWluID0gY3B1X3RvX2JlMzIoYmRldl9pb19taW4oYmRl
+dikpOworCQlwLT5xbGltLT5pb19vcHQgPSBjcHVfdG9fYmUzMihiZGV2X2lvX29wdChiZGV2KSk7
+CiAJCXAtPnFsaW0tPmRpc2NhcmRfZW5hYmxlZCA9IGJsa19xdWV1ZV9kaXNjYXJkKHEpOwogCQlw
+dXRfbGRldihkZXZpY2UpOwogCX0gZWxzZSB7Ci0tIAoyLjMwLjIKCgoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5n
+IGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0
+cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
