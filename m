@@ -4,127 +4,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8151EC43219
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Apr 2022 11:28:06 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ED849C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 12 Apr 2022 11:28:05 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1neEgm-0000Rg-AI; Tue, 12 Apr 2022 11:28:05 +0000
+	id 1neEgn-00048C-45; Tue, 12 Apr 2022 11:28:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <p.raghav@samsung.com>) id 1neEgj-0000RQ-MQ
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Apr 2022 11:28:02 +0000
+ (envelope-from <p.raghav@samsung.com>) id 1neEgk-00047x-Rq
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Apr 2022 11:28:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
- MIME-Version:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=50xlR4FpyQPxrNN9aGWo6TKW/LNL6gVyc2H0baY+Cxs=; b=KlrY40CL1lLbPJjKwfBrPPmTrR
- Y9wB+h2szd+lLH+e+oXRCxnLBO9Qe6ctARs/8wseLAmapH3kjSnHmO60sLVixmrT/GgW/gvkfZk3Q
- N+d55qiWpxyHQZ2K47QCpVqXUDYeQJxUL+yVi9wAIHpUT6bhCPYZv6GCbT9Sw2ram/Yg=;
+ bh=cYon+FDgndtgnkAW1YwWpaCP4Q/K8Kl6PJ70UghFXQ4=; b=jE0XVaUzCg41KyaBpKWo68HGjw
+ 30txZUSL3uAj9h7T8endj+UqKUlXoD692FL1SKAC79K7DmeXlpN45r718BrU0fPsg8xnNlvkbPHPJ
+ JtxlTNWHz1iDj6JmqaQeXTcg7v3TwQM4QS5gB8my8B5BawxyECagjNv/B7r71TK3PodI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=References:Content-Type:Content-Transfer-Encoding:MIME-Version:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=50xlR4FpyQPxrNN9aGWo6TKW/LNL6gVyc2H0baY+Cxs=; b=k5kz8gWL7K3jtgnpW99HNQlrNv
- bYTIOnY/87NeTmTKtRZk5HtN+uSMs7OA2kyz3rE8PuYSn+iscQLpsRPmC7tXxuBwfTCeWse7rwIbw
- WfTIPBL0U49UGu8aDeuNGt5KJPbESftYJFO6kQ2ejuGZN45fXzkPzGNDTtM8YV9SWzWw=;
+ h=References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id
+ :Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=cYon+FDgndtgnkAW1YwWpaCP4Q/K8Kl6PJ70UghFXQ4=; b=T
+ ItgsAfvRtyPnpt+vLn0qqUUUUcYltoA6jFPnXm2Rjz+IgCkHKYB8h1WS827LkYZe+LXgjimiYf72d
+ sHBH0wlAwN6jzjo8IfFUHxrl0L7nKLQA22CRIO5qn6T330ZdaEb/fqAUsyF8I0ydXqPqIE86ElXVy
+ bEKcJoxnFDHEJQ10=;
 Received: from mailout1.w1.samsung.com ([210.118.77.11])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1neEgf-00Dy23-BR
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Apr 2022 11:28:02 +0000
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ id 1neEgf-00Dy1m-3s
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 12 Apr 2022 11:28:01 +0000
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
  by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id
- 20220412112750euoutp01914c95665b7b5421a568e9883ce1fb89~lIpbwlMeK0273802738euoutp01M
+ 20220412112747euoutp01643c086b852baf45884ed86a904c95d4~lIpY1hQ500064500645euoutp01F
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 12 Apr 2022 11:27:50 +0000 (GMT)
+ Tue, 12 Apr 2022 11:27:47 +0000 (GMT)
 DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com
- 20220412112750euoutp01914c95665b7b5421a568e9883ce1fb89~lIpbwlMeK0273802738euoutp01M
+ 20220412112747euoutp01643c086b852baf45884ed86a904c95d4~lIpY1hQ500064500645euoutp01F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1649762870;
- bh=50xlR4FpyQPxrNN9aGWo6TKW/LNL6gVyc2H0baY+Cxs=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=gSWyHsyUS03w+/tPAw5tS/zIVq6DYNd/ra8W8/24Ps5KFs70LHXIMvvbJh8n8yWAa
- xU1DvusGG7dKOQ89vVFcU7/K3eJOuVF08rX1M9hv9jr6BnbFQZsJnGlufpjO2DYZhc
- gCUACMFCPQQTi7zU2JvFoMnuwX67DVE5tlx11LJg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+ s=mail20170921; t=1649762867;
+ bh=cYon+FDgndtgnkAW1YwWpaCP4Q/K8Kl6PJ70UghFXQ4=;
+ h=From:To:Cc:Subject:Date:References:From;
+ b=S4AzqfgqyqDsCAnAoQ5Nx5tpSIX+gpcU+e6Sqljep+3Rc5/x6d0hF8n1YDBOtEhN2
+ 84tw8CbIRnQAY5fu+6MgwWa4qlx5db1LAAZRfXwDT/giXh4KRSxnGUVNaDbmMY1njO
+ uRsfaK9c/HvlXv9X//C6gG1WvxeJIzHrIRDaglM4=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
  eucas1p1.samsung.com (KnoxPortal) with ESMTP id
- 20220412112749eucas1p1f54477e86a46bf59180a761c3208426b~lIpbWy2Yi2064220642eucas1p1D;
- Tue, 12 Apr 2022 11:27:49 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
- eusmges3new.samsung.com (EUCPMTA) with SMTP id 17.0D.10260.53265526; Tue, 12
- Apr 2022 12:27:49 +0100 (BST)
+ 20220412112746eucas1p145a9688edb742b101117c673c3e03c0e~lIpYh0z0W1426114261eucas1p1o;
+ Tue, 12 Apr 2022 11:27:46 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+ eusmges1new.samsung.com (EUCPMTA) with SMTP id 8D.D7.10009.23265526; Tue, 12
+ Apr 2022 12:27:46 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
- eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
- 20220412112749eucas1p28b82e6b3b563f2e25c78f479c1192451~lIpbBfd1v0045600456eucas1p20;
- Tue, 12 Apr 2022 11:27:49 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+ eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+ 20220412112746eucas1p14f52961641ef07fdc7274e75887da9ad~lIpYKCFLp1689016890eucas1p1J;
+ Tue, 12 Apr 2022 11:27:46 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
  eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
- 20220412112749eusmtrp245a156ab3b49eba71ff8a2815470676e~lIpbA2ZeL1314913149eusmtrp2V;
- Tue, 12 Apr 2022 11:27:49 +0000 (GMT)
-X-AuditID: cbfec7f5-bddff70000002814-9d-6255623573ea
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
- eusmgms1.samsung.com (EUCPMTA) with SMTP id 34.76.09522.53265526; Tue, 12
- Apr 2022 12:27:49 +0100 (BST)
-Received: from localhost (unknown [106.210.248.108]) by eusmtip2.samsung.com
+ 20220412112746eusmtrp2b3a17872394d56a2fac691883053edfd~lIpYJP2Iw1314913149eusmtrp2M;
+ Tue, 12 Apr 2022 11:27:46 +0000 (GMT)
+X-AuditID: cbfec7f2-e95ff70000002719-aa-625562324d75
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+ eusmgms2.samsung.com (EUCPMTA) with SMTP id B6.79.09404.23265526; Tue, 12
+ Apr 2022 12:27:46 +0100 (BST)
+Received: from localhost (unknown [106.210.248.108]) by eusmtip1.samsung.com
  (KnoxPortal) with ESMTPA id
- 20220412112749eusmtip2ba7b7d1c60bfa0aeaada52c782b949e2~lIpavgwy81347413474eusmtip2a;
- Tue, 12 Apr 2022 11:27:49 +0000 (GMT)
+ 20220412112745eusmtip1e1fcc8d492e8f8143cd787ff15100f76~lIpX2WS_o0423404234eusmtip17;
+ Tue, 12 Apr 2022 11:27:45 +0000 (GMT)
 From: Pankaj Raghav <p.raghav@samsung.com>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Tue, 12 Apr 2022 13:27:45 +0200
-Message-Id: <20220412112745.44108-4-p.raghav@samsung.com>
+Date: Tue, 12 Apr 2022 13:27:42 +0200
+Message-Id: <20220412112745.44108-1-p.raghav@samsung.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220412112745.44108-1-p.raghav@samsung.com>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjleLIzCtJLcpLzFFi42LZduznOV3TpNAkg5mbNCxa278xWTy+85nd
- 4uj/t2wWlxa5W9yY8JTR4vPSFnaLNTefsjiwe+ycdZfdY9OqTjaP3Qs+M3n0bVnF6NF+oJsp
- gDWKyyYlNSezLLVI3y6BK2Pn92nsBVe5K6a/sWtgnMLZxcjJISFgInHg7R/mLkYuDiGBFYwS
- MyafYIFwvjBK9Ow7xAjhfGaU2PjnCwtMy+rFE5hBbCGB5YwSc7c5QhS9ZJS4c+QFaxcjBweb
- gJZEYyc7SI0IkDmx4S/YIGaBmYwSB19MYwNJCAs4S8zbvxBsKIuAqsSSWXPBhvIKWEq8PLWP
- HWKZvMTMS9/BbE4BK4m531+xQNQISpyc+QTMZgaqad46G+wHCYEtHBLHXtxjhGh2kfj0uosJ
- whaWeHV8C9RQGYn/O+dDxaslnt74DdXcwijRv3M9G8gHEgLWEn1nckBMZgFNifW79CHKHSXO
- vP7PCFHBJ3HjrSDECXwSk7ZNZ4YI80p0tAlBVCtJ7Pz5BGqphMTlpjksECUeEqs6NScwKs5C
- 8sssJL/MQli7gJF5FaN4amlxbnpqsXFearlecWJucWleul5yfu4mRmCSOf3v+NcdjCtefdQ7
- xMjEwXiIUYKDWUmEt189NEmINyWxsiq1KD++qDQntfgQozQHi5I4b3LmhkQhgfTEktTs1NSC
- 1CKYLBMHp1QDU9yrTmvbaAcG6TfOnJunS8m8tnrxY17j5wYJtcfNJ9TEHopdOCUau4HPzddd
- 7N8MxsbTR2M+nXc2Cr4yK+g7s9ThRdNPL3wSvEh0s647m86MG/0r7I5ea/dM0TNlCL7/3N/s
- UeDuIwUL7FqeHd+3fQvvP9ZFB36waC33ObB95/ReN6v3liu6+xXUmB6o/HFt/nrPadGRprtV
- SdUPPuy/cF/1fj5rvUXHPYfQh5787TfMtTefSY3a6GFjW6jsesLoRvM8xzsVJ07q3drhYqbP
- sDHoxpHuFR9KvBU42coaAkSvN/Au7Ajs0LkTJ+8QvscghG9O6+xjfcUqjYvXaDRlH0jsfql3
- 6HDhrmDtz82mSizFGYmGWsxFxYkAReRc8qEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsVy+t/xe7qmSaFJBu+PCFq0tn9jsnh85zO7
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRmVeSWpSXmKPExsWy7djP87pGSaFJBps3q1q0tn9jsnh85zO7
  xdH/b9ksLi1yt7gx4SmjxeelLewWa24+ZXFg99g56y67x6ZVnWweuxd8ZvLo27KK0aP9QDdT
- AGuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsbO
- 79PYC65yV0x/Y9fAOIWzi5GTQ0LARGL14gnMXYxcHEICSxklvp/oZIdISEjcXtjECGELS/y5
- 1sUGUfScUWLVsrVMXYwcHGwCWhKNEPUiQObEhr+MIDXMAvMZJY5Nvg6WEBZwlpi3fyELiM0i
- oCqxZNZcZhCbV8BS4uWpfVDL5CVmXvoOZnMKWEnM/f4KrF4IqObL/XWMEPWCEidnPgGLMwPV
- N2+dzTyBUWAWktQsJKkFjEyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAmNi27Gfm3cwznv1
- Ue8QIxMH4yFGCQ5mJRHefvXQJCHelMTKqtSi/Pii0pzU4kOMpkB3T2SWEk3OB0ZlXkm8oZmB
- qaGJmaWBqaWZsZI4r2dBR6KQQHpiSWp2ampBahFMHxMHp1QDU5ekvFt8lyhnfHMOe31qfmd8
- 0mPTS029yztWX5KY97V8TrN5b7RGxz+vuJN6dizrfz+PDgxcULxzmqfayXzRa7vmeScc+XLo
- UsuEy3csO5W1WU3Whb89ZHI5TrEx9rHenf3zCkoe/dx2aceLlmf3HM3ySkKYL6zNcLU63i2x
- 24Gdy7qJPViubOKjW1vXa+VPZldKYy603/5RIZbZhS1du7IntGla/LSQbtVCFv41dqaazlw6
- 3yISVfZzZwioPQ1bVVXLnrONTVpFacGxjkeTdkzfV3OvsrzbeG7trCO7xZ7+nLd9yVSD6xKT
- SiNXy7pld37W4p5+/MP5RK7U9xXyS9MqTnX9f1meszL4wXslluKMREMt5qLiRABrtoipEgMA
- AA==
-X-CMS-MailID: 20220412112749eucas1p28b82e6b3b563f2e25c78f479c1192451
+ AGsUl01Kak5mWWqRvl0CV8bahc+ZCtawVTzZ85ulgbGJtYuRk0NCwETi/ZGH7F2MXBxCAisY
+ Ja49OcAI4XxhlLi0+RQbhPOZUeLX62csMC0bJ01nhkgsZ5TYf+giVNVLRom5Fy4A9XNwsAlo
+ STR2soM0iACZExv+go1lFpjJKHHwxTQ2kISwQLzEpkXfwGwWAVWJpRM3MYLYvAKWEjNObGCC
+ 2CYvMfPSd3aIuKDEyZlPwK5gBoo3b50NdoWEwBYOicNPe1hAFksIuEg0XJCA6BWWeHV8CzuE
+ LSPxf+d8qJnVEk9v/IbqbWGU6N+5ng2i11qi70wOiMksoCmxfpc+RLmjxJHf7xghKvgkbrwV
+ hLiAT2LSNlA4gIR5JTrahCCqlSR2/nwCtVRC4nLTHGiweUjcXHkS7EEhgViJoyfusUxgVJiF
+ 5K9ZSP6ahXDDAkbmVYziqaXFuempxYZ5qeV6xYm5xaV56XrJ+bmbGIGJ5vS/4592MM599VHv
+ ECMTB+MhRgkOZiUR3n710CQh3pTEyqrUovz4otKc1OJDjNIcLErivMmZGxKFBNITS1KzU1ML
+ UotgskwcnFINTHHSlmW+y07PCr55Myk3+PrqdJ1bLQ1PYk594dsbkXbtyWnBs4vuxN+3qFK4
+ Or+Y9+07Sy9398nPXkwTWq7h9/aWjUy4/xfVzvoVxhbMk37GBhnu/+pR+bUg/uZ/fq75DALL
+ jp84k/fk3uXulsqsc3+Z7rnb8G8qSZA523JxedCDVT9VD99InecdELvmVMK8RZYVnz5MOOV9
+ 99nU3wf0A1tXv7AoCrwkyvr20oK04v7cKIf0IGeHzkOSTlyT6yNvX0ov++t81Cwi6f21ic5V
+ D0KVUyZk1uq48xxervLn3tywJ0u+6vFNk5aq/iAmWXdu9taGGo3bzwreL/tXdt78UXxw/FfH
+ UwynnE991sr/EqbEUpyRaKjFXFScCAC6mLIjowMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsVy+t/xu7pGSaFJBpMu8Vq0tn9jsnh85zO7
+ xdH/b9ksLi1yt7gx4SmjxeelLewWa24+ZXFg99g56y67x6ZVnWweuxd8ZvLo27KK0aP9QDdT
+ AGuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsba
+ hc+ZCtawVTzZ85ulgbGJtYuRk0NCwERi46TpzF2MXBxCAksZJb69nMgCkZCQuL2wiRHCFpb4
+ c62LDaLoOaPEhcVngBwODjYBLYnGTnaQGhEgc2LDX0aQGmaB+YwSxyZfB0sIC8RKdP6eDjaI
+ RUBVYunETWA2r4ClxIwTG5ggFshLzLz0nR1kJrOApsT6XfoQJYISJ2c+AbuHGaikeets5gmM
+ /LMQqmYhqZqFpGoBI/MqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwIjYduznlh2MK1991DvE
+ yMTBeIhRgoNZSYS3Xz00SYg3JbGyKrUoP76oNCe1+BCjKdDVE5mlRJPzgTGZVxJvaGZgamhi
+ ZmlgamlmrCTO61nQkSgkkJ5YkpqdmlqQWgTTx8TBKdXAZND9f/uBXhHnPxGWU04uPRKcdmLK
+ 5MV377arG+aXem7mlo8pund8xZTXvr96qpPrIwJXFoewH5mc5W5zo8Uufl4d8zOXKa3xte/3
+ u6+W2vp9zqd86X//q1VmKr6V8f65sCVSJew512nXDefWn1yseeUDx4OHmvkztp7e77dqr9TT
+ rnuJz6e9UrWc1icW+sd7w4cnVyOfvvFh5hOMvHDejMX7Ow/73pMfH835fHC7I9/B66vPfGmz
+ PtdW1Sz/L6dweqGOPffKqYsO8kcu2Pa4/ormlaQJu3cvOHLSX6TJ6krqiecWh3lb9bVdrVN/
+ sD94sPJf7znX9H8KYbMmilg8XSF1d6V35HtV9c05gsF/c9YqsRRnJBpqMRcVJwIA/c3KZRED
+ AAA=
+X-CMS-MailID: 20220412112746eucas1p14f52961641ef07fdc7274e75887da9ad
 X-Msg-Generator: CA
-X-RootMTR: 20220412112749eucas1p28b82e6b3b563f2e25c78f479c1192451
+X-RootMTR: 20220412112746eucas1p14f52961641ef07fdc7274e75887da9ad
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20220412112749eucas1p28b82e6b3b563f2e25c78f479c1192451
-References: <20220412112745.44108-1-p.raghav@samsung.com>
- <CGME20220412112749eucas1p28b82e6b3b563f2e25c78f479c1192451@eucas1p2.samsung.com>
-X-Headers-End: 1neEgf-00Dy23-BR
-Subject: [f2fs-dev] [PATCH 3/3] libf2fs: don't allow mkfs / fsck on zoned
- NPO2
+X-CMS-RootMailID: 20220412112746eucas1p14f52961641ef07fdc7274e75887da9ad
+References: <CGME20220412112746eucas1p14f52961641ef07fdc7274e75887da9ad@eucas1p1.samsung.com>
+X-Headers-End: 1neEgf-00Dy1m-3s
+Subject: [f2fs-dev] [PATCH 0/3] f2fs-tools: return error for zoned devices
+ with non power-of-2 zone size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -142,54 +140,26 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Luis Chamberlain <mcgrof@kernel.org>
+F2FS only works for zoned devices with power-of-2 zone sizes as the
+f2fs section needs to be a power-of-2.
 
-f2fs currently only work with zoned storage devices with a zone
-size which is a power of 2 (PO2). So check if a non-power of 2
-zone is device is found, and if so disallow its use. This prevents
-users from incorrectly using these devices.
+At the moment the linux kernel only accepts zoned devices which are
+power-of-2 as block devices but there are zoned devices in the market
+which have non power-of-2 zone sizes.
 
-This is a non-issue today give today's kernel does not allow NPO2
-zon devices to exist. But these devices do exist, and so proactively
-put a stop-gap measure in place to prevent the from being assumed
-to be used.
+As a proactive measure, this patchset adds a check to return error
+from mkfs and fsck for zoned devices with non power-of-2 zone sizes.
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- lib/libf2fs.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Luis Chamberlain (3):
+  libf2fs_zoned: factor out helper to get chunk sectors
+  libf2fs: add support to report zone size
+  libf2fs: don't allow mkfs / fsck on zoned NPO2
 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 8fad1d7..a13ba32 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -882,6 +882,11 @@ static int open_check_fs(char *path, int flag)
- 	return open(path, O_RDONLY | flag);
- }
- 
-+static int is_power_of_2(unsigned long n)
-+{
-+	return (n != 0 && ((n & (n - 1)) == 0));
-+}
-+
- int get_device_info(int i)
- {
- 	int32_t fd = 0;
-@@ -1043,6 +1048,13 @@ int get_device_info(int i)
- 			return -1;
- 		}
- 
-+		if (!dev->zone_size || !is_power_of_2(dev->zone_size)) {
-+			MSG(0, "\tError: zoned: illegal zone size %lu (not a power of 2)\n",
-+					dev->zone_size);
-+			free(stat_buf);
-+			return -1;
-+		}
-+
- 		/*
- 		 * Check zone configuration: for the first disk of a
- 		 * multi-device volume, conventional zones are needed.
+ include/f2fs_fs.h   |  1 +
+ lib/libf2fs.c       | 17 +++++++++++++++--
+ lib/libf2fs_zoned.c | 32 ++++++++++++++++++++++----------
+ 3 files changed, 38 insertions(+), 12 deletions(-)
+
 -- 
 2.25.1
 
