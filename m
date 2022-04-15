@@ -4,57 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D5363C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Apr 2022 10:01:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3B7E1C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 15 Apr 2022 13:20:15 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nfIlY-0005GB-4z; Fri, 15 Apr 2022 10:01:23 +0000
+	id 1nfLru-0007ZP-KT; Fri, 15 Apr 2022 13:20:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jiapeng.chong@linux.alibaba.com>) id 1nfIlH-0005C4-So
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Apr 2022 10:01:07 +0000
+ (envelope-from <dzm91@hust.edu.cn>) id 1nfLrs-0007ZJ-F4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Apr 2022 13:20:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3lSg8Nk2VdvNvTZAFl/oTnO7aIqbKI+Uizd5QkeR/dg=; b=AFV6o3eTFIC10t9XQWjdZ8GL8s
- +ew/iNWTgw/aHSwkGxwpjt9oAbvtvMu4CmSDkdZEqQ/jn5mkHAow004nGZDF1e3bpgE83P2pUnDJ4
- LOtg14zuv6R6xZ6KVDz43YycSMPIDYrlAUsmU1H4kZlK4JEhaSnouimdORIEb1BDifpg=;
+ bh=x1+twxcNLtWV1O5ac2LQi8PLgLXHlVRzgri2odzohFg=; b=P6tWjrXbXs0bJjZWI7wJPEsb3A
+ QWXG8mx0opdlNCvyXVw2rdG97Zgc/bbP8KNlzK6EfW4iWlIdcOF1IbWY6dyPdT3Wc/hV36ZhFoHEo
+ kRJQsAYbgO8TDA+hfNgEG9XfX6tk06MLAOlH6V0iyFzYU2xg+uJw6f0Wa2b7uFLwjbmw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=3lSg8Nk2VdvNvTZAFl/oTnO7aIqbKI+Uizd5QkeR/dg=; b=c
- 3iTN/1Pm08MQ/H9hrJYdOsGzLP5A32xO06/zpSMuKVCjxPB0hQ9BYx7GyP6FkTEzsFaKLOI5IhE0/
- YTAsqyuQmyjAbcUIYyPOi08urJgg1fYcPeiaNFbYKNupk0+SlI2rYlGCmvpOOxnoPXM38do8swIEq
- J9IEMKiQvEiBaWGY=;
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=x1+twxcNLtWV1O5ac2LQi8PLgLXHlVRzgri2odzohFg=; b=d
+ Z7oo9qLoPndmIweQLAspWaugUhMV67auZzz/Dsf0wa4zHLL/JJfvmn7Vxw+ZQrkB9SXWwf1hRHwZ1
+ uUSzxMCMSkflBw35GBvTMj6ZeVQv7hu4viTVY4rey9m/QE9455/+mw3phclgaqgt04WQ/NSLlJVcz
+ RIejPxkOScFnVnfk=;
+Received: from mail.hust.edu.cn ([202.114.0.240] helo=hust.edu.cn)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nfIlC-0006OS-8d
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Apr 2022 10:01:06 +0000
-X-Alimail-AntiSpam: AC=PASS; BC=-1|-1; BR=01201311R901e4; CH=green; DM=||false|;
- DS=||; FP=0|-1|-1|-1|0|-1|-1|-1; HT=e01e04423;
- MF=jiapeng.chong@linux.alibaba.com; NM=1; PH=DS; RN=6; SR=0;
- TI=SMTPD_---0VA6o-rv_1650012574; 
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com
- fp:SMTPD_---0VA6o-rv_1650012574) by smtp.aliyun-inc.com(127.0.0.1);
- Fri, 15 Apr 2022 16:49:40 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: jaegeuk@kernel.org
-Date: Fri, 15 Apr 2022 16:49:31 +0800
-Message-Id: <20220415084931.49880-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+ id 1nfLrq-000QD4-R2
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 15 Apr 2022 13:20:09 +0000
+Received: from localhost.localdomain ([172.16.0.254])
+ (user=dzm91@hust.edu.cn mech=LOGIN bits=0)
+ by mx1.hust.edu.cn  with ESMTP id 23FDJ3rw021361-23FDJ3s1021361
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+ Fri, 15 Apr 2022 21:19:07 +0800
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Date: Fri, 15 Apr 2022 21:19:02 +0800
+Message-Id: <20220415131902.55028-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-Headers-End: 1nfIlC-0006OS-8d
-Subject: [f2fs-dev] [PATCH] f2fs: Fix signedness bugs in
- f2fs_gc_pinned_control functions
+X-FEAS-AUTH-USER: dzm91@hust.edu.cn
+X-Headers-End: 1nfLrq-000QD4-R2
+Subject: [f2fs-dev] [PATCH v2] fs: f2fs: remove WARN_ON in
+ f2fs_is_valid_blkaddr
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -66,39 +65,64 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
- Abaci Robot <abaci@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+Cc: linux-kernel@vger.kernel.org,
+ syzbot+763ae12a2ede1d99d4dc@syzkaller.appspotmail.com,
+ Dongliang Mu <mudongliangabcd@gmail.com>,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Fix the following smatch warning:
+From: Dongliang Mu <mudongliangabcd@gmail.com>
 
-fs/f2fs/gc.c:688 f2fs_gc_pinned_control() warn: signedness bug returning
-'(-16)'.
+Syzbot triggers two WARNs in f2fs_is_valid_blkaddr and
+__is_bitmap_valid. For example, in f2fs_is_valid_blkaddr,
+if type is DATA_GENERIC_ENHANCE or DATA_GENERIC_ENHANCE_READ,
+it invokes WARN_ON if blkaddr is not in the right range.
+The call trace is as follows:
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+ f2fs_get_node_info+0x45f/0x1070
+ read_node_page+0x577/0x1190
+ __get_node_page.part.0+0x9e/0x10e0
+ __get_node_page
+ f2fs_get_node_page+0x109/0x180
+ do_read_inode
+ f2fs_iget+0x2a5/0x58b0
+ f2fs_fill_super+0x3b39/0x7ca0
+
+Fix these two WARNs by replacing WARN_ON with dump_stack.
+
+Reported-by: syzbot+763ae12a2ede1d99d4dc@syzkaller.appspotmail.com
+Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
 ---
- fs/f2fs/gc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1->v2: as suggested by Chao Yu, change WARN_ON to dump_stack
+ fs/f2fs/checkpoint.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 34c097a7821d..4c8ce02a815b 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -679,7 +679,7 @@ static void f2fs_unpin_all_sections(struct f2fs_sb_info *sbi, bool enable)
- 	DIRTY_I(sbi)->enable_pin_section = enable;
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index f5366feea82d..4dfae0cc6b16 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -158,7 +158,7 @@ static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr,
+ 		f2fs_err(sbi, "Inconsistent error blkaddr:%u, sit bitmap:%d",
+ 			 blkaddr, exist);
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		WARN_ON(1);
++		dump_stack();
+ 	}
+ 	return exist;
  }
- 
--static bool f2fs_gc_pinned_control(struct inode *inode, int gc_type,
-+static int f2fs_gc_pinned_control(struct inode *inode, int gc_type,
- 							unsigned int segno)
- {
- 	if (!f2fs_is_pinned_file(inode))
+@@ -196,7 +196,7 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 			f2fs_warn(sbi, "access invalid blkaddr:%u",
+ 				  blkaddr);
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+-			WARN_ON(1);
++			dump_stack();
+ 			return false;
+ 		} else {
+ 			return __is_bitmap_valid(sbi, blkaddr, type);
 -- 
-2.20.1.7.g153144c
+2.25.1
 
 
 
