@@ -4,67 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0875EC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 Apr 2022 22:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 544A6C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 Apr 2022 22:43:22 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ngwXz-0001j7-8R; Tue, 19 Apr 2022 22:42:10 +0000
+	id 1ngwZ8-0001nk-Fd; Tue, 19 Apr 2022 22:43:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1ngwXx-0001ix-Ty
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 22:42:09 +0000
+ (envelope-from <mcgrof@kernel.org>) id 1ngwZ7-0001ne-ET
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 22:43:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=CFrI4TDJOKZpeJNISsqB6ALPZ9MHIjeoAOoPTG/7V4g=; b=Ztax+wouub3z9mmV8URPp9Hbnm
- rsQ00d8Cxk5jYykP1Lxiczo6W4nEzyHPrYNaD3WD8xjMDj3rWLKkGvRbYkxM4IPrwNyxk2P/2ks/Z
- ZyrscPBUkCpDUxfdtPeaQGxyoBF74l+FGq+rtE0ERUO3ne5gVaGsbFEhGBYcPZfpZXD0=;
+ bh=jF7auzV57qDr6XP10HA6Se98O0A956Exb2m+tUWiCEM=; b=DSl0CPCl7nPr/pX0kzxFCGsv39
+ 4/oEscEDgtBNBdHOtmp8db35H0LqGsqLtY6HHpecfPLQgZLPnwP1Vw6oqokJz0rA0BMC5g95DmyfQ
+ acKXE3dc8+FuUJdCe+ejQfkxOkwDQ3NRRu9EA8JRxWz3mWlZxoq0QnhpfxjuQowbmxAs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=CFrI4TDJOKZpeJNISsqB6ALPZ9MHIjeoAOoPTG/7V4g=; b=QNulSQ6OD4+OamreVfcA7eOyQc
- uRDpjatmd/OnP5bFUlnj6AKA3iqcLO3CRc7BxNQH6aaJoGOscActq4k0U01yHX7rj3UKEeFsCt36h
- sDCO4vjCrYhSDaoRuwAKTJS+wSzc1WKxj95Kmbf5W5+TtMjO9KN+fpJRAfGAKNHAV1Sw=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=jF7auzV57qDr6XP10HA6Se98O0A956Exb2m+tUWiCEM=; b=BQaZTvRHjJQWuZEs/5L3JDLWAl
+ bGjpLRL7q41KAgDCjSpHmCtAUzak2tb7wCLGXS9hrnSxJ7MNtV+SUiuIjvG81ICFK1RAy5FWo0FiB
+ P6na9WR1IN2wqO6SC28JAK9QPW0Ce91YWEa/zyKkI9x5X/bBFuGBofAFfzZPU95+PJ2c=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1ngwXs-004Ehq-7M
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 22:42:08 +0000
+ id 1ngwZ4-0007FG-Iu
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 22:43:20 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 8574C617E1;
- Tue, 19 Apr 2022 22:41:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4072C385A5;
- Tue, 19 Apr 2022 22:41:57 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 7B06FB81CA3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 19 Apr 2022 22:43:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A46AC385A8
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 19 Apr 2022 22:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1650408118;
- bh=2T3VacmzBWuaTXxaIk5oIDThRONmBw0yUVWxZ6VzWUM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=fctcDo2wH6Qjx4tKqhZSYj4ybZEzLN+FKY2E5c6rtJKQWMUovopeqcyWLIFtexme4
- cgkzZvKnLf9BS882g6W1pY6xwtxDfnhTqytIsgpnxelta2kE2q/IISZicoGc0uKHYU
- +4ArhDz4l27zDq/qOK4YapCTjMf82d0jA7j0f0wS2aBSXRXrbYWoaGecgeHfbjlW4f
- oIPHjw54WiHKIF+6541s2yVV9MfsM3n7mNk7lPI6SssiWaJOM0tyzrIjKZ+MW7tRIn
- lv2LhGokst11Uk/TxZLbb6qszI6G2iiTMKnlJGsFDkyvMwZhks8n+0tUBDYcIN6iQP
- rBaViM5ifz83A==
-Date: Tue, 19 Apr 2022 15:41:56 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Message-ID: <Yl86tKxvBN6lHoma@google.com>
-References: <CAB=NE6U7AnJf3_eHG_ZmVA66YfjH4rT+7dYiHgEurArpQS489g@mail.gmail.com>
+ s=k20201202; t=1650408190;
+ bh=jF7auzV57qDr6XP10HA6Se98O0A956Exb2m+tUWiCEM=;
+ h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+ b=dssESwdZGbNmKCnycd/8JlFs15QrmzVwQB2tpAc9OE8FMpSbTlThaaGKUUmx79HSo
+ /9OQvLzP/g+1UlyS5Sn4/UMQiBxPtwrz8pboIey3FNFWdwujXCNq73D3rjh6AVzwJU
+ ixn8FtoFVySRBeR3VBnizEvKGIHH5M+/TXHDr6QOYEHBqBlFKDTUiZl5bxU8YQAsGP
+ pELZ8d9IXyt3QvcQgzGozGpDjmSNWQUl1hTNP6TTaBsiBKusDjToAS3vf0pmiD81qT
+ UkSaSKE0pVhY++E22csniVZpOpA4+/ORb8HyQB0DFd+gUzRW3UoDF2dugfm8WI3wEK
+ RBgbpwz6w2A/Q==
+Received: by mail-oi1-f176.google.com with SMTP id 12so142734oix.12
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 19 Apr 2022 15:43:10 -0700 (PDT)
+X-Gm-Message-State: AOAM531QGg0jqW4oB295apiF/hDyAd+IfngYBrQ/E55nr3vgZyOk6NNJ
+ k8AdcmR8naWQcLtPxrZ+AL8fGNGcKd9haHWJ7UM=
+X-Google-Smtp-Source: ABdhPJwL/roT311ijeLmDUhupO0eKljOvJhynyt01Tr/rSW9lxc9c1mt3mHS5ok22F3Cm8RteE+BNGqWmziey2DDaDU=
+X-Received: by 2002:a05:6808:1189:b0:322:3293:4b30 with SMTP id
+ j9-20020a056808118900b0032232934b30mr361620oil.277.1650408189257; Tue, 19 Apr
+ 2022 15:43:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <CAB=NE6U7AnJf3_eHG_ZmVA66YfjH4rT+7dYiHgEurArpQS489g@mail.gmail.com>
-X-Headers-End: 1ngwXs-004Ehq-7M
+References: <CAB=NE6U7AnJf3_eHG_ZmVA66YfjH4rT+7dYiHgEurArpQS489g@mail.gmail.com>
+ <Yl86tKxvBN6lHoma@google.com>
+In-Reply-To: <Yl86tKxvBN6lHoma@google.com>
+From: Luis Chamberlain <mcgrof@kernel.org>
+Date: Tue, 19 Apr 2022 15:42:57 -0700
+X-Gmail-Original-Message-ID: <CAB=NE6W3r_O5L30pPLJ9s12ahfBGvudFAKyLbO_1=JCf2bDTkg@mail.gmail.com>
+Message-ID: <CAB=NE6W3r_O5L30pPLJ9s12ahfBGvudFAKyLbO_1=JCf2bDTkg@mail.gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1ngwZ4-0007FG-Iu
 Subject: Re: [f2fs-dev] Baseline for f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -82,22 +94,23 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 04/19, Luis Chamberlain wrote:
-> I'm going to add automation support for f2fs within kdevops [0]. This
-> should enable folks to test for regressions for f2fs from scratch with
-> just a few commands. Before I go ahead and add that I was curious if
-> folks have a known baseline of known failures from fstests for f2fs so
-> I can expunge the known issues for now. Is there a tracker where these
-> are kept as well?
+On Tue, Apr 19, 2022 at 3:42 PM Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>
+> On 04/19, Luis Chamberlain wrote:
+> > I'm going to add automation support for f2fs within kdevops [0]. This
+> > should enable folks to test for regressions for f2fs from scratch with
+> > just a few commands. Before I go ahead and add that I was curious if
+> > folks have a known baseline of known failures from fstests for f2fs so
+> > I can expunge the known issues for now. Is there a tracker where these
+> > are kept as well?
+>
+> Well, I'm not sure what fstests will run. Is that based on xfstests?
 
-Well, I'm not sure what fstests will run. Is that based on xfstests?
+Yes. I call it fstests only because I'm tired of attending LSFMMs
+where folks don't realize that xfstests is used to test any
+filesystem. So I figured we need to rebrand it.
 
-> 
-> Thanks!
-> 
->   Luis
-> 
-> [0] https://github.com/mcgrof/kdevops
+ Luis
 
 
 _______________________________________________
