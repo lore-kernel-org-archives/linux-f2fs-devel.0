@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3B3AC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 Apr 2022 10:50:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B9C8BC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 Apr 2022 11:00:35 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nglRW-0004Pe-Ce; Tue, 19 Apr 2022 10:50:47 +0000
+	id 1nglb1-0004QX-CA; Tue, 19 Apr 2022 11:00:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <xuyang2018.jy@fujitsu.com>) id 1nglRV-0004PS-40
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 10:50:46 +0000
+ (envelope-from <xuyang2018.jy@fujitsu.com>) id 1nglaz-0004Q9-Ir
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 11:00:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
  Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KUoy2iJzDfdq/6qX+n+tPy7WXkIBqP/Z5evBH4xlq3s=; b=NXSIGYSKquQwHtG0Nl5/suuaPs
- Vf0+lbI1+9giqjlpuLy/KFQ8wS2zHcqcolJGaAN8HNzJiPnAv3RMOtieFdqqfjeGQszgOoAMMttMm
- 2ixzsQgVJeKB2XoMnxoSe2VM1QqLa/3GvXGsKiuoEAodC5APAcxoipbFcvyIqEP+Q3is=;
+ bh=4LvUQiHQuZbq3+y9oGS90voMbGFx43rdOdvN/yWo2vI=; b=kUZBvGnGyeRvBjTmQy3VX9tsob
+ CiGzruVLJLv5VMYBUjzWGVuKHbG338xGxrfmr7LEtRhiEcrxZGtaUNPXvZMXrqtKQQOBp5qiVLSlh
+ E4Weom/E3PniuW6xIdnAcBTs65i5G39meYMDj+ob+EkUcPL3MjFCQRiwGIHV40xONhso=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
@@ -31,63 +31,62 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KUoy2iJzDfdq/6qX+n+tPy7WXkIBqP/Z5evBH4xlq3s=; b=auUyTWHtTeFDXYeh0L8YxT0Vi2
- 5DqDZJL6mK96jpbnM+B1qPdM0oZMd3QU2qta62itx+dkOjeXpQgDyLTKJT+EL/2Mh0kgUoNljXgGq
- xpVg9bnWCO/09nS9NAdc3F5faSjJVVbQVx7lc6lDeo8b7H6ZP7mbnED5KorROs0wl6sA=;
-Received: from mail1.bemta36.messagelabs.com ([85.158.142.113])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nglRT-003kXs-VI
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 10:50:45 +0000
+ bh=4LvUQiHQuZbq3+y9oGS90voMbGFx43rdOdvN/yWo2vI=; b=XBzENoHT3ZcpznNLtX9ofae5k6
+ aPf+NjUM4N96tvis5fYZRKS11OYhulZxb6lFa5Q7Z8KvY7c5XySgcOWbMwzgGPJncNHoERyJf4U41
+ RpXXIfvbpL95M/6ee/8tLHBxAWsciuJJiWK4wefLHzSTILdkn2jt6CXC20c68vpjSxFA=;
+Received: from mail3.bemta32.messagelabs.com ([195.245.230.82])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.94.2)
+ id 1nglau-003klg-Oz
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 11:00:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
- s=170520fj; t=1650365434; i=@fujitsu.com;
- bh=KUoy2iJzDfdq/6qX+n+tPy7WXkIBqP/Z5evBH4xlq3s=;
+ s=170520fj; t=1650365217; i=@fujitsu.com;
+ bh=4LvUQiHQuZbq3+y9oGS90voMbGFx43rdOdvN/yWo2vI=;
  h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
  MIME-Version:Content-Type;
- b=AT9aGIGMrlK8j3YT8sBCHhuIuq3BBxBztbgg9uLgpz6aYou7skZoN2sviXtypDbIp
- iuPWQZ/oa4nGFNXih74LyowrhN+6xM4thKV5HaSWRAg/kzEo8QDXLSfxZHX7gVIoJh
- nMa0X6sb4dZF+s3o6B+Fg4+k4WflRRqHfCxtk09Cmm2MRmw7ZR7MyDV1nqUDyGRSK3
- 7KPxlyt91Ap2MiLeu6/9/0f9PzcjTtkDVEnamVDJYahQwwygUxy23FZud8lTbwyYCO
- Ext/aTQNCz5Z7X+whqQ7hnFX/vYpaCWM0IMv7uu0ahJMVVwVsVBQAg1trPWm0T9Daw
- 1JiynZzDAI9kg==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkleJIrShJLcpLzFFi42Kxs+GYovtzcly
- SwfZv1havD39itPhwcxKTxempZ5ksthy7x2hx+Qmfxc9lq9gtLi1yt9iz9ySLxYUDp1ktdv3Z
- wW6x8vFWJovzf4+zOvB4nFok4bFpVSebx4vNMxk9di/4zOTxeZOcx6Ynb5kC2KJYM/OS8isSW
- DN+7uxlK9jHWfHy1U3WBsYd7F2MXBxCAq8ZJfpv9LFAOHsYJZZfamDtYuTkYBPQlHjWuYAZxB
- YRUJZYcOMYG4jNLPCBSWLiwSoQW1ggWGLvjBdg9SwCqhIfvsxk7GLk4OAV8JA4dp4TJCwhoCA
- x5eF7sDGcAp4SG9++ZwGxhYBKrh/eAhbnFRCUODnzCQvEeAmJgy9eMEP0Kkpc6vjGCGFXSMya
- 1cY0gZF/FpKWWUhaFjAyrWK0SyrKTM8oyU3MzNE1NDDQNTQ01TUHUmZmeolVuol6qaW6yal5J
- UWJQGm9xPJivdTiYr3iytzknBS9vNSSTYzAmEkpdlu2g3Ff30+9Q4ySHExKorz1UXFJQnxJ+S
- mVGYnFGfFFpTmpxYcYZTg4lCR4SycA5QSLUtNTK9Iyc4DxC5OW4OBREuGd3A+U5i0uSMwtzky
- HSJ1iVJQS5xVrAUoIgCQySvPg2mAp4xKjrJQwLyMDA4MQT0FqUW5mCar8K0ZxDkYlYd6Nk4Cm
- 8GTmlcBNfwW0mAlocfWUWJDFJYkIKakGJhamGom9xs1Ne7JeT25ldZgp33ErXdWeWad4t9J1B
- dfXeqsnefxSYFmukhWYWfCjTm8HV9B1ieMf+lbW/XfZdCQr5zLPoy38jh/z35Y9yNreVlH4eJ
- ZKy++qP7Vcqpv3xvrcvNq2M/TUDW5ZNraDmxK72W4+2/OktzDlUwTzz0Mi1z4etIvav5sz8uv
- d+/M/qey9dby9pk/kZHfpX0dudteH7nKqUqznGteFCn25XnGhvUG08FljQ/PKdY5d2adO3Obw
- 5BE7rmbvyfJJMPbZhSMfdaP/+Qv13KkOnjTl/bn40uXbnye7ySdZV9y8bpktfmbL9UmOz9l4m
- VyKb+ltzpPInbLZdf1PnylnHq7jV2Ipzkg01GIuKk4EAPdP9QqUAwAA
+ b=ao26HRrlQaKtDPImAqAml+KuTJieC1e81R6RJISy54lToIcQ9oV2MWbIFyiM2crWn
+ e2k778pGa9p83yhbDtcbWtLkSKwWjXo4FBLtw0S/8lqbjKD8ZR4itsIvORc768ViOH
+ HnjfTwwYH+CW8+BRezNa2dyoWhbCCF/cXAPE3GxAOUbRvbeQvsbpyuG3AABzoDTJpH
+ YrnDFbAejVXwaHCPJR0Vo9S5ElKSJwD3tChw7RUTM689yjQb6nkk8lnqo6tO+sm8gI
+ rbDe3b0Utulm5ETUnPmJWmeBTJXWeT9lb+xl51QIsBnljuMpBSMwH+zs9bUQqGc0VE
+ 6obMZ6J4tGdVA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleJIrShJLcpLzFFi42Kxs+EI0VWYHJd
+ k8GuFgcXrw58YLT7cnMRkcXrqWSaLLcfuMVpcfsJn8XPZKnaLS4vcLfbsPcliceHAaVaLXX92
+ sFusfLyVyeL83+OsDjwepxZJeGxa1cnm8WLzTEaP3Qs+M3l83iTnsenJW6YAtijWzLyk/IoE1
+ owvm86yFLzgrTjUu4S5gfE0dxcjJ4eQwGtGidaH8l2MXED2HkaJW8u/MoEk2AQ0JZ51LmAGsU
+ UElCUW3DjGBmIzC3xgkph4sKqLkYNDWCBIYvuaAJAwi4CqxJpvuxlBbF4BD4mWV+1gtoSAgsS
+ Uh+/BxnAKeEpsfPueBWKvh8T1w1uYIeoFJU7OfMICMV5C4uCLF8wQvYoSlzq+Qc2pkJg1q41p
+ AiP/LCQts5C0LGBkWsVomVSUmZ5RkpuYmaNraGCga2hoqmusa2Gml1ilm6iXWqpbnlpcomuol
+ 1herJdaXKxXXJmbnJOil5dasokRGCcpxcxhOxj/9P7UO8QoycGkJMpbHxWXJMSXlJ9SmZFYnB
+ FfVJqTWnyIUYaDQ0mCt3QCUE6wKDU9tSItMwcYszBpCQ4eJRHeyf1Aad7igsTc4sx0iNQpRl2
+ OtQ0H9jILseTl56VKifOKtQAVCYAUZZTmwY2ApY9LjLJSwryMDAwMQjwFqUW5mSWo8q8YxTkY
+ lYR5iyYBTeHJzCuB2/QK6AgmoCOqp8SCHFGSiJCSamAynjLFKGtG7eyP51ntE+V23nTmPlebI
+ bjgXsMtIy3+76ft0xzOPc5c8sJYM9Zk4buewAO9dhb1fhsm7tBZa3Vxv+MEf41bj9esSGhNeP
+ Radeayz1feFvZM371q8V3mWo5c5Tbp7IMRmxtVj/arV0tMY90Qm/645gbj9qJz5qUPN3yTaXx
+ kUGaplvPaR9cw2qtH4PGiyknJrM2iT96s2rpkyd/Uk7F9yzxKX8xgfFZ+SOs9l+XpqXqb+DLf
+ /Nu/f11d5x/jyuvrvDMDD73tDfJtS3POury3lP1LabfJwwmLfhl8lsvdcryKcXlXbdekmqap3
+ 0OEhTzOz/mn1dKx3GvWqR+ynnL3t3XNOJtZLv9NiaU4I9FQi7moOBEAMekPSpoDAAA=
 X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-25.tower-545.messagelabs.com!1650365433!270749!1
-X-Originating-IP: [62.60.8.148]
+X-Msg-Ref: server-18.tower-585.messagelabs.com!1650365216!280278!1
+X-Originating-IP: [62.60.8.84]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.85.8; banners=-,-,-
 X-VirusChecked: Checked
-Received: (qmail 1555 invoked from network); 19 Apr 2022 10:50:33 -0000
-Received: from unknown (HELO mailhost1.uk.fujitsu.com) (62.60.8.148)
- by server-25.tower-545.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384
- encrypted SMTP; 19 Apr 2022 10:50:33 -0000
+Received: (qmail 24417 invoked from network); 19 Apr 2022 10:46:56 -0000
+Received: from unknown (HELO mailhost3.uk.fujitsu.com) (62.60.8.84)
+ by server-18.tower-585.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384
+ encrypted SMTP; 19 Apr 2022 10:46:56 -0000
 Received: from R01UKEXCASM126.r01.fujitsu.local ([10.183.43.178])
- by mailhost1.uk.fujitsu.com (8.14.5/8.14.5) with ESMTP id 23JAoXvI005594
+ by mailhost3.uk.fujitsu.com (8.14.5/8.14.5) with ESMTP id 23JAkiuN014724
  (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
- Tue, 19 Apr 2022 11:50:33 +0100
+ Tue, 19 Apr 2022 11:46:44 +0100
 Received: from localhost.localdomain (10.167.220.84) by
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Tue, 19 Apr 2022 11:50:28 +0100
+ (TLS) id 15.0.1497.32; Tue, 19 Apr 2022 11:46:38 +0100
 From: Yang Xu <xuyang2018.jy@fujitsu.com>
 To: <linux-fsdevel@vger.kernel.org>
-Date: Tue, 19 Apr 2022 19:47:14 +0800
-Message-ID: <1650368834-2420-8-git-send-email-xuyang2018.jy@fujitsu.com>
+Date: Tue, 19 Apr 2022 19:47:09 +0800
+Message-ID: <1650368834-2420-3-git-send-email-xuyang2018.jy@fujitsu.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1650368834-2420-1-git-send-email-xuyang2018.jy@fujitsu.com>
 References: <1650368834-2420-1-git-send-email-xuyang2018.jy@fujitsu.com>
@@ -95,9 +94,9 @@ MIME-Version: 1.0
 X-Originating-IP: [10.167.220.84]
 X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
-X-Headers-End: 1nglRT-003kXs-VI
-Subject: [f2fs-dev] [PATCH v4 8/8] ceph: Remove S_ISGID clear code in
- ceph_finish_async_create
+X-Headers-End: 1nglau-003klg-Oz
+Subject: [f2fs-dev] [PATCH v4 3/8] xfs: only call posix_acl_create under
+ CONFIG_XFS_POSIX_ACL
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -118,46 +117,66 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Since vfs has stripped S_ISGID in the previous patch, the calltrace
-as below:
+Since xfs_generic_create only calls xfs_set_acl when enable this kconfig, we
+don't need to call posix_acl_create for the !CONFIG_XFS_POSIX_ACL case.
 
-vfs:	lookup_open
-	...
-	  if (open_flag & O_CREAT) {
-                if (open_flag & O_EXCL)
-                        open_flag &= ~O_TRUNC;
-                prepare_mode(mnt_userns, dir->d_inode, &mode);
-	...
-	   dir_inode->i_op->atomic_open
+The previous patch has added missing umask strip for tmpfile, so all creation
+paths handle umask in the vfs directly if the filesystem doesn't support or
+enable POSIX ACLs.
 
-ceph:	ceph_atomic_open
-	...
-	      if (flags & O_CREAT)
-            		ceph_finish_async_create
+So just put this function under CONFIG_XFS_POSIX_ACL and umask strip still works
+well.
 
-We have stripped sgid and umask in prepare mode, so remove this useless
-code here.
+Also use unified rule for CONFIG_XFS_POSIX_ACL in this file, so use IS_ENABLED in
+xfs_generic_create.
 
 Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
 ---
- fs/ceph/file.c | 4 ----
- 1 file changed, 4 deletions(-)
+ fs/xfs/xfs_iops.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 6c9e837aa1d3..8e3b99853333 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -651,10 +651,6 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
- 		/* Directories always inherit the setgid bit. */
- 		if (S_ISDIR(mode))
- 			mode |= S_ISGID;
--		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
--			 !in_group_p(dir->i_gid) &&
--			 !capable_wrt_inode_uidgid(&init_user_ns, dir, CAP_FSETID))
--			mode &= ~S_ISGID;
- 	} else {
- 		in.gid = cpu_to_le32(from_kgid(&init_user_ns, current_fsgid()));
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index b34e8e4344a8..6b8df9ab215a 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -150,6 +150,7 @@ xfs_create_need_xattr(
+ 		return true;
+ 	if (default_acl)
+ 		return true;
++
+ #if IS_ENABLED(CONFIG_SECURITY)
+ 	if (dir->i_sb->s_security)
+ 		return true;
+@@ -169,7 +170,7 @@ xfs_generic_create(
+ {
+ 	struct inode	*inode;
+ 	struct xfs_inode *ip = NULL;
+-	struct posix_acl *default_acl, *acl;
++	struct posix_acl *default_acl = NULL, *acl = NULL;
+ 	struct xfs_name	name;
+ 	int		error;
+ 
+@@ -184,9 +185,11 @@ xfs_generic_create(
+ 		rdev = 0;
  	}
+ 
++#if IS_ENABLED(CONFIG_XFS_POSIX_ACL)
+ 	error = posix_acl_create(dir, &mode, &default_acl, &acl);
+ 	if (error)
+ 		return error;
++#endif
+ 
+ 	/* Verify mode is valid also for tmpfile case */
+ 	error = xfs_dentry_mode_to_name(&name, dentry, mode);
+@@ -209,7 +212,7 @@ xfs_generic_create(
+ 	if (unlikely(error))
+ 		goto out_cleanup_inode;
+ 
+-#ifdef CONFIG_XFS_POSIX_ACL
++#if IS_ENABLED(CONFIG_XFS_POSIX_ACL)
+ 	if (default_acl) {
+ 		error = __xfs_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
+ 		if (error)
 -- 
 2.27.0
 
