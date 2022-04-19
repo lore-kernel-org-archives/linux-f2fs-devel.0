@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7EE4FC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 Apr 2022 11:00:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 351C8C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 19 Apr 2022 11:00:39 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nglb1-0004Qc-En; Tue, 19 Apr 2022 11:00:34 +0000
+	id 1nglb3-0004dw-II; Tue, 19 Apr 2022 11:00:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <xuyang2018.jy@fujitsu.com>) id 1nglb0-0004QL-Ku
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 11:00:33 +0000
+ (envelope-from <xuyang2018.jy@fujitsu.com>) id 1nglb2-0004dq-Lg
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 11:00:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:MIME-Version:References:In-Reply-To:
  Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ThqRNMVwN/gYuY+yP+qvGKhzoByHtom9pEJS+r8beCs=; b=Le0N1R0rER7E5+AN2JiqO3VR5o
- q8E69fYg+/aNRWtSHNgLZN3BQ7umoV/zLL6tKgH7Ib4f7hiFKXoeslYxaFIMzSpR8cl2+4yUUIRIi
- c58iRKPfPhntskbXYT/ACG+0V6tpzujxfCQKHEqdc+n+bRgyY28MX56UZb8TczMPOwsk=;
+ bh=0pzuZqnMKiL4erT/FsIYrH8hrYItIQ0ZRX22uC8lIbQ=; b=F2kzrMWXTdvy3QxzTvdK/8R7hR
+ cKln59FDk/6uiw1XWntKWiA7n2k1/cePJrK40SWBJk8GMAUMdY+HYL1EnI9zQCr2UgPQ0c1zatXCn
+ KDfD1zRXA+4iLtDTiMDb7OT0XlOXEn+St5XxK+x1FhP/+ZX4IA9zGydSesjIw+xLbTu8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:
@@ -31,67 +31,67 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ThqRNMVwN/gYuY+yP+qvGKhzoByHtom9pEJS+r8beCs=; b=IuBF6F9m2MBYvyeh34TGVmK8/z
- E4stwoWBvn/oM86hvyU9WwioA5Peoq6gd4rnBPaQQhYarWMPTSmeOwHfl0buD/nDvWkSOARXHl9aN
- czfWI3nFVqJen1rJgy2t/ZRabZ/O1J+2J7q8/rZAea5nxJNir8oGaGh3iefjxuV1llaY=;
-Received: from mail1.bemta32.messagelabs.com ([195.245.230.1])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=0pzuZqnMKiL4erT/FsIYrH8hrYItIQ0ZRX22uC8lIbQ=; b=POwhksnGh99/p4TRC36BzblVZB
+ e5iKEMxoFTbOTZU/0YCYKOfQj9cdRj6f3ji8KXdk4sw4jD4DnQtfdVBpl5O2km1Yrd+wc4sFW4Gtm
+ WnNsCXVdGtrCmXwm8xnYaRgpfh+CJwz/jhTXD5WPgH/FlcMJhZyhR8LHrMCfzM6qok4E=;
+Received: from mail1.bemta32.messagelabs.com ([195.245.230.2])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nglaw-00064c-Df
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 11:00:33 +0000
+ id 1nglb1-003klm-KJ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 19 Apr 2022 11:00:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
- s=170520fj; t=1650365198; i=@fujitsu.com;
- bh=ThqRNMVwN/gYuY+yP+qvGKhzoByHtom9pEJS+r8beCs=;
+ s=170520fj; t=1650365242; i=@fujitsu.com;
+ bh=0pzuZqnMKiL4erT/FsIYrH8hrYItIQ0ZRX22uC8lIbQ=;
  h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
  MIME-Version:Content-Type;
- b=vq8WP8thCOyj7/cit9HcuzsuLaT7Dp6E5Mv4/k+4VpBVKwZ+PCFbO1n22gGwIZRic
- 3EAXsuarx08FUb0aINwGjz+22QYqoIuaUmw1QiPfti+TAXN1G6iFNAfIyJFCkigljO
- xn7l4T/en7G07NbJi02RIWMWCjQIRzzS6bOpdqvKAyF+fUO0zthclHY/BOOVDw1QSX
- ybR9WRgQSa8SiryYEkeITq5n1nx+qwApuRusn2WBc32fhodUWClDYP1QWLKM4F14uD
- BKL5+xsiaO+2hwE4bEmtk1PvBs8RdxvEk/W3kbPBiNZHqhiCO3vXptGirx8uSz8omq
- G/P5MzBSVyhnw==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRWlGSWpSXmKPExsViZ8MxSZd3cly
- Swd+txhavD39itPhwcxKTxempZ5ksthy7x2hx+Qmfxc9lq9gtLi1yt9iz9ySLxYUDp1ktdv3Z
- wW6x8vFWJovzf4+zOvB4nFok4bFpVSebx4vNMxk9di/4zOTxeZOcx6Ynb5kC2KJYM/OS8isSW
- DMe7lnLWPCRveLv/ZVsDYz32boYuTiEBLYwSuxa84gdwlnAJNE2eyeUs4dRYsnLt6xdjJwcbA
- KaEs86FzCD2CICyhILbhwDa2cWOMMkcenaEkaQhLCAk8SeBz3sIDaLgKrE0vcvWUBsXgEPiYl
- t28FqJAQUJKY8fA82iFPAU2Lj2/dgNUJANdcPb2GGqBeUODnzCVicWUBC4uCLF8wQvYoSlzq+
- Qc2pkJg1q40JwlaTuHpuE/MERsFZSNpnIWlfwMi0itEqqSgzPaMkNzEzR9fQwEDX0NBU10DXy
- NBUL7FKN1EvtVS3PLW4RNdQL7G8WC+1uFivuDI3OSdFLy+1ZBMjMMJSihmu72Cc2PdT7xCjJA
- eTkihvfVRckhBfUn5KZUZicUZ8UWlOavEhRhkODiUJ3tIJQDnBotT01Iq0zBxgtMOkJTh4lER
- 4J/cDpXmLCxJzizPTIVKnGBWlxHnFWoASAiCJjNI8uDZYgrnEKCslzMvIwMAgxFOQWpSbWYIq
- /4pRnINRSZi3aSLQFJ7MvBK46a+AFjMBLa6eEguyuCQRISXVwHTiO/fzlm8l4Ve61jFftdvQL
- H6qR4J1SlY+g3qsSveUrUb6gWJtiVaWcadEZHY839Z2wldx++X+5U/EHKymHs6ryzBNMPnH9r
- z8mDDT+vnaX0Vm92wNiOnU+i/+at70zEPhD+daG9it+T3tjAqHa5fwXhX2HXkOwvlHyuYffLV
- TsCrITLfmYWH5uS0Xll7uUH0/I70gL2vbVOVaK3v3RxzWPf/3JMTHrOiLbF7/TSHf4J7QRscj
- uRKdG9qCz6+9l1jRc4pDUuPYhQ7nS8I7q76wCU++GuX1Mlr+3sVfPxZaMTzwFU7XO60uZKyar
- PI2VORSXzGTeFzI38YX3RuTNDfmRx2NXny/p1bLmX+tEktxRqKhFnNRcSIA0R2Z56sDAAA=
+ b=hIwfAuc69Xx8K25DwcOytVfnY2HcBlHnpYAGbO4CnypR85lQ5SFVuTh/tkIJQY6Ou
+ 2AUfaSP0Uy2wkPcWyRMeT8JKKenGQPKsey63y6p3NOtsZL0gyTvAK35vkwzo2Nsd60
+ FB6Lyt3Ztlp5nqmYSWLYvPiQCpODFdh0pwWJmlxRbvWBbqEHhN4V8xIQp1hmxrcf14
+ EOOjwwtJo6M1zZuCRPbn9scL9ZwmIaFXx4ClIc3Z9gHSUVwYXGIWcCJaqy2kEZ+vXQ
+ RXiFScjVnMIlMh9cHzIL+/14Si/jT8/nytq21b9Xrgl9LH5depfT0QxihYaSaXwZtA
+ zkM1J0kBbT+lQ==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRWlGSWpSXmKPExsViZ8ORqGs5OS7
+ JYEu3hMXrw58YLT7cnMRkcXrqWSaLLcfuMVpcfsJn8XPZKnaLS4vcLfbsPcliceHAaVaLXX92
+ sFusfLyVyeL83+OsDjwepxZJeGxa1cnm8WLzTEaP3Qs+M3l83iTnsenJW6YAtijWzLyk/IoE1
+ owlXy+xFuwUrdj1cjZ7A+NkoS5GLg4hgS2MEp1bpjJBOAuYJI78eczcxcgJ5OxhlDj0VhnEZh
+ PQlHjWuQAsLiKgLLHgxjE2kAZmgTNMEpeuLWEESQgL+Ev8fv4WyObgYBFQlZg0PRckzCvgIXF
+ t2QqwEgkBBYkpD9+DzeEU8JTY+PY9C8QuD4nrh7cwQ9QLSpyc+QQsziwgIXHwxQtmiF5FiUsd
+ 36DmVEjMmtXGBGGrSVw9t4l5AqPgLCTts5C0L2BkWsVolVSUmZ5RkpuYmaNraGCga2hoqgskT
+ U30Eqt0E/VSS3XLU4tLdA31EsuL9VKLi/WKK3OTc1L08lJLNjECoyulmGHWDsZZfT/1DjFKcj
+ ApifLWR8UlCfEl5adUZiQWZ8QXleakFh9ilOHgUJLgLZ0AlBMsSk1PrUjLzAFGOkxagoNHSYR
+ 3cj9Qmre4IDG3ODMdInWKUVFKnFesBSghAJLIKM2Da4Mll0uMslLCvIwMDAxCPAWpRbmZJajy
+ rxjFORiVhHmbJgJN4cnMK4Gb/gpoMRPQ4uopsSCLSxIRUlINTBMil3oo5px9M+P21/9NC85/d
+ fxqPvfMjN2PDk5jNq2KdnZnsNp99NFylynms66ZMf6cd9twjjzbhcbneX/1HTQWGM+7Glh9at
+ JGyW+eU9ayfLZ9Gt66Ri3ploKHrken1j22j+Ffda7cn6Bu3tGb4nRrx4clF8InLVxTf3lrnOn
+ iK2yKXwTSNb88m3LgXO7bxR2nowVzrI2v7On8Fbsh+67S67b2pYK5U0KtJ79rD73CYmd9h3vx
+ rF8JPousU0O0pEqZ6l++/ZwnFHHobhTjCZmSSBkR9/CVLnwp129LB0zck2MtwxnN/TvJ0rtr9
+ fSsXbz1P7KVGV2X/p4arHnH/wGvwG6+eMtep/NREmbfFZVYijMSDbWYi4oTAfUjQSGpAwAA
 X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-16.tower-591.messagelabs.com!1650365197!273701!1
-X-Originating-IP: [62.60.8.146]
+X-Msg-Ref: server-13.tower-591.messagelabs.com!1650365241!273698!1
+X-Originating-IP: [62.60.8.97]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.85.8; banners=-,-,-
 X-VirusChecked: Checked
-Received: (qmail 13109 invoked from network); 19 Apr 2022 10:46:37 -0000
-Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
- by server-16.tower-591.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384
- encrypted SMTP; 19 Apr 2022 10:46:37 -0000
-Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
- by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 4DBA01000F5;
- Tue, 19 Apr 2022 11:46:37 +0100 (BST)
+Received: (qmail 29673 invoked from network); 19 Apr 2022 10:47:21 -0000
+Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
+ by server-13.tower-591.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384
+ encrypted SMTP; 19 Apr 2022 10:47:21 -0000
+Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
+ by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 9AF6F1001A1;
+ Tue, 19 Apr 2022 11:47:20 +0100 (BST)
 Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
  (No client certificate requested)
- by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 21AF3100459;
- Tue, 19 Apr 2022 11:46:37 +0100 (BST)
+ by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 805B6100196;
+ Tue, 19 Apr 2022 11:47:20 +0100 (BST)
 Received: from localhost.localdomain (10.167.220.84) by
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Tue, 19 Apr 2022 11:46:25 +0100
+ (TLS) id 15.0.1497.32; Tue, 19 Apr 2022 11:47:01 +0100
 From: Yang Xu <xuyang2018.jy@fujitsu.com>
 To: <linux-fsdevel@vger.kernel.org>
-Date: Tue, 19 Apr 2022 19:47:08 +0800
-Message-ID: <1650368834-2420-2-git-send-email-xuyang2018.jy@fujitsu.com>
+Date: Tue, 19 Apr 2022 19:47:10 +0800
+Message-ID: <1650368834-2420-4-git-send-email-xuyang2018.jy@fujitsu.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1650368834-2420-1-git-send-email-xuyang2018.jy@fujitsu.com>
 References: <1650368834-2420-1-git-send-email-xuyang2018.jy@fujitsu.com>
@@ -100,8 +100,9 @@ X-Originating-IP: [10.167.220.84]
 X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
 X-Virus-Scanned: ClamAV using ClamSMTP
-X-Headers-End: 1nglaw-00064c-Df
-Subject: [f2fs-dev] [PATCH v4 2/8] fs: Add missing umask strip in vfs_tmpfile
+X-Headers-End: 1nglb1-003klm-KJ
+Subject: [f2fs-dev] [PATCH v4 4/8] NFSv3: only do posix_acl_create under
+ CONFIG_NFS_V3_ACL
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -122,32 +123,86 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-All creation paths except for O_TMPFILE handle umask in the vfs directly
-if the filesystem doesn't support or enable POSIX ACLs. If the filesystem
-does then umask handling is deferred until posix_acl_create().
-Because, O_TMPFILE misses umask handling in the vfs it will not honor
-umask settings. Fix this by adding the missing umask handling.
+Since nfs3_proc_create/nfs3_proc_mkdir/nfs3_proc_mknod these rpc ops are called
+by nfs_create/nfs_mkdir/nfs_mkdir these inode ops, so they are all in control of
+vfs.
 
-Reported-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+nfs3_proc_setacls does nothing in the !CONFIG_NFS_V3_ACL case, so we put
+posix_acl_create under CONFIG_NFS_V3_ACL and it also doesn't affect
+sattr->ia_mode value because vfs has did umask strip.
+
 Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
 ---
- fs/namei.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/nfs/nfs3proc.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 509657fdf4f5..73646e28fae0 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3521,6 +3521,8 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
- 	child = d_alloc(dentry, &slash_name);
- 	if (unlikely(!child))
- 		goto out_err;
-+	if (!IS_POSIXACL(dir))
-+		mode &= ~current_umask();
- 	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
- 	if (error)
- 		goto out_err;
+diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
+index 1597eef40d54..9ab93427db30 100644
+--- a/fs/nfs/nfs3proc.c
++++ b/fs/nfs/nfs3proc.c
+@@ -337,7 +337,7 @@ static int
+ nfs3_proc_create(struct inode *dir, struct dentry *dentry, struct iattr *sattr,
+ 		 int flags)
+ {
+-	struct posix_acl *default_acl, *acl;
++	struct posix_acl *default_acl = NULL, *acl = NULL;
+ 	struct nfs3_createdata *data;
+ 	struct dentry *d_alias;
+ 	int status = -ENOMEM;
+@@ -361,9 +361,11 @@ nfs3_proc_create(struct inode *dir, struct dentry *dentry, struct iattr *sattr,
+ 		data->arg.create.verifier[1] = cpu_to_be32(current->pid);
+ 	}
+ 
++#if IS_ENABLED(CONFIG_NFS_V3_ACL)
+ 	status = posix_acl_create(dir, &sattr->ia_mode, &default_acl, &acl);
+ 	if (status)
+ 		goto out;
++#endif
+ 
+ 	for (;;) {
+ 		d_alias = nfs3_do_create(dir, dentry, data);
+@@ -580,7 +582,7 @@ nfs3_proc_symlink(struct inode *dir, struct dentry *dentry, struct page *page,
+ static int
+ nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *sattr)
+ {
+-	struct posix_acl *default_acl, *acl;
++	struct posix_acl *default_acl = NULL, *acl = NULL;
+ 	struct nfs3_createdata *data;
+ 	struct dentry *d_alias;
+ 	int status = -ENOMEM;
+@@ -591,9 +593,11 @@ nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *sattr)
+ 	if (data == NULL)
+ 		goto out;
+ 
++#if IS_ENABLED(CONFIG_NFS_V3_ACL)
+ 	status = posix_acl_create(dir, &sattr->ia_mode, &default_acl, &acl);
+ 	if (status)
+ 		goto out;
++#endif
+ 
+ 	data->msg.rpc_proc = &nfs3_procedures[NFS3PROC_MKDIR];
+ 	data->arg.mkdir.fh = NFS_FH(dir);
+@@ -711,7 +715,7 @@ static int
+ nfs3_proc_mknod(struct inode *dir, struct dentry *dentry, struct iattr *sattr,
+ 		dev_t rdev)
+ {
+-	struct posix_acl *default_acl, *acl;
++	struct posix_acl *default_acl = NULL, *acl = NULL;
+ 	struct nfs3_createdata *data;
+ 	struct dentry *d_alias;
+ 	int status = -ENOMEM;
+@@ -723,9 +727,11 @@ nfs3_proc_mknod(struct inode *dir, struct dentry *dentry, struct iattr *sattr,
+ 	if (data == NULL)
+ 		goto out;
+ 
++#if IS_ENABLED(CONFIG_NFS_V3_ACL)
+ 	status = posix_acl_create(dir, &sattr->ia_mode, &default_acl, &acl);
+ 	if (status)
+ 		goto out;
++#endif
+ 
+ 	data->msg.rpc_proc = &nfs3_procedures[NFS3PROC_MKNOD];
+ 	data->arg.mknod.fh = NFS_FH(dir);
 -- 
 2.27.0
 
