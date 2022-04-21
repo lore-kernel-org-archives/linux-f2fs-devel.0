@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DC7BCC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Apr 2022 22:19:05 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6D992C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Apr 2022 22:19:06 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nhf8j-0001d6-Rc; Thu, 21 Apr 2022 22:19:04 +0000
+	id 1nhf8k-0007vy-JN; Thu, 21 Apr 2022 22:19:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bart.vanassche@gmail.com>) id 1nhf8i-0001cx-CV
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:02 +0000
+ (envelope-from <bart.vanassche@gmail.com>) id 1nhf8j-0007vk-Cc
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uSxNKbyqMf7hHVLx/ixngFPHFOFArYvNg9c8fV+82TA=; b=PZj926ueaStfKspnksKF3hjiAJ
- dl2O4aq7sjpANQpKIckr0ZWngy+r1KYI2sZlIJIFO7tSawfunQL4gdVlZxfQaPN76K9rPVfWUWlld
- witykKHhq9x7ZsXQQcP1TZitedudftAb0RL6MlgFrF/vDXfoP0S1cXwuitL82GnYJxX4=;
+ bh=nNzNNuzz8zM+CzjZ3joCCm7L7ib0lPqJUU4RRnwL/oY=; b=UwkiOjpIIoVIjN5dwih8XahlSV
+ Fuf5IomuL5oVvQg/vrJP0hyLT18vIgNBpWLZT3itZ7oWEpuJ3GCbXBljB690nAMr9EQGNdZ/iqkii
+ zdMFJy5m4+ENEVxSwxfmvCR1RLEEDNCMBdTrYDEfTUqVcOilSZ5R1ZUTthvRdzSmT4oo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,51 +31,51 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=uSxNKbyqMf7hHVLx/ixngFPHFOFArYvNg9c8fV+82TA=; b=JcsRI6XpY16XPTk86qbMAgtUjb
- UtJvHO4/LTrGd1tC9ob5B5gEkulFalEWsbinJvGCt/+MbL434jdaLKZrM/QqCkUrGEpmXz+pvXRol
- NBYWpvNO3gOCw6www0taW8mwR5TSK/aPUyCHIM0O54ZE//SjJV0Z3vyJEuiA/MZjEWns=;
-Received: from mail-pg1-f180.google.com ([209.85.215.180])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=nNzNNuzz8zM+CzjZ3joCCm7L7ib0lPqJUU4RRnwL/oY=; b=UaS19QUeilYEwN8l/nMZU+OJMm
+ 5Y77+yjHz/vfb7DeTZDdWmP/FJb+s1Pwt1/iL/+bF/30ZLvpL3fDSE/D9mtFPH8iPXNvAIdtzY864
+ Gs1/WtvFM6KtXURjjHKsg8SH9Zh5GmFbkOqDIk6nyxxavGFdMMFsRYG7M9WmkzSctvOk=;
+Received: from mail-pl1-f170.google.com ([209.85.214.170])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1nhf8c-005sOg-J7
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:02 +0000
-Received: by mail-pg1-f180.google.com with SMTP id q12so5765862pgj.13
+ id 1nhf8e-0002u7-5H
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:03 +0000
+Received: by mail-pl1-f170.google.com with SMTP id u15so3381749ple.4
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 21 Apr 2022 15:18:58 -0700 (PDT)
+ Thu, 21 Apr 2022 15:19:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
  :references:mime-version:content-transfer-encoding;
- bh=uSxNKbyqMf7hHVLx/ixngFPHFOFArYvNg9c8fV+82TA=;
- b=XG3IzQ1AzLsARXzGv6NL/0pQ5wYm2e6sPfew7XdxkexZQYPbMqTrODcnglIk2s2+eF
- gexDJXeIBvyoLzFpc3xKAe2c3o8gV81LeSbe0nbkSpLS6F15If3KHknKyPBhRaROdZf3
- V2pdzCXpWXktu7GiHb1DXXrraukkG71hap/2p+ifkb5+Yj0u/TgccHG/toyTDPsmU0AQ
- 4WLT6h/s3t4QzlyGsFjzVNXq161H4osb90iKQdUsEf1gnhpxe4t6e76tHCwPkGMTs89l
- VgprN30H1PeWkrwaykD1xL7CA7Qr799p+NnoTMti9eiiN8GtBqtLMoTJPFdLyMLc4x5r
- 6lfA==
-X-Gm-Message-State: AOAM531wAoXVP61sR4k5m0EuL/86cYCS1YeSMjSpSTtmcWdzRpPMYsRz
- utcnPHAeB6NNiS1eITch+/7YWenc+fhVaQ==
-X-Google-Smtp-Source: ABdhPJxc4ArC/H7ab+4Fca7MTHwI0aGf6q12sSsSN8qUYpJRKExouNwIY+PhV7vvhYbAZ2LH58BEsQ==
-X-Received: by 2002:a63:2b0b:0:b0:39d:890a:ab68 with SMTP id
- r11-20020a632b0b000000b0039d890aab68mr1281885pgr.247.1650579533006; 
- Thu, 21 Apr 2022 15:18:53 -0700 (PDT)
+ bh=nNzNNuzz8zM+CzjZ3joCCm7L7ib0lPqJUU4RRnwL/oY=;
+ b=u+kCn5zchBbnTO1xdvD2ZHgZ/huGW+9GTiaUiShiQbYWFjRw8kNxGyQz70paok3pqe
+ HMJaNOFFEzBKBt2y9bhH2q3bkC9OeBvYE9McmhaR60uYx2vxxgQZBSA9C0Kn8mPSg+ES
+ 20QTy2mSMtEx7bT7XNkKC0G8h5igbnF5Csm2sZSIoJhngfGjLahiFKEemxNaAFyZJckK
+ 2/hiC2XBcb1Z7PVzdyOjeBPVzWjm1OO5U4mDf9PCXqTuk+xrpj5312+i4v+6anj9nMh3
+ BsRRsR/sbXJ7Q5F4nl81tdFVVpIAsbVybDMBd8ShBBSVo9C6aU4aUyYK1+dlyQxJbSVl
+ H0eg==
+X-Gm-Message-State: AOAM530A0qqtxUHL63QOwBiO2O9ogDyigA2WuKcgVXBnu6pqqiFNl8gU
+ zZr4RBfFA1yPjWcz0INoBXE=
+X-Google-Smtp-Source: ABdhPJzDfgn2RVdzzjEPQwTG79POkYV4lKCzhJ8Zp9h+5hCHSJX0Q5QqfA5/iPdFIUPKAaqCDY0llw==
+X-Received: by 2002:a17:90b:3ec2:b0:1d2:a9a1:b2f1 with SMTP id
+ rm2-20020a17090b3ec200b001d2a9a1b2f1mr12660636pjb.145.1650579534544; 
+ Thu, 21 Apr 2022 15:18:54 -0700 (PDT)
 Received: from bvanassche-linux.mtv.corp.google.com
  ([2620:15c:211:201:a034:31d8:ca4e:1f35])
  by smtp.gmail.com with ESMTPSA id
- hi21-20020a17090b30d500b001cd4989ff4csm3794876pjb.19.2022.04.21.15.18.51
+ hi21-20020a17090b30d500b001cd4989ff4csm3794876pjb.19.2022.04.21.15.18.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 21 Apr 2022 15:18:52 -0700 (PDT)
+ Thu, 21 Apr 2022 15:18:53 -0700 (PDT)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Thu, 21 Apr 2022 15:18:08 -0700
-Message-Id: <20220421221836.3935616-4-bvanassche@acm.org>
+Date: Thu, 21 Apr 2022 15:18:09 -0700
+Message-Id: <20220421221836.3935616-5-bvanassche@acm.org>
 X-Mailer: git-send-email 2.36.0.rc2.479.g8af0fa9b8e-goog
 In-Reply-To: <20220421221836.3935616-1-bvanassche@acm.org>
 References: <20220421221836.3935616-1-bvanassche@acm.org>
 MIME-Version: 1.0
-X-Headers-End: 1nhf8c-005sOg-J7
-Subject: [f2fs-dev] [PATCH 03/31] configure.ac: Enable the automake -Wall
- option
+X-Headers-End: 1nhf8e-0002u7-5H
+Subject: [f2fs-dev] [PATCH 04/31] configure.ac: Sort header file names
+ alphabetically
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,41 +93,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch fixes the following automake warnings:
-
-/usr/share/automake-1.16/am/ltlibrary.am: warning: 'libf2fs.la': linking libtool libraries using a non-POSIX
-/usr/share/automake-1.16/am/ltlibrary.am: archiver requires 'AM_PROG_AR' in 'configure.ac'
-lib/Makefile.am:3:   while processing Libtool library 'libf2fs.la'
-/usr/share/automake-1.16/am/ltlibrary.am: warning: 'libf2fs_format.la': linking libtool libraries using a non-POSIX
-/usr/share/automake-1.16/am/ltlibrary.am: archiver requires 'AM_PROG_AR' in 'configure.ac'
-mkfs/Makefile.am:11:   while processing Libtool library 'libf2fs_format.la'
-
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- configure.ac | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index c908c9394613..b40012bd8745 100644
+index b40012bd8745..0d7872abde19 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -33,7 +33,7 @@ AC_CONFIG_SRCDIR([config.h.in])
- AC_CONFIG_HEADERS([config.h])
- AC_CONFIG_MACRO_DIR([m4])
- AC_CONFIG_AUX_DIR([build-aux])
--AM_INIT_AUTOMAKE([foreign tar-pax dist-xz])
-+AM_INIT_AUTOMAKE([-Wall -Werror foreign tar-pax dist-xz])
- 
- # Test configure options.
- AC_ARG_WITH([selinux],
-@@ -46,6 +46,7 @@ AC_ARG_WITH([blkid],
- 
- # Checks for programs.
- AC_PROG_CC
-+AM_PROG_AR
- LT_INIT
- AC_PATH_PROG([LDCONFIG], [ldconfig],
-        [AC_MSG_ERROR([ldconfig not found])],
+@@ -100,13 +100,13 @@ AC_CHECK_HEADERS(m4_flatten([
+ 	fcntl.h
+ 	linux/blkzoned.h
+ 	linux/falloc.h
++	linux/fiemap.h
+ 	linux/fs.h
+ 	linux/hdreg.h
+ 	linux/limits.h
+ 	linux/posix_acl.h
+ 	linux/types.h
+ 	linux/xattr.h
+-	linux/fiemap.h
+ 	mach/mach_time.h
+ 	mntent.h
+ 	scsi/sg.h
+@@ -114,8 +114,8 @@ AC_CHECK_HEADERS(m4_flatten([
+ 	string.h
+ 	sys/acl.h
+ 	sys/ioctl.h
+-	sys/syscall.h
+ 	sys/mount.h
++	sys/syscall.h
+ 	sys/sysmacros.h
+ 	sys/utsname.h
+ 	sys/xattr.h
 
 
 _______________________________________________
