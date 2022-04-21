@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D717BC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Apr 2022 22:19:20 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4FE3C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Apr 2022 22:19:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nhf8w-0005Kk-8g; Thu, 21 Apr 2022 22:19:19 +0000
+	id 1nhf90-0001ig-8S; Thu, 21 Apr 2022 22:19:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bart.vanassche@gmail.com>) id 1nhf8u-0005Jx-Lu
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:17 +0000
+ (envelope-from <bart.vanassche@gmail.com>) id 1nhf8y-0001i0-LF
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=x1QHoKycHIeH7zm2tT8ZUFD0G1KEa2qr986FVc/PA0c=; b=PBdSUE030iIVhKRSPTHlb7K0K1
- gaEDfdqBtsIfeHPO8A0vYGSBRgzo7R30TtSJQUKN6h1pZy/ZknYho8i788Tz7VCv2rmlQXGqrPBC9
- YzY1nMpdnVzgeLBzTeVBzA+RknkuVBgVq6z/y4NZ4K2U0U3R0dQU0UwYJ2j2vJVbT+Do=;
+ bh=r7B6va58ztFzexCbp+IzQPGrgh5J3MZhR3OFeRJ/XZY=; b=U2Z6nVoBkIonHFsgYAkEILTGYK
+ 2szm2g+byZggHGjA6tjFHpH7W2XfBqstjsF1gGaO3cBckjaa5Ng5JGZDLoukvDsU5MF/KdMW0W/jY
+ PdLNDCh3T+VXiliUMzLF/jYo5ZlrQCKUKqZ4AR9TLBgyWosMacBtOf1WKpj9l1wSH6qc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,51 +31,50 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=x1QHoKycHIeH7zm2tT8ZUFD0G1KEa2qr986FVc/PA0c=; b=IM2/01weIRvrt8ZcjcDq4KPtoX
- lGfGqaAB1jbAm96VaRQvK5oib2QmRFzE7+0GypkX97I6tEcq1LiJwAmIWHIt3E21T4c9cfP4tdZPD
- pSNGRLVmSnJGCXTV4cf8XV7l9cbrwFUmTYISASfQo4hs5Z5bkK8drMDyjTQT/Gpj6/jI=;
-Received: from mail-pl1-f170.google.com ([209.85.214.170])
+ bh=r7B6va58ztFzexCbp+IzQPGrgh5J3MZhR3OFeRJ/XZY=; b=AEnAv/PjLdZ+41R11GZVu+WdkW
+ Z4PktaJD8H+ICnxwrXTMnifQQD+TQQum/v9uLDdadznU0OUj1MFyDJbnb4F0XYBeSu7U943+RqTzt
+ +fMc4gbJXQFHYUaaH8kamMZHTmGGNn2cGOiSKgUyq2meNHYnKTib629jXpNrfx7aIE7U=;
+Received: from mail-pl1-f172.google.com ([209.85.214.172])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1nhf8v-005sQF-0J
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:17 +0000
-Received: by mail-pl1-f170.google.com with SMTP id j8so6755529pll.11
+ id 1nhf8w-005sQq-IJ
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:18 +0000
+Received: by mail-pl1-f172.google.com with SMTP id s17so6761219plg.9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 21 Apr 2022 15:19:16 -0700 (PDT)
+ Thu, 21 Apr 2022 15:19:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
  :references:mime-version:content-transfer-encoding;
- bh=x1QHoKycHIeH7zm2tT8ZUFD0G1KEa2qr986FVc/PA0c=;
- b=YJW5sVUjD9lfVT2WFzqK+78YtG3y/qBe6n9mp+crxCxkidj3D8xTEOH5crSWJWXmpZ
- 0txsaofxW5PHVJW+I/5isrBwHqWKFFn/d0ZdPjCjttpbKcZi2BIc90VC0MRUEtR3yTmf
- ef7qMGt8YmEY42AM0E6uhFpQMoCDmXEEz4du2rHr0GZYvP0JhSdZd6eqFzmKPk300UaJ
- BeV0jS4pZ9+S5lSMZQtXmTDi4BNjNuR2OaQgVvXR0mYZZvXEa/ezJFGgka8TCBvRVe9+
- 5M3anI8ISIFbjAnBMrtDAnvT89EaKksqQuKncr9miJjVXIveDzBXTBlmiMdSNtRM7jfs
- SynQ==
-X-Gm-Message-State: AOAM533pFfziBOcnGis4OZhNKT+YEE7Ry1SDezq7b9kLXl5HCX4jJeKf
- V8pMoFyFKggwznwdwGrD1Jo=
-X-Google-Smtp-Source: ABdhPJxD4RB6B34Uub+O4vn+lOuMv9zcGSceOo+YTCQfjyBIPsDwzGt5nTwuAdhs39PNqVFDWJgiQg==
-X-Received: by 2002:a17:902:76ca:b0:157:1c6:5660 with SMTP id
- j10-20020a17090276ca00b0015701c65660mr1545488plt.105.1650579551306; 
- Thu, 21 Apr 2022 15:19:11 -0700 (PDT)
+ bh=r7B6va58ztFzexCbp+IzQPGrgh5J3MZhR3OFeRJ/XZY=;
+ b=bEAewRiFVaLD03pSFhBojIAirN9cDcIt4cmJYRsQcmjpLoTCjVv+6yl5pfCyS5rD6U
+ 8ewl92sp/Gs2cmrDH13E0bZ/3ss9Cvbhst5bjfmdprYLwLFzG7c5Bu+4eKYeGj6krVvR
+ oOaDgg3hRuz//39TdtrWIcWMulT/hXs0/SiIwIbjEyv1Pt55DQQnLCrG3DypkUHhv1+y
+ hXw6STXvFzwKGr1v2WvrA06m3AwULWGxg8653yAUVvjMiyJUjI8hDHDfxNfnvbg7ALUA
+ K/hGs7PxNojc8jRXgfm/3wxkjZYR0B8y6gDoZNmsn6vKQoD/DTF6REEDy3MuqCbEVBlQ
+ zaig==
+X-Gm-Message-State: AOAM531Ng0Y/NM+TGhVuDzVHLlXDavMJcRBzNhBeD958CxmrtoD3w7Ci
+ bMHI8UdXlx6TyFFCRedN5+GCFL0817b3Pg==
+X-Google-Smtp-Source: ABdhPJz8+MAAneSzpnULDRk9SLtX2X7bYIH0kAexh7YUoxiLUt9k3YmeS7Gjro0cbtrdjzvEuIeqng==
+X-Received: by 2002:a17:903:41ca:b0:15a:4442:e74 with SMTP id
+ u10-20020a17090341ca00b0015a44420e74mr1580969ple.154.1650579552992; 
+ Thu, 21 Apr 2022 15:19:12 -0700 (PDT)
 Received: from bvanassche-linux.mtv.corp.google.com
  ([2620:15c:211:201:a034:31d8:ca4e:1f35])
  by smtp.gmail.com with ESMTPSA id
- hi21-20020a17090b30d500b001cd4989ff4csm3794876pjb.19.2022.04.21.15.19.10
+ hi21-20020a17090b30d500b001cd4989ff4csm3794876pjb.19.2022.04.21.15.19.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 21 Apr 2022 15:19:10 -0700 (PDT)
+ Thu, 21 Apr 2022 15:19:12 -0700 (PDT)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Thu, 21 Apr 2022 15:18:20 -0700
-Message-Id: <20220421221836.3935616-16-bvanassche@acm.org>
+Date: Thu, 21 Apr 2022 15:18:21 -0700
+Message-Id: <20220421221836.3935616-17-bvanassche@acm.org>
 X-Mailer: git-send-email 2.36.0.rc2.479.g8af0fa9b8e-goog
 In-Reply-To: <20220421221836.3935616-1-bvanassche@acm.org>
 References: <20220421221836.3935616-1-bvanassche@acm.org>
 MIME-Version: 1.0
-X-Headers-End: 1nhf8v-005sQF-0J
-Subject: [f2fs-dev] [PATCH 15/31] Include <stddef.h> instead of defining
- offsetof()
+X-Headers-End: 1nhf8w-005sQq-IJ
+Subject: [f2fs-dev] [PATCH 16/31] Use %zu to format size_t
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,57 +92,35 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Prepare for enabling -Wmacro-redefined.
+Use %zu to format size_t as required by the POSIX standards.
 
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- fsck/f2fs.h       | 2 +-
- include/f2fs_fs.h | 5 +----
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ fsck/mount.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index eacfd42478b8..e5130ba19961 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -15,6 +15,7 @@
- #include <unistd.h>
- #include <stdio.h>
- #include <stdbool.h>
-+#include <stddef.h>
- #include <errno.h>
- #include <fcntl.h>
- #include <string.h>
-@@ -37,7 +38,6 @@
- 		typecheck(unsigned long long, b) &&                     \
- 		((long long)((a) - (b)) > 0))
+diff --git a/fsck/mount.c b/fsck/mount.c
+index e075d3184f83..584385d682b5 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -1429,7 +1429,7 @@ static int f2fs_early_init_nid_bitmap(struct f2fs_sb_info *sbi)
  
--#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
- #define container_of(ptr, type, member) ({			\
- 	const typeof(((type *)0)->member) * __mptr = (ptr);	\
- 	(type *)((char *)__mptr - offsetof(type, member)); })
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 60b6dfced74b..dd62bc89a926 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -19,6 +19,7 @@
+ 	if (nats_in_cursum(journal) > NAT_JOURNAL_ENTRIES) {
+ 		MSG(0, "\tError: f2fs_init_nid_bitmap truncate n_nats(%u) to "
+-			"NAT_JOURNAL_ENTRIES(%lu)\n",
++			"NAT_JOURNAL_ENTRIES(%zu)\n",
+ 			nats_in_cursum(journal), NAT_JOURNAL_ENTRIES);
+ 		journal->n_nats = cpu_to_le16(NAT_JOURNAL_ENTRIES);
+ 		c.fix_on = 1;
+@@ -2381,7 +2381,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
  
- #include <stdio.h>
- #include <stdlib.h>
-+#include <stddef.h>
- #include <string.h>
- #include <time.h>
- #ifdef HAVE_CONFIG_H
-@@ -914,10 +915,6 @@ static_assert(sizeof(struct f2fs_extent) == 12, "");
- #define F2FS_PIN_FILE		0x40	/* file should not be gced */
- #define F2FS_COMPRESS_RELEASED	0x80	/* file released compressed blocks */
- 
--#if !defined(offsetof)
--#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
--#endif
--
- #define F2FS_EXTRA_ISIZE_OFFSET				\
- 	offsetof(struct f2fs_inode, i_extra_isize)
- #define F2FS_TOTAL_EXTRA_ATTR_SIZE			\
+ 	if (sits_in_cursum(journal) > SIT_JOURNAL_ENTRIES) {
+ 		MSG(0, "\tError: build_sit_entries truncate n_sits(%u) to "
+-			"SIT_JOURNAL_ENTRIES(%lu)\n",
++			"SIT_JOURNAL_ENTRIES(%zu)\n",
+ 			sits_in_cursum(journal), SIT_JOURNAL_ENTRIES);
+ 		journal->n_sits = cpu_to_le16(SIT_JOURNAL_ENTRIES);
+ 		c.fix_on = 1;
 
 
 _______________________________________________
