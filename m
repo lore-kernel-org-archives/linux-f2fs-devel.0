@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3F5DC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Apr 2022 22:19:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F4182C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Apr 2022 22:19:10 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nhf8n-0007wZ-Ld; Thu, 21 Apr 2022 22:19:08 +0000
+	id 1nhf8o-0001dz-Tz; Thu, 21 Apr 2022 22:19:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bart.vanassche@gmail.com>) id 1nhf8m-0007wG-7x
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:07 +0000
+ (envelope-from <bart.vanassche@gmail.com>) id 1nhf8n-0001df-5E
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tKDEEADIYQVytDvYqKLcVedQjfgIjM2wttb1wHl0dTg=; b=JPEI9KMhvwwgS9IoZ2J3FmkL67
- a+erL3XW46etCp1+OwBPj3NX2NwEXI3LisYEqnPxB2c0iotvHbHWZtLVE08qj2jhkA20Eg873E19q
- vWy2ICWkrvcGLAa2HXbhQ4vXg8OTiuheZG+UmLPyR3QJXcg8q4OVy3HAF6So8HI8FJGQ=;
+ bh=5eF/kEPp0NCNZxzoYvUyebXdhdVXQwZo8uakWZydwUk=; b=ToZFuxieqE0+8VU9WutuSF4nWt
+ G+DEklWVCRDZtbTgpYGx/B+uHwqZKFg7Pbxz0fTS8FddWHDKcmJu2WHaaCXZ1D5q7RzgjmHvsVo9m
+ a0a1PdAPTFconv+PkxdJJ/8NfHuE5ElApzV+XngBFC4vC+RepVSwEoyahoDUezp9UnW0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,51 +31,51 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=tKDEEADIYQVytDvYqKLcVedQjfgIjM2wttb1wHl0dTg=; b=J1yZc3sVgDK8b6YMDwy2l7C6zi
- ub3gHGhR8pTR90+7O/Bbd5p3mYVgW12Q7LyYuQ0Ujfnltk//cWv6rP3FaSZsYIwwJrGXH5d5iMkan
- Gw3VuO60hL99hd79jxZECs0U8DjmS/aPBIA0gCmLRyI3WifL0ivrrZvqUwcn3C8MDtG8=;
-Received: from mail-pl1-f182.google.com ([209.85.214.182])
+ bh=5eF/kEPp0NCNZxzoYvUyebXdhdVXQwZo8uakWZydwUk=; b=gGdAgO7aLYcgdvb5QHGB/wLRwZ
+ oALwyW7VaWovu12SOP2r+qNGXq6q69kDpj9f2jrsdsK2qb6wSIAjb3PNwAnnVJ/5yAdmnd72os9cD
+ tgznqI7YhMONbaQkWdLgqcWjLHfP9OC45YSpjsoc+grc2CqFgBfC9fpgY7LmxI8BYCK4=;
+Received: from mail-pl1-f178.google.com ([209.85.214.178])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1nhf8k-0002vJ-M3
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:07 +0000
-Received: by mail-pl1-f182.google.com with SMTP id q1so5595188plx.13
+ id 1nhf8j-0002vF-8E
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:06 +0000
+Received: by mail-pl1-f178.google.com with SMTP id n8so6793506plh.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 21 Apr 2022 15:19:06 -0700 (PDT)
+ Thu, 21 Apr 2022 15:19:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
  :references:mime-version:content-transfer-encoding;
- bh=tKDEEADIYQVytDvYqKLcVedQjfgIjM2wttb1wHl0dTg=;
- b=bbh22eM+GrG4rsbtgyUuDqoMHpuUphx7AX4Gf+ovlQZnrBh9g/B/qoB5gOqoNds9Ts
- 8Rv6we8tMMHzczW7YAvPl2xBqSsMD7djcNB34lM7w1SrF4j0rVY5wRvH9rDP9vOS/Ts+
- bi5Q2ykaRWANvMbqkY+hfY4/lOqBP8s4fw7PHP2IYCJH2H+1Dp5PX89u30RgSscKa2T8
- 160NbBwelWFzrgU7ZcznBguYd3VUTXnywXn/RhJRuv5MPS9alrRJK+KUAk/4inU2JHZ6
- Y1NjkBeoJ5Hv27r0NI6p4zIOH2BcQTLq3lVd0deg3goS8nYCB+A0SczUrh84gJRBFiMC
- 50lg==
-X-Gm-Message-State: AOAM531SiiwOwBmRhxySD919omvjHl1SrvEI9OhrFn44z2wBVdCPTtiO
- iaTpjAiX98swORnn2oknDk4Hi+M8gMP6qw==
-X-Google-Smtp-Source: ABdhPJzGI31kx5LkWHDC3M/jGtUVBBNkfaJI/vxFwfqL8AK4v/58HzUYvLkscS1q8Jn+MD38/5+dbg==
-X-Received: by 2002:a17:90b:3c47:b0:1cb:8121:dcc8 with SMTP id
- pm7-20020a17090b3c4700b001cb8121dcc8mr12898347pjb.35.1650579541005; 
- Thu, 21 Apr 2022 15:19:01 -0700 (PDT)
+ bh=5eF/kEPp0NCNZxzoYvUyebXdhdVXQwZo8uakWZydwUk=;
+ b=i0x7kyu5cOGYJwVqqdbh/5eIMSdNgDDxJQsaqOT/1/7KezA2j8Yq53HSOSMNtOo8Dx
+ Bb7w3Q4e1LhWDIOKzH9D2F/KV2NjjDYTM+SJMuTA5pqCI6fojUHF5qqryN2NjLUqw6xY
+ YPDJXaGSNGRc1utZewal1TirRXFLnqtw8jmRgDnuCB06zmiMEFeQzv17Va4X2kq+PWzL
+ 2U9MMVK4UFe8AYdfhzJ4MFtRgpQySfta06MiLQj7MQPBgPxgvFIpjBnIv8E+vcJNfVoq
+ dfuYhG6K0KerkP+QoEI76Tdu7dfFyPG30PT/A6Ue9Lk/WU8TZ4vogwjmL+HmYPMTyxPZ
+ hYhg==
+X-Gm-Message-State: AOAM532QHqHtTyXEhGyAMPGWvFtoc7kkFRtiucVXel1kZX+yMwbqltY4
+ RXqOHXRQ4sG99vxvklgJwV3WJDmtXF48sg==
+X-Google-Smtp-Source: ABdhPJxEYRR4hVBxo7/d4Z99Ts5m69kqiq4YpaJOetkc+deEQN+AC7goXqoHfLUWWBc2lvJHz38MqA==
+X-Received: by 2002:a17:902:b10f:b0:156:612f:318d with SMTP id
+ q15-20020a170902b10f00b00156612f318dmr1518153plr.143.1650579539617; 
+ Thu, 21 Apr 2022 15:18:59 -0700 (PDT)
 Received: from bvanassche-linux.mtv.corp.google.com
  ([2620:15c:211:201:a034:31d8:ca4e:1f35])
  by smtp.gmail.com with ESMTPSA id
- hi21-20020a17090b30d500b001cd4989ff4csm3794876pjb.19.2022.04.21.15.18.59
+ hi21-20020a17090b30d500b001cd4989ff4csm3794876pjb.19.2022.04.21.15.18.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 21 Apr 2022 15:19:00 -0700 (PDT)
+ Thu, 21 Apr 2022 15:18:58 -0700 (PDT)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Thu, 21 Apr 2022 15:18:13 -0700
-Message-Id: <20220421221836.3935616-9-bvanassche@acm.org>
+Date: Thu, 21 Apr 2022 15:18:12 -0700
+Message-Id: <20220421221836.3935616-8-bvanassche@acm.org>
 X-Mailer: git-send-email 2.36.0.rc2.479.g8af0fa9b8e-goog
 In-Reply-To: <20220421221836.3935616-1-bvanassche@acm.org>
 References: <20220421221836.3935616-1-bvanassche@acm.org>
 MIME-Version: 1.0
-X-Headers-End: 1nhf8k-0002vJ-M3
-Subject: [f2fs-dev] [PATCH 08/31] ci: Build f2fstools upon push and pull
- requests
+X-Headers-End: 1nhf8j-0002vF-8E
+Subject: [f2fs-dev] [PATCH 07/31] Change the ANDROID_WINDOWS_HOST macro into
+ _WIN32
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,92 +93,159 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-For those who use Github to contribute f2fs-tools patches, let the
-github servers build the f2fs-tools source code upon every push and pull
-requests. This change does not affect users who do not use Github.
+This makes it easier to build f2fs-tools for Windows.
 
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- .github/workflows/ci.yml | 70 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 .github/workflows/ci.yml
+ lib/libf2fs.c            | 10 +++++-----
+ lib/libf2fs_io.c         |  6 +++---
+ lib/libf2fs_zoned.c      |  2 +-
+ mkfs/f2fs_format.c       |  2 +-
+ mkfs/f2fs_format_main.c  |  2 +-
+ mkfs/f2fs_format_utils.c |  4 ++--
+ 6 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
-new file mode 100644
-index 000000000000..0c774f92fac8
---- /dev/null
-+++ b/.github/workflows/ci.yml
-@@ -0,0 +1,70 @@
-+# See also https://docs.github.com/en/actions/learn-github-actions/expressions
-+# See also https://github.com/marketplace/actions/setup-android-ndk
-+
-+name: CI
-+
-+on: [push, pull_request]
-+
-+jobs:
-+  build:
-+    runs-on: ubuntu-latest
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        build:
-+        - android
-+        - linux-gcc
-+        - linux-clang
-+        - linux-x86-gcc
-+        - linux-powerpc64-gcc
-+        - linux-mingw64-gcc
-+        - macos
-+        include:
-+        - build: android
-+          cc: clang
-+          host: aarch64-linux-android32
-+        - build: linux-gcc
-+          cc: gcc
-+        - build: linux-clang
-+          cc: clang
-+        - build: linux-x86-gcc
-+          cc: gcc
-+          arch: x86
-+        - build: linux-powerpc64-gcc
-+          cc: gcc
-+          host: powerpc64-linux-gnu
-+        - build: linux-mingw64-gcc
-+          cc: gcc
-+          host: x86_64-w64-mingw32
-+          cflags: -D__USE_MINGW_ANSI_STDIO
-+        - build: macos
-+          cc: clang
-+          os: macos-latest
-+    steps:
-+      - uses: actions/checkout@v3
-+      - name: Install Android NDK
-+        run: |
-+          if [ ${{matrix.build}} = android ]; then \
-+              wget --quiet https://dl.google.com/android/repository/android-ndk-r24-linux.zip; \
-+              unzip -q android-ndk-r24-linux.zip;  \
-+          fi
-+      - name: Install Ubuntu packages
-+        run: |
-+          sudo apt-get -q update
-+          case "${{matrix.host}}" in                                        \
-+            x86_64-w64-mingw32)                                             \
-+              sudo apt-get -q install -y binutils-mingw-w64 gcc-mingw-w64;; \
-+            powerpc64-linux-gnu)                                            \
-+              sudo apt-get -q install -y binutils-powerpc64-linux-gnu       \
-+              gcc-powerpc64-linux-gnu;;                                     \
-+          esac
-+      - name: Build
-+        run: |
-+          echo "HOST=${{matrix.host}}"
-+          NDK=$PWD/android-ndk-r24/toolchains/llvm/prebuilt/linux-x86_64/bin
-+          export PATH="$NDK:$PATH"
-+          ./autogen.sh
-+          ./configure --host=${{matrix.host}} \
-+              CC=${{ matrix.host && format('{0}-{1}', matrix.host, matrix.cc) || matrix.cc }} \
-+              CFLAGS="${{matrix.cflags}}"
-+          make -j$(nproc)
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index b0a892772de1..c7102528f2f4 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -22,7 +22,7 @@
+ #endif
+ #include <time.h>
+ #include <sys/stat.h>
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ #include <sys/mount.h>
+ #include <sys/ioctl.h>
+ #endif
+@@ -49,7 +49,7 @@
+ #define MODELINQUIRY	0x12,0x00,0x00,0x00,0x4A,0x00
+ #endif
+ 
+-#ifndef ANDROID_WINDOWS_HOST /* O_BINARY is windows-specific flag */
++#ifndef _WIN32 /* O_BINARY is windows-specific flag */
+ #define O_BINARY 0
+ #else
+ /* On Windows, wchar_t is 8 bit sized and it causes compilation errors. */
+@@ -606,7 +606,7 @@ int write_inode(struct f2fs_node *inode, u64 blkaddr)
+  */
+ char *get_rootdev()
+ {
+-#if defined(ANDROID_WINDOWS_HOST) || defined(WITH_ANDROID)
++#if defined(_WIN32) || defined(WITH_ANDROID)
+ 	return NULL;
+ #else
+ 	struct stat sb;
+@@ -740,7 +740,7 @@ static int is_mounted(const char *mpt, const char *device)
+ 
+ int f2fs_dev_is_umounted(char *path)
+ {
+-#ifdef ANDROID_WINDOWS_HOST
++#ifdef _WIN32
+ 	return 0;
+ #else
+ 	struct stat *st_buf;
+@@ -872,7 +872,7 @@ void get_kernel_uname_version(__u8 *version)
+ #define BLKSSZGET	DKIOCGETBLOCKCOUNT
+ #endif /* APPLE_DARWIN */
+ 
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ static int open_check_fs(char *path, int flag)
+ {
+ 	if (c.func != DUMP && (c.func != FSCK || c.fix_on || c.auto_fix))
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index b985e6f37a0a..bf6dfe240bb7 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -23,7 +23,7 @@
+ #include <mntent.h>
+ #endif
+ #include <time.h>
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ #include <sys/stat.h>
+ #include <sys/mount.h>
+ #include <sys/ioctl.h>
+@@ -634,7 +634,7 @@ int dev_reada_block(__u64 blk_addr)
+ 
+ int f2fs_fsync_device(void)
+ {
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ 	int i;
+ 
+ 	for (i = 0; i < c.ndevs; i++) {
+@@ -783,7 +783,7 @@ int f2fs_finalize_device(void)
+ 	 * in the block device page cache.
+ 	 */
+ 	for (i = 0; i < c.ndevs; i++) {
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ 		ret = fsync(c.devices[i].fd);
+ 		if (ret < 0) {
+ 			MSG(0, "\tError: Could not conduct fsync!!!\n");
+diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
+index c408a4991fa1..cb954feabe61 100644
+--- a/lib/libf2fs_zoned.c
++++ b/lib/libf2fs_zoned.c
+@@ -22,7 +22,7 @@
+ #ifdef HAVE_LINUX_LIMITS_H
+ #include <linux/limits.h>
+ #endif
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ #include <sys/ioctl.h>
+ #endif
+ #include <libgen.h>
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 8bd33ac003c5..332abf60d0d9 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -13,7 +13,7 @@
+ #include <fcntl.h>
+ #include <string.h>
+ #include <unistd.h>
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ #include <sys/stat.h>
+ #include <sys/mount.h>
+ #endif
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index d05d4e2cb4e5..ecc942b61d63 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -15,7 +15,7 @@
+ #include <stdbool.h>
+ #include <unistd.h>
+ #include <sys/stat.h>
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ #include <sys/mount.h>
+ #endif
+ #include <time.h>
+diff --git a/mkfs/f2fs_format_utils.c b/mkfs/f2fs_format_utils.c
+index e84311ae1287..53101d1bd790 100644
+--- a/mkfs/f2fs_format_utils.c
++++ b/mkfs/f2fs_format_utils.c
+@@ -26,7 +26,7 @@
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <stdbool.h>
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ #include <sys/ioctl.h>
+ #endif
+ #include <sys/stat.h>
+@@ -48,7 +48,7 @@
+ 
+ static int trim_device(int i)
+ {
+-#ifndef ANDROID_WINDOWS_HOST
++#ifndef _WIN32
+ 	unsigned long long range[2];
+ 	struct stat *stat_buf;
+ 	struct device_info *dev = c.devices + i;
 
 
 _______________________________________________
