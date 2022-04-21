@@ -4,75 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7FEC6C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DC7BCC4332F
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 21 Apr 2022 22:19:05 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nhf8h-0007va-HK; Thu, 21 Apr 2022 22:19:02 +0000
+	id 1nhf8j-0001d6-Rc; Thu, 21 Apr 2022 22:19:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bart.vanassche@gmail.com>) id 1nhf8e-0007v7-IH
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:18:59 +0000
+ (envelope-from <bart.vanassche@gmail.com>) id 1nhf8i-0001cx-CV
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
- :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=azxt38Al1G/K6xwQhVGC3f/Mzi7iGAOqgHhaI15NkAQ=; b=Ij6c/Isn0MU8z5y3cxY1+AAhdx
- VcsYRfQC7L9+eY3nwNy5ZNlh/62RFTLN/9mfEyvxGSQf/yIpk0IN714f4D/6PYXaruuXNHd6lPKA5
- 7eea03WrW4s6MTLnmNbex2dvhUtS0nI8PNw/1GtwSH2bi0xGm/PmWB8KK9M16dSmlS8c=;
+ bh=uSxNKbyqMf7hHVLx/ixngFPHFOFArYvNg9c8fV+82TA=; b=PZj926ueaStfKspnksKF3hjiAJ
+ dl2O4aq7sjpANQpKIckr0ZWngy+r1KYI2sZlIJIFO7tSawfunQL4gdVlZxfQaPN76K9rPVfWUWlld
+ witykKHhq9x7ZsXQQcP1TZitedudftAb0RL6MlgFrF/vDXfoP0S1cXwuitL82GnYJxX4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-Id:Date:
- Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=azxt38Al1G/K6xwQhVGC3f/Mzi7iGAOqgHhaI15NkAQ=; b=C
- saHPH/MzLG/FHgGQELjp+Q0jvtx68qfSn3pgDwhba01PWGL7fEEr6QCVXuoLfU6yYh4dCVVmWcUSL
- rJzQRWQUYL32ilRM7UPLVe4Ol5ZBKodtyVcoYaw70QDZF0TuYJleC8NbQMngq2NBrgQiHa4vT14Z6
- XP63mipKyFtdc7jI=;
-Received: from mail-pg1-f177.google.com ([209.85.215.177])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=uSxNKbyqMf7hHVLx/ixngFPHFOFArYvNg9c8fV+82TA=; b=JcsRI6XpY16XPTk86qbMAgtUjb
+ UtJvHO4/LTrGd1tC9ob5B5gEkulFalEWsbinJvGCt/+MbL434jdaLKZrM/QqCkUrGEpmXz+pvXRol
+ NBYWpvNO3gOCw6www0taW8mwR5TSK/aPUyCHIM0O54ZE//SjJV0Z3vyJEuiA/MZjEWns=;
+Received: from mail-pg1-f180.google.com ([209.85.215.180])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1nhf8Y-0002ts-0U
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:18:59 +0000
-Received: by mail-pg1-f177.google.com with SMTP id i63so5770862pge.11
+ id 1nhf8c-005sOg-J7
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 21 Apr 2022 22:19:02 +0000
+Received: by mail-pg1-f180.google.com with SMTP id q12so5765862pgj.13
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 21 Apr 2022 15:18:53 -0700 (PDT)
+ Thu, 21 Apr 2022 15:18:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=azxt38Al1G/K6xwQhVGC3f/Mzi7iGAOqgHhaI15NkAQ=;
- b=7ZLhPkjgQPoXMidy4uWzfcmz3fngEkVAmxUtPiqyMd52b1p0kwcMQIEiGQ6WMbKveZ
- 8TRhXapHEbPMNr7LG/TIdDcoMMtXErSJLgO0WNgLwtXvEjb2YwJC+vDRKYh4z7wdKp19
- wG4k+1Ol0fcI7+hSEJLFJfh3DaHqiC0sb8GJlwCojqrr5nVRjfUMlcW15VSGicstORoc
- Yg6y3j3ke6NVXX0AI1uslrxRQWn3HBXbOhM0ICvW1f6OgkfX0EosyJRb1/3xUGsEbRYG
- rBv4+RONvUrF+6vOtQ+1iJy4EFAqN4hEpFmq7m745zQZW3G5l92zQw5XTdve6oCKwEgF
- u6HA==
-X-Gm-Message-State: AOAM532FI9kLwm+MrHgBZkrdzDh6V4ylsA+ZZn7DBTm1ttSuYAttPGmY
- CJBNgS6g/RM3Hc2+acGgJKwZ+XBYLck0nw==
-X-Google-Smtp-Source: ABdhPJzPwE4fZb9h4jyekSSnlu2bWq1Rfdxa+PKCRCnR1KLwQDIWwt9hIu/yIz5WO44Th3SqCoJfPg==
-X-Received: by 2002:a63:444f:0:b0:39d:4a93:844 with SMTP id
- t15-20020a63444f000000b0039d4a930844mr1284248pgk.229.1650579528048; 
- Thu, 21 Apr 2022 15:18:48 -0700 (PDT)
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+ :references:mime-version:content-transfer-encoding;
+ bh=uSxNKbyqMf7hHVLx/ixngFPHFOFArYvNg9c8fV+82TA=;
+ b=XG3IzQ1AzLsARXzGv6NL/0pQ5wYm2e6sPfew7XdxkexZQYPbMqTrODcnglIk2s2+eF
+ gexDJXeIBvyoLzFpc3xKAe2c3o8gV81LeSbe0nbkSpLS6F15If3KHknKyPBhRaROdZf3
+ V2pdzCXpWXktu7GiHb1DXXrraukkG71hap/2p+ifkb5+Yj0u/TgccHG/toyTDPsmU0AQ
+ 4WLT6h/s3t4QzlyGsFjzVNXq161H4osb90iKQdUsEf1gnhpxe4t6e76tHCwPkGMTs89l
+ VgprN30H1PeWkrwaykD1xL7CA7Qr799p+NnoTMti9eiiN8GtBqtLMoTJPFdLyMLc4x5r
+ 6lfA==
+X-Gm-Message-State: AOAM531wAoXVP61sR4k5m0EuL/86cYCS1YeSMjSpSTtmcWdzRpPMYsRz
+ utcnPHAeB6NNiS1eITch+/7YWenc+fhVaQ==
+X-Google-Smtp-Source: ABdhPJxc4ArC/H7ab+4Fca7MTHwI0aGf6q12sSsSN8qUYpJRKExouNwIY+PhV7vvhYbAZ2LH58BEsQ==
+X-Received: by 2002:a63:2b0b:0:b0:39d:890a:ab68 with SMTP id
+ r11-20020a632b0b000000b0039d890aab68mr1281885pgr.247.1650579533006; 
+ Thu, 21 Apr 2022 15:18:53 -0700 (PDT)
 Received: from bvanassche-linux.mtv.corp.google.com
  ([2620:15c:211:201:a034:31d8:ca4e:1f35])
  by smtp.gmail.com with ESMTPSA id
- hi21-20020a17090b30d500b001cd4989ff4csm3794876pjb.19.2022.04.21.15.18.46
+ hi21-20020a17090b30d500b001cd4989ff4csm3794876pjb.19.2022.04.21.15.18.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 21 Apr 2022 15:18:47 -0700 (PDT)
+ Thu, 21 Apr 2022 15:18:52 -0700 (PDT)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Thu, 21 Apr 2022 15:18:05 -0700
-Message-Id: <20220421221836.3935616-1-bvanassche@acm.org>
+Date: Thu, 21 Apr 2022 15:18:08 -0700
+Message-Id: <20220421221836.3935616-4-bvanassche@acm.org>
 X-Mailer: git-send-email 2.36.0.rc2.479.g8af0fa9b8e-goog
+In-Reply-To: <20220421221836.3935616-1-bvanassche@acm.org>
+References: <20220421221836.3935616-1-bvanassche@acm.org>
 MIME-Version: 1.0
-X-Headers-End: 1nhf8Y-0002ts-0U
-Subject: [f2fs-dev] [PATCH 00/31] Make f2fs-tools easier to maintain
+X-Headers-End: 1nhf8c-005sOg-J7
+Subject: [f2fs-dev] [PATCH 03/31] configure.ac: Enable the automake -Wall
+ option
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,83 +93,41 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jaegeuk,
+This patch fixes the following automake warnings:
 
-This patch series should make f2fs-tools easier to maintain and fixes a few
-smaller bugs. Although these patches have been compile-tested only, please
-consider these patches for the upstream f2fs-tools repository.
+/usr/share/automake-1.16/am/ltlibrary.am: warning: 'libf2fs.la': linking libtool libraries using a non-POSIX
+/usr/share/automake-1.16/am/ltlibrary.am: archiver requires 'AM_PROG_AR' in 'configure.ac'
+lib/Makefile.am:3:   while processing Libtool library 'libf2fs.la'
+/usr/share/automake-1.16/am/ltlibrary.am: warning: 'libf2fs_format.la': linking libtool libraries using a non-POSIX
+/usr/share/automake-1.16/am/ltlibrary.am: archiver requires 'AM_PROG_AR' in 'configure.ac'
+mkfs/Makefile.am:11:   while processing Libtool library 'libf2fs_format.la'
 
-Thanks,
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+---
+ configure.ac | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Bart.
-
-Bart Van Assche (31):
-  configure.ac: Stop using obsolete macros
-  configure.ac: Remove two prototype tests
-  configure.ac: Enable the automake -Wall option
-  configure.ac: Sort header file names alphabetically
-  configure.ac: Enable cross-compilation
-  Switch from the u_int to the uint types
-  Change the ANDROID_WINDOWS_HOST macro into _WIN32
-  ci: Build f2fstools upon push and pull requests
-  Change one array member into a flexible array member
-  Verify structure sizes at compile time
-  Suppress a compiler warning
-  f2fs_fs.h: Use standard fixed width integer types
-  Remove unnecessary __attribute__((packed)) annotations
-  Move the be32_to_cpu() definition
-  Include <stddef.h> instead of defining offsetof()
-  Use %zu to format size_t
-  Fix the MinGW build
-  configure.ac: Detect the sparse/sparse.h header
-  configure.ac: Detect selinux/android.h
-  mkfs/f2fs_format.c: Suppress a compiler warning
-  fsck: Remove a superfluous include directive
-  tools/f2fscrypt.c: Fix build without uuid/uuid.h header file
-  fsck/main.c: Suppress a compiler warning
-  Change #ifdef _WIN32 checks into #ifdef HAVE_.*
-  fsck/segment.c: Remove dead code
-  tools/f2fs_io: Fix the type of 'ret'
-  Annotate switch/case fallthrough
-  Suppress a compiler warning about integer truncation
-  Support cross-compiliation for PowerPC
-  Fix PowerPC format string warnings
-  ci: Enable -Wall, -Wextra and -Werror
-
- .github/workflows/ci.yml |  70 ++++++++++
- README                   |   1 -
- configure.ac             | 131 +++++++++++--------
- fsck/Makefile.am         |   2 +-
- fsck/dir.c               |   8 ++
- fsck/f2fs.h              |  14 +-
- fsck/fsck.c              |   5 +-
- fsck/main.c              |  21 ++-
- fsck/mount.c             |  54 ++++----
- fsck/quotaio.c           |   4 +-
- fsck/quotaio.h           |   3 -
- fsck/quotaio_tree.h      |   4 +-
- fsck/quotaio_v2.h        |  12 +-
- fsck/resize.c            |  28 ++--
- fsck/segment.c           |   3 +-
- fsck/sload.c             |  15 ++-
- fsck/xattr.h             |   4 +-
- include/f2fs_fs.h        | 276 +++++++++++++++++++++++----------------
- include/quota.h          |  30 +++--
- lib/libf2fs.c            |  34 ++---
- lib/libf2fs_io.c         |  24 ++--
- lib/libf2fs_zoned.c      |  18 +--
- mkfs/f2fs_format.c       |  95 ++++++++------
- mkfs/f2fs_format_main.c  |  12 +-
- mkfs/f2fs_format_utils.c |   9 +-
- mkfs/f2fs_format_utils.h |   2 +-
- tools/Makefile.am        |   5 +-
- tools/f2fs_io/f2fs_io.c  |  26 +++-
- tools/f2fs_io/f2fs_io.h  |   8 +-
- tools/f2fscrypt.c        |  19 ++-
- tools/fibmap.c           |   2 +
- 31 files changed, 586 insertions(+), 353 deletions(-)
- create mode 100644 .github/workflows/ci.yml
-
+diff --git a/configure.ac b/configure.ac
+index c908c9394613..b40012bd8745 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -33,7 +33,7 @@ AC_CONFIG_SRCDIR([config.h.in])
+ AC_CONFIG_HEADERS([config.h])
+ AC_CONFIG_MACRO_DIR([m4])
+ AC_CONFIG_AUX_DIR([build-aux])
+-AM_INIT_AUTOMAKE([foreign tar-pax dist-xz])
++AM_INIT_AUTOMAKE([-Wall -Werror foreign tar-pax dist-xz])
+ 
+ # Test configure options.
+ AC_ARG_WITH([selinux],
+@@ -46,6 +46,7 @@ AC_ARG_WITH([blkid],
+ 
+ # Checks for programs.
+ AC_PROG_CC
++AM_PROG_AR
+ LT_INIT
+ AC_PATH_PROG([LDCONFIG], [ldconfig],
+        [AC_MSG_ERROR([ldconfig not found])],
 
 
 _______________________________________________
