@@ -4,68 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 707A2C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 557D4C433F5
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Apr 2022 21:18:51 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ni0fz-0002jc-KV; Fri, 22 Apr 2022 21:18:50 +0000
+	id 1ni0fz-0002jR-FV; Fri, 22 Apr 2022 21:18:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1ni0fv-0002jK-QR
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Apr 2022 21:18:47 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1ni0fu-0002jE-MD
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Apr 2022 21:18:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=T150FBHbGleIB5mrb9HL3szXKTUr2956ZFtpCqxsPgQ=; b=UYdWfTlVxAesZ9NDNt8Vc4xy4J
- D/v8K26tKxzLJwd8i/uvO6I3Xx63SityZvWwwXEPKq5CitKpO2SkiNRMWdub2MyEM3YhFa8p00Cte
- ZAX0mjFNDZlWsValYHjHkLjzK9dTR97/N1e5GqzojByuiitYe2U284X3ULdgQiD8m0T8=;
+ bh=QD3848xJLpo4enpAzb8b3EMbvZ2EhizUlyQnn12lsfc=; b=SqwvYI3PL6jD/J9+URhQ5iIien
+ Wq/pIrYvF0gaM/gyxD1DDjQW23sI4zM+/D2Uh0VXggTGL4jCJHwXiNdnVSL+PmswaSvaGZAxImTq3
+ r61+xGUuMsBd8GYJaObYSfrX3YnxzpwxqEnBXosmjWelXOJdq2YlVisHAvupT5FLg8dY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=T150FBHbGleIB5mrb9HL3szXKTUr2956ZFtpCqxsPgQ=; b=C
- BNRAbTW5NjxDTcmoOeabqUVLOiTZfNVeAfdkXfoYOtsdpUe2/HqjZvjm7Kjt6FIyn+QI0sSGEO7b7
- 9juw8I135gUsaVsmpXbX7SrINtBQVg/NdtIdUhry1QeyTohqwboHXMMRXmruK+VCqTjscozwO4f/U
- InRnSWFL2F7cQvmc=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=QD3848xJLpo4enpAzb8b3EMbvZ2EhizUlyQnn12lsfc=; b=Qpj4qXv1T+lievC04IMNNsEr2o
+ bMu9A4YC9Yyi4Cru+RVQs54wTkbc5sczQteD3KixyYt7e7fzwkGTsct2iHZftyZ6YKeRhOV4ZwoGk
+ 4n2mk83AA92Um2ByboljomGu+kbVq0W+CUNwMFY5A4W11VlRwUp0Mmyl5P1f+zFpyzeE=;
 Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1ni0fq-006rCD-C3
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Apr 2022 21:18:46 +0000
+ id 1ni0fp-000714-VN
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Apr 2022 21:18:45 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id EE4DDB8327C
+ by ams.source.kernel.org (Postfix) with ESMTPS id 47C7FB8327E
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 22 Apr 2022 21:18:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC36DC385A4;
- Fri, 22 Apr 2022 21:18:25 +0000 (UTC)
+ Fri, 22 Apr 2022 21:18:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA3B1C385AD;
+ Fri, 22 Apr 2022 21:18:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1650662305;
- bh=hqWuDh2/4bxBqikSOmOW5A/qv61DX68gdU1Tb71NWMI=;
- h=From:To:Cc:Subject:Date:From;
- b=KW++VE43h/4O+yK+DHLdNLcgk7b5Hq+BtGAH6Sq6sNANptG6axSP+xCd7xPJs1sPo
- xzPgwUpDSg+F0d6FrY3kltM1Cdy2ctgiWRhmQdzSNqeUGwbp3W22FmxvYWvgNFBY0q
- UbFDNmKZWumUQHypd+HQdHs34PFMhoMW9diwHXhCM2GsZIJt3QHQW3iPYA0z9brNUn
- VeRyIZFWdPH/EHxjMBy1DaFEPRcd4gau0jWYPLy7MPzWErXrLzKCqtMp3kY0X8HDbD
- 8vl8GEyVUEBx+/iMlk9uBpJ3l49Hl2/RuApPcaVypSTPQdCLi2gKyLQXXp73V13VE8
- ZSdxnhalGCzrA==
+ s=k20201202; t=1650662307;
+ bh=KjoR+fCMog/P5L03H1QDfhFhH3L4+fi3kgZ2xixNuvM=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=qQswMW1y6e54W5eosTGgGu64qxgy4VxaPGKyUbOpth+mwnzkMzCnWW4PVgADzgMTj
+ Gy9UubCrMahfLK9b2FLJBZl9RwPeJOViq1fcUU43/g6wOUGQ4KTNlbijsYBPCDJdDQ
+ Gc03NjR6q3sidfrv7RjRNrN8S+Ghm2MARSfTHw0bl/wGDO35TRCciFRaCq33DbwmVx
+ 9b+bc+ByQYB7q+wZ33AyuJEdlmhMJ14mnB3JcpB7dTKd6SYMwV91ah7+CrJrPfkhJL
+ uNjRQ+xLc7ZIUixfVj9aYeIBUlcr7Donn+4I0GHyd2+Qkni2bFcXs3khC1Rloh/a6D
+ iO8iOXkzz6wWA==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 22 Apr 2022 14:18:14 -0700
-Message-Id: <20220422211819.2230879-1-jaegeuk@kernel.org>
+Date: Fri, 22 Apr 2022 14:18:17 -0700
+Message-Id: <20220422211819.2230879-4-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.36.0.rc2.479.g8af0fa9b8e-goog
+In-Reply-To: <20220422211819.2230879-1-jaegeuk@kernel.org>
+References: <20220422211819.2230879-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ni0fq-006rCD-C3
-Subject: [f2fs-dev] [PATCH 1/6] libf2fs_io: add unused mactor to avoid build
- failure
+X-Headers-End: 1ni0fp-000714-VN
+Subject: [f2fs-dev] [PATCH 4/6] f2fs-tools: use fsync() in Android
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,39 +85,21 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- lib/libf2fs_io.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ include/android_config.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-index 09a689293356..a392255e8e85 100644
---- a/lib/libf2fs_io.c
-+++ b/lib/libf2fs_io.c
-@@ -501,9 +501,22 @@ static int sparse_merge_blocks(uint64_t start, uint64_t num, int zero)
- 					F2FS_BLKSIZE * num, start);
- }
- #else
--static int sparse_read_blk(__u64 block, int count, void *buf) { return 0; }
--static int sparse_write_blk(__u64 block, int count, const void *buf) { return 0; }
--static int sparse_write_zeroed_blk(__u64 block, int count) { return 0; }
-+static int sparse_read_blk(__u64 UNUSED(block),
-+				int UNUSED(count), void *UNUSED(buf))
-+{
-+	return 0;
-+}
-+
-+static int sparse_write_blk(__u64 UNUSED(block),
-+				int UNUSED(count), const void *UNUSED(buf))
-+{
-+	return 0;
-+}
-+
-+static int sparse_write_zeroed_blk(__u64 UNUSED(block), int UNUSED(count))
-+{
-+	return 0;
-+}
- #endif
- 
- int dev_read(void *buf, __u64 offset, size_t len)
+diff --git a/include/android_config.h b/include/android_config.h
+index 671cab6fb003..5a856a30fd8c 100644
+--- a/include/android_config.h
++++ b/include/android_config.h
+@@ -3,6 +3,7 @@
+ #define HAVE_BYTESWAP_H 1
+ #define HAVE_FCNTL_H 1
+ #define HAVE_FALLOC_H 1
++#define HAVE_FSYNC 1
+ #define HAVE_KERNEL_UAPI_LINUX_BLKZONED_H 1
+ #define HAVE_LINUX_HDREG_H 1
+ #define HAVE_LINUX_LIMITS_H 1
 -- 
 2.36.0.rc2.479.g8af0fa9b8e-goog
 
