@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6076BC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 Apr 2022 12:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4032AC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 Apr 2022 13:02:25 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1njhGs-0001t1-88; Wed, 27 Apr 2022 12:59:55 +0000
+	id 1njhJF-0001zB-It; Wed, 27 Apr 2022 13:02:22 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1njhGq-0001sq-IH
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 12:59:53 +0000
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1njhIx-0001yy-Qm
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 13:02:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+exUbMCwxRI/5Slm3+VtVczCZ8LWCgwMXOsKWwIc78Y=; b=XfOzTvhcrkgZV+lYxCwB5xKJFs
- 4hBmtD2tqrEXZZPLj2AjylF8Zh2H5S1FPACjo76eh70XJRHEVkIUJebLcm0Su5Ibnt8MoAk6MQGeO
- o0yLdj8a0xeQHlHBy0k0ssmGqRytgJ/r2LMhZBQIXZvPnjpkuQ08mWJ5aR8NzuqIZwm0=;
+ bh=+Eeu7/d8us1OTN4Gn2/ubEkC0HeqUdLmBtEv1XFvcQQ=; b=bZUPoHiAF9zV61gymsDxlQirSE
+ azBuEKfYLuk7ZR1SJgXx1iP8Vlehe7+szJ3RGvHZRZkEsGoSljOJARECsQTgme5WBKVFZrASibH22
+ tUQSjnB5rj/GrpPdkFumctL40h+wXSgYcy+kEx/AYL6zqCXlgOgV/tOQ6TWmkwEA+dc8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:Message-ID:Date:
- Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=+exUbMCwxRI/5Slm3+VtVczCZ8LWCgwMXOsKWwIc78Y=; b=c
- StfIwOymsjUy7yhb9B8vPHlgbcDYOxucqYfCXT7EOpfwres84rYFFahByiCC5fVRvlfPGEDIn7c1a
- Znrm+XMXR6jTy8KFLinpuyjm0DCjo4btvSsHxFKw2pe3mZRMkG6OQ1rYRZ2DLulWnqBdKhpALGfnD
- bRxah4Qf94xz7Vcc=;
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=+Eeu7/d8us1OTN4Gn2/ubEkC0HeqUdLmBtEv1XFvcQQ=; b=loz5GR3erEy2suOvfODoV6tFu3
+ z0IreGgqeqhLeC1QObLJAVks2kuiOQl5Oav1KUeMXWYbxC6lbJeeNj0MWPhq4sTLKnHbroGUp7K+M
+ Jz+Mnt7iEE6D2G0wecRCmzV2PzlyMLlJnRwQXW3UxNCTG3P5cDlfRlvdx1ML1hqktudc=;
 Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1njhGp-00BlQO-BX
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 12:59:53 +0000
+ id 1njhIy-0004Fe-1i
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 13:02:04 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id EB556B826EE
+ by ams.source.kernel.org (Postfix) with ESMTPS id BFB2AB824EA
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 27 Apr 2022 12:59:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BB8F6C385AC
+ Wed, 27 Apr 2022 13:01:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 86B0FC385A9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 27 Apr 2022 12:59:43 +0000 (UTC)
+ Wed, 27 Apr 2022 13:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1651064383;
- bh=J7xBth5N1aP9ZvWNkfgNlqaX28JhzYDEXZTO6OxJzXg=;
- h=From:To:Subject:Date:From;
- b=vLeDe2zDqnPqYVKcnDSF90q44O/YXSN/KPufnVWaOg27PJzuQpZPZI5+dzfKfwtQ/
- gDmZTTEQlAOZrUdiLU1+4AB5HdVMeT1RU/7dXVqaTzSc0/o5BwjQw8VeybKCp3HKvh
- m2Mf7UKdbRXZiVWSj7iPSmaTj8UWzX6+f68uRcdvIls85wpcvEvh29UrxhmAdvLCge
- xjzcLpP7Yelld/Tu1WuBM5Mt2/zZvPewch3revWiBZbtzxxYC3Vo6RLvlrx4AHiDLm
- bEB7Y5hHwg9prFKYlJWyaeHkXoAH5+JXzaXlXX7gAPyI22+EN90RLw5cwWd/pIVzSR
- 0hVV/FSKYhGWQ==
+ s=k20201202; t=1651064516;
+ bh=+Eeu7/d8us1OTN4Gn2/ubEkC0HeqUdLmBtEv1XFvcQQ=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=HQxSl5zNuOEyFv7XW3dbCNy0czIfCmo5xl9h0gQJD8eP8hBGO0LOuF4sh0AAaT14F
+ cgSrLXpjV3YCJ5Wb/0QxHXLTi8NbriRZKfqG3A0Lmn4q4dhCARee8pAQLhvIZM5SUG
+ RVBUbDvJzmklnTeklrSovK5V/AFAW9ADMxZlCzq2eCqQyTLztAT8j2TFIa2zYWRu6i
+ wJpbaJLxK+Z0EdpSFvNoAyFe0b8TkWx2VWjQOgdVEe9bfdf54Ek9toxvg8pUOykU6V
+ 7YEzJIrgt3HzrUhDfbplJiIpO8LMQE3gbfiiVp1TkzYlqQT27su3nIzvJr+iVhEh6n
+ ovrc/c31UU/Mg==
 Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id A77B0C05FD0; Wed, 27 Apr 2022 12:59:43 +0000 (UTC)
+ from userid 48) id 73C3AC05FD0; Wed, 27 Apr 2022 13:01:56 +0000 (UTC)
 From: bugzilla-daemon@kernel.org
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 27 Apr 2022 12:59:43 +0000
+Date: Wed, 27 Apr 2022 13:01:56 +0000
 X-Bugzilla-Reason: None
-X-Bugzilla-Type: new
+X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
 X-Bugzilla-Product: File System
 X-Bugzilla-Component: f2fs
@@ -77,16 +77,15 @@ X-Bugzilla-Resolution:
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version
- cf_kernel_version rep_platform op_sys cf_tree bug_status bug_severity
- priority component assigned_to reporter cf_regression attachments.created
-Message-ID: <bug-215900-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-Changed-Fields: 
+Message-ID: <bug-215897-202145-2yMIOLYIZR@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-215897-202145@https.bugzilla.kernel.org/>
+References: <bug-215897-202145@https.bugzilla.kernel.org/>
 X-Bugzilla-URL: https://bugzilla.kernel.org/
 Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1njhGp-00BlQO-BX
-Subject: [f2fs-dev] [Bug 215900] New: kernel hangs when running commands on
- F2FS file system
+X-Headers-End: 1njhIy-0004Fe-1i
+Subject: [f2fs-dev] [Bug 215897] kernel BUG at fs/f2fs/f2fs.h:2511!
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,44 +101,11 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=215900
+https://bugzilla.kernel.org/show_bug.cgi?id=215897
 
-            Bug ID: 215900
-           Summary: kernel hangs when running commands on F2FS file system
-           Product: File System
-           Version: 2.5
-    Kernel Version: 5.17
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: f2fs
-          Assignee: filesystem_f2fs@kernel-bugs.kernel.org
-          Reporter: yanming@tju.edu.cn
-        Regression: No
-
-Created attachment 300824
-  --> https://bugzilla.kernel.org/attachment.cgi?id=300824&action=edit
-case.c
-
-I have mounted a F2FS image on the Linux system. When I was performing file
-operations on the mounted directory, the kernel hangs. I tried to kill the
-running process but failed. Any operations on the directory have no response. I
-am wondering whether a deadlock is in the kernel.
-
-This issue can be reproduced by running the following scripts:
-
-gcc -o case case.c
-losetup /dev/loop0 case.img
-mount -o
-"disable_ext_identify,inline_data,nobarrier,extent_cache,grpquota,fsync_mode=nobarrier,test_dummy_encryption"
--t f2fs /dev/loop0 /root/mnt
-./case
-
-The image can be found at
-(https://drive.google.com/file/d/1bjCQR_-Sz6iF_wshMGU3wWZDQ8tQIFdj/view?usp=sharing)
+--- Comment #1 from bughunter (yanming@tju.edu.cn) ---
+Thank you for the prompt reply :) this bug has been fixed after adding the
+patch!
 
 -- 
 You may reply to this email to add a comment.
