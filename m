@@ -4,27 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 52532C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 Apr 2022 23:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 53D72C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 Apr 2022 23:53:15 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1njrNW-0002t7-4R; Wed, 27 Apr 2022 23:47:24 +0000
+	id 1njrT9-00036c-MA; Wed, 27 Apr 2022 23:53:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <prvs=109e08c9c=damien.lemoal@opensource.wdc.com>)
- id 1njrNV-0002t1-Fo
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 23:47:24 +0000
+ (envelope-from <bart.vanassche@gmail.com>) id 1njrT7-00036V-Tx
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 23:53:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PnDK63gcXNRgV//CCqerJpeFWxiM6q0NYD5whOcQOd0=; b=fJPvK4dmF+SX8DY4vDzHKRHgOs
- lStCHVyteeDJDIWRf/q1955JRpAR7nM8NOFN1TIIrW652llh1Qe6rG5gJeyTWZQkuOIH3nfFKULVZ
- W6JtUqjzvgw2FvZq7v7tPWLI/V3qvAnjllLeewDf8yNDIfhfChZ84Sym/qfOeEHRAH5c=;
+ bh=79AFRdpemBVck+ntzsW/yKNt4PCLDqnjtmYL3oWIWPs=; b=E+VoVcmb6tPTYQyjeaj3aQCCT2
+ FoalRVuXGP6XL8la+kloIP6XdfyV27CbKqpIocTlj4rRl9wcMebNgJDvmQ33/9gDQl+JIOty4rPF7
+ 3SAKZrkRcKaKwbmeKAu5V4Qs/GcUVX1nDX07iLW5g9KDXtmaFut8Mp7jDLiUKDKOpsSw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -32,91 +31,59 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=PnDK63gcXNRgV//CCqerJpeFWxiM6q0NYD5whOcQOd0=; b=mGXFXTQbrbxfvdsoZFNCM8ZGl8
- E80DY2s7BF4k39HKgXwGqfYrgeDDVE+6YY7b/FaCzzsAX2QsdI56snuTP1SXKWZeUHIXpXvpRTczu
- gI/NLKQtq6cwPuieq9QFx5CDuzgXaBAeRmP70IfjvyB71ojr9E7q6SGMe6NsnbGQxVEE=;
-Received: from esa3.hgst.iphmx.com ([216.71.153.141])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1njrNS-00CBEZ-H5
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 23:47:23 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
- d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1651103241; x=1682639241;
- h=message-id:date:mime-version:subject:to:cc:references:
- from:in-reply-to:content-transfer-encoding;
- bh=gLrzp6duhkPkV6taMyjQM6C7cL2l+fGNVwimG4CXPYA=;
- b=LH8fH8ERnjWjO0RlKQZPEOlzDqUlbLdkzNIAWEbI8QfBvrorLVKiQnki
- kD/aKnt1oK3XAxBKU1nDdzPwbCBiDBT+S1GU8z/ouoSMcXx4+l/3/veKn
- 2njd0U5kSkG9xmNnL4Rxh9FGmMpHxtfvA8AdLS2+RhcL9TPtIEsUIZfx6
- gCYQXNwWC6vZ8hNikZdju92XdnnLqK+7aiVzqxVLmGm01rFZ4tBmKj1r1
- JOO0AcFUI6ukmV+5yIUmoGjurG2nAteMgSzfVoYkMk3TXxkMpUx3SQ8gb
- oqwoD28MHP0yEBRr9pR5SRc7OEC+fxNpDvX0MnRc4VQe80/yHYN6dC8LK Q==;
-X-IronPort-AV: E=Sophos;i="5.90,294,1643644800"; d="scan'208";a="203872706"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com)
- ([199.255.45.14])
- by ob1.hgst.iphmx.com with ESMTP; 28 Apr 2022 07:31:40 +0800
-IronPort-SDR: /31Xmchl7gZFg8potWYmkm09e6QwU97PO8MVjrrkuow7tBlxpaJNmxUHby4QzfsNzt/GEK68K+
- IKieKy6pMWawGiYo7CQuGHN9KE7904uIarHzVLe+rsuB9+aow4hkhW5UdnSJp2fWRK1Pce09TB
- UfKOOY5emIz0MQmfrY6i5fBnvS78gKWtELmqsfxhwJaN0wA9mj1NPXA5M95W/a6hy2Ou/YVw7Y
- oRcl4grMZBZgFFyjgxcH95b9xNn0KVPolMnaDHZ8D7RI4JaQkWxchyBbyDmQ292r5m3YPFxrrr
- yVnGMvrGcJ64aDTsWnmvVmRM
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
- by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256;
- 27 Apr 2022 16:02:33 -0700
-IronPort-SDR: Dgc2Rmr8LepAnKUJzvPUVLBhuqURkXsjeSMxSqxFVcr0jLScB23+tIybT+EXSGv5ra2jTAg2W6
- jbkIBVnJejeJEPC/elOuJFaRdpcpE62ki0z5v7FmXlOPz8haaBMpnxbJm54FT4y7C/GZ35A+nP
- sGqR6Lu7LYc/0JS/jUDTXTTIWcrFNWelS2iw5kGz8VlHJbDUr5hyTJQYq7w+RLQ6f1mnohWswP
- QjMNyusyqaFEZwqz4/HXplK8KWxRDcNx4n2/LSXSiUsAun1gqwbFRP0kteEq4XQqieh+I8EdkS
- vJs=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
- by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256;
- 27 Apr 2022 16:31:41 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
- by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KpZlJ73Zzz1SHwl
+ bh=79AFRdpemBVck+ntzsW/yKNt4PCLDqnjtmYL3oWIWPs=; b=GOzIJ9BiBiP/tgnXU/U2cWLeIE
+ gn0uwGQZw2wOMjXnrS2szVlotXw9SUL7qIFLejB1FF7M4WGbZ3tIE1m2qCFmjNFp7Bh0Xo8v+K4kp
+ 9Bly2kIs++kF+t5bBjEPvz8+6ukxnxY5IpZNrGV2soU271mVJJ+jJ1Cx8o44uPOgUHkQ=;
+Received: from mail-pf1-f182.google.com ([209.85.210.182])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
+ id 1njrT4-0000vl-L4
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 23:53:12 +0000
+Received: by mail-pf1-f182.google.com with SMTP id g8so425113pfh.5
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 27 Apr 2022 16:31:40 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
- reason="pass (just generated, assumed good)"
- header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
- opensource.wdc.com; h=content-transfer-encoding:content-type
- :in-reply-to:organization:from:references:to:content-language
- :subject:user-agent:mime-version:date:message-id; s=dkim; t=
- 1651102299; x=1653694300; bh=gLrzp6duhkPkV6taMyjQM6C7cL2l+fGNVwi
- mG4CXPYA=; b=PdTQSxxj3EOLpYEGcnBYVKUPguXiBCCpr5ymI7+k28TTGz3mfSs
- KbvC8k3lhS5m6XprU6x/phnhFmDH5Zdpl9mtNhPvxWLwoLZA79RJ39tzK0T66DJg
- cQ1J9s5aD6mTMKCIx7SKO/H0j3TVPipsOior8762yACFqgZPSPwSaryNVkrWfY9P
- vFK6Qn1Dlh6ebNdzrLYEPjfHxjH1TIuA8nWpktFuNYhAu/AUjrulRyzZmZH+ftr1
- f82lyX/KB3APT/Gb/yPBy31svE2vEO1vB1f3Yyd5uBMXra+42NUkawZ+Cd66ga7/
- bklmIOigH4dlDMngOOGM9ReZ0ePeHAN6LGA==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
- by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new,
- port 10026) with ESMTP id W5I0xALrVRbk
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 27 Apr 2022 16:31:39 -0700 (PDT)
-Received: from [10.225.163.27] (unknown [10.225.163.27])
- by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KpZlB5PzJz1Rvlc;
- Wed, 27 Apr 2022 16:31:34 -0700 (PDT)
-Message-ID: <652c33b5-1d85-e356-05b9-7bd84b768143@opensource.wdc.com>
-Date: Thu, 28 Apr 2022 08:31:33 +0900
+ Wed, 27 Apr 2022 16:53:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+ :content-language:to:cc:references:from:in-reply-to
+ :content-transfer-encoding;
+ bh=79AFRdpemBVck+ntzsW/yKNt4PCLDqnjtmYL3oWIWPs=;
+ b=c/YYwEE7k6DJa4ofybVIwz2wLKK6nW8Ai2V6ADJts8G8BGVIXiPb5Xne+klgHBLPiI
+ AylF9jSqgyKC2FrTS59JFw+u5yhtVPNcmkIhUUbZMKm3vD9nBAz45bJsnWvwiUbWg2pM
+ ywA4CmgBHl/WrmhC/B/+lNk46OQwrFM1A2grwo9BJyKBj6Tbhh15iI5oPFmD12d62zFA
+ oM5BIqQ79DTIDtN/Z+htWiI+t5FTrKW+8VLlZzCv5OF/tdDAi6+OKn23lPW7ckEAl+EU
+ UNTJT/uBdUeXunH47/EImRXidjOJsOH/HDRRwGi5TbjnIXF8waX18+T/ahjdXxOYDpmF
+ u6/Q==
+X-Gm-Message-State: AOAM5329ztYMn8J2s9pLAmYVbeBcgha5u60d3Oc2bTQpZMC5+BuAtW6v
+ ggA3263AkJbpkf46fDgrNm8=
+X-Google-Smtp-Source: ABdhPJwSGv1Za1U51Sy0XzpwyxC0M8/mR/bjHPIzXDoe+MDiEfgeZRKytqp5jH37HlZvkYhAFK/M7Q==
+X-Received: by 2002:a05:6a00:a94:b0:4fd:c14b:21cb with SMTP id
+ b20-20020a056a000a9400b004fdc14b21cbmr32159218pfl.53.1651103583186; 
+ Wed, 27 Apr 2022 16:53:03 -0700 (PDT)
+Received: from ?IPV6:2620:15c:211:201:6cbb:d78e:9b3:bb62?
+ ([2620:15c:211:201:6cbb:d78e:9b3:bb62])
+ by smtp.gmail.com with ESMTPSA id
+ w129-20020a628287000000b0050d4246fbedsm11710895pfd.187.2022.04.27.16.53.00
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Wed, 27 Apr 2022 16:53:02 -0700 (PDT)
+Message-ID: <df8104aa-ca86-4053-5334-3bc4ff786c61@acm.org>
+Date: Wed, 27 Apr 2022 16:52:59 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
+ Thunderbird/91.7.0
 Content-Language: en-US
 To: Pankaj Raghav <p.raghav@samsung.com>, jaegeuk@kernel.org,
  axboe@kernel.dk, snitzer@kernel.org, hch@lst.de, mcgrof@kernel.org,
- naohiro.aota@wdc.com, sagi@grimberg.me, dsterba@suse.com,
- johannes.thumshirn@wdc.com
+ naohiro.aota@wdc.com, sagi@grimberg.me, damien.lemoal@opensource.wdc.com,
+ dsterba@suse.com, johannes.thumshirn@wdc.com
 References: <20220427160255.300418-1-p.raghav@samsung.com>
- <CGME20220427160259eucas1p25aab0637fec229cd1140e6aa08678f38@eucas1p2.samsung.com>
- <20220427160255.300418-4-p.raghav@samsung.com>
-Organization: Western Digital Research
-In-Reply-To: <20220427160255.300418-4-p.raghav@samsung.com>
-X-Headers-End: 1njrNS-00CBEZ-H5
-Subject: Re: [f2fs-dev] [PATCH 03/16] block: add bdev_zone_no helper
+ <CGME20220427160258eucas1p19548a7094f67b4c9f340add776f60082@eucas1p1.samsung.com>
+ <20220427160255.300418-3-p.raghav@samsung.com>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20220427160255.300418-3-p.raghav@samsung.com>
+X-Headers-End: 1njrT4-0000vl-L4
+Subject: Re: [f2fs-dev] [PATCH 02/16] block: add blk_queue_zone_aligned and
+ bdev_zone_aligned helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -128,63 +95,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Damien Le Moal via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc: jiangbo.365@bytedance.com, kch@nvidia.com, bvanassche@acm.org,
- matias.bjorling@wdc.com, gost.dev@samsung.com, linux-kernel@vger.kernel.org,
+Cc: jiangbo.365@bytedance.com, kch@nvidia.com, matias.bjorling@wdc.com,
+ gost.dev@samsung.com, linux-kernel@vger.kernel.org,
  linux-nvme@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-block@vger.kernel.org, clm@fb.com, dm-devel@redhat.com, agk@redhat.com,
  jonathan.derrick@linux.dev, kbusch@kernel.org, linux-fsdevel@vger.kernel.org,
  josef@toxicpanda.com, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 4/28/22 01:02, Pankaj Raghav wrote:
-> Many places in the filesystem for zoned devices open code this function
-> to find the zone number for a given sector with power of 2 assumption.
-> This generic helper can be used to calculate zone number for a given
-> sector in a block device
-> 
-> This helper internally uses blk_queue_zone_no to find the zone number.
-> 
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->  include/linux/blkdev.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index f8f2d2998afb..55293e0a8702 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -1392,6 +1392,15 @@ static inline bool bdev_zone_aligned(struct block_device *bdev, sector_t sec)
->  	return false;
->  }
->  
-> +static inline unsigned int bdev_zone_no(struct block_device *bdev, sector_t sec)
+On 4/27/22 09:02, Pankaj Raghav wrote:
+> +static inline bool bdev_zone_aligned(struct block_device *bdev, sector_t sec)
 > +{
 > +	struct request_queue *q = bdev_get_queue(bdev);
 > +
 > +	if (q)
-
-q is never NULL. So this can be simplified to:
-
-	return blk_queue_zone_no(bdev_get_queue(bdev), sector);
-
-> +		return blk_queue_zone_no(q, sec);
-> +	return 0;
+> +		return blk_queue_zone_aligned(q, sec);
+> +	return false;
 > +}
-> +
->  static inline unsigned int bdev_max_open_zones(struct block_device *bdev)
->  {
->  	struct request_queue *q = bdev_get_queue(bdev);
+
+Which patch uses this function? I can't find any patch in this series 
+that introduces a call to this function.
+
+Thanks,
+
+Bart.
 
 
--- 
-Damien Le Moal
-Western Digital Research
 
 
 _______________________________________________
