@@ -4,89 +4,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 81AA6C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 Apr 2022 15:30:06 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C136DC433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 27 Apr 2022 16:03:15 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1njjcA-0002bd-OC; Wed, 27 Apr 2022 15:30:01 +0000
+	id 1njk8G-0006JV-97; Wed, 27 Apr 2022 16:03:13 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1njjc9-0002b4-Ug
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 15:30:01 +0000
+ (envelope-from <p.raghav@samsung.com>) id 1njk8F-0006JK-3K
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 16:03:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
+ MIME-Version:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=s6HylUh+OEKV39VXfb/ISAqlwry5Bfreh7mgEO/7xWo=; b=Qn6WwfaCEcUcnDRzFKwNCwysK9
- x/5UtJWRis+x2+rBjHWpKu/5o8rV5FSDJ38yZJDlB6tDFBn94shDeImYpsmoIlPwv93PtivzEQAlv
- Y0jPqr9sjlYzzXg+BoJFfb/dRrgeDaWt5rBG1X+9k7TFjVGNvSJHfYP2rzxAXOa59Ltw=;
+ bh=O6Jd6Tzouqxtj71a1kvN5ymqEncAInPsXdGxEKyRKOk=; b=mLbAJC3Q+U6ScgSVz/02RW7ybJ
+ 5h36hkgtuxBWWLt5ri9xugQyDRbpS1WRTu1ClC9PD0MR2mGfB9Gy3fCAvitazFnFPz/UoBbSkXoYI
+ qkkYS8PEMHEW9ze4mItlWKHVuPijowz8a91fJc0HiYvS8tdXjrpU1soowZp1tfbgdJXg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:Message-ID:Date:
- Subject:To:From:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=s6HylUh+OEKV39VXfb/ISAqlwry5Bfreh7mgEO/7xWo=; b=P
- V2J9SgBZuYRo6iY4Drsin3e/0ZS9pDmst5KAYyiLpjW0wEcNASY+kz/R/1fl7jzzXsDhOKH7Pwo9/
- DN8kzwvaFyZ8vL/jT+9IF0pOrjR95yfuq4yX9WPRy0zZSN6IOhtUtK1WkY8UxWMKQvGriUdWrxgGz
- Qw8uksckKLTtWKUI=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=References:Content-Type:Content-Transfer-Encoding:MIME-Version:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=O6Jd6Tzouqxtj71a1kvN5ymqEncAInPsXdGxEKyRKOk=; b=G3s6k74XU0+ch1RRSIq95NGcWK
+ OX51xmUJpm47U/DYUJdHzAeRKT1RxeIaojAvyrm10mIS7o9lbc7aQxcN3MFOe+fEY9fJ4OYx3k/ja
+ 8gjZjo/Z4kh84ZNhRTltYhfWypQt/242JiBKQkopwiM6IeDo64FEyovJvR93mPDesRhg=;
+Received: from mailout2.w1.samsung.com ([210.118.77.12])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1njjc4-00Bs1o-DT
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 15:30:00 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id EBDFEB82871
+ id 1njk8F-00Bt4c-1T
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 27 Apr 2022 16:03:11 +0000
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+ by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id
+ 20220427160304euoutp02da685caf11157353ceed473128ef3da4~pzFCWSYF51060710607euoutp02T
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 27 Apr 2022 15:29:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B5AAC385A9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 27 Apr 2022 15:29:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1651073388;
- bh=9YU0hWTFJY8m8kDy0w6WufmEmPFdDakwiFKvD6iBy5E=;
- h=From:To:Subject:Date:From;
- b=LD54r4bSRvo87dRdrYLN+jZQwvVBF1eg3knfjlfvnINiNdqX80pRlnLd4pjmN11zD
- Iu4ulb98xOxcAJ5s6HqCKqEGRoceBq/qE7yXb83APHkHPbGwqi+g1Y+CktRgMUj/Ev
- hnQI1fK95qIJd/aNOx9S4Cu8umT6TR0gT8Rgyvdp3aHa4ZM/dl9OZE2s5yfhqSLI8C
- Mj0zPqfV2+I4pQMrsNTCFGqeoqsVCx9NOqHNVZhQHnLLkqTUZn5ETLIGaFTCgaZoKy
- VCyenP/EtNlxGXJcAGZfLK2b7LCIQFUk0p/nxSoOoaAnIpCZUtf2yDUgNLhCcvWS8J
- tkRBAUZDrxCTg==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id 70AAEC05FCE; Wed, 27 Apr 2022 15:29:48 +0000 (UTC)
-From: bugzilla-daemon@kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 27 Apr 2022 15:29:48 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: yanming@tju.edu.cn
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version
- cf_kernel_version rep_platform op_sys cf_tree bug_status bug_severity
- priority component assigned_to reporter cf_regression attachments.created
-Message-ID: <bug-215905-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ Wed, 27 Apr 2022 16:03:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com
+ 20220427160304euoutp02da685caf11157353ceed473128ef3da4~pzFCWSYF51060710607euoutp02T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+ s=mail20170921; t=1651075384;
+ bh=O6Jd6Tzouqxtj71a1kvN5ymqEncAInPsXdGxEKyRKOk=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=d1kh2nLIvuiyNDv9mO0UXd1d/AtdCYR4k3KlvRnvGeMovVA36LXVTuICTmGarWcNf
+ fW81xC/og7crE2MMu9qk01HnS4AttY4fdMBb3DUregeAAtUKtFbxrU9YB2IwVeTS9P
+ vbOT5ssBvbuNpu1XWbvRXBKTXFJKUfLVPJKKfTPo=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+ eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+ 20220427160303eucas1p22d7897065d614fc598a2b9280bec4adb~pzFA9zWA62335623356eucas1p2b;
+ Wed, 27 Apr 2022 16:03:03 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+ eusmges2new.samsung.com (EUCPMTA) with SMTP id BE.04.09887.73969626; Wed, 27
+ Apr 2022 17:03:03 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+ eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+ 20220427160302eucas1p1aaba7a309778d3440c3315ad899e4035~pzFAbPWo12290322903eucas1p1u;
+ Wed, 27 Apr 2022 16:03:02 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+ eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+ 20220427160302eusmtrp1f372a17275b8fcf9c53a511412b0283f~pzFAYod592077420774eusmtrp1N;
+ Wed, 27 Apr 2022 16:03:02 +0000 (GMT)
+X-AuditID: cbfec7f4-45bff7000000269f-52-62696937cddc
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+ eusmgms2.samsung.com (EUCPMTA) with SMTP id FF.97.09404.63969626; Wed, 27
+ Apr 2022 17:03:02 +0100 (BST)
+Received: from localhost (unknown [106.210.248.162]) by eusmtip1.samsung.com
+ (KnoxPortal) with ESMTPA id
+ 20220427160302eusmtip1f317e24df26397b4f560f917fa75f11b~pzE-yyoKH1317113171eusmtip1K;
+ Wed, 27 Apr 2022 16:03:02 +0000 (GMT)
+From: Pankaj Raghav <p.raghav@samsung.com>
+To: jaegeuk@kernel.org, axboe@kernel.dk, snitzer@kernel.org, hch@lst.de,
+ mcgrof@kernel.org, naohiro.aota@wdc.com, sagi@grimberg.me,
+ damien.lemoal@opensource.wdc.com, dsterba@suse.com,
+ johannes.thumshirn@wdc.com
+Date: Wed, 27 Apr 2022 18:02:45 +0200
+Message-Id: <20220427160255.300418-7-p.raghav@samsung.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220427160255.300418-1-p.raghav@samsung.com>
 MIME-Version: 1.0
-X-Headers-End: 1njjc4-00Bs1o-DT
-Subject: [f2fs-dev] [Bug 215905] New: BUG: KASAN: slab-out-of-bounds in
- f2fs_allocate_data_block+0x23d0/0x31f0
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTZxTG8957e++lse5aNL4ggqCOAYEicdkrELdlEu9gcctwUfZpwRs+
+ VkBbO9Ftsa7gpGNQMEwoLIJRUWBrKYxYGIThBsi3LSiosCDgBoSP8RGtBbaWWzP/e857fs95
+ zkleGhfrSXc6MeUEJ0+RynxIIVHbYu0OfC0xMTa41/oS0re34KhiKIdEP8xZcdSR34WhvJwC
+ Ctm6enDUMFMkQL1Pz2JosMmEoRsVf2BoTK/DUVbTHIFWNMP2t/QRHC2P7EJ5zXcBGu/XYajh
+ fgAyj16nkPnyfvRrw20CWeqKSXTp2jiFtOeWcDSgHQcot7VagBauplPo56lZArXd3/LGVtbS
+ F8WutlWSbK56hmJ7hqsI1tKlZI3lmSRbqsrH2eorZ9j6kgWMrR9Ukez36hmSNWX8KWBnG/tJ
+ NrumHLD6mn6C1VZXCd4TfygMP8rJEr/g5JK9R4QJl8ZM1LFiOq0yI5NUARupAS40ZHbDO+kq
+ uxbSYuY6gBUXdRhfLAL4WDtI8MUCgI3TT6nnltlvuym+UQZgW2u70zIBYNXiit1C0yTjD89m
+ rkEbmQEAcw2GNQhnJnHYW3MPc0CuzKvQNrO2CMHshHezJ9a0iAmF+cN9GJ/mBQvNTygH7sKE
+ Qe38YR7ZAG8XjhEOjdsR9S9FuGM8ZEqFsOHhHMF798GyrHnnHFc42VrjvMADdlzIcjJfwvEB
+ m9OcDmCOSU86wqA9LLtT5pA44wf1dRIefxOODg1SPLEeDkxv4FdYD/NqL+L8swiePyfmaR9o
+ so45QyG0fFPsDGXhQ1WOQAu8dS8co3vhGN3/uSUALwebOaUiOZ5ThKRwJ4MU0mSFMiU+KC41
+ 2Qjsf7pjtXXxJiib/CeoGWA0aAaQxn02ihbrE2LFoqPSU6c5eepncqWMUzSDLTThs1kUl2iQ
+ ipl46Qnuc447xsmfdzHaxV2Fue0JGJQ13vs0eMErwO+rv7btuRMLr1nKNTcvj3fvNPjH7JcV
+ dgeGJQ8HmoPOeMqXzieByoQ4o6DFoJwvNP40uju1QB+y0vSx5HUqu/PZg+WlA+rOhbBbEW+F
+ 3tj+7pA86hNPy6Nsv01tIZFWLCJmWHPLl/rtkSxq68TB6HdqbYcKopO26S70276rOX4k48mV
+ kAduriXiuj7NjhGz6Gt1e2jZKz1Tecf3hhcdupr2QcWq+rEElnoZrPrl00knwzXaj9xH+jzo
+ TcF4RJWJ63t5ynfaFvdj3r44BeaZFfl3jHdv5Ns09HZzK3p20P33desOs5I039yq9xNc/92O
+ KU8Z46NVHj6EIkG6yx+XK6T/AbMmFzlCBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsVy+t/xu7pmmZlJBufeqFmsP3WM2WL13X42
+ i2kffjJbnJ56lsliUv8MdovfZ88zW+x9N5vV4sKPRiaLmwd2MlmsXH2UyeLJ+lnMFj0HPrBY
+ /O26BxRrechs8eehocWkQ9cYLZ5encVksfeWtsWlxyvYLS4tcrfYs/cki8XlXXPYLOYve8pu
+ MaHtK7PFjQlPGS0mHt/MavF5aQu7xbrX71ksTtySdpD1uHzF2+PfiTVsHhOb37F7nL+3kcXj
+ 8tlSj02rOtk8FjZMZfbYvKTeY/eCz0weu282sHn0Nr9j89jZep/V4/2+q2wefVtWMXqs33KV
+ xWPC5o2sAUJRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF
+ +nYJehnzn+xkL5jDUbGmtZOtgfE3WxcjJ4eEgInE+/Zz7F2MXBxCAksZJQ7dWsUOkZCQuL2w
+ iRHCFpb4c62LDaLoOaPEtilzgBwODjYBLYnGTrBmEYEnjBL3fz5mAXGYBRpYJG5N3MUEUiQs
+ YCrx+x3YNhYBVYlrfS/BbF4BK4mp964wQSyQl5h56Ts7SDmngLXEhE8RIGEhoJLuRbdYIcoF
+ JU7OfMICYjMDlTdvnc08gVFgFpLULCSpBYxMqxhFUkuLc9Nzi430ihNzi0vz0vWS83M3MQIT
+ yrZjP7fsYFz56qPeIUYmDsZDjBIczEoivF92ZyQJ8aYkVlalFuXHF5XmpBYfYjQFOnsis5Ro
+ cj4wpeWVxBuaGZgamphZGphamhkrifN6FnQkCgmkJ5akZqemFqQWwfQxcXBKNTBpzluoMtPG
+ K3C1+c/PW6x+Rh5axbDhjLXQ1hzr5EN5l7WfRYu01XJO3u96W8Djr0Ixq6SQw6KXRu4sc15d
+ Epx8WqbMgrnbMolX0OeAo1XJ7s95hcyTNl8IWJcsZtXfw1r+m2PzB4lzd2ev7WcK5jGI19nT
+ xf1L+upsh3u2QlwT0uTO6/xcxJb/aYp0zxKp1W+fsLFPv7HzWvxjvX5zro85MWdVb+o1vXOt
+ f9Kd/H3dElNB4cyy/WGy+hKfllx5NT0on0FWjFX+V6+Ewl+jI7NqjavYJ3VNXJyUadFqZqDs
+ sXPKBsmt988Ur1ip9Fdo9RU7+16Gi61C0wrvBv5anWXTt9+17ZyIitD6L0zvSpVYijMSDbWY
+ i4oTAU7HChCxAwAA
+X-CMS-MailID: 20220427160302eucas1p1aaba7a309778d3440c3315ad899e4035
+X-Msg-Generator: CA
+X-RootMTR: 20220427160302eucas1p1aaba7a309778d3440c3315ad899e4035
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220427160302eucas1p1aaba7a309778d3440c3315ad899e4035
+References: <20220427160255.300418-1-p.raghav@samsung.com>
+ <CGME20220427160302eucas1p1aaba7a309778d3440c3315ad899e4035@eucas1p1.samsung.com>
+X-Headers-End: 1njk8F-00Bt4c-1T
+Subject: [f2fs-dev] [PATCH 06/16] nvmet: use blk_queue_zone_no()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,158 +144,46 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: jiangbo.365@bytedance.com, Pankaj Raghav <p.raghav@samsung.com>,
+ kch@nvidia.com, bvanassche@acm.org, matias.bjorling@wdc.com,
+ gost.dev@samsung.com, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-block@vger.kernel.org, clm@fb.com, dm-devel@redhat.com, agk@redhat.com,
+ jonathan.derrick@linux.dev, kbusch@kernel.org, linux-fsdevel@vger.kernel.org,
+ josef@toxicpanda.com, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=215905
+From: Luis Chamberlain <mcgrof@kernel.org>
 
-            Bug ID: 215905
-           Summary: BUG: KASAN: slab-out-of-bounds in
-                    f2fs_allocate_data_block+0x23d0/0x31f0
-           Product: File System
-           Version: 2.5
-    Kernel Version: 5.17
-          Hardware: All
-                OS: Linux
-              Tree: Mainline
-            Status: NEW
-          Severity: normal
-          Priority: P1
-         Component: f2fs
-          Assignee: filesystem_f2fs@kernel-bugs.kernel.org
-          Reporter: yanming@tju.edu.cn
-        Regression: No
+Instead of open coding the number of zones given a sector, use the helper
+blk_queue_zone_no(). This let's us make modifications to the math if
+needed in one place and adds now support for npo2 zone devices.
 
-Created attachment 300829
-  --> https://bugzilla.kernel.org/attachment.cgi?id=300829&action=edit
-case.c
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+---
+ drivers/nvme/target/zns.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have encountered a KASAN bug in F2FS file system in kernel v5.17.
-
-I have uploaded the system call sequence as case.c, and a fuzzed image can be
-found in google net disk
-(https://drive.google.com/file/d/1PKPI0AojESKJLWKaWeBg-nRPNlEPELFb/view?usp=sharing).
-
-The kernel should enable CONFIG_KASAN=y and CONFIG_KASAN_INLINE=y. You can
-reproduce the bug by running the following commands:
-
-gcc -o case case.c
-losetup /dev/loop0 case.img
-mount -o
-"background_gc=sync,discard,no_heap,nouser_xattr,active_logs=2,inline_data,fastboot,data_flush,checkpoint=disable,noquota,fsync_mode=strict,test_dummy_encryption"
--t f2fs /dev/loop0 /root/mnt
-./case
-
-The kernel log is shown below:
-
-3,904,146667379,-;==================================================================
-3,905,146667387,-;BUG: KASAN: slab-out-of-bounds in
-f2fs_allocate_data_block+0x23d0/0x31f0
-3,906,146667396,-;Read of size 4 at addr ffff88810ae96bc4 by task case/2167
-3,907,146667399,-;
-3,908,146667402,-;CPU: 1 PID: 2167 Comm: case Not tainted 5.17.0 #4
-3,909,146667405,-;Hardware name: Dell Inc. OptiPlex 9020/03CPWF, BIOS A14
-09/14/2015
-3,910,146667408,-;Call Trace:
-3,911,146667410,-; <TASK>
-3,912,146667412,-; dump_stack_lvl+0x34/0x44
-3,913,146667417,-; print_address_description.constprop.0+0x21/0x150
-3,914,146667423,-; ? f2fs_allocate_data_block+0x23d0/0x31f0
-3,915,146667426,-; ? f2fs_allocate_data_block+0x23d0/0x31f0
-3,916,146667429,-; kasan_report.cold+0x7f/0x11b
-3,917,146667434,-; ? f2fs_allocate_data_block+0x23d0/0x31f0
-3,918,146667437,-; f2fs_allocate_data_block+0x23d0/0x31f0
-3,919,146667441,-; ? _raw_read_lock_bh+0x40/0x40
-3,920,146667445,-; ? _raw_spin_lock_irqsave+0x88/0xe0
-3,921,146667449,-; do_write_page+0x18d/0x710
-3,922,146667453,-; f2fs_outplace_write_data+0x151/0x250
-3,923,146667457,-; ? f2fs_do_write_node_page+0x110/0x110
-3,924,146667461,-; f2fs_convert_inline_page+0x6f7/0x1300
-3,925,146667465,-; ? f2fs_read_inline_data+0x5c0/0x5c0
-3,926,146667469,-; ? __get_node_page+0x13c/0xd30
-3,927,146667472,-; f2fs_convert_inline_inode+0x99c/0xf40
-3,928,146667476,-; ? f2fs_convert_inline_page+0x1300/0x1300
-3,929,146667479,-; ? selinux_mount+0x220/0x220
-3,930,146667484,-; ? setattr_prepare+0xd5/0x640
-3,931,146667487,-; f2fs_setattr+0xb28/0x12e0
-3,932,146667491,-; notify_change+0x5a5/0xcc0
-3,933,146667494,-; ? down_write_killable+0x120/0x120
-3,934,146667498,-; ? do_truncate+0xeb/0x190
-3,935,146667501,-; do_truncate+0xeb/0x190
-3,936,146667504,-; ? __x64_sys_openat2+0x2a0/0x2a0
-3,937,146667508,-; ? __fget_light+0x52/0x500
-3,938,146667511,-; ? ksys_read+0xe8/0x1c0
-3,939,146667515,-; ? vfs_write+0x7b0/0x7b0
-3,940,146667518,-; do_sys_ftruncate+0x2b2/0x4b0
-3,941,146667522,-; do_syscall_64+0x3b/0x90
-3,942,146667526,-; entry_SYSCALL_64_after_hwframe+0x44/0xae
-3,943,146667529,-;RIP: 0033:0x7fd670d5976d
-3,944,146667532,-;Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48
-89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 8b 0d f3 36 0d 00 f7 d8 64 89 01 48
-3,945,146667536,-;RSP: 002b:00007fff4da961a8 EFLAGS: 00000203 ORIG_RAX:
-000000000000004d
-3,946,146667540,-;RAX: ffffffffffffffda RBX: 000055b2f5995b60 RCX:
-00007fd670d5976d
-3,947,146667543,-;RDX: 00007fd670d5976d RSI: 0000000000073460 RDI:
-0000000000000003
-3,948,146667545,-;RBP: 00007fff4de963e0 R08: 00007fff4de964d8 R09:
-00007fff4de964d8
-3,949,146667547,-;R10: 00007fff4de964d8 R11: 0000000000000203 R12:
-000055b2f59950a0
-3,950,146667549,-;R13: 00007fff4de964d0 R14: 0000000000000000 R15:
-0000000000000000
-3,951,146667552,-; </TASK>
-3,952,146667555,-;
-3,953,146667558,-;Allocated by task 2157:
-4,954,146667572,-; kasan_save_stack+0x1e/0x40
-4,955,146667575,-; __kasan_kmalloc+0x81/0xa0
-4,956,146667577,-; f2fs_fill_super+0xea/0x64f0
-4,957,146667580,-; mount_bdev+0x2c0/0x3a0
-4,958,146667583,-; legacy_get_tree+0xea/0x1d0
-4,959,146667598,-; vfs_get_tree+0x7f/0x2b0
-4,960,146667601,-; path_mount+0x47e/0x19b0
-4,961,146667613,-; do_mount+0xc5/0xe0
-4,962,146667616,-; __x64_sys_mount+0x127/0x190
-4,963,146667619,-; do_syscall_64+0x3b/0x90
-4,964,146667621,-; entry_SYSCALL_64_after_hwframe+0x44/0xae
-3,965,146667624,-;
-3,966,146667625,-;The buggy address belongs to the object at
-ffff88810ae96000\x0a which belongs to the cache kmalloc-4k of size 4096
-3,967,146667628,-;The buggy address is located 3012 bytes inside of\x0a
-4096-byte region [ffff88810ae96000, ffff88810ae97000)
-3,968,146667631,-;The buggy address belongs to the page:
-4,969,146667633,-;page:00000000d3f90f20 refcount:1 mapcount:0
-mapping:0000000000000000 index:0x0 pfn:0x10ae90
-4,970,146667636,-;head:00000000d3f90f20 order:3 compound_mapcount:0
-compound_pincount:0
-4,971,146667638,-;flags: 0x200000000010200(slab|head|node=0|zone=2)
-4,972,146667643,-;raw: 0200000000010200 dead000000000100 dead000000000122
-ffff888100043040
-4,973,146667645,-;raw: 0000000000000000 0000000000040004 00000001ffffffff
-0000000000000000
-4,974,146667646,-;page dumped because: kasan: bad access detected
-3,975,146667648,-;
-3,976,146667649,-;Memory state around the buggy address:
-3,977,146667651,-; ffff88810ae96a80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00
-3,978,146667653,-; ffff88810ae96b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00
-3,979,146667656,-;>ffff88810ae96b80: 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
-fc fc
-3,980,146667657,-;                                           ^
-3,981,146667660,-; ffff88810ae96c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-fc fc
-3,982,146667662,-; ffff88810ae96c80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-fc fc
-3,983,146667664,-;==================================================================
-
+diff --git a/drivers/nvme/target/zns.c b/drivers/nvme/target/zns.c
+index e34718b09550..e41b6a6ef048 100644
+--- a/drivers/nvme/target/zns.c
++++ b/drivers/nvme/target/zns.c
+@@ -243,7 +243,7 @@ static unsigned long nvmet_req_nr_zones_from_slba(struct nvmet_req *req)
+ 	unsigned int sect = nvmet_lba_to_sect(req->ns, req->cmd->zmr.slba);
+ 
+ 	return blkdev_nr_zones(req->ns->bdev->bd_disk) -
+-		(sect >> ilog2(bdev_zone_sectors(req->ns->bdev)));
++	       bdev_zone_no(req->ns->bdev, sect);
+ }
+ 
+ static unsigned long get_nr_zones_from_buf(struct nvmet_req *req, u32 bufsize)
 -- 
-You may reply to this email to add a comment.
+2.25.1
 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
