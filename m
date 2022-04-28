@@ -4,69 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E3191C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Apr 2022 22:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7842BC433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Apr 2022 22:30:21 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nkCI2-0004D3-T7; Thu, 28 Apr 2022 22:07:09 +0000
+	id 1nkCeT-0004vL-Pg; Thu, 28 Apr 2022 22:30:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <mcgrof@infradead.org>) id 1nkCI1-0004Cw-Ox
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Apr 2022 22:07:08 +0000
+ (envelope-from <krisman@collabora.com>) id 1nkCeS-0004vB-10
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Apr 2022 22:30:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Sender:In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9v/jwR+R8u87FL4qORMMhnuwU+FONow5gj9ZK60JlpI=; b=k9SSt4iIy0mMMVIdwM1jFvzWzA
- yN3XGFWh9hmVSZ78z9YulQ8z44Hog5JH3HWdeay8SDt3YdjD477ASpOzlJzo9EnWJiCbfz/mfh6jJ
- 3ZbxUh41R99qUDiKs+8hA/kCbUbb8lUCe/UPDYKeoyJHixiO7MDkB1MhZQ38w1prcX1w=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=pI5PYOwSrjKY1gxdkCtIy3MQOs0kdsXhBokyfSbsihI=; b=faKyi4zocZeIPRvGkxjeOnE1I7
+ 5pMdLjS0vcvCa2I1BmLmN9CI0plm+sAW9kE/d1lZ/08psB5gB8/5YCzZo3IFvOWblmI/wCJCjYqV1
+ IeThnnB6mbkkDyMzkLCL4xKxwOewKMyTHvKXIaUA0+/hcXe2VzYZniWYAMoJDe2ik3b8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Sender:In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
- Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9v/jwR+R8u87FL4qORMMhnuwU+FONow5gj9ZK60JlpI=; b=EFu48fKNyyV0hzHbYBei69TZJ+
- s0v14Nd+825PUzod0+J+97/XQPYaKThKK5xKgpR4Q91v80tDVIlNb6T+SxxUAZRucn+OMb4e32nWS
- 1ipJ30y2WH0DDiMSWJnQfZD4fTl34z8z6a9hsDaf9IPPnU6+QwR1V38rkMfcXb4rIBFg=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=pI5PYOwSrjKY1gxdkCtIy3MQOs0kdsXhBokyfSbsihI=; b=fadIQcTdI9fTUE9JGb18UTXWJb
+ 0UfeGbj5d4PwiQDdZy84ZxQC/kGT7b5mWnjUSgfKkrDiHheCFuAw+9uQeIorT7XS8ThpO9jEHDA4l
+ hwn4qwsmYIxiHdxsEuy8WIzmRVf1qa6wZZN4SxXMiIlQ/SsPS3zzYD/LjxmkOgIpjbMk=;
+Received: from bhuna.collabora.co.uk ([46.235.227.227])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nkCHy-0005Ys-Cj
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Apr 2022 22:07:08 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=9v/jwR+R8u87FL4qORMMhnuwU+FONow5gj9ZK60JlpI=; b=s7tZJeCHXPydeNyzQuN8NsfxgP
- eu4k6UGhsVLB00xCdra8ScX0cG22vl4diUOaGh9FKdX7ZbDm54F7Sz0V6dDshrJNi6/wT9TaTLE7L
- 4lziHtohweA2A/pEGRkEQA/vjgE7pbVRnrWniCsX9yEkpQ2hMs2CWXd+7aGj4ahpDbzBv+jVDj0ap
- JdQw0FhqNuU0KC9UTqrHuy4JXz7tHdwXRx/xwjjzvCWyXUc2CceR12Gm2rzyMoXNmRGC7jZDfM/Sd
- fASKdOUqjIoKv+PaYoM25kjeVCygCtv96ptD2wNPrJ0lPiZpRzZ7Jn+O1gxO1aN3k4eGnAkBe8P/F
- +J/VDTRA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2
- (Red Hat Linux)) id 1nkCHX-008hOx-BO; Thu, 28 Apr 2022 22:06:39 +0000
-Date: Thu, 28 Apr 2022 15:06:39 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Message-ID: <YmsP7wQAyDx9g8gy@bombadil.infradead.org>
-References: <20220427160255.300418-1-p.raghav@samsung.com>
- <CGME20220427160313eucas1p1feecf74ec15c8c3d9250444710fd1676@eucas1p1.samsung.com>
- <20220427160255.300418-17-p.raghav@samsung.com>
- <2ffc46c7-945f-ba26-90db-737fccd74fdf@opensource.wdc.com>
- <YmrQFu9EbMmrL2Ys@bombadil.infradead.org>
- <ce56cb7d-f184-aad1-4935-5f622e7afe5d@opensource.wdc.com>
+ id 1nkCeP-00DFZT-F7
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Apr 2022 22:30:18 +0000
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+ (Authenticated sender: krisman) with ESMTPSA id 22A1D1F45D08
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+ s=mail; t=1651183850;
+ bh=PNCfTULIr3nrKnUhteldBCGbb9yM9LedJwSaGK5KYUM=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=TxEJ6rlvmlJIF6/aua67Zx198i3yi7j3vGAUAeyLQ8fcGMyxRpPhbTT/v+eWaKFZc
+ alcYXf57NA0GIssrqALsMZ1hzWn+VPmNgHNqnl/Iw60Q99907t5fIYH/wLOujzEO+M
+ nW9U0Cz7oN/INLuxUN2sr45GevRvIIJGFk6Wsxiw+jWo3fJvkYCGiRmjQMl2tM7bUd
+ eXfZQNsUfa5rJCjVG9nsX6vAEhnh/XGlqdGtck4S7Tzob/MTkZK7+Bk9WMPfv9wg05
+ xQKQoK3/9fZQXfVtTBtBLq8xtCRPDgB/PUTDm+BRM9aNZ+hBcJWDqLyhc3QwLF6Q7u
+ vDWqhmip6sLuQ==
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jaegeuk@kernel.org
+Date: Thu, 28 Apr 2022 18:10:23 -0400
+Message-Id: <20220428221027.269084-4-krisman@collabora.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220428221027.269084-1-krisman@collabora.com>
+References: <20220428221027.269084-1-krisman@collabora.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <ce56cb7d-f184-aad1-4935-5f622e7afe5d@opensource.wdc.com>
-X-Headers-End: 1nkCHy-0005Ys-Cj
-Subject: Re: [f2fs-dev] [PATCH 16/16] dm-zoned: ensure only power of 2 zone
- sizes are allowed
+X-Headers-End: 1nkCeP-00DFZT-F7
+Subject: [f2fs-dev] [PATCH v2 3/7] ext4: Implement ci comparison using
+ unicode_name
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,33 +75,131 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jiangbo.365@bytedance.com, linux-nvme@lists.infradead.org, clm@fb.com,
- dm-devel@redhat.com, hch@lst.de, agk@redhat.com, naohiro.aota@wdc.com,
- sagi@grimberg.me, gost.dev@samsung.com, jonathan.derrick@linux.dev,
- Pankaj Raghav <p.raghav@samsung.com>, kch@nvidia.com, snitzer@kernel.org,
- josef@toxicpanda.com, linux-block@vger.kernel.org, dsterba@suse.com,
- kbusch@kernel.org, jaegeuk@kernel.org, matias.bjorling@wdc.com,
- bvanassche@acm.org, axboe@kernel.dk, johannes.thumshirn@wdc.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: ebiggers@kernel.org, linux-ext4@vger.kernel.org,
+ Gabriel Krisman Bertazi <krisman@collabora.com>, kernel@collabora.com,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Apr 29, 2022 at 06:43:58AM +0900, Damien Le Moal wrote:
-> On 4/29/22 02:34, Luis Chamberlain wrote:
-> > One step at a time.
-> 
-> Yes, in general, I agree. But in this case, that will create kernel
-> versions that end up having partial support for zoned drives. Not ideal to
-> say the least. So if the patches are not that big, I would rather like to
-> see everything go into a single release.
+By using a new type here, we can hide most of the caching casefold logic
+from ext4.  The condition in ext4_match is now quite redundant, but this
+is addressed in the next patch.
 
-This would have delayed the patches more, and I see no rush for npo2 to
-use dm-zoned really. Just as with f2fs, we can take priorities at a
-time.
+This doesn't use ext4_filename to keep it generic, since the function
+will be moved to libfs to be shared with f2fs.
 
-  Luis
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+
+--
+Changes since v1:
+  - Instead of (ab)using fscrypt_name, create a new type (ebiggers).
+---
+ fs/ext4/namei.c    | 32 +++++++++++++++-----------------
+ include/linux/fs.h |  5 +++++
+ 2 files changed, 20 insertions(+), 17 deletions(-)
+
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index c1a8a09369d1..5102652b5af4 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1321,20 +1321,19 @@ static void dx_insert_block(struct dx_frame *frame, u32 hash, ext4_lblk_t block)
+ /**
+  * ext4_match_ci() - Match (case-insensitive) a name with a dirent.
+  * @parent: Inode of the parent of the dentry.
+- * @name: name under lookup.
++ * @uname: name under lookup.
+  * @de_name: Dirent name.
+  * @de_name_len: dirent name length.
+- * @quick: whether @name is already casefolded.
+  *
+  * Test whether a case-insensitive directory entry matches the filename
+- * being searched.  If quick is set, the @name being looked up is
+- * already in the casefolded form.
++ * being searched.
+  *
+  * Return: > 0 if the directory entry matches, 0 if it doesn't match, or
+  * < 0 on error.
+  */
+-static int ext4_match_ci(const struct inode *parent, const struct qstr *name,
+-			 u8 *de_name, size_t de_name_len, bool quick)
++static int ext4_match_ci(const struct inode *parent,
++			 const struct unicode_name *uname,
++			 u8 *de_name, size_t de_name_len)
+ {
+ 	const struct super_block *sb = parent->i_sb;
+ 	const struct unicode_map *um = sb->s_encoding;
+@@ -1357,10 +1356,10 @@ static int ext4_match_ci(const struct inode *parent, const struct qstr *name,
+ 		entry.len = decrypted_name.len;
+ 	}
+ 
+-	if (quick)
+-		ret = utf8_strncasecmp_folded(um, name, &entry);
++	if (uname->folded_name->name)
++		ret = utf8_strncasecmp_folded(um, uname->folded_name, &entry);
+ 	else
+-		ret = utf8_strncasecmp(um, name, &entry);
++		ret = utf8_strncasecmp(um, uname->usr_name, &entry);
+ 
+ 	if (!ret)
+ 		match = true;
+@@ -1370,8 +1369,8 @@ static int ext4_match_ci(const struct inode *parent, const struct qstr *name,
+ 		 * the names have invalid characters.
+ 		 */
+ 		ret = 0;
+-		match = ((name->len == entry.len) &&
+-			 !memcmp(name->name, entry.name, entry.len));
++		match = ((uname->usr_name->len == entry.len) &&
++			 !memcmp(uname->usr_name->name, entry.name, entry.len));
+ 	}
+ 
+ out:
+@@ -1427,6 +1426,7 @@ static bool ext4_match(struct inode *parent,
+ 			      const struct ext4_filename *fname,
+ 			      struct ext4_dir_entry_2 *de)
+ {
++	struct unicode_name u;
+ 	struct fscrypt_name f;
+ 	int ret;
+ 
+@@ -1451,14 +1451,12 @@ static bool ext4_match(struct inode *parent,
+ 					return false;
+ 				}
+ 			}
+-
+-			ret = ext4_match_ci(parent, &fname->cf_name, de->name,
+-					    de->name_len, true);
+-		} else {
+-			ret = ext4_match_ci(parent, fname->usr_fname,
+-					    de->name, de->name_len, false);
+ 		}
+ 
++		u.folded_name = &fname->cf_name;
++		u.usr_name = fname->usr_fname;
++
++		ret = ext4_match_ci(parent, &u, de->name, de->name_len);
+ 		if (ret < 0) {
+ 			/*
+ 			 * Treat comparison errors as not a match.  The
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e2d892b201b0..3f76a18a5f40 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3358,6 +3358,11 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
+ 
+ extern int generic_check_addressable(unsigned, u64);
+ 
++struct unicode_name {
++	const struct qstr *folded_name;
++	const struct qstr *usr_name;
++};
++
+ extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
+ 
+ #ifdef CONFIG_MIGRATION
+-- 
+2.35.1
+
 
 
 _______________________________________________
