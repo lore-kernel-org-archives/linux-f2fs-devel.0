@@ -4,63 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6CB39C4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Apr 2022 22:30:21 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3F75AC433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 28 Apr 2022 22:30:23 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nkCeS-0006cy-TC; Thu, 28 Apr 2022 22:30:20 +0000
+	id 1nkCeS-0004nB-6R; Thu, 28 Apr 2022 22:30:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <krisman@collabora.com>) id 1nkCeR-0006cm-8x
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Apr 2022 22:30:18 +0000
+ (envelope-from <krisman@collabora.com>) id 1nkCeQ-0004my-33
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Apr 2022 22:30:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZKMEGI3aDCF4Hb/w532lTrDHni4JK/XD1JSEVzKbVlk=; b=hQXZo5aEm0sLvEOuRClhXPuyRj
- IUV9mJn9LYJImStus6CJ0+hyHkWXb+arz9K8xY5BL77N6yKi/VuCk1bq/TONKnjaA5ie4d2SrQLHj
- ghja9tI3yAkaPf8NUpdvlU0uBSl48HOREjlNDjpA+Ukq34UVXZlOhkPqTVRVguejDD7M=;
+ bh=SGi1PkdHCNzQd8mrIznjvDJcghdBwZh3daz4Nb+lP84=; b=CYgWhRrfrX7jm4ThSHI5Ibowwn
+ XPCdBxZFYzzmeXHNaakdJZz0sgb+G7ikdA98R3PRtfT8q829EUYlbS15N/UVcH1vBSHnUgMdSb0l4
+ YKRfGEU3qy3J62Qp2KIBxRaZD8pfTuez0zVi7ThejgOhBj7BlX+Mj56/ykuwK/eJu+Ms=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=ZKMEGI3aDCF4Hb/w532lTrDHni4JK/XD1JSEVzKbVlk=; b=V
- VF8dSODrNuM0sw0rTztKdp40tR/1imZ2A4a+IwbvpLAsW9Bq0oaGrFZpThSIygr6hjE2yc9P3qmXe
- qy+pVfyrZPnnAxqtsGxCGtdBnefhgytuujbxlY68SZtO7CJ8q8XyXwmkGBPItYKEsDscSk9cpbdWT
- MhahY3mC7TKIG7t0=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=SGi1PkdHCNzQd8mrIznjvDJcghdBwZh3daz4Nb+lP84=; b=DIGijqSQub8rX5cj716E/PYy0r
+ 84ymRu5ldEWsOkqifVBCIQSH0tXWJju0eC//b5OHT34/UnPwR/plos511oNNxECmkIxZhNhIV9Pue
+ oY0DVyccm+vNXLMe5GTLPZet0EpqGXkc8HMUTtW/NMoq5vdxzvQo1SZNvNNSvtK0+L58=;
 Received: from bhuna.collabora.co.uk ([46.235.227.227])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nkCeP-00DFZW-HI
+ id 1nkCeP-0001Tn-H3
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 28 Apr 2022 22:30:18 +0000
 Received: from [127.0.0.1] (localhost [127.0.0.1])
- (Authenticated sender: krisman) with ESMTPSA id F32B91F4247A
+ (Authenticated sender: krisman) with ESMTPSA id 5116D1F45D0B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
- s=mail; t=1651183840;
- bh=bcfClgonf+RR4NyaZu4xkE6VsQ2rDh7rY79Hk2fkr/0=;
- h=From:To:Cc:Subject:Date:From;
- b=n6W+0k1R5Hnp5cLFsP8gLdcYlA2KDLKx12h/b1DC2byjWE3xs7D8z1Y5f9bYLlQxA
- 6ejaZiPS6Idg8XOKU+bX8ZnlFB7KeW5vTK5tZyqoIa6L9khwCwC62OYQia7VVHT7ak
- JpfJFecAaLc4QnIncRvaGmyRbOn9YoxS6i7Ri99GO2aTgStTeHKxGXT1zXd+6AuMA0
- f1QZJ2aQ0lgcAHhM4fXFselCaI2h0qlzpO8JD2kGjv/JNnw8RaPBStiZ74jkJ5k/hu
- ijQc1Qrvw3ZbPGh/SUODOxLDc9Rme8ZYdBmn2ta63HXnob4d9eZSRFcrw1SWP8qw+9
- 95dcCFsUrplQw==
+ s=mail; t=1651183853;
+ bh=vyo85rNwnnFuylcqfkeboay433CDn2ax39QHFWTvwF8=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=WMR9VUiLNDGNRTAYhKWATRTuaeN5B7iI3NBjMMoVNp/RH7Oy21w58uIlez9YHUNdN
+ /W3UhwGbbuqvvxzqZqNrjGTw55G7yNuqWQ55OIxvJxfu868mYBR2fsRhvMCxZDcMU9
+ DuBSinlFBPyT10HVJdhKe+zOboGkUPnMS9htVnAx5PfDGmmXGbTY6l3jeHOIMJ3soJ
+ G9miPvzy9/CSLbQoMT4HcxuX+ObULnTwg7U5NfDVKr0mHhk/mnuQLcu0jprUlTPKrV
+ jaQriwY5kA9YmznyyJeq28rRu4yK/USlyVMIqMWt/ZE3X5kzzVGsTdGzvFXoGXFwuv
+ NoQag6JSv3AmQ==
 From: Gabriel Krisman Bertazi <krisman@collabora.com>
 To: tytso@mit.edu,
 	adilger.kernel@dilger.ca,
 	jaegeuk@kernel.org
-Date: Thu, 28 Apr 2022 18:10:20 -0400
-Message-Id: <20220428221027.269084-1-krisman@collabora.com>
+Date: Thu, 28 Apr 2022 18:10:24 -0400
+Message-Id: <20220428221027.269084-5-krisman@collabora.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220428221027.269084-1-krisman@collabora.com>
+References: <20220428221027.269084-1-krisman@collabora.com>
 MIME-Version: 1.0
-X-Headers-End: 1nkCeP-00DFZW-HI
-Subject: [f2fs-dev] [PATCH v2 0/7] Clean up the case-insenstive lookup path
+X-Headers-End: 1nkCeP-0001Tn-H3
+Subject: [f2fs-dev] [PATCH v2 4/7] ext4: Simplify hash check on ext4_match
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,37 +81,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This is the v2 of this series.  it applies Eric's comments and extend
-the series to complete the merge of generic_ci_match for ext4 and f2fs.
+The existence of fname->cf_name.name requires s_encoding & IS_CASEFOLDED,
+therefore this can be simplified.
 
-The case-insensitive implementations in f2fs and ext4 have quite a bit
-of duplicated code.  This series simplifies the ext4 version, with the
-goal of extracting ext4_ci_compare into a helper library that can be
-used by both filesystems.
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+---
+ fs/ext4/namei.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-While there, I noticed we can leverage the utf8 functions to detect
-encoded names that are corrupted in the filesystem. The final patch
-adds an ext4 error on that scenario, to mark the filesystem as
-corrupted.
-
-This series survived passes of xfstests -g quick.
-
-Gabriel Krisman Bertazi (7):
-  ext4: Match the f2fs ci_compare implementation
-  ext4: Simplify the handling of cached insensitive names
-  ext4: Implement ci comparison using unicode_name
-  ext4: Simplify hash check on ext4_match
-  ext4: Log error when lookup of encoded dentry fails
-  ext4: Move ext4_match_ci into libfs
-  f2fs: Reuse generic_ci_match for ci comparisons
-
- fs/ext4/ext4.h     |   2 +-
- fs/ext4/namei.c    | 110 ++++++++++++++-------------------------------
- fs/f2fs/dir.c      |  58 ++----------------------
- fs/libfs.c         |  60 +++++++++++++++++++++++++
- include/linux/fs.h |   8 ++++
- 5 files changed, 106 insertions(+), 132 deletions(-)
-
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 5102652b5af4..e450e52eef48 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1440,19 +1440,13 @@ static bool ext4_match(struct inode *parent,
+ #endif
+ 
+ #if IS_ENABLED(CONFIG_UNICODE)
+-	if (parent->i_sb->s_encoding && IS_CASEFOLDED(parent) &&
+-	    (!IS_ENCRYPTED(parent) || fscrypt_has_encryption_key(parent))) {
+-		if (fname->cf_name.name) {
+-			if (IS_ENCRYPTED(parent)) {
+-				if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
+-					fname->hinfo.minor_hash !=
+-						EXT4_DIRENT_MINOR_HASH(de)) {
+-
+-					return false;
+-				}
+-			}
+-		}
++	if (IS_ENCRYPTED(parent) && fname->cf_name.name) {
++		if (fname->hinfo.hash != EXT4_DIRENT_HASH(de) ||
++		    fname->hinfo.minor_hash != EXT4_DIRENT_MINOR_HASH(de))
++			return false;
++	}
+ 
++	if (parent->i_sb->s_encoding && IS_CASEFOLDED(parent)) {
+ 		u.folded_name = &fname->cf_name;
+ 		u.usr_name = fname->usr_fname;
+ 
 -- 
 2.35.1
 
