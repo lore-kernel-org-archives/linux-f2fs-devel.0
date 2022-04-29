@@ -4,66 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CB09DC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 31D1EC4332F
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 29 Apr 2022 18:28:01 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nkVLV-0001YK-18; Fri, 29 Apr 2022 18:28:00 +0000
+	id 1nkVLT-0001Xq-MY; Fri, 29 Apr 2022 18:27:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <krisman@collabora.com>) id 1nkVLT-0001Xy-T7
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Apr 2022 18:27:59 +0000
+ (envelope-from <krisman@collabora.com>) id 1nkVLH-0001Xa-Hl
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Apr 2022 18:27:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=LP74SXSLallJDJFvnepUZUaZ4D5qushscWLXFs5HHuM=; b=ZT1ItBVJ6IRVr847+smUa5Y23j
- dWLD7r1tjV35ZXepBi8rNd7Ke+SBR+hRwzv7HS5K3aTInKDNTfahSdlhn8GXwAZWEHGGCcKhPgzNh
- 87+hHzJrfNmrloMhkrPTLgjR+oVGLLm81QIjFR7ABlwIzvTTmPLllGuOj8zOip1KE6OY=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=LP74SXSLallJDJFvnepUZUaZ4D5qushscWLXFs5HHuM=; b=ItoywerurUe/Bx4z/H/VM6q0in
- 2OJ76BtMeD0r3iBO9auAwgBjjJUt9O2zDOWHYFtdZ4CjyWtTxDGnTwqjEkGUvPn1wKTC7RnUlKUvN
- XofZZGwHhnUD7tuJMYYC62w+bY8+0QCWcJuvWwYyRCE16SP6K3poymrYKC3Adlry5Glg=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Pzz3TR78yjKnMD8p0e+MAEfO6kQl7yW/9n6UzlnQ5vA=; b=MUDzEezD/WKc9pEaZkhYJBqXfT
+ 0fwRqRuyx1FnY+zFCnmGDgPXiekmjlEiB4QmFbBBpSOuDeZ+L45SP2HPgvHUvt0LwZDnl3iwhIoTr
+ cRof6DUFn8unp2lpp432VtIBBas98Jt8aE7ADglPq/IBLlvZAwZ2W2jmWfC+K+SWfW88=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Pzz3TR78yjKnMD8p0e+MAEfO6kQl7yW/9n6UzlnQ5vA=; b=G
+ OcV5e4uLOSlK77sR6hg7PKMChfhVsIYw27kq8CgwbIK0gvETcIVT/nTZotgpl/OLYycqSh/FoXD7y
+ w2Ab72eEnzbvdNUJhuuAXUUiukNr4WfSKs4GLgW2CGIBzHNJTejU2beCuIbGO8ox92hOZX+BI/IF9
+ ku5aK6N5Ybyym+ew=;
 Received: from bhuna.collabora.co.uk ([46.235.227.227])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nkVLS-0001qU-68
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Apr 2022 18:27:58 +0000
+ id 1nkVLC-00E43V-Bt
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 29 Apr 2022 18:27:46 +0000
 Received: from [127.0.0.1] (localhost [127.0.0.1])
- (Authenticated sender: krisman) with ESMTPSA id C488B1F46913
+ (Authenticated sender: krisman) with ESMTPSA id B275E1F4690E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
- s=mail; t=1651256872;
- bh=oEaF20C4aIC1tZklEgboa5zDbpP1I68FAiSAwW9buHM=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=QZiYqebtw0VKMXprv4ZNnM3H7vtYZPKX58JkORmEchJUySqza4uy5Q9CKjmGI7mPQ
- tROHXkf7L6iG6XdVaMJGPo6eXhxseAjtwu7lY+UPuj4JUezdm7RqK20AtLL/7IOJND
- BIr+mRAC68H18gPtn9rImNJ8OOA/pgFmb1Ja+A2YJq8nhNcnvyIJSG3lq9ZF5XQ291
- Q08vP+k7+p4To4m9QumYjKXVjPjI1WuTyeoBI2yuvyrYyXFAiKc3dpVA2u2cvjCP7N
- hB+B7edkf2moDEVQ79Bdd7hFFYbRZiG6saRyhHYU700Y0qM0vMN/4se7M3G7eNsPo5
- J8im4PrK7p1xA==
+ s=mail; t=1651256855;
+ bh=BennjuHd6cboenERnfAOrIYnBLd5KMc0poz3LPBQ9hQ=;
+ h=From:To:Cc:Subject:Date:From;
+ b=M07arppDaVxsrRh+13BjTik245FkbwpbvYdveXca5NR7rll6mK85puUsuqYBuNxTv
+ 36b62YjR79DPSKBsaxSw3fbsOmAWdRHs7MNP5CBjXm9BI9rQTgS+EcoirCv4kSeADT
+ hswVnZUTnj03JstDOzUm+mjFs/PoBFo1j5zwj4JgpBqKYIGgzUIKXuZJwaIHvDDp8B
+ /zOaoshm4KeWVBUKmmHtQ6teirk1YScRsVR4unylK+XeWFUhn7d15PmPfkrzmKXVLn
+ 9ZBuKdx6jGfrh7lopvDdU0jaGPU9VJ0YHSM/6ZemSOIA6nq5oJJ032VBYVnZw66U8o
+ KGNPWpAV/1i+A==
 From: Gabriel Krisman Bertazi <krisman@collabora.com>
 To: tytso@mit.edu,
 	adilger.kernel@dilger.ca,
 	jaegeuk@kernel.org
-Date: Fri, 29 Apr 2022 14:27:26 -0400
-Message-Id: <20220429182728.14008-6-krisman@collabora.com>
+Date: Fri, 29 Apr 2022 14:27:21 -0400
+Message-Id: <20220429182728.14008-1-krisman@collabora.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220429182728.14008-1-krisman@collabora.com>
-References: <20220429182728.14008-1-krisman@collabora.com>
 MIME-Version: 1.0
-X-Headers-End: 1nkVLS-0001qU-68
-Subject: [f2fs-dev] [PATCH v3 5/7] ext4: Log error when lookup of encoded
- dentry fails
+X-Headers-End: 1nkVLC-00E43V-Bt
+Subject: [f2fs-dev] [PATCH v3 0/7] Clean up the case-insenstive lookup path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,34 +79,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If the volume is in strict mode, ext4_ci_compare can report a broken
-encoding name.  This will not trigger on a bad lookup, which is caught
-earlier, only if the actual disk name is bad.
+This is the v3 of this series.  It fixes a build error when building
+filesystems as a module on the previous series.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+* v2
 
----
+This is the v2 of this series.  it applies Eric's comments and extend
+the series to complete the merge of generic_ci_match for ext4 and f2fs.
 
-Changes since v1:
-  - reword error message "file in directory" -> "filename" (Eric)
----
- fs/ext4/namei.c | 3 +++
- 1 file changed, 3 insertions(+)
+* Original cover letter
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index e450e52eef48..d53c8d101099 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1457,6 +1457,9 @@ static bool ext4_match(struct inode *parent,
- 			 * only case where it happens is on a disk
- 			 * corruption or ENOMEM.
- 			 */
-+			if (ret == -EINVAL)
-+				EXT4_ERROR_INODE(parent,
-+						 "Bad encoded filename");
- 			return false;
- 		}
- 		return ret;
+The case-insensitive implementations in f2fs and ext4 have quite a bit
+of duplicated code.  This series simplifies the ext4 version, with the
+goal of extracting ext4_ci_compare into a helper library that can be
+used by both filesystems.
+
+While there, I noticed we can leverage the utf8 functions to detect
+encoded names that are corrupted in the filesystem. The final patch
+adds an ext4 error on that scenario, to mark the filesystem as
+corrupted.
+
+This series survived passes of xfstests -g quick.
+
+Gabriel Krisman Bertazi (7):
+  ext4: Match the f2fs ci_compare implementation
+  ext4: Simplify the handling of cached insensitive names
+  ext4: Implement ci comparison using unicode_name
+  ext4: Simplify hash check on ext4_match
+  ext4: Log error when lookup of encoded dentry fails
+  ext4: Move ext4_match_ci into libfs
+  f2fs: Reuse generic_ci_match for ci comparisons
+
+ fs/ext4/ext4.h     |   2 +-
+ fs/ext4/namei.c    | 110 ++++++++++++++-------------------------------
+ fs/f2fs/dir.c      |  58 ++----------------------
+ fs/libfs.c         |  61 +++++++++++++++++++++++++
+ include/linux/fs.h |   8 ++++
+ 5 files changed, 107 insertions(+), 132 deletions(-)
+
 -- 
 2.35.1
 
