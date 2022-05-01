@@ -4,70 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AAEFDC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  1 May 2022 05:13:05 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1298FC4167B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  1 May 2022 05:13:06 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nl1tJ-0001cL-TL; Sun, 01 May 2022 05:13:05 +0000
+	id 1nl1tJ-0001Up-OB; Sun, 01 May 2022 05:13:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1nl1tF-0001bh-CF
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 May 2022 05:13:00 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1nl1tH-0001UN-E6
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 May 2022 05:13:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5CoeRvUMcu+Dj7auxcqJCgwRNM3BnLFMHC8re5GrgdQ=; b=g91CIJvABoal2YeaTXR8wpTMNr
- TCGc2u9Ixhi6pq64WcBmWsN/ZQLlxy5KGvBpwTxaXW+wIhZC/IBLb2q0+BfqAmMDpd3WFrVunF2NM
- byZ4D1seKB2wsodF954OkHtX99hyQtSc6e7u7VLt2r46vrlYnPK+pxJMvs1AarWqoJuk=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=5CoeRvUMcu+Dj7auxcqJCgwRNM3BnLFMHC8re5GrgdQ=; b=byB9WmDea0useG2a9qGmdBMPbC
- LWfEaEKe0IU1q1IiY08JkwDyVu+PwWA+31MhLNkkWuShx8qs7+vJ6UoM0beNgFK9hPb9BjmfpH6nR
- eToGLcj5eNDeU2a2nCLz3m7UOyzHVY45l4D+pda1GQ4RevC+cSv27Kk4iKtAHsriyLqo=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=6BmiW2OCNeX7cl61x4k4MzVIVJWZ9kKhnQk5cBd5l6M=; b=ZpQg9EgYR2TCEs0FVpfucIljtV
+ UWYjLFzZqNr/3uWmVyw3hRBkOsFJ/D/MKafbKfq3DKnDG3bnyIulsB+mYwUkgItaP5Bwxtw6DFW8C
+ DBHHxKmgznXTGOD26/Kby2WwZlOP+xSt8Y5uoLIAKJ8IUL0cwF4hNMG7YBsTWae0t1ko=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=6BmiW2OCNeX7cl61x4k4MzVIVJWZ9kKhnQk5cBd5l6M=; b=f
+ MpVY0CAhQIWdJKmUQIy8LbD+MsObw3OwjwZRkloftIUTDSe3xcb9s5hr6xTX4TRJkCUtt67skEImS
+ qv4TTXmG0QSm+QYno9Akv9cJ7drLaT7eeJpe1BEcIC5bpwK7LbAQCmDaXnVTQvcScRthD7SrUFlwl
+ RKhypjvw3vN4fR8I=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nl1tD-00FPch-9D
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 May 2022 05:13:00 +0000
+ id 1nl1tE-00FPcg-LV
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 01 May 2022 05:13:01 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 6FE99611B0;
- Sun,  1 May 2022 05:12:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65DC8C385B5;
+ by ams.source.kernel.org (Postfix) with ESMTPS id B5798B80CB4;
  Sun,  1 May 2022 05:12:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E5C6C385A9;
+ Sun,  1 May 2022 05:12:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1651381967;
- bh=lZT1gByo3Y9Ub5T0TA1IR1XBzyPH8WZkJ9F8N3p3es0=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=T1+iweG7jBy7ELy5r7MYHZHjHcu7ab9qUVX9z9mtOopxiYXR3GmtbIVHrvfIq0eIG
- 7PUhfBXIP7yVu5kYBw+5KGjR8vunqyY5dBv9I5zbDqqXj5vR5fD73Fvzhe/DmCweL+
- hIDnU0LhqOzYEcD4HGGLbF04ArCT6/dF2S5HXYOnnKv4OHPE4T3UxKUUCudovpcqQX
- Pr6d8ah7kthYGLA3m18muKEZv3nOOZ8lo1tg78FTiZWkRAC6xvBzXpIUP0VHU9yTRF
- 36AIHnGOB0/DP2Qxwk9hYgm0lsUXf87CYWnKEukWlweCR0i1deBNzR6/UHH+wX6ak/
- IJtWAQr466irQ==
+ s=k20201202; t=1651381966;
+ bh=lyQVprEqofKA88ZqVyvAxgyulhSJmHuioX9oIOz5/Ho=;
+ h=From:To:Cc:Subject:Date:From;
+ b=D94sKXm1Ewdq61DUBjxojjZ5SeyesoqsXYzRu4w+7EGm+Q8ardsu/GSFUx/C++uA9
+ WnBJXaJwyeH+Yc4Fe4pABwFQIglRcjdSwATubs0u8Hp9f/LYSk3wHA7YFZCoAZzvwO
+ Wwv8zBRN1B4FhHvF+poq2FHm4UzyVVzmQp4heMOMbG5iuCmUbIBzo3ShwpF++d3z0D
+ UFE/oJXvfivQN5yIEDmgRp++MvKag34kkleDWovEHiTW1hCVBkLXYhKqHAn142SANW
+ K0C3O4JIZ5A6GquQnQQP6NphvplYaSvIeNct/0Qrq2LdE6GFGI2SjkjLSIuQ91ZY9M
+ yqByXPrFDl6EA==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
-Date: Sat, 30 Apr 2022 22:08:53 -0700
-Message-Id: <20220501050857.538984-4-ebiggers@kernel.org>
+Date: Sat, 30 Apr 2022 22:08:50 -0700
+Message-Id: <20220501050857.538984-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20220501050857.538984-1-ebiggers@kernel.org>
-References: <20220501050857.538984-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1nl1tD-00FPch-9D
-Subject: [f2fs-dev] [PATCH v2 3/7] fscrypt: factor out
- fscrypt_policy_to_key_spec()
+X-Headers-End: 1nl1tE-00FPcg-LV
+Subject: [f2fs-dev] [PATCH v2 0/7] test_dummy_encryption fixes and cleanups
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,94 +82,54 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+This series cleans up and fixes the way that ext4 and f2fs handle the
+test_dummy_encryption mount option:
 
-Factor out a function that builds the fscrypt_key_specifier for an
-fscrypt_policy.  Before this was only needed when finding the key for a
-file, but now it will also be needed for test_dummy_encryption support.
+- Patches 1-2 make test_dummy_encryption consistently require that the
+  'encrypt' feature flag already be enabled and that
+  CONFIG_FS_ENCRYPTION be enabled.  Note, this will cause xfstest
+  ext4/053 to start failing; my xfstests patch "ext4/053: update the
+  test_dummy_encryption tests" will fix that.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/crypto/fscrypt_private.h |  2 ++
- fs/crypto/keysetup.c        | 20 +++-----------------
- fs/crypto/policy.c          | 20 ++++++++++++++++++++
- 3 files changed, 25 insertions(+), 17 deletions(-)
+- Patches 3-7 replace the fscrypt_set_test_dummy_encryption() helper
+  function with new functions that work properly with the new mount API,
+  by splitting up the parsing, checking, and applying steps.  These fix
+  bugs that were introduced when ext4 started using the new mount API.
 
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 5b0a9e6478b5d..f32d0ee91e70e 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -621,6 +621,8 @@ int fscrypt_setup_v1_file_key_via_subscribed_keyrings(struct fscrypt_info *ci);
- 
- bool fscrypt_policies_equal(const union fscrypt_policy *policy1,
- 			    const union fscrypt_policy *policy2);
-+int fscrypt_policy_to_key_spec(const union fscrypt_policy *policy,
-+			       struct fscrypt_key_specifier *key_spec);
- bool fscrypt_supported_policy(const union fscrypt_policy *policy_u,
- 			      const struct inode *inode);
- int fscrypt_policy_from_context(union fscrypt_policy *policy_u,
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index eede186b04ce3..571d220d6e226 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -425,23 +425,9 @@ static int setup_file_encryption_key(struct fscrypt_info *ci,
- 	if (err)
- 		return err;
- 
--	switch (ci->ci_policy.version) {
--	case FSCRYPT_POLICY_V1:
--		mk_spec.type = FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR;
--		memcpy(mk_spec.u.descriptor,
--		       ci->ci_policy.v1.master_key_descriptor,
--		       FSCRYPT_KEY_DESCRIPTOR_SIZE);
--		break;
--	case FSCRYPT_POLICY_V2:
--		mk_spec.type = FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER;
--		memcpy(mk_spec.u.identifier,
--		       ci->ci_policy.v2.master_key_identifier,
--		       FSCRYPT_KEY_IDENTIFIER_SIZE);
--		break;
--	default:
--		WARN_ON(1);
--		return -EINVAL;
--	}
-+	err = fscrypt_policy_to_key_spec(&ci->ci_policy, &mk_spec);
-+	if (err)
-+		return err;
- 
- 	key = fscrypt_find_master_key(ci->ci_inode->i_sb, &mk_spec);
- 	if (IS_ERR(key)) {
-diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
-index ed3d623724cdd..2a11276913a98 100644
---- a/fs/crypto/policy.c
-+++ b/fs/crypto/policy.c
-@@ -32,6 +32,26 @@ bool fscrypt_policies_equal(const union fscrypt_policy *policy1,
- 	return !memcmp(policy1, policy2, fscrypt_policy_size(policy1));
- }
- 
-+int fscrypt_policy_to_key_spec(const union fscrypt_policy *policy,
-+			       struct fscrypt_key_specifier *key_spec)
-+{
-+	switch (policy->version) {
-+	case FSCRYPT_POLICY_V1:
-+		key_spec->type = FSCRYPT_KEY_SPEC_TYPE_DESCRIPTOR;
-+		memcpy(key_spec->u.descriptor, policy->v1.master_key_descriptor,
-+		       FSCRYPT_KEY_DESCRIPTOR_SIZE);
-+		return 0;
-+	case FSCRYPT_POLICY_V2:
-+		key_spec->type = FSCRYPT_KEY_SPEC_TYPE_IDENTIFIER;
-+		memcpy(key_spec->u.identifier, policy->v2.master_key_identifier,
-+		       FSCRYPT_KEY_IDENTIFIER_SIZE);
-+		return 0;
-+	default:
-+		WARN_ON(1);
-+		return -EINVAL;
-+	}
-+}
-+
- static const union fscrypt_policy *
- fscrypt_get_dummy_policy(struct super_block *sb)
- {
+We can either take all these patches through the fscrypt tree, or we can
+take them in multiple cycles as follows:
+
+    1. patch 1 via ext4, patch 2 via f2fs, patch 3-4 via fscrypt
+    2. patch 5 via ext4, patch 6 via f2fs
+    3. patch 7 via fscrypt
+
+Ted and Jaegeuk, let me know what you prefer.
+
+Changed v1 => v2:
+    - Added patches 2-7
+    - Also reject test_dummy_encryption when !CONFIG_FS_ENCRYPTION
+
+Eric Biggers (7):
+  ext4: only allow test_dummy_encryption when supported
+  f2fs: reject test_dummy_encryption when !CONFIG_FS_ENCRYPTION
+  fscrypt: factor out fscrypt_policy_to_key_spec()
+  fscrypt: add new helper functions for test_dummy_encryption
+  ext4: fix up test_dummy_encryption handling for new mount API
+  f2fs: use the updated test_dummy_encryption helper functions
+  fscrypt: remove fscrypt_set_test_dummy_encryption()
+
+ fs/crypto/fscrypt_private.h |   6 +-
+ fs/crypto/keyring.c         |  64 +++++++++++---
+ fs/crypto/keysetup.c        |  20 +----
+ fs/crypto/policy.c          | 121 +++++++++++++------------
+ fs/ext4/ext4.h              |   6 --
+ fs/ext4/super.c             | 172 ++++++++++++++++++++----------------
+ fs/f2fs/super.c             |  28 ++++--
+ include/linux/fscrypt.h     |  41 ++++++++-
+ 8 files changed, 280 insertions(+), 178 deletions(-)
+
+
+base-commit: 8013d1d3d2e33236dee13a133fba49ad55045e79
 -- 
 2.36.0
 
