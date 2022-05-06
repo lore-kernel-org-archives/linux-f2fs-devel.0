@@ -4,71 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 17FBAC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 May 2022 23:20:56 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 85568C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  6 May 2022 23:22:14 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nn7Fm-0007zp-1s; Fri, 06 May 2022 23:20:54 +0000
+	id 1nn7H5-0007iV-DI; Fri, 06 May 2022 23:22:13 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1nn7Fk-0007za-1O
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 May 2022 23:20:52 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1nn7H3-0007iG-Ve
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 May 2022 23:22:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Z3MITmrFok6J08UNGUa0mKHIflVrhnaqlywby9eS/NA=; b=J5ueXJkW7Qt5KObtxmuPw+vgu7
- sfUUh1D00XXFMkwBfEBPadf4pcuu0oTwqUEGNy/vRXKW26ZZtUxbfZuAZh9CXRwRZ0cGac++F6OFP
- G9FpfZcw6oTEovpIwIp4Eq4tf3nLc/kb23IFW5yRBxhUGuKYLjuYi3GbbPPWHma/YwvY=;
+ bh=9v5cJIGJjN/ZJSHwfCWuva2dmmrJCYY4q9juHAb91eY=; b=Q9OuPmiF9OPo/2JWUmkj3gB6e4
+ DwCQJKrjBUg25v852BdkBrv2rkHtIXxmO5P20PEoimDiVWoEn6S9+DG4GOOR3aKNxOdmw/Z5PUrGP
+ mQu3FPk2QYo8q4Bv7KABqc73CLi4fyYHPNfFqvpvWvT1bAnCFxVt5sN2YUzySSK3DsiM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Z3MITmrFok6J08UNGUa0mKHIflVrhnaqlywby9eS/NA=; b=FoElE9tpaDOiBWVMI/PQG8Zww/
- 2wP2EDCMvIUNqQ1sQitT36DHqg9uinU/lKOgerut7e3w+q5HcYYx131MYiaWFhV6gsd+5BI71HU6d
- B8nysu+WYPQZXc5bPnr/LiHHSH9sURXeKqUdcXx1f4Ra+7Tansk325hBDRebwEjLxke0=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=9v5cJIGJjN/ZJSHwfCWuva2dmmrJCYY4q9juHAb91eY=; b=V50rlYV8rVUAMDrvTIuKk7Kg1K
+ YX7aAYksp4uVtASBYw7rYXPNAszTgagi8o7oFjv/QiBX/W4n8IMzOBpIUTTYuHAJfSK8khGMX4sXK
+ twdqV765QHTIhAj/g5Suf3nQKZikA0nnOXsJtt3jELzX9zbB9K1bSjHx3UEf3iE1Un9g=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nn7Fj-0007nz-4w
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 May 2022 23:20:52 +0000
+ id 1nn7H1-003dDa-KP
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 06 May 2022 23:22:12 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 69524B839F3
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  6 May 2022 23:20:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9CDC385AF;
- Fri,  6 May 2022 23:20:37 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 0339E61A28;
+ Fri,  6 May 2022 23:22:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC7DC385A9;
+ Fri,  6 May 2022 23:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1651879237;
- bh=7tiGj1Iqc5iCz3DAUKEe7nl0cr0APo8/CGbW4vUHIB0=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=HTZAptYiF24wqH56nf4+kjuYXnL0qX4i6DkZZSi1KfNsULp3VJvhqw6fNhHvjKWbJ
- lZLTiF6Yr5pZ7cgoI8Cr0WFf7ym0MDLSD+9Pc7cbxTtui5hDpTdf7gzB7FA7tQReta
- FyIpq8EJ6z59oIEPXfK/gT9gDqmavlJOgZO7QpCFzFdiA727daYuBRBgVBL8rFzRoE
- W6a7wUbiBnsXxyYoudHibBvVhEwM5kRRe69Qh5RpyYtN1m2QH8bR0XPNhCKwq5nwrg
- 10ZGqQDdPMxRkcRiSWnPVl214HDRxRVH8udhkUR0HvsTxYVtZuxA/1da9Ti+W25S9U
- bTerOWN4g+BXw==
+ s=k20201202; t=1651879325;
+ bh=0KxPlUem/CmfBocjj06kFOXXVyKwRj4DKawIeoBMDZU=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=DytsWlQv+vlTfw3SyKSmWAsf//Ttg/uqV9gzpcRjh6OX5v6e80FekiBsaG0wC4rFZ
+ ecUCSYAwNtVtum8eH0otLcUaLW+D3a4p/JvxLleZBj2Sv0zViSLTAXakViif5mlAZl
+ Eh2gWhdePTkHf0krStnVVgRxW14buxVzy1KFrCLBNxcZhsN9jDPEfAHlCp7bNgc5VA
+ uX2Oa6GExgVkNfyLgZNILxCfpmEWA5PxWivr7PXvGObIoEjgHEsSaCY1XtoDwLFhDm
+ Ad5GAFCrXPFxgoYArKqguaL7+DiGzC46W8wEOTIy6oKcPrTeCQv+pdX1uTQZeNvikv
+ iYOIHUIieMaQA==
+Date: Fri, 6 May 2022 16:22:03 -0700
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Fri,  6 May 2022 16:20:31 -0700
-Message-Id: <20220506232032.1264078-4-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.36.0.512.ge40c2bad7a-goog
-In-Reply-To: <20220506232032.1264078-1-jaegeuk@kernel.org>
-References: <20220506232032.1264078-1-jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <YnWtm4opVq3JypW9@google.com>
+References: <20220506013306.3563504-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1nn7Fj-0007nz-4w
-Subject: [f2fs-dev] [PATCH 4/5] f2fs: do not stop GC when requiring a free
- section
+Content-Disposition: inline
+In-Reply-To: <20220506013306.3563504-1-chao@kernel.org>
+X-Headers-End: 1nn7H1-003dDa-KP
+Subject: Re: [f2fs-dev] [PATCH v4] f2fs: fix to do sanity check on
+ total_data_blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,201 +78,147 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Ming Yan <yanming@tju.edu.cn>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The f2fs_gc uses a bitmap to indicate pinned sections, but when disabling
-chckpoint, we call f2fs_gc() with NULL_SEGNO which selects the same dirty
-segment as a victim all the time, resulting in checkpoint=disable failure,
-for example. Let's pick another one, if we fail to collect it.
+I added a macro to clean up. Could you please check this out?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h              |  1 +
- fs/f2fs/file.c              | 12 ++++++++----
- fs/f2fs/gc.c                | 11 +++++++----
- fs/f2fs/segment.c           |  3 ++-
- fs/f2fs/super.c             |  3 ++-
- include/trace/events/f2fs.h | 11 ++++++++---
- 6 files changed, 28 insertions(+), 13 deletions(-)
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=6b8beca0edd32075a769bfe4178ca00c0dcd22a9
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d49b9b476592..27871f6efb01 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1282,6 +1282,7 @@ struct f2fs_gc_control {
- 	bool no_bg_gc;			/* check the space and stop bg_gc */
- 	bool should_migrate_blocks;	/* should migrate blocks */
- 	bool err_gc_skipped;		/* return EAGAIN if GC skipped */
-+	unsigned int nr_free_secs;	/* # of free sections to do GC */
- };
- 
- /* For s_flag in struct f2fs_sb_info */
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 0e7d101c3e65..7072c2b86b2f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1650,7 +1650,8 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
- 	struct f2fs_gc_control gc_control = { .victim_segno = NULL_SEGNO,
- 			.init_gc_type = FG_GC,
- 			.should_migrate_blocks = false,
--			.err_gc_skipped = true };
-+			.err_gc_skipped = true,
-+			.nr_free_secs = 0 };
- 	pgoff_t pg_start, pg_end;
- 	loff_t new_size = i_size_read(inode);
- 	loff_t off_end;
-@@ -2453,7 +2454,8 @@ static int f2fs_ioc_gc(struct file *filp, unsigned long arg)
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct f2fs_gc_control gc_control = { .victim_segno = NULL_SEGNO,
- 			.no_bg_gc = false,
--			.should_migrate_blocks = false };
-+			.should_migrate_blocks = false,
-+			.nr_free_secs = 0 };
- 	__u32 sync;
- 	int ret;
- 
-@@ -2494,7 +2496,8 @@ static int __f2fs_ioc_gc_range(struct file *filp, struct f2fs_gc_range *range)
- 			.init_gc_type = range->sync ? FG_GC : BG_GC,
- 			.no_bg_gc = false,
- 			.should_migrate_blocks = false,
--			.err_gc_skipped = range->sync };
-+			.err_gc_skipped = range->sync,
-+			.nr_free_secs = 0 };
- 	u64 end;
- 	int ret;
- 
-@@ -2940,7 +2943,8 @@ static int f2fs_ioc_flush_device(struct file *filp, unsigned long arg)
- 	struct f2fs_gc_control gc_control = {
- 			.init_gc_type = FG_GC,
- 			.should_migrate_blocks = true,
--			.err_gc_skipped = true };
-+			.err_gc_skipped = true,
-+			.nr_free_secs = 0 };
- 	int ret;
- 
- 	if (!capable(CAP_SYS_ADMIN))
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index ec3f6f876e76..f63576ff1c2d 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -147,6 +147,7 @@ static int gc_thread_func(void *data)
- 
- 		gc_control.init_gc_type = sync_mode ? FG_GC : BG_GC;
- 		gc_control.no_bg_gc = foreground;
-+		gc_control.nr_free_secs = foreground ? 1 : 0;
- 
- 		/* if return value is not zero, no victim was selected */
- 		if (f2fs_gc(sbi, &gc_control))
-@@ -1776,6 +1777,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
- 	unsigned int skipped_round = 0, round = 0;
- 
- 	trace_f2fs_gc_begin(sbi->sb, gc_type, gc_control->no_bg_gc,
-+				gc_control->nr_free_secs,
- 				get_pages(sbi, F2FS_DIRTY_NODES),
- 				get_pages(sbi, F2FS_DIRTY_DENTS),
- 				get_pages(sbi, F2FS_DIRTY_IMETA),
-@@ -1848,11 +1850,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
- 	if (gc_type == FG_GC)
- 		sbi->cur_victim_sec = NULL_SEGNO;
- 
--	if (gc_control->init_gc_type == FG_GC)
--		goto stop;
--
--	if (!has_not_enough_free_secs(sbi, sec_freed, 0))
-+	if ((gc_control->init_gc_type == FG_GC ||
-+			!has_not_enough_free_secs(sbi, sec_freed, 0))) {
-+		if (sec_freed < gc_control->nr_free_secs)
-+			goto gc_more;
- 		goto stop;
-+	}
- 
- 	if (skipped_round <= MAX_SKIP_GC_COUNT || skipped_round * 2 < round) {
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index bc63f0572c64..d6b9231ab0e1 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -528,7 +528,8 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- 				.init_gc_type = BG_GC,
- 				.no_bg_gc = true,
- 				.should_migrate_blocks = false,
--				.err_gc_skipped = false };
-+				.err_gc_skipped = false,
-+				.nr_free_secs = 1 };
- 			f2fs_down_write(&sbi->gc_lock);
- 			f2fs_gc(sbi, &gc_control);
- 		}
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8b23fa6fc6b7..5d5b35067c3d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2084,7 +2084,8 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 			.victim_segno = NULL_SEGNO,
- 			.init_gc_type = FG_GC,
- 			.should_migrate_blocks = false,
--			.err_gc_skipped = true };
-+			.err_gc_skipped = true,
-+			.nr_free_secs = 1 };
- 
- 		f2fs_down_write(&sbi->gc_lock);
- 		err = f2fs_gc(sbi, &gc_control);
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 6699174977a3..349679a72301 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -653,18 +653,21 @@ TRACE_EVENT(f2fs_background_gc,
- TRACE_EVENT(f2fs_gc_begin,
- 
- 	TP_PROTO(struct super_block *sb, int gc_type, bool no_bg_gc,
-+			unsigned int nr_free_secs,
- 			long long dirty_nodes, long long dirty_dents,
- 			long long dirty_imeta, unsigned int free_sec,
- 			unsigned int free_seg, int reserved_seg,
- 			unsigned int prefree_seg),
- 
--	TP_ARGS(sb, gc_type, no_bg_gc, dirty_nodes, dirty_dents, dirty_imeta,
-+	TP_ARGS(sb, gc_type, no_bg_gc, nr_free_secs, dirty_nodes,
-+		dirty_dents, dirty_imeta,
- 		free_sec, free_seg, reserved_seg, prefree_seg),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,		dev)
- 		__field(int,		gc_type)
- 		__field(bool,		no_bg_gc)
-+		__field(unsigned int,	nr_free_secs)
- 		__field(long long,	dirty_nodes)
- 		__field(long long,	dirty_dents)
- 		__field(long long,	dirty_imeta)
-@@ -678,6 +681,7 @@ TRACE_EVENT(f2fs_gc_begin,
- 		__entry->dev		= sb->s_dev;
- 		__entry->gc_type	= gc_type;
- 		__entry->no_bg_gc	= no_bg_gc;
-+		__entry->nr_free_secs	= nr_free_secs;
- 		__entry->dirty_nodes	= dirty_nodes;
- 		__entry->dirty_dents	= dirty_dents;
- 		__entry->dirty_imeta	= dirty_imeta;
-@@ -687,12 +691,13 @@ TRACE_EVENT(f2fs_gc_begin,
- 		__entry->prefree_seg	= prefree_seg;
- 	),
- 
--	TP_printk("dev = (%d,%d), gc_type = %s, no_background_GC = %d, nodes = %lld, "
--		"dents = %lld, imeta = %lld, free_sec:%u, free_seg:%u, "
-+	TP_printk("dev = (%d,%d), gc_type = %s, no_background_GC = %d, nr_free_secs = %u, "
-+		"nodes = %lld, dents = %lld, imeta = %lld, free_sec:%u, free_seg:%u, "
- 		"rsv_seg:%d, prefree_seg:%u",
- 		show_dev(__entry->dev),
- 		show_gc_type(__entry->gc_type),
- 		__entry->no_bg_gc,
-+		__entry->nr_free_secs,
- 		__entry->dirty_nodes,
- 		__entry->dirty_dents,
- 		__entry->dirty_imeta,
--- 
-2.36.0.512.ge40c2bad7a-goog
-
+On 05/06, Chao Yu wrote:
+> As Yanming reported in bugzilla:
+> 
+> https://bugzilla.kernel.org/show_bug.cgi?id=215916
+> 
+> The kernel message is shown below:
+> 
+> kernel BUG at fs/f2fs/segment.c:2560!
+> Call Trace:
+>  allocate_segment_by_default+0x228/0x440
+>  f2fs_allocate_data_block+0x13d1/0x31f0
+>  do_write_page+0x18d/0x710
+>  f2fs_outplace_write_data+0x151/0x250
+>  f2fs_do_write_data_page+0xef9/0x1980
+>  move_data_page+0x6af/0xbc0
+>  do_garbage_collect+0x312f/0x46f0
+>  f2fs_gc+0x6b0/0x3bc0
+>  f2fs_balance_fs+0x921/0x2260
+>  f2fs_write_single_data_page+0x16be/0x2370
+>  f2fs_write_cache_pages+0x428/0xd00
+>  f2fs_write_data_pages+0x96e/0xd50
+>  do_writepages+0x168/0x550
+>  __writeback_single_inode+0x9f/0x870
+>  writeback_sb_inodes+0x47d/0xb20
+>  __writeback_inodes_wb+0xb2/0x200
+>  wb_writeback+0x4bd/0x660
+>  wb_workfn+0x5f3/0xab0
+>  process_one_work+0x79f/0x13e0
+>  worker_thread+0x89/0xf60
+>  kthread+0x26a/0x300
+>  ret_from_fork+0x22/0x30
+> RIP: 0010:new_curseg+0xe8d/0x15f0
+> 
+> The root cause is: ckpt.valid_block_count is inconsistent with SIT table,
+> stat info indicates filesystem has free blocks, but SIT table indicates
+> filesystem has no free segment.
+> 
+> So that during garbage colloection, it triggers panic when LFS allocator
+> fails to find free segment.
+> 
+> This patch tries to fix this issue by checking consistency in between
+> ckpt.valid_block_count and block accounted from SIT.
+> 
+> Cc: stable@vger.kernel.org
+> Reported-by: Ming Yan <yanming@tju.edu.cn>
+> Signed-off-by: Chao Yu <chao.yu@oppo.com>
+> ---
+> v4:
+> - fix to set data/node type correctly.
+>  fs/f2fs/segment.c | 37 ++++++++++++++++++++++++++-----------
+>  1 file changed, 26 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 3a3e2cec2ac4..4735d477059d 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -4461,7 +4461,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+>  	unsigned int i, start, end;
+>  	unsigned int readed, start_blk = 0;
+>  	int err = 0;
+> -	block_t total_node_blocks = 0;
+> +	block_t sit_valid_blocks[2] = {0, 0};
+> +	int type;
+>  
+>  	do {
+>  		readed = f2fs_ra_meta_pages(sbi, start_blk, BIO_MAX_VECS,
+> @@ -4486,8 +4487,9 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+>  			if (err)
+>  				return err;
+>  			seg_info_from_raw_sit(se, &sit);
+> -			if (IS_NODESEG(se->type))
+> -				total_node_blocks += se->valid_blocks;
+> +
+> +			type = IS_NODESEG(se->type) ? NODE : DATA;
+> +			sit_valid_blocks[type] += se->valid_blocks;
+>  
+>  			if (f2fs_block_unit_discard(sbi)) {
+>  				/* build discard map only one time */
+> @@ -4527,15 +4529,17 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+>  		sit = sit_in_journal(journal, i);
+>  
+>  		old_valid_blocks = se->valid_blocks;
+> -		if (IS_NODESEG(se->type))
+> -			total_node_blocks -= old_valid_blocks;
+> +
+> +		type = IS_NODESEG(se->type) ? NODE : DATA;
+> +		sit_valid_blocks[type] -= old_valid_blocks;
+>  
+>  		err = check_block_count(sbi, start, &sit);
+>  		if (err)
+>  			break;
+>  		seg_info_from_raw_sit(se, &sit);
+> -		if (IS_NODESEG(se->type))
+> -			total_node_blocks += se->valid_blocks;
+> +
+> +		type = IS_NODESEG(se->type) ? NODE : DATA;
+> +		sit_valid_blocks[type] += se->valid_blocks;
+>  
+>  		if (f2fs_block_unit_discard(sbi)) {
+>  			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
+> @@ -4557,13 +4561,24 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+>  	}
+>  	up_read(&curseg->journal_rwsem);
+>  
+> -	if (!err && total_node_blocks != valid_node_count(sbi)) {
+> +	if (err)
+> +		return err;
+> +
+> +	if (sit_valid_blocks[NODE] != valid_node_count(sbi)) {
+>  		f2fs_err(sbi, "SIT is corrupted node# %u vs %u",
+> -			 total_node_blocks, valid_node_count(sbi));
+> -		err = -EFSCORRUPTED;
+> +			 sit_valid_blocks[NODE], valid_node_count(sbi));
+> +		return -EFSCORRUPTED;
+>  	}
+>  
+> -	return err;
+> +	if (sit_valid_blocks[DATA] + sit_valid_blocks[NODE] >
+> +				valid_user_blocks(sbi)) {
+> +		f2fs_err(sbi, "SIT is corrupted data# %u %u vs %u",
+> +			 sit_valid_blocks[DATA], sit_valid_blocks[NODE],
+> +			 valid_user_blocks(sbi));
+> +		return -EFSCORRUPTED;
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  static void init_free_segmap(struct f2fs_sb_info *sbi)
+> -- 
+> 2.25.1
 
 
 _______________________________________________
