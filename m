@@ -4,74 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EEDA4C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 May 2022 22:25:12 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7AEC9C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 May 2022 23:21:09 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1npdih-0006dJ-Ek; Fri, 13 May 2022 22:25:10 +0000
+	id 1npear-0005mK-Vv; Fri, 13 May 2022 23:21:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1npdig-0006dD-6X
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 May 2022 22:25:09 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1npear-0005m7-8C
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 May 2022 23:21:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/JeOvad8YyJ+qPQC28JKnNdC32tsDQZgCGATg6Uw674=; b=d/xNdi1O5pPWdpi6q/ODBztNZP
- nPFBpaSoSX1XsCFF8qH1p/q+ENo/cJofNrEtFDj8BT4Rv7RPS2/2VNqfz+HciW6tWug1/o9QOPrwc
- EFyMVbF678lLHSVa0ASOWdQTRQxeOpZMJghpm/gOq163U8WA8Fcx8ujYW0aVvASf9CHc=;
+ bh=7p72gSrwz+S8tjHmGUnqX6OOQ4Ua9L/k1bzLr/LqCmI=; b=ZyKiEMrl2GtIgGWIBIj62aTa4V
+ DCHJ/Hexg+H8EtF4xndV62Tn6mt4pVa892h25oyAarB0qTBiMY7VKuJFLwVwe/GChLMhzJAMkPLpF
+ nGNRB6o+3fcdgk24oUAVBRi8O6KMUxb47WR7QLjEaNcP5M7xJ8h0Q2EWrtd7BeO/U2ss=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/JeOvad8YyJ+qPQC28JKnNdC32tsDQZgCGATg6Uw674=; b=mrrR6UdHPoKFZoyz0GZZMbHL8u
- k363h6b5lqBBmVmJ+E+WvNTm2f9BN5Bcb7IcbAvwiS8DOmbEADZ1Z/uBxv01lYhcrE/euVbHSfc7w
- p1AqkQhGZhEDNzSutxl6s1njRn8+Dycus2HVo/3U8KWUlyGVGprT91xMjNjubuVtWXso=;
+ bh=7p72gSrwz+S8tjHmGUnqX6OOQ4Ua9L/k1bzLr/LqCmI=; b=DtPpbzK9NUpM97BMZ/ynjK0zBU
+ 1PfYCdJWw67nNVmDxAcBrU8BHnR2ONiYv+0yqp/PFwB88qe2BR20nk+vxTJFuS+83vwE4bTRhELgv
+ Pon+c6t8v7ELRILuZFP0aMH7CWYYPfFDNfrTrpzaRadQI4XorHVSYCLMgzpQ3tnKtzJA=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1npdid-00BLv9-AJ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 May 2022 22:25:09 +0000
+ id 1npeao-0005Jh-3D
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 May 2022 23:21:07 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id DF26460BDB;
- Fri, 13 May 2022 22:25:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E611C34100;
- Fri, 13 May 2022 22:25:01 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 48E15618D6;
+ Fri, 13 May 2022 23:20:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75FDDC34119;
+ Fri, 13 May 2022 23:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1652480701;
- bh=46ZzQ9/zVtNlgN+LdM8tnWys31361tuY+hidkQ0ImP4=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=RpBhmK2/TGlaJdEdw3TWS5xktiUrwki+rbQQ32EqLFipxVl2+95NoNoz0G4TUi1Uh
- hc6ew21GRzxAL1iDmyQqoLm/yhap52l6fcXezJJqUt6+InjhQZa4exTuTK/qPpWFsD
- 9+A2snKtp0lAFDIGyeYcXeeyZmY9wDvzdWxCMWsofO2WwjKA2jXiHruCuoa9Bwx5dm
- K5xVoHFogQOZHEcyliQ3QIBvHxkbeyCP4iOi+mwOxgGKGDrZSRM676Uk+hFhpbH1mD
- oi50rwjuREDAD3C+HphLzfcP5UI5+fAgsWnVKNBSKAE9A2IER7R53Xfup31xincwy3
- Jkv12aSmqrPyQ==
-Date: Fri, 13 May 2022 15:24:59 -0700
+ s=k20201202; t=1652484055;
+ bh=L54m2DpaZFpXAxYKzTyDvABljacoQOsNHz9nUaWql/A=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=B7Pdogt2HrJlcJjISldAkLeknrqxyzeb7upzoE7f3NkzgAd4lTUsay0RnsfJEjhUY
+ Ugi//hcKXPO/P/jcpoiwZpbcAnbVxqrkJpREAoY10AEVoj1RW1V0GnPNvBZC6SfQ3v
+ XIkiNJR54i87ekcv2tSgl+NYFobFNoJORjsQgVZixcKS5Sn4YAjdTt8ynxXR6imkeq
+ /2cKPpDFAT8qyJ6vbbCx41ClbiKm1p8vTzTostWB/Wg9mQfb3AyWl7VYtgAX7vSz77
+ 7xHoQiR9YOpXTw4qZScXiLmi8oVes88cz9l+8i2rTZKkWBCpVdgI314ADmEpFtglUS
+ us3Ku1t7Z4VhQ==
 From: Eric Biggers <ebiggers@kernel.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Message-ID: <Yn7au5Pckn5T0iTm@sol.localdomain>
-References: <20220501050857.538984-1-ebiggers@kernel.org>
- <20220501050857.538984-6-ebiggers@kernel.org>
- <Ynmma+tkA2myRvz6@sol.localdomain>
- <20220511175433.inua5nj6l7qtlywq@riteshh-domain>
- <Ynv6dRdf3vZH7v2W@gmail.com>
- <20220513105853.v7iw2mbi3ycg2rqg@riteshh-domain>
+To: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 13 May 2022 16:16:02 -0700
+Message-Id: <20220513231605.175121-3-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220513231605.175121-1-ebiggers@kernel.org>
+References: <20220513231605.175121-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20220513105853.v7iw2mbi3ycg2rqg@riteshh-domain>
-X-Headers-End: 1npdid-00BLv9-AJ
-Subject: Re: [f2fs-dev] [PATCH v2 5/7] ext4: fix up test_dummy_encryption
- handling for new mount API
+X-Headers-End: 1npeao-0005Jh-3D
+Subject: [f2fs-dev] [PATCH v3 2/5] ext4: only allow test_dummy_encryption
+ when supported
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,119 +79,151 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Theodore Ts'o <tytso@mit.edu>, Jeff Layton <jlayton@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, Lukas Czerner <lczerner@redhat.com>,
- linux-ext4@vger.kernel.org
+Cc: Lukas Czerner <lczerner@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+ Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, May 13, 2022 at 04:28:53PM +0530, Ritesh Harjani wrote:
-> On 22/05/11 06:03PM, Eric Biggers wrote:
-> > On Wed, May 11, 2022 at 11:24:33PM +0530, Ritesh Harjani wrote:
-> > > On 22/05/09 04:40PM, Eric Biggers wrote:
-> > > > A couple corrections I'll include in the next version:
-> > >
-> > > Need few clarifications. Could you please help explain what am I missing here?
-> > >
-> > > >
-> > > > On Sat, Apr 30, 2022 at 10:08:55PM -0700, Eric Biggers wrote:
-> > > > > +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
-> > > > > +		if (fscrypt_dummy_policies_equal(&sbi->s_dummy_enc_policy,
-> > > > > +						 &ctx->dummy_enc_policy))
-> > > > > +			return 0;
-> > > > >  		ext4_msg(NULL, KERN_WARNING,
-> > > > > -			 "Can't set test_dummy_encryption on remount");
-> > > > > +			 "Can't set or change test_dummy_encryption on remount");
-> > > > >  		return -EINVAL;
-> > > > >  	}
-> > > >
-> > > > I think this needs to be 'fc->purpose == FS_CONTEXT_FOR_RECONFIGURE ||
-> > > > fscrypt_is_dummy_policy_set(&sbi->s_dummy_enc_policy)', since ext4 can parse
-> > > > mount options from both s_mount_opts and the regular mount options.
-> > >
-> > > Sorry, I am missing something here. Could you please help me understand why
-> > > do we need the other OR case which you mentioned above i.e.
-> > > "|| fscrypt_is_dummy_policy_set(&sbi->s_dummy_enc_policy)"
-> > >
-> > > So maybe to put it this way, when will it be the case where
-> > > fscrypt_is_dummy_policy_set(&sbi->s_dummy_enc_policy) is true and it is not a
-> > > FS_CONTEXT_FOR_RECONFIGURE case?
-> >
-> > The case where test_dummy_encryption is present in both the mount options stored
-> > in the superblock and in the regular mount options.  See how __ext4_fill_super()
-> > parses and applies each source of options separately.
-> 
-> Ok, thanks for clarifying. So this says that
-> 1. in case of mount; if test_dummy_encryption is already set with some policy in
->    the disk superblock and if the user is trying to change the mount option in
->    options string, then that is not allowed.
-> 2. Similarly if while remounting we try to change the mount option from the
->    previous mount option, then again this is not allowed.
-> 
+From: Eric Biggers <ebiggers@google.com>
 
-Yes.  I assume that the expected behavior of the on-disk mount options is the
-same as if they were prepended to the user-specified mount options.  So we
-simply aren't allowing conflicting test_dummy_encryption options in the mount
-options, regardless of where the mount options came from.
+Make the test_dummy_encryption mount option require that the encrypt
+feature flag be already enabled on the filesystem, rather than
+automatically enabling it.  Practically, this means that "-O encrypt"
+will need to be included in MKFS_OPTIONS when running xfstests with the
+test_dummy_encryption mount option.  (ext4/053 also needs an update.)
 
-> > > > > +static void ext4_apply_test_dummy_encryption(struct ext4_fs_context *ctx,
-> > > > > +                                            struct super_block *sb)
-> > > > > +{
-> > > > > +	if (!fscrypt_is_dummy_policy_set(&ctx->dummy_enc_policy))
-> > > > > +		return;
-> > > >
-> > > > To handle remounts correctly, this needs to be
-> > > > '!fscrypt_is_dummy_policy_set(&ctx->dummy_enc_policy) ||
-> > > > fscrypt_is_dummy_policy_set(&EXT4_SB(sb)->s_dummy_enc_policy)'.
-> > >
-> > > Why?
-> > > Isn't it true that in remount we should update EXT4_SB(sb)->s_dummy_enc_policy
-> > > only when ctx->dummy_enc_policy is set. If EXT4_SB(sb)->s_dummy_enc_policy is
-> > > already set and ctx->dummy_enc_policy is not set, that means it's a remount case with no mount
-> > > opts in which case ext4 should continue to have the same value of EXT4_SB(sb)->s_dummy_enc_policy?
-> >
-> > struct fscrypt_dummy_policy includes dynamically allocated memory, so
-> > overwriting it without first freeing it would be a memory leak.
-> 
-> Ok yes. Since this is dynamic memory allocation. Hence
-> I see that ext4_apply_test_dummy_encryption() can be called from
-> parse_apply_sb_mount_options(), __ext4_fill_super() and __ext4_remount().
-> 
-> Case 1: when this mount option is set in superblock
-> 1. So in parse_apply_sb_mount_options(), this mount option will get set the
->    first time if it is also set in superblock field.
-> 
-> 2. So if we also have a same mount option set in regular mount,
->    or during remount both will have sbi->s_dummy_enc_policy already set (from
->    step 1 above), so we should do nothing here.
-> 
-> Case 2: when this mount option is passed as regular mount
-> 1. parse_apply_sb_mount_options() won't set this.
-> 2. __ext4_fill_super() will set this mount option in sbi and hence __ext4_remount
->    should not set this again.
-> 
-> And as I see you are cleverly setting memset &ctx->dummy_enc_policy to 0
-> in case where we applied the parsed mount option to sbi. So that the actual
-> policy doesn't get free when you call __ext4_fc_free() after ext4_apply_options()
-> in parse_apply_sb_mount_options(). And in other cases where this mount option was
-> not applied to sbi mount opt, in that case we anyway want this policy to get
-> free.
-> 
-> This somehow looks very confusing to me. But I guess with parse, check and apply
-> mount APIs and with mount options in superblock, regular and remount path, this
-> couldn't be avoided (although I am no expert in this area).
-> 
-> Thanks for explaining. I hope I got this right ;)
+Moreover, as long as the preconditions for test_dummy_encryption are
+being tightened anyway, take the opportunity to start rejecting it when
+!CONFIG_FS_ENCRYPTION rather than ignoring it.
 
-That's all correct.  I think you're overthinking it a bit.  The important thing
-is that if the dummy policy is being set, we must move it into the ext4_sb_info.
-Zeroing the old location is just part of transferring ownership of memory in C.
-If a dummy policy was already set, we don't support changing it, and we've
-checked that any "new" value is consistent with it, so we don't do anything.
+The motivation for requiring the encrypt feature flag is that:
 
-- Eric
+- Having the filesystem auto-enable feature flags is problematic, as it
+  bypasses the usual sanity checks.  The specific issue which came up
+  recently is that in kernel versions where ext4 supports casefold but
+  not encrypt+casefold (v5.1 through v5.10), the kernel will happily add
+  the encrypt flag to a filesystem that has the casefold flag, making it
+  unmountable -- but only for subsequent mounts, not the initial one.
+  This confused the casefold support detection in xfstests, causing
+  generic/556 to fail rather than be skipped.
+
+- The xfstests-bld test runners (kvm-xfstests et al.) already use the
+  required mkfs flag, so they will not be affected by this change.  Only
+  users of test_dummy_encryption alone will be affected.  But, this
+  option has always been for testing only, so it should be fine to
+  require that the few users of this option update their test scripts.
+
+- f2fs already requires it (for its equivalent feature flag).
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/ext4/super.c | 59 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 37 insertions(+), 22 deletions(-)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 60fa2f2623e07..001915df62c07 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2427,11 +2427,12 @@ static int ext4_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		ctx->spec |= EXT4_SPEC_DUMMY_ENCRYPTION;
+ 		ctx->test_dummy_enc_arg = kmemdup_nul(param->string, param->size,
+ 						      GFP_KERNEL);
++		return 0;
+ #else
+ 		ext4_msg(NULL, KERN_WARNING,
+-			 "Test dummy encryption mount option ignored");
++			 "test_dummy_encryption option not supported");
++		return -EINVAL;
+ #endif
+-		return 0;
+ 	case Opt_dax:
+ 	case Opt_dax_type:
+ #ifdef CONFIG_FS_DAX
+@@ -2788,12 +2789,43 @@ static int ext4_check_quota_consistency(struct fs_context *fc,
+ #endif
+ }
+ 
++static int ext4_check_test_dummy_encryption(const struct fs_context *fc,
++					    struct super_block *sb)
++{
++	const struct ext4_fs_context *ctx = fc->fs_private;
++	const struct ext4_sb_info *sbi = EXT4_SB(sb);
++
++	if (!IS_ENABLED(CONFIG_FS_ENCRYPTION) ||
++	    !(ctx->spec & EXT4_SPEC_DUMMY_ENCRYPTION))
++		return 0;
++
++	if (!ext4_has_feature_encrypt(sb)) {
++		ext4_msg(NULL, KERN_WARNING,
++			 "test_dummy_encryption requires encrypt feature");
++		return -EINVAL;
++	}
++	/*
++	 * This mount option is just for testing, and it's not worthwhile to
++	 * implement the extra complexity (e.g. RCU protection) that would be
++	 * needed to allow it to be set or changed during remount.  We do allow
++	 * it to be specified during remount, but only if there is no change.
++	 */
++	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE &&
++	    !DUMMY_ENCRYPTION_ENABLED(sbi)) {
++		ext4_msg(NULL, KERN_WARNING,
++			 "Can't set test_dummy_encryption on remount");
++		return -EINVAL;
++	}
++	return 0;
++}
++
+ static int ext4_check_opt_consistency(struct fs_context *fc,
+ 				      struct super_block *sb)
+ {
+ 	struct ext4_fs_context *ctx = fc->fs_private;
+ 	struct ext4_sb_info *sbi = fc->s_fs_info;
+ 	int is_remount = fc->purpose == FS_CONTEXT_FOR_RECONFIGURE;
++	int err;
+ 
+ 	if ((ctx->opt_flags & MOPT_NO_EXT2) && IS_EXT2_SB(sb)) {
+ 		ext4_msg(NULL, KERN_ERR,
+@@ -2823,20 +2855,9 @@ static int ext4_check_opt_consistency(struct fs_context *fc,
+ 				 "for blocksize < PAGE_SIZE");
+ 	}
+ 
+-#ifdef CONFIG_FS_ENCRYPTION
+-	/*
+-	 * This mount option is just for testing, and it's not worthwhile to
+-	 * implement the extra complexity (e.g. RCU protection) that would be
+-	 * needed to allow it to be set or changed during remount.  We do allow
+-	 * it to be specified during remount, but only if there is no change.
+-	 */
+-	if ((ctx->spec & EXT4_SPEC_DUMMY_ENCRYPTION) &&
+-	    is_remount && !sbi->s_dummy_enc_policy.policy) {
+-		ext4_msg(NULL, KERN_WARNING,
+-			 "Can't set test_dummy_encryption on remount");
+-		return -1;
+-	}
+-#endif
++	err = ext4_check_test_dummy_encryption(fc, sb);
++	if (err)
++		return err;
+ 
+ 	if ((ctx->spec & EXT4_SPEC_DATAJ) && is_remount) {
+ 		if (!sbi->s_journal) {
+@@ -5281,12 +5302,6 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 		goto failed_mount_wq;
+ 	}
+ 
+-	if (DUMMY_ENCRYPTION_ENABLED(sbi) && !sb_rdonly(sb) &&
+-	    !ext4_has_feature_encrypt(sb)) {
+-		ext4_set_feature_encrypt(sb);
+-		ext4_commit_super(sb);
+-	}
+-
+ 	/*
+ 	 * Get the # of file system overhead blocks from the
+ 	 * superblock if present.
+-- 
+2.36.1
+
 
 
 _______________________________________________
