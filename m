@@ -4,16 +4,16 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1200FC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 May 2022 23:21:10 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 03DF7C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 13 May 2022 23:21:09 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1npear-0004cm-0t; Fri, 13 May 2022 23:21:09 +0000
+	id 1npeas-0008Dl-8c; Fri, 13 May 2022 23:21:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1npeap-0004ce-Bn
+ (envelope-from <ebiggers@kernel.org>) id 1npeaq-0008DV-Le
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 May 2022 23:21:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -21,9 +21,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ti7ys2/KIN7QituyZTCJAR8ZFFHnqZcJdqyMYwyLacU=; b=OcJtwpmCmTlpMh6TI0v7W/KCLD
- jVu6v1kiWZsbPOgfLZUH8cB5uEFfxOVaxaRx8zAwR4oJMo+gsrnCF3tLCXLPp6Ptem/G96Mix6hNl
- 6UQRn0R3PC0Ygx77CoRrm5zLncASFAmRSaDzAflHncdLq4KFImz94Y7hrCjKHbyNds70=;
+ bh=mzjFt3Uep6ZHt+0RJxUADGXLsQOpJNCPf4KdRrjArVE=; b=Q4mXVrZoYda9LIFpMa4lsg0T3I
+ BCMMzGNU8xXStmeRZKtAnq8Hdh8wc9zQyFFXbc9S3Vq2nD7mEc6jWWcwQ5OkGcw0JDn7K/dwJs5T1
+ j+zDhpdX4MHTIT1bKG2skoXZsQfbNW42Weq3nG7HARrujVN8uWtn3IXejdN//hBVsryg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,43 +31,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ti7ys2/KIN7QituyZTCJAR8ZFFHnqZcJdqyMYwyLacU=; b=ZrYNlB4QNsdsIxSZS177aqft3h
- bUrtgVVRwLdHsg+jwfK5z6iNUHc4ktboquqiU/bL+UTuGWmQNBHaUVakhQgIBE92lhGWNQiLQiZ+I
- 1jwFwYrlVPSVI3f4X/1sAUUE0+flpfSIdM3G27SE3Zycs8lsQhBLxDMqcq2wsLoGnwn0=;
+ bh=mzjFt3Uep6ZHt+0RJxUADGXLsQOpJNCPf4KdRrjArVE=; b=LJ7K1oFn6wUd1hMVG8WT3wwql+
+ 2wVPhwG2AxGqO9mH+CrDbtB7BIP7o6yhZHDQFYK9tlrJKY+7+wdaFnRXFa4iXpRJK3zPAN65vkg79
+ 5kkIsIsgaS7SJ3z5r9ohtmHmWTzsQg/OiARRR9xgNb84aEP6najPzRugGQFJPCwggmTc=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1npeao-0005Jk-3D
+ id 1npeao-0005Jg-3I
  for linux-f2fs-devel@lists.sourceforge.net; Fri, 13 May 2022 23:21:07 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A5C17618CF;
- Fri, 13 May 2022 23:20:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FE84C3411A;
- Fri, 13 May 2022 23:20:56 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id DC596618C1;
+ Fri, 13 May 2022 23:20:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 102ABC34113;
+ Fri, 13 May 2022 23:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1652484056;
- bh=EyKf7j3uVG38CtsPiz6Z+ffuEuCxBF8XO/5PoI3A4wQ=;
+ s=k20201202; t=1652484055;
+ bh=b92LkAqhO5PUVsDiRTBhHHeNaJDTEdm3bJ8lN4kNIfg=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=ZCPSywhblhgVP6TmsJZp1U4aRoeTYn1inyFmM03kvIOUL1+oia5WIehjVD7w+17G7
- 7N/CaV9RdU77hxa3zxAjE57nFmSamo1D++PyK/q6wcCUzTqjP8FzyJOf8z8HGsP6OJ
- dRqSgyvi0oG7gbazaWUhBX+lPEq+IUtI31SdULjzMFY9JASqYSSsW0A+1QYv0rggxY
- Edpcvjx7i8T1iijOjnJ9EQjYx9ImcaqYrqcIyaxIlg9GN7cvM4IUKtErYLNcWVRK4u
- 7xMVGo1PgDSd/VsZZLNohHfNfoN015UHofCBfnlauxGnib0Qhnajj8wZFsVgmhSuWy
- IoS49W75XC4EA==
+ b=FXmYdsz0VOS5bnNgZiePUFvY4PBeM7didV6ZMHJAFIjZZs4OxD+YKw2GWUImfihKT
+ I8p8PLNSwblLJPzYS1xBLQqBf3UyVdPRXQs5c6Q3ZcvtDXZ1T0ZYBdfkaCNlPlX/nx
+ huOW+ydQXjo9tTd/MnOeIjMJeZqu+6rIbUWJyArYj9QWq/CTnSgQYXYC6w45Y6WtpG
+ XzXGz36/vK8xYXOKx28jqW5Oy/gvZW1zVTH9FOXNZuyC3HmOK640v0tJapmDRcKgdU
+ p6ktSn+1jBvoJ4nOagefuu1EsctNc3giLo6APE847uxu1aYEDfdlJljZI3kyaHHC5i
+ +E/A/Nb3JLh7w==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 13 May 2022 16:16:04 -0700
-Message-Id: <20220513231605.175121-5-ebiggers@kernel.org>
+Date: Fri, 13 May 2022 16:16:01 -0700
+Message-Id: <20220513231605.175121-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220513231605.175121-1-ebiggers@kernel.org>
 References: <20220513231605.175121-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1npeao-0005Jk-3D
-Subject: [f2fs-dev] [PATCH v3 4/5] f2fs: use the updated
- test_dummy_encryption helper functions
+X-Headers-End: 1npeao-0005Jg-3I
+Subject: [f2fs-dev] [PATCH v3 1/5] ext4: fix memory leak in
+ parse_apply_sb_mount_options()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,93 +80,53 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: Lukas Czerner <lczerner@redhat.com>, Jeff Layton <jlayton@kernel.org>,
- Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+ Theodore Ts'o <tytso@mit.edu>, stable@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Switch f2fs over to the functions that are replacing
-fscrypt_set_test_dummy_encryption().  Since f2fs hasn't been converted
-to the new mount API yet, this doesn't really provide a benefit for
-f2fs.  But it allows fscrypt_set_test_dummy_encryption() to be removed.
+If processing the on-disk mount options fails after any memory was
+allocated in the ext4_fs_context, e.g. s_qf_names, then this memory is
+leaked.  Fix this by calling ext4_fc_free() instead of kfree() directly.
 
-Also take the opportunity to eliminate an #ifdef.
+Reproducer:
 
+    mkfs.ext4 -F /dev/vdc
+    tune2fs /dev/vdc -E mount_opts=usrjquota=file
+    echo clear > /sys/kernel/debug/kmemleak
+    mount /dev/vdc /vdc
+    echo scan > /sys/kernel/debug/kmemleak
+    sleep 5
+    echo scan > /sys/kernel/debug/kmemleak
+    cat /sys/kernel/debug/kmemleak
+
+Fixes: 7edfd85b1ffd ("ext4: Completely separate options parsing and sb setup")
+Cc: stable@vger.kernel.org
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/super.c | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ fs/ext4/super.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 6f69491aa5731..c08cbe0dfcd85 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -8,6 +8,7 @@
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/fs.h>
-+#include <linux/fs_context.h>
- #include <linux/sched/mm.h>
- #include <linux/statfs.h>
- #include <linux/buffer_head.h>
-@@ -492,9 +493,19 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
- 					  bool is_remount)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
--#ifdef CONFIG_FS_ENCRYPTION
-+	struct fs_parameter param = {
-+		.type = fs_value_is_string,
-+		.string = arg->from ? arg->from : "",
-+	};
-+	struct fscrypt_dummy_policy *policy =
-+		&F2FS_OPTION(sbi).dummy_enc_policy;
- 	int err;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 1466fbdbc8e34..60fa2f2623e07 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2625,8 +2625,10 @@ static int parse_apply_sb_mount_options(struct super_block *sb,
+ 	ret = ext4_apply_options(fc, sb);
  
-+	if (!IS_ENABLED(CONFIG_FS_ENCRYPTION)) {
-+		f2fs_warn(sbi, "test_dummy_encryption option not supported");
-+		return -EINVAL;
+ out_free:
+-	kfree(s_ctx);
+-	kfree(fc);
++	if (fc) {
++		ext4_fc_free(fc);
++		kfree(fc);
 +	}
-+
- 	if (!f2fs_sb_has_encrypt(sbi)) {
- 		f2fs_err(sbi, "Encrypt feature is off");
- 		return -EINVAL;
-@@ -506,12 +517,12 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
- 	 * needed to allow it to be set or changed during remount.  We do allow
- 	 * it to be specified during remount, but only if there is no change.
- 	 */
--	if (is_remount && !F2FS_OPTION(sbi).dummy_enc_policy.policy) {
-+	if (is_remount && !fscrypt_is_dummy_policy_set(policy)) {
- 		f2fs_warn(sbi, "Can't set test_dummy_encryption on remount");
- 		return -EINVAL;
- 	}
--	err = fscrypt_set_test_dummy_encryption(
--		sb, arg->from, &F2FS_OPTION(sbi).dummy_enc_policy);
-+
-+	err = fscrypt_parse_test_dummy_encryption(&param, policy);
- 	if (err) {
- 		if (err == -EEXIST)
- 			f2fs_warn(sbi,
-@@ -524,12 +535,14 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
- 				  opt, err);
- 		return -EINVAL;
- 	}
-+	err = fscrypt_add_test_dummy_key(sb, policy);
-+	if (err) {
-+		f2fs_warn(sbi, "Error adding test dummy encryption key [%d]",
-+			  err);
-+		return err;
-+	}
- 	f2fs_warn(sbi, "Test dummy encryption mode enabled");
- 	return 0;
--#else
--	f2fs_warn(sbi, "test_dummy_encryption option not supported");
--	return -EINVAL;
--#endif
+ 	kfree(s_mount_opts);
+ 	return ret;
  }
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
 -- 
 2.36.1
 
