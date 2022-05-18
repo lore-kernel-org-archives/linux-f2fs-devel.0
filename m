@@ -4,65 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E4171C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 May 2022 19:57:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 512F1C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 May 2022 00:15:53 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nr3Jw-000875-Su; Tue, 17 May 2022 19:57:28 +0000
+	id 1nr7Ly-00065L-40; Wed, 18 May 2022 00:15:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <krisman@collabora.com>) id 1nr3Jt-00086z-M0
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 May 2022 19:57:26 +0000
+ (envelope-from <tytso@mit.edu>) id 1nr7Lx-00065F-De
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 May 2022 00:15:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:In-Reply-To:
- Date:References:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8/+x3vzbrMNcnz1n+GLFzwNBAsTVFdJPfgK2PM6XggE=; b=SwMhlq6fIKwwclEmsijzEj+E/C
- HFeiCHAzB57BGDXm9ynDIOU9HIHl5olVYfLZmvX3cEPPeenuXTh/sWiw/VicHYmMOtLa3rAl4HgIg
- A8uJTw4px+bq/hXUI+JASMrNsAvEx1VCaP332tPrFviNvqnJbsYa1hVfYznzaUTyjFps=;
+ bh=nLsux+bfQ0hRDpmEXS+VWMhm89TTeh444O+sN/+s48Y=; b=epsKi8GrmccqP1eJQqk7ZHu/98
+ xn8dajh36+chlyUIvVOYN7jiRTg0WdC6ke6vX2gR9iaKz/eP5iJlaM/6afyGi1uJCw3aoj1BKWcZL
+ PNFvj18N0IREIp4eeLpvSDi9DCI+KxpZb2/bot6gJT1Ew1vWsZwm3CKwNHXeauFBM3ZY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:In-Reply-To:Date:References:Subject:
- Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8/+x3vzbrMNcnz1n+GLFzwNBAsTVFdJPfgK2PM6XggE=; b=K27W/ql6xRmPCEORjGu77SGmrg
- KrH4/jjLUtO+lL5bTTeuyV2wmvLIaoGTQbOjIM2xj5NWVciDDWpHahIlMFAS3xFtN0uKfHTz7/IoE
- l5MdumX3VDXTGgmxIdgxiEYjNqpyQIUryFocswuSwmxhqbvdcm3lWmVR2OiNyRnBQ2lI=;
-Received: from bhuna.collabora.co.uk ([46.235.227.227])
+ bh=nLsux+bfQ0hRDpmEXS+VWMhm89TTeh444O+sN/+s48Y=; b=SpzzN+Z5NQMnrr3PO8xgGxVg7c
+ 0RHd8kXAuxbJUB2iNqpyehgaEkhJdcC8YrDXrYd4gKnTMN+zZojsv8P7BCAz3TFijNRrYvAjrthBn
+ 6aV/MTN4ocKGk/nP5VjQJpvr6HYq2AIUpSPpZnkYF8jAqou2oDmfL4rhya1CPSLzZAqQ=;
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nr3Jr-0007zq-Gn
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 17 May 2022 19:57:24 +0000
-Received: from [127.0.0.1] (localhost [127.0.0.1])
- (Authenticated sender: krisman) with ESMTPSA id 594B31F4404A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
- s=mail; t=1652817428;
- bh=OWXF6pN1PKCgd1hX+us24uD4Px7KYa/a9N/AE+rwvM4=;
- h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
- b=MNzP6OhNLXZ5yDXAQu5rueURwO2Uxu1GS86MzOjPufuvaNR9Q7nnkzH0RcByRFwAL
- XMfTwYuZ7UM3DgKVUwqlWcNvFs/vrPrzssPlBcjIY11866UwSxMHJcETkHJH+cwYcW
- MNBqilZDb+k5CZqGqVFjGwQRbY7EQ9QOEC0gjUB1t8her9T3p0PusulQScw8ffCHud
- bmEsilcAsOBVfaMoKtmtZ8Wk1eD7UCX8dKX9s2UNiqAN52rb00tWSPEO4tOkI8r61u
- qMfna+TLKoTGVPqOJJ/HP/1rP/wdwIrilQhv7AIKTYuOFPgxOnv5HFyy0gza8edrTi
- q1AadYCLotVbA==
-From: Gabriel Krisman Bertazi <krisman@collabora.com>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Organization: Collabora
+ id 1nr7Lw-00060Z-IQ
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 May 2022 00:15:49 +0000
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net
+ [108.7.220.252]) (authenticated bits=0)
+ (User authenticated as tytso@ATHENA.MIT.EDU)
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 24I0FXpI008562
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 17 May 2022 20:15:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+ t=1652832935; bh=nLsux+bfQ0hRDpmEXS+VWMhm89TTeh444O+sN/+s48Y=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=KDgpYTicDX1UqyJA1019FH5KvR050Y4UMYITmPAt7aAmloOpjj1E1FJhMm/FQV0SY
+ ge+GzB4KI1dUSJ2txAHPFrqOY/m+avFf4C1hbUCLxnthdpAdWhkBNJWUiaEAstu+9K
+ vxxB25NifWUElpWe1l92wRrxYqhFAvpjLgBlvhgayP1ZrNS9Nemb+hhYuSGePYq8Uw
+ DAcpQolW+O99Sk4azk8hAEV731c2lQHfLGly2WAL+6D8L3HTC+PkDltJYbUyyStLXa
+ 9ouXYUxerIs3eMx5K0bK32hqaacZc6M2HBIIExcdz6W/NhHzmLiFuSxfKFQL9EFGxQ
+ pssISW+/DRbjg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+ id F331C15C3EC0; Tue, 17 May 2022 20:15:32 -0400 (EDT)
+Date: Tue, 17 May 2022 20:15:32 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Gabriel Krisman Bertazi <krisman@collabora.com>
+Message-ID: <YoQ6pPw/ITJtc310@mit.edu>
 References: <20220511193146.27526-1-krisman@collabora.com>
- <YoP5jH5axe9ltX2Y@mit.edu>
-Date: Tue, 17 May 2022 15:57:05 -0400
-In-Reply-To: <YoP5jH5axe9ltX2Y@mit.edu> (Theodore Ts'o's message of "Tue, 17
- May 2022 15:37:48 -0400")
-Message-ID: <87y1z0vsoe.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+ <YoP5jH5axe9ltX2Y@mit.edu> <87y1z0vsoe.fsf@collabora.com>
 MIME-Version: 1.0
-X-Headers-End: 1nr3Jr-0007zq-Gn
+Content-Disposition: inline
+In-Reply-To: <87y1z0vsoe.fsf@collabora.com>
+X-Headers-End: 1nr7Lw-00060Z-IQ
 Subject: Re: [f2fs-dev] [PATCH v4 00/10] Clean up the case-insensitive
  lookup path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -83,38 +86,17 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-"Theodore Ts'o" <tytso@mit.edu> writes:
+On Tue, May 17, 2022 at 03:57:05PM -0400, Gabriel Krisman Bertazi wrote:
+> 
+> I'll be reworking the series to apply Eric's comments and I might render
+> patch 1 unnecessary.  I'd be happy to send a v5 for the whole thing
+> instead of applying the first two now.
 
-> On Wed, May 11, 2022 at 03:31:36PM -0400, Gabriel Krisman Bertazi wrote:
->> The case-insensitive implementations in f2fs and ext4 have quite a bit
->> of duplicated code.  This series simplifies the ext4 version, with the
->> goal of extracting ext4_ci_compare into a helper library that can be
->> used by both filesystems.  It also reduces the clutter from many
->> codeguards for CONFIG_UNICODE; as requested by Linus, they are part of
->> the codeflow now.
->> 
->> While there, I noticed we can leverage the utf8 functions to detect
->> encoded names that are corrupted in the filesystem. Therefore, it also
->> adds an ext4 error on that scenario, to mark the filesystem as
->> corrupted.
->
-> Gabriel, are you planning on doing another version of this patch
-> series?
-> It looks like the first two patches for ext4 are not controversial, so
-> I could take those, while some of the other patches have questions
-> which Eric has raised.
+OK, great, I'll wait for the v5 patch series.
 
-Hi Ted,
+Thanks,
 
-I'll be reworking the series to apply Eric's comments and I might render
-patch 1 unnecessary.  I'd be happy to send a v5 for the whole thing
-instead of applying the first two now.
-
-Thanks, 
-
-
--- 
-Gabriel Krisman Bertazi
+						- Ted
 
 
 _______________________________________________
