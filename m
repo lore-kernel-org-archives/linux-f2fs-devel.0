@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 53F93C43219
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 May 2022 23:53:58 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A94C8C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 18 May 2022 23:53:57 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nrTUJ-0002hM-LI; Wed, 18 May 2022 23:53:56 +0000
+	id 1nrTUM-000541-Fz; Wed, 18 May 2022 23:53:57 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1nrTU8-0002gw-R2
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 May 2022 23:53:45 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1nrTUC-00053h-NX
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 May 2022 23:53:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+RDaEEMK4eT++lo3xgpRp/qjzTM2quZ8kl0hZwgItoE=; b=SS7DB9ESttGxghJGShO749EovY
- lw6VK3GeS7kES0U/lRMv5uTdhLyTF8VXlpxUEXepyb12AGlN5E4eE1jp1EAc9/JuieL0ph6obDX4b
- +Pw6R4lrGLoMZG1EaJX4drAuATsaanHsHbq/47e3zzHdhCD44ELLlHb07YIuw+b7Xrks=;
+ bh=VK+fxpefrXkihvbJXirC2GvOU4OhiStGiNVMoly2AWA=; b=FhJWZUaUhJ9j2ryQlRpSNl8QVo
+ 6jH/rDS/Qw7aE+cYgkutmMtmQXkil0hb0fQgp4eB4Fljnq3JK6ciMQ0QUwsTiQR/8ggskO2iZhdjV
+ evL1qZYppheL1uOUpwGbf6ZoiZK8KGGxjlmK6IbWSMvaAQLthKWndf7Yj/Noq0eEWEvE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,43 +31,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+RDaEEMK4eT++lo3xgpRp/qjzTM2quZ8kl0hZwgItoE=; b=Gs9NkSBAZeXZhb2Zyn9R7Fc3bZ
- g4TR9EVl7IUB6F9iUCoTVeVCVdsqx63iIkHfsHTqIFtwpFB0kQ1OMUa9jK5PN39yAlKMjUlVhUry6
- 3nV+19gxxyyCnBXQhNn6UklZ/vRJAV5WM5v2NeMhvex5+wXP3VD5qZRmF78upLQ8p444=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=VK+fxpefrXkihvbJXirC2GvOU4OhiStGiNVMoly2AWA=; b=k81pKTFIS/DqWTLWsnb0JjTaBN
+ b9ryiEV91azCVfD1NzJPIrCQnipD0yviLx8k9GlhTKRNoulLu78mlt9UriC6ZL6DvI3xalmcIkUPH
+ jGrLST1WaXknoiJ+xped1VM/PBZgmyR4rMhFR1/iJCR+GeJ6/o5xXts9lZh775CLf8Ag=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nrTU4-007nPM-Mp
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 May 2022 23:53:44 +0000
+ id 1nrTU6-0006CZ-Rm
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 18 May 2022 23:53:47 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 5A8D0B8225F
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 27E586175E
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Wed, 18 May 2022 23:53:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9F6C3411B;
- Wed, 18 May 2022 23:53:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A28C3411C;
+ Wed, 18 May 2022 23:53:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1652918011;
- bh=ZE7itEEPnptZhGuc8FqpYj5SCJPv5va5nQLMU3S/gQQ=;
+ s=k20201202; t=1652918012;
+ bh=mHfaNK/yqtCaO/YT1VZcqJFlQSMjauSczWDdIigQbH4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=owfg/F0xZThvzpCjzSoA1MRFeGdGDwzUdcPeWd/alnsvpgMVvJEqqh9PdOMPWq+5g
- /KOGcKBOtdGO3bDbcoYZ909SBYVoR2hEHX5w9T8wy9o3f3lDvn6okpsMgYi75IoNuv
- QVQBMz3l/DO+qa5omaNeIMR4O27xp0nUtc9NRcVMeiugPTmJBcRZ1/4FrC7bzcGRTz
- 4Hls4MRp41Nxu2UlJiYHRO/txX42QDmjODhpp+uuPWBBnyGAusxCKHgPBdTl2d9HuX
- yDaqaT40qaOnKwYIHf8DaGG90QFkPxNALhH9WhZZUY7qMWFFrzVzTP9T/4kvBMgsAn
- AeRd0FgWLGaWg==
+ b=X9OLn4uN0IO4WyRABB3ByikS4qWBMsqFglNa8PeQ72cZC0adZSBvyLrplspqEtJRX
+ mZxZJWuw2e0+J9G4KOg8g+NuMV3eMDe6MRLVhA2PXNtqgJ/22jaYPwmRJBuar7XPkV
+ BZMEX5DB0YvhDEVWNjqSNgnIYGirlIO+VpWpNzNKoRiCPTwZ013i1D1hEWsq+odUQ0
+ jqK5EGlKizkZblHmj0qlIhshRQvVwH+kkUcnm3PZiENEHBLFjoXOZL42G3moRRaLxh
+ iMIuOcvo/Xjrlh0wnusnqJd4zv9t2f8C4dAh8KR9Ee024Rmn8spgTVzaebA0uQzBKl
+ AGm4vyf4h8/Mg==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Wed, 18 May 2022 16:50:09 -0700
-Message-Id: <20220518235011.153058-6-ebiggers@kernel.org>
+Date: Wed, 18 May 2022 16:50:11 -0700
+Message-Id: <20220518235011.153058-8-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220518235011.153058-1-ebiggers@kernel.org>
 References: <20220518235011.153058-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1nrTU4-007nPM-Mp
-Subject: [f2fs-dev] [RFC PATCH v2 5/7] f2fs: don't allow DIO reads but not
- DIO writes
+X-Headers-End: 1nrTU6-0006CZ-Rm
+Subject: [f2fs-dev] [RFC PATCH v2 7/7] f2fs: support STATX_IOALIGN
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,39 +88,63 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Currently, if an f2fs filesystem is mounted with the mode=lfs and
-io_bits mount options, DIO reads are allowed but DIO writes are not.
-Allowing DIO reads but not DIO writes is an unusual restriction, which
-is likely to be surprising to applications, namely any application that
-both reads and writes from a file (using O_DIRECT).  Given this, let's
-drop the support for DIO reads in this configuration.
+Add support for STATX_IOALIGN to f2fs, so that I/O alignment information
+is exposed to userspace in a consistent and easy-to-use way.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/file.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/f2fs/file.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 67f2e21ffbd67..68947fe16ea35 100644
+index c32f7722ba6b0..f89a190949c59 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -822,7 +822,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 				struct kiocb *iocb, struct iov_iter *iter)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	int rw = iov_iter_rw(iter);
+@@ -835,6 +835,21 @@ static bool f2fs_force_buffered_io(struct inode *inode)
+ 	return false;
+ }
  
- 	if (!fscrypt_dio_supported(inode))
- 		return true;
-@@ -840,7 +839,7 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 	 */
- 	if (f2fs_sb_has_blkzoned(sbi))
- 		return true;
--	if (f2fs_lfs_mode(sbi) && (rw == WRITE)) {
-+	if (f2fs_lfs_mode(sbi)) {
- 		if (block_unaligned_IO(inode, iocb, iter))
- 			return true;
- 		if (F2FS_IO_ALIGNED(sbi))
++/* Return the maximum value of io_opt across all the filesystem's devices. */
++static unsigned int f2fs_max_io_opt(struct inode *inode)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	int io_opt = 0;
++	int i;
++
++	if (!f2fs_is_multi_device(sbi))
++		return bdev_io_opt(sbi->sb->s_bdev);
++
++	for (i = 0; i < sbi->s_ndevs; i++)
++		io_opt = max(io_opt, bdev_io_opt(FDEV(i).bdev));
++	return io_opt;
++}
++
+ int f2fs_getattr(struct user_namespace *mnt_userns, const struct path *path,
+ 		 struct kstat *stat, u32 request_mask, unsigned int query_flags)
+ {
+@@ -851,6 +866,22 @@ int f2fs_getattr(struct user_namespace *mnt_userns, const struct path *path,
+ 		stat->btime.tv_nsec = fi->i_crtime.tv_nsec;
+ 	}
+ 
++	/*
++	 * Return the I/O alignment information if requested.  We only return
++	 * this information when requested, since on encrypted files it might
++	 * take a fair bit of work to get if the file wasn't opened recently.
++	 */
++	if ((request_mask & STATX_IOALIGN) && S_ISREG(inode->i_mode)) {
++		unsigned int bsize = i_blocksize(inode);
++
++		stat->result_mask |= STATX_IOALIGN;
++		if (!f2fs_force_buffered_io(inode)) {
++			stat->mem_align_dio = bsize;
++			stat->offset_align_dio = bsize;
++		}
++		stat->offset_align_optimal = max(f2fs_max_io_opt(inode), bsize);
++	}
++
+ 	flags = fi->i_flags;
+ 	if (flags & F2FS_COMPR_FL)
+ 		stat->attributes |= STATX_ATTR_COMPRESSED;
 -- 
 2.36.1
 
