@@ -4,65 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4AEC6C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 May 2022 01:41:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 26914C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 May 2022 02:11:00 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nrVAd-0003GE-CE; Thu, 19 May 2022 01:41:43 +0000
+	id 1nrVcx-0008Pw-HN; Thu, 19 May 2022 02:10:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <krisman@collabora.com>) id 1nrVAb-0003Fi-Dy
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 May 2022 01:41:41 +0000
+ (envelope-from <tytso@mit.edu>) id 1nrVcv-0008Pn-Fi
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 May 2022 02:10:56 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=X2A8nluVgIpgE0mwD847NxK8GHtJkrIylYFBYLlNgUs=; b=KZqGJi3QJryVhGXwFVTCgmaMRU
- 8g+u9FWHucYEryE9Q07D72T+cmNs8V3yp4koowATBYxzpQTBwDK1LpESYwhXCrWrNvI7MS3PW7XPA
- eHIl+iZybAK9f/UCZjUe4A530zDVQE4tuBaJrzlognm+10t/VmIqigtmba0ibhjhQnI4=;
+ bh=tR13JwUbXXXeiykjLNhK4pqKKdnGUOdKfC+6Atr7Qec=; b=mhje6KWXU3m2t7XcQZeH3mKT/z
+ rVNwfqyKvlwsYIZM909VHWWN8gvggPxjjEbZwc0/4mHgA+fTkFHFaLG26PvvMnnF57XLhj/Ieg+3P
+ VCIEC13xsFc8xWIOioNJ/aNJp9IdQt7qyXLzjVxs+qTQyNfXGzOwtbobhiu1QH8TSOgM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=X2A8nluVgIpgE0mwD847NxK8GHtJkrIylYFBYLlNgUs=; b=flcJqXQLfEDnP4+ANPWepRGOT6
- 64eFagM9TSxa8Mx0+L4MX/TPQcDJXEqbt8kECEeenDHYmbuRaL8cXAqt93UAd4pMtC1FHiNsWcV8D
- S4+GUBfJPEgY9Mtg+Quk7804IWv2A3DDidrthwHl9svlNQAQPh+ofmDchhcUm4WlMHOc=;
-Received: from bhuna.collabora.co.uk ([46.235.227.227])
+ bh=tR13JwUbXXXeiykjLNhK4pqKKdnGUOdKfC+6Atr7Qec=; b=Yn18dN81DutZBF2CJTSaDKArkb
+ lUUH2rf2WzJmo7/CC859wbc5iGkDcEt87FWyCmsQRGNynajRU7FDABLge6MLciyxFlJFfhTt+w0u8
+ iAGpUYHFQOyJfK57yGoYvc2NijFUfJeQuCmazajpdDjp2ZZtQ+1g769EjWUgcyS24/Ts=;
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nrVAZ-0001Va-6n
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 May 2022 01:41:40 +0000
-Received: from [127.0.0.1] (localhost [127.0.0.1])
- (Authenticated sender: krisman) with ESMTPSA id 54CEC1F4544B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
- s=mail; t=1652924485;
- bh=2MSgumgq3Tv3MUMLO2SUKN4bTk+0tq6fHlRTGKiGr/I=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=VdGHmg+gyQOzaQUK2J16azvHoaYjPmLIqt3ExVQbWjSAuR+Jn4Gan3yRqazVEJAJ+
- RboWsZNzrrwtgphkzewjiisfCCnePRzamZAnSkka+8D7cgKzmsRoVAPYHEdl2DvFpB
- dnj/hzUy1dyGykkyEzy/yAkGN6USEWN0dg9CzbtFN2bIhiKlCLKf4POf27CIE8MCud
- cyUvoKtbzfAy5Eg80/XpWkvFlkMFl0Pl5J2bf0/6toXMlPTHZWG4ArX7Sa8wN0bp5P
- 7muHH+ZVKYjso/uGg+S5Jw46XzuwP93QoiEUVqpz0xyM/sWRATC8p4xh69sPvrOPmK
- Tr/KYXtoyDRdQ==
-From: Gabriel Krisman Bertazi <krisman@collabora.com>
-To: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
- ebiggers@kernel.org
-Date: Wed, 18 May 2022 21:40:43 -0400
-Message-Id: <20220519014044.508099-8-krisman@collabora.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220519014044.508099-1-krisman@collabora.com>
-References: <20220519014044.508099-1-krisman@collabora.com>
+ id 1nrVcq-0004WM-VB
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 19 May 2022 02:10:55 +0000
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net
+ [108.7.220.252]) (authenticated bits=0)
+ (User authenticated as tytso@ATHENA.MIT.EDU)
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 24J2Absr020685
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 18 May 2022 22:10:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+ t=1652926239; bh=tR13JwUbXXXeiykjLNhK4pqKKdnGUOdKfC+6Atr7Qec=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=KY3MZRCTmd2jkp++r3S74yh8ujOH46dVzROEXMoxhUYCq6YqEsVLiNa9z56gC2bJX
+ 12fgbb9hMeavEFfQmzO9FZEqge1/QMMZ4KLrBJQHwtF0qY6SLff4ZctdYz4q1G8WiI
+ WUPRss6ao9UlJIXxLBVxjKqHTO3rYM8bmP6r4gfuXXhblBUHbZ2m+WscMUjoH03biB
+ 4HHxTjXPUR0xA1wBvEZmZkuxuMsjc7FI4HwBMcMnzW54ONA3RZn/YTLQjIxT6ZWNKG
+ HjvYP7WCH7HrcY5Z7YAEAiify4VsKjVBlw+bIXSahQiubRkTsxq2sXNvxkdQA2iXYk
+ AOyQNsCLz86TQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+ id 86D8015C3EC0; Wed, 18 May 2022 22:10:37 -0400 (EDT)
+Date: Wed, 18 May 2022 22:10:37 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Eric Biggers <ebiggers@kernel.org>
+Message-ID: <YoWnHXZSQZA4CL6+@mit.edu>
+References: <20220513231605.175121-1-ebiggers@kernel.org>
+ <20220513231605.175121-2-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1nrVAZ-0001Va-6n
-Subject: [f2fs-dev] [PATCH v6 7/8] ext4: Move CONFIG_UNICODE defguards into
- the code flow
+Content-Disposition: inline
+In-Reply-To: <20220513231605.175121-2-ebiggers@kernel.org>
+X-Headers-End: 1nrVcq-0004WM-VB
+Subject: Re: [f2fs-dev] [PATCH v3 1/5] ext4: fix memory leak in
+ parse_apply_sb_mount_options()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -74,209 +79,39 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>,
- kernel@collabora.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jeff Layton <jlayton@kernel.org>, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
+ Lukas Czerner <lczerner@redhat.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Instead of a bunch of ifdefs, make the unicode built checks part of the
-code flow where possible, as requested by Torvalds.
+On Fri, May 13, 2022 at 04:16:01PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> If processing the on-disk mount options fails after any memory was
+> allocated in the ext4_fs_context, e.g. s_qf_names, then this memory is
+> leaked.  Fix this by calling ext4_fc_free() instead of kfree() directly.
+> 
+> Reproducer:
+> 
+>     mkfs.ext4 -F /dev/vdc
+>     tune2fs /dev/vdc -E mount_opts=usrjquota=file
+>     echo clear > /sys/kernel/debug/kmemleak
+>     mount /dev/vdc /vdc
+>     echo scan > /sys/kernel/debug/kmemleak
+>     sleep 5
+>     echo scan > /sys/kernel/debug/kmemleak
+>     cat /sys/kernel/debug/kmemleak
+> 
+> Fixes: 7edfd85b1ffd ("ext4: Completely separate options parsing and sb setup")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Thanks, applied.
 
----
-Changes since v5:
-  - Drop err variable (eric)
-Changes since v4:
-  - Create stub for !CONFIG_UNICODE case (eric)
----
- fs/ext4/ext4.h  | 47 +++++++++++++++++++++++------------------------
- fs/ext4/namei.c | 15 ++++++---------
- fs/ext4/super.c |  4 +---
- 3 files changed, 30 insertions(+), 36 deletions(-)
-
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 93a28fcb2e22..4bc3649e3385 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2727,8 +2727,24 @@ ext4_fsblk_t ext4_inode_to_goal_block(struct inode *);
- 
- #if IS_ENABLED(CONFIG_UNICODE)
- extern int ext4_fname_setup_ci_filename(struct inode *dir,
--					 const struct qstr *iname,
--					 struct ext4_filename *fname);
-+					const struct qstr *iname,
-+					struct ext4_filename *fname);
-+
-+static inline void ext4_fname_free_ci_filename(struct ext4_filename *fname)
-+{
-+	kfree(fname->cf_name.name);
-+	fname->cf_name.name = NULL;
-+}
-+#else
-+static inline int ext4_fname_setup_ci_filename(struct inode *dir,
-+					       const struct qstr *iname,
-+					       struct ext4_filename *fname)
-+{
-+	return 0;
-+}
-+static inline void ext4_fname_free_ci_filename(struct ext4_filename *fname)
-+{
-+}
- #endif
- 
- #ifdef CONFIG_FS_ENCRYPTION
-@@ -2758,10 +2774,7 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
- 
- 	ext4_fname_from_fscrypt_name(fname, &name);
- 
--#if IS_ENABLED(CONFIG_UNICODE)
--	err = ext4_fname_setup_ci_filename(dir, iname, fname);
--#endif
--	return err;
-+	return ext4_fname_setup_ci_filename(dir, iname, fname);
- }
- 
- static inline int ext4_fname_prepare_lookup(struct inode *dir,
-@@ -2777,10 +2790,7 @@ static inline int ext4_fname_prepare_lookup(struct inode *dir,
- 
- 	ext4_fname_from_fscrypt_name(fname, &name);
- 
--#if IS_ENABLED(CONFIG_UNICODE)
--	err = ext4_fname_setup_ci_filename(dir, &dentry->d_name, fname);
--#endif
--	return err;
-+	return ext4_fname_setup_ci_filename(dir, &dentry->d_name, fname);
- }
- 
- static inline void ext4_fname_free_filename(struct ext4_filename *fname)
-@@ -2794,10 +2804,7 @@ static inline void ext4_fname_free_filename(struct ext4_filename *fname)
- 	fname->usr_fname = NULL;
- 	fname->disk_name.name = NULL;
- 
--#if IS_ENABLED(CONFIG_UNICODE)
--	kfree(fname->cf_name.name);
--	fname->cf_name.name = NULL;
--#endif
-+	ext4_fname_free_ci_filename(fname);
- }
- #else /* !CONFIG_FS_ENCRYPTION */
- static inline int ext4_fname_setup_filename(struct inode *dir,
-@@ -2805,16 +2812,11 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
- 					    int lookup,
- 					    struct ext4_filename *fname)
- {
--	int err = 0;
- 	fname->usr_fname = iname;
- 	fname->disk_name.name = (unsigned char *) iname->name;
- 	fname->disk_name.len = iname->len;
- 
--#if IS_ENABLED(CONFIG_UNICODE)
--	err = ext4_fname_setup_ci_filename(dir, iname, fname);
--#endif
--
--	return err;
-+	return ext4_fname_setup_ci_filename(dir, iname, fname);
- }
- 
- static inline int ext4_fname_prepare_lookup(struct inode *dir,
-@@ -2826,10 +2828,7 @@ static inline int ext4_fname_prepare_lookup(struct inode *dir,
- 
- static inline void ext4_fname_free_filename(struct ext4_filename *fname)
- {
--#if IS_ENABLED(CONFIG_UNICODE)
--	kfree(fname->cf_name.name);
--	fname->cf_name.name = NULL;
--#endif
-+	ext4_fname_free_ci_filename(fname);
- }
- #endif /* !CONFIG_FS_ENCRYPTION */
- 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 8fbb35187f72..f142c8fef750 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1755,8 +1755,7 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
- 		}
- 	}
- 
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (!inode && IS_CASEFOLDED(dir)) {
-+	if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
- 		/* Eventually we want to call d_add_ci(dentry, NULL)
- 		 * for negative dentries in the encoding case as
- 		 * well.  For now, prevent the negative dentry
-@@ -1764,7 +1763,7 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
- 		 */
- 		return NULL;
- 	}
--#endif
-+
- 	return d_splice_alias(inode, dentry);
- }
- 
-@@ -3081,16 +3080,14 @@ static int ext4_rmdir(struct inode *dir, struct dentry *dentry)
- 	ext4_fc_track_unlink(handle, dentry);
- 	retval = ext4_mark_inode_dirty(handle, dir);
- 
--#if IS_ENABLED(CONFIG_UNICODE)
- 	/* VFS negative dentries are incompatible with Encoding and
- 	 * Case-insensitiveness. Eventually we'll want avoid
- 	 * invalidating the dentries here, alongside with returning the
- 	 * negative dentries at ext4_lookup(), when it is better
- 	 * supported by the VFS for the CI case.
- 	 */
--	if (IS_CASEFOLDED(dir))
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
- 		d_invalidate(dentry);
--#endif
- 
- end_rmdir:
- 	brelse(bh);
-@@ -3186,16 +3183,16 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
- 	retval = __ext4_unlink(handle, dir, &dentry->d_name, d_inode(dentry));
- 	if (!retval)
- 		ext4_fc_track_unlink(handle, dentry);
--#if IS_ENABLED(CONFIG_UNICODE)
-+
- 	/* VFS negative dentries are incompatible with Encoding and
- 	 * Case-insensitiveness. Eventually we'll want avoid
- 	 * invalidating the dentries here, alongside with returning the
- 	 * negative dentries at ext4_lookup(), when it is  better
- 	 * supported by the VFS for the CI case.
- 	 */
--	if (IS_CASEFOLDED(dir))
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
- 		d_invalidate(dentry);
--#endif
-+
- 	if (handle)
- 		ext4_journal_stop(handle);
- 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 1847b46af808..fa0004459dd6 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3645,14 +3645,12 @@ int ext4_feature_set_ok(struct super_block *sb, int readonly)
- 		return 0;
- 	}
- 
--#if !IS_ENABLED(CONFIG_UNICODE)
--	if (ext4_has_feature_casefold(sb)) {
-+	if (!IS_ENABLED(CONFIG_UNICODE) && ext4_has_feature_casefold(sb)) {
- 		ext4_msg(sb, KERN_ERR,
- 			 "Filesystem with casefold feature cannot be "
- 			 "mounted without CONFIG_UNICODE");
- 		return 0;
- 	}
--#endif
- 
- 	if (readonly)
- 		return 1;
--- 
-2.36.1
-
+					- Ted
 
 
 _______________________________________________
