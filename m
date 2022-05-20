@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D8D5CC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 May 2022 03:27:57 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 52859C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 20 May 2022 06:30:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nrtIv-00025u-R4; Fri, 20 May 2022 03:27:52 +0000
+	id 1nrw9j-0007CW-7P; Fri, 20 May 2022 06:30:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <david@fromorbit.com>) id 1nrtIt-00025n-Ox
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 May 2022 03:27:50 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1nrw9P-0007CN-Q8
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 May 2022 06:30:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=5kw+EBZjE7VU1oZGnaJXzP9KKs0ff2QnGmEMcPk/zFo=; b=BdBkIY7ToWfhGMcYQ4n71Cl2C2
- 3JWpMUZuZ/PxK6kI4CON6qpaMxAg8d7V3ckFmkXE1AQ9Ak/UFK+yq1pNVg9VhOETXgT0ZN3uUgwpx
- 4wJ0ZFN8By+Vm2/OSRRvKYVmeTHx9zjOImEefHInHJiwEElYkDh71eqr1NHvIZjdKN2g=;
+ bh=fGHBYx9Z0kj8n/0d3//S1qbtfHPwJBgSjE1CmGWstqo=; b=PeFyn471d6k/Khv/6y0lrPeelL
+ QF6sXMg57iV547YduXOGNYEJzKhoMcn4rulwJf/uST7bx9X+NBcVbk8Ghq/xna5kFdhGMq8l0NAb3
+ lWkj7VB7rIjv46Go5i6kwu8dLzyWe1nFkAz0XfVsqiJ/IeblM8lQK6cYTLJxqC5aBAZg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -31,37 +31,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=5kw+EBZjE7VU1oZGnaJXzP9KKs0ff2QnGmEMcPk/zFo=; b=SPfe0kH7HT/r961/UDtq++RztE
- XY7Xiq3AXMvz2Gk8q2+J3YGzN6DG/YL5aW84th7uFbci26+KHRJrA+PuJe9Ao9D4Li8HEzjRthcHj
- LukHlGV4qKdzXamUVIInScrhhpdO5E6rPoUjYk14m9mn9ssY63h2ZO68QyMCp73FNa5M=;
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtp (Exim 4.94.2)
- id 1nrtIp-0007Xr-55
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 May 2022 03:27:50 +0000
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au
- [49.181.2.147])
- by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4126E10E68AE;
- Fri, 20 May 2022 13:27:41 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
- (envelope-from <david@fromorbit.com>)
- id 1nrtIh-00E6GN-MT; Fri, 20 May 2022 13:27:39 +1000
-Date: Fri, 20 May 2022 13:27:39 +1000
-From: Dave Chinner <david@fromorbit.com>
+ bh=fGHBYx9Z0kj8n/0d3//S1qbtfHPwJBgSjE1CmGWstqo=; b=TRd7xpcaRbm7wV8Y9uhSjOIUvn
+ WfqHDzPR5F7RoobUR1/hN47ex2o+42c/upzISywdncy5UO7oRdcJK/4DYKY0IjmwGW3LbuBfQN75D
+ kRaQreMOjj/pbx92QvjpfCntdh5ACH61S2WWrmClJDs30ij8RYXShF+JYXkHttZt8DxU=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
+ id 1nrw9M-00BxMv-H9
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 20 May 2022 06:30:16 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id B4AB2B82892
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 20 May 2022 06:30:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 342CEC385A9;
+ Fri, 20 May 2022 06:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1653028204;
+ bh=zLcVAySAGbHavOCyzZ3mHIX/dLccYG2RDrRrXi8XEwY=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=mIi0kfLHATOya+xGeR0ur/w+CnAM2SQc8hib3dEpvbOubRYGldcau8s/33XCt2s76
+ SThI5nP5Bka/U8+8maJc8ic6ISPZUSR89qgmdoBjvGiqKfq7osmnUSaJHcB6JaG+kf
+ KbTo0iwc3dep7dA/EntYOhibh5zEl3e1WihnZHvrlzXhxsrS7FoVV8b6UdpGBAyRFf
+ Mgjw7EIhBzad06vU33Lx5bn2irSQTKaen9hMmsvds+j654UiaktBoZjKnKcWp+uVfB
+ Vi6Px9ntf2zfzBRwDwtTs3Xltn/kmUYIPpa1ptWnO+w7PtNiWQmW0CZDuhK4HMXxOi
+ 7bR3YsuCNmwWQ==
+Date: Thu, 19 May 2022 23:30:02 -0700
+From: Eric Biggers <ebiggers@kernel.org>
 To: "Darrick J. Wong" <djwong@kernel.org>
-Message-ID: <20220520032739.GB1098723@dread.disaster.area>
+Message-ID: <Yoc1asB6Ud4Su3gf@sol.localdomain>
 References: <20220518235011.153058-1-ebiggers@kernel.org>
  <20220518235011.153058-2-ebiggers@kernel.org>
  <YobNXbYnhBiqniTH@magnolia>
 MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <YobNXbYnhBiqniTH@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=62870aad
- a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
- a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8
- a=7-415B0cAAAA:8 a=-h69JAkiF4VdWyV60hkA:9 a=CjuIK1q_8ugA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Headers-End: 1nrtIp-0007Xr-55
+X-Headers-End: 1nrw9M-00BxMv-H9
 Subject: Re: [f2fs-dev] [RFC PATCH v2 1/7] statx: add I/O alignment
  information
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -75,83 +81,31 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, linux-api@vger.kernel.org,
+Cc: linux-block@vger.kernel.org, linux-api@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Eric Biggers <ebiggers@kernel.org>, Keith Busch <kbusch@kernel.org>,
- linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+ linux-xfs@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On Thu, May 19, 2022 at 04:06:05PM -0700, Darrick J. Wong wrote:
-> On Wed, May 18, 2022 at 04:50:05PM -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > Traditionally, the conditions for when DIO (direct I/O) is supported
-> > were fairly simple: filesystems either supported DIO aligned to the
-> > block device's logical block size, or didn't support DIO at all.
-> > 
-> > However, due to filesystem features that have been added over time (e.g,
-> > data journalling, inline data, encryption, verity, compression,
-> > checkpoint disabling, log-structured mode), the conditions for when DIO
-> > is allowed on a file have gotten increasingly complex.  Whether a
-> > particular file supports DIO, and with what alignment, can depend on
-> > various file attributes and filesystem mount options, as well as which
-> > block device(s) the file's data is located on.
-> > 
-> > XFS has an ioctl XFS_IOC_DIOINFO which exposes this information to
-> > applications.  However, as discussed
-> > (https://lore.kernel.org/linux-fsdevel/20220120071215.123274-1-ebiggers@kernel.org/T/#u),
-> > this ioctl is rarely used and not known to be used outside of
-> > XFS-specific code.  It also was never intended to indicate when a file
-> > doesn't support DIO at all, and it only exposes the minimum I/O
-> > alignment, not the optimal I/O alignment which has been requested too.
-> > 
-> > Therefore, let's expose this information via statx().  Add the
-> > STATX_IOALIGN flag and three fields associated with it:
-> > 
-> > * stx_mem_align_dio: the alignment (in bytes) required for user memory
-> >   buffers for DIO, or 0 if DIO is not supported on the file.
-> > 
-> > * stx_offset_align_dio: the alignment (in bytes) required for file
-> >   offsets and I/O segment lengths for DIO, or 0 if DIO is not supported
-> >   on the file.  This will only be nonzero if stx_mem_align_dio is
-> >   nonzero, and vice versa.
-> > 
-> > * stx_offset_align_optimal: the alignment (in bytes) suggested for file
-> >   offsets and I/O segment lengths to get optimal performance.  This
-> >   applies to both DIO and buffered I/O.  It differs from stx_blocksize
-> >   in that stx_offset_align_optimal will contain the real optimum I/O
-> >   size, which may be a large value.  In contrast, for compatibility
-> >   reasons stx_blocksize is the minimum size needed to avoid page cache
-> >   read/write/modify cycles, which may be much smaller than the optimum
-> >   I/O size.  For more details about the motivation for this field, see
-> >   https://lore.kernel.org/r/20220210040304.GM59729@dread.disaster.area
-> 
-> Hmm.  So I guess this is supposed to be the filesystem's best guess at
-> the IO size that will minimize RMW cycles in the entire stack?  i.e. if
-> the user does not want RMW of pagecache pages, of file allocation units
-> (if COW is enabled), of RAID stripes, or in the storage itself, then it
-> should ensure that all IOs are aligned to this value?
-> 
 > I guess that means for XFS it's effectively max(pagesize, i_blocksize,
 > bdev io_opt, sb_width, and (pretend XFS can reflink the realtime volume)
 > the rt extent size)?  I didn't see a manpage update for statx(2) but
 > that's mostly what I'm interested in. :)
 
-Yup, xfs_stat_blksize() should give a good idea of what we should
-do. It will end up being pretty much that, except without the need
-to a mount option to turn on the sunit/swidth return, and always
-taking into consideration extent size hints rather than just doing
-that for RT inodes...
+I'll send out a man page update with the next version.  I don't think there will
+be much new information that isn't already included in this patchset, though.
 
-Cheers,
+> Looking ahead, it looks like the ext4/f2fs implementations only seem to
+> be returning max(i_blocksize, bdev io_opt)?  But not the pagesize?
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I think that's just an oversight.  ext4 and f2fs should round the value up to
+PAGE_SIZE.
+
+- Eric
 
 
 _______________________________________________
