@@ -4,65 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77047C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 May 2022 09:30:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DA2BAC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 May 2022 09:30:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ntnLQ-0004pV-Rv; Wed, 25 May 2022 09:30:21 +0000
+	id 1ntnLX-0002nt-4L; Wed, 25 May 2022 09:30:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <yuyufen@huawei.com>) id 1ntnLO-0004pP-Na
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 09:30:19 +0000
+ (envelope-from <yuyufen@huawei.com>) id 1ntnLU-0002nn-1J
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 09:30:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XcuMGcarAM/kA0nynpzsZEGafbKWxJXPrXUZikOjaXc=; b=KNFLT/IZwE0rCauZbt/TQRWTpM
- VL3YcthHSqla2kfLIxLnCWfKAE8lydnEiFll6Iw+APx0L+48HKlqMWZlegttjdZHMGS4HRjliM0EO
- etcADn//241Jdgk0VuVHm4vDqde6k/7iReM5hJzOlynPFtVqUmPqYOvMNK1iCrO9pdds=;
+ bh=TPCi7ltVeNt5jE/ueUWv8Hcotudrsc231tJj33CYA98=; b=kQHIqbUIbLM9GNXw9raFkQ83mL
+ 0H6Flv491uEOzBo/Bp94J7C9VnNxrknADJD0f8W/UTgCJUK1noftV7mmJdtQGf3JRjLWHKeddVV7O
+ UZJl+mFIYX4C2WAnE8b13LGySkEpSdsmn5oonGh8y0i9JNrxUQYwXYtghjwDgd9LDp+g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=XcuMGcarAM/kA0nynpzsZEGafbKWxJXPrXUZikOjaXc=; b=SC2jQzZLjL8dRnySjwtltE0rBs
- bicNfn5/gzqy+88uugTC1PjMP+jVZWyXAK7fwBR9SplhZBkXWdOHpByf181AfjZfdQgWey/aE2AUG
- mdUUWHnwBPQ9ykoiqucl+rK/8/+lErpRYFqZRjnfyjx1u5uOF8uk5ZIK5piovQ+CgPEg=;
-Received: from szxga02-in.huawei.com ([45.249.212.188])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=TPCi7ltVeNt5jE/ueUWv8Hcotudrsc231tJj33CYA98=; b=N
+ suYz+E/dh+2u+fmr59HILb9lw51jCwPmZRvS7IAui4T41RChEpOS/17QDQFsE1DNBYoebNkdlrV3R
+ JxyKHPJEgs3Y9/nDZ1hvXUcDrMQY9TPK0s4S35NS+RhjMlM3S/nZ9Xr5kN+yqpKNhtKuSgUUUkC5K
+ pjOudDJLudToQwGQ=;
+Received: from szxga01-in.huawei.com ([45.249.212.187])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1ntnLM-008eCn-Uh
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 09:30:18 +0000
-Received: from dggpeml500024.china.huawei.com (unknown [172.30.72.54])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4L7Qgv51XDzQkGP;
- Wed, 25 May 2022 17:27:07 +0800 (CST)
+ id 1ntnLO-0001wv-9k
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 09:30:22 +0000
+Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.57])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4L7QkX5ycyzjX4P;
+ Wed, 25 May 2022 17:29:24 +0800 (CST)
 Received: from dggpeml500009.china.huawei.com (7.185.36.209) by
- dggpeml500024.china.huawei.com (7.185.36.10) with Microsoft SMTP Server
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 25 May 2022 17:30:08 +0800
+ 15.1.2375.24; Wed, 25 May 2022 17:30:07 +0800
 Received: from huawei.com (10.175.127.227) by dggpeml500009.china.huawei.com
  (7.185.36.209) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 25 May
  2022 17:30:07 +0800
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Wed, 25 May 2022 17:43:36 +0800
-Message-ID: <20220525094336.2489995-2-yuyufen@huawei.com>
+Date: Wed, 25 May 2022 17:43:35 +0800
+Message-ID: <20220525094336.2489995-1-yuyufen@huawei.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220525094336.2489995-1-yuyufen@huawei.com>
-References: <20220525094336.2489995-1-yuyufen@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.175.127.227]
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  dggpeml500009.china.huawei.com (7.185.36.209)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1ntnLM-008eCn-Uh
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: add f2fs_init_write_merge_io function
+X-Headers-End: 1ntnLO-0001wv-9k
+Subject: [f2fs-dev] [PATCH 1/2] f2fs: replace F2FS_I(inode) by the local
+ variable
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,110 +80,33 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Almost all other initialization of variables in f2fs_fill_super are
-extraced to a single function. Also do it for write_io[], which can
-make code more clean.
-
-This patch just refactors the code, theres no functional change.
+We have define 'fi' at the begin of function do_read_inode(),
+just use it, rather than use F2FS_I(inode) again.
 
 Signed-off-by: Yufen Yu <yuyufen@huawei.com>
 ---
- fs/f2fs/data.c  | 30 ++++++++++++++++++++++++++++++
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/super.c | 27 +++------------------------
- 3 files changed, 34 insertions(+), 24 deletions(-)
+ fs/f2fs/inode.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9a1a526f2092..ca560c046559 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -585,6 +585,36 @@ static bool __has_merged_page(struct bio *bio, struct inode *inode,
- 	return false;
- }
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 83639238a1fe..9bad349be9cc 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -466,10 +466,10 @@ static int do_read_inode(struct inode *inode)
+ 		}
+ 	}
  
-+int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi)
-+{
-+	int i;
-+
-+	for (i = 0; i < NR_PAGE_TYPE; i++) {
-+		int n = (i == META) ? 1 : NR_TEMP_TYPE;
-+		int j;
-+
-+		sbi->write_io[i] =
-+			f2fs_kmalloc(sbi,
-+					 array_size(n,
-+						sizeof(struct f2fs_bio_info)),
-+					 GFP_KERNEL);
-+		if (!sbi->write_io[i])
-+			return -ENOMEM;
-+
-+		for (j = HOT; j < n; j++) {
-+			init_f2fs_rwsem(&sbi->write_io[i][j].io_rwsem);
-+			sbi->write_io[i][j].sbi = sbi;
-+			sbi->write_io[i][j].bio = NULL;
-+			spin_lock_init(&sbi->write_io[i][j].io_lock);
-+			INIT_LIST_HEAD(&sbi->write_io[i][j].io_list);
-+			INIT_LIST_HEAD(&sbi->write_io[i][j].bio_list);
-+			init_f2fs_rwsem(&sbi->write_io[i][j].bio_list_lock);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
- 				enum page_type type, enum temp_type temp)
- {
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2b2b3c87e45e..02e2dc17938c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3719,6 +3719,7 @@ int f2fs_init_bio_entry_cache(void);
- void f2fs_destroy_bio_entry_cache(void);
- void f2fs_submit_bio(struct f2fs_sb_info *sbi,
- 				struct bio *bio, enum page_type type);
-+int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi);
- void f2fs_submit_merged_write(struct f2fs_sb_info *sbi, enum page_type type);
- void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
- 				struct inode *inode, struct page *page,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 912e99bc92e5..557c68956240 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4070,30 +4070,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	set_sbi_flag(sbi, SBI_POR_DOING);
- 	spin_lock_init(&sbi->stat_lock);
+-	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
+-	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
+-	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
+-	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
++	fi->i_disk_time[0] = inode->i_atime;
++	fi->i_disk_time[1] = inode->i_ctime;
++	fi->i_disk_time[2] = inode->i_mtime;
++	fi->i_disk_time[3] = fi->i_crtime;
+ 	f2fs_put_page(node_page, 1);
  
--	for (i = 0; i < NR_PAGE_TYPE; i++) {
--		int n = (i == META) ? 1 : NR_TEMP_TYPE;
--		int j;
--
--		sbi->write_io[i] =
--			f2fs_kmalloc(sbi,
--				     array_size(n,
--						sizeof(struct f2fs_bio_info)),
--				     GFP_KERNEL);
--		if (!sbi->write_io[i]) {
--			err = -ENOMEM;
--			goto free_bio_info;
--		}
--
--		for (j = HOT; j < n; j++) {
--			init_f2fs_rwsem(&sbi->write_io[i][j].io_rwsem);
--			sbi->write_io[i][j].sbi = sbi;
--			sbi->write_io[i][j].bio = NULL;
--			spin_lock_init(&sbi->write_io[i][j].io_lock);
--			INIT_LIST_HEAD(&sbi->write_io[i][j].io_list);
--			INIT_LIST_HEAD(&sbi->write_io[i][j].bio_list);
--			init_f2fs_rwsem(&sbi->write_io[i][j].bio_list_lock);
--		}
--	}
-+	err = f2fs_init_write_merge_io(sbi);
-+	if (err)
-+		goto free_bio_info;
- 
- 	init_f2fs_rwsem(&sbi->cp_rwsem);
- 	init_f2fs_rwsem(&sbi->quota_sem);
+ 	stat_inc_inline_xattr(inode);
 -- 
 2.31.1
 
