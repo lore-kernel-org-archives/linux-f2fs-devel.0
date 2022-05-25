@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BDD5DC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 May 2022 10:15:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E5841C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 May 2022 10:20:07 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nto3B-0000mf-9t; Wed, 25 May 2022 10:15:31 +0000
+	id 1nto7Z-0002mq-5m; Wed, 25 May 2022 10:20:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1nto3A-0000mV-KW
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 10:15:31 +0000
+ (envelope-from <chao@kernel.org>) id 1nto7X-0002mX-Eu
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 10:20:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dI8TLOAph7Z3EfK5UcTzDJzKn6DkUwNk5J2wWHxyG6E=; b=OjSsIfLAr5UcWEp26GXVD65tO7
- fYYTxyg7XeVaEeeYXM4e5bEQ6tzY19YTFl3QBDuHdsE4+Eoc71kp/v6yWUE6IKvcUHA3lN6CHiY8n
- VY0esSe8WPy2UTapd6MQWoBHMeTDJfkaib8hJoZ7U2N6LibEPDGehYEC3F27zQXb6k3o=;
+ bh=o3LLoT9psFRXH7u+ttwKfcMtMPpkV6pTDoakX73NMcI=; b=m/T9tLFT8fiu9G5PKQL6wcFH+f
+ tFOAT03S0VgO25fm1+PQCFmthJ+OTN5NsqaU2Z4yHrmVVrXhuRzfqg2TTuV1dj+Z54EL4vOK935Mh
+ HByqoPaDi1PwacZWznjM2h92KsAbFMGR2fE9aU9/eoMGssXgAxvBlZn4vvp+rlN7sT0I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -31,44 +31,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dI8TLOAph7Z3EfK5UcTzDJzKn6DkUwNk5J2wWHxyG6E=; b=gly8mh8d1gRxEHMklbe6vIIPXU
- X493FhUI3ZrnquH3A+2zaT7W2Dt/meTOHQlDkF/NkI7g54DGKL4FLJU1UOBm6gL884wZrI3ojgwPk
- dIJ+RcQpBBdYXPHNJJfLv7OFrA0oCis9ZptNqEIQFSZ/oqIjKBnOKiWo+TCnlxaxZtJ0=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=o3LLoT9psFRXH7u+ttwKfcMtMPpkV6pTDoakX73NMcI=; b=TeXeDVpeFEaklPJjNTJJ2Hx5E0
+ l0UN7y+IMfxglIYNQbOggbmYYsJpOGbXKlTFoEHmvgIrK69SOTO41HA2kWqNn1n1E2GJOwSVIDkG2
+ nUURX4FnDIv61Outi81HI03iL0z3o4j3KZuvEmtbB6KgxBiMlk3IviMfjqKPboV9c35s=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nto36-008kSo-4U
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 10:15:30 +0000
+ id 1nto7V-008lTE-Ua
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 10:20:03 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id C9263B81D18;
- Wed, 25 May 2022 10:15:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E5DC385B8;
- Wed, 25 May 2022 10:15:11 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id AE93A60BBD;
+ Wed, 25 May 2022 10:19:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 303E3C385B8;
+ Wed, 25 May 2022 10:19:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1653473712;
- bh=dI8TLOAph7Z3EfK5UcTzDJzKn6DkUwNk5J2wWHxyG6E=;
+ s=k20201202; t=1653473995;
+ bh=zNi9BVddPHdYzJhzN8S1giTTXHcermTY4kmOt2A3fq8=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=EVjfMMi6gF+YFccalv0ZyaKU218EGWSLcHHPIfoK/zm79ZEoWs/rO4o+Tb/KDHZ1/
- TPrz79d0g4vlaB2RIfqLk0lL24JUlhG/PPiEHp4sB4EmqRPGE/l4IgmcxtfcV6AC/L
- LQXpkKZXcAMbQnhbJM75VXmNVvDlFa12XTvDIB3hJ43d11jNkSeMLzYldH0wfauUhs
- XsVdcF0oCsOyiAaCsL2BFEIwHq3u96p15zAjQebPyCn9BS/dV5mq9uVweiTAPJ9ta4
- 6IrocakkkkeInKzgcEn2Gcd8T+uDZsW8P4wfqizil4JsX06OFdMCbGnMVQrOkZptK1
- 6AGPzsB0/31Dw==
-Message-ID: <7b3538cb-8886-d766-d510-1eee2ca88292@kernel.org>
-Date: Wed, 25 May 2022 18:15:08 +0800
+ b=A8ci7a/7nNDM+myS4BLhlwiLbD428RqEJ2q6S+nkZyLh+Bc5BKvulasquSJcYwVBL
+ pxeJ+5Hrr40zopfDAmyhzqv4Ot2glyjpUqqG/L5WN0yfCkaCC0tFdiSYg1/3j0Vv0k
+ ZbJEcHKB/NJ218nM4gfKTCege93J65gfkWpGXoANVz1ZNbIv0rc1fXwFeeLoIIRv4L
+ 1S4+a2Pz+/74zk/oRkC72j19CH9WIks6QkqjIYFX5xw78Qc0H6uo+gq8DHaG+SAsOf
+ LMo2f4weM5bx60UiHGema6nZd9lnpdeXXJT0VZPQ6Hu4+QLIhT+ZIpMuuoFyZeYLU1
+ 7eOy93WFSNnVg==
+Message-ID: <ddb513fa-7de9-3224-a251-201c5a2b9cdc@kernel.org>
+Date: Wed, 25 May 2022 18:19:52 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
 Content-Language: en-US
 To: Yufen Yu <yuyufen@huawei.com>, jaegeuk@kernel.org
 References: <20220525094336.2489995-1-yuyufen@huawei.com>
+ <20220525094336.2489995-2-yuyufen@huawei.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20220525094336.2489995-1-yuyufen@huawei.com>
-X-Headers-End: 1nto36-008kSo-4U
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: replace F2FS_I(inode) by the local
- variable
+In-Reply-To: <20220525094336.2489995-2-yuyufen@huawei.com>
+X-Headers-End: 1nto7V-008lTE-Ua
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: add f2fs_init_write_merge_io
+ function
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,10 +87,15 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2022/5/25 17:43, Yufen Yu via Linux-f2fs-devel wrote:
-> We have define 'fi' at the begin of function do_read_inode(),
-> just use it, rather than use F2FS_I(inode) again.
+> Almost all other initialization of variables in f2fs_fill_super are
+> extraced to a single function. Also do it for write_io[], which can
+> make code more clean.
+> 
+> This patch just refactors the code, theres no functional change.
+> 
+> Signed-off-by: Yufen Yu <yuyufen@huawei.com>
 
-How about cleaning up F2FS_I() in other functions, if 'fi' existed?
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
 
