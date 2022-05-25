@@ -4,63 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DA2BAC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 May 2022 09:30:27 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BDD5DC433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 May 2022 10:15:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ntnLX-0002nt-4L; Wed, 25 May 2022 09:30:26 +0000
+	id 1nto3B-0000mf-9t; Wed, 25 May 2022 10:15:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <yuyufen@huawei.com>) id 1ntnLU-0002nn-1J
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 09:30:23 +0000
+ (envelope-from <chao@kernel.org>) id 1nto3A-0000mV-KW
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 10:15:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TPCi7ltVeNt5jE/ueUWv8Hcotudrsc231tJj33CYA98=; b=kQHIqbUIbLM9GNXw9raFkQ83mL
- 0H6Flv491uEOzBo/Bp94J7C9VnNxrknADJD0f8W/UTgCJUK1noftV7mmJdtQGf3JRjLWHKeddVV7O
- UZJl+mFIYX4C2WAnE8b13LGySkEpSdsmn5oonGh8y0i9JNrxUQYwXYtghjwDgd9LDp+g=;
+ bh=dI8TLOAph7Z3EfK5UcTzDJzKn6DkUwNk5J2wWHxyG6E=; b=OjSsIfLAr5UcWEp26GXVD65tO7
+ fYYTxyg7XeVaEeeYXM4e5bEQ6tzY19YTFl3QBDuHdsE4+Eoc71kp/v6yWUE6IKvcUHA3lN6CHiY8n
+ VY0esSe8WPy2UTapd6MQWoBHMeTDJfkaib8hJoZ7U2N6LibEPDGehYEC3F27zQXb6k3o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=TPCi7ltVeNt5jE/ueUWv8Hcotudrsc231tJj33CYA98=; b=N
- suYz+E/dh+2u+fmr59HILb9lw51jCwPmZRvS7IAui4T41RChEpOS/17QDQFsE1DNBYoebNkdlrV3R
- JxyKHPJEgs3Y9/nDZ1hvXUcDrMQY9TPK0s4S35NS+RhjMlM3S/nZ9Xr5kN+yqpKNhtKuSgUUUkC5K
- pjOudDJLudToQwGQ=;
-Received: from szxga01-in.huawei.com ([45.249.212.187])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=dI8TLOAph7Z3EfK5UcTzDJzKn6DkUwNk5J2wWHxyG6E=; b=gly8mh8d1gRxEHMklbe6vIIPXU
+ X493FhUI3ZrnquH3A+2zaT7W2Dt/meTOHQlDkF/NkI7g54DGKL4FLJU1UOBm6gL884wZrI3ojgwPk
+ dIJ+RcQpBBdYXPHNJJfLv7OFrA0oCis9ZptNqEIQFSZ/oqIjKBnOKiWo+TCnlxaxZtJ0=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1ntnLO-0001wv-9k
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 09:30:22 +0000
-Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.57])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4L7QkX5ycyzjX4P;
- Wed, 25 May 2022 17:29:24 +0800 (CST)
-Received: from dggpeml500009.china.huawei.com (7.185.36.209) by
- dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 25 May 2022 17:30:07 +0800
-Received: from huawei.com (10.175.127.227) by dggpeml500009.china.huawei.com
- (7.185.36.209) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 25 May
- 2022 17:30:07 +0800
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Wed, 25 May 2022 17:43:35 +0800
-Message-ID: <20220525094336.2489995-1-yuyufen@huawei.com>
-X-Mailer: git-send-email 2.31.1
+ id 1nto36-008kSo-4U
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 10:15:30 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id C9263B81D18;
+ Wed, 25 May 2022 10:15:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E5DC385B8;
+ Wed, 25 May 2022 10:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1653473712;
+ bh=dI8TLOAph7Z3EfK5UcTzDJzKn6DkUwNk5J2wWHxyG6E=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=EVjfMMi6gF+YFccalv0ZyaKU218EGWSLcHHPIfoK/zm79ZEoWs/rO4o+Tb/KDHZ1/
+ TPrz79d0g4vlaB2RIfqLk0lL24JUlhG/PPiEHp4sB4EmqRPGE/l4IgmcxtfcV6AC/L
+ LQXpkKZXcAMbQnhbJM75VXmNVvDlFa12XTvDIB3hJ43d11jNkSeMLzYldH0wfauUhs
+ XsVdcF0oCsOyiAaCsL2BFEIwHq3u96p15zAjQebPyCn9BS/dV5mq9uVweiTAPJ9ta4
+ 6IrocakkkkeInKzgcEn2Gcd8T+uDZsW8P4wfqizil4JsX06OFdMCbGnMVQrOkZptK1
+ 6AGPzsB0/31Dw==
+Message-ID: <7b3538cb-8886-d766-d510-1eee2ca88292@kernel.org>
+Date: Wed, 25 May 2022 18:15:08 +0800
 MIME-Version: 1.0
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500009.china.huawei.com (7.185.36.209)
-X-CFilter-Loop: Reflected
-X-Headers-End: 1ntnLO-0001wv-9k
-Subject: [f2fs-dev] [PATCH 1/2] f2fs: replace F2FS_I(inode) by the local
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Content-Language: en-US
+To: Yufen Yu <yuyufen@huawei.com>, jaegeuk@kernel.org
+References: <20220525094336.2489995-1-yuyufen@huawei.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20220525094336.2489995-1-yuyufen@huawei.com>
+X-Headers-End: 1nto36-008kSo-4U
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: replace F2FS_I(inode) by the local
  variable
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -73,43 +80,18 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Yufen Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Yufen Yu <yuyufen@huawei.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-We have define 'fi' at the begin of function do_read_inode(),
-just use it, rather than use F2FS_I(inode) again.
+On 2022/5/25 17:43, Yufen Yu via Linux-f2fs-devel wrote:
+> We have define 'fi' at the begin of function do_read_inode(),
+> just use it, rather than use F2FS_I(inode) again.
 
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
----
- fs/f2fs/inode.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+How about cleaning up F2FS_I() in other functions, if 'fi' existed?
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 83639238a1fe..9bad349be9cc 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -466,10 +466,10 @@ static int do_read_inode(struct inode *inode)
- 		}
- 	}
- 
--	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
--	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
--	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
--	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
-+	fi->i_disk_time[0] = inode->i_atime;
-+	fi->i_disk_time[1] = inode->i_ctime;
-+	fi->i_disk_time[2] = inode->i_mtime;
-+	fi->i_disk_time[3] = fi->i_crtime;
- 	f2fs_put_page(node_page, 1);
- 
- 	stat_inc_inline_xattr(inode);
--- 
-2.31.1
-
+Thanks,
 
 
 _______________________________________________
