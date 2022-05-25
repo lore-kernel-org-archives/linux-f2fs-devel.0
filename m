@@ -4,67 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A2C2AC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 May 2022 17:33:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 98585C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 May 2022 23:35:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ntutB-0004xh-Ok; Wed, 25 May 2022 17:33:40 +0000
+	id 1nu0XM-0007kh-0B; Wed, 25 May 2022 23:35:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1ntutA-0004xb-M6
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 17:33:39 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1nu0XL-0007kb-Ah
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 23:35:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xuA1f5IsqFsKGwIqr1G79tX0BaZ5+bcE0fLm4r6i7Nc=; b=JvY9eaX7RnR1JZc5bC4s935lHO
- wzKKcl20OffCYhQ7vE5wUvb1NRVXUBbMXc+9+6uTz7l5exdZ8KIU59GuSu2NYuqyOSx/vX8KlhZOi
- g3paIv6K981PuE863BS0NB/dsLIymB7D9kXsrLDUl8VQH8FEVq4iD+KWpLBhpx4Y26Xs=;
+ bh=ZSMlgvwXfFQ7wAFonsX08gzrcxdZI6oAIqfXaAzyfck=; b=DbWRc5tz30apWIlOcT9reuRDEK
+ mN3JKro0QiSnfAc7bmTxYHl3feRjOyRAtKKp3FBYWqXw+zsO4sDkQSNcAs/55MUX2PQAQWkhrYKOe
+ ojl++qLnKqItM3QeP6KzKRBx9GFTa4IFVrGYg1FC87bTQUFNfQPFU/92eD2WKAYXTdt8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=xuA1f5IsqFsKGwIqr1G79tX0BaZ5+bcE0fLm4r6i7Nc=; b=h
- Fdi6fO0fy+6vD1t4MVUA4ttJLcQUNrcK5IKfPS5gviEotZlc8/4nUq2aOeazL2w/wup8NA+1YzbOg
- djPZE/szzFkYrIfj/kaHDRWHB4iKQN1kd4nky27O8fEZbLykkrDf9LlAtp7ME/D0qvm6m2u8uwoL9
- R3aFui+12MC6D1LA=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ZSMlgvwXfFQ7wAFonsX08gzrcxdZI6oAIqfXaAzyfck=; b=mcxomHvUCFZR/OGDQk8+Zo9wJf
+ x3gtyOfqotM9ARt1QykWaPitTWvRwIK5VFu9uPvMJZSdn6CjwTpZGIseyP2ppaZMo3+/i7WXFbyj8
+ Z1Sr6RMSokcniZTj90iriUE6oNbTxkk+9H1EdWSZMxbWuHATuqV2gqPj+D01DdgUVQ0Q=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1ntut4-009vuE-S4
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 17:33:39 +0000
+ id 1nu0XG-000hRM-1K
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 23:35:30 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 7E6D86178F
+ by dfw.source.kernel.org (Postfix) with ESMTPS id C8DAB6159A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 25 May 2022 17:33:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3442C385B8;
- Wed, 25 May 2022 17:33:28 +0000 (UTC)
+ Wed, 25 May 2022 23:35:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BF6C34114;
+ Wed, 25 May 2022 23:35:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1653500008;
- bh=DwMLcn0/K10UtAT1sEl/sBLtW5FlOXYahgdo/NZI7Qw=;
- h=From:To:Cc:Subject:Date:From;
- b=TDQzBbgHqIJXVA6lwwv3K9FFs6Eb6u5IMBnM2F0+M+JUizu5VSo6LJOHFiD/94naJ
- oGbPc5axI81iX0IfK+o5kSrFSsg0p0u/WUJsriypBmQPMca6eI678rzBqHYZFhhmWu
- BKgcKJ2sIbVSoy5y9fXuUxYGMYf97gWqVE8Pe6qLeHrqyiXwHhLpi5zrPQtcILtW6q
- BEruEKZgvSu+LRvF3kbf/dXpILfvMJ6joCfIb+CreGwTG87B7fsDBEZy8BlasKDvIr
- ytt9WCn0V7tykRMNa+XuJcIlynKdDuzKI7CF0KYtBpwioW5eUKB1PQm/uqdhQHr/Hd
- OPbVJyRe84RSg==
+ s=k20201202; t=1653521715;
+ bh=8ZXsmg5Hjdo3M1GTUekFf1//Cc4x41kGvl3dUA93EGs=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=PKXFMhS2Pl2vu5rvgO6COEmCiPpgiUvhBNpohE5wcHLRH0QRTEsUBm8GOzP2LWD5G
+ CNsg7G85aPI0sPbz20TgaMHZhd3tmoY0KlBWUfvFDpEmGWkD2UkFzU8LA2vYx4nJu1
+ baLKAq0ZLcwGPj/ebtLeX8r6A9hXg0iqd0w5jdntT/02ZRtGlP6JyhJ0DeiLoIVOvN
+ sZP3+1QJQK9AwkikxWF346Jmm+08oleqisid/lJZ5t1z85RVmS0OuqoSpUwVnBk1dh
+ k4Co6FK+8jmyOpT2eAISSU/sg/yZquT852J1+KtyoYZ3KJ56h3QJEnbLIselL/XbWA
+ nR3lub7aMjYVA==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 25 May 2022 10:33:27 -0700
-Message-Id: <20220525173327.851320-1-jaegeuk@kernel.org>
+Date: Wed, 25 May 2022 16:35:08 -0700
+Message-Id: <20220525233510.4023217-2-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.36.1.124.g0e6072fb45-goog
+In-Reply-To: <20220525233510.4023217-1-jaegeuk@kernel.org>
+References: <20220525233510.4023217-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ntut4-009vuE-S4
-Subject: [f2fs-dev] [PATCH] Support zoned device if libc exists
+X-Headers-End: 1nu0XG-000hRM-1K
+Subject: [f2fs-dev] [PATCH 2/4] Remove unnecessary config.h
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,37 +83,176 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+Instead, we should use <config.h> generated by configure.
+
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- include/android_config.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fsck/dict.c             | 1 -
+ fsck/mkquota.c          | 2 +-
+ fsck/quotaio.c          | 1 -
+ fsck/quotaio_tree.c     | 1 -
+ fsck/quotaio_v2.c       | 1 -
+ lib/nls_utf8.c          | 3 +--
+ mkfs/f2fs_format.c      | 2 --
+ mkfs/f2fs_format_main.c | 4 ++--
+ tools/f2fs_io/f2fs_io.c | 2 +-
+ tools/f2fscrypt.c       | 1 -
+ tools/sha512.c          | 1 -
+ 11 files changed, 5 insertions(+), 14 deletions(-)
 
-diff --git a/include/android_config.h b/include/android_config.h
-index 5f5c693cbbb3..07440874188c 100644
---- a/include/android_config.h
-+++ b/include/android_config.h
-@@ -4,8 +4,6 @@
- #define HAVE_FCNTL_H 1
- #define HAVE_FALLOC_H 1
- #define HAVE_FSYNC 1
--#define HAVE_KERNEL_UAPI_LINUX_BLKZONED_H 1
--#define HAVE_LINUX_BLKZONED_H 1
- #define HAVE_LINUX_HDREG_H 1
- #define HAVE_LINUX_LIMITS_H 1
- #define HAVE_POSIX_ACL_H 1
-@@ -42,6 +40,12 @@
- #ifdef WITH_SLOAD
- #define HAVE_LIBSELINUX 1
+diff --git a/fsck/dict.c b/fsck/dict.c
+index bb7600cc4fae..5b875bed81b3 100644
+--- a/fsck/dict.c
++++ b/fsck/dict.c
+@@ -20,7 +20,6 @@
+ 
+ #define DICT_NODEBUG
+ 
+-#include "config.h"
+ #include <stdlib.h>
+ #include <stddef.h>
+ #ifdef DICT_NODEBUG
+diff --git a/fsck/mkquota.c b/fsck/mkquota.c
+index c419a0fe2078..d18141e2460f 100644
+--- a/fsck/mkquota.c
++++ b/fsck/mkquota.c
+@@ -4,7 +4,7 @@
+  * Aditya Kali <adityakali@google.com>
+  * Hyojun Kim <hyojun@google.com> - Ported to f2fs-tools
+  */
+-#include "config.h"
++
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff --git a/fsck/quotaio.c b/fsck/quotaio.c
+index a3815b0c8835..d02475287c91 100644
+--- a/fsck/quotaio.c
++++ b/fsck/quotaio.c
+@@ -6,7 +6,6 @@
+  * Hyojun Kim <hyojun@google.com> - Ported to f2fs-tools
+  */
+ 
+-#include "config.h"
+ #include <stdio.h>
+ #include <errno.h>
+ #include <string.h>
+diff --git a/fsck/quotaio_tree.c b/fsck/quotaio_tree.c
+index c2034005cfe0..40521c54c436 100644
+--- a/fsck/quotaio_tree.c
++++ b/fsck/quotaio_tree.c
+@@ -5,7 +5,6 @@
+  * Hyojun Kim <hyojun@google.com> - Ported to f2fs-tools
+  */
+ 
+-#include "config.h"
+ #include <sys/types.h>
+ #include <errno.h>
+ #include <stdio.h>
+diff --git a/fsck/quotaio_v2.c b/fsck/quotaio_v2.c
+index 9353f8567647..e19f303d96ea 100644
+--- a/fsck/quotaio_v2.c
++++ b/fsck/quotaio_v2.c
+@@ -5,7 +5,6 @@
+  * Hyojun Kim <hyojun@google.com> - Ported to f2fs-tools
+  */
+ 
+-#include "config.h"
+ #include <sys/types.h>
+ #include <errno.h>
+ #include <stdio.h>
+diff --git a/lib/nls_utf8.c b/lib/nls_utf8.c
+index 9e7590deb338..e6f34ba60b18 100644
+--- a/lib/nls_utf8.c
++++ b/lib/nls_utf8.c
+@@ -20,14 +20,13 @@
+  * implementation.
+  */
+ 
+-#include "config.h"
+ #include <stdint.h>
+ #include <unistd.h>
+ #include <string.h>
+ #include <limits.h>
+ #include <errno.h>
+ 
+-#include "f2fs_fs.h"
++#include <f2fs_fs.h>
+ 
+ /* Encoding a unicode version number as a single unsigned int. */
+ #define UNICODE_MAJ_SHIFT		(16)
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 3b96d3182ac8..7cd5815e1f80 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -8,8 +8,6 @@
+  */
+ #define _LARGEFILE64_SOURCE
+ 
+-#include "config.h"
+-
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <fcntl.h>
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index b8936f15e0f2..d2c2605ae6a5 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -22,7 +22,8 @@
+ #include <errno.h>
+ #include <getopt.h>
+ 
+-#include "config.h"
++#include <f2fs_fs.h>
++
+ #ifdef HAVE_LIBBLKID
+ #include <blkid/blkid.h>
  #endif
-+
-+#ifdef WITH_LIBC
-+#define HAVE_KERNEL_UAPI_LINUX_BLKZONED_H 1
-+#define HAVE_LINUX_BLKZONED_H 1
-+#endif
-+
+@@ -30,7 +31,6 @@
+ #include <uuid/uuid.h>
  #endif
  
- #if defined(__APPLE__)
+-#include "f2fs_fs.h"
+ #include "quota.h"
+ #include "f2fs_format_utils.h"
+ 
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index 0edac6fedf33..2f0fc7b25d41 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -43,7 +43,7 @@
+ #include <unistd.h>
+ 
+ #ifdef HAVE_CONFIG_H
+-#include "config.h"
++#include <config.h>
+ #endif
+ #include <android_config.h>
+ 
+diff --git a/tools/f2fscrypt.c b/tools/f2fscrypt.c
+index 1233f3a5b103..8640ffae1404 100644
+--- a/tools/f2fscrypt.c
++++ b/tools/f2fscrypt.c
+@@ -20,7 +20,6 @@
+ #define _GNU_SOURCE
+ #endif
+ 
+-#include "config.h"
+ #include <f2fs_fs.h>
+ 
+ #include <assert.h>
+diff --git a/tools/sha512.c b/tools/sha512.c
+index bf0d9a4efaef..c6d35afa7e2c 100644
+--- a/tools/sha512.c
++++ b/tools/sha512.c
+@@ -11,7 +11,6 @@
+  */
+ 
+ 
+-#include "config.h"
+ #include <assert.h>
+ #include <errno.h>
+ #include <getopt.h>
 -- 
 2.36.1.124.g0e6072fb45-goog
 
