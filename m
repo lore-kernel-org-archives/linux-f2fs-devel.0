@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0A2E3C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 25 May 2022 23:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CAE9CC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 May 2022 00:21:55 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nu0XQ-0007l5-5Y; Wed, 25 May 2022 23:35:35 +0000
+	id 1nu1GF-0000Y6-Cd; Thu, 26 May 2022 00:21:54 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1nu0XO-0007kv-Sm
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 23:35:34 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1nu1GE-0000Y0-Ld
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 May 2022 00:21:53 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9zZ81w3Hx7ELWK4RQtZ4SoH/6WmjuGA/OwCDR1LAohk=; b=AZZ+5hwrwmhOM3oly8ypz2pKp6
- aFX1bWPm4X4hValOizr3oedG41aLqDrj8mnfXkHVqCVykeR2N/tByYfJDk/KOikP3hwKEFDDd56id
- 9vlJguBhB6pBudWD8tSUY4gRTs6qCpDUvK/oCWgJYiYVOQ5W5OwJru5xureaDLdnnjkA=;
+ bh=XBq/MkjHiiSUU0Iai0PnDz/SiQzhnL5QaGDn1tkhE04=; b=J4TtDMpvSbQVfAftB1KxOrv8o/
+ JV7jQ3BjZrRlP9TD4Bgb6r3FLWKKtO4+0sACKQKtx5Y7DWNiwJjqKSnu7rmmm4Lgq8v5c64IN/LPR
+ 3w/pstJ4O5n6Mu3ujQi5v5zGrkleb2d+sQc0ojdIWAajwIqVe9pdYJNXK11OxFxbKX0I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=9zZ81w3Hx7ELWK4RQtZ4SoH/6WmjuGA/OwCDR1LAohk=; b=g
- p3sxLhQys4wqVlGzkpjB5M8ObXRwOY7pfYKbfFoD3/P0P1SCgfrFnSXlYEsTbNrAjdGANimx0L3cy
- XzGajHxNOKbBiSXL+o15MIkYPEhwJjPKzM0FpGnBKt5C/swlsrOQN7v0X7Zd5s6RtTXo1UKjkZBuv
- yrSPU+SnqjaS5aco=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ List-Owner:List-Archive; bh=XBq/MkjHiiSUU0Iai0PnDz/SiQzhnL5QaGDn1tkhE04=; b=B
+ cRrJGMSWdoUl2WMywQQoz8IhV9Rec+NeNdylHXpnXQ0vKTsjMt0STR2MdT25yTQh21lPcHYISYKWM
+ Jr6wFZyuGTYd+DS2HiZQmH+M22xlkFdoNVeOQaFoIjVII5JGDDlexoiJM47Yw0/9Ti/82gsP34Ghi
+ m2QiGytkpujqK1OA=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nu0XH-000hRO-0M
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 25 May 2022 23:35:33 +0000
+ id 1nu1GB-000pi1-R8
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 May 2022 00:21:53 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id CA56FB81E6A
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 7821D6164F
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 25 May 2022 23:35:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EAB7C385B8;
- Wed, 25 May 2022 23:35:14 +0000 (UTC)
+ Thu, 26 May 2022 00:21:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA308C34114;
+ Thu, 26 May 2022 00:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1653521714;
- bh=3P6s718zR/c0BTIA3Zyd1VlYc9gQ5XLtfKyZJx6KhzQ=;
+ s=k20201202; t=1653524505;
+ bh=fSWCwR6wF3rhWh0bFYiuRB+AA3YVbYBjua+PG8qSFKY=;
  h=From:To:Cc:Subject:Date:From;
- b=gExDLFWbfC/UJihztto8AUEUlHFxXrkVzt8gj+avHM8lL0XhAWZVUfeRqjncybanU
- 6b7nGDllCU5wha1UdKYZ78xwrnVBLd97Xfl6Iv23mC5oi0s9866fLC+C2H+GxevrIj
- Lx7FsjVr84G0UYMaK42CjmgfU+D9Yh56klaHrkJyMnpJB457juDq/8cXQxNPSvA9m7
- BsZosurOMFTvBgD02GwV+6Zfkh/j9uJ1xt8ucGqe6FEAo7eKDcx3sCcS4BDS9hD6G2
- oqeSCjK2s+bljQ74GOEnpUIn/ybUWHwFP+PSUyeNRHiWs6BqBD9he6BaEaI6hiqMVN
- XK3LeDpPHsnGw==
+ b=TJWhsqI9I1wmrMmJGI6jzueCxlorKU2fUNueXmwdQ4nUyAKQZIErg6DEdevz3qbQh
+ ZMzxJpp+zegmcvgaNxT5czgBxTNkOgE8Ht5SmA+b0mg97+P261BQzxD7fXxLWy4NLK
+ GwvUiPK7wPHwoKW1bdTrL9imNXGe/ic4seBC2a9nfguzk7l45rvHE5301gIEjXARtL
+ KQODaIX3fbp/rgffaGTmUu9Gg/U/Ou7jdNHQN7sHNRX3Hq3VoM4zoZeKxVT3qJzqgd
+ TKZn37cnBBpvvLf+weqb8cCVHROB0rzBsOPtbPs+Z8UhzaZxJqdZ3bXcFVCLXtfMRO
+ G72lqKmKws7vA==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 25 May 2022 16:35:07 -0700
-Message-Id: <20220525233510.4023217-1-jaegeuk@kernel.org>
+Date: Wed, 25 May 2022 17:21:42 -0700
+Message-Id: <20220526002143.842643-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.36.1.124.g0e6072fb45-goog
 MIME-Version: 1.0
-X-Headers-End: 1nu0XH-000hRO-0M
-Subject: [f2fs-dev] [PATCH 1/4] libzone: remove duplicate header
+X-Headers-End: 1nu1GB-000pi1-R8
+Subject: [f2fs-dev] [PATCH] Check fallthrough in mount.h for Mac
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,24 +81,54 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/usr/include/os/base.h:128:23: error: missing ')' after 'do'
+                      ^~~~~~~~~~~
+external/f2fs-tools/include/f2fs_fs.h:81:24: note: expanded from macro 'fallthrough'
+                    ~~ ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.3.sdk/usr/include/os/base.h:128:22: note: to match this '('
+
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- lib/libf2fs_zoned.c | 2 --
- 1 file changed, 2 deletions(-)
+ include/f2fs_fs.h | 6 ++++++
+ lib/libf2fs.c     | 3 ---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-index c5c6ddee7cdd..f383ce275342 100644
---- a/lib/libf2fs_zoned.c
-+++ b/lib/libf2fs_zoned.c
-@@ -27,8 +27,6 @@
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index ad2798cf388c..21a7e70d952d 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -77,11 +77,17 @@
+ #define static_assert _Static_assert
  #endif
- #include <libgen.h>
  
--#include <f2fs_fs.h>
--
- #ifdef HAVE_LINUX_BLKZONED_H
++#ifdef HAVE_SYS_MOUNT_H
++#include <sys/mount.h>
++#endif
++
++#ifndef fallthrough
+ #ifdef __clang__
+ #define fallthrough do {} while (0) /* fall through */
+ #else
+ #define fallthrough __attribute__((__fallthrough__))
+ #endif
++#endif
  
- int get_sysfs_path(struct device_info *dev, const char *attr,
+ #ifdef _WIN32
+ #undef HAVE_LINUX_TYPES_H
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 36b8c25980ab..ecaa2e9d1ad5 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -22,9 +22,6 @@
+ #endif
+ #include <time.h>
+ #include <sys/stat.h>
+-#ifdef HAVE_SYS_MOUNT_H
+-#include <sys/mount.h>
+-#endif
+ #ifdef HAVE_SYS_IOCTL_H
+ #include <sys/ioctl.h>
+ #endif
 -- 
 2.36.1.124.g0e6072fb45-goog
 
