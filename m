@@ -4,67 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9676FC433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 May 2022 14:57:52 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BDE79C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 May 2022 15:04:09 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nubPT-0001OW-Qa; Fri, 27 May 2022 14:57:51 +0000
+	id 1nubVV-0006S1-Jf; Fri, 27 May 2022 15:04:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1nubPS-0001OO-Q4
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 14:57:50 +0000
+ (envelope-from <chao@kernel.org>) id 1nubVU-0006Rj-5U
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 15:04:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=78Ksa+8QbLDGcn2BdB7KCF7NFTAfdN1U8V+FsjVU5k8=; b=UpKhzMO55yCMcCV88oZiGwSII3
- 9pZvEDr9qKpO0QCM/zjiX3ZFt2hc6K8Tcly8yZdRAWrA39m97K8dFFf5q06y/nzWtMfks5cV46xCN
- mqmXrdzPNY/IBWvYFYqEkxmMf282WfeYzyQz5Iw0IcVJqN4cgyI+CzIyKEpC82S2kOb0=;
+ bh=mkbNoF7CHDD0939WO2D+SsXoyWlmC8IqIBG2NZDTadY=; b=OAby3F4uJAoZlvsEhvxGHgM/ya
+ Dv7zfhBPNM2ReqsNswdGyNRBgTosIPKc2phWug6Mv2X9UztUbgVbjGUNSnDV9jJ/1KcztNLDcm1ZO
+ +AxyYusjPQpCoWjgR4X3X7/3leJRz5glsEoIodu1k+j73fMlPqy9dz8bW8CyFDJdHFU0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=78Ksa+8QbLDGcn2BdB7KCF7NFTAfdN1U8V+FsjVU5k8=; b=M
- afmsqXX5203OnErFTd/AoJ6vWMsvBUzMKG7oHQ8pGxaWvzqK6d9FqdWXlGowjT2M0SccrnmKMMJ+S
- GNUJjgONfT3z3JvCWrL6/Qf+XbO6Bn10E3YFl05FQs9V64wVCRfyXRcxKUYtxsrb4bedcokBYY7XD
- zckY2Ma7N/AYvFNw=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=mkbNoF7CHDD0939WO2D+SsXoyWlmC8IqIBG2NZDTadY=; b=lx91cq3wCqkdXJPm4jjPh7volH
+ XMjudJVapug+T4uep0SyPh6o3q7EkT80npNv6U+MwvzPXKJUVK2oQF2mf8ZomJRY7ZbohxBarEkbh
+ p49yGPtArJKBEMwmsOgCbAN1Z4CsnC3dMxNai2Bh+vX3guTx7K27yMdD21X3n+iIOX9Y=;
 Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nubPP-004PGX-VN
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 14:57:49 +0000
+ id 1nubVT-004Ppp-Mr
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 15:04:04 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id D884EB8252D;
- Fri, 27 May 2022 14:57:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB63C385A9;
- Fri, 27 May 2022 14:57:33 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 63AC0B8255D;
+ Fri, 27 May 2022 15:03:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98190C385A9;
+ Fri, 27 May 2022 15:03:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1653663455;
- bh=tpEtjd4nbyNCejM6AtwsnItS+PD48F89/FUa062YJUI=;
- h=From:To:Cc:Subject:Date:From;
- b=iPBtkL6xdM/Z60+U7iPOu+FD9LGBe209M7wbOabX3NhUNr6aqDdif0CFhQGh3xHi0
- sytLxpuV82gBilWI9NucufMGvcNR4Rm260e2Po/Lzb7JWmwJcSUvyBXQUjx9BWijLF
- LGwHIGxgHj5SbwCA9d7FYtc67qK1YUQKhXpTAKCudqL4RZzIeiyjTrEcd+ktP7Wt/T
- 5NorrMBpQruxf0NNTVlzJYbKFzrn58FjFtRS9u++b4HMJvy5uUP4VD6O+xYhCh95dR
- 0uETkItq9qqAwE9+i4H3bIlnfMM89dEclAqPZSrt8/sa8jfLt7OKw3YdIBwceFWjbZ
- Ik68wOvD9ZtrA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Fri, 27 May 2022 12:13:30 +0800
-Message-Id: <20220527041330.19951-1-chao@kernel.org>
-X-Mailer: git-send-email 2.36.1
+ s=k20201202; t=1653663836;
+ bh=KYmRsp8PHcsSaHvwN0jbr6Bu6gOSmapE0ghQ9PlKuk0=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=gvrS3QKv0IjtRN0lfETBVYHZqaBLXVlfkmvoFwVET1CXV0ep4XxKHvmjTp5Wdk5IC
+ zujtE6qYxNlQgYEAKN6sor53oNK09Iu4H8SgyQfl28ca0rRiAGZZYpE5jsspOujwOh
+ OUgyJ2qQqYfhEOHOVzKTddubM02UsZdejLZHJLmt4SlTQUFcWVmQys8bZTPb25j1kh
+ nMgd/gof4XXwkmpKt5qve9PxLyHOec4uSUX+P1M38jnUZWjuTUtcqdVTmQxDHe4Qd3
+ blE/zmNZYcmiNe+GwPDQJHfqGfMFNi1qfhhoWZKWfQ0IlgGzf1pWf6NzXA9dh6En8N
+ pcHAEhio+BrUg==
+Message-ID: <a64e5581-0201-9a4b-46ef-817cbef327fc@kernel.org>
+Date: Fri, 27 May 2022 23:03:57 +0800
 MIME-Version: 1.0
-X-Headers-End: 1nubPP-004PGX-VN
-Subject: [f2fs-dev] [PATCH] f2fs: fix to tag gcing flag on page during file
- defragment
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Content-Language: en-US
+To: Yufen Yu <yuyufen@huawei.com>, jaegeuk@kernel.org
+References: <20220526022106.3848304-1-yuyufen@huawei.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20220526022106.3848304-1-yuyufen@huawei.com>
+X-Headers-End: 1nubVT-004Ppp-Mr
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: replace F2FS_I(inode) by the local
+ variable
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,35 +80,20 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In order to garantee migrated data be persisted during checkpoint,
-otherwise out-of-order persistency between data and node may cause
-data corruption after SPOR.
+On 2022/5/26 10:21, Yufen Yu wrote:
+> We have define 'fi' at the begin of the functions, just use it,
+> rather than use F2FS_I(inode) again.
+> 
+> Signed-off-by: Yufen Yu <yuyufen@huawei.com>
 
-Signed-off-by: Chao Yu <chao.yu@oppo.com>
----
- fs/f2fs/file.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a05d842a7e72..e2310c91183c 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2602,6 +2602,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 			}
- 
- 			set_page_dirty(page);
-+			set_page_private_gcing(page);
- 			f2fs_put_page(page, 1);
- 
- 			idx++;
--- 
-2.36.1
-
+Thanks,
 
 
 _______________________________________________
