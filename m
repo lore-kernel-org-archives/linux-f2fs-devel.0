@@ -4,64 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 37899C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 26 May 2022 02:07:56 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D69EBC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 May 2022 09:03:09 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nu2up-00080Z-0z; Thu, 26 May 2022 02:07:53 +0000
+	id 1nuVsB-0000Cz-Pf; Fri, 27 May 2022 09:03:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <yuyufen@huawei.com>) id 1nu2un-00080T-3M
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 May 2022 02:07:51 +0000
+ (envelope-from <fweimer@redhat.com>) id 1nuVsA-0000Cs-KW
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 09:03:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:In-Reply-To:
+ Date:References:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=euNux8306sc5btCy/RzxCUZpPvU1t/ETpknokZDNVmo=; b=NGUvm/D9stLiBAoIn5MAKOfKYk
- IyA2P77TDLlDPxc8UyOJgPerNwddPDn+C7Mq+PjUM1uBEjK580H+WM7dqMuvXxzOVihVuUq1AExt8
- SCws6JKOL0ixagHi6HWiqhvxmlS/hzoPUizB7tu/0gju0LfmmPkuVPQwnCevdRxcvXn4=;
+ bh=VxSx5WHE/is7ha0Qn9ZHkh6x3/barWbE89a+k35Foho=; b=CfUyb06hDLnkDFaBgHoCW/j11b
+ 4FTbG44wuVUxRvf2MUaRIf8BBNXBzmwxOw7pVMKAdMSAmrvoeBEi9L1Ad5nU5d1vvwgaI5/sHwVpj
+ jlW/sD8CpHSbjOlJ1dIxu2fYoKLbfN9IX4DUdQ/D9WL1BEb+EP1QUNZi+ryv/dBV2jTI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=euNux8306sc5btCy/RzxCUZpPvU1t/ETpknokZDNVmo=; b=C
- qfxarV43jlILPcHuZtp2pZX1/7IWcxWF1ZFF73qg/XOTZDJ8RSdBdZclf8vlBvxE0JF6yHC0LXdTI
- lfI6Ad2tg2f5lntZ1KPue9FQrV95fl8e6C/X1MSXYNh0VcyLLBdkskMFq5Q2TK7NDbItvOQ7O1vQD
- iSFu1/xVCvqa5rLc=;
-Received: from szxga02-in.huawei.com ([45.249.212.188])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:MIME-Version:Message-ID:In-Reply-To:Date:References:Subject:
+ Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=VxSx5WHE/is7ha0Qn9ZHkh6x3/barWbE89a+k35Foho=; b=NjlXTmG1jnkqvV0iZdv1KpCdq5
+ qW0zcMlbt15RsKktLJb2ivBDAQBBoUPXk8TpN4c4Ghysgv3IMWcyxcnOtDS76arq3CApwXjIr321O
+ Q2EmmT6J8G5YF0Nu3owIxW4y5o+OdndvXeSowOLQn5J+fC0uVS3TYFjO6D5gg6HWarQM=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nu2uf-0005uJ-IE
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 26 May 2022 02:07:51 +0000
-Received: from dggpeml500025.china.huawei.com (unknown [172.30.72.54])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4L7rs86JVDzjX7f;
- Thu, 26 May 2022 10:06:36 +0800 (CST)
-Received: from dggpeml500009.china.huawei.com (7.185.36.209) by
- dggpeml500025.china.huawei.com (7.185.36.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 26 May 2022 10:07:37 +0800
-Received: from huawei.com (10.175.127.227) by dggpeml500009.china.huawei.com
- (7.185.36.209) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 26 May
- 2022 10:07:37 +0800
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Thu, 26 May 2022 10:21:06 +0800
-Message-ID: <20220526022106.3848304-1-yuyufen@huawei.com>
-X-Mailer: git-send-email 2.31.1
+ id 1nuVs6-0044XY-5c
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 09:03:05 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1653642175;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=VxSx5WHE/is7ha0Qn9ZHkh6x3/barWbE89a+k35Foho=;
+ b=U1i/CMce/71+Vm99Gn0MUAGioyubgfWkRunDL45mcwWCas/s0RMv9EemQ/PPjNjZHBQN7a
+ TG4ms7S8yfCPS9LP1KHsFT1A4QX324jqJj9UoyA/Yzv/sm/H7FCpZNLFduehWfy7b6PG2n
+ hrwoLGYxr9xbEh2SwzGvsAIzRj+sh88=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-391-NTi_t_sZMdal6y7vIU_a0A-1; Fri, 27 May 2022 05:02:51 -0400
+X-MC-Unique: NTi_t_sZMdal6y7vIU_a0A-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com
+ [10.11.54.9])
+ (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+ (No client certificate requested)
+ by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BF12E858EEE;
+ Fri, 27 May 2022 09:02:50 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.39.192.71])
+ by smtp.corp.redhat.com (Postfix) with ESMTPS id 64FE7492C3B;
+ Fri, 27 May 2022 09:02:48 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Eric Biggers <ebiggers@kernel.org>
+References: <20220518235011.153058-1-ebiggers@kernel.org>
+ <20220518235011.153058-2-ebiggers@kernel.org>
+Date: Fri, 27 May 2022 11:02:46 +0200
+In-Reply-To: <20220518235011.153058-2-ebiggers@kernel.org> (Eric Biggers's
+ message of "Wed, 18 May 2022 16:50:05 -0700")
+Message-ID: <87r14ffivd.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
 MIME-Version: 1.0
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500009.china.huawei.com (7.185.36.209)
-X-CFilter-Loop: Reflected
-X-Headers-End: 1nu2uf-0005uJ-IE
-Subject: [f2fs-dev] [PATCH v2] f2fs: replace F2FS_I(inode) by the local
- variable
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+X-Headers-End: 1nuVs6-0044XY-5c
+Subject: Re: [f2fs-dev] [RFC PATCH v2 1/7] statx: add I/O alignment
+ information
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -73,131 +87,42 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Yufen Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Yufen Yu <yuyufen@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-block@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-We have define 'fi' at the begin of the functions, just use it,
-rather than use F2FS_I(inode) again.
+* Eric Biggers:
 
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
----
- fs/f2fs/f2fs.h  |  2 +-
- fs/f2fs/file.c  | 14 +++++++-------
- fs/f2fs/inode.c | 12 ++++++------
- 3 files changed, 14 insertions(+), 14 deletions(-)
+> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> index 1500a0f58041a..f822b23e81091 100644
+> --- a/include/uapi/linux/stat.h
+> +++ b/include/uapi/linux/stat.h
+> @@ -124,9 +124,13 @@ struct statx {
+>  	__u32	stx_dev_minor;
+>  	/* 0x90 */
+>  	__u64	stx_mnt_id;
+> -	__u64	__spare2;
+> +	__u32	stx_mem_align_dio;	/* Memory buffer alignment for direct I/O */
+> +	__u32	stx_offset_align_dio;	/* File offset alignment for direct I/O */
+>  	/* 0xa0 */
+> -	__u64	__spare3[12];	/* Spare space for future expansion */
+> +	__u32	stx_offset_align_optimal; /* Optimal file offset alignment for I/O */
+> +	__u32	__spare2;
+> +	/* 0xa8 */
+> +	__u64	__spare3[11];	/* Spare space for future expansion */
+>  	/* 0x100 */
+>  };
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 02e2dc17938c..1490239f1582 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4425,8 +4425,8 @@ static inline bool f2fs_may_compress(struct inode *inode)
- static inline void f2fs_i_compr_blocks_update(struct inode *inode,
- 						u64 blocks, bool add)
- {
--	int diff = F2FS_I(inode)->i_cluster_size - blocks;
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	int diff = fi->i_cluster_size - blocks;
- 
- 	/* don't update i_compr_blocks if saved blocks were released */
- 	if (!add && !atomic_read(&fi->i_compr_blocks))
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index eba27fb24c19..38ef52426405 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2024,7 +2024,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- 	if (ret)
- 		goto out;
- 
--	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
- 
- 	/*
- 	 * Should wait end_io to count F2FS_WB_CP_DATA correctly by
-@@ -2035,7 +2035,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- 			  inode->i_ino, get_dirty_pages(inode));
- 	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
- 	if (ret) {
--		f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+		f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
- 		goto out;
- 	}
- 
-@@ -2048,10 +2048,10 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- 	/* add inode in inmem_list first and set atomic_file */
- 	set_inode_flag(inode, FI_ATOMIC_FILE);
- 	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
--	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-+	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
- 
- 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
--	F2FS_I(inode)->inmem_task = current;
-+	fi->inmem_task = current;
- 	stat_update_max_atomic_write(inode);
- out:
- 	inode_unlock(inode);
-@@ -3017,7 +3017,7 @@ static int f2fs_ioc_setproject(struct inode *inode, __u32 projid)
- 
- 	kprojid = make_kprojid(&init_user_ns, (projid_t)projid);
- 
--	if (projid_eq(kprojid, F2FS_I(inode)->i_projid))
-+	if (projid_eq(kprojid, fi->i_projid))
- 		return 0;
- 
- 	err = -EPERM;
-@@ -3037,7 +3037,7 @@ static int f2fs_ioc_setproject(struct inode *inode, __u32 projid)
- 	if (err)
- 		goto out_unlock;
- 
--	F2FS_I(inode)->i_projid = kprojid;
-+	fi->i_projid = kprojid;
- 	inode->i_ctime = current_time(inode);
- 	f2fs_mark_inode_dirty_sync(inode, true);
- out_unlock:
-@@ -3987,7 +3987,7 @@ static int f2fs_ioc_decompress_file(struct file *filp, unsigned long arg)
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	pgoff_t page_idx = 0, last_idx;
- 	unsigned int blk_per_seg = sbi->blocks_per_seg;
--	int cluster_size = F2FS_I(inode)->i_cluster_size;
-+	int cluster_size = fi->i_cluster_size;
- 	int count, ret;
- 
- 	if (!f2fs_sb_has_compression(sbi) ||
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 83639238a1fe..65297eb36597 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -260,8 +260,8 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 		return false;
- 	}
- 
--	if (F2FS_I(inode)->extent_tree) {
--		struct extent_info *ei = &F2FS_I(inode)->extent_tree->largest;
-+	if (fi->extent_tree) {
-+		struct extent_info *ei = &fi->extent_tree->largest;
- 
- 		if (ei->len &&
- 			(!f2fs_is_valid_blkaddr(sbi, ei->blk,
-@@ -466,10 +466,10 @@ static int do_read_inode(struct inode *inode)
- 		}
- 	}
- 
--	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
--	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
--	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
--	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
-+	fi->i_disk_time[0] = inode->i_atime;
-+	fi->i_disk_time[1] = inode->i_ctime;
-+	fi->i_disk_time[2] = inode->i_mtime;
-+	fi->i_disk_time[3] = fi->i_crtime;
- 	f2fs_put_page(node_page, 1);
- 
- 	stat_inc_inline_xattr(inode);
--- 
-2.31.1
+Are 32 bits enough?  Would it make sense to store the base-2 logarithm
+instead?
+
+Thanks,
+Florian
 
 
 
