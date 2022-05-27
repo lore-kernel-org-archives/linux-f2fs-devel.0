@@ -4,78 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D69EBC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 May 2022 09:03:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9676FC433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 27 May 2022 14:57:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nuVsB-0000Cz-Pf; Fri, 27 May 2022 09:03:06 +0000
+	id 1nubPT-0001OW-Qa; Fri, 27 May 2022 14:57:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <fweimer@redhat.com>) id 1nuVsA-0000Cs-KW
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 09:03:05 +0000
+ (envelope-from <chao@kernel.org>) id 1nubPS-0001OO-Q4
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 14:57:50 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:In-Reply-To:
- Date:References:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VxSx5WHE/is7ha0Qn9ZHkh6x3/barWbE89a+k35Foho=; b=CfUyb06hDLnkDFaBgHoCW/j11b
- 4FTbG44wuVUxRvf2MUaRIf8BBNXBzmwxOw7pVMKAdMSAmrvoeBEi9L1Ad5nU5d1vvwgaI5/sHwVpj
- jlW/sD8CpHSbjOlJ1dIxu2fYoKLbfN9IX4DUdQ/D9WL1BEb+EP1QUNZi+ryv/dBV2jTI=;
+ bh=78Ksa+8QbLDGcn2BdB7KCF7NFTAfdN1U8V+FsjVU5k8=; b=UpKhzMO55yCMcCV88oZiGwSII3
+ 9pZvEDr9qKpO0QCM/zjiX3ZFt2hc6K8Tcly8yZdRAWrA39m97K8dFFf5q06y/nzWtMfks5cV46xCN
+ mqmXrdzPNY/IBWvYFYqEkxmMf282WfeYzyQz5Iw0IcVJqN4cgyI+CzIyKEpC82S2kOb0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:In-Reply-To:Date:References:Subject:
- Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=VxSx5WHE/is7ha0Qn9ZHkh6x3/barWbE89a+k35Foho=; b=NjlXTmG1jnkqvV0iZdv1KpCdq5
- qW0zcMlbt15RsKktLJb2ivBDAQBBoUPXk8TpN4c4Ghysgv3IMWcyxcnOtDS76arq3CApwXjIr321O
- Q2EmmT6J8G5YF0Nu3owIxW4y5o+OdndvXeSowOLQn5J+fC0uVS3TYFjO6D5gg6HWarQM=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=78Ksa+8QbLDGcn2BdB7KCF7NFTAfdN1U8V+FsjVU5k8=; b=M
+ afmsqXX5203OnErFTd/AoJ6vWMsvBUzMKG7oHQ8pGxaWvzqK6d9FqdWXlGowjT2M0SccrnmKMMJ+S
+ GNUJjgONfT3z3JvCWrL6/Qf+XbO6Bn10E3YFl05FQs9V64wVCRfyXRcxKUYtxsrb4bedcokBYY7XD
+ zckY2Ma7N/AYvFNw=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nuVs6-0044XY-5c
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 09:03:05 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1653642175;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=VxSx5WHE/is7ha0Qn9ZHkh6x3/barWbE89a+k35Foho=;
- b=U1i/CMce/71+Vm99Gn0MUAGioyubgfWkRunDL45mcwWCas/s0RMv9EemQ/PPjNjZHBQN7a
- TG4ms7S8yfCPS9LP1KHsFT1A4QX324jqJj9UoyA/Yzv/sm/H7FCpZNLFduehWfy7b6PG2n
- hrwoLGYxr9xbEh2SwzGvsAIzRj+sh88=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-391-NTi_t_sZMdal6y7vIU_a0A-1; Fri, 27 May 2022 05:02:51 -0400
-X-MC-Unique: NTi_t_sZMdal6y7vIU_a0A-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com
- [10.11.54.9])
- (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+ id 1nubPP-004PGX-VN
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 27 May 2022 14:57:49 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BF12E858EEE;
- Fri, 27 May 2022 09:02:50 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.39.192.71])
- by smtp.corp.redhat.com (Postfix) with ESMTPS id 64FE7492C3B;
- Fri, 27 May 2022 09:02:48 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>
-References: <20220518235011.153058-1-ebiggers@kernel.org>
- <20220518235011.153058-2-ebiggers@kernel.org>
-Date: Fri, 27 May 2022 11:02:46 +0200
-In-Reply-To: <20220518235011.153058-2-ebiggers@kernel.org> (Eric Biggers's
- message of "Wed, 18 May 2022 16:50:05 -0700")
-Message-ID: <87r14ffivd.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+ by ams.source.kernel.org (Postfix) with ESMTPS id D884EB8252D;
+ Fri, 27 May 2022 14:57:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB63C385A9;
+ Fri, 27 May 2022 14:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1653663455;
+ bh=tpEtjd4nbyNCejM6AtwsnItS+PD48F89/FUa062YJUI=;
+ h=From:To:Cc:Subject:Date:From;
+ b=iPBtkL6xdM/Z60+U7iPOu+FD9LGBe209M7wbOabX3NhUNr6aqDdif0CFhQGh3xHi0
+ sytLxpuV82gBilWI9NucufMGvcNR4Rm260e2Po/Lzb7JWmwJcSUvyBXQUjx9BWijLF
+ LGwHIGxgHj5SbwCA9d7FYtc67qK1YUQKhXpTAKCudqL4RZzIeiyjTrEcd+ktP7Wt/T
+ 5NorrMBpQruxf0NNTVlzJYbKFzrn58FjFtRS9u++b4HMJvy5uUP4VD6O+xYhCh95dR
+ 0uETkItq9qqAwE9+i4H3bIlnfMM89dEclAqPZSrt8/sa8jfLt7OKw3YdIBwceFWjbZ
+ Ik68wOvD9ZtrA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Fri, 27 May 2022 12:13:30 +0800
+Message-Id: <20220527041330.19951-1-chao@kernel.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
-X-Headers-End: 1nuVs6-0044XY-5c
-Subject: Re: [f2fs-dev] [RFC PATCH v2 1/7] statx: add I/O alignment
- information
+X-Headers-End: 1nubPP-004PGX-VN
+Subject: [f2fs-dev] [PATCH] f2fs: fix to tag gcing flag on page during file
+ defragment
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,42 +76,34 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-block@vger.kernel.org, linux-api@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-* Eric Biggers:
+In order to garantee migrated data be persisted during checkpoint,
+otherwise out-of-order persistency between data and node may cause
+data corruption after SPOR.
 
-> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-> index 1500a0f58041a..f822b23e81091 100644
-> --- a/include/uapi/linux/stat.h
-> +++ b/include/uapi/linux/stat.h
-> @@ -124,9 +124,13 @@ struct statx {
->  	__u32	stx_dev_minor;
->  	/* 0x90 */
->  	__u64	stx_mnt_id;
-> -	__u64	__spare2;
-> +	__u32	stx_mem_align_dio;	/* Memory buffer alignment for direct I/O */
-> +	__u32	stx_offset_align_dio;	/* File offset alignment for direct I/O */
->  	/* 0xa0 */
-> -	__u64	__spare3[12];	/* Spare space for future expansion */
-> +	__u32	stx_offset_align_optimal; /* Optimal file offset alignment for I/O */
-> +	__u32	__spare2;
-> +	/* 0xa8 */
-> +	__u64	__spare3[11];	/* Spare space for future expansion */
->  	/* 0x100 */
->  };
+Signed-off-by: Chao Yu <chao.yu@oppo.com>
+---
+ fs/f2fs/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Are 32 bits enough?  Would it make sense to store the base-2 logarithm
-instead?
-
-Thanks,
-Florian
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index a05d842a7e72..e2310c91183c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2602,6 +2602,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 			}
+ 
+ 			set_page_dirty(page);
++			set_page_private_gcing(page);
+ 			f2fs_put_page(page, 1);
+ 
+ 			idx++;
+-- 
+2.36.1
 
 
 
