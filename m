@@ -4,69 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9E5E3C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 29 May 2022 06:59:03 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C4FCAC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 May 2022 01:02:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nvCtC-0001d1-H4; Sun, 29 May 2022 06:59:01 +0000
+	id 1nvTnk-0000VN-Pj; Mon, 30 May 2022 01:02:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1nvCtB-0001cq-5t
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 May 2022 06:59:00 +0000
+ (envelope-from <jack.qiu@huawei.com>) id 1nvTnj-0000VH-Gv
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 May 2022 01:02:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+ MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=i3z3zPwNjFOftRNGg2yCf7o0oxURRptFmUkZGVFMFNM=; b=EQuD53ibxfo7qVhplUovOi9NA9
- U/GiRM920T8d8vUHy1vYB/owaIq07yIL0veJkRiHCMaEz5SrgnCKI6H3EJiO9OvsYNJaBA0UBK1Cv
- Ag8Un7rQqYuKIw8kRtl0YtxWt5/hx1GO3I7vQ/R2ARftxveW+sL+Q1kmZlPS8y1ow8So=;
+ bh=YT8KKZUQdQNdaGrVeo9dkcmBZgW2+E55LlpTCUbeH+4=; b=ZJKmOhu3UYPWh99nIQXEMqmvUH
+ oPzCiii5Kr+FGTitbAVn+r4rBIOVSRrlNMqG+Tfnp3G2tkbRZcvin7plrmrlYowe/mVZ0pZGVWSal
+ w+MiD5dRwnDKlANV4Vwc7/YcQAsJ9zCZPJ+asjHRglNah3+eiLroq801HzpxCPtP+oWg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+ Message-ID:From:References:To:Subject:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=i3z3zPwNjFOftRNGg2yCf7o0oxURRptFmUkZGVFMFNM=; b=gCvVQYIeCVqlZXf83BT96lLSGF
- LKbVKHF+GSObZKnwniG11XJ/HS4VxqWVXlxYG5E3igwqSovHjWikdxTuJY1klV+XASed5VlDBOqHK
- RPLrIMXnYBkvDvtBaGxaaT1Q1pTNIXB3COYT9WgIrz35heMtUinv8LDU+Gez3sTDDH2g=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=YT8KKZUQdQNdaGrVeo9dkcmBZgW2+E55LlpTCUbeH+4=; b=bjS21zr4GJrDc64oVbFygrNBwP
+ LzmL1ypshp/mZeYkBtr4q7dDoUHCKx+Lj/e/5vdfNkEdoEWKwvzthmUspJG5NBz+wsxT51tbziHFl
+ 8Na+Nul+KaDNW7Zl05PLJuAffOFrVM3hQDw85Nj1D9JNfd1rgT5EGqVLlr9xpz05mnSw=;
+Received: from szxga01-in.huawei.com ([45.249.212.187])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nvCt7-0007c1-Tp
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 29 May 2022 06:58:59 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id CC98360DF9;
- Sun, 29 May 2022 06:58:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15C0C385A9;
- Sun, 29 May 2022 06:58:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1653807533;
- bh=95wbLei2yMNGyVdvi55Y/XM841K2c9PMa5u5DUTd8RM=;
- h=Date:Subject:To:References:From:In-Reply-To:From;
- b=b3sq0prvrUhVKLcGOerqBOiOObZMJ5xzCxXsI8KGTySpeUEkQQ6B/BS1lwfURowXd
- maQmC9r42lyb6ZM0lnqCfLC/c7R32dFTwM0OmxQxCD5TyOu5ZRVsrTaB2f8mnEIWG5
- VzsF6O3/bu7x/RX6B8rUMnx2SLKNoT7cVxHH2U4bzNmU3dE+dqX27VEVeuPUOdRAv/
- xRXifIsDa8+VnpTJfsGXCdui/YqNA+FbBXmhlaePA1VzfdlJ+Tyr1PmJ302Q+u0c0w
- RGDQQpTyEluIyUyH/Sy7xefB3QvfRhP0s0Qe3uKxqzUqXjKCI+CvauOtRVF9GlcI2/
- NSVaHtz/rUXvQ==
-Message-ID: <fe8f163b-5ba9-f361-8e6f-5af007564420@kernel.org>
-Date: Sun, 29 May 2022 14:58:50 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Content-Language: en-US
-To: Jack Qiu <jack.qiu@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+ id 1nvTnh-00084i-HX
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 30 May 2022 01:02:32 +0000
+Received: from dggpemm500022.china.huawei.com (unknown [172.30.72.53])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4LBHDF4v9DzjWwF;
+ Mon, 30 May 2022 09:01:33 +0800 (CST)
+Received: from dggpemm500008.china.huawei.com (7.185.36.136) by
+ dggpemm500022.china.huawei.com (7.185.36.162) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 30 May 2022 09:02:21 +0800
+Received: from [10.174.176.201] (10.174.176.201) by
+ dggpemm500008.china.huawei.com (7.185.36.136) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 30 May 2022 09:02:21 +0800
+To: Chao Yu <chao@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>
 References: <20220528093503.2608388-1-jack.qiu@huawei.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20220528093503.2608388-1-jack.qiu@huawei.com>
-X-Headers-End: 1nvCt7-0007c1-Tp
+ <fe8f163b-5ba9-f361-8e6f-5af007564420@kernel.org>
+Message-ID: <b5b3ecce-d4d9-eeff-cdbb-3441885cf538@huawei.com>
+Date: Mon, 30 May 2022 09:02:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
+MIME-Version: 1.0
+In-Reply-To: <fe8f163b-5ba9-f361-8e6f-5af007564420@kernel.org>
+X-Originating-IP: [10.174.176.201]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500008.china.huawei.com (7.185.36.136)
+X-CFilter-Loop: Reflected
+X-Headers-End: 1nvTnh-00084i-HX
 Subject: Re: [f2fs-dev] [PATCH] f2fs: fix page leak in redirty_blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -79,76 +76,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+From: Jack Qiu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Jack Qiu <jack.qiu@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/5/28 17:35, Jack Qiu via Linux-f2fs-devel wrote:
-> When find_lock_page return error, page in [i, page_len) will leak.
-
-I doubt it is impossible to fail in find_lock_page due to one extra
-reference count was added in previous read_cache_page().
-
-Thanks,
-
-> 
-> Signed-off-by: Jack Qiu <jack.qiu@huawei.com>
-> ---
->   fs/f2fs/file.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 100637b1adb3..0e8938c5918e 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3954,6 +3954,12 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
->   	struct page *page;
->   	pgoff_t redirty_idx = page_idx;
->   	int i, page_len = 0, ret = 0;
-> +	struct page **pages;
-> +
-> +	pages = f2fs_kvzalloc(F2FS_I_SB(inode),
-> +				sizeof(struct page *) * len, GFP_NOFS);
-> +	if (!pages)
-> +		return -ENOMEM;
-> 
->   	page_cache_ra_unbounded(&ractl, len, 0);
-> 
-> @@ -3964,6 +3970,7 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
->   			break;
->   		}
->   		page_len++;
-> +		pages[i] = page;
->   	}
-> 
->   	for (i = 0; i < page_len; i++, redirty_idx++) {
-> @@ -3975,8 +3982,14 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
->   		set_page_dirty(page);
->   		f2fs_put_page(page, 1);
->   		f2fs_put_page(page, 0);
-> +		pages[i] = NULL;
->   	}
-> 
-> +	/* put pages[i, page_len) when error happens */
-> +	for (; ret < 0 && i < page_len; i++)
-> +		f2fs_put_page(pages[i], 0);
-> +	kvfree(pages);
-> +
->   	return ret;
->   }
-> 
-> --
-> 2.31.1
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gMjAyMi81LzI5IDE0OjU4LCBDaGFvIFl1IHdyb3RlOgo+IE9uIDIwMjIvNS8yOCAxNzozNSwg
+SmFjayBRaXUgdmlhIExpbnV4LWYyZnMtZGV2ZWwgd3JvdGU6Cj4+IFdoZW4gZmluZF9sb2NrX3Bh
+Z2UgcmV0dXJuIGVycm9yLCBwYWdlIGluIFtpLCBwYWdlX2xlbikgd2lsbCBsZWFrLgo+IAo+IEkg
+ZG91YnQgaXQgaXMgaW1wb3NzaWJsZSB0byBmYWlsIGluIGZpbmRfbG9ja19wYWdlIGR1ZSB0byBv
+bmUgZXh0cmEKPiByZWZlcmVuY2UgY291bnQgd2FzIGFkZGVkIGluIHByZXZpb3VzIHJlYWRfY2Fj
+aGVfcGFnZSgpLgoKVGhhbmtzIGZvciByZXZpZXcuCkknbSBub3Qgc3VyZSBhYm91dCBpdCB3aXRo
+IGxpbWl0ZWQga25vd2xlZGdlLiBJZiBpdCBpcyB0cnVlLCBtYXliZSB1c2UgZjJmc19idWdfb24o
+c2JpLCAhcGFnZSkgaXMgYmV0dGVyPwoKPiAKPiBUaGFua3MsCj4gCj4+Cj4+IFNpZ25lZC1vZmYt
+Ynk6IEphY2sgUWl1IDxqYWNrLnFpdUBodWF3ZWkuY29tPgo+PiAtLS0KPj4gwqAgZnMvZjJmcy9m
+aWxlLmMgfCAxMyArKysrKysrKysrKysrCj4+IMKgIDEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRp
+b25zKCspCj4+Cj4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2ZpbGUuYyBiL2ZzL2YyZnMvZmlsZS5j
+Cj4+IGluZGV4IDEwMDYzN2IxYWRiMy4uMGU4OTM4YzU5MThlIDEwMDY0NAo+PiAtLS0gYS9mcy9m
+MmZzL2ZpbGUuYwo+PiArKysgYi9mcy9mMmZzL2ZpbGUuYwo+PiBAQCAtMzk1NCw2ICszOTU0LDEy
+IEBAIHN0YXRpYyBpbnQgcmVkaXJ0eV9ibG9ja3Moc3RydWN0IGlub2RlICppbm9kZSwgcGdvZmZf
+dCBwYWdlX2lkeCwgaW50IGxlbikKPj4gwqDCoMKgwqDCoCBzdHJ1Y3QgcGFnZSAqcGFnZTsKPj4g
+wqDCoMKgwqDCoCBwZ29mZl90IHJlZGlydHlfaWR4ID0gcGFnZV9pZHg7Cj4+IMKgwqDCoMKgwqAg
+aW50IGksIHBhZ2VfbGVuID0gMCwgcmV0ID0gMDsKPj4gK8KgwqDCoCBzdHJ1Y3QgcGFnZSAqKnBh
+Z2VzOwo+PiArCj4+ICvCoMKgwqAgcGFnZXMgPSBmMmZzX2t2emFsbG9jKEYyRlNfSV9TQihpbm9k
+ZSksCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc2l6ZW9mKHN0cnVjdCBwYWdl
+ICopICogbGVuLCBHRlBfTk9GUyk7Cj4+ICvCoMKgwqAgaWYgKCFwYWdlcykKPj4gK8KgwqDCoMKg
+wqDCoMKgIHJldHVybiAtRU5PTUVNOwo+Pgo+PiDCoMKgwqDCoMKgIHBhZ2VfY2FjaGVfcmFfdW5i
+b3VuZGVkKCZyYWN0bCwgbGVuLCAwKTsKPj4KPj4gQEAgLTM5NjQsNiArMzk3MCw3IEBAIHN0YXRp
+YyBpbnQgcmVkaXJ0eV9ibG9ja3Moc3RydWN0IGlub2RlICppbm9kZSwgcGdvZmZfdCBwYWdlX2lk
+eCwgaW50IGxlbikKPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7Cj4+IMKgwqDC
+oMKgwqDCoMKgwqDCoCB9Cj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBwYWdlX2xlbisrOwo+PiArwqDC
+oMKgwqDCoMKgwqAgcGFnZXNbaV0gPSBwYWdlOwo+PiDCoMKgwqDCoMKgIH0KPj4KPj4gwqDCoMKg
+wqDCoCBmb3IgKGkgPSAwOyBpIDwgcGFnZV9sZW47IGkrKywgcmVkaXJ0eV9pZHgrKykgewo+PiBA
+QCAtMzk3NSw4ICszOTgyLDE0IEBAIHN0YXRpYyBpbnQgcmVkaXJ0eV9ibG9ja3Moc3RydWN0IGlu
+b2RlICppbm9kZSwgcGdvZmZfdCBwYWdlX2lkeCwgaW50IGxlbikKPj4gwqDCoMKgwqDCoMKgwqDC
+oMKgIHNldF9wYWdlX2RpcnR5KHBhZ2UpOwo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgZjJmc19wdXRf
+cGFnZShwYWdlLCAxKTsKPj4gwqDCoMKgwqDCoMKgwqDCoMKgIGYyZnNfcHV0X3BhZ2UocGFnZSwg
+MCk7Cj4+ICvCoMKgwqDCoMKgwqDCoCBwYWdlc1tpXSA9IE5VTEw7Cj4+IMKgwqDCoMKgwqAgfQo+
+Pgo+PiArwqDCoMKgIC8qIHB1dCBwYWdlc1tpLCBwYWdlX2xlbikgd2hlbiBlcnJvciBoYXBwZW5z
+ICovCj4+ICvCoMKgwqAgZm9yICg7IHJldCA8IDAgJiYgaSA8IHBhZ2VfbGVuOyBpKyspCj4+ICvC
+oMKgwqDCoMKgwqDCoCBmMmZzX3B1dF9wYWdlKHBhZ2VzW2ldLCAwKTsKPj4gK8KgwqDCoCBrdmZy
+ZWUocGFnZXMpOwo+PiArCj4+IMKgwqDCoMKgwqAgcmV0dXJuIHJldDsKPj4gwqAgfQo+Pgo+PiAt
+LSAKPj4gMi4zMS4xCj4+Cj4+Cj4+Cj4+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCj4+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4+IExpbnV4
+LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4+IGh0dHBzOi8vbGlzdHMuc291cmNl
+Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKPiAuCgoKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwg
+bWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBz
+Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
