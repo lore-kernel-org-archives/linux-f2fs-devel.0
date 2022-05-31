@@ -4,88 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5DEB4C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 31 May 2022 18:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CA45BC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 31 May 2022 18:50:34 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nw6P6-0006s3-Hb; Tue, 31 May 2022 18:15:41 +0000
+	id 1nw6wq-0007ug-7H; Tue, 31 May 2022 18:50:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1nw6P4-0006rx-Sy
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 May 2022 18:15:39 +0000
+ (envelope-from <info@lifecard.co.jp>) id 1nw6wp-0007uW-GZ
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 May 2022 18:50:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Subject:Content-Transfer-Encoding:Content-Type:
+ MIME-Version:Date:To:From:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KTP4uLKjD0E4Ana2J9doIBo1deNh7Z11DYFmX2uEjro=; b=iXh7p+lbs+Q8I+QgBRV+mKgd+r
- 5t+pFG8O8ytW97KK8F/xGBc20/uMLBHylXSJwkTGFLXLT+Eo3mBY2Sa3AKGoJAJfDZqmkBrpwHWVC
- tSFJX/+L+aN4i9Oac7XMBmPDfrlWXCV6rypB57hK2w4EPPhh37El+pEIqzvWDA+x//ig=;
+ bh=ppIM2xG3sMUDEzYVlnu0IIaOjAYwPVDWjswhRS1soXw=; b=P4ZfbofMnY3Flstz5X4LrHtNCY
+ IJkF4InB2muyo18/EqRGE8qVQmXk24L+pp23H+tZ5Mm9dh7fJ9kFdy3bnv9vuc7qNASIgUrGCEEdL
+ 78kcjFnTgo7eFyUbprJFJLAHYjFx3Tcu354ZBvIx3QKIE+zWyCUgLDjD5poXe7jbvLTI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=KTP4uLKjD0E4Ana2J9doIBo1deNh7Z11DYFmX2uEjro=; b=fTfiMT0Snuc6uNvXgrNnW+Wr30
- gzC0I7VPZYbeVpujXrTuV4F7AWnVYlis/DWlul3g51jYGNxb7Wo7WjnE4umkTidhcArM3jJHfDGVP
- joqLDL3uKvNSYJqGcro8sNvVTM++4w+mWOYFF/0DobSjJEjxC0r2GpcPPKCuUePCHGgU=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nw6P1-00BX7C-98
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 May 2022 18:15:39 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 708496113C
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 31 May 2022 18:15:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D5409C385A9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 31 May 2022 18:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1654020922;
- bh=/kVFa+2RgW1G8lXowGBy1qBTfcws94wJHrY2RGdnxwg=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=mpJH/q6z/TKvGdiuN8JlYGQhYEf/Ya7ngPxDWa/SOe6TYjcdJ8DeTeq1GVW5VnQWg
- 5tYU55UDmf9ifLQ4GcG5azaRwuKlVhhB1ZwLDOpieZcuDFTgOostqmMPCGbkyHWjAy
- FDBYfgzAjRcYOuox3C09KgqBFwr+PmnpIAobsgxg5hcJwccJT3WTaAFMVyASxC/RLc
- LTwWJmWJAHFsQyH7MOAUGjqcEkQpgerf4JMnbC3Qo7Si+DtneG7Bk/IaOswphEXdIE
- bnA4siexPquo0Tqu5pjkzWBTVfUtmlSl9yj/fhafa/eLk4BRODx20PSqI9oAdaWsFc
- pWrBaBwIQpEBA==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id B6BA8C05FD2; Tue, 31 May 2022 18:15:22 +0000 (UTC)
-From: bugzilla-daemon@kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Tue, 31 May 2022 18:15:22 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: guido.iodice@gmail.com
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: short_desc
-Message-ID: <bug-216050-202145-KTUsHCPyeO@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-216050-202145@https.bugzilla.kernel.org/>
-References: <bug-216050-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ h=Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:Date:To:From:
+ Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=ppIM2xG3sMUDEzYVlnu0IIaOjAYwPVDWjswhRS1soXw=; b=Y
+ sGVtupbsAaTrVDfhCbej5yMS30E3GdEaIsg9GdScrH+dldjCdbKjL79Bc2bf4dJlGGWQ1XB/M8wD6
+ eScXhQRzX7SZDyxeheqcD8ur+SuE0egPW7fI21UiutdKXvP/Qfe6s2HLtkO2kr/vGSvL3qTtz2Qng
+ sRB9QYaIXFsYegvg=;
+Received: from [128.1.42.34] (helo=lifecard.co.jp)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.94.2)
+ id 1nw6wm-00BhYq-88
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 31 May 2022 18:50:32 +0000
+Message-ID: <20220531205028345251@lifecard.co.jp>
+From: "lifecard" <info@lifecard.co.jp>
+To: <linux-f2fs-devel@lists.sourceforge.net>
+Date: Tue, 31 May 2022 20:50:17 +0100
 MIME-Version: 1.0
-X-Headers-End: 1nw6P1-00BX7C-98
-Subject: [f2fs-dev] [Bug 216050] f2fs_gc occupies 100% cpu
+X-mailer: Ihejubyb 1
+X-VA-Spam-Flag: YES
+X-Headers-End: 1nw6wm-00BhYq-88
+Subject: [SPAM] ãƒ©ã‚¤ãƒ•ã‚«©`¥É¤«¤é¤Î¤ªÖª¤é¤»
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,25 +58,64 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============4763141398755780723=="
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=216050
+--===============4763141398755780723==
+Content-Type: text/plain;
+	charset="gb2312"
+Content-Transfer-Encoding: base64
 
-Guido (guido.iodice@gmail.com) changed:
+DQo/pemlpKXVpaupYKXJpKuk6aTOpKrWqqTppLs/DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQql6aWkpdWlq6lgpcmk8qS0wPvTw6TOpKq/zaS1
+pN4NCsD708OkpKS/pMCkraGipKKk6qSspMikpqS0pLakpKTepLmhow0KpLOkzqS/pNOhoqS0sb7I
+y5iUpM6ktMD708Okq6TJpKakq6TytF/VSqS1pLukxqSkpL+kwKStpL+kpKSqyKHS/aSspKKk6qTe
+pLekv6TOpMehog0K1Vyky4TZytakyqSspOmhoqWrqWClyaTOpLTA+9PDpPLSu7K/1sbP3qS1pLuk
+xqSkpL+kwKStoaKktN9CvWqktaS7pMakpKS/pMCkraTepLekv6GjDQqkxKStpN6kt6TGpM+hotLU
+z8Kk2KWipa+lu6W5pM7Jz6GipaupYKXJpM6ktMD708O0X9VKpMuktIVmwaak8qSq7oqkpNbCpLek
+3qS5oaMNCiAgpKq/zZiUpMukz6S0w9S786GipLTQxMXkpPKkqpLspLGkt6Gi1Vyky8nqpLfUVaS0
+pLakpKTepLuk86GjDQq6ztfkpLTA7b3ipKSkv6TApK2kv6SvpKruiqSkyeqkt6SipLKk3qS5oaMN
+CqS0u9i08KTypKSkv6TApLGkyqSkiPa6z6GipaupYKXJpM6ktMD708PWxs/epKy+QL5BpLWk7KTr
+pLOkyKTipLSktqSkpN6kuaTOpMehotPopOENCqS0wcuz0M/CpLWkpKXepLQNCg0KqIvA+9PDtF/V
+SqTPpLOkwaTpqIsNCmh0dHBzOi8vd3d3My1saWZlY2FyZC1jby1qcC5jYXB0YWlucHJhY3RpY2Fs
+LmNvbT9lb3ZuZzV5LjI5eA0KDQqx18nnpM+hoqWkpfOlv6lgpc2lw6XIyc+kzrK71f3Q0J7ppM63
+wNa5oaTS1tbGpM7TUbXjpKuk6aW1paSlyKTIpLekxqTO0MXubdDUoaTV/bWx0NQNCqTyuN+k4aTr
+pL+k4Q0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tDQo/pemlpKXVpaupYKXJpM+kqqXIpa+kyqWtpeOl86XaqWCl86SsyqKk6qTApK+ktaTzIT8N
+CqXepa2l46XzpdmpYKXzx+mI86TPpLOkwaTppKuk6Q0KaHR0cHM6Ly93d3czLWxpZmVjYXJkLWNv
+LWpwLmNhcHRhaW5wcmFjdGljYWwuY29tP21mYmEua211aXJxcXc1DQoNCj97TElGRS1XZWIgRGVz
+a6Wipdal6qG5pM6ktMD708Okz6Wipdal6qSspaul86W/pfMmsePA+yE/DQqkqtankkK98O5+pOSl
+3aWkpfOlyMr9pKyk0qTIxL+kx7Rf1Uqkx6StpOuhorHjwPukyqW5pd6l26Wipdal6qTHpLmhow0K
+pd6lwKWmpfOl7algpcmkz6SzpMGk6aSrpOkNCmh0dHBzOi8vd3d3My1saWZlY2FyZC1jby1qcC5j
+YXB0YWlucHJhY3RpY2FsLmNvbT8zZnZya3RxLmYybm51DQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCqSqhpakpLrPpO+kuzpodHRwczovL3d3
+dzMtbGlmZWNhcmQtY28tanAuY2FwdGFpbnByYWN0aWNhbC5jb20/eHVuNy43ZnNxcmF3azgNCrBr
+0MXUqiA6pemlpKXVpaupYKXJ1urKvbvhyeeWfL6ptry428f41qW2/rahxL8zMbesMTm6xaXQpfOl
+tqWkpdOl6w0KofmxvqXhqWCl66TP19SE08Xk0MWktaTspMakpKTepLmho6S0t7XQxaSkpL+kwKSk
+pMak4qSqtPCkqKTHpK2k3qS7pPOkzqTHpLTBy7PQpK+kwA0KpLWkpKGjDQoNCqH505vdZKTOVVJM
+SaTPUEOhpKW5pd6pYKXIpdWlqaXzpKuk6aWipa+lu6W5pLekxqSvpMCktaSkoaMNCqH5pLTA+9PD
+pM62y8SppKqk6KTT1E+2qKTLpOikw6TGpM+7rcPm33fSxqS3pMqkpIj2us+krKS0pLakpKTepLmh
+ow0K
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-            Summary|fsfs_gc occupies 100% cpu   |f2fs_gc occupies 100% cpu
 
--- 
-You may reply to this email to add a comment.
 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+
+--===============4763141398755780723==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============4763141398755780723==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
 Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============4763141398755780723==--
