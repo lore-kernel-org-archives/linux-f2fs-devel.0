@@ -4,86 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5D66EC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Jun 2022 07:28:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9135AC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Jun 2022 15:13:19 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nwfFR-0000HB-Us; Thu, 02 Jun 2022 07:28:00 +0000
+	id 1nwmVg-0004Kg-Pt; Thu, 02 Jun 2022 15:13:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chaoliu719@gmail.com>) id 1nwfFQ-0000H4-NR
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jun 2022 07:27:59 +0000
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1nwmVf-0004KV-6R
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jun 2022 15:13:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dO8F4huKrg7HK40w6R+II0EDqtahfzCwucyNeG/6yhE=; b=N+JpadkvBGiVM6IzDUkGZ3nweB
- 5ylHahxpAJslzw4VAau3gwofc4SDoktOI7ZWyUXMcqD4vPwAfjUCda69BpEAeRB4emLVIUKGiihSH
- 4+iN5jUem6YVOmuxlXfTGcAiGmf0UbGfNlbYGgqYg5OegBtLyAh+0UeKqHRAYJ3wFxiM=;
+ bh=CA92+FixRrXpH8COI84legJlRVuXAuKiWD6p+tYrI10=; b=AzN5iphJCl/Tg3/0lpoxQfB5b1
+ 2zsOqaP4y22xgt44VkjU2EJagJNBnzQmrRK9qi4lHcYdriqcJT55iMhpfdkBo9GUnbraOglSMaPox
+ jm38+Ndwf4dzSbceKD18NU1RFL3x80RjHJN65jVeYvl8TH1tJjlCuHJWRlLJDfXmhlac=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=dO8F4huKrg7HK40w6R+II0EDqtahfzCwucyNeG/6yhE=; b=D
- 8ZSiT0LoQCh5QGRCDH0yT2hWWJl/XKfd35yFAZt4Z+bjdeeo5GCA/SGwVSIRpd8Ey8FOtsVngh9LW
- HBAg8CcaELoCh+yS6bJEQ6IR4WArNsj/kL8UfQKKdSAl2lGXbQMpromtmD4tKFW9WKTnmoOtZe5oT
- L/rCGzTnPEeUhe+k=;
-Received: from mail-pf1-f181.google.com ([209.85.210.181])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1nwfFJ-0002WJ-S8
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jun 2022 07:27:59 +0000
-Received: by mail-pf1-f181.google.com with SMTP id c196so4063850pfb.1
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=CA92+FixRrXpH8COI84legJlRVuXAuKiWD6p+tYrI10=; b=dH7l01/Q8vQxRGr6/zTekXDDUH
+ 6Gv0Msyg+opM1vUiOFnYDDhUWCoZ0A7DftAsMtIolVuNC+sEv8JqTzmdgBMpy/rbUZZVolYhqdCbu
+ 4LxXX6bzgEvqd3tj4QmP+BeuqmzDrGyzOo9n39/cPsWxMIGSX56PIznvLrNBN2ODtRuE=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
+ id 1nwmVb-002Pie-L7
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jun 2022 15:13:15 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 61A4B60F14
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 02 Jun 2022 00:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
- h=from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=dO8F4huKrg7HK40w6R+II0EDqtahfzCwucyNeG/6yhE=;
- b=YbmlsAf5cKN+CIdt4ksyeiFsXj0EO16r04pJvRYTBKJYl61jvLfDPpgpGksmXE6pna
- f0o9KsvP7NHWOUk3Me3mfFvf89XjY/S+STrfm10JmnFCI8kJdybbtZGmP7v0QqyXOvec
- /b3p05S/iWQNhtPipEU3TFT8HplJgJtc8UaN9lMK4BIhSD6WSw73oa0z82tkxZQEiDtp
- VmNI88iAEOPDH7L0GG78ABi26dMu5+TROVORxgoYoCMbFyveOI6jW1eBZoNAW0umuoG8
- 7mT7ZOkcL4pfHlESth8wdpUw5eoe2Kkl2Ac/EZ0AaEsqX8SotY9JRn8hmEzfUrRoDf49
- y/IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=dO8F4huKrg7HK40w6R+II0EDqtahfzCwucyNeG/6yhE=;
- b=aYh7xSWvdUITreRJmJv9vLf+Ov0d1l1IRa7GAVU+5yg8duzmJsuZWQCVWxhAnqDyrw
- Rm6v8IQSzxCC8l0XMNCbcr+slX+v5sOaWeHNT/9jGgckFNVkHxFfTsMDT3bh747IqN96
- r/pAPOb1y7OiWLC9A7VeTWRAXo3U8HbMY8EG6qbkc3/yzKIMhU8AVhfO/BnMVRapVEdY
- uNxzVrSs8Swcf+YQuocUfwrgKDP7nhFoXcAYHUsNPe2EVlVdppNX+URZPhcYI8lPp9Yi
- +UCjfNm3x25mU872KBbNGE5DHohplBaQXo44qgOAHTcKY4yZPTNb6k/FlejI68t5MSfv
- Ex5w==
-X-Gm-Message-State: AOAM533qt4gKowaQD3/cUWuhIXHuhRWu0U0fFRuraTmiLed6/mbCwuys
- qeWnDGFwLnWRqElt7b7ip5D7dIUOpIyKsNe6P4E=
-X-Google-Smtp-Source: ABdhPJxSXbdQaUbjNS/QdVvu+sLCgGBWTdnUUVvw1xqzChxB+sM8bBLz7d44zgYoS4w2B8l5C/3ElQ==
-X-Received: by 2002:a63:114d:0:b0:3fc:cfa3:52f0 with SMTP id
- 13-20020a63114d000000b003fccfa352f0mr2978866pgr.243.1654154869625; 
- Thu, 02 Jun 2022 00:27:49 -0700 (PDT)
-Received: from localhost.localdomain ([103.220.76.197])
- by smtp.gmail.com with ESMTPSA id
- c7-20020aa79527000000b0050dc76281ecsm2705091pfp.198.2022.06.02.00.27.46
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 02 Jun 2022 00:27:48 -0700 (PDT)
-From: Chao Liu <chaoliu719@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>
-Date: Thu,  2 Jun 2022 15:25:40 +0800
-Message-Id: <20220602072540.998638-1-chaoliu719@gmail.com>
-X-Mailer: git-send-email 2.36.1
+ Thu,  2 Jun 2022 15:13:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C02BFC34114
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu,  2 Jun 2022 15:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1654182780;
+ bh=RIuBPlri/fvsogFL5rvOnaJ0g/bRyqujQB4ImNAmxQ8=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=DEx0XXvyOLcwxl3MFbyJ131Yx980jCY4vgL74eQWeQruOmB35Oi4ky8gdvELalVoR
+ r/V3HYpnZxuNLT0eVGyjLVN04Eq6dLgF/qaHV6AdeAZZ92RZ7or/L1gHYITXIs0qAz
+ Wytm8tmjSIPUKOqspSNF21oDcFOLKoQwwunwjbw8UaqSSoHcJ8NxXqWotabExqrXpp
+ aIjo2dNT/hDVjmsUebOW4puaXBNoLyfgIT/33vwsBsSjufAYwdv1lu3BI0TkD1mga+
+ bzIcW4m6Y7QPJ/8haRxWBmvxQ+GfV30n/tT75SwyIi066YHKLMHSAorifr/opH4tKn
+ CRPDo7L3xk2MA==
+Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
+ from userid 48) id A8E2EC05FF5; Thu,  2 Jun 2022 15:13:00 +0000 (UTC)
+From: bugzilla-daemon@kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Thu, 02 Jun 2022 15:13:00 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: chao@kernel.org
+X-Bugzilla-Status: NEW
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: 
+Message-ID: <bug-216050-202145-hjKPRWyKEB@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-216050-202145@https.bugzilla.kernel.org/>
+References: <bug-216050-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1nwfFJ-0002WJ-S8
-Subject: [f2fs-dev] [PATCH] docs: filesystems: f2fs: fix description about
- compress ioctl
+X-Headers-End: 1nwmVb-002Pie-L7
+Subject: [f2fs-dev] [Bug 216050] f2fs_gc occupies 100% cpu
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,67 +97,61 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-doc@vger.kernel.org, Chao Liu <liuchao@coolpad.com>,
- linux-kernel@vger.kernel.org, Wayne Zhang <zhangwen@coolpad.com>,
- Yue Hu <huyue2@coolpad.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Liu <liuchao@coolpad.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=216050
 
-Since commit c61404153eb6 ("f2fs: introduce FI_COMPRESS_RELEASED
-instead of using IMMUTABLE bit"), we no longer use the IMMUTABLE
-bit to prevent writing data for compression. Let's correct the
-corresponding documentation.
+--- Comment #16 from Chao Yu (chao@kernel.org) ---
+(In reply to Jaegeuk Kim from comment #14)
+> Re #9,
+> 
+> Thank you so much.
+> 
+>    f2fs_gc-254:2-1156    [013] ..... 22290.243361:
+> f2fs_lookup_extent_tree_end: dev = (254,2), ino = 1409621, pgofs = 234,
+> ext_info(fofs: 0, blk: 0, len: 0) 
+>    f2fs_gc-254:2-1156    [013] ..... 22290.243362:
+> f2fs_lookup_extent_tree_start: dev = (254,2), ino = 1409621, pgofs = 234
+>    f2fs_gc-254:2-1156    [013] ..... 22290.243362:
+> f2fs_lookup_extent_tree_end: dev = (254,2), ino = 1409621, pgofs = 234,
+> ext_info(fofs: 0, blk: 0, len: 0) 
+>    f2fs_gc-254:2-1156    [013] ..... 22290.243362:
+> f2fs_lookup_extent_tree_start: dev = (254,2), ino = 1409621, pgofs = 234
+>    f2fs_gc-254:2-1156    [013] ..... 22290.243362:
+> f2fs_lookup_extent_tree_end: dev = (254,2), ino = 1409621, pgofs = 234,
+> ext_info(fofs: 0, blk: 0, len: 0) 
+>    f2fs_gc-254:2-1156    [013] ..... 22290.243362:
+> f2fs_lookup_extent_tree_start: dev = (254,2), ino = 1409621, pgofs = 234
+>    f2fs_gc-254:2-1156    [013] ..... 22290.243362:
+> f2fs_lookup_extent_tree_end: dev = (254,2), ino = 1409621, pgofs = 234,
+> ext_info(fofs: 0, blk: 0, len: 0) 
+>    f2fs_gc-254:2-1156    [013] ..... 22290.243362:
+> f2fs_lookup_extent_tree_start: dev = (254,2), ino = 1409621, pgofs = 234
+> 
+> 
+> It seems this disk is dm-2, since the extent hit count is something below.
+>     - Hit Ratio: 0% (38193 / 78044163449)
+> 
+> I'm suspecting this flow, but not sure where it goes into a loop.
+> 
+> f2fs_gc
+>  -> gc_data_segment
+>   -> f2fs_get_read_data_page
+>     -> f2fs_lookup_extent_cache
 
-BTW, this patch fixes some alignment issues in the compress
-metadata layout.
+I suspect this path, it looks impossible though...
 
-Signed-off-by: Chao Liu <liuchao@coolpad.com>
----
- Documentation/filesystems/f2fs.rst | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+- move_data_page
+ - f2fs_get_lock_data_page
+  - f2fs_get_read_data_page
 
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index ad8dc8c040a2..98dc24f5c6f0 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -818,10 +818,11 @@ Compression implementation
-   Instead, the main goal is to reduce data writes to flash disk as much as
-   possible, resulting in extending disk life time as well as relaxing IO
-   congestion. Alternatively, we've added ioctl(F2FS_IOC_RELEASE_COMPRESS_BLOCKS)
--  interface to reclaim compressed space and show it to user after putting the
--  immutable bit. Immutable bit, after release, it doesn't allow writing/mmaping
--  on the file, until reserving compressed space via
--  ioctl(F2FS_IOC_RESERVE_COMPRESS_BLOCKS) or truncating filesize to zero.
-+  interface to reclaim compressed space and show it to user after setting a
-+  special flag to the inode. Once the compressed space is released, the flag
-+  will block writing data to the file until either the compressed space is
-+  reserved via ioctl(F2FS_IOC_RESERVE_COMPRESS_BLOCKS) or the file size is
-+  truncated to zero.
- 
- Compress metadata layout::
- 
-@@ -830,12 +831,12 @@ Compress metadata layout::
- 		| cluster 1 | cluster 2 | ......... | cluster N |
- 		+-----------------------------------------------+
- 		.           .                       .           .
--	.                       .                .                      .
-+	  .                      .                .                      .
-     .         Compressed Cluster       .        .        Normal Cluster            .
-     +----------+---------+---------+---------+  +---------+---------+---------+---------+
-     |compr flag| block 1 | block 2 | block 3 |  | block 1 | block 2 | block 3 | block 4 |
-     +----------+---------+---------+---------+  +---------+---------+---------+---------+
--	    .                             .
-+	       .                             .
- 	    .                                           .
- 	.                                                           .
- 	+-------------+-------------+----------+----------------------------+
 -- 
-2.36.1
+You may reply to this email to add a comment.
 
-
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
