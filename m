@@ -4,51 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AF7D3C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Jun 2022 15:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 90BABC43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  2 Jun 2022 21:50:42 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nwnCD-00066n-OU; Thu, 02 Jun 2022 15:57:14 +0000
+	id 1nwsiE-00068U-9U; Thu, 02 Jun 2022 21:50:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <soc.salesmktgs@sharjahoxygen.com>)
- id 1nwnCA-00066c-PF
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jun 2022 15:57:11 +0000
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1nwsiB-00068O-Pv
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jun 2022 21:50:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Reply-To:From:
- Date:Subject:To:Sender:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dmHRIGS2rljxIOknV4VU/p/O9X/mSEPbWDlpvd9lQ3I=; b=bHGYP0LCLZ+OXRmUdFQrItuJBb
- eWsscyLbEJEvJGLTAbQSb3ZC22+pdxSwPol4PhJhryu4GCgZ4CKkfg8hvb3jDs4Wk4QUurwFJGM5W
- exl9y9OSqgGEE6VglIgnPXZgpGCXhNp4QjNhvlLtsDNxJ9F/g3ehYaZp5g/Hg5CJxElA=;
+ bh=ZyqVMt4uj7qZbQamZUC0fhNBlahMqaWmv6a3motIsyM=; b=Y7cdmLi7XZJ7daVX2RKhoe41Rs
+ OSKtQwGbCI0ysPrRXo+74amys8flNr1UTniV1rzcXUa7arDkY38432ql4njzPSC8VAeQpdSY0rRUh
+ 5yuTbu+7bYicvF9xbYkFUqFIiC3hUiPl+tVhU4dC/2VmFU8HEwcjn5+4RRIXvxsPsqnE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Reply-To:From:Date:Subject:To:Sender
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=dmHRIGS2rljxIOknV4VU/p/O9X/mSEPbWDlpvd9lQ3I=; b=k
- Q0unuxGs9dDEtV4dnwsjySVZ44d+8NkvHf4j+tsTaFor4zV0zhCFpAUwLgRq5eSjx4VmWXLV6BuME
- KHlDC3PWIixFlgQtp5DILvSOnPp/ozoUMiCHF5Q3TTBiUNR/z+3XVHdk85pjfMj7uw9R3Bv/+QPXT
- X7pcpRnLSmnbcD9I=;
-Received: from [143.110.184.46] (helo=unicodetestserver2021.in)
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ZyqVMt4uj7qZbQamZUC0fhNBlahMqaWmv6a3motIsyM=; b=ZMoWHxJbtKxUlF1+4xTiSzsNQw
+ ltT8OMJ2wenfksVcTu88kAJFSo5EyF7ECxBLLygTtMkVcLzIU3wBhAQbUfn9j1iNR59n8ZReEPYOZ
+ GYXnmTn4yy+dla8ibRdEUz0B9VZZuEDAPomLDjnmQlB3vo8h4rmF4ZORPcK5161OxNQs=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nwnCA-002S6E-Ot
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jun 2022 15:57:11 +0000
-Received: by unicodetestserver2021.in (Postfix, from userid 33)
- id 30FAA3D4944; Thu,  2 Jun 2022 21:06:43 +0530 (IST)
+ id 1nwsi7-002lul-CR
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 02 Jun 2022 21:50:36 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 354EC618D5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu,  2 Jun 2022 21:50:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9AB54C385A5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu,  2 Jun 2022 21:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1654206620;
+ bh=ZyqVMt4uj7qZbQamZUC0fhNBlahMqaWmv6a3motIsyM=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=DPaMBwvYo/sWFfdtNxs1UxcyZG3npN3x6eX71wogsVaCGW7UhrC6xUPPtLwD2Xhyc
+ qYeWrz5Hu6x8jI7Or7bZbowWpTH4f6kGApHe+d5L2Al4tOiXgfaL9X5zbS841yk1RS
+ T6/j3g3hYjvnStON7Zbq5Brfj0BQ0XkxnK+vgLawuvtp/07I0pstT4iwTm2znL6Y0x
+ hkigTWVy4KJR6heAeC2FUtKCLIpS+zVWcyD87ecm5/lc85Ris6WormOSSuK45+P6hD
+ FQuZRPMoom6TGogioyhNxrfK4KSe+85zrRiH6PUsPUNBif5PQs4uQ8OxVKYtjUlFTI
+ gDR42MDmrViSw==
+Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
+ from userid 48) id 7B993C05FD5; Thu,  2 Jun 2022 21:50:20 +0000 (UTC)
+From: bugzilla-daemon@kernel.org
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu, 2 Jun 2022 21:06:43 +0530
-From: SOC SALES & MARKETING <soc.salesmktgs@sharjahoxygen.com>
-Message-ID: <44338c1cf3d31639cbdbf7daf2e1d333@dentaltogether.com>
+Date: Thu, 02 Jun 2022 21:50:20 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: plague@privacyrequired.com
+X-Bugzilla-Status: NEW
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: 
+Message-ID: <bug-216050-202145-8IhItPlMxH@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-216050-202145@https.bugzilla.kernel.org/>
+References: <bug-216050-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1nwnCA-002S6E-Ot
-Subject: [f2fs-dev] Gas producer and supplier of gas related equipment
+X-Headers-End: 1nwsi7-002lul-CR
+Subject: [f2fs-dev] [Bug 216050] f2fs_gc occupies 100% cpu
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -60,43 +97,28 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: soc.salesmktg@hotmail.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Good day,  Sir
-With our experience in the Gas Industry, we provide high quality and approved international standards to large and small companies in the various types of industries
+https://bugzilla.kernel.org/show_bug.cgi?id=216050
 
-Our Primary activities are:
--Lease and Sales - Cylinders, Vaporizer, ISO and Storage Tanks
--Fabrication and Supply - Cylinder Quads / Racks / Carry Racks / Regulating Manifolds
--Supply of Gases - Industrial, Medical, Specialty Gases and Gas Mixtures
--Liquid Bulk Supply - Ammonia, Propane, LPG, Carbon Dioxide, Argon, Nitrous Oxide, Oxygen and Nitrogen
--Installation and Commissioning - Liquid and Gas Plants, Gas Filling Stations with Storage Tanks Facilities
--Trading - All Types of Gas accessories and Gas related Equipments
+--- Comment #18 from plague@privacyrequired.com ---
+Thank you for the WA suggested. Will do it and see how it goes.
 
-We carry out Hydrotesting of cylinders, racks and tube trailers along with the complete refurbishment of skids including repair of frames and manifolds, blasting, painting and other services as per customer requirement.
+It looks like dm-2 in my config is lv_root. I am happy to assist to provide
+more info as needed, but will need to be help with that and some hand-holding
+may be required... 
 
-If you need our service, pls inform me
+1) As this is my root, can you advise on how to create an image in secure (and
+private!) way? Also, I'd rather not make it publicly accessible image ;-)
+2) Will need to be told step by step the procedure.
 
- 
- 
- 
-Regards,
-RAHUL NARAIN
-General Manager - Projects, Exports & Bulk Sales
- 
-SHARJAH OXYGEN COMPANY (SOC)
-P.O. Box 800, Sharjah, UAE
-Tel:  971-6-529 1199 Ext 23 / Fax:  971-6-529 1099
+-- 
+You may reply to this email to add a comment.
 
-Skype email: soc.salesmktg@hotmail.com
- 
-SOC Website: http://www.sharjahoxygen.com
-Working Hours: 8:00AM to 6:00PM (Sunday to Thursday)
-
-
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
