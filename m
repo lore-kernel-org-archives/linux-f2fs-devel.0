@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A5C60CCA485
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jun 2022 19:39:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8A798C43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jun 2022 19:39:34 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nxw5x-0006Pp-5Q; Sun, 05 Jun 2022 19:39:30 +0000
+	id 1nxw62-0001gO-9z; Sun, 05 Jun 2022 19:39:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <willy@infradead.org>) id 1nxw5v-0006PE-Ta
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:28 +0000
+ (envelope-from <willy@infradead.org>) id 1nxw60-0001gH-PT
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OKfTT3lHI1ZyVlt5mIkzU0UCspOZGM/nu3wRRwSA884=; b=M2ve8HKoyYP0X3zc1XeoQ9jakV
- MHt89F9Dctn3V7CKYsWdq1exD2TecXdD13fxOQ6CqF7ILxHIT3hgfONeebXmAVySvmkqI6O/+ClXF
- M6TfsIAfG7rYFCIAsxowbCDrB9pmGaJEqTuCEVe9X7B/O+2PwbNmE6h+0Nn0F4Q6aDug=;
+ bh=4+VTXobun92H06BwkM9sboSswxKOXWma+MeYkEepBgA=; b=bpRTQRgt1bj+yWok8AnwA/my+8
+ oThKV6RN+O+M/y8vveTJR7d0e2/RYBxaZ8l8KD3yRe0SUfjyYQxxTQ/0MJWQR3Cw/i9Mccha5TiGC
+ wu6VJEkJRhBrBLjQyS6jIlUwWFA77nb6y9bvkGzr3yCfGtHyUqM1LOW30OgJP48F2Q6w=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,36 +31,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=OKfTT3lHI1ZyVlt5mIkzU0UCspOZGM/nu3wRRwSA884=; b=CfIlYMHuFSFOIf8RvwUFPxoQDY
- pD3aH0XhwEC/SNlGrXuxe9zEwx7UcECKQaQ+seuqNP1zHnOi9V778eBbB79HTsTbxmP/0aZ0mze5y
- Rre5QRjCjs+zz8roAsdkZxn0XTDjvs2A3x/QCuTw/rkWYSOvDpY1jpv6dtgSaJ/CnaCs=;
+ bh=4+VTXobun92H06BwkM9sboSswxKOXWma+MeYkEepBgA=; b=SjX9l6aM9NH6n+smcCa9JYEZf7
+ ojR0CGoMkdkOz2SrhhOuFMecgH2a3LrXrRxqLy5pVwFaR1n2Cf//sS8C+cd9hiqETPvR0vDE0EBJ3
+ PPctQQ5BinOIwO1/cdkMgXUuTqu9ijnDAyt/5xg2+HiLEKs5Z1FqgvI0whRAkSkWHp4c=;
 Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nxw5u-00055u-LB
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:28 +0000
+ id 1nxw5y-006MFV-VO
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=OKfTT3lHI1ZyVlt5mIkzU0UCspOZGM/nu3wRRwSA884=; b=oCy+OeGRtDxhYjiC1O/zCFlM1E
- +GLKQJ/W+sccDPBLjY3er2VqLfMCEOwVG2399jOMHXumUU9OHGAIixEoQOi/SpN3be9JrXvF16w/v
- Exl+YnA2i8gI7xqdnzTxw1MPX9mIztUvT6d28MoZlCWW9XP6JT+0/LaRG5ZBAyAOHPy4t3LVhruNY
- x/DFbMg1kb2C6BevSb31Bs4yqYOuNyGLM6eCChRa6QwSRaO+Gdj3Xk/rAclmb0Oonj5FrYQ2yaWx0
- x0PkYd/DRK5vRnOuPNzfMMOJ4i8jB1fSoAiI39Kk4myb97CWXL7S1aAlZ72vXZPLnBJ7fQi0obEck
- +vvpE4IQ==;
+ bh=4+VTXobun92H06BwkM9sboSswxKOXWma+MeYkEepBgA=; b=RQCVcbFFYG/IwPkZ92IOtlvbMm
+ az7RIzZuEXd7sNL2U7G8LPCRngD4SynAZcKmm6Z95io0HrbGL0vnB7fjGo7Cxu4ZBw1ODBrU0UG2e
+ HxKcshRvctwxq6I6s6/MK32FsYRAC2G0u/Hip2HcdGDzdI618anISANI/MA2khqP9eLitiytzdMDB
+ ct6KPLFs4aDjPFKc8Pkgohr+9RyESHl2CJp7vIumKABXwMvMmL913gy1dYEy+Y+5rn3L6A6SydWN3
+ 3u72ARdSAix5xot7Gj5q+zC981acWBZoknB7PiY9jRjVbOJiq7giOgLEaPV78mOWST9iLtfFjKdrU
+ TBXjCXKw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nxw5R-009wsd-5Z; Sun, 05 Jun 2022 19:38:57 +0000
+ Hat Linux)) id 1nxw5Q-009wsX-Tg; Sun, 05 Jun 2022 19:38:56 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Sun,  5 Jun 2022 20:38:52 +0100
-Message-Id: <20220605193854.2371230-9-willy@infradead.org>
+Date: Sun,  5 Jun 2022 20:38:49 +0100
+Message-Id: <20220605193854.2371230-6-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220605193854.2371230-1-willy@infradead.org>
 References: <20220605193854.2371230-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nxw5u-00055u-LB
-Subject: [f2fs-dev] [PATCH 08/10] vmscan: Add check_move_unevictable_folios()
+X-Headers-End: 1nxw5y-006MFV-VO
+Subject: [f2fs-dev] [PATCH 05/10] f2fs: Convert
+ f2fs_invalidate_compress_pages() to use filemap_get_folios()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,117 +81,78 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Change the guts of check_move_unevictable_pages() over to use folios
-and add check_move_unevictable_pages() as a wrapper.
+Convert this function to use folios throughout.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/swap.h |  3 ++-
- mm/vmscan.c          | 55 ++++++++++++++++++++++++++------------------
- 2 files changed, 35 insertions(+), 23 deletions(-)
+ fs/f2fs/compress.c | 35 +++++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 0c0fed1b348f..8672a7123ccd 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -438,7 +438,8 @@ static inline bool node_reclaim_enabled(void)
- 	return node_reclaim_mode & (RECLAIM_ZONE|RECLAIM_WRITE|RECLAIM_UNMAP);
- }
- 
--extern void check_move_unevictable_pages(struct pagevec *pvec);
-+void check_move_unevictable_folios(struct folio_batch *fbatch);
-+void check_move_unevictable_pages(struct pagevec *pvec);
- 
- extern void kswapd_run(int nid);
- extern void kswapd_stop(int nid);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index f7d9a683e3a7..5222c5ad600a 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4790,45 +4790,56 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
- }
- #endif
- 
-+void check_move_unevictable_pages(struct pagevec *pvec)
-+{
-+	struct folio_batch fbatch;
-+	unsigned i;
-+
-+	for (i = 0; i < pvec->nr; i++) {
-+		struct page *page = pvec->pages[i];
-+
-+		if (PageTransTail(page))
-+			continue;
-+		folio_batch_add(&fbatch, page_folio(page));
-+	}
-+	check_move_unevictable_folios(&fbatch);
-+}
-+EXPORT_SYMBOL_GPL(check_move_unevictable_pages);
-+
- /**
-- * check_move_unevictable_pages - check pages for evictability and move to
-- * appropriate zone lru list
-- * @pvec: pagevec with lru pages to check
-+ * check_move_unevictable_folios - Move evictable folios to appropriate zone
-+ * lru list
-+ * @fbatch: Batch of lru folios to check.
-  *
-- * Checks pages for evictability, if an evictable page is in the unevictable
-+ * Checks folios for evictability, if an evictable folio is in the unevictable
-  * lru list, moves it to the appropriate evictable lru list. This function
-- * should be only used for lru pages.
-+ * should be only used for lru folios.
-  */
--void check_move_unevictable_pages(struct pagevec *pvec)
-+void check_move_unevictable_folios(struct folio_batch *fbatch)
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 24824cd96f36..009e6c519e98 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1832,45 +1832,40 @@ bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+ void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi, nid_t ino)
  {
- 	struct lruvec *lruvec = NULL;
- 	int pgscanned = 0;
- 	int pgrescued = 0;
- 	int i;
+ 	struct address_space *mapping = sbi->compress_inode->i_mapping;
+-	struct pagevec pvec;
++	struct folio_batch fbatch;
+ 	pgoff_t index = 0;
+ 	pgoff_t end = MAX_BLKADDR(sbi);
  
--	for (i = 0; i < pvec->nr; i++) {
--		struct page *page = pvec->pages[i];
--		struct folio *folio = page_folio(page);
--		int nr_pages;
+ 	if (!mapping->nrpages)
+ 		return;
+ 
+-	pagevec_init(&pvec);
++	folio_batch_init(&fbatch);
+ 
+ 	do {
+-		unsigned int nr_pages;
+-		int i;
++		unsigned int nr, i;
+ 
+-		nr_pages = pagevec_lookup_range(&pvec, mapping,
+-						&index, end - 1);
+-		if (!nr_pages)
++		nr = filemap_get_folios(mapping, &index, end - 1, &fbatch);
++		if (!nr)
+ 			break;
+ 
+-		for (i = 0; i < nr_pages; i++) {
+-			struct page *page = pvec.pages[i];
 -
--		if (PageTransTail(page))
--			continue;
-+	for (i = 0; i < fbatch->nr; i++) {
-+		struct folio *folio = fbatch->folios[i];
-+		int nr_pages = folio_nr_pages(folio);
+-			if (page->index > end)
+-				break;
++		for (i = 0; i < nr; i++) {
++			struct folio *folio = fbatch.folios[i];
  
--		nr_pages = thp_nr_pages(page);
- 		pgscanned += nr_pages;
+-			lock_page(page);
+-			if (page->mapping != mapping) {
+-				unlock_page(page);
++			folio_lock(folio);
++			if (folio->mapping != mapping) {
++				folio_unlock(folio);
+ 				continue;
+ 			}
  
--		/* block memcg migration during page moving between lru */
--		if (!TestClearPageLRU(page))
-+		/* block memcg migration while the folio moves between lrus */
-+		if (!folio_test_clear_lru(folio))
- 			continue;
+-			if (ino != get_page_private_data(page)) {
+-				unlock_page(page);
++			if (ino != get_page_private_data(&folio->page)) {
++				folio_unlock(folio);
+ 				continue;
+ 			}
  
- 		lruvec = folio_lruvec_relock_irq(folio, lruvec);
--		if (page_evictable(page) && PageUnevictable(page)) {
--			del_page_from_lru_list(page, lruvec);
--			ClearPageUnevictable(page);
--			add_page_to_lru_list(page, lruvec);
-+		if (folio_evictable(folio) && folio_test_unevictable(folio)) {
-+			lruvec_del_folio(lruvec, folio);
-+			folio_clear_unevictable(folio);
-+			lruvec_add_folio(lruvec, folio);
- 			pgrescued += nr_pages;
+-			generic_error_remove_page(mapping, page);
+-			unlock_page(page);
++			generic_error_remove_page(mapping, &folio->page);
++			folio_unlock(folio);
  		}
--		SetPageLRU(page);
-+		folio_set_lru(folio);
- 	}
- 
- 	if (lruvec) {
-@@ -4839,4 +4850,4 @@ void check_move_unevictable_pages(struct pagevec *pvec)
- 		count_vm_events(UNEVICTABLE_PGSCANNED, pgscanned);
- 	}
+-		pagevec_release(&pvec);
++		folio_batch_release(&fbatch);
+ 		cond_resched();
+ 	} while (index < end);
  }
--EXPORT_SYMBOL_GPL(check_move_unevictable_pages);
-+EXPORT_SYMBOL_GPL(check_move_unevictable_folios);
 -- 
 2.35.1
 
