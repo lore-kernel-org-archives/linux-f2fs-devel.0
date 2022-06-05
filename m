@@ -4,64 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2A822CCA486
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jun 2022 19:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 75BF1CCA483
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jun 2022 19:39:30 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nxw5w-0006PR-Pd; Sun, 05 Jun 2022 19:39:29 +0000
+	id 1nxw5w-0006Pe-W7; Sun, 05 Jun 2022 19:39:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <willy@infradead.org>) id 1nxw5p-0006Ow-Jp
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:22 +0000
+ (envelope-from <willy@infradead.org>) id 1nxw5s-0006P2-Pg
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7vrbND8cI4Dlq/u8PQe/DoQG1zXQAC8bnQq3oGQZlCM=; b=FO/VoIZrJzZmcjr1MfnzOf0Tef
- Fu8Knzu/qYP0SBIXSBOWfW8m/mHyOc8DMZOzWltmW7R8q2DjoDzUX1WyAyL9WlMlwtiUfP7ZfG1b6
- +5/2AgOqzQrH73J6xMhTY99WHZXyHPAupQpRJeFwybbGynWlrjQC78a8kvpJgiMtFNxM=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=7vrbND8cI4Dlq/u8PQe/DoQG1zXQAC8bnQq3oGQZlCM=; b=aFGmYNR0qDdycFeB7YS7xQfxkY
- BwfxTRxZKgPeG+dNJVlKJw10P5mK/+/Go0s3k2BmOSRCnVl/bL9mFTUF1YuU8O/SsTbtQWmi+k5xg
- +tthSwpUHRVwp+fMr4k/+j9u8lGioW5e+bAFVEaoqoAMPbI+R2dPAWYsXSMXBO97DC6Q=;
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=pFaDJUkNgKV/oU+nKufi51KbavXmhswow0vSfNYzKrI=; b=muGIKy79Yxd6GBgw0gztDFQ/yS
+ eE6DzXTQlEMfF20rELDBFA1RKrLX9oOXGbeDf8W/n3YdPYF0fARj9Jr2tCNW30H0uZSQncqCb4NfL
+ F1vEkSuqO6TtVdcY340P9n2DdKnzQ1uWMmWwLi7LJox7oR3KJKk+53yuQ6xP4wWGlQdc=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=pFaDJUkNgKV/oU+nKufi51KbavXmhswow0vSfNYzKrI=; b=T
+ Xe/VyYEj72m2eh79ZFv3+ZZCBr1Xj8RofKeYrNrdUndiovmQFKWZjZH0jeXMWL+Ccz67lpB44Eu4G
+ vlfErOYaCNaIy/gSaAW96w3c4q4uTypN8+GV1SBctyAeHy/yyyJPuwdPcHih3zI+lxZ1Nz47VJkBG
+ YLitxxhvAXumNHqM=;
 Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nxw5p-006MEw-NE
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:22 +0000
+ id 1nxw5r-00055k-L0
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
- References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-Type:Content-ID:Content-Description;
- bh=7vrbND8cI4Dlq/u8PQe/DoQG1zXQAC8bnQq3oGQZlCM=; b=nyyxz3de/IeOoMboCtVOVL6Bfa
- VfKn+9Zxs/tns4f9iK0uXrzCv3nCmGwggtuSAUAtlPGnuq7icdE5HNPJH04XGNi7c1z8uo9aOBl13
- kJWUC0wwP6r24Wz1QxsuEIRQfaOEnZ3Dg+XUj8w0YlohN8gP7zUJj2pOjg7y43Pr//LpiWEXb5yqJ
- K6B5rwHIPhpnhCcdLsO2JTI3svxYEAP6mohHhTayjo4MzQ4RVRW6FirahM6gza6gHsplOlL7+7AeH
- NGJiKKqHk6YUBLdFV8TQaFaygjaxQdpQwBZOim9CpkDAEyupcW8eJHdlsziy2Jx6OO5JpEWzDeF8Q
- O5jHuBxg==;
+ Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:In-Reply-To:References;
+ bh=pFaDJUkNgKV/oU+nKufi51KbavXmhswow0vSfNYzKrI=; b=IQQ3chWAAqod3iNOvZPz+sg3JL
+ Hk+ApUMeqh7NT3g6IWWJNzgueSDKfvvNhBx6utIRkRDW0gX3AiQfvMXnwsyaJ/64KiwRfHwjSy/dv
+ 8J6uezBFHQnTUj8EMV7+h4tSlGa2WN04lIzx/EyXL84mDYJOn+khSbti+8XKflhn9L4r/WhR6xbM7
+ +MZ9IYhStDA3yihxRhpkHHC+OXeBpvNCGWk5fEeGTb1H9CRJG5lEjoY1+jSkJw8hVgtSw7cxw6GvV
+ KZogb0QToLdgR6kEf13Hcr4syZG2xfRXsnqeCO+zpSb6FDBtT5Fx6Rp6rYpWkgGY3OjWTTkHnJk29
+ kJYadcSQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nxw5R-009wsZ-07; Sun, 05 Jun 2022 19:38:57 +0000
+ Hat Linux)) id 1nxw5Q-009wsN-GO; Sun, 05 Jun 2022 19:38:56 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Sun,  5 Jun 2022 20:38:50 +0100
-Message-Id: <20220605193854.2371230-7-willy@infradead.org>
+Date: Sun,  5 Jun 2022 20:38:44 +0100
+Message-Id: <20220605193854.2371230-1-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220605193854.2371230-1-willy@infradead.org>
-References: <20220605193854.2371230-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nxw5p-006MEw-NE
-Subject: [f2fs-dev] [PATCH 06/10] hugetlbfs: Convert
- remove_inode_hugepages() to use filemap_get_folios()
+X-Headers-End: 1nxw5r-00055k-L0
+Subject: [f2fs-dev] [PATCH 00/10] Convert to filemap_get_folios()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,120 +78,40 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use folios throughout this function.  That removes the last caller of
-huge_pagevec_release(), so delete that too.
+This patch series removes find_get_pages_range(), pagevec_lookup()
+and pagevec_lookup_range(), converting all callers to use the new
+filemap_get_folios().  I've only run xfstests over ext4 ... some other
+testing might be appropriate.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/hugetlbfs/inode.c | 44 ++++++++++++++------------------------------
- 1 file changed, 14 insertions(+), 30 deletions(-)
+Matthew Wilcox (Oracle) (10):
+  filemap: Add filemap_get_folios()
+  buffer: Convert clean_bdev_aliases() to use filemap_get_folios()
+  ext4: Convert mpage_release_unused_pages() to use filemap_get_folios()
+  ext4: Convert mpage_map_and_submit_buffers() to use
+    filemap_get_folios()
+  f2fs: Convert f2fs_invalidate_compress_pages() to use
+    filemap_get_folios()
+  hugetlbfs: Convert remove_inode_hugepages() to use
+    filemap_get_folios()
+  nilfs2: Convert nilfs_copy_back_pages() to use filemap_get_folios()
+  vmscan: Add check_move_unevictable_folios()
+  shmem: Convert shmem_unlock_mapping() to use filemap_get_folios()
+  filemap: Remove find_get_pages_range() and associated functions
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index ae2524480f23..14d33f725e05 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -108,16 +108,6 @@ static inline void hugetlb_drop_vma_policy(struct vm_area_struct *vma)
- }
- #endif
- 
--static void huge_pagevec_release(struct pagevec *pvec)
--{
--	int i;
--
--	for (i = 0; i < pagevec_count(pvec); ++i)
--		put_page(pvec->pages[i]);
--
--	pagevec_reinit(pvec);
--}
--
- /*
-  * Mask used when checking the page offset value passed in via system
-  * calls.  This value will be converted to a loff_t which is signed.
-@@ -480,25 +470,19 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 	struct address_space *mapping = &inode->i_data;
- 	const pgoff_t start = lstart >> huge_page_shift(h);
- 	const pgoff_t end = lend >> huge_page_shift(h);
--	struct pagevec pvec;
-+	struct folio_batch fbatch;
- 	pgoff_t next, index;
- 	int i, freed = 0;
- 	bool truncate_op = (lend == LLONG_MAX);
- 
--	pagevec_init(&pvec);
-+	folio_batch_init(&fbatch);
- 	next = start;
--	while (next < end) {
--		/*
--		 * When no more pages are found, we are done.
--		 */
--		if (!pagevec_lookup_range(&pvec, mapping, &next, end - 1))
--			break;
--
--		for (i = 0; i < pagevec_count(&pvec); ++i) {
--			struct page *page = pvec.pages[i];
-+	while (filemap_get_folios(mapping, &next, end - 1, &fbatch)) {
-+		for (i = 0; i < folio_batch_count(&fbatch); ++i) {
-+			struct folio *folio = fbatch.folios[i];
- 			u32 hash = 0;
- 
--			index = page->index;
-+			index = folio->index;
- 			if (!truncate_op) {
- 				/*
- 				 * Only need to hold the fault mutex in the
-@@ -511,15 +495,15 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 			}
- 
- 			/*
--			 * If page is mapped, it was faulted in after being
-+			 * If folio is mapped, it was faulted in after being
- 			 * unmapped in caller.  Unmap (again) now after taking
- 			 * the fault mutex.  The mutex will prevent faults
--			 * until we finish removing the page.
-+			 * until we finish removing the folio.
- 			 *
- 			 * This race can only happen in the hole punch case.
- 			 * Getting here in a truncate operation is a bug.
- 			 */
--			if (unlikely(page_mapped(page))) {
-+			if (unlikely(folio_mapped(folio))) {
- 				BUG_ON(truncate_op);
- 
- 				mutex_unlock(&hugetlb_fault_mutex_table[hash]);
-@@ -532,7 +516,7 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 				i_mmap_unlock_write(mapping);
- 			}
- 
--			lock_page(page);
-+			folio_lock(folio);
- 			/*
- 			 * We must free the huge page and remove from page
- 			 * cache (remove_huge_page) BEFORE removing the
-@@ -542,8 +526,8 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 			 * the subpool and global reserve usage count can need
- 			 * to be adjusted.
- 			 */
--			VM_BUG_ON(HPageRestoreReserve(page));
--			remove_huge_page(page);
-+			VM_BUG_ON(HPageRestoreReserve(&folio->page));
-+			remove_huge_page(&folio->page);
- 			freed++;
- 			if (!truncate_op) {
- 				if (unlikely(hugetlb_unreserve_pages(inode,
-@@ -551,11 +535,11 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 					hugetlb_fix_reserve_counts(inode);
- 			}
- 
--			unlock_page(page);
-+			folio_unlock(folio);
- 			if (!truncate_op)
- 				mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 		}
--		huge_pagevec_release(&pvec);
-+		folio_batch_release(&fbatch);
- 		cond_resched();
- 	}
- 
+ fs/buffer.c             | 26 +++++++--------
+ fs/ext4/inode.c         | 40 ++++++++++++-----------
+ fs/f2fs/compress.c      | 35 +++++++++-----------
+ fs/hugetlbfs/inode.c    | 44 ++++++++-----------------
+ fs/nilfs2/page.c        | 60 +++++++++++++++++-----------------
+ include/linux/pagemap.h |  5 ++-
+ include/linux/pagevec.h | 10 ------
+ include/linux/swap.h    |  3 +-
+ mm/filemap.c            | 72 +++++++++++++++++------------------------
+ mm/shmem.c              | 13 ++++----
+ mm/swap.c               | 29 -----------------
+ mm/vmscan.c             | 55 ++++++++++++++++++-------------
+ 12 files changed, 166 insertions(+), 226 deletions(-)
+
 -- 
 2.35.1
 
