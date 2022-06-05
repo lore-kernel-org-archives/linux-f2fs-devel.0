@@ -4,88 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12CEAC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jun 2022 18:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78826C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jun 2022 19:39:26 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nxuub-0008Lh-SM; Sun, 05 Jun 2022 18:23:40 +0000
+	id 1nxw5u-0001b4-71; Sun, 05 Jun 2022 19:39:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1nxuua-0008Lb-MF
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 18:23:39 +0000
+ (envelope-from <willy@infradead.org>) id 1nxw5s-0001ak-3B
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VbW60G0Io2TlspHozLMI5SkQAbbzVkU83ar9CJKN2os=; b=gw9/Pkm6wV7SVoTicoUDmN85/e
- MyUaxJAPi56f2KWbcRltDRrfhqFPFbmec8AKrAsd2mmeboQz0bx9e/LEBoTLD5k54UUjZL7/+cp23
- wKBurr8XcKk9F0aF1+wLl9j1xqFgMgO9zF1eFsXW5yUJq0A6IOg5snC7WQukUcyB7vD8=;
+ bh=6g09y1A9jVwuZlJR1irGeBqDpd31Ui3pSGWrlaz4nb0=; b=lKTJnc79odjifwMClYaMqg9dwq
+ gu3G2FD3+6oggsEFcDb80dTbGQVgnk6dAmFd7R4UFvoIOOQifERpelMgjBESCXU1gRMJc42DoNc8y
+ aNsaya4vVLVyHWjsjqEESFpYXZJlxdX1XsXpC3wX7NpRm3q6PyodfV8spNeIFBkFfw80=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VbW60G0Io2TlspHozLMI5SkQAbbzVkU83ar9CJKN2os=; b=mV88cbDy+7MBLX+4QzOtzCbByd
- JFD/Y/Ngt1bDy3/AAHys/ahZv1p77+OxSha0nA4LdlaKy5KTqTC7YGWeeTONLHi/gaoQq3Pf+uXZe
- +wgt5NNsbYCXymIE/6aWwPhlDyeEDRIa6pP++qjzfX1Zoll5bx6hyyWAzBDp2CZ1t7WE=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=6g09y1A9jVwuZlJR1irGeBqDpd31Ui3pSGWrlaz4nb0=; b=UAz1HwBefv0T4cgUNVR1EalXBy
+ Yd1aDrMojVJUdQkThJN54fBx7MzsNlCB5QS3wC6ytXnSzUcM0SSXgsnrAEbIJQVnLkxEmMgQPP4b1
+ ImoTdHAAgxPe0pbd5rfSF6BcMLr1LaLA8rN6vU72TgxbOINkQuM3U68GA9gBw6WZgDEo=;
+Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nxuuT-006JvC-Iq
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 18:23:39 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 478D1B80B74
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  5 Jun 2022 18:23:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 17FA2C34115
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  5 Jun 2022 18:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1654453398;
- bh=VbW60G0Io2TlspHozLMI5SkQAbbzVkU83ar9CJKN2os=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=r2JaZpcxURXk/5aB9pxJibGVLRp4i0W0nHirWBPxvxVpnZ+cPZpEAmmRkz1fSWQ3+
- 7DRzkHoLuZ8egdLfxXPLIMF6me/ngPCH4KssTorLDsPMWb+hqVPRuvHqwSQdnYcSIH
- 6+aV03vF23qn+fS8F+TT60swJ/bQfUkp5QA59h9tx1pKp3zVQgNF0GoZKWpRNssYSb
- U23mff//iRzpplCCI+Ls37Cfu6E/qQjs40TDYQ3dyKCB6D16N21lHwuDsxUMtDQsXm
- EWGNJNahkYnphyvzUQND9J/LynZmLst1x1CkF+tdXBtm3BCTGKGTrrGGRvrRNTYxbk
- Oqu0j7EfjZMbw==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id F1B87C05FD6; Sun,  5 Jun 2022 18:23:17 +0000 (UTC)
-From: bugzilla-daemon@kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Sun, 05 Jun 2022 18:23:17 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: guido.iodice@gmail.com
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-216050-202145-4vLaTYsOlH@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-216050-202145@https.bugzilla.kernel.org/>
-References: <bug-216050-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ id 1nxw5p-006MEm-Oe
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:22 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+ References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-Type:Content-ID:Content-Description;
+ bh=6g09y1A9jVwuZlJR1irGeBqDpd31Ui3pSGWrlaz4nb0=; b=pg4gnoTyTVQMZkuLsLjufELZOm
+ zdlkyM6Epz9Y5ls6kjBxq58ihNIUrb2VqIKn1nUlONRVxbp4g7dlQzMHo9JPUvh1cyx4cdcigWDI1
+ slwAgDoI7SkWyyzH+j97LCItJ0qSvavcuPnYPdS5zdoFT4aZpCiGwaGGj7aUofkedaHvtjKzyVrNI
+ 42u9ldindn05Wm1yrBmLckPHwYi8R4I2j0QnGjrpg23633uwpEOoaC3S55ItOiGyvCgkUjK/1UElz
+ ks1lQWAPi22UiL9YIdwqGaBwOialRfaScxUmJwyto5dh3WMxU2Ag123Wygqx+r/Kt4P8V7BgYZyFl
+ 43sDr6cA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
+ Hat Linux)) id 1nxw5Q-009wsP-JZ; Sun, 05 Jun 2022 19:38:56 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Date: Sun,  5 Jun 2022 20:38:45 +0100
+Message-Id: <20220605193854.2371230-2-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220605193854.2371230-1-willy@infradead.org>
+References: <20220605193854.2371230-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nxuuT-006JvC-Iq
-Subject: [f2fs-dev] [Bug 216050] f2fs_gc occupies 100% cpu
+X-Headers-End: 1nxw5p-006MEm-Oe
+Subject: [f2fs-dev] [PATCH 01/10] filemap: Add filemap_get_folios()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,26 +72,106 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=216050
+This is the equivalent of find_get_pages() but fills a folio_batch
+instead of an array of pages.
 
---- Comment #21 from Guido (guido.iodice@gmail.com) ---
-just after my last comment on june 3, I set
-/sys/fs/f2fs/nvme0n1p3/atgc_age_threshold to 86400 (1 day)
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/pagemap.h |  2 ++
+ mm/filemap.c            | 55 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-Despite this, the problem did not occur again. I have never rebooted, only put
-it to sleep overnight.
-
-Does this make sense or am I just postponing the problem?
-
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 5555689ea809..50e57b2d845f 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -718,6 +718,8 @@ static inline struct page *find_subpage(struct page *head, pgoff_t index)
+ 	return head + (index & (thp_nr_pages(head) - 1));
+ }
+ 
++unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
++		pgoff_t end, struct folio_batch *fbatch);
+ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
+ 			pgoff_t end, unsigned int nr_pages,
+ 			struct page **pages);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 1e66eea98a7e..ea4145b7a84c 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2127,6 +2127,61 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t start,
+ 	return folio_batch_count(fbatch);
+ }
+ 
++/**
++ * filemap_get_folios - Get a batch of folios
++ * @mapping:	The address_space to search
++ * @start:	The starting page index
++ * @end:	The final page index (inclusive)
++ * @fbatch:	The batch to fill.
++ *
++ * Search for and return a batch of folios in the mapping starting at
++ * index @start and up to index @end (inclusive).  The folios are returned
++ * in @fbatch with an elevated reference count.
++ *
++ * The first folio may start before @start; if it does, it will contain
++ * @start.  The final folio may extend beyond @end; if it does, it will
++ * contain @end.  The folios have ascending indices.  There may be gaps
++ * between the folios if there are indices which have no folio in the
++ * page cache.  If folios are added to or removed from the page cache
++ * while this is running, they may or may not be found by this call.
++ *
++ * Return: The number of folios which were found.
++ * We also update @start to index the next folio for the traversal.
++ */
++unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
++		pgoff_t end, struct folio_batch *fbatch)
++{
++	XA_STATE(xas, &mapping->i_pages, *start);
++	struct folio *folio;
++
++	rcu_read_lock();
++	while ((folio = find_get_entry(&xas, end, XA_PRESENT)) != NULL) {
++		/* Skip over shadow, swap and DAX entries */
++		if (xa_is_value(folio))
++			continue;
++		if (!folio_batch_add(fbatch, folio)) {
++			*start = folio->index + folio_nr_pages(folio);
++			goto out;
++		}
++	}
++
++	/*
++	 * We come here when there is no page beyond @end. We take care to not
++	 * overflow the index @start as it confuses some of the callers. This
++	 * breaks the iteration when there is a page at index -1 but that is
++	 * already broken anyway.
++	 */
++	if (end == (pgoff_t)-1)
++		*start = (pgoff_t)-1;
++	else
++		*start = end + 1;
++out:
++	rcu_read_unlock();
++
++	return folio_batch_count(fbatch);
++}
++EXPORT_SYMBOL(filemap_get_folios);
++
+ static inline
+ bool folio_more_pages(struct folio *folio, pgoff_t index, pgoff_t max)
+ {
 -- 
-You may reply to this email to add a comment.
+2.35.1
 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
