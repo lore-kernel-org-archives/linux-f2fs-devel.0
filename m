@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2EB69CCA47E
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jun 2022 19:39:27 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DA02FCCA47B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  5 Jun 2022 19:39:29 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nxw5u-0001au-26; Sun, 05 Jun 2022 19:39:24 +0000
+	id 1nxw5w-000620-H6; Sun, 05 Jun 2022 19:39:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <willy@infradead.org>) id 1nxw5n-0001a0-JZ
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:18 +0000
+ (envelope-from <willy@infradead.org>) id 1nxw5q-00061f-Fp
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7zHJFf7s+ZSx87nHg6Bs72jjNt/zTHbg4PZc0KhFNBI=; b=DihCWc5mzVHQ7O/ew+WCwFX9N9
- 1NwEdlXhuMvWj9BwkVkqluz2tx+tK97MdTsE1+nNkXN5hmNxK7/YPiC2emcYpIxHITOwDTBwxDqJ3
- e8jL13P7EGIPB8KvFd3sms5i1jnsga+sLLolaKoukv6QqQGo0s6E8rebtiKMUdfzX6MQ=;
+ bh=nZd7FdfhHHpfkPZj2gtn0+UCb6ZHZaprTIaRzyl1jXk=; b=Dm2aIt4JO6gt6q9Rs5E38Ht3Ks
+ bnr4jl7x759BM36L15pmUbdSCQudssaG5zxzDjCc16zQtIo2LuMvwhQOmQM132gUzJ2dtHVv7oWAx
+ BskJVHVRCxjkZ1zIsridBy4F77AyZqgqLog9+270PzY/1CMiDlejVpbT+xtwSqDG0Qyg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,37 +31,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=7zHJFf7s+ZSx87nHg6Bs72jjNt/zTHbg4PZc0KhFNBI=; b=NYzv9XOumbCVjsiP0NwIwS8Oin
- UOtlVVsx/q2+JWmjQP4Pk1KZzOvsacI61btGK1n0sxtRrIayv8D2fJCzjYuTSek3UJaN68Fephk8V
- z4eYRarw0lDKMZJl8UN8q8aqYCVvtHNgk/btpEzTZngw0hM2jbkyaNmTvAmbFtqx6kZs=;
+ bh=nZd7FdfhHHpfkPZj2gtn0+UCb6ZHZaprTIaRzyl1jXk=; b=FWEQ4GN0tSpLEPN/CskrRppImV
+ DQUtMzAWNrA+aSVuvgolm4y9W8RmvhnsZ7GZ06qmRIoIXnBG8KBolIt+sbkAkmevI9viT0cm9RhT0
+ +aup9VC4JXGPws5fG/XhDrpMc3KpdE30DC5dW+tcSrmrTKYzJ8fkxlAmg+pd6PKWVbvg=;
 Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nxw5i-00054v-Oh
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:17 +0000
+ id 1nxw5p-006MEy-Ud
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 05 Jun 2022 19:39:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=7zHJFf7s+ZSx87nHg6Bs72jjNt/zTHbg4PZc0KhFNBI=; b=EYXV63i9/CEOzD0nHMe1OQHYDc
- mVCuEz0iq05DzWOTfwUUXon7lLclyJcGJZDFVFf36KaefdWNV0pHzAWE/juTBOh3LmOa6/GHAbwsA
- j9SKPw7wOEy++DynzZkxdw6cKJT5aOgxtQMtWaAQNIKZNtcW6JUvraw6AebVxfjYl0uWLN4Tnkrf1
- g5r1qFvxh5lUydZ/EqFXJtmm4X6GU4Pvr6z+zZzlpoy3rKdSu3dVWHKmxHNTzyLs4u7zgx7YRImNZ
- s12tQFfwrO2lznSTczeoD//K1wj12QguV4NYS7DRw7Y1XFPPUFJTnVvqq+s0OPozePCioZdM8Nwv2
- JJEs8DoA==;
+ bh=nZd7FdfhHHpfkPZj2gtn0+UCb6ZHZaprTIaRzyl1jXk=; b=uFlx6IYCw7cKUMv6UFQU0NiN2j
+ iQ24sV1L+N0JJ+PYt+whKlcyMvxX397wDiXAeuW16ipXpv7uj75S+ifah7UED1rGBmJ6INgUn0EaP
+ +9Vs3ySStr9qIgZ0zF6RDK7wq0A7Z8UrY0v2gbCiqtYZYhxFzeNL/2ggxHjmv6qm+147lvrX2dSYA
+ KrGPUqo5c0kBsr1HE5k1I7rfjNq5kWWJNZbU41W0uuZJbmiuIPzLxEOUcBBG4y5IcjIH3D5ekaRwS
+ R4P3XSnF1YkMw+gsOSK1a5dkmx/misM3DKGpZBhb7qWzj2lws1FAo2SU2BuaoFyWnchKohsh2xIzm
+ dolxg0Dg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nxw5Q-009wsT-OG; Sun, 05 Jun 2022 19:38:56 +0000
+ Hat Linux)) id 1nxw5R-009wsf-8D; Sun, 05 Jun 2022 19:38:57 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Sun,  5 Jun 2022 20:38:47 +0100
-Message-Id: <20220605193854.2371230-4-willy@infradead.org>
+Date: Sun,  5 Jun 2022 20:38:53 +0100
+Message-Id: <20220605193854.2371230-10-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220605193854.2371230-1-willy@infradead.org>
 References: <20220605193854.2371230-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nxw5i-00054v-Oh
-Subject: [f2fs-dev] [PATCH 03/10] ext4: Convert mpage_release_unused_pages()
- to use filemap_get_folios()
+X-Headers-End: 1nxw5p-006MEy-Ud
+Subject: [f2fs-dev] [PATCH 09/10] shmem: Convert shmem_unlock_mapping() to
+ use filemap_get_folios()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,64 +81,42 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-If the folio is large, it may overlap the beginning or end of the
-unused range.  If it does, we need to avoid invalidating it.
+This is a straightforward conversion.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ext4/inode.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ mm/shmem.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 3dce7d058985..32a7f5e024d6 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1554,9 +1554,9 @@ struct mpage_da_data {
- static void mpage_release_unused_pages(struct mpage_da_data *mpd,
- 				       bool invalidate)
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 60fdfc0208fd..313ae7df59d8 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -867,18 +867,17 @@ unsigned long shmem_swap_usage(struct vm_area_struct *vma)
+  */
+ void shmem_unlock_mapping(struct address_space *mapping)
  {
--	int nr_pages, i;
-+	unsigned nr, i;
- 	pgoff_t index, end;
 -	struct pagevec pvec;
 +	struct folio_batch fbatch;
- 	struct inode *inode = mpd->inode;
- 	struct address_space *mapping = inode->i_mapping;
- 
-@@ -1574,15 +1574,18 @@ static void mpage_release_unused_pages(struct mpage_da_data *mpd,
- 		ext4_es_remove_extent(inode, start, last - start + 1);
- 	}
+ 	pgoff_t index = 0;
  
 -	pagevec_init(&pvec);
 +	folio_batch_init(&fbatch);
- 	while (index <= end) {
--		nr_pages = pagevec_lookup_range(&pvec, mapping, &index, end);
--		if (nr_pages == 0)
-+		nr = filemap_get_folios(mapping, &index, end, &fbatch);
-+		if (nr == 0)
- 			break;
--		for (i = 0; i < nr_pages; i++) {
--			struct page *page = pvec.pages[i];
--			struct folio *folio = page_folio(page);
-+		for (i = 0; i < nr; i++) {
-+			struct folio *folio = fbatch.folios[i];
- 
-+			if (folio->index < mpd->first_page)
-+				continue;
-+			if (folio->index + folio_nr_pages(folio) - 1 > end)
-+				continue;
- 			BUG_ON(!folio_test_locked(folio));
- 			BUG_ON(folio_test_writeback(folio));
- 			if (invalidate) {
-@@ -1594,7 +1597,7 @@ static void mpage_release_unused_pages(struct mpage_da_data *mpd,
- 			}
- 			folio_unlock(folio);
- 		}
+ 	/*
+ 	 * Minor point, but we might as well stop if someone else SHM_LOCKs it.
+ 	 */
+-	while (!mapping_unevictable(mapping)) {
+-		if (!pagevec_lookup(&pvec, mapping, &index))
+-			break;
+-		check_move_unevictable_pages(&pvec);
 -		pagevec_release(&pvec);
++	while (!mapping_unevictable(mapping) &&
++	       filemap_get_folios(mapping, &index, ~0UL, &fbatch)) {
++		check_move_unevictable_folios(&fbatch);
 +		folio_batch_release(&fbatch);
+ 		cond_resched();
  	}
  }
- 
 -- 
 2.35.1
 
