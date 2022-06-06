@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BA8FCCCA493
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D1F9ECCA494
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jun 2022 20:41:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyJXR-0004Ok-6c; Mon, 06 Jun 2022 20:41:24 +0000
+	id 1nyJXP-0008VL-8F; Mon, 06 Jun 2022 20:41:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
  (envelope-from <willy@infradead.org>)
- id 1nyJXN-0004Ns-Kb; Mon, 06 Jun 2022 20:41:20 +0000
+ id 1nyJXL-0008UM-M8; Mon, 06 Jun 2022 20:41:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NFScYX57GEbw0yH/d1QXpe8YFpfaQsvuaQCT3ii6ess=; b=K0IGrWt8CmGMDOaN5xn+ZiM/yP
- TN3GdsuF+iiJvjk4HuP/+VdPnzGqvkdQtm1iiLG684tp4X94006NGXePeR9EAuOPzrvqxgIjuBugT
- eLOvudqwE4UpLkP/ShK8rYRAavBFH/UTZJZp0/p8GRd5smnJFBvCODpnXOGJbi2f1BP8=;
+ bh=jUHtPvxpwYn/CbCKtCO4gIDrDPVTvyaQoVGtIQShqV8=; b=glvBa7IstO/XbZ8Jh4B3YKNjAN
+ 0aCikxFhe55qJ0Sm9xCb5xSlTH2Lx50+oKK5FIksVvgAPLEljxgztw9V1cewVpbGy6wGVRckMr/ql
+ co3MPf7SsyUgpuzR1koMD63vIk8547NfFmKNOujsrdJDxqYsbO1h2trYIA5mh/sS1De8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,35 +31,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NFScYX57GEbw0yH/d1QXpe8YFpfaQsvuaQCT3ii6ess=; b=mNxCM76iHHQyZBQ4kYD97zv8lI
- mGcAdWlUUkyGOfyNqCexrndss0CuH63NuOjWICmEeZc9zQqgKfXSz+gG4iIN7OVUYvUgsGrqnLkNW
- 1OzFA6yq+cKEdwwacvVV+Cs9XGXPc38GTXjPylrbRKfg0XNCAO0FJauK9b8mnpiANkeA=;
+ bh=jUHtPvxpwYn/CbCKtCO4gIDrDPVTvyaQoVGtIQShqV8=; b=U2KGk4lOhJxKBfS3wzZVwmzOGL
+ vrjkAx80uvcvIYz/BXxC72T+pboin1PNKASUSCKANORvMPLxahttMXbiNsjODqfc1PBYN5V8i8MvU
+ A51prFQlSB7N8FvDiyDwOW4rHYg28fWytXvFNXoe7nHtYRnZXEOR2oGDTRTAit/cA/ps=;
 Received: from [90.155.50.34] (helo=casper.infradead.org)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyJXL-007Pyc-QW; Mon, 06 Jun 2022 20:41:20 +0000
+ id 1nyJXL-007Pyd-RN; Mon, 06 Jun 2022 20:41:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=NFScYX57GEbw0yH/d1QXpe8YFpfaQsvuaQCT3ii6ess=; b=mDp4J3wn+JfgTBMvZgEUqjDjOc
- MdvHmectsbLkZvfTk8nG6ytXS1+4dBHiC4pMAhcy3dH+w+BngrUwTH364Opf+ULDH9RffR6xS8W1s
- NvNCsPvgWsTpdK5si++BB7gskVwFgeJKaRz9oSkBMT/tvUH1htLz8dXlAm4tajf1oQVpZT/iQpp3Z
- 3qvjBqAGoN/HgsaNXSczCYJXunICX2cMGKbV8nqWYAZ1dFtuqgFYtfMpTC7xMxk50hUBGd3mZWqxV
- 6hlTudv8DYvIDVhKEtAVCLpJUOSZgQOHlnJd6eZoWquUE4SD1aKFk5s64qg6Qy5XVFt9b2QyPeQP8
- VdadEfOg==;
+ bh=jUHtPvxpwYn/CbCKtCO4gIDrDPVTvyaQoVGtIQShqV8=; b=jSXisP6LX46D6Mw+iXYFF/5dHQ
+ Cq+5Fi0773+cVC4U9ukK6uPnYuWIfkHADg3G9SiZaN1QWdL8Bw8OwfYPT7xfddEiqh5OKP81yWVIY
+ qERnKHNvRO9zfbKpGHImXAVxsBisgmn/CxiCns5EQmSUyg3J6K8R2kkkIDgNoaevsqaLFhC5Wxh52
+ Z38Ws7TQ5Dp7rpDRe4MO4DakZ/+co05qxKtyfgyK3bXqUiSNs9vH9ETqmdeoiAv+unUA3cgwymN9t
+ pq0eOgOppmxZCcU/ekIrK65xO/nlqiG9Pvvr5StvpmfjnqBIWv5xh9xJykbFL+Cw79+wHE0k8kIBA
+ U9JkUfCw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nyJWy-00B19s-0v; Mon, 06 Jun 2022 20:40:56 +0000
+ Hat Linux)) id 1nyJWx-00B19e-EV; Mon, 06 Jun 2022 20:40:55 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Mon,  6 Jun 2022 21:40:48 +0100
-Message-Id: <20220606204050.2625949-19-willy@infradead.org>
+Date: Mon,  6 Jun 2022 21:40:41 +0100
+Message-Id: <20220606204050.2625949-12-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220606204050.2625949-1-willy@infradead.org>
 References: <20220606204050.2625949-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nyJXL-007Pyc-QW
-Subject: [f2fs-dev] [PATCH 18/20] zsmalloc: Convert to migrate_folio
+X-Headers-End: 1nyJXL-007Pyd-RN
+Subject: [f2fs-dev] [PATCH 11/20] ubifs: Convert to filemap_migrate_folio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,42 +82,61 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-zsmalloc doesn't really use folios, but it needs to be called like this
-in order to migrate an individual page.  Convert from a folio back to
-a page until we decide how to handle migration better for zsmalloc.
+filemap_migrate_folio() is a little more general than ubifs really needs,
+but it's better to share the code.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/zsmalloc.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/ubifs/file.c | 29 ++---------------------------
+ 1 file changed, 2 insertions(+), 27 deletions(-)
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 5d5fc04385b8..8ed79121195a 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -1865,9 +1865,11 @@ static bool zs_page_isolate(struct page *page, isolate_mode_t mode)
- 	return true;
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index 04ced154960f..f2353dd676ef 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1461,29 +1461,6 @@ static bool ubifs_dirty_folio(struct address_space *mapping,
+ 	return ret;
  }
  
--static int zs_page_migrate(struct address_space *mapping, struct page *newpage,
--		struct page *page, enum migrate_mode mode)
-+static int zs_migrate_folio(struct address_space *mapping,
-+		struct folio *dst, struct folio *src, enum migrate_mode mode)
+-#ifdef CONFIG_MIGRATION
+-static int ubifs_migrate_page(struct address_space *mapping,
+-		struct page *newpage, struct page *page, enum migrate_mode mode)
+-{
+-	int rc;
+-
+-	rc = migrate_page_move_mapping(mapping, newpage, page, 0);
+-	if (rc != MIGRATEPAGE_SUCCESS)
+-		return rc;
+-
+-	if (PagePrivate(page)) {
+-		detach_page_private(page);
+-		attach_page_private(newpage, (void *)1);
+-	}
+-
+-	if (mode != MIGRATE_SYNC_NO_COPY)
+-		migrate_page_copy(newpage, page);
+-	else
+-		migrate_page_states(newpage, page);
+-	return MIGRATEPAGE_SUCCESS;
+-}
+-#endif
+-
+ static bool ubifs_release_folio(struct folio *folio, gfp_t unused_gfp_flags)
  {
-+	struct page *newpage = &dst->page;
-+	struct page *page = &src->page;
- 	struct zs_pool *pool;
- 	struct size_class *class;
- 	struct zspage *zspage;
-@@ -1966,7 +1968,7 @@ static void zs_page_putback(struct page *page)
- 
- static const struct address_space_operations zsmalloc_aops = {
- 	.isolate_page = zs_page_isolate,
--	.migratepage = zs_page_migrate,
-+	.migrate_folio = zs_migrate_folio,
- 	.putback_page = zs_page_putback,
+ 	struct inode *inode = folio->mapping->host;
+@@ -1649,10 +1626,8 @@ const struct address_space_operations ubifs_file_address_operations = {
+ 	.write_end      = ubifs_write_end,
+ 	.invalidate_folio = ubifs_invalidate_folio,
+ 	.dirty_folio	= ubifs_dirty_folio,
+-#ifdef CONFIG_MIGRATION
+-	.migratepage	= ubifs_migrate_page,
+-#endif
+-	.release_folio    = ubifs_release_folio,
++	.migrate_folio	= filemap_migrate_folio,
++	.release_folio	= ubifs_release_folio,
  };
  
+ const struct inode_operations ubifs_file_inode_operations = {
 -- 
 2.35.1
 
