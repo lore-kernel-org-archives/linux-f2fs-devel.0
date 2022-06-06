@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C0613CCA485
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jun 2022 20:41:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2B83FC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jun 2022 20:41:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyJXb-00063z-N2; Mon, 06 Jun 2022 20:41:36 +0000
+	id 1nyJXe-0004S3-Mg; Mon, 06 Jun 2022 20:41:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
  (envelope-from <willy@infradead.org>)
- id 1nyJXW-000605-Ra; Mon, 06 Jun 2022 20:41:31 +0000
+ id 1nyJXV-0004Pq-Fn; Mon, 06 Jun 2022 20:41:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xi6bfdZ9kew/Ht/n6wJe844q1fNiFHAUuQwBybhvWV8=; b=JKqMTY16PlzBpvIp2V1VL0ZGZj
- vsyyMJjLHeEMvuWssNYtTGVf1uELlUuidNaj2unqty8UK1Jqn0mNxxGQ95ZrpzdbenZRs+WTopSa0
- ladn3+dZabvRaAq1SyUH9pAGunRBaRscgFo0Ob2165+lwE1+g4idRh9ojQNmO42djN3Y=;
+ bh=qQEq4mdildUXXhXlw26OgbbgbPBpQ0UP7iPop0FGmsk=; b=d4+oV+WFPJKRcKXaBWo5yfdjRW
+ N4VvrnUoXgPH4FFD5UvEs0oULnX6Hrmo9RcE717ak0xpJ9U+Wtbdc/iuyg1tTcPDPLG1s5chFasIx
+ MVxQJKpcy8SZFjVbANNnCQcYJn2J8WZQOcNz9Y6dxSmcj3orlX64EpCUIaRHlqECEjgc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,35 +31,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xi6bfdZ9kew/Ht/n6wJe844q1fNiFHAUuQwBybhvWV8=; b=EG9SkWU/ZEkfKG4Ks8cAcLbgF2
- q8Q57slejh9ej6/4wFV2uca0LrT12w4SKPDrZpZhXiRSK1kUwg7vlZLPuN59TMt/v9YqJpc35dDPZ
- cy4YtpVTejM4DAVsOmnpzkc1lglQXsbViFNv1foWHM2bhwTBiFPvIkjdT7bteFt4ZcjA=;
+ bh=qQEq4mdildUXXhXlw26OgbbgbPBpQ0UP7iPop0FGmsk=; b=NkhtulQbaRTLHKw4i6sJgsTNLo
+ sWqgNxfy+SYxARVg2IrmWjZsKgYhswpZQP410m73SFltVdpiWr7N6q+jXy9hAbZ7dzriq5sTLkCum
+ /yUTYJh2sauZFvat3GcG3FVywiz06gw7ukrZhq03sf8hz7kDbWWT7TwsEc3uYTKteQ9c=;
 Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyJXW-007Q30-Ha; Mon, 06 Jun 2022 20:41:30 +0000
+ id 1nyJXP-0004Ie-TW; Mon, 06 Jun 2022 20:41:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=xi6bfdZ9kew/Ht/n6wJe844q1fNiFHAUuQwBybhvWV8=; b=SPlA9TQH81xoMoIY10n2YxKfFT
- FsYePoVkMqprqpv6ZpSb8LgcBJlPTx6ZiQnv9+DpcX1C8BhCoh731GzGv3vwXqOhVgpjWqAcZ9x5Q
- yXSG40C4z1zTwsHq25TqavEFM/aIkrZ74keXov/lJSFAeAlVFO92OjNCITHAZeey74UYtElj1IkQ9
- igzOLTZbXbr/H/xrC6wuD1gd2dEhozUsRpbKST11t4x3padiQWXP0MH6RjFWVF6lx2GnIIN77FMNF
- eqfhiP3IbavqdfjHnrPmIl/jNgL2ME2jYU2bFfEUdA0P2115AUzGiBLzXrUZQ116ZbPHL/l6z5/G3
- D9YuFHRg==;
+ bh=qQEq4mdildUXXhXlw26OgbbgbPBpQ0UP7iPop0FGmsk=; b=smk5cZ9QlxWeUzBKWfo86nVrRn
+ 486Q4WmG9O8N7FW33RHEsLn1KdnhRCjpYsCnh2VTGHbxlEbEoaGncZWPwo88zaujLhSpvhlFYqZjF
+ rT/pg4CkWWNMdWfegFLoYHJvmoFIm1xAxZgu4kmCe6BWjH2QkN1GsU7kYe50wZfva3uEoQHLUVRRU
+ edvLwLiCnvO9Xryb+ZR231DA0eGBN7CXz/fAN+xjcrsnTNRjReFVIp2BGCweM6NJZGbCkhTvenoYZ
+ cQCh2ENLaKQwbX+uc1wEhsR2j84htsXjEviyNnafZBo9+lFBva15d5sRZGRRozu2cOzqXNQM+sbim
+ Zzrgg9gg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nyJWx-00B19m-P8; Mon, 06 Jun 2022 20:40:55 +0000
+ Hat Linux)) id 1nyJWx-00B19U-0Q; Mon, 06 Jun 2022 20:40:55 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Mon,  6 Jun 2022 21:40:45 +0100
-Message-Id: <20220606204050.2625949-16-willy@infradead.org>
+Date: Mon,  6 Jun 2022 21:40:36 +0100
+Message-Id: <20220606204050.2625949-7-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220606204050.2625949-1-willy@infradead.org>
 References: <20220606204050.2625949-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nyJXW-007Q30-Ha
-Subject: [f2fs-dev] [PATCH 15/20] balloon: Convert to migrate_folio
+X-Headers-End: 1nyJXP-0004Ie-TW
+Subject: [f2fs-dev] [PATCH 06/20] btrfs: Convert btree_migratepage to
+ migrate_folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,52 +83,68 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This is little more than changing the types over; there's no real work
-being done in this function.
+Use a folio throughout this function.  migrate_page() will be converted
+later.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/balloon_compaction.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ fs/btrfs/disk-io.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
-index 4b8eab4b3f45..3f75b876ad76 100644
---- a/mm/balloon_compaction.c
-+++ b/mm/balloon_compaction.c
-@@ -230,11 +230,10 @@ static void balloon_page_putback(struct page *page)
- 
- 
- /* move_to_new_page() counterpart for a ballooned page */
--static int balloon_page_migrate(struct address_space *mapping,
--		struct page *newpage, struct page *page,
--		enum migrate_mode mode)
-+static int balloon_migrate_folio(struct address_space *mapping,
-+		struct folio *dst, struct folio *src, enum migrate_mode mode)
- {
--	struct balloon_dev_info *balloon = balloon_page_device(page);
-+	struct balloon_dev_info *balloon = balloon_page_device(&src->page);
- 
- 	/*
- 	 * We can not easily support the no copy case here so ignore it as it
-@@ -244,14 +243,14 @@ static int balloon_page_migrate(struct address_space *mapping,
- 	if (mode == MIGRATE_SYNC_NO_COPY)
- 		return -EINVAL;
- 
--	VM_BUG_ON_PAGE(!PageLocked(page), page);
--	VM_BUG_ON_PAGE(!PageLocked(newpage), newpage);
-+	VM_BUG_ON_FOLIO(!folio_test_locked(src), src);
-+	VM_BUG_ON_FOLIO(!folio_test_locked(dst), dst);
- 
--	return balloon->migratepage(balloon, newpage, page, mode);
-+	return balloon->migratepage(balloon, &dst->page, &src->page, mode);
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 12b11e645c14..9ceb73f683af 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -952,28 +952,28 @@ void btrfs_submit_metadata_bio(struct inode *inode, struct bio *bio, int mirror_
  }
  
- const struct address_space_operations balloon_aops = {
--	.migratepage = balloon_page_migrate,
-+	.migrate_folio = balloon_migrate_folio,
- 	.isolate_page = balloon_page_isolate,
- 	.putback_page = balloon_page_putback,
+ #ifdef CONFIG_MIGRATION
+-static int btree_migratepage(struct address_space *mapping,
+-			struct page *newpage, struct page *page,
+-			enum migrate_mode mode)
++static int btree_migrate_folio(struct address_space *mapping,
++		struct folio *dst, struct folio *src, enum migrate_mode mode)
+ {
+ 	/*
+ 	 * we can't safely write a btree page from here,
+ 	 * we haven't done the locking hook
+ 	 */
+-	if (PageDirty(page))
++	if (folio_test_dirty(src))
+ 		return -EAGAIN;
+ 	/*
+ 	 * Buffers may be managed in a filesystem specific way.
+ 	 * We must have no buffers or drop them.
+ 	 */
+-	if (page_has_private(page) &&
+-	    !try_to_release_page(page, GFP_KERNEL))
++	if (folio_get_private(src) &&
++	    !filemap_release_folio(src, GFP_KERNEL))
+ 		return -EAGAIN;
+-	return migrate_page(mapping, newpage, page, mode);
++	return migrate_page(mapping, &dst->page, &src->page, mode);
+ }
++#else
++#define btree_migrate_folio NULL
+ #endif
+ 
+-
+ static int btree_writepages(struct address_space *mapping,
+ 			    struct writeback_control *wbc)
+ {
+@@ -1073,10 +1073,8 @@ static const struct address_space_operations btree_aops = {
+ 	.writepages	= btree_writepages,
+ 	.release_folio	= btree_release_folio,
+ 	.invalidate_folio = btree_invalidate_folio,
+-#ifdef CONFIG_MIGRATION
+-	.migratepage	= btree_migratepage,
+-#endif
+-	.dirty_folio = btree_dirty_folio,
++	.migrate_folio	= btree_migrate_folio,
++	.dirty_folio	= btree_dirty_folio,
  };
+ 
+ struct extent_buffer *btrfs_find_create_tree_block(
 -- 
 2.35.1
 
