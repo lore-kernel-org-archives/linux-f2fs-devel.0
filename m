@@ -4,63 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6A0CCCCA482
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jun 2022 20:41:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3084EC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jun 2022 22:33:56 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyJXi-0004U0-UU; Mon, 06 Jun 2022 20:41:41 +0000
+	id 1nyLIB-0002z5-8t; Mon, 06 Jun 2022 22:33:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <willy@infradead.org>)
- id 1nyJXf-0004SR-Jv; Mon, 06 Jun 2022 20:41:38 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1nyLI7-0002yz-Og
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 Jun 2022 22:33:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PTb1fSw49y2qxNUUq4k5t2uIOYf1rKQU0qM36b/uqdM=; b=LtZU1RqePKin3tRpOx5rUnu/01
- Hvr02P/EJ3iiMvQgrTuAoqvF54Kns964Y/jvLIdRgt+6/CI4udnV1zQQXmNGIENk1Mt8EB1VNXIGK
- 38BCyVnxxMoysHlbsPdksKvhnNADZ93OWN/32EMLLvXmwqdt7V/EVTkRXmUpkckFSelU=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=PTb1fSw49y2qxNUUq4k5t2uIOYf1rKQU0qM36b/uqdM=; b=ZP1OW2L786OC36CKnxqqeO95oj
- 40G1HU0smraME9KzcBBdkijglS262HlXAz4ro8V5Mi9VdxNzYbmcMHsGI/zXpjVh4Pf/904f+9Crv
- p4C0sRxGn+ayzI3+RLbkQOzdcd1gZg7O3D2VAAafmwLCXs1S9hYInxpdI7PtjuJ+0ZtE=;
-Received: from casper.infradead.org ([90.155.50.34])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=izH+a4sO5oMqEl2hQu27DvQIXKCoHOMKMLmq0lgslfQ=; b=Q0y3JUcdJtY0WIk/VCxlI2KPQk
+ gdWQrdi5Dm7mndOczk5K5fOD4CqoH7HaWaWXPf8klMu5A746Oz+iYWHgjpQ0wgKozBAt6UZR54Rzj
+ Ii542rgrOM+MJ6IYuYsCwrcm84He7n7x0Ant8+HjgRCCc7X/vbS0wFZXjWFoe1Tg/I78=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=izH+a4sO5oMqEl2hQu27DvQIXKCoHOMKMLmq0lgslfQ=; b=h
+ t6H5sKZm1zvDNbqcnyNB/69BJvhVIQF7XS9bmRDQkPOEruuIMr/MI3CKyXIfB5KuhVbPzp3gH+tPl
+ cDpEy+YPGXMIzJpCD1M9eajDyxGlrJW2VvO7yxbPaWuqD8fPJnBboO+jtJTw2BNggeh2qBsOV4Qxz
+ jB3eM1wATFUk9L7s=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyJXc-007Q3T-UQ; Mon, 06 Jun 2022 20:41:38 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
- References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-Type:Content-ID:Content-Description;
- bh=PTb1fSw49y2qxNUUq4k5t2uIOYf1rKQU0qM36b/uqdM=; b=moAsLc7xAe9cCO2yLS/2VDmHEw
- YBwWTVJr9kJRjwoeFhsNnd8JLuuJjbq0xBtc3hJNd0koz0AzNRiu2y+N5Os1g1/u53LaRvxXW4rdM
- tHwy5XlETEs430Lov51yIttD+nu/AmMuCt1+6O5d08aKIMBYPTBY0Yt54xqFYELLNo0/O6twSwDnU
- wa3c1U/y/ETekmwC5gKHpa1nMck5VNxLTjucI7KCgMp9l5cOztmW0nCXmpkBfBeAli7aijjbj7GhC
- zHPVo0ax+4QE/HagbZZ6pGGOB2yVWmyQYd5p+40+xWsAl8Ab1eGJlEDyjqzfn+/+j35DgUlM4Y7a4
- FS4d0iCw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nyJWw-00B19S-UW; Mon, 06 Jun 2022 20:40:54 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: linux-fsdevel@vger.kernel.org
-Date: Mon,  6 Jun 2022 21:40:35 +0100
-Message-Id: <20220606204050.2625949-6-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220606204050.2625949-1-willy@infradead.org>
-References: <20220606204050.2625949-1-willy@infradead.org>
+ id 1nyLI7-007Tvz-Gz
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 06 Jun 2022 22:33:44 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 69A0AB81C21
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon,  6 Jun 2022 22:33:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9314C385A9;
+ Mon,  6 Jun 2022 22:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1654554815;
+ bh=WcJjpRc7XzfSJON+fPuBoWVagfFjcoKPqQP19/5+bv8=;
+ h=From:To:Cc:Subject:Date:From;
+ b=NNiodLz/m6Zi8KxGG3tTKJSrlfBGdMozhDOIBYGnihFrBGavCwheeMQFPWfuih+dw
+ mc77Rjl5Lgevb/VXycaaQk8srrnmnFl3PxcLiMJHCK02BoM+tbZvodVclp09RR9Yba
+ leJ3Fx1JirygvSNsXJBMLBQuhBZrFq4/6N2QecdJ8PPL4ZQG4tWQstc8UCdh/aYJ5Q
+ MXTN8LMzN9YOSKtOfYqXsCuz6WB6CJD47DW5FV5rEFSWKw74+bdrQWFaxP+DsXp2NL
+ 96HvspR+g3f/wQmr9ntQRWV3d9s/fEgkEgthf53MdAZQvzklmvYCNHGoSmjRTDVcKD
+ SQGPK/Ch7FJBA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Mon,  6 Jun 2022 15:32:41 -0700
+Message-Id: <20220606223241.12497-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-X-Headers-End: 1nyJXc-007Q3T-UQ
-Subject: [f2fs-dev] [PATCH 05/20] mm/migrate: Convert expected_page_refs()
- to folio_expected_refs()
+X-Headers-End: 1nyLI7-007Tvz-Gz
+Subject: [f2fs-dev] [PATCH RESEND v3] f2fs: use the updated
+ test_dummy_encryption helper functions
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -72,73 +77,101 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-aio@kvack.org, linux-nfs@vger.kernel.org, cluster-devel@redhat.com,
- linux-ntfs-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-mm@kvack.org, linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
- linux-ext4@vger.kernel.org, virtualization@lists.linux-foundation.org,
- linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: linux-fscrypt@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Now that both callers have a folio, convert this function to
-take a folio & rename it.
+From: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Switch f2fs over to the functions that are replacing
+fscrypt_set_test_dummy_encryption().  Since f2fs hasn't been converted
+to the new mount API yet, this doesn't really provide a benefit for
+f2fs.  But it allows fscrypt_set_test_dummy_encryption() to be removed.
+
+Also take the opportunity to eliminate an #ifdef.
+
+Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- mm/migrate.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 77b8c662c9ca..e0a593e5b5f9 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -337,13 +337,18 @@ void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd)
- }
- #endif
- 
--static int expected_page_refs(struct address_space *mapping, struct page *page)
-+static int folio_expected_refs(struct address_space *mapping,
-+		struct folio *folio)
+Resending this since its prerequisites are upstream now.
+
+ fs/f2fs/super.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 37221e94e5eff..3112fe92f9342 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -8,6 +8,7 @@
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/fs.h>
++#include <linux/fs_context.h>
+ #include <linux/sched/mm.h>
+ #include <linux/statfs.h>
+ #include <linux/buffer_head.h>
+@@ -492,9 +493,19 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
+ 					  bool is_remount)
  {
--	int expected_count = 1;
-+	int refs = 1;
-+	if (!mapping)
-+		return refs;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+-#ifdef CONFIG_FS_ENCRYPTION
++	struct fs_parameter param = {
++		.type = fs_value_is_string,
++		.string = arg->from ? arg->from : "",
++	};
++	struct fscrypt_dummy_policy *policy =
++		&F2FS_OPTION(sbi).dummy_enc_policy;
+ 	int err;
  
--	if (mapping)
--		expected_count += compound_nr(page) + page_has_private(page);
--	return expected_count;
-+	refs += folio_nr_pages(folio);
-+	if (folio_get_private(folio))
-+		refs++;
++	if (!IS_ENABLED(CONFIG_FS_ENCRYPTION)) {
++		f2fs_warn(sbi, "test_dummy_encryption option not supported");
++		return -EINVAL;
++	}
 +
-+	return refs;;
+ 	if (!f2fs_sb_has_encrypt(sbi)) {
+ 		f2fs_err(sbi, "Encrypt feature is off");
+ 		return -EINVAL;
+@@ -506,12 +517,12 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
+ 	 * needed to allow it to be set or changed during remount.  We do allow
+ 	 * it to be specified during remount, but only if there is no change.
+ 	 */
+-	if (is_remount && !F2FS_OPTION(sbi).dummy_enc_policy.policy) {
++	if (is_remount && !fscrypt_is_dummy_policy_set(policy)) {
+ 		f2fs_warn(sbi, "Can't set test_dummy_encryption on remount");
+ 		return -EINVAL;
+ 	}
+-	err = fscrypt_set_test_dummy_encryption(
+-		sb, arg->from, &F2FS_OPTION(sbi).dummy_enc_policy);
++
++	err = fscrypt_parse_test_dummy_encryption(&param, policy);
+ 	if (err) {
+ 		if (err == -EEXIST)
+ 			f2fs_warn(sbi,
+@@ -524,12 +535,14 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
+ 				  opt, err);
+ 		return -EINVAL;
+ 	}
++	err = fscrypt_add_test_dummy_key(sb, policy);
++	if (err) {
++		f2fs_warn(sbi, "Error adding test dummy encryption key [%d]",
++			  err);
++		return err;
++	}
+ 	f2fs_warn(sbi, "Test dummy encryption mode enabled");
+ 	return 0;
+-#else
+-	f2fs_warn(sbi, "test_dummy_encryption option not supported");
+-	return -EINVAL;
+-#endif
  }
  
- /*
-@@ -360,7 +365,7 @@ int folio_migrate_mapping(struct address_space *mapping,
- 	XA_STATE(xas, &mapping->i_pages, folio_index(folio));
- 	struct zone *oldzone, *newzone;
- 	int dirty;
--	int expected_count = expected_page_refs(mapping, &folio->page) + extra_count;
-+	int expected_count = folio_expected_refs(mapping, folio) + extra_count;
- 	long nr = folio_nr_pages(folio);
- 
- 	if (!mapping) {
-@@ -670,7 +675,7 @@ static int __buffer_migrate_folio(struct address_space *mapping,
- 		return migrate_page(mapping, &dst->page, &src->page, mode);
- 
- 	/* Check whether page does not have extra refs before we do more work */
--	expected_count = expected_page_refs(mapping, &src->page);
-+	expected_count = folio_expected_refs(mapping, src);
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
- 
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+
+base-commit: f2906aa863381afb0015a9eb7fefad885d4e5a56
 -- 
-2.35.1
+2.36.1
 
 
 
