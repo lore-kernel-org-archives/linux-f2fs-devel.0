@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2B83FC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jun 2022 20:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4F0D7CCA482
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Jun 2022 20:41:39 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyJXe-0004S3-Mg; Mon, 06 Jun 2022 20:41:37 +0000
+	id 1nyJXf-0004Se-Pk; Mon, 06 Jun 2022 20:41:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
  (envelope-from <willy@infradead.org>)
- id 1nyJXV-0004Pq-Fn; Mon, 06 Jun 2022 20:41:28 +0000
+ id 1nyJXb-0004RG-Ko; Mon, 06 Jun 2022 20:41:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qQEq4mdildUXXhXlw26OgbbgbPBpQ0UP7iPop0FGmsk=; b=d4+oV+WFPJKRcKXaBWo5yfdjRW
- N4VvrnUoXgPH4FFD5UvEs0oULnX6Hrmo9RcE717ak0xpJ9U+Wtbdc/iuyg1tTcPDPLG1s5chFasIx
- MVxQJKpcy8SZFjVbANNnCQcYJn2J8WZQOcNz9Y6dxSmcj3orlX64EpCUIaRHlqECEjgc=;
+ bh=sw3xGMu8EIPPhanldW93F5IagC/JMQIeTrByOXSqams=; b=fUKFC7WNwZlQgZgSnJAh7jmuJA
+ d69rhxF6sE6DE6Zhm0IgEhB3PfebXTXhMTNOWpV1MMQv3c7KJYvf7kue51VAN0VGFPIrlHMW0EVK9
+ SeGy09NrQtdEBjilKYGNTDttQAHxhTfaKn31/o2jf/p2t1DQ7/6JUb7UXmgkcdwPTmxE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,36 +31,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=qQEq4mdildUXXhXlw26OgbbgbPBpQ0UP7iPop0FGmsk=; b=NkhtulQbaRTLHKw4i6sJgsTNLo
- sWqgNxfy+SYxARVg2IrmWjZsKgYhswpZQP410m73SFltVdpiWr7N6q+jXy9hAbZ7dzriq5sTLkCum
- /yUTYJh2sauZFvat3GcG3FVywiz06gw7ukrZhq03sf8hz7kDbWWT7TwsEc3uYTKteQ9c=;
+ bh=sw3xGMu8EIPPhanldW93F5IagC/JMQIeTrByOXSqams=; b=RXzJLQvaSVJgV9jUAxHsq/a5de
+ 4hTRlChpZP2uR3cP4VWcFBX6pT8fQbotsI9cAB1pS8SCvblHlNCFHipSw8YaE3Kjs+Xa/Umf3FnDq
+ Rh5PbXFPYdLHurfrdptUo+OL6CZiAscCo11zdk2SEiOhfNmEdPbyEJUa1+QKZg38UjZs=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyJXP-0004Ie-TW; Mon, 06 Jun 2022 20:41:26 +0000
+ id 1nyJXY-0004JA-Eu; Mon, 06 Jun 2022 20:41:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=qQEq4mdildUXXhXlw26OgbbgbPBpQ0UP7iPop0FGmsk=; b=smk5cZ9QlxWeUzBKWfo86nVrRn
- 486Q4WmG9O8N7FW33RHEsLn1KdnhRCjpYsCnh2VTGHbxlEbEoaGncZWPwo88zaujLhSpvhlFYqZjF
- rT/pg4CkWWNMdWfegFLoYHJvmoFIm1xAxZgu4kmCe6BWjH2QkN1GsU7kYe50wZfva3uEoQHLUVRRU
- edvLwLiCnvO9Xryb+ZR231DA0eGBN7CXz/fAN+xjcrsnTNRjReFVIp2BGCweM6NJZGbCkhTvenoYZ
- cQCh2ENLaKQwbX+uc1wEhsR2j84htsXjEviyNnafZBo9+lFBva15d5sRZGRRozu2cOzqXNQM+sbim
- Zzrgg9gg==;
+ bh=sw3xGMu8EIPPhanldW93F5IagC/JMQIeTrByOXSqams=; b=JRGvxIipv7m6v6BYy6Iv5o96an
+ NjXbRwZx1kTpdL1gggi3uNnj2ZYHaGoDzYgFT9yWRY6RNrAPmjSRZuyOiiwaQM/1+M4AVwuYk+PBK
+ EhpIMqcN0q2USPv0aKU3dVjpSas0DHRDV7v4Cj/0tVzmx9G3IVaaTh1VHsmINPnXLtdg0pn0oK/os
+ mZ5HSWwosmZWEQkulkmXHnZdh3UXU16V/nVWQplhy19ME/Fyl4IioqID8E9V19f67diSrjjEsp+Bj
+ J6Yy4FA8M6KmTvtuBy+S1CbohBt8Z1KKKPT8ganbhA1EGJjXoSXsZPQfL0++fMRIBpXima3JffJKS
+ uzjNM9wQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nyJWx-00B19U-0Q; Mon, 06 Jun 2022 20:40:55 +0000
+ Hat Linux)) id 1nyJWx-00B19o-Ro; Mon, 06 Jun 2022 20:40:55 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Mon,  6 Jun 2022 21:40:36 +0100
-Message-Id: <20220606204050.2625949-7-willy@infradead.org>
+Date: Mon,  6 Jun 2022 21:40:46 +0100
+Message-Id: <20220606204050.2625949-17-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220606204050.2625949-1-willy@infradead.org>
 References: <20220606204050.2625949-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nyJXP-0004Ie-TW
-Subject: [f2fs-dev] [PATCH 06/20] btrfs: Convert btree_migratepage to
- migrate_folio
+X-Headers-End: 1nyJXY-0004JA-Eu
+Subject: [f2fs-dev] [PATCH 16/20] secretmem: Convert to migrate_folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,68 +82,38 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use a folio throughout this function.  migrate_page() will be converted
-later.
+This is little more than changing the types over; there's no real work
+being done in this function.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/btrfs/disk-io.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ mm/secretmem.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 12b11e645c14..9ceb73f683af 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -952,28 +952,28 @@ void btrfs_submit_metadata_bio(struct inode *inode, struct bio *bio, int mirror_
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index 206ed6b40c1d..9c7f6e3bf3e1 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -138,8 +138,8 @@ static bool secretmem_isolate_page(struct page *page, isolate_mode_t mode)
+ 	return false;
  }
  
- #ifdef CONFIG_MIGRATION
--static int btree_migratepage(struct address_space *mapping,
--			struct page *newpage, struct page *page,
--			enum migrate_mode mode)
-+static int btree_migrate_folio(struct address_space *mapping,
-+		struct folio *dst, struct folio *src, enum migrate_mode mode)
+-static int secretmem_migratepage(struct address_space *mapping,
+-				 struct page *newpage, struct page *page,
++static int secretmem_migrate_folio(struct address_space *mapping,
++				 struct folio *dst, struct folio *src,
+ 				 enum migrate_mode mode)
  {
- 	/*
- 	 * we can't safely write a btree page from here,
- 	 * we haven't done the locking hook
- 	 */
--	if (PageDirty(page))
-+	if (folio_test_dirty(src))
- 		return -EAGAIN;
- 	/*
- 	 * Buffers may be managed in a filesystem specific way.
- 	 * We must have no buffers or drop them.
- 	 */
--	if (page_has_private(page) &&
--	    !try_to_release_page(page, GFP_KERNEL))
-+	if (folio_get_private(src) &&
-+	    !filemap_release_folio(src, GFP_KERNEL))
- 		return -EAGAIN;
--	return migrate_page(mapping, newpage, page, mode);
-+	return migrate_page(mapping, &dst->page, &src->page, mode);
- }
-+#else
-+#define btree_migrate_folio NULL
- #endif
- 
--
- static int btree_writepages(struct address_space *mapping,
- 			    struct writeback_control *wbc)
- {
-@@ -1073,10 +1073,8 @@ static const struct address_space_operations btree_aops = {
- 	.writepages	= btree_writepages,
- 	.release_folio	= btree_release_folio,
- 	.invalidate_folio = btree_invalidate_folio,
--#ifdef CONFIG_MIGRATION
--	.migratepage	= btree_migratepage,
--#endif
--	.dirty_folio = btree_dirty_folio,
-+	.migrate_folio	= btree_migrate_folio,
-+	.dirty_folio	= btree_dirty_folio,
+ 	return -EBUSY;
+@@ -154,7 +154,7 @@ static void secretmem_free_folio(struct folio *folio)
+ const struct address_space_operations secretmem_aops = {
+ 	.dirty_folio	= noop_dirty_folio,
+ 	.free_folio	= secretmem_free_folio,
+-	.migratepage	= secretmem_migratepage,
++	.migrate_folio	= secretmem_migrate_folio,
+ 	.isolate_page	= secretmem_isolate_page,
  };
  
- struct extent_buffer *btrfs_find_create_tree_block(
 -- 
 2.35.1
 
