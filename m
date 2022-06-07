@@ -4,99 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 804ADC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jun 2022 13:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 99A06C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jun 2022 14:12:05 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyZTM-0003yp-0j; Tue, 07 Jun 2022 13:42:14 +0000
+	id 1nyZwD-0004rt-1L; Tue, 07 Jun 2022 14:12:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bfoster@redhat.com>) id 1nyZTJ-0003yj-VP
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jun 2022 13:42:13 +0000
+ (envelope-from <willy@infradead.org>)
+ id 1nyZwB-0004rb-Gb; Tue, 07 Jun 2022 14:12:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=U9GWchY9hZYcIJP7lDw5j1KYfu5h/jhdfCsZWPH40Q8=; b=PBDnxqao+2gCJIexxOP+fgA+hK
- c3iTnYKUZyWgFxclYfNq+bcTE+fE5ujwJChbfPym3nIrX4CQZgIc46Siu+2PWcsaqgAqINHi8CTMe
- 2QDSEJtPcZnXYgBxeg2pzt87KK6k2bwAYXOfuWby/LL+OFFwAkhHLyGVuDexRkZgRxgc=;
+ bh=4nUpYTI4YzQUWe3MX/DeuqIdjPgTHj7mksBWnabO8pk=; b=J5Otw9dDfq9FxnBKeTM+ISyV9x
+ mQ5Vv+jQ4j2LbkoPrF2ftfXDtRX8f2I4u9QPBptb95v0XMIv8w2mUPz/WwJFMRAlqJGQYY0u9Itte
+ SpTJ2WG+PqF9X8FXPv/wHeQcUAsG4IcwzLXc+QE1utU41Jk24UOAhcWUCYpCATA/9JLg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
  :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=U9GWchY9hZYcIJP7lDw5j1KYfu5h/jhdfCsZWPH40Q8=; b=WbThZ/CdojaAwhOON4qrt9C1SB
- gQkyUT46u2yuDAthj/EhQnsUKC4EIuKpusjzUu0ikRWDU+A88qZuEmrELWifWPS65B+S4px0Uy2Nj
- sp2FvjO8D4sYPa1Ag8Z40AKTMJnCpeeDZlGNToTIrq8Vz0ca/PLlE05GFRMEBKfezmQA=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=4nUpYTI4YzQUWe3MX/DeuqIdjPgTHj7mksBWnabO8pk=; b=JzakT+xOiMdL/kbtBMgWRy45fj
+ zOY/e6G8/1f7qxOIlytmLbPQcWP2fssfbYVUEf9Z5LlVPV68Ebj9cKaQFJTMfPlMV9qLo2tKXPAhH
+ YHl5RrWFZWMlsDS4QnKmjV+Fj30IFoksK88jJ0mUCWe57GcQYSHeY9Qs8JCGK63RM4qE=;
+Received: from casper.infradead.org ([90.155.50.34])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyZTE-008HLZ-5H
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jun 2022 13:42:12 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1654609322;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=U9GWchY9hZYcIJP7lDw5j1KYfu5h/jhdfCsZWPH40Q8=;
- b=GUkPRVvGUaOPnIf6DZL/xbvEbUulIJsi4e84BNLzLRFPmLgR9yyBwuILWOy/L68zsvLQ4W
- NA/y71u6QOWL/EA35pe1+dB0OyyL1DEoGWD4VkqL9VB2bVAcCe+4zzh+yvw3fhM7WfOxTp
- wTPxybpsRn/Ze/T5xon5LLk1IlB9AGY=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-591-6X4fui0LOdagZbpkPEbYEg-1; Tue, 07 Jun 2022 09:42:01 -0400
-X-MC-Unique: 6X4fui0LOdagZbpkPEbYEg-1
-Received: by mail-qv1-f72.google.com with SMTP id
- kk8-20020a056214508800b004645738eff6so7743765qvb.8
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 07 Jun 2022 06:42:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=x-gm-message-state:date:from:to:cc:subject:message-id:references
- :mime-version:content-disposition:in-reply-to;
- bh=U9GWchY9hZYcIJP7lDw5j1KYfu5h/jhdfCsZWPH40Q8=;
- b=smlfxzGOUzxSDhai/t7JaMf8k1TcrBTYUrnCzfjQGStb25Ac78TwGLzluNv0vUXGY+
- 7nE7M+Bq+OgkFE2b1Jc+byYpyJqK7jO3KMMaYerzJQsQrBrV9kVmdjbPld4ZGzgxmz7m
- GOvz//+B8a37sZHgjINw8Jg3fi5sywgXCFgCwB5fIsZuBR+50n8GCWuRzOCSBWcePj+a
- ipGNy4wQljhbddnW/L3aedOMSLWqbtBYABqEv52r8udE8QPN0Ds/TCmI22EzMNW8uiko
- doyGzIk+H+cfY2rhXAv41eIskg14hds0Wl6Yf9Nh0IB1PQcD62+OaABLyp3bv4J1RYtp
- F2Rg==
-X-Gm-Message-State: AOAM533VEmGAE55wMvJzncXXUWxFWuS5FBxS97aw1WbzpLTdPNZqyXe4
- qN1AE2sdMvY2i+Gefdb8+krkl7QAmmon62jw1sJMlpvRK0WGDO7m0QxtvfIX1qrMkBBGBmy2GtC
- OQVyrfzrPdNT/Sakev+NauzFTERZtwvK9lzo6Lg==
-X-Received: by 2002:ac8:5acc:0:b0:304:f75a:4a1d with SMTP id
- d12-20020ac85acc000000b00304f75a4a1dmr3015560qtd.120.1654609320539; 
- Tue, 07 Jun 2022 06:42:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyyavNr4YW+NLtrlTYw3DwYvyx9zxVnBrVGsEoQi3F5ODngxQYCXvCvG44n4ArB8DEsaTyYSw==
-X-Received: by 2002:ac8:5acc:0:b0:304:f75a:4a1d with SMTP id
- d12-20020ac85acc000000b00304f75a4a1dmr3015540qtd.120.1654609320271; 
- Tue, 07 Jun 2022 06:42:00 -0700 (PDT)
-Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
- by smtp.gmail.com with ESMTPSA id
- ay33-20020a05620a17a100b006a6f68c8a87sm148860qkb.126.2022.06.07.06.41.59
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Jun 2022 06:41:59 -0700 (PDT)
-Date: Tue, 7 Jun 2022 09:41:57 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Message-ID: <Yp9VpZDsUEAZHEuy@bfoster>
+ id 1nyZw5-0000Ow-0d; Tue, 07 Jun 2022 14:12:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=4nUpYTI4YzQUWe3MX/DeuqIdjPgTHj7mksBWnabO8pk=; b=IoritkaL90aqbR+RUHZKoSo8fb
+ np1ux4ttns5tYj2sJk/FAj12Ak/CQ/wW4eIuwXN5ulK6rhUSeL7wfME8a6K9gYUgIYgqg08BNe9+I
+ tus3kQ04SmPJZl9V4GH+E2xTibe280AETqIE3sbtSug/TUXDR0128c42jRa/+qeI8q7uri0dQOk1f
+ wWHM11+pgzBreVL8bkL3da/JDGIf99g2HUm8tnTrzT4cPM9I17c3dxlon1CkQMKJOgWEf9FbWmKJ9
+ h7TOtnv+jsL8ABFyKBR86bb03b2ZVDj0NIek4XcowncLGE0YjVino+xsZhqucJvOU+7lO9abDpL7s
+ BM8iPWpg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
+ Hat Linux)) id 1nyZvo-00BhC6-Sq; Tue, 07 Jun 2022 14:11:40 +0000
+Date: Tue, 7 Jun 2022 15:11:40 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Brian Foster <bfoster@redhat.com>
+Message-ID: <Yp9cnCaZ1O4qHFEp@casper.infradead.org>
 References: <20220606204050.2625949-1-willy@infradead.org>
  <20220606204050.2625949-6-willy@infradead.org>
+ <Yp9VpZDsUEAZHEuy@bfoster>
 MIME-Version: 1.0
-In-Reply-To: <20220606204050.2625949-6-willy@infradead.org>
-Authentication-Results: relay.mimecast.com;
- auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=bfoster@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
 Content-Disposition: inline
-X-Headers-End: 1nyZTE-008HLZ-5H
+In-Reply-To: <Yp9VpZDsUEAZHEuy@bfoster>
+X-Headers-End: 1nyZw5-0000Ow-0d
 Subject: Re: [f2fs-dev] [PATCH 05/20] mm/migrate: Convert
  expected_page_refs() to folio_expected_refs()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -121,75 +85,59 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Jun 06, 2022 at 09:40:35PM +0100, Matthew Wilcox (Oracle) wrote:
-> Now that both callers have a folio, convert this function to
-> take a folio & rename it.
+On Tue, Jun 07, 2022 at 09:41:57AM -0400, Brian Foster wrote:
+> On Mon, Jun 06, 2022 at 09:40:35PM +0100, Matthew Wilcox (Oracle) wrote:
+> > -static int expected_page_refs(struct address_space *mapping, struct page *page)
+> > +static int folio_expected_refs(struct address_space *mapping,
+> > +		struct folio *folio)
+> >  {
+> > -	int expected_count = 1;
+> > +	int refs = 1;
+> > +	if (!mapping)
+> > +		return refs;
+> >  
+> > -	if (mapping)
+> > -		expected_count += compound_nr(page) + page_has_private(page);
+> > -	return expected_count;
+> > +	refs += folio_nr_pages(folio);
+> > +	if (folio_get_private(folio))
+> > +		refs++;
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  mm/migrate.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
+> Why not folio_has_private() (as seems to be used for later
+> page_has_private() conversions) here?
+
+We have a horrid confusion that I'm trying to clean up stealthily
+without anyone noticing.  I would have gotten away with it too if it
+weren't for you pesky kids.
+
+#define PAGE_FLAGS_PRIVATE                              \
+        (1UL << PG_private | 1UL << PG_private_2)
+
+static inline int page_has_private(struct page *page)
+{
+        return !!(page->flags & PAGE_FLAGS_PRIVATE);
+}
+
+So what this function is saying is that there is one extra refcount
+expected on the struct page if PG_private _or_ PG_private_2 is set.
+
+How are filesystems expected to manage their page's refcount with this
+rule?  Increment the refcount when setting PG_private unless
+PG_private_2 is already set?  Decrement the refcount when clearing
+PG_private_2 unless PG_private is set?
+
+This is garbage.  IMO, PG_private_2 should have no bearing on the page's
+refcount.  Only btrfs and the netfs's use private_2 and neither of them
+do anything to the refcount when setting/clearing it.  So that's what
+I'm implementing here.
+
+> > +
+> > +	return refs;;
 > 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 77b8c662c9ca..e0a593e5b5f9 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -337,13 +337,18 @@ void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd)
->  }
->  #endif
->  
-> -static int expected_page_refs(struct address_space *mapping, struct page *page)
-> +static int folio_expected_refs(struct address_space *mapping,
-> +		struct folio *folio)
->  {
-> -	int expected_count = 1;
-> +	int refs = 1;
-> +	if (!mapping)
-> +		return refs;
->  
-> -	if (mapping)
-> -		expected_count += compound_nr(page) + page_has_private(page);
-> -	return expected_count;
-> +	refs += folio_nr_pages(folio);
-> +	if (folio_get_private(folio))
-> +		refs++;
+> Nit: extra ;
 
-Why not folio_has_private() (as seems to be used for later
-page_has_private() conversions) here?
-
-> +
-> +	return refs;;
-
-Nit: extra ;
-
-Brian
-
->  }
->  
->  /*
-> @@ -360,7 +365,7 @@ int folio_migrate_mapping(struct address_space *mapping,
->  	XA_STATE(xas, &mapping->i_pages, folio_index(folio));
->  	struct zone *oldzone, *newzone;
->  	int dirty;
-> -	int expected_count = expected_page_refs(mapping, &folio->page) + extra_count;
-> +	int expected_count = folio_expected_refs(mapping, folio) + extra_count;
->  	long nr = folio_nr_pages(folio);
->  
->  	if (!mapping) {
-> @@ -670,7 +675,7 @@ static int __buffer_migrate_folio(struct address_space *mapping,
->  		return migrate_page(mapping, &dst->page, &src->page, mode);
->  
->  	/* Check whether page does not have extra refs before we do more work */
-> -	expected_count = expected_page_refs(mapping, &src->page);
-> +	expected_count = folio_expected_refs(mapping, src);
->  	if (folio_ref_count(src) != expected_count)
->  		return -EAGAIN;
->  
-> -- 
-> 2.35.1
-> 
-> 
-
+Oh, that's where it went ;-)  I had a compile error due to a missing
+semicolon at some point, and thought it was just a typo ...
 
 
 _______________________________________________
