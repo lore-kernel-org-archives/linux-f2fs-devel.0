@@ -4,64 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9C371C43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jun 2022 14:24:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 43CB3CCA47C
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jun 2022 17:18:05 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nya8F-0005DG-Ca; Tue, 07 Jun 2022 14:24:30 +0000
+	id 1nycq9-0008D1-Kz; Tue, 07 Jun 2022 17:18:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <willy@infradead.org>)
- id 1nya8C-0005D6-RN; Tue, 07 Jun 2022 14:24:27 +0000
+ (envelope-from <konishi.ryusuke@gmail.com>) id 1nycq8-0008Cf-MU
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jun 2022 17:18:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TMQU2bbtV5kjI1Y7uBOgpmsi6MujvLdf4se1f0ultbQ=; b=HQGvfa94dfL83sCF5gxqwkKtS0
- 5onNFarpkDOYMk0oJBL1UQz3bGtkUGHFiMMr5Plhjtnff2dkG3FuS+fZGFYVoG68C40fJw5IIDNls
- 8xWJ2DT6qMn24iza1YxtcDYduLuSbCLap04JVQN/f9x+8cH3qZ/fwFbofxe3KoLb0TQE=;
+ bh=2Gf/LMdzQibmA3CQFIu++5apIgfZQUBK5B+qLCJdcj4=; b=Nf77TXhHXVA1+hTmaLSS+DQkrR
+ 2l4BHxI0/urhwKdbezSr6GGvtd1rQ7ZDdBIfzU6C8g22Xj7zVu6WEfZ247EJMtXSfXmwmxZHLTNEL
+ LbwU8xZa6CuDq/BeewenpPH/xgGNNNxFKGTeepQJ7a6Usl1a7I+lCSpPNGSZhMOvEmPs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TMQU2bbtV5kjI1Y7uBOgpmsi6MujvLdf4se1f0ultbQ=; b=hhSkToZPBSaA9pwNw8o86vQqrf
- SpCWomna11GnYC4LNuvZIDvdlfkrdqNB/gspgLhxSlASyETPsSubFiAXAUIfKHbW6GRW4lK1LRWfL
- aspOs7VHUi8/rRHdKZz0bYmm3BVhxuriGJhv3D334Titw+ELxVZMOB7rfjlkMRGxMQaY=;
-Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nya89-0001gm-HD; Tue, 07 Jun 2022 14:24:27 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=TMQU2bbtV5kjI1Y7uBOgpmsi6MujvLdf4se1f0ultbQ=; b=T3tONSSZEZI3TnW91MAPGKwqdn
- ynmJAoI6mOfrbbq8Jqf2czJGvi9Q0ukvLmmikcGSI8ZqHSwvRkTwLUTylDBqG6RaX8/3fM9Nvve4c
- VqFvCNQX2J5+bZcWx69Xcxl0FnIF/+ozKW4FHlSZHfTn6FEQTfoWOYo1nVdtg5lJcedIUJr0ygYNv
- BxeGZpOaFU4iqywNAUPFsAq2KhxI0Hbg9OXTdHy26nItEezSSsuIGEVlhH9A3QRH3TI9Fv56fknf8
- 0pc9AkwczXake1fj6Qt6cCxOadkgaG3Xkumb8mMGujy60/hhxbEX20y0v48fX/CV/o6oaLLnenmYd
- w0xneMdA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nya7z-00BhZy-2Z; Tue, 07 Jun 2022 14:24:15 +0000
-Date: Tue, 7 Jun 2022 15:24:15 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: David Hildenbrand <david@redhat.com>
-Message-ID: <Yp9fj/Si2qyb61Y3@casper.infradead.org>
-References: <20220606204050.2625949-1-willy@infradead.org>
- <20220606204050.2625949-16-willy@infradead.org>
- <e4d017a4-556d-bb5f-9830-a8843591bc8d@redhat.com>
+ bh=2Gf/LMdzQibmA3CQFIu++5apIgfZQUBK5B+qLCJdcj4=; b=aEYd6Ai3nnTb46DnRe1Lytzzb0
+ a6TcNH6iLqutID/sz5E9TebRpA3m89mingfrwPIFE3IwO0R7JcMWBfpSQUC+WQq1yArBnx6VtNW9U
+ P4jlJwg/CowOziZN9Q6T6Y5XHqvZCrqrmayIIW++XmqT1p5wva1D08MIz4I/lz5p/sDo=;
+Received: from mail-yb1-f174.google.com ([209.85.219.174])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
+ id 1nycq6-008S64-TG
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jun 2022 17:18:00 +0000
+Received: by mail-yb1-f174.google.com with SMTP id i39so4199098ybj.9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 07 Jun 2022 10:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
+ h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+ :cc; bh=2Gf/LMdzQibmA3CQFIu++5apIgfZQUBK5B+qLCJdcj4=;
+ b=UlIOhhRMP5WcJQ/zc/OiuB+lJTkLdYOOC2sp32tUMTA/O3i/rkc1ZAr+Jnb1VYWskV
+ u05p+kDGel0dChhHcNMQJ3nWK9QM/AusSmrLoilAGAMq8P1Cg/bOJoeexeiBsy2GTk2F
+ xVz0A6K871QbrFfNY0huAGfUWcdkRyXdofetnbhEzKFP4IxOMyQ0BEUlVV/2c2qB5QcA
+ 555PBTn0EZRhixi/yvufl6vbsxbyCY9hXpoiDGn8etsqPoI/JAhbz7JMw04rLSzr9ZHj
+ Urd+yKShZEUZEf3WOAkzCDqqZ597u7goZccNJETiU8vkNdpHhHzGB9Qr5r5SMSwm00qh
+ DfTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+ :message-id:subject:to:cc;
+ bh=2Gf/LMdzQibmA3CQFIu++5apIgfZQUBK5B+qLCJdcj4=;
+ b=m5neOeUBThPn/09LyWD1JqtXUnPucnywwMiq27AWCEJ0NS5L2SRV739oiBLeUVhQv8
+ I5ZO4ducn55dVBmtRE5YUotfT8VoMENh9LKWajm8VdLNgz6lT6WNGaeTPkjqDiYYYQsH
+ 03FoMkBkt8AwUwfGyGOGrLCyH6QudvSfevRaQO2qB4VJzfXgiHQzyqXOCyH+3qn4WJNt
+ IvTfrSiqqlYWMGH9TKpUq7xyD3YsKs08aTc7KC83Cd9BXuLk2FQZ5R3RC9mFa0Q398U6
+ RZH5jjNAa3odT9q8TvZai/BKdKi3rcO+7CS5xdG+L+XrlJ7SgHddp/nizjsIomXd0/+0
+ SWMA==
+X-Gm-Message-State: AOAM53394+lwSdjefN7lqstHaHf5I14A4r9WjY0T62uxfzhM/xM/gYhi
+ rx+sg8SZk9rfuS+8WMHPzCpXMfR4irL86ejBNTPKl7Kf
+X-Google-Smtp-Source: ABdhPJynkdTX/fp35vm2swA2RdeGUwkUNt87eYdVaLp+FtHRWgq9QR33twmE++ce1Xf4CBz4Rw1N2NcwHcYZ321gzr0=
+X-Received: by 2002:a05:6902:1509:b0:663:3a8b:4fac with SMTP id
+ q9-20020a056902150900b006633a8b4facmr18522009ybu.545.1654618264815; Tue, 07
+ Jun 2022 09:11:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <e4d017a4-556d-bb5f-9830-a8843591bc8d@redhat.com>
-X-Headers-End: 1nya89-0001gm-HD
-Subject: Re: [f2fs-dev] [PATCH 15/20] balloon: Convert to migrate_folio
+References: <20220605193854.2371230-1-willy@infradead.org>
+ <20220605193854.2371230-8-willy@infradead.org>
+In-Reply-To: <20220605193854.2371230-8-willy@infradead.org>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Wed, 8 Jun 2022 01:10:53 +0900
+Message-ID: <CAKFNMonLF+nEs7xi0t=Wy4tf7fttLZCL4v+AZGjDWvSYqmZiaw@mail.gmail.com>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+X-Headers-End: 1nycq6-008S64-TG
+Subject: Re: [f2fs-dev] [PATCH 07/10] nilfs2: Convert
+ nilfs_copy_back_pages() to use filemap_get_folios()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -73,40 +90,28 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-aio@kvack.org, linux-nfs@vger.kernel.org, cluster-devel@redhat.com,
- linux-ntfs-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-block@vger.kernel.org,
- linux-mm@kvack.org, linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-xfs@vger.kernel.org,
- linux-btrfs@vger.kernel.org
+Cc: linux-nilfs <linux-nilfs@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jun 07, 2022 at 09:36:21AM +0200, David Hildenbrand wrote:
-> On 06.06.22 22:40, Matthew Wilcox (Oracle) wrote:
-> >  const struct address_space_operations balloon_aops = {
-> > -	.migratepage = balloon_page_migrate,
-> > +	.migrate_folio = balloon_migrate_folio,
-> >  	.isolate_page = balloon_page_isolate,
-> >  	.putback_page = balloon_page_putback,
-> >  };
-> 
-> I assume you're working on conversion of the other callbacks as well,
-> because otherwise, this ends up looking a bit inconsistent and confusing :)
+On Mon, Jun 6, 2022 at 1:00 PM Matthew Wilcox (Oracle) wrote:
+>
+> Use folios throughout.
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/nilfs2/page.c | 60 ++++++++++++++++++++++++------------------------
+>  1 file changed, 30 insertions(+), 30 deletions(-)
 
-My intention was to finish converting aops for the next merge window.
+Throughout, looks good to me.   Thank you so much for your great work.
 
-However, it seems to me that we goofed back in 2016 by merging
-commit bda807d44454.  isolate_page() and putback_page() should
-never have been part of address_space_operations.
+Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 
-I'm about to embark on creating a new migrate_operations struct
-for drivers to use that contains only isolate/putback/migrate.
-No filesystem uses isolate/putback, so those can just be deleted.
-Both migrate_operations & address_space_operations will contain a
-migrate callback.
+Ryusuke Konishi
 
 
 _______________________________________________
