@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 634C5C43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jun 2022 18:09:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 13AFEC43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jun 2022 18:45:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nydeF-0005ul-26; Tue, 07 Jun 2022 18:09:47 +0000
+	id 1nyeD5-0008Sv-QO; Tue, 07 Jun 2022 18:45:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <willy@infradead.org>)
- id 1nydeC-0005uZ-3r; Tue, 07 Jun 2022 18:09:45 +0000
+ (envelope-from <jaegeuk@kernel.org>) id 1nyeD4-0008So-07
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jun 2022 18:45:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AfL2iuaKMIW3GEEXa7GrCIERYid9+IWuPeOvvtY3ld4=; b=bPfp6A/E/YwkkjY9sclALfc5A0
- 3+J9QqRx1YBrAdtru1ywHUxHCKiUs8h9cBhnnRAniQQojJD5EzlT1hcqtC+f9+K8kzjzCR52RZ1vq
- P1UjCnIniRX3kGAYarPSCf9ditYgAbYYe0kAh1X+BMNHZkJNRjf1gEqkNHj2lO2PalHg=;
+ bh=3uN4nq0XbuOsrHFZ2pB0DdREMuk/8aKWYq5d+ame1zI=; b=gme8qffrL2KObjJgzdrPetFYJX
+ nVTKWPlUqkDVdakK/s5DzO9Sxjxy1B5r/d90vMbqFoZDrRBVMr1bSXsD1dGmIliNjZMAti1WWaVvM
+ aXHQgstC0utdruUXPXU/N8fSlCqgcwOSGTXb0YhkHyNZ7JBRNc+4ETL+Q9W+upj/w7j0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -31,37 +31,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AfL2iuaKMIW3GEEXa7GrCIERYid9+IWuPeOvvtY3ld4=; b=k/cGMveeqj2N/5eLRC+pmONn/N
- R8TK/dMRNBB3zJ2f8wRn+/kOhVzmMuZVHNTne2TSTkqwN2Nd3csizY1tNFGmO793F+xF100LTjJmn
- rjMhWxhLFVPR3qxI7CoFbRGpOgZ+KrR40ZREAai0pZFW7wmscsSppGBMxWb6ABPhDO4U=;
-Received: from casper.infradead.org ([90.155.50.34])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=3uN4nq0XbuOsrHFZ2pB0DdREMuk/8aKWYq5d+ame1zI=; b=heyNJPq5OfqP4iVcJ0CwN2GaNU
+ mDYFYkz1rm0qV0a4hPpRvnWnbQKu9dm9dknNfU2DQhwbSdrOJ1Mh1g6vWoOQDjUq9WT+YW8bbcUC+
+ wiWcZkeKeUUfhzahXGuc4CbpOy3zF2pSSB9D4b5Om8n1ftr27u3hpXyXbdq0bAx58QSE=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nydeC-008X4r-71; Tue, 07 Jun 2022 18:09:44 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=AfL2iuaKMIW3GEEXa7GrCIERYid9+IWuPeOvvtY3ld4=; b=fRSk5WhSy4yx86ABGN8DAKmWjC
- 5IdJfhP/2tfrBb3qOP67dWCLnwarcUWbjvi3CSZox73Cc2Y1PIwGlfqeGnF3Uxyt0mbA5Mg3BbAic
- u8C1w1Bg+HnPIgHl9bpnhpAGnvXoNlM/riGdn7iNiA4dEw1cH8c3GLB6l+j+CAh8jR4QCRLgjeJYJ
- KjvzVwo8asMupiPKaBH9YNKuxq1ZqBG33mo7YsQtWCkEXiw/2CPMhM29QfN4S2WqjmyhTpN+ujECh
- HLTSFWPPBpUYWjBGjh365kLciirfPTZ2IaAsMeDnES6CMIrk6IVPXnxuuFSWcG0n8eXm6dw3XUxLO
- bUTOI4Jw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nyadh-00Bioa-Tk; Tue, 07 Jun 2022 14:57:01 +0000
-Date: Tue, 7 Jun 2022 15:57:01 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: kernel test robot <lkp@intel.com>
-Message-ID: <Yp9nPSwPEWoX7Ml+@casper.infradead.org>
-References: <20220606204050.2625949-5-willy@infradead.org>
- <202206071139.aWSx4GHH-lkp@intel.com>
+ id 1nyeCy-0003fS-IV
+ for linux-f2fs-devel@lists.sourceforge.net; Tue, 07 Jun 2022 18:45:46 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 9D9F2B82018;
+ Tue,  7 Jun 2022 18:45:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5185CC34115;
+ Tue,  7 Jun 2022 18:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1654627525;
+ bh=s4cfQxIymbuV8O9xJVAYNYX/52W1gB3xBALuAIc0AW4=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=RQqPs5KzS0iVUtoc10uCD6y0w3Btli34PXho1v4rV2oHNCXamTSupgGsMFa+1EjdV
+ sCsIsWD5lBlqsOBwbqn+3aDghfUSADLF3JQq8XCBcuiQYfeVREja6l8QHZNFRcAW2m
+ yTWSeQ9Xua8Q75FOX6tTLR7/i4F2FOFaB69opo7VrCvvHvl+lpMPxgOdE9ZjbqTb9V
+ Ax8Pq0kfX1WKd5+OS8AhlP+1tAlmPUpSAHG1viObpY02o23LR6Fh0yiT1SVECqenaN
+ 6MkKykLPcj9ed+UNL8ykeQN/DDv2pxQ462vi7y/XuLWscXqZe7+4cDt6/aXrb5mQTI
+ 2oybl4A6MUIjg==
+Date: Tue, 7 Jun 2022 11:45:23 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Fengnan Chang <fengnanchang@gmail.com>
+Message-ID: <Yp+cwxXag2ZPbvb8@google.com>
+References: <20220511071419.100386-1-fengnanchang@gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <202206071139.aWSx4GHH-lkp@intel.com>
-X-Headers-End: 1nydeC-008X4r-71
-Subject: Re: [f2fs-dev] [PATCH 04/20] mm/migrate: Convert
- buffer_migrate_page() to buffer_migrate_folio()
+In-Reply-To: <20220511071419.100386-1-fengnanchang@gmail.com>
+X-Headers-End: 1nyeCy-0003fS-IV
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix hungtask when decompressed fail
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -73,24 +77,59 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-aio@kvack.org, linux-nfs@vger.kernel.org, cluster-devel@redhat.com,
- kbuild-all@lists.01.org, linux-ntfs-dev@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-block@vger.kernel.org, linux-mm@kvack.org, linux-mtd@lists.infradead.org,
- ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, virtualization@lists.linux-foundation.org,
- linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jun 07, 2022 at 11:37:45AM +0800, kernel test robot wrote:
-> All warnings (new ones prefixed by >>):
+On 05/11, Fengnan Chang wrote:
+> When decompressed failed, f2fs_prepare_compress_overwrite will enter
+> endless loop, may casue hungtask.
 > 
-> >> mm/migrate.c:775: warning: expecting prototype for buffer_migrate_folio_noref(). Prototype was for buffer_migrate_folio_norefs() instead
+> [   14.088665] F2FS-fs (nvme0n1): lz4 decompress failed, ret:-4155
+> [   14.089851] F2FS-fs (nvme0n1): lz4 decompress failed, ret:-4155
+> 
+> Signed-off-by: Fengnan Chang <fengnanchang@gmail.com>
+> ---
+>  fs/f2fs/compress.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index 12a56f9e1572..6a65443fd9b3 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -1060,7 +1060,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+>  	sector_t last_block_in_bio;
+>  	unsigned fgp_flag = FGP_LOCK | FGP_WRITE | FGP_CREAT;
+>  	pgoff_t start_idx = start_idx_of_cluster(cc);
+> -	int i, ret;
+> +	int i, ret, retry_count = 3;
+>  
+>  retry:
+>  	ret = f2fs_is_compressed_cluster(cc->inode, start_idx);
+> @@ -1120,7 +1120,12 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+>  			f2fs_put_rpages(cc);
+>  			f2fs_unlock_rpages(cc, i + 1);
+>  			f2fs_destroy_compress_ctx(cc, true);
+> -			goto retry;
 
-No good deed (turning documentation into kerneldoc) goes unpunished ...
-thanks, fixed.
+Do we need to return EIO right away?
+			if (!page)
+				goto retry;
+			ret = -EIO;
+			goto out;
+
+> +			if (retry_count--)
+> +				goto retry;
+> +			else {
+> +				ret = -EIO;
+> +				goto out;
+> +			}
+>  		}
+>  	}
+>  
+> -- 
+> 2.25.1
 
 
 _______________________________________________
