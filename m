@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C3EECC43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jun 2022 03:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BD4D8C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Jun 2022 06:14:05 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyQ3p-0005kJ-85; Tue, 07 Jun 2022 03:39:16 +0000
+	id 1nySTb-0000fr-MV; Tue, 07 Jun 2022 06:14:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
  (envelope-from <lkp@intel.com>)
- id 1nyQ3n-0005k8-1r; Tue, 07 Jun 2022 03:39:15 +0000
+ id 1nySTZ-0000fW-NS; Tue, 07 Jun 2022 06:14:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=l5EOVhAu9/ENgZKm7TlPb12LyKLy0Q2+72LznQudnj0=; b=HUCGZzH/zOTHG8YjRu5grrbefX
- C8GxnCIN7LjxpQkrv4m/2qwv65HExIuNkrt1d7NRxjB07KonbCnh338PVt8I74YC3+5nORmQdtsXt
- Q8zGr51Lbkc7+Z5Iz0V9mcp84ap9YKG2UMljpq4ChgE6zX8DaXBan3yzhX/9pr2XdwSQ=;
+ bh=khFVcW3MLS7SoJTErp0Ezt99EakPVeB/RbJxON0w64M=; b=HlQvtK+cFBntBzjLdCLQGcjBxI
+ 0xoR+BsZryZJeNzOhjvbTzbv58685n7DDB7j2nc8g2uuKCWL60VSprcmv9PqekG5KMxmAjMvk15u8
+ eyzaPcVAsKi/DDJ6EkdgdD9+m57UJhAx5m5QCy0xi8LKXvcfpR2PLWyYoufynMUVy9ho=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -31,49 +31,48 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=l5EOVhAu9/ENgZKm7TlPb12LyKLy0Q2+72LznQudnj0=; b=SwVFlOrEy9Vaz2reIFjy7PKpFG
- InBbsIy/nY08Q6fmz470mPF2q0Oa0biokH+9H9JnsHHCV5zhhfxHqvFI7j7SXcpdJ5DcxkeSqrVZa
- UdQ2rqmZntdR/HWyVG/lh0/bctnZAjCJm3Nkx+Jr3b5h9DZNIDz+B3n+dCgowY7vTle0=;
-Received: from mga09.intel.com ([134.134.136.24])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=khFVcW3MLS7SoJTErp0Ezt99EakPVeB/RbJxON0w64M=; b=SpLCh2w2Lzg1plNvaJ8Vj4R6U+
+ dIQZ5qmvHoFMOHIVPW+n9oNzm9Y0EDw3Qo8TddugzGogpCHV9dviObbt9dM9od+Mjj/wPqFi7/Pfe
+ OtUkArWABd+35YoV2UnhLj1SRMHjG0bbeB+UOJYM6nGMLEFbGK7f/5Mt96a4RdcaztKg=;
+Received: from mga04.intel.com ([192.55.52.120])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyQ3i-007fds-2p; Tue, 07 Jun 2022 03:39:13 +0000
+ id 1nySTT-00040I-N9; Tue, 07 Jun 2022 06:14:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1654573150; x=1686109150;
+ t=1654582437; x=1686118437;
  h=date:from:to:cc:subject:message-id:references:
  mime-version:in-reply-to;
- bh=w4xeyqU+kOhDYzyqy82v69OYCHkAH6xk8Nd95qrz48A=;
- b=RiVvhF+nHo1eWkLBHPnFFxKKcJEQHdVMpfPPBOeRK0DZKJIdcfxu99tR
- 63jrq7Gl6tJPZFTAKBQpIfB6tpFnsoyBJpnFIaBA7eec9HVUvf7aMAiCr
- uFKOYLhskR0xxzjZ7X4wK35OOMqywUT0HbbESDsR3X5+B6rXTgST+70Qz
- TkGkRAFImuZe+KdwlGlEjvbsx1h0M64QeZNaX0c1Qtt172Fpq+/3inTGk
- wA1AGbgQz9Y/woV47h8/dUWJLU1VhNsibXitTFXffWaT8QwNxMlFkRAH6
- ytw4e821C5HrFtEDbhwI81T35uEZI//JGY8KZ4FiUWqZn+aMHa5G+zLzR w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="276987811"
-X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; d="scan'208";a="276987811"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
- by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Jun 2022 20:38:44 -0700
+ bh=pViZck3K1Rq0vF4B9iREn005L3q1DYrrwNaeY+v9f0c=;
+ b=CoQj212bzAQzaS+UKcHxu4AMVL08qh0+1OijVYzYvV2bmUN1c3Pbcvbt
+ TT+aq4W9J/pOr2HAOf1f0cyzIcQqo3udSQtsRim75z/tKcg6cEIAMqYd9
+ tj141QUSdQ47reW4jZiDhYZ93fEj9LigoIRqlzSgTkiZFN8TrUeZgUuii
+ P0+N+arRz5wg62WI3cIZ9UJgbxAvVllrdcbcGRUNVqAceLLF+3VmCQeMR
+ vNsL/84cjsJsbqlJqaUs7qP69e7rV48so21+QweI+rbFuZ8rTly77y/iG
+ EUR9E89YbNnzcStfrxfEaab5P5s5jD1BJibxlLnaYIBaQgGDqG77nZLTs w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="275483831"
+X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; d="scan'208";a="275483831"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+ by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Jun 2022 23:13:48 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; d="scan'208";a="579430786"
+X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; d="scan'208";a="614746862"
 Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
- by orsmga007.jf.intel.com with ESMTP; 06 Jun 2022 20:38:40 -0700
+ by orsmga001.jf.intel.com with ESMTP; 06 Jun 2022 23:13:44 -0700
 Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
- (envelope-from <lkp@intel.com>) id 1nyQ3D-000DJf-KE;
- Tue, 07 Jun 2022 03:38:39 +0000
-Date: Tue, 7 Jun 2022 11:37:45 +0800
+ (envelope-from <lkp@intel.com>) id 1nySTI-000DQ5-17;
+ Tue, 07 Jun 2022 06:13:44 +0000
+Date: Tue, 7 Jun 2022 14:13:26 +0800
 From: kernel test robot <lkp@intel.com>
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  linux-fsdevel@vger.kernel.org
-Message-ID: <202206071139.aWSx4GHH-lkp@intel.com>
-References: <20220606204050.2625949-5-willy@infradead.org>
+Message-ID: <202206071414.41wGG8fp-lkp@intel.com>
+References: <20220606204050.2625949-15-willy@infradead.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20220606204050.2625949-5-willy@infradead.org>
-X-Headers-End: 1nyQ3i-007fds-2p
-Subject: Re: [f2fs-dev] [PATCH 04/20] mm/migrate: Convert
- buffer_migrate_page() to buffer_migrate_folio()
+In-Reply-To: <20220606204050.2625949-15-willy@infradead.org>
+X-Headers-End: 1nySTT-00040I-N9
+Subject: Re: [f2fs-dev] [PATCH 14/20] hugetlb: Convert to migrate_folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,10 +98,10 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hi "Matthew,
 
-I love your patch! Perhaps something to improve:
+I love your patch! Yet something to improve:
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.19-rc1 next-20220606]
+[auto build test ERROR on linus/master]
+[also build test ERROR on v5.19-rc1 next-20220607]
 [cannot apply to jaegeuk-f2fs/dev-test trondmy-nfs/linux-next kdave/for-next xfs-linux/for-next]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
@@ -110,49 +109,62 @@ https://git-scm.com/docs/git-format-patch]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/Convert-aops-migratepage-to-aops-migrate_folio/20220607-044509
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git f2906aa863381afb0015a9eb7fefad885d4e5a56
-config: i386-defconfig (https://download.01.org/0day-ci/archive/20220607/202206071139.aWSx4GHH-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-1) 11.3.0
+config: ia64-randconfig-r015-20220605 (https://download.01.org/0day-ci/archive/20220607/202206071414.41wGG8fp-lkp@intel.com/config)
+compiler: ia64-linux-gcc (GCC) 11.3.0
 reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/96e64ba8b1be545885d89f44b1d8b968b22bdb4d
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/b038962c9c8c2ab77c71dfba24356ce24bd7a242
         git remote add linux-review https://github.com/intel-lab-lkp/linux
         git fetch --no-tags linux-review Matthew-Wilcox-Oracle/Convert-aops-migratepage-to-aops-migrate_folio/20220607-044509
-        git checkout 96e64ba8b1be545885d89f44b1d8b968b22bdb4d
+        git checkout b038962c9c8c2ab77c71dfba24356ce24bd7a242
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=ia64 SHELL=/bin/bash fs/hugetlbfs/
 
 If you fix the issue, kindly add following tag where applicable
 Reported-by: kernel test robot <lkp@intel.com>
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
->> mm/migrate.c:775: warning: expecting prototype for buffer_migrate_folio_noref(). Prototype was for buffer_migrate_folio_norefs() instead
+   fs/hugetlbfs/inode.c: In function 'hugetlbfs_migrate_folio':
+>> fs/hugetlbfs/inode.c:990:17: error: implicit declaration of function 'folio_migrate_copy' [-Werror=implicit-function-declaration]
+     990 |                 folio_migrate_copy(dst, src);
+         |                 ^~~~~~~~~~~~~~~~~~
+>> fs/hugetlbfs/inode.c:992:17: error: implicit declaration of function 'folio_migrate_flags'; did you mean 'folio_mapping_flags'? [-Werror=implicit-function-declaration]
+     992 |                 folio_migrate_flags(dst, src);
+         |                 ^~~~~~~~~~~~~~~~~~~
+         |                 folio_mapping_flags
+   cc1: some warnings being treated as errors
 
 
-vim +775 mm/migrate.c
+vim +/folio_migrate_copy +990 fs/hugetlbfs/inode.c
 
-89cb0888ca1483a Jan Kara                2018-12-28  758  
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  759) /**
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  760)  * buffer_migrate_folio_noref() - Migration function for folios with buffers.
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  761)  * @mapping: The address space containing @src.
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  762)  * @dst: The folio to migrate to.
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  763)  * @src: The folio to migrate from.
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  764)  * @mode: How to migrate the folio.
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  765)  *
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  766)  * Like buffer_migrate_folio() except that this variant is more careful
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  767)  * and checks that there are also no buffer head references. This function
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  768)  * is the right one for mappings where buffer heads are directly looked
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  769)  * up and referenced (such as block device mappings).
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  770)  *
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  771)  * Return: 0 on success or a negative errno on failure.
-89cb0888ca1483a Jan Kara                2018-12-28  772   */
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  773) int buffer_migrate_folio_norefs(struct address_space *mapping,
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  774) 		struct folio *dst, struct folio *src, enum migrate_mode mode)
-89cb0888ca1483a Jan Kara                2018-12-28 @775  {
-96e64ba8b1be545 Matthew Wilcox (Oracle  2022-06-06  776) 	return __buffer_migrate_folio(mapping, dst, src, mode, true);
-89cb0888ca1483a Jan Kara                2018-12-28  777  }
-9361401eb7619c0 David Howells           2006-09-30  778  #endif
-1d8b85ccf1ed53a Christoph Lameter       2006-06-23  779  
+   972	
+   973	static int hugetlbfs_migrate_folio(struct address_space *mapping,
+   974					struct folio *dst, struct folio *src,
+   975					enum migrate_mode mode)
+   976	{
+   977		int rc;
+   978	
+   979		rc = migrate_huge_page_move_mapping(mapping, dst, src);
+   980		if (rc != MIGRATEPAGE_SUCCESS)
+   981			return rc;
+   982	
+   983		if (hugetlb_page_subpool(&src->page)) {
+   984			hugetlb_set_page_subpool(&dst->page,
+   985						hugetlb_page_subpool(&src->page));
+   986			hugetlb_set_page_subpool(&src->page, NULL);
+   987		}
+   988	
+   989		if (mode != MIGRATE_SYNC_NO_COPY)
+ > 990			folio_migrate_copy(dst, src);
+   991		else
+ > 992			folio_migrate_flags(dst, src);
+   993	
+   994		return MIGRATEPAGE_SUCCESS;
+   995	}
+   996	
 
 -- 
 0-DAY CI Kernel Test Service
