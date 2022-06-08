@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4F209C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jun 2022 08:03:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4E921C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jun 2022 08:03:50 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyqeq-00066F-NJ; Wed, 08 Jun 2022 08:03:15 +0000
+	id 1nyqfL-0001Ss-TA; Wed, 08 Jun 2022 08:03:48 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2) (envelope-from
  <BATV+ba9ae8ab3d8ecaf97ba4+6863+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1nyqeq-000669-6C
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jun 2022 08:03:15 +0000
+ id 1nyqfK-0001Sm-Jc
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jun 2022 08:03:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Lmlll0xHee/vEiVot8MaIaDnFq94X7SQmNxMGuo2kIg=; b=KKO/nM/KcbiN0Rs5MKO54sVOqG
- 42GUPuuqF1l+/i3Kh63KbQiuAYdcGuXyChOB4L5U/6AQgd0jbNEOqEm0uxHYkFI9Z2/BH+8UVn4ZV
- 70kmegFUCtGJjoqByPd+n45e/pPGd1Dul4UvN5s/TR6DQYy/PHUkH0OP8Y5fDIDUcq9A=;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=RK8Xp72T5lkf7UuehHLsjFoDi+
+ GX4mTxtWcGGxDm9ZbR9b4pCbSrnafNbrl4+M/n9p9tOcfgabuFPF0rQ+hYUWYqjHpRY3wih3EHIns
+ prV1Cr0fxc6NB9qznxMF4fa5BQY44HGQ9xFLCk/+DAvIO+6+CKVIlgum7CS9Zc6HHvj8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -32,40 +32,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Lmlll0xHee/vEiVot8MaIaDnFq94X7SQmNxMGuo2kIg=; b=Sj2x/wkEvWdZt3H1yW8Icdagca
- w5U6yWxVHUVkszl3WlPxCpuMjOIifxsvk0MvKnNOKbuppl0Jv4c0f8jwh8+O1w2fULRcSrwNZpRkE
- VcouldmzErN7SZoRx6ujdWQfA2q2hn6Hfv/yrT2fYDTaxSzfVShXsAcjZF/08ytXzaMo=;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=hcoznC6Z1fVJVk26w5E9KSozLs
+ nXjaj3BaX8b2qd8lzx8C4UPV7Tu4PkouXWlZMIcJlFMjt3D13QlHNgmj0bGOJuUFE3v6cCkO2LCP+
+ tgBTuNloPg0ltbs5EFL2peoA2VpCTcPXiYijsvrVwcJxZYY1pgY0eOSqsV1SyqGCBUHQ=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyqeo-009Zwa-Bh
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jun 2022 08:03:14 +0000
+ id 1nyqfK-009a0z-R1
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 08 Jun 2022 08:03:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
  :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=Lmlll0xHee/vEiVot8MaIaDnFq94X7SQmNxMGuo2kIg=; b=K99MhL27rbGpyk6oZoCQHDJStN
- ATHqNPOPl7fmyyQofTDK54G9VDdXR1JVCTiKCNsyr/ha1NjCveZwfyr+ElXb6XTm4WzMWeGZrNqoP
- 5YXYRBZ/7Jh9lheCch0n+4CO+bhipsSd9uBl3meB+fpXyr3N/vuS+NureIBbTXMUob/JPzY9Ita3n
- rPGXBOz7FEXZ8SjNR69uDCDib2RwXZNJiLNaSJtWaPlbu5qnHUXq3m6OFZVDMKd1O9sq9xB+VDKM5
- Dm2DLmp0am4A0lVr3uXzeX8+FPn7RkWsYdGC0GKaalaGr3v/k6XOaJBNnhuKawVGhybCgpknzNBKc
- BwrsYkgw==;
+ bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=ETGyWJmiVwl8uakzt6P4V+CU2A
+ G94sm1P++WCgbDigiam9tX5SkQ0ieLw5fLJDSl6Z4lAT67M8VRyXCg96za4TLKnvfyJL/oNNep9yb
+ dlGqJMk2irV5SIRfGuVkQlACUCtWUy4F2Zrr9XJoYbRvD/Gf/muV6R6I5KWIer/FIatDgdLhyfGAy
+ RLSEiUPbWKPNRrvLf72fJzjbTXcnaOV0un4Nv4LP8mfLNiOwgI0leoYZMCPyMScgezsmat3Crd7NS
+ myCTQwyfvkACIZw4oiUY7hIMFuXTPaMl6e+BNQv6a3fmXMcNNOkER0uA4JlVrpJuNotPUsNHgTQ/b
+ Sa5gDe4Q==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nyqeh-00Bo4j-Cp; Wed, 08 Jun 2022 08:03:07 +0000
-Date: Wed, 8 Jun 2022 01:03:07 -0700
+ Hat Linux)) id 1nyqfD-00BoCm-R3; Wed, 08 Jun 2022 08:03:39 +0000
+Date: Wed, 8 Jun 2022 01:03:39 -0700
 From: Christoph Hellwig <hch@infradead.org>
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Message-ID: <YqBXux0cF90xV80C@infradead.org>
+Message-ID: <YqBX23zzkYAkZcty@infradead.org>
 References: <20220605193854.2371230-1-willy@infradead.org>
- <20220605193854.2371230-5-willy@infradead.org>
+ <20220605193854.2371230-6-willy@infradead.org>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20220605193854.2371230-5-willy@infradead.org>
+In-Reply-To: <20220605193854.2371230-6-willy@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1nyqeo-009Zwa-Bh
-Subject: Re: [f2fs-dev] [PATCH 04/10] ext4: Convert
- mpage_map_and_submit_buffers() to use filemap_get_folios()
+X-Headers-End: 1nyqfK-009a0z-R1
+Subject: Re: [f2fs-dev] [PATCH 05/10] f2fs: Convert
+ f2fs_invalidate_compress_pages() to use filemap_get_folios()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,9 +83,6 @@ Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org,
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-
-On Sun, Jun 05, 2022 at 08:38:48PM +0100, Matthew Wilcox (Oracle) wrote:
-> The called functions all use pages, so just convert back to a page.
 
 Looks good:
 
