@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2E8BFC433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jun 2022 15:03:22 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12098C43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jun 2022 15:03:24 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyxDM-0005pt-Mw; Wed, 08 Jun 2022 15:03:21 +0000
+	id 1nyxDO-0004Ft-ML; Wed, 08 Jun 2022 15:03:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
  (envelope-from <willy@infradead.org>)
- id 1nyxDL-0005pf-2c; Wed, 08 Jun 2022 15:03:19 +0000
+ id 1nyxDN-0004FU-Ls; Wed, 08 Jun 2022 15:03:22 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WUpG8Ni861ynrjDUWCnLTkzTIfxUJKXosLuHAm7Cnl4=; b=dJSe+xZVSqErOMTQayLwNmZt/R
- kTY4kj2ctv4nxz4N0lHQRYa+VP6Ts08ZJ2o9TRptiMwfwbdectCB+BKY+CTpBaSxwzS1sVA0VR21G
- S1OMNMIyNA6ejFZeAcYigrAvuLV/lI7p0yTqJ1XRqelDm6G2hzg24OZgwFq5DZXRtSl4=;
+ bh=QtCpoMtKxHZJjZ0zPsproZBlL3YauaUrqZHnxvuWLJc=; b=G4EXypOwKRa2i+skdtz4i+kJT0
+ Z5QXv9Ve7eLDNLyeedJ6IqqjAYDDGWEin8tkYIa+mASsc1kBCtxqyF4cA+DNicfXb5SYpZFRO2VZW
+ ZoZxhg8uoZQv/NdJGyqO24P23SlwU/eZY/kRXc1DtCTvHMCY4HKl7uJ2YT9aZ0mybsfA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,35 +31,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WUpG8Ni861ynrjDUWCnLTkzTIfxUJKXosLuHAm7Cnl4=; b=krWAbZ++mRNx6mP40pQJ650IdN
- UYjAvxKKDyP+6wp7Q9q/P8uBqlFMtrt7ruD3AVEuH4Dl9pNNoKswCAaIpUDdDpXjE7Ojti4IoXQ19
- 48Hf3Cy3e+x/rRlAr3wmdmGvulODpJvUlo9EL8J/B8V4h0TdvCZwN+wJQxHYOHif6fGg=;
+ bh=QtCpoMtKxHZJjZ0zPsproZBlL3YauaUrqZHnxvuWLJc=; b=mzvPppBt7TPoO2CiHhkiT25seT
+ Bhc7KLid2yMowsgC0HqMS0gWDOloRd+UFuqNyFbSbb5urTM1+dv2QQdmZGGxF7sx67Rk3Wg7ILsvg
+ a3F4BGNkIk+LmXQR16l3jnfhA6s3q+g6dr2sHmJ1SL3uFsrU3SKsrLP5aLPDmCDql0Dw=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyxDL-009xz5-3K; Wed, 08 Jun 2022 15:03:19 +0000
+ id 1nyxDN-009xzO-DL; Wed, 08 Jun 2022 15:03:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=WUpG8Ni861ynrjDUWCnLTkzTIfxUJKXosLuHAm7Cnl4=; b=TZRY1wF8ksrrIs1o9KbjlHWauY
- 4i3hvUjlM2cIjRUnhetVv8G6jMyi14dv6mXReUhlvxDOk++478UFLwnOTQRcW2OAzYRGsNtgSvdbm
- rzbNL4L83yv6t9VuZB7jb2fZTbAOWlo5a8uudsYH/7aOxtrNzw8CLlAmsabS+HdXV4gWCKA8QRNjP
- TEB2Mf9KWDrGrK8TMAo35J12l2+xg69zacyrBtimmMBqI0hEgYTGk5qIEXSbuwxPZt8S1FzoWckM/
- zJjg6W8idqpi/4VI0InsOV4Q7s8MeTv9rUBHDNK/kOpKOuF3YHJ2V9jmVvRttDYxzg4YE4S5tdNTF
- ViZ46uBg==;
+ bh=QtCpoMtKxHZJjZ0zPsproZBlL3YauaUrqZHnxvuWLJc=; b=h1JJSDwi8sTy0t0Nv3IdyI/SSp
+ jIF5pVOj06evVaP6sUZABnjlIHzpvlc6aJOURe5UCkHnW3iI3QP4xuoymAKnzwHaD8MtjzeYqIepM
+ 2Ts3fRtS1qfeNFFYMc3nNHdcseIK1Vy47ZmaV51+uXh6fNAnQeRAvvdhoGqHWjTFkPzF0v9O7acf2
+ xq4M713rzitxm3iOxcMIjCepwumvPeE3Jns/IcE3r6mlBV3OO8XJT8WSjSePKvPOSJ3+fKFPOWi4P
+ sRSqkPvbSbV6mgnrsExhzcPOl2ztfXK38fZitzA3s6knKBMiAmpJwGCXnWQovlCajyK2bKysaYFsQ
+ IcGOq5Vg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nyxCv-00CjFi-3n; Wed, 08 Jun 2022 15:02:53 +0000
+ Hat Linux)) id 1nyxCv-00CjFo-BL; Wed, 08 Jun 2022 15:02:53 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Wed,  8 Jun 2022 16:02:45 +0100
-Message-Id: <20220608150249.3033815-16-willy@infradead.org>
+Date: Wed,  8 Jun 2022 16:02:48 +0100
+Message-Id: <20220608150249.3033815-19-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220608150249.3033815-1-willy@infradead.org>
 References: <20220608150249.3033815-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nyxDL-009xz5-3K
-Subject: [f2fs-dev] [PATCH v2 15/19] aio: Convert to migrate_folio
+X-Headers-End: 1nyxDN-009xzO-DL
+Subject: [f2fs-dev] [PATCH v2 18/19] fs: Remove aops->migratepage()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,98 +83,66 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use a folio throughout this function.
+With all users converted to migrate_folio(), remove this operation.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/aio.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ include/linux/fs.h | 2 --
+ mm/compaction.c    | 5 ++---
+ mm/migrate.c       | 3 ---
+ 3 files changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 3c249b938632..a1911e86859c 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -400,8 +400,8 @@ static const struct file_operations aio_ring_fops = {
- };
- 
- #if IS_ENABLED(CONFIG_MIGRATION)
--static int aio_migratepage(struct address_space *mapping, struct page *new,
--			struct page *old, enum migrate_mode mode)
-+static int aio_migrate_folio(struct address_space *mapping, struct folio *dst,
-+			struct folio *src, enum migrate_mode mode)
- {
- 	struct kioctx *ctx;
- 	unsigned long flags;
-@@ -435,10 +435,10 @@ static int aio_migratepage(struct address_space *mapping, struct page *new,
- 		goto out;
- 	}
- 
--	idx = old->index;
-+	idx = src->index;
- 	if (idx < (pgoff_t)ctx->nr_pages) {
--		/* Make sure the old page hasn't already been changed */
--		if (ctx->ring_pages[idx] != old)
-+		/* Make sure the old folio hasn't already been changed */
-+		if (ctx->ring_pages[idx] != &src->page)
- 			rc = -EAGAIN;
- 	} else
- 		rc = -EINVAL;
-@@ -447,27 +447,27 @@ static int aio_migratepage(struct address_space *mapping, struct page *new,
- 		goto out_unlock;
- 
- 	/* Writeback must be complete */
--	BUG_ON(PageWriteback(old));
--	get_page(new);
-+	BUG_ON(folio_test_writeback(src));
-+	folio_get(dst);
- 
--	rc = migrate_page_move_mapping(mapping, new, old, 1);
-+	rc = folio_migrate_mapping(mapping, dst, src, 1);
- 	if (rc != MIGRATEPAGE_SUCCESS) {
--		put_page(new);
-+		folio_put(dst);
- 		goto out_unlock;
- 	}
- 
- 	/* Take completion_lock to prevent other writes to the ring buffer
--	 * while the old page is copied to the new.  This prevents new
-+	 * while the old folio is copied to the new.  This prevents new
- 	 * events from being lost.
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 9e6b17da4e11..7e06919b8f60 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -367,8 +367,6 @@ struct address_space_operations {
  	 */
- 	spin_lock_irqsave(&ctx->completion_lock, flags);
--	migrate_page_copy(new, old);
--	BUG_ON(ctx->ring_pages[idx] != old);
--	ctx->ring_pages[idx] = new;
-+	folio_migrate_copy(dst, src);
-+	BUG_ON(ctx->ring_pages[idx] != &src->page);
-+	ctx->ring_pages[idx] = &dst->page;
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
+ 	int (*migrate_folio)(struct address_space *, struct folio *dst,
+ 			struct folio *src, enum migrate_mode);
+-	int (*migratepage) (struct address_space *,
+-			struct page *, struct page *, enum migrate_mode);
+ 	int (*launder_folio)(struct folio *);
+ 	bool (*is_partially_uptodate) (struct folio *, size_t from,
+ 			size_t count);
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 458f49f9ab09..a2c53fcf933e 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1031,7 +1031,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
  
--	/* The old page is no longer accessible. */
--	put_page(old);
-+	/* The old folio is no longer accessible. */
-+	folio_put(src);
+ 			/*
+ 			 * Only pages without mappings or that have a
+-			 * ->migratepage callback are possible to migrate
++			 * ->migrate_folio callback are possible to migrate
+ 			 * without blocking. However, we can be racing with
+ 			 * truncation so it's necessary to lock the page
+ 			 * to stabilise the mapping as truncation holds
+@@ -1043,8 +1043,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
  
- out_unlock:
- 	mutex_unlock(&ctx->ring_lock);
-@@ -475,13 +475,13 @@ static int aio_migratepage(struct address_space *mapping, struct page *new,
- 	spin_unlock(&mapping->private_lock);
- 	return rc;
- }
-+#else
-+#define aio_migrate_folio NULL
- #endif
- 
- static const struct address_space_operations aio_ctx_aops = {
- 	.dirty_folio	= noop_dirty_folio,
--#if IS_ENABLED(CONFIG_MIGRATION)
--	.migratepage	= aio_migratepage,
--#endif
-+	.migrate_folio	= aio_migrate_folio,
- };
- 
- static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+ 			mapping = page_mapping(page);
+ 			migrate_dirty = !mapping ||
+-					mapping->a_ops->migrate_folio ||
+-					mapping->a_ops->migratepage;
++					mapping->a_ops->migrate_folio;
+ 			unlock_page(page);
+ 			if (!migrate_dirty)
+ 				goto isolate_fail_put;
+diff --git a/mm/migrate.c b/mm/migrate.c
+index bed0de86f3ae..767e41800d15 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -909,9 +909,6 @@ static int move_to_new_folio(struct folio *dst, struct folio *src,
+ 			 */
+ 			rc = mapping->a_ops->migrate_folio(mapping, dst, src,
+ 								mode);
+-		else if (mapping->a_ops->migratepage)
+-			rc = mapping->a_ops->migratepage(mapping, &dst->page,
+-							&src->page, mode);
+ 		else
+ 			rc = fallback_migrate_folio(mapping, dst, src, mode);
+ 	} else {
 -- 
 2.35.1
 
