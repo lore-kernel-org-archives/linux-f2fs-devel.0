@@ -4,61 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 878F4CCA485
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E728FCCA481
 	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jun 2022 15:03:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyxDb-0005te-1Q; Wed, 08 Jun 2022 15:03:35 +0000
+	id 1nyxDc-0003CR-Gr; Wed, 08 Jun 2022 15:03:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
  (envelope-from <willy@infradead.org>)
- id 1nyxDY-0005sH-2U; Wed, 08 Jun 2022 15:03:32 +0000
+ id 1nyxDb-0003Ba-CD; Wed, 08 Jun 2022 15:03:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=C8q0R+e/rBy0+WV0269yeWJ3JYLa6mvxcMU049tzAMQ=; b=DNWqaRz+k0I6ZcwN0ucXR46L7b
- T3ep8hf+RfIqBrAdbmeEUeOxMY+xnWBFY1aU4nUnnp052AYyfiBokyI6IWEj3sd8jTVAHolHTB3Oo
- Xxut+xWh0WOVi8QaaJwLla+AiXyDbMwI2X4k4W2d4vkNXoI/KwH0ZHV56HlLe3yaedNM=;
+ bh=jUHtPvxpwYn/CbCKtCO4gIDrDPVTvyaQoVGtIQShqV8=; b=hVE9naErP2mRgCksZZqPHg/7s2
+ JY7VhL4WdWd448TPr3kedws9Yu1++j8Sf2+hbTLyX8Ip8OPSluxJy6TNwaZSuCuSZWyNqudSZOubw
+ Wk+4n/Lm1PUzNrNoz69yw5ou9DXVgTwcBq3s8Kxaae0brFSmXox5df1mJ6JedkAkK5QI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=C8q0R+e/rBy0+WV0269yeWJ3JYLa6mvxcMU049tzAMQ=; b=K
- 4BiNh1IQvHcEzB6OS7VRBiIsXvT9n3op3KRgHir7+KTfGmfUaqfJD/FOXOqcrox+qsE8fJ1tgstlf
- WcnxBIbhVX1GOoJzVr5m+7a7+Hj05zjllN45yW5Y70pqQimXIv4MWELF1i0rAiLJv+fGZSilO1dTT
- w3uVRIzC5e1mOQ+I=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=jUHtPvxpwYn/CbCKtCO4gIDrDPVTvyaQoVGtIQShqV8=; b=IAq4YlN39JnaCaD/cgWfjDeAoJ
+ gLQVbHlSQoe3ihPeAyXtrHCLP77SeJ6x6bLmZCxh0vRBY3WfF+YYhrz17JkI1xl3/1/FvmBxMCDTx
+ SmOshHiib8Srw7IgHHUKMO/EqzWJY8KPt0q5Mp57LPsSett0pDHvmYzikh/w9GZ7WU64=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyxDW-0005FA-Q7; Wed, 08 Jun 2022 15:03:32 +0000
+ id 1nyxDY-0005FM-5n; Wed, 08 Jun 2022 15:03:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
- Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:In-Reply-To:References;
- bh=C8q0R+e/rBy0+WV0269yeWJ3JYLa6mvxcMU049tzAMQ=; b=CS/ArOOFgUazhgBuVIhXoz92Iz
- tLP1+UzjBKtIQ7Dy/5NVLgAnvWWvYfAukTChPBXBJHel7m/rRcIG1jTO3m2SVgS4dQ2RCnrpnI/2B
- 9iKrigIdgG1UysTmv8VlwqX324N8NrztRT9jaBzDbk+mLDdYbNW5pr4mZOlj2VneHAgPoio17IYwj
- m/4vzv2MBPDQc303p8MvgJU+5ViW9y/S2mis6sPjvcMV3XgTzYLKOwdVsPPuf7dw1p/zkAkFsZwEO
- lx/oyhsuVa0FzBkMKs3shdhPr6iBtAans8vQe+2EUQiQ7GyfqEuQkKrwSdQNjedKZMBZwIoJM8JrF
- UgeRmSEA==;
+ References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-Type:Content-ID:Content-Description;
+ bh=jUHtPvxpwYn/CbCKtCO4gIDrDPVTvyaQoVGtIQShqV8=; b=F0wkIwdh5JarabWL7s440hCeed
+ JG7M+RAPNvEs0qtJ0odlvedPM5u6UNyXbTmEBm4Hx35BoOjFV1oKCmRWs7a2p1I7DWzzzvlvH7zxb
+ NwAy72/kutKMINfwHD8wNSSOmlkp/ZbcRgANHqqHoyDCAzRFMPKBCLvDG/+pf/SqWyA6xVonIuvPK
+ 3Vo2mRZDOuHUiWFb793CtPIl0KBu+BtlMkUJpzHLOBoi3MTThxjS7QgPBZ4bWXFBqmBv38WY81zoI
+ IOHo+aIWKHbzH55lED0UDiMkvsiu5YHhPck8zRT5hnVZDoeLyNfO5FO+6YtWEQzYK/lnegSOXMkks
+ Gp33NrTQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nyxCt-00CjFE-KF; Wed, 08 Jun 2022 15:02:51 +0000
+ Hat Linux)) id 1nyxCu-00CjFe-U7; Wed, 08 Jun 2022 15:02:52 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Wed,  8 Jun 2022 16:02:30 +0100
-Message-Id: <20220608150249.3033815-1-willy@infradead.org>
+Date: Wed,  8 Jun 2022 16:02:43 +0100
+Message-Id: <20220608150249.3033815-14-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220608150249.3033815-1-willy@infradead.org>
+References: <20220608150249.3033815-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nyxDW-0005FA-Q7
-Subject: [f2fs-dev] [PATCH v2 00/19] Convert aops->migratepage to
- aops->migrate_folio
+X-Headers-End: 1nyxDY-0005FM-5n
+Subject: [f2fs-dev] [PATCH v2 13/19] ubifs: Convert to
+ filemap_migrate_folio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,90 +83,61 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-We're getting to the last aops that take a struct page.  The only
-remaining ones are ->writepage, ->write_begin, ->write_end and
-->error_remove_page.
+filemap_migrate_folio() is a little more general than ubifs really needs,
+but it's better to share the code.
 
-Changes from v1:
- - Remove ->isolate_page from secretmem
- - Split the movable_operations from address_space_operations
- - Drop the conversions of balloon, zsmalloc and z3fold
- - Fix the build errors with hugetlbfs
- - Fix the kerneldoc errors
- - Fix the ;; typo
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/ubifs/file.c | 29 ++---------------------------
+ 1 file changed, 2 insertions(+), 27 deletions(-)
 
-Matthew Wilcox (Oracle) (19):
-  secretmem: Remove isolate_page
-  mm: Convert all PageMovable users to movable_operations
-  fs: Add aops->migrate_folio
-  mm/migrate: Convert fallback_migrate_page() to
-    fallback_migrate_folio()
-  mm/migrate: Convert writeout() to take a folio
-  mm/migrate: Convert buffer_migrate_page() to buffer_migrate_folio()
-  mm/migrate: Convert expected_page_refs() to folio_expected_refs()
-  btrfs: Convert btree_migratepage to migrate_folio
-  nfs: Convert to migrate_folio
-  mm/migrate: Convert migrate_page() to migrate_folio()
-  mm/migrate: Add filemap_migrate_folio()
-  btrfs: Convert btrfs_migratepage to migrate_folio
-  ubifs: Convert to filemap_migrate_folio()
-  f2fs: Convert to filemap_migrate_folio()
-  aio: Convert to migrate_folio
-  hugetlb: Convert to migrate_folio
-  secretmem: Convert to migrate_folio
-  fs: Remove aops->migratepage()
-  mm/folio-compat: Remove migration compatibility functions
-
- Documentation/filesystems/locking.rst       |   5 +-
- Documentation/filesystems/vfs.rst           |  13 +-
- Documentation/vm/page_migration.rst         |  33 +--
- arch/powerpc/platforms/pseries/cmm.c        |  60 +----
- block/fops.c                                |   2 +-
- drivers/gpu/drm/i915/gem/i915_gem_userptr.c |   4 +-
- drivers/misc/vmw_balloon.c                  |  61 +----
- drivers/virtio/virtio_balloon.c             |  47 +---
- fs/aio.c                                    |  36 +--
- fs/btrfs/disk-io.c                          |  22 +-
- fs/btrfs/inode.c                            |  26 +--
- fs/ext2/inode.c                             |   4 +-
- fs/ext4/inode.c                             |   4 +-
- fs/f2fs/checkpoint.c                        |   4 +-
- fs/f2fs/data.c                              |  40 +---
- fs/f2fs/f2fs.h                              |   4 -
- fs/f2fs/node.c                              |   4 +-
- fs/gfs2/aops.c                              |   2 +-
- fs/hugetlbfs/inode.c                        |  23 +-
- fs/iomap/buffered-io.c                      |  25 --
- fs/nfs/file.c                               |   4 +-
- fs/nfs/internal.h                           |   6 +-
- fs/nfs/write.c                              |  16 +-
- fs/ntfs/aops.c                              |   6 +-
- fs/ocfs2/aops.c                             |   2 +-
- fs/ubifs/file.c                             |  29 +--
- fs/xfs/xfs_aops.c                           |   2 +-
- fs/zonefs/super.c                           |   2 +-
- include/linux/balloon_compaction.h          |   6 +-
- include/linux/buffer_head.h                 |  10 +
- include/linux/fs.h                          |  20 +-
- include/linux/iomap.h                       |   6 -
- include/linux/migrate.h                     |  48 ++--
- include/linux/page-flags.h                  |   2 +-
- include/linux/pagemap.h                     |   6 +
- include/uapi/linux/magic.h                  |   4 -
- mm/balloon_compaction.c                     |  10 +-
- mm/compaction.c                             |  34 ++-
- mm/folio-compat.c                           |  22 --
- mm/ksm.c                                    |   2 +-
- mm/migrate.c                                | 238 ++++++++++++--------
- mm/migrate_device.c                         |   3 +-
- mm/secretmem.c                              |  13 +-
- mm/shmem.c                                  |   2 +-
- mm/swap_state.c                             |   2 +-
- mm/util.c                                   |   4 +-
- mm/z3fold.c                                 |  82 +------
- mm/zsmalloc.c                               | 102 ++-------
- 48 files changed, 367 insertions(+), 735 deletions(-)
-
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index 04ced154960f..f2353dd676ef 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1461,29 +1461,6 @@ static bool ubifs_dirty_folio(struct address_space *mapping,
+ 	return ret;
+ }
+ 
+-#ifdef CONFIG_MIGRATION
+-static int ubifs_migrate_page(struct address_space *mapping,
+-		struct page *newpage, struct page *page, enum migrate_mode mode)
+-{
+-	int rc;
+-
+-	rc = migrate_page_move_mapping(mapping, newpage, page, 0);
+-	if (rc != MIGRATEPAGE_SUCCESS)
+-		return rc;
+-
+-	if (PagePrivate(page)) {
+-		detach_page_private(page);
+-		attach_page_private(newpage, (void *)1);
+-	}
+-
+-	if (mode != MIGRATE_SYNC_NO_COPY)
+-		migrate_page_copy(newpage, page);
+-	else
+-		migrate_page_states(newpage, page);
+-	return MIGRATEPAGE_SUCCESS;
+-}
+-#endif
+-
+ static bool ubifs_release_folio(struct folio *folio, gfp_t unused_gfp_flags)
+ {
+ 	struct inode *inode = folio->mapping->host;
+@@ -1649,10 +1626,8 @@ const struct address_space_operations ubifs_file_address_operations = {
+ 	.write_end      = ubifs_write_end,
+ 	.invalidate_folio = ubifs_invalidate_folio,
+ 	.dirty_folio	= ubifs_dirty_folio,
+-#ifdef CONFIG_MIGRATION
+-	.migratepage	= ubifs_migrate_page,
+-#endif
+-	.release_folio    = ubifs_release_folio,
++	.migrate_folio	= filemap_migrate_folio,
++	.release_folio	= ubifs_release_folio,
+ };
+ 
+ const struct inode_operations ubifs_file_inode_operations = {
 -- 
 2.35.1
 
