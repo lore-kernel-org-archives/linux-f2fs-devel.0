@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12098C43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jun 2022 15:03:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8F53CC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Jun 2022 15:03:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1nyxDO-0004Ft-ML; Wed, 08 Jun 2022 15:03:23 +0000
+	id 1nyxDY-0005s9-1p; Wed, 08 Jun 2022 15:03:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
  (envelope-from <willy@infradead.org>)
- id 1nyxDN-0004FU-Ls; Wed, 08 Jun 2022 15:03:22 +0000
+ id 1nyxDW-0005r7-Oy; Wed, 08 Jun 2022 15:03:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QtCpoMtKxHZJjZ0zPsproZBlL3YauaUrqZHnxvuWLJc=; b=G4EXypOwKRa2i+skdtz4i+kJT0
- Z5QXv9Ve7eLDNLyeedJ6IqqjAYDDGWEin8tkYIa+mASsc1kBCtxqyF4cA+DNicfXb5SYpZFRO2VZW
- ZoZxhg8uoZQv/NdJGyqO24P23SlwU/eZY/kRXc1DtCTvHMCY4HKl7uJ2YT9aZ0mybsfA=;
+ bh=ebo5nyfkwGkX0SM0pROh1Dct7QqdSa3ZjR42/FbSW98=; b=ajTpD4eIX4IFSCAILa5MhcNoCP
+ edFHFX1FY+Hd7/lgLTjM19ebQpGRQTfCDHrBfzNKv81oSQIqt3nwVjW7YDeM3+plGINDkSHNe2xqr
+ X5MLIbVFiSIyNLPoGx+9FM9xnoXWOVc2ijUHqkW3tTj+vr60Ye4S4QITxuM96YfohrhI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,35 +31,35 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=QtCpoMtKxHZJjZ0zPsproZBlL3YauaUrqZHnxvuWLJc=; b=mzvPppBt7TPoO2CiHhkiT25seT
- Bhc7KLid2yMowsgC0HqMS0gWDOloRd+UFuqNyFbSbb5urTM1+dv2QQdmZGGxF7sx67Rk3Wg7ILsvg
- a3F4BGNkIk+LmXQR16l3jnfhA6s3q+g6dr2sHmJ1SL3uFsrU3SKsrLP5aLPDmCDql0Dw=;
+ bh=ebo5nyfkwGkX0SM0pROh1Dct7QqdSa3ZjR42/FbSW98=; b=P2oXNvU3mUv7DIkGQE83LrRSvA
+ R+Ew+vHJSCBRXg4EaoWyJPV3wBUKS5HtS01U6Kv+G+oD/07fhEQyuXBWrPbiRCgHbLVCzIALH46MO
+ H9TQAfJjHsC/LkIG6gZzo8H03lpI50efl+1QN5Ex94eET/YThL5A2wI6arSbBqGH8XB8=;
 Received: from casper.infradead.org ([90.155.50.34])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1nyxDN-009xzO-DL; Wed, 08 Jun 2022 15:03:21 +0000
+ id 1nyxDQ-009xzV-Jd; Wed, 08 Jun 2022 15:03:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
  References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-Type:Content-ID:Content-Description;
- bh=QtCpoMtKxHZJjZ0zPsproZBlL3YauaUrqZHnxvuWLJc=; b=h1JJSDwi8sTy0t0Nv3IdyI/SSp
- jIF5pVOj06evVaP6sUZABnjlIHzpvlc6aJOURe5UCkHnW3iI3QP4xuoymAKnzwHaD8MtjzeYqIepM
- 2Ts3fRtS1qfeNFFYMc3nNHdcseIK1Vy47ZmaV51+uXh6fNAnQeRAvvdhoGqHWjTFkPzF0v9O7acf2
- xq4M713rzitxm3iOxcMIjCepwumvPeE3Jns/IcE3r6mlBV3OO8XJT8WSjSePKvPOSJ3+fKFPOWi4P
- sRSqkPvbSbV6mgnrsExhzcPOl2ztfXK38fZitzA3s6knKBMiAmpJwGCXnWQovlCajyK2bKysaYFsQ
- IcGOq5Vg==;
+ bh=ebo5nyfkwGkX0SM0pROh1Dct7QqdSa3ZjR42/FbSW98=; b=VP4hPmud7SPFmC3bIKYlVqSBNM
+ ye5qs83/sHqcoYsTLqQd+m9uMu5ak7kQqhrxPejY6kjGezj2IywtVb2KqugczyFSDrVR4wV9pSrVK
+ iSf/0bC449kpqY51nqYYffjd6WE1rtpD+iRnk+HIYHGnjNZhOOroRGUq/pB0InvMW4DRxGDTxdKau
+ LV1b+mg2Re0TultwkHBXglCIcQryDYl7+UF2rFc7QVpqSYJdzc0Al5iEjRY7dgk86mOekBEL9k1YS
+ ihpfsRLVoOMwePjy82T+0hAWr4N6/fZmtc9OYicZTzmrFQgTMbaOM2r5zfKDW1WGYyLJ19faZbb2i
+ WKGEyvZA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1nyxCv-00CjFo-BL; Wed, 08 Jun 2022 15:02:53 +0000
+ Hat Linux)) id 1nyxCt-00CjFK-V0; Wed, 08 Jun 2022 15:02:51 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Wed,  8 Jun 2022 16:02:48 +0100
-Message-Id: <20220608150249.3033815-19-willy@infradead.org>
+Date: Wed,  8 Jun 2022 16:02:33 +0100
+Message-Id: <20220608150249.3033815-4-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220608150249.3033815-1-willy@infradead.org>
 References: <20220608150249.3033815-1-willy@infradead.org>
 MIME-Version: 1.0
-X-Headers-End: 1nyxDN-009xzO-DL
-Subject: [f2fs-dev] [PATCH v2 18/19] fs: Remove aops->migratepage()
+X-Headers-End: 1nyxDQ-009xzV-Jd
+Subject: [f2fs-dev] [PATCH v2 03/19] fs: Add aops->migrate_folio
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,66 +83,177 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-With all users converted to migrate_folio(), remove this operation.
+Provide a folio-based replacement for aops->migratepage.  Update the
+documentation to document migrate_folio instead of migratepage.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/fs.h | 2 --
- mm/compaction.c    | 5 ++---
- mm/migrate.c       | 3 ---
- 3 files changed, 2 insertions(+), 8 deletions(-)
+ Documentation/filesystems/locking.rst |  5 ++--
+ Documentation/filesystems/vfs.rst     | 13 ++++++-----
+ Documentation/vm/page_migration.rst   | 33 ++++++++++++++-------------
+ include/linux/fs.h                    |  4 +++-
+ mm/compaction.c                       |  4 +++-
+ mm/migrate.c                          | 11 +++++----
+ 6 files changed, 40 insertions(+), 30 deletions(-)
 
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index c0fe711f14d3..3d28b23676bd 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -253,7 +253,8 @@ prototypes::
+ 	void (*free_folio)(struct folio *);
+ 	int (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+ 	bool (*isolate_page) (struct page *, isolate_mode_t);
+-	int (*migratepage)(struct address_space *, struct page *, struct page *);
++	int (*migrate_folio)(struct address_space *, struct folio *dst,
++			struct folio *src, enum migrate_mode);
+ 	void (*putback_page) (struct page *);
+ 	int (*launder_folio)(struct folio *);
+ 	bool (*is_partially_uptodate)(struct folio *, size_t from, size_t count);
+@@ -281,7 +282,7 @@ release_folio:		yes
+ free_folio:		yes
+ direct_IO:
+ isolate_page:		yes
+-migratepage:		yes (both)
++migrate_folio:		yes (both)
+ putback_page:		yes
+ launder_folio:		yes
+ is_partially_uptodate:	yes
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index a08c652467d7..3ae1b039b03f 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -740,7 +740,8 @@ cache in your filesystem.  The following members are defined:
+ 		/* isolate a page for migration */
+ 		bool (*isolate_page) (struct page *, isolate_mode_t);
+ 		/* migrate the contents of a page to the specified target */
+-		int (*migratepage) (struct page *, struct page *);
++		int (*migrate_folio)(struct mapping *, struct folio *dst,
++				struct folio *src, enum migrate_mode);
+ 		/* put migration-failed page back to right list */
+ 		void (*putback_page) (struct page *);
+ 		int (*launder_folio) (struct folio *);
+@@ -935,12 +936,12 @@ cache in your filesystem.  The following members are defined:
+ 	is successfully isolated, VM marks the page as PG_isolated via
+ 	__SetPageIsolated.
+ 
+-``migrate_page``
++``migrate_folio``
+ 	This is used to compact the physical memory usage.  If the VM
+-	wants to relocate a page (maybe off a memory card that is
+-	signalling imminent failure) it will pass a new page and an old
+-	page to this function.  migrate_page should transfer any private
+-	data across and update any references that it has to the page.
++	wants to relocate a folio (maybe from a memory device that is
++	signalling imminent failure) it will pass a new folio and an old
++	folio to this function.  migrate_folio should transfer any private
++	data across and update any references that it has to the folio.
+ 
+ ``putback_page``
+ 	Called by the VM when isolated page's migration fails.
+diff --git a/Documentation/vm/page_migration.rst b/Documentation/vm/page_migration.rst
+index 8c5cb8147e55..e0f73ddfabb1 100644
+--- a/Documentation/vm/page_migration.rst
++++ b/Documentation/vm/page_migration.rst
+@@ -181,22 +181,23 @@ which are function pointers of struct address_space_operations.
+    Once page is successfully isolated, VM uses page.lru fields so driver
+    shouldn't expect to preserve values in those fields.
+ 
+-2. ``int (*migratepage) (struct address_space *mapping,``
+-|	``struct page *newpage, struct page *oldpage, enum migrate_mode);``
+-
+-   After isolation, VM calls migratepage() of driver with the isolated page.
+-   The function of migratepage() is to move the contents of the old page to the
+-   new page
+-   and set up fields of struct page newpage. Keep in mind that you should
+-   indicate to the VM the oldpage is no longer movable via __ClearPageMovable()
+-   under page_lock if you migrated the oldpage successfully and returned
+-   MIGRATEPAGE_SUCCESS. If driver cannot migrate the page at the moment, driver
+-   can return -EAGAIN. On -EAGAIN, VM will retry page migration in a short time
+-   because VM interprets -EAGAIN as "temporary migration failure". On returning
+-   any error except -EAGAIN, VM will give up the page migration without
+-   retrying.
+-
+-   Driver shouldn't touch the page.lru field while in the migratepage() function.
++2. ``int (*migrate_folio) (struct address_space *mapping,``
++|	``struct folio *dst, struct folio *src, enum migrate_mode);``
++
++   After isolation, VM calls the driver's migrate_folio() with the
++   isolated folio.  The purpose of migrate_folio() is to move the contents
++   of the source folio to the destination folio and set up the fields
++   of destination folio.  Keep in mind that you should indicate to the
++   VM the source folio is no longer movable via __ClearPageMovable()
++   under folio if you migrated the source successfully and returned
++   MIGRATEPAGE_SUCCESS.  If driver cannot migrate the folio at the
++   moment, driver can return -EAGAIN. On -EAGAIN, VM will retry folio
++   migration in a short time because VM interprets -EAGAIN as "temporary
++   migration failure".  On returning any error except -EAGAIN, VM will
++   give up the folio migration without retrying.
++
++   Driver shouldn't touch the folio.lru field while in the migrate_folio()
++   function.
+ 
+ 3. ``void (*putback_page)(struct page *);``
+ 
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9e6b17da4e11..7e06919b8f60 100644
+index 5d8ee3155ca2..47431cf8fbb3 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -367,8 +367,6 @@ struct address_space_operations {
+@@ -362,9 +362,11 @@ struct address_space_operations {
+ 	void (*free_folio)(struct folio *folio);
+ 	ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+ 	/*
+-	 * migrate the contents of a page to the specified target. If
++	 * migrate the contents of a folio to the specified target. If
+ 	 * migrate_mode is MIGRATE_ASYNC, it must not block.
  	 */
- 	int (*migrate_folio)(struct address_space *, struct folio *dst,
- 			struct folio *src, enum migrate_mode);
--	int (*migratepage) (struct address_space *,
--			struct page *, struct page *, enum migrate_mode);
++	int (*migrate_folio)(struct address_space *, struct folio *dst,
++			struct folio *src, enum migrate_mode);
+ 	int (*migratepage) (struct address_space *,
+ 			struct page *, struct page *, enum migrate_mode);
  	int (*launder_folio)(struct folio *);
- 	bool (*is_partially_uptodate) (struct folio *, size_t from,
- 			size_t count);
 diff --git a/mm/compaction.c b/mm/compaction.c
-index 458f49f9ab09..a2c53fcf933e 100644
+index f23efba1d118..458f49f9ab09 100644
 --- a/mm/compaction.c
 +++ b/mm/compaction.c
-@@ -1031,7 +1031,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 
- 			/*
- 			 * Only pages without mappings or that have a
--			 * ->migratepage callback are possible to migrate
-+			 * ->migrate_folio callback are possible to migrate
- 			 * without blocking. However, we can be racing with
- 			 * truncation so it's necessary to lock the page
- 			 * to stabilise the mapping as truncation holds
-@@ -1043,8 +1043,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+@@ -1042,7 +1042,9 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 				goto isolate_fail_put;
  
  			mapping = page_mapping(page);
- 			migrate_dirty = !mapping ||
--					mapping->a_ops->migrate_folio ||
--					mapping->a_ops->migratepage;
-+					mapping->a_ops->migrate_folio;
+-			migrate_dirty = !mapping || mapping->a_ops->migratepage;
++			migrate_dirty = !mapping ||
++					mapping->a_ops->migrate_folio ||
++					mapping->a_ops->migratepage;
  			unlock_page(page);
  			if (!migrate_dirty)
  				goto isolate_fail_put;
 diff --git a/mm/migrate.c b/mm/migrate.c
-index bed0de86f3ae..767e41800d15 100644
+index 3ce6fee87efa..e064b998ead0 100644
 --- a/mm/migrate.c
 +++ b/mm/migrate.c
-@@ -909,9 +909,6 @@ static int move_to_new_folio(struct folio *dst, struct folio *src,
- 			 */
- 			rc = mapping->a_ops->migrate_folio(mapping, dst, src,
- 								mode);
+@@ -856,14 +856,17 @@ static int move_to_new_folio(struct folio *dst, struct folio *src,
+ 
+ 		if (!mapping)
+ 			rc = migrate_page(mapping, &dst->page, &src->page, mode);
 -		else if (mapping->a_ops->migratepage)
--			rc = mapping->a_ops->migratepage(mapping, &dst->page,
--							&src->page, mode);
++		else if (mapping->a_ops->migrate_folio)
+ 			/*
+-			 * Most pages have a mapping and most filesystems
+-			 * provide a migratepage callback. Anonymous pages
++			 * Most folios have a mapping and most filesystems
++			 * provide a migrate_folio callback. Anonymous folios
+ 			 * are part of swap space which also has its own
+-			 * migratepage callback. This is the most common path
++			 * migrate_folio callback. This is the most common path
+ 			 * for page migration.
+ 			 */
++			rc = mapping->a_ops->migrate_folio(mapping, dst, src,
++								mode);
++		else if (mapping->a_ops->migratepage)
+ 			rc = mapping->a_ops->migratepage(mapping, &dst->page,
+ 							&src->page, mode);
  		else
- 			rc = fallback_migrate_folio(mapping, dst, src, mode);
- 	} else {
 -- 
 2.35.1
 
