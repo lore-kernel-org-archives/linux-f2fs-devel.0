@@ -4,70 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1ADD3CCA47A
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jun 2022 20:18:38 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 655FFC43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jun 2022 20:22:42 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o1vwq-0008T6-K7; Thu, 16 Jun 2022 20:18:37 +0000
+	id 1o1w0o-0000y8-2n; Thu, 16 Jun 2022 20:22:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1o1vwp-0008Sl-9t
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 20:18:36 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1o1w0m-0000y1-MF
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 20:22:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+Hb9OJF0P7cNVWizEtJgiPgEvlDIEUZvn7xsWsrJMok=; b=QgZZtAZ1S+X2m93aIDb+tWNC9s
- fCdxn7kIvf0+wcrkWB/U+HaRJuQok+C+EJOfNhYn9RS87jBXf16atM9xIQlw7Ot3ldRaCEx+GXyQd
- AD94s+S+LX2QayNlL2hW7osSnDUBVPhZhC+E7JYP7gNWFdze8R/KpFz92EpECZSbDOig=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=+Hb9OJF0P7cNVWizEtJgiPgEvlDIEUZvn7xsWsrJMok=; b=hHek5VY698v7vEZcEwgdQGIQhx
- H/skiCc7QLFqxvvBUqhUexHzH7CdaEOvxj7MduYgtK5Fiko8+6xoFEzjv0wuuQqhIy7IAr+r/WZvW
- DF9KMD//AjPDDcE5kf4as6NdNYjn5BTEMZ5MiQ02zqthW4X2KUGj1Rp507MXsQmHDrLE=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=tGjyW02q9tyy6b121qkMRF0CxOB30x+8O9MvFUe/k7Y=; b=QRFgKQO8FreVFZqIThml8N4+iV
+ NvKdKjtFuQyFJg4igVZzkV5Q2KgMU55G+IFUdTKNSQgf1iFNTOVyFY5V0VwF/auuNr8xBQ4Z+coQJ
+ g3y5kZpuyr1BK952fNjMzww45jAAZtgcKJHxvzt+Ai4F5x8v5hQ4PsEB6DlTqrSh8tOU=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=tGjyW02q9tyy6b121qkMRF0CxOB30x+8O9MvFUe/k7Y=; b=c
+ tUc05i/Fwn87MIZjtmmaQJPo64RondDmHH0oEEemuVfdIf3geShhv9n2f4ONVX8mabWBK92OEnkbX
+ gm7cNuvi/sT2qo4HObTlk2fH2eX95FBG6yXPtmvmywaidvuLuksDpTb2WeQUsLUq5LsqXNfPM8PYs
+ 6dhXkLyIb7+9sXsg=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o1vwl-004Sqi-H6
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 20:18:35 +0000
+ id 1o1w0h-004Syz-Tt
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 20:22:39 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 3F35CB825FE
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 7FC2D61DD3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 16 Jun 2022 20:18:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B2AC3411F;
- Thu, 16 Jun 2022 20:18:15 +0000 (UTC)
+ Thu, 16 Jun 2022 20:22:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A0B0C3411B;
+ Thu, 16 Jun 2022 20:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1655410696;
- bh=iOxOv0QdDiqnoNfajHWkadykNw8yw6SMHWPSQ+/Z1Cs=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=XCySuz3YzYlgIHp8UL9jy8oSMx9yC+Hk6wTrq88c+IqE3hXqu0MY+j4K/xAAKTOAB
- sAbep1qh9fUb8cPkmzPaQXFgxh+7nOMstYpxFHqIhVpafDfYexM9uSN3fhdwzTOemJ
- vVKthy2fIB4Jh7ii0yur32iWQbzJuBIUYh4gNt3v2cHdnfB4jmyxfEh79bOgfZG9iS
- MwwX6yNWttTI2eKEHpQxjcfMtWiL98SiARcc+j/jzMKfzRbnNY05boFEMDVUk5YG+S
- rtMLJEhH/UUTKqs7mFfPlqVdeaqbFX2S7jZCkEZDBN+SJH0Yk7KT3G3/QA0AbK9qR/
- ASb2CbGMlBDdA==
+ s=k20201202; t=1655410949;
+ bh=M3h58AGOHHTXWiuwNhC9HEL2EAhvwozEXVfdsCNjbvM=;
+ h=From:To:Cc:Subject:Date:From;
+ b=MjJzjusn6ewv72iXR7k0V9x/KXqlia2Fj9JbaIi0pnWWHSBCRL/nBqC84wAMXdJCF
+ uUWcNCHMHFrddP4MYyXNp+Oy0fybAkSIH95xeQ6Fk9zuPmQC3WPQjcduLzixxM7o8G
+ 38TPZXSveYCnsy3jrG82hgamJWRowDxP5Jnu4mwmXh5fHMijOx1AFSFhvqbdv/EdVG
+ TaI45Xjwf/GQa0Js+dwSyIt3oQHXLHaIK3t4Ci6uJA/1OMEXWvqW6rq9nnmGc9+5jr
+ JTCmydNG7ltO+qEaQ/uPUkbQlP0pBkiGsWa4Up7jj7oH5TIV2ObhSOLE3aFhumB652
+ gWnXZB3m31aSw==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Thu, 16 Jun 2022 13:15:00 -0700
-Message-Id: <20220616201506.124209-3-ebiggers@kernel.org>
+Date: Thu, 16 Jun 2022 13:21:41 -0700
+Message-Id: <20220616202141.125079-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220616201506.124209-1-ebiggers@kernel.org>
-References: <20220616201506.124209-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1o1vwl-004Sqi-H6
-Subject: [f2fs-dev] [PATCH v3 2/8] vfs: support STATX_DIOALIGN on block
- devices
+X-Headers-End: 1o1w0h-004Syz-Tt
+Subject: [f2fs-dev] [man-pages RFC PATCH] statx.2,
+ open.2: document STATX_DIOALIGN
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,94 +77,143 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-block@vger.kernel.org, linux-api@vger.kernel.org,
+Cc: linux-man@vger.kernel.org, linux-api@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- Keith Busch <kbusch@kernel.org>, linux-ext4@vger.kernel.org
+ linux-block@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add support for STATX_DIOALIGN to block devices, so that direct I/O
-alignment restrictions are exposed to userspace in a generic way.
-
-Note that this breaks the tradition of stat operating only on the block
-device node, not the block device itself.  However, it was felt that
-doing this is preferable, in order to make the interface useful and
-avoid needing separate interfaces for regular files and block devices.
+Document the proposed STATX_DIOALIGN support for statx()
+(https://lore.kernel.org/linux-fsdevel/20220616201506.124209-1-ebiggers@kernel.org).
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/stat.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ man2/open.2  | 43 ++++++++++++++++++++++++++++++++-----------
+ man2/statx.2 | 32 +++++++++++++++++++++++++++++++-
+ 2 files changed, 63 insertions(+), 12 deletions(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index a7930d7444830..c1ce447c1a383 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -5,6 +5,7 @@
-  *  Copyright (C) 1991, 1992  Linus Torvalds
-  */
- 
-+#include <linux/blkdev.h>
- #include <linux/export.h>
- #include <linux/mm.h>
- #include <linux/errno.h>
-@@ -198,6 +199,35 @@ int getname_statx_lookup_flags(int flags)
- 	return lookup_flags;
- }
- 
-+/* Handle STATX_DIOALIGN for block devices. */
-+static inline void handle_bdev_dioalign(struct path *path, u32 request_mask,
-+					struct kstat *stat)
-+{
-+#ifdef CONFIG_BLOCK
-+	struct inode *inode;
-+	struct block_device *bdev;
-+	unsigned int lbs;
+diff --git a/man2/open.2 b/man2/open.2
+index d1485999f..ef29847c3 100644
+--- a/man2/open.2
++++ b/man2/open.2
+@@ -1732,21 +1732,42 @@ of user-space buffers and the file offset of I/Os.
+ In Linux alignment
+ restrictions vary by filesystem and kernel version and might be
+ absent entirely.
+-However there is currently no filesystem\-independent
+-interface for an application to discover these restrictions for a given
+-file or filesystem.
+-Some filesystems provide their own interfaces
+-for doing so, for example the
++The handling of misaligned
++.B O_DIRECT
++I/Os also varies; they can either fail with
++.B EINVAL
++or fall back to buffered I/O.
++.PP
++Since Linux 5.20,
++.B O_DIRECT
++support and alignment restrictions for a file can be queried using
++.BR statx (2),
++using the
++.B STATX_DIOALIGN
++flag.
++Support for
++.B STATX_DIOALIGN
++varies by filesystem; see
++.BR statx (2).
++.PP
++Some filesystems provide their own interfaces for querying
++.B O_DIRECT
++alignment restrictions, for example the
+ .B XFS_IOC_DIOINFO
+ operation in
+ .BR xfsctl (3).
++.B STATX_DIOALIGN
++should be used instead when it is available.
+ .PP
+-Under Linux 2.4, transfer sizes, the alignment of the user buffer,
+-and the file offset must all be multiples of the logical block size
+-of the filesystem.
+-Since Linux 2.6.0, alignment to the logical block size of the
+-underlying storage (typically 512 bytes) suffices.
+-The logical block size can be determined using the
++If none of the above is available, then direct I/O support and alignment
++restrictions can only be assumed from known characteristics of the filesystem,
++the individual file, the underlying storage device(s), and the kernel version.
++In Linux 2.4, most block device based filesystems require that the file offset
++and the length and memory address of all I/O segments be multiples of the
++filesystem block size (typically 4096 bytes).
++In Linux 2.6.0, this was relaxed to the logical block size of the block device
++(typically 512 bytes).
++A block device's logical block size can be determined using the
+ .BR ioctl (2)
+ .B BLKSSZGET
+ operation or from the shell using the command:
+diff --git a/man2/statx.2 b/man2/statx.2
+index a8620be6f..fff0a63ec 100644
+--- a/man2/statx.2
++++ b/man2/statx.2
+@@ -61,7 +61,12 @@ struct statx {
+        containing the filesystem where the file resides */
+     __u32 stx_dev_major;   /* Major ID */
+     __u32 stx_dev_minor;   /* Minor ID */
 +
-+	if (likely(!(request_mask & STATX_DIOALIGN)))
-+		return;
+     __u64 stx_mnt_id;      /* Mount ID */
 +
-+	inode = d_backing_inode(path->dentry);
-+	if (!S_ISBLK(inode->i_mode))
-+		return;
-+
-+	bdev = blkdev_get_no_open(inode->i_rdev);
-+	if (!bdev)
-+		return;
-+
-+	lbs = bdev_logical_block_size(bdev);
-+	stat->dio_mem_align = lbs;
-+	stat->dio_offset_align = lbs;
-+	stat->result_mask |= STATX_DIOALIGN;
-+
-+	blkdev_put_no_open(bdev);
-+#endif /* CONFIG_BLOCK */
-+}
-+
- /**
-  * vfs_statx - Get basic and extra attributes by filename
-  * @dfd: A file descriptor representing the base dir for a relative filename
-@@ -230,11 +260,16 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
- 		goto out;
- 
- 	error = vfs_getattr(&path, stat, request_mask, flags);
-+
- 	stat->mnt_id = real_mount(path.mnt)->mnt_id;
- 	stat->result_mask |= STATX_MNT_ID;
-+
- 	if (path.mnt->mnt_root == path.dentry)
- 		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
- 	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
-+
-+	handle_bdev_dioalign(&path, request_mask, stat);
-+
- 	path_put(&path);
- 	if (retry_estale(error, lookup_flags)) {
- 		lookup_flags |= LOOKUP_REVAL;
++    /* Direct I/O alignment restrictions */
++    __u32 stx_dio_mem_align;
++    __u32 stx_dio_offset_align;
+ };
+ .EE
+ .in
+@@ -244,8 +249,11 @@ STATX_SIZE	Want stx_size
+ STATX_BLOCKS	Want stx_blocks
+ STATX_BASIC_STATS	[All of the above]
+ STATX_BTIME	Want stx_btime
++STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
++         	This is deprecated and should not be used.
+ STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+-STATX_ALL	[All currently available fields]
++STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
++              	(since Linux 5.20; support varies by filesystem)
+ .TE
+ .in
+ .PP
+@@ -406,6 +414,28 @@ This is the same number reported by
+ .BR name_to_handle_at (2)
+ and corresponds to the number in the first field in one of the records in
+ .IR /proc/self/mountinfo .
++.TP
++.I stx_dio_mem_align
++The alignment (in bytes) required for user memory buffers for direct I/O
++.BR "" ( O_DIRECT )
++on this file. or 0 if direct I/O is not supported on this file.
++.IP
++.B STATX_DIOALIGN
++.IR "" ( stx_dio_mem_align
++and
++.IR stx_dio_offset_align )
++is supported on block devices since Linux 5.20.
++The support on regular files varies by filesystem; it is supported by ext4 and
++f2fs since Linux 5.20.
++.TP
++.I stx_dio_offset_align
++The alignment (in bytes) required for file offsets and I/O segment lengths for
++direct I/O
++.BR "" ( O_DIRECT )
++on this file, or 0 if direct I/O is not supported on this file.
++This will only be nonzero if
++.I stx_dio_mem_align
++is nonzero, and vice versa.
+ .PP
+ For further information on the above fields, see
+ .BR inode (7).
 -- 
 2.36.1
 
