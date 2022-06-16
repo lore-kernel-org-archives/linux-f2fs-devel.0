@@ -4,68 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C0534CCA47A
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jun 2022 20:18:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6400DCCA481
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jun 2022 20:18:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o1vwk-0008Rv-6b; Thu, 16 Jun 2022 20:18:31 +0000
+	id 1o1vwl-0000ZV-Aw; Thu, 16 Jun 2022 20:18:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1o1vwj-0008Rk-7r
+ (envelope-from <ebiggers@kernel.org>) id 1o1vwk-0000ZF-A0
  for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 20:18:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YZbo0H/dA7rC2UEnryNIZTqD/0DUVPDwvXxQ//0oEsg=; b=IS+1AayW+9JnRCMhEBYbp+sZ9U
- OHITDg3lrkkZC3UKteibfB+h9Lb2cZOx4CTJZgZAwYekkvM+g000AEua6udhuiKC8nCcvb1z1HbJA
- SaH/xbGWmJLTX/1zeWtHPyTo7ETxJakO0n8xYa9al8FRKyx7kLJaH/QiXFmdn80kW2oU=;
+ bh=h1txY4jrEkhTyxbsehk4iPdRqwnv0v9EigVsPTc5Y8o=; b=PPjhdI6me2GmCOzx9U2BV3Ieg8
+ yj96tO8XW76fTmnfR6nTvJJ9Fo/L5und6sSKmHOjoHCvO0QqJNCY6u5MC0TQXCad8QsBi3Ss2A8Sn
+ SpfKy9MIZd10/T8EnyVWP41/w2jIs9B9ej/s3dM4ook7v05U9DwMJiE+3Gv/BY13Uss4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=YZbo0H/dA7rC2UEnryNIZTqD/0DUVPDwvXxQ//0oEsg=; b=e
- 7PbeU/NCt38VYe6h163y6n3j5JHHm1GsvwwNj3HWc8mAKEfswwfx7ZpEF4no6yR7NwWGw2iWAnnAK
- VPjWQiRmtocfocCkQaj/RxHNBZaxzFLreJAbZMMv3ymjo/eZZlB8J4s7w277Qhx5xJk90mOMrmrBh
- l7vG2t6SSMxKugRo=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=h1txY4jrEkhTyxbsehk4iPdRqwnv0v9EigVsPTc5Y8o=; b=DgzUAmCyHDjbq6AvRQZ0XCjt3H
+ ssnLxS9kNZnkU+qvaj8MsXUZl9+UQjQ3TTOzCNALzUzMjsKXP5NWZFClfiIyieifzAnRJczArRmkC
+ yMZAbvrodvT3d12f1ik6zl2n/yAwNwO+AZOjF9IeM/uqVL4vBZM9Hu15FBrMahVBa4rU=;
 Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o1vwc-0005ai-Bp
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 20:18:29 +0000
+ id 1o1vwe-0005aq-7W
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 20:18:30 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 73882B825C6
+ by ams.source.kernel.org (Postfix) with ESMTPS id 48DF7B8241A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 16 Jun 2022 20:18:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B59C34114;
- Thu, 16 Jun 2022 20:18:14 +0000 (UTC)
+ Thu, 16 Jun 2022 20:18:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D11D9C3411F;
+ Thu, 16 Jun 2022 20:18:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1655410695;
- bh=uHvrE+2KCGPR9N5AeXBgCBnYJvNxKl74BJyMaayUJlE=;
- h=From:To:Cc:Subject:Date:From;
- b=FE409cquZhNFTvUkhTz7aypxXcp8WVokxBhnOgrLH7rlE98ZDV8l1GdGcslnY0oFx
- ByeEMsNBaXb9VYG8LFVjl1S+79f5i0YjMkfvsUE9Wj3myE3PSK8zfRz0/EtowyYHBO
- iOw2iLltOMlau7xeqpRv3LdCm6DGDeTZUolKc2IzonnbO9+6YbZOwCNo8qGlEkRTWs
- hqpSWrzTz01/8v2Q3ZThHothFD/mn5Nhs+a+vL4u/yf4s+PM80d04AO9bKkU0tNZug
- OemXtvGjdbXjqfvdtyPIPCgcGjA799xlqEljsmrYSlYgC4GqLRYODBx4O/scdI2HT6
- b92/3YjwKg2Ow==
+ s=k20201202; t=1655410698;
+ bh=rI5sJt81Ou1NC5AiKCGQE1sxPyKzxajDBp8KDiFqDgo=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=T4K//9g7LoKFtLBxQiI7A4UbFYnO1PvmVLcRxNgc3Je0qFDlC3NWBYgTkLWk6+sOX
+ 3F4EIx7V9BtYDB4Kh0nOsLjx4tlB6md1DuuaVvFRaL1pEPUuTg89ZBVyBEsOfc2A0N
+ bMHqq72VcXX8EWQInOyFmnVaV2L9Rt9M2J5saRxAxASZMcZtosnLdbnxJ58Z1OH6xS
+ 4ByFDauC50BLFtzBNQj2O1coP2O5K7ws1MvUPuouQfbO8vWVpibGWS/+8uGvbXhWLY
+ PCaYgR0YWVVtTsVfx5nxi38ecn45+hXB0WzcgnPViSzdv7kjiggIOhVeOZtXytpHj8
+ igesoUqqFF/5A==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Thu, 16 Jun 2022 13:14:58 -0700
-Message-Id: <20220616201506.124209-1-ebiggers@kernel.org>
+Date: Thu, 16 Jun 2022 13:15:05 -0700
+Message-Id: <20220616201506.124209-8-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220616201506.124209-1-ebiggers@kernel.org>
+References: <20220616201506.124209-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1o1vwc-0005ai-Bp
-Subject: [f2fs-dev] [PATCH v3 0/8] make statx() return DIO alignment
- information
+X-Headers-End: 1o1vwe-0005aq-7W
+Subject: [f2fs-dev] [PATCH v3 7/8] f2fs: simplify f2fs_force_buffered_io()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,65 +86,71 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patchset makes the statx() system call return direct I/O (DIO)
-alignment information.  This allows userspace to easily determine
-whether a file supports DIO, and if so with what alignment restrictions.
+From: Eric Biggers <ebiggers@google.com>
 
-Patch 1 adds the basic VFS support for STATX_DIOALIGN.  Patch 2 wires it
-up for all block device files.  The remaining patches wire it up for
-regular files on ext4 and f2fs.  Support for regular files on other
-filesystems can be added later.
+f2fs only allows direct I/O that is aligned to the filesystem block
+size.  Given that fact, simplify f2fs_force_buffered_io() by removing
+the redundant call to block_unaligned_IO().
 
-I've also written a man-pages patch, which I'm sending separately.
+This makes it easier to reuse this code for STATX_DIOALIGN.
 
-Note, f2fs has one corner case where DIO reads are allowed but not DIO
-writes.  The proposed statx fields can't represent this.  My proposal
-(patch 6) is to just eliminate this case, as it seems much too weird.
-But I'd appreciate any feedback on that part.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/f2fs/file.c | 24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
 
-This patchset applies to v5.19-rc2.
-
-Changed v2 => v3:
-   - Dropped the stx_offset_align_optimal field, since its purpose
-     wasn't clearly distinguished from the existing stx_blksize.
-
-   - Renamed STATX_IOALIGN to STATX_DIOALIGN, to reflect the new focus
-     on DIO only.
-
-   - Similarly, renamed stx_{mem,offset}_align_dio to
-     stx_dio_{mem,offset}_align, to reflect the new focus on DIO only.
-
-   - Wired up STATX_DIOALIGN on block device files.
-
-Changed v1 => v2:
-   - No changes.
-
-Eric Biggers (8):
-  statx: add direct I/O alignment information
-  vfs: support STATX_DIOALIGN on block devices
-  fscrypt: change fscrypt_dio_supported() to prepare for STATX_DIOALIGN
-  ext4: support STATX_DIOALIGN
-  f2fs: move f2fs_force_buffered_io() into file.c
-  f2fs: don't allow DIO reads but not DIO writes
-  f2fs: simplify f2fs_force_buffered_io()
-  f2fs: support STATX_DIOALIGN
-
- fs/crypto/inline_crypt.c  | 48 ++++++++++++++++++++-------------------
- fs/ext4/ext4.h            |  1 +
- fs/ext4/file.c            | 10 ++++----
- fs/ext4/inode.c           | 29 +++++++++++++++++++++++
- fs/f2fs/f2fs.h            | 45 ------------------------------------
- fs/f2fs/file.c            | 45 +++++++++++++++++++++++++++++++++++-
- fs/stat.c                 | 37 ++++++++++++++++++++++++++++++
- include/linux/fscrypt.h   |  7 ++----
- include/linux/stat.h      |  2 ++
- include/uapi/linux/stat.h |  4 +++-
- 10 files changed, 147 insertions(+), 81 deletions(-)
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ad0212848a1ab..1b452bb75af29 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -808,19 +808,7 @@ int f2fs_truncate(struct inode *inode)
+ 	return 0;
+ }
+ 
+-static int block_unaligned_IO(struct inode *inode, struct kiocb *iocb,
+-			      struct iov_iter *iter)
+-{
+-	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
+-	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
+-	loff_t offset = iocb->ki_pos;
+-	unsigned long align = offset | iov_iter_alignment(iter);
+-
+-	return align & blocksize_mask;
+-}
+-
+-static inline bool f2fs_force_buffered_io(struct inode *inode,
+-				struct kiocb *iocb, struct iov_iter *iter)
++static bool f2fs_force_buffered_io(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 
+@@ -840,12 +828,8 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 	 */
+ 	if (f2fs_sb_has_blkzoned(sbi))
+ 		return true;
+-	if (f2fs_lfs_mode(sbi)) {
+-		if (block_unaligned_IO(inode, iocb, iter))
+-			return true;
+-		if (F2FS_IO_ALIGNED(sbi))
+-			return true;
+-	}
++	if (f2fs_lfs_mode(sbi) && F2FS_IO_ALIGNED(sbi))
++		return true;
+ 	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_CP_DISABLED))
+ 		return true;
+ 
+@@ -4205,7 +4189,7 @@ static bool f2fs_should_use_dio(struct inode *inode, struct kiocb *iocb,
+ 	if (!(iocb->ki_flags & IOCB_DIRECT))
+ 		return false;
+ 
+-	if (f2fs_force_buffered_io(inode, iocb, iter))
++	if (f2fs_force_buffered_io(inode))
+ 		return false;
+ 
+ 	/*
 -- 
 2.36.1
 
-base-commit: b13baccc3850ca8b8cccbf8ed9912dbaa0fdf7f3
 
 
 _______________________________________________
