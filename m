@@ -4,68 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8F4B4C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jun 2022 17:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B2C70CCA485
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 16 Jun 2022 20:18:29 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o1t7P-0004EZ-Iu; Thu, 16 Jun 2022 17:17:18 +0000
+	id 1o1vwj-0000g0-Ff; Thu, 16 Jun 2022 20:18:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1o1t7O-0004ES-4Y
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 17:17:17 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1o1vwh-0000fo-PU
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 20:18:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DVdQwcUY0JDQ8cBcdIfuE++4LvonwdvjtJqLWdGizvg=; b=fV8RJmdeDvuXF3pFz14raVwtWn
- jAIFV61rR82m2VSB9zEFypc1nkctxEIccjUfLLOlxWWWMP72Bwn8bdjokbf5+tlTapw9aBKnwJf4d
- VKFQbvuPByPth40F4Y9dVr5gxOWhmoHDCoQZzU1IG0Q8JNDWOeQRRvXaALZl3RGVZAvA=;
+ bh=8MZ69rg3mqAgwjElUBwtVWVUSR/Cb0wwj+9iXZnePro=; b=fxLgrQU/+oys5evhQc0murKbV4
+ HOtDO2qpKhd7VYIkpAcjXcIfR3TzA59C12ow9K89CS2gRjGBFEqdI0yLk5nJfzat6aVYT2nGUYj1o
+ GmV78lTffYqawVoKWHPGc8y7zdY9DuhoPE+A2iuynNaLmSSzvSzCi6xAY3rN1TP1ZP9U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DVdQwcUY0JDQ8cBcdIfuE++4LvonwdvjtJqLWdGizvg=; b=miupSFOr3YIwgY3K9rHIr1dySJ
- OGr9u89ydOTFKjsuVD1WF3aH4F8tLijLcSVReSyLUTfPTz22lnoTlMLCauEQx6J6nWBdw50TKrN4K
- qTtoo1/mDUS0YHSSrywplYTkiId8dYuEcpP14NnnBou31uSrM1mK/6JMnXrUp4zxzWno=;
+ bh=8MZ69rg3mqAgwjElUBwtVWVUSR/Cb0wwj+9iXZnePro=; b=MbKBAd7LOqnvxPUuhihAmxzYhK
+ k0CXG+uhyiNk1lnaPH1Q7tx3sWOGy5d0pg9pHO0Ntat+kE01BGRgfcUS3Mv1IsVpyMTfZf7C+b4Zx
+ obZ2GttEZXSyXPWD1GHVbCL3c1QtXp/AtEDOZJVPQeHQVerEnl7cnXv1JZ/lkqLtNMyM=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o1t7M-004LjR-1m
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 17:17:16 +0000
+ id 1o1vwb-0005ag-2P
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 16 Jun 2022 20:18:25 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A342E61741;
- Thu, 16 Jun 2022 17:17:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F21ECC3411A;
- Thu, 16 Jun 2022 17:17:09 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 3B29361D68
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 16 Jun 2022 20:18:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FA79C3411B;
+ Thu, 16 Jun 2022 20:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1655399830;
- bh=/j2wNePK1Xela/ahc9maWQOf8Boi5z4O1qLLoB/erZQ=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=qtP4Rd/DGftGcqRvB2uDXrBhekVnUPl079+2ntnFvoUP/+KvxJHsknQ/CRao6qD2L
- Q309nF51FH9ewXFUIllr6jGPXfj85E1HJJWYLEuajdI38uRTgFT/bFACRTIFPhBdsn
- Ip/RcPhN+kjp23Z+4X1rAYxUdKcJjejncCfzKsqs4GILiXvI7TXX3nDzTKWnLedbGb
- f/3W+OV6QFPd1cYzAYztHl8LGP2mekOR/IEdRtRMSYvYNMRpQu/T9GtBu5KGxNzqYa
- cXcYTaMRaFKlAAutDMnn7cEPdP4hoOPmFqvteVE3Q4tW0bYhUNOEcnxljrwRxMpL4I
- tGDQNGWGgTCSw==
-Date: Thu, 16 Jun 2022 10:17:08 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Dylan Chang <y.w.zhang14@gmail.com>
-Message-ID: <YqtllO83cEw1jb+Q@google.com>
-References: <20220616035806.1663-1-dylan.chang@oneplus.com>
+ s=k20201202; t=1655410695;
+ bh=gmTrOXHThO4iMr0nkABFj5Gcpj4OfYgHMn3LWrNN/zY=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=Z4R44p7u1ykUlDTmZkIeRPn4kw5DWBRqOOrDRGR0VCC49vMWTvv8XfIHZaxCTAdOY
+ Zsptu+NXF+TtbNy3GllDBjJ64ONqThHS2r/AYjm4oxMfXFgRoojBGWNjQKtpWiz2Jl
+ qG0XuPi0ann0+B1tlRpJWXiNgcK3qQWqBHbDZODTKOt7sBaUmyepiwJ63pB2JvnrW5
+ wPw9JHs9MXgTZaQ07jjeIoyqPyTqtW+P1QVCnfQCYZRCjLDtCBzY5HVQ4PLtunJogn
+ myokCdvCeHN1vM8BSK+ZemLzMHWyJBp5pfT5lQivD08KdnsxTkz/K+/kmWhbilXDnB
+ W5INFGKArKuYw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Date: Thu, 16 Jun 2022 13:14:59 -0700
+Message-Id: <20220616201506.124209-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220616201506.124209-1-ebiggers@kernel.org>
+References: <20220616201506.124209-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20220616035806.1663-1-dylan.chang@oneplus.com>
-X-Headers-End: 1o1t7M-004LjR-1m
-Subject: Re: [f2fs-dev] [PATCH] Fix file too large causing overflow
+X-Headers-End: 1o1vwb-0005ag-2P
+Subject: [f2fs-dev] [PATCH v3 1/8] statx: add direct I/O alignment
+ information
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -77,139 +79,121 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Dylan Chang <dylan.chang@oneplus.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-block@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ Keith Busch <kbusch@kernel.org>, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 06/16, Dylan Chang wrote:
-> fibmap: Fix file too large causing file_pos overflow
-> 
-> fibmap show file_pos with incorrectly value when passing a large file.
-> 
-> Before:
-> 
-> ----------------file info-------------------
-> /data/media/0/data1 :
-> --------------------------------------------
-> dev       [254:18]
-> ino       [0x    4db1 : 19889]
-> mode      [0x    81b0 : 33200]
-> nlink     [0x       1 : 1]
-> uid       [0x    280e : 10254]
-> gid       [0x     3ff : 1023]
-> size      [0x1b3dca314 : 7312548628]
-> blksize   [0x    1000 : 4096]
-> blocks    [0x  da2530 : 14296368]
-> --------------------------------------------
-> 
-> file_pos   start_blk     end_blk        blks
->        0     3197602     3198463         862
->  3530752     3197509     3197509           1
->  3534848     3197557     3197578          22
->  3624960     3198464     3396701      198238
-> 815607808     3396703     3632480      235778
-> 1781354496     3632482     3652095       19614
-> 1861693440     3396702     3396702           1
-> 1861697536     3632481     3632481           1
-> 1861701632     1514948     1514948           1
-> 1861705728     1518774     1518774           1
-> 1861709824     2543104     2543125          22
-> ...
-> 1862111232     2457813     2457813           1
-> 1862115328     3652096     3878168      226073
-> -1506856960     3878170     4133725      255556
-> -460099584     1510048     1510052           5
-> 
-> Patched:
-> ----------------file info-------------------
-> /data/media/0/data1 :
-> --------------------------------------------
-> dev       [254:18]
-> ino       [0x    4db1 : 19889]
-> mode      [0x    81b0 : 33200]
-> nlink     [0x       1 : 1]
-> uid       [0x    280e : 10254]
-> gid       [0x     3ff : 1023]
-> size      [0x1b3dca314 : 7312548628]
-> blksize   [0x    1000 : 4096]
-> blocks    [0x  da2530 : 14296368]
-> --------------------------------------------
-> 
-> file_pos   start_blk     end_blk        blks
->        0     3197602     3198463         862
->  3530752     3197509     3197509           1
->  3534848     3197557     3197578          22
->  3624960     3198464     3396701      198238
-> 815607808     3396703     3632480      235778
-> 1781354496     3632482     3652095       19614
-> 1861693440     3396702     3396702           1
-> 1861697536     3632481     3632481           1
-> 1861701632     1514948     1514948           1
-> 1861705728     1518774     1518774           1
-> 1861709824     2543104     2543125          22
-> ...
-> 1862111232     2457813     2457813           1
-> 1862115328     3652096     3878168      226073
-> 2788110336     3878170     4133725      255556
-> 3834867712     1510048     1510052           5
-> 
-> Change-Id: Ic2486e25ea03114d4dbf3651650c6a2399db0714
-> Signed-off-by: Dylan Chang <dylan.chang@oneplus.com>
-> ---
->  tools/fibmap.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/fibmap.c b/tools/fibmap.c
-> index 3238f29..3217600 100644
-> --- a/tools/fibmap.c
-> +++ b/tools/fibmap.c
-> @@ -47,7 +47,7 @@
->  #endif
->  
->  struct file_ext {
-> -	__u32 f_pos;
-> +	__u64 f_pos;
->  	__u32 start_blk;
->  	__u32 end_blk;
->  	__u32 blk_count;
-> @@ -56,9 +56,9 @@ struct file_ext {
->  void print_ext(struct file_ext *ext)
->  {
->  	if (ext->end_blk == 0)
-> -		printf("%8d    %8d    %8d    %8d\n", ext->f_pos, 0, 0, ext->blk_count);
-> +		printf("%8llu    %8lu    %8lu    %8lu\n", ext->f_pos, 0, 0, ext->blk_count);
+From: Eric Biggers <ebiggers@google.com>
 
-I had to fix unrelated changes from %8d to %8lu. Please check it
+Traditionally, the conditions for when DIO (direct I/O) is supported
+were fairly simple.  For both block devices and regular files, DIO had
+to be aligned to the logical block size of the block device.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/commit/?h=dev-test&id=74f81f441ce24dd47cfe68e6fb336e0142bf4217
+However, due to filesystem features that have been added over time (e.g.
+multi-device support, data journalling, inline data, encryption, verity,
+compression, checkpoint disabling, log-structured mode), the conditions
+for when DIO is allowed on a regular file have gotten increasingly
+complex.  Whether a particular regular file supports DIO, and with what
+alignment, can depend on various file attributes and filesystem mount
+options, as well as which block device(s) the file's data is located on.
 
+Moreover, the general rule of DIO needing to be aligned to the block
+device's logical block size is being relaxed to allow user buffers (but
+not file offsets) aligned to the DMA alignment instead
+(https://lore.kernel.org/linux-block/20220610195830.3574005-1-kbusch@fb.com/T/#u).
 
->  	else
-> -		printf("%8d    %8d    %8d    %8d\n", ext->f_pos, ext->start_blk,
-> +		printf("%8llu    %8lu    %8lu    %8lu\n", ext->f_pos, ext->start_blk,
->  					ext->end_blk, ext->blk_count);
->  }
->  
-> @@ -209,7 +209,7 @@ int main(int argc, char *argv[])
->  			ext.blk_count++;
->  		} else {
->  			print_ext(&ext);
-> -			ext.f_pos = i * st.st_blksize;
-> +			ext.f_pos = (__u64)i * st.st_blksize;
->  			ext.start_blk = blknum;
->  			ext.end_blk = blknum;
->  			ext.blk_count = 1;
-> -- 
-> 2.17.1
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+XFS has an ioctl XFS_IOC_DIOINFO that exposes DIO alignment information.
+Uplifting this to the VFS is one possibility.  However, as discussed
+(https://lore.kernel.org/linux-fsdevel/20220120071215.123274-1-ebiggers@kernel.org/T/#u),
+this ioctl is rarely used and not known to be used outside of
+XFS-specific code.  It was also never intended to indicate when a file
+doesn't support DIO at all, nor was it intended for block devices.
+
+Therefore, let's expose this information via statx().  Add the
+STATX_DIOALIGN flag and two new statx fields associated with it:
+
+* stx_dio_mem_align: the alignment (in bytes) required for user memory
+  buffers for DIO, or 0 if DIO is not supported on the file.
+
+* stx_dio_offset_align: the alignment (in bytes) required for file
+  offsets and I/O segment lengths for DIO, or 0 if DIO is not supported
+  on the file.  This will only be nonzero if stx_dio_mem_align is
+  nonzero, and vice versa.
+
+Note that as with other statx() extensions, if STATX_DIOALIGN isn't set
+in the returned statx struct, then these new fields won't be filled in.
+This will happen if the file is neither a regular file nor a block
+device, or if the file is a regular file and the filesystem doesn't
+support STATX_DIOALIGN.  It might also happen if the caller didn't
+include STATX_DIOALIGN in the request mask, since statx() isn't required
+to return unrequested information.
+
+This commit only adds the VFS-level plumbing for STATX_DIOALIGN.  For
+regular files, individual filesystems will still need to add code to
+support it.  For block devices, a separate commit will wire it up too.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/stat.c                 | 2 ++
+ include/linux/stat.h      | 2 ++
+ include/uapi/linux/stat.h | 4 +++-
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/stat.c b/fs/stat.c
+index 9ced8860e0f35..a7930d7444830 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -611,6 +611,8 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
+ 	tmp.stx_dev_major = MAJOR(stat->dev);
+ 	tmp.stx_dev_minor = MINOR(stat->dev);
+ 	tmp.stx_mnt_id = stat->mnt_id;
++	tmp.stx_dio_mem_align = stat->dio_mem_align;
++	tmp.stx_dio_offset_align = stat->dio_offset_align;
+ 
+ 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
+ }
+diff --git a/include/linux/stat.h b/include/linux/stat.h
+index 7df06931f25d8..ff277ced50e9f 100644
+--- a/include/linux/stat.h
++++ b/include/linux/stat.h
+@@ -50,6 +50,8 @@ struct kstat {
+ 	struct timespec64 btime;			/* File creation time */
+ 	u64		blocks;
+ 	u64		mnt_id;
++	u32		dio_mem_align;
++	u32		dio_offset_align;
+ };
+ 
+ #endif
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index 1500a0f58041a..7cab2c65d3d7f 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -124,7 +124,8 @@ struct statx {
+ 	__u32	stx_dev_minor;
+ 	/* 0x90 */
+ 	__u64	stx_mnt_id;
+-	__u64	__spare2;
++	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
++	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
+ 	/* 0xa0 */
+ 	__u64	__spare3[12];	/* Spare space for future expansion */
+ 	/* 0x100 */
+@@ -152,6 +153,7 @@ struct statx {
+ #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
+ #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
++#define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
+ 
+ #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+ 
+-- 
+2.36.1
+
 
 
 _______________________________________________
