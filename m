@@ -4,74 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65278C43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 19 Jun 2022 00:55:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E6C7C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 19 Jun 2022 00:55:51 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o2jDW-0008Rw-QT; Sun, 19 Jun 2022 00:55:07 +0000
+	id 1o2jEF-0008JM-03; Sun, 19 Jun 2022 00:55:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1o2jDV-0008Rp-2Z
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 Jun 2022 00:55:05 +0000
+ (envelope-from <chao@kernel.org>) id 1o2jED-0008JF-JL
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 Jun 2022 00:55:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4PUdXuMJWy31xf0jQP7Vs/TpobsJ52VwYOrK2JMwYV4=; b=N6vizbhOVKZnQ2AwQBfrO6TPaL
- atR2iFqgTcYuKhsnGJa9GLU735PBj4qRXylrRqR8PXth2yTlAtzDjLBWzfmSbfDWXBH6yciSY0Ycc
- 6I1KKnqBcVZLjyZEJFO3gRd/0kVyoVL/QTkR76UZrCKYBtsTRwGn05dyCfN+RH07siA0=;
+ bh=YuGGco15QgIbUxcxeoK+Cdzu9s1C9Cjvgq+Cjhu4N8k=; b=P5iGH89+hR2DLGWNAZSuUAJ7cz
+ dOdPsj5um5GzmKWiX7zhYiY7/e1JdI/McGgyW80PrdmfKGyEqHrxI7QZ+sUKzPZxHvh4AmDrv8qqq
+ IEfGBNwCOV0RRKmJPMvhwcDUEMiBVTQWtRVYbD4R6AP3VgWxZ6AQH4FQEvzSUiwOTFEo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=4PUdXuMJWy31xf0jQP7Vs/TpobsJ52VwYOrK2JMwYV4=; b=ScthRZ6DNAviUnOj85Rg1Fjdl2
- Uj+ZAz83RPTtMdfrYHmwKWf9eHWOatpTop7cPwO8xomalqfQby7oRrpbRLQoqOQIDbjREUzby4jm7
- CQR7RwuoN55AeS2P1f7q32oFtk1V7HvXFbGvPxA9vSmsDLnWpxqK/XffYJkOSNp/AzHo=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=YuGGco15QgIbUxcxeoK+Cdzu9s1C9Cjvgq+Cjhu4N8k=; b=g
+ 2MXcd/I6g1+xA3aHd6f1ZO8vJ/Mcwrk3H74BA5on2VACCV2mir34/vj1G0SkdO33xhnkVfB5RUWOV
+ 7AR5MJVkcwtL0TI8jO8TlQZxO6JlsK66VGNmyQy40aA5fDIE8utSSCN1X9mTUs6TNLIGEE94rRTiF
+ XOAgKF69+qlAlWWg=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o2jDS-0005ZP-GE
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 Jun 2022 00:55:05 +0000
+ id 1o2jEA-0005bY-C1
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 Jun 2022 00:55:48 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 586FFB80B3F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun, 19 Jun 2022 00:54:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 874FDC3411A;
- Sun, 19 Jun 2022 00:54:47 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 49DE760DEC;
+ Sun, 19 Jun 2022 00:55:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB3DC3411A;
+ Sun, 19 Jun 2022 00:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1655600088;
- bh=x7abiCbuk7wG6GSu3AHKJhPYVCZGlCbAAv7OGXYdF0Q=;
- h=Date:Subject:To:References:From:In-Reply-To:From;
- b=OvAsvxp4psgzvMUwuYyixp1E0jUGsrpfqQdfTEpsNMOb2VVMK3uqwwX0JYwd4Siar
- UE52grnjeBe4P3Dcb4oxQJvfqwQEzowGcVjmUBHL8mWglQfqddmIkDJq6PLdO6Czti
- oLcckR0w90VYQ4+VAJsFNbxG3LNS/H0CsEYMEgkXj9aQFhhlESgOz43CHai469QzFC
- 2qNi05aEpVR/+m0imTv76+GAGzDBfcBPVyJGK/v/sljnfJU/FKYHrEJYH9uX1HZl5I
- To/8NFGYJ7Bq3CCNjtw5NWLOwHBifm7beUYk/aRjjkMqQEAtMRONWdCZmpskOiEAOm
- jNizIGX7J2Scw==
-Message-ID: <d826a043-0e2e-889c-4bae-63738867a3b4@kernel.org>
-Date: Sun, 19 Jun 2022 08:54:46 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Content-Language: en-US
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20220617223106.3517374-1-jaegeuk@kernel.org>
- <20220617223106.3517374-3-jaegeuk@kernel.org>
+ s=k20201202; t=1655600141;
+ bh=Y1pY1dTeemIGkfSVJrQX+Eq3dkLnscBf5JndGotxl+w=;
+ h=From:To:Cc:Subject:Date:From;
+ b=ZddnPrdb25S2Mxs6xdlu3Tfh/9GngPK2LG2wF6CBGjRq8U6gaWJy8/xhLCratMnqa
+ U3NS6ZraMnDoa2RroNZRXYiOi2NyKtHi8jsvTbcWGV29kKDHqkAtU+FTg1MrdgT8BC
+ cpy7+LjAO5gL79p3ram6orvA97R3fjYnGsyjMJErJ+ByvH3O2siKNHjTzYXHw7jUxD
+ eOJyS+Wwz76L+6Jj5unDe/frWDVIRAOCgUIeqM5Sj+4IV4Ml9mF6RG58LNxTEDl1+U
+ 9k8m6O2xWQFdddSiGbiXdDwhzytcnSBoEm25wX+r4u2z52aw+lprlHOAYPZZ9vKp0W
+ xEtmHkH3307Og==
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20220617223106.3517374-3-jaegeuk@kernel.org>
-X-Headers-End: 1o2jDS-0005ZP-GE
-Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: do not skip updating inode when
- retrying to flush node page
+To: jaegeuk@kernel.org
+Date: Sun, 19 Jun 2022 01:51:55 +0800
+Message-Id: <20220618175155.3908-1-chao@kernel.org>
+X-Mailer: git-send-email 2.36.1
+MIME-Version: 1.0
+X-Headers-End: 1o2jEA-0005bY-C1
+Subject: [f2fs-dev] [PATCH] f2fs: initialize page_array_entry slab only if
+ compression feature is on
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,18 +76,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/6/18 6:31, Jaegeuk Kim wrote:
-> Let's try to flush dirty inode again to improve subtle i_blocks mismatch.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Otherwise, in image which doesn't support compression feature,
+page_array_entry will be initialized w/o use.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Chao Yu <chao.yu@oppo.com>
+---
+ fs/f2fs/compress.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks,
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index 24824cd96f36..fa237e5c7173 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1908,6 +1908,9 @@ int f2fs_init_page_array_cache(struct f2fs_sb_info *sbi)
+ 	dev_t dev = sbi->sb->s_bdev->bd_dev;
+ 	char slab_name[32];
+ 
++	if (!f2fs_sb_has_compression(sbi))
++		return 0;
++
+ 	sprintf(slab_name, "f2fs_page_array_entry-%u:%u", MAJOR(dev), MINOR(dev));
+ 
+ 	sbi->page_array_slab_size = sizeof(struct page *) <<
+-- 
+2.36.1
+
 
 
 _______________________________________________
