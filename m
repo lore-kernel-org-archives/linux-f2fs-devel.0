@@ -4,67 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E6C7C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 19 Jun 2022 00:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 15F86C43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 19 Jun 2022 05:23:10 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o2jEF-0008JM-03; Sun, 19 Jun 2022 00:55:49 +0000
+	id 1o2nOu-0005Qw-QG; Sun, 19 Jun 2022 05:23:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1o2jED-0008JF-JL
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 Jun 2022 00:55:48 +0000
+ (envelope-from <qkrwngud825@gmail.com>) id 1o2nOt-0005Qp-GJ
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 Jun 2022 05:23:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Type:To:Subject:Message-ID:Date:From:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=YuGGco15QgIbUxcxeoK+Cdzu9s1C9Cjvgq+Cjhu4N8k=; b=P5iGH89+hR2DLGWNAZSuUAJ7cz
- dOdPsj5um5GzmKWiX7zhYiY7/e1JdI/McGgyW80PrdmfKGyEqHrxI7QZ+sUKzPZxHvh4AmDrv8qqq
- IEfGBNwCOV0RRKmJPMvhwcDUEMiBVTQWtRVYbD4R6AP3VgWxZ6AQH4FQEvzSUiwOTFEo=;
+ bh=B4cKia+866cgTcRv88SlVAXkzYujoUDJN/Y6pFA+dAs=; b=UGWr3LAPeOikiODhoF4RftFFLR
+ qUCZhT6tg2USjhBtB5zHjh+qdtenJKgE0G9sojPunG0jvMh3Hc3JTa9CBbunmxqcC7YbehkUCDF7g
+ Io+wEC12TqZtvbDH6bYKHXoiUxMmacaORIdH/sMmchazne/wowE8JqqdnEkcy2l4m/1c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ h=Content-Type:To:Subject:Message-ID:Date:From:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=YuGGco15QgIbUxcxeoK+Cdzu9s1C9Cjvgq+Cjhu4N8k=; b=g
- 2MXcd/I6g1+xA3aHd6f1ZO8vJ/Mcwrk3H74BA5on2VACCV2mir34/vj1G0SkdO33xhnkVfB5RUWOV
- 7AR5MJVkcwtL0TI8jO8TlQZxO6JlsK66VGNmyQy40aA5fDIE8utSSCN1X9mTUs6TNLIGEE94rRTiF
- XOAgKF69+qlAlWWg=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o2jEA-0005bY-C1
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 Jun 2022 00:55:48 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 49DE760DEC;
- Sun, 19 Jun 2022 00:55:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB3DC3411A;
- Sun, 19 Jun 2022 00:55:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1655600141;
- bh=Y1pY1dTeemIGkfSVJrQX+Eq3dkLnscBf5JndGotxl+w=;
- h=From:To:Cc:Subject:Date:From;
- b=ZddnPrdb25S2Mxs6xdlu3Tfh/9GngPK2LG2wF6CBGjRq8U6gaWJy8/xhLCratMnqa
- U3NS6ZraMnDoa2RroNZRXYiOi2NyKtHi8jsvTbcWGV29kKDHqkAtU+FTg1MrdgT8BC
- cpy7+LjAO5gL79p3ram6orvA97R3fjYnGsyjMJErJ+ByvH3O2siKNHjTzYXHw7jUxD
- eOJyS+Wwz76L+6Jj5unDe/frWDVIRAOCgUIeqM5Sj+4IV4Ml9mF6RG58LNxTEDl1+U
- 9k8m6O2xWQFdddSiGbiXdDwhzytcnSBoEm25wX+r4u2z52aw+lprlHOAYPZZ9vKp0W
- xEtmHkH3307Og==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Sun, 19 Jun 2022 01:51:55 +0800
-Message-Id: <20220618175155.3908-1-chao@kernel.org>
-X-Mailer: git-send-email 2.36.1
+ List-Owner:List-Archive; bh=B4cKia+866cgTcRv88SlVAXkzYujoUDJN/Y6pFA+dAs=; b=R
+ HmX5m3f1zadJ4QsqlhUyLyn5ffwj1ns0TMpcRfBqqi3rarc/Ole9aNzMfO5KFxeeZuqAsoIu/tI0i
+ 2J5382ZCHRBImAie5tnNY3704smduD0pjzeDxoQPJBH6o603RpagxBZ45sxlHNvV9sGpRyvSeQ26l
+ 3ThcFkN96BV3FcOY=;
+Received: from mail-ed1-f51.google.com ([209.85.208.51])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
+ id 1o2nOq-0073ZB-17
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 19 Jun 2022 05:23:06 +0000
+Received: by mail-ed1-f51.google.com with SMTP id o10so11002140edi.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sat, 18 Jun 2022 22:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
+ h=mime-version:from:date:message-id:subject:to;
+ bh=B4cKia+866cgTcRv88SlVAXkzYujoUDJN/Y6pFA+dAs=;
+ b=fwBVBtX8FCJo93gNfm7oXyUUrFdkcYZpgDETpEw5ZoQesfe2GugbUinHO9ylgZgjBm
+ hh43lH1Ky0KAetpM6LvKajcNTMpktHK5Y4ILG5hBk9+NoX4stX+C85GUVTaDsf1ON2V9
+ GSSntMXjKKK0iU/0mlayxDSn9bFMneI65Qu15+NHU2+qQgO5BMj/49w6ZxWzRfi0E4v3
+ asoEoNvghCPRPjmXfdStpqObzyKYvRdCuuEzH09wgqencjtu8YuUSjA1Yp5FPj2dR7ti
+ SZ7hQzDEQmhoWBwfnmk8vmoGJ6QGIZhpxpk2ftiUIvFK+5TtoD4zfVZ1DiNQ5Fz0bNbM
+ Jn5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+ bh=B4cKia+866cgTcRv88SlVAXkzYujoUDJN/Y6pFA+dAs=;
+ b=SbCYwalBAoMq73LSqagzoFFIRKh3G1Qk903rcchf+Jt9JogkzcUDfAvP1ivhwsKuev
+ DQtbnFXFUTGzA3hsxSqxfFdDmiHb9gnwrYVVzhK+Zlj+3xsaQebqzxmHvtb4iVmdH2bQ
+ OFc7TTVCKHd7PNrj+sNiwkdQ0/CloOw7PQol9+Os3oJzY+D5lnEEUJGv5Jn9sqS4eit8
+ 7c8m2/bhY3CbbgC5UsALOC8/mg7SQERgWZjiycLi8tWCx5vyin/Kt9WaqV9d8hwFahWr
+ 6+yJFoyLQE02LTAaLmJU0jeMK6ntrPyIrRGIRMlGmrcvI6JK/eW7HPeWKJvv+tiU00xz
+ H9cQ==
+X-Gm-Message-State: AJIora9cIWyEibsj3I79aztE3od+JjkhD+x41m0+xOBvbDj9D9uCIng+
+ 3xF6ynlZmKrRwVAWxPws6PzFSagb0/9nixOotMJgJlSgL8PnmAl4
+X-Google-Smtp-Source: AGRyM1u6tYKPIPl7yYdOlkUiHQj0gyvQ38A2biOr8Nq6kevDR0plQhE3+CoxpW2uiGE84PI9rJatwKknC3XsGJ9JSEs=
+X-Received: by 2002:aa7:df19:0:b0:435:5eb7:5e31 with SMTP id
+ c25-20020aa7df19000000b004355eb75e31mr13448144edy.418.1655616177215; Sat, 18
+ Jun 2022 22:22:57 -0700 (PDT)
 MIME-Version: 1.0
-X-Headers-End: 1o2jEA-0005bY-C1
-Subject: [f2fs-dev] [PATCH] f2fs: initialize page_array_entry slab only if
- compression feature is on
+From: Juhyung Park <qkrwngud825@gmail.com>
+Date: Sun, 19 Jun 2022 14:22:46 +0900
+Message-ID: <CAD14+f2U0FcZMEXvCXcwnpg-i5OuBURgd0apkB9voSkDu+CB_g@mail.gmail.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1o2nOq-0073ZB-17
+Subject: [f2fs-dev] f2fs: resize should update quota (w/ general experience
+ on Android)
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -76,36 +86,269 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Otherwise, in image which doesn't support compression feature,
-page_array_entry will be initialized w/o use.
+Hi,
 
-Signed-off-by: Chao Yu <chao.yu@oppo.com>
----
- fs/f2fs/compress.c | 3 +++
- 1 file changed, 3 insertions(+)
+I'm currently trying out f2fs safe resize / shrink on Android.
+(Size: 98 GiB used out of 221 GiB, 501,313 nodes, resize to 180 GiB)
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 24824cd96f36..fa237e5c7173 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1908,6 +1908,9 @@ int f2fs_init_page_array_cache(struct f2fs_sb_info *sbi)
- 	dev_t dev = sbi->sb->s_bdev->bd_dev;
- 	char slab_name[32];
- 
-+	if (!f2fs_sb_has_compression(sbi))
-+		return 0;
-+
- 	sprintf(slab_name, "f2fs_page_array_entry-%u:%u", MAJOR(dev), MINOR(dev));
- 
- 	sbi->page_array_slab_size = sizeof(struct page *) <<
--- 
-2.36.1
+It seems to work surprisingly well, the only improvement that can be
+made seems to be updating quota.
 
+After resize, fsck complains:
+[ERROR] quotaio_v2.c:201:v2_init_io:: Quota inode 4 corrupted: file
+size 73728 does not match page offset 19
+[ERROR] quotaio_v2.c:201:v2_init_io:: Quota inode 5 corrupted: file
+size 120832 does not match page offset 30
+[ERROR] quotaio_v2.c:201:v2_init_io:: Quota inode 6 corrupted: file
+size 27648 does not match page offset 7
+
+The resize.f2fs process was stuck at 100% CPU usage the whole time.
+Maybe this can be improved with a more efficient algorithm or
+parallelizing, but that's another discussion.
+The whole process took about 5 minutes, when the resize.f2fs was
+pinned at cpu7 (Cortex-X1).
+
+I've also confirmed that the files are exactly the same before and
+after the shrink (checked via rsync -c). This took 25 minutes.
+All in all, I'm glad to find out that shrinking works on f2fs well. No
+error logs on dmesg either.
+
+Also, I believe man/resize.f2fs.8 needs to be updated:
+`Current version only supports expanding the prebuilt filesystem.`
+
+Used versions:
+f2fs-tools 1.15.0
+Linux v5.4.197 with 5.19-rc1-5.4 merged
+
+Here's the full commands & outputs that I've used:
+---- Snapshot creation ----
+# echo 10G > /sys/block/zram0/disksize
+# dmsetup create snap --table "0 464059800 snapshot
+/dev/block/bootdevice/by-name/userdata /dev/block/zram0 N 256"
+
+---- Initial fsck before resize ----
+# fsck.f2fs -y -f /dev/block/mapper/snap
+Info: Force to fix corruption
+Info: Force to fix corruption
+Info: MKFS version
+  "5.4.179-arter97-gbc35154ef66c"
+Info: FSCK version
+  from "5.4-arter97"
+    to "Linux version 5.4.197-arter97-r21b2-69720-g84bf16de46b9
+(arter97@arter97-dgist) (Android (8508608, based on r450784e) clang
+version 14.0.7 (https://android.googlesource.com/toolchain/llvm-project
+4c603efb0cca074e9238af8b4106c30add4418f6), LLD 14.0.7) #"
+Info: superblock features = 1499 :  encrypt verity extra_attr
+project_quota quota_ino casefold
+Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: total FS sectors = 58007475 (226591 MB)
+Info: CKPT version = 6b90089a
+Info: checkpoint state = 44 :  crc compacted_summary sudden-power-off
+[FSCK] Check node 1 / 501313 (0.00%)
+[FSCK] Check node 50132 / 501313 (10.00%)
+[FSCK] Check node 100263 / 501313 (20.00%)
+[FSCK] Check node 150394 / 501313 (30.00%)
+[FSCK] Check node 200525 / 501313 (40.00%)
+[FSCK] Check node 250656 / 501313 (50.00%)
+[FSCK] Check node 300787 / 501313 (60.00%)
+[FSCK] Check node 350918 / 501313 (70.00%)
+[FSCK] Check node 401049 / 501313 (80.00%)
+[FSCK] Check node 451180 / 501313 (90.00%)
+[FSCK] Check node 501311 / 501313 (100.00%)
+[fsck_chk_quota_files:2035] Fixing Quota file ([  0] ino [0x4])
+[fsck_chk_quota_files:2035] Fixing Quota file ([  1] ino [0x5])
+[fsck_chk_quota_files:2035] Fixing Quota file ([  2] ino [0x6])
+
+[FSCK] Max image size: 206671 MB, Free space: 126217 MB
+[FSCK] Unreachable nat entries                        [Ok..] [0x0]
+[FSCK] SIT valid block bitmap checking                [Ok..]
+[FSCK] Hard link checking for regular file            [Ok..] [0xa]
+[FSCK] valid_block_count matching with CP             [Ok..] [0x17deab6]
+[FSCK] valid_node_count matching with CP (de lookup)  [Ok..] [0x7a641]
+[FSCK] valid_node_count matching with CP (nat lookup) [Ok..] [0x7a641]
+[FSCK] valid_inode_count matched with CP              [Ok..] [0x76cec]
+[FSCK] free segment_count matched with CP             [Ok..] [0xfa30]
+[FSCK] next block offset is free                      [Ok..]
+[FSCK] fixing SIT types
+[FSCK] other corrupted bugs                           [Ok..]
+Info: Duplicate valid checkpoint to mirror position 1024 -> 512
+Info: Write valid nat_bits in checkpoint
+Info: Write valid nat_bits in checkpoint
+
+Done: 0.000000 secs
+
+---- Resize ----
+# resize.f2fs -s -t 47185920 /dev/block/mapper/snap
+Info: MKFS version
+  "5.4.179-arter97-gbc35154ef66c"
+Info: FSCK version
+  from "5.4-arter97"
+    to "Linux version 5.4.197-arter97-r21b2-69720-g84bf16de46b9
+(arter97@arter97-dgist) (Android (8508608, based on r450784e) clang
+version 14.0.7 (https://android.googlesource.com/toolchain/llvm-project
+4c603efb0cca074e9238af8b4106c30add4418f6), LLD 14.0.7) #"
+Info: superblock features = 1499 :  encrypt verity extra_attr
+project_quota quota_ino casefold
+Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: total FS sectors = 58007475 (226591 MB)
+Info: CKPT version = 6b90089a
+[FIX] (move_one_curseg_info:2857)  --> Move curseg[0] 70 -> 161cc after 2d00000
+
+[FIX] (move_one_curseg_info:2857)  --> Move curseg[1] 890 -> 161cb after 2d00000
+
+[FIX] (move_one_curseg_info:2857)  --> Move curseg[2] 8af -> 161cd after 2d00000
+
+[FIX] (move_one_curseg_info:2857)  --> Move curseg[3] a8 -> 161ca after 2d00000
+
+[FIX] (move_one_curseg_info:2857)  --> Move curseg[4] 117 -> 161c9 after 2d00000
+
+[FIX] (move_one_curseg_info:2857)  --> Move curseg[5] 16d9 -> 161c8
+after 2d00000
+
+Info: Write valid nat_bits in checkpoint
+Try to do defragement: Done
+[update_superblock: 701] Info: Done to update superblock
+Info: Write valid nat_bits in checkpoint
+[rebuild_checkpoint: 591] Info: Done to rebuild checkpoint blocks
+
+Done: 0.000000 secs
+
+---- 1st fsck after resize ----
+# fsck.f2fs -y -f /dev/block/mapper/snap
+Info: Force to fix corruption
+Info: Force to fix corruption
+Info: MKFS version
+  "5.4.179-arter97-gbc35154ef66c"
+Info: FSCK version
+  from "5.4-arter97"
+    to "Linux version 5.4.197-arter97-r21b2-69720-g84bf16de46b9
+(arter97@arter97-dgist) (Android (8508608, based on r450784e) clang
+version 14.0.7 (https://android.googlesource.com/toolchain/llvm-project
+4c603efb0cca074e9238af8b4106c30add4418f6), LLD 14.0.7) #"
+Info: superblock features = 1499 :  encrypt verity extra_attr
+project_quota quota_ino casefold
+Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: total FS sectors = 47185920 (184320 MB)
+Invalid CP CRC offset: 0
+Info: CKPT version = 6b90089b
+Info: Checked valid nat_bits in checkpoint
+Info: checkpoint state = 81 :  nat_bits unmount
+[FSCK] Check node 1 / 501313 (0.00%)
+[FSCK] Check node 50132 / 501313 (10.00%)
+[FSCK] Check node 100263 / 501313 (20.00%)
+[FSCK] Check node 150394 / 501313 (30.00%)
+[FSCK] Check node 200525 / 501313 (40.00%)
+[FSCK] Check node 250656 / 501313 (50.00%)
+[FSCK] Check node 300787 / 501313 (60.00%)
+[FSCK] Check node 350918 / 501313 (70.00%)
+[FSCK] Check node 401049 / 501313 (80.00%)
+[FSCK] Check node 451180 / 501313 (90.00%)
+[FSCK] Check node 501311 / 501313 (100.00%)
+[ERROR] quotaio_v2.c:201:v2_init_io:: Quota inode 4 corrupted: file
+size 73728 does not match page offset 19
+[ERROR] quotaio_v2.c:201:v2_init_io:: Quota inode 5 corrupted: file
+size 120832 does not match page offset 30
+[ERROR] quotaio_v2.c:201:v2_init_io:: Quota inode 6 corrupted: file
+size 27648 does not match page offset 7
+
+[FSCK] Max image size: 184108 MB, Free space: 84135 MB
+[FSCK] Unreachable nat entries                        [Ok..] [0x0]
+[FSCK] SIT valid block bitmap checking                [Ok..]
+[FSCK] Hard link checking for regular file            [Ok..] [0xa]
+[FSCK] valid_block_count matching with CP             [Ok..] [0x17deab6]
+[FSCK] valid_node_count matching with CP (de lookup)  [Ok..] [0x7a641]
+[FSCK] valid_node_count matching with CP (nat lookup) [Ok..] [0x7a641]
+[FSCK] valid_inode_count matched with CP              [Ok..] [0x76cec]
+[FSCK] free segment_count matched with CP             [Ok..] [0xa79c]
+[FSCK] next block offset is free                      [Ok..]
+[FSCK] fixing SIT types
+[FSCK] other corrupted bugs                           [Ok..]
+
+Done: 0.000000 secs
+
+---- 2nd fsck after resize ----
+# fsck.f2fs -y -f /dev/block/mapper/snap
+Info: Force to fix corruption
+Info: Force to fix corruption
+Info: MKFS version
+  "5.4.179-arter97-gbc35154ef66c"
+Info: FSCK version
+  from "5.4-arter97"
+    to "Linux version 5.4.197-arter97-r21b2-69720-g84bf16de46b9
+(arter97@arter97-dgist) (Android (8508608, based on r450784e) clang
+version 14.0.7 (https://android.googlesource.com/toolchain/llvm-project
+4c603efb0cca074e9238af8b4106c30add4418f6), LLD 14.0.7) #"
+Info: superblock features = 1499 :  encrypt verity extra_attr
+project_quota quota_ino casefold
+Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: total FS sectors = 47185920 (184320 MB)
+Invalid CP CRC offset: 0
+Info: CKPT version = 6b90089b
+Info: Checked valid nat_bits in checkpoint
+Info: checkpoint state = 81 :  nat_bits unmount
+[FSCK] Check node 1 / 501313 (0.00%)
+[FSCK] Check node 50132 / 501313 (10.00%)
+[FSCK] Check node 100263 / 501313 (20.00%)
+[FSCK] Check node 150394 / 501313 (30.00%)
+[FSCK] Check node 200525 / 501313 (40.00%)
+[FSCK] Check node 250656 / 501313 (50.00%)
+[FSCK] Check node 300787 / 501313 (60.00%)
+[FSCK] Check node 350918 / 501313 (70.00%)
+[FSCK] Check node 401049 / 501313 (80.00%)
+[FSCK] Check node 451180 / 501313 (90.00%)
+[FSCK] Check node 501311 / 501313 (100.00%)
+
+[FSCK] Max image size: 184108 MB, Free space: 84135 MB
+[FSCK] Unreachable nat entries                        [Ok..] [0x0]
+[FSCK] SIT valid block bitmap checking                [Ok..]
+[FSCK] Hard link checking for regular file            [Ok..] [0xa]
+[FSCK] valid_block_count matching with CP             [Ok..] [0x17deab6]
+[FSCK] valid_node_count matching with CP (de lookup)  [Ok..] [0x7a641]
+[FSCK] valid_node_count matching with CP (nat lookup) [Ok..] [0x7a641]
+[FSCK] valid_inode_count matched with CP              [Ok..] [0x76cec]
+[FSCK] free segment_count matched with CP             [Ok..] [0xa79c]
+[FSCK] next block offset is free                      [Ok..]
+[FSCK] fixing SIT types
+[FSCK] other corrupted bugs                           [Ok..]
+
+Done: 0.000000 secs
+
+---- Before & after check ----
+# mkdir /tmp/1 /tmp/2
+# losetup -f -r /dev/block/by-name/userdata
+# mount -t f2fs -o ro /dev/block/loop0 /tmp/1
+# mount -t f2fs -o ro /dev/block/mapper/snap /tmp/2
+# rsync -ahxvc --info=progress2 1/ 2/
+sending incremental file list
+              0   0%    0.00kB/s    0:00:00 (xfr#0, to-chk=0/486687)
+
+sent 25.22M bytes  received 90.17K bytes  16.92K bytes/sec
+total size is 101.04G  speedup is 3,991.40
+# dmesg | grep -i f2fs
+[ 2462.787850] F2FS-fs (loop0): Using encoding defined by superblock:
+utf8-12.1.0 with flags 0x0
+[ 2462.929670] F2FS-fs (loop0): recover fsync data on readonly fs
+[ 2462.976133] F2FS-fs (loop0): write access unavailable, skipping recovery
+[ 2462.976135] F2FS-fs (loop0): Mounted with checkpoint version = 6b90089a
+[ 2475.857335] F2FS-fs (dm-0): Using encoding defined by superblock:
+utf8-12.1.0 with flags 0x0
+[ 2475.876950] F2FS-fs (dm-0): Found nat_bits in checkpoint
+[ 2475.913980] F2FS-fs (dm-0): recover fsync data on readonly fs
+[ 2475.940111] F2FS-fs (dm-0): Mounted with checkpoint version = 6b9009b7
+
+After the whole operation, zram0 usage was 3 GiB (uncompressed size).
 
 
 _______________________________________________
