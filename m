@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 435AEC43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jun 2022 08:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 79689C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 20 Jun 2022 11:57:26 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o3DBa-0002w7-J4; Mon, 20 Jun 2022 08:55:07 +0000
+	id 1o3G1x-0002sM-Sg; Mon, 20 Jun 2022 11:57:22 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <qxy65535@gmail.com>) id 1o3DBa-0002w1-2R
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jun 2022 08:55:06 +0000
+ (envelope-from <qxy65535@gmail.com>) id 1o3G1w-0002s8-FM
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jun 2022 11:57:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TtLr/oIle+ftNWxzyiFCCWbJ/ItjPPT10HheHqkPajk=; b=HKmn5DeXolOmm6BbLIPXQT8aSV
- i9zcvipYorwX7G0yFURuZ1J3MvTB5fnCj0ua0r1lYDmy9fnPriF41DC43yKxlLiYk2R17Xfht78es
- +IfmFxmGPhH7vgDRCgKx/pn9q6qs9veog4SLMpMvMogZ4dLRk2JJPfdEjImixVQs/XJo=;
+ bh=fspGpbF+a/tNC1sNSTA/NSolNIjuZW10eZcuVG52+qI=; b=G7M9Q3eq3bJ/AwOtc6nLizEsOg
+ 6S9Y6Zi2EYW6tB5aUE9wi1YAP/0HS6KSklJOtYwCwvxzI0LYejfNqiqfjJYwRggq+85w3FlT1vSnZ
+ sspEkBMeJ8L0P6/T3iFcknl+mNK5lTNH3zBPan7NjtWKMKs2lbDXW9FGx9GoJWr/3vL4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,60 +31,61 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TtLr/oIle+ftNWxzyiFCCWbJ/ItjPPT10HheHqkPajk=; b=ECauibPe3lzjWJJVTSH343lv99
- KKD0t6U2gdQhoMaDYvOYCwA1ViXmR0NSzx1zaG55VOp2mYEUFw/5Mi2wSOfdKzGO/C3No6DJ1ppS8
- /yjNBBkC7tMFhh87ljIlnKYfMjto8oolEubAc+BMURfznagWz+7Cg/2gQSmP+EXCv0JA=;
-Received: from mail-pj1-f42.google.com ([209.85.216.42])
+ bh=fspGpbF+a/tNC1sNSTA/NSolNIjuZW10eZcuVG52+qI=; b=L4jBRFSKV0gwcGWIploioDuZls
+ hb0rcSe4uzAecPw0Uhixr7uSfERmJWkzG6EHHQQff44smcvGxFzriWJt15hjGwRZ3BhiWsIOrHkKX
+ J1g4uUVYQBPxlZlkrt7qXvf3zZDtp3YfKzsXvEvGmiI+qQaweV7oS7dxftlacir/nAJY=;
+Received: from mail-pj1-f54.google.com ([209.85.216.54])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1o3DBZ-0006Tn-F1
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jun 2022 08:55:06 +0000
-Received: by mail-pj1-f42.google.com with SMTP id cv13so6923716pjb.4
+ id 1o3G1r-00089e-Gs
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 20 Jun 2022 11:57:20 +0000
+Received: by mail-pj1-f54.google.com with SMTP id
+ t3-20020a17090a510300b001ea87ef9a3dso10077392pjh.4
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 20 Jun 2022 01:55:05 -0700 (PDT)
+ Mon, 20 Jun 2022 04:57:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
  h=from:to:cc:subject:date:message-id:in-reply-to:references
  :mime-version:content-transfer-encoding;
- bh=TtLr/oIle+ftNWxzyiFCCWbJ/ItjPPT10HheHqkPajk=;
- b=fE/s/b+ZcvraL3GiWx5cEAwt5ZdVqVnARphsKCN6OHLs6yO4PMg/tHMBSIjAqCJHRf
- H7G4RzDkSBY/ZDVAN0lQL6P5WVbaWOFXJ0qO2tV2mg/JxzwddCFLmAKjluBqfW7dudlh
- iy3cD4R2Z9KWfk/cnQXConPubztYE0TR9gyc8oWNQsAf0TMo1k8t9KUpTI8qW1NfL1NM
- nWONh3lMFyK0mi8kDl8i7nm/JqGIFN2qZNWxwOwum2oFOFchpe1NNbYH0Ew5uCD/W5ov
- b9U+LPPdS1FOG/1iXvbGHhd/NGpuv8wDcod/6TZgwUqPojDjVbdMcH5NBt/H5ciBB0rm
- YrBw==
+ bh=fspGpbF+a/tNC1sNSTA/NSolNIjuZW10eZcuVG52+qI=;
+ b=nDA9AxaJXkSw4h/423thk9/K+swFT7dC4J0doqPwQxKqklzzggoB/0sE1fLQwnmnph
+ R/Mca/oYREnoJzMn6FCQlY+a8r5ZUDTYRZ9DUCKGykDVtpTgwOelo0mYBQfODVC17oxr
+ 2whc8bUGZ3Uf63wCW/TCYM0Q4oqahPWeYX1GvMmLAirCgnarYInaOwmdfRTqFy+7NdlZ
+ fdqpKZjdsoE3hqe53K06hBnLi3ICjBGMZsuAItI715alDkNeL/USie3quNHNwsG1/ota
+ l366q46liN0agQJBZoC8sWUkd1qk2xJuCOSMLpGKb6YrN934MBn5JQ02g/OqPe5VSGDW
+ jmBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
  :references:mime-version:content-transfer-encoding;
- bh=TtLr/oIle+ftNWxzyiFCCWbJ/ItjPPT10HheHqkPajk=;
- b=EO/3U3DgwNb48wlz+No5xs8UGyaM20mOa0bT1ZRGTXbeFLcOVVyV5b5UcdgjyT0Uqh
- HObWHqhyciePLJFTyc//WLrpBNdqPTWkW9aZivempjmxhSLzWW56B779lZWsW5bWGHxI
- Oub0h4XKlVmnDdO3ihPY5IPQTBpIYBgbrOwtPafysDXj9g3Km400IeYP4T2acxJOEzq7
- X+3iLxwCL+KZqOJv+yvCG1YjpmlGhefIy74LziuFQ9sDNQa49a7KnhkPvul00u+KbZ4n
- gVhVE/Hyv0ZQ/bv28WtfRTTZRJKeXvh/YlXNVOrS7CStBke3CNED8S+Xg+w7ixQKSNE4
- 1D6g==
-X-Gm-Message-State: AJIora/z5OALi/8z/wt6mF/CZi1TCzGH1nOPT0RwJDWX27tDj812CaJS
- KRI2vAXZX0nku+MWt8GL+Ko=
-X-Google-Smtp-Source: AGRyM1tVSn9nQC6aoE5n05n9SL9OJZev2NyQ1B4n2oaWJETYreDggz36HY2MsiXeII/DZAcUUukG+w==
-X-Received: by 2002:a17:902:ba86:b0:167:7ee0:7ab9 with SMTP id
- k6-20020a170902ba8600b001677ee07ab9mr22992897pls.24.1655715299757; 
- Mon, 20 Jun 2022 01:54:59 -0700 (PDT)
+ bh=fspGpbF+a/tNC1sNSTA/NSolNIjuZW10eZcuVG52+qI=;
+ b=E29wSmoW6Ek1zvyfgap4DC5r3rZP6Y5HqTPOkwJYZwc69zpPiEqXJSbFKw25f2sZIQ
+ /XpccxhStpHtroijpMPHnxexJ1a/itn1eGCUCyrDRByWoIbsaILp+hwdpD4NDtSObOcc
+ Qf6xej8gRffDJy8ge4GJUgj0fgTkCbnZpbvPFYqY0g0yTxqOx3cIBdrq/KevKNMKlqgV
+ K1Nu4/f1OQRXHtNXVfSR4yf7RQbJ0DJcPuTEje7IrmEdbxvGjdG2e5wqG3on/3h/g9Um
+ Bommci5ntofMLjvMxH+7IgDimH0bezAOj2zFxi0E9yLxxvkeH+ArKCx8PBVLI3LSlIh0
+ 3xxQ==
+X-Gm-Message-State: AJIora+CLgyy4WpEeZgGwjXjtcQMT88vhGaZNYf9vE5KweBqb5CaeKQn
+ pa6AtQHQha3MK7JkpEgb7W8=
+X-Google-Smtp-Source: AGRyM1t0+MI3KijEuW3nC/Cff77T+NSYR2+WTfmcGO8La3flzJPImRe/aqeqT9b4P6W/iTnWJ0H9Eg==
+X-Received: by 2002:a17:90b:388f:b0:1e8:5a44:8205 with SMTP id
+ mu15-20020a17090b388f00b001e85a448205mr38161790pjb.221.1655726229869; 
+ Mon, 20 Jun 2022 04:57:09 -0700 (PDT)
 Received: from mi-HP-ProDesk-680-G4-MT.mioffice.cn ([43.224.245.250])
  by smtp.gmail.com with ESMTPSA id
- q5-20020aa79605000000b0051c6613b5basm8450801pfg.134.2022.06.20.01.54.56
+ mm21-20020a17090b359500b001ec86a0490csm4539154pjb.32.2022.06.20.04.57.07
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 20 Jun 2022 01:54:59 -0700 (PDT)
+ Mon, 20 Jun 2022 04:57:09 -0700 (PDT)
 From: qixiaoyu1 <qxy65535@gmail.com>
 X-Google-Original-From: qixiaoyu1 <qixiaoyu1@xiaomi.com>
 To: Chao Yu <chao@kernel.org>
-Date: Mon, 20 Jun 2022 16:48:10 +0800
-Message-Id: <20220620084810.24885-1-qixiaoyu1@xiaomi.com>
+Date: Mon, 20 Jun 2022 19:56:28 +0800
+Message-Id: <20220620115629.9169-1-qixiaoyu1@xiaomi.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <5627a654-d605-6840-a133-e583c804aadd@kernel.org>
 References: <5627a654-d605-6840-a133-e583c804aadd@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1o3DBZ-0006Tn-F1
-Subject: Re: [f2fs-dev] [PATCH v2] resize.f2fs: add option to manually
+X-Headers-End: 1o3G1r-00089e-Gs
+Subject: [f2fs-dev] [PATCH v3 1/2] resize.f2fs: add option to manually
  specify new overprovision
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -119,10 +120,14 @@ F2FS-fs (loop0): Wrong valid_user_blocks: 16404, user_block_count: 13312
 F2FS-fs (loop0): Failed to get valid F2FS checkpoint
 mount(2) system call failed: Structure needs cleaning.
 
+Signed-off-by: liuchao12 <liuchao12@xiaomi.com>
 Signed-off-by: qixiaoyu1 <qixiaoyu1@xiaomi.com>
 ---
 
-  Change log form v1:
+  Change log from v2:
+    - Sorry for miss liuchao12 mistakenly when merge the two patches...
+
+  Change log from v1:
     - merged fix to check free space before grow
     - delete unessassary check of "c.new_overprovision == 0"
     - update man page
