@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BFF34C433EF
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Jun 2022 13:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A84CAC43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Jun 2022 14:02:42 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o40cq-0004uR-8B; Wed, 22 Jun 2022 13:42:31 +0000
+	id 1o40wM-0005Zq-0N; Wed, 22 Jun 2022 14:02:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1o40cp-0004uH-4X
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jun 2022 13:42:30 +0000
+ (envelope-from <chao@kernel.org>) id 1o40wL-0005Zk-6r
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jun 2022 14:02:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=c3q7fDIGosytsqOI3LNO+J+BBGFiVzuSsaJ3oroUF/s=; b=kXI1H7aSOK5BC+mUSvDJdLDbWg
- sXJSor6RnJg/l85lLKpvheVz7rQhaKN5jbunELi83b2Q7hfndk9oW5imEZJmCbOwlSYjRXux9piXM
- sCwVgweGGo82o+I29qjRhFLPS/IaLYY3apzZG4WP4cUE/5NUCy95COu0IHZPyDZB+wGo=;
+ bh=BVRyrf7vp6umDEneEQEGuoAw74fr08/qiqVCSAEKJJE=; b=ZL4RRzzW065kieHWdSBraY0ael
+ HyklkAxF9X76/5BcMItm+Es23CNVv/ymR6oEjBWd+8ayT6EkWDM1XdrCJnG67sZOWMIy0mHK7Weh9
+ iZxu4FKQFtPBVQyU9D6zLf3AyEXG35dZsJAfZyUrE7tfdmOKePu8vYzMf/0wSKmO4s8k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -31,44 +31,48 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=c3q7fDIGosytsqOI3LNO+J+BBGFiVzuSsaJ3oroUF/s=; b=VirhRIkdDADn0euy3raeeqvw3r
- zXTFju2wVyj8SkG3EpdicT/9oTboNOsiwoPpZexX+Vxo399ONhdPxqLN4P4GAIqpK2wX6z3+NlMWe
- KQE37hZxfOzoNmJR+LZCjfLnt+9sKpY81nQcF//99L7G1CUh2zU5b/z6GLJ5LLIKIIsc=;
+ bh=BVRyrf7vp6umDEneEQEGuoAw74fr08/qiqVCSAEKJJE=; b=fquauPzqStqmH2GKjw5tWnlTh0
+ NDlL/fZinP09uNYfFYpTjWzB8PEDuU3DkC2HWNzWotPvPDs1nWFUR7FGiFa254whYmxsVAhADTfcL
+ HFvzy+eSwsfncqDv9OuzIh7fc1en8LUgSZvogzttd2vTlXEzsp0N/IN5Gx3pAJJRP+gM=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o40cn-00ALnm-29
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jun 2022 13:42:29 +0000
+ id 1o40wI-00AMY7-4M
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jun 2022 14:02:39 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id D330361B22;
- Wed, 22 Jun 2022 13:42:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9ACCC34114;
- Wed, 22 Jun 2022 13:42:15 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id BFF5D61B71
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 22 Jun 2022 14:02:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC39C34114;
+ Wed, 22 Jun 2022 14:02:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1655905338;
- bh=FrB/4+7tsuZuC4Tew+ANJVJUtZpsL5HmpOFNjm1p794=;
+ s=k20201202; t=1655906552;
+ bh=KEOm3rqgaJaCmSIo+v3zlFCOBXMloNPUc4mYcPiUjvs=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=lKZdQZDJCzfpBdnTwsIbWvsQyyR1yhVCFqy3qnfwXHOlGJ9Mh/zIbQZ+y6AJP8y45
- /Fg0rGwtm0zcL5QDzKZqogVbv7ObMkXckcVYUcW9/HaLUJwJVxZiTWmvzw3pCwaH9e
- XC1QIu8tbMNsKddKrjKCiZPbExW5v4SiQMzA2XJV8BYGuVtAbOLYT/rSzsdBuHakHn
- XeY39+QW+iNc7dcUszkDtWdMAWYO4JK0eSZagjwOMWBgI5pAhWI6Yfn8xi0xomZNaN
- fc+EptDQmnGdXEAfU9cXoCA549VEpvsVW6jteaGA3bT5u8kTEGH9qqfuIu42NPPEi+
- 04QopMK1lnOMw==
-Message-ID: <0771b00b-e781-cd29-896a-4b6ebc948c2e@kernel.org>
-Date: Wed, 22 Jun 2022 21:42:13 +0800
+ b=YsKY7PMMvAMkQcB6CXNeZ7Dxe7ZU63lsuH14tVjVBSMHEoe4IkDbDAaxcAmuguGMN
+ XMdnBBWgBAGYVfSduxSeMx+zkEjLBZcRNvkpTgQRVRV/oJ9pe3OXTqeCJ+n4wb4VBl
+ ovSsGH076r3gb8iriy1hGUl4aeYFYOMRR/5MuI28gbkXEDvCYMlP3DSPGz+UF4X7VM
+ R0hmn+xGyV1GIeRaljyF/yFrlexeO3/YhffbJVkuqnfvEohQEvCZtgfrQp8dE36GwW
+ Bsy69qhxnpyhaHkDU13KLPMdWVRgTE87ArWEP6xgh3VOaYjVlPN2eQViDix1NTYab2
+ c3wd6fgimRg7w==
+Message-ID: <27138a10-a6b2-edad-1985-687a95b9039b@kernel.org>
+Date: Wed, 22 Jun 2022 22:02:29 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
 Content-Language: en-US
-To: Chao Liu <chaoliu719@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20220621064833.1079383-1-chaoliu719@gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20220617223106.3517374-1-jaegeuk@kernel.org>
+ <20220617223106.3517374-2-jaegeuk@kernel.org>
+ <c45a9c8b-c73a-76bc-6725-5d7e48e7a3f2@kernel.org>
+ <Yq+kiXPyBsXgdYb2@google.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20220621064833.1079383-1-chaoliu719@gmail.com>
-X-Headers-End: 1o40cn-00ALnm-29
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to remove F2FS_COMPR_FL and tag
- F2FS_NOCOMP_FL at the same time
+In-Reply-To: <Yq+kiXPyBsXgdYb2@google.com>
+X-Headers-End: 1o40wI-00AMY7-4M
+Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: run GCs synchronously given user
+ requests
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,99 +84,73 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Chao Liu <liuchao@coolpad.com>, linux-kernel@vger.kernel.org,
- Wayne Zhang <zhangwen@coolpad.com>, Yue Hu <huyue2@coolpad.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/6/21 14:48, Chao Liu wrote:
-> From: Chao Liu <liuchao@coolpad.com>
+On 2022/6/20 6:34, Jaegeuk Kim wrote:
+> On 06/19, Chao Yu wrote:
+>> On 2022/6/18 6:31, Jaegeuk Kim wrote:
+>>> When users set GC_URGENT or GC_MID, they expected to do GCs right away.
+>>> But, there's a condition to bypass it. Let's indicate we need to do now
+>>> in the thread.
+>>
+>> .should_migrate_blocks is used to force migrating blocks in full
+>> section, so what is the condition here? GC should not never select
+>> a full section, right?
 > 
-> If the inode has the compress flag, it will fail to use
-> 'chattr -c +m' to remove its compress flag and tag no compress flag.
-> However, the same command will be successful when executed again,
-> as shown below:
-> 
->    $ touch foo.txt
->    $ chattr +c foo.txt
->    $ chattr -c +m foo.txt
->    chattr: Invalid argument while setting flags on foo.txt
->    $ chattr -c +m foo.txt
->    $ f2fs_io getflags foo.txt
->    get a flag on foo.txt ret=0, flags=nocompression,inline_data
-> 
-> Fix this by removing some checks in f2fs_setflags_common()
-> that do not affect the original logic. I go through all the
-> possible scenarios, and the results are as follows. Bold is
-> the only thing that has changed.
-> 
-> +---------------+-----------+-----------+----------+
-> |               |            file flags            |
-> + command       +-----------+-----------+----------+
-> |               | no flag   | compr     | nocompr  |
-> +---------------+-----------+-----------+----------+
-> | chattr +c     | compr     | compr     | -EINVAL  |
-> | chattr -c     | no flag   | no flag   | nocompr  |
-> | chattr +m     | nocompr   | -EINVAL   | nocompr  |
-> | chattr -m     | no flag   | compr     | no flag  |
-> | chattr +c +m  | -EINVAL   | -EINVAL   | -EINVAL  |
-> | chattr +c -m  | compr     | compr     | compr    |
-> | chattr -c +m  | nocompr   | *nocompr* | nocompr  |
-> | chattr -c -m  | no flag   | no flag   | no flag  |
-> +---------------+-----------+-----------+----------+
-> 
-> Fixes: 4c8ff7095bef ("f2fs: support data compression")
-> Signed-off-by: Chao Liu <liuchao@coolpad.com>
-> ---
-> 
-> This patch depends on the the patch
-> "f2fs: allow compression of files without blocks" sent earlier this day.
-> 
->   fs/f2fs/file.c | 9 +--------
->   1 file changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index daaa0dfd2d2e..0c3ae5993b7a 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1873,10 +1873,7 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
->   		if (masked_flags & F2FS_COMPR_FL) {
->   			if (!f2fs_disable_compressed_file(inode))
->   				return -EINVAL;
-> -		}
-> -		if (iflags & F2FS_NOCOMP_FL)
-> -			return -EINVAL;
-> -		if (iflags & F2FS_COMPR_FL) {
-> +		} else {
->   			if (!f2fs_may_compress(inode))
->   				return -EINVAL;
->   			if (S_ISREG(inode->i_mode) && F2FS_HAS_BLOCKS(inode))
-> @@ -1885,10 +1882,6 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
->   			set_compress_context(inode);
->   		}
->   	}
-> -	if ((iflags ^ masked_flags) & F2FS_NOCOMP_FL) {
-> -		if (masked_flags & F2FS_COMPR_FL)
-> -			return -EINVAL;
-> -	}
+> I think it'll move a full section given .victim_segno is not NULL_SEGNO,
+> as __get_victim will give a dirty segment all the time. wdyt?
 
-Without above check condition, can we return -EINVAL for the case:
+However, in gc_thread_fun() victim_segno is NULL_SEGNO all the time.
 
-chattr +c on file w/ nocompr flag
-
-|               | no flag   | compr     | nocompr  |
-+---------------+-----------+-----------+----------+
-| chattr +c     | compr     | compr     | *-EINVAL*  |
+I guess .should_migrate_blocks should only be set to true for
+F2FS_IOC_FLUSH_DEVICE/F2FS_IOC_RESIZE_FS case? rather than GC_URGENT or GC_MID
+case? See commit 7dede88659df ("f2fs: fix to allow migrating fully valid segment").
 
 Thanks,
 
 > 
->   	fi->i_flags = iflags | (fi->i_flags & ~mask);
->   	f2fs_bug_on(F2FS_I_SB(inode), (fi->i_flags & F2FS_COMPR_FL) &&
-> --
-> 2.36.1
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>    fs/f2fs/gc.c | 8 ++++++--
+>>>    1 file changed, 6 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index d5fb426e0747..f4aa3c88118b 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -37,7 +37,6 @@ static int gc_thread_func(void *data)
+>>>    	unsigned int wait_ms;
+>>>    	struct f2fs_gc_control gc_control = {
+>>>    		.victim_segno = NULL_SEGNO,
+>>> -		.should_migrate_blocks = false,
+>>>    		.err_gc_skipped = false };
+>>>    	wait_ms = gc_th->min_sleep_time;
+>>> @@ -113,7 +112,10 @@ static int gc_thread_func(void *data)
+>>>    				sbi->gc_mode == GC_URGENT_MID) {
+>>>    			wait_ms = gc_th->urgent_sleep_time;
+>>>    			f2fs_down_write(&sbi->gc_lock);
+>>> +			gc_control.should_migrate_blocks = true;
+>>>    			goto do_gc;
+>>> +		} else {
+>>> +			gc_control.should_migrate_blocks = false;
+>>>    		}
+>>>    		if (foreground) {
+>>> @@ -139,7 +141,9 @@ static int gc_thread_func(void *data)
+>>>    		if (!foreground)
+>>>    			stat_inc_bggc_count(sbi->stat_info);
+>>> -		sync_mode = F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_SYNC;
+>>> +		sync_mode = F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_SYNC ||
+>>> +				sbi->gc_mode == GC_URGENT_HIGH ||
+>>> +				sbi->gc_mode == GC_URGENT_MID;
+>>>    		/* foreground GC was been triggered via f2fs_balance_fs() */
+>>>    		if (foreground)
 
 
 _______________________________________________
