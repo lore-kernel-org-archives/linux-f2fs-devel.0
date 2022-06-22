@@ -4,16 +4,16 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C6007C43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Jun 2022 19:46:35 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3D9CAC433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Jun 2022 19:46:36 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o46JA-0007da-7I; Wed, 22 Jun 2022 19:46:35 +0000
+	id 1o46J8-00046m-Pq; Wed, 22 Jun 2022 19:46:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <krisman@collabora.com>) id 1o46J8-0007dR-JC
+ (envelope-from <krisman@collabora.com>) id 1o46J7-00046Y-5Q
  for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jun 2022 19:46:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -21,9 +21,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ARS9sCr8hTgHVmXjCG765oPkuNaZ5ttZWVD1LamEXM8=; b=AXIm8rCZLNm5ITcVPz4oskN1q7
- omKBjpU9yYO1vKyvHoFsx5su43V8SHRXrsyloWusUX5llvzjBPBUj4qkFa0XTqp455jGS2CGTA3LU
- un8qKK9oGoXQplQCpmZGeF2RIndSttgvEVgixGC4QvTowwdIzn+TAIuKDdBLe9mh6pUo=;
+ bh=bJqicfk7jI/2HEQFu9XZAu4q6AO80AAOd77BqeWEEWk=; b=JyU2Ep4pMYPvWuJ/UME+DVaimk
+ UKVDr7evzmYGCOPbgR6nNGOAyOf3tuAvnwMPydxDEtO3GXIgrNtlT65BH7hL/bQ96qziTjCt7tlpD
+ bz5Rmas1/PBc+2O2Iv72+/HMpKfwGYe82f7HVqt2Thuis1OZX+3+pGW48RThTH8Uq7iM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,43 +31,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ARS9sCr8hTgHVmXjCG765oPkuNaZ5ttZWVD1LamEXM8=; b=j/kct6HqUVNyT45KiH1Gb8lK64
- zq7d9tNb4uHLcShd/JbHdmnriP/nWEezvUg7+upmN41ij5E2NyXwJuSqg3b1CFsVOqsdvP3m4PPN8
- 6DFdy2bxvJK86cXzMOmzRDHeXAYz9kZFzkU9e8qhqmrWjpo/QE3z0egcLnBSZKbJMeA0=;
+ bh=bJqicfk7jI/2HEQFu9XZAu4q6AO80AAOd77BqeWEEWk=; b=HrhUYTCT4sIm98AaKEwT31XCR2
+ mKdmogtgtyOy6RV3og82n87e8v6SZYmlxIvCYg0FkYaEBelbNZQIiaFYceRe5Fu/AizRPmDH2Zx4q
+ 2PubpxjIkK0Bb66UlsSM31niv5gxvkB1aQ7CSj0NRXz+EHVegVwTun98bh4zBB0NyZ10=;
 Received: from madras.collabora.co.uk ([46.235.227.172])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o46J6-0001Sz-JB
- for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jun 2022 19:46:33 +0000
+ id 1o46J2-0001Sp-UH
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 22 Jun 2022 19:46:32 +0000
 Received: from localhost (mtl.collabora.ca [66.171.169.34])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested) (Authenticated sender: krisman)
- by madras.collabora.co.uk (Postfix) with ESMTPSA id 2E82D66016F3;
- Wed, 22 Jun 2022 20:46:26 +0100 (BST)
+ by madras.collabora.co.uk (Postfix) with ESMTPSA id 8C8F86601736;
+ Wed, 22 Jun 2022 20:46:22 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
- s=mail; t=1655927186;
- bh=NSq4T8R/1LjZv5IrK3mdyn3xE+5FT2PzLu7hjGyXJ8I=;
+ s=mail; t=1655927182;
+ bh=+ZKL9HDtB8ixIilBthrStw+0LDABivssdB66ZuLZCzA=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=AUR+/OEvMPXYmzpyw/GFzzW5OiytNveWhrXb2oYJeS9fEZ0LnRb8yh6MfmRs9tEAb
- Id+mlGvra+nHetd3FS22lYbDCH0WGAPrzXsS6hvZaS+yGy1od5zt2u/77M2/JMBwzA
- HTjyWE6dySUG6yDZF4AWU5gPGAgfYtoe2gVHNc3qYJHmd3591VXef+9Relpb5HZKjq
- mOnOl3dCSKl1dyC+vIRKnRgI0R84ZDjftOKWP467LPbR2kSAC12cxaO3H/2YF1zF+r
- 862dIo+COp+HkW6oq338S/otfs2MQSfBHpmyFKhyYIVdFYf+/HgdVNaPBaFwbpI93w
- qQM1yas2MV+wA==
+ b=AN1ENUwjaQJvAZzW1SqVGKdeH/sKuItFwqcGMsN7l5ezgbxtmKVx/8OURKrRHwExX
+ Qs1OrFnS+GwhkKKbIPaDUBSviY3cZo3v7CTJA6Ayq+L/0qWkxw2DQM+OIfQ1hY6ULz
+ KbsMB/SZsXuLP0CkF/CQV0H7+4Rih1MnTE0f56AVlEPUyLkZhoYMXo4iefGinkZEY8
+ ufkXGyWzrbxwuPp2OgtvxfaoLVNNqkpOjaMR5GvDjWcZ6cyqW1gNYOKB/B1/Xciih8
+ gtpg32k0//8NOXAz+LZUXlXnRgGj9W5EJ6f23wBAQd8fD31ZZc7t7SxnICv5hUbNAG
+ 09n2s1rgCeJfg==
 From: Gabriel Krisman Bertazi <krisman@collabora.com>
 To: viro@zeniv.linux.org.uk,
 	tytso@mit.edu,
 	jaegeuk@kernel.org
-Date: Wed, 22 Jun 2022 15:46:00 -0400
-Message-Id: <20220622194603.102655-5-krisman@collabora.com>
+Date: Wed, 22 Jun 2022 15:45:59 -0400
+Message-Id: <20220622194603.102655-4-krisman@collabora.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220622194603.102655-1-krisman@collabora.com>
 References: <20220622194603.102655-1-krisman@collabora.com>
 MIME-Version: 1.0
-X-Headers-End: 1o46J6-0001Sz-JB
-Subject: [f2fs-dev] [PATCH 4/7] libfs: Support revalidation of encrypted
- case-insensitive dentries
+X-Headers-End: 1o46J2-0001Sp-UH
+Subject: [f2fs-dev] [PATCH 3/7] libfs: Validate negative dentries in
+ case-insensitive directories
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,46 +86,54 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Preserve the existing behavior for encrypted directories, by rejecting
-negative dentries of encrypted+casefolded directories.  This allows
-generic_ci_d_revalidate to be used by filesystems with both features
-enabled, as long as the directory is either casefolded or encrypted, but
-not both at the same time.
+Introduce a dentry revalidation helper to be used by case-insensitive
+filesystems to check if it is safe to reuse a negative dentry.
+
+A negative dentry is safe to be reused on a case-insensitive lookup if
+it was created during a case-insensitive lookup and this is not a lookup
+that will instantiate a dentry. If this is a creation lookup, we also
+need to make sure the name matches sensitively the name under lookup in
+order to assure the name preserving semantics.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 ---
- fs/libfs.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/libfs.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index de43f3f585f1..e4da68ebd618 100644
+index 31b0ddf01c31..de43f3f585f1 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -1461,6 +1461,9 @@ static inline int generic_ci_d_revalidate(struct dentry *dentry,
- 		const struct inode *dir = READ_ONCE(parent->d_inode);
- 
- 		if (dir && needs_casefold(dir)) {
-+			if (IS_ENCRYPTED(dir))
-+				return 0;
-+
- 			if (!d_is_casefold_lookup(dentry))
- 				return 0;
- 
-@@ -1470,7 +1473,8 @@ static inline int generic_ci_d_revalidate(struct dentry *dentry,
- 				return 0;
- 		}
- 	}
--	return 1;
-+
-+	return fscrypt_d_revalidate(dentry, flags);
+@@ -1450,9 +1450,33 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ 	return 0;
  }
  
++static inline int generic_ci_d_revalidate(struct dentry *dentry,
++					  const struct qstr *name,
++					  unsigned int flags)
++{
++	int is_creation = flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET);
++
++	if (d_is_negative(dentry)) {
++		const struct dentry *parent = READ_ONCE(dentry->d_parent);
++		const struct inode *dir = READ_ONCE(parent->d_inode);
++
++		if (dir && needs_casefold(dir)) {
++			if (!d_is_casefold_lookup(dentry))
++				return 0;
++
++			if (is_creation &&
++			    (dentry->d_name.len != name->len ||
++			     memcmp(dentry->d_name.name, name->name, name->len)))
++				return 0;
++		}
++	}
++	return 1;
++}
++
  static const struct dentry_operations generic_ci_dentry_ops = {
-@@ -1490,7 +1494,7 @@ static const struct dentry_operations generic_encrypted_dentry_ops = {
- static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
  	.d_hash = generic_ci_d_hash,
  	.d_compare = generic_ci_d_compare,
--	.d_revalidate = fscrypt_d_revalidate,
 +	.d_revalidate_name = generic_ci_d_revalidate,
  };
  #endif
