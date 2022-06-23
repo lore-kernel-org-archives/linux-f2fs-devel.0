@@ -4,72 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 791D5CCA47F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Jun 2022 17:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9D1E8C43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Jun 2022 18:12:27 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o4QYJ-000394-F3; Thu, 23 Jun 2022 17:23:36 +0000
+	id 1o4RJZ-0004SH-QS; Thu, 23 Jun 2022 18:12:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1o4QYI-00038x-Gt
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Jun 2022 17:23:35 +0000
+ (envelope-from <bart.vanassche@gmail.com>) id 1o4RJY-0004S6-4l
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Jun 2022 18:12:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9l89qyGbBGPiEsudUcvyHOzT5am4ksD2gPvevcRQpKo=; b=YFMzjmTkU7ZHf208A5TRsnTvar
- Jsh7VdaMLwqDdaA9nk7H6q/HpQUZiy29ljYkMAq7uu6XYioaPekrTmD1bto/5tLsdQZtlUZRevcZH
- kBKpDj3ElsGAmhxnPKrpTmZWdDiHGEMqvrqS8FQhQosPtEfxGGQPU99fA/r+8E1UtEok=;
+ bh=eCmB3u9XWRwc4MCQ9di/1b5idBouY1G1OCm3ls371Kw=; b=QX9VLG4f6bonC1/I0p38eGCxxQ
+ 66GrIp4ln+Qv4/TND8PrLoDAhdgemD1fznwIjax2U9hs7V/YqnPcrL/W4ynVAPEmijWqOVICCvtNl
+ QoiXBNNhbeG/0kExQa1QMLX7hgHtDYxjehmNyHG7fgiTmkfEDOeleawhSHKbBDhUvE8E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9l89qyGbBGPiEsudUcvyHOzT5am4ksD2gPvevcRQpKo=; b=g1VEWdmmcEkzmvB1yDPSoLNQ2Q
- ZAaPYq3yS//nIFnvA/LpMIZ74/kzq6IGZ/ZIzQcNoyQUTsv9wrX+zMsPbSWOzvDsPo9gcerCryEws
- MsDGmzmbgoLVSYki+HjV1YZelSWssym2OIqURzjrISYixm0hlFTdSGA1ZbIS8eDgr26I=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=eCmB3u9XWRwc4MCQ9di/1b5idBouY1G1OCm3ls371Kw=; b=GNqyPUJ7smmfQ5TlrM0CDBAmfa
+ MjLoX/OZvkmMq4v7fengN4nyWC0LkYxGgIZvrC+PrfLrwfm/fmkVuxvDntIQEEFM7wwCIIW9IeKSX
+ nvIEwa8WCTnyZmxA/IcH2WPi+R3qzoPGLM4Yoi+Z9YO/wSWTES70+g1NPBTNhTqyrLsA=;
+Received: from mail-pl1-f169.google.com ([209.85.214.169])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o4QYI-00BQV0-Jq
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Jun 2022 17:23:35 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 9844E61E9D
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
+ id 1o4RJY-00BS7t-8A
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Jun 2022 18:12:24 +0000
+Received: by mail-pl1-f169.google.com with SMTP id n10so1508727plp.0
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 23 Jun 2022 17:23:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812B1C3411B;
- Thu, 23 Jun 2022 17:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1656005002;
- bh=wHCbmf5IRU39rWTli2nZUaGZkhlxJIj37MxQFogSdEY=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=PyKKn5AmJY5LA84KqOczZyyRySup5L6Azsjk02/PDhbsW5QDnbgiunWdXq6+5Hdly
- so5Jt85YlQB9yKrlKNekvT01BKoj61uSsEu/gk7IN2BYRRSZpJ27dJHNI3qqcUG7Au
- zhBqRL1Qly6dDmbG/gEgCOJOudXz40JLfL6p+bxfc6GS+W4PIbHRpxLNi83ee1O/GS
- uP5kPq9auC78LW6pOr1jPPca7r7KzTXLrrbzcVjhNuSFmJf/idfZ+iKYrqA82FALa/
- yKF7FO0a8934AaK2M+hpSsOnQSPqHVFK1nrJQcNXnJEua4rVcuQoWL5ptjezOKzdVE
- vp2zp8L/1LTLQ==
-Date: Thu, 23 Jun 2022 10:23:20 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Message-ID: <YrShiIjNCIANjSwL@sol.localdomain>
-References: <20220616201506.124209-1-ebiggers@kernel.org>
- <20220616201506.124209-2-ebiggers@kernel.org>
- <YrSNlFgW6X4pUelg@magnolia>
+ Thu, 23 Jun 2022 11:12:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+ :references:mime-version:content-transfer-encoding;
+ bh=eCmB3u9XWRwc4MCQ9di/1b5idBouY1G1OCm3ls371Kw=;
+ b=jcD4Y2NjbWVQwomsWYvDIqrmDhQQp6C0Ix6kcw8hbeDkE4h3JQUNTU15GyY+pEs/Nt
+ ASLUhbfeg7voDtk6DvENlGxrz3Q4uuStcmWQyHDGYcK3jp8/KGfaCEmCUSAwNv0NyNl9
+ udnJ6EBp6wwFWnFk2ZX0Hv7e0PIKSFZ7spOlZS7wq79P796h30MHXP0ag7EHn+daWvUi
+ TIwzDNoy4b45qi1P84J91TGtPxJH5UyAWpJ+98CDbIPUeZfhZoqZBvMB8FBs+xsgALLE
+ TiBYv4a/2riNCv79fhhg0mTqBc75DvM5Sk9/sLPwtBe2ccokMGbOq4wBue7Oo24K5WSP
+ z8hg==
+X-Gm-Message-State: AJIora9uXPT+fHIkGmJDio5NDkUSyG2tWOtPNVItA4AJd7qolW1oS1R5
+ XP1A4e3LD0L5ZupzUoAX6zY=
+X-Google-Smtp-Source: AGRyM1tFtcNSXSsU9RAmmTDFtjGQzQOaNUjkcaz6M/h1ysLvVtP9FwHR+wEisAlbpfyQ3O41vk+Jtw==
+X-Received: by 2002:a17:903:283:b0:163:be9d:483a with SMTP id
+ j3-20020a170903028300b00163be9d483amr39529820plr.166.1656007938610; 
+ Thu, 23 Jun 2022 11:12:18 -0700 (PDT)
+Received: from bvanassche-linux.mtv.corp.google.com
+ ([2620:15c:211:201:70af:1dc5:d20:a563])
+ by smtp.gmail.com with ESMTPSA id
+ az8-20020a170902a58800b00163d76696e1sm104803plb.102.2022.06.23.11.12.17
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 23 Jun 2022 11:12:17 -0700 (PDT)
+From: Bart Van Assche <bvanassche@acm.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Thu, 23 Jun 2022 11:12:04 -0700
+Message-Id: <20220623181208.3596448-2-bvanassche@acm.org>
+X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
+In-Reply-To: <20220623181208.3596448-1-bvanassche@acm.org>
+References: <20220623181208.3596448-1-bvanassche@acm.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <YrSNlFgW6X4pUelg@magnolia>
-X-Headers-End: 1o4QYI-00BQV0-Jq
-Subject: Re: [f2fs-dev] [PATCH v3 1/8] statx: add direct I/O alignment
- information
+X-Headers-End: 1o4RJY-00BS7t-8A
+Subject: [f2fs-dev] [PATCH v2 1/5] Fix the struct f2fs_dentry_block
+ definition
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,52 +87,45 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-block@vger.kernel.org, linux-api@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, Keith Busch <kbusch@kernel.org>,
- linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org
+Cc: Peter Collingbourne <pcc@google.com>, Bart Van Assche <bvanassche@acm.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jun 23, 2022 at 08:58:12AM -0700, Darrick J. Wong wrote:
-> > diff --git a/include/linux/stat.h b/include/linux/stat.h
-> > index 7df06931f25d8..ff277ced50e9f 100644
-> > --- a/include/linux/stat.h
-> > +++ b/include/linux/stat.h
-> > @@ -50,6 +50,8 @@ struct kstat {
-> >  	struct timespec64 btime;			/* File creation time */
-> >  	u64		blocks;
-> >  	u64		mnt_id;
-> > +	u32		dio_mem_align;
-> > +	u32		dio_offset_align;
-> 
-> Hmm.  Does the XFS port of XFS_IOC_DIOINFO to STATX_DIOALIGN look like
-> this?
-> 
-> 	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
-> 
-> 	kstat.dio_mem_align = target->bt_logical_sectorsize;
-> 	kstat.dio_offset_align = target->bt_logical_sectorsize;
-> 	kstat.result_mask |= STATX_DIOALIGN;
+Fix the struct f2fs_dentry_block definition on systems for which
+PAGE_SIZE != 4096. This patch does not change the struct f2fs_dentry_block
+definition if PAGE_SIZE == 4096.
 
-Yes, I think so.
+Cc: Peter Collingbourne <pcc@google.com>
+Reported-by: Peter Collingbourne <pcc@google.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+---
+ include/f2fs_fs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-However, if we need more fields as Avi Kivity requested at
-https://lore.kernel.org/r/6c06b2d4-2d96-c4a6-7aca-5147a91e7cf2@scylladb.com
-that is going to complicate things.  I haven't had a chance to look
-into whether those extra fields are really needed.  Your opinion on whether XFS
-(and any other filesystem) needs them would be appreciated.
-
-> 
-> And I guess you're tabling the "optimal" IO discussions for now, because
-> there are too many variants of what that means?
-> 
-
-Yes, that's omitted for now due to the apparent redundancy with stx_blksize.
-
-- Eric
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 21a7e70d952d..fdbf7c7a0b35 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -1317,7 +1317,7 @@ typedef __le32	f2fs_hash_t;
+ #define SIZE_OF_DIR_ENTRY	11	/* by byte */
+ #define SIZE_OF_DENTRY_BITMAP	((NR_DENTRY_IN_BLOCK + BITS_PER_BYTE - 1) / \
+ 					BITS_PER_BYTE)
+-#define SIZE_OF_RESERVED	(PAGE_SIZE - ((SIZE_OF_DIR_ENTRY + \
++#define SIZE_OF_RESERVED	(F2FS_BLKSIZE - ((SIZE_OF_DIR_ENTRY + \
+ 				F2FS_SLOT_LEN) * \
+ 				NR_DENTRY_IN_BLOCK + SIZE_OF_DENTRY_BITMAP))
+ #define MIN_INLINE_DENTRY_SIZE		40	/* just include '.' and '..' entries */
+@@ -1341,7 +1341,7 @@ struct f2fs_dentry_block {
+ 	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
+ };
+ 
+-static_assert(sizeof(struct f2fs_dentry_block) == 4096, "");
++static_assert(sizeof(struct f2fs_dentry_block) == F2FS_BLKSIZE, "");
+ 
+ /* for inline stuff */
+ #define DEF_INLINE_RESERVED_SIZE	1
 
 
 _______________________________________________
