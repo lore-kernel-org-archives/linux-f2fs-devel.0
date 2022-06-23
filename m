@@ -4,77 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 41E8FCCA47C
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CA6DEC433EF
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Jun 2022 18:12:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o4RJa-0004TP-JZ; Thu, 23 Jun 2022 18:12:25 +0000
+	id 1o4RJc-0005Wf-A2; Thu, 23 Jun 2022 18:12:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bart.vanassche@gmail.com>) id 1o4RJZ-0004TJ-Ny
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Jun 2022 18:12:24 +0000
+ (envelope-from <bart.vanassche@gmail.com>) id 1o4RJa-0005WZ-Ar
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Jun 2022 18:12:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KMWv460Wb54wONmzPP5cv9DMKvBsyAs+kVlkOJ0bxi8=; b=Sq1tNAaooPQmP3tYE39m4dWUot
- 6LB3Y6+h8e7UV4rTUzLsm5WH27z+3OE7zZsrNFdGVbobQ67IlL8lhnQ/usTMkEkgVaAjEDoAh4XZj
- H669Koo5ddoa9vqRe3EentsCjS9zD2TWJJ30lWvlB6vpQbqWXqchRradyOtWZgre76E8=;
+ bh=olGZo4G5qWhNx4sOgVQ6big/g5gyvMiHwloMnqfNjEA=; b=EcPCRK/mZTEigPTnKcqbqMh/ja
+ eFPhRzYDWWa2dP1QFPAAcK7UlNriaIN/o66EyQSJcig31WzlilW2jrKMYJ+sgKw3qxKxv5+8QNBhp
+ BlWrzeg6XOc1NQhgTJdV1qmPwyFS+qsBK5NFsRgQqRScVdHKVunXith6oBOfAvm5xlB0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=KMWv460Wb54wONmzPP5cv9DMKvBsyAs+kVlkOJ0bxi8=; b=X
- HW59Hlr86XloWWd5SWljYXU++vtG5A4L2bbdYpA0lEVDFyr3M8Vxpr7HUPLnJ45XLrPRjdCXmP7dX
- Oa3p48el0w7ypEq2XHpuAMB91Wz8x/kQNhUSSKabf3xzhQzciKg1QEeOLOoHyDXwBRMXWTXXbXHAJ
- eJD6zxtYo+WN4Q4o=;
-Received: from mail-pj1-f46.google.com ([209.85.216.46])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=olGZo4G5qWhNx4sOgVQ6big/g5gyvMiHwloMnqfNjEA=; b=VQ2XyjYp41zfROUaoKx16uTyG8
+ Gqk07ySAlBFoNToOIpmkGqDeNj2JW5lp7AkWxI0CUuMtH4nOWSLhLrOdvbErflrPPeBVkKUTlBUNc
+ VH5/SBt8nQyL966nxVwX6zcEBwoc7UGjh7bOAuEg4g0ZcH97gOAKf1XCKSF+3fD52ucQ=;
+Received: from mail-pg1-f181.google.com ([209.85.215.181])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1o4RJW-00BS7r-Il
- for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Jun 2022 18:12:24 +0000
-Received: by mail-pj1-f46.google.com with SMTP id
- 73-20020a17090a0fcf00b001eaee69f600so381689pjz.1
+ id 1o4RJZ-0005ff-I8
+ for linux-f2fs-devel@lists.sourceforge.net; Thu, 23 Jun 2022 18:12:26 +0000
+Received: by mail-pg1-f181.google.com with SMTP id d129so167432pgc.9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 23 Jun 2022 11:12:22 -0700 (PDT)
+ Thu, 23 Jun 2022 11:12:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
- :content-transfer-encoding;
- bh=KMWv460Wb54wONmzPP5cv9DMKvBsyAs+kVlkOJ0bxi8=;
- b=TjeTzvnpneQHIu7YhDTYJeni8Kti1dl1RmM1u/XHVXhFGix1+OvaUoaQlE8+pw3NRl
- ogb+YF1i+KyinLVnjqAsL1Qo+gfZZOtTr6eGOX0CjGU0vLkcglxOvQ1SXxu5+Dnqmyjl
- 6GjcSK0ky8GivL4e2lhlH2l9i9XkLQBLJM2qro9OFc2LkxEk5bqmtOJN34PnXfK6jJ9L
- pBjKnBhlEZODmtvKk6MR/uW7Eu0v0ump5Af3ODd5VEgc5M77OcIUTleXP3hRnIS0zDhs
- 5yqsQPASIjSGccivv/FeAIoY2NiSYTKI0vj79gjTaRv+gCZql1E9KZiaNbwo82pWd8IK
- rr2w==
-X-Gm-Message-State: AJIora8mlL91eP0OxaRFlqKutqAFGmX/vuwyW8ruH3b5EMZIf001skMJ
- vSQm8pZ241D/7xC/3lMFknIJYJWDtVFeFA==
-X-Google-Smtp-Source: AGRyM1tW41AxQDe+woj4wtDofSa5GPmC2UXi8C2jMm322n9K/9epPT/fMzVq1mG0CC0sYoCSmcd4Zg==
-X-Received: by 2002:a17:902:7486:b0:16a:cfc:7f49 with SMTP id
- h6-20020a170902748600b0016a0cfc7f49mr30868893pll.135.1656007936971; 
- Thu, 23 Jun 2022 11:12:16 -0700 (PDT)
+ h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+ :references:mime-version:content-transfer-encoding;
+ bh=olGZo4G5qWhNx4sOgVQ6big/g5gyvMiHwloMnqfNjEA=;
+ b=JtmwWx56uaDfxjYLxgecm0T9FjPL4Q+NeSPmh28t0qHtfrn6FtBvPYwsAVx9c7Ons1
+ s8NTxFlQWzwrDv/Iq3jwrodzCsRbCXVDcEUztSypFymTLsZUH5GQ4lyjY4s8ullLLnIP
+ iXvejvzA9yQL0sgZ/hiH1kYzGzqcE3OjkF4L22Tg/1pUxRBjdB7ONzbTUwskpAKDB4s8
+ +oHrGJWCFc0xU4gGSUw5THZg3aalR8TXOuLCNtVXQYRYj09C9fTJeLeAlpQxl0Ju1nrt
+ SgEVlXFzpyaPO9VOzKP/t/fiQEBZj/mGq33hnSyz52yt9dnHgziqWEymRpjqVjejnlon
+ L1Ow==
+X-Gm-Message-State: AJIora/k6nK+wPsIe4pLfcT60soFnMTK6aJFahFCPDrQwmgGy7gKJ/M0
+ Xw6jEFuJWKxqxyAiOjfK48U=
+X-Google-Smtp-Source: AGRyM1voxjlWLd6eyQegynYNZ7WhUDbJQ5vF5rbls7rOCWeb87Z0fcJ6X9GADBUTP5bKDpULJAxpwA==
+X-Received: by 2002:a63:6cc8:0:b0:3fa:387b:3991 with SMTP id
+ h191-20020a636cc8000000b003fa387b3991mr8337426pgc.19.1656007939953; 
+ Thu, 23 Jun 2022 11:12:19 -0700 (PDT)
 Received: from bvanassche-linux.mtv.corp.google.com
  ([2620:15c:211:201:70af:1dc5:d20:a563])
  by smtp.gmail.com with ESMTPSA id
- az8-20020a170902a58800b00163d76696e1sm104803plb.102.2022.06.23.11.12.15
+ az8-20020a170902a58800b00163d76696e1sm104803plb.102.2022.06.23.11.12.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Jun 2022 11:12:16 -0700 (PDT)
+ Thu, 23 Jun 2022 11:12:19 -0700 (PDT)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Thu, 23 Jun 2022 11:12:03 -0700
-Message-Id: <20220623181208.3596448-1-bvanassche@acm.org>
+Date: Thu, 23 Jun 2022 11:12:05 -0700
+Message-Id: <20220623181208.3596448-3-bvanassche@acm.org>
 X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
+In-Reply-To: <20220623181208.3596448-1-bvanassche@acm.org>
+References: <20220623181208.3596448-1-bvanassche@acm.org>
 MIME-Version: 1.0
-X-Headers-End: 1o4RJW-00BS7r-Il
-Subject: [f2fs-dev] [PATCH v2 0/5] PAGE_SIZE and zoned storage related
- improvements
+X-Headers-End: 1o4RJZ-0005ff-I8
+Subject: [f2fs-dev] [PATCH v2 2/5] Fix f2fs_report_zone()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,34 +86,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Bart Van Assche <bvanassche@acm.org>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jaegeuk,
+The definition of struct blk_zone_report is as follows:
 
-This patch series fixes one issue reported by Peter Collingbourne and a few
-issues I discovered by reading the zoned block device source code. Please
-consider these patches for inclusion in the official f2fs-tools repository.
+	struct blk_zone_report {
+		__u64		sector;
+		__u32		nr_zones;
+		__u32		flags;
+		struct blk_zone zones[0];
+	};
 
-Thanks,
+Since f2fs_report_zone() allocates the above data structure with
+malloc() and since f2fs_report_zone() only initializes the sector and
+nr_zones members, the flags member is not initialized. Modify
+f2fs_report_zone() such that 0 is passed as flags to the
+BLKREPORTZONE ioctl instead of a random value. This has been
+discovered by reading the source code.
 
-Bart.
+Cc: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Fixes: 6d7c7b785feb ("libf2fs_zoned: Introduce f2fs_report_zone() helper function")
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+---
+ lib/libf2fs_zoned.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Bart Van Assche (5):
-  Fix the struct f2fs_dentry_block definition
-  Fix f2fs_report_zone()
-  Improve compile-time type checking for f2fs_report_zone()
-  Use F2FS_BLKSIZE for dev_read_block() buffers
-  Use F2FS_BLKSIZE as the size of struct f2fs_summary_block
-
- fsck/mount.c        | 14 +++++++-------
- include/f2fs_fs.h   |  8 +++++---
- lib/libf2fs_zoned.c | 23 +++++++++++++++--------
- 3 files changed, 27 insertions(+), 18 deletions(-)
-
+diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
+index f383ce275342..d8de66b82029 100644
+--- a/lib/libf2fs_zoned.c
++++ b/lib/libf2fs_zoned.c
+@@ -206,7 +206,8 @@ int f2fs_report_zone(int i, uint64_t sector, void *blkzone)
+ 	struct blk_zone_report *rep;
+ 	int ret = -1;
+ 
+-	rep = malloc(sizeof(struct blk_zone_report) + sizeof(struct blk_zone));
++	rep = calloc(1, sizeof(struct blk_zone_report) +
++		     sizeof(struct blk_zone));
+ 	if (!rep) {
+ 		ERR_MSG("No memory for report zones\n");
+ 		return -ENOMEM;
 
 
 _______________________________________________
