@@ -4,71 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F3EC0CCA479
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 28 Jun 2022 23:47:56 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 63341C43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 29 Jun 2022 09:07:53 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o6Kvx-000412-Au; Tue, 28 Jun 2022 23:47:52 +0000
+	id 1o6Tfq-0001zn-RG; Wed, 29 Jun 2022 09:07:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <jaegeuk@kernel.org>) id 1o6Kvw-00040w-Hk
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Jun 2022 23:47:51 +0000
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1o6Tfp-0001zg-Hx
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Jun 2022 09:07:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
+ :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=OKTRZMrdPIdfsiSIbOw5nNCNvJ4oKg5uvCZWfu37onU=; b=XMV2FZxMhY+woxlwcGDrL8s15Q
- mVbnuYDVe0t22zalPUvmaUU+/+79gwbIO6rj6XQkIECl8ITtkbUxpNrY7WAlcqbStJ+3E0VFGbO9j
- szbLqJxK1GzaZb0iqhK8hUj9HI+docm/cCCb5gIEuxhHoJOKDvj08MkBJl9l5F47NjVU=;
+ bh=2mAUbVd51phdpgbN8MYFfGo95LrCZQ84GrPfc9ScT4c=; b=Zi+n0MwSfuoI5IAqXXUuGQfBt6
+ mGnb6DrEaGkJDmKRfJloJynV8Eo+pqG8EXJgRATnyo4FlyPDp133tIb7im5STqgwXNNv1O0qYKmpO
+ O0afxinPhBNxt6qFwvc3Rrxz0ePeQfwTFvBJGwtwDh/+eyeQSYh6uRzA8eZrKtvP4NJo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+ In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=OKTRZMrdPIdfsiSIbOw5nNCNvJ4oKg5uvCZWfu37onU=; b=CQIwt12B0obOPLUkEuS5wNCsB1
- SIDm+QOGjtZxqOujItsbq/tqPyZ2LYuV6GEQkpO9wYVFksDwePkOZvaGcmohp5YmuVhLEFQniyW2t
- h4s37iAriyIwXK2CrKlatai33gohY1O+WyBtllO/pe67jJobVRj9VYqwrsIWtvGf6lOE=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=2mAUbVd51phdpgbN8MYFfGo95LrCZQ84GrPfc9ScT4c=; b=gXLIjhYMQy+t+uKjHcHIxV5wH9
+ 0mJty9otKHGYhVwUECBHZbz5ATZJtf2qYnIMrkCcMrP/lkn/ydOPfYZVilNFR4Pfp51pdToPnpiuf
+ lkLXNT3+Gn9v43Xkvh2sL5sxh5eyZF6RfF7dcDnskJ3PXwXNJbyj+NVMGw4ZIBE/uTCw=;
+Received: from sin.source.kernel.org ([145.40.73.55])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o6Kvs-0002dQ-DM
- for linux-f2fs-devel@lists.sourceforge.net; Tue, 28 Jun 2022 23:47:51 +0000
+ id 1o6Tfl-0000r6-O2
+ for linux-f2fs-devel@lists.sourceforge.net; Wed, 29 Jun 2022 09:07:49 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 6F38161B76
+ by sin.source.kernel.org (Postfix) with ESMTPS id 18789CE248C
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 28 Jun 2022 23:47:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F4EC341CC;
- Tue, 28 Jun 2022 23:47:36 +0000 (UTC)
+ Wed, 29 Jun 2022 09:07:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 57066C3411E
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 29 Jun 2022 09:07:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1656460056;
- bh=jMweakuotTV8bJtWOanoi9NZQqPD97x5eWAPdG7SVLQ=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=GIPP6cyo4AquWnm7SezW1gUJH5E68U2gNS7yD2ucYJKAi6JhmhUrYx7PdaslUkO/5
- 3IZRnRAyid3J/rgIvAxSo14xfKW9reE8ML/GByIoNa1q6CPc8Nt7gL2NMcXFAIom1Q
- VAqFaA/cFQ9YL1eZoTDznNHkapN5bNB2CA56PqDYle1bI+jyf5YxLhnsAhsS2nhKoj
- fysOZjEfB8wjO3+P6+YCuH8IfBsccX37omwfxAugn6SaVoQfIQup4a3uaAf+1A4l7G
- ew4I+rq2JbMgRQ1hAgK1yOR7AqvkTLcgLXiYzqElH77Mg8tj585c2o6md8XmYrj/aN
- GePWzptd9VWhA==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Tue, 28 Jun 2022 16:47:32 -0700
-Message-Id: <20220628234733.3330502-2-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
-In-Reply-To: <20220628234733.3330502-1-jaegeuk@kernel.org>
-References: <20220628234733.3330502-1-jaegeuk@kernel.org>
+ s=k20201202; t=1656493653;
+ bh=2mAUbVd51phdpgbN8MYFfGo95LrCZQ84GrPfc9ScT4c=;
+ h=From:To:Subject:Date:In-Reply-To:References:From;
+ b=IaXLz/Zk8qMqzSRXQPCcpS29q44s3mtIdZkrF239Ze7uT1VvO3ND3femtGVFRbml2
+ 7dMmX9yKB2HCW+as53FdCH9gVcO9oqg7mCBwwUD7v9GYnFeKXBUTuO5gDgGrRThtLy
+ a/WuLXG7DIj9N3F7SuMOhhFKmd0sTh98UWIhZM97d9HzmyRL7F5tQBX8c1VDLg4BBn
+ Hy993VylbYWdsXzH1yQ5BhQGl/3J2TOA9+DwzCa9uYlhZkdWLmvbkCdJgEQ0LiJCCX
+ jRWQU8taJdppYaIm0hHkdpXFakQ2naDvC6huyNiqz2vZQVtU+eXIBusTeQUYtjuvpe
+ JDs1v0r1GaSlA==
+Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
+ from userid 48) id 0DA05CC13AD; Wed, 29 Jun 2022 09:07:33 +0000 (UTC)
+From: bugzilla-daemon@kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Wed, 29 Jun 2022 09:07:32 +0000
+X-Bugzilla-Reason: None
+X-Bugzilla-Type: changed
+X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Product: File System
+X-Bugzilla-Component: f2fs
+X-Bugzilla-Version: 2.5
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: guido.iodice@gmail.com
+X-Bugzilla-Status: NEW
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: P1
+X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: 
+Message-ID: <bug-216050-202145-FhWngszUuA@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-216050-202145@https.bugzilla.kernel.org/>
+References: <bug-216050-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-URL: https://bugzilla.kernel.org/
+Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1o6Kvs-0002dQ-DM
-Subject: [f2fs-dev] [PATCH 2/3] f2fs: adjust zone capacity when considering
- valid block count
+X-Headers-End: 1o6Tfl-0000r6-O2
+Subject: [f2fs-dev] [Bug 216050] f2fs_gc occupies 100% cpu
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,151 +97,20 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch fixes counting unusable blocks set by zone capacity when
-checking the valid block count in a section.
+https://bugzilla.kernel.org/show_bug.cgi?id=216050
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/debug.c   | 2 +-
- fs/f2fs/file.c    | 6 +++---
- fs/f2fs/gc.c      | 4 ++--
- fs/f2fs/segment.c | 7 +++----
- fs/f2fs/segment.h | 8 ++++----
- 5 files changed, 13 insertions(+), 14 deletions(-)
+--- Comment #24 from Guido (guido.iodice@gmail.com) ---
+Linux 5.19 rc4 doesn't solve the problem
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index c92625ef16d0..c01471573977 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -39,7 +39,7 @@ void f2fs_update_sit_info(struct f2fs_sb_info *sbi)
- 
- 	bimodal = 0;
- 	total_vblocks = 0;
--	blks_per_sec = BLKS_PER_SEC(sbi);
-+	blks_per_sec = CAP_BLKS_PER_SEC(sbi);
- 	hblks_per_sec = blks_per_sec / 2;
- 	for (segno = 0; segno < MAIN_SEGS(sbi); segno += sbi->segs_per_sec) {
- 		vblocks = get_valid_blocks(sbi, segno, true);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 2d1114b0ceef..0f29af7876a6 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1681,7 +1681,7 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
- 		return 0;
- 
- 	if (f2fs_is_pinned_file(inode)) {
--		block_t sec_blks = BLKS_PER_SEC(sbi);
-+		block_t sec_blks = CAP_BLKS_PER_SEC(sbi);
- 		block_t sec_len = roundup(map.m_len, sec_blks);
- 
- 		map.m_len = sec_blks;
-@@ -2432,7 +2432,7 @@ static int __f2fs_ioc_gc_range(struct file *filp, struct f2fs_gc_range *range)
- 			ret = -EAGAIN;
- 		goto out;
- 	}
--	range->start += BLKS_PER_SEC(sbi);
-+	range->start += CAP_BLKS_PER_SEC(sbi);
- 	if (range->start <= end)
- 		goto do_more;
- out:
-@@ -2557,7 +2557,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 		goto out;
- 	}
- 
--	sec_num = DIV_ROUND_UP(total, BLKS_PER_SEC(sbi));
-+	sec_num = DIV_ROUND_UP(total, CAP_BLKS_PER_SEC(sbi));
- 
- 	/*
- 	 * make sure there are enough free section for LFS allocation, this can
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index d5fb426e0747..c38bdaf831af 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -487,7 +487,7 @@ static void atgc_lookup_victim(struct f2fs_sb_info *sbi,
- 	unsigned long long age, u, accu;
- 	unsigned long long max_mtime = sit_i->dirty_max_mtime;
- 	unsigned long long min_mtime = sit_i->dirty_min_mtime;
--	unsigned int sec_blocks = BLKS_PER_SEC(sbi);
-+	unsigned int sec_blocks = CAP_BLKS_PER_SEC(sbi);
- 	unsigned int vblocks;
- 	unsigned int dirty_threshold = max(am->max_candidate_count,
- 					am->candidate_ratio *
-@@ -1487,7 +1487,7 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 		 */
- 		if ((gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0)) ||
- 			(!force_migrate && get_valid_blocks(sbi, segno, true) ==
--							BLKS_PER_SEC(sbi)))
-+							CAP_BLKS_PER_SEC(sbi)))
- 			return submitted;
- 
- 		if (check_valid_map(sbi, segno, off) == 0)
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 447b03579049..ce571c0d7126 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -728,7 +728,7 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
- 				get_valid_blocks(sbi, segno, true);
- 
- 			f2fs_bug_on(sbi, unlikely(!valid_blocks ||
--					valid_blocks == BLKS_PER_SEC(sbi)));
-+					valid_blocks == CAP_BLKS_PER_SEC(sbi)));
- 
- 			if (!IS_CURSEC(sbi, secno))
- 				set_bit(secno, dirty_i->dirty_secmap);
-@@ -764,7 +764,7 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
- 			unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
- 
- 			if (!valid_blocks ||
--					valid_blocks == BLKS_PER_SEC(sbi)) {
-+					valid_blocks == CAP_BLKS_PER_SEC(sbi)) {
- 				clear_bit(secno, dirty_i->dirty_secmap);
- 				return;
- 			}
-@@ -4483,7 +4483,6 @@ static void init_dirty_segmap(struct f2fs_sb_info *sbi)
- 	struct free_segmap_info *free_i = FREE_I(sbi);
- 	unsigned int segno = 0, offset = 0, secno;
- 	block_t valid_blocks, usable_blks_in_seg;
--	block_t blks_per_sec = BLKS_PER_SEC(sbi);
- 
- 	while (1) {
- 		/* find dirty segment based on free segmap */
-@@ -4512,7 +4511,7 @@ static void init_dirty_segmap(struct f2fs_sb_info *sbi)
- 		valid_blocks = get_valid_blocks(sbi, segno, true);
- 		secno = GET_SEC_FROM_SEG(sbi, segno);
- 
--		if (!valid_blocks || valid_blocks == blks_per_sec)
-+		if (!valid_blocks || valid_blocks == CAP_BLKS_PER_SEC(sbi))
- 			continue;
- 		if (IS_CURSEC(sbi, secno))
- 			continue;
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 813a892cd979..d1d63766f2c7 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -612,10 +612,10 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
- 					get_pages(sbi, F2FS_DIRTY_DENTS) +
- 					get_pages(sbi, F2FS_DIRTY_IMETA);
- 	unsigned int total_dent_blocks = get_pages(sbi, F2FS_DIRTY_DENTS);
--	unsigned int node_secs = total_node_blocks / BLKS_PER_SEC(sbi);
--	unsigned int dent_secs = total_dent_blocks / BLKS_PER_SEC(sbi);
--	unsigned int node_blocks = total_node_blocks % BLKS_PER_SEC(sbi);
--	unsigned int dent_blocks = total_dent_blocks % BLKS_PER_SEC(sbi);
-+	unsigned int node_secs = total_node_blocks / CAP_BLKS_PER_SEC(sbi);
-+	unsigned int dent_secs = total_dent_blocks / CAP_BLKS_PER_SEC(sbi);
-+	unsigned int node_blocks = total_node_blocks % CAP_BLKS_PER_SEC(sbi);
-+	unsigned int dent_blocks = total_dent_blocks % CAP_BLKS_PER_SEC(sbi);
- 	unsigned int free, need_lower, need_upper;
- 
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
 -- 
-2.37.0.rc0.161.g10f37bed90-goog
+You may reply to this email to add a comment.
 
-
+You are receiving this mail because:
+You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
