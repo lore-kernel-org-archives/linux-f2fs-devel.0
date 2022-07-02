@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F26D3C43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  1 Jul 2022 21:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 65D95C43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  2 Jul 2022 23:03:50 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o7Nzb-0001rN-KC; Fri, 01 Jul 2022 21:15:59 +0000
+	id 1o7m9Q-0002HE-CW; Sat, 02 Jul 2022 23:03:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1o7NzZ-0001rB-KQ
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jul 2022 21:15:57 +0000
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1o7m9E-0002H7-A9
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 02 Jul 2022 23:03:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
  :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=U0beY1Jpze4+PMpqNi2/9cnHxs+Mt1p7LJiSEtWCTVo=; b=Lip/cYq8epXXfXqm8ZRjir3/tP
- LC02BFoJ1vgw+Vy5T70SwajS2hnGuaHvB1hZVuE5pstkXlT0+/mV5cZQwLksflrL8IHEdFsTy3S1f
- RMTCKkrk+eWm0H1C70XxWVAmt9zvOR9h6E62dnhAlEDQ8DaLiob4MIioNSUyb7tb4Jfw=;
+ bh=Ey8gmK1cVxat1ZKIKc0lS2G1CcziPxJXZ1HppTyastI=; b=lgreEzWxcvB4QST2wemWvftOO2
+ Jisc3L/puuQmy1oRPHhKEbjl+q6cWwSsWe0t/3VrfhiRAGXROxwSauAiPBTi21FWMTwb8dzyJeDAd
+ c4j1dqVQjYOg+RcHtjNVF0/54qzxa6tNsskj1lpocxlSAna+Vt4FfvHi2PFq0W3oysQo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
@@ -31,38 +31,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=U0beY1Jpze4+PMpqNi2/9cnHxs+Mt1p7LJiSEtWCTVo=; b=UrQb+KL8kK+qvnIfZL8z/8QdgD
- Ni5JFU/jPRlwXVBhSOIjok6ZdZ6Gmb5uDYQu6jG4bIYU8y/04NaiDSvt/W+2TbRPTUyWFbDejrAUp
- uMYeeqtKTS0qzERSXLXLjbmJNMTWAc2WOqZl4Cg6vNQ/LNNWCbEGBmcul103qz5VFIpA=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=Ey8gmK1cVxat1ZKIKc0lS2G1CcziPxJXZ1HppTyastI=; b=P9hw9YEJQggLnKnxOQBuNFWu/x
+ +nVfRRFv0deriK3YHjb+VE4GV4wuVr8uLNvPs4w/xY9B9JH9IDoDdycRExvF6z6pJUwGYLPHrXPaI
+ cXVpD0ujfGBh2Tq2OYxPdZAv/5RLHy/IFff41Tly9GJVAcuwaf/Pt3uXt2GWzjTxKPgs=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o7NzU-003y82-SO
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 01 Jul 2022 21:15:57 +0000
+ id 1o7m9C-005FMs-No
+ for linux-f2fs-devel@lists.sourceforge.net; Sat, 02 Jul 2022 23:03:32 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by sin.source.kernel.org (Postfix) with ESMTPS id 3928CCE354C
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 8A0FB61126
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  1 Jul 2022 21:15:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9DF54C3411E
+ Sat,  2 Jul 2022 23:03:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EFA35C34114
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  1 Jul 2022 21:15:36 +0000 (UTC)
+ Sat,  2 Jul 2022 23:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1656710136;
- bh=U0beY1Jpze4+PMpqNi2/9cnHxs+Mt1p7LJiSEtWCTVo=;
+ s=k20201202; t=1656803000;
+ bh=fa2pF0eTsxvCOW1Y8P2Z20xA5LKGZr6R13UnWRyciCU=;
  h=From:To:Subject:Date:In-Reply-To:References:From;
- b=Ak+xwLkrHSvPGynzKtdJ8RXUgBv0j3ijnQnxG6Ua8Y/GwiI3X5SBLYyt5kD2BfqZm
- 5BRm6nIPJxugjYz6AqhzI+WFToJQPibJmA6I3xz3L9njScwWk129pngv2k4p9uzG2z
- tnzjc2DuXZ1lpvy1Kcn0SKP1YifSyMw/v4E3lLz4uio56GlskjSa3Iu08QWvDH989b
- uJ10NKJNlp//II2Z1rsQvJphAed+mC5R4SD04Ycvx/MHc4nDsMo+j8m7gcbEk5Y+v4
- H3xyyPAH0+z2eFvq7PtSRh+XFcpRSxO1AY4yk1mHvG/Db2+eUCUE0tnnyRADQN9sXw
- IBoryu1zofGjw==
+ b=oR1+2dSzMFDAY8g5IjtDYaAewh6fqBg/KUYYbO2g6yfPLY/WwkFI0vENlIOzQv8cc
+ 017qEhGSwnb780kA0nOaKrIA0YlNVS8oJ5oefzDXDRW+TnyLnyZJjcpMtLzUDou+E7
+ scf9plHFGCgoNCGQcFIF85JzG23gmq6zTJjRs0OJp7e1xUaHxa3ctSMZLQvcrFG7Td
+ GvH2hfEsCYiHpiINk9RYu6oH79596yaTflmVyVjAZjtNUSUvUfzrHuBItjsV4DDUcm
+ 65ALk6fm0pSG/lrmUtSlHKtLo/e7qBp+dFAvABEKIg99Iw/bL/7UfAj+7vMIZ5d93I
+ pMwbtZ4r1qOGQ==
 Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id 83D68C05FF5; Fri,  1 Jul 2022 21:15:36 +0000 (UTC)
+ from userid 48) id DC692C05FD2; Sat,  2 Jul 2022 23:03:19 +0000 (UTC)
 From: bugzilla-daemon@kernel.org
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 01 Jul 2022 21:15:36 +0000
+Date: Sat, 02 Jul 2022 23:03:19 +0000
 X-Bugzilla-Reason: None
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
@@ -70,22 +70,23 @@ X-Bugzilla-Product: File System
 X-Bugzilla-Component: f2fs
 X-Bugzilla-Version: 2.5
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: yuriy.garin@gmail.com
+X-Bugzilla-Severity: high
+X-Bugzilla-Who: ghtm2@protonmail.com
 X-Bugzilla-Status: NEW
 X-Bugzilla-Resolution: 
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
 X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-216050-202145-qqLCV6NDlu@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-216050-202145@https.bugzilla.kernel.org/>
-References: <bug-216050-202145@https.bugzilla.kernel.org/>
+X-Bugzilla-Changed-Fields: cf_regression
+Message-ID: <bug-216162-202145-NE5saAaSwC@https.bugzilla.kernel.org/>
+In-Reply-To: <bug-216162-202145@https.bugzilla.kernel.org/>
+References: <bug-216162-202145@https.bugzilla.kernel.org/>
 X-Bugzilla-URL: https://bugzilla.kernel.org/
 Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1o7NzU-003y82-SO
-Subject: [f2fs-dev] [Bug 216050] f2fs_gc occupies 100% cpu
+X-Headers-End: 1o7m9C-005FMs-No
+Subject: [f2fs-dev] [Bug 216162] F2FS filesystem with compression broken
+ after kernel version 5.18.1
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,16 +102,13 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=216050
+https://bugzilla.kernel.org/show_bug.cgi?id=216162
 
---- Comment #32 from Yuriy Garin (yuriy.garin@gmail.com) ---
-(In reply to Jaegeuk Kim from comment #27)
-> Re #25, the dmesg is waiting for f2fs_issue_checkpoint, which is not GC. Do
-> you think it's hung by other f2fs_gc?
+ghtm2@protonmail.com changed:
 
-Frankly, I have no idea. What I can tell for sure is that normally there are no
-f2fs messages in dmesg. But all 3 times that I had this problem - 100% CPU by
-f2fs_gc, there were similar f2fs messages and stacks in dmesg.
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+         Regression|No                          |Yes
 
 -- 
 You may reply to this email to add a comment.
