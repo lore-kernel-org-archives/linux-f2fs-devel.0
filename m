@@ -4,89 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D3347C43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  2 Jul 2022 23:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A2739C43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  3 Jul 2022 03:15:24 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o7mxE-0005GC-1Q; Sat, 02 Jul 2022 23:55:10 +0000
+	id 1o7q4t-0000kf-0I; Sun, 03 Jul 2022 03:15:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1o7mxC-0005G1-D6
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 02 Jul 2022 23:55:09 +0000
+ (envelope-from <chao.yu@linux.dev>) id 1o7q4d-0000kT-Iz
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 03 Jul 2022 03:15:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ov8G/yQpYb7SXgBIbKqEHdKDBqnDmFxbXuHxQMlEHaE=; b=NeG7UZ8qNPxt3iM+I6ljSUc3n+
- /zrNicfTlCJTHUrotsWBwx7vFuE4uJVmPWSr3e55iz3ylkiXLfGoRF4WlvPAn7D7Pvqmh5Lq/rPmx
- vsyM5YnoWPMOJu4gSi377cPUc/9epDI4kRAgyaUDnlJoTMKey0ScOeZ/sKCG9RbUl8NU=;
+ bh=bOd+tIsRgHs/uTDdfCUKatjMnLlhooxoZSpiezzpmGU=; b=JlAWikLtMkQ/gwRjG+WVTeuQeh
+ C/EPifeAMK38MJqAigGqIYFzKppeRdpIuSVDK/RPvWzhl5BY5dSaYps1ZzOrK6NCPdFMzpsoT5OuC
+ s+BlZ3qozwZKtJd/hRKME/RwHa4w5E0HDvuiW3tIn/aMrNPNkdt1Zai864QFiHm7nSZ4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Ov8G/yQpYb7SXgBIbKqEHdKDBqnDmFxbXuHxQMlEHaE=; b=SA7zEpxLCQeLRMN2FINJAZ0T/2
- VDigsgRZeDCJclnU7YHiuPmTYmO/CmL7XYmMeMl7zLbckVa61AC/iNoR22qGFowosH1SvPkNHZGkE
- G5GGWtWKvOsSihDhmBW9XEwej5pIlIREIpEGsQR4DCvM+VX/Dlglgj3mVtBliktkMaFc=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=bOd+tIsRgHs/uTDdfCUKatjMnLlhooxoZSpiezzpmGU=; b=YyuWsEdyFjfaiNHoX2wg96/9NJ
+ to0EBU3fGsfS2dHe+Lbl5LIYUYmyDihGSkZS0dWWE3OMCJJxhRaMrHduw2FJ1eoOU8WyPdlofLU1q
+ QcjnuNvpl55TWIrt6po2rKNB1S8aOMqDPagi4BrG81pSeYnl0E0hQ4PwCYtPHCU0ezNg=;
+Received: from out0.migadu.com ([94.23.1.103])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o7mxA-005H3p-FK
- for linux-f2fs-devel@lists.sourceforge.net; Sat, 02 Jul 2022 23:55:09 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 1787060FFF
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat,  2 Jul 2022 23:55:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 77DD8C341CA
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat,  2 Jul 2022 23:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1656806102;
- bh=gs9EhL474PRaknUKs0rrxTy2Ut4GwFUNtAXbMsAe8ZY=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=sPEWguLm3oPFgf8QmtGZVY4IVy80BeDuqXJmHihVBHwhFxqADAhrT3JvstCzj1Ncy
- YP361gd/qMyB+chTt2emCtxmhCBpm49BuagKCQhdp+9Jhifv6CcKT1J/bbdMV0He/g
- sFv/Ao6gQ64BDNjYZ2sV2OBImcUWMkmXyJDL37aSBPUk+XJfBblfHasH6Gh25Ely7C
- l9iPXlWwmTE7uTE2+ftnB9m4uNFJXtKpU4vCRtPupX48QNbIKWRttuvOC8/ccO/SbN
- zFBqQx7va2dfK/IUZpzkquo3rCMMg3hPp/yphWcpNoNvG+b+ifxkeYCqeePA2BTnS7
- yFzL6RFIlGi0Q==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id 553F3C05FD5; Sat,  2 Jul 2022 23:55:02 +0000 (UTC)
-From: bugzilla-daemon@kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Sat, 02 Jul 2022 23:55:02 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: high
-X-Bugzilla-Who: jaegeuk@kernel.org
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: cc
-Message-ID: <bug-216162-202145-kQzCGYjzwO@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-216162-202145@https.bugzilla.kernel.org/>
-References: <bug-216162-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ id 1o7q4W-005N9F-0o
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 03 Jul 2022 03:15:02 +0000
+Message-ID: <1ccc7c6f-5136-2180-3fe7-5def006e6b88@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+ t=1656816972;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=bOd+tIsRgHs/uTDdfCUKatjMnLlhooxoZSpiezzpmGU=;
+ b=ZitAN9P6PPsPg+KspQ2yi94BYA8a3ZyWn/G1sUp04ei2C/2MVG0713yPERpUzLua+CLOw/
+ orT1EzMhu6E4lb9zVMGnawVqMaTJg8wMgDptiN2AJ5dbrO0MjQUa9ZmVrD2eHoCrIlVg4V
+ BcubYah3caapF/RU+Gv999QbItJLWIY=
+Date: Sun, 3 Jul 2022 10:56:09 +0800
 MIME-Version: 1.0
-X-Headers-End: 1o7mxA-005H3p-FK
-Subject: [f2fs-dev] [Bug 216162] F2FS filesystem with compression broken
- after kernel version 5.18.1
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+References: <20220621200548.3485092-1-jaegeuk@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
+ include these headers.
+From: Chao Yu <chao.yu@linux.dev>
+In-Reply-To: <20220621200548.3485092-1-jaegeuk@kernel.org>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Headers-End: 1o7q4W-005N9F-0o
+Subject: Re: [f2fs-dev] [PATCH] fsck.f2fs: drop compression bit if
+ inline_data is set
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,39 +75,20 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=216162
+On 2022/6/22 4:05, Jaegeuk Kim wrote:
+> The kernel enforced not to have compression and inline_data bits
+> together, but old kernel created files with them. Let's disable
+> compression in that case.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-Jaegeuk Kim (jaegeuk@kernel.org) changed:
+Thanks,
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |jaegeuk@kernel.org
-
---- Comment #3 from Jaegeuk Kim (jaegeuk@kernel.org) ---
-I suspect one issue recent reported with respect to compression vs.
-inline_data. Could you please run fsck from this?
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/log/?h=dev
-
-Especially this patch should fix the corruption.
-  "fsck.f2fs: drop compression bit if inline_data is set"
-
-And, in order to avoid the runtime issue, we need this from Linus's tree.
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=29eeafc661f283a7412ecf8d9899a5ffd0c80f59
-
-I think v5.18 stable branch hasn't merge the fixes yet. By any chance, could
-you please apply the below from the Linus tree on top of 5.18?
-
-  "f2fs: attach inline_data after setting compression"
-
--- 
-You may reply to this email to add a comment.
-
-You are receiving this mail because:
-You are watching the assignee of the bug.
 
 _______________________________________________
 Linux-f2fs-devel mailing list
