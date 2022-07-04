@@ -4,88 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3E59EC43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Jul 2022 03:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 837F4C433EF
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  4 Jul 2022 09:29:51 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1o8CW7-0006kP-88; Mon, 04 Jul 2022 03:12:56 +0000
+	id 1o8IOq-0007bu-Pp; Mon, 04 Jul 2022 09:29:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1o8CW5-0006kJ-MO
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jul 2022 03:12:54 +0000
+ (envelope-from <vincent@systemli.org>) id 1o8IOp-0007bo-6s
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jul 2022 09:29:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ozYbhJvegCm6cytGI3UTEZSu2IEBrnNk35rSUt2NH0g=; b=OgzH+NvIFfcbX0oiUIT7gD24Tr
- S8TSsU7GSq8XJMW2ZuHb/km7ieeYwAMSiBKanroLOlO7L5KAfNgRaWM7I7yFhM4TQ/ITCKqnCyyaX
- DuqwD5iSxWEapOz4gvTtnfMAvv2iGwVy5g6kafnFPuiuK3hR4uoDNxW/wZ8GzIqvi224=;
+ bh=8UMYy7urMqNmk8J5bJrF50E9mCx9h66rfBC8g8FzNr8=; b=SkwkDuaEcOpT8a9qxVzuxj4w1i
+ x7/A76quNYKnPmppijULoQtuHkwicaYiyqMfPqc2+o8X6eQGt4hgJT31C4yv0DKmjoZG5ZQpSUQdq
+ auzwIXWa46U1Gb0eh5/1hWpYqcodwjAPctUlDYZMBtPMPT9EJas9lWwpYdpO+x25q5tI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ozYbhJvegCm6cytGI3UTEZSu2IEBrnNk35rSUt2NH0g=; b=NXyq5rSWEX0C46nd/6s4jp6XML
- erx25aAvtE2ph/lRsNmD5BaZEGST0mkntWjnD6H6m5aAQKr2rNyFkIhcgk6XFECC0xwM9uzPssbbW
- Sw9Kh44NBB/XYM+SY/QTtDlotf9cpocx8BYBRZcHK91oeGyNnShUM46C/X4J92g1kGI8=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=8UMYy7urMqNmk8J5bJrF50E9mCx9h66rfBC8g8FzNr8=; b=J
+ v6Zu68brrwtoUDU6tZmlY6mv3B7lwKApOlS0RUGtd5/rlP2D3p9vqOgMlshXX9puBBW+3ZaE/7u21
+ Xfg5uB5BPKVH+1dGCka7DHDV0aXMBpyiqOQ054qu0kB6o0kFFknibqzwa2N3dJqRevl/1vuj+Oqon
+ YwzcvwJFVDZ4QUCs=;
+Received: from [93.190.126.36] (helo=mail1.systemli.org)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1o8CW2-0000AP-4R
- for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jul 2022 03:12:54 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id C998B6144F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  4 Jul 2022 03:12:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3335BC341C6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  4 Jul 2022 03:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1656904359;
- bh=bvcBiPSpdY6CLGw6d93a0sA8+t/1D6Rc/XSJvENSSsY=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=GB8d/Afvv82khVka6annT7AdltsgTV+KXB8wKl7Gz/D6JkqiOFQU04wyMVmftSGfG
- iiTEMtKuIaXWSE5Mqe+SH9UwlfloWXVwdbz8XlM8N6rhcldhlOL9s+0gOn5IIhYjlD
- tBZriUJJiFLQf1Epken07NJHTcNpnWJ+7I+n52OOHmZwt6OmVNWTbcUoouuo+hF8gH
- WRrN7cfc7TvF4aglSACee3n3dWgrAl10K6yD/ke5TheEK7gGFu9RPyluMpVhcgO9ii
- Fpom9g2fcIqOUmIxd5/Ii3CrW/a6aE0Ju1jA2y6I1u3qqwHBtc8QIqCr6p3SCLpBRi
- 3A5rDa8Dj3hrA==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id 0EB2EC05FD6; Mon,  4 Jul 2022 03:12:39 +0000 (UTC)
-From: bugzilla-daemon@kernel.org
+ id 1o8IOj-0001XJ-9V
+ for linux-f2fs-devel@lists.sourceforge.net; Mon, 04 Jul 2022 09:29:47 +0000
+From: vincent@systemli.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=systemli.org;
+ s=default; t=1656926964;
+ bh=8UMYy7urMqNmk8J5bJrF50E9mCx9h66rfBC8g8FzNr8=;
+ h=From:To:Cc:Subject:Date:From;
+ b=1YoxuvbBGL6GTMQ7o7StvP++VF5t0bqiGlFQiq35QKXOEs5Ada6Xarm7yKYfKKO4w
+ MgGDQ3tlWWr+VMjKXUF4d/IahzZHL4vtVgPWZzaYCHLlROa741WppWTiVXn+AmfIaW
+ avV+NNrGRsNDKQRCs955x9bWJ4By2wZKqrwZJuM85sW8G6pumhPqOMup81mC8/pRRs
+ v/J8BVNpc2BHNxnd3zZtunJT/fEnd8MePx/uJ2I+U0bps4arkRJajdVJw4wTCW3TWG
+ jjfKjZSpznJWc+s32W76JDPJqr+IctPBzvhL0mC8Y0ZrrqeNVMEUlJFtrzIsjNHTeU
+ qVArL99DHmw8w==
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon, 04 Jul 2022 03:12:38 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: mtwget@gmail.com
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: cc
-Message-ID: <bug-216050-202145-UKPFgsVwiU@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-216050-202145@https.bugzilla.kernel.org/>
-References: <bug-216050-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+Date: Mon,  4 Jul 2022 11:29:19 +0200
+Message-Id: <20220704092919.1420469-1-vincent@systemli.org>
 MIME-Version: 1.0
-X-Headers-End: 1o8CW2-0000AP-4R
-Subject: [f2fs-dev] [Bug 216050] f2fs_gc occupies 100% cpu
+X-Headers-End: 1o8IOj-0001XJ-9V
+Subject: [f2fs-dev] [PATCH] configure.ac: fix cross compilation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,22 +71,88 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=216050
+From: Nick Hainke <vincent@systemli.org>
 
-YuDong Zhang (mtwget@gmail.com) changed:
+AC_CHECK_LIB seems to not work correctly with OpenWrt. Add possibility
+to disable lz4 and lzo2 manually.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |mtwget@gmail.com
+Fixes errors in the form of:
+  Package f2fsck is missing dependencies for the following libraries:
+  liblz4.so.1
+  liblzo2.so.2
 
---- Comment #33 from YuDong Zhang (mtwget@gmail.com) ---
-This only seems to happen with PCIe NVMe, not SATA SSD
+Signed-off-by: Nick Hainke <vincent@systemli.org>
+---
+ configure.ac | 44 ++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 34 insertions(+), 10 deletions(-)
 
+diff --git a/configure.ac b/configure.ac
+index ea39461..dbe9ad3 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -50,6 +50,18 @@ AC_ARG_WITH([blkid],
+ 	[],
+ 	[with_blkid=check])
+ 
++AC_ARG_WITH([lzo2],
++	[AS_HELP_STRING([--without-lzo2],
++	  [Ignore presence of liblzo2 and disable lzo2 support])],
++	[],
++	[with_lzo2=check])
++
++AC_ARG_WITH([lz4],
++	[AS_HELP_STRING([--without-lz4],
++	  [Ignore presence of liblz4 and disable lz4 support])],
++	[],
++	[with_lz4=check])
++
+ # Checks for programs.
+ AC_PROG_CC
+ AM_PROG_AR
+@@ -71,17 +83,29 @@ AS_IF([test "x$with_blkid" != xno],
+         fi
+ 	], -lblkid)])
+ 
+-AC_CHECK_LIB([lzo2], [main],
+-	[AC_SUBST([liblzo2_LIBS], ["-llzo2"])
+-		AC_DEFINE([HAVE_LIBLZO2], [1],
+-		[Define if you have liblzo2])
+-	], [], [])
++AS_IF([test "x$with_lzo2" != xno],
++	[AC_CHECK_LIB([lzo2], [main],
++		[AC_SUBST([liblzo2_LIBS], ["-llzo2"])
++			AC_DEFINE([HAVE_LIBLZO2], [1],
++			[Define if you have liblzo2])
++		],
++		[if test "x$with_lzo2" != xcheck; then
++			AC_MSG_FAILURE(
++                [--with-lzo2 was given, but test for lzo2 failed])
++        fi
++	], -llzo2)])
+ 
+-AC_CHECK_LIB([lz4], [main],
+-	[AC_SUBST([liblz4_LIBS], ["-llz4"])
+-		AC_DEFINE([HAVE_LIBLZ4], [1],
+-		[Define if you have liblz4])
+-	], [], [])
++AS_IF([test "x$with_lz4" != xno],
++	[AC_CHECK_LIB([lz4], [main],
++		[AC_SUBST([liblz4_LIBS], ["-llz4"])
++			AC_DEFINE([HAVE_LIBLZ4], [1],
++			[Define if you have liblz4])
++		],
++		[if test "x$with_lz4" != xcheck; then
++			AC_MSG_FAILURE(
++                [--with-lz4 was given, but test for lz4 failed])
++        fi
++	], -llz4)])
+ 
+ AS_IF([test "x$with_selinux" != xno],
+ 	[AC_CHECK_LIB([selinux], [getcon],
 -- 
-You may reply to this email to add a comment.
+2.37.0
 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
