@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 733A9C43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Jul 2022 07:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 62EE4CCA48C
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Jul 2022 07:14:19 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oEmrX-0003eZ-8Y; Fri, 22 Jul 2022 07:14:16 +0000
+	id 1oEmrY-0003eg-Kh; Fri, 22 Jul 2022 07:14:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <ebiggers@kernel.org>) id 1oEmrU-0003eC-Mv
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jul 2022 07:14:13 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1oEmrV-0003eJ-Sv
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jul 2022 07:14:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XVJNtifrlqmaA7y9OVMZBixmV2Qx6gSzcOgc46HcnVA=; b=ISWkFvOm0uQpcDJKs0x7nVeeFs
- zxYZ+blueL0nykHHmb8tyQsGW8JVBSHB5LTpizQFNF9OOpnHFrSv+xOl3gYD6tSejO+yG+onS/JW1
- xvDVEPHXmF8UZBcI+0ML0iNU5LhiSIm+2/d0TuyRpM6H6RhhGd7P3SKNBIbo8nuKkhCg=;
+ bh=mx12fIL5okFtRKuQAtbDnQPw5kQ1a6ILqdRfnPthaUs=; b=fS4JzV78HW7oB4gFR+4kQ44WKx
+ HkKCls7fFOWppeIee3ONru4tVtQP9QLhwlS3pa17OL13w+V6wJ/dVcdIw9V72qr7mJcs2GBPycf5y
+ QZNwXqWojCTdcM4EQ86XO6VBjoBdYF7RDMraHoCHJ8Cxy+QL6jyDmofxZwxKd64HXazE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,43 +31,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XVJNtifrlqmaA7y9OVMZBixmV2Qx6gSzcOgc46HcnVA=; b=k2mmkmG/7mYjXW5kqXy5o7Mlr0
- yvIrFcP3z3Vs8onSlmY2Pi+/EdBpVtwOd+Gbi3qhHkrd3FgLUumOJ9/6E0m46devXQfqhWgrCbEey
- irWSoDQsuvEi9vQwyYq5WPjIvjdgDeKfCPnV8slPM6DVZ+S1RLlM2mWOk26f6wMcX3vg=;
+ bh=mx12fIL5okFtRKuQAtbDnQPw5kQ1a6ILqdRfnPthaUs=; b=SRGSB3i3tfSJUPdJqgdwbmqr43
+ H+T/FJihGO8fkxCM7dpVdoquGK1EYMe+4GQ3fpjwEmR9xA+XxKpe+a4/bgbFMb5u3boIdP4tMAfDs
+ S7sqj15LtKn9PAjgNqrn1iejHJEPciKivdt2F6+QXVcfuj2EviNIPUkdOnYFggxFGq68=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1oEmrS-006eDk-9h
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jul 2022 07:14:13 +0000
+ id 1oEmrV-0000qW-Cj
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jul 2022 07:14:14 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id E8F7C621A2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 22 Jul 2022 07:14:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1C6C385A2;
- Fri, 22 Jul 2022 07:14:04 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 37D6662195;
+ Fri, 22 Jul 2022 07:14:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F7DC341CA;
+ Fri, 22 Jul 2022 07:14:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1658474044;
- bh=d+gWaf5KF5ulzUXfYdXRVW3moWPvOd4xhr1Z99HXtok=;
+ s=k20201202; t=1658474042;
+ bh=hDPLaCgqAD8dm7MXlD1Frq819oFYqTXZlI03nvS/+yc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=ecmAOyRk83sVidXkCqPXM0AvJI/hX0NNO3+GMSbA65CKnQ6xYihQgCnuxl01RTOZy
- Z7R4dpODT1qt3s4ZE2XTxOX2/qmbkHFuLqMkJY81Kw+lFM25FWN1SbnpwZ35/ILD48
- 51HoNht6KIakI3oAuZYe6K3sP3x01RGcjbdNB7ewTgTdBIdpdaDNjYlqvLliwEbIU/
- V/HvXpi0vjnN1SaD5DmV3DxDWD7IIQg0elzH7uAYXZQuY/CsgdG/eSh8CJHKHUYMuc
- AysHmjopOy2sP3MsRAbqf8HwTxLez/ocsTeVUR9x1bQXwrxB2RvDFX/Xyydjxq27n7
- ztoUQcXuh7mEA==
+ b=CPs/ExZkA4M08BS5otGXisiQMuIlX3galN1C6QnfwwVe625akli4n5LfrbrAY5mM2
+ gvmOv++UaOhrkJlC0OWZv7Hpb3sLD5R72hYrlghJ/wlwR1RzQRMfT6IyFXZayOL8I3
+ XWfUBG5eX6aBtDFWLMffxIxw0bdoz7zQfD3uYNgMtEjmMk87GCylmrpiJKoQnrU8r9
+ SoaYkjkNIlnjLPP9jOxqgm5HtRlsgXEAUjW69aK4+Uub3cT9Mx5ubIJFgCBAamU3Ub
+ UV8xRndANioHaLHmlnYMsELapg0KhYKX2icgHOs2aXVcJ/r0ejCtmK0kBYgAWbqQb9
+ V8Hgqo6gX+cIA==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fsdevel@vger.kernel.org
-Date: Fri, 22 Jul 2022 00:12:24 -0700
-Message-Id: <20220722071228.146690-6-ebiggers@kernel.org>
+Date: Fri, 22 Jul 2022 00:12:20 -0700
+Message-Id: <20220722071228.146690-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.37.0
 In-Reply-To: <20220722071228.146690-1-ebiggers@kernel.org>
 References: <20220722071228.146690-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1oEmrS-006eDk-9h
-Subject: [f2fs-dev] [PATCH v4 5/9] f2fs: move f2fs_force_buffered_io() into
- file.c
+X-Headers-End: 1oEmrV-0000qW-Cj
+Subject: [f2fs-dev] [PATCH v4 1/9] statx: add direct I/O alignment
+ information
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,141 +81,117 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Cc: linux-block@vger.kernel.org, linux-api@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
  linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- Keith Busch <kbusch@kernel.org>, linux-ext4@vger.kernel.org
+ Keith Busch <kbusch@kernel.org>, linux-ext4@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-f2fs_force_buffered_io() is only used in file.c, so move it into there.
-No behavior change.  This makes it easier to review later patches.
+Traditionally, the conditions for when DIO (direct I/O) is supported
+were fairly simple.  For both block devices and regular files, DIO had
+to be aligned to the logical block size of the block device.
 
+However, due to filesystem features that have been added over time (e.g.
+multi-device support, data journalling, inline data, encryption, verity,
+compression, checkpoint disabling, log-structured mode), the conditions
+for when DIO is allowed on a regular file have gotten increasingly
+complex.  Whether a particular regular file supports DIO, and with what
+alignment, can depend on various file attributes and filesystem mount
+options, as well as which block device(s) the file's data is located on.
+
+Moreover, the general rule of DIO needing to be aligned to the block
+device's logical block size is being relaxed to allow user buffers (but
+not file offsets) aligned to the DMA alignment instead
+(https://lore.kernel.org/linux-block/20220610195830.3574005-1-kbusch@fb.com/T/#u).
+
+XFS has an ioctl XFS_IOC_DIOINFO that exposes DIO alignment information.
+Uplifting this to the VFS is one possibility.  However, as discussed
+(https://lore.kernel.org/linux-fsdevel/20220120071215.123274-1-ebiggers@kernel.org/T/#u),
+this ioctl is rarely used and not known to be used outside of
+XFS-specific code.  It was also never intended to indicate when a file
+doesn't support DIO at all, nor was it intended for block devices.
+
+Therefore, let's expose this information via statx().  Add the
+STATX_DIOALIGN flag and two new statx fields associated with it:
+
+* stx_dio_mem_align: the alignment (in bytes) required for user memory
+  buffers for DIO, or 0 if DIO is not supported on the file.
+
+* stx_dio_offset_align: the alignment (in bytes) required for file
+  offsets and I/O segment lengths for DIO, or 0 if DIO is not supported
+  on the file.  This will only be nonzero if stx_dio_mem_align is
+  nonzero, and vice versa.
+
+Note that as with other statx() extensions, if STATX_DIOALIGN isn't set
+in the returned statx struct, then these new fields won't be filled in.
+This will happen if the file is neither a regular file nor a block
+device, or if the file is a regular file and the filesystem doesn't
+support STATX_DIOALIGN.  It might also happen if the caller didn't
+include STATX_DIOALIGN in the request mask, since statx() isn't required
+to return unrequested information.
+
+This commit only adds the VFS-level plumbing for STATX_DIOALIGN.  For
+regular files, individual filesystems will still need to add code to
+support it.  For block devices, a separate commit will wire it up too.
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/f2fs.h | 45 ---------------------------------------------
- fs/f2fs/file.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+), 45 deletions(-)
+ fs/stat.c                 | 2 ++
+ include/linux/stat.h      | 2 ++
+ include/uapi/linux/stat.h | 4 +++-
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7869e749700fc2..d187b7d7ed2435 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4426,17 +4426,6 @@ static inline void f2fs_i_compr_blocks_update(struct inode *inode,
- 	f2fs_mark_inode_dirty_sync(inode, true);
- }
+diff --git a/fs/stat.c b/fs/stat.c
+index 9ced8860e0f35d..a7930d74448304 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -611,6 +611,8 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
+ 	tmp.stx_dev_major = MAJOR(stat->dev);
+ 	tmp.stx_dev_minor = MINOR(stat->dev);
+ 	tmp.stx_mnt_id = stat->mnt_id;
++	tmp.stx_dio_mem_align = stat->dio_mem_align;
++	tmp.stx_dio_offset_align = stat->dio_offset_align;
  
--static inline int block_unaligned_IO(struct inode *inode,
--				struct kiocb *iocb, struct iov_iter *iter)
--{
--	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
--	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
--	loff_t offset = iocb->ki_pos;
--	unsigned long align = offset | iov_iter_alignment(iter);
--
--	return align & blocksize_mask;
--}
--
- static inline bool f2fs_allow_multi_device_dio(struct f2fs_sb_info *sbi,
- 								int flag)
- {
-@@ -4447,40 +4436,6 @@ static inline bool f2fs_allow_multi_device_dio(struct f2fs_sb_info *sbi,
- 	return sbi->aligned_blksize;
+ 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
  }
+diff --git a/include/linux/stat.h b/include/linux/stat.h
+index 7df06931f25d85..ff277ced50e9fd 100644
+--- a/include/linux/stat.h
++++ b/include/linux/stat.h
+@@ -50,6 +50,8 @@ struct kstat {
+ 	struct timespec64 btime;			/* File creation time */
+ 	u64		blocks;
+ 	u64		mnt_id;
++	u32		dio_mem_align;
++	u32		dio_offset_align;
+ };
  
--static inline bool f2fs_force_buffered_io(struct inode *inode,
--				struct kiocb *iocb, struct iov_iter *iter)
--{
--	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	int rw = iov_iter_rw(iter);
--
--	if (!fscrypt_dio_supported(inode))
--		return true;
--	if (fsverity_active(inode))
--		return true;
--	if (f2fs_compressed_file(inode))
--		return true;
--
--	/* disallow direct IO if any of devices has unaligned blksize */
--	if (f2fs_is_multi_device(sbi) && !sbi->aligned_blksize)
--		return true;
--	/*
--	 * for blkzoned device, fallback direct IO to buffered IO, so
--	 * all IOs can be serialized by log-structured write.
--	 */
--	if (f2fs_sb_has_blkzoned(sbi))
--		return true;
--	if (f2fs_lfs_mode(sbi) && (rw == WRITE)) {
--		if (block_unaligned_IO(inode, iocb, iter))
--			return true;
--		if (F2FS_IO_ALIGNED(sbi))
--			return true;
--	}
--	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_CP_DISABLED))
--		return true;
--
--	return false;
--}
--
- static inline bool f2fs_need_verity(const struct inode *inode, pgoff_t idx)
- {
- 	return fsverity_active(inode) &&
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index bd14cef1b08fd2..5e5c97fccfb4ee 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -808,6 +808,51 @@ int f2fs_truncate(struct inode *inode)
- 	return 0;
- }
+ #endif
+diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+index 1500a0f58041ae..7cab2c65d3d7fc 100644
+--- a/include/uapi/linux/stat.h
++++ b/include/uapi/linux/stat.h
+@@ -124,7 +124,8 @@ struct statx {
+ 	__u32	stx_dev_minor;
+ 	/* 0x90 */
+ 	__u64	stx_mnt_id;
+-	__u64	__spare2;
++	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
++	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
+ 	/* 0xa0 */
+ 	__u64	__spare3[12];	/* Spare space for future expansion */
+ 	/* 0x100 */
+@@ -152,6 +153,7 @@ struct statx {
+ #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
+ #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
++#define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
  
-+static int block_unaligned_IO(struct inode *inode, struct kiocb *iocb,
-+			      struct iov_iter *iter)
-+{
-+	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
-+	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
-+	loff_t offset = iocb->ki_pos;
-+	unsigned long align = offset | iov_iter_alignment(iter);
-+
-+	return align & blocksize_mask;
-+}
-+
-+static inline bool f2fs_force_buffered_io(struct inode *inode,
-+				struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	int rw = iov_iter_rw(iter);
-+
-+	if (!fscrypt_dio_supported(inode))
-+		return true;
-+	if (fsverity_active(inode))
-+		return true;
-+	if (f2fs_compressed_file(inode))
-+		return true;
-+
-+	/* disallow direct IO if any of devices has unaligned blksize */
-+	if (f2fs_is_multi_device(sbi) && !sbi->aligned_blksize)
-+		return true;
-+	/*
-+	 * for blkzoned device, fallback direct IO to buffered IO, so
-+	 * all IOs can be serialized by log-structured write.
-+	 */
-+	if (f2fs_sb_has_blkzoned(sbi))
-+		return true;
-+	if (f2fs_lfs_mode(sbi) && (rw == WRITE)) {
-+		if (block_unaligned_IO(inode, iocb, iter))
-+			return true;
-+		if (F2FS_IO_ALIGNED(sbi))
-+			return true;
-+	}
-+	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_CP_DISABLED))
-+		return true;
-+
-+	return false;
-+}
-+
- int f2fs_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 		 struct kstat *stat, u32 request_mask, unsigned int query_flags)
- {
+ #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+ 
 -- 
 2.37.0
 
