@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BB4BEC43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Jul 2022 03:40:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 767F5CCA47F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 22 Jul 2022 07:14:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oEjWJ-0007xc-6i; Fri, 22 Jul 2022 03:40:08 +0000
+	id 1oEmra-0002gs-Ev; Fri, 22 Jul 2022 07:14:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <qxy65535@gmail.com>) id 1oEjWG-0007xV-T4
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jul 2022 03:40:05 +0000
+ (envelope-from <ebiggers@kernel.org>) id 1oEmrX-0002ga-Ng
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jul 2022 07:14:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8yiAGQE/qJl8oC8JosxyZbmVIi6xV2flByC1cOQGIuU=; b=eKMhG4bLMG4/E1lycvOu5RanTt
- C3XpYV7fiJNHcPhNMqQnXyC+arlmAOJVfv46Zc5yuGnKi36V1psdPCzGGvVvs6NED9IULihS/qJqT
- oSnu7nt0T6AKS8E3MSvjEDW1/emDCQDBEC6Z2iFcAoUSWDf6N+IEBsqEgywshbR6sjIk=;
+ bh=9DeTB1BlLGtFZlKSCseppW7W1ma7vwKEa7dw5sSLkFg=; b=Ruu1qknMOpFORCU0iDVEAQSbMz
+ C1tgCXL2oAylTzGUXd01Eug2zC72Js4mRGIPIA/YAezEolwzWrpoBTdvGCHLpkJaff7FsnEvI5xgf
+ OOZriXnWFdgGT+BEP2JHpS26Z2iH2/9RuuTdsoO3KSwtc+HgctdCtt2/f+cFg2VsQuPI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,61 +31,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8yiAGQE/qJl8oC8JosxyZbmVIi6xV2flByC1cOQGIuU=; b=HEjCdIhq7qx4+XPBtZluz45naB
- sTRWc1ENed22iu5mEyNKkQvF61XWTdjx4RZX/LpCMLYTCkO6ffx7FdBaxq19ZTF1jzsrBY1Im96TF
- VLocerVfSM9IMd1PojJjik8rXelJXUKq99/exKf6NtxnBjotbi1bUNLlPg+PIbiwcvx8=;
-Received: from mail-pj1-f49.google.com ([209.85.216.49])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1oEjWD-006UHt-9r
- for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jul 2022 03:40:05 +0000
-Received: by mail-pj1-f49.google.com with SMTP id
- bk6-20020a17090b080600b001f2138a2a7bso5587837pjb.1
+ bh=9DeTB1BlLGtFZlKSCseppW7W1ma7vwKEa7dw5sSLkFg=; b=VRNsZ1H8t6ZjSbPHje7lx5LQj0
+ qyzp5uhDFKPwFko84PdAzrOOxrFnek6BwUyRKvh9W4lORHguTyhR8QOIvjgPvVdeiuD5pQtsJ373g
+ 0z0oU8rav2eXq5wNGi8XfJLjx1I551EjPvwCvyGMMrSG253vcL9jV/wQJyQJcg8UugYA=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
+ id 1oEmrV-0000qd-Cj
+ for linux-f2fs-devel@lists.sourceforge.net; Fri, 22 Jul 2022 07:14:14 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id E0F806219E
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 21 Jul 2022 20:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
- h=from:to:cc:subject:date:message-id:in-reply-to:references
- :mime-version:content-transfer-encoding;
- bh=8yiAGQE/qJl8oC8JosxyZbmVIi6xV2flByC1cOQGIuU=;
- b=M/1VvF4Ovd3iUN9CD4ktumZWJBlRtuhjKyq7qK0unIRNyFWx3tDBXTXtae335GAtS8
- XwkhcrSYXnCF8yLLoPPT4JgaCfF5fvh6xMXo9lGikywR8Xm1kACabRtoBOYTVONilm4i
- F9BVEI+pO50C8U4ED/tLtWxWDDkt3qGLm2GzzRRXhZ31TiwuY9rg+OPCzgRYz86JhUFO
- w99TXH+xKUvAN8d5WqozvZrvsGIuX1+K0/8Wl8jCo9Y/H/e2VEHJ7afiwVSUGFTAVQOA
- OM/pnamG8KOGBkuIn2G/f7ajo7sMhc6woBc6kIin2EOYjOrWSl/F77ebceHxLGk4ylSZ
- XgWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
- :references:mime-version:content-transfer-encoding;
- bh=8yiAGQE/qJl8oC8JosxyZbmVIi6xV2flByC1cOQGIuU=;
- b=6ErFimu0+BaATzDXHop8qpYGoAqeF8r0EcydhmfavEII7DAIsN28GNEvHcRvxBxkHI
- erTIS9KxojRzsMGH0qQ1S5bI22Jlg3L70Finyc4V9UQSOJQ5xAdV/N8CUGxBWOwePvI0
- IQfC/9N1fL3u/PK+Re6DCjKAZFVKFTa/eB0Kvwczt9B7WOXoVPOCtDQvIqJpl0BnW+3N
- V7xqyNlKezLyhEVWEt4WYn+OujvsFtf3gbMkO8YP4UyEb2+RRkBRTC3QVTzhGzj8eu95
- Y1iaTVxhGClcQC+TpnKw7KzNFf5euAGZJHem++4IyNYRqOA46p0Gc85hnIJWimn3wRl4
- d6Mw==
-X-Gm-Message-State: AJIora8tHmAQxbkP3kLC1BPhyXaqMacf03+eVREx08U6mMHs8ZaztHWq
- 1EL5mqgkv4TDZKhIEtWLTPw=
-X-Google-Smtp-Source: AGRyM1sAz4kl6alB174O+R5oWH69AtL/ImQve7dAQ5sAXtF4urr2AU4MlHxt7rSxHSTLq78PnudYlw==
-X-Received: by 2002:a17:902:8a94:b0:16d:400a:797 with SMTP id
- p20-20020a1709028a9400b0016d400a0797mr1171146plo.174.1658461195601; 
- Thu, 21 Jul 2022 20:39:55 -0700 (PDT)
-Received: from mi-HP-ProDesk-680-G4-MT.mioffice.cn ([43.224.245.252])
- by smtp.gmail.com with ESMTPSA id
- h4-20020a170902f54400b0016be8da658fsm2508311plf.130.2022.07.21.20.39.53
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 21 Jul 2022 20:39:55 -0700 (PDT)
-From: qixiaoyu1 <qxy65535@gmail.com>
-X-Google-Original-From: qixiaoyu1 <qixiaoyu1@xiaomi.com>
-To: jaegeuk@kernel.org
-Date: Fri, 22 Jul 2022 11:39:10 +0800
-Message-Id: <20220722033910.25442-1-qixiaoyu1@xiaomi.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <YtoOGu/wyqKBJd1v@google.com>
-References: <YtoOGu/wyqKBJd1v@google.com>
+ Fri, 22 Jul 2022 07:14:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73054C385A5;
+ Fri, 22 Jul 2022 07:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1658474044;
+ bh=Xi5JrwkGMRjNbBiivYG5NLjIO4EBV+YXLEfJAlDv+2A=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=II9Y3TRuV9mm5FKGUq5vXuOGQbIVBnrNvh78iv2geP1tmChv9AzzLQZYDqm4tQjb1
+ S0pSKHPSNGTKRaUtmDdMPde0Dj5C5Wg8vaKKKjRtMslmfrBqMJ9MbHQSEdknxSyV5o
+ c7lCTbLiFarDSsGfKNd+49lsVxNM1ITiOdNs5hOcoN0beKAa6M2vtbYYsrg43YGV4H
+ 8wht22UspK6ct/EI4E4Q3pUB/9MR8qux46/w5MfdrNHJxqs//qv8FCoqYj451co34R
+ KfN393kPHJT0O3hO5nTk2Ihtyt6BrjkBkKiKdm5UVjVoJtBuBUktXJC7aho/mGlyvX
+ 02EQXEBwohTqg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Date: Fri, 22 Jul 2022 00:12:25 -0700
+Message-Id: <20220722071228.146690-7-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.37.0
+In-Reply-To: <20220722071228.146690-1-ebiggers@kernel.org>
+References: <20220722071228.146690-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1oEjWD-006UHt-9r
-Subject: [f2fs-dev] [PATCH v2] f2fs: don't bother wait_ms by foreground gc
+X-Headers-End: 1oEmrV-0000qd-Cj
+Subject: [f2fs-dev] [PATCH v4 6/9] f2fs: don't allow DIO reads but not DIO
+ writes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,42 +79,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: qixiaoyu1@xiaomi.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-block@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ Keith Busch <kbusch@kernel.org>, linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs_gc returns -EINVAL via f2fs_balance_fs when there is enough free
-secs after write checkpoint, but with gc_merge enabled, it will cause
-the sleep time of gc thread to be set to no_gc_sleep_time even if there
-are many dirty segments can be selected.
+From: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: qixiaoyu1 <qixiaoyu1@xiaomi.com>
+Currently, if an f2fs filesystem is mounted with the mode=lfs and
+io_bits mount options, DIO reads are allowed but DIO writes are not.
+Allowing DIO reads but not DIO writes is an unusual restriction, which
+is likely to be surprising to applications, namely any application that
+both reads and writes from a file (using O_DIRECT).  This behavior is
+also incompatible with the proposed STATX_DIOALIGN extension to statx.
+Given this, let's drop the support for DIO reads in this configuration.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/gc.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/f2fs/file.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index d5fb426e0747..e2f8a2dae908 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -150,8 +150,11 @@ static int gc_thread_func(void *data)
- 		gc_control.nr_free_secs = foreground ? 1 : 0;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5e5c97fccfb4ee..ad0212848a1ab9 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -823,7 +823,6 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 				struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	int rw = iov_iter_rw(iter);
  
- 		/* if return value is not zero, no victim was selected */
--		if (f2fs_gc(sbi, &gc_control))
--			wait_ms = gc_th->no_gc_sleep_time;
-+		if (f2fs_gc(sbi, &gc_control)) {
-+			/* don't bother wait_ms by foreground gc */
-+			if (!foreground)
-+				wait_ms = gc_th->no_gc_sleep_time;
-+		}
- 
- 		if (foreground)
- 			wake_up_all(&gc_th->fggc_wq);
+ 	if (!fscrypt_dio_supported(inode))
+ 		return true;
+@@ -841,7 +840,7 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
+ 	 */
+ 	if (f2fs_sb_has_blkzoned(sbi))
+ 		return true;
+-	if (f2fs_lfs_mode(sbi) && (rw == WRITE)) {
++	if (f2fs_lfs_mode(sbi)) {
+ 		if (block_unaligned_IO(inode, iocb, iter))
+ 			return true;
+ 		if (F2FS_IO_ALIGNED(sbi))
 -- 
-2.36.1
+2.37.0
 
 
 
