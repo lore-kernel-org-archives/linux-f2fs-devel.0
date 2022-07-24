@@ -4,71 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E9000C43334
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 24 Jul 2022 15:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3D014C43334
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 24 Jul 2022 16:04:01 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oFdUt-0001oN-Cp; Sun, 24 Jul 2022 15:26:22 +0000
+	id 1oFe5H-0002jE-UH; Sun, 24 Jul 2022 16:03:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <chao@kernel.org>) id 1oFdUs-0001oH-V2
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 24 Jul 2022 15:26:21 +0000
+ (envelope-from <chao@kernel.org>) id 1oFe5G-0002j8-P0
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 24 Jul 2022 16:03:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9lw3PpiOsCRg32X6kt6iZokfKL3oYBtxYXcHL5zpW0Y=; b=XU2sxm8PSzNmpfbSWxOY2m4TF0
- yvJuJgtab21Oatdj4vfwJZbi3rMwYAdnm601pb71rJEIpqnYT48whWHmaxMLViUVS3F0Po5zsbADn
- 0DFd7fsZZgYGSko28P3lntCqRj/guUA7VYs1N6qC6q8PbgdX4OwoISaCl5X4vUx4VMX4=;
+ bh=vl82IAwq/6TWL+lHwMeexGcEFkch+/ywQHCKZNS6UJM=; b=C67m20DyuYhumfund5oMNaZHFT
+ HE8poOxiJNCideUMReazU8dNV1vP0e9S9xx35RuZv8214fXqeclQAfehHDfJ71evSC4A94AZNCjZ5
+ yzvmett44V79Nq1cbb6WbLT+/QPFw36pmCxkbYWRHPKOZQZ+eZUEiv7mrg3u0Ss+xF1c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=9lw3PpiOsCRg32X6kt6iZokfKL3oYBtxYXcHL5zpW0Y=; b=gilhtFWM7LqPnClI9gb71DVUvn
- NkpsbncGEEswI3g/0SeTI3UnsFgy398RSBiycRPCDS/Y9JO9ogitvdBwRtuRTqMu2wbLHPQPKU6FM
- j0ARD2EyYt35W+34XC+ZDMMMvBMtOHZkrrN3AJljaBrlwUrD8tKI0aFmBK9mgaH0rer0=;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=vl82IAwq/6TWL+lHwMeexGcEFkch+/ywQHCKZNS6UJM=; b=K
+ iOsO9YxIUgktoIS5EL5M12ABY2nl5rv4VjHpLfwmXpMTDPsX5RdW1mm4gR2So/eTm7XmN7axZ9vXb
+ GjP8arixqoS7VAssA0wzRQAUck/2DokzMiqesd8TOlToTliq1d6yOsRel6JlwM5wSTu8WxUhq3cCl
+ Yh1qhHOODYT8tuUg=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.94.2)
- id 1oFdUp-0003DO-RT
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 24 Jul 2022 15:26:21 +0000
+ id 1oFe5E-0004Uo-0i
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 24 Jul 2022 16:03:57 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A78F46112A;
- Sun, 24 Jul 2022 15:26:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE021C3411E;
- Sun, 24 Jul 2022 15:26:07 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id A67A761173;
+ Sun, 24 Jul 2022 16:03:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26739C3411E;
+ Sun, 24 Jul 2022 16:03:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1658676369;
- bh=XawCLPtmZ4fqG7HmHG8DgJxtknVXOhtaMBHOKKVA+a4=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=TDphJYBgBVXs11PiEkP7SR+Eg8zcMq7InckjTEKmMzSLYPAp3El/IssQZyFeBDrX4
- NpCdJR6xquDs9+vRBQ0W6xo/MaBgSu6m/B7F1LRJCgMVLhqIV+X8Ta52Rtss5dB7Yt
- jeR97CMISQVZF4BkYl0fWZ8+B4PpM/6AmFpyD5It62fklcrTdeiL3y74Mpv+QudklR
- HWzdfaSgl/8sFcANuprXTZBYiX56Jxp5NjjzBmAAAHwoy2YDqCYkyrVZcFtEq3otOy
- Pa9aE8DL/hI6FakHLFPOgb1EVh9lwyJPucxYmKLEZNjSwU69J4lSSBHZv5g1Cpwzi+
- 9gfXIYBisGy8g==
-Message-ID: <8eaad9d0-1d59-3ecb-bab4-904ed22385f4@kernel.org>
-Date: Sun, 24 Jul 2022 23:26:04 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Content-Language: en-US
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Guowei Du <duguoweisz@gmail.com>
-References: <20220718081038.2279-1-duguoweisz@gmail.com>
- <YtoOxTyWPFUpw/Y0@google.com>
+ s=k20201202; t=1658678630;
+ bh=13VMcjVjygTo86YvqnEwgkrcMtl35I1hPD5j3xDOc94=;
+ h=From:To:Cc:Subject:Date:From;
+ b=p+Hmai7Na7CI4C+GMJnz75wkSGOTCDvIu3ez/57bsx3XZb3xJRegTswBRhHp42JJK
+ dMqyG/ekh9ycCLFD735qJGhBIqcXxXI86WzCZu+0l8l7QGeNo8yOZEeDO5mu59ZaXn
+ lROdfpbnlp1rb9YohpH1CTEWxNLzprVBXsFn+3pN6RQKL/MMKlOBTmOMwcx1q970Fc
+ 8fgteLBZorJgvjuBFZHXBOvjVTT2URehn2eb5BiaAP/UnF6+brCgVtn7Ibzv5kOg5q
+ CIIPolv3Hf+i24JqVTb+lD7+bWyBQBCwLjuZQ0pzQw++BJgKGr/b9vejcLzPGVa39f
+ 0RZX75tzfAVxQ==
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <YtoOxTyWPFUpw/Y0@google.com>
-X-Headers-End: 1oFdUp-0003DO-RT
-Subject: Re: [f2fs-dev] [PATCH] f2fs: modify task name prefix
+To: jaegeuk@kernel.org
+Date: Mon, 25 Jul 2022 00:03:23 +0800
+Message-Id: <20220724160323.18451-1-chao@kernel.org>
+X-Mailer: git-send-email 2.36.1
+MIME-Version: 1.0
+X-Headers-End: 1oFe5E-0004Uo-0i
+Subject: [f2fs-dev] [PATCH] f2fs: fix to avoid use f2fs_bug_on() in
+ f2fs_new_node_page()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,75 +76,66 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, duguowei <duguowei@xiaomi.com>,
+Cc: Dipanjan Das <mail.dipanjan.das@gmail.com>, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/7/22 10:43, Jaegeuk Kim wrote:
-> On 07/18, Guowei Du wrote:
->> From: duguowei <duguowei@xiaomi.com>
->>
->> If there are more than one f2fs sbi, there will be more
->> discard threads. But the comm is too long to show dev
->> minor. So, change the default prefix of thread from
->> "f2fs_discard" to "f2fs_dcd".
-> 
-> That looks quite unreadable. What about unmap?
+From: Chao Yu <chao.yu@oppo.com>
 
-FYI,
+As Dipanjan Das <mail.dipanjan.das@gmail.com> reported, syzkaller
+found a f2fs bug as below:
 
-With commit d6986ce24fc0 ("kthread: dynamically allocate memory to store
-kthread's full name"), it has chance to show full name of kthread when
-it's not in low memory scenario.
+RIP: 0010:f2fs_new_node_page+0x19ac/0x1fc0 fs/f2fs/node.c:1295
+Call Trace:
+ write_all_xattrs fs/f2fs/xattr.c:487 [inline]
+ __f2fs_setxattr+0xe76/0x2e10 fs/f2fs/xattr.c:743
+ f2fs_setxattr+0x233/0xab0 fs/f2fs/xattr.c:790
+ f2fs_xattr_generic_set+0x133/0x170 fs/f2fs/xattr.c:86
+ __vfs_setxattr+0x115/0x180 fs/xattr.c:182
+ __vfs_setxattr_noperm+0x125/0x5f0 fs/xattr.c:216
+ __vfs_setxattr_locked+0x1cf/0x260 fs/xattr.c:277
+ vfs_setxattr+0x13f/0x330 fs/xattr.c:303
+ setxattr+0x146/0x160 fs/xattr.c:611
+ path_setxattr+0x1a7/0x1d0 fs/xattr.c:630
+ __do_sys_lsetxattr fs/xattr.c:653 [inline]
+ __se_sys_lsetxattr fs/xattr.c:649 [inline]
+ __x64_sys_lsetxattr+0xbd/0x150 fs/xattr.c:649
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x46/0xb0
 
-Thanks,
+NAT entry and nat bitmap can be inconsistent, e.g. one nid is free
+in nat bitmap, and blkaddr in its NAT entry is not NULL_ADDR, it
+may trigger BUG_ON() in f2fs_new_node_page(), fix it.
 
-> 
->>
->> Before:
->> $ ps -e | grep f2fs
->> 1628 ?        00:00:00 f2fs_ckpt-7:10
->> 1629 ?        00:00:00 f2fs_flush-7:10
->> 1630 ?        00:00:00 f2fs_discard-7:
->> 1631 ?        00:00:00 f2fs_gc-7:10
->> 2030 ?        00:00:00 f2fs_ckpt-7:27
->> 2031 ?        00:00:00 f2fs_flush-7:27
->> 2032 ?        00:00:00 f2fs_discard-7:
->> 2033 ?        00:00:00 f2fs_gc-7:27
->>
->> After:
->> $ ps -e | grep f2fs
->> 1628 ?        00:00:00 f2fs_ckpt-7:10
->> 1629 ?        00:00:00 f2fs_flush-7:10
->> 1630 ?        00:00:00 f2fs_dcd-7:10
->> 1631 ?        00:00:00 f2fs_gc-7:10
->> 2030 ?        00:00:00 f2fs_ckpt-7:27
->> 2031 ?        00:00:00 f2fs_flush-7:27
->> 2032 ?        00:00:00 f2fs_dcd-7:27
->> 2033 ?        00:00:00 f2fs_gc-7:27
->>
->> Signed-off-by: duguowei <duguowei@xiaomi.com>
->> ---
->>   fs/f2fs/segment.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 874c1b9c41a2..2eeefcbe62db 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -2018,7 +2018,7 @@ int f2fs_start_discard_thread(struct f2fs_sb_info *sbi)
->>   		return 0;
->>   
->>   	dcc->f2fs_issue_discard = kthread_run(issue_discard_thread, sbi,
->> -				"f2fs_discard-%u:%u", MAJOR(dev), MINOR(dev));
->> +				"f2fs_dcd-%u:%u", MAJOR(dev), MINOR(dev));
->>   	if (IS_ERR(dcc->f2fs_issue_discard))
->>   		err = PTR_ERR(dcc->f2fs_issue_discard);
->>   
->> -- 
->> 2.36.1
+Reported-by: Dipanjan Das <mail.dipanjan.das@gmail.com>
+Signed-off-by: Chao Yu <chao.yu@oppo.com>
+---
+ fs/f2fs/node.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 095a634436e3..d1928952d371 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1292,7 +1292,11 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+ 		dec_valid_node_count(sbi, dn->inode, !ofs);
+ 		goto fail;
+ 	}
+-	f2fs_bug_on(sbi, new_ni.blk_addr != NULL_ADDR);
++	if (unlikely(new_ni.blk_addr != NULL_ADDR)) {
++		err = -EFSCORRUPTED;
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		goto fail;
++	}
+ #endif
+ 	new_ni.nid = dn->nid;
+ 	new_ni.ino = dn->inode->i_ino;
+-- 
+2.36.1
+
 
 
 _______________________________________________
