@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12A50C19F2C
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 31 Jul 2022 03:34:25 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A85A8C19F28
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 31 Jul 2022 03:34:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.94.2)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oHzii-0001C1-FI; Sun, 31 Jul 2022 03:34:24 +0000
+	id 1oHzij-0005A9-GC; Sun, 31 Jul 2022 03:34:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.94.2)
- (envelope-from <fengnanchang@gmail.com>) id 1oHzih-0001Bv-C2
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 31 Jul 2022 03:34:23 +0000
+ (envelope-from <fengnanchang@gmail.com>) id 1oHzii-00059p-AT
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 31 Jul 2022 03:34:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0NUrc0W1QWb//2ivdbxpNU8D3AKbtKApqcDsuJkuddQ=; b=HK5kDuROhL08tJO8IdBhWTB9r8
- YpJMR1axof0Q9is6pUwjcog984QmeUmG/zN7WmgFahk4QrZoMHvGxLzqLzVjKmAZNro3noDGxI+Sx
- Exx1bgvmTWi0ZG+8wslPD7Nzt4v+IQmw0ECj7P0V0r+bjNwr5Rn4uKvwTQE+LK2mDwGo=;
+ bh=guG0oBRavb6xbHov94qCa4u+vc0FBgyCh+0qYgGNQ5A=; b=Ea9hgMVvnXwArVZNwt1cJp6HbM
+ 54KrVcJ+hOG2FMi5/rnEg9c12K8b5dMA+z5byc8pKnsQD4kD+02OGPTBjht9bANWzPfTlKy4jtYtl
+ ITBWFdVVGLI9hETgM9bMBN3u3BF2+d+cp18OWx3cSSuDKAXjPtLnA4ALg203OKu9UL4I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -31,61 +31,61 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0NUrc0W1QWb//2ivdbxpNU8D3AKbtKApqcDsuJkuddQ=; b=MJ008gkidzcAR7ONIX6NO4nk/B
- JufhV1yv42ULpG6chLf8bcfHENUar5o9lEvpURLeAvnn2ArerHL2tFApqxzuexM+7vjtrSuOuasTL
- KXeiPUDvIwKM8VoW4rmD4QvHQDzb4TOsflQFtQlRS2tbI8dAP3I0cdQ8Lxnyf4aJmajE=;
-Received: from mail-pg1-f175.google.com ([209.85.215.175])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=guG0oBRavb6xbHov94qCa4u+vc0FBgyCh+0qYgGNQ5A=; b=KOUaeKwTEYVJqaIAf6SilwKJjB
+ PYm2iLejW8/Ck+wD7MiHRNTaa6ZJh77IIs+8SMO8b/pbSWSirIqpFu1O2u4wLRktu4wJfyAU/+5Jo
+ 4cTXDw3S6bX5TkAF3CgExdnrCBAdJ5RP8wKJDVacJGolZtxSWQV35SpkJgIZXZopWhzI=;
+Received: from mail-pf1-f182.google.com ([209.85.210.182])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.94.2)
- id 1oHzic-0002se-UH
- for linux-f2fs-devel@lists.sourceforge.net; Sun, 31 Jul 2022 03:34:23 +0000
-Received: by mail-pg1-f175.google.com with SMTP id f11so6986425pgj.7
+ id 1oHzii-00FdID-72
+ for linux-f2fs-devel@lists.sourceforge.net; Sun, 31 Jul 2022 03:34:24 +0000
+Received: by mail-pf1-f182.google.com with SMTP id y141so7779586pfb.7
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 30 Jul 2022 20:34:18 -0700 (PDT)
+ Sat, 30 Jul 2022 20:34:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
  h=from:to:cc:subject:date:message-id:in-reply-to:references
  :mime-version:content-transfer-encoding;
- bh=0NUrc0W1QWb//2ivdbxpNU8D3AKbtKApqcDsuJkuddQ=;
- b=YM1i8sm2SCn8+w5o7efjgX9kZM+x+Q3Gomww3pOaJAWeyq2cXU0WUC3Xziz8x6WL+u
- z7M9yF1Z/zuH1u2UBNfKREj71mGWWy/sGmrFY4Jj05AFIclAw22GvwLzihWEHsd698hY
- ogQtVytKGJ4pMtd2FPD3zC97J3QV8YvUa5xnGDEiObwVNq2d08HdMx4DdeC/IOexD5w8
- 0kY9Qc/B0TZWX7TeEfnM4LXCbYgr1JwANsopRi2NEli5eT2OeIk1FUB4AkvG2Rd17cWP
- Q9YOnZCn21MT+Nopsw0cniaOC0ywyGxoL217KWqUE+VGVSHxVSCIEqpVRR0NWzr7x0SD
- P2Wg==
+ bh=guG0oBRavb6xbHov94qCa4u+vc0FBgyCh+0qYgGNQ5A=;
+ b=AkMi4FE24nkiG1d3lQ3bDb/qWVKVQhAD+jk3Zz5M9Hlc7YtAMOfWu5nPBnOg0VbEVI
+ QPKylt3WFMySR9uUSN2at48CZs0OakmGVZa4bjJiFuBnC1l5vAQLwxNgchv5B27nbd9I
+ gkBasmkrg9AwheMlqSKS3v2sYT52fmzDTqxkbUwysL6kLuvJvZ9zu4B5+Gk5gj+02aHN
+ cPAaDMpbFHnhMftlHLwx1kIMfoKkxPutgVMzCNySD2JE0I9XqqBTQ6jg67oisfAwP5i6
+ VcRND1VuLkkHCAuOMVGbW0pghVgmFunA+HhrqQJU7+hYLgP483Q4VdlCqgLYgZHMZJ16
+ DXtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
  :references:mime-version:content-transfer-encoding;
- bh=0NUrc0W1QWb//2ivdbxpNU8D3AKbtKApqcDsuJkuddQ=;
- b=iIRS+RgMa/xuWyZdPh7P9GmnlEeI+zP2EIWTgFTFDSeJgoywgz7nkCnll18AoVR7kI
- Tcx08SRLqpH9Jn7ChivebkLxsuqVr4Uz/Dh7BFQBKhW8cF9k61z4eBs/WGEIrB8mABHj
- 0ZiAxqUHQ/ubENf0Gbci5zdp0xsxB0nW4mcL+I6KLpOvJfaY6zilBataVwf3tdg6y3/s
- JJHSYbirDw022X64al4e7c+mUxcu8zcuQxAz7xbz20+rTlW6uZ3cTB7x2jn80GdB/GWh
- CM135pJjTpZc5jS43Lya6A7cGIx6CZokpq3sdvS2T3TkeDbDRAQqahBkOlVKT2Xoqo4f
- /bIA==
-X-Gm-Message-State: AJIora9qRrn5x4zQB35JsHAmB/Na2XtsrW2BWU5oGA2FdoPwHAtvTkej
- L2upPpSmII4L/xebkL7kN48=
-X-Google-Smtp-Source: AGRyM1vwTIO5hDsjW3+CHC47O8nvOIPfm/+WETD2P+ttTHozF2mH131nFwlw4RtKVqz20jvBnjzmNg==
-X-Received: by 2002:a05:6a00:1496:b0:52a:c3fb:8ec7 with SMTP id
- v22-20020a056a00149600b0052ac3fb8ec7mr10548646pfu.25.1659238453397; 
- Sat, 30 Jul 2022 20:34:13 -0700 (PDT)
+ bh=guG0oBRavb6xbHov94qCa4u+vc0FBgyCh+0qYgGNQ5A=;
+ b=omaQo7HUiEDsOJ3faOdzFmr6EFVfkgMs9Gdqi6oq579/Ip2MmnM6MH/2XrpQygQuam
+ PS49AIDjXRsft5HFnIDUiK7N/WKmDpIvh641n2HVTISJUtIQeBkrSHScLBhbNZqaLNeK
+ To3cXaYhezmsnua4mYKGhyWgY8OCDeSpG0bfuq1hKBk4V91Pc48CsctgZJbzA5LdxSLs
+ dEPY7fBdBYo8zqxzVKQVCEMNbOyIBuR/cMkgfnYkSCJ9P5/CokZ3tQnIVvFNOA/pKz01
+ R7lNSJQKMPr0odbExV9oMPhnfSQoRUcHiSO6UTfU50E3POoWqkb0wfc67sXZke+cH8/f
+ 1Q/w==
+X-Gm-Message-State: AJIora/EkMGWng22EwRyz73LoI6F5WiaG4C0Fs32F3918Rk0WcOW5KW1
+ DWrzj2c+JywsUT6w+T8ekQ/9uUx/gx0=
+X-Google-Smtp-Source: AGRyM1t+9hnjagxxo08v5+5Z52tvEj6lgEv5tVjTGawrFzv1t/aErBDfskjPBhYIpvQ8IvesMG1ntw==
+X-Received: by 2002:a05:6a00:181c:b0:52a:bc83:d767 with SMTP id
+ y28-20020a056a00181c00b0052abc83d767mr10244582pfa.76.1659238458605; 
+ Sat, 30 Jul 2022 20:34:18 -0700 (PDT)
 Received: from localhost.localdomain ([103.215.126.52])
  by smtp.googlemail.com with ESMTPSA id
- e10-20020a63500a000000b0040dd052ab11sm5026631pgb.58.2022.07.30.20.34.11
+ e10-20020a63500a000000b0040dd052ab11sm5026631pgb.58.2022.07.30.20.34.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 30 Jul 2022 20:34:12 -0700 (PDT)
+ Sat, 30 Jul 2022 20:34:17 -0700 (PDT)
 From: Fengnan Chang <fengnanchang@gmail.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Sun, 31 Jul 2022 11:33:45 +0800
-Message-Id: <20220731033347.455209-2-fengnanchang@gmail.com>
+Date: Sun, 31 Jul 2022 11:33:47 +0800
+Message-Id: <20220731033347.455209-4-fengnanchang@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220731033347.455209-1-fengnanchang@gmail.com>
 References: <20220731033347.455209-1-fengnanchang@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1oHzic-0002se-UH
-Subject: [f2fs-dev] [PATCH v4 1/3] f2fs: intorduce
- f2fs_all_cluster_page_ready
+X-Headers-End: 1oHzii-00FdID-72
+Subject: [f2fs-dev] [PATCH v4 3/3] f2fs: support compressed file write/read
+ amplifiction
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -97,105 +97,294 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Fengnan Chang <changfengnan@vivo.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Fengnan Chang <changfengnan@vivo.com>
+Try to support compressed file write and amplifiction accounting.
 
-When write total cluster, all pages is uptodate, there is not need to call
-f2fs_prepare_compress_overwrite, intorduce f2fs_all_cluster_page_ready
-to avoid this.
-
-Signed-off-by: Fengnan Chang <changfengnan@vivo.com>
+Signed-off-by: Fengnan Chang <fengnanchang@gmail.com>
 ---
- fs/f2fs/compress.c | 21 ++++++++++++++-------
- fs/f2fs/data.c     |  8 ++++++--
- fs/f2fs/f2fs.h     |  4 ++--
- 3 files changed, 22 insertions(+), 11 deletions(-)
+ fs/f2fs/compress.c |  7 +++++--
+ fs/f2fs/data.c     | 44 ++++++++++++++++++++++++++++++++++++--------
+ fs/f2fs/debug.c    |  7 +++++--
+ fs/f2fs/f2fs.h     | 36 +++++++++++++++++++++++++++++++++++-
+ 4 files changed, 81 insertions(+), 13 deletions(-)
 
 diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 2e06a301bf12..4677300e87fe 100644
+index 0eca4e060deb..374d4a73ab2c 100644
 --- a/fs/f2fs/compress.c
 +++ b/fs/f2fs/compress.c
-@@ -929,20 +929,27 @@ bool f2fs_cluster_can_merge_page(struct compress_ctx *cc, pgoff_t index)
- 	return is_page_in_cluster(cc, index);
- }
+@@ -1125,7 +1125,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+ 	sector_t last_block_in_bio;
+ 	unsigned fgp_flag = FGP_LOCK | FGP_WRITE | FGP_CREAT;
+ 	pgoff_t start_idx = start_idx_of_cluster(cc);
+-	int i, ret;
++	int i, ret, once_read = 0;
  
--bool f2fs_all_cluster_page_loaded(struct compress_ctx *cc, struct pagevec *pvec,
--				int index, int nr_pages)
-+bool f2fs_all_cluster_page_ready(struct compress_ctx *cc, struct pagevec *pvec,
-+				int index, int nr_pages, bool uptodate)
- {
--	unsigned long pgidx;
--	int i;
-+	unsigned long pgidx = pvec->pages[index]->index;
-+	int i = uptodate ? 0 : 1;
+ retry:
+ 	ret = f2fs_is_compressed_cluster(cc->inode, start_idx);
+@@ -1155,13 +1155,16 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
+ 		struct bio *bio = NULL;
  
--	if (nr_pages - index < cc->cluster_size)
-+	/*
-+	 * when uptodate set to true, try to check all pages in cluster is
-+	 * uptodate or not.
-+	 */
-+	if (uptodate && (pgidx % cc->cluster_size))
- 		return false;
+ 		ret = f2fs_read_multi_pages(cc, &bio, cc->cluster_size,
+-					&last_block_in_bio, false, true);
++					&last_block_in_bio, false, true, &once_read);
+ 		f2fs_put_rpages(cc);
+ 		f2fs_destroy_compress_ctx(cc, true);
+ 		if (ret)
+ 			goto out;
+ 		if (bio)
+ 			f2fs_submit_bio(sbi, bio, DATA);
++		/* All need read page in here is read amplification */
++		if (once_read)
++			f2fs_i_compr_ra_blocks_update(cc->inode, once_read, true);
  
--	pgidx = pvec->pages[index]->index;
-+	if (nr_pages - index < cc->cluster_size)
-+		return false;
- 
--	for (i = 1; i < cc->cluster_size; i++) {
-+	for (; i < cc->cluster_size; i++) {
- 		if (pvec->pages[index + i]->index != pgidx + i)
- 			return false;
-+		if (uptodate && !PageUptodate(pvec->pages[index + i]))
-+			return false;
- 	}
- 
- 	return true;
+ 		ret = f2fs_init_compress_ctx(cc);
+ 		if (ret)
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f48eec8f93e2..34a7a9affea0 100644
+index 0b159c555069..9bedcea189eb 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -3011,6 +3011,10 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 				if (!f2fs_cluster_is_empty(&cc))
- 					goto lock_page;
- 
-+				if (f2fs_all_cluster_page_ready(&cc,
-+					&pvec, i, nr_pages, true))
-+					goto lock_page;
+@@ -2133,7 +2133,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 				unsigned nr_pages, sector_t *last_block_in_bio,
+-				bool is_readahead, bool for_write)
++				bool is_readahead, bool for_write, int *nr_need_read)
+ {
+ 	struct dnode_of_data dn;
+ 	struct inode *inode = cc->inode;
+@@ -2146,7 +2146,10 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 	struct extent_info ei = {0, };
+ 	bool from_dnode = true;
+ 	int i;
+-	int ret = 0;
++	int ret = 0, nr_cache_hit = 0;
 +
- 				ret2 = f2fs_prepare_compress_overwrite(
- 							inode, &pagep,
- 							page->index, &fsdata);
-@@ -3021,8 +3025,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
- 				} else if (ret2 &&
- 					(!f2fs_compress_write_end(inode,
- 						fsdata, page->index, 1) ||
--					 !f2fs_all_cluster_page_loaded(&cc,
--						&pvec, i, nr_pages))) {
-+					 !f2fs_all_cluster_page_ready(&cc,
-+						&pvec, i, nr_pages, false))) {
- 					retry = 1;
- 					break;
- 				}
++	if (nr_need_read)
++		*nr_need_read = 0;
+ 
+ 	f2fs_bug_on(sbi, f2fs_cluster_is_empty(cc));
+ 
+@@ -2237,6 +2240,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 		if (f2fs_load_compressed_page(sbi, page, blkaddr)) {
+ 			if (atomic_dec_and_test(&dic->remaining_pages))
+ 				f2fs_decompress_cluster(dic, true);
++			nr_cache_hit++;
+ 			continue;
+ 		}
+ 
+@@ -2275,6 +2279,10 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 		*last_block_in_bio = blkaddr;
+ 	}
+ 
++	/* we need read whole cluster when nr_cache_hit less than nr_cpages */
++	if (nr_need_read && nr_cache_hit < cc->nr_cpages)
++		*nr_need_read = cc->nr_cpages;
++
+ 	if (from_dnode)
+ 		f2fs_put_dnode(&dn);
+ 
+@@ -2322,7 +2330,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ #endif
+ 	unsigned nr_pages = rac ? readahead_count(rac) : 1;
+ 	unsigned max_nr_pages = nr_pages;
+-	int ret = 0;
++	int ret = 0, once_read = 0, total_read = 0, single_read = 0;
+ 
+ 	map.m_pblk = 0;
+ 	map.m_lblk = 0;
+@@ -2346,10 +2354,11 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ 				ret = f2fs_read_multi_pages(&cc, &bio,
+ 							max_nr_pages,
+ 							&last_block_in_bio,
+-							rac != NULL, false);
++							rac != NULL, false, &once_read);
+ 				f2fs_destroy_compress_ctx(&cc, false);
+ 				if (ret)
+ 					goto set_error_page;
++				total_read += once_read;
+ 			}
+ 			if (cc.cluster_idx == NULL_CLUSTER) {
+ 				if (nc_cluster_idx ==
+@@ -2389,6 +2398,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ 			zero_user_segment(page, 0, PAGE_SIZE);
+ 			unlock_page(page);
+ 		}
++		single_read++;
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ next_page:
+ #endif
+@@ -2402,12 +2412,23 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ 				ret = f2fs_read_multi_pages(&cc, &bio,
+ 							max_nr_pages,
+ 							&last_block_in_bio,
+-							rac != NULL, false);
++							rac != NULL, false, &once_read);
+ 				f2fs_destroy_compress_ctx(&cc, false);
++				if (!ret)
++					total_read += once_read;
+ 			}
+ 		}
+ #endif
+ 	}
++	max_nr_pages -= single_read;
++	if (total_read > max_nr_pages)
++		f2fs_i_compr_ra_blocks_update(inode,
++						total_read - max_nr_pages,
++						true);
++	else
++		f2fs_i_compr_ra_blocks_update(inode,
++						max_nr_pages - total_read,
++						false);
+ 	if (bio)
+ 		__submit_bio(F2FS_I_SB(inode), bio, DATA);
+ 	return ret;
+@@ -2944,11 +2965,11 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	int range_whole = 0;
+ 	xa_mark_t tag;
+ 	int nwritten = 0;
+-	int submitted = 0;
++	int submitted = 0, raw_dirty_pages = 0;
+ 	int i;
+ 
+-	if (get_dirty_pages(mapping->host) <=
+-				SM_I(F2FS_M_SB(mapping))->min_hot_blocks)
++	raw_dirty_pages = get_dirty_pages(mapping->host);
++	if (raw_dirty_pages <= SM_I(F2FS_M_SB(mapping))->min_hot_blocks)
+ 		set_inode_flag(mapping->host, FI_HOT_DATA);
+ 	else
+ 		clear_inode_flag(mapping->host, FI_HOT_DATA);
+@@ -3148,6 +3169,12 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	if (bio)
+ 		f2fs_submit_merged_ipu_write(sbi, &bio, NULL);
+ 
++	if (f2fs_compressed_file(inode)) {
++		if (nwritten > raw_dirty_pages)
++			f2fs_i_compr_wa_blocks_update(inode, nwritten - raw_dirty_pages, true);
++		else
++			f2fs_i_compr_wa_blocks_update(inode, raw_dirty_pages - nwritten, false);
++	}
+ 	return ret;
+ }
+ 
+@@ -3498,6 +3525,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 			err = ret;
+ 			goto fail;
+ 		} else if (ret) {
++			f2fs_i_compr_wa_blocks_update(inode, ret - 1, true);
+ 			return 0;
+ 		}
+ 	}
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index c01471573977..e6b943edba91 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -136,6 +136,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 	si->inline_dir = atomic_read(&sbi->inline_dir);
+ 	si->compr_inode = atomic_read(&sbi->compr_inode);
+ 	si->compr_blocks = atomic64_read(&sbi->compr_blocks);
++	si->compr_wa_blocks = atomic64_read(&sbi->compr_wa_blocks);
++	si->compr_ra_blocks = atomic64_read(&sbi->compr_ra_blocks);
+ 	si->append = sbi->im[APPEND_INO].ino_num;
+ 	si->update = sbi->im[UPDATE_INO].ino_num;
+ 	si->orphans = sbi->im[ORPHAN_INO].ino_num;
+@@ -383,8 +385,9 @@ static int stat_show(struct seq_file *s, void *v)
+ 			   si->inline_inode);
+ 		seq_printf(s, "  - Inline_dentry Inode: %u\n",
+ 			   si->inline_dir);
+-		seq_printf(s, "  - Compressed Inode: %u, Blocks: %llu\n",
+-			   si->compr_inode, si->compr_blocks);
++		seq_printf(s, "  - Compressed Inode: %u, Blocks: %llu, WA Blocks: %lld, RA Blocks %lld\n",
++			   si->compr_inode, si->compr_blocks,
++			   si->compr_wa_blocks, si->compr_ra_blocks);
+ 		seq_printf(s, "  - Orphan/Append/Update Inode: %u, %u, %u\n",
+ 			   si->orphans, si->append, si->update);
+ 		seq_printf(s, "\nMain area: %d segs, %d secs %d zones\n",
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3f669f851240..ac3788d0345d 100644
+index 955dbf4f83ad..c549be2e75af 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -4193,8 +4193,8 @@ void f2fs_end_read_compressed_page(struct page *page, bool failed,
- 				block_t blkaddr, bool in_task);
- bool f2fs_cluster_is_empty(struct compress_ctx *cc);
- bool f2fs_cluster_can_merge_page(struct compress_ctx *cc, pgoff_t index);
--bool f2fs_all_cluster_page_loaded(struct compress_ctx *cc, struct pagevec *pvec,
--				int index, int nr_pages);
-+bool f2fs_all_cluster_page_ready(struct compress_ctx *cc, struct pagevec *pvec,
-+				int index, int nr_pages, bool uptodate);
- bool f2fs_sanity_check_cluster(struct dnode_of_data *dn);
- void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct page *page);
- int f2fs_write_multi_pages(struct compress_ctx *cc,
+@@ -1761,6 +1761,8 @@ struct f2fs_sb_info {
+ 	atomic_t inline_dir;			/* # of inline_dentry inodes */
+ 	atomic_t compr_inode;			/* # of compressed inodes */
+ 	atomic64_t compr_blocks;		/* # of compressed blocks */
++	atomic64_t compr_wa_blocks;		/* # of compressed WA blocks */
++	atomic64_t compr_ra_blocks;		/* # of compressed RA blocks */
+ 	atomic_t max_aw_cnt;			/* max # of atomic writes */
+ 	unsigned int io_skip_bggc;		/* skip background gc for in-flight IO */
+ 	unsigned int other_skip_bggc;		/* skip background gc for other reasons */
+@@ -3859,6 +3861,8 @@ struct f2fs_stat_info {
+ 	int inline_xattr, inline_inode, inline_dir, append, update, orphans;
+ 	int compr_inode;
+ 	unsigned long long compr_blocks;
++	long long compr_wa_blocks;
++	long long compr_ra_blocks;
+ 	int aw_cnt, max_aw_cnt;
+ 	unsigned int valid_count, valid_node_count, valid_inode_count, discard_blks;
+ 	unsigned int bimodal, avg_vblocks;
+@@ -3946,6 +3950,14 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+ 		(atomic64_add(blocks, &F2FS_I_SB(inode)->compr_blocks))
+ #define stat_sub_compr_blocks(inode, blocks)				\
+ 		(atomic64_sub(blocks, &F2FS_I_SB(inode)->compr_blocks))
++#define stat_add_compr_wa_blocks(inode, blocks)				\
++	(atomic64_add(blocks, &F2FS_I_SB(inode)->compr_wa_blocks))
++#define stat_sub_compr_wa_blocks(inode, blocks)				\
++	(atomic64_sub(blocks, &F2FS_I_SB(inode)->compr_wa_blocks))
++#define stat_add_compr_ra_blocks(inode, blocks)				\
++	(atomic64_add(blocks, &F2FS_I_SB(inode)->compr_ra_blocks))
++#define stat_sub_compr_ra_blocks(inode, blocks)				\
++	(atomic64_sub(blocks, &F2FS_I_SB(inode)->compr_ra_blocks))
+ #define stat_inc_meta_count(sbi, blkaddr)				\
+ 	do {								\
+ 		if (blkaddr < SIT_I(sbi)->sit_base_addr)		\
+@@ -4030,6 +4042,10 @@ void f2fs_update_sit_info(struct f2fs_sb_info *sbi);
+ #define stat_dec_compr_inode(inode)			do { } while (0)
+ #define stat_add_compr_blocks(inode, blocks)		do { } while (0)
+ #define stat_sub_compr_blocks(inode, blocks)		do { } while (0)
++#define stat_add_compr_wa_blocks(inode, blocks)		do { } while (0)
++#define stat_sub_compr_wa_blocks(inode, blocks)		do { } while (0)
++#define stat_add_compr_ra_blocks(inode, blocks)		do { } while (0)
++#define stat_sub_compr_ra_blocks(inode, blocks)		do { } while (0)
+ #define stat_update_max_atomic_write(inode)		do { } while (0)
+ #define stat_inc_meta_count(sbi, blkaddr)		do { } while (0)
+ #define stat_inc_seg_type(sbi, curseg)			do { } while (0)
+@@ -4209,7 +4225,7 @@ void f2fs_update_extent_tree_range_compressed(struct inode *inode,
+ 				unsigned int c_len);
+ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 				unsigned nr_pages, sector_t *last_block_in_bio,
+-				bool is_readahead, bool for_write);
++				bool is_readahead, bool for_write, int *nr_need_read);
+ struct decompress_io_ctx *f2fs_alloc_dic(struct compress_ctx *cc);
+ void f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
+ 				bool in_task);
+@@ -4465,6 +4481,24 @@ static inline void f2fs_i_compr_blocks_update(struct inode *inode,
+ 	f2fs_mark_inode_dirty_sync(inode, true);
+ }
+ 
++static inline void f2fs_i_compr_wa_blocks_update(struct inode *inode,
++						u64 blocks, bool add)
++{
++	if (add)
++		stat_add_compr_wa_blocks(inode, blocks);
++	else
++		stat_sub_compr_wa_blocks(inode, blocks);
++}
++
++static inline void f2fs_i_compr_ra_blocks_update(struct inode *inode,
++						u64 blocks, bool add)
++{
++	if (add)
++		stat_add_compr_ra_blocks(inode, blocks);
++	else
++		stat_sub_compr_ra_blocks(inode, blocks);
++}
++
+ static inline int block_unaligned_IO(struct inode *inode,
+ 				struct kiocb *iocb, struct iov_iter *iter)
+ {
 -- 
 2.25.1
 
