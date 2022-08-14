@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A27ACC25B0F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Aug 2022 16:23:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1661FC3F6B0
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Aug 2022 16:23:45 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oNGOe-0004TQ-6F;
-	Sun, 14 Aug 2022 16:23:28 +0000
+	id 1oNGOu-00006x-CE;
+	Sun, 14 Aug 2022 16:23:44 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1oNGOZ-0004TJ-Pu
+ (envelope-from <sashal@kernel.org>) id 1oNGOs-00006r-On
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Aug 2022 16:23:23 +0000
+ Sun, 14 Aug 2022 16:23:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=L5hbcXCC9QbBzxUouE/DC/Zx0scoIHXDhJS7U2osIBI=; b=QtW1UEtqlJj+TOd8OifcfHViN2
- VYFG/esEHaY0qAqK0oTswYHFXqL2yaIN2hNUyWq4mC9g0q773gsWpX7fdmeOrUBYUKRiodqgHo/kk
- aFBEe5P67OJjFbgLUIu6UhRngO/kj0+qyqQRljrREi1ZefWwqJVnqo9KXiXwY44KfzqY=;
+ bh=FaiA1zqnviY4qRuk9hCkBry9oOwfOArB92X7XiM3YDo=; b=P9tZG8P68Zd2720yv/WBkX5a/c
+ Hc1OJBsOeDgtr34sYZHQ2c7UI/mnQ7XVnUzkmRM4eFpNzTwIsEEJUeYg+niOu/I+q6HgtSzDR4An+
+ DpY7td5Z8Z++j/lKJzV0k3UN3FQD4IY1rP5WFy59Ql9/ToxaaFkU62C+JczPuQCGO47s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,45 +33,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=L5hbcXCC9QbBzxUouE/DC/Zx0scoIHXDhJS7U2osIBI=; b=gLtVCR0iOkdpTx/c6814v/sVSy
- 0BcTpvHz9FJLIzklMU1WDI98QVI9eEXh+iLnlJFvFuhF4KGhcHOndXhMlNn5eq59BSIfUpROTASPa
- mN+yXoxDfTuPr8ivzEAr2rJ6cA9xjwkmLXktTBGybxLL2FTzyArudup8iYXA/otG7SWo=;
+ bh=FaiA1zqnviY4qRuk9hCkBry9oOwfOArB92X7XiM3YDo=; b=YbYoUPpzcuOIMU5WTL0SADDlrG
+ u9mA6AKzXcwYp0mhzn30+kUL+HNeKkOXbl4q1U4JG2VCeRPHU5uN93ETyDfxdTwjVKpioSHIl68Q3
+ b2xi66mF3m7dHBgtnpajrLUoazojoZ/3XeVdWtAaioehHaEVpPxUb5wOuPywOqERCsFg=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oNGOT-0008Pz-Tk for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Aug 2022 16:23:23 +0000
+ id 1oNGOh-0008Qe-Hv for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 14 Aug 2022 16:23:40 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 4EEE760F49;
- Sun, 14 Aug 2022 16:23:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA01C4347C;
- Sun, 14 Aug 2022 16:23:02 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 3122560F98;
+ Sun, 14 Aug 2022 16:23:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB4E5C433B5;
+ Sun, 14 Aug 2022 16:23:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1660494183;
- bh=nIcfzrungjtKw7y6HO2FvmCrIPM7rRA9aRlAm5poON0=;
+ s=k20201202; t=1660494205;
+ bh=tM8e8tdhXtnbW/O2ygxUNVyW/Jlf4wzfpnrAAuAhZAI=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=uh6ecDv79p8qjETv0dO52fcjQoKS/fn6aqkNKFNN/5ug7bQQ3iPzUClPFhz0J3AIJ
- XACR7yOMrUmo49/zxecN2JZt2diJNm/AWXIoarDQ1YEidPzafJL3Ehds2RrrOSQ+R8
- xVd22A71wfU1L+y2INp4SiTutnU37uphXsuP25phMCLjXW2JIEsfb5UVxuq4J5UVFb
- nATm3s2yQtG6b4uS7ZqaGu/WyXkdN7XaNzW0Hj+etSrh/VC+qZjKzQCO8u5JOSNz2D
- 0lJeFt/ovb/13P4YluxYxyE8eZkYsBm7LIrYqZasYJoj4Qui8kbojz4s52EOn7q27U
- cUEHdm8wi7dXA==
+ b=C26cVRG7jC2y0PC++FkHD340V0bcmO/Gbuds27884SVkLgG0nmxgBTyGFAwaF1qbr
+ p43RbtsBcdkw+jqP+IH4t87s9TqDRJm0rU7kauK+D5UFYuW6wc1gWQ85gjcOXFhOfw
+ gzZpIm2HzoXSsqTOlTv8BbkbMaTtQ6/oOdzOlauwZrqDZw+k5fwGNnsHZY0VJc8hgk
+ Ve1oRNYleNumS4icX6CqAaC2uEGB7FpPiJAsn3xfMzBkTCwxWEkr1x56gq0Om8FP6F
+ kcDs/6WFzOo82XL66kmkLvGK6xNMtnwD7Tk+Bkzwsc4iT0It0yWRBNftjbstCElOxH
+ ywREDwDHOZ5hw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Sun, 14 Aug 2022 12:19:34 -0400
-Message-Id: <20220814161943.2394452-41-sashal@kernel.org>
+Date: Sun, 14 Aug 2022 12:19:41 -0400
+Message-Id: <20220814161943.2394452-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220814161943.2394452-1-sashal@kernel.org>
 References: <20220814161943.2394452-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1oNGOT-0008Pz-Tk
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.19 41/48] f2fs: fix to do sanity check
- on segment type in build_sit_entries()
+X-Headers-End: 1oNGOh-0008Qe-Hv
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.19 48/48] f2fs: fix null-ptr-deref in
+ f2fs_get_dnode_of_data
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,82 +83,128 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sasha Levin <sashal@kernel.org>, Wenqing Liu <wenqingliu0120@gmail.com>,
- linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Ye Bin <yebin10@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Yu <chao.yu@oppo.com>
+From: Ye Bin <yebin10@huawei.com>
 
-[ Upstream commit 09beadf289d6e300553e60d6e76f13c0427ecab3 ]
+[ Upstream commit 4a2c5b7994960fac29cf8a3f4e62855bae1b27d4 ]
 
-As Wenqing Liu <wenqingliu0120@gmail.com> reported in bugzilla:
+There is issue as follows when test f2fs atomic write:
+F2FS-fs (loop0): Can't find valid F2FS filesystem in 2th superblock
+F2FS-fs (loop0): invalid crc_offset: 0
+F2FS-fs (loop0): f2fs_check_nid_range: out-of-range nid=1, run fsck to fix.
+F2FS-fs (loop0): f2fs_check_nid_range: out-of-range nid=2, run fsck to fix.
+==================================================================
+BUG: KASAN: null-ptr-deref in f2fs_get_dnode_of_data+0xac/0x16d0
+Read of size 8 at addr 0000000000000028 by task rep/1990
 
-https://bugzilla.kernel.org/show_bug.cgi?id=216285
-
-RIP: 0010:memcpy_erms+0x6/0x10
- f2fs_update_meta_page+0x84/0x570 [f2fs]
- change_curseg.constprop.0+0x159/0xbd0 [f2fs]
- f2fs_do_replace_block+0x5c7/0x18a0 [f2fs]
- f2fs_replace_block+0xeb/0x180 [f2fs]
- recover_data+0x1abd/0x6f50 [f2fs]
- f2fs_recover_fsync_data+0x12ce/0x3250 [f2fs]
- f2fs_fill_super+0x4459/0x6190 [f2fs]
- mount_bdev+0x2cf/0x3b0
- legacy_get_tree+0xed/0x1d0
- vfs_get_tree+0x81/0x2b0
- path_mount+0x47e/0x19d0
- do_mount+0xce/0xf0
- __x64_sys_mount+0x12c/0x1a0
- do_syscall_64+0x38/0x90
+CPU: 4 PID: 1990 Comm: rep Not tainted 5.19.0-rc6-next-20220715 #266
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x6e/0x91
+ print_report.cold+0x49a/0x6bb
+ kasan_report+0xa8/0x130
+ f2fs_get_dnode_of_data+0xac/0x16d0
+ f2fs_do_write_data_page+0x2a5/0x1030
+ move_data_page+0x3c5/0xdf0
+ do_garbage_collect+0x2015/0x36c0
+ f2fs_gc+0x554/0x1d30
+ f2fs_balance_fs+0x7f5/0xda0
+ f2fs_write_single_data_page+0xb66/0xdc0
+ f2fs_write_cache_pages+0x716/0x1420
+ f2fs_write_data_pages+0x84f/0x9a0
+ do_writepages+0x130/0x3a0
+ filemap_fdatawrite_wbc+0x87/0xa0
+ file_write_and_wait_range+0x157/0x1c0
+ f2fs_do_sync_file+0x206/0x12d0
+ f2fs_sync_file+0x99/0xc0
+ vfs_fsync_range+0x75/0x140
+ f2fs_file_write_iter+0xd7b/0x1850
+ vfs_write+0x645/0x780
+ ksys_write+0xf1/0x1e0
+ do_syscall_64+0x3b/0x90
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-The root cause is segment type is invalid, so in f2fs_do_replace_block(),
-f2fs accesses f2fs_sm_info::curseg_array with out-of-range segment type,
-result in accessing invalid curseg->sum_blk during memcpy in
-f2fs_update_meta_page(). Fix this by adding sanity check on segment type
-in build_sit_entries().
+As 3db1de0e582c commit changed atomic write way which new a cow_inode for
+atomic write file, and also mark cow_inode as FI_ATOMIC_FILE.
+When f2fs_do_write_data_page write cow_inode will use cow_inode's cow_inode
+which is NULL. Then will trigger null-ptr-deref.
+To solve above issue, introduce FI_COW_FILE flag for COW inode.
 
-Reported-by: Wenqing Liu <wenqingliu0120@gmail.com>
-Signed-off-by: Chao Yu <chao.yu@oppo.com>
+Fiexes: 3db1de0e582c("f2fs: change the current atomic write way")
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/segment.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ fs/f2fs/f2fs.h    | 6 ++++++
+ fs/f2fs/file.c    | 2 +-
+ fs/f2fs/segment.c | 4 ++--
+ 3 files changed, 9 insertions(+), 3 deletions(-)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d9bbecd008d2..94b763d4910b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -757,6 +757,7 @@ enum {
+ 	FI_ENABLE_COMPRESS,	/* enable compression in "user" compression mode */
+ 	FI_COMPRESS_RELEASED,	/* compressed blocks were released */
+ 	FI_ALIGNED_WRITE,	/* enable aligned write */
++	FI_COW_FILE,		/* indicate COW file */
+ 	FI_MAX,			/* max flag, never be used */
+ };
+ 
+@@ -3208,6 +3209,11 @@ static inline bool f2fs_is_atomic_file(struct inode *inode)
+ 	return is_inode_flag_set(inode, FI_ATOMIC_FILE);
+ }
+ 
++static inline bool f2fs_is_cow_file(struct inode *inode)
++{
++	return is_inode_flag_set(inode, FI_COW_FILE);
++}
++
+ static inline bool f2fs_is_first_block_written(struct inode *inode)
+ {
+ 	return is_inode_flag_set(inode, FI_FIRST_BLOCK_WRITTEN);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 2ab33fc5ee13..41805af9a728 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2068,7 +2068,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+ 
+ 	set_inode_flag(inode, FI_ATOMIC_FILE);
+-	set_inode_flag(fi->cow_inode, FI_ATOMIC_FILE);
++	set_inode_flag(fi->cow_inode, FI_COW_FILE);
+ 	clear_inode_flag(fi->cow_inode, FI_INLINE_DATA);
+ 	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
+ 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 874c1b9c41a2..ac890c9fa8a1 100644
+index ac890c9fa8a1..52df19a0638b 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -4362,6 +4362,12 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 				return err;
- 			seg_info_from_raw_sit(se, &sit);
- 
-+			if (se->type >= NR_PERSISTENT_LOG) {
-+				f2fs_err(sbi, "Invalid segment type: %u, segno: %u",
-+							se->type, start);
-+				return -EFSCORRUPTED;
-+			}
-+
- 			sit_valid_blocks[SE_PAGETYPE(se)] += se->valid_blocks;
- 
- 			if (f2fs_block_unit_discard(sbi)) {
-@@ -4410,6 +4416,13 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 			break;
- 		seg_info_from_raw_sit(se, &sit);
- 
-+		if (se->type >= NR_PERSISTENT_LOG) {
-+			f2fs_err(sbi, "Invalid segment type: %u, segno: %u",
-+							se->type, start);
-+			err = -EFSCORRUPTED;
-+			break;
-+		}
-+
- 		sit_valid_blocks[SE_PAGETYPE(se)] += se->valid_blocks;
- 
- 		if (f2fs_block_unit_discard(sbi)) {
+@@ -193,7 +193,7 @@ void f2fs_abort_atomic_write(struct inode *inode, bool clean)
+ 	if (f2fs_is_atomic_file(inode)) {
+ 		if (clean)
+ 			truncate_inode_pages_final(inode->i_mapping);
+-		clear_inode_flag(fi->cow_inode, FI_ATOMIC_FILE);
++		clear_inode_flag(fi->cow_inode, FI_COW_FILE);
+ 		iput(fi->cow_inode);
+ 		fi->cow_inode = NULL;
+ 		clear_inode_flag(inode, FI_ATOMIC_FILE);
+@@ -3166,7 +3166,7 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 			return CURSEG_COLD_DATA;
+ 		if (file_is_hot(inode) ||
+ 				is_inode_flag_set(inode, FI_HOT_DATA) ||
+-				f2fs_is_atomic_file(inode))
++				f2fs_is_cow_file(inode))
+ 			return CURSEG_HOT_DATA;
+ 		return f2fs_rw_hint_to_seg_type(inode->i_write_hint);
+ 	} else {
 -- 
 2.35.1
 
