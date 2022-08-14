@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9AC0CC25B06
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Aug 2022 16:23:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DF467C25B06
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Aug 2022 16:26:15 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oNGOt-0004Ty-J0;
-	Sun, 14 Aug 2022 16:23:43 +0000
+	id 1oNGRK-0000DH-EY;
+	Sun, 14 Aug 2022 16:26:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1oNGOh-0004Tc-2C
+ (envelope-from <sashal@kernel.org>) id 1oNGR5-0000Cn-BP
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Aug 2022 16:23:39 +0000
+ Sun, 14 Aug 2022 16:25:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EHYf5auqJJn+3KBgcDjdYo4+gHQHB9W2Cyg28hVi+Z4=; b=cBg9QRUg7Ww3E5M77SINwMyejH
- CaptMMZLW63rl9/g1WaBy5OtlpAWkgXxAuYgntTYEKUwihfnCazDbXc3dM8P37IUP70NgZGPjS07u
- FlU1uh+NTpVbFUVA2XTf1/ljaNradBdWiPB58dAnehNn9O3oC0A4Sqsye8qvsqkoaliU=;
+ bh=K4BdPQMp4w0scReBpHzrKu4tYzwg/6iJG/b+58rDoHE=; b=bUsQmBHmhRpx3BkQLwVM9pHCEL
+ A7YxMYN+boXqMFGModDAiUdxlaxh6wnUNuBEjQ1hUpnMn/Beox73+fERWA1cD2tGfYsbjPJaFdR97
+ prxNBAu5DxM5LejlNdThfLhrQKAqezbwdVpYyS1Pmpw54axnvAJEMx1VebBL0G8tzTpc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,45 +33,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=EHYf5auqJJn+3KBgcDjdYo4+gHQHB9W2Cyg28hVi+Z4=; b=EXp9dVEaxwVXA3YTssaXcGTL5c
- nIcti0Cugrcq/4kaSDtZv83hlP1cwJLHj6LkX5VFMevMM5H/UAn8qj2q/86MnIlvZJQZF1/GICgAd
- XS1HPMs9Kl55Fec5bzyHbS+NOY2NcHnvwGCuSjbwZajoHNYmDt/EGEqsHv0KGaUWkpdk=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=K4BdPQMp4w0scReBpHzrKu4tYzwg/6iJG/b+58rDoHE=; b=dx5LP5/mhlWRGP+W05IP0LxIU2
+ qsZk69dIGcfRp+dNebzjUkguT3nZUy8u8w3TLYpiFtSlfQY/q4kh7MB2OtQGNRyehYSyxJFeyZFzK
+ pSA0MiyazpYvNPAOz7KF84leNVaMOPC1ukc9LCK6n5rwUJOt4MkFHNS3J+X0v4wXSoVo=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oNGOg-0029Lz-3r for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Aug 2022 16:23:30 +0000
+ id 1oNGR4-0008Vx-NG for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 14 Aug 2022 16:25:59 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id D16A4B80AEE;
- Sun, 14 Aug 2022 16:23:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C5D7C433D6;
- Sun, 14 Aug 2022 16:23:22 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 5ACED60FB1;
+ Sun, 14 Aug 2022 16:25:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE0DC43141;
+ Sun, 14 Aug 2022 16:25:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1660494203;
- bh=3Cx6uIp12/bxIh8U635RMb8+E2YBg42NLG6gUoikfnM=;
+ s=k20201202; t=1660494352;
+ bh=UXrvQ85jeUzk4EXykGsxWHwVxHqjVXFyQ60c+WCIULc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=t0B4TiaGymHRpdpUjUduV8YxDJLw2NSp3yTDm9ZxHVBwVa9pTiKsx7TyLriblNM1P
- /EorWO8+yebH5EHqc+a9RSC0buGCn669c6yZi76+putctn2i5QNFrqZohwrrqSoxte
- OYmVapLK1oPkWGmbHBfM1NcPuL3pfUsuw7zoCHJpvhwnE4zW917j5jwdCyMwxVDLX7
- 6b8RvMi1s08DRTaeLOQGzYLkUH6Gc0I3puoJP5xfvGHqHK4YRWypNcLLPhioq5Mi2Y
- 135e3M3RHPd5Ood4KsSRrLK32lRDXQ9i5/HZYK1Lx7N5xqXrHyYziwQRyS3HvO6j7m
- u4ohA+Pz7uIgw==
+ b=GHbBpT2MHsqCIMMyEYfh6JO/d4M9yjBsXIxMDAkQFDvN59yHOMkhhlldxBtIEd8Lh
+ yB1aXzSi+FxXl7WwQjYNwKrFUbjqu6mvb49XjsxLbT2UclrCr68/7Z0he0vxtAXTXU
+ 48dyAtmZxJNXNKQEwP65Qv5XkMo7uvNUKGuHq6CQbwzV5uqow60+dgP4QPFDLP5tUf
+ MQFd9FP4jn2S2PDd5KrCm6UJc1eBoCOdNqIXa8/Bm5FblNpT20UbFmTk8Kz0rYJHUl
+ /i59ySJ3JIoSzieL0emyIAExkpgb/5ZoYZC+eAb4CA+zh9oz8+9+cKn+fXDvxBM0/I
+ DGR0gJxefYTbA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Sun, 14 Aug 2022 12:19:40 -0400
-Message-Id: <20220814161943.2394452-47-sashal@kernel.org>
+Date: Sun, 14 Aug 2022 12:23:23 -0400
+Message-Id: <20220814162332.2396012-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220814161943.2394452-1-sashal@kernel.org>
-References: <20220814161943.2394452-1-sashal@kernel.org>
+In-Reply-To: <20220814162332.2396012-1-sashal@kernel.org>
+References: <20220814162332.2396012-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1oNGOg-0029Lz-3r
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.19 47/48] f2fs: revive
- F2FS_IOC_ABORT_VOLATILE_WRITE
+X-Headers-End: 1oNGR4-0008Vx-NG
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.18 34/39] f2fs: fix to do sanity check
+ on segment type in build_sit_entries()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,100 +83,82 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Daeho Jeong <daehojeong@google.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: Sasha Levin <sashal@kernel.org>, Wenqing Liu <wenqingliu0120@gmail.com>,
+ linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Daeho Jeong <daehojeong@google.com>
+From: Chao Yu <chao.yu@oppo.com>
 
-[ Upstream commit 23339e5752d01a4b5e122759b002cf896d26f6c1 ]
+[ Upstream commit 09beadf289d6e300553e60d6e76f13c0427ecab3 ]
 
-F2FS_IOC_ABORT_VOLATILE_WRITE was used to abort a atomic write before.
-However it was removed accidentally. So revive it by changing the name,
-since volatile write had gone.
+As Wenqing Liu <wenqingliu0120@gmail.com> reported in bugzilla:
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
-Fiexes: 7bc155fec5b3("f2fs: kill volatile write support")
-Reviewed-by: Chao Yu <chao@kernel.org>
+https://bugzilla.kernel.org/show_bug.cgi?id=216285
+
+RIP: 0010:memcpy_erms+0x6/0x10
+ f2fs_update_meta_page+0x84/0x570 [f2fs]
+ change_curseg.constprop.0+0x159/0xbd0 [f2fs]
+ f2fs_do_replace_block+0x5c7/0x18a0 [f2fs]
+ f2fs_replace_block+0xeb/0x180 [f2fs]
+ recover_data+0x1abd/0x6f50 [f2fs]
+ f2fs_recover_fsync_data+0x12ce/0x3250 [f2fs]
+ f2fs_fill_super+0x4459/0x6190 [f2fs]
+ mount_bdev+0x2cf/0x3b0
+ legacy_get_tree+0xed/0x1d0
+ vfs_get_tree+0x81/0x2b0
+ path_mount+0x47e/0x19d0
+ do_mount+0xce/0xf0
+ __x64_sys_mount+0x12c/0x1a0
+ do_syscall_64+0x38/0x90
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+The root cause is segment type is invalid, so in f2fs_do_replace_block(),
+f2fs accesses f2fs_sm_info::curseg_array with out-of-range segment type,
+result in accessing invalid curseg->sum_blk during memcpy in
+f2fs_update_meta_page(). Fix this by adding sanity check on segment type
+in build_sit_entries().
+
+Reported-by: Wenqing Liu <wenqingliu0120@gmail.com>
+Signed-off-by: Chao Yu <chao.yu@oppo.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/file.c            | 30 ++++++++++++++++++++++++++++--
- include/uapi/linux/f2fs.h |  2 +-
- 2 files changed, 29 insertions(+), 3 deletions(-)
+ fs/f2fs/segment.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index bd14cef1b08f..2ab33fc5ee13 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2115,6 +2115,31 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
- 	return ret;
- }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index aa0162664a1e..15c72bfca692 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -4486,6 +4486,12 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 				return err;
+ 			seg_info_from_raw_sit(se, &sit);
  
-+static int f2fs_ioc_abort_atomic_write(struct file *filp)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct user_namespace *mnt_userns = file_mnt_user_ns(filp);
-+	int ret;
++			if (se->type >= NR_PERSISTENT_LOG) {
++				f2fs_err(sbi, "Invalid segment type: %u, segno: %u",
++							se->type, start);
++				return -EFSCORRUPTED;
++			}
 +
-+	if (!inode_owner_or_capable(mnt_userns, inode))
-+		return -EACCES;
+ 			sit_valid_blocks[SE_PAGETYPE(se)] += se->valid_blocks;
+ 
+ 			if (f2fs_block_unit_discard(sbi)) {
+@@ -4534,6 +4540,13 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 			break;
+ 		seg_info_from_raw_sit(se, &sit);
+ 
++		if (se->type >= NR_PERSISTENT_LOG) {
++			f2fs_err(sbi, "Invalid segment type: %u, segno: %u",
++							se->type, start);
++			err = -EFSCORRUPTED;
++			break;
++		}
 +
-+	ret = mnt_want_write_file(filp);
-+	if (ret)
-+		return ret;
-+
-+	inode_lock(inode);
-+
-+	if (f2fs_is_atomic_file(inode))
-+		f2fs_abort_atomic_write(inode, true);
-+
-+	inode_unlock(inode);
-+
-+	mnt_drop_write_file(filp);
-+	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-+	return ret;
-+}
-+
- static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -4060,9 +4085,10 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_start_atomic_write(filp);
- 	case F2FS_IOC_COMMIT_ATOMIC_WRITE:
- 		return f2fs_ioc_commit_atomic_write(filp);
-+	case F2FS_IOC_ABORT_ATOMIC_WRITE:
-+		return f2fs_ioc_abort_atomic_write(filp);
- 	case F2FS_IOC_START_VOLATILE_WRITE:
- 	case F2FS_IOC_RELEASE_VOLATILE_WRITE:
--	case F2FS_IOC_ABORT_VOLATILE_WRITE:
- 		return -EOPNOTSUPP;
- 	case F2FS_IOC_SHUTDOWN:
- 		return f2fs_ioc_shutdown(filp, arg);
-@@ -4731,7 +4757,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_COMMIT_ATOMIC_WRITE:
- 	case F2FS_IOC_START_VOLATILE_WRITE:
- 	case F2FS_IOC_RELEASE_VOLATILE_WRITE:
--	case F2FS_IOC_ABORT_VOLATILE_WRITE:
-+	case F2FS_IOC_ABORT_ATOMIC_WRITE:
- 	case F2FS_IOC_SHUTDOWN:
- 	case FITRIM:
- 	case FS_IOC_SET_ENCRYPTION_POLICY:
-diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
-index 352a822d4370..3121d127d5aa 100644
---- a/include/uapi/linux/f2fs.h
-+++ b/include/uapi/linux/f2fs.h
-@@ -13,7 +13,7 @@
- #define F2FS_IOC_COMMIT_ATOMIC_WRITE	_IO(F2FS_IOCTL_MAGIC, 2)
- #define F2FS_IOC_START_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 3)
- #define F2FS_IOC_RELEASE_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 4)
--#define F2FS_IOC_ABORT_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 5)
-+#define F2FS_IOC_ABORT_ATOMIC_WRITE	_IO(F2FS_IOCTL_MAGIC, 5)
- #define F2FS_IOC_GARBAGE_COLLECT	_IOW(F2FS_IOCTL_MAGIC, 6, __u32)
- #define F2FS_IOC_WRITE_CHECKPOINT	_IO(F2FS_IOCTL_MAGIC, 7)
- #define F2FS_IOC_DEFRAGMENT		_IOWR(F2FS_IOCTL_MAGIC, 8,	\
+ 		sit_valid_blocks[SE_PAGETYPE(se)] += se->valid_blocks;
+ 
+ 		if (f2fs_block_unit_discard(sbi)) {
 -- 
 2.35.1
 
