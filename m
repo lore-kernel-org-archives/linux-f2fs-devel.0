@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id ADDBBC25B0F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Aug 2022 16:26:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EAFE2C25B06
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 14 Aug 2022 16:27:35 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oNGRM-0000u3-8w;
-	Sun, 14 Aug 2022 16:26:16 +0000
+	id 1oNGSd-0004bE-FU;
+	Sun, 14 Aug 2022 16:27:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1oNGR5-0000tN-Ja
+ (envelope-from <sashal@kernel.org>) id 1oNGSc-0004b7-3n
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Aug 2022 16:25:59 +0000
+ Sun, 14 Aug 2022 16:27:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9CxQMQO7TCAgVlm26PVlVFCFYA7TvyLXAq44bJQtDn4=; b=Q4ZGgJIvtbUV2++vsgeM/0jtB7
- +F9mfrBepQYc7DBWrLx1wI5num3YtxirYpSiL9jBb20x2SN1zmLz1p1ezUEErd2Hdwfl1I0sWc5Fv
- cY9nMwFl9KJBZXigzD0CtwXY31sAm5Q+sIeaC578fdFawEmKSZATJQ1uK1MbO4PgjI/o=;
+ bh=Xzx7zJRhLf1PG6hnk6eh5JK5DhdjeFEdcEqQAp8LaKA=; b=cehpp+SQ4QxjDRuZvIZJrCRjz8
+ ym52Ru50upkazzrWJdb/yQK+fTrFhTP2bSqceagprRr3BEZaMmx/3FJmOf2HpMPlb6A02HnT5SOnP
+ FZz9Xfpx4uzHBVxaH1WbMHlFObzMUoCyI07gQ3jMQnAbqdHRiJ+rszG1DUi9uuuw+U30=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,44 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=9CxQMQO7TCAgVlm26PVlVFCFYA7TvyLXAq44bJQtDn4=; b=So9InMZMKHUtBVWglkozO21m8B
- eVkK84Wkffkewp6zB1bpi961SkjwMuxDfuRxdKjUf7wgi2/MEVZpEWC243efB9r947/LioIiAFz7T
- CXoldDosBydB9GRx3+hp9rPJ9qn+VROriKBTGAV8EKk2WB/6Wu24kURlk1lqW/QskWkE=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=Xzx7zJRhLf1PG6hnk6eh5JK5DhdjeFEdcEqQAp8LaKA=; b=DX4ehWX/6FUZgD/vbQaO3Tb9lM
+ XlV8lY6erEqk4zLtAcDYNwBgN+ATAUOenyN53kaxgH0WRI3biK4oPzLn86DiYvh2KPc6lSUG3oyx2
+ DVHOZSPJHiKKH6sfgDlh/P03wjmlWCovLZ8uweVDCbPiCk2JaRd5oaY7W843YwqqQ68I=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oNGR3-0008Vt-Cn for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 14 Aug 2022 16:25:59 +0000
+ id 1oNGSb-00007m-DE for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 14 Aug 2022 16:27:34 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 0AF6960EF8;
- Sun, 14 Aug 2022 16:25:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899A5C433D6;
- Sun, 14 Aug 2022 16:25:50 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 85940B80B79;
+ Sun, 14 Aug 2022 16:27:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FAA8C433C1;
+ Sun, 14 Aug 2022 16:27:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1660494351;
- bh=v9mNp2/hv8YVaCUPWTprlbS+YamM7pzHOil+P8Cudd0=;
+ s=k20201202; t=1660494444;
+ bh=/jfp8U8V850bZODnU1RZhL/AMJJd513LUtYsEK6JinA=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Nh0wcGv5j2/+0bkVh421dGdpwtETeAW4uU2+5lzj9DbpN4Z0L1/er6FRJHKdHtzEX
- JUrSCgYQfl09ON6MWZk6gLFX+/8Nwv3uAmYUPihDQGE8D+0o/hhix4tsO/EOmB92Qo
- Wk55MELssff4TF0dneadsAxVTPMoOSuaCYI+Lm92DeNbZ2m8icUaPg+Wp3jPRsRr0/
- nRroq5YW4Lir3q9ixsOSGADblwxC+i4iEtMYmLuhx0RL6LqMShxFkwFdMas7xGuBux
- HRxLBssV4tapxwJ64bP2MNMiPIMIRSoTCtnSMnKyjf5UcKV+LfSVBQM5ZViwq2oUk3
- SsYS94vIng42Q==
+ b=UNaW8HHtR4Q/eV4ogm6ByyLdtOVK1h+7H4rY8ngbtDF9DJv0QWIvSnM7dZUbhSMUY
+ rJBxKX2XTkyJvbkMuhJ433t8r1MmtOc5qyi1abfkvTftzd/qMPMtUDTyNMBV+LI8jY
+ B3vYZeAD0ss5NFR6+gPMeBzGSGX2+yiEdwb5OXCsFqc47h3n2pPck4JZrzpJJgrM09
+ DfLkd8TXmjUJgOyK+0XHk+cysGfqjJwsRrmG6jRCVRS7tpEyIavI9gUCPmiFubxoKB
+ /SLrajnzjEkDsWUEBO2balb3yHzj3sefpwBJXfsfvS2lYwoQ3jH+c08wWC4w62nU7V
+ td2t+vYQNwkKg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Sun, 14 Aug 2022 12:23:22 -0400
-Message-Id: <20220814162332.2396012-33-sashal@kernel.org>
+Date: Sun, 14 Aug 2022 12:26:02 -0400
+Message-Id: <20220814162610.2397644-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220814162332.2396012-1-sashal@kernel.org>
-References: <20220814162332.2396012-1-sashal@kernel.org>
+In-Reply-To: <20220814162610.2397644-1-sashal@kernel.org>
+References: <20220814162610.2397644-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1oNGR3-0008Vt-Cn
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.18 33/39] f2fs: fix to avoid use
+X-Headers-End: 1oNGSb-00007m-DE
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.15 22/28] f2fs: fix to avoid use
  f2fs_bug_on() in f2fs_new_node_page()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -128,10 +128,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index aedc3d334113..1cd89ce34418 100644
+index 69c6bcaf5aae..0e6e73bc42d4 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1296,7 +1296,11 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+@@ -1291,7 +1291,11 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
  		dec_valid_node_count(sbi, dn->inode, !ofs);
  		goto fail;
  	}
