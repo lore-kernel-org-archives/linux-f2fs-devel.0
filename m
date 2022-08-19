@@ -4,76 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 36708C28D13
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 Aug 2022 23:10:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9315CC28D13
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 Aug 2022 23:15:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oPB7t-0007ct-E2;
-	Fri, 19 Aug 2022 23:10:05 +0000
+	id 1oPBD8-0002od-QM;
+	Fri, 19 Aug 2022 23:15:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1oPB7s-0007cm-0T
+ (envelope-from <jaegeuk@kernel.org>) id 1oPBD2-0002oW-P9
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 Aug 2022 23:10:04 +0000
+ Fri, 19 Aug 2022 23:15:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/YRGxkqHSLLsDGMtIChnYKj97ZLW6WRE354eChmvAlM=; b=Aj/9+6QXW0h3+wuPP5kFLkqwQd
- wq7JIZV8IUvOhzCQjtDqU7ZhdjXS4x0coGp1zpi4V9QU/DOGwjDtNlcaBDEg4RQssVMqkIGO3e6nD
- uQffKZlPjsL+tkbQTxP62mwIa9iz64itl7kzgEAwCun+UdHr18mE1rsifcVoWOufvEI0=;
+ bh=WsFg5oNHrmidMjG+EQrZyB99LO8ZLfl7r4On0SYA+b4=; b=jzFnb3ACICcoyVqTnifH37A98W
+ 1Ck5nKPbSvCa21psxr6aD0g39wyPqj6+vUSz/VN9eGZfdSlocbqxOVz6jXaI8PPg61X7YDOHu8cFC
+ HYfyPHl2sjKYY5vBVX/44kX+CrwvZ+Zo3rPZNyEg1NuK2NEJEhBUka/UQU0bR/1cfCKI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/YRGxkqHSLLsDGMtIChnYKj97ZLW6WRE354eChmvAlM=; b=mieHAGIrC+lon6CezQOqbiv5PS
- KEPRizNyyr3iUYrQ1mWiOjddbFCtwD7SOpYWroyzBwprndU9PcE1ZV7DVCKSZM1YftTxsYw4SBoEY
- eeSP1XBttVSHFrwDFkoK0cOY76/mGqSsM0R+NZZHAPB0DUTvN8yggWmnQWD17iV0nfuI=;
+ bh=WsFg5oNHrmidMjG+EQrZyB99LO8ZLfl7r4On0SYA+b4=; b=RuPThwWb78ub4AVVzTsj1uFvsD
+ eaWY/Dg6B4OXeyalAr9UIAetiVoADmBK6YmEkLbYkMFm9cjiVLJKrr8VdzOzPi5JJud7ny+PQH4t9
+ S6mcd5gXcIZb6IDH3+NFBn4/rRYpz6KyTn+FXqbDNZFU5ajy6dhs5mxzaR1uxIDS0fro=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oPB7p-00054z-OH for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 Aug 2022 23:10:03 +0000
+ id 1oPBD2-009rNB-6a for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 19 Aug 2022 23:15:24 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 9201C61842;
- Fri, 19 Aug 2022 23:09:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93BD3C433C1;
- Fri, 19 Aug 2022 23:09:50 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id CEC5F61865
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 19 Aug 2022 23:15:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 790F6C433B5;
+ Fri, 19 Aug 2022 23:15:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1660950591;
- bh=jyQMlfDyLfQswfrcmubQj7ukvdgCEoTA8LhJP39mZNY=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=QuOfKLcTLqSxarEIMozH41HlKKSXIw1Ha5z+iGobBTp0XC/190sxrbX4xymxeQZFF
- 3WudYVrb63Ic60WpCeWYRRbbMC6sNiKGVAznV8UysIUN6uVjyi5NDY0XFhaprIuD8A
- pF59daiDM0+L9HkOjVyll+2uPITOtrvjzgrPS16r1XJmBV5ma+KvcLc+BHhqr03upy
- fMsLt1xcBM7/2jnJiXFv+FJPXeiiS+0sz7tw4jOhLuKIjQw+8yi7bYCZL/cqb3a2bJ
- OHxlSv4rJUDd6AvnKU3c4q61YHoNXW9ZdFJr7Qw7jTpstVUaoUe5id8DJL1pk0juet
- AgN1uJU3z9Rkg==
-Date: Fri, 19 Aug 2022 16:09:48 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Andreas Dilger <adilger@dilger.ca>
-Message-ID: <YwAYPFxW7VV4M9D1@sol.localdomain>
-References: <20220722071228.146690-1-ebiggers@kernel.org>
- <20220722071228.146690-7-ebiggers@kernel.org>
- <YtyoF89iOg8gs7hj@google.com> <Yt7dCcG0ns85QqJe@sol.localdomain>
- <YuXyKh8Zvr56rR4R@google.com> <YvrrEcw4E+rpDLwM@sol.localdomain>
- <20220816090312.GU3600936@dread.disaster.area>
- <D1CDACE3-EC7E-43E4-8F49-EEA2B6E71A41@dilger.ca>
+ s=k20201202; t=1660950918;
+ bh=hsH/o/XnOoVziPjmhg1KsTFQFW0lzFCZrIpev5lAsvI=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=Q8IGFuqf4kKfjLuk+gnmnFzMccXzWYDvzPwg6rpVCNI9Br8FzWbbwKucztcrJS98W
+ 2ycsDmO+/bmF9bdR7uGyYcgfOWBzpI4C127aUUaD1Dl2nGdFosQGqCy/AUNa8BtmrF
+ UHJT06DJiSOk2ZQ54Z8G6xJsv9+JCombZoftfhAMmZqDbsAe8avKCCQIYBGTU3h+My
+ l+53bQFMcxxUMK6bVhUb55sH6tdScxOvB+D7W0yeTZGVx20KmPzHaGYPYXqRoEN8Z8
+ ZXMFN18qOc0wfiDFBO+RXZcakTSQ7+jhCbDqUC9GzsOu5kxtJfSqVh2XixcWDvND13
+ zUSj0Xtl7tIWA==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Fri, 19 Aug 2022 16:15:14 -0700
+Message-Id: <20220819231514.3609958-2-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.37.1.595.g718a3a8f04-goog
+In-Reply-To: <20220819231514.3609958-1-jaegeuk@kernel.org>
+References: <20220819231514.3609958-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <D1CDACE3-EC7E-43E4-8F49-EEA2B6E71A41@dilger.ca>
-X-Headers-End: 1oPB7p-00054z-OH
-Subject: Re: [f2fs-dev] [PATCH v4 6/9] f2fs: don't allow DIO reads but not
- DIO writes
+X-Headers-End: 1oPBD2-009rNB-6a
+Subject: [f2fs-dev] [PATCH 2/2] f2fs: complete checkpoints during remount
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,57 +81,48 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-block <linux-block@vger.kernel.org>, linux-api@vger.kernel.org,
- Dave Chinner <david@fromorbit.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, xfs <linux-xfs@vger.kernel.org>,
- Keith Busch <kbusch@kernel.org>, linux-fscrypt@vger.kernel.org,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Jaegeuk Kim <jaegeuk@kernel.org>,
- Ext4 Developers List <linux-ext4@vger.kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Aug 16, 2022 at 10:42:29AM -0600, Andreas Dilger wrote:
-> 
-> IMHO, this whole discussion is putting the cart before the horse.
-> Changing existing (and useful) IO behavior to accommodate an API that
-> nobody has ever used, and is unlikely to even be widely used, doesn't
-> make sense to me.  Most applications won't check or care about the new
-> DIO size fields, since they've lived this long without statx() returning
-> this info, and will just pick a "large enough" size (4KB, 1MB, whatever)
-> that gives them the performance they need.  They *WILL* care if the app
-> is suddenly unable to read data from a file in ways that have worked for
-> a long time.
-> 
-> Even if apps are modified to check these new DIO size fields, and then
-> try to DIO write to a file in f2fs that doesn't allow it, then f2fs will
-> return an error, which is what it would have done without the statx()
-> changes, so no harm done AFAICS.
-> 
-> Even with a more-complex DIO status return that handles a "direction"
-> field (which IMHO is needlessly complex), there is always the potential
-> for a TOCTOU race where a file changes between checking and access, so
-> the userspace code would need to handle this.
-> 
+Otherwise, pending checkpoints can contribute a race condition to give a
+quota warning.
 
-I'm having trouble making sense of your argument here; you seem to be saying
-that STATX_DIOALIGN isn't useful, so it doesn't matter if we design it
-correctly?  That line of reasoning is concerning, as it's certainly intended to
-be useful, and if it's not useful there's no point in adding it.
+- Thread                      - checkpoint thread
+                              add checkpoints to the list
+do_remount()
+ down_write(&sb->s_umount);
+ f2fs_remount()
+                              block_operations()
+                               down_read_trylock(&sb->s_umount) = 0
+ up_write(&sb->s_umount);
+                               f2fs_quota_sync()
+                                dquot_writeback_dquots()
+                                 WARN_ON_ONCE(!rwsem_is_locked(&sb->s_umount));
 
-Are there any specific concerns that you have, besides TOCTOU races and the lack
-of support for read-only DIO?
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/super.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I don't think that TOCTOU races are a real concern here.  Generally DIO
-constraints would only change if the application doing DIO intentionally does
-something to the file, or if there are changes that involve the filesystem being
-taken offline, e.g. the filesystem being mounted with significantly different
-options or being moved to a different block device.  And, well, everything else
-in stat()/statx() is subject to TOCTOU as well, but is still used...
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 48ac3de4a533..88879c483805 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2349,6 +2349,9 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		f2fs_stop_ckpt_thread(sbi);
+ 		need_restart_ckpt = true;
+ 	} else {
++		/* flush if the prevous checkpoint, if exists. */
++		f2fs_flush_ckpt_thread(sbi);
++
+ 		err = f2fs_start_ckpt_thread(sbi);
+ 		if (err) {
+ 			f2fs_err(sbi,
+-- 
+2.37.1.595.g718a3a8f04-goog
 
-- Eric
 
 
 _______________________________________________
