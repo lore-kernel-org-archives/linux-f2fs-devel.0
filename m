@@ -4,71 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F28CFC25B08
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Aug 2022 19:11:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8C67CC25B08
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 20 Aug 2022 19:11:25 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oPTsA-0002qQ-Jw;
-	Sat, 20 Aug 2022 19:11:06 +0000
+	id 1oPTsT-0006pa-57;
+	Sat, 20 Aug 2022 19:11:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1oPTs9-0002qK-2t
+ (envelope-from <ebiggers@kernel.org>) id 1oPTsR-0006pO-KS
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 20 Aug 2022 19:11:05 +0000
+ Sat, 20 Aug 2022 19:11:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wAj4kSILl2mFDa/issSJtS/Zdo/WmOVgaSjHPOB7pjc=; b=e6EBN0s+UR3IN9FYmXvp6HMPEa
- Ltr/1DZixtrcmO3N9WQbUOGejJv4bl8pH6eEo1f0+sm9jzVoec0PC+3OgqAgKL+7yplBVq9ApGbeb
- zgtPMZYGjQbdVoFMTiGzE+vT+cZN/QeIZ6MIBNcFG+zFoOSGft9jqnETbyA1Wqc8QeYk=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=wAj4kSILl2mFDa/issSJtS/Zdo/WmOVgaSjHPOB7pjc=; b=QAM7xwevVuLR+oMbQwnBnJGXj1
- ZPD6697s4jUEc/ixEkBSOGC263U23A3bX3xMl+WCeOsNFTIP3v1LwoZqWb9yanEqERxhPz4tYDnsg
- JD3/C87QsAElAbx3xDsnIGbgvivBBUBhjGmNgOdvNhJCeGNRWiRBeuvf5K1csaXjNdDY=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=Hjq/9MnObc3Z8XhrXl896s6OXlEJ+vn+xSGaklbo2jY=; b=EziZqfdXUS9Z1MVv9P4V1YMOrk
+ qWqaK+fU18gHMrHjfUqtAtkIV0yL01BNUIsAQn+1lxzB9AeceKR7VAQTyXrClsKc2IdPenla6SSWG
+ H43AtsQ9H9gVKDRRRCjL6IbLm/Tyv1zRts1F2HeDN8yEV8p3enPpuipf6ZjxVHj7La8Q=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Hjq/9MnObc3Z8XhrXl896s6OXlEJ+vn+xSGaklbo2jY=; b=T
+ KfXLtQYtVTmHLzMXJWxifxfQUymQCk6mRkGGwCuUy1PpiWIOFOx1NPGhtHQamF5GvJQM2JoL2OYGC
+ o05NNeXJF9nZOZKvFx/+XZY2HTK21YJ+6mrg/8n1lNZRxeZpWDu9tGc9MKxr3OKaAhTLg3JSnMCIW
+ fV9dKIa/sbjgrLig=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oPTs4-00AueD-R8 for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 20 Aug 2022 19:11:05 +0000
+ id 1oPTsA-0006P7-J9 for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 20 Aug 2022 19:11:09 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A2BFA60FB5;
+ by ams.source.kernel.org (Postfix) with ESMTPS id 97081B80AAD;
  Sat, 20 Aug 2022 19:10:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C00C433B5;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 202FAC433C1;
  Sat, 20 Aug 2022 19:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1661022650;
- bh=4UhuGA2Y/YyBxxbJkeQ5kOcFtuuvinbvpzFPOMxkJSE=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Q/06RnHsDm9FhPJ4jki/F5SO4TTov/PBhPxOWgiU+FBcMfKne61nP6Agqr6ZXEAcp
- EbxIIn4NJ0GmTzNuURxAyP4PPj7bZPpg32+bdSmbQSkJY1ECRPhFeYyTYHym/tyDlG
- 3g8HfMNxtwM0QomlOT21mr0c/dxibHHjd5r9nAmk1HzwAOU3K7IHZrSmVfk6MHtzRh
- 74FBeFrSProNUrSxgLOU1Wvrm8ez0yuI7AG3gR3itxs6M1GcV+a85phPnq/qg7Hwi7
- GaeaRTX6w9VOVXPrROPtWwRmGaqDUl0kBjA7AUGenqtPIOYKtbwxvqy8kgbO3s/imr
- XBc8Iu+hcwCRg==
+ s=k20201202; t=1661022649;
+ bh=uNUb1M7CCQXGOxGrsYBQxCVkKEk2ADvQo+VwUlJ9jHQ=;
+ h=From:To:Cc:Subject:Date:From;
+ b=KzQ/lWHqSAiLkeoOQivxT89bOTDFv6C+41BHNiWuwaeSsE3Wsmfr4ybvTY+i7MKm6
+ kIC5kqNNUqyXGGprcbKIiXbJA51rNHvFYmRwj4qRXACUqb63yhId9WPe1l3A2aI/Fj
+ sTOTyORCQFdc61zxLhl3CHOBrdMjqJweKKfqlcbUA0pUebdKH7hswnkUEkzN/VhDnT
+ a0gZ5Rh713lZrWZPzgqDnTB1CW8g0CpwwPGx6zZS7HaQv5e9gsg/f9GFOmpm6UwJJJ
+ uVzRE8d4PvzS2DgzPHFMeAIUrbsZhZE1+hmQ1uXMh7dS2CSQr/xM9+y5I5FFL8GnGX
+ dbb8hI9LPdRAA==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Sat, 20 Aug 2022 12:02:10 -0700
-Message-Id: <20220820190210.169734-3-ebiggers@kernel.org>
+Date: Sat, 20 Aug 2022 12:02:08 -0700
+Message-Id: <20220820190210.169734-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220820190210.169734-1-ebiggers@kernel.org>
-References: <20220820190210.169734-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1oPTs4-00AueD-R8
-Subject: [f2fs-dev] [PATCH v2 2/2] fscrypt: stop holding extra request_queue
- references
+X-Headers-End: 1oPTsA-0006P7-J9
+Subject: [f2fs-dev] [PATCH v2 0/2] fscrypt: rework filesystem-level keyring
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,294 +84,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+This series reworks the filesystem-level keyring to not use the keyrings
+subsystem as part of its internal implementation (except for ->mk_users,
+which remains unchanged for now).  This fixes several issues, described
+in the first patch.  This is also a prerequisite for removing the direct
+use of struct request_queue from filesystem code, as discussed at
+https://lore.kernel.org/linux-fscrypt/20220721125929.1866403-1-hch@lst.de/T/#u
 
-Now that the fscrypt_master_key lifetime has been reworked to not be
-subject to the quirks of the keyrings subsystem, blk_crypto_evict_key()
-no longer gets called after the filesystem has already been unmounted.
-Therefore, there is no longer any need to hold extra references to the
-filesystem's request_queue(s).  (And these references didn't always do
-their intended job anyway, as pinning a request_queue doesn't
-necessarily pin the corresponding blk_crypto_profile.)
+Changed v1 => v2:
+    - Don't compare uninitialized bytes of struct fscrypt_key_specifier
+    - Don't use refcount_dec_and_lock() unnecessarily
+    - Other minor cleanups
 
-Stop taking these extra references.  Instead, just pass the super_block
-to fscrypt_destroy_inline_crypt_key(), and use it to get the list of
-block devices the key needs to be evicted from.
+Eric Biggers (2):
+  fscrypt: stop using keyrings subsystem for fscrypt_master_key
+  fscrypt: stop holding extra request_queue references
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/crypto/fscrypt_private.h | 11 +++--
- fs/crypto/inline_crypt.c    | 83 ++++++++++++++++---------------------
- fs/crypto/keyring.c         |  9 ++--
- fs/crypto/keysetup.c        |  8 ++--
- fs/crypto/keysetup_v1.c     |  4 +-
- 5 files changed, 57 insertions(+), 58 deletions(-)
+ fs/crypto/fscrypt_private.h |  74 ++++--
+ fs/crypto/hooks.c           |  10 +-
+ fs/crypto/inline_crypt.c    |  83 +++---
+ fs/crypto/keyring.c         | 495 +++++++++++++++++++-----------------
+ fs/crypto/keysetup.c        |  89 +++----
+ fs/crypto/keysetup_v1.c     |   4 +-
+ fs/crypto/policy.c          |   8 +-
+ fs/super.c                  |   2 +-
+ include/linux/fs.h          |   2 +-
+ include/linux/fscrypt.h     |   4 +-
+ 10 files changed, 406 insertions(+), 365 deletions(-)
 
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index 0e2d3b0af0f79e..dcc005e3491453 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -184,7 +184,7 @@ struct fscrypt_symlink_data {
- struct fscrypt_prepared_key {
- 	struct crypto_skcipher *tfm;
- #ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
--	struct fscrypt_blk_crypto_key *blk_key;
-+	struct blk_crypto_key *blk_key;
- #endif
- };
- 
-@@ -344,7 +344,8 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
- 				     const u8 *raw_key,
- 				     const struct fscrypt_info *ci);
- 
--void fscrypt_destroy_inline_crypt_key(struct fscrypt_prepared_key *prep_key);
-+void fscrypt_destroy_inline_crypt_key(struct super_block *sb,
-+				      struct fscrypt_prepared_key *prep_key);
- 
- /*
-  * Check whether the crypto transform or blk-crypto key has been allocated in
-@@ -390,7 +391,8 @@ fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
- }
- 
- static inline void
--fscrypt_destroy_inline_crypt_key(struct fscrypt_prepared_key *prep_key)
-+fscrypt_destroy_inline_crypt_key(struct super_block *sb,
-+				 struct fscrypt_prepared_key *prep_key)
- {
- }
- 
-@@ -600,7 +602,8 @@ extern struct fscrypt_mode fscrypt_modes[];
- int fscrypt_prepare_key(struct fscrypt_prepared_key *prep_key,
- 			const u8 *raw_key, const struct fscrypt_info *ci);
- 
--void fscrypt_destroy_prepared_key(struct fscrypt_prepared_key *prep_key);
-+void fscrypt_destroy_prepared_key(struct super_block *sb,
-+				  struct fscrypt_prepared_key *prep_key);
- 
- int fscrypt_set_per_file_enc_key(struct fscrypt_info *ci, const u8 *raw_key);
- 
-diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
-index 90f3e68f166e39..a3225fe2291361 100644
---- a/fs/crypto/inline_crypt.c
-+++ b/fs/crypto/inline_crypt.c
-@@ -21,12 +21,6 @@
- 
- #include "fscrypt_private.h"
- 
--struct fscrypt_blk_crypto_key {
--	struct blk_crypto_key base;
--	int num_devs;
--	struct request_queue *devs[];
--};
--
- static int fscrypt_get_num_devices(struct super_block *sb)
- {
- 	if (sb->s_cop->get_num_devices)
-@@ -162,47 +156,37 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
- 	const struct inode *inode = ci->ci_inode;
- 	struct super_block *sb = inode->i_sb;
- 	enum blk_crypto_mode_num crypto_mode = ci->ci_mode->blk_crypto_mode;
--	int num_devs = fscrypt_get_num_devices(sb);
--	int queue_refs = 0;
--	struct fscrypt_blk_crypto_key *blk_key;
-+	struct blk_crypto_key *blk_key;
-+	int num_devs;
-+	struct request_queue **devs = NULL;
- 	int err;
- 	int i;
- 
--	blk_key = kzalloc(struct_size(blk_key, devs, num_devs), GFP_KERNEL);
-+	blk_key = kmalloc(sizeof(*blk_key), GFP_KERNEL);
- 	if (!blk_key)
- 		return -ENOMEM;
- 
--	blk_key->num_devs = num_devs;
--	fscrypt_get_devices(sb, num_devs, blk_key->devs);
--
--	err = blk_crypto_init_key(&blk_key->base, raw_key, crypto_mode,
-+	err = blk_crypto_init_key(blk_key, raw_key, crypto_mode,
- 				  fscrypt_get_dun_bytes(ci), sb->s_blocksize);
- 	if (err) {
- 		fscrypt_err(inode, "error %d initializing blk-crypto key", err);
--		goto fail;
-+		goto out;
- 	}
- 
--	/*
--	 * We have to start using blk-crypto on all the filesystem's devices.
--	 * We also have to save all the request_queue's for later so that the
--	 * key can be evicted from them.  This is needed because some keys
--	 * aren't destroyed until after the filesystem was already unmounted
--	 * (namely, the per-mode keys in struct fscrypt_master_key).
--	 */
-+	/* Start using blk-crypto on all the filesystem's block devices. */
-+	num_devs = fscrypt_get_num_devices(sb);
-+	devs = kmalloc_array(num_devs, sizeof(*devs), GFP_KERNEL);
-+	if (!devs) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+	fscrypt_get_devices(sb, num_devs, devs);
- 	for (i = 0; i < num_devs; i++) {
--		if (!blk_get_queue(blk_key->devs[i])) {
--			fscrypt_err(inode, "couldn't get request_queue");
--			err = -EAGAIN;
--			goto fail;
--		}
--		queue_refs++;
--
--		err = blk_crypto_start_using_key(&blk_key->base,
--						 blk_key->devs[i]);
-+		err = blk_crypto_start_using_key(blk_key, devs[i]);
- 		if (err) {
- 			fscrypt_err(inode,
- 				    "error %d starting to use blk-crypto", err);
--			goto fail;
-+			goto out;
- 		}
- 	}
- 	/*
-@@ -212,27 +196,32 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
- 	 * possible for per-mode keys, not for per-file keys.
- 	 */
- 	smp_store_release(&prep_key->blk_key, blk_key);
--	return 0;
--
--fail:
--	for (i = 0; i < queue_refs; i++)
--		blk_put_queue(blk_key->devs[i]);
-+	blk_key = NULL;
-+	err = 0;
-+out:
-+	kfree(devs);
- 	kfree_sensitive(blk_key);
- 	return err;
- }
- 
--void fscrypt_destroy_inline_crypt_key(struct fscrypt_prepared_key *prep_key)
-+void fscrypt_destroy_inline_crypt_key(struct super_block *sb,
-+				      struct fscrypt_prepared_key *prep_key)
- {
--	struct fscrypt_blk_crypto_key *blk_key = prep_key->blk_key;
-+	struct blk_crypto_key *blk_key = prep_key->blk_key;
-+	int num_devs;
-+	struct request_queue **devs;
- 	int i;
- 
--	if (blk_key) {
--		for (i = 0; i < blk_key->num_devs; i++) {
--			blk_crypto_evict_key(blk_key->devs[i], &blk_key->base);
--			blk_put_queue(blk_key->devs[i]);
--		}
--		kfree_sensitive(blk_key);
-+	/* Evict the key from all the filesystem's block devices. */
-+	num_devs = fscrypt_get_num_devices(sb);
-+	devs = kmalloc_array(num_devs, sizeof(*devs), GFP_KERNEL);
-+	if (devs) {
-+		fscrypt_get_devices(sb, num_devs, devs);
-+		for (i = 0; i < num_devs; i++)
-+			blk_crypto_evict_key(devs[i], blk_key);
-+		kfree(devs);
- 	}
-+	kfree_sensitive(blk_key);
- }
- 
- bool __fscrypt_inode_uses_inline_crypto(const struct inode *inode)
-@@ -282,7 +271,7 @@ void fscrypt_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
- 	ci = inode->i_crypt_info;
- 
- 	fscrypt_generate_dun(ci, first_lblk, dun);
--	bio_crypt_set_ctx(bio, &ci->ci_enc_key.blk_key->base, dun, gfp_mask);
-+	bio_crypt_set_ctx(bio, ci->ci_enc_key.blk_key, dun, gfp_mask);
- }
- EXPORT_SYMBOL_GPL(fscrypt_set_bio_crypt_ctx);
- 
-@@ -369,7 +358,7 @@ bool fscrypt_mergeable_bio(struct bio *bio, const struct inode *inode,
- 	 * uses the same pointer.  I.e., there's currently no need to support
- 	 * merging requests where the keys are the same but the pointers differ.
- 	 */
--	if (bc->bc_key != &inode->i_crypt_info->ci_enc_key.blk_key->base)
-+	if (bc->bc_key != inode->i_crypt_info->ci_enc_key.blk_key)
- 		return false;
- 
- 	fscrypt_generate_dun(inode->i_crypt_info, next_lblk, next_dun);
-diff --git a/fs/crypto/keyring.c b/fs/crypto/keyring.c
-index 9b98d6a576e6a0..1cca09aa43f8b3 100644
---- a/fs/crypto/keyring.c
-+++ b/fs/crypto/keyring.c
-@@ -105,9 +105,12 @@ void fscrypt_put_master_key_activeref(struct fscrypt_master_key *mk)
- 	WARN_ON(!list_empty(&mk->mk_decrypted_inodes));
- 
- 	for (i = 0; i <= FSCRYPT_MODE_MAX; i++) {
--		fscrypt_destroy_prepared_key(&mk->mk_direct_keys[i]);
--		fscrypt_destroy_prepared_key(&mk->mk_iv_ino_lblk_64_keys[i]);
--		fscrypt_destroy_prepared_key(&mk->mk_iv_ino_lblk_32_keys[i]);
-+		fscrypt_destroy_prepared_key(
-+				sb, &mk->mk_direct_keys[i]);
-+		fscrypt_destroy_prepared_key(
-+				sb, &mk->mk_iv_ino_lblk_64_keys[i]);
-+		fscrypt_destroy_prepared_key(
-+				sb, &mk->mk_iv_ino_lblk_32_keys[i]);
- 	}
- 	memzero_explicit(&mk->mk_ino_hash_key,
- 			 sizeof(mk->mk_ino_hash_key));
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index e037a7b8e9e42b..f7407071a95242 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -154,10 +154,11 @@ int fscrypt_prepare_key(struct fscrypt_prepared_key *prep_key,
- }
- 
- /* Destroy a crypto transform object and/or blk-crypto key. */
--void fscrypt_destroy_prepared_key(struct fscrypt_prepared_key *prep_key)
-+void fscrypt_destroy_prepared_key(struct super_block *sb,
-+				  struct fscrypt_prepared_key *prep_key)
- {
- 	crypto_free_skcipher(prep_key->tfm);
--	fscrypt_destroy_inline_crypt_key(prep_key);
-+	fscrypt_destroy_inline_crypt_key(sb, prep_key);
- 	memzero_explicit(prep_key, sizeof(*prep_key));
- }
- 
-@@ -494,7 +495,8 @@ static void put_crypt_info(struct fscrypt_info *ci)
- 	if (ci->ci_direct_key)
- 		fscrypt_put_direct_key(ci->ci_direct_key);
- 	else if (ci->ci_owns_key)
--		fscrypt_destroy_prepared_key(&ci->ci_enc_key);
-+		fscrypt_destroy_prepared_key(ci->ci_inode->i_sb,
-+					     &ci->ci_enc_key);
- 
- 	mk = ci->ci_master_key;
- 	if (mk) {
-diff --git a/fs/crypto/keysetup_v1.c b/fs/crypto/keysetup_v1.c
-index 2762c53504323f..75dabd9b27f9b6 100644
---- a/fs/crypto/keysetup_v1.c
-+++ b/fs/crypto/keysetup_v1.c
-@@ -143,6 +143,7 @@ find_and_lock_process_key(const char *prefix,
- 
- /* Master key referenced by DIRECT_KEY policy */
- struct fscrypt_direct_key {
-+	struct super_block		*dk_sb;
- 	struct hlist_node		dk_node;
- 	refcount_t			dk_refcount;
- 	const struct fscrypt_mode	*dk_mode;
-@@ -154,7 +155,7 @@ struct fscrypt_direct_key {
- static void free_direct_key(struct fscrypt_direct_key *dk)
- {
- 	if (dk) {
--		fscrypt_destroy_prepared_key(&dk->dk_key);
-+		fscrypt_destroy_prepared_key(dk->dk_sb, &dk->dk_key);
- 		kfree_sensitive(dk);
- 	}
- }
-@@ -231,6 +232,7 @@ fscrypt_get_direct_key(const struct fscrypt_info *ci, const u8 *raw_key)
- 	dk = kzalloc(sizeof(*dk), GFP_KERNEL);
- 	if (!dk)
- 		return ERR_PTR(-ENOMEM);
-+	dk->dk_sb = ci->ci_inode->i_sb;
- 	refcount_set(&dk->dk_refcount, 1);
- 	dk->dk_mode = ci->ci_mode;
- 	err = fscrypt_prepare_key(&dk->dk_key, raw_key, ci);
+
+base-commit: 568035b01cfb107af8d2e4bd2fb9aea22cf5b868
 -- 
 2.37.1
 
