@@ -4,70 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6BA1AECAAD5
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 31 Aug 2022 02:40:41 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 344C2ECAAA1
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 31 Aug 2022 03:05:34 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oTDeg-0001we-Pp;
-	Wed, 31 Aug 2022 02:40:38 +0000
+	id 1oTE2l-0004gl-1o;
+	Wed, 31 Aug 2022 03:05:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <rdunlap@infradead.org>) id 1oTDee-0001wY-0X
+ (envelope-from <jaegeuk@kernel.org>) id 1oTE2k-0004ge-6F
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 31 Aug 2022 02:40:36 +0000
+ Wed, 31 Aug 2022 03:05:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vkC7YbGzcZlYm9RaWlAt34O4KbVTqpqAYy7ynMzo02g=; b=V93FBh6uzcqXKz2louhTNadGiz
- O5HPI8YxiJOJjOfUt7f4Mhw/TR+vCKMS8a0Y/ZMYQoyZfHYGFN5lsOEroId/xvp1J/JSci0ARttiW
- KBPCov9aYgDhIdrxvkBCpfmYFy/rOJqlKLzUZJ4A0xJ1iXSLSSwQ2bo6kYve4RvYNZcY=;
+ bh=fiU+T4aq9Zqm/GX0PZIUwWGsMdUHVXCSO6SbM+9PwdI=; b=A1A3xX4zSQSkiCxk4Uinkec6He
+ q62uAxV5i16Ny/7OyM8FJfuLp1FG3uDU4eVGVvpVDQxjKhne/bQlwLRgnmzzEWFYYWuaVFpY+i1US
+ A9hUV9HyRSfv+foPv25sS6ZntzP5lrvbOZWV6xr2x0yk4oZYvKvn2KtF1YSNShpRvAb0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=vkC7YbGzcZlYm9RaWlAt34O4KbVTqpqAYy7ynMzo02g=; b=VuPNaMT0pMnd7N8QaqxjqZzKRV
- PPGLN1iArsS9buF9k/OiuYgKXapWh7WU/8hIwrJQgY8IhZpoQUYJBMAfuthz3MgnxciHuFnDmupjb
- rhjiKp3zkgeJWj+oLcHliaP+1LqvyRq8TeFcC6CHkob/FT0G+VM5OOZg92SX9vSdGjF8=;
-Received: from bombadil.infradead.org ([198.137.202.133])
+ bh=fiU+T4aq9Zqm/GX0PZIUwWGsMdUHVXCSO6SbM+9PwdI=; b=DaozGKgUBzgIwUwpVNjZoRPnP1
+ kLnNxU8ff/f9F41/kAeCjDTiQs54afayCI1xSJXs6r1aNW6rAUQAAsQ+uJ7zmZS2zrlIEL+4YfKyD
+ C5xb844/eZs88riS5iAv6oQNe2EwMw9z/d+d9UzT2FoyU5i7rjH5aN/h/SUeQ49H/9gU=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oTDeZ-0004HG-Md for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 31 Aug 2022 02:40:35 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
- Message-ID:Sender:Reply-To:Content-ID:Content-Description;
- bh=vkC7YbGzcZlYm9RaWlAt34O4KbVTqpqAYy7ynMzo02g=; b=mfp/bZ3g9+9Ju4lllH4EyuLxsq
- XiHrpf3oC7uydhxIXrb1d20M9XXEMoN7cxOttnon7E9HOdiMUEXRbZFVls0AtN3n6IZQjPJDWWKaw
- HCwC1U8YtykW1o8aBsw22nbmSdFnLKWg/L4gRxTmR/KljgI5EA39pDSQcs2BCg/x8r2FJPoFF37zm
- kFAMakiv6ePHxSPVIQo/RJmggB2oXMMO1398z+2VMW3eJSf4/k3l/cEaFpCVO5l2OoUJ1HtXbUU23
- x79TJGuNsC6UhlGGREjxC9RxquEzfjNqlRcMvhZE2nhk+1n7dwr+9wsADFtBi/G70U0U1dq8vJjHq
- 8XBjFtow==;
-Received: from [2601:1c0:6280:3f0::a6b3]
- by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1oTCQy-002ydd-FD; Wed, 31 Aug 2022 01:22:24 +0000
-Message-ID: <ab1a33e5-01b9-79d4-662e-44c6e0e74113@infradead.org>
-Date: Tue, 30 Aug 2022 18:22:22 -0700
+ id 1oTE2e-0005Me-TH for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 31 Aug 2022 03:05:30 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id B468761927;
+ Wed, 31 Aug 2022 03:05:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00040C433D6;
+ Wed, 31 Aug 2022 03:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1661915114;
+ bh=dVup0T/Gm724oVjCg6gv0zTexmWsoNH4XnK67lgI7vE=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=bQ30ftyUYj4WNesdVZUK9vAqMkE3skgwTYdXxXPOBfBzazE8a93xVE4JGmbGcPvEb
+ PB6qBqbBZaTTb21dHtzVekH9LPpziKxNQF9fLI9dQFsVqicqg3Hly3XL95+KA6dLp+
+ brMfAWgTDhPNB8aogrWkaTA/qO5fXLC5/7+qk8SuoVzSY9nUqYkywc5Cu+hkKNkI4v
+ NOV5W8zpZ47zcxAtHwfkyICuzMvzhGLdOpy9eR2RgH5hR8qsRYmYroiEUvX5P8Hyqc
+ Rl2XWH8wLl4ivgj/a3Z7tepiOmLG7lhvBr98cOs7BaxVL5B42V5xi9NkbXu9kmtH7M
+ Su6HC6623/5mQ==
+Date: Tue, 30 Aug 2022 20:05:12 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <Yw7P6BkNZmqxji3B@google.com>
+References: <20220829215206.3082124-1-jaegeuk@kernel.org>
+ <cbc4bfe5-14f9-a4e0-c9c5-6b6b06437d5d@kernel.org>
+ <Yw55Ebk8zLIgBFfn@google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Content-Language: en-US
-To: Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@zeniv.linux.org.uk>
-References: <20220829235429.17902-1-rdunlap@infradead.org>
- <Yw56rVwBRg0LbC41@ZenIV> <Yw6Hp8l/7p3wbiGq@mit.edu>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <Yw6Hp8l/7p3wbiGq@mit.edu>
-X-Headers-End: 1oTDeZ-0004HG-Md
-Subject: Re: [f2fs-dev] [PATCH] Documentation: filesystems: correct
- possessive "its"
+Content-Disposition: inline
+In-Reply-To: <Yw55Ebk8zLIgBFfn@google.com>
+X-Headers-End: 1oTE2e-0005Me-TH
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix missing mapping caused by the
+ mount/umount race
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,37 +82,127 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Christian Brauner <brauner@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
- linux-fsdevel@vger.kernel.org
+Cc: syzbot+775a3440817f74fddb8c@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+On 08/30, Jaegeuk Kim wrote:
+> On 08/30, Chao Yu wrote:
+> > On 2022/8/30 5:52, Jaegeuk Kim wrote:
+> > > Sometimes we can get a cached meta_inode which has no aops yet. Let's set it
+> > > all the time to fix the below panic.
+> > > 
+> > > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+> > > Mem abort info:
+> > >    ESR = 0x0000000086000004
+> > >    EC = 0x21: IABT (current EL), IL = 32 bits
+> > >    SET = 0, FnV = 0
+> > >    EA = 0, S1PTW = 0
+> > >    FSC = 0x04: level 0 translation fault
+> > > user pgtable: 4k pages, 48-bit VAs, pgdp=0000000109ee4000
+> > > [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
+> > > Internal error: Oops: 86000004 [#1] PREEMPT SMP
+> > > Modules linked in:
+> > > CPU: 1 PID: 3045 Comm: syz-executor330 Not tainted 6.0.0-rc2-syzkaller-16455-ga41a877bc12d #0
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/22/2022
+> > > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > > pc : 0x0
+> > > lr : folio_mark_dirty+0xbc/0x208 mm/page-writeback.c:2748
+> > > sp : ffff800012783970
+> > > x29: ffff800012783970 x28: 0000000000000000 x27: ffff800012783b08
+> > > x26: 0000000000000001 x25: 0000000000000400 x24: 0000000000000001
+> > > x23: ffff0000c736e000 x22: 0000000000000045 x21: 05ffc00000000015
+> > > x20: ffff0000ca7403b8 x19: fffffc00032ec600 x18: 0000000000000181
+> > > x17: ffff80000c04d6bc x16: ffff80000dbb8658 x15: 0000000000000000
+> > > x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> > > x11: ff808000083e9814 x10: 0000000000000000 x9 : ffff8000083e9814
+> > > x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > x5 : ffff0000cbb19000 x4 : ffff0000cb3d2000 x3 : ffff0000cbb18f80
+> > > x2 : fffffffffffffff0 x1 : fffffc00032ec600 x0 : ffff0000ca7403b8
+> > > Call trace:
+> > >   0x0
+> > >   set_page_dirty+0x38/0xbc mm/folio-compat.c:62
+> > >   f2fs_update_meta_page+0x80/0xa8 fs/f2fs/segment.c:2369
+> > >   do_checkpoint+0x794/0xea8 fs/f2fs/checkpoint.c:1522
+> > >   f2fs_write_checkpoint+0x3b8/0x568 fs/f2fs/checkpoint.c:1679
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > > Reported-by: syzbot+775a3440817f74fddb8c@syzkaller.appspotmail.com
+> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > ---
+> > >   fs/f2fs/inode.c | 13 ++++++++-----
+> > >   1 file changed, 8 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > > index 6d11c365d7b4..1feb0a8a699e 100644
+> > > --- a/fs/f2fs/inode.c
+> > > +++ b/fs/f2fs/inode.c
+> > > @@ -490,10 +490,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+> > >   	if (!inode)
+> > >   		return ERR_PTR(-ENOMEM);
+> > > -	if (!(inode->i_state & I_NEW)) {
+> > > -		trace_f2fs_iget(inode);
+> > > -		return inode;
+> > > -	}
+> > > +	/* We can see an old cached inode. Let's set the aops all the time. */
+> > 
+> > Why an old cached inode (has no I_NEW flag) has NULL a_ops pointer? If it is a bad
+> > inode, it should be unhashed before unlock_new_inode().
+> 
+> I'm trying to dig further tho, it's not a bad inode, nor I_FREEING | I_CLEAR.
+> It's very werid that thie meta inode is found in newly created superblock by
+> the global hash table. I've checked that the same superblock pointer was used
+> in the previous tests, but inode was evictied all the time.
 
+I'll drop this patch, since it turned out there is a bug in reiserfs which
+doesn't free the root inode (ino=2). That leads f2fs to find an ino=2 with
+the previous superblock point used by reiserfs. That stale inode has no valid
+inode that f2fs can use. I tried to find where the root cause is in reiserfs,
+but it seems quite hard to catch one.
 
-On 8/30/22 14:56, Theodore Ts'o wrote:
-> On Tue, Aug 30, 2022 at 10:01:33PM +0100, Al Viro wrote:
->> On Mon, Aug 29, 2022 at 04:54:29PM -0700, Randy Dunlap wrote:
->>>  compress_log_size=%u	 Support configuring compress cluster size, the size will
->>> -			 be 4KB * (1 << %u), 16KB is minimum size, also it's
->>> +			 be 4KB * (1 << %u), 16KB is minimum size, also its
->>>  			 default size.
->>
->> That one doesn't look like possesive to me - more like "default size is 16KB and
->> values below that are not allowed"...
+- reiserfs_fill_super
+ - reiserfs_xattr_init
+  - create_privroot
+   - xattr_mkdir
+    - reiserfs_new_inode
+     - reiserfs_get_unused_objectid returned 0 due to map crash
 
-I have to disagree about the possessive part...
+It seems the error path doesn't handle the root inode properly.
 
-> That being said, it could also be rewritten to be easier to
-> understand.  e.g., "The default and minimum size is 16kb."
-
-but sure, it can be rewritten.
-
-thanks.
--- 
-~Randy
+> 
+> > 
+> > Thanks,
+> > 
+> > >   	if (ino == F2FS_NODE_INO(sbi) || ino == F2FS_META_INO(sbi))
+> > >   		goto make_now;
+> > > @@ -502,6 +499,11 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+> > >   		goto make_now;
+> > >   #endif
+> > > +	if (!(inode->i_state & I_NEW)) {
+> > > +		trace_f2fs_iget(inode);
+> > > +		return inode;
+> > > +	}
+> > > +
+> > >   	ret = do_read_inode(inode);
+> > >   	if (ret)
+> > >   		goto bad_inode;
+> > > @@ -557,7 +559,8 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+> > >   		file_dont_truncate(inode);
+> > >   	}
+> > > -	unlock_new_inode(inode);
+> > > +	if (inode->i_state & I_NEW)
+> > > +		unlock_new_inode(inode);
+> > >   	trace_f2fs_iget(inode);
+> > >   	return inode;
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 _______________________________________________
