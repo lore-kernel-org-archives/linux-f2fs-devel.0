@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A613BECAAD2
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Sep 2022 22:03:12 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 120ECC54EE9
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Sep 2022 22:03:16 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oTsHI-0000Rv-4b;
-	Thu, 01 Sep 2022 22:03:12 +0000
+	id 1oTsHL-0000Ye-Ks;
+	Thu, 01 Sep 2022 22:03:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <vishal.moola@gmail.com>) id 1oTsHH-0000RK-0F
+ (envelope-from <vishal.moola@gmail.com>) id 1oTsHJ-0000YD-SK
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Sep 2022 22:03:11 +0000
+ Thu, 01 Sep 2022 22:03:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wOJt0d5525/vdydCfZOLqeQx20ust1GIMaCJJ+sLeoU=; b=cam3/uan9fwGG2Zbp8oIg0hDmZ
- 1SxNBx62WMvRNM5RR5vtGbdSjBDVauDIrY/lgHE4WKSUdgLiGgmSWavTMBkT9+2X4dagJYYlsdl4/
- hatlDmutNauzRfGgAg1+cplE9ITjiTjEG36LZxE95uvwxZNcD64AG5eGfhKBsyEJUWrY=;
+ bh=HQUrfRdnfiMPUlTfezXhcqX7GV4m5M0rlOnnNapCheA=; b=gcOfP1xwU0MTjwdrmOc+gdNXpw
+ H4v5STaMfZLsKlepCIIa9vsuGZB8vtTYfIRfLHyCBPrOo7ISc267bFLNyxbJL1axGTEGLyzagyV8s
+ Li1KXTTuWDZe5yI5mLTRCviawMupAoO0sozOn3FCSbPIEBFMoKFwJcNfY1Y8kIoD+/8U=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,61 +33,60 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=wOJt0d5525/vdydCfZOLqeQx20ust1GIMaCJJ+sLeoU=; b=NNpcKIpJd8BfUhDlcJq5p/fc6Y
- CuvxWL8WY1AWGILuP/SWOnrxqbFsv+qIc54waUNdHUS3AUqK6uErKG7x68F93j4HFR4vCDFkL26yd
- vOlOi0YBipYNvSClW14Ejmy10pKK6GkoeHa8D7HCEGOsCfL6FDw9G/AmiZhXw1Wjvp7c=;
-Received: from mail-pl1-f172.google.com ([209.85.214.172])
+ bh=HQUrfRdnfiMPUlTfezXhcqX7GV4m5M0rlOnnNapCheA=; b=L1pKFXCFs3zD/TYxCdRuasUs34
+ 8V5zwRiHFxlpCvr/NTsJr5WlEv9z7hSPZPw7i9Ze4cD6wzTfbxZV/KWVRl9Bg5tGR58KIfYlVdJfQ
+ a0NNBlKFWfPGqc9BQ82ESsG29fuT47MlCaSx7wJP5YNoFGEic+lc9NfZPJS+p9uMfBMw=;
+Received: from mail-pl1-f175.google.com ([209.85.214.175])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1oTsHG-00Aahj-Ab for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Sep 2022 22:03:10 +0000
-Received: by mail-pl1-f172.google.com with SMTP id x23so97853pll.7
+ id 1oTsHJ-00Aahx-9V for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 01 Sep 2022 22:03:13 +0000
+Received: by mail-pl1-f175.google.com with SMTP id x23so97977pll.7
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 01 Sep 2022 15:03:10 -0700 (PDT)
+ Thu, 01 Sep 2022 15:03:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
- bh=wOJt0d5525/vdydCfZOLqeQx20ust1GIMaCJJ+sLeoU=;
- b=diBwxyvKEf6JI6u957lZlRjBGUqMPUv/DOTu7USfBuUCPzlXtneLcNkT0wHfsvIjgR
- RtFF5KdI3PUaclSG4E8jhu3HF/vGooJNXm0wgBU68eptXErnpIrgJIK7grK3lg2BeI6L
- gnzmKoFOzWTOhjK7j7BejIXQ7JSWJrnbFx0Oc6zaDOnzxuaDir2i3tvuwfF1UzG2jYEP
- Cytu/wxg4A0FNem7xkUQzwOJicEG0m8Lou+wbr97B040g23ggq7N5kdhn0ywWQ13/Za/
- fq1WOxoWKPbol+s7gwJKowNnVI90ccXLoGBZIPqrz2b0PYJIIzBsCuxtrhYjXdSRoOEL
- ZZig==
+ bh=HQUrfRdnfiMPUlTfezXhcqX7GV4m5M0rlOnnNapCheA=;
+ b=AZ1Gh+wOtBhSiXkUQoUoHrl/CllEH0S/F6SZN+G8cU8utWIxzXrnoFihXwwy0eoaqG
+ ZtZ6nYtih0NHVOG/x9bUxgLJC0EeQZankUp2pEA7g6KYwaTJf9CocEAG7w7ibYh1DFhx
+ 2HQQyt2JiKisIfFxLEcRmhLgtYoadDjglGDJ/UnVuA3tBxC76X4AHHv5Kq+Ie9VJwofJ
+ AspbI9B41dZhIaTKwUcp4Vr/pjxO1RO2X+wSsB0xbuIWNYtsF5wtGAA1UbZGQNpu9lWz
+ 7b8hoU1c9a8OqeUDqCd00/2NCsmjk5Y7NtnPYtn8ybzFuBSqIhxSE2lBKoRWqNV7Eixi
+ EGTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date;
- bh=wOJt0d5525/vdydCfZOLqeQx20ust1GIMaCJJ+sLeoU=;
- b=iHZtwynbe7YcfmipE1wtfWyLacXClvMZNzAEhNzlJoPx3ee/jyBZyP2aA9K+3uv2Yv
- W1Tmc0Q57EtlmYhnOqj/KSU7CMTb/m8E+vyMflRBqH9NcRYuyErFXiXgbPLBEPOYx2te
- flCPOIt0+AKJVgGWd4YTteeZdyNoKkBMhRu0nB5JRv45Z96GX80J73eGdW2ZllVKvXfk
- Vhnf5oy6eJdeOtHDWFXIJoA3OCuuRAezfNUlgBWF1pUPrCCBPW/BVgYrVH337E0crVFr
- YRdPbCEaerDUp5t1LbXQc28tecAnrrhXKB0i/fkxDwcRAz335PeuQuv+iI6/C+rJEjCI
- DXTQ==
-X-Gm-Message-State: ACgBeo0QrpSFAWyjTDp2NyGl/tvxrVteKI78/+JFqcfQfYoj8yH0j7ep
- gXraoWCChJWdicctHoG18qw=
-X-Google-Smtp-Source: AA6agR6RjeZe7Y8QnW0cYYPMobD16I7AFu/QpKwQwdSJSAXd1pKggv0iXArcdd34IaNHJIW6grL9/Q==
-X-Received: by 2002:a17:902:ea02:b0:16f:11bf:f018 with SMTP id
- s2-20020a170902ea0200b0016f11bff018mr32101491plg.150.1662069784735; 
- Thu, 01 Sep 2022 15:03:04 -0700 (PDT)
+ bh=HQUrfRdnfiMPUlTfezXhcqX7GV4m5M0rlOnnNapCheA=;
+ b=e6LRMCn2f15vq2zJMPJghQTs622rd0jr7v6d3TOAWTxiLijYbbT1uhODnDHHBhXg1j
+ c3S/6ShMGIDepYkjeL9VRzKuBs/UU5lSqIyxBFzU8Rx0U539mty6lez4fjM4ZSlQj3tD
+ 8EXLr/K891AraJBgiKdVFjqKqKovuW2AnPni272gx1ROzJjjsSVbsdf2MnSgKR4xxI7j
+ 9TYvX6tNYLKLDu1+2RPKqczunnEMDvUoGjP9u92+MrNzmZkMg0XO8ft6fbrOaBh/BuOF
+ VztZUeoYomRkP7QTtW/Z09kAPdUonnl3e7q7ngndg3bwHNT3gJJMt5Mumt+/d0IlfMPe
+ CjDg==
+X-Gm-Message-State: ACgBeo2Agz/arZVEuD8GbI/DFoFF5V/zfIrv7XdMN1ruu64BUkyDhGvp
+ mzKNdjUy80f0laab2BVxo2cUMueoTlgf4g==
+X-Google-Smtp-Source: AA6agR6M4KV1/uy50J3RjGncA9GjGMYBIQY9N46Ltdjsdv79/QyPq5LWrP53sFKtBy9pAOIegAIevw==
+X-Received: by 2002:a17:903:41d0:b0:174:d8e0:b0f1 with SMTP id
+ u16-20020a17090341d000b00174d8e0b0f1mr19365682ple.74.1662069787634; 
+ Thu, 01 Sep 2022 15:03:07 -0700 (PDT)
 Received: from vmfolio.. (c-73-189-111-8.hsd1.ca.comcast.net. [73.189.111.8])
  by smtp.googlemail.com with ESMTPSA id
- fv4-20020a17090b0e8400b001fb350026f1sm128894pjb.4.2022.09.01.15.03.03
+ fv4-20020a17090b0e8400b001fb350026f1sm128894pjb.4.2022.09.01.15.03.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 01 Sep 2022 15:03:04 -0700 (PDT)
+ Thu, 01 Sep 2022 15:03:07 -0700 (PDT)
 From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To: linux-fsdevel@vger.kernel.org
-Date: Thu,  1 Sep 2022 15:01:36 -0700
-Message-Id: <20220901220138.182896-22-vishal.moola@gmail.com>
+Date: Thu,  1 Sep 2022 15:01:38 -0700
+Message-Id: <20220901220138.182896-24-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220901220138.182896-1-vishal.moola@gmail.com>
 References: <20220901220138.182896-1-vishal.moola@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1oTsHG-00Aahj-Ab
-Subject: [f2fs-dev] [PATCH 21/23] nilfs2: Convert nilfs_copy_dirty_pages()
- to use filemap_get_folios_tag()
+X-Headers-End: 1oTsHJ-00Aahx-9V
+Subject: [f2fs-dev] [PATCH 23/23] filemap: Remove find_get_pages_range_tag()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -109,81 +108,149 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Convert function to use folios throughout. This is in preparation for
-the removal of find_get_pages_range_tag().
+All callers to find_get_pages_range_tag(), find_get_pages_tag(),
+pagevec_lookup_range_tag(), and pagevec_lookup_tag() have been removed.
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- fs/nilfs2/page.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+ include/linux/pagemap.h | 10 -------
+ include/linux/pagevec.h |  8 ------
+ mm/filemap.c            | 60 -----------------------------------------
+ mm/swap.c               | 10 -------
+ 4 files changed, 88 deletions(-)
 
-diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-index 3267e96c256c..5c96084e829f 100644
---- a/fs/nilfs2/page.c
-+++ b/fs/nilfs2/page.c
-@@ -240,42 +240,43 @@ static void nilfs_copy_page(struct page *dst, struct page *src, int copy_dirty)
- int nilfs_copy_dirty_pages(struct address_space *dmap,
- 			   struct address_space *smap)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 85cc96c82c2c..b8ea33751a66 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -742,16 +742,6 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t start,
+ 			       unsigned int nr_pages, struct page **pages);
+ unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
+ 		pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch);
+-unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
+-			pgoff_t end, xa_mark_t tag, unsigned int nr_pages,
+-			struct page **pages);
+-static inline unsigned find_get_pages_tag(struct address_space *mapping,
+-			pgoff_t *index, xa_mark_t tag, unsigned int nr_pages,
+-			struct page **pages)
+-{
+-	return find_get_pages_range_tag(mapping, index, (pgoff_t)-1, tag,
+-					nr_pages, pages);
+-}
+ 
+ struct page *grab_cache_page_write_begin(struct address_space *mapping,
+ 			pgoff_t index);
+diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
+index 215eb6c3bdc9..a520632297ac 100644
+--- a/include/linux/pagevec.h
++++ b/include/linux/pagevec.h
+@@ -26,14 +26,6 @@ struct pagevec {
+ };
+ 
+ void __pagevec_release(struct pagevec *pvec);
+-unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
+-		struct address_space *mapping, pgoff_t *index, pgoff_t end,
+-		xa_mark_t tag);
+-static inline unsigned pagevec_lookup_tag(struct pagevec *pvec,
+-		struct address_space *mapping, pgoff_t *index, xa_mark_t tag)
+-{
+-	return pagevec_lookup_range_tag(pvec, mapping, index, (pgoff_t)-1, tag);
+-}
+ 
+ static inline void pagevec_init(struct pagevec *pvec)
  {
--	struct pagevec pvec;
-+	struct folio_batch fbatch;
- 	unsigned int i;
- 	pgoff_t index = 0;
- 	int err = 0;
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 435fc53b3f2f..b986f246a6ae 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2309,66 +2309,6 @@ unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
+ }
+ EXPORT_SYMBOL(filemap_get_folios_tag);
  
--	pagevec_init(&pvec);
-+	folio_batch_init(&fbatch);
- repeat:
--	if (!pagevec_lookup_tag(&pvec, smap, &index, PAGECACHE_TAG_DIRTY))
-+	if (!filemap_get_folios_tag(smap, &index, (pgoff_t)-1,
-+				PAGECACHE_TAG_DIRTY, &fbatch))
- 		return 0;
+-/**
+- * find_get_pages_range_tag - Find and return head pages matching @tag.
+- * @mapping:	the address_space to search
+- * @index:	the starting page index
+- * @end:	The final page index (inclusive)
+- * @tag:	the tag index
+- * @nr_pages:	the maximum number of pages
+- * @pages:	where the resulting pages are placed
+- *
+- * Like find_get_pages_range(), except we only return head pages which are
+- * tagged with @tag.  @index is updated to the index immediately after the
+- * last page we return, ready for the next iteration.
+- *
+- * Return: the number of pages which were found.
+- */
+-unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
+-			pgoff_t end, xa_mark_t tag, unsigned int nr_pages,
+-			struct page **pages)
+-{
+-	XA_STATE(xas, &mapping->i_pages, *index);
+-	struct folio *folio;
+-	unsigned ret = 0;
+-
+-	if (unlikely(!nr_pages))
+-		return 0;
+-
+-	rcu_read_lock();
+-	while ((folio = find_get_entry(&xas, end, tag))) {
+-		/*
+-		 * Shadow entries should never be tagged, but this iteration
+-		 * is lockless so there is a window for page reclaim to evict
+-		 * a page we saw tagged.  Skip over it.
+-		 */
+-		if (xa_is_value(folio))
+-			continue;
+-
+-		pages[ret] = &folio->page;
+-		if (++ret == nr_pages) {
+-			*index = folio->index + folio_nr_pages(folio);
+-			goto out;
+-		}
+-	}
+-
+-	/*
+-	 * We come here when we got to @end. We take care to not overflow the
+-	 * index @index as it confuses some of the callers. This breaks the
+-	 * iteration when there is a page at index -1 but that is already
+-	 * broken anyway.
+-	 */
+-	if (end == (pgoff_t)-1)
+-		*index = (pgoff_t)-1;
+-	else
+-		*index = end + 1;
+-out:
+-	rcu_read_unlock();
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(find_get_pages_range_tag);
+-
+ /*
+  * CD/DVDs are error prone. When a medium error occurs, the driver may fail
+  * a _large_ part of the i/o request. Imagine the worst scenario:
+diff --git a/mm/swap.c b/mm/swap.c
+index 9cee7f6a3809..7b8c1c8024a1 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -1055,16 +1055,6 @@ void folio_batch_remove_exceptionals(struct folio_batch *fbatch)
+ 	fbatch->nr = j;
+ }
  
--	for (i = 0; i < pagevec_count(&pvec); i++) {
--		struct page *page = pvec.pages[i], *dpage;
-+	for (i = 0; i < folio_batch_count(&fbatch); i++) {
-+		struct folio *folio = fbatch.folios[i], *dfolio;
- 
--		lock_page(page);
--		if (unlikely(!PageDirty(page)))
--			NILFS_PAGE_BUG(page, "inconsistent dirty state");
-+		folio_lock(folio);
-+		if (unlikely(!folio_test_dirty(folio)))
-+			NILFS_PAGE_BUG(&folio->page, "inconsistent dirty state");
- 
--		dpage = grab_cache_page(dmap, page->index);
--		if (unlikely(!dpage)) {
-+		dfolio = filemap_grab_folio(dmap, folio->index);
-+		if (unlikely(!dfolio)) {
- 			/* No empty page is added to the page cache */
- 			err = -ENOMEM;
--			unlock_page(page);
-+			folio_unlock(folio);
- 			break;
- 		}
--		if (unlikely(!page_has_buffers(page)))
--			NILFS_PAGE_BUG(page,
-+		if (unlikely(!folio_buffers(folio)))
-+			NILFS_PAGE_BUG(&folio->page,
- 				       "found empty page in dat page cache");
- 
--		nilfs_copy_page(dpage, page, 1);
--		__set_page_dirty_nobuffers(dpage);
-+		nilfs_copy_page(&dfolio->page, &folio->page, 1);
-+		filemap_dirty_folio(folio_mapping(dfolio), dfolio);
- 
--		unlock_page(dpage);
--		put_page(dpage);
--		unlock_page(page);
-+		folio_unlock(dfolio);
-+		folio_put(dfolio);
-+		folio_unlock(folio);
- 	}
--	pagevec_release(&pvec);
-+	folio_batch_release(&fbatch);
- 	cond_resched();
- 
- 	if (likely(!err))
+-unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
+-		struct address_space *mapping, pgoff_t *index, pgoff_t end,
+-		xa_mark_t tag)
+-{
+-	pvec->nr = find_get_pages_range_tag(mapping, index, end, tag,
+-					PAGEVEC_SIZE, pvec->pages);
+-	return pagevec_count(pvec);
+-}
+-EXPORT_SYMBOL(pagevec_lookup_range_tag);
+-
+ /*
+  * Perform any setup for the swap system
+  */
 -- 
 2.36.1
 
