@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 10C55ECAAD5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Sep 2022 19:58:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 15BA0C6FA8B
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  2 Sep 2022 21:40:41 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oUCoL-0007bT-P3;
-	Fri, 02 Sep 2022 19:58:41 +0000
+	id 1oUEP0-0002bn-60;
+	Fri, 02 Sep 2022 21:40:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lkp@intel.com>) id 1oUCoK-0007bM-8j
+ (envelope-from <lkp@intel.com>) id 1oUEOz-0002bg-FP
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 02 Sep 2022 19:58:40 +0000
+ Fri, 02 Sep 2022 21:40:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DTiD0UDAHCowanUgvvoQMaLfSVgWjAaJf25jpBUdDhk=; b=N9iv4zaGZooPrQpAcBCm1cqzEK
- 3QSVDCQwcwQWSFA+4NEuvbF6oYYxvYIASfGlL4rxMAS/SCo8sOp/xep+KfrIyDOAS1njqmLd2s5i+
- D9ZFXwFDu/mrYL6+N1iz+wt5xCUaO9ZpZqoJvDCFMampw0tL86Xd11ucAbaw1ehpCSRU=;
+ bh=0jCukkhnBlF7Oq6mUDTOX3mm2uqAMe30rizyVw541S4=; b=aOXnA2a9yEoMXFNTtwWepJs+u2
+ z0BVej0fEVKVr2l2LiyQty8+JARcifRFBHx3ay7OrPnijgus86c731kN7AhOPDHIRsWXueRS6nTlk
+ Fv3yAaXSyj4rPFX0LVZKHb6z2K2aRE/ZnCEWf1iGx2e4XBiOstIH37FiMkBXW3WKvbNA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,48 +33,48 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DTiD0UDAHCowanUgvvoQMaLfSVgWjAaJf25jpBUdDhk=; b=bOkNgXJqY6C/mv2bLoOayIM5TQ
- mz7PXXNg+hHl7H5gi6ZYesed6eI6y0Y+L5l1dvobbp0bp2JsfkD8X2HnP2Y1lxKZrPEvwfzyUrawN
- YAyid4GUSGfkmbUtwR5vpjMNIKC9Dgbx26SsT1ETMV3NPdSg6mQ5ZSm5dNyj+kSxCJXs=;
-Received: from mga09.intel.com ([134.134.136.24])
+ bh=0jCukkhnBlF7Oq6mUDTOX3mm2uqAMe30rizyVw541S4=; b=ZSwGulgOuLGOzkr9/P/HtpGujO
+ /SG9/Y/V/vlQQtlw8zigobEYQ0vzYPxR1OzLP+9IKlO/we9a1IV6k9Wc3QwHyqqpEe7sU4MkNi8jC
+ hZE28QkPcGCUbT7miSRUzBOv6bBRKQyS3C4A/19TjriiAhra9dBpM62NOcTG8fIwZUWY=;
+Received: from mga14.intel.com ([192.55.52.115])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oUCoG-00Bjfa-JZ for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 02 Sep 2022 19:58:40 +0000
+ id 1oUEOw-00BotK-Ns for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 02 Sep 2022 21:40:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1662148716; x=1693684716;
+ t=1662154834; x=1693690834;
  h=date:from:to:cc:subject:message-id:references:
  mime-version:in-reply-to;
- bh=G1QyHL0Y+ZESOJ/0sIvIcNrwO+n+VamVBy4zwBJD12w=;
- b=RxjPBeL5FnkdE+BJS37R0eIfCSIhNWQNm+TKqOqRaNrusHdjmq9llZpp
- QTQo/fEmCWtUpiAr/5hN5Wwv6RNOLOD3JGnS5loZ7H2VbMXYjOwoB4UXk
- nI45xg12BxjjhSF39Uz3cpaDdORM5GqF9RsG3gi4VLhEKMvpFLG7J8Eay
- ngO4LzuxcO4YcEKkFfoJo9SkzRW8mvSLYibIgsLCBtzNAWdNCmG3Uuvih
- gOO+s4eDER1Uec8e55ZlCoaBzyu2C6CIXROdXojn2xkwb3OrbL+bJncHe
- pEHPaDxp+5jUzo7TtU2m1qNApfvnbMITZGC8NSj7HspeP74vzjT84dL7Q w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="296859518"
-X-IronPort-AV: E=Sophos;i="5.93,285,1654585200"; d="scan'208";a="296859518"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
- by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Sep 2022 12:58:23 -0700
+ bh=HksWenRhyuRs7h/PR6mpnNs+GL/O4/v36GNHyfdYvWA=;
+ b=jiyPRhvgtXFB7e0ZwEirhBuGxbvDlIgjQkzxSp0FqnJh5A4cUclOX8Qp
+ 6xowuy9+dVV36BBwL1agrBM7e8ZGQ7SmVMwwZUUTR8xLmKa7HXDI0g7J7
+ 4SRexudqLwWfooYeLjIrGcEkPevIthz9kJTgsyc6WMuY9mfl8o9h+ZY//
+ vK7NY5YeAx+rSNA5svOdqM7fp/pdqtpd/IeCE+h6QYIRnm4TesicpDhcl
+ 0hbAGUynxLfFxMblRaLG1ewhlGpDiUX4D5w4XD8TQn1jxBV1wmGIXzLmM
+ HVw4ywMvQ4jp1kVNcKwZSXWcS9aVRUNW0CLEG/39IGnunVfImK8iugh+/ g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10458"; a="296099520"
+X-IronPort-AV: E=Sophos;i="5.93,285,1654585200"; d="scan'208";a="296099520"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+ by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Sep 2022 14:40:28 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,285,1654585200"; d="scan'208";a="643037848"
+X-IronPort-AV: E=Sophos;i="5.93,285,1654585200"; d="scan'208";a="564106825"
 Received: from lkp-server02.sh.intel.com (HELO 95dfd251caa2) ([10.239.97.151])
- by orsmga008.jf.intel.com with ESMTP; 02 Sep 2022 12:58:20 -0700
+ by orsmga003.jf.intel.com with ESMTP; 02 Sep 2022 14:40:25 -0700
 Received: from kbuild by 95dfd251caa2 with local (Exim 4.96)
- (envelope-from <lkp@intel.com>) id 1oUCnz-0000Yt-2J;
- Fri, 02 Sep 2022 19:58:19 +0000
-Date: Sat, 3 Sep 2022 03:57:42 +0800
+ (envelope-from <lkp@intel.com>) id 1oUEOm-0000dc-2p;
+ Fri, 02 Sep 2022 21:40:24 +0000
+Date: Sat, 3 Sep 2022 05:39:26 +0800
 From: kernel test robot <lkp@intel.com>
 To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
  linux-fsdevel@vger.kernel.org
-Message-ID: <202209030346.t02z8VfY-lkp@intel.com>
+Message-ID: <202209030512.9yAy8edt-lkp@intel.com>
 References: <20220901220138.182896-15-vishal.moola@gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <20220901220138.182896-15-vishal.moola@gmail.com>
-X-Headers-End: 1oUCoG-00Bjfa-JZ
+X-Headers-End: 1oUEOw-00BotK-Ns
 Subject: Re: [f2fs-dev] [PATCH 14/23] f2fs: Convert f2fs_write_cache_pages()
  to use filemap_get_folios_tag()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -90,10 +90,10 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
  kbuild-all@lists.01.org, "Vishal Moola \(Oracle\)" <vishal.moola@gmail.com>,
- llvm@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
- linux-mm@kvack.org, ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ cluster-devel@redhat.com, linux-mm@kvack.org, ceph-devel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-afs@lists.infradead.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -111,8 +111,8 @@ https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Vishal-Moola-Oracle/Convert-to-filemap_get_folios_tag/20220902-060430
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-config: hexagon-randconfig-r045-20220901 (https://download.01.org/0day-ci/archive/20220903/202209030346.t02z8VfY-lkp@intel.com/config)
-compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project c55b41d5199d2394dd6cdb8f52180d8b81d809d4)
+config: arc-randconfig-r043-20220901 (https://download.01.org/0day-ci/archive/20220903/202209030512.9yAy8edt-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 12.1.0
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
@@ -122,24 +122,22 @@ reproduce (this is a W=1 build):
         git checkout 6c74320953cd3749db95f9f09c1fc7d044933635
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash fs/f2fs/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arc SHELL=/bin/bash fs/
 
 If you fix the issue, kindly add following tag where applicable
 Reported-by: kernel test robot <lkp@intel.com>
 
 All errors (new ones prefixed by >>):
 
->> fs/f2fs/data.c:3016:18: error: use of undeclared identifier 'nr_pages'; did you mean 'dir_pages'?
-                                           &fbatch, i, nr_pages, true))
-                                                       ^~~~~~~~
-                                                       dir_pages
-   include/linux/pagemap.h:1404:29: note: 'dir_pages' declared here
-   static inline unsigned long dir_pages(struct inode *inode)
-                               ^
->> fs/f2fs/data.c:3017:11: error: use of undeclared label 'lock_page'
-                                           goto lock_page;
-                                                ^
-   2 errors generated.
+   fs/f2fs/data.c: In function 'f2fs_write_cache_pages':
+>> fs/f2fs/data.c:3016:53: error: 'nr_pages' undeclared (first use in this function); did you mean 'dir_pages'?
+    3016 |                                         &fbatch, i, nr_pages, true))
+         |                                                     ^~~~~~~~
+         |                                                     dir_pages
+   fs/f2fs/data.c:3016:53: note: each undeclared identifier is reported only once for each function it appears in
+>> fs/f2fs/data.c:3017:41: error: label 'lock_page' used but not defined
+    3017 |                                         goto lock_page;
+         |                                         ^~~~
 
 
 vim +3016 fs/f2fs/data.c
