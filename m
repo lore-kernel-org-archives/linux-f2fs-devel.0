@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8DC48ECAAD4
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  3 Sep 2022 17:38:26 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8CC72C54EE9
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat,  3 Sep 2022 17:38:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oUX6A-0004pc-34;
+	id 1oUX6A-0006BQ-TF;
 	Sat, 03 Sep 2022 17:38:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <konishi.ryusuke@gmail.com>) id 1oUX61-0004pL-QR
+ (envelope-from <konishi.ryusuke@gmail.com>) id 1oUX69-0006BI-DU
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 03 Sep 2022 17:38:17 +0000
+ Sat, 03 Sep 2022 17:38:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
  In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
  :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=T9PB00G8n49mkQ5GqTry0cp+XpHMmRJWkRcveZs969s=; b=UBF2EV8pfj9bIeTVBqkbGGeBcb
- m9q2uB5KVo9ZJkQKImKtJc5ya74uaUTquivQ50vZB789vqMXsK+X4dCZB3iAoZve2xE35HDXZV+ag
- FzxTAP8232kAEFtVW50Wky4E/8aIyloxNEBU3pQJeVFlkFFoCUQYzK/4gHHriz/0BmVA=;
+ bh=XIAWHihpR6QwqgJNOUnH9+J9hxcC7HnY/D9h72CaivA=; b=emKopKxthzfOjhg5OPenueWAwB
+ pKfR+Fw2j2q3Qo3VUD85qdwUfqJOh1Vaf1bJlYYiEBS6O3WcdYgW8Vi9FkwV/0gQQt9KWOaajW+0U
+ FK691gWnGlYBLZ02IzgLYuEjsNkYRvj4ny+4pSG0317jlxX9aF5t+EoSoxh011KDNvMI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
@@ -33,55 +33,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=T9PB00G8n49mkQ5GqTry0cp+XpHMmRJWkRcveZs969s=; b=NT5rhnr7Iw8genzSlnSE4DSGQm
- XlCwaUj/t57Nlf8x+CWZ02XvWiPzF6UvfuMDUJWfkAom3kstK2jXvYfuZaMv4VaQ3r2AWmlgHQCbe
- JdM6UUbt32y7sSzGLBt+Yhr5WD4P5ijY0AfpbSiaFbiZyZXnVgtWQ/h9DTqiLQU4zDOA=;
-Received: from mail-lj1-f172.google.com ([209.85.208.172])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=XIAWHihpR6QwqgJNOUnH9+J9hxcC7HnY/D9h72CaivA=; b=bCnMG4QgXkDfpiktFQ4J8WC4JE
+ qmZoYKmP6z/iVzWl9UaDjQG7UDgeCoMO2PyzHxishyMNbhkJvAC6MvOzHduQUGYz2GQiOVsI1r0/B
+ bcopKvBCb9KwZYQ6N7NQTKXepqLE1etmUtotvrXmu38tvCFVnv/mkwAW7gnSz06eMxTY=;
+Received: from mail-lj1-f182.google.com ([209.85.208.182])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1oUX5r-0002mv-Cy for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 03 Sep 2022 17:38:17 +0000
-Received: by mail-lj1-f172.google.com with SMTP id w19so5230039ljj.7
+ id 1oUX67-00CdUR-Ka for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 03 Sep 2022 17:38:25 +0000
+Received: by mail-lj1-f182.google.com with SMTP id b26so5206538ljk.12
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 03 Sep 2022 10:38:07 -0700 (PDT)
+ Sat, 03 Sep 2022 10:38:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date;
- bh=T9PB00G8n49mkQ5GqTry0cp+XpHMmRJWkRcveZs969s=;
- b=fIOMCu7AITN9Pt+nFN8BJTaa3K5P3d8RThC1MmB5xW6+aCOf4ziM11dh3PVY8ChogI
- 2In7ghfavyCyWtgzUXJdWJbLcoFt8im2w1QA4Z8PA+4nH1IpLvWqzc4K3XXoKDtzZut+
- zrPXw4Xgu7XAc/zA8NHyqWGScGc/Vw+ZfkvXQsEFQsWc2nQpj9tj4wlMemyYzJexkbQZ
- tGfwIBaPTWxhz6U3HENtbDZhuNci6vVbLotA4cnZW4d6tLzMaxSeSrJVmoSXVaGAym04
- 0TdYH9bByMpa7AqY2/rQEU0ONx3kmD/re/WCnYtxpF1wiZp12OHS1//jc0Wu8MCo7ffF
- I/MA==
+ bh=XIAWHihpR6QwqgJNOUnH9+J9hxcC7HnY/D9h72CaivA=;
+ b=iwt/wbMtnp/q0jVwHZiE00ed484O19jfhyipFrnvrNDTORiNZ1YXFxifJnNfs+VIu9
+ ZTzJdY3uSO7qeUpTw2k1eYh0iMaaR6rQ8FuxoMwtiryw0IEKTNIkNHct1rD+slZ4Tw3r
+ 2OJU6WtHfNa9JKbDME7ah4hIZPU0j1jGPO6PMrWVJGeSkDHa//D/ignX3illfN2ha+TJ
+ H+1EyPYXY67aUIRp/z/7mkQ/sL95sVYevI1LF1OzGgAjd0Pv/Gsr8c9VZ3+AuDk1sG2J
+ r1O9wMojCiVxZphiPxfZs3xs1ZBF71kfoIwvvHBoqJxzYkmzLzcX+xnqdBb0Y9xkMCKf
+ tUMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date;
- bh=T9PB00G8n49mkQ5GqTry0cp+XpHMmRJWkRcveZs969s=;
- b=2OYQ7a2cWcGFGqcGaSUKxTfahLn//4VVn5o7PA1jOr5roNQjQkg5hBNwJ2R/pWYiXF
- RV9vHo+IIDRHoDd7yOEJ4+Dz5GGYaG892MSgwqKK7Qm+IMqjlmanpwH7wfWc8hN/ruCw
- pTC6kgufWH1RDRDWtFnc46PoyZ+rJKqlK5C53qUUR341kkRGNxmb0FsX/0o7Qx8105iy
- Cv9cZv08lw/JFZULDJIfMXqYEXYFtaKCzq9Gcev0CU+/O9MqCDHYBH/5AO5fTzYQac8/
- 1NJFamgMKfmw3z+9XLqLWhXWvDmo+ojF77EJU6G7k/xefWFnIGwNNqoDu4gU1z92FP8N
- qLYA==
-X-Gm-Message-State: ACgBeo2QfhcBdZD5vWCo8JlrgJbQVaSi06cDe6A5PzmOemAWGI5rPEdC
- AzhehD4Gs5nWXyXJbqM+toWJUaUIkmP2dwCOE64=
-X-Google-Smtp-Source: AA6agR70Jzdv99OIWtBI+Fq39YHvU0oO+xeoqhKJN9rejAsxAabkcRwmiauhY/c5RKQZKtQjTgpBf1Dezn5qMhA8Xac=
-X-Received: by 2002:a2e:8541:0:b0:261:b44b:1a8b with SMTP id
- u1-20020a2e8541000000b00261b44b1a8bmr13288406ljj.46.1662226680495; Sat, 03
- Sep 2022 10:38:00 -0700 (PDT)
+ bh=XIAWHihpR6QwqgJNOUnH9+J9hxcC7HnY/D9h72CaivA=;
+ b=bR+qMtwZk11L/gjH1jat1ne1xBYbUDSs/PQYMHa4MsLuzEwfb4ghHgFmgoXjmT2WdN
+ TiCvmO5tYnA2jYytaUWE36PxE7yVqj709EBBfkxqE7U4P12pYse22IQ839G8QctGDk0c
+ eWqkyAimizjq2AvPpEjRM6t2c1N65pl6uCmYuSiTciaURML/gdr5N80Ep8LgEbAmOYLV
+ Ej/557O7fqYDr8W/czvaJJSLEnx5cIK+XY9kJt8GdMIDToOid9XvrW7ZQ4TWf/FjnYQi
+ 0mZ9Fl2AbqpLJgNb57RlFKcZxUGX9tHp5OV415i0tyw5HakX07ajPV48u4SGR2URFxS0
+ htYg==
+X-Gm-Message-State: ACgBeo2d9DERyGrPXaLlH+Uq4Fib1YnwCrBdep3Wm9shytC13l6qE/H3
+ o/kw5X3o9FovslJPj0eSVHKJ6MZpMf09XgFaKrKb50d5dzxCjA==
+X-Google-Smtp-Source: AA6agR40XmT8zh4h31HtNMSrlBjKkdISLmyOpZLVSDQyaRAj4ei/rdAVMIwBkrqkTVTS5Uf2en5n9Pvu5S7dwteMLrc=
+X-Received: by 2002:a2e:508:0:b0:263:32c3:9a32 with SMTP id
+ 8-20020a2e0508000000b0026332c39a32mr9959731ljf.315.1662226697047; Sat, 03 Sep
+ 2022 10:38:17 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220901220138.182896-1-vishal.moola@gmail.com>
- <20220901220138.182896-20-vishal.moola@gmail.com>
-In-Reply-To: <20220901220138.182896-20-vishal.moola@gmail.com>
+ <20220901220138.182896-23-vishal.moola@gmail.com>
+In-Reply-To: <20220901220138.182896-23-vishal.moola@gmail.com>
 From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sun, 4 Sep 2022 02:37:43 +0900
-Message-ID: <CAKFNMon3fuhwv32mtP_yV1agLUQkOePOfAN0yBH2X669YgonCA@mail.gmail.com>
+Date: Sun, 4 Sep 2022 02:38:00 +0900
+Message-ID: <CAKFNMokhm5TTVn7yGEtwchpb5rk5pur6zog-uCWZGQJmAupoVQ@mail.gmail.com>
 To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-X-Headers-End: 1oUX5r-0002mv-Cy
-Subject: Re: [f2fs-dev] [PATCH 19/23] nilfs2: Convert
- nilfs_lookup_dirty_node_buffers() to use filemap_get_folios_tag()
+X-Headers-End: 1oUX67-00CdUR-Ka
+Subject: Re: [f2fs-dev] [PATCH 22/23] nilfs2: Convert
+ nilfs_clear_dirty_pages() to use filemap_get_folios_tag()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,15 +102,15 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri, Sep 2, 2022 at 7:07 AM Vishal Moola (Oracle) wrote:
+On Fri, Sep 2, 2022 at 7:14 AM Vishal Moola (Oracle) wrote:
 >
 > Convert function to use folios throughout. This is in preparation for
 > the removal of find_get_pages_range_tag().
 >
 > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 > ---
->  fs/nilfs2/segment.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
+>  fs/nilfs2/page.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 
 Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 
