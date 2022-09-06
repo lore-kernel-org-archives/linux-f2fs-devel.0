@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6246BECAAD3
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Sep 2022 03:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C31D6ECAAA1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Sep 2022 03:28:02 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oVOyi-0002G7-9j;
-	Tue, 06 Sep 2022 03:10:20 +0000
+	id 1oVPFo-0004o1-Bj;
+	Tue, 06 Sep 2022 03:28:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1oVOyc-0002Fx-Dj
+ (envelope-from <chao@kernel.org>) id 1oVPFn-0004nv-FV
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Sep 2022 03:10:14 +0000
+ Tue, 06 Sep 2022 03:27:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WXLlGUzDaadil2v42Ao6FwKQHjKhm7AMkdofWvWOEBQ=; b=ecc6h91pu/k6WpG1CJJZyot26u
- akwqX2V3gkZ4ILCt9RCxgNbhHLm+ZqDjTzT8YjSZzD3CvAbaW3LS+9PhNwKfnCFH8IP0kR/Ce9Bsk
- 539nLF5FB7Bmv0aSRhmCt/0n/Veyp8hrPoLw3RpTJsTnROe5Sx67y6vbClnaU9NiwNA8=;
+ bh=vA/ZARNqvxOgJQkBGU8oLT9KX5DnXBtmKmH8be20pQA=; b=gOIODJqh8Jl5iHa76hrPWbs8vg
+ JA1aYWZ72cYk40TsqUxodLLsYz3Pt/5B6UpGjRAeClQV+ITf1S5ia9vq4cmuqDjMYwtvwk9Zk42b9
+ QlfRaBB+CWFjxy/KHZ+ed2qL2I+9FpCc9y6mSDeRxaH6DBMfSdTDcP/5bEHo/M/As4Jw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,44 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WXLlGUzDaadil2v42Ao6FwKQHjKhm7AMkdofWvWOEBQ=; b=IrFiileIa9Z2nchJ5QqSOVO1nJ
- 0nGyIUnbP5nX7ezL6xuNXN9no6SzMP8iCo3zeHBVljLmpmk76ZoVvLiEd0Fdg7u9J2nTQWopPqkap
- jc3I3o/Rqr7kRLG0rRTB+70fJinLZo/M0rB1Z81Wn/39+A7Bmt4cjB3x1xbkWbPASPXk=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=vA/ZARNqvxOgJQkBGU8oLT9KX5DnXBtmKmH8be20pQA=; b=YlwUZBBMYgdpIQRjck/KhkfEBP
+ YtfpaWOiuDz036KIvNu7hDFW2ItAr7XLaCcMHJrfa/3lYGz+eJwtHDzdd8wBgRV2aXGomf1kPhPn1
+ g8XRA54uBfRLHRHOO+7i+RXAEFio4BQFlLX+wgvXvq4pbfI08r23Hgrv+JH+hgySK4sE=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oVOyb-00GsKY-L1 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Sep 2022 03:10:14 +0000
+ id 1oVPFm-00GtJJ-Uk for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Sep 2022 03:27:59 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 6402AB81603;
- Tue,  6 Sep 2022 03:10:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 653E4C433C1;
- Tue,  6 Sep 2022 03:10:04 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 302C661242;
+ Tue,  6 Sep 2022 03:27:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E662C43470;
+ Tue,  6 Sep 2022 03:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1662433806;
- bh=ARusBGZFU3E/QMas/4NlWaL/WDNIEgrvqoGlXde6Eb8=;
+ s=k20201202; t=1662434866;
+ bh=iPuAoo1l+jEO60ptqnFhfS9oJkta1xXjySBNeTmLs9w=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=IqA3DE3IdKxh+hI4fsDBamxcbXnNLA3T63Ce7DC5IAeQEYvcjJ+tWR9umVK6HdFEI
- E6tdgFyG44fGEEnZaUSnKabQXZ18HFBm//oenxvxarAu3eDtNx7qjR1NWEvKCLxeYi
- jjkxJBxZJFv22F7QE9LmpJX5WBZ6ltCD2Jq/9UswdRzAv+zH9dXl/umwiVIexv85Q2
- XUqWBVRDVabWWnZJ6q/Zy5c5++GuRtTHBkDJq7KFLyShfO4a8mz8lfhB2ciR1Nm/ER
- P5wdzr7V/GeXQ1gmu5ngYyYNu50uYBCKr919Y+N7Jr/uG9S5mX9OR25rLrop9rXS2S
- jC1PdVIz8ZC/Q==
-Message-ID: <6813adb8-73c4-0fd7-5ee4-a1d4a97e6552@kernel.org>
-Date: Tue, 6 Sep 2022 11:10:01 +0800
+ b=O+8ojnot5q5B7FfmMG+9WChttGJKjLNiIa+NKQ//wAwsiKYEWyySVAerKPgmMWAHr
+ AFWujTRReSDt56JJnqxMOXu8b0S+852TjD22cvy/QYRAgSu315S/ctrMfQ0dQYGNm3
+ cY0dGRmCPfhV57xqGrrTCV3nRiTYvpgL5pCHVzmhZUtGK6F4Obsmwi86OY++1b9dXK
+ qUfvGGce5bcUH3P2VD1VMzfgS0IgtuLbzTHdZ43eefrUrPgamza5dj7DRg2cKN/W/t
+ /1Tp8V3IofH89uiuBjYLX2sMHwYMnfhgrhUPNo1dF4ZSEr/rWE2EOo6eHllJFC+mlZ
+ SpNW3EQE2JvZA==
+Message-ID: <52a9d745-1039-a596-95f1-98e1c35ab62e@kernel.org>
+Date: Tue, 6 Sep 2022 11:27:42 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
 Content-Language: en-US
 To: Zhang Qilong <zhangqilong3@huawei.com>, jaegeuk@kernel.org
-References: <20220905141225.26456-1-zhangqilong3@huawei.com>
+References: <20220905045917.7520-1-zhangqilong3@huawei.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20220905141225.26456-1-zhangqilong3@huawei.com>
-X-Headers-End: 1oVOyb-00GsKY-L1
-Subject: Re: [f2fs-dev] [PATCH -next] f2fs: total hit count should only be
- increased when entry found
+In-Reply-To: <20220905045917.7520-1-zhangqilong3@huawei.com>
+X-Headers-End: 1oVPFm-00GtJJ-Uk
+Subject: Re: [f2fs-dev] [PATCH -next] f2fs: fix race condition on setting
+ FI_NO_EXTENT flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,45 +87,32 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/9/5 22:12, Zhang Qilong wrote:
-> We should not increase total hit count when not
-> found the entry in cache extent tree. Remove the
-> stat_inc_total_hit when f2fs_lookup_rb_tree returns
-> nullptr.
+On 2022/9/5 12:59, Zhang Qilong wrote:
+> The following scenarios exist.
+> process A:               process B:
+> ->f2fs_drop_extent_tree  ->f2fs_update_extent_cache_range
+>                            ->f2fs_update_extent_tree_range
+>                             ->write_lock
+>   ->set_inode_flag
+>                             ->is_inode_flag_set
+>                             ->__free_extent_tree // Shouldn't
+>                                                  // have been
+>                                                  // cleaned up
+>                                                  // here
+>    ->write_lock
+> 
+> In this case, the "FI_NO_EXTENT" flag is set between
+> f2fs_update_extent_tree_range and is_inode_flag_set
+> by other process. it leads to clearing the whole exten
+> tree which should not have happened. And we fix it by
+> move the setting it to the range of write_lock.
+> 
+> Fixes:5f281fab9b9a3 ("f2fs: disable extent_cache for fcollapse/finsert inodes")
+> Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
 
-Actually, f2fs will account total lookup count into sbi->total_hit_ext.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-
-> 
-> Fixes:54c2258cd63a8 ("f2fs: extract rb-tree operation infrastructure")
-> Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
-> ---
->   fs/f2fs/extent_cache.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index 866e72b29bd5..264682eebcd1 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -426,6 +426,7 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
->   		*ei = et->largest;
->   		ret = true;
->   		stat_inc_largest_node_hit(sbi);
-> +		stat_inc_total_hit(sbi);
->   		goto out;
->   	}
->   
-> @@ -447,8 +448,8 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
->   	}
->   	spin_unlock(&sbi->extent_lock);
->   	ret = true;
-> -out:
->   	stat_inc_total_hit(sbi);
-> +out:
->   	read_unlock(&et->lock);
->   
->   	trace_f2fs_lookup_extent_tree_end(inode, pgofs, ei);
 
 
 _______________________________________________
