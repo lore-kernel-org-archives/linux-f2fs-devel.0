@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7F70DECAAA1
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Sep 2022 02:56:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 32E50ECAAA1
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Sep 2022 02:58:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oVOkr-0008QA-Qw;
-	Tue, 06 Sep 2022 02:56:01 +0000
+	id 1oVOn5-0006tF-H1;
+	Tue, 06 Sep 2022 02:58:19 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1oVOkr-0008Pw-6q
+ (envelope-from <chao@kernel.org>) id 1oVOn3-0006t3-C9
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Sep 2022 02:56:01 +0000
+ Tue, 06 Sep 2022 02:58:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=iiRC55sNJzy/YPaxeCaL29UhmOmqwxypWu9HKBl939g=; b=YOT9j1MnlQW2DWCioo7WkybUYo
- 7WdhxH4zvRtT3vbAbcJkOYvtPKfDfKbLAN2pjeByimpA14jP7qT6YI/c2hDtdcNLXYdKOsEp3ulae
- lXSfilEWDNIs46cMchmsZwEtZ5bBJVNgv9yx9s8MV8VGaaSppsWNN8FiAv9HqHBcIdyk=;
+ bh=KRSCFecu011dikO4TGJ9f8CwcSGZX2l1jY30hj560w4=; b=YKQkYNThiFnzw4uWPuHrRAq8B1
+ htmG3sAlF7fmyXFpChQS3pzu9FDSJKeVxyMf2lFw70OVh+r5LCsy+gwHJcP3kQ9zr3VEnXY2zvgdD
+ bFVDvFReb8JBHRjxR4AyUTcfMoi5Gj/YG+SiElI+rdUuGvnGVrWndAxgO1ATcC5QwZ9I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,44 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=iiRC55sNJzy/YPaxeCaL29UhmOmqwxypWu9HKBl939g=; b=i5U+K4EqbKn4P3sT6+e42AnhyB
- /V32YmTDvEIdizH7643qFh0LRdf8Mp+xP69W9QHfihWzxZtcRADZVeTZSRiE1NUoL0GjADnNSlHKL
- qDIV70OOYIRZXXI6u30rVMFuIjK5txJUuum8PtVngglfBsEWE/I60rx9XmDkZJi15h48=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=KRSCFecu011dikO4TGJ9f8CwcSGZX2l1jY30hj560w4=; b=dSu0JswaH6QBTI0HrYomhkO0jL
+ kk3I8Tsw0tO0zGbANYr0x2rV0exUpUbLxN9b+qgL++vUbozZZAbXBw9hQ+RiOp0HDcFvD6/faykcY
+ OtfOs5zi3X7WPVUO46sCOM48xQX3Sb1pG+56tVAm/VLo/pSP4qb5KYSlsKg2Xlyx+pFw=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oVOko-0006o3-3g for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Sep 2022 02:56:01 +0000
+ id 1oVOn2-00Gri6-P1 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Sep 2022 02:58:17 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 3E68E61226;
- Tue,  6 Sep 2022 02:55:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD6A4C433D6;
- Tue,  6 Sep 2022 02:55:49 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 87276B815AE;
+ Tue,  6 Sep 2022 02:58:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B0EC433C1;
+ Tue,  6 Sep 2022 02:58:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1662432950;
- bh=OOVUbiOv01FcO5I8sIOvPc/pmn2ulz+SoXFCsOI5FXE=;
+ s=k20201202; t=1662433089;
+ bh=VgiapESEI1yn/ros3Sr8//iotTzOvdG+P3RJkMjESKY=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=t7SC/iLxeTrH30pQARBVgKCJkWk/LaQs5+KEMiNrXs2S3SNCcutvLe5DCqVTajeFt
- mwezGQAoiM8EGolCV9o50xZHmwAQrB0X+9PGKtTRxpd1CDKhdBM1ECYmRHYPmWdqWo
- pw9Q0WoiyWn/rYQzW6GOQYyEHCj6M5D+MMtZaxlHdgYYyxu6rpsnBj/ZozyQ31lmY2
- bp/8GCA7o/uvw/KGBvfDSiAmOZPm7prKncfN6iH+KeMhTi2XUR1iHr4ziuF9kwsZ0z
- Wh2POfNTIyCk8KBYN8qKCPXewGyviuzwvtER3b0n18/KeZTc0D+6mqUNA5am7hfmUX
- GZR3296/gIFZA==
-Message-ID: <55bcf918-dca6-6f16-4e78-4772f6a08852@kernel.org>
-Date: Tue, 6 Sep 2022 10:55:47 +0800
+ b=OsEQQfmEVINpX7FYkFcr71JUfSj1GdHcdvuS6Qjp8k//sSPrLNFbzKvR/n+wcPNss
+ wRu8ermPIbjIyuhu2aI9O4/nYsVMszbZ2om/jEgcaCxLm7zXFGQJ64HaZttd/bJIY9
+ n6UHbkf2KzoVbXLGxX5BZxbXbs39yLCBJMpsSgNDMdM4BHVsFYLVkttIZfinQjMNbH
+ PSGT3r3LCO8p4hlTEGHUWsLCcljHQKNMBFqq2dQ5TfOpmVWrf/hBjuuaSWIuppKeXC
+ TfXR+/7zh/IsIza0gRuOYxJTpyN3Clpd+dxOkfqPKNGkHUWzdDGeles29Z4r3m8j/b
+ FwLEd/Qe/MmyA==
+Message-ID: <758e68ce-2c23-f2b6-3034-3c4b339400f1@kernel.org>
+Date: Tue, 6 Sep 2022 10:58:06 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
 Content-Language: en-US
 To: Zhang Qilong <zhangqilong3@huawei.com>, jaegeuk@kernel.org
-References: <20220831094815.25002-1-zhangqilong3@huawei.com>
+References: <20220901071937.93945-1-zhangqilong3@huawei.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20220831094815.25002-1-zhangqilong3@huawei.com>
-X-Headers-End: 1oVOko-0006o3-3g
-Subject: Re: [f2fs-dev] [PATCH -next] f2fs: add static init_idisk_time
- function to reduce the code
+In-Reply-To: <20220901071937.93945-1-zhangqilong3@huawei.com>
+X-Headers-End: 1oVOn2-00Gri6-P1
+Subject: Re: [f2fs-dev] [PATCH -next] f2fs: remove redundant check in
+ f2fs_sanity_check_cluster
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,16 +87,16 @@ Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/8/31 17:48, Zhang Qilong wrote:
-> We can use a inner function to init the disk time
-> of f2fs_inode_info for cleaning redundant code.
+On 2022/9/1 15:19, Zhang Qilong wrote:
+> It have checked "compressed" at the entry of
+> f2fs_sanity_check_cluster, just remove the
+> redundant check for better performance here.
 > 
 > Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
-
 
 
 _______________________________________________
