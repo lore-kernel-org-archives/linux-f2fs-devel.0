@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C3124C6FA8B
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Sep 2022 18:26:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C7F8EC6FA8E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Sep 2022 18:26:03 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oXo7x-0002rR-QN;
-	Mon, 12 Sep 2022 18:26:02 +0000
+	id 1oXo8B-0000sS-Am;
+	Mon, 12 Sep 2022 18:26:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <vishal.moola@gmail.com>) id 1oXo7s-0002qH-Kg
+ (envelope-from <vishal.moola@gmail.com>) id 1oXo8A-0000s0-9Y
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Sep 2022 18:25:57 +0000
+ Mon, 12 Sep 2022 18:26:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dVPmZmiNC1IS+YQLU6Y2NRJjfhjAkHbCXCFivKSKXpI=; b=N+1T6AYHeRnRxYE2ql8wB1tVsp
- W4rKWqLVpG4Gx9qkOKASyqX9OofrcpVZwmVyXuGid2B1bbWwdqBQtnXRFWZRs681ReC2l3K6bQYjD
- CG15nvkdfj3VZUh2k0KBYxrtyfNRtFLISq2LIhQNkUKCbyoebyD3AlRItJ3D4Nq6vkeg=;
+ bh=iZBT3paH7ib6tLdY11ze0PGeOOPanYFCKzZa2TAf2gQ=; b=XHYytQN75Q9+HSR3BFqcL8lNpB
+ 0oqpGvrWyJHrd13XXbV0YEbQhn6zCl0A+/1CXQQ1aSO3M5FYK50pA9905i1+MdvTcx6JsIVu30N3e
+ Dpm0MQH0A3/hPHlKVa8RShUW3N1fvgL9vT8DbhiepcE7N3+noAzgiI8d1mpKZTpYqPBA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,61 +33,61 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dVPmZmiNC1IS+YQLU6Y2NRJjfhjAkHbCXCFivKSKXpI=; b=geXT6tHX419qmVC5LNg+GCy6fN
- 4yXlCIpZ4vCBqG9xNCNqMF0a223Bp2nqM1E+jBxV9NNTzCw0wn4qEg3ozOjklscpZ1IYzL/JXIfxz
- sAN1Y/wjqiZ03PQubvz3YImSEzwQgjhW8teJ421eKO4iQ//9u5rEVMwfymrwaqS0nZiE=;
-Received: from mail-pf1-f182.google.com ([209.85.210.182])
+ bh=iZBT3paH7ib6tLdY11ze0PGeOOPanYFCKzZa2TAf2gQ=; b=g1G+d34HPCxPwgf3pSkQ4LkGlh
+ lz9pMSjsMuUgTirOVtz1hmiXLCaRbP7iULseVprnMRtQwt7LzrM+VaUYUfVd6DIjxmpheuAhA5fkg
+ aGjddBTrEzLT5a5O/q6f8n8rBQHLp+UlFxHmOQCJps+QLZYHAdYTj2MIjrAAYd/HLNSY=;
+Received: from mail-pf1-f181.google.com ([209.85.210.181])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1oXo84-0003nJ-Ki for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Sep 2022 18:25:57 +0000
-Received: by mail-pf1-f182.google.com with SMTP id d82so9421754pfd.10
+ id 1oXo88-0003nd-Jn for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Sep 2022 18:26:01 +0000
+Received: by mail-pf1-f181.google.com with SMTP id z187so9418986pfb.12
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 12 Sep 2022 11:25:56 -0700 (PDT)
+ Mon, 12 Sep 2022 11:26:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
- bh=dVPmZmiNC1IS+YQLU6Y2NRJjfhjAkHbCXCFivKSKXpI=;
- b=oBC4zDF+WDmWgW6D6j4kBVoNttmlzw7SM2Dud9K5aTIdeGHp6wASaYdQxbVSVMg8yy
- 1YLMgIW9WwwzQjDsnXwvkJcEoVrmIMjU4Oj1Gcrg49Y37eBvbDf/EC41Vj4/jMMb+7Ck
- FCgSenb4wxPcxoi+kVc413A4xthL7v8gDDW1BWNADPokKLTbv0CesCH7p5XEg8gDVRKk
- iNqUvQ+pbDF5tyVENwqTvEKGaaIFS9mWFC71GvQccH45wKLom6EQlIeUp/cnrRObUn1x
- PZzV5sEe9lO7DYLyaBFMFDqCajFMmNm4YjLGgrURc+6n/8mveQORYhKJQMSfY5QF3W9m
- HbnA==
+ bh=iZBT3paH7ib6tLdY11ze0PGeOOPanYFCKzZa2TAf2gQ=;
+ b=QkzFucHR1fupSeVgkblSK5qafJCdbSmYeMiwUIAQlaY9uethI4Pgnd1Bnj9rnWMs8/
+ r3L4IeC3wfXLBQd0PODD5XEJxk5uyedAZU1m489CavS2FEDS8quz37ynfsdfhjEZm8RI
+ C2ZLDnP9Pnc8XBiwTLesO6YiXLxOL2gbOGUJt2n/PEx5+mfO0etsNWI0uvIAO/uhFb6x
+ lFFXBAKKaMWQvQgH39q61lrTIsM7c8YMTUcW4lDdSlXhdww3nb7o02TObqPupet5gyJk
+ 7RkJCEpDWHn639fPwEhJvdWuZSftDpyL+FtJODzUIbnECV1xwKcq6GxE0JKbw3aep+na
+ CN4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date;
- bh=dVPmZmiNC1IS+YQLU6Y2NRJjfhjAkHbCXCFivKSKXpI=;
- b=R3SqmjxywBrGPJ7Viac3AbHkRnugvKBLhkzQovx3cNPUTjd1AJSW1rPOOy52FAEL8d
- cX2QQnMcth0YZd4q66H4tZzRZJNukpOjxu77sCdASf249/BbEVjut0oYQKodAx4htAXH
- SU+JyPu9SR42NgKVi9n58xH50QNZj/pEkIg4OtBQaEz7KR8wp/X8hT16I9oH0fijuf3f
- uvTLUS+Rm/V5pULms7z/awPqesw7zLhmyNBNynyoyelTO7zXpotpUT9xclEHMk8bo6pV
- 5TEtsRC6ySjR17NNcWGuh6aqWKnFjUJ07UegRCuONCI2Qns7dbwqJN67iFogfGW3ccNO
- kAIA==
-X-Gm-Message-State: ACgBeo0QI3qMRe6Ngl53VJRw1LUtnyfesgSRQ2X2mhEeve7fi/MIejGo
- QukE0SuIckOpBgCaYv7FJoE=
-X-Google-Smtp-Source: AA6agR5Acqv7pt8aCugWQSlcu/2da/0WS5pUMnHLkzNbb0SnOalV4W4VSmf07FU6/EySzET52sgc5A==
-X-Received: by 2002:a63:5a0b:0:b0:434:4748:4e7a with SMTP id
- o11-20020a635a0b000000b0043447484e7amr24353361pgb.561.1663007151035; 
- Mon, 12 Sep 2022 11:25:51 -0700 (PDT)
+ bh=iZBT3paH7ib6tLdY11ze0PGeOOPanYFCKzZa2TAf2gQ=;
+ b=ERhT4zdtnyN13tEh2aH/5xD2l5ijXwMJrMrliGd9ipg4dfo6BOVI2W7V2VPhLgNq0K
+ rwNmpuxIeHJTEa2J6nUg/9ZqT/QOwy50hOnnDmytEeTER3kCXsYYVQRfW1fzlqvaaidJ
+ FwDxQiyDreo9BGWJKrUY4z24ogh9zY4PeWKAh0raMfqZG/gcPHlePCGDt8iWaybKSNql
+ mjM/zGBGwhmiupbx+ne5eYzJHh0LwIDEDYQBsnhbSBImj8hoUb74wASpl5ZTOQPTu5U0
+ Qrv8OxHvKJauLWLAbuxQjOO3Dy+23Dwz/4VN8DGoivTF5EAlPFnxK6Fx1CocUA8FJqIr
+ dWlg==
+X-Gm-Message-State: ACgBeo2v07cnAHZ7xxmNtZgHFFIM00SzTy2e8r6VBlnudCr34kCgdvKq
+ VuP+BnnsjxsxbZmeCD1iFgvN7OA08SYdKQ==
+X-Google-Smtp-Source: AA6agR5jqq4HR13QV4NjOJyLUDfVzNGQEZAmimcRy3kDhjfHX6OWAX3x1w/BfIb8s4plIHCJOjRu2Q==
+X-Received: by 2002:a65:6749:0:b0:434:1f8b:cb97 with SMTP id
+ c9-20020a656749000000b004341f8bcb97mr24158872pgu.360.1663007155026; 
+ Mon, 12 Sep 2022 11:25:55 -0700 (PDT)
 Received: from vmfolio.. (c-73-189-111-8.hsd1.ca.comcast.net. [73.189.111.8])
  by smtp.googlemail.com with ESMTPSA id
- x127-20020a626385000000b0053b2681b0e0sm5916894pfb.39.2022.09.12.11.25.49
+ x127-20020a626385000000b0053b2681b0e0sm5916894pfb.39.2022.09.12.11.25.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 12 Sep 2022 11:25:50 -0700 (PDT)
+ Mon, 12 Sep 2022 11:25:54 -0700 (PDT)
 From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To: linux-fsdevel@vger.kernel.org
-Date: Mon, 12 Sep 2022 11:22:19 -0700
-Message-Id: <20220912182224.514561-19-vishal.moola@gmail.com>
+Date: Mon, 12 Sep 2022 11:22:21 -0700
+Message-Id: <20220912182224.514561-21-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220912182224.514561-1-vishal.moola@gmail.com>
 References: <20220912182224.514561-1-vishal.moola@gmail.com>
 MIME-Version: 1.0
-X-Headers-End: 1oXo84-0003nJ-Ki
-Subject: [f2fs-dev] [PATCH v2 18/23] nilfs2: Convert
- nilfs_lookup_dirty_data_buffers() to use filemap_get_folios_tag()
+X-Headers-End: 1oXo88-0003nd-Jn
+Subject: [f2fs-dev] [PATCH v2 20/23] nilfs2: Convert
+ nilfs_btree_lookup_dirty_buffers() to use filemap_get_folios_tag()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -101,10 +101,10 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Cc: linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
  "Vishal Moola \(Oracle\)" <vishal.moola@gmail.com>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- cluster-devel@redhat.com, linux-mm@kvack.org, ceph-devel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-afs@lists.infradead.org,
- linux-btrfs@vger.kernel.org
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+ linux-mm@kvack.org, ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -113,76 +113,50 @@ Convert function to use folios throughout. This is in preparation for
 the removal of find_get_pages_range_tag().
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 ---
- fs/nilfs2/segment.c | 29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+ fs/nilfs2/btree.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index 0afe0832c754..c3f3484c4412 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -680,7 +680,7 @@ static size_t nilfs_lookup_dirty_data_buffers(struct inode *inode,
- 					      loff_t start, loff_t end)
- {
- 	struct address_space *mapping = inode->i_mapping;
+diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
+index 9f4d9432d38a..1e26f32a4e36 100644
+--- a/fs/nilfs2/btree.c
++++ b/fs/nilfs2/btree.c
+@@ -2143,7 +2143,7 @@ static void nilfs_btree_lookup_dirty_buffers(struct nilfs_bmap *btree,
+ 	struct inode *btnc_inode = NILFS_BMAP_I(btree)->i_assoc_inode;
+ 	struct address_space *btcache = btnc_inode->i_mapping;
+ 	struct list_head lists[NILFS_BTREE_LEVEL_MAX];
 -	struct pagevec pvec;
 +	struct folio_batch fbatch;
- 	pgoff_t index = 0, last = ULONG_MAX;
- 	size_t ndirties = 0;
- 	int i;
-@@ -694,23 +694,26 @@ static size_t nilfs_lookup_dirty_data_buffers(struct inode *inode,
- 		index = start >> PAGE_SHIFT;
- 		last = end >> PAGE_SHIFT;
- 	}
+ 	struct buffer_head *bh, *head;
+ 	pgoff_t index = 0;
+ 	int level, i;
+@@ -2153,19 +2153,19 @@ static void nilfs_btree_lookup_dirty_buffers(struct nilfs_bmap *btree,
+ 	     level++)
+ 		INIT_LIST_HEAD(&lists[level]);
+ 
 -	pagevec_init(&pvec);
 +	folio_batch_init(&fbatch);
-  repeat:
- 	if (unlikely(index > last) ||
--	    !pagevec_lookup_range_tag(&pvec, mapping, &index, last,
--				PAGECACHE_TAG_DIRTY))
-+	      !filemap_get_folios_tag(mapping, &index, last,
-+		      PAGECACHE_TAG_DIRTY, &fbatch))
- 		return ndirties;
  
--	for (i = 0; i < pagevec_count(&pvec); i++) {
-+	for (i = 0; i < folio_batch_count(&fbatch); i++) {
- 		struct buffer_head *bh, *head;
--		struct page *page = pvec.pages[i];
-+		struct folio *folio = fbatch.folios[i];
- 
--		lock_page(page);
--		if (!page_has_buffers(page))
--			create_empty_buffers(page, i_blocksize(inode), 0);
--		unlock_page(page);
-+		folio_lock(folio);
-+		head = folio_buffers(folio);
-+		if (!head) {
-+			create_empty_buffers(&folio->page, i_blocksize(inode), 0);
-+			head = folio_buffers(folio);
-+		}
-+		folio_unlock(folio);
- 
--		bh = head = page_buffers(page);
-+		bh = head;
- 		do {
- 			if (!buffer_dirty(bh) || buffer_async_write(bh))
- 				continue;
-@@ -718,13 +721,13 @@ static size_t nilfs_lookup_dirty_data_buffers(struct inode *inode,
- 			list_add_tail(&bh->b_assoc_buffers, listp);
- 			ndirties++;
- 			if (unlikely(ndirties >= nlimit)) {
--				pagevec_release(&pvec);
-+				folio_batch_release(&fbatch);
- 				cond_resched();
- 				return ndirties;
- 			}
- 		} while (bh = bh->b_this_page, bh != head);
+-	while (pagevec_lookup_tag(&pvec, btcache, &index,
+-					PAGECACHE_TAG_DIRTY)) {
+-		for (i = 0; i < pagevec_count(&pvec); i++) {
+-			bh = head = page_buffers(pvec.pages[i]);
++	while (filemap_get_folios_tag(btcache, &index, (pgoff_t)-1,
++				PAGECACHE_TAG_DIRTY, &fbatch)) {
++		for (i = 0; i < folio_batch_count(&fbatch); i++) {
++			bh = head = folio_buffers(fbatch.folios[i]);
+ 			do {
+ 				if (buffer_dirty(bh))
+ 					nilfs_btree_add_dirty_buffer(btree,
+ 								     lists, bh);
+ 			} while ((bh = bh->b_this_page) != head);
+ 		}
+-		pagevec_release(&pvec);
++		folio_batch_release(&fbatch);
+ 		cond_resched();
  	}
--	pagevec_release(&pvec);
-+	folio_batch_release(&fbatch);
- 	cond_resched();
- 	goto repeat;
- }
+ 
 -- 
 2.36.1
 
