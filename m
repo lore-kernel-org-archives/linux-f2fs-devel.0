@@ -4,53 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 707BEECAAD8
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Sep 2022 23:05:06 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8AA45C54EE9
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Sep 2022 23:59:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oYExj-0001Mm-Cg;
-	Tue, 13 Sep 2022 23:05:03 +0000
+	id 1oYFoC-0006OK-Uj;
+	Tue, 13 Sep 2022 23:59:16 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <phdm@macqel.be>) id 1oYExh-0001MU-7h
+ (envelope-from <krisman@collabora.com>) id 1oYFoB-0006O7-SO
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Sep 2022 23:05:01 +0000
+ Tue, 13 Sep 2022 23:59:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:MIME-Version:Message-ID:Subject:To:
- From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KmKY4H5hjDAqrgHPX6aEmgmlnao3PFGaIetaaGFiisg=; b=L5ri9bkMrudM5e58pQkeXXIZEV
- SH0RyduaMghxr7x5YvosjAmgAXMse3Xea90dEEdJ7AVAFp6qfOrhFLMeuPmNfOd/iEGcPNW7QrKzv
- WFRgpNKu5BYYDZBNC/p74Fca16JRLgL71wIH76pZTIlAjQHWG+hRsHGJulmfHHaLrJN0=;
+ bh=dW2wCaqcIDGiGOwrIxRGUl6eaX/RTAiDxiuyhdioejQ=; b=KaZT1urhV9/v/a/ExBWy1Q5VOX
+ ootSwKECsYL8kmG+bVKacJmdXkukc1JAB4hauVv10DZg0FwFiz8oJMagm5KqlrsF81wvsVWL33joN
+ YndBJhO+JrC47Zl5y+SCHdpNBsnqIybMckVOTqxpWhpM3xy4M2YWVOdLa2zhHBtJz5+c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:Sender:Reply-To
- :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=KmKY4H5hjDAqrgHPX6aEmgmlnao3PFGaIetaaGFiisg=; b=U
- N2xZ1QBukuASU8TnHfZUa56nbGkPl459tWGkD5gP3nM4YF3zes1nbTluUsliVa6fDg9oXwVnnecsS
- YGqzzUDqZrld8QIVQiQKypW5dJtkocBnpDiP9Lr9yvK6fV2HEe8tbtaRJ7MbKg9cFXBqMxhsxpKLx
- DerK54YWarcJyaaU=;
-Received: from smtp2.macqel.be ([109.135.2.61] helo=frolo.macqel.be)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtp (Exim 4.95)
- id 1oYExe-007LAM-MD for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Sep 2022 23:05:01 +0000
-Received: by frolo.macqel.be (Postfix, from userid 1000)
- id 1D40FDF00AC; Wed, 14 Sep 2022 00:49:08 +0200 (CEST)
-Date: Wed, 14 Sep 2022 00:49:08 +0200
-From: Philippe De Muyter <phdm@macq.eu>
-To: linux-f2fs-devel@lists.sourceforge.net
-Message-ID: <20220913224908.GA25100@172.21.0.10>
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=dW2wCaqcIDGiGOwrIxRGUl6eaX/RTAiDxiuyhdioejQ=; b=UzJrYjz0zibtnNEHoXtwKqwR3k
+ m+XLZXaURu2P1W6deuoaQxhLnXnLMRFa0tZeZJYK+wIQXRPLG0SwIZJwDcp0TYkQdQt7b1N8iJ50W
+ VzYg8An7Ly9zZxxO4yzbGFpkyK40KCIcVSWFagO9MzBNEisAM+pL0qx6lbJ+OwitTIuE=;
+Received: from madras.collabora.co.uk ([46.235.227.172])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1oYFo8-007NNM-6o for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Sep 2022 23:59:15 +0000
+Received: from localhost (modemcable141.102-20-96.mc.videotron.ca
+ [96.20.102.141])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+ (No client certificate requested) (Authenticated sender: krisman)
+ by madras.collabora.co.uk (Postfix) with ESMTPSA id 56A71660202D;
+ Wed, 14 Sep 2022 00:42:27 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+ s=mail; t=1663112547;
+ bh=a33LMC7xxApIQS2vau/J9KxbbG+qcYU2mrhACXJxisg=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=VzwXBSiNN+zYMTtwTysycDDzOhH1BBsvSRA/aeR937W3n1UU+6ndHVaIzVxufhNdC
+ 6ZYfb3D2auU11w0z2mkFIb1VUtR7gFQ3dJkL5Ntqr/uiXUdur6oCu4yg2bya5YdTCj
+ g1T0hrP0WDdBBXVxFO9I1CfcAcxUzu/DO+32NxnqoySZ9opIgGHWMwZbjg7WHBStf0
+ CktS7yznxCJ3h6aWsmVbtd5lUzh8Rq16F9jUG1+Ky8vKvd2FYtkCjqK9s3o0kWd2ET
+ dsxUxBWk+A4dppPMrFTpi0n3QJsABPCCm0qi0/R+/ykz2+Ds0CiDDdmSMHe0qzbqwJ
+ FzpDfyXTimG7g==
+From: Gabriel Krisman Bertazi <krisman@collabora.com>
+To: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+ ebiggers@kernel.org
+Date: Tue, 13 Sep 2022 19:41:49 -0400
+Message-Id: <20220913234150.513075-8-krisman@collabora.com>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220913234150.513075-1-krisman@collabora.com>
+References: <20220913234150.513075-1-krisman@collabora.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-User-Agent: Mutt/1.5.16 (2007-06-09)
-X-Headers-End: 1oYExe-007LAM-MD
-Subject: [f2fs-dev] concern about f2fs and fsck.f2fs
+X-Headers-End: 1oYFo8-007NNM-6o
+Subject: [f2fs-dev] [PATCH v9 7/8] ext4: Move CONFIG_UNICODE defguards into
+ the code flow
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -62,152 +81,218 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>,
+ kernel@collabora.com, Eric Biggers <ebiggers@google.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello,
+Instead of a bunch of ifdefs, make the unicode built checks part of the
+code flow where possible, as requested by Torvalds.
 
-I use the f2fs version from linux 4.1.15 for the root partition of our product.
-At that time, fsck.f2fs did nothing.  But now I feel the need to run fsck.f2fs
-in a initramfs at startup.
+Reviewed-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-I have cloned f2fs-tools and compiled version 1.14 of f2fs.fsck, and used
-it to check and fix automatically, with option '-y', my root partition.
+---
+Changes since v8:
+  - Rebase on top of 3030b59c8533 ("ext4: cleanup function defs from ext4.h into crypto.c")
+Changes since v5:
+  - Drop err variable (eric)
+Changes since v4:
+  - Create stub for !CONFIG_UNICODE case (eric)
+---
+ fs/ext4/crypto.c | 15 +++------------
+ fs/ext4/ext4.h   | 32 ++++++++++++++++++++------------
+ fs/ext4/namei.c  | 15 ++++++---------
+ fs/ext4/super.c  |  4 +---
+ 4 files changed, 30 insertions(+), 36 deletions(-)
 
-When running it on a previously fsck'd partition, where I had installed
-new files and shutdown the system properly, I have run fsck.f2fs and
-it gave me thousands of messages
-
- [FIX] (fsck_chk_inode_blk:1141)  --> Regular: 0x13cc1 reset i_gc_failures from 0x1 to 0x00
- ...
- [FIX] (fsck_chk_inode_blk:1141)  --> Regular: 0x81b4 reset i_gc_failures from 0x1 to 0x00
-
-and finished with :
-
- [FSCK] Check node 76051 / 76058 (100.00%)
+diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
+index e20ac0654b3f..c65d8a5f8315 100644
+--- a/fs/ext4/crypto.c
++++ b/fs/ext4/crypto.c
+@@ -31,10 +31,7 @@ int ext4_fname_setup_filename(struct inode *dir, const struct qstr *iname,
  
- [FSCK] Max image size: 3600 MB, Free space: 887 MB
- [FSCK] Unreachable nat entries                        [Ok..] [0x0]
- [FSCK] SIT valid block bitmap checking                [Ok..]
- [FSCK] Hard link checking for regular file            [Ok..] [0x956]
- [FSCK] valid_block_count matching with CP             [Ok..] [0x96a9c]
- [FSCK] valid_node_count matching with CP (de lookup)  [Ok..] [0x1291a]
- [FSCK] valid_node_count matching with CP (nat lookup) [Ok..] [0x1291a]
- [FSCK] valid_inode_count matched with CP              [Ok..] [0x1280b]
- [FSCK] free segment_count matched with CP             [Ok..] [0x217]
- [FSCK] next block offset is free                      [Ok..]
- [FSCK] fixing SIT types
- [FSCK] other corrupted bugs                           [Ok..]
- Info: Duplicate valid checkpoint to mirror position 1024 -> 512
- Info: Write valid nat_bits in checkpoint
- Info: Write valid nat_bits in checkpoint
+ 	ext4_fname_from_fscrypt_name(fname, &name);
  
- Done: 288.437391 secs
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	err = ext4_fname_setup_ci_filename(dir, iname, fname);
+-#endif
+-	return err;
++	return ext4_fname_setup_ci_filename(dir, iname, fname);
+ }
  
-But, afterwards, when the f2fs driver in the kernel worked with the fixed file
-system, it complained, only once, with :
-
- [ 2349.673407] ------------[ cut here ]------------
- [ 2349.676777] WARNING: CPU: 0 PID: 2359 at fs/f2fs/node.c:1863 flush_nat_entries+0x734/0x7c4()
- [ 2349.683996] Modules linked in:
- [ 2349.685796] CPU: 0 PID: 2359 Comm: python3 Not tainted 4.1.15-02177-gcef0cbe-dirty #166
- [ 2349.692527] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
- [ 2349.697780] [<80015f58>] (unwind_backtrace) from [<80012020>] (show_stack+0x10/0x14)
- [ 2349.704273] [<80012020>] (show_stack) from [<80732e64>] (dump_stack+0x68/0xb8)
- [ 2349.710205] [<80732e64>] (dump_stack) from [<8002b694>] (warn_slowpath_common+0x74/0xac)
- [ 2349.717031] [<8002b694>] (warn_slowpath_common) from [<8002b6e8>] (warn_slowpath_null+0x1c/0x24)
- [ 2349.724545] [<8002b6e8>] (warn_slowpath_null) from [<8024f8dc>] (flush_nat_entries+0x734/0x7c4)
- [ 2349.731950] [<8024f8dc>] (flush_nat_entries) from [<8024456c>] (write_checkpoint+0x208/0xe68)
- [ 2349.739207] [<8024456c>] (write_checkpoint) from [<802400c4>] (f2fs_sync_fs+0x50/0x70)
- [ 2349.745859] [<802400c4>] (f2fs_sync_fs) from [<8010436c>] (sync_fs_one_sb+0x28/0x2c)
- [ 2349.752315] [<8010436c>] (sync_fs_one_sb) from [<800df9e0>] (iterate_supers+0xac/0xd4)
- [ 2349.758960] [<800df9e0>] (iterate_supers) from [<80104414>] (sys_sync+0x48/0x98)
- [ 2349.765094] [<80104414>] (sys_sync) from [<8000f440>] (ret_fast_syscall+0x0/0x3c)
- [ 2349.771296] ---[ end trace 5d91f10cd7a61715 ]---
-
-fs/f2fs/node.c:1863 is here :
-
-        /* flush dirty nats in nat entry set */
-        list_for_each_entry_safe(ne, cur, &set->entry_list, list) {
-                struct f2fs_nat_entry *raw_ne;
-                nid_t nid = nat_get_nid(ne);
-                int offset;
-
-                if (nat_get_blkaddr(ne) == NEW_ADDR)
-                        continue;
-
-                if (to_journal) {
-                        offset = lookup_journal_in_cursum(sum,
-                                                        NAT_JOURNAL, nid, 1);
-HERE >>>>>>>>>>         f2fs_bug_on(sbi, offset < 0);
-                        raw_ne = &nat_in_journal(sum, offset);
-                        nid_in_journal(sum, offset) = cpu_to_le32(nid);
-                } else {
-                        raw_ne = &nat_blk->entries[nid - start_nid];
-                }
-                raw_nat_from_node_info(raw_ne, &ne->ni);
-
-                down_write(&NM_I(sbi)->nat_tree_lock);
-                nat_reset_flag(ne);
-                __clear_nat_cache_dirty(NM_I(sbi), ne);
-                up_write(&NM_I(sbi)->nat_tree_lock);
-
-                if (nat_get_blkaddr(ne) == NULL_ADDR)
-                        add_free_nid(sbi, nid, false);
-        }
-
-Is that 'offset < 0', probably '-1' as error return, really unexpected ?
-Is it caused by the fsck run on the filesystem ?
-Why does the driver continue with the negative offet instead of taking
-an error path ?
-Crashing the kernel is not an option as this runs on unattended devices,
-and consequently F2FS_CHECK_FS is not set.
-
-Afterwards, the kernel continued to run but issued those messages
-
- attempt to access beyond end of device
- mmcblk0p2: rw=16384, want=5798631936, limit=7372800
-
-with various rw and want values.
-
-After a second clean shutdown and reboot, initramfs ran again fsck.f2fs, and
-this time I had much less 'reset i_gc_failures' messages, but many 'Set node summary'
-and some 'Set data summary 0x6b1' messages, and a summary with 'Fail' reports.
-
- [FIX] (is_valid_ssa_node_blk: 201)  --> Set node summary 0x67a -> [0x9428] [0xd165c]
- [FIX] (is_valid_ssa_node_blk: 201)  --> Set node summary 0x67a -> [0x9429] [0xd165d]
- [FIX] (is_valid_ssa_node_blk: 201)  --> Set node summary 0x67a -> [0x95aa] [0xd168a]
- [FIX] (is_valid_ssa_node_blk: 201)  --> Set node summary 0x67a -> [0x95ab] [0xd168b]
- [FSCK] Check node 76051 / 76058 (100.00%)
+ int ext4_fname_prepare_lookup(struct inode *dir, struct dentry *dentry,
+@@ -49,10 +46,7 @@ int ext4_fname_prepare_lookup(struct inode *dir, struct dentry *dentry,
  
- NID[0x9f4d] is unreachable, blkaddr:0xcd353
- [FSCK] Max image size: 3600 MB, Free space: 887 MB
- [FSCK] Unreachable nat entries                        [Fail] [0x1]
- [FSCK] SIT valid block bitmap checking                [Ok..]
- [FSCK] Hard link checking for regular file            [Ok..] [0x956]
- [FSCK] valid_block_count matching with CP             [Ok..] [0x96a9c]
- [FSCK] valid_node_count matching with CP (de lookup)  [Ok..] [0x1291a]
- [FSCK] valid_node_count matching with CP (nat lookup) [Fail] [0x1291b]
- [FSCK] valid_inode_count matched with CP              [Ok..] [0x1280b]
- [FSCK] free segment_count matched with CP             [Ok..] [0x23a]
- [FSCK] next block offset is free                      [Ok..]
- [FSCK] fixing SIT types
- [FSCK] other corrupted bugs                           [Ok..]
+ 	ext4_fname_from_fscrypt_name(fname, &name);
+ 
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	err = ext4_fname_setup_ci_filename(dir, &dentry->d_name, fname);
+-#endif
+-	return err;
++	return ext4_fname_setup_ci_filename(dir, &dentry->d_name, fname);
+ }
+ 
+ void ext4_fname_free_filename(struct ext4_filename *fname)
+@@ -66,10 +60,7 @@ void ext4_fname_free_filename(struct ext4_filename *fname)
+ 	fname->usr_fname = NULL;
+ 	fname->disk_name.name = NULL;
+ 
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	kfree(fname->cf_name.name);
+-	fname->cf_name.name = NULL;
+-#endif
++	ext4_fname_free_ci_filename(fname);
+ }
+ 
+ static bool uuid_is_zero(__u8 u[16])
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 9717b9832425..f2a673ac67fe 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2734,8 +2734,24 @@ ext4_fsblk_t ext4_inode_to_goal_block(struct inode *);
+ 
+ #if IS_ENABLED(CONFIG_UNICODE)
+ extern int ext4_fname_setup_ci_filename(struct inode *dir,
+-					 const struct qstr *iname,
+-					 struct ext4_filename *fname);
++					const struct qstr *iname,
++					struct ext4_filename *fname);
++
++static inline void ext4_fname_free_ci_filename(struct ext4_filename *fname)
++{
++	kfree(fname->cf_name.name);
++	fname->cf_name.name = NULL;
++}
++#else
++static inline int ext4_fname_setup_ci_filename(struct inode *dir,
++					       const struct qstr *iname,
++					       struct ext4_filename *fname)
++{
++	return 0;
++}
++static inline void ext4_fname_free_ci_filename(struct ext4_filename *fname)
++{
++}
+ #endif
+ 
+ /* ext4 encryption related stuff goes here crypto.c */
+@@ -2758,16 +2774,11 @@ static inline int ext4_fname_setup_filename(struct inode *dir,
+ 					    int lookup,
+ 					    struct ext4_filename *fname)
+ {
+-	int err = 0;
+ 	fname->usr_fname = iname;
+ 	fname->disk_name.name = (unsigned char *) iname->name;
+ 	fname->disk_name.len = iname->len;
+ 
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	err = ext4_fname_setup_ci_filename(dir, iname, fname);
+-#endif
+-
+-	return err;
++	return ext4_fname_setup_ci_filename(dir, iname, fname);
+ }
+ 
+ static inline int ext4_fname_prepare_lookup(struct inode *dir,
+@@ -2779,10 +2790,7 @@ static inline int ext4_fname_prepare_lookup(struct inode *dir,
+ 
+ static inline void ext4_fname_free_filename(struct ext4_filename *fname)
+ {
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	kfree(fname->cf_name.name);
+-	fname->cf_name.name = NULL;
+-#endif
++	ext4_fname_free_ci_filename(fname);
+ }
+ 
+ static inline int ext4_ioctl_get_encryption_pwsalt(struct file *filp,
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 959346950b3c..100715586473 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1811,8 +1811,7 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
+ 		}
+ 	}
+ 
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	if (!inode && IS_CASEFOLDED(dir)) {
++	if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
+ 		/* Eventually we want to call d_add_ci(dentry, NULL)
+ 		 * for negative dentries in the encoding case as
+ 		 * well.  For now, prevent the negative dentry
+@@ -1820,7 +1819,7 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
+ 		 */
+ 		return NULL;
+ 	}
+-#endif
++
+ 	return d_splice_alias(inode, dentry);
+ }
+ 
+@@ -3138,16 +3137,14 @@ static int ext4_rmdir(struct inode *dir, struct dentry *dentry)
+ 	ext4_fc_track_unlink(handle, dentry);
+ 	retval = ext4_mark_inode_dirty(handle, dir);
+ 
+-#if IS_ENABLED(CONFIG_UNICODE)
+ 	/* VFS negative dentries are incompatible with Encoding and
+ 	 * Case-insensitiveness. Eventually we'll want avoid
+ 	 * invalidating the dentries here, alongside with returning the
+ 	 * negative dentries at ext4_lookup(), when it is better
+ 	 * supported by the VFS for the CI case.
+ 	 */
+-	if (IS_CASEFOLDED(dir))
++	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+ 		d_invalidate(dentry);
+-#endif
+ 
+ end_rmdir:
+ 	brelse(bh);
+@@ -3243,16 +3240,16 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
+ 	retval = __ext4_unlink(handle, dir, &dentry->d_name, d_inode(dentry));
+ 	if (!retval)
+ 		ext4_fc_track_unlink(handle, dentry);
+-#if IS_ENABLED(CONFIG_UNICODE)
++
+ 	/* VFS negative dentries are incompatible with Encoding and
+ 	 * Case-insensitiveness. Eventually we'll want avoid
+ 	 * invalidating the dentries here, alongside with returning the
+ 	 * negative dentries at ext4_lookup(), when it is  better
+ 	 * supported by the VFS for the CI case.
+ 	 */
+-	if (IS_CASEFOLDED(dir))
++	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+ 		d_invalidate(dentry);
+-#endif
++
+ 	if (handle)
+ 		ext4_journal_stop(handle);
+ 
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 9a66abcca1a8..6c8f5fa5e455 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3569,14 +3569,12 @@ int ext4_feature_set_ok(struct super_block *sb, int readonly)
+ 		return 0;
+ 	}
+ 
+-#if !IS_ENABLED(CONFIG_UNICODE)
+-	if (ext4_has_feature_casefold(sb)) {
++	if (!IS_ENABLED(CONFIG_UNICODE) && ext4_has_feature_casefold(sb)) {
+ 		ext4_msg(sb, KERN_ERR,
+ 			 "Filesystem with casefold feature cannot be "
+ 			 "mounted without CONFIG_UNICODE");
+ 		return 0;
+ 	}
+-#endif
+ 
+ 	if (readonly)
+ 		return 1;
+-- 
+2.37.3
 
-Thereafter, while running linux I haven't received any warning about 'offset < 0',
-nor about 'attempt to access beyond end of device'.
-
-But now I feel unsecure about my filesystem,
-
-Should I use an older version of fsck.f2fs (which one) or 1.15 ?
-
-Is there a patch to do something more than spit a warning but still continue
-with that negative offset ?
-
-Best regards
-
-Philippe
 
 
 _______________________________________________
