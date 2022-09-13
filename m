@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D4C14C6FA8D
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B47D1C6FA89
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Sep 2022 23:59:26 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oYFoM-0006PI-FH;
+	id 1oYFoM-0002OA-0b;
 	Tue, 13 Sep 2022 23:59:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@collabora.com>) id 1oYFoJ-0006Oh-FR
+ (envelope-from <krisman@collabora.com>) id 1oYFoJ-0002Nd-Nv
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 13 Sep 2022 23:59:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IthQB+mtGuM5QYdAz0buDSFRWXH53Zpia5+kSOJXueQ=; b=cSVryrTwMVbbjUJz8WO/JXK9co
- y+NT48qr1CUGMXyck6l0sB7EuYWVSqP/M98uy7qlqSfnKGrPYf2+iP7JPzh9EXUhIAvpKNg4gp2fd
- 5DWwRjLAPpBvUOL/JqzyCW1ZoYL7ULq6Lxorm0ML/3BeFPfm0dJQWZ82oanIuJ5KkaS4=;
+ bh=nct0Xqx9xo6NxUTEV0FFU5XM/7Svdyzp7scuHFBx/bM=; b=Pmo9ZE32+k7yzjtr7wvI3isqiO
+ qmMhLjcIfnlv76iJIc2KniD7PejQKeVfpJvNT0T0s+aRUeOOJvmgvfVWrM0j0yXjqScdmedRaK5EI
+ 6Qa1Zf+pnQHfWKB8NdSExPseYiIhfCFwSPDpwkumNZWcfj/HMpzCtsABGUWHhmxLO8BE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,43 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=IthQB+mtGuM5QYdAz0buDSFRWXH53Zpia5+kSOJXueQ=; b=cCvma3cgclQzBrUMsAYXWdNFFb
- 0s5Mgyc8hPIi/ldApu39Ru2NIa/hA09ueUAnOrUyOVXXpNnZ8t5CeECngKRdUMo9OGCValYRdKnmw
- UaZ6bW87bDbxdJi13xi0q+R+gWM+AoHG2trgxDHCLP2zz2glO/x76SWDOWH+7vuvXUgc=;
+ bh=nct0Xqx9xo6NxUTEV0FFU5XM/7Svdyzp7scuHFBx/bM=; b=Z2ZmcQn56reaMAcPytgnf6NVuk
+ dC1jp/i+IPWrCXhY7oyosJVbvSs/9SZDcYMHzOE2s9QmPw8KSJwsXfmN22QlGSTj7xd6W/1iq9Tf8
+ h4YGHFmnVQQoSfuZYXpmOJApLSYcGo5mpSYHzYZaT4C1jr83kAMpwqyU/ubIpthZxVao=;
 Received: from madras.collabora.co.uk ([46.235.227.172])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oYFoI-00035q-57 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Sep 2022 23:59:22 +0000
+ id 1oYFoI-00035p-4j for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Sep 2022 23:59:23 +0000
 Received: from localhost (modemcable141.102-20-96.mc.videotron.ca
  [96.20.102.141])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (No client certificate requested) (Authenticated sender: krisman)
- by madras.collabora.co.uk (Postfix) with ESMTPSA id 2E826660201D;
- Wed, 14 Sep 2022 00:42:19 +0100 (BST)
+ by madras.collabora.co.uk (Postfix) with ESMTPSA id 2D63E6601FF1;
+ Wed, 14 Sep 2022 00:42:07 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
- s=mail; t=1663112539;
- bh=faqmgQTGUmRIw+3ntvGWmd2h/vTEsHbxKjStw+7u9dI=;
+ s=mail; t=1663112527;
+ bh=j78UN+kM/OR2Ug6pmweMA9wum9zMeWGj6iYav82N+RA=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=L9oBiu9VSRpXLsF5E+Ed1qRiI5VHFd7Q0ILfzK7TE1D/BeyubpPhS+7O6/DwpdLX6
- 9sFUlnJiAB/QJ/3ER0EZ5Qtx2tVlBuzOs8AhMnQOrwHoC3Iu+ZWOdpU7+xAgLuu+XG
- XZ4tXJzrIySQ6Q8nXKjrjZ6iIh79YdNe6cpwukIYFrGLjzLQ0Eg33aSUB4+yd6KfZ+
- X3GYB6X1ZY8WJMriZ94BnphSzkN/y9WR6mH+aM8Sh0A296LAKRFOGyuSH+9Tb+2AzN
- wiV9L3zn1WaKtA/umjXzAgmnhzq+2vkzJwSNUaf0nN8AuqFioAqdt9aNu6uobyq/Z2
- TClDgBeZY5SmQ==
+ b=GDxU+bzRD2OyjECYsxQ70T5d1iGSlf97t7LFYwAI9DE5aIrrETDmYowz0TPPKfMBa
+ cZ4pWF+K5t6ZcyjnGBh5t/opNqSZFVbLiXHcHvpW7J13rAP9z0wLtgVvGy1zL+nVhE
+ FW1NWLPVchEDc4zdZvgVyfwiRPum96nuWVCctMszmnCoVUkQOEvClmknlliKzLv9cL
+ xYVM6ucAuX6KW7KtTEuurBQdqjj5BGtQJsTtk6TAllADcdBGUY3ASn6fbMLmorc9YK
+ XZBDlYF7Xtu6wlI097JyVcg1C0K2mUxDgE2TZaAz+4bbinNy/Jn4Fs5FakTbO5qeg4
+ HkGWOchksOI0g==
 From: Gabriel Krisman Bertazi <krisman@collabora.com>
 To: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
  ebiggers@kernel.org
-Date: Tue, 13 Sep 2022 19:41:47 -0400
-Message-Id: <20220913234150.513075-6-krisman@collabora.com>
+Date: Tue, 13 Sep 2022 19:41:44 -0400
+Message-Id: <20220913234150.513075-3-krisman@collabora.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20220913234150.513075-1-krisman@collabora.com>
 References: <20220913234150.513075-1-krisman@collabora.com>
 MIME-Version: 1.0
-X-Headers-End: 1oYFoI-00035q-57
-Subject: [f2fs-dev] [PATCH v9 5/8] f2fs: Reuse generic_ci_match for ci
- comparisons
+X-Headers-End: 1oYFoI-00035p-4j
+Subject: [f2fs-dev] [PATCH v9 2/8] f2fs: Simplify the handling of cached
+ insensitive names
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,104 +81,174 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: kernel@collabora.com, Eric Biggers <ebiggers@google.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
- Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc: linux-ext4@vger.kernel.org, Gabriel Krisman Bertazi <krisman@collabora.com>,
+ kernel@collabora.com, Eric Biggers <ebiggers@google.com>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Now that ci_match is part of libfs, make f2fs reuse it instead of having
-a different implementation.
+Keeping it as qstr avoids the unnecessary conversion in f2fs_match
 
-Reviewed-by: Chao Yu <chao@kernel.org>
 Reviewed-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
 ---
-Changes since v3:
-  - Drop cast (eric)
-  - fix unused variable iff !CONFIG_UNICODE (lkp)
+Changes since v4:
+  - Fix inconsistent return on error (eric)
 ---
- fs/f2fs/dir.c | 58 ++++-----------------------------------------------
- 1 file changed, 4 insertions(+), 54 deletions(-)
+ fs/f2fs/dir.c      | 53 ++++++++++++++++++++++++++--------------------
+ fs/f2fs/f2fs.h     | 15 ++++++++++++-
+ fs/f2fs/recovery.c |  5 +----
+ 3 files changed, 45 insertions(+), 28 deletions(-)
 
 diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 98db333a1338..bce3727de3c9 100644
+index d5bd7932fb64..98db333a1338 100644
 --- a/fs/f2fs/dir.c
 +++ b/fs/f2fs/dir.c
-@@ -218,58 +218,6 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
- 	return f2fs_find_target_dentry(&d, fname, max_slots);
+@@ -75,35 +75,49 @@ unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de)
+ 	return DT_UNKNOWN;
  }
  
++#if IS_ENABLED(CONFIG_UNICODE)
+ /* If @dir is casefolded, initialize @fname->cf_name from @fname->usr_fname. */
+ int f2fs_init_casefolded_name(const struct inode *dir,
+ 			      struct f2fs_filename *fname)
+ {
 -#if IS_ENABLED(CONFIG_UNICODE)
--/*
-- * Test whether a case-insensitive directory entry matches the filename
-- * being searched for.
-- *
-- * Returns 1 for a match, 0 for no match, and -errno on an error.
-- */
--static int f2fs_match_ci_name(const struct inode *dir, const struct qstr *name,
--			       const u8 *de_name, u32 de_name_len)
--{
--	const struct super_block *sb = dir->i_sb;
--	const struct unicode_map *um = sb->s_encoding;
--	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
--	struct qstr entry = QSTR_INIT(de_name, de_name_len);
--	int res;
--
--	if (IS_ENCRYPTED(dir)) {
--		const struct fscrypt_str encrypted_name =
--			FSTR_INIT((u8 *)de_name, de_name_len);
--
--		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(dir)))
--			return -EINVAL;
--
--		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
--		if (!decrypted_name.name)
--			return -ENOMEM;
--		res = fscrypt_fname_disk_to_usr(dir, 0, 0, &encrypted_name,
--						&decrypted_name);
--		if (res < 0)
--			goto out;
--		entry.name = decrypted_name.name;
--		entry.len = decrypted_name.len;
+ 	struct super_block *sb = dir->i_sb;
++	unsigned char *buf;
++	int len;
+ 
+ 	if (IS_CASEFOLDED(dir) &&
+ 	    !is_dot_dotdot(fname->usr_fname->name, fname->usr_fname->len)) {
+-		fname->cf_name.name = f2fs_kmem_cache_alloc(f2fs_cf_name_slab,
+-					GFP_NOFS, false, F2FS_SB(sb));
+-		if (!fname->cf_name.name)
++		buf = f2fs_kmem_cache_alloc(f2fs_cf_name_slab,
++					    GFP_NOFS, false, F2FS_SB(sb));
++		if (!buf)
+ 			return -ENOMEM;
+-		fname->cf_name.len = utf8_casefold(sb->s_encoding,
+-						   fname->usr_fname,
+-						   fname->cf_name.name,
+-						   F2FS_NAME_LEN);
+-		if ((int)fname->cf_name.len <= 0) {
+-			kmem_cache_free(f2fs_cf_name_slab, fname->cf_name.name);
+-			fname->cf_name.name = NULL;
++
++		len = utf8_casefold(sb->s_encoding, fname->usr_fname,
++				    buf, F2FS_NAME_LEN);
++		if (len <= 0) {
++			kmem_cache_free(f2fs_cf_name_slab, buf);
+ 			if (sb_has_strict_encoding(sb))
+ 				return -EINVAL;
+ 			/* fall back to treating name as opaque byte sequence */
++			return 0;
+ 		}
++		fname->cf_name.name = buf;
++		fname->cf_name.len = len;
+ 	}
+-#endif
++
+ 	return 0;
+ }
+ 
++void f2fs_free_casefolded_name(struct f2fs_filename *fname)
++{
++	unsigned char *buf = (unsigned char *)fname->cf_name.name;
++
++	if (buf) {
++		kmem_cache_free(f2fs_cf_name_slab, buf);
++		fname->cf_name.name = NULL;
++	}
++}
++#endif /* CONFIG_UNICODE */
++
+ static int __f2fs_setup_filename(const struct inode *dir,
+ 				 const struct fscrypt_name *crypt_name,
+ 				 struct f2fs_filename *fname)
+@@ -175,12 +189,7 @@ void f2fs_free_filename(struct f2fs_filename *fname)
+ 	kfree(fname->crypto_buf.name);
+ 	fname->crypto_buf.name = NULL;
+ #endif
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	if (fname->cf_name.name) {
+-		kmem_cache_free(f2fs_cf_name_slab, fname->cf_name.name);
+-		fname->cf_name.name = NULL;
 -	}
--
--	res = utf8_strncasecmp_folded(um, name, &entry);
--	/*
--	 * In strict mode, ignore invalid names.  In non-strict mode,
--	 * fall back to treating them as opaque byte sequences.
--	 */
--	if (res < 0 && !sb_has_strict_encoding(sb)) {
--		res = name->len == entry.len &&
--				memcmp(name->name, entry.name, name->len) == 0;
--	} else {
--		/* utf8_strncasecmp_folded returns 0 on match */
--		res = (res == 0);
--	}
--out:
--	kfree(decrypted_name.name);
--	return res;
--}
--#endif /* CONFIG_UNICODE */
--
- static inline int f2fs_match_name(const struct inode *dir,
- 				   const struct f2fs_filename *fname,
- 				   const u8 *de_name, u32 de_name_len)
-@@ -278,8 +226,10 @@ static inline int f2fs_match_name(const struct inode *dir,
+-#endif
++	f2fs_free_casefolded_name(fname);
+ }
+ 
+ static unsigned long dir_block_index(unsigned int level,
+@@ -268,11 +277,9 @@ static inline int f2fs_match_name(const struct inode *dir,
+ 	struct fscrypt_name f;
  
  #if IS_ENABLED(CONFIG_UNICODE)
- 	if (fname->cf_name.name)
--		return f2fs_match_ci_name(dir, &fname->cf_name,
--					  de_name, de_name_len);
-+		return generic_ci_match(dir, fname->usr_fname,
-+					&fname->cf_name,
-+					de_name, de_name_len);
-+
+-	if (fname->cf_name.name) {
+-		struct qstr cf = FSTR_TO_QSTR(&fname->cf_name);
+-
+-		return f2fs_match_ci_name(dir, &cf, de_name, de_name_len);
+-	}
++	if (fname->cf_name.name)
++		return f2fs_match_ci_name(dir, &fname->cf_name,
++					  de_name, de_name_len);
  #endif
  	f.usr_fname = fname->usr_fname;
  	f.disk_name = fname->disk_name;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3c7cdb70fe2e..2a0cc75665d6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -515,7 +515,7 @@ struct f2fs_filename {
+ 	 * internal operation where usr_fname is also NULL.  In all these cases
+ 	 * we fall back to treating the name as an opaque byte sequence.
+ 	 */
+-	struct fscrypt_str cf_name;
++	struct qstr cf_name;
+ #endif
+ };
+ 
+@@ -3484,8 +3484,21 @@ int f2fs_get_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+  * dir.c
+  */
+ unsigned char f2fs_get_de_type(struct f2fs_dir_entry *de);
++#if IS_ENABLED(CONFIG_UNICODE)
+ int f2fs_init_casefolded_name(const struct inode *dir,
+ 			      struct f2fs_filename *fname);
++void f2fs_free_casefolded_name(struct f2fs_filename *fname);
++#else
++static inline int f2fs_init_casefolded_name(const struct inode *dir,
++					    struct f2fs_filename *fname)
++{
++	return 0;
++}
++static inline void f2fs_free_casefolded_name(struct f2fs_filename *fname)
++{
++}
++#endif /* CONFIG_UNICODE */
++
+ int f2fs_setup_filename(struct inode *dir, const struct qstr *iname,
+ 			int lookup, struct f2fs_filename *fname);
+ int f2fs_prepare_lookup(struct inode *dir, struct dentry *dentry,
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index dcd0a1e35095..ead49ea25ae8 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -153,11 +153,8 @@ static int init_recovered_filename(const struct inode *dir,
+ 		if (err)
+ 			return err;
+ 		f2fs_hash_filename(dir, fname);
+-#if IS_ENABLED(CONFIG_UNICODE)
+ 		/* Case-sensitive match is fine for recovery */
+-		kmem_cache_free(f2fs_cf_name_slab, fname->cf_name.name);
+-		fname->cf_name.name = NULL;
+-#endif
++		f2fs_free_casefolded_name(fname);
+ 	} else {
+ 		f2fs_hash_filename(dir, fname);
+ 	}
 -- 
 2.37.3
 
