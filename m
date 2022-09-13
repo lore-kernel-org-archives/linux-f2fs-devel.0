@@ -4,65 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E9903C6FA89
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Sep 2022 15:02:50 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EC08DC6FA8E
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Sep 2022 15:02:51 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oY7R2-0007EA-CF;
-	Tue, 13 Sep 2022 15:02:48 +0000
+	id 1oY7Qs-0001aR-Sj;
+	Tue, 13 Sep 2022 15:02:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhangqilong3@huawei.com>) id 1oY7Qz-0007Dq-BF
+ (envelope-from <zhangqilong3@huawei.com>) id 1oY7Qn-0001aK-7Y
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 13 Sep 2022 15:02:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vkh8/jahfCXagIP5olbO8bz0eG4YR9zl53OI+OWUvYY=; b=kw/cTNtqO3zmmtvBKKYRDZxzF5
- oMZAAt2AL/ujk1jvarpRjDEE1EDmmOpmTIGXXWDWS8vMP8+rYKvR3hKMWr7ntlS2gFYwfaL1j71tS
- vkE/UA/SJETqXIIDShn3kIZWWqrPahKbUFV18jkRxOu1kuvs24uez6n6jZ4UK7AiSCOo=;
+ bh=iOmqrGT7VLaNy0izFr47G/81mka1A+iMQol5j8Pp6AE=; b=kXmduoGML9Nq1+Mo1rl2/W11es
+ Y8DQR1Ec/hmguKG7W0/ot741lEOJxVJP7+WcI4njrvpGsqq2dBPjKjrcB3EshRrprEsKlUlJVX+kR
+ vT7Qlpj7B3Ex092V3DRpQGCXcHe5lK19JWu6ZkBQhax1AINcVM7xtrvsatP0i9UgtHqA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=vkh8/jahfCXagIP5olbO8bz0eG4YR9zl53OI+OWUvYY=; b=S
- Zna2A9XvvrRp5iLsS13k0jONhQUBoxGef6ospHr099xPXAHHkQsxjHiAcrAJYWxCVT/wVv0vTf4Mv
- 5Z4CzkKKDyXlVFJH3+9IbwkqFIHHen0+/6apHpzIWxUnpSe2W8Duzq4l2mUwvFoASJkyBIvSbT7MO
- HmOk3j3Xr5hL3wRU=;
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=iOmqrGT7VLaNy0izFr47G/81mka1A+iMQol5j8Pp6AE=; b=MjkhEA67bGnJxIiMyZFPGxZeWU
+ CSxibq1Up3EkLJOcvWHn+/QiIT4LMXUHPAN2VvvbFEFg47F2mB1uTdlE4n7NndUJXgB6qpFktQT5m
+ 4mEQsqBH63jORlJDys2BBB3sGT8weY7FRrxqWMgbPKLNc1ZNTrvAPsqEopyIhn51GF0s=;
 Received: from szxga02-in.huawei.com ([45.249.212.188])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oY7Qw-0070m7-Jo for linux-f2fs-devel@lists.sourceforge.net;
+ id 1oY7Qw-0070m9-Qx for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 13 Sep 2022 15:02:45 +0000
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.54])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MRmmP6mQLzNm9Y;
- Tue, 13 Sep 2022 22:57:57 +0800 (CST)
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4MRmmQ45b7zNmBx;
+ Tue, 13 Sep 2022 22:57:58 +0800 (CST)
 Received: from kwepemm600014.china.huawei.com (7.193.23.54) by
  dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 13 Sep 2022 23:02:32 +0800
+ 15.1.2375.24; Tue, 13 Sep 2022 23:02:33 +0800
 Received: from huawei.com (10.90.53.225) by kwepemm600014.china.huawei.com
  (7.193.23.54) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Tue, 13 Sep
- 2022 23:02:32 +0800
+ 2022 23:02:33 +0800
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Tue, 13 Sep 2022 23:06:01 +0800
-Message-ID: <20220913150604.45447-1-zhangqilong3@huawei.com>
+Date: Tue, 13 Sep 2022 23:06:04 +0800
+Message-ID: <20220913150604.45447-4-zhangqilong3@huawei.com>
 X-Mailer: git-send-email 2.26.0.106.g9fadedd
+In-Reply-To: <20220913150604.45447-1-zhangqilong3@huawei.com>
+References: <20220913150604.45447-1-zhangqilong3@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.90.53.225]
 X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
  kwepemm600014.china.huawei.com (7.193.23.54)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1oY7Qw-0070m7-Jo
-Subject: [f2fs-dev] [PATCH -next 0/3] f2fs: clean code and fix type error
+X-Headers-End: 1oY7Qw-0070m9-Qx
+Subject: [f2fs-dev] [PATCH -next 3/3] f2fs: fix a stype error in
+ f2fs_update_extent_tree_range
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,21 +85,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Found serveral code type errors when review the code and fix it.
-There is no function change.
+A little awkward when looking at this code. Just
+replace the tab key with a space for better view
+here.
 
-Zhang Qilong (3):
-  f2fs: insert a space around colon
-  f2fs: replace spaces with tabs
-  f2fs: fix a stype error in f2fs_update_extent_tree_range
-
- fs/f2fs/data.c         | 2 +-
- fs/f2fs/debug.c        | 2 +-
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+---
  fs/f2fs/extent_cache.c | 2 +-
- fs/f2fs/file.c         | 2 +-
- fs/f2fs/node.c         | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 761fd42c93f2..9ca4b7ab9b9d 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -583,7 +583,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 		org_end = dei.fofs + dei.len;
+ 		f2fs_bug_on(sbi, pos >= org_end);
+ 
+-		if (pos > dei.fofs &&	pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
++		if (pos > dei.fofs && pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
+ 			en->ei.len = pos - en->ei.fofs;
+ 			prev_en = en;
+ 			parts = 1;
 -- 
 2.25.1
 
