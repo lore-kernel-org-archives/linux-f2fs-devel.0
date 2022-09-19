@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1124AC54EE9
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Sep 2022 11:39:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9E87DECAAD3
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 19 Sep 2022 11:54:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oaF75-0001db-LM;
-	Mon, 19 Sep 2022 11:38:59 +0000
+	id 1oaFLf-0002wW-L9;
+	Mon, 19 Sep 2022 11:54:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhangqilong3@huawei.com>) id 1oaF73-0001dV-Ml
+ (envelope-from <zhangqilong3@huawei.com>) id 1oaFLd-0002w0-1t
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Sep 2022 11:38:57 +0000
+ Mon, 19 Sep 2022 11:54:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Eozo7MD1aeXar3s94wSAXAQyFGR8kMnvq8sNTTIFelg=; b=DF8Afo+WlI/nFcO8F061Jq0OdL
- gtKbI0oE9Sa6aINTP+y23zqKgoxeui15nB8hJNueWcudSETJ1toB7P8JdAbRf6BDBGJ4JIM8wHTAz
- n1pJW5vAkEAG+dp7B1K8+l8wB1xigessI2RpcHxShUd+GR+EN4/mlFhsrFjR6sd7dYyo=;
+ bh=tlgmmP2eGwnuMRxbRvLewXiGk+1WaNuWUb15i206Y+k=; b=kE/MjhcZwkm9gwk/J/MU3cHWlo
+ WuMdxOCXlGV7eSa6wMfqnZZs6Dy1SshS77Lkx/VliOE8YS05bfL3JripSGwJWPFrqLgP43xEokC+s
+ LiqL3n5TadEj2/G5M7nYhs7qN80R1GEKn2UI3wd0+VqHDuj7rB8M6IuX2AeedqWB9BPI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
  Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
  :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Eozo7MD1aeXar3s94wSAXAQyFGR8kMnvq8sNTTIFelg=; b=X
- 4jSRs/iXSEbxYqKtltCkx79JFi5Pq0twaP4TmJW2UQgWWaIMIVKVeo6y2kvJOPc1pmEjPeAj7IoOx
- P1RQk3HMCTIDo1JF6Am+lIqy/GlasNtXpNlhBRrxIUznm8ynV6nZAjao9lo82ghq/+F0BAFQQ7N5s
- crldXMkUMTMYdq3o=;
-Received: from szxga01-in.huawei.com ([45.249.212.187])
+ List-Owner:List-Archive; bh=tlgmmP2eGwnuMRxbRvLewXiGk+1WaNuWUb15i206Y+k=; b=i
+ HydbMQJt5i7w6/4kw9Qs7pwOtnOC6+/mtMwPw2A+pKElm+572O5TuR9Lt3k9EdRL116QkUV+MKY5g
+ qIaKxZslWUayt5gzlqSQuquG/jUytZb25o8DyDhkeoN7TE4d/oFAm5CVfK0NXI3HcZwBFYNYwP+sn
+ FGfjRgwLijch+cZ4=;
+Received: from szxga03-in.huawei.com ([45.249.212.189])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oaF6z-00DIS5-Ae for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 19 Sep 2022 11:38:57 +0000
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MWMz4106vzlW0c;
- Mon, 19 Sep 2022 19:34:40 +0800 (CST)
+ id 1oaFLa-00DJUx-VS for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 19 Sep 2022 11:54:00 +0000
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
+ by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4MWNLl4YPjzHnxd;
+ Mon, 19 Sep 2022 19:51:43 +0800 (CST)
 Received: from kwepemm600014.china.huawei.com (7.193.23.54) by
  dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 19 Sep 2022 19:38:44 +0800
+ 15.1.2375.31; Mon, 19 Sep 2022 19:53:38 +0800
 Received: from huawei.com (10.90.53.225) by kwepemm600014.china.huawei.com
  (7.193.23.54) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 19 Sep
- 2022 19:38:44 +0800
+ 2022 19:53:38 +0800
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Mon, 19 Sep 2022 19:42:15 +0800
-Message-ID: <20220919114215.55619-1-zhangqilong3@huawei.com>
+Date: Mon, 19 Sep 2022 19:57:09 +0800
+Message-ID: <20220919115709.57272-1-zhangqilong3@huawei.com>
 X-Mailer: git-send-email 2.26.0.106.g9fadedd
 MIME-Version: 1.0
 X-Originating-IP: [10.90.53.225]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemm600014.china.huawei.com (7.193.23.54)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1oaF6z-00DIS5-Ae
-Subject: [f2fs-dev] [PATCH -next] f2fs: add "c_len" into
- f2fs_update_extent_tree_range for compress file
+X-Headers-End: 1oaFLa-00DJUx-VS
+Subject: [f2fs-dev] [PATCH v2 -next] f2fs: add "c_len" into
+ trace_f2fs_update_extent_tree_range for compressed file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,6 +87,9 @@ The trace_f2fs_update_extent_tree_range could not record compressed
 block length in the cluster of compress file and we just add it.
 
 Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+---
+v2:
+- modify the title
 ---
  fs/f2fs/extent_cache.c      |  4 ++--
  include/trace/events/f2fs.h | 13 +++++++++----
