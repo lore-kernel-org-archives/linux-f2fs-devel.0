@@ -4,68 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 34498C6FA8B
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Sep 2022 07:54:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9CA80ECAAD8
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Sep 2022 07:54:25 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oauYo-0000m7-Ct;
-	Wed, 21 Sep 2022 07:54:22 +0000
+	id 1oauYe-0005x3-Jo;
+	Wed, 21 Sep 2022 07:54:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <zhangqilong3@huawei.com>) id 1oauYk-0000lo-3s
+ (envelope-from <zhangqilong3@huawei.com>) id 1oauYX-0005wt-Nf
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 21 Sep 2022 07:54:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AthiQf7zA39IxPfnOYlSHBcZnIJ2RLQOb39rdpZ6gBo=; b=cQk/6IEZkikRi1x1WpNZMQb1b7
- wHH3xX59L7y+nGErrJH7B4/nehyb8VupqPuWq4lqtmxCzJFZIU/DyLz13E5frwoh28Q/f7lCof68d
- t5prBeJhqNnSfv9cx/etIIIWjgXbrJYslX3kTzEpIjCixTfmEDuyxxQiNQ58ljdBtCII=;
+ bh=kEbB861awV/dE20IdOL150JHpv+Y7FlMiLM0a7wfpt4=; b=Q37olw/6N8cijcLbTVzxH1VuEk
+ 0Oi/n8Y9v3iBN/1ww31spaWIbjSiju9sRehoGZZlnNS285llTN/TP6vWoj+eCzHldnYY4wrpxIlwV
+ gviavVg3FRVQgC9WedJPCyRFnaPbofYszdCL1fe7xBmpWZGib3UJnwOAHcLN4MrZWWZw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=AthiQf7zA39IxPfnOYlSHBcZnIJ2RLQOb39rdpZ6gBo=; b=jvDoyl4/uf5/3/JNpPGkloUj2T
- cMSHkzQTujc0I9z7XXDGRLRrN3EmewKLmCk4mmjwtzLJ9AIGiD5hZfezVNJN+Jmg6EWn3cdNyd3/s
- ON3UxV6UyomMvfehWl7pufCybd8pK18XjTvWdYxzoJg/tKL/twjf1M+4zxF1dj9CiFCk=;
+ h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+ Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=kEbB861awV/dE20IdOL150JHpv+Y7FlMiLM0a7wfpt4=; b=H
+ jSqwMdlsIt5IBRm3jOu8jaykrsftuU5kaEVfH5+DnoUsMmMt9YjnICUED3PYfeDxK6ZYH+1FizVlg
+ PeF7x5sX7N12thucM5oX7BCh3gOOM1orRoeCs3cELEgOlbZYrXXk+7uDXdAW8uTvcq8fggIeN/P4v
+ FNDjtsj3LySw5nZ0=;
 Received: from szxga01-in.huawei.com ([45.249.212.187])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oauYh-0004gd-JK for linux-f2fs-devel@lists.sourceforge.net;
+ id 1oauYh-0004gZ-JJ for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 21 Sep 2022 07:54:18 +0000
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.54])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MXVwR2rjdzpSym;
- Wed, 21 Sep 2022 15:51:19 +0800 (CST)
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.54])
+ by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MXVtw0cj9zlWm1;
+ Wed, 21 Sep 2022 15:50:00 +0800 (CST)
 Received: from kwepemm600014.china.huawei.com (7.193.23.54) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 21 Sep 2022 15:54:08 +0800
+ 15.1.2375.31; Wed, 21 Sep 2022 15:54:07 +0800
 Received: from huawei.com (10.90.53.225) by kwepemm600014.china.huawei.com
  (7.193.23.54) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 21 Sep
- 2022 15:54:07 +0800
+ 2022 15:54:06 +0800
 To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Wed, 21 Sep 2022 15:57:37 +0800
-Message-ID: <20220921075737.36708-5-zhangqilong3@huawei.com>
+Date: Wed, 21 Sep 2022 15:57:33 +0800
+Message-ID: <20220921075737.36708-1-zhangqilong3@huawei.com>
 X-Mailer: git-send-email 2.26.0.106.g9fadedd
-In-Reply-To: <20220921075737.36708-1-zhangqilong3@huawei.com>
-References: <20220921075737.36708-1-zhangqilong3@huawei.com>
 MIME-Version: 1.0
 X-Originating-IP: [10.90.53.225]
 X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
  kwepemm600014.china.huawei.com (7.193.23.54)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1oauYh-0004gd-JK
-Subject: [f2fs-dev] [PATCH -next 4/4] f2fs: remove the limit and
- no-compressed file could use extent
+X-Headers-End: 1oauYh-0004gZ-JJ
+Subject: [f2fs-dev] [PATCH -next 0/4] rebuild compressed extent and support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,31 +82,23 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-It have supported caching extent of no-compressed file and we
-just remove the limit in readonly format f2fs image.
+For readonly format image, we first rebuild the code of updating
+extent, and then support caching extent for no-compressed file.
+Its idea is almost same with original design. At last we remove
+the limit for no-compressed file that enable it use extent.
 
-Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
----
- fs/f2fs/node.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Zhang Qilong (4):
+  f2fs: rebuild compressed extent cache update code for readonly-fs
+  f2fs: extent cache: support extent for no-compressed file
+  f2fs: rename f2fs_update_extent_tree_range_compressed
+  f2fs: remove the limit and no-compressed file could use extent
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 4f500c2ecee8..880259bec0e4 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -845,11 +845,8 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
- 	dn->node_page = npage[level];
- 	dn->data_blkaddr = f2fs_data_blkaddr(dn);
- 
--	if (is_inode_flag_set(dn->inode, FI_COMPRESSED_FILE) &&
--					f2fs_sb_has_readonly(sbi)) {
--
-+	if (f2fs_sb_has_readonly(sbi))
- 		f2fs_readonly_update_extent_cache(dn, index);
--	}
- 
- 	return 0;
- 
+ fs/f2fs/compress.c     | 24 -------------
+ fs/f2fs/extent_cache.c | 80 ++++++++++++++++++++++++++++++++++++++++--
+ fs/f2fs/f2fs.h         | 11 ++----
+ fs/f2fs/node.c         | 20 ++---------
+ 4 files changed, 83 insertions(+), 52 deletions(-)
+
 -- 
 2.25.1
 
