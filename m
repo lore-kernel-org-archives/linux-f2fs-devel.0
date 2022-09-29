@@ -4,84 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 57EB2C433F5
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 29 Sep 2022 16:14:04 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EE308C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 29 Sep 2022 18:28:28 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1odwAj-00056W-DN;
-	Thu, 29 Sep 2022 16:14:01 +0000
+	id 1odyGo-0003nQ-Jc;
+	Thu, 29 Sep 2022 18:28:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <daeho43@gmail.com>) id 1odwAi-00056H-QV
+ (envelope-from <jaegeuk@kernel.org>) id 1odyGf-0003n0-Gg
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 29 Sep 2022 16:14:00 +0000
+ Thu, 29 Sep 2022 18:28:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BJEFi2peRNjlOLkRaFWXDsRxLx1PWgABJjOEp7WSgnI=; b=HnA4jqypQISIhwoom9kbCzgeCC
- aetjCUylTyo6M38/v4jseVrUm/6J4wGTmS5PyY48UX77fLJvK+fCIo6J9vNDCfmph1SpzDvhEk5RQ
- xFuO2soF2U6UqGuU+ZAvb7JHBkwvgpnlRBPYPYxuTs88DO6sMdIXktLawlsgRJAHobYs=;
+ bh=VznYZvp6xTT1pPGtpGxSX8V60DNWUpd/D0lFLsuGkes=; b=Y1BA2kTuX7TTVw/LTt6wBKk2P4
+ HCafRujM0fofeJnnFdQdI32xFUi9tt+i19ZyYw+sLeIocj9eje0uEyuyGCO3m72dNtG1TMiamFOU7
+ cdCTo5RL/Rz/c4NeCjQdV08CI2LncvMquxKD3Jmom3g0vHTdjZX7QKISV4/m+G1peMVE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BJEFi2peRNjlOLkRaFWXDsRxLx1PWgABJjOEp7WSgnI=; b=ibEnQODVPBzYJY5hm/tB9exwAK
- 0c4CiCkC9JP65w4FD1Cn21HKTVwsIjL3sEb1UDy04vg6GaHJTt3GiO7kec484pANnnqHbaHRRb5TQ
- pEp+ajsglOBHuXH3hLQTzFBT55BJVS5DVeSlmIlv11PXZNn5G3Sfy9Dtxwq7OQ1Fiy6k=;
-Received: from mail-qk1-f169.google.com ([209.85.222.169])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1odwAi-0007fV-40 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 29 Sep 2022 16:14:00 +0000
-Received: by mail-qk1-f169.google.com with SMTP id g2so1153764qkk.1
+ bh=VznYZvp6xTT1pPGtpGxSX8V60DNWUpd/D0lFLsuGkes=; b=J6hwvEEsov/Eccp62M9SqK1wJs
+ VSoxpRNFCdJfRkAeGyCV8KWY8Lh/pI+OENaXkh74aE5CFdkohSfl6pbQfd99DJlvr3L6udvuc8MVM
+ p08QyiybWQx9LAKoYF9yM4LYl/98v1XFLR+qxr0zHthImfN2bhGVwwSR5pgE4QpuaRaY=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1odyGd-006ugm-EJ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 29 Sep 2022 18:28:17 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 26228B8261E
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 29 Sep 2022 09:14:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date;
- bh=BJEFi2peRNjlOLkRaFWXDsRxLx1PWgABJjOEp7WSgnI=;
- b=QJPGuikmYr0ZW03VaKUcu56jJh2kuhCaDcYRiGL4u7RSB7ikdAH3iBk/vBZEcceX7d
- VtPLXr7sKILXHyLunpMmv1y9Mg1mj6iBAb4JfVvByN3y/uAzidlNyPq+dH52Ar43Nvzx
- 8EA8Wmy52Zgu/n4rZOVMCy3ewRKU+FwHLABP2Ajk9JHGFIQCpPoKlVo4jQB6jvjRiuU6
- tYfzGLFQfLyVRFofvJDz4X+GXxJMdDR8WY/v1UCMse3h2Ii5u15zwHDgIFnRUfhTHMml
- NdNdKvD86dQbxtywFubWkIurbga79JEC7CPmNkD6bjyM/Mr8zZkkcJ2PmuobaRlQbpAP
- bmRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date;
- bh=BJEFi2peRNjlOLkRaFWXDsRxLx1PWgABJjOEp7WSgnI=;
- b=jePPZ+hrCzZDeoe+08U3FbWthj8nr6AgAGWtnWpnmMFDwg5s/HdA8bbI1jjqP0z4Yv
- LrbXhgtYAyS2p62iOM8+eVJHER6mjt4n5GkgtE0xtAfY1ZPNZAjL9yLeIN/JbopgCVfS
- YnWSsOe+XNPKzc+6p4R3IsE5WdT5PXdzedEyOw+Nlrn77db1a/MyRmf9almg/Cy85kyh
- nu1wQ0hv3c41D+u1uBql5KLHJ8d1ve1527AdIzRqbX9KuZtb+1kX+1mz0FK+cAzX1F9p
- tV1AeA/LrLha//nKsy61qcicwR/bahuKRM2X4hM+oP3PIJs62HkE3FJdyYIkjCz5yPSM
- 3iQg==
-X-Gm-Message-State: ACrzQf3nJ8c/hHqWqUOmkQElxAoHYqasOYpwy18WQZj8ONYa7RlD64LB
- 3l/DNzx7hakqkUC7fuBsKLOVMXmL0qcrWwRxtaM=
-X-Google-Smtp-Source: AMsMyM7xLKQ5msbO4OdbAXKWCmN/f+7TAo99BOZq/9sHQawlBIgyfoCPFyck+kjk7/vfwiWxJi7H3giC3IhEUBZnH78=
-X-Received: by 2002:a05:620a:4412:b0:6ce:814b:84c8 with SMTP id
- v18-20020a05620a441200b006ce814b84c8mr2853837qkp.238.1664468034166; Thu, 29
- Sep 2022 09:13:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220920014036.2295853-1-daeho43@gmail.com>
- <f4ce9486-f104-b0e2-25ed-f6de96316b76@kernel.org>
-In-Reply-To: <f4ce9486-f104-b0e2-25ed-f6de96316b76@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Thu, 29 Sep 2022 09:13:43 -0700
-Message-ID: <CACOAw_z=9H6jEQNd8C99c6xO55PJXWJOW7Q=78qtppgysebN2A@mail.gmail.com>
+ Thu, 29 Sep 2022 18:28:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1021C433D6;
+ Thu, 29 Sep 2022 18:27:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1664476079;
+ bh=y8i/rIZKD3R0T4175rQFF3LIQLNSt+I6e6eQ5Zf3+1w=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=FwPfI+LBAF8x1jBTENO56sIChHGFLscw0eHoGscJBk6OI+wuqJU2jXLirgSZUiXnl
+ /5vcp7Pb+61AgIWm8vqV+3xeLm996LZfaBF0CTciVR38fsbkTxkMfTBerWUaNO9FMX
+ JkoK0XmycJ/0W1BzwJGk6NgXutWre6ZE/hgam/OYAofWqbVoge65vArjNx6X1+tQqa
+ 3wMPQ0oLUC2aLpw7+GKxuks+nYI3k1IRonHxpHgWZ/9PRx62f67w6pMhE9e2Gqq1Jv
+ 01bxsM+yTQ9qYmaNLD/JzUN1PpewgR6ObGGpIc/R9HVKUaKKwL7wK5Jmmck91dMYs3
+ ow7e20bvAvSAg==
+Date: Thu, 29 Sep 2022 11:27:58 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1odwAi-0007fV-40
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: introduce
- F2FS_IOC_START_ATOMIC_REPLACE
+Message-ID: <YzXjrn7oZzVmUz/n@google.com>
+References: <20220925055802.11955-1-chao@kernel.org>
+ <YzMnm4vx7dxb+vAA@google.com>
+ <f8be286d-a3d9-2426-ab79-34d5c6e80a9c@kernel.org>
+ <YzO8P7/XM4OckVSp@google.com>
+ <7387ba71-46bd-aed9-d435-f234f486a7a0@kernel.org>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <7387ba71-46bd-aed9-d435-f234f486a7a0@kernel.org>
+X-Headers-End: 1odyGd-006ugm-EJ
+Subject: Re: [f2fs-dev] [PATCH] mkfs.f2fs: update allocation policy for ro
+ feature
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,159 +85,65 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Sep 29, 2022 at 12:36 AM Chao Yu <chao@kernel.org> wrote:
->
-> On 2022/9/20 9:40, Daeho Jeong wrote:
-> > From: Daeho Jeong <daehojeong@google.com>
-> >
-> > introduce a new ioctl to replace the whole content of a file atomically,
-> > which means it induces truncate and content update at the same time.
-> > We can start it with F2FS_IOC_START_ATOMIC_REPLACE and complete it with
-> > F2FS_IOC_COMMIT_ATOMIC_WRITE. Or abort it with
-> > F2FS_IOC_ABORT_ATOMIC_WRITE.
-> >
-> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> > ---
-> > v2: add undefined ioctl number reported by <lkp@intel.com>
-> > ---
-> >   fs/f2fs/data.c            |  3 +++
-> >   fs/f2fs/f2fs.h            |  1 +
-> >   fs/f2fs/file.c            | 12 ++++++++++--
-> >   fs/f2fs/segment.c         | 14 +++++++++++++-
-> >   include/uapi/linux/f2fs.h |  1 +
-> >   5 files changed, 28 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 6cd29a575105..d3d32db3a25d 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -3438,6 +3438,9 @@ static int prepare_atomic_write_begin(struct f2fs_sb_info *sbi,
-> >       else if (*blk_addr != NULL_ADDR)
-> >               return 0;
-> >
-> > +     if (is_inode_flag_set(inode, FI_ATOMIC_REPLACE))
-> > +             goto reserve_block;
-> > +
-> >       /* Look for the block in the original inode */
-> >       err = __find_data_block(inode, index, &ori_blk_addr);
-> >       if (err)
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 539da7f12cfc..2c49da12d6d8 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -764,6 +764,7 @@ enum {
-> >       FI_COMPRESS_RELEASED,   /* compressed blocks were released */
-> >       FI_ALIGNED_WRITE,       /* enable aligned write */
-> >       FI_COW_FILE,            /* indicate COW file */
-> > +     FI_ATOMIC_REPLACE,      /* indicate atomic replace */
-> >       FI_MAX,                 /* max flag, never be used */
-> >   };
-> >
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 4f9b80c41b1e..4abd9d2a55b3 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -1982,7 +1982,7 @@ static int f2fs_ioc_getversion(struct file *filp, unsigned long arg)
-> >       return put_user(inode->i_generation, (int __user *)arg);
-> >   }
-> >
-> > -static int f2fs_ioc_start_atomic_write(struct file *filp)
-> > +static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
-> >   {
-> >       struct inode *inode = file_inode(filp);
-> >       struct user_namespace *mnt_userns = file_mnt_user_ns(filp);
-> > @@ -2051,6 +2051,12 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
-> >
-> >       isize = i_size_read(inode);
-> >       fi->original_i_size = isize;
-> > +     if (truncate) {
-> > +             set_inode_flag(inode, FI_ATOMIC_REPLACE);
-> > +             truncate_inode_pages_final(inode->i_mapping);
-> > +             f2fs_i_size_write(inode, 0);
-> > +             isize = 0;
-> > +     }
->
-> Hi Daeho,
->
-> isize should be updated after tagging inode as atomic_write one?
-> otherwise f2fs_mark_inode_dirty_sync() may update isize to inode page,
-> latter checkpoint may persist that change? IIUC...
->
+On 09/28, Chao Yu wrote:
+> On 2022/9/28 11:15, Jaegeuk Kim wrote:
+> > On 09/28, Chao Yu wrote:
+> > > On 2022/9/28 0:40, Jaegeuk Kim wrote:
+> > > > On 09/25, Chao Yu wrote:
+> > > > > Update allocation policy for ro feature:
+> > > > > - hot_data: allocating blocks by LBA ascending order
+> > > > > - hot_node: allocating blocks by LBA descending order
+> > > > 
+> > > > This will increase the RO image size.
+> > > 
+> > > Shouldn't RO image has fixed-size during mkfs?
+> > 
+> > First run gives the reduced size information, and second round makes the image
+> > with the required size.
+> 
+> I didn't get it, in which step it may increase the RO image size?
+> 
+> IIUC, after we apply this patch, reduced size information won't change due
+> to that after sload in first run, total used block count should be fixed?
+
+First run fills the data and leaves the maximum LBA touched in the image. Then,
+it'll resize the image file and run again with the smallest image.
+
+> 
 > Thanks,
-
-Hi Chao,
-
-The first patch of this patchset prevents the inode page from being
-updated as dirty for atomic file cases.
-Is there any other chances for the inode page to be marked as dirty?
-
-Thanks,
-
->
-> >       f2fs_i_size_write(fi->cow_inode, isize);
-> >
-> >       spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
-> > @@ -4080,7 +4086,9 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-> >       case FS_IOC_GETVERSION:
-> >               return f2fs_ioc_getversion(filp, arg);
-> >       case F2FS_IOC_START_ATOMIC_WRITE:
-> > -             return f2fs_ioc_start_atomic_write(filp);
-> > +             return f2fs_ioc_start_atomic_write(filp, false);
-> > +     case F2FS_IOC_START_ATOMIC_REPLACE:
-> > +             return f2fs_ioc_start_atomic_write(filp, true);
-> >       case F2FS_IOC_COMMIT_ATOMIC_WRITE:
-> >               return f2fs_ioc_commit_atomic_write(filp);
-> >       case F2FS_IOC_ABORT_ATOMIC_WRITE:
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 143b7ea0fb8e..c524538a9013 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -263,14 +263,26 @@ static void __complete_revoke_list(struct inode *inode, struct list_head *head,
-> >                                       bool revoke)
-> >   {
-> >       struct revoke_entry *cur, *tmp;
-> > +     pgoff_t start_index = 0;
-> > +     bool truncate = is_inode_flag_set(inode, FI_ATOMIC_REPLACE);
-> >
-> >       list_for_each_entry_safe(cur, tmp, head, list) {
-> > -             if (revoke)
-> > +             if (revoke) {
-> >                       __replace_atomic_write_block(inode, cur->index,
-> >                                               cur->old_addr, NULL, true);
-> > +             } else if (truncate) {
-> > +                     f2fs_truncate_hole(inode, start_index, cur->index);
-> > +                     start_index = cur->index + 1;
-> > +             }
-> > +
-> >               list_del(&cur->list);
-> >               kmem_cache_free(revoke_entry_slab, cur);
-> >       }
-> > +
-> > +     if (!revoke && truncate) {
-> > +             f2fs_do_truncate_blocks(inode, start_index * PAGE_SIZE, false);
-> > +             clear_inode_flag(inode, FI_ATOMIC_REPLACE);
-> > +     }
-> >   }
-> >
-> >   static int __f2fs_commit_atomic_write(struct inode *inode)
-> > diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
-> > index 3121d127d5aa..955d440be104 100644
-> > --- a/include/uapi/linux/f2fs.h
-> > +++ b/include/uapi/linux/f2fs.h
-> > @@ -42,6 +42,7 @@
-> >                                               struct f2fs_comp_option)
-> >   #define F2FS_IOC_DECOMPRESS_FILE    _IO(F2FS_IOCTL_MAGIC, 23)
-> >   #define F2FS_IOC_COMPRESS_FILE              _IO(F2FS_IOCTL_MAGIC, 24)
-> > +#define F2FS_IOC_START_ATOMIC_REPLACE        _IO(F2FS_IOCTL_MAGIC, 25)
-> >
-> >   /*
-> >    * should be same as XFS_IOC_GOINGDOWN.
+> 
+> > 
+> > > 
+> > > > 
+> > > > > 
+> > > > > Signed-off-by: Chao Yu <chao@kernel.org>
+> > > > > ---
+> > > > >    mkfs/f2fs_format.c | 4 ++--
+> > > > >    1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> > > > > index 40ac589..8d0f410 100644
+> > > > > --- a/mkfs/f2fs_format.c
+> > > > > +++ b/mkfs/f2fs_format.c
+> > > > > @@ -544,10 +544,10 @@ static int f2fs_prepare_super_block(void)
+> > > > >    	}
+> > > > >    	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO)) {
+> > > > > -		c.cur_seg[CURSEG_HOT_NODE] = 0;
+> > > > > +		c.cur_seg[CURSEG_HOT_NODE] = last_section(last_zone(total_zones));
+> > > > >    		c.cur_seg[CURSEG_WARM_NODE] = 0;
+> > > > >    		c.cur_seg[CURSEG_COLD_NODE] = 0;
+> > > > > -		c.cur_seg[CURSEG_HOT_DATA] = 1;
+> > > > > +		c.cur_seg[CURSEG_HOT_DATA] = 0;
+> > > > >    		c.cur_seg[CURSEG_COLD_DATA] = 0;
+> > > > >    		c.cur_seg[CURSEG_WARM_DATA] = 0;
+> > > > >    	} else if (c.heap) {
+> > > > > -- 
+> > > > > 2.36.1
 
 
 _______________________________________________
