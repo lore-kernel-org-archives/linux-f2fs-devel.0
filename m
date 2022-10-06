@@ -4,70 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7DCFCC433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 15:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BFC36C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 15:17:41 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ogScg-00032W-Pq;
-	Thu, 06 Oct 2022 15:17:18 +0000
+	id 1ogSd2-00036F-4u;
+	Thu, 06 Oct 2022 15:17:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ogScf-00032J-RH
+ (envelope-from <chao@kernel.org>) id 1ogSd0-000362-Qc
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 15:17:17 +0000
+ Thu, 06 Oct 2022 15:17:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2QQkFhtG22uqI3nGpRM3qHMV/OuPU2DOvZ8JtL5dsss=; b=fF7AZePk2/GpFRwgM1dxJWKk0H
- bsDds+erSEYaMGuAio5bAvhBKOkCYYw6WNosYhSpK2iFqFwTtbMIQZo2WgwdOlJNqFBgxWeySmzdu
- dKZVWSUADKTm1g3hLbY3U6WRHOXLJll5ffW2ZG8x8pZo6WZGYu1VI2w4DUyERAbwu3dg=;
+ bh=tPHfBPMVKqL9RJasHX5sx62xeQc9qphco+V5g7LrSws=; b=lHRP28Dgv6aY+EPQ6P2i2ERTF9
+ ykTuEKMVjcdIig0z/qxblh1Z/Z6L0fY621p26jl4aCjdftGwcJ2IpEOJ1yCVYFZBFmjQSie/qoVoe
+ KGhipTszEerCC5bisySmoP1ebILQ1tCshOXxHMu9MGtJ4iQeFuXhkcLoN0Yhc5M24hWk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=2QQkFhtG22uqI3nGpRM3qHMV/OuPU2DOvZ8JtL5dsss=; b=S
- gXe/fzUfsJxEhH7Lc2kbC0dBns/3FF3JMGtqO/Pse4hrPZDcvTprJ61xb02DdnSGivSBv9K6qbd6I
- nt3sTy7hnUKZkvtDNmiCPGW2H7Kx1taS8Icoiw7yjRk3iLbg4SKQdPzPQhr5tKojD8vI26TpEQ5VW
- l3io/RlWBirjLsdw=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=tPHfBPMVKqL9RJasHX5sx62xeQc9qphco+V5g7LrSws=; b=bI+/2tdTJCP5X0ra27YPeJAo0p
+ Lhy9HCoFc4tVz+JmIEWu3lmdsQDGrohh3Lt1RGB8R0NSL3XZ6pn1YVCPKnuSYN6PYsxy1sb3JpdlQ
+ S8/IZsImnBZm9hnXvLWwPOlhiBVJ2AePxV0OWqSZ7i5V62wilCrcKKIqJvtYn7mQ2LmI=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ogSca-00070Y-5t for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 15:17:14 +0000
+ id 1ogSd0-00EpD3-6f for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 06 Oct 2022 15:17:38 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 31E68619E5
+ by dfw.source.kernel.org (Postfix) with ESMTPS id C8C226189D
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  6 Oct 2022 15:17:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF05CC433D6;
- Thu,  6 Oct 2022 15:17:03 +0000 (UTC)
+ Thu,  6 Oct 2022 15:17:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 985A3C433D7;
+ Thu,  6 Oct 2022 15:17:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1665069424;
- bh=bQAFisTLMneOIb9teev0BcCjvNSpoFNyx3UBe/gq2l8=;
- h=From:To:Cc:Subject:Date:From;
- b=fl0RV7A2i5BxpdRDCdh0c5XAKi/24PpUzjhx3KqgdIB6/TQksNJst3gOVBxBSveVa
- y6tpohpCWV2Ezm3PfMU8scOgS8NgozkDuvaVnzHdWFQTqxXE2UMd97Df1K8XRQZ3QK
- 59hJIuQ2qUm9TkJyGJsyQP8U08Wm8sC+w90q2dvurFftvFaNcIJ4JS51X7Zfl0KyRw
- 7+NcA0zsIAJO2XfpBmMxzhxuUiH2Sl8M67zXGX7bVGquETTGuzxx1PvJ3eskFtotlG
- kF3AKG0gOXerzF1OmI2wA/kffkahs/fL7O2h0yM632yj7RyaXq73N+j7r4MIJclOte
- omqqeyjU/IawA==
+ s=k20201202; t=1665069452;
+ bh=KegCTwo0J1NmVSUHYJsrfkLuZMLue/5Q/BnCKiVzIG4=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=iv+t+pJV/ZO10pEjAgPvNfl170kGQjrQT6qUOel3yoUri9wZUrzU6VAIg0AW4QLsT
+ 7Hi9WNBv468mKZQ8QXY4MUhZQi56qtbGCqlJ/JrZ/gM+eq7gzyLl2W69eTmcFzHpD8
+ BLWK+SZbQBgsePXxJ7YUMCcCsOBlSPB88OKmBGI7PNRL1V+HxKqq7hD0l2IpNc5gZW
+ 50DIoCg4HzCQb2705YZ4kKAg0a5nN0vtyFMoLdQcLs6lojUjn5AqoJkU0uMCiHGFdJ
+ 75PyXhz6ZyzfQoB0x0MCZvXkHBubP+WQjWeddT9bCC4pCna4zVjt9dEBz1zruUWSJx
+ u2S3Fk8y2L18w==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Thu,  6 Oct 2022 23:16:56 +0800
-Message-Id: <20221006151657.58336-1-chao@kernel.org>
+Date: Thu,  6 Oct 2022 23:17:27 +0800
+Message-Id: <20221006151727.58380-2-chao@kernel.org>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20221006151727.58380-1-chao@kernel.org>
+References: <20221006151727.58380-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ogSca-00070Y-5t
-Subject: [f2fs-dev] [PATCH 1/2] mkfs.f2fs: update allocation policy for ro
- feature
+X-Headers-End: 1ogSd0-00EpD3-6f
+Subject: [f2fs-dev] [PATCH 2/2] fsck.f2fs: trigger repairing if filesystem
+ has inconsistent errors
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,86 +86,191 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Update allocation policy for ro feature:
-- hot_data: allocating blocks by LBA ascending order
-- hot_node: allocating blocks by LBA descending order
+In auto/preen mode, let's trigger repairing if filesystem has
+inconsistent errors.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fsck/mount.c       |  8 ++++++++
- fsck/segment.c     | 15 ++++++++++++++-
- mkfs/f2fs_format.c |  4 ++--
- 3 files changed, 24 insertions(+), 3 deletions(-)
+ fsck/fsck.c       |  8 ++++++--
+ fsck/fsck.h       |  1 +
+ fsck/mount.c      | 52 ++++++++++++++++++++++++++++++++++++++++++++++-
+ include/f2fs_fs.h | 26 +++++++++++++++++++++++-
+ 4 files changed, 83 insertions(+), 4 deletions(-)
 
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index db14859..036a834 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -3368,10 +3368,14 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 			write_checkpoints(sbi);
+ 		}
+ 
+-		if (c.abnormal_stop) {
++		if (c.abnormal_stop)
+ 			memset(sb->s_stop_reason, 0, MAX_STOP_REASON);
++
++		if (c.fs_errors)
++			memset(sb->s_errors, 0, MAX_F2FS_ERRORS);
++
++		if (c.abnormal_stop || c.fs_errors)
+ 			update_superblock(sb, SB_MASK_ALL);
+-		}
+ 
+ 		/* to return FSCK_ERROR_CORRECTED */
+ 		ret = 0;
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 6f0b019..939450f 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -238,6 +238,7 @@ extern void update_nat_blkaddr(struct f2fs_sb_info *, nid_t, nid_t, block_t);
+ 
+ extern void print_raw_sb_info(struct f2fs_super_block *);
+ extern bool is_checkpoint_stop(struct f2fs_super_block *, bool);
++extern bool is_inconsistent_error(struct f2fs_super_block *);
+ extern pgoff_t current_nat_addr(struct f2fs_sb_info *, nid_t, int *);
+ 
+ extern u32 get_free_segments(struct f2fs_sb_info *);
 diff --git a/fsck/mount.c b/fsck/mount.c
-index af24484..aebe363 100644
+index 6b21625..0597220 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -2777,6 +2777,14 @@ static void move_one_curseg_info(struct f2fs_sb_info *sbi, u64 from, int left,
- 	if ((get_sb(feature) & cpu_to_le32(F2FS_FEATURE_RO))) {
- 		if (i != CURSEG_HOT_DATA && i != CURSEG_HOT_NODE)
- 			return;
+@@ -611,6 +611,42 @@ void print_sb_stop_reason(struct f2fs_super_block *sb)
+ 	MSG(0, "\n");
+ }
+ 
++static char *errors_str[] = {
++	[ERROR_CORRUPTED_CLUSTER]		= "corrupted_cluster",
++	[ERROR_FAIL_DECOMPRESSION]		= "fail_decompression",
++	[ERROR_INVALID_BLKADDR]			= "invalid_blkaddr",
++	[ERROR_CORRUPTED_DIRENT]		= "corrupted_dirent",
++	[ERROR_CORRUPTED_INODE]			= "corrupted_inode",
++	[ERROR_INCONSISTENT_SUMMARY]		= "inconsistent_summary",
++	[ERROR_INCONSISTENT_FOOTER]		= "inconsistent_footer",
++	[ERROR_INCONSISTENT_SUM_TYPE]		= "inconsistent_sum_type",
++	[ERROR_CORRUPTED_JOURNAL]		= "corrupted_journal",
++	[ERROR_INCONSISTENT_NODE_COUNT]		= "inconsistent_node_count",
++	[ERROR_INCONSISTENT_BLOCK_COUNT]	= "inconsistent_block_count",
++	[ERROR_INVALID_CURSEG]			= "invalid_curseg",
++	[ERROR_INCONSISTENT_SIT]		= "inconsistent_sit",
++	[ERROR_CORRUPTED_VERITY_XATTR]		= "corrupted_verity_xattr",
++	[ERROR_CORRUPTED_XATTR]			= "corrupted_xattr",
++};
 +
-+		if (i == CURSEG_HOT_DATA) {
-+			left = 0;
-+			from = SM_I(sbi)->main_blkaddr;
-+		} else {
-+			left = 1;
-+			from = __end_block_addr(sbi);
-+		}
- 		goto bypass_ssa;
- 	}
- 
-diff --git a/fsck/segment.c b/fsck/segment.c
-index 401cbb6..0307bdd 100644
---- a/fsck/segment.c
-+++ b/fsck/segment.c
-@@ -28,6 +28,7 @@ int reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
- 	u64 blkaddr, offset;
- 	u64 old_blkaddr = *to;
- 	bool is_node = IS_NODESEG(type);
-+	int left = 0;
- 
- 	if (old_blkaddr == NULL_ADDR) {
- 		if (c.func == FSCK) {
-@@ -56,7 +57,19 @@ int reserve_new_block(struct f2fs_sb_info *sbi, block_t *to,
- 
- 	blkaddr = SM_I(sbi)->main_blkaddr;
- 
--	if (find_next_free_block(sbi, &blkaddr, 0, type, false)) {
-+	if (sbi->raw_super->feature & cpu_to_le32(F2FS_FEATURE_RO)) {
-+		if (IS_NODESEG(type)) {
-+			type = CURSEG_HOT_NODE;
-+			blkaddr = __end_block_addr(sbi);
-+			left = 1;
-+		} else if (IS_DATASEG(type)) {
-+			type = CURSEG_HOT_DATA;
-+			blkaddr = SM_I(sbi)->main_blkaddr;
-+			left = 0;
-+		}
++void print_sb_errors(struct f2fs_super_block *sb)
++{
++	u8 *errors = sb->s_errors;
++	int i;
++
++	if (!c.fs_errors)
++		return;
++
++	MSG(0, "Info: fs errors: ");
++
++	for (i = 0; i < ERROR_MAX; i++) {
++		if (test_bit_le(i, errors))
++			MSG(0, "%s ",  errors_str[i]);
 +	}
 +
-+	if (find_next_free_block(sbi, &blkaddr, left, type, false)) {
- 		ERR_MSG("Can't find free block");
- 		ASSERT(0);
- 	}
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 40ac589..8d0f410 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -544,10 +544,10 @@ static int f2fs_prepare_super_block(void)
++	MSG(0, "\n");
++}
++
+ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type)
+ {
+@@ -996,12 +1032,14 @@ int validate_super_block(struct f2fs_sb_info *sbi, enum SB_ADDR sb_addr)
+ 
+ 		c.force_stop = is_checkpoint_stop(sbi->raw_super, false);
+ 		c.abnormal_stop = is_checkpoint_stop(sbi->raw_super, true);
++		c.fs_errors = is_inconsistent_error(sbi->raw_super);
+ 
+ 		MSG(0, "Info: MKFS version\n  \"%s\"\n", c.init_version);
+ 		MSG(0, "Info: FSCK version\n  from \"%s\"\n    to \"%s\"\n",
+ 					c.sb_version, c.version);
+ 		print_sb_state(sbi->raw_super);
+ 		print_sb_stop_reason(sbi->raw_super);
++		print_sb_errors(sbi->raw_super);
+ 		return 0;
  	}
  
- 	if (c.feature & cpu_to_le32(F2FS_FEATURE_RO)) {
--		c.cur_seg[CURSEG_HOT_NODE] = 0;
-+		c.cur_seg[CURSEG_HOT_NODE] = last_section(last_zone(total_zones));
- 		c.cur_seg[CURSEG_WARM_NODE] = 0;
- 		c.cur_seg[CURSEG_COLD_NODE] = 0;
--		c.cur_seg[CURSEG_HOT_DATA] = 1;
-+		c.cur_seg[CURSEG_HOT_DATA] = 0;
- 		c.cur_seg[CURSEG_COLD_DATA] = 0;
- 		c.cur_seg[CURSEG_WARM_DATA] = 0;
- 	} else if (c.heap) {
+@@ -1247,6 +1285,18 @@ bool is_checkpoint_stop(struct f2fs_super_block *sb, bool abnormal)
+ 	return false;
+ }
+ 
++bool is_inconsistent_error(struct f2fs_super_block *sb)
++{
++	int i;
++
++	for (i = 0; i < MAX_F2FS_ERRORS; i++) {
++		if (sb->s_errors[i])
++			return true;
++	}
++
++	return false;
++}
++
+ /*
+  * For a return value of 1, caller should further check for c.fix_on state
+  * and take appropriate action.
+@@ -1256,7 +1306,7 @@ static int f2fs_should_proceed(struct f2fs_super_block *sb, u32 flag)
+ 	if (!c.fix_on && (c.auto_fix || c.preen_mode)) {
+ 		if (flag & CP_FSCK_FLAG ||
+ 			flag & CP_QUOTA_NEED_FSCK_FLAG ||
+-			c.abnormal_stop ||
++			c.abnormal_stop || c.fs_errors ||
+ 			(exist_qf_ino(sb) && (flag & CP_ERROR_FLAG))) {
+ 			c.fix_on = 1;
+ 		} else if (!c.preen_mode) {
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 424eaad..5fa9931 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -510,6 +510,7 @@ struct f2fs_configuration {
+ 	int bug_on;
+ 	int force_stop;
+ 	int abnormal_stop;
++	int fs_errors;
+ 	int bug_nat_bits;
+ 	bool quota_fixed;
+ 	int alloc_failed;
+@@ -773,6 +774,28 @@ enum stop_cp_reason {
+ 
+ #define	MAX_STOP_REASON			32
+ 
++/* detail reason for EFSCORRUPTED */
++enum f2fs_error {
++	ERROR_CORRUPTED_CLUSTER,
++	ERROR_FAIL_DECOMPRESSION,
++	ERROR_INVALID_BLKADDR,
++	ERROR_CORRUPTED_DIRENT,
++	ERROR_CORRUPTED_INODE,
++	ERROR_INCONSISTENT_SUMMARY,
++	ERROR_INCONSISTENT_FOOTER,
++	ERROR_INCONSISTENT_SUM_TYPE,
++	ERROR_CORRUPTED_JOURNAL,
++	ERROR_INCONSISTENT_NODE_COUNT,
++	ERROR_INCONSISTENT_BLOCK_COUNT,
++	ERROR_INVALID_CURSEG,
++	ERROR_INCONSISTENT_SIT,
++	ERROR_CORRUPTED_VERITY_XATTR,
++	ERROR_CORRUPTED_XATTR,
++	ERROR_MAX,
++};
++
++#define MAX_F2FS_ERRORS			16
++
+ struct f2fs_super_block {
+ 	__le32 magic;			/* Magic Number */
+ 	__le16 major_ver;		/* Major Version */
+@@ -818,7 +841,8 @@ struct f2fs_super_block {
+ 	__le16  s_encoding;		/* Filename charset encoding */
+ 	__le16  s_encoding_flags;	/* Filename charset encoding flags */
+ 	__u8 s_stop_reason[MAX_STOP_REASON];	/* stop checkpoint reason */
+-	__u8 reserved[274];		/* valid reserved region */
++	__u8 s_errors[MAX_F2FS_ERRORS];		/* reason of image corrupts */
++	__u8 reserved[258];		/* valid reserved region */
+ 	__le32 crc;			/* checksum of superblock */
+ };
+ 
 -- 
 2.36.1
 
