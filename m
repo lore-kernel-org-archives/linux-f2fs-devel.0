@@ -4,84 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AF909C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 04:23:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D3D12C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 04:39:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ogIPT-0001IQ-My;
-	Thu, 06 Oct 2022 04:22:59 +0000
+	id 1ogIfG-0000xU-Ez;
+	Thu, 06 Oct 2022 04:39:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <kpsingh@kernel.org>) id 1ogIPR-0001IK-4W
+ (envelope-from <keescook@chromium.org>) id 1ogIfF-0000xK-5O
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 04:22:57 +0000
+ Thu, 06 Oct 2022 04:39:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=79D/+k/bRZXhGBAaempdgng3l68Zp7pbnLAWamJJEQU=; b=WGfYxA9/nmrVAss6aZJBbVO+jc
- 7EFgdl51lzyuU+88/vDWeQ/yKL5PRdu2R9qVQ3whO9DttAtbbSn42q9byMizGU3ZBmPKp37aRQbEP
- iVMJOke/TyEOn3r8Z++PkMi0oLcs/eeD+XZioaNoED1t/u9OmCa5ewPWiUdmsW9eLZ0c=;
+ bh=y1Ewt823HoXUJ+RVCiU5hfekdC+9m7ghxyBCLtj1eUk=; b=C1xX60D4b5etIf/gbVDwsRdCR4
+ rhKw2CCz+PNJq0YDO9Ui92Be8KGq5YWtI3Wev/mfjBAbKQPVbrSOc5FtYqGR3XWv0InLlg0g1Dhjk
+ uxwCFwy9dIjHsnZM1c+Dfq+njQPi2rgGap7y2q9SjmPAvG3xgcfnLgWGeP0o4lprYWDo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=79D/+k/bRZXhGBAaempdgng3l68Zp7pbnLAWamJJEQU=; b=WT/5yR/BPSi1bA1AIqVBTOgs2g
- VOqERgCNjEzYRAj6xE96b+rOqswolwoaQvHTJmEhUwrTd3upB8bVo++nV3u3b7cZ0YzuUPNqK8y6X
- ztqSJeguIJQg8fG9idx55CkA59B+1LH+1VKXtgh3EtNPFfgG62MyTq/ZIEeBAeTtXppY=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ogIPQ-00EI7K-39 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 04:22:57 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id F107EB82002
+ bh=y1Ewt823HoXUJ+RVCiU5hfekdC+9m7ghxyBCLtj1eUk=; b=E1o0cKyBmtCavCoGDNd0m80c+Z
+ MnUVdTMRS8fLk14m/P+7m5wt6y20VW76MI5P2NL7oBJKNjNV/cWJnNe+I9T7JMHPPXv2PrBZvUNI4
+ ncjMskibSWS67v00ojIa9qRnCJZe2sCaLGr3Zg1gJ7ZnSH1ei2/ItKCEFqGcOf0ZTAto=;
+Received: from mail-pj1-f43.google.com ([209.85.216.43])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1ogIfB-00077U-Fj for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 06 Oct 2022 04:39:17 +0000
+Received: by mail-pj1-f43.google.com with SMTP id
+ v10-20020a17090a634a00b00205e48cf845so3260448pjs.4
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  6 Oct 2022 04:22:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7630C4FF6F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  6 Oct 2022 04:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1665030162;
- bh=HB4K7E86nsfwh8pjE5w4FJpZB/dXbKFz0OtI2RFCH+s=;
- h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
- b=U243XDpeQtdzP8OLbjBO8J34oe/T3rthPl2gsNKiT9xCqeUnUTBzfbdZR0oEbv8Mp
- lPUf13U9HZtldKkHu3hieQy1ooxgGr3je2Iyuov29SulKcYwRSQg8aT8ndxjKkrBm9
- yYZ1Uq8szapDDqaY77n9nTr7uQ/9X9WvUHPII0+TEdYCoMzEYZVnUy1SDg92Dq0uG2
- Ju8aaYT1AhIsd8qi8oF6wIzJ677pb+rbuaKAcxpTVzA4yhtL+83XMe6/9hKeCfKjTB
- mL7xYFl5DTW4GpUcX5w0ZJgJfMNDJ8SLOXyfnOzTwGam4VqrQ51ift8aGqYZ18csob
- aXa7zsdW2FHNQ==
-Received: by mail-lf1-f44.google.com with SMTP id g1so915657lfu.12
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 05 Oct 2022 21:22:42 -0700 (PDT)
-X-Gm-Message-State: ACrzQf2Htpnemga9BGGzle2bDmGkUphyPmS5pG0YrQMJfJDKM8858XQ6
- Tlv3xsl4uY/pFKGkKbUX3lOQlJx1hJl18ceWzNwGWA==
-X-Google-Smtp-Source: AMsMyM4buFniz46ZSiVKh/+EZ3E6CrEv7WC+W0XWrOZd99wlz7Q68ThxnzcjqPbpKa49LlF82wYrc2S5syRYJ4jy1zU=
-X-Received: by 2002:a2e:7318:0:b0:26d:fdd9:6b2 with SMTP id
- o24-20020a2e7318000000b0026dfdd906b2mr1076019ljc.156.1665030148829; Wed, 05
- Oct 2022 21:22:28 -0700 (PDT)
-MIME-Version: 1.0
+ Wed, 05 Oct 2022 21:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chromium.org; s=google;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:from:to:cc:subject:date;
+ bh=y1Ewt823HoXUJ+RVCiU5hfekdC+9m7ghxyBCLtj1eUk=;
+ b=Fcbv6b+yCuol0AU1mIs9HnAOz2/wjXtHru3VW95DL3V7mKymOrKADEfZ1NfF0xLiTB
+ LkCGzY8eutuXPS5+afbW7jf6o9DhcYADtCDqs8Qo8xeP+lYFZISv7p7XEeNAqavCs9/t
+ xtqe21TFW/x7aAqkAHw+ftHWXMel86ys26msI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+ bh=y1Ewt823HoXUJ+RVCiU5hfekdC+9m7ghxyBCLtj1eUk=;
+ b=3+brRujfn/qRhSVdhlzsFuVqADbTwQUhpHy2pjRKOpeMP4vtS2cthmK5j+G9rGzCs+
+ 0ERAv3dVNyDtjTenD0LbMiYhMOnf5dst63Q31uxz0VxW4GPnF83jaao4T2CTwTwfxEZ8
+ wiejWfHmu9lo6LTGABfXZScKKuegd3X11kLEl5Q742nMNYe4T6vIIRcIbfMjbgjOQERm
+ V4oAzs+JbwS/ZN+Prh9RrdjDsnk51Ka4Kn9c9QfSN4yYsmIvzidAYnNdj8Xhu7q/R99x
+ 6UXjCFWEvgeX78URMYh1+T7FAc4MEF1oBdHkm0D4RIm26u0Mf1DahlojaJQEBy1Rg3bX
+ Zchg==
+X-Gm-Message-State: ACrzQf0C6WTa2ajQp/esepscVG28BjTYt4d9LQROSbrvpoU5KP1RUWS3
+ c9bemVg79qCTdL+x3mIbAKzTNA==
+X-Google-Smtp-Source: AMsMyM60ELYmxh+A5d0x30z3COx8LaynKqt9bJxGAbjfrLwodOIKXzOKJgIYAS8Aw4fmck7UQns81A==
+X-Received: by 2002:a17:902:db0f:b0:176:e70f:6277 with SMTP id
+ m15-20020a170902db0f00b00176e70f6277mr2639160plx.13.1665031147915; 
+ Wed, 05 Oct 2022 21:39:07 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+ by smtp.gmail.com with ESMTPSA id
+ d12-20020a634f0c000000b00439d071c110sm673132pgb.43.2022.10.05.21.39.05
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 05 Oct 2022 21:39:06 -0700 (PDT)
+Date: Wed, 5 Oct 2022 21:39:03 -0700
+From: Kees Cook <keescook@chromium.org>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Message-ID: <202210052138.A585E4CC@keescook>
 References: <20221005214844.2699-1-Jason@zx2c4.com>
- <20221005214844.2699-2-Jason@zx2c4.com>
- <202210052035.A1020E3@keescook>
-In-Reply-To: <202210052035.A1020E3@keescook>
-From: KP Singh <kpsingh@kernel.org>
-Date: Wed, 5 Oct 2022 21:22:17 -0700
-X-Gmail-Original-Message-ID: <CACYkzJ6w6DitDk9uoEyyNeg+HmNHZx_tckJ_=EroqmT=CN3VBA@mail.gmail.com>
-Message-ID: <CACYkzJ6w6DitDk9uoEyyNeg+HmNHZx_tckJ_=EroqmT=CN3VBA@mail.gmail.com>
-To: Kees Cook <keescook@chromium.org>
-X-Headers-End: 1ogIPQ-00EI7K-39
-Subject: Re: [f2fs-dev] [PATCH v1 1/5] treewide: use prandom_u32_max() when
- possible
+ <20221005214844.2699-6-Jason@zx2c4.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <20221005214844.2699-6-Jason@zx2c4.com>
+X-Headers-End: 1ogIfB-00077U-Fj
+Subject: Re: [f2fs-dev] [PATCH v1 5/5] prandom: remove unused functions
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -118,12 +121,11 @@ Cc: Andrew Lunn <andrew@lunn.ch>, "Darrick J . Wong" <djwong@kernel.org>,
  Jiri Olsa <jolsa@kernel.org>, Jan Kara <jack@suse.com>,
  linux-fsdevel@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>,
  linux-media@vger.kernel.org, Claudiu Beznea <claudiu.beznea@microchip.com>,
- Sharvari Harisangam <sharvari.harisangam@nxp.com>,
- "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-doc@vger.kernel.org,
- linux-mmc@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
- Song Liu <song@kernel.org>, Eric Dumazet <edumazet@google.com>,
- target-devel@vger.kernel.org, John Stultz <jstultz@google.com>,
- Stanislav Fomichev <sdf@google.com>,
+ Sharvari Harisangam <sharvari.harisangam@nxp.com>, linux-fbdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>, Song Liu <song@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, target-devel@vger.kernel.org,
+ John Stultz <jstultz@google.com>, Stanislav Fomichev <sdf@google.com>,
  Gregory Greenman <gregory.greenman@intel.com>, drbd-dev@lists.linbit.com,
  dev@openvswitch.org, Leon Romanovsky <leon@kernel.org>,
  Helge Deller <deller@gmx.de>, Hugh Dickins <hughd@google.com>,
@@ -141,16 +143,16 @@ Cc: Andrew Lunn <andrew@lunn.ch>, "Darrick J . Wong" <djwong@kernel.org>,
  Theodore Ts'o <tytso@mit.edu>, Stephen Boyd <sboyd@kernel.org>,
  Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
  Florian Westphal <fw@strlen.de>,
- =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
  Jon Maloy <jmaloy@redhat.com>, Vlad Yasevich <vyasevich@gmail.com>,
  Anna Schumaker <anna@kernel.org>, Yehezkel Bernat <YehezkelShB@gmail.com>,
  Haoyue Xu <xuhaoyue1@hisilicon.com>, Heiner Kallweit <hkallweit1@gmail.com>,
  linux-wireless@vger.kernel.org,
  Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-fbdev@vger.kernel.org,
- linux-nvme@lists.infradead.org, Michal Januszewski <spock@gentoo.org>,
- linux-mtd@lists.infradead.org, kasan-dev@googlegroups.com,
- Cong Wang <xiyou.wangcong@gmail.com>, Thomas Sailer <t.sailer@alumni.ethz.ch>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-nvme@lists.infradead.org,
+ Michal Januszewski <spock@gentoo.org>, linux-mtd@lists.infradead.org,
+ kasan-dev@googlegroups.com, Cong Wang <xiyou.wangcong@gmail.com>,
+ Thomas Sailer <t.sailer@alumni.ethz.ch>,
  Ajay Singh <ajay.kathat@microchip.com>, Xiubo Li <xiubli@redhat.com>,
  Sagi Grimberg <sagi@grimberg.me>, Daniel Borkmann <daniel@iogearbox.net>,
  Jonathan Corbet <corbet@lwn.net>, linux-rdma@vger.kernel.org,
@@ -160,8 +162,9 @@ Cc: Andrew Lunn <andrew@lunn.ch>, "Darrick J . Wong" <djwong@kernel.org>,
  Pablo Neira Ayuso <pablo@netfilter.org>, Marco Elver <elver@google.com>,
  Yury Norov <yury.norov@gmail.com>,
  "James E . J . Bottomley" <jejb@linux.ibm.com>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Borislav Petkov <bp@alien8.de>,
- Keith Busch <kbusch@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, KP Singh <kpsingh@kernel.org>,
+ Borislav Petkov <bp@alien8.de>, Keith Busch <kbusch@kernel.org>,
+ Dan Williams <dan.j.williams@intel.com>,
  Mauro Carvalho Chehab <mchehab@kernel.org>,
  Franky Lin <franky.lin@broadcom.com>, Arend van Spriel <aspriel@gmail.com>,
  linux-ext4@vger.kernel.org, Wenpeng Liang <liangwenpeng@huawei.com>,
@@ -171,7 +174,7 @@ Cc: Andrew Lunn <andrew@lunn.ch>, "Darrick J . Wong" <djwong@kernel.org>,
  netdev@vger.kernel.org, Ying Xue <ying.xue@windriver.com>,
  Manish Rangankar <mrangankar@marvell.com>,
  "David S . Miller" <davem@davemloft.net>,
- =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>,
+ Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
  Vignesh Raghavendra <vigneshr@ti.com>, Peter Zijlstra <peterz@infradead.org>,
  "H . Peter Anvin" <hpa@zytor.com>,
  Alexandre Torgue <alexandre.torgue@foss.st.com>,
@@ -198,7 +201,7 @@ Cc: Andrew Lunn <andrew@lunn.ch>, "Darrick J . Wong" <djwong@kernel.org>,
  linuxppc-dev@lists.ozlabs.org, David Ahern <dsahern@kernel.org>,
  Philipp Reisner <philipp.reisner@linbit.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+ Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>,
  Vinod Koul <vkoul@kernel.org>, tipc-discussion@lists.sourceforge.net,
  Thomas Graf <tgraf@suug.ch>, Johannes Berg <johannes@sipsolutions.net>,
  Sungjong Seo <sj1557.seo@samsung.com>, Martin KaFai Lau <martin.lau@linux.dev>
@@ -206,72 +209,16 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Oct 5, 2022 at 9:16 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Wed, Oct 05, 2022 at 11:48:40PM +0200, Jason A. Donenfeld wrote:
-> > Rather than incurring a division or requesting too many random bytes for
-> > the given range, use the prandom_u32_max() function, which only takes
-> > the minimum required bytes from the RNG and avoids divisions.
->
-> Yes please!
->
-> Since this is a treewide patch, it's helpful for (me at least) doing
-> reviews to detail the mechanism of the transformation.
->
-> e.g. I imagine this could be done with something like Coccinelle and
->
-> @no_modulo@
-> expression E;
-> @@
->
-> -       (prandom_u32() % (E))
-> +       prandom_u32_max(E)
->
-> > diff --git a/drivers/mtd/ubi/debug.h b/drivers/mtd/ubi/debug.h
-> > index 118248a5d7d4..4236c799a47c 100644
-> > --- a/drivers/mtd/ubi/debug.h
-> > +++ b/drivers/mtd/ubi/debug.h
-> > @@ -73,7 +73,7 @@ static inline int ubi_dbg_is_bgt_disabled(const struct ubi_device *ubi)
-> >  static inline int ubi_dbg_is_bitflip(const struct ubi_device *ubi)
-> >  {
-> >       if (ubi->dbg.emulate_bitflips)
-> > -             return !(prandom_u32() % 200);
-> > +             return !(prandom_u32_max(200));
-> >       return 0;
-> >  }
-> >
->
-> Because some looks automated (why the parens?)
->
-> > @@ -393,14 +387,11 @@ static struct test_driver {
-> >
-> >  static void shuffle_array(int *arr, int n)
-> >  {
-> > -     unsigned int rnd;
-> >       int i, j;
-> >
-> >       for (i = n - 1; i > 0; i--)  {
-> > -             rnd = prandom_u32();
-> > -
-> >               /* Cut the range. */
-> > -             j = rnd % i;
-> > +             j = prandom_u32_max(i);
-> >
-> >               /* Swap indexes. */
-> >               swap(arr[i], arr[j]);
->
-> And some by hand. :)
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+On Wed, Oct 05, 2022 at 11:48:44PM +0200, Jason A. Donenfeld wrote:
+> With no callers left of prandom_u32() and prandom_bytes(), remove these
+> deprecated wrappers.
+> 
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 
-Thanks!
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Reviewed-by: KP Singh <kpsingh@kernel.org>
-
-
->
-> --
-> Kees Cook
+-- 
+Kees Cook
 
 
 _______________________________________________
