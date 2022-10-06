@@ -4,69 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 30615C43217
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 15:16:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 111E3C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 15:17:16 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ogSbu-0004Y7-DE;
-	Thu, 06 Oct 2022 15:16:30 +0000
+	id 1ogScd-00031n-FN;
+	Thu, 06 Oct 2022 15:17:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ogSbt-0004Y0-IK
+ (envelope-from <chao@kernel.org>) id 1ogScb-00031Z-LR
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 15:16:29 +0000
+ Thu, 06 Oct 2022 15:17:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=T20xZ2Id0fWfr9mHqukHXhubwI/1d7WeQeLLi3OVE8Y=; b=MeI5xtB1LVvbohNYmntxdQIJqw
- UnWp5KrJSZsxgehjbexnOmkGxyzEAuyZSwLKNd1BLkpi9vKwHf1tmhQiaswgOoSA5jDkUN5wgt7SX
- AG7gPz+UEGdhw3DK6j7TCVRBIFUSxPlQFSKhj7DV1qy+jBgvEESzqa1/qhi88h74Asxw=;
+ bh=zM9PamXmhRxD4THXcCllnuvnojOwt118tl1RibvASgA=; b=Mds01T45WiyciJm6mnWAuHc+y1
+ Di48QQaa1e5QhSG5I21BoJ/nEssuUJjnp4Rq/+us8hw9+lBWycNNLiA4i3m75vZ5/P5SH6W98seUq
+ 842qbQbNUhS2p6I51DfVoXCow0NG9VJWc8FcYmky5xrBpmnLGHkl6ovwXqHCuKpwFRv4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=T20xZ2Id0fWfr9mHqukHXhubwI/1d7WeQeLLi3OVE8Y=; b=J
- Ld272rC7wBuxY+H9BZhe94i92hjHF6EjqmaPyQuLBtEAMS9RFUEi2Focvse+uFe3R+OS5Vj8Xicyl
- V1BTaZaTgm/Hg5TZqBOB3lwnn6HeYXjTr8Hfa0SroDBmqAGU+UqSy8w2hMXKnJ5J5BvRZZXKAcpYi
- DIAcEQQqP0fTxvxg=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=zM9PamXmhRxD4THXcCllnuvnojOwt118tl1RibvASgA=; b=JVbEn7M3IdIZlb3A39O504JuDv
+ 4ePAGezeUdzc2huHAor31jm6k7ApuCmJ80v4+36kMxZQXZWc3Hw1NKZihCZfS53uUaLy4rPfutmub
+ tMMFbpoOB88LpMvxNB3XcOL6u9jagFbyXsuhqocYFEhGa+7pz93YMUCFV9Df7ciImwZM=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ogSbp-00Ep3m-8H for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 15:16:29 +0000
+ id 1ogScZ-00Ep7U-SM for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 06 Oct 2022 15:17:13 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 2BB6DB820C0
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 729E3619C8
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  6 Oct 2022 15:16:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 385B6C433C1;
- Thu,  6 Oct 2022 15:16:12 +0000 (UTC)
+ Thu,  6 Oct 2022 15:17:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 197D9C4347C;
+ Thu,  6 Oct 2022 15:17:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1665069372;
- bh=8SKqFBIYeThVUNjbIA0cdqEp2mrz/RMJNmMZ+5F8OOs=;
- h=From:To:Cc:Subject:Date:From;
- b=XQaOXXXy4SwGcbRfG8TYy5f5OmPewnH9LCPMyOj4VI8WZtookkwAdYlcWO6Q29WW6
- Y/SC/QRIfJYTYairRXDdw+Rp+1owutkJZjhBQF+upoi4tO1swjV6j2swTlB6lSxOzE
- L0jMwrhlXtsc2xvcLC1i6t6I+BFKEmLfEX+3myclUNk3DOi1vRAPXrGbl1vU0nAmLK
- 5dzma3nYfO3nMacJP+YBZ/hL51Wfk/8VlHscKC1To/9WGWwdtobef4OJ80JtMDr3+X
- Vo+mlHa3Ch468z9Xca+PheKkOcNUuSeKus6HE6CmYKZnkwUF2cYF+eX4IWZ1AVs5ja
- p5h2GtTZYe4ew==
+ s=k20201202; t=1665069425;
+ bh=g3wx+RZOhPXhRIjfDWyZ6lGpd8XdW9G7VNq1Rdx9r6M=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=kchR08irkxS2ngqqMc0wp2Iz10NooQKxFSUM0KKbAhcE2jOeCnGYbNhNlNZlCJIc/
+ 26RC5qlK49MDGO9BY/cHcaX+nskN/QMRKjcENioG7Mkf+iDfv1PLK0xxeaDwPykC9i
+ vLVtfRkTjagWvHPVaUIaj/NIYZk7BmuGRVnIUCnEGjYxDsvpp4LK+bfZNC/hE3qVZ+
+ 2IKafzx18whvTTQbxvBx+kbG6/wKW/MF7Qd4/nZuk+UZw/Cdx0HF4hmPoytcgEJdYh
+ j9A3+N6IYTXvdslBFiJnqP2geAdq24k3CFcEaNV6okrBuV5100dqy+X3Umg+B6vBVI
+ vzi9IH7HLHCqw==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Thu,  6 Oct 2022 23:16:06 +0800
-Message-Id: <20221006151606.58288-1-chao@kernel.org>
+Date: Thu,  6 Oct 2022 23:16:57 +0800
+Message-Id: <20221006151657.58336-2-chao@kernel.org>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20221006151657.58336-1-chao@kernel.org>
+References: <20221006151657.58336-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ogSbp-00Ep3m-8H
-Subject: [f2fs-dev] [PATCH] fsck.f2fs: fix __end_block_addr()
+X-Headers-End: 1ogScZ-00Ep7U-SM
+Subject: [f2fs-dev] [PATCH 2/2] fsck.f2fs: export valid image size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,29 +85,111 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The calculation is wrong, fix it.
+Change to calculate and export max image size with valid blocks
+used of image rather than last used block of image.
+
+[FSCK] Max image size: xx MB, Free space: xx MB
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fsck/f2fs.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fsck/f2fs.h       |  2 ++
+ fsck/fsck.c       | 15 +++++++++++----
+ include/f2fs_fs.h |  1 -
+ lib/libf2fs_io.c  |  9 ---------
+ 4 files changed, 13 insertions(+), 14 deletions(-)
 
 diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 030d750..2fd241f 100644
+index 2fd241f..703f340 100644
 --- a/fsck/f2fs.h
 +++ b/fsck/f2fs.h
-@@ -416,8 +416,9 @@ static inline block_t __start_sum_addr(struct f2fs_sb_info *sbi)
- 
- static inline block_t __end_block_addr(struct f2fs_sb_info *sbi)
- {
--	block_t end = SM_I(sbi)->main_blkaddr;
--	return end + le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
-+	return SM_I(sbi)->main_blkaddr +
-+		(le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment_count_main) <<
-+		sbi->log_blocks_per_seg);
+@@ -421,6 +421,8 @@ static inline block_t __end_block_addr(struct f2fs_sb_info *sbi)
+ 		sbi->log_blocks_per_seg);
  }
  
++#define BLKS_PER_SEC(sbi)						\
++	((sbi)->segs_per_sec * (sbi)->blocks_per_seg)
  #define GET_ZONENO_FROM_SEGNO(sbi, segno)                               \
+ 	((segno / sbi->segs_per_sec) / sbi->secs_per_zone)
+ 
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index b1b6722..2f6cc72 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -3179,6 +3179,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+ 	struct hard_link_node *node = NULL;
+ 	bool verify_failed = false;
++	uint64_t max_blks, data_secs, node_secs, free_blks;
+ 
+ 	if (c.show_file_map)
+ 		return 0;
+@@ -3229,10 +3230,16 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 		}
+ 		c.bug_on = 1;
+ 	}
+-	printf("[FSCK] Max image size: %"PRIu64" MB, Free space: %u MB\n",
+-		c.max_size >> 20,
+-		(sbi->user_block_count - sbi->total_valid_block_count) >>
+-		(20 - F2FS_BLKSIZE_BITS));
++
++	data_secs = round_up(sbi->total_valid_node_count, BLKS_PER_SEC(sbi));
++	node_secs = round_up(sbi->total_valid_block_count -
++				sbi->total_valid_node_count, BLKS_PER_SEC(sbi));
++	free_blks = (sbi->total_sections - data_secs - node_secs) *
++							BLKS_PER_SEC(sbi);
++	max_blks = SM_I(sbi)->main_blkaddr + (data_secs + node_secs) *
++							BLKS_PER_SEC(sbi);
++	printf("[FSCK] Max image size: %"PRIu64" MB, Free space: %"PRIu64" MB\n",
++						max_blks >> 8, free_blks >> 8);
+ 	printf("[FSCK] Unreachable nat entries                       ");
+ 	if (nr_unref_nid == 0x0) {
+ 		printf(" [Ok..] [0x%x]\n", nr_unref_nid);
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 509d75a..c36c623 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -480,7 +480,6 @@ struct f2fs_configuration {
+ 	uint64_t wanted_total_sectors;
+ 	uint64_t wanted_sector_size;
+ 	uint64_t target_sectors;
+-	uint64_t max_size;
+ 	uint32_t sectors_per_blk;
+ 	uint32_t blks_per_seg;
+ 	__u8 init_version[VERSION_LEN + 1];
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index a392255..1a8167d 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -524,9 +524,6 @@ int dev_read(void *buf, __u64 offset, size_t len)
+ 	int fd;
+ 	int err;
+ 
+-	if (c.max_size < (offset + len))
+-		c.max_size = offset + len;
+-
+ 	if (c.sparse_mode)
+ 		return sparse_read_blk(offset / F2FS_BLKSIZE,
+ 					len / F2FS_BLKSIZE, buf);
+@@ -568,9 +565,6 @@ int dev_write(void *buf, __u64 offset, size_t len)
+ {
+ 	int fd;
+ 
+-	if (c.max_size < (offset + len))
+-		c.max_size = offset + len;
+-
+ 	if (c.dry_run)
+ 		return 0;
+ 
+@@ -613,9 +607,6 @@ int dev_fill(void *buf, __u64 offset, size_t len)
+ {
+ 	int fd;
+ 
+-	if (c.max_size < (offset + len))
+-		c.max_size = offset + len;
+-
+ 	if (c.sparse_mode)
+ 		return sparse_write_zeroed_blk(offset / F2FS_BLKSIZE,
+ 						len / F2FS_BLKSIZE);
 -- 
 2.36.1
 
