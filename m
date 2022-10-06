@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 163F6C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 04:42:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 93D6AC433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 04:45:34 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ogIiE-00011L-VU;
-	Thu, 06 Oct 2022 04:42:22 +0000
+	id 1ogIlJ-0001a7-Uc;
+	Thu, 06 Oct 2022 04:45:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <keescook@chromium.org>) id 1ogIiD-00011F-L3
+ (envelope-from <keescook@chromium.org>) id 1ogIlJ-0001a1-68
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 04:42:21 +0000
+ Thu, 06 Oct 2022 04:45:33 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=WbAjddv7dJAWgX74vxMdFtfHq8KnIvmUd6IHydPVZWw=; b=Qug9li2ezyfdBx/Qon8SuLPvbo
- HC+HkJrK1PM+gR2lzJ/eJjw0qpN0kerm+7wkFSO7vJmU8npIABp3x509erDC+8EYppSPQ921jTCDf
- BpJ/n9jdbEdFeJQ0OtkbtYsWIXQILYW/Yx1Ml4eDCPyW9QOemcMUEV2F9q/zDrVy5bxg=;
+ bh=BXKZz/gOYpFYEK/kvAD1ks5ZMqdWWvWPR9euDTlMinY=; b=YfMKQNNiRHqzUWZA0vmarUWN6y
+ +BdhXfmE8ArjsMKknNaBeYZNn5VjN0hJATxAIkx/fUmRWtvGKnTjk/jwtmZmU/DGCRMWzNPLcGw4C
+ 7y2+0lcW5CztTXneGfbMNFfI6ZKOHjui6jrevoxTYySdwSg7IcRh8Tlxt8K8+ZocktEA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,58 +33,57 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=WbAjddv7dJAWgX74vxMdFtfHq8KnIvmUd6IHydPVZWw=; b=eUnbR0uNcmt75MLrcfN1YGIPbF
- LXwpw5zSVi6LLSBfu/OUQBKcd7PgpMRGKE/7wtuB8/jWk9wsam65TnlYmB6fdTig87i5stN3HOOm/
- 6sgvX+QMttZc3tCw5KmihZsbItOmAJre4daEQn5k95lmBdX8DTj3DbeqQX6jZvyigjAU=;
-Received: from mail-oa1-f50.google.com ([209.85.160.50])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=BXKZz/gOYpFYEK/kvAD1ks5ZMqdWWvWPR9euDTlMinY=; b=he1NcgT/vp8EbpIObf+i8QgNq6
+ AWjsmtfyrwWgIMyYeXtjwOhaCkcNzDJXHSb8IzZN/7psrJlZxTFJSG2+WIFg6dk4mpC+crT48mXox
+ JzVeqF7HczzG/ZZ3rokDLyk48PGOJBA84yMhKNxsK+dYGH6Rd4ZpSo81vCTnM0Dk9h7Q=;
+Received: from mail-pj1-f52.google.com ([209.85.216.52])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1ogIi6-0007Kt-UL for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 04:42:21 +0000
-Received: by mail-oa1-f50.google.com with SMTP id
- 586e51a60fabf-1322d768ba7so986042fac.5
+ id 1ogIlI-00EJBJ-K7 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 06 Oct 2022 04:45:33 +0000
+Received: by mail-pj1-f52.google.com with SMTP id pq16so764754pjb.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 05 Oct 2022 21:42:14 -0700 (PDT)
+ Wed, 05 Oct 2022 21:45:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chromium.org; s=google;
  h=in-reply-to:content-disposition:mime-version:references:message-id
  :subject:cc:to:from:date:from:to:cc:subject:date;
- bh=WbAjddv7dJAWgX74vxMdFtfHq8KnIvmUd6IHydPVZWw=;
- b=WgCBVOxTCY3r6hnjb6DkPXMWKhTpJd2tJ8grQVy4FqddmqNDeeFgajag3lajOwT2v4
- a87IfTIAA5TCPftGBNiy4cY7xnOoxUEfMiQjvrPT/rt/xjKxauu3MOYhjJEXssFW35Ee
- /z+9ItQjm7QhlvSxza54MmNIb/ZuYs/f028rM=
+ bh=BXKZz/gOYpFYEK/kvAD1ks5ZMqdWWvWPR9euDTlMinY=;
+ b=Pa5J7iVIfOPPpc5FnD+VCPFKYUv3DdEsBgX8F3veGLnr0MqCAKKnFqdt9Zn7I1vA4a
+ hp/m/n+zFRiftLounW3GI1Yh9t5CRw9Qy1PoS1A+KhEfND0rtCnNn/VAYMO7oSLOURb7
+ x/xHspG9KrvXOaDvidgpTqZEY9MLlutH21Sdk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=in-reply-to:content-disposition:mime-version:references:message-id
  :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
- bh=WbAjddv7dJAWgX74vxMdFtfHq8KnIvmUd6IHydPVZWw=;
- b=Gm1SGg4iGa+RXMqcGxwfV+sZLVxVdmN7+PowdqCT+/930BcJeFi3U0UfbzVBqQJpQL
- /D9KqnftHEagjTTNX8idSFeTWFIHWZpYGiheuBefqiu4obnlRqZTalpvz5Jbz/WPSBPs
- ojoFpJgel/szy2IS6qHpWeFswDxS4BsAEnvafWywQW18zUxKij5r2YCLU48uWETai5u8
- g0ZHukXd2GgLh+YzdkF5H/5Xgn/sPTkctQn7+Royelfpk9/2g4G6TTSimQJI4BQU4W03
- b60bQsBrdocT0eAcGZOaXU9aEBFt+KQefJ2Hv0pJCAnCX1sPxOGhj/k6ULsKGAIJmCEY
- 6wRg==
-X-Gm-Message-State: ACrzQf2i6gddZ/R+d8O91BgqQtElKBF0QN3GojWQ5zU5mFA9jnge0Gf5
- 7TaBa1EhZXPQ1zwYrgETVP8IsTfX5F+NrMMW
-X-Google-Smtp-Source: AMsMyM4cCCHH4sm8YdThV49cVWVDAgPzqhkhh6i7+17PaqDM+DNwRTUS7Um0Z/zO228Kkrjqlqz/Cg==
-X-Received: by 2002:a17:90a:ea95:b0:20a:f65b:143b with SMTP id
- h21-20020a17090aea9500b0020af65b143bmr3218311pjz.230.1665029812504; 
- Wed, 05 Oct 2022 21:16:52 -0700 (PDT)
+ bh=BXKZz/gOYpFYEK/kvAD1ks5ZMqdWWvWPR9euDTlMinY=;
+ b=kw5WiZ83Um+HZ/Q4sWxRrcuYsVDLRm3/DkVVhs6hjMtdyOXua+5qET44wAyzTmkT/d
+ l9npilNh1s87/jQZmKQZWAewmEEk8pt5HT+FmbZ44hUcvpe1FDMc6k9eCYpI5m6DYmmh
+ DUq+5n20ifO5GAGxmyLxoJYowznAmp0CpcAlhZ0t0CS6Q5hONfQKyvuOzdEgoEcZ+zDz
+ +V7f8alDDIF7/quF1qmH65Abiz4dsbgjvKejzhhFDudMj0is7Lda8w5xiBMl8B44erzQ
+ /cugE4MFP2JXML+AAGgovFoO8I6mZRFx+Vft2ycdm6OedWOWcR4DFKBfPDUO3T72c0A4
+ sYzg==
+X-Gm-Message-State: ACrzQf0Q6L1WX+X7t3A0ShfPgE9gyVREpWd7Gps8oTq6516AplrTq2hg
+ mOhz5cDYXeFdT/BNtDwtOxdVhznc1PXcnhtk
+X-Google-Smtp-Source: AMsMyM7BFOiJDjGZF65COEMp2Clzr5vtXi0588PB1vqUCkCeq9oCGZAqcRbRAS5gmL3ROlmwc9XhOA==
+X-Received: by 2002:a17:90b:384a:b0:203:7388:64bf with SMTP id
+ nl10-20020a17090b384a00b00203738864bfmr8697904pjb.115.1665031527009; 
+ Wed, 05 Oct 2022 21:45:27 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
  by smtp.gmail.com with ESMTPSA id
- je12-20020a170903264c00b00176d347e9a7sm11219825plb.233.2022.10.05.21.16.51
+ d5-20020a62f805000000b0054124008c14sm11733797pfh.154.2022.10.05.21.45.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Oct 2022 21:16:51 -0700 (PDT)
-Date: Wed, 5 Oct 2022 21:16:50 -0700
+ Wed, 05 Oct 2022 21:45:24 -0700 (PDT)
+Date: Wed, 5 Oct 2022 21:45:22 -0700
 From: Kees Cook <keescook@chromium.org>
 To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Message-ID: <202210052035.A1020E3@keescook>
+Message-ID: <202210052144.5DA3690D@keescook>
 References: <20221005214844.2699-1-Jason@zx2c4.com>
- <20221005214844.2699-2-Jason@zx2c4.com>
+ <20221005214844.2699-5-Jason@zx2c4.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20221005214844.2699-2-Jason@zx2c4.com>
-X-Headers-End: 1ogIi6-0007Kt-UL
-Subject: Re: [f2fs-dev] [PATCH v1 1/5] treewide: use prandom_u32_max() when
+In-Reply-To: <20221005214844.2699-5-Jason@zx2c4.com>
+X-Headers-End: 1ogIlI-00EJBJ-K7
+Subject: Re: [f2fs-dev] [PATCH v1 4/5] treewide: use get_random_bytes when
  possible
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -210,59 +209,13 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Oct 05, 2022 at 11:48:40PM +0200, Jason A. Donenfeld wrote:
-> Rather than incurring a division or requesting too many random bytes for
-> the given range, use the prandom_u32_max() function, which only takes
-> the minimum required bytes from the RNG and avoids divisions.
+On Wed, Oct 05, 2022 at 11:48:43PM +0200, Jason A. Donenfeld wrote:
+> The prandom_bytes() function has been a deprecated inline wrapper around
+> get_random_bytes() for several releases now, and compiles down to the
+> exact same code. Replace the deprecated wrapper with a direct call to
+> the real function.
 
-Yes please!
-
-Since this is a treewide patch, it's helpful for (me at least) doing
-reviews to detail the mechanism of the transformation.
-
-e.g. I imagine this could be done with something like Coccinelle and
-
-@no_modulo@
-expression E;
-@@
-
--	(prandom_u32() % (E))
-+	prandom_u32_max(E)
-
-> diff --git a/drivers/mtd/ubi/debug.h b/drivers/mtd/ubi/debug.h
-> index 118248a5d7d4..4236c799a47c 100644
-> --- a/drivers/mtd/ubi/debug.h
-> +++ b/drivers/mtd/ubi/debug.h
-> @@ -73,7 +73,7 @@ static inline int ubi_dbg_is_bgt_disabled(const struct ubi_device *ubi)
->  static inline int ubi_dbg_is_bitflip(const struct ubi_device *ubi)
->  {
->  	if (ubi->dbg.emulate_bitflips)
-> -		return !(prandom_u32() % 200);
-> +		return !(prandom_u32_max(200));
->  	return 0;
->  }
->  
-
-Because some looks automated (why the parens?)
-
-> @@ -393,14 +387,11 @@ static struct test_driver {
->  
->  static void shuffle_array(int *arr, int n)
->  {
-> -	unsigned int rnd;
->  	int i, j;
->  
->  	for (i = n - 1; i > 0; i--)  {
-> -		rnd = prandom_u32();
-> -
->  		/* Cut the range. */
-> -		j = rnd % i;
-> +		j = prandom_u32_max(i);
->  
->  		/* Swap indexes. */
->  		swap(arr[i], arr[j]);
-
-And some by hand. :)
+Global search/replace matches. :)
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 
