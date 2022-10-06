@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72583C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 12:46:10 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 40C5CC433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 12:54:02 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ogQGO-0008Rf-53;
-	Thu, 06 Oct 2022 12:46:08 +0000
+	id 1ogQO1-00034D-60;
+	Thu, 06 Oct 2022 12:54:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
  (envelope-from <SRS0=tIOp=2H=zx2c4.com=Jason@kernel.org>)
- id 1ogQGL-0008RL-SS; Thu, 06 Oct 2022 12:46:05 +0000
+ id 1ogQO0-000344-5X; Thu, 06 Oct 2022 12:54:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=8dWFI8h4OMBAtrqSOGO78rNNmSB/3Qreg0w0Og/94qc=; b=VMiC79M7ouMsqPKLAYMVe61Tx0
- WQDaoU9vLb3V6KxoY7x6kjIwcj6xokYRWwlunUBmxEJiM4/F8ELKossZM0k2F6FGeXr4PHU0L325u
- oPnpG3VR99vsLCKvrOwsSJkbXh7dW4YfkzDFOyD1KRDmRMH7t7wfOylyuWAYrrq0bAME=;
+ bh=+Hkd+03ZPFCZHL4SytFYjQxSlVLh/tCnsKNFxa5wK+g=; b=V8GTqRWKWCIoC+KdfabTpHAUXQ
+ Cws0oy+5JXTVw2HipUZY2nG0kzw/6+48Qt0sEIUx5AXKeJXD2C8s2apDhgD7D5GqcAFlMd2vu2/YQ
+ 3OCq8zzvk8oft9RX/PvxdaxIRndTVQKWh4IVigjOwEyAVtfttFu1m9OX86ieyd5mv4wU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -32,47 +32,46 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=8dWFI8h4OMBAtrqSOGO78rNNmSB/3Qreg0w0Og/94qc=; b=YLtkRWX5AONAJteVf8n5L3J2uZ
- 91RAFvSfjaY/TRH5ILdw+1HKVt5xkOBgJMgHEbFdcI+qGlY7W+kSaMB8H0NjAHUAPNyd0V7nnqyZ1
- j2IFuVSK0GCP7o2H/A0qJdVAf9ee+eCF+Oi/hZ5aQ1DeDby0FQj9OiekH+2ZcekqeVPU=;
+ bh=+Hkd+03ZPFCZHL4SytFYjQxSlVLh/tCnsKNFxa5wK+g=; b=VKxAdvTEB6tBAOOHIl5L2Xb1FQ
+ J2BfMQ6lnjnn6ZLq4tIvxWFYsEycb05QEmMmY5PAiPNNrf2L8dCsPaXf3I+wTKv5+HpyiNSZHKphD
+ i6y4kGRikJunyDGfdped/+uSji+ZsYp7kRzH0KUnyaR6k2EWDaMiWHbpbcgQC8AJX9FQ=;
 Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ogQGJ-0007Yo-LU; Thu, 06 Oct 2022 12:46:05 +0000
+ id 1ogQNz-00Ehzc-AP; Thu, 06 Oct 2022 12:54:00 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 6F88CB8206F;
- Thu,  6 Oct 2022 12:45:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BBD6C433B5;
- Thu,  6 Oct 2022 12:45:39 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 90876B82089;
+ Thu,  6 Oct 2022 12:53:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65819C433D6;
+ Thu,  6 Oct 2022 12:53:28 +0000 (UTC)
 Authentication-Results: smtp.kernel.org;
  dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com
- header.b="gqKJ5uKA"
+ header.b="JFNs4Haz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105; 
- t=1665060337;
+ t=1665060806;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=8dWFI8h4OMBAtrqSOGO78rNNmSB/3Qreg0w0Og/94qc=;
- b=gqKJ5uKA335nUt4dHqz8iF9PLBDcDgx3n0YhiOxMrlk3oPDvs/7yiBJIDKV/E4nv62pdqe
- sPWU3H5aG76qM2evnoA3/Ys8c2HrO6GXFQDfmwl/KqnyJgMuSbwIQZf5GAnNUvK/lVQDpw
- cqr/cVirflho361qsz5SQunwSlNAMYo=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c546cd47
+ bh=+Hkd+03ZPFCZHL4SytFYjQxSlVLh/tCnsKNFxa5wK+g=;
+ b=JFNs4Hazt/h3DVxpbrAbzMPE9whooDcKk8uIX5aTYNyaQ0ww6ONDZEpvj0pBCk5Bkl2DLt
+ ktmEJcNw1Kn2Ot/YdbAehCwxq7qPZvj6WGsUyAnJyfFHg6BU5H6pbom+jt+FBFixHsfFyw
+ FXN6BTv1V4qGzBVuWo2f1r2ZOkBYL5M=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 82a088b4
  (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO); 
- Thu, 6 Oct 2022 12:45:37 +0000 (UTC)
-Date: Thu, 6 Oct 2022 06:45:25 -0600
+ Thu, 6 Oct 2022 12:53:26 +0000 (UTC)
+Date: Thu, 6 Oct 2022 06:53:14 -0600
 To: Kees Cook <keescook@chromium.org>
-Message-ID: <Yz7N5WsqmKiUl+6b@zx2c4.com>
+Message-ID: <Yz7PusEN5TG1PvJZ@zx2c4.com>
 References: <20221005214844.2699-1-Jason@zx2c4.com>
- <20221005214844.2699-2-Jason@zx2c4.com>
- <202210052035.A1020E3@keescook>
+ <202210052148.B11CBC60@keescook>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <202210052035.A1020E3@keescook>
-X-Headers-End: 1ogQGJ-0007Yo-LU
-Subject: Re: [f2fs-dev] [PATCH v1 1/5] treewide: use prandom_u32_max() when
- possible
+In-Reply-To: <202210052148.B11CBC60@keescook>
+X-Headers-End: 1ogQNz-00Ehzc-AP
+Subject: Re: [f2fs-dev] [PATCH v1 0/5] treewide cleanup of random integer
+ usage
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -200,42 +199,37 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Kees,
+On Wed, Oct 05, 2022 at 09:55:43PM -0700, Kees Cook wrote:
+> It'd be nice to capture some (all?) of the above somewhere. Perhaps just
+> a massive comment in the header?
 
-On Wed, Oct 05, 2022 at 09:16:50PM -0700, Kees Cook wrote:
-> On Wed, Oct 05, 2022 at 11:48:40PM +0200, Jason A. Donenfeld wrote:
-> > Rather than incurring a division or requesting too many random bytes for
-> > the given range, use the prandom_u32_max() function, which only takes
-> > the minimum required bytes from the RNG and avoids divisions.
+I'll include (something like) this in some "how to use" documentation
+I'm working on separately.
+
+> > I've CC'd get_maintainers.pl, which is a pretty big list. Probably some
+> > portion of those are going to bounce, too, and everytime you reply to
+> > this thread, you'll have to deal with a bunch of bounces coming
+> > immediately after. And a recipient list this big will probably dock my
+> > email domain's spam reputation, at least temporarily. Sigh. I think
+> > that's just how it goes with treewide cleanups though. Again, let me
+> > know if I'm doing it wrong.
 > 
-> Yes please!
-> 
-> Since this is a treewide patch, it's helpful for (me at least) doing
-> reviews to detail the mechanism of the transformation.
+> I usually stick to just mailing lists and subsystem maintainers.
 
-This is hand done. There were also various wrong seds done. And then I'd
-edit the .diff manually, and then reapply it, as an iterative process.
-No internet on the airplane, and oddly no spatch already on my laptop (I
-think I had some Gentoo ocaml issues at some point and removed it?).
+Lord have mercy I really wish I had done that. I supremely butchered the
+sending of this, and then tried to save it by resubmitting directly to
+vger with the same message ID but truncated CC, which mostly worked, but
+the whole thing is a mess. I'll trim this to subsystem maintainers and
+resubmit a v2 right away, rather than having people wade through the
+mess.
 
-> e.g. I imagine this could be done with something like Coccinelle and
+To any one who's reading this: no more replies to v1! It clogs the
+tubes.
 
-Feel free to check the work here by using Coccinelle if you're into
-that.
+> If any of the subsystems ask you to break this up (I hope not), I've got
 
-> >  static inline int ubi_dbg_is_bitflip(const struct ubi_device *ubi)
-> >  {
-> >  	if (ubi->dbg.emulate_bitflips)
-> > -		return !(prandom_u32() % 200);
-> > +		return !(prandom_u32_max(200));
-> >  	return 0;
-> >  }
-> >  
-> 
-> Because some looks automated (why the parens?)
-
-I saw this before going out and thought I'd fixed it but I guess I sent
-the wrong one.
+Oh god I surely hope not. Sounds like a massive waste of time and
+paperwork.
 
 Jason
 
