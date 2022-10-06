@@ -4,88 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A770EC433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 05:26:13 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8A139C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Oct 2022 05:28:59 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ogJOc-0004xz-QP;
-	Thu, 06 Oct 2022 05:26:10 +0000
+	id 1ogJRK-0001vv-Ou;
+	Thu, 06 Oct 2022 05:28:58 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <keescook@chromium.org>) id 1ogJOb-0004xt-Ih
+ (envelope-from <keescook@chromium.org>) id 1ogJRH-0001vh-PQ
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 05:26:09 +0000
+ Thu, 06 Oct 2022 05:28:55 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
- MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=51dSYIsgEywaJmdEPyI7vbp82hVQfJ6jQKHayIqsWH8=; b=jwJJ19bbrjFHPrsITd/NBvqHdr
- aixA94qnxUMPLgCuUSxbF2MXQODRR38eTwvXWR0FKmAruRXZQCkoRPcAxowRXo/SRQh5h/JvpWrAM
- q7UnPEq3VeoiB/0pLvPiOEa4pbQSH4tYg6VuLGqLXOBQT9LYPP5BbWNv3ZNuX2TF/GFA=;
+ bh=+S5GQGZ6/D/Mg+joUObE0SvwDFyqkvRT2sP5/5vRQvk=; b=gJ2s6yL9xY5hg8+Gn/cBsX8M5a
+ jyy4Ntc1uaGhaejNHZey8NF/Idhh8jo4YOGYGYikepAZodN9lwAHl/mlRWH5P4mnDaiVXABmgLaTT
+ saEd/ZHj4QxV07Bj9DG8pMchDJucU1qSLVJT4umBuqMYjncPJXF0gqq1BVzVEn2LWkik=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
- References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=51dSYIsgEywaJmdEPyI7vbp82hVQfJ6jQKHayIqsWH8=; b=HpRQKTcU+aCUpdHQd7PAzEjS33
- 2vIT/NwwmXaPWL+C0HVXvJr0eyMlFezdZtd4TOJczLSRJQ7MV9Baj+i7lcjY0o0AERB8MSdVwVEL0
- gtdUfDXEG1982u9f4IRG14mO9uDs+3QAx6P2gJ5yA2aO5qZjFSmTJIRk/XRPDEpYI488=;
-Received: from mail-pf1-f169.google.com ([209.85.210.169])
+ bh=+S5GQGZ6/D/Mg+joUObE0SvwDFyqkvRT2sP5/5vRQvk=; b=UU5aLFLjfG73CUNaZGH0zF55vS
+ HCWkQc7VvTOyKqvb33e/yV9bEcFrqqnkVLf9F+iB1kczT2neoVJu5o6Os1cpxsS12g275WtDY0eh2
+ mLNueIkEGZTqv3VDO+32lPocM4lrrVcdJVrr4czP5JK/S/IoOjRaZQai660qG1eibg1E=;
+Received: from mail-qv1-f46.google.com ([209.85.219.46])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1ogJOa-00ELFU-II for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Oct 2022 05:26:09 +0000
-Received: by mail-pf1-f169.google.com with SMTP id f140so1109070pfa.1
+ id 1ogJRD-00ELMV-Rc for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 06 Oct 2022 05:28:55 +0000
+Received: by mail-qv1-f46.google.com with SMTP id df9so566187qvb.9
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 05 Oct 2022 22:26:08 -0700 (PDT)
+ Wed, 05 Oct 2022 22:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chromium.org; s=google;
- h=in-reply-to:content-transfer-encoding:content-disposition
- :mime-version:references:message-id:subject:cc:to:from:date:from:to
- :cc:subject:date;
- bh=51dSYIsgEywaJmdEPyI7vbp82hVQfJ6jQKHayIqsWH8=;
- b=e0wWc8f7UVTw3oXSVMh5SbOC8/ybqXORh0RfOsp37foz3bEHC+sZdUS2Cb48q2Rals
- cLwchuP5t4lVTMm+j0edXnLdA6eiOkpTvFVeI+b/+yanhEnnWG77EYRopMXRVrLoop3K
- nYwrVibqoZRWrTFw38o2fgxxWy4pLnB/kciNo=
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:from:to:cc:subject:date;
+ bh=+S5GQGZ6/D/Mg+joUObE0SvwDFyqkvRT2sP5/5vRQvk=;
+ b=FnhfzhzYXlNcl6IxqwADyyzc747mTy8MU4rkgJN+LmLi1BBuM+8meOEr2rKBNA5cdb
+ UV5cg1R4d2Z6xBRg09lXiXAPPCtiRk0FnLoDXMxi1ZwCUSCYDye4OaZgSAusHDiISi0X
+ vF5wP8hNjXz8Z2pcn3GjqjTxVus9QcfOT5k48=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
- h=in-reply-to:content-transfer-encoding:content-disposition
- :mime-version:references:message-id:subject:cc:to:from:date
- :x-gm-message-state:from:to:cc:subject:date;
- bh=51dSYIsgEywaJmdEPyI7vbp82hVQfJ6jQKHayIqsWH8=;
- b=fvBjYs0PrPw+Ss79mJTu+KO6AgBvTbKtJzpIJNh2BCK5jvTup4v9Rjg9cYvPmYcBdQ
- eZ1UJpsv263SX3X+tDgTvVH//8KSgg/8b5Uj0bYKnQYtCTFu2m6gRALTcJnJi4Ic2qCA
- rZwW/DeyjZxX/pRjLrlYAHtMT89kZnltzJJBFA5CZjMbTcKmdbjbbBg4SROAnAqD+KFZ
- HeeynXaKHz0MEZ9gSn37b8cGnvkju0PFrD4NNlCmtoDI6RZjl00xdiExzyAbcuU9jWFE
- Sa7SLCrb1B9kJGB4YW2x4lNTyWE1P/JPSpZkTS1A211qLT7CNrE9/r0Oy/tWSor+pJpx
- Ww8A==
-X-Gm-Message-State: ACrzQf1pWSN5+jR8ZxGbJp5xc2mgsJPwMFfHKgiRIYLqIK9gvMLboo++
- AMhdWAzcZGRmzbEAy9A40KBeyVjm7akRYVF7
-X-Google-Smtp-Source: AMsMyM48HYcC17YfWxdcqN47yJn5oQWwbAuWOEmTE9E3JPhKRJg4eKNbmI4Bm6DfbK3tY9AIwV8yDw==
-X-Received: by 2002:a63:d613:0:b0:45a:654:cf16 with SMTP id
- q19-20020a63d613000000b0045a0654cf16mr2835844pgg.611.1665032145428; 
- Wed, 05 Oct 2022 21:55:45 -0700 (PDT)
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+ bh=+S5GQGZ6/D/Mg+joUObE0SvwDFyqkvRT2sP5/5vRQvk=;
+ b=t1KFAGovr1gn7jLI6JAD3XwFozS9B8BNMyVLZmLdCkrsiJ6m2S03p7+pR0WOFhlImf
+ J5Lp1WfGa4VnZ4C+WfdcdDucrhL7crAAAva3rzaYgSWPp8U2L1ehN9Wcgwvz2/WuTZv5
+ jAJHUe/uz1bmfVuQ0vUZs/x9JdUHtYO0HJ2+etTYOc2NhBWSMbTopP79eCrapIAfA+3T
+ 3Xq3/5AwaMr+pG8bdFluaRLArwrvwXhLN/AjhrFymeM3RLg9R7cffVSfYU5X0VjNMlsP
+ E2qH83k1dhCV4weA6y3rOfDuR31QhPCxwQTW2RWoy6+fdV9Ac3sG9bTdRXJlprUbK1EW
+ dHhg==
+X-Gm-Message-State: ACrzQf2pyQOY24ZXc2l0/reuLvT+1CtHekq9M+m/SfWfZtkZ6WmxfD+1
+ /tk6nXM8UMzPGLKbwoQXOFErFp7P08Fvg8Uf
+X-Google-Smtp-Source: AMsMyM5wQShENjZofrpCE9JXF1y8+Mj33eJ2Bpuqg3wBtAV3umQgBeXMs02cH4EGpzIndWjF3gW38w==
+X-Received: by 2002:a17:902:db0a:b0:178:2636:b6de with SMTP id
+ m10-20020a170902db0a00b001782636b6demr2822346plx.58.1665031085103; 
+ Wed, 05 Oct 2022 21:38:05 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
  by smtp.gmail.com with ESMTPSA id
- s14-20020a17090302ce00b0017a09ebd1e2sm11252393plk.237.2022.10.05.21.55.44
+ l18-20020a17090aaa9200b001fd8316db51sm1928521pjq.7.2022.10.05.21.38.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Oct 2022 21:55:44 -0700 (PDT)
-Date: Wed, 5 Oct 2022 21:55:43 -0700
+ Wed, 05 Oct 2022 21:38:03 -0700 (PDT)
+Date: Wed, 5 Oct 2022 21:38:02 -0700
 From: Kees Cook <keescook@chromium.org>
 To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Message-ID: <202210052148.B11CBC60@keescook>
+Message-ID: <202210052126.B34A2C62@keescook>
 References: <20221005214844.2699-1-Jason@zx2c4.com>
+ <20221005214844.2699-3-Jason@zx2c4.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20221005214844.2699-1-Jason@zx2c4.com>
-X-Headers-End: 1ogJOa-00ELFU-II
-Subject: Re: [f2fs-dev] [PATCH v1 0/5] treewide cleanup of random integer
- usage
+In-Reply-To: <20221005214844.2699-3-Jason@zx2c4.com>
+X-Headers-End: 1ogJRD-00ELMV-Rc
+Subject: Re: [f2fs-dev] [PATCH v1 2/5] treewide: use get_random_{u8,
+ u16}() when possible
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -206,84 +205,90 @@ Cc: Andrew Lunn <andrew@lunn.ch>, "Darrick J . Wong" <djwong@kernel.org>,
  Vinod Koul <vkoul@kernel.org>, tipc-discussion@lists.sourceforge.net,
  Thomas Graf <tgraf@suug.ch>, Johannes Berg <johannes@sipsolutions.net>,
  Sungjong Seo <sj1557.seo@samsung.com>, Martin KaFai Lau <martin.lau@linux.dev>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gV2VkLCBPY3QgMDUsIDIwMjIgYXQgMTE6NDg6MzlQTSArMDIwMCwgSmFzb24gQS4gRG9uZW5m
-ZWxkIHdyb3RlOgo+IEhpIGZvbGtzLAo+IAo+IFRoaXMgaXMgYSBmaXZlIHBhcnQgdHJlZXdpZGUg
-Y2xlYW51cCBvZiByYW5kb20gaW50ZWdlciBoYW5kbGluZy4gVGhlCj4gcnVsZXMgZm9yIHJhbmRv
-bSBpbnRlZ2VycyBhcmU6Cj4gCj4gLSBJZiB5b3Ugd2FudCBhIHNlY3VyZSBvciBhbiBpbnNlY3Vy
-ZSByYW5kb20gdTY0LCB1c2UgZ2V0X3JhbmRvbV91NjQoKS4KPiAtIElmIHlvdSB3YW50IGEgc2Vj
-dXJlIG9yIGFuIGluc2VjdXJlIHJhbmRvbSB1MzIsIHVzZSBnZXRfcmFuZG9tX3UzMigpLgo+ICAg
-KiBUaGUgb2xkIGZ1bmN0aW9uIHByYW5kb21fdTMyKCkgaGFzIGJlZW4gZGVwcmVjYXRlZCBmb3Ig
-YSB3aGlsZSBub3cKPiAgICAgYW5kIGlzIGp1c3QgYSB3cmFwcGVyIGFyb3VuZCBnZXRfcmFuZG9t
-X3UzMigpLgo+IC0gSWYgeW91IHdhbnQgYSBzZWN1cmUgb3IgYW4gaW5zZWN1cmUgcmFuZG9tIHUx
-NiwgdXNlIGdldF9yYW5kb21fdTE2KCkuCj4gLSBJZiB5b3Ugd2FudCBhIHNlY3VyZSBvciBhbiBp
-bnNlY3VyZSByYW5kb20gdTgsIHVzZSBnZXRfcmFuZG9tX3U4KCkuCj4gLSBJZiB5b3Ugd2FudCBz
-ZWN1cmUgb3IgaW5zZWN1cmUgcmFuZG9tIGJ5dGVzLCB1c2UgZ2V0X3JhbmRvbV9ieXRlcygpLgo+
-ICAgKiBUaGUgb2xkIGZ1bmN0aW9uIHByYW5kb21fYnl0ZXMoKSBoYXMgYmVlbiBkZXByZWNhdGVk
-IGZvciBhIHdoaWxlIG5vdwo+ICAgICBhbmQgaGFzIGxvbmcgYmVlbiBhIHdyYXBwZXIgYXJvdW5k
-IGdldF9yYW5kb21fYnl0ZXMoKS4KPiAtIElmIHlvdSB3YW50IGEgbm9uLXVuaWZvcm0gcmFuZG9t
-IHUzMiwgdTE2LCBvciB1OCBib3VuZGVkIGJ5IGEgY2VydGFpbgo+ICAgb3BlbiBpbnRlcnZhbCBt
-YXhpbXVtLCB1c2UgcHJhbmRvbV91MzJfbWF4KCkuCj4gICAqIEkgc2F5ICJub24tdW5pZm9ybSIs
-IGJlY2F1c2UgaXQgZG9lc24ndCBkbyBhbnkgcmVqZWN0aW9uIHNhbXBsaW5nIG9yCj4gICAgIGRp
-dmlzaW9ucy4gSGVuY2UsIGl0IHN0YXlzIHdpdGhpbiB0aGUgcHJhbmRvbV8qIG5hbWVzcGFjZS4K
-PiAKPiBUaGVzZSBydWxlcyBvdWdodCB0byBiZSBhcHBsaWVkIHVuaWZvcm1seSwgc28gdGhhdCB3
-ZSBjYW4gY2xlYW4gdXAgdGhlCj4gZGVwcmVjYXRlZCBmdW5jdGlvbnMsIGFuZCBlYXJuIHRoZSBi
-ZW5lZml0cyBvZiB1c2luZyB0aGUgbW9kZXJuCj4gZnVuY3Rpb25zLiBJbiBwYXJ0aWN1bGFyLCBp
-biBhZGRpdGlvbiB0byB0aGUgYm9yaW5nIHN1YnN0aXR1dGlvbnMsIHRoaXMKPiBwYXRjaHNldCBh
-Y2NvbXBsaXNoZXMgYSBmZXcgbmljZSBlZmZlY3RzOgo+IAo+IC0gQnkgdXNpbmcgcHJhbmRvbV91
-MzJfbWF4KCkgd2l0aCBhbiB1cHBlci1ib3VuZCB0aGF0IHRoZSBjb21waWxlciBjYW4KPiAgIHBy
-b3ZlIGF0IGNvbXBpbGUtdGltZSBpcyDiiaQ2NTUzNiBvciDiiaQyNTYsIGludGVybmFsbHkgZ2V0
-X3JhbmRvbV91MTYoKQo+ICAgb3IgZ2V0X3JhbmRvbV91OCgpIGlzIHVzZWQsIHdoaWNoIHdhc3Rl
-cyBmZXdlciBiYXRjaGVkIHJhbmRvbSBieXRlcywKPiAgIGFuZCBoZW5jZSBoYXMgaGlnaGVyIHRo
-cm91Z2hwdXQuCj4gCj4gLSBCeSB1c2luZyBwcmFuZG9tX3UzMl9tYXgoKSBpbnN0ZWFkIG9mICUs
-IHdoZW4gdGhlIHVwcGVyLWJvdW5kIGlzIG5vdCBhCj4gICBjb25zdGFudCwgZGl2aXNpb24gaXMg
-c3RpbGwgYXZvaWRlZCwgYmVjYXVzZSBwcmFuZG9tX3UzMl9tYXgoKSB1c2VzCj4gICBhIGZhc3Rl
-ciBtdWx0aXBsaWNhdGlvbi1iYXNlZCB0cmljayBpbnN0ZWFkLgo+IAo+IC0gQnkgdXNpbmcgZ2V0
-X3JhbmRvbV91MTYoKSBvciBnZXRfcmFuZG9tX3U4KCkgaW4gY2FzZXMgd2hlcmUgdGhlIHJldHVy
-bgo+ICAgdmFsdWUgaXMgaW50ZW5kZWQgdG8gaW5kZWVkIGJlIGEgdTE2IG9yIGEgdTgsIHdlIHdh
-c3RlIGZld2VyIGJhdGNoZWQKPiAgIHJhbmRvbSBieXRlcywgYW5kIGhlbmNlIGhhdmUgaGlnaGVy
-IHRocm91Z2hwdXQuCj4gCj4gU28sIGJhc2VkIG9uIHRob3NlIHJ1bGVzIGFuZCBiZW5lZml0cyBm
-cm9tIGZvbGxvd2luZyB0aGVtLCB0aGlzIHBhdGNoc2V0Cj4gYnJlYWtzIGRvd24gaW50byB0aGUg
-Zm9sbG93aW5nIGZpdmUgc3RlcHM6Cj4gCj4gMSkgUmVwbGFjZSBgcHJhbmRvbV91MzIoKSAlIG1h
-eGAgYW5kIHZhcmlhbnRzIHRoZXJlb2Ygd2l0aAo+ICAgIHByYW5kb21fdTMyX21heChtYXgpLgo+
-IAo+IDIpIFJlcGxhY2UgYCh0eXBlKWdldF9yYW5kb21fdTMyKClgIGFuZCB2YXJpYW50cyB0aGVy
-ZW9mIHdpdGgKPiAgICBnZXRfcmFuZG9tX3UxNigpIG9yIGdldF9yYW5kb21fdTgoKS4gSSB0b29r
-IHRoZSBwYWlucyB0byBhY3R1YWxseQo+ICAgIGxvb2sgYW5kIHNlZSB3aGF0IGV2ZXJ5IGx2YWx1
-ZSB0eXBlIHdhcyBhY3Jvc3MgdGhlIGVudGlyZSB0cmVlLgo+IAo+IDMpIFJlcGxhY2UgcmVtYWlu
-aW5nIGRlcHJlY2F0ZWQgdXNlcyBvZiBwcmFuZG9tX3UzMigpIHdpdGgKPiAgICBnZXRfcmFuZG9t
-X3UzMigpLiAKPiAKPiA0KSBSZXBsYWNlIHJlbWFpbmluZyBkZXByZWNhdGVkIHVzZXMgb2YgcHJh
-bmRvbV9ieXRlcygpIHdpdGgKPiAgICBnZXRfcmFuZG9tX2J5dGVzKCkuCj4gCj4gNSkgUmVtb3Zl
-IHRoZSBkZXByZWNhdGVkIGFuZCBub3ctdW51c2VkIHByYW5kb21fdTMyKCkgYW5kCj4gICAgcHJh
-bmRvbV9ieXRlcygpIGlubGluZSB3cmFwcGVyIGZ1bmN0aW9ucy4KPiAKPiBJIHdhcyB0aGlua2lu
-ZyBvZiB0YWtpbmcgdGhpcyB0aHJvdWdoIG15IHJhbmRvbS5naXQgdHJlZSAob24gd2hpY2ggdGhp
-cwo+IHNlcmllcyBpcyBjdXJyZW50bHkgYmFzZWQpIGFuZCBzdWJtaXR0aW5nIGl0IG5lYXIgdGhl
-IGVuZCBvZiB0aGUgbWVyZ2UKPiB3aW5kb3csIG9yIHdhaXRpbmcgZm9yIHRoZSB2ZXJ5IGVuZCBv
-ZiB0aGUgNi4xIGN5Y2xlIHdoZW4gdGhlcmUgd2lsbCBiZQo+IHRoZSBmZXdlc3QgbmV3IHBhdGNo
-ZXMgYnJld2luZy4gSWYgc29tZWJvZHkgd2l0aCBzb21lIHRyZWV3aWRlLWNsZWFudXAKPiBleHBl
-cmllbmNlIG1pZ2h0IHNoYXJlIHNvbWUgd2lzZG9tIGFib3V0IHdoYXQgdGhlIGJlc3QgdGltaW5n
-IHVzdWFsbHkKPiB3aW5kcyB1cCBiZWluZywgSSdtIGFsbCBlYXJzLgoKSXQnZCBiZSBuaWNlIHRv
-IGNhcHR1cmUgc29tZSAoYWxsPykgb2YgdGhlIGFib3ZlIHNvbWV3aGVyZS4gUGVyaGFwcyBqdXN0
-CmEgbWFzc2l2ZSBjb21tZW50IGluIHRoZSBoZWFkZXI/Cgo+IEkndmUgQ0MnZCBnZXRfbWFpbnRh
-aW5lcnMucGwsIHdoaWNoIGlzIGEgcHJldHR5IGJpZyBsaXN0LiBQcm9iYWJseSBzb21lCj4gcG9y
-dGlvbiBvZiB0aG9zZSBhcmUgZ29pbmcgdG8gYm91bmNlLCB0b28sIGFuZCBldmVyeXRpbWUgeW91
-IHJlcGx5IHRvCj4gdGhpcyB0aHJlYWQsIHlvdSdsbCBoYXZlIHRvIGRlYWwgd2l0aCBhIGJ1bmNo
-IG9mIGJvdW5jZXMgY29taW5nCj4gaW1tZWRpYXRlbHkgYWZ0ZXIuIEFuZCBhIHJlY2lwaWVudCBs
-aXN0IHRoaXMgYmlnIHdpbGwgcHJvYmFibHkgZG9jayBteQo+IGVtYWlsIGRvbWFpbidzIHNwYW0g
-cmVwdXRhdGlvbiwgYXQgbGVhc3QgdGVtcG9yYXJpbHkuIFNpZ2guIEkgdGhpbmsKPiB0aGF0J3Mg
-anVzdCBob3cgaXQgZ29lcyB3aXRoIHRyZWV3aWRlIGNsZWFudXBzIHRob3VnaC4gQWdhaW4sIGxl
-dCBtZQo+IGtub3cgaWYgSSdtIGRvaW5nIGl0IHdyb25nLgoKSSB1c3VhbGx5IHN0aWNrIHRvIGp1
-c3QgbWFpbGluZyBsaXN0cyBhbmQgc3Vic3lzdGVtIG1haW50YWluZXJzLgoKSWYgYW55IG9mIHRo
-ZSBzdWJzeXN0ZW1zIGFzayB5b3UgdG8gYnJlYWsgdGhpcyB1cCAoSSBob3BlIG5vdCksIEkndmUg
-Z290CnRoaXNbMV0sIHdoaWNoIGRvZXMgYSByZWFzb25hYmxlIGpvYiBvZiBzcGxpdHRpbmcgYSBj
-b21taXQgdXAgaW50bwpzZXBhcmF0ZSBjb21taXRzIGZvciBlYWNoIG1hdGNoaW5nIHN1YnN5c3Rl
-bS4KClNob3dpbmcgdGhhdCBhIHRyZWV3aWRlIGNoYW5nZSBjYW4gYmUgcmVwcm9kdWNlZCBtZWNo
-YW5pY2FsbHkgaGVscHMgd2l0aAprZWVwaW5nIGl0IHRvZ2V0aGVyIGFzIG9uZSBiaXQgdHJlZXdp
-ZGUgcGF0Y2gsIHRvbywgSSd2ZSBmb3VuZC4gOikKClRoYW5rIHlvdSBmb3IgdGhlIGNsZWFudXAh
-IFRoZSAidTggcm5kID0gZ2V0X3JhbmRvbV91MzIoKSIgaW4gdGhlIHRyZWUKaGFzIGJvdGhlcmVk
-IG1lIGZvciBhIGxvb29vbmcgdGltZS4KCi1LZWVzCgotLSAKS2VlcyBDb29rCgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On Wed, Oct 05, 2022 at 11:48:41PM +0200, Jason A. Donenfeld wrote:
+> Rather than truncate a 32-bit value to a 16-bit value or an 8-bit value,
+> simply use the get_random_{u8,u16}() functions, which are faster than
+> wasting the additional bytes from a 32-bit value.
+> 
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+
+Same question about "mechanism of transformation".
+
+> diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c
+> index ddfe9208529a..ac452a0111a9 100644
+> --- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c
+> +++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c
+> @@ -1467,7 +1467,7 @@ static void make_established(struct sock *sk, u32 snd_isn, unsigned int opt)
+>  	tp->write_seq = snd_isn;
+>  	tp->snd_nxt = snd_isn;
+>  	tp->snd_una = snd_isn;
+> -	inet_sk(sk)->inet_id = prandom_u32();
+> +	inet_sk(sk)->inet_id = get_random_u16();
+>  	assign_rxopt(sk, opt);
+>  
+>  	if (tp->rcv_wnd > (RCV_BUFSIZ_M << 10))
+
+This one I had to go look at -- inet_id is u16, so yeah. :)
+
+> diff --git a/lib/test_vmalloc.c b/lib/test_vmalloc.c
+> index 56ffaa8dd3f6..0131ed2cd1bd 100644
+> --- a/lib/test_vmalloc.c
+> +++ b/lib/test_vmalloc.c
+> @@ -80,7 +80,7 @@ static int random_size_align_alloc_test(void)
+>  	int i;
+>  
+>  	for (i = 0; i < test_loop_count; i++) {
+> -		rnd = prandom_u32();
+> +		rnd = get_random_u8();
+>  
+>  		/*
+>  		 * Maximum 1024 pages, if PAGE_SIZE is 4096.
+
+This wasn't obvious either, but it looks like it's because it never
+consumes more than u8?
+
+> diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
+> index 7981be526f26..57c7686ac485 100644
+> --- a/net/netfilter/nf_nat_core.c
+> +++ b/net/netfilter/nf_nat_core.c
+> @@ -468,7 +468,7 @@ static void nf_nat_l4proto_unique_tuple(struct nf_conntrack_tuple *tuple,
+>  	if (range->flags & NF_NAT_RANGE_PROTO_OFFSET)
+>  		off = (ntohs(*keyptr) - ntohs(range->base_proto.all));
+>  	else
+> -		off = prandom_u32();
+> +		off = get_random_u16();
+>  
+>  	attempts = range_size;
+
+Yup, u16 off;
+
+> diff --git a/net/sched/sch_sfb.c b/net/sched/sch_sfb.c
+> index 2829455211f8..7eb70acb4d58 100644
+> --- a/net/sched/sch_sfb.c
+> +++ b/net/sched/sch_sfb.c
+> @@ -379,7 +379,7 @@ static int sfb_enqueue(struct sk_buff *skb, struct Qdisc *sch,
+>  		goto enqueue;
+>  	}
+>  
+> -	r = prandom_u32() & SFB_MAX_PROB;
+> +	r = get_random_u16() & SFB_MAX_PROB;
+>  
+>  	if (unlikely(r < p_min)) {
+>  		if (unlikely(p_min > SFB_MAX_PROB / 2)) {
+
+include/uapi/linux/pkt_sched.h:#define SFB_MAX_PROB 0xFFFF
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-- 
+Kees Cook
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
