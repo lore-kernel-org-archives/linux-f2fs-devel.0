@@ -4,72 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A458C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 10 Oct 2022 22:16:19 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E9E2C433F5
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Oct 2022 03:43:24 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oi14M-0006Zc-SY;
-	Mon, 10 Oct 2022 22:16:18 +0000
+	id 1oi6Ar-0007LS-VB;
+	Tue, 11 Oct 2022 03:43:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1oi147-0006ZG-CV
+ (envelope-from <pr-tracker-bot@kernel.org>) id 1oi6Aq-0007LM-Q9
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Oct 2022 22:16:03 +0000
+ Tue, 11 Oct 2022 03:43:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Cc:To:Date:Message-Id:References:In-Reply-To:From:
+ Subject:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TSnfmV5MJSfmBT33PUGaa9/Vml2+SENXFc4nbxU0++4=; b=TK69/S/6UO61CEYzg3O8R06GKO
- 4EEYI4DKy5Sc7BXNG38uP9xHDyb7n8mxhxtIPQaOBhDVeLvMytHKdH/bB22WyJBVYR71iNtEWf458
- F12Cux7pDjXOx2gmiJ3emXskEZr+taM+I3ccDp4/TUNW7zcy1P42N5icMEiwT79Q90SE=;
+ bh=jSTExcuFIP/Db/EdiFhdo5RIkdNGcpj6Q84kZW9IO6Q=; b=kKrcLUFFXTTqUZ4TQIrPAMD8di
+ sSi19jri4hhG4/yFgUOxRGaQRyVJrCpZ4m53Vsof4GahFS5YT1a4fXDJXkL2svb9Tz/Gj5N8D2u0y
+ E+CnqLOXfmKU+qK57tg90QG56dBoet+MXKI1YyTqBo0DOrFKLTzHUWmRRel7PCAhrpwM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Cc:To:Date:Message-Id:References:In-Reply-To:From:Subject:Sender:Reply-To
+ :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TSnfmV5MJSfmBT33PUGaa9/Vml2+SENXFc4nbxU0++4=; b=F2xlMwwYw6yncyR+Q/LV2HtKGr
- kckgQi21DtdKI+JQ38IW9CRD1wVlvOtNMXuEf5OLyKTn3Enx+E6V1Yv00jaqEPIg/wraxRsHEUFVF
- Df9145UOvz704kpm4E5StFTDHWywVgwJktwCFPrfS6zIFrbeiYRWFiD2Y99EOWmKaY5k=;
+ bh=jSTExcuFIP/Db/EdiFhdo5RIkdNGcpj6Q84kZW9IO6Q=; b=c0NEQa5KB+oIrGJMlZk+QE7Dfy
+ ldxrPA1/LubwK1PhlLRBwZDDRuoGXCTsO/DI+ZOVwWRmKSr/EwMsREBDvxvcVwXvPrW0elrSH8gW/
+ VDiYeLvLm8utQ5bwSnhl7A1wlYk3WaFpvQjJv6qteMdPXkbJI/NBojE/T6DuVrtKm+SI=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oi145-0008Av-VH for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 10 Oct 2022 22:16:03 +0000
+ id 1oi6Aq-0006l7-7w for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 11 Oct 2022 03:43:20 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 8E3276103E
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 10 Oct 2022 22:15:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF066C433D6;
- Mon, 10 Oct 2022 22:15:50 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id D48506106D;
+ Tue, 11 Oct 2022 03:43:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 46139C433D6;
+ Tue, 11 Oct 2022 03:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1665440151;
- bh=wZ/EOWz6nhcKq0ueJZs/TIumez1AxffY2Ws7JHLZD+o=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Iq1Tvt0gvQCIFVGz5MOACY/MIYxvdJxjOTZyGDw1vEldNc2y/XhqR8DXCow2TSzUy
- 2dwUoIiP9m9JNy0ISKAONTS+9mXQTYOsqRdU9sn1McP3GrU0Qq97kgv9I3d6TKGk5E
- LgRuYehXIkGwqQ7BjY9eFeQ5ligoAl08R2FZD1Zz9bapb8ZBD+WtlQVrz1CvFbXvlg
- aMzdnXPP43UdE0oSC4hslGkNFJkO154Odd/QLHAzwb1O3kKk6quXZpESVxQaoMtRHI
- Elu5Pk8bGFMgrmp5dboc2URlI1ez465ldmL7sUNZJrAnhK6+lAOecwpHTmwG/FSXA7
- K95OCptqEYPug==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon, 10 Oct 2022 15:15:47 -0700
-Message-Id: <20221010221548.2728860-2-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.38.0.rc1.362.ged0d419d3c-goog
-In-Reply-To: <20221010221548.2728860-1-jaegeuk@kernel.org>
-References: <20221010221548.2728860-1-jaegeuk@kernel.org>
-MIME-Version: 1.0
-X-Headers-End: 1oi145-0008Av-VH
-Subject: [f2fs-dev] [PATCH 2/3] fsck.f2fs: fix missing to assign
- c.zoned_model
+ s=k20201202; t=1665459794;
+ bh=V0Gw5eFHwWhdruihaitv8HhwZs38DRG6OiqYy/mi/y8=;
+ h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+ b=BuU7y0qhw5XwCtOFBiZDqVfxsJ0Jcvrr0Sfx5B1i3tQbbj5JLrYCkaoKvvKuOeTpA
+ HImopIM49h8rYpzB3xkFz7WC95Q4fBGqdqtXuzKQl6e4ExnGKw+Chxxjaa2ClD1XUh
+ VwDL89Ae+AiQbJnmSwKGsOqSOdzoyIVKPMgy2oqltoHye5pHA8sOkzJGyqNDjt8quI
+ PZYj28ha1tDCnwDz/WmP2eqlAobT5Q02FpagTi6zvx7gUR8rsdFz42NW2+On9NHBbR
+ hyrhutSpKPAMT13+yjqLvfCOntcZNFpKyiHFxhrx49XOwEYWXMtESW7two82X42FEI
+ j56YkQEI6dsIg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ 3090AE270E4; Tue, 11 Oct 2022 03:43:14 +0000 (UTC)
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Y0RV6kXCyXtqYuS4@google.com>
+References: <Y0RV6kXCyXtqYuS4@google.com>
+X-PR-Tracked-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+X-PR-Tracked-Message-Id: <Y0RV6kXCyXtqYuS4@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+ tags/f2fs-for-6.1-rc1
+X-PR-Tracked-Commit-Id: b4dac1203f39821c6119033cdeebcea83cf45786
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5d170fe435e54cafa599a21521ea65fe9535f537
+Message-Id: <166545979419.4678.7423127526476737144.pr-tracker-bot@kernel.org>
+Date: Tue, 11 Oct 2022 03:43:14 +0000
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1oi6Aq-0006l7-7w
+Subject: Re: [f2fs-dev] [GIT PULL] f2fs update for 6.1-rc1
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,40 +89,26 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-We need to set the c.zoned_model appropriately for further usages.
+The pull request you sent on Mon, 10 Oct 2022 10:27:06 -0700:
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/mount.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.1-rc1
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 0597220b3bc0..cd8a07538150 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1095,6 +1095,14 @@ int init_sb_info(struct f2fs_sb_info *sbi)
- 		if (i == 0)
- 			c.devices[i].end_blkaddr += get_sb(segment0_blkaddr);
- 
-+		if (c.zoned_model == F2FS_ZONED_NONE) {
-+			if (c.devices[i].zoned_model == F2FS_ZONED_HM)
-+				c.zoned_model = F2FS_ZONED_HM;
-+			else if (c.devices[i].zoned_model == F2FS_ZONED_HA &&
-+					c.zoned_model != F2FS_ZONED_HM)
-+				c.zoned_model = F2FS_ZONED_HA;
-+		}
-+
- 		c.ndevs = i + 1;
- 		MSG(0, "Info: Device[%d] : %s blkaddr = %"PRIx64"--%"PRIx64"\n",
- 				i, c.devices[i].path,
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5d170fe435e54cafa599a21521ea65fe9535f537
+
+Thank you!
+
 -- 
-2.38.0.rc1.362.ged0d419d3c-goog
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
 
 _______________________________________________
