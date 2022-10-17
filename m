@@ -4,73 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 526A7C4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Oct 2022 12:24:11 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 79E26C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Oct 2022 17:03:50 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1okPAA-0006ro-Hb;
-	Mon, 17 Oct 2022 12:24:10 +0000
+	id 1okTWl-0003Wz-UB;
+	Mon, 17 Oct 2022 17:03:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1okPA6-0006rT-Qy
+ (envelope-from <daeho43@gmail.com>) id 1okTWk-0003Wt-GH
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Oct 2022 12:24:06 +0000
+ Mon, 17 Oct 2022 17:03:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
+ In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
+ :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gj7yUkSBrJWQbrdiUqoRgMnUjElThllgQkBroi/SIC4=; b=TuKM8AuaYgrwF/VP82vP2PcFGO
- u8TQxW6ZRntNRiddIiwukuxfYmh9/+DjZYK0B2l5uUcqoJ0GAp7vxsLWYg7rJAHH+ancwJOFUxhyD
- dq4n6UMJIy+mkxE32aYzUXWKzr84A+Q0M9xg6RfTcVWAjvUoFd4BKNkJq0j5NO1g+28Q=;
+ bh=1gM2OhPkZ6+CVHU/B6ywYxdhbtgkPzENmTLQaUuvjkI=; b=EcMya9qkwSYb3IHHR1bEj0hMJx
+ xDVGvanws0WkqEh9hNEzdebaCn//nx4MRAfGx6NdW/iG/XqBzYmT3/KzbZ6TPCfYKVZTEUm6M753E
+ kXhYaMXWwlkrxmo3UEYa5tHKP4UdiMPBmkHdP/tS/ypsSxeDn1ISj5R21ChiyK2CV/Jk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
+ MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gj7yUkSBrJWQbrdiUqoRgMnUjElThllgQkBroi/SIC4=; b=WPUjIzK3O4BIfxMUtG7rSJHPPp
- fIIHdp8WcCr1C5MX/2K5ftAOhy20SVIFGeGsMO5hFn3Gderj8Tf5jw0uO0FsmtupKBVo5iEmJNldJ
- /h8tVnzyQn8FfEkA188f9NKUBKtLpLPzNZ58NmXZxsAhbC0/Tr5pArvDxD68o1xRUZLI=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1okPA1-0001jK-FH for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Oct 2022 12:24:06 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A32E36108D;
- Mon, 17 Oct 2022 12:23:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72D76C433C1;
- Mon, 17 Oct 2022 12:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1666009436;
- bh=8V48uvPxGKFSi7OzFbIVPe2DEkGqM7SFVUeaOyfbN3E=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=uvLmd6eyRhVc1yDiqwXpr/XUYCNldnt2B9A/92GqZe7Ze0R+KgWEw6dnNMi4NiIaF
- BxW4xq9n3USmmHZ+AZxOsTokKjpYMIapljvutoiuCIuufSmnHZrh2rkQTrj3MMjJH4
- oj3byZtSHBgheCOviq7KUqfL4NRFba4k29i2g0l93wvoyFlkAGFsKVqeDvf0Kti0hb
- ClNHb1s/0D6ax+gJTWpzaylm/ncqIfWi7GlIkzaIm3NkQNmHSsj+UYl+qoeCtkJtRk
- oW6CVlc0qmxI48gArUfgrfqFTi2YBcnwfpNsJWrvK3uadAERerZzYo25htTehhMS3U
- 5SuFDJuO1OPzQ==
-Message-ID: <39c430b1-f4f1-e0a7-1089-9db85d1163d9@kernel.org>
-Date: Mon, 17 Oct 2022 20:23:51 +0800
+ bh=1gM2OhPkZ6+CVHU/B6ywYxdhbtgkPzENmTLQaUuvjkI=; b=BMiRDjSNxbKtfQuuYFJlljo4hp
+ 6b95Cs9yf3O1A7B7mxlCGS6TRvGtatxqtAVsxsGoUYP3tSvXgM2jIIyzwQSU7uejqL7IUeB1+MycA
+ hFj328lh8skHXjwpc+3O9IaaYARucEx8kx54Mh9I31AuTEChRViq8yGTcinBP6uBkqoA=;
+Received: from mail-yb1-f182.google.com ([209.85.219.182])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1okTWj-007CyY-Vt for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 17 Oct 2022 17:03:46 +0000
+Received: by mail-yb1-f182.google.com with SMTP id 207so14025366ybn.1
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 17 Oct 2022 10:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=1gM2OhPkZ6+CVHU/B6ywYxdhbtgkPzENmTLQaUuvjkI=;
+ b=cZIQgpIJQMIYS77HywyT+t1No+jvE3iaIWeu9auSgMVTDDkiouT8bS/VE8qSdKT0d7
+ ozM1qOetOvplkyukd+qBZxkr/6vTKMLKt7PUFZzF/0LCSQHtLqKu5MUsdgH10hWpnr5H
+ 4/21CuM9XyiM5QgBk5Pp9GqrpY9PRRieeJiUIRxWRp7TuGZFuZQwQagPv4ryPCsPHnX1
+ 4wD+30MmtV04vpLsPmjY3pKLq/Zf8T2tiTmjy4yG9kNZBHlfdfx9oD/GIOqhEf73Mq8l
+ 5rFU4v0nBIdfCVPGcf705WrSo4Xh9xFKZ1WgzZ4Xpr+uTaAxmPkQzptZWZrdjJUwm+I6
+ 80DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=1gM2OhPkZ6+CVHU/B6ywYxdhbtgkPzENmTLQaUuvjkI=;
+ b=CuufoleK93gWvGHgy9zY3d+bULC/nP7I1MUpLz08MTgYvhHop69cM22lv10H9AwyEA
+ TwnQg4OUo1ti+c3WwiGqj1RYckGXE1yx+AwKln/kgHAcO1x8W58kP4X74z+crh34hvbG
+ CebGrVNmEAV8aj7biLx6qopbuYR+lYToKXwzdzbtoCIDv5BTOfVWFe2ZnbiIoVgdF1oF
+ uaUAAh8TEJO+qo1HfKRDVK/e01v+ElDSzM6+TWSwN4B5jl18gmXyLMqKzTDv2J1A8hv1
+ jqCOcU4RCEMJFOc2GTALgzP+ow4zeV2k0DjZKaQbgakvCRrjONqg8mcciumHsfZny/Ao
+ UBxA==
+X-Gm-Message-State: ACrzQf0RgV6vBTqUjGHWgSJakBXh7rPjgiSJuLdOBqJuFtOMIqeVOdId
+ 21ck0Ih9iEm2Pfsshnb+l5rue2w0lVWZTHsbV0A=
+X-Google-Smtp-Source: AMsMyM54HWiafe2uq2dl3gt7Md5lNHao++4/jaAzrj0jQke8Zcm1vzvnTP8vRn3Now7tETxpKUpDojnpfnywgJIOW7A=
+X-Received: by 2002:a05:6902:1186:b0:6c1:653a:ba74 with SMTP id
+ m6-20020a056902118600b006c1653aba74mr10104010ybu.546.1666026220102; Mon, 17
+ Oct 2022 10:03:40 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Content-Language: en-US
-To: Hoi Pok Wu <wuhoipok@gmail.com>, jaegeuk@kernel.org
-References: <20221017100437.618363-1-wuhoipok@gmail.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20221017100437.618363-1-wuhoipok@gmail.com>
-X-Headers-End: 1okPA1-0001jK-FH
-Subject: Re: [f2fs-dev] [PATCH] fs: f2fs: fix kernel discard_thread NULL
- dereference
+References: <20221004171351.3678194-1-daeho43@gmail.com>
+ <20221004171351.3678194-2-daeho43@gmail.com>
+ <Yz6S3kP4rjm5/30N@infradead.org> <Yz8DJROpwCcNyxVX@magnolia>
+In-Reply-To: <Yz8DJROpwCcNyxVX@magnolia>
+From: Daeho Jeong <daeho43@gmail.com>
+Date: Mon, 17 Oct 2022 10:03:29 -0700
+Message-ID: <CACOAw_z61txMMH+5Pq+4LS5hmC9rbvHaEiY5-V-M9mq56Tx6yg@mail.gmail.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+X-Headers-End: 1okTWj-007CyY-Vt
+Subject: Re: [f2fs-dev] [PATCH v4 2/2] f2fs: introduce
+ F2FS_IOC_START_ATOMIC_REPLACE
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,45 +95,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
- syzbot+035a381ea1afb63f098d@syzkaller.appspotmail.com,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>,
+ linux-fsdevel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/10/17 18:04, Hoi Pok Wu wrote:
-> Pointer discard_thread is pointing to nowhere, using IS_ERR prevents the
-> situation. IS_ERR also seen being used throughout the file.
+On Thu, Oct 6, 2022 at 9:32 AM Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> On Thu, Oct 06, 2022 at 01:33:34AM -0700, Christoph Hellwig wrote:
+> > On Tue, Oct 04, 2022 at 10:13:51AM -0700, Daeho Jeong wrote:
+> > > From: Daeho Jeong <daehojeong@google.com>
+> > >
+> > > introduce a new ioctl to replace the whole content of a file atomically,
+> > > which means it induces truncate and content update at the same time.
+> > > We can start it with F2FS_IOC_START_ATOMIC_REPLACE and complete it with
+> > > F2FS_IOC_COMMIT_ATOMIC_WRITE. Or abort it with
+> > > F2FS_IOC_ABORT_ATOMIC_WRITE.
+> >
+> > It would be great to Cc Darrick and linux-fsdevel as there have been
+> > attempts to do this properly at the VFS level instead of a completely
+> > undocumented ioctl.
+>
+> It's been a while since I sent the last RFC, but yes, it's still in my
+> queue as part of the xfs online fsck patchserieses.
+>
+> https://lore.kernel.org/linux-fsdevel/161723932606.3149451.12366114306150243052.stgit@magnolia/
+>
+> More recent git branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=atomic-file-updates
 
-I guess below patch can fix this issue from root cause?
+Hi,
 
-https://lore.kernel.org/linux-f2fs-devel/20221013155628.434671-1-chao@kernel.org/T/#u
+It's a very interesting suggestion and we might use this in F2FS someday.
+However, I think it's not exactly matched for what
+F2FS_IOC_START_ATOMIC_REPLACE is doing now.
 
-Thanks,
+Thanks for bringing my attention to this.
 
-> 
-> Link: https://syzkaller.appspot.com/bug?id=9499bc6574cea5940e48199c2fd0732d9b11e5e1
-> Reported-by: syzbot+035a381ea1afb63f098d@syzkaller.appspotmail.com
-> Signed-off-by: Hoi Pok Wu <wuhoipok@gmail.com>
-> ---
->   fs/f2fs/segment.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index acf3d3fa4363..79978b7206b5 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1634,7 +1634,8 @@ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi)
->   		struct task_struct *discard_thread = dcc->f2fs_issue_discard;
->   
->   		dcc->f2fs_issue_discard = NULL;
-> -		kthread_stop(discard_thread);
-> +		if (!IS_ERR(discard_thread))
-> +			kthread_stop(discard_thread);
->   	}
->   }
->   
+>
+> --D
 
 
 _______________________________________________
