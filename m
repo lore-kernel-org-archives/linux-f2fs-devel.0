@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A8A8DC43219
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Oct 2022 00:08:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 00A15C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Oct 2022 00:09:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oka9z-000451-Q7;
-	Tue, 18 Oct 2022 00:08:43 +0000
+	id 1okaAr-00055x-IC;
+	Tue, 18 Oct 2022 00:09:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1oka9x-00044v-S4
+ (envelope-from <sashal@kernel.org>) id 1okaAq-00055q-RG
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Oct 2022 00:08:41 +0000
+ Tue, 18 Oct 2022 00:09:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=o1DL+qiHYnPbHfFwBK4iBKWwA+1gSoVJdOL4VQF/0Mc=; b=leOMkjb0DyB8ptnPVGBWQjUdRs
- 9/xgo+WPPDBZBBp7FghEfW/sJBXCobBIcEaOhX73s+m1/srhQCMRSCHkJMEfqCuuTWUh3hcBU5HJ2
- dQxs4R+aK8hie6Zu1yDkT8uSUMK335uoLG53nPZ0cxoqUBH+/5zf/jnQ56qYJDIB/MOM=;
+ bh=M1gopsizru0utKz/91w7ECf4RqBFAAHdCywyNdNWsHI=; b=cN5ueX5WK1QoT/rx7AJ5n2fIOA
+ TKNz5XS8NddsDb/29m37EPu1KINAR789hBpEw4HplpJ0Us3WwVOaeoJZFwvLPrVu6uWiHJc/YXnp/
+ gP3ZNKNEiwMl2KcvT/5odRFRmaFv7s0/lhAo+uErFVgCOMd4bDpSxVL99AK5lY9sDX5s=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,46 +33,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=o1DL+qiHYnPbHfFwBK4iBKWwA+1gSoVJdOL4VQF/0Mc=; b=ZbmHmzh049RjQ04aqpPzJgYxhs
- Kpk5nPFtNTStcCTkwQ3y1g5uCTsH0ozmBNDpSwpBexJBU3A7gkmbnuWzWh6A2o2MfH4xICt8VS/1I
- MTG8sPjL6uWkbajeQKAaFRw4ksrEYxfo7Gj4nxo4EC1nX7iL8uAEXibJwpXP9XR5jX3I=;
+ bh=M1gopsizru0utKz/91w7ECf4RqBFAAHdCywyNdNWsHI=; b=U26VcdIR64eHCM+7wJVh4KXW04
+ i88HSgjcPNvTdHo5rcpH+VZEuamGCIAENYNSfN1srOmDJ8GowlE2SD0XBe353Ot9oDybDrdgtY5Qv
+ MNp2znM6+9aRxpaJ+82mT4JOSdu/VIlu35IoomJw550m8cuTKWcrqxRLSRL71angXvUg=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oka9w-0001zX-K0 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 18 Oct 2022 00:08:41 +0000
+ id 1okaAq-007dsZ-6H for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Oct 2022 00:09:36 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 8A4B461325
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 18 Oct 2022 00:08:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA7A4C4314E;
- Tue, 18 Oct 2022 00:08:27 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id C9C2A61311;
+ Tue, 18 Oct 2022 00:09:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 735B0C433C1;
+ Tue, 18 Oct 2022 00:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1666051708;
- bh=bL+HVvxvMiGzHrLEK7xG66xFmN5yqlydb7A787zVHMw=;
+ s=k20201202; t=1666051770;
+ bh=TV8O8F2fiRXD3tspAeChCoMnXeRn1pA6ztp/kg0kjOI=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=hyTOaNSQcJp6+G2LETmULp4qHMyrkqxrWQzqvVAFWbR+SdkfFw/QCXx36rX2H/GqV
- DL/uUVw4m5k6frIfWVtzsM7mG4jDU4IpILrZ4yJzTa4osyf8fwM7GoGFI7qMjO0jby
- 2D82urxgspVaPDGzuxkkF8bNpIzKc2wyrdKBfQFwGKBlOivp5D/0sMiGN3FztHNPqr
- nUuUZiv0zOAkMC1QXS6ILcG/7gprPVvXB9RNKo9lnS0Hb81hSuzg+QtZZ++y+zsJxy
- XJnb40La02dwOYEN9TJ1xUjSmIdfMeQEoeZb9/sO9rd2OFMhfqqQh8BaSoZ7mLBPJa
- iaqrkBR4OqHsg==
+ b=PtU+zZbOG4OueDLMM7SPXo8Gv/c0ziCrYmpEh52IH/MKhFtLOpnjKzBFt08inQvsE
+ yWF4+Kyl2PiOceLs4kGNO01IHwg2018l/NhUGQYRkGi8DavzjiRQFxIfYUMn2z8jdt
+ 74p33aNUwb+9UL3cCMovq2weC+To1cjLS/dY91ghjclIFjgToFzGgeLNxC9zolzsFD
+ FTw7Nm/GAbnvodelgtusnHpbPTAwvswotEmGvIBlsng+CkjvZGB77NJLI90FH2NTw5
+ gVpo2ALdD2tQ2F4x80MZNGHZ8Wvcxw2TLSp0sAnpl/ftGUYudQ11l+fFNbatu3n6A+
+ rgMCIvsOLvAAg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Mon, 17 Oct 2022 20:07:23 -0400
-Message-Id: <20221018000729.2730519-26-sashal@kernel.org>
+Date: Mon, 17 Oct 2022 20:08:32 -0400
+Message-Id: <20221018000839.2730954-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221018000729.2730519-1-sashal@kernel.org>
-References: <20221018000729.2730519-1-sashal@kernel.org>
+In-Reply-To: <20221018000839.2730954-1-sashal@kernel.org>
+References: <20221018000839.2730954-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1oka9w-0001zX-K0
-Subject: [f2fs-dev] [PATCH AUTOSEL 6.0 26/32] f2fs: fix to detect corrupted
- meta ino
+X-Headers-End: 1okaAq-007dsZ-6H
+Subject: [f2fs-dev] [PATCH AUTOSEL 5.19 23/29] f2fs: code clean and fix a
+ type error
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,76 +89,94 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Yu <chao@kernel.org>
+From: Zhang Qilong <zhangqilong3@huawei.com>
 
-[ Upstream commit fcc2d8cc96b2f6141bbbe5b1e8953db990794b44 ]
+[ Upstream commit 544b53dadc208278fd0796f2c22ea24a3fe16564 ]
 
-It is possible that ino of dirent or orphan inode is corrupted in a
-fuzzed image, occasionally, if corrupted ino is equal to meta ino:
-meta_ino, node_ino or compress_ino, caller of f2fs_iget() from below
-call paths will get meta inode directly, it's not allowed, let's
-add sanity check to detect such cases.
+ERROR: code indent should use tabs where possible
+ERROR: spaces required around that ':'
+ERROR: incorrect tab
 
-case #1
-- recover_dentry
- - __f2fs_find_entry
- - f2fs_iget_retry
+Found serveral code type errors when review the code and fix it.
+There is no function change.
 
-case #2
-- recover_orphan_inode
- - f2fs_iget_retry
-
-Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/inode.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ fs/f2fs/data.c         | 2 +-
+ fs/f2fs/debug.c        | 2 +-
+ fs/f2fs/extent_cache.c | 2 +-
+ fs/f2fs/file.c         | 2 +-
+ fs/f2fs/node.c         | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 6d11c365d7b4..34324ef48667 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -480,6 +480,12 @@ static int do_read_inode(struct inode *inode)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 9157d09dde6d..cb8260b1cb4e 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -707,7 +707,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 		wbc_account_cgroup_owner(fio->io_wbc, page, PAGE_SIZE);
+ 
+ 	inc_page_count(fio->sbi, is_read_io(fio->op) ?
+-			__read_io_type(page): WB_DATA_TYPE(fio->page));
++			__read_io_type(page) : WB_DATA_TYPE(fio->page));
+ 
+ 	__submit_bio(fio->sbi, bio, fio->type);
  	return 0;
- }
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index c92625ef16d0..9bac409d31bd 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -347,7 +347,7 @@ static int stat_show(struct seq_file *s, void *v)
  
-+static bool is_meta_ino(struct f2fs_sb_info *sbi, unsigned int ino)
-+{
-+	return ino == F2FS_NODE_INO(sbi) || ino == F2FS_META_INO(sbi) ||
-+		ino == F2FS_COMPRESS_INO(sbi);
-+}
-+
- struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -491,16 +497,21 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 		return ERR_PTR(-ENOMEM);
+ 		seq_printf(s, "\n=====[ partition info(%pg). #%d, %s, CP: %s]=====\n",
+ 			si->sbi->sb->s_bdev, i++,
+-			f2fs_readonly(si->sbi->sb) ? "RO": "RW",
++			f2fs_readonly(si->sbi->sb) ? "RO" : "RW",
+ 			is_set_ckpt_flags(si->sbi, CP_DISABLED_FLAG) ?
+ 			"Disabled" : (f2fs_cp_error(si->sbi) ? "Error" : "Good"));
+ 		if (si->sbi->s_flag) {
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 866e72b29bd5..d6b4a1c8ed2f 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -583,7 +583,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
+ 		org_end = dei.fofs + dei.len;
+ 		f2fs_bug_on(sbi, pos >= org_end);
  
- 	if (!(inode->i_state & I_NEW)) {
-+		if (is_meta_ino(sbi, ino)) {
-+			f2fs_err(sbi, "inaccessible inode: %lu, run fsck to repair", ino);
-+			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+			ret = -EFSCORRUPTED;
-+			trace_f2fs_iget_exit(inode, ret);
-+			iput(inode);
-+			return ERR_PTR(ret);
-+		}
-+
- 		trace_f2fs_iget(inode);
- 		return inode;
+-		if (pos > dei.fofs &&	pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
++		if (pos > dei.fofs && pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
+ 			en->ei.len = pos - en->ei.fofs;
+ 			prev_en = en;
+ 			parts = 1;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ecd833ba35fc..36e2d0226be4 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4627,7 +4627,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ skip_write_trace:
+ 		/* Do the actual write. */
+ 		ret = dio ?
+-			f2fs_dio_write_iter(iocb, from, &may_need_sync):
++			f2fs_dio_write_iter(iocb, from, &may_need_sync) :
+ 			f2fs_buffered_write_iter(iocb, from);
+ 
+ 		if (trace_f2fs_datawrite_end_enabled())
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 3f508b13cb61..c9b10113fcb1 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -585,7 +585,7 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
+ 		ne = nat_in_journal(journal, i);
+ 		node_info_from_raw_nat(ni, &ne);
  	}
--	if (ino == F2FS_NODE_INO(sbi) || ino == F2FS_META_INO(sbi))
--		goto make_now;
- 
--#ifdef CONFIG_F2FS_FS_COMPRESSION
--	if (ino == F2FS_COMPRESS_INO(sbi))
-+	if (is_meta_ino(sbi, ino))
- 		goto make_now;
--#endif
- 
- 	ret = do_read_inode(inode);
- 	if (ret)
+-        up_read(&curseg->journal_rwsem);
++	up_read(&curseg->journal_rwsem);
+ 	if (i >= 0) {
+ 		f2fs_up_read(&nm_i->nat_tree_lock);
+ 		goto cache;
 -- 
 2.35.1
 
