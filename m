@@ -4,90 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 312F6C4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Oct 2022 02:32:39 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 94947C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Oct 2022 02:34:44 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1olhpu-0008PM-L2;
-	Fri, 21 Oct 2022 02:32:38 +0000
+	id 1olhrv-0003dx-EY;
+	Fri, 21 Oct 2022 02:34:43 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qxy65535@gmail.com>) id 1olhpt-0008PG-6c
+ (envelope-from <chao@kernel.org>) id 1olhru-0003dr-ID
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Oct 2022 02:32:37 +0000
+ Fri, 21 Oct 2022 02:34:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EsvLhV+cbznBpgyq6mtNJgNZycGH3T3tCrg6LonEOp4=; b=i7yJzJNptqry84atrXWeFmfDfg
- nO+oeZwQo51eO4zXI2U+ot92+RXvqLc0lQ6+Nup3HRj1D30PvFG/yhAdGsMUpKAB7sryDQwzhegSU
- +hEJ3ZMa46MHd9G7PDZMRbxfO3h7YiKlEib24ZioKyY7zVPSGkSbgY/cPfjhDckhROLE=;
+ bh=s1wgIypwdn9SOXs6g/3584fsvIMdmLVGb86gGiVc2lA=; b=ArIkYauhz6ENfLaGQ+xnUdysPV
+ gxHrZoAS3BbmiKOLXUx+YnXou8DzVp1rczQRxQQQBSRQTRJX/zRVQMnqecL7wSF5xcbZ8cck+EE/m
+ brh4N3Lh2ddIwB3dBM9ShZILVDM0UW4CMaiGVzIoizSF040tY7t+5XS9LEHD/02CopKI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=EsvLhV+cbznBpgyq6mtNJgNZycGH3T3tCrg6LonEOp4=; b=d
- Kwjl0nrykw+fgmui1DS8NkNv2OfrdFvSBw2O6e9IKn0kdc+ksTWv/AxczSUIK1GzpuLxUNAYMF7KV
- atrYt5XNSj49XLHdukwiuGB/y4QP88IhEmKKr/6+BIRLEfa+KIBlEL3Tbt+gw+fqhYC/gxCaAMx70
- uc2fQQGM1tfbXUU0=;
-Received: from mail-pl1-f180.google.com ([209.85.214.180])
+ List-Owner:List-Archive; bh=s1wgIypwdn9SOXs6g/3584fsvIMdmLVGb86gGiVc2lA=; b=c
+ U6SukBuFxIUcZehvN/UTCkiUT/vOy11C0QjutZgBsibxy2BxgU7ufTqpNq3mUtrLJKH2cenv5rP4C
+ AUGENt6Rb3bfvbpWR7x0a4eKDownVpAggqybtMjDvZOsCscjGtLmjM6lp1cHXEyv39b/OAVbZHk6X
+ 9z4XMDMSXnoPO3zs=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1olhpp-00BfRq-0G for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Oct 2022 02:32:37 +0000
-Received: by mail-pl1-f180.google.com with SMTP id k9so1045916pll.11
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 20 Oct 2022 19:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=EsvLhV+cbznBpgyq6mtNJgNZycGH3T3tCrg6LonEOp4=;
- b=j/PynzD1zbRkpecTxyYqHEf9VOlhdAnPFJOV+1z+gFkB1FSq6HINXXtTMGuFuIo6Ep
- wEQl2D20Ee1cv5aTkporTtwe1KX0xnjVB6MRsj5mecJRoCDoG0OyB663+yD0NRGrxC2n
- Wj61WEZrQUN9h6rOa7UpVVm+goCuZjsCSElc/VBeiDJvdjyNp6cFoc5JaZlCj6rKVBWe
- mrahL6X5dThTNxDZ0uSvimWvEHIM7ToHfEcJ4rD7Wqvc/AVQiiRkyq02KQ87OM7lzVt1
- 1LKIjfxxR0cpcrkZS+dcv3HhTYsjuDY5Qf8G60IcL5OnioJ/qJr9awS47USK4Vsqa9Pq
- UrVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=EsvLhV+cbznBpgyq6mtNJgNZycGH3T3tCrg6LonEOp4=;
- b=yZzQuSAcquG4j9sXtqJ7WIUOSKR+CT1bISfHmcEc95voF4yBWl2nBo9fm4tBy9+YlO
- NN92oS2j6Jcw1IYnkUUBmtAjZJdD/hlJa7BpO0BydqXVo89X0W6/0H3M5kSS6pNYUlsq
- /eemfhmGVLQiOCIEqIjY/W+2dsNoPpgm7m9kaEDhcNSXVyL5OOnbdafulhIwuj2WzpsR
- WcMJLfn+gmyVFVXHEs4K4Zq20mOwRFSr35ah2pO7cYFvdOrS9sLoHPbIZt+1HZisxkz0
- Dhe4CrfNL4tXcm4/uztbZdRBay3IGhBkh8q0eRaBjULZ7dp4BUI+nu9dthhZnQK+tAGj
- 5DvA==
-X-Gm-Message-State: ACrzQf3opUUEEnSQ/HdIRluZLvzFIwKpuHdN27YIg/4foemgrz6ebKtD
- eN/NtUcsNbeuSh6uxeUOX88=
-X-Google-Smtp-Source: AMsMyM7XIQHtE3EZUCPvUCzBIEy8P10eqv0oWue4UomJiecL9ou04VigPmr21N4CME/yWIltLfobfw==
-X-Received: by 2002:a17:902:ed93:b0:185:4421:24b with SMTP id
- e19-20020a170902ed9300b001854421024bmr16735349plj.158.1666319547482; 
- Thu, 20 Oct 2022 19:32:27 -0700 (PDT)
-Received: from mi-HP-ProDesk-680-G4-MT.mioffice.cn ([43.224.245.252])
- by smtp.gmail.com with ESMTPSA id
- v129-20020a626187000000b00565f4efbc0csm1291080pfb.49.2022.10.20.19.32.23
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 20 Oct 2022 19:32:25 -0700 (PDT)
-From: qixiaoyu1 <qxy65535@gmail.com>
-X-Google-Original-From: qixiaoyu1 <qixiaoyu1@xiaomi.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Date: Fri, 21 Oct 2022 10:31:36 +0800
-Message-Id: <20221021023136.22863-1-qixiaoyu1@xiaomi.com>
-X-Mailer: git-send-email 2.36.1
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1olhrt-00BfXr-Ma for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 21 Oct 2022 02:34:42 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 7028CB8093B;
+ Fri, 21 Oct 2022 02:34:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55601C4FEB9;
+ Fri, 21 Oct 2022 02:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1666319674;
+ bh=580rqartSgXXhJapFprYMMcudTR1XAKCGjA2+wbw7n0=;
+ h=From:To:Cc:Subject:Date:From;
+ b=CGXMB7pFLUwX0p6r8P7m3dddcVf8gdsoPBzDzWG0l+lK/r7v4x/nEExifC6QyObmF
+ zAnu7jChIwUvsGFqnK41++j/hSrhpfsACUVDVWOI5XTyro93r/zqZUjlfU1s4m77KO
+ gjqVYYBnxYfTCKIBZUCE/XVIM2525JQpSVOA1RnXeJBniR5Xj0KbHz8Vuy+LYvHAdX
+ SGWaZcMXu6qXTtPCJaHNDnckA3feuWCls0b6S4w9Tu0AZnsTXh9K9cqMPRFzCJAP19
+ HqgLHGyUtF9/jcVtOSazyp3M7QQNBurKnP45rBSOglYk+si+KlBoB1PGRiSt20KUYK
+ XTXirLrSraxZw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Fri, 21 Oct 2022 10:34:22 +0800
+Message-Id: <20221021023422.3101585-1-chao@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-Headers-End: 1olhpp-00BfRq-0G
-Subject: [f2fs-dev] [PATCH] f2fs: separate IPU policy for fdatasync from
- F2FS_IPU_FSYNC
+X-Headers-End: 1olhrt-00BfXr-Ma
+Subject: [f2fs-dev] [PATCH v2] f2fs: fix to invalidate
+ dcc->f2fs_issue_discard in error path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,65 +78,74 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: qixiaoyu1 <qixiaoyu1@xiaomi.com>, linux-kernel@vger.kernel.org,
+Cc: syzbot+729c925c2d9fc495ddee@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org,
+ syzbot+035a381ea1afb63f098d@syzkaller.appspotmail.com,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Currently IPU policy for fdatasync is coupled with F2FS_IPU_FSYNC.
-Fix to apply it to all IPU policy.
+Syzbot reports a NULL pointer dereference issue as below:
 
-Signed-off-by: qixiaoyu1 <qixiaoyu1@xiaomi.com>
+ __refcount_add include/linux/refcount.h:193 [inline]
+ __refcount_inc include/linux/refcount.h:250 [inline]
+ refcount_inc include/linux/refcount.h:267 [inline]
+ get_task_struct include/linux/sched/task.h:110 [inline]
+ kthread_stop+0x34/0x1c0 kernel/kthread.c:703
+ f2fs_stop_discard_thread+0x3c/0x5c fs/f2fs/segment.c:1638
+ kill_f2fs_super+0x5c/0x194 fs/f2fs/super.c:4522
+ deactivate_locked_super+0x70/0xe8 fs/super.c:332
+ deactivate_super+0xd0/0xd4 fs/super.c:363
+ cleanup_mnt+0x1f8/0x234 fs/namespace.c:1186
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+ task_work_run+0xc4/0x14c kernel/task_work.c:177
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0x26c/0xbe0 kernel/exit.c:795
+ do_group_exit+0x60/0xe8 kernel/exit.c:925
+ __do_sys_exit_group kernel/exit.c:936 [inline]
+ __se_sys_exit_group kernel/exit.c:934 [inline]
+ __wake_up_parent+0x0/0x40 kernel/exit.c:934
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
+ el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
+ el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
+ el0t_64_sync+0x18c/0x190 arch/arm64/kernel/entry.S:581
+
+The root cause of this issue is in error path of f2fs_start_discard_thread(),
+it missed to invalidate dcc->f2fs_issue_discard, later kthread_stop() may
+access invalid pointer.
+
+Fixes: 4d67490498ac ("f2fs: Don't create discard thread when device doesn't support realtime discard")
+Reported-by: syzbot+035a381ea1afb63f098d@syzkaller.appspotmail.com
+Reported-by: syzbot+729c925c2d9fc495ddee@syzkaller.appspotmail.com
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c | 8 +++-----
- fs/f2fs/file.c | 4 +++-
- 2 files changed, 6 insertions(+), 6 deletions(-)
+v2:
+- add more commit message and Fixes and Reported-by tag.
+ fs/f2fs/segment.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a71e818cd67b..fec8e15fe820 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2518,6 +2518,9 @@ static inline bool check_inplace_update_policy(struct inode *inode,
- 	if (policy & (0x1 << F2FS_IPU_HONOR_OPU_WRITE) &&
- 			is_inode_flag_set(inode, FI_OPU_WRITE))
- 		return false;
-+	/* this is set by fdatasync or F2FS_IPU_FSYNC policy */
-+	if (is_inode_flag_set(inode, FI_NEED_IPU))
-+		return true;
- 	if (policy & (0x1 << F2FS_IPU_FORCE))
- 		return true;
- 	if (policy & (0x1 << F2FS_IPU_SSR) && f2fs_need_SSR(sbi))
-@@ -2538,11 +2541,6 @@ static inline bool check_inplace_update_policy(struct inode *inode,
- 			!IS_ENCRYPTED(inode))
- 		return true;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index acf3d3fa4363..7a4f7c88b8b9 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2025,8 +2025,10 @@ int f2fs_start_discard_thread(struct f2fs_sb_info *sbi)
  
--	/* this is only set during fdatasync */
--	if (policy & (0x1 << F2FS_IPU_FSYNC) &&
--			is_inode_flag_set(inode, FI_NEED_IPU))
--		return true;
--
- 	if (unlikely(fio && is_sbi_flag_set(sbi, SBI_CP_DISABLED) &&
- 			!f2fs_is_checkpointed_data(sbi, fio->old_blkaddr)))
- 		return true;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 82cda1258227..08091550cdf2 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -270,8 +270,10 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		goto go_write;
+ 	dcc->f2fs_issue_discard = kthread_run(issue_discard_thread, sbi,
+ 				"f2fs_discard-%u:%u", MAJOR(dev), MINOR(dev));
+-	if (IS_ERR(dcc->f2fs_issue_discard))
++	if (IS_ERR(dcc->f2fs_issue_discard)) {
+ 		err = PTR_ERR(dcc->f2fs_issue_discard);
++		dcc->f2fs_issue_discard = NULL;
++	}
  
- 	/* if fdatasync is triggered, let's do in-place-update */
--	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
-+	if (datasync || (SM_I(sbi)->ipu_policy & (0x1 << F2FS_IPU_FSYNC) &&
-+			get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks))
- 		set_inode_flag(inode, FI_NEED_IPU);
-+
- 	ret = file_write_and_wait_range(file, start, end);
- 	clear_inode_flag(inode, FI_NEED_IPU);
- 
+ 	return err;
+ }
 -- 
-2.36.1
+2.25.1
 
 
 
