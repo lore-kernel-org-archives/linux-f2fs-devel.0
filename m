@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8A32EC433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Oct 2022 02:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E66D8C43219
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Oct 2022 02:22:56 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1olhgT-0003L9-3V;
-	Fri, 21 Oct 2022 02:22:53 +0000
+	id 1olhgW-0003LT-FE;
+	Fri, 21 Oct 2022 02:22:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <yangyingliang@huawei.com>) id 1olhgR-0003L3-DX
+ (envelope-from <yangyingliang@huawei.com>) id 1olhgU-0003LI-RU
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Oct 2022 02:22:51 +0000
+ Fri, 21 Oct 2022 02:22:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=XcnBacFtkvcakgxinsPtVgsUyh+z9XVNjaHmktAFVU4=; b=fF0z1fS0KHlgvL3W8HvnakCDZk
- hskM42LW7C0vU8UlpgURLixvOLXbEqD9IzG08VrkLO7YWyZ8v1JPdOyc+dTMqogZrXkQW8qC6qMXu
- bCKMu/TIdEduOGX4XK57GXzWd8F57zeEKmHCqQelgHQ0oFi5gQyIBmdNmCGp9PkHWD+s=;
+ bh=WSEXmwx0N4x8ur/qaN3uPQl5/rYkkcR4UAdgcwqWvX0=; b=S3199BLAH4vtHik34JXkRllTRi
+ KYK4XEcroxSd3lMkRM4J3dBHLOS9SufaWqnTtAg6NXgUswpz7x68SXsIC+IGbYplSLtcpi0wZXY3v
+ whsdgvsAnX44L+6KzsXfk/W/oeM2Fe0uW3+KNr6Lia1O+UnyHRMFaO1D9rC7aT0wnxQY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,31 +33,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=XcnBacFtkvcakgxinsPtVgsUyh+z9XVNjaHmktAFVU4=; b=mmRR/5WxCs2S405WlnZV3EC029
- ZZoDMZBcjzfOuaaWQQOXg5iGkXCdpRxp1/E3YshCJDuoZroYEj7Q4sA7704tYTeLLcW8TCMk2FTEe
- OE4Dd0Zdq20i0XdNl1dV71pEX3BC47KFWUcOlmoNfQh13ZVhhm90sMaRTr26KVgzIhC4=;
-Received: from szxga01-in.huawei.com ([45.249.212.187])
+ bh=WSEXmwx0N4x8ur/qaN3uPQl5/rYkkcR4UAdgcwqWvX0=; b=IqO2fW7rdGnlxNSdUsligTXP7i
+ Ro8PO/ye4JfS/Zt/XDPvn9vXxi/Fnym5OGlK+xjY5bL3Z6w3jO7CHjcBowrL3NGILw2+nGNZqqIWT
+ XBOTn5xs6k+e7R+vr1isabi/Pt3fHMbEhs/WVJ62hlv7jyhP1FifxDJY6xg42FHzTIeg=;
+Received: from szxga08-in.huawei.com ([45.249.212.255])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1olhgN-0001rV-IV for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Oct 2022 02:22:51 +0000
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.56])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Mtp7V36sMzpVfQ;
- Fri, 21 Oct 2022 10:19:18 +0800 (CST)
+ id 1olhgP-0001rd-GR for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 21 Oct 2022 02:22:53 +0000
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
+ by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Mtp5w3XNvz1P7D4;
+ Fri, 21 Oct 2022 10:17:56 +0800 (CST)
 Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 21 Oct 2022 10:22:38 +0800
+ 15.1.2375.31; Fri, 21 Oct 2022 10:22:42 +0800
 Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
  (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Fri, 21 Oct
- 2022 10:22:37 +0800
+ 2022 10:22:41 +0800
 To: <linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>,
  <linux-f2fs-devel@lists.sourceforge.net>, <linux-erofs@lists.ozlabs.org>,
  <ocfs2-devel@oss.oracle.com>, <linux-mtd@lists.infradead.org>,
  <amd-gfx@lists.freedesktop.org>
-Date: Fri, 21 Oct 2022 10:20:53 +0800
-Message-ID: <20221021022102.2231464-3-yangyingliang@huawei.com>
+Date: Fri, 21 Oct 2022 10:20:57 +0800
+Message-ID: <20221021022102.2231464-7-yangyingliang@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221021022102.2231464-1-yangyingliang@huawei.com>
 References: <20221021022102.2231464-1-yangyingliang@huawei.com>
@@ -66,8 +66,9 @@ X-Originating-IP: [10.175.103.91]
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  dggpemm500007.china.huawei.com (7.185.36.183)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1olhgN-0001rV-IV
-Subject: [f2fs-dev] [PATCH 02/11] kset: add null pointer check in kset_put()
+X-Headers-End: 1olhgP-0001rd-GR
+Subject: [f2fs-dev] [PATCH 06/11] firmware: qemu_fw_cfg: fix possible memory
+ leak in fw_cfg_build_symlink()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,28 +92,44 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-kset_put() can be called from drivers, add null pointer
-check to make it more robust.
+Inject fault while loading module, kset_register() may fail, if
+it fails, but the refcount of kobject is not decreased to 0, the
+name allocated in kobject_set_name() is leaked. To fix this by
+calling kset_put(), so that name can be freed in callback function
+kobject_cleanup() and 'subdir' is freed in kset_release().
 
+unreferenced object 0xffff88810ad69050 (size 8):
+  comm "swapper/0", pid 1, jiffies 4294677178 (age 38.812s)
+  hex dump (first 8 bytes):
+    65 74 63 00 81 88 ff ff                          etc.....
+  backtrace:
+    [<00000000a80c7bf1>] __kmalloc_node_track_caller+0x44/0x1b0
+    [<000000003f0167c7>] kstrdup+0x3a/0x70
+    [<0000000049336709>] kstrdup_const+0x41/0x60
+    [<00000000175616e4>] kvasprintf_const+0xf5/0x180
+    [<000000004bcc30f7>] kobject_set_name_vargs+0x56/0x150
+    [<000000004b0251bd>] kobject_set_name+0xab/0xe0
+    [<00000000700151fb>] fw_cfg_sysfs_probe+0xa5b/0x1320
+
+Fixes: 246c46ebaeae ("firmware: create directory hierarchy for sysfs fw_cfg entries")
 Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 ---
- include/linux/kobject.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/firmware/qemu_fw_cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/kobject.h b/include/linux/kobject.h
-index 57fb972fea05..e81de8ba41a2 100644
---- a/include/linux/kobject.h
-+++ b/include/linux/kobject.h
-@@ -195,7 +195,8 @@ static inline struct kset *kset_get(struct kset *k)
+diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
+index a69399a6b7c0..d036e69cabbb 100644
+--- a/drivers/firmware/qemu_fw_cfg.c
++++ b/drivers/firmware/qemu_fw_cfg.c
+@@ -544,7 +544,7 @@ static int fw_cfg_build_symlink(struct kset *dir,
+ 			}
+ 			ret = kset_register(subdir);
+ 			if (ret) {
+-				kfree(subdir);
++				kset_put(subdir);
+ 				break;
+ 			}
  
- static inline void kset_put(struct kset *k)
- {
--	kobject_put(&k->kobj);
-+	if (k)
-+		kobject_put(&k->kobj);
- }
- 
- static inline const struct kobj_type *get_ktype(struct kobject *kobj)
 -- 
 2.25.1
 
