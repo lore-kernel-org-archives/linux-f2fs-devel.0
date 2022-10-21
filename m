@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B415AC433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Oct 2022 02:23:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D99F8C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Oct 2022 02:23:25 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1olhgc-00088w-0n;
-	Fri, 21 Oct 2022 02:23:02 +0000
+	id 1olhgz-0001hJ-CJ;
+	Fri, 21 Oct 2022 02:23:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <yangyingliang@huawei.com>) id 1olhgX-00088T-Da
+ (envelope-from <yangyingliang@huawei.com>) id 1olhgx-0001h2-Qc
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Oct 2022 02:22:57 +0000
+ Fri, 21 Oct 2022 02:23:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Le9tPcdohqK3UOrnanVaHtQhl6eTkZN7tCulrd3hy6g=; b=kKY+xLlB5lxfgu5BAB7aep3l7F
- +49EEoGFNxN9uf/kY4rpyaVNOMCbxek3S1CdFP7NvsUVsEdCkJ+/zR9h5OcupfvMH/SJEO7rh5qaj
- +wNlA+tEpoSiJ3aCAHM4Mr66llfpsFe79KRMiK0WUj6DmYjtSJQSoi56P0hDJG6QZ26w=;
+ bh=xzMFxLeFKUbQzHCjgeZFy2Z3JsN/mOjM/Yn4m8OkMjM=; b=MXCOGGcX5aoGigg21N6VS4IHSR
+ vqYp99er+MeB2RlokEf2tPUCdJKEdQmMvrrjWd2A4jX7jvv+q16Vd4jn9Z/aPhax35SdEMTqwuzSS
+ 1wMwn6tmQAWwJDZ393EBGhAP+m2HMeR633ihVpprVdrnDhTLUxf63RytPTve4tMttbNA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,31 +33,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Le9tPcdohqK3UOrnanVaHtQhl6eTkZN7tCulrd3hy6g=; b=iGxym0HsGBdnDEPGx4PCq2HwUJ
- e32gbSbN0L2lzIekj6w9kMVWo1oALPmk0qWSdjCTf2oDATBsTsK8XV5IBuAn5MHS+E1RCsc9w43co
- ZowvRC4wKZ/JtKFmXu0IiYu4Q+a+af3E7xm/N+SW6uMSPsFaCDB9lKEGuwkWc7129q/E=;
-Received: from szxga01-in.huawei.com ([45.249.212.187])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=xzMFxLeFKUbQzHCjgeZFy2Z3JsN/mOjM/Yn4m8OkMjM=; b=HpTh5Fn7kzAWOH+fjub4dKJX5V
+ /i80/axsfS2OndGx+NdKK5i0D6u22F7FgZ/SWXM3pJWvtFI+v0KaUAdbGFLr+L9Et/kyYaczP0aIM
+ 8H7lO0bSkcUGtoB7t5756etMguEwyvBeGmGQcveKoIxUcH7easRhs2RWvtxy9ez5itSo=;
+Received: from szxga02-in.huawei.com ([45.249.212.188])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1olhgW-00Beui-9b for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Oct 2022 02:22:57 +0000
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.56])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Mtp605R63zmVCd;
- Fri, 21 Oct 2022 10:18:00 +0800 (CST)
+ id 1olhgx-0001ta-4W for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 21 Oct 2022 02:23:23 +0000
+Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.53])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Mtp6h64dWzVj27;
+ Fri, 21 Oct 2022 10:18:36 +0800 (CST)
 Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
+ dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 21 Oct 2022 10:22:46 +0800
+ 15.1.2375.31; Fri, 21 Oct 2022 10:22:45 +0800
 Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
  (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Fri, 21 Oct
- 2022 10:22:46 +0800
+ 2022 10:22:44 +0800
 To: <linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>,
  <linux-f2fs-devel@lists.sourceforge.net>, <linux-erofs@lists.ozlabs.org>,
  <ocfs2-devel@oss.oracle.com>, <linux-mtd@lists.infradead.org>,
  <amd-gfx@lists.freedesktop.org>
-Date: Fri, 21 Oct 2022 10:21:02 +0800
-Message-ID: <20221021022102.2231464-12-yangyingliang@huawei.com>
+Date: Fri, 21 Oct 2022 10:21:00 +0800
+Message-ID: <20221021022102.2231464-10-yangyingliang@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221021022102.2231464-1-yangyingliang@huawei.com>
 References: <20221021022102.2231464-1-yangyingliang@huawei.com>
@@ -66,9 +66,9 @@ X-Originating-IP: [10.175.103.91]
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  dggpemm500007.china.huawei.com (7.185.36.183)
 X-CFilter-Loop: Reflected
-X-Headers-End: 1olhgW-00Beui-9b
-Subject: [f2fs-dev] [PATCH 11/11] ubifs: Fix memory leak in
- ubifs_sysfs_init()
+X-Headers-End: 1olhgx-0001ta-4W
+Subject: [f2fs-dev] [PATCH 09/11] ocfs2: possible memory leak in
+ mlog_sys_init()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -92,52 +92,55 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Liu Shixin <liushixin2@huawei.com>
+Inject fault while loading module, kset_register() may fail,
+if it fails, but the refcount of kobject is not decreased to
+0, the name allocated in kobject_set_name() is leaked. Fix
+this by calling kset_put(), so that name can be freed in
+callback function kobject_cleanup().
 
-When insmod ubifs.ko, a kmemleak reported as below:
+unreferenced object 0xffff888100da9348 (size 8):
+  comm "modprobe", pid 257, jiffies 4294701096 (age 33.334s)
+  hex dump (first 8 bytes):
+    6c 6f 67 6d 61 73 6b 00                          logmask.
+  backtrace:
+    [<00000000306e441c>] __kmalloc_node_track_caller+0x44/0x1b0
+    [<000000007c491a9e>] kstrdup+0x3a/0x70
+    [<0000000015719a3b>] kstrdup_const+0x63/0x80
+    [<0000000084e458ea>] kvasprintf_const+0x149/0x180
+    [<0000000091302b42>] kobject_set_name_vargs+0x56/0x150
+    [<000000005f48eeac>] kobject_set_name+0xab/0xe0
 
- unreferenced object 0xffff88817fb1a780 (size 8):
-   comm "insmod", pid 25265, jiffies 4295239702 (age 100.130s)
-   hex dump (first 8 bytes):
-     75 62 69 66 73 00 ff ff                          ubifs...
-   backtrace:
-     [<ffffffff81b3fc4c>] slab_post_alloc_hook+0x9c/0x3c0
-     [<ffffffff81b44bf3>] __kmalloc_track_caller+0x183/0x410
-     [<ffffffff8198d3da>] kstrdup+0x3a/0x80
-     [<ffffffff8198d486>] kstrdup_const+0x66/0x80
-     [<ffffffff83989325>] kvasprintf_const+0x155/0x190
-     [<ffffffff83bf55bb>] kobject_set_name_vargs+0x5b/0x150
-     [<ffffffff83bf576b>] kobject_set_name+0xbb/0xf0
-     [<ffffffff8100204c>] do_one_initcall+0x14c/0x5a0
-     [<ffffffff8157e380>] do_init_module+0x1f0/0x660
-     [<ffffffff815857be>] load_module+0x6d7e/0x7590
-     [<ffffffff8158644f>] __do_sys_finit_module+0x19f/0x230
-     [<ffffffff815866b3>] __x64_sys_finit_module+0x73/0xb0
-     [<ffffffff88c98e85>] do_syscall_64+0x35/0x80
-     [<ffffffff88e00087>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-When kset_register() failed, we should call kset_put to cleanup it.
-
-Fixes: 2e3cbf425804 ("ubifs: Export filesystem error counters")
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+Fixes: 34980ca8faeb ("Drivers: clean up direct setting of the name of a kset")
 Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 ---
- fs/ubifs/sysfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ocfs2/cluster/masklog.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ubifs/sysfs.c b/fs/ubifs/sysfs.c
-index 06ad8fa1fcfb..54270ad36321 100644
---- a/fs/ubifs/sysfs.c
-+++ b/fs/ubifs/sysfs.c
-@@ -144,6 +144,8 @@ int __init ubifs_sysfs_init(void)
- 	kobject_set_name(&ubifs_kset.kobj, "ubifs");
- 	ubifs_kset.kobj.parent = fs_kobj;
- 	ret = kset_register(&ubifs_kset);
-+	if (ret)
-+		kset_put(&ubifs_kset);
+diff --git a/fs/ocfs2/cluster/masklog.c b/fs/ocfs2/cluster/masklog.c
+index 563881ddbf00..7f9ba816d955 100644
+--- a/fs/ocfs2/cluster/masklog.c
++++ b/fs/ocfs2/cluster/masklog.c
+@@ -156,6 +156,7 @@ static struct kset mlog_kset = {
+ int mlog_sys_init(struct kset *o2cb_kset)
+ {
+ 	int i = 0;
++	int ret;
  
- 	return ret;
+ 	while (mlog_attrs[i].attr.mode) {
+ 		mlog_default_attrs[i] = &mlog_attrs[i].attr;
+@@ -165,7 +166,11 @@ int mlog_sys_init(struct kset *o2cb_kset)
+ 
+ 	kobject_set_name(&mlog_kset.kobj, "logmask");
+ 	mlog_kset.kobj.kset = o2cb_kset;
+-	return kset_register(&mlog_kset);
++	ret = kset_register(&mlog_kset);
++	if (ret)
++		kset_put(&mlog_kset);
++
++	return ret;
  }
+ 
+ void mlog_sys_shutdown(void)
 -- 
 2.25.1
 
