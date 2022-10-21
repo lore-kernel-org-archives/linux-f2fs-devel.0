@@ -4,75 +4,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 54BADC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Oct 2022 09:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 47477C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Oct 2022 10:28:46 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ololn-0000PA-Qv;
-	Fri, 21 Oct 2022 09:56:51 +0000
+	id 1olpGf-00018N-27;
+	Fri, 21 Oct 2022 10:28:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <yangyingliang@huawei.com>) id 1olole-0000Ox-Af
+ (envelope-from <frank.li@vivo.com>) id 1olpGM-000185-4u
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Oct 2022 09:56:42 +0000
+ Fri, 21 Oct 2022 10:28:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- MIME-Version:Date:Message-ID:From:References:CC:To:Subject:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
+ :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TRnSBV+L+nH4U6+3XNJM6jZhEQAehli86W+oOpm0+EY=; b=CydjiiaGB3NO7b2BvKeERUwlBw
- QkHl/AhTOgOwU5B9phIuVfWVMVBsE4PlkpMQ/eHAjB6i9Kaa2KiMnMN+J1/yIP8SryhF0dhkgq+YD
- bO31inhb4EpAVFWigu8PMrjUtaLU8BnjTbpa9Lz0/6oZraZTUSX6+Nb7KT4cVyslaZ08=;
+ bh=Wg3/qsHJrk5suB5PcnPhWs0D96zAfpa6pmV4KfO8MGI=; b=i2QhKvjRQ1hXzsYJEgbreFNd0v
+ FtjOGeFhHBG5K0jIDtb7W/jnU6vRAW6NIZz8S78SovMEeIkMyzPyaAj4Ypkb9hoPQgHAjn4S2AVEN
+ Bt9hjPsjqcd7FAIIpzIHrhtqXz7zXbO2tpS91vnyKMIVj1Q83NtiRNcUaUw4fIEOPzN8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
- Message-ID:From:References:CC:To:Subject:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=TRnSBV+L+nH4U6+3XNJM6jZhEQAehli86W+oOpm0+EY=; b=Qf76Y+5k3GgdG/noTQL8bReOdw
- GXwRnoO2p87B5FpgVIbxJisK8wOwl/sQExwLtcbFuYUF7pd9M4BSRgvlpDJ2pzqZV9lrHmKN7tphl
- lDSBqSl36zTneTXwkGiqQlgoZ1NkcPAWfQkwKKkQuC83VIVEMfvfSC7l+gQdYZE7Wsb4=;
-Received: from szxga01-in.huawei.com ([45.249.212.187])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Date:
+ Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=Wg3/qsHJrk5suB5PcnPhWs0D96zAfpa6pmV4KfO8MGI=; b=b
+ QsPZSU2cNZ2mYUZm2m08/k/vJKL/yGvChTpMq/ovhJqwh0xKVHwWgI6iJ8b8u1TbkqRvEdm2xS+D+
+ 8r/8Li+eM3X/+QfuwEBxPdOxxCiaJuT3inMnba1cwghMVQoDLEQrOzcNXZ95HrmX9JXv8o2caocYt
+ /edYfir+rumg4lzU=;
+Received: from mail-tyzapc01on2120.outbound.protection.outlook.com
+ ([40.107.117.120] helo=APC01-TYZ-obe.outbound.protection.outlook.com)
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ololZ-0001Tp-0q for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Oct 2022 09:56:42 +0000
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.55])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Mv09R6B5NzmVJg;
- Fri, 21 Oct 2022 17:51:39 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 21 Oct 2022 17:56:21 +0800
-Received: from [10.174.178.174] (10.174.178.174) by
- dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 21 Oct 2022 17:56:20 +0800
-To: Luben Tuikov <luben.tuikov@amd.com>, Greg KH <gregkh@linuxfoundation.org>
-References: <20221021022102.2231464-1-yangyingliang@huawei.com>
- <d559793a-0ce4-3384-e74e-19855aa31f31@amd.com> <Y1IwLOUGayjT9p6d@kroah.com>
- <0591e66f-731a-5f81-fc9d-3a6d80516c65@huawei.com>
- <Y1JZ9IUPL6jZIQ8E@kroah.com>
- <f1210e20-d167-26c4-7aba-490d8fb7241e@huawei.com>
- <78f84006-955f-6209-1cae-024e4f199b97@amd.com>
-Message-ID: <9ee10048-f3fe-533b-5f00-8e5dd176808e@huawei.com>
-Date: Fri, 21 Oct 2022 17:56:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ id 1olpGJ-00CCxX-NZ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 21 Oct 2022 10:28:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mTYE3zoO4unfhLQ6rAi6vh9xV9jXAdm0/FrkRH2ybSRh//rl12vWR1pcIaGI/s4om3Sd5Zheu1gr8BSpAKhIg4rEE+DzuDCvQ4reBekBao806GefaRWHAp3A7Ttzp+6HjcsAA1v7ExIETQ/GmsmdYDXCvKz1jE5Ztn1KPjzcqj9R8ymxz/NCwW7Jz7+qpRJ0vGkLewhqExMa5KwACSFKNeUhTXC0OzbcVm2fEnFzrLbqZtT/G4HsVHCcX+04TrxJ5ByXsdWlk4FR0/Krc4+d9pIYzbMK5aWQjYAHyeY7Y12FB0FMJTc/Lw5XsadWDDHe80HDVePHvLoEK2xw5QfPjw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wg3/qsHJrk5suB5PcnPhWs0D96zAfpa6pmV4KfO8MGI=;
+ b=PIWIl/V0V78gfbp/U5OWVGy6eJgFY9Z/hbpbrbQb3S4wpCqb/cTvAc0RhRwdX0Cc3H45O6Q29kDeT25rXfIl5HmbQfbBb+PYRAUBgRUAjv3UZJFZbMjBYegm0IgTifHGgvdCCjcepSIn6P6jF7FJIMuZfFb938fojC/6qAYmfXzaleQOzTwgRTiCscjjGnFHlgfHua5RoP1LTDWGgYxF2y+QdZRc1Co1mz+P8DNj8VTF2nq05XMPYkMCuDCg5r862dVJbQia8+SQN/FKfIIy/SLaOYYZqQ5E6imL9qT1kodxZpKLOL/PUtR+sqhviK/GkrS2Zxqs9yZuC7WBa7dMdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wg3/qsHJrk5suB5PcnPhWs0D96zAfpa6pmV4KfO8MGI=;
+ b=japW/9V/7gSzA9ZR+Rf5o2zBwpl/sf4hMEY+OJwSLungYjBXSCC9mt6WsifiIZwLXj79SZyAvqnkAgI/rAV65cIz94LSfjYx7sL3bMnsdJpQBHHd8oyPTFzIfQISKaoSFZcK5mLpGFvoy34lBOKIr4lVl8ltJECksKvLab+1ZI6bLv1PDX8ngkpd5DuTyXyWr9qWi8fvzWxJrG8XRuozZK2tMeKJLE2gqJkYedjeeAdZg+pg48occmp9ErkhBJoWEtOSMFkJLLYMV+V8JB5B7BUkqqKqYPo95xjYh7SGJEky6cW/z1IYUVcZBzZeVnnig27168qQ88STjILnuONtYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by TYZPR06MB5711.apcprd06.prod.outlook.com (2603:1096:400:281::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.34; Fri, 21 Oct
+ 2022 10:28:15 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::c84b:5a6c:d66f:c0fd]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::c84b:5a6c:d66f:c0fd%3]) with mapi id 15.20.5723.034; Fri, 21 Oct 2022
+ 10:28:15 +0000
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Fri, 21 Oct 2022 18:28:06 +0800
+Message-Id: <20221021102806.25459-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.35.1
+X-ClientProxiedBy: SI2PR06CA0003.apcprd06.prod.outlook.com
+ (2603:1096:4:186::14) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 MIME-Version: 1.0
-In-Reply-To: <78f84006-955f-6209-1cae-024e4f199b97@amd.com>
-Content-Language: en-US
-X-Originating-IP: [10.174.178.174]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
-X-Headers-End: 1ololZ-0001Tp-0q
-Subject: Re: [f2fs-dev] [PATCH 00/11] fix memory leak while kset_register()
- fails
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TYZPR06MB5711:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91df8b63-0fa6-4754-4ad7-08dab34ef641
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Lm68IejcCrad1KxI+Kz38aoC3vD6+70NkHj01K8p2vuizpiRwPsmSNR+QpNkzIt3P26eUZEQK1opsGE+p44Wvcl84ukRb/M+cuqOC0BB0VAnZ1ZfCVRo1lfC1N4l3VActzFnBYWlEVRioisxS8vOsLCgBP/T729/MbkwJfY8MaiJlYOegM7S+a/qxQ55A+ApcISXvzLslEpo1TOPzX0+8d0M5tm0vF3XLhyeilNTTG/Im9+ETITl02AdZzGLdqdoLcA5bZiUaiy57aGWQFEE5/6dHpNzB/8xsrAeIlkW6ZvYHFgo85FVPqPwDIolLfeU2FZwHwHMguDobmcyMTTuXx8oHe6Ge5dIoDmHcfvFMVfqurhyJJJJQPtpHE9kgNpZh440mkDH+wPzLd6hXXW92oVUH+be5ezvuOLbsAs6vPajUrW49sBhrI03NEV0w9A0SeH9+JOs24IVFnASpYxy7GIN1s8qTofxFixu2euj9aNn5J70ywMD+mjiGd3HOesNip6h7qD4kqHb6K+4AuRf1wPc6R/FsvqMHrBr126zobQWcSsXveCClZ3q81PFFox2p4FFFBT3ebAgdQCA5gs3aK4rjT0Im6pdaQG/MkkWIqnf+yhCSi/e+lCJcAJlZwz6S4bKTdeFGsTg+ifgjKPe1PbrFWU9G5X292g8V951xQWEvuS1r41siRDD0enOvrLBT5+YiPWR34hyHGleGy/eKBTU9Xu/lwcBm0a/s420vFb82zkSPTs+YLSqmXMFoouYVUrU825t01BnhnE4tShW+g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SEZPR06MB5269.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230022)(4636009)(376002)(136003)(396003)(366004)(346002)(39860400002)(451199015)(8676002)(86362001)(26005)(83380400001)(8936002)(41300700001)(6506007)(6512007)(4326008)(36756003)(52116002)(66476007)(66946007)(66556008)(5660300002)(316002)(6666004)(19627235002)(107886003)(6486002)(1076003)(38100700002)(2906002)(2616005)(186003)(38350700002)(478600001);
+ DIR:OUT; SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?lSfPBl7bhCqOSj44NPyCK269s5Fxfo5XgXPqz2gQHMPOwpvTR0J8RYKN+Shx?=
+ =?us-ascii?Q?rQE7RWupfSjIbQClC1v6tC88jzOTwx1FZ5m7X2VI6NbPXAyUAOzBik63GSFz?=
+ =?us-ascii?Q?CuGa1is9NncOE3VA7DrB77KBU6JI5LX89OFFHSercNNBcjmaVGAqQ9tUSkkq?=
+ =?us-ascii?Q?vw9wc1q2sFExP493jcQNSAG9HYQ5wooLO4zoihG0cRO/FMrL0ZMBSVL/kdpD?=
+ =?us-ascii?Q?EXKJUbOWVLnYx6bXyauxW8XdSqfhA88KL7Vqsqq/nicHFsEZnSwh8LaWtIHz?=
+ =?us-ascii?Q?kWZAWvxIe9Wf/c9zYJOYKR+By1tHYCiGIShflWD/CC16IMT7HJCJH1bnwI17?=
+ =?us-ascii?Q?DD7eaSaN8j2fv72pUv+VOcNIUx7UWABWzG0I+BkWkYLZV3aX7IvJGaWGjcG1?=
+ =?us-ascii?Q?exCSr7gal3pJaddEuVz0oynnzzBBEZBg1NOdg8b/XSXMEDvBlMlzzZQnGljc?=
+ =?us-ascii?Q?S43Z4+R2ZR8MzLYfJhUk0RdKpQlRxGVNUMvlAVhM1yYg8RpQXRDoVf7H5n90?=
+ =?us-ascii?Q?i8G/JYR412l/XoN6R8w3EPAE1kpbhcJsjAXcf5/7dFRqTwQgtj9X6hcug2Ma?=
+ =?us-ascii?Q?VjFxtMG0HC6buPs0y2L41Qi6QEpE0jEuTzMcT8Ihs+mYvkmkIw5P/2Rl+sCv?=
+ =?us-ascii?Q?EG7VUAjcG3F0n2bBT4T1rMQqPX1RyrUyW4Gu9VzBIn9tOxosD+WTtoARMA1o?=
+ =?us-ascii?Q?2juOzSekbD62D7g5TOvQlX9/hr+v6VvzKMeha2rguMRwCg9t8cGvYljA2fup?=
+ =?us-ascii?Q?FXLqzgSOajfEZ4jIdLPlnklYY+gkKnW7fVEWrMhIJew6p6QTMpnTfeFUdXOA?=
+ =?us-ascii?Q?aJqrDLrWaH1IRgYVhsHZXv/iO8V+zuioonrwSN9+HEyby1r1uUR7dJfdROyA?=
+ =?us-ascii?Q?qEt4VimBm4ZV46vVOPd6mMN9sgSrFf0DgcXUhrvI4JQPCfc5KXdUogpUe33n?=
+ =?us-ascii?Q?wKPKN4fnoo0M5tZC5Tm4t6tVNR0Ye4i4QYfQayA7oCSNZhx/+f+i8gIHcQ/9?=
+ =?us-ascii?Q?UptUzsBMB0PaxaHd7jc2WdulC293/uQXLrtLQMhEXDaPE0IuSU/KlvumCeLP?=
+ =?us-ascii?Q?9StSDpxZyFAolylslr+0ixBO5pS9zUrGL2SV71EeHqebzbcsVLFCQJdv8c8Q?=
+ =?us-ascii?Q?g0W1oSWcTT6eKZ9FeTktgcdlidNcUYbqebBDmyMsxsHd/TPyEoWVgF8quua3?=
+ =?us-ascii?Q?0rH5gmpkqxgDngzQ3sqao4UdADsmhbjAXDkMVC/MCDWG8cJzRTvfbsh2j4QB?=
+ =?us-ascii?Q?2aYqCvXAV/AhcJOULwOR7esIdtssxTZFRKlG4a2U9eNT1WXeXk8otQlYNaQt?=
+ =?us-ascii?Q?MmRbGMTMD4gaSv27bw7poJ0QU4PEjz/UPPlTzytFalAd1+Svnwwz++QcONUj?=
+ =?us-ascii?Q?vTaU08Bv1kDtfBt7k333LgEVM5qXSFIXM0rbHmvhT73xsbWdUbNkyWXqBd+C?=
+ =?us-ascii?Q?hjLrJKVFLHrc5QWVBKyfsnbVGmos3glA5MxUbEocl+fGrTeqneLhyXelCTd4?=
+ =?us-ascii?Q?rfKw1qZTNr5davMKdz4gRuh5rXIruM5XGnZ0SYeQYbbHO+9EIO9CCG9IT27p?=
+ =?us-ascii?Q?MqXkfP24Iu/diMumIlXqW5FJag1IKI+WIEEyIKhC?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91df8b63-0fa6-4754-4ad7-08dab34ef641
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2022 10:28:14.8984 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CqeMMswWGKIYk/sGtizn4IjIHl+mBv0AeI2SPN0vOusrGIqLO/VuQwpWSTYjdWO5+3jr3VFi18b4MK73U7qW+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5711
+X-Headers-End: 1olpGJ-00CCxX-NZ
+Subject: [f2fs-dev] [PATCH] f2fs: introduce max_order_discard sysfs node
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,103 +138,126 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Yang Yingliang via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Yang Yingliang <yangyingliang@huawei.com>
-Cc: rafael@kernel.org, qemu-devel@nongnu.org, richard@nod.at, somlo@cmu.edu,
- mst@redhat.com, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- linux-f2fs-devel@lists.sourceforge.net, liushixin2@huawei.com,
- joseph.qi@linux.alibaba.com, linux-mtd@lists.infradead.org, jlbec@evilplan.org,
- hsiangkao@linux.alibaba.com, alexander.deucher@amd.com, jaegeuk@kernel.org,
- akpm@linux-foundation.org, linux-erofs@lists.ozlabs.org, mark@fasheh.com,
- ocfs2-devel@oss.oracle.com
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
+From: Yangtao Li via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Yangtao Li <frank.li@vivo.com>
+Cc: Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Ck9uIDIwMjIvMTAvMjEgMTc6MDgsIEx1YmVuIFR1aWtvdiB3cm90ZToKPiBPbiAyMDIyLTEwLTIx
-IDA0OjU5LCBZYW5nIFlpbmdsaWFuZyB3cm90ZToKPj4gT24gMjAyMi8xMC8yMSAxNjozNiwgR3Jl
-ZyBLSCB3cm90ZToKPj4+IE9uIEZyaSwgT2N0IDIxLCAyMDIyIGF0IDA0OjI0OjIzUE0gKzA4MDAs
-IFlhbmcgWWluZ2xpYW5nIHdyb3RlOgo+Pj4+IE9uIDIwMjIvMTAvMjEgMTM6MzcsIEdyZWcgS0gg
-d3JvdGU6Cj4+Pj4+IE9uIEZyaSwgT2N0IDIxLCAyMDIyIGF0IDAxOjI5OjMxQU0gLTA0MDAsIEx1
-YmVuIFR1aWtvdiB3cm90ZToKPj4+Pj4+IE9uIDIwMjItMTAtMjAgMjI6MjAsIFlhbmcgWWluZ2xp
-YW5nIHdyb3RlOgo+Pj4+Pj4+IFRoZSBwcmV2aW91cyBkaXNjdXNzaW9uIGxpbms6Cj4+Pj4+Pj4g
-aHR0cHM6Ly9uYW0xMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHBz
-JTNBJTJGJTJGbG9yZS5rZXJuZWwub3JnJTJGbGttbCUyRjBkYjQ4NmViLTY5MjctOTI3ZS0zNjI5
-LTk1OGY4ZjIxMTE5NCU0MGh1YXdlaS5jb20lMkZUJTJGJmFtcDtkYXRhPTA1JTdDMDElN0NsdWJl
-bi50dWlrb3YlNDBhbWQuY29tJTdDNzRhYTliNTcxOTJiNDA2ZWYyNzQwOGRhYjM0MjlkYjQlN0Mz
-ZGQ4OTYxZmU0ODg0ZTYwOGUxMWE4MmQ5OTRlMTgzZCU3QzAlN0MwJTdDNjM4MDE5Mzk1OTc5ODY4
-MTAzJTdDVW5rbm93biU3Q1RXRnBiR1pzYjNkOGV5SldJam9pTUM0d0xqQXdNREFpTENKUUlqb2lW
-Mmx1TXpJaUxDSkJUaUk2SWsxaGFXd2lMQ0pYVkNJNk1uMCUzRCU3QzMwMDAlN0MlN0MlN0MmYW1w
-O3NkYXRhPVJjSzA1Y1htMUo1JTJCdFljTE8yU01HN2s2c2pleW1RemRCek1DREpTemZkRSUzRCZh
-bXA7cmVzZXJ2ZWQ9MAo+Pj4+Pj4gVGhlIHZlcnkgZmlyc3QgZGlzY3Vzc2lvbiBvbiB0aGlzIHdh
-cyBoZXJlOgo+Pj4+Pj4KPj4+Pj4+IGh0dHBzOi8vbmFtMTEuc2FmZWxpbmtzLnByb3RlY3Rpb24u
-b3V0bG9vay5jb20vP3VybD1odHRwcyUzQSUyRiUyRnd3dy5zcGluaWNzLm5ldCUyRmxpc3RzJTJG
-ZHJpLWRldmVsJTJGbXNnMzY4MDc3Lmh0bWwmYW1wO2RhdGE9MDUlN0MwMSU3Q2x1YmVuLnR1aWtv
-diU0MGFtZC5jb20lN0M3NGFhOWI1NzE5MmI0MDZlZjI3NDA4ZGFiMzQyOWRiNCU3QzNkZDg5NjFm
-ZTQ4ODRlNjA4ZTExYTgyZDk5NGUxODNkJTdDMCU3QzAlN0M2MzgwMTkzOTU5Nzk4NjgxMDMlN0NV
-bmtub3duJTdDVFdGcGJHWnNiM2Q4ZXlKV0lqb2lNQzR3TGpBd01EQWlMQ0pRSWpvaVYybHVNeklp
-TENKQlRpSTZJazFoYVd3aUxDSlhWQ0k2TW4wJTNEJTdDMzAwMCU3QyU3QyU3QyZhbXA7c2RhdGE9
-c0haNmtmTEY4SHhyTlhWNiUyRlZqZ2RIJTJCbVFNNFQzWnYwVSUyRkF3ZGRUOTdjRSUzRCZhbXA7
-cmVzZXJ2ZWQ9MAo+Pj4+Pj4KPj4+Pj4+IFBsZWFzZSB1c2UgdGhpcyBsaW5rLCBhbmQgbm90IHRo
-ZSB0aGF0IG9uZSB1cCB0aGVyZSB5b3Ugd2hpY2ggcXVvdGVkIGFib3ZlLAo+Pj4+Pj4gYW5kIHdo
-b3NlIGNvbW1pdCBkZXNjcmlwdGlvbiBpcyB0YWtlbiB2ZXJiYXRpbSBmcm9tIHRoZSB0aGlzIGxp
-bmsuCj4+Pj4+Pgo+Pj4+Pj4+IGtzZXRfcmVnaXN0ZXIoKSBpcyBjdXJyZW50bHkgdXNlZCBpbiBz
-b21lIHBsYWNlcyB3aXRob3V0IGNhbGxpbmcKPj4+Pj4+PiBrc2V0X3B1dCgpIGluIGVycm9yIHBh
-dGgsIGJlY2F1c2UgdGhlIGNhbGxlcnMgdGhpbmsgaXQgc2hvdWxkIGJlCj4+Pj4+Pj4ga3NldCBp
-bnRlcm5hbCB0aGluZyB0byBkbywgYnV0IHRoZSBkcml2ZXIgY29yZSBjYW4gbm90IGtub3cgd2hh
-dAo+Pj4+Pj4+IGNhbGxlciBkb2luZyB3aXRoIHRoYXQgbWVtb3J5IGF0IHRpbWVzLiBUaGUgbWVt
-b3J5IGNvdWxkIGJlIGZyZWVkCj4+Pj4+Pj4gYm90aCBpbiBrc2V0X3B1dCgpIGFuZCBlcnJvciBw
-YXRoIG9mIGNhbGxlciwgaWYgaXQgaXMgY2FsbGVkIGluCj4+Pj4+Pj4ga3NldF9yZWdpc3Rlcigp
-Lgo+Pj4+Pj4gQXMgSSBleHBsYWluZWQgaW4gdGhlIGxpbmsgYWJvdmUsIHRoZSByZWFzb24gdGhl
-cmUncwo+Pj4+Pj4gYSBtZW1vcnkgbGVhayBpcyB0aGF0IG9uZSBjYW5ub3QgY2FsbCBrc2V0X3Jl
-Z2lzdGVyKCkgd2l0aG91dAo+Pj4+Pj4gdGhlIGtzZXQtPmtvYmoubmFtZSBiZWluZyBzZXQtLWtv
-YmpfYWRkX2ludGVybmFsKCkgcmV0dXJucyAtRUlOVkFMLAo+Pj4+Pj4gaW4gdGhpcyBjYXNlLCBp
-LmUuIGtzZXRfcmVnaXN0ZXIoKSBmYWlscyB3aXRoIC1FSU5WQUwuCj4+Pj4+Pgo+Pj4+Pj4gVGh1
-cywgdGhlIG1vc3QgY29tbW9uIHVzYWdlIGlzIHNvbWV0aGluZyBsaWtlIHRoaXM6Cj4+Pj4+Pgo+
-Pj4+Pj4gCWtvYmpfc2V0X25hbWUoJmtzZXQtPmtvYmosIGZvcm1hdCwgLi4uKTsKPj4+Pj4+IAlr
-c2V0LT5rb2JqLmtzZXQgPSBwYXJlbnRfa3NldDsKPj4+Pj4+IAlrc2V0LT5rb2JqLmt0eXBlID0g
-a3R5cGU7Cj4+Pj4+PiAJcmVzID0ga3NldF9yZWdpc3Rlcihrc2V0KTsKPj4+Pj4+Cj4+Pj4+PiBT
-bywgd2hhdCBpcyBiZWluZyBsZWFrZWQsIGlzIHRoZSBtZW1vcnkgYWxsb2NhdGVkIGluIGtvYmpf
-c2V0X25hbWUoKSwKPj4+Pj4+IGJ5IHRoZSBjb21tb24gaWRpb20gc2hvd24gYWJvdmUuIFRoaXMg
-bmVlZHMgdG8gYmUgbWVudGlvbmVkIGluCj4+Pj4+PiB0aGUgZG9jdW1lbnRhdGlvbiwgYXQgbGVh
-c3QsIGluIGNhc2UsIGluIHRoZSBmdXR1cmUgdGhpcyBpcyBhYnNvbHZlZAo+Pj4+Pj4gaW4ga3Nl
-dF9yZWdpc3RlcigpIHJlZGVzaWduLCBldGMuCj4+Pj4+IEJhc2VkIG9uIHRoaXMsIGNhbiBrc2V0
-X3JlZ2lzdGVyKCkganVzdCBjbGVhbiB1cCBmcm9tIGl0c2VsZiB3aGVuIGFuCj4+Pj4+IGVycm9y
-IGhhcHBlbnM/ICBJZGVhbGx5IHRoYXQgd291bGQgYmUgdGhlIGNhc2UsIGFzIHRoZSBvZGRzIG9m
-IGEga3NldAo+Pj4+PiBiZWluZyBlbWJlZGRlZCBpbiBhIGxhcmdlciBzdHJ1Y3R1cmUgaXMgcHJv
-YmFibHkgc2xpbSwgYnV0IHdlIHdvdWxkIGhhdmUKPj4+Pj4gdG8gc2VhcmNoIHRoZSB0cmVlIHRv
-IG1ha2Ugc3VyZS4KPj4+PiBJIGhhdmUgc2VhcmNoIHRoZSB3aG9sZSB0cmVlLCB0aGUga3NldCB1
-c2VkIGluIGJ1c19yZWdpc3RlcigpIC0gcGF0Y2ggIzMsCj4+Pj4ga3NldF9jcmVhdGVfYW5kX2Fk
-ZCgpIC0gcGF0Y2ggIzQKPj4+PiBfX2NsYXNzX3JlZ2lzdGVyKCkgLSBwYXRjaCAjNSzCoCBmd19j
-ZmdfYnVpbGRfc3ltbGluaygpIC0gcGF0Y2ggIzYgYW5kCj4+Pj4gYW1kZ3B1X2Rpc2NvdmVyeS5j
-IC0gcGF0Y2ggIzEwCj4+Pj4gaXMgZW1iZWRkZWQgaW4gYSBsYXJnZXIgc3RydWN0dXJlLiBJbiB0
-aGVzZSBjYXNlcywgd2UgY2FuIG5vdCBjYWxsCj4+Pj4ga3NldF9wdXQoKSBpbiBlcnJvciBwYXRo
-IGluIGtzZXRfcmVnaXN0ZXIoKQo+Pj4gWWVzIHlvdSBjYW4gYXMgdGhlIGtvYmplY3QgaW4gdGhl
-IGtzZXQgc2hvdWxkIE5PVCBiZSBjb250cm9saW5nIHRoZQo+Pj4gbGlmZXNwYW4gb2YgdGhvc2Ug
-bGFyZ2VyIG9iamVjdHMuCj4+Pgo+Pj4gSWYgaXQgaXMsIHBsZWFzZSBwb2ludCBvdXQgdGhlIGNh
-bGwgY2hhaW4gaGVyZSBhcyBJIGRvbid0IHRoaW5rIHRoYXQKPj4+IHNob3VsZCBiZSBwb3NzaWJs
-ZS4KPj4+Cj4+PiBOb3RlIGFsbCBvZiB0aGlzIGlzIGEgbWVzcyBiZWNhdXNlIHRoZSBrb2JqZWN0
-IG5hbWUgc3R1ZmYgd2FzIGFkZGVkIG11Y2gKPj4+IGxhdGVyLCBhZnRlciB0aGUgZHJpdmVyIG1v
-ZGVsIGhhZCBiZWVuIGNyZWF0ZWQgYW5kIHJ1bm5pbmcgZm9yIGEgd2hpbGUuCj4+PiBXZSBtaXNz
-ZWQgdGhpcyBlcnJvciBwYXRoIHdoZW4gYWRkaW5nIHRoZSBkeW5hbWljIGtvYmplY3QgbmFtZSBs
-b2dpYywKPj4+IHRoYW5rIGZvciBsb29raW5nIGludG8gdGhpcy4KPj4+Cj4+PiBJZiB5b3UgY291
-bGQgdGVzdCB0aGUgcGF0Y2ggcG9zdGVkIHdpdGggeW91ciBlcnJvciBpbmplY3Rpb24gc3lzdGVt
-cywKPj4+IHRoYXQgY291bGQgbWFrZSB0aGlzIGFsbCBtdWNoIHNpbXBsZXIgdG8gc29sdmUuCj4+
-IFRoZSBwYXRjaCBwb3N0ZWQgYnkgTHViZW4gd2lsbCBjYXVzZSBkb3VibGUgZnJlZSBpbiBzb21l
-IGNhc2VzLgo+IFllcywgSSBmaWd1cmVkIHRoaXMgb3V0IGluIHRoZSBvdGhlciBlbWFpbCBhbmQg
-cG9zdGVkIHRoZSBzY2VuYXJpbyBHcmVnCj4gd2FzIGFza2luZyBhYm91dC4KPgo+IEJ1dCBJIGJl
-bGlldmUgdGhlIHF1ZXN0aW9uIHN0aWxsIHN0YW5kcyBpZiB3ZSBjYW4gZG8ga3NldF9wdXQoKQo+
-IGFmdGVyIGEgKmZhaWxlZCoga3NldF9yZWdpc3RlcigpLCBuYW1lbHkgaWYgbW9yZSBpcyBiZWlu
-ZyBkb25lIHRoYW4KPiBuZWNlc3NhcnksIHdoaWNoIGlzIGp1c3QgdG8gZnJlZSB0aGUgbWVtb3J5
-IGFsbG9jYXRlZCBieQo+IGtvYmplY3Rfc2V0X25hbWUoKS4KVGhlIG5hbWUgbWVtb3J5IGlzIGFs
-bG9jYXRlZCBpbiBrb2JqZWN0X3NldF9uYW1lKCkgaW4gY2FsbGVyLMKgIGFuZCBJIAp0aGluayBj
-YWxsZXIKZnJlZSB0aGUgbWVtb3J5IHRoYXQgaXQgYWxsb2NhdGVkIGlzIHJlYXNvbmFibGUsIGl0
-J3Mgd2VpcmQgdGhhdCBzb21lIApjYWxsZXJzIGFsbG9jYXRlCnNvbWUgbWVtb3J5IGFuZCB1c2Ug
-ZnVuY3Rpb24gKGtzZXRfcmVnaXN0ZXIpIGZhaWxlZCwgdGhlbiBpdCBmcmVlIHRoZSAKbWVtb3J5
-IGFsbG9jYXRlZAppbiBjYWxsZXJzLMKgIEkgdGhpbmsgdXNlIGtzZXRfcHV0KCkva2ZyZWVfY29u
-c3QobmFtZSkgaW4gY2FsbGVyIHNlZW1zIAptb3JlIHJlYXNvbmFibGUuCgpUaGFua3MsCllhbmcK
-Pgo+IFJlZ2FyZHMsCj4gTHViZW4KPiAuCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJm
-cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5u
-ZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+The current max_order_discard is a fixed value,
+change it to be configurable through the sys node.
+
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++++++
+ fs/f2fs/f2fs.h                          |  3 +++
+ fs/f2fs/segment.c                       |  3 ++-
+ fs/f2fs/sysfs.c                         | 11 +++++++++++
+ 4 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 11ce4a8bdacd..8faef2078a7a 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -99,6 +99,12 @@ Description:	Controls the issue rate of discard commands that consist of small
+ 		checkpoint is triggered, and issued during the checkpoint.
+ 		By default, it is disabled with 0.
+ 
++What:		/sys/fs/f2fs/<disk>/max_order_discard
++Date:		October 2022
++Contact:	"Yangtao Li" <frank.li@vivo.com>
++Description:	Controls the maximum ordered discard, the unit size is one block(4KB).
++		By default, it is disabled with 16.
++
+ What:		/sys/fs/f2fs/<disk>/max_discard_request
+ Date:		December 2021
+ Contact:	"Konstantin Vyshetsky" <vkon@google.com>
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c444f3f86608..070dee37b915 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -330,6 +330,8 @@ struct discard_entry {
+ 
+ /* default discard granularity of inner discard thread, unit: block count */
+ #define DEFAULT_DISCARD_GRANULARITY		16
++/* default maximum discard granularity of ordered discard, unit: block count */
++#define DEFAULT_MAX_ORDER_DISCARD_GRANULARITY	16
+ 
+ /* max discard pend list number */
+ #define MAX_PLIST_NUM		512
+@@ -409,6 +411,7 @@ struct discard_cmd_control {
+ 	unsigned int mid_discard_issue_time;	/* mid. interval between discard issue */
+ 	unsigned int max_discard_issue_time;	/* max. interval between discard issue */
+ 	unsigned int discard_granularity;	/* discard granularity */
++	unsigned int max_order_discard; /* maximum discard granularity issued by lba order */
+ 	unsigned int undiscard_blks;		/* # of undiscard blocks */
+ 	unsigned int next_pos;			/* next discard position */
+ 	atomic_t issued_discard;		/* # of issued discard */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index acf3d3fa4363..921ec17a40ce 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1448,7 +1448,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 		if (i + 1 < dpolicy->granularity)
+ 			break;
+ 
+-		if (i < DEFAULT_DISCARD_GRANULARITY && dpolicy->ordered)
++		if (i < dcc->max_order_discard && dpolicy->ordered)
+ 			return __issue_discard_cmd_orderly(sbi, dpolicy);
+ 
+ 		pend_list = &dcc->pend_list[i];
+@@ -2046,6 +2046,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+ 		return -ENOMEM;
+ 
+ 	dcc->discard_granularity = DEFAULT_DISCARD_GRANULARITY;
++	dcc->max_order_discard = DEFAULT_MAX_ORDER_DISCARD_GRANULARITY;
+ 	if (F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_SEGMENT)
+ 		dcc->discard_granularity = sbi->blocks_per_seg;
+ 	else if (F2FS_OPTION(sbi).discard_unit == DISCARD_UNIT_SECTION)
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 555849d4c744..81f628aed2e5 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -487,6 +487,15 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "max_order_discard")) {
++		if (t == 0 || t > MAX_PLIST_NUM)
++			return -EINVAL;
++		if (!f2fs_block_unit_discard(sbi))
++			return -EINVAL;
++		*ui = t;
++		return count;
++	}
++
+ 	if (!strcmp(a->attr.name, "migration_granularity")) {
+ 		if (t == 0 || t > sbi->segs_per_sec)
+ 			return -EINVAL;
+@@ -801,6 +810,7 @@ F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, min_discard_issue_time, min_discard_
+ F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, mid_discard_issue_time, mid_discard_issue_time);
+ F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, max_discard_issue_time, max_discard_issue_time);
+ F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, discard_granularity, discard_granularity);
++F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, max_order_discard, max_order_discard);
+ F2FS_RW_ATTR(RESERVED_BLOCKS, f2fs_sb_info, reserved_blocks, reserved_blocks);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
+ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
+@@ -931,6 +941,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(mid_discard_issue_time),
+ 	ATTR_LIST(max_discard_issue_time),
+ 	ATTR_LIST(discard_granularity),
++	ATTR_LIST(max_order_discard),
+ 	ATTR_LIST(pending_discard),
+ 	ATTR_LIST(batched_trim_sections),
+ 	ATTR_LIST(ipu_policy),
+-- 
+2.25.1
+
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
