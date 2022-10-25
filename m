@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3B2DC04A95
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Oct 2022 07:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 39844C04A95
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 25 Oct 2022 07:29:19 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1onEEd-0001XR-8Z;
-	Tue, 25 Oct 2022 07:20:27 +0000
+	id 1onENB-0001ep-UT;
+	Tue, 25 Oct 2022 07:29:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1onEEZ-0001XK-Oj
+ (envelope-from <chao@kernel.org>) id 1onENA-0001ei-LO
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Oct 2022 07:20:23 +0000
+ Tue, 25 Oct 2022 07:29:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rUiOj06881zr0lUkgjqz09G3WL0mIm9MGj/mHjq//zw=; b=GfxK9GhoF9pzpbhH3dMiYJzYN2
- 8Ptd1kH4btbVoJI77I1fNuKIjr6XbmXa9UiofhJ52QxxsttgxbCNNdoWkza1T92v6n9V0Eu+NKlCa
- ZamPYHMWExaUCgdaMGX3yEP5Kgrdx9rNilrYDVglSAVY1i4QnvQY+opTZHLIMmOQUDLs=;
+ bh=q1RyvoOcymfIySYcgs9ulA134LQcv1LmgCsjKiI382Y=; b=ibhxkXabeHAVDvPd4PqtdWSRor
+ KR/lZjBKMbG8/sg12GtvaOt3cVAuRahEq6Rk559HPtaj2AG9dM/REHTL0qnNFFpDH2YMGKFYSJiW8
+ +UvV6kMHrX0S73uNpLb4bD8XphUJ23jbDmYZ+ZpFEz7c1C/BFWdlwN0ujiSf9d8fZqiY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,52 +33,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=rUiOj06881zr0lUkgjqz09G3WL0mIm9MGj/mHjq//zw=; b=V9tJUSF154UCS1VzQXKwdNB2gY
- 73WW4w6CIoe89nWE5RbT4Mq85Q8n0ppLA2J/PvhOP9vtcn2RSwFBGLJr8tt0BPwXNbp+wtEGhCcz7
- Cf9AjE8CYwQxk1DjhpMWRb9+GbECcC4QYMquOaVzj02I8k7Jmxyd8NX8ZdEf0tN9VVBk=;
+ bh=q1RyvoOcymfIySYcgs9ulA134LQcv1LmgCsjKiI382Y=; b=bBo3ZfX+OygLRpVX9d5eiSYAeC
+ YzKLQ2vEpQRkwwCGB1H4bj56c5eNMYY7ioB8QGyRtSDBf5hYJOcVNwXtfwH7Lal4qjrgqivcpoqVG
+ DPfHYHSP35LjttxfBAgMoMiP9wQoiONoLx2cPwR06qaAvA+JxBtrafrlGbfbibbeJx1E=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1onEEY-00GbsZ-Sg for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 25 Oct 2022 07:20:23 +0000
+ id 1onEN9-00034w-Pv for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 25 Oct 2022 07:29:16 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 7DBBD61701;
- Tue, 25 Oct 2022 07:20:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00529C433C1;
- Tue, 25 Oct 2022 07:20:15 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 69D4461783;
+ Tue, 25 Oct 2022 07:29:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B00D7C433C1;
+ Tue, 25 Oct 2022 07:29:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1666682416;
- bh=lHe/4u47VjgyqS/qKPddIt0lVjDsU+LlWcVX4qqtXJo=;
+ s=k20201202; t=1666682949;
+ bh=Gv+wL2UYnkvCCSfsrxAR0k2V1PI7nMZ5YN27pTjKFDs=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=XCDCRE74MQPISejkvyMsMwnDw5O9axuZCB0YvCXtq7N+1kep98u0zjn32x+dkqyPM
- FnENvdPa5ye4v61yOeaLpZTE0WYzj5rhU76+LaRt4xn8UAeTFramMwpbBbxdNJ6zGd
- y6xYR2CUvIDto2dL9Y0HsVVJg6Q3O/jSM5VPpN/9XXXFCwLzSjOu48cQTyfeAk3lCa
- yW5bP9jtix4C6Fe1Olc5KdvgqxrKmug67KpkwuHfAYl3I5gKbLK3pH+UZgy8JXaNZB
- SqJ3848/AjeWh13DjbCxBjC59A1h50Ly7+SwGfzRFU1nds1/fShKISrQ/rm1gjvhXg
- gR7+p/oFYZ2rw==
-Message-ID: <702be2cb-0af5-f47d-486c-f3b032bdb8cd@kernel.org>
-Date: Tue, 25 Oct 2022 15:20:13 +0800
+ b=NkYcHkrAiFGBHaDCZbtg2xV4WxvmHEhemBJcYL1zXrnRa5GJxUW2QhIxFYaAuIjsS
+ S7sipVaLzJMCSBkGh/P0cySaBCCBWQbjCTXqmuSxUf0yHV/NPPEBYh6zdODRseQ6K/
+ JTKibZXeX6mpZCceolxI0GWSQYN0atY6CegWnpCoIdxcpwyFKRzzxBZS466AFa0z1w
+ XAsFJT34HBo+QNa0IBKz22tK13lq0ujS0zf6JnVhjY1NV9iJtnz/SPfXRFWJ0cxOMA
+ R+XG4VY7ZcqLSQWTsu5THL1NcJ1jkyV73+0xdi54KEGlmji0DmguWHpNoOAP3w8vhR
+ Hm8ddZkNAtYNA==
+Message-ID: <b19175cf-7f87-03c0-a129-716f9bb5e16d@kernel.org>
+Date: Tue, 25 Oct 2022 15:29:06 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.1
 Content-Language: en-US
-To: zhangqilong <zhangqilong3@huawei.com>,
- "jaegeuk@kernel.org" <jaegeuk@kernel.org>
-References: <20221018024532.44184-1-zhangqilong3@huawei.com>
- <35811a40-cc69-a50d-b348-62eed5ed1227@kernel.org>
- <1e8cf37922cc4c87aff770449bbba4ab@huawei.com>
- <07348e12-142b-228c-e5fe-6f4fc9a74421@kernel.org>
- <d1d56450ccd24c1091ae67894ce8cc69@huawei.com>
- <959ca5cb-947c-d693-5e6f-79736ada7664@kernel.org>
- <411daf4a5ff94907bc298579f1e99d49@huawei.com>
+To: Yangtao Li <frank.li@vivo.com>, jaegeuk@kernel.org
+References: <bfae3198-7557-f984-200c-2c677881f462@kernel.org>
+ <20221025070817.37391-1-frank.li@vivo.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <411daf4a5ff94907bc298579f1e99d49@huawei.com>
-X-Headers-End: 1onEEY-00GbsZ-Sg
-Subject: Re: [f2fs-dev] =?utf-8?b?562U5aSNOiDnrZTlpI06ICDnrZTlpI06IFtQQVRD?=
- =?utf-8?q?H=5D_f2fs=3A_Fix_data_consistency_in_f2fs=5Fmove=5Ffile=5Frange?=
- =?utf-8?b?KCk=?=
+In-Reply-To: <20221025070817.37391-1-frank.li@vivo.com>
+X-Headers-End: 1onEN9-00034w-Pv
+Subject: Re: [f2fs-dev] [PATCH] f2fs: remove redundant return in
+ f2fs_create_flush_cmd_control()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,168 +83,69 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/10/25 15:01, zhangqilong wrote:
->> On 2022/10/25 14:27, zhangqilong wrote:
->>>> On 2022/10/20 15:27, zhangqilong via Linux-f2fs-devel wrote:
->>>>>> On 2022/10/18 10:45, Zhang Qilong wrote:
->>>>>>> In the following case:
->>>>>>> process 1			process 2
->>>>>>>      ->open A
->>>>>>>       ->mmap
->>>>>>>        ->read # the first time
->>>>>>>        				 ->ioctl w/h F2FS_IOC_MOVE_RANGE
->>>>>>> 				        	# (range A->B)
->>>>>>>        ->read # the second time
->>>>>>
->>>>>> How about checking B as well? Previous mapped data can still be
->>>>>> accessed after F2FS_IOC_MOVE_RANGE?
->>>>>>
->>>>>
->>>>> Hi
->>>>>
->>>>> I have checked B as well. Previous mapped data can't be accessed
->>>>> after F2FS_IOC_MOVE_RANGE.
->>>>
->>>> I doubt that we didn't call flush_dcache_page() in below branch, so
->>>> user may see stall data after F2FS_IOC_MOVE_RANGE? Am I missing
->> something?
->>>>
->>>
->>> Hi,
->>>
->>> You are right, it needs flush_dcache_page, but it is unnecessary here,
->>> the __clone_blkaddrs() is called by FALLOC_FL_COLLAPSE_RANGE/
->> FALLOC_FL_INSERT_RANGE /F2FS_IOC_MOVE_RANGE.
->>> ->__exchange_data_block()
->>>    ->__clone_blkaddrs()
->>>
->>> f2fs_do_collapse()  and f2fs_insert_range() have truncate_pagecache
->>> after __exchange_data_block() It seem we have analyzed before. So we
->> only need to add a truncate operation for F2FS_IOC_MOVE_RANGE.
->>
->> I mean it needs to call truncate_pagecache_range(dst, ...) in
->> f2fs_move_file_range() as well, right?
+On 2022/10/25 15:08, Yangtao Li wrote:
+> Hi Chao,
 > 
-> Yes, I think it should call truncate_pagecache_range(dst, ...) or flush_dcache_page() here.
-> I submitted a patch before, it seems to be forgetten.
-> 
-> https://lore.kernel.org/linux-f2fs-devel/20220825024102.120651-1-zhangqilong3@huawei.com/
-> 
-> But, I test it w/o truncate_pagecache_range(dst, ...) or flush_dcache_page(), user can not
-> see stall dst data, maybe It is a bit difficult to construct the scene for me.
+> In my point of view, it should not return 0. Because calling kthread_run()
+> to create a kernel thread may fails, and err is assigned a value.
 
-Please check the condition how can we run into below else branch. I guess you
-need to persist data blocks of src into a checkpoint w/ SYNC(2), then
-__clone_blkaddrs() will copy data from page cache directly instead of exchanging
-metadatas.
+I commented on last 'return err' rather than the one in error path...
 
-Thanks,
+Maybe:
+
+---
+  fs/f2fs/segment.c | 8 ++++----
+  1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 81aadfc06c89..25ee8c8cb2cf 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -634,12 +634,12 @@ int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi)
+  {
+  	dev_t dev = sbi->sb->s_bdev->bd_dev;
+  	struct flush_cmd_control *fcc;
+-	int err = 0;
++	int err;
+
+  	if (SM_I(sbi)->fcc_info) {
+  		fcc = SM_I(sbi)->fcc_info;
+  		if (fcc->f2fs_issue_flush)
+-			return err;
++			return 0;
+  		goto init_thread;
+  	}
+
+@@ -652,7 +652,7 @@ int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi)
+  	init_llist_head(&fcc->issue_list);
+  	SM_I(sbi)->fcc_info = fcc;
+  	if (!test_opt(sbi, FLUSH_MERGE))
+-		return err;
++		return 0;
+
+  init_thread:
+  	fcc->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
+@@ -664,7 +664,7 @@ int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi)
+  		return err;
+  	}
+
+-	return err;
++	return 0;
+  }
+
+  void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free)
+-- 
+2.25.1
+
 
 
 > 
 > Thanks,
->>
->> Thanks,
->>
->>>
->>>> __clone_blkaddrs()
->>>> {
->>>> ...
->>>> 		} else {
->>>> 			struct page *psrc, *pdst;
->>>>
->>>> 			psrc = f2fs_get_lock_data_page(src_inode,
->>>> 							src + i, true);
->>>> 			if (IS_ERR(psrc))
->>>> 				return PTR_ERR(psrc);
->>>> 			pdst = f2fs_get_new_data_page(dst_inode, NULL,
->> dst + i,
->>>> 								true);
->>>> 			if (IS_ERR(pdst)) {
->>>> 				f2fs_put_page(psrc, 1);
->>>> 				return PTR_ERR(pdst);
->>>> 			}
->>>> 			memcpy_page(pdst, 0, psrc, 0, PAGE_SIZE);
->>>> 			set_page_dirty(pdst);
->>>> 			f2fs_put_page(pdst, 1);
->>>> 			f2fs_put_page(psrc, 1);
->>>>
->>>> 			ret = f2fs_truncate_hole(src_inode,
->>>> 						src + i, src + i + 1);
->>>> 			if (ret)
->>>> 				return ret;
->>>> 			i++;
->>>> 		}
->>>> ...
->>>> }
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>> In addition, this patch could be applied to mainline if possible?
->>>>>
->>>>> Thanks
->>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>> We will read old data at the second time. The root cause is that
->>>>>>> user still can see the previous source data after being moved. We
->>>>>>> fix it by adding truncating after __exchange_data_block.
->>>>>>>
->>>>>>> Fixes: 4dd6f977fc77 ("f2fs: support an ioctl to move a range of
->>>>>>> data
->>>>>>> blocks")
->>>>>>> Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
->>>>>>> ---
->>>>>>> v2:
->>>>>>> - moving truncating to the range of f2fs_lock_op()
->>>>>>>
->>>>>>> v3:
->>>>>>> - modify the title and commit message
->>>>>>> ---
->>>>>>>      fs/f2fs/file.c | 3 +++
->>>>>>>      1 file changed, 3 insertions(+)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c index
->>>>>>> 82cda1258227..e9dfa41baf9e 100644
->>>>>>> --- a/fs/f2fs/file.c
->>>>>>> +++ b/fs/f2fs/file.c
->>>>>>> @@ -2824,6 +2824,7 @@ static int f2fs_move_file_range(struct file
->>>>>>> *file_in,
->>>>>> loff_t pos_in,
->>>>>>>      			goto out_src;
->>>>>>>      	}
->>>>>>>
->>>>>>> +	filemap_invalidate_lock(src->i_mapping);
->>>>>>>      	f2fs_lock_op(sbi);
->>>>>>>      	ret = __exchange_data_block(src, dst, pos_in >>
->> F2FS_BLKSIZE_BITS,
->>>>>>>      				pos_out >> F2FS_BLKSIZE_BITS, @@
->> -2835,7
->>>> +2836,9 @@ static
->>>>>>> int f2fs_move_file_range(struct file *file_in,
->>>>>> loff_t pos_in,
->>>>>>>      		else if (dst_osize != dst->i_size)
->>>>>>>      			f2fs_i_size_write(dst, dst_osize);
->>>>>>>      	}
->>>>>>> +	truncate_pagecache_range(src, pos_in, pos_in + len - 1);
->>>>>>>      	f2fs_unlock_op(sbi);
->>>>>>> +	filemap_invalidate_unlock(src->i_mapping);
->>>>>>>
->>>>>>>      	if (src != dst)
->>>>>>>      		f2fs_up_write(&F2FS_I(dst)->i_gc_rwsem[WRITE]);
->>>>>
->>>>> _______________________________________________
->>>>> Linux-f2fs-devel mailing list
->>>>> Linux-f2fs-devel@lists.sourceforge.net
->>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 _______________________________________________
