@@ -4,69 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 44B80FA3745
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 40468FA3743
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Oct 2022 22:48:04 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ooY8x-0004OM-RZ;
+	id 1ooY8x-0004Th-OR;
 	Fri, 28 Oct 2022 22:48:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1ooY8v-0004O6-T7
+ (envelope-from <ebiggers@kernel.org>) id 1ooY8v-0004TT-Sk
  for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 28 Oct 2022 22:48:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SscYugZJ1BO2XiRVumEKauGSVdn0VvqusfkJqvC/OLY=; b=EpBP3Fcl+siVvPtawnT42nYpk0
- cCB8JYXohrGhExdA6eecP6zC8ZU16eHM9nIktoT3VM0oAL6gn+9k5VFdtfzEYt/xaiFQYJ7KH72uG
- BVqlUkyHfRVeMb/uyC/oq/w/0WHvGxLEsztiGo8S1qAxX6rkUZpcpmXb4iSm/cx34wOI=;
+ bh=0yDmuGLRkQy6J7Eq5voxPkJGN2w/HvLKatZbP6I888o=; b=Fa5tpsjT6CWsUrDv9xGW05lpuS
+ Qp+Q3ckkUeu+Rn2krsGdl0NyTniIpFoM6JJVncX6PGf7b3DRjt2W2Zv8SL503+wb4mKU+YkZyYPOx
+ l/50pIA4NEGZjY/jSndowyHaG3GKwF9wqsYx7BUKS5iOh0cuhKdfMIRQOXwbuUUXkgD4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=SscYugZJ1BO2XiRVumEKauGSVdn0VvqusfkJqvC/OLY=; b=H
- mF300LhYljVjv5rLEYKdOMl/IiusisI8D85q4OhPPoBzhJHICQ4NsDu4q3fJaasJaak8Eilpr4BBE
- M91BVP7uI2cLHuzGxTZZzEl8D6SpGUjr1uEQAnOg1UA0NyDrILhlUCIAyXgAVFT1DMD2yMgwmwi3v
- 2/uLujWqGA3EeZEs=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=0yDmuGLRkQy6J7Eq5voxPkJGN2w/HvLKatZbP6I888o=; b=fTrXIx4MBRKtETYpicFKPZq1FW
+ z99qS+h/yxwwdjubkJiGNGi+Tgy14ibd+d3GVolzBf6UvWt1xxJidyBQvkKdi5qmqBNtB5/qpPgfR
+ VM5r8WorevdYhKp996N6FiL0zktTBtrQogT7qdGw9D031xHV2quu6uV9LYrPsLpcq00I=;
 Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ooY8s-0007GH-Cg for linux-f2fs-devel@lists.sourceforge.net;
+ id 1ooY8s-0007GN-9W for linux-f2fs-devel@lists.sourceforge.net;
  Fri, 28 Oct 2022 22:48:01 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by sin.source.kernel.org (Postfix) with ESMTPS id E6FEBCE2E9E
+ by sin.source.kernel.org (Postfix) with ESMTPS id 03C00CE2EA2
  for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 28 Oct 2022 22:47:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9EEC43470;
  Fri, 28 Oct 2022 22:47:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8C6C433D6;
- Fri, 28 Oct 2022 22:47:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1666997265;
- bh=4Gis4J6FInfcpasgqe1VktNVUDifHwCLxkhJxJDfYg8=;
- h=From:To:Cc:Subject:Date:From;
- b=Tw4NUWnK6m8OaUTrRHH905TS9LfG6I9nYNG0Jz3Uwr35Q4LdLMKMs0hb76xKH7hUw
- iArYiH+CVoeUAmZthSWPhlWnJUbHrZchEbvc9FmGtPQPMGTgMKvqmGvnLVSLhShpBx
- cD08RgkjZqPlkfrUwHJ+XK5wBpnsqJnjS/97vyQQwn8z/ucBccm12lX2mOWcQRfBXu
- WpIB/tX9t5N9/KpVA3U8usMiE7H60bhctbfQ2tsHguU9frpYL8hZlu/P7jo0qnvOH/
- w0yqFmOfrREE0MYc95OfB4zZfV10TbZbgNcGKqIjAe9XMbgmcIj2dWNipIvi0tBMbP
- u51kmtmDq6UUg==
+ s=k20201202; t=1666997266;
+ bh=bqK81I/T6k3G4i3s/QXoplbiUG5b/2q9qN47fUeLeWQ=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=iw9YE3wb75BUEOFeFHw5T2uj6gkdp+UdqpvS6EZgDy36esM9mRbr6PCr9iHEOp1yy
+ EcNOS70sj+GbP1Coa89lWAZsPe7RubuqyUm37SNUfCiQtTCwaw1OTs493O4AxwlW2u
+ 7ANrvU1NFT3nO6/TiQDMlRZ4EtiZvNfLBI8rIT6y4ADKJRJycR3DKWLtD+Ongrpes3
+ vBXcQMu8t5B/k5SHqyr3KxngyzSBzqhOk7Sb2qAh6CJf5ua1uVSxp8i8nE4Ea/UEuI
+ XLWPs0uSmdY6a8BxGO5Iz6XFwo+5VkXnIUEhpwOIfy3TzZUvmM4cASyjOIPh+3navN
+ UIT4TNd6qrKUw==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Fri, 28 Oct 2022 15:45:33 -0700
-Message-Id: <20221028224539.171818-1-ebiggers@kernel.org>
+Date: Fri, 28 Oct 2022 15:45:36 -0700
+Message-Id: <20221028224539.171818-4-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.38.0
+In-Reply-To: <20221028224539.171818-1-ebiggers@kernel.org>
+References: <20221028224539.171818-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ooY8s-0007GH-Cg
-Subject: [f2fs-dev] [PATCH 0/6] fsverity: support for non-4K pages
+X-Headers-End: 1ooY8s-0007GN-9W
+Subject: [f2fs-dev] [PATCH 3/6] ext4: simplify ext4_readpage_limit()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,54 +86,31 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-[This patchset applies to v6.1-rc2 + my other patch
- https://lore.kernel.org/r/20221028175807.55495-1-ebiggers@kernel.org.
- You can get everything from tag "fsverity-non4k-v1" of
- https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git]
+From: Eric Biggers <ebiggers@google.com>
 
-Currently, filesystems (ext4, f2fs, and btrfs) only support fsverity
-when the Merkle tree block size, filesystem block size, and page size
-are all the same.  In practice that means 4K, since increasing the page
-size, e.g. to 16K, forces the Merkle tree block size and filesystem
-block size to be increased accordingly.  That can be impractical; for
-one, users want the same file signatures to work on all systems.
+Now that the implementation of FS_IOC_ENABLE_VERITY has changed to not
+involve reading back Merkle tree blocks that were previously written,
+there is no need for ext4_readpage_limit() to allow for this case.
 
-Therefore, this patchset reduces the coupling between these sizes.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/ext4/readpage.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-First, patches 1-4 allow the Merkle tree block size to be less than the
-page size or filesystem block size, provided that it's not larger than
-either one.  This involves, among other things, changing the way that
-fs/verity/verify.c tracks which hash blocks have been verified.
-
-Second, patches 5-6 makes ext4 support fsverity when the filesystem
-block size is less than the page size.  Note, f2fs doesn't need similar
-changes because f2fs always assumes that the filesystem block size and
-page size are the same anyway.  I haven't looked into btrfs yet.
-
-I've tested this patchset with changes to the verity tests in xfstests.
-I'll be sending out these xfstests changes separately.
-
-Eric Biggers (6):
-  fsverity: support verification with tree block size < PAGE_SIZE
-  fsverity: support enabling with tree block size < PAGE_SIZE
-  ext4: simplify ext4_readpage_limit()
-  f2fs: simplify f2fs_readpage_limit()
-  fs/buffer.c: support fsverity in block_read_full_folio()
-  ext4: allow verity with fs block size < PAGE_SIZE
-
- Documentation/filesystems/fsverity.rst |  76 +++---
- fs/buffer.c                            |  66 ++++-
- fs/ext4/readpage.c                     |   3 +-
- fs/ext4/super.c                        |   5 -
- fs/f2fs/data.c                         |   3 +-
- fs/verity/enable.c                     | 268 ++++++++++----------
- fs/verity/fsverity_private.h           |  17 +-
- fs/verity/hash_algs.c                  |  48 ++--
- fs/verity/open.c                       | 101 ++++++--
- fs/verity/verify.c                     | 325 +++++++++++++++++--------
- include/linux/fsverity.h               |  14 +-
- 11 files changed, 575 insertions(+), 351 deletions(-)
-
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index e604ea4e102b7..babaa7160c556 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -211,8 +211,7 @@ static void ext4_set_bio_post_read_ctx(struct bio *bio,
+ 
+ static inline loff_t ext4_readpage_limit(struct inode *inode)
+ {
+-	if (IS_ENABLED(CONFIG_FS_VERITY) &&
+-	    (IS_VERITY(inode) || ext4_verity_in_progress(inode)))
++	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
+ 		return inode->i_sb->s_maxbytes;
+ 
+ 	return i_size_read(inode);
 -- 
 2.38.0
 
