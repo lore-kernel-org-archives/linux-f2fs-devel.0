@@ -4,72 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C08C6FA374C
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Oct 2022 22:48:01 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 44B80FA3745
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Oct 2022 22:48:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ooY8v-0004TG-Ai;
-	Fri, 28 Oct 2022 22:48:01 +0000
+	id 1ooY8x-0004OM-RZ;
+	Fri, 28 Oct 2022 22:48:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1ooY8s-0004Sr-SB
+ (envelope-from <ebiggers@kernel.org>) id 1ooY8v-0004O6-T7
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Oct 2022 22:47:58 +0000
+ Fri, 28 Oct 2022 22:48:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=UjQjmkOk7hK6O0b2725GUhJe8kYPdG3VL8Tvj58c+5Y=; b=cjdSjS+4EEcrZK0iLwKIx3K4yn
- b/SoK2WLRS8vJFowpqMR4RY5T35I0sz/Mljp0IjGtgIUwWwxJ9NnWR4WI/fLk+f5UEOQ6UN9AKR4i
- oaFL7vYVw3J2K2CuptF9XW4IrmE64odvwR07Fsj3UwfcxCTG3WndkbiuLMC753cL2B7I=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=UjQjmkOk7hK6O0b2725GUhJe8kYPdG3VL8Tvj58c+5Y=; b=jekMNtJt9InHqG6rrDmVWkpB1K
- sbLlvP2p84YN4b85p8e5k7D9PhpVAMx1ZZnx4H8CAnTSDDX2WuCypw1UbRgpkOS+On+e+DC6k1Auw
- +yuVOnSoDPD8PC61CbwBTYt+9CCQ3ltvoNOJWARPcoHtsl3GgvRtIuRrOdUykyn7Jg7Y=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=SscYugZJ1BO2XiRVumEKauGSVdn0VvqusfkJqvC/OLY=; b=EpBP3Fcl+siVvPtawnT42nYpk0
+ cCB8JYXohrGhExdA6eecP6zC8ZU16eHM9nIktoT3VM0oAL6gn+9k5VFdtfzEYt/xaiFQYJ7KH72uG
+ BVqlUkyHfRVeMb/uyC/oq/w/0WHvGxLEsztiGo8S1qAxX6rkUZpcpmXb4iSm/cx34wOI=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=SscYugZJ1BO2XiRVumEKauGSVdn0VvqusfkJqvC/OLY=; b=H
+ mF300LhYljVjv5rLEYKdOMl/IiusisI8D85q4OhPPoBzhJHICQ4NsDu4q3fJaasJaak8Eilpr4BBE
+ M91BVP7uI2cLHuzGxTZZzEl8D6SpGUjr1uEQAnOg1UA0NyDrILhlUCIAyXgAVFT1DMD2yMgwmwi3v
+ 2/uLujWqGA3EeZEs=;
+Received: from sin.source.kernel.org ([145.40.73.55])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ooY8r-003vjA-DH for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Oct 2022 22:47:58 +0000
+ id 1ooY8s-0007GH-Cg for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 28 Oct 2022 22:48:01 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 7D52262AC7
+ by sin.source.kernel.org (Postfix) with ESMTPS id E6FEBCE2E9E
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 28 Oct 2022 22:47:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B18C4347C;
  Fri, 28 Oct 2022 22:47:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8C6C433D6;
+ Fri, 28 Oct 2022 22:47:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1666997266;
- bh=TIPDTx2LUw4vx8E38rt9OO0EAC7WyDogJc0vLXFp3gY=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=prnT5TA3ENz77NTNdV+c9bCieHMI/QrZSKTizjWQ916UJ5X+s6Hlh7fbZl1PMmUgL
- QkTU8Z3btWM3HLzOSZUqqqdDaXKhHD0o5Nd1YZJ2npy4WCgiK8CAcBkqej4hle22sH
- 44SNdI2+T0ES5EaHJpEqv6+BoLJ57ZeFnNegqpzzb98VrADluq9B6Ri5kihaeVwaV+
- 9/CuWdrJARI/nCuTkX8vmeL4XFs3c7/1I4KxtxKFOCPGQvjzR0b2s08P8TdYnePpMC
- dQ5Z5aX/75R806VvVd0wU4GyDfweo1mAQ+zFAordRj1+Ca/upMrLi8CCY0yaNIEB0j
- Cgr3K4lrGKwFA==
+ s=k20201202; t=1666997265;
+ bh=4Gis4J6FInfcpasgqe1VktNVUDifHwCLxkhJxJDfYg8=;
+ h=From:To:Cc:Subject:Date:From;
+ b=Tw4NUWnK6m8OaUTrRHH905TS9LfG6I9nYNG0Jz3Uwr35Q4LdLMKMs0hb76xKH7hUw
+ iArYiH+CVoeUAmZthSWPhlWnJUbHrZchEbvc9FmGtPQPMGTgMKvqmGvnLVSLhShpBx
+ cD08RgkjZqPlkfrUwHJ+XK5wBpnsqJnjS/97vyQQwn8z/ucBccm12lX2mOWcQRfBXu
+ WpIB/tX9t5N9/KpVA3U8usMiE7H60bhctbfQ2tsHguU9frpYL8hZlu/P7jo0qnvOH/
+ w0yqFmOfrREE0MYc95OfB4zZfV10TbZbgNcGKqIjAe9XMbgmcIj2dWNipIvi0tBMbP
+ u51kmtmDq6UUg==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Fri, 28 Oct 2022 15:45:38 -0700
-Message-Id: <20221028224539.171818-6-ebiggers@kernel.org>
+Date: Fri, 28 Oct 2022 15:45:33 -0700
+Message-Id: <20221028224539.171818-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.38.0
-In-Reply-To: <20221028224539.171818-1-ebiggers@kernel.org>
-References: <20221028224539.171818-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1ooY8r-003vjA-DH
-Subject: [f2fs-dev] [PATCH 5/6] fs/buffer.c: support fsverity in
- block_read_full_folio()
+X-Headers-End: 1ooY8s-0007GH-Cg
+Subject: [f2fs-dev] [PATCH 0/6] fsverity: support for non-4K pages
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,142 +84,54 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+[This patchset applies to v6.1-rc2 + my other patch
+ https://lore.kernel.org/r/20221028175807.55495-1-ebiggers@kernel.org.
+ You can get everything from tag "fsverity-non4k-v1" of
+ https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git]
 
-After each filesystem block (as represented by a buffer_head) has been
-read from disk by block_read_full_folio(), verify it if needed.  The
-verification is done on the fsverity_read_workqueue.  Also allow reads
-of verity metadata past i_size, as required by ext4.
+Currently, filesystems (ext4, f2fs, and btrfs) only support fsverity
+when the Merkle tree block size, filesystem block size, and page size
+are all the same.  In practice that means 4K, since increasing the page
+size, e.g. to 16K, forces the Merkle tree block size and filesystem
+block size to be increased accordingly.  That can be impractical; for
+one, users want the same file signatures to work on all systems.
 
-This is needed to support fsverity on ext4 filesystems where the
-filesystem block size is less than the page size.
+Therefore, this patchset reduces the coupling between these sizes.
 
-The new code is compiled away when CONFIG_FS_VERITY=n.
+First, patches 1-4 allow the Merkle tree block size to be less than the
+page size or filesystem block size, provided that it's not larger than
+either one.  This involves, among other things, changing the way that
+fs/verity/verify.c tracks which hash blocks have been verified.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/buffer.c | 66 +++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 56 insertions(+), 10 deletions(-)
+Second, patches 5-6 makes ext4 support fsverity when the filesystem
+block size is less than the page size.  Note, f2fs doesn't need similar
+changes because f2fs always assumes that the filesystem block size and
+page size are the same anyway.  I haven't looked into btrfs yet.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d9c6d1fbb6dde..bea0f63031129 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -48,6 +48,7 @@
- #include <linux/sched/mm.h>
- #include <trace/events/block.h>
- #include <linux/fscrypt.h>
-+#include <linux/fsverity.h>
- 
- #include "internal.h"
- 
-@@ -295,20 +296,51 @@ static void end_buffer_async_read(struct buffer_head *bh, int uptodate)
- 	return;
- }
- 
--struct decrypt_bh_ctx {
-+struct postprocess_bh_ctx {
- 	struct work_struct work;
- 	struct buffer_head *bh;
- };
- 
-+static void verify_bh(struct work_struct *work)
-+{
-+	struct postprocess_bh_ctx *ctx =
-+		container_of(work, struct postprocess_bh_ctx, work);
-+	struct buffer_head *bh = ctx->bh;
-+	bool valid;
-+
-+	valid = fsverity_verify_blocks(bh->b_page, bh->b_size, bh_offset(bh));
-+	end_buffer_async_read(bh, valid);
-+	kfree(ctx);
-+}
-+
-+static bool need_fsverity(struct buffer_head *bh)
-+{
-+	struct inode *inode = bh->b_page->mapping->host;
-+
-+	return fsverity_active(inode) &&
-+		/* needed by ext4 */
-+		bh->b_page->index < DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
-+}
-+
- static void decrypt_bh(struct work_struct *work)
- {
--	struct decrypt_bh_ctx *ctx =
--		container_of(work, struct decrypt_bh_ctx, work);
-+	struct postprocess_bh_ctx *ctx =
-+		container_of(work, struct postprocess_bh_ctx, work);
- 	struct buffer_head *bh = ctx->bh;
- 	int err;
- 
- 	err = fscrypt_decrypt_pagecache_blocks(bh->b_page, bh->b_size,
- 					       bh_offset(bh));
-+	if (err == 0 && need_fsverity(bh)) {
-+		/*
-+		 * We use different work queues for decryption and for verity
-+		 * because verity may require reading metadata pages that need
-+		 * decryption, and we shouldn't recurse to the same workqueue.
-+		 */
-+		INIT_WORK(&ctx->work, verify_bh);
-+		fsverity_enqueue_verify_work(&ctx->work);
-+		return;
-+	}
- 	end_buffer_async_read(bh, err == 0);
- 	kfree(ctx);
- }
-@@ -319,15 +351,24 @@ static void decrypt_bh(struct work_struct *work)
-  */
- static void end_buffer_async_read_io(struct buffer_head *bh, int uptodate)
- {
--	/* Decrypt if needed */
--	if (uptodate &&
--	    fscrypt_inode_uses_fs_layer_crypto(bh->b_page->mapping->host)) {
--		struct decrypt_bh_ctx *ctx = kmalloc(sizeof(*ctx), GFP_ATOMIC);
-+	struct inode *inode = bh->b_page->mapping->host;
-+	bool decrypt = fscrypt_inode_uses_fs_layer_crypto(inode);
-+	bool verify = need_fsverity(bh);
-+
-+	/* Decrypt (with fscrypt) and/or verify (with fsverity) if needed. */
-+	if (uptodate && (decrypt || verify)) {
-+		struct postprocess_bh_ctx *ctx =
-+			kmalloc(sizeof(*ctx), GFP_ATOMIC);
- 
- 		if (ctx) {
--			INIT_WORK(&ctx->work, decrypt_bh);
- 			ctx->bh = bh;
--			fscrypt_enqueue_decrypt_work(&ctx->work);
-+			if (decrypt) {
-+				INIT_WORK(&ctx->work, decrypt_bh);
-+				fscrypt_enqueue_decrypt_work(&ctx->work);
-+			} else {
-+				INIT_WORK(&ctx->work, verify_bh);
-+				fsverity_enqueue_verify_work(&ctx->work);
-+			}
- 			return;
- 		}
- 		uptodate = 0;
-@@ -2245,6 +2286,11 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
- 	int nr, i;
- 	int fully_mapped = 1;
- 	bool page_error = false;
-+	loff_t limit = i_size_read(inode);
-+
-+	/* This is needed for ext4. */
-+	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
-+		limit = inode->i_sb->s_maxbytes;
- 
- 	VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
- 
-@@ -2253,7 +2299,7 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
- 	bbits = block_size_bits(blocksize);
- 
- 	iblock = (sector_t)folio->index << (PAGE_SHIFT - bbits);
--	lblock = (i_size_read(inode)+blocksize-1) >> bbits;
-+	lblock = (limit+blocksize-1) >> bbits;
- 	bh = head;
- 	nr = 0;
- 	i = 0;
+I've tested this patchset with changes to the verity tests in xfstests.
+I'll be sending out these xfstests changes separately.
+
+Eric Biggers (6):
+  fsverity: support verification with tree block size < PAGE_SIZE
+  fsverity: support enabling with tree block size < PAGE_SIZE
+  ext4: simplify ext4_readpage_limit()
+  f2fs: simplify f2fs_readpage_limit()
+  fs/buffer.c: support fsverity in block_read_full_folio()
+  ext4: allow verity with fs block size < PAGE_SIZE
+
+ Documentation/filesystems/fsverity.rst |  76 +++---
+ fs/buffer.c                            |  66 ++++-
+ fs/ext4/readpage.c                     |   3 +-
+ fs/ext4/super.c                        |   5 -
+ fs/f2fs/data.c                         |   3 +-
+ fs/verity/enable.c                     | 268 ++++++++++----------
+ fs/verity/fsverity_private.h           |  17 +-
+ fs/verity/hash_algs.c                  |  48 ++--
+ fs/verity/open.c                       | 101 ++++++--
+ fs/verity/verify.c                     | 325 +++++++++++++++++--------
+ include/linux/fsverity.h               |  14 +-
+ 11 files changed, 575 insertions(+), 351 deletions(-)
+
 -- 
 2.38.0
 
