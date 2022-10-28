@@ -4,78 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EADB8C38A02
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Oct 2022 03:34:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 62AD4ECAAA1
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 28 Oct 2022 03:39:05 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ooG8b-0000bX-28;
-	Fri, 28 Oct 2022 03:34:29 +0000
+	id 1ooGD2-0005p3-SY;
+	Fri, 28 Oct 2022 03:39:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <3vU1bYwkbAOYaghSITTMZIXXQL.OWWOTMcaMZKWVbMVb.KWU@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
- id 1ooG8Z-0000bR-Jk for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Oct 2022 03:34:27 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <chao@kernel.org>) id 1ooGCz-0005op-B5
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 28 Oct 2022 03:39:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:In-Reply-To
- :Date:MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=d9bEgoyCkEVc1rviJui83BJ63zZs6aH07Bg8EsC0G6Q=; b=VFZQ7ZAzvbNsQJgSwb6dmCyPOR
- 3aytF9/vTk0yAWGJaUQXgnv5W16jQY7QoiVSheyNiqA3EZL8AdxkqloM24H4rrc41mqiJN0nlnB9s
- LizYUWAjSC4G2ECAzkjOGspym3VwL6qghrtFd5gKKOv29znqLTdWpmNKkc5UjWCYDLyM=;
+ bh=N0Frx5jnm/3u/6oiT7Vm9MzAhuCX5AMpIeiPUw4BVjs=; b=KNbXhZLEb8B6ZlUBIU/b2IFtN/
+ PsBVy+SDbAL8jcUGsjUQIjT8lA16Ez0U+dBUfjkF8hXlAMBfGw9JC0fCHyOomY3Z/lz6K4b6u1g5Q
+ Wxcg7HY/FU/HLVe+zERGEhUDd39MrTckgvxGZnTfqiS/klDVtJS6gOy4tcywqruInfYQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:To:From:Subject:Message-ID:In-Reply-To:Date:MIME-Version:
- Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=d9bEgoyCkEVc1rviJui83BJ63zZs6aH07Bg8EsC0G6Q=; b=R
- UOh1DWNXYK8D6O5QrG+zddUq6WSH6QYUb9qTYIPpjJ1sQ4sOWGTplcRmz1U9yaUjBIzoCavpck/Yr
- 9KzRllBDoCFGFPZYx6zS5YrEcwUlQhrWfiYFKv4epSmhPeVWKLrZRoTjDVLgitpe0r7l/NV15IXNw
- aDf7G1ziMiBHfup8=;
-Received: from mail-io1-f72.google.com ([209.85.166.72])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=N0Frx5jnm/3u/6oiT7Vm9MzAhuCX5AMpIeiPUw4BVjs=; b=MoKqgPYf3NPcS4N7A6aZLJLa3e
+ mcvxJF4UHYUeTDHFeadh0TxHSc5q6p4vZ+uljcWhUq8wGJkHYDBDsrNnv2BVfMclo+v/YNXhjq/XI
+ V2716eG3K/iVTJdRdaZYP4U8ekT5FlL8il/PDQp07FyJ1tAf9zk/5k5HbssEvyP9hRls=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1ooG8Y-00046w-Ub for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 28 Oct 2022 03:34:27 +0000
-Received: by mail-io1-f72.google.com with SMTP id
- a6-20020a056602208600b006bff2e56943so3288525ioa.11
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 27 Oct 2022 20:34:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=to:from:subject:message-id:in-reply-to:date:mime-version
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=d9bEgoyCkEVc1rviJui83BJ63zZs6aH07Bg8EsC0G6Q=;
- b=hkE+T4OBy2S+n2UHlzGC1enBntIrYGANK7TyrSt7IVXfXkbH7AfFv/NjAxht2UbEMy
- fUSPpHM7ts/HthSqIyeotMDQG71gHktx+5k9UOAeQuRVK5FmrFAxaWWfMaeK7lxX1veA
- 0QZfDjvImQUuUS+00dR4ApvXEidL4EZgh6uuIwBQQ5boKhCulyUbiw83xMyFcvS6leDI
- Bh5AUFXi2/zWbuswaSmXOMKinpBsICrqUaxOf29okH5txaim6Y+OioOI+1RLGP3V3998
- dQG15ZmcAU0Q+NOANd2+DBdfEOJpJ0VieoZU9Od65ny8POHi7TNOmqM1I4f/1YqIIGx9
- uEcA==
-X-Gm-Message-State: ACrzQf3LV79JZhwfte733ODfbFTjTVG3/yFU+sx8Yi17x2FQexeII+zj
- zSdadOf2hl5JVF6NbFLPShVbIalCYoS8B4e0QYYm+icQp5IQ
-X-Google-Smtp-Source: AMsMyM5D1/vrXmJp1T7B1mMtXHgOipwY7DPBpP1Uj5RWHyfccshSXYdP3JkEur3gchsb3YuZ8eqSfmteGNHGkWetUR0eZ6NgKSgP
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1ooGCy-0004Jr-Oi for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 28 Oct 2022 03:39:01 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 59D20625AF;
+ Fri, 28 Oct 2022 03:38:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C884C43143;
+ Fri, 28 Oct 2022 03:38:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1666928330;
+ bh=LlaI4t3FOeyLoIjMSrcnwjGr/jnLctc2/+mhw1nvwvw=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=hhxzI6gTbO/hJXBbU7Jg9pg0rFmgnnSa7QMZs29ycIObFnUxzdmQBfKlYV4peGvMv
+ rI0nZPSIXRDa/jFSxmvWfv4PjAml4mGt+s8piyNpxuK8DPRdOSP032ZA1ne1z31eN6
+ fwl9HCp2nNS4zV3T96y+nroFqa6c8uzfNzVAKbWVq1pfD46pmre3aWHr8+kTiurNW9
+ b7ITK0pTB/wTUT0QQvAvVJf1WSmNE6Mcpl2AwPIhvR+5WCHWEY/L+k7CSHozLtiyU1
+ fcHP1sKy6//NR5oGIKCWvO8STaJBNoeQyWeTy2sTsSKMwBfct0noimqNZuWboYfFw0
+ P7g+C5UcnTVsg==
+Message-ID: <9b7357f3-5e5e-c1db-fdf8-613b6ad7bac3@kernel.org>
+Date: Fri, 28 Oct 2022 11:38:46 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:d96:b0:363:9ed9:1112 with SMTP id
- l22-20020a0566380d9600b003639ed91112mr32264367jaj.171.1666928061421; Thu, 27
- Oct 2022 20:34:21 -0700 (PDT)
-Date: Thu, 27 Oct 2022 20:34:21 -0700
-In-Reply-To: <000000000000a7077705eae5f90c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f79f5905ec0fee38@google.com>
-From: syzbot <syzbot+035a381ea1afb63f098d@syzkaller.appspotmail.com>
-To: changfengnan@vivo.com, chao@kernel.org, frank.li@vivo.com, 
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
- wuhoipok@gmail.com
-X-Headers-End: 1ooG8Y-00046w-Ub
-Subject: Re: [f2fs-dev] [syzbot] BUG: unable to handle kernel NULL pointer
- dereference in f2fs_stop_discard_thread
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <ab2f3576-bedd-8c27-5549-f9ff5462aee3@kernel.org>
+ <20221028023303.28020-1-frank.li@vivo.com>
+ <85b6be9b-5c5b-ace0-8084-4bd52ef64996@kernel.org>
+ <Y1tJ4uKBa0ItHCBw@google.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <Y1tJ4uKBa0ItHCBw@google.com>
+X-Headers-End: 1ooGCy-0004Jr-Oi
+Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: fix to f2fs_handle_critical_error
+ when errors=remount-ro
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,32 +85,50 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ Yangtao Li <frank.li@vivo.com>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-syzbot has bisected this issue to:
+On 2022/10/28 11:17, Jaegeuk Kim wrote:
+> On 10/28, Chao Yu wrote:
+>> On 2022/10/28 10:33, Yangtao Li wrote:
+>>>> It won't pollute global namespace since it's a static function just be used in f2fs/super.c...
+>>>
+>>> emm, I think it would be nice to see the f2fs_record_error_work symbol
+>>> in the stack, it can be explicitly a function of f2fs. personal opinion for reference only.
+>>
+>> Oh, yes, let me update in original patch as well.
+> 
+> Chao,
+> 
+> It seems there're multiple bugs. Please apply this as well.
+> 
+> https://lore.kernel.org/linux-f2fs-devel/20221027180416.3786792-1-jaegeuk@kernel.org/T/#u
 
-commit 4d67490498acb4ffcef5ba7bc44990d46e66a44c
-Author: Fengnan Chang <changfengnan@vivo.com>
-Date:   Thu Aug 19 08:02:37 2021 +0000
+Jaegeuk,
 
-    f2fs: Don't create discard thread when device doesn't support realtime discard
+Thanks, let me merge all those patches and do the test.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17da7522880000
-start commit:   247f34f7b803 Linux 6.1-rc2
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=143a7522880000
-console output: https://syzkaller.appspot.com/x/log.txt?x=103a7522880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a66c6c673fb555e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=035a381ea1afb63f098d
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d92d6a880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e5dbba880000
+Thanks,
 
-Reported-by: syzbot+035a381ea1afb63f098d@syzkaller.appspotmail.com
-Fixes: 4d67490498ac ("f2fs: Don't create discard thread when device doesn't support realtime discard")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+>>
+>>>
+>>>> Do you mind letting me merge these two patches into original patch?
+>>>> since original patch is still in dev branch, rather than mainline.
+>>>
+>>> Glad to see, if resend.
+>>
+>> Thanks, :)
+>>
+>>>
+>>>> I guess it needs to stop ckpt thread as well...
+>>>
+>>> agree, :)
+>>>
+>>> Thanks,
 
 
 _______________________________________________
