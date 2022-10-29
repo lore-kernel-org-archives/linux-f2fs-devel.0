@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B4D12C38A02
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Oct 2022 02:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3C60CFA3741
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Oct 2022 02:56:05 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ooc0T-0000Nq-Fk;
-	Sat, 29 Oct 2022 02:55:33 +0000
+	id 1ooc0y-0000PV-QU;
+	Sat, 29 Oct 2022 02:56:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ooc0J-0000Ne-PY
+ (envelope-from <chao@kernel.org>) id 1ooc0v-0000Oz-Hh
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Oct 2022 02:55:23 +0000
+ Sat, 29 Oct 2022 02:56:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=oeVD5oPHqWoiUtjD2AtOqAk1TASSmZBVZTaDlKdryaw=; b=gfJYzJ5/jYvolOUy4oAQH6I2Wv
- v5bcjvZclgGbGA4wKuzmQCBIlbwMPV5qugsDnAw/0IUgjFxwh8UAA+bikscSK76SLGFdnttVZcLGH
- /3pUJnmQtNvQLTVACBG/xiWKbBa8Ah6PFCilYR+rY0Ukpk+YE+mPYgKQD9enPCGoYo7A=;
+ bh=yL4Qj9DIVb2Q8fyb6QWpzNa+LhdfTN8yL4PBrrsZGOQ=; b=GpBJbupWT9E11L2Gbrw4zJjP7e
+ IA4u8X+3GO/uz7NlfStvmlbNYqPdBqagrmP83Y6qN54nhA5/5S5lsq7qQpNEvh23ij2eA8aPsT06y
+ xmt6QPJ/dh5/Drh9QQD1Fg9SPsrroTVNzmpn3lKc6A4yJpAZZjs5sUpfZ9dSQGXF5lAg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,33 +33,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=oeVD5oPHqWoiUtjD2AtOqAk1TASSmZBVZTaDlKdryaw=; b=SUqTbWZ68t1KXOR0zFOalMCrRT
- Mir/XSOfH3/syCM2sEUDjpAO3xPpPkSYULIaPG6k+x/q/PMSW7PHhsniGLfXzRP5GAptZosqa0Fjy
- e2xh57HlOyo+IpKSou2j2Nm210VInqfmqQ0b4bPSRxlmny3z18eGYI1lRtC2iPaGzOTc=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=yL4Qj9DIVb2Q8fyb6QWpzNa+LhdfTN8yL4PBrrsZGOQ=; b=GOgbi2mwY4qcok5hHTvDdef+dE
+ r1WYt3jSdGWBm4rZAiE1SMK3+YT18CkzRmEKnuy+xQjyPYx+OEElc1HUF1TBDKCBDTFBH1Zr03z31
+ vbctT0zffguS0nPH8vVpDhgR8buTh/y/8URfX26YHsR39RL3UCmgVXnTIMCeecwYDinM=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ooc0F-0045pg-Iu for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Oct 2022 02:55:23 +0000
+ id 1ooc0q-0001Ic-Ci for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 29 Oct 2022 02:56:01 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 32FC062B5A;
- Sat, 29 Oct 2022 02:55:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE97CC433C1;
- Sat, 29 Oct 2022 02:55:12 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id BA473B82E00;
+ Sat, 29 Oct 2022 02:55:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 138A5C433D7;
+ Sat, 29 Oct 2022 02:55:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1667012114;
- bh=4p6l9uU/+Q4/g298HdI5bm5iguuaGyzOH1SBYsIlANQ=;
+ s=k20201202; t=1667012140;
+ bh=RxC13kMBfY3jA/I0va0EdOxfffvxi/dwXbNjcthKyJ4=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=LLAM5JooYqDcii3mtr/+UTqz1yiDZ5B2cHI1w/i4iqkkMRFbe0AJnHQ0AXF0oH1TS
- 2omUhxKhMChiSAqr9jXLwogD7RCNiQST0GMIaOp0UXyVjjsvisFHEHs0qZJ8dlvFhm
- 6yyB7C8kHpr3STNT6wI59d0kSHor8UOjtIgulwjwdpdYk1QVEPkJhusnxGCQgYC59g
- zdK6hqY09mgHMG/dDk26AIS0aSpRFOqyj8sGk2Z+6qiZQhvPrFPm0trekZkYnzeusV
- vzByR81eeH7B+HVgLC8+nUZYVXoNG/88+BcqCKTGwwcYId2caUYxY6LaaInMrZnjgC
- WDuI97LQ1pWyA==
-Message-ID: <56fbc5fb-4c82-005c-5cc9-84dfaeddf106@kernel.org>
-Date: Sat, 29 Oct 2022 10:55:13 +0800
+ b=a54Y++6FDUWWZJ7OppKBOT52neHOOlEhvVMmyL/H5nH2sWCp0XP8Yu54HZ7aa8l2b
+ BK6V8MJmGr3Y8mz329xlhGTRO72da/r8N95iRMXJqy6B9e9K9FBiundZ1ZFyvysxv0
+ zAN9jmBaCf5NcyDlegGD5ujLd4+NGAss37W4amgeqWMIEvQgQOqWfxsLV5K9Uk0F5v
+ dw9cfCfHoLpgdNqAN3x22kJBPDQL0t8ZJLuhLgBzpo1SzveIv3/cBoQhMD8zU1UYdP
+ TT2v/f4AuEP7Csy75UoCR1DgpeeckYRxx1Yso7uxbs08TNi6Q4vxkO/xHGKrKxoVHo
+ FhcnIVe5IyfJA==
+Message-ID: <4de69c67-b18f-0b1e-6a55-642120e8c675@kernel.org>
+Date: Sat, 29 Oct 2022 10:55:39 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.0
@@ -67,10 +67,11 @@ Content-Language: en-US
 To: Mukesh Ojha <quic_mojha@quicinc.com>, jaegeuk@kernel.org,
  mhiramat@kernel.org
 References: <1666861961-12924-1-git-send-email-quic_mojha@quicinc.com>
+ <1666861961-12924-2-git-send-email-quic_mojha@quicinc.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <1666861961-12924-1-git-send-email-quic_mojha@quicinc.com>
-X-Headers-End: 1ooc0F-0045pg-Iu
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: fix the assign logic of iocb
+In-Reply-To: <1666861961-12924-2-git-send-email-quic_mojha@quicinc.com>
+X-Headers-End: 1ooc0q-0001Ic-Ci
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: fix the msg data type
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,45 +90,9 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2022/10/27 17:12, Mukesh Ojha wrote:
-> commit 18ae8d12991b ("f2fs: show more DIO information in tracepoint")
-> introduces iocb field in 'f2fs_direct_IO_enter' trace event
-> And it only assigns the pointer and later it accesses its field
-> in trace print log.
+> Data type of msg in f2fs_write_checkpoint trace should
+> be const char * instead of char *.
 > 
-> Unable to handle kernel paging request at virtual address ffffffc04cef3d30
-> Mem abort info:
-> ESR = 0x96000007
-> EC = 0x25: DABT (current EL), IL = 32 bits
-> 
->   pc : trace_raw_output_f2fs_direct_IO_enter+0x54/0xa4
->   lr : trace_raw_output_f2fs_direct_IO_enter+0x2c/0xa4
->   sp : ffffffc0443cbbd0
->   x29: ffffffc0443cbbf0 x28: ffffff8935b120d0 x27: ffffff8935b12108
->   x26: ffffff8935b120f0 x25: ffffff8935b12100 x24: ffffff8935b110c0
->   x23: ffffff8935b10000 x22: ffffff88859a936c x21: ffffff88859a936c
->   x20: ffffff8935b110c0 x19: ffffff8935b10000 x18: ffffffc03b195060
->   x17: ffffff8935b11e76 x16: 00000000000000cc x15: ffffffef855c4f2c
->   x14: 0000000000000001 x13: 000000000000004e x12: ffff0000ffffff00
->   x11: ffffffef86c350d0 x10: 00000000000010c0 x9 : 000000000fe0002c
->   x8 : ffffffc04cef3d28 x7 : 7f7f7f7f7f7f7f7f x6 : 0000000002000000
->   x5 : ffffff8935b11e9a x4 : 0000000000006250 x3 : ffff0a00ffffff04
->   x2 : 0000000000000002 x1 : ffffffef86a0a31f x0 : ffffff8935b10000
->   Call trace:
->    trace_raw_output_f2fs_direct_IO_enter+0x54/0xa4
->    print_trace_fmt+0x9c/0x138
->    print_trace_line+0x154/0x254
->    tracing_read_pipe+0x21c/0x380
->    vfs_read+0x108/0x3ac
->    ksys_read+0x7c/0xec
->    __arm64_sys_read+0x20/0x30
->    invoke_syscall+0x60/0x150
->    el0_svc_common.llvm.1237943816091755067+0xb8/0xf8
->    do_el0_svc+0x28/0xa0
-> 
-> Fix it by copying the required variables for printing and while at
-> it fix the similar issue at some other places in the same file.
-> 
-> Fixes: 18ae8d12991b ("f2fs: show more DIO information in tracepoint")
 > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
