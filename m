@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CC127FA3746
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Oct 2022 04:46:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id EF939C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 29 Oct 2022 04:47:22 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oodjp-0002BV-Sd;
-	Sat, 29 Oct 2022 04:46:29 +0000
+	id 1oodkg-00029S-85;
+	Sat, 29 Oct 2022 04:47:22 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1oodjo-0002BO-Hb
+ (envelope-from <chao@kernel.org>) id 1oodkf-00029M-PZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Oct 2022 04:46:28 +0000
+ Sat, 29 Oct 2022 04:47:21 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xK0Gix4Nng4+bxsJBxIBs/C47KThO3x8jttgKijokEw=; b=is1DSAx5shXA9ASJ1ysiIcUtz7
- 8rR9jNY+VlvnkMRMh1MdD8z+nrn3orm+XiV36wKxaq9lK/820ZKYtydNHNI0z8NrbXdrbylwjNG01
- hJWYIHIS00baY7u8JNtdCT/hbHCZ+Hy53iPsrfHJ7/yyUGAUk1jeeAETanr9YfUPrziw=;
+ bh=wzZjotK7+5OIJiKDi3Xz+q73wmrkLvQEzzD6ct2pAXc=; b=aWGH9O3YIE8ZmoMySjHUtUjEmX
+ mVl/CnANlSYC90A7r2SvEBk4cfiSauaOJZ6RmltvNGUWGoqtz/KmXcZgOVLT7Kd/bRoyUZ9V/cKUN
+ sc5J24iCMTaVrDJNGtjWkEr1Y3YHo6J8SbJE+GReQMopZyh/u1ucD7JD9pvxMtk1wS8A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,33 +33,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xK0Gix4Nng4+bxsJBxIBs/C47KThO3x8jttgKijokEw=; b=Vr0mbn5Ic0bamE1Z+EfP/PQPQX
- E118CmdfdpBqFqtThAKVyTbNxqUdRqNkyITCNo+nP21KGa9p8+2kbMCYm3PwI1TyxN5EMHDCMrjE1
- jICu0Sz4yH8bNr9IoWwcXmMiKLZhEFJBzBifesSE3WTpN1UoYdd+cIu7EWTfim7dh5nQ=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=wzZjotK7+5OIJiKDi3Xz+q73wmrkLvQEzzD6ct2pAXc=; b=TgpO1ay07H6LN9xYyCJcbDqhKD
+ ovAZ3ozMwlPeHbP99fXeGcSL2LPasFJk+qOLnk2qVeO8kWSGKmajefs2TsGX4BhhOUPXtqHcFa93X
+ C4gq9SNh5AQQIw/08S/PCFTX8cImC4zAYC4NGbC2XSQ1Rzu09CIkyhW/SZySpZcu0194=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oodjn-004AUN-T1 for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 29 Oct 2022 04:46:28 +0000
+ id 1oodkb-004AW6-FK for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 29 Oct 2022 04:47:21 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 81D3160A67;
- Sat, 29 Oct 2022 04:46:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 968C2C433D6;
- Sat, 29 Oct 2022 04:46:19 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 6E907B82C9A;
+ Sat, 29 Oct 2022 04:47:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D26DC433C1;
+ Sat, 29 Oct 2022 04:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1667018781;
- bh=80lU3QpeiitIVawK91PHV+p4z43WIDD4Rouks6i2Gj8=;
+ s=k20201202; t=1667018828;
+ bh=30H2uNbMFKcPAqFuShUf03uMolLK4p541xhuBs+CXnI=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=uStOgrQ+MB0RzqQUR2IfSfKEroJt+tBJ1eUXiuGJdVpHPU65B4Wndy12I7NwulNEH
- QLUNGsb9gPkhyPjLpOHxZest61y+4N8W4qWlHOMrKXoINg0FcDDDOjXxHaefByx+f/
- 8kBWsq7LLWaUOqILmEqMSRc+s3mc9FckVC7dRltlA3gueYJyLaWQeeWS7ZpJzaVFRR
- 3jqmb9wVl/FmxMezeNEb5Mt6NqqRQIo9nqBur1wO2lEpw78o6TPaG3b+pYYYWCgZiM
- 1KYPHhw1mZSVn8629ziSH0yjYWEjxqX/XkcIejJBjvO5Ogm4Ov/+SG8x91NwiUvL6B
- J+nrTC2V/HxDA==
-Message-ID: <cee7fa24-5699-9777-d157-f03a8dd18a00@kernel.org>
-Date: Sat, 29 Oct 2022 12:46:19 +0800
+ b=gfP7Tdy8pIqM0v1DJqaGNtauH+2lb48dJX1fYQaIymUJ+CLtqqb7q9wwRAcGy2DSs
+ BdOmbwNbY5OZr2xEEYKKwU2aU+9GuTOSo4R6ns36zTSUIcjAcfVL/VlZzpDeZpKME8
+ JwsNjTbmlK+V7B2zgQZey1WW23pzhAP58MPZ23igfVckJhNckDLUxy6puVSkrGCoRK
+ f7eGMud7OL+mzoMFyvpYEH0blFGHNsjz3+hc1IYbpOYbQAJIjaOJ/GfqfVcPe35zvS
+ TRnDS1nX8jY4iti+jV9+pW0OWxMZ12yvdyJjPO1eQOSLk6K/9vEZaUEfj2WxQfgeHF
+ 1akF8W1Dj6/Qg==
+Message-ID: <04bf9d52-e12d-f11b-558e-a6b358e4b564@kernel.org>
+Date: Sat, 29 Oct 2022 12:47:05 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.0
@@ -67,12 +67,12 @@ Content-Language: en-US
 To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
  linux-fsdevel@vger.kernel.org
 References: <20221017202451.4951-1-vishal.moola@gmail.com>
- <20221017202451.4951-12-vishal.moola@gmail.com>
+ <20221017202451.4951-13-vishal.moola@gmail.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20221017202451.4951-12-vishal.moola@gmail.com>
-X-Headers-End: 1oodjn-004AUN-T1
-Subject: Re: [f2fs-dev] [PATCH v3 11/23] f2fs: Convert
- f2fs_fsync_node_pages() to use filemap_get_folios_tag()
+In-Reply-To: <20221017202451.4951-13-vishal.moola@gmail.com>
+X-Headers-End: 1oodkb-004AW6-FK
+Subject: Re: [f2fs-dev] [PATCH v3 12/23] f2fs: Convert
+ f2fs_flush_inline_data() to use filemap_get_folios_tag()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,7 +95,7 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2022/10/18 4:24, Vishal Moola (Oracle) wrote:
 > Convert function to use a folio_batch instead of pagevec. This is in
-> preparation for the removal of find_get_pages_range_tag().
+> preparation for the removal of find_get_pages_tag().
 > 
 > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
@@ -104,38 +104,27 @@ Acked-by: Chao Yu <chao@kernel.org>
 Thanks,
 
 > ---
->   fs/f2fs/node.c | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
+>   fs/f2fs/node.c | 17 +++++++++--------
+>   1 file changed, 9 insertions(+), 8 deletions(-)
 > 
 > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 983572f23896..e8b72336c096 100644
+> index e8b72336c096..a2f477cc48c7 100644
 > --- a/fs/f2fs/node.c
 > +++ b/fs/f2fs/node.c
-> @@ -1728,12 +1728,12 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->   			unsigned int *seq_id)
+> @@ -1887,17 +1887,18 @@ static bool flush_dirty_inode(struct page *page)
+>   void f2fs_flush_inline_data(struct f2fs_sb_info *sbi)
 >   {
->   	pgoff_t index;
+>   	pgoff_t index = 0;
 > -	struct pagevec pvec;
-> +	struct folio_batch fbatch;
->   	int ret = 0;
->   	struct page *last_page = NULL;
->   	bool marked = false;
->   	nid_t ino = inode->i_ino;
 > -	int nr_pages;
+> +	struct folio_batch fbatch;
 > +	int nr_folios;
->   	int nwritten = 0;
 >   
->   	if (atomic) {
-> @@ -1742,20 +1742,21 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->   			return PTR_ERR_OR_ZERO(last_page);
->   	}
->   retry:
 > -	pagevec_init(&pvec);
 > +	folio_batch_init(&fbatch);
->   	index = 0;
 >   
-> -	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
-> -				PAGECACHE_TAG_DIRTY))) {
+> -	while ((nr_pages = pagevec_lookup_tag(&pvec,
+> -			NODE_MAPPING(sbi), &index, PAGECACHE_TAG_DIRTY))) {
 > +	while ((nr_folios = filemap_get_folios_tag(NODE_MAPPING(sbi), &index,
 > +					(pgoff_t)-1, PAGECACHE_TAG_DIRTY,
 > +					&fbatch))) {
@@ -145,24 +134,18 @@ Thanks,
 > -			struct page *page = pvec.pages[i];
 > +		for (i = 0; i < nr_folios; i++) {
 > +			struct page *page = &fbatch.folios[i]->page;
->   			bool submitted = false;
 >   
->   			if (unlikely(f2fs_cp_error(sbi))) {
->   				f2fs_put_page(last_page, 0);
-> -				pagevec_release(&pvec);
-> +				folio_batch_release(&fbatch);
->   				ret = -EIO;
->   				goto out;
+>   			if (!IS_DNODE(page))
+>   				continue;
+> @@ -1924,7 +1925,7 @@ void f2fs_flush_inline_data(struct f2fs_sb_info *sbi)
 >   			}
-> @@ -1821,7 +1822,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
->   				break;
->   			}
+>   			unlock_page(page);
 >   		}
 > -		pagevec_release(&pvec);
 > +		folio_batch_release(&fbatch);
 >   		cond_resched();
->   
->   		if (ret || marked)
+>   	}
+>   }
 
 
 _______________________________________________
