@@ -4,107 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1190DC433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Nov 2022 09:58:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 42A6AC4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 11 Nov 2022 10:20:53 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1otQnU-0006vH-93;
-	Fri, 11 Nov 2022 09:58:04 +0000
+	id 1otR9Y-0005WK-2j;
+	Fri, 11 Nov 2022 10:20:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <arnd@arndb.de>) id 1otQnM-0006uw-1q
+ (envelope-from <chao@kernel.org>) id 1otR96-0005Vn-Eh
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 11 Nov 2022 09:57:57 +0000
+ Fri, 11 Nov 2022 10:20:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Subject:Cc:
- To:From:Date:References:In-Reply-To:Message-Id:Mime-Version:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=b7XPwc4bj4pQJuvSbD7H9uyA+buey1LxLq7ggZ+S3dQ=; b=RIsFNP5DjpUSP5iaelspTlbt82
- ih+4ymOWOaCdHWhqcfsfDH0+irV94vNuk6s9G7/rnC/Ssm65NtHfehKyFhN294PxI8At7O26blRy6
- pDBATIE10wzPNaxmWy0n3ooA0xf89Xt+dCT8Xwl7ns+936fH6m6ifUNhuPXZwSNEP+3I=;
+ bh=0gTY9KVhY5koHJUIdOKwq52LX+CaJmjCAz+4zXMgK8w=; b=i2RREa3QbSzJze0uyWyxpBnd8T
+ PysfUoh7Xdts3/k1U/NjHTXg37nc430LVq+h64HMfPklkoysaPG1ktNDd6FpfoAXQS3Sr8iYJZqXR
+ LGxNmlpJErV73OGumuhVGOGYuxUqTV2iuYkYN3lEIQ0FNhWfwrXof6WlINeOO8X/kUi8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:Subject:Cc:To:From:Date:References
- :In-Reply-To:Message-Id:Mime-Version:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=b7XPwc4bj4pQJuvSbD7H9uyA+buey1LxLq7ggZ+S3dQ=; b=knE5mSnsv0dwSO2py5caGoDyWM
- kNxE4AGqKJIAZhJQxdC6musIUVKV8qMFzofHhISwHKX+2Ni+3FDo8nUI0f/+ZJL8p9EADxtDDkXSk
- yLI5bH4EIE1/q/SlwJ9x3yCLzXdTdEOcBRNpsrzUGuP5w6vrDruXFtCMYM1/MX8BjoaY=;
-Received: from out1-smtp.messagingengine.com ([66.111.4.25])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=0gTY9KVhY5koHJUIdOKwq52LX+CaJmjCAz+4zXMgK8w=; b=TP3ftYjqwGn6de2+P6WcFTLmYO
+ OH5H69XP9X7hqQ6EA4xTdhKS/x3FT7kMlY/b90Yyk2fzCDVAiIC0UDjBtAzbMPgg3EmRm7lp6kugl
+ if5J6N5VsdTnGv9dPuR9iYCEQT6Cfls/YYZT95I/aRdgZjyBbE4Y+R8jqh+eJ8OFFrDc=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1otQnG-0006X2-8w for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 11 Nov 2022 09:57:54 +0000
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
- by mailout.nyi.internal (Postfix) with ESMTP id F40C55C00D7;
- Fri, 11 Nov 2022 04:57:42 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
- by compute3.internal (MEProxy); Fri, 11 Nov 2022 04:57:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
- :cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:sender:subject:subject:to:to; s=fm3; t=1668160662; x=
- 1668247062; bh=b7XPwc4bj4pQJuvSbD7H9uyA+buey1LxLq7ggZ+S3dQ=; b=P
- PeCk4miRzjy7uOJpTTtcn5CH/PaA/dCTbj6Bg95I4Xgr4OjR+8hNFkEth8tuS36X
- GSY9tPZfXgwd+OoNrSIPj/FMV7cFJvvPP5joYP7DYkeAfeYkX31EPchnfjfbTU0a
- 1RNndw1sN3PqZvcPpW/5GkFCUI3m9o8lcWxSyOGqwhrVQIMhRft1KoQNxsXnNd8c
- l3ImG/LfTz7OyaDw6cTodgRWLgC1bhHK7x4Hj4RwGMElbljT8aB9uLirvfKFd0AA
- ljXUdEfSXBiEsc/C0xBfCB9QKUraIyOsLf7wXdnwgEBhXTiamvjz+7C0nK5yMxVA
- ocDwgegVj7975SB8jYdsw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1668160662; x=
- 1668247062; bh=b7XPwc4bj4pQJuvSbD7H9uyA+buey1LxLq7ggZ+S3dQ=; b=V
- O8XvIEzSKRD3P+VLEJnCwZALf2Ce/+l2ZV85fH9Qyc+fZA1QbBI43Z/Kn3CcVta3
- SODi5QVGAQgHnMenUQV94I+WH8WarAeH/9tQa0zd8EgL/x91VVc4bjpwQD8dJ9rc
- SKCyr5NknlVvZ6abbZ8kAwNOxWlOg0zEf3rgQxypOqTDqvDnGnn1DqNsMeVBRYEe
- VYaENgOeqTDA1ApQn3pKedQtPBVnEAafTDF+8naxqbejf2WQRVPs2SAhonNvibQ0
- IH/NewvZ69v92OEhSxz+cuwyyslF8spUQZlsIfgqvcGgHPQ7aADbvQ6Vdlk78yvM
- VZP0dA7RuZn5SCLeca+oQ==
-X-ME-Sender: <xms:lhxuY2UGHr_zNh_QYLXdiSdr6yJVlMtBf3dIZ9X1OTP58vaJ8EAXMQ>
- <xme:lhxuYymTmRyntiAb1x4ZpnKYKUjAnPiUtIDfaxwH00K-p7RnPmD4U-LdTSU8wdO4m
- -In60vg9Mff4qNshMY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrfeeigddutdcutefuodetggdotefrodftvf
- curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
- uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
- fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
- nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
- htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
- jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
- hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:lhxuY6bWxlZJQM_ah-xk5zayo_mM9oaD8SpER4Kxanwhi8R9m2ix1A>
- <xmx:lhxuY9X0bbHfEFKGlMCUv3wABgQ8tiJzW0Ls_DpFTFPuyS3tvfQ3Qg>
- <xmx:lhxuYwlhaPwWxqBJjZr7ho-ma-DULVYkZ2401-OnDN367-Od_5K-7Q>
- <xmx:lhxuY-bO3TPsKdIRISlEq4dWpkIrMJrpd33U6McLpLgSHM2jsfQgsw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
- id 02B5FB60089; Fri, 11 Nov 2022 04:57:41 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-1115-g8b801eadce-fm-20221102.001-g8b801ead
-Mime-Version: 1.0
-Message-Id: <cd818e0c-4c8c-421e-ae39-c7cea79eeb7e@app.fastmail.com>
-In-Reply-To: <CAHJ8P3KU4NBr9ftqp1J_QWxGUjusoUZo6JjefPN-4YazD4mrUQ@mail.gmail.com>
-References: <1667889638-9106-1-git-send-email-zhiguo.niu@unisoc.com>
- <202211101659.j9z9jLHv-lkp@intel.com>
- <88fce16b-5092-4246-8bbf-23f2c03224f3@app.fastmail.com>
- <CAHJ8P3+g7dr3PBZFQCD5HQLZ2b0WHe=b6Jt7ha1o7mqZJ7_-BQ@mail.gmail.com>
- <97c529f2-c5a2-4ed6-89eb-c79f020e9d0c@app.fastmail.com>
- <CAHJ8P3KU4NBr9ftqp1J_QWxGUjusoUZo6JjefPN-4YazD4mrUQ@mail.gmail.com>
-Date: Fri, 11 Nov 2022 10:57:21 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Zhiguo Niu" <niuzhiguo84@gmail.com>
-X-Headers-End: 1otQnG-0006X2-8w
-Subject: Re: [f2fs-dev] [PATCH V2] f2fs: fix atgc bug on issue in 32bits
- platform
+ id 1otR94-004ESg-JH for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 11 Nov 2022 10:20:24 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 6951161F2F;
+ Fri, 11 Nov 2022 10:20:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F24C433D7;
+ Fri, 11 Nov 2022 10:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1668162010;
+ bh=H24VoR2zC1k3+kqFjlp5MPLEwbVf7+X5dDwcpSo7+EI=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=KsszgdB7pc2dR9r72LEkZt5Qv6cK7FFB6YI9/EJ6BnSRUQHrMOXVJq7HCbjCLyo15
+ eIwo0LdwBJVDtEwvKWZ5Gwf4xhWhy8WGWEcLzWR+PX8j9ZsLu/ABGWmlgR7xlo3roE
+ ZfSKx3/pS9VozjGmu9Wk7VmcTl8Cr9iHLr+EAsyQ7qChs1vDHUIh/PxeYP82EXO97u
+ 4aUKTyHJjqKXasL7cks28hpA0oByCGypBjGVqNsO2IlNQRbKKzXXHDRgYGgN7AHx8d
+ hfJmfqdCsteN7JRieA1Oa/9ZOGvley+vn+/KC/0OFScuPK/qPVZ//jZ5mbWSf+WeQC
+ dvgF9oAwr7YFA==
+Message-ID: <a80962aa-412c-6dde-1329-0b2fb5648607@kernel.org>
+Date: Fri, 11 Nov 2022 18:20:06 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Content-Language: en-US
+To: Sheng Yong <shengyong@oppo.com>, jaegeuk@kernel.org
+References: <20221111100830.953733-1-shengyong@oppo.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20221111100830.953733-1-shengyong@oppo.com>
+X-Headers-End: 1otR94-004ESg-JH
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: fix to enable compress for
+ newly created file if extension matches
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -116,51 +82,30 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: llvm@lists.linux.dev, kernel test robot <lkp@intel.com>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- "zhiguo.niu" <zhiguo.niu@unisoc.com>, oe-kbuild-all@lists.linux.dev,
- jaegeuk@kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gRnJpLCBOb3YgMTEsIDIwMjIsIGF0IDEwOjQwLCBaaGlndW8gTml1IHdyb3RlOgo+IEFybmQg
-QmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+IOS6jjIwMjLlubQxMeaciDEw5pel5ZGo5ZubIDIxOjQ1
-5YaZ6YGT77yaCj4gICBJIHRoaW5rcyB0aGUgZ2NjIGNvbXBsaWVyIGJ1aWxkIHdhcm5pbmcgOgo+
-IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0KPiAgICAgSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGZzL2YyZnMvc2VnbWVudC5jOjI0
-Ogo+Pj4gZnMvZjJmcy9nYy5oOjczOjE6IHdhcm5pbmc6IGFsaWdubWVudCAxIG9mICdzdHJ1Y3Qg
-dmljdGltX2VudHJ5JyBpcyAKPgo+Pj4gbGVzcyB0aGFuIDggWy1XcGFja2VkLW5vdC1hbGlnbmVk
-XQo+Cj4gICAgICAgNzMgfCB9IF9fcGFja2VkOwo+Cj4gICAgICAgICAgfCBeCj4KPiAgLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-Cj4KPiBJdCBpcyBiZWNhdXNlIHN0cnVjdCByYl9ub2RlIGhhcyB0aGUgYXR0cmlidXRlIAo+ICJf
-X2F0dHJpYnV0ZV9fKChhbGlnbmVkKHNpemVvZihsb25nKSIsIGl0IGlzIDggYnl0ZXMgaW4gNjRi
-aXRzIHBsYXRmb3JtLgo+Cj4gc3RydWN0IHJiX25vZGUgewo+IHVuc2lnbmVkIGxvbmcgIF9fcmJf
-cGFyZW50X2NvbG9yOwo+IHN0cnVjdCByYl9ub2RlICpyYl9yaWdodDsKPiBzdHJ1Y3QgcmJfbm9k
-ZSAqcmJfbGVmdDsKPiB9IF9fYXR0cmlidXRlX18oKGFsaWduZWQoc2l6ZW9mKGxvbmcpKSkpOwo+
-Cj4gc28gSSBqdXN0IHRyeSB0byBwdXQgX19wYWNrZWQgb24gdW5pb24gb2Ygc3RydWN0IHZpY3Rp
-bV9lbnRyeSBhbmQgaSAKPiBhbHNvIGtlZXAgY29uc2lzdGVudCB3aXRoIHN0cnVjdCByYl9lbnRy
-eS4KCk5vLCB0aGF0IGF0dHJpYnV0ZSBoYXMgbm8gZWZmZWN0IG9uIGFueSBhcmNoaXRlY3R1cmUg
-b3RoZXIKdGhhbiBtNjhrLCB3aGljaCBkZWZhdWx0cyB0byAxNi1iaXQgYWxpZ25tZW50IGZvciAz
-Mi1iaXQKbWVtYmVycy4gSSdtIGZhaXJseSBzdXJlIHRoZSBhbGlnbm1lbnQgYXR0cmlidXRlIG9u
-CnJiX25vZGUgaXMgZW50aXJlbHkgdW5yZWxhdGVkIHRvIHRoZSBwcm9ibGVtcyB5b3UgYXJlCnNl
-ZWluZyBpbiBmMmZzIHRoYXQgY29tZSBmcm9tIGhhdmluZyBhIHN0cnVjdHVyZSB3aXRoCnN0cmlj
-dGVyICg0IGJ5dGUgb3IgOCBieXRlKSBhbGlnbm1lbnQgcmVxdWlyZW1lbnRzIGVtYmVkZGVkCmlu
-IGEgc3RydWN0dXJlIHdpdGggcmVsYXhlZCAoc2luZ2xlLWJ5dGUpIGFsaWdubWVudDoKCj4gc3Ry
-dWN0IHJiX2VudHJ5IHsKPiBzdHJ1Y3QgcmJfbm9kZSByYl9ub2RlOyAvKiByYiBub2RlIGxvY2F0
-ZWQgaW4gcmItdHJlZSAqLwo+IHVuaW9uIHsKPiBzdHJ1Y3Qgewo+IHVuc2lnbmVkIGludCBvZnM7
-IC8qIHN0YXJ0IG9mZnNldCBvZiB0aGUgZW50cnkgKi8KPiB1bnNpZ25lZCBpbnQgbGVuOyAvKiBs
-ZW5ndGggb2YgdGhlIGVudHJ5ICovCj4gfTsKPiB1bnNpZ25lZCBsb25nIGxvbmcga2V5OyAvKiA2
-NC1iaXRzIGtleSAqLwo+IH0gX19wYWNrZWQ7Cj4gfTsKClRoaXMgdGVsbHMgdGhlIGNvbXBpbGVy
-IHRoYXQgdGhlIGFub255bW91cyB1bmlvbiBpcyAKZW50aXJlbHkgdW5jb25zdHJhaW5lZCwgYnV0
-IHRoZSBhbm9ueW1vdXMgc3RydWN0IGluc2lkZQppdCBoYXMgdGhlIGRlZmF1bHQgYWxpZ25tZW50
-LCB3aGljaCBpcyB0aGUgY29udHJhZGl0aW9uCnRoYXQgZ2NjIGNvcnJlY3RseSB3YXJucyBhYm91
-dC4KClNpbmNlIHRoZSBvbmx5IHRoaW5nIHlvdSBuZWVkIGhlcmUgaXMgdG8gbG93ZXIgdGhlCmFs
-aWdubWVudCBjb25zdHJhaW50IGZyb20gOCBieXRlcyB0byA0IGJ5dGVzLCB0aGUgZWFzaWVzdAp3
-YXkgaXMgdG8gaGF2ZSB0aGUgX19wYWNrZWQgYW5ub3RhdGlvbiBvbiB0aGUgJ2tleScKbWVtYmVy
-LiBUaGlzIGF2b2lkcyBhbGwgd2FybmluZ3MsIGFzIGxvbmcgeW91IGRvIG5vdAp0YWtlIHRoZSBh
-ZGRyZXNzIG9mIHRoZSAna2V5JyBtZW1iZXIgYW5kIHBhc3MgaXQgdG8KYSBmdW5jdGlvbiB0aGF0
-IGV4cGVjdHMgYW4gYWxpZ25lZCAndTY0JyBwb2ludGVyLgoKICAgICBBcm5kCgoKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On 2022/11/11 18:08, Sheng Yong wrote:
+> If compress_extension is set, and a newly created file matches the
+> extension, the file could be marked as compression file. However,
+> if inline_data is also enabled, there is no chance to check its
+> extension since f2fs_should_compress() always returns false.
+> 
+> This patch moves set_compress_inode(), which do extension check, in
+> f2fs_should_compress() to check extensions before setting inline
+> data flag.
+> 
+> Fixes: 7165841d578e ("f2fs: fix to check inline_data during compressed inode conversion")
+> Signed-off-by: Sheng Yong <shengyong@oppo.com>
+
+Reviewed-by: Chao Yu <chao@kernel.org>
+
+Thanks,
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
