@@ -4,90 +4,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7987DC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 12 Nov 2022 08:33:30 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 89183C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 12 Nov 2022 08:33:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1otlx8-00018n-Ig;
-	Sat, 12 Nov 2022 08:33:26 +0000
+	id 1otlxI-0004vM-Vx;
+	Sat, 12 Nov 2022 08:33:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ssawgyw@gmail.com>) id 1otlx7-00018U-Ox
+ (envelope-from <ssawgyw@gmail.com>) id 1otlxI-0004vG-8S
  for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 12 Nov 2022 08:33:25 +0000
+ Sat, 12 Nov 2022 08:33:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mCXCfNSRRcnm3vfJDiUHQ+ivRlGKBS+DxKu934Py8fQ=; b=b983FNUk7RAdImyKCuzizc2jsP
- 9YXV/P3I0y9JgO+hIx15Rz9C39LY4Y38s5dXZiKuL9OFF9Br/IzleZGSnre6JlW8Prb043iIdEhQN
- kOWRWY0yxSSBNQTP02DuANZePJ425/EltzlJXIHq7Lw6nvFwowMATW9nTEKqIjhItisI=;
+ bh=HpSAL+Frp6pI5uZevffauYMAMF7An7PWhGzNk6t7irc=; b=ZKCRCEQVI7bNFHaRHUM+p0e501
+ PLznyYz0e6yHcreOnkr0bPH8ZMtjPKDqaQdmbSWxn2Cq1EwysAzyHk+WAX8BuXe5L8XAfj4TZOKmK
+ 7uEE1VndXy8vMKPfx+qTePpe7dqaiCApSlVokLJSfWAREdJ5RtgDf6mjUvK1RU1gteOs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=mCXCfNSRRcnm3vfJDiUHQ+ivRlGKBS+DxKu934Py8fQ=; b=X
- ETIF0Xc6VCC0BUpY4Y8nt8lFQTl2xscoIHC6tZxKJeZ9U7XnRmLP1iSA/0JPBYb+rsVGnlrBgmTpI
- mWRD/srVoet+UQsfeh5xcWnMUUt1s7IveE6ipxseMWVyvPXf/y6nx1zQUhy3f8GzVa32242b4fh5w
- l2l0X9ktRy2NrW5s=;
-Received: from mail-pj1-f45.google.com ([209.85.216.45])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=HpSAL+Frp6pI5uZevffauYMAMF7An7PWhGzNk6t7irc=; b=SyVYsi8qlDMPIyzR59iMbRknmO
+ K/8Zq9Yfxf1i25DZITiY9FEtppSLfX0MYbv6AJcbbdL6YAw8mKWnwkOco/cISaUxGZJzQQ15pDnO6
+ ZwjBKtjvenGgTGNhU7UiZ2aHvQ+Onx8VmRMb7Gbj6KHKJi1eLR0ZhV4/bhkOLHE+nYes=;
+Received: from mail-pj1-f47.google.com ([209.85.216.47])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1otlx5-005EA4-Ms for linux-f2fs-devel@lists.sourceforge.net;
- Sat, 12 Nov 2022 08:33:25 +0000
-Received: by mail-pj1-f45.google.com with SMTP id
- d59-20020a17090a6f4100b00213202d77e1so9632762pjk.2
+ id 1otlxH-005EBJ-MB for linux-f2fs-devel@lists.sourceforge.net;
+ Sat, 12 Nov 2022 08:33:36 +0000
+Received: by mail-pj1-f47.google.com with SMTP id
+ q1-20020a17090a750100b002139ec1e999so6548021pjk.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 12 Nov 2022 00:33:23 -0800 (PST)
+ Sat, 12 Nov 2022 00:33:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=mCXCfNSRRcnm3vfJDiUHQ+ivRlGKBS+DxKu934Py8fQ=;
- b=O9LKssH+x7xTlrzWXwaIArZsn3pK5eyM+cqYVdkK73ww7nHgX9/y6qC5XTTO+AuQFC
- lSmER58Um0akQ55wChPfzLmVlp7RgcXZVagrrvcVsdw2+WVbXXjlhKpKGyk3//FWDBRC
- JBMpm6AF5jT8K5xDcjcw8GQ5BH027xc09sCtFy269a/eRnSyeVH4u0wa4jxTm+ouPjhM
- wjw1g8wrPnlWRF6BkRgBNsb4IGoCjn/s29F8Im5PoghpTMbN0k455V4M5EgjLfjFe7hf
- pre+jR2l5NglgXwKOxriE7YexNWIcLPvGGkGEqlXv1aMzBucbO0xVwHd0O2r7r8/FBGu
- YgQQ==
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=HpSAL+Frp6pI5uZevffauYMAMF7An7PWhGzNk6t7irc=;
+ b=BjdmEmrRmKb1KewQe1wjYXRVdQ/+pvyafqjJ9iLoUU5lLUjrFYCLilfD2swqM8EmvL
+ Mqws98NeNcg21hJWtyVmN7Mfn4wEv911g1lJbhC9FHAyiKlzIN8W8xcG33G0FOdXn44/
+ eXS024oauWVrIh64Eg7CBLazucVLvHLol7/DzM5W1Sgk9W164p3AeqeHVonaPxZyarIJ
+ ItnN8XGiFU/3cnzMlrcYfLBv0/QzJ03AlGUKU2N7C5KuFG3zcceH64pZxHqsrCCWV3GL
+ Xrm7AlApa4KRWs0lyP0jElIJCjC8StEW4ELpufPTfBGf88QwUYsWrmOU/nogrchzfSqE
+ 7DDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=mCXCfNSRRcnm3vfJDiUHQ+ivRlGKBS+DxKu934Py8fQ=;
- b=2XUXU886UHqBad4Dqdrp8DuvNXx5wMvIKHEVe+XUdSZ9PYayyr808mhSk1kHiGK3yc
- j3TUeUxkldGCWArj93Y/pT0Wit98Sbz/MqLJxnc0LMRnRemgY8hVHSpIzZVBgTP8bLZI
- CU7oQsTkNTQRpYOC+gOIWNI/XQc1LfqYhtwXTSX8pJhHBILUebRbG6JQsQ31M56vvMkg
- u7SUf4VqFm7EAHMGZDG7DkhBelukLXUs86c+MJJlcPCVYe1xOGvXq3yk9vXW+uqwr5hO
- 1GEjAftY98fUJTrAnJMRNfDg4BhbBVhJ/DOiMa4+1yRDPGZVM39cMmWgULvy7yx1uSB1
- t1jg==
-X-Gm-Message-State: ANoB5pkfE7TT/09CUtipVA3Vb0vGmEvY+qr3dQ9RKnNT5CG9P3gFfobP
- S/lEScQC37TExf4rkH0YzK0f/uBW9Is=
-X-Google-Smtp-Source: AA0mqf5RQr1VBKfLU1+udXTucL2rFuaiKeQofFtleyvs1i4lfqNMMIe0f8/zF4xbSPHUsogyE51t7Q==
-X-Received: by 2002:a17:902:6bc6:b0:17f:8642:7cb9 with SMTP id
- m6-20020a1709026bc600b0017f86427cb9mr5606649plt.174.1668241997938; 
- Sat, 12 Nov 2022 00:33:17 -0800 (PST)
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=HpSAL+Frp6pI5uZevffauYMAMF7An7PWhGzNk6t7irc=;
+ b=nZgakBiME2TewHbYIXfWtTDha6Oug10w132V+DolXemd8IjXY5YuxTbVxHx2K8AxvA
+ CMDIRdWeysoBCkjMczJRo+mrHMuijjgRx/i4xGzy2NnxWA7LazQjSEGNIqVzxUlUWy1Y
+ HKGGpG9Iu4ZABkNFZEIL1OJaZhWiz+x27aaXdIdLgzSbGRj4W0qU9+NM4wQSebX+mN//
+ xtPuOhNQmgtwfRe3ala4Z77JgMl0vNRU+QzQfT2Q2tbxAtlUiPR9kEcZVEKe9caaZ8H5
+ WPzgAXBQ/CcRrXUFYHwEieanYl1E9miHnh12ON9uROnKcGOzyXFrFep78FVauSgRzvMS
+ BkYQ==
+X-Gm-Message-State: ANoB5plPoejBUzq583Wqj1jWykt5xDOz4EJBuPl71OC36ZmsehrZ28RV
+ muoSv9Id1NS+LyugLqULIESguDGo+oY=
+X-Google-Smtp-Source: AA0mqf7tE2XuEywH3c3EIQLoY6KbWyTmYUek3jOnXZumk72NZnsdIP8ou5suR+4dwNG8D8yl5ormYw==
+X-Received: by 2002:a17:90b:48cd:b0:213:47:57cc with SMTP id
+ li13-20020a17090b48cd00b00213004757ccmr5459327pjb.174.1668242009382; 
+ Sat, 12 Nov 2022 00:33:29 -0800 (PST)
 Received: from VirtualBox.. ([129.227.152.6]) by smtp.gmail.com with ESMTPSA id
- i11-20020a1709026acb00b001870533c443sm3066927plt.236.2022.11.12.00.33.15
+ i11-20020a1709026acb00b001870533c443sm3066927plt.236.2022.11.12.00.33.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 12 Nov 2022 00:33:17 -0800 (PST)
+ Sat, 12 Nov 2022 00:33:28 -0800 (PST)
 From: Yuwei Guan <ssawgyw@gmail.com>
 X-Google-Original-From: Yuwei Guan <Yuwei.Guan@zeekrlife.com>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Sat, 12 Nov 2022 16:32:47 +0800
-Message-Id: <20221112083250.295700-1-Yuwei.Guan@zeekrlife.com>
+Date: Sat, 12 Nov 2022 16:32:50 +0800
+Message-Id: <20221112083250.295700-4-Yuwei.Guan@zeekrlife.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221112083250.295700-1-Yuwei.Guan@zeekrlife.com>
+References: <20221112083250.295700-1-Yuwei.Guan@zeekrlife.com>
 MIME-Version: 1.0
-X-Headers-End: 1otlx5-005EA4-Ms
-Subject: [f2fs-dev] [PATCH 0/3] alloc_mode changed after remount on a small
- volume device
+X-Headers-End: 1otlxH-005EBJ-MB
+Subject: [f2fs-dev] [PATCH 3/3] f2fs: change type for 'sbi->readdir_ra'
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,23 +106,95 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This series contains a fix patch for alloc_mode changed after remount
-on a small volume device, and do cleanup for 'f2fs_tuning_parameters'
-function.
+Before this patch, the varibale 'readdir_ra' takes effect if it's equal
+to '1' or not, so we can change type for it from 'int' to 'bool'.
 
-The last one change type for sbi->readdir_ra.
+Signed-off-by: Yuwei Guan <Yuwei.Guan@zeekrlife.com>
+---
+ fs/f2fs/dir.c   | 7 +++----
+ fs/f2fs/f2fs.h  | 2 +-
+ fs/f2fs/super.c | 2 +-
+ fs/f2fs/sysfs.c | 5 +++++
+ 4 files changed, 10 insertions(+), 6 deletions(-)
 
-Yuwei Guan (3):
-  f2fs: fix to alloc_mode changed after remount on a small volume device
-  f2fs: cleanup for 'f2fs_tuning_parameters' function
-  f2fs: change type for 'sbi->readdir_ra'
-
- fs/f2fs/dir.c   |  7 +++----
- fs/f2fs/f2fs.h  |  2 +-
- fs/f2fs/super.c | 35 ++++++++++++++++++-----------------
- fs/f2fs/sysfs.c |  5 +++++
- 4 files changed, 27 insertions(+), 22 deletions(-)
-
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 21960a899b6a..06d9bf98f5ae 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -1000,13 +1000,12 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 	struct fscrypt_str de_name = FSTR_INIT(NULL, 0);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(d->inode);
+ 	struct blk_plug plug;
+-	bool readdir_ra = sbi->readdir_ra == 1;
+ 	bool found_valid_dirent = false;
+ 	int err = 0;
+ 
+ 	bit_pos = ((unsigned long)ctx->pos % d->max);
+ 
+-	if (readdir_ra)
++	if (sbi->readdir_ra)
+ 		blk_start_plug(&plug);
+ 
+ 	while (bit_pos < d->max) {
+@@ -1064,14 +1063,14 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 			goto out;
+ 		}
+ 
+-		if (readdir_ra)
++		if (sbi->readdir_ra)
+ 			f2fs_ra_node_page(sbi, le32_to_cpu(de->ino));
+ 
+ 		ctx->pos = start_pos + bit_pos;
+ 		found_valid_dirent = true;
+ 	}
+ out:
+-	if (readdir_ra)
++	if (sbi->readdir_ra)
+ 		blk_finish_plug(&plug);
+ 	return err;
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e6355a5683b7..384840216e7f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1693,7 +1693,7 @@ struct f2fs_sb_info {
+ 	unsigned int total_node_count;		/* total node block count */
+ 	unsigned int total_valid_node_count;	/* valid node block count */
+ 	int dir_level;				/* directory level */
+-	int readdir_ra;				/* readahead inode in readdir */
++	bool readdir_ra;			/* readahead inode in readdir */
+ 	u64 max_io_bytes;			/* max io bytes to merge IOs */
+ 
+ 	block_t user_block_count;		/* # of user blocks */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f18ae5410b2c..da304861890f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2202,7 +2202,7 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi, bool is_remount)
+ 	}
+ 
+ 	if (!is_remount)
+-		sbi->readdir_ra = 1;
++		sbi->readdir_ra = true;
+ }
+ 
+ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index df27afd71ef4..53fbbb87dd0f 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -649,6 +649,11 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "readdir_ra")) {
++		sbi->readdir_ra = !!t;
++		return count;
++	}
++
+ 	*ui = (unsigned int)t;
+ 
+ 	return count;
 -- 
 2.34.1
 
