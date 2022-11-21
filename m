@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 211A7C4321E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Nov 2022 19:47:03 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C6DA8C433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Nov 2022 19:52:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oxCkv-0004uv-7D;
-	Mon, 21 Nov 2022 19:47:01 +0000
+	id 1oxCqF-0002Kq-Ip;
+	Mon, 21 Nov 2022 19:52:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1oxCkt-0004uh-9H
+ (envelope-from <ebiggers@kernel.org>) id 1oxCqD-0002Kk-Vq
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Nov 2022 19:46:59 +0000
+ Mon, 21 Nov 2022 19:52:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mrUeBzbBPktCj/0CXhmCr7HlBcwPe5CR0Yh38FsMH1k=; b=PIyIKYk1PWygueV/43g2L4d80b
- yZa37NgpZeCYj6FwfxbJzj4z1Q2F9SMJkGq++hFCD9rqbELmD5wTerF6V09sJ7a1eEGRF8AWVX4e5
- E2yxSWoCCsYXEIOnFloLIzDtlSrv185HsO77k3x5ZuwBc4ysnSFMutXcgrfQ7YvO6Ej0=;
+ bh=iaPVkf5sYf3j1N/ewWUR48878n+szf9W4DAsM3uKlmE=; b=I5xqQCRSdhC7YM1ArNWY6XFYAT
+ 6mriXpSioZUBYZ31xdEBt1smtpsi86pdXKHO1PiM7TJw6rHyIPJEOao0PUWha3CJyiQi1VhuA5sY9
+ MTjVun1oOtkuJegQN9B/ePtbJdIQVNTuxpvGtjwlTTjdBmFNhJdZGwLClpay0AKp0KLY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,43 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=mrUeBzbBPktCj/0CXhmCr7HlBcwPe5CR0Yh38FsMH1k=; b=CiKW2Wgvc/nv87fQ5S94OJktR8
- oTypUbFrY127mi6D4iTJIAAk98HplZ7owhBhV3Qq/EWR7oM/8MjTdu4X01tMiuMDTQrt7pZ6T1o4G
- TtNmED7HOuIkYndUT5V7mkeJZZMBk0qeurktZWnFa+bh0FTHM7RgKBdshnqK7fd4zlqQ=;
+ bh=iaPVkf5sYf3j1N/ewWUR48878n+szf9W4DAsM3uKlmE=; b=YCgYxl/TwnxYPegLBnhVVUloKY
+ YyxxbHicE3zRMQd3MLOmjkLsOT8xyLy1nRppuZpIYYIZ6KQ/7zeBF5BB8SsJuktUg5As6sF7bcEYw
+ A22HgizawH7zTmWuCTL1gKMrmNBftawFi5tkl/+qfkcb7/S6ZAN90381kKjqBECdvKT4=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oxCkp-008nTa-0S for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Nov 2022 19:46:59 +0000
+ id 1oxCqD-0007eh-CO for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Nov 2022 19:52:29 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 93B2C61146;
- Mon, 21 Nov 2022 19:46:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36061C4347C;
- Mon, 21 Nov 2022 19:46:49 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id F407A61456;
+ Mon, 21 Nov 2022 19:52:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3593CC433C1;
+ Mon, 21 Nov 2022 19:52:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1669060009;
- bh=pHzctSC+3S79oH24mEHkCYNAjNLCVnOPYHO4iVExqp8=;
+ s=k20201202; t=1669060343;
+ bh=e3ckNQ3AIoADAgf/ebPYYoIm7JZ0SGqlrtn9J2k3xWQ=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=gu4ApRO7ShKYUQt/o5rHuO7/e7edxcAQL2sz08D3vSZo4B4Yk7qIg2vN3+Vq3zb0+
- Znpn4doRVYY6VPlWQoh0Ki+1FycncWJEWYrgpqSxcxLrGTrUT1KzhrLmH0QIH+WGGj
- kbpFVJ/bYVorYvawbiwdS8l/ZzBij6GvGFI/CdCUsg6olmZxihCSuvgv3LaAYT0/7+
- TvDA9gIAJkZJCq0ErkkUytJZssk6IIHLmwxHEAxykGzz/dfMEiK9/q/3cZw4EHXrxq
- Ifz0K/JPBw7GfKC1syS2sIBKVLiEYwTrzvlu5GZqxy0pUPLAeBf3gY4OKNS1eYWpm/
- 4m6ENAR20nqXg==
-Date: Mon, 21 Nov 2022 19:46:47 +0000
+ b=WVT4pmRQyclkI9wj3E0sS0TMkksmSbkkQqj66ikyHbwPoFKShZspYh3gjOUXrIVkZ
+ 2T5hY3fRA2FrEdkg5Ba9oeUbylKKPFeBQ1mEnh/tk+MakYyUC0d0Sjq3QFOxKqWkQh
+ doaNEiGEUMTR6OB0HxAMCDlO5kUfhujQQm4S1iPL2uCP+7bQYd+u0LrEvpwjEczRce
+ dIKCxAmWSSxBdveRpnjHXK3wETuCajOfXlb4dOnLstiCoubTitlxPk9l8ua8cSGc7W
+ Jt+Tef4yqhp/ZdE19AYHBXoUsqKX7RhRiZTmrHrDSahzG7jiS3ElENnng4xtP3Lop7
+ Bzd4v4Db3luag==
+Date: Mon, 21 Nov 2022 19:52:21 +0000
 From: Eric Biggers <ebiggers@kernel.org>
 To: Alexander Potapenko <glider@google.com>
-Message-ID: <Y3vVp/2A9nao8HZ2@gmail.com>
+Message-ID: <Y3vW9Q8HVQth2Sz4@gmail.com>
 References: <20221121112134.407362-1-glider@google.com>
- <20221121112134.407362-2-glider@google.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20221121112134.407362-2-glider@google.com>
-X-Headers-End: 1oxCkp-008nTa-0S
-Subject: Re: [f2fs-dev] [PATCH 2/5] fs: affs: initialize fsdata in
- affs_truncate()
+In-Reply-To: <20221121112134.407362-1-glider@google.com>
+X-Headers-End: 1oxCqD-0007eh-CO
+Subject: Re: [f2fs-dev] [PATCH 1/5] fs: ext4: initialize fsdata in
+ pagecache_write()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,22 +83,41 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Cc: tytso@mit.edu, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net, adilger.kernel@dilger.ca,
  linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, akpm@linux-foundation.org,
- linux-ext4@vger.kernel.org
+ linux-ext4@vger.kernel.org,
+ syzbot+9767be679ef5016b6082@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Nov 21, 2022 at 12:21:31PM +0100, Alexander Potapenko wrote:
-> When aops->write_begin() does not initialize fsdata, KMSAN may report
+On Mon, Nov 21, 2022 at 12:21:30PM +0100, Alexander Potapenko wrote:
+> When aops->write_begin() does not initialize fsdata, KMSAN reports
 > an error passing the latter to aops->write_end().
 > 
 > Fix this by unconditionally initializing fsdata.
 > 
-> Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: Eric Biggers <ebiggers@kernel.org>
+> Fixes: c93d8f885809 ("ext4: add basic fs-verity support")
+> Reported-by: syzbot+9767be679ef5016b6082@syzkaller.appspotmail.com
+> Signed-off-by: Alexander Potapenko <glider@google.com>
+> ---
+>  fs/ext4/verity.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+> index 3c640bd7ecaeb..30e3b65798b50 100644
+> --- a/fs/ext4/verity.c
+> +++ b/fs/ext4/verity.c
+> @@ -79,7 +79,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+>  		size_t n = min_t(size_t, count,
+>  				 PAGE_SIZE - offset_in_page(pos));
+>  		struct page *page;
+> -		void *fsdata;
+> +		void *fsdata = NULL;
+>  		int res;
+>  
+>  		res = aops->write_begin(NULL, mapping, pos, n, &page, &fsdata);
 
-Are you sure that is the correct Fixes commit?  What about commit f2b6a16eb8f5
-("fs: affs convert to new aops")?
+Reviewed-by: Eric Biggers <ebiggers@google.com>
 
 - Eric
 
