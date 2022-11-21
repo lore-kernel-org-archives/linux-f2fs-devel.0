@@ -4,84 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 33FE2C4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Nov 2022 12:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C85DDC433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 21 Nov 2022 16:11:33 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ox60K-0000g5-GJ;
-	Mon, 21 Nov 2022 12:34:28 +0000
+	id 1ox9ON-0006c5-Lb;
+	Mon, 21 Nov 2022 16:11:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <3Ql97YwYKABEx2zuv8x55x2v.t53@flex--glider.bounces.google.com>)
- id 1ox60J-0000fr-5g for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Nov 2022 12:34:27 +0000
+ (envelope-from <ssawgyw@gmail.com>) id 1ox9OJ-0006bg-Au
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Nov 2022 16:11:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:From:Subject:Message-ID:
- Mime-Version:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ut094+1HiZ4Cjb1djYz8ZPvCLMxdVr+mJo3AtkrOKCA=; b=fMkb+mkywVmSeYjYzo1dvF+31S
- dmXd+FXQFVH/uqYCm67EF73kjjWEXKiQEfIxNvhmQXpzK43bPKzMwvKz8GPRZ5gbKjt11oGRz2/uK
- p6bC+FeHgfU33DSbZ+tbpQ+YbOpcfiJMdiAj/jdSdc5M1slrsqOYlxLkTvRJKpdiVdEk=;
+ bh=Nrfq658ppsV6A0UxvigWf4GUIKl2kFHfMPKNsHA6hzo=; b=gnMz+zWBENXCWv+1satEyL8eUa
+ SXNeG3oeDq6QaXthp0NiQe+zIVpDK9Ai1e1BtYl8Z5jzaFDCXRLosiLZroAwaXKut1plGHU5HvM9g
+ BqecRHVpJ0tKf8v4bbANuVVzlTauXFIXn8dPBo15sxMTllsudHiorXn7y3IaJH7Izcpo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:From:Subject:Message-ID:Mime-Version:Date:Sender:
- Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Ut094+1HiZ4Cjb1djYz8ZPvCLMxdVr+mJo3AtkrOKCA=; b=k
- BEjV1VuAYDQj8dKdt/eQoK703ub4HC8DlPxvty9+bcNb5sbMN/3gi+aA+QA3OepiePyCga6ZJgDAq
- 6rh6UjgYCgu+HETWXLaVHgFCHW/F9K4uqQczm7i6dosdgqKgza+jJu1GFVqHhZc+sCQJI5Qb4XtOb
- qFI6JopTfSmHFuBE=;
-Received: from mail-ed1-f73.google.com ([209.85.208.73])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ List-Owner:List-Archive; bh=Nrfq658ppsV6A0UxvigWf4GUIKl2kFHfMPKNsHA6hzo=; b=e
+ /ggXCTrOBSX2awC2SQYqVoAt27awhzSYBsShjmdfOacODfdVPtR+nqEcRjSMcE8fhTzAAK2ZC6iIO
+ 4YxC8rHUhnhPc0FGyVP036vE8OoTrlrwhoAX+FxVK7OKQ/uNcnp8UC3rBzS4W547GjZBbPEZID/gr
+ 3/QC0h9Q4ZIBNlUw=;
+Received: from mail-pj1-f54.google.com ([209.85.216.54])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1ox60H-006XiR-Fz for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 21 Nov 2022 12:34:27 +0000
-Received: by mail-ed1-f73.google.com with SMTP id
- h9-20020a05640250c900b00461d8ee12e2so6782647edb.23
+ id 1ox9OE-0007X4-3B for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 21 Nov 2022 16:11:27 +0000
+Received: by mail-pj1-f54.google.com with SMTP id
+ k2-20020a17090a4c8200b002187cce2f92so9499541pjh.2
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 21 Nov 2022 04:34:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=20210112;
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=Ut094+1HiZ4Cjb1djYz8ZPvCLMxdVr+mJo3AtkrOKCA=;
- b=PtZTUVznvnflFwUv9SKypxZQqr7i1LRYenCMrhMEOVGiPfxccwpjsY0A4YtFeeVnlF
- h2lGU/CX2UGfxpSXxpMO1krIzX7InkrGi25tw16FUZGnYRG+48rz3JaSCOEXLpqgE/EM
- opVGk0Q/rJdXGr0oIG5tziMO7oWC8RwHnTFpjZTCghBdovVeuHaJ0UfGVV+HSRF+Mevy
- v/vENEx2/1GIDj3F6RVT8uC+lujEgt6uMMFBYmaBcrnbZqaZYAVFDM7x70bVO4+mtAA4
- t18AcVUc3fi2I1HwUNs+HNibRi0u8zeQUEKGIUhxxWoUi8pcajXw5PvuDm5HDd/vf0M6
- Dc+A==
+ Mon, 21 Nov 2022 08:11:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=Nrfq658ppsV6A0UxvigWf4GUIKl2kFHfMPKNsHA6hzo=;
+ b=nhv+nzMIswF6089c7r9+/04T0AJi4Jfd7Bb2/+Ib6+Sb+/j3IevYn7Pp+nzWADYMFS
+ 2cTVOiPLxr54Z6YJm9NWdX5nVJrzkQbUMiLjlw+c2F6JASSK7u4WupuK1TZ2ps6uPb7b
+ rM7QvLGw6gV8uexiptIPbkhFpDnSZOTS+r6M3S0TNvDxSS7fl6H2IJGgtLHnCdeC+hwn
+ nkUJXZi3/WkjQlLcmLXZebh7qKlXcDglKNdI1VOYM5hpJMr9DJzpt3WmNVfpJolfKehk
+ FJaEKSEEfUe0e1NAg3lWUSVYdHo5k96MWSf2fE+Hqn+EehUD8wBWnRqpjwSAvvot2Qwv
+ +XIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=Ut094+1HiZ4Cjb1djYz8ZPvCLMxdVr+mJo3AtkrOKCA=;
- b=1HmW4n1gBzCPyfVH3dirKGEXUDjYNe5srqdoxQCVo1cM+NhJrWy9Ar4BSXG5jVxe1R
- 9i9sQZn/ueS5PIEV8xNJ8/L0vy/ndW5RU0uapXtyu6LB2AZQCv5VKu+zqYevd3n3mOHO
- Ox7eQzV3PeArDp1UsdTeCkzCqWXBlJJlj6VD09MHTfvt5jofzYILAgrNSYLi01/Hgyd8
- pQQD+Y7zTPcrhFlBte8K5lKw366LYc0LW8dNdkXm2yasqsRhTd8FdH2ZyiYpT5/TNVs2
- SE3qp3t7PxNmhZMXU24YkBt1CFZwfULRJAVjmT+FxHWVCCeNPxI2wplT3gicJZyXVE7H
- NTBA==
-X-Gm-Message-State: ANoB5pkWE0s7gF03Gu1wS0JhnW0sFWwayrATj46hDFWq1ZJ/+I+pEc1T
- YZXq9KLq8q3pr0QHYuNnxUO/hj9YpmY=
-X-Google-Smtp-Source: AA0mqf6ymM+aPMyFpxcfMJZ6dxw5jBiyJyJ7BqqZjljlNhaC6hbGZmGDYm3fYA/es+nh2vPHSPoyWsXw6P0=
-X-Received: from glider.muc.corp.google.com
- ([2a00:79e0:9c:201:db68:962:2bf6:6c7])
- (user=glider job=sendgmr) by 2002:aa7:c788:0:b0:458:b9f9:9fba with SMTP id
- n8-20020aa7c788000000b00458b9f99fbamr16132478eds.305.1669029698340; Mon, 21
- Nov 2022 03:21:38 -0800 (PST)
-Date: Mon, 21 Nov 2022 12:21:30 +0100
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.38.1.584.g0f3c55d4c2-goog
-Message-ID: <20221121112134.407362-1-glider@google.com>
-To: glider@google.com
-X-Headers-End: 1ox60H-006XiR-Fz
-Subject: [f2fs-dev] [PATCH 1/5] fs: ext4: initialize fsdata in
- pagecache_write()
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=Nrfq658ppsV6A0UxvigWf4GUIKl2kFHfMPKNsHA6hzo=;
+ b=4SRRdxbubSvtoURmwaCOTXLU94L0+2G1CBiit4X9j8j+6oGsl7A/d4OhipuQpsqRat
+ 7pg/6hhhW+Q0ngVEXoiIknWOPUaeHRKwFDPbhvWy40tvSXEmhe70RKMj6kxOPz59d6Fo
+ 2jnTXROo+VKVn1QkI6dEpTfhHqijCObRmbojt5gxjlg/PoMjT7d2BO5kIosLWlG6hZPo
+ flMMFk10HuFBGR9EmIihYTuE/amZTBhi6K39FFWrmzLERWXCNyetwrgxhut0HTeEonCC
+ eFDHd9RHAAw+ItNw1yjfr0pzezZrDHW/dczd0DJ4SUxXoAMbdBUT0ZyI1OuZAf/we7Yp
+ tu4A==
+X-Gm-Message-State: ANoB5pkTifAtjNV2KjK/6pbEO2o9Igoh281MjTrij2gVj1s8/BxT4Xvs
+ HhZy2aCnlKRHxfEc7IiH3Q+/ZU5wX+o=
+X-Google-Smtp-Source: AA0mqf6odYdNtQXeCRJPdgRlCySo6MJP81hhMJ/kpY0g4kwJ4SJvJUt6sTA8XeKHBBB31N8K5Cio3Q==
+X-Received: by 2002:a17:903:2109:b0:186:8d7b:377e with SMTP id
+ o9-20020a170903210900b001868d7b377emr259918ple.19.1669047076526; 
+ Mon, 21 Nov 2022 08:11:16 -0800 (PST)
+Received: from VirtualBox.. ([129.227.152.6]) by smtp.gmail.com with ESMTPSA id
+ x15-20020a63fe4f000000b00434272fe870sm7774571pgj.88.2022.11.21.08.11.13
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 21 Nov 2022 08:11:15 -0800 (PST)
+From: Yuwei Guan <ssawgyw@gmail.com>
+X-Google-Original-From: Yuwei Guan <Yuwei.Guan@zeekrlife.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Tue, 22 Nov 2022 00:11:01 +0800
+Message-Id: <20221121161101.72847-1-Yuwei.Guan@zeekrlife.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+X-Headers-End: 1ox9OE-0007X4-3B
+Subject: [f2fs-dev] [PATCH] f2fs: continuous counting for 'issued' in
+ __issue_discard_cmd_orderly()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,46 +99,85 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Alexander Potapenko via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Alexander Potapenko <glider@google.com>
-Cc: tytso@mit.edu, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@kernel.org>,
- adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
- akpm@linux-foundation.org, linux-ext4@vger.kernel.org,
- syzbot+9767be679ef5016b6082@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-When aops->write_begin() does not initialize fsdata, KMSAN reports
-an error passing the latter to aops->write_end().
+As the 'dcc->discard_granularity' and 'dcc->max_ordered_discard' can be set
+at the user space, and if the 'dcc->max_ordered_discard' is set larger than
+'dcc->discard_granularity' in DPOLICY_BG mode, or it's a volume device,
+discard_granularity can be tuned to 1 in f2fs_tuning_parameters(),
+it will may send more requests than the number of 'dpolicy->max_requests'
+in issue_discard_thread().
 
-Fix this by unconditionally initializing fsdata.
+This patch will fix the issue.
 
-Cc: Eric Biggers <ebiggers@kernel.org>
-Fixes: c93d8f885809 ("ext4: add basic fs-verity support")
-Reported-by: syzbot+9767be679ef5016b6082@syzkaller.appspotmail.com
-Signed-off-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Yuwei Guan <Yuwei.Guan@zeekrlife.com>
 ---
- fs/ext4/verity.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/segment.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index 3c640bd7ecaeb..30e3b65798b50 100644
---- a/fs/ext4/verity.c
-+++ b/fs/ext4/verity.c
-@@ -79,7 +79,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
- 		size_t n = min_t(size_t, count,
- 				 PAGE_SIZE - offset_in_page(pos));
- 		struct page *page;
--		void *fsdata;
-+		void *fsdata = NULL;
- 		int res;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8b0b76550578..b0157bf392fb 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1379,8 +1379,8 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+ 	return 0;
+ }
  
- 		res = aops->write_begin(NULL, mapping, pos, n, &page, &fsdata);
+-static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+-					struct discard_policy *dpolicy)
++static int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
++					struct discard_policy *dpolicy, int *issued)
+ {
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	struct discard_cmd *prev_dc = NULL, *next_dc = NULL;
+@@ -1388,7 +1388,6 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+ 	struct discard_cmd *dc;
+ 	struct blk_plug plug;
+ 	unsigned int pos = dcc->next_pos;
+-	unsigned int issued = 0;
+ 	bool io_interrupted = false;
+ 
+ 	mutex_lock(&dcc->cmd_lock);
+@@ -1415,9 +1414,9 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+ 		}
+ 
+ 		dcc->next_pos = dc->lstart + dc->len;
+-		err = __submit_discard_cmd(sbi, dpolicy, dc, &issued);
++		err = __submit_discard_cmd(sbi, dpolicy, dc, issued);
+ 
+-		if (issued >= dpolicy->max_requests)
++		if (*issued >= dpolicy->max_requests)
+ 			break;
+ next:
+ 		node = rb_next(&dc->rb_node);
+@@ -1433,10 +1432,10 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+ 
+ 	mutex_unlock(&dcc->cmd_lock);
+ 
+-	if (!issued && io_interrupted)
+-		issued = -1;
++	if (!(*issued) && io_interrupted)
++		*issued = -1;
+ 
+-	return issued;
++	return *issued;
+ }
+ static unsigned int __wait_all_discard_cmd(struct f2fs_sb_info *sbi,
+ 					struct discard_policy *dpolicy);
+@@ -1465,7 +1464,7 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+ 			break;
+ 
+ 		if (i + 1 < dcc->max_ordered_discard && dpolicy->ordered)
+-			return __issue_discard_cmd_orderly(sbi, dpolicy);
++			return __issue_discard_cmd_orderly(sbi, dpolicy, &issued);
+ 
+ 		pend_list = &dcc->pend_list[i];
+ 
 -- 
-2.38.1.584.g0f3c55d4c2-goog
+2.34.1
 
 
 
