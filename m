@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 44986C43217
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Nov 2022 14:21:37 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4DCE4C43217
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Nov 2022 14:24:57 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oyD6e-0003Cu-Dk;
-	Thu, 24 Nov 2022 14:21:36 +0000
+	id 1oyD9s-0004cI-K7;
+	Thu, 24 Nov 2022 14:24:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1oyD6d-0003Cf-2c
+ (envelope-from <chao@kernel.org>) id 1oyD9q-0004cB-Na
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Nov 2022 14:21:35 +0000
+ Thu, 24 Nov 2022 14:24:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0Hv71tDXcUPEB9qe7O5v9FbjvA1c8tTKfp9Ik1D2zp8=; b=W22BYUFB+KCnPK+n1d1kKEyCWK
- S6KjMqTwCBoCzkhCWp34X4fLEHIpqNkLfGQsJr4Ckfl3e4ONYNtmMRmCxE5m1G79gTdD1lska8geA
- uquhT3nq5OvmDtpwaML6CBuWI0oM2/lOTmckmO+kATK2AlhKtcdtEiK3Gt16WJ70sNBk=;
+ bh=1caH8pTmsFQ8BA4Ke5uAL+yh8cqfnTR5XflP5TiX88Y=; b=WMp/7Q4t8MSre8vogYeeMpzm/E
+ NVG1ZDOlHxsXAiB++to06CGYu+y7fkpsO9iexAZFejBkWgN4/WZhQlmPtUC6ScDW7L8k+XYBNqzid
+ mbEAUfV4LEgv1cTGk8QYSKdM+opiKfwyKLK8FQ8QOq8UJdD2WSRrW2Xl9Xu8NR/CLdQw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,44 +33,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0Hv71tDXcUPEB9qe7O5v9FbjvA1c8tTKfp9Ik1D2zp8=; b=Ktudb/nNjyJtydU2tSX2Wt+wxZ
- j9ET109EOHTkPQ3Ige4EgqI6FQf572gjWFsQMUG0Gf3cGtZGT2xlwyQgf94LpWyobeJ382ZhBQO6s
- HWdwlfZUX1KQciDtstE/BCdKyLCi3M4ZjbhKOST5hRPhyI5tdGEWzssv4MdeMkaRP/z0=;
+ bh=1caH8pTmsFQ8BA4Ke5uAL+yh8cqfnTR5XflP5TiX88Y=; b=KLhKOhBq1WqrG4BpzM35mtzFO0
+ I6DCgqEq7A3nAoXG6ZF1jZ7kor2C4Tqbh1VpGL88qc8bbWnaXNXSUSXgKN4XEO0NC8Xy7SvagMUTL
+ NvEqTzuUjZKapnRFZntdJkSRYdEd2eBbDLswUXTZg4wDJL/TILE/TWgm5/QcG6LKk0/U=;
 Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oyD6c-004oDo-ET for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Nov 2022 14:21:34 +0000
+ id 1oyD9l-0003VR-Bw for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 24 Nov 2022 14:24:54 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 26851B82803;
- Thu, 24 Nov 2022 14:21:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B56F4C433D6;
- Thu, 24 Nov 2022 14:21:25 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 3C490B82832;
+ Thu, 24 Nov 2022 14:24:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AB7DC433D6;
+ Thu, 24 Nov 2022 14:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1669299686;
- bh=jCX9ZgHFTBOM2D/hY3GhY26io0Yi+TGwAvmul0YeWJA=;
+ s=k20201202; t=1669299880;
+ bh=Fda1LOHt/EBtTJeEwnTqbY67nL2+Hwj4JoO/UxYlMT8=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=nydjkvx+OF5lVTYV8rH43vkpHcKhQQqC6tEEYd07Oiqzn1WiXzZu0kYGbU+uywXil
- 6wk/zH42/un26PPPmGaLOCJLOpByZTQ3SRitmI/pw8miyBrezuOSODRkF0gn6K/VSP
- Mj8TCXFkOaRxAQ5nsY+6BuoC0k8fQRPTadr3FtLfkV6NPdsH/4nif3jjy5GKClYJ5V
- znpKU/cONFfmS68Yx56gyKLBBgwcxVV9Y8XA61i4AH6KV/UNv1k4Q/P7uNz4DZYFYL
- t4YFS122XHyyjPyKjBIUHViCYx1peSrTpLMBRLnbQj2ypFUcZVW1FCaoU+QnrO6Ilf
- XhS3VeTJsJe+w==
-Message-ID: <84482d90-289d-7575-ebf3-2affa16a370d@kernel.org>
-Date: Thu, 24 Nov 2022 22:21:24 +0800
+ b=ISnot6pDJTsq/07VeONF0GbBPjlWtGfR8YY658kaA5hC+3etSN8wRsHyCzXz8IRJ3
+ OndwvJ8qhC99pmUleOJ2shtxf8uQQcpJQKVKdc7VIhn26ZaMgM3s56Tp+yDEZ3N8Vy
+ 2xAD08mlsM7h3L9ZfKGt0q3flpfaiVOXMGgo0uEIGXjYufsFIgO6lRFBClUjJLJ51H
+ FDlc998gDUoPq5eEbWgt+k21oZl/YAFspHGi8AJ5L7W2ByvrcM5NrGtFWIM+3pF+Tr
+ iRqqllaLA1RZGNeMgC1H+ZhZReye+sFOpJY1o8mQVYd4lSlE+rBkV6aLZ9PZ5f7WqV
+ Zyg2p1VkfnnoA==
+Message-ID: <254a85d2-fb86-d56a-56b1-33d89e00e711@kernel.org>
+Date: Thu, 24 Nov 2022 22:24:35 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.0
 Content-Language: en-US
 To: Yangtao Li <frank.li@vivo.com>, jaegeuk@kernel.org
 References: <20221123164402.13849-1-frank.li@vivo.com>
+ <20221123164402.13849-2-frank.li@vivo.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20221123164402.13849-1-frank.li@vivo.com>
-X-Headers-End: 1oyD6c-004oDo-ET
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: define MIN_DISCARD_GRANULARITY
- macro
+In-Reply-To: <20221123164402.13849-2-frank.li@vivo.com>
+X-Headers-End: 1oyD9l-0003VR-Bw
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: introduce discard_urgent_util
+ sysfs node
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,15 +89,16 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2022/11/24 0:44, Yangtao Li wrote:
-> Do cleanup in f2fs_tuning_parameters() and __init_discard_policy(),
-> let's use macro instead of number.
+> Through this node, you can control the background discard
+> to run more aggressively or not aggressively when reach the
+> utilization rate of the space.
 > 
-> Suggested-by: Chao Yu <chao@kernel.org>
 > Signed-off-by: Yangtao Li <frank.li@vivo.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
+
 
 
 _______________________________________________
