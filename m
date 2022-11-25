@@ -4,70 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id ED0F6C43217
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 24 Nov 2022 15:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 75295C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 25 Nov 2022 03:07:07 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oyEAV-0005su-OG;
-	Thu, 24 Nov 2022 15:29:39 +0000
+	id 1oyP3Q-0001yW-Ds;
+	Fri, 25 Nov 2022 03:07:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1oyEAU-0005so-9O
+ (envelope-from <chao@kernel.org>) id 1oyP3O-0001yQ-IK
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Nov 2022 15:29:38 +0000
+ Fri, 25 Nov 2022 03:07:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xbMVaUichRMtXY6bCeUP/gE23l0EZRkWaSxA3R91LhU=; b=SzjO/4Oek2EsMP4m+uJjVNVv78
- 26kWEPGkjHZSnHGP5ieEj8XcDosbJtg7An6iVJmdVV43zLAm8uFveAcEzlokX0S9oZXya83hH38MY
- v1hp5HkJmHe/lNu+z9sexe6LDdhVezcB5rZB1Qv4YOIHp6vVtuhgZhJkM2K0O3k7gkgE=;
+ bh=cMcDTDVJ34FegziKhXvDr8VdazQb+PGnbo5+ccPQ6Wc=; b=d7kAjEgaTdHbpalq4I6l8jMcYw
+ GmeEXYOIpBrN6dPWzNuNW0a1Ajpw1Ud5m/stpus1rWd4EA2KyZUrZ6QINz95Ng6kNF8BObhcBdtBk
+ p+T9ohpoRV3G6sfXw8N4YC7eWn/+CkmbM3BLcfZl/7AIjP8qsJi8159DUHulSXHQPQtM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=xbMVaUichRMtXY6bCeUP/gE23l0EZRkWaSxA3R91LhU=; b=i
- g3B4tSUyzYBXd39DP7c9JJ43KENPgKqR096OgOzSvc4Qr8zRqbIBsF+rF1cJOlK1O7EB9M1dWzsIU
- DI2tXh7wtTYaPrMIAk4xR5A3Lu64X9qBiFbKrSpBMgUkUfshFsBzd/S+QRwpKleqw/FmOSf69O58X
- P2Cwhxifbsg4NgeI=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=cMcDTDVJ34FegziKhXvDr8VdazQb+PGnbo5+ccPQ6Wc=; b=UXivnSwvy7TV4b3EkYkkaw8fv5
+ YmnTOhmIA5ISF81opiZ+CYJ/aFwHsk0QCSCDF4aEvnFpFFkDc0bkdWY491jLbEEbpIQAv2Pf7/Dcy
+ +nZ6vuj5bJGmJ7O07A2E8ktEfDkAPvG3rXs/fzrdurKRKbGdI3r7QehUawPfMtIS+O8w=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1oyEAT-000390-Oy for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 24 Nov 2022 15:29:38 +0000
+ id 1oyP3N-0004lb-Qz for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 25 Nov 2022 03:07:02 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 615BE621AE
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 24 Nov 2022 15:29:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B535BC433C1;
- Thu, 24 Nov 2022 15:29:30 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 25E0EB828FF;
+ Fri, 25 Nov 2022 03:06:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E788C433C1;
+ Fri, 25 Nov 2022 03:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1669303771;
- bh=nZmcBIjikcEpAdjorTMsfW0ArzMzZX6J9glvIy0+9Yw=;
- h=From:To:Cc:Subject:Date:From;
- b=tkuxkiYOSeWe0QbVkD9Dlmy23oS/T0Tt5/2VBM58HOLromEZHVxNJV2PcqUPsdOkO
- /oyJIXaZoPTgxQegyG7pD6FU/dfKNfefVD45zuumcwYYo13g6UTTjJZ6en/A8wFOzE
- Sqz9Ff+OTiV8zo9enx8lGqlYzs/ULL1e/Ub2j+/3GI+9/RQdQDFHlWsoPRht+kvPCc
- +OXLppCW/FxuNZUC8UOKiSNW6hHVSJ/bC6YCgKoY3cU3xiU4u0THV/nbzbiqM4yeI0
- QoYB8I1ib9WADog6LGeoVN1YH/CFZ1fTEec0pjT/5nej1cyjkRWpH/qf8tuogPcY3I
- Z650TEeDglG6w==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Wed, 23 Nov 2022 06:42:52 +0800
-Message-Id: <20221122224252.73270-1-chao@kernel.org>
-X-Mailer: git-send-email 2.36.1
+ s=k20201202; t=1669345607;
+ bh=llHY7MD0O4KbESr1IfNXkVxCsoqrf0x1miTbM2if/kA=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=uf+swNBqVug8dnkjGi6j5UuJv+OHqO452APhypTnl+OgAgmoG1eNJj6PQA/nx740l
+ bDRO8mPlFQlAEgMrIqonf3SYk+ebcgd0HVpmilOxa/FlykLTL0CuA0cf529MnNZHUT
+ F1QJC/Uf4LKJc+9GglTGXmqc3eiqAGc5adZ41SgUuAsFwFCy11GLEYIn82xSFNA2V2
+ ODOPItWvuSlW0Z7vytudtYwqRgmAulY9ack9BPMsctSVjPoTgGEbzTM/YAtmDbvWa8
+ w7nKZDg0sqSaH0MXwR35X0YjMZu8w4Er9mbgv0Ftws+wNn+rIk2koBy+iXUdCkbS87
+ zYTcQc0QtymHg==
+Message-ID: <4b0a548a-5b04-24a6-944d-348d15605dd2@kernel.org>
+Date: Fri, 25 Nov 2022 11:06:43 +0800
 MIME-Version: 1.0
-X-Headers-End: 1oyEAT-000390-Oy
-Subject: [f2fs-dev] [PATCH] f2fs: truncate blocks in batch in
- __complete_revoke_list()
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Content-Language: en-US
+To: Eric Biggers <ebiggers@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20221028175807.55495-1-ebiggers@kernel.org>
+ <Y2y0cspSZG5dt6c+@sol.localdomain> <Y36ccbZq9gsnbmWw@gmail.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <Y36ccbZq9gsnbmWw@gmail.com>
+X-Headers-End: 1oyP3N-0004lb-Qz
+Subject: Re: [f2fs-dev] [PATCH v3] fsverity: stop using PG_error to track
+ error status
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,53 +83,64 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-ext4@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use f2fs_do_truncate_blocks() to truncate all blocks in-batch in
-__complete_revoke_list().
+On 2022/11/24 6:19, Eric Biggers wrote:
+> On Thu, Nov 10, 2022 at 12:21:06AM -0800, Eric Biggers wrote:
+>> On Fri, Oct 28, 2022 at 10:58:07AM -0700, Eric Biggers wrote:
+>>> From: Eric Biggers <ebiggers@google.com>
+>>>
+>>> As a step towards freeing the PG_error flag for other uses, change ext4
+>>> and f2fs to stop using PG_error to track verity errors.  Instead, if a
+>>> verity error occurs, just mark the whole bio as failed.  The coarser
+>>> granularity isn't really a problem since it isn't any worse than what
+>>> the block layer provides, and errors from a multi-page readahead aren't
+>>> reported to applications unless a single-page read fails too.
+>>>
+>>> f2fs supports compression, which makes the f2fs changes a bit more
+>>> complicated than desired, but the basic premise still works.
+>>>
+>>> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>>> ---
+>>>
+>>> In v3, I made a small simplification to the f2fs changes.  I'm also only
+>>> sending the fsverity patch now, since the fscrypt one is now upstream.
+>>>
+>>>   fs/ext4/readpage.c |  8 ++----
+>>>   fs/f2fs/compress.c | 64 ++++++++++++++++++++++------------------------
+>>>   fs/f2fs/data.c     | 48 +++++++++++++++++++---------------
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/segment.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+Hi Eric,
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 14ece4bf7c7e..37c721e1eb03 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -262,24 +262,19 @@ static void __complete_revoke_list(struct inode *inode, struct list_head *head,
- 					bool revoke)
- {
- 	struct revoke_entry *cur, *tmp;
--	pgoff_t start_index = 0;
- 	bool truncate = is_inode_flag_set(inode, FI_ATOMIC_REPLACE);
- 
- 	list_for_each_entry_safe(cur, tmp, head, list) {
--		if (revoke) {
-+		if (revoke)
- 			__replace_atomic_write_block(inode, cur->index,
- 						cur->old_addr, NULL, true);
--		} else if (truncate) {
--			f2fs_truncate_hole(inode, start_index, cur->index);
--			start_index = cur->index + 1;
--		}
- 
- 		list_del(&cur->list);
- 		kmem_cache_free(revoke_entry_slab, cur);
- 	}
- 
- 	if (!revoke && truncate)
--		f2fs_do_truncate_blocks(inode, start_index * PAGE_SIZE, false);
-+		f2fs_do_truncate_blocks(inode, 0, false);
- }
- 
- static int __f2fs_commit_atomic_write(struct inode *inode)
--- 
-2.36.1
+Result of "grep PageError fs/f2fs/* -n"
 
+...
+fs/f2fs/gc.c:1364:      ClearPageError(page);
+fs/f2fs/inline.c:177:   ClearPageError(page);
+fs/f2fs/node.c:1649:    ClearPageError(page);
+fs/f2fs/node.c:2078:            if (TestClearPageError(page))
+fs/f2fs/segment.c:3406: ClearPageError(page);
+
+Any plan to remove above PG_error flag operations? Maybe in a separated patch?
+
+Thanks,
+
+>>>   fs/verity/verify.c | 12 ++++-----
+>>>   4 files changed, 67 insertions(+), 65 deletions(-)
+>>
+>> I've applied this to the fsverity tree for 6.2.
+>>
+>> Reviews would be greatly appreciated, of course.
+>>
+> 
+> Jaegeuk and Chao, can I get a review or ack from one of you?
+> 
+> - Eric
 
 
 _______________________________________________
