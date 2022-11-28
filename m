@@ -4,67 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EA002C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:16:08 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C7934C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:16:11 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ozaFE-00081c-GZ;
-	Mon, 28 Nov 2022 09:16:08 +0000
+	id 1ozaFH-0005S9-E7;
+	Mon, 28 Nov 2022 09:16:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+7f5f7765a4bd65a1d96c+7036+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1ozaEs-00080t-3o for linux-f2fs-devel@lists.sourceforge.net;
+ id 1ozaEs-0005QC-CX for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 28 Nov 2022 09:15:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9fsGliWg+Ks+MGBxAc2rfzVOJ5aTOFT80YBbjcS3kSw=; b=Q6J6aIZ2Dqj6wTZlE1bEPUwQE5
- CBhIa+d27uLAemvxUTx0h/owh1JMQnQxmbcmhkmSIy7k51lvAsg+rwxvfDO8QylF+yB3QUh27ay6S
- 95uMBdedjolbTkGEslZYl+ngBY4BiLZ9uA7SLc1/Y3kfmd3u6jRnOPZ7z1qEikUwxtYI=;
+ bh=VEUVq+kcF0dPE4B8MpU7tMh0mbOxws9Vns+F6we+GaA=; b=RZt/5JgocNZfIyfJrDAwC9SYhR
+ HL8buSMtzByr0rqlPbHoX6y/lDyHGJEx5ozQu5IDJq4KKPlik3/WONzpz400r1wwca3FOZZTMdiK0
+ bJSY1OY109edOWLj8RYFAxf5s61ByK/9GbjATtHxQzh7iJ9UVGmMMNrijSMiC9rNn/rc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=9fsGliWg+Ks+MGBxAc2rfzVOJ5aTOFT80YBbjcS3kSw=; b=d
- llxSXhmNTionH2JywXNS/8cJGAjHTdFPLMEPWfs21TyDaWSDxN6jogkmInURqAFR1YPjyfBUDjNVk
- 14fo4s42myMR06ohcBPT9MZFuN8vGET+UzIMltvA5TfV7P19T3Egp9joY9viEHCvUC22sX4e3M8yJ
- dBXIAPiofujw7+TA=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=VEUVq+kcF0dPE4B8MpU7tMh0mbOxws9Vns+F6we+GaA=; b=ADhVWQl6Rq+CmjTZd4xWk8AXdO
+ IpzxrQmaRUJBE1/tGGqlMnHoe5EZ4H+PZ5TLptLgMP2l+kTzViUxWqxv8eemD06MpFYSw62UG74bi
+ 5RWPDVAh/BtcabuYEB9Cunwwg+geSPxsm2fLfYebU4qT//sUtcEcAqJwlCCk0SxJSHZs=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ozaEn-00055y-Es for linux-f2fs-devel@lists.sourceforge.net;
+ id 1ozaEo-00GRQf-Vh for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 28 Nov 2022 09:15:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:In-Reply-To:References;
- bh=9fsGliWg+Ks+MGBxAc2rfzVOJ5aTOFT80YBbjcS3kSw=; b=PJMAnejt9vy8oCL/FMWt0AwItW
- cmejdvos+IXFMB5Zg/CRf6YgVqNVl/bsc8UK3v2hm3IwyQTyAFvKcpfmLTmYpslOviuHLxla+nB2r
- lWddXaChuNh2KsRbUrSbay4csSEi4859kSIkHlkuf0f5n76ZN0CXRWInA8iXJyspUCwMnuJBSxLeH
- R3FsBHm7xQy1O5azBdP1zLmUK9GO003RF+PqtFcRagtX+WH7xvEFjVvNnShPEzo5yKJX+Ydq6lhrf
- WM7Gw1XZyTx410YimGOcABT/atn7NmS7c0V+7uMR/sVQB8cV+zL5ogYvg9J65RU9gMRLxzJHWh2bu
- zc+8Ux9A==;
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=VEUVq+kcF0dPE4B8MpU7tMh0mbOxws9Vns+F6we+GaA=; b=TVx/rJlgYeL27lDYWvZftBwN5E
+ uIvvO4fhdApNFVVH9a7oyX7FkW2rw7tR6mts0aZLjZ5w2/RM9BtPlYVMZrWi6V+0cilxV5mxjKCLi
+ Ec8hNQA0X0/34FTw0nM9Xckolq97RxmRYuR3p5DtSrvxXy4iKBFROiwI9OYlfTWKyjW15LrCeEOQX
+ V9HdCZbV6+u5c3xJbFFupWfifKOIj0lU3QUkLHxGufG2Yz+vZC0Pp99v2dn0u/TX+5yGzbNK1X/3+
+ sk+H1cUuco7jwOGQXnzOK1WKnIrmlzwTF09S726QGk1yA/O9EOhMby6Nzto0AM+URqmGhE4EhLlrB
+ v3FraC0Q==;
 Received: from [2001:4bb8:192:26e7:4739:fc09:43a5:2665] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1ozaEZ-000YgU-7N; Mon, 28 Nov 2022 09:15:27 +0000
+ id 1ozaEe-000Ykd-S3; Mon, 28 Nov 2022 09:15:33 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 28 Nov 2022 10:15:08 +0100
-Message-Id: <20221128091523.1242584-1-hch@lst.de>
+Date: Mon, 28 Nov 2022 10:15:10 +0100
+Message-Id: <20221128091523.1242584-3-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20221128091523.1242584-1-hch@lst.de>
+References: <20221128091523.1242584-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1ozaEn-00055y-Es
-Subject: [f2fs-dev] a fix and a bunch of cleanups
+X-Headers-End: 1ozaEo-00GRQf-Vh
+Subject: [f2fs-dev] [PATCH 02/15] f2fs: decouple F2FS_MAP_ from buffer head
+ flags
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,20 +84,39 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Jaegeuk and Chao,
+m_flags is never interchanged with the buffer_heads b_flags directly,
+so use separate codepoints from that.
 
-the first patch in this series fixes a warning and subsequent hang when
-testing zoned f2fs.  The other patches are misc cleanups for the I/O path.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/f2fs/f2fs.h | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Diffstat
- fs/f2fs/compress.c          |    2 
- fs/f2fs/data.c              |  544 ++++++++++++++++++++++----------------------
- fs/f2fs/extent_cache.c      |   19 -
- fs/f2fs/f2fs.h              |   24 -
- fs/f2fs/file.c              |   16 -
- fs/f2fs/gc.c                |    4 
- include/trace/events/f2fs.h |   11 
- 7 files changed, 309 insertions(+), 311 deletions(-)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e6355a5683b75c..db2dc3fa73162b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -643,13 +643,11 @@ struct extent_tree {
+ };
+ 
+ /*
+- * This structure is taken from ext4_map_blocks.
+- *
+- * Note that, however, f2fs uses NEW and MAPPED flags for f2fs_map_blocks().
++ * State of block returned by f2fs_map_blocks.
+  */
+-#define F2FS_MAP_NEW		(1 << BH_New)
+-#define F2FS_MAP_MAPPED		(1 << BH_Mapped)
+-#define F2FS_MAP_UNWRITTEN	(1 << BH_Unwritten)
++#define F2FS_MAP_NEW		(1U << 0)
++#define F2FS_MAP_MAPPED		(1U << 1)
++#define F2FS_MAP_UNWRITTEN	(1U << 2)
+ #define F2FS_MAP_FLAGS		(F2FS_MAP_NEW | F2FS_MAP_MAPPED |\
+ 				F2FS_MAP_UNWRITTEN)
+ 
+-- 
+2.30.2
+
 
 
 _______________________________________________
