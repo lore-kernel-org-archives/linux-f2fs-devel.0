@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5BEF6C47089
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:16:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5A4F7C4708B
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:16:15 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ozaFJ-0005TM-VQ;
-	Mon, 28 Nov 2022 09:16:13 +0000
+	id 1ozaFK-00016O-JE;
+	Mon, 28 Nov 2022 09:16:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+7f5f7765a4bd65a1d96c+7036+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1ozaFE-0005RC-Es for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 09:16:08 +0000
+ id 1ozaFF-00015U-Id for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Nov 2022 09:16:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dtCCzHx/c0oUdOA5cXbXNMtaaYWRPB+/FOsUkUcZjxs=; b=MjXQMOMZyk//aSPXo52OZLzm8M
- QFuUI9ORESzoq6ZYoFhWq+BPeFvx+KcqmLtStKzhouGU6iPbvz9vZxWE/bqB/LPLRl5mdUvMkgNUI
- qKABexDiyfztBOiksujSR77buYnD9WoJJjkLwp/R8ByqXN3VqudDn5RUsuuXYjsJjPwI=;
+ bh=wncb9XySw5yox+wPe4xShlxIz5ToZSv81+OAy6HrZ/I=; b=Gqsom1p2NA/c79xbeYwZ+bosWF
+ lW67JQXEjoNlqICwjqEWNaCcBqwwROLrMDQgYP0fCVDo+XeY5HDoO3q8CORvRkYWrKLfPUkAQYYBd
+ wOcMBLdTpT6j+wDH2PfANYW51pj87q36oXXbFNjrQrfeF1MFK1oBBqaK9W2JHWLI3d+I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=dtCCzHx/c0oUdOA5cXbXNMtaaYWRPB+/FOsUkUcZjxs=; b=I67pok/7+5Pr85OPdGDf+AKHcp
- 7Iyv8MDgtt/qtFCi0FGBr+1riGH0R5Yg5WpyP7ZnN0nDsxroqPrcrLPJaqB5I3anlisxibD4Txpj/
- rwT2i8DhX1C8T+a4ESfrJcu7exHfH9wDIcO4pCxiRzHkEGjWd2Pr+2eYwNCmAKiw3kww=;
+ bh=wncb9XySw5yox+wPe4xShlxIz5ToZSv81+OAy6HrZ/I=; b=ex7p+pgpev2LaamAsXihdbQYsY
+ DYOO2AZT4o8Mq2q4Fl9D9mAvdNAnhAsS+gKhsHIqw7S1xHfleC9tGjr8XPmJ/gJxq4KtP/QNw+pcG
+ 8mN7uzKqhuqWXymnwQFWpf6UuqICKD+wy+xTpIuPb7L4EZapycNskSWjzW7hP9wyjQVU=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ozaF9-00GRSC-A4 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 09:16:03 +0000
+ id 1ozaFE-00058i-ON for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Nov 2022 09:16:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=dtCCzHx/c0oUdOA5cXbXNMtaaYWRPB+/FOsUkUcZjxs=; b=0h6XVBmutpR2Boui+xJQcur29U
- BOdO6hd7LI/GeyAUIii9ofXGiQcUuCTApKeKbaaHvdtREAX/2ZDYOA3rvrInp1U2ioDs03uoJ40XV
- 93V+5J9OO9yZwuqAAyGSBwmivPCu02CZb3TYKrVE58jd8mRXbMvf28oh94qTwyuSGsRo7bietOP+9
- QkvRX9pGPguTprPE7FZzIeCc57zYzMIezfS7ALTj35fCpWWdIw/TVZ/R53rSDmkdJ33/O0AO46dKi
- /YSD5mGqdz6oo5Xy6ECwEQooDngt+dyI7K6PrNWoayMa013g4iNZxHbQhncWzUgAf3mjb1kEtdOrh
- 4pw+DtWg==;
+ bh=wncb9XySw5yox+wPe4xShlxIz5ToZSv81+OAy6HrZ/I=; b=F5uw5sCexBhaq4U5t85AkGaS+P
+ 2Xi3J1/EaH3H8A3wek7KF3VcqvPHvG90W+YtV165WH/zk0dli02hFJK4iBiZOoFA6X55wl2+ljLlz
+ a6rZhvASXhZXdKWGJdiQAlXms2VFi+K4ccIqowWR5+/bdGM3Qm12VZVOPgdFJj0Tlw2yLWCzM2Ewm
+ SPXIjlpOwrpch8XF+KqconzKsQldg5LwrqMSPkJ6mGDz4z2Q6c5eI0x5QfyEbteVKlq5FZhAvZUqp
+ b9DeG/J6N+Ufe0JA1W/CaPYgClwIU4JopuBoLQy8+m+YwTpD5XL+rvhhRYczabxLlo2htordc6Obo
+ 27kp8n6g==;
 Received: from [2001:4bb8:192:26e7:4739:fc09:43a5:2665] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1ozaF3-000Yzm-Fq; Mon, 28 Nov 2022 09:15:57 +0000
+ id 1ozaF8-000Z29-TJ; Mon, 28 Nov 2022 09:16:03 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 28 Nov 2022 10:15:19 +0100
-Message-Id: <20221128091523.1242584-12-hch@lst.de>
+Date: Mon, 28 Nov 2022 10:15:21 +0100
+Message-Id: <20221128091523.1242584-14-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221128091523.1242584-1-hch@lst.de>
 References: <20221128091523.1242584-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1ozaF9-00GRSC-A4
-Subject: [f2fs-dev] [PATCH 11/15] f2fs: remove f2fs_get_block
+X-Headers-End: 1ozaFE-00058i-ON
+Subject: [f2fs-dev] [PATCH 13/15] f2fs: factor a f2f_map_blocks_cached helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,57 +83,108 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Fold f2fs_get_block into the two remaining callers to simplify the
-call chain a bit.
+Add a helper to deal with everything needed to return a f2fs_map_blocks
+structure based on a lookup in the extent cache.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/f2fs/data.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ fs/f2fs/data.c | 62 +++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 38 insertions(+), 24 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 87c17602a3fdd4..2ae8fcf7cf49f4 100644
+index 730b58ba97c0ae..f6124cedd121a2 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1197,13 +1197,6 @@ int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index)
+@@ -1449,6 +1449,41 @@ int f2fs_get_block_locked(struct dnode_of_data *dn, pgoff_t index)
  	return err;
  }
  
--static int f2fs_get_block(struct dnode_of_data *dn, pgoff_t index)
--{
--	if (f2fs_lookup_extent_cache_block(dn->inode, index, &dn->data_blkaddr))
--		return 0;
--	return f2fs_reserve_block(dn, index);
--}
++static bool f2fs_map_blocks_cached(struct inode *inode,
++		struct f2fs_map_blocks *map, int flag)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	unsigned int maxblocks = map->m_len;
++	pgoff_t pgoff = (pgoff_t)map->m_lblk;
++	struct extent_info ei = {};
++
++	if (!f2fs_lookup_extent_cache(inode, pgoff, &ei))
++		return false;
++
++	map->m_pblk = ei.blk + pgoff - ei.fofs;
++	map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgoff);
++	map->m_flags = F2FS_MAP_MAPPED;
++	if (map->m_next_extent)
++		*map->m_next_extent = pgoff + map->m_len;
++
++	/* for hardware encryption, but to avoid potential issue in future */
++	if (flag == F2FS_GET_BLOCK_DIO)
++		f2fs_wait_on_block_writeback_range(inode,
++					map->m_pblk, map->m_len);
++
++	if (f2fs_allow_multi_device_dio(sbi, flag)) {
++		int bidx = f2fs_target_device_index(sbi, map->m_pblk);
++		struct f2fs_dev_info *dev = &sbi->devs[bidx];
++
++		map->m_bdev = dev->bdev;
++		map->m_pblk -= dev->start_blk;
++		map->m_len = min(map->m_len, dev->end_blk + 1 - map->m_pblk);
++	} else {
++		map->m_bdev = inode->i_sb->s_bdev;
++	}
++	return true;
++}
++
+ /*
+  * f2fs_map_blocks() tries to find or build mapping relationship which
+  * maps continuous logical blocks to physical blocks, and return such
+@@ -1464,7 +1499,6 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	int err = 0, ofs = 1;
+ 	unsigned int ofs_in_node, last_ofs_in_node;
+ 	blkcnt_t prealloc;
+-	struct extent_info ei = {0, };
+ 	block_t blkaddr;
+ 	unsigned int start_pgofs;
+ 	int bidx = 0;
+@@ -1472,6 +1506,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	if (!maxblocks)
+ 		return 0;
+ 
++	if (!map->m_may_create && f2fs_map_blocks_cached(inode, map, flag))
++		goto out;
++
+ 	map->m_bdev = inode->i_sb->s_bdev;
+ 	map->m_multidev_dio =
+ 		f2fs_allow_multi_device_dio(F2FS_I_SB(inode), flag);
+@@ -1483,29 +1520,6 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	pgofs =	(pgoff_t)map->m_lblk;
+ 	end = pgofs + maxblocks;
+ 
+-	if (!map->m_may_create && f2fs_lookup_extent_cache(inode, pgofs, &ei)) {
+-		map->m_pblk = ei.blk + pgofs - ei.fofs;
+-		map->m_len = min((pgoff_t)maxblocks, ei.fofs + ei.len - pgofs);
+-		map->m_flags = F2FS_MAP_MAPPED;
+-		if (map->m_next_extent)
+-			*map->m_next_extent = pgofs + map->m_len;
 -
- struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
- 				     blk_opf_t op_flags, bool for_write)
- {
-@@ -1445,10 +1438,12 @@ static void f2fs_map_unlock(struct f2fs_sb_info *sbi, int flag)
- int f2fs_get_block_locked(struct dnode_of_data *dn, pgoff_t index)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
--	int err;
-+	int err = 0;
- 
- 	f2fs_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO);
--	err = f2fs_get_block(dn, index);
-+	if (!f2fs_lookup_extent_cache_block(dn->inode, index,
-+					    &dn->data_blkaddr))
-+		err = f2fs_reserve_block(dn, index);
- 	f2fs_map_unlock(sbi, F2FS_GET_BLOCK_PRE_AIO);
- 
- 	return err;
-@@ -3427,7 +3422,8 @@ static int __reserve_data_block(struct inode *inode, pgoff_t index,
- 	}
- 	set_new_dnode(&dn, inode, ipage, ipage, 0);
- 
--	err = f2fs_get_block(&dn, index);
-+	if (!f2fs_lookup_extent_cache_block(inode, index, &dn.data_blkaddr))
-+		err = f2fs_reserve_block(&dn, index);
- 
- 	*blk_addr = dn.data_blkaddr;
- 	*node_changed = dn.node_changed;
+-		/* for hardware encryption, but to avoid potential issue in future */
+-		if (flag == F2FS_GET_BLOCK_DIO)
+-			f2fs_wait_on_block_writeback_range(inode,
+-						map->m_pblk, map->m_len);
+-
+-		if (map->m_multidev_dio) {
+-			bidx = f2fs_target_device_index(sbi, map->m_pblk);
+-
+-			map->m_bdev = FDEV(bidx).bdev;
+-			map->m_pblk -= FDEV(bidx).start_blk;
+-			map->m_len = min(map->m_len,
+-				FDEV(bidx).end_blk + 1 - map->m_pblk);
+-		}
+-		goto out;
+-	}
+-
+ next_dnode:
+ 	if (map->m_may_create)
+ 		f2fs_map_lock(sbi, flag);
 -- 
 2.30.2
 
