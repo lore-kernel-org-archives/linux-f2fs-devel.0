@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12193C4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:06:52 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2FE8CC433FE
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:07:01 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1oza6F-0007qV-Iv;
-	Mon, 28 Nov 2022 09:06:51 +0000
+	id 1oza6O-0003zg-N0;
+	Mon, 28 Nov 2022 09:07:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <qxy65535@gmail.com>) id 1oza61-0007qJ-Us
+ (envelope-from <qxy65535@gmail.com>) id 1oza6D-0003vI-48
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 09:06:37 +0000
+ Mon, 28 Nov 2022 09:06:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=93lUf2Yl5jzTi/ZpIQt/d66du6Z7M3MI5N1pwAOidPY=; b=X2oOVk28tCxGuHOgqle9Mcv6A+
- TO0Nimqb+7cpjZbPOcjWuzfhkablYsKXUsaheLKL5Ch9ULGUHX2CrvFB9/FKTBx78tuh/E8RifPqO
- fMq2Ac442n2fyKhe6Q2J2YwISWi7n7ftknd0mDVmt42B7FupGJpv6HefN5Yg4kIrMAPk=;
+ bh=BLKXiYJYrg2dlB187g+CWrgI5UTddt8FYxHfk/bEX8w=; b=mM4qebe0X4AJNnjDKiLn9YDQ5h
+ gohHgkP9ueVuDFdXvNzBVmTj0mmvRvLrcVBus2yrsaTjq12to5EAl82BVXikut/77b0j8/KhGJleE
+ gytBMSkhge8OR+uFVbBgAF8Ud4cmnIXcv7Q4ZxDdga6HK3JyglJLTirADp1nNO9BfuiI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,63 +33,64 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=93lUf2Yl5jzTi/ZpIQt/d66du6Z7M3MI5N1pwAOidPY=; b=jD/T2+aKZiZV3dJcflVZgeDyRG
- OlbUMFGpHTfDnl+JYrZSoSzwnFiZyYyd4Qt6ZNn/K8GMRuyQyW5S1RgEGBzBns/edG85vaskUPADd
- Eg5Sh8+7Rzq9vs2LnsvD/f6NxSw8m8gwAuLCLmbfrgl4ZyzmjsB89D2nMBipFNh/X15g=;
-Received: from mail-pf1-f179.google.com ([209.85.210.179])
+ bh=BLKXiYJYrg2dlB187g+CWrgI5UTddt8FYxHfk/bEX8w=; b=BkERbOtTIzQ89p75LQHzQvFqJM
+ 3G5paygeRQk/jIss8tQr4jdvE10EIpc9JhdsPq5Q2AtX/nRVJ1xHC42zfOhjWYQcY4ldqWqfvdzEu
+ Irh329eD+54BBdzMkdwRqBlmUz/DXP1YKT88N7ctNk2fy+YcfUH+4LyZ+6uHRRNAGb5E=;
+Received: from mail-pg1-f177.google.com ([209.85.215.177])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1oza5w-0004Mx-Pq for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 09:06:37 +0000
-Received: by mail-pf1-f179.google.com with SMTP id w129so9826484pfb.5
+ id 1oza63-0004NU-VT for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Nov 2022 09:06:43 +0000
+Received: by mail-pg1-f177.google.com with SMTP id w37so4226119pga.5
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 28 Nov 2022 01:06:32 -0800 (PST)
+ Mon, 28 Nov 2022 01:06:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=93lUf2Yl5jzTi/ZpIQt/d66du6Z7M3MI5N1pwAOidPY=;
- b=cvRduKxQBd+dQX00FcUDlva9HxIMi7VXrDhju+OzmsUksxd1+QVOsiRPhFgy1T9nk/
- 5ey7nbpakRWL4y+EWdA67WIm0iQ4B701ccG8U1TBVOKA0IutNu4Pyp0WMOvf2gAk6kF1
- ua6qCIR1QsIUTkNFdhQl0UgwEofc8ZeeyTzo3aI804XeaaqcrYlDhGZgrZrW0zDkwMyx
- X5mFupdqjR6Oxo2uEnyMGhLvS6vLzohHdbDTZUT+4kegvUzNR/Dnvo9vcResfKIV9dXu
- +DZ65C2fLgesKA/EZ+PLJGH03NNezkjyjLWhjBFL4KewSBH35r7BSAKRFwj0H6OcJQrG
- ZjTg==
+ bh=BLKXiYJYrg2dlB187g+CWrgI5UTddt8FYxHfk/bEX8w=;
+ b=ToLYrPdB/98crZI29wTwpCgtIfl/tinLjbghq0UsSmXB2VSNQysz1AWDV7ZjS+w92q
+ j3bHP+azMDr6JM7C5wovgdSnbiIozqyUkx3DXGF35KYw5g1fkY77vcpHzlF/A1G84z16
+ 82FKGw5VhYdmolDeXmI9yADrFBQCtML6NTVcIOO4n+1Vtz3VR3IlwVsuNogkg9TQ6+p0
+ 1z3N0hQJ9yswmrLj8J+ZuEzK6gYew9JzvDN0DQmhcWeqxXkLhcpwMCF0zJnxbhhjgM9X
+ 7WuN+5ry+F+ieUwp10pUrAAgtjh4FeCzFfujT4koheU5sT9t6RgapnDHQ2i+bcRiD1eD
+ z2Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=93lUf2Yl5jzTi/ZpIQt/d66du6Z7M3MI5N1pwAOidPY=;
- b=v/KLhswp7wqOkPBZIPXSsUH5WO21xmUBxs7V7Ug8RvW9Lxv2QFuHljjX9Qg+zFijCJ
- UI5zW46l+9Gb20Le6Bstnyycrlaei1zQom7Ge5FEIz+urOtaMOpm9VTedrPKG6Nu8vqh
- 9w1VRCzSJ+PVlvgfV63/z7CCGwTqbxHl5odX1tYa/BvqReM5MPZMrg8HfwR6H6qpxWhD
- MHfLAhSuhQcILrDT3LPMfcFoQEc0d0pi50OMUWbnzBnN0N2zSLhi/12m2txmXhDpn79I
- uS/I1fz2uaYH86t0aNDJhU+SftcO7KdcWhyx4Aie0wbjLTNkJGCpo7BGXq71YOxlWLjP
- VqEg==
-X-Gm-Message-State: ANoB5plGW21HvL4TdGJZBxiK9my/9Kd5EFBtHwVVqmin/Ezahm90doWv
- jYWSRLjl884Bax5Ds9X3dPdHGKssYQvHjQ==
-X-Google-Smtp-Source: AA0mqf5bLNRGY5ORIClJVRaDOve5sCdxWODL5frMN+BPd5GYHAnQP2HovicHAy+X8YBzInCO7+2cBA==
-X-Received: by 2002:aa7:9045:0:b0:56c:a321:eecb with SMTP id
- n5-20020aa79045000000b0056ca321eecbmr52091885pfo.19.1669626387218; 
- Mon, 28 Nov 2022 01:06:27 -0800 (PST)
+ bh=BLKXiYJYrg2dlB187g+CWrgI5UTddt8FYxHfk/bEX8w=;
+ b=ZkW9VJyHePkyqgtlLiFr+EW7xjABKnl72FOOP85GyYfqI7QCCQEkqj5BYFcFL2vdrJ
+ kHteY7jZKVu0CovlCFu/cc8QiFcXZRIxD4yl1HeTwMKIS3I/KqShj4//uDVAIbSqclvp
+ mqOCWeAgX+i0ka2lZ5jcSK2abcjZ0eW9CldGCHVr7yaKQGI4K/7VCRDKfVNTzPxvOEVr
+ jPgbxSir0HEInTTWCIGEm3WvEpgBOcp7xRPX9TDrQvHHF7T3Wn+gCNKRSfgFTL2prnp1
+ VcDy3JM82V7Rgypfnbi+cBwuIqZZT99KD+Cn1gF15qnUwTbuOtR5V9U/8dOOLsk/Ll0w
+ hYhg==
+X-Gm-Message-State: ANoB5pm9gUKvy2jkHV/3+4QZOl/N+kllfEW3NGhYDlcZA+gM4iKteymJ
+ +Ikh89VUeLFGkgxgETpadVPypxXSCmnZIg==
+X-Google-Smtp-Source: AA0mqf6ccGEnOo/fA5QHWcUNY0QKAjGbgqC9jPuTZJv65ymypf+K5I5b6WsUjtvDcm8GUh0Kh7ps5w==
+X-Received: by 2002:a05:6a00:4009:b0:563:2ada:30a3 with SMTP id
+ by9-20020a056a00400900b005632ada30a3mr32385650pfb.27.1669626394381; 
+ Mon, 28 Nov 2022 01:06:34 -0800 (PST)
 Received: from mi-HP-ProDesk-680-G4-MT.mioffice.cn ([43.224.245.252])
  by smtp.gmail.com with ESMTPSA id
- s17-20020a170902ea1100b001811a197797sm8269268plg.194.2022.11.28.01.06.25
+ s17-20020a170902ea1100b001811a197797sm8269268plg.194.2022.11.28.01.06.32
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 28 Nov 2022 01:06:26 -0800 (PST)
+ Mon, 28 Nov 2022 01:06:33 -0800 (PST)
 From: qixiaoyu1 <qxy65535@gmail.com>
 X-Google-Original-From: qixiaoyu1 <qixiaoyu1@xiaomi.com>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 28 Nov 2022 16:58:57 +0800
-Message-Id: <20221128085859.5295-4-qixiaoyu1@xiaomi.com>
+Date: Mon, 28 Nov 2022 16:58:59 +0800
+Message-Id: <20221128085859.5295-6-qixiaoyu1@xiaomi.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20221128085859.5295-1-qixiaoyu1@xiaomi.com>
 References: <20221128085859.5295-1-qixiaoyu1@xiaomi.com>
 MIME-Version: 1.0
-X-Headers-End: 1oza5w-0004Mx-Pq
-Subject: [f2fs-dev] [PATCH 3/5] f2fs: add age_extent_cache mount option
+X-Headers-End: 1oza63-0004NU-VT
+Subject: [f2fs-dev] [PATCH 5/5] f2fs: implement data block seperation with
+ block update frequency
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -107,134 +108,208 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: xiongping1 <xiongping1@xiaomi.com>
-
-enable data block seperation feature only when
-age_extent_cache mount option is on
-
-Signed-off-by: xiongping1 <xiongping1@xiaomi.com>
 Signed-off-by: qixiaoyu1 <qixiaoyu1@xiaomi.com>
+Signed-off-by: xiongping1 <xiongping1@xiaomi.com>
 ---
- Documentation/filesystems/f2fs.rst |  4 ++++
- fs/f2fs/block_age.c                |  3 +++
- fs/f2fs/f2fs.h                     |  1 +
- fs/f2fs/super.c                    | 27 +++++++++++++++++++++++++++
- 4 files changed, 35 insertions(+)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 14 ++++++++++++
+ fs/f2fs/block_age.c                     | 29 +++++++++++++++++++++++++
+ fs/f2fs/f2fs.h                          |  4 ++++
+ fs/f2fs/segment.c                       |  9 ++++++++
+ fs/f2fs/sysfs.c                         | 28 ++++++++++++++++++++++++
+ include/trace/events/f2fs.h             |  2 +-
+ 6 files changed, 85 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index 17df9a02ccff..f4e8943f649d 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -340,6 +340,10 @@ memory=%s		 Control memory mode. This supports "normal" and "low" modes.
- 			 Because of the nature of low memory devices, in this mode, f2fs
- 			 will try to save memory sometimes by sacrificing performance.
- 			 "normal" mode is the default mode and same as before.
-+age_extent_cache	 Enable an age extent cache based on rb-tree, it can record
-+			 data block update frequency of the extent per inode, in
-+			 order to indicate better temperature info for data block
-+			 allocation.
- ======================== ============================================================
- 
- Debugfs Entries
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 483639fb727b..34952666b2fe 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -634,3 +634,17 @@ Date:		July 2022
+ Contact:	"Daeho Jeong" <daehojeong@google.com>
+ Description:	Show the accumulated total revoked atomic write block count after boot.
+ 		If you write "0" here, you can initialize to "0".
++
++What:		/sys/fs/f2fs/<disk>/hot_data_age_threshold
++Date:		November 2022
++Contact:	"Ping Xiong" <xiongping1@xiaomi.com>
++Description:	When DATA SEPARATION is on, it controls the age threshold to indicate
++		the data blocks as hot. By default it was initialized as 262144 blocks
++		(equals to 1GB).
++
++What:		/sys/fs/f2fs/<disk>/warm_data_age_threshold
++Date:		November 2022
++Contact:	"Ping Xiong" <xiongping1@xiaomi.com>
++Description:	When DATA SEPARATION is on, it controls the age threshold to indicate
++		the data blocks as warm. By default it was initialized as 2621440 blocks
++		(equals to 10GB).
 diff --git a/fs/f2fs/block_age.c b/fs/f2fs/block_age.c
-index c8e8fbe51d8e..bc009616adfb 100644
+index 488461b3f4bf..d0b578544df7 100644
 --- a/fs/f2fs/block_age.c
 +++ b/fs/f2fs/block_age.c
-@@ -37,6 +37,9 @@ static inline bool f2fs_may_age_extent_tree(struct inode *inode)
- 	if (list_empty(&sbi->s_list))
- 		return false;
+@@ -17,6 +17,13 @@
+ #define LAST_AGE_WEIGHT		30
+ #define SAME_AGE_REGION		1024
  
-+	if (!test_opt(sbi, AGE_EXTENT_CACHE))
-+		return false;
++/*
++ * Define data block with age less than 1GB as hot data
++ * define data block with age less than 10GB but more than 1GB as warm data
++ */
++#define DEF_HOT_DATA_AGE_THRESHOLD	262144
++#define DEF_WARM_DATA_AGE_THRESHOLD	2621440
 +
- 	/* don't cache block age info for cold file */
- 	if (is_inode_flag_set(inode, FI_COMPRESSED_FILE) ||
- 			file_is_cold(inode))
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5cc516228407..428cc560b721 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -106,6 +106,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
- #define F2FS_MOUNT_MERGE_CHECKPOINT	0x10000000
- #define	F2FS_MOUNT_GC_MERGE		0x20000000
- #define F2FS_MOUNT_COMPRESS_CACHE	0x40000000
-+#define F2FS_MOUNT_AGE_EXTENT_CACHE	0x80000000
+ static struct kmem_cache *age_extent_tree_slab;
+ static struct kmem_cache *age_extent_node_slab;
  
- #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
- #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 91d3c9d0425d..dcb5905c7264 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -161,6 +161,9 @@ enum {
- 	Opt_nogc_merge,
- 	Opt_discard_unit,
- 	Opt_memory_mode,
-+#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
-+	Opt_age_extent_cache,
-+#endif
- 	Opt_err,
- };
- 
-@@ -238,6 +241,9 @@ static match_table_t f2fs_tokens = {
- 	{Opt_nogc_merge, "nogc_merge"},
- 	{Opt_discard_unit, "discard_unit=%s"},
- 	{Opt_memory_mode, "memory=%s"},
-+#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
-+	{Opt_age_extent_cache, "age_extent_cache"},
-+#endif
- 	{Opt_err, NULL},
- };
- 
-@@ -1253,6 +1259,11 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			}
- 			kfree(name);
- 			break;
-+#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
-+		case Opt_age_extent_cache:
-+			set_opt(sbi, AGE_EXTENT_CACHE);
-+			break;
-+#endif
- 		default:
- 			f2fs_err(sbi, "Unrecognized mount option \"%s\" or missing value",
- 				 p);
-@@ -2035,6 +2046,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 	else if (F2FS_OPTION(sbi).memory_mode == MEMORY_MODE_LOW)
- 		seq_printf(seq, ",memory=%s", "low");
- 
-+#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
-+	if (test_opt(sbi, AGE_EXTENT_CACHE))
-+		seq_puts(seq, ",age_extent_cache");
-+#endif
- 	return 0;
+@@ -29,6 +36,9 @@ static inline void f2fs_inc_data_block_alloc(struct f2fs_sb_info *sbi)
+ static void f2fs_init_block_age_info(struct f2fs_sb_info *sbi)
+ {
+ 	atomic64_set(&sbi->total_data_alloc, 0);
++
++	sbi->hot_data_age_threshold = DEF_HOT_DATA_AGE_THRESHOLD;
++	sbi->warm_data_age_threshold = DEF_WARM_DATA_AGE_THRESHOLD;
  }
  
-@@ -2206,6 +2221,9 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool need_restart_discard = false, need_stop_discard = false;
- 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
- 	bool enable_checkpoint = !test_opt(sbi, DISABLE_CHECKPOINT);
-+#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
-+	bool no_age_extent_cache = !test_opt(sbi, AGE_EXTENT_CACHE);
-+#endif
- 	bool no_io_align = !F2FS_IO_ALIGNED(sbi);
- 	bool no_atgc = !test_opt(sbi, ATGC);
- 	bool no_discard = !test_opt(sbi, DISCARD);
-@@ -2300,6 +2318,15 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		goto restore_opts;
- 	}
+ static inline bool f2fs_may_age_extent_tree(struct inode *inode)
+@@ -697,6 +707,25 @@ unsigned long f2fs_count_age_extent_cache(struct f2fs_sb_info *sbi)
+ 				atomic_read(&sbi->total_age_ext_node);
+ }
+ 
++int f2fs_get_data_segment_type(struct inode *inode, pgoff_t pgofs)
++{
++	struct age_extent_info ei;
++	struct f2fs_sb_info *sbi =  F2FS_I_SB(inode);
++
++	if (f2fs_lookup_age_extent_cache(inode, pgofs, &ei)) {
++		if (ei.age != 0) {
++			if (ei.age <= sbi->hot_data_age_threshold)
++				return CURSEG_HOT_DATA;
++			else if (ei.age <= sbi->warm_data_age_threshold)
++				return CURSEG_WARM_DATA;
++			else
++				return CURSEG_COLD_DATA;
++		}
++	}
++
++	return NO_CHECK_TYPE;
++}
++
+ void f2fs_destroy_age_extent_cache(void)
+ {
+ 	kmem_cache_destroy(age_extent_node_slab);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 23516498b6d0..50f6f21b23bf 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1854,6 +1854,9 @@ struct f2fs_sb_info {
+ 
+ #ifdef CONFIG_F2FS_FS_DATA_SEPARATION
+ 	atomic64_t total_data_alloc;
++	/* The threshold used for hot and warm data seperation*/
++	unsigned int hot_data_age_threshold;
++	unsigned int warm_data_age_threshold;
+ #endif
+ 
+ 	/* Reference to checksum algorithm driver via cryptoapi */
+@@ -4241,6 +4244,7 @@ void f2fs_update_age_extent_cache(struct inode *inode, pgoff_t fofs,
+ void f2fs_update_data_block_age(struct dnode_of_data *dn);
+ void f2fs_truncate_age_extent_cache(struct inode *inode, pgoff_t fofs,
+ 					unsigned int len);
++int f2fs_get_data_segment_type(struct inode *inode, pgoff_t pgofs);
+ int __init f2fs_create_age_extent_cache(void);
+ void f2fs_destroy_age_extent_cache(void);
+ #endif
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index d4c338f332fa..2fa5b22119ac 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3163,6 +3163,9 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 	if (fio->type == DATA) {
+ 		struct inode *inode = fio->page->mapping->host;
  
 +#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
-+	/* disallow enable/disable age extent_cache dynamically */
-+	if (no_age_extent_cache == !!test_opt(sbi, AGE_EXTENT_CACHE)) {
-+		err = -EINVAL;
-+		f2fs_warn(sbi, "switch age_extent_cache option is not allowed");
-+		goto restore_opts;
++		int type;
++#endif
+ 		if (is_inode_flag_set(inode, FI_ALIGNED_WRITE))
+ 			return CURSEG_COLD_DATA_PINNED;
+ 
+@@ -3176,6 +3179,12 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 		}
+ 		if (file_is_cold(inode) || f2fs_need_compress_data(inode))
+ 			return CURSEG_COLD_DATA;
++
++#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
++		type = f2fs_get_data_segment_type(inode, fio->page->index);
++		if (type != NO_CHECK_TYPE)
++			return type;
++#endif
+ 		if (file_is_hot(inode) ||
+ 				is_inode_flag_set(inode, FI_HOT_DATA) ||
+ 				f2fs_is_cow_file(inode))
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index df27afd71ef4..68ba8c1c2cb3 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -648,6 +648,25 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		sbi->revoked_atomic_block = 0;
+ 		return count;
+ 	}
++#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
++	if (!strcmp(a->attr.name, "hot_data_age_threshold")) {
++		if (t == 0 || t >= sbi->warm_data_age_threshold)
++			return -EINVAL;
++		if (t == *ui)
++			return count;
++		*ui = (unsigned int)t;
++		return count;
++	}
++
++	if (!strcmp(a->attr.name, "warm_data_age_threshold")) {
++		if (t == 0 || t <= sbi->hot_data_age_threshold)
++			return -EINVAL;
++		if (t == *ui)
++			return count;
++		*ui = (unsigned int)t;
++		return count;
 +	}
 +#endif
+ 
+ 	*ui = (unsigned int)t;
+ 
+@@ -902,6 +921,11 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, peak_atomic_write, peak_atomic_write);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, committed_atomic_block, committed_atomic_block);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, revoked_atomic_block, revoked_atomic_block);
+ 
++#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
++F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, hot_data_age_threshold, hot_data_age_threshold);
++F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, warm_data_age_threshold, warm_data_age_threshold);
++#endif
 +
- 	if (no_io_align == !!F2FS_IO_ALIGNED(sbi)) {
- 		err = -EINVAL;
- 		f2fs_warn(sbi, "switch io_bits option is not allowed");
+ #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(gc_urgent_sleep_time),
+@@ -995,6 +1019,10 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(peak_atomic_write),
+ 	ATTR_LIST(committed_atomic_block),
+ 	ATTR_LIST(revoked_atomic_block),
++#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
++	ATTR_LIST(hot_data_age_threshold),
++	ATTR_LIST(warm_data_age_threshold),
++#endif
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(f2fs);
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index b19c057ff801..0adb26397e68 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -1692,7 +1692,7 @@ DECLARE_EVENT_CLASS(f2fs_add_age_extent_node,
+ 		__entry->blocks = ei->last_blocks;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), ino = %lu, node_cnt = %lu, "
++	TP_printk("dev = (%d,%d), ino = %lu, node_cnt = %u, "
+ 		"age_ext_info(fofs: %u, len: %u, age: %llu, blocks: %llu)",
+ 		show_dev_ino(__entry),
+ 		__entry->cnt,
 -- 
 2.36.1
 
