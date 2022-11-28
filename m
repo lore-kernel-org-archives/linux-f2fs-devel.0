@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DC8B8C433FE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D8599C4167D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:16:12 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ozaFH-0005Ry-4s;
-	Mon, 28 Nov 2022 09:16:11 +0000
+	id 1ozaFI-0005Sg-Ei;
+	Mon, 28 Nov 2022 09:16:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+7f5f7765a4bd65a1d96c+7036+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1ozaEs-0005Q6-3e for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 09:15:46 +0000
+ id 1ozaFE-0005QM-Eb for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Nov 2022 09:16:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DoK53Ib5g/cHEh9Q1C0KeM8YkfYu0tojguq3JOgGyz8=; b=Yi0m5mFoWUE+PYcAVv5huU1mJK
- BgLcjfomYA/+NU3eQX2grQoC2i5wqvmgrarkRCK5kytxgOetbhb/1NCEUK45f37eErIaJoLgr12YY
- bHgLMGeeoH6L6vyI55sPFywmawIxx/g1g7v4+gM0WMropWfXZRfOI73thWHWZPEa9UnY=;
+ bh=4jqHYuOx5OofNR1eP3uZLzZ/MRdlyrAD0Shaqhu8z4Y=; b=jgKX/332tFSUSJJeSmvgecQY2d
+ 8iPaSu16lF1n7u8wGblqB2RSlSYaUJaxVtZySlTAvtXMXKp30WASoDJvlElKu1QIrZzhKonG+OKS4
+ NP3YAKyCQVfvZc70JNmDkoXEvc6vqzCfwNPTJhAnr86RW/YfWbzMvSIqGt3PbBaeEBVU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,41 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=DoK53Ib5g/cHEh9Q1C0KeM8YkfYu0tojguq3JOgGyz8=; b=XxsSBK/9Xufn5M97l/vb68c9NP
- qisWFdFok1kI60ZcC4U3mP2n1mxy4c7u5I/icxA1PwkM4g8mpF6vCNlMg2pKlY0tv5rQ3szlKnesl
- FSQUMQFnt96urCRg4NA9Sc05Ayhb/pXnNOTJcMOtnbhHftf5FZmAgYzg6pyYNMBUlIg8=;
+ bh=4jqHYuOx5OofNR1eP3uZLzZ/MRdlyrAD0Shaqhu8z4Y=; b=lELNyr9keNZABLaWqH5tSxhcMm
+ qcK/nAvPefsnFiSsRfAh++/vx2b5+qAp8OyeWROoclYIGixwgs75AM16QenyE9cd6YrqhD8V7rLMO
+ 3VVykT2QAORSy5dyHjl1ORXgFFoQgJebO9x2Pm6AavJGrfhrxe0hil52GpagYNHFJR1A=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ozaEn-00056R-Er for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 09:15:46 +0000
+ id 1ozaF4-00GRRk-01 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Nov 2022 09:15:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=DoK53Ib5g/cHEh9Q1C0KeM8YkfYu0tojguq3JOgGyz8=; b=XsHL7Xkux2DZADI27YwBFO5BpQ
- kutz5C/W4Yw2FWoXHnkLSRKDZj5dN8mcrFExv+XZKvIM3fJFl8gVM3jd+EUXjZdcxoKVEwxh2o/ug
- o80wmsE9z0sGHGNwJXYUTiGpcKBmjnEkEyv+O8V/49cfjvJDFc0Ma8DvCsQMdSb1M05ZmNfnZlsiz
- afMpSTajycSiAY33pQSv/tQHD/J1pD8GMcHF/vjQBAjBwnNrV+DLrQ6x9y0L1phgGDf9duNaXq41v
- 1UcwBlpdpb4PzRnpK3KtDn3vl5RV06rPHsm5hte7sHn0rJYKkByXjIpvTVfqIJAxzaFmEvjtf5lWJ
- +rLxq/aQ==;
+ bh=4jqHYuOx5OofNR1eP3uZLzZ/MRdlyrAD0Shaqhu8z4Y=; b=Xwdhw0zt4XCoyWqeeoG90FG8Gz
+ MBR/H3EL35LX2Z1vpwdRe/mzNjthBRw7WY5FMrbcZonUW3+CueLpAmGilXUXyZw2WsD9pQPumOcfP
+ mXt331wNWXTHDXu6jCgHlknlMbckqcszUNbNdwrjDJFA2nZ41Ps6Rcyz+qsUrNs7tDFUqHMILx1MK
+ uEPPbtqPXDgtPBa1/Bqc3cyr+Sk4d/vAs3P+FmGby7/576ZZcc0r04MnpPg8p6/ecB2EYE4TokLFi
+ dOJxFIPMmxtrXhYWfeDM+uvnSAZA6OLAt12iMz2eo8CDnvZWCVfw7Jx0ymaV4XqjQme7yqOs52DXz
+ c+NFkTUw==;
 Received: from [2001:4bb8:192:26e7:4739:fc09:43a5:2665] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1ozaEh-000Yms-He; Mon, 28 Nov 2022 09:15:35 +0000
+ id 1ozaEy-000YwJ-3S; Mon, 28 Nov 2022 09:15:52 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 28 Nov 2022 10:15:11 +0100
-Message-Id: <20221128091523.1242584-4-hch@lst.de>
+Date: Mon, 28 Nov 2022 10:15:17 +0100
+Message-Id: <20221128091523.1242584-10-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221128091523.1242584-1-hch@lst.de>
 References: <20221128091523.1242584-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1ozaEn-00056R-Er
-Subject: [f2fs-dev] [PATCH 03/15] f2fs: rename F2FS_MAP_UNWRITTEN to
- F2FS_MAP_DELALLOC
+X-Headers-End: 1ozaF4-00GRRk-01
+Subject: [f2fs-dev] [PATCH 09/15] f2fs: reflow prepare_write_begin
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,67 +83,105 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-NEW_ADDR blocks are purely in-memory preallocated blocks, and thus
-equivalent to what the core FS code calls delayed allocations, and not
-unwritten extents which do have on-disk blocks allocated from which
-reads always return zeroes until they are converted to written status.
+Reflow prepare_write_begin so that it reads more straight forward,
+and so that there is one place that does an extent cache lookup
+instead of three, two of which are hidden in f2fs_get_block calls.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/f2fs/data.c | 8 ++++----
- fs/f2fs/f2fs.h | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ fs/f2fs/data.c | 57 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 28 insertions(+), 29 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 541d625d94be42..444865e0cb6397 100644
+index b7c8e3e0113aff..fc5207859912ce 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1638,9 +1638,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 		bidx = f2fs_target_device_index(sbi, blkaddr);
+@@ -3313,8 +3313,8 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 	struct dnode_of_data dn;
+ 	struct page *ipage;
+ 	bool locked = false;
++	int flag = F2FS_GET_BLOCK_PRE_AIO;
+ 	int err = 0;
+-	int flag;
  
- 	if (map->m_len == 0) {
--		/* preallocated unwritten block should be mapped for fiemap. */
-+		/* reserved delalloc block should be mapped for fiemap. */
- 		if (blkaddr == NEW_ADDR)
--			map->m_flags |= F2FS_MAP_UNWRITTEN;
-+			map->m_flags |= F2FS_MAP_DELALLOC;
- 		map->m_flags |= F2FS_MAP_MAPPED;
+ 	/*
+ 	 * If a whole page is being written and we already preallocated all the
+@@ -3324,13 +3324,12 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 		return 0;
  
- 		map->m_pblk = blkaddr;
-@@ -1962,7 +1962,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 
- 	compr_appended = false;
- 	/* In a case of compressed cluster, append this to the last extent */
--	if (compr_cluster && ((map.m_flags & F2FS_MAP_UNWRITTEN) ||
-+	if (compr_cluster && ((map.m_flags & F2FS_MAP_DELALLOC) ||
- 			!(map.m_flags & F2FS_MAP_FLAGS))) {
- 		compr_appended = true;
- 		goto skip_fill;
-@@ -2008,7 +2008,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 				compr_cluster = false;
- 				size += blks_to_bytes(inode, 1);
- 			}
--		} else if (map.m_flags & F2FS_MAP_UNWRITTEN) {
-+		} else if (map.m_flags & F2FS_MAP_DELALLOC) {
- 			flags = FIEMAP_EXTENT_UNWRITTEN;
+ 	/* f2fs_lock_op avoids race between write CP and convert_inline_page */
+-	if (f2fs_has_inline_data(inode) && pos + len > MAX_INLINE_DATA(inode))
+-		flag = F2FS_GET_BLOCK_DEFAULT;
+-	else
+-		flag = F2FS_GET_BLOCK_PRE_AIO;
+-
+-	if (f2fs_has_inline_data(inode) ||
+-			(pos & PAGE_MASK) >= i_size_read(inode)) {
++	if (f2fs_has_inline_data(inode)) {
++		if (pos + len > MAX_INLINE_DATA(inode))
++			flag = F2FS_GET_BLOCK_DEFAULT;
++		f2fs_map_lock(sbi, flag);
++		locked = true;
++	} else if ((pos & PAGE_MASK) >= i_size_read(inode)) {
+ 		f2fs_map_lock(sbi, flag);
+ 		locked = true;
+ 	}
+@@ -3351,34 +3350,34 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 			set_inode_flag(inode, FI_DATA_EXIST);
+ 			if (inode->i_nlink)
+ 				set_page_private_inline(ipage);
+-		} else {
+-			err = f2fs_convert_inline_page(&dn, page);
+-			if (err)
+-				goto out;
+-			if (dn.data_blkaddr == NULL_ADDR)
+-				err = f2fs_get_block(&dn, index);
++			goto out;
  		}
+-	} else if (locked) {
+-		err = f2fs_get_block(&dn, index);
+-	} else {
+-		if (!f2fs_lookup_extent_cache_block(inode, index,
+-				&dn.data_blkaddr)) {
++		err = f2fs_convert_inline_page(&dn, page);
++		if (err || dn.data_blkaddr != NULL_ADDR)
++			goto out;
++	}
++
++	if (!f2fs_lookup_extent_cache_block(inode, index, &dn.data_blkaddr)) {
++		if (!locked) {
+ 			/* hole case */
+ 			err = f2fs_get_dnode_of_data(&dn, index, LOOKUP_NODE);
+-			if (err || dn.data_blkaddr == NULL_ADDR) {
+-				f2fs_put_dnode(&dn);
+-				f2fs_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO);
+-				WARN_ON(flag != F2FS_GET_BLOCK_PRE_AIO);
+-				locked = true;
+-				goto restart;
+-			}
++			if (!err && dn.data_blkaddr != NULL_ADDR)
++				goto out;
++			f2fs_put_dnode(&dn);
++			f2fs_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO);
++			WARN_ON(flag != F2FS_GET_BLOCK_PRE_AIO);
++			locked = true;
++			goto restart;
+ 		}
++		err = f2fs_reserve_block(&dn, index);
+ 	}
  
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index db2dc3fa73162b..709bfd1c7c409e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -647,9 +647,9 @@ struct extent_tree {
-  */
- #define F2FS_MAP_NEW		(1U << 0)
- #define F2FS_MAP_MAPPED		(1U << 1)
--#define F2FS_MAP_UNWRITTEN	(1U << 2)
-+#define F2FS_MAP_DELALLOC	(1U << 2)
- #define F2FS_MAP_FLAGS		(F2FS_MAP_NEW | F2FS_MAP_MAPPED |\
--				F2FS_MAP_UNWRITTEN)
-+				F2FS_MAP_DELALLOC)
- 
- struct f2fs_map_blocks {
- 	struct block_device *m_bdev;	/* for multi-device dio */
+-	/* convert_inline_page can make node_changed */
+-	*blk_addr = dn.data_blkaddr;
+-	*node_changed = dn.node_changed;
+ out:
++	if (!err) {
++		/* convert_inline_page can make node_changed */
++		*blk_addr = dn.data_blkaddr;
++		*node_changed = dn.node_changed;
++	}
+ 	f2fs_put_dnode(&dn);
+ unlock_out:
+ 	if (locked)
 -- 
 2.30.2
 
