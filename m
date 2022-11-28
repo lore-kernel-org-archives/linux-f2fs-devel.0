@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 11765C4167D
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:16:17 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5334AC4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:16:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ozaFM-0005V4-KF;
-	Mon, 28 Nov 2022 09:16:16 +0000
+	id 1ozaFN-00082H-Sv;
+	Mon, 28 Nov 2022 09:16:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+7f5f7765a4bd65a1d96c+7036+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1ozaFH-0005SR-VD for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 09:16:11 +0000
+ id 1ozaEs-00080z-K5 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Nov 2022 09:15:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=T1+WexSPAThEq+r2pi4MJLHBKqvu2sSgqCXKpDR6P1I=; b=mh/zHYluAlV1GA9fjX9uRgKuZg
- 8wlUrJOyTLeobu+ddwiXbSwEGa9ILKQdKvO+QE7cb9FrEKeZ70nvB6g/9oY2h8hWHZELg5ROC589X
- GK2PBtc74Zf7NJoaHbAw4lo9mdrHHHBSrV0WbMZIvNYgu7jCPy5r/jQ5WCPb7+q75zEU=;
+ bh=oNsahFLP6ZLdRPsKJMzTkFrcg4Ha2SdvX5yPiFkHY5Q=; b=NFRZv+FlKF4EB4pkPPmvrPKf9m
+ g9FtnH25LWWBdPkb7EwXZ2xZ3f0qFCrjaz1qGm5hhlIsgQNVxyXgv2IRaXEV54tNH2/dzESf7R+tT
+ NRqs0WLFcVUjzwxz2JdIHFx9nvIJvW+FDmDBUjJkbMM9eDVDLLHmnw1hJhcCYvCXM4nk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,40 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=T1+WexSPAThEq+r2pi4MJLHBKqvu2sSgqCXKpDR6P1I=; b=fQEoNYFpuOtiFnBQnpmCeViPlL
- BnWTHf+8wRjye0ph040kQBMVTWwSBZofZb5aTSNEcUoibmDghq9QOlq2/4r/v4KD3vDEEaEKjNmsV
- o2cRs7mg0ixdZ2IAtYrxE8kAUrmIm7K2G/PmRixAJhwl2lPZWyBOmCyfv4vJyTPFGWec=;
+ bh=oNsahFLP6ZLdRPsKJMzTkFrcg4Ha2SdvX5yPiFkHY5Q=; b=M/SAhENvXuNebGiDyv8nh9q/v1
+ Ffyecyg7K/Rdu5iQYM1cuOgWdLN3oRFWK3UMGclEOd70+Z7BiccWz1vxl8/FVtyq2z9FH3K5Gr5PO
+ 8/Ck3sF18+a5QBP5fBxze441kgeVt7DyqomM76GbPDXApwwju5eCXEx68akYzQg9roE4=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ozaFH-00058m-Dv for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 09:16:11 +0000
+ id 1ozaEn-000567-Ey for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Nov 2022 09:15:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=T1+WexSPAThEq+r2pi4MJLHBKqvu2sSgqCXKpDR6P1I=; b=CoSBxyX9ZP1gVyL55PvCYRDkKJ
- Kfo960LTOdaTRX3NKXxqfEllgmeVD8oAEa/DzGdd7uQJ6hBYDvKD+PQBtRUWK7r0CbTm/HJ8F0VB1
- Fvvhu6j5mKdLN0WWLrDbredfrW8dRWV3Ahql8EVhXaOpjUfC9qiwckMSlxfz0RFhPRo/LMV4OtVxt
- jDDuwUDEox2E/PCDxMV7rpY2zaiJjRPRdphvV08v7HaQYj9hcTFFuWRuPtxhmkENpngdWKPa4tbCO
- z3kaeLOKAZKmMywF/8+1cIfVtBMiPct0lUdoFpmwBw4vH4jjwys2xrQEH8ba89gzCQpjwjzGvSxRY
- TtAgYc0g==;
+ bh=oNsahFLP6ZLdRPsKJMzTkFrcg4Ha2SdvX5yPiFkHY5Q=; b=xwwV6uO4+bcOfcj8fMgj+0WKnu
+ mXL6Yngm1T4Yg8O02PKT60tGoW37UxQY5M31LvPYBI5qL4WIkgbGUfyIhn1P7CRxJIsMnl0JHvlFv
+ ttdDEbbfD2FO+q6g9p1yusIYqz0gM6L0FU1mQ+GKtMJki1sYn43E7zPebNeQ9o9pZR7z7VALg8DF8
+ 98P/crT/l3GPitNWlbooIfTQMLW7+91GGSrxgHCdBbb4CWFLJpowjPVfV/UpEtUx1j5E3aSISHfJr
+ yFN0t85ee5cPgEqbnW4nX4SyT75w7eqcLP5Suy92sCxbZK8fUBvGncAHtexosMXYd8GWXDzk/jlg5
+ kByuBGyg==;
 Received: from [2001:4bb8:192:26e7:4739:fc09:43a5:2665] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1ozaFB-000Z3D-KE; Mon, 28 Nov 2022 09:16:06 +0000
+ id 1ozaEb-000YiU-Tx; Mon, 28 Nov 2022 09:15:30 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 28 Nov 2022 10:15:22 +0100
-Message-Id: <20221128091523.1242584-15-hch@lst.de>
+Date: Mon, 28 Nov 2022 10:15:09 +0100
+Message-Id: <20221128091523.1242584-2-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221128091523.1242584-1-hch@lst.de>
 References: <20221128091523.1242584-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1ozaFH-00058m-Dv
-Subject: [f2fs-dev] [PATCH 14/15] f2fs: factor out a f2fs_map_no_dnode
+X-Headers-End: 1ozaEn-000567-Ey
+Subject: [f2fs-dev] [PATCH 01/15] f2fs: don't rely on F2FS_MAP_* in
+ f2fs_iomap_begin
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,78 +84,64 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Factor out a helper to return a hole when no dnode was found.
+When testing with a mixed zoned / convention device combination, there
+are regular but not 100% reproducible failures in xfstests generic/113
+where the __is_valid_data_blkaddr assert hits due to finding a hole.
 
+This seems to be because f2fs_map_blocks can set this flag on a hole
+when it was found in the extent cache.
+
+Rework f2fs_iomap_begin to just check the special block numbers directly.
+This has the added benefits of the WARN_ON showing which invalid block
+address we found, and being properly error out on delalloc blocks that
+are confusingly called unwritten but not actually suitable for direct
+I/O.
+
+Fixes: 1517c1a7a445 ("f2fs: implement iomap operations")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/f2fs/data.c | 47 ++++++++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+ fs/f2fs/data.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f6124cedd121a2..3c802ce397de52 100644
+index a71e818cd67b43..541d625d94be42 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1449,6 +1449,28 @@ int f2fs_get_block_locked(struct dnode_of_data *dn, pgoff_t index)
- 	return err;
- }
+@@ -4134,20 +4134,24 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	 */
+ 	map.m_len = fscrypt_limit_io_blocks(inode, map.m_lblk, map.m_len);
  
-+static int f2fs_map_no_dnode(struct inode *inode,
-+		struct f2fs_map_blocks *map, struct dnode_of_data *dn,
-+		pgoff_t pgoff)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	/*
-+	 * There is one exceptional case that read_node_page() may return
-+	 * -ENOENT due to filesystem has been shutdown or cp_error, return
-+	 * -EIO in that case.
-+	 */
-+	if (map->m_may_create &&
-+	    (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN) || f2fs_cp_error(sbi)))
-+		return -EIO;
-+
-+	if (map->m_next_pgofs)
-+		*map->m_next_pgofs = f2fs_get_next_page_offset(dn, pgoff);
-+	if (map->m_next_extent)
-+		*map->m_next_extent = f2fs_get_next_page_offset(dn, pgoff);
-+	return 0;
-+}
-+
- static bool f2fs_map_blocks_cached(struct inode *inode,
- 		struct f2fs_map_blocks *map, int flag)
- {
-@@ -1530,29 +1552,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
- 	if (err) {
- 		if (flag == F2FS_GET_BLOCK_BMAP)
- 			map->m_pblk = 0;
--
--		if (err == -ENOENT) {
--			/*
--			 * There is one exceptional case that read_node_page()
--			 * may return -ENOENT due to filesystem has been
--			 * shutdown or cp_error, so force to convert error
--			 * number to EIO for such case.
--			 */
--			if (map->m_may_create &&
--				(is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN) ||
--				f2fs_cp_error(sbi))) {
--				err = -EIO;
--				goto unlock_out;
--			}
--
--			err = 0;
--			if (map->m_next_pgofs)
--				*map->m_next_pgofs =
--					f2fs_get_next_page_offset(&dn, pgofs);
--			if (map->m_next_extent)
--				*map->m_next_extent =
--					f2fs_get_next_page_offset(&dn, pgofs);
+-	if (map.m_flags & (F2FS_MAP_MAPPED | F2FS_MAP_UNWRITTEN)) {
+-		iomap->length = blks_to_bytes(inode, map.m_len);
+-		if (map.m_flags & F2FS_MAP_MAPPED) {
+-			iomap->type = IOMAP_MAPPED;
+-			iomap->flags |= IOMAP_F_MERGED;
+-		} else {
+-			iomap->type = IOMAP_UNWRITTEN;
 -		}
-+		if (err == -ENOENT)
-+			err = f2fs_map_no_dnode(inode, map, &dn, pgofs);
- 		goto unlock_out;
- 	}
+-		if (WARN_ON_ONCE(!__is_valid_data_blkaddr(map.m_pblk)))
+-			return -EINVAL;
++	/*
++	 * We should never see delalloc or compressed extents here based on
++	 * prior flushing and checks.
++	 */
++	if (WARN_ON_ONCE(map.m_pblk == NEW_ADDR))
++		return -EINVAL;
++	if (WARN_ON_ONCE(map.m_pblk == COMPRESS_ADDR))
++		return -EINVAL;
  
++	if (map.m_pblk != NULL_ADDR) {
++		iomap->length = blks_to_bytes(inode, map.m_len);
++		iomap->type = IOMAP_MAPPED;
++		iomap->flags |= IOMAP_F_MERGED;
+ 		iomap->bdev = map.m_bdev;
+ 		iomap->addr = blks_to_bytes(inode, map.m_pblk);
+ 	} else {
++		if (flags & IOMAP_WRITE)
++			return -ENOTBLK;
+ 		iomap->length = blks_to_bytes(inode, next_pgofs) -
+ 				iomap->offset;
+ 		iomap->type = IOMAP_HOLE;
 -- 
 2.30.2
 
