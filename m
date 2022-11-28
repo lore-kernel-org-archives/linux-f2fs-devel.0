@@ -4,18 +4,18 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0AAB6C46467
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 24ED4C47089
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 09:16:19 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ozaFO-00082U-As;
+	id 1ozaFO-00082n-N9;
 	Mon, 28 Nov 2022 09:16:18 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+7f5f7765a4bd65a1d96c+7036+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1ozaF8-00081B-HF for linux-f2fs-devel@lists.sourceforge.net;
+ id 1ozaF8-00081E-HH for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 28 Nov 2022 09:16:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=mo35tAxXmMMRiAoVdJV0xt8CeHxRi5H5ytU1aFMmHN8=; b=ICgDlMzZ+JjOSNkEtVDDSLs7Ct
- tg0KRON+TeGbnHkErsJNS9VIn1w/mARGqEpUB1JVmDj8sKHHxn9lxa4ze806TxbWnf61wWcTGII9T
- X0v16vR25ehVDE1mN/eiw+FHHj1bPGl3A0Uc1AF3wi39dC+W0no2GBeRex1tOahYr6aY=;
+ bh=xYxZCTgf87uwmCjS2Ba69FLL+Y03Pvmruegsod2EEzo=; b=ldMUNFPNgALrc5DwYZYTXqAS7T
+ KLrGcEfO76lxr8xBtfJRbRMEFGEhj+nGd9Qaf+U1Xwah0KSjSHWRiRJje0nrYKptUzXdb1ENDYUIO
+ XCpf35RMUk82rD97dyEhaTMt9Akr3giGNRFy1eoxKObKre1p/e3Ks9hrxu/MnRBaOGBw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=mo35tAxXmMMRiAoVdJV0xt8CeHxRi5H5ytU1aFMmHN8=; b=WhfDuNZm/OQ3ml45Upr4Jlh13v
- cfISlD75rmQYTL9nv8mxUsfWrBq72r15VFzWfFTe3lkW/LFkxmjXR5/gZ6myEJkz9wQiaGuUYM7Jj
- P/bMazMsmfymRjjXdJzVaGDiF9iDo9b0TJ67aIgHvSxfxjZBRizdYpM+DtEdn5Yzcg00=;
+ bh=xYxZCTgf87uwmCjS2Ba69FLL+Y03Pvmruegsod2EEzo=; b=mYkSAmQxqlZ/gFFBGOojsiKG50
+ dmpoaNzVpSsMdbC08QIFHaadnShVjPuJeGXDy0KAFSUi4X4113i/g3W4Oot0MyxGaDlPGOzm/zEfv
+ n4IgSAwmi4nMMDAqsJboahmWma1C/05j9q60d6Qh7NlSAnFphBHbFmujVUHdwvEhoftw=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ozaEy-00057O-JY for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 09:15:53 +0000
+ id 1ozaF6-00GRRp-Kj for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 28 Nov 2022 09:16:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=mo35tAxXmMMRiAoVdJV0xt8CeHxRi5H5ytU1aFMmHN8=; b=SmPeLFcY8KJlsJib1Qw5v8098G
- fpiLus8UjYALYTs6NsMFFL6FMnQjjp5gqVBZ1leH4aCYY/lF6A/tqQMPOv9dlTWgnBSk7f/Xt5Tfn
- 9rAc983QHeAWrRbLaR77QO1OBcvq8zDe1VXpKvzZiWmzaSifvi0rGvyrYpcuJ0msXQP3xzvgHyrzp
- mDrL1yhIEXuOLP3zXl8DdmvQo6MTndfpnuurESl/9zyWakZJZPWbdi08kjH0xDmjECLelaFxiSRlE
- bfs/2jk3u0bb9BrmHpQBHfxt7im8UkMN2SzZqN9C6uEyF+sCN9rIcHfKII7GcMC6JvrLNQpNoz1Yt
- cFDh+oYg==;
+ bh=xYxZCTgf87uwmCjS2Ba69FLL+Y03Pvmruegsod2EEzo=; b=zNdu9uh6PQrkcuNZTOn1gn4ndQ
+ 9ZCktNa6nh8wOq9XxFIIR19uycqMM7w0Q39exBypAVZVK0Gwv4yLNIZUodEZbjRD7vD+8c4yyBh4c
+ GTh6e3PZlft0Kly74PIhSGCusBQZelfmYnAMNLI5kNxsa7H6fYj82vcJKvc1u4XMewa0fSsTdqBZ0
+ b21MwcA8HpNVMIYqkRS7QMfA0R77/Nb3RZBasmXxnTbkBulNNU75p21v3QtAkBoiX0Im59CCtpgG3
+ xrdw5m9Ti3DxAd9nFlrJaZkRxyzePXSZydbIxicptTuWX2IeRTwDede3LM3Zz55ppGDIoUN0v91yI
+ vKRPA/UQ==;
 Received: from [2001:4bb8:192:26e7:4739:fc09:43a5:2665] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1ozaEs-000Ytu-NS; Mon, 28 Nov 2022 09:15:47 +0000
+ id 1ozaF0-000Yy3-Q9; Mon, 28 Nov 2022 09:15:55 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Mon, 28 Nov 2022 10:15:15 +0100
-Message-Id: <20221128091523.1242584-8-hch@lst.de>
+Date: Mon, 28 Nov 2022 10:15:18 +0100
+Message-Id: <20221128091523.1242584-11-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221128091523.1242584-1-hch@lst.de>
 References: <20221128091523.1242584-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1ozaEy-00057O-JY
-Subject: [f2fs-dev] [PATCH 07/15] f2fs: add a f2fs_get_block_locked helper
+X-Headers-End: 1ozaF6-00GRRp-Kj
+Subject: [f2fs-dev] [PATCH 10/15] f2fs: simplify __allocate_data_block
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,94 +83,37 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This allows to keep the f2fs_do_map_lock based locking scheme
-private to data.c.
+Just use a simple if block for the conditional call to
+inc_valid_block_count.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/f2fs/data.c | 16 ++++++++++++++--
- fs/f2fs/f2fs.h |  3 +--
- fs/f2fs/file.c |  4 +---
- 3 files changed, 16 insertions(+), 7 deletions(-)
+ fs/f2fs/data.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a294a589ba1a91..6df80a30df263c 100644
+index fc5207859912ce..87c17602a3fdd4 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1197,7 +1197,7 @@ int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index)
- 	return err;
- }
+@@ -1407,13 +1407,12 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+ 		return err;
  
--int f2fs_get_block(struct dnode_of_data *dn, pgoff_t index)
-+static int f2fs_get_block(struct dnode_of_data *dn, pgoff_t index)
- {
- 	if (f2fs_lookup_extent_cache_block(dn->inode, index, &dn->data_blkaddr))
- 		return 0;
-@@ -1427,7 +1427,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 	return 0;
- }
+ 	dn->data_blkaddr = f2fs_data_blkaddr(dn);
+-	if (dn->data_blkaddr != NULL_ADDR)
+-		goto alloc;
+-
+-	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
+-		return err;
++	if (dn->data_blkaddr == NULL_ADDR) {
++		err = inc_valid_block_count(sbi, dn->inode, &count);
++		if (unlikely(err))
++			return err;
++	}
  
--void f2fs_do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
-+static void f2fs_do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
- {
- 	if (flag == F2FS_GET_BLOCK_PRE_AIO) {
- 		if (lock)
-@@ -1442,6 +1442,18 @@ void f2fs_do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock)
- 	}
- }
- 
-+int f2fs_get_block_locked(struct dnode_of_data *dn, pgoff_t index)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-+	int err;
-+
-+	f2fs_do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
-+	err = f2fs_get_block(dn, index);
-+	f2fs_do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
-+
-+	return err;
-+}
-+
- /*
-  * f2fs_map_blocks() tries to find or build mapping relationship which
-  * maps continuous logical blocks to physical blocks, and return such
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c0a1a987889167..a3789dab0aade9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3791,7 +3791,7 @@ void f2fs_set_data_blkaddr(struct dnode_of_data *dn);
- void f2fs_update_data_blkaddr(struct dnode_of_data *dn, block_t blkaddr);
- int f2fs_reserve_new_blocks(struct dnode_of_data *dn, blkcnt_t count);
- int f2fs_reserve_new_block(struct dnode_of_data *dn);
--int f2fs_get_block(struct dnode_of_data *dn, pgoff_t index);
-+int f2fs_get_block_locked(struct dnode_of_data *dn, pgoff_t index);
- int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index);
- struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
- 			blk_opf_t op_flags, bool for_write);
-@@ -3801,7 +3801,6 @@ struct page *f2fs_get_lock_data_page(struct inode *inode, pgoff_t index,
- struct page *f2fs_get_new_data_page(struct inode *inode,
- 			struct page *ipage, pgoff_t index, bool new_i_size);
- int f2fs_do_write_data_page(struct f2fs_io_info *fio);
--void f2fs_do_map_lock(struct f2fs_sb_info *sbi, int flag, bool lock);
- int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 			int create, int flag);
- int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 82cda12582272a..cbeb7bd880046e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -113,10 +113,8 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 
- 	if (need_alloc) {
- 		/* block allocation */
--		f2fs_do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
- 		set_new_dnode(&dn, inode, NULL, NULL, 0);
--		err = f2fs_get_block(&dn, page->index);
--		f2fs_do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
-+		err = f2fs_get_block_locked(&dn, page->index);
- 	}
- 
- #ifdef CONFIG_F2FS_FS_COMPRESSION
+-alloc:
+ 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+ 	old_blkaddr = dn->data_blkaddr;
+ 	f2fs_allocate_data_block(sbi, NULL, old_blkaddr, &dn->data_blkaddr,
 -- 
 2.30.2
 
