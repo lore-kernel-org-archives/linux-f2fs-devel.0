@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F2A95C4321E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 28 Nov 2022 22:10:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5CE8DC4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 29 Nov 2022 02:51:23 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ozmKM-0007kY-7H;
-	Mon, 28 Nov 2022 22:10:14 +0000
+	id 1ozqiO-0006Ow-OU;
+	Tue, 29 Nov 2022 02:51:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1ozmKG-0007kN-6C
+ (envelope-from <jaegeuk@kernel.org>) id 1ozqiO-0006Oq-9M
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 22:10:08 +0000
+ Tue, 29 Nov 2022 02:51:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Xav8drGmXvnNtqZzl8SVyY6jOtKyfYlHRso1+74OqLE=; b=T68y4tLSIOH/7CS+5HUTI5wiE8
- BamyopfKF0eFw2LfdOFwK9V063mpI9nkONhWkVzO3BfHfHPr5VMNuc6+xR/Zv6T1CyU8YN5KYD1wP
- 5MyQTMHj4eT9+z2zkbmOxZc1U/OPNM9p69ek6xrGGz3bSzX/uP9bQ2ipiKgxgLCP21bQ=;
+ bh=jsorwso0o6jOSMMD8Ldkub7pLvh+a6Mqgayfuh1LFwo=; b=kCibI1sWWsHqvByt8LFM/AGMy3
+ MRDGU8q4QAANQIE4krUwFONcrMCQ4WRUErsyXqYSMrwJwVm45YFP2WbHUxCy0Lad23Ts08ia0aZRy
+ eyUOY/XRBMC+bcIUhuDMx2pV5XrmXh4MaSSXfzmC5FEPJBCBsZRZsuPGtMJCdcleI/xs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,42 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Xav8drGmXvnNtqZzl8SVyY6jOtKyfYlHRso1+74OqLE=; b=ZGiMQ92rJujWfChs8wpircTAnF
- cFeeAAyt5dgwewGkEQZoiO4GooDibIVhcM2h0Gp1/jkyjSCmCPmDt1M1Es9WrNoTNiydPkRlltPeH
- 0XCsJx2LlJNgXfqmi0RjlgWLOh37biKHMhWuhQ2HiVeOOvGHVvEa3HBFR2WnxrMHDPio=;
+ bh=jsorwso0o6jOSMMD8Ldkub7pLvh+a6Mqgayfuh1LFwo=; b=Cq7wHKmkYDpGS1b0j/aSCMri6P
+ LvH8u5a0Uk9WPoSbkmCFSAoLmb/9fmVuh7DMrGpMErRDRiaodo/4jMcKfxzhg+EW+fA4DAsSaC4Ew
+ zJkoZkolDHyENumGxkSTtQBVMgPLebkZv125SwPHJkUralkiv6dDXA4f9N7JzgehRcN8=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ozmKB-0006uL-6n for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 28 Nov 2022 22:10:08 +0000
+ id 1ozqiK-00HSTq-4H for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 29 Nov 2022 02:51:20 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id CA3F8614A6;
- Mon, 28 Nov 2022 22:09:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B987C433D7;
- Mon, 28 Nov 2022 22:09:57 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 1536C6151A;
+ Tue, 29 Nov 2022 02:51:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 483E1C433C1;
+ Tue, 29 Nov 2022 02:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1669673397;
- bh=bqj9g+jLTDji4I+GdGiDgNX5c3aziUxLgv0yWrH7unI=;
+ s=k20201202; t=1669690268;
+ bh=mQ0x4vPtpBDJ2b5m/W5k73dGLFBmDRafnyzqKaXDU/M=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=qIla2H6y76Y5sfcMxSJteSS74PM6efM3vqzdoeThZYkS2QkzWX4vbIz+ZXNYwXkth
- NxX/nLO94jKO0kATGgYeozLSM9F5yv1yK5WpkWlcTTiQMy12JZ8nce8qesA4i2q2ff
- y4jlI82UN+C4TfTed8RIwjqkIC5vAmIFKt106yKrRlDUyNB9uh/FT5gdIc7IBNDsn5
- xx8vPG5mgZBbvNwteX+78mJB0O7dVRZH4imrk0pR5giAxqaAkMxMaSB0zuPjQOV2WZ
- IssGnrdT+PvLd0MJXe5P06SkvgqOAoHIHZsWUTqQHvoXq2iJ2qK/6pFSmZWI4CmCGd
- NOiYzLr1lR8DA==
-Date: Mon, 28 Nov 2022 14:09:55 -0800
+ b=oKSFKFRAT2NoRGHvVvOXftlL+prdVD8tqpN91hef0VcBt+Zu4Th+QuLtGgR8jqgUu
+ 0i3Uh4QlN9RX1XJkigw156XFKkSvOjRxhxPoU7WW5T4P23ZwdTDXGZZJtpEqnZnSmb
+ kuwC9BsQcfADb/QgicIYBdLCdtQFpt6AvLtUnSeguVk3kKmZdcX02dAcZdSFtiNfGa
+ +Pwc1vWn0V9idBVDNBdAkEWi3OXrwW0S18wCUNzGop1Wi5ld0CFPfQ1hphYoQB62UL
+ 6CraIu/B89ct/xO5Vo9H07BwcKgkfYz1u32Do9qilnJ5p67qHjU4v9H7rLUzjRRGHk
+ y2yfZESg+BmeQ==
+Date: Mon, 28 Nov 2022 18:51:06 -0800
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Yangtao Li <frank.li@vivo.com>
-Message-ID: <Y4UxswxCt/Ew/X/X@google.com>
-References: <20221123132502.72078-1-frank.li@vivo.com>
+To: qixiaoyu1 <qxy65535@gmail.com>
+Message-ID: <Y4VzmiShMvp87z3p@google.com>
+References: <20221128085859.5295-1-qixiaoyu1@xiaomi.com>
+ <20221128085859.5295-2-qixiaoyu1@xiaomi.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20221123132502.72078-1-frank.li@vivo.com>
-X-Headers-End: 1ozmKB-0006uL-6n
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add support for counting the average
- time of submit discard cmd
+In-Reply-To: <20221128085859.5295-2-qixiaoyu1@xiaomi.com>
+X-Headers-End: 1ozqiK-00HSTq-4H
+Subject: Re: [f2fs-dev] [PATCH 1/5] f2fs: record total data blocks allocated
+ since mount
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,153 +81,190 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: xiongping1 <xiongping1@xiaomi.com>, qixiaoyu1 <qixiaoyu1@xiaomi.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Need to run checkpatch?
-
-On 11/23, Yangtao Li wrote:
-> This patch adds support for counting the average time of submit discard
-> command, and we can see its value in debugfs.
+On 11/28, qixiaoyu1 wrote:
+> From: xiongping1 <xiongping1@xiaomi.com>
 > 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Signed-off-by: xiongping1 <xiongping1@xiaomi.com>
+> Signed-off-by: qixiaoyu1 <qixiaoyu1@xiaomi.com>
 > ---
->  fs/f2fs/debug.c   |  7 +++++--
->  fs/f2fs/f2fs.h    |  5 +++++
->  fs/f2fs/segment.c | 17 +++++++++++++++--
->  3 files changed, 25 insertions(+), 4 deletions(-)
+>  fs/f2fs/Kconfig     |  7 +++++++
+>  fs/f2fs/Makefile    |  1 +
+>  fs/f2fs/block_age.c | 28 ++++++++++++++++++++++++++++
+>  fs/f2fs/debug.c     |  7 +++++++
+>  fs/f2fs/f2fs.h      | 15 +++++++++++++++
+>  fs/f2fs/segment.c   |  4 ++++
+>  fs/f2fs/super.c     |  4 ++++
+>  7 files changed, 66 insertions(+)
+>  create mode 100644 fs/f2fs/block_age.c
 > 
+> diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+> index 03ef087537c7..84915f9c6bc8 100644
+> --- a/fs/f2fs/Kconfig
+> +++ b/fs/f2fs/Kconfig
+> @@ -150,3 +150,10 @@ config F2FS_UNFAIR_RWSEM
+>  	help
+>  	  Use unfair rw_semaphore, if system configured IO priority by block
+>  	  cgroup.
+> +
+> +config F2FS_FS_DATA_SEPARATION
+> +	bool "F2FS hot/cold data separation feature"
+> +	depends on F2FS_FS
+> +	help
+> +	  Enable data blocks separation according to block update frequency.
+> +
+> diff --git a/fs/f2fs/Makefile b/fs/f2fs/Makefile
+> index 8a7322d229e4..70d8f0e23b46 100644
+> --- a/fs/f2fs/Makefile
+> +++ b/fs/f2fs/Makefile
+> @@ -10,3 +10,4 @@ f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) += acl.o
+>  f2fs-$(CONFIG_FS_VERITY) += verity.o
+>  f2fs-$(CONFIG_F2FS_FS_COMPRESSION) += compress.o
+>  f2fs-$(CONFIG_F2FS_IOSTAT) += iostat.o
+> +f2fs-$(CONFIG_F2FS_FS_DATA_SEPARATION) += block_age.o
+> diff --git a/fs/f2fs/block_age.c b/fs/f2fs/block_age.c
+> new file mode 100644
+> index 000000000000..1e8711a03959
+> --- /dev/null
+> +++ b/fs/f2fs/block_age.c
+> @@ -0,0 +1,28 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * fs/f2fs/block_age.c
+> + *
+> + * Copyright (c) 2022 xiaomi Co., Ltd.
+> + *             http://www.xiaomi.com/
+
+I don't think this is a right way, since it seems you copied lots of codes
+from extent_cache.c which has another copyrights.
+
+I'm thinking to integrate your extent_cache code into the original path in
+order to keep the single code path for easy debugging. Stay tuned.
+
+> + */
+> +#include <linux/fs.h>
+> +#include <linux/f2fs_fs.h>
+> +
+> +#include "f2fs.h"
+> +#include "segment.h"
+> +
+> +static inline void f2fs_inc_data_block_alloc(struct f2fs_sb_info *sbi)
+> +{
+> +	atomic64_inc(&sbi->total_data_alloc);
+> +}
+> +
+> +void f2fs_init_block_age_info(struct f2fs_sb_info *sbi)
+> +{
+> +	atomic64_set(&sbi->total_data_alloc, 0);
+> +}
+> +
+> +void f2fs_inc_block_alloc_count(struct f2fs_sb_info *sbi, int type)
+> +{
+> +	if (IS_DATASEG(type))
+> +		f2fs_inc_data_block_alloc(sbi);
+> +}
 > diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> index a216dcdf6941..ede862cb178d 100644
+> index a216dcdf6941..d24abdac20bb 100644
 > --- a/fs/f2fs/debug.c
 > +++ b/fs/f2fs/debug.c
-> @@ -109,6 +109,9 @@ static void update_general_status(struct f2fs_sb_info *sbi)
->  			llist_empty(&SM_I(sbi)->fcc_info->issue_list);
->  	}
->  	if (SM_I(sbi)->dcc_info) {
-> +		struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> +
-> +		si->discard_avg = dcc->discard_time_avg;
->  		si->nr_discarded =
->  			atomic_read(&SM_I(sbi)->dcc_info->issued_discard);
->  		si->nr_discarding =
-> @@ -506,11 +509,11 @@ static int stat_show(struct seq_file *s, void *v)
->  		seq_printf(s, "  - IO_R (Data: %4d, Node: %4d, Meta: %4d\n",
->  			   si->nr_rd_data, si->nr_rd_node, si->nr_rd_meta);
->  		seq_printf(s, "  - IO_W (CP: %4d, Data: %4d, Flush: (%4d %4d %4d), "
-> -			"Discard: (%4d %4d)) cmd: %4d undiscard:%4u\n",
-> +					  "Discard: (%4d %4d avg:%4lldns)) cmd: %4d undiscard:%4u\n",
->  			   si->nr_wb_cp_data, si->nr_wb_data,
->  			   si->nr_flushing, si->nr_flushed,
->  			   si->flush_list_empty,
-> -			   si->nr_discarding, si->nr_discarded,
-> +			   si->nr_discarding, si->nr_discarded, ktime_to_us(si->discard_avg),
->  			   si->nr_discard_cmd, si->undiscard_blks);
->  		seq_printf(s, "  - atomic IO: %4d (Max. %4d)\n",
->  			   si->aw_cnt, si->max_aw_cnt);
+> @@ -81,6 +81,9 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+>  	si->ext_tree = atomic_read(&sbi->total_ext_tree);
+>  	si->zombie_tree = atomic_read(&sbi->total_zombie_tree);
+>  	si->ext_node = atomic_read(&sbi->total_ext_node);
+> +#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
+> +	si->total_data_blocks_alloc = atomic64_read(&sbi->total_data_alloc);
+> +#endif
+>  	si->ndirty_node = get_pages(sbi, F2FS_DIRTY_NODES);
+>  	si->ndirty_dent = get_pages(sbi, F2FS_DIRTY_DENTS);
+>  	si->ndirty_meta = get_pages(sbi, F2FS_DIRTY_META);
+> @@ -373,6 +376,10 @@ static int stat_show(struct seq_file *s, void *v)
+>  			seq_printf(s, "Utilization: %u%% (%u valid blocks)\n",
+>  				si->utilization, si->valid_count);
+>  
+> +#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
+> +		seq_printf(s, "  - Data Block Allocated: %llu\n",
+> +			   si->total_data_blocks_alloc);
+> +#endif
+>  		seq_printf(s, "  - Node: %u (Inode: %u, ",
+>  			   si->valid_node_count, si->valid_inode_count);
+>  		seq_printf(s, "Other: %u)\n  - Data: %u\n",
 > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index f0833638f59e..6891467fdb6a 100644
+> index e6355a5683b7..686f09846de4 100644
 > --- a/fs/f2fs/f2fs.h
 > +++ b/fs/f2fs/f2fs.h
-> @@ -372,6 +372,8 @@ struct discard_cmd {
->  	int error;			/* bio error */
->  	spinlock_t lock;		/* for state/bio_ref updating */
->  	unsigned short bio_ref;		/* bio reference count */
-> +	struct discard_cmd_control *dcc; /* global discard cmd control */
-> +	ktime_t submit_start;		/* submit start time */
->  };
+> @@ -1807,6 +1807,10 @@ struct f2fs_sb_info {
+>  	u64 sectors_written_start;
+>  	u64 kbytes_written;
 >  
->  enum {
-> @@ -415,6 +417,8 @@ struct discard_cmd_control {
->  	unsigned int max_ordered_discard;	/* maximum discard granularity issued by lba order */
->  	unsigned int undiscard_blks;		/* # of undiscard blocks */
->  	unsigned int next_pos;			/* next discard position */
-> +	spinlock_t discard_time_lock;	/* for discard time statistics */
-> +	ktime_t discard_time_avg;		/* issued discard cmd avg time */
->  	atomic_t issued_discard;		/* # of issued discard */
->  	atomic_t queued_discard;		/* # of queued discard */
->  	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
-> @@ -3883,6 +3887,7 @@ struct f2fs_stat_info {
->  	int nr_dio_read, nr_dio_write;
->  	unsigned int io_skip_bggc, other_skip_bggc;
->  	int nr_flushing, nr_flushed, flush_list_empty;
-> +	ktime_t	discard_avg;
->  	int nr_discarding, nr_discarded;
->  	int nr_discard_cmd;
->  	unsigned int undiscard_blks;
+> +#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
+> +	atomic64_t total_data_alloc;
+> +#endif
+> +
+>  	/* Reference to checksum algorithm driver via cryptoapi */
+>  	struct crypto_shash *s_chksum_driver;
+>  
+> @@ -3858,6 +3862,9 @@ struct f2fs_stat_info {
+>  	int main_area_segs, main_area_sections, main_area_zones;
+>  	unsigned long long hit_largest, hit_cached, hit_rbtree;
+>  	unsigned long long hit_total, total_ext;
+> +#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
+> +	unsigned long long total_data_blocks_alloc;
+> +#endif
+>  	int ext_tree, zombie_tree, ext_node;
+>  	int ndirty_node, ndirty_dent, ndirty_meta, ndirty_imeta;
+>  	int ndirty_data, ndirty_qdata;
+> @@ -4166,6 +4173,14 @@ void f2fs_init_extent_cache_info(struct f2fs_sb_info *sbi);
+>  int __init f2fs_create_extent_cache(void);
+>  void f2fs_destroy_extent_cache(void);
+>  
+> +#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
+> +/*
+> + * block_age.c
+> + */
+> +void f2fs_init_block_age_info(struct f2fs_sb_info *sbi);
+> +void f2fs_inc_block_alloc_count(struct f2fs_sb_info *sbi, int type);
+> +#endif
+> +
+>  /*
+>   * sysfs.c
+>   */
 > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 8b0b76550578..dd67e936615a 100644
+> index acf3d3fa4363..0cf022fd3560 100644
 > --- a/fs/f2fs/segment.c
 > +++ b/fs/f2fs/segment.c
-> @@ -936,6 +936,7 @@ static struct discard_cmd *__create_discard_cmd(struct f2fs_sb_info *sbi,
->  	list_add_tail(&dc->list, pend_list);
->  	spin_lock_init(&dc->lock);
->  	dc->bio_ref = 0;
-> +	dc->dcc = dcc;
->  	atomic_inc(&dcc->discard_cmd_cnt);
->  	dcc->undiscard_blks += len;
+> @@ -3280,6 +3280,10 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+>  	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+>  	locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
 >  
-> @@ -1005,9 +1006,13 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi,
->  static void f2fs_submit_discard_endio(struct bio *bio)
->  {
->  	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
-> +	struct discard_cmd_control *dcc = dc->dcc;
->  	unsigned long flags;
-> +	ktime_t submit_time;
-> +	int nr_discarded;
->  
->  	spin_lock_irqsave(&dc->lock, flags);
-> +	submit_time = ktime_sub(ktime_get(), dc->submit_start);
->  	if (!dc->error)
->  		dc->error = blk_status_to_errno(bio->bi_status);
->  	dc->bio_ref--;
-> @@ -1017,6 +1022,13 @@ static void f2fs_submit_discard_endio(struct bio *bio)
->  	}
->  	spin_unlock_irqrestore(&dc->lock, flags);
->  	bio_put(bio);
+> +#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
+> +	f2fs_inc_block_alloc_count(sbi, type);
+> +#endif
 > +
-> +	spin_lock_irqsave(&dcc->discard_time_lock, flags);
-> +	nr_discarded = atomic_read(&dcc->issued_discard);
-> +	dcc->discard_time_avg = div_u64(ktime_add(nr_discarded * dcc->discard_time_avg, submit_time),
-> +									nr_discarded + 1);
-> +	atomic_inc(&dcc->issued_discard);
-> +	spin_unlock_irqrestore(&dcc->discard_time_lock, flags);
->  }
+>  	up_write(&sit_i->sentry_lock);
 >  
->  static void __check_sit_bitmap(struct f2fs_sb_info *sbi,
-> @@ -1165,6 +1177,7 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
->  		 * right away
->  		 */
->  		spin_lock_irqsave(&dc->lock, flags);
-> +		dc->submit_start = ktime_get();
->  		if (last)
->  			dc->state = D_SUBMIT;
->  		else
-> @@ -1184,8 +1197,6 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
->  		bio->bi_opf |= flag;
->  		submit_bio(bio);
+>  	if (page && IS_NODESEG(type)) {
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 3834ead04620..bf799d92282a 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -4475,6 +4475,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
 >  
-> -		atomic_inc(&dcc->issued_discard);
-> -
->  		f2fs_update_iostat(sbi, NULL, FS_DISCARD, 1);
+>  	f2fs_join_shrinker(sbi);
 >  
->  		lstart += len;
-> @@ -2076,9 +2087,11 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
->  	INIT_LIST_HEAD(&dcc->wait_list);
->  	INIT_LIST_HEAD(&dcc->fstrim_list);
->  	mutex_init(&dcc->cmd_lock);
-> +	spin_lock_init(&dcc->discard_time_lock);
->  	atomic_set(&dcc->issued_discard, 0);
->  	atomic_set(&dcc->queued_discard, 0);
->  	atomic_set(&dcc->discard_cmd_cnt, 0);
-> +	dcc->discard_time_avg = 0;
->  	dcc->nr_discards = 0;
->  	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
->  	dcc->max_discard_request = DEF_MAX_DISCARD_REQUEST;
+> +#ifdef CONFIG_F2FS_FS_DATA_SEPARATION
+> +	f2fs_init_block_age_info(sbi);
+> +#endif
+> +
+>  	f2fs_tuning_parameters(sbi);
+>  
+>  	f2fs_notice(sbi, "Mounted with checkpoint version = %llx",
 > -- 
-> 2.25.1
+> 2.36.1
 
 
 _______________________________________________
