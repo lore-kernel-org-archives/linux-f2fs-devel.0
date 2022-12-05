@@ -4,129 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 47292C4321E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Dec 2022 14:56:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96E37C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Dec 2022 18:55:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p2CtR-0002j6-OY;
-	Mon, 05 Dec 2022 14:56:29 +0000
+	id 1p2GcH-00071T-VM;
+	Mon, 05 Dec 2022 18:55:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <frank.li@vivo.com>) id 1p2CtQ-0002iv-N2
+ (envelope-from <jaegeuk@kernel.org>) id 1p2GcG-00070p-9r
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Dec 2022 14:56:28 +0000
+ Mon, 05 Dec 2022 18:55:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
- :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=qwZPEk0/yDwOeWJJRjEiTYic+YzaSVaIcjeYboXWcow=; b=V9Jc6wvXpSIKqdGH29iqZXli1N
- mzXq0J8rwhACCmEQIPcoWjmLR6I8B7oNOz/r9KPuJQh+9FCRdyAjaHWk8vR6new0KVAJeql+QoRPj
- 5G0JT+/xbJFutJInrnGBLDnRGE16f8voZJJhzZE4S5YSmpVxd5LBQ6hXA8hDZo4kCHZQ=;
+ bh=3cix26N9Zg86KL3M0MvRa5UR9flJlor+STlD8ap2XNk=; b=ipL1nHSy0nXNm4Y+WuwKbqnWZ5
+ S+ExR1a7ZmPKO9ziQTrv1HMCKoqGU0Hk1m8GdPpIQKWCk1KX73SykCEfAw463snMWrMUWgWjULxb7
+ od9CMoW+n04v9VTf6XLNU37pesS9shKFC4IJdAKi77yeNN5VSHEAis+/bsUMF4PugAmc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Date:
- Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=qwZPEk0/yDwOeWJJRjEiTYic+YzaSVaIcjeYboXWcow=; b=W
- Nd03AAitTR5KeXzvrLvQhBLbVRpcGXSiEI98lKRXgvW9qAkyxHX5FHixGKR80Ef/BPHwpxhOxmHA7
- ifZRZ+9eHBE235ORuTDY58XRe/AR/QLKixXwVyWiYX8p2Cc7UgU7dkudJCG9VaWk9qIDPv9lYiteq
- uSUBEVXcx84zA5KE=;
-Received: from mail-psaapc01on2126.outbound.protection.outlook.com
- ([40.107.255.126] helo=APC01-PSA-obe.outbound.protection.outlook.com)
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=3cix26N9Zg86KL3M0MvRa5UR9flJlor+STlD8ap2XNk=; b=IbXy9IJbbpOmfXcBwuvMEvGfiG
+ WNAEUX0T3R7GaQByvaRv9npyop6wlW3w4mrJUSdF5TVkw3Ef5cEl04KVI4Q4RCe49xMZ81xlzeV2F
+ YO3XGTibYx8COlSLkMldAnr4ebAhX9rmP3rGGWPojokXPk7yxXeXFKy19itoQI259uRk=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p2CtJ-006tSB-Fh for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Dec 2022 14:56:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HbRTuZPb9Oxh9wMNZlX2MFdygJSgt/H/mAMzvgjAKKVzMUSutGNUhc7gzlsfgO///JAZFuNuF231F7ESaIzZubMw5z3jM+sYoJwMzf1BdKjIrR/kZcXAGo/T7gBEM4cahK8lChZXIcbmoDC4EhaQ+T6UnBkpMriyLTq0ck3F1Nk5102kZygeJQc/rJwjqlVOrOYEEcO8kj4EzNTcpwNGlSoMUpiCa50tnsAARCeZd8ZO8btrlvHTPTi0ZuVf76X2VEn/95QbHPmE5lVRQH+JwqnacZh+J+jKSIjaf92PrNwhdAdsni4hu2o8YloWeK5HJR96hyX7hrd/zUz6iSzgcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qwZPEk0/yDwOeWJJRjEiTYic+YzaSVaIcjeYboXWcow=;
- b=J9Bis7fg3Iq5zs0NdMoW/T/eGgMJvsfPEZNpGxAwv1/NJMh+jwlxIeGpOC/eJXwvtPZ8z1OXHgQkE+xWalsSH1isMGFHtG6RRcrUV4fuExIVKPfH+IwAumEVtdIjLHVLq5vfs41XY6cyzzSfg4swg8p4OsXxBA6Fw9PQ7H7yhf6KtHjlTGjZEJKKTV2P4DKlNnyYPgkExnTrwCaHzTgRZiM2eJJ8pW+wcZYTql7EO/gKuoFZ94wJWYEZfSlCG6LcjSvAjnS8DHByV7xvlA6WmLXoTunrm5xLRn7X3NBYJN+cyK7ZYHn6JmeEvNGlrm/xNroAkS3IJW3iUf5rYozByA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qwZPEk0/yDwOeWJJRjEiTYic+YzaSVaIcjeYboXWcow=;
- b=bcaWHSyGxz22YR0Djujrq8MK24gY4KsAtvxrxFS+941pF+oWpqzOYHVoqZhPfk8obJEN1RKgcNrTo3ndzjvho5mvtJsVE2RDu8J4pCNFyqkm4j0rTZqTSk4c+M0TLivXJHsEAQZtpFZTnJkB3rV9ORtnoM+AsBFKRYFSJCruVRgPVR7GTQsufvnFx0lGUk0fvRVKzA46c9hDa+A0xBHtacf44Bo/dc2yLTmdoUAnp2ruIGDcpuaigmzXYMY0MZhfvsaXDzbuEBvTe5t+f1WuyiBO4NZ2tcS15Sqm87pmKjq4H38/VyAZwOHMAgQovUhC4mgYINfzrKZL7L47c8BlSw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB5275.apcprd06.prod.outlook.com (2603:1096:400:1f5::6)
- by TYZPR06MB4015.apcprd06.prod.outlook.com (2603:1096:400:28::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.14; Mon, 5 Dec
- 2022 14:56:13 +0000
-Received: from TYZPR06MB5275.apcprd06.prod.outlook.com
- ([fe80::1a6b:98db:3289:3369]) by TYZPR06MB5275.apcprd06.prod.outlook.com
- ([fe80::1a6b:98db:3289:3369%8]) with mapi id 15.20.5880.013; Mon, 5 Dec 2022
- 14:56:13 +0000
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Mon,  5 Dec 2022 22:56:03 +0800
-Message-Id: <20221205145603.70779-1-frank.li@vivo.com>
-X-Mailer: git-send-email 2.35.1
-X-ClientProxiedBy: SG2PR02CA0130.apcprd02.prod.outlook.com
- (2603:1096:4:188::8) To TYZPR06MB5275.apcprd06.prod.outlook.com
- (2603:1096:400:1f5::6)
+ id 1p2GcE-0071oz-9F for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 05 Dec 2022 18:55:00 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id D5589B811EF
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon,  5 Dec 2022 18:54:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F784C4347C;
+ Mon,  5 Dec 2022 18:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1670266490;
+ bh=GWLnt4Hpfc9of2Zu1Cv4iHRoSVmDRpLn3t9QCM1g0vQ=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=XEArKJECeifxlCS/uezFz28NIu+J/6VveiECr5cV53wpZqo+rqROZu5avQnOcnVJB
+ Aj4GY0DDrdWmdw/NcbMUKFpSxTdXLfMsZX9HEh5YtxXDdbf6TFbroKE2tOXTkZvQjP
+ saOXiAsJzgrGUHQ2aOzXAIaHBnoAv5nikfIJ4lbMhci65vr2Efw4Tyiu9167EIrs+t
+ IcLte5j1hp4/62ieOOf1sZzqMteLhFcPmMrtk4RCJnFpBENMBi1bo3KJ7vcTxGFqUc
+ ghb3cZpjJA9zQeg2oBLbBZeFWkcS4avx85HEObikD3co9SYlKletxW5pWSTk9gmHLA
+ mAOo34P7F7cgA==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Mon,  5 Dec 2022 10:54:29 -0800
+Message-Id: <20221205185433.3479699-2-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.39.0.rc0.267.gcb52ba06e7-goog
+In-Reply-To: <20221205185433.3479699-1-jaegeuk@kernel.org>
+References: <20221205185433.3479699-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB5275:EE_|TYZPR06MB4015:EE_
-X-MS-Office365-Filtering-Correlation-Id: c2d6fd88-fe49-4986-b863-08dad6d0da4b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: udJCzo3SZOhmgMv/AbCMJcnBRQLdCJ96RMnIxbodlq41jVK8qKo8iknZVetSOaW4B/rbbXMLMl3coxNga2jIs4MN2LRd+d9yu5gMzg0jjVJMCKfjj5Yc/eLzimPVyM3fFVJVGG3f7wbZA6JTGWSj6KCQTdUSQ977BI0FuxnS46Mz2UactKzxR3Kjqv9fi5hLuTxsasN7IvhnCMGwyopJez0PE9/WZmKABYtDkuk/KfzXBbPHzYMzI6o65V6KgIu5H+UuZT6wKil/Auo6jLyh5FedtEV3DU606e8006mvOneKnwtwM7G7WYGzhZP07V7HTY8/QsNZ4GSjHLlUbcGhOB/BbBtaZKawjauM/DN/k21BmDUL7rRO8GJCmZoYPOSCQZf8HoD50/HGa39hKSKg5vLhSob38be5Iakf64Nv0KeStd1HWiPubeQDyq7qf8MLai05NzqygJf58QpHkRYAmhiquyM8JoDO+UOypGlrEabi/L6VyWAFhg4hneOyh8XTzeQXhMa7sCLwYzvX0h5JBo0uLFKAPxd5bWgA3/u4JxcxPYP0E40ceF9jSlTv1ljrcmkAJ4n9yNE5x6yThGVNuYjKvsa8IBatsPyKVoHZUfmMWeKF6I3GfFa5gVBozPJ7nQ3PWdAu+n/01+boWursY8d1HF2BbM+f+2rhZOmEmjOYBLGePBdOhUKsmlAwimQ8
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:TYZPR06MB5275.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230022)(4636009)(376002)(366004)(396003)(346002)(136003)(39860400002)(451199015)(83380400001)(38350700002)(38100700002)(4744005)(5660300002)(41300700001)(2906002)(8936002)(4326008)(86362001)(8676002)(52116002)(6506007)(6512007)(186003)(26005)(107886003)(6666004)(1076003)(316002)(2616005)(66946007)(66476007)(66556008)(478600001)(6486002)(36756003);
- DIR:OUT; SFP:1102; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tp/JBY5jBjydYP4qTci3r2+E8ZQkIunJLvnn3fy60cKKIw9rfKP74RnYIBbN?=
- =?us-ascii?Q?PeLUdk5rCo9WBy7HWf170T8EpS9b7ACXpn/kDTBRXRQMXQhort4moiy1cxfI?=
- =?us-ascii?Q?WqkA8lXMMcS997GSEr2gWfETAL3U+ETz1+yWFCfMKML9E09p+N9NLR3wSXzk?=
- =?us-ascii?Q?rlmbsdmrFOc3Mkq0tz7gbuv0Sw8IajeKMi+Lxsb1Ngo60ubxDtpCMx42WFai?=
- =?us-ascii?Q?o1w5tPiL/aiFM9i2WFXm30nL0poRnY1VXXOO3fXjhh89k5QtQ9S0tTe8+X7i?=
- =?us-ascii?Q?kLZszm+kkojJ4wci6dvmfMt558ej2C8WEyrYDSUZVJSeL4mjznDa/AzlD2ZV?=
- =?us-ascii?Q?VSuNeCExkkkGYVBhTK9X47WaT5MxF5J/2L+FVKqlUmY1uUOZfvSXTMBqemZ6?=
- =?us-ascii?Q?0Ypi995OC3M2yYtS7kC9Tg31Vm/fvVIXcYuKR5MoIscYJ10BC9Isxh9172T4?=
- =?us-ascii?Q?jSNfSFN7E/EM+BREcpgfTnplkkdOPrsK3URH+BiME0L+bf5iZPCvYDNMJZfJ?=
- =?us-ascii?Q?1KkGne4rGtjNqKV/fI2iSL5yH1rpcTqxf7AbjFSSjOf2cV48vN2nhj7DsfbY?=
- =?us-ascii?Q?/bYpCD2c8kUkrLHKKK223W3qMJhNKuvVntcUat1a7+1s9lIOStOZZSacQQ0b?=
- =?us-ascii?Q?1Ml5hCJm4fz+eJ63Rh8KGLbFwJ9qZTBpC+5RDCMUraOqrkAqnpXyXvRl1Rlo?=
- =?us-ascii?Q?GpCs5EwztHCGLe4+SzKs77bS/qk6wfhH8h+gikqyLl3Y2tPYngZR7isVl/Zq?=
- =?us-ascii?Q?3lpb7B6De2j+lrzRroL83u5F+xSRmDaTGmo7qRv8FwUK4mTqEoJG8qVzqtsI?=
- =?us-ascii?Q?Q4DQcXTDyUhhnmeB8xNl+k/0JB05HU2fbCByhv/ALqt8pv9SDdkEctDUX74N?=
- =?us-ascii?Q?zhEu56PQd4UvW8Qy3qLYCn1t8aED4Q+hRIFrnGZKA9FjjeJFlrqtJO+DRhLC?=
- =?us-ascii?Q?Ev9V790GR31frBa0TLWqXOS/JJIEIb/QXmckz/8q1zBs5FL07tMgfxgRDufn?=
- =?us-ascii?Q?+XKA3zDYDkvD+yVSkfGOqLErQllmj5YqsMHH2LD/JHVe5VDPM6ouBsWmzQkz?=
- =?us-ascii?Q?+w5AJFd8g+nC1C+qeUq3HOeO8c+aNn10rgUorxMCQY14VwFg2OcBhEzllwQP?=
- =?us-ascii?Q?hFbJNbcyFTauwm3yybVeh65JqtsTcmE4ZH/UTDzg4ba9ZWNl3gLy4jt8yYwP?=
- =?us-ascii?Q?mdL9xaF1qlzgu0KqpSBiT11FM6E9KdBdLsd2cspRSJde7eJATZ/OqgIUYrS7?=
- =?us-ascii?Q?WTVmH0sSeBCDlQ996SXpTN65imAcNFywt+OntO3zqtMkpt51aSYjDpwqOOFn?=
- =?us-ascii?Q?l72NAFplOQih40rHwZ6fag18LPYfeDSpq6D8cHPh/mHTp/J/w8Kk9WPRkm5F?=
- =?us-ascii?Q?TjQ/zjTR7J97OVLYzPhlRHELXka+WqmEWsm+kgOkNCh6m9LrT84ylmlLPm9g?=
- =?us-ascii?Q?tVqTbaV00e7U2bDSFbvzTTTcXMvDYMo+KetEA5sCy5BvhL/HqkFZkYUIT9VG?=
- =?us-ascii?Q?G0/JgtAD19+yfY9hFzd3A0WJ+29IlqtqrBmcy27UTLPbFMerlKYN6gujlX7K?=
- =?us-ascii?Q?Zh67CBogTJ3W8k2wHIyv0lWMahp7BkkzLtSV3Rjn?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2d6fd88-fe49-4986-b863-08dad6d0da4b
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB5275.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2022 14:56:13.3564 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HA9u29/Hl9OvHXg5TKnDDwDc4JnsTpt+2kocUGEfp4pkbBFvTKPG2ijvoK1sQyiLEH33BHnAhRRgwnEOC2k/MQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB4015
-X-Headers-End: 1p2CtJ-006tSB-Fh
-Subject: [f2fs-dev] [PATCH] f2fs: fix iostat parameter for discard
+X-Headers-End: 1p2GcE-0071oz-9F
+Subject: [f2fs-dev] [PATCH 2/6] f2fs: move internal functions into
+ extent_cache.c
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -138,41 +82,253 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Yangtao Li via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Yangtao Li <frank.li@vivo.com>
-Cc: Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Just like other data we count uses the number of bytes as the basic unit,
-but discard uses the number of cmds as the statistical unit. In fact the
-discard command contains the number of blocks, so let's change to the
-number of bytes as the base unit.
+No functional change.
 
-Fixes: b0af6d491a6b ("f2fs: add app/fs io stat")
-
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/extent_cache.c | 88 +++++++++++++++++++++++++++++++++++++-----
+ fs/f2fs/f2fs.h         | 69 +--------------------------------
+ 2 files changed, 81 insertions(+), 76 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9486ca49ecb1..bc262e17b279 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1181,7 +1181,7 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 8cd87aee0292..2a8e31e6d518 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -15,6 +15,77 @@
+ #include "node.h"
+ #include <trace/events/f2fs.h>
  
- 		atomic_inc(&dcc->issued_discard);
++static void __set_extent_info(struct extent_info *ei,
++				unsigned int fofs, unsigned int len,
++				block_t blk, bool keep_clen)
++{
++	ei->fofs = fofs;
++	ei->blk = blk;
++	ei->len = len;
++
++	if (keep_clen)
++		return;
++
++#ifdef CONFIG_F2FS_FS_COMPRESSION
++	ei->c_len = 0;
++#endif
++}
++
++static bool f2fs_may_extent_tree(struct inode *inode)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	/*
++	 * for recovered files during mount do not create extents
++	 * if shrinker is not registered.
++	 */
++	if (list_empty(&sbi->s_list))
++		return false;
++
++	if (!test_opt(sbi, READ_EXTENT_CACHE) ||
++			is_inode_flag_set(inode, FI_NO_EXTENT) ||
++			(is_inode_flag_set(inode, FI_COMPRESSED_FILE) &&
++			 !f2fs_sb_has_readonly(sbi)))
++		return false;
++
++	return S_ISREG(inode->i_mode);
++}
++
++static void __try_update_largest_extent(struct extent_tree *et,
++						struct extent_node *en)
++{
++	if (en->ei.len <= et->largest.len)
++		return;
++
++	et->largest = en->ei;
++	et->largest_updated = true;
++}
++
++static bool __is_extent_mergeable(struct extent_info *back,
++				struct extent_info *front)
++{
++#ifdef CONFIG_F2FS_FS_COMPRESSION
++	if (back->c_len && back->len != back->c_len)
++		return false;
++	if (front->c_len && front->len != front->c_len)
++		return false;
++#endif
++	return (back->fofs + back->len == front->fofs &&
++			back->blk + back->len == front->blk);
++}
++
++static bool __is_back_mergeable(struct extent_info *cur,
++				struct extent_info *back)
++{
++	return __is_extent_mergeable(back, cur);
++}
++
++static bool __is_front_mergeable(struct extent_info *cur,
++				struct extent_info *front)
++{
++	return __is_extent_mergeable(cur, front);
++}
++
+ static struct rb_entry *__lookup_rb_tree_fast(struct rb_entry *cached_re,
+ 							unsigned int ofs)
+ {
+@@ -591,16 +662,16 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
  
--		f2fs_update_iostat(sbi, NULL, FS_DISCARD, 1);
-+		f2fs_update_iostat(sbi, NULL, FS_DISCARD, len * F2FS_BLKSIZE);
+ 		if (end < org_end && org_end - end >= F2FS_MIN_EXTENT_LEN) {
+ 			if (parts) {
+-				set_extent_info(&ei, end,
+-						end - dei.fofs + dei.blk,
+-						org_end - end);
++				__set_extent_info(&ei,
++					end, org_end - end,
++					end - dei.fofs + dei.blk, false);
+ 				en1 = __insert_extent_tree(sbi, et, &ei,
+ 							NULL, NULL, true);
+ 				next_en = en1;
+ 			} else {
+-				en->ei.fofs = end;
+-				en->ei.blk += end - dei.fofs;
+-				en->ei.len -= end - dei.fofs;
++				__set_extent_info(&en->ei,
++					end, en->ei.len - (end - dei.fofs),
++					en->ei.blk + (end - dei.fofs), true);
+ 				next_en = en;
+ 			}
+ 			parts++;
+@@ -632,8 +703,7 @@ static void f2fs_update_extent_tree_range(struct inode *inode,
  
- 		lstart += len;
- 		start += len;
+ 	/* 3. update extent in extent cache */
+ 	if (blkaddr) {
+-
+-		set_extent_info(&ei, fofs, blkaddr, len);
++		__set_extent_info(&ei, fofs, len, blkaddr, false);
+ 		if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
+ 			__insert_extent_tree(sbi, et, &ei,
+ 					insert_p, insert_parent, leftmost);
+@@ -692,7 +762,7 @@ void f2fs_update_extent_tree_range_compressed(struct inode *inode,
+ 	if (en)
+ 		goto unlock_out;
+ 
+-	set_extent_info(&ei, fofs, blkaddr, llen);
++	__set_extent_info(&ei, fofs, llen, blkaddr, true);
+ 	ei.c_len = c_len;
+ 
+ 	if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1c39f8145b61..04fdf010bb77 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -621,7 +621,7 @@ struct rb_entry {
+ struct extent_info {
+ 	unsigned int fofs;		/* start offset in a file */
+ 	unsigned int len;		/* length of the extent */
+-	u32 blk;			/* start block address of the extent */
++	block_t blk;			/* start block address of the extent */
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	unsigned int c_len;		/* physical extent length of compressed blocks */
+ #endif
+@@ -846,17 +846,6 @@ static inline void set_raw_read_extent(struct extent_info *ext,
+ 	i_ext->len = cpu_to_le32(ext->len);
+ }
+ 
+-static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+-						u32 blk, unsigned int len)
+-{
+-	ei->fofs = fofs;
+-	ei->blk = blk;
+-	ei->len = len;
+-#ifdef CONFIG_F2FS_FS_COMPRESSION
+-	ei->c_len = 0;
+-#endif
+-}
+-
+ static inline bool __is_discard_mergeable(struct discard_info *back,
+ 			struct discard_info *front, unsigned int max_len)
+ {
+@@ -876,41 +865,6 @@ static inline bool __is_discard_front_mergeable(struct discard_info *cur,
+ 	return __is_discard_mergeable(cur, front, max_len);
+ }
+ 
+-static inline bool __is_extent_mergeable(struct extent_info *back,
+-						struct extent_info *front)
+-{
+-#ifdef CONFIG_F2FS_FS_COMPRESSION
+-	if (back->c_len && back->len != back->c_len)
+-		return false;
+-	if (front->c_len && front->len != front->c_len)
+-		return false;
+-#endif
+-	return (back->fofs + back->len == front->fofs &&
+-			back->blk + back->len == front->blk);
+-}
+-
+-static inline bool __is_back_mergeable(struct extent_info *cur,
+-						struct extent_info *back)
+-{
+-	return __is_extent_mergeable(back, cur);
+-}
+-
+-static inline bool __is_front_mergeable(struct extent_info *cur,
+-						struct extent_info *front)
+-{
+-	return __is_extent_mergeable(cur, front);
+-}
+-
+-extern void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync);
+-static inline void __try_update_largest_extent(struct extent_tree *et,
+-						struct extent_node *en)
+-{
+-	if (en->ei.len > et->largest.len) {
+-		et->largest = en->ei;
+-		et->largest_updated = true;
+-	}
+-}
+-
+ /*
+  * For free nid management
+  */
+@@ -2581,6 +2535,7 @@ static inline block_t __start_sum_addr(struct f2fs_sb_info *sbi)
+ 	return le32_to_cpu(F2FS_CKPT(sbi)->cp_pack_start_sum);
+ }
+ 
++extern void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync);
+ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 					struct inode *inode, bool is_inode)
+ {
+@@ -4403,26 +4358,6 @@ F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
+ F2FS_FEATURE_FUNCS(compression, COMPRESSION);
+ F2FS_FEATURE_FUNCS(readonly, RO);
+ 
+-static inline bool f2fs_may_extent_tree(struct inode *inode)
+-{
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-
+-	if (!test_opt(sbi, READ_EXTENT_CACHE) ||
+-			is_inode_flag_set(inode, FI_NO_EXTENT) ||
+-			(is_inode_flag_set(inode, FI_COMPRESSED_FILE) &&
+-			 !f2fs_sb_has_readonly(sbi)))
+-		return false;
+-
+-	/*
+-	 * for recovered files during mount do not create extents
+-	 * if shrinker is not registered.
+-	 */
+-	if (list_empty(&sbi->s_list))
+-		return false;
+-
+-	return S_ISREG(inode->i_mode);
+-}
+-
+ #ifdef CONFIG_BLK_DEV_ZONED
+ static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+ 				    block_t blkaddr)
 -- 
-2.25.1
+2.39.0.rc0.267.gcb52ba06e7-goog
 
 
 
