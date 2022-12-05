@@ -4,71 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A47EAC4321E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Dec 2022 18:55:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96FECC4708D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Dec 2022 18:55:17 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p2GcT-0007A5-To;
-	Mon, 05 Dec 2022 18:55:13 +0000
+	id 1p2GcW-0007vp-FG;
+	Mon, 05 Dec 2022 18:55:16 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1p2GcJ-00079i-Q8
+ (envelope-from <jaegeuk@kernel.org>) id 1p2GcG-0007vK-Mj
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Dec 2022 18:55:03 +0000
+ Mon, 05 Dec 2022 18:55:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=S+ftk/33ak27DCJeAb7bFFnQxlJ+JQ5N6OYVqUQ/seU=; b=DJA/cmOVfIEcRCku9Ki/ROOFkZ
- lrjyYYHH03KHq2NROijT8y6WH2ZbT/yRmnhw3LgpwSicnB7Q4TpZoJKLAz1sn1YbpnxufRPc/TfqV
- 9d1I3MV5Z5YOILaquek7LYxv1hEeUSa71uvADTK8ufMmbHyghtrSxxaoPr7pmmHVn1tA=;
+ bh=/8AVgPuoiFr7DGuF6De9UqdgxBUB0NG1s3Q6rLKu4Pk=; b=EOr8oW+BeiiSWEpCXCcsKVAgRf
+ U2+zgxQ34BMM3zPMP0eTZtCdVW06BMVRwv8zPEQyz/p7ZEGG1fQbXg52zZ1oKAL5QZGECeZB3AUZn
+ vAl9ibIhui38l64qZpmROPhhTQQWH2W6W9Np02XjOWTyCoWBX+GZsEMIQUXQdw2g8xkc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=S+ftk/33ak27DCJeAb7bFFnQxlJ+JQ5N6OYVqUQ/seU=; b=k
- rixUkO/Tqcz7cEjzA/OFmAqe/GWIDPt2YpRQGgV13bdUztjqAEhJ3sG5kPOibzIzlMAHL2j7/LWA8
- Rx0oFvaiUB9MJkX7wZDulz48a3VIF8OUuOsKH4FTHC+2FziPxriWp93nELHktypK3u2TiMrifVPPf
- mWwLTFexKF7qz71U=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=/8AVgPuoiFr7DGuF6De9UqdgxBUB0NG1s3Q6rLKu4Pk=; b=Y4X9itqTIRQag8vCU7j86ZJGhr
+ rBLkTJ8rFE0F6CSg0NgfIZI/PxDYuvCJw2xuU3ZuV7kMmY2ZGiWfD0HQ0R2WNUQ4zN/rDNsJqMgb4
+ C5uFVtP8Q53XNGWlmB1SJgFOvwDF5aZQkL/DFbaMTdzmjDeEH0jc8QaX7n7eoEikDKBw=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p2GcD-00076k-Qt for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 05 Dec 2022 18:55:03 +0000
+ id 1p2GcF-0071p0-V1 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 05 Dec 2022 18:55:00 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 70886612FA
+ by dfw.source.kernel.org (Postfix) with ESMTPS id BE83B61303
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  5 Dec 2022 18:54:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9807C433D6;
- Mon,  5 Dec 2022 18:54:49 +0000 (UTC)
+ Mon,  5 Dec 2022 18:54:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 264F6C433D7;
+ Mon,  5 Dec 2022 18:54:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1670266489;
- bh=437LbcUfnuo/BgLD2e3LaAiMFiUyT2NdfywCgO5SUQs=;
- h=From:To:Cc:Subject:Date:From;
- b=cI/goZ3A7Tzy6BdhQQRpTHIYhI2d92B1t/MiFVRHE/wtRMdX+sKSaCHGfwVBCCKGB
- iSejFMdEMy1AdBdR1O6WQti2IOAvXi/YhugtZ8bmSgw22SyOGqsN/njKqe7aTC9eJP
- r4V7mMQKshBmbVRai/0KJMU1W1j0cbypJlQ2jnWQUZUn+62A/qXtVAKcGi6XUoSJ2Y
- 9jdbIBfDprimvW07uhmHGJq4Rb57dJrkmwKmhEAi7ukRM7uKiCMex0PZHtvAeHAIk/
- rKkUV7oEkfHyMHmoYjJaqO+Nnc7w6oDXJyGl0ceQiGyysK5xIhaO1g60qxhysmjA7x
- csQoVJk2vYSVg==
+ s=k20201202; t=1670266493;
+ bh=E+D8xdk5gqXIgVYmLrJvIyPn/PYJmfpR6rUrWPbhCjI=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=QFvBYziK8cRaHdll5daziqREyoc6Qd+2lCufAes2gM0ZsAMnAIsId2e59+3b9ro7d
+ P8Ea0sTJlPte9+ytyq1TxkQ3iTkinlMIHDKVs4j/TxVt2UXm1/7AfLNjX9DW8p2pec
+ Uz6w7Tb/FiWAvTQCj41L7CnFOLhMFJjcWgUWo0xIRhvZ5sAKbC3RfCLRf/NTQi/yQv
+ fN+EXdNTegX+i030gfXk09nkMo3FIRnqiyC1VAiXAoeizFaV7TElE/7ulw3rZUSCoH
+ jol6ogK4qRY5mCtomqNjJhQS02goPcMx0F9QLtzOq6pAs/HKNkWmVMnlU1aynoIUto
+ wiTfzx3GHek2Q==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net
-Date: Mon,  5 Dec 2022 10:54:28 -0800
-Message-Id: <20221205185433.3479699-1-jaegeuk@kernel.org>
+Date: Mon,  5 Dec 2022 10:54:32 -0800
+Message-Id: <20221205185433.3479699-5-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.39.0.rc0.267.gcb52ba06e7-goog
+In-Reply-To: <20221205185433.3479699-1-jaegeuk@kernel.org>
+References: <20221205185433.3479699-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1p2GcD-00076k-Qt
-Subject: [f2fs-dev] [PATCH 1/6] f2fs: specify extent cache for read
- explicitly
+X-Headers-End: 1p2GcF-0071p0-V1
+Subject: [f2fs-dev] [PATCH 5/6] f2fs: allocate the extent_cache by default
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,202 +86,177 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Let's descrbie it's read extent cache.
+Let's allocate it to remove the runtime complexity.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/extent_cache.c |  4 ++--
- fs/f2fs/f2fs.h         | 10 +++++-----
- fs/f2fs/inode.c        |  2 +-
- fs/f2fs/node.c         |  2 +-
- fs/f2fs/node.h         |  2 +-
- fs/f2fs/segment.c      |  4 ++--
- fs/f2fs/super.c        | 16 ++++++++--------
- 7 files changed, 20 insertions(+), 20 deletions(-)
+ fs/f2fs/extent_cache.c | 38 +++++++++++++++++++-------------------
+ fs/f2fs/f2fs.h         |  3 ++-
+ fs/f2fs/inode.c        |  6 ++++--
+ fs/f2fs/namei.c        |  4 ++--
+ 4 files changed, 27 insertions(+), 24 deletions(-)
 
 diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 932c070173b9..8cd87aee0292 100644
+index 654a14ab8977..305f969e3ad1 100644
 --- a/fs/f2fs/extent_cache.c
 +++ b/fs/f2fs/extent_cache.c
-@@ -383,7 +383,7 @@ static void __f2fs_init_extent_tree(struct inode *inode, struct page *ipage)
- 	if (!i_ext || !i_ext->len)
- 		return;
- 
--	get_extent_info(&ei, i_ext);
-+	get_read_extent_info(&ei, i_ext);
- 
- 	write_lock(&et->lock);
- 	if (atomic_read(&et->node_cnt))
-@@ -710,7 +710,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
- 	unsigned int node_cnt = 0, tree_cnt = 0;
- 	int remained;
- 
--	if (!test_opt(sbi, EXTENT_CACHE))
-+	if (!test_opt(sbi, READ_EXTENT_CACHE))
- 		return 0;
- 
- 	if (!atomic_read(&sbi->total_zombie_tree))
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index eb8c27c4e5fc..1c39f8145b61 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -92,7 +92,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
- #define F2FS_MOUNT_FLUSH_MERGE		0x00000400
- #define F2FS_MOUNT_NOBARRIER		0x00000800
- #define F2FS_MOUNT_FASTBOOT		0x00001000
--#define F2FS_MOUNT_EXTENT_CACHE		0x00002000
-+#define F2FS_MOUNT_READ_EXTENT_CACHE	0x00002000
- #define F2FS_MOUNT_DATA_FLUSH		0x00008000
- #define F2FS_MOUNT_FAULT_INJECTION	0x00010000
- #define F2FS_MOUNT_USRQUOTA		0x00080000
-@@ -600,7 +600,7 @@ enum {
- #define F2FS_MIN_EXTENT_LEN	64	/* minimum extent length */
- 
- /* number of extent info in extent cache we try to shrink */
--#define EXTENT_CACHE_SHRINK_NUMBER	128
-+#define READ_EXTENT_CACHE_SHRINK_NUMBER	128
- 
- #define RECOVERY_MAX_RA_BLOCKS		BIO_MAX_VECS
- #define RECOVERY_MIN_RA_BLOCKS		1
-@@ -830,7 +830,7 @@ struct f2fs_inode_info {
- 	loff_t original_i_size;		/* original i_size before atomic write */
- };
- 
--static inline void get_extent_info(struct extent_info *ext,
-+static inline void get_read_extent_info(struct extent_info *ext,
- 					struct f2fs_extent *i_ext)
- {
- 	ext->fofs = le32_to_cpu(i_ext->fofs);
-@@ -838,7 +838,7 @@ static inline void get_extent_info(struct extent_info *ext,
- 	ext->len = le32_to_cpu(i_ext->len);
+@@ -47,20 +47,23 @@ static bool __may_read_extent_tree(struct inode *inode)
+ 	return S_ISREG(inode->i_mode);
  }
  
--static inline void set_raw_extent(struct extent_info *ext,
-+static inline void set_raw_read_extent(struct extent_info *ext,
- 					struct f2fs_extent *i_ext)
+-static bool __may_extent_tree(struct inode *inode, enum extent_type type)
++static bool __init_may_extent_tree(struct inode *inode, enum extent_type type)
  {
- 	i_ext->fofs = cpu_to_le32(ext->fofs);
-@@ -4407,7 +4407,7 @@ static inline bool f2fs_may_extent_tree(struct inode *inode)
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	if (type == EX_READ)
++		return __may_read_extent_tree(inode);
++	return false;
++}
+ 
++static bool __may_extent_tree(struct inode *inode, enum extent_type type)
++{
+ 	/*
+ 	 * for recovered files during mount do not create extents
+ 	 * if shrinker is not registered.
+ 	 */
+-	if (list_empty(&sbi->s_list))
++	if (list_empty(&F2FS_I_SB(inode)->s_list))
+ 		return false;
+ 
+-	if (type == EX_READ)
+-		return __may_read_extent_tree(inode);
+-	return false;
++	return __init_may_extent_tree(inode, type);
+ }
+ 
+ static void __try_update_largest_extent(struct extent_tree *et,
+@@ -439,20 +442,18 @@ static void __drop_largest_extent(struct extent_tree *et,
+ 	}
+ }
+ 
+-/* return true, if inode page is changed */
+-static void __f2fs_init_extent_tree(struct inode *inode, struct page *ipage,
+-							enum extent_type type)
++void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
  {
  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct extent_tree_info *eti = &sbi->extent_tree[type];
+-	struct f2fs_extent *i_ext = ipage ? &F2FS_INODE(ipage)->i_ext : NULL;
++	struct extent_tree_info *eti = &sbi->extent_tree[EX_READ];
++	struct f2fs_extent *i_ext = &F2FS_INODE(ipage)->i_ext;
+ 	struct extent_tree *et;
+ 	struct extent_node *en;
+ 	struct extent_info ei;
  
--	if (!test_opt(sbi, EXTENT_CACHE) ||
-+	if (!test_opt(sbi, READ_EXTENT_CACHE) ||
- 			is_inode_flag_set(inode, FI_NO_EXTENT) ||
- 			(is_inode_flag_set(inode, FI_COMPRESSED_FILE) &&
- 			 !f2fs_sb_has_readonly(sbi)))
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 577f109b4e1d..2c705c60019b 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -629,7 +629,7 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
- 
- 	if (et) {
- 		read_lock(&et->lock);
--		set_raw_extent(&et->largest, &ri->i_ext);
-+		set_raw_read_extent(&et->largest, &ri->i_ext);
- 		read_unlock(&et->lock);
- 	} else {
- 		memset(&ri->i_ext, 0, sizeof(ri->i_ext));
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b9ee5a1176a0..84b147966080 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -85,7 +85,7 @@ bool f2fs_available_free_memory(struct f2fs_sb_info *sbi, int type)
- 						sizeof(struct ino_entry);
- 		mem_size >>= PAGE_SHIFT;
- 		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
--	} else if (type == EXTENT_CACHE) {
-+	} else if (type == READ_EXTENT_CACHE) {
- 		mem_size = (atomic_read(&sbi->total_ext_tree) *
- 				sizeof(struct extent_tree) +
- 				atomic_read(&sbi->total_ext_node) *
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 3c09cae058b0..0aa48704c77a 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -146,7 +146,7 @@ enum mem_type {
- 	NAT_ENTRIES,	/* indicates the cached nat entry */
- 	DIRTY_DENTS,	/* indicates dirty dentry pages */
- 	INO_ENTRIES,	/* indicates inode entries */
--	EXTENT_CACHE,	/* indicates extent cache */
-+	READ_EXTENT_CACHE,	/* indicates read extent cache */
- 	DISCARD_CACHE,	/* indicates memory of cached discard cmds */
- 	COMPRESS_PAGE,	/* indicates memory of cached compressed pages */
- 	BASE_CHECK,	/* check kernel status */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9486ca49ecb1..51de358bc452 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -449,8 +449,8 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi, bool from_bg)
- 		return;
- 
- 	/* try to shrink extent cache when there is no enough memory */
--	if (!f2fs_available_free_memory(sbi, EXTENT_CACHE))
--		f2fs_shrink_extent_tree(sbi, EXTENT_CACHE_SHRINK_NUMBER);
-+	if (!f2fs_available_free_memory(sbi, READ_EXTENT_CACHE))
-+		f2fs_shrink_extent_tree(sbi, READ_EXTENT_CACHE_SHRINK_NUMBER);
- 
- 	/* check the # of cached NAT entries */
- 	if (!f2fs_available_free_memory(sbi, NAT_ENTRIES))
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 79bf1faf4161..10bd03bbefec 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -814,10 +814,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			set_opt(sbi, FASTBOOT);
- 			break;
- 		case Opt_extent_cache:
--			set_opt(sbi, EXTENT_CACHE);
-+			set_opt(sbi, READ_EXTENT_CACHE);
- 			break;
- 		case Opt_noextent_cache:
--			clear_opt(sbi, EXTENT_CACHE);
-+			clear_opt(sbi, READ_EXTENT_CACHE);
- 			break;
- 		case Opt_noinline_data:
- 			clear_opt(sbi, INLINE_DATA);
-@@ -1954,10 +1954,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",barrier");
- 	if (test_opt(sbi, FASTBOOT))
- 		seq_puts(seq, ",fastboot");
--	if (test_opt(sbi, EXTENT_CACHE))
--		seq_puts(seq, ",extent_cache");
-+	if (test_opt(sbi, READ_EXTENT_CACHE))
-+		seq_puts(seq, ",read_extent_cache");
- 	else
--		seq_puts(seq, ",noextent_cache");
-+		seq_puts(seq, ",no_read_extent_cache");
- 	if (test_opt(sbi, DATA_FLUSH))
- 		seq_puts(seq, ",data_flush");
- 
-@@ -2076,7 +2076,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	set_opt(sbi, INLINE_XATTR);
- 	set_opt(sbi, INLINE_DATA);
- 	set_opt(sbi, INLINE_DENTRY);
--	set_opt(sbi, EXTENT_CACHE);
-+	set_opt(sbi, READ_EXTENT_CACHE);
- 	set_opt(sbi, NOHEAP);
- 	clear_opt(sbi, DISABLE_CHECKPOINT);
- 	set_opt(sbi, MERGE_CHECKPOINT);
-@@ -2218,7 +2218,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool need_restart_ckpt = false, need_stop_ckpt = false;
- 	bool need_restart_flush = false, need_stop_flush = false;
- 	bool need_restart_discard = false, need_stop_discard = false;
--	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
-+	bool no_read_extent_cache = !test_opt(sbi, READ_EXTENT_CACHE);
- 	bool enable_checkpoint = !test_opt(sbi, DISABLE_CHECKPOINT);
- 	bool no_io_align = !F2FS_IO_ALIGNED(sbi);
- 	bool no_atgc = !test_opt(sbi, ATGC);
-@@ -2308,7 +2308,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+-	if (!__may_extent_tree(inode, type)) {
++	if (!__may_extent_tree(inode, EX_READ)) {
+ 		/* drop largest read extent */
+-		if (type == EX_READ && i_ext && i_ext->len) {
++		if (i_ext && i_ext->len) {
+ 			f2fs_wait_on_page_writeback(ipage, NODE, true, true);
+ 			i_ext->len = 0;
+ 			set_page_dirty(ipage);
+@@ -460,13 +461,11 @@ static void __f2fs_init_extent_tree(struct inode *inode, struct page *ipage,
+ 		goto out;
  	}
  
- 	/* disallow enable/disable extent_cache dynamically */
--	if (no_extent_cache == !!test_opt(sbi, EXTENT_CACHE)) {
-+	if (no_read_extent_cache == !!test_opt(sbi, READ_EXTENT_CACHE)) {
- 		err = -EINVAL;
- 		f2fs_warn(sbi, "switch extent_cache option is not allowed");
- 		goto restore_opts;
+-	et = __grab_extent_tree(inode, type);
++	et = __grab_extent_tree(inode, EX_READ);
+ 
+ 	if (!i_ext || !i_ext->len)
+ 		goto out;
+ 
+-	BUG_ON(type != EX_READ);
+-
+ 	get_read_extent_info(&ei, i_ext);
+ 
+ 	write_lock(&et->lock);
+@@ -486,14 +485,15 @@ static void __f2fs_init_extent_tree(struct inode *inode, struct page *ipage,
+ unlock_out:
+ 	write_unlock(&et->lock);
+ out:
+-	if (type == EX_READ && !F2FS_I(inode)->extent_tree[EX_READ])
++	if (!F2FS_I(inode)->extent_tree[EX_READ])
+ 		set_inode_flag(inode, FI_NO_EXTENT);
+ }
+ 
+-void f2fs_init_extent_tree(struct inode *inode, struct page *ipage)
++void f2fs_init_extent_tree(struct inode *inode)
+ {
+ 	/* initialize read cache */
+-	__f2fs_init_extent_tree(inode, ipage, EX_READ);
++	if (__init_may_extent_tree(inode, EX_READ))
++		__grab_extent_tree(inode, EX_READ);
+ }
+ 
+ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 003b04b10109..ff940cba4600 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4150,7 +4150,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
+ 		bool force, bool *leftmost);
+ bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+ 				struct rb_root_cached *root, bool check_key);
+-void f2fs_init_extent_tree(struct inode *inode, struct page *ipage);
++void f2fs_init_extent_tree(struct inode *inode);
+ void f2fs_drop_extent_tree(struct inode *inode);
+ void f2fs_destroy_extent_node(struct inode *inode);
+ void f2fs_destroy_extent_tree(struct inode *inode);
+@@ -4159,6 +4159,7 @@ int __init f2fs_create_extent_cache(void);
+ void f2fs_destroy_extent_cache(void);
+ 
+ /* read extent cache ops */
++void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage);
+ bool f2fs_lookup_read_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 			struct extent_info *ei);
+ void f2fs_update_read_extent_cache(struct dnode_of_data *dn);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 086f201f15a0..c845c16f97d0 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -392,8 +392,6 @@ static int do_read_inode(struct inode *inode)
+ 	fi->i_pino = le32_to_cpu(ri->i_pino);
+ 	fi->i_dir_level = ri->i_dir_level;
+ 
+-	f2fs_init_extent_tree(inode, node_page);
+-
+ 	get_inline_info(inode, ri);
+ 
+ 	fi->i_extra_isize = f2fs_has_extra_attr(inode) ?
+@@ -479,6 +477,10 @@ static int do_read_inode(struct inode *inode)
+ 	}
+ 
+ 	init_idisk_time(inode);
++
++	/* Need all the flag bits */
++	f2fs_init_read_extent_tree(inode, node_page);
++
+ 	f2fs_put_page(node_page, 1);
+ 
+ 	stat_inc_inline_xattr(inode);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 58a91ce8fe08..46de782c2baa 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -284,8 +284,6 @@ static struct inode *f2fs_new_inode(struct user_namespace *mnt_userns,
+ 	}
+ 	F2FS_I(inode)->i_inline_xattr_size = xattr_size;
+ 
+-	f2fs_init_extent_tree(inode, NULL);
+-
+ 	F2FS_I(inode)->i_flags =
+ 		f2fs_mask_flags(mode, F2FS_I(dir)->i_flags & F2FS_FL_INHERITED);
+ 
+@@ -311,6 +309,8 @@ static struct inode *f2fs_new_inode(struct user_namespace *mnt_userns,
+ 
+ 	f2fs_set_inode_flags(inode);
+ 
++	f2fs_init_extent_tree(inode);
++
+ 	trace_f2fs_new_inode(inode, 0);
+ 	return inode;
+ 
 -- 
 2.39.0.rc0.267.gcb52ba06e7-goog
 
