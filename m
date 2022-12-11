@@ -4,73 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id F30C3C4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Dec 2022 02:52:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DF00BC4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Dec 2022 02:53:10 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p4CS8-0003LG-D8;
-	Sun, 11 Dec 2022 02:52:32 +0000
+	id 1p4CSk-0002oI-45;
+	Sun, 11 Dec 2022 02:53:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1p4CS6-0003L3-OJ
+ (envelope-from <chao@kernel.org>) id 1p4CSj-0002oC-2j
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Dec 2022 02:52:30 +0000
+ Sun, 11 Dec 2022 02:53:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- Subject:From:References:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4uXBbax0pRzc3Gsg708xLPBc3ddVSelMyAflgxqp9JA=; b=DKUu25BLY/FsfTsloFUHQnn95w
- p253LgBYo0FYxF5I238o8CSUAHpAFW4RFhmTt7Uo2nKOxNwd9oeYhdcaXuQgFFIv8AimL3jBj6Fr6
- 7UGXwAFEkWZ5gaJq1860HQRs0OQxPae86E7OXP2c6OEKsR1QDRi7qDKfwECZRqsrJkgo=;
+ bh=aqp3COK2fKuUQA8475eqWxXViDyVr1CqSOxAI1kEZMY=; b=LlEx6uJFFvFr/6SvCX/r6t6XdD
+ kuzCAU24uufUCP9cArF4npPpNJPCU5qlmXMecEMDvpXnnn67Q9qN0zQx1jrTJazPng0q0h30aiQcy
+ BZGfOQZxIRAQJukKaaYgogBfM2FNh9iCjgnjXTBHMWgJNvzZOPSNnToM68ohn37A/JI8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:Subject:From:
- References:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=4uXBbax0pRzc3Gsg708xLPBc3ddVSelMyAflgxqp9JA=; b=e+AEWxWcRvBaoE5mzPO8dtT7vw
- eHSqrwv6SQSVBgbbMs5PnWldBy/+fk8bZzyjz/Wd5aLhU4gqcvtaP5CBXrN8Jqsvm1kjIYadhB/W8
- tsA//MVA2cT7O18mNzOyUo9WsS2ystFXqDBwpUV0AzMWduC/lRFOza2E1XsCW6JmmcHo=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=aqp3COK2fKuUQA8475eqWxXViDyVr1CqSOxAI1kEZMY=; b=QvBhNXs8ZiXYweXhyhQ1Nn847I
+ 6rgG6wPAujGFNwJ3QX7xI0+HAi9QjNzKIrvBtQXy7W0WrjGoTOCxrwYDzc0eWbLvWweY8XYTvlt7a
+ IwX7bSAnhqnMG5k2F5Qonr9v7jANrb6plb8UUCO4Opmz+ksvaCPopGRiqdFEhtICyDgM=;
+Received: from sin.source.kernel.org ([145.40.73.55])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p4CS6-00DScE-4n for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Dec 2022 02:52:30 +0000
+ id 1p4CSf-00DSct-My for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 11 Dec 2022 02:53:09 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id BBA2E60D17;
- Sun, 11 Dec 2022 02:52:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD9BBC433D2;
- Sun, 11 Dec 2022 02:52:22 +0000 (UTC)
+ by sin.source.kernel.org (Postfix) with ESMTPS id 8EC53CE09F1;
+ Sun, 11 Dec 2022 02:52:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C4DC433D2;
+ Sun, 11 Dec 2022 02:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1670727144;
- bh=yVMfp1uldktAIyVGvt7Bwh+o9jSNVgi13RdkbJkMSso=;
- h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
- b=ii8rmZPLgA65CJBwT9eRtatBx4UujWU5YmhkOIbXTyN/p8hD3c0QeM0Yg3XyxuA4e
- 0mS7XyVuhbpQrg8pKgTB2ZgLPak8OBEVwvUCgFjSaapqe5FW2UJay+PoYCYQYFM6Sq
- MuzVq1pq8Cn15ourdetznTtcScCwSQ2h5S5Sy9ukKKZXGAofsvPSKcOjFRKJ+NTWzn
- fKswUWgUgAdMpfXHfO6orI4DhhnWvmLLwaVVDbsq426NjAhjujhkt+vzAZku9ADsWq
- mwUXnCZZY0E5GkGRPbCy2QSvl23+zQboHu97R2eDzsvtulb+0VKDMqruWJFFTF6Jjb
- CMTSQ/WBcXRcQ==
-Message-ID: <810bd221-1f35-db79-e9f3-a521464b3eaf@kernel.org>
-Date: Sun, 11 Dec 2022 10:52:20 +0800
+ s=k20201202; t=1670727173;
+ bh=nisRq5p9DLzuzSIWJsSZIki1q8UKQxwkg+jqQ5Nd/z4=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=KBrkA6E0LlP7rdNpvJYHcbH78mclYWwZnnWXVPxvPK2SN8d+yucpszYOSymv9ckJw
+ wd5jd40VkSTbYl/Jm1WXLKeX0xb23ZtCH0wKn+BUCUq7bMRFpTt3u8i12Bq8om49lW
+ W0JvNzZ1oDLjSHhQp41EkchugLTdtwyotUci5Yifx1/+TWI02mUkvTHypWMSWsiJ/8
+ qYozze92W5noFHYkIdvqqQ0gO9wKS7t4BlDwk7Br3H8wu8fe5rDdei24+5+sZCvOvY
+ PzHGKY7+yv3v7dWQwQhzttzigKVstDD5Lud/k4+GO0sobzi/BbKxXdb9XhWsNUS2Ja
+ Bovk4VXNIR3RA==
+Message-ID: <6c258bab-84fd-6515-6af1-d9fced65c34f@kernel.org>
+Date: Sun, 11 Dec 2022 10:52:50 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.1
 Content-Language: en-US
-To: Yuwei Guan <ssawgyw@gmail.com>, jaegeuk@kernel.org
-References: <20221209112813.73700-1-Yuwei.Guan@zeekrlife.com>
+To: Colin Ian King <colin.i.king@gmail.com>, Jaegeuk Kim
+ <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+References: <20221207134217.2325189-1-colin.i.king@gmail.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20221209112813.73700-1-Yuwei.Guan@zeekrlife.com>
-X-Headers-End: 1p4CS6-00DScE-4n
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do decrease_sleep_time() if any of the
- victims have been selected
+In-Reply-To: <20221207134217.2325189-1-colin.i.king@gmail.com>
+X-Headers-End: 1p4CSf-00DSct-My
+Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix spelling mistake in label:
+ free_bio_enrty_cache -> free_bio_entry_cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,79 +83,20 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2022/12/9 19:28, Yuwei Guan wrote:
-> In non-foreground gc mode, if no victim is selected, the gc process
-> will wait for no_gc_sleep_time before waking up again. In this
-> subsequent time, even though a victim will be selected, the gc process
-> still waits for no_gc_sleep_time before waking up. The configuration
-> of wait_ms is not reasonable.
+On 2022/12/7 21:42, Colin Ian King wrote:
+> There is a spelling mistake in a label name. Fix it.
 > 
-> After any of the victims have been selected, we need to do
-> decrease_sleep_time() to reduce wait_ms.
-> 
-> If it is GC_URGENT_HIGH or GC_URGENT_MID gc mode,
-> wait_ms will keep urgent_sleep_time after executing decrease_sleep_time().
-> 
-> In decrease_sleep_time() wait_time will be reduced to max_sleep_time
-> from no_gc_sleep_time, if *wait is no_gc_sleep_time. And then it goes
-> down in the next step.
-> 
-> Signed-off-by: Yuwei Guan <Yuwei.Guan@zeekrlife.com>
-> ---
->   fs/f2fs/gc.c | 2 ++
->   fs/f2fs/gc.h | 7 ++++++-
->   2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index f0c6506d8975..c023ffeb9268 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -141,6 +141,8 @@ static int gc_thread_func(void *data)
->   			/* don't bother wait_ms by foreground gc */
->   			if (!foreground)
->   				wait_ms = gc_th->no_gc_sleep_time;
-> +		} else {
-> +			decrease_sleep_time(gc_th, &wait_ms);
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Once BGGC selects valid victim, it will go faster and fater?
-
-How about:
-
-	} else {
-		/* reset wait_ms to default sleep time */
-		if (wait_ms == gc_th->no_gc_sleep_time)
-			wait_ms = gc_th->min_sleep_time;
-	}
+Reviewed-by: Chao Yu <chao@kernel.org>
 
 Thanks,
 
->   		}
->   
->   		if (foreground)
-> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> index 19b956c2d697..6402584dcd72 100644
-> --- a/fs/f2fs/gc.h
-> +++ b/fs/f2fs/gc.h
-> @@ -150,8 +150,13 @@ static inline void decrease_sleep_time(struct f2fs_gc_kthread *gc_th,
->   {
->   	unsigned int min_time = gc_th->min_sleep_time;
->   
-> -	if (*wait == gc_th->no_gc_sleep_time)
-> +	if (*wait == gc_th->urgent_sleep_time)
-> +		return;
-> +
-> +	if (*wait == gc_th->no_gc_sleep_time) {
->   		*wait = gc_th->max_sleep_time;
-> +		return;
-> +	}
->   
->   	if ((long long)*wait - (long long)min_time < (long long)min_time)
->   		*wait = min_time;
 
 
 _______________________________________________
