@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E28B2C4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Dec 2022 05:55:13 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2A1A0C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 11 Dec 2022 06:04:16 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p4FIs-00060N-R3;
-	Sun, 11 Dec 2022 05:55:10 +0000
+	id 1p4FRf-00068T-An;
+	Sun, 11 Dec 2022 06:04:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1p4FIr-00060H-91
+ (envelope-from <chao@kernel.org>) id 1p4FRe-00068N-1N
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Dec 2022 05:55:09 +0000
+ Sun, 11 Dec 2022 06:04:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=E3iH//lN9j/DlSYhxZrL2nzU/x07WF0rbkFjVtSy4qo=; b=Z3knPgzGhCLfmenqmuB4abjYeJ
- g8n3eEFLcUFGcQpt8vSSINPbzzd8zpidfPZE3vWMltxQVntMfqTqpH7cnhHbLU732lOTt0Fa2qqLK
- gffYwQEOGNiBxDpQkH+R2UEb9cxGk1PfozRa5EESKLRPgovmCYXaN8PTgCcYyy6m7Yfc=;
+ bh=1EnAx1geRWwCfFzlBGrx4cqIztH4USU76VYUhrnSf9o=; b=bX0S3JaPfvxci3lE0VFsKuVT4J
+ y9dCp1GjDabxY9DxRcWtKHPyTCwkFnER2hlJFYlgodKtqzXwScaIIrWR7fPwuxMiO791sIKeZLhht
+ kHu+KFcVRTGpXiPQA10aRZA1i9+y+xVyduDW6iq+QiOePsFvtk3nQQwWWx5KQgWAVw6I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,33 +33,33 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=E3iH//lN9j/DlSYhxZrL2nzU/x07WF0rbkFjVtSy4qo=; b=HpnLp7ZyDYAn4sT4eVdQMvWA7P
- 5PaIm8+VVcVAMkk13XjSTZ61yva/ynsl2+GFOCOIpwUdxCTF8gEbjO3iurAKPqsowyql9K3eoKp/x
- y2ANPBBNumSastp1REK1NxrFG3HoGrZBu9GfCh+NYET1vIzMtmVkHuuK8F6P1dZ8vGrk=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=1EnAx1geRWwCfFzlBGrx4cqIztH4USU76VYUhrnSf9o=; b=nNdoxjxr2IK1gAqRioAL8lXzSU
+ MyqsN1zjgqWB7hyOmGLK7hC7tzgugvoh89brsqqXwyB5h325LeeIe/G523v/KIEVo8XFOT/iAyrBe
+ WJaW52oQzqOfc9+F0UscdmvNTHHf18YNdgqutUh7jqKdZwGg/2vhaPT6Geh+aFuIoAK0=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p4FIp-00DXoq-90 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 11 Dec 2022 05:55:09 +0000
+ id 1p4FRY-00DY8D-QQ for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 11 Dec 2022 06:04:13 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id EF276B80945;
- Sun, 11 Dec 2022 05:54:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD88EC433EF;
- Sun, 11 Dec 2022 05:54:51 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 61B2F60C99;
+ Sun, 11 Dec 2022 06:04:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A34B2C433D2;
+ Sun, 11 Dec 2022 06:03:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1670738094;
- bh=1FZSvg1VV5fd0X4IXRQ/3Im/8nHJEAEA/6Sohp7gUlQ=;
+ s=k20201202; t=1670738642;
+ bh=U9Rhp55xf6rXsF3RAaS6Y+CbURUJS89vuN+H36qlHoI=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=uAyt4p6s8439vGHDMi+wDqrs/UBniW407/oGUr/VlX4oqYU3iycP0srZfI3sWJrAk
- oofuNsR7Elnf0oZ8BKt0dS8axjhtZvJ0j6tiES7ahWt8kev9t3inWkARx2/K9nG7cI
- k6FKY9tE8hDPlm49a8f0N4xqTeHWaPvHHYzjzjelrk8tw1BRP0HcAY7IfZQqjqjOx5
- NqFxpgU19OcEQb5mNonszOHGo3VC3rR1Z5N6Mkl35bDxXd3J+6JjocaYz71guctbAq
- fWZGh8HuNf8SsH1AjBSLmBvZRFHFPCOiOsvCp82IrSyo8IkRQpwaC4Usy+UVYMCA/E
- BZsWe7ADG/bzw==
-Message-ID: <38c34b59-bf57-4eb8-b74b-8b387b792cb8@kernel.org>
-Date: Sun, 11 Dec 2022 13:54:49 +0800
+ b=gvn7tDTwTp770J0jxxGbJ/eD63c2MIQ371jcBZF6XySVsl5cwc/6/VJo7EmthNzpR
+ ox3i1TMBwhRRllHhRuEMj7/Ug14/jRwkSLG9TzG1xFIyrs+jBie1F8LMjwY/9KeJtK
+ eIJeshb0ZiuFM2HlcrQabSdC3HRmw7LCtQjh0nG2y2NaUW5CC69gWekQmEFR96jvA+
+ W3ZPJEJYx+e3y7DQ4q8N6XLP/qxyzl9WAQoFLBlxikvESbccCCFgAfPRaObz5IC/oX
+ VspM7gm8zxvpsnKEKbW6OjUEbeBubLYFyePfm/TrC3WWIJWxybX8d6rAxbBHKq/UQM
+ W5JZ+7R9vuEBQ==
+Message-ID: <489f2daa-4559-6c32-71e2-8bab65fb8154@kernel.org>
+Date: Sun, 11 Dec 2022 14:03:57 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.1
@@ -67,12 +67,12 @@ Content-Language: en-US
 To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
  linux-fsdevel@vger.kernel.org
 References: <20221102161031.5820-1-vishal.moola@gmail.com>
- <20221102161031.5820-16-vishal.moola@gmail.com>
+ <20221102161031.5820-17-vishal.moola@gmail.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20221102161031.5820-16-vishal.moola@gmail.com>
-X-Headers-End: 1p4FIp-00DXoq-90
-Subject: Re: [f2fs-dev] [PATCH v4 15/23] f2fs: Convert last_fsync_dnode() to
- use filemap_get_folios_tag()
+In-Reply-To: <20221102161031.5820-17-vishal.moola@gmail.com>
+X-Headers-End: 1p4FRY-00DY8D-QQ
+Subject: Re: [f2fs-dev] [PATCH v4 16/23] f2fs: Convert
+ f2fs_sync_meta_pages() to use filemap_get_folios_tag()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,8 +94,21 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2022/11/3 0:10, Vishal Moola (Oracle) wrote:
-> Convert to use a folio_batch instead of pagevec. This is in preparation for
-> the removal of find_get_pages_range_tag().
+> Convert function to use folios throughout. This is in preparation for the
+> removal of find_get_pages_range_tag(). This change removes 5 calls to
+> compound_head().
+> 
+> Initially the function was checking if the previous page index is truly the
+> previous page i.e. 1 index behind the current page. To convert to folios and
+> maintain this check we need to make the check
+> folio->index != prev + folio_nr_pages(previous folio) since we don't know
+> how many pages are in a folio.
+> 
+> At index i == 0 the check is guaranteed to succeed, so to workaround indexing
+> bounds we can simply ignore the check for that specific index. This makes the
+> initial assignment of prev trivial, so I removed that as well.
+> 
+> Also modified a comment in commit_checkpoint for consistency.
 > 
 > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
