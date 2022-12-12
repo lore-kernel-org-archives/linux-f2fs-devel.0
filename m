@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7194CC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Dec 2022 23:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96D49C00145
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Dec 2022 23:05:21 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p4rnh-0005lu-NO;
-	Mon, 12 Dec 2022 23:01:33 +0000
+	id 1p4rrM-0005r6-G8;
+	Mon, 12 Dec 2022 23:05:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1p4rnd-0005ln-2H
+ (envelope-from <jaegeuk@kernel.org>) id 1p4rrK-0005r0-Hv
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Dec 2022 23:01:29 +0000
+ Mon, 12 Dec 2022 23:05:18 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2EZPtfefn5rUz36w5lI1l5X59LjdAskcCFXB5M3gty0=; b=JJVBD0GM+1ws5yCC2fnuBqFhpa
- GUZUPUno6vRcvF7GZXoowBDP2xaGl6HUDBBWWPD8QLTxiSBgYW9HzPDi71QI1Mm/0xD2fF2OPfmTX
- F0NGRsx0WARkejvW3iPXaluHYoU1cobl1V/DkxLtC+X4g2Mr+HnA3W2uQEXn/E30bQVY=;
+ bh=vX68QzEG8TaR2u946P1xBUMPHIpJQFQjU2rlcfM+eCQ=; b=ThAhuNYiaUNCIn+lgz0COCRsmg
+ UfLOHdgWI4zlbLu0nwHhDBqvAk2pYQTE1N9EzW+8iZ/z1VIdYlex2HgOeFMpTDEIPtATh5LgDW5Pv
+ IvWzhm5V0g79sWmoOrSdFpQ1H2+Cvn5Fz8SJCgh9tV8uztNPfFgykUey3Rhbo/fqzY6k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,42 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2EZPtfefn5rUz36w5lI1l5X59LjdAskcCFXB5M3gty0=; b=h6fs0zylsWmY71oy8if1ubDBu5
- MiDAapDOYftHRjit/6IgetYBfaxoC530M1VHWMdyO4hqxhSiPksS4T7gkN6yE9t999yeOXgF5PVek
- Vp71NgjV4XEJYWAIqUhJnfj8KigjaDjroWAoPeAUyA4S0De0BJbN/DCHjvqQ7FoHC7CI=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=vX68QzEG8TaR2u946P1xBUMPHIpJQFQjU2rlcfM+eCQ=; b=iUeml/h8XEXXcpW1frOBIwCMoW
+ 23Ueu+ws4lcWUR+IJ49tAitugn5MSL29SfhJ/j/UnUA6slBxX3YXBsDrmmp47eRfC8BvzHBQQ+wso
+ MAW3AKgMYjbixzECf76zuaH1IE1pKl4iF8YbQnwLHqnGvioGqHp1es65EyHBv/nTl4e0=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p4rnc-0005oW-Eo for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Dec 2022 23:01:29 +0000
+ id 1p4rrJ-00F9q4-CJ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Dec 2022 23:05:18 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 154A76125D;
- Mon, 12 Dec 2022 23:01:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 592C7C433EF;
- Mon, 12 Dec 2022 23:01:22 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 23F75B80DCB;
+ Mon, 12 Dec 2022 23:05:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD07C433EF;
+ Mon, 12 Dec 2022 23:05:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1670886082;
- bh=9oAgjcdDOYAHUDkoGMnxE/ESGaH+GAmrrh+m5qqxu00=;
+ s=k20201202; t=1670886309;
+ bh=x0cHRAp8vVmV/XZj21AnddH1EoJNiefnFUy3qnybb6g=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=YmBZCjpYmZak8jMVAv7HENvrL+ypajMzY+nHvmi1I3fGWSkjFL3EQ1Pin5euLoH7O
- 9MHcga12zkzVQymQw5Sn+0KiVady2ch3jeKGRI/61f9LYWKYQc+m5XSAPF+9QEZHhG
- /u40MRTpOTODV8Ay1+qXErV5BUQPJ3daK3dw3hbnaW0dIg0F9HUvoWheKDVwZ/QERg
- 5ZA38QvasZ9it/7RuoNAiKxj4QSy15/Pa/szer2s1MVM/1bD1nwrS1pjI8uEZTX5hU
- LG1tgWdxOtUvLEUog/McIOaYGvoCvbvIyNoNsNMTuMcrkkityIx0lxkzDDgGpqOF2R
- OG7lbWGCdzgKA==
-Date: Mon, 12 Dec 2022 15:01:20 -0800
+ b=b+/1GchgKTLX0JfWUgJtfxQ4wzp/NGEXf3sZVFK/yDrTCoKjwYrdMIM34Qg22IANp
+ K+PcxbGsDnRoP8NgRvAXzEq0r7+/B9q/pXKRKYQnW/p6HIRQTL1lBHnHlCBjy5vGbY
+ zxNp+SAIHriPUIvi5w0xS7o2zeru9lTLEm+9GIxBZu9M0lEjdZZJofNCAIEMAuBcP5
+ nxteDNzk2ff5CyrVBx6xSEEOF9jiHYY7Bqcm377Uqi2vf17WSSrTLVNbKBZMuivlX7
+ NqFmqDMCFDKi/weI5IAp3YEwCBJgO6lCwqprgcd67JBUZkQqF0Lt2t3KuSTcI6Qnhp
+ tecPtKV2M1HPg==
+Date: Mon, 12 Dec 2022 15:05:08 -0800
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <Y5eywH6M+2si0fRE@google.com>
-References: <20221212054706.65579-1-frank.li@vivo.com>
- <5cc534fc-1192-887a-91e1-2f1c2283b212@kernel.org>
+To: zhoudan <zhuqiandann@gmail.com>
+Message-ID: <Y5ezpOwd8sOTTaW5@google.com>
+References: <20221208050808.2448146-1-zhoudan8@xiaomi.com>
+ <Y5OYYJYx9G2LbRmc@google.com>
+ <20221212122109.GA714122@mi-ThinkStation-K>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <5cc534fc-1192-887a-91e1-2f1c2283b212@kernel.org>
-X-Headers-End: 1p4rnc-0005oW-Eo
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add iostat support for FS_DISCARD_IO
+In-Reply-To: <20221212122109.GA714122@mi-ThinkStation-K>
+X-Headers-End: 1p4rrJ-00F9q4-CJ
+Subject: Re: [f2fs-dev] [PATCH] f2fs: don't set FI_COMPRESS_RELEASED if file
+ is not compressed
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,28 +82,73 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- Yangtao Li <frank.li@vivo.com>
+Cc: zhoudan8@xiaomi.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Please check the previous comment.
+On 12/12, zhoudan wrote:
+> Maybe I'm not describing it clearly enough, but I think there is 
+> something wrong with the logic here.The 'f2fs_release_compress_blocks'
+> method does not determine if the file is compressed, but simply adds 
+> the FI_COMPRESS_RELEASED flag. 
 
-On 12/12, Chao Yu wrote:
-> On 2022/12/12 13:47, Yangtao Li wrote:
-> > Just like other data we count uses the number of bytes as the basic
-> > unit, but discard uses the number of cmds as the statistical unit. In
-> > fact, the discard command contains the number of blocks. In order to
-> > avoid breaking its usage of application, let's keeping FS_DISCARD
-> > as it is, and add FS_DISCARD_IO to account discard bytes.
+I firstly lost your point since f2fs_release_compress_blocks() checked
+f2fs_compressed_file().
+
+> In particular, in the current Android system, when the application is 
+> installed, the release interface is called by default to release the 
+> storage marked as compressed,  without checking whether the file is 
+> actually compressed. In this case, when compress_mode is set to user, 
+> calling the compress interface returns ENVAL and the file cannot be 
+> compressed.
+> So I think the implementation of release needs to be modified, and 
+> only set FI_COMPRESS_RELEASED when it's really compressed and the 
+> storage is released.
+> 
+> On Fri, Dec 09, 2022 at 12:19:44PM -0800, Jaegeuk Kim wrote:
+> > On 12/08, zhoudan8 wrote:
+> > > In compress_mode=user, f2fs_release_compress_blocks()
+> > >  does not verify whether it has been compressed and
+> > >  sets FI_COMPRESS_RELEASED directly. which will lead to
+> > > return -EINVAL after calling compress.
+> > > To fix it,let's do not set FI_COMPRESS_RELEASED if file
+> > > is not compressed.
 > > 
-> > Suggested-by: Chao Yu <chao@kernel.org>
-> > Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> 
-> Reviewed-by: Chao Yu <chao@kernel.org>
-> 
-> Thanks,
+> > Do you mean you want to avoid EINVAL on a file having FI_COMPRESS_RELEASED
+> > with zero i_compr_blokcs?
+> > 
+> > I think the current logic is giving the error on a released file already.
+> > 
+> > > 
+> > > Signed-off-by: zhoudan8 <zhoudan8@xiaomi.com>
+> > > ---
+> > >  fs/f2fs/file.c | 3 +--
+> > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > index 82cda1258227..f32910077df6 100644
+> > > --- a/fs/f2fs/file.c
+> > > +++ b/fs/f2fs/file.c
+> > > @@ -3451,14 +3451,13 @@ static int f2fs_release_compress_blocks(struct file *filp, unsigned long arg)
+> > >  	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+> > >  	if (ret)
+> > >  		goto out;
+> > > -
+> > > -	set_inode_flag(inode, FI_COMPRESS_RELEASED);
+> > >  	inode->i_ctime = current_time(inode);
+> > >  	f2fs_mark_inode_dirty_sync(inode, true);
+> > >  
+> > >  	if (!atomic_read(&F2FS_I(inode)->i_compr_blocks))
+> > >  		goto out;
+> > >  
+> > > +	set_inode_flag(inode, FI_COMPRESS_RELEASED);
+> > >  	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> > >  	filemap_invalidate_lock(inode->i_mapping);
+> > >  
+> > > -- 
+> > > 2.38.1
 
 
 _______________________________________________
