@@ -4,58 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D1E11C4167B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Dec 2022 05:58:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 51995C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Dec 2022 09:25:49 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p4yIw-00084P-LE;
-	Tue, 13 Dec 2022 05:58:14 +0000
+	id 1p51Xm-00019a-HO;
+	Tue, 13 Dec 2022 09:25:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1p4yIu-00084J-II
+ (envelope-from <ssawgyw@gmail.com>) id 1p51XV-00019M-83
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Dec 2022 05:58:12 +0000
+ Tue, 13 Dec 2022 09:25:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=f94Fg5K6pPtqpz7PAIZN5dlFiMzuXAQMWprUltpbtJQ=; b=hKMGG3sHzeKQn00zAL0U48kFow
- TTrxP3MBfYjMvkiSA1Eu/+7XcWIIjyelzth5R6Yl5chMT3BM3uJLOLg3xqCnIzVtUdEZj0XbgwKCl
- T/AlgcyEyiab6T8zaDpRCblWe3iFLaDjQonzpnup6gbUHjYiPmCTbLfk4A5oZvlN1mDM=;
+ bh=/DtRmYtMNHKnkR6bi6ueuHO103FUFfPv8+meEwjdmbw=; b=E7vrLPOc8l96Q15cBWEk1kvjb5
+ 26x9Vnh6zdJTPciQ+JsWqLpTqBGVuzLFRpqMDms21fl7pjv5Z/HEjOJsXs2TWzgpW6hamRNb6DSse
+ L/4c3sZvjVuRPTFeOzl4pLfD+WvqtQSClGkFoSw3HLtJ1n6qaokhYgzwFE25/OReBGwc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=f94Fg5K6pPtqpz7PAIZN5dlFiMzuXAQMWprUltpbtJQ=; b=Q1UD4IiVqW3ktHaUqpUHNrfs6I
- tmRF4Mev7Ofm8wCmUsorMxoyf8E/E+CJ8DjSIJ4QD0WWHZapYlQcviP7nzTe6BtPWTYlc2pPBiJvl
- iKp+EE+xulyItfMp67yjZIScYUrPPKQv/k7P8KaZqt37WoPOxcpqQ2GwoIbofMYDfpZU=;
-Received: from verein.lst.de ([213.95.11.211])
+ bh=/DtRmYtMNHKnkR6bi6ueuHO103FUFfPv8+meEwjdmbw=; b=K+NJ5TEY/4ggh8mphLG934TBPx
+ u++KCogVyNr5plRlUSEp6SKSZQQiGsJwEVD4ioHZQ5KwCFWzHQW2eHI9ArJ8Ix8XyJXfyBu1nnmJF
+ bZOBSw4b2TtvHdil5alkLyElzRsWnKiRyKQPF19GSL6tXrSoGr/uRHyvyi1B9pzffq/8=;
+Received: from mail-lf1-f47.google.com ([209.85.167.47])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p4yIt-00FSOm-EK for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Dec 2022 05:58:12 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 893B96732D; Tue, 13 Dec 2022 06:57:59 +0100 (CET)
-Date: Tue, 13 Dec 2022 06:57:59 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Message-ID: <20221213055759.GC882@lst.de>
-References: <20221128091523.1242584-1-hch@lst.de>
- <20221128091523.1242584-13-hch@lst.de> <Y5fT4SQ9/vuZeWWB@google.com>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1p51XU-00FdkI-K1 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Dec 2022 09:25:29 +0000
+Received: by mail-lf1-f47.google.com with SMTP id q6so3894634lfm.10
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue, 13 Dec 2022 01:25:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=/DtRmYtMNHKnkR6bi6ueuHO103FUFfPv8+meEwjdmbw=;
+ b=eHiyCsUJNyXUkeoYD3u3bIB6wPOea4+yX6vISQxfMqEP7D4H3VuNz1yTIcpAXnyX+D
+ OVzu3VK7K+QbP4n2UyLQRmYFkN6TtRVZhLlJnojtCuEtiG8CwRI6ra9RKIL7I9x6NxXC
+ uLk2R+dkVTSxlXOhKFJE7d768mbBOq3OpzQIE96QCaSDJhHQP5xy5JBg4abMqUh/jDin
+ 6PZxcdWgQPpwbwhdIL8iE+scdFyTH5sTZ9wIxQiAyXKLuLln4EAr64i4kfQyhQMzG6dS
+ DO8lE5yKa6pLUWaFvEV/9pYshb6BmbqMjM13FTDKadzfS1pFz5uqI9SqoSnHqJVuOnqD
+ /2NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=/DtRmYtMNHKnkR6bi6ueuHO103FUFfPv8+meEwjdmbw=;
+ b=euAN5DgXEjtZBmfO3xlv5ytC1DHYPTwxu5guc2I8ZZbg6hnqK9kbEgqS1hmHomPAcl
+ rprWC7m0EufCXAnpVoJ7B2Cm2UdmdRbG3rbd18uzLgcBVpqkScDWdthRb2gSfoCE+bzp
+ mFOJnJ0EGWvUyEQ4niU8njb3pbwe6h3lh7FuAXqGCgRxXo8OkYdgePQFkz4PsQNnl6yS
+ Sx/iBDZe4UYTmq44Kh4Z8F9B5FnmhAdubOm++sGnQ6TycJZF7CVvhG1f8rEOC0yZ9FZr
+ 0ixLHylbF/SbrmM1AEyPXfYMxVkn4+yBNOT6abovXdNUrGVTds9L14PI8bNntcbvDGJz
+ 2R3w==
+X-Gm-Message-State: ANoB5plrEU562RPTVVFkrWY5yvngGN1YHe8ZX/vfswveiLZXhVghUINH
+ 8SFAJQ25oLWxbmMNMrwQGtoqMi3R8lAqFbn+Aps=
+X-Google-Smtp-Source: AA0mqf42qnt1Sspgxd1CUIRY0s0hRKG3TTBrCD9Lac0deO3xWdNGTJXsxjpNFgrwMcjMAxXDRsp3c3P+CF/I0Uv1RI8=
+X-Received: by 2002:ac2:5459:0:b0:4b5:6f84:ab9c with SMTP id
+ d25-20020ac25459000000b004b56f84ab9cmr6939004lfn.201.1670923521844; Tue, 13
+ Dec 2022 01:25:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <Y5fT4SQ9/vuZeWWB@google.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1p4yIt-00FSOm-EK
-Subject: Re: [f2fs-dev] [PATCH 12/15] f2fs: remove the create argument to
- f2fs_map_blocks
+References: <20221211121852.112127-1-Yuwei.Guan@zeekrlife.com>
+ <Y5XZAg6X8nK7/vBi@debian.me>
+In-Reply-To: <Y5XZAg6X8nK7/vBi@debian.me>
+From: Yuwei Guan <ssawgyw@gmail.com>
+Date: Tue, 13 Dec 2022 17:24:46 +0800
+Message-ID: <CALJQGLkZgjvk+ysvFKHx6gr=dMQwUa-jOae3F3AJSy1Syczkqw@mail.gmail.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+X-Headers-End: 1p51XU-00FdkI-K1
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: continuous counting for 'issued' in
+ __issue_discard_cmd_orderly()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -67,40 +95,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Christoph Hellwig <hch@lst.de>, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Mon, Dec 12, 2022 at 05:22:41PM -0800, Jaegeuk Kim wrote:
-> >  	struct dnode_of_data dn;
-> > @@ -1484,11 +1483,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
-> >  	pgofs =	(pgoff_t)map->m_lblk;
-> >  	end = pgofs + maxblocks;
-> >  
-> > -	if (!create && f2fs_lookup_extent_cache(inode, pgofs, &ei)) {
-> > -		if (f2fs_lfs_mode(sbi) && flag == F2FS_GET_BLOCK_DIO &&
-> 
-> Any reason to remove this condition?
-> 
-> Thanks,
-> 
-> > -							map->m_may_create)
-
-With "this condition" I guess you mean the:
-
-		if (f2fs_lfs_mode(sbi) && flag == F2FS_GET_BLOCK_DIO &&
-							map->m_may_create)
-			goto next_dnode;
-
-?
-
-Now that the !create check above is replaced with !map->m_may_create
-above, it is dead code, as the map->m_may_create part of the conditions
-must be false.
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+QmFnYXMgU2FuamF5YSA8YmFnYXNkb3RtZUBnbWFpbC5jb20+IOS6jjIwMjLlubQxMuaciDEx5pel
+5ZGo5pelIDIxOjIw5YaZ6YGT77yaCj4KPiBPbiBTdW4sIERlYyAxMSwgMjAyMiBhdCAwODoxODo1
+MlBNICswODAwLCBZdXdlaSBHdWFuIHdyb3RlOgo+ID4gQXMgdGhlICdkY2MtPmRpc2NhcmRfZ3Jh
+bnVsYXJpdHknIGFuZCAnZGNjLT5tYXhfb3JkZXJlZF9kaXNjYXJkJyBjYW4gYmUgc2V0Cj4gPiBh
+dCB0aGUgdXNlciBzcGFjZSwgYW5kIGlmIHRoZSAnZGNjLT5tYXhfb3JkZXJlZF9kaXNjYXJkJyBp
+cyBzZXQgbGFyZ2VyIHRoYW4KPiA+ICdkY2MtPmRpc2NhcmRfZ3JhbnVsYXJpdHknIGluIERQT0xJ
+Q1lfQkcgbW9kZSwgb3IgaXQncyBhIHZvbHVtZSBkZXZpY2UsCj4gPiBkaXNjYXJkX2dyYW51bGFy
+aXR5IGNhbiBiZSB0dW5lZCB0byAxIGluIGYyZnNfdHVuaW5nX3BhcmFtZXRlcnMoKSwKPiA+IGl0
+IHdpbGwgbWF5IHNlbmQgbW9yZSByZXF1ZXN0cyB0aGFuIHRoZSBudW1iZXIgb2YgJ2Rwb2xpY3kt
+Pm1heF9yZXF1ZXN0cycKPiA+IGluIGlzc3VlX2Rpc2NhcmRfdGhyZWFkKCkuCj4gPgo+Cj4gWW91
+IGRvbid0IGtub3cgaG93IHRvIHN0b3Agc2VudGVuY2VzIChha2EgImFidXNpbmciIGNvbW1hKSwg
+c28gSSByZWFkCj4gYWJvdmUgYXMgdWJlci1sb25nIHNlbnRlbmNlLiBDYXJlIHRvIHJld29yZD8g
+VGhlcmUgYXJlIG1hbnkgY2FzZXMgd2hlbiBJCj4gaGF2ZSB0byByZXBseSB3aXRoIHN1Y2ggcmV3
+b3JkaW5nLCBidXQgdGhpcyB0aW1lIEkgY2hvb3NlIG5vdCB0byBkbwo+IGJlY2F1c2UgSSdtIGxh
+enkgYXQgdGhlIHRpbWUgSSB3cml0ZSB0aGlzIHJlcGx5Lgo+CkhpIEJhZ2FzLApUaGFua3MgZm9y
+IHlvdXIgcmV2aWV3LgpTb3JyeSBmb3Igc3VibWl0dGluZyBhIHBvb3JseSBkZXNjcmliZWQgcGF0
+Y2gsCkkgd2lsbCB1cGRhdGUgYSB2MyBwYXRjaCB0byByZXdyaXRlIHRoZSBpc3N1ZSBkZXNjcmlw
+dGlvbiBhbmQgc29sdXRpb24uCj4gPiBUaGlzIHBhdGNoIHdpbGwgZml4IHRoZSBpc3N1ZS4KPgo+
+IEZpeCBieSB3aGF0PyBJIGRvbid0IHVuZGVyc3RhbmQgdGhlIGNvZGUuCj4KPiA+Cj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBZdXdlaSBHdWFuIDxZdXdlaS5HdWFuQHplZWtybGlmZS5jb20+Cj4KPiBZb3Ug
+c2VuZCBmcm9tIHlvdXIgR21haWwgYWRkcmVzcyBidXQgaGF2ZSBTb0IgZnJvbSBlaXRoZXIgcGVy
+c29uYWwgZW1haWwKPiBkb21haW4gb3IgaXMgdGhpcyBhIHJhbmRvbSBjb21wYW55PyBJZiBpdCBp
+cyB0aGUgbGF0dGVyLCBwbGVhc2UgdGFsawo+IHdpdGggeW91ciBjb21wYW55IHRvIGZpeCB0aGUg
+bWFpbCBzeXN0ZW0gc28gdGhhdCB5b3UgY2FuIHNlbmQgZnJvbSBpdHMKPiBkb21haW4gKGFuZCBy
+ZWNlaXZlIHRyYWZmaWMgZnJvbSBtYWlsaW5nIGxpc3RzKS4gSW4gYW55IGNhc2UsIHlvdXIgZW1h
+aWwKPiBhZGRyZXNzIGluIEZyb20gaGVhZGVyIGFuZCBTb0IgbXVzdCBtYXRjaC4KPgpUaGUgZW1h
+aWwgc3lzdGVtIGhhcyBiZWVuIGZpeGVkLAphbmQgdGhlIGVtYWlsIGFkZHJlc3NlcyB3aWxsIG1h
+dGNoIGluIHRoZSBmdXR1cmUuCj4gVGhhbmtzLgo+Cj4gLS0KPiBBbiBvbGQgbWFuIGRvbGwuLi4g
+anVzdCB3aGF0IEkgYWx3YXlzIHdhbnRlZCEgLSBDbGFyYQoKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0
+CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291
+cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
