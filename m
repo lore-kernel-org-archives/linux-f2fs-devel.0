@@ -4,81 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 647C9C10F1B
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Dec 2022 05:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D1E11C4167B
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Dec 2022 05:58:16 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p4xP1-0005m9-67;
-	Tue, 13 Dec 2022 05:00:27 +0000
+	id 1p4yIw-00084P-LE;
+	Tue, 13 Dec 2022 05:58:14 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <pr-tracker-bot@kernel.org>) id 1p4xOr-0005m1-2e
+ (envelope-from <hch@lst.de>) id 1p4yIu-00084J-II
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Dec 2022 05:00:17 +0000
+ Tue, 13 Dec 2022 05:58:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:Date:Message-Id:References:In-Reply-To:From:
- Subject:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=M10wOzKwzjMpkSBB166N0fAo1X8kdTzzQRkl4O2hjC8=; b=ky1vo9mcH1qOUdEtMPWKpfkakm
- XSIDrsAwBluTha36EEy5DU9kf6xo3995penIanBUNPXPgU/z/AjxYZgQMd1pomp7D0hgoKOpDOqEC
- Mq8xaTIijfQbevwtmbCj5grE/4G6K6bKyWGxjj2UwJL2k5UKvtnaDRLMIPy2qm+DEZl4=;
+ bh=f94Fg5K6pPtqpz7PAIZN5dlFiMzuXAQMWprUltpbtJQ=; b=hKMGG3sHzeKQn00zAL0U48kFow
+ TTrxP3MBfYjMvkiSA1Eu/+7XcWIIjyelzth5R6Yl5chMT3BM3uJLOLg3xqCnIzVtUdEZj0XbgwKCl
+ T/AlgcyEyiab6T8zaDpRCblWe3iFLaDjQonzpnup6gbUHjYiPmCTbLfk4A5oZvlN1mDM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Cc:To:Date:Message-Id:References:In-Reply-To:From:Subject:Sender:Reply-To
- :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=M10wOzKwzjMpkSBB166N0fAo1X8kdTzzQRkl4O2hjC8=; b=j8Frl39AKfxgErikzlWsIkjy8R
- g5yKpJ44/Ahyxd1L/cm1+gDZE7Mb6Rn3yVE0gSeR+buBQPjnF74OHrnoVZrhcH2kyHA69xwkzq6qM
- Gw9hQqwB924DyENgmZJy+Xt1LBB3gxFyS31fh1TpfXlTHhzQzcxh00LLlZMMtUb5XIQ0=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=f94Fg5K6pPtqpz7PAIZN5dlFiMzuXAQMWprUltpbtJQ=; b=Q1UD4IiVqW3ktHaUqpUHNrfs6I
+ tmRF4Mev7Ofm8wCmUsorMxoyf8E/E+CJ8DjSIJ4QD0WWHZapYlQcviP7nzTe6BtPWTYlc2pPBiJvl
+ iKp+EE+xulyItfMp67yjZIScYUrPPKQv/k7P8KaZqt37WoPOxcpqQ2GwoIbofMYDfpZU=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p4xOp-00FPhq-46 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Dec 2022 05:00:17 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 31843B810D9;
- Tue, 13 Dec 2022 05:00:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EA7F8C433D2;
- Tue, 13 Dec 2022 05:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1670907605;
- bh=bWHTLgFxQc2o39iSKlfIsi3HueJcoojwB6FD6+BZaL4=;
- h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
- b=UACdc+N63MewVjY1V87dLL3dUoq4j35AW4bq3IwmzddfYe0NAX8dTXtLGXrvkAN3L
- NsOAZnPyfr8JAUj/Vo7+rPZ/q1tz1vMlZ+12mVFjAOMTOYTzt1Ge7gGSi3OQUg/ToU
- y4eko5o2ShNW7a9wl6lMBVHezZU0vQ4NLQ6VZPyu5jbt5MvoQo2aTlvm1V6Vgt3KIX
- TysN2qxL6Ymi4z0bJbJIrwZdLOPWVOqBsT2YwuvQeQeRBrF31DrWFDkN6fZn4VhY8W
- /awKEYGXDmBksT3tH3Crh2I6OVdws60pNX/k+7cAKkyg49mjpSPam5UJTrr2jcSnvp
- cdi2ZNPGvS33g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- BEB28C395EE; Tue, 13 Dec 2022 05:00:04 +0000 (UTC)
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Y5ayAsXkTF3jK13s@sol.localdomain>
-References: <Y5ayAsXkTF3jK13s@sol.localdomain>
-X-PR-Tracked-List-Id: Linux MTD discussion mailing list
- <linux-mtd.lists.infradead.org>
-X-PR-Tracked-Message-Id: <Y5ayAsXkTF3jK13s@sol.localdomain>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
- tags/fscrypt-for-linus
-X-PR-Tracked-Commit-Id: 41952551acb405080726aa38a8a7ce317d9de4bb
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8129bac60f30936d2339535841db5b66d0520a67
-Message-Id: <167090760471.4886.14328396193429514472.pr-tracker-bot@kernel.org>
-Date: Tue, 13 Dec 2022 05:00:04 +0000
-To: Eric Biggers <ebiggers@kernel.org>
-X-Headers-End: 1p4xOp-00FPhq-46
-Subject: Re: [f2fs-dev] [GIT PULL] fscrypt updates for 6.2
+ id 1p4yIt-00FSOm-EK for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Dec 2022 05:58:12 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id 893B96732D; Tue, 13 Dec 2022 06:57:59 +0100 (CET)
+Date: Tue, 13 Dec 2022 06:57:59 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Message-ID: <20221213055759.GC882@lst.de>
+References: <20221128091523.1242584-1-hch@lst.de>
+ <20221128091523.1242584-13-hch@lst.de> <Y5fT4SQ9/vuZeWWB@google.com>
+MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <Y5fT4SQ9/vuZeWWB@google.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1p4yIt-00FSOm-EK
+Subject: Re: [f2fs-dev] [PATCH 12/15] f2fs: remove the create argument to
+ f2fs_map_blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,28 +67,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fscrypt@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>
-MIME-Version: 1.0
+Cc: Christoph Hellwig <hch@lst.de>, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The pull request you sent on Sun, 11 Dec 2022 20:45:54 -0800:
+On Mon, Dec 12, 2022 at 05:22:41PM -0800, Jaegeuk Kim wrote:
+> >  	struct dnode_of_data dn;
+> > @@ -1484,11 +1483,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> >  	pgofs =	(pgoff_t)map->m_lblk;
+> >  	end = pgofs + maxblocks;
+> >  
+> > -	if (!create && f2fs_lookup_extent_cache(inode, pgofs, &ei)) {
+> > -		if (f2fs_lfs_mode(sbi) && flag == F2FS_GET_BLOCK_DIO &&
+> 
+> Any reason to remove this condition?
+> 
+> Thanks,
+> 
+> > -							map->m_may_create)
 
-> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
+With "this condition" I guess you mean the:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8129bac60f30936d2339535841db5b66d0520a67
+		if (f2fs_lfs_mode(sbi) && flag == F2FS_GET_BLOCK_DIO &&
+							map->m_may_create)
+			goto next_dnode;
 
-Thank you!
+?
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Now that the !create check above is replaced with !map->m_may_create
+above, it is dead code, as the map->m_may_create part of the conditions
+must be false.
 
 
 _______________________________________________
