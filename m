@@ -4,72 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1481FC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Dec 2022 22:46:08 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B0429C25B04
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 14 Dec 2022 22:46:09 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p5aVr-0003YV-Iu;
-	Wed, 14 Dec 2022 22:46:07 +0000
+	id 1p5aVt-00083J-5Z;
+	Wed, 14 Dec 2022 22:46:09 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1p5aVd-0003Xz-03
+ (envelope-from <ebiggers@kernel.org>) id 1p5aVX-00082m-SO
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 Dec 2022 22:45:53 +0000
+ Wed, 14 Dec 2022 22:45:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=D51rtKA9U0RWcjz3TtgFLmSvJyVQnrXAL32Nel5MBrs=; b=Q+/uYVJs8WW906bvn4wjBCt81n
- U3n78GtWGppoc/7BXQB9cdhAYvflXdj2EUj1xu+r56WdphG1AztWn5YZoK1U8bS8nq7OfZX9dC/DI
- RQnch25H8cHLpNdZGmV+xlYTE/Q40kTYyNYlCopxyFIjt1CBE3wa3RzKw2plgTGWmumA=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=D51rtKA9U0RWcjz3TtgFLmSvJyVQnrXAL32Nel5MBrs=; b=LDxZkTTDV4lSQhH62764luxQ6A
- UQR9MarNtVzJLTpgp440Hj6C53vjWMQPLBbHnMqE+20xOEjNNaR+d2XDmwRDOU1xOeV11OnLwoKx9
- GRG0FbEH3w2gZZnU20rQ7/NAK1ImHq3osR9qK8yIT1MVYcVZ3h43DlGg89g1Ylg3/Mec=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=pRdDYjjZY9OqS4YNrR21GFaeiW/9mPNrHz721v216T0=; b=i7GBN5SmAweWr9m7eJq2skYmvI
+ rTBUH2A7jPmi+tZiTZNVxBmo13Yl+XTZEP6BGNyCfth7n4EgszU0DIVkFc/3ooGMFFtSowpSB/Cve
+ P6ZLE68o+1nntubgNkCwr2MCiERC28zGe799R2pojN1l4bRX3tk0TkvQ8PXXThBrrLqA=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=pRdDYjjZY9OqS4YNrR21GFaeiW/9mPNrHz721v216T0=; b=C
+ g8eFxKzcgfjDyscdHw3Fl2f/NnMQO7HBIqD7YJ5JFDCL/aajVwnzZNERHRWtKz0TjnrJPduk7AuJN
+ Xs9xEl2KaKB1f68qO+ph8B3dnN2VevuRZChvPpgLI5fzsV+dXCe5kg8NVEUT9l5gSzd38GTh0BirO
+ CZ1XdAncpznPbrb4=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p5aVZ-00HGhH-8S for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 14 Dec 2022 22:45:52 +0000
+ id 1p5aVX-00HGhB-4r for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 14 Dec 2022 22:45:47 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id F2B0CB81A42
+ by dfw.source.kernel.org (Postfix) with ESMTPS id B313E61C19
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 14 Dec 2022 22:45:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9331AC433F0;
  Wed, 14 Dec 2022 22:45:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC9F9C433D2;
+ Wed, 14 Dec 2022 22:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1671057941;
- bh=uJ3FO4tiueVTb/4lrSOqyDlwjeWDWqy+a4fT7SmmDcs=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=C0QbxiKYE2VOxgX/uB7OvsCcHekCwBxYw2+DygusA8QIW/Quxt8Sawkvfo9So92Wj
- mjwygoQ2CFNs9P6CmgHk/tVl+ql2dSMbauBMdaAScm4f6KWZgeoWkweCOQGhMKhbqX
- 3k7Xy5GcgXcmkNtcKsbSDkNOzSK3XXnsz1gjrM8Z5VFoVvaxhpTxejOCJY/1i2yFci
- eF3GpIKe7EAvDJq1hWb/td9LMQxR5YRfLmjCBdXQL3XOOQcGyez3hIv9Hmkk9Qcswn
- BxQvfLOScLeHlnKv4MPCW/egRGUiIAei68p7yH4P5nrWUOsjxEnLojV0nDm308RKYn
- NCDecNzthjJjQ==
+ bh=7p0zl/jG1hqhXufm5ECGwbi68i+bng+vFDX0eMjfN3M=;
+ h=From:To:Cc:Subject:Date:From;
+ b=HxY4DkrK0t2KL6AL8sKo0g2/D5iAe7VQX6OgGC3naPJVeEJEV6nNQkqY4gA+y4cG4
+ gJGQq9GoJ/u4/1J/gXYwiqWYgnehjQRd9NKijW3cnM2uSb/F6RDuwR1Skv1zS0A6HW
+ gkuPB4XmVHPXs8BE/CVtQoj8yF1j+c/cv7x+NFxNuki/F9En1mCKFgcQDZ3CZrT1Nx
+ /b7rMYC79Jr3KYvp6jJ/CCn/BgY3vjp7qtKuph7wffB+XuS7en6bA8g+qxgVRdENLQ
+ S23YmDznCogG6eONQt+xTuPW6tFpluup/Da3+Ih2MFxxbPsAtWf9AHNlGeWUcpaI35
+ FHHlEcITf4ptQ==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Wed, 14 Dec 2022 14:43:02 -0800
-Message-Id: <20221214224304.145712-3-ebiggers@kernel.org>
+Date: Wed, 14 Dec 2022 14:43:00 -0800
+Message-Id: <20221214224304.145712-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221214224304.145712-1-ebiggers@kernel.org>
-References: <20221214224304.145712-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1p5aVZ-00HGhH-8S
-Subject: [f2fs-dev] [PATCH 2/4] fsverity: optimize
- fsverity_prepare_setattr() on non-verity files
+X-Headers-End: 1p5aVX-00HGhB-4r
+Subject: [f2fs-dev] [PATCH 0/4] fsverity cleanups
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,102 +84,28 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+This series implements a few cleanups that have been suggested 
+in the thread "[RFC PATCH 00/11] fs-verity support for XFS"
+(https://lore.kernel.org/linux-fsdevel/20221213172935.680971-1-aalbersh@redhat.com/T/#u).
 
-Make fsverity_prepare_setattr() an inline function that does the
-IS_VERITY() check, then (if needed) calls __fsverity_prepare_setattr()
-to do the real work.  This reduces the overhead on non-verity files.
+This applies to mainline (commit 93761c93e9da).
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/verity/open.c         | 16 +++-------------
- include/linux/fsverity.h | 26 ++++++++++++++++++++++----
- 2 files changed, 25 insertions(+), 17 deletions(-)
+Eric Biggers (4):
+  fsverity: optimize fsverity_file_open() on non-verity files
+  fsverity: optimize fsverity_prepare_setattr() on non-verity files
+  fsverity: optimize fsverity_cleanup_inode() on non-verity files
+  fsverity: pass pos and size to ->write_merkle_tree_block
 
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 673d6db9abdf..e1e531d5e09a 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -337,26 +337,16 @@ int __fsverity_file_open(struct inode *inode, struct file *filp)
- }
- EXPORT_SYMBOL_GPL(__fsverity_file_open);
- 
--/**
-- * fsverity_prepare_setattr() - prepare to change a verity inode's attributes
-- * @dentry: dentry through which the inode is being changed
-- * @attr: attributes to change
-- *
-- * Verity files are immutable, so deny truncates.  This isn't covered by the
-- * open-time check because sys_truncate() takes a path, not a file descriptor.
-- *
-- * Return: 0 on success, -errno on failure
-- */
--int fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr)
-+int __fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr)
- {
--	if (IS_VERITY(d_inode(dentry)) && (attr->ia_valid & ATTR_SIZE)) {
-+	if (attr->ia_valid & ATTR_SIZE) {
- 		pr_debug("Denying truncate of verity file (ino %lu)\n",
- 			 d_inode(dentry)->i_ino);
- 		return -EPERM;
- 	}
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(fsverity_prepare_setattr);
-+EXPORT_SYMBOL_GPL(__fsverity_prepare_setattr);
- 
- /**
-  * fsverity_cleanup_inode() - free the inode's verity info, if present
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 326bf2e2b903..84b498fff7ec 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -149,7 +149,7 @@ int fsverity_get_digest(struct inode *inode,
- /* open.c */
- 
- int __fsverity_file_open(struct inode *inode, struct file *filp);
--int fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr);
-+int __fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr);
- void fsverity_cleanup_inode(struct inode *inode);
- 
- /* read_metadata.c */
-@@ -198,10 +198,10 @@ static inline int __fsverity_file_open(struct inode *inode, struct file *filp)
- 	return -EOPNOTSUPP;
- }
- 
--static inline int fsverity_prepare_setattr(struct dentry *dentry,
--					   struct iattr *attr)
-+static inline int __fsverity_prepare_setattr(struct dentry *dentry,
-+					     struct iattr *attr)
- {
--	return IS_VERITY(d_inode(dentry)) ? -EOPNOTSUPP : 0;
-+	return -EOPNOTSUPP;
- }
- 
- static inline void fsverity_cleanup_inode(struct inode *inode)
-@@ -274,4 +274,22 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
- 	return 0;
- }
- 
-+/**
-+ * fsverity_prepare_setattr() - prepare to change a verity inode's attributes
-+ * @dentry: dentry through which the inode is being changed
-+ * @attr: attributes to change
-+ *
-+ * Verity files are immutable, so deny truncates.  This isn't covered by the
-+ * open-time check because sys_truncate() takes a path, not a file descriptor.
-+ *
-+ * Return: 0 on success, -errno on failure
-+ */
-+static inline int fsverity_prepare_setattr(struct dentry *dentry,
-+					   struct iattr *attr)
-+{
-+	if (IS_VERITY(d_inode(dentry)))
-+		return __fsverity_prepare_setattr(dentry, attr);
-+	return 0;
-+}
-+
- #endif	/* _LINUX_FSVERITY_H */
+ fs/btrfs/verity.c        | 19 ++++-------
+ fs/ext4/verity.c         |  6 ++--
+ fs/f2fs/verity.c         |  6 ++--
+ fs/verity/enable.c       |  4 +--
+ fs/verity/open.c         | 46 ++++---------------------
+ include/linux/fsverity.h | 74 +++++++++++++++++++++++++++++++++-------
+ 6 files changed, 84 insertions(+), 71 deletions(-)
+
+
+base-commit: 93761c93e9da28d8a020777cee2a84133082b477
 -- 
 2.38.1
 
