@@ -4,73 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 84216C3DA6E
-	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 17 Dec 2022 00:47:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D86D8C3DA7B
+	for <linux-f2fs-devel@archiver.kernel.org>; Sat, 17 Dec 2022 00:47:19 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p6LME-0006xT-3K;
-	Sat, 17 Dec 2022 00:47:18 +0000
+	id 1p6LMF-0001q1-Bw;
+	Sat, 17 Dec 2022 00:47:19 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1p6LMD-0006xM-EU
+ (envelope-from <jaegeuk@kernel.org>) id 1p6LMD-0001pl-MG
  for linux-f2fs-devel@lists.sourceforge.net;
  Sat, 17 Dec 2022 00:47:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hKYvtkFrQ5Gu/XGBw1Du7t9DP65ZOOocIcAU545xFeM=; b=LG078gzCtCTSWosXZMebD+Ax/Y
- ZwXDV/Re2IZaJ1R7kQ5ZTR0GNjCgTJdkGKJAmLH47DSjXdE0dH7oYEYO1fEN92b8IPRHcNy1ASEyZ
- uH6HGzIsQLqKGMxTC+y6oBeOeCMTLtISzUnyPUb+SCtaUkLfrEci/eX17EAkrPx8P5q4=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=hKYvtkFrQ5Gu/XGBw1Du7t9DP65ZOOocIcAU545xFeM=; b=PmG1NMYkEkC2ZQmNHek/nCibCV
- rRPDK3mLgC2TBMRUzov7ZEegMLfDKvOU0p7+eoo5lslr9F6o0NSu4iGVGfO3ty5X2fcBmv/TLWqd0
- 0ish0LXZA9FAlldXOogPZ4jFKsvype6g4agG36QyKycGMDd9nMuDD/ad6Tu9ud6ovpfg=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=6rUr+riJeBQGOvGKvPKOPPDW0eArrIRPj9toPOkHeLE=; b=H5IndbA+s0G2cJNju9vgiWEGIi
+ 4EO2x3/eFz301smbAOmectOo6O/TloEqTaIVYUqswjp4HxwLrOC4TLtXNF8iO/xBwmeexFgbUCI7e
+ 9izZbIZHFmYXaiSywkzvbE7PpIgFa875vJxwomOBQ4gnYtGKduQtez4OEae1fRs84CyI=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=6rUr+riJeBQGOvGKvPKOPPDW0eArrIRPj9toPOkHeLE=; b=c
+ Eqiny5RNyFMQDtHT0obhUc89nvGDuOPbRjAC2lhXxXedtCV+GvoAGv/nLme7C+TK7enl+mAJp4liV
+ HholkNi24De8nP0YUH9C28te2sm/wDavG/r56R5/pXWpBs8UnWUBuDyWbHotpiO4btOU94mCN9OoU
+ fXXDmG1NZ8SKziCI=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p6LMC-001vH0-SY for linux-f2fs-devel@lists.sourceforge.net;
+ id 1p6LMC-001vGx-UM for linux-f2fs-devel@lists.sourceforge.net;
  Sat, 17 Dec 2022 00:47:17 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 46C82622FF
+ by ams.source.kernel.org (Postfix) with ESMTPS id A5937B81E4F
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Sat, 17 Dec 2022 00:47:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DF15C433D2;
- Sat, 17 Dec 2022 00:47:07 +0000 (UTC)
+ Sat, 17 Dec 2022 00:47:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64066C433EF;
+ Sat, 17 Dec 2022 00:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1671238027;
- bh=AzwJwO831ToMtkyVqdqwG2XUb0eIPd36DW9P8p2Lef0=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=ItJS5nPxoXXc64tEoC8hOfl3x6pXx4brhOBseH0Pyxksxzz8in1nqVZnqERljNmqU
- brEIUU6hQEmXiUDL3EO7RmSQSIZ39aeG+LvjL+ndsRthYCklXmUKHKbg1ZU1/4euEv
- DdJjdXqHwWWcNokSfdY0S0YFxiPnuVTTkXUeC9dmmtwPepkh7gwmibrfwTU3/6nCZU
- hr9DCu5h1Ocig/o8lj4ISjo1vRRGvUhvMbraTdE8qMuigvKPWF1tNvzanI+Qb2U3O4
- nsjUThYrohqD37nig5b+Z6mGHivajLd5heX/wzOmPxVyim35RY649jXB+2LRCXELTn
- 3g0kXPxMvVdyw==
+ s=k20201202; t=1671238025;
+ bh=RcsuFo8KYXcA03TEr9Mq5ANGUIZxFkfKFOpi/1eHeRM=;
+ h=From:To:Cc:Subject:Date:From;
+ b=S72RlySVGVPRDL/AKYB7DNR8UK3pvepkv3/9VhwzFXHvfIqExsZxQVYjVND9MjwWg
+ dij+k1nrbvdKZeOftBV55V2JewouAYed9Eg1+w9qE/raifQO2iiZg1Ls+91nscZ+1o
+ sh8ZEHH03k4hIOEAme9PSkpmcaAUHGwwltB1TQ+LmTNE8OpVEfYwRvuX3iSToPS6wL
+ HSCy2eDGzDDlv5PxRYmQ/FJyQNeQFaCMJT2jL3BuCZuZzPG0q2eyiAP1ZVxkvfjokT
+ V06ytkm5JFNekj+iK4d5UsQFGtAe/++WTwE5KSJz9buOwxUneuibFrjwrlH6kynygK
+ I/k8iSbYmc3xA==
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net
-Date: Fri, 16 Dec 2022 16:46:59 -0800
-Message-Id: <20221217004659.2092427-4-jaegeuk@kernel.org>
+Date: Fri, 16 Dec 2022 16:46:56 -0800
+Message-Id: <20221217004659.2092427-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
-In-Reply-To: <20221217004659.2092427-1-jaegeuk@kernel.org>
-References: <20221217004659.2092427-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1p6LMC-001vH0-SY
-Subject: [f2fs-dev] [PATCH 3/3] f2fs: should use a temp extent_info for
- lookup
+X-Headers-End: 1p6LMC-001vGx-UM
+Subject: [f2fs-dev] [PATCH 0/3] fix per-block age-based extent_cache
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -87,50 +84,19 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Otherwise, __lookup_extent_tree() will override the given extent_info which will
-be used by caller.
+Clean up and one bug fix.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/extent_cache.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Jaegeuk Kim (3):
+  f2fs: initialize extent_cache parameter
+  f2fs: don't mix to use union values in extent_info
+  f2fs: should use a temp extent_info for lookup
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 7bd1e1832412..a510fa57a823 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -888,6 +888,7 @@ static int __get_new_block_age(struct inode *inode, struct extent_info *ei,
- 	loff_t f_size = i_size_read(inode);
- 	unsigned long long cur_blocks =
- 				atomic64_read(&sbi->allocated_data_blocks);
-+	struct extent_info tei = *ei;	/* only fofs and len are valid */
- 
- 	/*
- 	 * When I/O is not aligned to a PAGE_SIZE, update will happen to the last
-@@ -898,17 +899,17 @@ static int __get_new_block_age(struct inode *inode, struct extent_info *ei,
- 			blkaddr == NEW_ADDR)
- 		return -EINVAL;
- 
--	if (__lookup_extent_tree(inode, ei->fofs, ei, EX_BLOCK_AGE)) {
-+	if (__lookup_extent_tree(inode, ei->fofs, &tei, EX_BLOCK_AGE)) {
- 		unsigned long long cur_age;
- 
--		if (cur_blocks >= ei->last_blocks)
--			cur_age = cur_blocks - ei->last_blocks;
-+		if (cur_blocks >= tei.last_blocks)
-+			cur_age = cur_blocks - tei.last_blocks;
- 		else
- 			/* allocated_data_blocks overflow */
--			cur_age = ULLONG_MAX - ei->last_blocks + cur_blocks;
-+			cur_age = ULLONG_MAX - tei.last_blocks + cur_blocks;
- 
--		if (ei->age)
--			ei->age = __calculate_block_age(cur_age, ei->age);
-+		if (tei.age)
-+			ei->age = __calculate_block_age(cur_age, tei.age);
- 		else
- 			ei->age = cur_age;
- 		ei->last_blocks = cur_blocks;
+ fs/f2fs/data.c         |  2 +-
+ fs/f2fs/extent_cache.c | 31 ++++++++++++++++---------------
+ fs/f2fs/file.c         |  2 +-
+ fs/f2fs/segment.c      |  2 +-
+ 4 files changed, 19 insertions(+), 18 deletions(-)
+
 -- 
 2.39.0.314.g84b9a713c41-goog
 
