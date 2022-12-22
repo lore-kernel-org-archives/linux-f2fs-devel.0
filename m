@@ -4,71 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7BD7BC4332F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Dec 2022 23:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2716C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Dec 2022 02:28:43 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p88pX-0003pH-6g;
-	Wed, 21 Dec 2022 23:48:59 +0000
+	id 1p8BK5-0004Lt-A0;
+	Thu, 22 Dec 2022 02:28:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1p88pV-0003pB-H4
+ (envelope-from <raj.khem@gmail.com>) id 1p8BK4-0004Ln-8m
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 21 Dec 2022 23:48:57 +0000
+ Thu, 22 Dec 2022 02:28:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bQLb2XHOR3/VImIsPbeZY6XNF6O9qLIo20u8RNoVleM=; b=QNUvx4gskC5h0maDufFR2SMLMH
- tHnYfnE7RF3Fv9cejrq9NTPTLNKKydYWru2zAmfAsiRlFuXgTcn7I9l1JjBKj3wjOuWOExhLwq83T
- VxglZLpwQPjcbLbpTegjOkAZuqqazvjHPD0pC/A6LEtIieMA4KsRUGD3+3wQ26BG2Izw=;
+ bh=BJjx1P6uTGc0MvAfR+qnHnZ3YF2ePGv2gUWGfttFHPI=; b=bBrmMYf4v7F3dXz79DbtOhYYjZ
+ 6JqjmcCELvr+g9SYfboloU38xcg/BAGZXXwXwJLNwnvYqa9jFEvxYa3YN5LVyARkQ1l/pUFTO2nUV
+ xfliLW3N9X4WZBbbJzgrnvMo2nza3mjAdo/2ilPnrT8mAlOBw+Nf/yyNAnpeH1JxX5eo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=bQLb2XHOR3/VImIsPbeZY6XNF6O9qLIo20u8RNoVleM=; b=ScJO5m8UmQcS/LO5EcKfA+tLrp
- 5y72ZyiwkeQny0w3jLevOjXskOjnxMNo1bCkl0M9KeFFc8nqtEcXA+UlcjQJxjtSva6CnsPqsmOqP
- HaaWF02D7HUHuviHYKgT1l0psGjkuDZb0QiBn2MNMe8Q3XBMKJsndfg+TlUoGSPnGjFg=;
-Received: from sin.source.kernel.org ([145.40.73.55])
+ bh=BJjx1P6uTGc0MvAfR+qnHnZ3YF2ePGv2gUWGfttFHPI=; b=V1rsTVlVPSD5bMA60RyzJKYJYE
+ Cy7vBWtSrWCv3F0uwxLTrt/zhvHaQKLYnh0/I3mq+Uy6sI828ENXtVqVIrJ9OR6Rjez445LitfHDw
+ FEDxj9UZXHgXahaJ7h4iui6mN9/U5glpvTjQ5afs4xdk18TW5eHpyLWbWqBLZ4YyYjQI=;
+Received: from mail-pj1-f47.google.com ([209.85.216.47])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p88pQ-007I8x-4v for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 21 Dec 2022 23:48:57 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by sin.source.kernel.org (Postfix) with ESMTPS id 698C5CE1810;
- Wed, 21 Dec 2022 23:48:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B06C433D2;
- Wed, 21 Dec 2022 23:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1671666514;
- bh=dfwaApWQ0HHasq7Na874WL021J+XeyqZRnuKNQdoIeg=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=lbiOFI5ce6MhuC0e2A8vQiFx/g2qB5m5bAuRy9qk5Mm6jsrk+zWBi3jlAng6HxqRS
- tkK0WMTApgo6M0Jbg3095s4Q1pMoYgKZS/ZWlc2VENkPe/bJziiHDjmGYr3gWqg0q/
- P5+W7XUBFaQXduCjSECo0Fbaa9symmfh45iWALREkyJEsVUmBrV0KR4cgEcWC69XAU
- 8kNNFUCCnqTZJM2oskc545+E3tIgEQDhY12cdfhUl6fXV7rYVW+Hdy9jUErqQrqK/S
- rcWGayoxy12exGtux3xcFCjCAkcRBWcdnXHle4L7F66IcCQHm+yINcrctCpSdkJen2
- YhHnAN0ngueAA==
-Date: Wed, 21 Dec 2022 15:48:32 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>
-Message-ID: <Y6ObULdVm2UN5kw1@sol.localdomain>
-References: <Y5jRbLEJh3S46Jer@sol.localdomain>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1p8BK3-007OJv-J6 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Dec 2022 02:28:40 +0000
+Received: by mail-pj1-f47.google.com with SMTP id
+ t11-20020a17090a024b00b0021932afece4so4304964pje.5
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 21 Dec 2022 18:28:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=BJjx1P6uTGc0MvAfR+qnHnZ3YF2ePGv2gUWGfttFHPI=;
+ b=ZGUsuvRI1XgADXNGbovzZpD/Z0LIYDtoWlUA8oxL8MYNxUzcMcqwN7q269/hWdgEzd
+ SWJoI0S1AXIEwuOMZQdqXUk17V5DgaFEnypnkQPJtKZ5lSkbH7snMv+gkV7SdPyVjPFw
+ 6dUzxY3RZUeOZGEWsKNVPiDBj3e5ABp7yN6WswFd+hxQTy78BgeU+0sfQn2fdJU5lnLS
+ Adgtl3+YCzs7JDBtKVZl8gA8/8/5z1gbCtxVzxaZcTYKQ0XX5z9TBks152HMYeiM15sz
+ afsZxuJjE9rpakSc49BM4IyrxmLZKqC6lQUewsbgSAZpYdNF2MPR8x9n/53hx21TPnVb
+ lsWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=BJjx1P6uTGc0MvAfR+qnHnZ3YF2ePGv2gUWGfttFHPI=;
+ b=RpsimZRAuZsnqnEV7y/a11fOL3vVPIdtytTLL43wULIrAqk7iDC56biwTCIUuU8XxB
+ Yd5DLtV8hthVP6OHe0jXVFcX4kqzsR4WXrZAKmnC2oeV39HOrH9V3rsGh7dEK23Qq5pY
+ laINN0majuunYbWALvtZZ7+3+Sp/YQjyo6CyC8TuZb63eYwqVgA7CK2LJD3phIG6rtJX
+ m/nkTcSNZKuU0R9K9JXzbhC8uP1A6iDRrJJ6y2UwrFlUz6c44vtzOLw9KOEb9/jOG3Dx
+ 8anLXqWIc2XV4tjXmutCiVGMY9EKnqa8eKGyuz74LxcMQKyUP/t/g8zC6Jfg4ARHKxB7
+ 8lnw==
+X-Gm-Message-State: AFqh2ko2GdXIaBnEDKTHUymJ/IBBgSE532TDXsrKSh9F1UlNXfxBWqmJ
+ fI8D+O+VuR3UarRzHdCr8B0kzXqn6JU=
+X-Google-Smtp-Source: AMrXdXsfviNqBBMiICWtseY4ZrWgdvdiIA4ezkIPhWXjlDEgjkPRqvhp++rhlvqwWiR6bPqQ7KnYbg==
+X-Received: by 2002:a05:6a21:3949:b0:a7:9022:5d5e with SMTP id
+ ac9-20020a056a21394900b000a790225d5emr5248001pzc.2.1671676113649; 
+ Wed, 21 Dec 2022 18:28:33 -0800 (PST)
+Received: from apollo.hsd1.ca.comcast.net ([2601:646:9181:1cf0::41f2])
+ by smtp.gmail.com with ESMTPSA id
+ n20-20020a638f14000000b00478c48cf73csm10521278pgd.82.2022.12.21.18.28.32
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 21 Dec 2022 18:28:33 -0800 (PST)
+From: Khem Raj <raj.khem@gmail.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Date: Wed, 21 Dec 2022 18:28:30 -0800
+Message-Id: <20221222022830.976309-2-raj.khem@gmail.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20221222022830.976309-1-raj.khem@gmail.com>
+References: <20221222022830.976309-1-raj.khem@gmail.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <Y5jRbLEJh3S46Jer@sol.localdomain>
-X-Headers-End: 1p88pQ-007I8x-4v
-Subject: Re: [f2fs-dev] Separate mailing list (and git and patchwork) for
- fsverity?
+X-Headers-End: 1p8BK3-007OJv-J6
+Subject: [f2fs-dev] [PATCH 2/2] f2fs_io: Define _FILE_OFFSET_BITS=64
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,57 +100,55 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Khem Raj <raj.khem@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Dec 13, 2022 at 11:24:28AM -0800, Eric Biggers wrote:
-> Currently, fsverity development is reusing the same mailing list, git repo
-> (though a different branch), and patchwork project as fscrypt --- mainly just
-> because I was a little lazy and didn't bother to ask for new ones:
-> 
-> FSCRYPT: FILE SYSTEM LEVEL ENCRYPTION SUPPORT
-> [...]
-> L:      linux-fscrypt@vger.kernel.org
-> Q:      https://patchwork.kernel.org/project/linux-fscrypt/list/
-> T:      git git://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
-> [...]
-> 
-> FSVERITY: READ-ONLY FILE-BASED AUTHENTICITY PROTECTION
-> [...]
-> L:      linux-fscrypt@vger.kernel.org
-> Q:      https://patchwork.kernel.org/project/linux-fscrypt/list/
-> T:      git git://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git fsverity
-> [...]
-> 
-> I think this is causing some confusion.  It also makes it so that people can't
-> subscribe to the list for just one or the other.
-> 
-> What would people say about having a separate mailing list, git repo, and
-> patchwork project for fsverity?  So the fsverity entry would look like:
-> 
-> FSVERITY: READ-ONLY FILE-BASED AUTHENTICITY PROTECTION
-> [...]
-> L:      linux-fsverity@vger.kernel.org
-> Q:      https://patchwork.kernel.org/project/linux-fsverity/list/
-> T:      git git://git.kernel.org/pub/scm/fs/fsverity/fsverity.git
-> [...]
-> 
-> For the branches in the git repo, I'm thinking of using 'for-next' and
-> 'for-current'.  (I'd also update the fscrypt ones to match; currently they are
-> 'master' and 'for-stable'.)
-> 
-> If people are okay with these changes, I'll send off the needed requests to
-> helpdesk and linux-next to make these changes, and send Linus a pull request to
-> update MAINTAINERS.  (And update fsverity-utils to point to the new list.)
-> 
+Remove _LARGEFILE64_SOURCE, this is redundant when _FILE_OFFSET_BITS=64
+additionally it fixes build with musl because the detection logic for
+lseek64 fails because when using _LARGEFILE64_SOURCE musl also define's
+lseek64 as an alias to lseek
 
-Any thoughts on this from anyone?
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+---
+ lib/libf2fs_io.c        | 4 +++-
+ tools/f2fs_io/f2fs_io.c | 4 ++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-- Eric
+diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
+index 1a8167d..abb43a3 100644
+--- a/lib/libf2fs_io.c
++++ b/lib/libf2fs_io.c
+@@ -11,7 +11,9 @@
+  *
+  * Dual licensed under the GPL or LGPL version 2 licenses.
+  */
+-#define _LARGEFILE64_SOURCE
++#ifndef _FILE_OFFSET_BITS
++#define _FILE_OFFSET_BITS 64
++#endif
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index 6dcd840..cb99039 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -12,8 +12,8 @@
+ #ifndef _LARGEFILE_SOURCE
+ #define _LARGEFILE_SOURCE
+ #endif
+-#ifndef _LARGEFILE64_SOURCE
+-#define _LARGEFILE64_SOURCE
++#ifndef _FILE_OFFSET_BITS
++#define _FILE_OFFSET_BITS 64
+ #endif
+ #ifndef O_LARGEFILE
+ #define O_LARGEFILE 0
+-- 
+2.39.0
+
 
 
 _______________________________________________
