@@ -4,87 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 22887C4167B
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Dec 2022 02:28:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E7B21C10F1B
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Dec 2022 02:57:47 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p8BK6-00046f-5X;
-	Thu, 22 Dec 2022 02:28:42 +0000
+	id 1p8BmF-0005YZ-0B;
+	Thu, 22 Dec 2022 02:57:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <raj.khem@gmail.com>) id 1p8BK4-00046Z-Kj
- for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Dec 2022 02:28:40 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3osejYwkbAOMXdePFQQJWFUUNI.LTTLQJZXJWHTSYJSY.HTR@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1p8BmE-0005YS-Hu for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Dec 2022 02:57:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lzxnYomd7VaxUFiWhUShEMFjSdOAPazXsBhz/nuG8fE=; b=jMO1Da0pZTBeHhhIBs2GHzFxX0
- Cm4nkH0FaxP5ZQ6M9UlJP5IAMYEqPTEhSwwDf51uTauK3p9c7SbHIlI2sV5REhrPWjQO3zLeTweEM
- LTRf8fwlvDi8c0fp0+B2WY4JtU81JQZCTAML8eEX8fA9gJyBCW6yV87oi8YuTZgJWqTA=;
+ bh=QyXBieiJ7cY0MoEKI6KnrTbmapbftXsP47zDObaNoIo=; b=hPVhjuulCNOZLcH+7Uf/NH8so9
+ IFqs4SLnSjYWmAW0ZV0OVe8PuhCDzKwY125fHQyQmYnpDeBSgNlGW0bdqMZUUzLIDpTf7yHElzIcb
+ aWTfbCxdZ+6DGY5XsbxJrdu5UBUE3CTaTvQqdZ3q4WBQaUgRViTNEZsYmlYpRJC+eJXA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=lzxnYomd7VaxUFiWhUShEMFjSdOAPazXsBhz/nuG8fE=; b=k
- KMzF+en3IR+uEHcDTOpCiZkk/O+srtHCkxFml3tzvdEsq1iK/26+pQqx1E4pKkHz+1vzxJPezQzJI
- X9Ysn+dcORRtvQH/GzCjka++MNB9G7pkER0EOvO0DxNjkLNt2PW42Ph/3iGmoTCTumCkYsroJ39Ya
- VWQxXCdti53gYNZ4=;
-Received: from mail-pj1-f50.google.com ([209.85.216.50])
+ List-Owner:List-Archive; bh=QyXBieiJ7cY0MoEKI6KnrTbmapbftXsP47zDObaNoIo=; b=g
+ eVveCC3vLLJkGdeefuZwQ64mTIo/mAJMAUnJbbA/qvv/EzJ/FsjTByVl6ws0UCuk6mU7ErltJ8gF/
+ 8icJH/jkOTH+K25h1uVgV4ZaoUfhTvIshPF9hg4b+MVe0VlUdT5woUTA7VGPQPpMZEoWholKdrGQx
+ PMvA1gDBx0sApmBg=;
+Received: from mail-io1-f72.google.com ([209.85.166.72])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1p8BK2-007OJu-Nr for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 22 Dec 2022 02:28:40 +0000
-Received: by mail-pj1-f50.google.com with SMTP id u5so475204pjy.5
+ id 1p8BmD-007P8G-NP for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 22 Dec 2022 02:57:46 +0000
+Received: by mail-io1-f72.google.com with SMTP id
+ n10-20020a6b590a000000b006e03471b3eeso286036iob.11
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 21 Dec 2022 18:28:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=lzxnYomd7VaxUFiWhUShEMFjSdOAPazXsBhz/nuG8fE=;
- b=hJvXeVrqJtwcEuH2AkTjtkTxlgQOXlwYnyEiZLM2xXlbRVR5D9GJMw+uaugjtax5ut
- BD2jQhDy1t64bXGtK4cp7uNmyZmP7t643KTiLyfHJcqi2LBttH1ieeMHFIYtKxUz/AAc
- vVGnI44aretOSs/7g/6L0rduDPcFzzh+jdHnPUXNb7FXz/p41HMBps+xo9QtdR39hC/A
- w14jFkrWI6VzkHtDdqpyk/Xfe4evv4mg4D2NLUQ3Sw8kfkMal3cKgZELsEWiz6Inw/ea
- VNXIJbeMU+n1m9JVZmhCflhaSdHOlXvML8mXHZNZH/QSCb1XvsL7YsvTVphjmjCnuUXZ
- mexQ==
+ Wed, 21 Dec 2022 18:57:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20210112;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=lzxnYomd7VaxUFiWhUShEMFjSdOAPazXsBhz/nuG8fE=;
- b=Q8S0mrPyO0g2J/2qRd0Kh6tZAmUUTxI4LRHFvOSM9BzqojcKvyiZ/cYeGFqD4pIVbL
- Y95/87iSCp4aqAFfnOKD10apmPYVb7JG1PgjfXlDllsIpbq9Z7W8mkEv1EZn4yYmdxpN
- wTtxVRBQgZl45pYlyUNPfwxSxAjj083tEZ/74kNN9uj+8N/dpDsuTq3pz+9QeddTBZpF
- mPCs8HzmbgzAEbMxtalmHF2q31SmzBzwEsJphdS9uSglMcYoiyImGAjbLUiTZ2ACxm+I
- 9+9N4WVns4qPvlQ+z60GgwpkTws+aMmIxfpIBB5J+nhU+FeGgunGTJtBsyeoQQ8Texay
- 2Ykw==
-X-Gm-Message-State: AFqh2krSzl6RfkoCs2OuMpweT4t4YiTF+J/eGq0T9JlIO9R4gYqQe4Yf
- bLNoP8gctOsttXpCxOt/QES0vkEJpI0=
-X-Google-Smtp-Source: AMrXdXtfg3+m75rqCqoNYeiu4Djs+jYKyHdUaQ0jP0uI2mB1CR8E1NITsI6L21Nzg1mrMRE93G9rvg==
-X-Received: by 2002:a05:6a21:c007:b0:ad:67fa:8e50 with SMTP id
- bm7-20020a056a21c00700b000ad67fa8e50mr5833278pzc.57.1671676112756; 
- Wed, 21 Dec 2022 18:28:32 -0800 (PST)
-Received: from apollo.hsd1.ca.comcast.net ([2601:646:9181:1cf0::41f2])
- by smtp.gmail.com with ESMTPSA id
- n20-20020a638f14000000b00478c48cf73csm10521278pgd.82.2022.12.21.18.28.31
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 21 Dec 2022 18:28:32 -0800 (PST)
-From: Khem Raj <raj.khem@gmail.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Wed, 21 Dec 2022 18:28:29 -0800
-Message-Id: <20221222022830.976309-1-raj.khem@gmail.com>
-X-Mailer: git-send-email 2.39.0
+ h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=QyXBieiJ7cY0MoEKI6KnrTbmapbftXsP47zDObaNoIo=;
+ b=aHtdJD4vqSysl65ktF8c2HJ3GoQb+OFJsHH7Z/ND2XPYAHqxb6TmOYzdoc+kn+uZfX
+ rkTnPBF+hBvscBCWzCK2U0q8PCmM6/tZGDtXBdrI/R8RlRPNXDZkwYhjuXNRfszPyuQR
+ A8PGgNA090XyvbCcwpQLjBT50RikFc8ia5PNObwHaHdtderarY/9BBBtlKFm37QSeg6k
+ /6QDZ72fMw6TzgMBGDPi06RHS3ZBKvTFSuW18G3Xx9glxHtSq6XO0uV77XmIbeiGOHZp
+ U134aDMs5werSY7jVzOcNg+2rTGZ4hrVdXxbAKhERHIyMFZJkxc+9xB4F4z+4jshrE9d
+ /ApA==
+X-Gm-Message-State: AFqh2kpY35zwE/QBEVb8sE1JG855xvmM1UmfMAIPUY5bDzgOSJnVlwQq
+ ocNRH59AheVBfoV4v/JPkPquNBvVbgECRd13k3TeldPMpRxr
+X-Google-Smtp-Source: AMrXdXvhNLtD7E0YLTzmYt8FzcXCKQ5UPXZVWAu9Tx/HHC6b7vxGhW+UIZOS8QlroAmzNJW6r5VXLysWbEPqe2LYUOmPQZsJrZgt
 MIME-Version: 1.0
-X-Headers-End: 1p8BK2-007OJu-Nr
-Subject: [f2fs-dev] [PATCH 1/2] f2fs_io: Fix out of tree builds
+X-Received: by 2002:a02:85e3:0:b0:38a:66d5:8715 with SMTP id
+ d90-20020a0285e3000000b0038a66d58715mr327555jai.63.1671677858551; Wed, 21 Dec
+ 2022 18:57:38 -0800 (PST)
+Date: Wed, 21 Dec 2022 18:57:38 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f020a905f061d4c2@google.com>
+From: syzbot <syzbot+e1246909d526a9d470fa@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, chao@kernel.org, hughd@google.com, 
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+ syzkaller-bugs@googlegroups.com
+X-Headers-End: 1p8BmD-007P8G-NP
+Subject: [f2fs-dev] [syzbot] [f2fs?] [tmpfs?] kernel BUG in f2fs_evict_inode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -96,35 +85,105 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Khem Raj <raj.khem@gmail.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Relative path does not work when searching for include files
-when srcdir != builddir
+Hello,
 
-Signed-off-by: Khem Raj <raj.khem@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    77856d911a8c Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17c418c8480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f967143badd2fa39
+dashboard link: https://syzkaller.appspot.com/bug?extid=e1246909d526a9d470fa
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160ea04f880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e2a99d880000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4b424d9203f5/disk-77856d91.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/47fd68051834/vmlinux-77856d91.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d3091f087a86/bzImage-77856d91.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/36b1377afaef/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e1246909d526a9d470fa@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/inode.c:864!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 5067 Comm: syz-executor118 Not tainted 6.1.0-syzkaller-13031-g77856d911a8c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+RIP: 0010:f2fs_evict_inode+0x1306/0x1310 fs/f2fs/inode.c:864
+Code: ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 8a f5 ff ff 48 89 df e8 4b 51 1a fe e9 7d f5 ff ff e8 e1 b4 c4 fd 0f 0b e8 da b4 c4 fd <0f> 0b 0f 1f 84 00 00 00 00 00 55 41 57 41 56 53 48 89 fb e8 c2 b4
+RSP: 0018:ffffc90003b3f8f8 EFLAGS: 00010293
+RAX: ffffffff83c720e6 RBX: 0000000000000002 RCX: ffff8880251257c0
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff83c71bc3 R09: ffffed100e5a41b5
+R10: ffffed100e5a41b5 R11: 1ffff1100e5a41b4 R12: dffffc0000000000
+R13: ffff888072d208f0 R14: ffff888072d20da0 R15: 0000000000000000
+FS:  000055555685a300(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffd85832d68 CR3: 00000000726a5000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ evict+0x2a4/0x620 fs/inode.c:664
+ dispose_list fs/inode.c:697 [inline]
+ evict_inodes+0x658/0x700 fs/inode.c:747
+ generic_shutdown_super+0x94/0x310 fs/super.c:480
+ kill_block_super+0x79/0xd0 fs/super.c:1386
+ kill_f2fs_super+0x2f9/0x3c0 fs/f2fs/super.c:4640
+ deactivate_locked_super+0xa7/0xf0 fs/super.c:332
+ cleanup_mnt+0x494/0x520 fs/namespace.c:1291
+ task_work_run+0x243/0x300 kernel/task_work.c:179
+ ptrace_notify+0x29a/0x340 kernel/signal.c:2354
+ ptrace_report_syscall include/linux/ptrace.h:411 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:473 [inline]
+ syscall_exit_work+0x8c/0xe0 kernel/entry/common.c:251
+ syscall_exit_to_user_mode_prepare+0x63/0xc0 kernel/entry/common.c:278
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
+ syscall_exit_to_user_mode+0xa/0x60 kernel/entry/common.c:296
+ do_syscall_64+0x49/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fd8e1d06d97
+Code: 08 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd858334a8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fd8e1d06d97
+RDX: 00007ffd85833569 RSI: 000000000000000a RDI: 00007ffd85833560
+RBP: 00007ffd85833560 R08: 00000000ffffffff R09: 00007ffd85833340
+R10: 000055555685b653 R11: 0000000000000202 R12: 00007ffd858345d0
+R13: 000055555685b5f0 R14: 00007ffd858334d0 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:f2fs_evict_inode+0x1306/0x1310 fs/f2fs/inode.c:864
+Code: ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 8a f5 ff ff 48 89 df e8 4b 51 1a fe e9 7d f5 ff ff e8 e1 b4 c4 fd 0f 0b e8 da b4 c4 fd <0f> 0b 0f 1f 84 00 00 00 00 00 55 41 57 41 56 53 48 89 fb e8 c2 b4
+RSP: 0018:ffffc90003b3f8f8 EFLAGS: 00010293
+RAX: ffffffff83c720e6 RBX: 0000000000000002 RCX: ffff8880251257c0
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff83c71bc3 R09: ffffed100e5a41b5
+R10: ffffed100e5a41b5 R11: 1ffff1100e5a41b4 R12: dffffc0000000000
+R13: ffff888072d208f0 R14: ffff888072d20da0 R15: 0000000000000000
+FS:  000055555685a300(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffd85832d68 CR3: 00000000726a5000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- tools/f2fs_io/Makefile.am | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/f2fs_io/Makefile.am b/tools/f2fs_io/Makefile.am
-index 6c17db1..bc4f9d0 100644
---- a/tools/f2fs_io/Makefile.am
-+++ b/tools/f2fs_io/Makefile.am
-@@ -1,7 +1,7 @@
- ## Makefile.am
- 
- if LINUX
--AM_CPPFLAGS = -I../../include
-+AM_CPPFLAGS = -I$(top_srcdir)/include
- AM_CFLAGS = -Wall
- sbin_PROGRAMS = f2fs_io
- f2fs_io_SOURCES = f2fs_io.c
--- 
-2.39.0
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
 
 
 _______________________________________________
