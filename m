@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 351E0C4167B
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Dec 2022 08:08:40 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DAECFC54EBE
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Dec 2022 20:37:06 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p8d6b-0001fl-EH;
-	Fri, 23 Dec 2022 08:08:37 +0000
+	id 1p8omu-0003Ow-Ai;
+	Fri, 23 Dec 2022 20:37:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <BATV+a36cbb7ae26730e9169d+7061+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1p8d6N-0001XK-EG for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Dec 2022 08:08:23 +0000
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <ebiggers@kernel.org>) id 1p8omt-0003Op-H1
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Dec 2022 20:37:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=fbFBDoUTr0Hz3vXP45guCPqzXQAzMtYZDFQbW7aV/7M=; b=fXL7ZaqsXOhyp5xHUB34V9lB35
- tuNLeRr3j4FYlH3Woq6zDGq6Ps9I8CY0LIytYbLlw949F+44yxGZrMFczAmekeD6nvnzrpFX4EGRP
- MO5R7i8prTxtQjC+oxWzgaMqjXEt4ic5tSnD4fc/UVIxPlLJN2mBX1XyxVKXOZILRT9s=;
+ bh=A+xtctLy+fQFyKbl/YtJ+IVU/zZ2qZt9cfPUzZOXAbk=; b=DxbC6R2Yg6ieDKdwwUqN9DdZpv
+ CW4ZsXurp4ZtFFbYuMpJ4LuZVuCeyhVoCfjmczaQBl3APOfJ+i+P8abOTo7Jbc2aAxYn3DyxQgG4k
+ 2EqMqPqgHwMgoCc43D0/yxFMh/2s79eoQoYbcM20wPn7XIPrHS7SEUwxMKftpY8wv9B0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=fbFBDoUTr0Hz3vXP45guCPqzXQAzMtYZDFQbW7aV/7M=; b=ZFqJfA+65xslT0R3a6lfgX0xfI
- WgChS3rmJ1JUoleiGAKkFDvTxxxt8u0gWzjCY/bLEKgaSj+s18ClewQrdD3ydJXFHCufcfOJtafqg
- 1h1J32PXvGqFNgA58ur1p9ct43ssfX8tCUwmau6HSqUDdt9CSHFD/P3U82xVUPC8EW/E=;
-Received: from bombadil.infradead.org ([198.137.202.133])
+ bh=A+xtctLy+fQFyKbl/YtJ+IVU/zZ2qZt9cfPUzZOXAbk=; b=iDLD797SSpjnWHxOyNw1gQ/XtB
+ NZxaruaq/Gt09q/sFGoLZvMjnwyEcGiBlPmvIagkJMGG2YpD4KVEsPcehjvWN3sXW7H+esRj9hRzm
+ 7EKT94jTBUMQCwTkHNSkA8MaI0OYcNUSV4RC8Vpc7+RL1wl2zJQPL2pCIWN35r+tTii8=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p8d6F-0007ja-MD for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Dec 2022 08:08:17 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
- :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
- Content-Transfer-Encoding:Content-ID:Content-Description;
- bh=fbFBDoUTr0Hz3vXP45guCPqzXQAzMtYZDFQbW7aV/7M=; b=E51cHrJYUYXCLQJ6msKO9XaW+8
- SzQjBaBALne5fVjvNAvOV5qoAzJhYusiS9APVbPLZRIMgmJ7vHa2pr+LksdjkiUicoqtpUYZXNLFN
- 9bDjsW51Plzixgfu/1HQwqxSRbvphYEqPWc08mBxLgstgTi4TqffHWvFVor42sHep04aR2QZoiHJ9
- cydEsdBmqvFVWSWR3FsMvKU0hkKQBd8bHu6sdY4gbMqcF3OiPiol9TM3x7/sFIBON+zQeq5GNAJry
- xu016McQd+WlF9525pZjlgYolVF64q6K95fNFFNOvo3JJyco1IHDzd6tNVkz7jyKmnvciMq4Uhlf9
- 38vhvqTg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red
- Hat Linux)) id 1p8d5y-0054Xp-JZ; Fri, 23 Dec 2022 08:07:58 +0000
-Date: Fri, 23 Dec 2022 00:07:58 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Vishal Moola <vishal.moola@gmail.com>
-Message-ID: <Y6Vh3iu1xD7jgF9/@infradead.org>
-References: <0a95ba7b-9335-ce03-0f47-5d9f4cce988f@kernel.org>
- <20221212191317.9730-1-vishal.moola@gmail.com>
- <6770f692-490e-34fc-46f8-4f65aa071f58@kernel.org>
- <Y5trNfldXrM4FIyU@casper.infradead.org>
- <CAOzc2pzoyBg=jgYNNfsmum9tKFOAy65zVsEyDE3vKoiti7FZDA@mail.gmail.com>
+ id 1p8oms-00088U-Q2 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Dec 2022 20:37:03 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 68A8D61EF6;
+ Fri, 23 Dec 2022 20:36:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB06C433F1;
+ Fri, 23 Dec 2022 20:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1671827816;
+ bh=t0yAzf0aY4TIwKR3lJb5ncYuHOsUm40J81t2ZXzWYCw=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=OrB9nct0a4D75w6OZb/PSADeO79+yJwZst83UJeD+WY4kVJr7xzqBKafuOYGiydbt
+ DFBA/1jsp1UtZ45r05r5BpGhQn58FTfFYWUxdIug8yNDjXpbK1Jk56GbMRE6MTPX/X
+ Jg1i+Tk1sadNzYRvqZWbUb1umRD1ailVYXQV97mbspBG8y7C57Z3oLQXhXKYeJPHM4
+ +o+7Iyok+em4Zkzw2AkQI+IY8ysPbxMU818Q8qOqubpg5WNVStEQF6M3vNB2sPo8VF
+ pneBVurJaEV04Vc1JTOKA10j3s8g/EK1VOdp+hMlfzjzMoe1qWQmZkrO1LHjpjJAIb
+ ast7KgPHOwJDA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Fri, 23 Dec 2022 12:36:29 -0800
+Message-Id: <20221223203638.41293-3-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20221223203638.41293-1-ebiggers@kernel.org>
+References: <20221223203638.41293-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <CAOzc2pzoyBg=jgYNNfsmum9tKFOAy65zVsEyDE3vKoiti7FZDA@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1p8d6F-0007ja-MD
-Subject: Re: [f2fs-dev] [RFC PATCH] f2fs: Convert f2fs_write_cache_pages()
- to use filemap_get_folios_tag()
+X-Headers-End: 1p8oms-00088U-Q2
+Subject: [f2fs-dev] [PATCH v2 02/11] fsverity: simplify Merkle tree
+ readahead size calculation
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,30 +80,141 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
- linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
+Cc: Andrey Albershteyn <aalbersh@redhat.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Dec 21, 2022 at 09:17:30AM -0800, Vishal Moola wrote:
-> > That said, folio_ref_inct() is very much MM-internal and filesystems
-> > should be using folio_get(), so please make that modification in the
-> > next revision, Vishal.
-> 
-> Ok, I'll go through and fix all of those in the next version.
+From: Eric Biggers <ebiggers@google.com>
 
-Btw, something a lot more productive in this area would be to figure out
-how we could convert all these copy and paste versions of
-write_cache_pages to use common code.  This might need changes to the
-common code, but the amount of duplicate and poorly maintained versions
-of this loop is a bit alarming:
+First, calculate max_ra_pages more efficiently by using the bio size.
 
- - btree_write_cache_pages
- - extent_write_cache_pages
- - f2fs_write_cache_pages
- - gfs2_write_cache_jdata
+Second, calculate the number of readahead pages from the hash page
+index, instead of calculating it ahead of time using the data page
+index.  This ends up being a bit simpler, especially since level 0 is
+last in the tree, so we can just limit the readahead to the tree size.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/verity/fsverity_private.h |  2 +-
+ fs/verity/open.c             |  3 ++-
+ fs/verity/verify.c           | 21 +++++++--------------
+ 3 files changed, 10 insertions(+), 16 deletions(-)
+
+diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+index e8b40c8000be7..48b97f5d05569 100644
+--- a/fs/verity/fsverity_private.h
++++ b/fs/verity/fsverity_private.h
+@@ -46,7 +46,7 @@ struct merkle_tree_params {
+ 	unsigned int log_arity;		/* log2(hashes_per_block) */
+ 	unsigned int num_levels;	/* number of levels in Merkle tree */
+ 	u64 tree_size;			/* Merkle tree size in bytes */
+-	unsigned long level0_blocks;	/* number of blocks in tree level 0 */
++	unsigned long tree_pages;	/* Merkle tree size in pages */
+ 
+ 	/*
+ 	 * Starting block index for each tree level, ordered from leaf level (0)
+diff --git a/fs/verity/open.c b/fs/verity/open.c
+index 83ccc3c137363..e356eefb54d7b 100644
+--- a/fs/verity/open.c
++++ b/fs/verity/open.c
+@@ -7,6 +7,7 @@
+ 
+ #include "fsverity_private.h"
+ 
++#include <linux/mm.h>
+ #include <linux/slab.h>
+ 
+ static struct kmem_cache *fsverity_info_cachep;
+@@ -97,7 +98,6 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
+ 			 params->log_arity;
+ 		blocks_in_level[params->num_levels++] = blocks;
+ 	}
+-	params->level0_blocks = blocks_in_level[0];
+ 
+ 	/* Compute the starting block of each level */
+ 	offset = 0;
+@@ -118,6 +118,7 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
+ 	}
+ 
+ 	params->tree_size = offset << log_blocksize;
++	params->tree_pages = PAGE_ALIGN(params->tree_size) >> PAGE_SHIFT;
+ 	return 0;
+ 
+ out_err:
+diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+index de0d7aef785bf..4c57a1bd01afc 100644
+--- a/fs/verity/verify.c
++++ b/fs/verity/verify.c
+@@ -74,7 +74,7 @@ static inline int cmp_hashes(const struct fsverity_info *vi,
+  */
+ static bool verify_page(struct inode *inode, const struct fsverity_info *vi,
+ 			struct ahash_request *req, struct page *data_page,
+-			unsigned long level0_ra_pages)
++			unsigned long max_ra_pages)
+ {
+ 	const struct merkle_tree_params *params = &vi->tree_params;
+ 	const unsigned int hsize = params->digest_size;
+@@ -103,7 +103,8 @@ static bool verify_page(struct inode *inode, const struct fsverity_info *vi,
+ 		hash_at_level(params, index, level, &hindex, &hoffset);
+ 
+ 		hpage = inode->i_sb->s_vop->read_merkle_tree_page(inode, hindex,
+-				level == 0 ? level0_ra_pages : 0);
++				level == 0 ? min(max_ra_pages,
++					params->tree_pages - hindex) : 0);
+ 		if (IS_ERR(hpage)) {
+ 			err = PTR_ERR(hpage);
+ 			fsverity_err(inode,
+@@ -199,14 +200,13 @@ void fsverity_verify_bio(struct bio *bio)
+ {
+ 	struct inode *inode = bio_first_page_all(bio)->mapping->host;
+ 	const struct fsverity_info *vi = inode->i_verity_info;
+-	const struct merkle_tree_params *params = &vi->tree_params;
+ 	struct ahash_request *req;
+ 	struct bio_vec *bv;
+ 	struct bvec_iter_all iter_all;
+ 	unsigned long max_ra_pages = 0;
+ 
+ 	/* This allocation never fails, since it's mempool-backed. */
+-	req = fsverity_alloc_hash_request(params->hash_alg, GFP_NOFS);
++	req = fsverity_alloc_hash_request(vi->tree_params.hash_alg, GFP_NOFS);
+ 
+ 	if (bio->bi_opf & REQ_RAHEAD) {
+ 		/*
+@@ -218,24 +218,17 @@ void fsverity_verify_bio(struct bio *bio)
+ 		 * This improves sequential read performance, as it greatly
+ 		 * reduces the number of I/O requests made to the Merkle tree.
+ 		 */
+-		bio_for_each_segment_all(bv, bio, iter_all)
+-			max_ra_pages++;
+-		max_ra_pages /= 4;
++		max_ra_pages = bio->bi_iter.bi_size >> (PAGE_SHIFT + 2);
+ 	}
+ 
+ 	bio_for_each_segment_all(bv, bio, iter_all) {
+-		struct page *page = bv->bv_page;
+-		unsigned long level0_index = page->index >> params->log_arity;
+-		unsigned long level0_ra_pages =
+-			min(max_ra_pages, params->level0_blocks - level0_index);
+-
+-		if (!verify_page(inode, vi, req, page, level0_ra_pages)) {
++		if (!verify_page(inode, vi, req, bv->bv_page, max_ra_pages)) {
+ 			bio->bi_status = BLK_STS_IOERR;
+ 			break;
+ 		}
+ 	}
+ 
+-	fsverity_free_hash_request(params->hash_alg, req);
++	fsverity_free_hash_request(vi->tree_params.hash_alg, req);
+ }
+ EXPORT_SYMBOL_GPL(fsverity_verify_bio);
+ #endif /* CONFIG_BLOCK */
+-- 
+2.39.0
+
 
 
 _______________________________________________
