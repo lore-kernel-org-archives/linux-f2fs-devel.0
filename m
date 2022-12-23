@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 470E0C5479D
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4766DC54EBC
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Dec 2022 20:37:21 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p8onA-0003RM-SJ;
+	id 1p8onA-0003R8-JP;
 	Fri, 23 Dec 2022 20:37:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1p8on1-0003QD-9x
+ (envelope-from <ebiggers@kernel.org>) id 1p8omy-0003Pk-Gz
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Dec 2022 20:37:11 +0000
+ Fri, 23 Dec 2022 20:37:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IlQ4AZVLaRGn0b7mAEpQpaMCiLoFhSmHaLxhN++R7NU=; b=lktKPPAQHihmbRHtNMAAEqj6eK
- RlAelkL8DZ5jDuGj0TE/oBH9duJtBI2iORlcBv/I7LpjEMt7AGBmF6dYrbB3M8lyF4GVgDVWiLim3
- qo35l3hWf20dLmvJVkBJl+BaL7XV3q9TmSZKHGJ8NimQJQIeYy36XSSMR3TefwwGmYmg=;
+ bh=x9+knnFzhP55odH/zxflOxdWuprPUFqwZMD4vLoY/Yw=; b=iLkROs5vqGvh4tlceeZ73NlY5S
+ tuYHfosDuPUuBDloa+TM/9gflNC5agvj8iv2rruW7OtALJQFkq0UnhSoS6rN0O3KKLj5bKQ/jbfpx
+ BlFkfPSwkqQ+UF64WM9/dkbAjaWcXCzOGu2kcUkFK6jWhwlY6iGrX04L+XWkSilAOz+c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=IlQ4AZVLaRGn0b7mAEpQpaMCiLoFhSmHaLxhN++R7NU=; b=FhR1XKFBJg1IbfH5OjC9EqS9hA
- lswbNUSODhD29KfjG8CT5jiSpAzVU4mUz77OVkXdfzrzN+aWQUUfnKfLevi6Ozj8nFC6PivoLu1Vi
- 4TmZZ3OzY6jXYoKNihDmh1hXbWxZl0GLhQM/Dva7wbDnuCkdmsBALO/OkEvkRlMBKk/g=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=x9+knnFzhP55odH/zxflOxdWuprPUFqwZMD4vLoY/Yw=; b=hGCsaJXKpQjA9xZoFiu5c9UFB6
+ 9v4S3F7S6mjzk2UeXuMrD2FcfZ2aIavZbUBPq3I5QIHYo+j5CJyAMN2bs8WO4YyWAxtF0BZAbR+5x
+ 35jy4LdIOnwgsViyspafRC0H91mq/MjIn16k2rKIE46g9KWJorAY0Y0IPf/Ax4cfoxRc=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p8on0-009S3p-NI for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Dec 2022 20:37:11 +0000
+ id 1p8omv-00088m-JC for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Dec 2022 20:37:08 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id D381B61D28;
- Fri, 23 Dec 2022 20:37:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D60C433D2;
- Fri, 23 Dec 2022 20:37:00 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 828D0B82141;
+ Fri, 23 Dec 2022 20:36:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8F55C433EF;
+ Fri, 23 Dec 2022 20:36:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1671827820;
- bh=qLoSGFi2QkFfE5PAtk38FT/yWSIKsO+TzvgyJfycJFQ=;
+ s=k20201202; t=1671827817;
+ bh=wN7s/A4toTfgS+KIXn99r7XJg8+e84l5l3auBwZ0mnc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=XQdKCLLelfI4SoxzCMAnCUtgdS+h9/wA0ND1Sx878oRw5ipn2eXs8emLgIEWu7IIf
- JBsFNvEu/j58OSutvkMWLShj6wyhrUy37JNS2DnPwotL4+tmwysUERhVyhSs7ei+h9
- NKtBVyxLlMbc7C4ITMY+Kw7pVpPh7GXAnZFYIueqVWBYPwPpAXrpLLXbi8ujGYPUD5
- QFlSPCJd9Yuo0zOm5Dldc8Jq66Lwkia/3lxTXrKYU+xSn7wVnfBP2VDx3inq3A52bz
- ChvrTaw6ccDIJgTioKbE631T7CAD6ukJcDD2rq+lINmp6BCvnCVN2Uz2bCbYl+fKG8
- rgFvJqVI6oY7w==
+ b=d+p4IyQ3t6U+M3aSYLY7BTKWPteCG8tVzna1JJQAIpse35DoJuLJVcnL9qLS4mzyh
+ k7KwBMCk5nVGNNDuy2jvKNYRFsk5/nDWizFU+pzBPFBHk7xgCOw85MKqG17wjP18lX
+ X8T9nGdOTH1z0NJ+Vos6/3qahMbaj5/jamCSA4XFqXx0oI+PtiZ/MgtUbJ2VNW1Rvo
+ RCCMc80qeU3NmXJ6t9NCaBooCNzueEY61w6QyElnwELbfer37W5f7YGtJsKYPqErmQ
+ 41EyJ9E5j5WcBWIHGP00Uhg49JEFBe4CwecifaNHeN7+914nLOLfgCq/fZ5IsWLkaD
+ dHUMnqCIZJZgw==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Fri, 23 Dec 2022 12:36:38 -0800
-Message-Id: <20221223203638.41293-12-ebiggers@kernel.org>
+Date: Fri, 23 Dec 2022 12:36:30 -0800
+Message-Id: <20221223203638.41293-4-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20221223203638.41293-1-ebiggers@kernel.org>
 References: <20221223203638.41293-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1p8on0-009S3p-NI
-Subject: [f2fs-dev] [PATCH v2 11/11] ext4: allow verity with fs block size <
- PAGE_SIZE
+X-Headers-End: 1p8omv-00088m-JC
+Subject: [f2fs-dev] [PATCH v2 03/11] fsverity: store log2(digest_size)
+ precomputed
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,51 +90,59 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Now that the needed changes have been made to fs/buffer.c, ext4 is ready
-to support the verity feature when the filesystem block size is less
-than the page size.  So remove the mount-time check that prevented this.
+Add log_digestsize to struct merkle_tree_params so that it can be used
+in verify.c.  Also save memory by using u8 for all the log_* fields.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- Documentation/filesystems/fsverity.rst | 8 +++++---
- fs/ext4/super.c                        | 5 -----
- 2 files changed, 5 insertions(+), 8 deletions(-)
+ fs/verity/fsverity_private.h | 5 +++--
+ fs/verity/open.c             | 3 ++-
+ fs/verity/verify.c           | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
-index 948d202545240..c0c8a25b41bb8 100644
---- a/Documentation/filesystems/fsverity.rst
-+++ b/Documentation/filesystems/fsverity.rst
-@@ -497,9 +497,11 @@ To create verity files on an ext4 filesystem, the filesystem must have
- been formatted with ``-O verity`` or had ``tune2fs -O verity`` run on
- it.  "verity" is an RO_COMPAT filesystem feature, so once set, old
- kernels will only be able to mount the filesystem readonly, and old
--versions of e2fsck will be unable to check the filesystem.  Moreover,
--currently ext4 only supports mounting a filesystem with the "verity"
--feature when its block size is equal to PAGE_SIZE (often 4096 bytes).
-+versions of e2fsck will be unable to check the filesystem.
-+
-+Originally, an ext4 filesystem with the "verity" feature could only be
-+mounted when its block size was equal to the system page size
-+(typically 4096 bytes).  In Linux v6.3, this limitation was removed.
- 
- ext4 sets the EXT4_VERITY_FL on-disk inode flag on verity files.  It
- can only be set by `FS_IOC_ENABLE_VERITY`_, and it cannot be cleared.
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 16a343e8047d4..798cb19e2258b 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5336,11 +5336,6 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 		}
+diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+index 48b97f5d05569..fc1c2797fab19 100644
+--- a/fs/verity/fsverity_private.h
++++ b/fs/verity/fsverity_private.h
+@@ -42,8 +42,9 @@ struct merkle_tree_params {
+ 	unsigned int digest_size;	/* same as hash_alg->digest_size */
+ 	unsigned int block_size;	/* size of data and tree blocks */
+ 	unsigned int hashes_per_block;	/* number of hashes per tree block */
+-	unsigned int log_blocksize;	/* log2(block_size) */
+-	unsigned int log_arity;		/* log2(hashes_per_block) */
++	u8 log_digestsize;		/* log2(digest_size) */
++	u8 log_blocksize;		/* log2(block_size) */
++	u8 log_arity;			/* log2(hashes_per_block) */
+ 	unsigned int num_levels;	/* number of levels in Merkle tree */
+ 	u64 tree_size;			/* Merkle tree size in bytes */
+ 	unsigned long tree_pages;	/* Merkle tree size in pages */
+diff --git a/fs/verity/open.c b/fs/verity/open.c
+index e356eefb54d7b..ca8de73e5a0b8 100644
+--- a/fs/verity/open.c
++++ b/fs/verity/open.c
+@@ -76,7 +76,8 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
+ 		err = -EINVAL;
+ 		goto out_err;
  	}
+-	params->log_arity = params->log_blocksize - ilog2(params->digest_size);
++	params->log_digestsize = ilog2(params->digest_size);
++	params->log_arity = log_blocksize - params->log_digestsize;
+ 	params->hashes_per_block = 1 << params->log_arity;
  
--	if (ext4_has_feature_verity(sb) && sb->s_blocksize != PAGE_SIZE) {
--		ext4_msg(sb, KERN_ERR, "Unsupported blocksize for fs-verity");
--		goto failed_mount_wq;
--	}
--
  	/*
- 	 * Get the # of file system overhead blocks from the
- 	 * superblock if present.
+diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+index 4c57a1bd01afc..d2fcb6a21ea8e 100644
+--- a/fs/verity/verify.c
++++ b/fs/verity/verify.c
+@@ -35,7 +35,7 @@ static void hash_at_level(const struct merkle_tree_params *params,
+ 
+ 	/* Offset of the wanted hash (in bytes) within the hash block */
+ 	*hoffset = (position & ((1 << params->log_arity) - 1)) <<
+-		   (params->log_blocksize - params->log_arity);
++		   params->log_digestsize;
+ }
+ 
+ static inline int cmp_hashes(const struct fsverity_info *vi,
 -- 
 2.39.0
 
