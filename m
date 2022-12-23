@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4766DC54EBC
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Dec 2022 20:37:21 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A8E41C4332F
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Dec 2022 20:37:29 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p8onA-0003R8-JP;
-	Fri, 23 Dec 2022 20:37:20 +0000
+	id 1p8onJ-0000oZ-3V;
+	Fri, 23 Dec 2022 20:37:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1p8omy-0003Pk-Gz
+ (envelope-from <ebiggers@kernel.org>) id 1p8omw-0000oL-KC
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Dec 2022 20:37:08 +0000
+ Fri, 23 Dec 2022 20:37:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=x9+knnFzhP55odH/zxflOxdWuprPUFqwZMD4vLoY/Yw=; b=iLkROs5vqGvh4tlceeZ73NlY5S
- tuYHfosDuPUuBDloa+TM/9gflNC5agvj8iv2rruW7OtALJQFkq0UnhSoS6rN0O3KKLj5bKQ/jbfpx
- BlFkfPSwkqQ+UF64WM9/dkbAjaWcXCzOGu2kcUkFK6jWhwlY6iGrX04L+XWkSilAOz+c=;
+ bh=7g/TbiqxvwdS1NEAnv8cdY3TmAZBdAC77YD+BDdjpms=; b=YyM8aCSew6jN3kRwvAr/qkbYux
+ 4/2uM/LtjgQw/DaSKGB2iadfslPR7tkRpq3qR8QR34sb9MyXXvDL1XBD5ODFH5sktnHzHKMFvu+jJ
+ 9Trwyg618cVkDfqBVzEswdbLyyLZQpZj3gPH5wTV1qjdwTPRc8lZ5DZV0HjOIgPFp4zA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=x9+knnFzhP55odH/zxflOxdWuprPUFqwZMD4vLoY/Yw=; b=hGCsaJXKpQjA9xZoFiu5c9UFB6
- 9v4S3F7S6mjzk2UeXuMrD2FcfZ2aIavZbUBPq3I5QIHYo+j5CJyAMN2bs8WO4YyWAxtF0BZAbR+5x
- 35jy4LdIOnwgsViyspafRC0H91mq/MjIn16k2rKIE46g9KWJorAY0Y0IPf/Ax4cfoxRc=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=7g/TbiqxvwdS1NEAnv8cdY3TmAZBdAC77YD+BDdjpms=; b=lg/aGQi9Jbj+CV4mJ/TbBSAsYB
+ fVKHOTR13zGxE66RlPTAUPqB2njS5ldxDvV9VL1mLgzjFyil/prugOWbaBrFKmjkPiyoVkRsiGBrk
+ 6QePijm/msTC4HFIL4ix2Zqta/+w86B61OexbgRsxW0m+OyE7CTIVvullDCyonC646I4=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p8omv-00088m-JC for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Dec 2022 20:37:08 +0000
+ id 1p8omu-009S2Q-UW for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Dec 2022 20:37:05 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 828D0B82141;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 8325261EFA;
  Fri, 23 Dec 2022 20:36:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8F55C433EF;
- Fri, 23 Dec 2022 20:36:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0D06C433D2;
+ Fri, 23 Dec 2022 20:36:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1671827817;
- bh=wN7s/A4toTfgS+KIXn99r7XJg8+e84l5l3auBwZ0mnc=;
+ bh=Z8CoE1PrgXB4eCUJFPaeZnMBi1T65cAAQrdPuKXjbOU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=d+p4IyQ3t6U+M3aSYLY7BTKWPteCG8tVzna1JJQAIpse35DoJuLJVcnL9qLS4mzyh
- k7KwBMCk5nVGNNDuy2jvKNYRFsk5/nDWizFU+pzBPFBHk7xgCOw85MKqG17wjP18lX
- X8T9nGdOTH1z0NJ+Vos6/3qahMbaj5/jamCSA4XFqXx0oI+PtiZ/MgtUbJ2VNW1Rvo
- RCCMc80qeU3NmXJ6t9NCaBooCNzueEY61w6QyElnwELbfer37W5f7YGtJsKYPqErmQ
- 41EyJ9E5j5WcBWIHGP00Uhg49JEFBe4CwecifaNHeN7+914nLOLfgCq/fZ5IsWLkaD
- dHUMnqCIZJZgw==
+ b=eCLe0H2xFKnziAiqA2LNbf2DlfdqUPb/wum6IDM32pPVFT/cKXXtSWm14HjE4+Qjq
+ DFVdyJ76MyUk00jJ9ZNdS5Emr5EPZsLOExbHr+EVn6ADX6sznqcDox+alvSDym6qBU
+ GaBvJdK1PG2B7ztRY/vTIuTRoTRQoY0T/nmBF7O5b6clLy12I4r18+8EQslc66iPdu
+ YUndUmZry26NfrH+dYisSN06/Imxj9koAbw07slDBCXsxxci7v6qjtNQSMMEBYHvrv
+ 1qGcgrGGbg/Wxz1MmNaw/uXD7VezoenL7uG3JMipXFVsdoFQeeYmcRJpglaKysu5YD
+ v8kkjgNQDRqzQ==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Fri, 23 Dec 2022 12:36:30 -0800
-Message-Id: <20221223203638.41293-4-ebiggers@kernel.org>
+Date: Fri, 23 Dec 2022 12:36:32 -0800
+Message-Id: <20221223203638.41293-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20221223203638.41293-1-ebiggers@kernel.org>
 References: <20221223203638.41293-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1p8omv-00088m-JC
-Subject: [f2fs-dev] [PATCH v2 03/11] fsverity: store log2(digest_size)
- precomputed
+X-Headers-End: 1p8omu-009S2Q-UW
+Subject: [f2fs-dev] [PATCH v2 05/11] fsverity: replace fsverity_hash_page()
+ with fsverity_hash_block()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,59 +90,143 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add log_digestsize to struct merkle_tree_params so that it can be used
-in verify.c.  Also save memory by using u8 for all the log_* fields.
+In preparation for allowing the Merkle tree block size to differ from
+PAGE_SIZE, replace fsverity_hash_page() with fsverity_hash_block().  The
+new function is similar to the old one, but it operates on the block at
+the given offset in the page instead of on the full page.
+
+(For now, all callers still pass a full page.)
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/verity/fsverity_private.h | 5 +++--
- fs/verity/open.c             | 3 ++-
- fs/verity/verify.c           | 2 +-
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ fs/verity/enable.c           |  4 ++--
+ fs/verity/fsverity_private.h |  6 +++---
+ fs/verity/hash_algs.c        | 24 +++++++++++-------------
+ fs/verity/verify.c           |  9 +++++----
+ 4 files changed, 21 insertions(+), 22 deletions(-)
 
+diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+index 8a9189d479837..144483319f1a3 100644
+--- a/fs/verity/enable.c
++++ b/fs/verity/enable.c
+@@ -99,8 +99,8 @@ static int build_merkle_tree_level(struct file *filp, unsigned int level,
+ 			}
+ 		}
+ 
+-		err = fsverity_hash_page(params, inode, req, src_page,
+-					 &pending_hashes[pending_size]);
++		err = fsverity_hash_block(params, inode, req, src_page, 0,
++					  &pending_hashes[pending_size]);
+ 		put_page(src_page);
+ 		if (err)
+ 			return err;
 diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index 48b97f5d05569..fc1c2797fab19 100644
+index fc1c2797fab19..23ded939d649f 100644
 --- a/fs/verity/fsverity_private.h
 +++ b/fs/verity/fsverity_private.h
-@@ -42,8 +42,9 @@ struct merkle_tree_params {
- 	unsigned int digest_size;	/* same as hash_alg->digest_size */
- 	unsigned int block_size;	/* size of data and tree blocks */
- 	unsigned int hashes_per_block;	/* number of hashes per tree block */
--	unsigned int log_blocksize;	/* log2(block_size) */
--	unsigned int log_arity;		/* log2(hashes_per_block) */
-+	u8 log_digestsize;		/* log2(digest_size) */
-+	u8 log_blocksize;		/* log2(block_size) */
-+	u8 log_arity;			/* log2(hashes_per_block) */
- 	unsigned int num_levels;	/* number of levels in Merkle tree */
- 	u64 tree_size;			/* Merkle tree size in bytes */
- 	unsigned long tree_pages;	/* Merkle tree size in pages */
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index e356eefb54d7b..ca8de73e5a0b8 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -76,7 +76,8 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
- 		err = -EINVAL;
- 		goto out_err;
- 	}
--	params->log_arity = params->log_blocksize - ilog2(params->digest_size);
-+	params->log_digestsize = ilog2(params->digest_size);
-+	params->log_arity = log_blocksize - params->log_digestsize;
- 	params->hashes_per_block = 1 << params->log_arity;
- 
- 	/*
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index 4c57a1bd01afc..d2fcb6a21ea8e 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -35,7 +35,7 @@ static void hash_at_level(const struct merkle_tree_params *params,
- 
- 	/* Offset of the wanted hash (in bytes) within the hash block */
- 	*hoffset = (position & ((1 << params->log_arity) - 1)) <<
--		   (params->log_blocksize - params->log_arity);
-+		   params->log_digestsize;
+@@ -88,9 +88,9 @@ void fsverity_free_hash_request(struct fsverity_hash_alg *alg,
+ 				struct ahash_request *req);
+ const u8 *fsverity_prepare_hash_state(struct fsverity_hash_alg *alg,
+ 				      const u8 *salt, size_t salt_size);
+-int fsverity_hash_page(const struct merkle_tree_params *params,
+-		       const struct inode *inode,
+-		       struct ahash_request *req, struct page *page, u8 *out);
++int fsverity_hash_block(const struct merkle_tree_params *params,
++			const struct inode *inode, struct ahash_request *req,
++			struct page *page, unsigned int offset, u8 *out);
+ int fsverity_hash_buffer(struct fsverity_hash_alg *alg,
+ 			 const void *data, size_t size, u8 *out);
+ void __init fsverity_check_hash_algs(void);
+diff --git a/fs/verity/hash_algs.c b/fs/verity/hash_algs.c
+index 6f8170cf4ae71..13fcf31be8441 100644
+--- a/fs/verity/hash_algs.c
++++ b/fs/verity/hash_algs.c
+@@ -220,35 +220,33 @@ const u8 *fsverity_prepare_hash_state(struct fsverity_hash_alg *alg,
  }
  
- static inline int cmp_hashes(const struct fsverity_info *vi,
+ /**
+- * fsverity_hash_page() - hash a single data or hash page
++ * fsverity_hash_block() - hash a single data or hash block
+  * @params: the Merkle tree's parameters
+  * @inode: inode for which the hashing is being done
+  * @req: preallocated hash request
+- * @page: the page to hash
++ * @page: the page containing the block to hash
++ * @offset: the offset of the block within @page
+  * @out: output digest, size 'params->digest_size' bytes
+  *
+- * Hash a single data or hash block, assuming block_size == PAGE_SIZE.
+- * The hash is salted if a salt is specified in the Merkle tree parameters.
++ * Hash a single data or hash block.  The hash is salted if a salt is specified
++ * in the Merkle tree parameters.
+  *
+  * Return: 0 on success, -errno on failure
+  */
+-int fsverity_hash_page(const struct merkle_tree_params *params,
+-		       const struct inode *inode,
+-		       struct ahash_request *req, struct page *page, u8 *out)
++int fsverity_hash_block(const struct merkle_tree_params *params,
++			const struct inode *inode, struct ahash_request *req,
++			struct page *page, unsigned int offset, u8 *out)
+ {
+ 	struct scatterlist sg;
+ 	DECLARE_CRYPTO_WAIT(wait);
+ 	int err;
+ 
+-	if (WARN_ON(params->block_size != PAGE_SIZE))
+-		return -EINVAL;
+-
+ 	sg_init_table(&sg, 1);
+-	sg_set_page(&sg, page, PAGE_SIZE, 0);
++	sg_set_page(&sg, page, params->block_size, offset);
+ 	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
+ 					CRYPTO_TFM_REQ_MAY_BACKLOG,
+ 				   crypto_req_done, &wait);
+-	ahash_request_set_crypt(req, &sg, out, PAGE_SIZE);
++	ahash_request_set_crypt(req, &sg, out, params->block_size);
+ 
+ 	if (params->hashstate) {
+ 		err = crypto_ahash_import(req, params->hashstate);
+@@ -264,7 +262,7 @@ int fsverity_hash_page(const struct merkle_tree_params *params,
+ 
+ 	err = crypto_wait_req(err, &wait);
+ 	if (err)
+-		fsverity_err(inode, "Error %d computing page hash", err);
++		fsverity_err(inode, "Error %d computing block hash", err);
+ 	return err;
+ }
+ 
+diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+index d2fcb6a21ea8e..44df06ddcc603 100644
+--- a/fs/verity/verify.c
++++ b/fs/verity/verify.c
+@@ -125,12 +125,13 @@ static bool verify_page(struct inode *inode, const struct fsverity_info *vi,
+ 
+ 	want_hash = vi->root_hash;
+ descend:
+-	/* Descend the tree verifying hash pages */
++	/* Descend the tree verifying hash blocks. */
+ 	for (; level > 0; level--) {
+ 		struct page *hpage = hpages[level - 1];
+ 		unsigned int hoffset = hoffsets[level - 1];
+ 
+-		err = fsverity_hash_page(params, inode, req, hpage, real_hash);
++		err = fsverity_hash_block(params, inode, req, hpage, 0,
++					  real_hash);
+ 		if (err)
+ 			goto out;
+ 		err = cmp_hashes(vi, want_hash, real_hash, index, level - 1);
+@@ -142,8 +143,8 @@ static bool verify_page(struct inode *inode, const struct fsverity_info *vi,
+ 		put_page(hpage);
+ 	}
+ 
+-	/* Finally, verify the data page */
+-	err = fsverity_hash_page(params, inode, req, data_page, real_hash);
++	/* Finally, verify the data block. */
++	err = fsverity_hash_block(params, inode, req, data_page, 0, real_hash);
+ 	if (err)
+ 		goto out;
+ 	err = cmp_hashes(vi, want_hash, real_hash, index, -1);
 -- 
 2.39.0
 
