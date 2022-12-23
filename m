@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E370DC54E76
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F0993C54EBC
 	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 23 Dec 2022 20:37:08 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1p8omx-0003PW-V1;
+	id 1p8omx-0003PL-M5;
 	Fri, 23 Dec 2022 20:37:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1p8omx-0003PD-1W
+ (envelope-from <ebiggers@kernel.org>) id 1p8omv-0003P4-6n
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Dec 2022 20:37:07 +0000
+ Fri, 23 Dec 2022 20:37:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SP1rikeG5TcWjacmj9fdNsQMeLcBTBzHWiVqPUztrrM=; b=HBg8YJbw6A2vk9nNrQzqdnnLBD
- qQVOKUGNjBWII7DRepO716ZaVTdjWaWMkyVdKqTIh0MGIfcg05lvBfm82SpyqacnI4yfY7RANNQnS
- EmUDijICj5IloLw8Zxcf1xB1H+4HfGRHja4m3P4po9wa96xGWeYm82Xqk/nnrFNUpCaw=;
+ bh=l8P4LiO96AU70qR/laRSg5gCbmzlW0fQ82FdUEyjHoc=; b=KGeYEOfJDnSPZSVjYVJ9R0pLw6
+ DQge4ybq6ncfqTTM+idzFUr5SwtAexN/fuUgzVUSm8npMOoq8VrUbEvXAVMyVhvjoAHiuQpqFOmEg
+ nWDlvYHvkI9uiEQHNFKZYyVwWUl8M+f7vgHmTIZYOyrkT+zbcSA+wdV3u1KiC27531O8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=SP1rikeG5TcWjacmj9fdNsQMeLcBTBzHWiVqPUztrrM=; b=juN4o0NJt9qAJuLMUl04f6wCqp
- rmN3yBpDJkARr8cjT1YvNo9cTOZGKlet7iZFMkuF0RkyzZ9571a9/ERoX3sbxo0Ts/Irr7/cHZzqX
- YyzzX84Ya79XaRklFD4SmMQGPN2Ni3hPh4ajGZqANVYm3vjaseYgir4L0QP72OAV3N7c=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=l8P4LiO96AU70qR/laRSg5gCbmzlW0fQ82FdUEyjHoc=; b=JVoQ5XA228AEmS15kJ1Jc5D2Fk
+ IusvsjdAu8KlZr82Ddq7Auz5Qk5s4Ezr7eeXqVDeYo6GvK2HeAvL8hvgtFfEpy1E3BkgxxkLJaOcw
+ 4EDYOWI/vKsPllYBrn1LsAX3U8P09rLS1uY0oDqYu34nGuVjGPuoaPTAarsx/kfHxsCI=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1p8omv-009S2W-2D for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 23 Dec 2022 20:37:07 +0000
+ id 1p8omu-00088s-ML for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 23 Dec 2022 20:37:05 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id C7735B82142;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 4F45B61EF9;
+ Fri, 23 Dec 2022 20:36:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E024EC433D2;
  Fri, 23 Dec 2022 20:36:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529BEC433F0;
- Fri, 23 Dec 2022 20:36:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1671827817;
- bh=hUMxvtChJHIBiEf3QPm8r6dGOW77G56OuiC6WrUXTPs=;
+ s=k20201202; t=1671827819;
+ bh=5f4h1JTh7Ym7YmoePqqN9Pp+PtyJBLUnyId3SNpncmY=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=oyXzMNc4twgXBPEgKTMYdpGLLF0S+W/JjUp0sjBRFNQ3R4P31+mrvxJ1ZdzEO/JJc
- 2yKvKtQA9ldermdyYk7cM+zj2pjKPm0I75L/OXvjsuQE/OAGY837S/3OT0He6mjGqY
- 3j3T4wKkte1o51XsKB+PHC1Izsf/oUC1bfVwiOg4gw7gjU0B9svWzFhfkBbDrPocAD
- 1XMwZ/QDk5X9Rg0lKgwPpLFxyvZngASNHLl8b9jIRzfvRwbLUsillkGJn73NxFi93d
- fVFDCv4mQrgG9lGb015HN3LMPQmH2Ovw7RAizFoP6ZmdtiGTgHwaPIU7gmKvmC/rH7
- WO6RF5z584vmA==
+ b=h7bOrmUW3fhnTg+x+VidhjcdnxirPqapDdU+dX0eyaJNzRUfcdaufj8eyUp+calwr
+ OyiNLgf+6HE7ok378y0UR8FjTJQQu/V1DznM1pWjOE7PgLXgsQgDWeugloXgdPG6FA
+ tPb0VywVIDEM6DExy/uSrjb19zUJCNWhJGbf2V8HDg4FS1IlcP6Cms9Te/6XFL+s3y
+ 8V4j2+7KcN0CTZrn6OOyi+3sqCmbbhvheg/VTaVhJlZcpX/BEPuy2RE4B+/nY9vrQ1
+ LlO0ZdiYXFtYTYnXitWhSrTkfxHWDzYdq1mLc1Bdr1nOP35niVNWtEsAM32+mIeGR7
+ VSxlsvBM+b0bQ==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Fri, 23 Dec 2022 12:36:31 -0800
-Message-Id: <20221223203638.41293-5-ebiggers@kernel.org>
+Date: Fri, 23 Dec 2022 12:36:35 -0800
+Message-Id: <20221223203638.41293-9-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20221223203638.41293-1-ebiggers@kernel.org>
 References: <20221223203638.41293-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1p8omv-009S2W-2D
-Subject: [f2fs-dev] [PATCH v2 04/11] fsverity: use EFBIG for file too large
- to enable verity
+X-Headers-End: 1p8omu-00088s-ML
+Subject: [f2fs-dev] [PATCH v2 08/11] ext4: simplify ext4_readpage_limit()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,53 +89,29 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Currently, there is an implementation limit where files can't have more
-than 8 Merkle tree levels.  With SHA-256 and 4K blocks, this limit is
-never reached, since a file would need to be larger than 2**64 bytes to
-need 9 levels.  However, with SHA-512, 9 levels are needed for files
-larger than about 1.15 EB, which is possible on btrfs.  Therefore, this
-limit technically became reachable when btrfs added fsverity support.
-
-Meanwhile, support for merkle_tree_block_size < PAGE_SIZE will introduce
-another implementation limit on file size, resulting from the use of an
-in-memory bitmap to track which Merkle tree blocks have been verified.
-
-In any case, currently FS_IOC_ENABLE_VERITY fails with EINVAL when the
-file is too large.  This is undocumented, and also ambiguous since
-EINVAL can mean other things too.  Let's change the error code to EFBIG,
-which is much clearer, and document it.
+Now that the implementation of FS_IOC_ENABLE_VERITY has changed to not
+involve reading back Merkle tree blocks that were previously written,
+there is no need for ext4_readpage_limit() to allow for this case.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- Documentation/filesystems/fsverity.rst | 1 +
- fs/verity/open.c                       | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ fs/ext4/readpage.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
-index cb8e7573882a1..66cdca30ff58b 100644
---- a/Documentation/filesystems/fsverity.rst
-+++ b/Documentation/filesystems/fsverity.rst
-@@ -161,6 +161,7 @@ FS_IOC_ENABLE_VERITY can fail with the following errors:
- - ``EBUSY``: this ioctl is already running on the file
- - ``EEXIST``: the file already has verity enabled
- - ``EFAULT``: the caller provided inaccessible memory
-+- ``EFBIG``: the file is too large to enable verity on
- - ``EINTR``: the operation was interrupted by a fatal signal
- - ``EINVAL``: unsupported version, hash algorithm, or block size; or
-   reserved bits are set; or the file descriptor refers to neither a
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index ca8de73e5a0b8..09512daa22db5 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -92,7 +92,7 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
- 	while (blocks > 1) {
- 		if (params->num_levels >= FS_VERITY_MAX_LEVELS) {
- 			fsverity_err(inode, "Too many levels in Merkle tree");
--			err = -EINVAL;
-+			err = -EFBIG;
- 			goto out_err;
- 		}
- 		blocks = (blocks + params->hashes_per_block - 1) >>
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index d5266932ce6cd..c61dc8a7c0147 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -211,8 +211,7 @@ static void ext4_set_bio_post_read_ctx(struct bio *bio,
+ 
+ static inline loff_t ext4_readpage_limit(struct inode *inode)
+ {
+-	if (IS_ENABLED(CONFIG_FS_VERITY) &&
+-	    (IS_VERITY(inode) || ext4_verity_in_progress(inode)))
++	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
+ 		return inode->i_sb->s_maxbytes;
+ 
+ 	return i_size_read(inode);
 -- 
 2.39.0
 
