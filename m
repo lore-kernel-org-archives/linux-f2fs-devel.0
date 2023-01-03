@@ -4,70 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4C73EC46467
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Jan 2023 17:21:51 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CCFB2C3DA7D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  3 Jan 2023 18:50:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pCkyz-0007H2-P6;
-	Tue, 03 Jan 2023 17:21:49 +0000
+	id 1pCmMj-0002Ua-Ha;
+	Tue, 03 Jan 2023 18:50:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1pCkyz-0007Gq-3M
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pCmMi-0002UU-To
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Jan 2023 17:21:49 +0000
+ Tue, 03 Jan 2023 18:50:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xsXH01p2ZHU26TavxncWmQl5temDvoXjUduGbHitBtY=; b=F3LSaBkhWW/TRJCe//aBNXlurg
- fnH1HjMWO3S0dt9HhcnpjCSgdyXH/LUVM0lU2CahrBDKEHiSK8hOLfhrLuA8CZJl6ntHgJmXstc6C
- PlAMDxFFWRd7EzDtAUQkD0ZWKldDxThTLobyRVmrkTFRpxAKvtmQ7Vb2c7Snf/gDGP0g=;
+ bh=q+h3vgnfXMDmPE0j9kS1fnDW6c1CVGsX2/CLfw+rdHw=; b=efMfgr4JAbHerI5LipQ5fVWtwm
+ AMtNyllGlRRIgkZpJU3Ry6TuP0PUTUbVqCBTJznFIgA0XsrJ+4lPT7kENlrrTydl+pctoaU7v0S5C
+ i2/jU9Wh03CBBoeT/TjDw+xMATOCF3kq20BS4mlzzoSNjFWt6AE/c+BXO8e8oziMph+g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=xsXH01p2ZHU26TavxncWmQl5temDvoXjUduGbHitBtY=; b=Lf2woJCJRwPE3NzJFSYIMhFlmE
- 0lMKdFqNee4/YgHckFJjvURx8V5tGRmb1AV4//ACsK/mZNHx3J7btWFnALPtAeqvSQv1v3Mjy0PME
- UrrBqBzAZLkqfK5LB83C6J/a/2VSlDPpVzVWW+D9GXBJzmLJ4OvtAl03I7cSaArWIF80=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=q+h3vgnfXMDmPE0j9kS1fnDW6c1CVGsX2/CLfw+rdHw=; b=Nog1jTiixEELw73dkzAkC5dEXM
+ jcmRDAku/Kreb538N1vASPURb+Y+7IEzOzsR5r42kVOkj2npvWan819Sg4oe/7yYsxg5sfMEQTqoz
+ muI9pEOdJX1AbK7KqONoN4Qys6QYFrAszNL1YI8zNEiiqFMBkK7k3yvv+nt/qn2/YTco=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pCkyu-0006Fi-Rc for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 03 Jan 2023 17:21:49 +0000
+ id 1pCmMi-0003vq-7v for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 03 Jan 2023 18:50:24 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 7255661499;
- Tue,  3 Jan 2023 17:21:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3E8CC433EF;
- Tue,  3 Jan 2023 17:21:38 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id EF55BB810AB
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  3 Jan 2023 18:50:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9B0A7C433F1;
+ Tue,  3 Jan 2023 18:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1672766498;
- bh=ZyHwp988sZ12I9wUpcqJnIag8LKn4dqtFEX5E1v6dTM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=L5+SocAcVsRgVFso+7sdT7ZF8+HaKHIgyi70Vor3XTTgY0FDRqRnmJSbiOtk93rwn
- sRs9acZY9HXE45mBrQqipA1WCYV3ezvff8/W6QpXVt3DeKEgHyDzZiDjn+FCKswuZF
- A/Ceo0O0JgruvKf6i7oN0XOcsf4JsEMUqj4e0hYMfN5xBzsPfwIwuWUr3Nz5Q1t2Dn
- Zzbjy9AWLjLgC+OEPqGY3pQ2SYzt+09QCy/vL2cn8rGhbOti9X04phlMojyUvnCTlJ
- 4GRE2Elbhjyuu9c87CPGDpru/12rqnEJADC/EEx2sK/Id3COOZmW+Lipuby9see57r
- m2QKN87YmKBpw==
-Date: Tue, 3 Jan 2023 09:21:37 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <Y7RkIbB5JAAJ3Rw6@google.com>
-References: <20221128091523.1242584-1-hch@lst.de>
+ s=k20201202; t=1672771816;
+ bh=sWG9rZzpm0Uy4RsyJFum58ghvV4r6+MVa47kFQe/yhY=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=DyVkDAEfyYJAVG4YCa99Q0P5eGgeWPsv2HMIJtQIiIQlMrCqlI8oIo9YFPjj1w3Us
+ 78qyOpGXRs4uIncH4KO2jN1iSIKXhku3G7EhaAwkqHZm2TinS3Dnd+K0xXYulqBGjL
+ 1eptToGegMpyf85KxkoMWX4Ik6hsP80lYLRTz3Au3L9SiNcTTr9TlqKNMGIZtnG6ut
+ 75oP1+cUYHdJ5IkphJgzzArFm4kZ8Od8CZOW3nVPqJSxgEwGWgeqs/9myyDcTlXDPA
+ wCoSeF9xtqValf9JE0TBwXU082b3Q5Ecjo9KJoOWuxZgGn3KHpubtTvqpzkodszLo9
+ WIvmTzHSZ+l/Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ 74EA3E5724B; Tue,  3 Jan 2023 18:50:16 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20221128091523.1242584-1-hch@lst.de>
-X-Headers-End: 1pCkyu-0006Fi-Rc
-Subject: Re: [f2fs-dev] a fix and a bunch of cleanups
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <167277181647.18849.14412830382084760443.git-patchwork-notify@kernel.org>
+Date: Tue, 03 Jan 2023 18:50:16 +0000
+References: <20221222235458.957816-1-jaegeuk@kernel.org>
+In-Reply-To: <20221222235458.957816-1-jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1pCmMi-0003vq-7v
+Subject: Re: [f2fs-dev] [PATCH] f2fs: let's avoid panic if extent_tree is
+ not created
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,35 +83,67 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Christoph,
+Hello:
 
-I applied the patch set with minor modification to address merge conflict.
-Could you please take a look?
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev-test&qt=author&q=Christoph+Hellwig
-
-Thanks,
-
-On 11/28, Christoph Hellwig wrote:
-> Hi Jaegeuk and Chao,
+On Thu, 22 Dec 2022 15:54:58 -0800 you wrote:
+> This patch avoids the below panic.
 > 
-> the first patch in this series fixes a warning and subsequent hang when
-> testing zoned f2fs.  The other patches are misc cleanups for the I/O path.
+> pc : __lookup_extent_tree+0xd8/0x760
+> lr : f2fs_do_write_data_page+0x104/0x87c
+> sp : ffffffc010cbb3c0
+> x29: ffffffc010cbb3e0 x28: 0000000000000000
+> x27: ffffff8803e7f020 x26: ffffff8803e7ed40
+> x25: ffffff8803e7f020 x24: ffffffc010cbb460
+> x23: ffffffc010cbb480 x22: 0000000000000000
+> x21: 0000000000000000 x20: ffffffff22e90900
+> x19: 0000000000000000 x18: ffffffc010c5d080
+> x17: 0000000000000000 x16: 0000000000000020
+> x15: ffffffdb1acdbb88 x14: ffffff888759e2b0
+> x13: 0000000000000000 x12: ffffff802da49000
+> x11: 000000000a001200 x10: ffffff8803e7ed40
+> x9 : ffffff8023195800 x8 : ffffff802da49078
+> x7 : 0000000000000001 x6 : 0000000000000000
+> x5 : 0000000000000006 x4 : ffffffc010cbba28
+> x3 : 0000000000000000 x2 : ffffffc010cbb480
+> x1 : 0000000000000000 x0 : ffffff8803e7ed40
+> Call trace:
+>  __lookup_extent_tree+0xd8/0x760
+>  f2fs_do_write_data_page+0x104/0x87c
+>  f2fs_write_single_data_page+0x420/0xb60
+>  f2fs_write_cache_pages+0x418/0xb1c
+>  __f2fs_write_data_pages+0x428/0x58c
+>  f2fs_write_data_pages+0x30/0x40
+>  do_writepages+0x88/0x190
+>  __writeback_single_inode+0x48/0x448
+>  writeback_sb_inodes+0x468/0x9e8
+>  __writeback_inodes_wb+0xb8/0x2a4
+>  wb_writeback+0x33c/0x740
+>  wb_do_writeback+0x2b4/0x400
+>  wb_workfn+0xe4/0x34c
+>  process_one_work+0x24c/0x5bc
+>  worker_thread+0x3e8/0xa50
+>  kthread+0x150/0x1b4
 > 
-> Diffstat
->  fs/f2fs/compress.c          |    2 
->  fs/f2fs/data.c              |  544 ++++++++++++++++++++++----------------------
->  fs/f2fs/extent_cache.c      |   19 -
->  fs/f2fs/f2fs.h              |   24 -
->  fs/f2fs/file.c              |   16 -
->  fs/f2fs/gc.c                |    4 
->  include/trace/events/f2fs.h |   11 
->  7 files changed, 309 insertions(+), 311 deletions(-)
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev] f2fs: let's avoid panic if extent_tree is not created
+    https://git.kernel.org/jaegeux/f2fs/c/df9d44b645b8
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
