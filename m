@@ -4,80 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1EA58C4708D
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Jan 2023 20:17:53 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 99FD4C54EBC
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  4 Jan 2023 21:15:05 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pDACs-000315-Ek;
-	Wed, 04 Jan 2023 20:17:50 +0000
+	id 1pDB6G-0002K9-5a;
+	Wed, 04 Jan 2023 21:15:04 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <pr-tracker-bot@kernel.org>) id 1pDACr-00030v-8X
+ (envelope-from <vishal.moola@gmail.com>) id 1pDB6F-0002Ju-4u
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Jan 2023 20:17:49 +0000
+ Wed, 04 Jan 2023 21:15:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:Date:Message-Id:References:In-Reply-To:From:
- Subject:Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AakK3+UXwg/FNguRztkM0CL4ASJ0bnTxfYQRPLQ3PN4=; b=b6Pczd0bEogLgov9PJuv7oR77T
- 58qhZN19/VrAJQR9XlqqNUGhJwaK9sUo8FH0F9DIHKiasReeTk4b7NF7d4Xymp90hzQZhFwS9ogr9
- gss5CYpbCwkdIRcUidtNq9T+aMbi4DGlQr+RSIkjCHmHLuB1CyYyIglejfRjsJaSaSDw=;
+ bh=Yo+m9KCho02Llmwjmz5bDSbKVzw32DqjrZ5KrSHhgyc=; b=IXgHWiFeSbC2X1bajUWKZFogMP
+ 6AGjk8MjQXDu8Dm10qeXDS17L9Gh+7mlaA2jgyQHpJuauIBoXaLwogFEkS2TC85BnfZET/VFjdKBZ
+ 8NN/0ti+6IJJAdl3QeGEvTFgEoV8oGIK9ywfSYRWEAzShDKGSAZnMrcat9PV5N/AvZmg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Cc:To:Date:Message-Id:References:In-Reply-To:From:Subject:Sender:Reply-To
- :MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AakK3+UXwg/FNguRztkM0CL4ASJ0bnTxfYQRPLQ3PN4=; b=Z7EyoIla1NSJKVR02bVRpuQTrW
- 8ZxjWxlgL7PwJMyinst2XJU65dG0HblPOWJ7ZHO8EWIrnk8fJnz1bysRHlCYgKcD9mdSYWIj334eF
- bi6nm32lVWCeaWPPuzuU67+xykdJo/HKI+dQ2Zu8MwF0BhvU/U+zg89kptMbNmOUVt9w=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=Yo+m9KCho02Llmwjmz5bDSbKVzw32DqjrZ5KrSHhgyc=; b=meCC3o1Lws8nQ0VNeYdsAQ2qRp
+ YN9Q5QM2ipi6rREzx4rOBbrKCIZdIKFVd0+B2qk2naTuRhHBfLeoVoFh0ieMk5TyDtobF48Nr2Q9z
+ ouzTRQwIt3ARO0t6r89tyQ+Rn23gFseASqhzhAgH2HPVUznhVCqtwR2YhqOX3MJtY3DI=;
+Received: from mail-pj1-f52.google.com ([209.85.216.52])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pDACq-004ysH-Ja for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 04 Jan 2023 20:17:49 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 55470B818D6;
- Wed,  4 Jan 2023 20:17:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0C549C433D2;
- Wed,  4 Jan 2023 20:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1672863461;
- bh=V/h2BGMSlFlP8mJJwcYSUkI5kKvoGSa/rxCqiwWC9Rw=;
- h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
- b=KcofHTeV6n2TWsRXHlGRg/3w7e3QraZA0Ko42wD3BPq5Ty94iEzAjjQGubX9M/TN8
- 1sTh4ul5/KNJgmPke9ZBuOz9jdUU/3G16zpBkOp7iB74ye92NAZRdzJ2zUUbm4ZVRd
- AmqoDQ1tUZbUCQNWn0PlZOGKROX11wBQA4D9xQAqDL6Y7FL6P5XHgZZrnFa9NEBKI4
- lFzUkoFc5hysu/I8Q3w/2xl0VYqoFZklwcCFKGZWV4tNHNp4KcBQeHQ+nvk2V8qVL7
- 8RnkTCcmBpax3Q4l+wR2+mNnw+QmJ9GU4xdgBwZEGhzvZ13UYt+Kr7+D/Y0yxt5++R
- o6GUyani4MH1A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- DEDFEC395DF; Wed,  4 Jan 2023 20:17:40 +0000 (UTC)
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Y7XH7fSoURcqoUQW@google.com>
-References: <Y7XH7fSoURcqoUQW@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Y7XH7fSoURcqoUQW@google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
- tags/f2fs-fix-6.2-rc3
-X-PR-Tracked-Commit-Id: df9d44b645b83fffccfb4e28c1f93376585fdec8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2ac44821a81612317f4451b765986d8b9695d5d5
-Message-Id: <167286346090.24547.11166270720309340106.pr-tracker-bot@kernel.org>
-Date: Wed, 04 Jan 2023 20:17:40 +0000
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1pDACq-004ysH-Ja
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs fix for 6.2-rc3
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1pDB6E-0050wC-EP for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 04 Jan 2023 21:15:03 +0000
+Received: by mail-pj1-f52.google.com with SMTP id
+ o8-20020a17090a9f8800b00223de0364beso40225842pjp.4
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 04 Jan 2023 13:15:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20210112;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Yo+m9KCho02Llmwjmz5bDSbKVzw32DqjrZ5KrSHhgyc=;
+ b=bjZkMxIPNZ3wmKI3QGSepT81I5OzcwJOIb/dnupKeJzgemoOZcjM4yfreHA+pwVbeP
+ HOd/bgUCet0z9B/XX2tfep3wWWWYLyeCIHFa1NDUjFWQdX5A572uwUJHv92lvCUSn0jH
+ nDD1ayF0cF1sYXZY6D7okVUr906wpDImdUvSkzV/8th2CAYrKdz3orCKBweWTHnMlK4j
+ 8Q9LXTwaogmTrXs5Gj4PAGJAZD90/jRoTwO/o58iZ0J59ckgaPVRY99HTFyy5G/KNc7Q
+ k+iq8jJPMbsMV3H/So6AzW1W8RbB4qBsSsxHHBAFfFQVhi108BAllJmmP6SyPMsZeGbG
+ 6mUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=Yo+m9KCho02Llmwjmz5bDSbKVzw32DqjrZ5KrSHhgyc=;
+ b=VXn4c0bvXiaa0SJ0iHDw/ZWrOSRLfmBtJih8y6dEMG3+3mjogXIgeDjMOlzBmVLHd4
+ IECwP6dFYRhvHLsJZLF/jsuoVX/KVDBtYoDuWteRic2h3bE3gHRWQ3jl0beClfmm5Y7z
+ JlxX69RYcQVXKeebcysHE/7nWo3YRT++eXK4e6fv7/R+VdBTaxwVsoShd9+hFUi3kFHx
+ C49z0FquWNPIoWBZ1W6aQ4K+jOqz7gJtBqmObVIsuGPn8vMa0sMmd7RutKn2yn/n2peB
+ oXeyDTyCsEHdpAo7svE9JqJeHHp7Rbx+WYP9nHilfzbPt4+C07yHUy74sYOfeosLv/Q0
+ uhGA==
+X-Gm-Message-State: AFqh2kpPzwzFXSGMIJ3YiCUVw8lI+uMGUtMPXPyCn4qK5056Lh5SW4k5
+ X0DDy+eSQQI8JFLSELBuXsQ=
+X-Google-Smtp-Source: AMrXdXtzyCslo5KrrtE6aj4KE0tZMImyQpChectqYz62yJ5Pkw2zwmGtohmj+/DGwHCRBdZk95hgJQ==
+X-Received: by 2002:a17:90b:92:b0:225:eda7:13e with SMTP id
+ bb18-20020a17090b009200b00225eda7013emr35757516pjb.40.1672866896879; 
+ Wed, 04 Jan 2023 13:14:56 -0800 (PST)
+Received: from fedora.hsd1.ca.comcast.net ([2601:644:8002:1c20::a55d])
+ by smtp.googlemail.com with ESMTPSA id
+ i8-20020a17090a138800b00226369149cesm6408pja.21.2023.01.04.13.14.55
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 04 Jan 2023 13:14:56 -0800 (PST)
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: linux-fsdevel@vger.kernel.org
+Date: Wed,  4 Jan 2023 13:14:26 -0800
+Message-Id: <20230104211448.4804-2-vishal.moola@gmail.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230104211448.4804-1-vishal.moola@gmail.com>
+References: <20230104211448.4804-1-vishal.moola@gmail.com>
+MIME-Version: 1.0
+X-Headers-End: 1pDB6E-0050wC-EP
+Subject: [f2fs-dev] [PATCH v5 01/23] pagemap: Add filemap_grab_folio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,26 +100,61 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
-MIME-Version: 1.0
+Cc: linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ "Vishal Moola \(Oracle\)" <vishal.moola@gmail.com>,
+ linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+ linux-mm@kvack.org, ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The pull request you sent on Wed, 4 Jan 2023 10:39:41 -0800:
+Add function filemap_grab_folio() to grab a folio from the page cache.
+This function is meant to serve as a folio replacement for
+grab_cache_page, and is used to facilitate the removal of
+find_get_pages_range_tag().
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-fix-6.2-rc3
+Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/pagemap.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2ac44821a81612317f4451b765986d8b9695d5d5
-
-Thank you!
-
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 29e1f9e76eb6..468183be67be 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -546,6 +546,26 @@ static inline struct folio *filemap_lock_folio(struct address_space *mapping,
+ 	return __filemap_get_folio(mapping, index, FGP_LOCK, 0);
+ }
+ 
++/**
++ * filemap_grab_folio - grab a folio from the page cache
++ * @mapping: The address space to search
++ * @index: The page index
++ *
++ * Looks up the page cache entry at @mapping & @index. If no folio is found,
++ * a new folio is created. The folio is locked, marked as accessed, and
++ * returned.
++ *
++ * Return: A found or created folio. NULL if no folio is found and failed to
++ * create a folio.
++ */
++static inline struct folio *filemap_grab_folio(struct address_space *mapping,
++					pgoff_t index)
++{
++	return __filemap_get_folio(mapping, index,
++			FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
++			mapping_gfp_mask(mapping));
++}
++
+ /**
+  * find_get_page - find and get a page reference
+  * @mapping: the address_space to search
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.38.1
+
 
 
 _______________________________________________
