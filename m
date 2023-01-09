@@ -4,71 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CE6A6C54EBD
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E2A8DC5479D
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Jan 2023 03:45:27 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pEj6F-0006HL-3D;
-	Mon, 09 Jan 2023 03:45:27 +0000
+	id 1pEj6E-0006hH-Ol;
+	Mon, 09 Jan 2023 03:45:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pEj6D-0006H7-6e
+ (envelope-from <chao@kernel.org>) id 1pEj6D-0006gv-1X
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 09 Jan 2023 03:45:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BdLqJeLtzpNkFpkUgEU+4QDrBz/bontDoMJt5v1nsWQ=; b=jtMfEKmyETlRU9pGXG6ksnHNmf
- L5Uo5CRO28Ed6DNl1luZlBDS3wTvCHLSFis5MNHMw6AVFuNJBs1HOqUf8HVMStghMK+yuBhkM5O1m
- 8FB+a6Fplz00Joy4ueSszg1Wmnw6Apvm9Jttn1yf/duYj1foiuCoAesugnY731IZRQt0=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=BdLqJeLtzpNkFpkUgEU+4QDrBz/bontDoMJt5v1nsWQ=; b=HqEoll8ek2w4rL8IE9K3PRgqCr
- CSkGJYLPufKuiMnk3NBGcNbmsDyb7oLbKYTUV7wKP+7HJXmjl/DxC8aihj3M+DLM064ljnLoUMKjX
- DdGF/wLnmhzp048/wOpAEbCndxyP1uzaqtIKZceXmzBuAa38wZCik7JRNcvdcKkNLP00=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=pYIsgz6M0IEbdXuv1QgRwh57qWZajCSyHE1sCPMFfs8=; b=dODclNPd+8iFolmFQf0t5QpQqH
+ mT7pq4BegcGNdya4GS2GY9LPcC1Q55kAVdFXB4kY3u/P944Dd8r4xyfS6NpwpN6tufAtV0ac9dO+T
+ 0aOC1E7PB/7crcMPYj72FVwXUs8ElCV6hLC2RQl6H9OFuu1ssayW2H097BHL3FgNjOlM=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=pYIsgz6M0IEbdXuv1QgRwh57qWZajCSyHE1sCPMFfs8=; b=j
+ LShrMZUzIQCXGVssXmXUocjxBF61JaocsWPntPl2lWqE/U+1zcWvbTMrHQ4tLXfqEwtPXufKzl8bi
+ drJqLwhIUAsun8WMm6+is8e+OLdXaj0wIkX5Jg++YXXWTlTN1Wl4USLClp/C1YBWuA5HHiuImgHbH
+ OSc+wqLt07HS9T1c=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pEj6B-0003Wa-E9 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Jan 2023 03:45:25 +0000
+ id 1pEj68-0003WL-2I for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 09 Jan 2023 03:45:24 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 05EA860EE9;
- Mon,  9 Jan 2023 03:45:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F702C433F2;
- Mon,  9 Jan 2023 03:45:15 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id C5A93B80B9C
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon,  9 Jan 2023 03:45:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60CC0C433EF;
+ Mon,  9 Jan 2023 03:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1673235917;
- bh=p3rbTOR1QFjXLaPSnR9uaBLuFIGzPk439CwPaP0U//8=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=usr0EL8S2TWfVQj+6ygM2g8ntOS+6+nOYBoOMFpmSClbP1nd1kNQp7S0NZOFyUCNs
- k2HR7uMtEeEmp/KhHGsdYqzmficO41WyG+xvUemkT6xd84HnuKBzV/4Xfi2dJT0z4i
- dMa7uGrneuB8tYADOtTa07DJDdXbNYBoDFtdTdL0CBA2yvp5YnleqCg3GSwv2DmxyQ
- QkkSp9uRuKu7VHPhSnMJtuQx5DD8x37MVu9xe2Hndbhn6e+gIVTpFzufWGr3LOuvGC
- Qr1b7CW/u8GPRXJRMSIgx2+ptZfrdPBBj4WN0rLjQuXO3O1tdu/ZqfSJVkY7yVvQnS
- e1Av9wykN6wnw==
+ s=k20201202; t=1673235912;
+ bh=o0QGez8JNtfwfRegKYb2IXEmNk+VVLuwDSFz2DvJBSY=;
+ h=From:To:Cc:Subject:Date:From;
+ b=Dy6vAaYUAxbL0xhJdA/zEa4jCKnVodSGMc2y9Q4A0ow9KBjQxCrDnqHLIbsIXZa2f
+ TywH6ZfEZpyz2yPG5trS6msnAOgiPWvdRGF689/7tOTnVZXt+c73hS2ZSJj40cON5b
+ 1DB/RBLilUSOMCk0SYq0HJOc45t9r67XXCiwulrNyVs9gY399xQy2a3Nge7XowtrWL
+ I0KOZxviWblfWtzlRft6Zq4ovvUOxvHeIzgJNnw/xj7DXwTuPrF63qVZoUSU5kXlng
+ viw1wNIdvG/P2pRZZ8AYfVRjnb3iad7ZJoK333Ln8ZzSQn+PauwxNNeaiohdMwcIn4
+ OLozjyTItmxKw==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Mon,  9 Jan 2023 11:44:52 +0800
-Message-Id: <20230109034453.490176-4-chao@kernel.org>
+Date: Mon,  9 Jan 2023 11:44:49 +0800
+Message-Id: <20230109034453.490176-1-chao@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230109034453.490176-1-chao@kernel.org>
-References: <20230109034453.490176-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1pEj6B-0003Wa-E9
-Subject: [f2fs-dev] [PATCH 4/5] f2fs: fix to avoid race condition of
- f2fs_abort_atomic_write()
+X-Headers-End: 1pEj68-0003WL-2I
+Subject: [f2fs-dev] [PATCH 1/5] f2fs: introduce
+ trace_f2fs_replace_atomic_write_block
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,111 +79,85 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: syzbot+9b7be0f1263ed2dbfbba@syzkaller.appspotmail.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Syzbot reports a kernel panic as below:
+Commit 3db1de0e582c ("f2fs: change the current atomic write way")
+removed old tracepoints, but it missed to add new one, this patch
+fixes to introduce trace_f2fs_replace_atomic_write_block to trace
+atomic_write commit flow.
 
-kernel BUG at fs/inode.c:1763!
-RIP: 0010:iput+0x68/0x80 fs/inode.c:1763
-Call Trace:
- f2fs_abort_atomic_write+0xea/0x4f0 fs/f2fs/segment.c:196
- f2fs_ioc_commit_atomic_write+0x19f/0x260 fs/f2fs/file.c:2157
- __f2fs_ioctl+0x26f0/0xaaf0 fs/f2fs/file.c:4154
- f2fs_ioctl+0x18e/0x220 fs/f2fs/file.c:4242
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x197/0x210 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-The root cause is there may be race case in between f2fs_abort_atomic_write()
-called from f2fs_file_flush() and f2fs_ioc_commit_atomic_write().
-
-Thread A				Thread B
-- close
- - close_fd
-  - filp_close
-   - f2fs_file_flush
-					- f2fs_ioctl
-					 - f2fs_ioc_commit_atomic_write
-					  - f2fs_abort_atomic_write
-					   - iput(cow_inode)
-					    - f2fs_evict_inode
-					     - clear_inode
-					      - inode->i_state = I_FREEING | I_CLEAR;
-    - f2fs_abort_atomic_write
-     - iput(cow_inode)
-      - BUG_ON(inode->i_state & I_CLEAR)
-					   - cow_inode = NULL
-     - cow_inode = NULL
-
-So let's cover f2fs_abort_atomic_write() with f2fs_inode_info.i_atomic_sem
-lock to avoid this race condition.
-
-Reported-by: syzbot+9b7be0f1263ed2dbfbba@syzkaller.appspotmail.com
 Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/f2fs.h    | 1 +
- fs/f2fs/segment.c | 6 +++++-
- fs/f2fs/super.c   | 1 +
- 3 files changed, 7 insertions(+), 1 deletion(-)
+ fs/f2fs/segment.c           |  3 +++
+ include/trace/events/f2fs.h | 37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 70ed01aca6f6..fa41c0dad308 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -854,6 +854,7 @@ struct f2fs_inode_info {
- 	struct extent_tree *extent_tree[NR_EXTENT_CACHES];
- 					/* cached extent_tree entry */
- 	struct inode *cow_inode;	/* copy-on-write inode for atomic write */
-+	struct f2fs_rwsem i_atomic_sem;	/* protect atomic write context */
- 
- 	/* avoid racing between foreground op and gc */
- 	struct f2fs_rwsem i_gc_rwsem[2];
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 5f7e42b355eb..245d7adef6c6 100644
+index 8b773f3eef3b..c6f6d0618164 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -189,8 +189,10 @@ void f2fs_abort_atomic_write(struct inode *inode, bool clean)
- {
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 
-+	f2fs_down_write(&fi->i_atomic_sem);
-+
- 	if (!f2fs_is_atomic_file(inode))
--		return;
-+		goto out_unlock;
- 
- 	clear_inode_flag(fi->cow_inode, FI_COW_FILE);
- 	iput(fi->cow_inode);
-@@ -208,6 +210,8 @@ void f2fs_abort_atomic_write(struct inode *inode, bool clean)
- 		f2fs_i_size_write(inode, fi->original_i_size);
- 		fi->original_i_size = 0;
+@@ -255,6 +255,9 @@ static int __replace_atomic_write_block(struct inode *inode, pgoff_t index,
  	}
-+out_unlock:
-+	f2fs_up_write(&fi->i_atomic_sem);
+ 
+ 	f2fs_put_dnode(&dn);
++
++	trace_f2fs_replace_atomic_write_block(inode, F2FS_I(inode)->cow_inode,
++					index, *old_addr, new_addr, recover);
+ 	return 0;
  }
  
- static int __replace_atomic_write_block(struct inode *inode, pgoff_t index,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 0e8b3e27fa14..3edc8630eb4b 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1411,6 +1411,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
- 	init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
- 	init_f2fs_rwsem(&fi->i_xattr_sem);
-+	init_f2fs_rwsem(&fi->i_atomic_sem);
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 3852085198fb..fe6bcf5f917d 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -1290,6 +1290,43 @@ DEFINE_EVENT(f2fs__page, f2fs_vm_page_mkwrite,
+ 	TP_ARGS(page, type)
+ );
  
- 	/* Will be used by directory only */
- 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
++TRACE_EVENT(f2fs_replace_atomic_write_block,
++
++	TP_PROTO(struct inode *inode, struct inode *cow_inode, pgoff_t index,
++			block_t old_addr, block_t new_addr, bool recovery),
++
++	TP_ARGS(inode, cow_inode, index, old_addr, new_addr, recovery),
++
++	TP_STRUCT__entry(
++		__field(dev_t,	dev)
++		__field(ino_t,	ino)
++		__field(ino_t,	cow_ino)
++		__field(pgoff_t, index)
++		__field(block_t, old_addr)
++		__field(block_t, new_addr)
++		__field(bool, recovery)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->ino		= inode->i_ino;
++		__entry->cow_ino	= cow_inode->i_ino;
++		__entry->index		= index;
++		__entry->old_addr	= old_addr;
++		__entry->new_addr	= new_addr;
++		__entry->recovery	= recovery;
++	),
++
++	TP_printk("dev = (%d,%d), ino = %lu, cow_ino = %lu, index = %lu, "
++			"old_addr = 0x%llx, new_addr = 0x%llx, recovery = %d",
++		show_dev_ino(__entry),
++		__entry->cow_ino,
++		(unsigned long)__entry->index,
++		(unsigned long long)__entry->old_addr,
++		(unsigned long long)__entry->new_addr,
++		__entry->recovery)
++);
++
+ TRACE_EVENT(f2fs_filemap_fault,
+ 
+ 	TP_PROTO(struct inode *inode, pgoff_t index, unsigned long ret),
 -- 
 2.25.1
 
