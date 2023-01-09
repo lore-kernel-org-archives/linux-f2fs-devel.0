@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EE7F7C67871
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Jan 2023 03:45:27 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 95E6CC677F1
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Jan 2023 03:45:29 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pEj6C-0006Gx-Jd;
-	Mon, 09 Jan 2023 03:45:24 +0000
+	id 1pEj6H-0004gb-4r;
+	Mon, 09 Jan 2023 03:45:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pEj6B-0006Gi-FQ
+ (envelope-from <chao@kernel.org>) id 1pEj6F-0004gO-Ci
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Jan 2023 03:45:23 +0000
+ Mon, 09 Jan 2023 03:45:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=euvkepgFT3TX951BGNdItfqdJ54GGwjTkv52+qkVxEQ=; b=igrlS7IXT9UZoplz0wmp0qFytc
- KCpK/oJglsNE6XJkCqP+0EaIU2kegC/z9WdH1+ZwodqBbE8VaJKPT//Y9YeOrqU8w+nks6LXr+XAW
- cR5Y+wiVJT5a4lbKNXqx3H+7Oq5Hk39x4u13Xx5HNh6BuACmJREQbkarqwin7klt0JLg=;
+ bh=ddB79ksns4t2a1Y6SpOqk674sSKsAYNx9zfbCxBSxo4=; b=PutR15L3lcJP0CzVHl0n3/TiwL
+ 9O5R/K6iuqRYlzOqxZYRocfZic36Wws5CXvyJ/BEtWeXRochE5aTmq5q2jJ2Hv6aEmxKNF/4smXUE
+ pqGS7v3OQFrRfI1dBpUWUPlFmKJr9ORknw6m6k+QTmQQFp/4YlOxOm5Zf+D47qTd2uHs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,43 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=euvkepgFT3TX951BGNdItfqdJ54GGwjTkv52+qkVxEQ=; b=gSSHTfCXcDpDDQsg2ivTnuJDov
- LOuSUrwEE4mH2FkKYX3GOb8NvG55uQirK8arTzgEqA/JnRLtDXdF2gGx6M5fu7pvTAMPcHiywem33
- zuXFiqYzRS4KBRPKk1Qe0LlM3i2evQo4ayPpy5TdsaD5R8lmnTl6FrSSqO0LjH/DUoQA=;
+ bh=ddB79ksns4t2a1Y6SpOqk674sSKsAYNx9zfbCxBSxo4=; b=UzBSgXbm4mnMT9GnZVZpKJn0SV
+ Kp9er99l1lMYiyhkPvsWH2D8GicYa24VMVmE/hd7rN8Diq15it16gMlgx6700K/LpEIhUYUThjWUL
+ pgEVpPTJdm2Kkeg/9HQ7TIG0pixAXjLpHRSMr8Xn5x18epnjJCLAeQMOmX6+XnPH7za4=;
 Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pEj69-00AtiJ-Jt for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Jan 2023 03:45:23 +0000
+ id 1pEj6E-00AtiT-JQ for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 09 Jan 2023 03:45:27 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 5ACFEB80C7B
+ by ams.source.kernel.org (Postfix) with ESMTPS id 54A4FB80C9F
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  9 Jan 2023 03:45:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEBC1C433F2;
- Mon,  9 Jan 2023 03:45:12 +0000 (UTC)
+ Mon,  9 Jan 2023 03:45:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7FC3C433D2;
+ Mon,  9 Jan 2023 03:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1673235914;
- bh=z+rEkFMv+wRfNSPG7VtFK07vpI0/Mb7wF/w9G4C5Uac=;
+ s=k20201202; t=1673235919;
+ bh=hKDOr8JIcD75xkm83bOzZlDNnSHJYgKqfFQhYck7fao=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=HtGz6EvXa+PBbLwGnayMZXLkItsmkkRMAzq4RG4PAi2baRQI+1yaWsh/aM3xDxP2v
- 3Vjdh6bHI6i/e4n+cSTmMDxh1IPlD7HACU6HAUuQgLw6uXVeZk1UTEHfGHCg4xyF+V
- suZvvZrCquqM7Fe88ORTzPJQEgckViUKuctoe0+hrsgRFsS1ME4falCNouyTrbyXvj
- kXliOVbAeEV9pt7voeRaoA4ACYnq8fpfm05Ao6f/Vc9vmBTJlZI6AczeccBXXOIjrz
- H6bFMyumDZIkYiUL5B9lQFVw7LjzK2c+syKYUp8wN5e2CnZn8nnQFRR95pU2mWGLdc
- uPACqtsXlbEnA==
+ b=fnz5Izj6HLtcxq0IIK6AI95gkyGbaKgKRuG+asb279Pl0s1mm1k0R+E41pV8g8Zew
+ 4jNTdjkDcybVvv8+/nEOzETVYM7RTOFSYd65UoKD8a7On4TvdZSP2JVXI6TviD4OrE
+ U7iySzqLi/1nzSJkYhKTYg80ZDPvm7Z42YvVBWht0Wg+lheknO4vMaCbuf91Y5FlX3
+ qwp10urnh9YwPbTsLjAYdLObjGSlGqOEl7aNM+4Cx7q3ZIlzMArRNsG6k0DOvAoW1V
+ vwN0Q6yXUSW4drJRhnKnkcWpVaVajeZg82U0UAGynd+/QVfuz8PlL0eCX5d4wxyU3M
+ /KHS/LAe3//cA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Mon,  9 Jan 2023 11:44:50 +0800
-Message-Id: <20230109034453.490176-2-chao@kernel.org>
+Date: Mon,  9 Jan 2023 11:44:53 +0800
+Message-Id: <20230109034453.490176-5-chao@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230109034453.490176-1-chao@kernel.org>
 References: <20230109034453.490176-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1pEj69-00AtiJ-Jt
-Subject: [f2fs-dev] [PATCH 2/5] f2fs: clear atomic_write_task in
- f2fs_abort_atomic_write()
+X-Headers-End: 1pEj6E-00AtiT-JQ
+Subject: [f2fs-dev] [PATCH 5/5] f2fs: fix to avoid race condition of atomic
+ write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,31 +86,103 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Otherwise, last .atomic_write_task will be remained in structure
-f2fs_inode_info, resulting in aborting atomic_write accidentally
-in race case. Meanwhile, clear original_i_size as well.
+Thread A				Kworker
+- application crashs
+ - do_exit
+  - close_files
+   - filp_close
+    - flush (f2fs_file_flush)
+					- writepages
+					 - f2fs_write_cache_pages
+					  - f2fs_write_single_data_page
+					   - f2fs_do_write_data_page
+					    - check f2fs_is_atomic_file
+     - f2fs_abort_atomic_write
+      - check f2fs_is_atomic_file
+      - iput(cow_inode)
+      - cow_inode = NULL
+					    - set_new_dnode(cow_inode)
 
-Fixes: 7a10f0177e11 ("f2fs: don't give partially written atomic data from process crash")
+Fix this issue by covering f2fs_do_write_data_page() with i_atomic_sem.
+
+Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/segment.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/data.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c6f6d0618164..5f7e42b355eb 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -201,9 +201,12 @@ void f2fs_abort_atomic_write(struct inode *inode, bool clean)
- 	clear_inode_flag(inode, FI_ATOMIC_FILE);
- 	stat_dec_atomic_inode(inode);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index c940da1c540f..1645b8a1b904 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2637,13 +2637,24 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	struct dnode_of_data dn;
+ 	struct node_info ni;
+ 	bool ipu_force = false;
++	bool atomic_locked = false;
+ 	int err = 0;
  
-+	F2FS_I(inode)->atomic_write_task = NULL;
+ 	/* Use COW inode to make dnode_of_data for atomic write */
+-	if (f2fs_is_atomic_file(inode))
++	if (f2fs_is_atomic_file(inode)) {
++		f2fs_down_write(&F2FS_I(inode)->i_atomic_sem);
++		atomic_locked = true;
 +
- 	if (clean) {
- 		truncate_inode_pages_final(inode->i_mapping);
- 		f2fs_i_size_write(inode, fi->original_i_size);
-+		fi->original_i_size = 0;
++		if (!f2fs_is_atomic_file(inode)) {
++			/* atomic write is aborted */
++			err = -ENOENT;
++			goto out_err;
++		}
++
+ 		set_new_dnode(&dn, F2FS_I(inode)->cow_inode, NULL, NULL, 0);
+-	else
++	} else {
+ 		set_new_dnode(&dn, inode, NULL, NULL, 0);
++	}
+ 
+ 	if (need_inplace_update(fio) &&
+ 	    f2fs_lookup_read_extent_cache_block(inode, page->index,
+@@ -2652,7 +2663,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 						DATA_GENERIC_ENHANCE)) {
+ 			f2fs_handle_error(fio->sbi,
+ 						ERROR_INVALID_BLKADDR);
+-			return -EFSCORRUPTED;
++			err = -EFSCORRUPTED;
++			goto out_err;
+ 		}
+ 
+ 		ipu_force = true;
+@@ -2661,8 +2673,10 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
  	}
+ 
+ 	/* Deadlock due to between page->lock and f2fs_lock_op */
+-	if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi))
+-		return -EAGAIN;
++	if (fio->need_lock == LOCK_REQ && !f2fs_trylock_op(fio->sbi)) {
++		err = -EAGAIN;
++		goto out_err;
++	}
+ 
+ 	err = f2fs_get_dnode_of_data(&dn, page->index, LOOKUP_NODE);
+ 	if (err)
+@@ -2710,6 +2724,9 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 			set_inode_flag(inode, FI_UPDATE_WRITE);
+ 		}
+ 		trace_f2fs_do_write_data_page(fio->page, IPU);
++
++		if (atomic_locked)
++			f2fs_up_write(&F2FS_I(inode)->i_atomic_sem);
+ 		return err;
+ 	}
+ 
+@@ -2747,6 +2764,9 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ out:
+ 	if (fio->need_lock == LOCK_REQ)
+ 		f2fs_unlock_op(fio->sbi);
++out_err:
++	if (atomic_locked)
++		f2fs_up_write(&F2FS_I(inode)->i_atomic_sem);
+ 	return err;
  }
  
 -- 
