@@ -4,74 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A39F8C54EBE
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  9 Jan 2023 22:51:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 34903C5479D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 10 Jan 2023 02:55:50 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pF0zG-00046S-Gw;
-	Mon, 09 Jan 2023 22:51:26 +0000
+	id 1pF4ni-00086K-UO;
+	Tue, 10 Jan 2023 02:55:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pF0zF-00046L-5s
+ (envelope-from <akpm@linux-foundation.org>) id 1pF4ng-00086A-R0
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Jan 2023 22:51:25 +0000
+ Tue, 10 Jan 2023 02:55:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Mime-Version
+ :References:In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Gl2UFbg/ftVCIXQ7JSOB6JI9zBF5FhMw153QjRHSNVY=; b=Kvivvl+d/pDGjadKPefF7Z0RLi
- bPK7tLQyUHA1x/4FNcy80xHTt+9mlKEtj2FsPBmxBC3evdxaYDg8NAp1J9mOhJMqbwyyWuzKodljT
- 851EmJlsbwhvL/Trh6hUmgloJMxE++gJLPeOp2DjlpfNpkHtNq1b3qyHSFZ8p9IlB2Y8=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=JMNXsPxYhVKORIJezaHqnFFRc7qB+CERUFEvx8HBmPI=; b=aCbIpqZXfLst85kNQK5H0feaBg
+ XrQetdS3WGzJVzb/EwlOKC8g27lwyMbniwvIZkFv2meWs2QcaDtd0zqL1CiKPPrlpkSeF/0Ccnrsl
+ 9iwUsjN9rQZifaeahJmzZ5gYaOnQ77QU1Ma79UlDpHcyqfxz3Nf7peZazdYHQW9L96tI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Gl2UFbg/ftVCIXQ7JSOB6JI9zBF5FhMw153QjRHSNVY=; b=K
- yi4nmFNC/8xBz2nqpmZW9lVbFAbmp2grCLZDLrWcw5gO1ZI12eljyQN0zbdgS/eu0UaD8eZg6v6Tc
- DO/Ie76eFPVdc2hHDXiMQ7L5o9JgWGUFybDYemT4y7fXuqN3zHTzeUdtEFdSQqew47eB8qYCtPkPQ
- 2vK8XqyxdzcSeSTs=;
+ h=Content-Transfer-Encoding:Content-Type:Mime-Version:References:
+ In-Reply-To:Message-Id:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=JMNXsPxYhVKORIJezaHqnFFRc7qB+CERUFEvx8HBmPI=; b=it2YiCDj0guSL+9RboiUNRd48K
+ ZEhwyZH+omCdoE0LsCRvijbw2NmzFA1qoJcbiBg/UonjWwlS3uRfOp8mZMkrYQ4zYuHX5M4VmAKWv
+ ydlpJ8fO3H3mXU5emAqVTfT72OgdMtbSUASEL1XwyGktV3qcxXzyq8GkN/ZjoOrZ9xQI=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pF0zE-0005KY-Ja for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 09 Jan 2023 22:51:25 +0000
+ id 1pF4nZ-00CNJF-P8 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 10 Jan 2023 02:55:44 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 2D357611C0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  9 Jan 2023 22:51:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 67CCCC433D2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  9 Jan 2023 22:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1673304674;
- bh=i5jgjc1Rob7+Go0a0lh7sNLECDwDGLOcl2uHWLC2wNM=;
- h=Subject:From:Date:To:From;
- b=S6mBaqI+/gFCDLIR6hx8FqjizSN2U3LzhVhOiulTlJMP+MKdbbFw8Vz9Tlw/9DpjT
- D6xqlEsYsm++uBTcYSfphBTDfuutpLl7HenuQCX3+kuNn6mfzztKK7PWN+Iu7kMIWQ
- dC4xRK3jCpkIlX5sK6zqm9V80DIjFpCaiVfY16rtIZxNiitwdKDO2JIzxQ+ISi0j0f
- 8rXqM4KGXHMCIYykmdmSaBsZI/FPtRQ0rDyWskqNBtEh4t4P4tdJPhTA8zR23EnbZg
- uvxRORvvMyQHwmfhtrFQyWwZBCQurTP/2tGm+MsRJBnUvIMbvAn2pi7MSQHbUUtkyh
- ef82119m0TXww==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 55FD4C395DF for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  9 Jan 2023 22:51:14 +0000 (UTC)
-MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167330467434.13717.8625865752151779901.git-patchwork-summary@kernel.org>
-Date: Mon, 09 Jan 2023 22:51:14 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1pF0zE-0005KY-Ja
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+ by dfw.source.kernel.org (Postfix) with ESMTPS id BB7DC614B4;
+ Tue, 10 Jan 2023 02:38:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A862CC433EF;
+ Tue, 10 Jan 2023 02:38:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+ s=korg; t=1673318281;
+ bh=Y64MR4JK48Pzp25aGh8zQ5wqMuidq5kQnWPvb8e5i9I=;
+ h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+ b=cEgGQa5zyUoGHgJLglyternN0KDprFlgUCd6BKIvxiD2upcGonWYYLG4H/yh6Ywbg
+ mhfo1DGbQOmqUd8qvuzP76ikYLMkESZ1gih+2voSna2iJrFiRvv6jIDGac5HZ6dRo/
+ 9yjcHwGTRnn5HHiw2V0ZuL50gw2Z3KriC6g3L4ro=
+Date: Mon, 9 Jan 2023 18:37:59 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Message-Id: <20230109183759.c1e469f5f2181e9988f10131@linux-foundation.org>
+In-Reply-To: <20221223203638.41293-11-ebiggers@kernel.org>
+References: <20221223203638.41293-1-ebiggers@kernel.org>
+ <20221223203638.41293-11-ebiggers@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+X-Headers-End: 1pF4nZ-00CNJF-P8
+Subject: Re: [f2fs-dev] [PATCH v2 10/11] fs/buffer.c: support fsverity in
+ block_read_full_folio()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,47 +78,28 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+On Fri, 23 Dec 2022 12:36:37 -0800 Eric Biggers <ebiggers@kernel.org> wrote:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+> After each filesystem block (as represented by a buffer_head) has been
+> read from disk by block_read_full_folio(), verify it if needed.  The
+> verification is done on the fsverity_read_workqueue.  Also allow reads
+> of verity metadata past i_size, as required by ext4.
 
-Patch: [f2fs-dev,REPOST] f2fs: file: drop useless initializer in expand_inode_data()
-  Submitter: Sergey Shtylyov <s.shtylyov@omp.ru>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=705991
-  Lore link: https://lore.kernel.org/r/38010b42-afd3-5394-09df-2378b7b5d10f@omp.ru
+Sigh.  Do we reeeeealy need to mess with buffer.c in this fashion?  Did
+any other subsystems feel a need to do this?
 
-Patch: [f2fs-dev] f2fs: fix to support .migrate_folio for compressed inode
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=706209
-  Lore link: https://lore.kernel.org/r/20221221121445.14400-1-chao@kernel.org
+> This is needed to support fsverity on ext4 filesystems where the
+> filesystem block size is less than the page size.
 
-Patch: [f2fs-dev] f2fs: fix to call clear_page_private_reference in .{release, invalid}_folio
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=706208
-  Lore link: https://lore.kernel.org/r/20221221121345.14353-1-chao@kernel.org
-
-Patch: [f2fs-dev] f2fs: remove unused PAGE_PRIVATE_ATOMIC_WRITE
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=705896
-  Lore link: https://lore.kernel.org/r/20221220115602.6715-1-chao@kernel.org
-
-
-Total patches: 4
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Does any real person actually do this?
 
 
 _______________________________________________
