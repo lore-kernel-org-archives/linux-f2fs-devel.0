@@ -4,73 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E3E72C67871
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Jan 2023 19:20:25 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5695CC678D9
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Jan 2023 19:20:28 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pFgeA-000752-IY;
-	Wed, 11 Jan 2023 19:20:25 +0000
+	id 1pFgeC-000731-HY;
+	Wed, 11 Jan 2023 19:20:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pFge9-00074s-Ku
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pFgeB-00072q-9N
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Jan 2023 19:20:24 +0000
+ Wed, 11 Jan 2023 19:20:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PPVRNgvFczrxDjnUXZcT+Glyqxv2q5QM2HykD4EjN3Y=; b=fG/aInX4xX6JJXBQNhmFYg+B0D
- 7rqIYX0JaBBQPklOrNbBPJWRGrQxRVmM7jPWYm6y8S0gYMI8g6neuKx0KdnWQVg4wqODBez+Bc6Ol
- 3449wSuQxMiVYdKLo8WB4UQraH2jkoMh5MDx2kQVyt06+S4Zd7lTBxjeMycrAZVapLp4=;
+ bh=TtHeCog1+f0BsZ96qfrZjbKxKfRRKSCiXyWQ6F0/krE=; b=NNICh+qOBQC1hGl3szieJCusiA
+ Z6FZB/l1G98fTs9kOkmFTkkfenA1m1NQ2tdjH8cUdoaVC3ou8YXaN+ra3xSgyDohLIa9yqkz5wHaO
+ KnzyHa7CmHdKViyI9c9Llt/rl27Ilpbv2SxAGBrkBqwcOSqIQ5akABcPhOhukaJU+X/Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PPVRNgvFczrxDjnUXZcT+Glyqxv2q5QM2HykD4EjN3Y=; b=ROh8s9KA5+N0ftcTdK+2uoyjBc
- vyYzIpxh2v0AtoeOSDdcyTpEvcdMZy/CyMLtNwaWPRIkBRSRmk35Twrd1ZcLoE2kYL/Rx7dcl1QW3
- MqherjkaIEhwAuPq461zrWfqNU1sshbpc2XgwWCjVdAmBvagkMBri1Z0VOBPY5TzXrPE=;
+ bh=TtHeCog1+f0BsZ96qfrZjbKxKfRRKSCiXyWQ6F0/krE=; b=cuv2Fb/HkgCSle3secR3lq3owR
+ FxYTlrMGk+QCtGMun3u4BVdJhIG8tNWAgqVODenNizIMiEKyv4Km/94THp+0FxYfQNTEQUicJM5i3
+ Dws3TDqQOYxF4Fa2ddCh2SfD2Y2TEd79Owf94HDQstfe4PSPJbhDNM8TSVsgpYWo8N0o=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pFge7-0001VE-KT for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Jan 2023 19:20:24 +0000
+ id 1pFgeA-00011L-Ln for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 11 Jan 2023 19:20:27 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 3554C61DBC;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 66BD661DFF;
  Wed, 11 Jan 2023 19:20:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 01B28C433F2;
- Wed, 11 Jan 2023 19:20:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2BE30C43396;
+ Wed, 11 Jan 2023 19:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1673464818;
- bh=52urJWoz0blI4bnQ+w3PNpauD8QBF38h3Q2tnnT+iTQ=;
+ bh=kBFX7cJSGWf8rvuA9hm0aSTDFC40wCoDg+Fnj9OcTOg=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=rUnhfTub9goIwjO4RLaQaPVLBC+/Is8NWoPXtun5PVwSVVuRuzoCDPV1e9+HpOe6g
- TJckIi/o3djadXioCVaW+AWK7Q5GFGdp6cckC5e9BKoXnpAYHImJlddRWTGWqSGy0p
- ZM/bWx1gmViM2sWGxbQOLrWaMeBibJSk9wgjKAeJTC9Pjld98eV2Kg1pcEPR2Jz7H1
- oTnUxfhgob0+jESUgsgIme+aWBmWIX7/OubkZ+48mjD0lvJg5uVGukVIUKH4Lzm6cV
- Sdd6HvtjUYwQC+1ptX9T1vCPkgfAQndRX2si0jQbGjG6hdzl2FIxfuzKQrO2bouq70
- Z9nBjRz9w9sOQ==
+ b=X1oKLEPPwLgRkJTW3WiC++39n6Y1IEJzlkCI30ErDWxQF+BK3PYx4GmLauYyYfZmh
+ vzPUZG0aTLC+X/hllJ+OSJLKUrzdkwLvBYPS3nkYI+V/KD5plab4SGsia1xZOSL/DS
+ 98wN0ffrlTEU6s4E84WQ+FETKlNskt6xjQUuX/KQzSJJpwUDWf/lR5ZFAMpe+YzdAa
+ tGbYPolu+ZxmOq1oxqqNLmELFJS6qudQNE0jkRdxT4uVbgthlPhhNj6xObMBFLY+z5
+ MuAcnjfyQVs1+1bMpbcq7DdmQB0Knxd26XM2ylZHqyXGS1NYRfxCQf3s7Gje0Ldlny
+ 2Zolx4rLicxjA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- CDFF4E270F6; Wed, 11 Jan 2023 19:20:17 +0000 (UTC)
+ E7FDCE524CB; Wed, 11 Jan 2023 19:20:17 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167346481783.5008.9895955069686531878.git-patchwork-notify@kernel.org>
+Message-Id: <167346481794.5008.4557923376515038206.git-patchwork-notify@kernel.org>
 Date: Wed, 11 Jan 2023 19:20:17 +0000
-References: <20221220183904.53908-1-frank.li@vivo.com>
-In-Reply-To: <20221220183904.53908-1-frank.li@vivo.com>
+References: <20221221192634.18068-1-frank.li@vivo.com>
+In-Reply-To: <20221221192634.18068-1-frank.li@vivo.com>
 To: Yangtao Li <frank.li@vivo.com>
-X-Headers-End: 1pFge7-0001VE-KT
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: merge f2fs_show_injection_info()
- into time_to_inject()
+X-Headers-End: 1pFgeA-00011L-Ln
+Subject: Re: [f2fs-dev] [PATCH] f2fs: remove unnecessary blank lines
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,20 +92,17 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 21 Dec 2022 02:39:04 +0800 you wrote:
-> There is no need to additionally use f2fs_show_injection_info()
-> to output information. Concatenate time_to_inject() and
-> __time_to_inject() via a macro. In the new __time_to_inject()
-> function, pass in the caller function name and parent function.
+On Thu, 22 Dec 2022 03:26:34 +0800 you wrote:
+> Just cleanup.
 > 
-> In this way, we no longer need the f2fs_show_injection_info() function,
-> and let's remove it.
-> 
-> [...]
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  fs/f2fs/f2fs.h | 2 --
+>  1 file changed, 2 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,v3] f2fs: merge f2fs_show_injection_info() into time_to_inject()
-    https://git.kernel.org/jaegeuk/f2fs/c/c40e15a9a59f
+  - [f2fs-dev] f2fs: remove unnecessary blank lines
+    https://git.kernel.org/jaegeuk/f2fs/c/390d0b99212e
 
 You are awesome, thank you!
 -- 
