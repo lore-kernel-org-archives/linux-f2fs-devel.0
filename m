@@ -4,72 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5695CC678D9
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Jan 2023 19:20:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 32AE2C67871
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Jan 2023 19:20:30 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pFgeC-000731-HY;
-	Wed, 11 Jan 2023 19:20:27 +0000
+	id 1pFgeF-00075n-4a;
+	Wed, 11 Jan 2023 19:20:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pFgeB-00072q-9N
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pFgeC-00075O-2R
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 11 Jan 2023 19:20:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TtHeCog1+f0BsZ96qfrZjbKxKfRRKSCiXyWQ6F0/krE=; b=NNICh+qOBQC1hGl3szieJCusiA
- Z6FZB/l1G98fTs9kOkmFTkkfenA1m1NQ2tdjH8cUdoaVC3ou8YXaN+ra3xSgyDohLIa9yqkz5wHaO
- KnzyHa7CmHdKViyI9c9Llt/rl27Ilpbv2SxAGBrkBqwcOSqIQ5akABcPhOhukaJU+X/Y=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=eXyZnIxPTkBUvlViPxZ2pNQeVlqh5h3+LFZQJpyAm7s=; b=hkJNAtF13zkICqTxRTMH9BIMER
+ MW7Q8T164fPJPT19hdPuQAtmEsHwUgPh+fijJBTPrCVE5JNrVf48wjFT+rLzmNS5/dXn+dWTgF8uH
+ y2rV1BAWo0IH/JzKlOiOrPo1Aa1Akbq5FDHTG4J3Z+PCy7WNtiC7fXlq+KLPHBy9SNbc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TtHeCog1+f0BsZ96qfrZjbKxKfRRKSCiXyWQ6F0/krE=; b=cuv2Fb/HkgCSle3secR3lq3owR
- FxYTlrMGk+QCtGMun3u4BVdJhIG8tNWAgqVODenNizIMiEKyv4Km/94THp+0FxYfQNTEQUicJM5i3
- Dws3TDqQOYxF4Fa2ddCh2SfD2Y2TEd79Owf94HDQstfe4PSPJbhDNM8TSVsgpYWo8N0o=;
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=eXyZnIxPTkBUvlViPxZ2pNQeVlqh5h3+LFZQJpyAm7s=; b=c
+ pzJgPQ2r3WBHuNc4aNJrDaExJKIQCu8rTnTbtBXoOScwvaqIDtD/NsSy895aremWKF4ZUGgqUU1RN
+ KjLhJN6kDcWjaP0MPPYCyhDwx+fldEl8JmVk3/TTe2t646uAKamlP8/Zus6kXZleZfl2caiM0+4b7
+ EigoOaUl36w35mjs=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pFgeA-00011L-Ln for linux-f2fs-devel@lists.sourceforge.net;
+ id 1pFgeA-00011G-M4 for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 11 Jan 2023 19:20:27 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 66BD661DFF;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 2144C61E03
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Wed, 11 Jan 2023 19:20:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2BE30C43396;
- Wed, 11 Jan 2023 19:20:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E109DC433A7
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 11 Jan 2023 19:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1673464818;
- bh=kBFX7cJSGWf8rvuA9hm0aSTDFC40wCoDg+Fnj9OcTOg=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=X1oKLEPPwLgRkJTW3WiC++39n6Y1IEJzlkCI30ErDWxQF+BK3PYx4GmLauYyYfZmh
- vzPUZG0aTLC+X/hllJ+OSJLKUrzdkwLvBYPS3nkYI+V/KD5plab4SGsia1xZOSL/DS
- 98wN0ffrlTEU6s4E84WQ+FETKlNskt6xjQUuX/KQzSJJpwUDWf/lR5ZFAMpe+YzdAa
- tGbYPolu+ZxmOq1oxqqNLmELFJS6qudQNE0jkRdxT4uVbgthlPhhNj6xObMBFLY+z5
- MuAcnjfyQVs1+1bMpbcq7DdmQB0Knxd26XM2ylZHqyXGS1NYRfxCQf3s7Gje0Ldlny
- 2Zolx4rLicxjA==
+ s=k20201202; t=1673464817;
+ bh=/airuWVjZ1NHpaF5hjuI+4oYRcgJ+Gk2Co2U+20qTas=;
+ h=Subject:From:Date:To:From;
+ b=J9AZZrpHoRP1XsXWN4rdSKNYtEV929TMHgPyu/z3f6UeEQo/mPk+OHbg4MyUiqmVg
+ MVx2uPzGgekuOPF8cWvwBBnxxZX7NsaooT2Q96yVnaoDXe3aci/gsA4ozIeKB3S/i+
+ WDPUXVQ11r2klO9jL43OpuTItLtbhk6e6R3UaVxufb1GjRlv63R1VC5n3at/JEyQPQ
+ DcctI3sZLQoCOC7MopDGDFhy/ZbCONCl/FGd1qY5Xryk6zzT8Fax4/W7BSDRoJvhoq
+ LTzd4qpcDLW1y0dbS26BDXITgOKtLT6dGjNRnZKm+1rATRqbSSgOUudasm18VoaphI
+ AwU0d/nE1MPeQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- E7FDCE524CB; Wed, 11 Jan 2023 19:20:17 +0000 (UTC)
+ BB41EE45233 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 11 Jan 2023 19:20:17 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167346481794.5008.4557923376515038206.git-patchwork-notify@kernel.org>
+Message-Id: <167346481767.5008.13553735157284478842.git-patchwork-summary@kernel.org>
 Date: Wed, 11 Jan 2023 19:20:17 +0000
-References: <20221221192634.18068-1-frank.li@vivo.com>
-In-Reply-To: <20221221192634.18068-1-frank.li@vivo.com>
-To: Yangtao Li <frank.li@vivo.com>
-X-Headers-End: 1pFgeA-00011L-Ln
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove unnecessary blank lines
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1pFgeA-00011G-M4
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,30 +83,48 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Thu, 22 Dec 2022 03:26:34 +0800 you wrote:
-> Just cleanup.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  fs/f2fs/f2fs.h | 2 --
->  1 file changed, 2 deletions(-)
+Patch: [f2fs-dev] f2fs: add a f2fs_ prefix to punch_hole() and expand_inode_data()
+  Submitter: Yangtao Li <frank.li@vivo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=706033
+  Lore link: https://lore.kernel.org/r/20221220191212.58042-1-frank.li@vivo.com
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: remove unnecessary blank lines
-    https://git.kernel.org/jaegeuk/f2fs/c/390d0b99212e
+Patch: [f2fs-dev,v3] f2fs: merge f2fs_show_injection_info() into time_to_inject()
+  Submitter: Yangtao Li <frank.li@vivo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=706009
+  Lore link: https://lore.kernel.org/r/20221220183904.53908-1-frank.li@vivo.com
 
-You are awesome, thank you!
+Patch: [f2fs-dev] f2fs: mark f2fs_init_compress_mempool w/ __init
+  Submitter: Yangtao Li <frank.li@vivo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=707528
+  Lore link: https://lore.kernel.org/r/20221229131828.59116-1-frank.li@vivo.com
+
+Patch: [f2fs-dev] f2fs: convert to use MIN_DISCARD_GRANULARITY macro
+  Submitter: Yangtao Li <frank.li@vivo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=705317
+  Lore link: https://lore.kernel.org/r/20221217052448.60656-1-frank.li@vivo.com
+
+Patch: [f2fs-dev] f2fs: remove unnecessary blank lines
+  Submitter: Yangtao Li <frank.li@vivo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=706325
+  Lore link: https://lore.kernel.org/r/20221221192634.18068-1-frank.li@vivo.com
+
+
+Total patches: 5
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
