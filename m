@@ -4,73 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B8915C678D7
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 11 Jan 2023 19:20:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 671B0C54EBD
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 12 Jan 2023 08:41:03 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pFgeF-0002dc-Pz;
-	Wed, 11 Jan 2023 19:20:31 +0000
+	id 1pFt8v-000587-Pb;
+	Thu, 12 Jan 2023 08:41:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pFgeB-0002dI-U5
+ (envelope-from <zbynek.spacek@glencoeaur.com>) id 1pFt8u-00057s-Bf
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Jan 2023 19:20:27 +0000
+ Thu, 12 Jan 2023 08:40:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:MIME-Version
+ :Subject:To:From:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=E5Ln+BzJ4Gd7BOfVt0l8iPS586pp2iBF91++94ltnZc=; b=Ds2NeCsRNkbRg7a99GGFUP1IIM
- jG83iWCIhReFN+TU4aVSTDSaOmGisnRCaaW8f0T6XHgbruK9nmQTz6bMBCkjRxoRPAlSXVvE8ZOft
- Er/UgkbjjwIvpg5lcXEUSzdYo3eskzGhykMckN+naygPFbmTU/cLDm4MGbNw8IhoBgOQ=;
+ bh=2S0GQFScndXkBEK4sqdoOhOYLqsB2sEH8Q5XQfVvKpo=; b=gNFjguGBTzbCUI1G7c0bFGOduG
+ J0iWxpOWRf1XTDHM8jRH/a+pjGjlnyWhxwTiW3WDaiBwu9s8fTsSR281i5+01whqCHJ5WZtd9IEXr
+ sLrdrI7L0OipPvJUE4OFH326/8kljLfvwMRoflYn2H2AnCZBLPxSGc4//FToA/cl5MIw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=E5Ln+BzJ4Gd7BOfVt0l8iPS586pp2iBF91++94ltnZc=; b=bH8VUHpP2Detmstt0r8z4E6oRm
- dgQIkdjJeRc32U5cXgZ4Bj5Vk6SCw8sh/JwbJLqERwvr9K4UnaDQKipUfMN53TTkucqPwSRCd+qnb
- 2kHBf8uIVvDTIm/SGnoOVAuI0n6ECPcmdBUXduMk57slOsOFEKSPwZ7pM+tgSlH1t1fo=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ ;
+ h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:To:From:Date:
+ Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=2S0GQFScndXkBEK4sqdoOhOYLqsB2sEH8Q5XQfVvKpo=; b=D
+ 694wM3f46nTvzF5DYeuLJGWVhr5TtCKckvKhHcH0kwm66vgTngMRH+uR6X+t8RV7NuGMU52e8ZZCr
+ uARCHBXUHoVujap7HEXfkCfyc5kNsQ7AMuTqmWCEkUu9gGSBogGS5kM4BW6RHzq4T15YIAdReJ9BU
+ frGwZa20ybGzzRwg=;
+Received: from mail.glencoeaur.com ([217.61.97.113])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pFgeA-00011J-Lv for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 11 Jan 2023 19:20:27 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 4CB7361E05;
- Wed, 11 Jan 2023 19:20:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 11E77C433B0;
- Wed, 11 Jan 2023 19:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1673464818;
- bh=zeLE3YuBaPwdWq0OnqqBjA40FXySaJ6AnpW40oUr8Lc=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=IMSEorBOzO2Ww7x7/MWbXKeebz64zRMpkhWr63foKAF8w2ewvKjSHlVSjaFbXmGnr
- 9h/FM7H2BGqRwIJGXBpwBk3xXcqefHtQlqmV+uxPPy9eapQ2mhpzablhm0CzyupE83
- L5TvexHb8NQdE/y6NnunONCAUtJsY3kpXZmXx2RxZI/KMOj7B7NcNdr7LyLTC4pK8/
- jSs6DskjNRKYw65jH4AJcBP/dX1jBbCs8GXXf2B3QdTLzH8h/98eJpfRuIVkvCSNxC
- mfy/wqnUXvvXpylOPFTaRHC+KTmGKwIcJRLzwvcwtAp51QKyJBn6zNtRrGUKMBUE0s
- iktjr6KNGgjIA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- DE8BCE50D61; Wed, 11 Jan 2023 19:20:17 +0000 (UTC)
+ id 1pFt8p-0002s8-An for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 12 Jan 2023 08:40:57 +0000
+Received: by mail.glencoeaur.com (Postfix, from userid 1001)
+ id 0C5FC82220; Thu, 12 Jan 2023 08:40:47 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=glencoeaur.com;
+ s=mail; t=1673512849;
+ bh=2S0GQFScndXkBEK4sqdoOhOYLqsB2sEH8Q5XQfVvKpo=;
+ h=Date:From:To:Subject:From;
+ b=jP6uLFIq5XfZjT8sXXWYEbdmbiJkHkFv1+Ao9iS3Cb3h0dT14mS/SQ4AlaaM+olCc
+ UTU21DBO9nicSwEVUsfypyeKWgJJP3r9zT8Xsj78s/HxwrJZr57LBZbf27ZfluEnfC
+ pPt7CnOeZ5L0F4rrmgJan5PoIsPGFORUh4w4sUAeDwCf7OW3m+aaJRazYJn8BJG7lD
+ S4q5jH4K1cZabbe+pGQ8YzE9ZeHDvdAZ8bv7jKFH37yk4NCQJVLsoIxZcEN3XO9Efx
+ 69NQKNn8hB+I7rMxapOfi3YGP4An4IBRBAnkby+blaDHoJnyMvrL43lc5hAT3TLhOc
+ nE5+VEa3j8T5Q==
+Received: by mail.glencoeaur.com for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 12 Jan 2023 08:40:39 GMT
+Message-ID: <20230112074500-0.1.z.3gcb.0.036cp01wx6@glencoeaur.com>
+Date: Thu, 12 Jan 2023 08:40:39 GMT
+To: <linux-f2fs-devel@lists.sourceforge.net>
+X-Mailer: mail.glencoeaur.com
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167346481790.5008.280373755009706563.git-patchwork-notify@kernel.org>
-Date: Wed, 11 Jan 2023 19:20:17 +0000
-References: <20221217052448.60656-1-frank.li@vivo.com>
-In-Reply-To: <20221217052448.60656-1-frank.li@vivo.com>
-To: Yangtao Li <frank.li@vivo.com>
-X-Headers-End: 1pFgeA-00011J-Lv
-Subject: Re: [f2fs-dev] [PATCH] f2fs: convert to use MIN_DISCARD_GRANULARITY
- macro
+X-Headers-End: 1pFt8p-0002s8-An
+Subject: [f2fs-dev] Silikonmischungen
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,36 +73,28 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+From: Zbynek Spacek via Linux-f2fs-devel
+ <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Zbynek Spacek <zbynek.spacek@glencoeaur.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+Good morning,
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+do you need intermediates for processing, plastics (e.g. rubber) or silicone mixtures?
 
-On Sat, 17 Dec 2022 13:24:48 +0800 you wrote:
-> Commit 1cd2e6d54435 ("f2fs: define MIN_DISCARD_GRANULARITY macro")
-> introduce it, let's convert to use MIN_DISCARD_GRANULARITY macro.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  fs/f2fs/segment.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+We provide a wide range of silicone rubbers with various properties, silicone mixtures from renowned manufacturers such as Wacker, Elastosil LR and dyes, stabilizers, primers and anti-adhesive additives.
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: convert to use MIN_DISCARD_GRANULARITY macro
-    https://git.kernel.org/jaegeuk/f2fs/c/f08142bc3a60
+We also produce technical silicone compounds with increased resistance to oils, resistant to high temperatures and water vapor, conductive and many more.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+We provide fast order fulfillment, timely deliveries and cost optimization.
+
+Can I introduce what we can offer you?
 
 
+Best regards
+Zbynek Spacek
 
 
 _______________________________________________
