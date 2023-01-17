@@ -4,90 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C4496C3DA78
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Jan 2023 17:02:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F0955C3DA78
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 17 Jan 2023 17:06:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pHpLi-0005mx-K3;
-	Tue, 17 Jan 2023 17:02:13 +0000
+	id 1pHpPh-0000nK-VL;
+	Tue, 17 Jan 2023 17:06:21 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <geert.uytterhoeven@gmail.com>) id 1pHpLg-0005mn-Jm
+ (envelope-from <glaubitz@zedat.fu-berlin.de>) id 1pHpPg-0000nE-BH
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Jan 2023 17:02:11 +0000
+ Tue, 17 Jan 2023 17:06:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Cc:To:Subject:Message-ID:Date:From:
- In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-Transfer-Encoding
- :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AG07rkufzJudbSBlfxWXzYs9DtgP7S33LaaSRTlg/Ec=; b=VVm7A0IynGfBFKVjfBr43Po3gc
- TqKl04KTvV6RWJ/+tOT5uT09HgYkvkhU6nww71NGuRR59h424Ec8RySOFjtJSj/YQHwSNY/a/6+1Z
- 3CglN/EV5rGVxI6mIaoF9npetLT46eyQFYMsz5JGj2eOsmBWnbMA/qndIOxOZZ9aA0Bo=;
+ bh=0kLX03Az6cKSTZEXY/z4ABJEUAyylqMMgPZyMU9LWOQ=; b=cbMQZul8YW8L7lyjeYzgNDwOYq
+ 5mZgOZNoL13labAi8azfcN/GSEFUgwXBoZUa2DRQ7e8VbNAZMj1oxnCduA09s8kGgqRsW8MFrO3v/
+ rNPLtO40stbKhnetErD6QW2pFll2NsLq+p9cCkiq71O+RNuN/Qz2FVWcIt6m5Fpk/4Ks=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Cc:To:Subject:Message-ID:Date:From:In-Reply-To:References:
- MIME-Version:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=AG07rkufzJudbSBlfxWXzYs9DtgP7S33LaaSRTlg/Ec=; b=Jg6W90/cE2HUVXpcCZtKH0fDF0
- o/jdI+kZvPthbcKad9SaKcqfsCqFBOZEWiQLWAJbVfjeY30ROj6r4XWKbEsFR9cjt6MRmbVuR9hFb
- 2GMjcRU/bJO1Os3bZSdMHy5BG36P0c5Fpq0JEn4hkduGNuNXv5bQkphPrx0HqpgnWOWs=;
-Received: from mail-oi1-f176.google.com ([209.85.167.176])
+ bh=0kLX03Az6cKSTZEXY/z4ABJEUAyylqMMgPZyMU9LWOQ=; b=Znpe0GE+uzCOsArtzThVGcfH2f
+ /0eziFzye3qVEH9gVr9qaeXT8NMda8uRw2HsUCi53fakhvkyZ0rud/NBc3w2SQ+yqnp4aj36r0m9R
+ OPxxQASrUUoDkcAP9W3TnUSBsjyiVbti5tpcYA0SrLfwEh/k4dDD/TCYQ+qIW4BVdyAo=;
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1pHpLe-0073BB-57 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 17 Jan 2023 17:02:11 +0000
-Received: by mail-oi1-f176.google.com with SMTP id r9so15660592oie.13
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 17 Jan 2023 09:02:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=AG07rkufzJudbSBlfxWXzYs9DtgP7S33LaaSRTlg/Ec=;
- b=cuwjgT3f9J9QmVn55S/oNC0fDb9nkey31fE47CuSt2HEAopsZBq63SFS8idpMdmD7B
- D8qY6Y8VkdDgVyzN8yTmezf5bI45yNHCiLswomRpQkCQFEfpeaSuInk+5Jk6iY8Y/+Q+
- IgKiLDN4xZaeR+D3ZEaSqmSyFMRmB/X3aZ+cwzF41AvrNeWTcVwt9iwp4sbYzadLj28+
- dYRHLzgPC0oUWq+SHBIg39YO9Q46smE7jbvMZchPJkW4QOCmYWCN3w59ysjJOh1L5x+5
- NDyy0HAf81oPrRPM1ZC2M+exdHrAR84P/dSzYz/5uBDcSiCg+9ixaJ4965Te9xhcTkqR
- RwOw==
-X-Gm-Message-State: AFqh2kqYSG3+p2s3tXK3bdHwOVwMbpGpjVEg4lC+LKFKN22HvpAZ5WDf
- gpo6RdYgmOKDEOrJ/YYFxn1TLgYuHJVkIQ==
-X-Google-Smtp-Source: AMrXdXtWpqrNNg+f8C/I3+FgB0//ZxnrrCogjmaBVMdXOUuZLCwtImYp0v4Y4Z/gvlg3KhvbOQyrIA==
-X-Received: by 2002:aca:b303:0:b0:363:ea5c:2c2f with SMTP id
- c3-20020acab303000000b00363ea5c2c2fmr1727353oif.18.1673974923458; 
- Tue, 17 Jan 2023 09:02:03 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com.
- [209.85.219.181]) by smtp.gmail.com with ESMTPSA id
- bs15-20020a05620a470f00b006b61b2cb1d2sm20699642qkb.46.2023.01.17.09.02.02
- for <linux-f2fs-devel@lists.sourceforge.net>
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 17 Jan 2023 09:02:03 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id 188so34800208ybi.9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 17 Jan 2023 09:02:02 -0800 (PST)
-X-Received: by 2002:a25:d88c:0:b0:77a:b5f3:d0ac with SMTP id
- p134-20020a25d88c000000b0077ab5f3d0acmr418050ybg.202.1673974922451; Tue, 17
- Jan 2023 09:02:02 -0800 (PST)
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1pHpPe-0073PR-O0 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 17 Jan 2023 17:06:19 +0000
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+ by outpost.zedat.fu-berlin.de (Exim 4.95) with esmtps (TLS1.3)
+ tls TLS_AES_256_GCM_SHA384
+ (envelope-from <glaubitz@zedat.fu-berlin.de>)
+ id 1pHpPU-001nMn-Ss; Tue, 17 Jan 2023 18:06:08 +0100
+Received: from p57bd9464.dip0.t-ipconnect.de ([87.189.148.100]
+ helo=[192.168.178.81]) by inpost2.zedat.fu-berlin.de (Exim 4.95)
+ with esmtpsa (TLS1.3) tls TLS_AES_128_GCM_SHA256
+ (envelope-from <glaubitz@physik.fu-berlin.de>)
+ id 1pHpPT-002tRa-PS; Tue, 17 Jan 2023 18:06:08 +0100
+Message-ID: <429140e0-72fe-c91c-53bc-124d33ab5ffa@physik.fu-berlin.de>
+Date: Tue, 17 Jan 2023 18:06:07 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 References: <CAHk-=wgf929uGOVpiWALPyC7pv_9KbwB2EAvQ3C4woshZZ5zqQ@mail.gmail.com>
  <20221227082932.798359-1-geert@linux-m68k.org>
  <alpine.DEB.2.22.394.2212270933530.311423@ramsan.of.borg>
  <c05bee5d-0d69-289b-fe4b-98f4cd31a4f5@physik.fu-berlin.de>
  <CAMuHMdXNJveXHeS=g-aHbnxtyACxq1wCeaTg8LbpYqJTCqk86g@mail.gmail.com>
  <3800eaa8-a4da-b2f0-da31-6627176cb92e@physik.fu-berlin.de>
-In-Reply-To: <3800eaa8-a4da-b2f0-da31-6627176cb92e@physik.fu-berlin.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Jan 2023 18:01:51 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWbBRkhecrqcir92TgZnffMe8ku2t7PcVLqA6e6F-j=iw@mail.gmail.com>
-Message-ID: <CAMuHMdWbBRkhecrqcir92TgZnffMe8ku2t7PcVLqA6e6F-j=iw@mail.gmail.com>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-X-Headers-End: 1pHpLe-0073BB-57
+ <CAMuHMdWbBRkhecrqcir92TgZnffMe8ku2t7PcVLqA6e6F-j=iw@mail.gmail.com>
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+In-Reply-To: <CAMuHMdWbBRkhecrqcir92TgZnffMe8ku2t7PcVLqA6e6F-j=iw@mail.gmail.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-Originating-IP: 87.189.148.100
+X-Headers-End: 1pHpPe-0073PR-O0
 Subject: Re: [f2fs-dev] Calculating array sizes in C - was: Re: Build
  regressions/improvements in v6.2-rc1
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -108,89 +90,35 @@ Cc: linux-xtensa@linux-xtensa.org, linux-sh@vger.kernel.org,
  Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>,
  linux-f2fs-devel@lists.sourceforge.net, linuxppc-dev@lists.ozlabs.org,
  linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Adrian,
+Hi!
 
-On Tue, Jan 17, 2023 at 5:42 PM John Paul Adrian Glaubitz
-<glaubitz@physik.fu-berlin.de> wrote:
-> On 1/6/23 16:17, Geert Uytterhoeven wrote:
-> >> I'm not seeing this one, but I am getting this one instead:
-> >>
-> >> In file included from ./arch/sh/include/asm/hw_irq.h:6,
-> >>                    from ./include/linux/irq.h:596,
-> >>                    from ./include/asm-generic/hardirq.h:17,
-> >>                    from ./arch/sh/include/asm/hardirq.h:9,
-> >>                    from ./include/linux/hardirq.h:11,
-> >>                    from ./include/linux/interrupt.h:11,
-> >>                    from ./include/linux/serial_core.h:13,
-> >>                    from ./include/linux/serial_sci.h:6,
-> >>                    from arch/sh/kernel/cpu/sh2/setup-sh7619.c:11:
-> >> ./include/linux/sh_intc.h:100:63: error: division 'sizeof (void *) / sizeof (void)' does not compute the number of array elements [-Werror=sizeof-pointer-div]
-> >>     100 | #define _INTC_ARRAY(a) a, __same_type(a, NULL) ? 0 : sizeof(a)/sizeof(*a)
-> >>         |                                                               ^
-> >> ./include/linux/sh_intc.h:105:31: note: in expansion of macro '_INTC_ARRAY'
-> >>     105 |         _INTC_ARRAY(vectors), _INTC_ARRAY(groups),      \
-> >>         |                               ^~~~~~~~~~~
-> >
-> > The easiest fix for the latter is to disable CONFIG_WERROR.
-> > Unfortunately I don't know a simple solution to get rid of the warning.
->
-> I did some research and it seems that what the macro _INT_ARRAY() does with "sizeof(a)/sizeof(*a)"
-> is a commonly used way to calculate array sizes and the kernel has even its own macro for that
-> called ARRAY_SIZE() which Linus asks people to use here [1].
->
-> So, I replaced _INTC_ARRAY() with ARRAY_SIZE() (see below), however the kernel's own ARRAY_SIZE()
-> macro triggers the same compiler warning. I'm CC'ing Michael Karcher who has more knowledge on
-> writing proper C code than me and maybe an idea how to fix this warning.
->
-> Thanks,
-> Adrian
->
-> > [1] https://lkml.org/lkml/2015/9/3/428
->
-> diff --git a/include/linux/sh_intc.h b/include/linux/sh_intc.h
-> index c255273b0281..07a187686a84 100644
-> --- a/include/linux/sh_intc.h
-> +++ b/include/linux/sh_intc.h
-> @@ -97,14 +97,12 @@ struct intc_hw_desc {
->          unsigned int nr_subgroups;
->   };
->
-> -#define _INTC_ARRAY(a) a, __same_type(a, NULL) ? 0 : sizeof(a)/sizeof(*a)
-> -
->   #define INTC_HW_DESC(vectors, groups, mask_regs,       \
->                       prio_regs, sense_regs, ack_regs)   \
->   {                                                      \
-> -       _INTC_ARRAY(vectors), _INTC_ARRAY(groups),      \
-> -       _INTC_ARRAY(mask_regs), _INTC_ARRAY(prio_regs), \
-> -       _INTC_ARRAY(sense_regs), _INTC_ARRAY(ack_regs), \
-> +       ARRAY_SIZE(vectors), ARRAY_SIZE(groups),        \
-> +       ARRAY_SIZE(mask_regs), ARRAY_SIZE(prio_regs),   \
-> +       ARRAY_SIZE(sense_regs), ARRAY_SIZE(ack_regs),   \
->   }
+On 1/17/23 18:01, Geert Uytterhoeven wrote:
+> The issue is that some of the parameters are not arrays, but
+> NULL. E.g.:
+> 
+> arch/sh/kernel/cpu/sh2/setup-sh7619.c:static
+> DECLARE_INTC_DESC(intc_desc, "sh7619", vectors, NULL,
+> arch/sh/kernel/cpu/sh2/setup-sh7619.c-                   NULL,
+> prio_registers, NULL);
 
-The issue is that some of the parameters are not arrays, but
-NULL. E.g.:
+Isn't this supposed to be caught by this check:
 
-arch/sh/kernel/cpu/sh2/setup-sh7619.c:static
-DECLARE_INTC_DESC(intc_desc, "sh7619", vectors, NULL,
-arch/sh/kernel/cpu/sh2/setup-sh7619.c-                   NULL,
-prio_registers, NULL);
---
+	a, __same_type(a, NULL)
 
-Gr{oetje,eeting}s,
+?
 
-                        Geert
+Adrian
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-- 
+  .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
 
 _______________________________________________
