@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7EC13C6379F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Jan 2023 06:36:51 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D4AC1C678DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 19 Jan 2023 06:36:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pIOXa-0001Sh-QT;
-	Thu, 19 Jan 2023 06:36:49 +0000
+	id 1pIOXd-0000z4-7u;
+	Thu, 19 Jan 2023 06:36:52 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+d6c99cb0ec1a2cfa7d20+7088+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1pIOXY-0001SS-4a for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Jan 2023 06:36:46 +0000
+ id 1pIOXX-0000yr-E5 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 19 Jan 2023 06:36:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3Q1xLjahu5r3Hpi8KZaN6erKrrcckUykkiJeIuFGVEE=; b=IlUErF5i3b7jZi3XAcRuZ47I3B
- 42g12CLaQqhqwHGO8uChh8UOzdiNj82T+OikL3ZHqL/E08eJh74Qqvbl4y2+Lvp9wbTpR4LBbT7Wn
- PWsnvAkPGH6m8EjEo5Rf6zN2AKfu/Gr/+BMJ4+ISE0cjC2JmZpsLABzn10acGEfACGlQ=;
+ bh=i98/N1jTMU5BFfsuB5WaRbW8ztdFj6EVQJfgX6qMD04=; b=GOdis+lxbjhu+qGphaZFn49r8w
+ DC2s1uPCovyxvKMahfgp7lmJ33qP1IvvnDBzevm3idK/zvHjfCj3dZ9AzqKTrqc674oq7fSFr0rF0
+ mHh1MBksZu7uhVs5aExsbPun8zY9PqgEh9/a9uPXzgHbvizRKYUQYPwXCQzOda8ngBkQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3Q1xLjahu5r3Hpi8KZaN6erKrrcckUykkiJeIuFGVEE=; b=OTLiXq4nvPxNTLlP1xV5mAQxqv
- heIgOB3ruDEjvIMjMVppWStsoUOKrCeTqvetqe2UZkFvzKkVKlqes7vrSOViQ7wNNeYUWoBygFw1F
- Kehp3P5t3kG+6fOolSZjVTRTQaRCvqN/gXlkErPIBWln+R2AFL/9/8+8T1mcxF9rFStQ=;
+ bh=i98/N1jTMU5BFfsuB5WaRbW8ztdFj6EVQJfgX6qMD04=; b=RQxpuitvN6/62+VmWmgG34Q54+
+ UaJ5zmq18tAbEOvmwcIt0/f0Mcn7cUyIYL8at0Htb7yIFLPn+Z2hsV8eHynL28XBlxqUmYrA6obTU
+ Nv5DPhPlfv5Mziuav+g+aFI9NivvpNlF1YdEyTiBj1Y75cpOkHOM6DEOBl6mRHu+kSfY=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pIOXT-0001dS-40 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 19 Jan 2023 06:36:45 +0000
+ id 1pIOXW-008fSJ-0O for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 19 Jan 2023 06:36:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=3Q1xLjahu5r3Hpi8KZaN6erKrrcckUykkiJeIuFGVEE=; b=d3DP1HJYKUhjmxH2khsCX1lzSb
- nYglgL/Luow7+mlgv4t+ID3WyUjWW9WIam85f66YeL15OSsO+J0ymB+slQIbcyGc/3LmvY/aYRZRd
- aH33+vPELLR9WQ/fNMYoAzLixuxhgN6DQqTmZb00SOWavugxADcDu/T8zmnBuK/cAF0AbVKJ7js3N
- gYXpRYnWEcfZh32rhGj4+WiRcQk1W+PcroHK6uclkU+1BzPrhAgLSR0GSpRhG20calAetf2vxQXLe
- aF1of7K1s+92MjOIKVvRtJ1NSXMqX7Qge+/iUw95vdn/jVnMJJezaR6Bs6dNXfUPNHZCJEiB7MhJf
- 5tSq7T2g==;
+ bh=i98/N1jTMU5BFfsuB5WaRbW8ztdFj6EVQJfgX6qMD04=; b=vSRe5crZIFOdBLzlPen2t7HXXL
+ M5HIjZkDID1izOD5c3F52h3rhFDR3HOn08Lhtl2Lb1n60gs25Wm3ai/gMOj8Ubo4og5wEMwsYJfia
+ oKdwV70gIBIgoTKG/XgFJu4t4hUp55EjaVtSzRkXNEQ6binpXi0vSzDtMh330V8+T9CBfO2W+S3Id
+ wOZxNfOkutwUypANhwmzQmk6hCsBitD7ub+pdYViu8YbyC8Ezp5LeLEBjwfRumcUv/eCqriQJX3ug
+ OaRMNHGllfJXCYcHbXqP5XLnsNr8g4VwvN0tj7uDoM3L9xybsb2RuQX+rOMIWZ1im/YEU7bhLX6Gc
+ HCzDfx6w==;
 Received: from [2001:4bb8:19a:2039:96fe:c1ec:dda2:41a3] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
- id 1pIOXH-003kak-D6; Thu, 19 Jan 2023 06:36:32 +0000
+ id 1pIOXO-003kbY-F3; Thu, 19 Jan 2023 06:36:38 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jaegeuk Kim <jaegeuk@kernel.org>,
 	Chao Yu <chao@kernel.org>
-Date: Thu, 19 Jan 2023 07:36:18 +0100
-Message-Id: <20230119063625.466485-2-hch@lst.de>
+Date: Thu, 19 Jan 2023 07:36:20 +0100
+Message-Id: <20230119063625.466485-4-hch@lst.de>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230119063625.466485-1-hch@lst.de>
 References: <20230119063625.466485-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1pIOXT-0001dS-40
-Subject: [f2fs-dev] [PATCH 1/8] f2fs: remove __add_sum_entry
+X-Headers-End: 1pIOXW-008fSJ-0O
+Subject: [f2fs-dev] [PATCH 3/8] f2fs: add a f2fs_curseg_valid_blocks helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,63 +83,90 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This function just assigns a summary entry.  This can be done entirely
-typesafe with an open code struct assignment that relies on array
-indexing.
+Add a helper to return the valid blocks on log and SSR segments, and
+replace the last two uses of curseg_blkoff with it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/f2fs/segment.c | 23 ++---------------------
- 1 file changed, 2 insertions(+), 21 deletions(-)
+ fs/f2fs/segment.c | 32 +++++++++++++++-----------------
+ fs/f2fs/segment.h |  6 ------
+ 2 files changed, 15 insertions(+), 23 deletions(-)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 311243dda4cefa..ec6880213e8fa9 100644
+index ec6880213e8fa9..ad323b6e8609cd 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -2323,19 +2323,6 @@ bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr)
+@@ -2323,6 +2323,15 @@ bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr)
  	return is_cp;
  }
  
--/*
-- * This function should be resided under the curseg_mutex lock
-- */
--static void __add_sum_entry(struct f2fs_sb_info *sbi, int type,
--					struct f2fs_summary *sum)
--{
--	struct curseg_info *curseg = CURSEG_I(sbi, type);
--	void *addr = curseg->sum_blk;
--
--	addr += curseg->next_blkoff * sizeof(struct f2fs_summary);
--	memcpy(addr, sum, sizeof(struct f2fs_summary));
--}
--
++static unsigned short f2fs_curseg_valid_blocks(struct f2fs_sb_info *sbi, int type)
++{
++	struct curseg_info *curseg = CURSEG_I(sbi, type);
++
++	if (sbi->ckpt->alloc_type[type] == SSR)
++		return sbi->blocks_per_seg;
++	return curseg->next_blkoff;
++}
++
  /*
   * Calculate the number of current summary pages for writing
   */
-@@ -3262,13 +3249,7 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+@@ -2332,15 +2341,11 @@ int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra)
+ 	int i, sum_in_page;
  
- 	f2fs_wait_discard_bio(sbi, *new_blkaddr);
- 
--	/*
--	 * __add_sum_entry should be resided under the curseg_mutex
--	 * because, this function updates a summary entry in the
--	 * current summary block.
--	 */
--	__add_sum_entry(sbi, type, sum);
--
-+	curseg->sum_blk->entries[curseg->next_blkoff] = *sum;
- 	__refresh_next_blkoff(sbi, curseg);
- 
- 	stat_inc_block_count(sbi, curseg);
-@@ -3571,7 +3552,7 @@ void f2fs_do_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
+-		if (sbi->ckpt->alloc_type[i] == SSR)
+-			valid_sum_count += sbi->blocks_per_seg;
+-		else {
+-			if (for_ra)
+-				valid_sum_count += le16_to_cpu(
+-					F2FS_CKPT(sbi)->cur_data_blkoff[i]);
+-			else
+-				valid_sum_count += curseg_blkoff(sbi, i);
+-		}
++		if (sbi->ckpt->alloc_type[i] != SSR && for_ra)
++			valid_sum_count +=
++				le16_to_cpu(F2FS_CKPT(sbi)->cur_data_blkoff[i]);
++		else
++			valid_sum_count += f2fs_curseg_valid_blocks(sbi, i);
  	}
  
- 	curseg->next_blkoff = GET_BLKOFF_FROM_SEG0(sbi, new_blkaddr);
--	__add_sum_entry(sbi, type, sum);
-+	curseg->sum_blk->entries[curseg->next_blkoff] = *sum;
+ 	sum_in_page = (PAGE_SIZE - 2 * SUM_JOURNAL_SIZE -
+@@ -3861,15 +3866,8 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
  
- 	if (!recover_curseg || recover_newaddr) {
- 		if (!from_gc)
+ 	/* Step 3: write summary entries */
+ 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
+-		unsigned short blkoff;
+-
+ 		seg_i = CURSEG_I(sbi, i);
+-		if (sbi->ckpt->alloc_type[i] == SSR)
+-			blkoff = sbi->blocks_per_seg;
+-		else
+-			blkoff = curseg_blkoff(sbi, i);
+-
+-		for (j = 0; j < blkoff; j++) {
++		for (j = 0; j < f2fs_curseg_valid_blocks(sbi, i); j++) {
+ 			if (!page) {
+ 				page = f2fs_grab_meta_page(sbi, blkaddr++);
+ 				kaddr = (unsigned char *)page_address(page);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index ad6a9c19f46a48..0f3f05cb8c29f5 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -710,12 +710,6 @@ static inline unsigned char curseg_alloc_type(struct f2fs_sb_info *sbi,
+ 	return curseg->alloc_type;
+ }
+ 
+-static inline unsigned short curseg_blkoff(struct f2fs_sb_info *sbi, int type)
+-{
+-	struct curseg_info *curseg = CURSEG_I(sbi, type);
+-	return curseg->next_blkoff;
+-}
+-
+ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+ {
+ 	f2fs_bug_on(sbi, segno > TOTAL_SEGS(sbi) - 1);
 -- 
 2.39.0
 
