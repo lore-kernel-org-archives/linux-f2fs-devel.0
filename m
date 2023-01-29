@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 15EBEC05027
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 29 Jan 2023 10:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8EB90C61D97
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 29 Jan 2023 10:40:00 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pM55j-0007Ej-0P;
-	Sun, 29 Jan 2023 10:39:18 +0000
+	id 1pM56O-0007LT-Uu;
+	Sun, 29 Jan 2023 10:40:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pM55h-0007ER-2e
+ (envelope-from <chao@kernel.org>) id 1pM56N-0007LG-V8
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 29 Jan 2023 10:39:16 +0000
+ Sun, 29 Jan 2023 10:39:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=k9IY+p1zXZPmjR5iWE8OVyITeUa7n80WifqjOn9FglA=; b=J7VlQjgrGd7zMkjzYSvcug5Gmf
- P09p2FEB9pYWsRjF4c1Sn1XiDByVwd3jq0qUnhrqVK4buJwJukdOe4hpc9OpZ/yu2BysyuXE/645m
- n5QA/v+vyx5N5sjH82smSTjqydSDNtIAAcMwMbNN8VrpH16ONow7CiC8jfpxu/Z8K7oU=;
+ bh=Vj9oD18E19ySFG1wVEUQFApCDJ9WyUVQca6xclzWvC4=; b=KXkMo6SK57nkXiAbklprisjtIJ
+ L0NnZlcSmZ6fem3SNDBKZTWtbuc8AnKaOIPuL5jsCVgP8kZooCdaNVuCflHp2wWKLJ232WqtaqSFw
+ KHECdHL48+gVtRCSzr/fvAmt9CVdc57SAlEWd87IxQEPSDEw7ZNQ7rrxm0GT97fo6c/E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,44 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=k9IY+p1zXZPmjR5iWE8OVyITeUa7n80WifqjOn9FglA=; b=gryB74vjmFiuwQXPIJrSR25DCe
- GtT+LAME0Qwi8EvettrX2rcRb+6dLxaabBIhYsjtTabA7a5Sj5OCE5bbcQ4Apmb1yzNkaUEsY8hgi
- o1vH2T4rw48/aJUrcoGVGv4dJMbV86E27HekUVeyhlg3rDm72cizz9X1NilHoimLacBo=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=Vj9oD18E19ySFG1wVEUQFApCDJ9WyUVQca6xclzWvC4=; b=T5tW1hA6NOKmsb/DUow3bKxh98
+ PnzAifAAdueEcUBme9CMKCztfSJpUQjSqBwxXtd1/gtXyIkh1nsYJ7+pCNmq7HLt1y5IQ4ivyMQgl
+ gaEcVrGILhDgZbb8C/cH02RSuy0I+7QypEF0bIArOkOF3d936kkncpLYKu+PuUI5jGW8=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pM55e-0006uf-Q0 for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 29 Jan 2023 10:39:16 +0000
+ id 1pM56L-0006wP-Oj for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 29 Jan 2023 10:39:59 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 5292CB80CB1;
- Sun, 29 Jan 2023 10:39:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3D09C4339E;
- Sun, 29 Jan 2023 10:39:06 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 2823960CA3;
+ Sun, 29 Jan 2023 10:39:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF29C433D2;
+ Sun, 29 Jan 2023 10:39:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1674988748;
- bh=zoMMNXlm+0jOFtYtfc7qSditX9/ZdJj2AIRDwVK9fN8=;
+ s=k20201202; t=1674988792;
+ bh=U3FzXI5o4oxMN5qdYR1BoL4+SXaR0t0tkbljgs/gJ6s=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=B6V+FXHffAmucUN4SGbX/w5eTFYvPd3VSiXTiUYElqk3BL23M3Kyajack1ZXGHhmQ
- 1dT73/2b2x7cmiMGaby+b0KRkQHhyD09iQAqK9/pd0mBZFFPMf/EmTRSgzoIebZ8Ce
- GZJLAjMV61Y7u5P5j53VGJZehehFOG1oL6+5b7ng9Ow2M7ksjaFIJSj1Z1zJDpkC0g
- jMLOiBpy9jGOjyku3wGG39mTOv+XRXZiEmv24IxZRmKk4rPcxaqzxUrg2QFPIPsuiO
- ZrKCyJxOb5LE5WRe5XjsBt9EuK4mSyYVI49Q4pq4oy7hfDD/103XY03j4idq922uh8
- M4TXQRUVX+SYA==
-Message-ID: <de312d85-cc87-7e73-1d8a-b36c63528270@kernel.org>
-Date: Sun, 29 Jan 2023 18:39:04 +0800
+ b=MAlFVNitYdrCahsjEIb9gNkdJuAmd5c5xpx9tYpXfdsQqDn1hHl3UtZfibUZ9t8uV
+ n233Jj1GeFQfA9uBa58vxYT4nJXvPvDrcX44nlfshdOVR+Uj5olikWUetctTbNiMo5
+ gjmZTGJopiH40K5s5gA4JFAGhN3cBbwio8LauKUQTOGaL2zUM9DkBN4T1N8xHqMye8
+ K9jIu7wFMKmmHkSE9AisqcNd7uwqyywkM/nHMSj0dEuCKZ7wmjgmkE9aCCWYQ8md4C
+ XGJn6labPnQ78t7IP7SuWlojHn1YKYcvE2uF5YtUKcFqqTzXZV1boW3JFrBIf58Hp2
+ OetxN3vqRrygg==
+Message-ID: <eb1d37d8-1d60-b885-0ab1-5b1452eabc34@kernel.org>
+Date: Sun, 29 Jan 2023 18:39:49 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
 Content-Language: en-US
 To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>
 References: <20230119063625.466485-1-hch@lst.de>
- <20230119063625.466485-6-hch@lst.de>
+ <20230119063625.466485-7-hch@lst.de>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20230119063625.466485-6-hch@lst.de>
-X-Headers-End: 1pM55e-0006uf-Q0
-Subject: Re: [f2fs-dev] [PATCH 5/8] f2fs: refactor __allocate_new_segment
+In-Reply-To: <20230119063625.466485-7-hch@lst.de>
+X-Headers-End: 1pM56L-0006wP-Oj
+Subject: Re: [f2fs-dev] [PATCH 6/8] f2fs: remove __allocate_new_section
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,8 +88,7 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2023/1/19 14:36, Christoph Hellwig wrote:
-> Simplify the check whether to allocate a new segment or reuse an open
-> one.
+> Just fold this trivial wrapper into the only caller.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
