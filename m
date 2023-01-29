@@ -4,73 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DC29AC05027
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 29 Jan 2023 12:24:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9EAC0C61D97
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 29 Jan 2023 14:08:01 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pM6jj-0008JD-8R;
-	Sun, 29 Jan 2023 12:24:42 +0000
+	id 1pM8Lg-0007bR-P3;
+	Sun, 29 Jan 2023 14:07:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pM6jh-0008J7-IO
+ (envelope-from <chao@kernel.org>) id 1pM8Lg-0007bK-2B
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 29 Jan 2023 12:24:41 +0000
+ Sun, 29 Jan 2023 14:07:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZqwHlD6HHx5UL2UnsUMK8GzaTWNQqUdgd+Xmtu/qBHU=; b=IR5SKxtFaouDVslrMyLHZA+8O8
- WJaxXuV5fzAbtLuDzw3Uiy/VSoFp94EtA6NLyaaULraXEJE66Gd7JMoGqe50cTjKHROVIzLXhcRCi
- c3lq6WBV2kMNhV29zOjDb6obJYPO+bzy2atVwfZmv5BDtT4wJIIF3AZ7qe2XzyACBjfk=;
+ bh=1z+iCS46Yr3lm9ACNgc7qodB+R5Gmf1kYOzItj9dp4U=; b=JoMYKbtmyOXiBr0C5ZZxTXXQYC
+ 2eHNG2fwcjGDXUOVW0DNOC17f7qFfMBD15P4qujTXlFfqqbmd7q2KSmXdCe/CHBE86nx+EGQhCq7o
+ LBGnVnTa/OPIE77hfJmB32TB0Sr2ESwZeZY9MRCL554RAkLLq67OsLEyuvMLtGD/0V+0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=ZqwHlD6HHx5UL2UnsUMK8GzaTWNQqUdgd+Xmtu/qBHU=; b=Cz45IJ4+TJBPMwKHMGnMfqhkmZ
- ezc8wdhSmiENIqrg5FiDyT0HQ8zFr8IaP28iORXysVqwLpNvOvChihY0vIRRdsrxwbNxIdIt6Aem/
- INRMYzVmeirnrY88G143FIkUqVFRYfqoyVxOERS4yMmHF5vCym9lbks98eheBbJ13cNs=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=1z+iCS46Yr3lm9ACNgc7qodB+R5Gmf1kYOzItj9dp4U=; b=W
+ FcSJaru1gUC0G50F2ZL5W/DrutYLtpKhgJV7OL9qZ1HQfK6uwbJW7oORKtKoche73on+Q8KHHmQEA
+ lJGlBK6ZIpv3Wj6V7XAoQLVncR4LBtr/q7NRlLUAbFxEcYxv1yl6cbmLl+botfIVuk0VavCDSpJQp
+ 1kHaiJBZ5FHyS8Uw=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pM6jg-002T2m-3j for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 29 Jan 2023 12:24:40 +0000
+ id 1pM8La-0003Fi-SA for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 29 Jan 2023 14:07:58 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id CB7F2B80C67;
- Sun, 29 Jan 2023 12:24:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD8AC433D2;
- Sun, 29 Jan 2023 12:24:31 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id C9F2B60D40
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 29 Jan 2023 14:07:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E340C433EF;
+ Sun, 29 Jan 2023 14:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1674995072;
- bh=E9f8D4wiVvcHiiQc3dL0Vxh2/DAGIJuj+tDuzLrG5Es=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=t9NmulCW1oLrfnctTWnTo6TVyh48JGrG8MxKpkCcmRQke1xao4uxAB95kvW7rUNEx
- kbviZmhGBaNb0bqbnFnxTgIGwysk7we9rw4u+jlDGplUzdslTbkNEFU3DhvQcgUpjC
- RMIv2LO7ZJdlwF6OJcxQHmmPbwI4TSmxnYbnwwl3WmbNJ4913/C5A0AuNqGPluLv1x
- YTzui2ZQmvhSPwVQ3YyNfx4oR9FjG8qb4DFaur71/eM/MSZdpgxOfBQp28AXn3pf3S
- B9hzPRyNLUNJW5cuysZ/4esF7icRQsA6AGo91eZ10trFPU+nDUl7y/VnS6Ja8OKymO
- zo7gC/Vt+pFyQ==
-Message-ID: <c4007976-5ee8-506e-5ec4-adf8c02ac7c9@kernel.org>
-Date: Sun, 29 Jan 2023 20:24:30 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20230119063625.466485-1-hch@lst.de>
- <20230119063625.466485-9-hch@lst.de>
+ s=k20201202; t=1675001267;
+ bh=bivgQD4hccIujFULNfSi51tGjZlhLoS4MaUhofH0cSc=;
+ h=From:To:Cc:Subject:Date:From;
+ b=JqAp/Hc9UJhdXEb1d4OF6T7gLXjUOMIttzWm4qjncnt6y+JzSfVCQlRw8zBxhOIDh
+ aFvOiUOp4J79fM36UPDgJe9yGWrciOioFsS1CkJ3Y8W2kj5LzXQ8ZZxsR1sxGr8/zw
+ 7020xN/e1BWTLpQjF6iWtgkKYqjaihUyBzDmbU8TWxDLTo9/wykwiOTYq9kYfE9m64
+ K8ndYaMC3KLaf4z1mVTUHq7e0Ta3Pw5ST3JlRsfEbGqotqEhc+FFTHNNyrCH8P+NPW
+ KEUs8cIxn4NQuGmb59oDphE2bXorgTMF7di9Ips+jrES/1PGtKPw/p+9g7wq4c51TO
+ WD/O/1vgXducw==
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20230119063625.466485-9-hch@lst.de>
-X-Headers-End: 1pM6jg-002T2m-3j
-Subject: Re: [f2fs-dev] [PATCH 8/8] f2fs: remove __has_curseg_space
+To: jaegeuk@kernel.org
+Date: Sun, 29 Jan 2023 16:30:45 +0800
+Message-Id: <20230129083045.7754-1-chao@kernel.org>
+X-Mailer: git-send-email 2.36.1
+MIME-Version: 1.0
+X-Headers-End: 1pM8La-0003Fi-SA
+Subject: [f2fs-dev] [PATCH] f2fs: reduce stack memory cost by using bitfield
+ in struct f2fs_io_info
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,20 +79,69 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2023/1/19 14:36, Christoph Hellwig wrote:
-> Just open code the logic in the only caller, where it is more
-> obvious.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+This patch tries to use bitfield in struct f2fs_io_info to improve
+memory usage.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+struct f2fs_io_info {
+...
+	int need_lock:8;	/* indicate we need to lock cp_rwsem */
+	int version:8;		/* version of the node */
+	int submitted:1;	/* indicate IO submission */
+	int in_list:1;		/* indicate fio is in io_list */
+	int is_por:1;		/* indicate IO is from recovery or not */
+	int retry:1;		/* need to reallocate block address */
+	int encrypted:1;	/* indicate file is encrypted */
+	int post_read:1;	/* require post read */
+...
+};
 
-Thanks,
+After this patch, size of struct f2fs_io_info reduces from 136 to 120.
+
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/f2fs.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index fa41c0dad308..f2f201e2a6a6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1212,19 +1212,19 @@ struct f2fs_io_info {
+ 	struct page *encrypted_page;	/* encrypted page */
+ 	struct page *compressed_page;	/* compressed page */
+ 	struct list_head list;		/* serialize IOs */
+-	bool submitted;		/* indicate IO submission */
+-	int need_lock;		/* indicate we need to lock cp_rwsem */
+-	bool in_list;		/* indicate fio is in io_list */
+-	bool is_por;		/* indicate IO is from recovery or not */
+-	bool retry;		/* need to reallocate block address */
+ 	int compr_blocks;	/* # of compressed block addresses */
+-	bool encrypted;		/* indicate file is encrypted */
+-	bool post_read;		/* require post read */
++	int need_lock:8;	/* indicate we need to lock cp_rwsem */
++	int version:8;		/* version of the node */
++	int submitted:1;	/* indicate IO submission */
++	int in_list:1;		/* indicate fio is in io_list */
++	int is_por:1;		/* indicate IO is from recovery or not */
++	int retry:1;		/* need to reallocate block address */
++	int encrypted:1;	/* indicate file is encrypted */
++	int post_read:1;	/* require post read */
+ 	enum iostat_type io_type;	/* io type */
+ 	struct writeback_control *io_wbc; /* writeback control */
+ 	struct bio **bio;		/* bio for ipu */
+ 	sector_t *last_block;		/* last block number in bio */
+-	unsigned char version;		/* version of the node */
+ };
+ 
+ struct bio_entry {
+-- 
+2.36.1
+
 
 
 _______________________________________________
