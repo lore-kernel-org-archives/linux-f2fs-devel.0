@@ -4,74 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8DC2CC6379F
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72CFCC636CD
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:35 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pMd8d-0003ek-Ia;
+	id 1pMd8d-0001lZ-Dk;
 	Mon, 30 Jan 2023 23:00:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8a-0003dK-J8
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8Z-0001kv-Vb
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 30 Jan 2023 23:00:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=lIUTmzWyYHH++uOCCYF67MZRvnzfHhfi4SWRWYE6VnA=; b=YvR83GSSCJ/Mls9p/PpB9KYzA9
- Cs2aI5nONTW5Da6zRVQKy8n2sGOqc7EdPoVlkeUgPKm3ah4ElzbMZItp0TXJ0FRRQ7V25G81d0tjT
- CGXGVyRZelJZKklgO3iBPnObcJnugjAcZRyZ2Y5E73dbSPoTpRFU8i509mVhMC80xSDE=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=u5ski6DgZGOjrIRYBjHLjJZAn75Jv2QAkQhvrW0+Ygg=; b=bXKDihgiSxHTVmPOze1yX7U8nU
+ mNC2T4mPX4sGL7YcStr2O0YRVHjFZseL4/Bd/m8Ali11ILfzeVUST0mEzbKyJxFQIHEJG2dK8hMfr
+ K7MYqNCJI/Z2Y+DDmkN9M7qzl/tDnZw8eYQeHHbqhLMWScp2eVKgNDsqj+O1VBWQ1R/g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=lIUTmzWyYHH++uOCCYF67MZRvnzfHhfi4SWRWYE6VnA=; b=k
- 0KCE+lMi0G0YPzOQzq4JLspIjvtyHPpMm2zz45pZLbRuG/9If3XNWC6LAU6C2JyE5S2iNNQtz6L4R
- /YTNAvHt9vNf6YrI9mZ01Sssw6ypfQHKT9Xb3Wh4ddmDTzLGL4+sdxA3i9uZMFCE1sx00yC8yRiqX
- OS2MSNqqtLMvfW+4=;
-Received: from sin.source.kernel.org ([145.40.73.55])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=u5ski6DgZGOjrIRYBjHLjJZAn75Jv2QAkQhvrW0+Ygg=; b=hcZsdC01DP6aqEqGW2vg/t7XPN
+ iIJarkmi8Wjm2hZ/xmK9FPhdPbvzLwtu4ct8yDut6UPScGsWvjOZG99ufyy5HNg1wLSXKZtB+6XkR
+ c+YcCt9SVeY+QMYIDyMcCBAKe+YuvFrB8HZLP5Qz2aRAyLbOGxw6i23GbXXHKaqJKgR4=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pMd8V-004OGY-SF for linux-f2fs-devel@lists.sourceforge.net;
+ id 1pMd8X-0002fk-8V for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 30 Jan 2023 23:00:30 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by sin.source.kernel.org (Postfix) with ESMTPS id 894DACE1A92
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 71ECE61309;
  Mon, 30 Jan 2023 23:00:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D6891C433D2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 30 Jan 2023 23:00:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 590B1C43445;
+ Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1675119617;
- bh=iv6kseZGfeV90LPtMxVuaQwhfgO7vY8rFyGCXjdm8es=;
- h=Subject:From:Date:To:From;
- b=Rvb8S04KQGB11xYq3R64iYmdpnrOe3p/5phzPYujJXBOZUOV7Z2cJB8JBmVV0hs85
- CNEeQJMzdR2eaBDL2FShCCX58id/sXYtTLxK42a3mkg/ofnqrajrkVR2RTJwQMgFSB
- lVW5uVc9CmKWU7DQFPLeBXZuTR9+llXgtng9fnmFfAbNbva4EO+4ox9gafDtXxv4Ao
- 7ka3JdzYZJZzHt+sEsqm3jpcpXUq7652llhKMONVnVNkF56OQqdY6+/g6FenQAuKad
- L43qm6cwE3Zf866/apmV61nGFoGWxzCkKkQtY8wlbNU2NJIlkJEoHrJRsBXxWpSAtO
- SxvFjFOhsMBGA==
+ s=k20201202; t=1675119618;
+ bh=VQfPTgOSrENSs6GXZMHzN6Pub/gJTtD/bPFw5A74qKg=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=ccp/gDfbo3m+Z0A2407sCUnbNnoziYMPlai7HPaO4tnbborNjbknIIeNDScwbsLHK
+ KvmNn/n7ehALHEBacUy/+fFKugprp9wzbDU4f7AM7VgIp8Hnn5PZAVmizCh8xzirrR
+ Mj7JP2X+Qsw9hWzpdjz6DkxvCKEp1zO2X9ioHuRnqk1ce9wC6E0dDflHdocph2RyzZ
+ AFNWkMZ06r2wmQrJb8ubgoJDOs8Dp9etwJ0cr/yhQLlhLE0/2rmPXv6ERi5p1t3l8m
+ Hu/PYIMGpYBT1CgrP+aAYqw+C5lI3SlYnqGKzxUToWX9uoxk+Hacmn8sn/UkprsgxO
+ DXFIfnCONji+A==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- BDC56C16ABD for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 30 Jan 2023 23:00:17 +0000 (UTC)
+ 111D0E52560; Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167511961772.12751.11589352812714248123.git-patchwork-summary@kernel.org>
-Date: Mon, 30 Jan 2023 23:00:17 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1pMd8V-004OGY-SF
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <167511961806.12751.12383846430084360473.git-patchwork-notify@kernel.org>
+Date: Mon, 30 Jan 2023 23:00:18 +0000
+References: <20230116141228.43239-1-frank.li@vivo.com>
+In-Reply-To: <20230116141228.43239-1-frank.li@vivo.com>
+To: Yangtao Li <frank.li@vivo.com>
+X-Headers-End: 1pMd8X-0002fk-8V
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to show discard_unit mount opt
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,83 +81,30 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Series: [f2fs-dev,1/5] f2fs: introduce trace_f2fs_replace_atomic_write_block
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=709941
-  Lore link: https://lore.kernel.org/r/20230109034453.490176-1-chao@kernel.org
-    Patches: [f2fs-dev,1/5] f2fs: introduce trace_f2fs_replace_atomic_write_block
-             [f2fs-dev,2/5] f2fs: clear atomic_write_task in f2fs_abort_atomic_write()
-             [f2fs-dev,4/5] f2fs: fix to avoid race condition of f2fs_abort_atomic_write()
-             [f2fs-dev,5/5] f2fs: fix to avoid race condition of atomic write
+On Mon, 16 Jan 2023 22:12:28 +0800 you wrote:
+> Convert to show discard_unit only when has DISCARD opt.
+> 
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  fs/f2fs/super.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 
-Patch: [f2fs-dev] f2fs: fix to do sanity check on extent cache correctly
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=709943
-  Lore link: https://lore.kernel.org/r/20230109034920.492914-1-chao@kernel.org
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to show discard_unit mount opt
+    https://git.kernel.org/jaegeuk/f2fs/c/d6a19f963267
 
-Patch: [f2fs-dev] f2fs: fix information leak in f2fs_move_inline_dirents()
-  Submitter: Eric Biggers <ebiggers@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=714583
-  Lore link: https://lore.kernel.org/r/20230123070414.138052-1-ebiggers@kernel.org
-
-Patch: [f2fs-dev] f2fs: allow set compression option of files without blocks
-  Submitter: Yangtao Li <frank.li@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=714641
-  Lore link: https://lore.kernel.org/r/20230123094601.32940-1-frank.li@vivo.com
-
-Patch: [f2fs-dev,v2] f2fs: fix to check warm_data_age_threshold
-  Submitter: Yangtao Li <frank.li@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=712763
-  Lore link: https://lore.kernel.org/r/20230117132442.77645-1-frank.li@vivo.com
-
-Patch: [f2fs-dev] f2fs: remove unneeded f2fs_cp_error() in f2fs_create_whiteout()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=709942
-  Lore link: https://lore.kernel.org/r/20230109034734.491518-1-chao@kernel.org
-
-Patch: [f2fs-dev] f2fs: drop useless initializer and unneeded local variable
-  Submitter: Yangtao Li <frank.li@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=706418
-  Lore link: https://lore.kernel.org/r/20221222081855.81553-1-frank.li@vivo.com
-
-Patch: [f2fs-dev] f2fs: return true if all cmd were issued or no cmd need to be issued for f2fs_issue_discard_timeout()
-  Submitter: Yangtao Li <frank.li@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=711449
-  Lore link: https://lore.kernel.org/r/20230112191404.59020-1-frank.li@vivo.com
-
-Series: [f2fs-dev,1/3] f2fs: clarify compress level bit offset
-  Submitter: Yangtao Li <frank.li@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=711312
-  Lore link: https://lore.kernel.org/r/20230112133443.16713-1-frank.li@vivo.com
-    Patches: [f2fs-dev,1/3] f2fs: clarify compress level bit offset
-
-Patch: [f2fs-dev] f2fs: fix to show discard_unit mount opt
-  Submitter: Yangtao Li <frank.li@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=712389
-  Lore link: https://lore.kernel.org/r/20230116141228.43239-1-frank.li@vivo.com
-
-
-Total patches: 13
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
