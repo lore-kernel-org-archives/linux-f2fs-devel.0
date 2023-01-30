@@ -4,73 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C0FC3C636D6
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:27 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3CE94C54EAA
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pMd8U-0004yJ-F6;
-	Mon, 30 Jan 2023 23:00:25 +0000
+	id 1pMd8a-0003dP-Os;
+	Mon, 30 Jan 2023 23:00:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1pMd8S-0004y7-T4
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8T-0003d1-Vt
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 30 Jan 2023 23:00:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AdMt85tYZ5Jv8O0PNu7VsLHFjODIDwPP/RgeKsXDHyI=; b=EVutQc5dZnQ3B8I+CCPlCLgRH8
- S9UUN6rg+75neDtTIdC9FSMWE6KRUSpVz6rhbwRVfHjbLlDJtxIX4htcQpDfvPyzxnpZ79ds5o1nc
- vrIXb25SHxCJCfBWMZ7yp8Q2LWuy/H1Ks3N5fJmdFAgA8Amj+oY4fNIXWPf4OkLdMysw=;
+ bh=HbKOSdLOKlFyF1xxZntGe1YLY1E5Es8jAGr7Q0HXhdE=; b=m1yPjJaenyt+2IjHzldAomZjzs
+ KJmiylfTUxr2/6cTm+EVCMUEN9w2Bo1KzvzMcOZhllBPEaRtWBOcotf9tS2CCua9hp8HllobyjcAN
+ PL8ZbOG8eST1Tg9+vl0aVCSPmU+gaBzyVdzLe78qGN35xlnNQyt+yjCO5rT3BXBqdPKs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=AdMt85tYZ5Jv8O0PNu7VsLHFjODIDwPP/RgeKsXDHyI=; b=M736Eqh6Pe9NqMLqR6NzrDFZ3H
- r2KMWxU1WLPx3bU3oCxAZJoJBeUPjcW7cZ2x92n6J1wZv/IWHy2x2JF7ZfOtUVW2Epq0pTx275oiB
- dgrxGj9Tz74rdgIMKyfe4Cm4zBh3Tu62f40WOu4QIISCl9ngGV5WPra2p2Ag+gPak2HY=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=HbKOSdLOKlFyF1xxZntGe1YLY1E5Es8jAGr7Q0HXhdE=; b=XL4zjyFdajPNnPF64LhU9CNRUW
+ c804ZLl8cnSu0kCzgNQQvr0jxnylDpViHJyMYmpFlfxi8yKCMgMPrfasOxHq/0h4IgHCLqzJtOhP7
+ C52eVaEhjUGWlMkCKkwVBvgQuowzUeUw1XdBj6vicxKOmdTAw4PCuvuZQV8Pd2zfq1tg=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pMd8Q-0002fM-8e for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 30 Jan 2023 23:00:23 +0000
+ id 1pMd8R-0002fO-5B for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 30 Jan 2023 23:00:24 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id BCDC2B816AA;
- Mon, 30 Jan 2023 23:00:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E336C433D2;
- Mon, 30 Jan 2023 23:00:15 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 8A161612FA
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DF809C4339B;
+ Mon, 30 Jan 2023 23:00:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1675119615;
- bh=DlN53o7IVttqfaO+XI+AgKN6LdvPF0HyJERncPThIPM=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=ObNB60Is0uSRjMGdWrhgQkHAEMN5R/nwFjCvBVRgg097PrHunZrXNtjsfyDJnfCFE
- MSwbL+YD+nNk/R6lYDngG3+oBpyCafW4e5T8L+4yymj5NrySJ47uClDIl/q+w7fwnS
- WtsCn001k7ANV6m4QBsRwHS2YSnum5Yg4hWyaklukZKmcuXUccqjz6ljmv6I9H/eWB
- WhtD56q5kYETlbgMHlrTHXLaL7RdsCEOI7v7agxU6WqgCybBCPqC+2R8Hcs7NlvytI
- 8W4I4IXQofuDlW7kUBZNpPDRHmc1RzEWxAeQyOh3lh4tOKEt/DwuxexK1x2UATVZG2
- cOIywl2aCi98g==
-Date: Mon, 30 Jan 2023 15:00:13 -0800
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Message-ID: <Y9hL/Z2TSCRzmHiy@google.com>
-References: <20230119063625.466485-1-hch@lst.de>
- <20230119063625.466485-5-hch@lst.de>
- <3e0e4fa3-f1d1-a8f0-507a-e9321dcc759f@kernel.org>
+ s=k20201202; t=1675119617;
+ bh=8wG5NIsuKshWhb2XiCI9lAfT/vlNO8ZyFCtUknM3ANs=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=XzZUsRun1zvbD5R8j+IpZ8toL9en35Dt9IKNfR2Y7YJlT7n3yX/Aq0b5jjeNrdwLx
+ jdReH5IJkI53OueNqokmBuWJtk0BIBcbMoDRaT392BmbTMDJQ7S/YZboVAxYqrlaXF
+ 0Coh2OZ/VrvCTijcH7ESr54u5+eijNteWokgV23L0dKiKNyp2wCq0Wcd9Q5lHtlxnw
+ vbA8FgO4MJQgNY+u8Sy03eSaqmmjfHjIRu4UjsIdAt9glqbcLJsxpnHdmPTzfi4lkE
+ D1J8ili7HsxUydzF7d9uolw1Lzm4H+/IQlrULkxWQHDOZ9KuzAl7uHMmmw79WKgE3B
+ 7eIgr9Twh5KOw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ C5423E4D014; Mon, 30 Jan 2023 23:00:17 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <3e0e4fa3-f1d1-a8f0-507a-e9321dcc759f@kernel.org>
-X-Headers-End: 1pMd8Q-0002fM-8e
-Subject: Re: [f2fs-dev] [PATCH 4/8] f2fs: factor the read/write tracing
- logic into a helper
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <167511961780.12751.1698186738415312806.git-patchwork-notify@kernel.org>
+Date: Mon, 30 Jan 2023 23:00:17 +0000
+References: <20230109034453.490176-1-chao@kernel.org>
+In-Reply-To: <20230109034453.490176-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1pMd8R-0002fO-5B
+Subject: Re: [f2fs-dev] [PATCH 1/5] f2fs: introduce
+ trace_f2fs_replace_atomic_write_block
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,115 +83,46 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Christoph Hellwig <hch@lst.de>, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 01/29, Chao Yu wrote:
-> On 2023/1/19 14:36, Christoph Hellwig wrote:
-> > Factor the logic to log a path for reads and writs into a helper
-> > shared between the read_iter and write_iter methods.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >   fs/f2fs/file.c | 60 +++++++++++++++++++++-----------------------------
-> >   1 file changed, 25 insertions(+), 35 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index f5c1b78149540c..305be6ac024196 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -4340,6 +4340,27 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> >   	return ret;
-> >   }
-> > +static void f2fs_trace_rw_file_path(struct kiocb *iocb, size_t count, int rw)
-> > +{
-> > +	struct inode *inode = file_inode(iocb->ki_filp);
-> > +	char *buf, *path;
-> > +
-> > +	buf = f2fs_kmalloc(F2FS_I_SB(inode), PATH_MAX, GFP_KERNEL);
-> > +	if (!buf)
-> > +		return;
-> > +	path = dentry_path_raw(file_dentry(iocb->ki_filp), buf, PATH_MAX);
-> > +	if (IS_ERR(path))
-> > +		goto free_buf;
-> > +	if (rw == WRITE)
-> > +		trace_f2fs_datawrite_start(inode, iocb->ki_pos, count,
-> > +				current->pid, path, current->comm);
-> > +	else
-> > +		trace_f2fs_dataread_start(inode, iocb->ki_pos, count,
-> > +				current->pid, path, current->comm);
-> > +free_buf:
-> > +	kfree(buf);
-> > +}
-> > +
-> >   static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> >   {
-> >   	struct inode *inode = file_inode(iocb->ki_filp);
-> > @@ -4349,24 +4370,9 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> >   	if (!f2fs_is_compress_backend_ready(inode))
-> >   		return -EOPNOTSUPP;
-> > -	if (trace_f2fs_dataread_start_enabled()) {
-> > -		char *p = f2fs_kmalloc(F2FS_I_SB(inode), PATH_MAX, GFP_KERNEL);
-> > -		char *path;
-> > -
-> > -		if (!p)
-> > -			goto skip_read_trace;
-> > +	if (trace_f2fs_dataread_start_enabled())
-> > +		f2fs_trace_rw_file_path(iocb, iov_iter_count(to), READ);
-> > -		path = dentry_path_raw(file_dentry(iocb->ki_filp), p, PATH_MAX);
-> > -		if (IS_ERR(path)) {
-> > -			kfree(p);
-> > -			goto skip_read_trace;
-> > -		}
-> > -
-> > -		trace_f2fs_dataread_start(inode, pos, iov_iter_count(to),
-> > -					current->pid, path, current->comm);
-> > -		kfree(p);
-> > -	}
-> > -skip_read_trace:
-> >   	if (f2fs_should_use_dio(inode, iocb, to)) {
-> >   		ret = f2fs_dio_read_iter(iocb, to);
-> >   	} else {
-> > @@ -4672,24 +4678,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >   	if (preallocated < 0) {
-> >   		ret = preallocated;
-> >   	} else {
-> > -		if (trace_f2fs_datawrite_start_enabled()) {
-> > -			char *p = f2fs_kmalloc(F2FS_I_SB(inode),
-> > -						PATH_MAX, GFP_KERNEL);
-> > -			char *path;
-> > -
-> > -			if (!p)
-> > -				goto skip_write_trace;
-> > -			path = dentry_path_raw(file_dentry(iocb->ki_filp),
-> > -								p, PATH_MAX);
-> > -			if (IS_ERR(path)) {
-> > -				kfree(p);
-> > -				goto skip_write_trace;
-> > -			}
-> > -			trace_f2fs_datawrite_start(inode, orig_pos, orig_count,
-> > -					current->pid, path, current->comm);
-> > -			kfree(p);
-> > -		}
-> > -skip_write_trace:
-> > +		f2fs_trace_rw_file_path(iocb, orig_count, WRITE);
-> 
-> if (trace_f2fs_datawrite_start_enabled())
-> 	f2fs_trace_rw_file_path(..);
+Hello:
 
-I queued the patch with this change in dev-test first.
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Thanks,
+On Mon,  9 Jan 2023 11:44:49 +0800 you wrote:
+> Commit 3db1de0e582c ("f2fs: change the current atomic write way")
+> removed old tracepoints, but it missed to add new one, this patch
+> fixes to introduce trace_f2fs_replace_atomic_write_block to trace
+> atomic_write commit flow.
+> 
+> Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> 
+> [...]
 
-> 
-> Thanks,
-> 
-> > +
-> >   		/* Do the actual write. */
-> >   		ret = dio ?
-> >   			f2fs_dio_write_iter(iocb, from, &may_need_sync) :
+Here is the summary with links:
+  - [f2fs-dev,1/5] f2fs: introduce trace_f2fs_replace_atomic_write_block
+    https://git.kernel.org/jaegeuk/f2fs/c/2f3a9ae990a7
+  - [f2fs-dev,2/5] f2fs: clear atomic_write_task in f2fs_abort_atomic_write()
+    https://git.kernel.org/jaegeuk/f2fs/c/0e8d040bfa4c
+  - [f2fs-dev,3/5] f2fs: fix to abort atomic write only during do_exist()
+    (no matching commit)
+  - [f2fs-dev,4/5] f2fs: fix to avoid race condition of f2fs_abort_atomic_write()
+    https://git.kernel.org/jaegeuk/f2fs/c/f4c49874a80b
+  - [f2fs-dev,5/5] f2fs: fix to avoid race condition of atomic write
+    https://git.kernel.org/jaegeuk/f2fs/c/f571253668a9
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
