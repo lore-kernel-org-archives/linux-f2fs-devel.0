@@ -4,73 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91762C636D3
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F2E77C636D7
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pMd8W-0001kK-Kz;
-	Mon, 30 Jan 2023 23:00:27 +0000
+	id 1pMd8c-0003eS-Ms;
+	Mon, 30 Jan 2023 23:00:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8U-0001k1-Qv
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8X-0003dD-83
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 30 Jan 2023 23:00:26 +0000
+ Mon, 30 Jan 2023 23:00:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4SQLkTKxzLH3BSKdy3EbbnX/DuzmlPwF5xyCxUYpu4I=; b=A9I5P71IqTpTKWUr1M2sWiNdQ3
- rVCH3ePxiGdQZMf98IKImBxel1X4zND+4WpLyfakf16+uhk55YVgtsUnEVOffOmX/pJYUalP0JCpk
- jNj7QxsGB/P5vQ+AIzpJbLYKR6VPjh6n3f8YQ4A5HYxU8r9C2+cBeniXZZlAnQbKyBRQ=;
+ bh=HDrGLyzwMZZPbQIKgqtQdfMLBicLJofLF405tYT6AsA=; b=We6zgbOQrpoU7qaXjfkW3F2cg6
+ XTqJ4AeOrPCKdPXszbaKFhw/f+boLs47xOyNg6bJWCaoZ2NYkEP/tyXplAvhxTS8OCDBYkEawlu1f
+ jR2w3hOmPH/Hie921l58ri1TMWD4qDbCv56z4r0IW3rFSIqQaO6/Fc29lQ5/Qdboh29A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4SQLkTKxzLH3BSKdy3EbbnX/DuzmlPwF5xyCxUYpu4I=; b=hu18Mgv9Q019L2CuMIv+DoMm/c
- Vo5jDZbA+PDksWxOGkMbSHe0lnmNBxDCbUfpH/ovKxqUAQDq2vE66kzzjeO/UfZo5uya3T3InfxXe
- X/CLCDIZSKbkf2hrOfJkaYtR4ij56Vlq6/FPn0Fh/KhUosf9SAwiJ4zqUW6fUPlQe318=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=HDrGLyzwMZZPbQIKgqtQdfMLBicLJofLF405tYT6AsA=; b=OmsUx60SEYnMRnJ7hxTKykE7yE
+ MAgLsY6WKZBkQQ5EGYEnDz4Co3fPfbaZhaxvbt7o+51cUSfwofhw4l5cwlQPZu1f0bihrO2LIaYvx
+ 1LICPmC5cLBQnre8NYj6WiVwr4+7nc6Z8YTKi7EYqVzYaV6qhAA5z11Sq1Lei1nJeZlo=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pMd8S-004OGV-Kt for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 30 Jan 2023 23:00:25 +0000
+ id 1pMd8T-0002fX-2r for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 30 Jan 2023 23:00:27 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 43CD6612F1;
+ by ams.source.kernel.org (Postfix) with ESMTPS id 96E8DB8172A;
  Mon, 30 Jan 2023 23:00:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 41BC3C433B0;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5B713C43322;
  Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1675119618;
- bh=xc/KvQ4qE0zaYQjdK4Tv1DHZUeHVYvXu8EZbsocIWMI=;
+ bh=CvyZvy72JS05eTOox+biJHstIc1DNDyVc51Ujeo7+YY=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=dGpGBnSMfW8ed69u0Uf/Jclr2hr47Yn9jb4pQPEFKNbbRpQGGYAiFfvcaCXk6NNZ7
- 1lU4LBBOupaNXs8O8cFCMzXsyUIZQFKCTcftkCg5Ulru6ffLLiqnCCvaV91K8l/LEO
- awZcyX/x6wz2S8N5H3v0ldnmzLOMLu+kJyjgBIOkEds1mzpVOzRXcTMXwNcZAYdu82
- opqGaeee5mJjjtQ7okuYJFpgoFrQxLjb13OdBGoXQGxwbosicx9EfPJZSzX5MryoTm
- r09zs4g57gIuUtkbxLJlAoRNHtHy1S2/0Hw2miEHVN8Mi0kz9uzMRoVOOWeiYqA0QM
- Zw54fyIIL1GCA==
+ b=oVgV5zFQpAC8umAvI8t83n06fWRTtoDE7MY8Mrjyr56VspToDBFJ7kWv9hzNHHxb3
+ KswI6B3u4CzWPZcrHRXPCsFkA98UeWWcg2gLPBtaH1ItkXSPj2KtAaAUbbpcnaI5yX
+ HQw436Gcmu6vThcrrHXjTx62JoAb0Ark2dl+/7WQP+vH679w7+Y7CgX9iqcBq8M90n
+ wMXyyQUa1MSBUeUVnGf0QwCnBuyV3hkRH5Oudkhme/ipi4mRK87CBgYXv3mumeLv3t
+ QH26Wl6feF8QQwirGjzR98hiY0CRJg+X1vO1DQ0KPZac5SLuk1D3OmNjIh9zg0278v
+ DtaEg4LEgQdhg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- F006FC16ABD; Mon, 30 Jan 2023 23:00:17 +0000 (UTC)
+ 0A5F4E5255F; Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167511961798.12751.8349285057815304075.git-patchwork-notify@kernel.org>
-Date: Mon, 30 Jan 2023 23:00:17 +0000
-References: <20221222081855.81553-1-frank.li@vivo.com>
-In-Reply-To: <20221222081855.81553-1-frank.li@vivo.com>
+Message-Id: <167511961803.12751.4198234903796122252.git-patchwork-notify@kernel.org>
+Date: Mon, 30 Jan 2023 23:00:18 +0000
+References: <20230112133443.16713-1-frank.li@vivo.com>
+In-Reply-To: <20230112133443.16713-1-frank.li@vivo.com>
 To: Yangtao Li <frank.li@vivo.com>
-X-Headers-End: 1pMd8S-004OGV-Kt
-Subject: Re: [f2fs-dev] [PATCH] f2fs: drop useless initializer and unneeded
- local variable
+X-Headers-End: 1pMd8T-0002fX-2r
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: clarify compress level bit offset
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,20 +89,27 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 22 Dec 2022 16:18:55 +0800 you wrote:
-> No need to initialize idx twice. BTW, remove the unnecessary cnt variable.
+On Thu, 12 Jan 2023 21:34:43 +0800 you wrote:
+> commit 3fde13f817e2 ("f2fs: compress: support compress level") introduce
+> compress level, which macro(COMPRESS_LEVEL_OFFSET) is 8, But use wrong
+> comment about compress level.
+> 
+> Let's fix it.
 > 
 > Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  fs/f2fs/iostat.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: drop useless initializer and unneeded local variable
-    https://git.kernel.org/jaegeuk/f2fs/c/c5f9db2548d0
+  - [f2fs-dev,1/3] f2fs: clarify compress level bit offset
+    https://git.kernel.org/jaegeuk/f2fs/c/9adc6c8ff3da
+  - [f2fs-dev,2/3] f2fs: add F2FS_IOC_SET_COMPRESS_OPTION_V2 ioctl
+    (no matching commit)
+  - [f2fs-dev,3/3] f2fs: add F2FS_IOC_GET_COMPRESS_OPTION_V2 ioctl
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
