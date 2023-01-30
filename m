@@ -4,72 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72CFCC636CD
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:35 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BC9B6C61DA4
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:30:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pMd8d-0001lZ-Dk;
-	Mon, 30 Jan 2023 23:00:34 +0000
+	id 1pMdbc-0004PQ-Un;
+	Mon, 30 Jan 2023 23:30:31 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8Z-0001kv-Vb
+ (envelope-from <jaegeuk@kernel.org>) id 1pMdbb-0004PK-Be
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 30 Jan 2023 23:00:31 +0000
+ Mon, 30 Jan 2023 23:30:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=u5ski6DgZGOjrIRYBjHLjJZAn75Jv2QAkQhvrW0+Ygg=; b=bXKDihgiSxHTVmPOze1yX7U8nU
- mNC2T4mPX4sGL7YcStr2O0YRVHjFZseL4/Bd/m8Ali11ILfzeVUST0mEzbKyJxFQIHEJG2dK8hMfr
- K7MYqNCJI/Z2Y+DDmkN9M7qzl/tDnZw8eYQeHHbqhLMWScp2eVKgNDsqj+O1VBWQ1R/g=;
+ bh=X+AuVVL+58wnxa5epYqC7O5CGsMUgy50vGT+Ntssih4=; b=R8brjEUsBZ/ukAje9FljGuxgnz
+ GKbOBwdeSaOiHlnlbk/RY78z8qnJ+6e0kswaFyCIoTdJCHiR4iIiUWJZVW9ORCNlIjZo6UqfVLVeD
+ pSpBuJ4gi8blk9RshDUVl8ImQJSHDk0Aqos46VURPr0Rx7ng+FRezSp6gMGqK3ZKKOis=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=u5ski6DgZGOjrIRYBjHLjJZAn75Jv2QAkQhvrW0+Ygg=; b=hcZsdC01DP6aqEqGW2vg/t7XPN
- iIJarkmi8Wjm2hZ/xmK9FPhdPbvzLwtu4ct8yDut6UPScGsWvjOZG99ufyy5HNg1wLSXKZtB+6XkR
- c+YcCt9SVeY+QMYIDyMcCBAKe+YuvFrB8HZLP5Qz2aRAyLbOGxw6i23GbXXHKaqJKgR4=;
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=X+AuVVL+58wnxa5epYqC7O5CGsMUgy50vGT+Ntssih4=; b=R4qvpBCAwImlYszXOrNiwO751S
+ jfFLb97U8zHNBQg8a4yJJ5j5zEVJ2+PpGFSuI4RK+pemCxk0As2nQpVpSPXdh/1v252IjBX4af2DF
+ ep+HpdZT9qtdaqZpO9ABPhmfpiAF9omWA32j9nupJLNcFVwSCiSzXbybynarvCZUjKcM=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pMd8X-0002fk-8V for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 30 Jan 2023 23:00:30 +0000
+ id 1pMdbZ-004PgX-C0 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 30 Jan 2023 23:30:29 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 71ECE61309;
- Mon, 30 Jan 2023 23:00:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 590B1C43445;
- Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id C0C42612E4
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon, 30 Jan 2023 23:30:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13131C433D2;
+ Mon, 30 Jan 2023 23:30:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1675119618;
- bh=VQfPTgOSrENSs6GXZMHzN6Pub/gJTtD/bPFw5A74qKg=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=ccp/gDfbo3m+Z0A2407sCUnbNnoziYMPlai7HPaO4tnbborNjbknIIeNDScwbsLHK
- KvmNn/n7ehALHEBacUy/+fFKugprp9wzbDU4f7AM7VgIp8Hnn5PZAVmizCh8xzirrR
- Mj7JP2X+Qsw9hWzpdjz6DkxvCKEp1zO2X9ioHuRnqk1ce9wC6E0dDflHdocph2RyzZ
- AFNWkMZ06r2wmQrJb8ubgoJDOs8Dp9etwJ0cr/yhQLlhLE0/2rmPXv6ERi5p1t3l8m
- Hu/PYIMGpYBT1CgrP+aAYqw+C5lI3SlYnqGKzxUToWX9uoxk+Hacmn8sn/UkprsgxO
- DXFIfnCONji+A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 111D0E52560; Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
+ s=k20201202; t=1675121420;
+ bh=FMTcL6olniPtNNtz/BQFcjIBXn318WG674lmTqi1i/w=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=WUL0FPguAEci4o3rmKuwbIuHfrpCDE4PCzCMDKo0uS947RQVAez3GvuuCKhWLoJsa
+ Ml+fAKNw5mwwvBwpgdGQMT9ETdqLxoIWjYyOHgcWauFgFJC1jB1NRNIDprWnESV4GQ
+ 4vfRkS1ZzT1mDSrIfOrEwA87GJfZ5nGMzageALzYn5hE+8RUGCkF3HOR+FUXP2rvL9
+ 0mRmBIV8ZQEj18sXFWq42Ya21KGSIENzcI7UpV88pAQNpiyDWiSW22OdvdDrEVcbJz
+ hwLdkW2lSTxZX3zgmO72bZjuui374zNvc+5YSJ6H8Y0XWB2vB6GEqfo9E5W4E2W7/R
+ CJJQ9B40manDw==
+Date: Mon, 30 Jan 2023 15:30:18 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Message-ID: <Y9hTCtWLo9/PQnnN@google.com>
+References: <20230105233908.1030651-1-jaegeuk@kernel.org>
+ <Y74O+5SklijYqMU1@google.com>
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167511961806.12751.12383846430084360473.git-patchwork-notify@kernel.org>
-Date: Mon, 30 Jan 2023 23:00:18 +0000
-References: <20230116141228.43239-1-frank.li@vivo.com>
-In-Reply-To: <20230116141228.43239-1-frank.li@vivo.com>
-To: Yangtao Li <frank.li@vivo.com>
-X-Headers-End: 1pMd8X-0002fk-8V
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to show discard_unit mount opt
+Content-Disposition: inline
+In-Reply-To: <Y74O+5SklijYqMU1@google.com>
+X-Headers-End: 1pMdbZ-004PgX-C0
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: retry to update the inode page
+ given EIO
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,34 +82,61 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: stable@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+If the storage gives a corrupted node block due to short power failure and
+reset, f2fs stops the entire operations by setting the checkpoint failure flag.
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+Let's give more chances to live by re-issuing IOs for a while in such critical
+path.
 
-On Mon, 16 Jan 2023 22:12:28 +0800 you wrote:
-> Convert to show discard_unit only when has DISCARD opt.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  fs/f2fs/super.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+Cc: stable@vger.kernel.org
+Suggested-by: Randall Huang <huangrandall@google.com>
+Suggested-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to show discard_unit mount opt
-    https://git.kernel.org/jaegeuk/f2fs/c/d6a19f963267
+ Change log from v2:
+  - adopting the retry logic
 
-You are awesome, thank you!
+ fs/f2fs/inode.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index e1d6e021e82b..7bf660d4cad9 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -724,18 +724,19 @@ void f2fs_update_inode_page(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct page *node_page;
++	int count = 0;
+ retry:
+ 	node_page = f2fs_get_node_page(sbi, inode->i_ino);
+ 	if (IS_ERR(node_page)) {
+ 		int err = PTR_ERR(node_page);
+ 
+-		if (err == -ENOMEM) {
+-			cond_resched();
++		/* The node block was truncated. */
++		if (err == -ENOENT)
++			return;
++
++		if (err == -ENOMEM || ++count <= DEFAULT_RETRY_IO_COUNT)
+ 			goto retry;
+-		} else if (err != -ENOENT) {
+-			f2fs_stop_checkpoint(sbi, false,
+-					STOP_CP_REASON_UPDATE_INODE);
+-		}
++		f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_UPDATE_INODE);
+ 		return;
+ 	}
+ 	f2fs_update_inode(inode, node_page);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.1.456.gfc5497dd1b-goog
 
 
 
