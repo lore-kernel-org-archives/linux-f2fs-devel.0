@@ -4,73 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6DA17C636D7
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 74175C63797
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:28 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pMd8W-0004yX-4l;
+	id 1pMd8W-0004yh-Kz;
 	Mon, 30 Jan 2023 23:00:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8U-0004yD-6S
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8U-0004yO-Mm
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 30 Jan 2023 23:00:25 +0000
+ Mon, 30 Jan 2023 23:00:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=m5IFwKYcaHBrBwlibMVCCcCm49P936/GpLQEVV4pJQ8=; b=lIIn5V4mFzgovIpjogJYR2GWwL
- cs5+0i1eQfhOY/ucXHpqKrqkn+e1BYFOxd5TsbFKTmXautjbfPBHkNd9crQJ7KfT+cCIFBcfU/tNM
- IHi99I1PU6tQ9OE087++56aYLuPAdLjjCt5TPRuuX91thYxeM2b/ihMpfka8DjIpZDko=;
+ bh=P2iQm09VRNQe1Lnt5xvbmsSrfmVikG3oU81DhU/1ZJw=; b=cTKTkk43f5Qb5V0OHzae/a9LaY
+ 9afc/m6SLkv3xnz/vUKqqWIwF3A8+/6xqzg/t+moshAXynVhCtkZ5mxcphqroLTMgN6kBztJNujKy
+ L5BB22NqlKgneEs61TaVJBm6mmIUFsyhrFBUuqM1ycyuDrEnJkSfn1E4noOkFwFvjGNE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=m5IFwKYcaHBrBwlibMVCCcCm49P936/GpLQEVV4pJQ8=; b=cRizaX/41nL77hY6Xe7Z5j8utk
- xasaBVZLBwK0dhLhM8kROPk/fNfUw+PFJbO6H4MimwOD8V0t8anBaOKwWatyWy51zo3CwpzyWsfeL
- u6j+jd9crrAskm/P7PuO6sbu5f4rSAEPRKnwah1ohWEybZa6lsm89pwWYFypQJlFPppc=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=P2iQm09VRNQe1Lnt5xvbmsSrfmVikG3oU81DhU/1ZJw=; b=IVHY13i8P/RRSiyM5vLDQhT7JN
+ OOI2aesalj+YpAYHW5RRLW/MkSjT4u0uG4B3lSNPVumt3PZgG6kNDNOGDogry3IteHfRpglV2IeDP
+ ZImyo+mCT6OyvX9bnhF+s64T+8ZHY1GVYOj6BUoTZKuvPsOjdZGKBueAfIcdkMyI6Bbo=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pMd8S-0002fT-3B for linux-f2fs-devel@lists.sourceforge.net;
+ id 1pMd8R-0002fU-Hi for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 30 Jan 2023 23:00:25 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 9A78DB80E78;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id E9F7461301;
  Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 09E99C433A0;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2DFEEC433AF;
  Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1675119618;
- bh=mm+Hb+et6414G2nBmTQgnn6P2DF44wq1TLfITcp8GUs=;
+ bh=a6ZQ/b0uXTbL1kCWSrh6VhSJzA1LEtVN1cuA2y8NfJc=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=S+mO+DaQb28EkVhH3xbJdk4WcVS65gbBZajh62Xve5s9YtSr7oY6i1jKcTAF6m3pn
- X/O4Md0+6I/c3u/IzlSXuU9n5A5AOzOLhqC6q325PAFspFi7bxtAnYZFKKYOw+uZVK
- M457n+3YDLCmKpSSy/ElUD9NR2cD6HCo0sIB93YHURuJcm0YCVbG/MHQ6ggNKpIsoo
- xK6+XQ5Ew/X85kIvVQWBQyIZfaYvJz/rQUDNOMh6W5tN2gK8Pe3QnPPq3+oh2co+qI
- hUQOaPiWQqeJnSBOlxYrNHNy2AxLlNzdW9k5qwYNVz5uGA9UgQAUV6UXRYgdAiDXF5
- R37SWA7cTiWQQ==
+ b=j//+z8dCXXmcQfDGsph4mKLYBfMhUwHH9AqaCM5HzPmZctdWu9TeMlwVD3v04s65d
+ O1LuMuTRqnhS8GNfh01nVJu7Icsz6ahzc8n4yj7awxMJD9ywOdK9OV+RCN1Dl+nBZi
+ mYoTBte6azOq1KsCgJBPaCu4vn+5JV1i+vKBt2TbBrvTLmhaB6p1ZGcTFA7dquGTeR
+ 2YeETPvht/KzGnIebAdkwUkTOw+rjETCyj+TFPJMEdHS4cJy1pDFJJ/UZ2w36OJAtK
+ ik7IGit+BhCfaHRSC7N7aSNKfNPtRoHQ9D275nnwnu29xiv4/FR7OM3QhCCAbzE148
+ xasfar4xhDYdw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- D3778E52559; Mon, 30 Jan 2023 23:00:17 +0000 (UTC)
+ 0315DE5255E; Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167511961786.12751.10866509734206630885.git-patchwork-notify@kernel.org>
-Date: Mon, 30 Jan 2023 23:00:17 +0000
-References: <20230123070414.138052-1-ebiggers@kernel.org>
-In-Reply-To: <20230123070414.138052-1-ebiggers@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-X-Headers-End: 1pMd8S-0002fT-3B
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix information leak in
- f2fs_move_inline_dirents()
+Message-Id: <167511961800.12751.17604829596454297245.git-patchwork-notify@kernel.org>
+Date: Mon, 30 Jan 2023 23:00:18 +0000
+References: <20230112191404.59020-1-frank.li@vivo.com>
+In-Reply-To: <20230112191404.59020-1-frank.li@vivo.com>
+To: Yangtao Li <frank.li@vivo.com>
+X-Headers-End: 1pMd8R-0002fU-Hi
+Subject: Re: [f2fs-dev] [PATCH] f2fs: return true if all cmd were issued or
+ no cmd need to be issued for f2fs_issue_discard_timeout()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,7 +82,7 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, glider@google.com, stable@vger.kernel.org,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -93,22 +93,21 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun, 22 Jan 2023 23:04:14 -0800 you wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Fri, 13 Jan 2023 03:14:04 +0800 you wrote:
+> f2fs_issue_discard_timeout() returns whether discard cmds are dropped,
+> which does not match the meaning of the function. Let's change it to
+> return whether all discard cmd are issued.
 > 
-> When converting an inline directory to a regular one, f2fs is leaking
-> uninitialized memory to disk because it doesn't initialize the entire
-> directory block.  Fix this by zero-initializing the block.
-> 
-> This bug was introduced by commit 4ec17d688d74 ("f2fs: avoid unneeded
-> initializing when converting inline dentry"), which didn't consider the
-> security implications of leaking uninitialized memory to disk.
+> After commit 4d67490498ac ("f2fs: Don't create discard thread when
+> device doesn't support realtime discard"), f2fs_issue_discard_timeout()
+> is alse called by f2fs_remount(). Since the comments of
+> f2fs_issue_discard_timeout() doesn't make much sense, let's update it.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix information leak in f2fs_move_inline_dirents()
-    https://git.kernel.org/jaegeuk/f2fs/c/638ce5437867
+  - [f2fs-dev] f2fs: return true if all cmd were issued or no cmd need to be issued for f2fs_issue_discard_timeout()
+    https://git.kernel.org/jaegeuk/f2fs/c/255699a4d876
 
 You are awesome, thank you!
 -- 
