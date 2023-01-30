@@ -4,74 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C98FEC636D6
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B3AE4C54EAA
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 30 Jan 2023 23:00:34 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pMd8b-0004zX-1A;
-	Mon, 30 Jan 2023 23:00:32 +0000
+	id 1pMd8d-0001lK-2H;
+	Mon, 30 Jan 2023 23:00:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8Z-0004z9-R7
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMd8W-0001kJ-Kx
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 30 Jan 2023 23:00:31 +0000
+ Mon, 30 Jan 2023 23:00:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/35ikqloMktsiJHNheNcTP+pE97urVOT/am4FBeU+R0=; b=bzUMUCGVmSZUM4rHPshyL37aGp
- qOBWw0tTtn9MT4CWgLICXzx9XCGboJ98CLgb1RhBOgma/FXTsxAKQFH7Zu6MFx0ExaI8oj89kYVz9
- ajf2/D92UVulYYlUtMOGHbhWHLawF5p5N/nkYxVYk5ZGJlE457XCrOqReh8QeziM3oqk=;
+ bh=xyeQKt3V7OxgHG9jSnMkrMuWK1jB8hy6x+G58I96A9I=; b=AoLsHHWixVAFyhUY7xh3DYDOg0
+ Tj8mwQM1pvELRCHFMoAnEMp2v4hsVzMkd7I1Vurl+t6vnZg++xWlvQXNcZhbu6IainoLpRjN9me1o
+ 51JjeIo/SOoGOcZg4u2VXAtKCuN7CuCv6ND/s0bCfvo6WokcsaDQeg68thTE6HZyzrpg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/35ikqloMktsiJHNheNcTP+pE97urVOT/am4FBeU+R0=; b=EucirHcnw5gtd+dIeNVq9dTbY9
- ayxj9GriOXzcADcHgRZnRG3nl/oAM8BUxgBn/nC6AIn0ZrHsB09O7zOmXBnvSfXgHsJIX5Vs9K2y2
- XS4bGTINHwUWxHPM7oh5ikDnGwUGWMRBxWQwMhlpAn2m369a3Kuv1bRd8FmrzaeZ8iFo=;
+ bh=xyeQKt3V7OxgHG9jSnMkrMuWK1jB8hy6x+G58I96A9I=; b=F9DEmFCHg4tkaYeOWeFDZFaBnX
+ 7VMtf2rlAPKpXBcN6/7fyZGyUZorGCDdbLr/1G0PRBBbQLuSsQJExX29+AfOvu/kWyisAr0tB6Yoh
+ wiIhAdscQH9YLKd08Sd1qPcA6S9MId/uZzgkizTZ1tagIQuQuEYRLFwhi2WsvLrz6J64=;
 Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pMd8W-004OGX-S3 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 30 Jan 2023 23:00:29 +0000
+ id 1pMd8S-0002fV-JW for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 30 Jan 2023 23:00:27 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 65E89B81729
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by ams.source.kernel.org (Postfix) with ESMTPS id 1F9CCB8171E;
  Mon, 30 Jan 2023 23:00:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0D1F6C433A4;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2577EC4339E;
  Mon, 30 Jan 2023 23:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1675119618;
- bh=CMt3YGmi7TPBDuXz+slvY6FzDAJYXbHGEJa3D+ssLbk=;
+ bh=zz2fZTcXQE8aex0XxwAs/xActBapAAFL/JM4bRudbfw=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=CvMC3enDwkkDBfmWDU4trVuWWgsNR91OAe0a6yxskuwlBq7evvN+vz4CoBdhmSl7D
- hENXOlvZLw5PwYgvnGXnn3yTwqeljgy8o0Wb14A8EpoHupbuzIgBCgym6DlJqyN06B
- ZQFX44ooCjUK0K7lt0S9z96LIUzbS/hKWtkvRrq3rHBSNbX+4G9I+t38Dt047sajVF
- Erx6y8s+pmx84Iy9KEN4KsO0iKQ6nlBpksXw/jr4aDNF+7vCotgquEPsQT6VpzoPqu
- mAyBa/d0JmH5xuN2qhKZiuENZTFrn/zNf9hTTaE6SWgJUD9WEszwPK/LT4hjFr4DMV
- vUeWlHIt0bdoQ==
+ b=SJwA3jZ3s7rRAd10fBoTdE9Mrsc/m2xlUj4UTaXbdzzuro3CF0pT39LBmltbqtq+x
+ cZLFq6vP5cv9nxa3EmtxBh8dSqyRndp+InDwXkTkxW5QAJ4S88XDNFUVsRYXC0n1x+
+ BagVF5L8W9PHTb4poa0rHAZZBhJs+fEM60PxedTj9s+sCAySKnHmJ45ZDNsEUzqzfT
+ psRSTHgoXpzYzkpRYXqvtRcHxXhjwjxGwRGo0yrgIHdiQmiCkjBpH2jv6jWBCNKq9g
+ BmwkymVmpemoznAfzVE7HCKFo1OnLMoutnz1oQKi7qKjMF39uMg/NZo9bemAFs/Q4C
+ czfzfEZXdJaNA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- CC415C04E36; Mon, 30 Jan 2023 23:00:17 +0000 (UTC)
+ DAC4CE52558; Mon, 30 Jan 2023 23:00:17 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167511961783.12751.11163869544099252869.git-patchwork-notify@kernel.org>
+Message-Id: <167511961789.12751.5170670621436578021.git-patchwork-notify@kernel.org>
 Date: Mon, 30 Jan 2023 23:00:17 +0000
-References: <20230109034920.492914-1-chao@kernel.org>
-In-Reply-To: <20230109034920.492914-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1pMd8W-004OGX-S3
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on extent cache
- correctly
+References: <20230123094601.32940-1-frank.li@vivo.com>
+In-Reply-To: <20230123094601.32940-1-frank.li@vivo.com>
+To: Yangtao Li <frank.li@vivo.com>
+X-Headers-End: 1pMd8S-0002fV-JW
+Subject: Re: [f2fs-dev] [PATCH] f2fs: allow set compression option of files
+ without blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,19 +93,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon,  9 Jan 2023 11:49:20 +0800 you wrote:
-> In do_read_inode(), sanity_check_inode() should be called after
-> f2fs_init_read_extent_tree(), fix it.
+On Mon, 23 Jan 2023 17:46:01 +0800 you wrote:
+> Files created by truncate have a size but no blocks, so
+> they can be allowed to set compression option.
 > 
-> Fixes: 72840cccc0a1 ("f2fs: allocate the extent_cache by default")
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> Fixes: e1e8debec656 ("f2fs: add F2FS_IOC_SET_COMPRESS_OPTION ioctl")
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 > ---
->  fs/f2fs/inode.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  fs/f2fs/file.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to do sanity check on extent cache correctly
-    https://git.kernel.org/jaegeuk/f2fs/c/14c42b75ee14
+  - [f2fs-dev] f2fs: allow set compression option of files without blocks
+    https://git.kernel.org/jaegeuk/f2fs/c/0f837b84b2af
 
 You are awesome, thank you!
 -- 
