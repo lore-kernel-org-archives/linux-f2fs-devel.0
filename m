@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 50F31C636CD
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B424CC63797
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 31 Jan 2023 19:10:35 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pMw1b-00035h-FM;
+	id 1pMw1b-0004D6-19;
 	Tue, 31 Jan 2023 19:10:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMw1W-00035D-P8
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMw1W-0004Ct-UT
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 31 Jan 2023 19:10:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,55 +23,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I2xSV8+hm4kLpmify4Ao7DRX/XMrwvlmQUGLHfYS/6A=; b=JcylT1/33iE2JoxwAR5DotIM+v
- YkpwBbQf3x2WgVS5gHfjPEMSw3J32m3Fg7fnLtVXeUU20/73OGJrcDENBRKBE6/j2NoMsylTynhL8
- 3iQiQAdwXld2IN91G+wijrJ1fYhjFTl7MEI8M5Iaz9PrI+LSFXPnzjLL+Pd/XjeP0hGs=;
+ bh=PVNCeJTgs66hojhK9fwVJWK47aJhRDow74JuLGyYXmg=; b=BqitW5rwxf+SMCWuvEgP58RbSU
+ Wc/ZG6M6a2O4viKoxZhV43+Ajei8ERZWRRmJgno6UK1KCDj4gjpyZ15DOjJ0YZC9Qz/svHfWdWpVp
+ ePad5XERmSfkIA566LMsqHwUP2DlAWqfs8NuUirOxXLjxdEo7RE6dRhZlXf6M1C+FBG4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I2xSV8+hm4kLpmify4Ao7DRX/XMrwvlmQUGLHfYS/6A=; b=FzHuCeajOu5xHS2Q5e69ONisiw
- LAbPCH6wSutc35mHZ/2q9kMCkYNWSfQviCHu4P83iuURSvrGMncMpKyhlXH+4PVXpl/dUKNpJsigG
- 96QhCGK2c/RXhtrIfjknSbZqZPSV7+zYA2c7+kSkZz3feJpi17rQc9ZTSwmKqqE63n7E=;
+ bh=PVNCeJTgs66hojhK9fwVJWK47aJhRDow74JuLGyYXmg=; b=l2/KVWlhDN4Y7snunA6+vP4vFV
+ s9aOgAX44govGzkE2xdH02IncfgUvUm24anSs0UPomHrYWbN9VeKvgs9MFR3OnA7BjyukMbwihgi4
+ dVmDIh6vWj6L+96oZIDmwX12e+ITfwUVIZUi6AZzE0fAKvOuA9R+WZ/iMGO9zjO0Q0mQ=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pMw1S-005sYt-QU for linux-f2fs-devel@lists.sourceforge.net;
+ id 1pMw1S-0006XM-Ju for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 31 Jan 2023 19:10:30 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 685B9616CB
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 31 Jan 2023 19:10:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 49FFEC433A0;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 00DB9616C5;
+ Tue, 31 Jan 2023 19:10:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 62616C433A8;
  Tue, 31 Jan 2023 19:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1675192220;
- bh=tCiZPdBodHgn+9HGNSelz7b93sIkuDQColYmbEDd9S0=;
+ bh=9C5PDr6OI020i8CExGuBr9TUCXMNsJnEct3Kfz+VhCI=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=VlI4hatzDQ8JmbW0G/9iPlsaY5C1y9GqsFEavNR117DezU+LlkSaNNEH2r76Tggxs
- umDEnv9sxtp3pKQw85c0NZ4gq+KT5PDy0U+WhtY0IBLuTEVVQDWyNM38OlQ3f6qDYf
- 5KkBvwVHy6v4977LSEzs/YCQAaZ0tJN6Qnmw2i0wTwVpVLpz+QrKzcpayTXSnVcTvv
- baOAR3RRuG/ZqD9y2nTamPJpTLPNiFyamDvPPxp94mmnxmRCfqWx1yOXgxEFHphUek
- UeEaTY5SzGSSsOlPRAttCcCpmlRqZlsMpYg5lHC0KB7wbAhQnrKgWfnfcfpqW1d0Pa
- Ng6hcSAiEGe/w==
+ b=XhKx4Y8n/ghpCiZc5qHN1WazEY/Rbpmf7bDCBffHhjPhfr37O2XlxHP8ZipHR+aG1
+ J+t1jQBesuTvIWWDbLv2zdBzanFEcWqP25xxr7J42+7wy8RFCwpqD+AXnKJtGVnOdF
+ 7HnRsfv2IrpH6eiTBD4lT34cd3FIVsy+hEiZNdxSnaL+UJg2lgOgPSOnyHKBDl0e3Q
+ mn8a3Uw0p2xSApijr/DcQeCzE4liaET79+ij8TtT64qfn9kEMKL85mKzgK4Ua/osPz
+ xJbEZkzpBuXA8VdpSK7BxWCJkq5Hge/SkcqRQ24yeo3pRulJTnJwpKA+Z7pq76UzLn
+ Kq1sPCI8x3Hvw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 1D826E50D6C; Tue, 31 Jan 2023 19:10:20 +0000 (UTC)
+ 33EE2E50D6E; Tue, 31 Jan 2023 19:10:20 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167519222011.20142.17605283450543529387.git-patchwork-notify@kernel.org>
+Message-Id: <167519222020.20142.16236320006789243348.git-patchwork-notify@kernel.org>
 Date: Tue, 31 Jan 2023 19:10:20 +0000
-References: <20230131144701.34418-1-chao@kernel.org>
-In-Reply-To: <20230131144701.34418-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1pMw1S-005sYt-QU
-Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: clean up
- __update_extent_tree_range()
+References: <20230120161656.70308-1-frank.li@vivo.com>
+In-Reply-To: <20230120161656.70308-1-frank.li@vivo.com>
+To: Yangtao Li <frank.li@vivo.com>
+X-Headers-End: 1pMw1S-0006XM-Ju
+Subject: Re: [f2fs-dev] [PATCH v3 1/2] f2fs: fix to avoid potential memory
+ corruption in __update_iostat_latency()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,8 +82,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: lkp@intel.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, error27@gmail.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -94,21 +93,22 @@ Hello:
 This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 31 Jan 2023 22:46:59 +0800 you wrote:
-> No logic change, just avoid goto statement.
+On Sat, 21 Jan 2023 00:16:55 +0800 you wrote:
+> Add iotype sanity check to avoid potential memory corruption.
+> This is to fix the compile error below:
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/extent_cache.c | 66 ++++++++++++++++++++----------------------
->  1 file changed, 31 insertions(+), 35 deletions(-)
+> fs/f2fs/iostat.c:231 __update_iostat_latency() error: buffer overflow
+> 'io_lat->peak_lat[type]' 3 <= 3
+> 
+> vim +228 fs/f2fs/iostat.c
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev,1/3] f2fs: clean up __update_extent_tree_range()
+  - [f2fs-dev,v3,1/2] f2fs: fix to avoid potential memory corruption in __update_iostat_latency()
+    https://git.kernel.org/jaegeuk/f2fs/c/dcbf2ae5504f
+  - [f2fs-dev,v3,2/2] f2fs: use iostat_lat_type directly as a parameter in the iostat_update_and_unbind_ctx()
     (no matching commit)
-  - [f2fs-dev,2/3] f2fs: fix to update age extent correctly during truncation
-    https://git.kernel.org/jaegeuk/f2fs/c/334ce4a79c9e
-  - [f2fs-dev,3/3] f2fs: fix to update age extent in f2fs_do_zero_range()
-    https://git.kernel.org/jaegeuk/f2fs/c/de6b3a5e09b2
 
 You are awesome, thank you!
 -- 
