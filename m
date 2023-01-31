@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 579CDC636CC
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 31 Jan 2023 19:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 50F31C636CD
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 31 Jan 2023 19:10:35 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pMw1a-00035V-0m;
-	Tue, 31 Jan 2023 19:10:33 +0000
+	id 1pMw1b-00035h-FM;
+	Tue, 31 Jan 2023 19:10:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMw1W-000357-Aw
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pMw1W-00035D-P8
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 31 Jan 2023 19:10:29 +0000
+ Tue, 31 Jan 2023 19:10:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+xtwxRbkpGTb3I/he3w3tkHtksjHS9rgt0DJtFW2MBI=; b=ieDB6NvcERlUDDYfRbmCQ/7oDj
- F7z2jkIKmaweRMCFXyybqRjAE28hGh6i4bvnCLtj3DaszCHGnIskbNlPJL/w7HnxO0mYxtG+x3RAr
- FPrn5x7DF8AQyvznmLTkzjiLLT5FJxPOUuWMjieRhGXCZ/I7tzoj+ZrV1Pi+vlrX/ctE=;
+ bh=I2xSV8+hm4kLpmify4Ao7DRX/XMrwvlmQUGLHfYS/6A=; b=JcylT1/33iE2JoxwAR5DotIM+v
+ YkpwBbQf3x2WgVS5gHfjPEMSw3J32m3Fg7fnLtVXeUU20/73OGJrcDENBRKBE6/j2NoMsylTynhL8
+ 3iQiQAdwXld2IN91G+wijrJ1fYhjFTl7MEI8M5Iaz9PrI+LSFXPnzjLL+Pd/XjeP0hGs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+xtwxRbkpGTb3I/he3w3tkHtksjHS9rgt0DJtFW2MBI=; b=bJ2tFhRWBcKNIQKBgGopsQ44zP
- w8nBpOb+1FlBmHPtPM4tq24tQZU4jIhSMpDmt+7g/u9iCAGv0eRc5dUz36lXkveIfQlqDeLP30OCp
- 9wd7Ae3VnNpMEMwrPbBBpOVyOtRKIkgZmbsqHoSxPXmQEKWzP/59Ao368h2kIdLDK5kg=;
+ bh=I2xSV8+hm4kLpmify4Ao7DRX/XMrwvlmQUGLHfYS/6A=; b=FzHuCeajOu5xHS2Q5e69ONisiw
+ LAbPCH6wSutc35mHZ/2q9kMCkYNWSfQviCHu4P83iuURSvrGMncMpKyhlXH+4PVXpl/dUKNpJsigG
+ 96QhCGK2c/RXhtrIfjknSbZqZPSV7+zYA2c7+kSkZz3feJpi17rQc9ZTSwmKqqE63n7E=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pMw1S-005sYs-8P for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 31 Jan 2023 19:10:29 +0000
+ id 1pMw1S-005sYt-QU for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 31 Jan 2023 19:10:30 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id D385B616C4
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 685B9616CB
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 31 Jan 2023 19:10:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 40AB7C4339C;
+ Tue, 31 Jan 2023 19:10:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 49FFEC433A0;
  Tue, 31 Jan 2023 19:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1675192220;
- bh=5NLjWCifPKsQYHmWtcs0Dc3TPZQumXh9dKHEVGxZPRU=;
+ bh=tCiZPdBodHgn+9HGNSelz7b93sIkuDQColYmbEDd9S0=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=MDsfcKYIuZoY8ld3wB8Px3FT0Jrg1ZliYZ/XGhL0ZqH0vmue+4xOIr7zVR3NoaUAG
- TjkIlQmlgP1B4QiRIFDQCN3Y7unvvpLV7NjyvQDNcq8D9z2TfJaGmwr02qBtGFt9fF
- WoTg9rlZYfHxIzjPPK7/2aGVlOTsv0T4g/s5shDfnF/8V7Be5/A240c2h3fiDdZYp5
- MJX5AyXq2HD2aZkDWLZaHSiD2CSJJwyV5UyYBV+cbj5IuBiBZ6AemZ3tROjELkdl3w
- Rem1nQFch3t0UTX8t7tLJmyDIwlS1eUrGOLc+iI61U8aTJTnqcCzt0FxA/r+T0XkBc
- 6j48/Z6ezlqyw==
+ b=VlI4hatzDQ8JmbW0G/9iPlsaY5C1y9GqsFEavNR117DezU+LlkSaNNEH2r76Tggxs
+ umDEnv9sxtp3pKQw85c0NZ4gq+KT5PDy0U+WhtY0IBLuTEVVQDWyNM38OlQ3f6qDYf
+ 5KkBvwVHy6v4977LSEzs/YCQAaZ0tJN6Qnmw2i0wTwVpVLpz+QrKzcpayTXSnVcTvv
+ baOAR3RRuG/ZqD9y2nTamPJpTLPNiFyamDvPPxp94mmnxmRCfqWx1yOXgxEFHphUek
+ UeEaTY5SzGSSsOlPRAttCcCpmlRqZlsMpYg5lHC0KB7wbAhQnrKgWfnfcfpqW1d0Pa
+ Ng6hcSAiEGe/w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 14C76C0C40E; Tue, 31 Jan 2023 19:10:20 +0000 (UTC)
+ 1D826E50D6C; Tue, 31 Jan 2023 19:10:20 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167519222008.20142.15227307379912347562.git-patchwork-notify@kernel.org>
+Message-Id: <167519222011.20142.17605283450543529387.git-patchwork-notify@kernel.org>
 Date: Tue, 31 Jan 2023 19:10:20 +0000
-References: <20230130012012.2078978-1-chao@kernel.org>
-In-Reply-To: <20230130012012.2078978-1-chao@kernel.org>
+References: <20230131144701.34418-1-chao@kernel.org>
+In-Reply-To: <20230131144701.34418-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1pMw1S-005sYs-8P
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: reduce stack memory cost by using
- bitfield in struct f2fs_io_info
+X-Headers-End: 1pMw1S-005sYt-QU
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: clean up
+ __update_extent_tree_range()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,31 +91,24 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 30 Jan 2023 09:20:12 +0800 you wrote:
-> This patch tries to use bitfield in struct f2fs_io_info to improve
-> memory usage.
+On Tue, 31 Jan 2023 22:46:59 +0800 you wrote:
+> No logic change, just avoid goto statement.
 > 
-> struct f2fs_io_info {
-> ...
-> 	int need_lock:8;	/* indicate we need to lock cp_rwsem */
-> 	int version:8;		/* version of the node */
-> 	int submitted:1;	/* indicate IO submission */
-> 	int in_list:1;		/* indicate fio is in io_list */
-> 	int is_por:1;		/* indicate IO is from recovery or not */
-> 	int retry:1;		/* need to reallocate block address */
-> 	int encrypted:1;	/* indicate file is encrypted */
-> 	int post_read:1;	/* require post read */
-> ...
-> };
-> 
-> [...]
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/extent_cache.c | 66 ++++++++++++++++++++----------------------
+>  1 file changed, 31 insertions(+), 35 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: reduce stack memory cost by using bitfield in struct f2fs_io_info
-    https://git.kernel.org/jaegeuk/f2fs/c/998863dadd2c
+  - [f2fs-dev,1/3] f2fs: clean up __update_extent_tree_range()
+    (no matching commit)
+  - [f2fs-dev,2/3] f2fs: fix to update age extent correctly during truncation
+    https://git.kernel.org/jaegeuk/f2fs/c/334ce4a79c9e
+  - [f2fs-dev,3/3] f2fs: fix to update age extent in f2fs_do_zero_range()
+    https://git.kernel.org/jaegeuk/f2fs/c/de6b3a5e09b2
 
 You are awesome, thank you!
 -- 
