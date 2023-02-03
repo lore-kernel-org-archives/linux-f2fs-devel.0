@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5F062C64EC5
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Feb 2023 21:01:16 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ECB5FC61DA4
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  3 Feb 2023 21:01:23 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pO3BL-0004ff-Ht;
-	Fri, 03 Feb 2023 21:01:14 +0000
+	id 1pO3BU-0006pd-JO;
+	Fri, 03 Feb 2023 21:01:23 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <krisman@suse.de>) id 1pO3BJ-0004fS-Em
+ (envelope-from <krisman@suse.de>) id 1pO3BR-0006pO-VL
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 03 Feb 2023 21:01:12 +0000
+ Fri, 03 Feb 2023 21:01:20 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NbJ8A7z8OuIv+MdnkMNKw5FRm+lvF7JY4gxwIronnVI=; b=ETDwJpWbYlDSJfLDv2NOFKqcXj
- E5jQntWpOxBZekfmtmyjuChRQCK2wmw8wGZNadLBTBf/8XTRwsZYIml1uvFOZHMLnz6PjvnOhMgy5
- 1aalaqi7uLJxukmujNhzbx+hYVCYDSTpBO/n+vtkMjPHnVh4Semyc1U4zGhpluHlH49k=;
+ bh=pHCZyJAodGxzYJy9CRO1y2Ojz5lOmcNehoROILAvaTo=; b=Vw5aozJJ3U/bmCkdy4adOVtvxs
+ pz1s/wnUx2lx+PHCWGr8V7JLztrAlsyRnA/66qpOguRpxKSABF/yHofHYBe5eqkXK+f83FB1CUWNf
+ CNhGj2hlID7YGt69uFDPkJQ6cO5cO4/fOFP9IKpXBwBvTFtaf0NHYnzFg5P1n4AjI3EM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,59 +33,59 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=NbJ8A7z8OuIv+MdnkMNKw5FRm+lvF7JY4gxwIronnVI=; b=WiFYC+HaSf3sQdqQHSvEzoHkIz
- TsYHPpFO/UlGIrcgQq2MSo0/IjeVxZq9FvNCvM7eL7rgfhDui7vtmyHefrVPsqtDO5geGxhkJmK2D
- cU8eqLhm95kZDPhF6ZNFZ2sDQTB68jMQVvFZmX37p6SzqsqHzfzazqYf7O/G2LF4EJzw=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=pHCZyJAodGxzYJy9CRO1y2Ojz5lOmcNehoROILAvaTo=; b=g0C3/lEwYuitSBZnE8y19hXep0
+ AqP6wFIQc2YzdG/BL2yFBZxKuMe5vpdh6hwSH6t7oEdrc0Xl3IIr1GugfKUulC5kj2SoRVB6Q3zGP
+ IiqsE0WocFE8e2UzMDRPICWgYbD+/fV9QaD0ZFUO5RcuPGRHYl7GJj6ZhIJ+rv8B+1qw=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1pO3BH-00ASxb-Oh for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 03 Feb 2023 21:01:12 +0000
+ id 1pO3BO-0006HR-Uq for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 03 Feb 2023 21:01:20 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 7DC3D5C344;
- Fri,  3 Feb 2023 21:01:05 +0000 (UTC)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id BEA8335229;
+ Fri,  3 Feb 2023 21:01:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1675458065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1675458071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=NbJ8A7z8OuIv+MdnkMNKw5FRm+lvF7JY4gxwIronnVI=;
- b=ce4uKgVbpi/C7iswQ4w2hmqw5AERgDlwLmsxLhsNG9XzA2Cs+yMdYNxuqVqhhivMUaaThu
- DDBrpxmdV2q7iF3Cihhvy5UQbeV8+bGp8qa4ViP4rCK63x/XaexdByB/TcJ5v/LQj7IXNF
- M6BH3fFK8N+3zFpek9wOCWm/ZjWbEDo=
+ bh=pHCZyJAodGxzYJy9CRO1y2Ojz5lOmcNehoROILAvaTo=;
+ b=jPFyJFgXr00F4ibd2FHK4/m7NkiNDPoKJF/lRyUEBYYTrYSbsp2iavZM8VrXBpX0GHp4vc
+ ZLTM/NP0Jk/T4cGYe3b5mZgVV4qQeTMjCg5b/tDKc/VhhlzkJyZe91yoTjC4b+m4eQiXBE
+ eMrObPWbmOJ4XVA8JZeJm2JyNAey3iE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1675458065;
+ s=susede2_ed25519; t=1675458071;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=NbJ8A7z8OuIv+MdnkMNKw5FRm+lvF7JY4gxwIronnVI=;
- b=oYtHj8ESCbnCzDrWnQsC8plCxvJxONqie2yhTg2S14+cejnGgzdEt3pvquAToiYfDTyXcp
- 5QkpH8uOuYWBt9AQ==
+ bh=pHCZyJAodGxzYJy9CRO1y2Ojz5lOmcNehoROILAvaTo=;
+ b=zcGoUjCjzWnTtH045njIPtNw0QMmHqHbd9BaI1Ss0rLpjCPDYtl8TrwCR4oA9Ivka7Kzr5
+ hPg5+WuzI+gFR6AA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0C9371358A;
- Fri,  3 Feb 2023 21:01:04 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4D0D71358A;
+ Fri,  3 Feb 2023 21:01:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id xUrWMRB23WP0JgAAMHmgww
- (envelope-from <krisman@suse.de>); Fri, 03 Feb 2023 21:01:04 +0000
+ by imap2.suse-dmz.suse.de with ESMTPSA id m1UNBhd23WP4JgAAMHmgww
+ (envelope-from <krisman@suse.de>); Fri, 03 Feb 2023 21:01:11 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org,
  ebiggers@kernel.org, jack@suse.cz
-Date: Fri,  3 Feb 2023 18:00:36 -0300
-Message-Id: <20230203210039.16289-5-krisman@suse.de>
+Date: Fri,  3 Feb 2023 18:00:38 -0300
+Message-Id: <20230203210039.16289-7-krisman@suse.de>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230203210039.16289-1-krisman@suse.de>
 References: <20230203210039.16289-1-krisman@suse.de>
 MIME-Version: 1.0
-X-Headers-End: 1pO3BH-00ASxb-Oh
-Subject: [f2fs-dev] [PATCH v2 4/7] libfs: Support revalidation of encrypted
- case-insensitive dentries
+X-Headers-End: 1pO3BO-0006HR-Uq
+Subject: [f2fs-dev] [PATCH v2 6/7] ext4: Enable negative dentries on
+ case-insensitive lookup
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -106,50 +106,75 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Preserve the existing behavior for encrypted directories, by rejecting
-negative dentries of encrypted+casefolded directories.  This allows
-generic_ci_d_revalidate to be used by filesystems with both features
-enabled, as long as the directory is either casefolded or encrypted, but
-not both at the same time.
+Instead of invalidating negative dentries during case-insensitive
+lookups, mark them as such and let them be added to the dcache.
+d_ci_revalidate is able to properly filter them out if necessary based
+on the dentry casefold flag.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 ---
- fs/libfs.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/ext4/namei.c | 34 +++-------------------------------
+ 1 file changed, 3 insertions(+), 31 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index e3daca88d1d3..26a06fd5f5a1 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1478,6 +1478,9 @@ static inline int generic_ci_d_revalidate(struct dentry *dentry,
- 		const struct inode *dir = READ_ONCE(parent->d_inode);
- 
- 		if (dir && needs_casefold(dir)) {
-+			if (IS_ENCRYPTED(dir))
-+				return 0;
-+
- 			if (!d_is_casefold_lookup(dentry))
- 				return 0;
- 
-@@ -1487,7 +1490,8 @@ static inline int generic_ci_d_revalidate(struct dentry *dentry,
- 				return 0;
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index dd28453d6ea3..36d6683ff616 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1851,16 +1851,9 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
  		}
  	}
--	return 1;
+ 
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	if (!inode && IS_CASEFOLDED(dir)) {
+-		/* Eventually we want to call d_add_ci(dentry, NULL)
+-		 * for negative dentries in the encoding case as
+-		 * well.  For now, prevent the negative dentry
+-		 * from being cached.
+-		 */
+-		return NULL;
+-	}
+-#endif
++	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
++		d_set_casefold_lookup(dentry);
 +
-+	return fscrypt_d_revalidate(dentry, flags);
+ 	return d_splice_alias(inode, dentry);
  }
  
- static const struct dentry_operations generic_ci_dentry_ops = {
-@@ -1507,7 +1511,7 @@ static const struct dentry_operations generic_encrypted_dentry_ops = {
- static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
- 	.d_hash = generic_ci_d_hash,
- 	.d_compare = generic_ci_d_compare,
--	.d_revalidate = fscrypt_d_revalidate,
-+	.d_revalidate_name = generic_ci_d_revalidate,
- };
- #endif
+@@ -3186,17 +3179,6 @@ static int ext4_rmdir(struct inode *dir, struct dentry *dentry)
+ 	ext4_fc_track_unlink(handle, dentry);
+ 	retval = ext4_mark_inode_dirty(handle, dir);
  
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	/* VFS negative dentries are incompatible with Encoding and
+-	 * Case-insensitiveness. Eventually we'll want avoid
+-	 * invalidating the dentries here, alongside with returning the
+-	 * negative dentries at ext4_lookup(), when it is better
+-	 * supported by the VFS for the CI case.
+-	 */
+-	if (IS_CASEFOLDED(dir))
+-		d_invalidate(dentry);
+-#endif
+-
+ end_rmdir:
+ 	brelse(bh);
+ 	if (handle)
+@@ -3297,16 +3279,6 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
+ 		goto out_trace;
+ 
+ 	retval = __ext4_unlink(dir, &dentry->d_name, d_inode(dentry), dentry);
+-#if IS_ENABLED(CONFIG_UNICODE)
+-	/* VFS negative dentries are incompatible with Encoding and
+-	 * Case-insensitiveness. Eventually we'll want avoid
+-	 * invalidating the dentries here, alongside with returning the
+-	 * negative dentries at ext4_lookup(), when it is  better
+-	 * supported by the VFS for the CI case.
+-	 */
+-	if (IS_CASEFOLDED(dir))
+-		d_invalidate(dentry);
+-#endif
+ 
+ out_trace:
+ 	trace_ext4_unlink_exit(dentry, retval);
 -- 
 2.35.3
 
