@@ -4,112 +4,132 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4FD00C636D6
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Feb 2023 11:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3E15AC61DA4
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Feb 2023 14:43:42 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pP06h-0007jw-HM;
-	Mon, 06 Feb 2023 11:56:22 +0000
+	id 1pP2ic-0002c9-Sm;
+	Mon, 06 Feb 2023 14:43:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <j-young.choi@samsung.com>) id 1pP06f-0007jG-GI
+ (envelope-from <frank.li@vivo.com>) id 1pP2ib-0002bu-5C
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Feb 2023 11:56:20 +0000
+ Mon, 06 Feb 2023 14:43:39 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
- Date:Message-ID:To:From:Sender:Reply-To:Subject:Mime-Version:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
+ :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DaNoKx85s1XMgGyOKRqu4B4f9oIW5scdWTiV0LJmAWU=; b=jpzpmJt/n+PBqJdY9mNBA7XC9T
- 7xNgLDK6NkaSZT6AuWZjLQ7kESoC4fFie6TQdRw3VMpMoj+ELG17Tx39jbezZV6C+yDmHzwUcD/kR
- SOsGSdvT6eDMDIjHmqe9jTQKqggUtOGES08Dd2L02N+J6dpqEcORGrC0TPbCNmj1N8WE=;
+ bh=677DgX9T9ucQdvZBk24jzXG9QZcn+e1Vom4MGRh5xlA=; b=ltr9XG0tp60E2r++ISMY2vttO2
+ rXXYQRqVIJb2GBp7zyYvEf0I9tUvX9wSgmiVDphX3EWCFB3tiLqks1M7BB1J67Ld7Q7rKRvTDyLRA
+ 90ANvoOB4bNWFovqQimzuzZES+Sm0stHHPDDKi584day+4VjEHhcEdHdo8jG2M14Q1ys=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:To:From
- :Sender:Reply-To:Subject:Mime-Version:Cc:Content-ID:Content-Description:
- Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
- In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=DaNoKx85s1XMgGyOKRqu4B4f9oIW5scdWTiV0LJmAWU=; b=M
- fYQf1t9u0RaVSrztLNjMtZ5W8/2KFHibzq2AKWgzocbVBmwXojUo6iisahvFeuA18NSCIWbUBuwXT
- tgaZHIhZ66rlf19npJIVfyb4I5CEwnVNhKCVDm4PlexiBDKDj7Jsvj7VTA9nSgAsFGXwo9ipCkd5D
- JUKJXbHEgfiUOfws=;
-Received: from mailout3.samsung.com ([203.254.224.33])
+ h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=677DgX9T9ucQdvZBk24jzXG9QZcn+e1Vom4MGRh5xlA=; b=fQRNPu632KBmgJpnv82Q4exrLD
+ IvuTHvd5hLYtU0hKMvstfcQVIczkBbLwy5UVtZrk6DW3Zk7mfBQjYoZzVjDfo4mG0cl9nhjuPOX12
+ WDo24KrxLZ9yyGhiRKKvo+R0xA++g4ZkNdFuIrOXlOlLqu42xQNM4oztaMrPnRTPGmJg=;
+Received: from mail-psaapc01on2126.outbound.protection.outlook.com
+ ([40.107.255.126] helo=APC01-PSA-obe.outbound.protection.outlook.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pP06Y-00CX6v-Ic for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Feb 2023 11:56:19 +0000
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
- by mailout3.samsung.com (KnoxPortal) with ESMTP id
- 20230206115601epoutp03c712688c7e4df708806784f522735d6d~BOjr27v8k2896128961epoutp03c
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  6 Feb 2023 11:56:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com
- 20230206115601epoutp03c712688c7e4df708806784f522735d6d~BOjr27v8k2896128961epoutp03c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1675684561;
- bh=DaNoKx85s1XMgGyOKRqu4B4f9oIW5scdWTiV0LJmAWU=;
- h=Subject:Reply-To:From:To:Date:References:From;
- b=V4qVablqNjZ8dzuyZeRnUvvffWkrn9o1XBvYLL4GC1J6E6FEFkrvFUrUnSnJngEwA
- UCGuU2AUK3GdGuczoPM2C+UWPFxBbRwXxh1xKJmr5W/xeP7YFqTdjjWDzdMyLUbpIe
- Mdp4PhfXNgmLAaqUHK+g8ZX8pQW3r05oFmbkNEL4=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
- epcas2p3.samsung.com (KnoxPortal) with ESMTP id
- 20230206115600epcas2p375b5479445f9b87732dec33b8131bfbe~BOjrf4BlT1045210452epcas2p3F;
- Mon,  6 Feb 2023 11:56:00 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.69]) by
- epsnrtp4.localdomain (Postfix) with ESMTP id 4P9Pq42mSqz4x9Pv; Mon,  6 Feb
- 2023 11:56:00 +0000 (GMT)
-X-AuditID: b6c32a45-671ff7000001f1e7-3c-63e0ead0489b
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
- epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
- E4.23.61927.0DAE0E36; Mon,  6 Feb 2023 20:56:00 +0900 (KST)
-Mime-Version: 1.0
-From: Jinyoung CHOI <j-young.choi@samsung.com>
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
- <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20230206115600epcms2p736f05524a361d5926dbb401bdd218f85@epcms2p7>
-Date: Mon, 06 Feb 2023 20:56:00 +0900
-X-CMS-MailID: 20230206115600epcms2p736f05524a361d5926dbb401bdd218f85
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-CMS-TYPE: 102P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGKsWRmVeSWpSXmKPExsWy7bCmqe6FVw+SDc58ErI4PfUsk8XLQ5oW
- vf1b2SyerJ/FbHFpkbvF5V1z2BzYPDat6mTz2L3gM5NH35ZVjB6fN8kFsERl22SkJqakFimk
- 5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYArVZSKEvMKQUKBSQWFyvp
- 29kU5ZeWpCpk5BeX2CqlFqTkFJgX6BUn5haX5qXr5aWWWBkaGBiZAhUmZGdcWNjIWNBsXvHj
- 7F22BsaFOl2MnBwSAiYSG3/8Yu1i5OIQEtjBKNG/7A1TFyMHB6+AoMTfHcIgNcICOhIN1+4z
- gthCAkoS59bMYgQpERYwkLjVaw4SZhPQk/i5ZAYbiC0i8IpR4sxqUYjxvBIz2p+yQNjSEtuX
- b2WEsDUkfizrZYawRSVurn7LDmO/PzYfqkZEovXeWagaQYkHP3dDxSUlDh36ygZygoRAvsSG
- A4EQ4RqJt8sPQJXoS1zr2Ai2llfAV+LKmQZWEJtFQFWi+/s6qHNcJF4t/wtmMwvIS2x/O4cZ
- ZCSzgKbE+l36ENOVJY7cYoF5pGHjb3Z0NrMAn0TH4b9w8R3znjBBtKpJLGoyggjLSHw9PB+q
- xEPi2v29jBMYFWchAnkWkhNmIZywgJF5FaNYakFxbnpqsVGBITxek/NzNzGCE6CW6w7GyW8/
- 6B1iZOJgPMQowcGsJMJreuBBshBvSmJlVWpRfnxRaU5q8SFGU6DnJzJLiSbnA1NwXkm8oYml
- gYmZmaG5kamBuZI4r7TtyWQhgfTEktTs1NSC1CKYPiYOTqkGJnu16cV8ns82vUpmu9AuE5aX
- 69rd+Is33tJq/+IVuR9rG6cEy4ucEC65PmnL92+Tgy2sXh36cVxUMCZ6omKpiOavyTM/hKQ1
- h4Q7WEy0UCt45vXuw6sZTwNNJ+Q4lOrsflq57tyaj79rt7KK5L1v+/jsocLzG+1TNu5ibTnY
- qSe3Zf7Dy9oCnP++JYZOehl7p3hRjdDCYkWLzfJ1Gb4T59lf81SriD7wcYvjocehVbYtj4z4
- uGJaP53SiLxjGLiaJ9U0W/PsFwlWx5xtDPm8PB/+r7v73X4u5+rLDxtXWX15JOFxm+FS41X1
- 9Eez+U6dmVv/tnZmu+ekF1Yr337PnLplxkHTsxxpP37/1FcMYVNiKc5INNRiLipOBACc99YI
- CQQAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230206115600epcms2p736f05524a361d5926dbb401bdd218f85
-References: <CGME20230206115600epcms2p736f05524a361d5926dbb401bdd218f85@epcms2p7>
-X-Headers-End: 1pP06Y-00CX6v-Ic
-Subject: [f2fs-dev] [PATCH] f2fs: fix typos in comments
+ id 1pP2iW-00Cdrt-De for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 06 Feb 2023 14:43:39 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nTghQcWySFgmiXEi2GInAoqiESTb8R1l8/wJ8TxNu2V1696+g2ettDOnSFkee63Ed/2kcRqDhjRN6ZMdV7wFoS34FdF6BRbcZBtL/dtpCu3XCZr7p3qiNX9S8UJ38NdpZqMpuTwO3Q1sSVaRtXrdiQ9HCVca2HppTJtCmHZfmufLikgowOeGVj6W3qZ+4rT5ZoV7keqeirlOCOiOwEOPg+jAV+khNnNG3LHy3rFEUMPua/+mR9OzanigHX3iSgEX2IV2llLyYEadETjMQyfwlAXSMmx4UHvfnNLpmJdKsLNJu47U21P/2mN6L8xLrPUZjTL/x+3SP1IF6JPURp6jow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=677DgX9T9ucQdvZBk24jzXG9QZcn+e1Vom4MGRh5xlA=;
+ b=Y5bRXzWj3TE5ZhKrPAaNTYnEFV/kmQfNzpyMktTZOucxqesC+nDkmwtLzulRsqSqXVWcO9phJhNzB5hD6OVjfHNQ79xHdB/9j5rIlS/Ja80fiUhn+wNPRkTFo8NAFJWGairs4M7E1tfzqjxLLReVUpfJT2dAZXdLz6y+s3eeshMmnynLdlu3x5lj+j8xmbXaAvulX8RbjoJT9Va2uj+9KisGNNi24ApH5tm8fAxm7CP7LUVFMXjlMNtxnF3ZhGfMjHhRz04n0ttoJGZzPJcKDOBKKEzslC/GrhtUpKDLd10Sd16UeTQs9RauFj5pP+SfVAGgfNBjTt4hKytvNvr/Mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=677DgX9T9ucQdvZBk24jzXG9QZcn+e1Vom4MGRh5xlA=;
+ b=bMW2C74vtOVafYhpSOH9u057N0zPf6+7/4JNjbAXI5SYtnvIASvPHltUcVXUY57wJJWIB3PjL4N13ZVZnuyQ8Ay+8l8YFFViXEaDfzW5H9sEuZjn0fcsmBLWsAHYkcG1r9wmUzkZw7Iji3uu4UzANoSPyolw1PTH1qgESUAf7YNoNlkd91n/0BVnzssGW50XvzpS5Dhhqp0V4k+abC4gqVRrofKAbT2BqRIgpoH19ms5lq1xh4dyz9Ero+IAx+sVvtTqqmuMG4pAyYKKBKfphwJnHbDhN9bTByEgCmCa7vSk5A5ESnbBvauwTSgDAfbzToQfruDyR3gCtP4M7n2Q9g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by SEYPR06MB5765.apcprd06.prod.outlook.com (2603:1096:101:ba::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.22; Mon, 6 Feb
+ 2023 14:43:22 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::3e52:d08c:ecf4:d572]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::3e52:d08c:ecf4:d572%5]) with mapi id 15.20.6086.011; Mon, 6 Feb 2023
+ 14:43:22 +0000
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Date: Mon,  6 Feb 2023 22:43:09 +0800
+Message-Id: <20230206144310.2344-2-frank.li@vivo.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20230206144310.2344-1-frank.li@vivo.com>
+References: <20230206144310.2344-1-frank.li@vivo.com>
+X-ClientProxiedBy: SI2PR04CA0005.apcprd04.prod.outlook.com
+ (2603:1096:4:197::16) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB5765:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8f41012-c6cc-4651-6612-08db08507f19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Z3E76/MGJvXeTE4tfPj0wuBs2lldMIL4ivSCet+UcjEveUdxNR4Uae6veknlb2GFjtYf2osDVVaYYd4gA1jjvyvPHe/6NqPLKG81uIc4xACpHereLIotKxNDk4TIDJpW5bT3wouXxlJCOTo/iEgaaTV3RyLc/tJuL4RUsb6UnqYwWsE6XeVBFoLe4CRWjUEx7AxhssFJy+0rot67wo6jUcUf11hTQt1N51JCWCH95+KIMatOdN/m71yqHWoGg0M12iRWKnUSqOrI4WhA+dHbsYJKdUJNlUJxYw+5QWIqfPnD+TdpHx5BiyQ68Gz+C4mg4Zu+HtgtKS6mPHNafzP1oaysixv2CNtE5r/btijI+rhFkJk2VEBxTPE5Wc/h+TDAmqiuo/4FqydO8OJzyn2D6loshzg9cHAszULkGOTDni5vB6QWAG2g6WioddoTPikes21UnQd/gMCCwOj/nI8bgSr7wo/1dQm43ZlkZvPLoJyYJIOtGiS5Uj19i/1hi37qn8ctoujo17UU9avt+mAgD+W/Tb9QnHiAeCorQYuf/UBTA0C17zFBjkDYT0FR3RuPQjAiG/qz2lkUBW4pBaT8g9fALulev1Dy5wUD/rTOOv0i/dbG7Fuqr8wvNl8u7zO0m5arIOJEZelxBORWnAOw95/H9o+ZQFdYNlKj8slPGLqXKaiSMPUhqnHFpqOjPHswGNCPCk67TzQiEaOpRmngig==
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SEZPR06MB5269.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230025)(4636009)(376002)(136003)(396003)(346002)(366004)(39860400002)(451199018)(38100700002)(8936002)(86362001)(107886003)(6666004)(36756003)(2616005)(38350700002)(19627235002)(6486002)(2906002)(478600001)(52116002)(66946007)(66476007)(316002)(6512007)(41300700001)(4326008)(83380400001)(186003)(5660300002)(26005)(6506007)(1076003)(66556008)(8676002);
+ DIR:OUT; SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FJzwUF8imPOoSS96JnJ8q0lU69cHYWh//35/8u0mDqcroi3WN8NknJEMS3yE?=
+ =?us-ascii?Q?vlaIMTs0J33B7Xaypa8sAuAIOst9oZN78+ggTel2Xi2G31OpvUefy5W/wmAR?=
+ =?us-ascii?Q?phsEIWqz56DDBhwMxHL7EG9vSedKz/u0SkdmgpRnedk69mM0oFSX7B0ze/5Q?=
+ =?us-ascii?Q?YKQUipaNUJcPwU1ymlsrI1a8DqtwtHO/UGACO6EsFIqX3uS2yyHgfTYMoZG4?=
+ =?us-ascii?Q?fss6qQSzDzQE6A+lcUwQYGSiQD3MIHp5wBYKTfdWAP1C52Sc9wjMu2z58pEU?=
+ =?us-ascii?Q?ddiAzEdkfu8meq4kohb0QOKELYisw0+CbFVk8fKszjOgd/Hetp9JIcdh+4ij?=
+ =?us-ascii?Q?bLulzHm049uqB1AhTFfoMs1333GDTZp8iaR6mGz4WfeRqCFYZX0sbQaQEzg2?=
+ =?us-ascii?Q?83xWq+JEx9xUkcoKgNVkwTEIuMZ2s1dGadwIm2ZzBVutuy+U6tkWiPGTE4be?=
+ =?us-ascii?Q?2CGqP1znlcU9YJ+urt5Xo6m8GwIcKteORLxrJUVSV9ZwC7/5PHH1ogeJW62V?=
+ =?us-ascii?Q?iGu3Xq4tBcLjRiCA2cvSb5tkIk8XFbJnEq5LhS4mjk8W2zeBwem2z+ITFKei?=
+ =?us-ascii?Q?IhHNHAHp7LBp4tR39LeQMqK3v43qPvy4bs0oHYCOsA0cFICEBNBgKL+ZE8IT?=
+ =?us-ascii?Q?Gzhw44y23dnmJ2o4nDm1n+KQRkn7jakwh8KwnYotL/QyEz5Uids9MyYit/V8?=
+ =?us-ascii?Q?+brcYSsQcgxYUNJieDAdiapbLWQiP3ZFpJaXzzoAl+LugHe2d/XLepmGQtCB?=
+ =?us-ascii?Q?LXldFX6lQCm3PUbwGuozeKjlCxf8v2HpEYbpgFL9qjfDgKxouTfBbE6gJlEG?=
+ =?us-ascii?Q?P6WobFwpITxKXPWlkmqlw78Pe5fT5NcVPkOSaM7BXRSydbZju2jmfM8IH/nh?=
+ =?us-ascii?Q?D+G6mzj34qX3MSIbv0OXCWur8y1Cd/vqwWmnyMAn+6Im/72lz90QtUYTNEhC?=
+ =?us-ascii?Q?w/vEgIafpaHRKhdk7ez83wJDuTv0vF8jDaQG0tVUG9YhcCo90hQezrwyG+vW?=
+ =?us-ascii?Q?q3zpBJYWFyD1pvcNSxMv/LIj5i1PhCZ4s635S76BFawMS9PclpQzow/3xeOs?=
+ =?us-ascii?Q?3A9WfRGQXI1C4jRoXcs2LHpFlFgMU4wxOjcoC9c1OXJVeSkWzhITfkB1/7Oz?=
+ =?us-ascii?Q?Ehm19RammnnXAU+QZ4dOH9Ql8xbLIk0fpEAxcYyGyQaLT1g06rJTI1NZldxh?=
+ =?us-ascii?Q?+dXMtjZNF/2bIxCkmxo8S/sihVmF5pOTnlwJdk015G0kzOQfljuzNJg/56Ih?=
+ =?us-ascii?Q?jeoP9/TAAbpjYV+iICJifH+139YwBBDhJgME1b4rHMtaK8NkQ1oVzYkptWKy?=
+ =?us-ascii?Q?MG8M990XjE59qHI1z4ULzW+93CMxC8DHLo4ZSesLvVeOx5eHOpAfOFqMv/jA?=
+ =?us-ascii?Q?gwYHChD21l1iA/PMHmm4856uMOfDUC798BbT/nSUU2Ghpcqqx1tqcIbD+fvI?=
+ =?us-ascii?Q?l1lf8ikRvUQ2XXocF9EUUE98OQX8BhlDn8TCzDSz2ALXTyDapcixFnAfVS3F?=
+ =?us-ascii?Q?YHNC0rQhbipdOveETK13K6OGZylpHkNlQK/tx5hfKwUp+fX25X0iB1Vm+Sg+?=
+ =?us-ascii?Q?cGMtvS8Bu7Bu8IpcKwGN/tPr4POvcdHO2M3APkAX?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8f41012-c6cc-4651-6612-08db08507f19
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2023 14:43:22.7708 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4++sl523c4ohZCLxbBVrBZX9WiBw1b2LJ2kojei4rwPxz4dGG46mlxcP11tEKGdtxzi0I1vv83jMwcfFbFILVg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5765
+X-Headers-End: 1pP2iW-00Cdrt-De
+Subject: [f2fs-dev] [PATCH v4 2/3] f2fs: add missing description for
+ ipu_policy node
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,180 +141,65 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: j-young.choi@samsung.com
+From: Yangtao Li via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Reply-To: Yangtao Li <frank.li@vivo.com>
+Cc: Yangtao Li <frank.li@vivo.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch is to fix typos in f2fs files.
+IPU policy can be disabled, let's add description for it and other policy.
 
-Signed-off-by: Jinyoung Choi <j-young.choi@samsung.com>
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/checkpoint.c   | 4 ++--
- fs/f2fs/compress.c     | 2 +-
- fs/f2fs/data.c         | 8 ++++----
- fs/f2fs/extent_cache.c | 4 ++--
- fs/f2fs/file.c         | 6 +++---
- fs/f2fs/namei.c        | 2 +-
- fs/f2fs/segment.c      | 2 +-
- 7 files changed, 14 insertions(+), 14 deletions(-)
+v4:
+-add Reviewed-by tag
+ Documentation/ABI/testing/sysfs-fs-f2fs | 27 ++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 89ce08b0ff7c..1369ec892a2c 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -792,7 +792,7 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- 	 */
- 	head = &im->ino_list;
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 0f17adc80488..94132745ecbe 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -49,16 +49,23 @@ Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
+ Description:	Controls the in-place-update policy.
+ 		updates in f2fs. User can set:
  
--	/* loop for each orphan inode entry and write them in Jornal block */
-+	/* loop for each orphan inode entry and write them in journal block */
- 	list_for_each_entry(orphan, head, list) {
- 		if (!page) {
- 			page = f2fs_grab_meta_page(sbi, start_blk++);
-@@ -1122,7 +1122,7 @@ int f2fs_sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type,
- 	} else {
- 		/*
- 		 * We should submit bio, since it exists several
--		 * wribacking dentry pages in the freeing inode.
-+		 * writebacking dentry pages in the freeing inode.
- 		 */
- 		f2fs_submit_merged_write(sbi, DATA);
- 		cond_resched();
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index e4851f7a43d8..b40dec3d7f79 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1225,7 +1225,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
- 	loff_t psize;
- 	int i, err;
+-		====  =================
+-		0x01  F2FS_IPU_FORCE
+-		0x02  F2FS_IPU_SSR
+-		0x04  F2FS_IPU_UTIL
+-		0x08  F2FS_IPU_SSR_UTIL
+-		0x10  F2FS_IPU_FSYNC
+-		0x20  F2FS_IPU_ASYNC
+-		0x40  F2FS_IPU_NOCACHE
+-		0x80  F2FS_IPU_HONOR_OPU_WRITE
+-		====  =================
++		===== =============== ===================================================
++		value policy          description
++		0x00  DISABLE         disable IPU(=default option in LFS mode)
++		0x01  FORCE           all the time
++		0x02  SSR             if SSR mode is activated
++		0x04  UTIL            if FS utilization is over threashold
++		0x08  SSR_UTIL        if SSR mode is activated and FS utilization is over
++		                      threashold
++		0x10  FSYNC           activated in fsync path only for high performance
++		                      flash storages. IPU will be triggered only if the
++		                      # of dirty pages over min_fsync_blocks.
++		                      (=default option)
++		0x20  ASYNC           do IPU given by asynchronous write requests
++		0x40  NOCACHE         disable IPU bio cache
++		0x80  HONOR_OPU_WRITE use OPU write prior to IPU write if inode has
++		                      FI_OPU_WRITE flag
++		===== =============== ===================================================
  
--	/* we should bypass data pages to proceed the kworkder jobs */
-+	/* we should bypass data pages to proceed the kworker jobs */
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		mapping_set_error(cc->rpages[0]->mapping, -EIO);
- 		goto out_free;
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8a636500db0e..c00b9ad98ac4 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2382,7 +2382,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
+ 		Refer segment.h for details.
  
- #ifdef CONFIG_F2FS_FS_COMPRESSION
- 		if (f2fs_compressed_file(inode)) {
--			/* there are remained comressed pages, submit them */
-+			/* there are remained compressed pages, submit them */
- 			if (!f2fs_cluster_can_merge_page(&cc, page->index)) {
- 				ret = f2fs_read_multi_pages(&cc, &bio,
- 							max_nr_pages,
-@@ -2788,7 +2788,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
- 
- 	trace_f2fs_writepage(page, DATA);
- 
--	/* we should bypass data pages to proceed the kworkder jobs */
-+	/* we should bypass data pages to proceed the kworker jobs */
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		mapping_set_error(page->mapping, -EIO);
- 		/*
-@@ -2907,7 +2907,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
- redirty_out:
- 	redirty_page_for_writepage(wbc, page);
- 	/*
--	 * pageout() in MM traslates EAGAIN, so calls handle_write_error()
-+	 * pageout() in MM translates EAGAIN, so calls handle_write_error()
- 	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
- 	 * file_write_and_wait_range() will see EIO error, which is critical
- 	 * to return value of fsync() followed by atomic_write failure to user.
-@@ -2941,7 +2941,7 @@ static int f2fs_write_data_page(struct page *page,
- }
- 
- /*
-- * This function was copied from write_cche_pages from mm/page-writeback.c.
-+ * This function was copied from write_cache_pages from mm/page-writeback.c.
-  * The major change is making write step of cold data page separately from
-  * warm/hot data page.
-  */
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index c8efc957c230..636aa8694363 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -233,7 +233,7 @@ struct rb_node **f2fs_lookup_rb_tree_for_insert(struct f2fs_sb_info *sbi,
-  * @prev_ex: extent before ofs
-  * @next_ex: extent after ofs
-  * @insert_p: insert point for new extent at ofs
-- * in order to simpfy the insertion after.
-+ * in order to simplify the insertion after.
-  * tree must stay unchanged between lookup and insertion.
-  */
- struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
-@@ -718,7 +718,7 @@ static void __update_extent_tree_range(struct inode *inode,
- 	if (!en)
- 		en = next_en;
- 
--	/* 2. invlidate all extent nodes in range [fofs, fofs + len - 1] */
-+	/* 2. invalidate all extent nodes in range [fofs, fofs + len - 1] */
- 	while (en && en->ei.fofs < end) {
- 		unsigned int org_end;
- 		int parts = 0;	/* # of parts current extent split into */
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a17aca50c18c..300eae8b5415 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -303,7 +303,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		 * for OPU case, during fsync(), node can be persisted before
- 		 * data when lower device doesn't support write barrier, result
- 		 * in data corruption after SPO.
--		 * So for strict fsync mode, force to use atomic write sematics
-+		 * So for strict fsync mode, force to use atomic write semantics
- 		 * to keep write order in between data/node and last node to
- 		 * avoid potential data corruption.
- 		 */
-@@ -1806,7 +1806,7 @@ static long f2fs_fallocate(struct file *file, int mode,
- 		return -EOPNOTSUPP;
- 
- 	/*
--	 * Pinned file should not support partial trucation since the block
-+	 * Pinned file should not support partial truncation since the block
- 	 * can be used by applications.
- 	 */
- 	if ((f2fs_compressed_file(inode) || f2fs_is_pinned_file(inode)) &&
-@@ -1856,7 +1856,7 @@ static long f2fs_fallocate(struct file *file, int mode,
- static int f2fs_release_file(struct inode *inode, struct file *filp)
- {
- 	/*
--	 * f2fs_relase_file is called at every close calls. So we should
-+	 * f2fs_release_file is called at every close calls. So we should
- 	 * not drop any inmemory pages by close called by other process.
- 	 */
- 	if (!(filp->f_mode & FMODE_WRITE) ||
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 82923273f4bb..f9aafb7ac44d 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -963,7 +963,7 @@ static int f2fs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 
- 	/*
- 	 * If new_inode is null, the below renaming flow will
--	 * add a link in old_dir which can conver inline_dir.
-+	 * add a link in old_dir which can convert inline_dir.
- 	 * After then, if we failed to get the entry due to other
- 	 * reasons like ENOMEM, we had to remove the new entry.
- 	 * Instead of adding such the error handling routine, let's
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 69b01b5c0ce0..ead3f35f501d 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3616,7 +3616,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
- 
- 		/* submit cached LFS IO */
- 		f2fs_submit_merged_write_cond(sbi, NULL, page, 0, type);
--		/* sbumit cached IPU IO */
-+		/* submit cached IPU IO */
- 		f2fs_submit_merged_ipu_write(sbi, NULL, page);
- 		if (ordered) {
- 			wait_on_page_writeback(page);
 -- 
 2.25.1
+
 
 
 _______________________________________________
