@@ -4,131 +4,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4AA38C63797
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Feb 2023 14:43:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 12734C636D6
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Feb 2023 14:43:43 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pP2ie-0001x2-Hy;
-	Mon, 06 Feb 2023 14:43:43 +0000
+	id 1pP2iZ-0003ud-2n;
+	Mon, 06 Feb 2023 14:43:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <frank.li@vivo.com>) id 1pP2ic-0001wv-Sk
+ (envelope-from <frank.li@vivo.com>) id 1pP2iV-0003uI-R5
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Feb 2023 14:43:42 +0000
+ Mon, 06 Feb 2023 14:43:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
- :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cKDgtqNwjIKAF7DrCZY/KgODMwK1Cbj9cUdQIRJFGww=; b=RiOAugq44OwzIXlsW5QysCRSX+
- fKA/wH2DzwVLPh7ZAEaio/NbF3BHla0WatDrWjdBvUT2pdES33rrjl0WSHVS+HlCjE3iE0icmnAzu
- 8LXz/kXgplKrkBzGH842kxohnmry5nBKMEVCcGTET/Z8Bq5f3Ip4hfmC/5MK6DC89huo=;
+ bh=iikdIJXshUUDmQOlc2PXILnzDwFSNzD28AtS3qvMCXE=; b=U0n9oSrYJfwXeGKu7juqREaP24
+ NCU0Dh4wTJg5VkfbIQm1JtFsGkfkoqpRJZsItEoRvmrcJ3NMl1y4Y4Rkth+ZXpaXj7TnAcdXvyD4Z
+ Uj5z/6tLry3VZLXt1rfbgAltcVdCLjjY5pVNFSZre/AV5v3vN09u3JCxa4a/J+LY9RPk=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=cKDgtqNwjIKAF7DrCZY/KgODMwK1Cbj9cUdQIRJFGww=; b=Q37isaR37C8VZtZ1L7nR1Ud2H5
- zOHGcqsNPSmU22UNjNmYrILIOUkCzBPOzB2mZVB8J6sScKNJcthOrp3FhG4SDRmzcdqQo6mGYXwYL
- NfIg5/k9iYb0HI5jq5xDNa9G4s3gJtfxZcF51d0lERUzLxSFTvFX47dHaTpBdSWJ+Rsw=;
+ h=MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Date:
+ Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
+ :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=iikdIJXshUUDmQOlc2PXILnzDwFSNzD28AtS3qvMCXE=; b=V
+ EXSpLhlSUuKigkS7abL+X5DrB3xmJ3Lv4us9ksZ8qGlxqUFcA9szuxSBtVC+1OaTY8sYz0WZC2501
+ s29mLfCmYr7Rf1dZ6zOz32B1TPYellh/rXAxhUOUOqxmMr9Mo62NeWoiLovrH7FNMHsH2rJNdht1F
+ 73LKBtzEvMlusCKo=;
 Received: from mail-psaapc01on2126.outbound.protection.outlook.com
  ([40.107.255.126] helo=APC01-PSA-obe.outbound.protection.outlook.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pP2iZ-00Cdrt-V1 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Feb 2023 14:43:41 +0000
+ id 1pP2iP-00Cdrt-M6 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 06 Feb 2023 14:43:34 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ajUfrzlqCqTv1/lbKpXmtFL9EtRi6KlPtkC1f2JOo269ViL6EE2x3Ooa4PYvE3NVlO0+9XQ2XeZn/MPQeFeXbQ6d4/mTV1zUD0cQZDkt7Sr4b07WaTH3f9yUqwZgG3JF14/cHQE0Bew7KpPXOigW91mG4XRdYmQG/AA8LMw6TsS399tBi7n+eKDasLkV1/2nNsEbFGqEBelXhtnisulGBjPueVKcXizAFvyZYddlqPyE7PiVrwN8Cc7+6n5NUr6KPYCVTLib6aEadEqQZpGd5z/yLQQEx9/80Y1ST9IQdQS+t3zFa5hNaxgsmdUErGO0GUdNCqIhB6L9RIfJ73pnaQ==
+ b=GqFwXfauPHX6pA+/Q2VTc3erQYjSBApxXdZt4TFTnQD0ANA1oY5JItClFS3AhUbf95xpcfKt/VQ9yRTzTR+EfySKeVedXlL3Jfdm3E3WW1pfSmoLnWrqXy6jqTLeWs6v5NsKdn5YsIyJMLs52Xk8j2tBNmL4COqty7qFUaeDZMZhv69NMkNkCZ+rbp+n+6+x7wY1Z3NlEey7e48rErfn8H3jpvtvUHDftP8lUq/SIa5aALp7h9PmWuHJc/EYF9fpQACwB42RbvLfZi8mSpMRyTss5Ic0BhdNuU/xB90xnWiW4N/sqj08qfxQb5iFmCDug0EB1ZRwp0JNjfEWE7F5+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cKDgtqNwjIKAF7DrCZY/KgODMwK1Cbj9cUdQIRJFGww=;
- b=gVoQ/96AelaQfTNCGqdsIhBS40z6jMbstZX9DJvJ49hpspg2AO4Wcu7/Om3wIc8fFnFj2FWVd5NB4jDwOPWFS17MX2BqIq63V0Lo/GTL/1YG45dVOZqIVe1iBudE6zk7SXVBjYP6jIo1WY2urtWJQTQqOvQ9akBwxEPQsbhXiK9nywgc8ZEGYX3bpTdZjMej7UHTk16VR/DS4MZ1ADWy7nu9rRpJYjH6PKIA22LHDY/mD8Z/d4lOgJAx0cUSxDDfVQc29LYq73+BEV5BApd3MEhjOFo90gpZI7JLSE5E/DqVw5mxpn7n+bdVVrX9LylLNxxPoD0JLODreuEzxJMNtw==
+ bh=iikdIJXshUUDmQOlc2PXILnzDwFSNzD28AtS3qvMCXE=;
+ b=IfyJdgwrVdwzt2fqXmzVTF6caJUSMPao8O+gNJfdBea+2is+cNWrM4j5rZf8R0r98JIGo1CqlGztK6rHOutcMliaXaJwH8gUmGLdzgnMDVXbo7XwnsNthvsgyp+pcomqeJAuImfpNeLrO8ByrhobC93eiRhR52YwS//I3ydhjjMMn/NUapN6KfOqSkqTyOtPkV9cllcMPw/T7IAHjgIDD8lTCWiMhN0v0aC8NRgraqUdJWc/4L3JwzrVvOGFTtpj/PFg8XeersFeTNhXnMkhp/xgUzh4qeZR4vMtA7rh34y0mXSXVc4VTeG0PeQEyFE08EuPe+UiX4l7v4EOybvxqA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cKDgtqNwjIKAF7DrCZY/KgODMwK1Cbj9cUdQIRJFGww=;
- b=F38r7/DPXyGRZPZPdTRn1uR4cnGyvMWvm7mqiKhSK5BH4AkzruvhvNWGdogkLsDURrzuzerazXBPdH/ztfAhsM+uU2BRoP9r9Ef367LCLnmO1aN9dkK1CZOJVY5CqiZZbaQt6gs3wt7IVAI9NZbG8qlZeA2vft/OaujI3Gv/7sv+3/j+zn4B0ycTLJc+mmN0/0/CH5pDxrta147hKYlGLNLNsdZ3iweGp4Rc4fL1wOFN5oZ8XvoDUg3x6ZqunViYhNe5Dp3Ni9UAazub3/CGSrfurKReDVy3ICYkuCNhklFCepHfmkLOzxOtym9AltNZX64qz+NXQtM0eWcWIKe0DQ==
+ bh=iikdIJXshUUDmQOlc2PXILnzDwFSNzD28AtS3qvMCXE=;
+ b=jZsYa8oGq0zuWRKZ4nNUJJUEFnFg1FY3kEELaD0h45dG+UadvTIWeZmcF2CaZJo4rRkGqDldPLSRttdqR4kbVcNEyqB3qquoZq2m1ybTgEdYNpAqDJPVwtU/368dQ82KwAOq4FFJNKU7IgGlkd6GqW32prgg8Uq+rAIJeqigaHlhREEX3qJATEbBpVK3CmfpA8D5ciyTeU9oBZAFhO48KlCj78GB7THpIqbI5l1yOuD8Tgby3pgwQqINAjCU99lVYqRh9vjbP8ZvMAqb2ynmCAWroLmLL2VXZoyFU9GzBX0XsUKSQma6trxrvqTZlsSQBOSRUjI5XvDWSGvGfvImnA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
 Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
  by SEYPR06MB5765.apcprd06.prod.outlook.com (2603:1096:101:ba::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.22; Mon, 6 Feb
- 2023 14:43:30 +0000
+ 2023 14:43:21 +0000
 Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
  ([fe80::3e52:d08c:ecf4:d572]) by SEZPR06MB5269.apcprd06.prod.outlook.com
  ([fe80::3e52:d08c:ecf4:d572%5]) with mapi id 15.20.6086.011; Mon, 6 Feb 2023
- 14:43:30 +0000
+ 14:43:21 +0000
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Mon,  6 Feb 2023 22:43:10 +0800
-Message-Id: <20230206144310.2344-3-frank.li@vivo.com>
+Date: Mon,  6 Feb 2023 22:43:08 +0800
+Message-Id: <20230206144310.2344-1-frank.li@vivo.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20230206144310.2344-1-frank.li@vivo.com>
-References: <20230206144310.2344-1-frank.li@vivo.com>
 X-ClientProxiedBy: SI2PR04CA0005.apcprd04.prod.outlook.com
  (2603:1096:4:197::16) To SEZPR06MB5269.apcprd06.prod.outlook.com
  (2603:1096:101:78::6)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEYPR06MB5765:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9effe59-6867-44cb-5a02-08db08508388
+X-MS-Office365-Filtering-Correlation-Id: 1fbf435e-9d19-443f-0499-08db08507e0f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qsWSSTUpDSABPWgq60TqPL3u+cbgQpl+m+SG6XFHQvgaxuvCX6bmDexO9jaExuJ0taDqeCbePUtcJoRMcHWa+jeZt2bOLcxr7iTGkortHSGWR5kgHBe5d3dci9ukFo4GeLavIHK0hiXyt9Bqz4lkcvKsm47lxeQpnuaRjv3XgatX2yC6XrEg+ynQ9nIDrsnQ+T2i+S7E8d0Jt2JnDqaBDSkM5UW/olCac/rQ+/d868grxcOfFnVDJaGOHD1t8b5asX+RMowSHe9b+FS9wbx3kkweOdMLLdLNtqW1z/IMcjD7PT7SpA0/qt+XC32nZc4zsEGL1SN6NyeODYVYXq49/xRU5mnqliAClXRTeeRfVRJEdU/AWzKyq/BaaRahxhdvxaJzg3P8cFeaagr7ILAjFVIIiULN+AMmP0lQoEFMAtK8OOJSIxjMyFsvvfQ4pgWxqbCvnfYc7BtL9/RQzcfrZHB+ew/LrpVhAeYwb7LsJmlFQ2cYgagdiveekdPHAa7gPYzsrTXg6VrUxM2m8GBzqmch+TOmsnL7lhTVr+eLHAKGf9jn/fLavLHFqzzw5MpcWyKLxOeSv+rkkfk1jFdCuAA9udnTzCVpQamNipuRsqAm2YvW5I6gKCX0hlqtLyRGHT78+AsXpPsjYR3hrpCm/5ZYF/nPM1tY8/rtCwlDm0TIp5GBGFVqHbvVIHDrAFqklLLfuXH++oDZw31yYKuLPg==
+X-Microsoft-Antispam-Message-Info: 4RbrPXdgFfIZ7u8TU4AW2LdHe2zBP/5jAHRGC5676pvGo3S13c76EKwyScCwDcwude8QImKbRgSRLAwMK1otNwC9h4G2npm160hhfplxAOPkexSdNEvpJCkmv0j3lwn9o/OUJ6Uw/S4+iptVB9Ejz91NZMvRGWOJDIjQ1aRxhSG1AuuY27PRixtImEgGTWA0UhIPCwX+w/2xbogeodvfS1Fgn+en0kulMi133rSYxwaGN0eNKShi5m9MtVmbYxvUI3dX9vQUqr/ENxpAIl/2Ss3BRC30x5BW2PNqC5+KmF/dWBk1F9NetmcSqntUnMaBlUqdfMfK0JlX+scDpVU09aCTkiQtDFAylScF5LqHBXf3pV+gR7M3ZsNARBlvEZoj0Drb/IUsrf4Q+W62bQjCVgU83Jwf04NOJpRL4hHjQJjG2Ua3GIMvOo5C6xmOaf+RdJ9AuLWsm87K2490yb5llx7BlBJBit4bPv4Oqzc3lq3CZAVb01cUcvIhGv8TI9BCfwPPwAJDWaO0+mI1Z6BdOyCmX45MYwcvPLDpKDjPTaZs3pYgLPJSy1RNw0ZXpd0/dPyQrNgg/4Z1HKpIjisQc0AgcUXz0838Q4rtX7a02JXM8/oTRVnxL+WAHVzRQtbikt9GmjgSjd5NltjVdaDZOnb7CzukMFzCDVaIXjsrUntpJuX+zxLrNHTZQgKFXgD2mL5SFWspQVA9UVcY1SbKKaJnKfBbSBIri38c8NYpV80=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SEZPR06MB5269.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230025)(4636009)(376002)(136003)(396003)(346002)(366004)(39860400002)(451199018)(38100700002)(8936002)(86362001)(107886003)(6666004)(36756003)(2616005)(38350700002)(19627235002)(6486002)(2906002)(478600001)(52116002)(66946007)(66476007)(316002)(6512007)(41300700001)(4326008)(83380400001)(186003)(5660300002)(26005)(6506007)(1076003)(66556008)(8676002);
+ SFS:(13230025)(4636009)(376002)(136003)(396003)(346002)(366004)(39860400002)(451199018)(38100700002)(8936002)(86362001)(107886003)(6666004)(36756003)(2616005)(38350700002)(6486002)(2906002)(478600001)(52116002)(66946007)(66476007)(316002)(6512007)(41300700001)(4326008)(83380400001)(186003)(5660300002)(26005)(6506007)(1076003)(66556008)(8676002)(309714004);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?g4iKy3MLQ3MOKvpatH9vbn0dCXWd3E6xxEN7coPJI0ya7qvhG+UGnLNL+UPc?=
- =?us-ascii?Q?K/1Q1whLuPm2rOfvnTwMn3ovJMsdS1tKwVsjnn/ORFtAZe1gdmOvQXRSDu+S?=
- =?us-ascii?Q?LBVvB/Hvqo0mWHois8mskSCQQQ4Eu5j86rQIaIeozsaZgA8Y60TQJAwUTH4Y?=
- =?us-ascii?Q?ljPfz1N0FcVGY9FR0Cg1vgM2AKAwgRRXRN5CvoxRYKBjuU4YGc18Itx2dKMA?=
- =?us-ascii?Q?Ns80ax5expGMvgklau46A9yOfQH4x4+JfxEBos99ukumjz6tGs1oI2FIeY+R?=
- =?us-ascii?Q?rljaVkWSliXiMHxRTyQWTW3cUDKq8uCdpnvgicNi9zw01NM033rsFoSXN+Rb?=
- =?us-ascii?Q?Z3pub+fiBg0BZedm2+D5xGc9BV1Bg/aiL1zd6JWtTOCWOfueRJJIabA2ZSl7?=
- =?us-ascii?Q?CVbIoCX6KoO4faGwABgmhNYuLizt7gxmBnPvJs8Exf1diX2dcDq97MwwKNUA?=
- =?us-ascii?Q?k894S1yT5HzI8m4+4ZPnwY86zhxZtv3GBRltq0ZFebtH/+TDS8VSz1qa6Cjr?=
- =?us-ascii?Q?cuj6FMSD5WhDBWxzxebU3JjmWJ20C9GyIZ9FS5Ztw32YVmV/xv3FACVqAm1P?=
- =?us-ascii?Q?tqdoUq0HIG97aaBV58U8bDciCmnkBBP2i2v9Jvt2DgQh6RdnmaqqhNV39gpI?=
- =?us-ascii?Q?Qk9TiYMXktxpfRwj1+STyCT7zceyZKSLv0fVnxHBRnqCL4mHU7pyjg8Safj4?=
- =?us-ascii?Q?LmhirMMsF8FPugJSA2QKetpL/jv6lEvHoOuPjJFp37D+2MPsG6bCJvQC99Sw?=
- =?us-ascii?Q?PFWw3BYeJyLTpvETdQUNFMxc7uKgldSkU97Rprm2gTMYzmeU23ugu996W1xG?=
- =?us-ascii?Q?lanf5mQfM+IAFCEvLy+K/DzzZTryzqQ8d+i42fUuQv6GpDgfhpeMkUtUrtCF?=
- =?us-ascii?Q?iaf/URDc1Alu5ipc/W+U7inlZoCOPGS8fNH/hkjafyc0YSs7Yv3guSrih5lV?=
- =?us-ascii?Q?5CHgEcAepggtxiBAMLer0VMR/iQ+fMnrFK7evHnUZwWJZ/sjqCqSFzqmRSkA?=
- =?us-ascii?Q?vzR6RrXDNvVjEuDYGsx4pMpmJyqY/+HjbP2kvB59W4rh2aAdKSXp/PGADxH8?=
- =?us-ascii?Q?69CmZHeOO4DxHLmtDETsmXhcdbZ3RtTvkyxWutV4QzHRUQH36cis/0zK5PTt?=
- =?us-ascii?Q?NwX4ALN+AijiiDmGtz4BneCFmj+I7Jf+jt43stJGcTZAy/uAQXOqoCuUQGde?=
- =?us-ascii?Q?ntErsD6G9X40bZuJdlERu4Z/crnN+WQABpcqL+hkgONQjL8kEX5K1wackDYC?=
- =?us-ascii?Q?cUXAykyilm3kxQJFG9XiEA3eCCgKG0YC0JGBT9W0VWV5rZrCuCISmmYGT/ht?=
- =?us-ascii?Q?8pLNhwxg0QRF45SjvHKD6KtTSJWBar2uZNiQNLxYojEZFNIlijWCWYi15sAK?=
- =?us-ascii?Q?jrbcmg5Yugw7mA2pyvj9KaqenhISRkUA2CmITMY+7xHfYMO/v+Fhv/E3Gzsd?=
- =?us-ascii?Q?6y/CU9dB3ifuRXe7+efRtRLwmv/jWg+izJP1jI0v1JXzcP445diy2Zn6V05N?=
- =?us-ascii?Q?AgED5cRp50ClAvgVE3s7h/jO91Uqs0Huko1qmvpB4P5IHCPYy3+eXNVzqE4x?=
- =?us-ascii?Q?v5H6B205e7bPOh2z6lHqi7ojtQiQixUztKDt6FPi?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pAv3ivSXgTriOlWbKD6fWDtuwE+2reNNf31oO273DneqinmP2IKlmJ4RY+my?=
+ =?us-ascii?Q?582wkHx6ll3Qr2JnJBzbQX5v8WXKt21XP0f5MaTA39xh2iIjtfNylxeqo3zg?=
+ =?us-ascii?Q?kpaEZIslN8Oo2+0FH9K2t23Bgv7rCB4yygpQM3UyzxNpW6C+JILUojH4jcre?=
+ =?us-ascii?Q?Pt/Zq3yd/o7Lkla7NgblhRDMcPwjd9xEQwpIt4O1gi7SNrU11jFXMKbrMFKQ?=
+ =?us-ascii?Q?PGm/mDZ9Mlqlyp1JOxHht5XsSkrrA5t8KCNY+DIMphDvfvqgN9P1rgVa4qNt?=
+ =?us-ascii?Q?hXYlZ+h+kNz36CkU/Yv6tnWPMxH/JgqC5FXWjvgTPUY/OU9H7fdVZS5cQCnq?=
+ =?us-ascii?Q?Iw9cFU6FY1oRqAzYiefDuF3CO0M+n7l1LgTm852Wss6ohG7H8sKnp7Ts/1BG?=
+ =?us-ascii?Q?Z9qH9fflFVbaw+z0XZi9jNhDYsQ3vFqov/Wl8XW8VGo+rCCRyWwqbq7X3zXh?=
+ =?us-ascii?Q?t9RH7LfHmstWSGU0hlRdYsTCXu73NLAUhPy+LF61g9JEUR897uZJQkAkRULF?=
+ =?us-ascii?Q?aQGDD5+4luoBDnVTiTcEyunx3ddKSq34xRH557dsCEUM5+DMYyu4Hu6sngJO?=
+ =?us-ascii?Q?vSewYznJ2RHJ3WrAhxofSmt7oSV3+9qBbgRY9qH1hwpzEZv4UEDkEU4FHu5O?=
+ =?us-ascii?Q?7YHL61pK17rBcF/dRJdmJEe3VVXai2H0G948nlu42FRHpCE9g5OlxQh3rB91?=
+ =?us-ascii?Q?QbuVfu3Fp3hdlwTJE8NVcKY/n4toJs8szgqCv5cyxqYfh4B2z1V6/7rHxBOn?=
+ =?us-ascii?Q?5IpLuXBGhb5QrqleSPaPQPJEkHGt22HFhAW3V3GafVXyktyn7No356I17IOR?=
+ =?us-ascii?Q?I/VaWpSwaIj4OfScf4JwoWfhXM+8KKt8X9AE2yLaNailJI21zcCzh8oGZ6z9?=
+ =?us-ascii?Q?SrBcw0C2f48lpK/uYc1QWiU4OxfHUg43zq+dZoJ04Z2jyrPXn2PhK0ByKXG1?=
+ =?us-ascii?Q?126hYRB5MmM4BcGZbja+0VC6V0NP4e3Xu732N1f1zKWdikcRYlJZujQK0Czl?=
+ =?us-ascii?Q?thA0DZ22T1GgGZEhbiYiWQMFr1XReBXLk/uWjYA7xod3JXoLCMq9Z++gOrYj?=
+ =?us-ascii?Q?+WfD0fbJar9zBiK371m6ENqV+5M+fL/7ddzXfloQlRm1kGP+q4mtzm8saeit?=
+ =?us-ascii?Q?QGybldlzL2dIrxYbF1Vse/gyJmtb8G7NJFiWpc+PX8kr7P3MJ47Clbxepi87?=
+ =?us-ascii?Q?cRxnTxLTpIYMnYQaC8ASpv3sss8Qfq0um4BjtXd2/arnXqErFI8aabchgq1e?=
+ =?us-ascii?Q?9tEMgL79oxOuyzzZN+UiPMxvGPjb/LRpLiI3R7fcbZA7J6VnXeHAw1W8R1dC?=
+ =?us-ascii?Q?jSaPzqyLDOnwExw18GoVN8sPmVax+3vi1JFHBdOhJH86gYCFA0y+VZHdmzMe?=
+ =?us-ascii?Q?X9C1Yo1+j8pjX26fK5jZsBmZc6nzHeFi5Q/4yCLBAPPW5B6XmwvhVMeHrmnL?=
+ =?us-ascii?Q?9u17a9EYRNSYLaCK4DK56yIjxCqLsQzlLldTIBOT42rIdAcNdpDAFIIQOmXF?=
+ =?us-ascii?Q?ZKBpqAMYEmazC/8uFHqb6qVIGwUhf+6ShlT45x6JhHLclz6cipBsOePbFEDf?=
+ =?us-ascii?Q?5mGXdY0NYmIi65Qnb/rD8AAZNNYxr3FGqftp40am?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9effe59-6867-44cb-5a02-08db08508388
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1fbf435e-9d19-443f-0499-08db08507e0f
 X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2023 14:43:30.1464 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Feb 2023 14:43:20.9938 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b/4BZNhisKfdyvWaD4YeVHXzKYhRmWwVFhJVt7bJGsKYK0xwVlTvooMfkc7PF71bloB5UTi2kZSFxvjgBVZPkQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7UDtFsB6deO1E6Rr+oNxo50XiZnJhBbYDLPBpmAlSEGgWjOsh4FA+D6ZqCqAk9haJiOzWCoZXsd55IidHGeAhw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5765
-X-Headers-End: 1pP2iZ-00Cdrt-V1
-Subject: [f2fs-dev] [PATCH v4 3/3] f2fs: introduce ipu_mode sysfs node
+X-Headers-End: 1pP2iP-00Cdrt-M6
+Subject: [f2fs-dev] [PATCH v4 1/3] f2fs: fix to set ipu policy
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -148,138 +146,120 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add a ipu_mode sysfs node to show the current ipu policy as a string
-for readability, like we do in commit a3951cd199a5 ("f2fs: introduce
-gc_mode sysfs node").
+For LFS mode, it should update outplace and no need inplace update.
+When using LFS mode for small-volume devices, IPU will not be used,
+and the OPU writing method is actually used, but F2FS_IPU_FORCE can
+be read from the ipu_policy node, which is different from the actual
+situation. And remount to lfs mode should be disallowed when
+f2fs ipu is enabled, let's fix it.
 
-Since we use ipu_policy as a bitmap, and the bitmap API parameter is
-unsigned long type data, let's change ipu_policy to unsigned long type.
-
+Fixes: 84b89e5d943d ("f2fs: add auto tuning for small devices")
 Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
 v4:
--rebase, no code change
- Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++++++
- fs/f2fs/f2fs.h                          |  4 ++--
- fs/f2fs/segment.h                       |  1 +
- fs/f2fs/sysfs.c                         | 28 ++++++++++++++++++++++++-
- 4 files changed, 36 insertions(+), 3 deletions(-)
+-allow set 0 in lfs mode for ipu_policy node
+ fs/f2fs/segment.h | 10 +++++++++-
+ fs/f2fs/super.c   | 17 +++++++++++------
+ fs/f2fs/sysfs.c   |  9 +++++++++
+ 3 files changed, 29 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 94132745ecbe..b2d8c1e84073 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -729,3 +729,9 @@ What:		/sys/fs/f2fs/<disk>/last_age_weight
- Date:		January 2023
- Contact:	"Ping Xiong" <xiongping1@xiaomi.com>
- Description:	When DATA SEPARATION is on, it controls the weight of last data block age.
-+
-+What:		/sys/fs/f2fs/<disk>/ipu_mode
-+Date:		February 2023
-+Contact:	"Yangtao Li" <frank.li@vivo.com>
-+Description:	Show the current ipu policy as a string.
-+		This is a read-only entry.
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 44f2d76525bf..b699ed74f438 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1070,7 +1070,7 @@ struct f2fs_sm_info {
- 
- 	struct list_head sit_entry_set;	/* sit entry set list */
- 
--	unsigned int ipu_policy;	/* in-place-update policy */
-+	unsigned long ipu_policy;	/* in-place-update policy */
- 	unsigned int min_ipu_util;	/* in-place-update threshold */
- 	unsigned int min_fsync_blocks;	/* threshold for fsync */
- 	unsigned int min_seq_blocks;	/* threshold for sequential blocks */
-@@ -1322,7 +1322,7 @@ enum {
- 	MAX_TIME,
- };
- 
--/* Note that you need to keep synchronization with this gc_mode_names array */
-+/* Modification on enum should be synchronized with gc_mode_names array */
- enum {
- 	GC_NORMAL,
- 	GC_IDLE_CB,
 diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 8ee5e5db9287..92c8be00d396 100644
+index 0f3f05cb8c29..8ee5e5db9287 100644
 --- a/fs/f2fs/segment.h
 +++ b/fs/f2fs/segment.h
-@@ -672,6 +672,7 @@ static inline int utilization(struct f2fs_sb_info *sbi)
+@@ -670,6 +670,8 @@ static inline int utilization(struct f2fs_sb_info *sbi)
  
- #define F2FS_IPU_DISABLE	0
+ #define SMALL_VOLUME_SEGMENTS	(16 * 512)	/* 16GB */
  
-+/* Modification on enum should be synchronized with ipu_mode_names array */
++#define F2FS_IPU_DISABLE	0
++
  enum {
  	F2FS_IPU_FORCE,
  	F2FS_IPU_SSR,
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 3c3dae3ce84e..4a2d895cd52c 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -51,6 +51,17 @@ static const char *gc_mode_names[MAX_GC_MODE] = {
- 	"GC_URGENT_MID"
+@@ -679,10 +681,16 @@ enum {
+ 	F2FS_IPU_ASYNC,
+ 	F2FS_IPU_NOCACHE,
+ 	F2FS_IPU_HONOR_OPU_WRITE,
++	F2FS_IPU_MAX,
  };
  
-+static const char *ipu_mode_names[F2FS_IPU_MAX] = {
-+	"FORCE",
-+	"SSR",
-+	"UTIL",
-+	"SSR_UTIL",
-+	"FSYNC",
-+	"ASYNC",
-+	"NOCACHE",
-+	"HONOR_OPU_WRITE",
-+};
-+
- struct f2fs_attr {
- 	struct attribute attr;
- 	ssize_t (*show)(struct f2fs_attr *a, struct f2fs_sb_info *sbi, char *buf);
-@@ -149,6 +160,19 @@ static ssize_t gc_mode_show(struct f2fs_attr *a,
- 	return sysfs_emit(buf, "%s\n", gc_mode_names[sbi->gc_mode]);
- }
- 
-+static ssize_t ipu_mode_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
++static inline bool IS_F2FS_IPU_DISABLE(struct f2fs_sb_info *sbi)
 +{
-+	int len = 0, i = 0;
-+
-+	if (SM_I(sbi)->ipu_policy == F2FS_IPU_DISABLE)
-+		return sysfs_emit(buf, "DISABLE\n");
-+
-+	for_each_set_bit(i, &SM_I(sbi)->ipu_policy, F2FS_IPU_MAX)
-+		len += scnprintf(buf + len, PAGE_SIZE - len, "%s\n", ipu_mode_names[i]);
-+	return len;
++	return SM_I(sbi)->ipu_policy == F2FS_IPU_DISABLE;
 +}
 +
- static ssize_t features_show(struct f2fs_attr *a,
- 		struct f2fs_sb_info *sbi, char *buf)
- {
-@@ -711,7 +735,7 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 			return -EINVAL;
- 		if (t && f2fs_lfs_mode(sbi))
- 			return -EINVAL;
--		SM_I(sbi)->ipu_policy = (unsigned int)t;
-+		SM_I(sbi)->ipu_policy = t;
+ #define F2FS_IPU_POLICY(name)					\
+-static inline int IS_##name(struct f2fs_sb_info *sbi)		\
++static inline bool IS_##name(struct f2fs_sb_info *sbi)		\
+ {								\
+ 	return SM_I(sbi)->ipu_policy & BIT(name);		\
+ }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4ec2cbbc47eb..09696fc844ab 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1346,12 +1346,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 	}
+ 
+ 	if (test_opt(sbi, DISABLE_CHECKPOINT) && f2fs_lfs_mode(sbi)) {
+-		f2fs_err(sbi, "LFS not compatible with checkpoint=disable");
++		f2fs_err(sbi, "LFS is not compatible with checkpoint=disable");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (test_opt(sbi, ATGC) && f2fs_lfs_mode(sbi)) {
+-		f2fs_err(sbi, "LFS not compatible with ATGC");
++		f2fs_err(sbi, "LFS is not compatible with ATGC");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -2304,6 +2304,12 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		}
+ 	}
+ #endif
++	if (f2fs_lfs_mode(sbi) && !IS_F2FS_IPU_DISABLE(sbi)) {
++		err = -EINVAL;
++		f2fs_warn(sbi, "LFS is not compatible with IPU");
++		goto restore_opts;
++	}
++
+ 	/* disallow enable atgc dynamically */
+ 	if (no_atgc == !!test_opt(sbi, ATGC)) {
+ 		err = -EINVAL;
+@@ -4083,10 +4089,9 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+ 	/* adjust parameters according to the volume size */
+ 	if (MAIN_SEGS(sbi) <= SMALL_VOLUME_SEGMENTS) {
+ 		if (f2fs_block_unit_discard(sbi))
+-			SM_I(sbi)->dcc_info->discard_granularity =
+-						MIN_DISCARD_GRANULARITY;
+-		SM_I(sbi)->ipu_policy = BIT(F2FS_IPU_FORCE) |
+-					BIT(F2FS_IPU_HONOR_OPU_WRITE);
++			SM_I(sbi)->dcc_info->discard_granularity = MIN_DISCARD_GRANULARITY;
++		if (!f2fs_lfs_mode(sbi))
++			SM_I(sbi)->ipu_policy = BIT(F2FS_IPU_FORCE) | BIT(F2FS_IPU_HONOR_OPU_WRITE);
+ 	}
+ 
+ 	sbi->readdir_ra = true;
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 575a5536c0e7..3c3dae3ce84e 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -706,6 +706,15 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
  		return count;
  	}
  
-@@ -907,6 +931,7 @@ F2FS_GENERAL_RO_ATTR(mounted_time_sec);
- F2FS_GENERAL_RO_ATTR(main_blkaddr);
- F2FS_GENERAL_RO_ATTR(pending_discard);
- F2FS_GENERAL_RO_ATTR(gc_mode);
-+F2FS_GENERAL_RO_ATTR(ipu_mode);
- #ifdef CONFIG_F2FS_STAT_FS
- F2FS_STAT_ATTR(STAT_INFO, f2fs_stat_info, cp_foreground_calls, cp_count);
- F2FS_STAT_ATTR(STAT_INFO, f2fs_stat_info, cp_background_calls, bg_cp_count);
-@@ -997,6 +1022,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(max_ordered_discard),
- 	ATTR_LIST(pending_discard),
- 	ATTR_LIST(gc_mode),
-+	ATTR_LIST(ipu_mode),
- 	ATTR_LIST(ipu_policy),
- 	ATTR_LIST(min_ipu_util),
- 	ATTR_LIST(min_fsync_blocks),
++	if (!strcmp(a->attr.name, "ipu_policy")) {
++		if (t >= BIT(F2FS_IPU_MAX))
++			return -EINVAL;
++		if (t && f2fs_lfs_mode(sbi))
++			return -EINVAL;
++		SM_I(sbi)->ipu_policy = (unsigned int)t;
++		return count;
++	}
++
+ 	*ui = (unsigned int)t;
+ 
+ 	return count;
 -- 
 2.25.1
 
