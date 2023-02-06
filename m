@@ -4,73 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96F7EC05027
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Feb 2023 03:40:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 964A3C61DA4
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  6 Feb 2023 03:41:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pOsMs-0006Qr-Rt;
-	Mon, 06 Feb 2023 03:40:34 +0000
+	id 1pOsNe-0006np-AC;
+	Mon, 06 Feb 2023 03:41:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pOsMr-0006Qi-Et
+ (envelope-from <jaegeuk@kernel.org>) id 1pOsNd-0006nb-7b
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Feb 2023 03:40:32 +0000
+ Mon, 06 Feb 2023 03:41:19 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=eK/raFUy4Nu2W6VhgJv3SqRs+xvVQ8QV7KH2bexrFlw=; b=g5nI1/FpQWxe49UU1dLMY93P3v
- VF5yONzRXgNJ406SoOHURLINLepo9MIJNY+zNfJm5zG4C42UrTqcZKZlCZy2/OUsC/sG2o9Qg3Fos
- /g+/7JauIeCYG7BPpfiDs9ItTpaObBuAr5apSJf8Vt/1TjDOC3vI3jJdM6y917UFNQQI=;
+ bh=6zjxwwv9NaPotRZck6IRXhayEsfTwt/vRZ7rAKkGvcc=; b=KedW5QTp4SQOmu+G0fXbcyv20s
+ vqK2kCqu2TF3pSWTl+r+UkhMhSmbFsPR56KBbn+ElGFPSK8a8Vlr+xzwjOkMJ8uG/ny0DrTi5kKRT
+ tdkXZz1oJB/p4k5jnM6Sx8TGSh3kq6n327neVcz0+93Y0zxmmLRJAvpOX8dx4jXf2RQU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=eK/raFUy4Nu2W6VhgJv3SqRs+xvVQ8QV7KH2bexrFlw=; b=awgsWaGlgJTn9H/rfKA+Z6/EUG
- rdYmgI4ji5SWXTXoX+yYtyR+exMe+bcInOswsQUzeUFXGxXRH0XBL7KsD0S0rBtseSCBIAFZFEST1
- Nv+YCAayNCXcfaPfv+dRL4Ek3LtiXK47sXbTA2tv5fQSs/6zwkLo1aI1c0PLE5129Jos=;
+ ;
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=6zjxwwv9NaPotRZck6IRXhayEsfTwt/vRZ7rAKkGvcc=; b=aHNGAfU6VSUEg7y2BZb7Wq2eb8
+ wKF/TQzyGyiWauFyH0Ex2vwsr8Rq72phzQAImxp0bFn/Wn/LBzEE3xAumQHyLsM2K02bPORcpy3yz
+ rre6w/QKisPTn80Ms4NNI+0XKAa/4IuWxUMxXsxTuZgkM4+m28XbLXyN+Tjg2b3i5+G8=;
 Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pOsMp-0005dk-BI for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 06 Feb 2023 03:40:32 +0000
+ id 1pOsNZ-0005ez-1W for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 06 Feb 2023 03:41:19 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id EFBB4B80D25;
- Mon,  6 Feb 2023 03:40:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7CE4FC4339C;
- Mon,  6 Feb 2023 03:40:19 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 8BD34B80CD9
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Mon,  6 Feb 2023 03:41:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28B97C433EF;
+ Mon,  6 Feb 2023 03:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1675654819;
- bh=cuUmVlIvx0t/MTXG+vkVHRIKWFYI/gJMPubicUdPKKk=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=YXXH2KDrW8jrh5RZGN6u9Xcr8BONEkidH9bc9pqDZaJll0PjgcwqONAwyrQ0m4qU/
- T9/eQhSlXZcuQEF+qrVnwoWOUpP+9zaw+V0voBmvm+d2TVvpuRTjZMIJ5v94WhsH0e
- 0r5rD6AierG0r0UMM8LYAQ5r8bYbrxqiLnjb+1P6oZ/67qXmi4U4F/FZaYp1PHs/Ho
- s720UgbRaG8lhRLDX/JMf1qS8fENc3JeyODENlQh3b1zGbBC3aylDX+KAIQXdnirHA
- cMgttt5cF1Y5DhFxnarywKSxB5PLEe6g9L+ZOnXQa4cqFnz8WyUmaK6b55cfASQlWr
- DZCQCc4x1n95w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 61924E55F00; Mon,  6 Feb 2023 03:40:19 +0000 (UTC)
+ s=k20201202; t=1675654870;
+ bh=0e5Vf/+wq9RFfzBH3ksPS6To75J3Rc8u/Il3bhGTie0=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=sdpLCcMr6Ug8oCrOURoCovSbDtScoGcswvN+oKO7fkXeQ9l6t4FE8EDKxzLPqinbH
+ Q6MLfnhGj7ds7XoGY2XuyJMxJG17bKVlsewPsyGA4l5A+sIk/CMqgb4a7pezgKIha+
+ VKzCOFdERR46lNQi9XCDF4KA2lnEC9oGteuEZL3y9xIQmNy04bG0rF099I51T7eU31
+ 2QLWFl2DyhhmgVvhldUqrJTPJArnG+RyuyYpnQ3fo9g4aZ9E/wZKBp8UgrnAibAZ88
+ vEPsXFjuViVM66sj26TxUxq7NoCEjm39iGGfgEKbwP+5xPULox/OC4Y6l3swHC0THo
+ ahHGA6do+S5vw==
+Date: Sun, 5 Feb 2023 19:41:08 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Message-ID: <Y+B21EAHfuw2vyJ6@google.com>
+References: <20230131144701.34418-1-chao@kernel.org>
+ <Y9lkeVCMRA9goN2E@google.com>
+ <a27b1135-757f-9609-1511-7c6738887472@kernel.org>
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167565481939.5323.10753252080244168478.git-patchwork-notify@kernel.org>
-Date: Mon, 06 Feb 2023 03:40:19 +0000
-References: <20230203010239.216421-1-ebiggers@kernel.org>
-In-Reply-To: <20230203010239.216421-1-ebiggers@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-X-Headers-End: 1pOsMp-0005dk-BI
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix cgroup writeback accounting with
- fs-layer encryption
+Content-Disposition: inline
+In-Reply-To: <a27b1135-757f-9609-1511-7c6738887472@kernel.org>
+X-Headers-End: 1pOsNZ-0005ez-1W
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: clean up
+ __update_extent_tree_range()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,43 +83,176 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: willy@infradead.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- stable@vger.kernel.org, tj@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Thu,  2 Feb 2023 17:02:39 -0800 you wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 02/01, Chao Yu wrote:
+> On 2023/2/1 2:56, Jaegeuk Kim wrote:
+> > I wanted to avoid a deep if/else statement.
 > 
-> When writing a page from an encrypted file that is using
-> filesystem-layer encryption (not inline encryption), f2fs encrypts the
-> pagecache page into a bounce page, then writes the bounce page.
+> So how about this:
+
+Nothing impressive.
+
 > 
-> It also passes the bounce page to wbc_account_cgroup_owner().  That's
-> incorrect, because the bounce page is a newly allocated temporary page
-> that doesn't have the memory cgroup of the original pagecache page.
-> This makes wbc_account_cgroup_owner() not account the I/O to the owner
-> of the pagecache page as it should.
+> From 418b408420367ac5491c97a7c4d26e3d0e68ea57 Mon Sep 17 00:00:00 2001
+> From: Chao Yu <chao@kernel.org>
+> Date: Tue, 31 Jan 2023 22:46:59 +0800
+> Subject: [PATCH v2] f2fs: clean up __update_extent_tree_range()
 > 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev] f2fs: fix cgroup writeback accounting with fs-layer encryption
-    https://git.kernel.org/jaegeuk/f2fs/c/844545c51a5b
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> Introduce __update_read_extent_cache() and __update_age_extent_cache()
+> to clean up __update_extent_tree_range(), no logic change.
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> v2
+> - introduce __update_read_extent_cache() and __update_age_extent_cache()
+> to avoid a deep if/else statement in __update_extent_tree_range().
+>  fs/f2fs/extent_cache.c | 116 +++++++++++++++++++++++++++--------------
+>  1 file changed, 77 insertions(+), 39 deletions(-)
+> 
+> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> index d70ad6a44cbf..887b0b2898b9 100644
+> --- a/fs/f2fs/extent_cache.c
+> +++ b/fs/f2fs/extent_cache.c
+> @@ -666,6 +666,75 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
+>  	return en;
+>  }
+> 
+> +static inline bool __update_read_extent_cache(struct inode *inode,
+> +					struct extent_info *tei,
+> +					struct extent_info *ei,
+> +					struct extent_info *dei,
+> +					struct extent_info *prev,
+> +					unsigned int fofs, unsigned int len,
+> +					struct extent_node *prev_en,
+> +					struct extent_node *next_en,
+> +					struct rb_node **insert_p,
+> +					struct rb_node *insert_parent,
+> +					bool leftmost)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
+> +
+> +	if (!tei->blk)
+> +		return false;
+> +
+> +	__set_extent_info(ei, fofs, len, tei->blk, false,
+> +			  0, 0, EX_READ);
+> +	if (!__try_merge_extent_node(sbi, et, ei,
+> +					prev_en, next_en))
+> +		__insert_extent_tree(sbi, et, ei,
+> +			insert_p, insert_parent, leftmost);
+> +
+> +	/* give up read extent cache, if split and small updates happen */
+> +	if (dei->len >= 1 &&
+> +			prev->len < F2FS_MIN_EXTENT_LEN &&
+> +			et->largest.len < F2FS_MIN_EXTENT_LEN) {
+> +		et->largest.len = 0;
+> +		et->largest_updated = true;
+> +		set_inode_flag(inode, FI_NO_EXTENT);
+> +	}
+> +
+> +	if (is_inode_flag_set(inode, FI_NO_EXTENT))
+> +		__free_extent_tree(sbi, et);
+> +
+> +	if (et->largest_updated) {
+> +		et->largest_updated = false;
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static inline void __update_age_extent_cache(struct inode *inode,
+> +					struct extent_info *tei,
+> +					struct extent_info *ei,
+> +					unsigned int fofs, unsigned int len,
+> +					struct extent_node *prev_en,
+> +					struct extent_node *next_en,
+> +					struct rb_node **insert_p,
+> +					struct rb_node *insert_parent,
+> +					bool leftmost)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_BLOCK_AGE];
+> +
+> +	if (!tei->last_blocks)
+> +		return;
+> +
+> +	__set_extent_info(ei, fofs, len, 0, false,
+> +		tei->age, tei->last_blocks, EX_BLOCK_AGE);
+> +	if (!__try_merge_extent_node(sbi, et, ei,
+> +					prev_en, next_en))
+> +		__insert_extent_tree(sbi, et, ei,
+> +			insert_p, insert_parent, leftmost);
+> +}
+> +
+>  static void __update_extent_tree_range(struct inode *inode,
+>  			struct extent_info *tei, enum extent_type type)
+>  {
+> @@ -782,47 +851,16 @@ static void __update_extent_tree_range(struct inode *inode,
+>  		en = next_en;
+>  	}
+> 
+> -	if (type == EX_BLOCK_AGE)
+> -		goto update_age_extent_cache;
+> -
+> -	/* 3. update extent in read extent cache */
+> -	BUG_ON(type != EX_READ);
+> -
+> -	if (tei->blk) {
+> -		__set_extent_info(&ei, fofs, len, tei->blk, false,
+> -				  0, 0, EX_READ);
+> -		if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
+> -			__insert_extent_tree(sbi, et, &ei,
+> +	/* 3. update extent in extent cache */
+> +	if (type == EX_READ)
+> +		updated = __update_read_extent_cache(inode, tei, &ei, &dei,
+> +					&prev, fofs, len, prev_en, next_en,
+>  					insert_p, insert_parent, leftmost);
+> -
+> -		/* give up extent_cache, if split and small updates happen */
+> -		if (dei.len >= 1 &&
+> -				prev.len < F2FS_MIN_EXTENT_LEN &&
+> -				et->largest.len < F2FS_MIN_EXTENT_LEN) {
+> -			et->largest.len = 0;
+> -			et->largest_updated = true;
+> -			set_inode_flag(inode, FI_NO_EXTENT);
+> -		}
+> -	}
+> -
+> -	if (is_inode_flag_set(inode, FI_NO_EXTENT))
+> -		__free_extent_tree(sbi, et);
+> -
+> -	if (et->largest_updated) {
+> -		et->largest_updated = false;
+> -		updated = true;
+> -	}
+> -	goto out_read_extent_cache;
+> -update_age_extent_cache:
+> -	if (!tei->last_blocks)
+> -		goto out_read_extent_cache;
+> -
+> -	__set_extent_info(&ei, fofs, len, 0, false,
+> -			tei->age, tei->last_blocks, EX_BLOCK_AGE);
+> -	if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
+> -		__insert_extent_tree(sbi, et, &ei,
+> +	else if (type == EX_BLOCK_AGE)
+> +		__update_age_extent_cache(inode, tei, &ei,
+> +					fofs, len, prev_en, next_en,
+>  					insert_p, insert_parent, leftmost);
+> -out_read_extent_cache:
+> +
+>  	write_unlock(&et->lock);
+> 
+>  	if (updated)
+> -- 
+> 2.25.1
+> 
+> Thanks,
 
 
 _______________________________________________
