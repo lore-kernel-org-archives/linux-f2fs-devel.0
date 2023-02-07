@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 455D7C636D4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Feb 2023 19:00:26 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0A095C636D3
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Feb 2023 19:00:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pPTCc-0006zq-AF;
-	Tue, 07 Feb 2023 19:00:25 +0000
+	id 1pPTCe-0002CA-32;
+	Tue, 07 Feb 2023 19:00:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pPTCb-0006zj-A0
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pPTCb-0002C4-R6
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 07 Feb 2023 19:00:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,54 +23,53 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gMxjgZt0z8E/fMF90dK8nCZM/POYKo2vJQhVrJPeNrQ=; b=ECKK6Z/wuECHh0PsaHFK5Njb7f
- AFHlcneCkpkfhvivVrujdhGBzzNfR63+/1z0TmZI/0rAkcxtuZKgrOXlHb87odbhh+N1gYGL/GF+p
- exgLfABYKN89RDawMMPsZcS1j9zzEs4BRz+Ds7vBUeHkH4m34QEsBBr7IQOz1PEqVqwg=;
+ bh=sUQUjHlBM7wCdU/5F1YVghacsg2378O5pCH7hF5wmkY=; b=LjT1amE+0rQBSmubTTLpa6d+wt
+ FuxdbUrsVdvuc8hHBlcLK+ebNFbDPtdKDtSGxyY25bZyCENfImBpXk5qoGvtpJih0daSTjGaJhz7K
+ 9Z/zGnu46mDJ9r4xtb9hWl8N8iIY/FjV2WpCNNKGkJZGcTY9Bkz2F58Q1PtFtTjLSXnQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gMxjgZt0z8E/fMF90dK8nCZM/POYKo2vJQhVrJPeNrQ=; b=cPvAdhfZDqRQrLaAIHhcY64j2m
- TCBN9raG5yBlP7sB7eVZjCmKcqo5vH7M0IHBsSxAqQXI07EJ1y59qLdSMh3EXTmUwpRPaA6tVHVQz
- m40YKS6g4709CHVf29Jawu+FZpKvnqEfqW4T4foBrzf8tdHCt7rdLiLOUZw8WHqwUvn0=;
+ bh=sUQUjHlBM7wCdU/5F1YVghacsg2378O5pCH7hF5wmkY=; b=cn1ohOkMSrcZvySOE0NJrx0cME
+ dSn1J087RlpDURD5fIX1gG3OPSfmVXck2kcie6wY/EUWm5iUykyCbyZUtWOIyiYfczRYDLDjwUudF
+ bFx6yclYc2XiY6xNZAxbdYTmXZ0CsnqFLYiL/diovXv5XhQihJ4mEhZpwZAJFW21+bmw=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pPTCZ-0005dq-4S for linux-f2fs-devel@lists.sourceforge.net;
+ id 1pPTCZ-00Du7j-Si for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 07 Feb 2023 19:00:24 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 84B2F61137
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 7BC6160FB8;
  Tue,  7 Feb 2023 19:00:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E8337C4339B;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E0A3FC4339C;
  Tue,  7 Feb 2023 19:00:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1675796417;
- bh=r6UlP/dJGLR+YQx8+K0+rvbOWs3Gze3w+cUIcIpyEcQ=;
+ bh=tc4dtCKdgQt+/RAfVXhthTde0FWMM+uyaqVv++pKjXI=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=XBM05Z/dQUrHSGNNknUCuLAZG9cWOZ9cWABPZbwUMpodUiLcdKum9BtT12O8a0yia
- 1HWxcxHFD2FVBF/KXz5LYM69l73EIKEBsLeMCrdP26fc7sMqglH2Wwd1GIvqVkFwq5
- C8V7pvQZaMSI/gsPO+C+ueqtxxFURWC4fjeZNGYFIoZhbLKObugpMCCq9ebyMAJrjw
- ZCDFkYTSntfj7St3RvGr85fOR7/kCkglkxDjxsskun3KXI6ODRBokquJyr2uGKe+cP
- qqA3jRzqJvOfSHyKETFgJbrv7w2vcDRW5xpktcd3ULzTAHGFGrxu4pNeaROxXI/sb8
- qLA9hpdpRutLg==
+ b=Z0tjfG+UsSF3NSOUUhryJz/D9ipM7Ey/62L3N+6SSpr7ZPHaNV14CtCpbHVaYFdOo
+ EGmt+mvquUMBlN4XDDh89v/kTouCvLSPOlnzByNQZOnphkem7yTHjYAL5++/xXQ6uJ
+ q8DA+RI1uNs0SFHXOAWOmnavN7HCHMg9XElZzp0NzZ0GOqHuUFP0SDp2M8HGSTfD9m
+ MI/j9CTb9ASAtiDiiYMuFvYSkJ2THPw34OVglJRd3UyoPTCd9EyiiMHknLVa9VOIAZ
+ ZXhJjvhheetVx6k2o+TiL7RUywXRvP+Ci5Nz3f7Jw99jd5CaijigkB1g+FdliUyzbc
+ MJRaBdcI6ZArQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- C2E39E55EFD; Tue,  7 Feb 2023 19:00:17 +0000 (UTC)
+ BB499E55F09; Tue,  7 Feb 2023 19:00:17 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167579641779.24576.11865638891088345725.git-patchwork-notify@kernel.org>
+Message-Id: <167579641776.24576.16012752036026562631.git-patchwork-notify@kernel.org>
 Date: Tue, 07 Feb 2023 19:00:17 +0000
-References: <20230206034344.724593-1-jaegeuk@kernel.org>
-In-Reply-To: <20230206034344.724593-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1pPTCZ-0005dq-4S
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix kernel crash due to null io->bio
+References: <20230206115600epcms2p736f05524a361d5926dbb401bdd218f85@epcms2p7>
+In-Reply-To: <20230206115600epcms2p736f05524a361d5926dbb401bdd218f85@epcms2p7>
+To: Jinyoung CHOI <j-young.choi@samsung.com>
+X-Headers-End: 1pPTCZ-00Du7j-Si
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix typos in comments
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,7 +81,7 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -93,32 +92,23 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun,  5 Feb 2023 19:43:44 -0800 you wrote:
-> We should return when io->bio is null before doing anything. Otherwise, panic.
+On Mon, 06 Feb 2023 20:56:00 +0900 you wrote:
+> This patch is to fix typos in f2fs files.
 > 
-> BUG: kernel NULL pointer dereference, address: 0000000000000010
-> RIP: 0010:__submit_merged_write_cond+0x164/0x240 [f2fs]
-> Call Trace:
->  <TASK>
->  f2fs_submit_merged_write+0x1d/0x30 [f2fs]
->  commit_checkpoint+0x110/0x1e0 [f2fs]
->  f2fs_write_checkpoint+0x9f7/0xf00 [f2fs]
->  ? __pfx_issue_checkpoint_thread+0x10/0x10 [f2fs]
->  __checkpoint_and_complete_reqs+0x84/0x190 [f2fs]
->  ? preempt_count_add+0x82/0xc0
->  ? __pfx_issue_checkpoint_thread+0x10/0x10 [f2fs]
->  issue_checkpoint_thread+0x4c/0xf0 [f2fs]
->  ? __pfx_autoremove_wake_function+0x10/0x10
->  kthread+0xff/0x130
->  ? __pfx_kthread+0x10/0x10
->  ret_from_fork+0x2c/0x50
->  </TASK>
-> 
-> [...]
+> Signed-off-by: Jinyoung Choi <j-young.choi@samsung.com>
+> ---
+>  fs/f2fs/checkpoint.c   | 4 ++--
+>  fs/f2fs/compress.c     | 2 +-
+>  fs/f2fs/data.c         | 8 ++++----
+>  fs/f2fs/extent_cache.c | 4 ++--
+>  fs/f2fs/file.c         | 6 +++---
+>  fs/f2fs/namei.c        | 2 +-
+>  fs/f2fs/segment.c      | 2 +-
+>  7 files changed, 14 insertions(+), 14 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix kernel crash due to null io->bio
-    https://git.kernel.org/jaegeuk/f2fs/c/267c159f9c7b
+  - [f2fs-dev] f2fs: fix typos in comments
+    https://git.kernel.org/jaegeuk/f2fs/c/146949defda8
 
 You are awesome, thank you!
 -- 
