@@ -4,69 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 27A9DC05027
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Feb 2023 02:47:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 570DEC636CC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Feb 2023 12:32:29 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pPE1K-0007VK-R2;
-	Tue, 07 Feb 2023 02:47:46 +0000
+	id 1pPN9A-0002nm-2b;
+	Tue, 07 Feb 2023 12:32:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1pPE1F-0007V9-IP
+ (envelope-from <chao@kernel.org>) id 1pPN8x-0002nV-73
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Feb 2023 02:47:41 +0000
+ Tue, 07 Feb 2023 12:32:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I1HwyJl+R5vC29SbKGw6FjpINF262tPPv325uIIRljU=; b=lEtdAMHbPGuUyom/6J4VlS9oMv
- cKxMrBwlAPTLsamjk5XKFq+mZlxZGxI7rZb3It3RIA9+MnBNNZq7isEZt1BwgLp91nw/QQWK/QoGW
- hlyFrdyWzulfdragCvbLHC2ayMfNJY/oPKj5aMqL4SWm9KToFVSqjV1XMTylh5ztH3tw=;
+ bh=6tvv5oYaEJOKLUyqfMaGXUaAYNvt15546tIQxzIi6a8=; b=Z1cGW7l6YGn4DQ5++BXETM7Mps
+ Q0Y+X2/ZsQI9kPm00L2SXyxvRPVvBNXVMV7Xy5SHY8XxkZdMYSYaj0YUAntt9bGgRbtSAYjjfL5jP
+ vnNlH3tIzywgrHwj6eEKKeiOBNRsqamx4nXkO/FrXNKrgVP/P1nECzIzzTX2mOZtcypU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=I1HwyJl+R5vC29SbKGw6FjpINF262tPPv325uIIRljU=; b=g
- STIzNiq45wV0XCrlz76h0j1QNk9vgcychW7I1a4iU6S/R7cMfwzMuQeV7lPNN5/3Pxn0vuxA8xUtq
- inDWZSvEF6JeaNc7z7xYU5Iln02R+nSZWjCJN/XIvzg1yM5kHldIeThFKLtdClsDVdFTTjSzxR4nm
- mjuajcWai6hgQut0=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=6tvv5oYaEJOKLUyqfMaGXUaAYNvt15546tIQxzIi6a8=; b=U2OxQhBxLlcmstcWM4RSRWhtlX
+ sG8LcZRnILJUBdm6jpVdAHjvB9xA5/gnHxeio7h8Mk6uo6EFr4cANzmRXEzqptFguIh824JdSowPS
+ 2mDt3iNshESLMJS/SEMDWHOQ4pMBgEkMjTmq3c5UAeFFC/EyiKXXgd1T/G0KWxmylOA8=;
 Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pPE1A-00DB45-HK for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Feb 2023 02:47:40 +0000
+ id 1pPN8p-0000WC-7w for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 07 Feb 2023 12:32:10 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id CD4ADB81626
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  7 Feb 2023 02:47:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72EE9C433EF;
- Tue,  7 Feb 2023 02:47:26 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id B2FA5B8197B;
+ Tue,  7 Feb 2023 12:32:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1792C433EF;
+ Tue,  7 Feb 2023 12:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1675738046;
- bh=yGtnMhYY54FfgJR3V5+3Wp6+COLxxfVCgnOIbJ4U2UM=;
- h=From:To:Cc:Subject:Date:From;
- b=PB55QXNpMgTvjLbpjTjrwsVONQgYkE9RBvGFb7lWuRc2hfghX+2wD1O7hYgrwG7Wg
- u1MDT6XmL6o1SM1LrVMpa92k/Y/5trz9C2d6d1BRZW3RTHqGVTl1URqmgPF5RoNWJt
- JHjAD8KkP+pTggkpo+lx4pWfxdRteTmulPp+GZtWR/jB4UkXCXFwzQZ0sqElKtA4RG
- V6huPRfqlVgrxlTZF2ehwlAtzl1N9q0lSFn4hjWZzEvrt3siclqlGl3U8SeoKhxYjh
- JMXN/OwKq7iXl3ckBbu9kTl6M0CFzWMwNa9YWf2ZmvcVwQD1JepDRQdqMO/skrt2vI
- uO8pZnKahyqHQ==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Mon,  6 Feb 2023 18:47:25 -0800
-Message-Id: <20230207024725.260092-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.39.1.519.gcb327c4b5f-goog
+ s=k20201202; t=1675773120;
+ bh=oSZiPGKtKOkw8DR/wvKdxIyPICc+g7tTmBYbOSxusD0=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=hStQ3By0QeN35nFjP8sPONwsYctqYe4lWmg3OGKbuJbTU99z3WlgslVIZUSBcrA0Y
+ 4GHjSgDVah/o0LWF5VnIyphyWZqwGCAYUN3gE9FlX1aI8AibTe/T/j5smSn1nRAahm
+ KDYMXqDnkN4+YP95vksKrxhYGISET4YWMNOA8gsfLlIR7r4vIW92Fgj/Z38tw57U1D
+ pJ1ai/HAsA6QcIoulT4UwzqGU8sQa+QtGKRfTIhpx2NzdjEyjMwoZ0OgcwzsBeYXwh
+ +X0OsIct1aXfeEfsex4eUJmOXAXzxlU7YykKUjwXT54Htx/vpdvaWSbtYIqL0eDhJU
+ aAN/AZoYqedFQ==
+Message-ID: <ecce441d-845f-caf1-d7a8-e3c30a21ae60@kernel.org>
+Date: Tue, 7 Feb 2023 20:31:56 +0800
 MIME-Version: 1.0
-X-Headers-End: 1pPE1A-00DB45-HK
-Subject: [f2fs-dev] [PATCH] f2fs_io: support AES_256_HCTR2
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Content-Language: en-US
+To: qixiaoyu1 <qxy65535@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <3589331b-a3ec-87e1-790d-387439672ea5@kernel.org>
+ <20230204094345.591407-1-qixiaoyu1@xiaomi.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20230204094345.591407-1-qixiaoyu1@xiaomi.com>
+X-Headers-End: 1pPN8p-0000WC-7w
+Subject: Re: [f2fs-dev] [PATCH 2/2 v4] f2fs: add sysfs nodes to set
+ last_age_weight
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,51 +83,143 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+Cc: Ping Xiong <xiongping1@xiaomi.com>, Xiaoyu Qi <qixiaoyu1@xiaomi.com>,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- tools/f2fs_io/f2fs_io.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+On 2023/2/4 17:43, qixiaoyu1 wrote:
+> Signed-off-by: qixiaoyu1 <qixiaoyu1@xiaomi.com>
+> Signed-off-by: xiongping1 <xiongping1@xiaomi.com>
+> ---
+> change log v3 -> v4:
+>    - allow 0 and 100 to a valid value
+> 
+>   Documentation/ABI/testing/sysfs-fs-f2fs |  5 +++++
+>   fs/f2fs/extent_cache.c                  | 15 +++++++++------
+>   fs/f2fs/f2fs.h                          |  1 +
+>   fs/f2fs/sysfs.c                         | 11 +++++++++++
+>   4 files changed, 26 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index 9e3756625a81..11af7dbb6bc9 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -669,3 +669,8 @@ Contact:	"Ping Xiong" <xiongping1@xiaomi.com>
+>   Description:	When DATA SEPARATION is on, it controls the age threshold to indicate
+>   		the data blocks as warm. By default it was initialized as 2621440 blocks
+>   		(equals to 10GB).
+> +
+> +What:           /sys/fs/f2fs/<disk>/last_age_weight
+> +Date:           January 2023
+> +Contact:        "Ping Xiong" <xiongping1@xiaomi.com>
+> +Description:    When DATA SEPARATION is on, it controls the weight of last data block age.
+> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> index d9f12f404beb..ce99882ba81c 100644
+> --- a/fs/f2fs/extent_cache.c
+> +++ b/fs/f2fs/extent_cache.c
+> @@ -871,19 +871,21 @@ void f2fs_update_read_extent_tree_range_compressed(struct inode *inode,
+>   }
+>   #endif
+>   
+> -static unsigned long long __calculate_block_age(unsigned long long new,
+> +static unsigned long long __calculate_block_age(struct f2fs_sb_info *sbi,
+> +						unsigned long long new,
+>   						unsigned long long old)
+>   {
+>   	unsigned int rem_old, rem_new;
+>   	unsigned long long res;
+> +	unsigned int weight = sbi->last_age_weight;
+>   
+> -	res = div_u64_rem(new, 100, &rem_new) * (100 - LAST_AGE_WEIGHT)
+> -		+ div_u64_rem(old, 100, &rem_old) * LAST_AGE_WEIGHT;
+> +	res = div_u64_rem(new, 100, &rem_new) * (100 - weight)
+> +		+ div_u64_rem(old, 100, &rem_old) * weight;
+>   
+>   	if (rem_new)
+> -		res += rem_new * (100 - LAST_AGE_WEIGHT) / 100;
+> +		res += rem_new * (100 - weight) / 100;
+>   	if (rem_old)
+> -		res += rem_old * LAST_AGE_WEIGHT / 100;
+> +		res += rem_old * weight / 100;
+>   
+>   	return res;
+>   }
+> @@ -917,7 +919,7 @@ static int __get_new_block_age(struct inode *inode, struct extent_info *ei,
+>   			cur_age = ULLONG_MAX - tei.last_blocks + cur_blocks;
+>   
+>   		if (tei.age)
+> -			ei->age = __calculate_block_age(cur_age, tei.age);
+> +			ei->age = __calculate_block_age(sbi, cur_age, tei.age);
+>   		else
+>   			ei->age = cur_age;
+>   		ei->last_blocks = cur_blocks;
+> @@ -1233,6 +1235,7 @@ void f2fs_init_extent_cache_info(struct f2fs_sb_info *sbi)
+>   	atomic64_set(&sbi->allocated_data_blocks, 0);
+>   	sbi->hot_data_age_threshold = DEF_HOT_DATA_AGE_THRESHOLD;
+>   	sbi->warm_data_age_threshold = DEF_WARM_DATA_AGE_THRESHOLD;
+> +	sbi->last_age_weight = LAST_AGE_WEIGHT;
+>   }
+>   
+>   int __init f2fs_create_extent_cache(void)
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index e8953c3dc81a..c3609cbc28c7 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1679,6 +1679,7 @@ struct f2fs_sb_info {
+>   	/* The threshold used for hot and warm data seperation*/
+>   	unsigned int hot_data_age_threshold;
+>   	unsigned int warm_data_age_threshold;
+> +	unsigned int last_age_weight;
+>   
+>   	/* basic filesystem units */
+>   	unsigned int log_sectors_per_block;	/* log2 sectors per block */
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 83a366f3ee80..cd2fb52d1f3c 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -686,6 +686,15 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+>   		return count;
+>   	}
+>   
+> +	if (!strcmp(a->attr.name, "last_age_weight")) {
+> +		if (t < 0 || t > 100)
 
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index 6dcd84091583..5bc0baf40421 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -1195,16 +1195,17 @@ static void do_get_filename_encrypt_mode (int argc, char **argv,
- 						const struct cmd_desc *cmd)
- {
- 	static const char *enc_name[] = {
--		"invalid", /* FS_ENCRYPTION_MODE_INVALID (0) */
--		"aes-256-xts", /* FS_ENCRYPTION_MODE_AES_256_XTS (1) */
--		"aes-256-gcm", /* FS_ENCRYPTION_MODE_AES_256_GCM (2) */
--		"aes-256-cbc", /* FS_ENCRYPTION_MODE_AES_256_CBC (3) */
--		"aes-256-cts", /* FS_ENCRYPTION_MODE_AES_256_CTS (4) */
--		"aes-128-cbc", /* FS_ENCRYPTION_MODE_AES_128_CBC (5) */
--		"aes-128-cts", /* FS_ENCRYPTION_MODE_AES_128_CTS (6) */
--		"speck128-256-xts", /* FS_ENCRYPTION_MODE_SPECK128_256_XTS (7) */
--		"speck128-256-cts", /* FS_ENCRYPTION_MODE_SPECK128_256_CTS (8) */
--		"adiantum", /* FS_ENCRYPTION_MODE_ADIANTUM (9) */
-+		"invalid", /* FSCRYPT_MODE_INVALID (0) */
-+		"aes-256-xts", /* FSCRYPT_MODE_AES_256_XTS (1) */
-+		"aes-256-gcm", /* FSCRYPT_MODE_AES_256_GCM (2) */
-+		"aes-256-cbc", /* FSCRYPT_MODE_AES_256_CBC (3) */
-+		"aes-256-cts", /* FSCRYPT_MODE_AES_256_CTS (4) */
-+		"aes-128-cbc", /* FSCRYPT_MODE_AES_128_CBC (5) */
-+		"aes-128-cts", /* FSCRYPT_MODE_AES_128_CTS (6) */
-+		"speck128-256-xts", /* FSCRYPT_MODE_SPECK128_256_XTS (7) */
-+		"speck128-256-cts", /* FSCRYPT_MODE_SPECK128_256_CTS (8) */
-+		"adiantum", /* FSCRYPT_MODE_ADIANTUM (9) */
-+		"aes-256-hctr2", /* FSCRYPT_MODE_AES_256_HCTR2 (10) */
- 	};
- 	int fd, mode, ret;
- 	struct fscrypt_get_policy_ex_arg arg;
--- 
-2.39.1.519.gcb327c4b5f-goog
+t is unsigned long variable, should never be less than 0.
 
+Otherwise, it looks good to me, maybe Jaegeuk could fix it manually.
+
+Reviewed-by: Chao Yu <chao@kernel.org>
+
+Thanks,
+
+> +			return -EINVAL;
+> +		if (t == *ui)
+> +			return count;
+> +		*ui = (unsigned int)t;
+> +		return count;
+> +	}
+> +
+>   	*ui = (unsigned int)t;
+>   
+>   	return count;
+> @@ -944,6 +953,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, revoked_atomic_block, revoked_atomic_block)
+>   /* For block age extent cache */
+>   F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, hot_data_age_threshold, hot_data_age_threshold);
+>   F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, warm_data_age_threshold, warm_data_age_threshold);
+> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, last_age_weight, last_age_weight);
+>   
+>   #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+>   static struct attribute *f2fs_attrs[] = {
+> @@ -1042,6 +1052,7 @@ static struct attribute *f2fs_attrs[] = {
+>   	ATTR_LIST(revoked_atomic_block),
+>   	ATTR_LIST(hot_data_age_threshold),
+>   	ATTR_LIST(warm_data_age_threshold),
+> +	ATTR_LIST(last_age_weight),
+>   	NULL,
+>   };
+>   ATTRIBUTE_GROUPS(f2fs);
 
 
 _______________________________________________
