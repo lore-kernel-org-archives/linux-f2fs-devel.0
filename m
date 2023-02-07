@@ -4,72 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D99B3C636D4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Feb 2023 19:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 49F2EC636CC
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Feb 2023 19:00:30 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pPTCg-0000tP-19;
+	id 1pPTCg-0000ta-F4;
 	Tue, 07 Feb 2023 19:00:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pPTCb-0000t9-JX
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pPTCc-0000tG-Rb
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Feb 2023 19:00:24 +0000
+ Tue, 07 Feb 2023 19:00:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xeJe9FgspaFsnxPbY1+BH/1D9vtgFsDTr/kPWbnuuk0=; b=T1XvM1kzTucFkFoTGR3PYruq52
- z7lDqHvuhSByD2czeI+vsdGAw4PGs7L6YvDXZInodaLrbyHS2Polhzinzme2YC9YdjrTi86idwJQL
- z+Ufx1msZuMPij0r6++0IQ1m9VV3jFsBX0A5FmVp0+rGiEM+cGXxz2EgSnUEStarnBag=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=MjbUjhF8zq3jHhTPQRHSi0hOBtcNFpYgTWkCMHkCEFg=; b=NgMRUklmprPrhXJtSypmYuczdt
+ 4S3N0+3yjlVVzCUsXGqpHkIAuckDmlh6mYBwQyieXbjGxnaIKmfXbGYNg8pd3u5Y2VYULEk1xyr4D
+ dNIPGhm2WX3y8tK3e9Vw3QpGQCCe388kIkwST4Wzee88CJfexRCAv8fl6ndpkczAoa/Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xeJe9FgspaFsnxPbY1+BH/1D9vtgFsDTr/kPWbnuuk0=; b=Y+JPNX4nNBFaIPMXvO52icuksz
- BujW+X8O2SjcvWIJ6OkFoj1s9rpmkGK0iJmf7nhCKc+PVarNc1cXoURz0cO5Xz+Cd7ARtynVsoyZD
- f83fSM6tzV6GTehwYyxXWQj7VlFvUFqZwfjmnw/8o7yXziYT0pnfJAPgeNn0Y57t/Q5U=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=MjbUjhF8zq3jHhTPQRHSi0hOBtcNFpYgTWkCMHkCEFg=; b=X
+ GeQCIf95xUWVKvVDZaD1ZQxGFWOmYwgDeeIHKHdDQWE6gnE/wTeQGC2rsHXmhCS5V5JXu9b5ZRAge
+ JlH3ajHcLM75safyzQCd79fH2WvoZjm1yA6rfAigJHAqwrm4KuazmCfc4qQ0hZSgOE1gVl+bpjpj+
+ 0e4gwYFoqQrbD+iY=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pPTCa-00Du7k-Ev for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Feb 2023 19:00:24 +0000
+ id 1pPTCa-0005ds-N6 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 07 Feb 2023 19:00:26 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 1729460F71;
+ by ams.source.kernel.org (Postfix) with ESMTPS id 33823B81A61
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Tue,  7 Feb 2023 19:00:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F2C0CC4339E;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CDB70C433EF
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Tue,  7 Feb 2023 19:00:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1675796418;
- bh=BcIOalxqWOrgaDJrq9uO5FEbZqioEpeR56hDPQadaes=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=jOHkP2DOGkeFQ6xpbLfOntxl03B5I5xTjyhc7ByKewUlmBRX74ou3zikK5Mdgn/Vx
- F2eYpAUi3Fw0Hp0wKWhoTpD0jqG1Yyv1/uiZPTGR7pZ/M6RhghDxpogeI1zQ1QqJv0
- 4Y4ujFf6KYp+QgpsRK3oLNqmPZ68pHryQZzl6sjDo5K5sy6YL8U+CRIZpGXmUEBnbE
- jT/zoYhYen4jS8pKP3pb8Bx72dK5pKsuZXfyFHD+3DV32TuWE0K8f+DqSPOO6T+hG6
- 3m0wAwW/xTTUXJOaKshjNNg+ljdtqulhXN+EAGacFmXF7DKpCuubdQVAxUEuVRVwcE
- XHPvOXs0Guhsg==
+ s=k20201202; t=1675796417;
+ bh=KNMLzQRbXmtI14laLDIE2u3I5HHP1UTGH54PAZ/oC5M=;
+ h=Subject:From:Date:To:From;
+ b=FeuG62AWtaoa7+VAUNjHUQHBlNxGOEMJdNrlBfuRIgYtgGMVhv0v73uJA5UlSzEJv
+ RrEnE/4F5SSCt3XjuW0m9f+8Ox0whn9JILuKmeGq2HL3HOtO6/Pw6zKdlNU58nfXv8
+ yu/XbtKWN4rgeqnMZFeoYVNr+uL0U8luh0nK/u7muVYv2OjlDmudQSXA2M3zLdqal4
+ C9zME804a6l+idmnK2FDr77+JxdUAqpzPF6GoYNJyWAVqxPTA5iebF369PdrhB3pu9
+ yPe+muogMYHXEAab86LXWsW0Xrz38Hbwyzl/EVdGHjHmJ347N5q2c0HvQdmfOJFmKj
+ NZxwds1XFDu9A==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- CBE7BE21ECD; Tue,  7 Feb 2023 19:00:17 +0000 (UTC)
+ B3D9EE55F06 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  7 Feb 2023 19:00:17 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167579641783.24576.11656544535078514322.git-patchwork-notify@kernel.org>
+Message-Id: <167579641767.24576.7030553352235460537.git-patchwork-summary@kernel.org>
 Date: Tue, 07 Feb 2023 19:00:17 +0000
-References: <20230206144310.2344-1-frank.li@vivo.com>
-In-Reply-To: <20230206144310.2344-1-frank.li@vivo.com>
-To: Yangtao Li <frank.li@vivo.com>
-X-Headers-End: 1pPTCa-00Du7k-Ev
-Subject: Re: [f2fs-dev] [PATCH v4 1/3] f2fs: fix to set ipu policy
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1pPTCa-0005ds-N6
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,36 +83,37 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Mon,  6 Feb 2023 22:43:08 +0800 you wrote:
-> For LFS mode, it should update outplace and no need inplace update.
-> When using LFS mode for small-volume devices, IPU will not be used,
-> and the OPU writing method is actually used, but F2FS_IPU_FORCE can
-> be read from the ipu_policy node, which is different from the actual
-> situation. And remount to lfs mode should be disallowed when
-> f2fs ipu is enabled, let's fix it.
-> 
-> [...]
+Patch: [f2fs-dev] f2fs: fix typos in comments
+  Submitter: Jinyoung CHOI <j-young.choi@samsung.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=719092
+  Lore link: https://lore.kernel.org/r/20230206115600epcms2p736f05524a361d5926dbb401bdd218f85@epcms2p7
 
-Here is the summary with links:
-  - [f2fs-dev,v4,1/3] f2fs: fix to set ipu policy
-    (no matching commit)
-  - [f2fs-dev,v4,2/3] f2fs: add missing description for ipu_policy node
-    https://git.kernel.org/jaegeuk/f2fs/c/9e615dbba41e
-  - [f2fs-dev,v4,3/3] f2fs: introduce ipu_mode sysfs node
-    (no matching commit)
+Patch: [f2fs-dev] f2fs: fix kernel crash due to null io->bio
+  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=718989
+  Lore link: https://lore.kernel.org/r/20230206034344.724593-1-jaegeuk@kernel.org
 
-You are awesome, thank you!
+Series: [f2fs-dev,v4,1/3] f2fs: fix to set ipu policy
+  Submitter: Yangtao Li <frank.li@vivo.com>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=719149
+  Lore link: https://lore.kernel.org/r/20230206144310.2344-1-frank.li@vivo.com
+    Patches: [f2fs-dev,v4,1/3] f2fs: fix to set ipu policy
+             [f2fs-dev,v4,2/3] f2fs: add missing description for ipu_policy node
+
+
+Total patches: 4
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
