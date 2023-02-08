@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C3F94C05027
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Feb 2023 06:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72F9BC636D3
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Feb 2023 06:21:56 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pPdq8-0006LN-PF;
+	id 1pPdq9-0006La-4U;
 	Wed, 08 Feb 2023 06:21:55 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1pPdpy-0006Ku-Ue
+ (envelope-from <ebiggers@kernel.org>) id 1pPdpz-0006L0-QE
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 08 Feb 2023 06:21:45 +0000
+ Wed, 08 Feb 2023 06:21:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hDaq+hzSVVr5/sihIKGTr4ISu/lQ4Nf0whpSXh44p6Y=; b=N/adQMzFa+rw2yQyYtz4thmf4f
- vxzlcLRLqWv13Vp0C1PS4HSQVOc8931tozcM2GlzLrxSPimv1m7ZRixg6cKmOkcGKbJ9FDPYl+q4n
- fbzEtFbgQIwziOb0bX57rCRd9spqHszo0uTvu1eUzo/nhq5iQxTe2xblg8J3KdwGhJvs=;
+ bh=ZM2gebMby0FP9+HsVZ0LPm3InqNmJr/0inCyE6wV4Pk=; b=UdGNsZ+jxiMe1nwE5fGlzsr4l0
+ X1H71FRKZ9/v9IdRRtvs13u20wC51ELv7yN+eukoW8Z9vzVZnGGRpArCkys3VehTrte0DNhS4rjmm
+ wz1MCvsgRZcPvZwmzkVzooBb+utFn6hm+M4oJAP7ZHjraqd8+QtljBmUopRhZNuTT3lo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,41 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=hDaq+hzSVVr5/sihIKGTr4ISu/lQ4Nf0whpSXh44p6Y=; b=l01kFvY5TXvYgbKCg/tVf18+3w
- EioAOLhAtmSidn52l2fziCLVogcBcRC+8FIc7v+EJCHRbZ7BNHREut4IjNQW4gSOi6ihSzrJJiJKo
- pdxsXaXuTvOTWmI3Mvf/zaw6yxN7B0807VQQQGrkbDhEq0stERom++JfKZf2bAdKcfgA=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=ZM2gebMby0FP9+HsVZ0LPm3InqNmJr/0inCyE6wV4Pk=; b=avoeMxB0m9VwcjKycIzjpfwBVe
+ 1GE6Z5kPMdzRnb+5s/vW/QDiJuOHDP1zlFDw4dWfiLsrWei8TnRG/QkhBZX0FbtcLHjU9hpERsymV
+ SVkbuNmpJc5bFASVZvyZUdXyGvW5JgahRjcl7Y6vNEnKnloFSK0qud/V3j73gNGAJii8=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pPdpw-00EiFu-Uy for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 08 Feb 2023 06:21:45 +0000
+ id 1pPdpv-0008R5-Eu for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 08 Feb 2023 06:21:46 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 5AB85614E4;
+ by ams.source.kernel.org (Postfix) with ESMTPS id B13AAB81C20;
+ Wed,  8 Feb 2023 06:21:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F8D2C4339C;
  Wed,  8 Feb 2023 06:21:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 962A8C4339E;
- Wed,  8 Feb 2023 06:21:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1675837295;
- bh=sQVJxIPMagQOo1HvXPpx7fyeR0XGhmDecu3YxyPB1CY=;
+ s=k20201202; t=1675837296;
+ bh=9FKAgPpudsEY1b71O+8Pdv2NPJKqQ94hKa6qzZM+f/E=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=DbGtwnF4VnuwU4on1O7/cEfWfHUtx13gh7P3p8mGefvuSnr1Ike5IbZgNRonYmLak
- TlZiwaey1dosbaeUDX+gS6i63mlXqU+UUnqw3ObBCq5amvYOD+PdMoBuEbDHpWdTeE
- 7Tf+IAkd9SNsWzJrexAGucM8cE6kuRJGukl+uiN49e23GgXqvpHO04TJjfHzI9VhdH
- dPlxSQ6u82GVy9gg6YzNeoUC8+osvpsuBem37izs+Vr7b9l0T48EplZNtLsVCjt7lB
- lBZpV3e3rS9HUxDLQYLa0e6DwSGUDLlMXwL7Bb8UZoX4o17JL+rQDuXZ73F7xtKhQq
- B0+C/uOTOfAog==
+ b=X2gSotr/T2tuDmj7eKZmGldsLfnOOCW8QnUhI2J1RVyfsgRQkq6H/4aUYesDQqe5u
+ p9xk2PzVPdD3+GWILcUbgcq3lYj62oT2jWOjX9pvjpMINlDn9DM8Ba7BMJtgrazy7L
+ MQnl1SYZ/1vlQofGYyiIllHv+nQqLWAQJKdkHMJRW0XXpjuq+/53oHp4oNTNvW0uXB
+ DGMASFJ6wcbYlRfKN9HQJ83ru/vWVpJ761mzUoHLe2g8zHMOvokUupC6LVJnjhERJI
+ HXgyqcAzu02y7ZMxIXGiHqkJumxfzUmZ6lJ7AZurqZgLD7eZw3M/uzoUunaFzn/wNP
+ zEVtwiPO+49gw==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fscrypt@vger.kernel.org
-Date: Tue,  7 Feb 2023 22:21:05 -0800
-Message-Id: <20230208062107.199831-4-ebiggers@kernel.org>
+Date: Tue,  7 Feb 2023 22:21:07 -0800
+Message-Id: <20230208062107.199831-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230208062107.199831-1-ebiggers@kernel.org>
 References: <20230208062107.199831-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1pPdpw-00EiFu-Uy
-Subject: [f2fs-dev] [PATCH 3/5] f2fs: stop calling
+X-Headers-End: 1pPdpv-0008R5-Eu
+Subject: [f2fs-dev] [PATCH 5/5] fscrypt: clean up
  fscrypt_add_test_dummy_key()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -89,32 +89,132 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 From: Eric Biggers <ebiggers@google.com>
 
-Now that fs/crypto/ adds the test dummy encryption key on-demand when
-it's needed, there's no need for individual filesystems to call
-fscrypt_add_test_dummy_key().  Remove the call to it from f2fs.
+Now that fscrypt_add_test_dummy_key() is only called by
+setup_file_encryption_key() and not by the individual filesystems,
+un-export it.  Also change its prototype to take the
+fscrypt_key_specifier directly, as the caller already has it.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/super.c | 6 ------
- 1 file changed, 6 deletions(-)
+ fs/crypto/fscrypt_private.h |  3 +++
+ fs/crypto/keyring.c         | 26 +++++++-------------------
+ fs/crypto/keysetup.c        |  4 +---
+ include/linux/fscrypt.h     |  9 ---------
+ 4 files changed, 11 insertions(+), 31 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1f812b9ce985b..64d3556d61a55 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -540,12 +540,6 @@ static int f2fs_set_test_dummy_encryption(struct super_block *sb,
- 				  opt, err);
- 		return -EINVAL;
- 	}
--	err = fscrypt_add_test_dummy_key(sb, policy);
--	if (err) {
--		f2fs_warn(sbi, "Error adding test dummy encryption key [%d]",
--			  err);
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 17dd33d9a522e..0fec2dfc36ebe 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -573,6 +573,9 @@ fscrypt_find_master_key(struct super_block *sb,
+ int fscrypt_get_test_dummy_key_identifier(
+ 			  u8 key_identifier[FSCRYPT_KEY_IDENTIFIER_SIZE]);
+ 
++int fscrypt_add_test_dummy_key(struct super_block *sb,
++			       struct fscrypt_key_specifier *key_spec);
++
+ int fscrypt_verify_key_added(struct super_block *sb,
+ 			     const u8 identifier[FSCRYPT_KEY_IDENTIFIER_SIZE]);
+ 
+diff --git a/fs/crypto/keyring.c b/fs/crypto/keyring.c
+index 78dd2ff306bd7..78086f8dbda52 100644
+--- a/fs/crypto/keyring.c
++++ b/fs/crypto/keyring.c
+@@ -211,10 +211,6 @@ static int allocate_filesystem_keyring(struct super_block *sb)
+  * are still available at this time; this is important because after user file
+  * accesses have been allowed, this function may need to evict keys from the
+  * keyslots of an inline crypto engine, which requires the block device(s).
+- *
+- * This is also called when the super_block is being freed.  This is needed to
+- * avoid a memory leak if mounting fails after the "test_dummy_encryption"
+- * option was processed, as in that case the unmount-time call isn't made.
+  */
+ void fscrypt_destroy_keyring(struct super_block *sb)
+ {
+@@ -778,34 +774,26 @@ int fscrypt_get_test_dummy_key_identifier(
+ /**
+  * fscrypt_add_test_dummy_key() - add the test dummy encryption key
+  * @sb: the filesystem instance to add the key to
+- * @dummy_policy: the encryption policy for test_dummy_encryption
++ * @key_spec: the key specifier of the test dummy encryption key
+  *
+- * If needed, add the key for the test_dummy_encryption mount option to the
+- * filesystem.  To prevent misuse of this mount option, a per-boot random key is
+- * used instead of a hardcoded one.  This makes it so that any encrypted files
+- * created using this option won't be accessible after a reboot.
++ * Add the key for the test_dummy_encryption mount option to the filesystem.  To
++ * prevent misuse of this mount option, a per-boot random key is used instead of
++ * a hardcoded one.  This makes it so that any encrypted files created using
++ * this option won't be accessible after a reboot.
+  *
+  * Return: 0 on success, -errno on failure
+  */
+ int fscrypt_add_test_dummy_key(struct super_block *sb,
+-			       const struct fscrypt_dummy_policy *dummy_policy)
++			       struct fscrypt_key_specifier *key_spec)
+ {
+-	const union fscrypt_policy *policy = dummy_policy->policy;
+-	struct fscrypt_key_specifier key_spec;
+ 	struct fscrypt_master_key_secret secret;
+ 	int err;
+ 
+-	if (!policy)
+-		return 0;
+-	err = fscrypt_policy_to_key_spec(policy, &key_spec);
+-	if (err)
 -		return err;
--	}
- 	f2fs_warn(sbi, "Test dummy encryption mode enabled");
- 	return 0;
+ 	fscrypt_get_test_dummy_secret(&secret);
+-	err = add_master_key(sb, &secret, &key_spec);
++	err = add_master_key(sb, &secret, key_spec);
+ 	wipe_master_key_secret(&secret);
+ 	return err;
  }
+-EXPORT_SYMBOL_GPL(fscrypt_add_test_dummy_key);
+ 
+ /*
+  * Verify that the current user has added a master key with the given identifier
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index 20323c0ba4c5e..aa94fba9d17e7 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -464,9 +464,7 @@ static int setup_file_encryption_key(struct fscrypt_info *ci,
+ 		 */
+ 		if (dummy_policy &&
+ 		    fscrypt_policies_equal(dummy_policy, &ci->ci_policy)) {
+-			struct fscrypt_dummy_policy tmp = { dummy_policy };
+-
+-			err = fscrypt_add_test_dummy_key(sb, &tmp);
++			err = fscrypt_add_test_dummy_key(sb, &mk_spec);
+ 			if (err)
+ 				return err;
+ 			mk = fscrypt_find_master_key(sb, &mk_spec);
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 4f5f8a6512132..44848d870046a 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -309,8 +309,6 @@ fscrypt_free_dummy_policy(struct fscrypt_dummy_policy *dummy_policy)
+ /* keyring.c */
+ void fscrypt_destroy_keyring(struct super_block *sb);
+ int fscrypt_ioctl_add_key(struct file *filp, void __user *arg);
+-int fscrypt_add_test_dummy_key(struct super_block *sb,
+-			       const struct fscrypt_dummy_policy *dummy_policy);
+ int fscrypt_ioctl_remove_key(struct file *filp, void __user *arg);
+ int fscrypt_ioctl_remove_key_all_users(struct file *filp, void __user *arg);
+ int fscrypt_ioctl_get_key_status(struct file *filp, void __user *arg);
+@@ -530,13 +528,6 @@ static inline int fscrypt_ioctl_add_key(struct file *filp, void __user *arg)
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline int
+-fscrypt_add_test_dummy_key(struct super_block *sb,
+-			   const struct fscrypt_dummy_policy *dummy_policy)
+-{
+-	return 0;
+-}
+-
+ static inline int fscrypt_ioctl_remove_key(struct file *filp, void __user *arg)
+ {
+ 	return -EOPNOTSUPP;
 -- 
 2.39.1
 
