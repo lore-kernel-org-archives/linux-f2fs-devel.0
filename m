@@ -4,74 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 49F2EC636CC
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Feb 2023 19:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3D781C64ED6
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  8 Feb 2023 06:21:47 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pPTCg-0000ta-F4;
-	Tue, 07 Feb 2023 19:00:29 +0000
+	id 1pPdpz-0004Wu-1r;
+	Wed, 08 Feb 2023 06:21:46 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pPTCc-0000tG-Rb
+ (envelope-from <ebiggers@kernel.org>) id 1pPdpx-0004Wm-S7
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Feb 2023 19:00:26 +0000
+ Wed, 08 Feb 2023 06:21:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=MjbUjhF8zq3jHhTPQRHSi0hOBtcNFpYgTWkCMHkCEFg=; b=NgMRUklmprPrhXJtSypmYuczdt
- 4S3N0+3yjlVVzCUsXGqpHkIAuckDmlh6mYBwQyieXbjGxnaIKmfXbGYNg8pd3u5Y2VYULEk1xyr4D
- dNIPGhm2WX3y8tK3e9Vw3QpGQCCe388kIkwST4Wzee88CJfexRCAv8fl6ndpkczAoa/Y=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=JkFM0WcenL3jza42LrOkjPhnbb7eCgnerOySPiYQcI0=; b=MJjd/XBfKD75HuJWlYM63sre7w
+ f5Naoo8664do5kjbnYXHxsxjvqPbWiksG7V1rYQz5xb/4t4HCr8HxF6COucukfVD0NDHEOX9xl5fI
+ QJAtvc7DfohVaJzPFdt+rkmrvYhI90wpIQu54qufPenquhIupzBLNz3N7mbOaIfRLftE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=MjbUjhF8zq3jHhTPQRHSi0hOBtcNFpYgTWkCMHkCEFg=; b=X
- GeQCIf95xUWVKvVDZaD1ZQxGFWOmYwgDeeIHKHdDQWE6gnE/wTeQGC2rsHXmhCS5V5JXu9b5ZRAge
- JlH3ajHcLM75safyzQCd79fH2WvoZjm1yA6rfAigJHAqwrm4KuazmCfc4qQ0hZSgOE1gVl+bpjpj+
- 0e4gwYFoqQrbD+iY=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=JkFM0WcenL3jza42LrOkjPhnbb7eCgnerOySPiYQcI0=; b=kfhePfzVK/w0Qc+lcM+mgOtDA0
+ YMa/oCwM7lNK+l8Amsi814ES2GtJ5ldfmUNKnADN25tc+GNTUjAxGyizXM+0oPI8TIsB3NurRxFXn
+ BHi/yen5qKwmioa32uuUEOkainOz3/utBIL5i8Jux5nhnXDtQZP7rRQNJLeGERUtsy04=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pPTCa-0005ds-N6 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Feb 2023 19:00:26 +0000
+ id 1pPdpu-0008Qj-Ej for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 08 Feb 2023 06:21:45 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 33823B81A61
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  7 Feb 2023 19:00:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CDB70C433EF
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  7 Feb 2023 19:00:17 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id B2818614D7;
+ Wed,  8 Feb 2023 06:21:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC55DC433D2;
+ Wed,  8 Feb 2023 06:21:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1675796417;
- bh=KNMLzQRbXmtI14laLDIE2u3I5HHP1UTGH54PAZ/oC5M=;
- h=Subject:From:Date:To:From;
- b=FeuG62AWtaoa7+VAUNjHUQHBlNxGOEMJdNrlBfuRIgYtgGMVhv0v73uJA5UlSzEJv
- RrEnE/4F5SSCt3XjuW0m9f+8Ox0whn9JILuKmeGq2HL3HOtO6/Pw6zKdlNU58nfXv8
- yu/XbtKWN4rgeqnMZFeoYVNr+uL0U8luh0nK/u7muVYv2OjlDmudQSXA2M3zLdqal4
- C9zME804a6l+idmnK2FDr77+JxdUAqpzPF6GoYNJyWAVqxPTA5iebF369PdrhB3pu9
- yPe+muogMYHXEAab86LXWsW0Xrz38Hbwyzl/EVdGHjHmJ347N5q2c0HvQdmfOJFmKj
- NZxwds1XFDu9A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- B3D9EE55F06 for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  7 Feb 2023 19:00:17 +0000 (UTC)
+ s=k20201202; t=1675837295;
+ bh=rXzimvd4PWdjTx5BBrxxERaITqXWUNGccCwAWr6IKjY=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=bqgr3pjenH4hhu5yGdWxOmuBDTfjE4KLBRmr1eWNY3senk1DChomHChHvaaxF6sbw
+ WFt0IatwITKGVY/itxERVpapqWkjt5alhkueEyIKT84lQoCu0gAZ4T1uEu4FJf33/o
+ heMAhP1Ezd9x0FPiBMslUu7RBEXu3HgMborHvzBMxsapUwcOEVrGe3o0JmYKEwck9m
+ S2m6eg9Fv1O+XZQUCAASPtvuI1I1bozwdJGolV70KdhTahQQadD71tVagZeGiTGqSg
+ zLKtosWgeOdtBPa38BSfliQolz1TEODI3gol34EYGKeYBQmVPlK7+cRjlDgxXc/dC3
+ T73UdOlm3P/mQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Date: Tue,  7 Feb 2023 22:21:03 -0800
+Message-Id: <20230208062107.199831-2-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230208062107.199831-1-ebiggers@kernel.org>
+References: <20230208062107.199831-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167579641767.24576.7030553352235460537.git-patchwork-summary@kernel.org>
-Date: Tue, 07 Feb 2023 19:00:17 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1pPTCa-0005ds-N6
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+X-Headers-End: 1pPdpu-0008Qj-Ej
+Subject: [f2fs-dev] [PATCH 1/5] fscrypt: add the test dummy encryption key
+ on-demand
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,41 +80,105 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+From: Eric Biggers <ebiggers@google.com>
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+When the key for an inode is not found but the inode is using the
+test_dummy_encryption policy, automatically add the
+test_dummy_encryption key to the filesystem keyring.  This eliminates
+the need for all the individual filesystems to do this at mount time,
+which is a bit tricky to clean up from on failure.
 
-Patch: [f2fs-dev] f2fs: fix typos in comments
-  Submitter: Jinyoung CHOI <j-young.choi@samsung.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=719092
-  Lore link: https://lore.kernel.org/r/20230206115600epcms2p736f05524a361d5926dbb401bdd218f85@epcms2p7
+Note: this covers the call to fscrypt_find_master_key() from inode key
+setup, but not from the fscrypt ioctls.  So, this isn't *exactly* the
+same as the key being present from the very beginning.  I think we can
+tolerate that, though, since the inode key setup caller is the only one
+that actually matters in the context of test_dummy_encryption.
 
-Patch: [f2fs-dev] f2fs: fix kernel crash due to null io->bio
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=718989
-  Lore link: https://lore.kernel.org/r/20230206034344.724593-1-jaegeuk@kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/fscrypt_private.h |  1 +
+ fs/crypto/keysetup.c        | 25 +++++++++++++++++++++++--
+ fs/crypto/policy.c          |  3 +--
+ 3 files changed, 25 insertions(+), 4 deletions(-)
 
-Series: [f2fs-dev,v4,1/3] f2fs: fix to set ipu policy
-  Submitter: Yangtao Li <frank.li@vivo.com>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=719149
-  Lore link: https://lore.kernel.org/r/20230206144310.2344-1-frank.li@vivo.com
-    Patches: [f2fs-dev,v4,1/3] f2fs: fix to set ipu policy
-             [f2fs-dev,v4,2/3] f2fs: add missing description for ipu_policy node
-
-
-Total patches: 4
-
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index 316a778cec0ff..17dd33d9a522e 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -651,6 +651,7 @@ bool fscrypt_policies_equal(const union fscrypt_policy *policy1,
+ 			    const union fscrypt_policy *policy2);
+ int fscrypt_policy_to_key_spec(const union fscrypt_policy *policy,
+ 			       struct fscrypt_key_specifier *key_spec);
++const union fscrypt_policy *fscrypt_get_dummy_policy(struct super_block *sb);
+ bool fscrypt_supported_policy(const union fscrypt_policy *policy_u,
+ 			      const struct inode *inode);
+ int fscrypt_policy_from_context(union fscrypt_policy *policy_u,
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index 94757ccd30568..20323c0ba4c5e 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -438,6 +438,7 @@ static int setup_file_encryption_key(struct fscrypt_info *ci,
+ 				     bool need_dirhash_key,
+ 				     struct fscrypt_master_key **mk_ret)
+ {
++	struct super_block *sb = ci->ci_inode->i_sb;
+ 	struct fscrypt_key_specifier mk_spec;
+ 	struct fscrypt_master_key *mk;
+ 	int err;
+@@ -450,8 +451,28 @@ static int setup_file_encryption_key(struct fscrypt_info *ci,
+ 	if (err)
+ 		return err;
+ 
+-	mk = fscrypt_find_master_key(ci->ci_inode->i_sb, &mk_spec);
+-	if (!mk) {
++	mk = fscrypt_find_master_key(sb, &mk_spec);
++	if (unlikely(!mk)) {
++		const union fscrypt_policy *dummy_policy =
++			fscrypt_get_dummy_policy(sb);
++
++		/*
++		 * Add the test_dummy_encryption key on-demand.  In principle,
++		 * it should be added at mount time.  Do it here instead so that
++		 * the individual filesystems don't need to worry about adding
++		 * this key at mount time and cleaning up on mount failure.
++		 */
++		if (dummy_policy &&
++		    fscrypt_policies_equal(dummy_policy, &ci->ci_policy)) {
++			struct fscrypt_dummy_policy tmp = { dummy_policy };
++
++			err = fscrypt_add_test_dummy_key(sb, &tmp);
++			if (err)
++				return err;
++			mk = fscrypt_find_master_key(sb, &mk_spec);
++		}
++	}
++	if (unlikely(!mk)) {
+ 		if (ci->ci_policy.version != FSCRYPT_POLICY_V1)
+ 			return -ENOKEY;
+ 
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index 893661b523769..69dca4ff5f488 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -53,8 +53,7 @@ int fscrypt_policy_to_key_spec(const union fscrypt_policy *policy,
+ 	}
+ }
+ 
+-static const union fscrypt_policy *
+-fscrypt_get_dummy_policy(struct super_block *sb)
++const union fscrypt_policy *fscrypt_get_dummy_policy(struct super_block *sb)
+ {
+ 	if (!sb->s_cop->get_dummy_policy)
+ 		return NULL;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.1
 
 
 
