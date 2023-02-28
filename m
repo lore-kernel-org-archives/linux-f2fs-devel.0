@@ -4,72 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8A78EC7EE30
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 28 Feb 2023 01:02:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 882BDC7EE2E
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 28 Feb 2023 01:02:11 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pWoNb-0003UK-P7;
-	Tue, 28 Feb 2023 01:02:06 +0000
+	id 1pWoNf-0004tm-Q2;
+	Tue, 28 Feb 2023 01:02:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pWoNZ-0003UD-97
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pWoNe-0004ta-AO
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 28 Feb 2023 01:02:04 +0000
+ Tue, 28 Feb 2023 01:02:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IBPLWkixTTA5iQ7Jusq7+hSrq5Bdg1Dep6r949oL478=; b=KgPug+fqalcvUk6IC55byAJbDg
- w6axeksNGLIHSH7ZmzyYwdfYHlvuCHZ5WpTsougB4DUY5PrjCKcCJwj5OAos1FhUF0U1NoUSD+Adl
- T7162oyEieS0iAHmvRLrdekASTWcVZ7ieAQmpZIwGu9epjwsw7zoG7Fqf/zxbckF99XM=;
+ bh=vrLI1OKBNmboNRUOX2OhbzztFX8n7e+C5REp5D6UcSw=; b=TBUVPpY7OJMSTMY4BmxOxCZgDK
+ QXvFxSXlboiHNEfV3JM+WS3Rx+RizZ7IPwiQQUCZXEHuneUc4n7ZLKnbzxxdG4lSk/Q3kEl9hsIEa
+ rZndv6ruWo6PwxOg9dLqJlt3Fp7tL7lO6UUNwrF8g1froRt+TbpqFf6esxZRA9CWOcc0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=IBPLWkixTTA5iQ7Jusq7+hSrq5Bdg1Dep6r949oL478=; b=fCymq7JdVOckCp9QSLXPWOcMjw
- SakQCc0g94P8hVZhYYVOTREHsTvTbZ3/8bO/X612/OqBfZpcNXxMFCafGyGt3vF5Qpup6k8FnFk1d
- ypULYeqsMOouY5mEzI4VkirzS8LIDi0hz9ePjjhcmjy1WcJuCmCqUem0udZSLTo94TE0=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=vrLI1OKBNmboNRUOX2OhbzztFX8n7e+C5REp5D6UcSw=; b=camHzfYncsJ05oD31OHzcNUHNn
+ +igx/K6NH5mgf4JxFyAkwHzDe88N9RFu0tZjpmETPZ9Lhumc+7XRUkLqnM/Jbi9cTQRr6TSB9f+X5
+ 3fo78vBlwvdsfeynLMUaitYwIVd5ZUlU3672ggLdw5FHtJ10tpabmqycgUmyOp8wvsAM=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pWoNU-0001fL-8W for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 28 Feb 2023 01:02:04 +0000
+ id 1pWoNc-0056AK-Ly for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 28 Feb 2023 01:02:09 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A4BF760DE5;
- Tue, 28 Feb 2023 01:01:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 15E2BC433EF;
+ by ams.source.kernel.org (Postfix) with ESMTPS id C5743B80DD6;
+ Tue, 28 Feb 2023 01:01:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2A490C4339B;
  Tue, 28 Feb 2023 01:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1677546115;
- bh=SOFnAzz1BpATHblwfDPCUsbi+PYozLGsV7wjyMHjkQk=;
+ bh=0MyrhP8zxv6k33rgc7qfdjiKkOYxKugd6Y5yIm+G+iw=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Yrv42d67C/zchBY/GRxlF2I0lPmwe05knllpu/5rTK8vNLkpKkCLGXRW/EjYeRcQY
- aHuxa5lUaSLE2Afe8ejaxjxddX83InNC8yYf/n7QqXsiOwRK1tdC/PAWG2IXcNQOgY
- ctsys9m1rsLd6yP7b7tBdN812nYX2LYEo8qPe+oBIPHLt89g0Cwqkm0p51fR8fPCcg
- TdetilTXNnPAfk0reqGCm2sT8/+GsltnN7i+3VER2zpwbvwtW7x3LYVUOVdHbsdst+
- nRsbnEVQZZ/TZDNRZDCtUZfjm+T1pc4gWZZkfyI00zmudv+MED+Nr1dAn0L670B0wj
- RaBYdXnRZfKoA==
+ b=TrpxKXLHDJRZmtxPellg2R2e0LwhTmG2M11tD4m4F8F5sKa+ry/nGM6/NDBChHoSD
+ j+YaN0hFzU38PKpe17cqCZbGiwewOAiZERVYOj+LVc+zb+jt+6wDtD4bw9ZY6ZPna5
+ 065r5y/ntPdrttGXnI3ygAbmSEG2s9nsuyYdZPPvc3oEf0eJPU9GIxZ27JxeQH239M
+ eIP+6uHS95fWDDm7rwjzBKHQryPRBHRS4JkIq4xsHici3XYcI9wSHemkzlMeag11Ao
+ CyNrHEzQkd0ZOa/GCfBP9ibpQQKBD4VlH0bx1VPvcM/70InEGg8VvhrbOZQC5RFlmL
+ wAFn4/77eBcag==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- E53C0E1CF31; Tue, 28 Feb 2023 01:01:54 +0000 (UTC)
+ ED819C41676; Tue, 28 Feb 2023 01:01:54 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167754611492.27916.393758892204411776.git-patchwork-notify@kernel.org>
+Message-Id: <167754611496.27916.17463541946406622753.git-patchwork-notify@kernel.org>
 Date: Tue, 28 Feb 2023 01:01:54 +0000
-References: <20221223203638.41293-1-ebiggers@kernel.org>
-In-Reply-To: <20221223203638.41293-1-ebiggers@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-X-Headers-End: 1pWoNU-0001fL-8W
-Subject: Re: [f2fs-dev] [PATCH v2 00/11] fsverity: support for non-4K pages
+References: <20230104211448.4804-1-vishal.moola@gmail.com>
+In-Reply-To: <20230104211448.4804-1-vishal.moola@gmail.com>
+To: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+X-Headers-End: 1pWoNc-0056AK-Ly
+Subject: Re: [f2fs-dev] [PATCH v5 00/23] Convert to filemap_get_folios_tag()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,10 +81,11 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: aalbersh@redhat.com, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-btrfs@vger.kernel.org
+Cc: linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ cluster-devel@redhat.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -92,45 +93,65 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Hello:
 
 This series was applied to jaegeuk/f2fs.git (dev)
-by Eric Biggers <ebiggers@google.com>:
+by Andrew Morton <akpm@linux-foundation.org>:
 
-On Fri, 23 Dec 2022 12:36:27 -0800 you wrote:
-> [This patchset applies to mainline + some fsverity cleanups I sent out
->  recently.  You can get everything from tag "fsverity-non4k-v2" of
->  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git ]
-> 
-> Currently, filesystems (ext4, f2fs, and btrfs) only support fsverity
-> when the Merkle tree block size, filesystem block size, and page size
-> are all the same.  In practice that means 4K, since increasing the page
-> size, e.g. to 16K, forces the Merkle tree block size and filesystem
-> block size to be increased accordingly.  That can be impractical; for
-> one, users want the same file signatures to work on all systems.
+On Wed,  4 Jan 2023 13:14:25 -0800 you wrote:
+> This patch series replaces find_get_pages_range_tag() with
+> filemap_get_folios_tag(). This also allows the removal of multiple
+> calls to compound_head() throughout.
+> It also makes a good chunk of the straightforward conversions to folios,
+> and takes the opportunity to introduce a function that grabs a folio
+> from the pagecache.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2,01/11] fsverity: use unsigned long for level_start
-    https://git.kernel.org/jaegeuk/f2fs/c/284d5db5f99e
-  - [f2fs-dev,v2,02/11] fsverity: simplify Merkle tree readahead size calculation
-    https://git.kernel.org/jaegeuk/f2fs/c/9098f36b739d
-  - [f2fs-dev,v2,03/11] fsverity: store log2(digest_size) precomputed
-    https://git.kernel.org/jaegeuk/f2fs/c/579a12f78d88
-  - [f2fs-dev,v2,04/11] fsverity: use EFBIG for file too large to enable verity
-    https://git.kernel.org/jaegeuk/f2fs/c/55eed69cc8fd
-  - [f2fs-dev,v2,05/11] fsverity: replace fsverity_hash_page() with fsverity_hash_block()
-    https://git.kernel.org/jaegeuk/f2fs/c/f45555bf23cf
-  - [f2fs-dev,v2,06/11] fsverity: support verification with tree block size < PAGE_SIZE
-    https://git.kernel.org/jaegeuk/f2fs/c/5306892a50bf
-  - [f2fs-dev,v2,07/11] fsverity: support enabling with tree block size < PAGE_SIZE
-    https://git.kernel.org/jaegeuk/f2fs/c/56124d6c87fd
-  - [f2fs-dev,v2,08/11] ext4: simplify ext4_readpage_limit()
-    https://git.kernel.org/jaegeuk/f2fs/c/5e122148a3d5
-  - [f2fs-dev,v2,09/11] f2fs: simplify f2fs_readpage_limit()
-    https://git.kernel.org/jaegeuk/f2fs/c/feb0576a361a
-  - [f2fs-dev,v2,10/11] fs/buffer.c: support fsverity in block_read_full_folio()
-    https://git.kernel.org/jaegeuk/f2fs/c/4fa512ce7051
-  - [f2fs-dev,v2,11/11] ext4: allow verity with fs block size < PAGE_SIZE
-    https://git.kernel.org/jaegeuk/f2fs/c/db85d14dc5c5
+  - [f2fs-dev,v5,01/23] pagemap: Add filemap_grab_folio()
+    https://git.kernel.org/jaegeuk/f2fs/c/ee7a5906ff08
+  - [f2fs-dev,v5,02/23] filemap: Added filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/247f9e1feef4
+  - [f2fs-dev,v5,03/23] filemap: Convert __filemap_fdatawait_range() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/6817ef514e1a
+  - [f2fs-dev,v5,04/23] page-writeback: Convert write_cache_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/0fff435f060c
+  - [f2fs-dev,v5,05/23] afs: Convert afs_writepages_region() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/acc8d8588cb7
+  - [f2fs-dev,v5,06/23] btrfs: Convert btree_write_cache_pages() to use filemap_get_folio_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/51c5cd3bafe5
+  - [f2fs-dev,v5,07/23] btrfs: Convert extent_write_cache_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/9f50fd2e92e3
+  - [f2fs-dev,v5,08/23] ceph: Convert ceph_writepages_start() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/590a2b5f0a9b
+  - [f2fs-dev,v5,09/23] cifs: Convert wdata_alloc_and_fillpages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/4cda80f3a7a5
+  - [f2fs-dev,v5,10/23] ext4: Convert mpage_prepare_extent_to_map() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/50ead2537441
+  - [f2fs-dev,v5,11/23] f2fs: Convert f2fs_fsync_node_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/e6e46e1eb7ce
+  - [f2fs-dev,v5,12/23] f2fs: Convert f2fs_flush_inline_data() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/a40a4ad1186a
+  - [f2fs-dev,v5,13/23] f2fs: Convert f2fs_sync_node_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/7525486affa5
+  - [f2fs-dev,v5,14/23] f2fs: Convert f2fs_write_cache_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/1cd98ee747cf
+  - [f2fs-dev,v5,15/23] f2fs: Convert last_fsync_dnode() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/4f4a4f0febe6
+  - [f2fs-dev,v5,16/23] f2fs: Convert f2fs_sync_meta_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/580e7a492608
+  - [f2fs-dev,v5,17/23] gfs2: Convert gfs2_write_cache_jdata() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/87ed37e66dfd
+  - [f2fs-dev,v5,18/23] nilfs2: Convert nilfs_lookup_dirty_data_buffers() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/5ee4b25cb730
+  - [f2fs-dev,v5,19/23] nilfs2: Convert nilfs_lookup_dirty_node_buffers() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/a24586583169
+  - [f2fs-dev,v5,20/23] nilfs2: Convert nilfs_btree_lookup_dirty_buffers() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/41f3f3b5373e
+  - [f2fs-dev,v5,21/23] nilfs2: Convert nilfs_copy_dirty_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/d4a16d31334e
+  - [f2fs-dev,v5,22/23] nilfs2: Convert nilfs_clear_dirty_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/243c5ea4f783
+  - [f2fs-dev,v5,23/23] filemap: Remove find_get_pages_range_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/c5792d938411
 
 You are awesome, thank you!
 -- 
