@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0B22FC678DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Mar 2023 17:40:40 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C2946C6FD1B
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Mar 2023 17:40:42 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pZbIl-00033D-Gn;
-	Tue, 07 Mar 2023 17:40:40 +0000
+	id 1pZbIn-0001q4-MP;
+	Tue, 07 Mar 2023 17:40:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pZbIi-000331-Uc
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pZbIj-0001pk-Rk
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 07 Mar 2023 17:40:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,54 +23,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4denxN2IvwfPs6ASWis2rzcx3wLh2NEEAYmfBHsDSTE=; b=FuZnKFiljYOC5LmVnEG/yCIOrz
- fQOOjFMTRF8sQHXQ1vuW3ERpi3BlpZVhjxZJO4rW4en/znNghCpJIzOZBrGZCZJhN3MBpBn91/gSt
- z9pNqms4vBGuOUWL61n1cpSjwlBc9CJZhZw2U9wv5CNrSzBzZO7SgMfiOmJKMWaFpKIY=;
+ bh=24YD6Q4+lqMY4Nu//Qu/G1/IQnDyuQeElknGjb/MC+4=; b=E1lGhpw2Pjp4hMEJmDle2O0yvJ
+ 33pLCH5/SyIQxBj8DKvl0iCGDi0yZglAJFLENv2YjYNo1uM14LBmWJLixT7EzaniqXPXBecGDYH7f
+ ShRhtpbpHTiXeLKs0GOOjCruFT2usXvYXWpdlM0coX2SYgRDYHJe7wuzTCfdGXkYZ6tw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=4denxN2IvwfPs6ASWis2rzcx3wLh2NEEAYmfBHsDSTE=; b=Hv9H31E0IMp69nSzYdnct7uUKX
- sZ6XaonQDoDoSGC+yu7KsSf2Y6FO11ezMHPnZLZOVYAwana06DNSltbn7XVrVHClRDivSJzOZBJVB
- RsG7fkqaI0XA6dUNqRvdnVulpTeZNy4xLaZSmHzeEpa8O6yy4w5NoG6foNI3PAkCnm4w=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=24YD6Q4+lqMY4Nu//Qu/G1/IQnDyuQeElknGjb/MC+4=; b=Ud1M9OeCaBpPUN/IVzLei7r0Ve
+ ftej2JIFA5X9ctliiECoGhychBdfVHMW7ux6GbtkFH9aZQZYDurBsPwUKtjZuNE3kjedThE0vuQ3k
+ 2iTn4DsS8v7m8Csx88EX6T6a+5DrNuLObvmcbnNbi6oaffuhhTd4/n7PoJzbn/Rwxvpo=;
+Received: from ams.source.kernel.org ([145.40.68.75])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pZbIb-0001Kk-KM for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Mar 2023 17:40:35 +0000
+ id 1pZbIe-0001Kp-Mc for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 07 Mar 2023 17:40:38 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 06EA56151B;
- Tue,  7 Mar 2023 17:40:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CCA6BC433A7;
+ by ams.source.kernel.org (Postfix) with ESMTPS id 43C13B819BB;
+ Tue,  7 Mar 2023 17:40:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E96D7C433EF;
  Tue,  7 Mar 2023 17:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1678210824;
- bh=/xkqGNJ4VHBP+p2CoqdnBE4IC+f3MlVqqhOfFRd6CUk=;
+ s=k20201202; t=1678210825;
+ bh=sIZlFfMWBsTCJuuFDyf/IkINN3ShV1UqVU0yc1AsDfw=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=D2jOWm0luzts5v/YERrgmPCYhKyXyhHGuq68V0XQ080ZyCCCnUCuAejRQ515bpVOu
- 2VeTqhK3DlaByXJKeCHqG6W5Z86bFLJIXmRCddm/H4NM6dh96VVLz/gqek0mLXrYVz
- hC0tJFwac+b4cHL7Iq8tWI00mMCOX58N+hRnP7/CSHylPdT/WRDerBMgBuvmaEirYp
- 9TqHrJCWrSykWUg7ZgzVRppzqFnKAKa746Ft8LqWtu/uLNroCM6cA6Ua1TnsgqeIvQ
- 463qa0hOT4bUCLr08mc8J66peFmru1jGUjgoTg3p2OPcFjWhyFkK99+1HySnddZ0V+
- JTSjcGngPSuNQ==
+ b=LwV6l6rpbxiTRQuAE7nCrnXMmK3dA4wKKxRUJJVDgTP1wRdXF8xx/Be4f26cV2Eqa
+ wzpwDtUUj8E7eE7G1rNt2KoLk77AqTaUBYo7gbsP13jii6umm5OcLtmPcB3lAHXaiw
+ Aivuxx64KBVym0n+7XXa1yzdJFasKX3pWmTd0YRPvnzjhvwlpHAsR8WPD1bjlJxSf/
+ bE3SVMvMOEnZ0vUGR1YTgmWH09dsMXuLCpTvx+4ggioywLUZeNwZAsINUrjXdPZwYO
+ L8zCBYfs1swvGYSdeOwZv38NKLXBAMYqizxVVobulj4m4EMKpNwO//KygLF6ZtYwTV
+ UKQnN5twyCX8g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- BAA16E61B63; Tue,  7 Mar 2023 17:40:24 +0000 (UTC)
+ CCAACE61B65; Tue,  7 Mar 2023 17:40:24 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167821082476.1693.14172428859403665467.git-patchwork-notify@kernel.org>
+Message-Id: <167821082483.1693.5488669635546632139.git-patchwork-notify@kernel.org>
 Date: Tue, 07 Mar 2023 17:40:24 +0000
-References: <20230223012513.1781735-1-lizetao1@huawei.com>
-In-Reply-To: <20230223012513.1781735-1-lizetao1@huawei.com>
-To: Li Zetao <lizetao1@huawei.com>
-X-Headers-End: 1pZbIb-0001Kk-KM
-Subject: Re: [f2fs-dev] [PATCH -next] f2fs: make f2fs_sync_inode_meta()
- static
+References: <20230216140935.20447-1-frank.li@vivo.com>
+In-Reply-To: <20230216140935.20447-1-frank.li@vivo.com>
+To: Yangtao Li <frank.li@vivo.com>
+X-Headers-End: 1pZbIe-0001Kp-Mc
+Subject: Re: [f2fs-dev] [PATCH v2,
+ RESEND] f2fs: export compress_percent and compress_watermark entries
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -93,20 +93,20 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 23 Feb 2023 01:25:13 +0000 you wrote:
-> After commit 26b5a079197c ("f2fs: cleanup dirty pages if recover failed"),
-> f2fs_sync_inode_meta() is only used in checkpoint.c, so
-> f2fs_sync_inode_meta() should only be visible inside. Delete the
-> declaration in the header file and change f2fs_sync_inode_meta()
-> to static.
+On Thu, 16 Feb 2023 22:09:35 +0800 you wrote:
+> This patch export below sysfs entries for better control cached
+> compress page count.
 > 
-> Signed-off-by: Li Zetao <lizetao1@huawei.com>
+> /sys/fs/f2fs/<disk>/compress_watermark
+> /sys/fs/f2fs/<disk>/compress_percent
+> 
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,-next] f2fs: make f2fs_sync_inode_meta() static
-    https://git.kernel.org/jaegeuk/f2fs/c/e6bd5463fce0
+  - [f2fs-dev,v2,RESEND] f2fs: export compress_percent and compress_watermark entries
+    https://git.kernel.org/jaegeuk/f2fs/c/a29f3722b128
 
 You are awesome, thank you!
 -- 
