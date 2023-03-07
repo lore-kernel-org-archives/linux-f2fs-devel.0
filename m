@@ -4,69 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A778C678D4
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Mar 2023 15:14:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3B540C678D5
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Mar 2023 15:17:02 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pZZ1K-0007Fu-CB;
-	Tue, 07 Mar 2023 15:14:29 +0000
+	id 1pZZ3k-0002z0-Id;
+	Tue, 07 Mar 2023 15:16:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pZZ1I-0007Ff-Be
+ (envelope-from <chao@kernel.org>) id 1pZZ3j-0002yt-W7
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Mar 2023 15:14:27 +0000
+ Tue, 07 Mar 2023 15:16:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=G2vcEVoAREZUUkBDOXjxp8pa/RAGf3dIVj8UnS+wFwM=; b=cYJLMHMh++nKLl1y/+L9d213m3
- kzww3ttFm5lmU+l0hF6gfQJSkRQaP28DpXwgOlenpjV6g3nXgDTUv063f6ghyKyMTvfhD8SpARYTN
- kMyQ7YOfZpkh9hCuNFzY7+TwQ6cqlSS6jnmG/BhB2TD/1mLQ+mvgQRKMY2PsJ5f8s9yc=;
+ bh=ETfr7jvsay4QGArLjeOv4Eh8UCgfVzc/cNOApzBu9sI=; b=TLRWuZ08iSIg7ExWUa3xVivM6N
+ 0tK4/9PGBqB4pukhO95FHZPNtM+1RDH+SHTBqszyStUGz4BdMEFm5DpZt+P8mtSApeMEBfo257v35
+ 7v76Jhou/WwMfYn2ylpn73HzOOymEimsZhCwGhhuPIdRAeuPu+sBKEuNOat1gOgmyx5E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=G2vcEVoAREZUUkBDOXjxp8pa/RAGf3dIVj8UnS+wFwM=; b=b
- RqKOPp5MbJTty3nmEXkTjxCYdfI+jJHa7b1FpaFSzOOEJbWgfcUdGipXZq7l6mzWCp8FKS6rEhFDF
- i10DSnMHK/oZzfj/azWjzPH1cdrcrlMa4cGR6vejzpM53QKDK9cUjKgyAEM9M/D7rna+JiW2SQrRp
- /IkokwSxTB/aR4TI=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=ETfr7jvsay4QGArLjeOv4Eh8UCgfVzc/cNOApzBu9sI=; b=dTRoa+GCBQHisQNj8SULoQ95Q+
+ YqWa+T7DUOwER1jMV2NcxNXuw15mNq1i75UpRnBhzoxKqETInuYF/xfcB1PDUdHr4uBjyltMosAvk
+ y+5nGhsLLEfzPA29Dnd6cXqOem/FbUtYkR1yQd7AlzWbFENgS0TGVbuHn6bNR6+jbUOU=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pZZ1F-0004sx-W1 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Mar 2023 15:14:27 +0000
+ id 1pZZ3i-002Ilw-Oj for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 07 Mar 2023 15:16:59 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 8E7CD6145B;
- Tue,  7 Mar 2023 15:14:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB31C4339B;
- Tue,  7 Mar 2023 15:14:18 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 7A18161265;
+ Tue,  7 Mar 2023 15:16:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4593C4339B;
+ Tue,  7 Mar 2023 15:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1678202060;
- bh=bxU+hOiIjssyJGKPM24O0mCCSmIiA+TBoXRf2lB8e1M=;
- h=From:To:Cc:Subject:Date:From;
- b=AFUVp94n/6H6wCmMRVWpMVY28wdcHDusmYUVqrnS/PddbglmSoXaqQ5Woas/0IZHy
- sRXaOxFOTh1tnW70t6pCEne154DfMP7GXihFrPQen44zAU+UXaRxxog6VOUKclv83/
- LR8p56SJOhuTgplmWh0g9NV33t2QkhM6uXV0bcOM2BaTwNR5cg9RgVZQiOeVFUkQfc
- TTODcBOnbPl+fpIeyMTTust1tFxmGpolFApiTJ7OkgfIW05mB/QNMLCUe+Mg/dUOCz
- qT9eaMqrm8mfh1U3dJwOVooNkILRmoVcsJoJOIZTjCqXkYXUph8wwtWMJho8QfTAxI
- mKtEyr0hi5tVw==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Tue,  7 Mar 2023 23:14:08 +0800
-Message-Id: <20230307151408.58490-1-chao@kernel.org>
-X-Mailer: git-send-email 2.36.1
+ s=k20201202; t=1678202212;
+ bh=r5UlYGnLJQR3K3EgnBj+BtpeV/TXq8sAAb2GWHNtr1s=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=MwQm30pP8tYFJXLYp9KJTB+wjdOpFUU8NAz9yJ2Oz4247tPiD5B2Jh1ttiI7UZozl
+ UzrqeUUEPP2wmVMPAjU51BATX/Zk4/7YVWHet3j19SAgPJR38OMfwcUem1uF/W6mXN
+ Z50s5CIq4+NL8xiOToWMAbluGM/DeQewr9AuQCKb160MZviZZoOETn1WOyNV3FtzeP
+ Hfk5Is+qpC1qRIcpMefcx/9A5CSt//+1gPc/h/BF2hwckck5bhl0/0GFbjY9doOujl
+ D+eXIq+uX59l7vmEj5iK2WqJbnLsxYggRZx9BA/i8hr7CGKit5d4itxsHfoDj6j4wz
+ 0OwtNp3uCG4JQ==
+Message-ID: <1eafcd1d-50e9-e515-fd84-fca25139304e@kernel.org>
+Date: Tue, 7 Mar 2023 23:16:48 +0800
 MIME-Version: 1.0
-X-Headers-End: 1pZZ1F-0004sx-W1
-Subject: [f2fs-dev] [PATCH] f2fs: fix unaligned field offset in 32-bits
- platform
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Content-Language: en-US
+To: Yangtao Li <frank.li@vivo.com>, jaegeuk@kernel.org
+References: <20230216140935.20447-1-frank.li@vivo.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20230216140935.20447-1-frank.li@vivo.com>
+X-Headers-End: 1pZZ3i-002Ilw-Oj
+Subject: Re: [f2fs-dev] [PATCH v2,
+ RESEND] f2fs: export compress_percent and compress_watermark entries
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,121 +82,23 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-F2FS-fs (dm-x): inconsistent rbtree, cur(3470333575168) next(3320009719808)
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/gc.c:602!
-Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-PC is at get_victim_by_default+0x13c0/0x1498
-LR is at f2fs_check_rb_tree_consistence+0xc4/0xd4
-....
-[<c04d98b0>] (get_victim_by_default) from [<c04d4f44>] (f2fs_gc+0x220/0x6cc)
-[<c04d4f44>] (f2fs_gc) from [<c04d4780>] (gc_thread_func+0x2ac/0x708)
-[<c04d4780>] (gc_thread_func) from [<c015c774>] (kthread+0x1a8/0x1b4)
-[<c015c774>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+On 2023/2/16 22:09, Yangtao Li wrote:
+> This patch export below sysfs entries for better control cached
+> compress page count.
+> 
+> /sys/fs/f2fs/<disk>/compress_watermark
+> /sys/fs/f2fs/<disk>/compress_percent
+> 
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 
-The reason is there is __packed attribute in struct rb_entry, but there
-is no __packed attribute in struct victim_entry, so wrong offset of key
-field will be parsed in struct rb_entry in f2fs_check_rb_tree_consistence,
-it describes memory layouts of struct rb_entry and struct victim_entry in
-32-bits platform as below:
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-struct rb_entry {
-   [0] struct rb_node rb_node;
-       union {
-           struct {...};
-  [12]     unsigned long long key;
-       } __packed;
-}
-size of struct rb_entry: 20
-
-struct victim_entry {
-   [0] struct rb_node rb_node;
-       union {
-           struct {...};
-  [16]     struct victim_info vi;
-       };
-  [32] struct list_head list;
-}
-size of struct victim_entry: 40
-
-This patch tries to add __packed attribute in below structure:
-- discard_info, discard_cmd
-- extent_info, extent_node
-- victim_info, victim_entry
-in order to fix this unaligned field offset issue in 32-bits platform.
-
-Fixes: 004b68621897 ("f2fs: use rb-tree to track pending discard commands")
-Fixes: 13054c548a1c ("f2fs: introduce infra macro and data structure of rb-tree extent cache")
-Fixes: 093749e296e2 ("f2fs: support age threshold based garbage collection")
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/f2fs.h | 6 +++---
- fs/f2fs/gc.h   | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b0ab2062038a..17fa7572ceed 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -349,7 +349,7 @@ struct discard_info {
- 	block_t lstart;			/* logical start address */
- 	block_t len;			/* length */
- 	block_t start;			/* actual start address in dev */
--};
-+} __packed;
- 
- struct discard_cmd {
- 	struct rb_node rb_node;		/* rb node located in rb-tree */
-@@ -361,7 +361,7 @@ struct discard_cmd {
- 		};
- 		struct discard_info di;	/* discard info */
- 
--	};
-+	} __packed;
- 	struct list_head list;		/* command list */
- 	struct completion wait;		/* compleation */
- 	struct block_device *bdev;	/* bdev */
-@@ -660,7 +660,7 @@ struct extent_info {
- 			unsigned long long last_blocks;
- 		};
- 	};
--};
-+} __packed;
- 
- struct extent_node {
- 	struct rb_node rb_node;		/* rb node located in rb-tree */
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index 15bd1d680f67..304937d9a084 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -58,7 +58,7 @@ struct gc_inode_list {
- struct victim_info {
- 	unsigned long long mtime;	/* mtime of section */
- 	unsigned int segno;		/* section No. */
--};
-+} __packed;
- 
- struct victim_entry {
- 	struct rb_node rb_node;		/* rb node located in rb-tree */
-@@ -68,7 +68,7 @@ struct victim_entry {
- 			unsigned int segno;		/* segment No. */
- 		};
- 		struct victim_info vi;	/* victim info */
--	};
-+	} __packed;
- 	struct list_head list;
- };
- 
--- 
-2.36.1
-
+Thanks,
 
 
 _______________________________________________
