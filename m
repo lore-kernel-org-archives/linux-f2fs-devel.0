@@ -4,73 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id BD679C678DB
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Mar 2023 17:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D2AD8C678D5
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  7 Mar 2023 17:40:40 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pZbId-0001iE-HN;
-	Tue, 07 Mar 2023 17:40:32 +0000
+	id 1pZbIl-0001j6-3f;
+	Tue, 07 Mar 2023 17:40:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pZbIc-0001i3-Mg
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pZbIj-0001iv-I3
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Mar 2023 17:40:31 +0000
+ Tue, 07 Mar 2023 17:40:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cuOke+nCzuU5i4mz2PQrXE7Ef+BsLrTnR1SxRTwHPO0=; b=e+QF1+TobpmF3aw/6LVxUQCPXO
- E1fNe0BAAtL1utwpF4OVJ/3KQ6w2HzsWEzXoW5e6Gzl8Bh1v6j62+/pZDam6c3pGp6H2+jewwFT0U
- gspVPITUizc0m/rI7VKwkSlcIhoBndOxI7K6GOZ5lgTDsiSJ5pZ0elK2kQANj/dD+mwM=;
+ bh=dxwxQOJNL5Wso5AvBfr5JwPREhs5veCmUGOZ5MsaMx0=; b=L10oYam3xNkAxuxk4Pg4f0i0Vj
+ aF5xJ/HDgeFYqpwsyT9dlw3VfPOtWBvwArl2dx3qwdohG3gNsB+Cvu2ztzR2WMvS1r86X2p4hOISo
+ 4oMK+zBINocuXeCQj5Hj5BVlkFWNXY7NM4FIbcLSMjLn7fATgM+gsZLFgrX/jjQuOYGw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=cuOke+nCzuU5i4mz2PQrXE7Ef+BsLrTnR1SxRTwHPO0=; b=ctlChzcDRV9j9/m1p7p3qOnYDJ
- 5RYuIdroS8amjlQUbsxL1zZ5KlZOMKR/n+UTYYZXULc3GEWMx6+g2ZD1GFbYfV1+g4Suh/gyhv0Ff
- 0DDaJE4fYCCf+SK2SvP69hl7qmXb+eI0OxXEKy6UKtyEq7+8eLWlOMY+YOyUdNDESJpY=;
+ bh=dxwxQOJNL5Wso5AvBfr5JwPREhs5veCmUGOZ5MsaMx0=; b=nV92vzj+/ZCXp3WXVZZNUNljds
+ BVdJRkYxQdbTfSrLGYruvNWM8qmYX42uSadT8t+3dStG1XpiZK3UKEogwmLaiV5ERMM/0i/VQAmmP
+ RN3al4j/6Skv1GSQSVwkaZpuEhO47HWQ/HmtCvtUvToyED7loDgLIb2fr03o5NQ6aXoQ=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pZbIc-002P0D-JD for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 07 Mar 2023 17:40:31 +0000
+ id 1pZbIc-0001Kl-Aw for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 07 Mar 2023 17:40:33 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 1FBC561501;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id ABDD16152E;
  Tue,  7 Mar 2023 17:40:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DF6E9C4339C;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0699BC433A0;
  Tue,  7 Mar 2023 17:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1678210824;
- bh=nBD87ebtYyHOkt7XNSc1hkyvm5TVpFYpPKLC7O5xbSg=;
+ s=k20201202; t=1678210825;
+ bh=G624Y1RmqZOesd6378n2jmdY1VkeEqxM5hJbs/7/LxY=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=oWFJqa5qjySzpMRgbD+E6Vsqs+wW2DJyUAeWohs7eGUror17bo3tg2sPSoO0KZZL8
- p5mBcgIkqMsd4T61tDBd5ak6bOI5aLvy3g8l9svpn5MripXzDZE+9AdPYHQn+7bIIO
- 0ikJ9qAY79TKfCFBt+kHdnGLlgqbFaVLKT/PrwQQ4v5p7OXuidAh3NGR5//TwAApjA
- 4e4C8G8FLFpRolu+ExS59KkLQVgfMyBN05fKR7JgkHbbhd24GZ+BGjgGGx0WnF1+L7
- s9tVgv68N+vsjJQaSZH1itlkEwcvG4fxePy++NSJlfhfLoNWTnk9mcTJDjduJMlK57
- bSpWv3XIWjPwg==
+ b=FMOj1vve9R18caTJLaP/8XmAoHF0gvEPHDmS3B+sW/V9TFpNRmyR7aTvhJ7gbW9WK
+ LJj1N36E9W0VLoQbqHmqoP8++m3RP9sKtlwgHXg5iXzluYYGOiV7AzNlEqBOMCuIDw
+ kDCz4ZYnJPp6thh8qyYjPLle0rWekbwqgtQ7cRVRPnC32Pacl/g+n6CINKr3cQCz75
+ M+qhXkzkqpYvteYSLSzwYjQ+mW1JGvn/f37lmYhuinhcmvn7bGbzoHMlKo/nT9jGtV
+ VBhHcYkoWf8tYHs8COaSfocs/2gvXpqFw1jdDMAEfPJAMQ5RLRDRF0ULurx+it9VWN
+ hs1aVxTIljG6w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- C2A50E61B67; Tue,  7 Mar 2023 17:40:24 +0000 (UTC)
+ D5D13E61B69; Tue,  7 Mar 2023 17:40:24 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167821082479.1693.18260840022075703789.git-patchwork-notify@kernel.org>
+Message-Id: <167821082486.1693.13833377074235792413.git-patchwork-notify@kernel.org>
 Date: Tue, 07 Mar 2023 17:40:24 +0000
-References: <20230306122549.236561-1-douglas.raillard@arm.com>
-In-Reply-To: <20230306122549.236561-1-douglas.raillard@arm.com>
-To: Douglas RAILLARD <douglas.raillard@arm.com>
-X-Headers-End: 1pZbIc-002P0D-JD
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix f2fs_truncate_partial_nodes ftrace
- event
+References: <20230307151408.58490-1-chao@kernel.org>
+In-Reply-To: <20230307151408.58490-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1pZbIc-0001Kl-Aw
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix unaligned field offset in 32-bits
+ platform
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,9 +82,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
- linux-f2fs-devel@lists.sourceforge.net, mhiramat@kernel.org,
- jaegeuk@kernel.org, linux-trace-kernel@vger.kernel.org
+Cc: jaegeuk@kernel.org, zhiguo.niu@unisoc.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -94,20 +93,24 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon,  6 Mar 2023 12:25:49 +0000 you wrote:
-> From: Douglas Raillard <douglas.raillard@arm.com>
-> 
-> Fix the nid_t field so that its size is correctly reported in the text
-> format embedded in trace.dat files. As it stands, it is reported as
-> being of size 4:
-> 
->         field:nid_t nid[3];     offset:24;      size:4; signed:0;
+On Tue,  7 Mar 2023 23:14:08 +0800 you wrote:
+> F2FS-fs (dm-x): inconsistent rbtree, cur(3470333575168) next(3320009719808)
+> ------------[ cut here ]------------
+> kernel BUG at fs/f2fs/gc.c:602!
+> Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+> PC is at get_victim_by_default+0x13c0/0x1498
+> LR is at f2fs_check_rb_tree_consistence+0xc4/0xd4
+> ....
+> [<c04d98b0>] (get_victim_by_default) from [<c04d4f44>] (f2fs_gc+0x220/0x6cc)
+> [<c04d4f44>] (f2fs_gc) from [<c04d4780>] (gc_thread_func+0x2ac/0x708)
+> [<c04d4780>] (gc_thread_func) from [<c015c774>] (kthread+0x1a8/0x1b4)
+> [<c015c774>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: Fix f2fs_truncate_partial_nodes ftrace event
-    https://git.kernel.org/jaegeuk/f2fs/c/3ccc99d5a4ea
+  - [f2fs-dev] f2fs: fix unaligned field offset in 32-bits platform
+    https://git.kernel.org/jaegeuk/f2fs/c/8cac643eaa93
 
 You are awesome, thank you!
 -- 
