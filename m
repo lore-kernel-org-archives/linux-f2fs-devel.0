@@ -4,74 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8B5B6C761AF
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 52549C761A6
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Mar 2023 16:40:36 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pef2J-0007hV-9u;
-	Tue, 21 Mar 2023 16:40:35 +0000
+	id 1pef2H-0007h9-UH;
+	Tue, 21 Mar 2023 16:40:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pef2I-0007hK-EA
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pef2E-0007h3-RL
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Mar 2023 16:40:35 +0000
+ Tue, 21 Mar 2023 16:40:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=L8WXbJRsAPpJnnOnjRrlddNAtdqRNuJWf4o2K+QHUow=; b=BzizatIpaHLYxs1NqZZDIVhFlX
- acYtkMPGCy6EBr6MIXxmQXr445ezCtAUPRkvJ8aKy/D/1qlyrJUhZJyXgFfTuMV7COrjy7MUvbP6i
- VYUBisdiYp3gto4kpIAtG72xL3obQxwn+HWWPpPOqTd8gbcGxyY6pSC/VCpm0yA6fSYk=;
+ bh=ZwcvNMsnI3FF+Oc+o4EC7QnZ/wk9ZJSvQ8snntYj1to=; b=KyDfNj2pgig4gP04q11f/5XD/I
+ QuM2ihWivyKtFMYFuRR9xlBBqQ/zfDe2jqXTmgXUbPgjldO5aipyAMrqln0mEmw2sZ3HihQYvYdXm
+ BPeI7Y0DjSslKbmUVGMT+jK97cY+hQZ2EuhhUunxHiFi/8bkx5YyZ87HjaQheS8XsTR0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=L8WXbJRsAPpJnnOnjRrlddNAtdqRNuJWf4o2K+QHUow=; b=gKnG8vNBRsMoYm9ZJm4Gww8qN8
- wjmzOwdKGY2J2NOQ0PLoJaqsQKT73d+MsPVBoCwbRMXT2XSnA3Cg3Wp7uyVtchzoyJFzexol4Q5pp
- N1xeImh1icjb02ma7n4rFDMdPy6NUubhW/oAXYZVLzVQFl9eg+Db1ViAJxOOBJp5nbfs=;
+ bh=ZwcvNMsnI3FF+Oc+o4EC7QnZ/wk9ZJSvQ8snntYj1to=; b=CIQ3X4HwlA4zvEsyz12PshkXfN
+ vtONZden7FXvR9oTWNYkp67IyNTVbn+k9D1EhLNu0DZx/ISammyrBf8xgRIUouo6+AW1pUy2zhH9c
+ 4tQZ8VGyFsDVBcLP+JfyUnb2XQwG11FdzRvE3M0uQg6C4Pr5ArKfM1o95pC2emzvzBfw=;
 Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pef2A-00FiIv-J5 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Mar 2023 16:40:34 +0000
+ id 1pef2D-0000hJ-LB for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 21 Mar 2023 16:40:31 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 4A49AB818DF
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 21 Mar 2023 16:40:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E701DC4339B;
- Tue, 21 Mar 2023 16:40:18 +0000 (UTC)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 8EAA5B818E7;
+ Tue, 21 Mar 2023 16:40:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0DD41C433A4;
+ Tue, 21 Mar 2023 16:40:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1679416818;
- bh=ldWpBNnr4qmFL77lev/coFUi1C+rOctqD9HBEAO/K3M=;
+ s=k20201202; t=1679416819;
+ bh=/7au02i0+mo0Z5j2lMsIaSmHsivtpsY3DMU+Mi3Kk0M=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=oUOhoVZa7vRYH3Z5xq2ESZCtwOzg+y2BYzhkT+2hPiCfJNU/oN5O23AG7ohUiR9eN
- JY3qMbhBWisixw9jjSdZT3Wap7Nt931CkHbHPzWpwa73wzouPFg8Rs0huODaqfI3Yo
- pAYI8Y4BqAlQ9rv812CyeYOPE3gI37wqJ4KkIIIE5KzDp8EmAXxzDQsNRBnKDNF+uA
- rSYEx8uBKDxSgLkk6tdXWZyK4J2yn3xHEHcgBWWGFpvWiXAZk6NQgb3FKAoqxP+tKW
- Q84vyJYejVq0vrllQnIpc620ZuI1lVHmFMoCIn3kiBNZyxgGXnlyNaQeayHTnyhYK/
- 8xCdJDzKLVSpw==
+ b=b2SdIUkbCT6NMLevpCGgl69bjSszOWNbnX8XTP982A1R8QqlyUQ8qAWOQUWx9mwFG
+ TaqRLoKJp5kUrRZSgnSrGumCdekk1yb/TdespC/m4PgeoXEC7yjtWh+4gtlwiajE9W
+ Y7s2AZXI5MXG+oO9+jhqg15VjbsQoSJamxKMU5AiNb9F/ZxvGrM6C6wcT0NV2+sPbp
+ vSZ/0/uW/2BCTQomW9A3nhqiglKH++cg/iXdMcq8LmonUDDK/R7uhdz54bZvCrt72S
+ 1qrjuab0EbA9uvKTIF5aXJU1QHt9WFylTwgxeEClKtNyLWtUTLQ0l76W3yrjmxtTL2
+ Hcn2jMVrYZkUg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- C0F08E4F0DA; Tue, 21 Mar 2023 16:40:18 +0000 (UTC)
+ D989FE66C9D; Tue, 21 Mar 2023 16:40:18 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167941681878.25004.6451264587497952126.git-patchwork-notify@kernel.org>
+Message-Id: <167941681888.25004.14878736903526507777.git-patchwork-notify@kernel.org>
 Date: Tue, 21 Mar 2023 16:40:18 +0000
-References: <20230310210454.2350881-1-jaegeuk@kernel.org>
-In-Reply-To: <20230310210454.2350881-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1pef2A-00FiIv-J5
-Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: factor out victim_entry usage from
- general rb_tree use
+References: <20230302095509.53720-1-frank.li@vivo.com>
+In-Reply-To: <20230302095509.53720-1-frank.li@vivo.com>
+To: Yangtao Li <frank.li@vivo.com>
+X-Headers-End: 1pef2D-0000hJ-LB
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to handle filemap_fdatawrite()
+ error in f2fs_ioc_decompress_file/f2fs_ioc_compress_file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,7 +82,7 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -91,34 +90,21 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 10 Mar 2023 13:04:52 -0800 you wrote:
-> Let's reduce the complexity of mixed use of rb_tree in victim_entry from
-> extent_cache and discard_cmd.
+On Thu,  2 Mar 2023 17:55:09 +0800 you wrote:
+> It seems inappropriate that the current logic does not handle
+> filemap_fdatawrite() errors, so let's fix it.
 > 
-> This should fix arm32 memory alignment issue caused by shared rb_entry.
-> 
-> [struct victim_entry]              [struct rb_entry]
-> [0] struct rb_node rb_node;        [0] struct rb_node rb_node;
->                                        union {
->                                          struct {
->                                            unsigned int ofs;
->                                            unsigned int len;
->                                          };
-> [16] unsigned long long mtime;     [12] unsigned long long key;
->                                        } __packed;
-> 
-> [...]
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  fs/f2fs/file.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,1/3] f2fs: factor out victim_entry usage from general rb_tree use
-    (no matching commit)
-  - [f2fs-dev,2/3] f2fs: factor out discard_cmd usage from general rb_tree use
-    (no matching commit)
-  - [f2fs-dev,3/3] f2fs: remove entire rb_entry sharing
-    https://git.kernel.org/jaegeuk/f2fs/c/6b40bc364c10
+  - [f2fs-dev] f2fs: fix to handle filemap_fdatawrite() error in f2fs_ioc_decompress_file/f2fs_ioc_compress_file
+    https://git.kernel.org/jaegeuk/f2fs/c/d15180a8d1d7
 
 You are awesome, thank you!
 -- 
