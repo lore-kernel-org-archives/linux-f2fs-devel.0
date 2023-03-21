@@ -4,82 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A4FB1C6FD1D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Mar 2023 02:18:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C268C6FD1D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 21 Mar 2023 16:40:36 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1peRZt-0007QB-Ji;
-	Tue, 21 Mar 2023 02:18:22 +0000
+	id 1pef2F-0001Ol-9G;
+	Tue, 21 Mar 2023 16:40:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lkp@intel.com>) id 1peRZr-0007Q5-Vc
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pef2E-0001Of-Rf
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Mar 2023 02:18:20 +0000
+ Tue, 21 Mar 2023 16:40:31 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=o/WNQtmr/zzJ/IgMOGeK1zQp2TstrTEceTlkESztZsk=; b=W6lXQQ6t8rf4qvAs0lkpKUhfFc
- AgdLdkgsTPd6TEq7uCq+SC6k2MpS8E0pjIWT6G4iFhURc9NRxJALHyFKvB76bq1fEF03HhsvM6Afy
- M2SFPgjHmeJIhnanY3b1msm/3E5Czwbpy2LQSgKXm5Lkez8cLQopCkJ8hZwnyWyCWX3s=;
+ bh=6527N45SdC/F2zwWM/SDMyHX3zqq35L6jmxYK70VKHA=; b=L8A9Ec5AB9+Vjw3MxgdHyoK6wj
+ ZxGBVqTGd9b/fXXWacSRGKbqYoyS70BGogKwMgpN8BQI9/Qn7mfpyHWWTRn16kq8HMqCHCNViphGd
+ vIuZsMCM9a+jDXGUoRP/Jhghe820lLDhZfWFEe+no3l4oTy3P0JS9LTpi5g3R6VwkMQE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=o/WNQtmr/zzJ/IgMOGeK1zQp2TstrTEceTlkESztZsk=; b=dy0/dL36SgxtYiMa8lBVPwEuM7
- ES1uy/rROo6cSg4VaAT2kb4Ci19bIUcB29wz0ww6VACwYiOQrZ/XNGVYtTFKpfufZSXxpbYq3GQGm
- OyU6rarKUqoFhWGhuFm5oLBMz560Vd4dOKAaLdlvZMm/lXkWnr+dlSjUcAPMli9mBcqY=;
-Received: from mga06b.intel.com ([134.134.136.31] helo=mga06.intel.com)
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=6527N45SdC/F2zwWM/SDMyHX3zqq35L6jmxYK70VKHA=; b=gckzzripGSZrdSJ+etfbiiPSGB
+ kOV0TWWnXki6P0Ze9s/ULduqYV3/fUMlMf1QjohBlfe7Tk8Ii0CCmye2gAa1rkqoFDr93I/QU3xH1
+ 2ySo05IjI9k4YO/eQjW6J2KQJhyWDaQbiRXKDoCZLUGLfHhM/6yvMlrF7gzdMfrqiknE=;
+Received: from ams.source.kernel.org ([145.40.68.75])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1peRZo-00Eovg-Qb for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 21 Mar 2023 02:18:20 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1679365096; x=1710901096;
- h=date:from:to:cc:subject:message-id:references:
- mime-version:in-reply-to;
- bh=QBIssQwI18us+dgn2chNBQX5l2ZatxK5ht9vMn5tRT0=;
- b=ItsqXGeCQ8dbO9LeMnjmSqvPb92xt/rLYNHsi/qCjRnyuKEDvJpAJQvX
- r+Ofr9+fF8d/IFqjMW7v76GSI0vex2o+0hRKPtWVAudugUEjIsDHzzYgR
- w4lYYm8gUIRDypKuiFsN3xUT4MVbaSFm6D6SlPgb3CCi1dtLcVxpT/UpI
- OpJvN/IBigW4YiirS2587uSh3cGIXjkCty+zuhqkPpbMdY3x19tHeFE7F
- 9GLPfJv5LzkVwQKzKbg6sOTaBcLhJG5CXNwOrSXyJUn57BL6Y19IyCggy
- JNnGDg+5JJ73g6QqG+3sfinlOSwgk+0n3TApzvX1UUJo9tdCMH95C0QMA A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10655"; a="401402502"
-X-IronPort-AV: E=Sophos;i="5.98,277,1673942400"; d="scan'208";a="401402502"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
- by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Mar 2023 19:18:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10655"; a="711618653"
-X-IronPort-AV: E=Sophos;i="5.98,277,1673942400"; d="scan'208";a="711618653"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
- by orsmga008.jf.intel.com with ESMTP; 20 Mar 2023 19:18:07 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
- (envelope-from <lkp@intel.com>) id 1peRZf-000BV2-03;
- Tue, 21 Mar 2023 02:18:07 +0000
-Date: Tue, 21 Mar 2023 10:17:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yangtao Li <frank.li@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>
-Message-ID: <202303211005.RGxljvli-lkp@intel.com>
-References: <20230320175529.39129-1-frank.li@vivo.com>
+ id 1pef2D-0000hH-Ld for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 21 Mar 2023 16:40:31 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by ams.source.kernel.org (Postfix) with ESMTPS id 304CFB818E0;
+ Tue, 21 Mar 2023 16:40:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DAE07C433D2;
+ Tue, 21 Mar 2023 16:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1679416818;
+ bh=3rDLFVHcU6ma5+cN0vAvs0YCv2Sk5f2f3Irv+23Nd+0=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=PTyJ+slN6Kya1SR2N5ikXvIMXDRToqPgCBWLSYxyhbj2vGjsoY/Gt2zX+OoIEHnOf
+ q1B8o7eyDU3Qawoow+mw0W+j524OCMrvKShRh9hP0BZY9kDOkNVDJdy7iZ0914dl/S
+ bIW6AM9fUfd3hTEGVKV7sXfUowwCUqiSE2BUG50HJ78nU+lfMQ7flUsS2ubzMPjr21
+ LMaWJ5WeTtI6Z394qoSqOC9Pcwr8dHWN6L2W+6JApm0on7bJBcBtELFAsPIj16jLWd
+ vRthd7JAXRgrIb0UVIu5XiDp6KKsgGoPk5kl9Ph/EPZflGsWwFvDoBKtfZOC7piY97
+ f9QN5BWSuA5RA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ B83A5E66C97; Tue, 21 Mar 2023 16:40:18 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20230320175529.39129-1-frank.li@vivo.com>
-X-Headers-End: 1peRZo-00Eovg-Qb
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add iostat latency statistics
- support for discard
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <167941681874.25004.16164429117786681993.git-patchwork-notify@kernel.org>
+Date: Tue, 21 Mar 2023 16:40:18 +0000
+References: <20230313094825epcms2p71e6cb549251dc55e8d202dd64b9913a6@epcms2p7>
+In-Reply-To: <20230313094825epcms2p71e6cb549251dc55e8d202dd64b9913a6@epcms2p7>
+To: Yonggil Song <yonggil.song@samsung.com>
+X-Headers-End: 1pef2D-0000hH-Ld
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: Fix discard bug on zoned block
+ devices with 2MiB zone size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -91,81 +82,38 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, Yangtao Li <frank.li@vivo.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-trace-kernel@vger.kernel.org,
- oe-kbuild-all@lists.linux.dev
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Yangtao,
+Hello:
 
-I love your patch! Perhaps something to improve:
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-[auto build test WARNING on jaegeuk-f2fs/dev-test]
-[also build test WARNING on jaegeuk-f2fs/dev linus/master v6.3-rc3 next-20230320]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On Mon, 13 Mar 2023 18:48:25 +0900 you wrote:
+> When using f2fs on a zoned block device with 2MiB zone size, IO errors
+> occurs because f2fs tries to write data to a zone that has not been reset.
+> 
+> The cause is that f2fs tries to discard multiple zones at once. This is
+> caused by a condition in f2fs_clear_prefree_segments that does not check
+> for zoned block devices when setting the discard range. This leads to
+> invalid reset commands and write pointer mismatches.
+> 
+> [...]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yangtao-Li/f2fs-add-iostat-latency-statistics-support-for-discard/20230321-020736
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
-patch link:    https://lore.kernel.org/r/20230320175529.39129-1-frank.li%40vivo.com
-patch subject: [PATCH v2] f2fs: add iostat latency statistics support for discard
-config: x86_64-randconfig-s023 (https://download.01.org/0day-ci/archive/20230321/202303211005.RGxljvli-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.4-39-gce1a6720-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/a094ea0014763420eb8e3577552baac00c63efad
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Yangtao-Li/f2fs-add-iostat-latency-statistics-support-for-discard/20230321-020736
-        git checkout a094ea0014763420eb8e3577552baac00c63efad
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=x86_64 olddefconfig
-        make W=1 C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=x86_64 SHELL=/bin/bash fs/f2fs/
+Here is the summary with links:
+  - [f2fs-dev,v1] f2fs: Fix discard bug on zoned block devices with 2MiB zone size
+    https://git.kernel.org/jaegeuk/f2fs/c/5108a09b11d7
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303211005.RGxljvli-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> fs/f2fs/iostat.c:259:29: sparse: sparse: mixing different enum types:
->> fs/f2fs/iostat.c:259:29: sparse:    unsigned int enum iostat_lat_type
->> fs/f2fs/iostat.c:259:29: sparse:    unsigned int enum page_type
-   fs/f2fs/iostat.c:262:29: sparse: sparse: mixing different enum types:
-   fs/f2fs/iostat.c:262:29: sparse:    unsigned int enum iostat_lat_type
-   fs/f2fs/iostat.c:262:29: sparse:    unsigned int enum page_type
-
-vim +259 fs/f2fs/iostat.c
-
-   246	
-   247	void iostat_update_submit_ctx(struct bio *bio, enum page_type type)
-   248	{
-   249		struct bio_iostat_ctx *iostat_ctx = bio->bi_private;
-   250		enum iostat_lat_type lat_type;
-   251	
-   252		iostat_ctx->submit_ts = jiffies;
-   253	
-   254		if (type == DISCARD) {
-   255			lat_type = DISCARD_LAT;
-   256		} else if (op_is_write(bio_op(bio))) {
-   257			lat_type = bio->bi_opf & REQ_SYNC ?
-   258					WRITE_SYNC_DATA_LAT : WRITE_ASYNC_DATA_LAT;
- > 259			lat_type += type;
-   260		} else {
-   261			lat_type = READ_DATA_LAT;
-   262			lat_type += type;
-   263		}
-   264	
-   265		iostat_ctx->lat_type = lat_type;
-   266	}
-   267	
-
+You are awesome, thank you!
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
