@@ -4,90 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (unknown [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3FEB4C6FD1D
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Mar 2023 14:34:17 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C76BFC6FD1C
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Mar 2023 14:42:08 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pfM18-0007BN-Gx;
-	Thu, 23 Mar 2023 14:34:16 +0000
+	id 1pfM8l-00016i-IG;
+	Thu, 23 Mar 2023 14:42:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1pfM16-0007BH-OV
+ (envelope-from <chao@kernel.org>) id 1pfM8f-000161-3n
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Mar 2023 14:34:14 +0000
+ Thu, 23 Mar 2023 14:42:01 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
- :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ Subject:From:References:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Ha6Y5F9AQG0GQDvcwxfLd4IxxUqU7cyGTy3kGa4dNjo=; b=N1Z4elDuLsynt4idNXYg5g2AdQ
- tzYhCSB2auDeI9Eu1CYN1wPNvisuEgo+4OMuAnd3nX8z6LMz19QfCe2vX4PJa0aF0dqAmPnv9xaPy
- vIIhJEX4x3wJAGrAOIwUGbBG8mLhLI55MrIaNs7e1d+NcTONFuqVHcdzlyQAHILUUy3c=;
+ bh=uX81b+f03/K6rVT4ab7r73fTgT1ubWizpxu93noCA/M=; b=biwuyLlorhDK/IjQT6MxvihYIm
+ dE6vTV7S5P/aQ75k8Ks8+SoeKh/vQ1SUA9PATU5USXhp9UEwVMD4Ptb8ceSx/IqgaPrwlxpSg1o8n
+ KgdXymHw2S9q2U8jp2KZ2tJbt2eJlVUFYiSUxJqwnO625Lz5bndSaC/qKRDGKEPckzvc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
- In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:Subject:From:
+ References:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=Ha6Y5F9AQG0GQDvcwxfLd4IxxUqU7cyGTy3kGa4dNjo=; b=mwnY5facyD8tZv8Md2Lk8THIfd
- GE1AvAuAK7Ay0Woqzqx/v5wvOQbxDpyOTmeQzSikLwYZMKmixstIGEczXB/tUaVgdMfTpl5onL292
- HHMZLHrdtgVUxfB6afQEHRjK0h1E1/p8LuaxJvJCmYYnaYeq4QalGX+oQaFy21DETLjQ=;
-Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=uX81b+f03/K6rVT4ab7r73fTgT1ubWizpxu93noCA/M=; b=lQxHHvtt11Gy2em4Srf6J9Y2dw
+ I9DzCu7P6vAyDsXEGX5EYushrhALWm0EGYQ/FQr2OdcW1YTdwFpUDnrXKU/sGLnqudqm0YSvKHM7a
+ 5TJkqzoPD6CMG+I304MrYxvOvqCgYKKBSq7RZVHVzDAy9+jWSpcYcCintj98L+Mdgzlc=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pfM16-000I9b-Ki for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Mar 2023 14:34:14 +0000
+ id 1pfM8e-0005VB-VY for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 Mar 2023 14:42:01 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 62DA2B81DE5
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 23 Mar 2023 14:34:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D0BBC4339B
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 23 Mar 2023 14:34:05 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 912A962779;
+ Thu, 23 Mar 2023 14:41:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64B3C433A1;
+ Thu, 23 Mar 2023 14:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1679582045;
- bh=Ha6Y5F9AQG0GQDvcwxfLd4IxxUqU7cyGTy3kGa4dNjo=;
- h=From:To:Subject:Date:In-Reply-To:References:From;
- b=gLHt7KWtxd6qNp0mtdASA3RcRMbnG3Qzk42Ps0V5NU3yuAmFtIXyAM25kscTcIvJ3
- Zi0S+qA/d7XFolGDb/jW2aSgGuBspqxnjscdxrFCdYp8NxX/fmuwTfz6a2LfOGpx0j
- hX/KEgYcyvCGEnHu1daQNpIXBGNrxGPtzW3MpP4pDs/CvOhV0JsBqSLojvaNqhXUSV
- AUacIiC9aK6GcUpJLU5pQ5g5PTVo9nQWOHbCi9HdyXDy1yf3obdAIQyr2FtTj4YxxL
- Lh/TtHGBbxwN08NqZu0iXt1DVtlvSQKal2fLDIlI2kIK0ccusLFMi2dyjCntrQBVeV
- klCMdKU+3ZYrg==
-Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id 0AA1FC43141; Thu, 23 Mar 2023 14:34:05 +0000 (UTC)
-From: bugzilla-daemon@kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu, 23 Mar 2023 14:34:04 +0000
-X-Bugzilla-Reason: None
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Product: File System
-X-Bugzilla-Component: f2fs
-X-Bugzilla-Version: 2.5
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: high
-X-Bugzilla-Who: guido.iodice@gmail.com
-X-Bugzilla-Status: NEW
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: P1
-X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-216050-202145-DQubByjD9F@https.bugzilla.kernel.org/>
-In-Reply-To: <bug-216050-202145@https.bugzilla.kernel.org/>
-References: <bug-216050-202145@https.bugzilla.kernel.org/>
-X-Bugzilla-URL: https://bugzilla.kernel.org/
-Auto-Submitted: auto-generated
+ s=k20201202; t=1679582515;
+ bh=Vlg7H3iswuM5SaVZgxQDjdnUoBhjPiMEv9IlvCOSVCs=;
+ h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+ b=moaZguZ/J3waAJf4kCmha0ZzZ93nG9vf/r6CkBqy/vkc696vUfAOvgqBzW40wPeJl
+ 3q13nAaqKIiFJrZImZiTgn660O42ZCsl9rvyJ2/5Q63b6g3nZKLvXlyJRD35DmqXrc
+ RmFMPoK61a3C4RAAXdYL7Gd1dvB9ECwxmP1nyQPB9APmuKI7905/sJi8vYqXVFaVFU
+ 6nKWYMmOfequny+COOzLUC6YVIUyQoRAKPUo3unRhUxV2fh81F6nO6+/4UjT2uvXDW
+ MPzKkJvqQdPUYpI1Sh+b0B+AQuVWns4w+E9bOWxbREBbXMSlspK66uZnqqZJfZDbNb
+ cSVmxBZOQ/KGw==
+Message-ID: <0f1704e5-4a4f-d920-9c69-e01ed2f0dde5@kernel.org>
+Date: Thu, 23 Mar 2023 22:41:52 +0800
 MIME-Version: 1.0
-X-Headers-End: 1pfM16-000I9b-Ki
-Subject: [f2fs-dev] [Bug 216050] f2fs_gc occupies 100% cpu
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Content-Language: en-US
+To: Wang Shilong <wangshilong1991@gmail.com>, Yangtao Li <frank.li@vivo.com>
+References: <20230221144550.46557-1-frank.li@vivo.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20230221144550.46557-1-frank.li@vivo.com>
+X-Headers-End: 1pfM8e-0005VB-VY
+Subject: Re: [f2fs-dev] [PATCH] f2fs: handle dqget error in
+ f2fs_transfer_project_quota()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,22 +82,57 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-https://bugzilla.kernel.org/show_bug.cgi?id=216050
++Shilong,
 
---- Comment #139 from Guido (guido.iodice@gmail.com) ---
-I have been using the kernel with this patch for a month now and so far no
-problems. Out of superstition (I am Italian!), I'm afraid to say that the bug
-is fixed, but it seems plausible
+Hi, Shilong,
 
--- 
-You may reply to this email to add a comment.
+Could you please help to check this patch? in original patch, it tries to
+ignore such error intentionally? or it is a bug?
 
-You are receiving this mail because:
-You are watching the assignee of the bug.
+On 2023/2/21 22:45, Yangtao Li wrote:
+> We should set the error code when dqget() failed.
+> 
+> Fixes: 2c1d03056991 ("f2fs: support F2FS_IOC_FS{GET,SET}XATTR")
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>   fs/f2fs/file.c | 15 ++++++++-------
+>   1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index ca1720fc1187..f25e58680984 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -3009,15 +3009,16 @@ int f2fs_transfer_project_quota(struct inode *inode, kprojid_t kprojid)
+>   	struct dquot *transfer_to[MAXQUOTAS] = {};
+>   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>   	struct super_block *sb = sbi->sb;
+> -	int err = 0;
+> +	int err;
+>   
+>   	transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
+> -	if (!IS_ERR(transfer_to[PRJQUOTA])) {
+> -		err = __dquot_transfer(inode, transfer_to);
+> -		if (err)
+> -			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> -		dqput(transfer_to[PRJQUOTA]);
+> -	}
+> +	if (IS_ERR(transfer_to[PRJQUOTA]))
+> +		return PTR_ERR(transfer_to[PRJQUOTA]);
+> +
+> +	err = __dquot_transfer(inode, transfer_to);
+> +	if (err)
+> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+> +	dqput(transfer_to[PRJQUOTA]);
+>   	return err;
+>   }
+>   
+
 
 _______________________________________________
 Linux-f2fs-devel mailing list
