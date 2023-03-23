@@ -4,122 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (unknown [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C41A7C6FD1F
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 22 Mar 2023 23:47:23 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 73628C6FD1F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Mar 2023 02:38:26 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pf8As-0004wX-AZ;
-	Wed, 22 Mar 2023 23:47:22 +0000
+	id 1pfAqM-0004Bj-EG;
+	Thu, 23 Mar 2023 02:38:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <prvs=438b69c7b=damien.lemoal@opensource.wdc.com>)
- id 1pf8Aq-0004wR-Hs for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 22 Mar 2023 23:47:21 +0000
+ (envelope-from <lkp@intel.com>) id 1pfAqL-0004Bc-4m
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 Mar 2023 02:38:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KQSDAMaTzmE9XBa8j1VLibejVzOAwkcT9p0rqOH9+2w=; b=KP492S9vaHNR4SjUs9mPS8OYVq
- Aly73XzNJhYk7bslT/YvvVskVB1whXsc/l4yUObgd8f8kZHCb3lOH1jOHLCuKWi7/paLT4f8aKci1
- Lgj7j/3O8+lY/Q7+mnwE5UwJGcsleVbDUiE+A1c1uFVZi4CEvx/axDzAEudDs2/uQEU4=;
+ bh=BdmJDKIfphMfgBtR7LuIBQXSb+73p1ykUF/o9VjYKZ4=; b=gYYYnBnzl5uT0tF2JXvP5hxFcm
+ yp2wVpQSa2XM0viazLKRouopFDtpLDnReEYkMjb9XAARO2S2Bb8ZPusQ4Hf69y9d5ztILAidKjpfc
+ yV3zGIMg+jkDrPzqxCqMU8I9E11UWcKPP+zNLmshnkZfIAAnrGKsqwVYwM34bjm4Sv7c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=KQSDAMaTzmE9XBa8j1VLibejVzOAwkcT9p0rqOH9+2w=; b=KHvkkZ49leAab9EkKEDtPi5inP
- nj+3WeqGc1qPU35y8j9mwZnA2IEjsHm39Upavrt0qFIlXt8W5kSc27kPqPklsZABWKbKsJRwmHQ7X
- IQRsFHK9yPE6bKGQPXASGJifMg94k/kZqIWqqCvQj5XvAHmDsUqyQGJLxBqckzAAK1O8=;
-Received: from esa6.hgst.iphmx.com ([216.71.154.45])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=BdmJDKIfphMfgBtR7LuIBQXSb+73p1ykUF/o9VjYKZ4=; b=A7EUWPIKJhNDyHGdBPpXjNgUDT
+ n5goQMYTijs4IyRrRzc4HI3Tome3ZhmGxtPExblaCfU1DyvF7KVFPiRAKYdgn3T2miPKMoJRkrG4y
+ 4qi2V9wT1jEB8Zi2Zk1VICS+8WABT35jUoy6ileWJNIrwUyi0AAp/WIF1krLy0YIjv5E=;
+Received: from mga04.intel.com ([192.55.52.120])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pf8Aq-00H7UL-6z for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 22 Mar 2023 23:47:21 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
- d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
- t=1679528840; x=1711064840;
- h=message-id:date:mime-version:subject:to:cc:references:
- from:in-reply-to:content-transfer-encoding;
- bh=q9SHaaGc/iP3oUCDDkuobziv3fI8u5euiS4kcHH3kx8=;
- b=AqAeBr7PeHZ3VC+UkFpe9Ws6m5sQCRYSDbageIOOHNtoMAEEm7pq6s7x
- uzD57Teu2v2/HNoQUll8nBerA4PWPBiW0nFYSdys2PI8G+obq9ti6qpNI
- oeZTiU1fg22dFM8a+P4e4qu6d19czHRmbnPVEsL/huGS43kD7fTJjW0XR
- f/VyWmGKaZJguOlJf+ajMbJbOaY99zU8vhbWmcbJY4VapNuq+OLiOysll
- Tdybdnmt2GIf3SZp/AiXOt1G8+tVuwC7oFe9xW010MUJK1AOsl2iHEmpe
- 365NQemRma4pYf/3U+8MHsKpHgpCwJEMDo93ysH97hNcMB3KgjK55CqgV Q==;
-X-IronPort-AV: E=Sophos;i="5.98,282,1673884800"; d="scan'208";a="226273057"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com)
- ([199.255.45.15])
- by ob1.hgst.iphmx.com with ESMTP; 23 Mar 2023 07:31:39 +0800
-IronPort-SDR: 24jTB+/hRJU4SaVo8zIV/pL2gKX+inOeD2sLYsw83tY1CPXp8ZMRhHDjxr4Xsu1xg4SVRl7sCQ
- HgURYsz+lnfVv7W5aUqHdDu83c4CfWTBI/Ff84V3hecrl0TeLhiU603nwBg/1CqQMSPu6zoN4X
- gCDsmtBx2c3JQ27gH9tGZ5K7D0Y5qKqSX5lwZFY+WjTOq3SX+EbIgrmhWQ0zU4yPKc5+cDJfeC
- TY1qydDEOvKpVp+z8b/ztTrFRQRj9UCozapiFRlufMAJ/nHDz6NyfpItjgQHAtBl4bQN7OzCwD
- K1I=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
- by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256;
- 22 Mar 2023 15:42:16 -0700
-IronPort-SDR: N96jlNSQxH0TsVQzXt6B8ZXyoJvBDP3jvZcrKYqmTjcZYrKUGrtFkZHhcUUPY0bC6JjVO1Ozbz
- U0sVLonuV5xbypaUzMR4bWmM/rKTe5UYXGZXaF5nH8lz8PZbRk3H8Ysy6HuCj52H4yA+xuKyBd
- 3tzGiGrthYxKbpwys3qrwOKBq67BUZnQoOO959RzXxvGAuv8QksSxsv3ZxxE7j6Vri9XtK9w+n
- ADf53vujeG8H/QsGyg2n86fRuawbCCO16k+7Rff6dvoZKbtaXTG03V14o++U8fVajDBAvtzA7G
- HBk=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
- by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256;
- 22 Mar 2023 16:31:39 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
- by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Phl9Q5fTvz1RtVq
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 22 Mar 2023 16:31:38 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
- reason="pass (just generated, assumed good)"
- header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
- opensource.wdc.com; h=content-transfer-encoding:content-type
- :in-reply-to:organization:from:references:to:content-language
- :subject:user-agent:mime-version:date:message-id; s=dkim; t=
- 1679527897; x=1682119898; bh=q9SHaaGc/iP3oUCDDkuobziv3fI8u5euiS4
- kcHH3kx8=; b=JGNufdCwdGSw+94EX16K+0u2kFMVp2NvMLIq1nJZeab8uhMdwEp
- ofeBGEWeT3XCiWuOQ9cadh1ZCGt6neqeNZZyT2OBS+H2o1Cvu5cncPD0EDzjH1AD
- myqHohfVKhmuEzn/VGtFJ7tfYD8TReeVYC7gO1HyzUKJhYf0JQ75JgZThXcZk9KL
- CPRoJq87xivOlYq6xPGnJMI9lRYbH4wI6+ISXQTY6SIHsRlxQ7o3g3F5XwT9hVKt
- fLnDy4FDSd0EN1mp9Ihw418Ej9XwY+ZX1tAKbEbdvAyv0qiLal1fF184rj8UhwDY
- 6eTC3LRkgdQnQyirrpmiYNHdXAQDoGEBDdg==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
- by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new,
- port 10026) with ESMTP id upix8eC8tAIw
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 22 Mar 2023 16:31:37 -0700 (PDT)
-Received: from [10.225.163.96] (unknown [10.225.163.96])
- by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Phl9H74fjz1RtVm;
- Wed, 22 Mar 2023 16:31:31 -0700 (PDT)
-Message-ID: <5e7e8187-f514-c65e-2615-26762a329590@opensource.wdc.com>
-Date: Thu, 23 Mar 2023 08:31:30 +0900
+ id 1pfAqL-0002hm-46 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 Mar 2023 02:38:23 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1679539101; x=1711075101;
+ h=date:from:to:cc:subject:message-id:references:
+ mime-version:in-reply-to;
+ bh=NVzhAprKO7gzBk6TU2LvPqa0tyYsN5S2OZgjE9c3DBU=;
+ b=F+gmAPSjS0k9ZhpcbJyObFcYXSreZi5ciCwVZoeHc4D5s388OvA7a+2B
+ gNedRd6jm40pyJlMADX5mpDOfq5RtvXhaYfZg1UBpQb5+/jJzoJOJGiQH
+ golhP4SzU58W0ABsUtn/sZXC7GHOuSIn8EJMD4jEvA6UTS6/RG6jH7/sR
+ h/Bz1l7ETQS5rPOMb/2BWocrgOTUQ+ekHAUqk1l5L0IY27JqQXN6YqdFA
+ y99/KfexDHkF+zKP4WxJFrdHicYzp6/j9C9ONGv4UgYRCLPHjTcoJ2qhg
+ cZ1YZNB0UTrEUaAeWC6dJatWT1BfIfo2ptJ3+nTCvjzT1escOmlO8Y73k g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10657"; a="338099620"
+X-IronPort-AV: E=Sophos;i="5.98,283,1673942400"; d="scan'208";a="338099620"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+ by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Mar 2023 19:38:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10657"; a="712490028"
+X-IronPort-AV: E=Sophos;i="5.98,283,1673942400"; d="scan'208";a="712490028"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+ by orsmga008.jf.intel.com with ESMTP; 22 Mar 2023 19:38:05 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+ (envelope-from <lkp@intel.com>) id 1pfAq5-000Dry-0L;
+ Thu, 23 Mar 2023 02:38:05 +0000
+Date: Thu, 23 Mar 2023 10:37:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yohan Joung <jyh429@gmail.com>, jaegeuk@kernel.org, chao@kernel.org
+Message-ID: <202303231039.GKLRE8O5-lkp@intel.com>
+References: <20230322131408.1192-1-jyh429@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Content-Language: en-US
-To: Yangtao Li <frank.li@vivo.com>, clm@fb.com, josef@toxicpanda.com,
- dsterba@suse.com, xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
- jefflexu@linux.alibaba.com, jaegeuk@kernel.org,
- trond.myklebust@hammerspace.com, anna@kernel.org, konishi.ryusuke@gmail.com,
- mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
- richard@nod.at, djwong@kernel.org, naohiro.aota@wdc.com, jth@kernel.org,
- gregkh@linuxfoundation.org, rafael@kernel.org
-References: <20230322165830.55071-1-frank.li@vivo.com>
-Organization: Western Digital Research
-In-Reply-To: <20230322165830.55071-1-frank.li@vivo.com>
-X-Headers-End: 1pf8Aq-00H7UL-6z
-Subject: Re: [f2fs-dev] [PATCH v3 01/10] kobject: introduce
- kobject_del_and_put()
+Content-Disposition: inline
+In-Reply-To: <20230322131408.1192-1-jyh429@gmail.com>
+X-Headers-End: 1pfAqL-0002hm-46
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix align check for npo2
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -131,95 +87,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Damien Le Moal via Linux-f2fs-devel
- <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc: linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, linux-mtd@lists.infradead.org,
- ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Cc: Yohan Joung <jyh429@gmail.com>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 3/23/23 01:58, Yangtao Li wrote:
-> There are plenty of using kobject_del() and kobject_put() together
-> in the kernel tree. This patch wraps these two calls in a single helper.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
-> v3:
-> -convert to inline helper
-> v2:
-> -add kobject_del_and_put() users
->  include/linux/kobject.h | 13 +++++++++++++
->  lib/kobject.c           |  3 +--
->  2 files changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/kobject.h b/include/linux/kobject.h
-> index bdab370a24f4..e21b7c22e355 100644
-> --- a/include/linux/kobject.h
-> +++ b/include/linux/kobject.h
-> @@ -112,6 +112,19 @@ extern struct kobject * __must_check kobject_get_unless_zero(
->  						struct kobject *kobj);
->  extern void kobject_put(struct kobject *kobj);
->  
-> +/**
-> + * kobject_del_and_put() - Delete kobject.
-> + * @kobj: object.
-> + *
-> + * Unlink kobject from hierarchy and decrement the refcount.
+Hi Yohan,
 
-Unlink kobject from hierarchy and decrement its refcount.
+Thank you for the patch! Yet something to improve:
 
-> + * If refcount is 0, call kobject_cleanup().
+[auto build test ERROR on jaegeuk-f2fs/dev-test]
+[also build test ERROR on jaegeuk-f2fs/dev]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-That is done by kobject_put() and not explicitly done directly in this helper.
-So I would not mention this to avoid confusion as you otherwise have a
-description that does not match the code we can see here.
+url:    https://github.com/intel-lab-lkp/linux/commits/Yohan-Joung/f2fs-fix-align-check-for-npo2/20230322-211529
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
+patch link:    https://lore.kernel.org/r/20230322131408.1192-1-jyh429%40gmail.com
+patch subject: [PATCH] f2fs: fix align check for npo2
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20230323/202303231039.GKLRE8O5-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/3531dd5850533df89bd45af9fd59ed4693d6d5aa
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Yohan-Joung/f2fs-fix-align-check-for-npo2/20230322-211529
+        git checkout 3531dd5850533df89bd45af9fd59ed4693d6d5aa
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash
 
-With that fixed, this looks OK to me, so feel free to add:
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303231039.GKLRE8O5-lkp@intel.com/
 
-Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-> + */
-> +static inline void kobject_del_and_put(struct kobject *kobj)
-> +{
-> +	kobject_del(kobj);
-> +	kobject_put(kobj);
-> +}
-> +
->  extern const void *kobject_namespace(const struct kobject *kobj);
->  extern void kobject_get_ownership(const struct kobject *kobj,
->  				  kuid_t *uid, kgid_t *gid);
-> diff --git a/lib/kobject.c b/lib/kobject.c
-> index f79a434e1231..e6c5a3ff1c53 100644
-> --- a/lib/kobject.c
-> +++ b/lib/kobject.c
-> @@ -876,8 +876,7 @@ void kset_unregister(struct kset *k)
->  {
->  	if (!k)
->  		return;
-> -	kobject_del(&k->kobj);
-> -	kobject_put(&k->kobj);
-> +	kobject_del_and_put(&k->kobj);
-
-Nit: You could simplify this one to be:
-
-	if (k)
-		kobject_del_and_put(&k->kobj);
-
-and drop the return line.
-
->  }
->  EXPORT_SYMBOL(kset_unregister);
->  
+>> ERROR: modpost: "__umoddi3" [fs/f2fs/f2fs.ko] undefined!
+>> ERROR: modpost: "__moddi3" [fs/f2fs/f2fs.ko] undefined!
 
 -- 
-Damien Le Moal
-Western Digital Research
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
 
 
 _______________________________________________
