@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (unknown [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 66DE8C76196
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Mar 2023 14:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 50ECBC76196
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Mar 2023 14:50:30 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pfMGm-0007a1-07;
-	Thu, 23 Mar 2023 14:50:26 +0000
+	id 1pfMGp-0007au-Ui;
+	Thu, 23 Mar 2023 14:50:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <tytso@mit.edu>) id 1pfMGk-0007Zl-IK
+ (envelope-from <tytso@mit.edu>) id 1pfMGm-0007aA-Bn
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Mar 2023 14:50:24 +0000
+ Thu, 23 Mar 2023 14:50:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7azV9DBDgQBiJKia4YDLFtE+brQJDyiEHzkKR+zggZo=; b=aUVvBWxndu+dTUVEaYsKmutoHj
- G1dCir38zQrof/lnjdBBwBe2Ng32GTtNfx1Y6C0mJJwednVed/5Q3ZOP7SRpiiXm8CbF+isTdGjv/
- zKnEGXRecg7uU6KlyDO3DZLLeXRCiAf9qyzSRxcKg5Dp3xiCxdXZID5soLIaZuZRaaFw=;
+ bh=n243UkKU1dhQVd7DjzyG88PTzABaz+ZslvR4BBb7qqM=; b=XF30qVOVNc3UWYUla6unBF+za8
+ RutlbjkFfLd+jMAvjmW1LKZnjStMJLSSzBCpP3Ow02hA6YES5j1aDWz5cToj2Rm7B6+AOB1t48WG0
+ Rwo+FB+5//wdMBbOe3MB/G2XOJrSuZHf4SqOGUU2/SmSrB/pDLISmEB+gb3PAHk5WLig=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,43 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=7azV9DBDgQBiJKia4YDLFtE+brQJDyiEHzkKR+zggZo=; b=Zy4ZpYlP1SvOb31IJoFq1Cz3Am
- PAW422sdRpAnt+/v63ZucguiNuf1yU1BjfyLt/k+AV8PSl6O7Vqnfp0oTg0w4PicVgklxGEPboHlt
- YjNKg3/h7XlzJBIP3NG2qy/ez8FJ+Ba5negqWpeVLfUrMXUWnDJSj7+lyR+cDJynI3OQ=;
+ bh=n243UkKU1dhQVd7DjzyG88PTzABaz+ZslvR4BBb7qqM=; b=BjsEoDdWIYtf5+YQ8a76XF/BZL
+ AEOfkTa0AU+onAZJZ7tolkA77qAbNOVVajDAr5aXvDOXCHm7Mw02zoWYgtYZ3GdwgoTcn5hXgUR/b
+ NlNQSucpDMRtvSaHvBOCKkXoNtZSbuKf5KtRdsfVT6JcjQGUpItUNGOVRuPo4xo1w4bM=;
 Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pfMGl-000JJN-N0 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Mar 2023 14:50:24 +0000
+ id 1pfMGn-000JJN-NE for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 Mar 2023 14:50:26 +0000
 Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net
  [173.48.120.46]) (authenticated bits=0)
  (User authenticated as tytso@ATHENA.MIT.EDU)
- by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 32NEdpYe013894
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 32NEXKRh010278
  (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 23 Mar 2023 10:39:52 -0400
+ Thu, 23 Mar 2023 10:33:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
- t=1679582393; bh=7azV9DBDgQBiJKia4YDLFtE+brQJDyiEHzkKR+zggZo=;
+ t=1679582002; bh=n243UkKU1dhQVd7DjzyG88PTzABaz+ZslvR4BBb7qqM=;
  h=Date:From:To:Cc:Subject:References:In-Reply-To;
- b=C1rcV08pIURUpZuCG31evHvrrmFZ0e/hKAgfKKHzRyqWYdrjeS8psJc7VXmM83Ww3
- H+qn70JDFZ5LE/MgvbBQIcvN5frghysghTu5KegOU0Su2l1TG21SF0ALzXK8WbY8AY
- MikMCbM2Y1XJsiPTzYqJuzceXZFyvPyQgJAgeFcy/Yi1rQBUWoEwhgBgJ2h6BXe+lZ
- lTUAaLXwEIZCFnXzT5udcoWRFQplckWtHHv1RpyfmznjS5vnhsifY9ndKHrWlPtXfo
- Ht0Q0EXjvbNo7ziCYIjBSW8DOZZE5qusUU59xCZOOCudUwucxg/e7wEFLJ2ycJ18h+
- ucyhGIXNXCYCQ==
+ b=C3A0S93pvXptCixS1bEn3ZWm9blHoINL7rmJpXmQ1AI7LQGCBhlTVKfMLttc30AIn
+ /mAkwxzcSQSI0LfDGTdodwzmQDF1WfDq5nhLyLR5dJSq62jIUF561n3LmfRrhkeXD0
+ jaAKzhThfspyr6g9LbQrIK3tRaZGgeUwWayayD0c30L31WXijUnIdOosyubFeRQUE6
+ Qfph8eAvQVenwT9qIjh04pXV6mIe9Z3kC+ADrsy/sCzGeRJRn7cb5xxItr4H428WNj
+ 0vflOAGwsHWvpz0tyfzrhIEfOInbeCSQVJ0tSCX6vFHxeYGYKD85IbOHpNEBve3wDB
+ LUASlnZ/kqEXg==
 Received: by cwcc.thunk.org (Postfix, from userid 15806)
- id BC71515C4279; Thu, 23 Mar 2023 10:39:51 -0400 (EDT)
-Date: Thu, 23 Mar 2023 10:39:51 -0400
+ id 5669715C4279; Thu, 23 Mar 2023 10:33:20 -0400 (EDT)
+Date: Thu, 23 Mar 2023 10:33:20 -0400
 From: "Theodore Ts'o" <tytso@mit.edu>
 To: Gabriel Krisman Bertazi <krisman@collabora.com>
-Message-ID: <20230323143951.GH136146@mit.edu>
+Message-ID: <20230323143320.GC136146@mit.edu>
 References: <20220622194603.102655-1-krisman@collabora.com>
- <20220622194603.102655-7-krisman@collabora.com>
+ <20220622194603.102655-2-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20220622194603.102655-7-krisman@collabora.com>
-X-Headers-End: 1pfMGl-000JJN-N0
-Subject: Re: [f2fs-dev] [PATCH 6/7] ext4: Enable negative dentries on
- case-insensitive lookup
+In-Reply-To: <20220622194603.102655-2-krisman@collabora.com>
+X-Headers-End: 1pfMGn-000JJN-NE
+Subject: Re: [f2fs-dev] [PATCH 1/7] fs: Expose name under lookup to
+ d_revalidate hook
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,15 +88,31 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Jun 22, 2022 at 03:46:02PM -0400, Gabriel Krisman Bertazi wrote:
-> Instead of invalidating negative dentries during case-insensitive
-> lookups, mark them as such and let them be added to the dcache.
-> d_ci_revalidate is able to properly filter them out if necessary based
-> on the dentry casefold flag.
+On Wed, Jun 22, 2022 at 03:45:57PM -0400, Gabriel Krisman Bertazi wrote:
+> Negative dentries support on case-insensitive ext4/f2fs will require
+> access to the name under lookup to ensure it matches the dentry.  This
+> adds an optional new flavor of cached dentry revalidation hook to expose
+> this extra parameter.
+> 
+> I'm fine with extending d_revalidate instead of adding a new hook, if
+> it is considered cleaner and the approach is accepted.  I wrote a new
+> hook to simplify reviewing.
 > 
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
 Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+
+
+Al, could you take a look and see if you have any objections?
+
+Also, any thoughts about adding the new d_revalidate_name() callback
+as opposed to change d_revalidate() to add an extra parameter?  It
+looks like there are some 33 d_revalidate callbacks, from 24 file
+sysetms, that would have to be changed.
+
+Cheers,
+
+					- Ted
 
 
 _______________________________________________
