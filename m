@@ -4,73 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (unknown [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C76BFC6FD1C
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Mar 2023 14:42:08 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 82570C6FD1D
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 23 Mar 2023 14:46:00 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pfM8l-00016i-IG;
-	Thu, 23 Mar 2023 14:42:08 +0000
+	id 1pfMCV-0000sW-4o;
+	Thu, 23 Mar 2023 14:45:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pfM8f-000161-3n
+ (envelope-from <tytso@mit.edu>) id 1pfMCT-0000sP-TK
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Mar 2023 14:42:01 +0000
+ Thu, 23 Mar 2023 14:45:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- Subject:From:References:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=uX81b+f03/K6rVT4ab7r73fTgT1ubWizpxu93noCA/M=; b=biwuyLlorhDK/IjQT6MxvihYIm
- dE6vTV7S5P/aQ75k8Ks8+SoeKh/vQ1SUA9PATU5USXhp9UEwVMD4Ptb8ceSx/IqgaPrwlxpSg1o8n
- KgdXymHw2S9q2U8jp2KZ2tJbt2eJlVUFYiSUxJqwnO625Lz5bndSaC/qKRDGKEPckzvc=;
+ bh=mFMJqLcjrnAL8JljGxhBhN4umzSGhKk2guyVXCBOPcw=; b=m/fdd/aBmKrNNghowzg9+ppMh2
+ W13IDNMP56dujGX6+AJKb/fe+KdHndn0JHMDYzLOziXvq05M9zTN0EFzMSguujYEyv32iZvTLiIFw
+ 0WaBLMgM4iwYR7+0tLAdy1mde4p+J83tZ3qan1eCxXrEGIpU9gFv2CRXkel2y5vP1ZJ8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:Subject:From:
- References:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=uX81b+f03/K6rVT4ab7r73fTgT1ubWizpxu93noCA/M=; b=lQxHHvtt11Gy2em4Srf6J9Y2dw
- I9DzCu7P6vAyDsXEGX5EYushrhALWm0EGYQ/FQr2OdcW1YTdwFpUDnrXKU/sGLnqudqm0YSvKHM7a
- 5TJkqzoPD6CMG+I304MrYxvOvqCgYKKBSq7RZVHVzDAy9+jWSpcYcCintj98L+Mdgzlc=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=mFMJqLcjrnAL8JljGxhBhN4umzSGhKk2guyVXCBOPcw=; b=l8R+C0xwgGgojTo96nvLVck5Lq
+ GiIp6R8+LEWluNoSgfWOjOvUDhhA1Bbgmut9upIVahQdGQiRgXAvk4I7tROVly5ylMtFwLoTR7H95
+ wb/v6prBaA1pEB0aYYCTeM01hxw0tE98COwVp5TdGSqvzJAu/9ogdsrhpPRElxQYaK7o=;
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11] helo=outgoing.mit.edu)
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pfM8e-0005VB-VY for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 23 Mar 2023 14:42:01 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 912A962779;
- Thu, 23 Mar 2023 14:41:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64B3C433A1;
- Thu, 23 Mar 2023 14:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1679582515;
- bh=Vlg7H3iswuM5SaVZgxQDjdnUoBhjPiMEv9IlvCOSVCs=;
- h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
- b=moaZguZ/J3waAJf4kCmha0ZzZ93nG9vf/r6CkBqy/vkc696vUfAOvgqBzW40wPeJl
- 3q13nAaqKIiFJrZImZiTgn660O42ZCsl9rvyJ2/5Q63b6g3nZKLvXlyJRD35DmqXrc
- RmFMPoK61a3C4RAAXdYL7Gd1dvB9ECwxmP1nyQPB9APmuKI7905/sJi8vYqXVFaVFU
- 6nKWYMmOfequny+COOzLUC6YVIUyQoRAKPUo3unRhUxV2fh81F6nO6+/4UjT2uvXDW
- MPzKkJvqQdPUYpI1Sh+b0B+AQuVWns4w+E9bOWxbREBbXMSlspK66uZnqqZJfZDbNb
- cSVmxBZOQ/KGw==
-Message-ID: <0f1704e5-4a4f-d920-9c69-e01ed2f0dde5@kernel.org>
-Date: Thu, 23 Mar 2023 22:41:52 +0800
+ id 1pfMCQ-0005gh-BY for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 23 Mar 2023 14:45:58 +0000
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net
+ [173.48.120.46]) (authenticated bits=0)
+ (User authenticated as tytso@ATHENA.MIT.EDU)
+ by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 32NEbYI4012741
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 23 Mar 2023 10:37:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+ t=1679582256; bh=mFMJqLcjrnAL8JljGxhBhN4umzSGhKk2guyVXCBOPcw=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To;
+ b=QU753MeneCiMKiUaxD2SVGtaiTPUast8Iy+eVbGI/zd7Xn7/UyBda8Q9N1+XDIqKK
+ 1TlpuOc0h2DttAII4hn/Tf+/mOFTyq51cT3CtOgLt4qqyxJIbsdHGDI15cFPabPCcV
+ YtfscSmSgI8ZKxgKNx38VZYX0NO6/4ecDtphjOxOZPn/3lJBWu2Nhn/QsfS20A/MA0
+ scOkceHzQBQ9Do1rsLBMItUlmwBHCgJKwMfqnEAD6z4yP2CODTkAtZSWOw8JEcoN2I
+ xboNsLpu3jw7f7t6vsS69p20vliCL9y+nDvFsDdPYLEe2X/x3hlTC8BHabhvK1Rxuu
+ UmRWma7CYmSKQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+ id A11F915C4279; Thu, 23 Mar 2023 10:37:34 -0400 (EDT)
+Date: Thu, 23 Mar 2023 10:37:34 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Gabriel Krisman Bertazi <krisman@collabora.com>
+Message-ID: <20230323143734.GF136146@mit.edu>
+References: <20220622194603.102655-1-krisman@collabora.com>
+ <20220622194603.102655-5-krisman@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Content-Language: en-US
-To: Wang Shilong <wangshilong1991@gmail.com>, Yangtao Li <frank.li@vivo.com>
-References: <20230221144550.46557-1-frank.li@vivo.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20230221144550.46557-1-frank.li@vivo.com>
-X-Headers-End: 1pfM8e-0005VB-VY
-Subject: Re: [f2fs-dev] [PATCH] f2fs: handle dqget error in
- f2fs_transfer_project_quota()
+Content-Disposition: inline
+In-Reply-To: <20220622194603.102655-5-krisman@collabora.com>
+X-Headers-End: 1pfMCQ-0005gh-BY
+Subject: Re: [f2fs-dev] [PATCH 4/7] libfs: Support revalidation of encrypted
+ case-insensitive dentries
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,56 +81,23 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: kernel@collabora.com, linux-f2fs-devel@lists.sourceforge.net,
+ ebiggers@kernel.org, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+ jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-+Shilong,
-
-Hi, Shilong,
-
-Could you please help to check this patch? in original patch, it tries to
-ignore such error intentionally? or it is a bug?
-
-On 2023/2/21 22:45, Yangtao Li wrote:
-> We should set the error code when dqget() failed.
+On Wed, Jun 22, 2022 at 03:46:00PM -0400, Gabriel Krisman Bertazi wrote:
+> Preserve the existing behavior for encrypted directories, by rejecting
+> negative dentries of encrypted+casefolded directories.  This allows
+> generic_ci_d_revalidate to be used by filesystems with both features
+> enabled, as long as the directory is either casefolded or encrypted, but
+> not both at the same time.
 > 
-> Fixes: 2c1d03056991 ("f2fs: support F2FS_IOC_FS{GET,SET}XATTR")
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->   fs/f2fs/file.c | 15 ++++++++-------
->   1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index ca1720fc1187..f25e58680984 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -3009,15 +3009,16 @@ int f2fs_transfer_project_quota(struct inode *inode, kprojid_t kprojid)
->   	struct dquot *transfer_to[MAXQUOTAS] = {};
->   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->   	struct super_block *sb = sbi->sb;
-> -	int err = 0;
-> +	int err;
->   
->   	transfer_to[PRJQUOTA] = dqget(sb, make_kqid_projid(kprojid));
-> -	if (!IS_ERR(transfer_to[PRJQUOTA])) {
-> -		err = __dquot_transfer(inode, transfer_to);
-> -		if (err)
-> -			set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-> -		dqput(transfer_to[PRJQUOTA]);
-> -	}
-> +	if (IS_ERR(transfer_to[PRJQUOTA]))
-> +		return PTR_ERR(transfer_to[PRJQUOTA]);
-> +
-> +	err = __dquot_transfer(inode, transfer_to);
-> +	if (err)
-> +		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
-> +	dqput(transfer_to[PRJQUOTA]);
->   	return err;
->   }
->   
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+
+Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 
 
 _______________________________________________
