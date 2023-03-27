@@ -4,73 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 93A26C761A6
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 27 Mar 2023 16:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 266B2C6FD1D
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 27 Mar 2023 16:00:56 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pgpHC-000482-74;
+	id 1pgpHC-00048Q-IK;
 	Mon, 27 Mar 2023 16:00:55 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pgpGu-00047O-8X
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pgpH1-00047i-HP
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 27 Mar 2023 16:00:37 +0000
+ Mon, 27 Mar 2023 16:00:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
  Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SJ6yumhRStLhIYhYwZTOjDyop/PyPyjpcBXBU07q30Q=; b=nAloYA/SDwyagKDP0kULHtGqA7
- shqN0N843MKOuto4tY9sRX0DS2ahk5mo1kALzU1xk9j4kJ5J90k1+RiAOdUfqt4WWSIiAezD+p8xK
- 2WhiTjXp2MeYdUwAPeqW9or1YO6V7nvnowfdb7mSrtA6r8sZPRLKFn07ENvGk4pKT8lM=;
+ bh=2/hnheb0N2Zv2NcJzgAdXNf37u3wpBajPuf7eaPUd8Y=; b=F+Y1MVh4taWSAaRQWIdijz9fFy
+ BZRdLBBAVekpbRsbMpHOeh+kRghJXZZOj5lmD6CddtCyUp3xvECx0V9Nrx6X6h7jx4lIdstwOJ/zd
+ 6OuFoI+KsUipCqWa72kv5sj6xUUiVLUffkAxCJJrxNL5IoUivRup9hFlwN4Ghe23pTug=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=SJ6yumhRStLhIYhYwZTOjDyop/PyPyjpcBXBU07q30Q=; b=OUCekVRKArWzgDp8TqX0o3Kd6J
- DgQxNjsx54SgGK4zZJVuc0Z2FHImWBnehzXa1GwZhKFDtqZLq1RhMXHgv1Iqni2FlUd8gvwTT40Ji
- hJVCEnNP1P8u7JMHjmPFzSlnjcTH1RP0EGA1PZQQtWGY8RhjId2otHLVNAhnXvVGk0wA=;
-Received: from ams.source.kernel.org ([145.40.68.75])
+ bh=2/hnheb0N2Zv2NcJzgAdXNf37u3wpBajPuf7eaPUd8Y=; b=GZOy3no/2K4Q/zNGxNhpb4qL69
+ wUoi0wKPeRIYsd5zv6egliZTMSFXQ2G4xibMm1l6h+kaRiQ8zxsSHYjUn8jMk146ieVUR+ER+3oIV
+ IxUC5/LMaM3lln/7lBIlnU3iQTkuYZDaVPQ9QuYRB1kRZ7wAjEck6cYzQ3EAo0InZyoI=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pgpGp-00038S-9I for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 27 Mar 2023 16:00:35 +0000
+ id 1pgpGr-00038f-5V for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 27 Mar 2023 16:00:40 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id CCDCCB816BF;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 48AAA6136F;
  Mon, 27 Mar 2023 16:00:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 29540C433A8;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2FF38C433AE;
  Mon, 27 Mar 2023 16:00:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1679932820;
- bh=mTrcWKNvXGbT1nCUhAXnXUsx1ffGSRzt/7LW7RE71Oc=;
+ bh=UosN6WQmhU0gC9d+forj880ODhU3d/cXAP2nSX62Ok8=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=TmtfLLkexyXxxNSU3ZxwjIWeNSqeqVM5tZpT6DoY8HccxP8lLXzZQJtSqtoNiObPi
- 0g9LrejVu4HKz7iJ3SdhQZPvirEZ5l7hL5P03w/xCeN+T0v5Bk8bZmTFMMHsWpVsJP
- sIeLQjUKIjrIudId00QQRMPI1BwXNksmv133H0Zlb2J5jEceWF/etzMjeRaKGu22U1
- Zs8RCNKRiYhuJfJeNfcIYDEQSjGj78y0s9bIFyIMOQzphutGtEB3GPdG0BIr99UaQ/
- UXFgG814S+Wz2yhx1WUWANwaLtYMtPVtMEDrUpU1wl6L5MHzqgtnXwk0wYeLsA6AnT
- 7I+xusfwuUyGQ==
+ b=KrsvI2JR/EF6ofUmO0G+zXz6nAti6v81lp4d0Hm3kNYM32oxxUjdsBymVpUy5Smoa
+ olnw4Pn360MKZlVQCW/JUGnxgfLA53hL5JzVS6G6OW7L/ysbtQgaTmor35a54Ig+oJ
+ axT62tuk+Zy7/3ijnrnbx2jaAnjGcziZGOCMzdj0aPZvIt3v9SDLQsuOfbkXKyc/IB
+ fLlFegXI473a9e9WVZVbcmWUr0giKFIASeGOkC1YE26HF/WzBsKZPRilOt9PvSpasF
+ pcguNWlGVjrRc6Re6NYHH39Sy3JBH+lkxh2sTWlW5aFsOWSBtWuthIFQK2mQeDTtj7
+ FCZ2noenDN9pA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 18387E4D022; Mon, 27 Mar 2023 16:00:20 +0000 (UTC)
+ 0454AE52505; Mon, 27 Mar 2023 16:00:20 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <167993282009.32120.676262168059778051.git-patchwork-notify@kernel.org>
+Message-Id: <167993282000.32120.2964162432731935413.git-patchwork-notify@kernel.org>
 Date: Mon, 27 Mar 2023 16:00:20 +0000
-References: <20230321001251epcms2p4c1fd48495643dbfca2cf82a433490bb8@epcms2p4>
-In-Reply-To: <20230321001251epcms2p4c1fd48495643dbfca2cf82a433490bb8@epcms2p4>
-To: Yonggil Song <yonggil.song@samsung.com>
-X-Headers-End: 1pgpGp-00038S-9I
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: Fix system crash due to lack of
- free space in LFS
+References: <20230320172218.59628-1-frank.li@vivo.com>
+In-Reply-To: <20230320172218.59628-1-frank.li@vivo.com>
+To: Yangtao Li <frank.li@vivo.com>
+X-Headers-End: 1pgpGr-00038f-5V
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: compress: fix to call
+ f2fs_wait_on_page_writeback() in f2fs_write_raw_pages()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,8 +82,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: hanqi@vivo.com, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, hch@lst.de
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -93,22 +93,23 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 21 Mar 2023 09:12:51 +0900 you wrote:
-> When f2fs tries to checkpoint during foreground gc in LFS mode, system
-> crash occurs due to lack of free space if the amount of dirty node and
-> dentry pages generated by data migration exceeds free space.
-> The reproduction sequence is as follows.
+On Tue, 21 Mar 2023 01:22:18 +0800 you wrote:
+> BUG_ON() will be triggered when writing files concurrently,
+> because the same page is writtenback multiple times.
 > 
->  - 20GiB capacity block device (null_blk)
->  - format and mount with LFS mode
->  - create a file and write 20,000MiB
->  - 4k random write on full range of the file
+> 1597 void folio_end_writeback(struct folio *folio)
+> 1598 {
+> 		......
+> 1618     if (!__folio_end_writeback(folio))
+> 1619         BUG();
+> 		......
+> 1625 }
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: Fix system crash due to lack of free space in LFS
-    https://git.kernel.org/jaegeuk/f2fs/c/86003b7460ed
+  - [f2fs-dev,v2] f2fs: compress: fix to call f2fs_wait_on_page_writeback() in f2fs_write_raw_pages()
+    https://git.kernel.org/jaegeuk/f2fs/c/08a8457cfd78
 
 You are awesome, thank you!
 -- 
