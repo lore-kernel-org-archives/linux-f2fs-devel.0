@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EEC30C6FD18
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Mar 2023 02:49:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E75E5C6FD1D
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 30 Mar 2023 03:31:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1phiLb-00070G-N8;
-	Thu, 30 Mar 2023 02:49:06 +0000
+	id 1phj0Q-0007XM-8y;
+	Thu, 30 Mar 2023 03:31:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <bugzilla-daemon@kernel.org>) id 1phiLa-000709-CQ
+ (envelope-from <bugzilla-daemon@kernel.org>) id 1phj0N-0007XG-MS
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 30 Mar 2023 02:49:05 +0000
+ Thu, 30 Mar 2023 03:31:14 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
  :References:In-Reply-To:Message-ID:Date:Subject:To:From:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=2byGa2NSSN5ED3o+NstRmeaTgQVyNLRsw8hD6Nmpvtc=; b=nAF7GmLRfqrAZKtVDEqeWUavsO
- 4BzXITrRpEgXI8sGIO7qxJXpbxANaRgqYgcMNJF3yekpbuB/FNwWicSq2h3v1hhKL/Zz9A3sQ4luM
- Rarw9o8ElHmcX+OjmcCymioBuNrbV4+OqE+v8la8dm90/GowMVyzVKOTOQQ6ts2lZoZI=;
+ bh=TLgZPTVMN0LvTmH5TMV20T4pZfNc0F7HKieGx5nppVQ=; b=mvkKEE7cIJO4jT/I2mWelH8xUn
+ vD5+tze9g37E53aidyhP63aWZigamqOG87cY8OweQUUJGhn7pfH5G4Ptb8otgsM0V5GVKAxpMlH6B
+ 22aRb1DE5zNGVm7h+SPgnjCBoJwGLF68T1ezrC8jkcDGaYDN7waa9s7QnU0IwJh/0j7Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
@@ -33,38 +33,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=2byGa2NSSN5ED3o+NstRmeaTgQVyNLRsw8hD6Nmpvtc=; b=b/8h2ilYKhunTOgDV0wCHiH/45
- NiD4I4S1wd+VPT/UHNaQnMbe0cizbXhO4EjhxE4qK0+du1u3wDArBbhNSmlgXD8aLOLX1hoIpHKsV
- GAIWwnEzDrZCPve4Itb0S/m9sUYpQsDgo+mEmfq5qvn/MmPR1cUrTSRuqKYd0UD76umQ=;
+ bh=TLgZPTVMN0LvTmH5TMV20T4pZfNc0F7HKieGx5nppVQ=; b=S7sBQ++a1WCWasNvRSENEWlsLA
+ /1eXS3wXgE0DsdjoztUZGk2zGtrDMO+LhveGdaEXO/F1QDoQO4J37ZTRktQtUJ/i5dLKP8d+vAac0
+ TCborD07GZ9QERJodQXzSNQFqxbqsZqfSV+CTzSfmiET0/cr2k3TH/C/XvyiBJUWjfnY=;
 Received: from ams.source.kernel.org ([145.40.68.75])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1phiLU-0000S2-D7 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 30 Mar 2023 02:49:05 +0000
+ id 1phj0M-0095Gt-4d for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 30 Mar 2023 03:31:14 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by ams.source.kernel.org (Postfix) with ESMTPS id 5232AB8239E
+ by ams.source.kernel.org (Postfix) with ESMTPS id DAA36B82580
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 30 Mar 2023 02:48:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1764DC433EF
+ Thu, 30 Mar 2023 03:31:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A04FDC4339B
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 30 Mar 2023 02:48:48 +0000 (UTC)
+ Thu, 30 Mar 2023 03:31:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1680144528;
- bh=2byGa2NSSN5ED3o+NstRmeaTgQVyNLRsw8hD6Nmpvtc=;
+ s=k20201202; t=1680147066;
+ bh=TLgZPTVMN0LvTmH5TMV20T4pZfNc0F7HKieGx5nppVQ=;
  h=From:To:Subject:Date:In-Reply-To:References:From;
- b=G8ej1VL2PdTjRCbQLwMOTE3Ff6a0s009lXQQ/+WYvEPnCvzYICVaEwvAiCxWNjIY0
- C8bOnM9a6y/FYmrKnwIxSjKyfLWnPMP8UAjEAi1gQruSzoqtq6QVixR6qzY6HLymF1
- yoOQ2l/qhNJtmWh7divNnYkxxjk4TVVbi6rHMgVxO2QiOCgeIesC1vUOKZMw/q3h5y
- UOo4UVJtKOmxWjVQwT8qjTUde4S8OV7W1hxHwPev/Cha+xne/eUrJ72ZmNri8lmPgZ
- C1Rw0E4TdbqOwuncAhN89SZx0Sq8qUsVjWQTpHTMvGlLNdKBCrj+t4sN9x9jcUQ0kW
- WAwClWjmADleA==
+ b=uJzz1letYUGy8sio+1SKDvY5Vf8s5/h7OEhIyOsTzOti6eGMyn4xw0phNo05jKOqI
+ UOgIugJEG9t2jIFHv/SxWENDCb5tQKdq9YRga2PXAcv7H+pG5tFTw8VD9ENc3vMnJj
+ dTAnhaYL23F6vHrLxiHafDyGM24AJgeKY1DsXZnsHt7qADcUm+bKpB9iCZ7YfQ/S5t
+ 1C3qfDnQW8kXuEoYiIkhnmIMe21ORQMPfj94Uj0VG5BauWBNRMyJB7fMSNMH2ReJeN
+ kmVl0nJzvHren7T0jYyHD6HwFQddh/mtqNso1V0QO3yQwjCzF0UyrHiWEpHehpbyOe
+ b5dmTF4LC1K7w==
 Received: by aws-us-west-2-korg-bugzilla-1.web.codeaurora.org (Postfix,
- from userid 48) id ECD30C43142; Thu, 30 Mar 2023 02:48:47 +0000 (UTC)
+ from userid 48) id 89B1AC43143; Thu, 30 Mar 2023 03:31:06 +0000 (UTC)
 From: bugzilla-daemon@kernel.org
 To: linux-f2fs-devel@lists.sourceforge.net
-Date: Thu, 30 Mar 2023 02:48:47 +0000
+Date: Thu, 30 Mar 2023 03:31:06 +0000
 X-Bugzilla-Reason: None
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: AssignedTo filesystem_f2fs@kernel-bugs.kernel.org
@@ -73,20 +73,20 @@ X-Bugzilla-Component: f2fs
 X-Bugzilla-Version: 2.5
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: blocking
-X-Bugzilla-Who: shilkazx@gmail.com
+X-Bugzilla-Who: chao@kernel.org
 X-Bugzilla-Status: NEW
 X-Bugzilla-Resolution: 
 X-Bugzilla-Priority: P1
 X-Bugzilla-Assigned-To: filesystem_f2fs@kernel-bugs.kernel.org
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: 
-Message-ID: <bug-217266-202145-lBYEimIUNZ@https.bugzilla.kernel.org/>
+Message-ID: <bug-217266-202145-Uzcihil2Te@https.bugzilla.kernel.org/>
 In-Reply-To: <bug-217266-202145@https.bugzilla.kernel.org/>
 References: <bug-217266-202145@https.bugzilla.kernel.org/>
 X-Bugzilla-URL: https://bugzilla.kernel.org/
 Auto-Submitted: auto-generated
 MIME-Version: 1.0
-X-Headers-End: 1phiLU-0000S2-D7
+X-Headers-End: 1phj0M-0095Gt-4d
 Subject: [f2fs-dev] [Bug 217266] kernel panic on f2fs filesystem when
  f2fs_commit_atomic_write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -106,20 +106,33 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 https://bugzilla.kernel.org/show_bug.cgi?id=217266
 
---- Comment #2 from shilka (shilkazx@gmail.com) ---
-(In reply to michalechner92 from comment #1)
-> That looks identical to what I reported last week here:
+--- Comment #3 from Chao Yu (chao@kernel.org) ---
+On 2023/3/30 10:48, bugzilla-daemon@kernel.org wrote:
+> https://bugzilla.kernel.org/show_bug.cgi?id=217266
 > 
-> https://sourceforge.net/p/linux-f2fs/mailman/message/37794257/
-> 
-> 
+> --- Comment #2 from shilka (shilkazx@gmail.com) ---
+> (In reply to michalechner92 from comment #1)
+>> That looks identical to what I reported last week here:
+>>
+>> https://sourceforge.net/p/linux-f2fs/mailman/message/37794257/
 
-Yep, it seems very similar, but I do not encounter this problem until update to
-kernel 6.2.8. 
-Before I saw your reply, I guess there might exist some subtle conflicts
-between new feature in 6.2.8 kernel and the f2fs module. With your info, it is
-highly possible that the implementation of f2fs exists some bug, and new kernel
-feature might frequently trigger it.
+Could you please have a try w/ below patch?
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a46bebd502fe1a3bd1d22f64cedd93e7e7702693
+
+>>
+>>
+> 
+> Yep, it seems very similar, but I do not encounter this problem until update
+> to
+> kernel 6.2.8.
+> Before I saw your reply, I guess there might exist some subtle conflicts
+> between new feature in 6.2.8 kernel and the f2fs module. With your info, it
+> is
+> highly possible that the implementation of f2fs exists some bug, and new
+> kernel
+> feature might frequently trigger it.
+>
 
 -- 
 You may reply to this email to add a comment.
