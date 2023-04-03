@@ -4,74 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E1838C76196
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Apr 2023 18:30:26 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 82D07C761A6
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Apr 2023 18:30:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pjOwj-0002yK-0a;
-	Mon, 03 Apr 2023 18:30:25 +0000
+	id 1pjOwm-00065t-0R;
+	Mon, 03 Apr 2023 18:30:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pjOwi-0002yE-8P
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pjOwk-00065n-Bb
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 03 Apr 2023 18:30:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7s2XuA2VovwHc2CEBF6YFwU6lVq+baHEIYEw+Y4p5aY=; b=ZcBudEgrYyycsIKFq6WhfoxIZv
- 8GUCKw3nJ8S8DlIJUKZ3jsNMIQ924dTqzqEAdu7umh07n1DnKIRsomRbFALCW2zrxAnY6pueVkL/c
- A1vgoYH+0/KhQviuyDz9wOKssXqFaowKuVOB5cie13cxE1MUSJm4XwDOZS45DD2URUD0=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=vOAA9ZkxzHphL4CfbBmzX2YrNd0KbOGa9iHzjcturxo=; b=fNAoaLsmBOdZiNckcl89xr8bEQ
+ ZRKotn0tI3b8y1CtB7xFhois6ESdSjbtcS1HuJFVQP+mP9AIVVLqyVu4BnETu6k9iQy3efP1gJXJW
+ i3dHSVeh0St2SRom4N9qsT8bWfzKObeA+RwnfwuPf3KVKUQIC+dn17w6LEOK7DLuKqCs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=7s2XuA2VovwHc2CEBF6YFwU6lVq+baHEIYEw+Y4p5aY=; b=O
- FwmB1beE32T/LrZpqX36vKyRhG+kGZBQyWlhyLqaokveHyH1L5sTKL2ksAGHIqWFeVuha9Kute6AJ
- fTyr6xCn8HMIguiF/8YHJgqyDEFM6yxvmb159P6A7JOYPe8F6/0LbJuGW4BhjukT1v8jTug66n+RM
- 4QyIG2HZjruIZdyE=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=vOAA9ZkxzHphL4CfbBmzX2YrNd0KbOGa9iHzjcturxo=; b=GZPWfo7u5QgerSWMtbWW78Y06T
+ TT/q0v39eGltjB8FqMJQgc8Il3k5kp84pnKycVz1nFHrGl4cw2vcjIoEe4uMmGT1BvOYZApTaiRSG
+ Oz/D7tig+otk14F5vOrkLP9xO1XcQ9RTMpck0OtkQBzQJRbxoJ6ejsF235W4i40mlp2w=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pjOwi-00DxvZ-KO for linux-f2fs-devel@lists.sourceforge.net;
+ id 1pjOwi-000737-MG for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 03 Apr 2023 18:30:25 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 3F463619C6
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 4E137618F8;
  Mon,  3 Apr 2023 18:30:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A36CDC433D2
- for <linux-f2fs-devel@lists.sourceforge.net>;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B09D3C433EF;
  Mon,  3 Apr 2023 18:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1680546618;
- bh=D1gJi9jWP7Ye2wa6ucZyHpYKFTPdKNTj0BOkCoSlMps=;
- h=Subject:From:Date:To:From;
- b=MLAl747522YVqckVcOIdorbt/l9KGd3y7nQXPZ5JBA/D8kQWMtxkDaqvhSzm7XpJ6
- sAJhVu+mEAI1WUZ/IGHBxRwHgYcQ2dYCmkuV9mhIyTNuBpq7oLXxXWePkWaJQbKONL
- +YRWwzYQw9ko1Ib0mwNOUSwme+Pof8iRjX4cJ+6pYLtOQF5BB5+m3ld8N7qCHXvVh3
- iUHEGZnE+b4SasYTog4S5uzTAB5kyOmYYlX3Sqcv9c4MauQnHFvOKvQ3aibJgG96PV
- Tnj0PuynoOoEq3LJonCcMFP1ZO9AQJcCSf2wRuCHSylEWJT69hfmK3KKZVOc+jvop8
- S855Hi8VD3PRg==
+ bh=4LH6DmsLQfzTs2kOVQRO7644p9IgdG5cgEpOhmSGjRM=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=oTD81naPwuSaro0Hvwrg1IJXSP2u1sMcvRGBbpwv1mhhjeLHp8blQZXsylbgYrivI
+ EKX6thdKaKqSgGE+n4dRucWLN0dolTkLXBOrqjvvbF+HTYqBOyrJpmVFbvYW66JXOP
+ IlPVsGGNuAzWG7sCBXrkR5zXRb/Qlt63kJQYwh0BN047YVIfVaE/vN62vfohT/Bgu7
+ 4GgUC+ajo7U6v3xFW6C+RjZWNzqO4Y8wnQp1HXibjmjXVngYTESZKPDTXaI5sQ/fGx
+ DM3rPUFuPQnUwUeAoPFxRhZ7SJ3A7gMH+Vca3HV+VKw2MnnJ5V2rVyovqTjUf9MDg/
+ 9hOgwRKrnAicQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 8AB71C41670 for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon,  3 Apr 2023 18:30:18 +0000 (UTC)
+ 93268E5EA86; Mon,  3 Apr 2023 18:30:18 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168054661849.14597.10064714302438002085.git-patchwork-summary@kernel.org>
+Message-Id: <168054661859.14597.6329451701329861497.git-patchwork-notify@kernel.org>
 Date: Mon, 03 Apr 2023 18:30:18 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1pjOwi-00DxvZ-KO
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+References: <20230331092658.72386-1-bo.ye@mediatek.com>
+In-Reply-To: <20230331092658.72386-1-bo.ye@mediatek.com>
+To: Bo Ye <bo.ye@mediatek.com>
+X-Headers-End: 1pjOwi-000737-MG
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix iostat lock protection
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,31 +81,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: yongdong.zhang@mediatek.com, linux-kernel@vger.kernel.org,
+ light.hsieh@mediatek.com, linux-f2fs-devel@lists.sourceforge.net,
+ qilin.tan@mediatek.com, linux-mediatek@lists.infradead.org,
+ browse.zhang@mediatek.com, matthias.bgg@gmail.com, jaegeuk@kernel.org,
+ peng.zhou@mediatek.com, linux-arm-kernel@lists.infradead.org,
+ angelogioacchino.delregno@collabora.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Series: [f2fs-dev,1/2] f2fs: fix iostat lock protection
-  Submitter: Bo Ye <bo.ye@mediatek.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=735769
-  Lore link: https://lore.kernel.org/r/20230331092658.72386-1-bo.ye@mediatek.com
-    Patches: [f2fs-dev,1/2] f2fs: fix iostat lock protection
+On Fri, 31 Mar 2023 17:26:56 +0800 you wrote:
+> From: Qilin Tan <qilin.tan@mediatek.com>
+> 
+> Made iostat lock irq safe to avoid potentinal deadlock.
+> 
+> Deadlock scenario:
+> f2fs_attr_store
+>   -> f2fs_sbi_store
+>   -> _sbi_store
+>   -> spin_lock(sbi->iostat_lock)
+>     <interrupt request>
+>     -> scsi_end_request
+>     -> bio_endio
+>     -> f2fs_dio_read_end_io
+>     -> f2fs_update_iostat
+>     -> spin_lock_irqsave(sbi->iostat_lock)  ===> Dead lock here
+> 
+> [...]
 
-Patch: [f2fs-dev,v2] f2fs: fix align check for npo2
-  Submitter: Yohan Joung <jyh429@gmail.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=736130
-  Lore link: https://lore.kernel.org/r/20230402031259.286-1-yohan.joung@sk.com
+Here is the summary with links:
+  - [f2fs-dev,1/2] f2fs: fix iostat lock protection
+    https://git.kernel.org/jaegeuk/f2fs/c/daa080db4e7e
+  - [f2fs-dev,2/2] f2fs: add __pack attribute for extent_info
+    (no matching commit)
 
-
-Total patches: 2
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
