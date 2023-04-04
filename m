@@ -4,103 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D6D8EC77B6C
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 14:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D8422C761A6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 15:03:26 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pji4y-00083J-Ix;
-	Tue, 04 Apr 2023 14:56:13 +0000
+	id 1pjiBx-0008Ft-EN;
+	Tue, 04 Apr 2023 15:03:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@redhat.com>) id 1pji4w-00082x-RE
+ (envelope-from <chao@kernel.org>) id 1pjiBv-0008Fm-UE
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 14:56:11 +0000
+ Tue, 04 Apr 2023 15:03:24 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ Subject:From:References:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vAR4IqzKft1FulbfGVumK2HKMhiXaE7ZaLXEvaQK8Qc=; b=Cjlo5ZXVgIBuFF0VHvUQ1etkMS
- 2SPib5brH3yZsSn22bZbHuTiS+HvIQjp1SYZPsDtHCDYAEPiCv/d61i5wjVLwYWO9UkiyhVHTyXyo
- 0NhVL0y/cJIwGFAYQnvrEXLdw7ywJIeOYBQ4OwiutZ+bTTtNbibpL5f74UZoCuiIWxA0=;
+ bh=z9aoaAacSWLDqGouznJKCG5DmtE61Hj36npYkil07RA=; b=InRqylUrOirFxqrXqUFFs9TXAr
+ 7YNBJbrNGkwaKB/WKKQFh36902P5F1N4Cy4emFc/OFFUJv1dXE95wUEJL1LwmlcmtZlQWrSSBWQh0
+ SxK0eq1/1Xw0a4hYbRSRRW8hrb4iE6XHGFFu6zPbDBC/fpiWI4PZgR2IUYttcN78/Vd8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:Subject:From:
+ References:Cc:To:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=vAR4IqzKft1FulbfGVumK2HKMhiXaE7ZaLXEvaQK8Qc=; b=hUlZCjbObdMdit4VsXpIRscgD1
- gX5Cfqa4jDOUOfrjGpks1b+KLxYXYi+tPJzLBAXd3AgAyd7RpEyyroEMM/b+ehEroVYPz0m59U6rU
- TLZsDiZ5rLQwap2ksJ8C/iaEUKrWSKZUZcSXCFeZX6T5x59EtsYzqbuToMubX5+pOvsU=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=z9aoaAacSWLDqGouznJKCG5DmtE61Hj36npYkil07RA=; b=QHyg6tV+e7mru6ZM5cyZuGEWSI
+ J3fzv65C96MKCl5YznGyw4Zmw1qmq8RrfF2cOmioK5SV3QzP5634SJ7Jlnl8mlLWGnegjMBin1vCd
+ S3IHtQmRALtrt0vM8qZ1zhP7W06Pmwd+0RvRP3IMo6wrSRFi2EQbNrl4lYFoW5yVr2Kw=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pji4r-00028e-M1 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 14:56:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1680620159;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=vAR4IqzKft1FulbfGVumK2HKMhiXaE7ZaLXEvaQK8Qc=;
- b=Zi/e4dtQWR6jvoFmluzUMwj+B527FFFr8yyneS1fjzysJYF4R8xW+NLeRWXllbeWdH4G3v
- Kh//pf/PWLbGH+wY1ll3a4uS0MjEPseTgy2L66MoWE16E3geSEFT5A6w/BIdmoEJ33xao4
- xtPgMkQ6uhbB3iPRvbnzA93PLxP+KEQ=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-399-UIuUuQDWOOqdnxzg-H7JWQ-1; Tue, 04 Apr 2023 10:55:56 -0400
-X-MC-Unique: UIuUuQDWOOqdnxzg-H7JWQ-1
-Received: by mail-qt1-f199.google.com with SMTP id
- p22-20020a05622a00d600b003e38f7f800bso22067779qtw.9
+ id 1pjiBt-00Ezdj-7B for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Apr 2023 15:03:24 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id C93CB635BD
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 04 Apr 2023 07:55:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112; t=1680620152;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=vAR4IqzKft1FulbfGVumK2HKMhiXaE7ZaLXEvaQK8Qc=;
- b=fJMtOE95KI8Iwa6rtjy08mn9xvblhRxyfJ7Uacv6lOrnNr3ePLRnlW/XEYPgh9dWYa
- kQf9BsPrKY0FDzDOQlZi6AhB6KoIPMSavTTQBmwvvkq5GD4ND/TqMAK/i6F/ln79s7rq
- YlocZCFyHjazA3gkc3srS+LfP1804JGSCIqvc0qJDwWyEy0+B5pJpXRMuEnbkQhHpP9+
- Nq40RIdFd+kzYni+IC/o+isx9692GqkakiyOLl68FvIRDAPh9+I/3PKRx3ojZMms7vBE
- 7Kw6P0bkiWUTBjciKJIvT7wB71+SLJbLMlJMUSOyBwHFfvrWqLQURujqAWRsQh+yLYQn
- LO9w==
-X-Gm-Message-State: AAQBX9dxLLQy7tN9Xhf8RtRKyzXXpINXKk9ZqJW9Y5LJYTNgdHka1Xry
- r0H+AI6U+tsPiRiGTEsHSWYkiP0r5QO0OFV4Q9KSLse4u95hOI8ysyt2yfQk1/RdTRhaE0y5x5F
- /gYH0TzJCp+xqgSBS/I2sl2DuVj1JeYKCCSc0
-X-Received: by 2002:a05:6214:da8:b0:5c5:471a:1e2f with SMTP id
- h8-20020a0562140da800b005c5471a1e2fmr3781901qvh.51.1680620152499; 
- Tue, 04 Apr 2023 07:55:52 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Y+CJdy2zuw3OclTHQicHY+1y6liC+cgVxTA4alT47Sc9E4dbJpC4DNw4j3Dv/W+hf5PybB+w==
-X-Received: by 2002:a05:6214:da8:b0:5c5:471a:1e2f with SMTP id
- h8-20020a0562140da800b005c5471a1e2fmr3781877qvh.51.1680620152126; 
- Tue, 04 Apr 2023 07:55:52 -0700 (PDT)
-Received: from aalbersh.remote.csb ([109.183.6.197])
- by smtp.gmail.com with ESMTPSA id
- j4-20020ac86644000000b003e6387431dcsm3296539qtp.7.2023.04.04.07.55.48
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Apr 2023 07:55:51 -0700 (PDT)
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: djwong@kernel.org, dchinner@redhat.com, ebiggers@kernel.org,
- hch@infradead.org, linux-xfs@vger.kernel.org, fsverity@lists.linux.dev
-Date: Tue,  4 Apr 2023 16:53:17 +0200
-Message-Id: <20230404145319.2057051-22-aalbersh@redhat.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20230404145319.2057051-1-aalbersh@redhat.com>
-References: <20230404145319.2057051-1-aalbersh@redhat.com>
+ Tue,  4 Apr 2023 15:03:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1ED2C4339B;
+ Tue,  4 Apr 2023 15:03:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1680620595;
+ bh=7oy8h46rrhB1ieIqVXQECr4df3oWx5oEbXm8xhNQB/4=;
+ h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+ b=g0QX2A/ElUKD3zejglZ+pWv5gerUvIOVE3W4rcE06gvtBJxrGqX6za46CTYS2HrQ8
+ Yl/QySeiOxEC+7VkgN1oW9pAfe/xtrPRjAniQdGsVMie3WUZQeuwPsovIYE0X+fa8t
+ /hKfpBdlEuM7sx7ph9HX/JlSqKpQHG+xTx0IlXFRmdsXhpXkxk6ARW64wcSSt/Stbq
+ coEtHGRkZUw5LfZAl+Pd7j2cV64SruXpMvJwfiP5ZkJxHa8lGz2W2wpYCkRhFcfU8j
+ 4ciBXS9ePYhjfXv2nrRQPuCQerfo5F4oaOaFcVQfMgLtQDVCUwK1b97wksPqngqDgZ
+ 8PIv6yfTMQatQ==
+Message-ID: <e4757f96-8749-5210-11cc-fcbe4875661d@kernel.org>
+Date: Tue, 4 Apr 2023 23:03:12 +0800
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-X-Headers-End: 1pji4r-00028e-M1
-Subject: [f2fs-dev] [PATCH v2 21/23] xfs: handle merkle tree block size !=
- fs blocksize != PAGE_SIZE
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20230402112825.42486-1-chao@kernel.org>
+ <ZCsT5mRsZJqPXBzz@google.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZCsT5mRsZJqPXBzz@google.com>
+X-Headers-End: 1pjiBt-00Ezdj-7B
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to check readonly condition
+ correctly
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -112,164 +84,161 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-ext4@vger.kernel.org, agruenba@redhat.com,
- damien.lemoal@opensource.wdc.com, linux-f2fs-devel@lists.sourceforge.net,
- cluster-devel@redhat.com, rpeterso@redhat.com, xiang@kernel.org,
- jth@kernel.org, linux-erofs@lists.ozlabs.org,
- Andrey Albershteyn <aalbersh@redhat.com>, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In case of different Merkle tree block size fs-verity expects
-->read_merkle_tree_page() to return Merkle tree page filled with
-Merkle tree blocks. The XFS stores each merkle tree block under
-extended attribute. Those attributes are addressed by block offset
-into Merkle tree.
+On 2023/4/4 1:59, Jaegeuk Kim wrote:
+> On 04/02, Chao Yu wrote:
+>> This patch does below changes:
+>>
+>> - If f2fs enables readonly feature or device is readonly, allow to
+>> mount readonly mode only
+>> - Introduce f2fs_dev_is_readonly() to indicate whether image or device
+>> is readonly
+>> - remove unnecessary f2fs_hw_is_readonly() in f2fs_write_checkpoint()
+>> and f2fs_convert_inline_inode()
+>> - enable FLUSH_MERGE only if f2fs is mounted as rw and image/device
+>> is writable
+> 
+> What is the problem to solve here?
 
-This patch make ->read_merkle_tree_page() to fetch multiple merkle
-tree blocks based on size ratio. Also the reference to each xfs_buf
-is passed with page->private to ->drop_page().
+With below case, it can mount multi-device image w/ rw option, however
+one of secondary device is set as ro, later update will cause panic, so
+I introduced f2fs_dev_is_readonly(), and check multi-devices rw status
+in parse_options() w/ it in order to avoid such inconsistent mount status.
 
-Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
----
- fs/xfs/xfs_verity.c | 74 +++++++++++++++++++++++++++++++++++----------
- fs/xfs/xfs_verity.h |  8 +++++
- 2 files changed, 66 insertions(+), 16 deletions(-)
+mkfs.f2fs -c /dev/zram1 /dev/zram0 -f
+blockdev --setro /dev/zram1
+mount -t f2fs /dev/zram0 /mnt/f2fs/
+mount: /mnt/f2fs: WARNING: source write-protected, mounted read-only.
+mount -t f2fs -o remount,rw /mnt/f2fs/
+dd if=/dev/zero  of=/mnt/f2fs/file bs=1M count=8192
 
-diff --git a/fs/xfs/xfs_verity.c b/fs/xfs/xfs_verity.c
-index a9874ff4efcd..ef0aff216f06 100644
---- a/fs/xfs/xfs_verity.c
-+++ b/fs/xfs/xfs_verity.c
-@@ -134,6 +134,10 @@ xfs_read_merkle_tree_page(
- 	struct page		*page = NULL;
- 	__be64			name = cpu_to_be64(index << PAGE_SHIFT);
- 	uint32_t		bs = 1 << log_blocksize;
-+	int			blocks_per_page =
-+		(1 << (PAGE_SHIFT - log_blocksize));
-+	int			n = 0;
-+	int			offset = 0;
- 	struct xfs_da_args	args = {
- 		.dp		= ip,
- 		.attr_filter	= XFS_ATTR_VERITY,
-@@ -143,26 +147,59 @@ xfs_read_merkle_tree_page(
- 		.valuelen	= bs,
- 	};
- 	int			error = 0;
-+	bool			is_checked = true;
-+	struct xfs_verity_buf_list	*buf_list;
- 
- 	page = alloc_page(GFP_KERNEL);
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
- 
--	error = xfs_attr_get(&args);
--	if (error) {
--		kmem_free(args.value);
--		xfs_buf_rele(args.bp);
-+	buf_list = kzalloc(sizeof(struct xfs_verity_buf_list), GFP_KERNEL);
-+	if (!buf_list) {
- 		put_page(page);
--		return ERR_PTR(-EFAULT);
-+		return ERR_PTR(-ENOMEM);
- 	}
- 
--	if (args.bp->b_flags & XBF_VERITY_CHECKED)
-+	/*
-+	 * Fill the page with Merkle tree blocks. The blcoks_per_page is higher
-+	 * than 1 when fs block size != PAGE_SIZE or Merkle tree block size !=
-+	 * PAGE SIZE
-+	 */
-+	for (n = 0; n < blocks_per_page; n++) {
-+		offset = bs * n;
-+		name = cpu_to_be64(((index << PAGE_SHIFT) + offset));
-+		args.name = (const uint8_t *)&name;
-+
-+		error = xfs_attr_get(&args);
-+		if (error) {
-+			kmem_free(args.value);
-+			/*
-+			 * No more Merkle tree blocks (e.g. this was the last
-+			 * block of the tree)
-+			 */
-+			if (error == -ENOATTR)
-+				break;
-+			xfs_buf_rele(args.bp);
-+			put_page(page);
-+			kmem_free(buf_list);
-+			return ERR_PTR(-EFAULT);
-+		}
-+
-+		buf_list->bufs[buf_list->buf_count++] = args.bp;
-+
-+		/* One of the buffers was dropped */
-+		if (!(args.bp->b_flags & XBF_VERITY_CHECKED))
-+			is_checked = false;
-+
-+		memcpy(page_address(page) + offset, args.value, args.valuelen);
-+		kmem_free(args.value);
-+		args.value = NULL;
-+	}
-+
-+	if (is_checked)
- 		SetPageChecked(page);
-+	page->private = (unsigned long)buf_list;
- 
--	page->private = (unsigned long)args.bp;
--	memcpy(page_address(page), args.value, args.valuelen);
--
--	kmem_free(args.value);
- 	return page;
- }
- 
-@@ -191,16 +228,21 @@ xfs_write_merkle_tree_block(
- 
- static void
- xfs_drop_page(
--	struct page	*page)
-+	struct page			*page)
- {
--	struct xfs_buf *buf = (struct xfs_buf *)page->private;
-+	int				i = 0;
-+	struct xfs_verity_buf_list	*buf_list =
-+		(struct xfs_verity_buf_list *)page->private;
- 
--	ASSERT(buf != NULL);
-+	ASSERT(buf_list != NULL);
- 
--	if (PageChecked(page))
--		buf->b_flags |= XBF_VERITY_CHECKED;
-+	for (i = 0; i < buf_list->buf_count; i++) {
-+		if (PageChecked(page))
-+			buf_list->bufs[i]->b_flags |= XBF_VERITY_CHECKED;
-+		xfs_buf_rele(buf_list->bufs[i]);
-+	}
- 
--	xfs_buf_rele(buf);
-+	kmem_free(buf_list);
- 	put_page(page);
- }
- 
-diff --git a/fs/xfs/xfs_verity.h b/fs/xfs/xfs_verity.h
-index ae5d87ca32a8..433b2f4ae3bc 100644
---- a/fs/xfs/xfs_verity.h
-+++ b/fs/xfs/xfs_verity.h
-@@ -16,4 +16,12 @@ extern const struct fsverity_operations xfs_verity_ops;
- #define xfs_verity_ops NULL
- #endif	/* CONFIG_FS_VERITY */
- 
-+/* Minimal Merkle tree block size is 1024 */
-+#define XFS_VERITY_MAX_MBLOCKS_PER_PAGE (1 << (PAGE_SHIFT - 10))
-+
-+struct xfs_verity_buf_list {
-+	unsigned int	buf_count;
-+	struct xfs_buf	*bufs[XFS_VERITY_MAX_MBLOCKS_PER_PAGE];
-+};
-+
- #endif	/* __XFS_VERITY_H__ */
--- 
-2.38.4
+kernel BUG at fs/f2fs/inline.c:258!
+RIP: 0010:f2fs_write_inline_data+0x23e/0x2d0 [f2fs]
+Call Trace:
+  f2fs_write_single_data_page+0x26b/0x9f0 [f2fs]
+  f2fs_write_cache_pages+0x389/0xa60 [f2fs]
+  __f2fs_write_data_pages+0x26b/0x2d0 [f2fs]
+  f2fs_write_data_pages+0x2e/0x40 [f2fs]
+  do_writepages+0xd3/0x1b0
+  __writeback_single_inode+0x5b/0x420
+  writeback_sb_inodes+0x236/0x5a0
+  __writeback_inodes_wb+0x56/0xf0
+  wb_writeback+0x2a3/0x490
+  wb_do_writeback+0x2b2/0x330
+  wb_workfn+0x6a/0x260
+  process_one_work+0x270/0x5e0
+  worker_thread+0x52/0x3e0
+  kthread+0xf4/0x120
+  ret_from_fork+0x29/0x50
 
+Thanks,
+
+> 
+>>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>   fs/f2fs/checkpoint.c |  2 +-
+>>   fs/f2fs/f2fs.h       | 10 +++++-----
+>>   fs/f2fs/inline.c     |  3 +--
+>>   fs/f2fs/super.c      | 13 +++++++------
+>>   4 files changed, 14 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index 8e1db5752fff..1eef597ed393 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -1604,7 +1604,7 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>   	unsigned long long ckpt_ver;
+>>   	int err = 0;
+>>   
+>> -	if (f2fs_readonly(sbi->sb) || f2fs_hw_is_readonly(sbi))
+>> +	if (f2fs_readonly(sbi->sb))
+>>   		return -EROFS;
+>>   
+>>   	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 2d4a7ef62537..7de95133478a 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -4446,6 +4446,11 @@ static inline bool f2fs_hw_is_readonly(struct f2fs_sb_info *sbi)
+>>   	return false;
+>>   }
+>>   
+>> +static inline bool f2fs_dev_is_readonly(struct f2fs_sb_info *sbi)
+>> +{
+>> +	return f2fs_sb_has_readonly(sbi) || f2fs_hw_is_readonly(sbi);
+>> +}
+>> +
+>>   static inline bool f2fs_lfs_mode(struct f2fs_sb_info *sbi)
+>>   {
+>>   	return F2FS_OPTION(sbi).fs_mode == FS_MODE_LFS;
+>> @@ -4546,11 +4551,6 @@ static inline void f2fs_handle_page_eio(struct f2fs_sb_info *sbi, pgoff_t ofs,
+>>   	}
+>>   }
+>>   
+>> -static inline bool f2fs_is_readonly(struct f2fs_sb_info *sbi)
+>> -{
+>> -	return f2fs_sb_has_readonly(sbi) || f2fs_readonly(sbi->sb);
+>> -}
+>> -
+>>   #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+>>   #define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+>>   
+>> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+>> index 72269e7efd26..2c36f2dc2317 100644
+>> --- a/fs/f2fs/inline.c
+>> +++ b/fs/f2fs/inline.c
+>> @@ -203,8 +203,7 @@ int f2fs_convert_inline_inode(struct inode *inode)
+>>   	struct page *ipage, *page;
+>>   	int err = 0;
+>>   
+>> -	if (!f2fs_has_inline_data(inode) ||
+>> -			f2fs_hw_is_readonly(sbi) || f2fs_readonly(sbi->sb))
+>> +	if (!f2fs_has_inline_data(inode) || f2fs_readonly(sbi->sb))
+>>   		return 0;
+>>   
+>>   	err = f2fs_dquot_initialize(inode);
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index d016f398fcad..db7649010c12 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -1382,15 +1382,16 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> -	if (f2fs_is_readonly(sbi) && test_opt(sbi, FLUSH_MERGE)) {
+>> +	if (f2fs_dev_is_readonly(sbi) && !f2fs_readonly(sbi->sb)) {
+>> +		f2fs_err(sbi, "Allow to mount readonly mode only");
+>> +		return -EROFS;
+>> +	}
+>> +
+>> +	if (f2fs_readonly(sbi->sb) && test_opt(sbi, FLUSH_MERGE)) {
+>>   		f2fs_err(sbi, "FLUSH_MERGE not compatible with readonly mode");
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> -	if (f2fs_sb_has_readonly(sbi) && !f2fs_readonly(sbi->sb)) {
+>> -		f2fs_err(sbi, "Allow to mount readonly mode only");
+>> -		return -EROFS;
+>> -	}
+>>   	return 0;
+>>   }
+>>   
+>> @@ -2122,7 +2123,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+>>   	set_opt(sbi, MERGE_CHECKPOINT);
+>>   	F2FS_OPTION(sbi).unusable_cap = 0;
+>>   	sbi->sb->s_flags |= SB_LAZYTIME;
+>> -	if (!f2fs_is_readonly(sbi))
+>> +	if (!f2fs_readonly(sbi->sb) && !f2fs_dev_is_readonly(sbi))
+>>   		set_opt(sbi, FLUSH_MERGE);
+>>   	if (f2fs_hw_support_discard(sbi) || f2fs_hw_should_discard(sbi))
+>>   		set_opt(sbi, DISCARD);
+>> -- 
+>> 2.36.1
 
 
 _______________________________________________
