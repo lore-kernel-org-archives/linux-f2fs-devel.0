@@ -4,70 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9F16FC6FD1D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 15:28:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C00FCC761A6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 15:31:26 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pjiaE-0004lz-0B;
-	Tue, 04 Apr 2023 15:28:30 +0000
+	id 1pjid4-0001Oq-IQ;
+	Tue, 04 Apr 2023 15:31:25 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pjiaC-0004ls-Sy
- for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 15:28:29 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+8568051c7530f6265d9e+7163+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1pjicw-0001Oi-0N for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Apr 2023 15:31:17 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=KnP3f2zy8ZWGbJP/zUtUn0pDZ9v1KBSCrSRFLAWSSpE=; b=m0OiW4YI2oV5nOJUv5arAM4bB0
- if1y2M1yzX6Rq8UdbSyBGSJKH+zt3FyhPAcJtRNZZDOHFeUA0MhbmRKp7Ppjog7p8wk9S1k6JIpuo
- z7E3zxxkp/TYVwPP3H+/riOzFNBh6VuZCkMHx/H8f1tWla1YfSuSjJk01AQ3R+0MI9dE=;
+ bh=oRUY6/nVUdkJWa+BgfeeaayCjIWt7sUTbaMHlXagjNw=; b=jJ7CO+jfYQDxdHL/2EBm+3mkej
+ /+JNIujNtXd2twYDCvTXqJS0lEa/vTr28POMO5LUE5s/fccGAP4vxa+9ctFtlRgGoBRs6BMSi2r+q
+ 5VxcKuGfL1+ZpeOb+Rw5gu4i+WrzzX73e/CLQkwbXJ+7b3fgkSjZ000XfAkbZL5rpqtU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=KnP3f2zy8ZWGbJP/zUtUn0pDZ9v1KBSCrSRFLAWSSpE=; b=G
- 5ebkEbfTGxxJSThzyWUvDP9mikOObf2/lvFWwPTacyYXaj2l4QHJgSzmN6XklwBIawKGEn3FGvt9t
- ipPq6xvC3GS7SJiXdN+Y8YdvX6NmB5GhmMNVKEluKsBtXZirmY1qfsKhJFzvcWQ+ajWtm3tyivGIi
- 0jmBIBuZn9QGi0ak=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=oRUY6/nVUdkJWa+BgfeeaayCjIWt7sUTbaMHlXagjNw=; b=aqdNYkotL434cYf3STctvuKtVb
+ 9TEgrPgqGw6UTh/DHOF7pPs5PO1n1Ze8rtl4Y9mHJvx0IhLVsRc3ahHufX6RsR9/4jysOK5bcUovi
+ X9T08EVq4ily0vPVIYfPiFZbQ9GjYpYtPzPLFUfLL8GYuDVaUwZFXNcnNRdu5L05qRr8=;
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pjia7-00F1We-U9 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 15:28:29 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 89D65635F9
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue,  4 Apr 2023 15:28:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31949C433D2;
- Tue,  4 Apr 2023 15:28:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1680622098;
- bh=Q9R/0spYK1JLY5KmDAtd1V4FUjv3MQUTeOhn9KqE2eQ=;
- h=From:To:Cc:Subject:Date:From;
- b=Hy0iHLZYL/ciUUtKwh3G/xrFsOkIo3kS/TW2h3qr3W/E584v9VOPFckjvxO8A0U9i
- 2zvFkaBpxbRPL7lBNJTHoZYdr8XT3MQM08MgcujaE5m8o7nc6Jx5CltK5362P7tklU
- 8FesFNJ6gFb8xWP67kUf2KA1RF1Zn/acIsH7Iw6wR44KkUcgq2XftXyGs3R1ezQnO+
- qz1USJUspK+Z3GMCmqFNACTZ8ztYZLuhLs6sAs+zrw2GnNZUoMz03S28Ge0zV8QxXh
- p5wRQjDQnzslsTj+CFRA/vQLJXEit4qrtlCtgxOaN7wonpGNR8ukcqpYYlvBETX9a4
- 8b6DS3nl6n0KQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Tue,  4 Apr 2023 23:28:07 +0800
-Message-Id: <20230404152807.4987-1-chao@kernel.org>
-X-Mailer: git-send-email 2.36.1
+ id 1pjict-0004Rl-5F for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Apr 2023 15:31:17 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+ :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+ Content-Transfer-Encoding:Content-ID:Content-Description;
+ bh=oRUY6/nVUdkJWa+BgfeeaayCjIWt7sUTbaMHlXagjNw=; b=Fn5hZQrai6OxRnc53wDWJvsQUi
+ l0f2jY/0e+u5hzy8V4qA0uX6eNIA0HL+/ThjvZ+58OfHp5yJqwS4UwWtJa85+FoQv1YOF18PQ8y/e
+ fZlpCpeR10Vlao2xf/ZiIbKLawae3/lvFHmhVGCbU5EseY8BqD2Zq9XQmLqu1Rs3Ie8J+zOpNJhqg
+ WOPGvV+nuedhEDvyiMY4PKQZIb21ECVPvSGrC0nkv5nmqQuhLqlykdFWXGNzzFth3lMtIfRXD4Co3
+ i32ooWz4rlCAa8EN+liRSIfzaYutkEpt2RTf3KItD2VFGXXaziebwy1oggfRtL771dhH2RwYQSCtU
+ E2Ik6G2g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat
+ Linux)) id 1pjicG-0020iL-1q; Tue, 04 Apr 2023 15:30:36 +0000
+Date: Tue, 4 Apr 2023 08:30:36 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Message-ID: <ZCxCnC2lM9N9qtCc@infradead.org>
+References: <20230404145319.2057051-1-aalbersh@redhat.com>
+ <20230404145319.2057051-6-aalbersh@redhat.com>
 MIME-Version: 1.0
-X-Headers-End: 1pjia7-00F1We-U9
-Subject: [f2fs-dev] [PATCH v2] f2fs: fix to check readonly condition
- correctly
+Content-Disposition: inline
+In-Reply-To: <20230404145319.2057051-6-aalbersh@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1pjict-0004Rl-5F
+Subject: Re: [f2fs-dev] [PATCH v2 05/23] fsverity: make
+ fsverity_verify_folio() accept folio's offset and size
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,83 +78,22 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, agruenba@redhat.com, hch@infradead.org,
+ djwong@kernel.org, damien.lemoal@opensource.wdc.com,
+ linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
+ cluster-devel@redhat.com, dchinner@redhat.com, rpeterso@redhat.com,
+ xiang@kernel.org, jth@kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-With below case, it can mount multi-device image w/ rw option, however
-one of secondary device is set as ro, later update will cause panic, so
-let's introduce f2fs_dev_is_readonly(), and check multi-devices rw status
-in f2fs_remount() w/ it in order to avoid such inconsistent mount status.
+On Tue, Apr 04, 2023 at 04:53:01PM +0200, Andrey Albershteyn wrote:
+> Not the whole folio always need to be verified by fs-verity (e.g.
+> with 1k blocks). Use passed folio's offset and size.
 
-mkfs.f2fs -c /dev/zram1 /dev/zram0 -f
-blockdev --setro /dev/zram1
-mount -t f2fs dev/zram0 /mnt/f2fs
-mount: /mnt/f2fs: WARNING: source write-protected, mounted read-only.
-mount -t f2fs -o remount,rw mnt/f2fs
-dd if=/dev/zero  of=/mnt/f2fs/file bs=1M count=8192
-
-kernel BUG at fs/f2fs/inline.c:258!
-RIP: 0010:f2fs_write_inline_data+0x23e/0x2d0 [f2fs]
-Call Trace:
-  f2fs_write_single_data_page+0x26b/0x9f0 [f2fs]
-  f2fs_write_cache_pages+0x389/0xa60 [f2fs]
-  __f2fs_write_data_pages+0x26b/0x2d0 [f2fs]
-  f2fs_write_data_pages+0x2e/0x40 [f2fs]
-  do_writepages+0xd3/0x1b0
-  __writeback_single_inode+0x5b/0x420
-  writeback_sb_inodes+0x236/0x5a0
-  __writeback_inodes_wb+0x56/0xf0
-  wb_writeback+0x2a3/0x490
-  wb_do_writeback+0x2b2/0x330
-  wb_workfn+0x6a/0x260
-  process_one_work+0x270/0x5e0
-  worker_thread+0x52/0x3e0
-  kthread+0xf4/0x120
-  ret_from_fork+0x29/0x50
-
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- update commit message to describe details of the issue.
-- fix to do the check in f2fs_remount().
- fs/f2fs/f2fs.h  | 5 +++++
- fs/f2fs/super.c | 2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2d4a7ef62537..52f3badced21 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4446,6 +4446,11 @@ static inline bool f2fs_hw_is_readonly(struct f2fs_sb_info *sbi)
- 	return false;
- }
- 
-+static inline bool f2fs_dev_is_readonly(struct f2fs_sb_info *sbi)
-+{
-+	return f2fs_sb_has_readonly(sbi) || f2fs_hw_is_readonly(sbi);
-+}
-+
- static inline bool f2fs_lfs_mode(struct f2fs_sb_info *sbi)
- {
- 	return F2FS_OPTION(sbi).fs_mode == FS_MODE_LFS;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d016f398fcad..75597a107157 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2321,7 +2321,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	if (f2fs_readonly(sb) && (*flags & SB_RDONLY))
- 		goto skip;
- 
--	if (f2fs_sb_has_readonly(sbi) && !(*flags & SB_RDONLY)) {
-+	if (f2fs_dev_is_readonly(sbi) && !(*flags & SB_RDONLY)) {
- 		err = -EROFS;
- 		goto restore_opts;
- 	}
--- 
-2.36.1
-
+Why can't those callers just call fsverity_verify_blocks directly?
 
 
 _______________________________________________
