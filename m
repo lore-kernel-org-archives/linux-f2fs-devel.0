@@ -4,72 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2785FC76188
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  3 Apr 2023 18:30:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 643C3C76188
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 01:16:48 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pjOwm-0003ee-6p;
-	Mon, 03 Apr 2023 18:30:27 +0000
+	id 1pjVHx-0005Rq-JY;
+	Tue, 04 Apr 2023 01:16:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pjOwk-0003eY-5q
+ (envelope-from <chao@kernel.org>) id 1pjVHv-0005Qv-JR
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Apr 2023 18:30:25 +0000
+ Tue, 04 Apr 2023 01:16:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/MhzcBLNyPlc9F3ixDDCbFwvl87msy/AaRv46ZDeEHg=; b=NaVD8NjxmyTiaXOPxO5dyHW9st
- b4R0l1LIQSBVi+Qt69YKSxlb0H87LdomyFPMmsaqvFv2XnssFiFqRBWbWAu7ZZe7wfDt7o/uwscXe
- E0NiLHm/DJUk0RPiW2CRRtk3mqLdSqEnfTPSRfjyZ6JhHaKaf2i6A3TK3IW963yDE7U0=;
+ bh=L153HcRuruhlSlcGPUpRvHvvIoON7VuuLV9JPdOMJgE=; b=CEpOVGXCydZ5yXWP2GW1WM0q2/
+ 4HBE70+cw1UVI4L0EGqbup9E3oGYraqIWK99utvvq6lmifJS+2+6ehSzUWSb8CEQupTCiP/8cYcHL
+ PrkvfjiKiCoJs8t+ED5bonw+8AnU3VUZxU2SdIhJi9mIq1fGQzVCQBqULFnNI2dKZs/c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/MhzcBLNyPlc9F3ixDDCbFwvl87msy/AaRv46ZDeEHg=; b=HgDKxxf1JjsvgLFHh2mb9lwb4W
- Gcsl8tFnQ+V5GPDB2x4zebjin6X1nKDywNNsCGgnGVZnGZPWEJodsrnlpDEsIDgfgW+wLhxp7p4PH
- rTQaduiO3lZ4EoVF9DGKeEgtOCzboyaSR9e0MTJkUscvbvrNvsvBPka4SPzx4R1EcHcM=;
+ ;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=L153HcRuruhlSlcGPUpRvHvvIoON7VuuLV9JPdOMJgE=; b=fH/vrpOsWNsnBWiCPBLrFvwK78
+ cLr0y2Pi1favxVjSATZTpYMOIxG/jRJgvmJOn/+RgjOu7lTYOJtbuxu0rZ1dq3ATTomLnyJQfN73B
+ yWRWBjLjGNzxwRByOZtTpsgZsDU9QxnKZ/OU1vIHiOHHPhVL/65cvl2cxEW7xx0zE1ZU=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pjOwi-00Dxva-PX for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 03 Apr 2023 18:30:25 +0000
+ id 1pjVHs-0007mG-Ia for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Apr 2023 01:16:43 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 672E462373;
- Mon,  3 Apr 2023 18:30:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BF2A0C4339B;
- Mon,  3 Apr 2023 18:30:18 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 0830F61627;
+ Tue,  4 Apr 2023 01:16:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32B40C433D2;
+ Tue,  4 Apr 2023 01:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1680546618;
- bh=3DvCucPxUeD1Jihv3ZNtq1tc5RsK0vh2rCux0YE1IFY=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=rteC1mXhVvEryy5rV5kcMzThKMLxZ5HH33G3TO5GYA/vnq+cqHfaEQahRF63Ga1vo
- 7z8mMH+xBbBZokNVoRvJx2E4fB0JEsOHBCQWKFIs+6idpOgu/yyi2idfEhhOlsle77
- 1dpUPqBM21vlHR2Qlknn0CC4EvpI1D40cAF9PC47EinYUhYqX7kiv3GmMUAd3IvU5o
- 3EZS3rLvQsk2x84iUNS7N7gdQ1ir6MR38ozzWbr7Gfkdqj0+UxtFLQDKftxwv0YkoM
- MvXhz8CxD5EOV6cNnSsOixUxem6GubLytlnrvNvH4Icb4QcRNfbcTIG9GKMZ3sA+7i
- muLy/GvOqUFJA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 9D3BEE5EA88; Mon,  3 Apr 2023 18:30:18 +0000 (UTC)
+ s=k20201202; t=1680570993;
+ bh=ImnzqcPQJHnWnlK8ylnOnQS3YAQ3sNcQ92eD3xoDbq8=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=Sjx6yjbtf6SN1EgfbkCuvIp60VLjP0+4e2Lu4AEVPzlWM4u0GjdN+S/xuwnUS+8sX
+ 919EQa5LUhSsM/z9XnX3Nc9OWTyVY7ShNHLZnGINtH1iRmssTA8UdyaUFMQ8ZY7ege
+ /28ieBV/+RMFuKXuUf0PA2g4ZBSb9UYrLzppi/XAbwWszXFMK3ZFkpGxQSxy/aQ/Y+
+ CzqroVEsQ3p3CRbc+ZnLvdC/BeXWwLv839Su+fuh8+knCeKw3MOFwbiEXBSvJEQaAO
+ Ckyw7s5iSVQalPjngaCtsTVFIfCsZhPFf+Qzmwl1SO9USBOGWZd/F3+XWU9XHubRLd
+ DYBX7jZHDsjaA==
+Message-ID: <5b766d0c-fae7-885a-0dc9-a16d90540260@kernel.org>
+Date: Tue, 4 Apr 2023 09:16:30 +0800
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168054661863.14597.5981880840616760856.git-patchwork-notify@kernel.org>
-Date: Mon, 03 Apr 2023 18:30:18 +0000
-References: <20230402031259.286-1-yohan.joung@sk.com>
-In-Reply-To: <20230402031259.286-1-yohan.joung@sk.com>
-To: Yohan Joung <jyh429@gmail.com>
-X-Headers-End: 1pjOwi-00Dxva-PX
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix align check for npo2
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Content-Language: en-US
+To: Yangtao Li <frank.li@vivo.com>, linux-f2fs-devel@lists.sourceforge.net
+References: <20230330162811.18923-1-frank.li@vivo.com>
+ <20230403133359.6649-1-frank.li@vivo.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20230403133359.6649-1-frank.li@vivo.com>
+X-Headers-End: 1pjVHs-0007mG-Ia
+Subject: Re: [f2fs-dev] [RESEND] f2fs: add sanity compress level check for
+ compressed file
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,37 +83,92 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: jaegeuk@kernel.org, terrelln@fb.com, linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Sun,  2 Apr 2023 12:12:59 +0900 you wrote:
-> From: Yohan Joung <jyh429@gmail.com>
+On 2023/4/3 21:33, Yangtao Li wrote:
+> Hi Chao,
 > 
-> Fix alignment check to be correct in npo2 as well
+>> Why not zstd_max_clevel()?
 > 
-> Signed-off-by: Yohan Joung <yohan.joung@sk.com>
-> ---
->  fs/f2fs/segment.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> zstd_max_clevel() is only defined when CONFIG_F2FS_FS_ZSTD is enabled,
+> using zstd_max_clevel() will result in compile errors otherwise.
+> 
+> If using the following code,
+> 
+> ----------------------------------------------------------------------------
+>          switch (ri->i_compress_algorithm) {
+>          case COMPRESS_LZO:
+>          case COMPRESS_LZORLE:
+>                  if (compress_level)
+>                          goto err;
+>                  break;
+>          case COMPRESS_LZ4:
+>                  if ((compress_level && compress_level < LZ4HC_MIN_CLEVEL) ||
+>                                  compress_level > LZ4HC_MAX_CLEVEL)
+>                          goto err;
+>                  break;
+> #ifdef CONFIG_F2FS_FS_ZSTD
+>          case COMPRESS_ZSTD:
 
-Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: fix align check for npo2
-    https://git.kernel.org/jaegeuk/f2fs/c/2aeb9c3b9a3c
+Hi Yangtao,
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+How about:
 
+#ifdef CONFIG_F2FS_FS_ZSTD
+	if (!compress_level || compress_level > zstd_max_clevel())
+		goto err;
+#endif
+	break;
 
+>                  if (!compress_level || compress_level > zstd_max_clevel())
+>                          goto err;
+>                  break;
+> #endif
+>          default:
+>                  goto err;
+>          }
+> ----------------------------------------------------------------------------
+> 
+> then we will get this result:
+> 
+> 	F2FS-fs (loop0): sanity_check_compress_inode: inode (ino=4) has
+> 			unsupported compress level: 0, run fsck to fix
+> 
+> Another way is to use the following code, which ignores the check for
+> level when CONFIG_F2FS_FS_ZSTD is not enabled.
+> 
+> ----------------------------------------------------------------------------
+>          switch (ri->i_compress_algorithm) {
+>          case COMPRESS_LZO:
+>          case COMPRESS_LZORLE:
+>                  if (compress_level)
+>                          goto err;
+>                  break;
+>          case COMPRESS_LZ4:
+>                  if ((compress_level && compress_level < LZ4HC_MIN_CLEVEL) ||
+>                                  compress_level > LZ4HC_MAX_CLEVEL)
+>                          goto err;
+>                  break;
+>          case COMPRESS_ZSTD:
+> #ifdef CONFIG_F2FS_FS_ZSTD
+>                  if (!compress_level || compress_level > zstd_max_clevel())
+>                          goto err;
+>                  break;
+> #else
+>                  return true;
+> #endif
+>          default:
+>                  goto err;
+>          }
+> ----------------------------------------------------------------------------
+> 
+> Perhaps exporting ZSTD_MAX_CLEVEL is a better choice?
+> 
+> Thx,
+> Yangtao
 
 
 _______________________________________________
