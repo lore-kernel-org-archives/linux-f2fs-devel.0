@@ -4,74 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 643C3C76188
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 01:16:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C0BAC76188
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 01:18:28 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pjVHx-0005Rq-JY;
-	Tue, 04 Apr 2023 01:16:45 +0000
+	id 1pjVJc-0007mH-3g;
+	Tue, 04 Apr 2023 01:18:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pjVHv-0005Qv-JR
+ (envelope-from <chao@kernel.org>) id 1pjVJa-0007mB-OJ
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 01:16:43 +0000
+ Tue, 04 Apr 2023 01:18:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=L153HcRuruhlSlcGPUpRvHvvIoON7VuuLV9JPdOMJgE=; b=CEpOVGXCydZ5yXWP2GW1WM0q2/
- 4HBE70+cw1UVI4L0EGqbup9E3oGYraqIWK99utvvq6lmifJS+2+6ehSzUWSb8CEQupTCiP/8cYcHL
- PrkvfjiKiCoJs8t+ED5bonw+8AnU3VUZxU2SdIhJi9mIq1fGQzVCQBqULFnNI2dKZs/c=;
+ bh=//ZW0TEZujqY4La+qdggtKnadXfW1RDj35TArO/EaKU=; b=kdPVegzBujL1gM8iwIDYXJ2rTt
+ 4EHvYS5EgtgPafn2f/ZnUSFULQGNOd/RX72v5FgKbCS2rRM4cr+NelCjaZCOeR/eZarmISoHwsXmQ
+ yDULr7vpjlnzqZKxenxW+qvu0APsFLQSEAZSL0bYLhi7wH5fGoV13trZftxhMse1y+Wc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=L153HcRuruhlSlcGPUpRvHvvIoON7VuuLV9JPdOMJgE=; b=fH/vrpOsWNsnBWiCPBLrFvwK78
- cLr0y2Pi1favxVjSATZTpYMOIxG/jRJgvmJOn/+RgjOu7lTYOJtbuxu0rZ1dq3ATTomLnyJQfN73B
- yWRWBjLjGNzxwRByOZtTpsgZsDU9QxnKZ/OU1vIHiOHHPhVL/65cvl2cxEW7xx0zE1ZU=;
+ bh=//ZW0TEZujqY4La+qdggtKnadXfW1RDj35TArO/EaKU=; b=N0cVdlfeVAPIFCOdrI80w7Npsx
+ I92XeF9FoilNQdzNxM1UfavaeuJb1Vqi7QICBetUjM0gq/t1qlGM6M3PQ/5BPayoEuZlcFm3RZgag
+ sEtmoZsCkd6KVw6wIeBfMX/58QOkginnomzwlvv3Yd69X4arTC3Fo/LNj9RUKXX2AM5U=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pjVHs-0007mG-Ia for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 01:16:43 +0000
+ id 1pjVJZ-00EAB1-6j for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Apr 2023 01:18:25 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 0830F61627;
- Tue,  4 Apr 2023 01:16:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32B40C433D2;
- Tue,  4 Apr 2023 01:16:31 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id CCC3A61698
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Tue,  4 Apr 2023 01:18:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7498EC433EF;
+ Tue,  4 Apr 2023 01:18:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1680570993;
- bh=ImnzqcPQJHnWnlK8ylnOnQS3YAQ3sNcQ92eD3xoDbq8=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Sjx6yjbtf6SN1EgfbkCuvIp60VLjP0+4e2Lu4AEVPzlWM4u0GjdN+S/xuwnUS+8sX
- 919EQa5LUhSsM/z9XnX3Nc9OWTyVY7ShNHLZnGINtH1iRmssTA8UdyaUFMQ8ZY7ege
- /28ieBV/+RMFuKXuUf0PA2g4ZBSb9UYrLzppi/XAbwWszXFMK3ZFkpGxQSxy/aQ/Y+
- CzqroVEsQ3p3CRbc+ZnLvdC/BeXWwLv839Su+fuh8+knCeKw3MOFwbiEXBSvJEQaAO
- Ckyw7s5iSVQalPjngaCtsTVFIfCsZhPFf+Qzmwl1SO9USBOGWZd/F3+XWU9XHubRLd
- DYBX7jZHDsjaA==
-Message-ID: <5b766d0c-fae7-885a-0dc9-a16d90540260@kernel.org>
-Date: Tue, 4 Apr 2023 09:16:30 +0800
+ s=k20201202; t=1680571099;
+ bh=omvd1hoh8VRO0NpDO8klPxjFF4gsouVc4emYNNhV+x0=;
+ h=Date:Subject:To:References:From:In-Reply-To:From;
+ b=QqWBg9qvN/7v6mfGsRigTTa1XLb2wufnvh1I5ezXp3RTvT1D2UL3oiqMcLUTwGLAe
+ ZWwmXOdG4Z0Od6LQw1ZqPXXa/8VVcUwdTv7deH8F6xkCKxwZAU9Vp0nxYWEnd3z5pE
+ 1N7YfHM5LG2SMHsZ+ISwW9QNxh+kKi209HTEsT3QKl6qTnZMsiLc+baDmdTe+Jib9d
+ wC1pPEh501SdPY0iBkyl4+kQVYh9HtBwsQfiOL0wYOnT+U9Y3ZlIc7heu/z8j/aitO
+ SIlh9DYqBVjuferu2LB76GBNtcDXOxkpWM6pBlJ/AsIdIISOJ5Odj4JaDg8T7Go7Z4
+ ELoh0B3+cbC1g==
+Message-ID: <07d1c848-fd1e-7e5e-6b56-90ac2a1a86ef@kernel.org>
+Date: Tue, 4 Apr 2023 09:18:17 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
 Content-Language: en-US
-To: Yangtao Li <frank.li@vivo.com>, linux-f2fs-devel@lists.sourceforge.net
-References: <20230330162811.18923-1-frank.li@vivo.com>
- <20230403133359.6649-1-frank.li@vivo.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20230403165038.3018949-1-jaegeuk@kernel.org>
+ <ZCsEytDjqEjQDPiO@google.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20230403133359.6649-1-frank.li@vivo.com>
-X-Headers-End: 1pjVHs-0007mG-Ia
-Subject: Re: [f2fs-dev] [RESEND] f2fs: add sanity compress level check for
- compressed file
+In-Reply-To: <ZCsEytDjqEjQDPiO@google.com>
+X-Headers-End: 1pjVJZ-00EAB1-6j
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix null pointer panic in
+ tracepoint in __replace_atomic_write_block
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,92 +85,36 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, terrelln@fb.com, linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2023/4/3 21:33, Yangtao Li wrote:
-> Hi Chao,
+On 2023/4/4 0:54, Jaegeuk Kim wrote:
+> We got a kernel panic if old_addr is NULL.
 > 
->> Why not zstd_max_clevel()?
+> https://bugzilla.kernel.org/show_bug.cgi?id=217266
 > 
-> zstd_max_clevel() is only defined when CONFIG_F2FS_FS_ZSTD is enabled,
-> using zstd_max_clevel() will result in compile errors otherwise.
+> BUG: kernel NULL pointer dereference, address: 0000000000000000
+>   Call Trace:
+>    <TASK>
+>    f2fs_commit_atomic_write+0x619/0x990 [f2fs a1b985b80f5babd6f3ea778384908880812bfa43]
+>    __f2fs_ioctl+0xd8e/0x4080 [f2fs a1b985b80f5babd6f3ea778384908880812bfa43]
+>    ? vfs_write+0x2ae/0x3f0
+>    ? vfs_write+0x2ae/0x3f0
+>    __x64_sys_ioctl+0x91/0xd0
+>    do_syscall_64+0x5c/0x90
+>    entry_SYSCALL_64_after_hwframe+0x72/0xdc
+>   RIP: 0033:0x7f69095fe53f
 > 
-> If using the following code,
-> 
-> ----------------------------------------------------------------------------
->          switch (ri->i_compress_algorithm) {
->          case COMPRESS_LZO:
->          case COMPRESS_LZORLE:
->                  if (compress_level)
->                          goto err;
->                  break;
->          case COMPRESS_LZ4:
->                  if ((compress_level && compress_level < LZ4HC_MIN_CLEVEL) ||
->                                  compress_level > LZ4HC_MAX_CLEVEL)
->                          goto err;
->                  break;
-> #ifdef CONFIG_F2FS_FS_ZSTD
->          case COMPRESS_ZSTD:
+> Fixes: 2f3a9ae990a7 ("f2fs: introduce trace_f2fs_replace_atomic_write_block")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Hi Yangtao,
+Thanks for fixing this. :)
 
-How about:
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-#ifdef CONFIG_F2FS_FS_ZSTD
-	if (!compress_level || compress_level > zstd_max_clevel())
-		goto err;
-#endif
-	break;
-
->                  if (!compress_level || compress_level > zstd_max_clevel())
->                          goto err;
->                  break;
-> #endif
->          default:
->                  goto err;
->          }
-> ----------------------------------------------------------------------------
-> 
-> then we will get this result:
-> 
-> 	F2FS-fs (loop0): sanity_check_compress_inode: inode (ino=4) has
-> 			unsupported compress level: 0, run fsck to fix
-> 
-> Another way is to use the following code, which ignores the check for
-> level when CONFIG_F2FS_FS_ZSTD is not enabled.
-> 
-> ----------------------------------------------------------------------------
->          switch (ri->i_compress_algorithm) {
->          case COMPRESS_LZO:
->          case COMPRESS_LZORLE:
->                  if (compress_level)
->                          goto err;
->                  break;
->          case COMPRESS_LZ4:
->                  if ((compress_level && compress_level < LZ4HC_MIN_CLEVEL) ||
->                                  compress_level > LZ4HC_MAX_CLEVEL)
->                          goto err;
->                  break;
->          case COMPRESS_ZSTD:
-> #ifdef CONFIG_F2FS_FS_ZSTD
->                  if (!compress_level || compress_level > zstd_max_clevel())
->                          goto err;
->                  break;
-> #else
->                  return true;
-> #endif
->          default:
->                  goto err;
->          }
-> ----------------------------------------------------------------------------
-> 
-> Perhaps exporting ZSTD_MAX_CLEVEL is a better choice?
-> 
-> Thx,
-> Yangtao
+Thanks,
 
 
 _______________________________________________
