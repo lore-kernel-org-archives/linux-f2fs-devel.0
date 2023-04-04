@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7DA06C6FD1D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 14:55:22 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A59F3C761A6
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 14:55:28 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pji4A-0000hF-Tq;
-	Tue, 04 Apr 2023 14:55:22 +0000
+	id 1pji4F-0007xu-AG;
+	Tue, 04 Apr 2023 14:55:28 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@redhat.com>) id 1pji49-0000h5-Rl
+ (envelope-from <aalbersh@redhat.com>) id 1pji4E-0007xn-4z
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 14:55:21 +0000
+ Tue, 04 Apr 2023 14:55:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=HOa0kR4UZ9J5lXSH1eVSD9D5g9oUFaieHHnsOCRS/TM=; b=jhYmAHMyS1X3o7yxrmP7qL4tkl
- UsmRgpO2OhiDsBjQeJVcEb6RDG3BGxqYprnoaQv7+TwIlQdKPdAa40IalMcMKMODRfJ8pVfVDixK6
- ZbsyfZS1n0dLVat9Kud+ZyJ89Dm4K0YI7Mfhmz+RVTUNlVJp4kRnxnCRw4JspuVNfTdo=;
+ bh=k8y9WhZdDNtrUXoW/FedDtUjjZj566BJYHrOtFmmOqc=; b=JPJTUjcegO9EwPr1oF35jhy1zi
+ SBZXvqlP438jJhvGtDkpmAWLp7SaeJHc2ogqumSNQj0b7srQzYZUK56ioISKpqGP3jNWthwI0Uofw
+ dH26HUBJ8zrqKTIVI+r9aiHSYTLbx5DRB6om75Ad7ypMcoy4HkP0QzDqKQSlrcdsPI8c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,74 +33,74 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=HOa0kR4UZ9J5lXSH1eVSD9D5g9oUFaieHHnsOCRS/TM=; b=LxLGoD93RltEpSt4vD6kGCOqyR
- GIIJNU2K9QGu3ukJXeka71PqkkT0lNOzajpW7199LneUH14TG8dCI37BfuvUnzUe5pNJrzty8XRpt
- 027ovEYqTEvbVqHpEAugi7kF+4rY+6u0yb2moaYmpGvvOSJW35fCHeNVeInLQmgJyGTc=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=k8y9WhZdDNtrUXoW/FedDtUjjZj566BJYHrOtFmmOqc=; b=ZTcEDLJY+TdG4rDetVLXkG7yWY
+ EBzt/GYIaFieHP8EQ0KG2HGRsoyChCEx5kLhjD2T2rlCab5dG/k6nPQgGcNVuc8I2u9hC94g7p6tp
+ OL9GP4Yci9WZd56Qn+P8WH1Ulxy/0NBZX0m941eIKza6o/BM1u4fBA3uq5BhtIb2H2f4=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pji47-00024N-W8 for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 14:55:20 +0000
+ id 1pji4E-00Ez8D-9u for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Apr 2023 14:55:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1680620114;
+ s=mimecast20190719; t=1680620120;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=HOa0kR4UZ9J5lXSH1eVSD9D5g9oUFaieHHnsOCRS/TM=;
- b=FlqghJc0j0M5d0evAE1MZhNe/BXfpz6pntUDZ8aYrHXoty+Sq6kS1WKDxEJQJurnPUZ/aY
- XFuwVAY1yfhrygW/fud2MPw1At7Y5tKs3AD1rC6j5FZIAdnh8HD3RzvX/oGoRZ8b5tZKBi
- 1VGEUEhLo87i6VFwKdbd61mmN25B4X0=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=k8y9WhZdDNtrUXoW/FedDtUjjZj566BJYHrOtFmmOqc=;
+ b=XQ5M64wYoCjwbMos+m1h3AtH64pL456UE2GAz25p4v0DZdLzW6NqMqmKLS6AENI2s2uAtF
+ Ys2OoPsKsZwxJzezRQbfVamrLpDV7LXBtmk42hHuKWKS4tT26wpbTMoqo4BBZjtDdufj44
+ TeJRpqLcWc3YZhQL/VP0HJWrPfOBB+I=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-5-4izFvk6kM8yho4YPrAueZQ-1; Tue, 04 Apr 2023 10:55:12 -0400
-X-MC-Unique: 4izFvk6kM8yho4YPrAueZQ-1
-Received: by mail-qt1-f198.google.com with SMTP id
- f2-20020ac87f02000000b003e6372b917dso10373476qtk.3
+ us-mta-364-ydqWOF6cOXC3VpHY31kBEw-1; Tue, 04 Apr 2023 10:55:19 -0400
+X-MC-Unique: ydqWOF6cOXC3VpHY31kBEw-1
+Received: by mail-qv1-f69.google.com with SMTP id
+ l18-20020ad44bd2000000b005a9cf5f609eso14731337qvw.15
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 04 Apr 2023 07:55:12 -0700 (PDT)
+ Tue, 04 Apr 2023 07:55:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112; t=1680620112;
+ d=1e100.net; s=20210112; t=1680620119;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=HOa0kR4UZ9J5lXSH1eVSD9D5g9oUFaieHHnsOCRS/TM=;
- b=YGaLuAR9Mi5raMyfVj0EfHAUT+F+3RKGqsoSSzIrd2AeO7Zabhc0Rrj48hYcIMC8sP
- aOc89N8WyoB8hfpXsuvb8b/30ht/ED9LkeGogKf/JDjC5lHvgbStDJX/qhn7hP5RUC2M
- 2w8P7EPp2ois3EzhxbvhwfQgEtkaDwF9n4ndsw2cysXqetkhjgFGmDv5SZnjyvPGZBvI
- EvP7SrAWfDsWwnRL3ZF86SNxLFZuACMNEqPTPDH5mSKaIXgrd5jAw9xvO2z+HNgaOYuL
- dH7uf1WChfO7CGH88Dyyxb4MaP5nsMGSgQqCtd0p5juSBLzR0oeZj2n46JOKqpC914WI
- A3WA==
-X-Gm-Message-State: AAQBX9d1KunMUgbE3AhbbI/VgMTLn9Rm313vu1XALLJVfqZCJIJ1hD4t
- Pu1Mm/YK2py/9J9y6xXo+sqxqLnlmKf8IYC8gyH/3CqzP3dWYcPkhHYNAnFDJl91XuuwPipt67a
- a2QtDDvrSxBRuUh3VYPVztj6cPD3oIZLTHhv9
-X-Received: by 2002:a05:622a:1206:b0:3e6:386b:2314 with SMTP id
- y6-20020a05622a120600b003e6386b2314mr4234340qtx.62.1680620112376; 
- Tue, 04 Apr 2023 07:55:12 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Zi2LAt4qDrudwl48rNwlY8u7pFZFW3zeybFHV9/WikI3mElMyLLcUr2mx2LZUuubcbPpyUsw==
-X-Received: by 2002:a05:622a:1206:b0:3e6:386b:2314 with SMTP id
- y6-20020a05622a120600b003e6386b2314mr4234307qtx.62.1680620112123; 
- Tue, 04 Apr 2023 07:55:12 -0700 (PDT)
+ bh=k8y9WhZdDNtrUXoW/FedDtUjjZj566BJYHrOtFmmOqc=;
+ b=WqpuJU4PPtdExTX/vOEiUXZlpz60xiNJfjyPeeRXPz0e+zaLYBcyxrGp7bPJytNddQ
+ ZaknbFNM3GOK+iLrBHjL321UqKxo/sh6CcILRhZCjib4cSwL5Nwkme24d2imOzXrvWHK
+ lfwXt6xfrKiRq9JXh952/ycOMZwNLc+aMjawLI5r5oz5lZOQn1DxbHisJRdkShZzqFSp
+ hQIBpqSqVPwv4zmntoGnrNbjj1hX/6WAnuUbQhhhe51WQspLY6KzjSlaExbrv2A3uTUG
+ J84Tz9JYxCM8+pfd70V1utm9mVc/NmCQSyVTZ3ANt+NVuqFZZjYaM629PP6YyCfTRvNm
+ D7lQ==
+X-Gm-Message-State: AAQBX9fqu0lUatzEXMP2pUEwQBAUIeXUkBQu/ZHiHqIu1W71t/PN7dmN
+ rY3zZ2Aq30Cgu/tXFrOFxGlTb9SPR4mlYmIrMRD+o1x1Inuk4+9dsxxLApAvzDnEak88c6WRUXT
+ be1CM9fDdWLsrWaeti2718a6q65cZLYsFd9by
+X-Received: by 2002:ac8:5b06:0:b0:3d4:3d6c:a62b with SMTP id
+ m6-20020ac85b06000000b003d43d6ca62bmr3793794qtw.27.1680620118593; 
+ Tue, 04 Apr 2023 07:55:18 -0700 (PDT)
+X-Google-Smtp-Source: AKy350Zq76N3HAqDggjHqbDMyBg5khfORiFnim8gNTT1pLECc9GdD6VxBnlyiVZupUjB3vAUZcGqDA==
+X-Received: by 2002:ac8:5b06:0:b0:3d4:3d6c:a62b with SMTP id
+ m6-20020ac85b06000000b003d43d6ca62bmr3793740qtw.27.1680620118202; 
+ Tue, 04 Apr 2023 07:55:18 -0700 (PDT)
 Received: from aalbersh.remote.csb ([109.183.6.197])
  by smtp.gmail.com with ESMTPSA id
- j4-20020ac86644000000b003e6387431dcsm3296539qtp.7.2023.04.04.07.55.09
+ j4-20020ac86644000000b003e6387431dcsm3296539qtp.7.2023.04.04.07.55.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Apr 2023 07:55:11 -0700 (PDT)
+ Tue, 04 Apr 2023 07:55:17 -0700 (PDT)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 To: djwong@kernel.org, dchinner@redhat.com, ebiggers@kernel.org,
  hch@infradead.org, linux-xfs@vger.kernel.org, fsverity@lists.linux.dev
-Date: Tue,  4 Apr 2023 16:53:05 +0200
-Message-Id: <20230404145319.2057051-10-aalbersh@redhat.com>
+Date: Tue,  4 Apr 2023 16:53:07 +0200
+Message-Id: <20230404145319.2057051-12-aalbersh@redhat.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20230404145319.2057051-1-aalbersh@redhat.com>
 References: <20230404145319.2057051-1-aalbersh@redhat.com>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
-X-Headers-End: 1pji47-00024N-W8
-Subject: [f2fs-dev] [PATCH v2 09/23] iomap: allow filesystem to implement
- read path verification
+X-Headers-End: 1pji4E-00Ez8D-9u
+Subject: [f2fs-dev] [PATCH v2 11/23] xfs: add XFS_DA_OP_BUFFER to make
+ xfs_attr_get() return buffer
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,187 +121,129 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Add IOMAP_F_READ_VERITY which indicates that iomap need to
-verify BIO (e.g. fs-verity) after I/O is completed.
+One of essential ideas of fs-verity is that pages which are already
+verified won't need to be re-verified if they still in page cache.
 
-Add iomap_readpage_ops with only optional ->prepare_ioend() to allow
-filesystem to add callout used for configuring read path ioend.
-Mainly for setting ->bi_end_io() callout. Add
-iomap_folio_ops->verify_folio() for direct folio verification.
+The XFS stores Merkle tree blocks in extended attributes. Each
+attribute has one Merkle tree block. We can not directly mark
+underlying xfs_buf's pages as checked. The are not aligned with
+xattr value and we don't have a reference to that buffer which is
+immediately release when value is copied out.
 
-The verification itself is suppose to happen on filesystem side. The
-verification is done when the BIO is processed by calling out
-->bi_end_io().
+One way to track that this block was verified is to mark xattr's
+buffer as verified. If buffer is evicted the incore
+XBF_VERITY_CHECKED flag is lost. When the xattr is read again
+xfs_attr_get() returns new buffer without the flag. The flag is then
+used to tell fs-verity if it's new page or cached one.
 
-Make iomap_read_end_io() exportable, so, it can be called back from
-filesystem callout after verification is done.
-
-The read path ioend are stored side by side with BIOs allocated from
-iomap_read_ioend_bioset.
+This patch adds XFS_DA_OP_BUFFER to tell xfs_attr_get() to
+xfs_buf_hold() underlying buffer and return it as xfs_da_args->bp.
+The caller must then xfs_buf_rele() the buffer.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- fs/iomap/buffered-io.c | 32 +++++++++++++++++++++++++++++---
- include/linux/iomap.h  | 26 ++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+), 3 deletions(-)
+ fs/xfs/libxfs/xfs_attr.c        |  5 ++++-
+ fs/xfs/libxfs/xfs_attr_leaf.c   |  7 +++++++
+ fs/xfs/libxfs/xfs_attr_remote.c | 13 +++++++++++--
+ fs/xfs/libxfs/xfs_da_btree.h    |  5 ++++-
+ 4 files changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index d39be64b1da9..7e59c299c496 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -42,6 +42,7 @@ static inline struct iomap_page *to_iomap_page(struct folio *folio)
- }
+diff --git a/fs/xfs/libxfs/xfs_attr.c b/fs/xfs/libxfs/xfs_attr.c
+index 711022742e34..298b74245267 100644
+--- a/fs/xfs/libxfs/xfs_attr.c
++++ b/fs/xfs/libxfs/xfs_attr.c
+@@ -251,6 +251,8 @@ xfs_attr_get_ilocked(
+  * If the attribute is found, but exceeds the size limit set by the caller in
+  * args->valuelen, return -ERANGE with the size of the attribute that was found
+  * in args->valuelen.
++ *
++ * Using XFS_DA_OP_BUFFER the caller have to release the buffer args->bp.
+  */
+ int
+ xfs_attr_get(
+@@ -269,7 +271,8 @@ xfs_attr_get(
+ 	args->hashval = xfs_da_hashname(args->name, args->namelen);
  
- static struct bio_set iomap_ioend_bioset;
-+static struct bio_set iomap_read_ioend_bioset;
+ 	/* Entirely possible to look up a name which doesn't exist */
+-	args->op_flags = XFS_DA_OP_OKNOENT;
++	args->op_flags = XFS_DA_OP_OKNOENT |
++					(args->op_flags & XFS_DA_OP_BUFFER);
  
- static struct iomap_page *
- iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
-@@ -184,7 +185,7 @@ static void iomap_finish_folio_read(struct folio *folio, size_t offset,
- 		folio_unlock(folio);
- }
- 
--static void iomap_read_end_io(struct bio *bio)
-+void iomap_read_end_io(struct bio *bio)
- {
- 	int error = blk_status_to_errno(bio->bi_status);
- 	struct folio_iter fi;
-@@ -193,6 +194,7 @@ static void iomap_read_end_io(struct bio *bio)
- 		iomap_finish_folio_read(fi.folio, fi.offset, fi.length, error);
- 	bio_put(bio);
- }
-+EXPORT_SYMBOL_GPL(iomap_read_end_io);
- 
- /**
-  * iomap_read_inline_data - copy inline data into the page cache
-@@ -257,6 +259,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	loff_t orig_pos = pos;
- 	size_t poff, plen;
- 	sector_t sector;
-+	struct iomap_read_ioend *ioend;
- 
- 	if (iomap->type == IOMAP_INLINE)
- 		return iomap_read_inline_data(iter, folio);
-@@ -269,6 +272,13 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 
- 	if (iomap_block_needs_zeroing(iter, pos)) {
- 		folio_zero_range(folio, poff, plen);
-+		if (iomap->flags & IOMAP_F_READ_VERITY) {
-+			if (!iomap->folio_ops->verify_folio(folio, poff, plen)) {
-+				folio_set_error(folio);
-+				goto done;
-+			}
+ 	lock_mode = xfs_ilock_attr_map_shared(args->dp);
+ 	error = xfs_attr_get_ilocked(args);
+diff --git a/fs/xfs/libxfs/xfs_attr_leaf.c b/fs/xfs/libxfs/xfs_attr_leaf.c
+index beee51ad75ce..112bb2604c89 100644
+--- a/fs/xfs/libxfs/xfs_attr_leaf.c
++++ b/fs/xfs/libxfs/xfs_attr_leaf.c
+@@ -2533,6 +2533,13 @@ xfs_attr3_leaf_getvalue(
+ 		name_loc = xfs_attr3_leaf_name_local(leaf, args->index);
+ 		ASSERT(name_loc->namelen == args->namelen);
+ 		ASSERT(memcmp(args->name, name_loc->nameval, args->namelen) == 0);
++
++		/* must be released by the caller */
++		if (args->op_flags & XFS_DA_OP_BUFFER) {
++			xfs_buf_hold(bp);
++			args->bp = bp;
 +		}
 +
- 		iomap_set_range_uptodate(folio, iop, poff, plen);
- 		goto done;
- 	}
-@@ -290,8 +300,8 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 		return xfs_attr_copy_value(args,
+ 					&name_loc->nameval[args->namelen],
+ 					be16_to_cpu(name_loc->valuelen));
+diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
+index d440393b40eb..72908e0e1c86 100644
+--- a/fs/xfs/libxfs/xfs_attr_remote.c
++++ b/fs/xfs/libxfs/xfs_attr_remote.c
+@@ -424,9 +424,18 @@ xfs_attr_rmtval_get(
+ 			error = xfs_attr_rmtval_copyout(mp, bp, args->dp->i_ino,
+ 							&offset, &valuelen,
+ 							&dst);
+-			xfs_buf_relse(bp);
+-			if (error)
++			xfs_buf_unlock(bp);
++			/* must be released by the caller */
++			if (args->op_flags & XFS_DA_OP_BUFFER)
++				args->bp = bp;
++			else
++				xfs_buf_rele(bp);
++
++			if (error) {
++				if (args->op_flags & XFS_DA_OP_BUFFER)
++					xfs_buf_rele(args->bp);
+ 				return error;
++			}
  
- 		if (ctx->rac) /* same as readahead_gfp_mask */
- 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
--		ctx->bio = bio_alloc(iomap->bdev, bio_max_segs(nr_vecs),
--				     REQ_OP_READ, gfp);
-+		ctx->bio = bio_alloc_bioset(iomap->bdev, bio_max_segs(nr_vecs),
-+				REQ_OP_READ, GFP_NOFS, &iomap_read_ioend_bioset);
- 		/*
- 		 * If the bio_alloc fails, try it again for a single page to
- 		 * avoid having to deal with partial page reads.  This emulates
-@@ -305,6 +315,13 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 			ctx->bio->bi_opf |= REQ_RAHEAD;
- 		ctx->bio->bi_iter.bi_sector = sector;
- 		ctx->bio->bi_end_io = iomap_read_end_io;
-+
-+		ioend = container_of(ctx->bio, struct iomap_read_ioend,
-+				read_inline_bio);
-+		ioend->io_inode = iter->inode;
-+		if (ctx->ops && ctx->ops->prepare_ioend)
-+			ctx->ops->prepare_ioend(ioend);
-+
- 		bio_add_folio(ctx->bio, folio, plen, poff);
- 	}
+ 			/* roll attribute extent map forwards */
+ 			lblkno += map[i].br_blockcount;
+diff --git a/fs/xfs/libxfs/xfs_da_btree.h b/fs/xfs/libxfs/xfs_da_btree.h
+index a4b29827603f..269d26730bca 100644
+--- a/fs/xfs/libxfs/xfs_da_btree.h
++++ b/fs/xfs/libxfs/xfs_da_btree.h
+@@ -61,6 +61,7 @@ typedef struct xfs_da_args {
+ 	uint8_t		filetype;	/* filetype of inode for directories */
+ 	void		*value;		/* set of bytes (maybe contain NULLs) */
+ 	int		valuelen;	/* length of value */
++	struct xfs_buf	*bp;		/* OUT: xfs_buf which contains the attr */
+ 	unsigned int	attr_filter;	/* XFS_ATTR_{ROOT,SECURE,INCOMPLETE} */
+ 	unsigned int	attr_flags;	/* XATTR_{CREATE,REPLACE} */
+ 	xfs_dahash_t	hashval;	/* hash value of name */
+@@ -95,6 +96,7 @@ typedef struct xfs_da_args {
+ #define XFS_DA_OP_REMOVE	(1u << 6) /* this is a remove operation */
+ #define XFS_DA_OP_RECOVERY	(1u << 7) /* Log recovery operation */
+ #define XFS_DA_OP_LOGGED	(1u << 8) /* Use intent items to track op */
++#define XFS_DA_OP_BUFFER	(1u << 9) /* Return underlying buffer */
  
-@@ -1813,6 +1830,15 @@ EXPORT_SYMBOL_GPL(iomap_writepages);
- 
- static int __init iomap_init(void)
- {
-+	int error = 0;
-+
-+	error = bioset_init(&iomap_read_ioend_bioset,
-+			   4 * (PAGE_SIZE / SECTOR_SIZE),
-+			   offsetof(struct iomap_read_ioend, read_inline_bio),
-+			   BIOSET_NEED_BVECS);
-+	if (error)
-+		return error;
-+
- 	return bioset_init(&iomap_ioend_bioset, 4 * (PAGE_SIZE / SECTOR_SIZE),
- 			   offsetof(struct iomap_ioend, io_inline_bio),
- 			   BIOSET_NEED_BVECS);
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 0fbce375265d..9a17b53309c9 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -53,6 +53,9 @@ struct vm_fault;
-  *
-  * IOMAP_F_XATTR indicates that the iomap is for an extended attribute extent
-  * rather than a file data extent.
-+ *
-+ * IOMAP_F_READ_VERITY indicates that the iomap needs verification of read
-+ * folios
-  */
- #define IOMAP_F_NEW		(1U << 0)
- #define IOMAP_F_DIRTY		(1U << 1)
-@@ -60,6 +63,7 @@ struct vm_fault;
- #define IOMAP_F_MERGED		(1U << 3)
- #define IOMAP_F_BUFFER_HEAD	(1U << 4)
- #define IOMAP_F_XATTR		(1U << 5)
-+#define IOMAP_F_READ_VERITY	(1U << 6)
+ #define XFS_DA_OP_FLAGS \
+ 	{ XFS_DA_OP_JUSTCHECK,	"JUSTCHECK" }, \
+@@ -105,7 +107,8 @@ typedef struct xfs_da_args {
+ 	{ XFS_DA_OP_NOTIME,	"NOTIME" }, \
+ 	{ XFS_DA_OP_REMOVE,	"REMOVE" }, \
+ 	{ XFS_DA_OP_RECOVERY,	"RECOVERY" }, \
+-	{ XFS_DA_OP_LOGGED,	"LOGGED" }
++	{ XFS_DA_OP_LOGGED,	"LOGGED" }, \
++	{ XFS_DA_OP_BUFFER,	"BUFFER" }
  
  /*
-  * Flags set by the core iomap code during operations:
-@@ -156,6 +160,11 @@ struct iomap_folio_ops {
- 	 * locked by the iomap code.
- 	 */
- 	bool (*iomap_valid)(struct inode *inode, const struct iomap *iomap);
-+
-+	/*
-+	 * Verify folio when successfully read
-+	 */
-+	bool (*verify_folio)(struct folio *folio, loff_t pos, unsigned int len);
- };
- 
- /*
-@@ -258,13 +267,30 @@ int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
- 		struct iomap *iomap, loff_t pos, loff_t length, ssize_t written,
- 		int (*punch)(struct inode *inode, loff_t pos, loff_t length));
- 
-+struct iomap_read_ioend {
-+	struct inode		*io_inode;	/* file being read from */
-+	struct work_struct	work;		/* post read work (e.g. fs-verity) */
-+	struct bio		read_inline_bio;/* MUST BE LAST! */
-+};
-+
-+struct iomap_readpage_ops {
-+	/*
-+	 * Optional, allows the file systems to perform actions just before
-+	 * submitting the bio and/or override the bio bi_end_io handler for
-+	 * additional verification after bio is processed
-+	 */
-+	void (*prepare_ioend)(struct iomap_read_ioend *ioend);
-+};
-+
- struct iomap_readpage_ctx {
- 	struct folio			*cur_folio;
- 	bool				cur_folio_in_bio;
- 	struct bio			*bio;
- 	struct readahead_control	*rac;
-+	const struct iomap_readpage_ops *ops;
- };
- 
-+void iomap_read_end_io(struct bio *bio);
- int iomap_read_folio(struct iomap_readpage_ctx *ctx,
- 		const struct iomap_ops *ops);
- void iomap_readahead(struct iomap_readpage_ctx *ctx,
+  * Storage for holding state during Btree searches and split/join ops.
 -- 
 2.38.4
 
