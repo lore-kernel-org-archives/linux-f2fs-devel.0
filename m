@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A59F3C761A6
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 14:55:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1884DC6FD1D
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 14:55:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pji4F-0007xu-AG;
-	Tue, 04 Apr 2023 14:55:28 +0000
+	id 1pji4L-00025K-IR;
+	Tue, 04 Apr 2023 14:55:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@redhat.com>) id 1pji4E-0007xn-4z
+ (envelope-from <aalbersh@redhat.com>) id 1pji4I-00024r-EE
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 14:55:27 +0000
+ Tue, 04 Apr 2023 14:55:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=k8y9WhZdDNtrUXoW/FedDtUjjZj566BJYHrOtFmmOqc=; b=JPJTUjcegO9EwPr1oF35jhy1zi
- SBZXvqlP438jJhvGtDkpmAWLp7SaeJHc2ogqumSNQj0b7srQzYZUK56ioISKpqGP3jNWthwI0Uofw
- dH26HUBJ8zrqKTIVI+r9aiHSYTLbx5DRB6om75Ad7ypMcoy4HkP0QzDqKQSlrcdsPI8c=;
+ bh=1DCV/M5yyrM1g1B6cxt9ZQ7HQFDQ1socxlG7tzRHhCM=; b=E7Z3RPAMFyxh3kSgzTpzTk9FHh
+ 0/hi/jAHLapp88PoFIDGfE1BGJHcedZ75fdkmkd+Nmwu/qzcNL7Vr0P4Kx9xAH4eh7Gxtcc/MOcER
+ fIUV0AhsfgkzSqmkreWlGaVzD5BDgTE5Y/i2t7GNEIhs/oQe9aQC7RtDIdaly0n9vm40=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,74 +33,63 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=k8y9WhZdDNtrUXoW/FedDtUjjZj566BJYHrOtFmmOqc=; b=ZTcEDLJY+TdG4rDetVLXkG7yWY
- EBzt/GYIaFieHP8EQ0KG2HGRsoyChCEx5kLhjD2T2rlCab5dG/k6nPQgGcNVuc8I2u9hC94g7p6tp
- OL9GP4Yci9WZd56Qn+P8WH1Ulxy/0NBZX0m941eIKza6o/BM1u4fBA3uq5BhtIb2H2f4=;
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=1DCV/M5yyrM1g1B6cxt9ZQ7HQFDQ1socxlG7tzRHhCM=; b=DuiOwkntyXrOGeqcliRG/FvSs/
+ 8ESV6E9m9vrH03kLaxnEjPebTqvs3FVjbThvkUsOf4qKnFQw0zZBt+sRo61Adn4PVDNXt7Rs/0V7d
+ t1Z/7y7OX6692lvOYxW3+oQs7xOgQeO80Gni1gX4UEVr2kwvZgCazcsYRmrUuwKzfdJ4=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pji4E-00Ez8D-9u for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 14:55:27 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1680620120;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=k8y9WhZdDNtrUXoW/FedDtUjjZj566BJYHrOtFmmOqc=;
- b=XQ5M64wYoCjwbMos+m1h3AtH64pL456UE2GAz25p4v0DZdLzW6NqMqmKLS6AENI2s2uAtF
- Ys2OoPsKsZwxJzezRQbfVamrLpDV7LXBtmk42hHuKWKS4tT26wpbTMoqo4BBZjtDdufj44
- TeJRpqLcWc3YZhQL/VP0HJWrPfOBB+I=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ id 1pji4D-00024n-AZ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Apr 2023 14:55:29 +0000
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-364-ydqWOF6cOXC3VpHY31kBEw-1; Tue, 04 Apr 2023 10:55:19 -0400
-X-MC-Unique: ydqWOF6cOXC3VpHY31kBEw-1
-Received: by mail-qv1-f69.google.com with SMTP id
- l18-20020ad44bd2000000b005a9cf5f609eso14731337qvw.15
+ us-mta-449-VGspT3VVPauQQQBsmoD7Gw-1; Tue, 04 Apr 2023 10:55:16 -0400
+X-MC-Unique: VGspT3VVPauQQQBsmoD7Gw-1
+Received: by mail-qt1-f199.google.com with SMTP id
+ y10-20020a05622a164a00b003e38e0a3cc3so22188043qtj.14
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 04 Apr 2023 07:55:19 -0700 (PDT)
+ Tue, 04 Apr 2023 07:55:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112; t=1680620119;
+ d=1e100.net; s=20210112; t=1680620115;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=k8y9WhZdDNtrUXoW/FedDtUjjZj566BJYHrOtFmmOqc=;
- b=WqpuJU4PPtdExTX/vOEiUXZlpz60xiNJfjyPeeRXPz0e+zaLYBcyxrGp7bPJytNddQ
- ZaknbFNM3GOK+iLrBHjL321UqKxo/sh6CcILRhZCjib4cSwL5Nwkme24d2imOzXrvWHK
- lfwXt6xfrKiRq9JXh952/ycOMZwNLc+aMjawLI5r5oz5lZOQn1DxbHisJRdkShZzqFSp
- hQIBpqSqVPwv4zmntoGnrNbjj1hX/6WAnuUbQhhhe51WQspLY6KzjSlaExbrv2A3uTUG
- J84Tz9JYxCM8+pfd70V1utm9mVc/NmCQSyVTZ3ANt+NVuqFZZjYaM629PP6YyCfTRvNm
- D7lQ==
-X-Gm-Message-State: AAQBX9fqu0lUatzEXMP2pUEwQBAUIeXUkBQu/ZHiHqIu1W71t/PN7dmN
- rY3zZ2Aq30Cgu/tXFrOFxGlTb9SPR4mlYmIrMRD+o1x1Inuk4+9dsxxLApAvzDnEak88c6WRUXT
- be1CM9fDdWLsrWaeti2718a6q65cZLYsFd9by
-X-Received: by 2002:ac8:5b06:0:b0:3d4:3d6c:a62b with SMTP id
- m6-20020ac85b06000000b003d43d6ca62bmr3793794qtw.27.1680620118593; 
- Tue, 04 Apr 2023 07:55:18 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Zq76N3HAqDggjHqbDMyBg5khfORiFnim8gNTT1pLECc9GdD6VxBnlyiVZupUjB3vAUZcGqDA==
-X-Received: by 2002:ac8:5b06:0:b0:3d4:3d6c:a62b with SMTP id
- m6-20020ac85b06000000b003d43d6ca62bmr3793740qtw.27.1680620118202; 
- Tue, 04 Apr 2023 07:55:18 -0700 (PDT)
+ bh=1DCV/M5yyrM1g1B6cxt9ZQ7HQFDQ1socxlG7tzRHhCM=;
+ b=rs3p8X9XhyPSOSOLFwYHfm3RHjRkS12550LdB6GpHEb+Ct92uCpFHlvl2sTmRMBJEY
+ 3o+CrmFeF9oWavnTT+zUVSpQiTg6yD3DGvBaUxOnib4NW6SW5pBQ7zgvO2FV2UejcQfE
+ 95uG3lTSuoX0nlG9DyOfThYdaaOMJ3VG0Nc5AqCJX/h7enly4X5HW+GLCT2L3EMBgdmk
+ nE/JBFGJZ2mXdaHwtECitKKRNHIgjkGwhHl85KsO8pbfH4n7F8P/1L8IewiyDk3H3RNb
+ 8+Abkq8uIOaBMRtlB5cwVV/pxA6bJtL6Fxq26uji9KNE1/2pZs8lyTWgJasQXYacsEsP
+ YPKg==
+X-Gm-Message-State: AAQBX9eVvkomp/g6dFyOEv7UU0qr/yFDTViDyNMcPX/DJaWiYa65/Mca
+ 0ocxjjRxyS6GPbsc3fpLN1+onvAKQ8Ba7PXGicYoq+yYEyDu1xaC/9rwFzKHxN8LI/wjO8lSgb9
+ Wg2e2wC9F8uvAxL5y8juAKSlEZWWFmWTDbPOA
+X-Received: by 2002:a05:622a:1002:b0:3e3:8ebe:ce17 with SMTP id
+ d2-20020a05622a100200b003e38ebece17mr3401482qte.43.1680620115384; 
+ Tue, 04 Apr 2023 07:55:15 -0700 (PDT)
+X-Google-Smtp-Source: AKy350ZeTsqSdwXkQooxtkxa5UspUTLXqFsUhIKZ9BZk1HmO99VPevTQAHz0NwCmfjyQvtO6XB3OTQ==
+X-Received: by 2002:a05:622a:1002:b0:3e3:8ebe:ce17 with SMTP id
+ d2-20020a05622a100200b003e38ebece17mr3401445qte.43.1680620115062; 
+ Tue, 04 Apr 2023 07:55:15 -0700 (PDT)
 Received: from aalbersh.remote.csb ([109.183.6.197])
  by smtp.gmail.com with ESMTPSA id
- j4-20020ac86644000000b003e6387431dcsm3296539qtp.7.2023.04.04.07.55.15
+ j4-20020ac86644000000b003e6387431dcsm3296539qtp.7.2023.04.04.07.55.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Apr 2023 07:55:17 -0700 (PDT)
+ Tue, 04 Apr 2023 07:55:14 -0700 (PDT)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 To: djwong@kernel.org, dchinner@redhat.com, ebiggers@kernel.org,
  hch@infradead.org, linux-xfs@vger.kernel.org, fsverity@lists.linux.dev
-Date: Tue,  4 Apr 2023 16:53:07 +0200
-Message-Id: <20230404145319.2057051-12-aalbersh@redhat.com>
+Date: Tue,  4 Apr 2023 16:53:06 +0200
+Message-Id: <20230404145319.2057051-11-aalbersh@redhat.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20230404145319.2057051-1-aalbersh@redhat.com>
 References: <20230404145319.2057051-1-aalbersh@redhat.com>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
-X-Headers-End: 1pji4E-00Ez8D-9u
-Subject: [f2fs-dev] [PATCH v2 11/23] xfs: add XFS_DA_OP_BUFFER to make
- xfs_attr_get() return buffer
+X-Headers-End: 1pji4D-00024n-AZ
+Subject: [f2fs-dev] [PATCH v2 10/23] xfs: add XBF_VERITY_CHECKED xfs_buf flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,129 +110,47 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-One of essential ideas of fs-verity is that pages which are already
-verified won't need to be re-verified if they still in page cache.
+The meaning of the flag is that value of the extended attribute in
+the buffer was verified. The underlying pages have PageChecked() ==
+false (the way fs-verity identifies verified pages), as page content
+will be copied out to newly allocated pages in further patches.
 
-The XFS stores Merkle tree blocks in extended attributes. Each
-attribute has one Merkle tree block. We can not directly mark
-underlying xfs_buf's pages as checked. The are not aligned with
-xattr value and we don't have a reference to that buffer which is
-immediately release when value is copied out.
-
-One way to track that this block was verified is to mark xattr's
-buffer as verified. If buffer is evicted the incore
-XBF_VERITY_CHECKED flag is lost. When the xattr is read again
-xfs_attr_get() returns new buffer without the flag. The flag is then
-used to tell fs-verity if it's new page or cached one.
-
-This patch adds XFS_DA_OP_BUFFER to tell xfs_attr_get() to
-xfs_buf_hold() underlying buffer and return it as xfs_da_args->bp.
-The caller must then xfs_buf_rele() the buffer.
+The flag is being used later to SetPageChecked() on pages handed to
+the fs-verity.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- fs/xfs/libxfs/xfs_attr.c        |  5 ++++-
- fs/xfs/libxfs/xfs_attr_leaf.c   |  7 +++++++
- fs/xfs/libxfs/xfs_attr_remote.c | 13 +++++++++++--
- fs/xfs/libxfs/xfs_da_btree.h    |  5 ++++-
- 4 files changed, 26 insertions(+), 4 deletions(-)
+ fs/xfs/xfs_buf.h | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_attr.c b/fs/xfs/libxfs/xfs_attr.c
-index 711022742e34..298b74245267 100644
---- a/fs/xfs/libxfs/xfs_attr.c
-+++ b/fs/xfs/libxfs/xfs_attr.c
-@@ -251,6 +251,8 @@ xfs_attr_get_ilocked(
-  * If the attribute is found, but exceeds the size limit set by the caller in
-  * args->valuelen, return -ERANGE with the size of the attribute that was found
-  * in args->valuelen.
-+ *
-+ * Using XFS_DA_OP_BUFFER the caller have to release the buffer args->bp.
-  */
- int
- xfs_attr_get(
-@@ -269,7 +271,8 @@ xfs_attr_get(
- 	args->hashval = xfs_da_hashname(args->name, args->namelen);
+diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
+index 549c60942208..8cc86fed962b 100644
+--- a/fs/xfs/xfs_buf.h
++++ b/fs/xfs/xfs_buf.h
+@@ -24,14 +24,15 @@ struct xfs_buf;
  
- 	/* Entirely possible to look up a name which doesn't exist */
--	args->op_flags = XFS_DA_OP_OKNOENT;
-+	args->op_flags = XFS_DA_OP_OKNOENT |
-+					(args->op_flags & XFS_DA_OP_BUFFER);
+ #define XFS_BUF_DADDR_NULL	((xfs_daddr_t) (-1LL))
  
- 	lock_mode = xfs_ilock_attr_map_shared(args->dp);
- 	error = xfs_attr_get_ilocked(args);
-diff --git a/fs/xfs/libxfs/xfs_attr_leaf.c b/fs/xfs/libxfs/xfs_attr_leaf.c
-index beee51ad75ce..112bb2604c89 100644
---- a/fs/xfs/libxfs/xfs_attr_leaf.c
-+++ b/fs/xfs/libxfs/xfs_attr_leaf.c
-@@ -2533,6 +2533,13 @@ xfs_attr3_leaf_getvalue(
- 		name_loc = xfs_attr3_leaf_name_local(leaf, args->index);
- 		ASSERT(name_loc->namelen == args->namelen);
- 		ASSERT(memcmp(args->name, name_loc->nameval, args->namelen) == 0);
-+
-+		/* must be released by the caller */
-+		if (args->op_flags & XFS_DA_OP_BUFFER) {
-+			xfs_buf_hold(bp);
-+			args->bp = bp;
-+		}
-+
- 		return xfs_attr_copy_value(args,
- 					&name_loc->nameval[args->namelen],
- 					be16_to_cpu(name_loc->valuelen));
-diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
-index d440393b40eb..72908e0e1c86 100644
---- a/fs/xfs/libxfs/xfs_attr_remote.c
-+++ b/fs/xfs/libxfs/xfs_attr_remote.c
-@@ -424,9 +424,18 @@ xfs_attr_rmtval_get(
- 			error = xfs_attr_rmtval_copyout(mp, bp, args->dp->i_ino,
- 							&offset, &valuelen,
- 							&dst);
--			xfs_buf_relse(bp);
--			if (error)
-+			xfs_buf_unlock(bp);
-+			/* must be released by the caller */
-+			if (args->op_flags & XFS_DA_OP_BUFFER)
-+				args->bp = bp;
-+			else
-+				xfs_buf_rele(bp);
-+
-+			if (error) {
-+				if (args->op_flags & XFS_DA_OP_BUFFER)
-+					xfs_buf_rele(args->bp);
- 				return error;
-+			}
+-#define XBF_READ	 (1u << 0) /* buffer intended for reading from device */
+-#define XBF_WRITE	 (1u << 1) /* buffer intended for writing to device */
+-#define XBF_READ_AHEAD	 (1u << 2) /* asynchronous read-ahead */
+-#define XBF_NO_IOACCT	 (1u << 3) /* bypass I/O accounting (non-LRU bufs) */
+-#define XBF_ASYNC	 (1u << 4) /* initiator will not wait for completion */
+-#define XBF_DONE	 (1u << 5) /* all pages in the buffer uptodate */
+-#define XBF_STALE	 (1u << 6) /* buffer has been staled, do not find it */
+-#define XBF_WRITE_FAIL	 (1u << 7) /* async writes have failed on this buffer */
++#define XBF_READ		(1u << 0) /* buffer intended for reading from device */
++#define XBF_WRITE		(1u << 1) /* buffer intended for writing to device */
++#define XBF_READ_AHEAD		(1u << 2) /* asynchronous read-ahead */
++#define XBF_NO_IOACCT		(1u << 3) /* bypass I/O accounting (non-LRU bufs) */
++#define XBF_ASYNC		(1u << 4) /* initiator will not wait for completion */
++#define XBF_DONE		(1u << 5) /* all pages in the buffer uptodate */
++#define XBF_STALE		(1u << 6) /* buffer has been staled, do not find it */
++#define XBF_WRITE_FAIL		(1u << 7) /* async writes have failed on this buffer */
++#define XBF_VERITY_CHECKED	(1u << 8) /* buffer was verified by fs-verity*/
  
- 			/* roll attribute extent map forwards */
- 			lblkno += map[i].br_blockcount;
-diff --git a/fs/xfs/libxfs/xfs_da_btree.h b/fs/xfs/libxfs/xfs_da_btree.h
-index a4b29827603f..269d26730bca 100644
---- a/fs/xfs/libxfs/xfs_da_btree.h
-+++ b/fs/xfs/libxfs/xfs_da_btree.h
-@@ -61,6 +61,7 @@ typedef struct xfs_da_args {
- 	uint8_t		filetype;	/* filetype of inode for directories */
- 	void		*value;		/* set of bytes (maybe contain NULLs) */
- 	int		valuelen;	/* length of value */
-+	struct xfs_buf	*bp;		/* OUT: xfs_buf which contains the attr */
- 	unsigned int	attr_filter;	/* XFS_ATTR_{ROOT,SECURE,INCOMPLETE} */
- 	unsigned int	attr_flags;	/* XATTR_{CREATE,REPLACE} */
- 	xfs_dahash_t	hashval;	/* hash value of name */
-@@ -95,6 +96,7 @@ typedef struct xfs_da_args {
- #define XFS_DA_OP_REMOVE	(1u << 6) /* this is a remove operation */
- #define XFS_DA_OP_RECOVERY	(1u << 7) /* Log recovery operation */
- #define XFS_DA_OP_LOGGED	(1u << 8) /* Use intent items to track op */
-+#define XFS_DA_OP_BUFFER	(1u << 9) /* Return underlying buffer */
- 
- #define XFS_DA_OP_FLAGS \
- 	{ XFS_DA_OP_JUSTCHECK,	"JUSTCHECK" }, \
-@@ -105,7 +107,8 @@ typedef struct xfs_da_args {
- 	{ XFS_DA_OP_NOTIME,	"NOTIME" }, \
- 	{ XFS_DA_OP_REMOVE,	"REMOVE" }, \
- 	{ XFS_DA_OP_RECOVERY,	"RECOVERY" }, \
--	{ XFS_DA_OP_LOGGED,	"LOGGED" }
-+	{ XFS_DA_OP_LOGGED,	"LOGGED" }, \
-+	{ XFS_DA_OP_BUFFER,	"BUFFER" }
- 
- /*
-  * Storage for holding state during Btree searches and split/join ops.
+ /* buffer type flags for write callbacks */
+ #define _XBF_INODES	 (1u << 16)/* inode buffer */
 -- 
 2.38.4
 
