@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 72C69C6FD1D
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 14:55:37 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D937FC77B62
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Apr 2023 14:55:38 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pji4P-0000jB-Go;
-	Tue, 04 Apr 2023 14:55:36 +0000
+	id 1pji4Q-00026q-Tu;
+	Tue, 04 Apr 2023 14:55:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <aalbersh@redhat.com>) id 1pji4L-0000iV-LV
+ (envelope-from <aalbersh@redhat.com>) id 1pji4P-00026C-78
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 14:55:32 +0000
+ Tue, 04 Apr 2023 14:55:36 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
  :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=g1NG2DlOPhECSBoFyURsYJB7f5VQnxxV8rEkg1d1tQc=; b=f7nUotqTAQy6fGbxigzuVn/b/B
- knBdoCqrc9roK6TZJLjPCpu1F4MXUiuAB6XCpGMzJzdeLU+/O96mFhi7QFTIsQhYxIMVoD5/UAukG
- ZCIG9ZMaw/fWTLA1Avkqbg8gGJzCXn69IDK4XEJzVDZmbnJTxAG3WY4Xw3wSpw6i6RDQ=;
+ bh=qBYfR9y7mc4emCV9kD7O8/LELcLcH0cCLkcuznWVRNE=; b=IsZnP3wtzI7Xow4CQa6fYBHbbY
+ NNRqkOqBUbQJNCeuGAlsfNlH8tg2BWkgqEaHw0Y4c62oLDOv9AOzr6ZPY9ZjJbJCtbF73tlzN4aCb
+ MQkFqqtwKrNuEOrIeTPqveLInOvcSggciY8yB1NAQBpGKjEuhxF9aqlprpkj9L6HpVYc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:
@@ -33,74 +33,73 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=g1NG2DlOPhECSBoFyURsYJB7f5VQnxxV8rEkg1d1tQc=; b=HQD7BbJTo+efWh4L11HBXsLSCz
- anrF7UAmDE++iLnUlzjPCSdQf05IvnHV+GusGvsNlFOXHsvjjRD20Nu+7SGtUHrFsfKmcyUqpWysY
- Lv9dF4MhiAkCRLNoi7qkDRKsne/t7lV/tq9uQi7wZj+r8CqWxu4qx7MdfCwogndqwr5Y=;
+ bh=qBYfR9y7mc4emCV9kD7O8/LELcLcH0cCLkcuznWVRNE=; b=Riz9zzTVIoUx/9yh4ekc658wru
+ AmT3DjwOjQpz1ZxJ9WFMoiaNwe25CrxOUrdPPlbUY6QlcaM4CxlXVIslt1LG5YhAu2MD4medYrmwy
+ VMZ0R0TQ42tFQ6ynYfLVONWqMGaZ5QJdHY5ujorG/8ZuoVZeTGLjh69dolS3FSfiIfCM=;
 Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pji4K-00025F-4L for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Apr 2023 14:55:32 +0000
+ id 1pji4N-00Ez8m-2i for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 04 Apr 2023 14:55:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1680620126;
+ s=mimecast20190719; t=1680620129;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=g1NG2DlOPhECSBoFyURsYJB7f5VQnxxV8rEkg1d1tQc=;
- b=JcVIpQAJvDrdUuqyNsVYLoncjglB0MOHWb63z5op0+StlMVRhPam+GFVYw4LAKTPNbaHrv
- D9hinTozxWlq9yUYQuiZmmLVrCHg9cuuwwYfbCQ+6SQQq1vL/gWV1zMDfldmzVzf1QfaVN
- vWSv/7YYON5GFQA1Qogi4AUMEcj/66s=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=qBYfR9y7mc4emCV9kD7O8/LELcLcH0cCLkcuznWVRNE=;
+ b=HTiw/liJMegjz+Tl1wLGQATZrf5NKGnHMOpZKOlWwbyPBoFoXcJ2Lb/HDI0FG+krbWnRou
+ tFVAdKEEpSvo4iaLSmOP9Vh80DxW8kmBvvwJQnqvYJzLbGIMEuJgEa0GA8/b7dtKrZYV7T
+ 2SH3L1AUSQnDc1ieScd26nAwkpwVMkc=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-463-p8jdI2vOND283DWsl4MxWg-1; Tue, 04 Apr 2023 10:55:24 -0400
-X-MC-Unique: p8jdI2vOND283DWsl4MxWg-1
-Received: by mail-qk1-f198.google.com with SMTP id
- s21-20020a05620a0bd500b0074234f33f24so14661693qki.3
+ us-mta-599-gg4wJ_vBOxus2BPC7vSy3A-1; Tue, 04 Apr 2023 10:55:28 -0400
+X-MC-Unique: gg4wJ_vBOxus2BPC7vSy3A-1
+Received: by mail-qt1-f199.google.com with SMTP id
+ s23-20020a05622a1a9700b003e6578904c3so3760255qtc.17
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 04 Apr 2023 07:55:21 -0700 (PDT)
+ Tue, 04 Apr 2023 07:55:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20210112; t=1680620121;
+ d=1e100.net; s=20210112; t=1680620127;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=g1NG2DlOPhECSBoFyURsYJB7f5VQnxxV8rEkg1d1tQc=;
- b=dewwA8fKLrVQCZe0TSrGFOcn6GJ6U6TaSDS1AEqjnvhAQ8NiO24UgZJrBGjdcfCD9j
- IAPmAb4CPSP8Z7TDK72LyM+TQQusaDvlC4ID8NmLiiXJS+1Ep88x9uEBmz1YOZvybsCu
- 7v1Lmxd1n5OsfouEURnHZ1oO+rK074v2Hq2b/fIewCgKNBBODaLDKiaPqkL+bseoFLGW
- aj3ZCVMSrikZXE5LTbYyIXFKsYel5fVsbQ7uRPErFxGpOk/QLhAj8hhGa6s8lRwY7Idk
- YWvZhw69tnRfBsJ6M7DeUaKOKZ5zC/qYyuynbGlSYL6JfFaz8OdfFrOULMaT6kCrY+BH
- 8Pxw==
-X-Gm-Message-State: AAQBX9f5ye4k/Vgh8laCELIfEZ7vgB+cSH1auA3vzUPgQANEAfZiINsh
- 7uuYK6jSZS98Cr6DUiT3Bi+hNtIXtdlUQa6cX0aLQ4YKHF6LBqe8Qed6w11ClOJUuMBb/ruuuGl
- oxQiXbbvaX54oY+24GaHxel0X4Wsn/9Gh4psS
-X-Received: by 2002:ac8:5754:0:b0:3d7:960e:5387 with SMTP id
- 20-20020ac85754000000b003d7960e5387mr3872051qtx.35.1680620121260; 
- Tue, 04 Apr 2023 07:55:21 -0700 (PDT)
-X-Google-Smtp-Source: AKy350bjyktKoJdi6D9KFFirgwb83MTSe30Fparym5df9UxsVGpZNZWXy1G6A3UC/2iyEvUKlSZpbw==
-X-Received: by 2002:ac8:5754:0:b0:3d7:960e:5387 with SMTP id
- 20-20020ac85754000000b003d7960e5387mr3871997qtx.35.1680620120899; 
- Tue, 04 Apr 2023 07:55:20 -0700 (PDT)
+ bh=qBYfR9y7mc4emCV9kD7O8/LELcLcH0cCLkcuznWVRNE=;
+ b=dwR2dhc1bRrTX3i7/hvZhrhVw5GnGiZzu0mUmNQY1Y0mGNUCrmjMOyXJi/r1Z87XhM
+ 4GLD3WLROBTYjskz8TOe5Ac40E3KzWear+uD4fmPn0QwgmQPsXSecFBgMiXStLdTz04g
+ qEaOblhQchV8fQ0jSI6eo5+ZvycqAZVvZFQUXeADGXIvjdzYsIRK0Et0FqpHYV7qbMCu
+ JzTUeqEN1EYvQMrNKBBGM9ojtFIKGEXdlFOWpONUfAJpI5dUOEwIEOKKKhp2mgpSuyCd
+ dncbc9hMBbkxENvrbbVtp14t8XkP5fZuop61tT4pk0m11BMb2ic7Yup8moSzGuQQa+I/
+ cepw==
+X-Gm-Message-State: AAQBX9c/cIrYddkzmmJB/R9pEIXaWPWfbW7V0SHztE3inpnV94N/aQSc
+ NjqU/umey7elaNpEKLqxcbjwCqa2i7D1YYU+PsI+6Jrt8cqs5EA0xLpvB5C248KhYAdkSvIE07C
+ WkTkrxXldBsCN40CmkET1jXIaa1fTK0j5bKU6
+X-Received: by 2002:a05:622a:199c:b0:3e4:3f79:9d7b with SMTP id
+ u28-20020a05622a199c00b003e43f799d7bmr3716048qtc.55.1680620127337; 
+ Tue, 04 Apr 2023 07:55:27 -0700 (PDT)
+X-Google-Smtp-Source: AKy350aPhI2S3MEB+MRHM6CVfbFypXk0qGatbwEPU5syhmYxnWr2Q3wqyiCRz9ctEKISxtGe9l4JDA==
+X-Received: by 2002:a05:622a:199c:b0:3e4:3f79:9d7b with SMTP id
+ u28-20020a05622a199c00b003e43f799d7bmr3716007qtc.55.1680620126943; 
+ Tue, 04 Apr 2023 07:55:26 -0700 (PDT)
 Received: from aalbersh.remote.csb ([109.183.6.197])
  by smtp.gmail.com with ESMTPSA id
- j4-20020ac86644000000b003e6387431dcsm3296539qtp.7.2023.04.04.07.55.18
+ j4-20020ac86644000000b003e6387431dcsm3296539qtp.7.2023.04.04.07.55.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Apr 2023 07:55:20 -0700 (PDT)
+ Tue, 04 Apr 2023 07:55:26 -0700 (PDT)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 To: djwong@kernel.org, dchinner@redhat.com, ebiggers@kernel.org,
  hch@infradead.org, linux-xfs@vger.kernel.org, fsverity@lists.linux.dev
-Date: Tue,  4 Apr 2023 16:53:08 +0200
-Message-Id: <20230404145319.2057051-13-aalbersh@redhat.com>
+Date: Tue,  4 Apr 2023 16:53:10 +0200
+Message-Id: <20230404145319.2057051-15-aalbersh@redhat.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20230404145319.2057051-1-aalbersh@redhat.com>
 References: <20230404145319.2057051-1-aalbersh@redhat.com>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
-X-Headers-End: 1pji4K-00025F-4L
-Subject: [f2fs-dev] [PATCH v2 12/23] xfs: introduce workqueue for post read
- IO work
+X-Headers-End: 1pji4N-00Ez8m-2i
+Subject: [f2fs-dev] [PATCH v2 14/23] xfs: add attribute type for fs-verity
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -121,72 +120,118 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-As noted by Dave there are two problems with using fs-verity's
-workqueue in XFS:
-
-1. High priority workqueues are used within XFS to ensure that data
-   IO completion cannot stall processing of journal IO completions.
-   Hence using a WQ_HIGHPRI workqueue directly in the user data IO
-   path is a potential filesystem livelock/deadlock vector.
-
-2. The fsverity workqueue is global - it creates a cross-filesystem
-   contention point.
-
-This patch adds per-filesystem, per-cpu workqueue for fsverity
-work.
+The Merkle tree blocks and descriptor are stored in the extended
+attributes of the inode. Add new attribute type for fs-verity
+metadata. Add XFS_ATTR_INTERNAL_MASK to skip parent pointer and
+fs-verity attributes as those are only for internal use. While we're
+at it add a few comments in relevant places that internally visible
+attributes are not suppose to be handled via interface defined in
+xfs_xattr.c.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- fs/xfs/xfs_mount.h | 1 +
- fs/xfs/xfs_super.c | 9 +++++++++
- 2 files changed, 10 insertions(+)
+ fs/xfs/libxfs/xfs_da_format.h  | 10 +++++++++-
+ fs/xfs/libxfs/xfs_log_format.h |  1 +
+ fs/xfs/xfs_ioctl.c             |  5 +++++
+ fs/xfs/xfs_trace.h             |  1 +
+ fs/xfs/xfs_xattr.c             |  9 +++++++++
+ 5 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index f3269c0626f0..53a4a9304937 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -107,6 +107,7 @@ typedef struct xfs_mount {
- 	struct xfs_mru_cache	*m_filestream;  /* per-mount filestream data */
- 	struct workqueue_struct *m_buf_workqueue;
- 	struct workqueue_struct	*m_unwritten_workqueue;
-+	struct workqueue_struct	*m_postread_workqueue;
- 	struct workqueue_struct	*m_reclaim_workqueue;
- 	struct workqueue_struct	*m_sync_workqueue;
- 	struct workqueue_struct *m_blockgc_wq;
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 4f814f9e12ab..d6f22cb94ee2 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -548,6 +548,12 @@ xfs_init_mount_workqueues(
- 	if (!mp->m_unwritten_workqueue)
- 		goto out_destroy_buf;
- 
-+	mp->m_postread_workqueue = alloc_workqueue("xfs-pread/%s",
-+			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
-+			0, mp->m_super->s_id);
-+	if (!mp->m_postread_workqueue)
-+		goto out_destroy_postread;
+diff --git a/fs/xfs/libxfs/xfs_da_format.h b/fs/xfs/libxfs/xfs_da_format.h
+index 75b13807145d..2b5967befc2e 100644
+--- a/fs/xfs/libxfs/xfs_da_format.h
++++ b/fs/xfs/libxfs/xfs_da_format.h
+@@ -689,14 +689,22 @@ struct xfs_attr3_leafblock {
+ #define	XFS_ATTR_ROOT_BIT	1	/* limit access to trusted attrs */
+ #define	XFS_ATTR_SECURE_BIT	2	/* limit access to secure attrs */
+ #define	XFS_ATTR_PARENT_BIT	3	/* parent pointer attrs */
++#define	XFS_ATTR_VERITY_BIT	4	/* verity merkle tree and descriptor */
+ #define	XFS_ATTR_INCOMPLETE_BIT	7	/* attr in middle of create/delete */
+ #define XFS_ATTR_LOCAL		(1u << XFS_ATTR_LOCAL_BIT)
+ #define XFS_ATTR_ROOT		(1u << XFS_ATTR_ROOT_BIT)
+ #define XFS_ATTR_SECURE		(1u << XFS_ATTR_SECURE_BIT)
+ #define XFS_ATTR_PARENT		(1u << XFS_ATTR_PARENT_BIT)
++#define XFS_ATTR_VERITY		(1u << XFS_ATTR_VERITY_BIT)
+ #define XFS_ATTR_INCOMPLETE	(1u << XFS_ATTR_INCOMPLETE_BIT)
+ #define XFS_ATTR_NSP_ONDISK_MASK \
+-			(XFS_ATTR_ROOT | XFS_ATTR_SECURE | XFS_ATTR_PARENT)
++			(XFS_ATTR_ROOT | XFS_ATTR_SECURE | XFS_ATTR_PARENT | \
++			 XFS_ATTR_VERITY)
 +
- 	mp->m_reclaim_workqueue = alloc_workqueue("xfs-reclaim/%s",
- 			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
- 			0, mp->m_super->s_id);
-@@ -581,6 +587,8 @@ xfs_init_mount_workqueues(
- 	destroy_workqueue(mp->m_reclaim_workqueue);
- out_destroy_unwritten:
- 	destroy_workqueue(mp->m_unwritten_workqueue);
-+out_destroy_postread:
-+	destroy_workqueue(mp->m_postread_workqueue);
- out_destroy_buf:
- 	destroy_workqueue(mp->m_buf_workqueue);
- out:
-@@ -596,6 +604,7 @@ xfs_destroy_mount_workqueues(
- 	destroy_workqueue(mp->m_inodegc_wq);
- 	destroy_workqueue(mp->m_reclaim_workqueue);
- 	destroy_workqueue(mp->m_unwritten_workqueue);
-+	destroy_workqueue(mp->m_postread_workqueue);
- 	destroy_workqueue(mp->m_buf_workqueue);
- }
++/*
++ * Internal attributes not exposed to the user
++ */
++#define XFS_ATTR_INTERNAL_MASK (XFS_ATTR_PARENT | XFS_ATTR_VERITY)
  
+ /*
+  * Alignment for namelist and valuelist entries (since they are mixed
+diff --git a/fs/xfs/libxfs/xfs_log_format.h b/fs/xfs/libxfs/xfs_log_format.h
+index 727b5a858028..678eacb7925c 100644
+--- a/fs/xfs/libxfs/xfs_log_format.h
++++ b/fs/xfs/libxfs/xfs_log_format.h
+@@ -968,6 +968,7 @@ struct xfs_icreate_log {
+ #define XFS_ATTRI_FILTER_MASK		(XFS_ATTR_ROOT | \
+ 					 XFS_ATTR_SECURE | \
+ 					 XFS_ATTR_PARENT | \
++					 XFS_ATTR_VERITY | \
+ 					 XFS_ATTR_INCOMPLETE)
+ 
+ /*
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 55bb01173cde..3d6d680b6cf3 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -351,6 +351,11 @@ static unsigned int
+ xfs_attr_filter(
+ 	u32			ioc_flags)
+ {
++	/*
++	 * Only externally visible attributes should be specified here.
++	 * Internally used attributes (such as parent pointers or fs-verity)
++	 * should not be exposed to userspace.
++	 */
+ 	if (ioc_flags & XFS_IOC_ATTR_ROOT)
+ 		return XFS_ATTR_ROOT;
+ 	if (ioc_flags & XFS_IOC_ATTR_SECURE)
+diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
+index 9c0006c55fec..e842b9d145cb 100644
+--- a/fs/xfs/xfs_trace.h
++++ b/fs/xfs/xfs_trace.h
+@@ -79,6 +79,7 @@ struct xfs_perag;
+ #define XFS_ATTR_FILTER_FLAGS \
+ 	{ XFS_ATTR_ROOT,	"ROOT" }, \
+ 	{ XFS_ATTR_SECURE,	"SECURE" }, \
++	{ XFS_ATTR_VERITY,	"VERITY" }, \
+ 	{ XFS_ATTR_INCOMPLETE,	"INCOMPLETE" }
+ 
+ DECLARE_EVENT_CLASS(xfs_attr_list_class,
+diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
+index 7b9a0ed1b11f..5a71797fbd44 100644
+--- a/fs/xfs/xfs_xattr.c
++++ b/fs/xfs/xfs_xattr.c
+@@ -20,6 +20,12 @@
+ 
+ #include <linux/posix_acl_xattr.h>
+ 
++/*
++ * This file defines interface to work with externally visible extended
++ * attributes, such as those in system or security namespaces. This interface
++ * should not be used for internally used attributes (consider xfs_attr.c).
++ */
++
+ /*
+  * Get permission to use log-assisted atomic exchange of file extents.
+  *
+@@ -234,6 +240,9 @@ xfs_xattr_put_listent(
+ 
+ 	ASSERT(context->count >= 0);
+ 
++	if (flags & XFS_ATTR_INTERNAL_MASK)
++		return;
++
+ 	if (flags & XFS_ATTR_ROOT) {
+ #ifdef CONFIG_XFS_POSIX_ACL
+ 		if (namelen == SGI_ACL_FILE_SIZE &&
 -- 
 2.38.4
 
