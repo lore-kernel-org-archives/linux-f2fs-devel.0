@@ -4,69 +4,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0498FC7619A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Apr 2023 16:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1E311C76188
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  5 Apr 2023 16:27:43 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pk5u7-0007BV-Fd;
-	Wed, 05 Apr 2023 16:22:34 +0000
+	id 1pk5z5-0007at-5h;
+	Wed, 05 Apr 2023 16:27:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pk5u6-0007BP-5f
+ (envelope-from <aalbersh@redhat.com>) id 1pk5z3-0007an-Rl
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Apr 2023 16:22:33 +0000
+ Wed, 05 Apr 2023 16:27:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:In-Reply-To:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=33MXYDDb4OYTdD203d6enmcAPUh147sgohZ6lL/hbyA=; b=Z9gtzbafOIc8j2niTJY7qTBweK
- omgPCHCClnVjqAR+dGWiOBkH3bMBmFUZwi1xaY+KEwWm/GpsGcRXzDuEM7aAiC6+FoKRQbeP5SFQu
- 5NdjfzmbwwXHQ5lwbBt6RBevDS/kSmHz6NQQgH/dsU7OGbAAUO4zNe7qpKRfar1tDohs=;
+ bh=xpkEDS6jt39qufg3GMcbXZKRt5qOSbn/1OJhbiuzI9E=; b=QDbHBZOb2jXJ6CehltZuEkVQGB
+ 3caYPEPXm0KuIaLJbzayFpk3w6h4vSDKXKex5f3IkqE9QKFepqXJcnD+MhImgzUod4yCxdO6h38rT
+ GCwIVS0RnKb035b0q0orsyN7WPnAi8rlZI5cmqv5i9AeMJDVs0SYmG40Z/vdSsythFSY=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=33MXYDDb4OYTdD203d6enmcAPUh147sgohZ6lL/hbyA=; b=K
- kbSizCmdHJvR6WxEbNnKnhR2c51da+OHMa0em6t387JJ8g0EyRhik8lRRmzxDwFJdZjGn1mi0/ZGS
- KVXT+0TRnzOnYZ8oGA47pUruPF6pvX2S+7MZYGLUSTDNJ4gzetbFHsSGmQAnibpzR6G4xH6JBT+rs
- lw3Mxn/Qaswt7euc=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=xpkEDS6jt39qufg3GMcbXZKRt5qOSbn/1OJhbiuzI9E=; b=WkQzJNCovlKEOqHWpvXP8qX2Oz
+ 9AKnH5F7B3abZEgVnbTJCbxxTOTxUGxOpUQ+JMnXu8EscKofv4odZS9RnNm/VQrgkxLtu1tC5Gza6
+ 7s3WJALqOW6geskjeGPPiLioMv+NvSNNMNZ3Ji3th385g6FtjmNMa539wqbqt0wmvP3A=;
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pk5u4-0002qW-N1 for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 05 Apr 2023 16:22:33 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 4F15E62380;
- Wed,  5 Apr 2023 16:22:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1A5BC433D2;
- Wed,  5 Apr 2023 16:22:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1680711746;
- bh=IKKd5/z6diLNwuttq1cK4BoG4eEmFEMFdox28Mo3uos=;
- h=From:To:Cc:Subject:Date:From;
- b=AAbjh4o1z/necfAjZKY1Sln6VweDJ7xXWEsUoZ2KWAdtadfcbfHDyuFfdCPjQ0TV0
- /QnxXK3/AzDHI4I909K4A7pA9y8k6e9uijWFJxSGnvy6oq8YVqfG7syd7wn+VyZVa9
- JOuBZI80K3uFps/zD19EUN2gzKbqwo0KcDTMD3oJkOfs6Vq4dcmLglKBPdHz1C9NH4
- HcIJt+yzuXVDGUyrfy2izT+eWHTvDHXYWSOvcMgDDcdXhbwN6OoHixI8ZgqrbIM38v
- DnS4ll5JbOu2168GJa0B8boo+ZnUr/W13wj6VEbcyKRJ7YquVi5T315DYgrSBloAlc
- +QNzVWlmiwdjQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Wed,  5 Apr 2023 22:45:36 +0800
-Message-Id: <20230405144536.930370-1-chao@kernel.org>
-X-Mailer: git-send-email 2.36.1
+ id 1pk5z1-00G8j7-4O for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 05 Apr 2023 16:27:40 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1680712053;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=xpkEDS6jt39qufg3GMcbXZKRt5qOSbn/1OJhbiuzI9E=;
+ b=IofOlEqACMOcCzuQ8zDo5dyqBOLvXdb0QvuYAKZrtfen6rJemfyHcn0NzhYfrMe90AlLgw
+ sCXlDbXL5AfxkB8L5tN7WQZjNBjcTD4zvgK1uGeauIk2xCLMzXyltZzqAigdMU2MFWboC3
+ kBA0yYlZD3JoeCQK1YgJw9KbBIxHoOc=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-392-4gpl-oLyOhebpPvoJSCraw-1; Wed, 05 Apr 2023 12:27:32 -0400
+X-MC-Unique: 4gpl-oLyOhebpPvoJSCraw-1
+Received: by mail-qt1-f197.google.com with SMTP id
+ u1-20020a05622a198100b003e12a0467easo24628635qtc.11
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed, 05 Apr 2023 09:27:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20210112; t=1680712051;
+ h=in-reply-to:content-disposition:mime-version:references:message-id
+ :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=xpkEDS6jt39qufg3GMcbXZKRt5qOSbn/1OJhbiuzI9E=;
+ b=1NSzFHajd0SIHyyCch90HXNvaEppvA1pF202iAJsjxMvbIIgwGrIjte3YYzlAcgmjc
+ okNyPmywbZu+bTWSG/nHl6kvEo/pT7PTkh62hJkiNX6wE6dok040+9Zg1zkRqOf3PSKK
+ gXWD/aR+ngS+I0lcKDNAgh8/21l4p2gBXTehcq+flH8czwWOo7O4cVUfIWl3XIBV2sI4
+ OzS90DKzlQBQb5eS25jtT/pdKASHPVOKILsgacVYQjEmMZsCEtj8T8oz3yiz+17UtknK
+ 599OwP7lTdP1FWUi80o8qDsXE/ofWJD18DhB46Omfk5JxZ+qpbqsPm1pytAew/Ysj9B3
+ bTMw==
+X-Gm-Message-State: AAQBX9cRivhTWeow53HR46GCooTZogzFB26dIqinF1oKGFaV5xcCbb78
+ poUU8WkhrL0YW7BqLyyN3Uz75Rgn5XQTxbuePl5jAMgQunesXDMW7/a/ifUdSbHAhKCAUezF2uq
+ e4JVP9CRycpRse9gesI/nO35LGFV665gdSe+2
+X-Received: by 2002:a05:6214:1c8d:b0:5bb:eefc:1624 with SMTP id
+ ib13-20020a0562141c8d00b005bbeefc1624mr9853058qvb.27.1680712051494; 
+ Wed, 05 Apr 2023 09:27:31 -0700 (PDT)
+X-Google-Smtp-Source: AKy350ZZl4q26mcUoNHuCokraSI3hi88peqAYHPpgY7Wvk0Gvn/BxgeqpN4NaYegoUGQwHkcsJ0yow==
+X-Received: by 2002:a05:6214:1c8d:b0:5bb:eefc:1624 with SMTP id
+ ib13-20020a0562141c8d00b005bbeefc1624mr9853021qvb.27.1680712051206; 
+ Wed, 05 Apr 2023 09:27:31 -0700 (PDT)
+Received: from aalbersh.remote.csb ([109.183.6.197])
+ by smtp.gmail.com with ESMTPSA id
+ r206-20020a3744d7000000b0074a0051fcd4sm4559684qka.88.2023.04.05.09.27.28
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 05 Apr 2023 09:27:30 -0700 (PDT)
+Date: Wed, 5 Apr 2023 18:27:26 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Message-ID: <20230405162726.4d7bu3uz63w4cdkz@aalbersh.remote.csb>
+References: <20230404145319.2057051-1-aalbersh@redhat.com>
+ <20230404163942.GD109974@frogsfrogsfrogs>
 MIME-Version: 1.0
-X-Headers-End: 1pk5u4-0002qW-N1
-Subject: [f2fs-dev] [PATCH] f2fs: fix to check return value of
- inc_valid_block_count()
+In-Reply-To: <20230404163942.GD109974@frogsfrogsfrogs>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Disposition: inline
+X-Headers-End: 1pk5z1-00G8j7-4O
+Subject: Re: [f2fs-dev] [PATCH v2 00/23] fs-verity support for XFS
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,48 +110,85 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Daeho Jeong <daehojeong@google.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: fsverity@lists.linux.dev, hch@infradead.org, linux-ext4@vger.kernel.org,
+ agruenba@redhat.com, damien.lemoal@opensource.wdc.com,
+ linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
+ cluster-devel@redhat.com, dchinner@redhat.com, rpeterso@redhat.com,
+ xiang@kernel.org, jth@kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In __replace_atomic_write_block(), we missed to check return value
-of inc_valid_block_count(), for extreme testcase that f2fs image is
-run out of space, it may cause inconsistent status in between SIT
-table and total valid block count.
+Hi Darrick,
 
-Cc: Daeho Jeong <daehojeong@google.com>
-Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/segment.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+On Tue, Apr 04, 2023 at 09:39:42AM -0700, Darrick J. Wong wrote:
+> On Tue, Apr 04, 2023 at 04:52:56PM +0200, Andrey Albershteyn wrote:
+> > Hi all,
+> > 
+> > This is V2 of fs-verity support in XFS. In this series I did
+> > numerous changes from V1 which are described below.
+> > 
+> > This patchset introduces fs-verity [5] support for XFS. This
+> > implementation utilizes extended attributes to store fs-verity
+> > metadata. The Merkle tree blocks are stored in the remote extended
+> > attributes.
+> > 
+> > A few key points:
+> > - fs-verity metadata is stored in extended attributes
+> > - Direct path and DAX are disabled for inodes with fs-verity
+> > - Pages are verified in iomap's read IO path (offloaded to
+> >   workqueue)
+> > - New workqueue for verification processing
+> > - New ro-compat flag
+> > - Inodes with fs-verity have new on-disk diflag
+> > - xfs_attr_get() can return buffer with the attribute
+> > 
+> > The patchset is tested with xfstests -g auto on xfs_1k, xfs_4k,
+> > xfs_1k_quota, and xfs_4k_quota. Haven't found any major failures.
+> > 
+> > Patches [6/23] and [7/23] touch ext4, f2fs, btrfs, and patch [8/23]
+> > touches erofs, gfs2, and zonefs.
+> > 
+> > The patchset consist of four parts:
+> > - [1..4]: Patches from Parent Pointer patchset which add binary
+> >           xattr names with a few deps
+> > - [5..7]: Improvements to core fs-verity
+> > - [8..9]: Add read path verification to iomap
+> > - [10..23]: Integration of fs-verity to xfs
+> > 
+> > Changes from V1:
+> > - Added parent pointer patches for easier testing
+> > - Many issues and refactoring points fixed from the V1 review
+> > - Adjusted for recent changes in fs-verity core (folios, non-4k)
+> > - Dropped disabling of large folios
+> > - Completely new fsverity patches (fix, callout, log_blocksize)
+> > - Change approach to verification in iomap to the same one as in
+> >   write path. Callouts to fs instead of direct fs-verity use.
+> > - New XFS workqueue for post read folio verification
+> > - xfs_attr_get() can return underlying xfs_buf
+> > - xfs_bufs are marked with XBF_VERITY_CHECKED to track verified
+> >   blocks
+> > 
+> > kernel:
+> > [1]: https://github.com/alberand/linux/tree/xfs-verity-v2
+> > 
+> > xfsprogs:
+> > [2]: https://github.com/alberand/xfsprogs/tree/fsverity-v2
+> 
+> Will there any means for xfs_repair to check the merkle tree contents?
+> Should it clear the ondisk inode flag if it decides to trash the xattr
+> structure, or is it ok to let the kernel deal with flag set and no
+> verity data?
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index fc0734e4fb92..17203e8b865a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -246,10 +246,16 @@ static int __replace_atomic_write_block(struct inode *inode, pgoff_t index,
- 	} else {
- 		blkcnt_t count = 1;
- 
-+		err = inc_valid_block_count(sbi, inode, &count);
-+		if (err) {
-+			f2fs_put_dnode(&dn);
-+			return err;
-+		}
-+
- 		*old_addr = dn.data_blkaddr;
- 		f2fs_truncate_data_blocks_range(&dn, 1);
- 		dec_valid_block_count(sbi, F2FS_I(inode)->cow_inode, count);
--		inc_valid_block_count(sbi, inode, &count);
-+
- 		f2fs_replace_block(sbi, &dn, dn.data_blkaddr, new_addr,
- 					ni.version, true, false);
- 	}
+The fsverity-util can calculate merkle tree offline, so, it's
+possible for xfs_repair to do the same and compare, also it can
+check that all merkle tree blocks are there. The flag without tree
+is probably bad as all reading ops will fail and it won't be
+possible to regenerate the tree (enable also checks for flag).
+
 -- 
-2.36.1
+- Andrey
 
 
 
