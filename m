@@ -4,71 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id CCF4BC7618D
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Apr 2023 11:33:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 15C9BC77B6E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Apr 2023 11:34:12 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pkNsD-0006Ha-7S;
-	Thu, 06 Apr 2023 11:33:48 +0000
+	id 1pkNsY-0005U7-Gq;
+	Thu, 06 Apr 2023 11:34:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1pkNsB-0006HS-Hc
+ (envelope-from <sashal@kernel.org>) id 1pkNsW-0005U1-UK
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Apr 2023 11:33:46 +0000
+ Thu, 06 Apr 2023 11:34:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=rl5tolBVquO/9mY4Wgs7ETt11yXdlHdHk+psTYaiuwA=; b=VBux6+BTo46ZMK2udsiCN5kb3s
- VAIJrlLTCLRwZMAyfJut6+ygbzzCJOQqWS4SWbCfTwTHZfdJ58oEyZxEUKoDQBPkHn7n8hH500JXf
- pt4rAbIUuWe/3yrCvxCfq6MULaKcQ6wdEfn5WgdHLNc92K6rz0OMNRgqYyT/zs7XmPQg=;
+ bh=SrD96Qo4ynCPPalZH76cflngfcobubTBhZZEAl8zvTg=; b=FbzTIvtmvsRodZOrLx1LneEwBl
+ WMeRp5/tBjoSMEQjYvSYUjGcAu9Pv5kUS5WXpB6Bciv+yCZFnFl3GkJ2gvOU69gXPNtH9L66iB4or
+ phNvGHsBuv9Q79Fcp6QScuYXoEBh+1QrNtTJAczWpR/6y1hqKdxtQ8LvX7tyZ4Dp19nU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
  :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=rl5tolBVquO/9mY4Wgs7ETt11yXdlHdHk+psTYaiuwA=; b=K
- DaqJWB275LMGtzeJKPso7qJilASpmc2sDt43eKLhWpVkbJjgtJ9mYgs/XNiGhpceNwnhV0s+VNt5/
- 0+XjYa6uRbELI2488PsCasDfX/V9sQmbAx2NKigjJlN90csemJYX35MqI6YzwO/6j6jyiLr291OJt
- IRw8BEoBTzKIcg8o=;
+ List-Owner:List-Archive; bh=SrD96Qo4ynCPPalZH76cflngfcobubTBhZZEAl8zvTg=; b=K
+ DY1HHOESyGk0+Mx9uzzZy3g8FzfwTC/RrVldaHjN3znwteRQwpURnEihar5d1YqVZSdgA+TLjKB8v
+ zwsx78kw05Nsj6UNJP8v0Or9LnEHhwMTP1gd9yIoVdM6VmlSNXhdR7wCC8EgzWpqSGA9G97pOTx3+
+ JWtsz5iakh81gNTg=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pkNsA-00GoqC-6o for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Apr 2023 11:33:46 +0000
+ id 1pkNsX-00GorP-8s for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 06 Apr 2023 11:34:09 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id CCD2E6465E;
- Thu,  6 Apr 2023 11:33:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95759C433EF;
- Thu,  6 Apr 2023 11:33:39 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id DF05464636;
+ Thu,  6 Apr 2023 11:34:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C4B8C4339B;
+ Thu,  6 Apr 2023 11:34:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1680780820;
- bh=mppVQ5jtT4fSApzqCuxe+7bh5NUmo2Ve9smUeficbsk=;
+ s=k20201202; t=1680780843;
+ bh=FrPrFRzIb80pwqGPPW/9W4CngxldpXYwhVu5k4UI80Q=;
  h=From:To:Cc:Subject:Date:From;
- b=qbq02H56Qhiu1Bd0jTXlPqXSzBgOZUsQIhtAr5dTGCZ4JJSISBo+Z84c20Jh0viHd
- e8uRW6RIISDjddVmLiIG9Bkd8QQoOy5hQrlJl0A7PxK3xnpsl9IEBHiXpK5d+V/DPN
- co95PW96bagKkO9LE5PZjw5NMJ0ZzgTPIDHNA2vimZSXMUMOEQ3lblO603UMumr8j+
- cA29DDzW9QQQxKMBqKyEdpFiyny75UCbEZg4dwKtQc/z5elfLNbSGiqYbdOWx2KtPO
- LL61WjHRB19jwn+J9FKk7rSwlLwxpLRqNJWmGUKQUDqlpbargclxUlErXDTFx2sgqm
- 4SiaK40KkXtWw==
+ b=sYnM4NjzMbhILoUjrkvIKXnYDQlisejccKwGKyuExp+d35Y/K2HLxIH9aNsf9CILI
+ m9tVgx+o4O0CA+1K8e94Rq6KdehFLnUJdNlhibf2gDUKL1hKXwGKJ9Z6qMeIQrWssS
+ ucu7Mf01HqgevsqxmTkIkYdZn+jbo9LgkmG3ILGenFl9yjQndW63e80e/xRbsVulfy
+ eKcu7QHc6TaJXtNLu7Jqx7wAvOt1cJnP7SmJ3m+SyRwVX2pjXqjr6CZw4gUe4bpfvw
+ /v0eLR33jW3RX8S51Xn8BtUzVhfRQNrqOz2JbSpR4PxISm/SlU3qfapkNd25Veur+9
+ fae+mtL1WfkVg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Date: Thu,  6 Apr 2023 07:33:29 -0400
-Message-Id: <20230406113337.648916-1-sashal@kernel.org>
+Date: Thu,  6 Apr 2023 07:33:53 -0400
+Message-Id: <20230406113400.649038-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-Headers-End: 1pkNsA-00GoqC-6o
-Subject: [f2fs-dev] [PATCH AUTOSEL 5.4 1/9] f2fs: Fix
+X-Headers-End: 1pkNsX-00GorP-8s
+Subject: [f2fs-dev] [PATCH AUTOSEL 4.19 1/8] f2fs: Fix
  f2fs_truncate_partial_nodes ftrace event
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -116,10 +116,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index a7613efc271ab..88266a7fbad26 100644
+index 52e6456bdb922..098d6dff20bef 100644
 --- a/include/trace/events/f2fs.h
 +++ b/include/trace/events/f2fs.h
-@@ -499,7 +499,7 @@ TRACE_EVENT(f2fs_truncate_partial_nodes,
+@@ -498,7 +498,7 @@ TRACE_EVENT(f2fs_truncate_partial_nodes,
  	TP_STRUCT__entry(
  		__field(dev_t,	dev)
  		__field(ino_t,	ino)
