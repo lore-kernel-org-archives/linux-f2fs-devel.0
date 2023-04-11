@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 97519C77B6F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Apr 2023 17:00:28 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CE36DC77B73
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 11 Apr 2023 17:00:29 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pmHM5-0001Sz-1I;
-	Tue, 11 Apr 2023 17:00:28 +0000
+	id 1pmHM5-0008LW-00;
+	Tue, 11 Apr 2023 17:00:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pmHM3-0001Sq-Sv
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pmHM3-0008L8-4G
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 11 Apr 2023 17:00:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,55 +23,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RVxWB6Zsi+PGtuUD0LBpMZrqMhViABP5NX8k44//cmk=; b=nIvjjPrsOY+uTqTw2lbejd2hbR
- LoQ8D+CReB+I0N4hdJ0ADhEH/SnZbWCSYH6m1pdW4Kc1HxxKdi/uDZ6m/Xt/zrxbd9JNf+RVQuoKv
- 9H1HWtfcBHK71w4Bm+qdf1cJ5r3MRiYOlBU89xhcKatPYqx4vhM92wZSVa29lT5BKtdo=;
+ bh=F2IKzThatDxKaIPPYtkdupSxSWmO19y+aP5HP5MDzFU=; b=iDVEgjBi08qs9KQxiMmFhDjUwo
+ +6AM2OHWlIe71d47Fyz7S76I6hR/g/7JeMRhwRCzsrr9XIooVOAbnPfLYu61jIVyoVnmDfvVM7vAs
+ ZTs0rRnHs8y6UBNiwx2WIpFWU+2FELpTOVc8tEuTrDhXw0Q2LMHktrPvE4kBasvqQfgE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=RVxWB6Zsi+PGtuUD0LBpMZrqMhViABP5NX8k44//cmk=; b=gDoTK9bhDm8yqSoOYPHJl8LMTB
- 7ZHdDVu419V6qfxtfxUXM/lphNLVcAN7Jizn6hvjr8lEcwuXZG8La9ZzOQVreT8nBCqHSGDrkDoiE
- Syw9Q3Yh+Kwt9jAi6zDsbjpwF4odQbQz1MLvhQSiJvd8mPOzcNUxyBj1SznuuaPai0rk=;
+ bh=F2IKzThatDxKaIPPYtkdupSxSWmO19y+aP5HP5MDzFU=; b=ftXUEhxi6cPKFDdOlUuteNFVtn
+ 90mEi8YXogADd8S9ZKsorZMOAd9QKt5Y0Ec326hU3YgkBMNHZE6nPu8ugYMzEGsbwRXn729hr4PL4
+ O6xvdvfG90i9CtG1YU19Po1rD5+MN8e7LaWfGiQ8lHmq7BtNEQCxwF7uYLYQEGklcFQw=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pmHM2-0005Ch-FK for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 11 Apr 2023 17:00:26 +0000
+ id 1pmHM2-004G75-GN for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 11 Apr 2023 17:00:27 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 1B4B7629AD
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 250B4629B0
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Tue, 11 Apr 2023 17:00:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 053ADC433A0;
- Tue, 11 Apr 2023 17:00:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 11FE9C433A7;
+ Tue, 11 Apr 2023 17:00:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1681232420;
- bh=y0sC1maeF6BaZCVKP2Dpae2MYRm6bDMWSoxaogWa0tw=;
+ bh=aJirYYVnV507CuqdHFL9yYz35QVzF4kkQPhyKYjmd94=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=Mu0Y+nL2v52Anxuw8M7kClUMoXtEdnoJ0tC7PXlRgKOG/GIIKEzqpAAHcR/YlBEDE
- oDbCqh45+oxLslZL/sU0YUoh561I/rKLGuMvXPJpW5gV8ysxQIqfOPlC97Y89+Jze9
- 9rBlfZ77FyZ3tTTnvThj+6A5tzuQaiwH+1/cDtYAnrbLQ0hu82dCu9YDQVf5hCIjy1
- P63DHgOoSuJGs/CNu+ZkHT6t4juchCJZPanngquwV7gTeq9LPemJVaUxTXJ4MnlxV3
- Yo16NwKW8DgSlE2/m5HvQFNEWbmYKBs+DXBIshczsWl5INcr3cldZ+oII7ygM7ARlJ
- 2/0W9RkcyPUKQ==
+ b=nk6jCMDRQOZ12KevU/XEk6UfbS8sZsm08gwJLobFPYj9YjVSnWXcNnOXZjoEHGJEo
+ qK0AVOX6ShPpnPSHhmME56aQpIDcB62I4ITy0bop9tEMR/oqWU6izNqMktTE1z/XfO
+ sc9MhpOoq4UXMph6YyLI7CdGXaYEvof7HP68YWsq1oLG58cD6e12HcPG0t7LVh7XnJ
+ YY7zVQUue9d9/Pb9wVFRL51CkR/hXw5Rl2VnE9B2k+CkuPWPK7sk0db5qZMqSz/HR5
+ qMFzh1QOOwyUxvO+HepHgei65BbibdSX4RnGjM/imFPA2Qdl8r2c+AiZsbuHrm+pDc
+ MCe1THivk+jDw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- CE94DE52447; Tue, 11 Apr 2023 17:00:19 +0000 (UTC)
+ DF9BBE52449; Tue, 11 Apr 2023 17:00:19 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168123241984.4928.10498593969347479726.git-patchwork-notify@kernel.org>
+Message-Id: <168123241991.4928.7987013426639567312.git-patchwork-notify@kernel.org>
 Date: Tue, 11 Apr 2023 17:00:19 +0000
-References: <20230410021722.1836433-1-chao@kernel.org>
-In-Reply-To: <20230410021722.1836433-1-chao@kernel.org>
+References: <20230410022012.1839127-1-chao@kernel.org>
+In-Reply-To: <20230410022012.1839127-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1pmHM2-0005Ch-FK
-Subject: Re: [f2fs-dev] [PATCH] f2fs: use f2fs_hw_is_readonly() instead of
- bdev_read_only()
+X-Headers-End: 1pmHM2-004G75-GN
+Subject: Re: [f2fs-dev] [PATCH] f2fs: remove unneeded in-memory i_crtime copy
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,22 +93,20 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 10 Apr 2023 10:17:22 +0800 you wrote:
-> f2fs has supported multi-device feature, to check devices' rw status,
-> it should use f2fs_hw_is_readonly() rather than bdev_read_only(), fix
-> it.
+On Mon, 10 Apr 2023 10:20:12 +0800 you wrote:
+> i_crtime will never change after inode creation, so we don't need
+> to copy it into f2fs_inode_info.i_disk_time[3], and monitor its
+> change to decide whether updating inode page, remove related stuff.
 > 
-> Meanwhile, it removes f2fs_hw_is_readonly() check condition in:
-> - f2fs_write_checkpoint()
-> - f2fs_convert_inline_inode()
-> As it has checked f2fs_readonly() condition, and if f2fs' devices
-> were readonly, f2fs_readonly() must be true.
-> 
-> [...]
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/f2fs.h  | 5 +----
+>  fs/f2fs/inode.c | 1 -
+>  2 files changed, 1 insertion(+), 5 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: use f2fs_hw_is_readonly() instead of bdev_read_only()
-    https://git.kernel.org/jaegeuk/f2fs/c/68f0453dabdb
+  - [f2fs-dev] f2fs: remove unneeded in-memory i_crtime copy
+    https://git.kernel.org/jaegeuk/f2fs/c/c277991d7cf0
 
 You are awesome, thank you!
 -- 
