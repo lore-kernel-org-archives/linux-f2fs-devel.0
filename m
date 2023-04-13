@@ -4,73 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1012BC77B6E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Apr 2023 22:57:49 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9109DC77B6F
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Apr 2023 23:40:29 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pn5sw-0006x2-SK;
-	Thu, 13 Apr 2023 22:57:47 +0000
+	id 1pn6YG-0002Oi-IC;
+	Thu, 13 Apr 2023 23:40:27 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1pn5su-0006ww-OD
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pn6YE-0002Ob-Ic
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Apr 2023 22:57:45 +0000
+ Thu, 13 Apr 2023 23:40:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=551suF2aP3jEpvFjtA3sWRHx9GL70pUk/yB3NhTNQ3s=; b=B5jagTXSsi6XKap3WXxLAHq1fe
- nG8HiLQx1q4CINJRATS5v95xrkP4unNvqH/GtEgR3HSMEeaYDQZLu3lQ5GeFbqqjwCCn2NMu3rouW
- ccBNZeZMCPYqbmhDvcDfRKSDNOYc1qk9hLKZeW5MBF9/ssLkAZyIvm6Qqhs2C2LhWW9Y=;
+ bh=2VRMUM/fEb+b8iVjl+mzBrW9pNkoRPu5BTPwcDuA3lY=; b=fAD7gBsZ9Q13bwQVRJuD5iT2Qy
+ /FShuWwBBjuXq0Fpp7bqG1d4HnSiPcYySYYZV/+zmQMNG/1Wbp+LqYEqdnqSqggcdVjDffnypyUcB
+ qpNrejwK0YXqjPa3AOQ9GSC7iQHA/tbkJlDxFOAo2TO3pFNJmZrMUs5H1emf++Oq0VQU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:To:
- From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=551suF2aP3jEpvFjtA3sWRHx9GL70pUk/yB3NhTNQ3s=; b=YKB8cudRqbJF4ARQapuhA23DyB
- MMRLaDE3wUnHOPP5c0JFrMMif/M3gcSaN9wVJKSSbqqgTO4GjcaeD8yGh+e7Fg72UxRv+ixZDGsdS
- EZmsTNeuaBO1m/1bKUrhUP2gIHfFRuytRG22hgWzs9ecvyy42KP52z2VMfIOB+ArvCt0=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=2VRMUM/fEb+b8iVjl+mzBrW9pNkoRPu5BTPwcDuA3lY=; b=V9SBenrFVDWlD2zWcPIn9+Blaj
+ Xv2pK+B03sltTwop+yVTqDz+q5vppUaHwGo9W488qZmcrkV1cPv7iljxlp7rR/nLtRG4U5jo5jvUb
+ rVbAO9eLLicgdFWbtFObJvO4+ae8E3bkN7MSSkSChMUANvM5Ejrz/JaATBmicdsxZ+I0=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pn5su-0004BU-AC for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Apr 2023 22:57:45 +0000
+ id 1pn6YD-0005Mx-3j for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 13 Apr 2023 23:40:25 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 4640B6423F
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 13 Apr 2023 22:57:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F824C433EF;
- Thu, 13 Apr 2023 22:57:33 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 9B1E064290;
+ Thu, 13 Apr 2023 23:40:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E75B2C4339C;
+ Thu, 13 Apr 2023 23:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1681426653;
- bh=x7b+Gqwia9nwQPurGo1PiKBlq7AFL1pSBWAxh/Cpgyg=;
- h=Date:From:To:Subject:References:In-Reply-To:From;
- b=tjAIfaZax4RCdqsATQy/LN/YWan6GFvPdNVaR55vDE//yQu0SVc61ZRRcz/stgFTC
- B/TNEk2Y6vvrxDoofcihPNmuznP3ESOOu+/qdhSfALB4QwgFeFZ56mG6bk8TPkzcuO
- KKhvkmWl5GjXKsRGvCf4FFaCVImtBPVJlJe/mmQDmH0EHmpEHUFL/Xnso28fl1Zu/m
- eWQa/wQOU2KUbAG7N0ORSZTd9tFavsXtTrlKbhYddjyRSp7clPhjAe4HCbq5E6p+Wt
- Yt5SYsoMrGxfmei10PO0o53VEphCKNZ6YE83SvgfVJV/WIz7Yr9fBW7Tw8y5mawn1a
- mJZkDA0CSPqJA==
-Date: Thu, 13 Apr 2023 15:57:31 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Message-ID: <ZDiI2ypb3FECoSK9@google.com>
-References: <20230407181539.4136580-1-jaegeuk@kernel.org>
- <ZDbZlwH5u3/nOTwL@google.com>
+ s=k20201202; t=1681429218;
+ bh=FCdRLP1bIR+b34FlLmWhChicvm3dOWNEYQM95/2rJzI=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=UgoR/eWJp0y4mA7FQrMKBtN466m9+67oim9i99p58jj1ykz6+P2p0KBASkr8QKhjp
+ RWhHbBl4pHY0/B4QgYdIXrzioRPffnVBLBEQKBNBilqEOSr2lV1p/cSsiKaR5Ts9RH
+ 1xVlBHHrWZzJQ+sCNznIJ46vHW9narnU0oLw2Rd69qqbwr9lINqKpjzxIs6jiZMeGV
+ Fd2QkAb4Ob1TCzyTKeUCtMTl6hdiETxgCXQdbPbkTe7BL26HvGMO++madyBXsAzROm
+ 4NBWanZrOmK5EkionVi86Gfofn8n3hPPVlJcbkqL761slnrQFlJQYjjH1wn5w0LSJd
+ E+m+Y/yrU/ouw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ BEF9BE4F0B3; Thu, 13 Apr 2023 23:40:18 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <ZDbZlwH5u3/nOTwL@google.com>
-X-Headers-End: 1pn5su-0004BU-AC
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: relax sanity check if checkpoint is
- corrupted
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <168142921877.31957.15174753111449147359.git-patchwork-notify@kernel.org>
+Date: Thu, 13 Apr 2023 23:40:18 +0000
+References: <20230404143832.18234-1-frank.li@vivo.com>
+In-Reply-To: <20230404143832.18234-1-frank.li@vivo.com>
+To: Yangtao Li <frank.li@vivo.com>
+X-Headers-End: 1pn6YD-0005Mx-3j
+Subject: Re: [f2fs-dev] [PATCH] f2fs: remove batched_trim_sections node
+ description
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,109 +82,35 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-1. extent_cache
- - let's drop the largest extent_cache
-2. invalidate_block
- - don't show the warnings
+Hello:
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
- change log from v1:
-  - cover f2fs_read_multi_pages
+On Tue,  4 Apr 2023 22:38:31 +0800 you wrote:
+> It's deprecated since commit 377224c47118 ("f2fs: don't split checkpoint
+> in fstrim").
+> 
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  Documentation/ABI/testing/sysfs-fs-f2fs | 6 ------
+>  1 file changed, 6 deletions(-)
 
- fs/f2fs/checkpoint.c   | 10 ++++++++++
- fs/f2fs/data.c         |  4 ++++
- fs/f2fs/extent_cache.c | 22 +++++++++++++++-------
- 3 files changed, 29 insertions(+), 7 deletions(-)
+Here is the summary with links:
+  - [f2fs-dev] f2fs: remove batched_trim_sections node description
+    https://git.kernel.org/jaegeuk/f2fs/c/abae448626a2
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 448ecf5000b8..64b3860f50ee 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -152,6 +152,11 @@ static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr,
- 	se = get_seg_entry(sbi, segno);
- 
- 	exist = f2fs_test_bit(offset, se->cur_valid_map);
-+
-+	/* skip data, if we already have an error in checkpoint. */
-+	if (unlikely(f2fs_cp_error(sbi)))
-+		return exist;
-+
- 	if (exist && type == DATA_GENERIC_ENHANCE_UPDATE) {
- 		f2fs_err(sbi, "Inconsistent error blkaddr:%u, sit bitmap:%d",
- 			 blkaddr, exist);
-@@ -202,6 +207,11 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- 	case DATA_GENERIC_ENHANCE_UPDATE:
- 		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
- 				blkaddr < MAIN_BLKADDR(sbi))) {
-+
-+			/* Skip to emit an error message. */
-+			if (unlikely(f2fs_cp_error(sbi)))
-+				return false;
-+
- 			f2fs_warn(sbi, "access invalid blkaddr:%u",
- 				  blkaddr);
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f21e3aaa2474..8df225014304 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2237,6 +2237,10 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
- 	if (ret)
- 		goto out;
- 
-+	if (unlikely(f2fs_cp_error(sbi))) {
-+		ret = -EIO;
-+		goto out_put_dnode;
-+	}
- 	f2fs_bug_on(sbi, dn.data_blkaddr != COMPRESS_ADDR);
- 
- skip_reading_dnode:
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 9a8153895d20..bea6ab9d846a 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -23,18 +23,26 @@ bool sanity_check_extent_cache(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	struct extent_tree *et = fi->extent_tree[EX_READ];
- 	struct extent_info *ei;
- 
--	if (!fi->extent_tree[EX_READ])
-+	if (!et)
-+		return true;
-+
-+	ei = &et->largest;
-+	if (!ei->len)
- 		return true;
- 
--	ei = &fi->extent_tree[EX_READ]->largest;
-+	/* Let's drop, if checkpoint got corrupted. */
-+	if (is_set_ckpt_flags(sbi, CP_ERROR_FLAG)) {
-+		ei->len = 0;
-+		et->largest_updated = true;
-+		return true;
-+	}
- 
--	if (ei->len &&
--		(!f2fs_is_valid_blkaddr(sbi, ei->blk,
--					DATA_GENERIC_ENHANCE) ||
--		!f2fs_is_valid_blkaddr(sbi, ei->blk + ei->len - 1,
--					DATA_GENERIC_ENHANCE))) {
-+	if (!f2fs_is_valid_blkaddr(sbi, ei->blk, DATA_GENERIC_ENHANCE) ||
-+	    !f2fs_is_valid_blkaddr(sbi, ei->blk + ei->len - 1,
-+					DATA_GENERIC_ENHANCE)) {
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		f2fs_warn(sbi, "%s: inode (ino=%lx) extent info [%u, %u, %u] is incorrect, run fsck to fix",
- 			  __func__, inode->i_ino,
+You are awesome, thank you!
 -- 
-2.40.0.634.g4ca3ef3211-goog
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
 
