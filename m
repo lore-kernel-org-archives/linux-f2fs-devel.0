@@ -4,73 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AD582C77B6E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Apr 2023 23:40:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 740CEC77B6E
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 14 Apr 2023 01:19:12 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pn6YN-0007mt-1w;
-	Thu, 13 Apr 2023 23:40:34 +0000
+	id 1pn85k-0003SN-Sg;
+	Fri, 14 Apr 2023 01:19:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pn6YK-0007mV-Qa
+ (envelope-from <chao@kernel.org>) id 1pn85j-0003SH-OV
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Apr 2023 23:40:31 +0000
+ Fri, 14 Apr 2023 01:19:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vL/80rbqW1MiaNbJyd6RmbqNI7drkpnby40HFmfoBEg=; b=kANsyCXUdcMyn7qVr2JDAtoEsB
- 6yQ6nNta6PrR7ogRNrMSwWtIWHsOpBhJ/Apz8AWS4WaI5ZVISxaQpfwVavE8LgBEqfb36hPquW0E7
- pm2yy6C53aXL8G07gk4xFTV8ZjNlvh6pxxy9/FlgEuNG9Xat7MrBvuTt9zUmh7a8bBIY=;
+ bh=rSpoj5UqM4hBtoQ/OM+hiWV88Sord4Iu7w33wlTHFQM=; b=PQF1bNR8GWufKAmsOCUam4zZUQ
+ VYTZJfSwZiyqIhWed8ckp1KXvO7MSKkkMEIfAwbkWC0xusAVCrYAJAq70eEdeNbh5Y9SWu8DIOKSw
+ v6BzeWESP4StYknuCZSfRsh3+UdQ0gXVBIa2CAOFkdZeLoGV4X8Ch1nIuMHkyLUPTa/E=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vL/80rbqW1MiaNbJyd6RmbqNI7drkpnby40HFmfoBEg=; b=TTwMI8nc4LxuhJxCJVOskWhe78
- VOruTBuynvZie3aGG3chnaLcPa/QIWThxvTgZBbwKd2fuSrg+HZVnbjkqVOxQBUj0yPvEvqy96Hdc
- 2lzfKtNoKdBNtNJdMMZbYYwH6bPVuD2ffyZbX599AB1J0hYCwVDZOfuZn+H9cBgYYJY4=;
+ ;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=rSpoj5UqM4hBtoQ/OM+hiWV88Sord4Iu7w33wlTHFQM=; b=BHOLbXknPZ52KMOck8jxHL+ByR
+ o0zGTinoFuc7qYXkluT8+rETQr0/ZeNFuBczEcHe822hKFDqXNiz1sEdreHbAhRdGTv8K9N02kP1H
+ jkPtZ/FVKJitc398dC8ye5KAYLmtiy09XNFjtHpb+w8MuMzmczeBDLnosSo+vtgkwhfQ=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pn6YJ-006ztU-A7 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Apr 2023 23:40:31 +0000
+ id 1pn85i-0001KZ-5F for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 14 Apr 2023 01:19:06 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 614436429C;
- Thu, 13 Apr 2023 23:40:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F3324C433A0;
- Thu, 13 Apr 2023 23:40:18 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 92C82642A0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 14 Apr 2023 01:19:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA50CC433D2;
+ Fri, 14 Apr 2023 01:18:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1681429219;
- bh=y1tsCDiR9PB0QaZqwPHvaqN4LWmaz9Wyb/y9A7Tkf5Q=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=ZE0jiYJYP3cQM56F74mfHvqsS8Bkl2etzHgJ+mhyvwgEFuNYXzWCXxabfjm8Up+tu
- amXve31PQc2ZY+SKmEDoaDyRkR+MkD8lqU4+WTNTC6GXiOhUNTn+VPmtpNr+Y1UEaW
- 2yeipsDYoiTcpA10S2vkDWsubTSGQK3euLBKDn+6CVG4//QNhRCApbsLmaf/Dy7k2i
- swIRPhPMKGAJ2VXrcu6FdFwJEPP+Hf/WOjFyWXXDN1zBBhp2+ztgODOWDUPzICGTYl
- 4OPGgAMJSyqsejovCPxp5PrYhddY16ob788ybkaUKzBNEiAQH7RPcIOYxyaATYqqES
- y9QuQUC7AlEmw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- D0646E52505; Thu, 13 Apr 2023 23:40:18 +0000 (UTC)
+ s=k20201202; t=1681435139;
+ bh=GpyqswlkR5WgrTmui+S0AaHMMIflP1m47uRsisRn0N8=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=ShgZ2Hz3viX7fEiwFXbfXEECNWNK4RBYOS83qbbUxpdPNS93Dt2xOlHESUPGZGC//
+ JvfNDB+AfGphfTPIILlzD23Wo3p65QyMmDBP5PPQvgj9Bu0zqroC0l0TIATtNVHB55
+ 7gEBRjiGKQPqI8jZztu9HPVtZeTg0jtfzL/IlZHImvNxM8KRVk5/Je2c6GnrYLPWIx
+ eryiiQ10XyLT97bBBZD7/Sv/cXXt/P+qIl5rPnt/AaJS177GieGs22grSdIRUhtVsX
+ KOmpYpTLYsZwJHGQntdFFbBHkoYU4RIhp0ohMqOEt8juzOck3g0JQpofG9mDK1zGHm
+ oXN5pvFBi8/lw==
+Message-ID: <9e77c30c-0770-6cb7-cb75-2e22bc52b8d2@kernel.org>
+Date: Fri, 14 Apr 2023 09:18:56 +0800
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168142921884.31957.17494916129948763212.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Apr 2023 23:40:18 +0000
-References: <20230405144536.930370-1-chao@kernel.org>
-In-Reply-To: <20230405144536.930370-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1pn6YJ-006ztU-A7
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to check return value of
- inc_valid_block_count()
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20230407181539.4136580-1-jaegeuk@kernel.org>
+ <ZDbZlwH5u3/nOTwL@google.com>
+ <82ecc91f-a739-4744-29da-227daf5e45a2@kernel.org>
+ <ZDglMgnxctYzMNnr@google.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZDglMgnxctYzMNnr@google.com>
+X-Headers-End: 1pn85i-0001KZ-5F
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: relax sanity check if checkpoint is
+ corrupted
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,39 +86,109 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- daehojeong@google.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Wed,  5 Apr 2023 22:45:36 +0800 you wrote:
-> In __replace_atomic_write_block(), we missed to check return value
-> of inc_valid_block_count(), for extreme testcase that f2fs image is
-> run out of space, it may cause inconsistent status in between SIT
-> table and total valid block count.
+On 2023/4/13 23:52, Jaegeuk Kim wrote:
+> On 04/13, Chao Yu wrote:
+>> On 2023/4/13 0:17, Jaegeuk Kim wrote:
+>>> 1. extent_cache
+>>>    - let's drop the largest extent_cache
+>>> 2. invalidate_block
+>>>    - don't show the warnings
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>
+>>>    Change log from v1:
+>>>     - add one more case to skip the error message
+>>>
+>>>    fs/f2fs/checkpoint.c   | 10 ++++++++++
+>>>    fs/f2fs/extent_cache.c | 22 +++++++++++++++-------
+>>>    2 files changed, 25 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>> index 448ecf5000b8..64b3860f50ee 100644
+>>> --- a/fs/f2fs/checkpoint.c
+>>> +++ b/fs/f2fs/checkpoint.c
+>>> @@ -152,6 +152,11 @@ static bool __is_bitmap_valid(struct f2fs_sb_info *sbi, block_t blkaddr,
+>>>    	se = get_seg_entry(sbi, segno);
+>>>    	exist = f2fs_test_bit(offset, se->cur_valid_map);
+>>> +
+>>> +	/* skip data, if we already have an error in checkpoint. */
+>>> +	if (unlikely(f2fs_cp_error(sbi)))
+>>> +		return exist;
+>>> +
+>>>    	if (exist && type == DATA_GENERIC_ENHANCE_UPDATE) {
+>>>    		f2fs_err(sbi, "Inconsistent error blkaddr:%u, sit bitmap:%d",
+>>>    			 blkaddr, exist);
+>>> @@ -202,6 +207,11 @@ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+>>>    	case DATA_GENERIC_ENHANCE_UPDATE:
+>>>    		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
+>>>    				blkaddr < MAIN_BLKADDR(sbi))) {
+>>> +
+>>> +			/* Skip to emit an error message. */
+>>> +			if (unlikely(f2fs_cp_error(sbi)))
+>>> +				return false;
+>>> +
+>>>    			f2fs_warn(sbi, "access invalid blkaddr:%u",
+>>>    				  blkaddr);
+>>>    			set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+>>> index 9a8153895d20..bea6ab9d846a 100644
+>>> --- a/fs/f2fs/extent_cache.c
+>>> +++ b/fs/f2fs/extent_cache.c
+>>> @@ -23,18 +23,26 @@ bool sanity_check_extent_cache(struct inode *inode)
+>>>    {
+>>>    	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>>>    	struct f2fs_inode_info *fi = F2FS_I(inode);
+>>> +	struct extent_tree *et = fi->extent_tree[EX_READ];
+>>>    	struct extent_info *ei;
+>>> -	if (!fi->extent_tree[EX_READ])
+>>> +	if (!et)
+>>> +		return true;
+>>> +
+>>> +	ei = &et->largest;
+>>> +	if (!ei->len)
+>>>    		return true;
+>>> -	ei = &fi->extent_tree[EX_READ]->largest;
+>>> +	/* Let's drop, if checkpoint got corrupted. */
+>>> +	if (is_set_ckpt_flags(sbi, CP_ERROR_FLAG)) {
+>>> +		ei->len = 0;
+>>> +		et->largest_updated = true;
+>>
+>> Thsi field indicates whether it is needed to update largest extent into
+>> inode page, since cp_error is unrecoverable, it seems we don't needed to
+>> update it.
 > 
-> Cc: Daeho Jeong <daehojeong@google.com>
-> Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> Intention is to avoid any assumption like that, but sync the same logic when
+> updating this.
+
+Sure, fine to me.
+
+Reviewed-by: Chao Yu <chao@kernel.org>
+
+Thanks,
+
 > 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to check return value of inc_valid_block_count()
-    https://git.kernel.org/jaegeuk/f2fs/c/935fc6fa6466
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+>>
+>> Thanks,
+>>
+>>> +		return true;
+>>> +	}
+>>> -	if (ei->len &&
+>>> -		(!f2fs_is_valid_blkaddr(sbi, ei->blk,
+>>> -					DATA_GENERIC_ENHANCE) ||
+>>> -		!f2fs_is_valid_blkaddr(sbi, ei->blk + ei->len - 1,
+>>> -					DATA_GENERIC_ENHANCE))) {
+>>> +	if (!f2fs_is_valid_blkaddr(sbi, ei->blk, DATA_GENERIC_ENHANCE) ||
+>>> +	    !f2fs_is_valid_blkaddr(sbi, ei->blk + ei->len - 1,
+>>> +					DATA_GENERIC_ENHANCE)) {
+>>>    		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>    		f2fs_warn(sbi, "%s: inode (ino=%lx) extent info [%u, %u, %u] is incorrect, run fsck to fix",
+>>>    			  __func__, inode->i_ino,
 
 
 _______________________________________________
