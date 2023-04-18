@@ -4,74 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D9C1CC77B76
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 17 Apr 2023 21:50:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1BAD0C77B72
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 18 Apr 2023 00:41:04 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1poWjy-0002dg-1Z;
-	Mon, 17 Apr 2023 21:50:26 +0000
+	id 1poZP4-0007Qo-6L;
+	Tue, 18 Apr 2023 00:41:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1poWjw-0002da-QG
+ (envelope-from <jaegeuk@kernel.org>) id 1poZP3-0007Qi-8m
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Apr 2023 21:50:25 +0000
+ Tue, 18 Apr 2023 00:41:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=t23P3nOj4MSkHPbbedko9m7lNnNkqMqoGx0SkNgp+Co=; b=FeNLNG/Ws6m6UWfqDoM2Ps0xG5
- 4vrKwN68jz9RNKSSn4Jo3joq+osFK9VRgH97e/rCGiQK30Z5asvcylYTBYbK1aKkIb/yR7iuaKND7
- S6Z6pP21ujLj59Jwd0M+heMCtMWWm1PDiwtA0kHbz8tL4qGGB8RTytd9uThQiN2Yv5c8=;
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=+Eo+JWun+Qgz3N9AiZy12Naydujuhu5225U+6bNxpVg=; b=MwEnOooEyUDeHjH3/lYDRdpYPO
+ 6AbxLCvNsMkFV0GqYKikYFzn0vUnvkv6g82n2u/4JBnP1ogiEhWsFHGlioBJC6ya1qlauod486AkX
+ wmxnI9OLKCMPOXabKWRTikGSaEgjJKjGAD0QuV/R/LqFkT15twmVA9DF0CC3vRIW1C7A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
  Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=t23P3nOj4MSkHPbbedko9m7lNnNkqMqoGx0SkNgp+Co=; b=F
- Hqbs+OsPdkgAstwz4CZQwB4pU2sii3DG6NvV9GIQBXW8fAaYkUmvQz0S2YNMSnHA51pIZxuuOEHuq
- T/eRSg8rcOTgVoWykEFJWdPaXWN11/D/Fn1Ks05s1H2+iV7o/XaxbFOZZw5vWZYlE+2QhozNjTrGc
- 6CmpfgpBLrp08ePM=;
+ List-Owner:List-Archive; bh=+Eo+JWun+Qgz3N9AiZy12Naydujuhu5225U+6bNxpVg=; b=l
+ Mdr6Uxb0EAfHMY/piVsRPxsFWQbyaxbKLy0QoCVOezmW9b2QuHbatRplecLeX2eGA9DdSvLCmNCI8
+ ViPc3E7o3kWrKo+F5oJDQAZ57dkQ7EGWbO2wVG1cW7S9W4H3kl7tEuVxqlDt7KiQzfiAvhNBHksiu
+ EZvDhq8GjO+6FzQo=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1poWjw-0000J6-Fv for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 17 Apr 2023 21:50:25 +0000
+ id 1poZP1-00AzO9-Nn for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 18 Apr 2023 00:41:00 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 206E46221C
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 1E22A62B68
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 17 Apr 2023 21:50:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7F7F7C433D2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 17 Apr 2023 21:50:18 +0000 (UTC)
+ Tue, 18 Apr 2023 00:40:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C10C433D2;
+ Tue, 18 Apr 2023 00:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1681768218;
- bh=sIA9k2HVWA9muvhFAP7i9dy+/hinp3DpZB5U6zu5fOw=;
- h=Subject:From:Date:To:From;
- b=g8S3qVOauqCMlT/75b4TOnwt5mKhMu/Jr23+pHO1InBKsVc/Wwm8i9+pnHRKlgfCx
- pnznJBnGyr9qH8HNpJprNqaxXl+HmLmaiVvE2IaFVBg63YtqaxbiJQLJdMXRouXUgf
- +A7QntuaC1Ce19b7LnhuA9i8c7poJTTI8DGIAyn3MSItFyk95DadPmxdnH17X93nU8
- /BAIv0NI32pBPG+Hjfr7Y0cnb8kx2imL6pbmVXBjDHoySfISJKgVdjIfbepVOQvznv
- ErGux9+i36hWscYEcMIK2srOEMbJcaaIiG1hZfmwuEcDXhnhCDXkQ2tVRMMj0nj6+e
- ZjgVHlwaSA8FQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 61BE2C395C8 for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 17 Apr 2023 21:50:18 +0000 (UTC)
+ s=k20201202; t=1681778450;
+ bh=Krcthgy/LtBAbgtwEWXCvP7D8f3/FPztsZJremvZ+pc=;
+ h=From:To:Cc:Subject:Date:From;
+ b=AKN4e+dc/NrZ1J0iY7FvCl3YxkSnnDvmqDcQmi9dHi0r90pQUbEvY1N8Oi+AgT+yW
+ 8JJ82dqNVEkZrDqenv7WTZn+L9QptitG+lZ8XsWMsQr1zu9PodE1lyKO+V9CO2rnPA
+ 3KgNF3Nh4ItUAFjvDbKlr6WjgZr8b3zHpXLBmwMMuaNJpPPSWtAWqrbKbeKKelQQAJ
+ bAWKAtL2NagrCrRZwUP1L3NWd5KVr8omIecC0dfdQsOKGT2RWpDSDnslxM1VfoSjRI
+ pp9QSSFuQKCfDYNWoI2a0621GBUtHC+Ap2gSnPzvJSeeE2u41VMzhRm7d82dykff0v
+ aiHnZPqgOMkiw==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Date: Mon, 17 Apr 2023 17:40:49 -0700
+Message-ID: <20230418004049.3262659-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.40.0.634.g4ca3ef3211-goog
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168176821834.10429.7775331406595503524.git-patchwork-summary@kernel.org>
-Date: Mon, 17 Apr 2023 21:50:18 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1poWjw-0000J6-Fv
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+X-Headers-End: 1poZP1-00AzO9-Nn
+Subject: [f2fs-dev] [PATCH] f2fs: remove power-of-two limitation fo zoned
+ device
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,28 +80,88 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+In f2fs, there's no reason to force po2.
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h    | 3 +--
+ fs/f2fs/gc.c      | 2 +-
+ fs/f2fs/segment.c | 2 +-
+ fs/f2fs/super.c   | 7 +------
+ 4 files changed, 4 insertions(+), 10 deletions(-)
 
-Patch: [f2fs-dev] f2fs: remove bulk remove_proc_entry() and unnecessary kobject_del()
-  Submitter: Yangtao Li <frank.li@vivo.com>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=737752
-  Lore link: https://lore.kernel.org/r/20230406191629.63024-1-frank.li@vivo.com
-
-
-Total patches: 1
-
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6cae94d51821..d8cb1dc09f9f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1523,7 +1523,6 @@ struct f2fs_sb_info {
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+-	unsigned int log_blocks_per_blkz;	/* log2 F2FS blocks per zone */
+ #endif
+ 
+ 	/* for node-related operations */
+@@ -4377,7 +4376,7 @@ F2FS_FEATURE_FUNCS(readonly, RO);
+ static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+ 				    block_t blkaddr)
+ {
+-	unsigned int zno = blkaddr >> sbi->log_blocks_per_blkz;
++	unsigned int zno = blkaddr / sbi->blocks_per_blkz;
+ 
+ 	return test_bit(zno, FDEV(devi).blkz_seq);
+ }
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index a6a0dc471b74..d69b5c7544eb 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -2094,7 +2094,7 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
+ 				(long long)FDEV(last_dev).end_blk + blks;
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 		FDEV(last_dev).nr_blkz = (int)FDEV(last_dev).nr_blkz +
+-					(int)(blks >> sbi->log_blocks_per_blkz);
++					(int)(blks / sbi->blocks_per_blkz);
+ #endif
+ 	}
+ }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index c35476b3c075..641bd8cc54da 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2075,7 +2075,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ 
+ 		if (force && start >= cpc->trim_start &&
+ 					(end - 1) <= cpc->trim_end)
+-				continue;
++			continue;
+ 
+ 		/* Should cover 2MB zoned device for zone-based reset */
+ 		if (!f2fs_sb_has_blkzoned(sbi) &&
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4e53b1100b84..5e4cd0249ffd 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3806,12 +3806,7 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
+ 				SECTOR_TO_BLOCK(zone_sectors))
+ 		return -EINVAL;
+ 	sbi->blocks_per_blkz = SECTOR_TO_BLOCK(zone_sectors);
+-	if (sbi->log_blocks_per_blkz && sbi->log_blocks_per_blkz !=
+-				__ilog2_u32(sbi->blocks_per_blkz))
+-		return -EINVAL;
+-	sbi->log_blocks_per_blkz = __ilog2_u32(sbi->blocks_per_blkz);
+-	FDEV(devi).nr_blkz = SECTOR_TO_BLOCK(nr_sectors) >>
+-					sbi->log_blocks_per_blkz;
++	FDEV(devi).nr_blkz = SECTOR_TO_BLOCK(nr_sectors) / sbi->blocks_per_blkz;
+ 	if (nr_sectors & (zone_sectors - 1))
+ 		FDEV(devi).nr_blkz++;
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.40.0.634.g4ca3ef3211-goog
 
 
 
