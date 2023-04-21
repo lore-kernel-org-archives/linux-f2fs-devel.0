@@ -4,76 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9FB9FC77B73
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Apr 2023 02:14:02 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78A76C77B73
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Apr 2023 02:24:08 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ppgHg-0001ag-TS;
-	Fri, 21 Apr 2023 02:14:01 +0000
+	id 1ppgRS-0007Gu-O5;
+	Fri, 21 Apr 2023 02:24:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ppgHe-0001aa-Bu
+ (envelope-from <chao@kernel.org>) id 1ppgRQ-0007Gn-3a
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Apr 2023 02:13:59 +0000
+ Fri, 21 Apr 2023 02:24:06 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3qpcZCJ6nC33oWEoeg01lcLZoIoKn9t2P+rg+71dEDI=; b=JJsCSOlvaJ4QJwLgX5f189npBZ
- WzWoPsZOAfrXe1G4bxv6OwNYoRsx1KYpLZVjUzBLLR6LEbaGSjq2PDOSkb6RF+GOeu9339MZp5vzJ
- 7V6+V/RR70g5APrrLrAnK9dnUfq/rQxzAm91CpFANBswfRBv/KvcbWvQQXh6vyvkYSF0=;
+ bh=mWiYSE+udsapZIJ3lW4VqXWw4CDnYW4ikf0ARXSPZME=; b=MeT/oblEzA+Diw3DEW9x6y3dPA
+ e2OlsO+xp6Usq/KOwWAkJMN8fF2Vkh1kltlbobjUaQxBQosZDJ75A59LRDlHUXTLFWJ1jnmERf8F3
+ VA9YjmRoYw5mikAurEdUm7NQue1ArOskl7ZPDvw+h0r9pvK8B242mD3c8aXR8EnIPeoM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3qpcZCJ6nC33oWEoeg01lcLZoIoKn9t2P+rg+71dEDI=; b=RN5m9UpYCxA095mEMY4jRcifoS
- Q/0hDpLpJz6BrbunHUcpnndOgYOavGIbAiLc0a19gVbOWvWW8u0Q4r6R/bmGH+OmxoKrrCr2NLaeK
- wcMIMmqc9B8x3sn46PO0Yl9B2U4cZIvlT32boqhyoCFoTqfTJD3fTbfa6eC/caKxcanc=;
+ bh=mWiYSE+udsapZIJ3lW4VqXWw4CDnYW4ikf0ARXSPZME=; b=fEAptTSP96CfvwvGCvzN3yg+Ax
+ Zai2r+oAeYIING2D9kDMt0bWra4YdTKupNKt2rNMS9f16LyGMLQFvqyyjMoR+wwF/g3k8nHUbJCYN
+ BgXmXzGxPbDhjS2ck2fMN8g+/o/lsD2yj8ZdrPFYEKkKVUUlYPUG0bgWZ6m+r5MCWqjA=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ppgHe-00E8Mq-Km for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Apr 2023 02:13:59 +0000
+ id 1ppgRP-00E9xo-Ot for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 21 Apr 2023 02:24:04 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 5FEE763B16
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 21 Apr 2023 02:13:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98D8C433EF;
- Fri, 21 Apr 2023 02:13:50 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 6488261516;
+ Fri, 21 Apr 2023 02:23:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FEFCC433D2;
+ Fri, 21 Apr 2023 02:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1682043231;
- bh=GfEnyAq1sJ23EkSIPV78r6qjEZKqFoMaypHu+SvGn38=;
- h=Date:Subject:To:References:From:In-Reply-To:From;
- b=GlW95Jarfr7xQ+vcBeF+RvAOWiaWU11zrAM/eyp15fjn+QnDlVSkF1VoD/1S02+hQ
- usvbYbeUd8174uU0lPXBkbWWKKVjkDhPJUB3Tfoo8yUKJwvWOI/1Fe751BL2SylbTk
- V1DBAIxr062I78XGNVm0Yq4CB2UV776hKxriSNkDYR76zxhiwfCJoWwyW7eO+g89h7
- 9Y8KYW9UBHBUDZ3dm8KMXk6IHLrpWPH2MkayZVyOGDDj1P+s32hVNWvxw3hxVOSZ7B
- nTDBo3LKhYu29wpUwQZQ8XZ+qFIeVV5vooGBFEK9y7HfVPvu7Aq2SWv7hlrlcZ6rjS
- UqninEqfRoNqg==
-Message-ID: <8e8b620f-f14e-ece3-2fc0-7c14869978ec@kernel.org>
-Date: Fri, 21 Apr 2023 10:13:48 +0800
+ s=k20201202; t=1682043837;
+ bh=1Nm5Zb6uJo/S3RC7aYlzD7h6cDUnGH6wY4UXaWEbzPs=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=PPw0tAgskpKmZ3wBuiV3DQzVSL/PFsI7NlcNsk/l/rGRxd5FMaaFab11mduc8ibiu
+ oKMu8YJIINLXmc1TsD7VDpqlXc5MlANpML2MPWJPKQU9/1xzPJBOsxy29h3K9ety/Q
+ JzQLnnlzkw+DYYNgJ+CTPUg54zDtvh8SjrV/bC7v7JbTNe25yePmSJN+gBvkG0UQnA
+ dkfMtbrD8CcqoV22kwdZFW1q5gtBnf56r6HicdRNyu5kK7SsapvN8llL/IOQLo0FZO
+ LEVWhX/7UZjcnYsQ4imHKURgw+IcxRm7HIPXasl5faFJWFc3C5susW0bmOjmAudHih
+ 7zzCEp6Ib5c1w==
+Message-ID: <44ca783a-da8c-aec9-ac35-76acc5475cb9@kernel.org>
+Date: Fri, 21 Apr 2023 10:23:54 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
 Content-Language: en-US
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20230418004049.3262659-1-jaegeuk@kernel.org>
- <ZD69jto/SFPycuHm@google.com>
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20230418175206.3282328-1-daeho43@gmail.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <ZD69jto/SFPycuHm@google.com>
-X-Headers-End: 1ppgHe-00E8Mq-Km
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: remove power-of-two limitation fo
- zoned device
+In-Reply-To: <20230418175206.3282328-1-daeho43@gmail.com>
+X-Headers-End: 1ppgRP-00E9xo-Ot
+Subject: Re: [f2fs-dev] [PATCH] f2fs: use cow inode data when updating
+ atomic write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,18 +83,85 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2023/4/18 23:55, Jaegeuk Kim wrote:
-> In f2fs, there's no reason to force po2.
+On 2023/4/19 1:52, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Need to use cow inode data content instead of the one in the original
+> inode, when we try to write the already updated atomic write files.
+> 
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Miss a fixes line?
 
-Thanks,
+Otherwise it looks good to me.
+
+Thanks
+
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> ---
+>   fs/f2fs/data.c | 15 ++++++++++-----
+>   1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 8df225014304..7165b1202f53 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -3491,7 +3491,7 @@ static int __reserve_data_block(struct inode *inode, pgoff_t index,
+>   
+>   static int prepare_atomic_write_begin(struct f2fs_sb_info *sbi,
+>   			struct page *page, loff_t pos, unsigned int len,
+> -			block_t *blk_addr, bool *node_changed)
+> +			block_t *blk_addr, bool *node_changed, bool *use_cow)
+>   {
+>   	struct inode *inode = page->mapping->host;
+>   	struct inode *cow_inode = F2FS_I(inode)->cow_inode;
+> @@ -3505,10 +3505,12 @@ static int prepare_atomic_write_begin(struct f2fs_sb_info *sbi,
+>   
+>   	/* Look for the block in COW inode first */
+>   	err = __find_data_block(cow_inode, index, blk_addr);
+> -	if (err)
+> +	if (err) {
+>   		return err;
+> -	else if (*blk_addr != NULL_ADDR)
+> +	} else if (*blk_addr != NULL_ADDR) {
+> +		*use_cow = true;
+>   		return 0;
+> +	}
+>   
+>   	if (is_inode_flag_set(inode, FI_ATOMIC_REPLACE))
+>   		goto reserve_block;
+> @@ -3538,6 +3540,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+>   	struct page *page = NULL;
+>   	pgoff_t index = ((unsigned long long) pos) >> PAGE_SHIFT;
+>   	bool need_balance = false;
+> +	bool use_cow = false;
+>   	block_t blkaddr = NULL_ADDR;
+>   	int err = 0;
+>   
+> @@ -3597,7 +3600,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+>   
+>   	if (f2fs_is_atomic_file(inode))
+>   		err = prepare_atomic_write_begin(sbi, page, pos, len,
+> -					&blkaddr, &need_balance);
+> +					&blkaddr, &need_balance, &use_cow);
+>   	else
+>   		err = prepare_write_begin(sbi, page, pos, len,
+>   					&blkaddr, &need_balance);
+> @@ -3637,7 +3640,9 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+>   			f2fs_handle_error(sbi, ERROR_INVALID_BLKADDR);
+>   			goto fail;
+>   		}
+> -		err = f2fs_submit_page_read(inode, page, blkaddr, 0, true);
+> +		err = f2fs_submit_page_read(use_cow ?
+> +				F2FS_I(inode)->cow_inode : inode, page,
+> +				blkaddr, 0, true);
+>   		if (err)
+>   			goto fail;
+>   
 
 
 _______________________________________________
