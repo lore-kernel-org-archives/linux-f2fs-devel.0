@@ -4,70 +4,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 78BB7C7618E
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Apr 2023 02:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9FB9FC77B73
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 21 Apr 2023 02:14:02 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1ppg6K-0001U3-Bc;
-	Fri, 21 Apr 2023 02:02:17 +0000
+	id 1ppgHg-0001ag-TS;
+	Fri, 21 Apr 2023 02:14:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1ppg6F-0001Tw-4e
+ (envelope-from <chao@kernel.org>) id 1ppgHe-0001aa-Bu
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Apr 2023 02:02:12 +0000
+ Fri, 21 Apr 2023 02:13:59 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Iyfi/PjnhIP9XOYzCLcG69avXjDKVNa44dPm76cmEtE=; b=THE3FEuWcuMFxIxZ/MjgctHj/S
- z8AkiU+JX8qIZs4NuI+XxKp1i7e7fP1n3ApQjWNhgnSjBeCk11fTw6H5NT7WLgLcDqMeC1JeGRMnR
- zgDafvtxtyfhsre5ZQPZLSPLDgs4zW4cs6GR5PzYRhf/VW7gXnfCN49O/BREvPUDgDyI=;
+ bh=3qpcZCJ6nC33oWEoeg01lcLZoIoKn9t2P+rg+71dEDI=; b=JJsCSOlvaJ4QJwLgX5f189npBZ
+ WzWoPsZOAfrXe1G4bxv6OwNYoRsx1KYpLZVjUzBLLR6LEbaGSjq2PDOSkb6RF+GOeu9339MZp5vzJ
+ 7V6+V/RR70g5APrrLrAnK9dnUfq/rQxzAm91CpFANBswfRBv/KvcbWvQQXh6vyvkYSF0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Iyfi/PjnhIP9XOYzCLcG69avXjDKVNa44dPm76cmEtE=; b=V
- 417OMUnjjJ7mu4AzM1ueqKA+qQhVxQT+2rJM5UCyZxzcqik4U8ZEbcotgJUbpEBIQ+2HYzGic3m1r
- RKmAstYbv2dZywUrkfgmqY0apSU6Bk1ajvH7wAL3e3CyNDlxj0EBjvxBRiuvAgT4xr4zFM6f/CNPj
- q6pRQUU34Ss6dhV0=;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=3qpcZCJ6nC33oWEoeg01lcLZoIoKn9t2P+rg+71dEDI=; b=RN5m9UpYCxA095mEMY4jRcifoS
+ Q/0hDpLpJz6BrbunHUcpnndOgYOavGIbAiLc0a19gVbOWvWW8u0Q4r6R/bmGH+OmxoKrrCr2NLaeK
+ wcMIMmqc9B8x3sn46PO0Yl9B2U4cZIvlT32boqhyoCFoTqfTJD3fTbfa6eC/caKxcanc=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1ppg6F-00020V-F3 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 21 Apr 2023 02:02:11 +0000
+ id 1ppgHe-00E8Mq-Km for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 21 Apr 2023 02:13:59 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 20A9F64CF0
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 5FEE763B16
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 21 Apr 2023 02:02:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D4A4C433D2;
- Fri, 21 Apr 2023 02:02:04 +0000 (UTC)
+ Fri, 21 Apr 2023 02:13:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98D8C433EF;
+ Fri, 21 Apr 2023 02:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1682042525;
- bh=9340DfwcHIyLGEj8rbvnurntm4mO9XqyjEGJYFQnSS4=;
- h=From:To:Cc:Subject:Date:From;
- b=uWywheHbQHNcegTawbbJPT4238fUZcZ1xAsKEDARxcQ7ie+F7oqRCDPAoqIl3r/r7
- RhRIDLsCSQK+JbTEy1jEJcnKh8ReknKVnP20eSYk7a4PwxPvsn3uOmrbYfuObYXOec
- or4Os/WmAo//ceNYJy4rNNPYFnDB+05Ibq/KPblzizq0xQ8XS4g4cjloaef5OdkH60
- OfYZ1vhFmEm8NlHBPNrnW/kHlHELCQ7KMkt320Xl/rijF7+DD1PEJnKZi+rqkBlDP+
- xQstIFpJwPOXdy+jtoxA9TQSpcoupbxOnGPUMgblAbC0nbEJceF6sYpOKFU6E2YT+0
- QtTRSI/bJc57g==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Fri, 21 Apr 2023 10:01:38 +0800
-Message-Id: <20230421020138.2727050-1-chao@kernel.org>
-X-Mailer: git-send-email 2.25.1
+ s=k20201202; t=1682043231;
+ bh=GfEnyAq1sJ23EkSIPV78r6qjEZKqFoMaypHu+SvGn38=;
+ h=Date:Subject:To:References:From:In-Reply-To:From;
+ b=GlW95Jarfr7xQ+vcBeF+RvAOWiaWU11zrAM/eyp15fjn+QnDlVSkF1VoD/1S02+hQ
+ usvbYbeUd8174uU0lPXBkbWWKKVjkDhPJUB3Tfoo8yUKJwvWOI/1Fe751BL2SylbTk
+ V1DBAIxr062I78XGNVm0Yq4CB2UV776hKxriSNkDYR76zxhiwfCJoWwyW7eO+g89h7
+ 9Y8KYW9UBHBUDZ3dm8KMXk6IHLrpWPH2MkayZVyOGDDj1P+s32hVNWvxw3hxVOSZ7B
+ nTDBo3LKhYu29wpUwQZQ8XZ+qFIeVV5vooGBFEK9y7HfVPvu7Aq2SWv7hlrlcZ6rjS
+ UqninEqfRoNqg==
+Message-ID: <8e8b620f-f14e-ece3-2fc0-7c14869978ec@kernel.org>
+Date: Fri, 21 Apr 2023 10:13:48 +0800
 MIME-Version: 1.0
-X-Headers-End: 1ppg6F-00020V-F3
-Subject: [f2fs-dev] [PATCH] f2fs: compress: fix to check validity of
- i_compress_flag field
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20230418004049.3262659-1-jaegeuk@kernel.org>
+ <ZD69jto/SFPycuHm@google.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZD69jto/SFPycuHm@google.com>
+X-Headers-End: 1ppgHe-00E8Mq-Km
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: remove power-of-two limitation fo
+ zoned device
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,53 +85,18 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-The last valid compress related field is i_compress_flag, check its
-validity instead of i_log_cluster_size.
+On 2023/4/18 23:55, Jaegeuk Kim wrote:
+> In f2fs, there's no reason to force po2.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/inode.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index cf4327ad106c..516d5dd8f976 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -286,7 +286,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
- 	if (f2fs_has_extra_attr(inode) && f2fs_sb_has_compression(sbi) &&
- 			fi->i_flags & F2FS_COMPR_FL &&
- 			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize,
--						i_log_cluster_size)) {
-+						i_compress_flag)) {
- 		if (ri->i_compress_algorithm >= COMPRESS_MAX) {
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
- 			f2fs_warn(sbi, "%s: inode (ino=%lx) has unsupported "
-@@ -442,7 +442,7 @@ static int do_read_inode(struct inode *inode)
- 	if (f2fs_has_extra_attr(inode) && f2fs_sb_has_compression(sbi) &&
- 					(fi->i_flags & F2FS_COMPR_FL)) {
- 		if (F2FS_FITS_IN_INODE(ri, fi->i_extra_isize,
--					i_log_cluster_size)) {
-+					i_compress_flag)) {
- 			unsigned short compress_flag;
- 
- 			atomic_set(&fi->i_compr_blocks,
-@@ -680,7 +680,7 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
- 
- 		if (f2fs_sb_has_compression(F2FS_I_SB(inode)) &&
- 			F2FS_FITS_IN_INODE(ri, F2FS_I(inode)->i_extra_isize,
--							i_log_cluster_size)) {
-+							i_compress_flag)) {
- 			unsigned short compress_flag;
- 
- 			ri->i_compr_blocks =
--- 
-2.25.1
-
+Thanks,
 
 
 _______________________________________________
