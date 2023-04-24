@@ -4,62 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D65C2C77B61
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Apr 2023 15:46:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 198FBC77B61
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Apr 2023 15:47:18 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pqyOu-0002E3-7w;
-	Mon, 24 Apr 2023 15:46:47 +0000
+	id 1pqyPN-0001F3-4E;
+	Mon, 24 Apr 2023 15:47:17 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <lizetao1@huawei.com>) id 1pqyOs-0002Dw-5F
+ (envelope-from <chao@kernel.org>) id 1pqyPM-0001Ew-2r
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Apr 2023 15:46:45 +0000
+ Mon, 24 Apr 2023 15:47:16 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Type:Content-Transfer-Encoding:MIME-Version
- :Message-ID:Date:Subject:CC:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=nfMNEuRl44uF5Jwgh4trYhfoQd1i+R3ihLAlsMM3FDM=; b=i1pn6ZwClJcVB1su1pcqKD3TMZ
- W5qDjokd6zfanWUHcziCEjo3QZhVs2P9btaO5B21+mCLwVmKT6Lxg7vqhfWJ9/SkpTk0LH2LNkNB4
- msnMy+RSz47u7JSHPlsWSTlwtUyNxvL7K9Wupj4tKvvEvOd/8wm46elJmlOhaeal5w0w=;
+ bh=kN8IDUqW0EmeFZzzB0jKCfL06jXe7XO0VewqhkyjHqg=; b=Iy1OJOOS2yit+yOWVvxk1odAje
+ dPwk3EHRLyTYazA1e3YwdHp51aeewRqKZNXogY0WqeqXMX9/R5NtZ5xMdsmgqQY/oZq/xbJFE2AYH
+ fsUicPdMexdIlw4k0rOU+dtB1pbl9B7IlowULQ7oaN0/pG9KpuQnTy5GoNQthghfT9sc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
- Subject:CC:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=nfMNEuRl44uF5Jwgh4trYhfoQd1i+R3ihLAlsMM3FDM=; b=W
- pxF7efIkYPlvo6uQAeSDqYhrKQVTW5FrGn7P5yO3nG2cQSJARfxGnNGUd9XnHypIZU+00+IfWhJJf
- WeMaCjeNIrbGuK1jR0Wn/TxJrr66+D/GXHO5r+z3kQ/Kn59g51gW8zZwQf0JkV2i0DQKCVSqd2Mb/
- c5XCdoOF4WlA6HAo=;
-Received: from szxga08-in.huawei.com ([45.249.212.255])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=kN8IDUqW0EmeFZzzB0jKCfL06jXe7XO0VewqhkyjHqg=; b=U83VyYeM6tT8zCs1gDa2pkhf/p
+ mn3tNf38nId1qQdn+H3yl31cvbMgQkUxWdAYUR0FMrAw/YA/kj8awmGOG7Dlka1IQh0w+sMMSiLCX
+ KR3gzKDtXJnXq6Bjyms52nJqHZCWqtSxvFVVNPy4HrPyhPpWKGr3yfwl+oimsfElyprE=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pqyOp-0007PI-2R for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Apr 2023 15:46:45 +0000
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.53])
- by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Q4qC51sWZz17Trl;
- Mon, 24 Apr 2023 23:42:41 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi500012.china.huawei.com
- (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Mon, 24 Apr
- 2023 23:46:31 +0800
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-Date: Mon, 24 Apr 2023 23:46:48 +0000
-Message-ID: <20230424234648.577673-1-lizetao1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+ id 1pqyPI-0008DZ-WA for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Apr 2023 15:47:16 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 958F862268;
+ Mon, 24 Apr 2023 15:47:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D63B9C433EF;
+ Mon, 24 Apr 2023 15:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1682351227;
+ bh=LC4skObKqPI+7BhFR03IM0NOmyFyRnFGlYN8RXopcKI=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=e6uGRl4nBYkGrXa7TEWDsXPoE4r/LgOUzIJvAhyvBH1uHJAGQy2XZ71irQiCmvfW0
+ uzrABUnvNEgTkD/PwQvog7FqSIYwvlnXRHgNzPOeiZ6tT68fhu9S0z36KkS11WHPAk
+ f4MgcLJ2ku0nmoCyEVFKwmuaYbSOZRVNiwZLMVABWKxx+xgIHq2oZB2n0lTMRXIXlf
+ LFZLccItwTst56B6IiKEmmWWoYVWDt7Cmf+/xltk6J+qxmHFjLTH8z32PHBFLDx93M
+ Vry33lynzuzLT2SVe/4urTQt2g2QeK2bBkSsTQdw1CNEMAeRub2pHsA6NwWMYYN0ve
+ 2MBZeaLaQw9/Q==
+Message-ID: <4f72f8f4-7f00-aaad-7d5c-c2ce0b80c500@kernel.org>
+Date: Mon, 24 Apr 2023 23:47:05 +0800
 MIME-Version: 1.0
-X-Originating-IP: [10.90.53.73]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
-X-Headers-End: 1pqyOp-0007PI-2R
-Subject: [f2fs-dev] [PATCH -next] f2fs: remove redundant goto statement in
- f2fs_read_single_page()
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20230424154348.22885-1-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20230424154348.22885-1-daeho43@gmail.com>
+X-Headers-End: 1pqyPI-0008DZ-WA
+Subject: Re: [f2fs-dev] [PATCH] f2fs: use cow inode data when updating
+ atomic write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -71,36 +83,23 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Li Zetao via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Li Zetao <lizetao1@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: Daeho Jeong <daehojeong@google.com>
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-After the commit "0a4ee518185", this "goto" statement was redundant,
-remote it for clean code.
+On 2023/4/24 23:43, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> Need to use cow inode data content instead of the one in the original
+> inode, when we try to write the already updated atomic write files.
+> 
+> Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
 
-Signed-off-by: Li Zetao <lizetao1@huawei.com>
----
- fs/f2fs/data.c | 1 -
- 1 file changed, 1 deletion(-)
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 06b552a0aba2..c9a71b4b09dd 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2171,7 +2171,6 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
- 	f2fs_update_iostat(F2FS_I_SB(inode), NULL, FS_DATA_READ_IO,
- 							F2FS_BLKSIZE);
- 	*last_block_in_bio = block_nr;
--	goto out;
- out:
- 	*bio_ret = bio;
- 	return ret;
--- 
-2.34.1
-
+Thanks,
 
 
 _______________________________________________
