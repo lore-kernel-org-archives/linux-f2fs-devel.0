@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1AB1CC7EE37
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Apr 2023 05:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 17AFEC7EE3A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Apr 2023 05:50:04 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pqp5I-0007IV-UQ;
-	Mon, 24 Apr 2023 05:49:57 +0000
+	id 1pqp5P-0007JA-Au;
+	Mon, 24 Apr 2023 05:50:03 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+e16e2fc4419b117693a1+7183+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1pqp5H-0007IL-08 for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Apr 2023 05:49:55 +0000
+ id 1pqp5N-0007J2-QK for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Apr 2023 05:50:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=TRgCZMat6SwmbUJc5nYBP6IbIwCnK37cme83Pl+2pA8=; b=RuJs+4j3k+5DRVoUosPqnznquO
- yNHdXNw0fDZPZkK7hs/GK1ynerkXPDTDdSaWl2ELm0Zb6n41QrYk6oUddq1tw5hXMgkNUGcpF03fU
- rPI8r2XBnuZ3CN+bylxkGSvkHmYU+hTOLLnqsaNdHzWIZdnLNJHvxumpnQTliwELocq4=;
+ bh=3c56lCE/WpWmApGzGmNY2gwMFr2O/06RZiXwIkvRQAA=; b=lu7eyCLDNX0oxGA+6/YCwAVPEw
+ TZA5mlBIRxXXUseu+Q4ciPHIVRohL5pAzRSGB6CgWCF/wes65THNmWBKMuolTx55bQ4JY2OW8zCRU
+ dK8CNIAUNQmcr2XvFdo3ykbkxf6PlPErliJOaIJ3X9bYt5MA7rUsD6dVJfK8aR9OYzGU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=TRgCZMat6SwmbUJc5nYBP6IbIwCnK37cme83Pl+2pA8=; b=iKSrVpaV57T/fcZbJEslD68taM
- Qtxx7JoiuN52efOdr1ekpBK+b+Xe4a1gqmIbaZBIZ+imHXay4mxIzc4Sh40Nln7h1TNP0DGIEE3To
- UAAL6mWSRgBb+bAUtvtKB/N/XylBg/33DPCXNrAt8fJk6PGDVEeQzSKABoucai/7GQY4=;
+ bh=3c56lCE/WpWmApGzGmNY2gwMFr2O/06RZiXwIkvRQAA=; b=HU4kx+BtmX+Na4+cymhZB1m54U
+ b+cOTbr6SrcULCOVsfD+/R9plgnMYSwo4lcxbgZP1WIvjrQ9UzYxca1sZbSNnehEpBLtJoVgoFpcm
+ Tx3TmLSyVuCboh1C9Z0ms+BVPYCXQKZSIMqi+22A8nNPC0qmang/zwhBlHMuqeNruVh0=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pqp5E-0003Ts-MJ for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 24 Apr 2023 05:49:55 +0000
+ id 1pqp5L-00HHsz-6L for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 24 Apr 2023 05:50:02 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=TRgCZMat6SwmbUJc5nYBP6IbIwCnK37cme83Pl+2pA8=; b=IisOQjT9f5WFKcdC3Jd5pbj8sh
- 4VxYG9fcjD21qV4vH246OoxCV6nph/mgCU3NIWP8P4y3dlViSSGAmZjXKbLou0yjIYZaM3cnIY2Kt
- mjxtvSSMGgpzOLyFt6Owfa5+glDjlrIybM/1ZBwz3b1jzQlJ1EgeUSLyfdrbYx4CDGDKxjiIrnu36
- kfJfmV8CzCSfJEL70k1/Giql2X0o5GEh/voLjYWzXCdDVciAzPcCtw1ssj+JIttdkB/PCHceRsfbT
- 6ORot5jXqhFK8ewJjwizNl7JjjUwrZhWXmblesM672+/0ZZBeLqjjqHAXGNhN8Y39rALvBAMKA3jw
- wWfxZqbQ==;
+ bh=3c56lCE/WpWmApGzGmNY2gwMFr2O/06RZiXwIkvRQAA=; b=cM1FMSAwc/AcWY9+ks8bZeTOQS
+ HSRE1wj1RmlIHQ8bv8JqINzDuFQyl7YsoQO9Evk1tQKaU3yYt2c2UI9Wkit37h631rokvkd0z9B2l
+ VVR+BaKxya/38EoJ2UI+TEap1+Ose9SVw/y8UrqGFhmlrsWIquEeWKjrX32vtILQS5aSgVf0A0uaL
+ Ujm1de5SPOrTuaN6+/YdmMaLU7F/3TLvzgdhR5BVXO6OzWn5yVlHyHDIyq0elCmeLixuuC8FOmM6S
+ Qn7nRM49zrqQDcjoKZ3gEI5dasf5T027NjT8LyJlv76Nt62r/CuI41r9aJ9HgIGXVKNKJ2N8Fjal6
+ Pdgu78vg==;
 Received: from [2001:4bb8:189:a74f:e8a5:5f73:6d2:23b8] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1pqp51-00FOul-1F; Mon, 24 Apr 2023 05:49:39 +0000
+ id 1pqp57-00FOvQ-0r; Mon, 24 Apr 2023 05:49:45 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 24 Apr 2023 07:49:12 +0200
-Message-Id: <20230424054926.26927-4-hch@lst.de>
+Date: Mon, 24 Apr 2023 07:49:14 +0200
+Message-Id: <20230424054926.26927-6-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230424054926.26927-1-hch@lst.de>
 References: <20230424054926.26927-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1pqp5E-0003Ts-MJ
-Subject: [f2fs-dev] [PATCH 03/17] fs: rename and move
- block_page_mkwrite_return
+X-Headers-End: 1pqp5L-00HHsz-6L
+Subject: [f2fs-dev] [PATCH 05/17] filemap: update ki_pos in
+ generic_perform_write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,207 +90,108 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-block_page_mkwrite_return is neither block nor mkwrite specific, and
-should not be under CONFIG_BLOCK.  Move it to mm.h and rename it to
-errno_to_vmfault.
+All callers of generic_perform_write need to updated ki_pos, move it into
+common code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ext4/inode.c             |  2 +-
- fs/f2fs/file.c              |  2 +-
- fs/gfs2/file.c              | 16 ++++++++--------
- fs/iomap/buffered-io.c      |  2 +-
- fs/nilfs2/file.c            |  2 +-
- fs/udf/file.c               |  2 +-
- include/linux/buffer_head.h | 12 ------------
- include/linux/mm.h          | 13 +++++++++++++
- 8 files changed, 26 insertions(+), 25 deletions(-)
+ fs/ceph/file.c | 2 --
+ fs/ext4/file.c | 9 +++------
+ fs/f2fs/file.c | 1 -
+ fs/nfs/file.c  | 1 -
+ mm/filemap.c   | 8 ++++----
+ 5 files changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index bf0b7dea4900af..c0f41a38bd9ca4 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -6343,7 +6343,7 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 	if (err == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
- 		goto retry_alloc;
- out_ret:
--	ret = block_page_mkwrite_return(err);
-+	ret = errno_to_vmfault(err);
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index f4d8bf7dec88a8..feeb9882ef635a 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1894,8 +1894,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		 * can not run at the same time
+ 		 */
+ 		written = generic_perform_write(iocb, from);
+-		if (likely(written >= 0))
+-			iocb->ki_pos = pos + written;
+ 		ceph_end_io_write(inode);
+ 	}
+ 
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 0b8b4499e5ca18..1026acaf1235a0 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -291,12 +291,9 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
+ 
  out:
- 	filemap_invalidate_unlock_shared(mapping);
- 	sb_end_pagefault(inode->i_sb);
+ 	inode_unlock(inode);
+-	if (likely(ret > 0)) {
+-		iocb->ki_pos += ret;
+-		ret = generic_write_sync(iocb, ret);
+-	}
+-
+-	return ret;
++	if (unlikely(ret <= 0))
++		return ret;
++	return generic_write_sync(iocb, ret);
+ }
+ 
+ static ssize_t ext4_handle_inode_extension(struct inode *inode, loff_t offset,
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 15dabeac469050..f4ab23efcf85f8 100644
+index f4ab23efcf85f8..5a9ae054b6da7d 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -161,7 +161,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+@@ -4511,7 +4511,6 @@ static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
+ 	current->backing_dev_info = NULL;
  
- 	sb_end_pagefault(inode->i_sb);
- err:
--	return block_page_mkwrite_return(err);
-+	return errno_to_vmfault(err);
+ 	if (ret > 0) {
+-		iocb->ki_pos += ret;
+ 		f2fs_update_iostat(F2FS_I_SB(inode), inode,
+ 						APP_BUFFERED_IO, ret);
+ 	}
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index 893625eacab9fa..abdae2b29369be 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -666,7 +666,6 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
+ 		goto out;
+ 
+ 	written = result;
+-	iocb->ki_pos += written;
+ 	nfs_add_stats(inode, NFSIOS_NORMALWRITTENBYTES, written);
+ 
+ 	if (mntflags & NFS_MOUNT_WRITE_EAGER) {
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 2723104cc06a12..0110bde3708b3f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3960,7 +3960,10 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+ 		balance_dirty_pages_ratelimited(mapping);
+ 	} while (iov_iter_count(i));
+ 
+-	return written ? written : status;
++	if (!written)
++		return status;
++	iocb->ki_pos += written;
++	return written;
  }
+ EXPORT_SYMBOL(generic_perform_write);
  
- static const struct vm_operations_struct f2fs_file_vm_ops = {
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index 300844f50dcd28..8c4fad359ff538 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -432,7 +432,7 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 	gfs2_holder_init(ip->i_gl, LM_ST_EXCLUSIVE, 0, &gh);
- 	err = gfs2_glock_nq(&gh);
- 	if (err) {
--		ret = block_page_mkwrite_return(err);
-+		ret = errno_to_vmfault(err);
- 		goto out_uninit;
- 	}
- 
-@@ -474,7 +474,7 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 
- 	err = gfs2_rindex_update(sdp);
- 	if (err) {
--		ret = block_page_mkwrite_return(err);
-+		ret = errno_to_vmfault(err);
- 		goto out_unlock;
- 	}
- 
-@@ -482,12 +482,12 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 	ap.target = data_blocks + ind_blocks;
- 	err = gfs2_quota_lock_check(ip, &ap);
- 	if (err) {
--		ret = block_page_mkwrite_return(err);
-+		ret = errno_to_vmfault(err);
- 		goto out_unlock;
- 	}
- 	err = gfs2_inplace_reserve(ip, &ap);
- 	if (err) {
--		ret = block_page_mkwrite_return(err);
-+		ret = errno_to_vmfault(err);
- 		goto out_quota_unlock;
- 	}
- 
-@@ -500,7 +500,7 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 	}
- 	err = gfs2_trans_begin(sdp, rblocks, 0);
- 	if (err) {
--		ret = block_page_mkwrite_return(err);
-+		ret = errno_to_vmfault(err);
- 		goto out_trans_fail;
- 	}
- 
-@@ -508,7 +508,7 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 	if (gfs2_is_stuffed(ip)) {
- 		err = gfs2_unstuff_dinode(ip);
- 		if (err) {
--			ret = block_page_mkwrite_return(err);
-+			ret = errno_to_vmfault(err);
- 			goto out_trans_end;
+@@ -4039,7 +4042,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		endbyte = pos + status - 1;
+ 		err = filemap_write_and_wait_range(mapping, pos, endbyte);
+ 		if (err == 0) {
+-			iocb->ki_pos = endbyte + 1;
+ 			written += status;
+ 			invalidate_mapping_pages(mapping,
+ 						 pos >> PAGE_SHIFT,
+@@ -4052,8 +4054,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
  		}
+ 	} else {
+ 		written = generic_perform_write(iocb, from);
+-		if (likely(written > 0))
+-			iocb->ki_pos += written;
  	}
-@@ -524,7 +524,7 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 
- 	err = gfs2_allocate_page_backing(page, length);
- 	if (err)
--		ret = block_page_mkwrite_return(err);
-+		ret = errno_to_vmfault(err);
- 
- out_page_locked:
- 	if (ret != VM_FAULT_LOCKED)
-@@ -558,7 +558,7 @@ static vm_fault_t gfs2_fault(struct vm_fault *vmf)
- 	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
- 	err = gfs2_glock_nq(&gh);
- 	if (err) {
--		ret = block_page_mkwrite_return(err);
-+		ret = errno_to_vmfault(err);
- 		goto out_uninit;
- 	}
- 	ret = filemap_fault(vmf);
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 6f4c97a6d7e9dc..2986be63d2bea6 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1290,7 +1290,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
- 	return VM_FAULT_LOCKED;
- out_unlock:
- 	folio_unlock(folio);
--	return block_page_mkwrite_return(ret);
-+	return errno_to_vmfault(ret);
- }
- EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
- 
-diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
-index a265d391ffe92d..ea35294bb158a3 100644
---- a/fs/nilfs2/file.c
-+++ b/fs/nilfs2/file.c
-@@ -108,7 +108,7 @@ static vm_fault_t nilfs_page_mkwrite(struct vm_fault *vmf)
- 	wait_for_stable_page(page);
-  out:
- 	sb_end_pagefault(inode->i_sb);
--	return block_page_mkwrite_return(ret);
-+	return errno_to_vmfault(ret);
- }
- 
- static const struct vm_operations_struct nilfs_file_vm_ops = {
-diff --git a/fs/udf/file.c b/fs/udf/file.c
-index 8238f742377bab..9420284d7c0455 100644
---- a/fs/udf/file.c
-+++ b/fs/udf/file.c
-@@ -71,7 +71,7 @@ static vm_fault_t udf_page_mkwrite(struct vm_fault *vmf)
- 		err = block_commit_write(page, 0, end);
- 	if (err < 0) {
- 		unlock_page(page);
--		ret = block_page_mkwrite_return(err);
-+		ret = errno_to_vmfault(err);
- 		goto out_unlock;
- 	}
- out_dirty:
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 8f14dca5fed756..0fcc16b7f02bb4 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -281,18 +281,6 @@ int generic_cont_expand_simple(struct inode *inode, loff_t size);
- int block_commit_write(struct page *page, unsigned from, unsigned to);
- int block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
- 				get_block_t get_block);
--/* Convert errno to return value from ->page_mkwrite() call */
--static inline vm_fault_t block_page_mkwrite_return(int err)
--{
--	if (err == 0)
--		return VM_FAULT_LOCKED;
--	if (err == -EFAULT || err == -EAGAIN)
--		return VM_FAULT_NOPAGE;
--	if (err == -ENOMEM)
--		return VM_FAULT_OOM;
--	/* -ENOSPC, -EDQUOT, -EIO ... */
--	return VM_FAULT_SIGBUS;
--}
- sector_t generic_block_bmap(struct address_space *, sector_t, get_block_t *);
- int block_truncate_page(struct address_space *, loff_t, get_block_t *);
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1f79667824eb60..03e645032c81ac 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3061,6 +3061,19 @@ extern vm_fault_t filemap_map_pages(struct vm_fault *vmf,
- 		pgoff_t start_pgoff, pgoff_t end_pgoff);
- extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
- 
-+/* Convert errno to return value from ->page_mkwrite() call */
-+static inline vm_fault_t errno_to_vmfault(int err)
-+{
-+	if (err == 0)
-+		return VM_FAULT_LOCKED;
-+	if (err == -EFAULT || err == -EAGAIN)
-+		return VM_FAULT_NOPAGE;
-+	if (err == -ENOMEM)
-+		return VM_FAULT_OOM;
-+	/* -ENOSPC, -EDQUOT, -EIO ... */
-+	return VM_FAULT_SIGBUS;
-+}
-+
- extern unsigned long stack_guard_gap;
- /* Generic expand stack which grows the stack according to GROWS{UP,DOWN} */
- extern int expand_stack(struct vm_area_struct *vma, unsigned long address);
+ out:
+ 	current->backing_dev_info = NULL;
 -- 
 2.39.2
 
