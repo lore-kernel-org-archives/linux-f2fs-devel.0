@@ -4,18 +4,18 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E6977C7EE2C
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Apr 2023 05:49:57 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 654CCC7EE2E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 24 Apr 2023 05:49:58 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pqp5H-0006KN-Aq;
+	id 1pqp5J-0004IG-OL;
 	Mon, 24 Apr 2023 05:49:56 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+e16e2fc4419b117693a1+7183+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1pqp5F-0006KG-Pd for linux-f2fs-devel@lists.sourceforge.net;
+ id 1pqp5H-0004I9-HO for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 24 Apr 2023 05:49:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
@@ -23,9 +23,9 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=bS05QMoD6j6YpGz1rHCHZCzEMuRJxwEBMPELLNqMvVM=; b=VdkDPaOl+f5FiwyO3azaDS5Yuy
- pyWiDGY0gP5fZwskPvHGyfwSzzjQxGWhXg523ZemniuSG0/m//cul85XmjWkBfcRk6bqICZT+zo9w
- nqTs7sayLLbGUOMxYfBVFQtKtBYzRAx3cL6AGUVZ0o3wIyllgk90M6r1eIXQ3IXdZolw=;
+ bh=V5nklQoA9f4p457fAmSLCbWYVHcQ95Tr9Yi93vZ1hXQ=; b=nCjuVtkVVc1fPqw4NetZPxZ3n7
+ OHJa+Bt2N0O6Dk1bwwek+9IWlun+WZ2+tLk991c24566npRBu6q5gkVEQsbKhVSqhx7aDHc7zOqTR
+ B18WS5bqhNZll/xMHTHVSfiaAV4MnOVJNZZDfb3ow1URpWyMigSJKZPmTkyugVqXfdj4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,39 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=bS05QMoD6j6YpGz1rHCHZCzEMuRJxwEBMPELLNqMvVM=; b=LDW7dcRWHt/+Z/NzViAS14Vui6
- Xn2hX1qg8r5JcjhyWEU+RyNcBT5B8CC7do5dGQWmghLLbHyxJqJyR7PqUeOC+6s0S3PnazXcpY6+v
- KEVz5vx7T5otEmtss1Y5IQ1ivW+9qTSijNmaSYumYo1Lk0XWAYDqHvZb9jreYOONbKbI=;
+ bh=V5nklQoA9f4p457fAmSLCbWYVHcQ95Tr9Yi93vZ1hXQ=; b=f5NLsfM1OpZeLrQfmizEER0QeA
+ HieqnxcGalEoWW11bu6lkB4p8q0qGr7A4IL1TuJGrPXbCgMdkENK++x8FeoiyWsrLkZOOCmrtBwA4
+ x58zPgZuMecKaPXVlWPUgKpkOT5jb+iMkYxrfBVXpEDxHert9JTG8YulSe090C3msmm4=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pqp5E-0003Tt-ML for linux-f2fs-devel@lists.sourceforge.net;
+ id 1pqp5E-0003Tp-MK for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 24 Apr 2023 05:49:54 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=bS05QMoD6j6YpGz1rHCHZCzEMuRJxwEBMPELLNqMvVM=; b=QAuUTMs9c0fPPuxtegrv+eZFd7
- m1Lb/Zn2oEdFxGNTL6MyQ1wn8x4GTSTmoDmXSEpvoQtz2+8sgXF6o1xdmIGxAfsSLMFUF2Rdb/QCw
- QELH8/3nG4bNASqOdAHA35mLeydY1xzz4dUPnNEsh0dTA/um5YWXh/LZcV75W2WYGokrA0cEhf1qA
- KKw6r1pxS24iVwx30XkH6ewxhXLH1nN6hYHJDiHEFB82PfR4sJADmcttvzNs0seHtisbFo0Bbqa9V
- n3yxCEfgi9duwfR5Ke4/YsTw+fVVP3Ub8FBS1iXniGGQbGngJEVnnvGoIEv6ORCKaN3u1LbDCqCFv
- PHlgzFNw==;
+ bh=V5nklQoA9f4p457fAmSLCbWYVHcQ95Tr9Yi93vZ1hXQ=; b=BVLdIyeC9XyB883rbVnHnnshYb
+ v9MBAr9Kui06l3iqsHsxD6wr7hDLJughW5sYL6bLE4MMi2NT4MojE/Kqi+QP5twRZ+EZc4+pHQm3S
+ kcN/fEcPtZ2XKOf2kEcveCPw4THCw9R3Vp3FTaYaHC5Q6XyN/KDa1LZrslZMBHL8ouAUMCh+sbtnt
+ jGhkPdK1bf1+RRVNAAo7uctMzy3iud0d3e4hNElvjoV0xaEA7vu/iU7cwGxhgjr4qByRCVU5CGTNI
+ M7ydlMTMwaIbWoe21seFAlCC/o0TZc5ZPNp4ELlK9gRxqfYBpHM10qTh06+1CPkGzgFFFvJGUiBet
+ OQvgwjkg==;
 Received: from [2001:4bb8:189:a74f:e8a5:5f73:6d2:23b8] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1pqp54-00FOuy-17; Mon, 24 Apr 2023 05:49:42 +0000
+ id 1pqp4y-00FOuS-1q; Mon, 24 Apr 2023 05:49:37 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Mon, 24 Apr 2023 07:49:13 +0200
-Message-Id: <20230424054926.26927-5-hch@lst.de>
+Date: Mon, 24 Apr 2023 07:49:11 +0200
+Message-Id: <20230424054926.26927-3-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230424054926.26927-1-hch@lst.de>
 References: <20230424054926.26927-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1pqp5E-0003Tt-ML
-Subject: [f2fs-dev] [PATCH 04/17] fs: remove emergency_thaw_bdev
+X-Headers-End: 1pqp5E-0003Tp-MK
+Subject: [f2fs-dev] [PATCH 02/17] fs: remove the special !CONFIG_BLOCK
+ def_blk_fops
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -89,69 +90,79 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Fold emergency_thaw_bdev into it's only caller, to prepare for buffer.c
-to be built only when buffer_head support is enabled.
+def_blk_fops always returns -ENODEV, which dosn't match the return value
+of a non-existing block device with CONFIG_BLOCK, which is -ENXIO.
+Just remove the extra implementation and fall back to the default
+no_open_fops that always returns -ENXIO.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/buffer.c   | 6 ------
- fs/internal.h | 6 ------
- fs/super.c    | 4 +++-
- 3 files changed, 3 insertions(+), 13 deletions(-)
+ fs/Makefile   | 10 ++--------
+ fs/inode.c    |  3 ++-
+ fs/no-block.c | 19 -------------------
+ 3 files changed, 4 insertions(+), 28 deletions(-)
+ delete mode 100644 fs/no-block.c
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index eb14fbaa7d35f7..58e0007892b1c7 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -563,12 +563,6 @@ static int osync_buffers_list(spinlock_t *lock, struct list_head *list)
- 	return err;
- }
+diff --git a/fs/Makefile b/fs/Makefile
+index 05f89b5c962f88..da21e7d0a1cf37 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -18,14 +18,8 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		fs_types.o fs_context.o fs_parser.o fsopen.o init.o \
+ 		kernel_read_file.o mnt_idmapping.o remap_range.o
  
--void emergency_thaw_bdev(struct super_block *sb)
--{
--	while (sb->s_bdev && !thaw_bdev(sb->s_bdev))
--		printk(KERN_WARNING "Emergency Thaw on %pg\n", sb->s_bdev);
--}
+-ifeq ($(CONFIG_BLOCK),y)
+-obj-y +=	buffer.o mpage.o
+-else
+-obj-y +=	no-block.o
+-endif
 -
- /**
-  * sync_mapping_buffers - write out & wait upon a mapping's "associated" buffers
-  * @mapping: the mapping which wants those buffers written
-diff --git a/fs/internal.h b/fs/internal.h
-index dc4eb91a577a80..cad87784eb5e0f 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -23,16 +23,10 @@ struct mnt_idmap;
-  */
- #ifdef CONFIG_BLOCK
- extern void __init bdev_cache_init(void);
+-obj-$(CONFIG_PROC_FS) += proc_namespace.o
 -
--void emergency_thaw_bdev(struct super_block *sb);
- #else
- static inline void bdev_cache_init(void)
- {
- }
--static inline int emergency_thaw_bdev(struct super_block *sb)
--{
--	return 0;
--}
- #endif /* CONFIG_BLOCK */
- 
- /*
-diff --git a/fs/super.c b/fs/super.c
-index 04bc62ab7dfea9..d8f0a28d1850b1 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1026,7 +1026,9 @@ static void do_thaw_all_callback(struct super_block *sb)
- {
- 	down_write(&sb->s_umount);
- 	if (sb->s_root && sb->s_flags & SB_BORN) {
--		emergency_thaw_bdev(sb);
++obj-$(CONFIG_BLOCK)		+= buffer.o mpage.o
++obj-$(CONFIG_PROC_FS)		+= proc_namespace.o
+ obj-$(CONFIG_LEGACY_DIRECT_IO)	+= direct-io.o
+ obj-y				+= notify/
+ obj-$(CONFIG_EPOLL)		+= eventpoll.o
+diff --git a/fs/inode.c b/fs/inode.c
+index 4558dc2f135573..d43f07f146eb73 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2265,7 +2265,8 @@ void init_special_inode(struct inode *inode, umode_t mode, dev_t rdev)
+ 		inode->i_fop = &def_chr_fops;
+ 		inode->i_rdev = rdev;
+ 	} else if (S_ISBLK(mode)) {
+-		inode->i_fop = &def_blk_fops;
 +		if (IS_ENABLED(CONFIG_BLOCK))
-+			while (sb->s_bdev && !thaw_bdev(sb->s_bdev))
-+				pr_warn("Emergency Thaw on %pg\n", sb->s_bdev);
- 		thaw_super_locked(sb);
- 	} else {
- 		up_write(&sb->s_umount);
++			inode->i_fop = &def_blk_fops;
+ 		inode->i_rdev = rdev;
+ 	} else if (S_ISFIFO(mode))
+ 		inode->i_fop = &pipefifo_fops;
+diff --git a/fs/no-block.c b/fs/no-block.c
+deleted file mode 100644
+index 481c0f0ab4bd2c..00000000000000
+--- a/fs/no-block.c
++++ /dev/null
+@@ -1,19 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/* no-block.c: implementation of routines required for non-BLOCK configuration
+- *
+- * Copyright (C) 2006 Red Hat, Inc. All Rights Reserved.
+- * Written by David Howells (dhowells@redhat.com)
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/fs.h>
+-
+-static int no_blkdev_open(struct inode * inode, struct file * filp)
+-{
+-	return -ENODEV;
+-}
+-
+-const struct file_operations def_blk_fops = {
+-	.open		= no_blkdev_open,
+-	.llseek		= noop_llseek,
+-};
 -- 
 2.39.2
 
