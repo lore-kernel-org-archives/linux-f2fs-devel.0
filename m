@@ -4,74 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EBA4CC77B7C
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Apr 2023 23:07:32 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 96F45C77B7C
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 26 Apr 2023 23:07:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1proEV-0007FK-Hw;
-	Wed, 26 Apr 2023 23:07:32 +0000
+	id 1proEW-0000oE-VG;
+	Wed, 26 Apr 2023 23:07:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1proET-0007F7-Kh
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1proEU-0000o7-5N
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 26 Apr 2023 23:07:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=Qgnqyf29BGtWKeF4E5exmaAxjVwdFo5NSlrx3Swjvyw=; b=L5MT8mTudoMzpQOuYOGmbZ9jrl
- WQaQ89iz33wvst4GiCc1ablSSTIRTaGaOmn47x/zikmisGmj7U25YqKTapTu4dhi0+b7xogB00tOX
- immr42jaXki+imwb3IXo9Gt4E+liEyrbJEtPUp2SdYNyf4hPPqxISPBMfqf1BDsMa0zQ=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=KRbd0a/qDQTDs15mdior7ibEFxYo5du7OaugRgzXWTQ=; b=RNdTEFZ1LtFAGuYkSP8eiPdpq3
+ yMrw/NPuEVVV7o296Jvfc0P6bmZCkHJXbO2/zj6Zz0+3Xzfv2fb7eb5buin128q8uMLfjMfFmTqnB
+ JT8JAlM1na8mckBtymWNpvS/lr9APzyq6E9pDECs6goHX5TjuIezpgbo1LCIwJCeMSvA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=Qgnqyf29BGtWKeF4E5exmaAxjVwdFo5NSlrx3Swjvyw=; b=Q
- h9jK8kHjg1+aBV0QTovyvo/Wonm+Iv9dJuUS8h3qLUH2N8Phh3knCwKManA3lLtEXd6bmMT/h4U8t
- U3bD33dBpv28AZSAh3LMvyj1fcumnAaRgdHW/I/w37B1+l30P4glNHddD23u7ySzRqim5AriZ2USU
- 9iGfUjC04qbcBhXk=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=KRbd0a/qDQTDs15mdior7ibEFxYo5du7OaugRgzXWTQ=; b=Yatao7XMvM/sbcWHCm8gpBzURv
+ abmOmZ5kM36IN9Age7oZfBS3lLXgFIie0PtBWSHlph9AdhQoqcQnUOacfFrKdt7dOeLMja4VCPnSR
+ N2JSELQ1JHUk8Dw+b8IEXSWJOZutjii7AhcND8+cM4QkvF0jUbWZ0RcntkDAMuhrg3vw=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1proET-0002Gw-SE for linux-f2fs-devel@lists.sourceforge.net;
+ id 1proET-0002Gx-Sh for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 26 Apr 2023 23:07:30 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 4C90B60AF0
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 659F663968;
  Wed, 26 Apr 2023 23:07:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AFBC5C433EF
- for <linux-f2fs-devel@lists.sourceforge.net>;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C45B4C433D2;
  Wed, 26 Apr 2023 23:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1682550440;
- bh=PwTEB1vzF6HMxSIdPZMZITC7fC12GSDt01cXWWq8nGM=;
- h=Subject:From:Date:To:From;
- b=TA1FWYUwxkpPK0/KplrbWuGpO2cWvwyUjjsahTPPIl1ALXNB+wwbNUYYCNq9u3aT/
- 0M24Oy9WmaotCHB/+8ANgMC8AZcXx0N/heY6Xbccq3yRmWlkSFUPrko8lOaEccspVn
- JI31SNa316sPHDiQhQHWXcThacvY05kNZCM7mltzWrvH7/a4k2W34f791t4S/d+seC
- nRE+Y3wS/Mvx9Vd4lSkBhZw0Q6EiCDcVZQ5z4ioQBLLhDQPeK2mZ8+8ctOeixAN8o3
- ew6skSyegnHL2B87132WVEG9YCVkqylkU4HxW7EKOnOzdEEB+5ObHf7e+1fCpk08mM
- UfjafolOXhOOA==
+ bh=/+hULzucfSLRlVWrR5BmDeyXpDowzM7ZKzI3SZWoaRU=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=bi3StrqxZmtuSO0VU5rtR4Xpo0KbCTRtH2j7+0g85WAx1upPH/NRl7Yja1ApSe84k
+ 3jS6/yzQK97XcK5J0YTrOeQbvoylykMIOm+JQSMvUGlfL1pmA0V3FtAiY9tJcdJ4yP
+ vG8AoGxZm0rvlqNlfyFkF7Z0bwG3DXDH7iOWcvzWSKPKjX4U5VGc/PgZwcjrgblJti
+ 1jJYCRiHc2X7rOoTtk1rJrsc4jfxQJfl/TvgXzy04i/VfQtVd1ZYfyT2b1BrB52Bme
+ lWYEn0qePPm/df1rFJSDTbUSzSAV7nq4k1HcKVo1vqVkhaRRO0lZe9h3rsrqtRxdpF
+ DfTzM3ffHUkeg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 98C7EE5FFC9 for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 26 Apr 2023 23:07:20 +0000 (UTC)
+ A3931C73FF3; Wed, 26 Apr 2023 23:07:20 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168255044055.16014.14169437395103079337.git-patchwork-summary@kernel.org>
+Message-Id: <168255044066.16014.6020850362177131584.git-patchwork-notify@kernel.org>
 Date: Wed, 26 Apr 2023 23:07:20 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1proET-0002Gw-SE
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+References: <ZEgdmJWhJX9NJ0fG@google.com>
+In-Reply-To: <ZEgdmJWhJX9NJ0fG@google.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1proET-0002Gx-Sh
+Subject: Re: [f2fs-dev] [GIT PULL] f2fs update for 6.4
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,36 +81,33 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This pull request was applied to jaegeuk/f2fs.git (dev)
+by Linus Torvalds <torvalds@linux-foundation.org>:
 
-Patch: [f2fs-dev,GIT,PULL] f2fs update for 6.4
-  Submitter: Jaegeuk Kim <jaegeuk@kernel.org>
-  Committer: Linus Torvalds <torvalds@linux-foundation.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=743132
-  Lore link: https://lore.kernel.org/r/ZEgdmJWhJX9NJ0fG@google.com
+On Tue, 25 Apr 2023 11:36:08 -0700 you wrote:
+> Hi Linus,
+> 
+> Could you please consider this pull request?
+> 
+> Thanks,
+> 
+> The following changes since commit ffe78bbd512166e0ef1cc4858010b128c510ed7d:
+> 
+> [...]
 
-Patch: acl: remove generic posix acl handlers from all xattr handlers
-  Submitter: Christian Brauner <brauner@kernel.org>
-  Committer: Christian Brauner (Microsoft) <brauner@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=717032
-  Lore link: https://lore.kernel.org/r/20230125-fs-acl-remove-generic-xattr-handlers-v2-0-214cfb88bb56@kernel.org
+Here is the summary with links:
+  - [f2fs-dev,GIT,PULL] f2fs update for 6.4
+    https://git.kernel.org/jaegeuk/f2fs/c/5c7ecada25d2
 
-Patch: acl: drop posix acl handlers from xattr handlers
-  Submitter: Christian Brauner <brauner@kernel.org>
-  Committer: Christian Brauner (Microsoft) <brauner@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=717704
-  Lore link: https://lore.kernel.org/r/20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org
-
-
-Total patches: 3
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
