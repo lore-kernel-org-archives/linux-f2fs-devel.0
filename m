@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1C045C7EE21
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  4 May 2023 19:52:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6A68BC77B7D
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  5 May 2023 10:02:39 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1puezl-0004Pn-C3;
-	Thu, 04 May 2023 19:52:06 +0000
+	id 1pusGr-0004ga-Ic;
+	Fri, 05 May 2023 10:02:37 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <sashal@kernel.org>) id 1puezk-0004Ph-6P
+ (envelope-from <chao@kernel.org>) id 1pusGq-0004gR-Px
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 04 May 2023 19:52:05 +0000
+ Fri, 05 May 2023 10:02:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=z1KvI3f7Npsoc8Pg3lL/Sfst/b3/RZi9HZ31MPItIZg=; b=nCCzCySonk5QrJnfrrCSPwMDIs
- uzXGBs5bzzBoYPBP9Q0BUF8Z7pFHxx5yIc8XXb33Fb/FOvJTojy0jiGvFX/dkLDSD7TKUFIQDCH+c
- e2kznk7LlmiLnUMcmxSPY41pey1hozkx0P6i6Qq4bEiI7WH0RS1eRumu2V/H6VTiHMmo=;
+ bh=6qumTK+NelXkhB5VDlu/80vlcehzrumCR0Z8roARkTo=; b=Rno1l0QzDuBPIE+l9HRvyr9Rp3
+ 1q7eYvFFUjdLq+JhU96pNimsnMknNyWp0ACPGLGuR/BQdxKGfCMOFtSYJ38MUbFoRw9E1cVOgrlmx
+ 9u3ZOP9uu63ZA5JnsWf4pkqMzbYr8YmzrRw6zIiYzMRCPjqB7EUnfGQyPrxiJWvkh26Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,46 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=z1KvI3f7Npsoc8Pg3lL/Sfst/b3/RZi9HZ31MPItIZg=; b=JWgEPA94lecnqb9ZINhStJNlMK
- LCBUZHyzjv0v3nS3ZvDnbsTx0mJSLT4b0MGXzkVpM85h7P817gVmxKFf5ULYfX5lQC2atkAB6boG1
- On6fHZVePD1tpwK2xOrTVv1RslUmIrea61euXFCsVFEjug8UWNM5980Dn198kFN0n9a8=;
+ bh=6qumTK+NelXkhB5VDlu/80vlcehzrumCR0Z8roARkTo=; b=NCzF4u+6eeNYmkJ3lznGxI0t+s
+ W878sWcqDBtBViS06wVroEfnPlWzyZBUK80+IFsG65mopKk/CHMAiysFfbrP47eCQo74ig0v+osqB
+ oaOB1mdEGRxZWX/ym4OGylf2IU4zJA3ldlBm4AEPAFBfJpXqxDuUzTWK7DRswwzW0zqs=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1puezk-00EKye-EV for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 04 May 2023 19:52:04 +0000
+ id 1pusGl-0007k4-Ss for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 05 May 2023 10:02:37 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 1664763888
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 7FDC763D04
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  4 May 2023 19:51:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F393C4339B;
- Thu,  4 May 2023 19:51:58 +0000 (UTC)
+ Fri,  5 May 2023 10:02:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7672C4339E;
+ Fri,  5 May 2023 10:02:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1683229918;
- bh=7tGG+NOlssfu/NITwNH5Vwr/UrNSkYrA8md/wSgniNg=;
+ s=k20201202; t=1683280945;
+ bh=ZyVrUVlQjetosZr4whKO7s1Es2Z/Kb1syAKYglz/M1c=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=e5jOnoINVrRgTNCga6MqeQ8HW3myP6CLY83kgjFSx9EOGTtGXOFUf9SBrc0O5vPvg
- qxIFgw13ZmgEOfCplzxCV/nrpJxEERjgUeAdW7n2IwowZA8D5ZGZLEGS4rbauPcN6l
- /JKuW5qFGcIwEyBs7hO30tEQYZo9+KOQOKg9KEecBB9cxH33scS2VcjDv2xIUaWOHE
- 2KNnTxQisczejPtnVPgRcDBehM56OYUwEY5EqFfgUsi8c+fOGcs+7rYK7ufIM1R5b/
- 4dO3Uu4kyxrAtdSHgr/wxkkhQsRNIS4dexLkPTC5TtMNwSSY/5AOB2548lzzyn0tny
- 2z8I1vt4hy9fQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Date: Thu,  4 May 2023 15:51:28 -0400
-Message-Id: <20230504195132.3808946-11-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230504195132.3808946-1-sashal@kernel.org>
-References: <20230504195132.3808946-1-sashal@kernel.org>
+ b=jhumQTJwgz15rJ8MWb+GX64ZZl3vOqHgmZr4DRKnaVGjkNFuEdshjQnF7DemzFbo6
+ N07vBPzeQqL0qBH0g9sfUbiR0oph9kiRPqgnDSjs/E4xydtQK10xWUCeK2hAzdsDTP
+ QRuA+OD3k11j5kRQGnWH1dOfJprzoedlrLUN6NrGOrDCubOM3ueZPsSZWJn7zm19ni
+ VjzefE3Y+TbJVEBY8XL08FJJ7dI2wQvz6VPg2G8W/+17cnVpmSxD21Z0qpNW2LmSk5
+ DKomY4GWGboFcGypWSprZYXYF+Ve7INYKLF16BM98E6GejlYaw3Ttq867vJDgXOp1l
+ uIs7hzCHesZXw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Fri,  5 May 2023 18:02:01 +0800
+Message-Id: <20230505100205.1921708-2-chao@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230505100205.1921708-1-chao@kernel.org>
+References: <20230505100205.1921708-1-chao@kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-Headers-End: 1puezk-00EKye-EV
-Subject: [f2fs-dev] [PATCH AUTOSEL 4.19 11/13] f2fs: fix to drop all dirty
- pages during umount() if cp_error is set
+X-Headers-End: 1pusGl-0007k4-Ss
+Subject: [f2fs-dev] [PATCH 2/6] f2fs-tools: rename i_padding to
+ i_compress_flag
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,99 +81,74 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Sasha Levin <sashal@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-From: Chao Yu <chao@kernel.org>
-
-[ Upstream commit c9b3649a934d131151111354bcbb638076f03a30 ]
-
-xfstest generic/361 reports a bug as below:
-
-f2fs_bug_on(sbi, sbi->fsync_node_num);
-
-kernel BUG at fs/f2fs/super.c:1627!
-RIP: 0010:f2fs_put_super+0x3a8/0x3b0
-Call Trace:
- generic_shutdown_super+0x8c/0x1b0
- kill_block_super+0x2b/0x60
- kill_f2fs_super+0x87/0x110
- deactivate_locked_super+0x39/0x80
- deactivate_super+0x46/0x50
- cleanup_mnt+0x109/0x170
- __cleanup_mnt+0x16/0x20
- task_work_run+0x65/0xa0
- exit_to_user_mode_prepare+0x175/0x190
- syscall_exit_to_user_mode+0x25/0x50
- do_syscall_64+0x4c/0x90
- entry_SYSCALL_64_after_hwframe+0x72/0xdc
-
-During umount(), if cp_error is set, f2fs_wait_on_all_pages() should
-not stop waiting all F2FS_WB_CP_DATA pages to be writebacked, otherwise,
-fsync_node_num can be non-zero after f2fs_wait_on_all_pages() causing
-this bug.
-
-In this case, to avoid deadloop in f2fs_wait_on_all_pages(), it needs
-to drop all dirty pages rather than redirtying them.
+Commit b28f047b28c5 ("f2fs: compress: support chksum") renames i_padding
+to i_compress_flag in struct f2fs_inode, adjust f2fs-tools' codes as well.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 12 ++++++++++--
- fs/f2fs/data.c       |  3 ++-
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ fsck/mount.c       | 2 +-
+ include/f2fs_fs.h  | 5 ++++-
+ mkfs/f2fs_format.c | 4 ++--
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index a563de5ccd217..621e0d4f1fbf5 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -273,8 +273,15 @@ static int __f2fs_write_meta_page(struct page *page,
- 
- 	trace_f2fs_writepage(page, META);
- 
--	if (unlikely(f2fs_cp_error(sbi)))
-+	if (unlikely(f2fs_cp_error(sbi))) {
-+		if (is_sbi_flag_set(sbi, SBI_IS_CLOSE)) {
-+			ClearPageUptodate(page);
-+			dec_page_count(sbi, F2FS_DIRTY_META);
-+			unlock_page(page);
-+			return 0;
-+		}
- 		goto redirty_out;
-+	}
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
- 		goto redirty_out;
- 	if (wbc->for_reclaim && page->index < GET_SUM_BLOCK(sbi, 0))
-@@ -1185,7 +1192,8 @@ void f2fs_wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
- 		if (!get_pages(sbi, F2FS_WB_CP_DATA))
- 			break;
- 
--		if (unlikely(f2fs_cp_error(sbi)))
-+		if (unlikely(f2fs_cp_error(sbi) &&
-+			!is_sbi_flag_set(sbi, SBI_IS_CLOSE)))
- 			break;
- 
- 		io_schedule_timeout(5*HZ);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 56b2dadd623b2..419586809cef6 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1885,7 +1885,8 @@ static int __write_data_page(struct page *page, bool *submitted,
- 		 * don't drop any dirty dentry pages for keeping lastest
- 		 * directory structure.
- 		 */
--		if (S_ISDIR(inode->i_mode))
-+		if (S_ISDIR(inode->i_mode) &&
-+				!is_sbi_flag_set(sbi, SBI_IS_CLOSE))
- 			goto redirty_out;
- 		goto out;
+diff --git a/fsck/mount.c b/fsck/mount.c
+index df0314d..2e1634f 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -304,7 +304,7 @@ void print_inode_info(struct f2fs_sb_info *sbi,
+ 			DISP_u64(inode, i_compr_blocks);
+ 			DISP_u32(inode, i_compress_algrithm);
+ 			DISP_u32(inode, i_log_cluster_size);
+-			DISP_u32(inode, i_padding);
++			DISP_u32(inode, i_compress_flag);
+ 		}
  	}
+ 
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index c71b59d..7ad1c40 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -1076,7 +1076,10 @@ struct f2fs_inode {
+ 			__le64 i_compr_blocks;	/* # of compressed blocks */
+ 			__u8 i_compress_algrithm;	/* compress algrithm */
+ 			__u8 i_log_cluster_size;	/* log of cluster size */
+-			__le16 i_padding;		/* padding */
++			__le16 i_compress_flag;		/* compress flag */
++						/* 0 bit: chksum flag
++						 * [8,15] bits: compress level
++						 */
+ 			__le32 i_extra_end[0];	/* for attribute size calculation */
+ 		} __attribute__((packed));
+ 		__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index d3bb622..11804eb 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -1289,7 +1289,7 @@ static int f2fs_write_root_inode(void)
+ 	if (c.feature & cpu_to_le32(F2FS_FEATURE_COMPRESSION)) {
+ 		raw_node->i.i_compress_algrithm = 0;
+ 		raw_node->i.i_log_cluster_size = 0;
+-		raw_node->i.i_padding = 0;
++		raw_node->i.i_compress_flag = 0;
+ 	}
+ 
+ 	data_blk_nor = get_sb(main_blkaddr) +
+@@ -1611,7 +1611,7 @@ static int f2fs_write_lpf_inode(void)
+ 	if (c.feature & cpu_to_le32(F2FS_FEATURE_COMPRESSION)) {
+ 		raw_node->i.i_compress_algrithm = 0;
+ 		raw_node->i.i_log_cluster_size = 0;
+-		raw_node->i.i_padding = 0;
++		raw_node->i.i_compress_flag = 0;
+ 	}
+ 
+ 	data_blk_nor = f2fs_add_default_dentry_lpf();
 -- 
-2.39.2
+2.25.1
 
 
 
