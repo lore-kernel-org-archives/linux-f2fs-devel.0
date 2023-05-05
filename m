@@ -4,70 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E411AC77B75
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  5 May 2023 10:02:39 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 77159C77B7D
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  5 May 2023 10:02:42 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pusGr-0004MR-OH;
-	Fri, 05 May 2023 10:02:37 +0000
+	id 1pusGv-0007lW-43;
+	Fri, 05 May 2023 10:02:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pusGp-0004ML-KV
+ (envelope-from <chao@kernel.org>) id 1pusGt-0007lH-W8
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 05 May 2023 10:02:35 +0000
+ Fri, 05 May 2023 10:02:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/nz6/Uadb7H7G3YFFP4OlF6i65bhIwfg4rk474BUYMk=; b=hXm9EcFlV1+877HEMTq7xUFGRz
- 91+dF+l9cEp6xinqCaKm/CDISNTahHOYZ8iS+fFlqmxRYBfn0zV+oGypvxZqBF1UlpQtjqRyNlpWU
- VzRmxeMuH1SAIpLnMnfbsTOr6GqIJK5c98kNeEZS/3YY4X5KWLRJEj/GGsdwpoNeFe18=;
+ bh=Hutm2pxCoF8V7ug5iQtrZEyTWM28MeQf9PAMUTJcEAA=; b=gNYVZRWMwgs6KPRR5undalqWD1
+ TrrrMhnMN/2ILUSTdvv1nTlUBPXlWmzV3Yp6RixNAyLqMW+K7bVeD+dkAgPaCZTtR018wFiRtkaip
+ N8GyvAU5UQtvn0v3Cw+kit0jx2cYFtkuiQhHjpsMD7RUfpnjPlzx+wck90BRBqMCedpE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=/nz6/Uadb7H7G3YFFP4OlF6i65bhIwfg4rk474BUYMk=; b=C
- fN3lTUjeYFr32UhIrZpsBBu16DCqNURwwQ4umFcYa1ufrfcg1Zw0T1xx5MD4oSocthMipqyL5vQA7
- w6ECIfli8ZPvIbeJQ29/PVCTkqwtTOdmtnDo0SifJ9HfyLOjDgOPBVrTgC6H5gYiZX5D2Lbt51nDP
- +V726oaAFvVmvS+4=;
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=Hutm2pxCoF8V7ug5iQtrZEyTWM28MeQf9PAMUTJcEAA=; b=QUVdEdyUN4Yl+Ty5UT5R/dm1dB
+ xobZ46rY48bhPZQokJ+Vz88f/pSGdnBFxQr42tqA9iKXjdpToPiHOKx50QAiiysxWgc9OaHrPyQqn
+ vDujvw3LGbhq0+e0VpkqCyf9cny+gGHf+si6+lPWsjvePwSUqH2yooarNKqu9G07q0iY=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pusGk-00F8L9-Cv for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 05 May 2023 10:02:35 +0000
+ id 1pusGo-00F8LD-SV for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 05 May 2023 10:02:40 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 0763461281
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 7B56763D0A
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  5 May 2023 10:02:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70064C433D2;
- Fri,  5 May 2023 10:02:23 +0000 (UTC)
+ Fri,  5 May 2023 10:02:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFD84C4339E;
+ Fri,  5 May 2023 10:02:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1683280944;
- bh=lNBNV6B5y1MgXLhf8ZukLUZNk+SzXLYsXaOi78SS6OE=;
- h=From:To:Cc:Subject:Date:From;
- b=uVQeMVAMtU5PoPC+QRIEsLy+tdor6V3FjRFTn08t9ZGt6W4CWsxVVMlwDt2Eua1QP
- MeiXgti3Z4djnVOXmqinptycT7s1zrbnFO4w/2JkW8mUBjoySxbLrwv012ndxWOWxn
- qnGgRd7RkgRW64nHnZFkrLRilMKJIcKyh6BvWWt2TEmLJF4eOtV1AbdH2ExM2/sdQb
- /cGpqL/5fupseuY/tIYNV4AFc6XzxPKDYRsXtDzRjiZbdD71LUSj2h9QXsVesL5o4E
- GYzJu4JSFkP0XI+d4viWUmP3D2pb0wgdoX0EAkylJINW/VPVwzAbfJKs47mNCi2gJ4
- owTjmzur0G8LQ==
+ s=k20201202; t=1683280948;
+ bh=cz3oRRmvG5okQd0cyNeoeQXKErnw2aTiRUPVOyqJuIs=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=J+GxmjOlCc6OSEZB8O7fmCI27uONLSuFagrLBRMOeub3BeoTdKN8PumYZUdl34uvM
+ ZUt/VBBfh1F3xPIKm0LGMeqH+QTUQe48W4kfbWfLu76CWwiHRDOndDxYXCpeBexUM7
+ FcsvGQOCfgeqo9PpKWGRyEhlEZ2idtRGILZEdmH3HezXYkH//Df6PZYN2WCNBGHsbj
+ lB85O1P3Ro6yStztEcCUB+mVx7BfbBJvQHtkEDlZsjuBVHKtym5ONkc4TjCf67uPDK
+ VWqTHscz7ikKq/59SDvt7/F/1aEG4OmN+1y45uND5ljgUxIlv/ApVDBib97M2Urb65
+ u6hmz3EECwMHA==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Fri,  5 May 2023 18:02:00 +0800
-Message-Id: <20230505100205.1921708-1-chao@kernel.org>
+Date: Fri,  5 May 2023 18:02:03 +0800
+Message-Id: <20230505100205.1921708-4-chao@kernel.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230505100205.1921708-1-chao@kernel.org>
+References: <20230505100205.1921708-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1pusGk-00F8L9-Cv
-Subject: [f2fs-dev] [PATCH 1/6] f2fs-tools: add packed attribute for struct
- f2fs_super_block
+X-Headers-End: 1pusGo-00F8LD-SV
+Subject: [f2fs-dev] [PATCH 4/6] f2fs-tools: add DISP_u8() macro
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,29 +85,56 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Otherwise, it may trigger static assert below when the structure
-updates.
-
-static_assert(sizeof(struct f2fs_super_block) == 3072, "")
+Introduce DISP_u8(), and use DISP_u16() and DISP_u8() to print below fields:
+- i_compress_algorithm
+- i_log_cluster_size
+- i_compress_flag
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- include/f2fs_fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fsck/mount.c      |  6 +++---
+ include/f2fs_fs.h | 11 +++++++++++
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
+diff --git a/fsck/mount.c b/fsck/mount.c
+index b314756..5e475a3 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -302,9 +302,9 @@ void print_inode_info(struct f2fs_sb_info *sbi,
+ 		}
+ 		if (c.feature & cpu_to_le32(F2FS_FEATURE_COMPRESSION)) {
+ 			DISP_u64(inode, i_compr_blocks);
+-			DISP_u32(inode, i_compress_algorithm);
+-			DISP_u32(inode, i_log_cluster_size);
+-			DISP_u32(inode, i_compress_flag);
++			DISP_u8(inode, i_compress_algorithm);
++			DISP_u8(inode, i_log_cluster_size);
++			DISP_u16(inode, i_compress_flag);
+ 		}
+ 	}
+ 
 diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 6948814..c71b59d 100644
+index dca4cd8..e5d5d13 100644
 --- a/include/f2fs_fs.h
 +++ b/include/f2fs_fs.h
-@@ -849,7 +849,7 @@ struct f2fs_super_block {
- 	__u8 s_errors[MAX_F2FS_ERRORS];		/* reason of image corrupts */
- 	__u8 reserved[258];		/* valid reserved region */
- 	__le32 crc;			/* checksum of superblock */
--};
-+} __attribute__((packed));
+@@ -282,6 +282,17 @@ static inline uint64_t bswap_64(uint64_t val)
+ 		printf("%-30s" fmt, #member, ((ptr)->member));	\
+ 	} while (0)
  
- static_assert(sizeof(struct f2fs_super_block) == 3072, "");
- 
++#define DISP_u8(ptr, member)						\
++	do {								\
++		assert(sizeof((ptr)->member) == 1);			\
++		if (c.layout)						\
++			printf("%-30s %u\n",				\
++			#member":", ((ptr)->member));			\
++		else							\
++			printf("%-30s" "\t\t[0x%8x : %u]\n",		\
++			#member, ((ptr)->member), ((ptr)->member));	\
++	} while (0)
++
+ #define DISP_u16(ptr, member)						\
+ 	do {								\
+ 		assert(sizeof((ptr)->member) == 2);			\
 -- 
 2.25.1
 
