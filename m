@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D8008C77B7F
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  5 May 2023 10:02:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4A742C7EE22
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri,  5 May 2023 10:02:44 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pusGw-0006d9-ER;
-	Fri, 05 May 2023 10:02:42 +0000
+	id 1pusGx-0004Ms-BQ;
+	Fri, 05 May 2023 10:02:43 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1pusGu-0006d2-Re
+ (envelope-from <chao@kernel.org>) id 1pusGv-0004Mk-Jz
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 05 May 2023 10:02:40 +0000
+ Fri, 05 May 2023 10:02:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=QAlLXmyPGXS4i4+lrCKBZVlQU5pxGZ9Tqil/9eGDbhM=; b=Dx6zD81yYcEz0g/YOr/OVatS8V
- aKDTXLI4hxpPQV0E8BVpcQ0ScCxJexeH7qcF7XbT9YTkMrPQb0p8axkYi7UiEewANb2hnm/jlQPaX
- ezSYHM8L588ay2sU/d8xEPC4i9ZMbNJxytysC7KdAW/vbIJk1u7MsX3Pm7dvkhwKgkW0=;
+ bh=qY34rgbDrGVCDbTKJ3zE1V+AxjZ8M1zbP7ilag6p89k=; b=j4CPALWKjAC+b38aVIBVNdfIML
+ FRRp9CrxxQF8e3jrYGblQnjONYWWlWFhiL+q8FtIOwAl6YxYIJFhgeIJ7LuO6DSvgnb1br8VN3QzA
+ znTe7lxdlowDsbinsRDx4X+uAhmghfyqzpZg2cisDcK/nlejyf1UpbA3PsNqrnD7qvrA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=QAlLXmyPGXS4i4+lrCKBZVlQU5pxGZ9Tqil/9eGDbhM=; b=PfLzgIrgKtwubPasa51gLYK7WE
- Mzb032nTt9Ujl0eocNj8qsIu9rgSdReaSh1SMPllYL955L+Mm2UnLz0YtWER8bHK4mtnJ6Z7S+yzM
- PQH6qh9/VsTao0faVX7Q5ilEr/qZEw+cuI2gs3jIOohJcKNulvLn9XAi72mHVt/npVsA=;
+ bh=qY34rgbDrGVCDbTKJ3zE1V+AxjZ8M1zbP7ilag6p89k=; b=e59n2YyzXPGfG6dd3BIsk8QVss
+ tXy24P76jaK//PGyGWUnllVCMGg97Mrj8DlArjiw9CkPvva420hySOtYooS85/ngWlddOBYN6FyXf
+ F2O7iaEVAMPnSmOqmScA030QQWs6pFYLW/6Tw70ua9MMxbVU1d9uXEZz0akW1JWD3jO8=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pusGn-00F8LB-CN for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 05 May 2023 10:02:40 +0000
+ id 1pusGq-0007k9-BL for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 05 May 2023 10:02:41 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 000E263D07
+ by dfw.source.kernel.org (Postfix) with ESMTPS id EE8E763CFF
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri,  5 May 2023 10:02:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6983BC4339C;
- Fri,  5 May 2023 10:02:26 +0000 (UTC)
+ Fri,  5 May 2023 10:02:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63BAFC433D2;
+ Fri,  5 May 2023 10:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1683280947;
- bh=OljGVEJ85emXYstDa5DeLRblnvW4bDVk2devzBiCgxc=;
+ s=k20201202; t=1683280950;
+ bh=QFVk5Uiw/jMz9GfXgLtpnNnEncbAij3NbR0ptx866nU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=TUbvkKhmzEhWnYAS7CTHxkdnbhQLabDx6BtIQYe+zZdsHlS2JxTeDkxM18RSYTiib
- TaMjg5XmNHAtt5OkkXkVLT4rbWE4dQ7yXfwReA/EdoRF/yGcs25jYwBMwfqTnyaPOx
- yEHTxlZB3UOetUJsuNufy1vn8okO5UW43IsiDNVNQ3a0ECjPjr0lqtgpK8bNNDPj63
- UehJPQo7S/XkSnuqwPhC2rkUtzxRhzOLXMONX5nlXWAYp4bzVaOu/UYd/fonHh2xtg
- RADeZJkd8D7P68jmuqQkk+aoaQd7IiIWsVvPiab3/GBGpAi1HjL822GhurRs15kiOM
- zY8/c+rWQWyzg==
+ b=s0/gC8MtMfGO/MdzsxK0xFfUiWiFYLivW/bQRYLnOLj22gPMxcxULZ5aiXUYCSTas
+ INti+yjxHvzvCV791PJEDe1BWw6zkYuCAhKGAkwbYraRhbo7UTNDDFFPv0Za2uAZ4X
+ TweIuiVres/91l1bNikX+xyl151+ubQ3YekEXKbmqW+A9xhCrcIW11aIS6yHxQ0Gts
+ MchE3vbGzZrdjbvU6kBDaXkcvf8a97P24Da70sX6JuZAccSPRbd2QvZmJzv+fHjNvy
+ 85YS+D0YdCieUCh3mRdKB4MPhSusx4zftCtO5BBU8o9Y8kt4PiPhn8zpmtmBKlfqK7
+ sQsp5LDbOCJFw==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
-Date: Fri,  5 May 2023 18:02:02 +0800
-Message-Id: <20230505100205.1921708-3-chao@kernel.org>
+Date: Fri,  5 May 2023 18:02:04 +0800
+Message-Id: <20230505100205.1921708-5-chao@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230505100205.1921708-1-chao@kernel.org>
 References: <20230505100205.1921708-1-chao@kernel.org>
 MIME-Version: 1.0
-X-Headers-End: 1pusGn-00F8LB-CN
-Subject: [f2fs-dev] [PATCH 3/6] f2fs-tools: fix typo in f2fs_inode structure
+X-Headers-End: 1pusGq-0007k9-BL
+Subject: [f2fs-dev] [PATCH 5/6] f2fs-tools: print more raw sb info
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -85,77 +85,274 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-:%s/i_compress_algrithm/i_compress_algorithm/g
+Output is as below:
+
+magic                         		[0xf2f52010 : 4076150800]
+major_ver                     		[0x       1 : 1]
+minor_ver                     		[0x      10 : 16]
+log_sectorsize                		[0x       9 : 9]
+log_sectors_per_block         		[0x       3 : 3]
+log_blocksize                 		[0x       c : 12]
+log_blocks_per_seg            		[0x       9 : 9]
+segs_per_sec                  		[0x       1 : 1]
+secs_per_zone                 		[0x       1 : 1]
+checksum_offset               		[0x       0 : 0]
+block_count                   		[0x  300000 : 3145728]
+section_count                 		[0x    17d3 : 6099]
+segment_count                 		[0x    17ff : 6143]
+segment_count_ckpt            		[0x       2 : 2]
+segment_count_sit             		[0x       2 : 2]
+segment_count_nat             		[0x      1c : 28]
+segment_count_ssa             		[0x       c : 12]
+segment_count_main            		[0x    17d3 : 6099]
+segment0_blkaddr              		[0x     200 : 512]
+cp_blkaddr                    		[0x     200 : 512]
+sit_blkaddr                   		[0x     600 : 1536]
+nat_blkaddr                   		[0x     a00 : 2560]
+ssa_blkaddr                   		[0x    4200 : 16896]
+main_blkaddr                  		[0x    5a00 : 23040]
+root_ino                      		[0x       3 : 3]
+node_ino                      		[0x       1 : 1]
+meta_ino                      		[0x       2 : 2]
+uuid                          		[f16856a6-8781-422b-adce-d51c0632c94e]
+volum_name                    		[]
+extension_count               		[0x      24 : 36]
+cold file extentsions
+                              		[mp      wm      og      jp      ]
+                              		[avi     m4v     m4p     mkv     ]
+                              		[mov     webm    wav     m4a     ]
+                              		[3gp     opus    flac    gif     ]
+                              		[png     svg     webp    jar     ]
+                              		[deb     iso     gz      xz      ]
+                              		[zst     pdf     pyc     ttc     ]
+                              		[ttf     exe     apk     cnt     ]
+                              		[exo     odex    vdex    so      ]
+hot_ext_count                 		[0x       4 : 4]
+hot file extentsions
+                              		[db      vmdk    vdi     qcow2   ]
+cp_payload                    		[0x       0 : 0]
+version                       		[Linux version 6.3.0+ (gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0, GNU ld (GNU Binutils for Ubuntu) 2.34) #143 SMP PREEMPT_DYNAMIC Thu May  4 09:50:08 HKT 2023]
+init_version                  		[Linux version 6.3.0+ (gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0, GNU ld (GNU Binutils for Ubuntu) 2.34) #143 SMP PREEMPT_DYNAMIC Thu May  4 09:50:08 HKT 2023]
+feature                       		[0x    21f8 : 8696]
+encryption_level              		[0x       0 : 0]
+encrypt_pw_salt               		[00000000-0000-0000-0000-000000000000]
+qf_ino[USRQUOTA]              		[0x       4 : 4]
+qf_ino[GRPQUOTA]              		[0x       5 : 5]
+qf_ino[PRJQUOTA]              		[0x       6 : 6]
+s_encoding                    		[0x       0 : 0]
+crc                           		[0x       0 : 0]
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fsck/mount.c       | 2 +-
- fsck/segment.c     | 2 +-
- include/f2fs_fs.h  | 2 +-
- mkfs/f2fs_format.c | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ fsck/mount.c       | 105 +++++++++++++++++++++++++++++++++++++++++++--
+ include/f2fs_fs.h  |  19 ++++++++
+ mkfs/f2fs_format.c |   1 +
+ 3 files changed, 122 insertions(+), 3 deletions(-)
 
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 2e1634f..b314756 100644
+index 5e475a3..93ad806 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -302,7 +302,7 @@ void print_inode_info(struct f2fs_sb_info *sbi,
- 		}
- 		if (c.feature & cpu_to_le32(F2FS_FEATURE_COMPRESSION)) {
- 			DISP_u64(inode, i_compr_blocks);
--			DISP_u32(inode, i_compress_algrithm);
-+			DISP_u32(inode, i_compress_algorithm);
- 			DISP_u32(inode, i_log_cluster_size);
- 			DISP_u32(inode, i_compress_flag);
- 		}
-diff --git a/fsck/segment.c b/fsck/segment.c
-index 0307bdd..0ca8b5a 100644
---- a/fsck/segment.c
-+++ b/fsck/segment.c
-@@ -633,7 +633,7 @@ int f2fs_build_file(struct f2fs_sb_info *sbi, struct dentry *de)
- 		get_node_info(sbi, de->ino, &ni);
- 		ASSERT(dev_read_block(node_blk, ni.blk_addr) >= 0);
- 		/* update inode meta */
--		node_blk->i.i_compress_algrithm = c.compress.alg;
-+		node_blk->i.i_compress_algorithm = c.compress.alg;
- 		node_blk->i.i_log_cluster_size =
- 				c.compress.cc.log_cluster_size;
- 		node_blk->i.i_flags = cpu_to_le32(F2FS_COMPR_FL);
+@@ -11,6 +11,7 @@
+ #include "fsck.h"
+ #include "node.h"
+ #include "xattr.h"
++#include "quota.h"
+ #include <locale.h>
+ #include <stdbool.h>
+ #include <time.h>
+@@ -20,6 +21,9 @@
+ #ifdef HAVE_SYS_ACL_H
+ #include <sys/acl.h>
+ #endif
++#ifdef HAVE_UUID_UUID_H
++#include <uuid/uuid.h>
++#endif
+ 
+ #ifndef ACL_UNDEFINED_TAG
+ #define ACL_UNDEFINED_TAG	(0x00)
+@@ -365,6 +369,40 @@ void print_node_info(struct f2fs_sb_info *sbi,
+ 	}
+ }
+ 
++void print_extention_list(struct f2fs_super_block *sb, int cold)
++{
++	int start, end, i;
++
++	if (cold) {
++		DISP_u32(sb, extension_count);
++
++		start = 0;
++		end = le32_to_cpu(sb->extension_count);
++	} else {
++		DISP_u8(sb, hot_ext_count);
++
++		start = le32_to_cpu(sb->extension_count);
++		end = start + sb->hot_ext_count;
++	}
++
++	printf("%s file extentsions\n", cold ? "cold" : "hot");
++
++	for (i = start; i < end; i++) {
++		if (c.layout) {
++			printf("%-30s %-8.8s\n", "extension_list",
++						sb->extension_list[i]);
++		} else {
++			if (i % 4 == 0)
++				printf("%-30s\t\t[", "");
++
++			printf("%-8.8s", sb->extension_list[i]);
++
++			if (i % 4 == 4 - 1 || i == end - start - 1)
++				printf("]\n");
++		}
++	}
++}
++
+ static void DISP_label(uint16_t *name)
+ {
+ 	char buffer[MAX_VOLUME_NAME];
+@@ -376,8 +414,14 @@ static void DISP_label(uint16_t *name)
+ 		printf("%-30s" "\t\t[%s]\n", "volum_name", buffer);
+ }
+ 
++void print_sb_debug_info(struct f2fs_super_block *sb);
+ void print_raw_sb_info(struct f2fs_super_block *sb)
+ {
++#ifdef HAVE_LIBUUID
++	char uuid[40];
++	char encrypt_pw_salt[40];
++#endif
++
+ 	if (c.layout)
+ 		goto printout;
+ 	if (!c.dbg_lv)
+@@ -391,8 +435,6 @@ printout:
+ 	DISP_u32(sb, magic);
+ 	DISP_u32(sb, major_ver);
+ 
+-	DISP_label(sb->volume_name);
+-
+ 	DISP_u32(sb, minor_ver);
+ 	DISP_u32(sb, log_sectorsize);
+ 	DISP_u32(sb, log_sectors_per_block);
+@@ -423,9 +465,39 @@ printout:
+ 	DISP_u32(sb, root_ino);
+ 	DISP_u32(sb, node_ino);
+ 	DISP_u32(sb, meta_ino);
++
++#ifdef HAVE_LIBUUID
++	uuid_unparse(sb->uuid, uuid);
++	DISP_raw_str("%-.36s", uuid);
++#endif
++
++	DISP_label(sb->volume_name);
++
++	print_extention_list(sb, 1);
++	print_extention_list(sb, 0);
++
+ 	DISP_u32(sb, cp_payload);
++
++	DISP_str("%-.252s", sb, version);
++	DISP_str("%-.252s", sb, init_version);
++
++	DISP_u32(sb, feature);
++	DISP_u8(sb, encryption_level);
++
++#ifdef HAVE_LIBUUID
++	uuid_unparse(sb->encrypt_pw_salt, encrypt_pw_salt);
++	DISP_raw_str("%-.36s", encrypt_pw_salt);
++#endif
++
++	DISP_u32(sb, qf_ino[USRQUOTA]);
++	DISP_u32(sb, qf_ino[GRPQUOTA]);
++	DISP_u32(sb, qf_ino[PRJQUOTA]);
++
++	DISP_u16(sb, s_encoding);
+ 	DISP_u32(sb, crc);
+-	DISP("%-.252s", sb, version);
++
++	print_sb_debug_info(sb);
++
+ 	printf("\n");
+ }
+ 
+@@ -647,6 +719,33 @@ void print_sb_errors(struct f2fs_super_block *sb)
+ 	MSG(0, "\n");
+ }
+ 
++void print_sb_debug_info(struct f2fs_super_block *sb)
++{
++	u8 *reason = sb->s_stop_reason;
++	u8 *errors = sb->s_errors;
++	int i;
++
++	for (i = 0; i < STOP_CP_REASON_MAX; i++) {
++		if (!reason[i])
++			continue;
++		if (c.layout)
++			printf("%-30s %s(%s, %d)\n", "", "stop_reason",
++				stop_reason_str[i], reason[i]);
++		else
++			printf("%-30s\t\t[%-20s : %u]\n", "",
++				stop_reason_str[i], reason[i]);
++	}
++
++	for (i = 0; i < ERROR_MAX; i++) {
++		if (!test_bit_le(i, errors))
++			continue;
++		if (c.layout)
++			printf("%-30s %s(%s)\n", "", "errors", errors_str[i]);
++		else
++			printf("%-30s\t\t[%-20s]\n", "", errors_str[i]);
++	}
++}
++
+ bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
+ 					block_t blkaddr, int type)
+ {
 diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 7ad1c40..dca4cd8 100644
+index e5d5d13..4accade 100644
 --- a/include/f2fs_fs.h
 +++ b/include/f2fs_fs.h
-@@ -1074,7 +1074,7 @@ struct f2fs_inode {
- 			__le64 i_crtime;	/* creation time */
- 			__le32 i_crtime_nsec;	/* creation time in nano scale */
- 			__le64 i_compr_blocks;	/* # of compressed blocks */
--			__u8 i_compress_algrithm;	/* compress algrithm */
-+			__u8 i_compress_algorithm;	/* compress algorithm */
- 			__u8 i_log_cluster_size;	/* log of cluster size */
- 			__le16 i_compress_flag;		/* compress flag */
- 						/* 0 bit: chksum flag
+@@ -282,6 +282,25 @@ static inline uint64_t bswap_64(uint64_t val)
+ 		printf("%-30s" fmt, #member, ((ptr)->member));	\
+ 	} while (0)
+ 
++#define DISP_raw_str(fmt, member)					\
++	do {								\
++		if (c.layout)						\
++			printf("%-30s " fmt "\n", #member":", member);	\
++		else							\
++			printf("%-30s" "\t\t[" fmt "]\n",		\
++			#member, member);				\
++	} while (0)
++
++#define DISP_str(fmt, ptr, member)					\
++	do {								\
++		if (c.layout)						\
++			printf("%-30s " fmt "\n",			\
++			#member":", ((ptr)->member));			\
++		else							\
++			printf("%-30s" "\t\t[" fmt "]\n",		\
++			#member, ((ptr)->member));			\
++	} while (0)
++
+ #define DISP_u8(ptr, member)						\
+ 	do {								\
+ 		assert(sizeof((ptr)->member) == 1);			\
 diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 11804eb..e8c9675 100644
+index e8c9675..666af45 100644
 --- a/mkfs/f2fs_format.c
 +++ b/mkfs/f2fs_format.c
-@@ -1287,7 +1287,7 @@ static int f2fs_write_root_inode(void)
- 	}
+@@ -29,6 +29,7 @@
+ #ifndef HAVE_LIBUUID
+ #define uuid_parse(a, b) -1
+ #define uuid_generate(a)
++#define uuid_unparse(a, b) -1
+ #endif
  
- 	if (c.feature & cpu_to_le32(F2FS_FEATURE_COMPRESSION)) {
--		raw_node->i.i_compress_algrithm = 0;
-+		raw_node->i.i_compress_algorithm = 0;
- 		raw_node->i.i_log_cluster_size = 0;
- 		raw_node->i.i_compress_flag = 0;
- 	}
-@@ -1609,7 +1609,7 @@ static int f2fs_write_lpf_inode(void)
- 	}
- 
- 	if (c.feature & cpu_to_le32(F2FS_FEATURE_COMPRESSION)) {
--		raw_node->i.i_compress_algrithm = 0;
-+		raw_node->i.i_compress_algorithm = 0;
- 		raw_node->i.i_log_cluster_size = 0;
- 		raw_node->i.i_compress_flag = 0;
- 	}
+ #include "quota.h"
 -- 
 2.25.1
 
