@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 32D3EC7EE24
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 501F8C77B75
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  8 May 2023 18:34:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pw5h3-0000qe-OB;
-	Mon, 08 May 2023 18:34:41 +0000
+	id 1pw5h0-0002mB-Rk;
+	Mon, 08 May 2023 18:34:39 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pw5h0-0000qX-Dh
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pw5gz-0002m5-Ku
  for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 08 May 2023 18:34:38 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,53 +23,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NdnoQDRjnQp+qZzNYW+L47cHiX2duhUreawxU024aFg=; b=IhIxoy9G3urfxJyMSgHNaRPnyV
- pYDfH7StAbkGj/z8Vt6LPs53oGb6aoCGfgeMJO7Bney85kUlalCJQlSovTe5GbxQv/3C2/8ijDg+T
- rpE9u5jtlLbUM64ZIB/jWIuPBb82DYJHzVK/XyfushN3N3kLME66GpcHOapa1+XE95T4=;
+ bh=dGX4/eij3sXn1A8/AJX5f4FZ9CKsf1KK8syuanSOvMY=; b=Gel3aAdDfK3SFlyG/eI/4/dyxN
+ rryYXcpH/nSm/9TPOE/8fjbF39Jj1ryheQB8E9f+nwKnrbtMhGi2GPvftCWHkux4WrvpM8PsLcJjd
+ BA+Z/rL8P34ftOeIap7CXTD8Q6nxSqRiq62joI1NSaqUiZfKR0Gaburm3tU6gU8X7vv8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=NdnoQDRjnQp+qZzNYW+L47cHiX2duhUreawxU024aFg=; b=BGfg5bfq8lTrrFAaYZvF30UqBT
- kPSqSAW2o6qFgCA2a54vhkovLwXunCmU/FfGHdMhDRW8gH3P4KKWUlwnLJljEwT8YqofficKcZ4AH
- /VpUTQb8nr0Ud3wR8oWN70OlPZokkL7Nl3HCFKGvBvZdcFSkKEhP1pQKokRf5tyxqlTc=;
+ bh=dGX4/eij3sXn1A8/AJX5f4FZ9CKsf1KK8syuanSOvMY=; b=d5qd3IXh1QQ0a84roQ2gamDfvp
+ DGY3/9a6WVRnlkjwdd/F5uwIkdVBSqN9FjCIixMfg6LNbbkRYScznZQHKbTnmobJ6byJPm5BveDX7
+ 2oWiUh9Va2fRDxjb4glzT+UJr0kX2sNQ/lgK+p6n+UHZxowJvGgOqtYIjWO65Ffdm/2k=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pw5gv-002LNH-74 for linux-f2fs-devel@lists.sourceforge.net;
+ id 1pw5gv-002LNI-Q7 for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 08 May 2023 18:34:38 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id D2DC762080;
- Mon,  8 May 2023 18:34:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3854EC433D2;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 6CC5F6207F;
+ Mon,  8 May 2023 18:34:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 49015C4339C;
  Mon,  8 May 2023 18:34:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1683570867;
- bh=Dn7+e8seK6/zwfLvdedKADC/j3PIr8QfOPcWNlmROtU=;
+ bh=TNvoTz3NbOFEJrnEiM49QKPvbzCgS37E7OGjAtEsRsY=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=D8gF7m1nvfltldXU0tUm0i9BzkC0+M4VLhXZRrDUDCjs1mxxe02T9VXg1d8MW49yN
- HFqIVWnZEe6XUQOXRZ/vZCxjh3c4iZqBCCIrSl8MoSPs59YOwPiqsaBfcn4JLz1f1U
- O5agOHtKQ6XK5Q9X6h0xUWO1NwI7l5zSiJjMht4ZWQtEDvj2j+yGPUIDRKLcb5EHzy
- izTpIkCDm+m74FPEgUEZTvpbegUo3IDUUp3riV2rnl6Iq8TuFEDTll9FKEY9i3vo7B
- Wu88ENKVdcy60gCWZhFOD3ERo1FitJCJgNIJiAWM6+nhbEoJcM+tv0ZNhPWSS4T+pb
- jzV+1wuzP5saA==
+ b=p9/NIXDwgryeNUn5DGG41xjRsbiCmgPp6PZigl/4kxKFAgY7dT+jLOz/uyOcSyi7+
+ kW6gNPY4EB8c6Lw/+sEqmVeyW8c4et88oBbWC8fN1DmMkNuN85+wSD11ihhmxePAQg
+ EviDXCwsK9Qjhu/c9C440VKLZhTAJTDjvP43SQWkRBt5yL8yQgo1l2AvsE32lMyM/6
+ 94dDj8iW+ZaUIuT6e+8fczPdosqDpJc8WLP3C6Kvw8Ky4anqVrpqt8ZzWT6i/g7Lu5
+ MYgbTh5FVtTVqe1YBH2l0Mk1og3Ut7zyf6PCWFhrYZZFErzqSYyJRk7hYLlYc3WB7z
+ 0oizvHVW5Nm2w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 1698CC39562; Mon,  8 May 2023 18:34:27 +0000 (UTC)
+ 203D3E270D4; Mon,  8 May 2023 18:34:27 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168357086708.2764.4303615885378186638.git-patchwork-notify@kernel.org>
+Message-Id: <168357086712.2764.18059620800942332067.git-patchwork-notify@kernel.org>
 Date: Mon, 08 May 2023 18:34:27 +0000
-References: <20230425160611.79848-1-frank.li@vivo.com>
-In-Reply-To: <20230425160611.79848-1-frank.li@vivo.com>
-To: Yangtao Li <frank.li@vivo.com>
-X-Headers-End: 1pw5gv-002LNH-74
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add sanity check for proc_mkdir
+References: <20230423154915.530254-1-chao@kernel.org>
+In-Reply-To: <20230423154915.530254-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1pw5gv-002LNI-Q7
+Subject: Re: [f2fs-dev] [PATCH v11] f2fs: support
+ errors=remount-ro|continue|panic mountoption
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,8 +82,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, frank.li@vivo.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -92,19 +93,25 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 26 Apr 2023 00:06:11 +0800 you wrote:
-> Return -ENOMEM when proc_mkdir failed.
+On Sun, 23 Apr 2023 23:49:15 +0800 you wrote:
+> This patch supports errors=remount-ro|continue|panic mount option
+> for f2fs.
 > 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
-> v2:
-> -removing check for proc in f2fs_unregister_sysfs and f2fs_register_sysfs
->  fs/f2fs/sysfs.c | 39 +++++++++++++++++++++++----------------
->  1 file changed, 23 insertions(+), 16 deletions(-)
+> f2fs behaves as below in three different modes:
+> mode			continue	remount-ro	panic
+> access ops		normal		noraml		N/A
+> syscall errors		-EIO		-EROFS		N/A
+> mount option		rw		ro		N/A
+> pending dir write	keep		keep		N/A
+> pending non-dir write	drop		keep		N/A
+> pending node write	drop		keep		N/A
+> pending meta write	keep		keep		N/A
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: add sanity check for proc_mkdir
-    https://git.kernel.org/jaegeuk/f2fs/c/888ca6edac81
+  - [f2fs-dev,v11] f2fs: support errors=remount-ro|continue|panic mountoption
+    https://git.kernel.org/jaegeuk/f2fs/c/b62e71be2110
 
 You are awesome, thank you!
 -- 
