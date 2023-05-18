@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0AA80C77B7F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 18 May 2023 01:50:48 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 1D52DC77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 18 May 2023 01:50:49 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pzSn0-0005vk-Oy;
+	id 1pzSmz-00084o-Mc;
 	Thu, 18 May 2023 01:50:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pzSmo-0005vX-HA
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pzSmo-00084Y-5Y
  for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 18 May 2023 01:50:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,55 +23,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hiJkOE4sF397K528VCy6DbZQ2gJCBHiPoeu0MIB0Gw0=; b=Iups4ekCBbT7/4We0Zxgvih/hk
- i8rPryh51nUA1KdGdNQLRRlJMAHFwftsJpIybm+dYl+4GBQvAzeL+qdjXlCfBUTkKlG7w70lpdOiP
- NJ9wuA26WumykuDw0UKRMH7/WSOZ2lVkRTJnYC292lWgSeiRTE8i1j3eP6IwmzyW/Njw=;
+ bh=W6iWRekBHtz1heXpKMOPs9O0r0ELPkJKyE2d0MCapDU=; b=LXjkRnbqKP2Db6/ROxLWgoK6Cg
+ BUmW4eJDcYxXik+p/CXYaW9uwtsBECy4D265wBSyjNqIgAL0oGCLdE/n99EtEQA34FxFGEEmCshGE
+ LonMx/AeLwKPnprSRh2ej9h2XueOn4XPgeeFgkcCimcIYGhT2YOyygml1wmvPzYCZN5c=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=hiJkOE4sF397K528VCy6DbZQ2gJCBHiPoeu0MIB0Gw0=; b=c3egvpuJUPeansInzhpTiLhXC2
- ADBfhnLiKlyYsWuTIvrlaoQu3+iT/ifv+jOImZ1mYpgBJarQzUgDx17EV0djsyAuXvrDZxrzGPpp+
- 0mxhEWW+Dz+Q7aIEmUUCn4/p6wkilB5iRv4vTUCkD1cUvUk10ViCTC4pw5UAvn73DFt8=;
+ bh=W6iWRekBHtz1heXpKMOPs9O0r0ELPkJKyE2d0MCapDU=; b=AWFqFsAq5QHc8TgK56VVdgHdqA
+ IY6QhP/TOC5IdV3JGKoTkBiiiDCf8HANJFM1elA8CiXs++oG9VRjW+LmnsxCimxWLAI1uTqbyWZ7W
+ 4Ob+KuJlj4IoB9Bh8LP6avv0ulNDRnlRUOhEOnfR3U9fmg/ufl6XmhqHTbmctzndW/HU=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pzSmn-00BlvX-GU for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 18 May 2023 01:50:33 +0000
+ id 1pzSmn-00Blvb-TC for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 18 May 2023 01:50:34 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A377564C44
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id D12D564C53;
  Thu, 18 May 2023 01:50:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 91D37C4339E;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B11B9C433AF;
  Thu, 18 May 2023 01:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1684374621;
- bh=6P3qFN0pUzsg+xFu4WJdAzDQLrByxRzOzEBQ1mm69iI=;
+ bh=38bOYjNs1Ei5s3rnORJ5Nb8u0FgNezxRrYWUA2SytAU=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=hEt+kkNHD7RrBapnZKztBgIsBPqHhgP2MomnRfGqFj3hKRc3miQkfc6rRfFdU9J26
- qdlA18xP/UH4EEAEf5DE4n2x64CDpN9gyuLBA+1zygYU90pWGkWooyQqjoUOgxMvsF
- AoskRgD8OUs6EKebgYbrqGv+Mfe2S4zjEgzJlBakfEE5Omu/qPjmdESbtd6m4MG9jw
- 4Lt1szILdr6bo4JzgDqAfesBdU9YC+PblEdsMvQ3MoHKNrTeEltpNOqPtWunOzNlYq
- Gu+/LwHBpChhxuvFnPPXp4bluWjH0L77l8Y8iSkBE3A1pdp3WFhWe3jM4DBoYdwb9c
- yO9VzUiXCngLg==
+ b=Q1gogNMXzC873yWXitUSskmlkpMHUqrU/so15BeMInd63O95Z0PiQIDfc/lgwKtTv
+ gVQ6yF2uolqfyJNpi2V7prfOB0aY4S3tclkU6T022njCExi8BNh6eOCDQr+Drw9El8
+ b5tTfGVnZbj+WcQz+nyrZuxmb8Rzt7BzIDWtAgERR47rdL683Q67i6WPm4y+DhjSiT
+ oydUe7rv37Kk0vNjrPrysEIAqxHaurhb9h4BX4u7m0jm9+X9R9IY4q/lGwLJlsjrqR
+ 8cFXhYDKGF6HKoBDAYeMd2HLdwp7VAsB5cIz6lXb6TNRjl3TIh2aHIp4mSd+ObbWij
+ IHDi/2STeNaqg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 7642CC4166F; Thu, 18 May 2023 01:50:21 +0000 (UTC)
+ 93F5CE5421C; Thu, 18 May 2023 01:50:21 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168437462148.19511.5245634211423194029.git-patchwork-notify@kernel.org>
+Message-Id: <168437462160.19511.13019487085074367761.git-patchwork-notify@kernel.org>
 Date: Thu, 18 May 2023 01:50:21 +0000
-References: <20230517034139.12879-1-chao@kernel.org>
-In-Reply-To: <20230517034139.12879-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1pzSmn-00BlvX-GU
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: compress: fix to check validity of
- i_compress_flag field
+References: <20230512041610epcms2p506e7539079670524146ba6eeeb9dbd63@epcms2p5>
+In-Reply-To: <20230512041610epcms2p506e7539079670524146ba6eeeb9dbd63@epcms2p5>
+To: Yonggil Song <yonggil.song@samsung.com>
+X-Headers-End: 1pzSmn-00Blvb-TC
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: Fix over-estimating free section
+ during FG GC
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,7 +82,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+Cc: linux-kernel@vger.kernel.org, beomsu7.kim@samsung.com,
+ sukka.kim@samsung.com, jaegeuk@kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -94,20 +94,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 17 May 2023 11:41:39 +0800 you wrote:
-> The last valid compress related field is i_compress_flag, check its
-> validity instead of i_log_cluster_size.
+On Fri, 12 May 2023 13:16:10 +0900 you wrote:
+> There was a bug that finishing FG GC unconditionally because free sections
+> are over-estimated after checkpoint in FG GC.
+> This patch initializes sec_freed by every checkpoint in FG GC.
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> Signed-off-by: Yonggil Song <yonggil.song@samsung.com>
 > ---
-> v2:
-> - rebase the code.
->  fs/f2fs/inode.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  fs/f2fs/gc.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: compress: fix to check validity of i_compress_flag field
-    https://git.kernel.org/jaegeuk/f2fs/c/8a0dbd506b6d
+  - [f2fs-dev,v1] f2fs: Fix over-estimating free section during FG GC
+    https://git.kernel.org/jaegeuk/f2fs/c/62c85994b958
 
 You are awesome, thank you!
 -- 
