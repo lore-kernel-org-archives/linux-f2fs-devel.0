@@ -4,74 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 52060C77B7A
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 18 May 2023 01:50:54 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id B327BC77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 18 May 2023 01:59:43 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pzSn6-0007J4-J7;
-	Thu, 18 May 2023 01:50:53 +0000
+	id 1pzSve-0008Bf-DC;
+	Thu, 18 May 2023 01:59:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pzSn5-0007Iu-14
+ (envelope-from <chao@kernel.org>) id 1pzSvc-0008BZ-PM
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 18 May 2023 01:50:51 +0000
+ Thu, 18 May 2023 01:59:41 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tYvBe56RiRok/NsXQTsyeK5Vx+wkToLEn80xiRdETjE=; b=exmOTUMxnX2+6pMdl84aThZkie
- Nk5er4k8o5Xhmnr+dvM9Iovfim5eIqYl5UfDw47WoYOksv8LHQNbfxR2/WQZKChrS5rxSx+FYaCT9
- ADqSXshR//qK8UFUurz11LOycCpZ9Zpehzivps0QNl82rZApFDAwz2hH6sJeJu0e+H10=;
+ bh=9RtQpZIZedgi1Q+OcEFgIhCpuuJxD6gEF0+SSRQJnRU=; b=lC7yyEUytdsSfozCYdRTayrKj+
+ ql16wAHEICNA3eNYM0YHKNemuSk4OT5dQ3xIApdWDbpLvHn0wy645jgWkz7vxou1McDtlPcZi0kzt
+ aWpGOFi09DADhhM9FhwYDYqy/XwxgiGaKdA+ngv4e7Zbl7I/hgvrZDGshuueKH0V+qAQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=tYvBe56RiRok/NsXQTsyeK5Vx+wkToLEn80xiRdETjE=; b=c9Fc0np4suuk/QIOM/NOC0DlkV
- vPewFKzt477vOCgqS5znQSEbgD60ZPQBNn5jQZm/LBzAKV04zSxDBBR3nPrvZv/p00jYx86/rTY62
- c6zzf64k0Ve+XDM5dkU1xYBaf9XB40Jmtxm5lf1DleRMiBeUarlcoTQ/pEVRukZqIaHA=;
+ ;
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=9RtQpZIZedgi1Q+OcEFgIhCpuuJxD6gEF0+SSRQJnRU=; b=ddW4R/r139RN1CYkyhjeKVwQbZ
+ TUMF3w1Heq6VXZqKovZQSMfBVshnWKDliFHWzRdWjSnjkfapVOjCbJxejuUJhWMAgKnJqxgM/gB47
+ Z1+2oz35PJqnAy48cESLcivUxV7MrWIGVBtxpauq/ajFNzzwqFnJRvAwI/A0Hermlumc=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pzSmq-0007VD-V8 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 18 May 2023 01:50:44 +0000
+ id 1pzSvc-0008S2-9a for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 18 May 2023 01:59:41 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id B90C464C50
+ by dfw.source.kernel.org (Postfix) with ESMTPS id E38CC64BD3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 18 May 2023 01:50:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A6DC8C433AA;
- Thu, 18 May 2023 01:50:21 +0000 (UTC)
+ Thu, 18 May 2023 01:59:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA838C433EF;
+ Thu, 18 May 2023 01:59:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1684374621;
- bh=h5wZXuGuivPiw1wCi19eTgzWGkbGvrsyWB3cTP8ACus=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=ONhYuEGnjXYVm5PHis3SOTu0gvw5dQJMAlcPsVZRRm3p3alc9JKeYMzyUXXZFVyaq
- qtewm1Oio41/WBN/q/hlUmlRVe3GUxPZ7eWgzRNuqoF062EBUsKXFOZGaHrVSnzZGe
- C8QUiDZK47RfCyfcYbmxOwQ8iSn+RVXGhfJu5HT0p1x0OqQlsgaaKDm0LJmEQBBjMu
- oeFGSKUW8TKfcAUPbqPCmBpkREYFr6OVWkEt1/gTILsZ+1aq+mXm7wsJckKDFxlQTB
- YPE2+OK/RDsF3U4Pw8cDQTLyKErgk58DX9wigUSAnStePgQ8CNIfgqdhAeXF/tyL4L
- wbWIB4LuTG6IQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 897F6E21EF8; Thu, 18 May 2023 01:50:21 +0000 (UTC)
+ s=k20201202; t=1684375174;
+ bh=xOhI1pIJ+m4eCD4irKdNqEhxin+F3m38vShn4+3wNqE=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=hbFrN694v1nxiK/J0ZfcxGvcOf7IN22zbwAgbqrLnAgpb5kHN6eVhVoeRDmhhBmat
+ PpbxJbHFIXXdVzMEtAT6IERX88AmFILx8lUmqRGx8FRBpdY+28TakQKj6iD1LzArNz
+ +kTV6dm/jPTqgr+KYJhaBXb3i39P8In+LH2qPdzGHpAlvxOrddlQWQHlEgvyN6fkLh
+ ka26tAt80HX+Ggl9r+ZmfeJheExIEQQu2+8s58HowxMYyD/hXTTU0AeFszdM5Hv8ec
+ ed1QKpAdq40JAKU67sRDN+CDQWM9sUa/i5di2udqeyvQkU6myG48UWid43jBkWxUdM
+ 4yc/H5qARVoRg==
+Message-ID: <a54081b2-ae51-6331-28df-f292a8009862@kernel.org>
+Date: Thu, 18 May 2023 09:59:31 +0800
 MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168437462155.19511.5323396327491038939.git-patchwork-notify@kernel.org>
-Date: Thu, 18 May 2023 01:50:21 +0000
-References: <20230505191841.3185179-1-jaegeuk@kernel.org>
-In-Reply-To: <20230505191841.3185179-1-jaegeuk@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Content-Language: en-US
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1pzSmq-0007VD-V8
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix the wrong condition to determine
- atomic context
+References: <20230517082632.748914-1-chao@kernel.org>
+ <20230517082632.748914-3-chao@kernel.org> <ZGWBFvPFvQH7qdmz@google.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZGWBFvPFvQH7qdmz@google.com>
+X-Headers-End: 1pzSvc-0008S2-9a
+Subject: Re: [f2fs-dev] [PATCH 3/4] mkfs.f2fs: cleanup w/
+ alloc_next_free_block()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,35 +84,227 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
-
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Fri,  5 May 2023 12:18:41 -0700 you wrote:
-> Should use !in_task for irq context.
+On 2023/5/18 9:36, Jaegeuk Kim wrote:
+> On 05/17, Chao Yu wrote:
+>> Introduce alloc_next_free_block() to wrap below openned codes:
+>>
+>> 	blkaddr = get_sb(main_blkaddr) +
+>> 			c.cur_seg[curseg_type] * c.blks_per_seg +
+>> 			c.curseg_offset[curseg_type];
+>>
+>> Meanwhile add curseg_offset field in f2fs_configuration to record
+>> last blkaddr in each log.
+>>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>   include/f2fs_fs.h  |   2 +
+>>   mkfs/f2fs_format.c | 101 +++++++++++++++++++--------------------------
+>>   2 files changed, 45 insertions(+), 58 deletions(-)
+>>
+>> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+>> index 8475645..05d27ba 100644
+>> --- a/include/f2fs_fs.h
+>> +++ b/include/f2fs_fs.h
+>> @@ -603,6 +603,8 @@ struct f2fs_configuration {
+>>   
+>>   	/* compression support for sload.f2fs */
+>>   	compress_config_t compress;
+>> +
+>> +	block_t curseg_offset[6];
 > 
-> Fixes: 1aa161e43106 ("f2fs: fix scheduling while atomic in decompression path")
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/compress.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> NR_CURSEG_TYPE?
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: fix the wrong condition to determine atomic context
-    https://git.kernel.org/jaegeuk/f2fs/c/f063fa439956
+The macro is defined after struct f2fs_configuration...
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+How about updating all value w/ macro in below patch, as the patch
+relocates struct f2fs_configuration?
 
+[PATCH 4/4]mkfs.f2fs: refactor format flow for cleanup
 
+Thanks,
+
+> 
+>>   };
+>>   
+>>   #ifdef CONFIG_64BIT
+>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>> index 620f779..2ca5f48 100644
+>> --- a/mkfs/f2fs_format.c
+>> +++ b/mkfs/f2fs_format.c
+>> @@ -1230,11 +1230,24 @@ static int f2fs_discard_obsolete_dnode(void)
+>>   }
+>>   #endif
+>>   
+>> +static block_t alloc_next_free_block(int curseg_type, int blkcnt)
+>> +{
+>> +	block_t blkaddr;
+>> +
+>> +	blkaddr = get_sb(main_blkaddr) +
+>> +		c.cur_seg[curseg_type] * c.blks_per_seg +
+>> +		c.curseg_offset[curseg_type];
+>> +
+>> +	c.curseg_offset[curseg_type] += blkcnt;
+>> +
+>> +	return blkaddr;
+>> +}
+>> +
+>>   static int f2fs_write_root_inode(void)
+>>   {
+>>   	struct f2fs_node *raw_node = NULL;
+>> -	uint64_t data_blk_nor;
+>> -	uint64_t main_area_node_seg_blk_offset = 0;
+>> +	block_t data_blkaddr;
+>> +	block_t node_blkaddr;
+>>   
+>>   	raw_node = calloc(F2FS_BLKSIZE, 1);
+>>   	if (raw_node == NULL) {
+>> @@ -1248,24 +1261,15 @@ static int f2fs_write_root_inode(void)
+>>   	if (c.lpf_ino)
+>>   		raw_node->i.i_links = cpu_to_le32(3);
+>>   
+>> -	raw_node->footer.next_blkaddr = cpu_to_le32(
+>> -			get_sb(main_blkaddr) +
+>> -			c.cur_seg[CURSEG_HOT_NODE] *
+>> -			c.blks_per_seg + 1);
+>> -
+>> -	data_blk_nor = get_sb(main_blkaddr) +
+>> -		c.cur_seg[CURSEG_HOT_DATA] * c.blks_per_seg;
+>> -	raw_node->i.i_addr[get_extra_isize(raw_node)] = cpu_to_le32(data_blk_nor);
+>> -
+>> -	main_area_node_seg_blk_offset = get_sb(main_blkaddr);
+>> -	main_area_node_seg_blk_offset += c.cur_seg[CURSEG_HOT_NODE] *
+>> -					c.blks_per_seg;
+>> -
+>> -	DBG(1, "\tWriting root inode (hot node), %x %x %x at offset 0x%08"PRIu64"\n",
+>> -			get_sb(main_blkaddr),
+>> -			c.cur_seg[CURSEG_HOT_NODE],
+>> -			c.blks_per_seg, main_area_node_seg_blk_offset);
+>> -	if (write_inode(raw_node, main_area_node_seg_blk_offset) < 0) {
+>> +	data_blkaddr = alloc_next_free_block(CURSEG_HOT_DATA, 1);
+>> +	raw_node->i.i_addr[get_extra_isize(raw_node)] =
+>> +				cpu_to_le32(data_blkaddr);
+>> +
+>> +	node_blkaddr = alloc_next_free_block(CURSEG_HOT_NODE, 1);
+>> +	raw_node->footer.next_blkaddr = cpu_to_le32(node_blkaddr + 1);
+>> +
+>> +	DBG(1, "\tWriting root inode (hot node), offset 0x%x\n", node_blkaddr);
+>> +	if (write_inode(raw_node, node_blkaddr) < 0) {
+>>   		MSG(1, "\tError: While writing the raw_node to disk!!!\n");
+>>   		free(raw_node);
+>>   		return -1;
+>> @@ -1349,8 +1353,8 @@ static int f2fs_write_default_quota(int qtype, unsigned int blkaddr,
+>>   static int f2fs_write_qf_inode(int qtype, int offset)
+>>   {
+>>   	struct f2fs_node *raw_node = NULL;
+>> -	uint64_t data_blk_nor;
+>> -	uint64_t main_area_node_seg_blk_offset = 0;
+>> +	block_t data_blkaddr;
+>> +	block_t node_blkaddr;
+>>   	__le32 raw_id;
+>>   	int i;
+>>   
+>> @@ -1366,14 +1370,10 @@ static int f2fs_write_qf_inode(int qtype, int offset)
+>>   	raw_node->i.i_blocks = cpu_to_le64(1 + QUOTA_DATA(qtype));
+>>   	raw_node->i.i_flags = F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL;
+>>   
+>> -	raw_node->footer.next_blkaddr = cpu_to_le32(
+>> -			get_sb(main_blkaddr) +
+>> -			c.cur_seg[CURSEG_HOT_NODE] *
+>> -			c.blks_per_seg + 1 + qtype + 1);
+>> +	node_blkaddr = alloc_next_free_block(CURSEG_HOT_NODE, 1);
+>> +	raw_node->footer.next_blkaddr = cpu_to_le32(node_blkaddr + 1);
+>>   
+>> -	data_blk_nor = get_sb(main_blkaddr) +
+>> -		c.cur_seg[CURSEG_HOT_DATA] * c.blks_per_seg + 1
+>> -		+ offset * QUOTA_DATA(i);
+>> +	data_blkaddr = alloc_next_free_block(CURSEG_HOT_DATA, QUOTA_DATA(i));
+>>   
+>>   	if (qtype == 0)
+>>   		raw_id = raw_node->i.i_uid;
+>> @@ -1385,24 +1385,17 @@ static int f2fs_write_qf_inode(int qtype, int offset)
+>>   		ASSERT(0);
+>>   
+>>   	/* write two blocks */
+>> -	if (f2fs_write_default_quota(qtype, data_blk_nor, raw_id)) {
+>> +	if (f2fs_write_default_quota(qtype, data_blkaddr, raw_id)) {
+>>   		free(raw_node);
+>>   		return -1;
+>>   	}
+>>   
+>>   	for (i = 0; i < QUOTA_DATA(qtype); i++)
+>>   		raw_node->i.i_addr[get_extra_isize(raw_node) + i] =
+>> -					cpu_to_le32(data_blk_nor + i);
+>> +					cpu_to_le32(data_blkaddr + i);
+>>   
+>> -	main_area_node_seg_blk_offset = get_sb(main_blkaddr);
+>> -	main_area_node_seg_blk_offset += c.cur_seg[CURSEG_HOT_NODE] *
+>> -					c.blks_per_seg + offset + 1;
+>> -
+>> -	DBG(1, "\tWriting quota inode (hot node), %x %x %x at offset 0x%08"PRIu64"\n",
+>> -			get_sb(main_blkaddr),
+>> -			c.cur_seg[CURSEG_HOT_NODE],
+>> -			c.blks_per_seg, main_area_node_seg_blk_offset);
+>> -	if (write_inode(raw_node, main_area_node_seg_blk_offset) < 0) {
+>> +	DBG(1, "\tWriting quota inode (hot node), offset 0x%x\n", node_blkaddr);
+>> +	if (write_inode(raw_node, node_blkaddr) < 0) {
+>>   		MSG(1, "\tError: While writing the raw_node to disk!!!\n");
+>>   		free(raw_node);
+>>   		return -1;
+>> @@ -1492,8 +1485,8 @@ static block_t f2fs_add_default_dentry_lpf(void)
+>>   static int f2fs_write_lpf_inode(void)
+>>   {
+>>   	struct f2fs_node *raw_node;
+>> -	uint64_t main_area_node_seg_blk_offset;
+>> -	block_t data_blk_nor;
+>> +	block_t data_blkaddr;
+>> +	block_t node_blkaddr;
+>>   	int err = 0;
+>>   
+>>   	ASSERT(c.lpf_ino);
+>> @@ -1510,28 +1503,20 @@ static int f2fs_write_lpf_inode(void)
+>>   	raw_node->i.i_namelen = le32_to_cpu(strlen(LPF));
+>>   	memcpy(raw_node->i.i_name, LPF, strlen(LPF));
+>>   
+>> -	raw_node->footer.next_blkaddr = cpu_to_le32(
+>> -			get_sb(main_blkaddr) +
+>> -			c.cur_seg[CURSEG_HOT_NODE] * c.blks_per_seg +
+>> -			1 + c.quota_inum + 1);
+>> +	node_blkaddr = alloc_next_free_block(CURSEG_HOT_NODE, 1);
+>> +	raw_node->footer.next_blkaddr = cpu_to_le32(node_blkaddr + 1);
+>>   
+>> -	data_blk_nor = f2fs_add_default_dentry_lpf();
+>> -	if (data_blk_nor == 0) {
+>> +	data_blkaddr = f2fs_add_default_dentry_lpf();
+>> +	if (data_blkaddr == 0) {
+>>   		MSG(1, "\tError: Failed to add default dentries for lost+found!!!\n");
+>>   		err = -1;
+>>   		goto exit;
+>>   	}
+>> -	raw_node->i.i_addr[get_extra_isize(raw_node)] = cpu_to_le32(data_blk_nor);
+>> -
+>> -	main_area_node_seg_blk_offset = get_sb(main_blkaddr);
+>> -	main_area_node_seg_blk_offset += c.cur_seg[CURSEG_HOT_NODE] *
+>> -		c.blks_per_seg + c.quota_inum + 1;
+>> +	raw_node->i.i_addr[get_extra_isize(raw_node)] = cpu_to_le32(data_blkaddr);
+>>   
+>> -	DBG(1, "\tWriting lost+found inode (hot node), %x %x %x at offset 0x%08"PRIu64"\n",
+>> -			get_sb(main_blkaddr),
+>> -			c.cur_seg[CURSEG_HOT_NODE],
+>> -			c.blks_per_seg, main_area_node_seg_blk_offset);
+>> -	if (write_inode(raw_node, main_area_node_seg_blk_offset) < 0) {
+>> +	DBG(1, "\tWriting lost+found inode (hot node), offset 0x%x\n",
+>> +								node_blkaddr);
+>> +	if (write_inode(raw_node, node_blkaddr) < 0) {
+>>   		MSG(1, "\tError: While writing the raw_node to disk!!!\n");
+>>   		err = -1;
+>>   		goto exit;
+>> -- 
+>> 2.40.1
 
 
 _______________________________________________
