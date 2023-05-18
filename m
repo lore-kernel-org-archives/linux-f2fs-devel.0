@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 62602C77B7F
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 18 May 2023 01:50:53 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 52060C77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 18 May 2023 01:50:54 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pzSn7-0008Un-0A;
+	id 1pzSn6-0007J4-J7;
 	Thu, 18 May 2023 01:50:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pzSn3-0008UZ-5h
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1pzSn5-0007Iu-14
  for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 18 May 2023 01:50:51 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,55 +23,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DMStgIMEK7v1DTteuU0rqCvdf82oIm75Nm0cSK0cJC4=; b=ZLGF1dYEXbR0PoJA0naBkomaOA
- WACz75imGza+T4f3W8Y/7rYjMNRoLHGuHDKgWIboGwPUm1TuMPZt7jNlCQ2hXzVpYqlnZOWUOSzV6
- F+JNyJJBG+1tL2NrkGBjxoqnJP4XZN0CGKbEOOf+Ko/6F/ERaOi6wcm7RSJoP+8GiLLQ=;
+ bh=tYvBe56RiRok/NsXQTsyeK5Vx+wkToLEn80xiRdETjE=; b=exmOTUMxnX2+6pMdl84aThZkie
+ Nk5er4k8o5Xhmnr+dvM9Iovfim5eIqYl5UfDw47WoYOksv8LHQNbfxR2/WQZKChrS5rxSx+FYaCT9
+ ADqSXshR//qK8UFUurz11LOycCpZ9Zpehzivps0QNl82rZApFDAwz2hH6sJeJu0e+H10=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DMStgIMEK7v1DTteuU0rqCvdf82oIm75Nm0cSK0cJC4=; b=Iz/IBwV5WwT540LrVFqwc0JFlO
- vYAtLHaVcHvlEVkbY2JVLL2e3gvtM6SjivVz/f8uSdRe04fBmtfNLvo/FUCYOLuI1PnzgBpBcmxvL
- OT8T8TdM6uJ0nkiZwGA3oTsnKjP5kICJYPxmx3/HbZ5S8UhFgAEGFnZv7JD1pxIo0abU=;
+ bh=tYvBe56RiRok/NsXQTsyeK5Vx+wkToLEn80xiRdETjE=; b=c9Fc0np4suuk/QIOM/NOC0DlkV
+ vPewFKzt477vOCgqS5znQSEbgD60ZPQBNn5jQZm/LBzAKV04zSxDBBR3nPrvZv/p00jYx86/rTY62
+ c6zzf64k0Ve+XDM5dkU1xYBaf9XB40Jmtxm5lf1DleRMiBeUarlcoTQ/pEVRukZqIaHA=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pzSmq-0007VA-V8 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 18 May 2023 01:50:39 +0000
+ id 1pzSmq-0007VD-V8 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 18 May 2023 01:50:44 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id B243264C4B
+ by dfw.source.kernel.org (Postfix) with ESMTPS id B90C464C50
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Thu, 18 May 2023 01:50:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9D846C433A8;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A6DC8C433AA;
  Thu, 18 May 2023 01:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1684374621;
- bh=iDRmiHP42z5SPaRMhEHGDBbuFT5qxpgNW+w2+vW00DU=;
+ bh=h5wZXuGuivPiw1wCi19eTgzWGkbGvrsyWB3cTP8ACus=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=CO/d25jNrqBnKYubsVVMKYjgDQA/5aL+BL9AJfMXtzmw9HRCPidfIpKvOYVbj4exD
- tFeLGiCbGNyogmaLKEKE0HzUKpfPNlDaV4JYxsDhSlRqUFoFyParNIw91PHshpyf4j
- 4koOBiWLlOlETyCJ9KOMj3+h0n8Da1/ziU7QkPIp8vk2Hnt991IvFrjWkkIjJXUeiA
- 0Wgtb/BHid2kxSDp4MDoKXqQil4wiHMt6glf9Il0BfkPjcW9i7ukyoUkDpL0dW2zGU
- UgmgiqBeTchZ+AYiBgAzUY9k6l53CokBetedWHfIk2RqeWFmSC4/aZpFru/G/Qz8ii
- +IObKnpLAaW9Q==
+ b=ONhYuEGnjXYVm5PHis3SOTu0gvw5dQJMAlcPsVZRRm3p3alc9JKeYMzyUXXZFVyaq
+ qtewm1Oio41/WBN/q/hlUmlRVe3GUxPZ7eWgzRNuqoF062EBUsKXFOZGaHrVSnzZGe
+ C8QUiDZK47RfCyfcYbmxOwQ8iSn+RVXGhfJu5HT0p1x0OqQlsgaaKDm0LJmEQBBjMu
+ oeFGSKUW8TKfcAUPbqPCmBpkREYFr6OVWkEt1/gTILsZ+1aq+mXm7wsJckKDFxlQTB
+ YPE2+OK/RDsF3U4Pw8cDQTLyKErgk58DX9wigUSAnStePgQ8CNIfgqdhAeXF/tyL4L
+ wbWIB4LuTG6IQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 7FFDFE21EF5; Thu, 18 May 2023 01:50:21 +0000 (UTC)
+ 897F6E21EF8; Thu, 18 May 2023 01:50:21 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168437462152.19511.17219175731809504338.git-patchwork-notify@kernel.org>
+Message-Id: <168437462155.19511.5323396327491038939.git-patchwork-notify@kernel.org>
 Date: Thu, 18 May 2023 01:50:21 +0000
-References: <20230514080723.17313-1-chao@kernel.org>
-In-Reply-To: <20230514080723.17313-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1pzSmq-0007VA-V8
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix potential deadlock due to unpaired
- node_write lock use
+References: <20230505191841.3185179-1-jaegeuk@kernel.org>
+In-Reply-To: <20230505191841.3185179-1-jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+X-Headers-End: 1pzSmq-0007VD-V8
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix the wrong condition to determine
+ atomic context
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,8 +83,7 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -94,25 +93,18 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sun, 14 May 2023 16:07:23 +0800 you wrote:
-> If S_NOQUOTA is cleared from inode during data page writeback of quota
-> file, it may miss to unlock node_write lock, result in potential
-> deadlock, fix to use the lock in paired.
+On Fri,  5 May 2023 12:18:41 -0700 you wrote:
+> Should use !in_task for irq context.
 > 
-> Kworker					Thread
-> - writepage
->  if (IS_NOQUOTA())
->    f2fs_down_read(&sbi->node_write);
-> 					- vfs_cleanup_quota_inode
-> 					 - inode->i_flags &= ~S_NOQUOTA;
->  if (IS_NOQUOTA())
->    f2fs_up_read(&sbi->node_write);
-> 
-> [...]
+> Fixes: 1aa161e43106 ("f2fs: fix scheduling while atomic in decompression path")
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/compress.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix potential deadlock due to unpaired node_write lock use
-    https://git.kernel.org/jaegeuk/f2fs/c/a731b6aefbb4
+  - [f2fs-dev] f2fs: fix the wrong condition to determine atomic context
+    https://git.kernel.org/jaegeuk/f2fs/c/f063fa439956
 
 You are awesome, thank you!
 -- 
