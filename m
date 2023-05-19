@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 745A3C7EE29
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 May 2023 09:36:12 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3AAF8C77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 May 2023 09:36:14 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pzwWy-0007lT-3D;
-	Fri, 19 May 2023 09:36:12 +0000
+	id 1pzwWz-000503-F2;
+	Fri, 19 May 2023 09:36:13 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+aecf67361b95543ec79f+7208+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1pzwWv-0007kv-HO for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 May 2023 09:36:10 +0000
+ id 1pzwWx-0004zq-PT for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 19 May 2023 09:36:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=g0XZ1SdajcGpQ1AF9r9lkRdRsXz7pcMVrMTOSW6r8Eo=; b=PMAsbPWQH4aOxoQzHQjaMAAEeQ
- 1UhSuss4dcNTSqkRBB3oVwWZWXoMHj7elq8M2aO3xHRIr6lbp/gjX2cY4gyQk2KXE03ITMvDZiaBT
- gVm6TK5UD3e/c2uN6fE0lA+wYSFBnVKzeeqH3zhUvp+kvRgOviyO0/PpwxMIPL6DGJzk=;
+ bh=TKBAB7v33dbYW3H4NRpBXoH9tha0ccQ02cfBeOuFf/4=; b=fQjfcGmM4b+LLNcroH2fb7U0/r
+ XzjN5isPOqX2OjqSck6n56D7MIGC2qttKi6eaZiJBGsRQuwUSf0HfX0mpX14oA79hjpCORguYeN0f
+ GVdT8+HqGAGVZoUMsnStl+vzuN83ph67ZKOkHZ/FyZiqF2KxcVqTadN63zbjl4UJd3Ks=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,40 +33,39 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=g0XZ1SdajcGpQ1AF9r9lkRdRsXz7pcMVrMTOSW6r8Eo=; b=dhNT8Jj5KVh8nMLiiIglYBw02W
- 6S9CI8Ghhi1ygownR4kQtS4/FVTVeHTE2dm/8Q+Tkx5pN5x1Yft8RMjglcAIzKsvvhXN0cnYGqjy6
- T1PnJejMls6Cp3nY2ycX3k10zeTAmR0VJHcTU0NCvO8fnNO7jDhgtkx2PGM7si0N+HR8=;
+ bh=TKBAB7v33dbYW3H4NRpBXoH9tha0ccQ02cfBeOuFf/4=; b=BKxW4/azj/FEh5Y9d2Jh7YBMG7
+ MG+JKIistNWxp/7bRwnq0fWx/Fg3E8WcgkGj9QEotUjAln35op0qB8pl0vCxHI95p6gLRBRrvkT0a
+ 5KyMjOGRNndamB6bm0EZnilgZBeoGFwWXX/JAfz7ueauTysPezUtwcIkriHVgbz6muXE=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pzwWu-00DDUz-Am for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 May 2023 09:36:08 +0000
+ id 1pzwWx-0007WC-JC for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 19 May 2023 09:36:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=g0XZ1SdajcGpQ1AF9r9lkRdRsXz7pcMVrMTOSW6r8Eo=; b=pQ7KSa/86Q7HW7fROWUx7jCR6O
- 5XFMJ9iXKvcRSF09WDb7T2Oe4gvkeIhaNzzaxy6czyIFHufAKCGsQQXKPj6V3g2+Yh3xCdmhw8Yem
- xgj5RovMsJ5sb9CwXmpuBgGG47h6W14hgsw8meXVfD8srvupuYd1wrBTP29pKyg4C/aN3aYMDx30V
- 3F+s9l05Pu0Nj8l8G8vVeSaGYZTNPRkhzs8LqCoRz22GQLqjxNh8lLcb8lcq9x99NvHbkhc0/jELZ
- O9XVqtERlrKY6QQYh73k45QPJOqZSIliql+BFfuGqGfwEgWEqLQweYUs7+GB+p22ORdFXz0Af4uz4
- UCA5bGHA==;
+ bh=TKBAB7v33dbYW3H4NRpBXoH9tha0ccQ02cfBeOuFf/4=; b=jBbC+jMl9D3UjfJN7p2yKZDP/I
+ WbBFLIN3Q/AJih3OxKSHbTD9vT/F1tJobu4KuSjWuiUGnD5rFBmeuEaeD/Iu5pzKBe+WoF0cJV/pR
+ aHdHe3VblJTeUN80/WZVfFkLjN2xPcAqkhJGTHlmMCBAXleLOTmJaaYavT1/S9aM9V0FApxTI8BsN
+ kq2VaEl7CyULWIrWWkY30KLE99zxPFDr6mlVbG53PUvDT0Owj+1Oafd0P6BmL8cNhjdjQCmT8ZUKw
+ mgdHI+yL0Zy6QHpBrK9tCvQI2IS8OZd316ApM4Rm2MZrQDKXQ1/k3sGBk62SyeqnLCKYpmESn7t8M
+ izw91Nrw==;
 Received: from [2001:4bb8:188:3dd5:e8d0:68bb:e5be:210a] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1pzwWc-00Fjh6-1P; Fri, 19 May 2023 09:35:50 +0000
+ id 1pzwWh-00Fjj0-1m; Fri, 19 May 2023 09:35:55 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Matthew Wilcox <willy@infradead.org>
-Date: Fri, 19 May 2023 11:35:17 +0200
-Message-Id: <20230519093521.133226-10-hch@lst.de>
+Date: Fri, 19 May 2023 11:35:19 +0200
+Message-Id: <20230519093521.133226-12-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230519093521.133226-1-hch@lst.de>
 References: <20230519093521.133226-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1pzwWu-00DDUz-Am
-Subject: [f2fs-dev] [PATCH 09/13] iomap: use kiocb_write_and_wait and
- kiocb_invalidate_pages
+X-Headers-End: 1pzwWx-0007WC-JC
+Subject: [f2fs-dev] [PATCH 11/13] fuse: update ki_pos in fuse_perform_write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -95,122 +94,79 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use the common helpers for direct I/O page invalidation instead of
-open coding the logic.  This leads to a slight reordering of checks
-in __iomap_dio_rw to keep the logic straight.
+Both callers of fuse_perform_write need to updated ki_pos, move it into
+common code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/direct-io.c | 55 ++++++++++++++++----------------------------
- 1 file changed, 20 insertions(+), 35 deletions(-)
+ fs/fuse/file.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 45accd98344e79..ccf51d57619721 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -472,7 +472,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
- 		unsigned int dio_flags, void *private, size_t done_before)
- {
--	struct address_space *mapping = iocb->ki_filp->f_mapping;
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 	struct iomap_iter iomi = {
- 		.inode		= inode,
-@@ -481,11 +480,11 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		.flags		= IOMAP_DIRECT,
- 		.private	= private,
- 	};
--	loff_t end = iomi.pos + iomi.len - 1, ret = 0;
- 	bool wait_for_completion =
- 		is_sync_kiocb(iocb) || (dio_flags & IOMAP_DIO_FORCE_WAIT);
- 	struct blk_plug plug;
- 	struct iomap_dio *dio;
-+	loff_t ret = 0;
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 89d97f6188e05e..fd2f27f2144750 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1329,7 +1329,10 @@ static ssize_t fuse_perform_write(struct kiocb *iocb,
+ 	fuse_write_update_attr(inode, pos, res);
+ 	clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
  
- 	trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before);
+-	return res > 0 ? res : err;
++	if (!res)
++		return err;
++	iocb->ki_pos += res;
++	return res;
+ }
  
-@@ -509,31 +508,29 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	dio->submit.waiter = current;
- 	dio->submit.poll_bio = NULL;
+ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+@@ -1378,42 +1381,36 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		goto out;
  
-+	if (iocb->ki_flags & IOCB_NOWAIT)
-+		iomi.flags |= IOMAP_NOWAIT;
-+
- 	if (iov_iter_rw(iter) == READ) {
- 		if (iomi.pos >= dio->i_size)
- 			goto out_free_dio;
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+-		loff_t pos = iocb->ki_pos;
+ 		written = generic_file_direct_write(iocb, from);
+ 		if (written < 0 || !iov_iter_count(from))
+ 			goto out;
  
--		if (iocb->ki_flags & IOCB_NOWAIT) {
--			if (filemap_range_needs_writeback(mapping, iomi.pos,
--					end)) {
--				ret = -EAGAIN;
--				goto out_free_dio;
--			}
--			iomi.flags |= IOMAP_NOWAIT;
--		}
+-		pos += written;
 -
- 		if (user_backed_iter(iter))
- 			dio->flags |= IOMAP_DIO_DIRTY;
-+
-+		ret = kiocb_write_and_wait(iocb, iomi.len);
-+		if (ret)
-+			goto out_free_dio;
+-		written_buffered = fuse_perform_write(iocb, mapping, from, pos);
++		written_buffered = fuse_perform_write(iocb, mapping, from,
++						      iocb->ki_pos);
+ 		if (written_buffered < 0) {
+ 			err = written_buffered;
+ 			goto out;
+ 		}
+-		endbyte = pos + written_buffered - 1;
++		endbyte = iocb->ki_pos + written_buffered - 1;
+ 
+-		err = filemap_write_and_wait_range(file->f_mapping, pos,
++		err = filemap_write_and_wait_range(file->f_mapping,
++						   iocb->ki_pos,
+ 						   endbyte);
+ 		if (err)
+ 			goto out;
+ 
+ 		invalidate_mapping_pages(file->f_mapping,
+-					 pos >> PAGE_SHIFT,
++					 iocb->ki_pos >> PAGE_SHIFT,
+ 					 endbyte >> PAGE_SHIFT);
+ 
+ 		written += written_buffered;
+-		iocb->ki_pos = pos + written_buffered;
++		iocb->ki_pos += written_buffered;
  	} else {
- 		iomi.flags |= IOMAP_WRITE;
- 		dio->flags |= IOMAP_DIO_WRITE;
- 
--		if (iocb->ki_flags & IOCB_NOWAIT) {
--			if (filemap_range_has_page(mapping, iomi.pos, end)) {
--				ret = -EAGAIN;
-+		if (dio_flags & IOMAP_DIO_OVERWRITE_ONLY) {
-+			ret = -EAGAIN;
-+			if (iomi.pos >= dio->i_size ||
-+			    iomi.pos + iomi.len > dio->i_size)
- 				goto out_free_dio;
--			}
--			iomi.flags |= IOMAP_NOWAIT;
-+			iomi.flags |= IOMAP_OVERWRITE_ONLY;
- 		}
- 
- 		/* for data sync or sync, we need sync completion processing */
-@@ -549,31 +546,19 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 			if (!(iocb->ki_flags & IOCB_SYNC))
- 				dio->flags |= IOMAP_DIO_WRITE_FUA;
- 		}
--	}
+ 		written = fuse_perform_write(iocb, mapping, from, iocb->ki_pos);
+-		if (written >= 0)
+-			iocb->ki_pos += written;
+ 	}
+ out:
+ 	current->backing_dev_info = NULL;
+ 	inode_unlock(inode);
+-	if (written > 0)
+-		written = generic_write_sync(iocb, written);
 -
--	if (dio_flags & IOMAP_DIO_OVERWRITE_ONLY) {
--		ret = -EAGAIN;
--		if (iomi.pos >= dio->i_size ||
--		    iomi.pos + iomi.len > dio->i_size)
--			goto out_free_dio;
--		iomi.flags |= IOMAP_OVERWRITE_ONLY;
--	}
- 
--	ret = filemap_write_and_wait_range(mapping, iomi.pos, end);
--	if (ret)
--		goto out_free_dio;
--
--	if (iov_iter_rw(iter) == WRITE) {
- 		/*
- 		 * Try to invalidate cache pages for the range we are writing.
- 		 * If this invalidation fails, let the caller fall back to
- 		 * buffered I/O.
- 		 */
--		if (invalidate_inode_pages2_range(mapping,
--				iomi.pos >> PAGE_SHIFT, end >> PAGE_SHIFT)) {
--			trace_iomap_dio_invalidate_fail(inode, iomi.pos,
--							iomi.len);
--			ret = -ENOTBLK;
-+		ret = kiocb_invalidate_pages(iocb, iomi.len);
-+		if (ret) {
-+			if (ret != -EAGAIN) {
-+				trace_iomap_dio_invalidate_fail(inode, iomi.pos,
-+								iomi.len);
-+				ret = -ENOTBLK;
-+			}
- 			goto out_free_dio;
- 		}
+ 	return written ? written : err;
+ }
  
 -- 
 2.39.2
