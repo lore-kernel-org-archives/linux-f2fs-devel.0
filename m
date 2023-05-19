@@ -4,69 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9E6E3C77B75
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 May 2023 09:36:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 16E8CC7EE23
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 19 May 2023 14:17:32 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1pzwX3-0003aI-C2;
-	Fri, 19 May 2023 09:36:18 +0000
+	id 1q00vB-0008Rz-BV;
+	Fri, 19 May 2023 14:17:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <BATV+aecf67361b95543ec79f+7208+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1pzwX1-0003a5-O1 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 May 2023 09:36:16 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <hare@suse.de>) id 1q00v8-0008Rt-J6
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 19 May 2023 14:17:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=STVg9hQSNCoHnaWP+j57/x1LHg0FYksrLdPn28xq/k4=; b=F/HrRjHzLhjBBW6oxzsyHqyvZR
- 9/X7l61vALfoRgKH+JJzm4/UXV3u1LRjdABViOWtFD6ZZPwX2XWRKPU2D+A2LWyq7VPAzIWSgR6+V
- I80g9JJFoZgZDD4sZTsG9VSr6R4/tfV/xp0KZCpdfTJYRmTkNMuL4n3cRGC+6Mc+H4sA=;
+ bh=0+VZ1HyTsuRdYwi+hWd9cIzn7uyvdspX3l+sCDgOvwM=; b=k2TfilmNTCMPg9N7Im1Uy5WRmw
+ tSOUZbH20Z1PbqXTkvN5JXFRlP/xV1563qS6vAPW1lLraIsvyWmt3ialazZEtz8MejjJFF+rC0HUv
+ MN2GVtRF3dub0h++zKr233RbXp16m/E2VUVOpjKtu6UDMWLsIO6UNwei+sSBP3YBHblw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=STVg9hQSNCoHnaWP+j57/x1LHg0FYksrLdPn28xq/k4=; b=kjzHeVLTn3yGSvqKOOesqvkKYr
- 9XPdBppSA/q+7HrkhS62/OFeSduOra80OdsOqeNYMzsdzw2brjgwMg2VmCkqJA5Ne7kgQW0wF2K+c
- elwbiCYxTjaJ5qP5N8BSOe665Mje648zOpuj7xJe4BtDzkwzsTvTFZN4iDvCD7Zt+/g4=;
-Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1pzwX1-00DDYS-Vv for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 19 May 2023 09:36:16 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
- :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=STVg9hQSNCoHnaWP+j57/x1LHg0FYksrLdPn28xq/k4=; b=lQYT2kwaUEtArFfEb79xA//fBJ
- qogp7VjnGEoqLT6bjXgEup01sK0KL/4RiA1Fe8gDUeej2m9QIQCe2S/3Jocd+N+cdKp668C9VvAeW
- phbQS3w1Z6z10f/6yehWWZEY+S9fYiGxT0TfhkNTWvUDWB9iDdV0uv+kx5oc3HcI/0ayvEc19i8ma
- zliWUfhpNpatxjBI+G08zM6lhwpCdNsKd9r0pUWyuMh5c22vx8ahQkEsYV+AjmSNW3RXuG4Ue3k+H
- sTtOSNleeSciqjt1JlkB9rX6zj9iM4pWW19+tNfp7ueTD0W+O2LSYhMGFcK+0P4fgPFc3EgSG2rLh
- YUxjFJXg==;
-Received: from [2001:4bb8:188:3dd5:e8d0:68bb:e5be:210a] (helo=localhost)
- by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1pzwWk-00Fjjz-1H; Fri, 19 May 2023 09:35:58 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Matthew Wilcox <willy@infradead.org>
-Date: Fri, 19 May 2023 11:35:20 +0200
-Message-Id: <20230519093521.133226-13-hch@lst.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230519093521.133226-1-hch@lst.de>
-References: <20230519093521.133226-1-hch@lst.de>
+ bh=0+VZ1HyTsuRdYwi+hWd9cIzn7uyvdspX3l+sCDgOvwM=; b=hu97TP59pU4trscFyQlCeC7TnO
+ hE/T7MVyQW0ntSg9dExhclEceKXA35oR6GYaZhxdWqF1EnDWVt/WHs6BcPgPGd8HYGRhdVhcFRMBD
+ RzQFll26wzZt4JtesBUv3C2k59Ag/7Do3/87K7/g1pdxutdo82YrqZei0MJRbmlj9uQo=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1q00v5-0000ge-J5 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 19 May 2023 14:17:26 +0000
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ (No client certificate requested)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 48C7922179;
+ Fri, 19 May 2023 14:17:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+ t=1684505837; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=0+VZ1HyTsuRdYwi+hWd9cIzn7uyvdspX3l+sCDgOvwM=;
+ b=lUR/RERVITvOIkTMYj6gZ+8JeXHqan3Bnna1FOBmjp847w9ZHf0T6hzhM7Eq/A1T0L/dJx
+ 4wI5ealbv3H9+kP1cNsE/jTxKje5DwlQj8mmbM95l7QnmE1+pQihUz/KdlG3xypRVqbmYZ
+ 7C0GNrUdzrqlPr3V5FwR/UHrQKpeLp8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+ s=susede2_ed25519; t=1684505837;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=0+VZ1HyTsuRdYwi+hWd9cIzn7uyvdspX3l+sCDgOvwM=;
+ b=0H/DQLixAzELypiG8mcDJ4c7dKWgixPm6jvK/14EDBieNR/7dM/kD/ybovU/M5icvpLBTz
+ 2GDt3VvKWgu74TCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ (No client certificate requested)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D7D5313A12;
+ Fri, 19 May 2023 14:17:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+ by imap2.suse-dmz.suse.de with ESMTPSA id cB26M+yEZ2ThHQAAMHmgww
+ (envelope-from <hare@suse.de>); Fri, 19 May 2023 14:17:16 +0000
+Message-ID: <adb6e8d5-9bc5-e988-f21a-1c3e5191e66b@suse.de>
+Date: Fri, 19 May 2023 16:17:16 +0200
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1pzwX1-00DDYS-Vv
-Subject: [f2fs-dev] [PATCH 12/13] fuse: drop redundant arguments to
- fuse_perform_write
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+References: <20230424054926.26927-1-hch@lst.de>
+ <20230424054926.26927-2-hch@lst.de>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20230424054926.26927-2-hch@lst.de>
+X-Headers-End: 1q00v5-0000ge-J5
+Subject: Re: [f2fs-dev] [PATCH 01/17] fs: unexport
+ buffer_check_dirty_writeback
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,74 +99,45 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
- Andreas Gruenbacher <agruenba@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
- cluster-devel@redhat.com, Ilya Dryomov <idryomov@gmail.com>,
- linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-block@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
- ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
- Theodore Ts'o <tytso@mit.edu>,
- "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
- linux-xfs@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
- linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="us-ascii"
+Cc: linux-block@vger.kernel.org, linux-nfs@vger.kernel.org,
+ cluster-devel@redhat.com, linux-xfs@vger.kernel.org,
+ Miklos Szeredi <miklos@szeredi.hu>, "Darrick J. Wong" <djwong@kernel.org>,
+ linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+ linux-f2fs-devel@lists.sourceforge.net, David Howells <dhowells@redhat.com>,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, linux-ext4@vger.kernel.org,
+ ceph-devel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-pos is always equal to iocb->ki_pos, and mapping is always equal to
-iocb->ki_filp->f_mapping.
+On 4/24/23 07:49, Christoph Hellwig wrote:
+> buffer_check_dirty_writeback is only used by the block device aops,
+> remove the export.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   fs/buffer.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 9e1e2add541e07..eb14fbaa7d35f7 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -111,7 +111,6 @@ void buffer_check_dirty_writeback(struct folio *folio,
+>   		bh = bh->b_this_page;
+>   	} while (bh != head);
+>   }
+> -EXPORT_SYMBOL(buffer_check_dirty_writeback);
+>   
+>   /*
+>    * Block until a buffer comes unlocked.  This doesn't stop it
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/fuse/file.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index fd2f27f2144750..5f7b58798f99fc 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1280,13 +1280,13 @@ static inline unsigned int fuse_wr_pages(loff_t pos, size_t len,
- 		     max_pages);
- }
- 
--static ssize_t fuse_perform_write(struct kiocb *iocb,
--				  struct address_space *mapping,
--				  struct iov_iter *ii, loff_t pos)
-+static ssize_t fuse_perform_write(struct kiocb *iocb, struct iov_iter *ii)
- {
-+	struct address_space *mapping = iocb->ki_filp->f_mapping;
- 	struct inode *inode = mapping->host;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	struct fuse_inode *fi = get_fuse_inode(inode);
-+	loff_t pos = iocb->ki_pos;
- 	int err = 0;
- 	ssize_t res = 0;
- 
-@@ -1385,8 +1385,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		if (written < 0 || !iov_iter_count(from))
- 			goto out;
- 
--		written_buffered = fuse_perform_write(iocb, mapping, from,
--						      iocb->ki_pos);
-+		written_buffered = fuse_perform_write(iocb, from);
- 		if (written_buffered < 0) {
- 			err = written_buffered;
- 			goto out;
-@@ -1406,7 +1405,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		written += written_buffered;
- 		iocb->ki_pos += written_buffered;
- 	} else {
--		written = fuse_perform_write(iocb, mapping, from, iocb->ki_pos);
-+		written = fuse_perform_write(iocb, from);
- 	}
- out:
- 	current->backing_dev_info = NULL;
--- 
-2.39.2
+Cheers,
 
+Hannes
 
 
 _______________________________________________
