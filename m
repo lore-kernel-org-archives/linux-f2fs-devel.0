@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D675DC7EE23
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 21 May 2023 23:43:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E6BE8C7EE23
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 21 May 2023 23:44:29 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q0she-0002kI-Gh;
-	Sun, 21 May 2023 23:43:07 +0000
+	id 1q0siz-0002vI-Hv;
+	Sun, 21 May 2023 23:44:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dlemoal@kernel.org>) id 1q0shc-0002k9-PG
+ (envelope-from <dlemoal@kernel.org>) id 1q0siw-0002vB-6u
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 21 May 2023 23:43:05 +0000
+ Sun, 21 May 2023 23:44:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=/EEzt1mH4pGersrqB+6Cjp/kv+tNVWBtfwKwv6o8UPQ=; b=H2GhWy49KDlJwWJtgArY9Fw1MN
- LILmdMmnCSkw7lEv0fGuSYFos/xhUGzKBKyHa+vDHYPWaoOX6JlRn02/j+6sJnlawf6+rjLV/Yx9m
- tjtZZW56hy7Jo/QFoZE3W7ERhpHMt6BVr8jnhvNGUeSnM8wkA+rzoxkofnMSgOCW9atY=;
+ bh=D3ON52/oBoiDPPEwPVEo7ufvfEHAk3mG/WX3TEQY1Ow=; b=kqKbjfKm31+wliGHuCtErT9MkX
+ DdYV3lNyoRn9IoxglcmaArShz0MUC+D50sGh8j7hgTRolSI0AOzUuSQnctHIju8xJeuRkp0dDgQni
+ Wgc3KrjSSKXyj+KDSIb8ObCJh3bDOGG3GFjJ1SlwbmXYF0bp0h54Zi8KjT+o0WFHcQIA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,46 +33,46 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=/EEzt1mH4pGersrqB+6Cjp/kv+tNVWBtfwKwv6o8UPQ=; b=jNDuoS8/cLcDcuLDy8czeksbpv
- FHGAaOOovtaC40FInsSNY9uWttW6NUUB2KcE+5mbjsNGvJAPFQghEmCafi6mMpAE/bV3/wX3CWdbZ
- Z+CmL6qn30L+ir7xFNPlUPtd9M4jFu6ngkudPgb5yq8uzUXTlLsqH31ITVa1Q+lDTdbY=;
+ bh=D3ON52/oBoiDPPEwPVEo7ufvfEHAk3mG/WX3TEQY1Ow=; b=SBxQuCJcjFOV7iRXDjm5oSfU9G
+ JsSj7KYpqQnqG8sDG+bIhsNwUA+n4etStHxk4s8weQkyH9c4gMAdbo5cEPKHn9FrCDw6x1bVsHbaw
+ tf9/uNtAXxO6QANdgOfghR0yHE2v3ugJ+S2sloihHKwpJmjKmGJqg/WKxExUboT4g6HI=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q0shb-0004VC-CF for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 21 May 2023 23:43:05 +0000
+ id 1q0siu-0004Wt-V5 for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 21 May 2023 23:44:25 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id E70E560EE2;
- Sun, 21 May 2023 23:42:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A15DBC433D2;
- Sun, 21 May 2023 23:42:54 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 8504D614C7;
+ Sun, 21 May 2023 23:44:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575A8C433EF;
+ Sun, 21 May 2023 23:44:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1684712577;
- bh=9o8YjW/0rW9n4EIvj5Drfi1ga7BAPLHMwQw8ZY2sqi4=;
+ s=k20201202; t=1684712659;
+ bh=rN0pgHH364PGD+YbnxODmAiedsQk+sR/miSpfYq1jG0=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Ysa6SsijJ4K6vBetQbj6zi3jStRT3hhhI73P9cqZlzJbTxDSDiG8+yDPw/bylUzNn
- iGr/eGB+sRccqCcix5Soa4VSDnNBG0NkCHlpbvIbJS1qPitXXXjF7pOTf56Gf7J3qW
- 1QPB1JwfZ1XAa9TWvzldwNgG+dvGdy9R5W+cA51lcAmBDQHVldNQXYDzDqkCElUv49
- mxEREyWsLYR44kyvHI+DYNny72/IWsI+FdgiMh/EYxLC9Dsh4F/FPBO+8bowk+J89n
- 0+Z+zGeJbmI8kcyRWFWxCmCuubDR/erBita3KQuo9hvoJURXNtiG1YFS9/pnezTyOz
- M/ZgIPHf5h3Cg==
-Message-ID: <544bc32e-e081-510a-27df-3769df00b7d1@kernel.org>
-Date: Mon, 22 May 2023 08:42:53 +0900
+ b=B01HdAPFZNpXSANwj/AR66SsyvdifehJ3h1PPX+3t5dhQlViDal2O1TfIz0ZR/l1+
+ nWRp26BJPxq1xulOdyjJxBPQFYsZi4oOoIiZy95llY8Vpy9+T3XIicMZVbexOWWdx6
+ aPmpOFog+AFn7kPaWaFyD7Zkc7qmhAYTysqlisd6I0upsE/lJvleFWkJqdPeBQUrhJ
+ /qk96Ki0QX7a8xyjGjhDmPzSxEtzRViITwpML49uUWd3BM4vuAWHX43lz0K7EkKekd
+ SxswSxIkzlIcQd9/WA+JdT9SYjDE3w5Hio7Z+4H+xfj4WBDhshhfMKwRRVvz3n+dYJ
+ jBdlwTDfxyd2Q==
+Message-ID: <600202a3-25dd-a404-9051-637fcbc90db6@kernel.org>
+Date: Mon, 22 May 2023 08:44:15 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
 Content-Language: en-US
 To: Christoph Hellwig <hch@lst.de>, Matthew Wilcox <willy@infradead.org>
 References: <20230519093521.133226-1-hch@lst.de>
- <20230519093521.133226-3-hch@lst.de>
+ <20230519093521.133226-4-hch@lst.de>
 From: Damien Le Moal <dlemoal@kernel.org>
 Organization: Western Digital Research
-In-Reply-To: <20230519093521.133226-3-hch@lst.de>
-X-Headers-End: 1q0shb-0004VC-CF
-Subject: Re: [f2fs-dev] [PATCH 02/13] filemap: update ki_pos in
- generic_perform_write
+In-Reply-To: <20230519093521.133226-4-hch@lst.de>
+X-Headers-End: 1q0siu-0004Wt-V5
+Subject: Re: [f2fs-dev] [PATCH 03/13] filemap: assign
+ current->backing_dev_info in generic_perform_write
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,8 +102,9 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 5/19/23 18:35, Christoph Hellwig wrote:
-> All callers of generic_perform_write need to updated ki_pos, move it into
-> common code.
+> Move the assignment to current->backing_dev_info from the callers into
+> generic_perform_write to reduce boiler plate code and reduce the scope
+> to just around the page dirtying loop.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
