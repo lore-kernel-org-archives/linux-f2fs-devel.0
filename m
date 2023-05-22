@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7C521C7EE23
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 May 2023 00:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 88B73C7EE2A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 22 May 2023 00:21:10 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q0tHI-0003Lv-LH;
-	Mon, 22 May 2023 00:19:56 +0000
+	id 1q0tIU-0003O4-4l;
+	Mon, 22 May 2023 00:21:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <dlemoal@kernel.org>) id 1q0tHH-0003Ln-Hv
+ (envelope-from <dlemoal@kernel.org>) id 1q0tIS-0003Nx-SB
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 May 2023 00:19:55 +0000
+ Mon, 22 May 2023 00:21:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PlaJ8tgkqzd2AC75bYWzOXuIlemnk1JcYEE5wMJCYvU=; b=QFpsOq58c9UMQDQnmdVbM5/i06
- IRyn9kaE/UDDBhhIPtI+bDgm2FOaObPUE63znYVPRwdN8MUHFnwpQOCHIK0XcEqakdNhP8h2fMzM2
- LIczQmoQYNi1jlo2CfJUQz0tbrW8oPEGYHNopQyJHXkU5GBTClEEBhGb5zUOdsSDLdNk=;
+ bh=C6oYnjVx9ie7Txv29XEiipji565OvD93nKT1/kcO+18=; b=AMpOetkIBOM0D2eoq/9/SmBuna
+ oGanmzTuPAef4U8YAr0/VC2f7wRW+OtK5Kj2YZRks5W+iSN1b13tIYvV0zU6/3SDGTcZB0jnoCw1f
+ 9wRNV5xNJ9IiMo6Lh4FzsORftY2gZ94j2pQwkRTvzUSWjLo0gGu37eSAV+L1haVqaG4o=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,46 +33,45 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=PlaJ8tgkqzd2AC75bYWzOXuIlemnk1JcYEE5wMJCYvU=; b=COp9VdFS0e8wI0asyK8Q7j/Q8H
- 25rB6v/6cIG38B3yLxHb8O3nj4U1v9QRB2FyCtfQ9yI69+MSg3gjiNTNgxYJ2Fl29lTUW7Q+y27F3
- oLHxkCLcBNxdvixWQbstnZche3sdhhHsBAcu5yj7Hv+8ySu9CJJM6PItPM8al9kLNdfs=;
+ bh=C6oYnjVx9ie7Txv29XEiipji565OvD93nKT1/kcO+18=; b=jq0rQ4BZbqf3pLJeXWhRzrqvsT
+ S1/FmuHVxd6NIMUCHPQIomRY1TRanh0oov2oKsgCAIMRz0KnhLqWzUc+rrvsRWyE3tvqOKNUt7Aiq
+ ackR0PLgErGyKQBy0ToadrHLKhIu5uBIu4SOqiQeOCdratDO/VIQonkFSPn6pyNwvtSM=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q0tHH-00FIKf-0d for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 22 May 2023 00:19:55 +0000
+ id 1q0tIS-00FIMq-Bs for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 22 May 2023 00:21:08 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A1D4D61026;
- Mon, 22 May 2023 00:19:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B75FC433EF;
- Mon, 22 May 2023 00:19:45 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id F2CDC60EBD;
+ Mon, 22 May 2023 00:21:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9EDBC433EF;
+ Mon, 22 May 2023 00:20:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1684714789;
- bh=0wMqm8X8okr8bQlU0srLtMNQGV4Sb8jZambGxoRRwbI=;
+ s=k20201202; t=1684714862;
+ bh=mxFY5Ys3GsQsIss7C7Uz0yTTtJAH+VljEJbbEGeCG9A=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Q848JHFH/73MaEyiSlpI5u8Qqu1/UIV5YsfF5aB/NR6WP7Au6x2YNvKscJXaOkd2I
- 9XL90qth2OHNf0eit4hRZXwPwLULA4TPuMzy4jgH6OxyZ5g2IcYtta/5hPRowDuqRX
- piMwelG30Y2EhWkWm2qtha8v1wcPJ/ThP3y7JL7ojmBWMfxyBeg88iGyOlKsJOSTOT
- UCKid+QFg00PeD+sx1RIqEDhkWfgZ+qnRjDHgTmuk5SXqDqpDqiAQEEvFFDeffQt4h
- wlw8aN2wcIajPm4Bwb+WnJcL8iE2xWhn5YGmZvRuo//g4DMQMlgEtxOgKRUV4KSaM7
- UqH5BaxAg1utQ==
-Message-ID: <4ebd2eb4-04e3-8c41-0606-aa057f4d2e4b@kernel.org>
-Date: Mon, 22 May 2023 09:19:44 +0900
+ b=AOSxZ5qfdalhJdXdqKVodV1oVuts2OqvnSzs7CTgxOnTnxICRLF1NjMt0rmrBCifR
+ FnRkh25eQpaY3arFCHzeVWQYhArz18DlwxhSxTKNFTaKsTOc33VlWLcTMHN7SrA9K2
+ Pb/N/mgjzTqIbnnqBSkGmlHWaFqlGoPh6nNSwg/6eWqnl0A87XlA30iI8m6OjlVUfR
+ E72Ao23rJ7IPJ4Lr+0yXY3HSz2wEG+iKkXIZKu7UsZEkxBT1DOtA2rwaXY8rwyEKMu
+ U9RBxJviCJziKLvv/U6tQZEHqEusoH4w8cssD3GHKeKYOR80V0NqT/J5czvUfZgHIt
+ H1ox3tSLA8Rbg==
+Message-ID: <46f0818c-a04e-466a-3037-7cad41290512@kernel.org>
+Date: Mon, 22 May 2023 09:20:58 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
 Content-Language: en-US
 To: Christoph Hellwig <hch@lst.de>, Matthew Wilcox <willy@infradead.org>
 References: <20230519093521.133226-1-hch@lst.de>
- <20230519093521.133226-13-hch@lst.de>
+ <20230519093521.133226-14-hch@lst.de>
 From: Damien Le Moal <dlemoal@kernel.org>
 Organization: Western Digital Research
-In-Reply-To: <20230519093521.133226-13-hch@lst.de>
-X-Headers-End: 1q0tHH-00FIKf-0d
-Subject: Re: [f2fs-dev] [PATCH 12/13] fuse: drop redundant arguments to
- fuse_perform_write
+In-Reply-To: <20230519093521.133226-14-hch@lst.de>
+X-Headers-End: 1q0tIS-00FIMq-Bs
+Subject: Re: [f2fs-dev] [PATCH 13/13] fuse: use direct_write_fallback
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -102,8 +101,8 @@ Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 5/19/23 18:35, Christoph Hellwig wrote:
-> pos is always equal to iocb->ki_pos, and mapping is always equal to
-> iocb->ki_filp->f_mapping.
+> Use the generic direct_write_fallback helper instead of duplicating the
+> logic.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
