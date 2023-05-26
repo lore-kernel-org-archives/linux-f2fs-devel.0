@@ -4,70 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DDBAEC7EE23
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 May 2023 14:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id C9E90C77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 26 May 2023 14:48:12 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q2Yiu-0004wo-9H;
-	Fri, 26 May 2023 14:47:20 +0000
+	id 1q2Yjh-00055y-OU;
+	Fri, 26 May 2023 14:48:10 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1q2THU-0002Mc-Ty
+ (envelope-from <amir73il@gmail.com>) id 1q2WJz-0003bF-PK
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 May 2023 08:58:43 +0000
+ Fri, 26 May 2023 12:13:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:Cc:To:
+ Subject:Message-ID:Date:From:In-Reply-To:References:MIME-Version:Sender:
+ Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+ :Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GrfyfVOE5OV5ZL8Wswx9+m14xy/ywsK2MKASdvA/bGM=; b=isl0ohCRZTELvOz3VmISjjegmy
- fnY7L1+lXvfpRCQqfEQtToVjmhOtbZt0Sop4Is8U6Sq70ZNwrPsJqBFo9Bfu1/paqI6tBeOV+gjKP
- icIozmH1sUUzVyPpdmGKtaDjvpLKXialEaHluYVkXOKXbUAQARJwo0wuBO12DQMVugKQ=;
+ bh=tcRKotHm11Cr8qUj3/GWYcYV61NEa/MLisov9OVu4ms=; b=LLlWpBUjaDvO9NZD/+8p9N02vr
+ dcvpv8Lz0ikSJx0ocJU+KxJVaWh11oNX+TLcJT9pqtsC4RfMnQa3gv/zkaLVbYchkER0yL0TOP4zc
+ /ZgjlArDXNByrlCIJRVY972iicmW/XwEtc4GM2Gya+MPYq2YffVYxmejnoj7JphDc5vo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=GrfyfVOE5OV5ZL8Wswx9+m14xy/ywsK2MKASdvA/bGM=; b=f
- nXgnd7SER8J2S8KWvQ8+R1PIA/q9pYR2OVM/LtOs2/FpOw+DTW0uRpFv6jn4q3C8BCqNqPmcgv+MD
- 4DABDAEArLj/WHkZDxU8S6TXIgE0n4RZoaeXwH9E0humhWrjN16bZVGPZ39zH1ZjrYz0N/r24TKqR
- VN/I7YqEmewQT544=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q2THT-0037OE-GN for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 26 May 2023 08:58:41 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 18E4264CF6
+ h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:Message-ID:Date:From
+ :In-Reply-To:References:MIME-Version:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=tcRKotHm11Cr8qUj3/GWYcYV61NEa/MLisov9OVu4ms=; b=Ots94Xwzx8iYYN0h0UXLqi52Ii
+ B6NoGo/C4Sk1K+QMHhldl3FUJ3ImeRpts9vppltoPET6+yFJ3OktEyjk+TTKrLE0opeupzzDo7yQU
+ wg2vPvzHnKKDJ1Xxfs9Q54p/xVtAYQVCHFtvn3iqNViLrpProY1AuVr7EV2CO7lBejR4=;
+Received: from mail-ua1-f50.google.com ([209.85.222.50])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1q2WJv-0008Uw-L0 for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 26 May 2023 12:13:28 +0000
+Received: by mail-ua1-f50.google.com with SMTP id
+ a1e0cc1a2514c-76d846a4b85so187432241.1
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 26 May 2023 08:58:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51ED7C433D2;
- Fri, 26 May 2023 08:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1685091513;
- bh=aWshqpSyTaKXNMhCURcUPX9BJKvcaA3mrkJ1WKdkOwQ=;
- h=From:To:Cc:Subject:Date:From;
- b=Y8fBKlQbOJpmS0DHTSp2YzRxBqjtzZk6ulJC/lhfbBYvpPzMLnqitky2gpGcKPaOk
- 4WqVpNbT+J8ygU5JAn8EEnunkZ5YiEk7Y1yfwjYCKihgH3+OfTuNb7s/ey9VGvzDwb
- gNO7skSC4VvDcLlDZs5wP2zLuM0xwf1nCm+zhNUBcdgr5gIb98z3VpVSbJEQ6FbC46
- kMJ4dXlqDuh1g//PA/iqV7dk58F5JoIwXzyayL08MdZYlnnde8MxnM9NRipgQE1WRH
- MuaboyL1L8r+LB1hzg02lqHwAv5KYiTSAa30clIVhbx7+HrTg2qvaH8aU8m9GnUUR7
- Mxu5PaHHjA7xA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Fri, 26 May 2023 16:58:27 +0800
-Message-Id: <20230526085827.3113644-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ Fri, 26 May 2023 05:13:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20221208; t=1685103198; x=1687695198;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=tcRKotHm11Cr8qUj3/GWYcYV61NEa/MLisov9OVu4ms=;
+ b=qNJVBcO0pgHk1FtxZZZInxG5XdghYq7HW2ekZSNyUQKTTieVyOCgSQa5g6QfgxAXWF
+ iIs7lRqeZCDwFbkve3kKHr9GsFUj+d35A5TRs7wO415HxBqGDGT95xEufzLk/Sa1RXGk
+ lB7Wrb+zVHQ10S32Geo1slxl2hH6pKR3lJ4CD5uFKCeVSnzlcY3bWA+tnKor4r/5U5g3
+ BE93yg4DE21BXoVnRKhW/JbF37e3FVKkdGs/LhFb6lx2FqFEPKXvR6IAYjCQn8XcEpVV
+ uyUeEcnXATJBcn5bk4BW/Mrr6TxBU05movLQG5wkaep6Un+LO0pXOwrLpOCvqf7Tgynv
+ Ihsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20221208; t=1685103198; x=1687695198;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=tcRKotHm11Cr8qUj3/GWYcYV61NEa/MLisov9OVu4ms=;
+ b=fKo3wSPI/dyGHsllr5QZSiAL1a/z/iCLlGzSnwPDEV9f5iPkrKRUvl9CGwccmiLwae
+ cweZsDjxodB3bcxnSmKfMZfoNcFB0nRMg4qgIfAlRTgEc/xNhKv4vJ/B/uAOS/K2y54m
+ gIULu/DgAsnOLDCYs+fo8wXqPexUBfysPh+d4KFeYqlN4A6Ty6On+L8KuXaRMRvzP2r7
+ fJTix3PkeZjRbUVNJPh3tF5A3LVXy9plNNTTjLG0CJF3nNXOwqQwTyF6S8QZQS1YBnZt
+ YzfUQRmgl0ZTSjzzeAtgItip3qOgGvXMAx/8ADuh5fw1U5pdeQxGStgmcRC/zMlGG7Tg
+ bBPw==
+X-Gm-Message-State: AC+VfDywKECNuWf3ZVkqBfLlyAOFJaspkp9aYo/5yQ6Qgyy9/cUX+uYy
+ riGbiyVN+rQVGNKS94slI06YqyAikG9uJBtu52E=
+X-Google-Smtp-Source: ACHHUZ65ecGR6Dzg9pcCYcUOIL+cztRir6Po2LaPk6wm4K318CXvLnjQsqidAmmm+l52h3OiA8iZpjdjHa+3MI8cCXs=
+X-Received: by 2002:a67:f554:0:b0:439:40d7:c66f with SMTP id
+ z20-20020a67f554000000b0043940d7c66fmr346571vsn.14.1685103197744; Fri, 26 May
+ 2023 05:13:17 -0700 (PDT)
 MIME-Version: 1.0
-X-Headers-End: 1q2THT-0037OE-GN
-Subject: [f2fs-dev] [PATCH v3 2/2] f2fs-tools: reuse feature_table to clean
- up print_sb_state()
+References: <20230525100654.15069-1-jack@suse.cz>
+ <20230525101624.15814-6-jack@suse.cz>
+In-Reply-To: <20230525101624.15814-6-jack@suse.cz>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 26 May 2023 15:13:06 +0300
+Message-ID: <CAOQ4uxhL0w+yqg2u_xW6r4J_gJX=_zoZjo3vh0ONqAbgxm2VTA@mail.gmail.com>
+To: Jan Kara <jack@suse.cz>
+X-Headers-End: 1q2WJv-0008Uw-L0
+Subject: Re: [f2fs-dev] [PATCH 6/6] fs: Restrict lock_two_nondirectories()
+ to non-directory inodes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,176 +97,51 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: Christian Brauner <brauner@kernel.org>, Ted Tso <tytso@mit.edu>,
+ Miklos Szeredi <miklos@szeredi.hu>, "Darrick J. Wong" <djwong@kernel.org>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-reuse feature_table in print_sb_state() for cleanup.
-
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v3:
-- fix a bug in feature_map()
- fsck/mount.c      | 56 +++++++++++++----------------------------------
- include/f2fs_fs.h | 52 +++++++++++++++++++++++++++++--------------
- 2 files changed, 50 insertions(+), 58 deletions(-)
-
-diff --git a/fsck/mount.c b/fsck/mount.c
-index ea38b14..18c5e2b 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -599,54 +599,28 @@ void print_cp_state(u32 flag)
- 	MSG(0, "\n");
- }
- 
-+extern struct feature feature_table[];
- void print_sb_state(struct f2fs_super_block *sb)
- {
- 	unsigned int f = get_sb(feature);
-+	char *name;
- 	int i;
- 
- 	MSG(0, "Info: superblock features = %x : ", f);
--	if (f & F2FS_FEATURE_ENCRYPT) {
--		MSG(0, "%s", " encrypt");
--	}
--	if (f & F2FS_FEATURE_VERITY) {
--		MSG(0, "%s", " verity");
--	}
--	if (f & F2FS_FEATURE_BLKZONED) {
--		MSG(0, "%s", " blkzoned");
--	}
--	if (f & F2FS_FEATURE_EXTRA_ATTR) {
--		MSG(0, "%s", " extra_attr");
--	}
--	if (f & F2FS_FEATURE_PRJQUOTA) {
--		MSG(0, "%s", " project_quota");
--	}
--	if (f & F2FS_FEATURE_INODE_CHKSUM) {
--		MSG(0, "%s", " inode_checksum");
--	}
--	if (f & F2FS_FEATURE_FLEXIBLE_INLINE_XATTR) {
--		MSG(0, "%s", " flexible_inline_xattr");
--	}
--	if (f & F2FS_FEATURE_QUOTA_INO) {
--		MSG(0, "%s", " quota_ino");
--	}
--	if (f & F2FS_FEATURE_INODE_CRTIME) {
--		MSG(0, "%s", " inode_crtime");
--	}
--	if (f & F2FS_FEATURE_LOST_FOUND) {
--		MSG(0, "%s", " lost_found");
--	}
--	if (f & F2FS_FEATURE_SB_CHKSUM) {
--		MSG(0, "%s", " sb_checksum");
--	}
--	if (f & F2FS_FEATURE_CASEFOLD) {
--		MSG(0, "%s", " casefold");
--	}
--	if (f & F2FS_FEATURE_COMPRESSION) {
--		MSG(0, "%s", " compression");
--	}
--	if (f & F2FS_FEATURE_RO) {
--		MSG(0, "%s", " ro");
-+
-+	for (i = 0; i < 32; i++) {
-+		unsigned int bit = 1 << i;
-+
-+		if (!(f & bit))
-+			continue;
-+
-+		name = feature_name(feature_table, bit);
-+		if (!name)
-+			continue;
-+
-+		MSG(0, " %s", name);
- 	}
-+
- 	MSG(0, "\n");
- 	MSG(0, "Info: superblock encrypt level = %d, salt = ",
- 					sb->encryption_level);
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 9d35b42..229b2aa 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -1811,35 +1811,53 @@ static inline void f2fs_init_inode(struct f2fs_super_block *sb,
- 
- struct feature {
- 	char *name;
--	u32  mask;
-+	u32 mask;
-+	u32 settable;
- };
- 
- #define INIT_FEATURE_TABLE						\
- struct feature feature_table[] = {					\
--	{ "encrypt",			F2FS_FEATURE_ENCRYPT },		\
--	{ "extra_attr",			F2FS_FEATURE_EXTRA_ATTR },	\
--	{ "project_quota",		F2FS_FEATURE_PRJQUOTA },	\
--	{ "inode_checksum",		F2FS_FEATURE_INODE_CHKSUM },	\
--	{ "flexible_inline_xattr",	F2FS_FEATURE_FLEXIBLE_INLINE_XATTR },\
--	{ "quota",			F2FS_FEATURE_QUOTA_INO },	\
--	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME },	\
--	{ "lost_found",			F2FS_FEATURE_LOST_FOUND },	\
--	{ "verity",			F2FS_FEATURE_VERITY },	/* reserved */ \
--	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM },	\
--	{ "casefold",			F2FS_FEATURE_CASEFOLD },	\
--	{ "compression",		F2FS_FEATURE_COMPRESSION },	\
--	{ "ro",				F2FS_FEATURE_RO},		\
--	{ NULL,				0x0},				\
-+	{ "encrypt",			F2FS_FEATURE_ENCRYPT,		1}, \
-+	{ "blkzoned",			F2FS_FEATURE_BLKZONED,		0}, \
-+	{ "extra_attr",			F2FS_FEATURE_EXTRA_ATTR,	1}, \
-+	{ "project_quota",		F2FS_FEATURE_PRJQUOTA,		1}, \
-+	{ "inode_checksum",		F2FS_FEATURE_INODE_CHKSUM,	1}, \
-+	{ "flexible_inline_xattr",	F2FS_FEATURE_FLEXIBLE_INLINE_XATTR,1}, \
-+	{ "quota",			F2FS_FEATURE_QUOTA_INO,		1}, \
-+	{ "inode_crtime",		F2FS_FEATURE_INODE_CRTIME,	1}, \
-+	{ "lost_found",			F2FS_FEATURE_LOST_FOUND,	1}, \
-+	{ "verity",			F2FS_FEATURE_VERITY,		1}, \
-+	{ "sb_checksum",		F2FS_FEATURE_SB_CHKSUM,		1}, \
-+	{ "casefold",			F2FS_FEATURE_CASEFOLD,		1}, \
-+	{ "compression",		F2FS_FEATURE_COMPRESSION,	1}, \
-+	{ "ro",				F2FS_FEATURE_RO,		1}, \
-+	{ NULL,				0x0,				0}, \
- };
- 
- static inline u32 feature_map(struct feature *table, char *feature)
- {
- 	struct feature *p;
--	for (p = table; p->name && strcmp(p->name, feature); p++)
--		;
-+	for (p = table; p->name; p++) {
-+		if (!p->settable)
-+			continue;
-+		if (strcmp(p->name, feature))
-+			continue;
-+		break;
-+	}
- 	return p->mask;
- }
- 
-+static inline char *feature_name(struct feature *table, u32 mask)
-+{
-+	struct feature *p;
-+	for (p = table; p->name; p++) {
-+		if (p->mask != mask)
-+			continue;
-+		break;
-+	}
-+	return p->name;
-+}
-+
- static inline int set_feature_bits(struct feature *table, char *features)
- {
- 	u32 mask = feature_map(table, features);
--- 
-2.40.1
-
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gVGh1LCBNYXkgMjUsIDIwMjMgYXQgMToxN+KAr1BNIEphbiBLYXJhIDxqYWNrQHN1c2UuY3o+
+IHdyb3RlOgo+Cj4gQ3VycmVudGx5IGxvY2tfdHdvX25vbmRpcmVjdG9yaWVzKCkgaXMgc2tpcHBp
+bmcgYW55IHBhc3NlZCBkaXJlY3Rvcmllcy4KPiBBZnRlciB2ZnNfcmVuYW1lKCkgdXNlcyBsb2Nr
+X3R3b19pbm9kZXMoKSwgYWxsIHRoZSByZW1haW5pbmcgZm91ciB1c2Vycwo+IG9mIHRoaXMgZnVu
+Y3Rpb24gcGFzcyBvbmx5IHJlZ3VsYXIgZmlsZXMgdG8gaXQuIFNvIGRyb3AgdGhlIHNvbWV3aGF0
+Cj4gdW51c3VhbCAic2tpcCBkaXJlY3RvcnkiIGxvZ2ljIGFuZCBpbnN0ZWFkIHdhcm4gaWYgYW55
+Ym9keSBwYXNzZXMKPiBkaXJlY3RvcnkgdG8gaXQuIFRoaXMgYWxzbyBhbGxvd3MgdXMgdG8gdXNl
+IGxvY2tfdHdvX2lub2RlcygpIGluCj4gbG9ja190d29fbm9uZGlyZWN0b3JpZXMoKSB0byBjb25j
+ZW50cmF0ZSB0aGUgbG9jayBvcmRlcmluZyBsb2dpYyBpbiBsZXNzCj4gcGxhY2VzLgo+Cj4gU2ln
+bmVkLW9mZi1ieTogSmFuIEthcmEgPGphY2tAc3VzZS5jej4KPiAtLS0KPiAgZnMvaW5vZGUuYyB8
+IDEyICsrKystLS0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA4IGRl
+bGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2ZzL2lub2RlLmMgYi9mcy9pbm9kZS5jCj4gaW5k
+ZXggMjAxNWZhNTBkMzRhLi5hY2NmNTEyNWEwNDkgMTAwNjQ0Cj4gLS0tIGEvZnMvaW5vZGUuYwo+
+ICsrKyBiL2ZzL2lub2RlLmMKPiBAQCAtMTE0MCw3ICsxMTQwLDcgQEAgdm9pZCBsb2NrX3R3b19p
+bm9kZXMoc3RydWN0IGlub2RlICppbm9kZTEsIHN0cnVjdCBpbm9kZSAqaW5vZGUyLAo+ICAvKioK
+PiAgICogbG9ja190d29fbm9uZGlyZWN0b3JpZXMgLSB0YWtlIHR3byBpX211dGV4ZXMgb24gbm9u
+LWRpcmVjdG9yeSBvYmplY3RzCj4gICAqCj4gLSAqIExvY2sgYW55IG5vbi1OVUxMIGFyZ3VtZW50
+IHRoYXQgaXMgbm90IGEgZGlyZWN0b3J5Lgo+ICsgKiBMb2NrIGFueSBub24tTlVMTCBhcmd1bWVu
+dC4gUGFzc2VkIG9iamVjdHMgbXVzdCBub3QgYmUgZGlyZWN0b3JpZXMuCj4gICAqIFplcm8sIG9u
+ZSBvciB0d28gb2JqZWN0cyBtYXkgYmUgbG9ja2VkIGJ5IHRoaXMgZnVuY3Rpb24uCj4gICAqCj4g
+ICAqIEBpbm9kZTE6IGZpcnN0IGlub2RlIHRvIGxvY2sKPiBAQCAtMTE0OCwxMyArMTE0OCw5IEBA
+IHZvaWQgbG9ja190d29faW5vZGVzKHN0cnVjdCBpbm9kZSAqaW5vZGUxLCBzdHJ1Y3QgaW5vZGUg
+Kmlub2RlMiwKPiAgICovCj4gIHZvaWQgbG9ja190d29fbm9uZGlyZWN0b3JpZXMoc3RydWN0IGlu
+b2RlICppbm9kZTEsIHN0cnVjdCBpbm9kZSAqaW5vZGUyKQo+ICB7Cj4gLSAgICAgICBpZiAoaW5v
+ZGUxID4gaW5vZGUyKQo+IC0gICAgICAgICAgICAgICBzd2FwKGlub2RlMSwgaW5vZGUyKTsKPiAt
+Cj4gLSAgICAgICBpZiAoaW5vZGUxICYmICFTX0lTRElSKGlub2RlMS0+aV9tb2RlKSkKPiAtICAg
+ICAgICAgICAgICAgaW5vZGVfbG9jayhpbm9kZTEpOwo+IC0gICAgICAgaWYgKGlub2RlMiAmJiAh
+U19JU0RJUihpbm9kZTItPmlfbW9kZSkgJiYgaW5vZGUyICE9IGlub2RlMSkKPiAtICAgICAgICAg
+ICAgICAgaW5vZGVfbG9ja19uZXN0ZWQoaW5vZGUyLCBJX01VVEVYX05PTkRJUjIpOwo+ICsgICAg
+ICAgV0FSTl9PTl9PTkNFKFNfSVNESVIoaW5vZGUxLT5pX21vZGUpKTsKPiArICAgICAgIFdBUk5f
+T05fT05DRShTX0lTRElSKGlub2RlMi0+aV9tb2RlKSk7Cj4gKyAgICAgICBsb2NrX3R3b19pbm9k
+ZXMoaW5vZGUxLCBpbm9kZTIsIElfTVVURVhfTk9STUFMLCBJX01VVEVYX05PTkRJUjIpOwo+ICB9
+Cj4gIEVYUE9SVF9TWU1CT0wobG9ja190d29fbm9uZGlyZWN0b3JpZXMpOwo+CgpOZWVkIHRoZSBz
+YW1lIHRyZWF0bWVudCB0byB1bmxvY2tfdHdvX25vbmRpcmVjdG9yaWVzKCkgYmVjYXVzZSBub3cg
+aWYKc29tZW9uZSBkb2VzIHBhc3MgYSBkaXJlY3RvcnkgdGhleSB3aWxsIGdldCBhIHdhcm5pbmcg
+YnV0IGFsc28gYSBsZWFrZWQgbG9jay4KClRoYW5rcywKQW1pci4KCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcg
+bGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3Rz
+LnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
