@@ -4,89 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0E30EC7EE23
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 May 2023 15:38:09 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7E556C77B7E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 29 May 2023 15:38:10 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q3ewj-0002A3-0Z;
-	Mon, 29 May 2023 15:38:09 +0000
+	id 1q3ewh-00089W-A7;
+	Mon, 29 May 2023 15:38:07 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1q3ewg-00029x-UH
+ (envelope-from <jack@suse.cz>) id 1q3ewf-00089Q-Io
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 May 2023 15:38:07 +0000
+ Mon, 29 May 2023 15:38:05 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+ MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=VfC2IdpO+7uEiBHhtf+jBby1eH6FWQ5ChsH/O7pLur0=; b=jI0jMBJjZwawkHmv8B8OvzC9PU
- T3IhDdrenzDuEqgALgw9UzGkvhNI1tGguCInwQPRapKQmcIIADiiTc7s2WBACd7zhro83EGpSdGLi
- zdq+Go+V2OyHzhue6Q4vP+jAd2Tsk5xFRjAMrJHPNDQvyJwFX24aGfL3xoz0MXIhZvHY=;
+ bh=5x//7WihZJHP1ybBvKd6Troh9+7buiiSd3Ne59BgSEw=; b=Yl1WsBfx655mBTZ3PKvQPkN5oi
+ HYMgCpaThqezTRkdrEfxmMg4Mw1TjeY9wjoqU8o+ODHZjHG8p0/b5Kp0c7NAv0/PNlpWhifmXccsr
+ FGNWrk6t4oLUUzN7DSgF+jBTQkFrvnHPQ3gfxbRP34oQui00azE6G7TULxF9rD/GUt88=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+ References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=VfC2IdpO+7uEiBHhtf+jBby1eH6FWQ5ChsH/O7pLur0=; b=LWCGF3pelD9FPDaBrHJ5kqByNZ
- Ii73n187khOdAIW9ZAy23+SBmG7gtO0mkLMjWqlQkxh41QSHuW9VG2pl++PBEa0wn1KJa9W9psDEL
- gi/4pr17lRJrDBKTv2Rz943gi1vmxvc3YyR2JuhuM0xfJZNa6seiDqIzUDfKKIGE89/g=;
+ bh=5x//7WihZJHP1ybBvKd6Troh9+7buiiSd3Ne59BgSEw=; b=K7uAjDFroX4YJIcE0UHeRuiWIH
+ S5paslTeuK6f3MmHqmHhokQtGZ3KQOYfc4JxuGclepElECFITprSsOHKAj2sIkPEmvsdrnoWpjnwE
+ /9+tFAjtBEVhkzV7usC38r4ZGuYFX2KfcpY1+u1P/cHSGZHi2+FaVVZsWEddrR7QIr9Q=;
 Received: from smtp-out2.suse.de ([195.135.220.29])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q3ewe-000721-PU for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 29 May 2023 15:38:07 +0000
+ id 1q3ewc-005r4y-9E for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 29 May 2023 15:38:05 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id A8E621F8B5;
+ by smtp-out2.suse.de (Postfix) with ESMTPS id A13CB1F8B0;
  Mon, 29 May 2023 15:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
  t=1685374674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=VfC2IdpO+7uEiBHhtf+jBby1eH6FWQ5ChsH/O7pLur0=;
- b=gSf0t+vZ0B4myh9SviD61zCj1EH1uc1YlVGhNUgb/MCZXxzHgA8J3XifwVyza2KRq20hWr
- pZGc6AXCETQnP8jb+U91N20w7vIA7f5VobiHfL+/HbuvYR4sGOy/Qvb7o1ZnPBWqac7LBg
- kZfgvCRZqV9R20JgWvdDd1kIZir+lK0=
+ bh=5x//7WihZJHP1ybBvKd6Troh9+7buiiSd3Ne59BgSEw=;
+ b=fSpO7ae3VdnMdXRDt9Y0DgiDJbH0T7K3W5P4bBRjL+L/BxE+bLD+2Csqqs4Aw9c6ncV85s
+ //0FCpp9/c45UE4B1CzxbNvvJkhIf+47hE8Zdcfv1+N31NNgr2rY+PEBH/9d3SQVwoD+2I
+ JS1f4SwRyENJ/I6HnI4mWulU1S2DJZs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
  s=susede2_ed25519; t=1685374674;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=VfC2IdpO+7uEiBHhtf+jBby1eH6FWQ5ChsH/O7pLur0=;
- b=2+2tMQkyipmhcoqtqPAlHCSakWLZKRrkGMRW/G1J4HZuo+ZsFqLS2sYv/igpPh23T0GX71
- 4QMmBZeR6OW2F3DA==
+ bh=5x//7WihZJHP1ybBvKd6Troh9+7buiiSd3Ne59BgSEw=;
+ b=lf3ZWecKucEDCJ60SKDHz/Mb7QuqwTjJgxmnrSoFrZFJtwpPVPzhebfnSEeyqO4LZ5J5MO
+ gnAzWelT/f/35kCA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 87AAC13A36;
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 81ACD13466;
  Mon, 29 May 2023 15:37:54 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id BKs+INLGdGQrSAAAMHmgww
+ by imap2.suse-dmz.suse.de with ESMTPSA id nRcSH9LGdGQmSAAAMHmgww
  (envelope-from <jack@suse.cz>); Mon, 29 May 2023 15:37:54 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 0BA32A06F2; Mon, 29 May 2023 14:41:31 +0200 (CEST)
-Date: Mon, 29 May 2023 14:41:31 +0200
+ id E43C8A0717; Mon, 29 May 2023 14:42:08 +0200 (CEST)
+Date: Mon, 29 May 2023 14:42:08 +0200
 From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Message-ID: <20230529124131.gbb3fmhrspl332i6@quack3>
+To: Amir Goldstein <amir73il@gmail.com>
+Message-ID: <20230529124208.2oou7jt3iitwxk4v@quack3>
 References: <20230525100654.15069-1-jack@suse.cz>
- <20230525101624.15814-4-jack@suse.cz>
- <20230526-polarstern-herrichten-32fc46c63bfc@brauner>
+ <20230525101624.15814-6-jack@suse.cz>
+ <CAOQ4uxhL0w+yqg2u_xW6r4J_gJX=_zoZjo3vh0ONqAbgxm2VTA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20230526-polarstern-herrichten-32fc46c63bfc@brauner>
-X-Headers-End: 1q3ewe-000721-PU
-Subject: Re: [f2fs-dev] [PATCH 4/6] fs: Establish locking order for
- unrelated directories
+In-Reply-To: <CAOQ4uxhL0w+yqg2u_xW6r4J_gJX=_zoZjo3vh0ONqAbgxm2VTA@mail.gmail.com>
+X-Headers-End: 1q3ewc-005r4y-9E
+Subject: Re: [f2fs-dev] [PATCH 6/6] fs: Restrict lock_two_nondirectories()
+ to non-directory inodes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,81 +100,57 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
- "Darrick J. Wong" <djwong@kernel.org>, stable@vger.kernel.org,
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Miklos Szeredi <miklos@szeredi.hu>, "Darrick J. Wong" <djwong@kernel.org>,
  linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
- Al Viro <viro@ZenIV.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
  linux-fsdevel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
  linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Fri 26-05-23 11:45:15, Christian Brauner wrote:
-> On Thu, May 25, 2023 at 12:16:10PM +0200, Jan Kara wrote:
-> > Currently the locking order of inode locks for directories that are not
-> > in ancestor relationship is not defined because all operations that
-> > needed to lock two directories like this were serialized by
-> > sb->s_vfs_rename_mutex. However some filesystems need to lock two
-> > subdirectories for RENAME_EXCHANGE operations and for this we need the
-> > locking order established even for two tree-unrelated directories.
-> > Provide a helper function lock_two_inodes() that establishes lock
-> > ordering for any two inodes and use it in lock_two_directories().
-> > 
-> > CC: stable@vger.kernel.org
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/inode.c    | 34 ++++++++++++++++++++++++++++++++++
-> >  fs/internal.h |  2 ++
-> >  fs/namei.c    |  4 ++--
-> >  3 files changed, 38 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 577799b7855f..2015fa50d34a 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -1103,6 +1103,40 @@ void discard_new_inode(struct inode *inode)
-> >  }
-> >  EXPORT_SYMBOL(discard_new_inode);
-> >  
-> > +/**
-> > + * lock_two_inodes - lock two inodes (may be regular files but also dirs)
-> > + *
-> > + * Lock any non-NULL argument. The caller must make sure that if he is passing
-> > + * in two directories, one is not ancestor of the other.  Zero, one or two
-> > + * objects may be locked by this function.
-> > + *
-> > + * @inode1: first inode to lock
-> > + * @inode2: second inode to lock
-> > + * @subclass1: inode lock subclass for the first lock obtained
-> > + * @subclass2: inode lock subclass for the second lock obtained
-> > + */
-> > +void lock_two_inodes(struct inode *inode1, struct inode *inode2,
-> > +		     unsigned subclass1, unsigned subclass2)
-> > +{
-> > +	if (!inode1 || !inode2)
-> > +		goto lock;
-> 
-> Before this change in
-> 
-> lock_two_nondirectories(struct inode *inode1, struct inode *inode2)
-> 
-> the swap() would cause the non-NULL inode to always be locked with
-> I_MUTEX_NONDIR2. Now it can be either I_MUTEX_NORMAL or I_MUTEX_NONDIR2.
-> Is that change intentional?
-
-Kind of. I don't think we really care so I didn't bother to complicate the
-code for this. If you think keeping the lockdep class consistent is worth
-it, I can modify the patch...
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gRnJpIDI2LTA1LTIzIDE1OjEzOjA2LCBBbWlyIEdvbGRzdGVpbiB3cm90ZToKPiBPbiBUaHUs
+IE1heSAyNSwgMjAyMyBhdCAxOjE34oCvUE0gSmFuIEthcmEgPGphY2tAc3VzZS5jej4gd3JvdGU6
+Cj4gPgo+ID4gQ3VycmVudGx5IGxvY2tfdHdvX25vbmRpcmVjdG9yaWVzKCkgaXMgc2tpcHBpbmcg
+YW55IHBhc3NlZCBkaXJlY3Rvcmllcy4KPiA+IEFmdGVyIHZmc19yZW5hbWUoKSB1c2VzIGxvY2tf
+dHdvX2lub2RlcygpLCBhbGwgdGhlIHJlbWFpbmluZyBmb3VyIHVzZXJzCj4gPiBvZiB0aGlzIGZ1
+bmN0aW9uIHBhc3Mgb25seSByZWd1bGFyIGZpbGVzIHRvIGl0LiBTbyBkcm9wIHRoZSBzb21ld2hh
+dAo+ID4gdW51c3VhbCAic2tpcCBkaXJlY3RvcnkiIGxvZ2ljIGFuZCBpbnN0ZWFkIHdhcm4gaWYg
+YW55Ym9keSBwYXNzZXMKPiA+IGRpcmVjdG9yeSB0byBpdC4gVGhpcyBhbHNvIGFsbG93cyB1cyB0
+byB1c2UgbG9ja190d29faW5vZGVzKCkgaW4KPiA+IGxvY2tfdHdvX25vbmRpcmVjdG9yaWVzKCkg
+dG8gY29uY2VudHJhdGUgdGhlIGxvY2sgb3JkZXJpbmcgbG9naWMgaW4gbGVzcwo+ID4gcGxhY2Vz
+Lgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IEphbiBLYXJhIDxqYWNrQHN1c2UuY3o+Cj4gPiAtLS0K
+PiA+ICBmcy9pbm9kZS5jIHwgMTIgKysrKy0tLS0tLS0tCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDQg
+aW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkKPiA+Cj4gPiBkaWZmIC0tZ2l0IGEvZnMvaW5v
+ZGUuYyBiL2ZzL2lub2RlLmMKPiA+IGluZGV4IDIwMTVmYTUwZDM0YS4uYWNjZjUxMjVhMDQ5IDEw
+MDY0NAo+ID4gLS0tIGEvZnMvaW5vZGUuYwo+ID4gKysrIGIvZnMvaW5vZGUuYwo+ID4gQEAgLTEx
+NDAsNyArMTE0MCw3IEBAIHZvaWQgbG9ja190d29faW5vZGVzKHN0cnVjdCBpbm9kZSAqaW5vZGUx
+LCBzdHJ1Y3QgaW5vZGUgKmlub2RlMiwKPiA+ICAvKioKPiA+ICAgKiBsb2NrX3R3b19ub25kaXJl
+Y3RvcmllcyAtIHRha2UgdHdvIGlfbXV0ZXhlcyBvbiBub24tZGlyZWN0b3J5IG9iamVjdHMKPiA+
+ICAgKgo+ID4gLSAqIExvY2sgYW55IG5vbi1OVUxMIGFyZ3VtZW50IHRoYXQgaXMgbm90IGEgZGly
+ZWN0b3J5Lgo+ID4gKyAqIExvY2sgYW55IG5vbi1OVUxMIGFyZ3VtZW50LiBQYXNzZWQgb2JqZWN0
+cyBtdXN0IG5vdCBiZSBkaXJlY3Rvcmllcy4KPiA+ICAgKiBaZXJvLCBvbmUgb3IgdHdvIG9iamVj
+dHMgbWF5IGJlIGxvY2tlZCBieSB0aGlzIGZ1bmN0aW9uLgo+ID4gICAqCj4gPiAgICogQGlub2Rl
+MTogZmlyc3QgaW5vZGUgdG8gbG9jawo+ID4gQEAgLTExNDgsMTMgKzExNDgsOSBAQCB2b2lkIGxv
+Y2tfdHdvX2lub2RlcyhzdHJ1Y3QgaW5vZGUgKmlub2RlMSwgc3RydWN0IGlub2RlICppbm9kZTIs
+Cj4gPiAgICovCj4gPiAgdm9pZCBsb2NrX3R3b19ub25kaXJlY3RvcmllcyhzdHJ1Y3QgaW5vZGUg
+Kmlub2RlMSwgc3RydWN0IGlub2RlICppbm9kZTIpCj4gPiAgewo+ID4gLSAgICAgICBpZiAoaW5v
+ZGUxID4gaW5vZGUyKQo+ID4gLSAgICAgICAgICAgICAgIHN3YXAoaW5vZGUxLCBpbm9kZTIpOwo+
+ID4gLQo+ID4gLSAgICAgICBpZiAoaW5vZGUxICYmICFTX0lTRElSKGlub2RlMS0+aV9tb2RlKSkK
+PiA+IC0gICAgICAgICAgICAgICBpbm9kZV9sb2NrKGlub2RlMSk7Cj4gPiAtICAgICAgIGlmIChp
+bm9kZTIgJiYgIVNfSVNESVIoaW5vZGUyLT5pX21vZGUpICYmIGlub2RlMiAhPSBpbm9kZTEpCj4g
+PiAtICAgICAgICAgICAgICAgaW5vZGVfbG9ja19uZXN0ZWQoaW5vZGUyLCBJX01VVEVYX05PTkRJ
+UjIpOwo+ID4gKyAgICAgICBXQVJOX09OX09OQ0UoU19JU0RJUihpbm9kZTEtPmlfbW9kZSkpOwo+
+ID4gKyAgICAgICBXQVJOX09OX09OQ0UoU19JU0RJUihpbm9kZTItPmlfbW9kZSkpOwo+ID4gKyAg
+ICAgICBsb2NrX3R3b19pbm9kZXMoaW5vZGUxLCBpbm9kZTIsIElfTVVURVhfTk9STUFMLCBJX01V
+VEVYX05PTkRJUjIpOwo+ID4gIH0KPiA+ICBFWFBPUlRfU1lNQk9MKGxvY2tfdHdvX25vbmRpcmVj
+dG9yaWVzKTsKPiA+Cj4gCj4gTmVlZCB0aGUgc2FtZSB0cmVhdG1lbnQgdG8gdW5sb2NrX3R3b19u
+b25kaXJlY3RvcmllcygpIGJlY2F1c2Ugbm93IGlmCj4gc29tZW9uZSBkb2VzIHBhc3MgYSBkaXJl
+Y3RvcnkgdGhleSB3aWxsIGdldCBhIHdhcm5pbmcgYnV0IGFsc28gYSBsZWFrZWQgbG9jay4KClll
+cywgcHJvYmFibHkgdGhhdCBpcyBnb29kIGRlZmVuc2l2ZSBwcm9ncmFtbWluZy4gSSdsbCB1cGRh
+dGUgdGhlIHBhdGNoLgoKCQkJCQkJCQlIb256YQotLSAKSmFuIEthcmEgPGphY2tAc3VzZS5jb20+
+ClNVU0UgTGFicywgQ1IKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxp
+c3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9s
+aXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
