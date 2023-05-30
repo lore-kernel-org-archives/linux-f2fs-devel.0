@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8B750C7EE31
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E094BC7EE32
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 May 2023 23:40:42 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q48xF-0006Qp-9f;
+	id 1q48xG-0004oW-1y;
 	Tue, 30 May 2023 23:40:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q48xD-0006Qe-JE
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q48xE-0004oB-A7
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 30 May 2023 23:40:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,55 +23,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kkbMLyRXFa8/4+5blywO5UgiOnSsjfXrJfoN65d7sHI=; b=f5J7uznmtzedtYWl1XGOnvo3q2
- t9uokeHVHK49yDW1dNjo1jiSmrEqAnT+kmRgLh3kqMowJvMMj/m4/8eRfPjeUL0BOhdpbS8H0ZrKw
- Yam94DOCiMYcunLVPhtXneE/6AdYCIonfhAE4hOy706xQilDc7AQ5bCohA+FlbLN1ev4=;
+ bh=DBRLMIKp+js5hPh5JKSX4lKxLqSlfnm7pmh8Na4lDVg=; b=fI5x/ra6KO+LCwvcFJTkqmsARu
+ OXkEIe3F9qgjGy2PkejPzpSIFk3UMkzQyNeEFqlK6TAOdEgxPN01EO82PP32X8m9W48m2wejMVJvp
+ orLOLsN3R9K3q1WngPgcvxPBHAA95mjR2DHT4pzoDaEoNcS1aWjIb3gJCVq/0DK8X3iQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=kkbMLyRXFa8/4+5blywO5UgiOnSsjfXrJfoN65d7sHI=; b=C5bFrHu5VwxqsA+bnBkQhStkTR
- lSsvjMHCyUfIXmyQE0OK3cVmLm4/YHxsB5s9F/8aPy+pokhJN4dntgEw28rVPbRx4+sP2zmYk159S
- g6AsNxQ6qHjsaJVBnSdhfAWsXL5cdUjr/zAWEtviDdVjyeUidr9ZdU2CqZ/7qocvqe/I=;
+ bh=DBRLMIKp+js5hPh5JKSX4lKxLqSlfnm7pmh8Na4lDVg=; b=Jmcowzi+lsUc5b3CBEiY9hH3OU
+ Hsrs+gBQgvBcwuQEt64pLIYAAurvLBb/ruXZXRYiINGewDcS7vPDO0JtdyogJiE5exzRqvcjvpkM5
+ QFEFB84w/n950Od4iaTqZup/zaZLHZ+5MqQ6lbpM9qgWAiN2b51STyhjuU+avmZ4eCsU=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q48xD-0000Nh-S1 for linux-f2fs-devel@lists.sourceforge.net;
+ id 1q48xD-006wkk-S3 for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 30 May 2023 23:40:40 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 726CA63553
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 611F46354B
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Tue, 30 May 2023 23:40:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 60E50C433B4;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 54A58C433A8;
  Tue, 30 May 2023 23:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1685490024;
- bh=JUb5V6kUM0gHtoz2x7OrWhtRLti1YDyfG3Z2xfxVIT8=;
+ bh=H9VqBAbZl2Fz3jcWASfHBQXr+VWaknCHrI+JGkA2M7I=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=XUhL7fxY7nS/+bDHkU9GjXgiFAamwjgoOKf1Ztm8Miis7BJ/Zk0rQbIbrkjPXkTi+
- imSx0NIp2uF+Y0vrir4JYiW0eZmipNzRMm9EgaAQSUgecwqnC1i2UpkiE61Jt0WRac
- Q4QBWfV9bUmbHlGISZL9+kNj7hwbefXMsYl0pOrFuWg0UulpsN1ETzaDqIdlaVAVhY
- pBtIWJc0kjkd834wgRZQ96H2l7h2J8L4tnli1dX6ybAGR7b2fPwQMsdaLJY/X0A74e
- ULC7B9gstPjhihIcAaVC+l+lMcoOyETKJyyQaRdw9CGpAnK4oFMlLYxno5F1XBb6/O
- PP4pzmBuGVkag==
+ b=JEd3jMOSxkRA25cxJZQj+PH7QXy2mHT5dhF1np91C5mvtwruhLNQjF05SpS9MX+xV
+ xXHGiCRdtPMUskZmY3GoYdPH7DSUCzELY702nliohHfJbfmuXMmrOrTL58GcMkiXGS
+ 5hhyRziWIrfJTn+uPE/3cgI24DdW/BTXRDNBvsT3KAlakPVvW5PF3kE2XSYoTD5LrQ
+ 4xIST7nT8C+efwbd4haMOP8zLRYNvlAzt3Woe2J7l/m3AgIiHTiftCg1jKXHJ0AES+
+ P3rXnXLNYBkTISxN52Engk4u5tt9UMIFXbZ1ixyTIBIuE1g2b6SLfxJ42rsKmpBxqb
+ db/rKKoBaOExA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 407E7E4D022; Tue, 30 May 2023 23:40:24 +0000 (UTC)
+ 35AC6E21ED8; Tue, 30 May 2023 23:40:24 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168549002425.8773.15836981117739675166.git-patchwork-notify@kernel.org>
+Message-Id: <168549002421.8773.313920209333136970.git-patchwork-notify@kernel.org>
 Date: Tue, 30 May 2023 23:40:24 +0000
-References: <20230527001539.3608665-1-chao@kernel.org>
-In-Reply-To: <20230527001539.3608665-1-chao@kernel.org>
+References: <20230518021412.2037728-1-chao@kernel.org>
+In-Reply-To: <20230518021412.2037728-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1q48xD-0000Nh-S1
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: fix to set noatime and immutable
- flag for quota file
+X-Headers-End: 1q48xD-006wkk-S3
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: flush error flags in workqueue
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -94,19 +93,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Sat, 27 May 2023 08:15:39 +0800 you wrote:
-> We should set noatime bit for quota files, since no one cares about
-> atime of quota file, and we should set immutalbe bit as well, due to
-> nobody should write to the file through exported interfaces.
+On Thu, 18 May 2023 10:14:12 +0800 you wrote:
+> In IRQ context, it wakes up workqueue to record errors into on-disk
+> superblock fields rather than in-memory fields.
 > 
-> Meanwhile this patch use inode_lock to avoid race condition during
-> inode->i_flags, f2fs_inode->i_flags update.
+> Fixes: 1aa161e43106 ("f2fs: fix scheduling while atomic in decompression path")
+> Fixes: 95fa90c9e5a7 ("f2fs: support recording errors into superblock")
+> Signed-off-by: Chao Yu <chao@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v3] f2fs: fix to set noatime and immutable flag for quota file
-    https://git.kernel.org/jaegeuk/f2fs/c/cd2a3af38096
+  - [f2fs-dev,v3] f2fs: flush error flags in workqueue
+    https://git.kernel.org/jaegeuk/f2fs/c/36e63b159dd6
 
 You are awesome, thank you!
 -- 
