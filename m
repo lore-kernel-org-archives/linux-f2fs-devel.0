@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 88E86C77B73
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 May 2023 23:40:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 630CFC7EE31
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 May 2023 23:40:37 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q48x9-0004nd-Lf;
+	id 1q48xA-00075N-5P;
 	Tue, 30 May 2023 23:40:36 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q48x8-0004nQ-NJ
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q48x8-00075H-Ln
  for linux-f2fs-devel@lists.sourceforge.net;
  Tue, 30 May 2023 23:40:35 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,54 +23,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DmwLT4s3vcHNRd5pHUJvtYeNehX4nK6cGUaSM+n4+DU=; b=b6kPLii8PJKVaFFRYTiqiTOfZ8
- l9NCavetH01E1hahsZSxiFzxf7mesJOhRAF7VQhT14twLTBgCHpncGpouHEonuQBvXaT3vIVknjcC
- 5rCIPoszs0AZ17ujZKY2HLlLpyIiOqhp+OUlSctZS8kQT0e1cdIeZEIaBhbZvT/cvbgo=;
+ bh=SUwC9jURQbSe5FpjG3KTUJuJbDj/W3hNP7Qv7IwlnVM=; b=Lz6dI/sB6Rlmt7FwkznDARilp1
+ 5xncwYMvtwM2o5cAq9LiXqOIhRN4VN7lsk5xgYHesrYSzbVVe4UP0ZumfbEsH2lA+pjbb3M7OH/eG
+ 7u9DymCbO75OJ4UBUQneoH90YkJ4tMVNj0FhhWynuIiLevO3YYtZ1w5snYFw/sU39YI0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DmwLT4s3vcHNRd5pHUJvtYeNehX4nK6cGUaSM+n4+DU=; b=dnSOA6tzm+6kHQ4JakReMa0d5X
- /NT1wgTYRBBrWgQj2/OOjh2QFPNZ1zmg4nMj4MdB7DEdBZ6V5F46dhqlJmXm4oJ3/iSjWuYrWVkcw
- cIrif+54jPKy70UN9jQ8HxLZOzhpIq4UeRZw9BYSloJ0QhMa45u49FlCH1CkT3jQDheY=;
+ bh=SUwC9jURQbSe5FpjG3KTUJuJbDj/W3hNP7Qv7IwlnVM=; b=I600eZ+fZXzoObQWdTqicknBeV
+ vH9ZPGmie/Hiuu7iX/IfA5CMmmXo9QwlqMPD/X3NNZpPCyNEhuIjhMp2alSyGY0rWevqoK7s1O3mL
+ 6AqcFhLUhWUI1cpN98SXH4b1twp2TrB1iV1FLPdwup2vwlzu2oYG5Ns1kfl+1uqQSJdQ=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q48x4-0000NP-OK for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 May 2023 23:40:35 +0000
+ id 1q48x4-006wkQ-PZ for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 30 May 2023 23:40:34 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 59AA46354D
- for <linux-f2fs-devel@lists.sourceforge.net>;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 600986354F;
  Tue, 30 May 2023 23:40:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4622AC4339C;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 429FAC433A0;
  Tue, 30 May 2023 23:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1685490024;
- bh=+sbfkCGq8BzDi8rChbGwTkXONATdk9LCRY+eodRnV0w=;
+ bh=X2D/1a1qdK0++0GVnVTUuU8tD+5QP3hQ8D+IOu9ggiI=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=g1JrjJCqORaffZCMuSSK4lselvoVdajwPAeQiPwwg56+GkiItHICjCU0Y5Eq1LslX
- 2v47elE9rVKBAOxt1z23IY8iSClg2jh/2hwIksqcjFvP2DzBxlbtewEfdW4kf2o5k8
- WHvZN5tuE+QN7GqdCE16Putyv9cl0P6rsb0R2lh2wwLC9+6SWjmyHg48wJZbHPeI8y
- AdOsV+XXRfQ3d8nS4iK8Ypnc6FsZk6ElH8eLiWMbipwLV+HayNI6QJbNCwSXDrKDmI
- GutIS2X5TOcog1gA50jJ8+cE1juQKiatFdJb8LGgtSTe7S+ee1iKVSOA1yPaow3Xw1
- flYMIpVZQT4JA==
+ b=kaHUTYTq6NQmZcM5+V5T+3gOXuTYdbf10V/3EBLA2qEbcu3te5I7w9OIr6xBtxALQ
+ FWHU0msvz/mAh4O2EAffmxDSitq1G6xbt166qcVdQ4NwSupHO1Zyz+BWYzvNjmgPoe
+ PYkNWnnjaElmGQ8k7kw+ltjvLWIl5cHMqvp588mVwCcOg0EwlU4KgZkGmMnNk5ajFv
+ Jid6cfvOowEXsnhVtedK2hLSkOSV1+EgXWS+MYoHboBAmtDeniic41pw6SYVeu38H+
+ 5gP5ASTJhJo9nsprlT3V/O/aiJXlz5RWj7ORoVYzByUXSUvxbD+2BJ8W74jAhwkIu9
+ v3DYWxWuWRzjw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 1EBBBE21ECC; Tue, 30 May 2023 23:40:24 +0000 (UTC)
+ 2A6DDE21EC5; Tue, 30 May 2023 23:40:24 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168549002411.8773.18270821240993946589.git-patchwork-notify@kernel.org>
+Message-Id: <168549002416.8773.766514446956426834.git-patchwork-notify@kernel.org>
 Date: Tue, 30 May 2023 23:40:24 +0000
-References: <20230523123521.67656-1-chao@kernel.org>
-In-Reply-To: <20230523123521.67656-1-chao@kernel.org>
+References: <20230523061725.650692-1-chao@kernel.org>
+In-Reply-To: <20230523061725.650692-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-X-Headers-End: 1q48x4-0000NP-OK
-Subject: Re: [f2fs-dev] [PATCH] f2fs: clean up w/ sbi->log_sectors_per_block
+X-Headers-End: 1q48x4-006wkQ-PZ
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid NULL pointer
+ dereference f2fs_write_end_io()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,8 +82,8 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, butterflyhuangxx@gmail.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
@@ -93,19 +93,19 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 23 May 2023 20:35:21 +0800 you wrote:
-> Use sbi->log_sectors_per_block to clean up below calculated one:
+On Tue, 23 May 2023 14:17:25 +0800 you wrote:
+> butt3rflyh4ck reports a bug as below:
 > 
-> unsigned int log_sectors_per_block = sbi->log_blocksize - SECTOR_SHIFT;
+> When a thread always calls F2FS_IOC_RESIZE_FS to resize fs, if resize fs is
+> failed, f2fs kernel thread would invoke callback function to update f2fs io
+> info, it would call  f2fs_write_end_io and may trigger null-ptr-deref in
+> NODE_MAPPING.
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/segment.c | 23 +++++++++++------------
->  1 file changed, 11 insertions(+), 12 deletions(-)
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: clean up w/ sbi->log_sectors_per_block
-    https://git.kernel.org/jaegeuk/f2fs/c/584212446615
+  - [f2fs-dev,v2] f2fs: fix to avoid NULL pointer dereference f2fs_write_end_io()
+    https://git.kernel.org/jaegeuk/f2fs/c/9318465d0e82
 
 You are awesome, thank you!
 -- 
