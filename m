@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6EE92C7EE32
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 May 2023 06:59:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id ABD9BC77B73
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 May 2023 07:00:06 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q3tKO-0001KF-3R;
-	Tue, 30 May 2023 06:59:32 +0000
+	id 1q3tKv-0007cY-C0;
+	Tue, 30 May 2023 07:00:06 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hare@suse.de>) id 1q3tKM-0001K9-3q
+ (envelope-from <hare@suse.de>) id 1q3tKt-0007cS-Ne
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 May 2023 06:59:30 +0000
+ Tue, 30 May 2023 07:00:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+8JC+yzzEddP3kFcFknhdaMuF8N/LXO9+3kmakahL+4=; b=f5ffLpN7C+rARS3oCGhSY33+Hb
- NPJRA933j+Xmz67DRY7auAqrklEc1HkKzW7BBq8w3GbxGQI/5nJ9LBLfc6QYVjoxM2JjjE+huDkYW
- PKW3AKr23d+PkYkRd+KeziSG6ML9A/GR5gU9VMkzt+mynDbCOrA7Pk60Y3TANjmroEXo=;
+ bh=Q0PsOe2Gxw2SLcQPMi/D2wOLKa5xfHhjwYepRb/EUp8=; b=RlF1IuQmaDOcFoPuEQ7OsA4ze/
+ 0ZClL0RCk/azOIBprBqv97ZTzVAku8fllyf9hxsQp5kuG9qoB3cK57PsrM8rMGMOpkqww5WfKMyI+
+ q3Pxjhp9VlciV0r4R07oldH6FZ755AD6h85lv806Et8VtWxvSZKmViWcedBJ1yxCFsyw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,61 +33,61 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+8JC+yzzEddP3kFcFknhdaMuF8N/LXO9+3kmakahL+4=; b=U2rDxnLA6S9NVEVtVcY/cUSNxL
- gMWYWVpz47H4Zdwk43tg/TKkdN5omHD3laxNVFmcbK83q7tF0NmfuvmEjqb1pwA2j7UCb4dX52cHL
- Nw3qvOPmnDCFwv7qvzDJwkypePkpfJ+k2ng+ZN1JNAnSBMvsSw0tix0fn2+p/sywHdOQ=;
+ bh=Q0PsOe2Gxw2SLcQPMi/D2wOLKa5xfHhjwYepRb/EUp8=; b=jbYAUptKIHSeRarNJitrwqarBI
+ EzuVi86OL19S2kgqVGk0RquaE2NVz+09V3KKR5WUSZXI3dvwMz4uE0599sYbfM+NRAsU2fChOSc/e
+ oRVtpiJRqjiY6e+2qtEvST3l6uS3wbM1YmghP69f5mgVbqQP+G9ZmH2ArPYWoEyLbY00=;
 Received: from smtp-out2.suse.de ([195.135.220.29])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q3tKL-00041H-TV for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 May 2023 06:59:30 +0000
+ id 1q3tKq-006KZW-JB for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 30 May 2023 07:00:04 +0000
 Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id A88A31FD68;
- Tue, 30 May 2023 06:59:23 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 5C58E1FD68;
+ Tue, 30 May 2023 06:59:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1685429963; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1685429994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=+8JC+yzzEddP3kFcFknhdaMuF8N/LXO9+3kmakahL+4=;
- b=cLzIkveF94y8jlmAIoDcWDwckCX2NCmxBNShotcR8fchMDjUSMFZXNUwvK60l0AfSPAk56
- Vrl1yzOLLd7yqb68JfavmR26CPqySg45qg3+Zi+V5qq0qhE/WG18KtKNwbNhDY/moaudum
- FlDAoTge9EwHKSbonSRXazrYmMBrjBA=
+ bh=Q0PsOe2Gxw2SLcQPMi/D2wOLKa5xfHhjwYepRb/EUp8=;
+ b=1y7XhZ1pKDsXxc34xAkVmti0Uu8u+GarKhCqTI3+gC1JIYWEfNJSFMUlc1RQJFxWZav4HJ
+ LqxlR19VxmNSCu+WiofkXE7LoTu4AyusZJMEKmOLfaN72kG69+tUEQTCedTcYbla1Za8mH
+ uBDA4rgqXTq2wcOUv8uwc0BdgSS8tn8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1685429963;
+ s=susede2_ed25519; t=1685429994;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=+8JC+yzzEddP3kFcFknhdaMuF8N/LXO9+3kmakahL+4=;
- b=ISkIUYq4d3VtM6UEwJYmHOXUy/rbQ2cOaDZtRoFviYhC29AlvEiV5jUkVDJZjCymkEbfCz
- 2yPs1uPLfcutjSDA==
+ bh=Q0PsOe2Gxw2SLcQPMi/D2wOLKa5xfHhjwYepRb/EUp8=;
+ b=3SnuMLEx3ehE/qE3OCEn3UikVazz5Bio8UW9I0DhSkFKCd+DBRyzJnXcP+oKYt2ju+fd5J
+ Z9FGzjvv5M+MgMAQ==
 Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 184541341B;
- Tue, 30 May 2023 06:59:23 +0000 (UTC)
+ by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id D32491341B;
+ Tue, 30 May 2023 06:59:53 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap1.suse-dmz.suse.de with ESMTPSA id uu8EBcuedWStcgAAGKfGzw
- (envelope-from <hare@suse.de>); Tue, 30 May 2023 06:59:23 +0000
-Message-ID: <833b9589-3ae5-71db-9428-2016491cf186@suse.de>
-Date: Tue, 30 May 2023 08:59:22 +0200
+ by imap1.suse-dmz.suse.de with ESMTPSA id VJgPMumedWTgcgAAGKfGzw
+ (envelope-from <hare@suse.de>); Tue, 30 May 2023 06:59:53 +0000
+Message-ID: <be023c36-c9ba-bc78-7d71-2e311364c94e@suse.de>
+Date: Tue, 30 May 2023 08:59:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
 Content-Language: en-US
 To: Christoph Hellwig <hch@lst.de>, Matthew Wilcox <willy@infradead.org>
 References: <20230524063810.1595778-1-hch@lst.de>
- <20230524063810.1595778-6-hch@lst.de>
+ <20230524063810.1595778-7-hch@lst.de>
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230524063810.1595778-6-hch@lst.de>
-X-Headers-End: 1q3tKL-00041H-TV
-Subject: Re: [f2fs-dev] [PATCH 05/11] filemap: add a kiocb_invalidate_pages
- helper
+In-Reply-To: <20230524063810.1595778-7-hch@lst.de>
+X-Headers-End: 1q3tKq-006KZW-JB
+Subject: Re: [f2fs-dev] [PATCH 06/11] filemap: add a
+ kiocb_invalidate_post_direct_write helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -115,24 +115,23 @@ Content-Transfer-Encoding: base64
 Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-T24gNS8yNC8yMyAwODozOCwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6Cj4gRmFjdG9yIG91dCBh
-IGhlbHBlciB0aGF0IGNhbGxzIGZpbGVtYXBfd3JpdGVfYW5kX3dhaXRfcmFuZ2UgYW5kCj4gaW52
-YWxpZGF0ZV9pbm9kZV9wYWdlczJfcmFuZ2UgZm9yIHRoZSByYW5nZSBjb3ZlcmVkIGJ5IGEgd3Jp
-dGUga2lvY2Igb3IKPiByZXR1cm5zIC1FQUdBSU4gaWYgdGhlIGtpb2NiIGlzIG1hcmtlZCBhcyBu
-b3dhaXQgYW5kIHRoZXJlIHdvdWxkIGJlIHBhZ2VzCj4gdG8gd3JpdGUgb3IgaW52YWxpZGF0ZS4K
-PiAKPiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4KPiBSZXZp
-ZXdlZC1ieTogRGFtaWVuIExlIE1vYWwgPGRsZW1vYWxAa2VybmVsLm9yZz4KPiBBY2tlZC1ieTog
-RGFycmljayBKLiBXb25nIDxkandvbmdAa2VybmVsLm9yZz4KPiAtLS0KPiAgIGluY2x1ZGUvbGlu
-dXgvcGFnZW1hcC5oIHwgIDEgKwo+ICAgbW0vZmlsZW1hcC5jICAgICAgICAgICAgfCA0OCArKysr
-KysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLQo+ICAgMiBmaWxlcyBjaGFuZ2Vk
-LCAyOSBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkKPiAKUmV2aWV3ZWQtYnk6IEhhbm5l
-cyBSZWluZWNrZSA8aGFyZUBzdXNlLmRlPgoKQ2hlZXJzLAoKSGFubmVzCi0tIApEci4gSGFubmVz
-IFJlaW5lY2tlICAgICAgICAgICAgICAgIEtlcm5lbCBTdG9yYWdlIEFyY2hpdGVjdApoYXJlQHN1
-c2UuZGUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICArNDkgOTExIDc0MDUzIDY4OApTVVNF
-IFNvZnR3YXJlIFNvbHV0aW9ucyBHbWJILCBNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcK
-SFJCIDM2ODA5IChBRyBOw7xybmJlcmcpLCBHZXNjaMOkZnRzZsO8aHJlcjogSXZvIFRvdGV2LCBB
-bmRyZXcKTXllcnMsIEFuZHJldyBNY0RvbmFsZCwgTWFydGplIEJvdWRpZW4gTW9lcm1hbgoKCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
-LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
-dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
-LWRldmVsCg==
+T24gNS8yNC8yMyAwODozOCwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6Cj4gQWRkIGEgaGVscGVy
+IHRvIGludmFsaWRhdGUgcGFnZSBjYWNoZSBhZnRlciBhIGRpbyB3cml0ZS4KPiAKPiBTaWduZWQt
+b2ZmLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4KPiBSZXZpZXdlZC1ieTogRGFt
+aWVuIExlIE1vYWwgPGRsZW1vYWxAa2VybmVsLm9yZz4KPiBBY2tlZC1ieTogRGFycmljayBKLiBX
+b25nIDxkandvbmdAa2VybmVsLm9yZz4KPiAtLS0KPiAgIGZzL2RpcmVjdC1pby5jICAgICAgICAg
+IHwgMTAgKystLS0tLS0tLQo+ICAgZnMvaW9tYXAvZGlyZWN0LWlvLmMgICAgfCAxMiArKy0tLS0t
+LS0tLS0KPiAgIGluY2x1ZGUvbGludXgvZnMuaCAgICAgIHwgIDUgLS0tLS0KPiAgIGluY2x1ZGUv
+bGludXgvcGFnZW1hcC5oIHwgIDEgKwo+ICAgbW0vZmlsZW1hcC5jICAgICAgICAgICAgfCAzNyAr
+KysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tCj4gICA1IGZpbGVzIGNoYW5nZWQs
+IDI1IGluc2VydGlvbnMoKyksIDQwIGRlbGV0aW9ucygtKQo+IApSZXZpZXdlZC1ieTogSGFubmVz
+IFJlaW5lY2tlIDxoYXJlQHN1c2UuZGU+CgpDaGVlcnMsCgpIYW5uZXMKLS0gCkRyLiBIYW5uZXMg
+UmVpbmVja2UgICAgICAgICAgICAgICAgS2VybmVsIFN0b3JhZ2UgQXJjaGl0ZWN0CmhhcmVAc3Vz
+ZS5kZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICs0OSA5MTEgNzQwNTMgNjg4ClNVU0Ug
+U29mdHdhcmUgU29sdXRpb25zIEdtYkgsIE1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJuYmVyZwpI
+UkIgMzY4MDkgKEFHIE7DvHJuYmVyZyksIEdlc2Now6RmdHNmw7xocmVyOiBJdm8gVG90ZXYsIEFu
+ZHJldwpNeWVycywgQW5kcmV3IE1jRG9uYWxkLCBNYXJ0amUgQm91ZGllbiBNb2VybWFuCgoKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
+ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
+Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
+ZGV2ZWwK
