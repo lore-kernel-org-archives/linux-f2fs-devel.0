@@ -4,71 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id DFF14C77B73
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 May 2023 23:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91723C7EE23
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 30 May 2023 23:40:36 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q48po-0004iG-CG;
-	Tue, 30 May 2023 23:33:01 +0000
+	id 1q48x9-0004nW-BK;
+	Tue, 30 May 2023 23:40:35 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1q48pk-0004iA-2W
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q48x7-0004nK-Un
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 May 2023 23:32:56 +0000
+ Tue, 30 May 2023 23:40:34 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vEzkXBQo/b7PQnyCX67HVTT4YmASqWFxkqgWXgu3lfg=; b=a5UYZ3JSOQ7luWx7rw592F/WCd
- rnwYc2dU+3eWNXYqFJ0SUIdaPmvplrdtcie2qgnAkhBVw7DVy5Znqf1CPnx7QjOsaQBekxmz3D/7h
- /3bKbraQ5QX0dg+9ECoEMEJqtO/BLS1AutVbBbAOOzDOWmKk+WLXmWtF4nl8tIHsGvgw=;
+ bh=nQFZgZa0rxLaXkC3ZaBMsVAL+PG1c6tOaWHyAd3cth0=; b=HsHnRhq/+1g4TNUh2zGmBgw5lD
+ K4BHPhKmb1RSwsCCi6ETOFbMR/bv1cr/PynRMdsNwW9b7OTrI6MsIkPz2WSY4WsnIo8tl3gviNkfj
+ xLOjZc+/3FX1PecbPa0swv/kK4E2U6/nXijJiAROPyjmTOKwb93yK0NbZ999Jux3BPR8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=vEzkXBQo/b7PQnyCX67HVTT4YmASqWFxkqgWXgu3lfg=; b=idKqEdIok3Vh4LMkfB2g8WaUh0
- u2ZaYh+uCcqjHdhbafqWANi6MMD2pllSMFcwFh83OtHt3/F0AFebdQosh7rTKApreS8K2DxTf6a86
- yjBacUhg0Zr7FExCBh+5jx6/3Xekvq5Sk/W+3E4MqyWzOq8iw4arjdawgpsDOafpgIEI=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=nQFZgZa0rxLaXkC3ZaBMsVAL+PG1c6tOaWHyAd3cth0=; b=kp326eBpOxzFj8Z4DQmiU3is62
+ F5D3sGtwo4dIdnchS9WGS3NiDuIvmizkjrfje4hF39jQ6+H7OQxq841RjayGuRe3IycmEMTmzLT8P
+ xp9qdZQSaFdSKmPlZHeMJoNhYgH+mo9YK3iSmsdUh+ppwWJy6Wxi2tCf1ZXMIKpMhotY=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q48pW-0000Bm-OM for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 30 May 2023 23:32:49 +0000
+ id 1q48x4-0000NO-60 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 30 May 2023 23:40:34 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 5C4E660F08;
- Tue, 30 May 2023 23:32:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B92AC433EF;
- Tue, 30 May 2023 23:32:36 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id C538D6353D;
+ Tue, 30 May 2023 23:40:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E7D5C4339E;
+ Tue, 30 May 2023 23:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1685489556;
- bh=JXz0xI70zuYpYZsltrSyZalooGB27OtEMdKKeiDcQNU=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=tXcGh5VxJseqUJCs/l1tb6YMnkYiaCyHEJTbJqUThtjcDapGkcJac485k3iwsuBrJ
- SdqnqflN+cQvNFYN+X1ewgC1UEYScO3QvVLLxMZvRn/P+VzwJmuG3jsV5DcJnqPR9e
- veyKyUJlQCnr5v3vsOg+e9djeOGIprE4lt9SJ3sF8g/IsnW/3PeQHDkL06aKLTG5ml
- zjQwucwHtmy5cbW9CStYnaZd+lGyaZGsgaGWmEpKpAvISP+5LcTF2Q8QAHvuOqbQpu
- J//q6QKPKLT4b9ZC0qupD41JPo8h6SBsGiv6sx4mL1auDdcJb6WAPzzwg6Md8zlXel
- wVzjEwbX49w6g==
-Date: Tue, 30 May 2023 16:32:34 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Wu Bo <bo.wu@vivo.com>
-Message-ID: <ZHaHknKmSQIdQzBC@google.com>
-References: <20230530012118.74228-1-bo.wu@vivo.com>
+ s=k20201202; t=1685490024;
+ bh=93IH1PJyULP9H9CKkenkkwO9S03yefaslN8oe+MaLpU=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=E4BXP1JocNsvJNxCns1JewTFpD978vXapuTcGmiDGO2Zn6GZdbrZRKM9IdKFWaQ2R
+ JiT7c9FdrMZvA0K0Xq182r284IX9/Z1Abp/iyhzvXqHpqlSbpXb+JDWF72baj2MyD/
+ Fr6FHawDFPFYRrqPzrQVD0n3uOuVKKFrQkdBRDrMExmGU4rRraMjVv0h3/zjm9HynU
+ BjNaSvzCeTjCSq3fZ+Axra7izOLxYd/Okq40gydDQOb/YS7F6jSWey3V6UYiLqFoCC
+ mbNPdM56bUNTI6xSURugIsqofhluRLWGfgFrG+18v4uG+t1lskmvzHOqAQbWlgnmzW
+ 3QhuCEag7t0Gw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ 11E2DE52BF5; Tue, 30 May 2023 23:40:24 +0000 (UTC)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20230530012118.74228-1-bo.wu@vivo.com>
-X-Headers-End: 1q48pW-0000Bm-OM
-Subject: Re: [f2fs-dev] [PATCH v2 1/1] f2fs: fix args passed to
- trace_f2fs_lookup_end
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <168549002406.8773.17572147089084947715.git-patchwork-notify@kernel.org>
+Date: Tue, 30 May 2023 23:40:24 +0000
+References: <20230508081042epcms2p8a637deae7de1829f54614e09d5fde5e5@epcms2p8>
+In-Reply-To: <20230508081042epcms2p8a637deae7de1829f54614e09d5fde5e5@epcms2p8>
+To: Daejun Park <daejun7.park@samsung.com>
+X-Headers-End: 1q48x4-0000NO-60
+Subject: Re: [f2fs-dev] [PATCH v6] f2fs: add async reset zone command support
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -80,55 +81,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: wubo.oduw@gmail.com, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+ linux-f2fs-devel@lists.sourceforge.net, mhiramat@kernel.org,
+ sukka.kim@samsung.com, jaegeuk@kernel.org, beomsu7.kim@samsung.com,
+ linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 05/30, Wu Bo wrote:
-> The NULL return of 'd_splice_alias' dosen't mean error. Thus the
-> successful case will also return NULL, which makes the tracepoint always
-> print 'err=-ENOENT'.
+Hello:
+
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
+
+On Mon, 08 May 2023 17:10:42 +0900 you wrote:
+> v5 -> v6
+> Added trace_f2fs_iostat support for zone reset command.
 > 
-> Signed-off-by: Wu Bo <bo.wu@vivo.com>
-> ---
->  fs/f2fs/namei.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> v4 -> v5
+> Added f2fs iostat for zone reset command.
 > 
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 77a71276ecb1..0c5e4c424eab 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -576,8 +576,9 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
->  	}
->  #endif
->  	new = d_splice_alias(inode, dentry);
-> -	err = PTR_ERR_OR_ZERO(new);
-> -	trace_f2fs_lookup_end(dir, dentry, ino, !new ? -ENOENT : err);
-> +	if (IS_ERR(new))
-> +		err = PTR_ERR(new);
-> +	trace_f2fs_lookup_end(dir, new ? new : dentry, ino, err);
+> v3 -> v4
+> Fixed build error caused by unused function.
+> 
+> [...]
 
-Again, new can be an error pointer, and the previous err was supposed to be
-zero or -ENOENT.
+Here is the summary with links:
+  - [f2fs-dev,v6] f2fs: add async reset zone command support
+    https://git.kernel.org/jaegeuk/f2fs/c/7aa6ef440cd7
 
-case 1) dentry exists: err (0) with new (NULL) --> dentry, err=0
-case 2) dentry exists: err (0) with new (VALID) --> new, err=0
-case 3) dentry exists: err (0) with new (ERR) --> dentry, err=ERR
-case 4) no dentry exists: err (-ENOENT) with new (NULL) --> dentry, err=-ENOENT
-case 4) no dentry exists: err (-ENOENT) with new (VALID) --> new, err=-ENOENT
-case 5) no dentry exists: err (-ENOENT) with new (ERR) --> dentry, err=ERR
-
-	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
-				ino, IS_ERR(new) ? PTR_ERR(new) : err);
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
->  	return new;
->  out_iput:
->  	iput(inode);
-> -- 
-> 2.35.3
 
 
 _______________________________________________
