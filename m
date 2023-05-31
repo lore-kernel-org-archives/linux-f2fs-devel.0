@@ -4,89 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D3E7AC77B73
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 31 May 2023 07:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DDFF4C7EE24
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 31 May 2023 07:50:48 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q4GAa-0004SP-JO;
-	Wed, 31 May 2023 07:22:57 +0000
+	id 1q4GbW-0004qq-95;
+	Wed, 31 May 2023 07:50:47 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <korotkov.maxim.s@gmail.com>) id 1q4GAY-0004SH-TQ
- for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 31 May 2023 07:22:55 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+b81a8c9a6d22e8bb2302+7220+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1q4GbV-0004qj-4h for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 31 May 2023 07:50:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=osB1PFoOgarjFoG6hJZ2Q+i003TXS1qizWubHtt0Tbw=; b=ZDpW7vUE2SpFVXFMXGlWDPcf0u
- IjjAFgV19yQtTFzT/A+AxtqN1eLARQIWnAX7Lc71dxp5Gdmb3bPK7K+bt6IOGUd1JArs+s3A2YZAi
- zriwd0aVNKwV15rH+HyvhlyFvo43Rhx0E3WZyzPLkmIfKi1vd7kyh8AMtPk/Hh61+b6M=;
+ bh=rJDdDhTRqJ0hb0KJKHGdzKkpTnId05huPY6N7LjcMHE=; b=SpnX+yHzcY+xkXBM8aEe3wpcix
+ q5aoZsWN5tQBzJmXcI561PsMFZcE9ISQAbRlUoJPV5/J9vvvVSlFEN3H+vYGcvN0LGB3jcLfDvu+l
+ U08ldynDeQFVF5M5EVJ8p88tZatG9XfQEC/TwYv4SyknGGYyB05MR41tlqMfXcu11xb0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=osB1PFoOgarjFoG6hJZ2Q+i003TXS1qizWubHtt0Tbw=; b=j
- obKYRcTOamOpD8dynH28TqRHIxQqHmYuLUC1h6rjeu/R3P2Ts6KMYqTxTFbs18k0Fo7TwojV6AkxM
- 4WKhIZA2yJchCUTBgkRPK8xmXpAT3EB1BYtCR2ygrwb9BozDAVsv04bLk2kQNSX7DHht7+CQP5Wsy
- OwkS5BO2C28VfobA=;
-Received: from mail-lf1-f51.google.com ([209.85.167.51])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q4GAZ-0004vt-6w for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 31 May 2023 07:22:55 +0000
-Received: by mail-lf1-f51.google.com with SMTP id
- 2adb3069b0e04-4f5021faa16so3602539e87.2
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Wed, 31 May 2023 00:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20221208; t=1685517768; x=1688109768;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=osB1PFoOgarjFoG6hJZ2Q+i003TXS1qizWubHtt0Tbw=;
- b=FUdvp+4ybcTP8w7YuiDPadQyM+TRYcE2H5s+zDY0yYwqsuLulxeQCOeTLW+22C+d5c
- 2iErxht34KcASVRqMegyowZfYzoILTXDLa1WgT9XuO57985p8fAAV+ccGn5tzXK8220o
- cEuvYyLrVUKs7AczpkEDBHL6TQ92DI4rcRi3Jjcry/bR0Si/jOUtraBtaVyEpCTMnGmd
- zaYaieiFUIsd8tbmjeqUbi30eDzXHYm/RPh1XM3kz16LZTewTf5n+VNJClbqF9WelV6c
- blrh/IXxG5tKaTl8byajruKmMiwKBnKZGur73EZM7ru2QPYpRN8mfc6QKYhBQMuSDOfR
- zN0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1685517768; x=1688109768;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=osB1PFoOgarjFoG6hJZ2Q+i003TXS1qizWubHtt0Tbw=;
- b=XophJBuiBhRe6h4sHbWGVMtB+uK/CY5bTiShTLbo8/UIyDNUR5qnIOtmToWgaPrRlk
- /C787/T+qftYwfH2jiFXd2PMYPA71eF40dCgnL9ZAReQepSSDdRhYSnAndFhkxSwz7/9
- CSoxoDNmbuOKfU71huK7GoArDk1ft7Y0EJcBqo1ojBh+HurbnLnIBY+SxxZ9aWAzM5cn
- QMbJpyxWF/xJkOGghltrP5iN7mgT9HKBlsleuE0JiSUeCtsF8TCW7hHeSE36sM4dlfPH
- DNISK51xgBgWhqsA1LZLjMhTJNVYrzY8mrLEDCfqYQI0nfUBzTRwR+mbmlsNSxuR9e9s
- 8m6g==
-X-Gm-Message-State: AC+VfDy/hZaBTHGlt4gHafLPEWZ6ufsz9XaaAnY2/+qKB3HZYDWD2BxL
- XZz/+thGcNCFBu1nR3/sbBc=
-X-Google-Smtp-Source: ACHHUZ6Y5m+OinlSLfdUr+k3Ia1sMPPKMTuj97j5PPc70ODRR0i2BLEYnXcZeMxqQHgEeS6Oyqh2Qg==
-X-Received: by 2002:a05:6512:3743:b0:4f2:7ce7:dcf3 with SMTP id
- a3-20020a056512374300b004f27ce7dcf3mr2119121lfs.17.1685517768226; 
- Wed, 31 May 2023 00:22:48 -0700 (PDT)
-Received: from mkorotkov.rasu.local ([212.22.67.162])
- by smtp.gmail.com with ESMTPSA id
- u4-20020ac248a4000000b004f3b5af3971sm606594lfg.104.2023.05.31.00.22.47
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 31 May 2023 00:22:47 -0700 (PDT)
-From: Maxim Korotkov <korotkov.maxim.s@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Wed, 31 May 2023 10:22:38 +0300
-Message-Id: <20230531072238.370186-1-korotkov.maxim.s@gmail.com>
-X-Mailer: git-send-email 2.34.1
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=rJDdDhTRqJ0hb0KJKHGdzKkpTnId05huPY6N7LjcMHE=; b=ZPgWY2PPUkzCW8+gijFDd17V8c
+ WmkBFxQLzeaPvU6oXj+jsJKwNUQJAlGRT3cfTCWcaYh3Wzuq/7x5Z88558MzrjkISIQWTmjoUrbJx
+ UJesmbRZgI+kZxXDKRAg0Y1+l3bab9HcwCDjmdTkQS5kfEVAY9KDLYhv31D79RtbnTs4=;
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1q4GbU-007Eiv-RX for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 31 May 2023 07:50:45 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=rJDdDhTRqJ0hb0KJKHGdzKkpTnId05huPY6N7LjcMHE=; b=d6s3dTvXVTM2e4BtO+Kt3za1v2
+ lm+WZ2EMJDEpFCJMVeDdn7/7iSfS/gDqydHCpwAlxW2I+LnIOr6qLV0OOF+LKBeaaec1LMlY5ngrw
+ two9EzTnRAEgjhST0bZj4SsL3hZk4cWd3TlxmK9mL/DlRgrclnhadM4hdX1/jz8Oq/BhEKhpmRCJv
+ WhXjUd9eEakyhTEOMLDwmVqqjZJqKnOx63kPNHc1JVPMjuO/02pJyhrlO85R567DR9SVEwJcVuHgW
+ pdm9CTjQvFpL02rQSnPyF98Ow3ALjPB31hEiLAIN9TLFTX9NPf9kRzdlwCQuhe5HZTU1WRTXWcM4J
+ H8mIs9mQ==;
+Received: from [2001:4bb8:182:6d06:f5c3:53d7:b5aa:b6a7] (helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+ id 1q4GbH-00GVn3-2h; Wed, 31 May 2023 07:50:32 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Matthew Wilcox <willy@infradead.org>
+Date: Wed, 31 May 2023 09:50:15 +0200
+Message-Id: <20230531075026.480237-2-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230531075026.480237-1-hch@lst.de>
+References: <20230531075026.480237-1-hch@lst.de>
 MIME-Version: 1.0
-X-Headers-End: 1q4GAZ-0004vt-6w
-Subject: [f2fs-dev] [PATCH] fsck.f2fs: fix memleak in f2fs_create()
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1q4GbU-007Eiv-RX
+Subject: [f2fs-dev] [PATCH 01/12] backing_dev: remove
+ current->backing_dev_info
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,57 +78,285 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Maxim Korotkov <maskorotkov@rasu.ru>,
- Maxim Korotkov <korotkov.maxim.s@gmail.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
+ Andreas Gruenbacher <agruenba@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ cluster-devel@redhat.com, Ilya Dryomov <idryomov@gmail.com>,
+ linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-block@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+ Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
+ linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Hannes Reinecke <hare@suse.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-In error handling cases, exiting a function without releasing memory
-Added tags to clean up resources and return error code
-Found by RASU JSC
-Signed-off-by: Maxim Korotkov <maskorotkov@rasu.ru>
----
- fsck/dir.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+The last user of current->backing_dev_info disappeared in commit
+b9b1335e6403 ("remove bdi_congested() and wb_congested() and related
+functions").  Remove the field and all assignments to it.
 
-diff --git a/fsck/dir.c b/fsck/dir.c
-index 4a3eb6e..c3508bf 100644
---- a/fsck/dir.c
-+++ b/fsck/dir.c
-@@ -704,7 +704,7 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
- 	ret = convert_inline_dentry(sbi, parent, ni.blk_addr);
- 	if (ret) {
- 		MSG(0, "Convert inline dentry for pino=%x failed.\n", de->pino);
--		return -1;
-+		goto err_free_parent_dir;
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+---
+ fs/btrfs/file.c       | 6 +-----
+ fs/ceph/file.c        | 4 ----
+ fs/ext4/file.c        | 2 --
+ fs/f2fs/file.c        | 2 --
+ fs/fuse/file.c        | 4 ----
+ fs/gfs2/file.c        | 2 --
+ fs/nfs/file.c         | 5 +----
+ fs/ntfs/file.c        | 2 --
+ fs/ntfs3/file.c       | 3 ---
+ fs/xfs/xfs_file.c     | 4 ----
+ include/linux/sched.h | 3 ---
+ mm/filemap.c          | 3 ---
+ 12 files changed, 2 insertions(+), 38 deletions(-)
+
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index f649647392e0e4..ecd43ab66fa6c7 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1145,7 +1145,6 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
+ 	    !(BTRFS_I(inode)->flags & (BTRFS_INODE_NODATACOW | BTRFS_INODE_PREALLOC)))
+ 		return -EAGAIN;
+ 
+-	current->backing_dev_info = inode_to_bdi(inode);
+ 	ret = file_remove_privs(file);
+ 	if (ret)
+ 		return ret;
+@@ -1165,10 +1164,8 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
+ 		loff_t end_pos = round_up(pos + count, fs_info->sectorsize);
+ 
+ 		ret = btrfs_cont_expand(BTRFS_I(inode), oldsize, end_pos);
+-		if (ret) {
+-			current->backing_dev_info = NULL;
++		if (ret)
+ 			return ret;
+-		}
  	}
  
- 	ret = f2fs_find_entry(sbi, parent, de);
-@@ -728,7 +728,7 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
- 		if (hardlink_ni.blk_addr == NULL_ADDR) {
- 			MSG(1, "No original inode for hard link to_ino=%x\n",
- 				found_hardlink->to_ino);
--			return -1;
-+			goto err_free_child_dir;
- 		}
- 
- 		/* Use previously-recorded inode */
-@@ -805,6 +805,11 @@ free_child_dir:
- free_parent_dir:
- 	free(parent);
  	return 0;
-+err_free_child_dir:
-+	free(child);
-+err_free_parent_dir:
-+	free(parent);
-+	return -1;	
+@@ -1689,7 +1686,6 @@ ssize_t btrfs_do_write_iter(struct kiocb *iocb, struct iov_iter *from,
+ 	if (sync)
+ 		atomic_dec(&inode->sync_writers);
+ 
+-	current->backing_dev_info = NULL;
+ 	return num_written;
  }
  
- int f2fs_mkdir(struct f2fs_sb_info *sbi, struct dentry *de)
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index f4d8bf7dec88a8..c8ef72f723badd 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1791,9 +1791,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	else
+ 		ceph_start_io_write(inode);
+ 
+-	/* We can write back this queue in page reclaim */
+-	current->backing_dev_info = inode_to_bdi(inode);
+-
+ 	if (iocb->ki_flags & IOCB_APPEND) {
+ 		err = ceph_do_getattr(inode, CEPH_STAT_CAP_SIZE, false);
+ 		if (err < 0)
+@@ -1940,7 +1937,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		ceph_end_io_write(inode);
+ out_unlocked:
+ 	ceph_free_cap_flush(prealloc_cf);
+-	current->backing_dev_info = NULL;
+ 	return written ? written : err;
+ }
+ 
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index d101b3b0c7dad8..bc430270c23c19 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -285,9 +285,7 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
+ 	if (ret <= 0)
+ 		goto out;
+ 
+-	current->backing_dev_info = inode_to_bdi(inode);
+ 	ret = generic_perform_write(iocb, from);
+-	current->backing_dev_info = NULL;
+ 
+ out:
+ 	inode_unlock(inode);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5ac53d2627d20d..4f423d367a44b9 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4517,9 +4517,7 @@ static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
+ 	if (iocb->ki_flags & IOCB_NOWAIT)
+ 		return -EOPNOTSUPP;
+ 
+-	current->backing_dev_info = inode_to_bdi(inode);
+ 	ret = generic_perform_write(iocb, from);
+-	current->backing_dev_info = NULL;
+ 
+ 	if (ret > 0) {
+ 		iocb->ki_pos += ret;
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 89d97f6188e05e..97d435874b14aa 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1362,9 +1362,6 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ writethrough:
+ 	inode_lock(inode);
+ 
+-	/* We can write back this queue in page reclaim */
+-	current->backing_dev_info = inode_to_bdi(inode);
+-
+ 	err = generic_write_checks(iocb, from);
+ 	if (err <= 0)
+ 		goto out;
+@@ -1409,7 +1406,6 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			iocb->ki_pos += written;
+ 	}
+ out:
+-	current->backing_dev_info = NULL;
+ 	inode_unlock(inode);
+ 	if (written > 0)
+ 		written = generic_write_sync(iocb, written);
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index 300844f50dcd28..904a0d6ac1a1a9 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -1041,11 +1041,9 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
+ 			goto out_unlock;
+ 	}
+ 
+-	current->backing_dev_info = inode_to_bdi(inode);
+ 	pagefault_disable();
+ 	ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
+ 	pagefault_enable();
+-	current->backing_dev_info = NULL;
+ 	if (ret > 0) {
+ 		iocb->ki_pos += ret;
+ 		written += ret;
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index f0edf5a36237d1..665ce3fc62eaf4 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -648,11 +648,8 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
+ 	since = filemap_sample_wb_err(file->f_mapping);
+ 	nfs_start_io_write(inode);
+ 	result = generic_write_checks(iocb, from);
+-	if (result > 0) {
+-		current->backing_dev_info = inode_to_bdi(inode);
++	if (result > 0)
+ 		result = generic_perform_write(iocb, from);
+-		current->backing_dev_info = NULL;
+-	}
+ 	nfs_end_io_write(inode);
+ 	if (result <= 0)
+ 		goto out;
+diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
+index c481b14e4fd989..e296f804a9c442 100644
+--- a/fs/ntfs/file.c
++++ b/fs/ntfs/file.c
+@@ -1911,11 +1911,9 @@ static ssize_t ntfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 	inode_lock(vi);
+ 	/* We can write back this queue in page reclaim. */
+-	current->backing_dev_info = inode_to_bdi(vi);
+ 	err = ntfs_prepare_file_for_write(iocb, from);
+ 	if (iov_iter_count(from) && !err)
+ 		written = ntfs_perform_write(file, from, iocb->ki_pos);
+-	current->backing_dev_info = NULL;
+ 	inode_unlock(vi);
+ 	iocb->ki_pos += written;
+ 	if (likely(written > 0))
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 9a3d55c367d920..86d16a2c8339ca 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -820,7 +820,6 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+ 	if (!pages)
+ 		return -ENOMEM;
+ 
+-	current->backing_dev_info = inode_to_bdi(inode);
+ 	err = file_remove_privs(file);
+ 	if (err)
+ 		goto out;
+@@ -993,8 +992,6 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+ out:
+ 	kfree(pages);
+ 
+-	current->backing_dev_info = NULL;
+-
+ 	if (err < 0)
+ 		return err;
+ 
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index aede746541f8ae..431c3fd0e2b598 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -717,9 +717,6 @@ xfs_file_buffered_write(
+ 	if (ret)
+ 		goto out;
+ 
+-	/* We can write back this queue in page reclaim */
+-	current->backing_dev_info = inode_to_bdi(inode);
+-
+ 	trace_xfs_file_buffered_write(iocb, from);
+ 	ret = iomap_file_buffered_write(iocb, from,
+ 			&xfs_buffered_write_iomap_ops);
+@@ -753,7 +750,6 @@ xfs_file_buffered_write(
+ 		goto write_retry;
+ 	}
+ 
+-	current->backing_dev_info = NULL;
+ out:
+ 	if (iolock)
+ 		xfs_iunlock(ip, iolock);
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index eed5d65b8d1f4d..54780571fe9a07 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -41,7 +41,6 @@
+ 
+ /* task_struct member predeclarations (sorted alphabetically): */
+ struct audit_context;
+-struct backing_dev_info;
+ struct bio_list;
+ struct blk_plug;
+ struct bpf_local_storage;
+@@ -1186,8 +1185,6 @@ struct task_struct {
+ 	/* VM state: */
+ 	struct reclaim_state		*reclaim_state;
+ 
+-	struct backing_dev_info		*backing_dev_info;
+-
+ 	struct io_context		*io_context;
+ 
+ #ifdef CONFIG_COMPACTION
+diff --git a/mm/filemap.c b/mm/filemap.c
+index b4c9bd368b7e58..33b54660ad2b39 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3991,8 +3991,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	ssize_t		err;
+ 	ssize_t		status;
+ 
+-	/* We can write back this queue in page reclaim */
+-	current->backing_dev_info = inode_to_bdi(inode);
+ 	err = file_remove_privs(file);
+ 	if (err)
+ 		goto out;
+@@ -4053,7 +4051,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			iocb->ki_pos += written;
+ 	}
+ out:
+-	current->backing_dev_info = NULL;
+ 	return written ? written : err;
+ }
+ EXPORT_SYMBOL(__generic_file_write_iter);
 -- 
-2.34.1
+2.39.2
 
 
 
