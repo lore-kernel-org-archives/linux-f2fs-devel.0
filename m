@@ -4,69 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B4453C87FDE
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Jun 2023 15:00:29 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 18973C77B7E
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Jun 2023 15:25:03 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q4jmu-0007J6-7B;
-	Thu, 01 Jun 2023 15:00:28 +0000
+	id 1q4kAf-0006Nz-AE;
+	Thu, 01 Jun 2023 15:25:01 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
- <BATV+afcc791b37732e68e234+7221+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1q4jmC-0007GC-Rm for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Jun 2023 14:59:46 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
+ (envelope-from <jack@suse.cz>) id 1q4kAc-0006Nh-DW
+ for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 01 Jun 2023 15:24:58 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
+ Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=+TlwHQVmCcfSC9sL9si103D1qv7dfudCnmtDuQc976U=; b=iafEFfUi2tfJVqCr7f3UCZzkej
- 1LKgY20Q5wlMI3skkXGUG8erOcluawJ2veCPxJ/H7ZMzM3w7+mAEe9ZpGTIX6azdo9HsGvwMgFRWT
- xNRMlJfbiv6lphFtTv0bGnwEHvxh5QsXXNy64XxTFaOKDqZf08J2Dz/6d4oBFPwUSXmw=;
+ bh=NMMC3ehgaWslWeASfjcmQ+SuyyB+zQPCwx9GtXbqe3Y=; b=m3TqboXxe2m5UVFlHqQmVqLTVW
+ eRA8OnL0Fcrsnf+WgZnoKLy6reHxDUlFPG93juPSNZB272gzwt+YU3Udl57sKo74T/xVBfonW0dbI
+ bWyXsEujBak2sGHgPMUMNnKMbmWrOZ3T5F5ZSgsT2RcUPrXb2YV/gtr6fXV79PNwwBkM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
+ :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=+TlwHQVmCcfSC9sL9si103D1qv7dfudCnmtDuQc976U=; b=ZIElc1EVwzXWHZFeC0mdIH8m+c
- kYBGG0LmB4d91OJBrO5jUSczeNm+dtyHRT/UcBREFfI9qpJVKaSvx/Sz59YpTJ3sPMpCZ0CQSRdye
- I/myJ5ZWgIu7N8Ul3tnmmI8GTiaExd2/O6LAfstAtRCkGyIGBW2ZdNgouX2HCaACvI1A=;
-Received: from bombadil.infradead.org ([198.137.202.133])
+ bh=NMMC3ehgaWslWeASfjcmQ+SuyyB+zQPCwx9GtXbqe3Y=; b=easxQe5geB8JpnqK2HIVxD/N8l
+ Zkho9vHOoXJFr+EDtpqCtCxNZZ/MbhTiv8CqMLS6KFtMujdZ4PyGtrRZP0LA7+E/09McWcsBPvzBP
+ h6F37zQ2sDqDdtcWsN6BGsFOJxU0qP9SiMtNo80gQY7mhlJ9t/XpDBZ2BBOiSFNqczq4=;
+Received: from smtp-out2.suse.de ([195.135.220.29])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q4jmC-008Saw-O9 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Jun 2023 14:59:45 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
- MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
- :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=+TlwHQVmCcfSC9sL9si103D1qv7dfudCnmtDuQc976U=; b=yIATEWuIAieoRWEpSxfntSFM82
- D+6jfMT4RQR3K25Sc8qxUL3xmhBQEZes7Zhlyb8ubufcv1k8qbQva3Oe6nISgXoPjgL30hb7xLxJ+
- uZqMsD5J2azG/uOjx0fdrb6/BRFzfBzZ76dbKDHHLdWrosxPBlXV2r5DQ+ViMhKg9IHFswYO4OFpX
- 3cL38j2lR+fVSkaafjR6sb/+/aMQTfObjF1aCBNYyxDUyYbKpXHNbprk22T+YX9mpEUebqgGMIj19
- 2DV9Ornvu0Ao7dkRQ5oR4MaV/TVC/AaODDqXImZSmmjuQAmvJ8FcuvW6KrYWbIE7yi7iNO/XLAoiu
- GJYCm/Xg==;
-Received: from [2001:4bb8:182:6d06:eacb:c751:971:73eb] (helo=localhost)
- by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1q4jlv-003w8I-0Z; Thu, 01 Jun 2023 14:59:27 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Matthew Wilcox <willy@infradead.org>
-Date: Thu,  1 Jun 2023 16:59:00 +0200
-Message-Id: <20230601145904.1385409-9-hch@lst.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230601145904.1385409-1-hch@lst.de>
-References: <20230601145904.1385409-1-hch@lst.de>
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1q4kAa-008TmV-Fn for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 01 Jun 2023 15:24:58 +0000
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ (No client certificate requested)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 439421FDAF;
+ Thu,  1 Jun 2023 15:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+ t=1685633090; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=NMMC3ehgaWslWeASfjcmQ+SuyyB+zQPCwx9GtXbqe3Y=;
+ b=WjHviSuQYqQL5ww/WGZrxQ9IaSK+faKZeFG2YF8j1TneF9hscLLx1tqg0Bx8EgldewEIHi
+ PBEV92dYJc9WiX/PL/Fl3kvtNUHQ7iVPTlmwqgOKI3ucMytqhW2aWsSuZSvUhP7hf/zFKn
+ KNnBc370aTHSrj3tbsurPTnkkfqoXmA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+ s=susede2_ed25519; t=1685633090;
+ h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=NMMC3ehgaWslWeASfjcmQ+SuyyB+zQPCwx9GtXbqe3Y=;
+ b=9kcmzqr/0hZ1iA49qNNzf1cUeGB4/rjsaKBaQ3EqCfnWgDiqMRyj80AFflpKW9e0YgPeZl
+ nKRmR487X7h99zBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ (No client certificate requested)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3109D139B7;
+ Thu,  1 Jun 2023 15:24:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+ by imap2.suse-dmz.suse.de with ESMTPSA id 7FLvC0K4eGQuawAAMHmgww
+ (envelope-from <jack@suse.cz>); Thu, 01 Jun 2023 15:24:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+ id 91EB1A0754; Thu,  1 Jun 2023 17:24:49 +0200 (CEST)
+Date: Thu, 1 Jun 2023 17:24:49 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Message-ID: <20230601152449.h4ur5zrfqjqygujd@quack3>
+References: <20230601104525.27897-1-jack@suse.cz>
+ <20230601105830.13168-4-jack@suse.cz>
+ <20230601-gebracht-gesehen-c779a56b3bf3@brauner>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
- bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1q4jmC-008Saw-O9
-Subject: [f2fs-dev] [PATCH 08/12] iomap: use kiocb_write_and_wait and
- kiocb_invalidate_pages
+Content-Disposition: inline
+In-Reply-To: <20230601-gebracht-gesehen-c779a56b3bf3@brauner>
+X-Headers-End: 1q4kAa-008TmV-Fn
+Subject: Re: [f2fs-dev] [PATCH v2 4/6] fs: Establish locking order for
+ unrelated directories
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -78,146 +98,71 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
- Andreas Gruenbacher <agruenba@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
- cluster-devel@redhat.com, Ilya Dryomov <idryomov@gmail.com>,
- linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-block@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
- ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
- Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
- linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Hannes Reinecke <hare@suse.de>
+Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+ "Darrick J. Wong" <djwong@kernel.org>, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+ Al Viro <viro@ZenIV.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ linux-fsdevel@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+ linux-ext4@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Use the common helpers for direct I/O page invalidation instead of
-open coding the logic.  This leads to a slight reordering of checks
-in __iomap_dio_rw to keep the logic straight.
+On Thu 01-06-23 15:58:58, Christian Brauner wrote:
+> On Thu, Jun 01, 2023 at 12:58:24PM +0200, Jan Kara wrote:
+> > Currently the locking order of inode locks for directories that are not
+> > in ancestor relationship is not defined because all operations that
+> > needed to lock two directories like this were serialized by
+> > sb->s_vfs_rename_mutex. However some filesystems need to lock two
+> > subdirectories for RENAME_EXCHANGE operations and for this we need the
+> > locking order established even for two tree-unrelated directories.
+> > Provide a helper function lock_two_inodes() that establishes lock
+> > ordering for any two inodes and use it in lock_two_directories().
+> > 
+> > CC: stable@vger.kernel.org
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  fs/inode.c    | 42 ++++++++++++++++++++++++++++++++++++++++++
+> >  fs/internal.h |  2 ++
+> >  fs/namei.c    |  4 ++--
+> >  3 files changed, 46 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 577799b7855f..4000ab08bbc0 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -1103,6 +1103,48 @@ void discard_new_inode(struct inode *inode)
+> >  }
+> >  EXPORT_SYMBOL(discard_new_inode);
+> >  
+> > +/**
+> > + * lock_two_inodes - lock two inodes (may be regular files but also dirs)
+> > + *
+> > + * Lock any non-NULL argument. The caller must make sure that if he is passing
+> > + * in two directories, one is not ancestor of the other.  Zero, one or two
+> > + * objects may be locked by this function.
+> > + *
+> > + * @inode1: first inode to lock
+> > + * @inode2: second inode to lock
+> > + * @subclass1: inode lock subclass for the first lock obtained
+> > + * @subclass2: inode lock subclass for the second lock obtained
+> > + */
+> > +void lock_two_inodes(struct inode *inode1, struct inode *inode2,
+> > +		     unsigned subclass1, unsigned subclass2)
+> > +{
+> > +	if (!inode1 || !inode2)
+> 
+> I think you forgot the opening bracket...
+> I can just fix this up for you though.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
----
- fs/iomap/direct-io.c | 55 ++++++++++++++++----------------------------
- 1 file changed, 20 insertions(+), 35 deletions(-)
+Oh, yes. Apparently I forgot to rerun git-format-patch after fixing up this
+bit. I'm sorry for that. The patch series has survived full ext4 fstests
+run on my end.
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 0795c54a745bca..6bd14691f96e07 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -472,7 +472,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
- 		unsigned int dio_flags, void *private, size_t done_before)
- {
--	struct address_space *mapping = iocb->ki_filp->f_mapping;
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 	struct iomap_iter iomi = {
- 		.inode		= inode,
-@@ -481,11 +480,11 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		.flags		= IOMAP_DIRECT,
- 		.private	= private,
- 	};
--	loff_t end = iomi.pos + iomi.len - 1, ret = 0;
- 	bool wait_for_completion =
- 		is_sync_kiocb(iocb) || (dio_flags & IOMAP_DIO_FORCE_WAIT);
- 	struct blk_plug plug;
- 	struct iomap_dio *dio;
-+	loff_t ret = 0;
- 
- 	trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before);
- 
-@@ -509,31 +508,29 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	dio->submit.waiter = current;
- 	dio->submit.poll_bio = NULL;
- 
-+	if (iocb->ki_flags & IOCB_NOWAIT)
-+		iomi.flags |= IOMAP_NOWAIT;
-+
- 	if (iov_iter_rw(iter) == READ) {
- 		if (iomi.pos >= dio->i_size)
- 			goto out_free_dio;
- 
--		if (iocb->ki_flags & IOCB_NOWAIT) {
--			if (filemap_range_needs_writeback(mapping, iomi.pos,
--					end)) {
--				ret = -EAGAIN;
--				goto out_free_dio;
--			}
--			iomi.flags |= IOMAP_NOWAIT;
--		}
--
- 		if (user_backed_iter(iter))
- 			dio->flags |= IOMAP_DIO_DIRTY;
-+
-+		ret = kiocb_write_and_wait(iocb, iomi.len);
-+		if (ret)
-+			goto out_free_dio;
- 	} else {
- 		iomi.flags |= IOMAP_WRITE;
- 		dio->flags |= IOMAP_DIO_WRITE;
- 
--		if (iocb->ki_flags & IOCB_NOWAIT) {
--			if (filemap_range_has_page(mapping, iomi.pos, end)) {
--				ret = -EAGAIN;
-+		if (dio_flags & IOMAP_DIO_OVERWRITE_ONLY) {
-+			ret = -EAGAIN;
-+			if (iomi.pos >= dio->i_size ||
-+			    iomi.pos + iomi.len > dio->i_size)
- 				goto out_free_dio;
--			}
--			iomi.flags |= IOMAP_NOWAIT;
-+			iomi.flags |= IOMAP_OVERWRITE_ONLY;
- 		}
- 
- 		/* for data sync or sync, we need sync completion processing */
-@@ -549,31 +546,19 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 			if (!(iocb->ki_flags & IOCB_SYNC))
- 				dio->flags |= IOMAP_DIO_WRITE_FUA;
- 		}
--	}
--
--	if (dio_flags & IOMAP_DIO_OVERWRITE_ONLY) {
--		ret = -EAGAIN;
--		if (iomi.pos >= dio->i_size ||
--		    iomi.pos + iomi.len > dio->i_size)
--			goto out_free_dio;
--		iomi.flags |= IOMAP_OVERWRITE_ONLY;
--	}
- 
--	ret = filemap_write_and_wait_range(mapping, iomi.pos, end);
--	if (ret)
--		goto out_free_dio;
--
--	if (iov_iter_rw(iter) == WRITE) {
- 		/*
- 		 * Try to invalidate cache pages for the range we are writing.
- 		 * If this invalidation fails, let the caller fall back to
- 		 * buffered I/O.
- 		 */
--		if (invalidate_inode_pages2_range(mapping,
--				iomi.pos >> PAGE_SHIFT, end >> PAGE_SHIFT)) {
--			trace_iomap_dio_invalidate_fail(inode, iomi.pos,
--							iomi.len);
--			ret = -ENOTBLK;
-+		ret = kiocb_invalidate_pages(iocb, iomi.len);
-+		if (ret) {
-+			if (ret != -EAGAIN) {
-+				trace_iomap_dio_invalidate_fail(inode, iomi.pos,
-+								iomi.len);
-+				ret = -ENOTBLK;
-+			}
- 			goto out_free_dio;
- 		}
- 
+								Honza
 -- 
-2.39.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
 
 _______________________________________________
