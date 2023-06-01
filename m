@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2A114C7EE29
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 401BDC7EE2A
 	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Jun 2023 10:58:50 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
 	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q4g13-0005n9-8S;
+	id 1q4g12-0005n1-Pz;
 	Thu, 01 Jun 2023 10:58:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1q4g12-0005mw-KR
+ (envelope-from <jack@suse.cz>) id 1q4g10-0005mq-Id
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Jun 2023 10:58:48 +0000
+ Thu, 01 Jun 2023 10:58:46 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ioHF3wJZOEdK9Zi2g8x0HxHqMAZdyIP3moICR5/W8ZM=; b=NX6ieR6dXW8ducxKSEDBj76E4M
- PjAVJzbBmrxRYP158fTSSB+QTyYpMh6NDL2lz3IslKDffypEK67nNKRTjtIxOr6mk9RTYS7Sy3Iyb
- bvYpmOUIymW0r4VqOJkfOll9Q6uYeXTOuNwFj5/jIV9K6b4Qbr7z5pTuAY7y4Y508UlQ=;
+ bh=WVCS2NXBW5ZH4HJiDG94f7/my/nZc/t1gaXommKhNSs=; b=G0bMQywPabS8MzMQ4iVYuU1FU2
+ FJs2e1cIkuzksbRjz7E2Vs6xIKHmRAfqKJqxenUDCiwQBxZaxVdsZSS/T+SmLMuMdIE5ySj+G1jFE
+ XZl8sjskOnzIiTAzyq8Y64VuD52pN3ZhnR8pEO1qODc9iptO6kQMUmq/2zZuG+XsZ8Vw=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,71 +33,70 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ioHF3wJZOEdK9Zi2g8x0HxHqMAZdyIP3moICR5/W8ZM=; b=LskfAmr4HUU0cA8m2CCy/S50d4
- OwOhU6bxgbbVI282xUpVhh8mjZVZ/3wQKCJ2qmpp1/eySsmobNvP15ci551/nPBj15YI0o+GGe1Q6
- onaURTm6PAMQz8EhDf0p9r04bL/jJ5qX+hzZyQZ654l4Kc+itjZom4If/SGL/+9hWtj4=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=WVCS2NXBW5ZH4HJiDG94f7/my/nZc/t1gaXommKhNSs=; b=f7sUNjhUltWqgph9To6V+1yp+f
+ MFAl05EHzhqiD1lM6gkCU7TyzjY/fd4dhqeBalOMj9QZ3No5fEXQcEokVlGz13K4Fjt6mZqidihvj
+ PLCc8cgze3NinNB7MgbtxBMGGiUbTnvSWKgsnKmYrk7nCaakK11EbVAEAz8+7TS+jr1c=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q4g0z-0005t0-9j for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Jun 2023 10:58:48 +0000
+ id 1q4g0u-008G6v-H3 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 01 Jun 2023 10:58:46 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 9CA741FDA3;
- Thu,  1 Jun 2023 10:58:30 +0000 (UTC)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 180AF2197E;
+ Thu,  1 Jun 2023 10:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1685617110; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1685617111; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=ioHF3wJZOEdK9Zi2g8x0HxHqMAZdyIP3moICR5/W8ZM=;
- b=AMqfoQG+Oqjn4ZqNhHx+B0BDjqiyhV8yIbX3yzJbvq3FNyYQfdfufCQFRg0anXY2Czp8Ld
- LJNCdivx4JGpOmLRTntSNnx7L/a2XoSCRJekq15ccyjFrvAaNCf0tp05GBPty7EcyJ4HvC
- 2UWijpfiNW2KRbcLlH62o62KCQXB2ZE=
+ bh=WVCS2NXBW5ZH4HJiDG94f7/my/nZc/t1gaXommKhNSs=;
+ b=sk8CUrc5W8W+ATmUeBoPtRVc2tLcmAeBXR1SKEKOL49RIImPQ2l8GCKekmntDiWQ1S01Ol
+ x54+S6D7tJs6K+3+W/W78Wk95ZdRxqQncjP7g1bn9yzeOCmRmxmlDEh757NsaZ7VdX9tVa
+ +5BBgseIuW58hljimTAc28c8g2lt1nc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1685617110;
+ s=susede2_ed25519; t=1685617111;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=ioHF3wJZOEdK9Zi2g8x0HxHqMAZdyIP3moICR5/W8ZM=;
- b=g6E4r15cOMFlrWtQmecf7LGmqF15nLLRfnb0JE+2kjFsYt+vJumZnB9H3ENlitVeHBAXQT
- BuySk7STrx6wPXDw==
+ bh=WVCS2NXBW5ZH4HJiDG94f7/my/nZc/t1gaXommKhNSs=;
+ b=s2Ncj+jC+LWCSSYtcD2/hbX1MZeKwUEnf5kIdxKy9neWgXvER8vXh4BvHoC7nLPnGfbPsT
+ G09K2PkXlnZg9vDg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8E09F13441;
- Thu,  1 Jun 2023 10:58:30 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0A35613441;
+ Thu,  1 Jun 2023 10:58:31 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id uUi2ItZ5eGRuWAAAMHmgww
- (envelope-from <jack@suse.cz>); Thu, 01 Jun 2023 10:58:30 +0000
+ by imap2.suse-dmz.suse.de with ESMTPSA id BpuIAtd5eGSAWAAAMHmgww
+ (envelope-from <jack@suse.cz>); Thu, 01 Jun 2023 10:58:31 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 17082A075C; Thu,  1 Jun 2023 12:58:30 +0200 (CEST)
+ id 27813A0763; Thu,  1 Jun 2023 12:58:30 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: Al Viro <viro@ZenIV.linux.org.uk>
-Date: Thu,  1 Jun 2023 12:58:22 +0200
-Message-Id: <20230601105830.13168-2-jack@suse.cz>
+Date: Thu,  1 Jun 2023 12:58:25 +0200
+Message-Id: <20230601105830.13168-5-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20230601104525.27897-1-jack@suse.cz>
 References: <20230601104525.27897-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1840; i=jack@suse.cz;
- h=from:subject; bh=cUFu/3mUBi4bt/K+j6IZ3Ng8iPItrjlJa92MM2nlCwY=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkeHnOIPd8xE0p+HpULv7ZaonyuahLzBKAgbz88fay
- PJv6AsKJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZHh5zgAKCRCcnaoHP2RA2QysCA
- CTIL3by4FVm7WFw+onDgoqu8NeITyZA2OomlK2x/zMpGpAxU2bz3Ofz3PeZubavF2I9MoQWxdk+pWa
- RYbSbJui5ntaXx5C0j16m552h7dRKKOxBW7gb9xde7hP5jMPO7WYgLo+5d8ZcBUWHBlCfWmIa33Ux+
- fCNk4AbSKt01GVTTdUV47s++JoTwJC1SFAM7YYNlIMbS/zMO1Q6QCH8neqeNaL2wTcPZD9CvXB4vYI
- q42iN5IBmGVsEoKZURp+YLUyXMETAn6Jn/yAptPq+hiSjg79nvYaEzukgMynxraFCSD4q1r28ZjcMW
- jzWw6gfSHe3ui3HXZ0VDAoaQ1F7rjY
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5467; i=jack@suse.cz;
+ h=from:subject; bh=x4FZJj19EKHfl9vXc7blu9EGaRK3J4g/IYXgMMiRgsg=;
+ b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkeHnQOagY8JFtxmxrH4yOG15iOHj85ARzmW1mO6z6
+ m4CoTtqJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZHh50AAKCRCcnaoHP2RA2fOmCA
+ CGZ/60qBrc6mq5kJuPlRk9zqrA938OweaDejgjB5rj/+wPTCG423XQxEjq785RwCe9imbIcJywyI89
+ A0pan5qcfnH3LTQfSvu8g6Jnn/hUJIc/ZMpljEw2EQVWXfo3gjmfNtu2Nv80yeCWEt+RhRaifk2PpA
+ FLUIaavbPKYMxQ68HJ0IAdihcEEjPMCnTBQNJYwjkR9+2RDhPtxB05Dxbx7SoLrQG4CyCnR0UNvBFu
+ VouTBcwwyqv4irtxgwlnroN7k242fLUWgmWkRIlxkPK3MjdN2wTxLC4YYJ1BQ6HnnVZewXTrQEWlUP
+ Sx2kjy7KuoAPi36BlrAAF2PUdusf8G
 X-Developer-Key: i=jack@suse.cz; a=openpgp;
  fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1q4g0z-0005t0-9j
-Subject: [f2fs-dev] [PATCH v2 2/6] Revert "udf: Protect rename against
- modification of moved directory"
+X-Headers-End: 1q4g0u-008G6v-H3
+Subject: [f2fs-dev] [PATCH v2 5/6] fs: Lock moved directories
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,64 +118,124 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This reverts commit f950fd0529130a617b3da526da9fb6a896ce87c2. The
-locking is going to be provided by vfs_rename() in the following
-patches.
+When a directory is moved to a different directory, some filesystems
+(udf, ext4, ocfs2, f2fs, and likely gfs2, reiserfs, and others) need to
+update their pointer to the parent and this must not race with other
+operations on the directory. Lock the directories when they are moved.
+Although not all filesystems need this locking, we perform it in
+vfs_rename() because getting the lock ordering right is really difficult
+and we don't want to expose these locking details to filesystems.
 
 CC: stable@vger.kernel.org
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/udf/namei.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ .../filesystems/directory-locking.rst         | 26 ++++++++++---------
+ fs/namei.c                                    | 22 ++++++++++------
+ 2 files changed, 28 insertions(+), 20 deletions(-)
 
-diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-index fd20423d3ed2..fd29a66e7241 100644
---- a/fs/udf/namei.c
-+++ b/fs/udf/namei.c
-@@ -793,11 +793,6 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 			if (!empty_dir(new_inode))
- 				goto out_oiter;
- 		}
--		/*
--		 * We need to protect against old_inode getting converted from
--		 * ICB to normal directory.
--		 */
--		inode_lock_nested(old_inode, I_MUTEX_NONDIR2);
- 		retval = udf_fiiter_find_entry(old_inode, &dotdot_name,
- 					       &diriter);
- 		if (retval == -ENOENT) {
-@@ -806,10 +801,8 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 				old_inode->i_ino);
- 			retval = -EFSCORRUPTED;
- 		}
--		if (retval) {
--			inode_unlock(old_inode);
-+		if (retval)
- 			goto out_oiter;
--		}
- 		has_diriter = true;
- 		tloc = lelb_to_cpu(diriter.fi.icb.extLocation);
- 		if (udf_get_lb_pblock(old_inode->i_sb, &tloc, 0) !=
-@@ -889,7 +882,6 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 			       udf_dir_entry_len(&diriter.fi));
- 		udf_fiiter_write_fi(&diriter, NULL);
- 		udf_fiiter_release(&diriter);
--		inode_unlock(old_inode);
+diff --git a/Documentation/filesystems/directory-locking.rst b/Documentation/filesystems/directory-locking.rst
+index 504ba940c36c..dccd61c7c5c3 100644
+--- a/Documentation/filesystems/directory-locking.rst
++++ b/Documentation/filesystems/directory-locking.rst
+@@ -22,12 +22,11 @@ exclusive.
+ 3) object removal.  Locking rules: caller locks parent, finds victim,
+ locks victim and calls the method.  Locks are exclusive.
  
- 		inode_dec_link_count(old_dir);
- 		if (new_inode)
-@@ -901,10 +893,8 @@ static int udf_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+-4) rename() that is _not_ cross-directory.  Locking rules: caller locks
+-the parent and finds source and target.  In case of exchange (with
+-RENAME_EXCHANGE in flags argument) lock both.  In any case,
+-if the target already exists, lock it.  If the source is a non-directory,
+-lock it.  If we need to lock both, lock them in inode pointer order.
+-Then call the method.  All locks are exclusive.
++4) rename() that is _not_ cross-directory.  Locking rules: caller locks the
++parent and finds source and target.  We lock both (provided they exist).  If we
++need to lock two inodes of different type (dir vs non-dir), we lock directory
++first.  If we need to lock two inodes of the same type, lock them in inode
++pointer order.  Then call the method.  All locks are exclusive.
+ NB: we might get away with locking the source (and target in exchange
+ case) shared.
+ 
+@@ -44,15 +43,17 @@ All locks are exclusive.
+ rules:
+ 
+ 	* lock the filesystem
+-	* lock parents in "ancestors first" order.
++	* lock parents in "ancestors first" order. If one is not ancestor of
++	  the other, lock them in inode pointer order.
+ 	* find source and target.
+ 	* if old parent is equal to or is a descendent of target
+ 	  fail with -ENOTEMPTY
+ 	* if new parent is equal to or is a descendent of source
+ 	  fail with -ELOOP
+-	* If it's an exchange, lock both the source and the target.
+-	* If the target exists, lock it.  If the source is a non-directory,
+-	  lock it.  If we need to lock both, do so in inode pointer order.
++	* Lock both the source and the target provided they exist. If we
++	  need to lock two inodes of different type (dir vs non-dir), we lock
++	  the directory first. If we need to lock two inodes of the same type,
++	  lock them in inode pointer order.
+ 	* call the method.
+ 
+ All ->i_rwsem are taken exclusive.  Again, we might get away with locking
+@@ -66,8 +67,9 @@ If no directory is its own ancestor, the scheme above is deadlock-free.
+ 
+ Proof:
+ 
+-	First of all, at any moment we have a partial ordering of the
+-	objects - A < B iff A is an ancestor of B.
++	First of all, at any moment we have a linear ordering of the
++	objects - A < B iff (A is an ancestor of B) or (B is not an ancestor
++        of A and ptr(A) < ptr(B)).
+ 
+ 	That ordering can change.  However, the following is true:
+ 
+diff --git a/fs/namei.c b/fs/namei.c
+index 148570aabe74..6a5e26a529e1 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4731,7 +4731,7 @@ SYSCALL_DEFINE2(link, const char __user *, oldname, const char __user *, newname
+  *	   sb->s_vfs_rename_mutex. We might be more accurate, but that's another
+  *	   story.
+  *	c) we have to lock _four_ objects - parents and victim (if it exists),
+- *	   and source (if it is not a directory).
++ *	   and source.
+  *	   And that - after we got ->i_mutex on parents (until then we don't know
+  *	   whether the target exists).  Solution: try to be smart with locking
+  *	   order for inodes.  We rely on the fact that tree topology may change
+@@ -4815,10 +4815,16 @@ int vfs_rename(struct renamedata *rd)
+ 
+ 	take_dentry_name_snapshot(&old_name, old_dentry);
+ 	dget(new_dentry);
+-	if (!is_dir || (flags & RENAME_EXCHANGE))
+-		lock_two_nondirectories(source, target);
+-	else if (target)
+-		inode_lock(target);
++	/*
++	 * Lock all moved children. Moved directories may need to change parent
++	 * pointer so they need the lock to prevent against concurrent
++	 * directory changes moving parent pointer. For regular files we've
++	 * historically always done this. The lockdep locking subclasses are
++	 * somewhat arbitrary but RENAME_EXCHANGE in particular can swap
++	 * regular files and directories so it's difficult to tell which
++	 * subclasses to use.
++	 */
++	lock_two_inodes(source, target, I_MUTEX_NORMAL, I_MUTEX_NONDIR2);
+ 
+ 	error = -EPERM;
+ 	if (IS_SWAPFILE(source) || (target && IS_SWAPFILE(target)))
+@@ -4866,9 +4872,9 @@ int vfs_rename(struct renamedata *rd)
+ 			d_exchange(old_dentry, new_dentry);
  	}
- 	return 0;
- out_oiter:
--	if (has_diriter) {
-+	if (has_diriter)
- 		udf_fiiter_release(&diriter);
--		inode_unlock(old_inode);
--	}
- 	udf_fiiter_release(&oiter);
- 
- 	return retval;
+ out:
+-	if (!is_dir || (flags & RENAME_EXCHANGE))
+-		unlock_two_nondirectories(source, target);
+-	else if (target)
++	if (source)
++		inode_unlock(source);
++	if (target)
+ 		inode_unlock(target);
+ 	dput(new_dentry);
+ 	if (!error) {
 -- 
 2.35.3
 
