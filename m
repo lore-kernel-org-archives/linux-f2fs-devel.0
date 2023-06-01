@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E3FA7C77B7E
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Jun 2023 15:00:05 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F0B0AC87FDE
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Jun 2023 15:00:20 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q4jmW-0001vM-Ln;
-	Thu, 01 Jun 2023 15:00:05 +0000
+	id 1q4jmk-0004eF-D4;
+	Thu, 01 Jun 2023 15:00:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+afcc791b37732e68e234+7221+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1q4jmI-0001u4-J4 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Jun 2023 14:59:51 +0000
+ id 1q4jmD-0004bu-RI for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 01 Jun 2023 14:59:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=a5Lvr5nZsxWnI6T+V3CK7XOpJ+ONTwidG7DsWkZk2X0=; b=loEJIpVdG9ld7qA5wmQNPcaReF
- f0Krm3BKyxQMiVirLx6P8QgDjJpCWYYRtM+jQ+6lVbgQdhFKU/AT21Fr/Yvd5VwmYP7xJtfCqvABI
- 2K2lJePXgDCUuaRrv6xs98UGa3VSQHCLPuzEIaMm5l6RI8nzqjfT8pI58RqP1Qlq2Qo4=;
+ bh=5x2udqJGy5EspUL35WEc9ZEWV3oRgZmJB0zkY8x6oY8=; b=L7T3p6Fydc35tQD8PoK4nasWaB
+ UJbwGdPu8BIqIwjYt+NKEJ0P0hJqGEYKHHMGlQc4Cc8Qot7gBHg/TVhDYEkcq7Be1NMv8b/SHBtK0
+ /In6CrrW5rqGyb+c3oH8IJlQUwtOAvnxYkjQbf6rWyDjJAp03PNxlN0FdPO0wnNKZLvU=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,40 +33,40 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=a5Lvr5nZsxWnI6T+V3CK7XOpJ+ONTwidG7DsWkZk2X0=; b=QXrjYlU2BanuQQS9Qvy4P+cU1f
- 5Mr1Da8+Tk1kF5ve2DmFIrbrdNFJ9QbuvLm15sfCmRSLZFPuygdBZn+8hTvBOuUnogBoNIBIT5TpJ
- 4tMiHTeDddZPeX6PhHjQWEDVfZdaln5Df+zODEFIZwVPfscdYXNsV1zeJ3w27uDeMvIY=;
+ bh=5x2udqJGy5EspUL35WEc9ZEWV3oRgZmJB0zkY8x6oY8=; b=WvGfa437cWLiQ4ELEoVrbKuMVo
+ MuA3RCg8fTQcB1zcf2HlLG26qC4RG9eJaxXJTWzpQcjfZp/RcyPhSkL3h4D5erusM2MqF1jOylJ9J
+ nVhY9Afb1RRSCXHQYjmcjSKX9tvz2dQabuhcI8ABjCgw0y0zqaLQgR2h/2YqC3AyWadk=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q4jmA-0007oH-Ez for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Jun 2023 14:59:43 +0000
+ id 1q4jmC-008Sat-8p for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 01 Jun 2023 14:59:45 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=a5Lvr5nZsxWnI6T+V3CK7XOpJ+ONTwidG7DsWkZk2X0=; b=coWy/MXDVp/dV45yvGlFv3QUBw
- NSwr39kAlpdMqJeXOxel2UDwfDJKlCMGsuXQnLqMVIDTONFvnSasl/TBL89ySpwL01KF46bVQVRw+
- 66FA1x2sxcQeOGQdJAbhsWsYfKTZQLVATX/xSiV3aIxouxheUP2Az/wScrj9gh1nIHrsXxBD5UL2C
- yXAbm+9oR8uTja7O+Te+FE4jk+s87ca6acOJdZwu+dXjc4eJetGgHL+R4hiGbYaGzJRElp/A7dWpk
- uhRtSguYYyhbU3VE7X4T+UyR1isFkpRo8D8NL4JizguYQ5K55JSthA/rRamv1DlKE/wboRI5hNRJp
- EZ3O/0hw==;
+ bh=5x2udqJGy5EspUL35WEc9ZEWV3oRgZmJB0zkY8x6oY8=; b=RSKlKIrAmm0xz5z7crxjtGMq9+
+ LefqIEyvSaA/qbiFbWlj4WmHZ7kPKwNA5XPhvkfJJKm89HFOJ2Nfrttaj1ac2LInlAWW4VM1viyWQ
+ ZbwT9inrRH7zXc4ENnJ5JBuf7JivgmBc5j2HIFEZOiSnUMgHL/O+TyrbBiJye2k8gKHj610USpiSp
+ MAuq2ofInylC+ITiHCTfrwo6CbghCNSKfiLe1A2he6zKBtOQmwe9ziJsgNUItsg8/H94pTB1geGxD
+ IXwlZ8E/ACg+u9ma3YMdhp+00+KpftIpICbAXnjhF2+vELCqPdnZ+VscoCDUlFTxlIfIE00owtc3H
+ /s9waYog==;
 Received: from [2001:4bb8:182:6d06:eacb:c751:971:73eb] (helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1q4jls-003w7l-1t; Thu, 01 Jun 2023 14:59:24 +0000
+ id 1q4jlx-003w94-2f; Thu, 01 Jun 2023 14:59:30 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Matthew Wilcox <willy@infradead.org>
-Date: Thu,  1 Jun 2023 16:58:59 +0200
-Message-Id: <20230601145904.1385409-8-hch@lst.de>
+Date: Thu,  1 Jun 2023 16:59:01 +0200
+Message-Id: <20230601145904.1385409-10-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230601145904.1385409-1-hch@lst.de>
 References: <20230601145904.1385409-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1q4jmA-0007oH-Ez
-Subject: [f2fs-dev] [PATCH 07/12] iomap: update ki_pos in
- iomap_file_buffered_write
+X-Headers-End: 1q4jmC-008Sat-8p
+Subject: [f2fs-dev] [PATCH 09/12] fs: factor out a direct_write_fallback
+ helper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,106 +81,183 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
  Andreas Gruenbacher <agruenba@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
  cluster-devel@redhat.com, Ilya Dryomov <idryomov@gmail.com>,
- linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-block@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
- ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
+ linux-ext4@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+ linux-nfs@vger.kernel.org, linux-block@vger.kernel.org,
+ Damien Le Moal <dlemoal@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
+ Xiubo Li <xiubli@redhat.com>,
  Trond Myklebust <trond.myklebust@hammerspace.com>,
  Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
  Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
  linux-xfs@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
- linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Hannes Reinecke <hare@suse.de>
+ linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-All callers of iomap_file_buffered_write need to updated ki_pos, move it
-into common code.
+Add a helper dealing with handling the syncing of a buffered write fallback
+for direct I/O.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Acked-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/gfs2/file.c         | 4 +---
- fs/iomap/buffered-io.c | 9 ++++++---
- fs/xfs/xfs_file.c      | 2 --
- fs/zonefs/file.c       | 4 +---
- 4 files changed, 8 insertions(+), 11 deletions(-)
+ fs/libfs.c         | 41 ++++++++++++++++++++++++++++
+ include/linux/fs.h |  2 ++
+ mm/filemap.c       | 66 +++++++++++-----------------------------------
+ 3 files changed, 58 insertions(+), 51 deletions(-)
 
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index 904a0d6ac1a1a9..c6a7555d5ad8bb 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -1044,10 +1044,8 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
- 	pagefault_disable();
- 	ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
- 	pagefault_enable();
--	if (ret > 0) {
--		iocb->ki_pos += ret;
-+	if (ret > 0)
- 		written += ret;
--	}
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 89cf614a327158..5b851315eeed03 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1613,3 +1613,44 @@ u64 inode_query_iversion(struct inode *inode)
+ 	return cur >> I_VERSION_QUERIED_SHIFT;
+ }
+ EXPORT_SYMBOL(inode_query_iversion);
++
++ssize_t direct_write_fallback(struct kiocb *iocb, struct iov_iter *iter,
++		ssize_t direct_written, ssize_t buffered_written)
++{
++	struct address_space *mapping = iocb->ki_filp->f_mapping;
++	loff_t pos = iocb->ki_pos - buffered_written;
++	loff_t end = iocb->ki_pos - 1;
++	int err;
++
++	/*
++	 * If the buffered write fallback returned an error, we want to return
++	 * the number of bytes which were written by direct I/O, or the error
++	 * code if that was zero.
++	 *
++	 * Note that this differs from normal direct-io semantics, which will
++	 * return -EFOO even if some bytes were written.
++	 */
++	if (unlikely(buffered_written < 0)) {
++		if (direct_written)
++			return direct_written;
++		return buffered_written;
++	}
++
++	/*
++	 * We need to ensure that the page cache pages are written to disk and
++	 * invalidated to preserve the expected O_DIRECT semantics.
++	 */
++	err = filemap_write_and_wait_range(mapping, pos, end);
++	if (err < 0) {
++		/*
++		 * We don't know how much we wrote, so just return the number of
++		 * bytes which were direct-written
++		 */
++		if (direct_written)
++			return direct_written;
++		return err;
++	}
++	invalidate_mapping_pages(mapping, pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
++	return direct_written + buffered_written;
++}
++EXPORT_SYMBOL_GPL(direct_write_fallback);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 91021b4e1f6f48..6af25137543824 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2738,6 +2738,8 @@ extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t generic_file_direct_write(struct kiocb *, struct iov_iter *);
+ ssize_t generic_perform_write(struct kiocb *, struct iov_iter *);
++ssize_t direct_write_fallback(struct kiocb *iocb, struct iov_iter *iter,
++		ssize_t direct_written, ssize_t buffered_written);
  
- 	if (inode == sdp->sd_rindex)
- 		gfs2_glock_dq_uninit(statfs_gh);
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 063133ec77f49e..550525a525c45c 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -864,16 +864,19 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
- 		.len		= iov_iter_count(i),
- 		.flags		= IOMAP_WRITE,
- 	};
--	int ret;
+ ssize_t vfs_iter_read(struct file *file, struct iov_iter *iter, loff_t *ppos,
+ 		rwf_t flags);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index ddb6f8aa86d6ca..137508da5525b6 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -4006,23 +4006,19 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct address_space *mapping = file->f_mapping;
+-	struct inode 	*inode = mapping->host;
+-	ssize_t		written = 0;
+-	ssize_t		err;
+-	ssize_t		status;
++	struct inode *inode = mapping->host;
 +	ssize_t ret;
  
- 	if (iocb->ki_flags & IOCB_NOWAIT)
- 		iter.flags |= IOMAP_NOWAIT;
+-	err = file_remove_privs(file);
+-	if (err)
+-		goto out;
++	ret = file_remove_privs(file);
++	if (ret)
++		return ret;
  
- 	while ((ret = iomap_iter(&iter, ops)) > 0)
- 		iter.processed = iomap_write_iter(&iter, i);
--	if (iter.pos == iocb->ki_pos)
+-	err = file_update_time(file);
+-	if (err)
+-		goto out;
++	ret = file_update_time(file);
++	if (ret)
++		return ret;
+ 
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+-		loff_t pos, endbyte;
+-
+-		written = generic_file_direct_write(iocb, from);
++		ret = generic_file_direct_write(iocb, from);
+ 		/*
+ 		 * If the write stopped short of completing, fall back to
+ 		 * buffered writes.  Some filesystems do this for writes to
+@@ -4030,45 +4026,13 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		 * not succeed (even if it did, DAX does not handle dirty
+ 		 * page-cache pages correctly).
+ 		 */
+-		if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
+-			goto out;
+-
+-		pos = iocb->ki_pos;
+-		status = generic_perform_write(iocb, from);
+-		/*
+-		 * If generic_perform_write() returned a synchronous error
+-		 * then we want to return the number of bytes which were
+-		 * direct-written, or the error code if that was zero.  Note
+-		 * that this differs from normal direct-io semantics, which
+-		 * will return -EFOO even if some bytes were written.
+-		 */
+-		if (unlikely(status < 0)) {
+-			err = status;
+-			goto out;
+-		}
+-		/*
+-		 * We need to ensure that the page cache pages are written to
+-		 * disk and invalidated to preserve the expected O_DIRECT
+-		 * semantics.
+-		 */
+-		endbyte = pos + status - 1;
+-		err = filemap_write_and_wait_range(mapping, pos, endbyte);
+-		if (err == 0) {
+-			written += status;
+-			invalidate_mapping_pages(mapping,
+-						 pos >> PAGE_SHIFT,
+-						 endbyte >> PAGE_SHIFT);
+-		} else {
+-			/*
+-			 * We don't know how much we wrote, so just return
+-			 * the number of bytes which were direct-written
+-			 */
+-		}
+-	} else {
+-		written = generic_perform_write(iocb, from);
++		if (ret < 0 || !iov_iter_count(from) || IS_DAX(inode))
++			return ret;
++		return direct_write_fallback(iocb, from, ret,
++				generic_perform_write(iocb, from));
+ 	}
+-out:
+-	return written ? written : err;
 +
-+	if (unlikely(ret < 0))
- 		return ret;
--	return iter.pos - iocb->ki_pos;
-+	ret = iter.pos - iocb->ki_pos;
-+	iocb->ki_pos += ret;
-+	return ret;
++	return generic_perform_write(iocb, from);
  }
- EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
+ EXPORT_SYMBOL(__generic_file_write_iter);
  
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 431c3fd0e2b598..d57443db633637 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -720,8 +720,6 @@ xfs_file_buffered_write(
- 	trace_xfs_file_buffered_write(iocb, from);
- 	ret = iomap_file_buffered_write(iocb, from,
- 			&xfs_buffered_write_iomap_ops);
--	if (likely(ret >= 0))
--		iocb->ki_pos += ret;
- 
- 	/*
- 	 * If we hit a space limit, try to free up some lingering preallocated
-diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
-index 132f01d3461f14..e212d0636f848e 100644
---- a/fs/zonefs/file.c
-+++ b/fs/zonefs/file.c
-@@ -643,9 +643,7 @@ static ssize_t zonefs_file_buffered_write(struct kiocb *iocb,
- 		goto inode_unlock;
- 
- 	ret = iomap_file_buffered_write(iocb, from, &zonefs_write_iomap_ops);
--	if (ret > 0)
--		iocb->ki_pos += ret;
--	else if (ret == -EIO)
-+	if (ret == -EIO)
- 		zonefs_io_error(inode, true);
- 
- inode_unlock:
 -- 
 2.39.2
 
