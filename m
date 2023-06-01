@@ -4,59 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7748C7EE23
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Jun 2023 06:34:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 8B762C77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  1 Jun 2023 10:31:14 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q4btL-0002oT-Gi;
-	Thu, 01 Jun 2023 06:34:35 +0000
+	id 1q4faK-0003TF-0t;
+	Thu, 01 Jun 2023 10:31:12 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1q4btJ-0002oN-Mq
+ (envelope-from <chao@kernel.org>) id 1q4faJ-0003T9-8p
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Jun 2023 06:34:34 +0000
+ Thu, 01 Jun 2023 10:31:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9rClrKphZplTVtYFMuxLiTJcrcPs3PK+tO7sbVzoQZU=; b=f9TXfXlzuZ/7nEkjdCA0BI2Wv4
- 4Pyyf6Hwo4FQmJddV1G6e0gnBRcbCZSy+GP3v+aK2AudnoLN+pXRxcM8KeKyqydJ1Y5BHKKljPBJK
- McKFyB1LfWNBFrLscgmBrKO0kiMhpLNJBUqbkHpBEjvQTs4Fxb2cyotFfHKEhe0N0Afs=;
+ bh=6tZoW86LnslWJIFXxhLKaIqFwtfJR0kUPtrxU6el33c=; b=GBl+TSc/FnS6dGY7VASVIwvCpq
+ WvT+OYbB3QN9GVHOPFPviSI1CE+3n+b6qGA4ZydvRBbkpmxGtXibUk82H3pEVGjrX+GRP2emB6shI
+ 8Ot3p5iMqyKdEZVkB9BT1zGGlZGFtNn5qaU/BwZS0OdbsrV1VzPO7mq3lb0OQUzGpcU4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=9rClrKphZplTVtYFMuxLiTJcrcPs3PK+tO7sbVzoQZU=; b=E31HcYVc2VZpbnyw243ZfGFmcP
- cdO+/nOgBfNSaabOhxVIkEtJBdDkctdnrYTcyotWIH4u9gzLloudIQLOWMMZfBus3bt8J4d9I29zj
- Sq3ugcZkOg+rkhCc5Xp8Cn5XAiGEtZvhmnQyFM7F9ywAuncCTpC1b6sORFBYV3Gpn1UU=;
-Received: from verein.lst.de ([213.95.11.211])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=6tZoW86LnslWJIFXxhLKaIqFwtfJR0kUPtrxU6el33c=; b=I
+ YUKnxZ4Q6BOF9nnxYLSnLPw9TQRKC7knPPfGMDhF9Nv8Ar5IPhkAvYGFBrwcWYUtGrikEuNUB7xZU
+ f4y+6ggjbX+nOt/9M1yAVwX0laKsCGM5dxJ6XfB7m0uNhzjT1VyvEmOwJLnmjVuN/psbUfXzEkM4e
+ CKvGsNrfOa9ROFPg=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q4btH-0004WX-AA for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 01 Jun 2023 06:34:33 +0000
-Received: by verein.lst.de (Postfix, from userid 2407)
- id 82D0F67373; Thu,  1 Jun 2023 08:34:14 +0200 (CEST)
-Date: Thu, 1 Jun 2023 08:34:14 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Message-ID: <20230601063413.GB24071@lst.de>
-References: <20230531075026.480237-1-hch@lst.de>
- <20230531075026.480237-11-hch@lst.de>
- <CAJfpegth2z06pAH5K5vxRsy1PqygBD=ShiQxoYGqjmJPvk1-aQ@mail.gmail.com>
+ id 1q4faE-008Esa-Vo for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 01 Jun 2023 10:31:11 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 969756434C
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu,  1 Jun 2023 10:31:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D263C433D2;
+ Thu,  1 Jun 2023 10:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1685615461;
+ bh=/UUetYgv2gACpBnJ/guVq2cNeMZaEvkHuj6i/aXY5iQ=;
+ h=From:To:Cc:Subject:Date:From;
+ b=WlZRQ4DnBQQITF6iTlX76sfLOyiF6+oFSdyLiB9IzSNDtMyJ5Qd3hBTaQYoHUW8Dh
+ NRqmeXuEdpedS1Wntq916GnAjVXX/YCEhGqxR5yW2o8s1ObTaHkdZH5wl73OObaC3b
+ BEVZoXLVYh0gPkx7yeCibRHAPDiUotynY63j20iKitNcNEG3aDhV8FqLjiZrqmUv8w
+ C+fqGoAnbrfO9iRF8A0Bv6+oLQuNIr5Wlvo9baJVoR7gxaKwig6RxAyJNzqe0rGRVF
+ eKtFjTl2EyaBSYEoZXg+27iVOkHZ08e/NIMhtVh7f87Wgoziuu/btDPMZvBcdsEZ+z
+ ca1llqDbFbrPA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Date: Thu,  1 Jun 2023 18:30:54 +0800
+Message-Id: <20230601103054.1761833-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <CAJfpegth2z06pAH5K5vxRsy1PqygBD=ShiQxoYGqjmJPvk1-aQ@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1q4btH-0004WX-AA
-Subject: Re: [f2fs-dev] [PATCH 10/12] fuse: update ki_pos in
- fuse_perform_write
+X-Headers-End: 1q4faE-008Esa-Vo
+Subject: [f2fs-dev] [PATCH] f2fs_io: support gc_range command
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -68,29 +78,91 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
- Christoph Hellwig <hch@lst.de>, Andreas Gruenbacher <agruenba@redhat.com>,
- Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
- Ilya Dryomov <idryomov@gmail.com>, linux-ext4@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-block@vger.kernel.org,
- Damien Le Moal <dlemoal@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Jaegeuk Kim <jaegeuk@kernel.org>, ceph-devel@vger.kernel.org,
- Xiubo Li <xiubli@redhat.com>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
- Theodore Ts'o <tytso@mit.edu>, linux-f2fs-devel@lists.sourceforge.net,
- linux-xfs@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
- linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, May 31, 2023 at 11:11:13AM +0200, Miklos Szeredi wrote:
-> Why remove generic_write_sync()?  Definitely doesn't belong in this
-> patch even if there's a good reason.
+This patch supports a new sub-command 'gc_range' in f2fs_io to trigger
+gc to move blocks in specified range via F2FS_IOC_GARBAGE_COLLECT_RANGE
+ioctl.
 
-Yes, this shouldn't have happened.  I think this was a bad merge
-resolution after the current->backing_dev removal.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ man/f2fs_io.8           |  3 +++
+ tools/f2fs_io/f2fs_io.c | 35 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+
+diff --git a/man/f2fs_io.8 b/man/f2fs_io.8
+index b25f807..c5eadde 100644
+--- a/man/f2fs_io.8
++++ b/man/f2fs_io.8
+@@ -144,6 +144,9 @@ Trigger precache extents
+ .TP
+ \fBmove_range\fR \fI[src_path] [dst_path] [src_start] [dst_start] [length]\fR
+ Move a range of data blocks from source file to destination file
++.TP
++\fBgc_range\fR \fI[sync_mode] [start in 4kb] [length in 4kb] [file]\fR
++Trigger gc to move data blocks from specified address range
+ .SH AUTHOR
+ This version of
+ .B f2fs_io
+diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+index ea9143b..b8102b5 100644
+--- a/tools/f2fs_io/f2fs_io.c
++++ b/tools/f2fs_io/f2fs_io.c
+@@ -1419,6 +1419,40 @@ static void do_move_range(int argc, char **argv, const struct cmd_desc *cmd)
+ 	exit(0);
+ }
+ 
++#define gc_range_desc "trigger filesystem gc_range"
++#define gc_range_help "f2fs_io gc_range [sync_mode] [start] [length] [file_path]\n\n"\
++"  sync_mode : 0: asynchronous, 1: synchronous\n"			\
++"  start     : start offset of defragment region, unit: 4kb\n"	\
++"  length    : bytes number of defragment region, unit: 4kb\n"	\
++
++static void do_gc_range(int argc, char **argv, const struct cmd_desc *cmd)
++{
++	struct f2fs_gc_range range;
++	int ret, fd;
++
++	if (argc != 5) {
++		fputs("Excess arguments\n\n", stderr);
++		fputs(cmd->cmd_help, stderr);
++		exit(1);
++	}
++
++	range.sync = atoi(argv[1]);
++	range.start = (u64)atoi(argv[2]);
++	range.len = (u64)atoi(argv[3]);
++
++	fd = xopen(argv[4], O_RDWR, 0);
++
++	ret = ioctl(fd, F2FS_IOC_GARBAGE_COLLECT_RANGE, &range);
++	if (ret < 0) {
++		die_errno("F2FS_IOC_GARBAGE_COLLECT_RANGE failed");
++	}
++
++	printf("trigger %s gc_range [%lu, %lu] ret=%d\n",
++		range.sync ? "synchronous" : "asynchronous",
++		range.start, range.len, ret);
++	exit(0);
++}
++
+ #define CMD_HIDDEN 	0x0001
+ #define CMD(name) { #name, do_##name, name##_desc, name##_help, 0 }
+ #define _CMD(name) { #name, do_##name, NULL, NULL, CMD_HIDDEN }
+@@ -1454,6 +1488,7 @@ const struct cmd_desc cmd_list[] = {
+ 	CMD(checkpoint),
+ 	CMD(precache_extents),
+ 	CMD(move_range),
++	CMD(gc_range),
+ 	{ NULL, NULL, NULL, NULL, 0 }
+ };
+ 
+-- 
+2.40.1
+
 
 
 _______________________________________________
