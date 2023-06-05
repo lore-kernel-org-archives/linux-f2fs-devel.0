@@ -4,74 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9FB42C77B73
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun,  4 Jun 2023 12:02:18 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 486C8C77B73
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon,  5 Jun 2023 04:19:12 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q5mR6-0005NQ-8G;
-	Sun, 04 Jun 2023 12:02:16 +0000
+	id 1q61gS-0002xl-6z;
+	Mon, 05 Jun 2023 04:19:08 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <reni@bess.co.id>) id 1q5mR4-0005NG-VT
+ (envelope-from <chao@kernel.org>) id 1q61gR-0002xf-EQ
  for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 04 Jun 2023 12:02:14 +0000
+ Mon, 05 Jun 2023 04:19:07 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Subject:Content-Transfer-Encoding:Content-Type:
- MIME-Version:Message-ID:Date:To:From:Reply-To:Sender:Cc:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=AkVaycPHATF4Z96h7qyGSVuaFGZSQeH59skbFfclPN8=; b=O8d6xN7Y/TI93Lkf0NznxH1HPG
- 9ngNt0Nwv+YjHAauicylGl0kb/g3I7T7T5Xy6wze6ICHw55JIBI4Hb+FJJ179aCqvhiKbEmLmDx6v
- xwZBWpRxA0WAwWiyPk2JoWR+lVb2T5OKRWHA1zRqoBe6uP4DgTmwqPjFnPkzKQzQvcQI=;
+ bh=TWe2Y7D4E/A7kfly4CSjcUayA/bM8oWxtLdayA3KZ2o=; b=YzKUheNXErQCpdhLwBacYSbZTk
+ rp5cV7o1AHMHlot26g9hOruBuSUAaFz+8ukv/6DDPUv7M2T6Ej6SBtRl56BfrFPfMlGrOeVcT/ndl
+ ktmRwZpOrglOZN1Va9UeUnwdO13DzT7cvuUraQoNFBWLtaayEjjWcfM68zvu1/CjO26k=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
- Date:To:From:Reply-To:Sender:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=AkVaycPHATF4Z96h7qyGSVuaFGZSQeH59skbFfclPN8=; b=V
- KhUQzzZeFofnHg3RqykNnZJmQLzehOQeL9tG4uaKwm6x5y7bFWAJ5K2p8dClL7iO5+lJGvNPAKl7B
- yu9QaZcqhmGgDmiY5+qlz0FtIE/KYP4zY+ssVHHDjyYs2KrmqM6UGQ8TY48xXjJwUCCHRyJOmJpFd
- dSMWZDrhY3yYlhY4=;
-Received: from [202.157.188.57] (helo=synergy.bess.co.id)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=TWe2Y7D4E/A7kfly4CSjcUayA/bM8oWxtLdayA3KZ2o=; b=f0tqf6mAFb/fROZazRW46xs0ze
+ lxP4YWIwDBkLidw05e94njtuCHtZYPFerDiqbUks7Yy52SRuHMK2GcBwSweHjzK9A4+Oy+rCu0tLL
+ +xzeWRl5GKxhgHjAV3HhMMkvOsyOf/6h2r2Rf7ASaiyh2yWWet0tPjy0LpaVPYPRHbzI=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q5mR4-0003nX-Ai for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 04 Jun 2023 12:02:14 +0000
-Received: from localhost (localhost [127.0.0.1])
- by synergy.bess.co.id (Postfix) with ESMTP id 9E400A204CE6
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  4 Jun 2023 18:45:37 +0700 (WIB)
-Received: from synergy.bess.co.id ([127.0.0.1])
- by localhost (synergy.bess.co.id [127.0.0.1]) (amavisd-new, port 10032)
- with ESMTP id Vealmb9jagXK
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  4 Jun 2023 18:45:37 +0700 (WIB)
-Received: from localhost (localhost [127.0.0.1])
- by synergy.bess.co.id (Postfix) with ESMTP id 6F190A1FA234
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  4 Jun 2023 18:45:37 +0700 (WIB)
-X-Virus-Scanned: amavisd-new at bess.co.id
-Received: from synergy.bess.co.id ([127.0.0.1])
- by localhost (synergy.bess.co.id [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id 33DjVGOj_yCW
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  4 Jun 2023 18:45:37 +0700 (WIB)
-Received: from bess.co.id (unknown [156.0.213.29])
- by synergy.bess.co.id (Postfix) with ESMTPSA id 47B78A1F9ADC
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Sun,  4 Jun 2023 18:45:35 +0700 (WIB)
-From: Mr Philippe <reni@bess.co.id>
-To: linux-f2fs-devel@lists.sourceforge.net
-Date: 04 Jun 2023 13:45:35 +0200
-Message-ID: <20230604134535.E0571B72AE00C2A9@bess.co.id>
+ id 1q61gR-00BNnx-DY for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 05 Jun 2023 04:19:07 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 0666B60C85;
+ Mon,  5 Jun 2023 04:19:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7FE3C433D2;
+ Mon,  5 Jun 2023 04:19:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1685938741;
+ bh=8/RgLxwn3Vbfw/goUIfKuABW9jVshJfGZ9AmaPhNkiw=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=VEl/enRRAw+O3XszBhOTu0dIe6T0r2EvH54rU5e8kIDz9lEmOZsempUiWHRkq5yjB
+ erqoykBERRZAWlCItMLWQWCEzdcvmQQdsxDtCfDIuAL3/sa9SaesC6MeR7RdEUZErW
+ GH+qE6k6ZwlqQRWY9Ze0zzXNDv/wLAv5Dv20KJe9Cj29JJJJraDGkgZBLPQarPuEjV
+ gxVKiB1GmuVBnovii2Qlv8N66c0RTM+Y1/yJt2WVuBrpP+JOYWdP2LPrt4Ok7RUcKl
+ 1NhYFI2Mnu5Q9y1/L9nLMMgHubzGJ/a2ls2WNvmhRUOj9XutWfTAviUw5qQEjXLYdh
+ w47gjENo1P/Kw==
+Message-ID: <6d606656-b1ce-2bdd-04e4-f66b466419c4@kernel.org>
+Date: Mon, 5 Jun 2023 12:18:58 +0800
 MIME-Version: 1.0
-X-VA-Spam-Flag: YES
-X-Headers-End: 1q5mR4-0003nX-Ai
-Subject: [f2fs-dev] [SPAM] Re: Bonjour
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Content-Language: en-US
+To: Maxim Korotkov <korotkov.maxim.s@gmail.com>
+References: <20230602102451.602105-1-korotkov.maxim.s@gmail.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20230602102451.602105-1-korotkov.maxim.s@gmail.com>
+X-Headers-End: 1q61gR-00BNnx-DY
+Subject: Re: [f2fs-dev] [PATCH v2] fsck.f2fs: fix memleak in f2fs_create()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,18 +81,22 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: phillippemartinez@outlook.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Qm9uam91ciwKSmUgbWUgcHLDqXNlbnRlIE1vbnNpZXVyIFBoaWxpcHBlIE1BUlRJTkVaLCBqZSB2
-b3VzIGNvbnRhY3RlIHN1aXRlIArDoCB1biBkb24gZGUgMSA1MjUgMDAwIOKCrCBxdWUgamUgdmV1
-eCB2b3VzIG9mZnJpciwgY2FyIG1lcyBqb3VycyAKc29udCBjb21wdMOpcy4gUG91ciBwbHVzIGRl
-IHJlbnNlaWduZW1lbnRzLCBqZSB2b3VzIHByaWUgZGUgYmllbiAKdm91bG9pciBtZSBjb250YWN0
-ZXIgw6AgbW9uIGFkcmVzc2UgY291cnJpZWwgcGVyc29ubmVsOiAKcGhpbGxpcHBlbWFydGluZXpA
-b3V0bG9vay5jb20KUXVlIGxlIFNlaWduZXVyIGRpZXUgY3LDqWF0ZXVyIGR1IGNpZWwgZXQgZGUg
-bGEgdGVycmUgZXhhdWNlIHZvcyAKcHJpw6hyZXMsIEFtZW4uCgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On 2023/6/2 18:24, Maxim Korotkov wrote:
+> In error handling cases, the function exited without releasing memory
+> 
+> Signed-off-by: Maxim Korotkov <korotkov.maxim.s@gmail.com>
+
+Reviewed-by: Chao Yu <chao@kernel.org>
+
+Thanks,
+
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
