@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4326FC77B7A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jun 2023 07:41:33 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 588C7C77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jun 2023 07:41:40 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6RJs-0001RW-Ck;
-	Tue, 06 Jun 2023 07:41:32 +0000
+	id 1q6RJy-0003Qt-3I;
+	Tue, 06 Jun 2023 07:41:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+c7f58ba0a08136e81302+7226+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1q6RJq-0001R0-Mi for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 07:41:30 +0000
+ id 1q6RJs-0003Qc-0l for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Jun 2023 07:41:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3oobpK0I71CFipYMnkLmr3dHEuRlArP1BTxUWt63+Iw=; b=YtR+GqmFmqSeO3cnjf9EdKAYTk
- lxkg0oHMjqr38xzdjafuMbhchs05qzz6/8jCN5ToQwag/mu/QcahZV26NhX61hKlJJNPvHYgH0rDN
- 3mQ0Fd2utW5XOdL9oVf+zuo/ywOfOozPTlbKdMz8iKKzeeEWr2HChcrxHgjp66mhriME=;
+ bh=2otnM+h2q2Vr05Ue513L8XbjCWF6SyivDzhbZWcxM4w=; b=jbrVJRgFeEGCJVP/J3CJKFIegk
+ U3vMNnJVMvV52zoR+CmwzkxoADVXUOkN5HdjonPnrjUtWY4Du7srIWH6HNlMVtVEpTCCtRWAmg/GH
+ 8De9pEYo5OQOk0jL+B2mmm32Nwk/UGVfP20F3xxsg9PAjcQgED6wuw9C5WBMzQgsMB+0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3oobpK0I71CFipYMnkLmr3dHEuRlArP1BTxUWt63+Iw=; b=lF3nYw2mBGv14EYr8NklT9p6xP
- IXQx5A36TTTN1RJxSSeHxFJJrEe10iJc+DPfWKR2qmOxQEXqw78hqKw3qxiLOpNpyqWVul7B6fq3E
- yrJjZtFJr2sobooTdoLIxBu3EJMFu1E4xzNP/ng4kDhGEz1vSKJWE4pNxhmbLNKO1jlQ=;
+ bh=2otnM+h2q2Vr05Ue513L8XbjCWF6SyivDzhbZWcxM4w=; b=exRIvs+hRdcmV8Xw6OkgS7xmV2
+ V6YpVvlcEz/S3ed8ow5EeVCJQHO/+SkvvJ5F1FamThm+yDrMDMnai2ns74XdehQ21xk4wVBPGxe+w
+ UJj2zZvU/Z3d03A7FuPNZQy2uO1PlnPRcap+GNmz0JTZtvdS5miTIKWbhKwkKA1avX7Y=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q6RJn-0003cM-As for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 07:41:30 +0000
+ id 1q6RJr-00CV9d-P7 for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Jun 2023 07:41:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=3oobpK0I71CFipYMnkLmr3dHEuRlArP1BTxUWt63+Iw=; b=Rb34amWhb/J6SdllZhBnBaIpWi
- KUt+llcgkwzWM92BIcNAp4ExNHPt6bTYyfe/HqtT+Ygyoea+7dphS6ckMDqefBW7ntbmRuCsblhZ2
- rloc+oUH88AGQ+iodSYQ7eLa1MOg5M9txYsRdbvm1La+vPcrGGlqDQ+rWO8cuVaET8LMBVg+djeEF
- avLlFkj7kG2Uk5mJ7YH/MDePsleY3BuwgsUumfaNe23QpIgicon+pLWS+IcOoUHSnYryjKpqIy+96
- gJYLNRQg/Bny+ZvZXVAarVf9oqqRFURrR6k4cooGuNfT5pQygIZFluIL+Ggt7S86QXjZe5Z5z53Bf
- 9R2jcXuQ==;
+ bh=2otnM+h2q2Vr05Ue513L8XbjCWF6SyivDzhbZWcxM4w=; b=SNHo0P3hNkB9JCEe3Vz/VUk+6o
+ y7j1336pgqmqWJHypVwNt8FNedqR3cWQTlNKpEzWh5tNLWhBWd7xR271tMevkEcfVBgDkoD78/8y2
+ NcU8M9mYpNWdcZOo+POMetj1B2RpQe70qwCvirnpr/LVOjVuCcUH9SaxGCHp1GETxrnqYLSlIb5I0
+ XaKlasI/s0W/vSw0zoqnsyzBjGVJoFt683+Id7wtj/N+WveQlE0pmOuAp9uiOBqYTKcJpKSI3Lrem
+ cy/b+vh9jNYbOKTFu4uOj+WodBBXfaGU+gMS/AFIvZMffALdVvmv7BgQWjN9Gtw/OijYEjyPqCcUN
+ EFeqD9eg==;
 Received: from
  2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1q6RJH-000Zcn-32; Tue, 06 Jun 2023 07:40:56 +0000
+ id 1q6RJO-000ZjC-14; Tue, 06 Jun 2023 07:41:02 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Tue,  6 Jun 2023 09:39:38 +0200
-Message-Id: <20230606073950.225178-20-hch@lst.de>
+Date: Tue,  6 Jun 2023 09:39:40 +0200
+Message-Id: <20230606073950.225178-22-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230606073950.225178-1-hch@lst.de>
 References: <20230606073950.225178-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1q6RJn-0003cM-As
-Subject: [f2fs-dev] [PATCH 19/31] scsi: replace the fmode_t argument to
- scsi_cmd_allowed with a simple bool
+X-Headers-End: 1q6RJr-00CV9d-P7
+Subject: [f2fs-dev] [PATCH 21/31] scsi: replace the fmode_t argument to
+ ->sg_io_fn with a simple bool
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,91 +104,93 @@ a bool open_for_write to prepare for callers that won't have the fmode_t.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/scsi/scsi_bsg.c   | 2 +-
- drivers/scsi/scsi_ioctl.c | 8 ++++----
- drivers/scsi/sg.c         | 2 +-
- include/scsi/scsi_ioctl.h | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
+ block/bsg-lib.c         | 2 +-
+ block/bsg.c             | 8 +++++---
+ drivers/scsi/scsi_bsg.c | 4 ++--
+ include/linux/bsg.h     | 2 +-
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
+diff --git a/block/bsg-lib.c b/block/bsg-lib.c
+index 435c32373cd68f..b3acdbdb6e7ea8 100644
+--- a/block/bsg-lib.c
++++ b/block/bsg-lib.c
+@@ -26,7 +26,7 @@ struct bsg_set {
+ };
+ 
+ static int bsg_transport_sg_io_fn(struct request_queue *q, struct sg_io_v4 *hdr,
+-		fmode_t mode, unsigned int timeout)
++		bool open_for_write, unsigned int timeout)
+ {
+ 	struct bsg_job *job;
+ 	struct request *rq;
+diff --git a/block/bsg.c b/block/bsg.c
+index 7eca43f33d7ff8..bec4027842b31e 100644
+--- a/block/bsg.c
++++ b/block/bsg.c
+@@ -54,7 +54,8 @@ static unsigned int bsg_timeout(struct bsg_device *bd, struct sg_io_v4 *hdr)
+ 	return max_t(unsigned int, timeout, BLK_MIN_SG_TIMEOUT);
+ }
+ 
+-static int bsg_sg_io(struct bsg_device *bd, fmode_t mode, void __user *uarg)
++static int bsg_sg_io(struct bsg_device *bd, bool open_for_write,
++		     void __user *uarg)
+ {
+ 	struct sg_io_v4 hdr;
+ 	int ret;
+@@ -63,7 +64,8 @@ static int bsg_sg_io(struct bsg_device *bd, fmode_t mode, void __user *uarg)
+ 		return -EFAULT;
+ 	if (hdr.guard != 'Q')
+ 		return -EINVAL;
+-	ret = bd->sg_io_fn(bd->queue, &hdr, mode, bsg_timeout(bd, &hdr));
++	ret = bd->sg_io_fn(bd->queue, &hdr, open_for_write,
++			   bsg_timeout(bd, &hdr));
+ 	if (!ret && copy_to_user(uarg, &hdr, sizeof(hdr)))
+ 		return -EFAULT;
+ 	return ret;
+@@ -146,7 +148,7 @@ static long bsg_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case SG_EMULATED_HOST:
+ 		return put_user(1, intp);
+ 	case SG_IO:
+-		return bsg_sg_io(bd, file->f_mode, uarg);
++		return bsg_sg_io(bd, file->f_mode & FMODE_WRITE, uarg);
+ 	case SCSI_IOCTL_SEND_COMMAND:
+ 		pr_warn_ratelimited("%s: calling unsupported SCSI_IOCTL_SEND_COMMAND\n",
+ 				current->comm);
 diff --git a/drivers/scsi/scsi_bsg.c b/drivers/scsi/scsi_bsg.c
-index 96ee35256a168f..12431f35f861e1 100644
+index 12431f35f861e1..a9a9ec086a7e3f 100644
 --- a/drivers/scsi/scsi_bsg.c
 +++ b/drivers/scsi/scsi_bsg.c
+@@ -10,7 +10,7 @@
+ #define uptr64(val) ((void __user *)(uintptr_t)(val))
+ 
+ static int scsi_bsg_sg_io_fn(struct request_queue *q, struct sg_io_v4 *hdr,
+-		fmode_t mode, unsigned int timeout)
++		bool open_for_write, unsigned int timeout)
+ {
+ 	struct scsi_cmnd *scmd;
+ 	struct request *rq;
 @@ -42,7 +42,7 @@ static int scsi_bsg_sg_io_fn(struct request_queue *q, struct sg_io_v4 *hdr,
  	if (copy_from_user(scmd->cmnd, uptr64(hdr->request), scmd->cmd_len))
  		goto out_put_request;
  	ret = -EPERM;
--	if (!scsi_cmd_allowed(scmd->cmnd, mode))
-+	if (!scsi_cmd_allowed(scmd->cmnd, mode & FMODE_WRITE))
+-	if (!scsi_cmd_allowed(scmd->cmnd, mode & FMODE_WRITE))
++	if (!scsi_cmd_allowed(scmd->cmnd, open_for_write))
  		goto out_put_request;
  
  	ret = 0;
-diff --git a/drivers/scsi/scsi_ioctl.c b/drivers/scsi/scsi_ioctl.c
-index e3b31d32b6a92e..dda5468ca97f90 100644
---- a/drivers/scsi/scsi_ioctl.c
-+++ b/drivers/scsi/scsi_ioctl.c
-@@ -248,7 +248,7 @@ static int scsi_send_start_stop(struct scsi_device *sdev, int data)
-  * Only a subset of commands are allowed for unprivileged users. Commands used
-  * to format the media, update the firmware, etc. are not permitted.
-  */
--bool scsi_cmd_allowed(unsigned char *cmd, fmode_t mode)
-+bool scsi_cmd_allowed(unsigned char *cmd, bool open_for_write)
- {
- 	/* root can do any command. */
- 	if (capable(CAP_SYS_RAWIO))
-@@ -338,7 +338,7 @@ bool scsi_cmd_allowed(unsigned char *cmd, fmode_t mode)
- 	case GPCMD_SET_READ_AHEAD:
- 	/* ZBC */
- 	case ZBC_OUT:
--		return (mode & FMODE_WRITE);
-+		return open_for_write;
- 	default:
- 		return false;
- 	}
-@@ -354,7 +354,7 @@ static int scsi_fill_sghdr_rq(struct scsi_device *sdev, struct request *rq,
- 		return -EMSGSIZE;
- 	if (copy_from_user(scmd->cmnd, hdr->cmdp, hdr->cmd_len))
- 		return -EFAULT;
--	if (!scsi_cmd_allowed(scmd->cmnd, mode))
-+	if (!scsi_cmd_allowed(scmd->cmnd, mode & FMODE_WRITE))
- 		return -EPERM;
- 	scmd->cmd_len = hdr->cmd_len;
+diff --git a/include/linux/bsg.h b/include/linux/bsg.h
+index 1ac81c809da9b3..ee2df73edf83f8 100644
+--- a/include/linux/bsg.h
++++ b/include/linux/bsg.h
+@@ -9,7 +9,7 @@ struct device;
+ struct request_queue;
  
-@@ -554,7 +554,7 @@ static int sg_scsi_ioctl(struct request_queue *q, fmode_t mode,
- 		goto error;
+ typedef int (bsg_sg_io_fn)(struct request_queue *, struct sg_io_v4 *hdr,
+-		fmode_t mode, unsigned int timeout);
++		bool open_for_write, unsigned int timeout);
  
- 	err = -EPERM;
--	if (!scsi_cmd_allowed(scmd->cmnd, mode))
-+	if (!scsi_cmd_allowed(scmd->cmnd, mode & FMODE_WRITE))
- 		goto error;
- 
- 	/* default.  possible overridden later */
-diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-index 037f8c98a6d364..e49ea693d0b656 100644
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -237,7 +237,7 @@ static int sg_allow_access(struct file *filp, unsigned char *cmd)
- 
- 	if (sfp->parentdp->device->type == TYPE_SCANNER)
- 		return 0;
--	if (!scsi_cmd_allowed(cmd, filp->f_mode))
-+	if (!scsi_cmd_allowed(cmd, filp->f_mode & FMODE_WRITE))
- 		return -EPERM;
- 	return 0;
- }
-diff --git a/include/scsi/scsi_ioctl.h b/include/scsi/scsi_ioctl.h
-index beac64e38b8746..914201a8cb947c 100644
---- a/include/scsi/scsi_ioctl.h
-+++ b/include/scsi/scsi_ioctl.h
-@@ -49,7 +49,7 @@ int scsi_ioctl(struct scsi_device *sdev, fmode_t mode, int cmd,
- 		void __user *arg);
- int get_sg_io_hdr(struct sg_io_hdr *hdr, const void __user *argp);
- int put_sg_io_hdr(const struct sg_io_hdr *hdr, void __user *argp);
--bool scsi_cmd_allowed(unsigned char *cmd, fmode_t mode);
-+bool scsi_cmd_allowed(unsigned char *cmd, bool open_for_write);
- 
- #endif /* __KERNEL__ */
- #endif /* _SCSI_IOCTL_H */
+ struct bsg_device *bsg_register_queue(struct request_queue *q,
+ 		struct device *parent, const char *name,
 -- 
 2.39.2
 
