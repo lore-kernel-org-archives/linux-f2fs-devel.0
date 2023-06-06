@@ -4,95 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id EA14AC7EE2F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jun 2023 23:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D3A18C7EE2F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jun 2023 23:22:06 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
 	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6fx7-0002aF-GS;
-	Tue, 06 Jun 2023 23:19:02 +0000
+	id 1q6g05-0002dy-13;
+	Tue, 06 Jun 2023 23:22:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <phil@philpotter.co.uk>) id 1q6fx6-0002Zt-5v
- for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 23:19:01 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3kr9_ZAkbADspvwhXiiboXmmfa.dlldibrpboZlkqbkq.Zlj@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1q6g03-0002dr-JE for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Jun 2023 23:22:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=dxnH2bKFZYPbzBbkbYN/M0Q5lBbTzYSqgYP+SCcXSJI=; b=a7OCcqRomJL8nRfyMOYBroOrqm
- QhWz7XrTAXg6LFl83v+Eq5INfCA5YByBNSmbag4/e/SAWUGIh4wJZqRu68f6YvX8Vjmd6X+IbUQvf
- nq6VpKI8wDPE7anDPOBw918sacV9lo1/JAYaROqWM+pjxHcK4e2UmVUrFPtSX7/phj0k=;
+ bh=uaw8+zjh0NK6MTFy6PtThiP3fMKWcFKEOZLWg7Hnxbo=; b=j7+WpPGc4Apym0no+OVTDpb+jg
+ 5ELg7bGql3uCDzDw4BClYaoR7fkOMMxNM5coGW+uu8VvBPnAayKzxZHIlSeJHJa5zNbvIEpv4WAWD
+ XlPR6weqOYsUWkBsgAf6ns1iNiQHiEy2UfiTlVBWb3lYa4jcPC3s3Y/lDXvlTKVInMzo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=dxnH2bKFZYPbzBbkbYN/M0Q5lBbTzYSqgYP+SCcXSJI=; b=JV+uEQSEIHo+vcdsFkRterB0NX
- I/eO/VkVT2YLDEhBl1zf6ZCyjhNvVB5V3pyyy2r8lTR898w/tR1Mwyvr6vmm4fiCI9AhjeFeyNhqv
- WBNgVG30DRA+zyVOKJlIhA0eBzTBFLQfi3xDt1bjkxDN1otmrXjmO4VZ5Lm+JP/x8+Ac=;
-Received: from mail-ej1-f46.google.com ([209.85.218.46])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=uaw8+zjh0NK6MTFy6PtThiP3fMKWcFKEOZLWg7Hnxbo=; b=d
+ FI9EYC2JXR8E0gNpDG3RVTbLbtv5pae601DCUDBhbK/QofFht5RfHct6Nb6U2MMFZSIsWsNtRt2M2
+ CrPwXZ+9yCqBAaqoNi05N5lgUgkdQzh4vWrBH34GkXi0RGJmjGIhp8v9iwdb0SwT5xNJLsgaE5jHU
+ jO88ZgCHHaYADSC4=;
+Received: from mail-io1-f71.google.com ([209.85.166.71])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q6fx2-00D9pZ-PU for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 23:19:00 +0000
-Received: by mail-ej1-f46.google.com with SMTP id
- a640c23a62f3a-974f4897d87so770624866b.0
+ id 1q6g00-0002wF-Gb for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Jun 2023 23:22:04 +0000
+Received: by mail-io1-f71.google.com with SMTP id
+ ca18e2360f4ac-777a93b3277so260812739f.3
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 06 Jun 2023 16:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=philpotter-co-uk.20221208.gappssmtp.com; s=20221208; t=1686093530;
- x=1688685530; 
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
- bh=dxnH2bKFZYPbzBbkbYN/M0Q5lBbTzYSqgYP+SCcXSJI=;
- b=ZxaGY1tkR2NqQDBbNNfgfgrUlsFbgn4uaJe2FLY+7uQJeViLgy41jBQY7Sj3+nXVzb
- y/yUQ75sGU4iKRrsxUn/2AgwGgLfxf4ntY4eAYCn9TR4p+fT76KCXQCiecxaMfxoYvjd
- 0e/51HUhl0C3auUJTyMlIVJun4iwpA+4RnhZ1S1gPfu1MWvwWNSAUuJQx0s/WeWLkGTY
- g307gGYtRvTpklGSeuqWeL29U4bGbQ+n2T11+tlPh1jrECdxl/zu2WhavHcdmxLDbnqI
- CWZR65kJLd8qqfSH61rBwvc6jNlb59/6BvZ+erJjqN4G9YDcYBVz+TLAH7nHe/N29cO2
- k8Ng==
+ Tue, 06 Jun 2023 16:22:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1686093530; x=1688685530;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=dxnH2bKFZYPbzBbkbYN/M0Q5lBbTzYSqgYP+SCcXSJI=;
- b=N5Ezraf3ut7nPzrO8s82unIpJNsXjQatQED0+5iGyeMFMh0T7LYawOaJL3Nsj25zZQ
- gWFEEwB16moID97eewFpZHTmymiqRMPpvfK3LCsZRa6IDcl9uiKqn2qZiqJnMCM43c/q
- jN0mD3z+HUyhCJCqTPtmDdqNX5AXGPVhjY/8+zJK1lF8ShQj0OwdLsQQR4x5y0q/duPW
- tYii3xKHKYDIVIX2zuqmqknAvFFlTZsV+5kiQL8orXa3+Nl1grL1O2e72H0cAEI8/A9G
- o5iweReB2f0epljEYafuFmXTUH13MU1KBwjhuvvn0aSgf7dNiXRvT3SUiMcsZCOijOVe
- of9g==
-X-Gm-Message-State: AC+VfDzoH74fENv4x1pGuvoEsI858Z/Rf9ZSYrw3S0WyFwQ2R8f9UMAX
- gR+MeaVqQB7uxcJQ1ewvzMGkslWRRlN49DNHiGlozkzI
-X-Google-Smtp-Source: ACHHUZ5pQzUTLLtnHvgmo1ol8cE04EwQ5GBQgMMp4jQLTMwchBoXo98AWKbZj6A4D3QlrXQs6Z+F2A==
-X-Received: by 2002:a5d:4711:0:b0:309:4e06:ff0b with SMTP id
- y17-20020a5d4711000000b003094e06ff0bmr2933775wrq.27.1686092198322; 
- Tue, 06 Jun 2023 15:56:38 -0700 (PDT)
-Received: from equinox
- (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.a.1.e.e.d.f.d.0.b.8.0.1.0.0.2.ip6.arpa.
- [2001:8b0:dfde:e1a0::2]) by smtp.gmail.com with ESMTPSA id
- o14-20020a5d62ce000000b0030af54c5f33sm13658638wrv.113.2023.06.06.15.56.37
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Jun 2023 15:56:37 -0700 (PDT)
-Date: Tue, 6 Jun 2023 23:56:35 +0100
-From: Phillip Potter <phil@philpotter.co.uk>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <ZH+5oxuJzPnIlVxZ@equinox>
-References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-5-hch@lst.de>
+ d=1e100.net; s=20221208; t=1686093715; x=1688685715;
+ h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=uaw8+zjh0NK6MTFy6PtThiP3fMKWcFKEOZLWg7Hnxbo=;
+ b=Lg+TdRgX4YyVy/zcJds0QRCb5bhBhYt1F7JDYBSAYV3tHU81cdSxZLQtV4TG1jjAeS
+ ZjogqxLrKpugBH41SlEx0Gzwly+mWkLExJ58hYADv/aO3UAC8UBSEwpwC9NrKk7gPXmP
+ Ed6zBJ7pNukehIipK/z0PbN+ilioXiFYDMOvbNfyjjMGHLKsf9/VpkA+WE6VJKa6k7J4
+ xlzVIACSOei9e2kTkg9t3iasVIwBlzE4iSOJQ350j1rlJ1k9qjiIUO/gJFHAPb0upo75
+ zxVybzLIz1QrPrlCqx9U6rhhvwkJR7AaA4eBLVZiBrY7WBoASSsGjLDVqxUpldTHxtvi
+ cE6w==
+X-Gm-Message-State: AC+VfDxHGP725wOBogqovLw+QyV/V7T/ijeSfknkV7hP2+uacsu4nBCu
+ 3QNIMLP7ZbWPusHJQFmPN7g73clJxFkQNafMcoUJLrY764u+
+X-Google-Smtp-Source: ACHHUZ5wRd9iaUWBeihpwV1Zeu5IxbL8gN+M2f1cUzcipDPEUYYJQpDKIOkGcP2k6Q+vhdGigwER8eTNCw+0SYymmVyhWO3mEhJX
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-5-hch@lst.de>
-X-Headers-End: 1q6fx2-00D9pZ-PU
-Subject: Re: [f2fs-dev] [PATCH 04/31] cdrom: remove the unused
- cdrom_close_write release code
+X-Received: by 2002:a92:cec6:0:b0:33c:9631:3ea6 with SMTP id
+ z6-20020a92cec6000000b0033c96313ea6mr1766215ilq.4.1686093714897; Tue, 06 Jun
+ 2023 16:21:54 -0700 (PDT)
+Date: Tue, 06 Jun 2023 16:21:54 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ef407105fd7e485e@google.com>
+From: syzbot <syzbot+listf5045cc3857cd5f3f4c2@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+X-Headers-End: 1q6g00-0002wF-Gb
+Subject: [f2fs-dev] [syzbot] Monthly f2fs report (Jun 2023)
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -104,90 +84,41 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-nvme@lists.infradead.org,
- Phillip Potter <phil@philpotter.co.uk>, Chris Mason <clm@fb.com>,
- dm-devel@redhat.com, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
- Pavel Machek <pavel@ucw.cz>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Jack Wang <jinpu.wang@ionos.com>, linux-nilfs@vger.kernel.org,
- linux-scsi@vger.kernel.org, Richard Weinberger <richard@nod.at>,
- linux-pm@vger.kernel.org, linux-um@lists.infradead.org,
- Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
- linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>,
- Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jun 06, 2023 at 09:39:23AM +0200, Christoph Hellwig wrote:
-> cdrom_close_write is empty, and the for_data flag it is keyed off is
-> never set.  Remove all this clutter.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/cdrom/cdrom.c | 15 ---------------
->  include/linux/cdrom.h |  1 -
->  2 files changed, 16 deletions(-)
-> 
-> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-> index 245e5bbb05d41c..08abf1ffede002 100644
-> --- a/drivers/cdrom/cdrom.c
-> +++ b/drivers/cdrom/cdrom.c
-> @@ -978,15 +978,6 @@ static void cdrom_dvd_rw_close_write(struct cdrom_device_info *cdi)
->  	cdi->media_written = 0;
->  }
->  
-> -static int cdrom_close_write(struct cdrom_device_info *cdi)
-> -{
-> -#if 0
-> -	return cdrom_flush_cache(cdi);
-> -#else
-> -	return 0;
-> -#endif
-> -}
-> -
->  /* badly broken, I know. Is due for a fixup anytime. */
->  static void cdrom_count_tracks(struct cdrom_device_info *cdi, tracktype *tracks)
->  {
-> @@ -1282,12 +1273,6 @@ void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode)
->  	opened_for_data = !(cdi->options & CDO_USE_FFLAGS) ||
->  		!(mode & FMODE_NDELAY);
->  
-> -	/*
-> -	 * flush cache on last write release
-> -	 */
-> -	if (CDROM_CAN(CDC_RAM) && !cdi->use_count && cdi->for_data)
-> -		cdrom_close_write(cdi);
-> -
->  	cdo->release(cdi);
->  	if (cdi->use_count == 0) {      /* last process that closes dev*/
->  		if (opened_for_data &&
-> diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
-> index 4aea8c82d16971..0a5db0b0c958a1 100644
-> --- a/include/linux/cdrom.h
-> +++ b/include/linux/cdrom.h
-> @@ -61,7 +61,6 @@ struct cdrom_device_info {
->  	__u8 last_sense;
->  	__u8 media_written;		/* dirty flag, DVD+RW bookkeeping */
->  	unsigned short mmc3_profile;	/* current MMC3 profile */
-> -	int for_data;
->  	int (*exit)(struct cdrom_device_info *);
->  	int mrw_mode_page;
->  	__s64 last_media_change_ms;
-> -- 
-> 2.39.2
-> 
+Hello f2fs maintainers/developers,
 
-All good, many thanks.
+This is a 31-day syzbot report for the f2fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/f2fs
 
-Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 16 issues are still open and 28 have been fixed so far.
 
-Regards,
-Phil
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 187     Yes   INFO: task hung in f2fs_balance_fs
+                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+<2> 63      Yes   kernel BUG in f2fs_evict_inode
+                  https://syzkaller.appspot.com/bug?extid=e1246909d526a9d470fa
+<3> 4       Yes   WARNING: lock held when returning to user space in f2fs_write_single_data_page
+                  https://syzkaller.appspot.com/bug?extid=eb6201248f684e99b9f8
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
 
 _______________________________________________
