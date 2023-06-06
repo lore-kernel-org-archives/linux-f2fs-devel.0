@@ -4,72 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 53A8CC7EE2A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jun 2023 06:44:05 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id DE591C7EE24
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jun 2023 07:40:31 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6QQG-0002mc-AW;
-	Tue, 06 Jun 2023 06:44:04 +0000
+	id 1q6RIr-0001Hi-N5;
+	Tue, 06 Jun 2023 07:40:29 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1q6QQE-0002mW-4u
- for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 06:44:02 +0000
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+c7f58ba0a08136e81302+7226+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1q6RIq-0001HX-JG for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Jun 2023 07:40:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=PYF//qMxjWzr8gdQn1EitkTXlZodMKRMwnVxfb9k2Jg=; b=crpY9Aw8jk5ls9b1j3zYi7oD2L
- TYaBeT4m+V5/R0CHyY/qmXsmSBOdHVOBEG/ZqTQ04shWnzCLMKu9bBVzus7OBmoG6xLqJLCzPtmzm
- OZJvWh5e2bm00OS6n8WtmVLYbXR1coRJ6xKzAkJ+fItm1IU9c0g59h1c9h4eANt5TppY=;
+ bh=4vTkM88Q4vOnIk7RWnBk9kClYM+gvOSK7rFbMW2koP8=; b=YDoP50jROZQ2fK3794aGoYIJym
+ EvcBdsNTJ7Yc3gfQ/2PzOOgDGH0wmNCaIAuFnL/pZGTUMm7z9ffVmDSiBBSVHigg1U31XyzYTiqnI
+ LpTnLeAtOKqvXBCOe6HARR/IpMNUiu+aG4u4g1WDcgMrLDhksHB5kzSfyAq5sE6klpRQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=PYF//qMxjWzr8gdQn1EitkTXlZodMKRMwnVxfb9k2Jg=; b=BQR77cgHvkRgU8MSyYCWtJUKyH
- jWalG2dh7TlIib9cM/NSLSS8zlB7X2oOp3fI1VHTO7YQMQHTVfiU3Ep6VNLFP9+YaiVXsL6800Pxx
- Oo/t4UgUc9VFpx9IZ4dgEL/K/s569x4Q2atrSW1w0DxL3Yr45Cd7aUWAE6ASZxXUfyDg=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=4vTkM88Q4vOnIk7RWnBk9kClYM+gvOSK7rFbMW2koP8=; b=kqyCbE29LOFR0Ukll+gTOCYZW8
+ MzG54I0rjV0iy6YCuGhpyHn1MpK1D98jSk3BZQWII3w6WLQaf6iBno7VEanXhwYWHmhRUQOOTB2Bp
+ YrgHAyi2k7byXQZUyY3UKtS6w+DZqS1uLXwUiWWG/wxpvbKJBUTm14Dp1vfjYOB+uI6o=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q6QQ8-000282-9I for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 06:44:02 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id DEFEB61176;
- Tue,  6 Jun 2023 06:43:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DDFCC433A4;
- Tue,  6 Jun 2023 06:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1686033830;
- bh=iuTfu26glfb8E1WFTPHNw0lExwnuCUbJYgkCjPpeHcA=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=FDPka2ENBwIPSxTnzOoEx1HTMgEMn5YtVGOMtTaTohqpcM4Qh/uaBlq1HEHQZHY5k
- 91M/IXd+qG59sNGGOXi/TgXD04zKRk2QJdX3d8Cp2fTqg4NgjC2L1Y9WQYOwBB6ZaU
- 1ZruUwmdAanKJOA1jh+GPWePUT2hA5QMuO+XiAKWGMlBCSuzdndHqATN3NIqtHoFzY
- eN45H6BFFzkt7WwEcyJeqnZjYLH5uz+G8SmdZfCurjOVyaKF28a1gJFAyXBVcle7BY
- LIDIo/YQd77HCQjw5k7uRn9QTUPKc5jsSd32R2n7gkRVtVxwfQoYCpyc1kmfys4il9
- 8ILd7eMDiDfTA==
-Message-ID: <e8e4758f-5895-acd7-27d2-4b72b69722b3@kernel.org>
-Date: Tue, 6 Jun 2023 14:43:47 +0800
+ id 1q6RIn-0003YU-IT for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Jun 2023 07:40:28 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=4vTkM88Q4vOnIk7RWnBk9kClYM+gvOSK7rFbMW2koP8=; b=5ACdkWotRkuDFBRw87bd6nNyHq
+ a7JoDFw7N7Ed/402wPqJm7BAmrrRW/JGvfgGzU6ZI2AolGVvEU7NkgEl9WBhlEIRMwwadLXs8tZOU
+ NlPbUO+piRKgmN5M6UbQTLdhhsm3a72chXondveYppINAZ0gHY7ypryuh7wkV0cmwEUNzuMKYcJY1
+ yMZc3hE4miIftWCP1tDZkvC5MRESoJWMwAV92vqScIhKd6Zd96+K1QZsHr9xCCLs0aokaRBas+7XO
+ T5O6p0T5uU4EcucL+8esF/hg4YmfKROthLTTvxdpLH1pw6xzSZtu5/us9C9NFv6v+2sCd+HFwK2oQ
+ LfjNKiFg==;
+Received: from
+ 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at
+ ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+ id 1q6RIK-000YaI-16; Tue, 06 Jun 2023 07:39:56 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>
+Date: Tue,  6 Jun 2023 09:39:20 +0200
+Message-Id: <20230606073950.225178-2-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230606073950.225178-1-hch@lst.de>
+References: <20230606073950.225178-1-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Content-Language: en-US
-To: Yangtao Li <frank.li@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20230531144006.7307-1-frank.li@vivo.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20230531144006.7307-1-frank.li@vivo.com>
-X-Headers-End: 1q6QQ8-000282-9I
-Subject: Re: [f2fs-dev] [PATCH] f2fs: enable nowait async buffered writes
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1q6RIn-0003YU-IT
+Subject: [f2fs-dev] [PATCH 01/31] block: also call ->open for incremental
+ partition opens
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,56 +80,81 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, Lu Hongfei <luhongfei@vivo.com>,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-nvme@lists.infradead.org,
+ Phillip Potter <phil@philpotter.co.uk>, Chris Mason <clm@fb.com>,
+ dm-devel@redhat.com, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+ Pavel Machek <pavel@ucw.cz>, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Jack Wang <jinpu.wang@ionos.com>, linux-nilfs@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+ linux-pm@vger.kernel.org, linux-um@lists.infradead.org,
+ Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
+ linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>,
+ Christian Brauner <brauner@kernel.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2023/5/31 22:40, Yangtao Li wrote:
-> This adds the async buffered write support to f2fs,
-> the following is the relevant test data.
+For whole devices ->open is called for each open, but for partitions it
+is only called on the first open of a partition.  This is problematic
+as various block drivers look at open flags and might not do all setup
+for ioctl only or NDELAY opens.
 
-Yangtao,
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ block/bdev.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-Could you please provide detailed test command?
+diff --git a/block/bdev.c b/block/bdev.c
+index 5c46ff10770638..981f6135795138 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -683,9 +683,6 @@ static int blkdev_get_part(struct block_device *part, fmode_t mode)
+ 	struct gendisk *disk = part->bd_disk;
+ 	int ret;
+ 
+-	if (atomic_read(&part->bd_openers))
+-		goto done;
+-
+ 	ret = blkdev_get_whole(bdev_whole(part), mode);
+ 	if (ret)
+ 		return ret;
+@@ -694,9 +691,10 @@ static int blkdev_get_part(struct block_device *part, fmode_t mode)
+ 	if (!bdev_nr_sectors(part))
+ 		goto out_blkdev_put;
+ 
+-	disk->open_partitions++;
+-	set_init_blocksize(part);
+-done:
++	if (!atomic_read(&part->bd_openers)) {
++		disk->open_partitions++;
++		set_init_blocksize(part);
++	}
+ 	atomic_inc(&part->bd_openers);
+ 	return 0;
+ 
+@@ -709,10 +707,10 @@ static void blkdev_put_part(struct block_device *part, fmode_t mode)
+ {
+ 	struct block_device *whole = bdev_whole(part);
+ 
+-	if (!atomic_dec_and_test(&part->bd_openers))
+-		return;
+-	blkdev_flush_mapping(part);
+-	whole->bd_disk->open_partitions--;
++	if (atomic_dec_and_test(&part->bd_openers)) {
++		blkdev_flush_mapping(part);
++		whole->bd_disk->open_partitions--;
++	}
+ 	blkdev_put_whole(whole, mode);
+ }
+ 
+-- 
+2.39.2
 
-Thanks,
-
-> 
-> iodepth      | 1    | 2    | 4    | 8    | 16   |
-> before(M/s)  | 1012 | 1133 | 894  | 981  | 866  |
-> after(M/s)   | 1488 | 1896 | 2081 | 2188 | 2207 |
-> 
-> Signed-off-by: Lu Hongfei <luhongfei@vivo.com>
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->   fs/f2fs/file.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 23c68ee946e5..4faf2c04e325 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -546,7 +546,7 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
->   	if (err)
->   		return err;
->   
-> -	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC;
-> +	filp->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC;
->   
->   	return dquot_file_open(inode, filp);
->   }
-> @@ -4515,9 +4515,6 @@ static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
->   	struct inode *inode = file_inode(file);
->   	ssize_t ret;
->   
-> -	if (iocb->ki_flags & IOCB_NOWAIT)
-> -		return -EOPNOTSUPP;
-> -
->   	current->backing_dev_info = inode_to_bdi(inode);
->   	ret = generic_perform_write(iocb, from);
->   	current->backing_dev_info = NULL;
 
 
 _______________________________________________
