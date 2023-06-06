@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 00045C7EE2F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jun 2023 07:40:40 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0A2F0C77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jun 2023 07:40:42 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6RJ1-0003Qq-La;
-	Tue, 06 Jun 2023 07:40:40 +0000
+	id 1q6RJ3-0001JZ-JA;
+	Tue, 06 Jun 2023 07:40:41 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+c7f58ba0a08136e81302+7226+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1q6RJ0-0003Qh-4M for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 07:40:39 +0000
+ id 1q6RJ2-0001JI-HI for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Jun 2023 07:40:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=7kSiDWX+wBfpAMl1gbSCpgjgS70R4anaEnwRQlQDcQo=; b=nPVXlzgqUylh/r2tRvJMMmjDsj
- hFgBfNJToXYaCAaR4uBgA4xIf42s8Nu+vUW424Mq4YqTKAwnZ2ya2KbH8RSs3UWYBUWUwsnX6Ghn/
- iZTufxvuVbpjFIKfeoxupHYzEAcgDcp+c5wGv+8MliJXF5UapgWYWmVJ8ego6DPWaYbw=;
+ bh=2SPWfmGJUwFbC3copUvvHjLo5uqBbUzEMBJnYk3hl0s=; b=ZohO0H6/JL2gAX1FvRJ9GZKFK4
+ Arqgr80CI9OXL8khsfhf5EL1Sml6YwGcHHut+xdAqtMNVUwMTDE+PvkqBW744ep8GnZLo6u7fUjjx
+ eY1t5qCq9WIekfAWxtiSS9Nr07Pw0T9C7LBCP//mXOygTvob5ZIO6a61EhvNBHLrFC1I=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=7kSiDWX+wBfpAMl1gbSCpgjgS70R4anaEnwRQlQDcQo=; b=bTSraHDRCtpPlzr82gXT1ltPRo
- sOIOTvGQDQ+9DGXg+EMNqg4AQrdSp2izuNTOdeLjZ1eMti4cfiYd+2GNq9pFqjXPLLw31guR4kA4I
- u3oI7ywiDWyHcFKaToFMTeb+ZBfjEhb9Kpdc3FCATsuLRkdRKr7hIxbT+i1viR4WbUFs=;
+ bh=2SPWfmGJUwFbC3copUvvHjLo5uqBbUzEMBJnYk3hl0s=; b=EgeiUi4Z7vsbuBlH8aXk4FpMM+
+ yJqBawxKnnh3yTfkuS3xnSBDK3Ljk6gmcflF9v1cu6T/MO73f9YOj4NcrEiYM5FQpBfj/uJihlAgL
+ h3QUrSxzeBmSrSh8y0zu1tE8oV8eh4/aGejrlguaQlWmufnMEgAqtiU+4WVbqkQTrSPk=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q6RJ0-0003Yw-6U for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 07:40:38 +0000
+ id 1q6RJ1-0003Z4-RM for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 06 Jun 2023 07:40:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=7kSiDWX+wBfpAMl1gbSCpgjgS70R4anaEnwRQlQDcQo=; b=nFRQKfpiDHj53kS6vmfxS7C3cA
- eILPXidLfwXuzQExX0rKMjrPLyAwZkFmTVPgpKPbx9sZm99EoptcHglNzlnKI7MP/iXpq6oT/LmPg
- K/tZWRM0g4CWcVHOgsIIn+0ZXWy/kSqdoAOzwkogdg0BwORc+v35hymsI+cydLuRiboBKvPgP3ZDf
- 4uhNhTDAU5SgfUuV6tcVQbUZXIrPZ/CBb6Z4pGfdHPjg9eN7iSoBrMaCh117//0Qse5mpkdkoUWwj
- X+Zd3ikZUk3cBBPyJbNUkclymt4hxzn9x2PuTwygbhcZdgwbplh8zEhY9PafAqCYkEa0n9EAjXVsH
- iFM/Krkg==;
+ bh=2SPWfmGJUwFbC3copUvvHjLo5uqBbUzEMBJnYk3hl0s=; b=nthF8Vyi7Ns8iyD57FbeSEz/QL
+ WGFS/ZAsryct2y6V9vt7eZ1kYG/2dn8fg5qnRSHaOji8lARcXypF8WpYTLsHv1QaThkdqV5sgSqw3
+ 3Z46enGoC9IYfJ1xu9fTkv01CE0Cxri8X3HWeAVKsuQJ6+RWZcr6Jw8OMxsxDIPXy1wpRZ8ED+83u
+ 8fO+xFLWiCaedANquTR7JrSc0Xm9xfXOMDVPMvAvGBtmIolZ0xnX1jKRARNCH+hZtHJF6JNrHttKr
+ ZpBP6vY0NeMQB8t/xo81EBphSVlSqODBaKDpn87njZPd07lRHcBGTUVYH2fuIn6oTUOKoEEXf0lAo
+ 82K/QNgg==;
 Received: from
  2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1q6RIZ-000Ykh-1p; Tue, 06 Jun 2023 07:40:12 +0000
+ id 1q6RIT-000YeY-1a; Tue, 06 Jun 2023 07:40:06 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Tue,  6 Jun 2023 09:39:25 +0200
-Message-Id: <20230606073950.225178-7-hch@lst.de>
+Date: Tue,  6 Jun 2023 09:39:23 +0200
+Message-Id: <20230606073950.225178-5-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230606073950.225178-1-hch@lst.de>
 References: <20230606073950.225178-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1q6RJ0-0003Yw-6U
-Subject: [f2fs-dev] [PATCH 06/31] cdrom: remove the unused mode argument to
- cdrom_release
+X-Headers-End: 1q6RJ1-0003Z4-RM
+Subject: [f2fs-dev] [PATCH 04/31] cdrom: remove the unused cdrom_close_write
+ release code
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -99,66 +99,60 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
+cdrom_close_write is empty, and the for_data flag it is keyed off is
+never set.  Remove all this clutter.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/cdrom/cdrom.c | 2 +-
- drivers/cdrom/gdrom.c | 2 +-
- drivers/scsi/sr.c     | 2 +-
- include/linux/cdrom.h | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/cdrom/cdrom.c | 15 ---------------
+ include/linux/cdrom.h |  1 -
+ 2 files changed, 16 deletions(-)
 
 diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index adebac1bd210d9..998b03fe976e22 100644
+index 245e5bbb05d41c..08abf1ffede002 100644
 --- a/drivers/cdrom/cdrom.c
 +++ b/drivers/cdrom/cdrom.c
-@@ -1250,7 +1250,7 @@ static int check_for_audio_disc(struct cdrom_device_info *cdi,
- 	return 0;
+@@ -978,15 +978,6 @@ static void cdrom_dvd_rw_close_write(struct cdrom_device_info *cdi)
+ 	cdi->media_written = 0;
  }
  
--void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode)
-+void cdrom_release(struct cdrom_device_info *cdi)
+-static int cdrom_close_write(struct cdrom_device_info *cdi)
+-{
+-#if 0
+-	return cdrom_flush_cache(cdi);
+-#else
+-	return 0;
+-#endif
+-}
+-
+ /* badly broken, I know. Is due for a fixup anytime. */
+ static void cdrom_count_tracks(struct cdrom_device_info *cdi, tracktype *tracks)
  {
- 	const struct cdrom_device_ops *cdo = cdi->ops;
+@@ -1282,12 +1273,6 @@ void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode)
+ 	opened_for_data = !(cdi->options & CDO_USE_FFLAGS) ||
+ 		!(mode & FMODE_NDELAY);
  
-diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index 14922403983e9e..a401dc4218a998 100644
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -481,7 +481,7 @@ static int gdrom_bdops_open(struct block_device *bdev, fmode_t mode)
- 	bdev_check_media_change(bdev);
- 
- 	mutex_lock(&gdrom_mutex);
--	ret = cdrom_open(gd.cd_info, mode);
-+	ret = cdrom_open(gd.cd_info);
- 	mutex_unlock(&gdrom_mutex);
- 	return ret;
- }
-diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
-index 444c7efc14cba7..6d33120ee5ba85 100644
---- a/drivers/scsi/sr.c
-+++ b/drivers/scsi/sr.c
-@@ -512,7 +512,7 @@ static void sr_block_release(struct gendisk *disk, fmode_t mode)
- 	struct scsi_cd *cd = scsi_cd(disk);
- 
- 	mutex_lock(&cd->lock);
--	cdrom_release(&cd->cdi, mode);
-+	cdrom_release(&cd->cdi);
- 	mutex_unlock(&cd->lock);
- 
- 	scsi_device_put(cd->device);
+-	/*
+-	 * flush cache on last write release
+-	 */
+-	if (CDROM_CAN(CDC_RAM) && !cdi->use_count && cdi->for_data)
+-		cdrom_close_write(cdi);
+-
+ 	cdo->release(cdi);
+ 	if (cdi->use_count == 0) {      /* last process that closes dev*/
+ 		if (opened_for_data &&
 diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
-index 385e94732b2cf1..3f23d5239de254 100644
+index 4aea8c82d16971..0a5db0b0c958a1 100644
 --- a/include/linux/cdrom.h
 +++ b/include/linux/cdrom.h
-@@ -102,7 +102,7 @@ int cdrom_read_tocentry(struct cdrom_device_info *cdi,
- 
- /* the general block_device operations structure: */
- int cdrom_open(struct cdrom_device_info *cdi, fmode_t mode);
--extern void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode);
-+void cdrom_release(struct cdrom_device_info *cdi);
- int cdrom_ioctl(struct cdrom_device_info *cdi, struct block_device *bdev,
- 		unsigned int cmd, unsigned long arg);
- extern unsigned int cdrom_check_events(struct cdrom_device_info *cdi,
+@@ -61,7 +61,6 @@ struct cdrom_device_info {
+ 	__u8 last_sense;
+ 	__u8 media_written;		/* dirty flag, DVD+RW bookkeeping */
+ 	unsigned short mmc3_profile;	/* current MMC3 profile */
+-	int for_data;
+ 	int (*exit)(struct cdrom_device_info *);
+ 	int mrw_mode_page;
+ 	__s64 last_media_change_ms;
 -- 
 2.39.2
 
