@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0659C7EE25
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 12:19:15 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 02A84C7EE29
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 12:19:45 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6s8A-0001WH-DI;
-	Wed, 07 Jun 2023 12:19:15 +0000
+	id 1q6s8f-00080L-AG;
+	Wed, 07 Jun 2023 12:19:45 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hare@suse.de>) id 1q6s88-0001W9-K6
+ (envelope-from <hare@suse.de>) id 1q6s8d-00080D-LZ
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jun 2023 12:19:13 +0000
+ Wed, 07 Jun 2023 12:19:44 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=B3Xg67NbOS5YKdaySGyicbSsoGzlBjyHFHEFD4Mj8fk=; b=Yg2w/XRI8B4umhGHuEonRpbUMX
- T6x0LRwJAbMZxZpbv3B8MBsWKpAc/xMgDpCkGgkLQ9BDtu6aob/uutfi6Jk5WvjksLlRCOw6KMRIi
- 5KC3iKgKtTs1CXCnr7HiIsoGGiOe9xlMPZQBvxGjH78491Z1SMMhl2MhqEcc1vTSdMxk=;
+ bh=hIcAmuwwomlFKuWyJzT2ZczfUfDqBv+dd3ElI46NTH0=; b=ERd+1raQfp09PSimSYzmiOcc9l
+ RWHL9sQxBr17zqiH6LSUL0B9at2dHCTqUP+fnW5GFi3ywe1OuikzgYG1HuyglS1TCM0sstDnoxOBG
+ ZAHDbkakyaSnkOg2TFYsQERg8RNZkHFmXIHmhG3RgRDL1uVDe15VCE0wpXiLVuUkrrBs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,61 +33,60 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=B3Xg67NbOS5YKdaySGyicbSsoGzlBjyHFHEFD4Mj8fk=; b=F8deTDCU+S5zRWwzcXa0NGDFea
- iag7nwA9I/KmJiNV784tCyP2vk03s7QcUAPRtf7sVZAxA6TBRxeJG8wmjaW3ZoI+Lp9kFNHbW7r5U
- SBxa7EjmmT81mV6kBhgFQgRlcr3aklExbnpAKThZCLcP4ifyBXsngft71lgjJU/7nVmU=;
-Received: from smtp-out1.suse.de ([195.135.220.28])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ bh=hIcAmuwwomlFKuWyJzT2ZczfUfDqBv+dd3ElI46NTH0=; b=i5OZQSqYLxtJsncSLQOBTO9nO/
+ ogZJdoS2yGtM8rvZBYWW69Vu/RsONucBf4x6UR2034wNcj50nVo9ZBzPsA0KKxOPJ4eMsGs42x9zn
+ RC5bCdMW/+95MvahSJpIP0OS/cZ3Wlyj72HWPm56Vd4aGcet9ORgImutu28J1D5D+N8Y=;
+Received: from smtp-out2.suse.de ([195.135.220.29])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q6s86-0003JO-1A for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jun 2023 12:19:13 +0000
+ id 1q6s8d-00DfxY-8g for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 Jun 2023 12:19:43 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 992EB219BF;
- Wed,  7 Jun 2023 12:19:00 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 0679A1FDAC;
+ Wed,  7 Jun 2023 12:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1686140340; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1686140377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=B3Xg67NbOS5YKdaySGyicbSsoGzlBjyHFHEFD4Mj8fk=;
- b=Zf8A5Tyivs1LBVr9z9fcut+KsQs3kcPY5GvqULx5P0MxaNd5oWQGh+1UzbHH7L+ejvrrTh
- JDmnIQJNe0G+Z00BxJB1bq4IRuImozBYRQpd4LwynxswtstxT9j1wT23SZh+ZR9kxi9nY9
- fU/9FYrR7hcLl9YyuWLg9NqNhV/Ku4o=
+ bh=hIcAmuwwomlFKuWyJzT2ZczfUfDqBv+dd3ElI46NTH0=;
+ b=nwl1WimOwPcjF98AEDnJ2K0z5H5r6S9PZV0NMxPrxeO+b6iUxsJL+D1fFXUbalAwuKeyE3
+ zDs72n/QwOPnZMi8nk3pSIarBQVHhZeQACSX9v+viDkwrv0NDl02wL5QLAw6mpY+lpJvKO
+ GLq8dP5GTUTOdUeWCMUzXQ+Ee2PhJ1Y=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1686140340;
+ s=susede2_ed25519; t=1686140377;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=B3Xg67NbOS5YKdaySGyicbSsoGzlBjyHFHEFD4Mj8fk=;
- b=eV5SDjF+54GbLqg30Fap2sfm11c6Xv616rnS3/fxtHlHOpZy29z55XNlWk4So5K2w2nPsG
- Z+0rka3GXG+V67DA==
+ bh=hIcAmuwwomlFKuWyJzT2ZczfUfDqBv+dd3ElI46NTH0=;
+ b=E1AF4AwgkO2HnPq1es8OnevAsUmnYalHeDtF1c1JN6GfSa26Y5PIvIwVLzXxB76McWsDjz
+ R09PGSzfxNnSgdAQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6987D13776;
- Wed,  7 Jun 2023 12:19:00 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B7EEB13776;
+ Wed,  7 Jun 2023 12:19:36 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id ngODGbR1gGR3QAAAMHmgww
- (envelope-from <hare@suse.de>); Wed, 07 Jun 2023 12:19:00 +0000
-Message-ID: <30183892-dce6-6946-2f7a-1bc693a657a2@suse.de>
-Date: Wed, 7 Jun 2023 14:19:00 +0200
+ by imap2.suse-dmz.suse.de with ESMTPSA id LXmULNh1gGTYQAAAMHmgww
+ (envelope-from <hare@suse.de>); Wed, 07 Jun 2023 12:19:36 +0000
+Message-ID: <9d7ae46b-f963-3412-cf5c-4d11c54eea58@suse.de>
+Date: Wed, 7 Jun 2023 14:19:36 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
 Content-Language: en-US
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-9-hch@lst.de>
+ <20230606073950.225178-10-hch@lst.de>
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230606073950.225178-9-hch@lst.de>
-X-Headers-End: 1q6s86-0003JO-1A
-Subject: Re: [f2fs-dev] [PATCH 08/31] block: share code between
- disk_check_media_change and disk_force_media_change
+In-Reply-To: <20230606073950.225178-10-hch@lst.de>
+X-Headers-End: 1q6s8d-00DfxY-8g
+Subject: Re: [f2fs-dev] [PATCH 09/31] block: pass a gendisk to ->open
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,60 +118,45 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 6/6/23 09:39, Christoph Hellwig wrote:
-> Factor the common logic between disk_check_media_change and
-> disk_force_media_change into a helper.
+> ->open is only called on the whole device.  Make that explicit by
+> passing a gendisk instead of the block_device.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   block/disk-events.c | 37 ++++++++++++++++---------------------
->   1 file changed, 16 insertions(+), 21 deletions(-)
+>   arch/um/drivers/ubd_kern.c          |  5 ++---
+>   arch/xtensa/platforms/iss/simdisk.c |  4 ++--
+>   block/bdev.c                        |  2 +-
+>   drivers/block/amiflop.c             |  8 ++++----
+>   drivers/block/aoe/aoeblk.c          |  4 ++--
+>   drivers/block/ataflop.c             | 16 +++++++--------
+>   drivers/block/drbd/drbd_main.c      |  6 +++---
+>   drivers/block/floppy.c              | 30 +++++++++++++++--------------
+>   drivers/block/nbd.c                 |  8 ++++----
+>   drivers/block/pktcdvd.c             |  6 +++---
+>   drivers/block/rbd.c                 |  4 ++--
+>   drivers/block/rnbd/rnbd-clt.c       |  4 ++--
+>   drivers/block/swim.c                | 10 +++++-----
+>   drivers/block/swim3.c               | 10 +++++-----
+>   drivers/block/ublk_drv.c            |  4 ++--
+>   drivers/block/z2ram.c               |  6 ++----
+>   drivers/block/zram/zram_drv.c       | 13 +++++--------
+>   drivers/cdrom/gdrom.c               |  4 ++--
+>   drivers/md/bcache/super.c           |  4 ++--
+>   drivers/md/dm.c                     |  4 ++--
+>   drivers/md/md.c                     |  6 +++---
+>   drivers/mmc/core/block.c            |  4 ++--
+>   drivers/mtd/mtd_blkdevs.c           |  4 ++--
+>   drivers/mtd/ubi/block.c             |  4 ++--
+>   drivers/nvme/host/core.c            |  4 ++--
+>   drivers/nvme/host/multipath.c       |  4 ++--
+>   drivers/s390/block/dasd.c           |  4 ++--
+>   drivers/s390/block/dcssblk.c        |  7 +++----
+>   drivers/scsi/sd.c                   | 12 ++++++------
+>   drivers/scsi/sr.c                   |  6 +++---
+>   include/linux/blkdev.h              |  2 +-
+>   31 files changed, 102 insertions(+), 107 deletions(-)
 > 
-> diff --git a/block/disk-events.c b/block/disk-events.c
-> index 8b1b63225738f8..06f325662b3494 100644
-> --- a/block/disk-events.c
-> +++ b/block/disk-events.c
-> @@ -262,6 +262,18 @@ static unsigned int disk_clear_events(struct gendisk *disk, unsigned int mask)
->   	return pending;
->   }
->   
-> +static bool __disk_check_media_change(struct gendisk *disk, unsigned int events)
-> +{
-> +	if (!(events & DISK_EVENT_MEDIA_CHANGE))
-> +		return false;
-> +
-> +	if (__invalidate_device(disk->part0, true))
-> +		pr_warn("VFS: busy inodes on changed media %s\n",
-> +			disk->disk_name);
-> +	set_bit(GD_NEED_PART_SCAN, &disk->state);
-> +	return true;
-> +}
-> +
->   /**
->    * disk_check_media_change - check if a removable media has been changed
->    * @disk: gendisk to check
-> @@ -274,18 +286,9 @@ static unsigned int disk_clear_events(struct gendisk *disk, unsigned int mask)
->    */
->   bool disk_check_media_change(struct gendisk *disk)
->   {
-> -	unsigned int events;
-> -
-> -	events = disk_clear_events(disk, DISK_EVENT_MEDIA_CHANGE |
-> -				   DISK_EVENT_EJECT_REQUEST);
-> -	if (!(events & DISK_EVENT_MEDIA_CHANGE))
-> -		return false;
-> -
-> -	if (__invalidate_device(disk->part0, true))
-> -		pr_warn("VFS: busy inodes on changed media %s\n",
-> -			disk->disk_name);
-> -	set_bit(GD_NEED_PART_SCAN, &disk->state);
-> -	return true;
-> +	return __disk_check_media_change(disk,
-> +			disk_clear_events(disk, DISK_EVENT_MEDIA_CHANGE |
-> +						DISK_EVENT_EJECT_REQUEST));
-
-Can you move the call to disk_clear_events() out of the call to 
-__disk_check_media_change()?
-I find this pattern hard to read.
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
 
