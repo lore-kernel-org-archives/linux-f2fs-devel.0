@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 545A7C83005
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 17:30:36 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 83AFBC7EE25
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 17:30:35 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6wzT-0002dg-6h;
-	Wed, 07 Jun 2023 17:30:35 +0000
+	id 1q6wzR-0000n8-KF;
+	Wed, 07 Jun 2023 17:30:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q6wzQ-0002dZ-05
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q6wzQ-0000mz-Ip
  for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 07 Jun 2023 17:30:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,53 +23,55 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ISN1xylzzfRGbEDB0mtFpecaYaDO4iCHl7OtcRNvKok=; b=OqP7d2ZTpPftqSSURS2YaviZ+2
- /rWop9jMjm0GXnvCUQBEXFyGHBOtwXJtBBCroU11K2LioV2WTaERmiJNDq+b7ls8/DyT9o5xcR48M
- HlyzxXC5mQWTF6uqp9oT79gwud8Bc2lMgKeJnb79ReMo/YtFGJOl2K8suuFjdKtEfseA=;
+ bh=r066NRAzL6ww8T8LkwrjZeZQEkO6B1OxcB9+T07K5G4=; b=XIhu8iAUPqZt8A9lH/m3DOs1a9
+ rg6PV0yu8BZTYyV+u/KdzNYNIWx8YZRpcKkExGYAcEA2+L7z7aWiZd2LWhmjwsm/l2EwHr1pPF2TK
+ 7JBoN5MkTx8Vdoj9Et8fh4+6islrmahI5C+VNWSDSgEahfAOm4m2vR8K4UALVlNyeF6Y=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ISN1xylzzfRGbEDB0mtFpecaYaDO4iCHl7OtcRNvKok=; b=X0EY3xeskNnWylOm0bZTEUfPHd
- N7yCcunSeBEvht6U7ShPr1kzLW0fdiwgaSLCqkMOPXnin+1Rq7iiqCt+LtvVvDzFDQ02v89Vjspal
- 9P2CwBIlI7ay+g6+eritYQA8e9dNERi1xaTKPbRVwG2fp23CpdJDyXBrEGpK6pw60IW8=;
+ bh=r066NRAzL6ww8T8LkwrjZeZQEkO6B1OxcB9+T07K5G4=; b=Q0EqegRvR+fbyhB4wPAWsU5fDm
+ ZoEVT/FhR2w8DDMlqe6OYC+mprq04BxFCnUVwkGg6ku9KS3zLc4cnruDy08BJIsu6Ps+Rh51a33uX
+ AMSAaQxWic3KzErpazUf1MaSgfnRxY9QVftIwKY7IGhPsDMJQuwtMwJlHnPeZxoyP2+w=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q6wzP-00DvrK-Vj for linux-f2fs-devel@lists.sourceforge.net;
+ id 1q6wzP-00DvrL-VZ for linux-f2fs-devel@lists.sourceforge.net;
  Wed, 07 Jun 2023 17:30:32 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id ED33B64204;
- Wed,  7 Jun 2023 17:30:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 55A97C4339B;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 5D1BE6420C
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Wed,  7 Jun 2023 17:30:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5CFDAC4339C;
  Wed,  7 Jun 2023 17:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1686159025;
- bh=Iu0WdkrFGv1GjZ2atrz9cBImnG3oKrStjhc+uU+EgpI=;
+ bh=zE2IShqugBtrR3++gA9RJ6k/KdgXrKYy2Y73L97WYt8=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=oq0QouLgg4ddzK8u3+yf703bLYcZNkZbV9Tb9+uzbMtT+yBG2FeVSw/Rzb89/yMaK
- G9IfYZOwaa8n2qAlZQOtVwh+kUo6wnY2zCtO3pk1pDwvtvgvDBChhrzqMM9yBR0HgS
- XNjr1VVwWCV1k77BPu10o/7L3KbXhg4cr22or+10RhpR3zisdhgiHtsuAbim/1rrxI
- sqeIuVjqCDsgjW85CjY4t4R6xnS9UT63ec1Mw0sO6V3Fb1ZtKUUg8VS44GkDpXTp3W
- YsN/SDUK/i9BmdVG8bRDeAzIKdWTONpVBT/R+IiBF9YclmtyP36MI+fNx7gVjCmyYL
- 9FYrMnrTkeNeA==
+ b=lmWWZ0AsdDibxt7VYxODpXfI87U1SK9ss1XQzpQ7+xMcj5uZ7uoYRyjcg6lNCK4wG
+ qwsIgkWeHVW7v+C3CGH4eCZS6jYTFaa/AbF/C5dMTEs2WXryr5I3JT+1fUqlMsXAxT
+ EK4L490mLGBHvFS9oCnVoCqyCH4lv+/nKu54bbC5EFe8rjWAaHNNG8WhEjn/a0pL0N
+ GFIR906MK7H5Xihn04o29SjDG93FVgl6NDiuMI/E7uETzuqZ750lTdNG5yerSbhbks
+ kTAy44M5Fo/2hcQc8/ra8MpfCtRe6aAbvudRryRrErcOcUApmLoafUsWyF4VlsJGfw
+ T/W0afM9tHlKg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 2FA3DE4F13A; Wed,  7 Jun 2023 17:30:25 +0000 (UTC)
+ 3910AE29F39; Wed,  7 Jun 2023 17:30:25 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168615902518.7521.17734763826963254315.git-patchwork-notify@kernel.org>
+Message-Id: <168615902522.7521.11156422070450767318.git-patchwork-notify@kernel.org>
 Date: Wed, 07 Jun 2023 17:30:25 +0000
-References: <20230531125918.55609-1-frank.li@vivo.com>
-In-Reply-To: <20230531125918.55609-1-frank.li@vivo.com>
-To: Yangtao Li <frank.li@vivo.com>
-X-Headers-End: 1q6wzP-00DvrK-Vj
-Subject: Re: [f2fs-dev] [PATCH] f2fs: flag as supporting buffered async reads
+References: <20230528074713.1682062-1-chao@kernel.org>
+In-Reply-To: <20230528074713.1682062-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1q6wzP-00DvrL-VZ
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix to drop all dirty meta/node
+ pages during umount()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,7 +83,7 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, luhongfei@vivo.com,
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -89,27 +91,24 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 31 May 2023 20:59:18 +0800 you wrote:
-> After enabling this feature, the read performance has been greatly
-> improved:
+On Sun, 28 May 2023 15:47:12 +0800 you wrote:
+> For cp error case, there will be dirty meta/node pages remained after
+> f2fs_write_checkpoint() in f2fs_put_super(), drop them explicitly, and
+> do sanity check on reference count of dirty pages and inflight IOs.
 > 
->     167M/s -> 234M/s, Increase ratio by 40%
-> 
-> Test w/:
->     ./fio --name=onessd --filename=/data/test/local/io_uring_test
->     --size=256M --rw=randread --bs=4k --direct=0 --overwrite=0
->     --numjobs=1 --iodepth=1 --time_based=0 --runtime=10
->     --ioengine=io_uring --registerfiles --fixedbufs
->     --gtod_reduce=1 --group_reporting --sqthread_poll=1
-> 
-> [...]
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/super.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: flag as supporting buffered async reads
-    https://git.kernel.org/jaegeuk/f2fs/c/fdb43e12e0c1
+  - [f2fs-dev,1/2] f2fs: fix to drop all dirty meta/node pages during umount()
+    https://git.kernel.org/jaegeuk/f2fs/c/50cfdbd772cf
+  - [f2fs-dev,2/2] f2fs: avoid dead loop in f2fs_issue_checkpoint()
+    (no matching commit)
 
 You are awesome, thank you!
 -- 
