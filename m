@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 4DD7FC7EE23
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 12:22:38 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7CA8AC7EE23
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 12:23:27 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6sBR-00085m-9J;
-	Wed, 07 Jun 2023 12:22:37 +0000
+	id 1q6sCE-0006h4-7F;
+	Wed, 07 Jun 2023 12:23:26 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hare@suse.de>) id 1q6sBP-00085g-MC
+ (envelope-from <hare@suse.de>) id 1q6sCC-0006gy-TB
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jun 2023 12:22:36 +0000
+ Wed, 07 Jun 2023 12:23:25 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=y5/re5ZKHhf+HsiKoBHJy9sV78dj7UGjrSWHzTtQwHY=; b=kFBnquiOe43Xgh2eLGkWq1XtpO
- em7wX/n2CVQR0QlnNhLntkeiGQGwrohKtXf7MDkza1qSr6QaDti9VmC8F2zTNK04eYlLoUztvsOsu
- Ud/qSbrTFDdYikoWiP8g4k5HS/8kzJRbtfxshCzLIWgBRegMTGDuwpGvdC95Nfs0XTwY=;
+ bh=+iIOsQLPB7YZZYVVrausU5kIOvN1cfOb9IWj5ZxDzbs=; b=XhqLMXZ2l1HLNDx2BARWe9Winr
+ myNjyIaRN9YTfxN1Lve616x0oRlRMb99OZHFwFQ7r4GbXhMu4ESZbUwLY3kQL5msXICKhuMjl76gZ
+ HD7a61mQDwPSFKOdXTshNRFzE4G61F8rtout7goiFc+vfIOAIKaMBzCzX5L3toQJOZHE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,60 +33,60 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=y5/re5ZKHhf+HsiKoBHJy9sV78dj7UGjrSWHzTtQwHY=; b=WvedAwDXRIQ0FIg3GXCHARO1BJ
- 6BiSSvzpPnr731X7DpgHS9kk+04EMUAshLuLFMt3cKdKXLzTBZh1Qi/H5cEvgGV+ONDAY0FsT+wBq
- IMRe/tqfP2gUNw5Tv51cnrxIydwwn8qOaOjJvvq4p9pAc/thTWM/ylZ8S93tuFQxWjVQ=;
+ bh=+iIOsQLPB7YZZYVVrausU5kIOvN1cfOb9IWj5ZxDzbs=; b=QSzZ9gi8sWMx/fJDcBbVBGdRHW
+ VVPfVhfJjaB01yxniLacaIARNH154QM2W7AKw4eg14+K8+wSDo0nNTGp2Mcyf4FgOsMJdtc7Bewzu
+ cCS6nHcPr7vL6Bu1UzNzzXaEuxytHoyF6oOZC4oequTrdWIXZbW9XV7W+f4pngIFHp0s=;
 Received: from smtp-out2.suse.de ([195.135.220.29])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q6sBP-00Dg7C-9R for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jun 2023 12:22:35 +0000
+ id 1q6sCC-00Dg98-Lu for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 Jun 2023 12:23:25 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 0E1EE1FDAC;
- Wed,  7 Jun 2023 12:22:29 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 72E721FDAB;
+ Wed,  7 Jun 2023 12:23:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1686140549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1686140598; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=y5/re5ZKHhf+HsiKoBHJy9sV78dj7UGjrSWHzTtQwHY=;
- b=qvZ+tg3HOwDwgvlodDLQayhC5NPnqUtDyXNxfLFWZMX7Q6Zh5MwQdKIV6Vs4PUgW+Ar4aw
- NH2pny9sYDrFlo5nd7lOygNm+OvUPAkOaAeuXW6BJ30lokNS8kdN2s3N2OLQpHh7zY3Wj2
- A3G7JXYPchjGSP+aCqzbNbEc6weWD4Q=
+ bh=+iIOsQLPB7YZZYVVrausU5kIOvN1cfOb9IWj5ZxDzbs=;
+ b=tUDPgFGh7AnivU0V9GcUwo1xQYyZd5gcErtEGaqwWUCoXCd4jiaMFokUF4WY8LLDDiqJWr
+ JufyNO098hsKKp8QyvyLhf4f0UK+2z5JKS1txinQSQzKJ9i6WkxoMpHDu6kNCdh6BMY5X9
+ vKLoAqZ8Xb8SBcLECt+Y5xJy75WAix8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1686140549;
+ s=susede2_ed25519; t=1686140598;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=y5/re5ZKHhf+HsiKoBHJy9sV78dj7UGjrSWHzTtQwHY=;
- b=TBqgiJLiiypHLRGDDE9OJ7AcoFCL4AQWePcbCTYugUg9aHOr0dyrV6pl6bTOOmNJb6mMnq
- 9WkSdFkXCITQkMCg==
+ bh=+iIOsQLPB7YZZYVVrausU5kIOvN1cfOb9IWj5ZxDzbs=;
+ b=MUq/mCltjJxBM+miHzSe96ZT+T+bP01yFlcat1Ang0sVf+yjMl7Uimw08eK0YLrU6uvP58
+ uVESDDRgNl+t65Dg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C8A1013776;
- Wed,  7 Jun 2023 12:22:28 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1535613776;
+ Wed,  7 Jun 2023 12:23:18 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id BNyqMIR2gGRgQgAAMHmgww
- (envelope-from <hare@suse.de>); Wed, 07 Jun 2023 12:22:28 +0000
-Message-ID: <bcce493a-9090-8520-f8c6-c9b14754e20e@suse.de>
-Date: Wed, 7 Jun 2023 14:22:28 +0200
+ by imap2.suse-dmz.suse.de with ESMTPSA id SsTeBLZ2gGTrQgAAMHmgww
+ (envelope-from <hare@suse.de>); Wed, 07 Jun 2023 12:23:18 +0000
+Message-ID: <a5a9ca4d-cbbc-ab1a-18e9-04701fc36f72@suse.de>
+Date: Wed, 7 Jun 2023 14:23:17 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
 Content-Language: en-US
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-13-hch@lst.de>
+ <20230606073950.225178-14-hch@lst.de>
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230606073950.225178-13-hch@lst.de>
-X-Headers-End: 1q6sBP-00Dg7C-9R
-Subject: Re: [f2fs-dev] [PATCH 12/31] swsusp: don't pass a stack address to
+In-Reply-To: <20230606073950.225178-14-hch@lst.de>
+X-Headers-End: 1q6sCC-00Dg98-Lu
+Subject: Re: [f2fs-dev] [PATCH 13/31] bcache: don't pass a stack address to
  blkdev_get_by_path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -119,13 +119,14 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 6/6/23 09:39, Christoph Hellwig wrote:
-> holder is just an on-stack pointer that can easily be reused by other calls,
-> replace it with a static variable that doesn't change.
+> sb is just an on-stack pointer that can easily be reused by other calls.
+> Switch to use the bcache-wide bcache_kobj instead as there is no need to
+> claim per-bcache device anyway.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   kernel/power/swap.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+>   drivers/md/bcache/super.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
