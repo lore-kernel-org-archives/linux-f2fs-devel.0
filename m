@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7F47DC77B7A
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  6 Jun 2023 23:29:46 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 2642AC77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 08:14:54 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6g7V-0002lm-6o;
-	Tue, 06 Jun 2023 23:29:46 +0000
+	id 1q6oJf-0004nM-5m;
+	Wed, 07 Jun 2023 08:14:51 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <phil@philpotter.co.uk>) id 1q6g7U-0002lg-98
+ (envelope-from <brauner@kernel.org>) id 1q6oJa-0004nF-To
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 23:29:45 +0000
+ Wed, 07 Jun 2023 08:14:47 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=xzrxvHE7NOsDG+KS0tlYsM4OII1tBEP7fRMkD9ta1LM=; b=Ny/X7uwj1Q2UCrzBT/KOQI5gF5
- WfN+AktlRMHGkLCO+gqhmujrRviCrHG13w+YmxKmZep2zXANdl/4Z9IhBi08X4FJAXjt+zIxYvxlq
- xQNXurWLCP0UqV36hq0AosbNF+jH2f2MkIqJP04Z/XeZgq+JQw/72JXY/b53zakQWeXM=;
+ bh=idJYnJNs8X8blppL3OUvXfKqnI3BgYcWWssYBP5ZnTI=; b=k08s4LNa9+3Yq/mY6/3p1i0/6l
+ EcG3sw6PylX8lqucYK6RP80XNx1dPhZwSKQjmaVFmHWkH2JHgEz+fJrR1GqKIzRfz8C7wOmpUGqdO
+ tA6/GLrnO1sWh52UVXouXqaSFQ79gw8/BQy75/b6gIUN0R0HRyalKhEfdubzWeUl4VWo=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,66 +33,43 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=xzrxvHE7NOsDG+KS0tlYsM4OII1tBEP7fRMkD9ta1LM=; b=lex1iWmg8IR6D3vZz7j2BAw2ZS
- VkOtiemr2Igyw4T+s9Wm+NBX3MuEidPibQpGZsL9LONv3Bt1HYUs0xLWvTqlf2zxSp/qlkiRxz7Wk
- hY51LAqVk/D0oadmtAG/8tgdHIfFRxctdOrlaWyQCBor+9R1wXgQq384zs6YVgia2iWc=;
-Received: from mail-ej1-f47.google.com ([209.85.218.47])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q6g7Q-00DAGJ-Nh for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 06 Jun 2023 23:29:44 +0000
-Received: by mail-ej1-f47.google.com with SMTP id
- a640c23a62f3a-977d0ee1736so498121466b.0
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Tue, 06 Jun 2023 16:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=philpotter-co-uk.20221208.gappssmtp.com; s=20221208; t=1686094174;
- x=1688686174; 
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
- bh=xzrxvHE7NOsDG+KS0tlYsM4OII1tBEP7fRMkD9ta1LM=;
- b=O1qFe/QoLigtHLmT5H8I5UrCkDn5WEKSQjsA8V21uMCY5CTcF6diBpfdeJ9YW1IAjH
- NcRwZXMcJG9VOKG5jnCM3OZRgg9z/fV8UqnGORDn8btA/MYJG1Ix68OBZioHQ9kt86KS
- DpsynyafdA5/60iwH8gvGtNdlj5zridTS4RJ4VksjGAAUHH9dvUVarkevkUqdZV2c2+8
- OqF/tNYF4mt6NpZFDghluIVgo9fInhqiKgYxUJfVaVYzhfhNt3KP8mU9ypOPVs/na/S4
- 8SQikK4ZjLyNR7lUP4g5i98kJTNjICbUHhEftMp9PwrnEjmDKKmjRHMVK2wn3YTHJfmo
- suqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1686094174; x=1688686174;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=xzrxvHE7NOsDG+KS0tlYsM4OII1tBEP7fRMkD9ta1LM=;
- b=AY/7sPGSLf/c9qs+ayjca2aW0HmiZj8o3A3XNnlyl2eQYLHxBzg3Dhz7BOplu/+QyL
- bdW+81ba7vqIi39PbEQmhb1B6KnbiVG4/pX8w1TNGi1ITZdqL/ZlgMg/Wuh7FQ9Q90/6
- G7wjIapIs4W52XQiwY76hHhqyR7E61Hui7PtXva9jBGvb0hMCqtX0YBTvFy9BoRayLTb
- +qsaEKP+4wIUftl4hVj5w52UoD9PVlx68JwOgnWUhkeVXy9F/VIoQyEfJGby1He/jOXs
- 6/weYebncRjN2zlp/cEXJ8EzSbZUe6CZHumm5g2N4q6RzSCV1RMiNXm1F1EPU2+kG/sL
- Dp5Q==
-X-Gm-Message-State: AC+VfDxtKQXgc2Vpol5AhihjRPaphca7zkT11bh0YqPHF47PyFieSFHk
- zM6GWf02S0KyqQ1E6fxksqkfLS+bR8o9r7Hef5M23WvV
-X-Google-Smtp-Source: ACHHUZ5dEmrYamI1Roz1b/XXwx7e2SyRLgLDxBk8a4qqwZElHaxX8CqOd+UmcQ9YIORhk7TJQYcx6A==
-X-Received: by 2002:adf:ff8e:0:b0:30e:412a:841b with SMTP id
- j14-20020adfff8e000000b0030e412a841bmr2765794wrr.37.1686092369334; 
- Tue, 06 Jun 2023 15:59:29 -0700 (PDT)
-Received: from equinox
- (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.a.1.e.e.d.f.d.0.b.8.0.1.0.0.2.ip6.arpa.
- [2001:8b0:dfde:e1a0::2]) by smtp.gmail.com with ESMTPSA id
- y14-20020a5d470e000000b002fed865c55esm13607049wrq.56.2023.06.06.15.59.28
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 06 Jun 2023 15:59:28 -0700 (PDT)
-Date: Tue, 6 Jun 2023 23:59:27 +0100
-From: Phillip Potter <phil@philpotter.co.uk>
+ bh=idJYnJNs8X8blppL3OUvXfKqnI3BgYcWWssYBP5ZnTI=; b=TIRz2T62/iIK3EhvSIRaLBlL7u
+ gBOjmeOzklq/hWzBxqXTU3GlVwF3FfPQRvTBeeuK2XJQQYZY45N2GOvl2NCcfK3V5Qeas5OO232Yd
+ phqhDaTH5CAI4l3UBilRbrPmYVTiUpVE4Z2nlwdMXN0uX8VbqGyuDk/lyTTaA9vUf7vw=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1q6oJT-0002Ky-22 for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 Jun 2023 08:14:43 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 3FBA863894;
+ Wed,  7 Jun 2023 08:14:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02DB1C433EF;
+ Wed,  7 Jun 2023 08:14:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1686125670;
+ bh=OikN0V0gAjgBP+HPzDoTzlQuNrCoReKL8FDM6o8SWL4=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=LoOtwMsbiODoiTDBOlhy9h+NcaXo/0ty0ho40m0mYf7Tqj+wr2dJZ7vUbOn0Kz7GP
+ 33AzVbFt/SH4ZtCqtGcyP4wx2pNr5qeOSz7n5llnvQzbkevHbUBwUChjs8tVFu+w+7
+ 9qFZdhkREWPfruOfyuYqVKvgknYU35bmYym5jzuvpMGmp93SMTqsZWFeVhyuiwJkrs
+ LAwyIzU/+kVumnYrd9shzRES4ZrZYHJo9QZXt+wC4ujn3BMrp977Z7B0LOqc0LVlBz
+ 8OgzOnLLMWqPSlcCNiFoGKY+/fwNpasAfTm2ssRASquxyIwPgu3PSIm5oXJID8PKnw
+ l3rqMIfCwdUgQ==
+Date: Wed, 7 Jun 2023 10:14:22 +0200
+From: Christian Brauner <brauner@kernel.org>
 To: Christoph Hellwig <hch@lst.de>
-Message-ID: <ZH+6T/ibWkjSrWdt@equinox>
+Message-ID: <20230607-behelfen-abnormal-8ccf8e1e99c9@brauner>
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-6-hch@lst.de>
+ <20230606073950.225178-2-hch@lst.de>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-6-hch@lst.de>
-X-Headers-End: 1q6g7Q-00DAGJ-Nh
-Subject: Re: [f2fs-dev] [PATCH 05/31] cdrom: track if a cdrom_device_info
- was opened for data
+In-Reply-To: <20230606073950.225178-2-hch@lst.de>
+X-Headers-End: 1q6oJT-0002Ky-22
+Subject: Re: [f2fs-dev] [PATCH 01/31] block: also call ->open for
+ incremental partition opens
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -115,7 +92,7 @@ Cc: Vignesh Raghavendra <vigneshr@ti.com>,
  Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
  linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
  Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>,
- Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
  "Martin K. Petersen" <martin.petersen@oracle.com>,
  linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
  linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org
@@ -123,79 +100,18 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jun 06, 2023 at 09:39:24AM +0200, Christoph Hellwig wrote:
-> Set a flag when a cdrom_device_info is opened for writing, instead of
-> trying to figure out this at release time.  This will allow to eventually
-> remove the mode argument to the ->release block_device_operation as
-> nothing but the CDROM drivers uses that argument.
+On Tue, Jun 06, 2023 at 09:39:20AM +0200, Christoph Hellwig wrote:
+> For whole devices ->open is called for each open, but for partitions it
+> is only called on the first open of a partition.  This is problematic
+> as various block drivers look at open flags and might not do all setup
+> for ioctl only or NDELAY opens.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  drivers/cdrom/cdrom.c | 12 +++++-------
->  include/linux/cdrom.h |  1 +
->  2 files changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-> index 08abf1ffede002..adebac1bd210d9 100644
-> --- a/drivers/cdrom/cdrom.c
-> +++ b/drivers/cdrom/cdrom.c
-> @@ -1172,6 +1172,7 @@ int cdrom_open(struct cdrom_device_info *cdi, fmode_t mode)
->  			ret = 0;
->  			cdi->media_written = 0;
->  		}
-> +		cdi->opened_for_data = true;
->  	}
->  
->  	if (ret)
-> @@ -1252,7 +1253,6 @@ static int check_for_audio_disc(struct cdrom_device_info *cdi,
->  void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode)
->  {
->  	const struct cdrom_device_ops *cdo = cdi->ops;
-> -	int opened_for_data;
->  
->  	cd_dbg(CD_CLOSE, "entering cdrom_release\n");
->  
-> @@ -1270,14 +1270,12 @@ void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode)
->  		}
->  	}
->  
-> -	opened_for_data = !(cdi->options & CDO_USE_FFLAGS) ||
-> -		!(mode & FMODE_NDELAY);
-> -
->  	cdo->release(cdi);
-> -	if (cdi->use_count == 0) {      /* last process that closes dev*/
-> -		if (opened_for_data &&
-> -		    cdi->options & CDO_AUTO_EJECT && CDROM_CAN(CDC_OPEN_TRAY))
-> +
-> +	if (cdi->use_count == 0 && cdi->opened_for_data) {
-> +		if (cdi->options & CDO_AUTO_EJECT && CDROM_CAN(CDC_OPEN_TRAY))
->  			cdo->tray_move(cdi, 1);
-> +		cdi->opened_for_data = false;
->  	}
->  }
->  EXPORT_SYMBOL(cdrom_release);
-> diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
-> index 0a5db0b0c958a1..385e94732b2cf1 100644
-> --- a/include/linux/cdrom.h
-> +++ b/include/linux/cdrom.h
-> @@ -64,6 +64,7 @@ struct cdrom_device_info {
->  	int (*exit)(struct cdrom_device_info *);
->  	int mrw_mode_page;
->  	__s64 last_media_change_ms;
-> +	bool opened_for_data;
->  };
->  
->  struct cdrom_device_ops {
-> -- 
-> 2.39.2
-> 
 
-Looks good, thanks.
-
-Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
-
-Regards,
-Phil
+This assumes that all drivers deal with additional ->open() calls for
+each partition correctly which I assumed you checked so,
+Acked-by: Christian Brauner <brauner@kernel.org>
 
 
 _______________________________________________
