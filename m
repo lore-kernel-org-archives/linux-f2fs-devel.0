@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 62F3CC7EE25
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 13:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 9E009C7EE25
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 13:10:06 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
 	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6sty-0007Ms-Fh;
-	Wed, 07 Jun 2023 13:08:38 +0000
+	id 1q6svN-0007Pu-4w;
+	Wed, 07 Jun 2023 13:10:05 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hare@suse.de>) id 1q6stv-0007Mi-6z
+ (envelope-from <hare@suse.de>) id 1q6svK-0007Pm-9Z
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jun 2023 13:08:35 +0000
+ Wed, 07 Jun 2023 13:10:03 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=U7c7WodeDtNpjUczv8+eIXLuhq9h/8jtLxSsWcXS9gw=; b=A1Jgi/mZ43uXYxi11h5Zf1nM7s
- dn3/n+HPesQNLKnXZrhjOQ2fzyb7G6F4+yK3DHxorpY7aFZrMaLhn5nxDlud3PsPQzR5G6dLMo5Bw
- OKMEALLBx+epITgGLboRjywPbCZj0I35T24/TzK3apGSL8Jy/y0xYb/6ICI77PlraPIQ=;
+ bh=Gj4N9CQn2kqn2JPIKiZwsmIeXGaklK+rdXMsutYdAuA=; b=MmAr0p812i6+DZAvrdsMSrHvFX
+ HmBr6g8wHWp1oQYaxQKcV7C8FMWpnFXnv/aGHF2ZrdvsQf3N2IF12GGoEkvU6g0mZaJoZ2y7mbnOU
+ exUtR6HEKoCbcqEvInk6YuzQBi3Yq8i+UcjR2ikoYlY9DP4CTZgnASueUOhlUvg2pXM4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,61 +33,61 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=U7c7WodeDtNpjUczv8+eIXLuhq9h/8jtLxSsWcXS9gw=; b=ATXCquRYKCkBVsaJe6yM9dEDTV
- WL3fXqN8xOM3dvNxiu7eztisZ1KE/2sKCDGlfbLSEhyVdjANYUKnkyL27Vgb+jpwwfxjz3zN3G+4t
- y7ynn0cHi1JlNJLOBH6DBMR5VzePalK0Bw2GJmNCnHHuncGdQGJR/4JV5ZbbeH63MHbE=;
-Received: from smtp-out1.suse.de ([195.135.220.28])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=Gj4N9CQn2kqn2JPIKiZwsmIeXGaklK+rdXMsutYdAuA=; b=Fm1qYeCX8Dmqr9ulSLZmkcg5Wt
+ eSJBnKSOMp4lE8nbAyXm1gw7dbFlum7on/4LVJxZxwFSY1gMlbFzjBQ5/ulKdzuvNhUckPbxpYNmd
+ wrCoG8lwpkgSSuRsCmXXAORDcInuI8y7ypFhhmJZIqAYu1lcAYPk74LbJ/drJeONIXYI=;
+Received: from smtp-out2.suse.de ([195.135.220.29])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q6stu-00Di1X-Ph for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jun 2023 13:08:35 +0000
+ id 1q6svG-00052o-Oc for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 Jun 2023 13:10:01 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out1.suse.de (Postfix) with ESMTPS id 8A6B921A00;
- Wed,  7 Jun 2023 13:08:28 +0000 (UTC)
+ by smtp-out2.suse.de (Postfix) with ESMTPS id 787811FDAB;
+ Wed,  7 Jun 2023 13:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
- t=1686143308; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ t=1686143392; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=U7c7WodeDtNpjUczv8+eIXLuhq9h/8jtLxSsWcXS9gw=;
- b=D/C4L04h1rP5J6hr6cun6vBK1odWkxm4oiZ3+bCIB7YS8rxty7MHJVgSr5cBIKVyaVc6/j
- V0wu45NO4rPRln1DVSrmcF2j9Xl9WQIoXFic5XkOpuGmPgiadhgaVNlNLy3EtOWtfwwsjK
- uhbIcWet01WVarqPebK8GrhUkjxtklM=
+ bh=Gj4N9CQn2kqn2JPIKiZwsmIeXGaklK+rdXMsutYdAuA=;
+ b=wY8TW9M3hOxC0sX6KA/+DWt9SMykbXIqiZlrdcx2tvfOiOCVXIL24h38aVUc0suf5qttPl
+ 1FTfU4we5wCLvY9Df6lcARgamtkc9JynOFzMh5TzTLdmhZ86eok77yuBW+rH+0nH5NyBLG
+ 5HRcsV3/Bg4E18QmFF8s5oIf00fo2rs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
- s=susede2_ed25519; t=1686143308;
+ s=susede2_ed25519; t=1686143392;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
  mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=U7c7WodeDtNpjUczv8+eIXLuhq9h/8jtLxSsWcXS9gw=;
- b=+m+dsjXNA1CdOA3mnKYfSUl/F0sOFe+7d2pbdstHXWNJuYW/QJaxyTdqFGeyeFk1FL9aSU
- R2uX+N06szza/bDQ==
+ bh=Gj4N9CQn2kqn2JPIKiZwsmIeXGaklK+rdXMsutYdAuA=;
+ b=F0iBRPfNOGf1w++pMIdJAfHDayMjAi2FNNzGmsfh0S0h9ixVHgQbj/eD9WIu1ncW3s8L7w
+ wmt6qi4jG7IJQ7DQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 572561346D;
- Wed,  7 Jun 2023 13:08:28 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 174331346D;
+ Wed,  7 Jun 2023 13:09:52 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id JQx/FEyBgGT6XAAAMHmgww
- (envelope-from <hare@suse.de>); Wed, 07 Jun 2023 13:08:28 +0000
-Message-ID: <3e04efc2-f9dd-0675-1fac-fc3903b1fbcb@suse.de>
-Date: Wed, 7 Jun 2023 15:08:27 +0200
+ by imap2.suse-dmz.suse.de with ESMTPSA id SL5IBaCBgGTuXQAAMHmgww
+ (envelope-from <hare@suse.de>); Wed, 07 Jun 2023 13:09:52 +0000
+Message-ID: <7814a706-3f16-42c7-75ce-c926e274fe98@suse.de>
+Date: Wed, 7 Jun 2023 15:09:51 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
 Content-Language: en-US
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-26-hch@lst.de>
+ <20230606073950.225178-27-hch@lst.de>
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230606073950.225178-26-hch@lst.de>
-X-Headers-End: 1q6stu-00Di1X-Ph
-Subject: Re: [f2fs-dev] [PATCH 25/31] ubd: remove commented out code in
- ubd_open
+In-Reply-To: <20230606073950.225178-27-hch@lst.de>
+X-Headers-End: 1q6svG-00052o-Oc
+Subject: Re: [f2fs-dev] [PATCH 26/31] block: move a few internal definitions
+ out of blkdev.h
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -119,13 +119,14 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 6/6/23 09:39, Christoph Hellwig wrote:
-> This code has been dead forever, make sure it doesn't show up in code
-> searches.
+> All these helpers are only used in core block code, so move them out of
+> the public header.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   arch/um/drivers/ubd_kern.c | 7 -------
->   1 file changed, 7 deletions(-)
+>   block/blk.h            | 23 +++++++++++++++++++++--
+>   include/linux/blkdev.h | 27 ---------------------------
+>   2 files changed, 21 insertions(+), 29 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
