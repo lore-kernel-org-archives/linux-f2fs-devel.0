@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0E1ADC77B7A
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 08:27:08 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id CFE6AC83005
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed,  7 Jun 2023 08:33:11 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q6oVW-0002u3-HG;
-	Wed, 07 Jun 2023 08:27:07 +0000
+	id 1q6obO-0003bx-VR;
+	Wed, 07 Jun 2023 08:33:11 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <brauner@kernel.org>) id 1q6oVU-0002tJ-Vd
+ (envelope-from <hch@lst.de>) id 1q6obN-0003bq-3z
  for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jun 2023 08:27:05 +0000
+ Wed, 07 Jun 2023 08:33:09 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=0M0M30z2u+fglgWOMw3K+IgsVQPGa0lJUOxsFckoNYw=; b=mbM4mOLLqVk+0WRduFRYGRZEQn
- evNf2tzFgfkMVPQTW4PMtWXi7+2LyV5R3VHUSiGCBaqSJ84RNp08oEtaP8ji91BVTBYhWh0vaJlaQ
- 77d35HL8+WLDikTKR3UL7vv1b2O48ZVxSZUHB9R3kaULJfAvkX5IcV5PAImqTas/9iE8=;
+ bh=y/0t9c4SY3SShfmM/+4Kp5Hz5Wz8u51E8hCvz4NiAPs=; b=WRaFHjus5t24xqeKnl8z8lYkhb
+ 0KGb29xgLTjoHeZUuaYn6Oj9TKeAySu0hiWnMR6g4eBq/9vL9SWjvpDjR/kzN5KoWYvFyI55xdD65
+ 6YTBkZ3SjtFMwTBtym5ozhzu+JTQ4EQ07e/+gxOEBK8RfQrZO1rnxNx951WjZvws5rTI=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,43 +33,30 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=0M0M30z2u+fglgWOMw3K+IgsVQPGa0lJUOxsFckoNYw=; b=hMtMm+j6cKxr2IgvpOrbrHQfbb
- hBSWZ+UKI71d4IvbGTmanXvbojQs9pF6D2xESEI2gWWdENrfA46aacDfOcnEzx24zcGAcpAFRBKc+
- i52adUQIQkF/haAXgE0NcFY+76OJNxj8QLL+sRNEEIGX8hrQlXV9+F4jYRPOpRn1dUs8=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=y/0t9c4SY3SShfmM/+4Kp5Hz5Wz8u51E8hCvz4NiAPs=; b=l8t3IWdgedVVKHnq6zZrnvCEQx
+ qXLpZuLqUoT2l+ysk2qsabyAFSI18nOjB5pr1u0AxEIrli4fwNkFC9DvHPMN6XJRa65ZgwAJjw+pI
+ ZOaziOECdLKsIP5MsrS7sMivSPo4AY1fkeZIicFIfi2Cct0MylWH0VxjWoZneEQ8N+8E=;
+Received: from verein.lst.de ([213.95.11.211])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q6oVV-00DVPa-0q for linux-f2fs-devel@lists.sourceforge.net;
- Wed, 07 Jun 2023 08:27:05 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A02AE63C27;
- Wed,  7 Jun 2023 08:26:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CDFCC433D2;
- Wed,  7 Jun 2023 08:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1686126419;
- bh=Kl3XQ9PoGp9pTvNWEYEaCMqRkYInB2avmNbeu92C6zU=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=rgcywzP+1oCMwlq0k2fRCPBZXdUZRn9J8LrJASSZ5i8ERKpLVi1lgtd0pJwqJB0W7
- D8wlIL49yepvEx4+n2MmT7Ru/Aj5siKdB0jHacl1CtCKl9pO0JR5AlsMNcP4+CHinp
- OPR0Amz34//UXpE4vCzXPXEgPCrc/4r0Ykl5ORkARbmB44ULuK5TjPuzNOZ8nQxJja
- fGuUjMxzGMLdLJSXdYGCnhXt1cV/9zOntJTs1hNqR0nhjGSgxERqeRaqheqynMWt/A
- ac1PW1JzvY8VShzgVMk8msTfO/mSWVq1Eb6Oegl+HSBogzogFDyzAMws4bWaCKrm0L
- 32r0fwv3mAedA==
-Date: Wed, 7 Jun 2023 10:26:50 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <20230607-abhielt-kirschen-288e7a9a9fe4@brauner>
+ id 1q6obL-0003Pv-Fe for linux-f2fs-devel@lists.sourceforge.net;
+ Wed, 07 Jun 2023 08:33:09 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id E15E86732D; Wed,  7 Jun 2023 10:32:53 +0200 (CEST)
+Date: Wed, 7 Jun 2023 10:32:53 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Message-ID: <20230607083253.GA29653@lst.de>
 References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-9-hch@lst.de>
+ <20230606073950.225178-2-hch@lst.de>
+ <20230607-behelfen-abnormal-8ccf8e1e99c9@brauner>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20230606073950.225178-9-hch@lst.de>
-X-Headers-End: 1q6oVV-00DVPa-0q
-Subject: Re: [f2fs-dev] [PATCH 08/31] block: share code between
- disk_check_media_change and disk_force_media_change
+In-Reply-To: <20230607-behelfen-abnormal-8ccf8e1e99c9@brauner>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1q6obL-0003Pv-Fe
+Subject: Re: [f2fs-dev] [PATCH 01/31] block: also call ->open for
+ incremental partition opens
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -86,13 +73,13 @@ Cc: Vignesh Raghavendra <vigneshr@ti.com>,
  Phillip Potter <phil@philpotter.co.uk>, Chris Mason <clm@fb.com>,
  dm-devel@redhat.com, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
  Pavel Machek <pavel@ucw.cz>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Jack Wang <jinpu.wang@ionos.com>, linux-nilfs@vger.kernel.org,
- linux-scsi@vger.kernel.org, Richard Weinberger <richard@nod.at>,
- linux-pm@vger.kernel.org, linux-um@lists.infradead.org,
- Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
- linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>,
- Jens Axboe <axboe@kernel.dk>,
+ Jack Wang <jinpu.wang@ionos.com>, Christoph Hellwig <hch@lst.de>,
+ linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
+ Richard Weinberger <richard@nod.at>, linux-pm@vger.kernel.org,
+ linux-um@lists.infradead.org, Josef Bacik <josef@toxicpanda.com>,
+ Coly Li <colyli@suse.de>, linux-block@vger.kernel.org,
+ linux-bcache@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ David Sterba <dsterba@suse.com>, Jens Axboe <axboe@kernel.dk>,
  "Martin K. Petersen" <martin.petersen@oracle.com>,
  linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
  linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org
@@ -100,15 +87,36 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Tue, Jun 06, 2023 at 09:39:27AM +0200, Christoph Hellwig wrote:
-> Factor the common logic between disk_check_media_change and
-> disk_force_media_change into a helper.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+On Wed, Jun 07, 2023 at 10:14:22AM +0200, Christian Brauner wrote:
+> This assumes that all drivers deal with additional ->open() calls for
+> each partition correctly which I assumed you checked so,
 
-Looks good to me,
-Acked-by: Christian Brauner <brauner@kernel.org>
+They have to, because they already get the additional open for
+extra opens of the whole device.  The current behavior is:
+
+open("/dev/vdb", ...)
+  ->open called
+
+open("/dev/vdb", ...)
+  ->open called
+
+----
+
+open("/dev/vdb", ...)
+  ->open called
+
+open("/dev/vdb1", ...)
+  ->open called
+
+----
+
+open("/dev/vdb1", ...)
+  ->open called
+
+open("/dev/vdb1", ...)
+  ->open NOT called
+
+which is very inconsistent.
 
 
 _______________________________________________
