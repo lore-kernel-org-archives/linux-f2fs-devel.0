@@ -4,70 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 7B7AAC7EE23
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 10:12:46 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 002D7C87FDD
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 11:03:39 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q7CdJ-0003DQ-W3;
-	Thu, 08 Jun 2023 10:12:46 +0000
+	id 1q7DQY-0007h6-JA;
+	Thu, 08 Jun 2023 11:03:38 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1q7CdI-0003DA-5M
- for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 10:12:44 +0000
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+69acd89764e6999cdd63+7228+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1q7DQW-0007gs-TF for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 11:03:37 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
+ In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vW9Pg3025r7tvGJQCvfoCPcgA0cDwnTwjIgJuW7mEx0=; b=Qs/Y/wKe1lKxyUX5Kxrc3Gv6RN
- XtTbCIcvoO1L3WcVn/gg5XLdUgd4okjXX2w9kZ3M4U9GEHDEGNpZNb+qxPEEqSbcETZdmdq90iXmN
- TSMqslEPnuvEbKW3HRXzz1yya2qfEpIFCgEmXFf7bVOX8awn4ZADq8FqzunNq9gAjV/4=;
+ bh=eGImU7RddjAi80e+tW424dPAVsMSpId5HtotbM4PBXg=; b=Zh/6lHni3GfElBOpSGw4DRWX5j
+ fM8osmR8RHq20SWoLOtGcKDPllsZuVluB4kDjBlVlEAdJkUVV3ZHMehC21UoIhBMpF2llgY9KcVm5
+ We/oXaxWc027mIqXq+Hsw4ngi04H59XELX2v/WEIib2Y6B5cs+vxRFwilTRTC1cmX8kA=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=vW9Pg3025r7tvGJQCvfoCPcgA0cDwnTwjIgJuW7mEx0=; b=R
- dB8kEaQLClH9VCKIEKmXI7Uo+wr4d3K9p7Hi06POLD9HUxC0x2njJSDJFRtrbp5MdFmqU724jijAX
- 5Is5uumpqnqgD5yLgxzO7aK9Ti4BViB0HkHZzjjoUyxYFmXXk90Pw4AH8To7ACwupEyJ8wqaCd1bd
- Yo2oJ19FNUFKO/aY=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+ List-Post:List-Owner:List-Archive;
+ bh=eGImU7RddjAi80e+tW424dPAVsMSpId5HtotbM4PBXg=; b=ZODgStz/rw/wjH/DTQoqRikhlv
+ PTGGvX3EcM3yFXff10Vxp3vujPhNSd+oigh9TlG8qp59AOpSTHV0Qseft+jEyoOVUvtHWwSpYQJA2
+ dNwOfK1nsWn9uyCx24EWf5YfmLtgqqj+88mN7RTg8KtB9/NDzHqvDNMOWdxbmI5ZryAo=;
+Received: from bombadil.infradead.org ([198.137.202.133])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q7CdH-00Ebdg-Jk for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 10:12:44 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 3930B61866
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu,  8 Jun 2023 10:12:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD7B5C4339C;
- Thu,  8 Jun 2023 10:12:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1686219157;
- bh=4e3yJa9fSjX/Z/iF3gNTTDJB/YVfizwvnPCS8mnBgzU=;
- h=From:To:Cc:Subject:Date:From;
- b=gGsmp47QZArgcGmKwSYyX9BHTedwg7hONg45j5xd/e0J28dnHD2t9XTHUbaOXCIHI
- G6ikfrq8q1kIyDZIxLaDy1eG2dmOPeSj+9LVssk92g7D/Hji2myNLXwEjLAuGoHueS
- dgODBfUPgrNgTtbIAhS8bb8soWzKdIC8dmSVdquw2ac3RYjLwC/R6ZvJoQt2gUPd8p
- LutVBqNhK4STZ2ae6mJmdrSB2v4zmVM9md0BPd2wKTIxZzvzNbbi10ADchDBDXLvz9
- A3hyCnOjGgi7d9hlQ15xA4VHVrcVHpDr/fUuLCik9DPfjPlqs8Bz+iMOaLRBeJU9/i
- vxLpIKzIVEXOQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Date: Thu,  8 Jun 2023 18:12:30 +0800
-Message-Id: <20230608101230.3671677-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+ id 1q7DQV-0000Ns-Ec for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 11:03:37 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+ :Reply-To:Content-Type:Content-ID:Content-Description;
+ bh=eGImU7RddjAi80e+tW424dPAVsMSpId5HtotbM4PBXg=; b=QKoakhTg4fLiP0bDEva9VVDSHF
+ PoMBZ8+2TZOm6zqZZZbysdmTGb0yc9nnFw6clZtx37HM3Xse3adwly95AZxbBY1ySSJgA8HA67iRn
+ eFV+iFsVsN2LDA9OYWGge7BK/aQOICH/cCGdQwmGwpXDtZ2C9goXDM/g0Anr3ib1UehMzci70pj/c
+ 1iUfv3NEM/9DSaVrFRoJ0WTbVxqrrIvihx4Na5Zz+kh4TjKYbgTjY+8ywcaQrPWxmiifoF5xz8Sji
+ NfHF8ccPi5btIbYCZxAgOPoAfNOorZLKLMq1GGa7914qlDNbq0ngSD9scqJVd+NIwYP55iXOJWqBX
+ sDrYuk7w==;
+Received: from
+ 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at
+ ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+ id 1q7DQ4-0091eW-27; Thu, 08 Jun 2023 11:03:09 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>
+Date: Thu,  8 Jun 2023 13:02:31 +0200
+Message-Id: <20230608110258.189493-4-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230608110258.189493-1-hch@lst.de>
+References: <20230608110258.189493-1-hch@lst.de>
 MIME-Version: 1.0
-X-Headers-End: 1q7CdH-00Ebdg-Jk
-Subject: [f2fs-dev] [PATCH] f2fs-tools: fix to call assert() if
- f2fs_dentry_hash() fails
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1q7DQV-0000Ns-Ec
+Subject: [f2fs-dev] [PATCH 03/30] cdrom: remove the unused mode argument to
+ cdrom_ioctl
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,37 +80,93 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-nvme@lists.infradead.org,
+ Phillip Potter <phil@philpotter.co.uk>, Chris Mason <clm@fb.com>,
+ dm-devel@redhat.com, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+ Pavel Machek <pavel@ucw.cz>, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Jack Wang <jinpu.wang@ionos.com>, linux-nilfs@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+ linux-pm@vger.kernel.org, linux-um@lists.infradead.org,
+ Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
+ linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, David Sterba <dsterba@suse.com>,
+ Christian Brauner <brauner@kernel.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org,
+ Hannes Reinecke <hare@suse.de>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-f2fs_dentry_hash() may return -ENOMEM due to malloc() failure, however
-caller won't check validaty of return value, result assign or check
-wrong hash value, fix to call assert() for such case.
-
-Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Phillip Potter <phil@philpotter.co.uk>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Acked-by: Christian Brauner <brauner@kernel.org>
 ---
- lib/libf2fs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/cdrom/cdrom.c | 2 +-
+ drivers/cdrom/gdrom.c | 2 +-
+ drivers/scsi/sr.c     | 2 +-
+ include/linux/cdrom.h | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 7a08a7f..0ab7342 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -497,8 +497,8 @@ f2fs_hash_t f2fs_dentry_hash(int encoding, int casefolded,
+diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
+index e3eab319cb0474..245e5bbb05d41c 100644
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -3336,7 +3336,7 @@ static int mmc_ioctl(struct cdrom_device_info *cdi, unsigned int cmd,
+  * ATAPI / SCSI specific code now mainly resides in mmc_ioctl().
+  */
+ int cdrom_ioctl(struct cdrom_device_info *cdi, struct block_device *bdev,
+-		fmode_t mode, unsigned int cmd, unsigned long arg)
++		unsigned int cmd, unsigned long arg)
+ {
+ 	void __user *argp = (void __user *)arg;
+ 	int ret;
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index eaa2d5a90bc82f..14922403983e9e 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -505,7 +505,7 @@ static int gdrom_bdops_ioctl(struct block_device *bdev, fmode_t mode,
+ 	int ret;
  
- 	if (len && casefolded) {
- 		buff = malloc(sizeof(char) * PATH_MAX);
--		if (!buff)
--			return -ENOMEM;
-+		ASSERT(buff);
-+
- 		dlen = table->ops->casefold(table, name, len, buff, PATH_MAX);
- 		if (dlen < 0) {
- 			free(buff);
+ 	mutex_lock(&gdrom_mutex);
+-	ret = cdrom_ioctl(gd.cd_info, bdev, mode, cmd, arg);
++	ret = cdrom_ioctl(gd.cd_info, bdev, cmd, arg);
+ 	mutex_unlock(&gdrom_mutex);
+ 
+ 	return ret;
+diff --git a/drivers/scsi/sr.c b/drivers/scsi/sr.c
+index 61b83880e395a4..444c7efc14cba7 100644
+--- a/drivers/scsi/sr.c
++++ b/drivers/scsi/sr.c
+@@ -539,7 +539,7 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
+ 	scsi_autopm_get_device(sdev);
+ 
+ 	if (cmd != CDROMCLOSETRAY && cmd != CDROMEJECT) {
+-		ret = cdrom_ioctl(&cd->cdi, bdev, mode, cmd, arg);
++		ret = cdrom_ioctl(&cd->cdi, bdev, cmd, arg);
+ 		if (ret != -ENOSYS)
+ 			goto put;
+ 	}
+diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
+index cc5717cb0fa8a8..4aea8c82d16971 100644
+--- a/include/linux/cdrom.h
++++ b/include/linux/cdrom.h
+@@ -103,8 +103,8 @@ int cdrom_read_tocentry(struct cdrom_device_info *cdi,
+ /* the general block_device operations structure: */
+ int cdrom_open(struct cdrom_device_info *cdi, fmode_t mode);
+ extern void cdrom_release(struct cdrom_device_info *cdi, fmode_t mode);
+-extern int cdrom_ioctl(struct cdrom_device_info *cdi, struct block_device *bdev,
+-		       fmode_t mode, unsigned int cmd, unsigned long arg);
++int cdrom_ioctl(struct cdrom_device_info *cdi, struct block_device *bdev,
++		unsigned int cmd, unsigned long arg);
+ extern unsigned int cdrom_check_events(struct cdrom_device_info *cdi,
+ 				       unsigned int clearing);
+ 
 -- 
-2.40.1
+2.39.2
 
 
 
