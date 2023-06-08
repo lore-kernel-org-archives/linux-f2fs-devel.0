@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6C18DC83003
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 11:04:41 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0C5E6C83003
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 11:04:54 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q7DRY-00057X-K4;
-	Thu, 08 Jun 2023 11:04:40 +0000
+	id 1q7DRk-0001Dk-Bh;
+	Thu, 08 Jun 2023 11:04:53 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+69acd89764e6999cdd63+7228+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1q7DRX-00057K-Jg for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 11:04:39 +0000
+ id 1q7DRg-0001CX-UG for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 11:04:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=vY4TzS76/rJ2xce2OD2MlrdJfdqE96jSdZdHV2ROwoI=; b=Jmoy6bVrutOSlTs/PywEBXSOdC
- UyNdWJubs5Cm0CZfipUkEL2Uq6LShuuQEjhbV4EpLIhK1yik1lpq+G6hi7TjUE0j9xw4VTHdX92e5
- JedSWF0xU9Oq/15hbyJ2rH14TR7Vx33aKtPuvotEtkaeTG+hXX4CmaCActVHZJvPyqrM=;
+ bh=p3NBH2d+BZbJRo9MySTDpcirZPYXEQPs5kc/V4dN6kM=; b=MXS/TOiAhhLyjYW6fnPyw0n5Qb
+ MHAk9RYXVVDS93IY2wT6eDGzPq9PwUrz5goVyiyM7F/JhHW4VnQmDY7GM47U0kbNloKtnurKdnbRh
+ +D0Q8oSgZB8Fhc9mR+du8sizKfxe+pL6bLTh1QjDnxtaqjdVudQRj1rlzL9PeDSlmfQQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=vY4TzS76/rJ2xce2OD2MlrdJfdqE96jSdZdHV2ROwoI=; b=L7qiVdy0j3FPOve9HQ4kePUcwU
- j6zoLX5yERUWjF3hVLaoIf8xj/EnySAfZHThZy6EnCwnEuen5rnpNU8xXcFquzwgxAHWdslsPVOZc
- C+jgG3fUpjFSv2LJ7IyTQ0LcgBRUhSkO0GuKK7DaDrhfbYsgP36ita7GgAZRqI23IqkM=;
+ bh=p3NBH2d+BZbJRo9MySTDpcirZPYXEQPs5kc/V4dN6kM=; b=IKx/UNmnGnK80yaNCxu70Rwba3
+ gEM2Fj9XFOq9qrIeUwq8P11aajoEZnvYJUmyFIKdO8NanVSvaFHyaBS2Jd9PhogiCUnmgNj4qjcij
+ e05YXHf50PlUiFNhSyYa+MpUKAYT02lz/UMsncYYVuk0xSyoKqgUtnLJS1ESj29kWOPI=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q7DRX-00Edzn-3v for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 11:04:39 +0000
+ id 1q7DRh-00Ee0j-7V for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 11:04:49 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=vY4TzS76/rJ2xce2OD2MlrdJfdqE96jSdZdHV2ROwoI=; b=qtZc66QRnp6ItyMHZhuUGe4A72
- oyK4P17k4i9Jb1HIO4XtasJgiPIm6p6crRVvWHHR0j0/9GEb6CBkbLV9MTbVP6DdY2Mfm98SLeTnT
- 9mLNMtLmQhKjNylaC1PAef4Q7FzQ0pBzRblaH4gZF769uixkLEtT9ztqGg04mcOqgLBwawZL50W7T
- kHxO4V5h7JuAnuMXQ0G/NZW9PIiYBaQWnXrk81+Xg/nignplbrRscS+3zydxIt3mk4CjPW8jF4lFD
- nbbYeIBITvF/v2l/ARUaUnGbAWR0CzX5NkYxlkYPZdMZ/gNvUDFfOcfgqIodGUOmv+5VAAilMRx5f
- DB4z1kzA==;
+ bh=p3NBH2d+BZbJRo9MySTDpcirZPYXEQPs5kc/V4dN6kM=; b=dWzzEqpqhDygLh7woY6IYAlXO5
+ wRd5hTeDKpr48DAQXqhoAs4M0FfktwRx2LupXxS1UFvFHXfPOqv1dDz9MT+UuYB5wqTwAtf6mdWyD
+ AFb9w6LyYqg8XsbR/GbDvEJ3LcYY3CmUkw1tUgEzhtzX627u7prflQQF5Xi7RGFwQWrWtqEAC5Gjk
+ YUAIS9d8dz14eleGGx2i1SQzrG7QG9U2evVtUbHfaXH70K0ZH/ERSD5RueRSTs+nBmsDjXmpjzvrr
+ SdkkLh7XXu76tAu4a6nwFunLGXeCKUivyyr5+EgCNpezUG78WeCBhZ96Dviml7pshXWLoX6vbWtZ+
+ UX34FN8Q==;
 Received: from
  2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1q7DR0-0092dV-19; Thu, 08 Jun 2023 11:04:06 +0000
+ id 1q7DRA-0092pp-0o; Thu, 08 Jun 2023 11:04:16 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Thu,  8 Jun 2023 13:02:50 +0200
-Message-Id: <20230608110258.189493-23-hch@lst.de>
+Date: Thu,  8 Jun 2023 13:02:54 +0200
+Message-Id: <20230608110258.189493-27-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230608110258.189493-1-hch@lst.de>
 References: <20230608110258.189493-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1q7DRX-00Edzn-3v
-Subject: [f2fs-dev] [PATCH 22/30] mtd: block: use a simple bool to track
- open for write
+X-Headers-End: 1q7DRh-00Ee0j-7V
+Subject: [f2fs-dev] [PATCH 26/30] block: remove unused fmode_t arguments
+ from ioctl handlers
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,58 +100,103 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Instead of propagating the fmode_t, just use a bool to track if a mtd
-block device was opened for writing.
+A few ioctl handlers have fmode_t arguments that are entirely unused,
+remove them.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
 Acked-by: Christian Brauner <brauner@kernel.org>
-Acked-by: Richard Weinberger <richard@nod.at>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 ---
- drivers/mtd/mtd_blkdevs.c    | 2 +-
- drivers/mtd/mtdblock.c       | 2 +-
- include/linux/mtd/blktrans.h | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ block/blk-zoned.c |  4 ++--
+ block/blk.h       |  6 +++---
+ block/ioctl.c     | 14 +++++++-------
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
-index f0bb09fde95e3a..bd0b7545364349 100644
---- a/drivers/mtd/mtd_blkdevs.c
-+++ b/drivers/mtd/mtd_blkdevs.c
-@@ -208,7 +208,7 @@ static int blktrans_open(struct gendisk *disk, fmode_t mode)
- 	ret = __get_mtd_device(dev->mtd);
- 	if (ret)
- 		goto error_release;
--	dev->file_mode = mode;
-+	dev->writable = mode & FMODE_WRITE;
+diff --git a/block/blk-zoned.c b/block/blk-zoned.c
+index 096b6b47561f83..02cc2c629ac9be 100644
+--- a/block/blk-zoned.c
++++ b/block/blk-zoned.c
+@@ -323,8 +323,8 @@ static int blkdev_copy_zone_to_user(struct blk_zone *zone, unsigned int idx,
+  * BLKREPORTZONE ioctl processing.
+  * Called from blkdev_ioctl.
+  */
+-int blkdev_report_zones_ioctl(struct block_device *bdev, fmode_t mode,
+-			      unsigned int cmd, unsigned long arg)
++int blkdev_report_zones_ioctl(struct block_device *bdev, unsigned int cmd,
++		unsigned long arg)
+ {
+ 	void __user *argp = (void __user *)arg;
+ 	struct zone_report_args args;
+diff --git a/block/blk.h b/block/blk.h
+index 6910220aa030f1..e28d5d67d31a28 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -394,15 +394,15 @@ static inline struct bio *blk_queue_bounce(struct bio *bio,
+ #ifdef CONFIG_BLK_DEV_ZONED
+ void disk_free_zone_bitmaps(struct gendisk *disk);
+ void disk_clear_zone_settings(struct gendisk *disk);
+-int blkdev_report_zones_ioctl(struct block_device *bdev, fmode_t mode,
+-		unsigned int cmd, unsigned long arg);
++int blkdev_report_zones_ioctl(struct block_device *bdev, unsigned int cmd,
++		unsigned long arg);
+ int blkdev_zone_mgmt_ioctl(struct block_device *bdev, fmode_t mode,
+ 		unsigned int cmd, unsigned long arg);
+ #else /* CONFIG_BLK_DEV_ZONED */
+ static inline void disk_free_zone_bitmaps(struct gendisk *disk) {}
+ static inline void disk_clear_zone_settings(struct gendisk *disk) {}
+ static inline int blkdev_report_zones_ioctl(struct block_device *bdev,
+-		fmode_t mode, unsigned int cmd, unsigned long arg)
++		unsigned int cmd, unsigned long arg)
+ {
+ 	return -ENOTTY;
+ }
+diff --git a/block/ioctl.c b/block/ioctl.c
+index b39bd5b41ee492..3a10c34b8ef6d3 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -344,8 +344,8 @@ static int blkdev_pr_clear(struct block_device *bdev,
+ 	return ops->pr_clear(bdev, c.key);
+ }
  
- unlock:
- 	dev->open++;
-diff --git a/drivers/mtd/mtdblock.c b/drivers/mtd/mtdblock.c
-index a0a1194dc1d902..fa476fb4dffb6c 100644
---- a/drivers/mtd/mtdblock.c
-+++ b/drivers/mtd/mtdblock.c
-@@ -294,7 +294,7 @@ static void mtdblock_release(struct mtd_blktrans_dev *mbd)
- 		 * It was the last usage. Free the cache, but only sync if
- 		 * opened for writing.
- 		 */
--		if (mbd->file_mode & FMODE_WRITE)
-+		if (mbd->writable)
- 			mtd_sync(mbd->mtd);
- 		vfree(mtdblk->cache_data);
- 	}
-diff --git a/include/linux/mtd/blktrans.h b/include/linux/mtd/blktrans.h
-index 15cc9b95e32b52..6e471436bba556 100644
---- a/include/linux/mtd/blktrans.h
-+++ b/include/linux/mtd/blktrans.h
-@@ -34,7 +34,7 @@ struct mtd_blktrans_dev {
- 	struct blk_mq_tag_set *tag_set;
- 	spinlock_t queue_lock;
- 	void *priv;
--	fmode_t file_mode;
-+	bool writable;
- };
+-static int blkdev_flushbuf(struct block_device *bdev, fmode_t mode,
+-		unsigned cmd, unsigned long arg)
++static int blkdev_flushbuf(struct block_device *bdev, unsigned cmd,
++		unsigned long arg)
+ {
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EACCES;
+@@ -354,8 +354,8 @@ static int blkdev_flushbuf(struct block_device *bdev, fmode_t mode,
+ 	return 0;
+ }
  
- struct mtd_blktrans_ops {
+-static int blkdev_roset(struct block_device *bdev, fmode_t mode,
+-		unsigned cmd, unsigned long arg)
++static int blkdev_roset(struct block_device *bdev, unsigned cmd,
++		unsigned long arg)
+ {
+ 	int ret, n;
+ 
+@@ -475,9 +475,9 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
+ 
+ 	switch (cmd) {
+ 	case BLKFLSBUF:
+-		return blkdev_flushbuf(bdev, mode, cmd, arg);
++		return blkdev_flushbuf(bdev, cmd, arg);
+ 	case BLKROSET:
+-		return blkdev_roset(bdev, mode, cmd, arg);
++		return blkdev_roset(bdev, cmd, arg);
+ 	case BLKDISCARD:
+ 		return blk_ioctl_discard(bdev, mode, arg);
+ 	case BLKSECDISCARD:
+@@ -487,7 +487,7 @@ static int blkdev_common_ioctl(struct block_device *bdev, fmode_t mode,
+ 	case BLKGETDISKSEQ:
+ 		return put_u64(argp, bdev->bd_disk->diskseq);
+ 	case BLKREPORTZONE:
+-		return blkdev_report_zones_ioctl(bdev, mode, cmd, arg);
++		return blkdev_report_zones_ioctl(bdev, cmd, arg);
+ 	case BLKRESETZONE:
+ 	case BLKOPENZONE:
+ 	case BLKCLOSEZONE:
 -- 
 2.39.2
 
