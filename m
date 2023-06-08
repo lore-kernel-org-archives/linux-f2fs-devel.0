@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B4847C7EE29
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 11:04:07 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 62E6FC7EE23
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 11:04:13 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q7DR0-0006yz-Sw;
-	Thu, 08 Jun 2023 11:04:07 +0000
+	id 1q7DR6-0007k3-Ld;
+	Thu, 08 Jun 2023 11:04:13 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+69acd89764e6999cdd63+7228+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1q7DQy-0006ys-MU for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 11:04:05 +0000
+ id 1q7DR5-0007jn-9o for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 11:04:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=gQ3Spsv4LyW6gkuENKLqfBtm97HUuPElpVTvO1XeD28=; b=G2W3bH0Efo1QseZAn0KC/X4LH5
- d4XNN4wQleXZL8kYklZtHmxRO+u9dStswhwtJIfwYvPLyt7uQGCis38J6jQF5yVcjwd3r3sopwygW
- A/SAF4+ZcFzSL8tOpC96Una87wjdwUtMKLtbyraoSrsise0OzzNz2yFtpd4ES7xC9KwE=;
+ bh=xSqFj5WjPegwW9vHvX0amQPsBL5EhPR3xtQURM4QZms=; b=StWJD24+NUoaPITayPgIXSE+r4
+ LTM3u0mGqVKCoJVzRLOgzR7kLAc6P8Dja/j+OJHRqVeZwOWYNrpAiDrJsgQ2ReffLlpxxKa+dNP97
+ Ew6B5sdubKX6EqNivGsazqbM4pVSbxXeUxBFAEERL/JbW/Ov5rPU9kcnSx5FXzlRF9Bg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,42 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=gQ3Spsv4LyW6gkuENKLqfBtm97HUuPElpVTvO1XeD28=; b=IyTvTkcnJa0iNVNG+zASbE/4ho
- 1J0d0VHqWGuK2soP36g9mmYa53Vogima8E/Jbk4TskYOX0k1olE9wzDZGTWKMUgx09e7GkoVDk8Xj
- VJ4iOE1UJDCN5Wd5E6Oa8tG8hZ+6Qa4QbyN8jg26ZcfNzTfVEiobiaF4G99vNDLE9xlc=;
+ bh=xSqFj5WjPegwW9vHvX0amQPsBL5EhPR3xtQURM4QZms=; b=ELJWXFu+JFoGRSCpLpRSulH0jB
+ 58zoX77pjFIqUDFPD5jY3rdFkgc2JVxoGL4zVQmtrcAc7tT3NHFwJuNlGiaUUVUt0dpO6Mbrp5UUN
+ CXc9kHhpOJqS9VUvzG7bXgY8tgP8hbuvFdX9CyEM/U5FLwEnBIyoEVXzvCu3TX/7g3A0=;
 Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q7DQy-0000PR-JP for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 11:04:05 +0000
+ id 1q7DR4-0000Po-S7 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 11:04:11 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=gQ3Spsv4LyW6gkuENKLqfBtm97HUuPElpVTvO1XeD28=; b=jW0zTWF6tfMg7bq3namLXxCJhX
- 9o76HmmsCWifkmnenvxNN9ST2kDHg69JQjRM52ooMvxhJiNBPaSCCFxcHBlMOLs2V774wWqMCQhPj
- /A1n8jDntoho8B6HC55sEWz9a3tEKJg5IDswpl9YuPwHOg7bQupCwXyuFlfPZADmA+4hFGg2+dmne
- GY8stUwwlY+yosMPEFLSh7VFkFng9rGoZBIUYp7nJ1KPt83j3gpN/sYgk7DKf0RRjZ9mHuWj6VGu7
- x+drRsxDDSDwRO0RDfNLxONcMjX6ZN6OS7II7WT15ThtGWxZ4Bd+3m2ZPDdl5LJs0Xqbsb7BknqRk
- Es3R62fQ==;
+ bh=xSqFj5WjPegwW9vHvX0amQPsBL5EhPR3xtQURM4QZms=; b=UVsk9E3iML3/64B8dXp1VuUqoE
+ MxoqBLiSUPG1S1XbSV8VRFEEXEJLekKJFeOkGvH1AqsbpntQwjGXZJAI/9ZTp4h7ivhSYjtdL2OxI
+ /zyvIWdpNYs52s5YTU5pAH7ulkPPvY0CrQY1aklT73+Giwf1fZ273YAHOgRZjDHvuZ79j/l+fB3dx
+ XSgCRH12MpKS0NLsJodDA8kx+Ak1mSsHodrw6kgLrjbnNHK7cpiPmDDFW1fTYmnpUTtb9ZgfxRkEw
+ HvZ9ZKx3kNS7gt3mx5O2OLw5u1bmAvEngqCQEa98yMiPVKV+D1LZnMN/iD86VsbNG/jIKI3fJbMSS
+ ew4dX1Lw==;
 Received: from
  2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1q7DQO-0091yH-2h; Thu, 08 Jun 2023 11:03:29 +0000
+ id 1q7DQY-0092CW-2p; Thu, 08 Jun 2023 11:03:39 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Thu,  8 Jun 2023 13:02:38 +0200
-Message-Id: <20230608110258.189493-11-hch@lst.de>
+Date: Thu,  8 Jun 2023 13:02:42 +0200
+Message-Id: <20230608110258.189493-15-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230608110258.189493-1-hch@lst.de>
 References: <20230608110258.189493-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1q7DQy-0000PR-JP
-Subject: [f2fs-dev] [PATCH 10/30] block: rename blkdev_close to
- blkdev_release
+X-Headers-End: 1q7DR4-0000Po-S7
+Subject: [f2fs-dev] [PATCH 14/30] btrfs: don't pass a holder for
+ non-exclusive blkdev_get_by_path
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,37 +100,143 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Make the function name match the method name.
+Passing a holder to blkdev_get_by_path when FMODE_EXCL isn't set doesn't
+make sense, so pass NULL instead and remove the holder argument from the
+call chains the only end up in non-FMODE_EXCL blkdev_get_by_path calls.
+
+Exclusive mode for device scanning is not used since commit 50d281fc434c
+("btrfs: scan device in non-exclusive mode")".
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 Acked-by: Christian Brauner <brauner@kernel.org>
+Acked-by: David Sterba <dsterba@suse.com>
 ---
- block/fops.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/super.c   | 16 ++++++----------
+ fs/btrfs/volumes.c | 17 ++++++++---------
+ fs/btrfs/volumes.h |  3 +--
+ 3 files changed, 15 insertions(+), 21 deletions(-)
 
-diff --git a/block/fops.c b/block/fops.c
-index 6a3087b750a6cd..26af2b39c758e1 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -500,7 +500,7 @@ static int blkdev_open(struct inode *inode, struct file *filp)
- 	return 0;
- }
- 
--static int blkdev_close(struct inode *inode, struct file *filp)
-+static int blkdev_release(struct inode *inode, struct file *filp)
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index ec18e22106023b..1a2ee9407f5414 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -849,8 +849,7 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+  * All other options will be parsed on much later in the mount process and
+  * only when we need to allocate a new super block.
+  */
+-static int btrfs_parse_device_options(const char *options, fmode_t flags,
+-				      void *holder)
++static int btrfs_parse_device_options(const char *options, fmode_t flags)
  {
- 	struct block_device *bdev = filp->private_data;
+ 	substring_t args[MAX_OPT_ARGS];
+ 	char *device_name, *opts, *orig, *p;
+@@ -884,8 +883,7 @@ static int btrfs_parse_device_options(const char *options, fmode_t flags,
+ 				error = -ENOMEM;
+ 				goto out;
+ 			}
+-			device = btrfs_scan_one_device(device_name, flags,
+-					holder);
++			device = btrfs_scan_one_device(device_name, flags);
+ 			kfree(device_name);
+ 			if (IS_ERR(device)) {
+ 				error = PTR_ERR(device);
+@@ -1477,13 +1475,13 @@ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
+ 	}
  
-@@ -677,7 +677,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+ 	mutex_lock(&uuid_mutex);
+-	error = btrfs_parse_device_options(data, mode, fs_type);
++	error = btrfs_parse_device_options(data, mode);
+ 	if (error) {
+ 		mutex_unlock(&uuid_mutex);
+ 		goto error_fs_info;
+ 	}
  
- const struct file_operations def_blk_fops = {
- 	.open		= blkdev_open,
--	.release	= blkdev_close,
-+	.release	= blkdev_release,
- 	.llseek		= blkdev_llseek,
- 	.read_iter	= blkdev_read_iter,
- 	.write_iter	= blkdev_write_iter,
+-	device = btrfs_scan_one_device(device_name, mode, fs_type);
++	device = btrfs_scan_one_device(device_name, mode);
+ 	if (IS_ERR(device)) {
+ 		mutex_unlock(&uuid_mutex);
+ 		error = PTR_ERR(device);
+@@ -2190,8 +2188,7 @@ static long btrfs_control_ioctl(struct file *file, unsigned int cmd,
+ 	switch (cmd) {
+ 	case BTRFS_IOC_SCAN_DEV:
+ 		mutex_lock(&uuid_mutex);
+-		device = btrfs_scan_one_device(vol->name, FMODE_READ,
+-					       &btrfs_root_fs_type);
++		device = btrfs_scan_one_device(vol->name, FMODE_READ);
+ 		ret = PTR_ERR_OR_ZERO(device);
+ 		mutex_unlock(&uuid_mutex);
+ 		break;
+@@ -2205,8 +2202,7 @@ static long btrfs_control_ioctl(struct file *file, unsigned int cmd,
+ 		break;
+ 	case BTRFS_IOC_DEVICES_READY:
+ 		mutex_lock(&uuid_mutex);
+-		device = btrfs_scan_one_device(vol->name, FMODE_READ,
+-					       &btrfs_root_fs_type);
++		device = btrfs_scan_one_device(vol->name, FMODE_READ);
+ 		if (IS_ERR(device)) {
+ 			mutex_unlock(&uuid_mutex);
+ 			ret = PTR_ERR(device);
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 784ccc8f6c69c1..035868cee3ddc3 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -1348,8 +1348,7 @@ int btrfs_forget_devices(dev_t devt)
+  * and we are not allowed to call set_blocksize during the scan. The superblock
+  * is read via pagecache
+  */
+-struct btrfs_device *btrfs_scan_one_device(const char *path, fmode_t flags,
+-					   void *holder)
++struct btrfs_device *btrfs_scan_one_device(const char *path, fmode_t flags)
+ {
+ 	struct btrfs_super_block *disk_super;
+ 	bool new_device_added = false;
+@@ -1368,16 +1367,16 @@ struct btrfs_device *btrfs_scan_one_device(const char *path, fmode_t flags,
+ 	 */
+ 
+ 	/*
+-	 * Avoid using flag |= FMODE_EXCL here, as the systemd-udev may
+-	 * initiate the device scan which may race with the user's mount
+-	 * or mkfs command, resulting in failure.
+-	 * Since the device scan is solely for reading purposes, there is
+-	 * no need for FMODE_EXCL. Additionally, the devices are read again
++	 * Avoid an exclusive open here, as the systemd-udev may initiate the
++	 * device scan which may race with the user's mount or mkfs command,
++	 * resulting in failure.
++	 * Since the device scan is solely for reading purposes, there is no
++	 * need for an exclusive open. Additionally, the devices are read again
+ 	 * during the mount process. It is ok to get some inconsistent
+ 	 * values temporarily, as the device paths of the fsid are the only
+ 	 * required information for assembling the volume.
+ 	 */
+-	bdev = blkdev_get_by_path(path, flags, holder, NULL);
++	bdev = blkdev_get_by_path(path, flags, NULL, NULL);
+ 	if (IS_ERR(bdev))
+ 		return ERR_CAST(bdev);
+ 
+@@ -2381,7 +2380,7 @@ int btrfs_get_dev_args_from_path(struct btrfs_fs_info *fs_info,
+ 		return -ENOMEM;
+ 	}
+ 
+-	ret = btrfs_get_bdev_and_sb(path, FMODE_READ, fs_info->bdev_holder, 0,
++	ret = btrfs_get_bdev_and_sb(path, FMODE_READ, NULL, 0,
+ 				    &bdev, &disk_super);
+ 	if (ret) {
+ 		btrfs_put_dev_args_from_path(args);
+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+index bf47a1a70813ba..eb97a397b3c3fb 100644
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -600,8 +600,7 @@ struct btrfs_block_group *btrfs_create_chunk(struct btrfs_trans_handle *trans,
+ void btrfs_mapping_tree_free(struct extent_map_tree *tree);
+ int btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
+ 		       fmode_t flags, void *holder);
+-struct btrfs_device *btrfs_scan_one_device(const char *path,
+-					   fmode_t flags, void *holder);
++struct btrfs_device *btrfs_scan_one_device(const char *path, fmode_t flags);
+ int btrfs_forget_devices(dev_t devt);
+ void btrfs_close_devices(struct btrfs_fs_devices *fs_devices);
+ void btrfs_free_extra_devids(struct btrfs_fs_devices *fs_devices);
 -- 
 2.39.2
 
