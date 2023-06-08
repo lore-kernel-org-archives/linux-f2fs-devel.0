@@ -4,96 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id B9CFCC7EE25
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 09:16:23 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id F35FBC7EE29
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 09:38:26 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q7Bkj-0005X5-H8;
-	Thu, 08 Jun 2023 09:16:22 +0000
+	id 1q7C64-00049R-3R;
+	Thu, 08 Jun 2023 09:38:24 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <phil@philpotter.co.uk>) id 1q7Bkg-0005Wy-ED
+ (envelope-from <chao@kernel.org>) id 1q7C62-00049L-H8
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 09:16:19 +0000
+ Thu, 08 Jun 2023 09:38:23 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
- Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3Z0zXMf0/p1bWmc9mPlzpLlXYRZkfsnJE7sT8NRRA6c=; b=mmROEojiK+In5CDmZ5JYHoEn/g
- N13657WGF3Zo0ZNq0upj/AMpJZBUEP51V6GQtaSRnRZKkoX1/7DnKPF4PvdL2otifUTzrdC3rbk7h
- U3kmXUDHlpjkq+k1khMXrDY5SWyB82+Hi4oesiJTxBbqZvS4oRvVYluI6sxodofaJKWM=;
+ bh=mowgfPODmJ8fZ0lRp+NbcEmQH9MxHOWzW0aw7P9cZ6Y=; b=K7dswUtxm4MOlQOW8awNhFxmWx
+ 8K9cz6CxVqHUpnVodqn54qu8l8Zw1hzOSz6WYPzMAmJ/ktnYHrd31OGpMpYshk9g1fx6Os8gtYNYy
+ X2qTifaRmTxMRMZ8Qp1+DmAh9RalF+oD8JJuDz2l5Tkdjq1yXRZcquK/AJ7xRt1HSwEg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
- :From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=3Z0zXMf0/p1bWmc9mPlzpLlXYRZkfsnJE7sT8NRRA6c=; b=j/7libNQVBCEyS9ipf8XEA+z2j
- QmcCGhZpVBG0Di6+piCA1iO3S7bxKjljPcxenvn5jIuhFLuigGQ2uVs8EZze6q+UlAyY2HCkdoKco
- SluLx+U1jKQr9ACYbf4Z7P46qZFaLQkNlIw5wwRcSHwzbgwlaB9AEshOx9tBlDu+jnFk=;
-Received: from mail-ed1-f48.google.com ([209.85.208.48])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1q7BkY-0004oS-Qq for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 09:16:17 +0000
-Received: by mail-ed1-f48.google.com with SMTP id
- 4fb4d7f45d1cf-5149c76f4dbso648332a12.1
- for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 08 Jun 2023 02:16:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=philpotter-co-uk.20221208.gappssmtp.com; s=20221208; t=1686215764;
- x=1688807764; 
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
- bh=3Z0zXMf0/p1bWmc9mPlzpLlXYRZkfsnJE7sT8NRRA6c=;
- b=YTz/J5gKhasTQV+ShmIofOu+CiE0mB6Bi4UhT/Vq6RqR24tWQDamUCWwJYlchU+0VJ
- ZzCEYh7Fek8LiIn/+rkQfwScPc4XLNNommhqcY8csyiyauOBSQVcZ5KOdo8Q0xj4TW6I
- azxj75m0OGs/frIsa0CWP+oV5SElU+pvGFElph1jxvABkfTxr/S75GqMl79EoC+pnvxz
- uQRvAmcjt4qsFiu37V3NoIQdCRWCDZTiBFr4WPFRB1okl+q4+PGHF7tPoK6mJC25kqL4
- HAVd9EhZjJcxRj7st5Ce0yK9lUVi6EJRmWG4hjlca0L1msofUQt4czeIGqpJ00+aXMDF
- DRkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20221208; t=1686215764; x=1688807764;
- h=in-reply-to:content-disposition:mime-version:references:message-id
- :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=3Z0zXMf0/p1bWmc9mPlzpLlXYRZkfsnJE7sT8NRRA6c=;
- b=IiReRrI1XiYrxWdyYzVvo7YNg35qAD31kWfVK1ntYtWfVaVhN4k7SvqDzEETYdNQbQ
- PHpKcGwCOwfGQSkXqLAQlDAoduyaiuk64nDNjCA6aItEbmlUO/WAoVvTG88ShbrCJIpA
- khkTWPjm0ucptYXA3BEm+5JzFuRuYb8PZIh1EUZ84xozYSisSKTAqbqoVVoNpSwkXRjl
- vsWDha4ck+1N5abHNM/ZBFX35afZjkYu105lxSf/NkD1infemL5N2sDjiTt1rw+Pk7q8
- bWi071y5BG7lWe3DaBQ5Iyu1EiNV7AkfjLuW36t0rWrzl5qFF65JvIbx/gsooH5gWr7J
- aRDg==
-X-Gm-Message-State: AC+VfDyrkPbFhj/NZw3tPKo4z3nZyFMP8HKNX7UH1B5gaI2IyDg7wvYf
- 6ygqqhhOrzCcrA86yIwnbirAx7RLOhs0hMQFQmch9Zpd
-X-Google-Smtp-Source: ACHHUZ64php+m1QCHow4PROIWkYJdsxvPRvM75l2Ndr3HzBRHztMsSyV31x82/mpTwubbqm80EXyLg==
-X-Received: by 2002:a05:600c:d6:b0:3f6:389:73b1 with SMTP id
- u22-20020a05600c00d600b003f6038973b1mr839950wmm.6.1686214049725; 
- Thu, 08 Jun 2023 01:47:29 -0700 (PDT)
-Received: from equinox
- (2.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.a.1.e.e.d.f.d.0.b.8.0.1.0.0.2.ip6.arpa.
- [2001:8b0:dfde:e1a0::2]) by smtp.gmail.com with ESMTPSA id
- n19-20020a7bcbd3000000b003f73a101f88sm1253740wmi.16.2023.06.08.01.47.28
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 08 Jun 2023 01:47:29 -0700 (PDT)
-Date: Thu, 8 Jun 2023 09:47:27 +0100
-From: Phillip Potter <phil@philpotter.co.uk>
-To: Christoph Hellwig <hch@lst.de>
-Message-ID: <ZIGVn9E9ME26V0Gn@equinox>
-References: <20230606073950.225178-1-hch@lst.de>
- <20230606073950.225178-7-hch@lst.de> <ZH+6qd1W75G49P7p@equinox>
- <20230608084129.GA14689@lst.de>
+ bh=mowgfPODmJ8fZ0lRp+NbcEmQH9MxHOWzW0aw7P9cZ6Y=; b=aS/rRi5dMZ87oQcl7EaK+4UVuy
+ tqkFkFKjn3n9OE9tHh1ZVga8wN+frQ/TowM9TV/X3UgtkKqpujY+nosbOH2rm2DH1oGS+jyKq/1Xn
+ aVqvXZJPr/GjCY7AGhGs5STqjZ4WXKr99XX4KKhDE3g8DTffU6DdJZfsOgF4QlTCwT4A=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
+ id 1q7C5z-00Ea0K-NU for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 09:38:23 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id E5F5464B57;
+ Thu,  8 Jun 2023 09:38:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41AEFC433D2;
+ Thu,  8 Jun 2023 09:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1686217090;
+ bh=V19RuyGw5moEVQtVIKIzHCHkmzutxvLKUftm4u1YHGA=;
+ h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+ b=HfOYHujpVwPnBBs8MCW0W1iGvRx+wOQX/szfXZboXubF8q4XHtecO5OD86vbE2s6/
+ mZqC2BoP61MJ50e1RU2Zai29XGG84KdAt/OcBUJn9L4xVsvdJiwcKv220DewoB1v1z
+ DN/QCbMGv9MYdfe6PKd81teb+hFFuo+j96LSFw0cFG4OzNj0EzEAmi74B6EdK5m22T
+ Ix9XVYwbr30CZrteZulUWuoeFXAca2v/YMiHIrlHUL6CEEKCnEO+5reOmkJA928/Kp
+ XmSvzADO/8c4Ty1ufLex02AHZKKUpy0zQKelwWeOKlpsle0Yq04i+nEYxFcEovTFtw
+ MRtwgvAmJOAsQ==
+Message-ID: <059b17ce-cb65-fd55-29b1-2b253c6b41c4@kernel.org>
+Date: Thu, 8 Jun 2023 17:38:07 +0800
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20230608084129.GA14689@lst.de>
-X-Headers-End: 1q7BkY-0004oS-Qq
-Subject: Re: [f2fs-dev] [PATCH 06/31] cdrom: remove the unused mode argument
- to cdrom_release
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Content-Language: en-US
+To: Yangtao Li <frank.li@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20230531144006.7307-1-frank.li@vivo.com>
+ <e8e4758f-5895-acd7-27d2-4b72b69722b3@kernel.org>
+ <29bea47b-9085-05e7-d254-a40007e6c7f3@vivo.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <29bea47b-9085-05e7-d254-a40007e6c7f3@vivo.com>
+X-Headers-End: 1q7C5z-00Ea0K-NU
+Subject: Re: [f2fs-dev] [PATCH] f2fs: enable nowait async buffered writes
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -105,47 +83,52 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-nvme@lists.infradead.org,
- Chris Mason <clm@fb.com>, dm-devel@redhat.com,
- "Md. Haris Iqbal" <haris.iqbal@ionos.com>, Pavel Machek <pavel@ucw.cz>,
- Miquel Raynal <miquel.raynal@bootlin.com>, Jack Wang <jinpu.wang@ionos.com>,
- linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
- Richard Weinberger <richard@nod.at>, linux-pm@vger.kernel.org,
- linux-um@lists.infradead.org, Josef Bacik <josef@toxicpanda.com>,
- Coly Li <colyli@suse.de>, linux-block@vger.kernel.org,
- linux-bcache@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- David Sterba <dsterba@suse.com>, Jens Axboe <axboe@kernel.dk>,
- Christian Brauner <brauner@kernel.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: linux-kernel@vger.kernel.org, Lu Hongfei <luhongfei@vivo.com>,
+ linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Thu, Jun 08, 2023 at 10:41:29AM +0200, Christoph Hellwig wrote:
-> On Wed, Jun 07, 2023 at 12:00:57AM +0100, Phillip Potter wrote:
-> > Looks good, thanks.
-> > 
-> > Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
-> 
-> Hmm, these signoffs don't really make sense here.  Were they intended
-> as Reviewed-bys?
-> 
-Hi Christoph,
-
-Yes indeed - I was under the impression it was appropriate for a
-maintainer to signal their approval of a patch to maintained code using
-a Signed-off-by tag due to their involvement in the submission process?
-Apologies if I've got this wrong, happy to send Reviewed-bys by all
-means.
-
-Regards,
-Phil
-
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+T24gMjAyMy82LzYgMTk6MTMsIFlhbmd0YW8gTGkgd3JvdGU6Cj4gT24gMjAyMy82LzYgMTQ6NDMs
+IENoYW8gWXUgd3JvdGU6Cj4gCj4+IE9uIDIwMjMvNS8zMSAyMjo0MCwgWWFuZ3RhbyBMaSB3cm90
+ZToKPj4+IFRoaXMgYWRkcyB0aGUgYXN5bmMgYnVmZmVyZWQgd3JpdGUgc3VwcG9ydCB0byBmMmZz
+LAo+Pj4gdGhlIGZvbGxvd2luZyBpcyB0aGUgcmVsZXZhbnQgdGVzdCBkYXRhLgo+Pgo+PiBZYW5n
+dGFvLAo+Pgo+PiBDb3VsZCB5b3UgcGxlYXNlIHByb3ZpZGUgZGV0YWlsZWQgdGVzdCBjb21tYW5k
+Pwo+IAo+IAo+IFVzZSBmaW8gdG8gdGVzdCwgdGhlIGZvbGxvd2luZyBpcyB0aGUgY29uZmlndXJh
+dGlvbjoKPiAKPiAjIGlvX3VyaW5nCj4gW2dsb2JhbF0KPiBpb2VuZ2luZT1pb191cmluZwo+IHNx
+dGhyZWFkX3BvbGw9MQo+IHRocmVhZHM9MQo+IGlvZGVwdGg9MzIKPiBoaXByaT0wCj4gZGlyZWN0
+PTAKPiBmaXhlZGJ1ZnM9MAo+IHVuY2FjaGVkPTAKPiBub3dhaXQ9MAo+IGZvcmNlX2FzeW5jPTAK
+PiByYW5kcmVwZWF0PTAKPiB0aW1lX2Jhc2VkPTAKPiBzaXplPTI1Nk0KPiBmaWxlbmFtZT0vZGF0
+YS90ZXN0L2xvY2FsL2lvX3VyaW5nX3Rlc3QKPiBncm91cF9yZXBvcnRpbmcKPiBbcmVhZDI1NkIt
+cmFuZF0KPiBicz00MDk2Cj4gcnc9cmFuZHdyaXRlCj4gbnVtam9icz0xCgpUaGFua3MsIGl0IGxv
+b2tzIHRoZSBwZXJmb3JtYW5jZSBpcyBub3QgdmVyeSBzdGFibGUgd2hlbiBpb2RlcHRoIGlzCmxh
+cmdlLCBlLmcuIDMyLgoKQ291bGQgeW91IHBsZWFzZSBhZGQgYWJvdmUgdGVzdCBwYXJhbWV0ZXIg
+aW50byBjb21taXQgbWVzc2FnZT8KCk90aGVyd2lzZSwgdGhpcyBwYXRjaCBsb29rcyBnb29kIHRv
+IG1lLgoKVGhhbmtzLAoKPiAKPiAKPj4KPj4gVGhhbmtzLAo+Pgo+Pj4KPj4+IGlvZGVwdGjCoMKg
+wqDCoMKgIHwgMcKgwqDCoCB8IDLCoMKgwqAgfCA0wqDCoMKgIHwgOMKgwqDCoCB8IDE2wqDCoCB8
+Cj4+PiBiZWZvcmUoTS9zKcKgIHwgMTAxMiB8IDExMzMgfCA4OTTCoCB8IDk4McKgIHwgODY2wqAg
+fAo+Pj4gYWZ0ZXIoTS9zKcKgwqAgfCAxNDg4IHwgMTg5NiB8IDIwODEgfCAyMTg4IHwgMjIwNyB8
+Cj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogTHUgSG9uZ2ZlaSA8bHVob25nZmVpQHZpdm8uY29tPgo+
+Pj4gU2lnbmVkLW9mZi1ieTogWWFuZ3RhbyBMaSA8ZnJhbmsubGlAdml2by5jb20+Cj4+PiAtLS0K
+Pj4+IMKgIGZzL2YyZnMvZmlsZS5jIHwgNSArLS0tLQo+Pj4gwqAgMSBmaWxlIGNoYW5nZWQsIDEg
+aW5zZXJ0aW9uKCspLCA0IGRlbGV0aW9ucygtKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9mcy9mMmZz
+L2ZpbGUuYyBiL2ZzL2YyZnMvZmlsZS5jCj4+PiBpbmRleCAyM2M2OGVlOTQ2ZTUuLjRmYWYyYzA0
+ZTMyNSAxMDA2NDQKPj4+IC0tLSBhL2ZzL2YyZnMvZmlsZS5jCj4+PiArKysgYi9mcy9mMmZzL2Zp
+bGUuYwo+Pj4gQEAgLTU0Niw3ICs1NDYsNyBAQCBzdGF0aWMgaW50IGYyZnNfZmlsZV9vcGVuKHN0
+cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmaWxlICpmaWxwKQo+Pj4gwqDCoMKgwqDCoCBpZiAo
+ZXJyKQo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiBlcnI7Cj4+PiDCoCAtwqDCoMKgIGZp
+bHAtPmZfbW9kZSB8PSBGTU9ERV9OT1dBSVQgfCBGTU9ERV9CVUZfUkFTWU5DOwo+Pj4gK8KgwqDC
+oCBmaWxwLT5mX21vZGUgfD0gRk1PREVfTk9XQUlUIHwgRk1PREVfQlVGX1JBU1lOQyB8IEZNT0RF
+X0JVRl9XQVNZTkM7Cj4+PiDCoCDCoMKgwqDCoMKgIHJldHVybiBkcXVvdF9maWxlX29wZW4oaW5v
+ZGUsIGZpbHApOwo+Pj4gwqAgfQo+Pj4gQEAgLTQ1MTUsOSArNDUxNSw2IEBAIHN0YXRpYyBzc2l6
+ZV90IGYyZnNfYnVmZmVyZWRfd3JpdGVfaXRlcihzdHJ1Y3Qga2lvY2IgKmlvY2IsCj4+PiDCoMKg
+wqDCoMKgIHN0cnVjdCBpbm9kZSAqaW5vZGUgPSBmaWxlX2lub2RlKGZpbGUpOwo+Pj4gwqDCoMKg
+wqDCoCBzc2l6ZV90IHJldDsKPj4+IMKgIC3CoMKgwqAgaWYgKGlvY2ItPmtpX2ZsYWdzICYgSU9D
+Ql9OT1dBSVQpCj4+PiAtwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FT1BOT1RTVVBQOwo+Pj4gLQo+
+Pj4gwqDCoMKgwqDCoCBjdXJyZW50LT5iYWNraW5nX2Rldl9pbmZvID0gaW5vZGVfdG9fYmRpKGlu
+b2RlKTsKPj4+IMKgwqDCoMKgwqAgcmV0ID0gZ2VuZXJpY19wZXJmb3JtX3dyaXRlKGlvY2IsIGZy
+b20pOwo+Pj4gwqDCoMKgwqDCoCBjdXJyZW50LT5iYWNraW5nX2Rldl9pbmZvID0gTlVMTDsKCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
+LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
+dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
+LWRldmVsCg==
