@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 04D2CC7EE29
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 08:41:43 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E64DAC7EE25
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 09:05:00 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q7BDB-00078S-Lb;
-	Thu, 08 Jun 2023 08:41:42 +0000
+	id 1q7BZj-0005MU-5u;
+	Thu, 08 Jun 2023 09:04:59 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <hch@lst.de>) id 1q7BDA-00077p-LQ
+ (envelope-from <hch@lst.de>) id 1q7BZh-0005MO-6K
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 08:41:41 +0000
+ Thu, 08 Jun 2023 09:04:57 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GAAIRqqkx4vBaceVmFUxkRJ9Ec6cSuVyQKnbanRnmp8=; b=hvx0shM6sBYVtfiYvk3HnRNoiS
- KQvDLiAzloDyMexn4b1v0dKWXr0Rfv1NhTMFhgvIDjNsNcX747ng75BelrQSadNehBG65Qky+vJu3
- iQzfLQIcw31//fhfwD73e7ZTWLfvf8WfegfAxlkRvYWM7GYflaYI1CXG/mADmqtAW2KI=;
+ bh=bQ4hxpwi6OE6UTVICd0IkPx6VL5XPse1f31cPM2BFIE=; b=BAmSxJF2QqaEF0txZ5SkKXGdyp
+ ydAcKe7IfMcm0zwlui6vvslrzOVoSdkoMY6g5a2xEmXyhcq+no+o7S/wMdHv+f7g2qc0YUUWEIZV8
+ GtlGsHucKwUSVZxnoJJtRt/7sVFvXvSXy2Jf4haW6npzAPjtH8/JdIt6x1lZe6rmtxMg=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,27 +33,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GAAIRqqkx4vBaceVmFUxkRJ9Ec6cSuVyQKnbanRnmp8=; b=PhUvfojBMiqCvJB/NylHsG/sLF
- IDfz1LIIQaHNwgR8uvbmpqCgTt0ZUOBKPU2g90Ly6DanMweNKBjKHycWffY+Dy6kDp1rWsh9JJSe5
- 9wLlEAqpF5yr+e66ydEgZGS8H3f6Pvo71rjY9bEOwPEF+x8G5SSjy11IeyBKp3ksZ5xI=;
+ bh=bQ4hxpwi6OE6UTVICd0IkPx6VL5XPse1f31cPM2BFIE=; b=aRdFQU8X/HTBwglmntVske90Ma
+ i3+b8dDHW1LZfs7UySNsP6X1D+TQ74ks+iophRST4vysc5KLHWfIPfaijpGa9HAkWOz0gpWkM8W+2
+ 5w+DwESFNDWtVexOSGEJV7nwKawxrlmRABKfByfGMHo8+3MDCL0g7rLX5z7T0k6RHpFc=;
 Received: from verein.lst.de ([213.95.11.211])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q7BD9-00EWsU-IE for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 08:41:41 +0000
+ id 1q7BZh-0004Mt-0Y for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 09:04:57 +0000
 Received: by verein.lst.de (Postfix, from userid 2407)
- id 9341068BFE; Thu,  8 Jun 2023 10:41:29 +0200 (CEST)
-Date: Thu, 8 Jun 2023 10:41:29 +0200
+ id A178768AA6; Thu,  8 Jun 2023 11:04:44 +0200 (CEST)
+Date: Thu, 8 Jun 2023 11:04:44 +0200
 From: Christoph Hellwig <hch@lst.de>
 To: Phillip Potter <phil@philpotter.co.uk>
-Message-ID: <20230608084129.GA14689@lst.de>
+Message-ID: <20230608090444.GA15075@lst.de>
 References: <20230606073950.225178-1-hch@lst.de>
  <20230606073950.225178-7-hch@lst.de> <ZH+6qd1W75G49P7p@equinox>
+ <20230608084129.GA14689@lst.de> <ZIGVn9E9ME26V0Gn@equinox>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <ZH+6qd1W75G49P7p@equinox>
+In-Reply-To: <ZIGVn9E9ME26V0Gn@equinox>
 User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Headers-End: 1q7BD9-00EWsU-IE
+X-Headers-End: 1q7BZh-0004Mt-0Y
 Subject: Re: [f2fs-dev] [PATCH 06/31] cdrom: remove the unused mode argument
  to cdrom_release
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
@@ -86,14 +87,16 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, Jun 07, 2023 at 12:00:57AM +0100, Phillip Potter wrote:
-> Looks good, thanks.
-> 
-> Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
+On Thu, Jun 08, 2023 at 09:47:27AM +0100, Phillip Potter wrote:
+> Yes indeed - I was under the impression it was appropriate for a
+> maintainer to signal their approval of a patch to maintained code using
+> a Signed-off-by tag due to their involvement in the submission process?
+> Apologies if I've got this wrong, happy to send Reviewed-bys by all
+> means.
 
-Hmm, these signoffs don't really make sense here.  Were they intended
-as Reviewed-bys?
-
+Signed-off-by is for the chain that the patches pass through.  You add
+it when you apply or forward the patch.  Just give me a Reviewed-by
+tag and say it shold apply to patches 1 to 6 and I'll add it.
 
 
 _______________________________________________
