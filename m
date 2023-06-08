@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D4F0FC83003
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 11:04:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 5D110C87FE4
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  8 Jun 2023 11:04:16 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q7DR7-000702-HL;
-	Thu, 08 Jun 2023 11:04:14 +0000
+	id 1q7DR8-00014c-LT;
+	Thu, 08 Jun 2023 11:04:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
  <BATV+69acd89764e6999cdd63+7228+infradead.org+hch@bombadil.srs.infradead.org>)
- id 1q7DR6-0006zs-C3 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 11:04:12 +0000
+ id 1q7DR6-00013l-UW for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 11:04:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
  In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=BWc5z9HT4dUA9mjQNGkIg08JFiqviKFgFc2kwBdnmvA=; b=LvJv/A6yU6ExdrZ6m1FDlDxTFB
- TG0QpAdJ7TO8Pq+KZvQ4eDD7ebZQj2tXXqET/1gNJbfuS4z7WeJcweuvmpowoD2D2sFmN5XK1on5L
- ncQ4lD+3V9Pkfj+yqpiH4xbxlr/Nsocw6BPMkHq2vutGS5m4HeBRj5xrDKYxYh+rIHAM=;
+ bh=T5Z718thWwTBzPeDg0jur6OK5CtfhwUqydvftRUUfzk=; b=Ve+U2bdtXZnhz7wvsQtSpY8BkS
+ LAs6ZQEPDe73rYnDYwp3IOVEb8TSWsoM2ZVkTUYdCZFelT5MksWpRAaxllzbs/b7IY+WjzTt9Q/Kf
+ 1HXcsOxHVAzHnGgLg0/7NlYt56rcKTF1QE/F5yrc9nWuo2efuzD3x1p8O/obxl8Ek+WQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
@@ -33,42 +33,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=BWc5z9HT4dUA9mjQNGkIg08JFiqviKFgFc2kwBdnmvA=; b=GwsI8zzZRjUNyQ33Uva7xAddNy
- rbYMYSmfRDxbPB2nNdPMNzGuOXI9NISJExjBDIyDYuvRzq/Smd901IcmK61sMpxDGY64vexQ4mLZr
- J4Pg7QBdA7ukbcryvb68BvDT0441GMto306r97mv4HuUuphI+arAp4TxiKmWcvdkRvdU=;
+ bh=T5Z718thWwTBzPeDg0jur6OK5CtfhwUqydvftRUUfzk=; b=JSXYC5xl8SVKgubFb+blPz60sL
+ zmCstzstQ26onRqOCgyOf/PG3lHiHummT/y2qn1bC/R/B3ydftBsoKzXORzyZCUwsvBo/ngS56izb
+ 89BSqhp9cFXw00EcfuHxAAxXX5Ds0PZxBU/KFjdl+0aM+ikLS825xwv5kdpaIfPleA7U=;
 Received: from bombadil.infradead.org ([198.137.202.133])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q7DR5-0000Ps-HI for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 08 Jun 2023 11:04:12 +0000
+ id 1q7DR7-00EdxP-7R for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 08 Jun 2023 11:04:13 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
  MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
  :Reply-To:Content-Type:Content-ID:Content-Description;
- bh=BWc5z9HT4dUA9mjQNGkIg08JFiqviKFgFc2kwBdnmvA=; b=DSaSxe/TisXuiNZhOR1TgSi7tx
- 33lAtkUXPMOr9WQm9Z+HhNKEJGoeKJSluj7uhXRCmimH7VoHS0E0fvUNcZ7UiWxsb/tBtz6fXhZlr
- GE9jtxC+Q8FoQSEQz+4vk9nOOH8BTAjfrUuFLcHba2SvPuPGZNkEv8QjVxkATSDkihbdNi6umKqVB
- 7p2NEvk5EAeqwWcAKAwVWRbUBkG4tyEy/NutpgRnWrvU0mWTHAqNh1aG3veS9lJl/Zm3XwnRRN4uy
- kPNwBnK5dcXc2ETiMnCmg0liMCPKVYmWiFEJ6OPE/jhf6OnfgqyBEoO+PrWwml+/G7QKTlQlKNK+/
- sLCUxnmg==;
+ bh=T5Z718thWwTBzPeDg0jur6OK5CtfhwUqydvftRUUfzk=; b=Try8qIUINKsh2VL+vddRHYQmeK
+ eg6+6M/8CD84A88WXuC8XV2Ftj53W7w3QfqWwkpFvM8dcSNiyhJdJ8jc6RMeT5FILY/RCY3DI/Tm6
+ OUtJOgOIAdm527Pojaljwjtgtc5J+NXVTNkayO7Ij3p0a6NtsO9A64bVMzc80GY2tUcWtP6qGLBup
+ 8GUu2v5YbAWehIuMzuGYMIKn4ImSBwE+aW2tx2uXC5smzWfCZCL9Dwp0FgQCYlM3uji0pURCU61Tq
+ oF6CRvRoUcI303XbGlmfMOA0JGhD7JytDLkjy8wt1OGx/u1K/5RhruAL0wUtKLs4N2SVf4WfDKKdq
+ FAf6PO1w==;
 Received: from
  2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at
  ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
  by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
- id 1q7DQR-00921s-1m; Thu, 08 Jun 2023 11:03:31 +0000
+ id 1q7DQh-0092Ka-0N; Thu, 08 Jun 2023 11:03:47 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
-Date: Thu,  8 Jun 2023 13:02:39 +0200
-Message-Id: <20230608110258.189493-12-hch@lst.de>
+Date: Thu,  8 Jun 2023 13:02:45 +0200
+Message-Id: <20230608110258.189493-18-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230608110258.189493-1-hch@lst.de>
 References: <20230608110258.189493-1-hch@lst.de>
 MIME-Version: 1.0
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
  bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Headers-End: 1q7DR5-0000Ps-HI
-Subject: [f2fs-dev] [PATCH 11/30] swsusp: don't pass a stack address to
- blkdev_get_by_path
+X-Headers-End: 1q7DR7-00EdxP-7R
+Subject: [f2fs-dev] [PATCH 17/30] fs: remove sb->s_mode
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -100,44 +99,98 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-holder is just an on-stack pointer that can easily be reused by other calls,
-replace it with a static variable that doesn't change.
+There is no real need to store the open mode in the super_block now.
+It is only used by f2fs, which can easily recalculate it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
+Acked-by: Christian Brauner <brauner@kernel.org>
 ---
- kernel/power/swap.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c    | 10 ++++++----
+ fs/nilfs2/super.c  |  1 -
+ fs/super.c         |  2 --
+ include/linux/fs.h |  1 -
+ 4 files changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index 81aec3b2c60510..b03ff1a33c7f68 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -1510,6 +1510,8 @@ int swsusp_read(unsigned int *flags_p)
- 	return error;
- }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index a5adb1d316e331..5a764fecd1c7ef 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3993,6 +3993,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
+ 	unsigned int max_devices = MAX_DEVICES;
+ 	unsigned int logical_blksize;
++	fmode_t mode = sb_open_mode(sbi->sb->s_flags);
+ 	int i;
  
-+static void *swsusp_holder;
-+
- /**
-  *      swsusp_check - Check for swsusp signature in the resume device
-  */
-@@ -1517,14 +1519,13 @@ int swsusp_read(unsigned int *flags_p)
- int swsusp_check(bool snapshot_test)
- {
- 	int error;
--	void *holder;
- 	fmode_t mode = FMODE_READ;
+ 	/* Initialize single device information */
+@@ -4024,8 +4025,8 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 		if (max_devices == 1) {
+ 			/* Single zoned block device mount */
+ 			FDEV(0).bdev =
+-				blkdev_get_by_dev(sbi->sb->s_bdev->bd_dev,
+-					sbi->sb->s_mode, sbi->sb->s_type, NULL);
++				blkdev_get_by_dev(sbi->sb->s_bdev->bd_dev, mode,
++						  sbi->sb->s_type, NULL);
+ 		} else {
+ 			/* Multi-device mount */
+ 			memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
+@@ -4043,8 +4044,9 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 					(FDEV(i).total_segments <<
+ 					sbi->log_blocks_per_seg) - 1;
+ 			}
+-			FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path,
+-					sbi->sb->s_mode, sbi->sb->s_type, NULL);
++			FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path, mode,
++							  sbi->sb->s_type,
++							  NULL);
+ 		}
+ 		if (IS_ERR(FDEV(i).bdev))
+ 			return PTR_ERR(FDEV(i).bdev);
+diff --git a/fs/nilfs2/super.c b/fs/nilfs2/super.c
+index a41fd84d4e28ab..15a5a1099427d8 100644
+--- a/fs/nilfs2/super.c
++++ b/fs/nilfs2/super.c
+@@ -1316,7 +1316,6 @@ nilfs_mount(struct file_system_type *fs_type, int flags,
+ 		s_new = true;
  
- 	if (snapshot_test)
- 		mode |= FMODE_EXCL;
+ 		/* New superblock instance created */
+-		s->s_mode = mode;
+ 		snprintf(s->s_id, sizeof(s->s_id), "%pg", sd.bdev);
+ 		sb_set_blocksize(s, block_size(sd.bdev));
  
- 	hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device,
--					    mode, &holder, NULL);
-+					    mode, &swsusp_holder, NULL);
- 	if (!IS_ERR(hib_resume_bdev)) {
- 		set_blocksize(hib_resume_bdev, PAGE_SIZE);
- 		clear_page(swsusp_header);
+diff --git a/fs/super.c b/fs/super.c
+index dc7f328398339d..86f40f8981989d 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1308,7 +1308,6 @@ int get_tree_bdev(struct fs_context *fc,
+ 		blkdev_put(bdev, fc->fs_type);
+ 		down_write(&s->s_umount);
+ 	} else {
+-		s->s_mode = mode;
+ 		snprintf(s->s_id, sizeof(s->s_id), "%pg", bdev);
+ 		shrinker_debugfs_rename(&s->s_shrink, "sb-%s:%s",
+ 					fc->fs_type->name, s->s_id);
+@@ -1382,7 +1381,6 @@ struct dentry *mount_bdev(struct file_system_type *fs_type,
+ 		blkdev_put(bdev, fs_type);
+ 		down_write(&s->s_umount);
+ 	} else {
+-		s->s_mode = mode;
+ 		snprintf(s->s_id, sizeof(s->s_id), "%pg", bdev);
+ 		shrinker_debugfs_rename(&s->s_shrink, "sb-%s:%s",
+ 					fs_type->name, s->s_id);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7b2053649820cc..ad1d2c9afb3fa4 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1215,7 +1215,6 @@ struct super_block {
+ 	uuid_t			s_uuid;		/* UUID */
+ 
+ 	unsigned int		s_max_links;
+-	fmode_t			s_mode;
+ 
+ 	/*
+ 	 * The next field is for VFS *only*. No filesystems have any business
 -- 
 2.39.2
 
