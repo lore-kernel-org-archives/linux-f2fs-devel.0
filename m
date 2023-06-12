@@ -4,70 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 500ABC7EE2E
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jun 2023 20:16:43 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 6E6D5C7EE2F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jun 2023 20:50:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q8nxy-0000ar-RL;
-	Mon, 12 Jun 2023 20:16:42 +0000
+	id 1q8oUi-0000W8-DA;
+	Mon, 12 Jun 2023 20:50:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jaegeuk@kernel.org>) id 1q8nxu-0000aY-OS
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q8oUe-0000Vv-CG
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jun 2023 20:16:38 +0000
+ Mon, 12 Jun 2023 20:50:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-ID:
- Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ug1VxCEmHAqGISqkhoUB4D6Ip4k3KyuFNIlhKVmS6bk=; b=hcDt9PsCv2wH8nLAmoNX1z19nK
- wCp79vpumcFksGKfOJG4FHP3+jW2Lh+WZ6wEguZ4uJFiwDwYgrBWL0LZkG+rpdi+79oErZ1G0j2Lx
- HicKPhHvQ3ifBN39r0PMVGHUz8PgN1Udc+WcYFJ4i3/McgTxc7DR5RaN5hRMMxQ4wrWo=;
+ bh=X+t8lkxlr/rAQAjUvfTjOfyWgykklUrp17OQBiArSFM=; b=kuhkKVgXDAYq5Y0RfJTLs2IJ8x
+ n6rcJtaFMPLVmnrBZML8Soubgg9OjOSLghQHabEHliH0DykxXdqu1RlF38MBnHKUNOW2jrmWmSIeC
+ RJsdXqoRJzj3p2SGzqtv5rJ7tVBlaCHsYiQwNUTsJtg95URrplgdWdQsaxFA8mTc6SK0=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From
- :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=ug1VxCEmHAqGISqkhoUB4D6Ip4k3KyuFNIlhKVmS6bk=; b=N
- PcJNG3wb+NoUwSTIZcnuKYs0quK+HqDhWLJ+lfZLmObkAkE1hOJnv7joYVM1srF429RhAUXAxfJdb
- jAA4TDh63h2j++7j0KbI+vfSINHq56Lk/nGoLQJzu1qmVD6cWSPVzsqBFhTKIllvw/qIW8R5DFrHS
- kHztdYI4lPQJfOno=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=X+t8lkxlr/rAQAjUvfTjOfyWgykklUrp17OQBiArSFM=; b=hEMLh6s9Xrd8w78PCXQ38Nqpk6
+ UIUuUJ/vdOtkG9bE02Zo6VLeUR3flVkOPSEYft8QHHavMMu0WO0eQH4MkUJvO8wS14/j64VAn/g3H
+ 9J1EGS013h5JIT1PRlugmhH9H9g4draJHgpRghLMjpyveagEtdJuo2FdH0m7hP6w9KvA=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q8nxs-0012Ba-Tf for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jun 2023 20:16:38 +0000
+ id 1q8oUe-0013OQ-7U for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Jun 2023 20:50:28 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id B188D62946
+ by dfw.source.kernel.org (Postfix) with ESMTPS id D185362174
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 12 Jun 2023 20:16:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A04C433EF;
- Mon, 12 Jun 2023 20:16:30 +0000 (UTC)
+ Mon, 12 Jun 2023 20:50:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 41FEDC4339B;
+ Mon, 12 Jun 2023 20:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1686600990;
- bh=IFNcl3Qr1j61HWEFzbLwNkndMDHFIaUy4E04xrmndB0=;
- h=From:To:Cc:Subject:Date:From;
- b=IsYOGsxQ+G+xE05S99c1FUqdnyA5A0r8/EhbCRuw0sMxfM3FubILmfAFyp76cq/P7
- zptzsxHFMYtBoVTdMsHEzTlfx5nOMGpzYDZcOMVuSxFFO5qlaafRO4cvD+Ur51UHCo
- LMWALzfw00GkhIrmQLLs1p5fPwVgIX3+bTK4aDMtLrHrv6YubXRfuZkdHHVs8cqYhn
- mkyexby7SIRqonCAREHNet3KtO304KOyHvkgKcEFngMWEDGSqFTiwpwM/91mFPhBOw
- Zsf9bKzZE5+ui8xZwBp3TqLbUgLiilTi+xgKwcO6Q/WXX98y57cbfJB49ar+ASFgGf
- WCFL45smMkm8g==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Date: Mon, 12 Jun 2023 13:16:26 -0700
-Message-ID: <20230612201626.3768393-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
+ s=k20201202; t=1686603022;
+ bh=u2/UkIhdf3DGxsdKdPni953WmZ7Tsrt6n89M2makI5s=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=P4zdWrJ7I9ncv/xIsWpCfy1UOAmt34YqvBUf4TkPb4hI8MqHFKhcMkpXthRBW5ztu
+ s7WkJrNKbp1i4awNH27GK1JFL0r/iNkGsNojanTitv9FyK9QDLo1tWrcAPf5qBISn6
+ tr1Q8t8d/nCDQDDTr+NeiWzx8OpBonyfBgdUTawPVvQxFcp6s1jnduzpJdyZ0KLox3
+ OLyW6ejA9EIfj3Ydq1bdDw2+tlczWcRCk1a1OFbOei/SCDEtpZmztb1zY0BSQYMspu
+ 4bv+11U777r4lNkMRIbfRogZJTAavvOmV5QN8p0HD55GirdTZphaFZfUwlTJG4z+rz
+ rulesEWwo3zhw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ 1DA9FC395F3; Mon, 12 Jun 2023 20:50:22 +0000 (UTC)
 MIME-Version: 1.0
-X-Headers-End: 1q8nxs-0012Ba-Tf
-Subject: [f2fs-dev] [PATCH] f2fs: assign default compression level
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <168660302211.10168.11054570964013825555.git-patchwork-notify@kernel.org>
+Date: Mon, 12 Jun 2023 20:50:22 +0000
+References: <20230529104709.2560779-1-chao@kernel.org>
+In-Reply-To: <20230529104709.2560779-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1q8oUe-0013OQ-7U
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid mmap vs
+ set_compress_option case
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -79,105 +83,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Let's avoid any confusion from assigning compress_level=0 for LZ4HC and ZSTD.
+Hello:
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/compress.c |  3 +--
- fs/f2fs/f2fs.h     |  2 ++
- fs/f2fs/super.c    | 12 +++++++-----
- 3 files changed, 10 insertions(+), 7 deletions(-)
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 1132d3cd8f33..438af59d3571 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -317,8 +317,6 @@ static const struct f2fs_compress_ops f2fs_lz4_ops = {
- #endif
- 
- #ifdef CONFIG_F2FS_FS_ZSTD
--#define F2FS_ZSTD_DEFAULT_CLEVEL	1
--
- static int zstd_init_compress_ctx(struct compress_ctx *cc)
- {
- 	zstd_parameters params;
-@@ -327,6 +325,7 @@ static int zstd_init_compress_ctx(struct compress_ctx *cc)
- 	unsigned int workspace_size;
- 	unsigned char level = F2FS_I(cc->inode)->i_compress_level;
- 
-+	/* Need to remain this for backward compatibility */
- 	if (!level)
- 		level = F2FS_ZSTD_DEFAULT_CLEVEL;
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4b249716ae7b..c61f728e1116 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1440,6 +1440,8 @@ struct compress_data {
- 
- #define F2FS_COMPRESSED_PAGE_MAGIC	0xF5F2C000
- 
-+#define F2FS_ZSTD_DEFAULT_CLEVEL	1
-+
- #define	COMPRESS_LEVEL_OFFSET	8
- 
- /* compress context */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8fd23caa1ed9..7162e55c4eb4 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -589,14 +589,12 @@ static int f2fs_set_lz4hc_level(struct f2fs_sb_info *sbi, const char *str)
- {
- #ifdef CONFIG_F2FS_FS_LZ4HC
- 	unsigned int level;
--#endif
- 
- 	if (strlen(str) == 3) {
--		F2FS_OPTION(sbi).compress_level = 0;
-+		F2FS_OPTION(sbi).compress_level = LZ4HC_DEFAULT_CLEVEL;
- 		return 0;
- 	}
- 
--#ifdef CONFIG_F2FS_FS_LZ4HC
- 	str += 3;
- 
- 	if (str[0] != ':') {
-@@ -614,6 +612,10 @@ static int f2fs_set_lz4hc_level(struct f2fs_sb_info *sbi, const char *str)
- 	F2FS_OPTION(sbi).compress_level = level;
- 	return 0;
- #else
-+	if (strlen(str) == 3) {
-+		F2FS_OPTION(sbi).compress_level = 0;
-+		return 0;
-+	}
- 	f2fs_info(sbi, "kernel doesn't support lz4hc compression");
- 	return -EINVAL;
- #endif
-@@ -627,7 +629,7 @@ static int f2fs_set_zstd_level(struct f2fs_sb_info *sbi, const char *str)
- 	int len = 4;
- 
- 	if (strlen(str) == len) {
--		F2FS_OPTION(sbi).compress_level = 0;
-+		F2FS_OPTION(sbi).compress_level = F2FS_ZSTD_DEFAULT_CLEVEL;
- 		return 0;
- 	}
- 
-@@ -640,7 +642,7 @@ static int f2fs_set_zstd_level(struct f2fs_sb_info *sbi, const char *str)
- 	if (kstrtouint(str + 1, 10, &level))
- 		return -EINVAL;
- 
--	if (!level || level > zstd_max_clevel()) {
-+	if (level < zstd_min_clevel() || level > zstd_max_clevel()) {
- 		f2fs_info(sbi, "invalid zstd compress level: %d", level);
- 		return -EINVAL;
- 	}
+On Mon, 29 May 2023 18:47:09 +0800 you wrote:
+> Compression option in inode should not be changed after they have
+> been used, however, it may happen in below race case:
+> 
+> Thread A				Thread B
+> - f2fs_ioc_set_compress_option
+>  - check f2fs_is_mmap_file()
+>  - check get_dirty_pages()
+>  - check F2FS_HAS_BLOCKS()
+> 					- f2fs_file_mmap
+> 					 - set_inode_flag(FI_MMAP_FILE)
+> 					- fault
+> 					 - do_page_mkwrite
+> 					  - f2fs_vm_page_mkwrite
+> 					  - f2fs_get_block_locked
+> 					 - fault_dirty_shared_page
+> 					  - set_page_dirty
+>  - update i_compress_algorithm
+>  - update i_log_cluster_size
+>  - update i_cluster_size
+> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev,v2] f2fs: fix to avoid mmap vs set_compress_option case
+    https://git.kernel.org/jaegeuk/f2fs/c/4286ee3e6efe
+
+You are awesome, thank you!
 -- 
-2.41.0.162.gfafddb0af9-goog
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
 
