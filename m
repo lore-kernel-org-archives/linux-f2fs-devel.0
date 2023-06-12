@@ -4,116 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 563DFC7EE25
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jun 2023 07:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id AE2FCC7EE2F
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jun 2023 14:18:33 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q8cMP-0005Rv-0A;
-	Mon, 12 Jun 2023 07:53:09 +0000
+	id 1q8iNK-0002rg-OA;
+	Mon, 12 Jun 2023 14:18:30 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <beomsu7.kim@samsung.com>) id 1q8cMN-0005Rk-37
+ (envelope-from <chao@kernel.org>) id 1q8iNH-0002rR-6q
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jun 2023 07:53:07 +0000
+ Mon, 12 Jun 2023 14:18:27 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
- Date:Message-ID:In-Reply-To:To:From:Sender:Reply-To:Subject:Mime-Version:Cc:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+ From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=URaC+fwzwBBWdu87ez64/DWs/qxRMF1AQRsVSgmOwoM=; b=fPUu0LPcs6DSoAHpRoG19yXPGt
- DxsEpg3zTPhJ3KNmMxtN1Wpg74QO/RG9j/0SiTkQhS76fBL1/EOuK4CSwYfw5zZbhN6MMYk6CVdkF
- mEb+qVXg3WbJp+fJgYeslC9mV93hViAjdDXZBKhmV1q8LGGdFmV1NXTtk/vRZYXjxfN0=;
+ bh=VrZ4GNFnC3sgYd3sMRUahYToCKoEXjYbz/m7skd0Wrs=; b=l/S8QFIrD/1h5JEnO/lwNVKn2s
+ hRdk+fOTd4tXXseX5rsxJRkmkEz0Md3kAgPkC8+jPoSaS2v/OBO/yzlIpN5k8uyXm5/Bp7RDUkS9h
+ Wfc+/3zzCYg8UHDU5CfbHqdEn0NxIwLTBSiEV7pUxqdBGGLv6O8tGPigjoFIExxfuesE=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:
- In-Reply-To:To:From:Sender:Reply-To:Subject:Mime-Version:Cc:Content-ID:
+ h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:To:
+ Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=URaC+fwzwBBWdu87ez64/DWs/qxRMF1AQRsVSgmOwoM=; b=NkT7xVzvaRx0XM3ljA15grBsET
- WN2AhxBbJJLqFRQJbe0NZ7Gx10Ol8io6rkLa11O85YgF+DhKKN7ZUH2vhPwsBHw/1Oeaiczvdxu20
- AugHkApReKEYaZeAP8jRRnJpG3OaBeaCe/PTmrWA8Dud6jHbRiBXgYnXFxeKdDf4oZzA=;
-Received: from mailout2.samsung.com ([203.254.224.25])
- by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ bh=VrZ4GNFnC3sgYd3sMRUahYToCKoEXjYbz/m7skd0Wrs=; b=fcL4uul3mzX02t9OLv53Ncztgn
+ /mEuATu+nwuBpKm4WOrR0Ei3zGssrKe6fS5lbcKWYJ1Il+KPJSOM2GHwOIx/4CSvDAebD7B9+kiYj
+ z8LQbLAwB52layu3WC6VaoYwXsGKKLR6kZV2d8p63DAGyYxCxsCwlXlZ+9rMFvHpZ1/k=;
+Received: from dfw.source.kernel.org ([139.178.84.217])
+ by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q8cMI-000VOU-9p for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jun 2023 07:53:07 +0000
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
- by mailout2.samsung.com (KnoxPortal) with ESMTP id
- 20230612075251epoutp0250ad3071b23b10e2c2c420c3f4634d4b~n2hWhv5lQ1684416844epoutp02i
+ id 1q8iNG-0003Vl-H2 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Jun 2023 14:18:27 +0000
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+ (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+ (No client certificate requested)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 20D68629BE
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 12 Jun 2023 07:52:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com
- 20230612075251epoutp0250ad3071b23b10e2c2c420c3f4634d4b~n2hWhv5lQ1684416844epoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
- s=mail20170921; t=1686556371;
- bh=URaC+fwzwBBWdu87ez64/DWs/qxRMF1AQRsVSgmOwoM=;
- h=Subject:Reply-To:From:To:In-Reply-To:Date:References:From;
- b=q2XSW5c4dKbZMDdN+GugjF1JRDhhWxJU0Paqcqb74ENF5a/l1SOS6PVImTVPPC5is
- F0+3WwhYyilkZfGQE9/5sHRV1oj68aaEAqo03QcuigIz7P9hMWNcXTzs8rNeWjkUma
- WUXNT9Vn4Q8xJKW7J/rKOmKsxfnVFmWnNw6eOtK0=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
- epcas2p3.samsung.com (KnoxPortal) with ESMTP id
- 20230612075251epcas2p3a7f046b80cc23f5f28fb5dd4b031bcff~n2hWCgJMr2111021110epcas2p3q;
- Mon, 12 Jun 2023 07:52:51 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.89]) by
- epsnrtp4.localdomain (Postfix) with ESMTP id 4QfkSL6GG2z4x9Q9; Mon, 12 Jun
- 2023 07:52:50 +0000 (GMT)
-X-AuditID: b6c32a48-c3ff87000000acbc-ef-6486ced2ce9e
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
- epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
- 0F.BE.44220.2DEC6846; Mon, 12 Jun 2023 16:52:50 +0900 (KST)
-Mime-Version: 1.0
-From: beomsu kim <beomsu7.kim@samsung.com>
-To: Chao Yu <chao@kernel.org>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Yonggil Song <yonggil.song@samsung.com>,
- Seokhwan Kim <sukka.kim@samsung.com>, Daejun Park
- <daejun7.park@samsung.com>, Seonghun Kim <seonghun-sui.kim@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <f301845f-c358-4632-1df5-5944d7483072@kernel.org>
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20230612075250epcms2p7d2e02243caa54d4a9ceb525a2b23d555@epcms2p7>
-Date: Mon, 12 Jun 2023 16:52:50 +0900
-X-CMS-MailID: 20230612075250epcms2p7d2e02243caa54d4a9ceb525a2b23d555
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgk+LIzCtJLcpLzFFi42LZdljTVPfSubYUg8XdWhanp55lslj1INzi
- yfpZzBaXFrlbXN41h83i9Q85i1Udcxktpp4/wuTA4bFpVSebx+4Fn5k8+rasYvT4vEkugCUq
- 2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6AYlhbLE
- nFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToF5gV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbG
- 3C0LWAoOC1ccmfCQrYFxI18XIyeHhICJxIMz/cxdjFwcQgI7GCXmPp7L1MXIwcErICjxd4cw
- SI2wgLfE6hv/WUBsIQFFib7mDWwgJcICOhJLthiDhNkEtCS6r58BGyMi0MEssW/7W0aI+bwS
- M9qfskDY0hLbl28Fi3MK2Ek8b/vADhHXkPixrJcZwhaVuLn6LTuM/f7YfKg5IhKt985C1QhK
- PPi5GyouIfH652WoeL7E998fGUGOkBBoYZTY2TMHKqEvse3PbLAjeAV8JV40bGQFeYBFQFVi
- 79xsiBIXiY+794OVMAvIS2x/C9LKAWRrSqzfpQ9iSggoSxy5BVXBJ9Fx+C87zIc75j1hgihR
- legGBQ472LMdBhAFHhIfH91ggQTxSUaJmT0XWScwKsxChPIsJFtnIWxdwMi8ilEstaA4Nz21
- 2KjABB6xyfm5mxjBSVHLYwfj7Lcf9A4xMnEwHmKU4GBWEuHVNmlOEeJNSaysSi3Kjy8qzUkt
- PsRoCvTuRGYp0eR8YFrOK4k3NLE0MDEzMzQ3MjUwVxLn/dihnCIkkJ5YkpqdmlqQWgTTx8TB
- KdXA5LM0lfnUyrbt5cIvmFbsPPPQISPtVb3f4xcVxWkT1r5c+jDn5Paj18pm9iZuWjM/e93P
- G1Znfrtqyxrs9WGqaZN6q8Nqu5vtBLMIS1bnQaXzki5qec5/Lks5ssyZHSTxbPrK2VdLNAQ5
- K+V6N7/9zB0pW62wzvR7oYL2U9V7F3OWipb0Sb7Iyzn+SY8xL3TV5Jr1vN8LPn+tfrikutJu
- a/yne1ckyhyW2jAnz/vPnb/t5mtt69uyJ5m8YxJ81ndWfTey+3jQa11++aL7SQpF7y/7BEjd
- FziyZfUr2VtKl4PYtSw/ZhZxCG3US5t42vfdj6ITK3bET+Tg4L9o+7vUYZKRxfcFEp69Pxi/
- 1tzwVGIpzkg01GIuKk4EAIpujO8TBAAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20230602044830epcms2p141ec782e866c2adc5a3142516f051b87
-References: <f301845f-c358-4632-1df5-5944d7483072@kernel.org>
- <20230602044830epcms2p141ec782e866c2adc5a3142516f051b87@epcms2p1>
- <CGME20230602044830epcms2p141ec782e866c2adc5a3142516f051b87@epcms2p7>
-X-Headers-End: 1q8cMI-000VOU-9p
-Subject: Re: [f2fs-dev] (2) [PATCH] f2fs: including waf data in f2fs status
- information
+ Mon, 12 Jun 2023 14:18:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B960FC4339B;
+ Mon, 12 Jun 2023 14:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+ s=k20201202; t=1686579500;
+ bh=ilN1/jTNe0GA6pB/SlZ9PiNSr53z2qsAMGgSkLjTC2w=;
+ h=Date:Subject:To:References:From:In-Reply-To:From;
+ b=sDMPNCtc0puIdJWz86xkxsdXNL19AE4EeVwLS/TyXZOr2t4P2/4Im0P2qECC30mDP
+ tm4DDNx3P33+vPFwlWlJLludG8YoYq+00Yyj4s87yhihKig8YEA/HtXbG9oH0VsoJb
+ x6qV1O1I4eblUs1+Qes/NOqAysPeciTTpYs7kXxryqySCwqITm22QDxY48FQshiOGS
+ 22PpbsfSiQGZotypAGtQgNuSbVKMFohjb4UY+veEVG7/bqkNuEaP90dBbqyjKhVxZ6
+ UGzm2a+zLdaVNRPxloxjtB2aaADN3DKtoXD1rM/VkIBHJoZIIlBKuMmGIUzbxr+bWI
+ i/HmVoQEQWMXg==
+Message-ID: <7af0f599-2314-56af-2813-5e63754134e1@kernel.org>
+Date: Mon, 12 Jun 2023 22:18:17 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Content-Language: en-US
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20230606203645.3926651-1-jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20230606203645.3926651-1-jaegeuk@kernel.org>
+X-Headers-End: 1q8iNG-0003Vl-H2
+Subject: Re: [f2fs-dev] [PATCH] f2fs: compress tmp files given extension
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -125,72 +83,59 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Reply-To: beomsu7.kim@samsung.com
-Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2023/6/2 12:48, beomsu kim wrote:
->> When evaluating in f2fs, it takes much time to obtain waf data.
->> This patch helps to obtain waf data without calcluation.
->> 
->> Signed-off-by: Beomsu Kim <beomsu7.kim@samsung.com>
->> ---
->>   fs/f2fs/iostat.c | 16 ++++++++++++++++
->>   1 file changed, 16 insertions(+)
->> 
->> diff --git a/fs/f2fs/iostat.c b/fs/f2fs/iostat.c
->> index 3d5bfb1ad585..6eab11b0610d 100644
->> --- a/fs/f2fs/iostat.c
->> +++ b/fs/f2fs/iostat.c
->> @@ -34,10 +34,22 @@ int __maybe_unused iostat_info_seq_show(struct seq_file *seq, void *offset)
->>   {
->>          struct super_block *sb = seq->private;
->>          struct f2fs_sb_info *sbi = F2FS_SB(sb);
->> +       int j;
->> +       unsigned long long waf = 0;
->> +       unsigned long long data_written_to_storage = 0;
->> +       unsigned long long data_written_by_user = 0;
->>   
->>          if (!sbi->iostat_enable)
->>                  return 0;
->>   
->> +       for (j = FS_DATA_IO; j <= FS_CP_META_IO; j++)
->
->FS_CDATA_IO is redundant?
+On 2023/6/7 4:36, Jaegeuk Kim wrote:
+> Let's compress tmp files for the given extension list.
 
-I agree, and modified it.
-		
->
->> +               data_written_to_storage += sbi->iostat_bytes[j];
->> +       for (j = FS_DATA_IO; j <= FS_CDATA_IO; j++)
->
->Just needs to include APP_WRITE_IO and APP_MAPPED_IO?
+Could you please check below commit? IIRC, it was introduce to avoid compressing
+file which has unpredictable tmp file, e.g. foo.sox.
 
-There is a slight time interval between requests in the form of APP_*_IO until they become requests in the form of FS_*_IO. On the other hand, we get the amount of file system meta data from FS_*_IO for 'data_written_to_storage'. So, If we use APP_*_IO for 'data_written_by_user', the 'waf' value returned during this time interval might have some difference from the actual value.
+Could you please describe the case you encounter?
 
->
->Thanks,
->
->> +               data_written_by_user += sbi->iostat_bytes[j];
->> +
->> +       if (data_written_by_user > 0)
->> +               waf = data_written_to_storage * 100 / data_written_by_user;
->> +
->>          seq_printf(seq, "time:          %-16llu\n>", ktime_get_real_seconds());
->>          seq_printf(seq, "\t\t\t%-16s %-16s %-16s\n>",
->>                                  "io_bytes", "count", "avg_bytes");
->> @@ -81,6 +93,10 @@ int __maybe_unused iostat_info_seq_show(struct seq_file *seq, void *offset)
->>          IOSTAT_INFO_SHOW("fs discard", FS_DISCARD_IO);
->>          IOSTAT_INFO_SHOW("fs flush", FS_FLUSH_IO);
->>   
->> +       /* print waf */
->> +       seq_puts(seq, "[WAF]\n>");
->> +       seq_printf(seq, "fs waf:                %llu.%02llu\n>", waf / 100, waf % 100);
->> +
->>          return 0;
->>   }
->> 
+commit 4a67d9b07ac8dce7f1034e0d887f2f4ee00fe118
+Author: Chao Yu <chao@kernel.org>
+Date:   Tue May 18 17:54:58 2021 +0800
+
+     f2fs: compress: fix to disallow temp extension
+
+     This patch restricts to configure compress extension as format of:
+
+      [filename + '.' + extension]
+
+     rather than:
+
+      [filename + '.' + extension + (optional: '.' + temp extension)]
+
+     in order to avoid to enable compression incorrectly:
+
+     1. compress_extension=so
+     2. touch file.soa
+     3. touch file.so.tmp
+
+Thanks,
+
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>   fs/f2fs/namei.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 3e35eb7dbb8f..cdc94c8e60f7 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -161,7 +161,7 @@ static void set_compress_new_inode(struct f2fs_sb_info *sbi, struct inode *dir,
+>   
+>   	/* Compress wanting extension. */
+>   	for (i = 0; i < ext_cnt; i++) {
+> -		if (is_extension_exist(name, ext[i], false)) {
+> +		if (is_extension_exist(name, ext[i], true)) {
+>   			set_compress_context(inode);
+>   			return;
+>   		}
 
 
 _______________________________________________
