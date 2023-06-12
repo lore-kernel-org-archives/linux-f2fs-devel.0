@@ -4,131 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 48531C7EE23
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jun 2023 03:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id E57B6C7EE2E
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jun 2023 05:37:43 +0000 (UTC)
 Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
 	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q8Xp5-0002Uc-Nf;
-	Mon, 12 Jun 2023 03:02:27 +0000
+	id 1q8aFI-0004xp-IN;
+	Mon, 12 Jun 2023 05:37:40 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
  by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong@oppo.com>) id 1q8Xoz-0002To-UU
- for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jun 2023 03:02:24 +0000
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <BATV+33f57c12507318cbaa86+7232+infradead.org+hch@bombadil.srs.infradead.org>)
+ id 1q8aF6-0004x3-21 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Jun 2023 05:37:28 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
- :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
+ Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=yG4NaiIwJDVRa91GbUkjytPpX0qB5PkhDezBZEAmJxM=; b=f9rfUtNHIwne3HKciYGf8XobjP
- yTRRErnbfBSSH2jg9KOTw7S6AS4e4TsUklPmPxD9uNXEZ9CTsIPjPhYXyH/7sEsUm4thU0RWXGojA
- MTkCFeW0b4r+qHzaxsxubbxFZAbVSSK9XuEwsfkB9Rq65ArrqWqX7r3Nt9Ruo6/GnG/I=;
+ bh=4trhRw7xARg2lJaXKLjvoI562MgArwdRoegsyL2HFFQ=; b=BDpIUWCW/WtkPk17eErCzbdBpH
+ PU12J6VN3YSu2G8GomLrcCT+uLPUTxUkvXGK3lNzHpqWk83MKwSIAPemORcpd5HdQdM+qdC0+FOAJ
+ eqUkeoFyhXX9XyURLsIalOfQGjgfMAWtwEM66HxkGR6N1xDgfYk5yg7RiKwpVz0ZBh5g=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=yG4NaiIwJDVRa91GbUkjytPpX0qB5PkhDezBZEAmJxM=; b=lAB4lOUvcP0YQJAZmfirBlr7Tg
- 774AuD55XXiYFI1SC406FgcTAaavH9OvaudWFeyxcEx6HujLjvk4VuGnYVq9htd/I7bIl+DNs6ISG
- 9ieJWHgC09P8T2Vo+4yrDr5uEdXnNrZoNubfiBbyMldzLB3EtVdr/L3VuLDBOC/9wE5k=;
-Received: from mail-tyzapc01on2071.outbound.protection.outlook.com
- ([40.107.117.71] helo=APC01-TYZ-obe.outbound.protection.outlook.com)
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=4trhRw7xARg2lJaXKLjvoI562MgArwdRoegsyL2HFFQ=; b=S
+ ntfSROQdaon/CVsxrs7XDB5uEKlbtTwplG7Nx0AXdXkaMkxWfHjDHd1bl9zGPXOv9NDoQ/htqT6gQ
+ 0N6IkXmmRsZXfygAeBUki3dMEY4Aj4i9+xu+84hn16/U1W6UtPbrsGANvIqZi9zotJD2d7e5vqau+
+ MTcm0lTAZve2DDNI=;
+Received: from bombadil.infradead.org ([198.137.202.133])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q8Xon-0007se-BR for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jun 2023 03:02:15 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oHywBGUK7RtIahJCVitMtgTRZxuq62SBfPfc4ljyg3HBynRACDy4vXyvxv550BHwXv9163vfKxO167HV87KQghhZ+qQYrSe5KlnGF3mhySvRl6qKdTSjwb2Kxvia48QlGicN30LOUICSh35140bHeS3x+nIcjJIuPE56MN7p4sju/ZUOiS3KxIEipOrm/DPHqsgYV9B/fEbmzD+90s2eVH93HK1yrOQhL484GnsqdbqdiPpnDe5FMF3662pwTKp6HRmyvYJoDDzFjaECk0e/fTWTV+jfclVKCVTr6JoBLBb62hN8bIqIEoTY+NvfbBCzqtgCaZSKteSVel5WiaoIag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yG4NaiIwJDVRa91GbUkjytPpX0qB5PkhDezBZEAmJxM=;
- b=iWV5rSI+YaCh9WHVyT1BMXoMPqiAbFD0mutn2RVgrl+Nhnzr9u+9CQWAKTS+aycslXVuGbmYTIBZKKK4MO8hyMxH2fq9NLlQu2MuGlQWp4EZqer50WXkRVuNDY24y/DDy070+212TBCPGaYEpkbVOarQr95uoP7zuwenqekyICEXzV2bEsEEZ2HIZX8EdjqtdolZermbNAl+9PyjMmXD/vUukjyV0JOCk5im4pR8a2yJIiyMQJNlU6u/EqDNScNDU/wcLRJz5E01PXsH7rCkTGWMucitRQRx9/Ln5dKsWb12i61ADJyvA/ReK6WwV/nme62GYu0dNXWXjSCO82ruMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yG4NaiIwJDVRa91GbUkjytPpX0qB5PkhDezBZEAmJxM=;
- b=ZlpEdXJZxSA+P7zmhq6IrKNTAw1XaAeKs74eS3ncErV8WBklXjMALn4mF7tsprdTMh4+l/T9AZh4wRY/Y3MlTl3ClvQoWtfNiwbRTxk0/qXG/Ae7jNmIKmiRxYhHLKXWgEJpop9N4PAdWJ9ZXNyE/XAj1238pulgBtjC67df52g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oppo.com;
-Received: from SI2PR02MB5148.apcprd02.prod.outlook.com (2603:1096:4:153::6) by
- KL1PR02MB6259.apcprd02.prod.outlook.com (2603:1096:820:dc::9) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6500.21; Mon, 12 Jun 2023 03:01:46 +0000
-Received: from SI2PR02MB5148.apcprd02.prod.outlook.com
- ([fe80::6297:13a6:41f1:e471]) by SI2PR02MB5148.apcprd02.prod.outlook.com
- ([fe80::6297:13a6:41f1:e471%6]) with mapi id 15.20.6500.020; Mon, 12 Jun 2023
- 03:01:46 +0000
+ id 1q8aF0-0002uR-R6 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Jun 2023 05:37:26 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+ MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+ Content-ID:Content-Description:In-Reply-To:References;
+ bh=4trhRw7xARg2lJaXKLjvoI562MgArwdRoegsyL2HFFQ=; b=x+c50jeIZW7m/QplkfoSsK/Cxa
+ ndP60B4TEdN+GlO6lpj3/whvj6a5ceUGKv002v4x1+ugVx8Gn5KX8WvLxeiALiaQC9RND5PB+tF1P
+ q5qVxfbfOwSvVUFc6Zfr0MQtM5l11P7Zjv9QCCFVYZS2BEpRW6s/xDA8KwHChdjbpHGcIMJUYZ/83
+ 7LVM23YmOY8IfKLq+aFYBL4algEC8Q/++Govj+iwco/61XBPKbLdix3SPCnYTh6EbHIKeUGZNnA04
+ nKE2vrOhasKhaJOUBAUvibhP9w6UxWtiysH5Dw8x2J/u+hpZ2NrYhyrpFU1xodjYswsC5nJYABSEm
+ H7y1inbQ==;
+Received: from
+ 2a02-8389-2341-5b80-8c8c-28f8-1274-e038.cable.dynamic.v6.surfer.at
+ ([2a02:8389:2341:5b80:8c8c:28f8:1274:e038] helo=localhost)
+ by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+ id 1q8aEr-002fGv-1w; Mon, 12 Jun 2023 05:37:14 +0000
+From: Christoph Hellwig <hch@lst.de>
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Mon, 12 Jun 2023 11:01:17 +0800
-Message-Id: <20230612030121.2393541-3-shengyong@oppo.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230612030121.2393541-1-shengyong@oppo.com>
-References: <20230612030121.2393541-1-shengyong@oppo.com>
-X-ClientProxiedBy: SI1PR02CA0029.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::20) To SI2PR02MB5148.apcprd02.prod.outlook.com
- (2603:1096:4:153::6)
+Date: Mon, 12 Jun 2023 07:37:11 +0200
+Message-Id: <20230612053711.585847-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR02MB5148:EE_|KL1PR02MB6259:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee3d659b-a27b-4415-8a83-08db6af15b5e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5x6AMKJbDVweatTajHefXK3uD/csCXbk23plknNb/SJsddH6Kb5Ki4D+gXmz895DCeYu75ZNNlSAFor1B1ngsZqs/hWeep+9XS4HeVAzr5d/clcPbwqAeVn9Qh44PnXfankRclPar/7++U4+dfIMjX6Froo/HRlFlb1dN5GPp8zs0vLgjwG3Cdg4cAh1e8agacpEPbhlgk6/UGaFFtKrHrtwAiHEJDT2RGoGxOEnEkjCyIcInUg0e/BNfbtKiagcnFDN6r1SFrCHzL+IFbuzILgnE+Dl+hebLxc+OmzrEnViQNVcSPgsDRP+W8Lrlra37mK7e+54uQyDzaw1VMziY3/WrTbYpibHnq71BYFpR0zSTl7XoE9hVGzwkbPGejPRqSYBjdu91V7CcaskLqOEYlltiKtEKeychCVDfHjVHAwiPwAzWbch2JFT7GeLqRzrP3xc+kUVj1nfj+vAHdqQNiaybvl7uW8hViTwynVy469+q2c0MDbOPnY1sORd5QSO7z4Suoxl8Q4+/IFj8dGkslNZKuoG580BPhubvNseyShkCTsXfZdLIZn0yeRTfnnF3J9JRIQoWBWe07jkR1XKbyDtmrLPBLw/++/dwLnaeoNe32iZ+Oyji2tK0aQ8/G8Y
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SI2PR02MB5148.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230028)(4636009)(346002)(39860400002)(366004)(376002)(396003)(136003)(451199021)(66476007)(66556008)(8936002)(5660300002)(8676002)(36756003)(66946007)(4326008)(478600001)(6666004)(41300700001)(52116002)(6486002)(316002)(38100700002)(38350700002)(6512007)(6506007)(1076003)(26005)(186003)(2906002)(107886003)(2616005)(86362001)(83380400001);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DUlp9yiDqy1Tn20fL2JCARYWAH6lmKYKBcdK6ePhMe0z+ctliDbCdj/o07yw?=
- =?us-ascii?Q?6AkB+TsymsXNi3OaQf7mNmqThVkXBsJRWUnBtRYpThg3G9AgajfyMyvJO1L0?=
- =?us-ascii?Q?QzTrv4NDkeo+aw7K7sz3psXxgl+DUDDralHUaLEE58ycsAiVwilrLg7cNX3x?=
- =?us-ascii?Q?FhiisZ/yez9q2JHGsKA0V56Cn2C9Otyyx5aWk4WFnkqYM6FzT33uBLb4+p5z?=
- =?us-ascii?Q?D0vMaQRVGgx32tXjgBMR/Xj0XZAqwDEWpF85zBBUPK3mTPHzBLBtIwj8E/ay?=
- =?us-ascii?Q?VUYIq0/g3sha3DxpqaOOTq7E8R1Nm1LLrUg+dac6QM8lHTwUbxtBsQmRruUO?=
- =?us-ascii?Q?kOOkhqCTkfnVbr6vEmAwGiO6nfk5gnFVobTHb8PLfV4IaeCVvRdoiW6jAfHb?=
- =?us-ascii?Q?/KBiIAnH9q6ItZC56+j9rKldn1lTxdxULI32G9jRFjis8XTUSLV3Yt4mPvHL?=
- =?us-ascii?Q?a4SQUqSJspihWtLxmEtBNAWCVwTlYBof1Tlu/GrX08S6vXFAe9uktEwd5wM4?=
- =?us-ascii?Q?ILyIDPExQ6IdtcVGOoIzhWq3ihjFUgqmfXs9NcsJl3uJgg7PgjXuqvxH8RBx?=
- =?us-ascii?Q?rz0WKTpu9cUIQytNI+iUw2X0Yd2oTdvbKswezI8DxNTwsyeEZrHyuznK27a4?=
- =?us-ascii?Q?mdr0Jsx74jQWKjpBkkLoAtkREDUTUvovKWaugnZoNgXeD91QadY2C4C3iV4u?=
- =?us-ascii?Q?ObJ2JqCzvwT1vqoKubi34hp8qRc/aU5re4aNo+0eVLm1Djm4LmHK8dvWCE99?=
- =?us-ascii?Q?yZK64cNs7UDwVgkCVvue94f2QK6PNha1oviFxmBnk9dg4LeLOabc9PljsuIB?=
- =?us-ascii?Q?1K2UcZu9A+YIcL0z9cHeEYrs/yAHZRKhGb/EZI1RDrt0cE5WGJ0C6VDb9sFe?=
- =?us-ascii?Q?3fCCJx31YZ1QUCKHmm+q6fniEpFgomccYa/LhGOCRfcbokgtT+SVEPeB+vsG?=
- =?us-ascii?Q?ktVVX47/f23femfBNMJa64FGenOG4cvajLVa0mDyUxKweWy2aXiugwdYS9qR?=
- =?us-ascii?Q?yB18Sa0evUpd3pTxRp2WLpQHNTisvxVcOaxPTf8rPhSUdjNqKfEsArOLI+1g?=
- =?us-ascii?Q?yyUWP61pQUwj3Sd5W1WjUtFM5CvL7QXvDTvo2arr0rAY1Tg5TdfDREplNpHQ?=
- =?us-ascii?Q?e8ncIWzTp1Y/CG9fI9UeZCKpExhpXD5T1tuYAQQ/XligAd6LaK2RENhCvSe+?=
- =?us-ascii?Q?+NV+on5TmvSiQJV8Ib9/Q2E/KpuWi9zE32N6X1ip+nqheWh05CrbhDo1NtBi?=
- =?us-ascii?Q?0GMnXieGO6o/EJ/Odl4F29T4jGYDmZK/xLo4/Z99lJQXNZZJG4XSeUx5sbo3?=
- =?us-ascii?Q?DOLcnIflq8eTJaH2peqj4WGo+FmbBANyMpxfdeJCAurxOcnpaCVVJb7aeKRs?=
- =?us-ascii?Q?Xs8Ifd7u4raNcPHNc3xavsEc6vQGvliWT0CDpqXP7bMD/tW0YjVEvcARbgKO?=
- =?us-ascii?Q?3GtFqqS3OrPzmQV7Qftfo0LXVs2hXTDsLHZ6L/BHaO9UpyLMj2+VsY4BochT?=
- =?us-ascii?Q?SzJ2BVwnN+85jgWrOc2j2hixTH3r+euYt2lXG+GJvGYT4lLsgcFSPVUzi2b3?=
- =?us-ascii?Q?r+qeANz6k5t2T7nqpBqBrEECGPcCVL6WKFEiYpYl?=
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee3d659b-a27b-4415-8a83-08db6af15b5e
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR02MB5148.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2023 03:01:46.0237 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rP1XJo4UT6OPywRqHJTJf8wg9uRpZGidI8pUhWGjaNnpInRbvTYP3WR+6XaNhrhU0sqKslHEL2mwUEc4L1OyGw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB6259
-X-Headers-End: 1q8Xon-0007se-BR
-Subject: [f2fs-dev] [PATCH v4 2/6] f2fs: cleanup MIN_INLINE_XATTR_SIZE
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Headers-End: 1q8aF0-0002uR-R6
+Subject: [f2fs-dev] [PATCH] f2fs: set FMODE_CAN_ODIRECT instead of a dummy
+ direct_IO method
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -140,47 +79,49 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Sheng Yong via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Sheng Yong <shengyong@oppo.com>
-Cc: ebiggers@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Signed-off-by: Sheng Yong <shengyong@oppo.com>
----
- fs/f2fs/super.c | 2 +-
- fs/f2fs/xattr.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Since commit a2ad63daa88b ("VFS: add FMODE_CAN_ODIRECT file flag") file
+systems can just set the FMODE_CAN_ODIRECT flag at open time instead of
+wiring up a dummy direct_IO method to indicate support for direct I/O.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 023981824d240..d7630f6dcbd62 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1361,7 +1361,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 			return -EINVAL;
- 		}
+Do that for f2fs so that noop_direct_IO can eventually be removed.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/f2fs/data.c | 1 -
+ fs/f2fs/file.c | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7165b1202f539c..5e90416f64daa1 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -4067,7 +4067,6 @@ const struct address_space_operations f2fs_dblock_aops = {
+ 	.migrate_folio	= filemap_migrate_folio,
+ 	.invalidate_folio = f2fs_invalidate_folio,
+ 	.release_folio	= f2fs_release_folio,
+-	.direct_IO	= noop_direct_IO,
+ 	.bmap		= f2fs_bmap,
+ 	.swap_activate  = f2fs_swap_activate,
+ 	.swap_deactivate = f2fs_swap_deactivate,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5ac53d2627d20d..ca809e366cb79f 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -547,6 +547,7 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+ 		return err;
  
--		min_size = sizeof(struct f2fs_xattr_header) / sizeof(__le32);
-+		min_size = MIN_INLINE_XATTR_SIZE;
- 		max_size = MAX_INLINE_XATTR_SIZE;
+ 	filp->f_mode |= FMODE_NOWAIT;
++	filp->f_mode |= FMODE_CAN_ODIRECT;
  
- 		if (F2FS_OPTION(sbi).inline_xattr_size < min_size ||
-diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
-index 416d652774a33..b1811c392e6f1 100644
---- a/fs/f2fs/xattr.h
-+++ b/fs/f2fs/xattr.h
-@@ -83,6 +83,7 @@ struct f2fs_xattr_entry {
- 				sizeof(struct f2fs_xattr_header) -	\
- 				sizeof(struct f2fs_xattr_entry))
- 
-+#define MIN_INLINE_XATTR_SIZE (sizeof(struct f2fs_xattr_header) / sizeof(__le32))
- #define MAX_INLINE_XATTR_SIZE						\
- 			(DEF_ADDRS_PER_INODE -				\
- 			F2FS_TOTAL_EXTRA_ATTR_SIZE / sizeof(__le32) -	\
+ 	return dquot_file_open(inode, filp);
+ }
 -- 
-2.40.1
+2.39.2
 
 
 
