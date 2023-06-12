@@ -4,74 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 036EEC88CB5
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 111AAC88CB7
 	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jun 2023 20:50:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q8oUf-00031H-MK;
-	Mon, 12 Jun 2023 20:50:30 +0000
+	id 1q8oUj-0000WH-0v;
+	Mon, 12 Jun 2023 20:50:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q8oUe-00031B-Qq
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q8oUf-0000Vz-9H
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jun 2023 20:50:29 +0000
+ Mon, 12 Jun 2023 20:50:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
+ d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
+ Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=3jx8GmBufojtkRqFuD7YDxhuK0Mx97Af6IkaVZ1tpms=; b=FKartlPcc4pfT6K8Vk7k2FZMi3
- UMkHwPGaHns17Nhr+sZ/Vv697a4iIkcbHZmv3tWWFRgfmMBtnSGgEwdaPB9lhNnSiHi3emYm1nD+0
- UxRcLCp6XnIbyH/ZkSgcNITZfBgg5pFwF43nCcFw9GyJDtYXHPBn19cOGI8R/inzbTxo=;
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=DeZML/HMtvz6NTCeYV7M4KBATdyK6jqWsdkdWwaQlmU=; b=c8T6Ps+acx5e1ADTKdKygnPbQ6
+ z53d7wGZ0dpOAbW0Y6GKxH83wUjwkGUJ8w5Zq5SATxT1pJgIXv7RiLMb09VX41OlMU/nBK/gFygdf
+ f3ieN+2RQ8/Uo/dspRYtVsAOtJA0Yy0BEd0Hty33edp3uUDAU4qfDz1/vv+1NaNBdjh4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
- Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
- References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=3jx8GmBufojtkRqFuD7YDxhuK0Mx97Af6IkaVZ1tpms=; b=K
- EMJWWr4lopc+D1Rr2lOnlst4pnp+yN25Auc8Cxj4TEsMPsI3fNmlRU6oT+sgP5B8csBXemmjtS0KZ
- OM15Q7NuDFVUk0kNj1YApgKre2XdNy57fPKC6+o1CneNzKM75nM5sJQa6JKz4l90KGytsgsEbTQhw
- hunNq5uQoS0BuPNc=;
+ ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+ Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=DeZML/HMtvz6NTCeYV7M4KBATdyK6jqWsdkdWwaQlmU=; b=SzVY2T9MxlXmVWDZWrE3cPXKcU
+ nUGHbsA3HERifrMZ/+Hj6eM9mCQP+Rfv0P/KLAryymEdcoOiVDFbT4Na3sh5WiShsbnP5++GxCWPB
+ X6AKfKqGxDfJJ6FZQ1cEShFkvKMwzgKeZqpsT6kdozXizTcuQ5xmLunkp3HZHqZAH4u4=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q8oUe-0007Uf-68 for linux-f2fs-devel@lists.sourceforge.net;
+ id 1q8oUe-0007Ug-97 for linux-f2fs-devel@lists.sourceforge.net;
  Mon, 12 Jun 2023 20:50:29 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id C4E736130B
+ by dfw.source.kernel.org (Postfix) with ESMTPS id DCD3E6221C
  for <linux-f2fs-devel@lists.sourceforge.net>;
  Mon, 12 Jun 2023 20:50:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2F284C433D2
- for <linux-f2fs-devel@lists.sourceforge.net>;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4A519C433EF;
  Mon, 12 Jun 2023 20:50:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1686603022;
- bh=SEx7dV9nAjW0dkHfEsrGOYs539oeXuu1EqPP20ae+84=;
- h=Subject:From:Date:To:From;
- b=LxiD6HTz9LFS7zRZuDceBtMNLZZTZ3Ga1RXD9T8GZ/kTdqluCe3Jh5aUT4B9N9UHO
- TBjUVy+Rq7VyboyGouXU5pxNtkLRkaO/ir37YMiT5BbjMzKzzgm9uSTcFciuJUsKsy
- mpt155tI7NHzQgyomPj63mGGxXbZUATF36K3JLSDyS5LdMhc971m4x7KB5vAvzmPNW
- DEGqOB0/b2F+gh5hmwWNAfK4ChCoTSpsin8r39pw3Q7CdDCg+XNWiI8CMcJYIfnePi
- koavQWUJSlyn7mwOIx7jmuFCmANW7TqMAuDndFYVuYJbk49b/pUR0sdbPxv+RcztIE
- WvkAy6KkF07GQ==
+ bh=J3OtHHSsn0yjMX1uffsIAnEqKvVl+vYQ2fSPIvHvSCs=;
+ h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+ b=mUKTUdzxXFJuqgCl9mF64LbBWb0+c3szdJ5CHE27/XfC2lj4iNRQVmJRGJnKMnlHN
+ zDratVzW4nhN3YxOfdlFbDup2LRGLUgrBS852fo40a/dFGoDv86agG6AkgeNct5qIz
+ OmcoY8tAa4OEf0SHxB+PehExcg5wo0KPb/UX6hwFHYNoHoGfdFCfwdUI9EEq1ohJtr
+ XK/qMqPpVBEEtHmUb7h9Kxms7e0lg5h2PY5fXI02PGKKAIbonBAHzockG/ZUwYdJYA
+ l61hEr3doTcKZVuSlcYXjffbxzYDuDusPERIMp+V//DP2v5D+O60fA+2EEyQKq+XOx
+ guwkf28Tdmp5Q==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 12F94E1CF31 for <linux-f2fs-devel@lists.sourceforge.net>;
- Mon, 12 Jun 2023 20:50:22 +0000 (UTC)
+ 27AA1E2A05F; Mon, 12 Jun 2023 20:50:22 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168660302199.10168.971770710606969396.git-patchwork-summary@kernel.org>
-Date: Mon, 12 Jun 2023 20:50:21 +0000
-To: linux-f2fs-devel@lists.sourceforge.net
-X-Headers-End: 1q8oUe-0007Uf-68
-Subject: [f2fs-dev] Patchwork summary for: f2fs
+Message-Id: <168660302215.10168.4138766982780443549.git-patchwork-notify@kernel.org>
+Date: Mon, 12 Jun 2023 20:50:22 +0000
+References: <20230606061901.1179970-1-chao@kernel.org>
+In-Reply-To: <20230606061901.1179970-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+X-Headers-End: 1q8oUe-0007Ug-97
+Subject: Re: [f2fs-dev] [PATCH] f2fs: check return value of freeze_super()
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,36 +82,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-The following patches were marked "accepted", because they were applied to
-jaegeuk/f2fs.git (dev):
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Patch: [f2fs-dev,v2] f2fs: fix to avoid mmap vs set_compress_option case
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=751813
-  Lore link: https://lore.kernel.org/r/20230529104709.2560779-1-chao@kernel.org
+On Tue,  6 Jun 2023 14:19:01 +0800 you wrote:
+> freeze_super() can fail, it needs to check its return value and do
+> error handling in f2fs_resize_fs().
+> 
+> Fixes: 04f0b2eaa3b3 ("f2fs: ioctl for removing a range from F2FS")
+> Fixes: b4b10061ef98 ("f2fs: refactor resize_fs to avoid meta updates in progress")
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> 
+> [...]
 
-Patch: [f2fs-dev] f2fs: check return value of freeze_super()
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=754275
-  Lore link: https://lore.kernel.org/r/20230606061901.1179970-1-chao@kernel.org
+Here is the summary with links:
+  - [f2fs-dev] f2fs: check return value of freeze_super()
+    https://git.kernel.org/jaegeuk/f2fs/c/e6fd55c1f4b6
 
-Patch: [f2fs-dev] f2fs: introduce F2FS_QUOTA_DEFAULT_FL for cleanup
-  Submitter: Chao Yu <chao@kernel.org>
-  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
-  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=754274
-  Lore link: https://lore.kernel.org/r/20230606061822.1179551-1-chao@kernel.org
-
-
-Total patches: 3
-
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
