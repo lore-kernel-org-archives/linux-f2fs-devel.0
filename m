@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 15710C7EE23
-	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jun 2023 03:02:20 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D02E0C77B7A
+	for <linux-f2fs-devel@archiver.kernel.org>; Mon, 12 Jun 2023 03:02:21 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q8Xow-0002bN-Ox;
-	Mon, 12 Jun 2023 03:02:19 +0000
+	id 1q8Xoy-0002TW-9y;
+	Mon, 12 Jun 2023 03:02:20 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <shengyong@oppo.com>) id 1q8Xou-0002bH-Ng
+ (envelope-from <shengyong@oppo.com>) id 1q8Xos-0002T4-F3
  for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jun 2023 03:02:17 +0000
+ Mon, 12 Jun 2023 03:02:15 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
  :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=GRcY7XIgJXp+hNexvFH7YBp7/dL6xWDdR/4H3MeDN3s=; b=DOUrLC8zabmrMenQcWmEM5ZJXW
- neVeyYGKXcE8Kyi2bSIix5FKGTVs8VeX4MEtssdqfudqDnIOhX5gTh7MfwTbt2D66ZOo2bgoU07ol
- uyE8mTqF14CUXGN8uX0re/Li70TLFy4E7nekzCLQgCPId5y3Ow2OVz5XyOoSuTIwFnoc=;
+ bh=K1K6vKgsEBr9XA5kkiRlKqIymaZ3HjuFwbvqRqXXQqE=; b=l+sDImieMcVP2PufKBr9nKroKl
+ RIahQ6pXUaVqFZXmXuYeMJzkTtPmHbWoJ8gaXg09P32GIY8UTtuslc04ncG1g8GL9YEjm+MwyUvOz
+ Vbnh1EpcpEhR+oVdmME9mORe5+xPlcqVQutNmhFDw94ugqyODRonwlX9+UZOu4Djvy5A=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Type:Content-Transfer-Encoding:References:
@@ -33,44 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=GRcY7XIgJXp+hNexvFH7YBp7/dL6xWDdR/4H3MeDN3s=; b=dqEc+l44lMpdKpT9TaeJnlW/Ih
- opS918funeu7k7Xz0xMzuQAVpnF2kbBXrTiuy0bfyb1VatxmiCMSyyyBOKuAm6cPXHFrOaZR1nGkZ
- XouowHm9zJNDwdyQWAyHh8Vdb8uPvVjNgJPkFrq0Dlbc8pN9QeHhiCOtXEIJ+OI3EwmM=;
+ bh=K1K6vKgsEBr9XA5kkiRlKqIymaZ3HjuFwbvqRqXXQqE=; b=eei0Xz8Wk3hlaZLWZ6Pte4LWB1
+ M2aaxcyzeGpXj+8uKAh5gE0u1FYOBE92kP4og+IREw46qhhKuUbh9pz7NgF1BaMqnzvta5+x1fxpf
+ WOyWA3+ZoOVuo41zqAKBdZwX04S/nMoEgsLdE8B34YrPtYe8DcUOAtOvCeG/24KLEfvs=;
 Received: from mail-tyzapc01on2054.outbound.protection.outlook.com
  ([40.107.117.54] helo=APC01-TYZ-obe.outbound.protection.outlook.com)
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q8Xou-000MRd-PW for linux-f2fs-devel@lists.sourceforge.net;
- Mon, 12 Jun 2023 03:02:17 +0000
+ id 1q8Xoo-000MRd-S0 for linux-f2fs-devel@lists.sourceforge.net;
+ Mon, 12 Jun 2023 03:02:14 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hOu2emvJb1VmRZHFZuGWicxfihOap46Yv/2xIJJH8e3tassfPvtMqZHYFrq7fnnRMEfnT+a2pnvPP67hLuyAhYIwF5upjLJ73oaP1deuuuZzlYNgyfNdb+KaxX/6V6vjM9ZTIBgWIdrFVYnhgZ1I61YqoL/rq9HhERVOqAqZwE2ZgSA54XCNVpSuEwYB9rIv6hCwq2oew9mhlwdFU+vqs/r4kDtLpWDSzf6OzTxI29sZE8MqkAJm49fiCwrL84gHdCjD6UmciTP6nmJgpYz7Wr6PlAhgRbkj76OYblvzHGbygKTuiFy6t/OHwYLVsqRVJcXfRsmPLEnblFSkgdASgg==
+ b=gefyTtI6qnFg4mkf8Cn5DbsVqG5gtPdulGlp02XsqhYcswjCBZRs89t/YPauvre5PEt9QW4a9c+FzlBMSooPhRpnKqDqcabw7eGNMsuY7EJjIb4Y/ziF6sCC5uVnMVEjVEi0x7Ux+8ZN+c1uDVnmQaNiAPMtmBFRw9EnVPG6a/hMfpbTku/FcM1bVoPxHjkXc4u+biKLzvMFevFZ8znzUPZ0VjYuKqk6CVM4h3aiJDfAWTrZ0Qhc8X0NLCBSq/9wIB8wz3ulRchfvPKJ7HY8ThOKr61N+9V5TZ7Xq+CjSd3e+NVeqe43v8g0YQF9MBQPpgE9R1wWlxqG+OjFluQcjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GRcY7XIgJXp+hNexvFH7YBp7/dL6xWDdR/4H3MeDN3s=;
- b=Br+VkzOS1kuiIPWRBPNl+EuHj2vNfxF8h3rzLkpyMHQDKUnzMrj+It2kBmaSI22klEI1WJ9nQmdn3anf6sFx5mjtf7tiURzvdd8OwQ1kiJVwNkMtBX8pyTsHcIFnoRABdRHDaXwbeHkGZth4VA+hwCqtywON+dyKlF6JCZUzVmUzX9w84mei72wZ1/TyhLWa7VodqNTn49dnmqVrDaTLfsG7bAwyfNeJLIbawaWpb7T58xxQvfcUMln7oRz0LbLK05WSC325rws74P50/Vx8ZfLMZjIYZ/g4r4XB+KVFWtIp07SBAj5t6vIGhdNE8H5kRHR4ADT7d/Tk1UdXOamP7w==
+ bh=K1K6vKgsEBr9XA5kkiRlKqIymaZ3HjuFwbvqRqXXQqE=;
+ b=f55LxVh15ouqzAbHz1IOQVvf7mnTS6J3tpTuaMwVCp7HGmJgCxQXmlJ7Bw2xm/rrkgMs6gINrWqLNpg9l3L1G94rhRt4uiESbQ9snbCHa3UEW4m+JeQ35DEi5gVa645QoYwch7laUEYjwzXS94+c1TzWOjt5EST02bYJ95/pt0wuFeFgxUaUrWrBhjgIFfiXm6PkCXhxepl6wiRGeBJIjGQcHT7PXN4RSjvQ6vCrC8Lx9ZgJ/nP6TwWLMeoYWPoUApo/PjpJPsQ1BhNwROXif7lCQgQpdTDuqEEsFhYb0nHNk+KaqEcXn0/o43JDAuRVzhYl4F+Gmg6Ta0hPOHKjxQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
  dkim=pass header.d=oppo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GRcY7XIgJXp+hNexvFH7YBp7/dL6xWDdR/4H3MeDN3s=;
- b=ONJ8Jjyz2B9HAE1oRh41D/aji9DLLUiMVbA3UXVdpLQlp4UhsaxdWTg5jrmDTRRCX64cx3XRNBrYRO2A2eIkiBl7bD+8jUO4O3dWTMEapPmNPHUXKfLWGIjhk9JTcJcFDPN7ZbXjl0neS+0im4uYZCMQiEDMWQC7bv1jgrhycRo=
+ bh=K1K6vKgsEBr9XA5kkiRlKqIymaZ3HjuFwbvqRqXXQqE=;
+ b=u9BdKaewtxNIrKB9JOt2ftXsBKq5qTztTk6EdohVMn9ztNYZix00psdCpf5xQRUqM6syFigK4dWltIYG1eOBhAoD1A3omoKZGFuD+xJFqflAHBxaaqZ1VQCCc3eLDTvzZ6Gq7U9Rs+DHfVEzMMsWDSD3ktIBn1ITT3rcUtOSQcg=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oppo.com;
 Received: from SI2PR02MB5148.apcprd02.prod.outlook.com (2603:1096:4:153::6) by
  KL1PR02MB6259.apcprd02.prod.outlook.com (2603:1096:820:dc::9) with
  Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6500.21; Mon, 12 Jun 2023 03:01:49 +0000
+ 15.20.6500.21; Mon, 12 Jun 2023 03:01:47 +0000
 Received: from SI2PR02MB5148.apcprd02.prod.outlook.com
  ([fe80::6297:13a6:41f1:e471]) by SI2PR02MB5148.apcprd02.prod.outlook.com
  ([fe80::6297:13a6:41f1:e471%6]) with mapi id 15.20.6500.020; Mon, 12 Jun 2023
- 03:01:49 +0000
+ 03:01:47 +0000
 To: jaegeuk@kernel.org,
 	chao@kernel.org
-Date: Mon, 12 Jun 2023 11:01:20 +0800
-Message-Id: <20230612030121.2393541-6-shengyong@oppo.com>
+Date: Mon, 12 Jun 2023 11:01:18 +0800
+Message-Id: <20230612030121.2393541-4-shengyong@oppo.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230612030121.2393541-1-shengyong@oppo.com>
 References: <20230612030121.2393541-1-shengyong@oppo.com>
@@ -80,55 +80,56 @@ X-ClientProxiedBy: SI1PR02CA0029.apcprd02.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SI2PR02MB5148:EE_|KL1PR02MB6259:EE_
-X-MS-Office365-Filtering-Correlation-Id: bd2b2fd8-2927-4d84-0f06-08db6af15d21
+X-MS-Office365-Filtering-Correlation-Id: 13e7c429-77f1-4b3a-143d-08db6af15c16
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: boPyc20m893HVloBn6RuZSNcS+lu9RPashWxU6mu11ym/OUtiWAshaeh9CZGkm8aghw2tMUNqQtuo2yeAZbI8dhzITQoCDjrPHJ69SYyxaGAMvYlKg6ZpQxvSUOP9X2Y5JOMeRe3c+tk4N3/JqYJKtWWuzLsXTSDSxsixZq6GaD/zevDFBWwAk3qn1GL8aPkxTZ5j+Z7/raz2euqGVEV67lDdm3MZ+ieSdPvfRyCMa2vD/hSMUp5xsA0Tgfv9CcrN3+4qnyKNf0lSQtPh8kLvBlO9zfYxh9BZCbcKUJO9YYKe7DM26W9Wee5PsUv6eneoRcSsOZhEt/+63OYjj2iQNC4w99b+1L4X2Sl93fTtQINwavW7P7QVUlfn98UT/X8YLPNpa3sUatwP5CMdCixi4fuTWHPD8G1NCYspw6ITrBnXe7MuZxaJbH2c/ShpQJ1BVQiAYZS4yXsL1YJ22GdtLW0X6bfa/8nQFCv5CugT0vQIt2ToaugVhDSZPtcb0RQslQMBREgJdJIu4jS8Fj9Nj02riNIyPuXm5NHo+VDfZd454k7qe0pq07UE1DVoAF+KeOgsoJ9XhTibsunIAHQ3uwf70ccvBdxYuDwmIUF09AWXPk6NO9N1QuqiE9ktKV9
+X-Microsoft-Antispam-Message-Info: 7I4/FA2hFiQuVVAz9R1yGywr3BSyyNCCeOGFWK/DDCND8Q3TgWMzzdJ77ZYZjCp28Kg9CiNAHOfMf4zUSEfAyW5sJ9qVCAnqVUQ37qiQBgl7Zc2FAchop24Wq+sumgsuO1l+/gkuFCOiwvWqiRBh5yI8rN2XKpx1o3d8inEBJ1my2Meh/uS8fkDt7d/hWcrlgVJfQSkOmew251XggV+Z/5DV6i0UVUSvh6EuKPfXR+1yQnVhvVsppP1Q2WH4qw6k7dbpBmRMZsCLsY1Ecj5IBtZVsuG789R577hgApLdvGisD0eWhmpDwAjWWsRSQjJ7d0Jk3O3F6nNquTGcsddUny2fqdIgHOM5TAk+k2IKKvwD/G6QfWAbYIFhAp8A2HLwUa5oRj2Q5mu3RXAI0oxwaehiB7d+8jYI1ogt7A1mg1SkzXD2r9d7FJgZh7tiAn40skelpacIkDA13/f307ML+pBL7MBY6OfBqMCJEWC6nMVj8pjzgn96N0BdL+S2QlyVMMSgNPe0tPhq8FlDj/Ir2AEUvDflFp1H/FGvyj4RxroW13q7XqhSiZvdWICxbl8qGipWpU5ircVxqBV6dXsanIoHKk9MO9vokY66mphoOfPYVC5PkKNGt2xjmuxiGnAV
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SI2PR02MB5148.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230028)(4636009)(346002)(39860400002)(366004)(376002)(396003)(136003)(451199021)(66476007)(66556008)(8936002)(5660300002)(8676002)(36756003)(66946007)(4326008)(478600001)(6666004)(41300700001)(52116002)(6486002)(316002)(38100700002)(38350700002)(6512007)(6506007)(1076003)(26005)(186003)(2906002)(107886003)(2616005)(86362001)(83380400001);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nwvYdKHyqrLbbGj+z5WqeTCaJIkdZ3MkDXlE3EoiXhZrU26gbGq3KepjH+fU?=
- =?us-ascii?Q?mNRlERRaqxFZCgDGAEvJTbgXcr6DmC0CnCEiPC3YzmN8yVYRhIPzd7RuFZbb?=
- =?us-ascii?Q?IVy61WHorF6XhYVBy/gZI8SMlyThP1zgAEmM9hsvMvG4xfrh+GvUtWehKNsj?=
- =?us-ascii?Q?IPSh0yQvyvQ4a9qqjxpqi93brIVzcmTL9PFEa6qvQctsJJ+vY9BOLSNdB+ed?=
- =?us-ascii?Q?YuESnWO0vw+uNA33i04EZhmzqadk7O1QqkAJPS/KsrIWUvd2qM51/sLHZbgx?=
- =?us-ascii?Q?HFQIp/W79PmmxhiXUDEr3COv0EeESNtVb3CYVdrXAWkXnhs78sc9AMB3Gm6E?=
- =?us-ascii?Q?X3xyRg0Mhj+/t1wbUnOJIHh8XGc3FsdDpmmNjvPrTj+Mnk4OsC13HPST6TI0?=
- =?us-ascii?Q?3YSzZOqzDpUeiCBHqDdhD/2LRSWAj9H97prKPYixXtFSwbXC+cUAx7PaDPwS?=
- =?us-ascii?Q?x6pHdTrLxwrgPV8YABOaFuyQRKrWAowOuoVK1XLiEagng7K7bckQJI4Zjl1I?=
- =?us-ascii?Q?M/51R0Z7KbauVFvDMbPjdzt3Teq0/Gi31Ixsyuh8mG3Y0vfIJGAGIpx6i6NI?=
- =?us-ascii?Q?aKMrE4Q9clFNpHA+YlkHExMuk7q0tamRwW9B2WcOYabezrzoeqQfIdE2pvym?=
- =?us-ascii?Q?g9khs/Zg0E+7AtWH3zu4mS/tP36VhqQSTuDsXUQ7jBBAr7Y56VkTQEnaABXb?=
- =?us-ascii?Q?n59ujTGstZfj54Etgnc+1RCAOXaaB/GxidVq41SJ6Ho6y8guJ98sQkuh2xVV?=
- =?us-ascii?Q?FhhvCVs9uKCDgmAl8SF+tFH9Q+iUoWSgo59+A2OJNs26H6utGgfcniWUDcK7?=
- =?us-ascii?Q?yK7ZTaE23wTUnlRTjwdGCm93qxJgDzWD2owmLMSanMGaGAhejnPw+B1NmOaR?=
- =?us-ascii?Q?PxJIWRO2GBUN+vSVzOhRGwKUyO3dfdzvmBm+Lob5Kr2VnfBAwMs0I/FoVtXi?=
- =?us-ascii?Q?4WKf5uwADE3SsLHTpRSve2zz4s1tuCptKx12GJj32SijT3j+ldqZSzJTprEZ?=
- =?us-ascii?Q?7dGiHL418yuDLKaITkFwN0DFnmnUgrj4Ups2a4acw7FaMBPd1ZWj4z2Gm65h?=
- =?us-ascii?Q?2hLiDtAWMkKme/ciR+a5IGVU9+DwiM5k5eKK0aIQkDLoSCbGZ5OBWYQ2KGPy?=
- =?us-ascii?Q?0OshsVQyOuDg3YRpLuRo2+oQKxMvcJsR7Q2Rf7hyIhf0+1uRMTLI4Wn9XYq+?=
- =?us-ascii?Q?CzTFyq+R91W2AzxHCj9QfU0A6PscwcCCTQUFhDjdvaLjL/R0Jh0qJanfJIxO?=
- =?us-ascii?Q?W+6bj6tzXWh3d/9niDM1SqML0bCUoengkqer4aIffyW+XikeJFfyfv/1YbiN?=
- =?us-ascii?Q?LWvA0oFBqKqOsaWN/fftWs0/+j0Jf4JOL1MTN3tO2vNzjPeaL6+/N4LnZqfT?=
- =?us-ascii?Q?Y5pk8Mdg6yeJgP/Dt2OYfB7ECAlxsA61Bc/opiX39hAZ2QNM2crgRSbAUhQh?=
- =?us-ascii?Q?2wyz587wr1lhuw9ijSj0s8T3sEKkj+fu74KK7vJSWYsOlh7E+XzePPJCOrBc?=
- =?us-ascii?Q?YE0NOTtaBSwEjCSEf/3K0QfMszSluU0/19eCdFVl2df97K2VPuD/ZufXDfd7?=
- =?us-ascii?Q?vrstF7WmKoQuYh33wnOK4KydELo58Ls7MtNDzViC?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1oKzPXMpSFmRfjZLMxqYewpPNuxV4U5B/mePqkADj40sDpDTYWgkQ8xtfqOA?=
+ =?us-ascii?Q?9xS0RN7c3KH4fjHxlTjljPJ+fZgc2t5xKIe4kXeAcXIlbExYSL2Yp5Dw/U8Z?=
+ =?us-ascii?Q?M8FUYxOm4qOVYLstU356bWQSMerWEyeMhyaKjnyOD4TYi1sg4bZmKNwm20AX?=
+ =?us-ascii?Q?3ycUSi9WsqAmgqPqAKj061eGbeojguWNnnjM00mZQT8jHWip5+1bkgiq7oVD?=
+ =?us-ascii?Q?5SHquULCaTeu8+CEFZicXGZdhS4uhQIKVD7hAth0qpAJSmMwlJs0tKm4kIUc?=
+ =?us-ascii?Q?JKLY8YKOKYsdKp+XPGoBBpGu1QFXpuZAceG2lE43JQllX+JEU0Ai8mQg2q4r?=
+ =?us-ascii?Q?8iuRn42NqL37Wj+svZ99MumzizLBL7zXJwQFGHocvuK6cO9v6/M0cffnHYHE?=
+ =?us-ascii?Q?Sz8XLMoDJEmIkw91pw3Wru2WhvNDxKihKZXUHRiCSoIXgj/SZRt36fujHmG2?=
+ =?us-ascii?Q?AWXfpioux9CnDUJ16xJ1HFQjByezHHjcT/+iVtYqbpx57Drnwvb5kc/hrSux?=
+ =?us-ascii?Q?PgNSpx8Zs2GsH/rDf/9wb0hmptAOGvs+uyeF/7tJBUroyyBzFILeCiRHmd/2?=
+ =?us-ascii?Q?DyiQi39po/p31Joe4EFJnSlfzAy6cCZ5NhVgysRL//DNjXsgEBw2Yw5S9KnG?=
+ =?us-ascii?Q?+2lQyLMIITo9sxzgr8Pkiur/7vCAsJPI34v2TmM//ws1t4z3qkmv/6Ymjsi0?=
+ =?us-ascii?Q?QtOqjfHWe/O+DjocNAvO0NeAmkMCuVsRxb3UR6WRI+B6Ug778KTcXoGGSvBS?=
+ =?us-ascii?Q?cZTY9AlnawowSB1RSChOhpxwG/xDToA6p1bn4Tp7Iq3t3qP+8AltX/d/+Gng?=
+ =?us-ascii?Q?Kp2lcYC/lX7RAcKOO0I8vcRs+XKcyLe2dPxME7mmidT/Td/B7wc6st5NKDN5?=
+ =?us-ascii?Q?wfT87Rekg07lD060zRtC3yK9ooUpn6GnIbYSdmq9z7ONDFvhsdf922YCFMzo?=
+ =?us-ascii?Q?UQJyqvzZwdmlciuiqa/GoaXTyRbalKbenCJXyeFLzvBSsVcC8wbmI3HmsENr?=
+ =?us-ascii?Q?zvU6eL9BMDJwWPvsAFfTBmvzOGvKY17f7TFPr/8aMv7LZu6rJCWHSNs2IUll?=
+ =?us-ascii?Q?RDLeFehGWdekET62FM/Ehjni+G7uLw8mYac49pNwDHtFISATvEq8RzyayPl4?=
+ =?us-ascii?Q?vFuK0Hr/ExaDdWalTJEt4jGFbTzFyqpeJ5ejR2cdIagOas3WqgMUO7SJj5IF?=
+ =?us-ascii?Q?YaFkteTT6RQ1aoSUK4PcSy8Nx5EDv7kYTw/LkFicxhlcAdbOYaUAHx/ft+cz?=
+ =?us-ascii?Q?6PlcnkF0bp1+fEgN/rabONFEovxpQDxux0FT1kKDhGIlXn10Hv42/+bpzr7i?=
+ =?us-ascii?Q?FZ8C+CcsE4Z7nPrqriGqab9esiCTLMr67PDlWQWiCceiJlFlbgfFac2TvpEn?=
+ =?us-ascii?Q?5kYt9r6CJpc0GBR2cVEVsvfwmG8al5s0J8JIUA0mhviPLTgYopHKdM5ViZmb?=
+ =?us-ascii?Q?1bd3aF9U0nYkMmNnfas31rILU3IMzmOtVvqcehO9C+jAHy8Lz/pZSyQeUhMh?=
+ =?us-ascii?Q?E9kwuSI01NmjwGQAus8HovbtK6IYKwhX0FBQ27KhE31aVOxuSd+JwXD/vFdj?=
+ =?us-ascii?Q?8AdmaEBs+ZfGzR2KJWJlNzMgxow8JWAnhaUlN+Sv?=
 X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd2b2fd8-2927-4d84-0f06-08db6af15d21
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13e7c429-77f1-4b3a-143d-08db6af15c16
 X-MS-Exchange-CrossTenant-AuthSource: SI2PR02MB5148.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2023 03:01:48.6708 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2023 03:01:46.9602 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CF8GmtYK18E6ACHGVN8x/nAmpIthzaFz6iXgt5VIimcXbSMpRxM6DJre4zS+30uJpjDAHUlueuINHYqOk2m69w==
+X-MS-Exchange-CrossTenant-UserPrincipalName: mgWw5wjkY7sxwyorLErmFc6VP/7e97rVTxegs4d31L6M0exywRVwEEJ8zlCNNzFDcIVG3jrftUgQAXZDK4iFKg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB6259
-X-Headers-End: 1q8Xou-000MRd-PW
-Subject: [f2fs-dev] [PATCH v4 5/6] f2fs: add f2fs_ioc_[get|set]_extra_attr
+X-Headers-End: 1q8Xoo-000MRd-S0
+Subject: [f2fs-dev] [PATCH v4 3/6] f2fs: add helper to get inode chksum from
+ inode page
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -148,291 +149,57 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-This patch introduces two ioctls:
-  * f2fs_ioc_get_extra_attr
-  * f2fs_ioc_set_extra_attr
-to get or modify values in f2fs_inode's extra attribute area.
-
-The argument of these two ioctls is `struct f2fs_extra_attr', which has
-three members:
-  * field: indicates which field in extra attribute area is handled
-  * attr: value or userspace pointer
-  * attr_size: size of `attr'
-
-The `field' member could help extend functionality of these two ioctls
-without modify or add new interfaces, if more fields are added into
-extra attributes ares in the feture.
-
 Signed-off-by: Sheng Yong <shengyong@oppo.com>
 ---
- fs/f2fs/file.c            | 205 ++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/f2fs.h |  25 +++++
- 2 files changed, 230 insertions(+)
+ fs/f2fs/f2fs.h  |  2 ++
+ fs/f2fs/inode.c | 21 +++++++++++++++++++++
+ 2 files changed, 23 insertions(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index f8aa842b5d233..39d04f8f0bb6b 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4179,6 +4179,207 @@ static int f2fs_ioc_compress_file(struct file *filp)
- 	return ret;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1b17bbe7e8656..a30c81ac7299d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3478,6 +3478,8 @@ int f2fs_pin_file_control(struct inode *inode, bool inc);
+ void f2fs_set_inode_flags(struct inode *inode);
+ bool f2fs_inode_chksum_verify(struct f2fs_sb_info *sbi, struct page *page);
+ void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct page *page);
++int f2fs_inode_chksum_get(struct f2fs_sb_info *sbi, struct inode *inode,
++			  u32 *chksum);
+ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino);
+ struct inode *f2fs_iget_retry(struct super_block *sb, unsigned long ino);
+ int f2fs_try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 1e49009831c12..098d1ee72bfcb 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -204,6 +204,27 @@ void f2fs_inode_chksum_set(struct f2fs_sb_info *sbi, struct page *page)
+ 	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, page));
  }
  
-+static bool extra_attr_fits_in_inode(struct inode *inode, int field)
++int f2fs_inode_chksum_get(struct f2fs_sb_info *sbi,
++			  struct inode *inode, u32 *chksum)
 +{
++	struct page *ipage;
 +	struct f2fs_inode_info *fi = F2FS_I(inode);
 +	struct f2fs_inode *ri;
 +
-+	switch (field) {
-+	case F2FS_EXTRA_ATTR_TOTAL_SIZE:
-+	case F2FS_EXTRA_ATTR_ISIZE:
-+	case F2FS_EXTRA_ATTR_INLINE_XATTR_SIZE:
-+		return true;
-+	case F2FS_EXTRA_ATTR_PROJID:
-+		if (!F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_projid))
-+			return false;
-+		return true;
-+	case F2FS_EXTRA_ATTR_INODE_CHKSUM:
-+		if (!F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_inode_checksum))
-+			return false;
-+		return true;
-+	case F2FS_EXTRA_ATTR_CRTIME:
-+		if (!F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_crtime))
-+			return false;
-+		return true;
-+	case F2FS_EXTRA_ATTR_COMPR_BLOCKS:
-+	case F2FS_EXTRA_ATTR_COMPR_OPTION:
-+		if (!F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_compr_blocks))
-+			return false;
-+		return true;
-+	default:
-+		BUG_ON(1);
-+		return false;
-+	}
-+}
-+
-+static int f2fs_ioc_get_extra_attr(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_extra_attr attr;
-+	u32 chksum;
-+	int ret = 0;
-+
-+	if (!f2fs_has_extra_attr(inode))
++	if (!f2fs_sb_has_inode_chksum(sbi) ||
++	    !f2fs_has_extra_attr(inode) ||
++	    !F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_inode_checksum))
 +		return -EOPNOTSUPP;
 +
-+	if (copy_from_user(&attr, (void __user *)arg, sizeof(attr)))
-+		return -EFAULT;
++	ipage = f2fs_get_node_page(sbi, inode->i_ino);
++	if (IS_ERR(ipage))
++		return PTR_ERR(ipage);
 +
-+	if (attr.field >= F2FS_EXTRA_ATTR_MAX)
-+		return -EINVAL;
-+
-+	if (!extra_attr_fits_in_inode(inode, attr.field))
-+		return -EOPNOTSUPP;
-+
-+	switch (attr.field) {
-+	case F2FS_EXTRA_ATTR_TOTAL_SIZE:
-+		attr.attr = F2FS_TOTAL_EXTRA_ATTR_SIZE;
-+		break;
-+	case F2FS_EXTRA_ATTR_ISIZE:
-+		attr.attr = fi->i_extra_isize;
-+		break;
-+	case F2FS_EXTRA_ATTR_INLINE_XATTR_SIZE:
-+		if (!f2fs_has_inline_xattr(inode))
-+			return -EOPNOTSUPP;
-+		attr.attr = get_inline_xattr_addrs(inode);
-+		break;
-+	case F2FS_EXTRA_ATTR_PROJID:
-+		if (!f2fs_sb_has_project_quota(F2FS_I_SB(inode)))
-+			return -EOPNOTSUPP;
-+		attr.attr = from_kprojid(&init_user_ns, fi->i_projid);
-+		break;
-+	case F2FS_EXTRA_ATTR_INODE_CHKSUM:
-+		ret = f2fs_inode_chksum_get(sbi, inode, &chksum);
-+		if (ret)
-+			return ret;
-+		attr.attr = chksum;
-+		break;
-+	case F2FS_EXTRA_ATTR_CRTIME:
-+		if (!f2fs_sb_has_inode_crtime(sbi))
-+			return -EOPNOTSUPP;
-+		if (attr.attr_size == sizeof(struct timespec64)) {
-+			if (put_timespec64(&fi->i_crtime,
-+					(void __user *)(uintptr_t)attr.attr))
-+				return -EFAULT;
-+		} else if (attr.attr_size == sizeof(struct old_timespec32)) {
-+			if (put_old_timespec32(&fi->i_crtime,
-+					(void __user *)(uintptr_t)attr.attr))
-+				return -EFAULT;
-+		} else {
-+			return -EINVAL;
-+		}
-+		break;
-+	case F2FS_EXTRA_ATTR_COMPR_BLOCKS:
-+		if (attr.attr_size != sizeof(__u64))
-+			return -EINVAL;
-+		ret = f2fs_get_compress_blocks(inode, &attr.attr);
-+		break;
-+	case F2FS_EXTRA_ATTR_COMPR_OPTION:
-+		ret = f2fs_ioc_get_compress_option(filp, attr.attr);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	if (copy_to_user((void __user *)arg, &attr, sizeof(attr)))
-+		return -EFAULT;
-+
++	*chksum = f2fs_inode_chksum(sbi, ipage);
++	f2fs_put_page(ipage, true);
 +	return 0;
 +}
 +
-+static int f2fs_ioc_set_extra_attr(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_extra_attr attr;
-+	struct page *ipage;
-+	void *inline_addr;
-+	int ret;
-+
-+	if (!f2fs_has_extra_attr(inode))
-+		return -EOPNOTSUPP;
-+
-+	if (copy_from_user(&attr, (void __user *)arg, sizeof(attr)))
-+		return -EFAULT;
-+
-+	if (attr.field >= F2FS_EXTRA_ATTR_MAX)
-+		return -EINVAL;
-+
-+	if (!extra_attr_fits_in_inode(inode, attr.field))
-+		return -EOPNOTSUPP;
-+
-+	switch (attr.field) {
-+	case F2FS_EXTRA_ATTR_TOTAL_SIZE:
-+	case F2FS_EXTRA_ATTR_ISIZE:
-+	case F2FS_EXTRA_ATTR_PROJID:
-+	case F2FS_EXTRA_ATTR_INODE_CHKSUM:
-+	case F2FS_EXTRA_ATTR_CRTIME:
-+	case F2FS_EXTRA_ATTR_COMPR_BLOCKS:
-+		/* read only attribtues */
-+		return -EOPNOTSUPP;
-+	case F2FS_EXTRA_ATTR_INLINE_XATTR_SIZE:
-+		if (!f2fs_sb_has_flexible_inline_xattr(sbi) ||
-+		    !f2fs_has_inline_xattr(inode))
-+			return -EOPNOTSUPP;
-+		if (attr.attr < MIN_INLINE_XATTR_SIZE ||
-+		    attr.attr > MAX_INLINE_XATTR_SIZE)
-+			return -EINVAL;
-+		inode_lock(inode);
-+		f2fs_lock_op(sbi);
-+		f2fs_down_write(&F2FS_I(inode)->i_xattr_sem);
-+		if (i_size_read(inode) || F2FS_I(inode)->i_xattr_nid) {
-+			/*
-+			 * it is not allowed to set this field if the inode
-+			 * has data or xattr node
-+			 */
-+			ret = -EFBIG;
-+			goto xattr_out_unlock;
-+		}
-+		ipage = f2fs_get_node_page(sbi, inode->i_ino);
-+		if (IS_ERR(ipage)) {
-+			ret = PTR_ERR(ipage);
-+			goto xattr_out_unlock;
-+		}
-+		inline_addr = inline_xattr_addr(inode, ipage);
-+		if (!IS_XATTR_LAST_ENTRY(XATTR_FIRST_ENTRY(inline_addr))) {
-+			ret = -EFBIG;
-+		} else {
-+			struct f2fs_xattr_header *hdr;
-+			struct f2fs_xattr_entry *ent;
-+
-+			F2FS_I(inode)->i_inline_xattr_size = (int)attr.attr;
-+			inline_addr = inline_xattr_addr(inode, ipage);
-+			hdr = XATTR_HDR(inline_addr);
-+			ent = XATTR_FIRST_ENTRY(inline_addr);
-+			hdr->h_magic = cpu_to_le32(F2FS_XATTR_MAGIC);
-+			hdr->h_refcount = cpu_to_le32(1);
-+			memset(ent, 0, attr.attr - sizeof(*hdr));
-+			set_page_dirty(ipage);
-+			ret = 0;
-+		}
-+		f2fs_put_page(ipage, 1);
-+xattr_out_unlock:
-+		f2fs_up_write(&F2FS_I(inode)->i_xattr_sem);
-+		f2fs_unlock_op(sbi);
-+		inode_unlock(inode);
-+		if (!ret)
-+			f2fs_balance_fs(sbi, true);
-+		break;
-+	case F2FS_EXTRA_ATTR_COMPR_OPTION:
-+		ret = f2fs_ioc_set_compress_option(filp, attr.attr);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
- static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ static bool sanity_check_compress_inode(struct inode *inode,
+ 			struct f2fs_inode *ri)
  {
- 	switch (cmd) {
-@@ -4265,6 +4466,10 @@ static long __f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_decompress_file(filp);
- 	case F2FS_IOC_COMPRESS_FILE:
- 		return f2fs_ioc_compress_file(filp);
-+	case F2FS_IOC_GET_EXTRA_ATTR:
-+		return f2fs_ioc_get_extra_attr(filp, arg);
-+	case F2FS_IOC_SET_EXTRA_ATTR:
-+		return f2fs_ioc_set_extra_attr(filp, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/include/uapi/linux/f2fs.h b/include/uapi/linux/f2fs.h
-index 955d440be1046..2b53e90421bfc 100644
---- a/include/uapi/linux/f2fs.h
-+++ b/include/uapi/linux/f2fs.h
-@@ -43,6 +43,10 @@
- #define F2FS_IOC_DECOMPRESS_FILE	_IO(F2FS_IOCTL_MAGIC, 23)
- #define F2FS_IOC_COMPRESS_FILE		_IO(F2FS_IOCTL_MAGIC, 24)
- #define F2FS_IOC_START_ATOMIC_REPLACE	_IO(F2FS_IOCTL_MAGIC, 25)
-+#define F2FS_IOC_GET_EXTRA_ATTR		_IOR(F2FS_IOCTL_MAGIC, 26,	\
-+						struct f2fs_extra_attr)
-+#define F2FS_IOC_SET_EXTRA_ATTR		_IOW(F2FS_IOCTL_MAGIC, 27,	\
-+						struct f2fs_extra_attr)
- 
- /*
-  * should be same as XFS_IOC_GOINGDOWN.
-@@ -96,4 +100,25 @@ struct f2fs_comp_option {
- 	__u8 log_cluster_size;
- };
- 
-+enum {
-+	F2FS_EXTRA_ATTR_TOTAL_SIZE,		/* ro, size of extra attr area */
-+	F2FS_EXTRA_ATTR_ISIZE,			/* ro, i_extra_isize */
-+	F2FS_EXTRA_ATTR_INLINE_XATTR_SIZE,	/* rw, i_inline_xattr_size */
-+	F2FS_EXTRA_ATTR_PROJID,			/* ro, i_projid */
-+	F2FS_EXTRA_ATTR_INODE_CHKSUM,		/* ro, i_inode_chksum */
-+	F2FS_EXTRA_ATTR_CRTIME,			/* ro, i_crtime, i_crtime_nsec */
-+	F2FS_EXTRA_ATTR_COMPR_BLOCKS,		/* ro, i_compr_blocks */
-+	F2FS_EXTRA_ATTR_COMPR_OPTION,		/* rw, i_compress_algorithm,
-+						 *     i_log_cluster_size
-+						 */
-+	F2FS_EXTRA_ATTR_MAX,
-+};
-+
-+struct f2fs_extra_attr {
-+	__u8 field;		/* F2FS_EXTRA_ATTR_* */
-+	__u8 rsvd1;
-+	__u16 attr_size;	/* size of @attr */
-+	__u32 rsvd2;
-+	__u64 attr;		/* attr value or pointer */
-+};
- #endif /* _UAPI_LINUX_F2FS_H */
 -- 
 2.40.1
 
