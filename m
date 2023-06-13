@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 91B2CC7EE2F
-	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Jun 2023 01:52:24 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id A0A9BC7EE2F
+	for <linux-f2fs-devel@archiver.kernel.org>; Tue, 13 Jun 2023 01:53:36 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q8tCp-0001xw-AK;
-	Tue, 13 Jun 2023 01:52:24 +0000
+	id 1q8tDx-0007ds-4K;
+	Tue, 13 Jun 2023 01:53:33 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1q8tCn-0001xp-Vn
+ (envelope-from <chao@kernel.org>) id 1q8tDw-0007dm-JG
  for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Jun 2023 01:52:22 +0000
+ Tue, 13 Jun 2023 01:53:32 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
  From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EKQf9AUcQkPpeKpp8S2CTMWBdQam6LzX/JCZk9FnDZk=; b=De5xLv8UiUfU4d0aJxuXmMhqpl
- 8gkwOxepuZjmTi21DWl2ACfBolTWUQGl8SMO3+icT95x4HyvNeoNP/SOAXcZU8+4RoEQbTXMdpx9N
- xg5J38mee/mml1fqJk5Y0aveq6CXlOmH/Pa0xm6OxjqEx4s/25AaXACVJRt58newGep0=;
+ bh=A3CAidy8NF6E7NzGL88WpNVT7OSy6tOF8kZXLPk7UQ0=; b=jukqrXiF2zyqTbrWyzCnlaooGx
+ 5NtA+t4mC3PAtELBcrBcF8QHzpPMGlj8N46Kyx0nc2IMdCV/ZdASTkJ1eWCksuY3DGJgzjJLBWrTp
+ mE4P2A1FKBizPYra+YT4ShfXZ9s5Gq2yYSrOZ0VVGRoBJfLAZ6kr2na3aqBgOha6IpEc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
@@ -33,45 +33,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=EKQf9AUcQkPpeKpp8S2CTMWBdQam6LzX/JCZk9FnDZk=; b=S83PdmiMfAVlX7j8cRH7gLybV/
- olKuCv/hojHLIIPLiGXdZiEBJT/37FYndrXuHq7Ds0jiVbLIAAwp4D0yK9djTa4X6vEAQ9WvTLOTt
- 1BE6Le/u1hXRbC7cVlvzW9kiu31itNdCET+0GsO9t98yxCrzS0VLOyTK3EjitaE26ym8=;
+ bh=A3CAidy8NF6E7NzGL88WpNVT7OSy6tOF8kZXLPk7UQ0=; b=DSMaE76r5uMQS2rPC1k5+3wblk
+ /FOVzxUc5RRhuyDJRALks3KNzv1n6XvvlTZVsZv9izYOIh/Wp+1lMM1ug8868rRxD7+/GfvZ+bsST
+ IHEYuI9PVYnuuHvZTfZsUZZS4ZHlCmotiVMA8ufV+yqUdb2xoCSzuwyxYI02ZQIBMxEk=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q8tCo-0008KM-Ab for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 13 Jun 2023 01:52:22 +0000
+ id 1q8tDv-0008Mp-FW for linux-f2fs-devel@lists.sourceforge.net;
+ Tue, 13 Jun 2023 01:53:32 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id E88E76305A;
- Tue, 13 Jun 2023 01:52:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3444DC433EF;
- Tue, 13 Jun 2023 01:52:15 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 18D946305C;
+ Tue, 13 Jun 2023 01:53:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B671C433EF;
+ Tue, 13 Jun 2023 01:53:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1686621136;
- bh=EKQf9AUcQkPpeKpp8S2CTMWBdQam6LzX/JCZk9FnDZk=;
+ s=k20201202; t=1686621205;
+ bh=jQzl78vkH5imr/uqQKm1VRitSbjPqMq6WBF+qTjykec=;
  h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Q9ljurLQy5R/F040JQA3pUPEN3VOulN7aVTGlIXAvs27kNkZdSLIvxq2HTDo6eOoy
- w37s8Uk9+9KeyqG/EkXtifnZiphSigiBy9i2hVs1e3iMkJppdD/Vt6rySor/b9Zd4l
- BxXwt4BTY2gdzdsh5hnmZ+6fwK2zgHoI//fLRvb17dkF/XsQW5tzTP0k5xlz8rRqll
- Rj7cDJPYVmCvXpp2tbe6YFP9XXRpKRrAkQZNTlwaOwS4y/FztpciwCGBgeh+Rcc+h5
- g23SW2+VkUWwJmViu665/vSB6JxsjrNwnPrVeSSCwnxMTvaA9G1KVYrhs/9wsbn+fL
- ViNs4pJoBOTxQ==
-Message-ID: <974680a9-ffcb-1290-80a6-c4791ec988c0@kernel.org>
-Date: Tue, 13 Jun 2023 09:52:13 +0800
+ b=jn1pnVU/PvqrfI1AGEbtHw8WRiIFsSEssYI1F1NOOMDt/CbVaPHRLYjLN2mE2IhLU
+ E8eQushd3ZIrdexw2g9+7fHhnzCZbWcq/2xuAr3rznStrivmKzyE3wfWPFUvlvsFE7
+ ufnRdQdZuTff9j0gt/mhqyAPaL53qIjAr3vbSzW4tUZFjRyxpbPyIyFRdSe+zQpOGJ
+ /fmw7IR2jMawg1h86mcD0QM7iL0BA2yUE7Y6PuS4CNfNRyxnE1rn9s+x+NCtZ41dcJ
+ GzkDOMaXs0GIIGGauzOLrHQrh+uRDP7de/jM0vvsShpFWxqvVz67rOnmzZNVBqeCS9
+ 6hG72jfkIrTqw==
+Message-ID: <ebac8472-2119-d1bc-73af-642caf129e3c@kernel.org>
+Date: Tue, 13 Jun 2023 09:53:22 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.2
 Content-Language: en-US
 To: Sheng Yong <shengyong@oppo.com>, jaegeuk@kernel.org
 References: <20230612030121.2393541-1-shengyong@oppo.com>
- <20230612030121.2393541-4-shengyong@oppo.com>
+ <20230612030121.2393541-5-shengyong@oppo.com>
 From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20230612030121.2393541-4-shengyong@oppo.com>
-X-Headers-End: 1q8tCo-0008KM-Ab
-Subject: Re: [f2fs-dev] [PATCH v4 3/6] f2fs: add helper to get inode chksum
- from inode page
+In-Reply-To: <20230612030121.2393541-5-shengyong@oppo.com>
+X-Headers-End: 1q8tDv-0008Mp-FW
+Subject: Re: [f2fs-dev] [PATCH v4 4/6] f2fs: add f2fs_ioc_get_compress_blocks
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -90,6 +89,9 @@ Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 On 2023/6/12 11:01, Sheng Yong wrote:
+> This patch adds f2fs_ioc_get_compress_blocks() to provide a common
+> f2fs_get_compress_blocks().
+> 
 > Signed-off-by: Sheng Yong <shengyong@oppo.com>
 
 Reviewed-by: Chao Yu <chao@kernel.org>
