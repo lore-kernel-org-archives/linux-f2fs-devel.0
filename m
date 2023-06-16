@@ -4,75 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D7F5AEB64D9
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 15 Jun 2023 18:00:44 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 52C9FEB64D7
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 16 Jun 2023 04:37:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1q9rH1-0005Cb-It;
-	Thu, 15 Jun 2023 18:00:44 +0000
+	id 1qA1DZ-0004cW-2Q;
+	Fri, 16 Jun 2023 04:37:49 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1q9rGq-0005CT-LC
+ (envelope-from <beomsu7.kim@samsung.com>) id 1qA1DS-0004cP-Nk
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 15 Jun 2023 18:00:33 +0000
+ Fri, 16 Jun 2023 04:37:43 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+ d=sourceforge.net; s=x; h=References:Content-Type:Content-Transfer-Encoding:
+ Date:Message-ID:CC:To:From:Sender:Reply-To:Subject:Mime-Version:Content-ID:
+ Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+ :Resent-Message-ID:In-Reply-To:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=u3/3FCHnxSGzppySyQFQtfuUvYcmo3XpwA87+5z7jSM=; b=YEObDx8xEgu/0DzIPqasA92fIZ
- 9t5AXDgcL3d353jn/fCz0Eu9Dw77YwGkR/X0rjUi2x3s5IPo7AEFF9gIoHmotIcNFCx2mxg7Qh3aU
- GNdQeJQTDz7W8OiJBbj6eCZrotqT9dPdbXBLLprFkJRlaLBTJqUZY8ZrByKPUOUPPAsA=;
+ bh=TzMoaf8vGyU8GATKSoffunm8vsRVuxtDYDCKWXxcjoM=; b=ExQ64VXf4aVXb6iA6/t3LVq7R6
+ tgpE+bfTxJEUILfcIl53Ioc6UEuKhS++JFNC/knOAaBaMUnMALHwkEJa6UE/KON77GzLk65Maggat
+ NEFX8w21bw9zyO0q+QGaKdOQJ3ZelMBG0IpzWUZtWOVkkzlKqON5DYOARAtgR3SVUQH4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=u3/3FCHnxSGzppySyQFQtfuUvYcmo3XpwA87+5z7jSM=; b=MjgabMfjbTLauafhv5jdIwN1mp
- MwQcTOHKuCiyWUWk1t6rzCKPJII7g27FrGfOAwpFimzlPrtK+JgDsDW267PyRkEcVBYEeiUMsC0FB
- EHoIgpQzhPfxDOTLrJ4/+HfITirm52h2NW7njWsq0F6Aukfot5GfH+wEluocm2R5g8oE=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ ;
+ h=References:Content-Type:Content-Transfer-Encoding:Date:Message-ID:CC:To:
+ From:Sender:Reply-To:Subject:Mime-Version:Content-ID:Content-Description:
+ Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+ In-Reply-To:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=TzMoaf8vGyU8GATKSoffunm8vsRVuxtDYDCKWXxcjoM=; b=c
+ Qfem4+XBEsXU6BsrQ+Sf0aKyEp8Du1uoETb6YKjrFqdenRkYe8P4ZU79JnMp7kMXRpY6lfqaJZ28d
+ 5TVJrTtdy5cbzJgA4DaqwaJTX/IK+gYfDUkcnb/VJtorCktZhUsp1rX5hsW+1PBFsuZrpjSHAW05D
+ C/Hb3BjAVEU+3wTo=;
+Received: from mailout1.samsung.com ([203.254.224.24])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1q9rGo-00063P-LM for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 15 Jun 2023 18:00:31 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 3EF68623DB
+ id 1qA1DN-0057FF-SF for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 16 Jun 2023 04:37:42 +0000
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+ by mailout1.samsung.com (KnoxPortal) with ESMTP id
+ 20230616043724epoutp01b0d0404a7a03d919f9ff16d010ac2af2~pCb1Zd2KU2558425584epoutp01H
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Thu, 15 Jun 2023 18:00:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 29C06C433CB;
- Thu, 15 Jun 2023 18:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1686852023;
- bh=Imb3WG7QI8cil1kPmzmNUNmJVrOdNvIhZQQyApYC8nw=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=XJPmGYRrUIzmrBfArHQF8Ry4unq7pMbbzC03vCvsSD/ZQSoFQTv7rme0Fj8eNEvo0
- yoj8Vrm1GHG0cdlnVnahueux46kBFlj+gBZUL9mTGeCHywFbnsSfsCcayOhb6MjZgX
- czLOu7hxuOgZQATOMUH7s7c1PfAFXf+vfXlXM/ycDjLS+YQH3IpgVPr3Ku/Lzg7Gwr
- 0K349CUhNh9ApEE+yieYrsytVck60j4Tyhp6rzQu/MpmTDqkOI76qS0H94eHalbFDj
- Pz9zYYKZNYqLnGT4iVRxdY8xp+9qL7n/oFOdd4U2uCIolzKMHs2NOJCbU+kmXHjYly
- PHWRawnPYcj5w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
- (localhost.localdomain [127.0.0.1])
- by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 03F78C395E0; Thu, 15 Jun 2023 18:00:23 +0000 (UTC)
-MIME-Version: 1.0
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168685202301.7502.14081948087591121398.git-patchwork-notify@kernel.org>
-Date: Thu, 15 Jun 2023 18:00:23 +0000
-References: <20230613233940.3643362-1-jaegeuk@kernel.org>
-In-Reply-To: <20230613233940.3643362-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1q9rGo-00063P-LM
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove i_xattr_sem to avoid deadlock
- and fix the original issue
+ Fri, 16 Jun 2023 04:37:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com
+ 20230616043724epoutp01b0d0404a7a03d919f9ff16d010ac2af2~pCb1Zd2KU2558425584epoutp01H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+ s=mail20170921; t=1686890244;
+ bh=TzMoaf8vGyU8GATKSoffunm8vsRVuxtDYDCKWXxcjoM=;
+ h=Subject:Reply-To:From:To:CC:Date:References:From;
+ b=t5s68veHJRxeVnORsIARiDc6EwV0HlQVtpb5K+6Ul2//G7j5CyTf6JIZyOau63doP
+ /WiPXKUAcFjJI9oD6fz+W3/WqpwZ2sZweGZxzCxmD+5yjRw08+r2olEjG3/4Ju/al5
+ OlZ4OPaXOeSiT+0U/qMznfa9MynfGuv5kJtQQeDs=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+ epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+ 20230616043723epcas2p29c8c2f82eba70fd792df2735fc3edace~pCb0xnmfw1438214382epcas2p2B;
+ Fri, 16 Jun 2023 04:37:23 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.99]) by
+ epsnrtp3.localdomain (Postfix) with ESMTP id 4Qj5wz0MD0z4x9Pw; Fri, 16 Jun
+ 2023 04:37:23 +0000 (GMT)
+X-AuditID: b6c32a45-1dbff70000022cba-7e-648be7029a0a
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+ epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+ 68.BD.11450.207EB846; Fri, 16 Jun 2023 13:37:22 +0900 (KST)
+Mime-Version: 1.0
+From: beomsu kim <beomsu7.kim@samsung.com>
+To: Chao Yu <chao@kernel.org>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20230616043722epcms2p3073c77119d37f5f963b8a75801efb40f@epcms2p3>
+Date: Fri, 16 Jun 2023 13:37:22 +0900
+X-CMS-MailID: 20230616043722epcms2p3073c77119d37f5f963b8a75801efb40f
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHKsWRmVeSWpSXmKPExsWy7bCmhS7T8+4UgyPXrSxOTz3LZLHqQbjF
+ k/WzmC0uLXK3uLxrDpvF6x9yFqs65jJaTD1/hMmBw2PTqk42j90LPjN59G1ZxejxeZNcAEtU
+ tk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0A1KCmWJ
+ OaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnALzAr3ixNzi0rx0vbzUEitDAwMjU6DChOyM
+ j/PPMBX85q1onniZsYFxPlcXIyeHhICJROej94xdjFwcQgI7GCXedZ1k62Lk4OAVEJT4u0MY
+ pEZYwF3iwuWFzCC2kICiRF/zBrASYQEdiSVbjEHCbAJaEt3XzzCDjBEReMAoMeXGXjYQh1lg
+ FaPE4tbLzBDLeCVmtD9lgbClJbYv38oIYWtI/FjWC1UjKnFz9Vt2GPv9sflQNSISrffOQtUI
+ Sjz4uRsqLiHx+ifM/HyJ778/gj0jIdDCKLGzZw5UQl9i25/ZYIt5BXwltn7axw7yAYuAqsSk
+ X/ogpoSAi8TmUyEgFcwC8hLb34J0cgDZmhLrd0FVKEscucUCUcEn0XH4LzvMUzvmPWGCKFGV
+ 6AYFDjvYfx0GEAUeEh8f3WABKRASCJS4fJtjAqPCLEQYz0KycxbCzgWMzKsYxVILinPTU4uN
+ Cgzh0Zqcn7uJEZwQtVx3ME5++0HvECMTB+MhRgkOZiUR3mUnulKEeFMSK6tSi/Lji0pzUosP
+ MZoC/TqRWUo0OR+YkvNK4g1NLA1MzMwMzY1MDcyVxHmlbU8mCwmkJ5akZqemFqQWwfQxcXBK
+ NTBN2GU6uzN0S7eNhiFnrUTQ4o1Z3UwLKzTEsn4VRy/bevdmemydg3TfcTuj5tD/QdxGpv/j
+ wza47YzMYXRMVjM+N3G98vkvOy+4nDW8+fms806BA97KV3d8dZ2XV3Jym85+Lv4pX5ikbs8q
+ 8JIXjHVV04vxPBbcpve3qNpq8q6meNPDd1Qfu01ceKm/1zm//dO5ArX6QMtF8gdqu4LCau+W
+ C6ZfarXk2KwdvDHA0MA1VLtG9v6b/u/h0W1HFizcevHkxcD9ZvHvNbc8+sAffH1Bg9wTldnT
+ Flq8Ftnz5v6XtglmNovM1sZKZrC2L7NyUTprOeGydntI7eQN10UtvFMNBPgt7z8x+c5YkPRu
+ txJLcUaioRZzUXEiAAiX+VoRBAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20230602044830epcms2p141ec782e866c2adc5a3142516f051b87
+References: <CGME20230602044830epcms2p141ec782e866c2adc5a3142516f051b87@epcms2p3>
+X-Headers-End: 1qA1DN-0057FF-SF
+Subject: [f2fs-dev] [PATCH v2] f2fs: including waf data in f2fs status
+ information
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -84,39 +120,62 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Reply-To: beomsu7.kim@samsung.com
+Cc: Seokhwan Kim <sukka.kim@samsung.com>,
+ Seonghun Kim <seonghun-sui.kim@samsung.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hello:
+When evaluating in f2fs, it takes much time to obtain waf data.
+This patch helps to obtain waf data without calcluation.
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+Signed-off-by: Beomsu Kim <beomsu7.kim@samsung.com>
+---
+ fs/f2fs/iostat.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-On Tue, 13 Jun 2023 16:39:40 -0700 you wrote:
-> This reverts commit 27161f13e3c3 "f2fs: avoid race in between read xattr & write xattr".
-> 
-> That introduced a deadlock case:
-> 
-> Thread #1:
-> 
-> [122554.641906][   T92]  f2fs_getxattr+0xd4/0x5fc
->     -> waiting for f2fs_down_read(&F2FS_I(inode)->i_xattr_sem);
-> 
-> [...]
-
-Here is the summary with links:
-  - [f2fs-dev] f2fs: remove i_xattr_sem to avoid deadlock and fix the original issue
-    https://git.kernel.org/jaegeuk/f2fs/c/c1ac6e02b5fc
-
-You are awesome, thank you!
+diff --git a/fs/f2fs/iostat.c b/fs/f2fs/iostat.c
+index 3d5bfb1ad585..59720639e8c0 100644
+--- a/fs/f2fs/iostat.c
++++ b/fs/f2fs/iostat.c
+@@ -34,10 +34,23 @@ int __maybe_unused iostat_info_seq_show(struct seq_file *seq, void *offset)
+ {
+        struct super_block *sb = seq->private;
+        struct f2fs_sb_info *sbi = F2FS_SB(sb);
++       int j;
++       unsigned long long waf = 0;
++       unsigned long long data_written_by_user;
++       unsigned long long data_written_to_storage;
+ 
+        if (!sbi->iostat_enable)
+                return 0;
+ 
++       data_written_by_user = sbi->iostat_bytes[FS_DATA_IO];
++
++       data_written_to_storage = data_written_by_user;
++       for (j = FS_NODE_IO; j <= FS_CP_META_IO; j++)
++               data_written_to_storage += sbi->iostat_bytes[j];
++
++       if (data_written_by_user > 0)
++               waf = data_written_to_storage * 100 / data_written_by_user;
++
+        seq_printf(seq, "time:          %-16llu\n", ktime_get_real_seconds());
+        seq_printf(seq, "\t\t\t%-16s %-16s %-16s\n",
+                                "io_bytes", "count", "avg_bytes");
+@@ -81,6 +94,10 @@ int __maybe_unused iostat_info_seq_show(struct seq_file *seq, void *offset)
+        IOSTAT_INFO_SHOW("fs discard", FS_DISCARD_IO);
+        IOSTAT_INFO_SHOW("fs flush", FS_FLUSH_IO);
+ 
++       /* print waf */
++       seq_puts(seq, "[WAF]\n");
++       seq_printf(seq, "fs waf:                %llu.%02llu\n", waf / 100, waf % 100);
++
+        return 0;
+ }
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+2.17.1
 
 
 _______________________________________________
