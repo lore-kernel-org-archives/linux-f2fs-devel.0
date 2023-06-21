@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E1E51EB64D8
-	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Jun 2023 18:01:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
-	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 69322EB64DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Wed, 21 Jun 2023 18:49:02 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qC29H-0003iv-Oc;
-	Wed, 21 Jun 2023 18:01:44 +0000
+	id 1qC2t2-00085H-Bd;
+	Wed, 21 Jun 2023 18:49:00 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jlayton@kernel.org>) id 1qC29G-0003ig-Bi;
- Wed, 21 Jun 2023 18:01:42 +0000
+ (envelope-from <jlayton@kernel.org>) id 1qC2st-00084g-Vf;
+ Wed, 21 Jun 2023 18:48:52 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=MIME-Version:Content-Transfer-Encoding:Content-Type
  :References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=ZG+t0WGX6sTaTgh3a79i3TULO64iDRYDnoN3E5sKu+s=; b=WeZLgkPyn9rFN7y+CCaU87nCGk
- qwKd2a2//IeBQoNCgwGIZm1yCv1xAtuU1WzOFzXQmFFNPOJ2f8yMPkutFaK6Js1uBy7RuOrR69yfM
- jOueIYn2pnVvp8f+n6es0vD7JeIrB1F3eJLi2pQq2jTINajqTQYjre91IO4zRSM0h86Y=;
+ bh=A1kbXwuqBdSEgrCme3vFF6i7KkR5+tPtLwHXAbS02LM=; b=bEAFISxBoTSzLY+5vSpdjN/P8R
+ yWFaXxeerukpQS4NzBXfJ2J/G1DJcxren1MtpZQRX/XZrDkaN7+zDbw52rbJa6KL0GOUOyOhogwDt
+ v+pJLnPByed6ANsarP87KKKJoxizwxQvwGkptz8qjrAJidIl4W27rxdgSJ92QbmS0WKM=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
@@ -32,32 +32,32 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=ZG+t0WGX6sTaTgh3a79i3TULO64iDRYDnoN3E5sKu+s=; b=X0ht3LwbU28i7PRcPv0KNJO9Pi
- ZarHz3/6vZZVp/8sSo6fVLAxUBTvDEoSP5mqNfTm/KScxTgwvhw9a5wEd7/zBf+MihAtGyKnN/sVt
- KasnIN76tf55TzaUauk6bRLE9/MIhuVrJcVwSb4Uy8raZnD+vUuhE+QN2G2t45P7y3Zw=;
+ bh=A1kbXwuqBdSEgrCme3vFF6i7KkR5+tPtLwHXAbS02LM=; b=MxyMYtStewzy7RNRg3SO3LQS3t
+ /xbqHwI+QA6lF7pUe4OxeiHeaZyuot6mfDhXZWMThDUuNm6Ln8PL2BzcqO/OKw25nyHWnA0GyJe6C
+ faUblc0aBSbqr5kVvPj6wUhxfAO0N6B28rv+vaeYYeZRwq1YP9m+lIZt57EzOLGV3pgI=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qC29F-0002zP-SD; Wed, 21 Jun 2023 18:01:42 +0000
+ id 1qC2sk-0004JW-I1; Wed, 21 Jun 2023 18:48:51 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id F2317614C7;
- Wed, 21 Jun 2023 18:01:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 994ABC433C8;
- Wed, 21 Jun 2023 18:01:10 +0000 (UTC)
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 75C6F616AB;
+ Wed, 21 Jun 2023 18:48:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB234C433C8;
+ Wed, 21 Jun 2023 18:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1687370487;
- bh=f6MfE+OwYlooIGk6bzrRy2nMoaF6fYVrxR9rt/b+wHA=;
+ s=k20201202; t=1687373315;
+ bh=a5OpkE0TU4uPAvSOWcyUKhr2U/OaDDTahqvZpyNm/D4=;
  h=Subject:From:To:Date:In-Reply-To:References:From;
- b=bVcrCvUx5qUKiFKoGoCpRU9cOdPpOKYso9mJvg46pEjfpa5HrNdfQIs+z6jHr5sux
- dlx89O00OX+JFXaZsV1aqCsQCXMgGUPun8gG0+O63APDuieKF+NHNtURapcBRt6lwA
- XUSZY7Lxndjjm0Guu7ABZsDoRASFWxW9NDkbTecnzII3k7EzTCDZqTBAfGwPJVYC9o
- 4y1h+nwRvjsJy2OJKNcBHeZcxgyGTH5ATcgrCrgxjm4t9FpTdCYfY2dSxFdgqaYmjq
- McRt37g4zUkhYaqSUzhLnP9BOtEXfLTVHkZOUz8jt6fW2f8bh/uJnCW9nUVVVNS/3d
- grPvoD0B9Xewg==
-Message-ID: <6f4bcd7d79f688120d80e96e86d7c521854d8e84.camel@kernel.org>
+ b=PiPk49g+MFOu/O2ZwDxO/8QAjKIZGlhjql5KOg56o+z0jsrDavO9BiaXOtkYto876
+ fJ7qYzZ7aATc9kPncdP1kCdlY5wqINNGdYK2LGj2HmV63uWD5NHZ4+OFVQ4t30vFE9
+ rYDpgx917Jc/lUMtGxdnWxKlhyndYbn3MftPxoStquXW6wJVzxk1ZBM8Z7BTbv2h/U
+ qJjwHaLWN8lUJ3h6C5OcO+D166wrcNaWoWGX2W/vO7mNHZJIsw6euWqEIeYa7S4lF3
+ jaX3jg20U9mjcF803nObNGAx9i1QbKIM3FZeyHr6EhjkD9DNtiQVqDSkHfY1GNj8rV
+ 9eRPHwtyQHGGQ==
+Message-ID: <c376703f26442b3310f173219c37c7b7ae4fe61b.camel@kernel.org>
 From: Jeff Layton <jlayton@kernel.org>
 To: Tom Talpey <tom@talpey.com>, Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann
  <arnd@arndb.de>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
@@ -175,14 +175,16 @@ To: Tom Talpey <tom@talpey.com>, Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann
  linux-trace-kernel@vger.kernel.org,  linux-xfs@vger.kernel.org,
  bpf@vger.kernel.org, netdev@vger.kernel.org,  apparmor@lists.ubuntu.com,
  linux-security-module@vger.kernel.org,  selinux@vger.kernel.org
-Date: Wed, 21 Jun 2023 14:01:09 -0400
-In-Reply-To: <1f97d595-e035-46ce-6269-eebfe922cf35@talpey.com>
+Date: Wed, 21 Jun 2023 14:48:17 -0400
+In-Reply-To: <e513d856-3a6f-3a32-40fe-6c728e7b5ec8@talpey.com>
 References: <20230621144507.55591-1-jlayton@kernel.org>
  <20230621144507.55591-2-jlayton@kernel.org>
  <1f97d595-e035-46ce-6269-eebfe922cf35@talpey.com>
+ <6f4bcd7d79f688120d80e96e86d7c521854d8e84.camel@kernel.org>
+ <e513d856-3a6f-3a32-40fe-6c728e7b5ec8@talpey.com>
 User-Agent: Evolution 3.48.3 (3.48.3-1.fc38) 
 MIME-Version: 1.0
-X-Headers-End: 1qC29F-0002zP-SD
+X-Headers-End: 1qC2sk-0004JW-I1
 Subject: Re: [f2fs-dev] [PATCH 01/79] fs: add ctime accessors infrastructure
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
@@ -199,136 +201,171 @@ Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On Wed, 2023-06-21 at 13:29 -0400, Tom Talpey wrote:
-> On 6/21/2023 10:45 AM, Jeff Layton wrote:
-> > struct timespec64 has unused bits in the tv_nsec field that can be used
-> > for other purposes. In future patches, we're going to change how the
-> > inode->i_ctime is accessed in certain inodes in order to make use of
-> > them. In order to do that safely though, we'll need to eradicate raw
-> > accesses of the inode->i_ctime field from the kernel.
+On Wed, 2023-06-21 at 14:19 -0400, Tom Talpey wrote:
+> On 6/21/2023 2:01 PM, Jeff Layton wrote:
+> > On Wed, 2023-06-21 at 13:29 -0400, Tom Talpey wrote:
+> > > On 6/21/2023 10:45 AM, Jeff Layton wrote:
+> > > > struct timespec64 has unused bits in the tv_nsec field that can be used
+> > > > for other purposes. In future patches, we're going to change how the
+> > > > inode->i_ctime is accessed in certain inodes in order to make use of
+> > > > them. In order to do that safely though, we'll need to eradicate raw
+> > > > accesses of the inode->i_ctime field from the kernel.
+> > > > 
+> > > > Add new accessor functions for the ctime that we can use to replace them.
+> > > > 
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > > >    fs/inode.c         | 16 ++++++++++++++
+> > > >    include/linux/fs.h | 53 +++++++++++++++++++++++++++++++++++++++++++++-
+> > > >    2 files changed, 68 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/fs/inode.c b/fs/inode.c
+> > > > index d37fad91c8da..c005e7328fbb 100644
+> > > > --- a/fs/inode.c
+> > > > +++ b/fs/inode.c
+> > > > @@ -2499,6 +2499,22 @@ struct timespec64 current_time(struct inode *inode)
+> > > >    }
+> > > >    EXPORT_SYMBOL(current_time);
+> > > >    
+> > > > +/**
+> > > > + * inode_ctime_set_current - set the ctime to current_time
+> > > > + * @inode: inode
+> > > > + *
+> > > > + * Set the inode->i_ctime to the current value for the inode. Returns
+> > > > + * the current value that was assigned to i_ctime.
+> > > > + */
+> > > > +struct timespec64 inode_ctime_set_current(struct inode *inode)
+> > > > +{
+> > > > +	struct timespec64 now = current_time(inode);
+> > > > +
+> > > > +	inode_set_ctime(inode, now);
+> > > > +	return now;
+> > > > +}
+> > > > +EXPORT_SYMBOL(inode_ctime_set_current);
+> > > > +
+> > > >    /**
+> > > >     * in_group_or_capable - check whether caller is CAP_FSETID privileged
+> > > >     * @idmap:	idmap of the mount @inode was found from
+> > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > > index 6867512907d6..9afb30606373 100644
+> > > > --- a/include/linux/fs.h
+> > > > +++ b/include/linux/fs.h
+> > > > @@ -1474,7 +1474,58 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
+> > > >    	       kgid_has_mapping(fs_userns, kgid);
+> > > >    }
+> > > >    
+> > > > -extern struct timespec64 current_time(struct inode *inode);
+> > > > +struct timespec64 current_time(struct inode *inode);
+> > > > +struct timespec64 inode_ctime_set_current(struct inode *inode);
+> > > > +
+> > > > +/**
+> > > > + * inode_ctime_peek - fetch the current ctime from the inode
+> > > > + * @inode: inode from which to fetch ctime
+> > > > + *
+> > > > + * Grab the current ctime from the inode and return it.
+> > > > + */
+> > > > +static inline struct timespec64 inode_ctime_peek(const struct inode *inode)
+> > > > +{
+> > > > +	return inode->i_ctime;
+> > > > +}
+> > > > +
+> > > > +/**
+> > > > + * inode_ctime_set - set the ctime in the inode to the given value
+> > > > + * @inode: inode in which to set the ctime
+> > > > + * @ts: timespec value to set the ctime
+> > > > + *
+> > > > + * Set the ctime in @inode to @ts.
+> > > > + */
+> > > > +static inline struct timespec64 inode_ctime_set(struct inode *inode, struct timespec64 ts)
+> > > > +{
+> > > > +	inode->i_ctime = ts;
+> > > > +	return ts;
+> > > > +}
+> > > > +
+> > > > +/**
+> > > > + * inode_ctime_set_sec - set only the tv_sec field in the inode ctime
+> > > 
+> > > I'm curious about why you choose to split the tv_sec and tv_nsec
+> > > set_ functions. Do any callers not set them both? Wouldn't a
+> > > single call enable a more atomic behavior someday?
+> > > 
+> > >     inode_ctime_set_sec_nsec(struct inode *, time64_t, time64_t)
+> > > 
+> > > (or simply initialize a timespec64 and use inode_ctime_spec() )
+> > > 
 > > 
-> > Add new accessor functions for the ctime that we can use to replace them.
+> > Yes, quite a few places set the fields individually. For example, when
+> > loading a value from disk that doesn't have sufficient granularity to
+> > set the nsecs field to anything but 0.
+> 
+> Well, they still need to set the tv_nsec so they could just pass 0.
+> But ok.
+> 
+
+Sure. The difficulty is in trying to do this in an automated way. For
+instance, look at the hfsplus patch; it has separate assignments in
+place already:
+
+-       result->i_ctime.tv_sec = result->i_mtime.tv_sec = result->i_atime.tv_sec = local_to_gmt(dir->i_sb, le32_to_cpu(dee.creation_date));
+-       result->i_ctime.tv_nsec = 0;
++       inode_ctime_set_sec(result,
++                           result->i_mtime.tv_sec = result->i_atime.tv_sec = local_to_gmt(dir->i_sb, le32_to_cpu(dee.creation_date)));
++       inode_ctime_set_nsec(result, 0);
+
+Granted the new code is pretty ugly, but it compiles!
+
+Transforming that into what you're suggesting is a tougher proposition
+to do with coccinelle. I didn't see a way to conditionally catch cases
+like this, declare a new variable in the appropriate spot and then
+transform two assignments (that may not be next to one another!) into a
+single one.
+
+Maybe it's possible, but my grasp of SMPL is not that great. The docs
+and examples (including Kees' vey helpful ones!) cover fairly simple
+changes well, but I didn't quite grasp how to do that complex an
+evolution.
+
+> > Could I have done it by declaring a local timespec64 variable and just
+> > use the inode_ctime_set function in these places? Absolutely.
 > > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >   fs/inode.c         | 16 ++++++++++++++
-> >   include/linux/fs.h | 53 +++++++++++++++++++++++++++++++++++++++++++++-
-> >   2 files changed, 68 insertions(+), 1 deletion(-)
+> > That's a bit more difficult to handle with coccinelle though. If someone
+> > wants to suggest a way to do that without having to change all of these
+> > call sites manually, then I'm open to redoing the set.
 > > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index d37fad91c8da..c005e7328fbb 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -2499,6 +2499,22 @@ struct timespec64 current_time(struct inode *inode)
-> >   }
-> >   EXPORT_SYMBOL(current_time);
-> >   
-> > +/**
-> > + * inode_ctime_set_current - set the ctime to current_time
-> > + * @inode: inode
-> > + *
-> > + * Set the inode->i_ctime to the current value for the inode. Returns
-> > + * the current value that was assigned to i_ctime.
-> > + */
-> > +struct timespec64 inode_ctime_set_current(struct inode *inode)
-> > +{
-> > +	struct timespec64 now = current_time(inode);
-> > +
-> > +	inode_set_ctime(inode, now);
-> > +	return now;
-> > +}
-> > +EXPORT_SYMBOL(inode_ctime_set_current);
-> > +
-> >   /**
-> >    * in_group_or_capable - check whether caller is CAP_FSETID privileged
-> >    * @idmap:	idmap of the mount @inode was found from
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 6867512907d6..9afb30606373 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1474,7 +1474,58 @@ static inline bool fsuidgid_has_mapping(struct super_block *sb,
-> >   	       kgid_has_mapping(fs_userns, kgid);
-> >   }
-> >   
-> > -extern struct timespec64 current_time(struct inode *inode);
-> > +struct timespec64 current_time(struct inode *inode);
-> > +struct timespec64 inode_ctime_set_current(struct inode *inode);
-> > +
-> > +/**
-> > + * inode_ctime_peek - fetch the current ctime from the inode
-> > + * @inode: inode from which to fetch ctime
-> > + *
-> > + * Grab the current ctime from the inode and return it.
-> > + */
-> > +static inline struct timespec64 inode_ctime_peek(const struct inode *inode)
-> > +{
-> > +	return inode->i_ctime;
-> > +}
-> > +
-> > +/**
-> > + * inode_ctime_set - set the ctime in the inode to the given value
-> > + * @inode: inode in which to set the ctime
-> > + * @ts: timespec value to set the ctime
-> > + *
-> > + * Set the ctime in @inode to @ts.
-> > + */
-> > +static inline struct timespec64 inode_ctime_set(struct inode *inode, struct timespec64 ts)
-> > +{
-> > +	inode->i_ctime = ts;
-> > +	return ts;
-> > +}
-> > +
-> > +/**
-> > + * inode_ctime_set_sec - set only the tv_sec field in the inode ctime
+> > That might be better left for a later cleanup though.
 > 
-> I'm curious about why you choose to split the tv_sec and tv_nsec
-> set_ functions. Do any callers not set them both? Wouldn't a
-> single call enable a more atomic behavior someday?
-> 
->    inode_ctime_set_sec_nsec(struct inode *, time64_t, time64_t)
-> 
-> (or simply initialize a timespec64 and use inode_ctime_spec() )
+> Acked-by: Tom Talpey <tom@talpey.com>
 > 
 
-Yes, quite a few places set the fields individually. For example, when
-loading a value from disk that doesn't have sufficient granularity to
-set the nsecs field to anything but 0.
+Many thanks!
 
-Could I have done it by declaring a local timespec64 variable and just
-use the inode_ctime_set function in these places? Absolutely.
-
-That's a bit more difficult to handle with coccinelle though. If someone
-wants to suggest a way to do that without having to change all of these
-call sites manually, then I'm open to redoing the set.
-
-That might be better left for a later cleanup though.
-
-> > + * @inode: inode in which to set the ctime
-> > + * @sec:  value to set the tv_sec field
-> > + *
-> > + * Set the sec field in the ctime. Returns @sec.
-> > + */
-> > +static inline time64_t inode_ctime_set_sec(struct inode *inode, time64_t sec)
-> > +{
-> > +	inode->i_ctime.tv_sec = sec;
-> > +	return sec;
-> > +}
-> > +
-> > +/**
-> > + * inode_ctime_set_nsec - set only the tv_nsec field in the inode ctime
-> > + * @inode: inode in which to set the ctime
-> > + * @nsec:  value to set the tv_nsec field
-> > + *
-> > + * Set the nsec field in the ctime. Returns @nsec.
-> > + */
-> > +static inline long inode_ctime_set_nsec(struct inode *inode, long nsec)
-> > +{
-> > +	inode->i_ctime.tv_nsec = nsec;
-> > +	return nsec;
-> > +}
-> >   
-> >   /*
-> >    * Snapshotting support.
+> > > > + * @inode: inode in which to set the ctime
+> > > > + * @sec:  value to set the tv_sec field
+> > > > + *
+> > > > + * Set the sec field in the ctime. Returns @sec.
+> > > > + */
+> > > > +static inline time64_t inode_ctime_set_sec(struct inode *inode, time64_t sec)
+> > > > +{
+> > > > +	inode->i_ctime.tv_sec = sec;
+> > > > +	return sec;
+> > > > +}
+> > > > +
+> > > > +/**
+> > > > + * inode_ctime_set_nsec - set only the tv_nsec field in the inode ctime
+> > > > + * @inode: inode in which to set the ctime
+> > > > + * @nsec:  value to set the tv_nsec field
+> > > > + *
+> > > > + * Set the nsec field in the ctime. Returns @nsec.
+> > > > + */
+> > > > +static inline long inode_ctime_set_nsec(struct inode *inode, long nsec)
+> > > > +{
+> > > > +	inode->i_ctime.tv_nsec = nsec;
+> > > > +	return nsec;
+> > > > +}
+> > > >    
+> > > >    /*
+> > > >     * Snapshotting support.
+> > 
 
 -- 
 Jeff Layton <jlayton@kernel.org>
