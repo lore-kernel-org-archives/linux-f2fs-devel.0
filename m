@@ -4,74 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id AFAF4EB64D8
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jun 2023 07:11:14 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id BCF32EB64DA
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 22 Jun 2023 07:11:15 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qCETK-0006Fz-93;
-	Thu, 22 Jun 2023 07:11:14 +0000
+	id 1qCETK-0003IB-Nj;
+	Thu, 22 Jun 2023 07:11:15 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qCETI-0006Fm-QX
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qCETI-0003I5-Fq
  for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 22 Jun 2023 07:11:12 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:
- Subject:Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9qSKJKeOY7IsFH/+Cw+yjXqQwKOAfpVWsmJnRRGDhLE=; b=FmHtzOyV33sM01fzphQ4EqJB2+
- RkGT5eF8So47qVYcF+IbM2J8J7p2yxbWl/hH1a7VlHYHmnzHzkoxzkGmFPtDFEnvz7qH1lRoQ9S3m
- J1jwz+Pr+dIBhtrRhra5Tqw9xyTj2Tqxyr5bt5iKk92Sjf5QB9Qj9rxezP3n9H48kKZI=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=GlcjJ9qsf36jHL4bwITjXm8Op1EslVAsC6Kssm1sj+o=; b=hMPhEy4uxdnFgKrUu/f9Yb3sO4
+ icdeOgFm2Z6RJQKdLVIzu2QRl1nQoRGHiT0WUCrxxmCtuq9zxgdd08ppbx/9m81Ftry9XpcDeZVkx
+ hz85FRTvxzLHIF9MAcTkB/RW7fii/Kqf77fHYro3TRP16wN/HnwvOJNv7cg8aPTIW5dQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
- Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=9qSKJKeOY7IsFH/+Cw+yjXqQwKOAfpVWsmJnRRGDhLE=; b=ioyPh1FrPMZ2fbsO4/oNtHC4K+
- sll02JqD3b34bEYo/I3zN3jArj/6vn5ztrT2iybfe9hgNA8Q3WLN6RkGDImS6EnrATJSubxshHHof
- BteZ5C9yMXW+au79/YdY0kWxZK1lS7TrhtM8hgen5X6WHiBx1lLcSVSRCfIP9WRylrBY=;
+ ;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=GlcjJ9qsf36jHL4bwITjXm8Op1EslVAsC6Kssm1sj+o=; b=H
+ NiWcE9HewIxzjUMdwLlobR4k4JoIckmiunwmcJeu8kIL8uToQeD0A9iAB1GreInujDs9njl4sboTW
+ 4PzGR3ngR3cWYrTUOfuNtDxa7FswMAjsiEaPxf5BtjJgcLetHojnvGOtUZ9Yq271O81Rq1hhm7wXD
+ ZJCHV/IHTOXdkC3I=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qCETI-0006St-7k for linux-f2fs-devel@lists.sourceforge.net;
+ id 1qCETI-0006Ss-7X for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 22 Jun 2023 07:11:12 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id E6B2961779;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id CCF2461772
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Thu, 22 Jun 2023 07:11:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 59B79C433C9;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3D332C433C0
+ for <linux-f2fs-devel@lists.sourceforge.net>;
  Thu, 22 Jun 2023 07:11:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1687417865;
- bh=GjxOJYaBtSOlnk07x5M2xCANMesU4QG/68w08znZ5Sw=;
- h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=GBRM4w2W9hv/OLK76SCW0rizK456TApuO8uBeABjJ1fVuQLKkT5Thw+WEHMXrrweH
- /yHkEO1ccNwCvX7Y+xQacloD7xw7lE/6CAMwWfi5eSRlKcigosVlAp6TayRX7nSXib
- vg2rXLKZOzYwLlopkCccEPFhdr6REICTNVNYbVBpJHK8brZwFXt2Fm+oFs1kvBIHmB
- 9fv+F8qrIXYQI9OSYJWlcPI4ttelV0wKV+wWqmkBISxtogrx6KzEUWYuFf2zJTwDrn
- 3LkNCZnmhJy2FRAf2YA9CWQN5jNj3E3sekWQekNqV5Qk7PysaMy5yfC+26P8JhvVJJ
- m+34yQKrfiCqg==
+ bh=3qYLhvUqn3rCW6JI5F1t7M/Ds+v5BaqHx2FmNwf5et8=;
+ h=Subject:From:Date:To:From;
+ b=CdjCEPEOgU4ufPaJ79HKmxEzjTE3/iwkbZumbl6bNx6UvVt/kbiAmwsEARWz7JUte
+ /2WsaIJyCW9bvijc9a3Kj9I58qqK0wC6efPcT4hobj9okWsNliLtwpNJ8X58v8B8Tq
+ D0UCUOE0bJlRqg2nHq8shKiMy3ObZ9A4QJj+lAQFCfyonAwc0gpkyT4ZQFSOqeueA7
+ 5aifX3SX//BxT/ZrXzErf4lXxj+WLVZ3SsFq/mLTD++BWMmnOZryarrnltn95h4Rzb
+ kiJrOAtiMgCXMMi+y2PCZmcme8/nPKzLCKh8+/bNNk/Y5qng50bKlPqDFTAJCWuF77
+ RlxyQgAPXN4Mw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 3AC49C691F0; Thu, 22 Jun 2023 07:11:05 +0000 (UTC)
+ 2848AC691EE for <linux-f2fs-devel@lists.sourceforge.net>;
+ Thu, 22 Jun 2023 07:11:05 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168741786523.21692.5617086196942708682.git-patchwork-notify@kernel.org>
+Message-Id: <168741786516.21692.3124274629217326901.git-patchwork-summary@kernel.org>
 Date: Thu, 22 Jun 2023 07:11:05 +0000
-References: <20230613075157.41065-1-frank.li@vivo.com>
-In-Reply-To: <20230613075157.41065-1-frank.li@vivo.com>
-To: Yangtao Li <frank.li@vivo.com>
-X-Headers-End: 1qCETI-0006St-7k
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: convert to use
- F2FS_SMALL_VOLUME_IPU_POLICY macro
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1qCETI-0006Ss-7X
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -83,33 +84,32 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-On Tue, 13 Jun 2023 15:51:56 +0800 you wrote:
-> Just for cleanup.
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  fs/f2fs/segment.h | 2 ++
->  fs/f2fs/super.c   | 3 +--
->  2 files changed, 3 insertions(+), 2 deletions(-)
+Series: [f2fs-dev,1/4] f2fs: convert to use sbi directly
+  Submitter: Yangtao Li <frank.li@vivo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=746065
+  Lore link: https://lore.kernel.org/r/20230509095706.17844-1-frank.li@vivo.com
+    Patches: [f2fs-dev,1/4] f2fs: convert to use sbi directly
 
-Here is the summary with links:
-  - [f2fs-dev,1/2] f2fs: convert to use F2FS_SMALL_VOLUME_IPU_POLICY macro
-    (no matching commit)
-  - [f2fs-dev,2/2] f2fs: convert to use sbi directly
-    https://git.kernel.org/jaegeuk/f2fs/c/08f83cb23a3e
+Series: [f2fs-dev,1/2] f2fs: convert to use F2FS_SMALL_VOLUME_IPU_POLICY macro
+  Submitter: Yangtao Li <frank.li@vivo.com>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=756624
+  Lore link: https://lore.kernel.org/r/20230613075157.41065-1-frank.li@vivo.com
+    Patches: [f2fs-dev,1/2] f2fs: convert to use F2FS_SMALL_VOLUME_IPU_POLICY macro
+             [f2fs-dev,2/2] f2fs: convert to use sbi directly
 
-You are awesome, thank you!
+
+Total patches: 3
+
 -- 
 Deet-doot-dot, I am a bot.
 https://korg.docs.kernel.org/patchwork/pwbot.html
