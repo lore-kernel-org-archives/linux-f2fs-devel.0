@@ -4,130 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 64B6FC0015E
-	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Jun 2023 16:07:17 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 22781EB64DC
+	for <linux-f2fs-devel@archiver.kernel.org>; Sun, 25 Jun 2023 17:46:05 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qDSGf-0004oo-0c;
-	Sun, 25 Jun 2023 16:07:13 +0000
+	id 1qDToH-0003e1-Bv;
+	Sun, 25 Jun 2023 17:46:02 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
- TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <heyunlei@oppo.com>) id 1qDSGT-0004o0-9Q
- for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 25 Jun 2023 16:07:02 +0000
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95) (envelope-from
+ <3S32YZAkbANIGMN8y992FyDD61.4CC492IG2F0CBH2BH.0CA@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>)
+ id 1qDToF-0003dg-Ca for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 25 Jun 2023 17:46:00 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=MIME-Version:Content-Type:Content-Transfer-Encoding
- :Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+ d=sourceforge.net; s=x; h=Content-Type:To:From:Subject:Message-ID:Date:
+ MIME-Version:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=wpLEVI6/bI32qr0raUjTydbTK5PnWSM46q9Onm8g7hM=; b=KELCaRmnjBbplHl+UXH+KB648W
- BKMWx5yFL6zY5x3bGIAKhtthucXlR90way7S9PP70tbv82+FJzr1l3+hKuCgjfcvk1eESi/4o8ScR
- i5BWoTh1zdCFIp7tDzj3oY8JluGFqdDu3ofR+D/Pnb4R59ju7TooCPaaOm5fhmaeuXd4=;
+ bh=nMnS8yteeq908fCMk+lnJPrDlGNebwY4YZGBzDeFebs=; b=EzVo9o9q5d9+UmdvyT+IUFd2r5
+ 42bUG2xnBANCggDhRqYjSihfklE+/kUGFDTA8XSzWLOODyqpRArT4xAx8dXFKBYkp5HstV98JCkRd
+ 5J9cfvINJQ+Yde9TZhVss1bI7zkZGBqNKvw0rJSBmlWDpSfNHtXjB9XmxpSC31Rng6SQ=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Date:
- Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:Resent-Date
- :Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ h=Content-Type:To:From:Subject:Message-ID:Date:MIME-Version:Sender:Reply-To
+ :Cc:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
  References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
- List-Owner:List-Archive; bh=wpLEVI6/bI32qr0raUjTydbTK5PnWSM46q9Onm8g7hM=; b=f
- T58NSmGKVhHG5lbtPkKTia+jXjhrnbSD9oX3x2bssPUVTVDq4BZRnKHRgwn0YT3qzar9h23Isc2dR
- KEopUHbC2HaDyuCajteftOxWzWtwT5XPLTnMjFPfoGEMg8FrYw+34lEdYurbfN6ByGnJKWqeW8Azn
- DOMKp9wE6L4KH2Iw=;
-Received: from mail-sgaapc01on2077.outbound.protection.outlook.com
- ([40.107.215.77] helo=APC01-SG2-obe.outbound.protection.outlook.com)
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
- (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qDSGL-0004T4-MT for linux-f2fs-devel@lists.sourceforge.net;
- Sun, 25 Jun 2023 16:06:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QZKa+1LIkkct3zhtELEucrFyJ1ybBNBffugidS6x4MaXFphyyUGUlHU4N0wVgNug0cI0qsbdoTjG5S8KW82TX9qhCVQ/tJYTd5xix7jhSAEqGly+XV2QiDTdv1Jvsf6WNflDc+oV6GLxZGlrqgspQFMbalWmzGD8cXTZLHtNRutPJMuUpfYaBKKcYEQ1QycfJ+BH25WktUjhCMenLOeNmfOsavHwPlRCFHS2cmGqBt2gChkkw3wW0NEsz1t23ergXsoIZro04Tp3q0iVrEzDn+/i84TrlOX9VqJPJuuRXk/6KYtrEjitJPHyotAIwktqDs5O4KztBcAY9KLa39bGTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wpLEVI6/bI32qr0raUjTydbTK5PnWSM46q9Onm8g7hM=;
- b=cAAAKR6tA0Y4PDhSvYm92OnpwpKhh0Eb22KY+rz3Oi075raowshNmOmMkRlYdH1a1dqT+413fcGFKlHn6IJfCoiIzk5r6loUeD64FqE2isE6YTpob6Ix0rl1NPa6Qm0mArjdb0HS3p8pt8eGI3EESzpT43SHmbj/RTNw9nsW8mXYl7jWf7YxbFynSRjr3bO8Lj5JUlrDusPJ4n5uYMU2wCukVf+IRN9O3Hk2zaBwriZm+eZp7lCtQnMt6xBeM+RFllZo0+dYxuWJw6CzODukMNrx6o3RDZAQvE3CHN2AymsF0NnZeAGK/mQahhsnIGuTL7o17qrTgVlZ8RK6SYkCxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wpLEVI6/bI32qr0raUjTydbTK5PnWSM46q9Onm8g7hM=;
- b=viFf/3+AjjhOZfSNtV0Nfz3S3kiLhVdwHBbQNWX6zAn6Pru2Xjvyl9RQERwEJqgcqVtF7JOAYQC4OWlGCF8bBqzW+FN34dif8Q/VXeTUrdiGXeyO+Z/IAO0SOY/5KXeBxW6HiVhrhpi72EMN2SM+0Fu7EAXariDAsotkslSEHfQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oppo.com;
-Received: from PSBPR02MB4471.apcprd02.prod.outlook.com (2603:1096:301:2::12)
- by TYZPR02MB6524.apcprd02.prod.outlook.com (2603:1096:400:363::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.21; Sun, 25 Jun
- 2023 16:06:43 +0000
-Received: from PSBPR02MB4471.apcprd02.prod.outlook.com
- ([fe80::8d7f:e42e:6212:882f]) by PSBPR02MB4471.apcprd02.prod.outlook.com
- ([fe80::8d7f:e42e:6212:882f%4]) with mapi id 15.20.6521.023; Sun, 25 Jun 2023
- 16:06:43 +0000
-To: jaegeuk@kernel.org,
-	chao@kernel.org
-Date: Mon, 26 Jun 2023 00:06:26 +0800
-Message-Id: <20230625160627.4112651-1-heyunlei@oppo.com>
-X-Mailer: git-send-email 2.40.1
-X-ClientProxiedBy: SGAP274CA0006.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::18)
- To PSBPR02MB4471.apcprd02.prod.outlook.com
- (2603:1096:301:2::12)
+ List-Owner:List-Archive; bh=nMnS8yteeq908fCMk+lnJPrDlGNebwY4YZGBzDeFebs=; b=J
+ N/lpSn7yq/LnrczIT0ZOZluaQmx4epAFQf+GfFDlYKThLc9faeMD5Scv1JRA9/YWIf43EWmWKrCUp
+ Z84+kVYqZlg+/yAmMVmqVGFa0ZY0Mlv0zSrbAdMVQIFTULizwMe2pr7FZJYb7BOJEYDkqhXnymGar
+ fHMQZGJj4npEgnR0=;
+Received: from mail-il1-f208.google.com ([209.85.166.208])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
+ (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
+ id 1qDToC-00EEsN-Mh for linux-f2fs-devel@lists.sourceforge.net;
+ Sun, 25 Jun 2023 17:46:00 +0000
+Received: by mail-il1-f208.google.com with SMTP id
+ e9e14a558f8ab-345ac144755so96155ab.3
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Sun, 25 Jun 2023 10:45:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20221208; t=1687715148; x=1690307148;
+ h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=nMnS8yteeq908fCMk+lnJPrDlGNebwY4YZGBzDeFebs=;
+ b=ltVvn6/zjvymWYq44DIPreX9i44IT5Dwwcvm7Wy+EGDfg6b8GiEQ6pr2nGpAQPe24U
+ 56bt+ufl4CTCUc8YluzgT529AlCe91FpnaF/OVR8KiwlAe0SbPy+QMgpPqCZkleim8M5
+ PA3pXImwdFSFa+tpQgd9GDmNvUURtUpLbY8XFU0OJmY0oI9/UUKXMgAGkCYjieLRay1x
+ /uBaRjgoSr+hk2aWKOPNn3FXXPQjm8JDV3d3ETj2VGpUjTIij1psFuTxcvEu4w9uc1yN
+ 8Vc5FgJPo/zmUbfGZc8CAQSJtpiBgvqaHggERxhpHs14Lb7ZQPJfbHSrZiKAhcgwl7jC
+ w4cg==
+X-Gm-Message-State: AC+VfDyjWpw9BL6S9BNIEyWIvqy323FUkoB2UdvIkzysZ9+/yyXObsRi
+ ql9HYfXF8blwtgI02KZEbYCZefkrf1e6482j9jnEiP1MkPPd
+X-Google-Smtp-Source: ACHHUZ7meTc6+Z+5poB65do2Ielys1kCaWw4bc2j1x7NcxiHnCpOClMs2a8om3mzT5+pT5aWWSWVhdcq3n7MnESuzK/B67HFQxgl
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PSBPR02MB4471:EE_|TYZPR02MB6524:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6d50e506-7da1-4927-3f49-08db75962ae9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: jTcsE+Ehe3EcNCAQ5gwk1MEo2Ewzw4wox6ZByascAsrpF2yfV7U+GNm/1ts0kWNfXfDFp424Wg2vLI8uQmjY2dCUmHj79tQY1qe6rOUprg2QCQY7j2xP/xkFZPIHjkSsOHhXf4Budbb45ur3z6qZnIUHGhnmfw7jbNmA+1IQ0bOQr7NiQkeLFQPc4K3ITnvW6zIZPhVFqXBmfMqnpNdj4qHNZ7Hi9aCwMQvr9vetCElLFvZFmPCUFC7DCUM/u9B4hBNkVFJMu3cgb6s+CaM1p13rmKKWlz7AyNSOxN77xNBFT9Zeybe6bC4hJLo1wThT13ZdXY7t2jXG7jWAoe5DoqRng9jAHncJWL1jze0dCCAQt/OGbRIvJL7H0vfuvJ76Kj2RTGXNTw0nzOmxUugtSr8wPBFY8/IjuNdFDcY476taYFuo2igZI2fLfXfa3AQS7c1/FSrXOntkhv/zbHo8txxG5/hQpzKTFI3ifgf+EjsTpAmaT+A867nX8wamSTwv9gZ28WyzBdiCEU8juYWoysl9wt/ld6qtzk06lKeMkMEi2jPsZqE5sj2oFUoqBRMXCcChZGuQAFqDmb0XHToVNVuO9Mh9BbwI7PihETOEXCxmF37iLcDQl1UZUeK9BKti
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PSBPR02MB4471.apcprd02.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230028)(4636009)(39860400002)(376002)(396003)(136003)(346002)(366004)(451199021)(4744005)(2906002)(4326008)(15650500001)(41300700001)(8936002)(5660300002)(8676002)(316002)(66476007)(66946007)(66556008)(478600001)(6666004)(52116002)(6486002)(107886003)(186003)(6506007)(1076003)(83380400001)(26005)(2616005)(6512007)(36756003)(38100700002)(86362001)(38350700002);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?X/S3B9AhWLWGc7XXKOWJIRa2cyIXSGF5vKNePbN8a8w3tahFgxSqrJDcdHf7?=
- =?us-ascii?Q?/IZa31d3eTJGr+/ZMqMZ2fRvpMVYK7VD3qHFf6b1YfYymu6r86zMWsqAR8o9?=
- =?us-ascii?Q?5x/pxjWv/98Ifk+1YhSw7dXWKXbEZRlTRjRgeuSsZKMqpSmurGu9otRzLVZU?=
- =?us-ascii?Q?bxfVh6F/mJhAZuBle8tL2JOeXP8E9n+d32Qk6c+99RRRnPFrg/qeHbyYw4ze?=
- =?us-ascii?Q?lS/Od9EgzPR2EmSDEk9wDpaALJ14vDEEjy8i3TnwWhSccJJoTMR3/z3iUd9N?=
- =?us-ascii?Q?uH/0rUBlfXQsggjG3fV9POSzm5a9dK2RVnKUmSxVCHOpxPd7dji/toU+QiIq?=
- =?us-ascii?Q?z9lwoKT8Ss7mKzlOC4CpdNs9DuXC/goO+KmLNNPWr0CqTA/zrw3IFpW8cHSE?=
- =?us-ascii?Q?9+AL2fklCaaK/D73AVWyjZVT7z9T2PXe6QPF6ka2DRBcberKe4JRWjEzMjci?=
- =?us-ascii?Q?474ZEE+BD/ez8lumF19AWywd25V40dVBdWao74lWc40hJpZm6JX4ol0Rah9Z?=
- =?us-ascii?Q?V+w7DAqM/Q3D/dtiq/nlOOJsiec/fbx2mRhl6Go0mIRSArjQwYKS02ni0cKg?=
- =?us-ascii?Q?0uWDevdpBFFFKK4Vrg80Iw5cx2BTNhv46TDj4al7gAdGVH/cX9Kr09Gj69bp?=
- =?us-ascii?Q?w47Wqhb9XGRhQh0aTnfr+cR1EqWoGhORWsj3v0dZSVUVp7n5SAVf9sV8ySM6?=
- =?us-ascii?Q?RJukTQ1giUWVIK9oF1R2EGtC8xudIOf77h408YGDhcmkBepA8DvQZ/4mbehI?=
- =?us-ascii?Q?ufaVlnd1B64dMGrS+yxIJTEvp8dIGuG6g6yof1jsDIsTb3j6+bIr7wtF0Jv3?=
- =?us-ascii?Q?iJXYypcpiec9fBUKpNXN01WL9XF9kISeRu1SPqstg5BGRWhmEL6diTmPCquc?=
- =?us-ascii?Q?7q51DaqbPYlEFMc1yRq5bBQ7a9gU0LELELKCJHPFnUxvpVJ//uYiYtTMEECf?=
- =?us-ascii?Q?sQMUwOgjN9cY1+ocenL+lUJhrD6TLNKw5NRqRczUYpol3HK0BQK0eixWXoG2?=
- =?us-ascii?Q?6W0seVw4BL3bINOz6e0mfSeDdx7KCwQL9ds969FIl3Oc2n84k1mXncshDWDr?=
- =?us-ascii?Q?D3DXW/sQF0bw/7H6NusE2BZG+ixfF+lXzamEpOKhK6U/ZJYlygRBVzt+TiXL?=
- =?us-ascii?Q?9YJrCsYNAdhU54jqGMWs0QDQW1J3Rwt5vHsIk2SmkSP1EEyF44R12jgF073G?=
- =?us-ascii?Q?uAVJU3bX05sg4juyFDXRv3q5iRV+p7j8qJPJccLCGRI195JSJFQdHvbWvi6z?=
- =?us-ascii?Q?9w6pJGgqnl+YjLA0Srysu9u8M9wHGskGlZqeP0EkUWSl8k77dxa03jlLZRLL?=
- =?us-ascii?Q?qGrBAeL6XMm0tPiSxHGWzXAJ1rwOlYQ7JaaLcdz09nV6liK/1kcHiwegfzho?=
- =?us-ascii?Q?dzfIXSBbD/4bqOC8tUZ52X4EofAiDxOSUXmPeT5R2U9gQ2Fvlr19EuUbmcdR?=
- =?us-ascii?Q?abvdlE/KNNyo8sBQYeHL3s9HaBpS/AAITbwADegvoCEsGeOZ9yBIXo+Ph87V?=
- =?us-ascii?Q?cHbpeSly1CJrwGKu5wedYZ/45YgoXyTn1KLfsUSRXj8PJWDmZYaYjtrH4kdI?=
- =?us-ascii?Q?rI8pinYpkWFyolAnZtdTcrZf4rOlahRB+ocRvG09?=
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d50e506-7da1-4927-3f49-08db75962ae9
-X-MS-Exchange-CrossTenant-AuthSource: PSBPR02MB4471.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2023 16:06:43.2791 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rSMWmgA4tQzlfoZLDhCdD6553yz/4wve27NXFzDbHNn8hxRef2It4QS7A+9zC+Er2lxbrrqqIN11V/CyQOIEJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR02MB6524
-X-Headers-End: 1qDSGL-0004T4-MT
-Subject: [f2fs-dev] [PATCH 1/2 v2] f2fs: update mtime and ctime in move file
- range method
+X-Received: by 2002:a92:d350:0:b0:345:a49a:32d7 with SMTP id
+ a16-20020a92d350000000b00345a49a32d7mr608409ilh.5.1687715147862; Sun, 25 Jun
+ 2023 10:45:47 -0700 (PDT)
+Date: Sun, 25 Jun 2023 10:45:47 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ded70105fef7cd35@google.com>
+From: syzbot <syzbot+dd6352699b8027673b35@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+ linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+X-Headers-End: 1qDToC-00EEsN-Mh
+Subject: [f2fs-dev] [syzbot] [f2fs?] possible deadlock in f2fs_fiemap
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -139,48 +84,159 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-From: Yunlei He via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-Reply-To: Yunlei He <heyunlei@oppo.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Mtime and ctime stay old value without update after move
-file range ioctl. This patch add time update.
+Hello,
 
-Signed-off-by: Yunlei He <heyunlei@oppo.com>
+syzbot found the following issue on:
+
+HEAD commit:    15e71592dbae Add linux-next specific files for 20230621
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=101c827b280000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b4e51841f618f374
+dashboard link: https://syzkaller.appspot.com/bug?extid=dd6352699b8027673b35
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6b6464ef4887/disk-15e71592.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/81eba5775318/vmlinux-15e71592.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bc7983587629/bzImage-15e71592.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dd6352699b8027673b35@syzkaller.appspotmail.com
+
+loop4: detected capacity change from 0 to 40427
+F2FS-fs (loop4): Found nat_bits in checkpoint
+F2FS-fs (loop4): Mounted with checkpoint version = 48b305e5
+======================================================
+WARNING: possible circular locking dependency detected
+6.4.0-rc7-next-20230621-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor.4/7658 is trying to acquire lock:
+ffff888012869e20 (&mm->mmap_lock){++++}-{3:3}, at: __might_fault+0xb2/0x190 mm/memory.c:5716
+
+but task is already holding lock:
+ffff8880865b1a10 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:771 [inline]
+ffff8880865b1a10 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: f2fs_fiemap+0x1e3/0x1670 fs/f2fs/data.c:1998
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}:
+       down_write+0x92/0x200 kernel/locking/rwsem.c:1573
+       inode_lock include/linux/fs.h:771 [inline]
+       f2fs_file_mmap+0x154/0x290 fs/f2fs/file.c:527
+       call_mmap include/linux/fs.h:1876 [inline]
+       mmap_region+0x6cf/0x2570 mm/mmap.c:2669
+       do_mmap+0x850/0xee0 mm/mmap.c:1373
+       vm_mmap_pgoff+0x1a2/0x3b0 mm/util.c:543
+       ksys_mmap_pgoff+0x42b/0x5b0 mm/mmap.c:1419
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #0 (&mm->mmap_lock){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3142 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3261 [inline]
+       validate_chain kernel/locking/lockdep.c:3876 [inline]
+       __lock_acquire+0x2e9d/0x5e20 kernel/locking/lockdep.c:5144
+       lock_acquire.part.0+0x11c/0x370 kernel/locking/lockdep.c:5761
+       __might_fault mm/memory.c:5717 [inline]
+       __might_fault+0x115/0x190 mm/memory.c:5710
+       _copy_to_user+0x2b/0xc0 lib/usercopy.c:36
+       copy_to_user include/linux/uaccess.h:191 [inline]
+       fiemap_fill_next_extent+0x217/0x370 fs/ioctl.c:144
+       f2fs_fiemap+0x5a5/0x1670 fs/f2fs/data.c:2066
+       ioctl_fiemap fs/ioctl.c:219 [inline]
+       do_vfs_ioctl+0x478/0x16c0 fs/ioctl.c:810
+       __do_sys_ioctl fs/ioctl.c:868 [inline]
+       __se_sys_ioctl fs/ioctl.c:856 [inline]
+       __x64_sys_ioctl+0x10c/0x210 fs/ioctl.c:856
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sb->s_type->i_mutex_key#23);
+                               lock(&mm->mmap_lock);
+                               lock(&sb->s_type->i_mutex_key#23);
+  rlock(&mm->mmap_lock);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.4/7658:
+ #0: ffff8880865b1a10 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:771 [inline]
+ #0: ffff8880865b1a10 (&sb->s_type->i_mutex_key#23){+.+.}-{3:3}, at: f2fs_fiemap+0x1e3/0x1670 fs/f2fs/data.c:1998
+
+stack backtrace:
+CPU: 1 PID: 7658 Comm: syz-executor.4 Not tainted 6.4.0-rc7-next-20230621-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/27/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x150 lib/dump_stack.c:106
+ check_noncircular+0x2df/0x3b0 kernel/locking/lockdep.c:2195
+ check_prev_add kernel/locking/lockdep.c:3142 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3261 [inline]
+ validate_chain kernel/locking/lockdep.c:3876 [inline]
+ __lock_acquire+0x2e9d/0x5e20 kernel/locking/lockdep.c:5144
+ lock_acquire.part.0+0x11c/0x370 kernel/locking/lockdep.c:5761
+ __might_fault mm/memory.c:5717 [inline]
+ __might_fault+0x115/0x190 mm/memory.c:5710
+ _copy_to_user+0x2b/0xc0 lib/usercopy.c:36
+ copy_to_user include/linux/uaccess.h:191 [inline]
+ fiemap_fill_next_extent+0x217/0x370 fs/ioctl.c:144
+ f2fs_fiemap+0x5a5/0x1670 fs/f2fs/data.c:2066
+ ioctl_fiemap fs/ioctl.c:219 [inline]
+ do_vfs_ioctl+0x478/0x16c0 fs/ioctl.c:810
+ __do_sys_ioctl fs/ioctl.c:868 [inline]
+ __se_sys_ioctl fs/ioctl.c:856 [inline]
+ __x64_sys_ioctl+0x10c/0x210 fs/ioctl.c:856
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f3f8028c389
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3f81084168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f3f803abf80 RCX: 00007f3f8028c389
+RDX: 00000000200000c0 RSI: 00000000c020660b RDI: 0000000000000004
+RBP: 00007f3f802d7493 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe04349abf R14: 00007f3f81084300 R15: 0000000000022000
+ </TASK>
+
+
 ---
-v2:
--update both src and dst inode
- fs/f2fs/file.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index cb42d8464ad9..5af7e57b6140 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2886,6 +2886,17 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
- 		f2fs_up_write(&F2FS_I(dst)->i_gc_rwsem[WRITE]);
- out_src:
- 	f2fs_up_write(&F2FS_I(src)->i_gc_rwsem[WRITE]);
-+	if (ret)
-+		goto out_unlock;
-+
-+	src->i_mtime = src->i_ctime = current_time(src);
-+	f2fs_mark_inode_dirty_sync(src, false);
-+	if (src != dst) {
-+		dst->i_mtime = dst->i_ctime = current_time(dst);
-+		f2fs_mark_inode_dirty_sync(dst, false);
-+	}
-+
-+	f2fs_update_time(sbi, REQ_TIME);
- out_unlock:
- 	if (src != dst)
- 		inode_unlock(dst);
--- 
-2.40.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the bug is already fixed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to change bug's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the bug is a duplicate of another bug, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
 
 _______________________________________________
