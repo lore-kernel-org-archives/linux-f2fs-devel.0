@@ -4,79 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 0204AEB64DA
-	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Jun 2023 23:36:38 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 3F885EB64DA
+	for <linux-f2fs-devel@archiver.kernel.org>; Fri, 30 Jun 2023 23:40:33 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
+	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qFNfG-00014g-D1;
-	Fri, 30 Jun 2023 23:36:35 +0000
+	id 1qFNj6-0005yZ-9c;
+	Fri, 30 Jun 2023 23:40:32 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <chao@kernel.org>) id 1qFNfG-00014a-2r
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qFNj3-0005yT-OJ
  for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Jun 2023 23:36:34 +0000
+ Fri, 30 Jun 2023 23:40:30 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
- From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+ d=sourceforge.net; s=x; h=To:Date:Message-Id:From:Subject:
+ Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:Cc:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=EEVLaINZES5ixLIW/4QJdesmS0/2/8THu5RFYxo5A98=; b=PCt0E9mLhFqcMt+shHRNIPclBb
- dx0SIe8myrQR/9+qfTuuDWjAtnWhOROrNfSIRk57k9ep43YShDRvJQF53c9yWil4u8XIBuC6Ml5du
- 88XDMGJ3S+dfSSkvejzTX1DXRdvHGpaKfyTZ1CYeJe99xIme9KGsZTiT5exB7XMJ92p4=;
+ Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+ List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=YZYDR2TWxAQBjrseq1iJKm/v1/dvUZmb2sMqFNnmeLE=; b=fEZD9gA+v9YAZq3YYcqPTSnL/V
+ NVHqSIXDERI6aSjIF3TjuGsJCBVxIl99J2OyT7TdG6jTKp6U5Xiumcq0GR+eqOLJTPj3Kb12TVQBc
+ jSCCCZrucYA4lD4XVnnwgiv52vI6VQ/TcfWfu9kzwze3vrpq6Snb6k6U28uDMA1mvfTs=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
- h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
- Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
- Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=EEVLaINZES5ixLIW/4QJdesmS0/2/8THu5RFYxo5A98=; b=mgESBHrLlIGE1QZFIf0jv3gZyS
- sa+XbJuf0KUzJVshiZweF/+tOaC1gaLlsrqRAS8N8pThnmijJa8CxrVwAtmJEaJIVAHnlssrcNRYp
- rz93vcEHi6YRWRfsWRcc5/kmBqLTcN7+3vXr4JVa12iODJWHF+GtL2PcFQYKHctrgnhk=;
+ h=To:Date:Message-Id:From:Subject:Content-Transfer-Encoding:MIME-Version:
+ Content-Type:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=YZYDR2TWxAQBjrseq1iJKm/v1/dvUZmb2sMqFNnmeLE=; b=J
+ hkI8k0P7cW5aVPGlWZGQb69XV/wkTXTNQpOOZkZ5SqHPRqg4kTZsvYVB7JfKUlxZltGx6ObaOgzTI
+ j/eb5wAuljA2iByt/4P/ttWVWbO6jvaQMOwGxuv4LeS9ZwiSpbZvEF0ErsslaMTCQ5sgFtyha8nxK
+ C/ZtYNpNGqGwFMHw=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qFNfC-0000oA-L1 for linux-f2fs-devel@lists.sourceforge.net;
- Fri, 30 Jun 2023 23:36:34 +0000
+ id 1qFNj3-002Wkh-FO for linux-f2fs-devel@lists.sourceforge.net;
+ Fri, 30 Jun 2023 23:40:30 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 6FD2D617E6
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 0A0FD617E6
  for <linux-f2fs-devel@lists.sourceforge.net>;
- Fri, 30 Jun 2023 23:36:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF1FC433C7;
- Fri, 30 Jun 2023 23:36:22 +0000 (UTC)
+ Fri, 30 Jun 2023 23:40:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6C1A0C433C8
+ for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 30 Jun 2023 23:40:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1688168183;
- bh=aK6yYJgscyZwWj5dtSV65RXKY0BEz1UX2yJwu5X1aZ8=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=MoIiIYi0ETQup2yAMpWWZEQCL1KgbttW38aGQd9oj+soN2lWps5H2gS+e10zrOeST
- bTYKG04zuQ/1RY/buL8tObEzyG5DsCX+jwcOIuKgCwJO5MDC2QzCT7OkGEWGJXjUy5
- GfdV59i3bUnftyi704U/xTI9rRpXMwBsrgxNKlws2o2SjCiK9GRp/EV8ZV6bs1gChd
- id2amycXugMhySZcMTI/9KHDXzTEzD9s6OvocDP8wmPuSUnvZa1RukVnsPvAOw2faJ
- YPebe6SIx7l1pbsjb1GBRjhXOAo4r6lGELCl7fHFeCVYXUX9neYzHGixjio2Vfvnp3
- mSGzs+zqKYv0g==
-Message-ID: <44777f8c-6f2e-a9bd-6923-b12d0326d3cb@kernel.org>
-Date: Sat, 1 Jul 2023 07:36:20 +0800
+ s=k20201202; t=1688168423;
+ bh=L2AaKeMuP0jsXpJ5ClfyUX6qK20+3skbkismnC6S8bU=;
+ h=Subject:From:Date:To:From;
+ b=Due7B4moSjS+12f8NFLmcGX+ZJz8fH0MjWNvCYQY+SWEigxNRvVsWSj3DKkpq4yqF
+ zuO9dg4egTZwN0Rcj5q/wuTRZ3vG69KeyjWiVhqjPJOj3W6W2W/8JSNC73Yd2Xpv0F
+ KQz6Lb20+qxC7SVBh3DKxVdJaWB5fOgj0o0HKFXgaRWRrQNzr+mA3LdbZkIysPlO5C
+ MoiPErWd6Rr2mQBh9ebpXECsxblDdTSWAkUS80TNVz3WTAOf0j6kmimZNFuAGhrj0B
+ aNYsoZ91/WoTGQ7r1NO+SmboF6c1NH9ruL9blWg8HkorBvlG+o5c/tZU9mPhTAw5kd
+ pe6Hia4J182xw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
+ (localhost.localdomain [127.0.0.1])
+ by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
+ 4E868C39563 for <linux-f2fs-devel@lists.sourceforge.net>;
+ Fri, 30 Jun 2023 23:40:23 +0000 (UTC)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Content-Language: en-US
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20230613233940.3643362-1-jaegeuk@kernel.org>
- <e5788348-b547-8e10-21af-90544f3aa75c@kernel.org>
- <ZJvqZTX1SIwvDCUn@google.com>
- <e4ee00c4-c20a-4613-87ec-3b144d6252ed@kernel.org>
- <ZJx8/0eOB4PcftQe@google.com> <ZJ9QPLd6LF9dy5bm@google.com>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <ZJ9QPLd6LF9dy5bm@google.com>
-X-Headers-End: 1qFNfC-0000oA-L1
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix deadlock in i_xattr_sem and
- inode page lock and fix the original issue
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: <168816842324.31915.640960670411622269.git-patchwork-summary@kernel.org>
+Date: Fri, 30 Jun 2023 23:40:23 +0000
+To: linux-f2fs-devel@lists.sourceforge.net
+X-Headers-End: 1qFNj3-002Wkh-FO
+Subject: [f2fs-dev] Patchwork summary for: f2fs
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -88,129 +84,47 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-On 2023/7/1 5:59, Jaegeuk Kim wrote:
-> On 06/28, Jaegeuk Kim wrote:
->> On 06/28, Chao Yu wrote:
->>> On 2023/6/28 16:08, Jaegeuk Kim wrote:
->>>> Thread #1:
->>>>
->>>> [122554.641906][   T92]  f2fs_getxattr+0xd4/0x5fc
->>>>       -> waiting for f2fs_down_read(&F2FS_I(inode)->i_xattr_sem);
->>>>
->>>> [122554.641927][   T92]  __f2fs_get_acl+0x50/0x284
->>>> [122554.641948][   T92]  f2fs_init_acl+0x84/0x54c
->>>> [122554.641969][   T92]  f2fs_init_inode_metadata+0x460/0x5f0
->>>> [122554.641990][   T92]  f2fs_add_inline_entry+0x11c/0x350
->>>>       -> Locked dir->inode_page by f2fs_get_node_page()
->>>>
->>>> [122554.642009][   T92]  f2fs_do_add_link+0x100/0x1e4
->>>> [122554.642025][   T92]  f2fs_create+0xf4/0x22c
->>>> [122554.642047][   T92]  vfs_create+0x130/0x1f4
->>>>
->>>> Thread #2:
->>>>
->>>> [123996.386358][   T92]  __get_node_page+0x8c/0x504
->>>>       -> waiting for dir->inode_page lock
->>>>
->>>> [123996.386383][   T92]  read_all_xattrs+0x11c/0x1f4
->>>> [123996.386405][   T92]  __f2fs_setxattr+0xcc/0x528
->>>> [123996.386424][   T92]  f2fs_setxattr+0x158/0x1f4
->>>>       -> f2fs_down_write(&F2FS_I(inode)->i_xattr_sem);
->>>>
->>>> [123996.386443][   T92]  __f2fs_set_acl+0x328/0x430
->>>> [123996.386618][   T92]  f2fs_set_acl+0x38/0x50
->>>> [123996.386642][   T92]  posix_acl_chmod+0xc8/0x1c8
->>>> [123996.386669][   T92]  f2fs_setattr+0x5e0/0x6bc
->>>> [123996.386689][   T92]  notify_change+0x4d8/0x580
->>>> [123996.386717][   T92]  chmod_common+0xd8/0x184
->>>> [123996.386748][   T92]  do_fchmodat+0x60/0x124
->>>> [123996.386766][   T92]  __arm64_sys_fchmodat+0x28/0x3c
->>>
->>> Back to the race condition, my question is why we can chmod on inode before
->>> it has been created?
->>
->> This is touching the directory.
-> 
-> Chao,
-> 
-> Do you have other concern? Otherwise, I'll include this into the next pull
-> request.
+Hello:
 
-Jaegeuk,
+The following patches were marked "accepted", because they were applied to
+jaegeuk/f2fs.git (dev):
 
-Sorry for late reply, I was misled by "dir->inode_page" and "inode" words in commit
-message, it should be "dir->inode_page" and "dir_inode".
+Patch: [f2fs-dev] f2fs: fix to do sanity check on direct node in truncate_dnode()
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=761204
+  Lore link: https://lore.kernel.org/r/20230629111144.3582787-1-chao@kernel.org
 
-Anyway, the patch looks good to me.
+Patch: [f2fs-dev] f2fs: fix error path handling in truncate_dnode()
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=761084
+  Lore link: https://lore.kernel.org/r/20230629014102.3057853-1-chao@kernel.org
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Patch: [f2fs-dev,RFC] f2fs: only set release for file that has compressed data
+  Submitter: Sheng Yong <shengyong@oppo.com>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=760603
+  Lore link: https://lore.kernel.org/r/20230627122153.1557656-1-shengyong@oppo.com
 
-Thanks,
+Patch: [f2fs-dev] f2fs: fix compile warning in f2fs_destroy_node_manager()
+  Submitter: Chao Yu <chao@kernel.org>
+  Committer: Jaegeuk Kim <jaegeuk@kernel.org>
+  Patchwork: https://patchwork.kernel.org/project/f2fs/list/?series=761085
+  Lore link: https://lore.kernel.org/r/20230629014134.3058318-1-chao@kernel.org
 
-> 
-> Thanks,
-> 
->>
->>>
->>> Thanks,
->>>
->>>>
->>>> Fixes: 27161f13e3c3 "f2fs: avoid race in between read xattr & write xattr"
->>>> Cc: <stable@vger.kernel.org>
->>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>> ---
->>>>    fs/f2fs/dir.c   | 9 ++++++++-
->>>>    fs/f2fs/xattr.c | 6 ++++--
->>>>    2 files changed, 12 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->>>> index 887e55988450..d635c58cf5a3 100644
->>>> --- a/fs/f2fs/dir.c
->>>> +++ b/fs/f2fs/dir.c
->>>> @@ -775,8 +775,15 @@ int f2fs_add_dentry(struct inode *dir, const struct f2fs_filename *fname,
->>>>    {
->>>>    	int err = -EAGAIN;
->>>> -	if (f2fs_has_inline_dentry(dir))
->>>> +	if (f2fs_has_inline_dentry(dir)) {
->>>> +		/*
->>>> +		 * Should get i_xattr_sem to keep the lock order:
->>>> +		 * i_xattr_sem -> inode_page lock used by f2fs_setxattr.
->>>> +		 */
->>>> +		f2fs_down_read(&F2FS_I(dir)->i_xattr_sem);
->>>>    		err = f2fs_add_inline_entry(dir, fname, inode, ino, mode);
->>>> +		f2fs_up_read(&F2FS_I(dir)->i_xattr_sem);
->>>> +	}
->>>>    	if (err == -EAGAIN)
->>>>    		err = f2fs_add_regular_entry(dir, fname, inode, ino, mode);
->>>> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
->>>> index 213805d3592c..476b186b90a6 100644
->>>> --- a/fs/f2fs/xattr.c
->>>> +++ b/fs/f2fs/xattr.c
->>>> @@ -528,10 +528,12 @@ int f2fs_getxattr(struct inode *inode, int index, const char *name,
->>>>    	if (len > F2FS_NAME_LEN)
->>>>    		return -ERANGE;
->>>> -	f2fs_down_read(&F2FS_I(inode)->i_xattr_sem);
->>>> +	if (!ipage)
->>>> +		f2fs_down_read(&F2FS_I(inode)->i_xattr_sem);
->>>>    	error = lookup_all_xattrs(inode, ipage, index, len, name,
->>>>    				&entry, &base_addr, &base_size, &is_inline);
->>>> -	f2fs_up_read(&F2FS_I(inode)->i_xattr_sem);
->>>> +	if (!ipage)
->>>> +		f2fs_up_read(&F2FS_I(inode)->i_xattr_sem);
->>>>    	if (error)
->>>>    		return error;
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+Total patches: 4
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
 
 _______________________________________________
