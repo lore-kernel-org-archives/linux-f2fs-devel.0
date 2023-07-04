@@ -4,100 +4,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id 83266C001E0
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 24E8CC10F19
 	for <linux-f2fs-devel@archiver.kernel.org>; Tue,  4 Jul 2023 12:22:45 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qGf3M-0006Zm-3b;
-	Tue, 04 Jul 2023 12:22:44 +0000
+	id 1qGf3J-0005hX-GC;
+	Tue, 04 Jul 2023 12:22:42 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <jack@suse.cz>) id 1qGf3J-0006Zf-Iz
- for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Jul 2023 12:22:42 +0000
+ (envelope-from <jack@suse.cz>) id 1qGf3H-0005hE-J3;
+ Tue, 04 Jul 2023 12:22:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:References:
- In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
- List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=DCGhF7aG0ICnzzcrmQsOj1iUvKcFg3KjYUt2ITpurKA=; b=c+8+IJWNn1ZkY9cmL3VkuLBLW2
- S7mvd/iHYvIr7FmPGeCQ+qsckityjVmoRogokXBqNkAT3QXe+9aW9/iQQZLT0EfOHZfCvuddEOZM2
- scPfUT3J0gFenmB4hsEZbDpJ+XqyjAEBr/5A3N3LrV7LXhHys9sgvh5OHlOhPn1mpdTU=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
- ;
- h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-Id:
+ d=sourceforge.net; s=x; h=Content-Transfer-Encoding:MIME-Version:Message-Id:
  Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
- :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
- List-Post:List-Owner:List-Archive;
- bh=DCGhF7aG0ICnzzcrmQsOj1iUvKcFg3KjYUt2ITpurKA=; b=ZWe6EJHA3YfQlGJvCa7c2Ef/I0
- HULu4DkETrdgXI5tRBoT8DIW7Vumy0KWT3eDD/xuwIFSAjpbp/SneMDTFZFc6MSNrX94jDQfsLvmA
- uv37fBJAwjoT9JtSmHhSV3vDz0nMSJyTMuEgUfCbosaae4mj2GnRmeQofA4/G5hov/Z0=;
-Received: from smtp-out2.suse.de ([195.135.220.29])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+ List-Subscribe:List-Post:List-Owner:List-Archive;
+ bh=fmLTdco5SVuopuSHDbZ7fgiCJT9fmPtnstwBD5O0cVs=; b=QaOxGyXCpCHvdE+aDVXSpCVGUF
+ 7ETv3bQtQ6fV/PYROcK6BcJlC3u7T33NgY9GsTM8G10JLzhBR3zugRoJ/M+wblOWBJwW2/CojwTG5
+ WoGFgmBiyEqPn+iwNX/CCpJrkME9mrErbE5LegRz7E8sOnCFRiI7nzAnPEDlA4Ya5Bsk=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
+ ;
+ h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From
+ :Sender:Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:
+ Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+ References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+ List-Owner:List-Archive; bh=fmLTdco5SVuopuSHDbZ7fgiCJT9fmPtnstwBD5O0cVs=; b=M
+ TpE+ojhr0/5fLw45Rbhn+qxguKDbpXPh2PV6+JNv0wXCn6OKrS4Scx6mEYHVkIwOCswcxxxbfse0N
+ wd9CPzMFUWlTixE4giyx6U9CALxKnQEg9c4ZNcOH4YaoPtNZ601xgZxAPjq8SgtUXey7w+vHNPQa2
+ /BWaAOmVLnVl2fGk=;
+Received: from smtp-out1.suse.de ([195.135.220.28])
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128) (Exim 4.95)
- id 1qGf3F-0004yL-1p for linux-f2fs-devel@lists.sourceforge.net;
- Tue, 04 Jul 2023 12:22:40 +0000
+ id 1qGf3H-005hBQ-Ic; Tue, 04 Jul 2023 12:22:40 +0000
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by smtp-out2.suse.de (Postfix) with ESMTPS id 9D49D2056F;
- Tue,  4 Jul 2023 12:22:26 +0000 (UTC)
+ by smtp-out1.suse.de (Postfix) with ESMTPS id 37C1422864;
+ Tue,  4 Jul 2023 12:22:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
- t=1688473346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=DCGhF7aG0ICnzzcrmQsOj1iUvKcFg3KjYUt2ITpurKA=;
- b=JYTQ4Qndf0rmIHWQ/Wge5YOAxgITvuWtSC+X+uxM8Ag+eytWbHShbtJoizWkc8GONChhT7
- p+utlJCTK2JVn8+gf1M81Ir3Ds/I6wyAgcdJr6tv5z/C6VS1s5Icc2yeOcpoLNLajRekEt
- gtjyL1ikbFFqwFlfuaOkKDGf2HguPMU=
+ t=1688473345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+ mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
+ bh=fmLTdco5SVuopuSHDbZ7fgiCJT9fmPtnstwBD5O0cVs=;
+ b=LYS1cAt6t7JDeaXCZA2GfkFsvePsCKrBv683wLJKbeQdnB0RB5kex3lpjPlaO0WNrRIj/p
+ OKov+tjGtn08tmzrJU88unG7OZdlwokmKgdGkl+OG4epxE3GA77hqhJZhG3Z0dN3YI1cPw
+ 0UrvrW8qrgzkAVKwdQJPDUFGAz/meEU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
- s=susede2_ed25519; t=1688473346;
+ s=susede2_ed25519; t=1688473345;
  h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
- mime-version:mime-version:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=DCGhF7aG0ICnzzcrmQsOj1iUvKcFg3KjYUt2ITpurKA=;
- b=7D4V23So0uda/luweBJxz11yl0lwco62tjFcKIjQ32NHEUu3+82UVHdsD4yrGrO9DrtUEl
- UHyuEvTZ+i1sFfCg==
+ mime-version:mime-version: content-transfer-encoding:content-transfer-encoding;
+ bh=fmLTdco5SVuopuSHDbZ7fgiCJT9fmPtnstwBD5O0cVs=;
+ b=Dse69eRRr1j+O/QtQVzrTyIAnqxKgXzcDp3QAv4KDKTfaZG4HjcsXtXKNaEGDfzmeYyIxx
+ WQrcOQN123NhV6Dg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
  (No client certificate requested)
- by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8ADC613A26;
- Tue,  4 Jul 2023 12:22:26 +0000 (UTC)
+ by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1D4941346D;
+ Tue,  4 Jul 2023 12:22:25 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
- by imap2.suse-dmz.suse.de with ESMTPSA id DyrgIQIPpGRZMAAAMHmgww
- (envelope-from <jack@suse.cz>); Tue, 04 Jul 2023 12:22:26 +0000
+ by imap2.suse-dmz.suse.de with ESMTPSA id j8gfBwEPpGQFMAAAMHmgww
+ (envelope-from <jack@suse.cz>); Tue, 04 Jul 2023 12:22:25 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
- id 2B6E1A0787; Tue,  4 Jul 2023 14:22:25 +0200 (CEST)
+ id 915DAA0722; Tue,  4 Jul 2023 14:22:24 +0200 (CEST)
 From: Jan Kara <jack@suse.cz>
 To: <linux-block@vger.kernel.org>
-Date: Tue,  4 Jul 2023 14:21:51 +0200
-Message-Id: <20230704122224.16257-24-jack@suse.cz>
+Date: Tue,  4 Jul 2023 14:21:27 +0200
+Message-Id: <20230629165206.383-1-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20230629165206.383-1-jack@suse.cz>
-References: <20230629165206.383-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2324; i=jack@suse.cz;
- h=from:subject; bh=zY0vQIFWwXxZ7RHzAEqG6D4bDjhEcI3Cdr6fuyrfZKs=;
- b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkpA7fQhkJvnMF8uP9W/ZbXYDJIo2ZlL1tAVBNnpLc
- tGLTdAmJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZKQO3wAKCRCcnaoHP2RA2ZwFB/
- 9x2FfXI23LL9d4U0StfRUPWhB/1bRuiDcFEymT2N8DWjxiyNYTYniv/hG+AYiVk5fvwKPVPLtbeCWR
- SwTc296AoMYNt6OYTs5omCWTDrrGuU7/N9IyGZKlPDDKWCFlGUhR+GoQYC+p2MgWPo4MUyF/p5QXx9
- NTG2SMoLXGFMMBE83HivzaIzqr84ckWTYdCbrXp32tkCttJqnAZrTdFSb3SPxL+PwNS5C+wpdyY/Xu
- xdpcXqd3W62aPcYj8imMu2V2aEknQm1o4YfBnsQ6cKANu+lft0AJ6gIdJkDd7ZjKRDtSZWL009oOjG
- lWB+GrHroIZAeQODGJDj4/Yp3JjPOY
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2471; i=jack@suse.cz;
+ h=from:subject:message-id; bh=ceZQTtdZjpsFiBb9Fva7YX0lOa2i6Zx53n9hl/3+KQM=;
+ b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBkpA7DYrlV/5vfqjK0juEsCaKDoUZ39z4YDWexB9PO
+ aQyP7ZaJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZKQOwwAKCRCcnaoHP2RA2S48B/
+ 476l3pggtn8igKmRoHswxXv63Ks68g/08HDzIZqCtDPA84BSKd93Nq0m/Wn76G+ubHQpfg8PMw5+DG
+ uV+DOTR+NEYKAToQQ8YzmS6RAGasKKWUg3k1pr7jK23l+wcq16ImmBXmWM3nr2j85QcDZeB+vpUKHh
+ bdQJQsBOqKsA+qlImgVwvMS+V4UTLQcIYQo2bDBl0TIbJB0UiXYMYHcvrEkwNZWybXBs+wfERrXuF1
+ XlXO6rWvLyW94kkpvaZTvPY+yZd7tOLd+W8gsz2uBFG9QJg57aDkZxf6NA+Qxf2O8uwfWiyb1XXBN8
+ I1wYA/sSduibCw4tF4sYb/wERvIAO+
 X-Developer-Key: i=jack@suse.cz; a=openpgp;
  fpr=93C6099A142276A28BBE35D815BC833443038D8C
-X-Headers-End: 1qGf3F-0004yL-1p
-Subject: [f2fs-dev] [PATCH 24/32] f2fs: Convert to
- blkdev_get_handle_by_dev/path()
+X-Headers-End: 1qGf3H-005hBQ-Ic
+Subject: [f2fs-dev] [PATCH RFC 0/32] block: Make blkdev_get_by_*() return
+ handle
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -109,84 +101,99 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
- linux-f2fs-devel@lists.sourceforge.net, Christoph Hellwig <hch@infradead.org>,
- linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net,
+ Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+ linux-nvme@lists.infradead.org, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ dm-devel@redhat.com, target-devel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, Jack Wang <jinpu.wang@ionos.com>,
+ Alasdair Kergon <agk@redhat.com>, drbd-dev@lists.linbit.com,
+ linux-s390@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Christoph Hellwig <hch@infradead.org>, xen-devel@lists.xenproject.org,
+ Gao Xiang <xiang@kernel.org>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Sven Schnelle <svens@linux.ibm.com>, linux-pm@vger.kernel.org,
+ Mike Snitzer <snitzer@kernel.org>, Joern Engel <joern@lazybastard.org>,
+ reiserfs-devel@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-bcache@vger.kernel.org, David Sterba <dsterba@suse.com>,
+ Jaegeuk Kim <jaegeuk@kernel.org>,
+ Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Jens Axboe <axboe@kernel.dk>, linux-nfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>, linux-mm@kvack.org,
+ Song Liu <song@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-xfs@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
+ ocfs2-devel@oss.oracle.com, Anna Schumaker <anna@kernel.org>,
+ linux-fsdevel@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-erofs@lists.ozlabs.org,
+ linux-btrfs@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Convert f2fs to use blkdev_get_handle_by_dev/path() and pass the handle
-around.
+Hello,
 
-CC: Jaegeuk Kim <jaegeuk@kernel.org>
+this patch series implements the idea of blkdev_get_by_*() calls returning
+bdev_handle which is then passed to blkdev_put() [1]. This makes the get
+and put calls for bdevs more obviously matching and allows us to propagate
+context from get to put without having to modify all the users (again!).
+In particular I need to propagate used open flags to blkdev_put() to be able
+count writeable opens and add support for blocking writes to mounted block
+devices. I'll send that series separately.
+
+The series is based on Linus' tree as of yesterday + two bcache fixes which are
+in the block tree. Patches have passed some basic testing, I plan to test more
+users once we agree this is the right way to go.
+
+								Honza
+
+[1] https://lore.kernel.org/all/ZJGNsVDhZx0Xgs2H@infradead.org
+
+CC: Alasdair Kergon <agk@redhat.com>
+CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Anna Schumaker <anna@kernel.org>
 CC: Chao Yu <chao@kernel.org>
+CC: Christian Borntraeger <borntraeger@linux.ibm.com>
+CC: Coly Li <colyli@suse.de
+CC: "Darrick J. Wong" <djwong@kernel.org>
+CC: Dave Kleikamp <shaggy@kernel.org>
+CC: David Sterba <dsterba@suse.com>
+CC: dm-devel@redhat.com
+CC: drbd-dev@lists.linbit.com
+CC: Gao Xiang <xiang@kernel.org>
+CC: Jack Wang <jinpu.wang@ionos.com>
+CC: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: jfs-discussion@lists.sourceforge.net
+CC: Joern Engel <joern@lazybastard.org>
+CC: Joseph Qi <joseph.qi@linux.alibaba.com>
+CC: Kent Overstreet <kent.overstreet@gmail.com>
+CC: linux-bcache@vger.kernel.org
+CC: linux-btrfs@vger.kernel.org
+CC: linux-erofs@lists.ozlabs.org
+CC: <linux-ext4@vger.kernel.org>
 CC: linux-f2fs-devel@lists.sourceforge.net
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/super.c | 18 +++++++++---------
- 2 files changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d211ee89c158..680874adb265 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1227,6 +1227,7 @@ struct f2fs_bio_info {
- #define FDEV(i)				(sbi->devs[i])
- #define RDEV(i)				(raw_super->devs[i])
- struct f2fs_dev_info {
-+	struct bdev_handle *bdev_handle;
- 	struct block_device *bdev;
- 	char path[MAX_PATH_LEN];
- 	unsigned int total_segments;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index e34197a70dc1..570364954578 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1538,7 +1538,7 @@ static void destroy_device_list(struct f2fs_sb_info *sbi)
- 	int i;
- 
- 	for (i = 0; i < sbi->s_ndevs; i++) {
--		blkdev_put(FDEV(i).bdev, sbi->sb->s_type);
-+		blkdev_handle_put(FDEV(i).bdev_handle);
- #ifdef CONFIG_BLK_DEV_ZONED
- 		kvfree(FDEV(i).blkz_seq);
- #endif
-@@ -4024,9 +4024,9 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 
- 		if (max_devices == 1) {
- 			/* Single zoned block device mount */
--			FDEV(0).bdev =
--				blkdev_get_by_dev(sbi->sb->s_bdev->bd_dev, mode,
--						  sbi->sb->s_type, NULL);
-+			FDEV(0).bdev_handle = blkdev_get_handle_by_dev(
-+					sbi->sb->s_bdev->bd_dev,
-+					mode, sbi->sb->s_type, NULL);
- 		} else {
- 			/* Multi-device mount */
- 			memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
-@@ -4044,13 +4044,13 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 					(FDEV(i).total_segments <<
- 					sbi->log_blocks_per_seg) - 1;
- 			}
--			FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path, mode,
--							  sbi->sb->s_type,
--							  NULL);
-+			FDEV(i).bdev_handle = blkdev_get_handle_by_path(
-+				FDEV(i).path, mode, sbi->sb->s_type, NULL);
- 		}
--		if (IS_ERR(FDEV(i).bdev))
--			return PTR_ERR(FDEV(i).bdev);
-+		if (IS_ERR(FDEV(i).bdev_handle))
-+			return PTR_ERR(FDEV(i).bdev_handle);
- 
-+		FDEV(i).bdev = FDEV(i).bdev_handle->bdev;
- 		/* to release errored devices */
- 		sbi->s_ndevs = i + 1;
- 
--- 
-2.35.3
+CC: linux-mm@kvack.org
+CC: linux-mtd@lists.infradead.org
+CC: linux-nfs@vger.kernel.org
+CC: linux-nilfs@vger.kernel.org
+CC: linux-nvme@lists.infradead.org
+CC: linux-pm@vger.kernel.org
+CC: linux-raid@vger.kernel.org
+CC: linux-s390@vger.kernel.org
+CC: linux-scsi@vger.kernel.org
+CC: linux-xfs@vger.kernel.org
+CC: "Md. Haris Iqbal" <haris.iqbal@ionos.com>
+CC: Mike Snitzer <snitzer@kernel.org>
+CC: Minchan Kim <minchan@kernel.org>
+CC: ocfs2-devel@oss.oracle.com
+CC: reiserfs-devel@vger.kernel.org
+CC: Sergey Senozhatsky <senozhatsky@chromium.org>
+CC: Song Liu <song@kernel.org>
+CC: Sven Schnelle <svens@linux.ibm.com>
+CC: target-devel@vger.kernel.org
+CC: Ted Tso <tytso@mit.edu>
+CC: Trond Myklebust <trond.myklebust@hammerspace.com>
+CC: xen-devel@lists.xenproject.org
 
 
 
