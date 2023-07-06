@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id D448FC05053
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Jul 2023 00:18:34 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
-	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id 31E94C07CA9
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Jul 2023 00:18:35 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-3.v29.lw.sourceforge.com)
+	by sfs-ml-3.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qHChd-00061w-7l;
+	id 1qHChe-0008MR-BY;
 	Thu, 06 Jul 2023 00:18:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-3.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qHChY-00061h-8c
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qHChY-0008Lq-Po
  for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 06 Jul 2023 00:18:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,54 +23,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I9j04/I1S7+3cFTAbgiD9QSlOTdyw3ycSGVvSrPmnms=; b=JOKmVe/nTLiO2QitPk2QW5XTxb
- 7b5mOSje1U+ao+TWf5Se5+KP3TmMNLe6xsvLiMRo2+JFIR3hF4nD8Bb/fp6sDVCBT0TfiVXf77yoS
- CyEk3krpITCfgE1ClQn/mq2udCKZD9off+Y3zlyueg+jSY2X4pgMvkxcGDmEehqByIR4=;
+ bh=5HRzWU1LRHfNMrRMYBDBMoX1iQYXRkPBgy9Wt0dCY9Y=; b=kmbdm/VMt+dnb6Z7UHq90FfPfh
+ GoySV2CiYq1SI07Vdlhfoz9lTOtCelpRpIPnlDeB8AaupdDkbsi1sC1/Shhn4JBlxjzBgr1/wdFeI
+ Cnxu1HyGffLV8wqGlChsGUSD5aaP9iOFWdztnYKzo9pslG3vZPTIE+iY3YEqku0NJgS8=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=I9j04/I1S7+3cFTAbgiD9QSlOTdyw3ycSGVvSrPmnms=; b=PoUkXWF+mQp0mO6BlMuCxIA1i9
- 0X3GMMbbcDL1lUugxFKPZ5eUHf01MFhrm5GAhjUQ7ysjEogZRHzdMMAu8gpVvxzG92dCZOrU6PD+w
- ArxszRuYSnChd6bturuT+y7hJrK6sXV269ZnJZ3p91Ofbmi/fD1VD4GfEIv2ZJMWy1+I=;
+ bh=5HRzWU1LRHfNMrRMYBDBMoX1iQYXRkPBgy9Wt0dCY9Y=; b=KjNQ0iLQm0IS2yOaEph45YdGjB
+ Cr/ELrsW/LFnJS+Gc0hAJrZdMPBG6xuDzizNGCmATnfenAzE54Uz0Wful+mK8OrEs8zIo1RfV2CCS
+ sWdMSevQgUXEJKP/3zOBxEmB2XMHe5lFzyApaPrku9qdqldQzI4i7L1Xe8xhIMtlflvQ=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
  by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qHChY-007tJN-92 for linux-f2fs-devel@lists.sourceforge.net;
+ id 1qHChY-007tJL-5i for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 06 Jul 2023 00:18:28 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id B73C961843;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id 26775617F2;
  Thu,  6 Jul 2023 00:18:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 123E5C433B7;
- Thu,  6 Jul 2023 00:18:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EC42FC433CC;
+ Thu,  6 Jul 2023 00:18:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1688602695;
- bh=n19H1bNzyKgXIdlxXeVLq/pVMrGObknKs8lwRwrUP90=;
+ bh=xIK8FsM0y6IdTXxoj2yUtX8ybh4E/hSNnrTgFUHcmA8=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=L0+ViUP6R7pGw/hqVLlqlhVenRrVaizDIJiQDp1b5Nqfi/6MgrNNXgX5VOirFTZr7
- 7G2hYmfDpiRL3WvTUeFd59G3OFJRltfq5vjRmdiVeXUDS5iHVk94kuNxgIJvLWauzz
- mOXsaxvGRndBuMlcYOA8xzWMF3/drk2LGQqLXrTBzoBBoUMHRSS+fdSjOaMH2sFyQ7
- P1CSil5dqpGkX8VsubftoxF+dV2Wq47plE0wRTG6SzKcnFMWZkgMxW8aXW/6GWn+fb
- YyXFEztb5MEZ+ZIIluSVdTxp0rAQnRWpkjk3UZcTo8t6giHCCuMHOnirYJ77EyxIf9
- LhoISi3RR/cJw==
+ b=ksZHAgHMiqjHHNI+HBfmh/tl3uHBBT0nfbChSIFhUHykziJMCSV/dXLYK3T1W2p9U
+ CirRv9+voPPJIwygedt30zAR6PpNsTqJ6iiu3TVFL5TNFBAhEa7XCLXru7Pxe8gh7q
+ g4a2eOmEDNhcCl+xlsMDNsHW2SW6gLnNfgOwk7VSYh7OzpsGT9NjdI+ITbQ/WcG9Wn
+ fIp3qfeQtscPJ+OpOWfQRZh4xECVMU2dlje1Cr3uA9UldOejm8bKH1tP/qXpJ7er3w
+ 3jYQGpCyQ1ko5Njz6BZi4VANr+UNx+6bTyfw+gMFEXf+gHhZEkKp+Ojf0kEDAn6G35
+ fB5WZ+CX6Rz1g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- DA85AC691F0; Thu,  6 Jul 2023 00:18:14 +0000 (UTC)
+ CC72CC6445A; Thu,  6 Jul 2023 00:18:14 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168860269488.29151.5197726531516627453.git-patchwork-notify@kernel.org>
+Message-Id: <168860269483.29151.4192794448591336624.git-patchwork-notify@kernel.org>
 Date: Thu, 06 Jul 2023 00:18:14 +0000
-References: <20230522135018.2742245-20-dhowells@redhat.com>
-In-Reply-To: <20230522135018.2742245-20-dhowells@redhat.com>
+References: <20230520000049.2226926-20-dhowells@redhat.com>
+In-Reply-To: <20230520000049.2226926-20-dhowells@redhat.com>
 To: David Howells <dhowells@redhat.com>
-X-Headers-End: 1qHChY-007tJN-92
-Subject: Re: [f2fs-dev] [PATCH v22 19/31] f2fs: Provide a splice-read wrapper
+X-Headers-End: 1qHChY-007tJL-5i
+Subject: Re: [f2fs-dev] [PATCH v21 19/30] f2fs: Provide a splice-read stub
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -98,8 +98,8 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jens Axboe <axboe@kernel.dk>:
 
-On Mon, 22 May 2023 14:50:06 +0100 you wrote:
-> Provide a splice_read wrapper for f2fs.  This does some checks and tracing
+On Sat, 20 May 2023 01:00:38 +0100 you wrote:
+> Provide a splice_read stub for f2fs.  This does some checks and tracing
 > before calling filemap_splice_read() and will update the iostats
 > afterwards.  Direct I/O is handled by the caller.
 > 
@@ -117,7 +117,7 @@ On Mon, 22 May 2023 14:50:06 +0100 you wrote:
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v22,19/31] f2fs: Provide a splice-read wrapper
+  - [f2fs-dev,v21,19/30] f2fs: Provide a splice-read stub
     https://git.kernel.org/jaegeuk/f2fs/c/ceb11d0e2da2
 
 You are awesome, thank you!
