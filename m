@@ -4,17 +4,17 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id E9887C04FE0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Jul 2023 00:18:31 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
-	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D448FC05053
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu,  6 Jul 2023 00:18:34 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-1.v29.lw.sourceforge.com)
+	by sfs-ml-1.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qHChb-0003GZ-E3;
-	Thu, 06 Jul 2023 00:18:31 +0000
+	id 1qHChd-00061w-7l;
+	Thu, 06 Jul 2023 00:18:34 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-1.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qHChZ-0003EJ-4J
+ (envelope-from <patchwork-bot+f2fs@kernel.org>) id 1qHChY-00061h-8c
  for linux-f2fs-devel@lists.sourceforge.net;
  Thu, 06 Jul 2023 00:18:29 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -23,54 +23,54 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sIhwu2hpEHCr9gc6S1YJv3JO6lrMDt52GyIlj2O0sgA=; b=GGVMrPhShrBkepevA7wavAeDg+
- FecQoO/XEE3dxbc71um4YPc1xptHYfCukRetnau4EP15xfHujlGYIh/F1YPygbJL9SQy11ecvsKTW
- b1/Ld1DETtaw64fs50chkHO8sTEBOrwdhbn+9fI+xbdz9vv8Gwt5iOQMlfluBTyHwzIc=;
+ bh=I9j04/I1S7+3cFTAbgiD9QSlOTdyw3ycSGVvSrPmnms=; b=JOKmVe/nTLiO2QitPk2QW5XTxb
+ 7b5mOSje1U+ao+TWf5Se5+KP3TmMNLe6xsvLiMRo2+JFIR3hF4nD8Bb/fp6sDVCBT0TfiVXf77yoS
+ CyEk3krpITCfgE1ClQn/mq2udCKZD9off+Y3zlyueg+jSY2X4pgMvkxcGDmEehqByIR4=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ; h=Cc:To:In-Reply-To:References:Date:Message-Id:From:Subject:
  Content-Transfer-Encoding:MIME-Version:Content-Type:Sender:Reply-To:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=sIhwu2hpEHCr9gc6S1YJv3JO6lrMDt52GyIlj2O0sgA=; b=Hi7r3LO0ubkZufB9zFh2QOfYTP
- c/chzDozkzR+L6ZkbbBERRq/buL8J9nZ1dltEjnv0K04vtRpacVsJM5Y37yuzyXZOW/yjOSsti6yl
- /EqzgP0t8v6fxnTgfsOhRGOXKu8/hW+ZQ1Y1RYcbq1Fs/2xjMrNljAcSYe20hSS71UlA=;
+ bh=I9j04/I1S7+3cFTAbgiD9QSlOTdyw3ycSGVvSrPmnms=; b=PoUkXWF+mQp0mO6BlMuCxIA1i9
+ 0X3GMMbbcDL1lUugxFKPZ5eUHf01MFhrm5GAhjUQ7ysjEogZRHzdMMAu8gpVvxzG92dCZOrU6PD+w
+ ArxszRuYSnChd6bturuT+y7hJrK6sXV269ZnJZ3p91Ofbmi/fD1VD4GfEIv2ZJMWy1+I=;
 Received: from dfw.source.kernel.org ([139.178.84.217])
- by sfi-mx-2.v28.lw.sourceforge.com with esmtps
+ by sfi-mx-1.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qHChY-0006H7-64 for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 06 Jul 2023 00:18:29 +0000
+ id 1qHChY-007tJN-92 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 06 Jul 2023 00:18:28 +0000
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits))
  (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id 55AD761838;
+ by dfw.source.kernel.org (Postfix) with ESMTPS id B73C961843;
  Thu,  6 Jul 2023 00:18:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 30C45C4163C;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 123E5C433B7;
  Thu,  6 Jul 2023 00:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
  s=k20201202; t=1688602695;
- bh=NJw3PZzMuCwwMcMSxFbvLpZhobMhsPnQQv6wafbTKtk=;
+ bh=n19H1bNzyKgXIdlxXeVLq/pVMrGObknKs8lwRwrUP90=;
  h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
- b=PTwth056POe7NUFtCvmuHa28xS5FyO5l+dQBHab2NGymq0TI+h83vnutmCEP7HZ4S
- 7038WZ/oGBuSQ1rR9FTsGvdTZlPklGh9MT4IWUBxeX7XrjsW5R15UaphF70osX8wMY
- 8LU77IEJy8gEQNO0LNJX1K96pyNk8+EKBSmFQqjvFQ6ZE+/xNy7IO2tRJpH70MTqHT
- LUk8NoEATcnxImLTeoS1I1yibU13ZweAEQJGrjaA9ljv/J8JLyTURwvwRK0hn+GDPQ
- dEdX95Ixxc9f8PCUcVwxY6fVVrDEVoGCxzv3QodF3LP+GRA1Y3lk9MhI0A2mFxWzwP
- eca8pDxHvLs7A==
+ b=L0+ViUP6R7pGw/hqVLlqlhVenRrVaizDIJiQDp1b5Nqfi/6MgrNNXgX5VOirFTZr7
+ 7G2hYmfDpiRL3WvTUeFd59G3OFJRltfq5vjRmdiVeXUDS5iHVk94kuNxgIJvLWauzz
+ mOXsaxvGRndBuMlcYOA8xzWMF3/drk2LGQqLXrTBzoBBoUMHRSS+fdSjOaMH2sFyQ7
+ P1CSil5dqpGkX8VsubftoxF+dV2Wq47plE0wRTG6SzKcnFMWZkgMxW8aXW/6GWn+fb
+ YyXFEztb5MEZ+ZIIluSVdTxp0rAQnRWpkjk3UZcTo8t6giHCCuMHOnirYJ77EyxIf9
+ LhoISi3RR/cJw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org
  (localhost.localdomain [127.0.0.1])
  by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id
- 06476C561EE; Thu,  6 Jul 2023 00:18:15 +0000 (UTC)
+ DA85AC691F0; Thu,  6 Jul 2023 00:18:14 +0000 (UTC)
 MIME-Version: 1.0
 From: patchwork-bot+f2fs@kernel.org
-Message-Id: <168860269502.29151.1311493785535240240.git-patchwork-notify@kernel.org>
-Date: Thu, 06 Jul 2023 00:18:15 +0000
-References: <ZKWuP6+mGdW/W0/P@google.com>
-In-Reply-To: <ZKWuP6+mGdW/W0/P@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-X-Headers-End: 1qHChY-0006H7-64
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs update for 6.5
+Message-Id: <168860269488.29151.5197726531516627453.git-patchwork-notify@kernel.org>
+Date: Thu, 06 Jul 2023 00:18:14 +0000
+References: <20230522135018.2742245-20-dhowells@redhat.com>
+In-Reply-To: <20230522135018.2742245-20-dhowells@redhat.com>
+To: David Howells <dhowells@redhat.com>
+X-Headers-End: 1qHChY-007tJN-92
+Subject: Re: [f2fs-dev] [PATCH v22 19/31] f2fs: Provide a splice-read wrapper
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -82,31 +82,43 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org, hdanton@sina.com,
+ jack@suse.cz, david@redhat.com, logang@deltatee.com, jlayton@kernel.org,
+ brauner@kernel.org, willy@infradead.org, linux-kernel@vger.kernel.org,
+ hch@infradead.org, linux-mm@kvack.org, viro@zeniv.linux.org.uk, jgg@nvidia.com,
+ linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, torvalds@linux-foundation.org,
+ hch@lst.de
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
 Hello:
 
-This pull request was applied to jaegeuk/f2fs.git (dev)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jens Axboe <axboe@kernel.dk>:
 
-On Wed, 5 Jul 2023 10:54:07 -0700 you wrote:
-> Hi Linus,
+On Mon, 22 May 2023 14:50:06 +0100 you wrote:
+> Provide a splice_read wrapper for f2fs.  This does some checks and tracing
+> before calling filemap_splice_read() and will update the iostats
+> afterwards.  Direct I/O is handled by the caller.
 > 
-> Could you please consider this pull request?
-> 
-> Thank you.
-> 
-> The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Christoph Hellwig <hch@lst.de>
+> cc: Al Viro <viro@zeniv.linux.org.uk>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> cc: Chao Yu <chao@kernel.org>
+> cc: linux-f2fs-devel@lists.sourceforge.net
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-block@vger.kernel.org
+> cc: linux-mm@kvack.org
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,GIT,PULL] f2fs update for 6.5
-    https://git.kernel.org/jaegeuk/f2fs/c/73a3fcdaa732
+  - [f2fs-dev,v22,19/31] f2fs: Provide a splice-read wrapper
+    https://git.kernel.org/jaegeuk/f2fs/c/ceb11d0e2da2
 
 You are awesome, thank you!
 -- 
