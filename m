@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 Received: from lists.sourceforge.net (lists.sourceforge.net [216.105.38.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.lore.kernel.org (Postfix) with ESMTPS id C7B26C001B0
-	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Jul 2023 07:22:41 +0000 (UTC)
-Received: from [127.0.0.1] (helo=sfs-ml-4.v29.lw.sourceforge.com)
-	by sfs-ml-4.v29.lw.sourceforge.com with esmtp (Exim 4.95)
+	by smtp.lore.kernel.org (Postfix) with ESMTPS id D2DD3EB64DD
+	for <linux-f2fs-devel@archiver.kernel.org>; Thu, 13 Jul 2023 11:19:52 +0000 (UTC)
+Received: from [127.0.0.1] (helo=sfs-ml-2.v29.lw.sourceforge.com)
+	by sfs-ml-2.v29.lw.sourceforge.com with esmtp (Exim 4.95)
 	(envelope-from <linux-f2fs-devel-bounces@lists.sourceforge.net>)
-	id 1qJqes-0000xp-4K;
-	Thu, 13 Jul 2023 07:22:38 +0000
+	id 1qJuMR-0005Ds-T9;
+	Thu, 13 Jul 2023 11:19:50 +0000
 Received: from [172.30.20.202] (helo=mx.sourceforge.net)
- by sfs-ml-4.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
+ by sfs-ml-2.v29.lw.sourceforge.com with esmtps (TLS1.2) tls
  TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (Exim 4.95)
- (envelope-from <ebiggers@kernel.org>) id 1qJqeq-0000xj-QR
+ (envelope-from <hch@lst.de>) id 1qJuMP-0005Dl-G6
  for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Jul 2023 07:22:37 +0000
+ Thu, 13 Jul 2023 11:19:48 +0000
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
  d=sourceforge.net; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:
  Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
  Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
  Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
  List-Subscribe:List-Post:List-Owner:List-Archive;
- bh=aXlgRNR4+P8QoG2khYwdAhXKxFR+0pxzAZPWyreBXao=; b=dQItvL/4qq8aM8lc27lcufl0Ec
- iqOk+IBboJDuHJSN2+eQXSODGEpzTAsznV01nYU6p2mLYHwuLy5A3clngNSztfEAYjazBlHCE7ixZ
- pXryYqYBnKSArKCDT5+SDSk9oJVdupFavd5XoWwljqJd/qyj8TTRQu6FnLLg04I/7R68=;
+ bh=Id3dDSEZ8ejwio8FiH8f9/mFmdYUyuGbpNTIxJPoZmo=; b=R2ya4SnK8kXq4uzn52q9JfJnGe
+ OOySsfO2J/2LaTkFNt0kwOFY6o6hHyYFiKHpNkIsxM+fM31Tns0y3r7tw3xImzTwi3Mvknxi5G7Sh
+ gdLY0UN7VhGLJfjUS8qCcjUadGdsFnH1ojudcwzJGbPMzl9sztzE5XOVC5ARVwWB/+sc=;
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  ;
  h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To
@@ -33,43 +33,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sf.net; s=x
  Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
  :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
  List-Post:List-Owner:List-Archive;
- bh=aXlgRNR4+P8QoG2khYwdAhXKxFR+0pxzAZPWyreBXao=; b=jwQbiBB1pmZvjKmK13zXDKrHpd
- sRZ49Mk5PCxDg+ixkraURvUpmzTayUiQmieCkQZEdOMoADmZTtZtCpnJ7ZUaCA5AbqLRHEDrjdkqr
- PUQiT6Fkzm0pYbKGAFgSvxNuGxNR8i46+vlqwew0zzV52oD5mgd0vm4HV3gWn5tcAk5w=;
-Received: from dfw.source.kernel.org ([139.178.84.217])
+ bh=Id3dDSEZ8ejwio8FiH8f9/mFmdYUyuGbpNTIxJPoZmo=; b=c4NlSrXqOQ17+tn2gXMWTnc2zP
+ 47lvRa65bdvwvrec8OM/9WP/9DICgsYunf5Grh1yp2QC/t6AYJcbsl50emLkVZdOBpxHhCl48Y96+
+ gsGVHTeoeDa4ifDqgPiDUtCVZMLGAvjsd16MAQdvDJ+0DVbqEVpT8HALTdqlXdA7rHKs=;
+Received: from verein.lst.de ([213.95.11.211])
  by sfi-mx-2.v28.lw.sourceforge.com with esmtps
  (TLS1.2:ECDHE-RSA-AES256-GCM-SHA384:256) (Exim 4.95)
- id 1qJqes-0002MN-Cg for linux-f2fs-devel@lists.sourceforge.net;
- Thu, 13 Jul 2023 07:22:37 +0000
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits))
- (No client certificate requested)
- by dfw.source.kernel.org (Postfix) with ESMTPS id A65F861A39;
- Thu, 13 Jul 2023 07:22:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E1BC433C8;
- Thu, 13 Jul 2023 07:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
- s=k20201202; t=1689232950;
- bh=BpHdt5uwnAilJ8S0bLCo0m3OsfgBJ2CqoYvUmojxMyk=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=sj3qtugjAVE3RrZL9f0h3B+IJ+r1CcFJdTxT7WDHhHFjCVnjqxypDcJzsdYn5A+8u
- 4E7+OTefkKJSfn/FlRo2iZ8G9xQpEyRiJJw+Uf2LAJ0Cf3P8oAyW38ItwNPdM26MAZ
- GrcD8WLG3c7jKFzJmJ3+8GmDM0K8/R/HRokc2Q6AnUdPSpCa+5inVLgt0pM/Rz0K/a
- vhOfw2l+9HOniKrCLauNkAR92k3HTriA/zd4UXGeUIb0hjCPTxP/DK4dsJFsGCCRkx
- WTfmNxtpwtlSGMXtE2LJq3PccVAJ51GXO91HMoP/IU7htQgT2UTOZu4F6sN5InODth
- Xsn1k8+6f6KlQ==
-Date: Thu, 13 Jul 2023 00:22:28 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Weichao Guo <guoweichao@oppo.com>
-Message-ID: <20230713072228.GD2199@sol.localdomain>
-References: <20230712102331.4079126-1-guoweichao@oppo.com>
+ id 1qJuMP-0002Nr-02 for linux-f2fs-devel@lists.sourceforge.net;
+ Thu, 13 Jul 2023 11:19:48 +0000
+Received: by verein.lst.de (Postfix, from userid 2407)
+ id 1C7E96732D; Thu, 13 Jul 2023 13:19:36 +0200 (CEST)
+Date: Thu, 13 Jul 2023 13:19:35 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Message-ID: <20230713111935.GA22470@lst.de>
+References: <5ncdtsl3nycvxwldjg27yhqbt3pg6sdnjlynucbt536fudq7pg@o4zhoxt224jm>
 MIME-Version: 1.0
 Content-Disposition: inline
-In-Reply-To: <20230712102331.4079126-1-guoweichao@oppo.com>
-X-Headers-End: 1qJqes-0002MN-Cg
-Subject: Re: [f2fs-dev] [PATCH] f2fs-tools: support print_xattr_entry with
- fscrypt context v2
+In-Reply-To: <5ncdtsl3nycvxwldjg27yhqbt3pg6sdnjlynucbt536fudq7pg@o4zhoxt224jm>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Headers-End: 1qJuMP-0002Nr-02
+Subject: Re: [f2fs-dev] [bug report] f2fs mount failure on zoned block
+ devices
 X-BeenThere: linux-f2fs-devel@lists.sourceforge.net
 X-Mailman-Version: 2.1.21
 Precedence: list
@@ -81,89 +66,18 @@ List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
 List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>, 
  <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ Damien Le Moal <Damien.LeMoal@wdc.com>, Christoph Hellwig <hch@lst.de>,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 
-Hi Weichao,
+Take a look at the "f2fs: don't reopen the main block device in
+f2fs_scan_devices" thread on the block list.  The first version of patch
+still had issues, but there is an updated on deeper in the thread.
 
-On Wed, Jul 12, 2023 at 06:23:31PM +0800, Weichao Guo via Linux-f2fs-devel wrote:
-> Signed-off-by: Weichao Guo <guoweichao@oppo.com>
-> Signed-off-by: Sheng Yong <shengyong@oppo.com>
-> ---
->  fsck/mount.c | 44 +++++++++++++++++++++++++++---------------
->  fsck/xattr.h | 54 +++++++++++++++++++++++++++++++++++++++++++---------
->  2 files changed, 74 insertions(+), 24 deletions(-)
-> 
-> diff --git a/fsck/mount.c b/fsck/mount.c
-> index 397feb5..b9696c4 100644
-> --- a/fsck/mount.c
-> +++ b/fsck/mount.c
-> @@ -196,7 +196,7 @@ static void print_xattr_entry(const struct f2fs_xattr_entry *ent)
->  {
->  	const u8 *value = (const u8 *)&ent->e_name[ent->e_name_len];
->  	const int size = le16_to_cpu(ent->e_value_size);
-> -	const struct fscrypt_context *ctx;
-> +	const union fscrypt_context *ctx;
->  	int i;
->  
->  	MSG(0, "\nxattr: e_name_index:%d e_name:", ent->e_name_index);
-> @@ -213,21 +213,35 @@ static void print_xattr_entry(const struct f2fs_xattr_entry *ent)
->  		return;
->  #endif
->  	case F2FS_XATTR_INDEX_ENCRYPTION:
-> -		ctx = (const struct fscrypt_context *)value;
-> -		if (size != sizeof(*ctx) ||
-> -		    ctx->format != FS_ENCRYPTION_CONTEXT_FORMAT_V1)
-> +		ctx = (const union fscrypt_context *)value;
-> +		if (size != fscrypt_context_size(ctx))
->  			break;
-> -		MSG(0, "format: %d\n", ctx->format);
-> -		MSG(0, "contents_encryption_mode: 0x%x\n", ctx->contents_encryption_mode);
-> -		MSG(0, "filenames_encryption_mode: 0x%x\n", ctx->filenames_encryption_mode);
-> -		MSG(0, "flags: 0x%x\n", ctx->flags);
-> -		MSG(0, "master_key_descriptor: ");
-> -		for (i = 0; i < FS_KEY_DESCRIPTOR_SIZE; i++)
-> -			MSG(0, "%02X", ctx->master_key_descriptor[i]);
-> -		MSG(0, "\nnonce: ");
-> -		for (i = 0; i < FS_KEY_DERIVATION_NONCE_SIZE; i++)
-> -			MSG(0, "%02X", ctx->nonce[i]);
-> -		MSG(0, "\n");
-> +		switch (ctx->version) {
-> +		case FSCRYPT_CONTEXT_V1:
-> +			MSG(0, "format: %d\n", ctx->version);
-> +			MSG(0, "contents_encryption_mode: 0x%x\n", ctx->v1.contents_encryption_mode);
-> +			MSG(0, "filenames_encryption_mode: 0x%x\n", ctx->v1.filenames_encryption_mode);
-> +			MSG(0, "flags: 0x%x\n", ctx->v1.flags);
-> +			MSG(0, "master_key_descriptor: ");
-> +			for (i = 0; i < FSCRYPT_KEY_DESCRIPTOR_SIZE; i++)
-> +				MSG(0, "%02X", ctx->v1.master_key_descriptor[i]);
-> +			MSG(0, "\nnonce: ");
-> +			for (i = 0; i < FSCRYPT_FILE_NONCE_SIZE; i++)
-> +				MSG(0, "%02X", ctx->v1.nonce[i]);
-> +			MSG(0, "\n");
-> +		case FSCRYPT_CONTEXT_V2:
-> +			MSG(0, "format: %d\n", ctx->version);
-> +			MSG(0, "contents_encryption_mode: 0x%x\n", ctx->v2.contents_encryption_mode);
-> +			MSG(0, "filenames_encryption_mode: 0x%x\n", ctx->v2.filenames_encryption_mode);
-> +			MSG(0, "flags: 0x%x\n", ctx->v2.flags);
-> +			MSG(0, "master_key_identifier: ");
-> +			for (i = 0; i < FSCRYPT_KEY_IDENTIFIER_SIZE; i++)
-> +				MSG(0, "%02X", ctx->v2.master_key_identifier[i]);
-> +			MSG(0, "\nnonce: ");
-> +			for (i = 0; i < FSCRYPT_FILE_NONCE_SIZE; i++)
-> +				MSG(0, "%02X", ctx->v2.nonce[i]);
-> +			MSG(0, "\n");
-> +		}
->  		return;
-
-The FSCRYPT_CONTEXT_V1 case is falling through to FSCRYPT_CONTEXT_V2.  Also,
-this patch makes the values of encryption xattrs with unknown versions no longer
-be shown.  To fix this, there needs to be a return at end of each case (v1 and
-v2), and the return after the switch statement needs to be a break.
-
-- Eric
 
 
 _______________________________________________
